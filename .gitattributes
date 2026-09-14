@@ -1,0 +1,2 @@
+# The design document is a large single-file HTML export with embedded fonts.
+docs/design/*.html -diff -merge linguist-generated
