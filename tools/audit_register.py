@@ -215,7 +215,7 @@ dict(id="C1", kind="contradiction", severity="blocking", status="proposed",
          "numbers are data in <code>content/detection.json</code> and validated. "
          "Awaiting sign-off before the lock in §26.7."),
 
-dict(id="C2", kind="contradiction", severity="blocking", status="open",
+dict(id="C2", kind="contradiction", severity="blocking", status="proposed",
      title="Two incompatible raid-payout models, differing by 16–30×",
      refs=["9.4", "9.6", "12.1", "12.9"],
      body="§9.4 pays a percentage of what the defender holds; §9.6 replaces it with "
@@ -248,7 +248,7 @@ dict(id="C3", kind="contradiction", severity="blocking", status="open",
          "§14.4 and the glossary from one table. Choosing five ranks means "
          "re-tagging 14 laws and re-deriving the page economy."),
 
-dict(id="C4", kind="contradiction", severity="blocking", status="open",
+dict(id="C4", kind="contradiction", severity="blocking", status="proposed",
      title="The master inflation dial is keyed to a level range that does not exist",
      refs=["5.2", "9.4", "9.6", "13.4"],
      body="§5.2's outer-realm table stops at level 5. §9.6's haul table quotes realm "

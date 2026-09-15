@@ -233,7 +233,7 @@
 
     <div class="summary">
       <div><span class="n">56</span><span class="k">items tracked</span></div>
-      <div><span class="n">40</span><span class="k">open</span></div>
+      <div><span class="n">38</span><span class="k">open</span></div>
       <div><span class="n">9</span><span class="k">done or adopted</span></div>
       <div><span class="n">11</span><span class="k">blocking the build</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
@@ -440,12 +440,12 @@
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/detection.md</code> states §12.17 once, with the four edits it forces spelled out: §12.8 becomes behavioural description only, §5.4's landing noise is restated as 250 of 1000 suspicion, §29.1 is regenerated, §21.12 is already correct. The numbers are data in <code>content/detection.json</code> and validated. Awaiting sign-off before the lock in §26.7.</p>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C2</span>
           <h3>Two incompatible raid-payout models, differing by 16–30×</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§9.4</span><span class="ref">§9.6</span><span class="ref">§12.1</span><span class="ref">§12.9</span></div>
         <p class="body">§9.4 pays a percentage of what the defender holds; §9.6 replaces it with a haul minted from the raider's own level and says so explicitly — but §9.4's percentages and §12.9's multipliers remain. Run through the economy model, <strong>§9.4 delivers 32% of a player's income, reproducing its own stated “roughly a third” almost exactly, while §9.6 delivers 1–2%</strong>. Strong evidence that §9.4 generated the published progression tables and §9.6 was added afterwards without re-running them.</p>
@@ -464,12 +464,12 @@
         <p class="rec"><span class="arrow">&rarr;</span> §7.10's reasoning survives either way — rarity should buy specificity, not strength. Decide the split, then regenerate §7.4, §7.7, §7.6, §9.5, §14.4 and the glossary from one table. Choosing five ranks means re-tagging 14 laws and re-deriving the page economy.</p>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C4</span>
           <h3>The master inflation dial is keyed to a level range that does not exist</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§5.2</span><span class="ref">§9.4</span><span class="ref">§9.6</span><span class="ref">§13.4</span></div>
         <p class="body">§5.2's outer-realm table stops at level 5. §9.6's haul table quotes realm levels 2, 6 and 10, and attributes the 40%→71.5% sealed share to “realm level” — but §9.4 attributes that same share to the <em>Vault</em>, which does have ten levels. So §9.6 appears to have conflated the two and then built <code>B(L) = 100 × 1.5^(L−1)</code>, which §9.6 itself calls “the master inflation lever”, on top of the conflation. At L=10 that is 25× its value at L=5.</p>

@@ -111,6 +111,9 @@ python3 -m tools.economy_model.test_economy_model
 # score the two pre-code gates from testers' result codes
 python3 tools/parse_gate_results.py results.txt
 
+# price the open decisions
+python3 tools/decision_support.py
+
 # rebuild the audit register page after changing an item's status
 python3 tools/build_audit.py
 
