@@ -134,12 +134,39 @@ intent. But three things follow that the document has not absorbed:
    quarter of them, the marginal Star Well is worthless, and a large part of the
    Starlight sink in §10.2 evaporates.
 
-**Recommendation:** decide which lever moves. Either raise the roster (more
-Hearth homes, or more Hearths per realm), cut permitted building counts, or make
-partial staffing genuinely worthwhile — §9.2's 60% / 85% / 100% curve already
-hints at the third, but at 25% coverage most buildings sit at 0%.
+### Two things that make this sharper
 
-Reproduce with `python3 -m tools.economy_model positions`.
+**No second or third worker slot is ever worth filling.** §9.2's staffing curve
+is 60% / 85% / 100% for one, two and three workers — marginal gains of +60, +25
+and +15 points. Decreasing, so a player fills every building's *first* slot
+before any second. Take the 21 guard posts §5.2 allows and a crew of five out of
+a roster of 38, and **12 characters are left to work**. They cannot fill even the
+first slot of 21 buildings, let alone reach a second. §10.2 grants a second slot
+at building level 4 and a third at level 7: **both are dead content**, while
+§14.3 lists "every Star Well at level 10" (day 316) and "everything built and at
+its highest level" (day 378) as milestones.
+
+**A second, independent cap agrees with the first.** §9.5 prices a new ruleborn
+at `100 × 1.15^owned` Essence:
+
+| nth ruleborn | Essence |
+| --- | --- |
+| 30 | 6,621 |
+| 38 | 20,254 |
+| 50 | 108,366 |
+| 89 | 25,241,072 |
+
+The 89th — the roster one producer per realm would need — costs about **200 days
+of an engaged player's entire Essence production**. So the Hearth homes and the
+birth curve cap the roster in the same place, independently. Both halves of the
+character economy say 30–40. The building rules ask for 152.
+
+**Recommendation:** decide which lever moves — raise the roster (which means
+changing *both* caps), cut the buildings, or keep the shortage and recompute
+§9.3 at the staffing a player can actually reach. It is a design choice, not
+arithmetic. What is not a choice is leaving all three tables as they are.
+
+Reproduce with `python3 tools/decision_support.py staffing`.
 
 ---
 

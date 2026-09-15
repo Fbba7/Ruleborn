@@ -8,9 +8,10 @@ These do not pick. Each report lays out what every option costs, using the
 content tables and the economy model, and says plainly which parts are a matter
 of taste rather than arithmetic.
 
-  rarity   C3 / Q3 — three law ranks or five?
-  haul     C4 / C2 — what is L in B(L), and what growth rate would meet the
-                     document's own stated target for raid income?
+  rarity    C3 / Q3 — three law ranks or five?
+  haul      C4 / C2 — what is L in B(L), and what growth rate would meet the
+                      document's own stated target for raid income?
+  staffing  F1 / Q1 — is character scarcity a feature, and which lever moves?
 """
 
 import collections
@@ -181,7 +182,93 @@ def haul_report() -> None:
     print("quantity the progression curve is already built on.")
 
 
-REPORTS = {"rarity": rarity_report, "haul": haul_report}
+# ---------------------------------------------------------------------------
+# F1 / Q1 — is character scarcity a feature, and which lever moves?
+# ---------------------------------------------------------------------------
+
+GUARD_POSTS = 6 * 3 + 3        # §5.2, outer realms at level 5, plus the Heart
+CREW = 5                       # §12.5, from Keeper level 16
+BIRTH_BASE, BIRTH_GROWTH = 100, 1.15   # §9.5
+
+
+def staffing_report() -> None:
+    roster = 3 + 7 * econ.HEARTH_HOMES[-1]
+    slots_each = econ.BUILDINGS["Star Well"].slots[-1]
+
+    print("F1 / Q1 — is character scarcity a feature, and which lever moves?\n")
+
+    print("The staffing curve makes spreading thin strictly optimal (§9.2):")
+    for n in range(1, 4):
+        print(f"    {n} worker{'s' if n > 1 else ' '} -> {econ.STAFFING[n]:.0%}"
+              f"   marginal gain {econ.STAFFING[n] - econ.STAFFING[n - 1]:+.0%}")
+    print("  Decreasing, so a player fills the FIRST slot of every building before")
+    print("  any second. That matters more than it looks.\n")
+
+    print(f"{'':<24}{'2 producers/realm':>20}{'1 producer/realm':>20}")
+    rows = {}
+    for per_realm in (2, 1):
+        buildings = 7 * per_realm * 3
+        rows[per_realm] = {
+            "buildings": buildings,
+            "slots": buildings * slots_each,
+            "workers": max(0, roster - GUARD_POSTS - CREW),
+            "empty": max(0, buildings - max(0, roster - GUARD_POSTS - CREW)),
+        }
+        r = rows[per_realm]
+        r["output"] = min(r["workers"], buildings) * econ.STAFFING[1]
+        r["nameplate_pct"] = r["output"] / buildings
+    for key, label in (("buildings", "producing buildings"),
+                       ("slots", "worker slots"),
+                       ("workers", "workers actually free"),
+                       ("empty", "buildings left empty")):
+        print(f"{label:<24}{rows[2][key]:>20}{rows[1][key]:>20}")
+    print(f"{'output vs nameplate':<24}{rows[2]['nameplate_pct']:>19.0%}"
+          f"{rows[1]['nameplate_pct']:>20.0%}")
+
+    print(f"\n  Roster is {roster} (3 at the Spire + 7 Hearths x "
+          f"{econ.HEARTH_HOMES[-1]} homes, §11.5). Post the {GUARD_POSTS} guard")
+    print(f"  posts §5.2 allows and field a crew of {CREW}, and "
+          f"{max(0, roster - GUARD_POSTS - CREW)} characters are left to work.")
+    print("\n  Consequence: NO second or third worker slot is ever worth filling.")
+    print("  §10.2 grants a second slot at building level 4 and a third at level 7.")
+    print("  Both are dead content under this roster — and §14.3 still lists")
+    print("  'every Star Well at level 10' (day 316) and 'everything built and at")
+    print("  its highest level' (day 378) as milestones.\n")
+
+    print("A second, independent cap agrees with the first (§9.5):\n")
+    print(f"    {'nth ruleborn':>14}{'Essence':>16}")
+    for n in (30, 38, 50, 89):
+        print(f"    {n:>14}{BIRTH_BASE * BIRTH_GROWTH ** n:>16,.0f}")
+    print("\n  The birth curve caps the roster in the same place the Hearths do.")
+    print("  Both halves of the character economy say ~30-40. The building rules")
+    print("  ask for 152 positions. They were sized independently.\n")
+
+    print("The three levers, priced:\n")
+    print("  A. Raise the roster to match the buildings.")
+    print(f"     Needs ~{rows[1]['slots'] + GUARD_POSTS + CREW} characters for one producer per realm.")
+    print("     Requires changing BOTH caps: Hearth homes ~3x, and the birth")
+    print(f"     growth rate, since the 89th ruleborn currently costs "
+          f"{BIRTH_BASE * BIRTH_GROWTH ** 89:,.0f} Essence")
+    print("     — about 200 days of an engaged player's entire Essence production.")
+    print("     Cost: the Essence sink disappears, and §4's claim that characters'")
+    print("     time is scarce goes with it.\n")
+    print("  B. Cut the buildings to match the roster.")
+    print("     One producer of each kind per realm, one worker slot each: 21 slots,")
+    print(f"     {GUARD_POSTS} guard posts, a crew of {CREW} = "
+          f"{21 + GUARD_POSTS + CREW} positions against {roster}.")
+    print("     Cost: removes a Starlight sink, and §10.2's level-4 and level-7")
+    print("     slot grants become meaningless and should be deleted.\n")
+    print("  C. Keep the shortage and design around it.")
+    print("     Then §9.3's production figures must be recomputed at the staffing")
+    print("     a player can actually reach — about a third of nameplate — and the")
+    print("     second and third slots deleted, since they can never be filled.")
+    print("     Cost: honest, but it makes 'everything built and at its highest")
+    print("     level' describe a universe that is two-thirds idle.\n")
+    print("  This is a design choice, not arithmetic. What is NOT a choice is")
+    print("  leaving all three tables as they are: they cannot all be right.")
+
+
+REPORTS = {"rarity": rarity_report, "haul": haul_report, "staffing": staffing_report}
 
 
 def main() -> int:
