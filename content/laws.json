@@ -1,0 +1,889 @@
+[
+  {
+    "id": "bounce",
+    "name": "Bounce",
+    "rank": "Common",
+    "school": "Motion",
+    "stability_cost": 14,
+    "notes": [
+      "Flow",
+      "Echo"
+    ],
+    "tier_1": "Walls and wards bounce back 50% of what hits them, including characters.",
+    "tiers_2_3": "65%, 80%",
+    "movement": "Squash-and-stretch rebounds off walls with a springy boing.",
+    "world": "Walls wobble like jelly when touched.",
+    "raider_use": "Ricochet past a guard you cannot out-fight.",
+    "defender_use": "Line wards along walls so a bounce lands the crew in them.",
+    "weakness": "Wardens are heavy enough to absorb a rebound.",
+    "sound": "a rising whistle and a soft thump on landing"
+  },
+  {
+    "id": "half_gravity",
+    "name": "Half gravity",
+    "rank": "Common",
+    "school": "Motion",
+    "stability_cost": 12,
+    "notes": [
+      "Flow"
+    ],
+    "tier_1": "Everyone jumps twice as high and can leap one obstacle; thrown attacks fly 30% farther.",
+    "tiers_2_3": "Leap 2 obstacles; range +40%, +50%",
+    "movement": "Floaty strides and long, slow hops; cloaks and loot sacks drift upward.",
+    "world": "Pebbles hover a hand above the ground; dust falls slowly.",
+    "raider_use": "Leap the gaps the defender cannot wall off; reach roofs and ledges.",
+    "defender_use": "Put loot where only a long leap reaches it, then watch that landing.",
+    "weakness": "Heavy carriers barely rise; wind and slopes push a leaping crew off course.",
+    "sound": "a rising whistle and a soft thump on landing"
+  },
+  {
+    "id": "tilt",
+    "name": "Tilt",
+    "rank": "Common",
+    "school": "Motion",
+    "stability_cost": 11,
+    "notes": [
+      "Flow"
+    ],
+    "tier_1": "The realm slopes toward a side the owner picks: +30% speed downhill, -30% uphill, and dropped loot rolls downhill.",
+    "tiers_2_3": "±40%, ±50%",
+    "movement": "Arms windmill running downhill; bodies lean hard going uphill.",
+    "world": "Trees, lanterns and banners lean one way; water runs downhill.",
+    "raider_use": "Run downhill on the approach and drop loot so it rolls to the edge.",
+    "defender_use": "Point the slope inward so every escape is uphill.",
+    "weakness": "A Weight-note law woven beside it blunts the slide.",
+    "sound": "a rising whistle and a soft thump on landing"
+  },
+  {
+    "id": "current",
+    "name": "Current",
+    "rank": "Rare",
+    "school": "Motion",
+    "stability_cost": 15,
+    "notes": [
+      "Flow"
+    ],
+    "tier_1": "A wind blows one way, chosen by the owner: +30% speed with it, -30% against it.",
+    "tiers_2_3": "±40%, ±50%",
+    "movement": "Bodies lean into the wind; hair and cloaks stream; steps lengthen downwind.",
+    "world": "Grass waves and leaves stream in one direction.",
+    "raider_use": "Ride it outward on the escape.",
+    "defender_use": "Blow it toward the Heart so raiders fight it all the way in.",
+    "weakness": "Cover breaks the wind; so does Stillness.",
+    "sound": "a rising whistle and a soft thump on landing"
+  },
+  {
+    "id": "heavy_ground",
+    "name": "Heavy ground",
+    "rank": "Rare",
+    "school": "Motion",
+    "stability_cost": 16,
+    "notes": [
+      "Weight"
+    ],
+    "tier_1": "Flyers are grounded; carried loot weighs double, slowing carriers by 30%.",
+    "tiers_2_3": "Carriers slowed 40%, 50%",
+    "movement": "Stomping steps with bent knees; carriers hunch under loot; flyers walk.",
+    "world": "Grass lies flat; footprints sink deep.",
+    "raider_use": "Slows the guards as much as the crew; Carriers are the ones who suffer.",
+    "defender_use": "Pair it with a long route to the Vault.",
+    "weakness": "Featherkin and Half gravity shrug it off.",
+    "sound": "a rising whistle and a soft thump on landing"
+  },
+  {
+    "id": "leapfrog",
+    "name": "Leapfrog",
+    "rank": "Rare",
+    "school": "Motion",
+    "stability_cost": 15,
+    "notes": [
+      "Flow",
+      "Glow"
+    ],
+    "tier_1": "Every third step is a hop that clears one tile. Landings are noisy: guards within 4 tiles notice 25% faster.",
+    "tiers_2_3": "Hop every second step; noise only within 3 tiles",
+    "movement": "A step-step-hop rhythm; each landing puffs dust.",
+    "world": "Springy turf covered in hop marks.",
+    "raider_use": "Hop fences and streams without a ramp.",
+    "defender_use": "Gravel and bells under every hop landing.",
+    "weakness": "The noise gives you away in a quiet realm.",
+    "sound": "a rising whistle and a soft thump on landing"
+  },
+  {
+    "id": "frictionless",
+    "name": "Frictionless",
+    "rank": "Deep",
+    "school": "Motion",
+    "stability_cost": 20,
+    "notes": [
+      "Flow",
+      "Spark"
+    ],
+    "tier_1": "Anything moving keeps sliding until it hits something; top speed +20%.",
+    "tiers_2_3": "Top speed +30%, +40%",
+    "movement": "Skating glides with arms out for balance; spin-stops against walls.",
+    "world": "Glossy ground with reflections.",
+    "raider_use": "Slide a whole crew past a patrol in one push.",
+    "defender_use": "Put pits and edges where a slide ends.",
+    "weakness": "Nobody stops where they meant to, including you.",
+    "sound": "a rising whistle and a soft thump on landing"
+  },
+  {
+    "id": "inward_pull",
+    "name": "Inward pull",
+    "rank": "Deep",
+    "school": "Motion",
+    "stability_cost": 22,
+    "notes": [
+      "Weight"
+    ],
+    "tier_1": "Everything drifts toward the Heart: +25% speed going in, -25% going out, -35% for loaded carriers going out.",
+    "tiers_2_3": "Outward penalty -30%/-40%, -35%/-45%",
+    "movement": "A slight drift toward the Heart; feet drag when heading outward.",
+    "world": "Faint spiral streaks lead toward the Heart.",
+    "raider_use": "Dropped loot drifts toward the Heart, which is where you are going anyway.",
+    "defender_use": "Makes the escape a climb out of a bowl.",
+    "weakness": "Heavy crews barely feel it.",
+    "sound": "a rising whistle and a soft thump on landing"
+  },
+  {
+    "id": "brittle_stone",
+    "name": "Brittle stone",
+    "rank": "Common",
+    "school": "Matter",
+    "stability_cost": 10,
+    "notes": [
+      "Spark"
+    ],
+    "tier_1": "Every structure takes double damage: pylons, vaults and wards, but also the owner's walls.",
+    "tiers_2_3": "× 2.25, × 2.5",
+    "movement": "Careful tiptoeing; wobbles on cracked tiles.",
+    "world": "Hairline cracks everywhere; crumbs fall from walls.",
+    "raider_use": "Break a wall instead of walking around it.",
+    "defender_use": "Guards hear every break; wall the noisy routes.",
+    "weakness": "The defender can break their own walls to open a charge.",
+    "sound": "a glassy chime and a low grind"
+  },
+  {
+    "id": "crystal_growth",
+    "name": "Crystal growth",
+    "rank": "Common",
+    "school": "Matter",
+    "stability_cost": 15,
+    "notes": [
+      "Bloom",
+      "Glow"
+    ],
+    "tier_1": "Broken walls and hedges regrow as clear crystal after 8 seconds.",
+    "tiers_2_3": "6 s, 4 s",
+    "movement": "Characters pause to tap humming crystal walls.",
+    "world": "Crystals sprout where walls broke and hum softly.",
+    "raider_use": "Growing crystal blocks a chase behind you.",
+    "defender_use": "Regrow cover after every break, so routes never stay open.",
+    "weakness": "It grows on both sides of a fight.",
+    "sound": "a glassy chime and a low grind"
+  },
+  {
+    "id": "glass",
+    "name": "Glass",
+    "rank": "Common",
+    "school": "Matter",
+    "stability_cost": 12,
+    "notes": [
+      "Glow"
+    ],
+    "tier_1": "Walls become see-through: nobody can hide behind them, though they still block movement.",
+    "tiers_2_3": "Also reveals hidden wards; also shows guard vision cones",
+    "movement": "Characters crouch behind glass walls, in vain.",
+    "world": "Walls turn clear with coloured edges.",
+    "raider_use": "See the patrol before you commit.",
+    "defender_use": "They see you too: use it where you want them watched.",
+    "weakness": "Shattered glass slows whoever is standing on it.",
+    "sound": "a glassy chime and a low grind"
+  },
+  {
+    "id": "density",
+    "name": "Density",
+    "rank": "Rare",
+    "school": "Matter",
+    "stability_cost": 20,
+    "notes": [
+      "Weight"
+    ],
+    "tier_1": "Big characters get +30% health and -20% speed; small ones get +25% speed and -20% health.",
+    "tiers_2_3": "±40%/30%, ±50%/40%",
+    "movement": "Big characters lumber in slow motion; small ones scurry double-time.",
+    "world": "Grass and props look slightly oversized.",
+    "raider_use": "Send the small ones through and the big ones around.",
+    "defender_use": "Design a route only small bodies fit.",
+    "weakness": "Your Breakers become slow targets.",
+    "sound": "a glassy chime and a low grind"
+  },
+  {
+    "id": "honeycomb",
+    "name": "Honeycomb",
+    "rank": "Rare",
+    "school": "Matter",
+    "stability_cost": 17,
+    "notes": [
+      "Weight"
+    ],
+    "tier_1": "The ground is sticky: everyone moves 20% slower but can climb walls and cliffs one level.",
+    "tiers_2_3": "Climb two levels; climbers can't be seen while on a wall",
+    "movement": "Sticky steps pull golden strands; characters scale walls like geckos.",
+    "world": "A golden hexagon sheen covers the ground.",
+    "raider_use": "Climb any cliff the defender thought was a wall.",
+    "defender_use": "Everything is slower, including the escape with a full sack.",
+    "weakness": "Fire and Spark laws burn the stickiness away.",
+    "sound": "a glassy chime and a low grind"
+  },
+  {
+    "id": "lodestones",
+    "name": "Lodestones",
+    "rank": "Rare",
+    "school": "Matter",
+    "stability_cost": 18,
+    "notes": [
+      "Weight",
+      "Echo"
+    ],
+    "tier_1": "The owner places two lodestones; carried loot is pulled toward them, slowing carriers moving away by 30%.",
+    "tiers_2_3": "3 lodestones; 40% slow",
+    "movement": "Carriers are tugged sideways; sacks strain toward the stones.",
+    "world": "Iron filings fan out around each lodestone.",
+    "raider_use": "Pull a dropped sack back to you across a gap.",
+    "defender_use": "Drag loot toward a guarded room.",
+    "weakness": "Metal-heavy crews are pulled off their line.",
+    "sound": "a glassy chime and a low grind"
+  },
+  {
+    "id": "shifting_stones",
+    "name": "Shifting stones",
+    "rank": "Deep",
+    "school": "Matter",
+    "stability_cost": 22,
+    "notes": [
+      "Veil",
+      "Flow"
+    ],
+    "tier_1": "Walls and boulders slide one tile every 15 seconds along a loop the owner draws.",
+    "tiers_2_3": "Every 12 s, every 10 s",
+    "movement": "Characters wait at gaps, then dart through.",
+    "world": "Walls glide along grooves with a grinding rumble.",
+    "raider_use": "Wait for the gap and walk a wall that was not there.",
+    "defender_use": "A maze that never repeats the same way twice.",
+    "weakness": "Guards get stuck behind their own walls.",
+    "sound": "a glassy chime and a low grind"
+  },
+  {
+    "id": "transmute",
+    "name": "Transmute",
+    "rank": "Deep",
+    "school": "Matter",
+    "stability_cost": 22,
+    "notes": [
+      "Veil"
+    ],
+    "tier_1": "Carried loot swaps between Starlight and Essence every 20 seconds, losing 5% each time.",
+    "tiers_2_3": "Every 16 s, 12 s",
+    "movement": "Carriers juggle sacks that flicker between gold and green.",
+    "world": "Loot glints and shifts colour.",
+    "raider_use": "Turn awkward loot into something a Carrier can hold.",
+    "defender_use": "Make the haul unpredictable so raiders cannot plan.",
+    "weakness": "You cannot count your haul until you are out.",
+    "sound": "a glassy chime and a low grind"
+  },
+  {
+    "id": "day_and_night",
+    "name": "Day and night",
+    "rank": "Common",
+    "school": "Time",
+    "stability_cost": 17,
+    "notes": [
+      "Echo"
+    ],
+    "tier_1": "The realm switches between light and dark every 30 seconds; vision halves in the dark.",
+    "tiers_2_3": "Dark phases 35 s, 40 s",
+    "movement": "In the dark phase, characters hold lanterns high and tread carefully.",
+    "world": "The sky flips between day and night.",
+    "raider_use": "Time the run to the dark phase.",
+    "defender_use": "Guards with lanterns own the dark; raiders must wait.",
+    "weakness": "The cycle is public: both sides can plan around it.",
+    "sound": "a slow tick that stretches and snaps back"
+  },
+  {
+    "id": "slow_rivers",
+    "name": "Slow rivers",
+    "rank": "Common",
+    "school": "Time",
+    "stability_cost": 10,
+    "notes": [
+      "Weight"
+    ],
+    "tier_1": "Anyone in water moves at half speed. The owner can draw streams on the realm's grid.",
+    "tiers_2_3": "40% speed, 30% speed",
+    "movement": "Slow-motion wading with big, lazy splashes.",
+    "world": "Water flows like syrup; drops hang in the air.",
+    "raider_use": "Water becomes cover you can stand in.",
+    "defender_use": "A moat with no bridge.",
+    "weakness": "Tidewalkers and Swimmers ignore it entirely.",
+    "sound": "a slow tick that stretches and snaps back"
+  },
+  {
+    "id": "stillness",
+    "name": "Stillness",
+    "rank": "Common",
+    "school": "Time",
+    "stability_cost": 15,
+    "notes": [
+      "Hush"
+    ],
+    "tier_1": "Anyone standing still for 1.5 seconds becomes invisible to guards and wards.",
+    "tiers_2_3": "1.2 s, 1.0 s",
+    "movement": "Frozen statue poses with a shimmering outline.",
+    "world": "The air is calm; not a leaf moves.",
+    "raider_use": "Stop moving and disappear.",
+    "defender_use": "Guards that stand still cannot be tracked either.",
+    "weakness": "Any Glow law breaks the hiding.",
+    "sound": "a slow tick that stretches and snaps back"
+  },
+  {
+    "id": "afterimage",
+    "name": "Afterimage",
+    "rank": "Rare",
+    "school": "Time",
+    "stability_cost": 16,
+    "notes": [
+      "Veil",
+      "Glow"
+    ],
+    "tier_1": "Everyone leaves an afterimage that lingers for 3 seconds, and guards investigate afterimages.",
+    "tiers_2_3": "4 s, 5 s",
+    "movement": "Translucent copies trail every character.",
+    "world": "Faint ghost frames linger where people passed.",
+    "raider_use": "Leave a copy where you are not.",
+    "defender_use": "Guards chase ghosts, which buys time.",
+    "weakness": "Your afterimages point at the route you took.",
+    "sound": "a slow tick that stretches and snaps back"
+  },
+  {
+    "id": "delay",
+    "name": "Delay",
+    "rank": "Rare",
+    "school": "Time",
+    "stability_cost": 14,
+    "notes": [
+      "Veil"
+    ],
+    "tier_1": "Wards and abilities take effect 3 seconds after they are triggered.",
+    "tiers_2_3": "3.5 s, 4 s",
+    "movement": "Characters flinch a beat late; effects land after a pause.",
+    "world": "Ripples linger around anything triggered.",
+    "raider_use": "Wards fire late, so you are already past.",
+    "defender_use": "Alarms land after the crew has committed.",
+    "weakness": "Your own guards react late too.",
+    "sound": "a slow tick that stretches and snaps back"
+  },
+  {
+    "id": "haste",
+    "name": "Haste",
+    "rank": "Rare",
+    "school": "Time",
+    "stability_cost": 18,
+    "notes": [
+      "Flow",
+      "Spark"
+    ],
+    "tier_1": "Everyone moves 25% faster, and the heist clock runs 25% faster in this realm.",
+    "tiers_2_3": "+30%, +35%",
+    "movement": "Sped-up strides with motion lines and little skips.",
+    "world": "Clouds race overhead; plants sway quickly.",
+    "raider_use": "Cross open ground before anyone finishes looking.",
+    "defender_use": "Guards reach the alarm faster than you reach the Vault.",
+    "weakness": "Everything gets harder to control at speed.",
+    "sound": "a slow tick that stretches and snaps back"
+  },
+  {
+    "id": "held_breath",
+    "name": "Held breath",
+    "rank": "Deep",
+    "school": "Time",
+    "stability_cost": 25,
+    "notes": [
+      "Hush",
+      "Weight"
+    ],
+    "tier_1": "Guards, wards and the crew's cooldowns only move while a crew member moves. The heist clock never stops.",
+    "tiers_2_3": "The heist clock runs 20%, then 40% faster here",
+    "movement": "When the crew stops, everything freezes mid-motion; the crew breathes in deeply.",
+    "world": "Floating dust hangs still in the air.",
+    "raider_use": "The world waits while you plan the next step.",
+    "defender_use": "The clock does not wait: it burns while you stand still.",
+    "weakness": "Stand-still crews are still visible.",
+    "sound": "a slow tick that stretches and snaps back"
+  },
+  {
+    "id": "rewind",
+    "name": "Rewind",
+    "rank": "Deep",
+    "school": "Time",
+    "stability_cost": 26,
+    "notes": [
+      "Echo"
+    ],
+    "tier_1": "Every 20 seconds, broken things return to how they were 10 seconds earlier.",
+    "tiers_2_3": "Every 16 s, 12 s",
+    "movement": "Characters glance back as debris flies back into place.",
+    "world": "Broken pieces whoosh back where they were.",
+    "raider_use": "Undo a broken plan once.",
+    "defender_use": "Bring back the pylon they just broke.",
+    "weakness": "It returns the defender's losses as readily as yours.",
+    "sound": "a slow tick that stretches and snaps back"
+  },
+  {
+    "id": "glowing_dark",
+    "name": "Glowing dark",
+    "rank": "Common",
+    "school": "Energy",
+    "stability_cost": 13,
+    "notes": [
+      "Hush"
+    ],
+    "tier_1": "The realm is dark; beyond 3 tiles only glowing things can be seen.",
+    "tiers_2_3": "Beyond 2.5 tiles, 2 tiles",
+    "movement": "Glowing characters tiptoe; everyone else is a silhouette.",
+    "world": "A black realm lit by glowing mushrooms and runes.",
+    "raider_use": "The dark is cover.",
+    "defender_use": "Put your glowing ruleborn on the routes that matter.",
+    "weakness": "Anything that glows is a target.",
+    "sound": "a crackle building to a short clap"
+  },
+  {
+    "id": "heat_bloom",
+    "name": "Heat bloom",
+    "rank": "Common",
+    "school": "Energy",
+    "stability_cost": 17,
+    "notes": [
+      "Spark",
+      "Glow"
+    ],
+    "tier_1": "Anyone within 2 tiles of a fire deals 25% more damage. The owner places braziers.",
+    "tiers_2_3": "+30%, +35%",
+    "movement": "Characters near fire puff up and swing faster, steam rising.",
+    "world": "Heat haze around braziers.",
+    "raider_use": "Fight near fire and hit harder.",
+    "defender_use": "Bait the crew into fighting where your guards are strongest.",
+    "weakness": "Your guards are stronger there too, but so are theirs.",
+    "sound": "a crackle building to a short clap"
+  },
+  {
+    "id": "spark_trails",
+    "name": "Spark trails",
+    "rank": "Common",
+    "school": "Energy",
+    "stability_cost": 12,
+    "notes": [
+      "Glow"
+    ],
+    "tier_1": "Anyone moving faster than a walk leaves sparks for 5 seconds that guards can see from anywhere in their sight.",
+    "tiers_2_3": "7 s, 9 s",
+    "movement": "Runners leave crackling sparks; walkers tiptoe to stay dark.",
+    "world": "Sparkles fade slowly on the ground.",
+    "raider_use": "Walk, do not run, and leave nothing.",
+    "defender_use": "Punish the crew for hurrying.",
+    "weakness": "Your own patrols leave trails a raider can read.",
+    "sound": "a crackle building to a short clap"
+  },
+  {
+    "id": "aurora",
+    "name": "Aurora",
+    "rank": "Rare",
+    "school": "Energy",
+    "stability_cost": 18,
+    "notes": [
+      "Glow",
+      "Flow"
+    ],
+    "tier_1": "Bands of light sweep the realm every 10 seconds. Inside a band everyone can be seen from twice as far; between bands, vision halves.",
+    "tiers_2_3": "Wider bands; every 8 s",
+    "movement": "Characters wait at the edge of a light band, then dash.",
+    "world": "Ribbons of light sweep across the ground.",
+    "raider_use": "Move between the bands and you are nearly invisible.",
+    "defender_use": "Time patrols to the bands.",
+    "weakness": "The pattern is readable, so it rewards patience on both sides.",
+    "sound": "a crackle building to a short clap"
+  },
+  {
+    "id": "chain_lightning",
+    "name": "Chain lightning",
+    "rank": "Rare",
+    "school": "Energy",
+    "stability_cost": 19,
+    "notes": [
+      "Spark"
+    ],
+    "tier_1": "Every hit jumps to a second target within 3 tiles at 50% strength.",
+    "tiers_2_3": "60%, 70%",
+    "movement": "Hair stands on end; arcs jump between neighbours when hit.",
+    "world": "Small arcs between metal props.",
+    "raider_use": "One good hit clears a knot of guards.",
+    "defender_use": "Keep guards apart and the chain dies.",
+    "weakness": "It jumps between your crew as well.",
+    "sound": "a crackle building to a short clap"
+  },
+  {
+    "id": "static",
+    "name": "Static",
+    "rank": "Rare",
+    "school": "Energy",
+    "stability_cost": 16,
+    "notes": [
+      "Spark"
+    ],
+    "tier_1": "Moving builds charge; after 5 tiles, the next touch stuns for half a second.",
+    "tiers_2_3": "0.75 s, 1 s",
+    "movement": "Fur and hair frizz with every step; a zap pose on contact.",
+    "world": "Crackling motes over the ground.",
+    "raider_use": "Chain a stun through a clustered patrol.",
+    "defender_use": "Cluster nothing; spread your guards.",
+    "weakness": "Crews that bunch up get stunned together.",
+    "sound": "a crackle building to a short clap"
+  },
+  {
+    "id": "overcharge",
+    "name": "Overcharge",
+    "rank": "Deep",
+    "school": "Energy",
+    "stability_cost": 21,
+    "notes": [
+      "Spark",
+      "Echo"
+    ],
+    "tier_1": "Every third ability used in the realm, by anyone, fires twice.",
+    "tiers_2_3": "Second firing at +20%, +40%",
+    "movement": "Every third ability animation doubles with an afterflash.",
+    "world": "Pylons pulse in threes.",
+    "raider_use": "Every third ability is a hammer.",
+    "defender_use": "Wards hit three times as hard on the beat.",
+    "weakness": "The beat is visible: count it.",
+    "sound": "a crackle building to a short clap"
+  },
+  {
+    "id": "sunburst",
+    "name": "Sunburst",
+    "rank": "Deep",
+    "school": "Energy",
+    "stability_cost": 23,
+    "notes": [
+      "Glow",
+      "Spark"
+    ],
+    "tier_1": "Every 25 seconds a flash stuns anyone not in shade for 1.5 seconds.",
+    "tiers_2_3": "2 s, 2.5 s",
+    "movement": "Characters duck into shade at the warning glint.",
+    "world": "A sun flare every 25 seconds; shade patches are marked.",
+    "raider_use": "Shade is a safe lane if you read it.",
+    "defender_use": "Remove the shade and the route becomes a gauntlet.",
+    "weakness": "Your guards burn in the open too.",
+    "sound": "a crackle building to a short clap"
+  },
+  {
+    "id": "bloom",
+    "name": "Bloom",
+    "rank": "Common",
+    "school": "Life",
+    "stability_cost": 11,
+    "notes": [
+      "Bloom"
+    ],
+    "tier_1": "Cut hedges regrow after 10 seconds.",
+    "tiers_2_3": "8 s, 6 s",
+    "movement": "Characters push through hedges that close behind them.",
+    "world": "Hedges sprout back in time-lapse.",
+    "raider_use": "Cut through and the hedge closes behind you.",
+    "defender_use": "Regrown hedges reroute a chase.",
+    "weakness": "It hides the crew as readily as it blocks them.",
+    "sound": "a kalimba phrase and rustling leaves"
+  },
+  {
+    "id": "kinship",
+    "name": "Kinship",
+    "rank": "Common",
+    "school": "Life",
+    "stability_cost": 14,
+    "notes": [
+      "Bloom"
+    ],
+    "tier_1": "Characters standing next to an ally heal each other 1.5% a second.",
+    "tiers_2_3": "2%, 2.5%",
+    "movement": "Allies walk shoulder to shoulder, linked by a green thread.",
+    "world": "Vines braid between neighbours.",
+    "raider_use": "Keep the crew together and they hold longer.",
+    "defender_use": "Guards near each other heal each other.",
+    "weakness": "Splitting the crew loses the bonus.",
+    "sound": "a kalimba phrase and rustling leaves"
+  },
+  {
+    "id": "wild_paths",
+    "name": "Wild paths",
+    "rank": "Common",
+    "school": "Life",
+    "stability_cost": 12,
+    "notes": [
+      "Bloom",
+      "Flow"
+    ],
+    "tier_1": "Tiles walked three times grow flowers that make anyone on them 20% faster, so guards' patrols become fast lanes.",
+    "tiers_2_3": "25%, 30%",
+    "movement": "Characters skip along flower paths.",
+    "world": "Flowers bloom wherever people walk.",
+    "raider_use": "Use the guards' own worn paths to move fast.",
+    "defender_use": "Your patrol routes become raider highways.",
+    "weakness": "The paths reveal where your guards walk.",
+    "sound": "a kalimba phrase and rustling leaves"
+  },
+  {
+    "id": "flock",
+    "name": "Flock",
+    "rank": "Rare",
+    "school": "Life",
+    "stability_cost": 16,
+    "notes": [
+      "Bloom",
+      "Glow"
+    ],
+    "tier_1": "A flock of six puffballs wanders the realm and blocks narrow paths. Bumping one makes it bleat: guards within 5 tiles become 30% more aware.",
+    "tiers_2_3": "9 puffs, 12 puffs",
+    "movement": "Characters weave and shush their way through bleating puffballs.",
+    "world": "Fluffy puffballs graze across the realm.",
+    "raider_use": "Hide in the flock and move with it.",
+    "defender_use": "A living alarm nobody can predict.",
+    "weakness": "Puffballs block your guards' paths too.",
+    "sound": "a kalimba phrase and rustling leaves"
+  },
+  {
+    "id": "spores",
+    "name": "Spores",
+    "rank": "Rare",
+    "school": "Life",
+    "stability_cost": 18,
+    "notes": [
+      "Hush",
+      "Weight"
+    ],
+    "tier_1": "Drifting pollen clouds make anyone inside for 2 seconds drowsy: -50% speed for 3 seconds.",
+    "tiers_2_3": "4 s, 5 s drowsy",
+    "movement": "Drowsy yawns, slow blinks and stumbles.",
+    "world": "Pollen clouds drift lazily.",
+    "raider_use": "Cross the sleeping guards, not the awake ones.",
+    "defender_use": "A pollen field in front of the Vault.",
+    "weakness": "Wind carries it back over your own posts.",
+    "sound": "a kalimba phrase and rustling leaves"
+  },
+  {
+    "id": "thorns",
+    "name": "Thorns",
+    "rank": "Rare",
+    "school": "Life",
+    "stability_cost": 15,
+    "notes": [
+      "Bloom",
+      "Weight"
+    ],
+    "tier_1": "Touching walls or hedges costs 5% health.",
+    "tiers_2_3": "7%, 9%",
+    "movement": "Characters flinch away from walls and hop around hedges.",
+    "world": "Thorny vines cover walls and hedges.",
+    "raider_use": "Avoid the walls; the middle is safer.",
+    "defender_use": "Make every shortcut cost health.",
+    "weakness": "Your own guards cannot hug the hedges either.",
+    "sound": "a kalimba phrase and rustling leaves"
+  },
+  {
+    "id": "regrowth",
+    "name": "Regrowth",
+    "rank": "Deep",
+    "school": "Life",
+    "stability_cost": 16,
+    "notes": [
+      "Bloom",
+      "Echo"
+    ],
+    "tier_1": "Buildings, wards and guards heal 2% of their health each second.",
+    "tiers_2_3": "2.5%, 3%",
+    "movement": "Guards' wounds glow green and close as they walk.",
+    "world": "Moss creeps over everything.",
+    "raider_use": "Take the fights you can finish quickly.",
+    "defender_use": "Guards come back from almost anything.",
+    "weakness": "Healing does nothing against a knockout.",
+    "sound": "a kalimba phrase and rustling leaves"
+  },
+  {
+    "id": "swarm_birth",
+    "name": "Swarm birth",
+    "rank": "Deep",
+    "school": "Life",
+    "stability_cost": 24,
+    "notes": [
+      "Bloom"
+    ],
+    "tier_1": "Each knocked-out guard splits into two small guards with 30% of its strength.",
+    "tiers_2_3": "40%, 50%",
+    "movement": "Knocked-out guards pop into two tiny guards that toddle after the crew.",
+    "world": "Seed pods cluster around guard posts.",
+    "raider_use": "Ignore the small ones and keep moving.",
+    "defender_use": "Every knockout becomes two more bodies.",
+    "weakness": "The swarm gets in your guards' way.",
+    "sound": "a kalimba phrase and rustling leaves"
+  },
+  {
+    "id": "haunting",
+    "name": "Haunting",
+    "rank": "Common",
+    "school": "Spirit",
+    "stability_cost": 19,
+    "notes": [
+      "Glow",
+      "Echo"
+    ],
+    "tier_1": "Carried loot leaves a glowing trail; guards following it move 50% faster.",
+    "tiers_2_3": "60%, 70%",
+    "movement": "Carriers glance nervously at the glowing trail behind them.",
+    "world": "Ghostly footprints trail anyone carrying loot.",
+    "raider_use": "Drop the loot and the trail dies.",
+    "defender_use": "Make carrying loot the dangerous part.",
+    "weakness": "The trail also shows a defender where a raid went.",
+    "sound": "a distant choir swell and a single bell"
+  },
+  {
+    "id": "soul_lanterns",
+    "name": "Soul lanterns",
+    "rank": "Common",
+    "school": "Spirit",
+    "stability_cost": 15,
+    "notes": [
+      "Glow"
+    ],
+    "tier_1": "Lantern light marks safe ground; outside it, everyone loses 1% health a second.",
+    "tiers_2_3": "1.5%, 2%",
+    "movement": "Characters hurry between pools of lantern light and flicker when outside them.",
+    "world": "Warm lantern pools in cold blue dusk.",
+    "raider_use": "Lantern light is safe ground.",
+    "defender_use": "Light exactly the routes you can watch.",
+    "weakness": "Light where you stand is light where you are seen.",
+    "sound": "a distant choir swell and a single bell"
+  },
+  {
+    "id": "whispers",
+    "name": "Whispers",
+    "rank": "Common",
+    "school": "Spirit",
+    "stability_cost": 16,
+    "notes": [
+      "Glow",
+      "Echo"
+    ],
+    "tier_1": "When one guard raises the alarm, every guard in the universe hears it.",
+    "tiers_2_3": "Guards also move 10%, 20% faster when alerted",
+    "movement": "Guards cup their ears; an alarm travels as a visible wave.",
+    "world": "Whispering wind lines drift between guards.",
+    "raider_use": "Keep it clean; one alarm tells everyone.",
+    "defender_use": "The whole universe answers a single shout.",
+    "weakness": "Your guards' confusion also travels.",
+    "sound": "a distant choir swell and a single bell"
+  },
+  {
+    "id": "echoes",
+    "name": "Echoes",
+    "rank": "Rare",
+    "school": "Spirit",
+    "stability_cost": 18,
+    "notes": [
+      "Echo"
+    ],
+    "tier_1": "Knocked-out characters and guards return once, at 60% strength.",
+    "tiers_2_3": "70%, 80%",
+    "movement": "Knocked-out characters rise as translucent echoes that float a little.",
+    "world": "Soft chimes; faint silhouettes.",
+    "raider_use": "A knocked-out crew member comes back once.",
+    "defender_use": "So do knocked-out guards.",
+    "weakness": "Echoes are visible: they mark where you fell.",
+    "sound": "a distant choir swell and a single bell"
+  },
+  {
+    "id": "sleepwalk",
+    "name": "Sleepwalk",
+    "rank": "Rare",
+    "school": "Spirit",
+    "stability_cost": 17,
+    "notes": [
+      "Hush",
+      "Echo"
+    ],
+    "tier_1": "Guards patrol with their eyes closed: they can't see, but hear anyone moving faster than a walk within 4 tiles.",
+    "tiers_2_3": "Hearing 5 tiles, 6 tiles",
+    "movement": "Guards shuffle with arms outstretched and eyes closed; the crew tiptoes theatrically.",
+    "world": "Dreamy haze with drifting Z-shaped motes.",
+    "raider_use": "Walk, never run, and they never see you.",
+    "defender_use": "Silent patrols that cannot be baited by sight.",
+    "weakness": "Sleeping guards cannot raise an alarm quickly.",
+    "sound": "a distant choir swell and a single bell"
+  },
+  {
+    "id": "soul_swap",
+    "name": "Soul swap",
+    "rank": "Rare",
+    "school": "Spirit",
+    "stability_cost": 20,
+    "notes": [
+      "Veil",
+      "Flow"
+    ],
+    "tier_1": "A character about to be knocked out swaps places with its nearest ally, who takes half the blow.",
+    "tiers_2_3": "Ally takes 40%, 30%",
+    "movement": "A magenta swirl as two characters trade places.",
+    "world": "Wisps orbit every character.",
+    "raider_use": "Trade places to pull someone out of trouble.",
+    "defender_use": "Guards trade places across a chokepoint.",
+    "weakness": "The swirl shows exactly where both ends are.",
+    "sound": "a distant choir swell and a single bell"
+  },
+  {
+    "id": "borrowed_face",
+    "name": "Borrowed Face",
+    "rank": "Deep",
+    "school": "Spirit",
+    "stability_cost": 21,
+    "notes": [
+      "Veil",
+      "Hush"
+    ],
+    "tier_1": "For the first 10 seconds in the realm, guards can't tell crew from guards unless the crew runs or uses an ability.",
+    "tiers_2_3": "14 s, 18 s",
+    "movement": "Everyone wears a mask; the crew copies the guards' marching step.",
+    "world": "Festival lanterns and confetti.",
+    "raider_use": "Walk in with the patrol for ten seconds.",
+    "defender_use": "Raiders cannot tell your guards apart either.",
+    "weakness": "Running breaks the disguise instantly.",
+    "sound": "a distant choir swell and a single bell"
+  },
+  {
+    "id": "mirror_images",
+    "name": "Mirror images",
+    "rank": "Deep",
+    "school": "Spirit",
+    "stability_cost": 21,
+    "notes": [
+      "Veil"
+    ],
+    "tier_1": "One guard in three is an illusion; illusions vanish when touched but still raise the alarm if they see a crew.",
+    "tiers_2_3": "One in 2.5, one in 2",
+    "movement": "Guards shimmer; illusions pop into sparkles when touched.",
+    "world": "How characters move",
+    "raider_use": "Half the guards are not there.",
+    "defender_use": "A patrol that looks twice its size.",
+    "weakness": "Illusions pop on contact: one hit tells the truth.",
+    "sound": "a distant choir swell and a single bell"
+  }
+]

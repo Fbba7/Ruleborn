@@ -391,6 +391,22 @@ dict(id="C18", kind="contradiction", severity="significant", status="open",
      rec="Small, but Aether is the weaving and upkeep currency, so the cap gates how "
          "much law a player can re-weave in one session."),
 
+dict(id="C20", kind="contradiction", severity="significant", status="open",
+     title="The 48 law sound signatures are six school sounds repeated",
+     refs=["21.8", "7.9", "21.9"],
+     body="§21.8 says \u201cevery law also has a sound signature, so a player can "
+          "hear which rules are running with the screen half-watched\u201d. "
+          "Extracting all 48 law sheets gives <strong>6 distinct sounds, one per "
+          "school, each repeated eight times</strong> \u2014 Motion laws all sound "
+          "like \u201ca rising whistle and a soft thump on landing\u201d, Matter "
+          "laws all like \u201ca glassy chime and a low grind\u201d. A player can "
+          "hear which <em>school</em> is running, not which law, and a realm can "
+          "hold several laws of one school. §21.9's asset list budgets 6 school "
+          "stingers, so the budget matches the content and not the claim.",
+     rec="Either correct §21.8 to say sounds are per school \u2014 which is a "
+         "reasonable design, and cheaper \u2014 or budget 48 law sounds in §21.9 "
+         "and author them. The claim as written is not met by the content."),
+
 dict(id="C13", kind="contradiction", severity="significant", status="open",
      title="Matchmaking cannot reach its own worst difficulty tier",
      refs=["12.3", "9.6"],

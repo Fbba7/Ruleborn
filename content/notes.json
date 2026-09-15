@@ -1,0 +1,58 @@
+[
+  {
+    "id": "flow",
+    "name": "Flow",
+    "does": "Change how things move: speed, direction, jumping, sliding",
+    "opposite": "Weight",
+    "symbol": "A wave"
+  },
+  {
+    "id": "weight",
+    "name": "Weight",
+    "does": "Slow, pull, hold and weigh down",
+    "opposite": "Flow",
+    "symbol": "An anchor"
+  },
+  {
+    "id": "glow",
+    "name": "Glow",
+    "does": "Light, reveal and show",
+    "opposite": "Hush",
+    "symbol": "A sun"
+  },
+  {
+    "id": "hush",
+    "name": "Hush",
+    "does": "Hide, silence and still",
+    "opposite": "Glow",
+    "symbol": "A crescent"
+  },
+  {
+    "id": "bloom",
+    "name": "Bloom",
+    "does": "Grow, heal and multiply",
+    "opposite": "Spark",
+    "symbol": "A sprout"
+  },
+  {
+    "id": "spark",
+    "name": "Spark",
+    "does": "Burst, stun, break and surge",
+    "opposite": "Bloom",
+    "symbol": "A star"
+  },
+  {
+    "id": "echo",
+    "name": "Echo",
+    "does": "Return, repeat and rewind",
+    "opposite": "Veil",
+    "symbol": "A ring"
+  },
+  {
+    "id": "veil",
+    "name": "Veil",
+    "does": "Disguise, deceive and transform",
+    "opposite": "Echo",
+    "symbol": "A mask"
+  }
+]

@@ -1,0 +1,383 @@
+[
+  {
+    "id": "featherkin",
+    "name": "Featherkin",
+    "role": "Scout",
+    "school": "Motion",
+    "source": "11.11",
+    "look": "Owl-like sprite with a feather cape",
+    "proportions": "2.2 heads, eyes 22% of face width, set low and wide",
+    "personality": "Curious and easily distracted; the first to investigate anything new",
+    "at_home": "Perches on the highest thing it can find and preens",
+    "ability": "Glide 3 tiles, ignoring one height level; 14 s cooldown",
+    "resists": "Ignores Half gravity's overshoot",
+    "best_at": "Star Wells, scouting",
+    "sound": "a soft two-note whistle",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Glide over one gap or wall (12 s)"
+    },
+    "passive_11_2": "Flies; grounded by Heavy ground"
+  },
+  {
+    "id": "skyskipper",
+    "name": "Skyskipper",
+    "role": "Carrier",
+    "school": "Motion",
+    "source": "11.11",
+    "look": "Long-eared hopper with a big satchel",
+    "proportions": "2.4 heads, round skull, short limbs",
+    "personality": "Eager and clumsy; drops things and picks them straight back up",
+    "at_home": "Practises hops over a fence until it trips",
+    "ability": "Carries 40% more and hops over one obstacle per 8 s",
+    "resists": "Unbothered by Leapfrog's noise",
+    "best_at": "Carrying, Star Wells",
+    "sound": "a bouncing rubbery boing",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Bound 4 tiles while loaded (10 s)"
+    },
+    "passive_11_2": "Leaps one extra obstacle under Half gravity"
+  },
+  {
+    "id": "rambler",
+    "name": "Rambler",
+    "role": "Breaker",
+    "school": "Motion",
+    "source": "11.11",
+    "look": "Stocky ram-horned ball",
+    "proportions": "2.0 heads, wide jaw, tiny legs",
+    "personality": "Stubborn and cheerful; charges first, apologises after",
+    "at_home": "Headbutts a boulder in the yard, slowly",
+    "ability": "Charge 4 tiles, breaking one wall or boulder; 16 s",
+    "resists": "Immune to being pushed by Current or Tilt",
+    "best_at": "Breaking pylons and walls",
+    "sound": "a low grunt and a dusty crash",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Charge 5 tiles, breaking the first ward hit (14 s)"
+    },
+    "passive_11_2": "Pushed less by Current and Inward pull"
+  },
+  {
+    "id": "glass_golem",
+    "name": "Glass Golem",
+    "role": "Warden",
+    "school": "Matter",
+    "source": "11.11",
+    "look": "Tall faceted crystal body with an inner light",
+    "proportions": "2.6 heads, blunt features, heavy shoulders",
+    "personality": "Quiet and patient; stands where it is put",
+    "at_home": "Stands at the edge watching the sky for hours",
+    "ability": "Raises a crystal wall for 6 s; 20 s",
+    "resists": "Takes half damage from Spark laws",
+    "best_at": "Guard posts, chokepoints",
+    "sound": "a struck wineglass",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Raise a crystal wall that blocks guards for 5 s (16 s)"
+    },
+    "passive_11_2": "Sees through walls"
+  },
+  {
+    "id": "quarryback",
+    "name": "Quarryback",
+    "role": "Breaker",
+    "school": "Matter",
+    "source": "11.11",
+    "look": "Armadillo with a stone shell and a pick tail",
+    "proportions": "2.1 heads, round back, small eyes set low",
+    "personality": "Grumpy and methodical; finishes what it starts",
+    "at_home": "Digs a hole, fills it in, digs it again",
+    "ability": "Rolls 5 tiles then slams; double damage to walls",
+    "resists": "Ignores Brittle stone's crumbling ground",
+    "best_at": "Breaking, Star Wells",
+    "sound": "gravel poured from a bucket",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Break walls and the Vault 50% faster for 6 s (14 s)"
+    },
+    "passive_11_2": "Takes less damage from Brittle stone"
+  },
+  {
+    "id": "prism_mite",
+    "name": "Prism Mite",
+    "role": "Scout",
+    "school": "Matter",
+    "source": "11.11",
+    "look": "Tiny prism bug with a backpack",
+    "proportions": "1.9 heads, enormous eyes, stubby limbs",
+    "personality": "Bright and busy; talks to itself constantly",
+    "at_home": "Splits in two and plays with itself",
+    "ability": "Splits into two half-health copies for 10 s; 22 s",
+    "resists": "Sees through Glass and Mirror images",
+    "best_at": "Scouting, Gardens",
+    "sound": "a rapid glassy chirp",
+    "needs_decision": "C6",
+    "conflict_severity": "role",
+    "alt_11_2": {
+      "role": "Carrier",
+      "ability": "Split into two mites, each carrying half, for 5 s (15 s)"
+    },
+    "passive_11_2": "Tiny and quick"
+  },
+  {
+    "id": "tidewalker",
+    "name": "Tidewalker",
+    "role": "Carrier",
+    "school": "Time",
+    "source": "11.11",
+    "look": "Otter-like wader with a shell pack",
+    "proportions": "2.3 heads, soft muzzle, big low eyes",
+    "personality": "Calm and unbothered; never hurries",
+    "at_home": "Floats on its back in the pond",
+    "ability": "Wades at full speed and carries one ally through water",
+    "resists": "Ignores Slow rivers and Rapids",
+    "best_at": "Aether Springs, water routes",
+    "sound": "water poured slowly",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Ignore all slowing for 6 s (15 s)"
+    },
+    "passive_11_2": "Ignores Slow rivers"
+  },
+  {
+    "id": "hourkeeper",
+    "name": "Hourkeeper",
+    "role": "Mender",
+    "school": "Time",
+    "source": "11.11",
+    "look": "Owl with an hourglass belly",
+    "proportions": "2.5 heads, round face, wide-set eyes",
+    "personality": "Precise and fussy; hates being interrupted",
+    "at_home": "Turns its hourglass over and watches it drain",
+    "ability": "Rewinds an ally 3 s, undoing damage; 24 s",
+    "resists": "Unaffected by Delay",
+    "best_at": "Aether Springs, support",
+    "sound": "a soft tick and a chime",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Return an ally to its health of 5 seconds ago (16 s)"
+    },
+    "passive_11_2": "Unaffected by Delay"
+  },
+  {
+    "id": "stillwatch",
+    "name": "Stillwatch",
+    "role": "Warden",
+    "school": "Time",
+    "source": "11.11",
+    "look": "Tall heron-like sentinel",
+    "proportions": "2.8 heads, long neck, narrow eyes",
+    "personality": "Silent and unnervingly patient",
+    "at_home": "Stands on one leg, motionless, all evening",
+    "ability": "Freezes one guard for 2.5 s; 18 s",
+    "resists": "Hides perfectly under Stillness",
+    "best_at": "Guard posts, ambushes",
+    "sound": "one long held note",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Freeze one guard or ward for 2 s (12 s)"
+    },
+    "passive_11_2": "Invisible while still, even without Stillness"
+  },
+  {
+    "id": "emberling",
+    "name": "Emberling",
+    "role": "Breaker",
+    "school": "Energy",
+    "source": "11.11",
+    "look": "Flame-headed imp",
+    "proportions": "1.8 heads, huge eyes, tiny body",
+    "personality": "Excitable and reckless; cannot stand still",
+    "at_home": "Chases sparks around the hearth",
+    "ability": "Bursts for area damage and a 1 s stun; 15 s",
+    "resists": "Immune to Heat bloom and ember vents",
+    "best_at": "Breaking, Aether Springs",
+    "sound": "a struck match and a whoosh",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Burst a ward or pylon for heavy damage (10 s)"
+    },
+    "passive_11_2": "Glows: seen in the dark, and lights its surroundings"
+  },
+  {
+    "id": "stormhound",
+    "name": "Stormhound",
+    "role": "Carrier",
+    "school": "Energy",
+    "source": "11.11",
+    "look": "Lean fox-hound with a lightning mane",
+    "proportions": "2.2 heads, bright eyes, alert ears",
+    "personality": "Loyal and impatient; runs ahead and comes back",
+    "at_home": "Chases its own sparks in circles",
+    "ability": "Sprints 40% faster for 5 s, carrying anything; 18 s",
+    "resists": "Immune to Static and Chain lightning",
+    "best_at": "Chasing, Aether Springs",
+    "sound": "a crackle and a happy yip",
+    "needs_decision": "C6",
+    "conflict_severity": "role",
+    "alt_11_2": {
+      "role": "Scout",
+      "ability": "Sprint 60% faster for 4 s; hits chain to a second target (12 s)"
+    },
+    "passive_11_2": "Immune to Static"
+  },
+  {
+    "id": "sparkwright",
+    "name": "Sparkwright",
+    "role": "Mender",
+    "school": "Energy",
+    "source": "11.11",
+    "look": "Little tinker with a coil backpack",
+    "proportions": "2.0 heads, goggled eyes, round head",
+    "personality": "Chatty and inventive; explains things nobody asked about",
+    "at_home": "Rewires the lantern, badly, then fixes it",
+    "ability": "Cuts one ally's cooldown by 5 s; 20 s",
+    "resists": "Unaffected by Overcharge's surges",
+    "best_at": "Support, Aether Springs",
+    "sound": "a coil winding up",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Cut the Sage's power cooldowns by 5 s (20 s)"
+    },
+    "passive_11_2": "Heals more near fire"
+  },
+  {
+    "id": "mossbear",
+    "name": "Mossbear",
+    "role": "Warden",
+    "school": "Life",
+    "source": "11.11",
+    "look": "Big mossy stone bear",
+    "proportions": "2.9 heads, huge shoulders, kind eyes",
+    "personality": "Gentle and slow; the one everyone leans on",
+    "at_home": "Sleeps in the sun while flowers grow on its back",
+    "ability": "Roots in place, taking 50% less damage for 6 s; 20 s",
+    "resists": "Immune to Thorns",
+    "best_at": "Guard posts, Gardens",
+    "sound": "a deep hum and creaking wood",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Root in place and heal 20% over 4 s (16 s)"
+    },
+    "passive_11_2": "Unharmed by Thorns"
+  },
+  {
+    "id": "bloomling",
+    "name": "Bloomling",
+    "role": "Mender",
+    "school": "Life",
+    "source": "11.11",
+    "look": "Flower-headed sprite",
+    "proportions": "1.9 heads, enormous eyes, petal crown",
+    "personality": "Sweet and shy; hides behind bigger crew members",
+    "at_home": "Waters the garden, including the stones",
+    "ability": "Heals all nearby allies 15%; 18 s",
+    "resists": "Immune to Spores",
+    "best_at": "Gardens, support",
+    "sound": "a small bell and rustling petals",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Heal all allies within 3 tiles, 6 a second for 5 s (15 s)"
+    },
+    "passive_11_2": "Hedges part for it"
+  },
+  {
+    "id": "rootrunner",
+    "name": "Rootrunner",
+    "role": "Scout",
+    "school": "Life",
+    "source": "11.11",
+    "look": "Root-legged sprout with a basket",
+    "proportions": "2.1 heads, wide face, low eyes",
+    "personality": "Practical and tidy; always carrying something",
+    "at_home": "Rearranges the garden into neat rows",
+    "ability": "Grows a root bridge across one gap; 20 s",
+    "resists": "Ignores Heavy ground",
+    "best_at": "Gardens, routes",
+    "sound": "creaking roots and soil",
+    "needs_decision": "C6",
+    "conflict_severity": "role",
+    "alt_11_2": {
+      "role": "Carrier",
+      "ability": "Grow a root bridge over a gap for 8 s (18 s)"
+    },
+    "passive_11_2": "Ignores Spores"
+  },
+  {
+    "id": "echoplate",
+    "name": "Echoplate",
+    "role": "Warden",
+    "school": "Spirit",
+    "source": "11.11",
+    "look": "Hollow armour with a wisp inside",
+    "proportions": "2.7 heads, visor slit, glowing eyes",
+    "personality": "Formal and brave; speaks rarely and kindly",
+    "at_home": "Polishes armour nobody wears",
+    "ability": "Shield flare, blocking one hit for the crew; returns once at 40%",
+    "resists": "Returns automatically under Echoes",
+    "best_at": "Guard posts, heists",
+    "sound": "armour settling and a soft chord",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Shield an ally, taking its next hit (12 s)"
+    },
+    "passive_11_2": "Comes back once at 50% after being knocked out"
+  },
+  {
+    "id": "lantern_wisp",
+    "name": "Lantern Wisp",
+    "role": "Scout",
+    "school": "Spirit",
+    "source": "11.11",
+    "look": "Floating lantern spirit",
+    "proportions": "1.7 heads, all eyes and light",
+    "personality": "Playful and nosy; drifts toward anything hidden",
+    "at_home": "Lights every lantern in the realm, one by one",
+    "ability": "Reveals hidden wards and guards within 6 tiles; 16 s",
+    "resists": "Cannot be hidden by Glowing dark",
+    "best_at": "Scouting, Gardens",
+    "sound": "a warm flicker and a hush",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Light a 5-tile area for 6 s, revealing illusions and hidden wards (14 s)"
+    },
+    "passive_11_2": "Carries its own light under Soul lanterns"
+  },
+  {
+    "id": "soulmender",
+    "name": "Soulmender",
+    "role": "Mender",
+    "school": "Spirit",
+    "source": "11.11",
+    "look": "Hooded moth-like spirit",
+    "proportions": "2.4 heads, soft wings, large dark eyes",
+    "personality": "Quiet and watchful; notices who is struggling",
+    "at_home": "Sits with whoever lost a heist that day",
+    "ability": "Links the crew: damage is shared for 8 s; 22 s",
+    "resists": "Unaffected by Haunting's trails",
+    "best_at": "Support, Hearths",
+    "sound": "wingbeats and a low choir",
+    "needs_decision": "C6",
+    "conflict_severity": "wording",
+    "alt_11_2": {
+      "ability": "Share incoming damage evenly across the crew for 6 s (18 s)"
+    },
+    "passive_11_2": "Soul swap costs its partner less"
+  }
+]

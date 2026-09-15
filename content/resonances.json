@@ -1,0 +1,654 @@
+[
+  {
+    "id": "drifting_echoes",
+    "name": "Drifting echoes",
+    "laws": [
+      "half_gravity",
+      "echoes"
+    ],
+    "law_names": [
+      "Half gravity",
+      "Echoes"
+    ],
+    "shared_notes": [],
+    "effect": "Returning echoes float and can pass over one wall."
+  },
+  {
+    "id": "mangrove_banks",
+    "name": "Mangrove banks",
+    "laws": [
+      "slow_rivers",
+      "bloom"
+    ],
+    "law_names": [
+      "Slow rivers",
+      "Bloom"
+    ],
+    "shared_notes": [],
+    "effect": "River banks grow root walls that slow crews by a further 20%."
+  },
+  {
+    "id": "night_runners",
+    "name": "Night runners",
+    "laws": [
+      "haste",
+      "glowing_dark"
+    ],
+    "law_names": [
+      "Haste",
+      "Glowing dark"
+    ],
+    "shared_notes": [],
+    "effect": "Anyone in darkness moves 30% faster."
+  },
+  {
+    "id": "cracked_gardens",
+    "name": "Cracked gardens",
+    "laws": [
+      "brittle_stone",
+      "bloom"
+    ],
+    "law_names": [
+      "Brittle stone",
+      "Bloom"
+    ],
+    "shared_notes": [],
+    "effect": "Broken structures leave Essence that the owner collects after the heist."
+  },
+  {
+    "id": "lantern_choir",
+    "name": "Lantern choir",
+    "laws": [
+      "echoes",
+      "soul_lanterns"
+    ],
+    "law_names": [
+      "Echoes",
+      "Soul lanterns"
+    ],
+    "shared_notes": [],
+    "effect": "Echoes heal allies within 3 tiles."
+  },
+  {
+    "id": "bedrock",
+    "name": "Bedrock",
+    "laws": [
+      "heavy_ground",
+      "crystal_growth"
+    ],
+    "law_names": [
+      "Heavy ground",
+      "Crystal growth"
+    ],
+    "shared_notes": [],
+    "effect": "Crystal regrows twice as fast and can't be leapt over."
+  },
+  {
+    "id": "pinball",
+    "name": "Pinball",
+    "laws": [
+      "frictionless",
+      "bounce"
+    ],
+    "law_names": [
+      "Frictionless",
+      "Bounce"
+    ],
+    "shared_notes": [
+      "Flow"
+    ],
+    "effect": "Sliding characters ricochet off walls without slowing down."
+  },
+  {
+    "id": "evergreen",
+    "name": "Evergreen",
+    "laws": [
+      "rewind",
+      "regrowth"
+    ],
+    "law_names": [
+      "Rewind",
+      "Regrowth"
+    ],
+    "shared_notes": [
+      "Echo"
+    ],
+    "effect": "Each rewind fully heals structures."
+  },
+  {
+    "id": "frozen_reflections",
+    "name": "Frozen reflections",
+    "laws": [
+      "stillness",
+      "mirror_images"
+    ],
+    "law_names": [
+      "Stillness",
+      "Mirror images"
+    ],
+    "shared_notes": [],
+    "effect": "Illusions stand still and can't be told apart from real guards."
+  },
+  {
+    "id": "storm_grid",
+    "name": "Storm grid",
+    "laws": [
+      "chain_lightning",
+      "static"
+    ],
+    "law_names": [
+      "Chain lightning",
+      "Static"
+    ],
+    "shared_notes": [
+      "Spark"
+    ],
+    "effect": "Chains jump to three targets."
+  },
+  {
+    "id": "midsummer",
+    "name": "Midsummer",
+    "laws": [
+      "heat_bloom",
+      "sunburst"
+    ],
+    "law_names": [
+      "Heat bloom",
+      "Sunburst"
+    ],
+    "shared_notes": [
+      "Glow",
+      "Spark"
+    ],
+    "effect": "Each flash lights a fire where it strikes."
+  },
+  {
+    "id": "hive",
+    "name": "Hive",
+    "laws": [
+      "swarm_birth",
+      "kinship"
+    ],
+    "law_names": [
+      "Swarm birth",
+      "Kinship"
+    ],
+    "shared_notes": [
+      "Bloom"
+    ],
+    "effect": "Split guards heal each other."
+  },
+  {
+    "id": "tidal_pull",
+    "name": "Tidal pull",
+    "laws": [
+      "current",
+      "lodestones"
+    ],
+    "law_names": [
+      "Current",
+      "Lodestones"
+    ],
+    "shared_notes": [],
+    "effect": "Lodestones drift with the current."
+  },
+  {
+    "id": "echo_chamber",
+    "name": "Echo chamber",
+    "laws": [
+      "delay",
+      "overcharge"
+    ],
+    "law_names": [
+      "Delay",
+      "Overcharge"
+    ],
+    "shared_notes": [],
+    "effect": "Delayed abilities fire twice."
+  },
+  {
+    "id": "the_hunt",
+    "name": "The hunt",
+    "laws": [
+      "whispers",
+      "haunting"
+    ],
+    "law_names": [
+      "Whispers",
+      "Haunting"
+    ],
+    "shared_notes": [
+      "Echo",
+      "Glow"
+    ],
+    "effect": "An alarm reveals every carrier's position."
+  },
+  {
+    "id": "alchemy",
+    "name": "Alchemy",
+    "laws": [
+      "transmute",
+      "density"
+    ],
+    "law_names": [
+      "Transmute",
+      "Density"
+    ],
+    "shared_notes": [],
+    "effect": "Transmuted loot changes weight with the size of its carrier."
+  },
+  {
+    "id": "maelstrom",
+    "name": "Maelstrom",
+    "laws": [
+      "inward_pull",
+      "current"
+    ],
+    "law_names": [
+      "Inward pull",
+      "Current"
+    ],
+    "shared_notes": [],
+    "effect": "The wind curls into a spiral around the Heart: moving along it is 40% faster, cutting across it 40% slower."
+  },
+  {
+    "id": "hall_of_mirrors",
+    "name": "Hall of mirrors",
+    "laws": [
+      "glass",
+      "mirror_images"
+    ],
+    "law_names": [
+      "Glass",
+      "Mirror images"
+    ],
+    "shared_notes": [],
+    "effect": "Illusions can be seen through walls, so a crew seems to face twice as many guards."
+  },
+  {
+    "id": "dusk_watch",
+    "name": "Dusk watch",
+    "laws": [
+      "day_and_night",
+      "stillness"
+    ],
+    "law_names": [
+      "Day and night",
+      "Stillness"
+    ],
+    "shared_notes": [],
+    "effect": "In the dark phase, anyone who stops moving is invisible at once."
+  },
+  {
+    "id": "briar_maze",
+    "name": "Briar maze",
+    "laws": [
+      "thorns",
+      "bloom"
+    ],
+    "law_names": [
+      "Thorns",
+      "Bloom"
+    ],
+    "shared_notes": [
+      "Bloom"
+    ],
+    "effect": "Cut hedges regrow thorny and one tile wider."
+  },
+  {
+    "id": "sleeping_streams",
+    "name": "Sleeping streams",
+    "laws": [
+      "spores",
+      "slow_rivers"
+    ],
+    "law_names": [
+      "Spores",
+      "Slow rivers"
+    ],
+    "shared_notes": [
+      "Weight"
+    ],
+    "effect": "Pollen settles on water; anyone wading for 2 seconds falls asleep for 2 seconds."
+  },
+  {
+    "id": "twin_souls",
+    "name": "Twin souls",
+    "laws": [
+      "soul_swap",
+      "kinship"
+    ],
+    "law_names": [
+      "Soul swap",
+      "Kinship"
+    ],
+    "shared_notes": [],
+    "effect": "Characters who swap places heal each other 20%."
+  },
+  {
+    "id": "deep_well",
+    "name": "Deep well",
+    "laws": [
+      "heavy_ground",
+      "inward_pull"
+    ],
+    "law_names": [
+      "Heavy ground",
+      "Inward pull"
+    ],
+    "shared_notes": [
+      "Weight"
+    ],
+    "effect": "Dropped loot rolls back toward the Heart."
+  },
+  {
+    "id": "sun_prism",
+    "name": "Sun prism",
+    "laws": [
+      "glass",
+      "sunburst"
+    ],
+    "law_names": [
+      "Glass",
+      "Sunburst"
+    ],
+    "shared_notes": [
+      "Glow"
+    ],
+    "effect": "Flashes pass through glass walls, so shade behind glass gives no protection."
+  },
+  {
+    "id": "night_bloom",
+    "name": "Night bloom",
+    "laws": [
+      "day_and_night",
+      "bloom"
+    ],
+    "law_names": [
+      "Day and night",
+      "Bloom"
+    ],
+    "shared_notes": [],
+    "effect": "Hedges regrow twice as fast, but only in the dark phase."
+  },
+  {
+    "id": "nettle_wind",
+    "name": "Nettle wind",
+    "laws": [
+      "thorns",
+      "current"
+    ],
+    "law_names": [
+      "Thorns",
+      "Current"
+    ],
+    "shared_notes": [],
+    "effect": "Thorn needles drift downwind of hedges, costing 2% health a second."
+  },
+  {
+    "id": "pollen_storm",
+    "name": "Pollen storm",
+    "laws": [
+      "spores",
+      "current"
+    ],
+    "law_names": [
+      "Spores",
+      "Current"
+    ],
+    "shared_notes": [],
+    "effect": "Pollen clouds drift with the wind at twice their speed."
+  },
+  {
+    "id": "soul_tether",
+    "name": "Soul tether",
+    "laws": [
+      "soul_swap",
+      "echoes"
+    ],
+    "law_names": [
+      "Soul swap",
+      "Echoes"
+    ],
+    "shared_notes": [],
+    "effect": "A returned echo can swap places with an ally once."
+  },
+  {
+    "id": "lighthouse",
+    "name": "Lighthouse",
+    "laws": [
+      "soul_lanterns",
+      "glowing_dark"
+    ],
+    "law_names": [
+      "Soul lanterns",
+      "Glowing dark"
+    ],
+    "shared_notes": [],
+    "effect": "Lantern light reaches twice as far and reveals hidden wards."
+  },
+  {
+    "id": "shattered_glass",
+    "name": "Shattered glass",
+    "laws": [
+      "glass",
+      "brittle_stone"
+    ],
+    "law_names": [
+      "Glass",
+      "Brittle stone"
+    ],
+    "shared_notes": [],
+    "effect": "Glass walls break in one hit, leaving shards that slow anyone by 30% for 5 seconds."
+  },
+  {
+    "id": "echoing_hours",
+    "name": "Echoing hours",
+    "laws": [
+      "rewind",
+      "echoes"
+    ],
+    "law_names": [
+      "Rewind",
+      "Echoes"
+    ],
+    "shared_notes": [
+      "Echo"
+    ],
+    "effect": "Each rewind also brings back one knocked-out guard."
+  },
+  {
+    "id": "charged_pollen",
+    "name": "Charged pollen",
+    "laws": [
+      "static",
+      "spores"
+    ],
+    "law_names": [
+      "Static",
+      "Spores"
+    ],
+    "shared_notes": [],
+    "effect": "Pollen carries charge: entering a cloud stuns for half a second."
+  },
+  {
+    "id": "crowded_hop",
+    "name": "Crowded hop",
+    "laws": [
+      "leapfrog",
+      "flock"
+    ],
+    "law_names": [
+      "Leapfrog",
+      "Flock"
+    ],
+    "shared_notes": [
+      "Glow"
+    ],
+    "effect": "Landing on a puffball is silent, so hopping across the flock makes no noise."
+  },
+  {
+    "id": "rolling_stones",
+    "name": "Rolling stones",
+    "laws": [
+      "tilt",
+      "brittle_stone"
+    ],
+    "law_names": [
+      "Tilt",
+      "Brittle stone"
+    ],
+    "shared_notes": [],
+    "effect": "Broken rubble rolls downhill and knocks down anyone below."
+  },
+  {
+    "id": "honey_trap",
+    "name": "Honey trap",
+    "laws": [
+      "honeycomb",
+      "bloom"
+    ],
+    "law_names": [
+      "Honeycomb",
+      "Bloom"
+    ],
+    "shared_notes": [],
+    "effect": "Regrown hedges drip honey: anyone touching one sticks for a second."
+  },
+  {
+    "id": "night_maze",
+    "name": "Night maze",
+    "laws": [
+      "shifting_stones",
+      "day_and_night"
+    ],
+    "law_names": [
+      "Shifting stones",
+      "Day and night"
+    ],
+    "shared_notes": [],
+    "effect": "Walls slide only in the dark phase."
+  },
+  {
+    "id": "ghost_relay",
+    "name": "Ghost relay",
+    "laws": [
+      "afterimage",
+      "whispers"
+    ],
+    "law_names": [
+      "Afterimage",
+      "Whispers"
+    ],
+    "shared_notes": [
+      "Glow"
+    ],
+    "effect": "A guard chasing an afterimage stops the alarm from spreading."
+  },
+  {
+    "id": "frozen_glide",
+    "name": "Frozen glide",
+    "laws": [
+      "held_breath",
+      "frictionless"
+    ],
+    "law_names": [
+      "Held breath",
+      "Frictionless"
+    ],
+    "shared_notes": [],
+    "effect": "While time is held, sliding characters keep gliding."
+  },
+  {
+    "id": "spark_storm",
+    "name": "Spark storm",
+    "laws": [
+      "spark_trails",
+      "static"
+    ],
+    "law_names": [
+      "Spark trails",
+      "Static"
+    ],
+    "shared_notes": [],
+    "effect": "Running builds charge twice as fast."
+  },
+  {
+    "id": "northern_lights",
+    "name": "Northern lights",
+    "laws": [
+      "aurora",
+      "glowing_dark"
+    ],
+    "law_names": [
+      "Aurora",
+      "Glowing dark"
+    ],
+    "shared_notes": [],
+    "effect": "Aurora bands are the only light, and everything inside them glows."
+  },
+  {
+    "id": "meadow_roads",
+    "name": "Meadow roads",
+    "laws": [
+      "wild_paths",
+      "current"
+    ],
+    "law_names": [
+      "Wild paths",
+      "Current"
+    ],
+    "shared_notes": [
+      "Flow"
+    ],
+    "effect": "Flower paths bend with the wind and always lead downwind."
+  },
+  {
+    "id": "shepherd_s_bell",
+    "name": "Shepherd's bell",
+    "laws": [
+      "flock",
+      "whispers"
+    ],
+    "law_names": [
+      "Flock",
+      "Whispers"
+    ],
+    "shared_notes": [
+      "Glow"
+    ],
+    "effect": "The flock follows the nearest guard, hiding it in the crowd."
+  },
+  {
+    "id": "dream_parade",
+    "name": "Dream parade",
+    "laws": [
+      "sleepwalk",
+      "borrowed_face"
+    ],
+    "law_names": [
+      "Sleepwalk",
+      "Borrowed Face"
+    ],
+    "shared_notes": [
+      "Hush"
+    ],
+    "effect": "Masked crew members can't be heard by sleepwalking guards, even when running."
+  },
+  {
+    "id": "masked_mirrors",
+    "name": "Masked mirrors",
+    "laws": [
+      "borrowed_face",
+      "mirror_images"
+    ],
+    "law_names": [
+      "Borrowed Face",
+      "Mirror images"
+    ],
+    "shared_notes": [
+      "Veil"
+    ],
+    "effect": "Illusions wear masks too, so nobody can tell anyone apart."
+  }
+]

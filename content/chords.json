@@ -1,0 +1,122 @@
+[
+  {
+    "id": "tempest",
+    "name": "Tempest",
+    "notes": [
+      "Flow",
+      "Spark",
+      "Glow"
+    ],
+    "effect": "Everyone moves 20% faster, and every 20 seconds lightning lights the whole realm for a second."
+  },
+  {
+    "id": "deep_sleep",
+    "name": "Deep sleep",
+    "notes": [
+      "Weight",
+      "Hush",
+      "Bloom"
+    ],
+    "effect": "Every 20 seconds each guard dozes for 3 seconds; flowers muffle footsteps."
+  },
+  {
+    "id": "ghost_tide",
+    "name": "Ghost tide",
+    "notes": [
+      "Flow",
+      "Echo",
+      "Hush"
+    ],
+    "effect": "Knocked-out characters drift back to where they entered the realm instead of being caught."
+  },
+  {
+    "id": "fair_lights",
+    "name": "Fair lights",
+    "notes": [
+      "Glow",
+      "Bloom",
+      "Veil"
+    ],
+    "effect": "Floating lights form illusions of crew members that draw guards away."
+  },
+  {
+    "id": "iron_bell",
+    "name": "Iron bell",
+    "notes": [
+      "Weight",
+      "Echo",
+      "Glow"
+    ],
+    "effect": "Every step echoes: guards hear 2 tiles further but see 2 tiles less."
+  },
+  {
+    "id": "mirage",
+    "name": "Mirage",
+    "notes": [
+      "Flow",
+      "Veil",
+      "Glow"
+    ],
+    "effect": "Anything moving appears one tile from where it really is."
+  },
+  {
+    "id": "clockwork",
+    "name": "Clockwork",
+    "notes": [
+      "Weight",
+      "Spark",
+      "Echo"
+    ],
+    "effect": "Every 15 seconds all wards in the realm trigger together."
+  },
+  {
+    "id": "wild_hunt",
+    "name": "Wild hunt",
+    "notes": [
+      "Flow",
+      "Spark",
+      "Hush"
+    ],
+    "effect": "Anyone running makes no noise at all."
+  },
+  {
+    "id": "hidden_garden",
+    "name": "Hidden garden",
+    "notes": [
+      "Bloom",
+      "Hush",
+      "Veil"
+    ],
+    "effect": "Tall grass spreads one tile a minute across the realm."
+  },
+  {
+    "id": "lantern_festival",
+    "name": "Lantern festival",
+    "notes": [
+      "Glow",
+      "Bloom",
+      "Echo"
+    ],
+    "effect": "Lanterns heal anyone in their light and revive each character once."
+  },
+  {
+    "id": "quicksand",
+    "name": "Quicksand",
+    "notes": [
+      "Weight",
+      "Veil",
+      "Hush"
+    ],
+    "effect": "A few tiles become hidden pits that drop anyone a level."
+  },
+  {
+    "id": "rebound",
+    "name": "Rebound",
+    "notes": [
+      "Flow",
+      "Echo",
+      "Spark"
+    ],
+    "effect": "Every stun bounces on to the nearest enemy."
+  }
+]

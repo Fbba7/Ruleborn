@@ -35,12 +35,15 @@ is done. In short:
 docs/
   design/     the game design document, as delivered, plus a greppable extract
   analysis/   the deep analysis of that document — start here
+content/       laws, notes, resonances, chords, terrain and ruleborn as data
 docs/audit/    the generated audit register page
 prototypes/
   heist-gate/  a throwaway browser build that runs both pre-code gates
 tools/
   extract_design_doc.py         HTML -> greppable text
   check_design_consistency.py   machine checks behind the analysis
+  extract_content.py            design document -> content/*.json
+  validate_content.py           schema and cross-reference checks on content/
   audit_register.py             the audit register, as data
   build_audit.py                renders the register to docs/audit/index.html
   parse_gate_results.py         scores the gates from testers' result codes
@@ -99,6 +102,10 @@ python3 tools/parse_gate_results.py results.txt
 
 # rebuild the audit register page after changing an item's status
 python3 tools/build_audit.py
+
+# content tables: extract from the document, then validate
+python3 tools/extract_content.py
+python3 tools/validate_content.py
 ```
 
 ## The audit register
