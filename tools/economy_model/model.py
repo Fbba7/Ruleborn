@@ -223,6 +223,13 @@ class EconomyModel:
             # §9.4: a successful heist brings about a fifth of a day's production.
             rate = data.heist_success_rate(self.s.day)
             return daily_starlight * data.HEIST_SHARE_OF_DAILY_PRODUCTION * n * rate
+        if self.cfg.faucet == "pegged":
+            # docs/design/spec/economy.md: B(L) replaced by the raider's own
+            # daily production. Every other term of §9.6 is unchanged, so the
+            # fatigue curve and the average-per-attempt factor still apply.
+            fatigue = sum(data.HAUL_FATIGUE ** i for i in range(n))
+            return (daily_starlight * self.cfg.peg_share
+                    * data.HAUL_VALUE_PER_ATTEMPT * fatigue)
         # §9.6: minted from the raider's own level, decaying through the day.
         level = self.cfg.haul_level(
             self.vault_level(), self.mean_realm_level(), self.s.keeper_level

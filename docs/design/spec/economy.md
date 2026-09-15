@@ -108,6 +108,22 @@ The share is stable by construction, and it scales with how much a player
 actually raids — so raiding more genuinely earns more, at every stage, which is
 what §11.6 claims and what F3 shows is currently untrue.
 
+Both of those are claims, so they are implemented rather than asserted. The
+economy model carries the formula as `faucet="pegged"`:
+
+```
+python3 -m tools.economy_model faucet
+```
+
+which now prints all three models side by side. Two tests in
+`tools/economy_model/test_economy_model.py` hold the peg to the claims made
+here — that the raid share moves by less than a percentage point across days
+31, 91, 181 and 301, and by less than the minted haul's does; and that it
+orders engaged above regular above casual while staying below a third of
+income. If a later change to production, the roster or the purchase
+policy breaks either property, the test fails rather than this page quietly
+becoming wrong.
+
 ### It is not a runaway loop
 
 Haul is a fixed multiple of production, so income becomes `(1 + 0.38) × P`. That

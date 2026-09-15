@@ -126,6 +126,54 @@ def test_finding_published_tables_imply_one_producer_per_realm():
     assert two / one > 1.5, (one, two)     # the second producer is worth ~2x production
 
 
+# -- the proposal in docs/design/spec/economy.md ---------------------------
+
+def _raid_share(faucet: str, archetype: str = "engaged", days: int = 301) -> dict[int, float]:
+    """The fraction of a player's income that comes from raiding, by day."""
+    state = EconomyModel(Config(archetype=archetype, days=days, faucet=faucet)).run()
+    return {
+        row["day"]: row["heist_income"] / (row["starlight_per_day"] + row["heist_income"])
+        for row in state.log
+    }
+
+
+def test_pegged_faucet_holds_the_raid_share_steady_across_the_curve():
+    """The proposal's whole claim: pegging to production fixes C2 by construction.
+
+    §9.6's minted haul falls away as production compounds, which is the finding in
+    05-quantitative-findings.md. Pegging the haul to the raider's own production
+    should hold the share flat instead — not approximately, but exactly, since
+    production divides out. The test asserts flatness rather than trusting the
+    prose in spec/economy.md.
+    """
+    shares = _raid_share("pegged")
+    sampled = [shares[day] for day in (31, 91, 181, 301)]
+    assert max(sampled) - min(sampled) < 0.01, sampled
+
+    # And the contrast: the model it replaces does not hold.
+    minted = _raid_share("minted")
+    drift = [minted[day] for day in (31, 91, 181, 301)]
+    assert max(drift) - min(drift) > max(sampled) - min(sampled), (drift, sampled)
+
+
+def test_pegged_faucet_scales_with_how_much_a_player_raids():
+    """Raiding four times a day should be worth more of your income than raiding once.
+
+    This is the property §12.1 needs and §9.6's minted haul does not deliver:
+    under a minted haul the payout is set by the raider's own level, so a casual
+    player raiding once earns a share of their income that is not obviously
+    ordered against an engaged player's. Pegged, the ordering is structural.
+    """
+    by_archetype = {
+        name: _raid_share("pegged", archetype=name, days=181)[181]
+        for name in ("engaged", "regular", "casual")
+    }
+    assert by_archetype["engaged"] > by_archetype["regular"] > by_archetype["casual"], \
+        by_archetype
+    # And it stays a supplement, not a replacement: §9.4 wants about a third.
+    assert by_archetype["engaged"] < 0.35, by_archetype
+
+
 if __name__ == "__main__":
     passed = failed = 0
     for name, fn in sorted(globals().items()):

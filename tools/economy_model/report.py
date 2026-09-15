@@ -89,24 +89,35 @@ def raiding_trade_off() -> str:
 
 
 def faucet_comparison() -> str:
-    """§9.4's stated share against §9.6's minted haul."""
+    """§9.4's stated share, §9.6's minted haul, and the peg proposed in spec/economy.md."""
     lines = ["Raid income as a share of total income, by payout model", ""]
-    lines.append(f"{'day':>4} {'production/day':>15} {'§9.4 share':>12} {'§9.6 minted':>13} "
-                 f"{'§9.4 %':>8} {'§9.6 %':>8}")
-    share_model, share_log = _run(archetype="engaged", days=320, faucet="share")
-    mint_model, mint_log = _run(archetype="engaged", days=320, faucet="minted")
+    lines.append(f"{'day':>4} {'production/day':>15} "
+                 f"{'§9.4 share':>12} {'§9.6 minted':>13} {'pegged':>10}   "
+                 f"{'§9.4':>6} {'§9.6':>6} {'peg':>6}")
+    runs = {name: _run(archetype="engaged", days=320, faucet=name)[1]
+            for name in ("share", "minted", "pegged")}
     for day in (31, 91, 181, 301):
-        a, b = share_log.get(day), mint_log.get(day)
-        if not (a and b):
+        rows = {name: log.get(day) for name, log in runs.items()}
+        if not all(rows.values()):
             continue
-        prod = a["starlight_per_day"]
+        prod = rows["share"]["starlight_per_day"]
+
+        def pct(row):
+            return 100 * row["heist_income"] / (row["starlight_per_day"] + row["heist_income"])
+
         lines.append(
-            f"{day:>4} {prod:>15,.0f} {a['heist_income']:>12,.0f} {b['heist_income']:>13,.0f} "
-            f"{100 * a['heist_income'] / (prod + a['heist_income']):>7.0f}% "
-            f"{100 * b['heist_income'] / (b['starlight_per_day'] + b['heist_income']):>7.0f}%"
+            f"{day:>4} {prod:>15,.0f} "
+            f"{rows['share']['heist_income']:>12,.0f} "
+            f"{rows['minted']['heist_income']:>13,.0f} "
+            f"{rows['pegged']['heist_income']:>10,.0f}   "
+            f"{pct(rows['share']):>5.0f}% {pct(rows['minted']):>5.0f}% "
+            f"{pct(rows['pegged']):>5.0f}%"
         )
     lines += ["", "§9.4 and §12.1 claim heists supply a third to 40% of a player's resources.",
-              "§9.6's formula, which supersedes them, supplies a few per cent."]
+              "§9.6's formula, which supersedes them, supplies a few per cent and thins as",
+              "production compounds. The peg in docs/design/spec/economy.md replaces B(L)",
+              "with the raider's own daily production, which holds the share flat by",
+              "construction; tools/economy_model/test_economy_model.py asserts that it does."]
     return "\n".join(lines)
 
 

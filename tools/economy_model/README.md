@@ -20,6 +20,13 @@ could be re-tuned without it. Second, to settle the contradictions in
 C2 (which raid-payout model) and C4 (what `L` is in `B(L)`) are both questions
 the model answers.
 
+There is now a third job: to keep the *proposals* honest too. The payout peg
+recommended in `docs/design/spec/economy.md` is implemented as
+`Config(faucet="pegged")`, so the behaviour that page claims for it is asserted
+by tests rather than by prose. `faucet` takes `"share"` (§9.4), `"minted"`
+(§9.6) or `"pegged"` (the proposal), and the `faucet` report prints all three
+against each other.
+
 ## Calibration
 
 The model reproduces the document's first month closely and its Keeper curve

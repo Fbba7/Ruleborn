@@ -17,7 +17,16 @@ class Config:
     #           This is what §14.1 says the published tables were generated with.
     # "minted"  §9.6: Haul = B(L) x grade x difficulty x richness x fatigue.
     #           This is the current, better-argued model.
+    # "pegged"  The proposal in docs/design/spec/economy.md: the same formula with
+    #           B(L) replaced by the raider's OWN daily production times a share.
+    #           §9.6's objection to a percentage was to pegging against what a
+    #           DEFENDER hoards; pegging against the raider's production is the
+    #           quantity the designer controls and the progression curve rests on.
     faucet: str = "share"
+
+    #: The proposed coefficient: a clean heist is worth this much of a day's
+    #: production. §9.4's own figure, and under "pegged" it is the single dial.
+    peg_share: float = 0.20
 
     # -- Contested: what L is in B(L) (C4) ---------------------------------
     #
