@@ -50,13 +50,16 @@ plainly (22.2, 30.8 risk 9). It is a coherent trade, honestly stated.
 
 ## What has to change before a line of gameplay code
 
-Ordered by how much they block.
+Ordered by how much they block. **All six now have a drafted resolution or a
+priced set of options** in `docs/design/spec/` — what remains is sign-off, and in
+three cases a decision only the owner can make.
 
 1. **Pick one detection model.** 12.17 (three vision zones, 0–1000 suspicion, six
    states, path-following noise) is a complete, buildable spec. 12.8 (120° cone,
    6 tiles, awareness in %/second) is the older one, and it is still what 5.4,
    13.x and the formulas appendix in 29.1 reference. Everything downstream —
    balance, the guard AI, the vision-cone rendering in 21.12 — is blocked on this.
+   → Drafted: `spec/detection.md`.
 
 2. **Pick one raid-payout model, then re-derive the loop's purpose.** Rebuilding
    the economy model measured the gap exactly: §9.4's model delivers **32%** of a
@@ -64,23 +67,27 @@ Ordered by how much they block.
    minted haul delivers **1–2%**. A 16- to 30-fold reduction, with nothing else in
    the document updated to match. §9.6 is the better-argued model, but adopting it
    means raiding is a *page* faucet, not a resource faucet, and §9.4 and §12.1 need
-   rewriting to say so.
+   rewriting to say so. → Drafted: `spec/economy.md`, which finds that **no growth
+   rate fixes it** and proposes pegging the haul to the raider's own production.
 
 3. **Pick one law-rarity taxonomy.** 7.10 and 27.2 describe five ranks
    (18/14/10/6 + 3 paradoxes, 10/20/35/60/120 pages). The 48 laws actually
    authored in 7.4 and 7.7 use three (18 Common / 18 Rare / 12 Deep, 15/30/60
    pages), and **no law in the document is tagged Uncommon**. 9.5, 14.4 and the
    glossary all use the three-rank version. The five-rank system exists only as
-   prose.
+   prose. → Priced: `tools/decision_support.py rarity`. This one is a judgement.
 
 4. **Pick one ruleborn roster.** 11.2 and 11.11 specify the same 18 creatures
-   with different roles for three of them (Prism Mite, Stormhound, Rootrunner),
-   and different abilities, cooldowns and resistances for most of the rest.
+   with different roles for three of them (Prism Mite, Stormhound, Rootrunner).
+   Worse than first recorded: **eleven of the eighteen have an entirely different
+   passive property**, not a different wording of one. → Drafted: `spec/ruleborn.md`.
 
 5. **Reconcile the defence budget.** 13.4 introduces a per-realm "stability pool"
    with laws priced at 30–40 and 2–9 wards per realm. 5.2 and 5.5 give realms
    1–3 law slots drawn from a *universe-wide* stability pool, laws costing 10–26,
-   and a ward limit of 4–8. These are two different games.
+   and a ward limit of 4–8. The root turns out to be one missing number: §5.2
+   counts guard *posts*, §13.4 counts *guards*, and **how many ruleborn stand at a
+   post is never stated**. → Drafted: `spec/defence.md`.
 
 6. **Resize the roster against the buildings.** Rebuilding the economy model
    surfaced a structural problem that is not in the register as a contradiction
@@ -88,8 +95,8 @@ Ordered by how much they block.
    character positions** to fill (126 producer worker slots, 21 guard posts, a
    crew of 5) against a **roster ceiling of 38**. Even at one producer per realm,
    production alone needs 63 workers before a single guard is posted. §9.3's
-   published production figures are therefore unstaffable as written. Details in
-   `05-quantitative-findings.md` F1.
+   published production figures are therefore unstaffable as written.
+   → Priced: `tools/decision_support.py staffing`. This one is a design choice.
 
 ## The two risks that decide whether this game exists
 
@@ -107,8 +114,11 @@ well-reasoned change (27.5) that removes the sharpest edge of the fantasy, and
 the document knows it. The paper-prototype gate is the right test and also costs
 nothing.
 
-Both are answerable in a fortnight with a printer, a metronome and thirty people.
-Neither needs an engine.
+Both are answerable in a fortnight. The document's method — a paper prototype and
+about thirty people in a room — assumes a cohort this project does not have, so
+the method changed while the questions did not: a throwaway browser prototype is
+built and published, because a link is recruitable and a room is not. See
+`07-recommended-next-steps.md` stage 0.
 
 ## Where I disagree with the document
 
@@ -159,7 +169,7 @@ until the determinism spike has passed.
 | Document | What it covers |
 | --- | --- |
 | `02-system-map.md` | Every system, what it depends on, and where the load-bearing couplings are |
-| `03-contradiction-register.md` | 17 confirmed internal contradictions, with section references and a recommended resolution for each |
+| `03-contradiction-register.md` | Every confirmed internal contradiction, with section references and a recommended resolution for each |
 | `04-specification-gaps.md` | What is referenced but never specified, and what a builder would have to invent |
 | `05-quantitative-findings.md` | The arithmetic that checks out, the arithmetic that does not, and the note/chord analysis |
 | `06-build-readiness.md` | What is buildable today, the critical path, and an independent read on scope |

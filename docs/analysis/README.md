@@ -10,7 +10,7 @@ Start with `01-executive-summary.md`.
 | --- | --- |
 | [01-executive-summary.md](01-executive-summary.md) | The verdict, what the design gets right, the six things that must change before code, and where I disagree with the document |
 | [02-system-map.md](02-system-map.md) | Every system, the dependency graph, the six couplings carrying the design's weight, and what is safe to defer |
-| [03-contradiction-register.md](03-contradiction-register.md) | 19 confirmed internal contradictions, with sections, cause and a recommended resolution for each |
+| [03-contradiction-register.md](03-contradiction-register.md) | Every confirmed internal contradiction, with sections, cause and a recommended resolution for each |
 | [04-specification-gaps.md](04-specification-gaps.md) | 11 things referenced but never specified — what a builder would have to invent |
 | [05-quantitative-findings.md](05-quantitative-findings.md) | The three economy-model findings (F1–F3), the arithmetic that checks out, the arithmetic that doesn't, and the note/chord/cost distribution analysis |
 | [06-build-readiness.md](06-build-readiness.md) | What is buildable today, what's blocked, the technical bet assessed, and an independent scope and risk read |
@@ -57,7 +57,7 @@ solo developer without a test cohort.
 ## The audit register
 
 The working view of this analysis — what changed about the plan, and what is
-still to fix — is tracked as 54 items at
+still to fix — is tracked at
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**, generated from
 `tools/audit_register.py`. These documents carry the reasoning; the register
 carries the state.

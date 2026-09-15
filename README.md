@@ -45,6 +45,9 @@ tools/
   check_design_consistency.py   machine checks behind the analysis
   extract_content.py            design document -> content/*.json
   validate_content.py           schema and cross-reference checks on content/
+  generate_docs.py              content/ -> the design document's summary tables
+  check_docs_consistency.py     this repository's own documents, against each other
+  decision_support.py           prices the decisions that are the owner's
   audit_register.py             the audit register, as data
   build_audit.py                renders the register to docs/audit/index.html
   parse_gate_results.py         scores the gates from testers' result codes

@@ -25,6 +25,10 @@ echo "== economy model =="
 python3 -m tools.economy_model.test_economy_model
 
 echo
+echo "== this repository's own documents agree with each other =="
+python3 tools/check_docs_consistency.py
+
+echo
 echo "== audit register builds =="
 python3 tools/build_audit.py
 
