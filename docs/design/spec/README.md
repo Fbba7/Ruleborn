@@ -13,6 +13,7 @@ Every file here is **proposed** until signed off. Nothing is locked (§26.7).
 | [`economy.md`](economy.md) | C2, C4 — what a raid pays | Proposed: peg the haul to the raider's own production |
 | [`defence.md`](defence.md) | C5 — what an island may hold | Proposed: one table in §5.2, counting posts |
 | [`movement.md`](movement.md) | G1 — crew movement and control | Proposed, and partly new design |
+| [`corrections.md`](corrections.md) | C7–C18, C20 — the clerical sweep | 13 single edits, one session |
 
 ## How these were written
 

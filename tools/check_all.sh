@@ -17,6 +17,10 @@ echo "== content tables =="
 python3 tools/validate_content.py
 
 echo
+echo "== generated docs are in sync with the data =="
+python3 tools/generate_docs.py --check
+
+echo
 echo "== economy model =="
 python3 -m tools.economy_model.test_economy_model
 

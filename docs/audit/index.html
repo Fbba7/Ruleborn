@@ -232,17 +232,17 @@
       from it.</p>
 
     <div class="summary">
-      <div><span class="n">56</span><span class="k">items tracked</span></div>
-      <div><span class="n">36</span><span class="k">open</span></div>
-      <div><span class="n">9</span><span class="k">done or adopted</span></div>
+      <div><span class="n">57</span><span class="k">items tracked</span></div>
+      <div><span class="n">24</span><span class="k">open</span></div>
+      <div><span class="n">10</span><span class="k">done or adopted</span></div>
       <div><span class="n">11</span><span class="k">blocking the build</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">56</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">14</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">8</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">3</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">16</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">7</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">57</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">15</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">8</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">3</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">16</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">7</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
   </nav>
 
   <main id="list">
@@ -407,6 +407,18 @@
         <div class="refs"><span class="ref">§8.1</span><span class="ref">§7.4</span><span class="ref">§24</span></div>
         <p class="body">Parsed from all 48 law sheets: Glow is carried by 12 laws, its opposite Hush by 6. Hush is the <em>hiding</em> note — the raider-favouring one — and it is the scarcest, while the revealing note is the most abundant. Since laws are woven by the defender and apply symmetrically, defenders have both the least reason and the fewest options to weave Hush. Five of the twelve chords require it.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Rebalance toward roughly 8–9 laws per note. §24 freezes the note count at eight and makes laws the expansion axis, so this is a one-time cost now and a permanent constraint on every future season's six laws.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done">
+        <header class="item-head">
+          <span class="id">D15</span>
+          <h3>Summary tables are now generated, not authored</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§11.2</span><span class="ref">§7.4</span><span class="ref">§29.1</span><span class="ref">§24.9</span></div>
+        <p class="body">Four register items — C1, C3, C6 and C19 — have one cause: the same facts written down twice by hand, and one copy updated. The structural fix is that a table which exists only to summarise something else is never authored, only emitted.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <code>tools/generate_docs.py</code> emits §11.2's roster index, §7.4's law summary and §29.1's formulas appendix from <code>content/</code>. <code>--check</code> fails the build if a generated file has been hand-edited, and <code>./tools/check_all.sh</code> runs it. This matters most for §29.1, which still carries the detection model §12.17 superseded — the worst place for a stale number, since it is where an implementer looks for it. It does not cover prose, which is what D10's split is for.</p>
       </article>
       <article class="item chg" data-group="changes"
                data-kind="deviation" data-status="proposed">
@@ -574,12 +586,12 @@
         </div>
         
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C7</span>
           <h3>Tick rate: 20 Hz or 30 Hz?</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§7.3</span><span class="ref">§24</span><span class="ref">§24.10</span></div>
         <p class="body">§7.3 and §24's engine table both say 20 steps a second. §24.10, the later simulation contract, says 30 and is self-consistent — it states a heist is 4,500–7,200 ticks, which is exactly 30 × 150–240 seconds. It also says “drop to 20” if a cheap phone cannot hold it, so 20 may be a pre-emptive fallback that leaked upward.</p>
@@ -598,96 +610,96 @@
         <p class="rec"><span class="arrow">&rarr;</span> Add it as a 17th building with a full level table, or fold the trickle into the Observatory or the Spire and rewrite the four references. Do not leave a load-bearing economic faucet unspecified.</p>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C18</span>
           <h3>Aether storage: formula or table?</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§9.1</span><span class="ref">§10.2</span></div>
         <p class="body">§9.1 gives the Aether cap as 5,000 per Spire level plus 3,000. §10.2's Spire table gives a flat 5,000 × level — 5,000 at level 1, 50,000 at level 10. The formula would give 8,000 and 53,000.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Small, but Aether is the weaving and upkeep currency, so the cap gates how much law a player can re-weave in one session.</p>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C20</span>
           <h3>The 48 law sound signatures are six school sounds repeated</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§21.8</span><span class="ref">§7.9</span><span class="ref">§21.9</span></div>
         <p class="body">§21.8 says “every law also has a sound signature, so a player can hear which rules are running with the screen half-watched”. Extracting all 48 law sheets gives <strong>6 distinct sounds, one per school, each repeated eight times</strong> — Motion laws all sound like “a rising whistle and a soft thump on landing”, Matter laws all like “a glassy chime and a low grind”. A player can hear which <em>school</em> is running, not which law, and a realm can hold several laws of one school. §21.9's asset list budgets 6 school stingers, so the budget matches the content and not the claim.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either correct §21.8 to say sounds are per school — which is a reasonable design, and cheaper — or budget 48 law sounds in §21.9 and author them. The claim as written is not met by the content.</p>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C13</span>
           <h3>Matchmaking cannot reach its own worst difficulty tier</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§12.3</span><span class="ref">§9.6</span></div>
         <p class="body">§12.3 offers targets within 3 Keeper levels. §9.6's difficulty multiplier has a tier for targets “three or more below” paying 0.25×. If the Observatory never offers such targets, that tier is unreachable in normal play.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either widen the offered band, or state that the 0.25 tier exists only for challenge links, friendly heists and Trace targets.</p>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C14</span>
           <h3>Renown for a foiled heist is undefined</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§12.9</span></div>
         <p class="body">The outcomes table gives Renown as a percentage — 100% / 80% / 50% / −50% — while the formula below it produces an absolute value of 8 to 40. “−50%” of a gain the raider did not make has no meaning.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Express all four outcomes as multipliers on the formula's output, and state the sign convention explicitly.</p>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C9</span>
           <h3>The Codex screen says 36 laws; there are 48</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§23.2</span><span class="ref">§7</span><span class="ref">§26.1</span></div>
         <p class="body">The Law Codex screen spec says “36 laws by school and rank”. 36 is the size of Codex chapter 3 (§7.6), so this is probably a stale number rather than a disagreement about the collection.</p>
         
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C10</span>
           <h3>Trait count: 30, 31 or 32?</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§11.3</span><span class="ref">§17.3</span><span class="ref">§26.1</span><span class="ref">§11.5</span></div>
         <p class="body">§11.3 enumerates 31 traits (6 body, 5 heist, 11 law-linked, 9 home). §26.1's launch table says 30. §17.3 references “the rare Starborn trait”, which appears in no list. §11.5 also says strays arrive with three traits while §11.3 says every ruleborn is born with two.</p>
         
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C11</span>
           <h3>Screen count: 23 or 27?</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§21.9</span><span class="ref">§23.2</span></div>
         <p class="body">§23.2 lists 27 screens to design; §21.9's asset list says 23. The difference is four screens of interface work and their icons.</p>
         
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C12</span>
           <h3>The high revenue scenario quietly uses a different commission rate</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§22.2</span><span class="ref">§22.5</span></div>
         <p class="body">§22.5 says every figure in §22.2 assumes 15%. The low and base scenarios do — €2,720 and €25,500, both confirmed. The high scenario's €168,000 is computed at <strong>30%</strong>. That is arguably correct, since €204,000 a month crosses Apple's $1M small-business threshold — but it contradicts the stated assumption and makes the three scenarios non-comparable.</p>
@@ -773,36 +785,36 @@
         </div>
         
       <article class="item min" data-group="minor"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C15</span>
           <h3>Guard vision is given in tiles in one place and metres in another</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§21.1</span></div>
         <p class="body">§21.1 establishes that one tile is one metre, so the two reconcile — but the document should pick one unit and use it throughout.</p>
         
       </article>
       <article class="item min" data-group="minor"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C16</span>
           <h3>“Three-minute heist” against a 150–240 second clock</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§12</span><span class="ref">§12.2</span><span class="ref">§5.4</span><span class="ref">§14.1</span></div>
         <p class="body">§12's opening calls a heist “a three-minute run”; the clock is 150–240 seconds and §12.2 correctly says 2.5–4 minutes. Harmless, but the marketing line and the spec should not disagree.</p>
         
       </article>
       <article class="item min" data-group="minor"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C17</span>
           <h3>The game lists itself as its own fallback name</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§27.2</span><span class="ref">§26.9</span></div>
         <p class="body">§27.2 says “Fallbacks are Lawkeep and Ruleborn” — but Ruleborn <em>is</em> the chosen name. Almost certainly a leftover from the v2.2 rename.</p>

@@ -181,6 +181,21 @@ dict(id="D13", kind="deviation", severity="change", status="proposed",
          "count at eight and makes laws the expansion axis, so this is a one-time "
          "cost now and a permanent constraint on every future season's six laws."),
 
+dict(id="D15", kind="deviation", severity="change", status="done",
+     title="Summary tables are now generated, not authored",
+     refs=["11.2", "7.4", "29.1", "24.9"],
+     body="Four register items \u2014 C1, C3, C6 and C19 \u2014 have one cause: the "
+          "same facts written down twice by hand, and one copy updated. The "
+          "structural fix is that a table which exists only to summarise something "
+          "else is never authored, only emitted.",
+     rec="<code>tools/generate_docs.py</code> emits §11.2's roster index, §7.4's law "
+         "summary and §29.1's formulas appendix from <code>content/</code>. "
+         "<code>--check</code> fails the build if a generated file has been "
+         "hand-edited, and <code>./tools/check_all.sh</code> runs it. This matters "
+         "most for §29.1, which still carries the detection model §12.17 superseded "
+         "\u2014 the worst place for a stale number, since it is where an implementer "
+         "looks for it. It does not cover prose, which is what D10's split is for."),
+
 dict(id="D14", kind="deviation", severity="change", status="proposed",
      title="Chords should require three laws, not three notes",
      refs=["8.5"],
@@ -362,7 +377,7 @@ dict(id="F3", kind="finding", severity="design", status="open",
 # Significant
 # ===========================================================================
 
-dict(id="C7", kind="contradiction", severity="significant", status="open",
+dict(id="C7", kind="contradiction", severity="significant", status="proposed",
      title="Tick rate: 20 Hz or 30 Hz?",
      refs=["7.3", "24", "24.10"],
      body="§7.3 and §24's engine table both say 20 steps a second. §24.10, the later "
@@ -387,7 +402,7 @@ dict(id="C8", kind="contradiction", severity="significant", status="open",
          "into the Observatory or the Spire and rewrite the four references. Do not "
          "leave a load-bearing economic faucet unspecified."),
 
-dict(id="C18", kind="contradiction", severity="significant", status="open",
+dict(id="C18", kind="contradiction", severity="significant", status="proposed",
      title="Aether storage: formula or table?",
      refs=["9.1", "10.2"],
      body="§9.1 gives the Aether cap as 5,000 per Spire level plus 3,000. §10.2's "
@@ -396,7 +411,7 @@ dict(id="C18", kind="contradiction", severity="significant", status="open",
      rec="Small, but Aether is the weaving and upkeep currency, so the cap gates how "
          "much law a player can re-weave in one session."),
 
-dict(id="C20", kind="contradiction", severity="significant", status="open",
+dict(id="C20", kind="contradiction", severity="significant", status="proposed",
      title="The 48 law sound signatures are six school sounds repeated",
      refs=["21.8", "7.9", "21.9"],
      body="§21.8 says \u201cevery law also has a sound signature, so a player can "
@@ -412,7 +427,7 @@ dict(id="C20", kind="contradiction", severity="significant", status="open",
          "reasonable design, and cheaper \u2014 or budget 48 law sounds in §21.9 "
          "and author them. The claim as written is not met by the content."),
 
-dict(id="C13", kind="contradiction", severity="significant", status="open",
+dict(id="C13", kind="contradiction", severity="significant", status="proposed",
      title="Matchmaking cannot reach its own worst difficulty tier",
      refs=["12.3", "9.6"],
      body="§12.3 offers targets within 3 Keeper levels. §9.6's difficulty multiplier "
@@ -422,7 +437,7 @@ dict(id="C13", kind="contradiction", severity="significant", status="open",
      rec="Either widen the offered band, or state that the 0.25 tier exists only for "
          "challenge links, friendly heists and Trace targets."),
 
-dict(id="C14", kind="contradiction", severity="significant", status="open",
+dict(id="C14", kind="contradiction", severity="significant", status="proposed",
      title="Renown for a foiled heist is undefined",
      refs=["12.9"],
      body="The outcomes table gives Renown as a percentage — 100% / 80% / 50% / "
@@ -432,14 +447,14 @@ dict(id="C14", kind="contradiction", severity="significant", status="open",
      rec="Express all four outcomes as multipliers on the formula's output, and "
          "state the sign convention explicitly."),
 
-dict(id="C9", kind="contradiction", severity="significant", status="open",
+dict(id="C9", kind="contradiction", severity="significant", status="proposed",
      title="The Codex screen says 36 laws; there are 48",
      refs=["23.2", "7", "26.1"],
      body="The Law Codex screen spec says “36 laws by school and rank”. "
           "36 is the size of Codex chapter 3 (§7.6), so this is probably a stale "
           "number rather than a disagreement about the collection."),
 
-dict(id="C10", kind="contradiction", severity="significant", status="open",
+dict(id="C10", kind="contradiction", severity="significant", status="proposed",
      title="Trait count: 30, 31 or 32?",
      refs=["11.3", "17.3", "26.1", "11.5"],
      body="§11.3 enumerates 31 traits (6 body, 5 heist, 11 law-linked, 9 home). "
@@ -447,13 +462,13 @@ dict(id="C10", kind="contradiction", severity="significant", status="open",
           "trait”, which appears in no list. §11.5 also says strays arrive with "
           "three traits while §11.3 says every ruleborn is born with two."),
 
-dict(id="C11", kind="contradiction", severity="significant", status="open",
+dict(id="C11", kind="contradiction", severity="significant", status="proposed",
      title="Screen count: 23 or 27?",
      refs=["21.9", "23.2"],
      body="§23.2 lists 27 screens to design; §21.9's asset list says 23. The "
           "difference is four screens of interface work and their icons."),
 
-dict(id="C12", kind="contradiction", severity="significant", status="open",
+dict(id="C12", kind="contradiction", severity="significant", status="proposed",
      title="The high revenue scenario quietly uses a different commission rate",
      refs=["22.2", "22.5"],
      body="§22.5 says every figure in §22.2 assumes 15%. The low and base scenarios "
@@ -470,20 +485,20 @@ dict(id="C12", kind="contradiction", severity="significant", status="open",
 # Minor
 # ===========================================================================
 
-dict(id="C15", kind="contradiction", severity="minor", status="open",
+dict(id="C15", kind="contradiction", severity="minor", status="proposed",
      title="Guard vision is given in tiles in one place and metres in another",
      refs=["12.8", "12.17", "21.1"],
      body="§21.1 establishes that one tile is one metre, so the two reconcile — "
           "but the document should pick one unit and use it throughout."),
 
-dict(id="C16", kind="contradiction", severity="minor", status="open",
+dict(id="C16", kind="contradiction", severity="minor", status="proposed",
      title="“Three-minute heist” against a 150–240 second clock",
      refs=["12", "12.2", "5.4", "14.1"],
      body="§12's opening calls a heist “a three-minute run”; the clock is "
           "150–240 seconds and §12.2 correctly says 2.5–4 minutes. Harmless, "
           "but the marketing line and the spec should not disagree."),
 
-dict(id="C17", kind="contradiction", severity="minor", status="open",
+dict(id="C17", kind="contradiction", severity="minor", status="proposed",
      title="The game lists itself as its own fallback name",
      refs=["27.2", "26.9"],
      body="§27.2 says “Fallbacks are Lawkeep and Ruleborn” — but "
