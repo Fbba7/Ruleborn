@@ -818,5 +818,32 @@
         "gives": "3 visitor(s) a day; Collector swaps 5 for 2"
       }
     ]
+  },
+  {
+    "name": "The Library",
+    "id": "library",
+    "placement": "Heart; 1.",
+    "levels": [
+      {
+        "level": 1,
+        "cost_starlight": 900,
+        "needs": "Spire 1",
+        "gives": "3 pages a day"
+      },
+      {
+        "level": 5,
+        "cost_starlight": 14000,
+        "needs": "Spire 5",
+        "gives": "9 pages a day"
+      },
+      {
+        "level": 10,
+        "cost_starlight": 150000,
+        "needs": "Spire 10",
+        "gives": "18 pages a day"
+      }
+    ],
+    "note": "§10.5 gives levels 1, 5 and 10 only; the other seven are not stated. Every other building in §10.2 lists every level.",
+    "needs_decision": "C8"
   }
 ]

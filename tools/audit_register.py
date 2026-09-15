@@ -981,4 +981,352 @@ dict(id="Q7", kind="decision", severity="choice", status="open",
          "wait.<br><strong>Order:</strong> the trade-mark check first, since §26.9 "
          "makes it a gate and it costs nothing; then soft-launch countries; then the "
          "Island Fund test, which cannot start until the Workshop ships."),
+
+# ===========================================================================
+# Found in version 3.0 — fixes that were not finished, and claims that were
+# not carried out
+# ===========================================================================
+
+dict(id="C21", kind="contradiction", severity="blocking", status="open",
+     title="The formulas appendix still carries the detection model §12.8 deleted",
+     refs=["29.1", "12.8", "12.17", "5.4"],
+     body="§12.8 in v3.0 states the old perception rules are gone and that §12.17 "
+          "wins everywhere. <strong>§29.1 still tabulates them</strong> \u2014 "
+          "\u201cAwareness: +50% a second in sight, +75% within 3 tiles; investigate "
+          "at 50%, alarm at 100%\u201d \u2014 and gives §12.8 as the source, which is "
+          "the section that deleted them. Its ambush row is stale the same way: "
+          "\u201cFirst unseen hit: 2 s stun and triple damage\u201d, without the "
+          "health floor §12.8 added. §5.4\u2019s landing rule still starts guards at "
+          "\u201c25% awareness\u201d, a unit that no longer exists.<br><br>This is "
+          "the worst possible place for it: the formulas appendix is where an "
+          "implementer looks for a number rather than a discussion.",
+     rec="§29.1 should be generated, not authored \u2014 which is D15, already "
+         "recorded and already built (<code>tools/generate_docs.py</code> emits it "
+         "from <code>content/</code>). Adopting that is a one-line change to the "
+         "build and it makes this class of item impossible rather than merely "
+         "unlikely. §5.4 restates as 250 of 1000 suspicion, as "
+         "<code>spec/detection.md</code> proposed."),
+
+dict(id="C22", kind="contradiction", severity="significant", status="open",
+     title="§12.6 still loads at 150 a second, five times §12.19's rate",
+     refs=["12.6", "12.19", "9.6"],
+     body="§12.19 opens by naming the problem \u2014 \u201c12.6 called the loading "
+          "phase the heist\u2019s central decision, and its own numbers gave that "
+          "decision two seconds and one option\u201d \u2014 and fixes it: every role "
+          "loads, at 30 units a second. §12.6\u2019s own sentence was not changed. It "
+          "still reads \u201ceach Carrier loads 150 loot a second until full\u201d, "
+          "which is both the wrong rate and the wrong set of roles.",
+     rec="Delete the sentence from §12.6 and point it at §12.19, the way §12.8 now "
+         "points at §12.17. Both numbers are live in the file today, and the one in "
+         "the moment-to-moment section is the one a reader meets first."),
+
+dict(id="C23", kind="contradiction", severity="significant", status="open",
+     title="Three sections still price laws in three ranks after the sheets moved to four",
+     refs=["7.6", "7.7", "7.10", "14.4", "29.2"],
+     body="v3.0 re-tagged twelve laws from Rare to Uncommon. §7.6 still says "
+          "\u201cRestoring a law: 15 pages for a common law, 30 for a rare one, 60 for "
+          "a deep one\u201d \u2014 three ranks, and no mention of the rank twelve laws "
+          "now carry. §14.4 still totals the Codex as \u201c15 commons \u00d7 15 + 18 "
+          "rares \u00d7 30 + 12 deep \u00d7 60 = 1,485 pages\u201d, arithmetic that "
+          "describes a roster of laws that no longer exists. The glossary and the "
+          "price list still say \u201c15, 30 or 60 pages by rank\u201d.<br><br>The "
+          "change log states the new figure as 1,350 pages. That counts all 18 "
+          "commons; §14.4\u2019s convention excludes the three free starting laws, so "
+          "even the replacement figure is on a different basis from the number it "
+          "replaces.",
+     rec="This is C3\u2019s collateral list, and C3 is still open \u2014 the sheets "
+         "say 18/12/6/12 and §7.10 says 18/14/10/6. Settle the split first, then "
+         "regenerate every page total from the law table rather than restating it."),
+
+dict(id="C24", kind="contradiction", severity="minor", status="open",
+     title="Seventeen building types, and §26.1 still says sixteen",
+     refs=["10.5", "10.2", "26.1"],
+     body="§10.5 adds the Library and calls it \u201ca building at the Heart, one per "
+          "universe\u201d, which closes the faucet C8 was about. Two counts did not "
+          "follow: §26.1\u2019s launch content table still says 16 building types, and "
+          "§10.2 \u2014 headed <em>Every level of every building</em> \u2014 does not "
+          "contain it. §10.5 also gives only levels 1, 5 and 10, where every other "
+          "building lists all ten.",
+     rec="Move the Library into §10.2 with its full level table and raise §26.1 to "
+         "17. The seven missing levels matter more than they look: the Library is "
+         "the faucet that keeps non-raiders progressing, and the economy model "
+         "cannot price a curve given three of its points."),
+
+dict(id="C25", kind="contradiction", severity="significant", status="open",
+     title="§8.8 states the note rebalance as done; the law sheets are unchanged",
+     refs=["8.8", "7.7", "8.1"],
+     body="§8.8 reads: \u201cThe table now runs eight or nine laws per note, and since "
+          "the note count is frozen at eight and laws are the expansion axis, that "
+          "balance is a permanent constraint on every future season.\u201d Parsing "
+          "all 48 law sheets gives <strong>Glow 12, Flow 11, Echo 10, Weight 9, Spark "
+          "8, Bloom 8, Veil 7, Hush 6</strong> \u2014 identical to v2.3. The "
+          "rebalance is described in the past tense and has not happened.<br><br>The "
+          "asymmetry still runs the wrong way for the same reason: Hush is the hiding "
+          "note, it is the scarcest, and laws are woven by the defender.",
+     rec="Retag or re-note about six laws to bring every pool to 8 or 9 \u2014 this "
+         "is D13, which is still the right fix and is now also a correctness fix, "
+         "since a section of the document asserts the result. "
+         "<code>python3 tools/check_design_consistency.py</code> fails until the "
+         "sheets match the claim."),
+
+dict(id="C26", kind="contradiction", severity="significant", status="open",
+     title="§12.21 declares size and flight as properties; no table carries them",
+     refs=["12.21", "11.1", "11.2", "11.11", "7.7"],
+     body="§12.21 is the right answer to G12, stated well: \u201cA law that reads a "
+          "parameter which does not exist is the same failure as a law full of "
+          "special cases, seen from the other side.\u201d It then says size is a band "
+          "on every ruleborn and flight is a stated property rather than an "
+          "implication of a passive.<br><br>Neither exists as a field. §11.1 has "
+          "health, speed, power and carry. §11.11 has proportions, which are art "
+          "direction. <strong>Featherkin\u2019s flight is still prose in a Passive "
+          "column</strong> \u2014 \u201cFlies; grounded by Heavy ground\u201d \u2014 "
+          "which is precisely the implication §12.21 says it must not be. Three laws "
+          "(Density, Heavy ground, Swarm birth) still read attributes that no "
+          "creature carries.",
+     rec="Add <code>size</code> and <code>flies</code> to the creature table and "
+         "derive nothing from prose. <code>content/ruleborn.json</code> is the place "
+         "to do it once; <code>tools/validate_content.py</code> already fails on any "
+         "law that reads an attribute no creature has, so the check exists and is "
+         "waiting for the data."),
+
+dict(id="D19", kind="deviation", severity="change", status="done",
+     title="The checks were rewritten to read the document rather than remember it",
+     refs=["29.1", "11.1", "12.6"],
+     body="Four checks added while auditing v2.3 \u2014 the ambush rule, the load "
+          "rate, crew capacity, the fight-length bound \u2014 hard-coded the role "
+          "stats and the Vault rate instead of parsing them. Against v3.0 they "
+          "reported exactly the same failures they had reported against v2.3, "
+          "including for the two things v3.0 had fixed.<br><br>A check that cannot "
+          "pass is not a check. It is a comment that runs.",
+     rec="<code>check_design_consistency.py</code> now parses §11.1\u2019s role table, "
+         "every load-rate sentence, §7.10\u2019s rank table, §7.6\u2019s restore costs "
+         "and §12.8\u2019s ambush wording out of the document. Two findings retired on "
+         "the first run against v3.0, which is what retirement is supposed to look "
+         "like. The fight-length bound was <strong>deleted</strong> rather than "
+         "re-based: it measured a lone Mender attacking a Warden, which is a player "
+         "mistake rather than a specification fault, and the health floor had already "
+         "halved it."),
+
+dict(id="D20", kind="deviation", severity="change", status="open",
+     title="Both pre-code player gates are gone, and the prototype with them",
+     refs=["19.27", "13.3", "26.7", "30.8"],
+     body="v3.0 removes both tests this analysis built a prototype for. §19.27 "
+          "replaces them with simulation harnesses and states the cost plainly: "
+          "\u201cSimulation can prove a system is legible, balanced and "
+          "decision-dense. It cannot prove a game is enjoyable \u2014 nothing except "
+          "a person playing can, and that evidence now arrives at soft launch rather "
+          "than before code.\u201d §13.3 goes further and removes the build-"
+          "willingness question itself: every player gets a generated defence, "
+          "curation is the default creative act, and authoring becomes the deep end. "
+          "<strong>Risk #1 is designed out rather than measured.</strong><br><br>Both "
+          "are defensible and both are stated honestly. One premise is worth "
+          "restating, because it is the premise the change rests on: §19.27 gives the "
+          "reason as \u201cthat cohort does not exist for this project\u201d, meaning "
+          "thirty people in a room. That was D2\u2019s finding too \u2014 and D2\u2019s "
+          "answer was that a link is recruitable where a room is not. The prototype "
+          "exists, it is published, and sending it to twenty strangers costs an "
+          "afternoon rather than a soft launch.",
+     rec="Not a disagreement with the decision, which is the owner\u2019s and is "
+         "argued well. Two things follow from it regardless.<br><br><strong>The "
+         "harnesses in §19.27 are now on the critical path</strong>, ahead of the "
+         "vertical slice, and they are buildable here: thousands of scripted heists "
+         "at three skill levels, measuring decisions per run, near-captures, and "
+         "whether the last ten seconds decide the outcome. §19.27 sets the thresholds "
+         "\u2014 15\u201325 decisions, a near-capture in half of runs, the optimal "
+         "crew 35 points ahead of the careless one.<br><br><strong>The prototype "
+         "stays published anyway.</strong> It costs nothing to leave up, and it is "
+         "the only artefact in this repository that can answer the one question "
+         "§19.27 says simulation cannot."),
+
 ]
+
+
+# ===========================================================================
+# What version 3.0 did about each of these
+# ===========================================================================
+#
+# The register above records what was found against v2.3. This records what the
+# next version of the design document did about it, as a separate layer rather
+# than by editing sixty-four entries — so "what was found" and "what was done"
+# stay two different things, and the second can be re-derived when v3.1 arrives.
+#
+# `status` overrides the item's own. `fixed` means the design document itself
+# resolved it, as distinct from `done`, which means this repository did.
+# `note` says what v3.0 did, including where it stopped short.
+
+V3 = {
+
+# -- resolved in the document ----------------------------------------------
+
+"C1": dict(status="fixed", note=
+    "§12.8 now says sight and awareness are \u201cspecified once, in 12.17\u201d and "
+    "that the older single-cone, percent-per-second rules are gone. The residue is "
+    "tracked as C21: §29.1 still tabulates the deleted model, and cites §12.8 for it."),
+
+"C4": dict(status="fixed", note=
+    "§9.6\u2019s base is now <code>B(V)</code> with V stated as \u201cthe target\u2019s "
+    "Vault level, one to ten \u2014 not the realm level, which stops at five\u201d. "
+    "One paragraph deeper, §9.6\u2019s <em>what is exposed</em> still says the sealed "
+    "share runs \u201c40% at realm level 1\u201d while §9.4 says Vault level 1."),
+
+"C5": dict(status="fixed", note=
+    "§13.4 keeps the slot limits and drops the second pool in as many words: "
+    "\u201cThe older per-realm pool is gone, and these numbers now match 5.2 and "
+    "10.2 rather than competing with them.\u201d"),
+
+"G1": dict(status="fixed", note=
+    "§12.18 settles it, and adopts the reading in <code>spec/movement.md</code>: tiles "
+    "for terrain and building, continuous millitile position and facing, "
+    "breadth-first pathfinding with a fixed neighbour order, the command recorded "
+    "rather than the path, and crew passing through one another. The rule that "
+    "protects premise 3 is stated as a heading: <strong>the crew never makes a "
+    "decision the player did not make</strong>."),
+
+"G2": dict(status="fixed", note=
+    "§12.20, with §12.8 rewritten around it. One hit per 0.8 s for Power damage on "
+    "both sides; fighting allowed but an unambushed hit sends suspicion straight to "
+    "1000; ten seconds down, revived in 3 s or 1.5 s by a Mender; loot dropped on "
+    "the tile. §29.1 was not updated \u2014 C21."),
+
+"G4": dict(status="fixed", note=
+    "§12.19, adopting <code>spec/vault.md</code> whole: every role loads at 30 units "
+    "a second, a crew fills in ten seconds, the haul is multiplied by the share of "
+    "bags filled, and the break-even sits at 70%. §9.6 carries the new "
+    "<code>fill</code> term. §12.6 still says 150 a second \u2014 C22."),
+
+"G6": dict(status="fixed", note=
+    "§12.22 gives the five steps: the band, the Bayesian rating with its uncertainty "
+    "term, the guarantee that the median offered target sits in the 55\u201370% band, "
+    "the widening order when nothing matches, and why the 0.25 payout tier is "
+    "unreachable through normal matchmaking."),
+
+"G8": dict(status="fixed", note=
+    "§24.13 answers both: one lease per target per player, so a second device is "
+    "handed the lease the first holds; and the entry fee is debited at validation "
+    "rather than at lease, so an offline heist never submitted costs nothing."),
+
+"F4": dict(status="fixed", note=
+    "§12.8 now reads \u201ctriple Power, or half the guard\u2019s full health, "
+    "whichever is greater\u201d, and says why: the rule below it was true for three "
+    "of twenty-five pairings without it. Verified \u2014 25 of 25 now. §29.1 still "
+    "gives triple damage with no floor (C21)."),
+
+"F5": dict(status="fixed", note=
+    "§12.19. Loading is ten seconds, every role loads, and the fill fraction is a "
+    "term in §9.6\u2019s formula. The check retires \u2014 all 560 units of crew "
+    "capacity are now reachable."),
+
+"F1": dict(status="fixed", note=
+    "§5.9 decides it: one producer of each kind per realm, partial staffing paying "
+    "pro-rata, and \u201cthe roster can never fill everything \u2014 38 ruleborn "
+    "against far more positions \u2014 and that is the scarcity the design is built "
+    "on\u201d. Scarcity is now a feature by decision rather than by accident."),
+
+"F2": dict(status="fixed", note=
+    "§5.9: one, not two, with the model\u2019s reasoning quoted. The published tables "
+    "in §9.3 were not regenerated against it \u2014 C19."),
+
+"F3": dict(status="fixed", note=
+    "§5.9: \u201cA crew on a heist is assigned to it, like a guard at a post, and "
+    "does not work while assigned. Five of thirty-eight is a real choice.\u201d This "
+    "is the mechanism the finding recommended, taken whole."),
+
+"Q1": dict(status="fixed", note="Answered by §5.9: scarcity is a feature."),
+"Q4": dict(status="fixed", note="Answered by §5.9: one producer of each kind per realm."),
+"Q2": dict(status="fixed", note=
+    "Answered by §5.9: crew membership excludes work, so the trade-off binds."),
+
+"D14": dict(status="fixed", note=
+    "§8.8 changes the rule to three <em>distinct laws</em>, which makes §8.5 true. "
+    "It did not achieve what it argued for: the cheapest chord now costs 33 "
+    "stability against a day-2 capacity of 51, up from 26, and seven of twelve are "
+    "still three commons. The gate that actually makes a chord late-game is the Lab "
+    "level 3 at Spire 5, about day 42 \u2014 which §8.5 mentions and §8.8 does not "
+    "lean on."),
+
+# -- moved rather than resolved ---------------------------------------------
+
+"C2": dict(note=
+    "Half resolved. §9.4\u2019s percentages are deleted \u2014 \u201cthe percentages "
+    "this paragraph used to carry are gone\u201d \u2014 and §9.6 is the one formula, "
+    "now with a <code>fill</code> term. But §9.6 keeps <code>B(V)</code> rather than "
+    "pegging to production, so the faucet still delivers 1\u20132% of income, while "
+    "§9.4\u2019s balance target (\u201ca fifth of a day\u2019s production\u2026 "
+    "roughly a third\u201d) and §12.1\u2019s 40% are unchanged. The two-model "
+    "contradiction is gone; the model-versus-target one is not."),
+
+"C3": dict(note=
+    "Changed shape, not resolved. Twelve laws were re-tagged from Rare to Uncommon, "
+    "so the sheets now read 18/12/6/12 \u2014 against §7.10\u2019s own table of "
+    "18/14/10/6. Deep doubled from 6 to 12. And §7.6, §14.4 and the glossary still "
+    "price three ranks at 15/30/60 pages (C23)."),
+
+"C6": dict(note=
+    "§30.18 records \u201c11.11 is the roster\u201d, but §11.2 is still a full "
+    "hand-authored table and still disagrees with it about Prism Mite, Stormhound "
+    "and Rootrunner, plus fifteen wording differences. The decision was taken and "
+    "the second copy was not retired."),
+
+"C8": dict(note=
+    "The Library exists: §10.5 gives it a placement and three levels. Three, not ten "
+    "\u2014 levels 1, 5 and 10, where every other building lists every level. And "
+    "§26.1 still says 16 building types while there are now 17 (C24)."),
+
+"C19": dict(note=
+    "The decision is made (§5.9) and §9.3\u2019s tables were not regenerated against "
+    "it \u2014 day 2 is still 2,100 Starlight, day 8 still 6,200. This is the item "
+    "whose recommendation was \u201cregenerate from the model rather than editing by "
+    "hand\u201d, and it is now the clearest remaining instance."),
+
+"G3": dict(note="Untouched. §10.3 still gives level-1 effects only, with no key for "
+                "what §10.2\u2019s \u201ceffect +15%\u201d scales."),
+
+"G5": dict(note="Untouched. §12.6\u2019s pylon sentence is unchanged, so a raider "
+                "still cannot tell which law a pylon carries before committing."),
+
+"G10": dict(note=
+    "§12.21 states the rule this gap asked for \u2014 \u201cevery tier effect of "
+    "every law must be expressible as a change to a named parameter\u201d \u2014 and "
+    "names the three parameters that were missing. It does not apply it: no table "
+    "carries size or flight (C26)."),
+
+"G12": dict(note=
+    "Same as G10. §12.21 declares size a band on every ruleborn and flight a stated "
+    "property; §11.1 and §11.11 carry neither, and Featherkin\u2019s flight is still "
+    "prose in a Passive column."),
+
+"G9": dict(status="fixed", note=
+    "Resolved by removal rather than specification. §13.3 is now \u201cNobody has to "
+    "build\u201d: every player has a generated defence from the first minute, "
+    "curation is the default creative act and authoring is the deep end. The "
+    "60-second guided build is no longer the mitigation for risk #1, because the "
+    "risk is designed out instead of tested. See D20."),
+
+"D2": dict(note=
+    "Overtaken. §19.27 now answers every pre-code question by simulation rather than "
+    "by people, so the published prototype is no longer on the critical path. It "
+    "still runs, and it is still the only artefact that can answer the one question "
+    "§19.27 says simulation cannot. See D20."),
+
+"D13": dict(note=
+    "<strong>Claimed, not done.</strong> §8.8 states \u201cThe table now runs eight or "
+    "nine laws per note\u201d. Parsing all 48 law sheets gives Glow 12, Flow 11, Echo "
+    "10, Weight 9, Spark 8, Bloom 8, Veil 7, Hush 6 \u2014 unchanged from v2.3. "
+    "Tracked as C25."),
+
+"D15": dict(note=
+    "Vindicated in the worst way. §30.18 draws exactly this conclusion \u2014 "
+    "\u201ca table that exists only to summarise something else should be generated, "
+    "never authored\u201d \u2014 and then v3.0 fixed six systems and left stale copies "
+    "of four of them (C21\u2013C23, C6). §29.1 is the sharpest case: it is the "
+    "formulas appendix, it carries the detection model §12.8 deleted, and it cites "
+    "§12.8 as its source."),
+
+"C7": dict(note="Untouched: 20 steps a second and 30 both still appear."),
+"C10": dict(note="Untouched: 31 traits authored, 30 in §26.1, a 32nd named in §17.3."),
+"C20": dict(note="Untouched: 48 laws still share 6 sound signatures."),
+"F6": dict(note="Untouched. The Breaker is still 63% of the crew\u2019s damage against "
+                "every breakable object."),
+"G11": dict(note="Untouched: §20.6 still says English and Portuguese at launch, §26.2 "
+                 "still says twelve languages."),
+}

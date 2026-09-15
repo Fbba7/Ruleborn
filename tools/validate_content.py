@@ -34,14 +34,23 @@ OPPOSITE = {"Flow": "Weight", "Weight": "Flow", "Glow": "Hush", "Hush": "Glow",
 SCHOOLS = ["Motion", "Matter", "Time", "Energy", "Life", "Spirit"]
 ROLES = ["Scout", "Breaker", "Carrier", "Warden", "Mender"]
 
-#: §26.1's launch content table. A count that drifts from this is a real error.
+#: §26.1's launch content table. A count that drifts from this is a real error,
+#: except where the drift is itself a tracked contradiction — see BUILDINGS below.
 EXPECTED = {"notes": 8, "laws": 48, "resonances": 44, "chords": 12,
-            "terrain": 39, "ruleborn": 18, "roles": 5, "buildings": 16,
+            "terrain": 39, "ruleborn": 18, "roles": 5,
             "wards": 6, "sages": 4, "eras": 8}
+
+#: §26.1 still says 16 building types. v3.0 added the Library as §10.5 without
+#: updating that count, so 17 is the correct extraction and 16 is the stale copy.
+BUILDINGS_IN_26_1 = 16
 
 #: Traits are counted separately: §26.1 says 30, §11.3 enumerates 31, and §17.3
 #: names a 32nd. That is contradiction C10, so it is reported, not failed.
 EXPECTED_TRAITS = 30
+
+#: A day-2 player's stability capacity, from the economy model. Used to ask
+#: whether a "late-game discovery" is actually gated.
+DAY_2_STABILITY = 51
 
 #: The old names v2.3 replaced (§26.9). A surviving reference is a stale rename.
 RETIRED_NAMES = ["Echo Knight", "Moss Giant", "Masquerade", "Creator Fund", "Lawbound"]
@@ -62,6 +71,15 @@ def opn(item_id: str, msg: str) -> None:
     open_items.append((item_id, msg))
 
 
+def _doc_declares_attributes() -> bool:
+    """Whether the design document claims size and flight are stated properties."""
+    doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.0.txt"
+    if not doc.exists():
+        return False
+    text = doc.read_text(encoding="utf-8")
+    return "Size is a band on every ruleborn" in text
+
+
 def load(name: str) -> list[dict]:
     path = CONTENT / f"{name}.json"
     if not path.exists():
@@ -71,7 +89,7 @@ def load(name: str) -> list[dict]:
 
 
 def main() -> int:
-    data = {name: load(name) for name in list(EXPECTED) + ["traits"]}
+    data = {name: load(name) for name in list(EXPECTED) + ["traits", "buildings"]}
     if errors:
         report()
         return 1
@@ -189,7 +207,14 @@ def main() -> int:
     for b in data["buildings"]:
         levels = [lvl["level"] for lvl in b["levels"]]
         if levels != list(range(1, len(levels) + 1)):
-            err(f"building {b['name']}: levels are {levels}, expected 1..{len(levels)}")
+            if b.get("needs_decision"):
+                opn(b["needs_decision"],
+                    f"building {b['name']}: \u00a710.5 states levels {levels} only. "
+                    f"Every other building lists every level, and the economy model "
+                    f"cannot price a faucet with seven levels missing")
+            else:
+                err(f"building {b['name']}: levels are {levels}, "
+                    f"expected 1..{len(levels)}")
         costs = [lvl["cost_starlight"] for lvl in b["levels"]]
         if costs != sorted(costs):
             err(f"building {b['name']}: costs are not monotonically increasing")
@@ -268,14 +293,25 @@ def main() -> int:
     #: Attributes a law may read, beyond role and creature names.
     KNOWN_ATTRS = {"flyer", "flyers", "big", "small", "size", "mass"}
     undefined = {a for a in KNOWN_ATTRS if a not in creature_attrs}
+    #: v3.0's §12.21 says these attributes now exist. They do not yet exist as
+    #: fields, which is the same gap re-stated rather than closed.
+    declares_attributes = any(
+        r.get("size") or r.get("flight") is not None for r in data["ruleborn"]
+    ) is False and _doc_declares_attributes()
     for law in laws:
         text = f"{law.get('tier_1', '')} {law.get('tiers_2_3', '')}".lower()
         hits = sorted(a for a in undefined if a in text.split()
                       or f"{a} characters" in text or f"{a} ones" in text)
         if hits:
+            where = ("\u00a712.21 declares size a band on every ruleborn and "
+                     "flight a stated property, but neither appears as a field in "
+                     "\u00a711.1 or \u00a711.11 \u2014 Featherkin's flight is "
+                     "still prose in a Passive column"
+                     if declares_attributes else
+                     "\u00a711.1 has health, speed, power and carry; "
+                     "\u00a711.11's proportions are art direction")
             opn("G12", f"law {law['name']} keys off {hits} \u2014 no creature or "
-                       f"role carries that attribute (§11.1 has health, speed, "
-                       f"power and carry; §11.11's proportions are art direction)")
+                       f"role carries that attribute ({where})")
 
     # =====================================================================
     # Known open contradictions — reported, not failed
@@ -288,10 +324,16 @@ def main() -> int:
                    f"that appears in neither")
 
     names = {b["name"] for b in data["buildings"]}
-    if "Library" not in names:
+    has_library = any("Library" in n for n in names)
+    if not has_library:
         opn("C8", "the Library is referenced four times as the non-raiding page "
-                  "source (§7.6, §12.1, §27.2, §30.15) but is not among the 16 "
+                  "source (§7.6, §12.1, §27.2, §30.15) but is not among the "
                   "building types in §10.2 — no cost, no levels, no placement rule")
+    elif len(data["buildings"]) != BUILDINGS_IN_26_1:
+        opn("C8", f"v3.0 added the Library as \u00a710.5, so there are now "
+                  f"{len(data['buildings'])} building types \u2014 but \u00a726.1's "
+                  f"launch table still says {BUILDINGS_IN_26_1}, and \u00a710.2's "
+                  f"table of every level of every building does not contain it")
 
     if all(w.get("missing") == "levels 2-5" for w in data["wards"]):
         opn("G3", "§10.3 specifies ward level 1 only, but §10.2 gives the Ward "
@@ -299,8 +341,11 @@ def main() -> int:
 
     ranks = collections.Counter(law["rank"] for law in laws)
     if "Uncommon" not in ranks:
-        opn("C3", f"law ranks are {dict(ranks)} — §7.10 and §27.2 describe five "
-                  f"ranks including 14 Uncommon, but no law is tagged Uncommon")
+        opn("C3", f"law ranks are {dict(ranks)} \u2014 \u00a77.10's own table says "
+                  f"18/14/10/6 plus 3 paradoxes. v3.0 re-tagged 12 laws from Rare "
+                  f"to Uncommon, which moved the split without matching it, and "
+                  f"left \u00a77.6, \u00a714.4 and the glossary on the old "
+                  f"three-rank page costs")
 
     pools = collections.Counter()
     for law in laws:
@@ -315,9 +360,35 @@ def main() -> int:
         if any(set(c["notes"]) <= set(a["notes"]) | set(b["notes"])
                for a, b in itertools.combinations(pool, 2)):
             reachable_with_two += 1
-    if reachable_with_two:
+    # v3.0's §8.8 changed the rule to three *distinct laws*, which makes §8.5
+    # true. Whether it makes a chord late-game is a different question, and the
+    # cheapest three-law combination is how to answer it.
+    by_id = {law["id"]: law for law in laws}
+    cheapest, all_common = None, 0
+    for c in data["chords"]:
+        banned = {OPPOSITE[n] for n in c["notes"]}
+        pool = [law for law in laws
+                if set(law["notes"]) & set(c["notes"]) and not set(law["notes"]) & banned]
+        best = None
+        for combo in itertools.combinations(pool, 3):
+            if set(c["notes"]) <= set().union(*(set(l["notes"]) for l in combo)):
+                cost = sum(l["stability_cost"] for l in combo)
+                if best is None or cost < best[0]:
+                    best = (cost, [l["rank"] for l in combo])
+        if best:
+            cheapest = best[0] if cheapest is None else min(cheapest, best[0])
+            all_common += set(best[1]) == {"Common"}
+    if cheapest is not None and cheapest <= DAY_2_STABILITY:
+        opn("D14", f"\u00a78.8 fixed the rule \u2014 a chord needs three distinct "
+                   f"laws \u2014 but not the outcome it argued for. The cheapest "
+                   f"chord now costs {cheapest} stability against a day-2 capacity "
+                   f"of {DAY_2_STABILITY}, up from 26, and {all_common} of "
+                   f"{len(data['chords'])} are still three commons. The gate that "
+                   f"makes a chord late-game is the Lab level 3 (Spire 5, about day "
+                   f"42), which \u00a78.5 mentions and \u00a78.8 does not lean on")
+    elif reachable_with_two:
         opn("D14", f"{reachable_with_two} of {len(data['chords'])} chords are reachable "
-                   f"with two laws, not the three §8.5 describes "
+                   f"with two laws, not the three \u00a78.5 describes "
                    f"({two_note} of {len(laws)} laws carry two notes)")
 
     sounds = collections.Counter(law["sound"] for law in laws)

@@ -43,55 +43,65 @@ STAGES = [
 # ===========================================================================
 dict(
     id="S0",
-    title="The two gates",
-    subtitle="Decide whether the project continues",
-    blurb="§26.7 puts two tests before any code and both are right. They cost "
-          "nothing and they answer the only two questions that can stop the "
-          "project. The prototype for both is built and published; what remains "
-          "is people playing it.",
+    title="Validation without players",
+    subtitle="\u00a719.27, rewritten in v3.0 \u2014 and now the critical path",
+    blurb="v3.0 removed both pre-code player tests and replaced them with "
+          "harnesses, stating the cost plainly: simulation can prove a system is "
+          "legible, balanced and decision-dense, and cannot prove a game is "
+          "enjoyable. Each harness below is buildable here, needs no engine, and "
+          "has a threshold \u00a719.27 sets for itself.",
     tasks=[
         dict(id="T0.1", owner="claude", status="done",
-             title="Build a browser prototype that runs both gates",
-             detail="One page: a heist against a hand-built island, and a build "
-                    "mode that places three terrain features, one guard and one "
-                    "law. Implements §12.17's detection faithfully. Throwaway by "
-                    "design — none of its numbers carry forward (D11).",
+             title="Build a browser prototype that runs the two old gates",
+             detail="Superseded rather than wrong. \u00a719.27 no longer asks for "
+                    "either test, so this is off the critical path \u2014 but it "
+                    "stays published, because it is the only artefact here that "
+                    "can answer the question \u00a719.27 says simulation cannot, "
+                    "and sending a link to twenty strangers costs an afternoon "
+                    "rather than a soft launch (D20).",
              evidence="https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E"),
-        dict(id="T0.2", owner="claude", status="done",
-             title="Build the scoring harness",
-             detail="Testers finish with a copyable code. The harness scores a "
-                    "batch of codes against §19.27's and §13.3's own thresholds, "
-                    "so the answer is read off rather than argued.",
+        dict(id="T0.2", owner="claude", status="ready",
+             title="The heist harness \u2014 is it tense, and is there depth?",
+             detail="Thousands of runs with scripted crews at three skill levels "
+                    "\u2014 careless, competent, optimal. Tension inferred from "
+                    "structure rather than reported: decisions per run, "
+                    "near-captures, whether the last ten seconds decide it. The "
+                    "same harness answers depth by comparing the skill levels, "
+                    "which is the cheaper and sharper of the two questions.",
+             gate="a median run carries 15\u201325 decisions; a near-capture in "
+                  "half of runs; the last ten seconds decide a quarter; and the "
+                  "optimal crew succeeds 35 points more often than the careless "
+                  "one (\u00a719.27)"),
+        dict(id="T0.3", owner="claude", status="blocked",
+             title="The attribution check \u2014 does delegated control hold?",
+             detail="\u00a719.27 does not ask whether it <em>felt</em> right; it "
+                    "checks that \u00a712.18's rule holds, which is the honest "
+                    "move. Every state change in a replay must trace to a player "
+                    "command.",
+             gate="no unattributed decisions in ten thousand replays",
+             blocked_by=["T0.2"]),
+        dict(id="T0.4", owner="claude", status="blocked",
+             title="The ablation harness \u2014 is the defence fair?",
+             detail="\u00a713.4's method: hold rate across all thirty-two "
+                    "combinations of the five layers. This is also the only test "
+                    "that can catch F6 \u2014 if one role is two thirds of the "
+                    "answer against every breakable object, an ablation will show "
+                    "it as a layer that does not move.",
+             gate="hold rate 30\u201345%, no layer above a quarter, design beating "
+                  "progression 60/40 (\u00a713.4)",
+             blocked_by=["T0.2"]),
+        dict(id="T0.5", owner="you", status="ready",
+             title="Decide whether to send the prototype out anyway",
+             detail="Not a disagreement with \u00a719.27, which argues its case "
+                    "well and is your call. But the reason it gives \u2014 that "
+                    "thirty people in a room do not exist \u2014 is the reason the "
+                    "prototype was built as a link. It is published and it costs "
+                    "nothing to leave up. Twenty sessions would move the one "
+                    "question the harnesses cannot touch.",
              evidence="tools/parse_gate_results.py"),
-        dict(id="T0.3", owner="you", status="yours",
-             title="Gate 1 — get 15–30 people to play it",
-             detail="A hobbyist community, a subreddit, a Discord, or a paid "
-                    "panel (§25.5 budgets for one). The measure that matters is "
-                    "behavioural: whether they choose to play again.",
-             gate="median tension ≥ 3/4, median enjoyment ≥ 6/10, "
-                  "≥ 60% play again (§19.27)",
-             blocked_by=["T0.1"]),
-        dict(id="T0.4", owner="you", status="yours",
-             title="Gate 2 — get 15–20 people to complete a build",
-             detail="Build an island, watch a scripted raid against it, then be "
-                    "told they may stop. Whether a second island gets built "
-                    "unprompted is logged, never asked — stated willingness "
-                    "runs about 46% ahead of behaviour [218][219].",
-             gate="≥ 30% build a second island → authorship as designed; "
-                  "15–30% → authorship with scaffolding; < 15% → "
-                  "pivot to generated islands the player curates (§13.3)",
-             blocked_by=["T0.1"]),
-        dict(id="T0.5", owner="you", status="blocked",
-             title="Read the two results and decide",
-             detail="Gate 2's answer decides what game is being built, not "
-                    "whether it is built — §26.7 calls it “the single "
-                    "decision that changes the most”, and the pivot is not a "
-                    "lesser game. Gate 1's answer can stop the project.",
-             blocked_by=["T0.3", "T0.4"]),
     ],
 ),
 
-# ===========================================================================
 dict(
     id="S1",
     title="Reconcile the document",
@@ -122,10 +132,12 @@ dict(
              register_severity=["significant", "minor"]),
         dict(id="T1.4", owner="you", status="yours",
              title="Sign off, or overrule, each drafted resolution",
-             detail="Every spec file is marked <em>proposed</em>. They are "
-                    "readings of your document, not decisions about your game. "
-                    "Nothing below this line should start until they are "
-                    "decisions.",
+             detail="Most of this happened in v3.0, which adopted "
+                    "<code>movement.md</code>, <code>fights.md</code> and "
+                    "<code>vault.md</code> close to whole. What is left is the "
+                    "spec files v3.0 did not take up \u2014 <code>wards.md</code>, "
+                    "<code>economy.md</code>'s production peg \u2014 and the "
+                    "resolutions for the six items v3.0 introduced.",
              evidence="docs/design/spec/README.md",
              blocked_by=["T1.2"]),
         dict(id="T1.5", owner="you", status="yours",
@@ -196,18 +208,25 @@ dict(
                     "still hold, and that the payout peg behaves as its spec page "
                     "claims.",
              evidence="python3 -m tools.economy_model.test_economy_model"),
-        dict(id="T2.3", owner="claude", status="blocked",
-             title="Model Aether and Essence spending",
+        dict(id="T2.3", owner="claude", status="ready",
+             title="Model Aether and Essence spending, and the Library",
              detail="Starlight currently drives all growth, so weaving upkeep, "
                     "births and character levels are unmodelled and "
-                    "law-restoration dates are indicative only.",
-             blocked_by=["T1.4"]),
-        dict(id="T2.4", owner="claude", status="blocked",
-             title="Regenerate §9.3, §10.2, §14.2 and §14.3 from the model",
-             detail="Under whatever building and roster rules are chosen, and "
-                    "replace the published tables wholesale. Hand-editing them is "
-                    "what produced C19 in the first place.",
-             blocked_by=["T1.5"]),
+                    "law-restoration dates are indicative only. v3.0 adds a "
+                    "second page faucet \u2014 the Library \u2014 which the model "
+                    "must carry before any page total can be re-derived. "
+                    "\u00a710.5 gives three of its ten levels (C24)."),
+        dict(id="T2.4", owner="claude", status="ready",
+             title="Regenerate \u00a79.3, \u00a710.2, \u00a714.2 and \u00a714.3 from the model",
+             detail="<strong>Unblocked by v3.0.</strong> \u00a75.9 settles the "
+                    "building and roster rules \u2014 one producer of each kind "
+                    "per realm, partial staffing paying pro-rata, a crew on a "
+                    "heist withheld from work. The published tables were not "
+                    "re-run against that decision: day 2 is still 2,100 Starlight "
+                    "and day 8 still 6,200. This is C19, and it is now the "
+                    "clearest instance of the thing the register exists to stop.",
+             evidence="python3 -m tools.economy_model production",
+             register=["C19"]),
     ],
 ),
 
@@ -228,8 +247,8 @@ dict(
                     "round</strong> rather than deferring it — the whole "
                     "architecture rests on the same code running in both places.",
              gate="identical checksums on all four, or take the C# fallback "
-                  "without renegotiating (§24.7)",
-             blocked_by=["T0.5"]),
+                  "without renegotiating (\u00a724.7)",
+             blocked_by=["T0.2"]),
         dict(id="T3.2", owner="claude", status="blocked",
              title="Fixed-point module and golden replays, portable from day one",
              detail="Written so that switching to the fallback costs the spike "

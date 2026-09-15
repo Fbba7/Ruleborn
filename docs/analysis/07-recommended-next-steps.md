@@ -3,6 +3,14 @@
 Ordered. Everything in stage 0 and 1 costs essentially nothing and can start
 immediately; nothing after stage 2 should start before it.
 
+**Superseded in part by v3.0.** Stage 0 below proposed a browser prototype to run
+two player gates. §19.27 and §13.3 removed both gates: every pre-code question is
+now answered by simulation, and the build-willingness risk is designed out rather
+than measured. The stage-0 argument is left standing because v3.0's stated reason
+— "that cohort does not exist" — is the same problem this page solved a different
+way, and because the prototype is built and published either way. What replaced
+it is in the roadmap.
+
 **This page is the argument; the roadmap is the tracker.** The same stages, as a
 live page with statuses, blockers and computed progress, are at
 https://claude.ai/artifact/Yb1WxZ2eJCCbByitnd7fJf — generated from

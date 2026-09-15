@@ -1,4 +1,4 @@
-# Design analysis — Ruleborn v2.3
+# Design analysis — Ruleborn
 
 A deep read of `docs/design/ruleborn-game-design-v2.3.html`: 30 sections,
 ~85,600 words, 330 headings, 123 graded references, 12 commissioned evidence
@@ -34,7 +34,7 @@ python3 -m tools.economy_model
 python3 -m tools.economy_model.test_economy_model
 ```
 
-`check_design_consistency.py` confirms twelve findings and passes seven other
+`check_design_consistency.py` confirms fourteen findings and passes twelve other
 checks. The economy model's twelve tests assert both that it still reproduces the
 document where the document is self-consistent, that findings F1–F3 still hold,
 and that the payout peg proposed in `spec/economy.md` behaves as that page

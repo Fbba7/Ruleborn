@@ -14,7 +14,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from audit_register import REGISTER  # noqa: E402
+from audit_register import REGISTER, V3  # noqa: E402
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "docs" / "audit" / "index.html"
 
@@ -40,6 +40,7 @@ STATUS = {
     "proposed": "Proposed",
     "adopted":  "Adopted",
     "done":     "Done",
+    "fixed":    "Fixed in v3.0",
 }
 
 GROUPS = [
@@ -81,8 +82,11 @@ def refs_html(refs: list[str]) -> str:
 
 def item_html(item: dict) -> str:
     label, cls = SEVERITY[item["severity"]]
-    status = item.get("status", "open")
+    v3 = V3.get(item["id"], {})
+    status = v3.get("status") or item.get("status", "open")
     rec = item.get("rec")
+    v3_html = (f'<p class="v3"><span class="vlabel">v3.0</span> {v3["note"]}</p>'
+               if v3.get("note") else "")
     return f"""
       <article class="item {cls}" data-group="{item['_group']}"
                data-kind="{item['kind']}" data-status="{status}">
@@ -95,6 +99,7 @@ def item_html(item: dict) -> str:
         <div class="refs">{refs_html(item['refs'])}</div>
         <p class="body">{item['body']}</p>
         {f'<p class="rec"><span class="arrow">&rarr;</span> {rec}</p>' if rec else ''}
+        {v3_html}
       </article>"""
 
 
@@ -108,8 +113,16 @@ def build() -> str:
         raise SystemExit(f"items in no group: {stray}")
 
     counts = {g: sum(1 for i in REGISTER if i["_group"] == g) for g, *_ in GROUPS}
-    open_count = sum(1 for i in REGISTER if i.get("status") == "open")
-    done_count = sum(1 for i in REGISTER if i.get("status") in ("done", "adopted"))
+    def status_of(item: dict) -> str:
+        return V3.get(item["id"], {}).get("status") or item.get("status", "open")
+
+    open_count = sum(1 for i in REGISTER if status_of(i) == "open")
+    done_count = sum(1 for i in REGISTER if status_of(i) in ("done", "adopted"))
+    fixed_count = sum(1 for i in REGISTER if status_of(i) == "fixed")
+    touched = sum(1 for i in REGISTER if i["id"] in V3)
+    new_in_v3 = sum(1 for i in REGISTER
+                    if i["id"] in ("C21", "C22", "C23", "C24", "C25", "C26",
+                                   "D19", "D20"))
     today = datetime.date.today().strftime("%d %B %Y")
 
     chips = "".join(
@@ -120,6 +133,8 @@ def build() -> str:
     gap_count = sum(1 for i in REGISTER if i["kind"] == "gap")
     chips += (f'<button class="chip alt" data-filter="kind:gap">Specified nowhere'
               f'<span class="n">{gap_count}</span></button>')
+    chips += (f'<button class="chip alt" data-filter="status:fixed">Fixed in v3.0'
+              f'<span class="n">{fixed_count}</span></button>')
 
     sections = []
     for group_id, title, blurb, _ in GROUPS:
@@ -323,6 +338,20 @@ def build() -> str:
   }}
   .status.s-done, .status.s-adopted {{ color: var(--cho); }}
   .status.s-proposed {{ color: var(--sig); }}
+  .status.s-fixed {{ color: var(--chg); font-weight: 500; }}
+
+  /* What version 3.0 did about an item, as a layer over what was found. */
+  .v3 {{
+    margin-top: 10px; padding: 9px 12px; border-radius: 6px;
+    background: color-mix(in srgb, var(--chg) 9%, transparent);
+    border-left: 2px solid var(--chg);
+    color: var(--ink); font-size: 14px; max-width: 66ch;
+  }}
+  .vlabel {{
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--chg);
+    margin-right: 7px; font-weight: 500;
+  }}
 
   .refs {{ display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 9px; }}
   .ref {{
@@ -367,10 +396,17 @@ def build() -> str:
       still needs fixing in the document. Section marks point into the design
       document; the repository is the source of truth and this page is generated
       from it.</p>
+    <p class="lede">Read against <strong>version 3.0</strong>, which answered this
+      register directly (&sect;30.18). {fixed_count} items are fixed in the
+      document itself and carry a <span class="vlabel">v3.0</span> note saying
+      what it did &mdash; including where a fix stopped short. {new_in_v3} items
+      are new: four of them are decisions v3.0 took and then left a stale copy
+      of, which is the pattern the whole register is about.</p>
 
     <div class="summary">
       <div><span class="n">{len(REGISTER)}</span><span class="k">items tracked</span></div>
       <div><span class="n">{open_count}</span><span class="k">open</span></div>
+      <div><span class="n">{fixed_count}</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">{done_count}</span><span class="k">done or adopted</span></div>
       <div><span class="n">{counts['blocking'] + counts['design']}</span><span class="k">blocking the build</span></div>
       <div><span class="n">{today.split()[0]} {today.split()[1][:3]}</span><span class="k">last generated</span></div>

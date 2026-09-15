@@ -6,13 +6,81 @@ checked here, so the analysis can be re-run against a later version of the desig
 and the findings re-confirmed or retired.
 
 Usage:
-    python3 tools/check_design_consistency.py docs/design/ruleborn-game-design-v2.3.txt
+    python3 tools/check_design_consistency.py [path to the extracted text]
+
+Checks read their numbers **from the document** wherever they can, so a check
+can retire when the document is fixed. An earlier version hard-coded the role
+stats and the Vault load rate, which meant those checks would have reported the
+same failure against any version — including one that had fixed them.
 """
 
 import collections
 import itertools
 import re
 import sys
+
+DEFAULT_DOC = "docs/design/ruleborn-game-design-v3.0.txt"
+
+# --------------------------------------------------------------------------
+# Supersession
+# --------------------------------------------------------------------------
+#
+# §30.18 draws the right lesson from the v2.3 audit: four of six conflicts had
+# one cause, a table that summarises something else and was updated in only one
+# place. v3.0 then fixed six systems and left copies of four of them standing.
+#
+# This is the check that lesson implies. Each entry names a decision the document
+# has made, and the exact sentences elsewhere that still describe the version it
+# replaced. A fix is not finished while any of them is still in the file.
+SUPERSESSIONS = [
+    dict(
+        fix="the detection model",
+        winner="12.17",
+        said="12.8 states the older single-cone, percent-per-second rules are gone",
+        stale=[
+            ("+50% a second in sight",
+             "29.1, the formulas appendix, still tabulates it — and cites 12.8"),
+            ("start at 25% awareness",
+             "5.4's landing rule is still written in the deleted percentage unit"),
+        ],
+    ),
+    dict(
+        fix="the ambush floor",
+        winner="12.8",
+        said="12.8 adds a floor of half the target's full health",
+        stale=[
+            ("First unseen hit: 2 s stun and triple damage",
+             "29.1 still gives triple damage with no floor"),
+        ],
+    ),
+    dict(
+        fix="the Vault loading rate",
+        winner="12.19",
+        said="12.19 gives every role 30 units a second",
+        stale=[
+            ("each Carrier loads 150 loot a second",
+             "12.6 still has Carriers only, at five times the rate"),
+        ],
+    ),
+    dict(
+        fix="the law rarity split",
+        winner="7.7",
+        said="the 48 law sheets are re-tagged to 18/12/6/12",
+        stale=[
+            ("15 pages for a common law",
+             "7.6 still prices three ranks, and never mentions Uncommon"),
+            ("1,485 pages",
+             "14.4's Codex total is still the three-rank arithmetic"),
+            ("15, 30 or 60 pages by rank",
+             "the glossary and the price list still carry three ranks"),
+        ],
+    ),
+]
+
+#: §12.8's wind-up, read as the universal attack interval — the only cadence the
+#: document states, and since v3.0 the one §12.20 adopts explicitly.
+WIND_UP = 0.8
+AMBUSH_MULTIPLIER = 3.0
 
 LAW_HEADER = re.compile(
     r"^(.+?)(Common|Uncommon|Rare|Deep) · "
@@ -102,8 +170,85 @@ def parse_roles_from_bible(lines: list[str]) -> dict:
     return out
 
 
+def section(text: str, start: str, end: str) -> str:
+    """The text between two headings, raising rather than slicing backwards."""
+    i = text.index(start)
+    j = text.index(end, i)
+    if j <= i:
+        raise SystemExit(f"section({start!r}, {end!r}) is inverted")
+    return text[i:j]
+
+
+def parse_role_stats(text: str) -> dict:
+    """§11.1's role table: Health, Speed, Power, Carry.
+
+    Parsed rather than transcribed, so re-tuning the table re-runs every fight
+    and Vault check below against the new numbers.
+    """
+    block = section(text, "11.1 Roles", "11.2 The 18 ruleborn")
+    cells = [l.strip().lstrip("| ").strip() for l in block.split("\n") if l.strip()]
+    out = {}
+    for i, cell in enumerate(cells):
+        if cell in ROLES and i + 4 < len(cells):
+            try:
+                health, speed, power, carry = (
+                    float(cells[i + 1]), float(cells[i + 2]),
+                    float(cells[i + 3]), float(cells[i + 4]),
+                )
+            except ValueError:
+                continue
+            out[cell] = dict(health=health, speed=speed, power=power, carry=carry)
+    return out
+
+
+def parse_load_rates(text: str) -> list[tuple[str, float, bool]]:
+    """Every statement in the document about how fast loot is loaded.
+
+    Returns (quoted phrase, units per second, everyone-loads). More than one
+    distinct rate is the finding: it means the phase is specified twice.
+    """
+    out = []
+    for m in re.finditer(
+        r"(each Carrier loads (\d+) loot a second"
+        r"|Every role can load, at (\d+) units a second"
+        r"|loads (\d+) loot a second)", text
+    ):
+        phrase = m.group(1)
+        rate = float(next(g for g in m.groups()[1:] if g))
+        out.append((phrase, rate, "Every role" in phrase))
+    return out
+
+
+def parse_rank_table(text: str) -> dict:
+    """§7.10's Rank / Count / Pages table."""
+    block = section(text, "7.10 Rarity buys specificity", "This follows the published")
+    cells = [l.strip().lstrip("| ").strip() for l in block.split("\n") if l.strip()]
+    out = {}
+    for i, cell in enumerate(cells):
+        if cell in ("Common", "Uncommon", "Rare", "Deep", "Paradox") and i + 3 < len(cells):
+            try:
+                count = int(cells[i + 1])
+                pages = int(cells[i + 3])
+            except ValueError:
+                continue
+            out[cell] = (count, pages)
+    return out
+
+
+def parse_restore_costs(text: str) -> str | None:
+    """§7.6's one-line statement of what a law costs to restore."""
+    m = re.search(r"Restoring a law: ([^\n]+)", text)
+    return m.group(1).strip() if m else None
+
+
+def ambush_has_floor(text: str) -> bool:
+    """Whether §12.8's ambush carries the health floor that makes its own rule true."""
+    block = section(text, "12.8 Guards, stealth and fights", "12.9 Outcomes")
+    return bool(re.search(r"half the guard's full health|half the target's", block))
+
+
 def main() -> int:
-    path = sys.argv[1] if len(sys.argv) > 1 else "docs/design/ruleborn-game-design-v2.3.txt"
+    path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_DOC
     text = open(path, encoding="utf-8").read()
     lines = text.split("\n")
     laws = parse_laws(lines)
@@ -113,10 +258,26 @@ def main() -> int:
     schools = collections.Counter(d["school"] for d in laws.values())
     check("8 laws per school", set(schools.values()) == {8}, str(dict(schools)))
     ranks = collections.Counter(d["rank"] for d in laws.values())
+    stated = parse_rank_table(text)
+    stated_counts = {k: v[0] for k, v in stated.items() if k != "Paradox"}
     check(
-        "law ranks match the 7.10 five-rank table (18/14/10/6 + 3 paradox)",
-        ranks.get("Uncommon", 0) == 14,
-        f"actual {dict(ranks)} — no law is tagged Uncommon; 7.4 three-rank split is what is authored",
+        "the authored law sheets match 7.10's own rank table",
+        dict(ranks) == stated_counts,
+        f"authored {dict(ranks)} against 7.10's {stated_counts}",
+    )
+
+    # 7.10 prices each rank in pages; 7.6 states the same thing in a sentence.
+    restore = parse_restore_costs(text)
+    stated_pages = {k: v[1] for k, v in stated.items()}
+    missing = [r for r in ranks if restore and r.lower() not in restore.lower()]
+    agrees = restore is not None and all(
+        str(pages) in restore for rank, pages in stated_pages.items() if rank in ranks
+    )
+    check(
+        "7.6's restore costs match 7.10's pages column",
+        agrees and not missing,
+        f"7.10 prices {stated_pages}; 7.6 says {restore!r}"
+        + (f"; it never mentions {', '.join(missing)}" if missing else ""),
     )
 
     print("\nNote economy (8.1)")
@@ -126,10 +287,19 @@ def main() -> int:
             by_note[note].append(name)
     sizes = {k: len(v) for k, v in sorted(by_note.items(), key=lambda kv: -len(kv[1]))}
     print(f"        note pools: {sizes}")
+    worst = max(OPPOSITE.items(), key=lambda ab: abs(len(by_note[ab[0]]) - len(by_note[ab[1]])))
+    a, b = worst
     check(
         "opposite note pairs are within 2 laws of each other",
-        all(abs(len(by_note[a]) - len(by_note[b])) <= 2 for a, b in OPPOSITE.items()),
-        "Glow 12 vs Hush 6 — the Glow/Hush pair is 2:1",
+        all(abs(len(by_note[x]) - len(by_note[y])) <= 2 for x, y in OPPOSITE.items()),
+        f"{a} {len(by_note[a])} vs {b} {len(by_note[b])}",
+    )
+    # 8.8 states the rebalance as done. The law sheets are where it would show.
+    claims_rebalance = "eight or nine laws per note" in text
+    check(
+        "8.8's claim that the note table 'now runs eight or nine laws per note' holds",
+        not claims_rebalance or set(sizes.values()) <= {8, 9},
+        f"the section claims it; the 48 law sheets give {sizes}",
     )
 
     print("\nChord reachability (8.5)")
@@ -151,11 +321,14 @@ def main() -> int:
                 break
         min_laws[chord] = best
     print(f"        minimum laws per chord: {collections.Counter(min_laws.values())}")
+    two_note = sum(1 for d in laws.values() if len(d["notes"]) > 1)
+    requires_distinct = "three distinct laws" in text
     check(
-        "chords need three laws, as 8.5 states",
-        all(v >= 3 for v in min_laws.values()),
-        f"all 12 chords are reachable with {min(min_laws.values())} laws, "
-        "because 23 of 48 laws carry two notes",
+        "8.5 requires three distinct laws, not three notes",
+        requires_distinct,
+        f"{two_note} of {len(laws)} laws carry two notes, so "
+        f"all 12 chords are reachable with {min(min_laws.values())} laws "
+        "unless the rule names distinct laws",
     )
 
     print("\nRuleborn roles (11.2 vs 11.11)")
@@ -187,59 +360,60 @@ def main() -> int:
     )
 
     print("\nFights (12.8, 11.1)")
-    # §11.1's level-1 role stats, read straight from the table.
-    role_stats = {
-        "Scout": (12, 120, 60), "Breaker": (40, 180, 60), "Carrier": (8, 160, 300),
-        "Warden": (20, 420, 80), "Mender": (6, 130, 60),
-    }
-    # §12.8: "two ambush hits knock out a guard of equal level", with an ambush at
-    # triple damage and the section's own 0.8s wind-up as the attack interval.
+    role_stats = parse_role_stats(text)
+    floor = 0.5 if ambush_has_floor(text) else 0.0
+    check(
+        "the ambush rule is stated with a health floor (12.8)",
+        floor > 0,
+        f"a floor of {floor:.0%} of the target's full health" if floor
+        else "triple Power alone; without a floor the rule below cannot hold",
+    )
+
+    def ambush_damage(power: float, health: float) -> float:
+        return max(AMBUSH_MULTIPLIER * power, floor * health)
+
     holds = sum(
         1
-        for power, _, _ in role_stats.values()
-        for _, health, _ in role_stats.values()
-        if 2 * 3 * power >= health
+        for a in role_stats.values()
+        for d in role_stats.values()
+        if 2 * ambush_damage(a["power"], d["health"]) >= d["health"]
     )
     check(
         "two ambush hits knock out an equal-level guard (12.8)",
         holds == len(role_stats) ** 2,
-        f"true for {holds} of {len(role_stats) ** 2} role pairings; the rule needs "
-        f"Power = Health/4 and no role reaches it",
-    )
-    ratio, slowest, toughest = max(
-        (health / power, a, d)
-        for a, (power, _, _) in role_stats.items()
-        for d, (_, health, _) in role_stats.items()
-    )
-    # One ambush at triple damage, then the remainder, at one hit per 0.8s.
-    seconds = (1 + max(0, -(-(ratio - 3) // 1))) * 0.8
-    check(
-        "no single fight eats a tenth of the 3-minute heist (11.6, 12.6)",
-        seconds <= 18,
-        f"a {slowest} against a {toughest} takes {seconds:.0f}s, which is "
-        f"{100 * seconds / 180:.0f}% of the heist and a third of the 15-25 "
-        f"decisions 12.6 budgets for the whole run",
+        f"true for {holds} of {len(role_stats) ** 2} role pairings"
+        + ("" if holds == len(role_stats) ** 2 else
+           "; the rule needs Power = Health/4 and no role reaches it"),
     )
 
-    print("\nThe Vault phase (12.6, 11.1)")
-    capacity = sum(carry for _, _, carry in role_stats.values())
-    carrier_carry = role_stats["Carrier"][2]
+    print("\nThe Vault phase (12.6, 12.19, 11.1)")
+    rates = parse_load_rates(text)
+    distinct = sorted({r for _, r, _ in rates})
     check(
-        "a crew of five can fill its bags (12.6 loads Carriers only)",
-        capacity == carrier_carry,
-        f"{capacity - carrier_carry} of {capacity} units of crew capacity are "
-        f"unreachable: only Carriers load, and only into themselves",
+        "the document states one loading rate",
+        len(distinct) <= 1,
+        "two rates are live: " + "; ".join(f"{p!r} = {r:.0f}/s" for p, r, _ in rates)
+        + " — the superseded one was not deleted",
     )
+    everyone_loads = any(every for _, _, every in rates)
+    capacity = sum(r["carry"] for r in role_stats.values())
+    carrier = role_stats["Carrier"]["carry"]
+    check(
+        "a crew of five can fill its bags",
+        everyone_loads,
+        f"every role loads, so all {capacity:.0f} units are reachable" if everyone_loads
+        else f"{capacity - carrier:.0f} of {capacity:.0f} units of crew capacity are "
+             f"unreachable: only Carriers load, and only into themselves",
+    )
+    slowest = min(distinct) if distinct else 0
+    fill = max(r["carry"] for r in role_stats.values()) / slowest if slowest else 0
     check(
         "loading lasts long enough to contain a decision (12.6: one per 8-12s)",
-        carrier_carry / 150 >= 8,
-        f"filling a Carrier at 150/s takes {carrier_carry / 150:.1f}s, against a "
-        f"phase budgeted at about 30s whose stated core decision is when to stop",
+        fill >= 8,
+        f"a full bag at {slowest:.0f}/s takes {fill:.1f}s",
     )
-    # The corroboration, stated as a passing check rather than a failure.
-    volley = sum(power * (2 if name == "Breaker" else 1)
-                 for name, (power, _, _) in role_stats.items())
-    crack = (1_500 * 6) / (volley * 1.08 ** 11 / 0.8)
+    volley = sum(r["power"] * (2 if n == "Breaker" else 1) for n, r in role_stats.items())
+    crack = (1_500 * 6) / (volley * 1.08 ** 11 / WIND_UP)
     check(
         "cracking a level-6 Vault fits the 30-second phase (12.6)",
         20 <= crack <= 30,
@@ -247,7 +421,7 @@ def main() -> int:
     )
 
     print("\nWards and pylons (11.1, 10.2, 12.6)")
-    breaker = role_stats["Breaker"][0] * 2
+    breaker = role_stats["Breaker"]["power"] * 2
     check(
         "'who cracks' is a decision (12.6) rather than always the Breaker",
         breaker / volley < 0.5,
@@ -255,18 +429,22 @@ def main() -> int:
         f"wards, pylons and the Vault, so four extra characters cut the time by "
         f"{100 * (1 - breaker / volley):.0f}%",
     )
-    # §10.2 gives ward levels 2-5 as "effect +15%..." and never says what scales.
-    ward_effects = {
-        "Gravity Well": 2, "Crystal Wall": 1, "Time Snare": 1,
-        "Static Coil": 3, "Thorn Hedge": 1, "Lantern Glare": 2,
-    }
-    ambiguous = [n for n, candidates in ward_effects.items() if candidates > 1]
+    ward_block = section(text, "10.3 Wards", "10.5 The Library")
     check(
         "every ward's '+15% effect' names one quantity (10.2, 10.3)",
-        not ambiguous,
-        f"{len(ambiguous)} of {len(ward_effects)} wards state more than one number "
-        f"the percentage could scale: {', '.join(ambiguous)}",
+        "scales" in ward_block or "the level scales" in ward_block,
+        "10.3 gives level-1 effects in six different units and 10.2 prices five "
+        "levels as '+15% effect'; nothing says which number the percentage moves",
     )
+
+    print("\nSupersession — is each fix finished?")
+    for entry in SUPERSESSIONS:
+        survivors = [(phrase, where) for phrase, where in entry["stale"] if phrase in text]
+        check(
+            f"{entry['fix']} is stated once ({entry['winner']})",
+            not survivors,
+            "; ".join(where for _, where in survivors),
+        )
 
     print("\nStability arithmetic (5.5)")
     capacity = (30 + 8 * 10) + 7 * (8 + 5 * 10)

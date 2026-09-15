@@ -6,6 +6,12 @@ own §19, §28 and §30, which are the research archive (D10).
 
 Every file here is **proposed** until signed off. Nothing is locked (§26.7).
 
+**v3.0 adopted four of them.** `movement.md` became §12.18, `fights.md` became
+§12.20 with §12.8 rewritten around it, `vault.md` became §12.19 with §9.6 gaining
+its `fill` term, and `detection.md`'s reading became §12.8's own words. The three
+still unadopted are `wards.md` (§10.3 is untouched), `economy.md`'s production peg
+(§9.6 kept `B(V)`), and `first-build.md` (§13.3 removed the feature instead).
+
 | File | Resolves | Status |
 | --- | --- | --- |
 | [`detection.md`](detection.md) | C1 — two detection models | Proposed: §12.17 authoritative |

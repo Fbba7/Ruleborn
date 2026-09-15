@@ -57,7 +57,7 @@
   {
     "id": "current",
     "name": "Current",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Motion",
     "stability_cost": 15,
     "notes": [
@@ -75,7 +75,7 @@
   {
     "id": "heavy_ground",
     "name": "Heavy ground",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Motion",
     "stability_cost": 16,
     "notes": [
@@ -204,7 +204,7 @@
   {
     "id": "density",
     "name": "Density",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Matter",
     "stability_cost": 20,
     "notes": [
@@ -222,7 +222,7 @@
   {
     "id": "honeycomb",
     "name": "Honeycomb",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Matter",
     "stability_cost": 17,
     "notes": [
@@ -350,7 +350,7 @@
   {
     "id": "afterimage",
     "name": "Afterimage",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Time",
     "stability_cost": 16,
     "notes": [
@@ -369,7 +369,7 @@
   {
     "id": "delay",
     "name": "Delay",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Time",
     "stability_cost": 14,
     "notes": [
@@ -498,7 +498,7 @@
   {
     "id": "aurora",
     "name": "Aurora",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Energy",
     "stability_cost": 18,
     "notes": [
@@ -517,7 +517,7 @@
   {
     "id": "chain_lightning",
     "name": "Chain lightning",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Energy",
     "stability_cost": 19,
     "notes": [
@@ -646,7 +646,7 @@
   {
     "id": "flock",
     "name": "Flock",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Life",
     "stability_cost": 16,
     "notes": [
@@ -665,7 +665,7 @@
   {
     "id": "spores",
     "name": "Spores",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Life",
     "stability_cost": 18,
     "notes": [
@@ -796,7 +796,7 @@
   {
     "id": "echoes",
     "name": "Echoes",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Spirit",
     "stability_cost": 18,
     "notes": [
@@ -814,7 +814,7 @@
   {
     "id": "sleepwalk",
     "name": "Sleepwalk",
-    "rank": "Rare",
+    "rank": "Uncommon",
     "school": "Spirit",
     "stability_cost": 17,
     "notes": [

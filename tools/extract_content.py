@@ -24,7 +24,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SRC = ROOT / "docs" / "design" / "ruleborn-game-design-v2.3.txt"
+SRC = ROOT / "docs" / "design" / "ruleborn-game-design-v3.0.txt"
 OUT = ROOT / "content"
 
 NOTES = ["Flow", "Weight", "Glow", "Hush", "Bloom", "Spark", "Echo", "Veil"]
@@ -306,7 +306,10 @@ def extract_roles(text: str) -> list[dict]:
 
 
 def extract_wards(text: str) -> list[dict]:
-    rows = table(text, "10.3 Wards", "11.1 Roles",
+    # v3.0 inserted 10.5 (the Library) between the ward table and 11.1, so the
+    # old end marker swallowed the Library's level table as four extra wards.
+    end = "10.5 The Library" if "10.5 The Library" in text else "11.1 Roles"
+    rows = table(text, "10.3 Wards", end,
                  ["name", "school", "effect_level_1", "resets_after"],
                  ["Ward", "School", "Effect at level 1", "Resets after"])
     for r in rows:
@@ -345,6 +348,37 @@ BUILDING_NAMES = ["Keeper's Spire", "Vault", "Anchor Stone", "Star Well",
                   "Aether Spring", "Garden", "Storehouse", "Law Pylon", "Hearth",
                   "Nursery", "Guardian Post", "Ward", "Resonance Lab",
                   "Observatory", "Beacon", "Visitor's Dock"]
+
+
+def extract_library(text: str) -> dict | None:
+    """v3.0 added the Library as §10.5, outside §10.2's table of sixteen.
+
+    It is a building — "a building at the Heart, one per universe" — so it
+    belongs with the others, and being outside the table is exactly how C8
+    happened in the first place.
+    """
+    if "10.5 The Library" not in text:
+        return None
+    block = section(text, "10.5 The Library", "11Characters")
+    cells = [l.strip().lstrip("| ").strip() for l in block.split("\n") if l.strip()]
+    levels = []
+    for i, cell in enumerate(cells):
+        if re.fullmatch(r"\d+", cell) and i + 2 < len(cells) \
+                and re.fullmatch(r"[\d,]+( Starlight)?", cells[i + 1]):
+            levels.append({
+                "level": int(cell),
+                "cost_starlight": int(
+                    cells[i + 1].replace(",", "").replace(" Starlight", "")),
+                "needs": "Spire " + cell,
+                "gives": f"{cells[i + 2]} pages a day",
+            })
+    return {
+        "name": "The Library", "id": "library", "placement": "Heart; 1.",
+        "levels": levels,
+        "note": "\u00a710.5 gives levels 1, 5 and 10 only; the other seven are "
+                "not stated. Every other building in \u00a710.2 lists every level.",
+        "needs_decision": "C8",
+    }
 
 
 def extract_buildings(text: str) -> list[dict]:
@@ -410,7 +444,11 @@ def main() -> int:
     write("roles", extract_roles(text))
     write("ruleborn", extract_ruleborn(text))
     write("traits", extract_traits(text))
-    write("buildings", extract_buildings(text))
+    buildings = extract_buildings(text)
+    library = extract_library(text)
+    if library:
+        buildings.append(library)
+    write("buildings", buildings)
     write("wards", extract_wards(text))
     write("sages", extract_sages(text))
     write("eras", extract_eras(text))

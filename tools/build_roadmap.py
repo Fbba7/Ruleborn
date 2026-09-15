@@ -18,7 +18,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from audit_register import REGISTER              # noqa: E402
+from audit_register import REGISTER, V3          # noqa: E402
 from roadmap import NOT_YET, STAGES              # noqa: E402
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "docs" / "roadmap" / "index.html"
@@ -34,9 +34,14 @@ STATUS = {
 OWNER = {"claude": "from here", "you": "needs you"}
 
 #: A register item has moved past "recorded" once it has a drafted resolution.
-DRAFTED = ("proposed", "adopted", "done")
-#: ...and is finished only once it is a decision.
-SETTLED = ("adopted", "done")
+DRAFTED = ("proposed", "adopted", "done", "fixed")
+#: ...and is finished only once it is a decision in the design document itself.
+SETTLED = ("adopted", "done", "fixed")
+
+
+def status_of(item: dict) -> str:
+    """An item's status, with what v3.0 did about it taking precedence."""
+    return V3.get(item["id"], {}).get("status") or item.get("status", "open")
 
 
 def esc(text: str) -> str:
@@ -75,8 +80,8 @@ def progress_html(task: dict) -> str:
     if not items:
         return ""
     total = len(items)
-    drafted = sum(1 for i in items if i.get("status") in DRAFTED)
-    settled = sum(1 for i in items if i.get("status") in SETTLED)
+    drafted = sum(1 for i in items if status_of(i) in DRAFTED)
+    settled = sum(1 for i in items if status_of(i) in SETTLED)
     pct = 100 * drafted / total
     settled_pct = 100 * settled / total
     ids = " ".join(sorted(i["id"] for i in items))
@@ -164,8 +169,8 @@ def build() -> str:
     today = datetime.date.today().strftime("%d %B %Y")
 
     reg_total = len(REGISTER)
-    reg_drafted = sum(1 for i in REGISTER if i.get("status") in DRAFTED)
-    reg_settled = sum(1 for i in REGISTER if i.get("status") in SETTLED)
+    reg_drafted = sum(1 for i in REGISTER if status_of(i) in DRAFTED)
+    reg_settled = sum(1 for i in REGISTER if status_of(i) in SETTLED)
 
     stage_html = ""
     for stage in STAGES:
@@ -377,6 +382,11 @@ def build() -> str:
       Progress against the register is computed rather than claimed &mdash; and
       <strong>drafted is not signed off</strong>, which is the distinction the
       two bars below keep separate.</p>
+    <p class="lede">Read against <strong>design document v3.0</strong>, which
+      took most of the audit and changed the plan underneath this page: both
+      pre-code player tests are gone, replaced by the simulation harnesses in
+      stage 0, and the build-willingness risk is designed out rather than
+      measured (&sect;13.3, &sect;19.27).</p>
 
     <div class="summary">
       <div><span class="n">{counts['done']}</span><span class="k">tasks done</span></div>

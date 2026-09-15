@@ -174,26 +174,31 @@
       Progress against the register is computed rather than claimed &mdash; and
       <strong>drafted is not signed off</strong>, which is the distinction the
       two bars below keep separate.</p>
+    <p class="lede">Read against <strong>design document v3.0</strong>, which
+      took most of the audit and changed the plan underneath this page: both
+      pre-code player tests are gone, replaced by the simulation harnesses in
+      stage 0, and the build-willingness risk is designed out rather than
+      measured (&sect;13.3, &sect;19.27).</p>
 
     <div class="summary">
-      <div><span class="n">6</span><span class="k">tasks done</span></div>
-      <div><span class="n">5</span><span class="k">live now</span></div>
-      <div><span class="n">7</span><span class="k">waiting on you</span></div>
-      <div><span class="n">41/64</span><span class="k">register items drafted</span></div>
-      <div><span class="n">11</span><span class="k">signed off</span></div>
+      <div><span class="n">5</span><span class="k">tasks done</span></div>
+      <div><span class="n">9</span><span class="k">live now</span></div>
+      <div><span class="n">6</span><span class="k">waiting on you</span></div>
+      <div><span class="n">52/72</span><span class="k">register items drafted</span></div>
+      <div><span class="n">30</span><span class="k">signed off</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
     </div>
 
     <div class="callout">
       <h2>What only you can do</h2>
-      <ul><li><a href="#T0-3">T0.3</a> Gate 1 — get 15–30 people to play it</li><li><a href="#T0-4">T0.4</a> Gate 2 — get 15–20 people to complete a build</li><li><a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution</li><li><a href="#T1-5">T1.5</a> Make the eight decisions that are genuinely yours</li><li><a href="#T1-9">T1.9</a> Two content-balance passes, before any law is authored</li><li><a href="#T4-1">T4.1</a> Decide launch content against the team that exists</li><li><a href="#T4-2">T4.2</a> Budget the iteration that finds the fun</li></ul>
+      <ul><li><a href="#T0-5">T0.5</a> Decide whether to send the prototype out anyway</li><li><a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution</li><li><a href="#T1-5">T1.5</a> Make the eight decisions that are genuinely yours</li><li><a href="#T1-9">T1.9</a> Two content-balance passes, before any law is authored</li><li><a href="#T4-1">T4.1</a> Decide launch content against the team that exists</li><li><a href="#T4-2">T4.2</a> Budget the iteration that finds the fun</li></ul>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the roadmap">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">33</span></button>
-    <button class="chip" data-filter="owner:you">Yours<span class="n">11</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">6</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">18</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">4</span></button>
+    <button class="chip" data-filter="owner:you">Yours<span class="n">9</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">5</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">7</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">17</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">2</span></button>
   </nav>
 
   <main id="list">
@@ -201,82 +206,82 @@
         <div class="stage-head">
           <span class="sid">S0</span>
           <div>
-            <h2>The two gates</h2>
-            <p class="sub">Decide whether the project continues</p>
+            <h2>Validation without players</h2>
+            <p class="sub">§19.27, rewritten in v3.0 — and now the critical path</p>
           </div>
-          <span class="scount">2/5</span>
+          <span class="scount">1/5</span>
         </div>
-        <p class="blurb">§26.7 puts two tests before any code and both are right. They cost nothing and they answer the only two questions that can stop the project. The prototype for both is built and published; what remains is people playing it.</p>
+        <p class="blurb">v3.0 removed both pre-code player tests and replaced them with harnesses, stating the cost plainly: simulation can prove a system is legible, balanced and decision-dense, and cannot prove a game is enjoyable. Each harness below is buildable here, needs no engine, and has a threshold §19.27 sets for itself.</p>
         
       <article class="task st-done" id="T0-1"
                data-status="done" data-owner="claude">
         <header class="task-head">
           <span class="tid">T0.1</span>
-          <h3>Build a browser prototype that runs both gates</h3>
+          <h3>Build a browser prototype that runs the two old gates</h3>
           <span class="status st-done">Done</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">One page: a heist against a hand-built island, and a build mode that places three terrain features, one guard and one law. Implements §12.17's detection faithfully. Throwaway by design — none of its numbers carry forward (D11).</p>
+        <p class="detail">Superseded rather than wrong. §19.27 no longer asks for either test, so this is off the critical path — but it stays published, because it is the only artefact here that can answer the question §19.27 says simulation cannot, and sending a link to twenty strangers costs an afternoon rather than a soft launch (D20).</p>
         
         
         <p class="evidence"><span class="glabel">Check it at</span> <a href="https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E">https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E</a></p>
         
       </article>
-      <article class="task st-done" id="T0-2"
-               data-status="done" data-owner="claude">
+      <article class="task st-ready" id="T0-2"
+               data-status="ready" data-owner="claude">
         <header class="task-head">
           <span class="tid">T0.2</span>
-          <h3>Build the scoring harness</h3>
-          <span class="status st-done">Done</span>
+          <h3>The heist harness — is it tense, and is there depth?</h3>
+          <span class="status st-ready">Ready to start</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">Testers finish with a copyable code. The harness scores a batch of codes against §19.27's and §13.3's own thresholds, so the answer is read off rather than argued.</p>
+        <p class="detail">Thousands of runs with scripted crews at three skill levels — careless, competent, optimal. Tension inferred from structure rather than reported: decisions per run, near-captures, whether the last ten seconds decide it. The same harness answers depth by comparing the skill levels, which is the cheaper and sharper of the two questions.</p>
+        
+        <p class="gate"><span class="glabel">Passes when</span> a median run carries 15–25 decisions; a near-capture in half of runs; the last ten seconds decide a quarter; and the optimal crew succeeds 35 points more often than the careless one (§19.27)</p>
+        
+        
+      </article>
+      <article class="task st-blocked" id="T0-3"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T0.3</span>
+          <h3>The attribution check — does delegated control hold?</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">§19.27 does not ask whether it <em>felt</em> right; it checks that §12.18's rule holds, which is the honest move. Every state change in a replay must trace to a player command.</p>
+        
+        <p class="gate"><span class="glabel">Passes when</span> no unattributed decisions in ten thousand replays</p>
+        
+        <p class="blockers">After <a href="#T0-2">T0.2</a> The heist harness</p>
+      </article>
+      <article class="task st-blocked" id="T0-4"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T0.4</span>
+          <h3>The ablation harness — is the defence fair?</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">§13.4's method: hold rate across all thirty-two combinations of the five layers. This is also the only test that can catch F6 — if one role is two thirds of the answer against every breakable object, an ablation will show it as a layer that does not move.</p>
+        
+        <p class="gate"><span class="glabel">Passes when</span> hold rate 30–45%, no layer above a quarter, design beating progression 60/40 (§13.4)</p>
+        
+        <p class="blockers">After <a href="#T0-2">T0.2</a> The heist harness</p>
+      </article>
+      <article class="task st-ready" id="T0-5"
+               data-status="ready" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T0.5</span>
+          <h3>Decide whether to send the prototype out anyway</h3>
+          <span class="status st-ready">Ready to start</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        <p class="detail">Not a disagreement with §19.27, which argues its case well and is your call. But the reason it gives — that thirty people in a room do not exist — is the reason the prototype was built as a link. It is published and it costs nothing to leave up. Twenty sessions would move the one question the harnesses cannot touch.</p>
         
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>tools/parse_gate_results.py</code></p>
         
-      </article>
-      <article class="task st-yours" id="T0-3"
-               data-status="yours" data-owner="you">
-        <header class="task-head">
-          <span class="tid">T0.3</span>
-          <h3>Gate 1 — get 15–30 people to play it</h3>
-          <span class="status st-yours">Waiting on you</span>
-          <span class="owner o-you">needs you</span>
-        </header>
-        <p class="detail">A hobbyist community, a subreddit, a Discord, or a paid panel (§25.5 budgets for one). The measure that matters is behavioural: whether they choose to play again.</p>
-        
-        <p class="gate"><span class="glabel">Passes when</span> median tension ≥ 3/4, median enjoyment ≥ 6/10, ≥ 60% play again (§19.27)</p>
-        
-        <p class="blockers">After <a href="#T0-1">T0.1</a> Build a browser prototype that runs both gates</p>
-      </article>
-      <article class="task st-yours" id="T0-4"
-               data-status="yours" data-owner="you">
-        <header class="task-head">
-          <span class="tid">T0.4</span>
-          <h3>Gate 2 — get 15–20 people to complete a build</h3>
-          <span class="status st-yours">Waiting on you</span>
-          <span class="owner o-you">needs you</span>
-        </header>
-        <p class="detail">Build an island, watch a scripted raid against it, then be told they may stop. Whether a second island gets built unprompted is logged, never asked — stated willingness runs about 46% ahead of behaviour [218][219].</p>
-        
-        <p class="gate"><span class="glabel">Passes when</span> ≥ 30% build a second island → authorship as designed; 15–30% → authorship with scaffolding; < 15% → pivot to generated islands the player curates (§13.3)</p>
-        
-        <p class="blockers">After <a href="#T0-1">T0.1</a> Build a browser prototype that runs both gates</p>
-      </article>
-      <article class="task st-blocked" id="T0-5"
-               data-status="blocked" data-owner="you">
-        <header class="task-head">
-          <span class="tid">T0.5</span>
-          <h3>Read the two results and decide</h3>
-          <span class="status st-blocked">Blocked</span>
-          <span class="owner o-you">needs you</span>
-        </header>
-        <p class="detail">Gate 2's answer decides what game is being built, not whether it is built — §26.7 calls it “the single decision that changes the most”, and the pivot is not a lesser game. Gate 1's answer can stop the project.</p>
-        
-        
-        
-        <p class="blockers">After <a href="#T0-3">T0.3</a> Gate 1, <a href="#T0-4">T0.4</a> Gate 2</p>
       </article>
       </section>
       <section class="stage" id="S1">
@@ -300,13 +305,13 @@
         </header>
         <p class="detail">Every contradiction, gap and measured finding, each with the sections involved and a recommended resolution.</p>
         
-        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C3 C4 C5 C6 C7 C8 C9 F1 F2 F3 F4 F5 F6 G1 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8 G9">
+        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C21 C22 C23 C24 C25 C26 C3 C4 C5 C6 C7 C8 C9 F1 F2 F3 F4 F5 F6 G1 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8 G9">
           <div class="bar">
-            <span class="fill" style="width:63.2%"></span>
-            <span class="fill settled" style="width:2.6%"></span>
+            <span class="fill" style="width:70.5%"></span>
+            <span class="fill settled" style="width:34.1%"></span>
           </div>
-          <p class="prog-n"><strong>24 of 38</strong> drafted &middot;
-             <strong>1</strong> signed off</p>
+          <p class="prog-n"><strong>31 of 44</strong> drafted &middot;
+             <strong>15</strong> signed off</p>
         </div>
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>docs/audit/index.html</code></p>
@@ -322,13 +327,13 @@
         </header>
         <p class="detail">One spec file per system, each stating the chosen reading once and then listing every other section the choice forces a change to. That last part is what stops the pattern recurring.</p>
         
-        <div class="prog" title="C1 C19 C2 C3 C4 C5 C6 G1 G9">
+        <div class="prog" title="C1 C19 C2 C21 C3 C4 C5 C6 G1 G9">
           <div class="bar">
-            <span class="fill" style="width:77.8%"></span>
-            <span class="fill settled" style="width:0.0%"></span>
+            <span class="fill" style="width:70.0%"></span>
+            <span class="fill settled" style="width:50.0%"></span>
           </div>
-          <p class="prog-n"><strong>7 of 9</strong> drafted &middot;
-             <strong>0</strong> signed off</p>
+          <p class="prog-n"><strong>7 of 10</strong> drafted &middot;
+             <strong>5</strong> signed off</p>
         </div>
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>docs/design/spec/</code></p>
@@ -344,13 +349,13 @@
         </header>
         <p class="detail">The significant and minor conflicts, and the gaps below the blocking line.</p>
         
-        <div class="prog" title="C10 C11 C12 C13 C14 C15 C16 C17 C18 C20 C7 C8 C9 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8">
+        <div class="prog" title="C10 C11 C12 C13 C14 C15 C16 C17 C18 C20 C22 C23 C24 C25 C26 C7 C8 C9 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8">
           <div class="bar">
-            <span class="fill" style="width:73.9%"></span>
-            <span class="fill settled" style="width:4.3%"></span>
+            <span class="fill" style="width:67.9%"></span>
+            <span class="fill settled" style="width:17.9%"></span>
           </div>
-          <p class="prog-n"><strong>17 of 23</strong> drafted &middot;
-             <strong>1</strong> signed off</p>
+          <p class="prog-n"><strong>19 of 28</strong> drafted &middot;
+             <strong>5</strong> signed off</p>
         </div>
         
         
@@ -364,7 +369,7 @@
           <span class="status st-yours">Waiting on you</span>
           <span class="owner o-you">needs you</span>
         </header>
-        <p class="detail">Every spec file is marked <em>proposed</em>. They are readings of your document, not decisions about your game. Nothing below this line should start until they are decisions.</p>
+        <p class="detail">Most of this happened in v3.0, which adopted <code>movement.md</code>, <code>fights.md</code> and <code>vault.md</code> close to whole. What is left is the spec files v3.0 did not take up — <code>wards.md</code>, <code>economy.md</code>'s production peg — and the resolutions for the six items v3.0 introduced.</p>
         
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>docs/design/spec/README.md</code></p>
@@ -382,11 +387,11 @@
         
         <div class="prog" title="Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8">
           <div class="bar">
-            <span class="fill" style="width:0.0%"></span>
-            <span class="fill settled" style="width:0.0%"></span>
+            <span class="fill" style="width:37.5%"></span>
+            <span class="fill settled" style="width:37.5%"></span>
           </div>
-          <p class="prog-n"><strong>0 of 8</strong> drafted &middot;
-             <strong>0</strong> signed off</p>
+          <p class="prog-n"><strong>3 of 8</strong> drafted &middot;
+             <strong>3</strong> signed off</p>
         </div>
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 tools/decision_support.py</code></p>
@@ -488,33 +493,41 @@
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.economy_model.test_economy_model</code></p>
         
       </article>
-      <article class="task st-blocked" id="T2-3"
-               data-status="blocked" data-owner="claude">
+      <article class="task st-ready" id="T2-3"
+               data-status="ready" data-owner="claude">
         <header class="task-head">
           <span class="tid">T2.3</span>
-          <h3>Model Aether and Essence spending</h3>
-          <span class="status st-blocked">Blocked</span>
+          <h3>Model Aether and Essence spending, and the Library</h3>
+          <span class="status st-ready">Ready to start</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">Starlight currently drives all growth, so weaving upkeep, births and character levels are unmodelled and law-restoration dates are indicative only.</p>
+        <p class="detail">Starlight currently drives all growth, so weaving upkeep, births and character levels are unmodelled and law-restoration dates are indicative only. v3.0 adds a second page faucet — the Library — which the model must carry before any page total can be re-derived. §10.5 gives three of its ten levels (C24).</p>
         
         
         
-        <p class="blockers">After <a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution</p>
+        
       </article>
-      <article class="task st-blocked" id="T2-4"
-               data-status="blocked" data-owner="claude">
+      <article class="task st-ready" id="T2-4"
+               data-status="ready" data-owner="claude">
         <header class="task-head">
           <span class="tid">T2.4</span>
           <h3>Regenerate §9.3, §10.2, §14.2 and §14.3 from the model</h3>
-          <span class="status st-blocked">Blocked</span>
+          <span class="status st-ready">Ready to start</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">Under whatever building and roster rules are chosen, and replace the published tables wholesale. Hand-editing them is what produced C19 in the first place.</p>
+        <p class="detail"><strong>Unblocked by v3.0.</strong> §5.9 settles the building and roster rules — one producer of each kind per realm, partial staffing paying pro-rata, a crew on a heist withheld from work. The published tables were not re-run against that decision: day 2 is still 2,100 Starlight and day 8 still 6,200. This is C19, and it is now the clearest instance of the thing the register exists to stop.</p>
         
+        <div class="prog" title="C19">
+          <div class="bar">
+            <span class="fill" style="width:0.0%"></span>
+            <span class="fill settled" style="width:0.0%"></span>
+          </div>
+          <p class="prog-n"><strong>0 of 1</strong> drafted &middot;
+             <strong>0</strong> signed off</p>
+        </div>
         
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.economy_model production</code></p>
         
-        <p class="blockers">After <a href="#T1-5">T1.5</a> Make the eight decisions that are genuinely yours</p>
       </article>
       </section>
       <section class="stage" id="S3">
@@ -540,7 +553,7 @@
         
         <p class="gate"><span class="glabel">Passes when</span> identical checksums on all four, or take the C# fallback without renegotiating (§24.7)</p>
         
-        <p class="blockers">After <a href="#T0-5">T0.5</a> Read the two results and decide</p>
+        <p class="blockers">After <a href="#T0-2">T0.2</a> The heist harness</p>
       </article>
       <article class="task st-blocked" id="T3-2"
                data-status="blocked" data-owner="claude">

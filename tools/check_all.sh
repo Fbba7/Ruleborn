@@ -10,7 +10,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 echo "== design document consistency =="
-python3 tools/check_design_consistency.py docs/design/ruleborn-game-design-v2.3.txt
+python3 tools/check_design_consistency.py
 
 echo
 echo "== content tables =="
