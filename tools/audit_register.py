@@ -262,7 +262,7 @@ dict(id="C4", kind="contradiction", severity="blocking", status="proposed",
          "target-strength score. If realms really cap at 5, the entire payout table "
          "is wrong by about 7×."),
 
-dict(id="C5", kind="contradiction", severity="blocking", status="open",
+dict(id="C5", kind="contradiction", severity="blocking", status="proposed",
      title="Two defence budget systems, with three different ward limits",
      refs=["5.2", "5.5", "13", "13.4", "10.2"],
      body="§5.5 has one universe-wide stability pool from the Spire and Anchor "

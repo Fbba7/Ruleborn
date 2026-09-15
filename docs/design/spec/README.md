@@ -11,6 +11,7 @@ Every file here is **proposed** until signed off. Nothing is locked (§26.7).
 | [`detection.md`](detection.md) | C1 — two detection models | Proposed: §12.17 authoritative |
 | [`ruleborn.md`](ruleborn.md) | C6 — two rosters | Proposed: §11.11 authoritative |
 | [`economy.md`](economy.md) | C2, C4 — what a raid pays | Proposed: peg the haul to the raider's own production |
+| [`defence.md`](defence.md) | C5 — what an island may hold | Proposed: one table in §5.2, counting posts |
 
 ## How these were written
 
@@ -29,6 +30,5 @@ The blocking items still without a spec file:
 
 - **C3** — three law ranks or five. `decision_support.py rarity` prices both;
   the split itself is a judgement about complexity and excitement, not arithmetic.
-- **C5** — two defence budget systems, with three different ward limits.
 - **C19, F1, F2** — the roster, the building counts and the production tables
   cannot be reconciled without deciding whether character scarcity is a feature.
