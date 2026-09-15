@@ -1,6 +1,6 @@
 # Contradiction register
 
-Nineteen confirmed internal contradictions in design document v2.3, ordered by
+Twenty-one confirmed internal contradictions in design document v2.3, ordered by
 how much they block work. Each names the conflicting sections, what the conflict
 actually is, and a recommended resolution.
 
@@ -337,3 +337,5 @@ rather than editing the published numbers by hand.
 | C17 | Name fallbacks | 27.2 | Copy |
 | C18 | Aether storage cap | 9.1 / 10.2 | Weaving budget per session |
 | C19 | Production tables vs build rules | 9.3 / 5.2 / 11.5 | **All of §14's pacing** |
+| C20 | Law sound signatures are per school | 21.8 / 21.9 | Audio budget, or the claim |
+| G12 | Laws key off attributes no creature has | 7.4 / 11.1 / 11.11 | Density, Heavy ground, Swarm birth |

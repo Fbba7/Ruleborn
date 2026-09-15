@@ -232,7 +232,7 @@
       from it.</p>
 
     <div class="summary">
-      <div><span class="n">55</span><span class="k">items tracked</span></div>
+      <div><span class="n">56</span><span class="k">items tracked</span></div>
       <div><span class="n">40</span><span class="k">open</span></div>
       <div><span class="n">9</span><span class="k">done or adopted</span></div>
       <div><span class="n">11</span><span class="k">blocking the build</span></div>
@@ -241,8 +241,8 @@
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">55</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">14</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">8</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">3</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">15</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">7</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">11</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">56</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">14</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">8</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">3</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">16</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">7</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
   </nav>
 
   <main id="list">
@@ -488,12 +488,12 @@
         <p class="rec"><span class="arrow">&rarr;</span> §13.4's <em>mechanism</em> is right — slot limits per layer are what enforce the “no layer above a quarter” rule, and cost alone cannot. Keep the limits, drop the second pool, price the layers in an explicitly named budget (parallel to terrain points), and reconcile the ward and guard numbers into one table in §5.2.</p>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C6</span>
-          <h3>Two ruleborn rosters, disagreeing on three roles and most abilities</h3>
+          <h3>Two ruleborn rosters — and eleven are different creatures, not different wordings</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§11.2</span><span class="ref">§11.11</span><span class="ref">§11.5</span><span class="ref">§12.8</span></div>
         <p class="body">The same 18 creatures are specified twice. Prism Mite is a Carrier in §11.2 and a Scout in §11.11; Stormhound is a Scout then a Carrier; Rootrunner a Carrier then a Scout. That changes the role distribution (3 Scout / 4 Carrier versus 4 Scout / 3 Carrier), and role drives crew composition, guard behaviour (§12.8) and the Nursery's fewest-roles-first rule (§11.5). Most of the other fifteen disagree on ability, cooldown or resistance — Featherkin 12s or 14s, Echoplate returns at 50% or 40%, Rootrunner ignores Spores or Heavy ground.</p>
@@ -692,6 +692,18 @@
         <div class="refs"><span class="ref">§22.2</span><span class="ref">§22.5</span></div>
         <p class="body">§22.5 says every figure in §22.2 assumes 15%. The low and base scenarios do — €2,720 and €25,500, both confirmed. The high scenario's €168,000 is computed at <strong>30%</strong>. That is arguably correct, since €204,000 a month crosses Apple's $1M small-business threshold — but it contradicts the stated assumption and makes the three scenarios non-comparable.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Keep the 30% figure and footnote the threshold crossing. Worth surfacing that the discontinuity is a real business fact: revenue between roughly €70k and €85k a month is partly a dead zone.</p>
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G12</span>
+          <h3>Three laws key off creature attributes that no creature has</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§7.4</span><span class="ref">§7.3</span><span class="ref">§11.1</span><span class="ref">§11.11</span><span class="ref">§11.10</span></div>
+        <p class="body">Checked across all 48 law sheets against the role and creature tables. <strong>Density</strong> reads “Big characters get +30% health and −20% speed; small ones get +25% speed and −20% health” — but there is <strong>no size or mass attribute anywhere</strong>. §11.1's role table carries health, speed, power and carry, nothing else; §11.11's proportions are in heads, which is art direction for the character artist; §11.10's forms add quirks, never a size. A rare law's entire tier-1 effect has nothing to resolve against.<br><br><strong>Heavy ground</strong> grounds “flyers”, and flight exists only in §11.2's Featherkin passive — so under §11.11 (the spec C6 recommends adopting) half the law is inert and its stated weakness is false. <strong>Swarm birth</strong> is milder: “two small guards with 30% of its strength” describes what it creates rather than an attribute it reads, but 30% of <em>what</em> is undefined, and split guards have no role, so §12.17 gives them no perception profile.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Either add the attributes (a size or mass band on each creature; flight as a stated property) or rewrite the three laws to key off role, which does exist. §7.3's rule is that laws change a realm's rule sheet and never contain special cases; a law reading a parameter that does not exist is the same failure from the other side. Enforce it in the law data table.</p>
       </article>
       <article class="item sig" data-group="significant"
                data-kind="gap" data-status="open">

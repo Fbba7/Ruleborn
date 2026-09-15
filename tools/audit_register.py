@@ -277,8 +277,8 @@ dict(id="C5", kind="contradiction", severity="blocking", status="open",
          "explicitly named budget (parallel to terrain points), and reconcile the "
          "ward and guard numbers into one table in §5.2."),
 
-dict(id="C6", kind="contradiction", severity="blocking", status="open",
-     title="Two ruleborn rosters, disagreeing on three roles and most abilities",
+dict(id="C6", kind="contradiction", severity="blocking", status="proposed",
+     title="Two ruleborn rosters — and eleven are different creatures, not different wordings",
      refs=["11.2", "11.11", "11.5", "12.8"],
      body="The same 18 creatures are specified twice. Prism Mite is a Carrier in "
           "§11.2 and a Scout in §11.11; Stormhound is a Scout then a Carrier; "
@@ -509,6 +509,30 @@ dict(id="G1", kind="gap", severity="blocking", status="open",
          "3.</strong> Specify it before the vertical slice and make felt control a "
          "gate rather than a polish item. Pikmin is cited as the model in §2.2; make "
          "that concrete."),
+
+dict(id="G12", kind="gap", severity="significant", status="open",
+     title="Three laws key off creature attributes that no creature has",
+     refs=["7.4", "7.3", "11.1", "11.11", "11.10"],
+     body="Checked across all 48 law sheets against the role and creature tables. "
+          "<strong>Density</strong> reads \u201cBig characters get +30% health and "
+          "\u221220% speed; small ones get +25% speed and \u221220% health\u201d "
+          "\u2014 but there is <strong>no size or mass attribute anywhere</strong>. "
+          "§11.1's role table carries health, speed, power and carry, nothing else; "
+          "§11.11's proportions are in heads, which is art direction for the "
+          "character artist; §11.10's forms add quirks, never a size. A rare law's "
+          "entire tier-1 effect has nothing to resolve against.<br><br>"
+          "<strong>Heavy ground</strong> grounds \u201cflyers\u201d, and flight "
+          "exists only in §11.2's Featherkin passive \u2014 so under §11.11 (the "
+          "spec C6 recommends adopting) half the law is inert and its stated "
+          "weakness is false. <strong>Swarm birth</strong> is milder: \u201ctwo "
+          "small guards with 30% of its strength\u201d describes what it creates "
+          "rather than an attribute it reads, but 30% of <em>what</em> is undefined, "
+          "and split guards have no role, so §12.17 gives them no perception profile.",
+     rec="Either add the attributes (a size or mass band on each creature; flight as "
+         "a stated property) or rewrite the three laws to key off role, which does "
+         "exist. §7.3's rule is that laws change a realm's rule sheet and never "
+         "contain special cases; a law reading a parameter that does not exist is "
+         "the same failure from the other side. Enforce it in the law data table."),
 
 dict(id="G2", kind="gap", severity="significant", status="open",
      title="What happens when a guard catches you",

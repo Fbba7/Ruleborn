@@ -255,6 +255,28 @@ def main() -> int:
             if retired in sentence:
                 err(f"{where}: names {retired!r}, which v2.3 retired (§26.9)")
 
+    # -- laws must key off attributes that exist ----------------------------
+    #
+    # §7.3's rule is that laws change a realm's rule sheet and never contain
+    # special cases. A law reading an attribute no creature carries is the same
+    # failure from the other side: the parameter it reads does not exist.
+    creature_attrs = set()
+    for r in data["roles"]:
+        creature_attrs.add(r["name"].lower())
+    for r in data["ruleborn"]:
+        creature_attrs.add(r["name"].lower())
+    #: Attributes a law may read, beyond role and creature names.
+    KNOWN_ATTRS = {"flyer", "flyers", "big", "small", "size", "mass"}
+    undefined = {a for a in KNOWN_ATTRS if a not in creature_attrs}
+    for law in laws:
+        text = f"{law.get('tier_1', '')} {law.get('tiers_2_3', '')}".lower()
+        hits = sorted(a for a in undefined if a in text.split()
+                      or f"{a} characters" in text or f"{a} ones" in text)
+        if hits:
+            opn("G12", f"law {law['name']} keys off {hits} \u2014 no creature or "
+                       f"role carries that attribute (§11.1 has health, speed, "
+                       f"power and carry; §11.11's proportions are art direction)")
+
     # =====================================================================
     # Known open contradictions — reported, not failed
     # =====================================================================
