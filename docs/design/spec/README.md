@@ -16,6 +16,7 @@ Every file here is **proposed** until signed off. Nothing is locked (§26.7).
 | [`first-build.md`](first-build.md) | G9 — the 60-second guided build | Proposed, and partly new design |
 | [`fights.md`](fights.md) | G2 — what happens when a guard catches you | Proposed, and largely new design |
 | [`vault.md`](vault.md) | G4 — cracking, loading, and what a full bag is worth | Proposed |
+| [`wards.md`](wards.md) | G3, G5 — wards, their levels, and law pylons | Proposed |
 | [`corrections.md`](corrections.md) | C7–C18, C20 — the clerical sweep | 13 single edits, one session |
 
 ## How these were written
@@ -23,6 +24,12 @@ Every file here is **proposed** until signed off. Nothing is locked (§26.7).
 `movement.md`, `first-build.md`, `fights.md` and `vault.md` are the exceptions:
 the document leaves G1, G2, G4 and G9 empty, so those files are partly new design
 rather than reconciliations. Each says so at the top.
+
+`wards.md` is the exception to the exception, and worth reading for that alone:
+it begins by **correcting this analysis**. Two things `04-specification-gaps.md`
+recorded as missing — ward levels 2–5 and the pylon-to-law-slot relationship —
+are in §10.2's building tables, which had not been read against §10.3. The gap
+that survives is smaller and sharper than the one that was recorded.
 
 `fights.md` and `vault.md` are a pair. Neither can be settled alone — what a
 Vault costs to crack is a combat question, and what a fight costs is priced by

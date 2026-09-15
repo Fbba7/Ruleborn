@@ -16,6 +16,8 @@ of taste rather than arithmetic.
                       about fights, and which of its stated rules they contradict
   vault     G4      — how long cracking and loading take, and where the
                       "when to stop loading" decision actually sits
+  wards     G3 / G5 — what "effect +15%" scales, what a ward costs to get past,
+                      and how much of a heist a law pylon is worth
 """
 
 import collections
@@ -436,8 +438,101 @@ def vault_report() -> None:
     print("  fraction is worth — which is the part that turns a timer into a bet.")
 
 
+# ---------------------------------------------------------------------------
+# G3 and G5 — wards and law pylons
+# ---------------------------------------------------------------------------
+
+#: §10.2's Ward table, which §10.3 never keys to anything.
+WARD_LEVELS = [(1, 0.00, 10), (2, 0.15, 9), (3, 0.30, 8), (4, 0.45, 7), (5, 0.60, 6)]
+#: §10.2's Law Pylon table: health, one pylon per law slot.
+PYLON_HEALTH_PER_LEVEL = 600
+#: Proposed in spec/wards.md.
+WARD_HEALTH_PER_LEVEL = 500
+DISARM_BASE, DISARM_PER_LEVEL, TINKER = 3.0, 1.0, 0.70
+
+
+def damage_per_second(roles: dict, role: str, level: int, doubled: bool = True) -> float:
+    """One hit per 0.8 s for Power damage, doubled for a Breaker on an object."""
+    factor = 2 if (doubled and role == "Breaker") else 1
+    return roles[role]["power"] * factor * LEVEL_GROWTH ** (level - 1) / WIND_UP
+
+
+def wards_report() -> None:
+    roles = {r["name"]: r for r in load("roles")}
+    wards = load("wards")
+
+    print("G3 and G5 — wards and pylons, the defender's objects on the route\n")
+
+    print("What §10.2 already answers, and the analysis had not checked:")
+    print("  \u2022 ward levels 2\u20135 exist, at effect +15/30/45/60% and resets")
+    print("    10\u21926 s \u2014 so G3's \u201cno levels above 1\u201d is wrong about §10.2,")
+    print("    right about §10.3")
+    print("  \u2022 a Law Pylon has ten levels, 600 health per level, and §10.2 states")
+    print("    the relationship G5 calls missing: \u201cOne per law slot; per slot\u201d\n")
+    print("What is genuinely missing is smaller and sharper: \u201ceffect +15%\u201d has")
+    print("no key. Each ward states its effect in different units, and for three")
+    print("of the six there is more than one number it could scale \u2014 one of")
+    print("which, Static Coil, has no damage number at all.\n")
+
+    scaled = {
+        "Gravity Well": ("hold 2 s", "pull radius 3 tiles"),
+        "Crystal Wall": ("800 health", None),
+        "Time Snare": ("freeze 2.5 s", None),
+        "Static Coil": ("damage \u2014 unstated", "radius 2 tiles / every 3 s"),
+        "Thorn Hedge": ("5% health a second", None),
+        "Lantern Glare": ("reveal 5 s", "blind 2 s"),
+    }
+    print(f"  {'ward':<15} {'proposed scaled quantity':<26} {'also a candidate'}")
+    for w in wards:
+        take, other = scaled[w["name"]]
+        also = other or "\u2014"
+        print(f"  {w['name']:<15} {take:<26} {also}")
+    print("\n  The rule that picks them: NEVER SCALE A DISTANCE. A ward whose")
+    print("  radius grows on upgrade covers tiles it did not cover when it was")
+    print("  placed, so the island the defender built is not the island they get,")
+    print("  and the editor cannot show a ward's footprint without knowing its")
+    print("  future level. Static Coil has no damage number at all and needs one.\n")
+
+    print("Getting past a ward: smash it, or disarm it.\n")
+    print(f"  {'ward level':>11} {'health':>7} {'Breaker L12':>12} {'Scout L12':>11} "
+          f"{'disarm':>8} {'Tinker':>8}")
+    for level, _, _ in WARD_LEVELS:
+        health = WARD_HEALTH_PER_LEVEL * level
+        disarm = DISARM_BASE + DISARM_PER_LEVEL * level
+        print(f"  {level:>11} {health:>7,} "
+              f"{health / damage_per_second(roles, 'Breaker', 12):>11.1f}s "
+              f"{health / damage_per_second(roles, 'Scout', 12):>10.1f}s "
+              f"{disarm:>7.1f}s {disarm * TINKER:>7.1f}s")
+    print("\n  Smashing wins up to level 2 and loses from level 3, and a Tinker moves")
+    print("  the crossover down by one. That is the shape a decision should have: the")
+    print("  defender's spending changes the raider's best answer. Smashing is also")
+    print("  loud (5 m, §12.17's \u201cbreaking something\u201d) and disarming is not,")
+    print("  so the fast answer is rarely the quiet one.\n")
+
+    print("Law pylons. §12.6 says breaking one is \u201coften worth a detour\u201d.")
+    print("Against a 180-second heist (§11.6), the detour costs:\n")
+    crew = sum(r["power"] * (2 if n == "Breaker" else 1) for n, r in roles.items())
+    print(f"  {'pylon':>6} {'health':>7} {'lone Breaker L12':>17} {'whole crew L12':>16} "
+          f"{'% of the heist':>15}")
+    for level in (1, 3, 5, 6, 8, 10):
+        health = PYLON_HEALTH_PER_LEVEL * level
+        alone = health / damage_per_second(roles, "Breaker", 12)
+        together = health / (crew * LEVEL_GROWTH ** 11 / WIND_UP)
+        print(f"  {level:>6} {health:>7,} {alone:>16.1f}s {together:>15.1f}s "
+              f"{100 * together / 180:>14.0f}%")
+    breaker_share = roles["Breaker"]["power"] * 2 / crew
+    print(f"\n  Note what the two columns say: four extra crew members cut the time")
+    print(f"  by only {100 * (1 - breaker_share):.0f}%. Against wards, pylons and the "
+          f"Vault the Breaker is")
+    print(f"  {100 * breaker_share:.0f}% of the crew's damage on its own, so §12.6's "
+          "\u201cwho cracks\u201d has")
+    print("  one answer and is not a decision.\n")
+    print("  Drafted in docs/design/spec/wards.md.")
+
+
 REPORTS = {"rarity": rarity_report, "haul": haul_report,
-           "staffing": staffing_report, "combat": combat_report, "vault": vault_report}
+           "staffing": staffing_report, "combat": combat_report, "vault": vault_report,
+           "wards": wards_report}
 
 
 def main() -> int:

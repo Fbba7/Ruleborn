@@ -246,6 +246,27 @@ dict(id="D17", kind="deviation", severity="change", status="proposed",
          "would need three ambushers, which a crew of three (§12.5, before Keeper 8) "
          "cannot spare, quietly deleting the tactic for early players."),
 
+dict(id="D18", kind="deviation", severity="change", status="done",
+     title="Two recorded gaps were wrong, and the register now says so",
+     refs=["10.2", "10.3", "12.6"],
+     body="G3 recorded that ward levels 2\u20135 are unspecified and G5 that law "
+          "pylons have no health and no stated relationship to law slots. Both are "
+          "in §10.2\u2019s building tables \u2014 wards at effect +15/30/45/60% with "
+          "resets 10\u21926 s, pylons at 600 health a level and \u201cone per law "
+          "slot\u201d. G5\u2019s own text admitted the table had not been examined; "
+          "G3\u2019s did not.<br><br>The cause is the one this whole register is "
+          "about, turned on the analysis itself: <strong>a fact written in two "
+          "places, and only one of them read</strong>. The design document specifies "
+          "wards in §10.3 and prices them in §10.2, and reading either alone gives a "
+          "wrong answer about the other.",
+     rec="Both items are corrected in place rather than deleted, because what "
+         "survives of each is real and because a register that quietly drops its "
+         "mistakes is not an audit. <code>docs/design/spec/wards.md</code> opens "
+         "with the correction. The general lesson is recorded here rather than "
+         "absorbed: <strong>before recording something as unspecified, check "
+         "whether it is specified in a table somewhere else</strong> \u2014 which "
+         "is exactly the failure mode the document itself keeps exhibiting."),
+
 # ===========================================================================
 # Blocking — these prevent content authoring or core code
 # ===========================================================================
@@ -458,6 +479,26 @@ dict(id="F5", kind="finding", severity="design", status="open",
          "sign-off; the alternative, raising carry capacity fivefold, breaks "
          "§9.4\u2019s exposure percentages instead."),
 
+dict(id="F6", kind="finding", severity="design", status="open",
+     title="The Breaker is 63% of the crew's damage against every breakable object",
+     refs=["11.1", "12.6", "10.2", "12.5"],
+     body="§11.1 gives the Breaker double damage to wards, pylons and the Vault. "
+          "Against all three its doubled Power of 80 is <strong>63% of a "
+          "five-crew\u2019s 126</strong>, so adding four characters to a lone "
+          "Breaker cuts the time by 37%. §12.6 lists \u201cwho cracks\u201d among "
+          "the Vault phase\u2019s decisions; it has one answer, in every situation, "
+          "at every level \u2014 and so do \u201cwho smashes the ward\u201d and "
+          "\u201cwho breaks the pylon\u201d. A Scout needs 14 seconds on the "
+          "cheapest ward a Breaker clears in two.<br><br>This is the same shape as "
+          "F5, reached from the other end: a sub-phase named as a decision that "
+          "contains none.",
+     rec="Three defensible answers and the choice is a balance judgement: narrow "
+         "the Power spread; give a second character on the same object a stacking "
+         "bonus, so joining in is worth the exposure; or accept it as role identity "
+         "and stop calling it a decision. What is not defensible is keeping the "
+         "sentence while one role is two thirds of the answer. "
+         "<code>python3 tools/decision_support.py wards</code>."),
+
 # ===========================================================================
 # Significant
 # ===========================================================================
@@ -669,7 +710,7 @@ dict(id="G2", kind="gap", severity="significant", status="proposed",
          "half the target\u2019s maximum health, which makes §12.8\u2019s own "
          "sentence true for all 25 pairings instead of three."),
 
-dict(id="G3", kind="gap", severity="significant", status="open",
+dict(id="G3", kind="gap", severity="significant", status="proposed",
      title="Ward placement, triggering and disarming",
      refs=["10.3", "12.5", "11.1", "21.9"],
      body="§10.3 lists six wards with level-1 effects and reset timers. The Tinker "
@@ -677,7 +718,20 @@ dict(id="G3", kind="gap", severity="significant", status="open",
           "is never specified — who, how long, whether it makes noise. Also "
           "missing: what triggers a ward; levels 2–5, which the asset list and "
           "building table both assume; and ward health, given that Breakers deal "
-          "double damage to them."),
+          "double damage to them.",
+     rec="<strong>Drafted, and smaller than recorded.</strong> Levels 2\u20135 do "
+         "exist \u2014 §10.2\u2019s Ward row gives effect +15/30/45/60% and resets "
+         "10\u21926 s. What is missing is the <em>key</em>: \u201ceffect +15%\u201d "
+         "never says which number it scales, and three of the six wards have more "
+         "than one candidate. <code>docs/design/spec/wards.md</code> supplies it "
+         "under one rule \u2014 <strong>never scale a distance</strong>, because a "
+         "ward whose radius grows on upgrade covers tiles it did not cover when it "
+         "was placed, and the editor cannot then draw its footprint. It also gives "
+         "Static Coil the damage it has never had, names the three trigger kinds "
+         "(passive, aura, triggered) that the wording already implies, specifies "
+         "the disarm action §12.5\u2019s Tinker trait presumes, and proposes ward "
+         "health of 500 \u00d7 level \u2014 which puts the smash-or-disarm "
+         "crossover at ward level 3, and at level 2 with a Tinker."),
 
 dict(id="G4", kind="gap", severity="significant", status="proposed",
      title="The Vault's loading loop has no relationship to the payout",
@@ -700,14 +754,26 @@ dict(id="G4", kind="gap", severity="significant", status="proposed",
          "else cancelling</strong>. Tuning the tension of the game\u2019s "
          "emotional peak is then one number that already exists."),
 
-dict(id="G5", kind="gap", severity="minor", status="open",
+dict(id="G5", kind="gap", severity="minor", status="proposed",
      title="Law pylons have no count, health or placement rule",
      refs=["12.6", "5.7", "10.2", "5.1"],
      body="Breaking a pylon switches its law off for the rest of a heist and yields a "
           "page, and the Spire's light going out when one breaks is the Heart's "
           "signature moment. §10.2 lists Law Pylon as a building with ten levels and "
           "health, but the relationship between pylons and the law slots they "
-          "presumably represent is never stated."),
+          "presumably represent is never stated.",
+     rec="<strong>Mostly a false alarm, and that is the useful part.</strong> "
+         "§10.2\u2019s Law Pylon row gives ten levels at 600 health each and states "
+         "the relationship this item calls missing, in four words: <em>\u201cOne "
+         "per law slot; per slot\u201d</em>. This item was recorded without reading "
+         "that table \u2014 its own text admits as much \u2014 and the same "
+         "oversight produced half of G3.<br><br>What survives is one sentence: "
+         "nothing says a raider can tell <em>which law</em> a pylon carries before "
+         "committing to the detour, which both §12.6 and §5.7 assume. "
+         "<code>docs/design/spec/wards.md</code> proposes the pylon show its "
+         "school colour and note glyphs, with §15.3\u2019s law banner naming it on "
+         "approach, and prices the detour from §10.2\u2019s health: 1% of a heist "
+         "at pylon level 1, 9% at level 10."),
 
 dict(id="G6", kind="gap", severity="minor", status="open",
      title="How the matchmaking rating actually combines its inputs",

@@ -232,17 +232,17 @@
       from it.</p>
 
     <div class="summary">
-      <div><span class="n">62</span><span class="k">items tracked</span></div>
-      <div><span class="n">24</span><span class="k">open</span></div>
-      <div><span class="n">10</span><span class="k">done or adopted</span></div>
-      <div><span class="n">14</span><span class="k">blocking the build</span></div>
+      <div><span class="n">64</span><span class="k">items tracked</span></div>
+      <div><span class="n">23</span><span class="k">open</span></div>
+      <div><span class="n">11</span><span class="k">done or adopted</span></div>
+      <div><span class="n">15</span><span class="k">blocking the build</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">62</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">17</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">9</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">5</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">15</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">64</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">18</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">9</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">6</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">15</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
   </nav>
 
   <main id="list">
@@ -456,6 +456,18 @@
         <p class="body">§12.8’s ambush is triple Power. F4 measures what that delivers: the same section’s claim that two ambush hits drop an equal-level guard is true for three of twenty-five pairings. This adds a floor — an ambush deals triple Power <em>or</em> half the target’s maximum health, whichever is greater — which changes a formula the document states in order to satisfy a rule the document also states.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Where two of the document’s own sentences cannot both hold, the one expressing <em>intent</em> wins over the one expressing a coefficient: “two ambush hits knock out a guard” is a design statement about how stealth pays off, and “triple damage” is a number chosen to deliver it. Half is the value that makes the intent exactly true; a third would need three ambushers, which a crew of three (§12.5, before Keeper 8) cannot spare, quietly deleting the tactic for early players.</p>
       </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done">
+        <header class="item-head">
+          <span class="id">D18</span>
+          <h3>Two recorded gaps were wrong, and the register now says so</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§10.2</span><span class="ref">§10.3</span><span class="ref">§12.6</span></div>
+        <p class="body">G3 recorded that ward levels 2–5 are unspecified and G5 that law pylons have no health and no stated relationship to law slots. Both are in §10.2’s building tables — wards at effect +15/30/45/60% with resets 10→6 s, pylons at 600 health a level and “one per law slot”. G5’s own text admitted the table had not been examined; G3’s did not.<br><br>The cause is the one this whole register is about, turned on the analysis itself: <strong>a fact written in two places, and only one of them read</strong>. The design document specifies wards in §10.3 and prices them in §10.2, and reading either alone gives a wrong answer about the other.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Both items are corrected in place rather than deleted, because what survives of each is real and because a register that quietly drops its mistakes is not an audit. <code>docs/design/spec/wards.md</code> opens with the correction. The general lesson is recorded here rather than absorbed: <strong>before recording something as unspecified, check whether it is specified in a table somewhere else</strong> — which is exactly the failure mode the document itself keeps exhibiting.</p>
+      </article>
       </section>
       <section class="group" id="g-blocking" data-group="blocking">
         <div class="group-head">
@@ -638,6 +650,18 @@
         <p class="body">§12.6 budgets the Vault phase at about 30 seconds and names “when to stop loading” as its central decision. Its own numbers say otherwise. A Carrier holds 300 loot and loads 150 a second, so loading takes <strong>2.0 seconds</strong>; and because §12.6 has only Carriers load, <strong>260 of a five-crew’s 560 units of capacity cannot be filled by any means the document describes</strong>. The thirty seconds is cracking, and cracking is a progress bar with no decision in it.<br><br>The same arithmetic produced the one place the document’s numbers <em>corroborate</em> each other: cracking takes 10–25 seconds across the whole game against a phase length written in a different section from Vault health, which was written in a different section again from role Power. <code>python3 tools/decision_support.py vault</code>.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <code>docs/design/spec/vault.md</code> lets every role load, at a rate scaling with Carry, so the crew fills in ten seconds — one decision by §12.6’s own 8–12 second cadence. That is a <strong>fivefold cut to a published rate</strong> and should be flagged as such at sign-off; the alternative, raising carry capacity fivefold, breaks §9.4’s exposure percentages instead.</p>
       </article>
+      <article class="item dsg" data-group="design"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F6</span>
+          <h3>The Breaker is 63% of the crew's damage against every breakable object</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§11.1</span><span class="ref">§12.6</span><span class="ref">§10.2</span><span class="ref">§12.5</span></div>
+        <p class="body">§11.1 gives the Breaker double damage to wards, pylons and the Vault. Against all three its doubled Power of 80 is <strong>63% of a five-crew’s 126</strong>, so adding four characters to a lone Breaker cuts the time by 37%. §12.6 lists “who cracks” among the Vault phase’s decisions; it has one answer, in every situation, at every level — and so do “who smashes the ward” and “who breaks the pylon”. A Scout needs 14 seconds on the cheapest ward a Breaker clears in two.<br><br>This is the same shape as F5, reached from the other end: a sub-phase named as a decision that contains none.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Three defensible answers and the choice is a balance judgement: narrow the Power spread; give a second character on the same object a stacking bonus, so joining in is worth the exposure; or accept it as role identity and stop calling it a decision. What is not defensible is keeping the sentence while one role is two thirds of the answer. <code>python3 tools/decision_support.py wards</code>.</p>
+      </article>
       </section>
       <section class="group" id="g-significant" data-group="significant">
         <div class="group-head">
@@ -790,16 +814,16 @@
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/fights.md</code>, which like <code>movement.md</code> is largely new design. It adopts the only cadence the document states — one hit per 0.8s for damage equal to Power — and that choice is corroborated rather than assumed: it is the reading under which Vault health, role Power and §12.6's stated phase length agree (see G4). It then answers the three open questions: the crew may fight at any time, but damaging a guard that has not been ambushed sends it straight to suspicion 1000, so an open fight is an alarm with a priced cost rather than a forbidden move; a downed crew member drops its loot on the tile and has ten seconds — one decision by §12.6's cadence — before capture, revivable by an adjacent ally in 3s, or 1.5s for a Mender.<br><br>It also repairs F4 by giving the ambush a floor of half the target’s maximum health, which makes §12.8’s own sentence true for all 25 pairings instead of three.</p>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="gap" data-status="open">
+               data-kind="gap" data-status="proposed">
         <header class="item-head">
           <span class="id">G3</span>
           <h3>Ward placement, triggering and disarming</h3>
           <span class="kind">unspecified</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§10.3</span><span class="ref">§12.5</span><span class="ref">§11.1</span><span class="ref">§21.9</span></div>
         <p class="body">§10.3 lists six wards with level-1 effects and reset timers. The Tinker trait “disarms wards 30% faster”, implying a disarm action that is never specified — who, how long, whether it makes noise. Also missing: what triggers a ward; levels 2–5, which the asset list and building table both assume; and ward health, given that Breakers deal double damage to them.</p>
-        
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted, and smaller than recorded.</strong> Levels 2–5 do exist — §10.2’s Ward row gives effect +15/30/45/60% and resets 10→6 s. What is missing is the <em>key</em>: “effect +15%” never says which number it scales, and three of the six wards have more than one candidate. <code>docs/design/spec/wards.md</code> supplies it under one rule — <strong>never scale a distance</strong>, because a ward whose radius grows on upgrade covers tiles it did not cover when it was placed, and the editor cannot then draw its footprint. It also gives Static Coil the damage it has never had, names the three trigger kinds (passive, aura, triggered) that the wording already implies, specifies the disarm action §12.5’s Tinker trait presumes, and proposes ward health of 500 × level — which puts the smash-or-disarm crossover at ward level 3, and at level 2 with a Tinker.</p>
       </article>
       <article class="item sig" data-group="significant"
                data-kind="gap" data-status="proposed">
@@ -869,16 +893,16 @@
         
       </article>
       <article class="item min" data-group="minor"
-               data-kind="gap" data-status="open">
+               data-kind="gap" data-status="proposed">
         <header class="item-head">
           <span class="id">G5</span>
           <h3>Law pylons have no count, health or placement rule</h3>
           <span class="kind">unspecified</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§12.6</span><span class="ref">§5.7</span><span class="ref">§10.2</span><span class="ref">§5.1</span></div>
         <p class="body">Breaking a pylon switches its law off for the rest of a heist and yields a page, and the Spire's light going out when one breaks is the Heart's signature moment. §10.2 lists Law Pylon as a building with ten levels and health, but the relationship between pylons and the law slots they presumably represent is never stated.</p>
-        
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Mostly a false alarm, and that is the useful part.</strong> §10.2’s Law Pylon row gives ten levels at 600 health each and states the relationship this item calls missing, in four words: <em>“One per law slot; per slot”</em>. This item was recorded without reading that table — its own text admits as much — and the same oversight produced half of G3.<br><br>What survives is one sentence: nothing says a raider can tell <em>which law</em> a pylon carries before committing to the detour, which both §12.6 and §5.7 assume. <code>docs/design/spec/wards.md</code> proposes the pylon show its school colour and note glyphs, with §15.3’s law banner naming it on approach, and prices the detour from §10.2’s health: 1% of a heist at pylon level 1, 9% at level 10.</p>
       </article>
       <article class="item min" data-group="minor"
                data-kind="gap" data-status="open">

@@ -9,7 +9,7 @@ Findings F1–F3 came out of rebuilding the economy model the document reference
 but does not contain, and are the most consequential in this analysis. F4 and F5
 came out of the opposite exercise — taking the document's combat and Vault
 numbers at face value and multiplying them together, which nobody appears to
-have done.
+have done. F6 came out of extending that to the wards and pylons on the route.
 
 ---
 
@@ -342,6 +342,36 @@ stop-or-continue breakeven sits at exactly 70% full: §12.9's Loud multiplier,
 with everything else cancelling.
 
 Reproduce with `python3 tools/decision_support.py vault`.
+
+---
+
+## F6. The Breaker is 63% of the crew's damage against every breakable object
+
+§11.1 gives the Breaker "double damage to wards, pylons and the Vault". Against
+all three, its doubled Power of 80 is **63% of a five-crew's 126**:
+
+| Pylon level | Health | Lone Breaker (L12) | Whole crew (L12) |
+| --- | --- | --- | --- |
+| 3 | 1,800 | 7.7 s | 4.9 s |
+| 6 | 3,600 | 15.4 s | 9.8 s |
+| 10 | 6,000 | 25.7 s | 16.3 s |
+
+Four extra characters cut the time by **37%**. §12.6 lists "who cracks" among the
+Vault phase's decisions; it has one answer, in every situation, at every level.
+So do "who smashes the ward" and "who breaks the pylon" — a Scout needs 14
+seconds on the cheapest ward a Breaker clears in two.
+
+This is F5's shape reached from the other end: a sub-phase named as a decision
+that contains none.
+
+**Recommendation:** three defensible answers, and the choice is a balance
+judgement rather than arithmetic — narrow the Power spread; give a second
+character on the same object a stacking bonus, so joining in is worth the
+exposure; or accept it as role identity and stop calling it a decision. What is
+not defensible is keeping the sentence while one role is two thirds of the
+answer.
+
+Reproduce with `python3 tools/decision_support.py wards`.
 
 ---
 

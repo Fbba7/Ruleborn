@@ -86,6 +86,21 @@ four of the five roles are two and a half to five times below it.
 - Can a ward be destroyed as well as disarmed? Breakers deal "double damage to
   wards" (§11.1), so presumably yes — but wards have no health values.
 
+**Corrected since.** The bullet about levels 2–5 was wrong: §10.2's Ward row
+gives all five, at **effect +15/30/45/60% and resets 10 → 6 s**. §10.3 gives
+level-1 effects and §10.2 prices the levels, and reading either alone gives a
+wrong answer about the other — the document's own recurring failure, reproduced
+in this analysis. See D18.
+
+What genuinely remains is sharper: **"effect +15%" has no key.** Each ward states
+its effect in its own units, and for three of the six there is more than one
+number the percentage could scale. Static Coil has no damage value at all.
+
+→ Drafted: [`spec/wards.md`](../design/spec/wards.md), under one rule — never
+scale a distance — plus the three trigger kinds the wording already implies, the
+disarm action §12.5 presumes, and ward health of 500 × level, which puts the
+smash-or-disarm crossover at ward level 3.
+
 ---
 
 ## G4. The Vault, Storehouses and the loading loop
@@ -125,6 +140,18 @@ as the Heart's signature moment. But pylons have no health, no count per realm,
 no placement rule, and no relationship to the law slots they presumably represent.
 §10.2 lists "Law Pylon" as a building type but its level table was not examined in
 detail — this should be verified against the law-slot model in §5.1.
+
+**Verified since, and this gap was mostly wrong.** §10.2's Law Pylon row gives
+ten levels at **600 health each** and states the relationship in four words:
+*"One per law slot; per slot."* Almost everything this item asked for was already
+written down, one section away.
+
+What survives is one sentence: nothing says a raider can tell **which law** a
+pylon carries before committing to the detour, which §12.6 and §5.7 both assume.
+
+→ Drafted: [`spec/wards.md`](../design/spec/wards.md), which also prices the
+detour from §10.2's own health figures — 1% of a heist at pylon level 1, 9% at
+level 10.
 
 ---
 

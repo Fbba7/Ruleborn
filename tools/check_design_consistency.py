@@ -246,6 +246,28 @@ def main() -> int:
         f"{crack:.0f}s at one hit per 0.8s for Power damage",
     )
 
+    print("\nWards and pylons (11.1, 10.2, 12.6)")
+    breaker = role_stats["Breaker"][0] * 2
+    check(
+        "'who cracks' is a decision (12.6) rather than always the Breaker",
+        breaker / volley < 0.5,
+        f"the Breaker is {100 * breaker / volley:.0f}% of the crew's damage against "
+        f"wards, pylons and the Vault, so four extra characters cut the time by "
+        f"{100 * (1 - breaker / volley):.0f}%",
+    )
+    # §10.2 gives ward levels 2-5 as "effect +15%..." and never says what scales.
+    ward_effects = {
+        "Gravity Well": 2, "Crystal Wall": 1, "Time Snare": 1,
+        "Static Coil": 3, "Thorn Hedge": 1, "Lantern Glare": 2,
+    }
+    ambiguous = [n for n, candidates in ward_effects.items() if candidates > 1]
+    check(
+        "every ward's '+15% effect' names one quantity (10.2, 10.3)",
+        not ambiguous,
+        f"{len(ambiguous)} of {len(ward_effects)} wards state more than one number "
+        f"the percentage could scale: {', '.join(ambiguous)}",
+    )
+
     print("\nStability arithmetic (5.5)")
     capacity = (30 + 8 * 10) + 7 * (8 + 5 * 10)
     check("Spire 10 + seven Anchor Stones 10 = 516 stability", capacity == 516, str(capacity))
