@@ -33,4 +33,8 @@ echo "== audit register builds =="
 python3 tools/build_audit.py
 
 echo
+echo "== roadmap builds and is internally consistent =="
+python3 tools/build_roadmap.py
+
+echo
 echo "All checks passed."

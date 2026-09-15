@@ -4,15 +4,17 @@ A deep read of `docs/design/ruleborn-game-design-v2.3.html`: 30 sections,
 ~85,600 words, 330 headings, 123 graded references, 12 commissioned evidence
 reviews.
 
-Start with `01-executive-summary.md`.
+Start with `01-executive-summary.md`. To check where the work stands rather
+than what it found, the roadmap is at
+https://claude.ai/artifact/Yb1WxZ2eJCCbByitnd7fJf.
 
 | Document | What it covers |
 | --- | --- |
 | [01-executive-summary.md](01-executive-summary.md) | The verdict, what the design gets right, the six things that must change before code, and where I disagree with the document |
 | [02-system-map.md](02-system-map.md) | Every system, the dependency graph, the six couplings carrying the design's weight, and what is safe to defer |
 | [03-contradiction-register.md](03-contradiction-register.md) | Every confirmed internal contradiction, with sections, cause and a recommended resolution for each |
-| [04-specification-gaps.md](04-specification-gaps.md) | 11 things referenced but never specified — what a builder would have to invent |
-| [05-quantitative-findings.md](05-quantitative-findings.md) | The three economy-model findings (F1–F3), the arithmetic that checks out, the arithmetic that doesn't, and the note/chord/cost distribution analysis |
+| [04-specification-gaps.md](04-specification-gaps.md) | Things referenced but never specified — what a builder would have to invent, and two entries that turned out to be specified after all |
+| [05-quantitative-findings.md](05-quantitative-findings.md) | The six measured findings (F1–F6), the arithmetic that checks out, the arithmetic that doesn't, and the note/chord/cost distribution analysis |
 | [06-build-readiness.md](06-build-readiness.md) | What is buildable today, what's blocked, the technical bet assessed, and an independent scope and risk read |
 | [07-recommended-next-steps.md](07-recommended-next-steps.md) | Ordered actions, the two decisive gates first |
 

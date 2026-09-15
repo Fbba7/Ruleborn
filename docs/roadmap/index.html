@@ -1,0 +1,851 @@
+<title>Ruleborn Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  /* Same palette and typefaces as the audit register: the two pages are one
+     project and should read that way. */
+  :root {
+    --ground: #FCFBFF; --raised: #FFFFFF;
+    --ink: #221C3A; --muted: #6E6685; --faint: #958CAD;
+    --rule: #E6E2EE; --rule-strong: #D3CCE3;
+    --done: #2E7D5B; --doing: #1F6F83; --ready: #A77410;
+    --blocked: #958CAD; --yours: #C0304A;
+    --accent: #7A46C8;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #17122C; --raised: #1E1839;
+      --ink: #EDE9F8; --muted: #A79FC4; --faint: #7E76A0;
+      --rule: #2E2650; --rule-strong: #3D3466;
+      --done: #5CC46A; --doing: #3CC6D8; --ready: #F2B43C;
+      --blocked: #7E76A0; --yours: #E2536B;
+      --accent: #B18CF5;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #17122C; --raised: #1E1839;
+    --ink: #EDE9F8; --muted: #A79FC4; --faint: #7E76A0;
+    --rule: #2E2650; --rule-strong: #3D3466;
+    --done: #5CC46A; --doing: #3CC6D8; --ready: #F2B43C;
+    --blocked: #7E76A0; --yours: #E2536B;
+    --accent: #B18CF5;
+    color-scheme: dark;
+  }
+
+  [hidden] { display: none !important; }
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    font-size: 15.5px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 800px; margin: 0 auto; padding: 40px 20px 72px; }
+
+  h1, h2 { font-family: Marcellus, Georgia, serif; font-weight: 400; text-wrap: balance; }
+  h1 { font-size: clamp(30px, 7vw, 42px); line-height: 1.1; margin: 0 0 6px; }
+  h2 { font-size: 22px; margin: 0; line-height: 1.25; }
+  h3 { font-family: inherit; font-size: 16px; font-weight: 600; margin: 0;
+        line-height: 1.35; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: var(--accent); }
+
+  .eyebrow { font-family: "IBM Plex Mono", monospace; text-transform: uppercase;
+              letter-spacing: 0.16em; font-size: 11px; color: var(--accent); margin: 0 0 10px; }
+  .lede { color: var(--muted); font-size: 17px; max-width: 62ch; margin-top: 14px; }
+
+  .summary { display: flex; flex-wrap: wrap; margin: 30px 0 0;
+              border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+              padding-block: 14px; }
+  .summary div { flex: 1 1 104px; padding-right: 14px; }
+  .summary .n { font-family: "IBM Plex Mono", monospace; font-size: 23px; font-weight: 500;
+                 font-variant-numeric: tabular-nums; display: block; line-height: 1.2; }
+  .summary .k { font-size: 12.5px; color: var(--muted); }
+
+  .callout { border: 1px solid var(--yours); border-radius: 8px;
+              padding: 16px 18px; margin-top: 28px; }
+  .callout h2 { font-size: 19px; color: var(--yours); }
+  .callout ul { margin: 10px 0 0; padding-left: 20px; }
+  .callout li { margin-bottom: 4px; }
+  .callout li a { font-family: "IBM Plex Mono", monospace; font-size: 12.5px;
+                   margin-right: 6px; }
+
+  .filters { position: sticky; top: 0; background: var(--ground); z-index: 5;
+              display: flex; flex-wrap: wrap; gap: 7px; padding-block: 14px;
+              margin-bottom: 8px; border-bottom: 1px solid var(--rule); }
+  .chip { font: inherit; font-size: 13px; font-weight: 500; color: var(--muted);
+           background: transparent; border: 1px solid var(--rule-strong);
+           border-radius: 999px; padding: 6px 12px; cursor: pointer; min-height: 34px;
+           display: inline-flex; align-items: center; gap: 7px; }
+  .chip:hover { color: var(--ink); border-color: var(--faint); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chip[aria-pressed="true"] { color: var(--ground); background: var(--ink);
+                                border-color: var(--ink); }
+  .chip .n { font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+              font-variant-numeric: tabular-nums; opacity: 0.65; }
+
+  .stage { margin-top: 46px; }
+  .stage-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+  .stage-head > div { flex: 1 1 auto; }
+  .sid { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 500;
+          color: var(--ground); background: var(--ink); padding: 3px 8px;
+          border-radius: 4px; margin-top: 3px; }
+  .sub { color: var(--muted); font-size: 14px; margin-top: 2px; }
+  .scount { font-family: "IBM Plex Mono", monospace; font-size: 13px;
+             color: var(--faint); font-variant-numeric: tabular-nums; margin-top: 4px; }
+  .blurb { color: var(--muted); font-size: 14.5px; max-width: 62ch; margin-bottom: 20px; }
+
+  .task { border-left: 3px solid var(--blocked); padding-left: 18px; margin-bottom: 24px; }
+  .task.st-done { border-left-color: var(--done); }
+  .task.st-doing { border-left-color: var(--doing); }
+  .task.st-ready { border-left-color: var(--ready); }
+  .task.st-yours { border-left-color: var(--yours); }
+
+  .task-head { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap;
+                margin-bottom: 7px; }
+  .task-head h3 { flex: 1 1 240px; }
+  .tid { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; font-weight: 500;
+          color: var(--ground); background: var(--blocked); padding: 2px 7px;
+          border-radius: 4px; }
+  .st-done .tid { background: var(--done); }
+  .st-doing .tid { background: var(--doing); }
+  .st-ready .tid { background: var(--ready); }
+  .st-yours .tid { background: var(--yours); }
+
+  .status { font-family: "IBM Plex Mono", monospace; font-size: 11px;
+             letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+             color: var(--faint); }
+  .status.st-done { color: var(--done); }
+  .status.st-doing { color: var(--doing); }
+  .status.st-ready { color: var(--ready); }
+  .status.st-yours { color: var(--yours); }
+  .owner { font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+            letter-spacing: 0.05em; color: var(--faint);
+            border: 1px solid var(--rule-strong); border-radius: 3px; padding: 0 5px;
+            white-space: nowrap; }
+  .owner.o-you { color: var(--yours); border-color: var(--yours); }
+
+  .detail { max-width: 66ch; overflow-wrap: break-word; }
+  .task strong { font-weight: 600; }
+  .task em { font-style: italic; }
+  code { font-family: "IBM Plex Mono", monospace; font-size: 0.88em;
+          background: var(--rule); padding: 1px 5px; border-radius: 3px;
+          overflow-wrap: anywhere; }
+
+  .prog { margin-top: 11px; max-width: 420px; }
+  .bar { position: relative; height: 7px; border-radius: 4px; background: var(--rule);
+          overflow: hidden; }
+  .fill { position: absolute; inset: 0 auto 0 0; background: var(--doing);
+           border-radius: 4px; }
+  .fill.settled { background: var(--done); }
+  .prog-n { font-size: 12.5px; color: var(--muted); margin-top: 5px;
+             font-variant-numeric: tabular-nums; }
+
+  .gate, .evidence, .blockers { font-size: 13.5px; color: var(--muted);
+                                 margin-top: 8px; max-width: 66ch; }
+  .glabel { font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+             text-transform: uppercase; letter-spacing: 0.07em; color: var(--faint);
+             margin-right: 6px; }
+  .blockers { color: var(--faint); font-size: 13px; }
+  .blockers a { font-family: "IBM Plex Mono", monospace; font-size: 12px; }
+
+  .notyet { margin-top: 50px; border-top: 1px solid var(--rule); padding-top: 26px; }
+  .notyet ul { margin: 14px 0 0; padding-left: 20px; color: var(--muted);
+                font-size: 14.5px; max-width: 64ch; }
+  .notyet li { margin-bottom: 8px; }
+  .notyet strong { color: var(--ink); }
+
+  .empty { color: var(--muted); font-size: 14.5px; padding: 26px 0; }
+  footer { margin-top: 52px; padding-top: 22px; border-top: 1px solid var(--rule);
+            color: var(--muted); font-size: 13.5px; max-width: 64ch; }
+  footer p + p { margin-top: 10px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Ruleborn &middot; against design document v2.3</p>
+    <h1>Roadmap</h1>
+    <p class="lede">Every stage, what finishes it, and who it is waiting on.
+      Progress against the register is computed rather than claimed &mdash; and
+      <strong>drafted is not signed off</strong>, which is the distinction the
+      two bars below keep separate.</p>
+
+    <div class="summary">
+      <div><span class="n">6</span><span class="k">tasks done</span></div>
+      <div><span class="n">5</span><span class="k">live now</span></div>
+      <div><span class="n">7</span><span class="k">waiting on you</span></div>
+      <div><span class="n">41/64</span><span class="k">register items drafted</span></div>
+      <div><span class="n">11</span><span class="k">signed off</span></div>
+      <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
+    </div>
+
+    <div class="callout">
+      <h2>What only you can do</h2>
+      <ul><li><a href="#T0-3">T0.3</a> Gate 1 — get 15–30 people to play it</li><li><a href="#T0-4">T0.4</a> Gate 2 — get 15–20 people to complete a build</li><li><a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution</li><li><a href="#T1-5">T1.5</a> Make the eight decisions that are genuinely yours</li><li><a href="#T1-9">T1.9</a> Two content-balance passes, before any law is authored</li><li><a href="#T4-1">T4.1</a> Decide launch content against the team that exists</li><li><a href="#T4-2">T4.2</a> Budget the iteration that finds the fun</li></ul>
+    </div>
+  </header>
+
+  <nav class="filters" aria-label="Filter the roadmap">
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">33</span></button>
+    <button class="chip" data-filter="owner:you">Yours<span class="n">11</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">6</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">18</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">4</span></button>
+  </nav>
+
+  <main id="list">
+      <section class="stage" id="S0">
+        <div class="stage-head">
+          <span class="sid">S0</span>
+          <div>
+            <h2>The two gates</h2>
+            <p class="sub">Decide whether the project continues</p>
+          </div>
+          <span class="scount">2/5</span>
+        </div>
+        <p class="blurb">§26.7 puts two tests before any code and both are right. They cost nothing and they answer the only two questions that can stop the project. The prototype for both is built and published; what remains is people playing it.</p>
+        
+      <article class="task st-done" id="T0-1"
+               data-status="done" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T0.1</span>
+          <h3>Build a browser prototype that runs both gates</h3>
+          <span class="status st-done">Done</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">One page: a heist against a hand-built island, and a build mode that places three terrain features, one guard and one law. Implements §12.17's detection faithfully. Throwaway by design — none of its numbers carry forward (D11).</p>
+        
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <a href="https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E">https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E</a></p>
+        
+      </article>
+      <article class="task st-done" id="T0-2"
+               data-status="done" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T0.2</span>
+          <h3>Build the scoring harness</h3>
+          <span class="status st-done">Done</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Testers finish with a copyable code. The harness scores a batch of codes against §19.27's and §13.3's own thresholds, so the answer is read off rather than argued.</p>
+        
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>tools/parse_gate_results.py</code></p>
+        
+      </article>
+      <article class="task st-yours" id="T0-3"
+               data-status="yours" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T0.3</span>
+          <h3>Gate 1 — get 15–30 people to play it</h3>
+          <span class="status st-yours">Waiting on you</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        <p class="detail">A hobbyist community, a subreddit, a Discord, or a paid panel (§25.5 budgets for one). The measure that matters is behavioural: whether they choose to play again.</p>
+        
+        <p class="gate"><span class="glabel">Passes when</span> median tension ≥ 3/4, median enjoyment ≥ 6/10, ≥ 60% play again (§19.27)</p>
+        
+        <p class="blockers">After <a href="#T0-1">T0.1</a> Build a browser prototype that runs both gates</p>
+      </article>
+      <article class="task st-yours" id="T0-4"
+               data-status="yours" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T0.4</span>
+          <h3>Gate 2 — get 15–20 people to complete a build</h3>
+          <span class="status st-yours">Waiting on you</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        <p class="detail">Build an island, watch a scripted raid against it, then be told they may stop. Whether a second island gets built unprompted is logged, never asked — stated willingness runs about 46% ahead of behaviour [218][219].</p>
+        
+        <p class="gate"><span class="glabel">Passes when</span> ≥ 30% build a second island → authorship as designed; 15–30% → authorship with scaffolding; < 15% → pivot to generated islands the player curates (§13.3)</p>
+        
+        <p class="blockers">After <a href="#T0-1">T0.1</a> Build a browser prototype that runs both gates</p>
+      </article>
+      <article class="task st-blocked" id="T0-5"
+               data-status="blocked" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T0.5</span>
+          <h3>Read the two results and decide</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        <p class="detail">Gate 2's answer decides what game is being built, not whether it is built — §26.7 calls it “the single decision that changes the most”, and the pivot is not a lesser game. Gate 1's answer can stop the project.</p>
+        
+        
+        
+        <p class="blockers">After <a href="#T0-3">T0.3</a> Gate 1, <a href="#T0-4">T0.4</a> Gate 2</p>
+      </article>
+      </section>
+      <section class="stage" id="S1">
+        <div class="stage-head">
+          <span class="sid">S1</span>
+          <div>
+            <h2>Reconcile the document</h2>
+            <p class="sub">Days of desk time, and the cheapest work in the plan</p>
+          </div>
+          <span class="scount">2/9</span>
+        </div>
+        <p class="blurb">Four systems are specified twice and the later spec never retired the earlier one. Nothing downstream can be locked while two answers exist. Most of this is drafted; none of it is signed off, and the design document itself is still untouched.</p>
+        
+      <article class="task st-done" id="T1-1"
+               data-status="done" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T1.1</span>
+          <h3>Find and enumerate every conflict</h3>
+          <span class="status st-done">Done</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Every contradiction, gap and measured finding, each with the sections involved and a recommended resolution.</p>
+        
+        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C3 C4 C5 C6 C7 C8 C9 F1 F2 F3 F4 F5 F6 G1 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8 G9">
+          <div class="bar">
+            <span class="fill" style="width:63.2%"></span>
+            <span class="fill settled" style="width:2.6%"></span>
+          </div>
+          <p class="prog-n"><strong>24 of 38</strong> drafted &middot;
+             <strong>1</strong> signed off</p>
+        </div>
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>docs/audit/index.html</code></p>
+        
+      </article>
+      <article class="task st-doing" id="T1-2"
+               data-status="doing" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T1.2</span>
+          <h3>Draft a resolution for every blocking item</h3>
+          <span class="status st-doing">Under way</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">One spec file per system, each stating the chosen reading once and then listing every other section the choice forces a change to. That last part is what stops the pattern recurring.</p>
+        
+        <div class="prog" title="C1 C19 C2 C3 C4 C5 C6 G1 G9">
+          <div class="bar">
+            <span class="fill" style="width:77.8%"></span>
+            <span class="fill settled" style="width:0.0%"></span>
+          </div>
+          <p class="prog-n"><strong>7 of 9</strong> drafted &middot;
+             <strong>0</strong> signed off</p>
+        </div>
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>docs/design/spec/</code></p>
+        
+      </article>
+      <article class="task st-doing" id="T1-3"
+               data-status="doing" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T1.3</span>
+          <h3>Draft a resolution for the rest</h3>
+          <span class="status st-doing">Under way</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">The significant and minor conflicts, and the gaps below the blocking line.</p>
+        
+        <div class="prog" title="C10 C11 C12 C13 C14 C15 C16 C17 C18 C20 C7 C8 C9 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8">
+          <div class="bar">
+            <span class="fill" style="width:73.9%"></span>
+            <span class="fill settled" style="width:4.3%"></span>
+          </div>
+          <p class="prog-n"><strong>17 of 23</strong> drafted &middot;
+             <strong>1</strong> signed off</p>
+        </div>
+        
+        
+        
+      </article>
+      <article class="task st-yours" id="T1-4"
+               data-status="yours" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T1.4</span>
+          <h3>Sign off, or overrule, each drafted resolution</h3>
+          <span class="status st-yours">Waiting on you</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        <p class="detail">Every spec file is marked <em>proposed</em>. They are readings of your document, not decisions about your game. Nothing below this line should start until they are decisions.</p>
+        
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>docs/design/spec/README.md</code></p>
+        <p class="blockers">After <a href="#T1-2">T1.2</a> Draft a resolution for every blocking item</p>
+      </article>
+      <article class="task st-yours" id="T1-5"
+               data-status="yours" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T1.5</span>
+          <h3>Make the eight decisions that are genuinely yours</h3>
+          <span class="status st-yours">Waiting on you</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        <p class="detail">Where the answer is a judgement rather than arithmetic, the options are priced rather than picked. Character scarcity as a feature; the raid-versus-build trade-off; three law ranks or five; one producer per realm or two.</p>
+        
+        <div class="prog" title="Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8">
+          <div class="bar">
+            <span class="fill" style="width:0.0%"></span>
+            <span class="fill settled" style="width:0.0%"></span>
+          </div>
+          <p class="prog-n"><strong>0 of 8</strong> drafted &middot;
+             <strong>0</strong> signed off</p>
+        </div>
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 tools/decision_support.py</code></p>
+        
+      </article>
+      <article class="task st-blocked" id="T1-6"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T1.6</span>
+          <h3>Apply the decisions back into the design document</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail"><strong>Nothing so far has touched the document.</strong> Every resolution lives in a side repository, which is the right place to draft but the wrong place to stop — a second copy of the truth is how this started. Each applied decision gets a dated record naming the sections it supersedes.</p>
+        
+        
+        
+        <p class="blockers">After <a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution, <a href="#T1-5">T1.5</a> Make the eight decisions that are genuinely yours</p>
+      </article>
+      <article class="task st-done" id="T1-7"
+               data-status="done" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T1.7</span>
+          <h3>Split the content out of the prose</h3>
+          <span class="status st-done">Done</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">The laws, ruleborn, terrain, buildings, wards and detection numbers are now data, validated, with every contradiction recorded as both readings rather than silently resolved. Summary tables are generated from it and drift fails the build.</p>
+        
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>content/ and tools/generate_docs.py</code></p>
+        
+      </article>
+      <article class="task st-blocked" id="T1-8"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T1.8</span>
+          <h3>Split the document into a specification and a research archive</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">§19, §28 and §30 are roughly 40% of the text and hold the reasoning behind decisions recorded elsewhere. Both halves are worth keeping; together they mean the spec cannot be read, diffed or implemented without the archive (D10).</p>
+        
+        
+        
+        <p class="blockers">After <a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution</p>
+      </article>
+      <article class="task st-ready" id="T1-9"
+               data-status="ready" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T1.9</span>
+          <h3>Two content-balance passes, before any law is authored</h3>
+          <span class="status st-ready">Ready to start</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        <p class="detail">Notes are 2:1 imbalanced on the axis that matters most — Glow 12 laws, its opposite Hush 6, and Hush is the hiding note (D13). And all twelve chords are reachable with two laws rather than the three §8.5 describes (D14). Notes are frozen at eight, so this is a permanent constraint on every future season.</p>
+        
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 tools/check_design_consistency.py</code></p>
+        
+      </article>
+      </section>
+      <section class="stage" id="S2">
+        <div class="stage-head">
+          <span class="sid">S2</span>
+          <div>
+            <h2>The economy model</h2>
+            <p class="sub">Done, and it has already paid for itself</p>
+          </div>
+          <span class="scount">2/4</span>
+        </div>
+        <p class="blurb">§24 says a Python model generated roughly a quarter of the document's numbers. That model is not in the document, so none of those numbers could be re-derived. Rebuilt from the published formulas, it reproduces the first month to within 10% and the Keeper curve to within three days.</p>
+        
+      <article class="task st-done" id="T2-1"
+               data-status="done" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T2.1</span>
+          <h3>Rebuild and calibrate the model</h3>
+          <span class="status st-done">Done</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Every choice the document leaves open is a documented field in <code>config.py</code>; <code>data.py</code> is transcription only, so it can be checked line by line.</p>
+        
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.economy_model</code></p>
+        
+      </article>
+      <article class="task st-done" id="T2-2"
+               data-status="done" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T2.2</span>
+          <h3>Assert the findings, so they are re-checked rather than re-read</h3>
+          <span class="status st-done">Done</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Twelve tests: that the model still reproduces the document where the document is self-consistent, that findings F1–F3 still hold, and that the payout peg behaves as its spec page claims.</p>
+        
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.economy_model.test_economy_model</code></p>
+        
+      </article>
+      <article class="task st-blocked" id="T2-3"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T2.3</span>
+          <h3>Model Aether and Essence spending</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Starlight currently drives all growth, so weaving upkeep, births and character levels are unmodelled and law-restoration dates are indicative only.</p>
+        
+        
+        
+        <p class="blockers">After <a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution</p>
+      </article>
+      <article class="task st-blocked" id="T2-4"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T2.4</span>
+          <h3>Regenerate §9.3, §10.2, §14.2 and §14.3 from the model</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Under whatever building and roster rules are chosen, and replace the published tables wholesale. Hand-editing them is what produced C19 in the first place.</p>
+        
+        
+        
+        <p class="blockers">After <a href="#T1-5">T1.5</a> Make the eight decisions that are genuinely yours</p>
+      </article>
+      </section>
+      <section class="stage" id="S3">
+        <div class="stage-head">
+          <span class="sid">S3</span>
+          <div>
+            <h2>The determinism spike</h2>
+            <p class="sub">6–14 sessions, time-boxed — and everything rests on it</p>
+          </div>
+          <span class="scount">0/2</span>
+        </div>
+        <p class="blurb">One simulation written once and compiled twice buys server-authoritative anti-cheat, free replays, free analytics, rehearsals, balance bots, co-op and a $5–15/month infrastructure bill at a million players. If it fails they all fail together.</p>
+        
+      <article class="task st-blocked" id="T3-1"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T3.1</span>
+          <h3>One function, the same checksum on four targets</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Desktop, server (WebAssembly), a cheap Android and an iPhone. <strong>Put the server Wasm build in the first round</strong> rather than deferring it — the whole architecture rests on the same code running in both places.</p>
+        
+        <p class="gate"><span class="glabel">Passes when</span> identical checksums on all four, or take the C# fallback without renegotiating (§24.7)</p>
+        
+        <p class="blockers">After <a href="#T0-5">T0.5</a> Read the two results and decide</p>
+      </article>
+      <article class="task st-blocked" id="T3-2"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T3.2</span>
+          <h3>Fixed-point module and golden replays, portable from day one</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Written so that switching to the fallback costs the spike and nothing else. The tick rate has to be settled first (C7), because the replays encode it.</p>
+        
+        
+        
+        <p class="blockers">After <a href="#T3-1">T3.1</a> One function, the same checksum on four targets, <a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution</p>
+      </article>
+      </section>
+      <section class="stage" id="S4">
+        <div class="stage-head">
+          <span class="sid">S4</span>
+          <div>
+            <h2>The scope conversation</h2>
+            <p class="sub">One decision, and §26.5 already names it the lever</p>
+          </div>
+          <span class="scount">0/2</span>
+        </div>
+        <p class="blurb">48 laws, 144 creature forms, 44 resonances, 39 terrain features, 16 buildings, 27 screens and 12 languages, from one designer, one coding agent and three contractors. §26.8's own estimate leaves the iteration needed to find the fun unbudgeted.</p>
+        
+      <article class="task st-ready" id="T4-1"
+               data-status="ready" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T4.1</span>
+          <h3>Decide launch content against the team that exists</h3>
+          <span class="status st-ready">Ready to start</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        <p class="detail">A ~40% cut is priced that preserves everything distinctively Ruleborn: 24 laws rather than 48, 3 form-notes rather than 8, ~20 resonances, 2–3 languages (§20.6 already says this), constellations to v1.1, wards at 2 levels. <strong>The Island Workshop is the one thing not to cut</strong> — it is the only credible answer to the content treadmill at this team size.</p>
+        
+        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>docs/analysis/06-build-readiness.md</code></p>
+        
+      </article>
+      <article class="task st-ready" id="T4-2"
+               data-status="ready" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T4.2</span>
+          <h3>Budget the iteration that finds the fun</h3>
+          <span class="status st-ready">Ready to start</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        <p class="detail">§26.8 estimates ~270 agent runs and then says plainly that the iteration is unbudgeted. For a novel genre blend with no reference implementation that iteration is normally most of the work. Proposed: 1–1.5× the build estimate (D9).</p>
+        
+        
+        
+        
+      </article>
+      </section>
+      <section class="stage" id="S5">
+        <div class="stage-head">
+          <span class="sid">S5</span>
+          <div>
+            <h2>Specification locks</h2>
+            <p class="sub">§26.7's sequence, unchanged</p>
+          </div>
+          <span class="scount">0/5</span>
+        </div>
+        <p class="blurb">Each lock assumes there is one specification to lock, which is why stage 1 comes first. Nothing here is hard; all of it is irreversible.</p>
+        
+      <article class="task st-blocked" id="T5-1"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T5.1</span>
+          <h3>Lock the simulation contract (§24.10)</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        
+        
+        
+        
+        <p class="blockers">After <a href="#T3-1">T3.1</a> One function, the same checksum on four targets</p>
+      </article>
+      <article class="task st-blocked" id="T5-2"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T5.2</span>
+          <h3>Lock the detection numbers (§12.17)</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Unblocked by C1, and the numbers are already data in <code>content/detection.json</code>.</p>
+        
+        
+        
+        <p class="blockers">After <a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution</p>
+      </article>
+      <article class="task st-blocked" id="T5-3"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T5.3</span>
+          <h3>Lock the law schema (§7, §8.7)</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Unblocked by C3 and the note rebalance.</p>
+        
+        
+        
+        <p class="blockers">After <a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution, <a href="#T1-9">T1.9</a> Two content-balance passes, before any law is authored</p>
+      </article>
+      <article class="task st-blocked" id="T5-4"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T5.4</span>
+          <h3>Lock saves, bundles and versions (§24.11)</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        
+        
+        
+        
+        <p class="blockers">After <a href="#T5-1">T5.1</a> Lock the simulation contract (§24.10)</p>
+      </article>
+      <article class="task st-blocked" id="T5-5"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T5.5</span>
+          <h3>Specify pathfinding and crew control before building it</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">The largest gap and the system most likely to fail §30.7's premise 3 — that delegated control still feels like agency. Drafted in <code>spec/movement.md</code>; make felt control a gate on the slice, not a polish item.</p>
+        
+        <p class="gate"><span class="glabel">Passes when</span> ≥ 70% felt control (§30.8)</p>
+        
+        <p class="blockers">After <a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution</p>
+      </article>
+      </section>
+      <section class="stage" id="S6">
+        <div class="stage-head">
+          <span class="sid">S6</span>
+          <div>
+            <h2>Vertical slice</h2>
+            <p class="sub">§26.2 phase 2 — 10 to 12 weeks</p>
+          </div>
+          <span class="scount">0/2</span>
+        </div>
+        <p class="blurb">A Heart and two realms, 8 common laws, 6 ruleborn, 2 Sages, ruins only, rehearsals. The first build that can answer whether the game is fun, which is the one question none of the analysis can.</p>
+        
+      <article class="task st-blocked" id="T6-1"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T6.1</span>
+          <h3>Build the slice</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        
+        
+        <p class="gate"><span class="glabel">Passes when</span> ≥ 7 of 10 outside playtesters ask for a second session; ≥ 15 decisions per heist (§26.2)</p>
+        
+        <p class="blockers">After <a href="#T5-1">T5.1</a> Lock the simulation contract (§24.10), <a href="#T5-2">T5.2</a> Lock the detection numbers (§12.17), <a href="#T5-3">T5.3</a> Lock the law schema (§7, §8.7), <a href="#T5-4">T5.4</a> Lock saves, bundles and versions (§24.11), <a href="#T5-5">T5.5</a> Specify pathfinding and crew control before building it</p>
+      </article>
+      <article class="task st-blocked" id="T6-2"
+               data-status="blocked" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T6.2</span>
+          <h3>Run §19.5's fun gate</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        <p class="detail">The exit test, and the first honest answer to whether any of this works.</p>
+        
+        
+        
+        <p class="blockers">After <a href="#T6-1">T6.1</a> Build the slice</p>
+      </article>
+      </section>
+      <section class="stage" id="S7">
+        <div class="stage-head">
+          <span class="sid">S7</span>
+          <div>
+            <h2>Alpha to launch</h2>
+            <p class="sub">§26.2 phases 3–6</p>
+          </div>
+          <span class="scount">0/4</span>
+        </div>
+        <p class="blurb">Out of scope for planning at this distance, and listed so the roadmap does not end at the slice. Each phase ends only when its exit test passes.</p>
+        
+      <article class="task st-blocked" id="T7-1"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T7.1</span>
+          <h3>Alpha — 18 laws, player heists, the server, balance bots</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        
+        
+        <p class="gate"><span class="glabel">Passes when</span> no dominant law in bot runs; ≥ 20% of testers still playing after a week (§26.2)</p>
+        
+        <p class="blockers">After <a href="#T6-2">T6.2</a> Run §19.5's fun gate</p>
+      </article>
+      <article class="task st-blocked" id="T7-2"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T7.2</span>
+          <h3>Beta on TestFlight — all launch content, age protections, moderation</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        
+        
+        <p class="gate"><span class="glabel">Passes when</span> stable; privacy and legal review passed (§26.2)</p>
+        
+        <p class="blockers">After <a href="#T7-1">T7.1</a> Alpha</p>
+      </article>
+      <article class="task st-blocked" id="T7-3"
+               data-status="blocked" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T7.3</span>
+          <h3>Soft launch in a few English- and Portuguese-speaking countries</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        
+        
+        <p class="gate"><span class="glabel">Passes when</span> the launch gates in §22.2</p>
+        
+        <p class="blockers">After <a href="#T7-2">T7.2</a> Beta on TestFlight</p>
+      </article>
+      <article class="task st-blocked" id="T7-4"
+               data-status="blocked" data-owner="you">
+        <header class="task-head">
+          <span class="tid">T7.4</span>
+          <h3>Global launch</h3>
+          <span class="status st-blocked">Blocked</span>
+          <span class="owner o-you">needs you</span>
+        </header>
+        
+        
+        
+        
+        <p class="blockers">After <a href="#T7-3">T7.3</a> Soft launch in a few English- and Portuguese-speaking countries</p>
+      </article>
+      </section></main>
+
+  <p class="empty" id="empty" hidden>Nothing matches that filter.</p>
+
+  <section class="notyet">
+    <h2>Not blocked, and still not yet</h2>
+    <p class="blurb">These look available. Starting any of them now spends work
+      that a decision above will throw away.</p>
+    <ul><li><strong>Gameplay code</strong> &mdash; The determinism spike gates it. Anti-cheat, replay validation, free analytics, rehearsals, balance bots and the whole cost model fail together if it does not pass.</li><li><strong>Character art</strong> &mdash; The form-notes decision in stage 4 changes the quantity by 3× — 144 forms against 54.</li><li><strong>Detailed screen design</strong> &mdash; C1, C5 and C6 each change what several screens show.</li><li><strong>Localisation</strong> &mdash; Twelve languages against a coined vocabulary is a large translation problem with no owner in the team model, and §20.6 already says two at launch (G11).</li><li><strong>Claiming the name publicly</strong> &mdash; §26.9 makes trademark clearance a gate, and it has not been done.</li></ul>
+  </section>
+
+  <footer>
+    <p>Generated from <code>tools/roadmap.py</code> and
+       <code>tools/audit_register.py</code> by
+       <code>python3 tools/build_roadmap.py</code>. The repository is the source
+       of truth; this page is a view of it.</p>
+    <p>The register behind the progress bars is at the
+       <a href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN">audit register</a>,
+       and the prototype the first stage depends on is
+       <a href="https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E">here</a>.</p>
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+    var tasks = Array.prototype.slice.call(document.querySelectorAll(".task"));
+    var stages = Array.prototype.slice.call(document.querySelectorAll(".stage"));
+    var empty = document.getElementById("empty");
+    var KEY = "ruleborn-roadmap-filter";
+
+    function apply(filter) {
+      var shown = 0;
+      tasks.forEach(function (t) {
+        var ok = filter === "all"
+          || (filter.indexOf("status:") === 0 && t.dataset.status === filter.slice(7))
+          || (filter.indexOf("owner:") === 0 && t.dataset.owner === filter.slice(6));
+        t.hidden = !ok;
+        if (ok) shown++;
+      });
+      stages.forEach(function (s) {
+        var any = Array.prototype.slice.call(s.querySelectorAll(".task"))
+          .some(function (t) { return !t.hidden; });
+        s.hidden = !any;
+      });
+      empty.hidden = shown > 0;
+      chips.forEach(function (c) {
+        c.setAttribute("aria-pressed", String(c.dataset.filter === filter));
+      });
+      try { localStorage.setItem(KEY, filter); } catch (e) { /* private mode */ }
+    }
+
+    chips.forEach(function (c) {
+      c.addEventListener("click", function () { apply(c.dataset.filter); });
+    });
+
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) { saved = null; }
+    if (saved && chips.some(function (c) { return c.dataset.filter === saved; })) {
+      apply(saved);
+    }
+  })();
+</script>

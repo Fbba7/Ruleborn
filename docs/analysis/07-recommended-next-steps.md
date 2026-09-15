@@ -3,6 +3,12 @@
 Ordered. Everything in stage 0 and 1 costs essentially nothing and can start
 immediately; nothing after stage 2 should start before it.
 
+**This page is the argument; the roadmap is the tracker.** The same stages, as a
+live page with statuses, blockers and computed progress, are at
+https://claude.ai/artifact/Yb1WxZ2eJCCbByitnd7fJf — generated from
+`tools/roadmap.py`. Read this for *why* the order is this order; check the
+roadmap for where things stand.
+
 ---
 
 ## Stage 0 — the two gates, re-planned for a solo developer

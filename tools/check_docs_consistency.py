@@ -63,6 +63,7 @@ def check_counts(files: list[pathlib.Path]) -> None:
         (re.compile(r"(\d+)\s+confirmed internal contradictions"), kinds["contradiction"],
          "confirmed internal contradictions"),
         (re.compile(r"tracked as (\d+) items"), total, "items tracked"),
+        (re.compile(r"as (\d+) tracked items"), total, "items tracked"),
         (re.compile(r"register is at (\d+)", re.I), total, "register size"),
         (re.compile(r"(\d+) (?:specification )?gaps\b"), kinds["gap"], "gaps"),
     ]
@@ -125,8 +126,13 @@ def check_artifact_urls(files: list[pathlib.Path]) -> None:
         for match in url.finditer(text):
             # Group by the sentence context: audit register vs prototype.
             start = max(0, match.start() - 200)
-            context = "prototype" if "prototype" in text[start:match.start()].lower() \
-                else "audit"
+            before = text[start:match.start()].lower()
+            if "prototype" in before:
+                context = "prototype"
+            elif "roadmap" in before or "progress" in before:
+                context = "roadmap"
+            else:
+                context = "audit"
             seen.setdefault(context, set()).add(match.group(1))
     for context, ids in seen.items():
         if len(ids) > 1:
