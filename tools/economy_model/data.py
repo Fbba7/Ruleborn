@@ -290,3 +290,8 @@ PUBLISHED_STABILITY = {
     181: (446, 22, 1.10),
     366: (516, 22, 0.96),
 }
+
+
+#: Hours a crew member is unavailable per heist: 3 minutes of heist (§12.6)
+#: plus 45 minutes' rest after a clean escape (§11.6, §12.9).
+CREW_HOURS_PER_HEIST = 0.8

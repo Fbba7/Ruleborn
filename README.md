@@ -20,9 +20,11 @@ Nothing should be built until the stage 0–3 work in
 [`docs/analysis/07-recommended-next-steps.md`](docs/analysis/07-recommended-next-steps.md)
 is done. In short:
 
-0. Two free playtests — the paper heist, and the build-willingness test
-1. Reconcile 17 confirmed contradictions in the design document
-2. Rebuild the economy model (Python, no engine)
+0. Two gates — does a no-loss heist feel tense, and will players build islands?
+   Re-planned as a throwaway browser prototype, since a link is recruitable and
+   a room of thirty people is not
+1. Reconcile 19 confirmed contradictions in the design document
+2. ~~Rebuild the economy model~~ — **done**, `tools/economy_model/`
 3. The determinism spike on real devices — this gates all gameplay code
 4. A launch-scope decision
 
@@ -32,7 +34,10 @@ is done. In short:
 docs/
   design/     the game design document, as delivered, plus a greppable extract
   analysis/   the deep analysis of that document — start here
-tools/        scripts that extract and machine-check the design document
+tools/
+  extract_design_doc.py         HTML -> greppable text
+  check_design_consistency.py   machine checks behind the analysis
+  economy_model/                the day-by-day model §24 references but omits
 ```
 
 ## The design in one page
@@ -77,4 +82,8 @@ python3 tools/extract_design_doc.py \
 
 # machine-check the design document for the inconsistencies found in the analysis
 python3 tools/check_design_consistency.py docs/design/ruleborn-game-design-v2.3.txt
+
+# economy model: reports and tests
+python3 -m tools.economy_model
+python3 -m tools.economy_model.test_economy_model
 ```

@@ -5,43 +5,81 @@ immediately; nothing after stage 2 should start before it.
 
 ---
 
-## Stage 0 — the two free tests (start now, run in parallel)
+## Stage 0 — the two gates, re-planned for a solo developer
 
-Both are already designed in the document. Neither needs an engine, art, or a
-line of code.
+§26.7 puts two tests before any code, and both are right. But as written they
+assume **about thirty people in a room**: eight to twelve for the paper heist
+(§19.27), fifteen to twenty for the build-willingness test (§13.3). That cohort
+does not exist for this project, so the *method* has to change even though the
+*questions* do not.
 
-### 0a. The paper heist (§19.27, gate 1)
+### What each gate actually asks
 
-An 8×8 board, face-down tiles, a guard deck, a metronome at one beat per four
-seconds for the clock. Eight to twelve people, two heists each.
+| Gate | Question | Why it cannot be skipped |
+| --- | --- | --- |
+| Paper heist (§19.27) | Does a no-loss, delegated-control stealth heist feel tense? | The premise the whole game rests on. No published research covers it (§30.8) |
+| Build willingness (§13.3) | Will players design a second island unprompted? | Ranked risk #1. §26.7 calls it "the single decision that changes the most" |
 
-**Passes if:** median tension ≥ 3/4, median enjoyment ≥ 6/10, and **at least 60%
-choose to play again** — the only behavioural measure in the set, and the one that
-matters.
+### The re-plan: a link is recruitable, a room is not
 
-**Decides:** whether a no-loss, delegated-control stealth heist is fun at all.
-This is the premise the whole game rests on and no published research covers it
-(§30.8).
+Replace the paper prototype with a **single-file browser prototype** — one
+8×8 realm, two or three laws, a crew of three, a guard on a patrol, a vault and
+a clock. No Godot, no Rust, no determinism work, no art. It exists only to be
+sent to strangers as a URL.
 
-*One addition to the document's protocol:* also record whether players feel they
-are **playing or watching**. §30.7 premise 3 is only conditionally supported and
-§04's G1 shows the system that decides it is unspecified. A paper prototype is
-the cheapest place to find out that delegated crews feel passive.
+This costs a handful of working sessions, which the paper test was designed to
+avoid — but it buys three things the paper test cannot:
 
-### 0b. The build-willingness test (§13.3)
+- **Recruitment becomes possible.** A link can go to a hobbyist community, a
+  subreddit, a Discord, or a paid panel. §25.5 already budgets for panels
+  ("a per-session fee; an indie tier exists for small studios"), so the document
+  has costed this route.
+- **It answers the harder question too.** §30.7 premise 3 — whether a delegated
+  crew feels like *playing* or *watching* — cannot be tested on a board where a
+  human moves the pieces. It is the failure mode most likely to sink the design
+  (`06-build-readiness.md` adds it as an unranked risk ~4) and the system that
+  decides it is the largest specification gap (G1).
+- **It doubles as gate 2.** Add a build mode to the same page — place three
+  terrain features, one guard, one law — and the build-willingness test runs
+  asynchronously: build, watch a raid against what you built, then be told you
+  may stop. Whether a second island gets built unprompted is logged, not asked.
 
-Fifteen to twenty people. Everyone builds one island under guidance, watches a
-raid run against it, and is then told they may stop. **Whether they build a
-second, unprompted, is the whole measurement.**
+### Sample sizes that are actually reachable
 
-**Decides:** the three-way branch in §13.3 — ≥30% authorship as designed;
-15–30% authorship with heavy scaffolding; <15% pivot to generated islands the
-player curates.
+The document's own guidance already points here. §25.4 asks for "three rounds of
+5 to 8 testers, not one round of five", and §25.5 notes in-app surveys average
+~13% response. So:
 
-This is ranked risk #1 and §26.7 calls it "the single decision that changes the
-most". The document schedules it after the paper heist; I would run it first or
-alongside, because it changes *what game is being built*, not just whether to
-build it.
+| | Target | Source |
+| --- | --- | --- |
+| Usability and felt control | 3 rounds × 5–8 | §25.4 |
+| Tension and play-again rate | 15–30 sessions via link | behavioural, not opinion |
+| Build willingness | 15–20 completions | §13.3's own threshold needs this to separate 15% from 30% |
+
+**Honest limit, stated in the document already (§19.27):** "a sample of ten to
+twenty can show a large effect but not measure a small one". These gates are
+looking for large effects — "does anyone come back", "does anyone build twice" —
+so small samples are adequate. They are not adequate for tuning.
+
+### Thresholds, unchanged
+
+- **Paper/browser heist:** median tension ≥ 3/4, median enjoyment ≥ 6/10, and
+  **≥60% choose to play again** — the only behavioural measure, and the one that
+  matters.
+- **Build willingness:** ≥30% build a second island → authorship as designed;
+  15–30% → authorship with heavy scaffolding; <15% → pivot to generated islands
+  the player curates (§13.3). The pivot is not a lesser game.
+
+### What this changes about the order of work
+
+The browser prototype moves onto the critical path, ahead of the determinism
+spike. That is a deviation from §26.7 and worth stating plainly: it spends a few
+sessions of engineering to answer the two questions that decide whether the
+project continues at all. Given §26.5's own rule that scope is the lever, buying
+those answers cheaply is the right trade.
+
+It does **not** change the rule that gameplay code waits for the determinism
+spike — the prototype is throwaway, and should be written as such.
 
 ---
 
@@ -57,9 +95,17 @@ each of which is a choice rather than new design work:
 | **C3** Law rarity | three ranks vs five | Either, but regenerate §7.4, §7.7, §7.6, §9.5, §14.4 and the glossary from one table |
 | **C4** What `L` is in `B(L)` | realm level (caps at 5) vs Vault level (caps at 10) | Almost certainly Vault level or a composite target-strength score. This is the master inflation dial and it currently references a level range that does not exist |
 | **C6** Ruleborn roster | §11.2 vs §11.11 | §11.11, reduced to one data table; §11.2 becomes a generated index |
+| **C19 / F1** Roster vs buildings | 152 positions vs a roster of 38 | Decide which moves: more Hearth homes, fewer permitted producers, or partial staffing made worthwhile |
+| **F2** Producers per realm | 1 (what §9.3 assumes) vs 2 (what §5.2 permits) | Decide, then regenerate §9.3, §10.2, §14.2 and §14.3 from the model |
+| **F3** The core trade-off | Raiding costs 2% of production | Make crew membership exclude work, the way guarding does — or accept that the trade-off is cosmetic and stop building the design on it |
 
-Then C5 (defence budgets), C7 (tick rate) and C8 (the Library), then the minor
-ones.
+Then C5 (defence budgets), C7 (tick rate), C8 (the Library) and C18 (the Aether
+cap), then the minor ones.
+
+F1 and F3 deserve the most thought: they are not clerical. F1 asks whether
+character scarcity is a feature (as §4 claims) or an accident, and F3 asks
+whether the design's stated central tension should be made real or dropped.
+Both change how the game plays, not just what a table says.
 
 **While doing this, split the document.** It is currently a specification and a
 research archive in one file, and §19, §28 and §30 are roughly 40% of the text.
@@ -84,24 +130,33 @@ don't duplicate.
 
 ---
 
-## Stage 2 — rebuild the economy model (a few coding sessions)
+## Stage 2 — rebuild the economy model — **done**
 
-§24 describes a Python model that generated §10.2, §14.2 and §14.3. It is not in
-the document, and it is the source of roughly a quarter of the document's numbers
-(G7).
+`tools/economy_model/` is built, calibrated and tested. It reproduces the
+document's first month to within 10% and its Keeper curve to within three days,
+which is the evidence the reconstruction is sound.
 
-Rebuilding it is the ideal first coding task:
+It has already paid for itself by settling three things argument could not:
 
-- No engine, no art, no device, no network
-- Validates the economy independently of the simulation spike
-- It is the tool that resolves C2 and C4 — you cannot pick a value for `B(L)`
-  without being able to see what it does to the curve
-- It produces the regression tests for every balance change thereafter
-- It is exactly the kind of work §26.8 lists as "safe to hand over"
+- **C2 measured.** §9.4's payout model delivers 32% of a player's income —
+  reproducing its own stated "roughly a third" — against §9.6's 1–2%.
+- **F1.** A finished universe has 152 character positions against a roster
+  ceiling of 38. §9.3's production figures are unstaffable as written.
+- **F2.** The published tables fit one producer per realm, not the two §5.2
+  permits. A player who builds the second earns roughly double what §14 predicts.
 
-Target: re-derive §10.2's building tables and §14's day-by-day milestones from
-first principles, and confirm they match the published figures. Where they don't,
-that is another finding.
+What remains on the model:
+
+1. Model Aether and Essence spending — weaving upkeep, births, character levels.
+   Starlight currently drives all growth, which is why law-restoration dates are
+   indicative only.
+2. Once C3 is decided, replace the coarse page economy with per-law tracking, so
+   §14.4's 1,485-page figure can be re-derived rather than assumed.
+3. Once C4 is decided, re-run the faucet comparison with the chosen `L`, and set
+   `B(L)`'s growth rate against the production curve rather than in isolation.
+4. Regenerate §9.3, §10.2, §14.2 and §14.3 from the model under whatever building
+   and roster rules are chosen, and replace the published tables wholesale. Hand-
+   editing them is what produced C19.
 
 ---
 

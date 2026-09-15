@@ -58,13 +58,13 @@ Ordered by how much they block.
    13.x and the formulas appendix in 29.1 reference. Everything downstream —
    balance, the guard AI, the vision-cone rendering in 21.12 — is blocked on this.
 
-2. **Pick one raid-payout model, then re-derive the loop's purpose.** The minted-haul
-   formula in 9.6 is well-argued and internally consistent, but it pays roughly
-   **3–8% of an engaged player's daily income**, against the 33–40% claimed in 9.4
-   and 12.1. Either the formula's base growth rate is wrong by ~5×, or raiding is
-   a *page* faucet rather than a *resource* faucet and 9.4/12.1 need rewriting.
-   The second reading is probably the intended one (7.6 says pages are the reason
-   to raid) — but as written, the document promises a resource loop it does not fund.
+2. **Pick one raid-payout model, then re-derive the loop's purpose.** Rebuilding
+   the economy model measured the gap exactly: §9.4's model delivers **32%** of a
+   player's income — reproducing its own stated "roughly a third" — while §9.6's
+   minted haul delivers **1–2%**. A 16- to 30-fold reduction, with nothing else in
+   the document updated to match. §9.6 is the better-argued model, but adopting it
+   means raiding is a *page* faucet, not a resource faucet, and §9.4 and §12.1 need
+   rewriting to say so.
 
 3. **Pick one law-rarity taxonomy.** 7.10 and 27.2 describe five ranks
    (18/14/10/6 + 3 paradoxes, 10/20/35/60/120 pages). The 48 laws actually
@@ -81,6 +81,15 @@ Ordered by how much they block.
    with laws priced at 30–40 and 2–9 wards per realm. 5.2 and 5.5 give realms
    1–3 law slots drawn from a *universe-wide* stability pool, laws costing 10–26,
    and a ward limit of 4–8. These are two different games.
+
+6. **Resize the roster against the buildings.** Rebuilding the economy model
+   surfaced a structural problem that is not in the register as a contradiction
+   between two texts, but between three tables: a finished universe has **152
+   character positions** to fill (126 producer worker slots, 21 guard posts, a
+   crew of 5) against a **roster ceiling of 38**. Even at one producer per realm,
+   production alone needs 63 workers before a single guard is posted. §9.3's
+   published production figures are therefore unstaffable as written. Details in
+   `05-quantitative-findings.md` F1.
 
 ## The two risks that decide whether this game exists
 
@@ -123,6 +132,14 @@ Neither needs an engine.
   most abundant. Five of the twelve chords require Hush. Since laws are woven by
   the defender and apply symmetrically, defenders have both the least reason and
   the fewest options to weave Hush.
+
+- **The core trade-off the design is built on does not bind.** §4 and §11.6 say
+  the game turns on characters' time — "raiding more means earning less at home
+  and defending worse". In the document's own numbers a crew of five raiding four
+  times a day is withheld from work for 16 character-hours out of 744: **about 2%
+  of production**. Combined with §9.6's 1–2% return, the raid-versus-build tension
+  is absent from the arithmetic entirely. The scarcity the design needs already
+  exists (see point 6 above) — it is just not connected to raiding.
 
 - **The document is a specification and a research archive at the same time, and
   the archive is winning.** Sections 19, 28 and 30 are ~40% of the text and

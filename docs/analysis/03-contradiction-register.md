@@ -1,12 +1,13 @@
 # Contradiction register
 
-Seventeen confirmed internal contradictions in design document v2.3, ordered by
+Nineteen confirmed internal contradictions in design document v2.3, ordered by
 how much they block work. Each names the conflicting sections, what the conflict
 actually is, and a recommended resolution.
 
 The six that can be checked mechanically are asserted in
-`tools/check_design_consistency.py`, so they can be re-verified against a later
-version of the document.
+`tools/check_design_consistency.py`; C2 and C19 are measured by
+`tools/economy_model/`. Both can be re-run against a later version of the
+document.
 
 **The pattern behind most of these:** a system was specified early, then
 re-specified later and better by a commissioned review (§30), and the later spec
@@ -59,10 +60,13 @@ different numbers. They also imply different *systems*: §9.4's loot is bounded 
 Carrier capacity (300 each, loading 150/s), which is a moment-to-moment gameplay
 constraint; §9.6's is a closed-form payout that carrying capacity never touches.
 
-**Worse, the two disagree about how big the loop is.** See `05-quantitative-findings.md` §2:
-under §9.6, six raids a day yield **3–8%** of an engaged player's daily income,
-against the "about a fifth of a day's production" per heist in §9.4 and the "40%
-of mid-game growth" in §12.1.
+**Worse, the two disagree about how big the loop is — measurably.** Running both
+through the economy model (`05-quantitative-findings.md` §2): §9.4's model
+delivers **32%** of a player's income, reproducing its own stated target of
+"roughly a third" almost exactly. §9.6's delivers **1–2%**. That is a 16- to
+30-fold reduction, and it is strong evidence that §9.4 is what generated the
+published progression tables and §9.6 was added afterwards without re-running
+them.
 
 **Recommendation:** §9.6 is the better-reasoned model and should be
 authoritative — minting from the raider's level is the right answer when loot is
@@ -282,6 +286,32 @@ Harmless, but the marketing line and the spec should not disagree.
 §27.2 says "Fallbacks are Lawkeep and Ruleborn" — but Ruleborn *is* the chosen
 name. Almost certainly a leftover from the v2.2 rename.
 
+### C18. Aether storage: formula or table?
+**§9.1 vs §10.2**
+
+§9.1 gives the Aether cap as `5,000 per Spire level + 3,000`. §10.2's Spire table
+gives a flat `5,000 × level` — 5,000 at level 1, 50,000 at level 10. The formula
+would give 8,000 and 53,000.
+
+Minor, but Aether is the weaving and upkeep currency, so the cap gates how much
+law a player can re-weave in a session.
+
+### C19. Production tables assume a universe the build rules do not describe
+**§9.3 vs §5.2 and §11.5** — see findings F1 and F2 in
+`05-quantitative-findings.md`
+
+§9.3's published production figures fit a universe with **one** producer of each
+kind per realm, fully staffed. §5.2 permits **two** from realm level 3, and
+§11.5's roster ceiling of 38 characters cannot fully staff even the one-producer
+version (63 worker slots), let alone the two-producer one (126).
+
+This is listed as a contradiction rather than a finding because all three tables
+cannot be simultaneously correct. Resolving it changes §14's entire pacing curve.
+
+**Recommendation:** re-run the economy model against whichever building and
+roster rules are chosen, and regenerate §9.3, §10.2, §14.2 and §14.3 from it
+rather than editing the published numbers by hand.
+
 ---
 
 ## Summary table
@@ -305,3 +335,5 @@ name. Almost certainly a leftover from the v2.2 rename.
 | C15 | Tiles vs metres | 12.8 / 12.17 / 21.1 | Spec clarity |
 | C16 | Heist length | 12 / 12.2 / 5.4 | Copy |
 | C17 | Name fallbacks | 27.2 | Copy |
+| C18 | Aether storage cap | 9.1 / 10.2 | Weaving budget per session |
+| C19 | Production tables vs build rules | 9.3 / 5.2 / 11.5 | **All of §14's pacing** |

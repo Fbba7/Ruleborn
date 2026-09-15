@@ -1,0 +1,142 @@
+"""Tests for the economy model.
+
+Two kinds of assertion:
+
+  * that the model reproduces the design document where the document is
+    self-consistent (its formulas, its early-game curve), which is what makes it
+    trustworthy enough to reason with;
+  * that the findings in docs/analysis/ still hold, so they are re-checked
+    automatically rather than by re-reading 85,000 words.
+
+Run with:  python3 -m pytest tools/economy_model/ -q
+       or: python3 tools/economy_model/test_economy_model.py
+"""
+
+from . import data
+from .config import Config
+from .model import EconomyModel
+
+
+# -- the document's own formulas ------------------------------------------
+
+def test_stability_capacity_matches_worked_example():
+    """§5.5: a Spire at 10 and seven Anchor Stones at 10 give 516."""
+    capacity = data.spire_stability(10) + 7 * data.anchor_stability(10)
+    assert capacity == 516
+
+
+def test_building_costs_follow_a_geometric_curve():
+    """§29.1: cost = base x growth^(level-1). Confirms the transcription.
+
+    The published costs are rounded, so the growth rate is fitted across the
+    whole curve rather than taken from the first step.
+    """
+    for name, spec in data.BUILDINGS.items():
+        n = len(spec.costs)
+        growth = (spec.costs[-1] / spec.costs[0]) ** (1 / (n - 1))
+        for level, cost in enumerate(spec.costs[1:], start=2):
+            predicted = spec.costs[0] * growth ** (level - 1)
+            assert abs(cost - predicted) / cost < 0.03, (name, level, cost, predicted)
+
+
+def test_producer_output_follows_the_published_curve():
+    """§9.3: output = base x 1.35^(level-1)."""
+    for name in ("Star Well", "Aether Spring", "Garden"):
+        spec = data.BUILDINGS[name]
+        for level, hourly in enumerate(spec.hourly[1:], start=2):
+            predicted = spec.hourly[0] * 1.35 ** (level - 1)
+            assert abs(hourly - predicted) / hourly < 0.02, (name, level)
+
+
+def test_keeper_curve_matches_the_stated_target():
+    """§14.2: an engaged player's day ~= 0.13 x level^1.96."""
+    for level, published in ((16, 31), (28, 90), (40, 181)):
+        predicted = 0.13 * level ** 1.96
+        assert abs(predicted - published) / published < 0.10, (level, predicted, published)
+
+
+# -- the model reproduces the early game ----------------------------------
+
+def test_early_production_is_close_to_published():
+    """The first month should land within 10% of §9.3, or the model is wrong."""
+    model = EconomyModel(Config(archetype="engaged", days=31))
+    state = model.run()
+    by_day = {row["day"]: row for row in state.log}
+    published = data.PUBLISHED_DAILY_PRODUCTION[31][0]
+    modelled = by_day[31]["starlight_per_day"]
+    assert abs(modelled - published) / published < 0.10, (modelled, published)
+
+
+def test_early_keeper_levels_are_close_to_published():
+    model = EconomyModel(Config(archetype="engaged", days=60))
+    state = model.run()
+    for level, (published, _, _) in data.PUBLISHED_KEEPER_DAYS.items():
+        if level > 16:
+            continue
+        reached = state.keeper_level_days.get(level)
+        assert reached is not None and abs(reached - published) <= 3, (level, reached, published)
+
+
+# -- the findings ----------------------------------------------------------
+
+def test_finding_raid_payout_models_disagree_by_an_order_of_magnitude():
+    """C2: §9.4 claims a third of resources; §9.6's formula delivers a few per cent."""
+    shares = {}
+    for faucet in ("share", "minted"):
+        model = EconomyModel(Config(archetype="engaged", days=181, faucet=faucet))
+        state = model.run()
+        row = state.log[-1]
+        shares[faucet] = row["heist_income"] / (row["starlight_per_day"] + row["heist_income"])
+    assert shares["share"] > 0.25, shares          # §9.4's own target, reproduced
+    assert shares["minted"] < 0.10, shares         # §9.6's formula, an order of magnitude below
+    assert shares["share"] / shares["minted"] > 10, shares
+
+
+def test_finding_roster_cannot_staff_the_permitted_universe():
+    """The build rules create roughly four times the positions the roster can fill."""
+    slots_per_producer = data.BUILDINGS["Star Well"].slots[-1]
+    roster = 3 + 7 * data.HEARTH_HOMES[-1]
+    producer_slots = 7 * 2 * 3 * slots_per_producer      # §5.2 allows 2 of each from level 3
+    guard_posts = 6 * 3 + 3                              # §5.2
+    positions = producer_slots + guard_posts + 5         # + a crew of five (§12.5)
+    assert roster == 38, roster
+    assert positions == 152, positions
+    assert roster / positions < 0.30, roster / positions
+    # Even production alone, with one producer per realm, outruns the roster.
+    assert 7 * 1 * 3 * slots_per_producer > roster
+
+
+def test_finding_raiding_barely_costs_any_production():
+    """§11.6 calls this the core trade-off; it is worth about 2% of the roster."""
+    model = EconomyModel(Config(archetype="engaged", days=181))
+    model.run()
+    withheld = model.workers_withheld_by_raiding() / model.roster_size()
+    assert withheld < 0.05, withheld
+
+
+def test_finding_published_tables_imply_one_producer_per_realm():
+    """§9.3's figures fit one producer per realm, not the two §5.2 permits."""
+    published = data.PUBLISHED_DAILY_PRODUCTION[301][0]
+    one, two = (
+        EconomyModel(Config(archetype="engaged", days=301, enforce_worker_cap=False,
+                            producers_per_realm_override=n)).run().log[-1]["starlight_per_day"]
+        for n in (1, 2)
+    )
+    assert abs(one - published) < abs(two - published), (one, two, published)
+    assert two / one > 1.5, (one, two)     # the second producer is worth ~2x production
+
+
+if __name__ == "__main__":
+    passed = failed = 0
+    for name, fn in sorted(globals().items()):
+        if not name.startswith("test_") or not callable(fn):
+            continue
+        try:
+            fn()
+            print(f"  [PASS] {name}")
+            passed += 1
+        except AssertionError as exc:
+            print(f"  [FAIL] {name}: {exc}")
+            failed += 1
+    print(f"\n{passed} passed, {failed} failed")
+    raise SystemExit(1 if failed else 0)

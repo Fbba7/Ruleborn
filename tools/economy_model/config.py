@@ -64,6 +64,21 @@ class Config:
     # model does too.
     buy_non_producers: bool = True
 
+    # -- Test switch: how many producers per realm? --------------------------
+    #
+    # §5.2 allows a second Star Well, Aether Spring and Garden per realm from
+    # realm level 3. Setting this to 1 holds every realm to one of each, which
+    # is what §9.3's published production figures appear to assume.
+    producers_per_realm_override: int | None = None
+
+    # -- Test switch: does the roster cap bind? ------------------------------
+    #
+    # The published tables in §9.3 may or may not have been generated with the
+    # roster cap in §11.5 applied. Setting this False staffs every building
+    # regardless of how many ruleborn the player can actually house, which is
+    # how the question gets answered with numbers.
+    enforce_worker_cap: bool = True
+
     # -- Simulation ----------------------------------------------------------
     days: int = 400
     archetype: str = "engaged"

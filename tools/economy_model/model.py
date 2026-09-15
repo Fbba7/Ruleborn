@@ -127,14 +127,49 @@ class EconomyModel:
 
     # -- production -------------------------------------------------------
 
-    def _workers_for(self, slots: int, available: int) -> int:
-        return min(slots, max(0, available))
+    def crew_size(self) -> int:
+        """§12.5: 3 characters, 4 from Keeper level 8, 5 from level 16."""
+        if self.s.keeper_level >= 16:
+            return 5
+        if self.s.keeper_level >= 8:
+            return 4
+        return 3
+
+    def workers_withheld_by_raiding(self) -> float:
+        """How much of the roster raiding actually costs, as whole-day equivalents.
+
+        A heist is 3 minutes (§12.6) and a clean escape rests the crew 45 minutes
+        (§11.6, §12.9), so a raider is unavailable for ~0.8 hours per heist, not
+        for the day. This is what §11.6 calls the core trade-off of the game.
+        """
+        hours_away = self.crew_size() * self.arch.heists_per_day * data.CREW_HOURS_PER_HEIST
+        return hours_away / 24.0
+
+    def producer_slots(self) -> int:
+        """Total worker slots across every producing building the player owns."""
+        total = 0
+        for realm in self.s.realms:
+            for spec in data.BUILDINGS.values():
+                if not spec.resource:
+                    continue
+                for lvl in realm.levels(spec.name):
+                    total += spec.slots[lvl - 1]
+        return total
+
+    def _workers_for(self, slots: int, available: float) -> int:
+        if available == float("inf"):
+            return slots
+        return min(slots, max(0, int(available)))
 
     def hourly_production(self) -> dict[str, float]:
         """Output per hour across the whole universe, fully staffed where possible."""
-        workers_left = self.roster_size() - self.arch.heists_per_day  # crew is away
+        if self.cfg.enforce_worker_cap:
+            workers_left = self.roster_size() - self.workers_withheld_by_raiding()
+        else:
+            workers_left = float("inf")
         out = {"starlight": 0.0, "aether": 0.0, "essence": 0.0}
         band = self.band_multiplier()
+        self._last_unstaffed_slots = 0
 
         producers = [b for b in data.BUILDINGS.values() if b.resource]
         for realm in self.s.realms:
@@ -147,6 +182,7 @@ class EconomyModel:
                     slots = spec.slots[lvl - 1]
                     workers = self._workers_for(slots, workers_left)
                     workers_left -= workers
+                    self._last_unstaffed_slots += slots - workers
                     if workers == 0:
                         continue
                     staffing = (
@@ -264,6 +300,8 @@ class EconomyModel:
             if spec.name == "Guardian Post":
                 return 1 if realm.level < 4 else 3
             return spec.per_realm
+        if self.cfg.producers_per_realm_override is not None:
+            return self.cfg.producers_per_realm_override
         if realm.kind == "heart":
             return 2 if self.s.spire_level >= self.cfg.heart_second_producer_at_spire else 1
         return data.PRODUCERS_PER_REALM[realm.level - 1]
@@ -297,11 +335,10 @@ class EconomyModel:
                 self.s.spire_level += 1
                 self.s.mark(f"Spire level {self.s.spire_level}")
                 continue
-            if spire:
-                # Saving for the Spire: only spend what is left over above its cost.
-                budget = self.s.starlight - spire[2]
-            else:
-                budget = self.s.starlight
+            # §14.1's "save for the next Spire level first" is read as a priority,
+            # not a reserve: reserving the Spire's full cost would stall every other
+            # purchase from Spire level 9 onward, when the Spire costs 1.2M Starlight.
+            budget = self.s.starlight
             options = self._available_upgrades()
             if self.cfg.producers_first:
                 options.sort(key=lambda o: (o[3] not in ("Star Well", "Aether Spring", "Garden"), o[0]))

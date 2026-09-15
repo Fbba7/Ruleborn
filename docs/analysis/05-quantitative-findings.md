@@ -1,7 +1,11 @@
 # Quantitative findings
 
 Arithmetic and content-distribution analysis of design document v2.3. Everything
-here is reproducible with `tools/check_design_consistency.py`.
+here is reproducible with `tools/check_design_consistency.py` and
+`tools/economy_model/` (see its README for how the model was calibrated).
+
+Findings F1–F3 came out of rebuilding the economy model the document references
+but does not contain, and are the most consequential in this analysis.
 
 ---
 
@@ -70,13 +74,147 @@ Three possible readings, and they lead to different games:
 3. **Both.** Raids fund pages primarily and resources secondarily, at a stated,
    smaller share — say 10–15%.
 
-Reading 2 is probably what the design now believes. But it has a consequence the
-document has not absorbed: **if raiding supplies ~3% of resources, the "nothing is
-wasted / raiding more means earning less at home" trade-off in §11.6 resolves
-almost entirely in favour of staying home.** A character on a heist forgoes
-production worth more than the heist returns. That is a live balance problem for
-the game's central tension, and it is invisible until these two sections are read
-against each other.
+Reading 2 is probably what the design now believes.
+
+**The economy model measures the gap exactly.** Running the same simulated
+engaged player under each payout model:
+
+| Day | Production/day | §9.4 "share" | §9.6 minted | §9.4 share of income | §9.6 share |
+| --- | --- | --- | --- | --- | --- |
+| 31 | 17,773 | 8,531 | 330 | **32%** | **2%** |
+| 91 | 59,154 | 28,394 | 742 | 32% | 1% |
+| 181 | 79,932 | 38,367 | 1,113 | 32% | 2% |
+| 301 | 132,642 | 63,668 | 1,670 | 32% | 2% |
+
+§9.4's model reproduces its own stated target exactly — "roughly a third" — which
+is strong evidence it is what generated the published tables. §9.6's replaces it
+with 1–2%, a **16- to 30-fold** reduction, and nothing else in the document was
+updated to match.
+
+See F3 below for the consequence: with raiding returning 1–2% and costing 2%,
+the loop §11.6 describes does not exist in the numbers at all.
+
+Reproduce with `python3 -m tools.economy_model faucet`.
+
+---
+
+## F1. The roster cannot staff the universe the rules permit
+
+**The most structural finding in the analysis.** It is pure arithmetic from three
+published tables and needs no simulation.
+
+At a finished universe (7 realms, everything at maximum):
+
+| Positions to fill | Count | Source |
+| --- | --- | --- |
+| Producer worker slots | **126** | 7 realms × 2 of each producer (§5.2) × 3 kinds × 3 slots at level 7+ (§10.2) |
+| Guard posts | 21 | 3 per outer realm at realm level 5 (§5.2) |
+| Heist crew | 5 | §12.5, from Keeper level 16 |
+| **Total** | **152** | |
+| **Roster ceiling** | **38** | 3 at the Spire + 7 Hearths × 5 homes (§11.5, §10.2) |
+| **Coverage** | **25%** | the roster would have to be **4× larger** |
+
+Even production alone, and even at *one* producer per realm, outruns the roster:
+63 worker slots against 38 characters, **before a single guard is posted**.
+
+§11.5 says the roster is "around 30 at the most at launch", so this is not an
+oversight in one table — the two halves were simply sized independently.
+
+**This is not automatically wrong.** §4 names "characters' time" as one of the
+game's two scarce resources, so a roster that cannot fill every post may be the
+intent. But three things follow that the document has not absorbed:
+
+1. **§9.3's production figures are unstaffable.** They require ~63 fully staffed
+   worker slots; the roster caps out at 38, and guards come out of the same pool.
+   A player who defends at all produces materially less than §14 says they will.
+2. **The choice is not interesting at this ratio.** A 25% coverage rate is not
+   "an interesting allocation puzzle", it is "most of your buildings are idle
+   most of the time" — which reads as broken rather than as scarce.
+3. **Building more producers stops being a decision.** If you can only staff a
+   quarter of them, the marginal Star Well is worthless, and a large part of the
+   Starlight sink in §10.2 evaporates.
+
+**Recommendation:** decide which lever moves. Either raise the roster (more
+Hearth homes, or more Hearths per realm), cut permitted building counts, or make
+partial staffing genuinely worthwhile — §9.2's 60% / 85% / 100% curve already
+hints at the third, but at 25% coverage most buildings sit at 0%.
+
+Reproduce with `python3 -m tools.economy_model positions`.
+
+---
+
+## F2. The published progression tables assume one producer per realm, not two
+
+§5.2 permits a second Star Well, Aether Spring and Garden per realm from realm
+level 3. §9.3's production figures do not reflect that.
+
+Solving backwards from §9.3's day-301 figure (256,100 Starlight/day = 10,671 per
+hour), with the law and band bonuses the document assumes, implies **about seven
+fully staffed Star Wells at level 9** — one per realm. Not the fourteen §5.2
+allows. The same holds at days 91 and 181.
+
+Running the model under all four readings confirms it:
+
+| Reading | Day 301 as % of published | Keeper 40 |
+| --- | --- | --- |
+| 2 producers/realm, roster cap applied | 52% | day 249 |
+| 2 producers/realm, no roster cap | 233% | day 107 |
+| 1 producer/realm, roster cap applied | 59% | day 226 |
+| **1 producer/realm, no roster cap** | **117%** | **day 171** (published: 181) |
+
+Only the last reading tracks the document, and it is the one the build rules do
+*not* describe.
+
+**Consequence:** a player who builds the second producer — which is a pure
+production gain, so everyone will — earns roughly **twice** what §14 predicts.
+Every "engaged player reaches this on day X" milestone in §14.2 and §14.3 would
+be optimistic by a wide margin, and the pacing gate in §14.3 ("each Spire level
+arrives within a few days of the Keeper level that allows it") would not hold.
+
+**Recommendation:** re-run the economy model against the rules as written and
+republish §10.2, §14.2 and §14.3 from it. Then decide whether the second
+producer should exist at all — given F1, it may be exactly the wrong thing to
+add.
+
+---
+
+## F3. Raiding barely costs any production, so the core trade-off does not bind
+
+§11.6 calls this "the core trade-off" and §4 builds the whole design on it:
+
+> A character on a heist isn't working or guarding. Raiding more means earning
+> less at home and defending worse.
+
+In the document's own numbers, it does not. A heist is 3 minutes (§12.6) and a
+clean escape rests the crew 45 minutes (§11.6, §12.9), so each raider is away
+~0.8 hours per heist:
+
+| Archetype | Roster | Crew | Heists/day | Characters withheld | % of roster |
+| --- | --- | --- | --- | --- | --- |
+| Engaged | 31 | 5 | 4 | 0.67 | **2.2%** |
+| Regular | 31 | 5 | 2 | 0.33 | 1.1% |
+| Casual | 27 | 5 | 1 | 0.17 | 0.6% |
+
+A crew of five raiding four times a day is unavailable for 16 character-hours out
+of 744. The stated trade-off is worth about **2% of production**.
+
+Taken together with §2 above, the loop the design describes — raid hard, earn
+less at home, raid harder — is not present in the numbers at all: raiding costs
+2% of production and (under §9.6) returns 1–2%.
+
+**Note the interaction with F1.** The trade-off could be made real without
+touching rest times, by making it about *allocation* rather than *time*: if
+there are 152 posts and 38 characters, then a crew of five is 13% of the roster
+permanently committed, and that is a genuine decision. The document has the
+right intuition and the wrong mechanism — the scarcity it needs is already
+there in F1, it is just not connected to raiding.
+
+**Recommendation:** either lengthen rest substantially (which §12.14's
+"temporary failure" principle argues against), or make crew membership an
+assignment that excludes work, the way guarding does. The second is closer to
+what §11.6 already claims.
+
+Reproduce with `python3 -m tools.economy_model raiding`.
 
 ---
 
