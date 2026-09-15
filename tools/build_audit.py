@@ -63,8 +63,10 @@ GROUPS = [
      "Copy and consistency.",
      lambda i: i["severity"] == "minor" and i["kind"] != "deviation"),
     ("choices", "Decisions that are yours",
-     "These cannot be resolved by reading the document more carefully. They "
-     "change what the game is.",
+     "These cannot be resolved by reading the document more carefully — they "
+     "change what the game is. Each says what it blocks, what the numbers are, "
+     "and a leaning where there is one. Q8 is small and comes first: it swings "
+     "Q1 by a factor of three.",
      lambda i: i["kind"] == "decision"),
 ]
 

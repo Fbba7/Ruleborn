@@ -690,39 +690,108 @@ dict(id="Q1", kind="decision", severity="choice", status="open",
           "is one of the game's two scarce resources, which would make this "
           "deliberate. But 25% coverage is not an allocation puzzle, and §9.3's "
           "production figures assume staffing the roster cannot supply.",
-     rec="Decide which lever moves: raise the roster, cut permitted buildings, or "
-         "make partial staffing genuinely worthwhile."),
+     rec="<strong>Blocks:</strong> Q4, C19, the economy spec, and every pacing date "
+         "in §14.<br><strong>The numbers</strong> (<code>decision_support.py "
+         "staffing</code>): 152 positions against a roster of 38; only 12 characters "
+         "free to work once guards and a crew are committed; no second or third "
+         "worker slot is ever worth filling, though §10.2 grants them at building "
+         "levels 4 and 7; and two independent caps \u2014 Hearth homes and §9.5's "
+         "birth curve \u2014 both say 30\u201340 without referring to each other."
+         "<br><strong>Depends on Q8:</strong> if a Guardian Post holds more than one "
+         "ruleborn, defence alone consumes 42\u201363 characters and the shortage "
+         "stops being severe and becomes absolute.<br><strong>No recommendation.</strong> "
+         "This is a design choice about whether scarcity is the point. What is not a "
+         "choice is leaving all three tables as they are."),
 
 dict(id="Q2", kind="decision", severity="choice", status="open",
      title="Should the raid-versus-build trade-off be made real, or dropped?",
      refs=["4", "11.6", "12.9"],
      body="F3 shows it is worth about 2% of production. It can be made real by "
           "making crew membership exclude work the way guarding does, or the claim "
-          "can be removed from §4 and §11.6. What it cannot do is stay as written."),
+          "can be removed from §4 and §11.6. What it cannot do is stay as written.",
+     rec="<strong>Blocks:</strong> nothing technical, but it decides whether §4's "
+         "central claim survives.<br><strong>The numbers:</strong> a crew of five "
+         "raiding four times a day is withheld from work for 16 character-hours out "
+         "of 744 \u2014 about 2% of production.<br><strong>Leaning:</strong> make "
+         "crew membership exclude work the way guarding does, so five of 38 are "
+         "committed rather than 0.67. The scarcity needed already exists in F1; it "
+         "is simply not connected to raiding. Lengthening rest instead runs against "
+         "§12.14's rule that failure stays temporary."),
 
 dict(id="Q3", kind="decision", severity="choice", status="open",
      title="Three law ranks or five?",
      refs=["7.4", "7.10"],
      body="C3. Both work; the reasoning in §7.10 survives either. Choosing five means "
-          "re-tagging 14 laws and re-deriving the page economy."),
+          "re-tagging 14 laws and re-deriving the page economy.",
+     rec="<strong>Blocks:</strong> all law content authoring, and §14.4's page "
+         "economy.<br><strong>The numbers</strong> (<code>decision_support.py "
+         "rarity</code>): five ranks completes the collection 23% cheaper \u2014 "
+         "2,460 pages against 2,805 \u2014 pulling it in about a month at eleven "
+         "pages a day. §14.4's own 1,485-page figure is the three-rank total, so "
+         "three ranks is what generated the published curve.<br><strong>No "
+         "recommendation.</strong> Five ranks needs fourteen Rares re-tagged, and "
+         "the split is a judgement about complexity and excitement \u2014 §7.10 is "
+         "explicit that rarity must not track power, which rules out the obvious "
+         "cost-ordered answer."),
 
 dict(id="Q4", kind="decision", severity="choice", status="open",
      title="One producer per realm, or two?",
      refs=["5.2", "9.3"],
      body="F2. Two doubles income against every published pacing date; one matches "
-          "the tables but contradicts §5.2. Interacts with Q1."),
+          "the tables but contradicts §5.2. Interacts with Q1.",
+     rec="<strong>Blocks:</strong> §9.3, §10.2, §14.2 and §14.3 \u2014 every "
+         "published pacing date.<br><strong>The numbers</strong> (F2): only "
+         "\u201cone producer per realm, no binding roster cap\u201d reproduces the "
+         "document (117% of published at day 301; Keeper 40 on day 171 against 181). "
+         "Every other reading is out by 2\u20134\u00d7. A player who builds the "
+         "second producer \u2014 a pure gain, so everyone will \u2014 earns roughly "
+         "twice what §14 predicts.<br><strong>Leaning:</strong> one per realm, given "
+         "Q1. Under a roster that cannot staff what already exists, the second "
+         "producer is not a decision, it is dead Starlight."),
 
 dict(id="Q5", kind="decision", severity="choice", status="open",
      title="Accept the launch-scope cut?",
      refs=["26.1", "26.5"],
-     body="D6. Roughly 40% less launch content, protecting the Island Workshop."),
+     body="D6. Roughly 40% less launch content, protecting the Island Workshop.",
+     rec="<strong>Blocks:</strong> the vertical slice's content budget, and the "
+         "contractor brief.<br><strong>The proposal</strong> (D6): 24 laws rather "
+         "than 48, 3 form-notes rather than 8, ~20 resonances rather than 44, "
+         "2\u20133 languages rather than 12, constellations to v1.1, wards at 2 "
+         "levels rather than 5 \u2014 roughly 40% less, protecting the Island "
+         "Workshop.<br><strong>Leaning:</strong> take it. §26.5 says scope is the "
+         "lever and §30.8 ranks execution as risk #2, but neither is applied to "
+         "§26.1. The Codex already gates laws in chapters, so 24 laws is chapter 2, "
+         "which an engaged player reaches on day 5."),
 
 dict(id="Q6", kind="decision", severity="choice", status="open",
      title="Casual pacing: leave it, or add the catch-up discount?",
      refs=["27.3", "14", "27.5"],
      body="Open in the document since v0.3. At one session a day, finishing "
           "everything takes about 1,019 days. §27.5 settles on a visible, openly "
-          "labelled catch-up discount, but it is not specified."),
+          "labelled catch-up discount, but it is not specified.",
+     rec="<strong>Blocks:</strong> nothing, and it has been open since v0.3."
+         "<br><strong>The numbers:</strong> at one session a day, finishing "
+         "everything takes about 1,019 days. §27.5 already settles on a visible, "
+         "openly labelled catch-up discount, citing [83] \u2014 disclosed assistance "
+         "does not harm the experience \u2014 but never specifies it."
+         "<br><strong>Leaning:</strong> specify the discount. The decision is already "
+         "made; only the mechanism is missing."),
+
+dict(id="Q8", kind="decision", severity="choice", status="open",
+     title="How many ruleborn stand at one Guardian Post?",
+     refs=["5.2", "13.4", "10.2", "9.2"],
+     body="Never stated anywhere in the document, and it is the missing conversion "
+          "between §5.2, which counts guard <em>posts</em>, and §13.4, which counts "
+          "<em>guards</em> \u2014 one post against three guards at realm level 1, "
+          "three posts against six at level 5, so no constant reconciles them. "
+          "§10.2's Guardian Post entry gives the post's capability per level "
+          "(\u201cguard +10% health and sight\u201d) but never a capacity.",
+     rec="<strong>Blocks:</strong> C5, and it swings Q1 by a factor of three."
+         "<br><strong>Leaning:</strong> one. It matches §9.2's phrasing, keeps §5.2's "
+         "numbers intact, and keeps defence affordable against the roster. Anything "
+         "higher means F1's arithmetic has to be redone first, because defence would "
+         "then consume more characters than production.<br>A small question with a "
+         "large blast radius \u2014 worth answering before Q1, not after."),
 
 dict(id="Q7", kind="decision", severity="choice", status="open",
      title="The document's own open list",
@@ -731,5 +800,10 @@ dict(id="Q7", kind="decision", severity="choice", status="open",
           "six-month test; whether to strengthen performative and emotional challenge "
           "after launch; Law Clash rules; soft-launch countries; whether the interface "
           "says “universe” or “your sky”; whether constellations "
-          "later get a competitive mode."),
+          "later get a competitive mode.",
+     rec="<strong>Blocks:</strong> the name clearance blocks any public use "
+         "(§26.9), and the soft-launch countries block the launch plan. The rest can "
+         "wait.<br><strong>Order:</strong> the trade-mark check first, since §26.9 "
+         "makes it a gate and it costs nothing; then soft-launch countries; then the "
+         "Island Fund test, which cannot start until the Workshop ships."),
 ]

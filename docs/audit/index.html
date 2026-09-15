@@ -232,8 +232,8 @@
       from it.</p>
 
     <div class="summary">
-      <div><span class="n">57</span><span class="k">items tracked</span></div>
-      <div><span class="n">23</span><span class="k">open</span></div>
+      <div><span class="n">58</span><span class="k">items tracked</span></div>
+      <div><span class="n">24</span><span class="k">open</span></div>
       <div><span class="n">10</span><span class="k">done or adopted</span></div>
       <div><span class="n">12</span><span class="k">blocking the build</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
@@ -241,8 +241,8 @@
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">57</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">15</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">9</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">3</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">15</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">7</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">58</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">15</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">9</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">3</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">15</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
   </nav>
 
   <main id="list">
@@ -884,7 +884,7 @@
       <section class="group" id="g-choices" data-group="choices">
         <div class="group-head">
           <h2>Decisions that are yours</h2>
-          <p class="blurb">These cannot be resolved by reading the document more carefully. They change what the game is.</p>
+          <p class="blurb">These cannot be resolved by reading the document more carefully — they change what the game is. Each says what it blocks, what the numbers are, and a leaning where there is one. Q8 is small and comes first: it swings Q1 by a factor of three.</p>
         </div>
         
       <article class="item cho" data-group="choices"
@@ -897,7 +897,7 @@
         </header>
         <div class="refs"><span class="ref">§4</span><span class="ref">§11.5</span><span class="ref">§5.2</span><span class="ref">§9.3</span></div>
         <p class="body">F1 shows 152 positions against a roster of 38. §4 claims characters' time is one of the game's two scarce resources, which would make this deliberate. But 25% coverage is not an allocation puzzle, and §9.3's production figures assume staffing the roster cannot supply.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> Decide which lever moves: raise the roster, cut permitted buildings, or make partial staffing genuinely worthwhile.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> Q4, C19, the economy spec, and every pacing date in §14.<br><strong>The numbers</strong> (<code>decision_support.py staffing</code>): 152 positions against a roster of 38; only 12 characters free to work once guards and a crew are committed; no second or third worker slot is ever worth filling, though §10.2 grants them at building levels 4 and 7; and two independent caps — Hearth homes and §9.5's birth curve — both say 30–40 without referring to each other.<br><strong>Depends on Q8:</strong> if a Guardian Post holds more than one ruleborn, defence alone consumes 42–63 characters and the shortage stops being severe and becomes absolute.<br><strong>No recommendation.</strong> This is a design choice about whether scarcity is the point. What is not a choice is leaving all three tables as they are.</p>
       </article>
       <article class="item cho" data-group="choices"
                data-kind="decision" data-status="open">
@@ -909,7 +909,7 @@
         </header>
         <div class="refs"><span class="ref">§4</span><span class="ref">§11.6</span><span class="ref">§12.9</span></div>
         <p class="body">F3 shows it is worth about 2% of production. It can be made real by making crew membership exclude work the way guarding does, or the claim can be removed from §4 and §11.6. What it cannot do is stay as written.</p>
-        
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> nothing technical, but it decides whether §4's central claim survives.<br><strong>The numbers:</strong> a crew of five raiding four times a day is withheld from work for 16 character-hours out of 744 — about 2% of production.<br><strong>Leaning:</strong> make crew membership exclude work the way guarding does, so five of 38 are committed rather than 0.67. The scarcity needed already exists in F1; it is simply not connected to raiding. Lengthening rest instead runs against §12.14's rule that failure stays temporary.</p>
       </article>
       <article class="item cho" data-group="choices"
                data-kind="decision" data-status="open">
@@ -921,7 +921,7 @@
         </header>
         <div class="refs"><span class="ref">§7.4</span><span class="ref">§7.10</span></div>
         <p class="body">C3. Both work; the reasoning in §7.10 survives either. Choosing five means re-tagging 14 laws and re-deriving the page economy.</p>
-        
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> all law content authoring, and §14.4's page economy.<br><strong>The numbers</strong> (<code>decision_support.py rarity</code>): five ranks completes the collection 23% cheaper — 2,460 pages against 2,805 — pulling it in about a month at eleven pages a day. §14.4's own 1,485-page figure is the three-rank total, so three ranks is what generated the published curve.<br><strong>No recommendation.</strong> Five ranks needs fourteen Rares re-tagged, and the split is a judgement about complexity and excitement — §7.10 is explicit that rarity must not track power, which rules out the obvious cost-ordered answer.</p>
       </article>
       <article class="item cho" data-group="choices"
                data-kind="decision" data-status="open">
@@ -933,7 +933,7 @@
         </header>
         <div class="refs"><span class="ref">§5.2</span><span class="ref">§9.3</span></div>
         <p class="body">F2. Two doubles income against every published pacing date; one matches the tables but contradicts §5.2. Interacts with Q1.</p>
-        
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> §9.3, §10.2, §14.2 and §14.3 — every published pacing date.<br><strong>The numbers</strong> (F2): only “one producer per realm, no binding roster cap” reproduces the document (117% of published at day 301; Keeper 40 on day 171 against 181). Every other reading is out by 2–4×. A player who builds the second producer — a pure gain, so everyone will — earns roughly twice what §14 predicts.<br><strong>Leaning:</strong> one per realm, given Q1. Under a roster that cannot staff what already exists, the second producer is not a decision, it is dead Starlight.</p>
       </article>
       <article class="item cho" data-group="choices"
                data-kind="decision" data-status="open">
@@ -945,7 +945,7 @@
         </header>
         <div class="refs"><span class="ref">§26.1</span><span class="ref">§26.5</span></div>
         <p class="body">D6. Roughly 40% less launch content, protecting the Island Workshop.</p>
-        
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> the vertical slice's content budget, and the contractor brief.<br><strong>The proposal</strong> (D6): 24 laws rather than 48, 3 form-notes rather than 8, ~20 resonances rather than 44, 2–3 languages rather than 12, constellations to v1.1, wards at 2 levels rather than 5 — roughly 40% less, protecting the Island Workshop.<br><strong>Leaning:</strong> take it. §26.5 says scope is the lever and §30.8 ranks execution as risk #2, but neither is applied to §26.1. The Codex already gates laws in chapters, so 24 laws is chapter 2, which an engaged player reaches on day 5.</p>
       </article>
       <article class="item cho" data-group="choices"
                data-kind="decision" data-status="open">
@@ -957,7 +957,19 @@
         </header>
         <div class="refs"><span class="ref">§27.3</span><span class="ref">§14</span><span class="ref">§27.5</span></div>
         <p class="body">Open in the document since v0.3. At one session a day, finishing everything takes about 1,019 days. §27.5 settles on a visible, openly labelled catch-up discount, but it is not specified.</p>
-        
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> nothing, and it has been open since v0.3.<br><strong>The numbers:</strong> at one session a day, finishing everything takes about 1,019 days. §27.5 already settles on a visible, openly labelled catch-up discount, citing [83] — disclosed assistance does not harm the experience — but never specifies it.<br><strong>Leaning:</strong> specify the discount. The decision is already made; only the mechanism is missing.</p>
+      </article>
+      <article class="item cho" data-group="choices"
+               data-kind="decision" data-status="open">
+        <header class="item-head">
+          <span class="id">Q8</span>
+          <h3>How many ruleborn stand at one Guardian Post?</h3>
+          <span class="kind">decision</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§5.2</span><span class="ref">§13.4</span><span class="ref">§10.2</span><span class="ref">§9.2</span></div>
+        <p class="body">Never stated anywhere in the document, and it is the missing conversion between §5.2, which counts guard <em>posts</em>, and §13.4, which counts <em>guards</em> — one post against three guards at realm level 1, three posts against six at level 5, so no constant reconciles them. §10.2's Guardian Post entry gives the post's capability per level (“guard +10% health and sight”) but never a capacity.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> C5, and it swings Q1 by a factor of three.<br><strong>Leaning:</strong> one. It matches §9.2's phrasing, keeps §5.2's numbers intact, and keeps defence affordable against the roster. Anything higher means F1's arithmetic has to be redone first, because defence would then consume more characters than production.<br>A small question with a large blast radius — worth answering before Q1, not after.</p>
       </article>
       <article class="item cho" data-group="choices"
                data-kind="decision" data-status="open">
@@ -969,7 +981,7 @@
         </header>
         <div class="refs"><span class="ref">§27.3</span></div>
         <p class="body">Final names and the trade-mark check; whether the Island Fund survives its six-month test; whether to strengthen performative and emotional challenge after launch; Law Clash rules; soft-launch countries; whether the interface says “universe” or “your sky”; whether constellations later get a competitive mode.</p>
-        
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> the name clearance blocks any public use (§26.9), and the soft-launch countries block the launch plan. The rest can wait.<br><strong>Order:</strong> the trade-mark check first, since §26.9 makes it a gate and it costs nothing; then soft-launch countries; then the Island Fund test, which cannot start until the Workshop ships.</p>
       </article>
       </section>
     <p class="empty" id="empty" hidden>Nothing in that filter.</p>
