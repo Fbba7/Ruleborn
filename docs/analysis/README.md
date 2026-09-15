@@ -53,3 +53,11 @@ What this analysis cannot tell you: whether the game is fun. The document is
 clear-eyed about that too (§19.1, §30.8) and has designed the right tests for it.
 Those tests are stage 0 of `07-recommended-next-steps.md`, re-planned there for a
 solo developer without a test cohort.
+
+## The audit register
+
+The working view of this analysis — what changed about the plan, and what is
+still to fix — is tracked as 54 items at
+**https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**, generated from
+`tools/audit_register.py`. These documents carry the reasoning; the register
+carries the state.

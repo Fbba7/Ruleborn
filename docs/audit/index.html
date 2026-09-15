@@ -1,0 +1,1002 @@
+<title>Ruleborn Audit Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  /* Light palette on bare :root; dark redefines only the tokens. The hues are
+     the design document's own (§21.2), shifted in luminance so they hold their
+     contrast on paper as well as on the violet ground. */
+  :root {
+    --ground: #FCFBFF;
+    --raised: #FFFFFF;
+    --ink: #221C3A;
+    --muted: #6E6685;
+    --faint: #958CAD;
+    --rule: #E6E2EE;
+    --rule-strong: #D3CCE3;
+
+    --blk: #C0304A;
+    --dsg: #7A46C8;
+    --sig: #A77410;
+    --min: #6E6685;
+    --chg: #1F6F83;
+    --cho: #2E7D5B;
+
+    --accent: #7A46C8;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #17122C;
+      --raised: #1E1839;
+      --ink: #EDE9F8;
+      --muted: #A79FC4;
+      --faint: #7E76A0;
+      --rule: #2E2650;
+      --rule-strong: #3D3466;
+
+      --blk: #E2536B;
+      --dsg: #B18CF5;
+      --sig: #F2B43C;
+      --min: #A79FC4;
+      --chg: #3CC6D8;
+      --cho: #5CC46A;
+
+      --accent: #B18CF5;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #17122C;
+    --raised: #1E1839;
+    --ink: #EDE9F8;
+    --muted: #A79FC4;
+    --faint: #7E76A0;
+    --rule: #2E2650;
+    --rule-strong: #3D3466;
+    --blk: #E2536B;
+    --dsg: #B18CF5;
+    --sig: #F2B43C;
+    --min: #A79FC4;
+    --chg: #3CC6D8;
+    --cho: #5CC46A;
+    --accent: #B18CF5;
+    color-scheme: dark;
+  }
+
+  [hidden] { display: none !important; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    font-size: 15.5px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 40px 72px;
+  }
+
+  h1, h2 { font-family: Marcellus, Georgia, serif; font-weight: 400; text-wrap: balance; }
+  h1 { font-size: clamp(30px, 7vw, 42px); line-height: 1.1; margin: 0 0 6px; letter-spacing: 0.01em; }
+  h2 { font-size: 23px; margin: 0; }
+  h3 { font-family: "IBM Plex Sans", sans-serif; font-size: 16.5px; font-weight: 600;
+       margin: 0; line-height: 1.35; text-wrap: balance; }
+  p { margin: 0; }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    font-size: 11px; color: var(--accent); margin: 0 0 10px;
+  }
+  .lede { color: var(--muted); font-size: 17px; max-width: 62ch; margin-top: 14px; }
+
+  /* --- summary ------------------------------------------------------- */
+  .summary {
+    display: flex; flex-wrap: wrap; gap: 0;
+    margin: 30px 0 0; border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule); padding-block: 14px;
+  }
+  .summary div { flex: 1 1 108px; padding-right: 14px; }
+  .summary .n {
+    font-family: "IBM Plex Mono", monospace; font-size: 23px; font-weight: 500;
+    font-variant-numeric: tabular-nums; display: block; line-height: 1.2;
+  }
+  .summary .k { font-size: 12.5px; color: var(--muted); }
+
+  /* --- filter -------------------------------------------------------- */
+  .filters {
+    position: sticky; top: env(safe-area-inset-top, 0px);
+    background: var(--ground); z-index: 5;
+    display: flex; flex-wrap: wrap; gap: 7px;
+    padding-block: 14px; margin-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .chip {
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    color: var(--muted); background: transparent;
+    border: 1px solid var(--rule-strong); border-radius: 999px;
+    padding: 6px 12px; cursor: pointer; min-height: 34px;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .chip:hover { color: var(--ink); border-color: var(--faint); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chip[aria-pressed="true"] {
+    color: var(--ground); background: var(--ink); border-color: var(--ink);
+  }
+  .chip .n {
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    font-variant-numeric: tabular-nums; opacity: 0.65;
+  }
+
+  /* --- groups and items ---------------------------------------------- */
+  .group { margin-top: 44px; }
+  .group-head { margin-bottom: 20px; }
+  .group-head .blurb { color: var(--muted); font-size: 14.5px; margin-top: 5px; max-width: 60ch; }
+
+  .item {
+    border-left: 3px solid var(--rule-strong);
+    padding: 0 0 0 18px;
+    margin-bottom: 26px;
+  }
+  .item.blk { border-left-color: var(--blk); }
+  .item.dsg { border-left-color: var(--dsg); }
+  .item.sig { border-left-color: var(--sig); }
+  .item.min { border-left-color: var(--min); }
+  .item.chg { border-left-color: var(--chg); }
+  .item.cho { border-left-color: var(--cho); }
+
+  .item-head {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 7px;
+  }
+  .id {
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 500;
+    color: var(--ground); background: var(--min);
+    padding: 2px 7px; border-radius: 4px; letter-spacing: 0.02em;
+  }
+  .blk .id { background: var(--blk); }
+  .dsg .id { background: var(--dsg); }
+  .sig .id { background: var(--sig); }
+  .chg .id { background: var(--chg); }
+  .cho .id { background: var(--cho); }
+
+  .item-head h3 { flex: 1 1 260px; }
+
+  .kind {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.06em; color: var(--faint);
+    border: 1px solid var(--rule-strong); border-radius: 3px;
+    padding: 0 5px; white-space: nowrap;
+  }
+
+  .chip.alt { border-style: dashed; }
+
+  .status {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--faint); white-space: nowrap;
+  }
+  .status.s-done, .status.s-adopted { color: var(--cho); }
+  .status.s-proposed { color: var(--sig); }
+
+  .refs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 9px; }
+  .ref {
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    color: var(--muted); background: var(--rule);
+    padding: 1px 6px; border-radius: 3px; white-space: nowrap;
+  }
+
+  .item .body { color: var(--ink); max-width: 66ch; overflow-wrap: break-word; }
+  .item .rec {
+    margin-top: 10px; color: var(--muted); font-size: 14.5px; max-width: 66ch;
+    position: relative; padding-left: 20px;
+  }
+  .rec .arrow {
+    color: var(--accent); font-weight: 600;
+    position: absolute; left: 0; top: 0;
+  }
+  .item strong { font-weight: 600; color: var(--ink); }
+  .item em { font-style: italic; }
+  code {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.89em;
+    background: var(--rule); padding: 1px 5px; border-radius: 3px;
+    overflow-wrap: anywhere;
+  }
+
+  .empty { color: var(--muted); font-size: 14.5px; padding: 26px 0; }
+
+  footer {
+    margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--rule);
+    color: var(--muted); font-size: 13.5px; max-width: 64ch;
+  }
+  footer p + p { margin-top: 10px; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Ruleborn &middot; design document v2.3</p>
+    <h1>Audit register</h1>
+    <p class="lede">Everything that changed about the plan, and everything that
+      still needs fixing in the document. Section marks point into the design
+      document; the repository is the source of truth and this page is generated
+      from it.</p>
+
+    <div class="summary">
+      <div><span class="n">54</span><span class="k">items tracked</span></div>
+      <div><span class="n">40</span><span class="k">open</span></div>
+      <div><span class="n">9</span><span class="k">done or adopted</span></div>
+      <div><span class="n">11</span><span class="k">blocking the build</span></div>
+      <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
+    </div>
+  </header>
+
+  <nav class="filters" aria-label="Filter the register">
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">54</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">14</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">8</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">3</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">14</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">7</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">11</span></button>
+  </nav>
+
+  <main id="list">
+      <section class="group" id="g-changes" data-group="changes">
+        <div class="group-head">
+          <h2>What changed about the approach</h2>
+          <p class="blurb">Deviations from the plan the design document sets out, each with what it costs and why it was worth it.</p>
+        </div>
+        
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="adopted">
+        <header class="item-head">
+          <span class="id">D1</span>
+          <h3>The build-willingness test runs first, not second</h3>
+          <span class="kind">change</span>
+          <span class="status s-adopted">Adopted</span>
+        </header>
+        <div class="refs"><span class="ref">§26.7</span><span class="ref">§13.3</span><span class="ref">§30.8</span></div>
+        <p class="body">§26.7 schedules the paper heist first and the build-willingness test after it. But the build test is ranked risk #1, and §26.7 itself calls it “the single decision that changes the most”. The heist test decides whether the game is fun; the build test decides <em>what game is being built</em> — authorship, authorship-with-scaffolding, or a pivot to generated islands the player curates.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Run both in parallel. Neither blocks the other, and the build test's answer changes what the rest of the plan is for.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done">
+        <header class="item-head">
+          <span class="id">D2</span>
+          <h3>The paper prototype became a browser prototype</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§19.27</span><span class="ref">§26.7</span><span class="ref">§25.5</span></div>
+        <p class="body">Both pre-code gates as written assume about thirty people in a room — eight to twelve for the paper heist, fifteen to twenty for the build test. That cohort does not exist for this project. The questions did not change; the method did, because <strong>a link can be sent to strangers and a room cannot</strong>. §25.5 already budgets for recruited remote panels, so the route was costed.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Built and published. It also answers a question paper could not: whether a delegated crew feels like playing or watching (§30.7 premise 3), which cannot be tested on a board where a human moves the pieces.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="adopted">
+        <header class="item-head">
+          <span class="id">D3</span>
+          <h3>The prototype sits ahead of the determinism spike on the critical path</h3>
+          <span class="kind">change</span>
+          <span class="status s-adopted">Adopted</span>
+        </header>
+        <div class="refs"><span class="ref">§26.7</span><span class="ref">§24.2</span><span class="ref">§26.5</span></div>
+        <p class="body">§26.7 puts the determinism spike immediately after the paper tests. Because the paper test became software, a few working sessions of engineering now precede the spike — exactly what the paper test was designed to avoid.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Accepted: §26.5's own rule is that scope is the lever, and buying the two project-deciding answers cheaply is worth it. This does <strong>not</strong> relax the rule that gameplay code waits for the spike. The prototype is throwaway and written as such.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="open">
+        <header class="item-head">
+          <span class="id">D4</span>
+          <h3>A reconciliation step was inserted before the specification locks</h3>
+          <span class="kind">change</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§26.7</span></div>
+        <p class="body">§26.7 goes spike → lock the simulation contract → lock detection → lock the law schema → lock saves. Every one of those assumes there is one specification to lock. Four systems currently have two (C1, C2, C3, C6), and a fifth has two budgets (C5).</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Work the blocking half of this register before any lock. It is days of desk time and the cheapest work in the whole plan.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done">
+        <header class="item-head">
+          <span class="id">D5</span>
+          <h3>The economy model was rebuilt from scratch</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§24</span><span class="ref">§10.2</span><span class="ref">§14.2</span><span class="ref">§14.3</span><span class="ref">§9.3</span></div>
+        <p class="body">§24 describes a Python model that generated roughly a quarter of the document's numbers. That model is not in the document, so none of those numbers could be re-derived or re-tuned (gap G7).</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Rebuilt at <code>tools/economy_model/</code>. It reproduces the first month to within 10% and the Keeper curve to within three days, and it produced findings F1, F2 and F3.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="proposed">
+        <header class="item-head">
+          <span class="id">D6</span>
+          <h3>A launch-scope cut of roughly 40% is proposed</h3>
+          <span class="kind">change</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§26.1</span><span class="ref">§26.5</span><span class="ref">§26.8</span><span class="ref">§30.8</span></div>
+        <p class="body">§26.1's launch table asks for 48 laws, 144 creature forms, 44 resonances, 39 terrain features, 16 buildings, 27 screens and 12 languages, from one designer, one coding agent and three contractors. §26.5 says scope discipline is the main risk control and §30.8 ranks execution as risk #2 — but neither is applied to §26.1.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Proposed: 24 laws rather than 48 (the Codex already gates in chapters); 3 form-notes rather than 8; ~20 resonances rather than 44; 2–3 languages rather than 12 (§20.6 already says this); constellations to v1.1; wards at 2 levels rather than 5. <strong>The Island Workshop is the one thing not to cut</strong> — it is the only credible answer to the content treadmill at this team size.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="adopted">
+        <header class="item-head">
+          <span class="id">D7</span>
+          <h3>A risk was added: delegated control reading as watching</h3>
+          <span class="kind">change</span>
+          <span class="status s-adopted">Adopted</span>
+        </header>
+        <div class="refs"><span class="ref">§30.7</span><span class="ref">§30.8</span><span class="ref">§19.4</span></div>
+        <p class="body">§30.7 marks premise 3 — that delegated control still feels like agency — as only <em>conditionally</em> supported, names the failure mode (“my units are stupid”), and sets a 70% felt-control threshold. It does not appear in §30.8's ranked register. Meanwhile §19.4 concedes performative challenge is “almost absent by design”, and the system that decides it — pathfinding and crew control — is the largest specification gap (G1).</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Added at rank ~4. The prototype measures it directly.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="adopted">
+        <header class="item-head">
+          <span class="id">D8</span>
+          <h3>Two risks were re-ranked</h3>
+          <span class="kind">change</span>
+          <span class="status s-adopted">Adopted</span>
+        </header>
+        <div class="refs"><span class="ref">§30.8</span><span class="ref">§19.4</span><span class="ref">§20.10</span></div>
+        <p class="body">Trust and safety moved from 6 to 8: the design has already engineered most of that risk away — no free text for minors, no uploads, structured data only, preset chat. Complexity overwhelming new players moved from 7 to 6: §19.4 calls it “the biggest risk in the whole design” and the four-interacting-rules cap is untested.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> No action beyond ordering the mitigations accordingly.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="proposed">
+        <header class="item-head">
+          <span class="id">D9</span>
+          <h3>Iteration is given a budget</h3>
+          <span class="kind">change</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§26.8</span><span class="ref">§19.17</span><span class="ref">§26.5</span></div>
+        <p class="body">§26.8 estimates ~270 agent runs (≈810 focused hours) and then states plainly that the iteration needed to <em>find the fun</em> is unbudgeted. For a novel genre blend with no reference implementation, that iteration is normally the majority of the work. §19.17 alone lists nine A/B experiments, each needing a playable build and a tuning pass.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Budget iteration at 1–1.5× the build estimate (a further 200–400 runs) and treat the total as the reference-class figure §26.5 asks for.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="proposed">
+        <header class="item-head">
+          <span class="id">D10</span>
+          <h3>The document should split into a specification and a research archive</h3>
+          <span class="kind">change</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§19</span><span class="ref">§28</span><span class="ref">§30</span></div>
+        <p class="body">The document is a buildable spec and an evidence archive in one file, and §19, §28 and §30 are roughly 40% of the text. Both halves are valuable. Keeping them together means the spec cannot be read, diffed or implemented without the archive — and it is part of why four systems reached v2.3 specified twice.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <code>docs/design/spec/</code> carries decisions, one file per system; <code>docs/design/research/</code> carries why. Cross-reference, never duplicate.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done">
+        <header class="item-head">
+          <span class="id">D11</span>
+          <h3>The prototype departs from the document's numbers on purpose</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§12.6</span><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§5.4</span></div>
+        <p class="body">Vault health is 600 rather than 1,500 so cracking takes about eight seconds; being caught takes 1.6 seconds of contact and takes one crew member at a time; there are two guards; the island is hand-built. The first build caught all three crew instantly, which read as unfair rather than tense and would have produced a false negative on gate 1.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Prototype-only. None of these numbers carries forward.</strong> The catch-takes-time change is worth considering for the real build, because instant total capture conflicts with §12.14's rule that failure stays temporary.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="adopted">
+        <header class="item-head">
+          <span class="id">D12</span>
+          <h3>The published prototype declares no runtime capabilities</h3>
+          <span class="kind">change</span>
+          <span class="status s-adopted">Adopted</span>
+        </header>
+        <div class="refs"><span class="ref">§13.3</span><span class="ref">§25.5</span></div>
+        <p class="body">Server-side result collection would have been convenient, but declaring the database capability makes an artifact organisation-internal and unshareable publicly — which defeats the entire point of recruiting by link.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Results are collected in the browser and shown as a copyable code. <code>tools/parse_gate_results.py</code> scores them.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="proposed">
+        <header class="item-head">
+          <span class="id">D13</span>
+          <h3>The note distribution should be rebalanced before the law table is authored</h3>
+          <span class="kind">change</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§8.1</span><span class="ref">§7.4</span><span class="ref">§24</span></div>
+        <p class="body">Parsed from all 48 law sheets: Glow is carried by 12 laws, its opposite Hush by 6. Hush is the <em>hiding</em> note — the raider-favouring one — and it is the scarcest, while the revealing note is the most abundant. Since laws are woven by the defender and apply symmetrically, defenders have both the least reason and the fewest options to weave Hush. Five of the twelve chords require it.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Rebalance toward roughly 8–9 laws per note. §24 freezes the note count at eight and makes laws the expansion axis, so this is a one-time cost now and a permanent constraint on every future season's six laws.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="proposed">
+        <header class="item-head">
+          <span class="id">D14</span>
+          <h3>Chords should require three laws, not three notes</h3>
+          <span class="kind">change</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§8.5</span></div>
+        <p class="body">§8.5 calls chords “the late-game discovery” needing “three laws in play and a Lab of level 3”. Because 23 of the 48 laws carry two notes, <strong>all twelve chords are reachable with two laws</strong>, several with two commons. Slow rivers + Whispers gives Iron bell for 26 stability — inside a day-2 player's capacity of 51.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Require three distinct laws. It is a one-line rule change and it preserves the stated design intent; the alternatives are to reposition chords as a mid-game discovery, or to reduce two-note laws (which also helps D13).</p>
+      </article>
+      </section>
+      <section class="group" id="g-blocking" data-group="blocking">
+        <div class="group-head">
+          <h2>Blocking — fix before any content or core code</h2>
+          <p class="blurb">Systems specified twice and incompatibly. Nothing downstream can be locked while two answers exist.</p>
+        </div>
+        
+      <article class="item blk" data-group="blocking"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C1</span>
+          <h3>Two incompatible detection models</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§5.4</span><span class="ref">§29.1</span></div>
+        <p class="body">§12.17 specifies three vision zones inside a 30–45° cone plus peripheral vision, a 0–1000 suspicion meter, six guard states and noise travelling along walkable paths. §12.8 specifies one 120° cone at 6 tiles, awareness in percent per second, and two states. §12.17 presents itself as the fix, but §12.8 is left intact, §5.4's landing rule is written in the old percentage model, and <strong>§29.1, the formulas appendix, encodes the old model</strong>.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> §12.17 is authoritative. Rewrite §12.8 as behavioural description only, restate §5.4's landing noise in suspicion units, and regenerate §29.1 from §12.17. Blocks guard AI, all stealth balance, and the HUD.</p>
+      </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C2</span>
+          <h3>Two incompatible raid-payout models, differing by 16–30×</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§9.4</span><span class="ref">§9.6</span><span class="ref">§12.1</span><span class="ref">§12.9</span></div>
+        <p class="body">§9.4 pays a percentage of what the defender holds; §9.6 replaces it with a haul minted from the raider's own level and says so explicitly — but §9.4's percentages and §12.9's multipliers remain. Run through the economy model, <strong>§9.4 delivers 32% of a player's income, reproducing its own stated “roughly a third” almost exactly, while §9.6 delivers 1–2%</strong>. Strong evidence that §9.4 generated the published progression tables and §9.6 was added afterwards without re-running them.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> §9.6 is the better-reasoned model — minting is right when loot is created rather than transferred. Then: delete §9.4's percentages and §12.9's loot column; say what Carrier capacity now means (probably time pressure, not a cap on value — see G4); rewrite §9.4's and §12.1's resource-share claims; and resolve C4 first, since the formula's level term is undefined.</p>
+      </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C3</span>
+          <h3>Two law-rarity taxonomies, and one of them has no laws in it</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§7.4</span><span class="ref">§7.7</span><span class="ref">§7.10</span><span class="ref">§9.5</span><span class="ref">§14.4</span><span class="ref">§27.2</span><span class="ref">§29.2</span></div>
+        <p class="body">What is <em>authored</em> (§7.4, §7.7, verified by parsing all 48 law sheets): three ranks — 18 Common, 18 Rare, 12 Deep — at 15/30/60 pages. §14.4's 1,485-page total is computed from exactly that, and the glossary agrees. What is <em>described</em> (§7.10, §27.2): five ranks — 18/14/10/6 plus 3 paradoxes — at 10/20/35/60/120 pages. <strong>No law anywhere in the document is tagged Uncommon.</strong> The two totals differ by 345 pages, which moves the whole late-game curve.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> §7.10's reasoning survives either way — rarity should buy specificity, not strength. Decide the split, then regenerate §7.4, §7.7, §7.6, §9.5, §14.4 and the glossary from one table. Choosing five ranks means re-tagging 14 laws and re-deriving the page economy.</p>
+      </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C4</span>
+          <h3>The master inflation dial is keyed to a level range that does not exist</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§5.2</span><span class="ref">§9.4</span><span class="ref">§9.6</span><span class="ref">§13.4</span></div>
+        <p class="body">§5.2's outer-realm table stops at level 5. §9.6's haul table quotes realm levels 2, 6 and 10, and attributes the 40%→71.5% sealed share to “realm level” — but §9.4 attributes that same share to the <em>Vault</em>, which does have ten levels. So §9.6 appears to have conflated the two and then built <code>B(L) = 100 × 1.5^(L−1)</code>, which §9.6 itself calls “the master inflation lever”, on top of the conflation. At L=10 that is 25× its value at L=5.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Decide what L is — most likely Vault level or a composite target-strength score. If realms really cap at 5, the entire payout table is wrong by about 7×.</p>
+      </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C5</span>
+          <h3>Two defence budget systems, with three different ward limits</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§5.2</span><span class="ref">§5.5</span><span class="ref">§13</span><span class="ref">§13.4</span><span class="ref">§10.2</span></div>
+        <p class="body">§5.5 has one universe-wide stability pool from the Spire and Anchor Stones, with laws costing 10–26. §13.4 introduces a <em>per-realm</em> pool of 100/336/1,504 with laws at a flat 30/40. Ward limits appear three times: §5.2 and §10.2 say 4–8 per realm (3 + realm level), §13 says “three to seven”, §13.4 says 2–9. Guard posts: §5.2 says 1–3, §13.4 says 3–10 guards.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> §13.4's <em>mechanism</em> is right — slot limits per layer are what enforce the “no layer above a quarter” rule, and cost alone cannot. Keep the limits, drop the second pool, price the layers in an explicitly named budget (parallel to terrain points), and reconcile the ward and guard numbers into one table in §5.2.</p>
+      </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C6</span>
+          <h3>Two ruleborn rosters, disagreeing on three roles and most abilities</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§11.2</span><span class="ref">§11.11</span><span class="ref">§11.5</span><span class="ref">§12.8</span></div>
+        <p class="body">The same 18 creatures are specified twice. Prism Mite is a Carrier in §11.2 and a Scout in §11.11; Stormhound is a Scout then a Carrier; Rootrunner a Carrier then a Scout. That changes the role distribution (3 Scout / 4 Carrier versus 4 Scout / 3 Carrier), and role drives crew composition, guard behaviour (§12.8) and the Nursery's fewest-roles-first rule (§11.5). Most of the other fifteen disagree on ability, cooldown or resistance — Featherkin 12s or 14s, Echoplate returns at 50% or 40%, Rootrunner ignores Spores or Heavy ground.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> §11.11 is the richer and later spec. Make it authoritative, reduce §11.2 to a generated index, and hold both in <strong>one creature data table</strong> — exactly the server-side content data §24 describes.</p>
+      </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C19</span>
+          <h3>The production tables describe a universe the build rules do not permit</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§9.3</span><span class="ref">§5.2</span><span class="ref">§11.5</span><span class="ref">§10.2</span><span class="ref">§14.2</span><span class="ref">§14.3</span></div>
+        <p class="body">§9.3's published production figures fit a universe with <strong>one</strong> producer of each kind per realm, fully staffed. §5.2 permits <strong>two</strong> from realm level 3. And §11.5's roster ceiling of 38 characters cannot fully staff even the one-producer version, which needs 63 worker slots. All three tables cannot be correct at once. See findings F1 and F2.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Decide the building and roster rules, then regenerate §9.3, §10.2, §14.2 and §14.3 from the economy model rather than editing them by hand — hand-editing is what produced this.</p>
+      </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G1</span>
+          <h3>Pathfinding and crew movement</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.5</span><span class="ref">§12.6</span><span class="ref">§12.7</span><span class="ref">§6</span><span class="ref">§30.7</span></div>
+        <p class="body">The document specifies in detail what guards perceive and what laws do to movement parameters, but never how a crew actually moves. Unanswered: is the world a tile grid or continuous (§6 is in tiles, §12.17's sub-metre zones and degrees-per-tick imply continuous); how does a player order movement at all (§12.7 covers abilities, never locomotion); what happens at an unplanned fork; how do 3–5 crew avoid each other; does the §12.5 route planner produce a literal path or waypoints re-pathed at runtime — which have very different determinism properties.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>The largest gap, and the one most likely to fail §30.7's premise 3.</strong> Specify it before the vertical slice and make felt control a gate rather than a polish item. Pikmin is cited as the model in §2.2; make that concrete.</p>
+      </article>
+      </section>
+      <section class="group" id="g-design" data-group="design">
+        <div class="group-head">
+          <h2>Design findings — these change how the game plays</h2>
+          <p class="blurb">Not clerical. Each is arithmetic from the document's own published tables, and each asks a question about the design rather than the prose.</p>
+        </div>
+        
+      <article class="item dsg" data-group="design"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F1</span>
+          <h3>The roster cannot staff the universe the rules permit</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§5.2</span><span class="ref">§10.2</span><span class="ref">§11.5</span><span class="ref">§9.3</span><span class="ref">§4</span></div>
+        <p class="body">Pure arithmetic from three published tables. A finished universe has <strong>152 character positions</strong> — 126 producer worker slots (7 realms × 2 of each producer × 3 kinds × 3 slots), 21 guard posts, a crew of five — against a <strong>roster ceiling of 38</strong> (3 at the Spire plus 7 Hearths × 5 homes). That is 25% coverage; the roster would need to be four times larger. Even production alone at one producer per realm needs 63 workers, before a single guard is posted.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> This may be intentional — §4 names characters' time as one of two scarce resources. But three things follow that the document has not absorbed: §9.3's production figures are unstaffable; 25% coverage reads as “most of my buildings are idle” rather than as interesting scarcity; and the marginal Star Well becomes worthless, which removes a large part of §10.2's Starlight sink. Decide which lever moves: more Hearth homes, fewer permitted producers, or partial staffing made genuinely worthwhile.</p>
+      </article>
+      <article class="item dsg" data-group="design"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F2</span>
+          <h3>Building the second producer doubles income and breaks every pacing date</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§9.3</span><span class="ref">§5.2</span><span class="ref">§14.2</span><span class="ref">§14.3</span></div>
+        <p class="body">Solving backwards from §9.3's day-301 figure implies about seven fully staffed Star Wells at level 9 — one per realm, not the fourteen §5.2 allows. Running the economy model under all four readings, only “one producer per realm, no binding roster cap” tracks the document (117% of published at day 301; Keeper 40 on day 171 against a published 181). Every other reading is out by 2–4×.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> A player who builds the second producer — a pure production gain, so everyone will — earns roughly <strong>twice</strong> what §14 predicts, and every “engaged player reaches this on day X” milestone becomes optimistic. Given F1, the second producer may be exactly the wrong thing to permit.</p>
+      </article>
+      <article class="item dsg" data-group="design"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F3</span>
+          <h3>The core trade-off the design is built on does not bind</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§4</span><span class="ref">§11.6</span><span class="ref">§12.6</span><span class="ref">§12.9</span><span class="ref">§9.6</span></div>
+        <p class="body">§4 and §11.6 build the whole design on characters' time: “raiding more means earning less at home and defending worse”. A heist is 3 minutes and a clean escape rests the crew 45, so a crew of five raiding four times a day is withheld for 16 character-hours out of 744 — <strong>about 2% of production</strong>. With §9.6 returning 1–2%, the raid-versus-build tension is absent from the arithmetic entirely.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> The scarcity the design needs already exists in F1 — it is simply not connected to raiding. Make crew membership an assignment that excludes work, the way guarding does, so five of 38 are committed rather than 0.67. The alternative is to lengthen rest substantially, which §12.14's temporary-failure principle argues against. Doing neither means dropping the claim in §4 and §11.6.</p>
+      </article>
+      </section>
+      <section class="group" id="g-significant" data-group="significant">
+        <div class="group-head">
+          <h2>Significant — will cause balance or build errors</h2>
+          <p class="blurb">Smaller conflicts, but each one produces a wrong number or a wrong asset count if it reaches implementation.</p>
+        </div>
+        
+      <article class="item sig" data-group="significant"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C7</span>
+          <h3>Tick rate: 20 Hz or 30 Hz?</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§7.3</span><span class="ref">§24</span><span class="ref">§24.10</span></div>
+        <p class="body">§7.3 and §24's engine table both say 20 steps a second. §24.10, the later simulation contract, says 30 and is self-consistent — it states a heist is 4,500–7,200 ticks, which is exactly 30 × 150–240 seconds. It also says “drop to 20” if a cheap phone cannot hold it, so 20 may be a pre-emptive fallback that leaked upward.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> 30 Hz per §24.10; fix §7.3 and §24. Settle this <strong>before</strong> the golden replays are written, since they encode it and every duration expressed in ticks depends on it.</p>
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C8</span>
+          <h3>The Library is load-bearing and specified nowhere</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§7.6</span><span class="ref">§12.1</span><span class="ref">§10.2</span><span class="ref">§26.1</span><span class="ref">§30.15</span></div>
+        <p class="body">“A Library at the Heart produces about one page per realm every few hours” is the mitigation for the problem review 10 identified — that making pages raid-only punishes the large share of players who prefer building. It is referenced four times. It is <strong>not among the 16 building types</strong> in §10.2, has no cost, no levels and no placement rule, and §26.1 confirms 16 types at launch.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Add it as a 17th building with a full level table, or fold the trickle into the Observatory or the Spire and rewrite the four references. Do not leave a load-bearing economic faucet unspecified.</p>
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C18</span>
+          <h3>Aether storage: formula or table?</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§9.1</span><span class="ref">§10.2</span></div>
+        <p class="body">§9.1 gives the Aether cap as 5,000 per Spire level plus 3,000. §10.2's Spire table gives a flat 5,000 × level — 5,000 at level 1, 50,000 at level 10. The formula would give 8,000 and 53,000.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Small, but Aether is the weaving and upkeep currency, so the cap gates how much law a player can re-weave in one session.</p>
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C13</span>
+          <h3>Matchmaking cannot reach its own worst difficulty tier</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.3</span><span class="ref">§9.6</span></div>
+        <p class="body">§12.3 offers targets within 3 Keeper levels. §9.6's difficulty multiplier has a tier for targets “three or more below” paying 0.25×. If the Observatory never offers such targets, that tier is unreachable in normal play.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Either widen the offered band, or state that the 0.25 tier exists only for challenge links, friendly heists and Trace targets.</p>
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C14</span>
+          <h3>Renown for a foiled heist is undefined</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.9</span></div>
+        <p class="body">The outcomes table gives Renown as a percentage — 100% / 80% / 50% / −50% — while the formula below it produces an absolute value of 8 to 40. “−50%” of a gain the raider did not make has no meaning.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Express all four outcomes as multipliers on the formula's output, and state the sign convention explicitly.</p>
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C9</span>
+          <h3>The Codex screen says 36 laws; there are 48</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§23.2</span><span class="ref">§7</span><span class="ref">§26.1</span></div>
+        <p class="body">The Law Codex screen spec says “36 laws by school and rank”. 36 is the size of Codex chapter 3 (§7.6), so this is probably a stale number rather than a disagreement about the collection.</p>
+        
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C10</span>
+          <h3>Trait count: 30, 31 or 32?</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§11.3</span><span class="ref">§17.3</span><span class="ref">§26.1</span><span class="ref">§11.5</span></div>
+        <p class="body">§11.3 enumerates 31 traits (6 body, 5 heist, 11 law-linked, 9 home). §26.1's launch table says 30. §17.3 references “the rare Starborn trait”, which appears in no list. §11.5 also says strays arrive with three traits while §11.3 says every ruleborn is born with two.</p>
+        
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C11</span>
+          <h3>Screen count: 23 or 27?</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§21.9</span><span class="ref">§23.2</span></div>
+        <p class="body">§23.2 lists 27 screens to design; §21.9's asset list says 23. The difference is four screens of interface work and their icons.</p>
+        
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C12</span>
+          <h3>The high revenue scenario quietly uses a different commission rate</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§22.2</span><span class="ref">§22.5</span></div>
+        <p class="body">§22.5 says every figure in §22.2 assumes 15%. The low and base scenarios do — €2,720 and €25,500, both confirmed. The high scenario's €168,000 is computed at <strong>30%</strong>. That is arguably correct, since €204,000 a month crosses Apple's $1M small-business threshold — but it contradicts the stated assumption and makes the three scenarios non-comparable.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Keep the 30% figure and footnote the threshold crossing. Worth surfacing that the discontinuity is a real business fact: revenue between roughly €70k and €85k a month is partly a dead zone.</p>
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G2</span>
+          <h3>What happens when a guard catches you</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§11.1</span><span class="ref">§13</span></div>
+        <p class="body">§12.8 gives ambush rules and a level cap, and §12.17 says an alerted guard converges and is never lethal. But there is no combat resolution: roles have Power (6–40) and Health (130–420) and attacks have a 0.8s wind-up, yet there is no attack rate, damage formula or range. Nor is it stated whether the crew can choose to fight, or what happens to loot carried by someone knocked out mid-run (§13 and §12.6 cover the clock-end and post-capture cases only).</p>
+        
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G3</span>
+          <h3>Ward placement, triggering and disarming</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§10.3</span><span class="ref">§12.5</span><span class="ref">§11.1</span><span class="ref">§21.9</span></div>
+        <p class="body">§10.3 lists six wards with level-1 effects and reset timers. The Tinker trait “disarms wards 30% faster”, implying a disarm action that is never specified — who, how long, whether it makes noise. Also missing: what triggers a ward; levels 2–5, which the asset list and building table both assume; and ward health, given that Breakers deal double damage to them.</p>
+        
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G4</span>
+          <h3>The Vault's loading loop has no relationship to the payout</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.6</span><span class="ref">§9.6</span><span class="ref">§9.4</span></div>
+        <p class="body">§12.6 gives Vault health, Breaker double damage, cracking noise and a 150-per-second load rate, and names “when to stop loading” as the Vault phase's core tension. But if §9.6's minted haul is authoritative (C2), loading longer earns nothing — so the phase's central decision currently has no mechanism behind it.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Decide whether loading time scales the haul, or is purely a time-pressure device. Either is defensible; neither is stated.</p>
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="gap" data-status="done">
+        <header class="item-head">
+          <span class="id">G7</span>
+          <h3>The economy model itself was missing</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§24</span><span class="ref">§10.2</span><span class="ref">§14.2</span><span class="ref">§14.3</span></div>
+        <p class="body">§24 says a Python model “generated the tables in 10.2 and 14, and is re-run whenever a number changes”. That model was not in the document, and it is the source of roughly a quarter of its numbers.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Rebuilt at <code>tools/economy_model/</code> (D5). It produced F1, F2 and F3, and measured C2.</p>
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G9</span>
+          <h3>The 60-second guided build is the top risk's mitigation and is unspecified</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§13.1</span><span class="ref">§27.2</span><span class="ref">§16</span></div>
+        <p class="body">§13.1 makes “a 60-second guided build before the first player heist” the primary mitigation for the design's number-one risk, and §27.2 confirms it as a decision. What three terrain features, which guard, which law, what the player is told, and — critically — whether the island they build then becomes their actual defence, are all unstated.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Give it the treatment §16 gives the first session. It is the mitigation for the highest-ranked risk in the document.</p>
+      </article>
+      </section>
+      <section class="group" id="g-minor" data-group="minor">
+        <div class="group-head">
+          <h2>Minor — tidy before the spec is frozen</h2>
+          <p class="blurb">Copy and consistency.</p>
+        </div>
+        
+      <article class="item min" data-group="minor"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C15</span>
+          <h3>Guard vision is given in tiles in one place and metres in another</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§21.1</span></div>
+        <p class="body">§21.1 establishes that one tile is one metre, so the two reconcile — but the document should pick one unit and use it throughout.</p>
+        
+      </article>
+      <article class="item min" data-group="minor"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C16</span>
+          <h3>“Three-minute heist” against a 150–240 second clock</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12</span><span class="ref">§12.2</span><span class="ref">§5.4</span><span class="ref">§14.1</span></div>
+        <p class="body">§12's opening calls a heist “a three-minute run”; the clock is 150–240 seconds and §12.2 correctly says 2.5–4 minutes. Harmless, but the marketing line and the spec should not disagree.</p>
+        
+      </article>
+      <article class="item min" data-group="minor"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C17</span>
+          <h3>The game lists itself as its own fallback name</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§27.2</span><span class="ref">§26.9</span></div>
+        <p class="body">§27.2 says “Fallbacks are Lawkeep and Ruleborn” — but Ruleborn <em>is</em> the chosen name. Almost certainly a leftover from the v2.2 rename.</p>
+        
+      </article>
+      <article class="item min" data-group="minor"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G5</span>
+          <h3>Law pylons have no count, health or placement rule</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.6</span><span class="ref">§5.7</span><span class="ref">§10.2</span><span class="ref">§5.1</span></div>
+        <p class="body">Breaking a pylon switches its law off for the rest of a heist and yields a page, and the Spire's light going out when one breaks is the Heart's signature moment. §10.2 lists Law Pylon as a building with ten levels and health, but the relationship between pylons and the law slots they presumably represent is never stated.</p>
+        
+      </article>
+      <article class="item min" data-group="minor"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G6</span>
+          <h3>How the matchmaking rating actually combines its inputs</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.15</span><span class="ref">§12.3</span></div>
+        <p class="body">§12.15 says skill and island difficulty use “a Bayesian rating with an explicit uncertainty term” and that a new island starts wide. §12.3 gives three filter bands. How Renown, Keeper level and the internal rating combine, how the “median target is winnable” guarantee is enforced, and what happens when all three filters return nothing, are not stated.</p>
+        
+      </article>
+      <article class="item min" data-group="minor"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G8</span>
+          <h3>Two offline edge cases named but not resolved</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§24.12</span><span class="ref">§9.4</span></div>
+        <p class="body">§24.12 is otherwise excellent. Two gaps: the target lease is per snapshot, so two devices could hold two leases on the same target and nothing says what happens; and the entry fee (2% of Starlight, returned on a clean heist) has no stated debit point — lease, submission or validation — so an offline heist that is never submitted has an unclear fee state.</p>
+        
+      </article>
+      <article class="item min" data-group="minor"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G10</span>
+          <h3>Some law tier effects cannot be expressed as parameters</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§7.7</span><span class="ref">§7.3</span></div>
+        <p class="body">§7.3's best architectural decision is that laws change a realm's rule sheet and never contain special cases. But several tier values are qualitative rather than numeric — Glass at tier II “also reveals hidden wards” and at tier III “also shows guard vision cones” — so the principle is already bending. Density's “±40%/30%, ±50%/40%” needs a key.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> When the law data table is authored, every tier value must be expressible as a rule-sheet parameter change. Any that cannot is a design smell worth resolving then, not at implementation time.</p>
+      </article>
+      <article class="item min" data-group="minor"
+               data-kind="gap" data-status="open">
+        <header class="item-head">
+          <span class="id">G11</span>
+          <h3>Localisation of a coined vocabulary has no owner</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§25.4</span><span class="ref">§26.9</span><span class="ref">§26.3</span><span class="ref">§20.6</span><span class="ref">§26.2</span></div>
+        <p class="body">§25.4 sets a 70% post-tutorial comprehension gate and §26.9 says every new name is said aloud in the twelve launch languages. Twelve languages across roughly 130 coined proper nouns — 48 law names, 44 resonances, 12 chords, 18 creatures, 8 notes, 6 schools, 7 realms — is a large translation problem with no owner in §26.3's team. §20.6 also says launch is English and Portuguese, against §26.2's twelve.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Related to D6: shipping 2–3 languages and translating store pages more widely is §26.4's own plan.</p>
+      </article>
+      </section>
+      <section class="group" id="g-choices" data-group="choices">
+        <div class="group-head">
+          <h2>Decisions that are yours</h2>
+          <p class="blurb">These cannot be resolved by reading the document more carefully. They change what the game is.</p>
+        </div>
+        
+      <article class="item cho" data-group="choices"
+               data-kind="decision" data-status="open">
+        <header class="item-head">
+          <span class="id">Q1</span>
+          <h3>Is character scarcity a feature or an accident?</h3>
+          <span class="kind">decision</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§4</span><span class="ref">§11.5</span><span class="ref">§5.2</span><span class="ref">§9.3</span></div>
+        <p class="body">F1 shows 152 positions against a roster of 38. §4 claims characters' time is one of the game's two scarce resources, which would make this deliberate. But 25% coverage is not an allocation puzzle, and §9.3's production figures assume staffing the roster cannot supply.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Decide which lever moves: raise the roster, cut permitted buildings, or make partial staffing genuinely worthwhile.</p>
+      </article>
+      <article class="item cho" data-group="choices"
+               data-kind="decision" data-status="open">
+        <header class="item-head">
+          <span class="id">Q2</span>
+          <h3>Should the raid-versus-build trade-off be made real, or dropped?</h3>
+          <span class="kind">decision</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§4</span><span class="ref">§11.6</span><span class="ref">§12.9</span></div>
+        <p class="body">F3 shows it is worth about 2% of production. It can be made real by making crew membership exclude work the way guarding does, or the claim can be removed from §4 and §11.6. What it cannot do is stay as written.</p>
+        
+      </article>
+      <article class="item cho" data-group="choices"
+               data-kind="decision" data-status="open">
+        <header class="item-head">
+          <span class="id">Q3</span>
+          <h3>Three law ranks or five?</h3>
+          <span class="kind">decision</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§7.4</span><span class="ref">§7.10</span></div>
+        <p class="body">C3. Both work; the reasoning in §7.10 survives either. Choosing five means re-tagging 14 laws and re-deriving the page economy.</p>
+        
+      </article>
+      <article class="item cho" data-group="choices"
+               data-kind="decision" data-status="open">
+        <header class="item-head">
+          <span class="id">Q4</span>
+          <h3>One producer per realm, or two?</h3>
+          <span class="kind">decision</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§5.2</span><span class="ref">§9.3</span></div>
+        <p class="body">F2. Two doubles income against every published pacing date; one matches the tables but contradicts §5.2. Interacts with Q1.</p>
+        
+      </article>
+      <article class="item cho" data-group="choices"
+               data-kind="decision" data-status="open">
+        <header class="item-head">
+          <span class="id">Q5</span>
+          <h3>Accept the launch-scope cut?</h3>
+          <span class="kind">decision</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§26.1</span><span class="ref">§26.5</span></div>
+        <p class="body">D6. Roughly 40% less launch content, protecting the Island Workshop.</p>
+        
+      </article>
+      <article class="item cho" data-group="choices"
+               data-kind="decision" data-status="open">
+        <header class="item-head">
+          <span class="id">Q6</span>
+          <h3>Casual pacing: leave it, or add the catch-up discount?</h3>
+          <span class="kind">decision</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§27.3</span><span class="ref">§14</span><span class="ref">§27.5</span></div>
+        <p class="body">Open in the document since v0.3. At one session a day, finishing everything takes about 1,019 days. §27.5 settles on a visible, openly labelled catch-up discount, but it is not specified.</p>
+        
+      </article>
+      <article class="item cho" data-group="choices"
+               data-kind="decision" data-status="open">
+        <header class="item-head">
+          <span class="id">Q7</span>
+          <h3>The document's own open list</h3>
+          <span class="kind">decision</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§27.3</span></div>
+        <p class="body">Final names and the trade-mark check; whether the Island Fund survives its six-month test; whether to strengthen performative and emotional challenge after launch; Law Clash rules; soft-launch countries; whether the interface says “universe” or “your sky”; whether constellations later get a competitive mode.</p>
+        
+      </article>
+      </section>
+    <p class="empty" id="empty" hidden>Nothing in that filter.</p>
+  </main>
+
+  <footer>
+    <p><strong>How this page is maintained.</strong> The register lives in
+      <code>tools/audit_register.py</code> and this page is generated by
+      <code>python3 tools/build_audit.py</code>. Change an item's status there
+      and rebuild &mdash; never edit the generated HTML, or the next build will
+      overwrite it.</p>
+    <p>Findings marked F were produced by <code>tools/economy_model/</code>,
+      which rebuilds the day-by-day model §24 describes but does not contain.
+      Contradictions marked C are asserted where possible in
+      <code>tools/check_design_consistency.py</code>, so they are re-checked
+      automatically against any later version of the document rather than by
+      re-reading 85,000 words.</p>
+    <p>The full analysis behind every item is in <code>docs/analysis/</code>.</p>
+  </footer>
+</div>
+
+<script>
+  (function () {
+    "use strict";
+    var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+    var items = Array.prototype.slice.call(document.querySelectorAll(".item"));
+    var groups = Array.prototype.slice.call(document.querySelectorAll(".group"));
+    var empty = document.getElementById("empty");
+    var KEY = "ruleborn-audit-filter";
+
+    function matches(el, filter) {
+      if (filter === "all") return true;
+      var parts = filter.split(":");
+      return el.dataset[parts[0]] === parts[1];
+    }
+
+    function apply(filter) {
+      var shown = 0;
+      items.forEach(function (el) {
+        var on = matches(el, filter);
+        el.hidden = !on;
+        if (on) shown++;
+      });
+      groups.forEach(function (g) {
+        var any = Array.prototype.some.call(
+          g.querySelectorAll(".item"), function (el) { return !el.hidden; });
+        g.hidden = !any;
+      });
+      empty.hidden = shown > 0;
+      chips.forEach(function (c) {
+        c.setAttribute("aria-pressed", String(c.dataset.filter === filter));
+      });
+      try { localStorage.setItem(KEY, filter); } catch (e) { /* private mode */ }
+    }
+
+    chips.forEach(function (c) {
+      c.addEventListener("click", function () { apply(c.dataset.filter); });
+    });
+
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) { saved = null; }
+    if (saved && chips.some(function (c) { return c.dataset.filter === saved; })) {
+      apply(saved);
+    }
+  })();
+</script>
