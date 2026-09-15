@@ -233,16 +233,16 @@
 
     <div class="summary">
       <div><span class="n">57</span><span class="k">items tracked</span></div>
-      <div><span class="n">24</span><span class="k">open</span></div>
+      <div><span class="n">23</span><span class="k">open</span></div>
       <div><span class="n">10</span><span class="k">done or adopted</span></div>
-      <div><span class="n">11</span><span class="k">blocking the build</span></div>
+      <div><span class="n">12</span><span class="k">blocking the build</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">57</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">15</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">8</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">3</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">16</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">7</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">15</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">9</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">3</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">15</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">7</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
   </nav>
 
   <main id="list">
@@ -535,6 +535,18 @@
         <p class="body">The document specifies in detail what guards perceive and what laws do to movement parameters, but never how a crew actually moves. Unanswered: is the world a tile grid or continuous (§6 is in tiles, §12.17's sub-metre zones and degrees-per-tick imply continuous); how does a player order movement at all (§12.7 covers abilities, never locomotion); what happens at an unplanned fork; how do 3–5 crew avoid each other; does the §12.5 route planner produce a literal path or waypoints re-pathed at runtime — which have very different determinism properties.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/movement.md</code>, which unlike the other spec files is partly new design, since the document leaves this empty. It settles the world model first — <strong>tile topology, continuous position</strong>, which is the only reading that satisfies both §6's per-tile terrain and §12.17's sub-metre vision zones and degrees-per-tick turning — then proposes tap-to-move with per-member selection, deterministic breadth-first pathfinding with a fixed neighbour order, and commands rather than paths in the input log (§24.10).<br><br>The rule that protects premise 3 is stated explicitly: <strong>the crew never makes a decision the player did not make</strong>. No auto-attack, no auto-avoid, no auto-retreat, no re-routing around a guard the player walked them into. A unit cannot look stupid for a decision it never made. The prototype implements this and the felt-control question is measured directly against §30.8's 70% threshold.</p>
       </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="gap" data-status="proposed">
+        <header class="item-head">
+          <span class="id">G9</span>
+          <h3>The 60-second guided build is the top risk's mitigation and is unspecified</h3>
+          <span class="kind">unspecified</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§13.1</span><span class="ref">§27.2</span><span class="ref">§16</span></div>
+        <p class="body">§13.1 makes “a 60-second guided build before the first player heist” the primary mitigation for the design's number-one risk, and §27.2 confirms it as a decision. What three terrain features, which guard, which law, what the player is told, and — critically — whether the island they build then becomes their actual defence, are all unstated.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/first-build.md</code>. The decision the sentence hides is whether the island becomes the player's <em>actual</em> defence — the document never says, and the two answers are different features. If it does not, this is a tutorial that is thrown away, and §49's finding is that people value what they built only when they finish it. The spec proposes it becomes the real defence, places it at the top of day 2 (after the player has met a cone from the outside, per §15.1's teach-in-context rule), and names the five placements that make a guard's cone mean something.<br><br>It also draws a distinction the document does not: <strong>the §13.3 test protocol and the shipped feature differ</strong>. The test tells the player they may stop, because stated willingness is worthless here. The shipped game says nothing and logs what they do. And it flags that §13.1's “not optional” sits oddly against §20.3's “no obligations” — reconcilable, since §20.3 is about recurring demands rather than onboarding, but the reason should be written down rather than assumed.</p>
+      </article>
       </section>
       <section class="group" id="g-design" data-group="design">
         <div class="group-head">
@@ -764,18 +776,6 @@
         <div class="refs"><span class="ref">§24</span><span class="ref">§10.2</span><span class="ref">§14.2</span><span class="ref">§14.3</span></div>
         <p class="body">§24 says a Python model “generated the tables in 10.2 and 14, and is re-run whenever a number changes”. That model was not in the document, and it is the source of roughly a quarter of its numbers.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Rebuilt at <code>tools/economy_model/</code> (D5). It produced F1, F2 and F3, and measured C2.</p>
-      </article>
-      <article class="item sig" data-group="significant"
-               data-kind="gap" data-status="open">
-        <header class="item-head">
-          <span class="id">G9</span>
-          <h3>The 60-second guided build is the top risk's mitigation and is unspecified</h3>
-          <span class="kind">unspecified</span>
-          <span class="status s-open">Open</span>
-        </header>
-        <div class="refs"><span class="ref">§13.1</span><span class="ref">§27.2</span><span class="ref">§16</span></div>
-        <p class="body">§13.1 makes “a 60-second guided build before the first player heist” the primary mitigation for the design's number-one risk, and §27.2 confirms it as a decision. What three terrain features, which guard, which law, what the player is told, and — critically — whether the island they build then becomes their actual defence, are all unstated.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> Give it the treatment §16 gives the first session. It is the mitigation for the highest-ranked risk in the document.</p>
       </article>
       </section>
       <section class="group" id="g-minor" data-group="minor">

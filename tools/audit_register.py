@@ -629,7 +629,7 @@ dict(id="G8", kind="gap", severity="minor", status="open",
           "— so an offline heist that is never submitted has an unclear fee "
           "state."),
 
-dict(id="G9", kind="gap", severity="significant", status="open",
+dict(id="G9", kind="gap", severity="blocking", status="proposed",
      title="The 60-second guided build is the top risk's mitigation and is unspecified",
      refs=["13.1", "27.2", "16"],
      body="§13.1 makes “a 60-second guided build before the first player "
@@ -637,8 +637,22 @@ dict(id="G9", kind="gap", severity="significant", status="open",
           "§27.2 confirms it as a decision. What three terrain features, which guard, "
           "which law, what the player is told, and — critically — whether "
           "the island they build then becomes their actual defence, are all unstated.",
-     rec="Give it the treatment §16 gives the first session. It is the mitigation "
-         "for the highest-ranked risk in the document."),
+     rec="<strong>Drafted.</strong> <code>docs/design/spec/first-build.md</code>. The "
+         "decision the sentence hides is whether the island becomes the player's "
+         "<em>actual</em> defence \u2014 the document never says, and the two answers "
+         "are different features. If it does not, this is a tutorial that is thrown "
+         "away, and §49's finding is that people value what they built only when they "
+         "finish it. The spec proposes it becomes the real defence, places it at the "
+         "top of day 2 (after the player has met a cone from the outside, per §15.1's "
+         "teach-in-context rule), and names the five placements that make a guard's "
+         "cone mean something.<br><br>It also draws a distinction the document does "
+         "not: <strong>the §13.3 test protocol and the shipped feature differ</strong>. "
+         "The test tells the player they may stop, because stated willingness is "
+         "worthless here. The shipped game says nothing and logs what they do. And it "
+         "flags that §13.1's \u201cnot optional\u201d sits oddly against §20.3's "
+         "\u201cno obligations\u201d \u2014 reconcilable, since §20.3 is about "
+         "recurring demands rather than onboarding, but the reason should be written "
+         "down rather than assumed."),
 
 dict(id="G10", kind="gap", severity="minor", status="open",
      title="Some law tier effects cannot be expressed as parameters",
