@@ -1,0 +1,188 @@
+[
+  {
+    "id": "swift",
+    "name": "Swift",
+    "family": "Body",
+    "effect": "+10% speed"
+  },
+  {
+    "id": "sturdy",
+    "name": "Sturdy",
+    "family": "Body",
+    "effect": "+15% health"
+  },
+  {
+    "id": "brave",
+    "name": "Brave",
+    "family": "Body",
+    "effect": "+10% power when outnumbered"
+  },
+  {
+    "id": "hoarder",
+    "name": "Hoarder",
+    "family": "Body",
+    "effect": "+30% carry"
+  },
+  {
+    "id": "greedy",
+    "name": "Greedy",
+    "family": "Body",
+    "effect": "+50% carry but drops 20% of it when hit"
+  },
+  {
+    "id": "clumsy",
+    "name": "Clumsy",
+    "family": "Body",
+    "effect": "+15% speed, 10% chance to trigger any ward it passes"
+  },
+  {
+    "id": "quiet",
+    "name": "Quiet",
+    "family": "Heist",
+    "effect": "guards notice it 25% later"
+  },
+  {
+    "id": "tinker",
+    "name": "Tinker",
+    "family": "Heist",
+    "effect": "disarms wards 30% faster"
+  },
+  {
+    "id": "lucky",
+    "name": "Lucky",
+    "family": "Heist",
+    "effect": "10% chance of a bonus page"
+  },
+  {
+    "id": "loyal",
+    "name": "Loyal",
+    "family": "Heist",
+    "effect": "rests 25% less after a success"
+  },
+  {
+    "id": "shadow",
+    "name": "Shadow",
+    "family": "Heist",
+    "effect": "invisible after standing still 3 seconds"
+  },
+  {
+    "id": "floaty",
+    "name": "Floaty",
+    "family": "Law-linked",
+    "effect": "an extra leap under Half gravity"
+  },
+  {
+    "id": "swimmer",
+    "name": "Swimmer",
+    "family": "Law-linked",
+    "effect": "ignores Slow rivers"
+  },
+  {
+    "id": "grounded",
+    "name": "Grounded",
+    "family": "Law-linked",
+    "effect": "unmoved by Current and Inward pull"
+  },
+  {
+    "id": "sure_footed",
+    "name": "Sure-footed",
+    "family": "Law-linked",
+    "effect": "doesn't slide on Frictionless"
+  },
+  {
+    "id": "night_eyed",
+    "name": "Night-eyed",
+    "family": "Law-linked",
+    "effect": "full sight in the dark"
+  },
+  {
+    "id": "insulated",
+    "name": "Insulated",
+    "family": "Law-linked",
+    "effect": "immune to Static and Chain lightning"
+  },
+  {
+    "id": "sun_hardened",
+    "name": "Sun-hardened",
+    "family": "Law-linked",
+    "effect": "immune to Sunburst"
+  },
+  {
+    "id": "thornproof",
+    "name": "Thornproof",
+    "family": "Law-linked",
+    "effect": "immune to Thorns"
+  },
+  {
+    "id": "clear_headed",
+    "name": "Clear-headed",
+    "family": "Law-linked",
+    "effect": "immune to Spores and Delay"
+  },
+  {
+    "id": "echo_touched",
+    "name": "Echo-touched",
+    "family": "Law-linked",
+    "effect": "returns once at 50% even without Echoes"
+  },
+  {
+    "id": "lantern_born",
+    "name": "Lantern-born",
+    "family": "Law-linked",
+    "effect": "safe outside lantern light"
+  },
+  {
+    "id": "homebody",
+    "name": "Homebody",
+    "family": "Home",
+    "effect": "+20% work, -10% power in heists"
+  },
+  {
+    "id": "sleepy",
+    "name": "Sleepy",
+    "family": "Home",
+    "effect": "+30% work, rests 50% longer"
+  },
+  {
+    "id": "green_thumb",
+    "name": "Green thumb",
+    "family": "Home",
+    "effect": "+25% in Gardens"
+  },
+  {
+    "id": "well_digger",
+    "name": "Well-digger",
+    "family": "Home",
+    "effect": "+25% in Star Wells"
+  },
+  {
+    "id": "spring_finder",
+    "name": "Spring-finder",
+    "family": "Home",
+    "effect": "+25% in Aether Springs"
+  },
+  {
+    "id": "watchful",
+    "name": "Watchful",
+    "family": "Home",
+    "effect": "+3 sight as a guard"
+  },
+  {
+    "id": "stubborn",
+    "name": "Stubborn",
+    "family": "Home",
+    "effect": "+25% health as a guard"
+  },
+  {
+    "id": "teacher",
+    "name": "Teacher",
+    "family": "Home",
+    "effect": "births in its realm roll one extra trait to choose from"
+  },
+  {
+    "id": "steady",
+    "name": "Steady",
+    "family": "Home",
+    "effect": "its building keeps producing for one hour after it leaves"
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Gravity Well",
+    "school": "Motion",
+    "effect_level_1": "Pulls anyone within 3 tiles to its centre and holds them 2 seconds.",
+    "resets_after": "10 s",
+    "id": "gravity_well",
+    "needs_decision": "G3",
+    "missing": "levels 2-5"
+  },
+  {
+    "name": "Crystal Wall",
+    "school": "Matter",
+    "effect_level_1": "A breakable wall (800 health) that blocks a path. It can never close the last route to the Heart.",
+    "resets_after": "Stays broken",
+    "id": "crystal_wall",
+    "needs_decision": "G3",
+    "missing": "levels 2-5"
+  },
+  {
+    "name": "Time Snare",
+    "school": "Time",
+    "effect_level_1": "Freezes the first character to step on it for 2.5 seconds.",
+    "resets_after": "12 s",
+    "id": "time_snare",
+    "needs_decision": "G3",
+    "missing": "levels 2-5"
+  },
+  {
+    "name": "Static Coil",
+    "school": "Energy",
+    "effect_level_1": "Shocks anyone within 2 tiles every 3 seconds.",
+    "resets_after": "Always on",
+    "id": "static_coil",
+    "needs_decision": "G3",
+    "missing": "levels 2-5"
+  },
+  {
+    "name": "Thorn Hedge",
+    "school": "Life",
+    "effect_level_1": "Blocks a path and hurts anyone pushing through (5% health a second).",
+    "resets_after": "Regrows only with Bloom",
+    "id": "thorn_hedge",
+    "needs_decision": "G3",
+    "missing": "levels 2-5"
+  },
+  {
+    "name": "Lantern Glare",
+    "school": "Spirit",
+    "effect_level_1": "Shows the crew to every guard in the realm for 5 seconds and blinds them for 2.",
+    "resets_after": "20 s",
+    "id": "lantern_glare",
+    "needs_decision": "G3",
+    "missing": "levels 2-5"
+  }
+]

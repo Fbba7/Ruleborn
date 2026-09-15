@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Scout",
+    "health": 120,
+    "speed": 4.5,
+    "power": 12,
+    "carry": 60,
+    "job": "Sees 8 tiles instead of 6; reveals what's ahead",
+    "id": "scout"
+  },
+  {
+    "name": "Breaker",
+    "health": 180,
+    "speed": 3.2,
+    "power": 40,
+    "carry": 60,
+    "job": "Double damage to wards, pylons and the Vault",
+    "id": "breaker"
+  },
+  {
+    "name": "Carrier",
+    "health": 160,
+    "speed": 3.6,
+    "power": 8,
+    "carry": 300,
+    "job": "Hauls loot; 15% slower when loaded",
+    "id": "carrier"
+  },
+  {
+    "name": "Warden",
+    "health": 420,
+    "speed": 2.6,
+    "power": 20,
+    "carry": 80,
+    "job": "Draws guards within 3 tiles; holds ground",
+    "id": "warden"
+  },
+  {
+    "name": "Mender",
+    "health": 130,
+    "speed": 3.4,
+    "power": 6,
+    "carry": 60,
+    "job": "Heals the most hurt ally within 4 tiles, 8 health a second",
+    "id": "mender"
+  }
+]

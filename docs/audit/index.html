@@ -233,7 +233,7 @@
 
     <div class="summary">
       <div><span class="n">55</span><span class="k">items tracked</span></div>
-      <div><span class="n">41</span><span class="k">open</span></div>
+      <div><span class="n">40</span><span class="k">open</span></div>
       <div><span class="n">9</span><span class="k">done or adopted</span></div>
       <div><span class="n">11</span><span class="k">blocking the build</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
@@ -370,7 +370,7 @@
         </header>
         <div class="refs"><span class="ref">§19</span><span class="ref">§28</span><span class="ref">§30</span></div>
         <p class="body">The document is a buildable spec and an evidence archive in one file, and §19, §28 and §30 are roughly 40% of the text. Both halves are valuable. Keeping them together means the spec cannot be read, diffed or implemented without the archive — and it is part of why four systems reached v2.3 specified twice.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> <code>docs/design/spec/</code> carries decisions, one file per system; <code>docs/design/research/</code> carries why. Cross-reference, never duplicate.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <code>docs/design/spec/</code> carries decisions, one file per system; <code>docs/design/research/</code> carries why. Cross-reference, never duplicate. <strong>Started:</strong> <code>spec/detection.md</code> is the first file, and the twelve content tables in <code>content/</code> are the data half of the same split.</p>
       </article>
       <article class="item chg" data-group="changes"
                data-kind="deviation" data-status="done">
@@ -428,16 +428,16 @@
         </div>
         
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="proposed">
         <header class="item-head">
           <span class="id">C1</span>
           <h3>Two incompatible detection models</h3>
           <span class="kind">conflict</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§5.4</span><span class="ref">§29.1</span></div>
         <p class="body">§12.17 specifies three vision zones inside a 30–45° cone plus peripheral vision, a 0–1000 suspicion meter, six guard states and noise travelling along walkable paths. §12.8 specifies one 120° cone at 6 tiles, awareness in percent per second, and two states. §12.17 presents itself as the fix, but §12.8 is left intact, §5.4's landing rule is written in the old percentage model, and <strong>§29.1, the formulas appendix, encodes the old model</strong>.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> §12.17 is authoritative. Rewrite §12.8 as behavioural description only, restate §5.4's landing noise in suspicion units, and regenerate §29.1 from §12.17. Blocks guard AI, all stealth balance, and the HUD.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/detection.md</code> states §12.17 once, with the four edits it forces spelled out: §12.8 becomes behavioural description only, §5.4's landing noise is restated as 250 of 1000 suspicion, §29.1 is regenerated, §21.12 is already correct. The numbers are data in <code>content/detection.json</code> and validated. Awaiting sign-off before the lock in §26.7.</p>
       </article>
       <article class="item blk" data-group="blocking"
                data-kind="contradiction" data-status="open">

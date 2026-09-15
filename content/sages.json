@@ -1,0 +1,30 @@
+[
+  {
+    "name": "The Archivist",
+    "unlocks": "Start",
+    "heist_powers": "Suspend: switch off one law in the current realm for 10 s (1 use). Reveal: show every ward in the realm (2 uses). Recall: bring a knocked-out character back at 40% (1 use).",
+    "at_home": "Lab experiments 20% faster. On guard: when an alarm sounds, the crew is shown to every guard for 5 s.",
+    "id": "the_archivist"
+  },
+  {
+    "name": "The Tinkerer",
+    "unlocks": "Keeper level 7",
+    "heist_powers": "Invert: turn a law into its opposite for 10 s, such as Half gravity into heavy gravity (1 use). Jam: disable a ward for 12 s (2 uses). Plank: lay a 4-tile shortcut over a gap for 15 s (2 uses).",
+    "at_home": "Buildings cost 10% less. On guard: the first ward the crew disables rearms after 5 s.",
+    "id": "the_tinkerer"
+  },
+  {
+    "name": "The Gardener",
+    "unlocks": "Keeper level 13",
+    "heist_powers": "Vine bridge: join two points up to 6 tiles apart for 20 s (1 use). Renew: heal the crew 30% over 5 s (1 use). Decoy: plant a sapling guards chase for 8 s (2 uses).",
+    "at_home": "Gardens make 15% more. On guard: hedges and wards in the Heart heal 50% faster.",
+    "id": "the_gardener"
+  },
+  {
+    "name": "The Wanderer",
+    "unlocks": "Keeper level 20",
+    "heist_powers": "Copy: take one enemy law and carry it around the crew for the rest of the heist (1 use). Rift: open a two-way rift between two realms already visited for 20 s (1 use). Tailwind: crew moves 40% faster for 6 s (2 uses).",
+    "at_home": "The Observatory offers one more target. On guard: raiders can't call their skiff to one chosen outer realm for the first 60 s.",
+    "id": "the_wanderer"
+  }
+]

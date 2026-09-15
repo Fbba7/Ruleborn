@@ -63,3 +63,32 @@ layer is in better shape than the prose:
 The faults the validator finds are all in the places the document specified
 something twice, or claimed something the content does not deliver — never in the
 content's internal craft.
+
+## The rest of the tables
+
+Added after the first pass, completing the set §24 names:
+
+| File | Entries | Source |
+| --- | --- | --- |
+| `roles.json` | 5 | §11.1 |
+| `traits.json` | 31 | §11.3, unpacked from prose |
+| `buildings.json` | 16 | §10.2, with every level |
+| `wards.json` | 6 | §10.3 — level 1 only, see G3 |
+| `sages.json` | 4 | §11.7 |
+| `eras.json` | 8 | §18.3 |
+| `detection.json` | — | §12.17, reconciled; see `docs/design/spec/detection.md` |
+
+`detection.json` is the only file here that is not pure extraction: it is the
+proposed resolution of C1, and the validator checks it for self-consistency —
+that the per-tick fill rates really do produce the stated fill times at 30 Hz,
+that suspicion cannot drain faster than the far zone fills, that zone boundaries
+increase, that each cone sits inside its peripheral arc, and that state
+thresholds are ordered and top out at the cap.
+
+Two more things the validator confirmed on this pass:
+
+- Every building's levels are numbered contiguously from 1 and every cost curve
+  increases monotonically — 16 buildings, 118 levels, no exceptions.
+- No retired name survives anywhere in the terrain, era or ward prose. v2.3's
+  four renames (Echo Knight, Moss Giant, Masquerade, Creator Fund) were carried
+  through consistently.

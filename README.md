@@ -35,7 +35,8 @@ is done. In short:
 docs/
   design/     the game design document, as delivered, plus a greppable extract
   analysis/   the deep analysis of that document — start here
-content/       laws, notes, resonances, chords, terrain and ruleborn as data
+content/       the twelve content tables as data, plus the reconciled detection spec
+docs/design/spec/   the reconciled specification, one file per system
 docs/audit/    the generated audit register page
 prototypes/
   heist-gate/  a throwaway browser build that runs both pre-code gates
@@ -81,6 +82,16 @@ rewards, no engagement-tuned matchmaking — with the refusals written down so t
 cannot creep back in.
 
 Full detail: [`docs/design/ruleborn-game-design-v2.3.html`](docs/design/ruleborn-game-design-v2.3.html).
+
+## Checks
+
+```bash
+./tools/check_all.sh
+```
+
+Runs every check in dependency order. Non-zero exit means something is wrong;
+known contradictions in the design document are reported but do not fail, and
+that list shrinks as the document is reconciled.
 
 ## Tools
 

@@ -141,7 +141,9 @@ dict(id="D10", kind="deviation", severity="change", status="proposed",
           "reached v2.3 specified twice.",
      rec="<code>docs/design/spec/</code> carries decisions, one file per system; "
          "<code>docs/design/research/</code> carries why. Cross-reference, never "
-         "duplicate."),
+         "duplicate. <strong>Started:</strong> <code>spec/detection.md</code> is the "
+         "first file, and the twelve content tables in <code>content/</code> are the "
+         "data half of the same split."),
 
 dict(id="D11", kind="deviation", severity="change", status="done",
      title="The prototype departs from the document's numbers on purpose",
@@ -196,7 +198,7 @@ dict(id="D14", kind="deviation", severity="change", status="proposed",
 # Blocking — these prevent content authoring or core code
 # ===========================================================================
 
-dict(id="C1", kind="contradiction", severity="blocking", status="open",
+dict(id="C1", kind="contradiction", severity="blocking", status="proposed",
      title="Two incompatible detection models",
      refs=["12.8", "12.17", "5.4", "29.1"],
      body="§12.17 specifies three vision zones inside a 30–45° cone plus "
@@ -206,9 +208,12 @@ dict(id="C1", kind="contradiction", severity="blocking", status="open",
           "presents itself as the fix, but §12.8 is left intact, §5.4's landing rule "
           "is written in the old percentage model, and <strong>§29.1, the formulas "
           "appendix, encodes the old model</strong>.",
-     rec="§12.17 is authoritative. Rewrite §12.8 as behavioural description only, "
-         "restate §5.4's landing noise in suspicion units, and regenerate §29.1 "
-         "from §12.17. Blocks guard AI, all stealth balance, and the HUD."),
+     rec="<strong>Drafted.</strong> <code>docs/design/spec/detection.md</code> states "
+         "§12.17 once, with the four edits it forces spelled out: §12.8 becomes "
+         "behavioural description only, §5.4's landing noise is restated as 250 of "
+         "1000 suspicion, §29.1 is regenerated, §21.12 is already correct. The "
+         "numbers are data in <code>content/detection.json</code> and validated. "
+         "Awaiting sign-off before the lock in §26.7."),
 
 dict(id="C2", kind="contradiction", severity="blocking", status="open",
      title="Two incompatible raid-payout models, differing by 16–30×",

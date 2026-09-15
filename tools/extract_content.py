@@ -35,7 +35,18 @@ ROLES = ["Scout", "Breaker", "Carrier", "Warden", "Mender"]
 
 
 def section(text: str, start: str, end: str) -> str:
-    return text[text.index(start):text.index(end)]
+    """Slice one section out of the document.
+
+    Markers must be unique to the body. Several section titles also appear in
+    the contents list at the top, which would slice backwards and silently
+    return nothing, so an inverted or empty slice is an error rather than an
+    empty table.
+    """
+    a = text.index(start)
+    b = text.index(end, a + len(start))
+    if b <= a:
+        raise ValueError(f"section marker {end!r} precedes {start!r}")
+    return text[a:b]
 
 
 def fields(block: str) -> dict[str, str]:
@@ -264,6 +275,114 @@ def extract_notes(text: str) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
+# Simple tables: roles, wards, eras, sages, buildings, traits
+# ---------------------------------------------------------------------------
+
+def table(text: str, start: str, end: str, columns: list[str],
+          headers: list[str]) -> list[dict]:
+    """Parse a flat '| cell' table whose header row is `headers`."""
+    block = section(text, start, end)
+    cells = [c.strip()[2:].strip() for c in block.split("\n") if c.strip().startswith("| ")]
+    if cells[:len(headers)] == headers:
+        cells = cells[len(headers):]
+    rows = []
+    for i in range(0, len(cells) - len(columns) + 1, len(columns)):
+        row = dict(zip(columns, cells[i:i + len(columns)]))
+        row["id"] = slug(row[columns[0]])
+        rows.append(row)
+    return rows
+
+
+def extract_roles(text: str) -> list[dict]:
+    rows = table(text, "11.1 Roles", "11.2 The 18 ruleborn",
+                 ["name", "health", "speed", "power", "carry", "job"],
+                 ["Role", "Health", "Speed (tiles/s)", "Power", "Carry", "Job in a heist"])
+    for r in rows:
+        r["health"] = int(r["health"])
+        r["speed"] = float(r["speed"])
+        r["power"] = int(r["power"])
+        r["carry"] = int(r["carry"])
+    return rows
+
+
+def extract_wards(text: str) -> list[dict]:
+    rows = table(text, "10.3 Wards", "11.1 Roles",
+                 ["name", "school", "effect_level_1", "resets_after"],
+                 ["Ward", "School", "Effect at level 1", "Resets after"])
+    for r in rows:
+        # G3: §10.3 gives level 1 only, but §21.9 and §10.2 both assume five levels.
+        r["needs_decision"] = "G3"
+        r["missing"] = "levels 2-5"
+    return rows
+
+
+def extract_eras(text: str) -> list[dict]:
+    return table(text, "18.3 Eras (at launch)", "18.4 Epochs",
+                 ["name", "rule"], ["Era", "Rule for the week"])
+
+
+def extract_sages(text: str) -> list[dict]:
+    return table(text, "11.7 Sages, the heroes", "11.8 Special characters",
+                 ["name", "unlocks", "heist_powers", "at_home"],
+                 ["Sage", "Unlocks", "Heist powers", "At home"])
+
+
+def extract_traits(text: str) -> list[dict]:
+    """§11.3 packs each family's traits into one prose cell: 'Name: effect.'"""
+    rows = table(text, "11.3 Traits", "11.4 Levels", ["kind", "traits"],
+                 ["Kind", "Traits"])
+    out = []
+    for row in rows:
+        for part in re.split(r"(?<=\.)\s+(?=[A-Z])", row["traits"]):
+            m = re.match(r"^([A-Z][A-Za-z-]*(?: [a-z]+)?):\s*(.+?)\.?$", part.strip())
+            if m:
+                out.append({"id": slug(m.group(1)), "name": m.group(1),
+                            "family": row["kind"], "effect": m.group(2).strip()})
+    return out
+
+
+BUILDING_NAMES = ["Keeper's Spire", "Vault", "Anchor Stone", "Star Well",
+                  "Aether Spring", "Garden", "Storehouse", "Law Pylon", "Hearth",
+                  "Nursery", "Guardian Post", "Ward", "Resonance Lab",
+                  "Observatory", "Beacon", "Visitor's Dock"]
+
+
+def extract_buildings(text: str) -> list[dict]:
+    block = section(text, "10.2 Every level of every building", "10.3 Wards")
+    lines = [l.rstrip() for l in block.split("\n")]
+    out, current, placement, cells = [], None, None, []
+
+    def flush():
+        if not current:
+            return
+        levels, i = [], 0
+        while i + 3 < len(cells):
+            if re.fullmatch(r"\d+", cells[i]):
+                levels.append({
+                    "level": int(cells[i]),
+                    "cost_starlight": int(cells[i + 1].replace(",", "")),
+                    "needs": cells[i + 2],
+                    "gives": cells[i + 3],
+                })
+                i += 6          # two further columns: build day, income hours
+            else:
+                i += 1
+        out.append({"id": slug(current), "name": current,
+                    "placement": placement, "levels": levels})
+
+    for i, line in enumerate(lines):
+        bare = line.strip()
+        if bare in BUILDING_NAMES:
+            flush()
+            current, cells = bare, []
+            placement = lines[i + 2].strip() if i + 2 < len(lines) else ""
+        elif current and bare.startswith("| "):
+            cells.append(bare[2:].strip())
+    flush()
+    return out
+
+
+# ---------------------------------------------------------------------------
 
 def write(name: str, rows: list[dict]) -> None:
     OUT.mkdir(exist_ok=True)
@@ -288,7 +407,13 @@ def main() -> int:
     write("resonances", extract_resonances(text))
     write("chords", extract_chords(text))
     write("terrain", extract_terrain(text))
+    write("roles", extract_roles(text))
     write("ruleborn", extract_ruleborn(text))
+    write("traits", extract_traits(text))
+    write("buildings", extract_buildings(text))
+    write("wards", extract_wards(text))
+    write("sages", extract_sages(text))
+    write("eras", extract_eras(text))
     print("\nNow run: python3 tools/validate_content.py")
     return 0
 

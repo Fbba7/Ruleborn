@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Heavy Stars",
+    "rule": "Motion laws cost 30% less; gravity can't be set lower",
+    "id": "heavy_stars"
+  },
+  {
+    "name": "The Long Night",
+    "rule": "Vision is 30% shorter everywhere",
+    "id": "the_long_night"
+  },
+  {
+    "name": "High Tide",
+    "rule": "Slow rivers costs no stability",
+    "id": "high_tide"
+  },
+  {
+    "name": "Wildgrowth",
+    "rule": "Life laws are 25% stronger",
+    "id": "wildgrowth"
+  },
+  {
+    "name": "Echoing Skies",
+    "rule": "Everyone returns once at 40% after being knocked out",
+    "id": "echoing_skies"
+  },
+  {
+    "name": "Static Storm",
+    "rule": "Energy wards are 50% stronger",
+    "id": "static_storm"
+  },
+  {
+    "name": "Glass Moon",
+    "rule": "Walls everywhere are see-through",
+    "id": "glass_moon"
+  },
+  {
+    "name": "Quiet Week",
+    "rule": "Heists are 30 seconds longer",
+    "id": "quiet_week"
+  }
+]

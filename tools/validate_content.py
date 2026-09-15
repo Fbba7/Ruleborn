@@ -36,7 +36,15 @@ ROLES = ["Scout", "Breaker", "Carrier", "Warden", "Mender"]
 
 #: §26.1's launch content table. A count that drifts from this is a real error.
 EXPECTED = {"notes": 8, "laws": 48, "resonances": 44, "chords": 12,
-            "terrain": 39, "ruleborn": 18}
+            "terrain": 39, "ruleborn": 18, "roles": 5, "buildings": 16,
+            "wards": 6, "sages": 4, "eras": 8}
+
+#: Traits are counted separately: §26.1 says 30, §11.3 enumerates 31, and §17.3
+#: names a 32nd. That is contradiction C10, so it is reported, not failed.
+EXPECTED_TRAITS = 30
+
+#: The old names v2.3 replaced (§26.9). A surviving reference is a stale rename.
+RETIRED_NAMES = ["Echo Knight", "Moss Giant", "Masquerade", "Creator Fund", "Lawbound"]
 
 REQUIRED_LAW_FIELDS = ["id", "name", "rank", "school", "stability_cost", "notes",
                        "tier_1", "tiers_2_3", "movement", "world",
@@ -63,7 +71,7 @@ def load(name: str) -> list[dict]:
 
 
 def main() -> int:
-    data = {name: load(name) for name in EXPECTED}
+    data = {name: load(name) for name in list(EXPECTED) + ["traits"]}
     if errors:
         report()
         return 1
@@ -170,9 +178,102 @@ def main() -> int:
         if r["role"] not in ROLES:
             err(f"ruleborn {r['name']}: unknown role {r['role']}")
 
+    # -- roles, buildings, wards, sages, eras -------------------------------
+    role_names = {r["name"] for r in data["roles"]}
+    if role_names != set(ROLES):
+        err(f"roles are {sorted(role_names)}, expected {ROLES}")
+    for r in data["roles"]:
+        if not 1 <= r["speed"] <= 10:
+            err(f"role {r['name']}: speed {r['speed']} out of range")
+
+    for b in data["buildings"]:
+        levels = [lvl["level"] for lvl in b["levels"]]
+        if levels != list(range(1, len(levels) + 1)):
+            err(f"building {b['name']}: levels are {levels}, expected 1..{len(levels)}")
+        costs = [lvl["cost_starlight"] for lvl in b["levels"]]
+        if costs != sorted(costs):
+            err(f"building {b['name']}: costs are not monotonically increasing")
+        if any(c <= 0 for c in costs):
+            err(f"building {b['name']}: a level costs nothing")
+
+    ward_schools = collections.Counter(w["school"] for w in data["wards"])
+    if set(ward_schools) != set(SCHOOLS) or set(ward_schools.values()) != {1}:
+        err(f"wards by school: {dict(ward_schools)}, expected one per school")
+
+    # -- detection (the reconciled §12.17 spec) -----------------------------
+    det = json.loads((CONTENT / "detection.json").read_text(encoding="utf-8")) \
+        if (CONTENT / "detection.json").exists() else None
+    if det:
+        if det["_tick_rate"] != 30:
+            err(f"detection: tick rate {det['_tick_rate']}, the §24.10 contract says 30")
+        sus = det["suspicion"]
+        for zone, seconds in sus["fill_seconds"].items():
+            want = round(sus["max"] / (seconds * det["_tick_rate"]))
+            got = sus["fill_per_tick"][zone]
+            if abs(got - want) > 1:
+                err(f"detection: {zone} zone fills at {got}/tick, but "
+                    f"{seconds}s at {det['_tick_rate']} Hz needs {want}")
+        want_decay = round(sus["max"] / (sus["decay_seconds"] * det["_tick_rate"]))
+        if abs(sus["decay_per_tick"] - want_decay) > 1:
+            err(f"detection: decay {sus['decay_per_tick']}/tick, "
+                f"{sus['decay_seconds']}s needs {want_decay}")
+        if sus["decay_per_tick"] >= sus["fill_per_tick"]["far"] * 2:
+            err("detection: suspicion drains faster than the far zone fills, "
+                "so a distant guard could never reach Suspicious")
+        det_roles = {g["role"] for g in det["guards"]}
+        if det_roles != set(ROLES):
+            err(f"detection: guard roles {sorted(det_roles)}, expected {ROLES}")
+        for g in det["guards"]:
+            zones = [g["near_m"], g["mid_m"], g["far_m"]]
+            present = [z for z in zones if z is not None]
+            if present != sorted(present):
+                err(f"detection: {g['role']} zone boundaries are not increasing: {zones}")
+            if not 0 < g["cone_degrees"] <= g["peripheral_degrees"] <= 360:
+                err(f"detection: {g['role']} cone {g['cone_degrees']}° is not inside "
+                    f"its peripheral arc {g['peripheral_degrees']}°")
+        thresholds = [s["at"] for s in det["states"] if s["at"] is not None]
+        if thresholds != sorted(thresholds):
+            err(f"detection: state thresholds are not ordered: {thresholds}")
+        if thresholds[-1] != sus["max"]:
+            err(f"detection: the top state triggers at {thresholds[-1]}, "
+                f"but suspicion caps at {sus['max']}")
+        noise = det["noise"]["sources"]
+        if [n["heard_within_m"] for n in noise if n["id"] in ("crouched_walk", "walking", "running")] \
+                != [1.0, 2.5, 4.5]:
+            err("detection: the crouch/walk/run noise ladder does not match §12.17")
+
+    # -- cross-references into the law table --------------------------------
+    #
+    # §6.2's "With laws" column and §18.3's era rules both name laws in prose.
+    # A name that no longer exists is a rename that was not carried through.
+    law_names = sorted((law["name"] for law in laws), key=len, reverse=True)
+    prose = [("terrain " + t["name"], t["with_laws"]) for t in data["terrain"]]
+    prose += [("era " + e["name"], e["rule"]) for e in data["eras"]]
+    prose += [("ward " + w["name"], w["effect_level_1"]) for w in data["wards"]]
+    for where, sentence in prose:
+        for retired in RETIRED_NAMES:
+            if retired in sentence:
+                err(f"{where}: names {retired!r}, which v2.3 retired (§26.9)")
+
     # =====================================================================
     # Known open contradictions — reported, not failed
     # =====================================================================
+
+    n_traits = len(data["traits"])
+    if n_traits != EXPECTED_TRAITS:
+        opn("C10", f"§11.3 enumerates {n_traits} traits, §26.1's launch table says "
+                   f"{EXPECTED_TRAITS}, and §17.3 names a \u201crare Starborn trait\u201d "
+                   f"that appears in neither")
+
+    names = {b["name"] for b in data["buildings"]}
+    if "Library" not in names:
+        opn("C8", "the Library is referenced four times as the non-raiding page "
+                  "source (§7.6, §12.1, §27.2, §30.15) but is not among the 16 "
+                  "building types in §10.2 — no cost, no levels, no placement rule")
+
+    if all(w.get("missing") == "levels 2-5" for w in data["wards"]):
+        opn("G3", "§10.3 specifies ward level 1 only, but §10.2 gives the Ward "
+                  "building five levels and §21.9 budgets 6 types x 5 levels of props")
 
     ranks = collections.Counter(law["rank"] for law in laws)
     if "Uncommon" not in ranks:

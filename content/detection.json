@@ -1,0 +1,80 @@
+{
+  "_source": "§12.17, reconciled. See docs/design/spec/detection.md.",
+  "_status": "proposed — resolves C1 in favour of §12.17; awaiting sign-off",
+  "_tick_rate": 30,
+  "_note": "Rates are per tick at 30 Hz (§24.10, per C7). Every value is an integer: the simulation contains no decimals where a result is decided (§24.7).",
+
+  "suspicion": {
+    "max": 1000,
+    "fill_per_tick": { "near": 67, "mid": 33, "far": 12 },
+    "fill_seconds": { "near": 0.5, "mid": 1.0, "far": 2.8 },
+    "decay_per_tick": 20,
+    "decay_seconds": 1.7,
+    "state_floor_ticks": 15
+  },
+
+  "states": [
+    { "id": "unaware",       "at": 0,    "does": "Patrols or holds its post" },
+    { "id": "suspicious",    "at": 200,  "does": "Stops, turns toward it, stays on route" },
+    { "id": "investigating", "at": 600,  "does": "Walks to the spot and searches nearby for ten seconds" },
+    { "id": "alerted",       "at": 1000, "does": "Calls out, converges, raises the alarm. Never lethal" },
+    { "id": "searching",     "at": null, "does": "Twenty seconds of wider, faster searching after losing sight" },
+    { "id": "returning",     "at": null, "does": "Walks home, still easily re-alerted" }
+  ],
+
+  "guards": [
+    { "role": "Scout",   "cone_degrees": 45, "near_m": 2.0, "mid_m": 4.0, "far_m": 6.0, "peripheral_degrees": 110, "turn_degrees_per_tick": 6 },
+    { "role": "Warden",  "cone_degrees": 40, "near_m": 1.5, "mid_m": 3.0, "far_m": 4.5, "peripheral_degrees": 90,  "turn_degrees_per_tick": 3 },
+    { "role": "Breaker", "cone_degrees": 35, "near_m": 1.5, "mid_m": 2.5, "far_m": 3.5, "peripheral_degrees": 70,  "turn_degrees_per_tick": 8 },
+    { "role": "Carrier", "cone_degrees": 30, "near_m": 1.0, "mid_m": 2.0, "far_m": 3.0, "peripheral_degrees": 60,  "turn_degrees_per_tick": 4 },
+    { "role": "Mender",  "cone_degrees": 40, "near_m": 1.5, "mid_m": 2.5, "far_m": null, "peripheral_degrees": 100, "turn_degrees_per_tick": 4 }
+  ],
+
+  "modifiers": [
+    { "id": "higher_ground",   "effect": "range", "delta_m": 1.0,  "when": "the guard stands a level above" },
+    { "id": "lower_ground",    "effect": "range", "far_zone": false, "when": "the guard stands a level below" },
+    { "id": "crouched",        "effect": "rate",  "multiplier": 0.5,  "when": "the crew member is crouched" },
+    { "id": "running",         "effect": "rate",  "multiplier": 1.75, "when": "the crew member is running" },
+    { "id": "unlit",           "effect": "rate",  "multiplier": 0.5,  "when": "the tile is unlit" },
+    { "id": "still_in_grass",  "effect": "hidden", "when": "standing still in tall grass, until a guard walks into the tile" },
+    { "id": "peripheral",      "effect": "rate",  "multiplier": 0.5,  "when": "inside the peripheral arc but outside the cone" }
+  ],
+
+  "noise": {
+    "_travels": "along the walkable path, never through walls, so a guard turns toward the way around rather than toward the source",
+    "off_screen_multiplier": 0.5,
+    "sources": [
+      { "id": "crawling",        "heard_within_m": 0 },
+      { "id": "crouched_walk",   "heard_within_m": 1.0 },
+      { "id": "walking",         "heard_within_m": 2.5 },
+      { "id": "running",         "heard_within_m": 4.5 },
+      { "id": "landing_1_level", "heard_within_m": 2.0 },
+      { "id": "landing_3_levels","heard_within_m": 4.0 },
+      { "id": "breaking",        "heard_within_m": 5.0 }
+    ],
+    "surfaces": [
+      { "id": "gravel", "multiplier": 1.25 },
+      { "id": "water",  "multiplier": 1.25 },
+      { "id": "moss",   "multiplier": 0.75 }
+    ]
+  },
+
+  "alarm": {
+    "spread_radius_m": 4.0,
+    "spread_delay_ticks": 15,
+    "realm_alarm_max": 6,
+    "realm_alarm_per_30s": 1,
+    "realm_alarm_per_guard_found": 1,
+    "reinforcement_at": 5,
+    "reinforcement": "another Warden arrives at an entrance"
+  },
+
+  "ambush": {
+    "_source": "§12.8, the one part of the older model that survives",
+    "stun_seconds": 2,
+    "damage_multiplier": 3,
+    "hits_to_down_equal_level_guard": 2,
+    "wind_up_seconds": 0.8,
+    "level_advantage_cap": 3
+  }
+}
