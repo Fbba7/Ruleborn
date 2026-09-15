@@ -122,7 +122,7 @@ def build() -> str:
     touched = sum(1 for i in REGISTER if i["id"] in V3)
     new_in_v3 = sum(1 for i in REGISTER
                     if i["id"] in ("C21", "C22", "C23", "C24", "C25", "C26",
-                                   "D19", "D20"))
+                                   "D19", "D20", "D21", "F7", "F8", "F9"))
     today = datetime.date.today().strftime("%d %B %Y")
 
     chips = "".join(
@@ -400,8 +400,9 @@ def build() -> str:
       register directly (&sect;30.18). {fixed_count} items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
       what it did &mdash; including where a fix stopped short. {new_in_v3} items
-      are new: four of them are decisions v3.0 took and then left a stale copy
-      of, which is the pattern the whole register is about.</p>
+      are new: four are decisions v3.0 took and then left a stale copy of, which
+      is the pattern the whole register is about, and three came out of building
+      the simulation harnesses &sect;19.27 now depends on and running them.</p>
 
     <div class="summary">
       <div><span class="n">{len(REGISTER)}</span><span class="k">items tracked</span></div>

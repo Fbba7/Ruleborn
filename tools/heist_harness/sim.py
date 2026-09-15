@@ -1,0 +1,473 @@
+"""One heist, simulated tick by tick.
+
+A run is a pure function of (island seed, crew, policy). Nothing inside the loop
+consults a random source — §12.17's own requirement, and the thing that makes a
+replay checkable on the server (§24.10).
+
+What is modelled, and why each is here:
+
+  * §12.17 perception, in full: three zones, peripheral arc, suspicion, six states
+  * §12.18 movement: breadth-first paths on the tile graph, continuous position,
+    crew passing through one another, and the command recorded rather than the path
+  * §12.19 the Vault: crack, then load at 30 units a second, fill fraction banked
+  * §12.20 capture: ten seconds down, loot dropped on the tile
+  * §12.9 grades, which is what the harness is finally measuring
+
+What is not: laws, wards, abilities, pylons, fights the crew starts. §19.27 asks
+whether the heist carries decisions and whether skill separates outcomes, and
+every one of those additions widens the gap between skill levels rather than
+narrowing it — so leaving them out makes the harness's answer conservative.
+"""
+
+import json
+import pathlib
+from dataclasses import dataclass, field
+
+from . import detect
+from .detect import (ALERTED, DECAY, INVESTIGATING, STATE_FLOOR_TICKS, SUS_MAX,
+                     SUSPICIOUS, VISION, fill_rate, line_of_sight, zone)
+from .fixed import TPS, U, Rng, angle_to, dist2, tiles, turn_toward
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
+ROLES = {r["name"]: r for r in
+         json.loads((ROOT / "content" / "roles.json").read_text(encoding="utf-8"))}
+
+#: §5.4: "150 seconds plus 15 seconds for each link on the shortest route from
+#: the landing realm to the Heart, up to 240 seconds." The clock is therefore a
+#: function of how far in the Vault is, which is why the harness crosses realms
+#: rather than modelling one.
+BASE_TICKS = 150 * TPS
+LINK_TICKS = 15 * TPS
+MAX_TICKS = 240 * TPS
+VAULT_HEALTH_PER_LEVEL = 1_500           #: §12.6
+LOAD_PER_SECOND = 30                     #: §12.19
+WIND_UP_TICKS = int(0.8 * TPS)           #: §12.8, one hit per 0.8 s
+SKIFF_TICKS = 5 * TPS                    #: §12.6, an outer realm
+CRACK_AWARENESS_PER_5S = 10              #: §12.6, percent added to Heart guards
+
+#: §12.19's break-even, and the number the harness exists to test.
+BREAKEVEN_FILL = 70
+
+
+@dataclass
+class Member:
+    role: str
+    x: int
+    y: int
+    carried: int = 0
+    down_ticks: int = 0
+    revive_ticks: int = 0
+    wait_ticks: int = 0
+    frozen_ticks: int = 0
+    disarm_ticks: int = 0
+    caught: bool = False
+    out: bool = False
+    path: list = field(default_factory=list)
+    crouched: bool = True
+
+    @property
+    def capacity(self) -> int:
+        return ROLES[self.role]["carry"]
+
+    @property
+    def step(self) -> int:
+        """Position units per tick, from §11.1's tiles a second."""
+        return max(1, int(ROLES[self.role]["speed"] * U) // TPS)
+
+
+@dataclass
+class Guard:
+    role: str
+    x: int
+    y: int
+    facing: int
+    patrol: list
+    leg: int = 0
+    suspicion: int = 0
+    state: str = "unaware"
+    state_ticks: int = 0
+    target: tuple | None = None
+
+
+@dataclass
+class Result:
+    seed: int
+    policy: str
+    grade: str
+    fill: int                 #: percentage of crew capacity banked
+    ticks: int
+    decisions: int
+    near_captures: int
+    peak_suspicion: int
+    alarm: bool
+    caught: int
+    #: The grade the run would have had if the clock had stopped ten seconds early.
+    grade_ten_seconds_earlier: str
+    #: "clock", "caught", or "" when the run succeeded.
+    lost_to: str = ""
+    wards_triggered: int = 0
+    wards_disarmed: int = 0
+    crossings: int = 0
+    clock_ticks: int = 0
+
+    @property
+    def success(self) -> bool:
+        return self.grade in ("clean", "loud", "partial")
+
+    @property
+    def last_ten_decided(self) -> bool:
+        return self.grade != self.grade_ten_seconds_earlier
+
+
+GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
+
+
+def path_to(island, start, goal, avoid=None, exact=False) -> list:
+    """Breadth-first on the tile graph, fixed neighbour order (§12.18).
+
+    `avoid` is a predicate naming tiles the policy would rather not cross — a
+    callable rather than a set, because building the set means testing every tile
+    on the map when the search only ever looks at a few. They are not walls: if no
+    path avoids them, the search runs again without them, so a cautious policy is
+    never simply stuck.
+    """
+    #: The Vault's own tile is not walkable, so a route to it means a route to a
+    #: tile beside it. The exit is walkable and must be reached exactly — without
+    #: `exact`, an escaping crew paths to a tile *next to* the exit, arrives, is
+    #: still not out, and re-plans to another tile next to the exit, for ever.
+    never = lambda _t: False                                      # noqa: E731
+    for forbidden in ((avoid or never), never):
+        prev = {start: None}
+        frontier = [start]
+        goals = {goal} if exact else {
+            (goal[0] + dx, goal[1] + dy)
+            for dx in (-1, 0, 1) for dy in (-1, 0, 1)} | {goal}
+        found = None
+        while frontier and not found:
+            nxt = []
+            for cur in frontier:
+                if cur in goals and cur != start:
+                    found = cur
+                    break
+                for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
+                    n = (cur[0] + dx, cur[1] + dy)
+                    if n in prev or not island.walkable(*n) or forbidden(n):
+                        continue
+                    prev[n] = cur
+                    nxt.append(n)
+            frontier = nxt
+        if found:
+            out = []
+            while found:
+                out.append(found)
+                found = prev[found]
+            return out[::-1][1:]
+    return []
+
+
+class Heist:
+    #: §12.5: 3 characters, 4 from Keeper level 8, 5 from level 16. Five is the
+    #: finished crew and the one every other number in this analysis assumes.
+    DEFAULT_CREW = ("Scout", "Breaker", "Carrier", "Warden", "Mender")
+
+    def __init__(self, island, policy, crew_roles=DEFAULT_CREW,
+                 realm_level: int = 3, crossing=()):
+        """`crossing` is the outer realms the crew walks through on the way in.
+
+        §12.6 splits a heist into Entry, Crossing, Vault and Escape, and gives the
+        crossing 20 to 120 seconds of the run. A one-realm heist is the special
+        case where that phase is empty, and it is not the common one: §5.4 prices
+        the skiff by the number of links between the landing realm and the Heart.
+        """
+        self.crossing = list(crossing)
+        self.leg = 0
+        self.islands = self.crossing + [island]
+        self.island = self.islands[0]
+        self.target = island
+        self.policy = policy
+        self.realm_level = realm_level
+        self.clock = min(MAX_TICKS, BASE_TICKS + LINK_TICKS * len(self.crossing))
+        self.vault_health = VAULT_HEALTH_PER_LEVEL * realm_level
+        self.vault_open = False
+        self.exposed = sum(ROLES[r]["carry"] for r in crew_roles)
+        self.crew = [Member(r, self.island.entry[0] * U + U // 2,
+                            self.island.entry[1] * U + U // 2) for r in crew_roles]
+        self.guards = []
+        self._enter(self.island)
+        self.tick = 0
+        self.alarm = False
+        self.decisions = 0
+        self.near_captures = 0
+        self.peak_suspicion = 0
+        self.escaping = False
+        self.grade_history = []
+        self.wards_triggered = 0
+        self.wards_disarmed = 0
+        self.crossings = 0
+
+    def _enter(self, island) -> None:
+        """Place the guards of the realm the crew has just entered."""
+        self.island = island
+        self.guards = [
+            Guard(p.role, p.waypoints[0][0] * U + U // 2,
+                  p.waypoints[0][1] * U + U // 2, 0, p.waypoints)
+            for p in island.patrols
+        ]
+
+    @property
+    def goal_tile(self):
+        """What the crew is walking toward in this realm: a link, or the Vault."""
+        return self.island.vault
+
+    def _cross(self) -> bool:
+        """Move on to the next realm once the whole crew reaches the link.
+
+        §12.6: "Crossing a link plays a one-second swoop to the next realm." The
+        alarm does not follow — §12.8's alarm "calls every guard in the realm".
+        """
+        if self.island is self.target or self.escaping:
+            return False
+        here = [m for m in self.crew if not m.out and not m.caught]
+        if not here:
+            return False
+        link = self.island.vault
+        if not all(max(abs(m.x // U - link[0]), abs(m.y // U - link[1])) <= 1
+                   for m in here):
+            return False
+        self.leg += 1
+        nxt = self.islands[self.leg]
+        self._enter(nxt)
+        for m in self.crew:
+            m.x, m.y = nxt.entry[0] * U + U // 2, nxt.entry[1] * U + U // 2
+            m.path = []
+            m.wait_ticks = m.frozen_ticks = m.disarm_ticks = 0
+        self.crossings += 1
+        return True
+
+    # -- guards ------------------------------------------------------------
+
+    def _guard_move(self, g: Guard) -> None:
+        if g.state == "alerted":
+            target = self._nearest_visible_crew(g)
+            goal = (target.x, target.y) if target else (g.x, g.y)
+        elif g.state == "investigating" and g.target:
+            goal = g.target
+        else:
+            wx, wy = g.patrol[g.leg % len(g.patrol)]
+            goal = (wx * U + U // 2, wy * U + U // 2)
+            if dist2(g.x, g.y, *goal) < (U // 3) ** 2:
+                g.leg += 1
+        speed = max(1, int(ROLES[g.role]["speed"] * U) // TPS)
+        if g.state in ("investigating", "alerted"):
+            speed = speed * 5 // 4
+        if goal != (g.x, g.y):
+            want = angle_to(g.x, g.y, *goal)
+            g.facing = turn_toward(g.facing, want, VISION[g.role]["turn"])
+            if dist2(g.x, g.y, *goal) > speed * speed:
+                from .fixed import cos, sin
+                g.x += cos(g.facing) * speed // 1024
+                g.y += sin(g.facing) * speed // 1024
+
+    def _nearest_visible_crew(self, g: Guard):
+        best, best_d = None, None
+        for m in self.crew:
+            if m.out or m.caught:
+                continue
+            d = dist2(g.x, g.y, m.x, m.y)
+            if best_d is None or d < best_d:
+                best, best_d = m, d
+        return best
+
+    def _perceive(self, g: Guard) -> None:
+        gained = 0
+        for m in self.crew:
+            if m.out or m.caught:
+                continue
+            z = zone(g.role, g.x, g.y, g.facing, m.x, m.y)
+            if not z:
+                continue
+            if not line_of_sight(self.island, g.x, g.y, m.x, m.y):
+                continue
+            tile = (m.x // U, m.y // U)
+            hidden = self.island.hides(*tile) and not m.path and m.down_ticks == 0
+            rate = fill_rate(z, m.crouched, running=not m.crouched,
+                             hidden=hidden, unlit=False)
+            if rate:
+                gained = max(gained, rate)
+                g.target = (m.x, m.y)
+        if gained:
+            before = g.suspicion
+            g.suspicion = min(SUS_MAX, g.suspicion + gained)
+            # "Within a second of capture" (§19.27): one more second at this rate
+            # would have alerted the guard, and it did not.
+            if before < ALERTED and g.suspicion < ALERTED \
+                    and g.suspicion + gained * TPS >= ALERTED:
+                self.near_captures += 1
+        else:
+            g.suspicion = max(0, g.suspicion - DECAY)
+        self.peak_suspicion = max(self.peak_suspicion, g.suspicion)
+
+        want = g.state
+        if g.suspicion >= ALERTED:
+            want = "alerted"
+        elif g.suspicion >= INVESTIGATING:
+            want = "investigating"
+        elif g.suspicion >= SUSPICIOUS:
+            want = "suspicious"
+        elif g.suspicion == 0:
+            want = "unaware"
+        g.state_ticks += 1
+        if want != g.state and g.state_ticks >= STATE_FLOOR_TICKS:
+            g.state, g.state_ticks = want, 0
+        if g.state == "alerted":
+            self.alarm = True
+
+    # -- the crew ----------------------------------------------------------
+
+    def _advance(self, m: Member) -> None:
+        if not m.path:
+            return
+        tx, ty = m.path[0]
+        goal = (tx * U + U // 2, ty * U + U // 2)
+        d2 = dist2(m.x, m.y, *goal)
+        step = m.step if m.crouched else m.step * 2
+        if d2 <= step * step:
+            m.x, m.y = goal
+            m.path.pop(0)
+            return
+        from .fixed import cos, sin
+        a = angle_to(m.x, m.y, *goal)
+        m.x += cos(a) * step // 1024
+        m.y += sin(a) * step // 1024
+
+    # -- wards -------------------------------------------------------------
+
+    def _wards(self) -> None:
+        """Triggered wards fire on the first member to enter, then reset (§10.3).
+
+        Effects are the spec/wards.md reading of §10.2's "effect +15%": a duration
+        or a damage scales with level, never a distance.
+        """
+        for w in self.island.wards:
+            if w.spent and self.tick >= w.reset_at:
+                w.spent = False
+            if w.spent or w.disarmed:
+                continue
+            for m in self.crew:
+                if m.out or m.caught:
+                    continue
+                if (m.x // U, m.y // U) != (w.x, w.y):
+                    continue
+                scale = 100 + 15 * (w.level - 1)
+                if w.kind == "Time Snare":
+                    m.frozen_ticks = int(2.5 * TPS) * scale // 100
+                elif w.kind == "Gravity Well":
+                    m.frozen_ticks = 2 * TPS * scale // 100
+                elif w.kind == "Lantern Glare":
+                    # Shows the crew to every guard in the realm for 5 s (§10.3).
+                    for g in self.guards:
+                        g.suspicion = ALERTED
+                w.spent = True
+                w.reset_at = self.tick + w.reset_ticks
+                self.wards_triggered += 1
+                break
+
+    def _capture_check(self) -> None:
+        for g in self.guards:
+            if g.state != "alerted":
+                continue
+            for m in self.crew:
+                if m.out or m.caught:
+                    continue
+                if dist2(g.x, g.y, m.x, m.y) <= (U * 3 // 4) ** 2:
+                    m.down_ticks += 1
+                    if m.down_ticks >= 10 * TPS:      # §12.20
+                        m.caught = True
+                        m.carried = 0                 # dropped on the tile
+        # §12.20: an ally standing adjacent revives in 3 s, a Mender in 1.5.
+        for m in self.crew:
+            if not m.down_ticks or m.caught:
+                continue
+            helper = next(
+                (o for o in self.crew
+                 if o is not m and not o.out and not o.caught and not o.down_ticks
+                 and dist2(o.x, o.y, m.x, m.y) <= U * U),
+                None)
+            if helper:
+                m.revive_ticks += 1
+                need = int(1.5 * TPS) if helper.role == "Mender" else 3 * TPS
+                if m.revive_ticks >= need:
+                    m.down_ticks = m.revive_ticks = 0
+                continue
+            m.revive_ticks = 0
+            near = any(g.state == "alerted"
+                       and dist2(g.x, g.y, m.x, m.y) <= (U * 3 // 4) ** 2
+                       for g in self.guards)
+            if not near:
+                m.down_ticks = 0
+
+    # -- grading -----------------------------------------------------------
+
+    def _grade_now(self) -> str:
+        banked = sum(m.carried for m in self.crew if m.out)
+        caught = sum(1 for m in self.crew if m.caught)
+        if banked == 0:
+            return "foiled"
+        if caught:
+            return "partial"
+        if not all(m.out for m in self.crew):
+            return "partial"
+        return "loud" if self.alarm else "clean"
+
+    # -- the loop ----------------------------------------------------------
+
+    def run(self) -> Result:
+        while self.tick < self.clock:
+            for g in self.guards:
+                self._guard_move(g)
+                self._perceive(g)
+            self._wards()
+            if self._cross():
+                self.tick += TPS            # §12.6's one-second swoop
+                continue
+            self.decisions += self.policy.act(self)
+            for m in self.crew:
+                if m.frozen_ticks:
+                    m.frozen_ticks -= 1
+                    continue
+                if not m.out and not m.caught and m.down_ticks == 0 \
+                        and m.wait_ticks == 0 and m.disarm_ticks == 0:
+                    self._advance(m)
+            self._capture_check()
+            self.grade_history.append(self._grade_now())
+            self.tick += 1
+            if all(m.out or m.caught for m in self.crew):
+                break
+
+        capacity = sum(m.capacity for m in self.crew)
+        banked = sum(m.carried for m in self.crew if m.out)
+        grade = self._grade_now()
+        lost_to = ""
+        if grade == "foiled":
+            lost_to = "caught" if any(m.caught for m in self.crew) else "clock"
+        # §19.27 asks whether "the last ten seconds decide the outcome". That is a
+        # question about the clock, not about the run: a crew out at 60 seconds had
+        # its outcome settled long before the last ten. So the comparison is the
+        # grade with ten seconds of clock left — which, for a run that ended early,
+        # is the final grade, and correctly counts as decided early.
+        cutoff = self.clock - 10 * TPS
+        earlier = (self.grade_history[cutoff]
+                   if len(self.grade_history) > cutoff else grade)
+        return Result(
+            seed=self.target.seed, policy=self.policy.name,
+            grade=grade,
+            fill=100 * banked // capacity if capacity else 0,
+            ticks=self.tick, decisions=self.decisions,
+            near_captures=self.near_captures, peak_suspicion=self.peak_suspicion,
+            alarm=self.alarm,
+            caught=sum(1 for m in self.crew if m.caught),
+            grade_ten_seconds_earlier=earlier, lost_to=lost_to,
+            wards_triggered=self.wards_triggered,
+            wards_disarmed=self.wards_disarmed,
+            crossings=self.crossings, clock_ticks=self.clock,
+        )

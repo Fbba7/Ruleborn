@@ -181,11 +181,11 @@
       measured (&sect;13.3, &sect;19.27).</p>
 
     <div class="summary">
-      <div><span class="n">5</span><span class="k">tasks done</span></div>
+      <div><span class="n">7</span><span class="k">tasks done</span></div>
       <div><span class="n">9</span><span class="k">live now</span></div>
       <div><span class="n">6</span><span class="k">waiting on you</span></div>
-      <div><span class="n">52/72</span><span class="k">register items drafted</span></div>
-      <div><span class="n">30</span><span class="k">signed off</span></div>
+      <div><span class="n">53/76</span><span class="k">register items drafted</span></div>
+      <div><span class="n">31</span><span class="k">signed off</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
     </div>
 
@@ -196,9 +196,9 @@
   </header>
 
   <nav class="filters" aria-label="Filter the roadmap">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">33</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">34</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">9</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">5</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">7</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">17</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">2</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">7</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">3</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">6</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">16</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">2</span></button>
   </nav>
 
   <main id="list">
@@ -209,7 +209,7 @@
             <h2>Validation without players</h2>
             <p class="sub">§19.27, rewritten in v3.0 — and now the critical path</p>
           </div>
-          <span class="scount">1/5</span>
+          <span class="scount">3/6</span>
         </div>
         <p class="blurb">v3.0 removed both pre-code player tests and replaced them with harnesses, stating the cost plainly: simulation can prove a system is legible, balanced and decision-dense, and cannot prove a game is enjoyable. Each harness below is buildable here, needs no engine, and has a threshold §19.27 sets for itself.</p>
         
@@ -227,47 +227,77 @@
         <p class="evidence"><span class="glabel">Check it at</span> <a href="https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E">https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E</a></p>
         
       </article>
-      <article class="task st-ready" id="T0-2"
-               data-status="ready" data-owner="claude">
+      <article class="task st-done" id="T0-2"
+               data-status="done" data-owner="claude">
         <header class="task-head">
           <span class="tid">T0.2</span>
           <h3>The heist harness — is it tense, and is there depth?</h3>
-          <span class="status st-ready">Ready to start</span>
+          <span class="status st-done">Done</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">Thousands of runs with scripted crews at three skill levels — careless, competent, optimal. Tension inferred from structure rather than reported: decisions per run, near-captures, whether the last ten seconds decide it. The same harness answers depth by comparing the skill levels, which is the cheaper and sharper of the two questions.</p>
+        <p class="detail">Built. §12.17's perception in full, §12.18's movement, §12.19's loading, §12.20's capture and revive, §5.4's clock, §12.9's grades — every run a function of its seed, in integer arithmetic. Three of §19.27's four thresholds pass; the fourth is F8. Two findings came with it: <strong>F7</strong>, that the 15–25 band implies crossing two to three realms, which §12.22's matchmaker does not control; and <strong>F8</strong>, that the clock decides nothing.</p>
         
+        <div class="prog" title="F7 F8">
+          <div class="bar">
+            <span class="fill" style="width:0.0%"></span>
+            <span class="fill settled" style="width:0.0%"></span>
+          </div>
+          <p class="prog-n"><strong>0 of 2</strong> drafted &middot;
+             <strong>0</strong> signed off</p>
+        </div>
         <p class="gate"><span class="glabel">Passes when</span> a median run carries 15–25 decisions; a near-capture in half of runs; the last ten seconds decide a quarter; and the optimal crew succeeds 35 points more often than the careless one (§19.27)</p>
-        
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness depth</code></p>
         
       </article>
-      <article class="task st-blocked" id="T0-3"
-               data-status="blocked" data-owner="claude">
+      <article class="task st-done" id="T0-3"
+               data-status="done" data-owner="claude">
         <header class="task-head">
           <span class="tid">T0.3</span>
           <h3>The attribution check — does delegated control hold?</h3>
-          <span class="status st-blocked">Blocked</span>
+          <span class="status st-done">Done</span>
           <span class="owner o-claude">from here</span>
         </header>
         <p class="detail">§19.27 does not ask whether it <em>felt</em> right; it checks that §12.18's rule holds, which is the honest move. Every state change in a replay must trace to a player command.</p>
         
         <p class="gate"><span class="glabel">Passes when</span> no unattributed decisions in ten thousand replays</p>
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness control</code></p>
         
-        <p class="blockers">After <a href="#T0-2">T0.2</a> The heist harness</p>
       </article>
-      <article class="task st-blocked" id="T0-4"
-               data-status="blocked" data-owner="claude">
+      <article class="task st-doing" id="T0-4"
+               data-status="doing" data-owner="claude">
         <header class="task-head">
           <span class="tid">T0.4</span>
           <h3>The ablation harness — is the defence fair?</h3>
+          <span class="status st-doing">Under way</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">Hold rate is measured; the thirty-two layer combinations are not, because the harness has no laws yet. The first number is already the sharpest finding of the three: <strong>a generated island at realm level 1 holds 2% of the time against a competent crew</strong>, and only level 5 reaches §13.2's band. v3.0's §13.3 makes generated defences every player's default and requires them to be “legal, coherent, and never empty” — which they are. Effective is a different requirement and is not stated (F9).</p>
+        
+        <div class="prog" title="F9">
+          <div class="bar">
+            <span class="fill" style="width:0.0%"></span>
+            <span class="fill settled" style="width:0.0%"></span>
+          </div>
+          <p class="prog-n"><strong>0 of 1</strong> drafted &middot;
+             <strong>0</strong> signed off</p>
+        </div>
+        <p class="gate"><span class="glabel">Passes when</span> hold rate 30–45%, no layer above a quarter, design beating progression 60/40 (§13.4)</p>
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness defence</code></p>
+        
+      </article>
+      <article class="task st-blocked" id="T0-6"
+               data-status="blocked" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T0.6</span>
+          <h3>Give the island generator laws, and measure it against the band</h3>
           <span class="status st-blocked">Blocked</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">§13.4's method: hold rate across all thirty-two combinations of the five layers. This is also the only test that can catch F6 — if one role is two thirds of the answer against every breakable object, an ablation will show it as a layer that does not move.</p>
+        <p class="detail">F9's caveat is the next task. The generator in the harness has hedges, grass, guards and wards, and no laws — so the 2% is a floor rather than a verdict. Weaving laws is what §13.3 says the real generator does, and it is the only way to find out whether the band is reachable by generation at all.</p>
         
-        <p class="gate"><span class="glabel">Passes when</span> hold rate 30–45%, no layer above a quarter, design beating progression 60/40 (§13.4)</p>
+        <p class="gate"><span class="glabel">Passes when</span> a generated island at every realm level holds 30–45% against a competent crew (§13.2)</p>
         
-        <p class="blockers">After <a href="#T0-2">T0.2</a> The heist harness</p>
+        <p class="blockers">After <a href="#T0-4">T0.4</a> The ablation harness</p>
       </article>
       <article class="task st-ready" id="T0-5"
                data-status="ready" data-owner="you">
@@ -305,12 +335,12 @@
         </header>
         <p class="detail">Every contradiction, gap and measured finding, each with the sections involved and a recommended resolution.</p>
         
-        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C21 C22 C23 C24 C25 C26 C3 C4 C5 C6 C7 C8 C9 F1 F2 F3 F4 F5 F6 G1 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8 G9">
+        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C21 C22 C23 C24 C25 C26 C3 C4 C5 C6 C7 C8 C9 F1 F2 F3 F4 F5 F6 F7 F8 F9 G1 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8 G9">
           <div class="bar">
-            <span class="fill" style="width:70.5%"></span>
-            <span class="fill settled" style="width:34.1%"></span>
+            <span class="fill" style="width:66.0%"></span>
+            <span class="fill settled" style="width:31.9%"></span>
           </div>
-          <p class="prog-n"><strong>31 of 44</strong> drafted &middot;
+          <p class="prog-n"><strong>31 of 47</strong> drafted &middot;
              <strong>15</strong> signed off</p>
         </div>
         
@@ -327,12 +357,12 @@
         </header>
         <p class="detail">One spec file per system, each stating the chosen reading once and then listing every other section the choice forces a change to. That last part is what stops the pattern recurring.</p>
         
-        <div class="prog" title="C1 C19 C2 C21 C3 C4 C5 C6 G1 G9">
+        <div class="prog" title="C1 C19 C2 C21 C3 C4 C5 C6 F9 G1 G9">
           <div class="bar">
-            <span class="fill" style="width:70.0%"></span>
-            <span class="fill settled" style="width:50.0%"></span>
+            <span class="fill" style="width:63.6%"></span>
+            <span class="fill settled" style="width:45.5%"></span>
           </div>
-          <p class="prog-n"><strong>7 of 10</strong> drafted &middot;
+          <p class="prog-n"><strong>7 of 11</strong> drafted &middot;
              <strong>5</strong> signed off</p>
         </div>
         

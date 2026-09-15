@@ -1138,8 +1138,90 @@ dict(id="D20", kind="deviation", severity="change", status="open",
          "the only artefact in this repository that can answer the one question "
          "§19.27 says simulation cannot."),
 
-]
 
+dict(id="F7", kind="finding", severity="design", status="open",
+     title="\u00a712.6\u2019s 15\u201325 decisions implies crossing two to three realms",
+     refs=["12.6", "19.2", "12.22", "5.4"],
+     body="\u00a712.6 budgets \u201croughly one decision every 8 to 12 seconds, or 15 "
+          "to 25 in a run\u201d, and \u00a719.27 makes it a threshold. Simulated, the "
+          "count is a function of how far in the target is:<br><br>"
+          "<code>1 realm &rarr; 10 &nbsp; 2 &rarr; 17 &nbsp; 3 &rarr; 24 &nbsp; "
+          "4 &rarr; 31</code> (optimal crew, median)<br><br>"
+          "So the band is met at <strong>two to three realms crossed</strong>, "
+          "fails below and overshoots above. That is a real design constraint "
+          "hiding in a pacing sentence: it says how deep a heist has to go.<br><br>"
+          "\u00a75.4 already prices the skiff by the number of links, so the "
+          "document knows heists vary in depth. \u00a712.22, which chooses the "
+          "target, filters on Renown, Keeper level and a difficulty rating, and "
+          "<strong>says nothing about depth at all</strong>.",
+     rec="Add depth to \u00a712.22\u2019s band, or accept that the decision count "
+         "varies three-fold with a dimension the matchmaker does not control. "
+         "<code>python3 -m tools.heist_harness depth</code>."),
+
+dict(id="F8", kind="finding", severity="design", status="open",
+     title="The clock is not a pressure device: runs finish with a third of it unused",
+     refs=["19.27", "12.6", "5.4"],
+     body="\u00a712.6 makes the clock the escape phase\u2019s tension \u2014 "
+          "\u201cthe clock turns red for its last 30 seconds\u201d \u2014 and "
+          "\u00a719.27 sets a threshold on it: the last ten seconds should decide "
+          "the outcome in a quarter of runs. Simulated across four depths and "
+          "three skill levels, it decides <strong>0%</strong>. A median run takes "
+          "45 to 150 seconds against a clock of 150 to 195.<br><br>Near-captures, "
+          "by contrast, happen in <strong>100%</strong> of runs against a "
+          "threshold of 50 \u2014 so the tension is all in the guards and none in "
+          "the clock, and a close call is so common it cannot register as one.",
+     rec="Two dials, and they pull opposite ways. Shortening the clock makes it "
+         "bite; it also makes \u00a712.6\u2019s crossing phase unaffordable at "
+         "depth. The likelier answer is that the clock is not the pressure and "
+         "should stop being described as it \u2014 the alarm is."),
+
+dict(id="F9", kind="finding", severity="blocking", status="open",
+     title="Generated defences hold 2% at realm level 1, against a target of 30\u201345%",
+     refs=["13.3", "13.2", "13.4", "5.2"],
+     body="v3.0\u2019s \u00a713.3 is the biggest design change in the version: the "
+          "build-willingness risk is removed rather than measured, and every "
+          "player gets a defence generated \u201cfrom their realm, their laws and "
+          "their ruleborn \u2014 legal, coherent, and never empty\u201d.<br><br>"
+          "Simulated against a competent crew, a generated island at realm level 1 "
+          "holds <strong>2%</strong> of the time. Level 3 holds 28%. Only level 5 "
+          "reaches \u00a713.2\u2019s 30\u201345% band. Legal, coherent and never "
+          "empty are all true of these islands, and none of them is the same "
+          "requirement as effective.<br><br>This matters more in v3.0 than it "
+          "would have in v2.3, because the generator is no longer a fallback for "
+          "players who will not build \u2014 it is what most islands in the target "
+          "pool now are.",
+     rec="\u00a713.3 should carry the hold-rate band as a stated requirement on "
+         "the generator, the way \u00a713.2 carries it for designed islands, and "
+         "the generator should be measured against it before the Workshop is "
+         "built. The harness does that: "
+         "<code>python3 -m tools.heist_harness defence</code>. "
+         "<br><br>Caveat, stated plainly: the generator in the harness is a first "
+         "sketch \u2014 hedges, tall grass, one to three guards, four to eight "
+         "wards, no laws. A generator that weaves laws would hold better. That is "
+         "the point: nothing says how well it has to hold, so nothing says when "
+         "it is finished."),
+
+dict(id="D21", kind="deviation", severity="change", status="done",
+     title="\u00a719.27\u2019s harnesses were built, since they are now the critical path",
+     refs=["19.27", "12.17", "12.18", "12.19", "12.20", "5.4"],
+     body="v3.0 replaced both pre-code player tests with simulation (D20), which "
+          "puts the harnesses on the critical path ahead of the vertical slice. "
+          "<code>tools/heist_harness/</code> is three of them: tension and depth, "
+          "defence balance, and the attribution check.<br><br>It implements "
+          "\u00a712.17\u2019s perception in full, \u00a712.18\u2019s movement "
+          "rules, \u00a712.19\u2019s loading and \u00a712.20\u2019s capture and "
+          "revive, with \u00a75.4\u2019s clock and \u00a712.9\u2019s grades. "
+          "Every run is a function of its seed: integer arithmetic throughout, "
+          "no random source consulted inside the loop, and a SplitMix64 reference "
+          "stream in the tests so a port can be checked against it "
+          "(\u00a724.7).<br><br>It is not the engine and is not a step toward "
+          "one. It answers questions, like the economy model, and \u00a726.7\u2019s "
+          "rule that gameplay code waits for the determinism spike is untouched.",
+     rec="Three findings on the first full run: F7, F8 and F9. The one that "
+         "changes a decision is F9, because \u00a713.3 now rests on the generator "
+         "and nothing states how well it has to hold."),
+
+]
 
 # ===========================================================================
 # What version 3.0 did about each of these

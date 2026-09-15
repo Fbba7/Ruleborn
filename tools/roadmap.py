@@ -60,36 +60,58 @@ dict(
                     "and sending a link to twenty strangers costs an afternoon "
                     "rather than a soft launch (D20).",
              evidence="https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E"),
-        dict(id="T0.2", owner="claude", status="ready",
+        dict(id="T0.2", owner="claude", status="done",
              title="The heist harness \u2014 is it tense, and is there depth?",
-             detail="Thousands of runs with scripted crews at three skill levels "
-                    "\u2014 careless, competent, optimal. Tension inferred from "
-                    "structure rather than reported: decisions per run, "
-                    "near-captures, whether the last ten seconds decide it. The "
-                    "same harness answers depth by comparing the skill levels, "
-                    "which is the cheaper and sharper of the two questions.",
+             detail="Built. \u00a712.17's perception in full, \u00a712.18's "
+                    "movement, \u00a712.19's loading, \u00a712.20's capture and "
+                    "revive, \u00a75.4's clock, \u00a712.9's grades \u2014 every "
+                    "run a function of its seed, in integer arithmetic. Three of "
+                    "\u00a719.27's four thresholds pass; the fourth is F8. Two "
+                    "findings came with it: <strong>F7</strong>, that the "
+                    "15\u201325 band implies crossing two to three realms, which "
+                    "\u00a712.22's matchmaker does not control; and "
+                    "<strong>F8</strong>, that the clock decides nothing.",
+             evidence="python3 -m tools.heist_harness depth",
+             register=["F7", "F8"],
              gate="a median run carries 15\u201325 decisions; a near-capture in "
                   "half of runs; the last ten seconds decide a quarter; and the "
                   "optimal crew succeeds 35 points more often than the careless "
                   "one (\u00a719.27)"),
-        dict(id="T0.3", owner="claude", status="blocked",
+        dict(id="T0.3", owner="claude", status="done",
              title="The attribution check \u2014 does delegated control hold?",
              detail="\u00a719.27 does not ask whether it <em>felt</em> right; it "
                     "checks that \u00a712.18's rule holds, which is the honest "
                     "move. Every state change in a replay must trace to a player "
                     "command.",
              gate="no unattributed decisions in ten thousand replays",
-             blocked_by=["T0.2"]),
-        dict(id="T0.4", owner="claude", status="blocked",
+             evidence="python3 -m tools.heist_harness control"),
+        dict(id="T0.4", owner="claude", status="doing",
              title="The ablation harness \u2014 is the defence fair?",
-             detail="\u00a713.4's method: hold rate across all thirty-two "
-                    "combinations of the five layers. This is also the only test "
-                    "that can catch F6 \u2014 if one role is two thirds of the "
-                    "answer against every breakable object, an ablation will show "
-                    "it as a layer that does not move.",
+             detail="Hold rate is measured; the thirty-two layer combinations are "
+                    "not, because the harness has no laws yet. The first number "
+                    "is already the sharpest finding of the three: <strong>a "
+                    "generated island at realm level 1 holds 2% of the time "
+                    "against a competent crew</strong>, and only level 5 reaches "
+                    "\u00a713.2's band. v3.0's \u00a713.3 makes generated "
+                    "defences every player's default and requires them to be "
+                    "\u201clegal, coherent, and never empty\u201d \u2014 which "
+                    "they are. Effective is a different requirement and is not "
+                    "stated (F9).",
+             evidence="python3 -m tools.heist_harness defence",
+             register=["F9"],
              gate="hold rate 30\u201345%, no layer above a quarter, design beating "
-                  "progression 60/40 (\u00a713.4)",
-             blocked_by=["T0.2"]),
+                  "progression 60/40 (\u00a713.4)"),
+        dict(id="T0.6", owner="claude", status="blocked",
+             title="Give the island generator laws, and measure it against the band",
+             detail="F9's caveat is the next task. The generator in the harness "
+                    "has hedges, grass, guards and wards, and no laws \u2014 so "
+                    "the 2% is a floor rather than a verdict. Weaving laws is what "
+                    "\u00a713.3 says the real generator does, and it is the only "
+                    "way to find out whether the band is reachable by generation "
+                    "at all.",
+             gate="a generated island at every realm level holds 30\u201345% "
+                  "against a competent crew (\u00a713.2)",
+             blocked_by=["T0.4"]),
         dict(id="T0.5", owner="you", status="ready",
              title="Decide whether to send the prototype out anyway",
              detail="Not a disagreement with \u00a719.27, which argues its case "

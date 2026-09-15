@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 72 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 8 are new — found by reading v3.0 the same way v2.3 was read.
+v3.0 answered the audit directly, in §30.18. Of 76 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 12 are new. Six of the new ones came from reading v3.0 the way v2.3 was read; three came from building the harnesses §19.27 now depends on and running them.
 
 ## Fixed in v3.0
 
@@ -63,6 +63,10 @@ v3.0 answered the audit directly, in §30.18. Of 72 items, **18 are fixed in the
 | **C26** | §12.21 declares size and flight as properties; no table carries them |
 | **D19** | The checks were rewritten to read the document rather than remember it |
 | **D20** | Both pre-code player gates are gone, and the prototype with them |
+| **F7** | §12.6’s 15–25 decisions implies crossing two to three realms |
+| **F8** | The clock is not a pressure device: runs finish with a third of it unused |
+| **F9** | Generated defences hold 2% at realm level 1, against a target of 30–45% |
+| **D21** | §19.27’s harnesses were built, since they are now the critical path |
 
 ## The shape of it
 

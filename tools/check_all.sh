@@ -25,6 +25,10 @@ echo "== economy model =="
 python3 -m tools.economy_model.test_economy_model
 
 echo
+echo "== heist harness =="
+python3 -m tools.heist_harness.test_harness
+
+echo
 echo "== this repository's own documents agree with each other =="
 python3 tools/check_docs_consistency.py
 
