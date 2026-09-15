@@ -233,7 +233,7 @@
 
     <div class="summary">
       <div><span class="n">56</span><span class="k">items tracked</span></div>
-      <div><span class="n">37</span><span class="k">open</span></div>
+      <div><span class="n">36</span><span class="k">open</span></div>
       <div><span class="n">9</span><span class="k">done or adopted</span></div>
       <div><span class="n">11</span><span class="k">blocking the build</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
@@ -512,16 +512,16 @@
         <p class="rec"><span class="arrow">&rarr;</span> Decide the building and roster rules, then regenerate §9.3, §10.2, §14.2 and §14.3 from the economy model rather than editing them by hand — hand-editing is what produced this.</p>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="gap" data-status="open">
+               data-kind="gap" data-status="proposed">
         <header class="item-head">
           <span class="id">G1</span>
           <h3>Pathfinding and crew movement</h3>
           <span class="kind">unspecified</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§12.5</span><span class="ref">§12.6</span><span class="ref">§12.7</span><span class="ref">§6</span><span class="ref">§30.7</span></div>
         <p class="body">The document specifies in detail what guards perceive and what laws do to movement parameters, but never how a crew actually moves. Unanswered: is the world a tile grid or continuous (§6 is in tiles, §12.17's sub-metre zones and degrees-per-tick imply continuous); how does a player order movement at all (§12.7 covers abilities, never locomotion); what happens at an unplanned fork; how do 3–5 crew avoid each other; does the §12.5 route planner produce a literal path or waypoints re-pathed at runtime — which have very different determinism properties.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> <strong>The largest gap, and the one most likely to fail §30.7's premise 3.</strong> Specify it before the vertical slice and make felt control a gate rather than a polish item. Pikmin is cited as the model in §2.2; make that concrete.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/movement.md</code>, which unlike the other spec files is partly new design, since the document leaves this empty. It settles the world model first — <strong>tile topology, continuous position</strong>, which is the only reading that satisfies both §6's per-tile terrain and §12.17's sub-metre vision zones and degrees-per-tick turning — then proposes tap-to-move with per-member selection, deterministic breadth-first pathfinding with a fixed neighbour order, and commands rather than paths in the input log (§24.10).<br><br>The rule that protects premise 3 is stated explicitly: <strong>the crew never makes a decision the player did not make</strong>. No auto-attack, no auto-avoid, no auto-retreat, no re-routing around a guard the player walked them into. A unit cannot look stupid for a decision it never made. The prototype implements this and the felt-control question is measured directly against §30.8's 70% threshold.</p>
       </article>
       </section>
       <section class="group" id="g-design" data-group="design">

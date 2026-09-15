@@ -494,7 +494,7 @@ dict(id="C17", kind="contradiction", severity="minor", status="open",
 # Specified nowhere
 # ===========================================================================
 
-dict(id="G1", kind="gap", severity="blocking", status="open",
+dict(id="G1", kind="gap", severity="blocking", status="proposed",
      title="Pathfinding and crew movement",
      refs=["12.5", "12.6", "12.7", "6", "30.7"],
      body="The document specifies in detail what guards perceive and what laws do to "
@@ -505,10 +505,20 @@ dict(id="G1", kind="gap", severity="blocking", status="open",
           "at an unplanned fork; how do 3–5 crew avoid each other; does the "
           "§12.5 route planner produce a literal path or waypoints re-pathed at "
           "runtime — which have very different determinism properties.",
-     rec="<strong>The largest gap, and the one most likely to fail §30.7's premise "
-         "3.</strong> Specify it before the vertical slice and make felt control a "
-         "gate rather than a polish item. Pikmin is cited as the model in §2.2; make "
-         "that concrete."),
+     rec="<strong>Drafted.</strong> <code>docs/design/spec/movement.md</code>, which "
+         "unlike the other spec files is partly new design, since the document leaves "
+         "this empty. It settles the world model first \u2014 <strong>tile topology, "
+         "continuous position</strong>, which is the only reading that satisfies both "
+         "§6's per-tile terrain and §12.17's sub-metre vision zones and "
+         "degrees-per-tick turning \u2014 then proposes tap-to-move with per-member "
+         "selection, deterministic breadth-first pathfinding with a fixed neighbour "
+         "order, and commands rather than paths in the input log (§24.10).<br><br>"
+         "The rule that protects premise 3 is stated explicitly: <strong>the crew "
+         "never makes a decision the player did not make</strong>. No auto-attack, no "
+         "auto-avoid, no auto-retreat, no re-routing around a guard the player walked "
+         "them into. A unit cannot look stupid for a decision it never made. The "
+         "prototype implements this and the felt-control question is measured "
+         "directly against §30.8's 70% threshold."),
 
 dict(id="G12", kind="gap", severity="significant", status="open",
      title="Three laws key off creature attributes that no creature has",

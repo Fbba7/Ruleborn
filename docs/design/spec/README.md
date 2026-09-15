@@ -12,10 +12,14 @@ Every file here is **proposed** until signed off. Nothing is locked (§26.7).
 | [`ruleborn.md`](ruleborn.md) | C6 — two rosters | Proposed: §11.11 authoritative |
 | [`economy.md`](economy.md) | C2, C4 — what a raid pays | Proposed: peg the haul to the raider's own production |
 | [`defence.md`](defence.md) | C5 — what an island may hold | Proposed: one table in §5.2, counting posts |
+| [`movement.md`](movement.md) | G1 — crew movement and control | Proposed, and partly new design |
 
 ## How these were written
 
-Each takes a contradiction the register records, works out which reading is
+`movement.md` is the exception: the document leaves G1 empty, so that file is
+partly new design rather than a reconciliation. It says so at the top.
+
+The others each take a contradiction the register records, works out which reading is
 authoritative, states that reading **once**, and then lists every other section
 the choice forces a change to. That last part is the point: the document reached
 v2.3 with four systems specified twice because the newer spec was added without
