@@ -229,14 +229,27 @@ class EconomyModel:
             # fatigue curve and the average-per-attempt factor still apply.
             fatigue = sum(data.HAUL_FATIGUE ** i for i in range(n))
             return (daily_starlight * self.cfg.peg_share
-                    * data.HAUL_VALUE_PER_ATTEMPT * fatigue)
+                    * self._value_per_attempt() * fatigue)
         # §9.6: minted from the raider's own level, decaying through the day.
         level = self.cfg.haul_level(
             self.vault_level(), self.mean_realm_level(), self.s.keeper_level
         )
         base = data.HAUL_BASE * data.HAUL_GROWTH ** (level - 1)
         fatigue = sum(data.HAUL_FATIGUE ** i for i in range(n))
-        return base * data.HAUL_VALUE_PER_ATTEMPT * fatigue
+        return base * self._value_per_attempt() * fatigue
+
+    def _value_per_attempt(self) -> float:
+        """§9.6's 0.46, times v3.0's `fill` term where it is being applied.
+
+        §9.6 calls 0.46 "the number the progression curve is built on" and then
+        v3.0 multiplied the haul by `fill` without re-deriving it. `apply_fill`
+        puts the measured value in, which is how the size of that omission gets
+        a number rather than an argument.
+        """
+        value = data.HAUL_VALUE_PER_ATTEMPT
+        if self.cfg.apply_fill:
+            value *= data.MEASURED_FILL_ON_SUCCESS
+        return value
 
     # -- spending ---------------------------------------------------------
 

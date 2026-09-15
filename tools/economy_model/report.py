@@ -118,6 +118,24 @@ def faucet_comparison() -> str:
               "production compounds. The peg in docs/design/spec/economy.md replaces B(L)",
               "with the raider's own daily production, which holds the share flat by",
               "construction; tools/economy_model/test_economy_model.py asserts that it does."]
+
+    # F14: v3.0 added `fill` to the same formula and left 0.46 alone.
+    lines += ["", "What v3.0's `fill` term costs (F14). §9.6 calls 0.46 \"the number the",
+              "progression curve is built on\" and then multiplied the haul by the share",
+              "of the crew's bags loaded, which the harness measures at about 52%:", ""]
+    lines.append(f"  {'day':>4} {'0.46':>12} {'0.46 x fill':>13} {'change':>8}")
+    for day in (31, 91, 181, 301):
+        pair = []
+        for fill in (False, True):
+            log = _run(archetype="engaged", days=320, faucet="minted",
+                       apply_fill=fill)[1]
+            pair.append(log[day]["heist_income"] if day in log else None)
+        if all(pair):
+            lines.append(f"  {day:>4} {pair[0]:>12,.0f} {pair[1]:>13,.0f} "
+                         f"{100 * (pair[1] / pair[0] - 1):>7.0f}%")
+    lines += ["", "  §9.6's own worked example, \"an upgrade costing 25 clean raids takes",
+              f"  about 55 attempts\", becomes "
+              f"{25 / (data.HAUL_VALUE_PER_ATTEMPT * data.MEASURED_FILL_ON_SUCCESS):.0f}."]
     return "\n".join(lines)
 
 

@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 80 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 16 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
+v3.0 answered the audit directly, in §30.18. Of 82 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 18 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 
@@ -71,6 +71,8 @@ v3.0 answered the audit directly, in §30.18. Of 80 items, **18 are fixed in the
 | **F11** | Weaving the player’s own laws makes a generated defence worse, not better |
 | **F12** | Eight laws need a decision from the owner that a generator has to make |
 | **D22** | Law effects became a classified table, not prose to be read twice |
+| **F13** | §12.22’s matchmaking guarantee has no targets to draw from early |
+| **F14** | v3.0’s fill term halves the number §9.6 calls load-bearing, and it was not re-derived |
 
 ## The shape of it
 

@@ -122,8 +122,8 @@ def build() -> str:
     touched = sum(1 for i in REGISTER if i["id"] in V3)
     new_in_v3 = sum(1 for i in REGISTER
                     if i["id"] in ("C21", "C22", "C23", "C24", "C25", "C26",
-                                   "D19", "D20", "D21", "D22",
-                                   "F7", "F8", "F9", "F10", "F11", "F12"))
+                                   "D19", "D20", "D21", "D22", "F7", "F8",
+                                   "F9", "F10", "F11", "F12", "F13", "F14"))
     today = datetime.date.today().strftime("%d %B %Y")
 
     chips = "".join(

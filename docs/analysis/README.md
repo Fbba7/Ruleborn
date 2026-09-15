@@ -35,7 +35,7 @@ python3 -m tools.economy_model.test_economy_model
 ```
 
 `check_design_consistency.py` confirms fourteen findings and passes twelve other
-checks. The economy model's twelve tests assert both that it still reproduces the
+checks. The economy model's fourteen tests assert both that it still reproduces the
 document where the document is self-consistent, that findings F1–F3 still hold,
 and that the payout peg proposed in `spec/economy.md` behaves as that page
 claims. Run both against any later version of the document to see what stands.

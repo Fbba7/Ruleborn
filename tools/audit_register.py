@@ -1262,16 +1262,23 @@ dict(id="F11", kind="finding", severity="blocking", status="open",
           "apply to everyone in the realm (\u00a77.3), so that asymmetry is "
           "structural rather than accidental.<br><br>Simulated hold rate against "
           "a competent crew, by what the generator weaves:<br><br>"
-          "<code>realm &nbsp; 1 &nbsp; 2 &nbsp; 3 &nbsp; 4 &nbsp; 5<br>"
-          "no laws &nbsp;&nbsp;3% &nbsp;13% &nbsp;27% &nbsp;30% &nbsp;33%<br>"
-          "any laws &nbsp;&nbsp;0% &nbsp;&nbsp;3% &nbsp;&nbsp;7% &nbsp;&nbsp;7% "
-          "&nbsp;&nbsp;0%<br>"
-          "sign-aware &nbsp;7% &nbsp;23% &nbsp;33% &nbsp;47% &nbsp;40%</code>"
+          "<code>realm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 &nbsp;&nbsp;&nbsp;2 "
+          "&nbsp;&nbsp;&nbsp;3 &nbsp;&nbsp;&nbsp;4 &nbsp;&nbsp;&nbsp;5<br>"
+          "no laws &nbsp;&nbsp;&nbsp;7% &nbsp;&nbsp;7% &nbsp;29% &nbsp;35% "
+          "&nbsp;43%<br>"
+          "any laws &nbsp;&nbsp;2% &nbsp;&nbsp;3% &nbsp;&nbsp;9% &nbsp;&nbsp;6% "
+          "&nbsp;&nbsp;4%<br>"
+          "sign-aware 9% &nbsp;13% &nbsp;40% &nbsp;44% &nbsp;54%</code> "
+          "<span style=\"opacity:.7\">(150 runs a cell)</span>"
           "<br><br><strong>A generator that weaves the player\u2019s laws "
-          "naively produces a weaker island than one that weaves none.</strong> "
-          "Reading the sign of each law recovers it and then some. This is the "
+          "naively produces a weaker island than one that weaves none</strong> \u2014 "
+          "2 to 9% against 7 to 43%, at every realm level. Reading the sign of "
+          "each law recovers it and then some. This is the "
           "same shape as D13\u2019s note imbalance: the law pool leans toward the "
-          "side that is not paying for it.",
+          "side that is not paying for it.<br><br>Note the first two rows as "
+          "well: <strong>no generator reaches \u00a713.2\u2019s band at realm "
+          "level 1 or 2</strong>, which is where every new player starts and "
+          "where most of the target pool sits early in a season.",
      rec="\u00a713.3 should say what the generator optimises for, because "
          "\u201cgenerated from their laws\u201d has at least three meanings and "
          "two of them are worse than nothing. And \u00a713.2\u2019s 30\u201345% "
@@ -1314,6 +1321,56 @@ dict(id="D22", kind="deviation", severity="change", status="done",
          "\u2014 so a new law in a future season cannot be added without saying "
          "what kind of thing it is. The harness weaves the nineteen it can apply, "
          "which is how F11 was measured."),
+
+dict(id="F13", kind="finding", severity="blocking", status="open",
+     title="\u00a712.22\u2019s matchmaking guarantee has no targets to draw from early",
+     refs=["12.22", "13.2", "13.3"],
+     body="\u00a712.22 step 3 is a promise: \u201cthe list is built so the median "
+          "offered target is winnable at the player\u2019s chosen difficulty: "
+          "candidates are sorted by predicted success and the middle of the list "
+          "is drawn from the 55 to 70% band\u201d. That band is \u00a713.2\u2019s "
+          "30\u201345% hold rate, seen from the raider\u2019s side.<br><br>"
+          "Measured, a generated island at realm level 1 or 2 holds 2\u201313% "
+          "under every generator tried \u2014 <strong>a raider success rate of 87 "
+          "to 98%</strong>. There is no band to draw the middle of the list from, "
+          "because every candidate is far easier than the band\u2019s easy end. "
+          "\u00a712.22\u2019s step 4 does not help: it widens the bands when "
+          "nothing matches, and widening cannot produce a target that is not "
+          "there.<br><br>The chain is short and each link is the document\u2019s "
+          "own: \u00a713.3 makes most islands generated, F11 measures what "
+          "generated islands hold, and \u00a712.22 promises a median drawn from a "
+          "band those islands do not reach.",
+     rec="This is F11\u2019s consequence rather than a separate defect, and it is "
+         "why F11 is blocking. Fix the generator and this resolves; leave it and "
+         "\u00a712.22 promises something the target pool cannot supply, most "
+         "visibly to new players. Worth stating in \u00a712.22 either way: what "
+         "the matchmaker does when the band is empty rather than merely sparse."),
+
+dict(id="F14", kind="finding", severity="blocking", status="open",
+     title="v3.0\u2019s fill term halves the number \u00a79.6 calls load-bearing, and it was not re-derived",
+     refs=["9.6", "12.19", "14.4", "14.2"],
+     body="\u00a79.6 states its own key figure and says why it matters: \u201can "
+          "attempt is worth about 46% of a clean same-level haul, <em>which is the "
+          "number the progression curve is built on</em>: an upgrade costing 25 "
+          "clean raids takes about 55 attempts, or nine days at six a day, at "
+          "every level.\u201d That 0.46 is E[grade] over all attempts, and it "
+          "reconciles exactly: 62.5% succeed, split 35/40/25 clean/loud/partial, "
+          "giving 0.456.<br><br>v3.0 then added <code>fill</code> to the same "
+          "formula \u2014 \u201cthe share of the crew\u2019s bags actually "
+          "loaded\u201d \u2014 and left 0.46 alone. Measured in the harness, a "
+          "crew that gets out has filled about <strong>52%</strong> of its bags, "
+          "because \u00a712.19\u2019s own break-even tells it to stop at 70% and "
+          "interruptions take the rest. So an attempt is worth "
+          "<strong>0.46 \u00d7 0.52 = 0.24</strong>, not 0.46.<br><br>Run through "
+          "the economy model, that is a <strong>48% cut to the raid faucet</strong> "
+          "(62% under the production peg), and \u00a79.6\u2019s own worked example "
+          "becomes 105 attempts rather than 55. Every date in \u00a714 moves.",
+     rec="Re-derive 0.46 against the fill term, or state that fill is already "
+         "inside it \u2014 but not both, and not neither. "
+         "<code>Config(apply_fill=True)</code> in the economy model applies the "
+         "measured value, and a test asserts the size of the gap so it cannot "
+         "close quietly. This is C19\u2019s pattern applied to the single number "
+         "\u00a79.6 names as the one the curve rests on."),
 
 ]
 

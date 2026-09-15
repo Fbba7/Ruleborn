@@ -28,6 +28,15 @@ class Config:
     #: production. §9.4's own figure, and under "pegged" it is the single dial.
     peg_share: float = 0.20
 
+    # -- v3.0: the fill term §9.6 added and did not re-derive against ------
+    #
+    # "Fill: the share of the crew's bags actually loaded. What you carry is what
+    # you bank (12.19)." It multiplies the haul, and §9.6's 0.46 average per
+    # attempt — the figure it calls the number the progression curve is built on
+    # — still assumes a full crew. Setting this True applies the measured value
+    # instead, which is how the cost of that omission gets a number.
+    apply_fill: bool = False
+
     # -- Contested: what L is in B(L) (C4) ---------------------------------
     #
     # §9.6 quotes haul figures for levels 2, 6 and 10, but §5.2 caps outer realms

@@ -203,8 +203,21 @@ STARLIGHT_PER_XP = 40               # 1 XP for every 40 Starlight spent
 HAUL_BASE = 100
 HAUL_GROWTH = 1.5                   # B(L) = 100 x 1.5^(L-1); the master inflation lever
 HAUL_FATIGUE = 0.85                 # per successive raid in a day
-#: An attempt is worth this fraction of a clean same-level haul (§9.6).
+#: An attempt is worth this fraction of a clean same-level haul (§9.6), which
+#: that section calls "the number the progression curve is built on". It is
+#: E[grade] over all attempts: 62.5% succeed, split 35% clean / 40% loud / 25%
+#: partial, so 0.625 x (0.35x1.0 + 0.40x0.7 + 0.25x0.4) = 0.456.
 HAUL_VALUE_PER_ATTEMPT = 0.46
+
+#: v3.0's §9.6 multiplied the haul by `fill`, "the share of the crew's bags
+#: actually loaded" (§12.19). 0.46 was not re-derived against it. Measured in the
+#: heist harness, a crew that gets out has filled about half its bags:
+#:
+#:     python3 -m tools.heist_harness depth
+#:
+#: so the value of an attempt is 0.46 x 0.52, not 0.46. This is the C19 pattern
+#: applied to the one number §9.6 names as load-bearing.
+MEASURED_FILL_ON_SUCCESS = 0.52
 #: §9.4's balance target: a successful heist yields this share of a day's production.
 HEIST_SHARE_OF_DAILY_PRODUCTION = 0.20
 
