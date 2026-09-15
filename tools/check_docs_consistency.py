@@ -85,14 +85,20 @@ def check_links(files: list[pathlib.Path]) -> None:
 
 
 def check_spec_index() -> None:
-    """The spec index and the spec directory must agree."""
+    """The spec index and the spec directory must agree.
+
+    The file-name pattern must allow hyphens and digits. An earlier version used
+    ``[a-z_]+`` and reported `first-build.md` as unlisted when it was listed —
+    a false positive, which is its own kind of failure: it sent me to "fix" a
+    file that was already correct, and I added a duplicate row before noticing.
+    """
     index = SPEC_DIR / "README.md"
     if not index.exists():
         fail("docs/design/spec/README.md is missing")
         return
     text = index.read_text(encoding="utf-8")
     on_disk = {p.name for p in SPEC_DIR.glob("*.md")} - {"README.md"}
-    listed = set(re.findall(r"\(([a-z_]+\.md)\)", text))
+    listed = set(re.findall(r"\(([a-z0-9_-]+\.md)\)", text))
     for name in sorted(on_disk - listed):
         fail(f"spec/{name} exists but is not listed in spec/README.md")
     for name in sorted(listed - on_disk):
@@ -101,7 +107,7 @@ def check_spec_index() -> None:
 
 def check_register_references() -> None:
     """A register item naming a spec file must name one that exists."""
-    named = re.compile(r"docs/design/spec/([a-z_]+\.md)")
+    named = re.compile(r"docs/design/spec/([a-z0-9_-]+\.md)")
     for item in REGISTER:
         blob = item.get("body", "") + item.get("rec", "")
         for name in named.findall(blob):
@@ -155,6 +161,22 @@ def main() -> int:
     print("  no inconsistencies — counts, links, the spec index and the artifact")
     print("  URLs all agree.\n")
     return 0
+
+
+def _self_test() -> None:
+    """Guard against the regex bug that produced a false positive once.
+
+    Run with: python3 tools/check_docs_consistency.py --self-test
+    """
+    pattern = re.compile(r"\(([a-z0-9_-]+\.md)\)")
+    for name in ("first-build.md", "economy.md", "check_all_2.md"):
+        assert pattern.findall(f"[x]({name})") == [name], name
+    print("self-test passed: hyphenated and numeric file names are matched")
+
+
+if "--self-test" in sys.argv:
+    _self_test()
+    raise SystemExit(0)
 
 
 if __name__ == "__main__":
