@@ -1,0 +1,76 @@
+"""Model configuration: the choices the design document leaves open or contradicts.
+
+Every field here is either a documented assumption the model has to make, or one
+half of a contradiction recorded in docs/analysis/03-contradiction-register.md.
+Changing one and re-running is how those contradictions get resolved with numbers
+rather than argument.
+"""
+
+from dataclasses import dataclass
+
+
+@dataclass
+class Config:
+    # -- Contested: which raid-payout model is in force (C2) ----------------
+    #
+    # "share"   §9.4: a successful heist yields ~20% of a day's production.
+    #           This is what §14.1 says the published tables were generated with.
+    # "minted"  §9.6: Haul = B(L) x grade x difficulty x richness x fatigue.
+    #           This is the current, better-argued model.
+    faucet: str = "share"
+
+    # -- Contested: what L is in B(L) (C4) ---------------------------------
+    #
+    # §9.6 quotes haul figures for levels 2, 6 and 10, but §5.2 caps outer realms
+    # at level 5. "vault" reads L as the Vault's level, which does run 1-10 and
+    # does carry the 40%->71.5% sealed share §9.6 attributes to it.
+    haul_level_source: str = "vault"      # "vault" | "realm" | "keeper_div_4"
+
+    # -- Assumption: producers in the Heart --------------------------------
+    #
+    # §10.2 says Star Wells, Aether Springs and Gardens are built in "every
+    # realm", and §5.2 allows a second of each from realm level 3. The Heart has
+    # no realm level, so the model keys it to the Spire instead. Documented
+    # because it materially affects early production.
+    heart_second_producer_at_spire: int = 5
+
+    # -- Assumption: staffing ----------------------------------------------
+    #
+    # §9.2 gives staffing factors of 60% / 85% / 100% but does not say how they
+    # map onto buildings with one or two slots. The model treats a fully staffed
+    # building as 100% whatever its slot count, and applies 60% / 85% to the
+    # partial cases of a three-slot building.
+    full_staffing_is_always_100: bool = True
+
+    # -- Assumption: law configuration --------------------------------------
+    #
+    # §5.5 and §9.3 describe "typical realm matches and harmonies" without
+    # defining them. The model assumes a player weaves laws matching each realm's
+    # own school, so every producer gets its realm-match bonus and one realm-law
+    # bonus per law slot in its realm.
+    laws_match_realm_school: bool = True
+
+    # -- Assumption: purchase policy (§14.1) --------------------------------
+    #
+    # "Players save for the next Spire level first, then buy the cheapest
+    # available upgrade; producers come before everything else."
+    producers_first: bool = True
+
+    # -- Assumption: which buildings the model buys at all -------------------
+    #
+    # Defensive and social buildings cost Starlight but return nothing the model
+    # tracks, so including them slows growth. The document's own tables include
+    # them (they quote build days for Observatory, Beacon and the Dock), so the
+    # model does too.
+    buy_non_producers: bool = True
+
+    # -- Simulation ----------------------------------------------------------
+    days: int = 400
+    archetype: str = "engaged"
+
+    def haul_level(self, vault_level: int, realm_level: int, keeper_level: int) -> int:
+        if self.haul_level_source == "vault":
+            return max(1, vault_level)
+        if self.haul_level_source == "realm":
+            return max(1, realm_level)
+        return max(1, keeper_level // 4)
