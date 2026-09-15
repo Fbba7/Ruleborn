@@ -1,0 +1,1614 @@
+<title>Ruleborn Heist Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Marcellus&display=swap">
+
+<style>
+  /* Palette is the design document's own (§21.2, §21.8). This page commits to
+     one visual world — the violet night sky the art direction specifies — so it
+     is deliberately single-theme, with every colour painted explicitly. */
+  :root {
+    --sky-top: #1A1433;
+    --sky-bottom: #3A2B6B;
+    --stone: #D8CFC2;
+    --soil: #8A6A4E;
+    --ink: #221C3A;
+    --paper: #FCFBFF;
+    --motion: #F2B43C;
+    --matter: #8C6CF0;
+    --time: #3CC6D8;
+    --energy: #F07A3C;
+    --life: #5CC46A;
+    --spirit: #E05CB4;
+    --alarm: #E2536B;
+    --good: #3FBF7F;
+    --panel: rgba(28, 21, 56, 0.88);
+    --panel-edge: rgba(216, 207, 194, 0.22);
+    --dim: #9d94c4;
+
+    color-scheme: dark;
+  }
+
+  /* The publish skeleton supplies this, but .card sets display:flex, which
+     would override the UA's [hidden] rule if the reset ever went missing. */
+  [hidden] { display: none !important; }
+
+  html, body { height: 100%; }
+
+  body {
+    margin: 0;
+    background: linear-gradient(170deg, var(--sky-top) 0%, var(--sky-bottom) 70%, #4b3a80 100%);
+    background-attachment: fixed;
+    color: var(--paper);
+    font-family: "Baloo 2", system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    padding-inline: 16px;
+    padding-block: 18px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 100%;
+    box-sizing: border-box;
+  }
+
+  h1, h2, h3, .display { font-family: Marcellus, Georgia, serif; font-weight: 400; text-wrap: balance; }
+  h1 { font-size: 30px; margin: 0; letter-spacing: 0.01em; }
+  h2 { font-size: 22px; margin: 0; }
+  h3 { font-size: 17px; margin: 0; }
+
+  p { margin: 0; }
+  .muted { color: var(--dim); font-size: 13.5px; }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 0.14em; font-size: 11px;
+    font-weight: 600; color: var(--motion);
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  button {
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    border-radius: 11px; border: 1px solid transparent;
+    padding: 11px 16px; cursor: pointer;
+    background: rgba(216, 207, 194, 0.12); color: var(--paper);
+    border-color: var(--panel-edge);
+    min-height: 44px;
+    transition: transform 120ms ease, background 120ms ease;
+  }
+  button:hover { background: rgba(216, 207, 194, 0.2); }
+  button:active { transform: scale(0.97); }
+  button:focus-visible { outline: 2px solid var(--motion); outline-offset: 2px; }
+  button.primary { background: var(--motion); color: var(--ink); border-color: transparent; }
+  button.primary:hover { background: #f7c460; }
+  button.quiet { background: transparent; color: var(--dim); font-weight: 500; }
+  button.quiet:hover { color: var(--paper); background: rgba(216,207,194,0.08); }
+  button[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > button { flex: 1 1 140px; }
+
+  /* --- the heist board ------------------------------------------------ */
+
+  #stage { position: relative; display: flex; flex-direction: column; gap: 10px; }
+
+  .hud-top {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 8px;
+  }
+  .lawbar { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+  .lawchip {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+    padding: 3px 9px; border-radius: 999px;
+    border: 1px solid currentColor; white-space: nowrap;
+  }
+  .clockbox { text-align: center; }
+  .clock {
+    font-size: 30px; font-weight: 700; line-height: 1;
+    font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
+  }
+  .clock.hot { color: var(--alarm); }
+  .alarm-track {
+    width: 92px; height: 5px; border-radius: 3px; margin: 6px auto 0;
+    background: rgba(216,207,194,0.18); overflow: hidden;
+  }
+  .alarm-fill { height: 100%; width: 0%; background: var(--alarm); transition: width 140ms linear; }
+  .loot { text-align: right; }
+  .loot .n { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--motion); }
+
+  canvas {
+    width: 100%; height: auto; display: block;
+    border-radius: 12px; touch-action: manipulation;
+    background: transparent;
+  }
+
+  .crewbar { display: flex; gap: 8px; }
+  .portrait {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 8px 4px; border-radius: 11px; min-height: 58px;
+    border: 2px solid transparent; background: rgba(216,207,194,0.1);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .portrait .dot { width: 16px; height: 16px; border-radius: 50%; }
+  .portrait.sel { border-color: var(--paper); background: rgba(216,207,194,0.22); }
+  .portrait.down { opacity: 0.35; }
+  .portrait .hp { font-size: 10px; color: var(--dim); font-variant-numeric: tabular-nums; }
+
+  .actionbar { display: flex; gap: 8px; }
+  .actionbar button { flex: 1; }
+  .sneaking { background: var(--time) !important; color: var(--ink) !important; }
+
+  .ticker {
+    min-height: 34px; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--dim); text-align: center;
+    padding: 0 8px;
+  }
+  .ticker.warn { color: var(--motion); }
+  .ticker.bad { color: var(--alarm); }
+
+  /* --- surveys --------------------------------------------------------- */
+
+  .q { display: flex; flex-direction: column; gap: 8px; }
+  .q .label { font-size: 14px; font-weight: 500; }
+  .scale { display: flex; gap: 6px; }
+  .scale button { flex: 1; padding: 10px 0; font-size: 14px; min-height: 42px; }
+  .scale button.on { background: var(--motion); color: var(--ink); }
+  .ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); }
+
+  .stat { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+  .stat .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  code, .code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+  }
+  textarea.code {
+    width: 100%; box-sizing: border-box; min-height: 92px;
+    background: rgba(10, 7, 22, 0.6); color: var(--stone);
+    border: 1px solid var(--panel-edge); border-radius: 10px; padding: 10px;
+    resize: vertical; line-height: 1.5;
+  }
+
+  .toolgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .toolgrid button { font-size: 13px; padding: 10px 6px; min-height: 52px;
+    display: flex; flex-direction: column; gap: 2px; align-items: center; }
+  .toolgrid button.on { background: var(--life); color: var(--ink); }
+  .toolgrid .left { font-size: 10px; color: inherit; opacity: 0.75; font-weight: 500; }
+
+  hr { border: 0; border-top: 1px solid var(--panel-edge); margin: 2px 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<div class="wrap">
+  <!-- ============================= INTRO ============================= -->
+  <section id="s-intro" class="card">
+    <div>
+      <p class="eyebrow">Prototype · gate 1 of 2</p>
+      <h1>Ruleborn</h1>
+    </div>
+    <p>You are a Keeper. Your crew of three lands on someone else's floating
+      island, which runs on its own magic rules, and tries to reach the vault
+      and get out before the clock ends.</p>
+    <p class="muted">Nothing is destroyed and nobody is hurt. A crew that is
+      caught wakes up at home. This is a test build: rough shapes, no sound,
+      about four minutes.</p>
+    <button class="primary" id="go-brief">Start</button>
+  </section>
+
+  <!-- ============================= BRIEF ============================= -->
+  <section id="s-brief" class="card" hidden>
+    <p class="eyebrow">Before you land</p>
+    <h2>Three things to know</h2>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <p><strong>Tap the ground</strong> to send your crew there. Tap a crew
+        member below the board to move just that one.</p>
+      <p><strong>Guards see in cones.</strong> The cone fills toward you as a
+        guard notices you. Tall grass hides you. Sneaking is slower and quieter.</p>
+      <p><strong>The island has rules.</strong> They are named at the top left,
+        and they apply to the guards as much as to you.</p>
+    </div>
+    <hr>
+    <div class="lawbar" id="brief-laws"></div>
+    <button class="primary" id="go-heist1">Land</button>
+  </section>
+
+  <!-- ============================= STAGE ============================= -->
+  <section id="s-stage" hidden>
+    <div id="stage">
+      <div class="hud-top">
+        <div class="lawbar" id="hud-laws"></div>
+        <div class="clockbox">
+          <div class="clock" id="hud-clock">2:30</div>
+          <div class="alarm-track"><div class="alarm-fill" id="hud-alarm"></div></div>
+        </div>
+        <div class="loot">
+          <div class="n" id="hud-loot">0</div>
+          <div class="muted" style="font-size:11px;">Starlight</div>
+        </div>
+      </div>
+
+      <canvas id="board" width="440" height="440" aria-label="The island"></canvas>
+
+      <div class="ticker" id="hud-ticker">Land on a green edge marker.</div>
+      <div class="crewbar" id="hud-crew"></div>
+      <div class="actionbar">
+        <button id="btn-sneak">Sneak</button>
+        <button id="btn-out">Get out</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= RESULT ============================ -->
+  <section id="s-result" class="card" hidden>
+    <p class="eyebrow" id="res-eyebrow">Result</p>
+    <h2 id="res-title">Clean</h2>
+    <p id="res-line"></p>
+    <hr>
+    <div id="res-stats"></div>
+    <div class="row" id="res-actions"></div>
+  </section>
+
+  <!-- ============================= SURVEY ============================ -->
+  <section id="s-survey" class="card" hidden>
+    <p class="eyebrow">Four questions</p>
+    <h2>How did that feel?</h2>
+    <p class="muted">There are no right answers and nothing is scored. Answer
+      for the heists you just played.</p>
+    <div id="survey-qs" style="display:flex; flex-direction:column; gap:18px;"></div>
+    <button class="primary" id="go-build-intro" disabled>Continue</button>
+  </section>
+
+  <!-- ========================== BUILD INTRO ========================== -->
+  <section id="s-build-intro" class="card" hidden>
+    <p class="eyebrow">Prototype · gate 2 of 2</p>
+    <h2>Now build one</h2>
+    <p>The islands you rob are built by other players. This is the other half of
+      the game: you shape an island, write a rule into it, post a guard, and
+      other Keepers try to get past it.</p>
+    <p class="muted">You will place three pieces of terrain, one guard and one
+      rule. Then a crew will raid what you built and you will see how it went.</p>
+    <button class="primary" id="go-build">Build an island</button>
+  </section>
+
+  <!-- ============================= BUILD ============================= -->
+  <section id="s-build" hidden>
+    <div id="stage">
+      <div class="hud-top">
+        <div class="lawbar"><span class="lawchip" style="color:var(--life)">Your island</span></div>
+        <div class="clockbox">
+          <div class="clock" id="build-left" style="font-size:22px;">5</div>
+          <div class="muted" style="font-size:11px;">pieces left</div>
+        </div>
+        <div class="loot"><div class="muted" style="font-size:11px;">tap the<br>ground to place</div></div>
+      </div>
+      <canvas id="bboard" width="440" height="440" aria-label="Your island"></canvas>
+      <div class="ticker" id="build-ticker">Pick a piece, then tap the ground.</div>
+      <div class="toolgrid" id="build-tools"></div>
+      <div class="actionbar">
+        <button class="quiet" id="btn-undo">Undo</button>
+        <button class="primary" id="btn-publish" disabled>Let a crew raid it</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================== BUILD RESULT ========================= -->
+  <section id="s-build-result" class="card" hidden>
+    <p class="eyebrow">A crew raided your island</p>
+    <h2 id="br-title">They got away with it</h2>
+    <p id="br-line"></p>
+    <div id="br-stats"></div>
+    <hr>
+    <p><strong>That is the end of the test.</strong> You can stop here — nothing
+      else is required, and closing the page now is a perfectly good outcome.</p>
+    <div class="row">
+      <button class="quiet" id="go-finish">I'm done</button>
+      <button class="quiet" id="go-build-again">Build another island</button>
+    </div>
+  </section>
+
+  <!-- ============================= FINISH ============================ -->
+  <section id="s-finish" class="card" hidden>
+    <p class="eyebrow">Thank you</p>
+    <h2>That's everything</h2>
+    <p>Copy the code below and send it back to whoever gave you this link. It
+      records what you did, not who you are — no names, no accounts, nothing
+      typed.</p>
+    <textarea class="code" id="out-code" readonly rows="5"></textarea>
+    <button class="primary" id="btn-copy">Copy the code</button>
+    <p class="muted" id="copy-note" hidden>Copied.</p>
+  </section>
+</div>
+
+<script>
+"use strict";
+/* ===========================================================================
+   Ruleborn heist prototype.
+
+   Throwaway build for the two gates in the design document (§19.27, §13.3):
+   does a no-loss heist feel tense, does a delegated crew feel like playing
+   rather than watching, and will anyone build a second island unprompted.
+
+   The simulation deliberately previews the real architecture from §24.10 —
+   a fixed 30 Hz tick, integer positions in 1/256-tile units, a seeded integer
+   RNG, and no floating point anywhere a result is decided — so that building
+   it also tests whether that contract is workable.
+
+   Detection follows §12.17 (three vision zones inside a cone, weak peripheral
+   vision, a 0-1000 suspicion meter, six guard states, noise that travels along
+   walkable paths). Vision is drawn per §21.12: one cone at a time, sharp
+   edges, the fill travelling from the guard's eyes toward the crew.
+   =========================================================================== */
+
+const TPS = 30;          // §24.10: thirty ticks a second, fixed
+const U = 256;           // sub-tile units; no decimals decide anything
+const N = 10;            // a realm is 10 to 14 tiles across (§21.1)
+const CLOCK_TICKS = 150 * TPS;   // §5.4: 150 seconds plus links; one realm here
+
+// Suspicion, in points per tick, from §12.17's stated fill times.
+const SUS_MAX = 1000;
+const SUS_NEAR = 67;     // near zone fills in about half a second
+const SUS_MID = 33;      // middle zone in about a second
+const SUS_FAR = 12;      // far zone in just under three
+const SUS_DECAY = 20;    // empties more slowly than it fills (~1.7 s)
+const STATE_FLOOR_TICKS = 15;    // a state cannot fall back for half a second
+const GRAB_TICKS = Math.round(1.6 * TPS);  // how long a guard must hold you
+
+// Tiles
+const FLOOR = 0, ROCK = 1, HEDGE = 2, GRASS = 3, STREAM = 4, LANTERN = 5;
+const BLOCKS_MOVE = { [ROCK]: 1, [HEDGE]: 1 };
+const BLOCKS_SIGHT = { [ROCK]: 1, [HEDGE]: 1 };
+
+// ---------------------------------------------------------------------------
+// Deterministic integer RNG (xorshift32). Same seed, same heist, every time.
+// ---------------------------------------------------------------------------
+function rng(seed) {
+  let s = seed >>> 0 || 1;
+  return function () {
+    s ^= s << 13; s >>>= 0;
+    s ^= s >>> 17;
+    s ^= s << 5; s >>>= 0;
+    return s;
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Content
+// ---------------------------------------------------------------------------
+const LAWS = {
+  halfGravity: { name: "Half gravity", school: "Motion", colour: "var(--motion)",
+    blurb: "Everyone can leap one obstacle." },
+  slowRivers: { name: "Slow rivers", school: "Time", colour: "var(--time)",
+    blurb: "Anyone in water moves at half speed." },
+  glowingDark: { name: "Glowing dark", school: "Energy", colour: "var(--energy)",
+    blurb: "Beyond three tiles, only lantern light shows you." },
+  bloom: { name: "Bloom", school: "Life", colour: "var(--life)",
+    blurb: "Cut hedges grow back." },
+};
+
+const ROLES = {
+  scout:   { label: "Scout",   colour: "#7fd4e8", speed: 4.5, hp: 120, power: 12, carry: 60 },
+  breaker: { label: "Breaker", colour: "#f09a5c", speed: 3.2, hp: 180, power: 40, carry: 60 },
+  carrier: { label: "Carrier", colour: "#9ee38a", speed: 3.6, hp: 160, power: 8,  carry: 300 },
+};
+
+// Guard archetypes, §12.17. Distances in tiles; a tile is a metre (§21.1).
+const GUARDS = {
+  scout:  { label: "Scout",  cone: 45, near: 2,   mid: 4,   far: 6,   periph: 110, turn: 6, speed: 2.8, hp: 120 },
+  warden: { label: "Warden", cone: 40, near: 1.5, mid: 3,   far: 4.5, periph: 90,  turn: 3, speed: 2.0, hp: 420 },
+};
+
+// The island the player robs. Hand-built so every tester meets the same one.
+const LEVEL = {
+  seed: 20260915,
+  laws: ["slowRivers", "halfGravity"],
+  vault: { x: 5, y: 1 },
+  entries: [{ x: 1, y: 9 }, { x: 8, y: 9 }, { x: 0, y: 6 }],
+  tiles: [
+    //  0      1      2       3       4       5       6       7      8      9
+    [ROCK,  FLOOR, FLOOR,  HEDGE,  FLOOR,  FLOOR,  FLOOR,  HEDGE, FLOOR, ROCK ],
+    [FLOOR, FLOOR, HEDGE,  HEDGE,  FLOOR,  FLOOR,  FLOOR,  HEDGE, FLOOR, FLOOR],
+    [FLOOR, FLOOR, FLOOR,  FLOOR,  FLOOR,  FLOOR,  FLOOR,  FLOOR, FLOOR, FLOOR],
+    [FLOOR, LANTERN,FLOOR, FLOOR,  ROCK,   FLOOR,  ROCK,   FLOOR, LANTERN,FLOOR],
+    [STREAM,STREAM,STREAM, FLOOR,  STREAM, STREAM, STREAM, STREAM,STREAM,STREAM],
+    [FLOOR, FLOOR, GRASS,  FLOOR,  FLOOR,  FLOOR,  GRASS,  GRASS, FLOOR, FLOOR],
+    [FLOOR, GRASS, GRASS,  HEDGE,  FLOOR,  ROCK,   GRASS,  FLOOR, FLOOR, FLOOR],
+    [FLOOR, FLOOR, FLOOR,  HEDGE,  FLOOR,  FLOOR,  FLOOR,  FLOOR, HEDGE, FLOOR],
+    [FLOOR, FLOOR, FLOOR,  FLOOR,  FLOOR,  LANTERN,FLOOR,  FLOOR, HEDGE, FLOOR],
+    [FLOOR, FLOOR, GRASS,  FLOOR,  FLOOR,  FLOOR,  FLOOR,  GRASS, FLOOR, FLOOR],
+  ],
+  guards: [
+    { type: "scout",  route: [{ x: 2, y: 5 }, { x: 8, y: 5 }, { x: 8, y: 7 }, { x: 2, y: 7 }] },
+    { type: "warden", route: [{ x: 4, y: 2 }, { x: 7, y: 2 }, { x: 7, y: 3 }, { x: 4, y: 3 }] },
+  ],
+};
+
+// ---------------------------------------------------------------------------
+// Grid helpers
+// ---------------------------------------------------------------------------
+function inBounds(x, y) { return x >= 0 && y >= 0 && x < N && y < N; }
+
+function makeGrid(tiles) { return tiles.map(row => row.slice()); }
+
+function walkable(grid, x, y) {
+  return inBounds(x, y) && !BLOCKS_MOVE[grid[y][x]];
+}
+
+/** Breadth-first distances in tiles from one origin, along walkable ground.
+ *  Used for pathing and, per §12.17, for how far a sound actually travels. */
+function bfs(grid, sx, sy) {
+  const dist = new Int16Array(N * N).fill(-1);
+  const prev = new Int16Array(N * N).fill(-1);
+  if (!walkable(grid, sx, sy)) return { dist, prev };
+  const q = [sy * N + sx];
+  dist[sy * N + sx] = 0;
+  const DX = [1, -1, 0, 0], DY = [0, 0, 1, -1];
+  for (let h = 0; h < q.length; h++) {
+    const cur = q[h], cx = cur % N, cy = (cur / N) | 0;
+    for (let d = 0; d < 4; d++) {
+      const nx = cx + DX[d], ny = cy + DY[d];
+      if (!walkable(grid, nx, ny)) continue;
+      const idx = ny * N + nx;
+      if (dist[idx] !== -1) continue;
+      dist[idx] = dist[cur] + 1;
+      prev[idx] = cur;
+      q.push(idx);
+    }
+  }
+  return { dist, prev };
+}
+
+function pathTo(grid, sx, sy, tx, ty) {
+  if (!walkable(grid, tx, ty)) return null;
+  const { dist, prev } = bfs(grid, sx, sy);
+  const goal = ty * N + tx;
+  if (dist[goal] === -1) return null;
+  const out = [];
+  let cur = goal;
+  while (cur !== -1 && cur !== sy * N + sx) {
+    out.push({ x: cur % N, y: (cur / N) | 0 });
+    cur = prev[cur];
+  }
+  return out.reverse();
+}
+
+/** Bresenham line of sight — blocked by rock and hedge. */
+function lineOfSight(grid, x0, y0, x1, y1) {
+  let dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+  let sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+  let err = dx - dy, x = x0, y = y0;
+  for (let guard = 0; guard < 64; guard++) {
+    if (x === x1 && y === y1) return true;
+    const e2 = 2 * err;
+    if (e2 > -dy) { err -= dy; x += sx; }
+    if (e2 < dx) { err += dx; y += sy; }
+    if (!(x === x1 && y === y1) && inBounds(x, y) && BLOCKS_SIGHT[grid[y][x]]) return false;
+  }
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// Simulation
+// ---------------------------------------------------------------------------
+function createSim(level, opts) {
+  opts = opts || {};
+  const grid = makeGrid(level.tiles);
+  const rand = rng(level.seed);
+  const laws = {};
+  level.laws.forEach(k => { laws[k] = true; });
+
+  const entry = level.entries[opts.entry || 0];
+
+  const crew = [
+    mkCrew("scout", entry, 0),
+    mkCrew("breaker", entry, 1),
+    mkCrew("carrier", entry, 2),
+  ];
+  function mkCrew(role, at, i) {
+    const r = ROLES[role];
+    return {
+      role, label: r.label, colour: r.colour,
+      x: at.x * U + U / 2, y: at.y * U + U / 2,
+      path: null, down: false, hp: r.hp, maxHp: r.hp,
+      carrying: 0, capacity: r.carry,
+      speed: Math.max(1, Math.round(r.speed * U / TPS)),
+      bob: i * 7,
+    };
+  }
+
+  const guards = level.guards.map((g, i) => {
+    const a = GUARDS[g.type];
+    const start = g.route[0];
+    return {
+      type: g.type, label: a.label, spec: a,
+      x: start.x * U + U / 2, y: start.y * U + U / 2,
+      facing: 90, route: g.route.slice(), leg: 0,
+      path: null, sus: 0, state: "unaware", stateTicks: 0,
+      target: null, searchTicks: 0, stunned: 0,
+      speed: Math.max(1, Math.round(a.speed * U / TPS)),
+      hp: a.hp, down: false, seed: i,
+    };
+  });
+
+  return {
+    grid, laws, rand,
+    crew, guards,
+    tick: 0, clock: CLOCK_TICKS,
+    alarm: 0,                       // realm alarm, 0..6 (§12.17)
+    vault: { x: level.vault.x, y: level.vault.y, hp: 600, max: 600, open: false, left: 900 },
+    loot: 0, banked: 0,
+    sneak: false, selected: -1,
+    calling: 0, skiffAt: null,
+    over: null, events: [],
+    noises: [],
+    seen: 0,                        // ticks spent inside a filling cone
+    decisions: 0,                   // player orders — the "decisions per heist" measure
+  };
+}
+
+function say(sim, text, tone) {
+  sim.events.push({ tick: sim.tick, text, tone: tone || "" });
+}
+
+function tileOf(ent) { return { x: (ent.x / U) | 0, y: (ent.y / U) | 0 }; }
+
+function moveAlong(sim, ent, speed) {
+  if (!ent.path || !ent.path.length) return false;
+  const next = ent.path[0];
+  const tx = next.x * U + U / 2, ty = next.y * U + U / 2;
+  const dx = tx - ent.x, dy = ty - ent.y;
+  const d = Math.abs(dx) + Math.abs(dy);
+  if (d <= speed) {
+    ent.x = tx; ent.y = ty; ent.path.shift();
+    if (!ent.path.length) ent.path = null;
+    return true;
+  }
+  // Integer step, apportioned along the dominant axis first.
+  const sx = Math.sign(dx), sy = Math.sign(dy);
+  let left = speed;
+  const stepX = Math.min(Math.abs(dx), left); ent.x += sx * stepX; left -= stepX;
+  const stepY = Math.min(Math.abs(dy), left); ent.y += sy * stepY;
+  return true;
+}
+
+function crewSpeed(sim, c) {
+  let s = c.speed;
+  const t = tileOf(c);
+  if (sim.grid[t.y][t.x] === STREAM && sim.laws.slowRivers) s = Math.round(s / 2);
+  if (sim.sneak) s = Math.round(s * 55 / 100);
+  if (c.carrying > 0) s = Math.round(s * 85 / 100);
+  return Math.max(1, s);
+}
+
+function noiseRadius(sim, c) {
+  if (!c.path) return 0;
+  return sim.sneak ? 1 : 3;          // §12.17: crouched 1 m, walking 2.5 m
+}
+
+function litTile(sim, x, y) {
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+    if (sim.grid[j][i] === LANTERN) {
+      if (Math.abs(i - x) + Math.abs(j - y) <= 3) return true;
+    }
+  }
+  return false;
+}
+
+/** How fast this guard notices this crew member, in suspicion points a tick. */
+function noticeRate(sim, g, c) {
+  const gt = tileOf(g), ct = tileOf(c);
+  const dx = ct.x - gt.x, dy = ct.y - gt.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const spec = g.spec;
+
+  let far = spec.far;
+  if (sim.laws.glowingDark && !litTile(sim, ct.x, ct.y)) far = Math.min(far, 3);
+  if (dist > far) return 0;
+  if (!lineOfSight(sim.grid, gt.x, gt.y, ct.x, ct.y)) return 0;
+
+  // Standing still in tall grass hides you until a guard walks into the tile.
+  const still = !c.path;
+  if (sim.grid[ct.y][ct.x] === GRASS && still && dist > 1) return 0;
+
+  const ang = Math.atan2(dy, dx) * 180 / Math.PI;
+  let diff = Math.abs(((ang - g.facing + 540) % 360) - 180);
+  let rate;
+  if (diff <= spec.cone / 2) {
+    rate = dist <= spec.near ? SUS_NEAR : (dist <= spec.mid ? SUS_MID : SUS_FAR);
+  } else if (diff <= spec.periph / 2) {
+    rate = Math.round(SUS_FAR / 2);              // the corner of the eye
+  } else return 0;
+
+  if (sim.sneak) rate = Math.round(rate / 2);
+  if (sim.grid[ct.y][ct.x] === GRASS) rate = Math.round(rate / 2);
+  if (sim.laws.glowingDark && !litTile(sim, ct.x, ct.y)) rate = Math.round(rate / 2);
+  return Math.max(1, rate);
+}
+
+function setState(g, next) {
+  if (g.state === next) return;
+  if (g.stateTicks < STATE_FLOOR_TICKS && rank(next) < rank(g.state)) return;
+  g.state = next; g.stateTicks = 0;
+}
+function rank(s) {
+  return { unaware: 0, suspicious: 1, investigating: 2, searching: 2, alerted: 3 }[s] || 0;
+}
+
+function stepGuard(sim, g) {
+  g.stateTicks++;
+  if (g.down) return;
+  if (g.stunned > 0) { g.stunned--; return; }
+
+  // --- perception
+  let best = 0, bestC = null;
+  for (const c of sim.crew) {
+    if (c.down) continue;
+    const r = noticeRate(sim, g, c);
+    if (r > best) { best = r; bestC = c; }
+  }
+  if (best > 0) {
+    g.sus = Math.min(SUS_MAX, g.sus + best);
+    g.target = tileOf(bestC);
+    sim.seen++;
+  } else {
+    g.sus = Math.max(0, g.sus - SUS_DECAY);
+  }
+
+  // --- hearing: sound follows the walkable path, so walls really muffle it
+  for (const nz of sim.noises) {
+    const d = nz.dist[((g.y / U) | 0) * N + ((g.x / U) | 0)];
+    if (d !== -1 && d <= nz.r) {
+      g.sus = Math.min(SUS_MAX, g.sus + 22);
+      if (g.state === "unaware") g.target = { x: nz.x, y: nz.y };
+    }
+  }
+
+  // --- states
+  if (g.sus >= SUS_MAX) setState(g, "alerted");
+  else if (g.sus >= 600) setState(g, "investigating");
+  else if (g.sus >= 200) setState(g, "suspicious");
+  else if (g.state !== "searching") setState(g, "unaware");
+
+  if (g.state === "alerted" && g.stateTicks === 1) {
+    sim.alarm = Math.min(6, sim.alarm + 2);
+    say(sim, g.label + ": “there they are!”", "bad");
+    for (const o of sim.guards) {
+      if (o !== g && !o.down) { o.sus = Math.max(o.sus, 600); o.target = g.target; }
+    }
+  }
+  if (g.state === "suspicious" && g.stateTicks === 1) say(sim, g.label + ": “was that the wind?”", "warn");
+  if (g.state === "investigating" && g.stateTicks === 1) say(sim, g.label + ": “someone's been here.”", "warn");
+
+  // --- movement
+  const gt = tileOf(g);
+  if (g.state === "alerted" || g.state === "investigating") {
+    if (g.target && (!g.path || !g.path.length)) {
+      g.path = pathTo(sim.grid, gt.x, gt.y, g.target.x, g.target.y);
+    }
+    if (g.sus < 600 && g.state !== "alerted") { g.state = "searching"; g.searchTicks = 20 * TPS; }
+  } else if (g.state === "searching") {
+    g.searchTicks--;
+    if (g.searchTicks <= 0) { g.state = "unaware"; g.path = null; g.target = null; }
+  } else if (g.state === "suspicious") {
+    g.path = null;                         // stops and turns toward it, stays on route
+    if (g.target) {
+      const want = Math.atan2(g.target.y - gt.y, g.target.x - gt.x) * 180 / Math.PI;
+      g.facing = turnToward(g.facing, want, g.spec.turn);
+    }
+    return;
+  } else {
+    // patrol
+    if (!g.path || !g.path.length) {
+      g.leg = (g.leg + 1) % g.route.length;
+      const w = g.route[g.leg];
+      g.path = pathTo(sim.grid, gt.x, gt.y, w.x, w.y);
+    }
+  }
+
+  if (g.path && g.path.length) {
+    const nxt = g.path[0];
+    const want = Math.atan2(nxt.y * U + U / 2 - g.y, nxt.x * U + U / 2 - g.x) * 180 / Math.PI;
+    g.facing = turnToward(g.facing, want, g.spec.turn);
+    let sp = g.speed;
+    if (g.state === "alerted") sp = Math.round(sp * 13 / 10);
+    moveAlong(sim, g, sp);
+  }
+
+  // --- catching the crew. A guard has to keep hold of someone for a moment,
+  //     and can only hold one at a time, so there is always a chance to run.
+  if (g.state === "alerted") {
+    for (const c of sim.crew) {
+      if (c.down) continue;
+      const d = Math.abs(c.x - g.x) + Math.abs(c.y - g.y);
+      if (d < U) {
+        c.grabbed = (c.grabbed || 0) + 1;
+        if (c.grabbed === 1) say(sim, g.label + " has hold of your " + c.label + " — run!", "bad");
+        if (c.grabbed >= GRAB_TICKS) {
+          c.down = true; c.carrying = 0;
+          say(sim, c.label + " was caught.", "bad");
+        }
+        break;
+      }
+    }
+  }
+}
+
+function turnToward(cur, want, rate) {
+  let diff = ((want - cur + 540) % 360) - 180;
+  if (Math.abs(diff) <= rate) return want;
+  return (cur + Math.sign(diff) * rate + 360) % 360;
+}
+
+function step(sim) {
+  if (sim.over) return;
+  sim.tick++;
+  sim.clock--;
+  sim.noises = [];
+
+  // crew
+  for (const c of sim.crew) {
+    if (c.down) continue;
+    if (c.grabbed) c.grabbed = Math.max(0, c.grabbed - 1);
+    if (c.path && c.path.length) {
+      const before = tileOf(c);
+      moveAlong(sim, c, crewSpeed(sim, c));
+      const after = tileOf(c);
+      if (before.x !== after.x || before.y !== after.y) {
+        const r = noiseRadius(sim, c);
+        if (r > 0) sim.noises.push({ x: after.x, y: after.y, r, dist: bfs(sim.grid, after.x, after.y).dist });
+      }
+    }
+  }
+
+  // vault
+  const vt = sim.vault;
+  if (!vt.open) {
+    let power = 0;
+    for (const c of sim.crew) {
+      if (c.down || c.path) continue;
+      const t = tileOf(c);
+      if (Math.abs(t.x - vt.x) + Math.abs(t.y - vt.y) <= 1) {
+        power += (c.role === "breaker" ? ROLES.breaker.power * 2 : ROLES[c.role].power);
+      }
+    }
+    if (power > 0) {
+      vt.hp -= power / TPS * 3;
+      if (sim.tick % 15 === 0) {
+        const d = bfs(sim.grid, vt.x, vt.y).dist;
+        sim.noises.push({ x: vt.x, y: vt.y, r: 5, dist: d });   // breaking carries 5 m
+      }
+      if (vt.hp <= 0 && !vt.open) {
+        vt.open = true;
+        say(sim, "The vault is open.", "warn");
+      }
+    }
+  } else if (vt.left > 0) {
+    for (const c of sim.crew) {
+      if (c.down || c.path) continue;
+      const t = tileOf(c);
+      if (Math.abs(t.x - vt.x) + Math.abs(t.y - vt.y) <= 1 && c.carrying < c.capacity) {
+        const take = Math.min(5, c.capacity - c.carrying, vt.left);
+        c.carrying += take; vt.left -= take; sim.loot += take;
+      }
+    }
+  }
+
+  for (const g of sim.guards) stepGuard(sim, g);
+
+  // alarm creeps while anyone is alerted
+  if (sim.tick % (30 * TPS) === 0 && sim.guards.some(g => g.state === "alerted")) {
+    sim.alarm = Math.min(6, sim.alarm + 1);
+  }
+
+  // escape
+  if (sim.calling > 0) {
+    sim.calling--;
+    if (sim.calling === 0) {
+      let out = 0, home = 0;
+      for (const c of sim.crew) {
+        if (c.down) continue;
+        const t = tileOf(c);
+        if (t.x === sim.skiffAt.x && t.y === sim.skiffAt.y) { out++; home += c.carrying; }
+      }
+      if (out === 0) say(sim, "The skiff left without anyone.", "bad");
+      sim.banked = home;
+      // §12.9: clean means out WITH loot. Leaving empty-handed is a foiled run,
+      // however quietly it was done.
+      const caught = sim.crew.filter(c => c.down).length;
+      let outcome;
+      if (out === 0 || home === 0) outcome = "foiled";
+      else if (caught) outcome = "partial";
+      else if (sim.alarm > 0) outcome = "loud";
+      else outcome = "clean";
+      finish(sim, outcome);
+    }
+  }
+
+  if (sim.crew.every(c => c.down)) finish(sim, "foiled");
+  if (sim.clock <= 0) finish(sim, sim.banked > 0 ? "partial" : "foiled");
+}
+
+function finish(sim, outcome) {
+  if (sim.over) return;
+  sim.over = outcome;
+}
+
+function callSkiff(sim) {
+  if (sim.calling > 0 || sim.over) return;
+  // Nearest edge tile to the crew's centre.
+  let best = null, bestD = 1e9;
+  const alive = sim.crew.filter(c => !c.down);
+  if (!alive.length) return;
+  const cx = Math.round(alive.reduce((a, c) => a + c.x, 0) / alive.length / U);
+  const cy = Math.round(alive.reduce((a, c) => a + c.y, 0) / alive.length / U);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    if (x !== 0 && y !== 0 && x !== N - 1 && y !== N - 1) continue;
+    if (!walkable(sim.grid, x, y)) continue;
+    const d = Math.abs(x - cx) + Math.abs(y - cy);
+    if (d < bestD) { bestD = d; best = { x, y }; }
+  }
+  sim.skiffAt = best;
+  sim.calling = 5 * TPS;               // §5.4: five seconds to an outer realm
+  for (const c of sim.crew) {
+    if (c.down) continue;
+    const t = tileOf(c);
+    c.path = pathTo(sim.grid, t.x, t.y, best.x, best.y);
+  }
+  say(sim, "Skiff called. Hold the marked tile.", "warn");
+}
+
+function orderMove(sim, tx, ty, who) {
+  if (sim.over) return false;
+  const targets = who >= 0 ? [sim.crew[who]] : sim.crew.filter(c => !c.down);
+  const spots = [{ x: tx, y: ty }, { x: tx + 1, y: ty }, { x: tx - 1, y: ty },
+                 { x: tx, y: ty + 1 }, { x: tx, y: ty - 1 }]
+    .filter(s => walkable(sim.grid, s.x, s.y));
+  if (!spots.length) return false;
+  let any = false, i = 0;
+  for (const c of targets) {
+    if (c.down) continue;
+    const t = tileOf(c);
+    const s = spots[Math.min(i, spots.length - 1)];
+    const p = pathTo(sim.grid, t.x, t.y, s.x, s.y);
+    if (p) { c.path = p.length ? p : null; any = true; }
+    i++;
+  }
+  if (any) sim.decisions++;
+  return any;
+}
+
+// ===========================================================================
+// Rendering
+// ===========================================================================
+function makeRenderer(canvas) {
+  const ctx = canvas.getContext("2d");
+  let TS = 44;
+
+  function resize() {
+    const w = Math.min(canvas.parentElement.clientWidth, 448);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.style.width = w + "px";
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(w * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    TS = w / N;
+  }
+
+  function tileColour(t) {
+    switch (t) {
+      case ROCK: return "#6c6480";
+      case HEDGE: return "#245537";
+      case GRASS: return "#77b062";
+      case STREAM: return "#2f7d97";
+      case LANTERN: return "#cfc3b2";
+      default: return "#cfc3b2";
+    }
+  }
+
+  function draw(sim, opts) {
+    opts = opts || {};
+    const w = N * TS;
+    ctx.clearRect(0, 0, w, w);
+
+    // the island, floating
+    ctx.save();
+    ctx.beginPath();
+    roundRect(ctx, 0, 0, w, w, 14);
+    ctx.clip();
+    ctx.fillStyle = "#cfc3b2";
+    ctx.fillRect(0, 0, w, w);
+
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const t = sim.grid[y][x];
+      ctx.fillStyle = tileColour(t);
+      ctx.fillRect(x * TS, y * TS, TS, TS);
+      if (t === GRASS) {
+        ctx.strokeStyle = "rgba(30,74,32,0.75)"; ctx.lineWidth = 1.5;
+        for (let i = 0; i < 4; i++) {
+          const gx = x * TS + 5 + i * (TS - 10) / 3;
+          ctx.beginPath(); ctx.moveTo(gx, y * TS + TS - 5);
+          ctx.lineTo(gx + 2, y * TS + 6); ctx.stroke();
+        }
+      }
+      if (t === STREAM) {
+        ctx.strokeStyle = "rgba(190,236,246,0.5)"; ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(x * TS + 4, y * TS + TS * 0.4);
+        ctx.lineTo(x * TS + TS - 4, y * TS + TS * 0.45);
+        ctx.stroke();
+      }
+      if (t === ROCK) {
+        ctx.fillStyle = "rgba(0,0,0,0.18)";
+        ctx.fillRect(x * TS + 3, y * TS + TS - 6, TS - 6, 4);
+      }
+      // faint grid
+      ctx.strokeStyle = "rgba(60,48,34,0.08)"; ctx.lineWidth = 1;
+      ctx.strokeRect(x * TS + 0.5, y * TS + 0.5, TS - 1, TS - 1);
+    }
+
+    // darkness, if the island runs Glowing dark
+    if (sim.laws.glowingDark) {
+      ctx.fillStyle = "rgba(10,7,30,0.55)";
+      ctx.fillRect(0, 0, w, w);
+    }
+    // lantern pools
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      if (sim.grid[y][x] !== LANTERN) continue;
+      const g = ctx.createRadialGradient(x * TS + TS / 2, y * TS + TS / 2, 2,
+                                         x * TS + TS / 2, y * TS + TS / 2, TS * 3);
+      g.addColorStop(0, "rgba(255,215,140,0.55)");
+      g.addColorStop(1, "rgba(255,215,140,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(x * TS - TS * 3, y * TS - TS * 3, TS * 7, TS * 7);
+      ctx.fillStyle = "#F2B43C";
+      ctx.beginPath(); ctx.arc(x * TS + TS / 2, y * TS + TS / 2, TS * 0.17, 0, 7); ctx.fill();
+    }
+
+    // vault
+    const v = sim.vault;
+    if (v) {
+      const vx = v.x * TS, vy = v.y * TS;
+      ctx.fillStyle = v.open ? "#6b5a2a" : "#8a7330";
+      roundRect(ctx, vx + 4, vy + 4, TS - 8, TS - 8, 5); ctx.fill();
+      ctx.fillStyle = "#F2B43C";
+      if (!v.open) {
+        const frac = 1 - v.hp / v.max;
+        ctx.fillRect(vx + 6, vy + TS - 12, (TS - 12) * frac, 4);
+        ctx.beginPath(); ctx.arc(vx + TS / 2, vy + TS / 2 - 2, TS * 0.13, 0, 7); ctx.fill();
+      } else {
+        ctx.font = (TS * 0.4) + "px Baloo 2, sans-serif";
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("✦", vx + TS / 2, vy + TS / 2);
+      }
+    }
+
+    // skiff marker
+    if (sim.skiffAt) {
+      const s = sim.skiffAt;
+      ctx.strokeStyle = "#3FBF7F"; ctx.lineWidth = 3;
+      ctx.setLineDash([5, 4]);
+      ctx.strokeRect(s.x * TS + 3, s.y * TS + 3, TS - 6, TS - 6);
+      ctx.setLineDash([]);
+    }
+
+    // entry markers, before landing
+    if (opts.entries) {
+      for (const e of opts.entries) {
+        ctx.fillStyle = "rgba(63,191,127,0.85)";
+        ctx.beginPath(); ctx.arc(e.x * TS + TS / 2, e.y * TS + TS / 2, TS * 0.22, 0, 7); ctx.fill();
+      }
+    }
+
+    // --- guards. §21.12: one cone at a time, sharp edges, fill travels.
+    let focus = null;
+    for (const g of sim.guards) if (!focus || g.sus > focus.sus) focus = g;
+
+    for (const g of sim.guards) {
+      if (g.down) continue;
+      const gx = g.x / U * TS, gy = g.y / U * TS;
+      const showCone = (g === focus);
+      if (showCone) {
+        const spec = g.spec;
+        const a0 = (g.facing - spec.cone / 2) * Math.PI / 180;
+        const a1 = (g.facing + spec.cone / 2) * Math.PI / 180;
+        let far = spec.far;
+        if (sim.laws.glowingDark) far = Math.min(far, 3);
+        const tone = g.state === "alerted" ? "226,83,107"
+          : g.state === "investigating" ? "240,122,60"
+          : g.state === "suspicious" ? "242,180,60" : "230,226,240";
+        ctx.fillStyle = "rgba(" + tone + ",0.16)";
+        ctx.beginPath(); ctx.moveTo(gx, gy);
+        ctx.arc(gx, gy, far * TS, a0, a1); ctx.closePath(); ctx.fill();
+        // the fill travels from the eyes outward, in proportion to suspicion
+        if (g.sus > 0) {
+          ctx.fillStyle = "rgba(" + tone + ",0.34)";
+          ctx.beginPath(); ctx.moveTo(gx, gy);
+          ctx.arc(gx, gy, far * TS * (g.sus / SUS_MAX), a0, a1); ctx.closePath(); ctx.fill();
+        }
+        ctx.strokeStyle = "rgba(" + tone + ",0.6)"; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(gx, gy);
+        ctx.arc(gx, gy, far * TS, a0, a1); ctx.closePath(); ctx.stroke();
+      }
+
+      const body = g.state === "alerted" ? "#E2536B"
+        : g.state === "investigating" ? "#F07A3C"
+        : g.state === "suspicious" ? "#F2B43C" : "#8C7FB8";
+      ctx.fillStyle = body;
+      ctx.beginPath(); ctx.arc(gx, gy, TS * 0.26, 0, 7); ctx.fill();
+      ctx.strokeStyle = "rgba(20,14,40,0.8)"; ctx.lineWidth = 2; ctx.stroke();
+      // facing pip, always drawn even when the cone is not
+      const fa = g.facing * Math.PI / 180;
+      ctx.fillStyle = "#1A1433";
+      ctx.beginPath();
+      ctx.arc(gx + Math.cos(fa) * TS * 0.17, gy + Math.sin(fa) * TS * 0.17, TS * 0.07, 0, 7);
+      ctx.fill();
+    }
+
+    // --- crew
+    sim.crew.forEach((c, i) => {
+      const cx = c.x / U * TS, cy = c.y / U * TS;
+      if (c.down) {
+        ctx.fillStyle = "rgba(255,255,255,0.25)";
+        ctx.beginPath(); ctx.arc(cx, cy, TS * 0.2, 0, 7); ctx.fill();
+        return;
+      }
+      if (sim.selected === i) {
+        ctx.strokeStyle = "#FCFBFF"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(cx, cy, TS * 0.36, 0, 7); ctx.stroke();
+      }
+      ctx.fillStyle = c.colour;
+      ctx.beginPath(); ctx.arc(cx, cy, TS * 0.24, 0, 7); ctx.fill();
+      ctx.strokeStyle = "rgba(20,14,40,0.85)"; ctx.lineWidth = 2; ctx.stroke();
+      if (c.carrying > 0) {
+        ctx.fillStyle = "#F2B43C";
+        ctx.beginPath(); ctx.arc(cx + TS * 0.18, cy - TS * 0.18, TS * 0.1, 0, 7); ctx.fill();
+      }
+      if (c.path && c.path.length) {
+        const last = c.path[c.path.length - 1];
+        ctx.strokeStyle = "rgba(252,251,255,0.28)"; ctx.lineWidth = 1.5;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(cx, cy);
+        ctx.lineTo(last.x * TS + TS / 2, last.y * TS + TS / 2); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    });
+
+    ctx.restore();
+
+    // island rim
+    ctx.strokeStyle = "rgba(138,106,78,0.9)"; ctx.lineWidth = 3;
+    roundRect(ctx, 1.5, 1.5, w - 3, w - 3, 14); ctx.stroke();
+  }
+
+  function roundRect(c, x, y, w, h, r) {
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r);
+    c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r);
+    c.arcTo(x, y, x + w, y, r);
+    c.closePath();
+  }
+
+  function pick(evt) {
+    const rect = canvas.getBoundingClientRect();
+    const px = (evt.clientX - rect.left) / rect.width * (N * TS);
+    const py = (evt.clientY - rect.top) / rect.height * (N * TS);
+    return { x: Math.floor(px / TS), y: Math.floor(py / TS) };
+  }
+
+  return { resize, draw, pick, get TS() { return TS; } };
+}
+
+// ===========================================================================
+// Session record — behaviour, not opinion, wherever possible
+// ===========================================================================
+const REC = {
+  v: 1,
+  started: Date.now(),
+  heists: [],
+  playAgainClicks: 0,
+  survey: {},
+  islandsBuilt: 0,
+  secondBuildUnprompted: false,
+  finished: false,
+};
+
+function saveRec() {
+  try { localStorage.setItem("ruleborn-gate", JSON.stringify(REC)); } catch (e) { /* private mode */ }
+}
+
+// ===========================================================================
+// Screens
+// ===========================================================================
+const $ = s => document.querySelector(s);
+const screens = ["s-intro", "s-brief", "s-stage", "s-result", "s-survey",
+                 "s-build-intro", "s-build", "s-build-result", "s-finish"];
+function show(id) {
+  screens.forEach(s => { const el = document.getElementById(s); if (el) el.hidden = (s !== id); });
+  window.scrollTo(0, 0);
+}
+
+function lawChips(into, keys) {
+  into.innerHTML = "";
+  keys.forEach(k => {
+    const l = LAWS[k];
+    const el = document.createElement("span");
+    el.className = "lawchip";
+    el.style.color = l.colour;
+    el.textContent = l.name;
+    el.title = l.blurb;
+    into.appendChild(el);
+  });
+}
+
+// --------------------------------------------------------------------------
+// Heist screen
+// --------------------------------------------------------------------------
+const board = makeRenderer($("#board"));
+let sim = null, raf = null, landed = false, heistNo = 0, acc = 0, lastT = 0;
+
+function startHeist() {
+  heistNo++;
+  landed = false;
+  sim = createSim(LEVEL, { entry: 0 });
+  sim.crew.forEach(c => { c.x = -999; c.y = -999; });   // not landed yet
+  lawChips($("#hud-laws"), LEVEL.laws);
+  renderCrewBar();
+  $("#btn-sneak").classList.remove("sneaking");
+  $("#hud-ticker").textContent = "Tap a green marker to land.";
+  $("#hud-ticker").className = "ticker";
+  show("s-stage");
+  board.resize();
+  lastT = performance.now(); acc = 0;
+  cancelAnimationFrame(raf);
+  loop();
+}
+
+function loop() {
+  raf = requestAnimationFrame(loop);
+  const now = performance.now();
+  let dt = now - lastT; lastT = now;
+  if (dt > 250) dt = 250;
+  if (landed && sim && !sim.over) {
+    acc += dt;
+    const per = 1000 / TPS;
+    let guard = 0;
+    while (acc >= per && guard++ < 8) { step(sim); acc -= per; }
+    updateHud();
+  }
+  if (sim) board.draw(sim, landed ? {} : { entries: LEVEL.entries });
+  if (sim && sim.over) { endHeist(); return; }
+}
+
+function updateHud() {
+  const secs = Math.max(0, Math.ceil(sim.clock / TPS));
+  const m = Math.floor(secs / 60), s = secs % 60;
+  const clk = $("#hud-clock");
+  clk.textContent = m + ":" + String(s).padStart(2, "0");
+  clk.classList.toggle("hot", secs <= 30);
+  $("#hud-alarm").style.width = Math.round(sim.alarm / 6 * 100) + "%";
+  $("#hud-loot").textContent = sim.loot;
+
+  const last = sim.events[sim.events.length - 1];
+  if (last && last.tick > sim.tick - 3 * TPS) {
+    $("#hud-ticker").textContent = last.text;
+    $("#hud-ticker").className = "ticker " + last.tone;
+  } else if (sim.calling > 0) {
+    $("#hud-ticker").textContent = "Skiff arriving in " + Math.ceil(sim.calling / TPS) + "s — hold the marked tile.";
+    $("#hud-ticker").className = "ticker warn";
+  }
+  renderCrewBar();
+}
+
+let crewEls = [];
+function renderCrewBar() {
+  const bar = $("#hud-crew");
+  if (crewEls.length !== sim.crew.length) {
+    bar.innerHTML = ""; crewEls = [];
+    sim.crew.forEach((c, i) => {
+      const b = document.createElement("button");
+      b.className = "portrait";
+      b.innerHTML = '<span class="dot" style="background:' + c.colour + '"></span>' +
+        '<span>' + c.label + '</span><span class="hp"></span>';
+      b.addEventListener("click", () => {
+        if (sim.crew[i].down) return;
+        sim.selected = (sim.selected === i) ? -1 : i;
+        renderCrewBar();
+      });
+      bar.appendChild(b); crewEls.push(b);
+    });
+  }
+  sim.crew.forEach((c, i) => {
+    const b = crewEls[i];
+    b.classList.toggle("sel", sim.selected === i);
+    b.classList.toggle("down", c.down);
+    b.lastChild.textContent = c.down ? "caught" : (c.carrying > 0 ? c.carrying + " ✦" : "");
+  });
+}
+
+$("#board").addEventListener("click", ev => {
+  if (!sim) return;
+  const t = board.pick(ev);
+  if (!inBounds(t.x, t.y)) return;
+  if (!landed) {
+    const e = LEVEL.entries.find(e => e.x === t.x && e.y === t.y);
+    if (!e) {
+      $("#hud-ticker").textContent = "Land on one of the green markers.";
+      return;
+    }
+    sim.crew.forEach(c => { c.x = e.x * U + U / 2; c.y = e.y * U + U / 2; });
+    landed = true;
+    say(sim, "Landed. The vault is the gold box.", "");
+    lastT = performance.now(); acc = 0;
+    return;
+  }
+  orderMove(sim, t.x, t.y, sim.selected);
+});
+
+$("#btn-sneak").addEventListener("click", () => {
+  if (!sim || sim.over) return;
+  sim.sneak = !sim.sneak;
+  sim.decisions++;
+  $("#btn-sneak").classList.toggle("sneaking", sim.sneak);
+  $("#btn-sneak").textContent = sim.sneak ? "Sneaking" : "Sneak";
+});
+
+$("#btn-out").addEventListener("click", () => {
+  if (!sim || sim.over) return;
+  callSkiff(sim); sim.decisions++;
+});
+
+function endHeist() {
+  cancelAnimationFrame(raf);
+  const secs = Math.round((CLOCK_TICKS - sim.clock) / TPS);
+  REC.heists.push({
+    n: heistNo, outcome: sim.over, loot: sim.banked,
+    seconds: secs, decisions: sim.decisions,
+    caught: sim.crew.filter(c => c.down).length,
+    alarm: sim.alarm, seenTicks: sim.seen,
+  });
+  saveRec();
+
+  const titles = { clean: "Clean", loud: "Loud", partial: "Partial", foiled: "Foiled" };
+  const lines = {
+    clean: "Nobody raised the alarm, and everyone came home.",
+    loud: "The alarm went up, but the crew got out with the haul.",
+    partial: "Some of the crew were caught. They wake up at home, tired.",
+    foiled: "The crew came home with nothing. Nothing was lost but the run.",
+  };
+  const emptyHanded = sim.over === "foiled" && !sim.crew.some(c => c.down);
+  if (emptyHanded) {
+    lines.foiled = "Everyone got home, but the vault is still shut. " +
+      "You have to be inside long enough to crack it.";
+  }
+  $("#res-title").textContent = titles[sim.over] || "Over";
+  $("#res-line").textContent = lines[sim.over] || "";
+  $("#res-eyebrow").textContent = "Heist " + heistNo;
+
+  const st = $("#res-stats");
+  st.innerHTML = "";
+  const rows = [
+    ["Starlight carried out", sim.banked],
+    ["Time taken", secs + "s of 150"],
+    ["Orders you gave", sim.decisions],
+    ["Crew caught", sim.crew.filter(c => c.down).length + " of 3"],
+  ];
+  rows.forEach(([k, v]) => {
+    const d = document.createElement("div");
+    d.className = "stat";
+    d.innerHTML = "<span>" + k + "</span><span class='v'>" + v + "</span>";
+    st.appendChild(d);
+  });
+
+  const acts = $("#res-actions");
+  acts.innerHTML = "";
+  const again = document.createElement("button");
+  again.className = heistNo >= 3 ? "quiet" : "primary";
+  again.textContent = heistNo === 1 ? "Go again" : "One more";
+  again.addEventListener("click", () => {
+    REC.playAgainClicks++; saveRec(); startHeist();
+  });
+  acts.appendChild(again);
+
+  if (heistNo >= 2) {
+    const on = document.createElement("button");
+    on.className = heistNo >= 3 ? "primary" : "quiet";
+    on.textContent = "Stop and answer four questions";
+    on.addEventListener("click", openSurvey);
+    acts.appendChild(on);
+  }
+  show("s-result");
+}
+
+// --------------------------------------------------------------------------
+// Survey
+// --------------------------------------------------------------------------
+const QUESTIONS = [
+  { k: "tense", label: "While the clock was running, I felt tense.",
+    n: 4, ends: ["Not at all", "Very much"] },
+  { k: "pressure", label: "I felt under pressure to get out in time.",
+    n: 4, ends: ["Not at all", "Very much"] },
+  { k: "control", label: "Did that feel like playing, or like watching?",
+    n: 5, ends: ["Watching", "Playing"] },
+  { k: "enjoy", label: "How much did you enjoy it?",
+    n: 10, ends: ["Not at all", "A lot"] },
+];
+
+function openSurvey() {
+  const host = $("#survey-qs");
+  host.innerHTML = "";
+  QUESTIONS.forEach(q => {
+    const wrap = document.createElement("div");
+    wrap.className = "q";
+    const lab = document.createElement("div");
+    lab.className = "label"; lab.textContent = q.label;
+    const sc = document.createElement("div");
+    sc.className = "scale";
+    for (let i = 1; i <= q.n; i++) {
+      const b = document.createElement("button");
+      b.textContent = i;
+      b.addEventListener("click", () => {
+        REC.survey[q.k] = i;
+        [...sc.children].forEach(c => c.classList.remove("on"));
+        b.classList.add("on");
+        saveRec();
+        $("#go-build-intro").disabled = QUESTIONS.some(qq => !REC.survey[qq.k]);
+      });
+      sc.appendChild(b);
+    }
+    const ends = document.createElement("div");
+    ends.className = "ends";
+    ends.innerHTML = "<span>" + q.ends[0] + "</span><span>" + q.ends[1] + "</span>";
+    wrap.append(lab, sc, ends);
+    host.appendChild(wrap);
+  });
+  show("s-survey");
+}
+
+// --------------------------------------------------------------------------
+// Build mode — gate 2
+// --------------------------------------------------------------------------
+const bboard = makeRenderer($("#bboard"));
+let bsim = null, btool = null, bplaced = [], braf = null;
+
+const TOOLS = [
+  { k: "grass",  label: "Tall grass", sub: "hides you",   max: 3, kind: "tile", tile: GRASS },
+  { k: "hedge",  label: "Hedge",      sub: "blocks sight", max: 3, kind: "tile", tile: HEDGE },
+  { k: "lantern",label: "Lantern",    sub: "lights 3",    max: 3, kind: "tile", tile: LANTERN },
+  { k: "guard",  label: "Guard",      sub: "1 only",      max: 1, kind: "guard" },
+  { k: "law",    label: "Rule",       sub: "1 only",      max: 1, kind: "law" },
+];
+const BUILD_BUDGET = 5;   // three terrain, one guard, one rule (§13.1)
+
+function blankLevel() {
+  const tiles = [];
+  for (let y = 0; y < N; y++) {
+    const row = [];
+    for (let x = 0; x < N; x++) row.push(FLOOR);
+    tiles.push(row);
+  }
+  tiles[3][2] = ROCK; tiles[3][7] = ROCK; tiles[6][4] = ROCK;
+  return {
+    seed: 77, laws: [], vault: { x: 5, y: 1 },
+    entries: [{ x: 1, y: 9 }, { x: 8, y: 9 }],
+    tiles, guards: [],
+  };
+}
+
+let blevel = null, bchosenLaw = null, bguardAt = null;
+
+function startBuild(unprompted) {
+  if (unprompted) REC.secondBuildUnprompted = true;
+  blevel = blankLevel();
+  bplaced = []; btool = null; bchosenLaw = null; bguardAt = null;
+  bsim = createSim(blevel, {});
+  bsim.crew.forEach(c => { c.x = -999; c.y = -999; });
+  bsim.guards = [];
+  renderTools();
+  updateBuildHud();
+  show("s-build");
+  bboard.resize();
+  drawBuild();
+  saveRec();
+}
+
+function drawBuild() {
+  bsim.grid = makeGrid(blevel.tiles);
+  bsim.laws = {}; if (bchosenLaw) bsim.laws[bchosenLaw] = true;
+  bsim.guards = bguardAt ? [{
+    type: "scout", label: "Scout", spec: GUARDS.scout,
+    x: bguardAt.x * U + U / 2, y: bguardAt.y * U + U / 2,
+    facing: 0, route: [bguardAt], leg: 0, path: null,
+    sus: 0, state: "unaware", stateTicks: 0, target: null,
+    searchTicks: 0, stunned: 0, speed: 20, hp: 120, down: false, seed: 0,
+  }] : [];
+  bboard.draw(bsim, { entries: blevel.entries });
+}
+
+function renderTools() {
+  const host = $("#build-tools");
+  host.innerHTML = "";
+  TOOLS.forEach(t => {
+    const used = bplaced.filter(p => p.k === t.k).length;
+    const b = document.createElement("button");
+    if (btool === t.k) b.classList.add("on");
+    b.innerHTML = "<span>" + t.label + "</span><span class='left'>" +
+      (t.kind === "tile" ? (t.max - used) + " left" : (used ? "placed" : t.sub)) + "</span>";
+    b.disabled = used >= t.max || bplaced.length >= BUILD_BUDGET;
+    b.addEventListener("click", () => {
+      btool = (btool === t.k) ? null : t.k;
+      renderTools();
+      $("#build-ticker").textContent = btool ? "Now tap the ground."
+        : "Pick a piece, then tap the ground.";
+      if (btool === "law") pickLaw();
+    });
+    host.appendChild(b);
+  });
+}
+
+function pickLaw() {
+  const keys = ["slowRivers", "glowingDark", "bloom"];
+  const host = $("#build-ticker");
+  host.innerHTML = "";
+  keys.forEach(k => {
+    const b = document.createElement("button");
+    b.style.cssText = "margin:2px; padding:6px 10px; min-height:0; font-size:12px; color:" + LAWS[k].colour;
+    b.textContent = LAWS[k].name;
+    b.title = LAWS[k].blurb;
+    b.addEventListener("click", () => {
+      bchosenLaw = k;
+      bplaced.push({ k: "law", law: k });
+      btool = null;
+      host.textContent = LAWS[k].name + " — " + LAWS[k].blurb;
+      renderTools(); updateBuildHud(); drawBuild();
+    });
+    host.appendChild(b);
+  });
+}
+
+$("#bboard").addEventListener("click", ev => {
+  if (!btool || btool === "law") return;
+  const t = bboard.pick(ev);
+  if (!inBounds(t.x, t.y)) return;
+  if (blevel.tiles[t.y][t.x] === ROCK) return;
+  if (t.x === blevel.vault.x && t.y === blevel.vault.y) return;
+  const tool = TOOLS.find(x => x.k === btool);
+  if (tool.kind === "guard") {
+    bguardAt = { x: t.x, y: t.y };
+    bplaced.push({ k: "guard", at: t });
+  } else {
+    blevel.tiles[t.y][t.x] = tool.tile;
+    bplaced.push({ k: btool, at: t });
+  }
+  btool = null;
+  renderTools(); updateBuildHud(); drawBuild();
+  $("#build-ticker").textContent = "Pick a piece, then tap the ground.";
+});
+
+$("#btn-undo").addEventListener("click", () => {
+  const last = bplaced.pop();
+  if (!last) return;
+  if (last.k === "guard") bguardAt = null;
+  else if (last.k === "law") bchosenLaw = null;
+  else blevel.tiles[last.at.y][last.at.x] = FLOOR;
+  renderTools(); updateBuildHud(); drawBuild();
+});
+
+function updateBuildHud() {
+  $("#build-left").textContent = BUILD_BUDGET - bplaced.length;
+  $("#btn-publish").disabled = bplaced.length < BUILD_BUDGET;
+}
+
+$("#btn-publish").addEventListener("click", runRaidOnBuild);
+
+/** A scripted crew raids the island the player built — headless, then reported. */
+function runRaidOnBuild() {
+  REC.islandsBuilt++;
+  const lvl = {
+    seed: 4242,
+    laws: bchosenLaw ? [bchosenLaw] : [],
+    vault: blevel.vault,
+    entries: blevel.entries,
+    tiles: blevel.tiles,
+    guards: bguardAt ? [{ type: "scout", route: [bguardAt, { x: bguardAt.x, y: Math.min(N - 1, bguardAt.y + 2) }] }] : [],
+  };
+  const s = createSim(lvl, { entry: 0 });
+  // A cautious crew: head for the vault, crack it, run for the nearest edge.
+  let phase = "in";
+  for (let i = 0; i < CLOCK_TICKS && !s.over; i++) {
+    if (phase === "in") {
+      const c = s.crew[0], t = tileOf(c);
+      if (!c.path && !(Math.abs(t.x - s.vault.x) + Math.abs(t.y - s.vault.y) <= 1)) {
+        orderMove(s, s.vault.x, s.vault.y + 1, -1);
+      }
+      if (s.vault.open && s.crew.some(c2 => c2.carrying >= 60)) { phase = "out"; callSkiff(s); }
+    }
+    step(s);
+  }
+  if (!s.over) finish(s, s.banked > 0 ? "partial" : "foiled");
+
+  const held = (s.over === "foiled" || s.over === "partial");
+  $("#br-title").textContent = held ? "Your island held" : "They got away with it";
+  $("#br-line").textContent = held
+    ? "The crew did not get clear with the haul. Whatever you put in their way worked."
+    : "The crew reached the vault and got out. That is the common outcome — most raids are meant to pay.";
+  const st = $("#br-stats");
+  st.innerHTML = "";
+  [["Outcome", s.over], ["Starlight they took", s.banked],
+   ["Seconds they needed", Math.round((CLOCK_TICKS - s.clock) / TPS)]]
+    .forEach(([k, v]) => {
+      const d = document.createElement("div"); d.className = "stat";
+      d.innerHTML = "<span>" + k + "</span><span class='v'>" + v + "</span>";
+      st.appendChild(d);
+    });
+  saveRec();
+  show("s-build-result");
+}
+
+// --------------------------------------------------------------------------
+// Wiring
+// --------------------------------------------------------------------------
+$("#go-brief").addEventListener("click", () => {
+  lawChips($("#brief-laws"), LEVEL.laws);
+  const host = $("#brief-laws");
+  LEVEL.laws.forEach(k => {
+    const p = document.createElement("p");
+    p.className = "muted";
+    p.textContent = LAWS[k].name + " — " + LAWS[k].blurb;
+    host.appendChild(p);
+  });
+  show("s-brief");
+});
+$("#go-heist1").addEventListener("click", startHeist);
+$("#go-build-intro").addEventListener("click", () => show("s-build-intro"));
+$("#go-build").addEventListener("click", () => startBuild(false));
+$("#go-build-again").addEventListener("click", () => startBuild(true));
+$("#go-finish").addEventListener("click", finishUp);
+
+function finishUp() {
+  REC.finished = true;
+  REC.minutes = Math.round((Date.now() - REC.started) / 60000);
+  saveRec();
+  const compact = {
+    v: REC.v,
+    heists: REC.heists.map(h => [h.n, h.outcome[0], h.loot, h.seconds, h.decisions, h.caught]),
+    again: REC.playAgainClicks,
+    survey: REC.survey,
+    built: REC.islandsBuilt,
+    second: REC.secondBuildUnprompted ? 1 : 0,
+    mins: REC.minutes,
+  };
+  $("#out-code").value = JSON.stringify(compact);
+  show("s-finish");
+}
+
+$("#btn-copy").addEventListener("click", async () => {
+  const ta = $("#out-code");
+  ta.select();
+  try { await navigator.clipboard.writeText(ta.value); }
+  catch (e) { try { document.execCommand("copy"); } catch (e2) { /* select-and-copy by hand */ } }
+  $("#copy-note").hidden = false;
+});
+
+window.addEventListener("resize", () => {
+  board.resize(); bboard.resize();
+  if (sim && !$("#s-stage").hidden) board.draw(sim, landed ? {} : { entries: LEVEL.entries });
+  if (bsim && !$("#s-build").hidden) drawBuild();
+});
+
+board.resize();
+bboard.resize();
+</script>
