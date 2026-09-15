@@ -247,24 +247,25 @@
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
       register directly (&sect;30.18). 18 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. 12 items
+      what it did &mdash; including where a fix stopped short. 16 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
-      is the pattern the whole register is about, and three came out of building
-      the simulation harnesses &sect;19.27 now depends on and running them.</p>
+      is the pattern the whole register is about; the rest came out of building
+      the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
+      out against the rule sheet &sect;7.3 claims they change.</p>
 
     <div class="summary">
-      <div><span class="n">76</span><span class="k">items tracked</span></div>
-      <div><span class="n">23</span><span class="k">open</span></div>
+      <div><span class="n">80</span><span class="k">items tracked</span></div>
+      <div><span class="n">26</span><span class="k">open</span></div>
       <div><span class="n">18</span><span class="k">fixed in v3.0</span></div>
-      <div><span class="n">13</span><span class="k">done or adopted</span></div>
-      <div><span class="n">19</span><span class="k">blocking the build</span></div>
+      <div><span class="n">14</span><span class="k">done or adopted</span></div>
+      <div><span class="n">22</span><span class="k">blocking the build</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">76</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">21</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">11</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">8</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">19</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">9</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">80</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">22</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">13</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">19</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">9</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button>
   </nav>
 
   <main id="list">
@@ -547,6 +548,19 @@
         <p class="rec"><span class="arrow">&rarr;</span> Three findings on the first full run: F7, F8 and F9. The one that changes a decision is F9, because §13.3 now rests on the generator and nothing states how well it has to hold.</p>
         
       </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done">
+        <header class="item-head">
+          <span class="id">D22</span>
+          <h3>Law effects became a classified table, not prose to be read twice</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§7.3</span><span class="ref">§12.21</span><span class="ref">§7.7</span></div>
+        <p class="body">§7.3 claims laws are parameters and §12.21 makes it a rule, but the 48 law sheets state their effects in prose and nothing maps them onto anything. So the claim could not be checked, and was not.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <code>tools/law_effects.py</code> classifies every law against a twenty-parameter rule sheet and emits <code>content/law_effects.json</code>. It refuses to run if a law names a parameter outside the sheet, or if a law has no classification at all — so a new law in a future season cannot be added without saying what kind of thing it is. The harness weaves the nineteen it can apply, which is how F11 was measured.</p>
+        
+      </article>
       </section>
       <section class="group" id="g-blocking" data-group="blocking">
         <div class="group-head">
@@ -697,6 +711,32 @@
         <p class="rec"><span class="arrow">&rarr;</span> §13.3 should carry the hold-rate band as a stated requirement on the generator, the way §13.2 carries it for designed islands, and the generator should be measured against it before the Workshop is built. The harness does that: <code>python3 -m tools.heist_harness defence</code>. <br><br>Caveat, stated plainly: the generator in the harness is a first sketch — hedges, tall grass, one to three guards, four to eight wards, no laws. A generator that weaves laws would hold better. That is the point: nothing says how well it has to hold, so nothing says when it is finished.</p>
         
       </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F10</span>
+          <h3>Sixteen of forty-eight laws are parameter changes; the rest need an engine feature</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§7.3</span><span class="ref">§12.21</span><span class="ref">§24</span><span class="ref">§26.1</span></div>
+        <p class="body">§7.3 is the architectural claim the whole design rests on — laws change a realm’s rule sheet rather than containing special cases — and v3.0’s §12.21 turns it into a rule: “every tier effect of every law must be expressible as a change to a named parameter”. Written out for all 48 laws against a rule sheet of twenty named parameters:<br><br><code>parameter 16 &nbsp; authored 4 &nbsp; attribute 2 &nbsp; entity 10 &nbsp; event 16</code><br><br><strong>Sixteen are parameter changes and nothing else.</strong> Ten need the simulation to spawn and track an object it otherwise has no reason to know about — braziers, puffballs, afterimages, illusory guards. Sixteen need a periodic or conditional rule: Rewind restores world state from ten seconds ago, which §24.10’s input-log model keeps no snapshots for; Held breath advances time only while a crew member moves, which is not a parameter of the simulation but a different simulation.<br><br>This is not an argument against those laws. It is the engine budget §26.1 does not contain: 32 of them are features, and they were costed as content.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Two things follow. <strong>Tag every law with its kind before authoring resumes</strong> — <code>python3 tools/law_effects.py --write</code> emits the table — so a scope cut can drop the expensive ones rather than the unpopular ones; D6’s proposed cut from 48 laws to 24 is a very different saving depending which 24. And <strong>state the rule sheet</strong>. §7.3 asserts laws are parameters without ever listing the parameters, and a vocabulary that grows to fit each new law is not a vocabulary.</p>
+        
+      </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F11</span>
+          <h3>Weaving the player’s own laws makes a generated defence worse, not better</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§13.3</span><span class="ref">§13.2</span><span class="ref">§7.3</span><span class="ref">§5.5</span></div>
+        <p class="body">v3.0’s §13.3 gives every player a defence generated “from their realm, their laws and their ruleborn”. Of the nineteen laws whose effect a rule sheet can express, <strong>five help the defender</strong> — Glass, Kinship, Thorns, Regrowth, Whispers — and fourteen help the raider or cut both ways. Laws apply to everyone in the realm (§7.3), so that asymmetry is structural rather than accidental.<br><br>Simulated hold rate against a competent crew, by what the generator weaves:<br><br><code>realm &nbsp; 1 &nbsp; 2 &nbsp; 3 &nbsp; 4 &nbsp; 5<br>no laws &nbsp;&nbsp;3% &nbsp;13% &nbsp;27% &nbsp;30% &nbsp;33%<br>any laws &nbsp;&nbsp;0% &nbsp;&nbsp;3% &nbsp;&nbsp;7% &nbsp;&nbsp;7% &nbsp;&nbsp;0%<br>sign-aware &nbsp;7% &nbsp;23% &nbsp;33% &nbsp;47% &nbsp;40%</code><br><br><strong>A generator that weaves the player’s laws naively produces a weaker island than one that weaves none.</strong> Reading the sign of each law recovers it and then some. This is the same shape as D13’s note imbalance: the law pool leans toward the side that is not paying for it.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> §13.3 should say what the generator optimises for, because “generated from their laws” has at least three meanings and two of them are worse than nothing. And §13.2’s 30–45% band should be a stated requirement on the generator, not only on designed islands — F9 asked for that and this is why it matters. <code>python3 -m tools.heist_harness defence</code>.</p>
+        
+      </article>
       </section>
       <section class="group" id="g-design" data-group="design">
         <div class="group-head">
@@ -806,6 +846,19 @@
         <div class="refs"><span class="ref">§19.27</span><span class="ref">§12.6</span><span class="ref">§5.4</span></div>
         <p class="body">§12.6 makes the clock the escape phase’s tension — “the clock turns red for its last 30 seconds” — and §19.27 sets a threshold on it: the last ten seconds should decide the outcome in a quarter of runs. Simulated across four depths and three skill levels, it decides <strong>0%</strong>. A median run takes 45 to 150 seconds against a clock of 150 to 195.<br><br>Near-captures, by contrast, happen in <strong>100%</strong> of runs against a threshold of 50 — so the tension is all in the guards and none in the clock, and a close call is so common it cannot register as one.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Two dials, and they pull opposite ways. Shortening the clock makes it bite; it also makes §12.6’s crossing phase unaffordable at depth. The likelier answer is that the clock is not the pressure and should stop being described as it — the alarm is.</p>
+        
+      </article>
+      <article class="item dsg" data-group="design"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F12</span>
+          <h3>Eight laws need a decision from the owner that a generator has to make</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§13.3</span><span class="ref">§7.7</span><span class="ref">§5.5</span></div>
+        <p class="body">Tilt slopes the realm “toward a side the owner picks”. Current blows “one way, chosen by the owner”. Slow rivers lets “the owner draw streams on the realm’s grid”. Lodestones, Heat bloom and Soul lanterns are placements; Shifting stones is a loop the owner draws; Inward pull assumes a direction that is well defined for a realm with one Heart link and not for one with two.<br><br>Eight of forty-eight laws therefore carry a parameter that is not a number in a table but an act of authorship. That was fine while authorship was the default. <strong>§13.3 made curation the default and authorship the deep end</strong>, so for most islands the generator now makes these choices — and a badly chosen slope or stream turns the defender’s law into the raider’s.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Either the generator gets an explicit rule for each (slope away from the entry, streams across the approach), or these eight laws are marked as ones a generated realm cannot weave. The first is better design and more work; the second is one column in the law table. Deciding nothing means the generator picks arbitrarily, which is the current state.</p>
         
       </article>
       </section>

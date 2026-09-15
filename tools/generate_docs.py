@@ -196,7 +196,8 @@ def v3_response() -> str:
     moved = [k for k, v in V3.items() if v.get("status") != "fixed"]
     new = [i["id"] for i in REGISTER
            if i["id"] in ("C21", "C22", "C23", "C24", "C25", "C26",
-                          "D19", "D20", "D21", "F7", "F8", "F9")]
+                          "D19", "D20", "D21", "D22",
+                          "F7", "F8", "F9", "F10", "F11", "F12")]
 
     def strip(html: str) -> str:
         import re as _re
@@ -215,8 +216,9 @@ def v3_response() -> str:
         f"v3.0 answered the audit directly, in §30.18. Of {len(REGISTER)} items, "
         f"**{len(fixed)} are fixed in the design document itself**, "
         f"{len(moved)} moved without being resolved, and {len(new)} are new. "
-        "Six of the new ones came from reading v3.0 the way v2.3 was read; three "
-        "came from building the harnesses §19.27 now depends on and running them.",
+        "Six came from reading v3.0 the way v2.3 was read. The rest came from "
+        "building the harnesses §19.27 now depends on, and from writing all 48 "
+        "laws out against the rule sheet §7.3 claims they change.",
         "",
         "## Fixed in v3.0",
         "",

@@ -68,7 +68,8 @@ def line_of_sight(island, ax: int, ay: int, bx: int, by: int) -> bool:
     return True
 
 
-def zone(role: str, gx: int, gy: int, facing: int, tx: int, ty: int) -> str | None:
+def zone(role: str, gx: int, gy: int, facing: int, tx: int, ty: int,
+         reach: float = 1.0) -> str | None:
     """Which of a guard's three zones a point falls in, or None.
 
     Outside the cone but inside the peripheral arc, §12.17 gives "weak peripheral
@@ -77,19 +78,24 @@ def zone(role: str, gx: int, gy: int, facing: int, tx: int, ty: int) -> str | No
     rather than detail.
     """
     v = VISION[role]
+    # §7.3: a law scales a parameter. Ranges are squared here, so a multiplier on
+    # distance is its square on the comparison — done once, in integers.
+    scale = 1.0 if reach == 1.0 else reach * reach
+    near, mid, far = (int(v["near"] * scale), int(v["mid"] * scale),
+                      int(v["far"] * scale))
     d2 = dist2(gx, gy, tx, ty)
-    if d2 > max(v["far"], v["mid"]):
+    if d2 > max(far, mid):
         return None
     off = angle_diff(facing, angle_to(gx, gy, tx, ty))
     if off <= v["cone"]:
-        if d2 <= v["near"]:
+        if d2 <= near:
             return "near"
-        if d2 <= v["mid"]:
+        if d2 <= mid:
             return "mid"
-        if v["far"] and d2 <= v["far"]:
+        if far and d2 <= far:
             return "far"
         return None
-    if off <= v["peripheral"] and d2 <= max(v["mid"], v["far"]):
+    if off <= v["peripheral"] and d2 <= max(mid, far):
         return "far"
     return None
 

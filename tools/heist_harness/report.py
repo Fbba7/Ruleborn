@@ -12,6 +12,7 @@ import statistics as st
 
 from .fixed import TPS
 from .island import generate
+from .laws import SIMULATED, Sheet, _helps_defender, weave
 from .policy import POLICIES
 from .sim import Heist
 
@@ -23,15 +24,19 @@ DEPTH_SEPARATION = 35            # percentage points, optimal over careless
 
 
 def run_batch(n: int, links: int, realm_level: int, policy_name: str,
-              seed0: int = 0) -> list:
+              seed0: int = 0, laws: str = "none") -> list:
+    """`laws` is "none", "any" (woven at random) or "defensive" (sign-aware)."""
     cls = POLICIES[policy_name]
     out = []
     for i in range(n):
         seed = seed0 + i
         crossing = [generate(900_000 + seed * 8 + k, realm_level) for k in range(links)]
+        sheet = (Sheet() if laws == "none"
+                 else weave(seed, realm_level, favour_defender=laws == "defensive"))
         policy = cls()
         result = Heist(generate(seed, realm_level), policy,
-                       realm_level=realm_level, crossing=crossing).run()
+                       realm_level=realm_level, crossing=crossing, sheet=sheet).run()
+        result.sheet = sheet
         result.crew_decisions = policy.crew_decisions
         result.member_decisions = policy.member_decisions
         out.append(result)
@@ -96,15 +101,36 @@ def defence_balance(n: int = 40, realm_level: int = 3) -> str:
     lines.append("measures it against a competent crew, since that is the player the")
     lines.append("band is about.")
     lines.append("")
-    lines.append(f"{'realm':>6} {'grid':>7} {'guards':>7} {'wards':>6} {'hold rate':>10}")
+    lines.append("v3.0's \u00a713.3 makes a generated island every player's defence, so")
+    lines.append("what a generator weaves is now a balance question and not a fallback.")
+    lines.append("Three generators are measured: no laws at all, laws picked at random")
+    lines.append("from what the player has, and laws picked for their sign.")
+    lines.append("")
+    lines.append(f"{'realm':>6} {'grid':>7} {'guards':>7} {'wards':>6} "
+                 f"{'no laws':>9} {'any laws':>9} {'defensive':>10}")
     for level in (1, 2, 3, 4, 5):
-        rs = run_batch(n, 1, level, "competent")
         island = generate(0, level)
-        hold = 100 - _pct([r.success for r in rs])
-        flag = "" if 30 <= hold <= 45 else "   <-- outside 13.2's band"
+        holds = []
+        for mode in ("none", "any", "defensive"):
+            rs = run_batch(n, 1, level, "competent", laws=mode)
+            holds.append(100 - _pct([r.success for r in rs]))
+        flags = ["*" if 30 <= h <= 45 else " " for h in holds]
         lines.append(f"{level:>6} {island.width:>3}x{island.height:<3} "
-                     f"{len(island.patrols):>7} {len(island.wards):>6} {hold:>9}%{flag}")
-    return "\n".join(lines)
+                     f"{len(island.patrols):>7} {len(island.wards):>6} "
+                     + "".join(f"{h:>8}%{f}" for h, f in zip(holds, flags))
+                     + ("" if any(f == "*" for f in flags) else ""))
+    lines.append("")
+    lines.append("  * inside \u00a713.2's 30-45% band.")
+    lines.append("")
+    helps = [law for law in SIMULATED if _helps_defender(law)]
+    lines.append(f"  Of the {len(SIMULATED)} laws a rule sheet can express, "
+                 f"<b>{len(helps)} help the defender</b>")
+    lines.append(f"  and {len(SIMULATED) - len(helps)} help the raider or cut both ways: "
+                 + ", ".join(law["name"] for law in helps) + " against the rest.")
+    lines.append("  Laws apply to everyone in the realm (\u00a77.3), so a generator that")
+    lines.append("  weaves the player's laws without reading their sign is choosing")
+    lines.append("  the raider's side about three times in four.")
+    return "\n".join(lines).replace("<b>", "").replace("</b>", "")
 
 
 def attribution(n: int = 50, realm_level: int = 3) -> str:

@@ -1221,6 +1221,100 @@ dict(id="D21", kind="deviation", severity="change", status="done",
          "changes a decision is F9, because \u00a713.3 now rests on the generator "
          "and nothing states how well it has to hold."),
 
+dict(id="F10", kind="finding", severity="blocking", status="open",
+     title="Sixteen of forty-eight laws are parameter changes; the rest need an engine feature",
+     refs=["7.3", "12.21", "24", "26.1"],
+     body="\u00a77.3 is the architectural claim the whole design rests on \u2014 "
+          "laws change a realm\u2019s rule sheet rather than containing special "
+          "cases \u2014 and v3.0\u2019s \u00a712.21 turns it into a rule: "
+          "\u201cevery tier effect of every law must be expressible as a change "
+          "to a named parameter\u201d. Written out for all 48 laws against a "
+          "rule sheet of twenty named parameters:<br><br>"
+          "<code>parameter 16 &nbsp; authored 4 &nbsp; attribute 2 &nbsp; "
+          "entity 10 &nbsp; event 16</code><br><br>"
+          "<strong>Sixteen are parameter changes and nothing else.</strong> Ten "
+          "need the simulation to spawn and track an object it otherwise has no "
+          "reason to know about \u2014 braziers, puffballs, afterimages, illusory "
+          "guards. Sixteen need a periodic or conditional rule: Rewind restores "
+          "world state from ten seconds ago, which \u00a724.10\u2019s input-log "
+          "model keeps no snapshots for; Held breath advances time only while a "
+          "crew member moves, which is not a parameter of the simulation but a "
+          "different simulation.<br><br>This is not an argument against those "
+          "laws. It is the engine budget \u00a726.1 does not contain: 32 of them "
+          "are features, and they were costed as content.",
+     rec="Two things follow. <strong>Tag every law with its kind before "
+         "authoring resumes</strong> \u2014 <code>python3 tools/law_effects.py "
+         "--write</code> emits the table \u2014 so a scope cut can drop the "
+         "expensive ones rather than the unpopular ones; D6\u2019s proposed cut "
+         "from 48 laws to 24 is a very different saving depending which 24. And "
+         "<strong>state the rule sheet</strong>. \u00a77.3 asserts laws are "
+         "parameters without ever listing the parameters, and a vocabulary that "
+         "grows to fit each new law is not a vocabulary."),
+
+dict(id="F11", kind="finding", severity="blocking", status="open",
+     title="Weaving the player\u2019s own laws makes a generated defence worse, not better",
+     refs=["13.3", "13.2", "7.3", "5.5"],
+     body="v3.0\u2019s \u00a713.3 gives every player a defence generated "
+          "\u201cfrom their realm, their laws and their ruleborn\u201d. Of the "
+          "nineteen laws whose effect a rule sheet can express, <strong>five help "
+          "the defender</strong> \u2014 Glass, Kinship, Thorns, Regrowth, "
+          "Whispers \u2014 and fourteen help the raider or cut both ways. Laws "
+          "apply to everyone in the realm (\u00a77.3), so that asymmetry is "
+          "structural rather than accidental.<br><br>Simulated hold rate against "
+          "a competent crew, by what the generator weaves:<br><br>"
+          "<code>realm &nbsp; 1 &nbsp; 2 &nbsp; 3 &nbsp; 4 &nbsp; 5<br>"
+          "no laws &nbsp;&nbsp;3% &nbsp;13% &nbsp;27% &nbsp;30% &nbsp;33%<br>"
+          "any laws &nbsp;&nbsp;0% &nbsp;&nbsp;3% &nbsp;&nbsp;7% &nbsp;&nbsp;7% "
+          "&nbsp;&nbsp;0%<br>"
+          "sign-aware &nbsp;7% &nbsp;23% &nbsp;33% &nbsp;47% &nbsp;40%</code>"
+          "<br><br><strong>A generator that weaves the player\u2019s laws "
+          "naively produces a weaker island than one that weaves none.</strong> "
+          "Reading the sign of each law recovers it and then some. This is the "
+          "same shape as D13\u2019s note imbalance: the law pool leans toward the "
+          "side that is not paying for it.",
+     rec="\u00a713.3 should say what the generator optimises for, because "
+         "\u201cgenerated from their laws\u201d has at least three meanings and "
+         "two of them are worse than nothing. And \u00a713.2\u2019s 30\u201345% "
+         "band should be a stated requirement on the generator, not only on "
+         "designed islands \u2014 F9 asked for that and this is why it matters. "
+         "<code>python3 -m tools.heist_harness defence</code>."),
+
+dict(id="F12", kind="finding", severity="design", status="open",
+     title="Eight laws need a decision from the owner that a generator has to make",
+     refs=["13.3", "7.7", "5.5"],
+     body="Tilt slopes the realm \u201ctoward a side the owner picks\u201d. "
+          "Current blows \u201cone way, chosen by the owner\u201d. Slow rivers "
+          "lets \u201cthe owner draw streams on the realm\u2019s grid\u201d. "
+          "Lodestones, Heat bloom and Soul lanterns are placements; Shifting "
+          "stones is a loop the owner draws; Inward pull assumes a direction that "
+          "is well defined for a realm with one Heart link and not for one with "
+          "two.<br><br>Eight of forty-eight laws therefore carry a parameter that "
+          "is not a number in a table but an act of authorship. That was fine "
+          "while authorship was the default. <strong>\u00a713.3 made curation the "
+          "default and authorship the deep end</strong>, so for most islands the "
+          "generator now makes these choices \u2014 and a badly chosen slope or "
+          "stream turns the defender\u2019s law into the raider\u2019s.",
+     rec="Either the generator gets an explicit rule for each (slope away from "
+         "the entry, streams across the approach), or these eight laws are "
+         "marked as ones a generated realm cannot weave. The first is better "
+         "design and more work; the second is one column in the law table. "
+         "Deciding nothing means the generator picks arbitrarily, which is the "
+         "current state."),
+
+dict(id="D22", kind="deviation", severity="change", status="done",
+     title="Law effects became a classified table, not prose to be read twice",
+     refs=["7.3", "12.21", "7.7"],
+     body="\u00a77.3 claims laws are parameters and \u00a712.21 makes it a rule, "
+          "but the 48 law sheets state their effects in prose and nothing maps "
+          "them onto anything. So the claim could not be checked, and was not.",
+     rec="<code>tools/law_effects.py</code> classifies every law against a "
+         "twenty-parameter rule sheet and emits "
+         "<code>content/law_effects.json</code>. It refuses to run if a law names "
+         "a parameter outside the sheet, or if a law has no classification at all "
+         "\u2014 so a new law in a future season cannot be added without saying "
+         "what kind of thing it is. The harness weaves the nineteen it can apply, "
+         "which is how F11 was measured."),
+
 ]
 
 # ===========================================================================

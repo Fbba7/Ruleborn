@@ -181,11 +181,11 @@
       measured (&sect;13.3, &sect;19.27).</p>
 
     <div class="summary">
-      <div><span class="n">7</span><span class="k">tasks done</span></div>
+      <div><span class="n">8</span><span class="k">tasks done</span></div>
       <div><span class="n">9</span><span class="k">live now</span></div>
       <div><span class="n">6</span><span class="k">waiting on you</span></div>
-      <div><span class="n">53/76</span><span class="k">register items drafted</span></div>
-      <div><span class="n">31</span><span class="k">signed off</span></div>
+      <div><span class="n">54/80</span><span class="k">register items drafted</span></div>
+      <div><span class="n">32</span><span class="k">signed off</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
     </div>
 
@@ -198,7 +198,7 @@
   <nav class="filters" aria-label="Filter the roadmap">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">34</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">9</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">7</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">3</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">6</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">16</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">2</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">8</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">3</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">6</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">15</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">2</span></button>
   </nav>
 
   <main id="list">
@@ -209,7 +209,7 @@
             <h2>Validation without players</h2>
             <p class="sub">§19.27, rewritten in v3.0 — and now the critical path</p>
           </div>
-          <span class="scount">3/6</span>
+          <span class="scount">4/6</span>
         </div>
         <p class="blurb">v3.0 removed both pre-code player tests and replaced them with harnesses, stating the cost plainly: simulation can prove a system is legible, balanced and decision-dense, and cannot prove a game is enjoyable. Each harness below is buildable here, needs no engine, and has a threshold §19.27 sets for itself.</p>
         
@@ -285,19 +285,27 @@
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness defence</code></p>
         
       </article>
-      <article class="task st-blocked" id="T0-6"
-               data-status="blocked" data-owner="claude">
+      <article class="task st-done" id="T0-6"
+               data-status="done" data-owner="claude">
         <header class="task-head">
           <span class="tid">T0.6</span>
           <h3>Give the island generator laws, and measure it against the band</h3>
-          <span class="status st-blocked">Blocked</span>
+          <span class="status st-done">Done</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">F9's caveat is the next task. The generator in the harness has hedges, grass, guards and wards, and no laws — so the 2% is a floor rather than a verdict. Weaving laws is what §13.3 says the real generator does, and it is the only way to find out whether the band is reachable by generation at all.</p>
+        <p class="detail">Done, and it answered F9's caveat the other way. Adding laws does not rescue the hold rate — <strong>weaving the player's own laws at random makes the island weaker than weaving none</strong> (0–7% against 3–33%), because only five of the nineteen laws a rule sheet can express help the defender. A generator that reads the sign of each law recovers it (F11). Writing all 48 laws out against the rule sheet also settled §12.21's rule: 16 are parameter changes, 32 need an engine feature (F10), and 8 need a choice from the owner that a generator now has to make (F12).</p>
         
+        <div class="prog" title="F10 F11 F12 F9">
+          <div class="bar">
+            <span class="fill" style="width:0.0%"></span>
+            <span class="fill settled" style="width:0.0%"></span>
+          </div>
+          <p class="prog-n"><strong>0 of 4</strong> drafted &middot;
+             <strong>0</strong> signed off</p>
+        </div>
         <p class="gate"><span class="glabel">Passes when</span> a generated island at every realm level holds 30–45% against a competent crew (§13.2)</p>
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 tools/law_effects.py</code></p>
         
-        <p class="blockers">After <a href="#T0-4">T0.4</a> The ablation harness</p>
       </article>
       <article class="task st-ready" id="T0-5"
                data-status="ready" data-owner="you">
@@ -335,12 +343,12 @@
         </header>
         <p class="detail">Every contradiction, gap and measured finding, each with the sections involved and a recommended resolution.</p>
         
-        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C21 C22 C23 C24 C25 C26 C3 C4 C5 C6 C7 C8 C9 F1 F2 F3 F4 F5 F6 F7 F8 F9 G1 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8 G9">
+        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C21 C22 C23 C24 C25 C26 C3 C4 C5 C6 C7 C8 C9 F1 F10 F11 F12 F2 F3 F4 F5 F6 F7 F8 F9 G1 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8 G9">
           <div class="bar">
-            <span class="fill" style="width:66.0%"></span>
-            <span class="fill settled" style="width:31.9%"></span>
+            <span class="fill" style="width:62.0%"></span>
+            <span class="fill settled" style="width:30.0%"></span>
           </div>
-          <p class="prog-n"><strong>31 of 47</strong> drafted &middot;
+          <p class="prog-n"><strong>31 of 50</strong> drafted &middot;
              <strong>15</strong> signed off</p>
         </div>
         
@@ -357,12 +365,12 @@
         </header>
         <p class="detail">One spec file per system, each stating the chosen reading once and then listing every other section the choice forces a change to. That last part is what stops the pattern recurring.</p>
         
-        <div class="prog" title="C1 C19 C2 C21 C3 C4 C5 C6 F9 G1 G9">
+        <div class="prog" title="C1 C19 C2 C21 C3 C4 C5 C6 F10 F11 F9 G1 G9">
           <div class="bar">
-            <span class="fill" style="width:63.6%"></span>
-            <span class="fill settled" style="width:45.5%"></span>
+            <span class="fill" style="width:53.8%"></span>
+            <span class="fill settled" style="width:38.5%"></span>
           </div>
-          <p class="prog-n"><strong>7 of 11</strong> drafted &middot;
+          <p class="prog-n"><strong>7 of 13</strong> drafted &middot;
              <strong>5</strong> signed off</p>
         </div>
         

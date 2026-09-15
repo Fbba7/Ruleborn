@@ -1,0 +1,1009 @@
+{
+ "_source": "tools/law_effects.py, classified against §7.3 and §12.21",
+ "_rule_sheet": [
+  "alarm_range",
+  "carry_weight",
+  "climb_levels",
+  "clock_rate",
+  "cone_angle",
+  "crew_speed",
+  "damage",
+  "guard_speed",
+  "health_drain",
+  "health_regen",
+  "hide_behind_walls",
+  "leap_obstacles",
+  "loaded_speed",
+  "noise_radius",
+  "regrow_seconds",
+  "sight_range",
+  "still_is_invisible",
+  "structure_damage",
+  "suspicion_decay",
+  "suspicion_fill"
+ ],
+ "laws": [
+  {
+   "id": "bounce",
+   "name": "Bounce",
+   "school": "Motion",
+   "rank": "Common",
+   "stability_cost": 14,
+   "notes": [
+    "Flow",
+    "Echo"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "A rebound is a collision response, not a number: it needs the simulation to reflect a moving body off a surface.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "half_gravity",
+   "name": "Half gravity",
+   "school": "Motion",
+   "rank": "Common",
+   "stability_cost": 12,
+   "notes": [
+    "Flow"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "leap_obstacles": 1
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "tilt",
+   "name": "Tilt",
+   "school": "Motion",
+   "rank": "Common",
+   "stability_cost": 11,
+   "notes": [
+    "Flow"
+   ],
+   "kinds": [
+    "parameter",
+    "authored"
+   ],
+   "params": {
+    "crew_speed": 1.3
+   },
+   "authored": [
+    "downhill side"
+   ],
+   "note": "The +30/-30 is a parameter; which way the realm slopes is not.",
+   "hardest": "authored",
+   "simulated": true
+  },
+  {
+   "id": "current",
+   "name": "Current",
+   "school": "Motion",
+   "rank": "Uncommon",
+   "stability_cost": 15,
+   "notes": [
+    "Flow"
+   ],
+   "kinds": [
+    "parameter",
+    "authored"
+   ],
+   "params": {
+    "crew_speed": 1.3
+   },
+   "authored": [
+    "wind direction"
+   ],
+   "note": "",
+   "hardest": "authored",
+   "simulated": true
+  },
+  {
+   "id": "heavy_ground",
+   "name": "Heavy ground",
+   "school": "Motion",
+   "rank": "Uncommon",
+   "stability_cost": 16,
+   "notes": [
+    "Weight"
+   ],
+   "kinds": [
+    "parameter",
+    "attribute"
+   ],
+   "params": {
+    "loaded_speed": 0.7
+   },
+   "authored": [],
+   "note": "“Flyers are grounded” reads an attribute no character carries (C26).",
+   "hardest": "attribute",
+   "simulated": false
+  },
+  {
+   "id": "leapfrog",
+   "name": "Leapfrog",
+   "school": "Motion",
+   "rank": "Rare",
+   "stability_cost": 15,
+   "notes": [
+    "Flow",
+    "Glow"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "noise_radius": 1.0,
+    "suspicion_fill": 1.25
+   },
+   "authored": [],
+   "note": "Every third step being a hop is a gait, but its effect is a suspicion multiplier, which the rule sheet has.",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "frictionless",
+   "name": "Frictionless",
+   "school": "Motion",
+   "rank": "Deep",
+   "stability_cost": 20,
+   "notes": [
+    "Flow",
+    "Spark"
+   ],
+   "kinds": [
+    "parameter",
+    "event"
+   ],
+   "params": {
+    "crew_speed": 1.2
+   },
+   "authored": [],
+   "note": "The speed cap is a parameter; “keeps sliding until it hits something” is a physics rule.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "inward_pull",
+   "name": "Inward pull",
+   "school": "Motion",
+   "rank": "Deep",
+   "stability_cost": 22,
+   "notes": [
+    "Weight"
+   ],
+   "kinds": [
+    "parameter",
+    "authored"
+   ],
+   "params": {
+    "crew_speed": 1.25,
+    "loaded_speed": 0.65
+   },
+   "authored": [
+    "which direction is inward"
+   ],
+   "note": "Inward is well defined for a realm with one Heart link and not for a realm with two.",
+   "hardest": "authored",
+   "simulated": true
+  },
+  {
+   "id": "brittle_stone",
+   "name": "Brittle stone",
+   "school": "Matter",
+   "rank": "Common",
+   "stability_cost": 10,
+   "notes": [
+    "Spark"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "structure_damage": 2.0
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "crystal_growth",
+   "name": "Crystal growth",
+   "school": "Matter",
+   "rank": "Common",
+   "stability_cost": 15,
+   "notes": [
+    "Bloom",
+    "Glow"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "regrow_seconds": 8
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "glass",
+   "name": "Glass",
+   "school": "Matter",
+   "rank": "Common",
+   "stability_cost": 12,
+   "notes": [
+    "Glow"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "hide_behind_walls": 0
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "density",
+   "name": "Density",
+   "school": "Matter",
+   "rank": "Uncommon",
+   "stability_cost": 20,
+   "notes": [
+    "Weight"
+   ],
+   "kinds": [
+    "parameter",
+    "attribute"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Reads big and small, which §12.21 declares and no table carries.",
+   "hardest": "attribute",
+   "simulated": false
+  },
+  {
+   "id": "honeycomb",
+   "name": "Honeycomb",
+   "school": "Matter",
+   "rank": "Uncommon",
+   "stability_cost": 17,
+   "notes": [
+    "Weight"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "crew_speed": 0.8,
+    "climb_levels": 1
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "lodestones",
+   "name": "Lodestones",
+   "school": "Matter",
+   "rank": "Rare",
+   "stability_cost": 18,
+   "notes": [
+    "Weight",
+    "Echo"
+   ],
+   "kinds": [
+    "entity",
+    "authored"
+   ],
+   "params": {
+    "loaded_speed": 0.7
+   },
+   "authored": [
+    "two placements"
+   ],
+   "note": "",
+   "hardest": "entity",
+   "simulated": false
+  },
+  {
+   "id": "shifting_stones",
+   "name": "Shifting stones",
+   "school": "Matter",
+   "rank": "Deep",
+   "stability_cost": 22,
+   "notes": [
+    "Veil",
+    "Flow"
+   ],
+   "kinds": [
+    "entity",
+    "authored"
+   ],
+   "params": {},
+   "authored": [
+    "a loop the owner draws"
+   ],
+   "note": "Moving walls change the walkable graph mid-run, which the pathfinder in §12.18 assumes is static.",
+   "hardest": "entity",
+   "simulated": false
+  },
+  {
+   "id": "transmute",
+   "name": "Transmute",
+   "school": "Matter",
+   "rank": "Deep",
+   "stability_cost": 22,
+   "notes": [
+    "Veil"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Converting carried loot every 20 s at a 5% loss is an economy rule inside a heist — the only law that touches §9.6.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "day_and_night",
+   "name": "Day and night",
+   "school": "Time",
+   "rank": "Common",
+   "stability_cost": 17,
+   "notes": [
+    "Echo"
+   ],
+   "kinds": [
+    "event",
+    "parameter"
+   ],
+   "params": {
+    "sight_range": 0.5
+   },
+   "authored": [],
+   "note": "The halving is a parameter; the 30-second switch is a clock.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "slow_rivers",
+   "name": "Slow rivers",
+   "school": "Time",
+   "rank": "Common",
+   "stability_cost": 10,
+   "notes": [
+    "Weight"
+   ],
+   "kinds": [
+    "parameter",
+    "authored"
+   ],
+   "params": {
+    "crew_speed": 0.5
+   },
+   "authored": [
+    "where the streams run"
+   ],
+   "note": "",
+   "hardest": "authored",
+   "simulated": true
+  },
+  {
+   "id": "stillness",
+   "name": "Stillness",
+   "school": "Time",
+   "rank": "Common",
+   "stability_cost": 15,
+   "notes": [
+    "Hush"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "still_is_invisible": 1
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "afterimage",
+   "name": "Afterimage",
+   "school": "Time",
+   "rank": "Uncommon",
+   "stability_cost": 16,
+   "notes": [
+    "Veil",
+    "Glow"
+   ],
+   "kinds": [
+    "entity"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "A decoy that guards path toward: a new object with its own lifetime, and a new reason for a guard to investigate.",
+   "hardest": "entity",
+   "simulated": false
+  },
+  {
+   "id": "delay",
+   "name": "Delay",
+   "school": "Time",
+   "rank": "Uncommon",
+   "stability_cost": 14,
+   "notes": [
+    "Veil"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "A 3-second delay on ward triggering is a parameter the ward system does not currently have.",
+   "hardest": "parameter",
+   "simulated": false
+  },
+  {
+   "id": "haste",
+   "name": "Haste",
+   "school": "Time",
+   "rank": "Rare",
+   "stability_cost": 18,
+   "notes": [
+    "Flow",
+    "Spark"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "crew_speed": 1.25,
+    "guard_speed": 1.25,
+    "clock_rate": 1.25
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "held_breath",
+   "name": "Held breath",
+   "school": "Time",
+   "rank": "Deep",
+   "stability_cost": 25,
+   "notes": [
+    "Hush",
+    "Weight"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Time advancing only while a crew member moves is not a parameter of the simulation; it is a different simulation.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "rewind",
+   "name": "Rewind",
+   "school": "Time",
+   "rank": "Deep",
+   "stability_cost": 26,
+   "notes": [
+    "Echo"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Restoring world state to 10 seconds earlier needs a snapshot history, which §24.10's input-log model does not keep.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "glowing_dark",
+   "name": "Glowing dark",
+   "school": "Energy",
+   "rank": "Common",
+   "stability_cost": 13,
+   "notes": [
+    "Hush"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "sight_range": 0.5
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "heat_bloom",
+   "name": "Heat bloom",
+   "school": "Energy",
+   "rank": "Common",
+   "stability_cost": 17,
+   "notes": [
+    "Spark",
+    "Glow"
+   ],
+   "kinds": [
+    "entity",
+    "authored"
+   ],
+   "params": {
+    "damage": 1.25
+   },
+   "authored": [
+    "brazier placements"
+   ],
+   "note": "",
+   "hardest": "entity",
+   "simulated": false
+  },
+  {
+   "id": "spark_trails",
+   "name": "Spark trails",
+   "school": "Energy",
+   "rank": "Common",
+   "stability_cost": 12,
+   "notes": [
+    "Glow"
+   ],
+   "kinds": [
+    "entity"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "A trail is an object with a lifetime that guards can see.",
+   "hardest": "entity",
+   "simulated": false
+  },
+  {
+   "id": "aurora",
+   "name": "Aurora",
+   "school": "Energy",
+   "rank": "Uncommon",
+   "stability_cost": 18,
+   "notes": [
+    "Glow",
+    "Flow"
+   ],
+   "kinds": [
+    "event",
+    "entity"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Sweeping bands are moving regions that change sight range inside them — a parameter that varies by position and time.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "chain_lightning",
+   "name": "Chain lightning",
+   "school": "Energy",
+   "rank": "Uncommon",
+   "stability_cost": 19,
+   "notes": [
+    "Spark"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {
+    "damage": 0.5
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "static",
+   "name": "Static",
+   "school": "Energy",
+   "rank": "Rare",
+   "stability_cost": 16,
+   "notes": [
+    "Spark"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Charge accumulating with distance travelled is per-character state the rule sheet does not have.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "overcharge",
+   "name": "Overcharge",
+   "school": "Energy",
+   "rank": "Deep",
+   "stability_cost": 21,
+   "notes": [
+    "Spark",
+    "Echo"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "“Every third ability, by anyone” is a realm-wide counter shared between both sides.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "sunburst",
+   "name": "Sunburst",
+   "school": "Energy",
+   "rank": "Deep",
+   "stability_cost": 23,
+   "notes": [
+    "Glow",
+    "Spark"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "A 25-second timer with a shade test.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "bloom",
+   "name": "Bloom",
+   "school": "Life",
+   "rank": "Common",
+   "stability_cost": 11,
+   "notes": [
+    "Bloom"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "regrow_seconds": 10
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "kinship",
+   "name": "Kinship",
+   "school": "Life",
+   "rank": "Common",
+   "stability_cost": 14,
+   "notes": [
+    "Bloom"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "health_regen": 0.015
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "wild_paths",
+   "name": "Wild paths",
+   "school": "Life",
+   "rank": "Common",
+   "stability_cost": 12,
+   "notes": [
+    "Bloom",
+    "Flow"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {
+    "crew_speed": 1.2
+   },
+   "authored": [],
+   "note": "Tiles changing after three crossings is per-tile state that accumulates during the run.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "flock",
+   "name": "Flock",
+   "school": "Life",
+   "rank": "Uncommon",
+   "stability_cost": 16,
+   "notes": [
+    "Bloom",
+    "Glow"
+   ],
+   "kinds": [
+    "entity"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Six wandering bodies that block and bleat.",
+   "hardest": "entity",
+   "simulated": false
+  },
+  {
+   "id": "spores",
+   "name": "Spores",
+   "school": "Life",
+   "rank": "Uncommon",
+   "stability_cost": 18,
+   "notes": [
+    "Hush",
+    "Weight"
+   ],
+   "kinds": [
+    "entity"
+   ],
+   "params": {
+    "crew_speed": 0.5
+   },
+   "authored": [],
+   "note": "Drifting clouds with position.",
+   "hardest": "entity",
+   "simulated": false
+  },
+  {
+   "id": "thorns",
+   "name": "Thorns",
+   "school": "Life",
+   "rank": "Rare",
+   "stability_cost": 15,
+   "notes": [
+    "Bloom",
+    "Weight"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "health_drain": 0.05
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "regrowth",
+   "name": "Regrowth",
+   "school": "Life",
+   "rank": "Deep",
+   "stability_cost": 16,
+   "notes": [
+    "Bloom",
+    "Echo"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "health_regen": 0.02
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "swarm_birth",
+   "name": "Swarm birth",
+   "school": "Life",
+   "rank": "Deep",
+   "stability_cost": 24,
+   "notes": [
+    "Bloom"
+   ],
+   "kinds": [
+    "event",
+    "attribute"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Splitting a guard into two creates characters mid-run. §12.21 fixes the attribute half and not this half.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "haunting",
+   "name": "Haunting",
+   "school": "Spirit",
+   "rank": "Common",
+   "stability_cost": 19,
+   "notes": [
+    "Glow",
+    "Echo"
+   ],
+   "kinds": [
+    "entity",
+    "parameter"
+   ],
+   "params": {
+    "guard_speed": 1.5
+   },
+   "authored": [],
+   "note": "",
+   "hardest": "entity",
+   "simulated": false
+  },
+  {
+   "id": "soul_lanterns",
+   "name": "Soul lanterns",
+   "school": "Spirit",
+   "rank": "Common",
+   "stability_cost": 15,
+   "notes": [
+    "Glow"
+   ],
+   "kinds": [
+    "entity",
+    "authored"
+   ],
+   "params": {
+    "health_drain": 0.01
+   },
+   "authored": [
+    "lantern placements"
+   ],
+   "note": "",
+   "hardest": "entity",
+   "simulated": false
+  },
+  {
+   "id": "whispers",
+   "name": "Whispers",
+   "school": "Spirit",
+   "rank": "Common",
+   "stability_cost": 16,
+   "notes": [
+    "Glow",
+    "Echo"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "alarm_range": 999
+   },
+   "authored": [],
+   "note": "A range parameter set to the whole universe — which is the cleanest law in the set, and the one that changes the most.",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "echoes",
+   "name": "Echoes",
+   "school": "Spirit",
+   "rank": "Uncommon",
+   "stability_cost": 18,
+   "notes": [
+    "Echo"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Returning a knocked-out character at 60%.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "sleepwalk",
+   "name": "Sleepwalk",
+   "school": "Spirit",
+   "rank": "Uncommon",
+   "stability_cost": 17,
+   "notes": [
+    "Hush",
+    "Echo"
+   ],
+   "kinds": [
+    "parameter"
+   ],
+   "params": {
+    "sight_range": 0.0,
+    "noise_radius": 1.0
+   },
+   "authored": [],
+   "note": "Sight off and hearing on is two parameters, both in the sheet.",
+   "hardest": "parameter",
+   "simulated": true
+  },
+  {
+   "id": "soul_swap",
+   "name": "Soul swap",
+   "school": "Spirit",
+   "rank": "Rare",
+   "stability_cost": 20,
+   "notes": [
+    "Veil",
+    "Flow"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "A conditional teleport at the moment of a knockout.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "borrowed_face",
+   "name": "Borrowed Face",
+   "school": "Spirit",
+   "rank": "Deep",
+   "stability_cost": 21,
+   "notes": [
+    "Veil",
+    "Hush"
+   ],
+   "kinds": [
+    "event"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Identity confusion for 10 seconds: a per-character flag with a timer and two cancel conditions.",
+   "hardest": "event",
+   "simulated": false
+  },
+  {
+   "id": "mirror_images",
+   "name": "Mirror images",
+   "school": "Spirit",
+   "rank": "Deep",
+   "stability_cost": 21,
+   "notes": [
+    "Veil"
+   ],
+   "kinds": [
+    "entity"
+   ],
+   "params": {},
+   "authored": [],
+   "note": "Illusory guards that vanish on touch and still raise the alarm — a guard that is not a guard.",
+   "hardest": "entity",
+   "simulated": false
+  }
+ ]
+}

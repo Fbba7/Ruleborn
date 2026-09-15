@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 76 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 12 are new. Six of the new ones came from reading v3.0 the way v2.3 was read; three came from building the harnesses §19.27 now depends on and running them.
+v3.0 answered the audit directly, in §30.18. Of 80 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 16 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 
@@ -67,6 +67,10 @@ v3.0 answered the audit directly, in §30.18. Of 76 items, **18 are fixed in the
 | **F8** | The clock is not a pressure device: runs finish with a third of it unused |
 | **F9** | Generated defences hold 2% at realm level 1, against a target of 30–45% |
 | **D21** | §19.27’s harnesses were built, since they are now the critical path |
+| **F10** | Sixteen of forty-eight laws are parameter changes; the rest need an engine feature |
+| **F11** | Weaving the player’s own laws makes a generated defence worse, not better |
+| **F12** | Eight laws need a decision from the owner that a generator has to make |
+| **D22** | Law effects became a classified table, not prose to be read twice |
 
 ## The shape of it
 

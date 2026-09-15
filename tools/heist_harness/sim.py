@@ -24,6 +24,7 @@ import pathlib
 from dataclasses import dataclass, field
 
 from . import detect
+from .laws import Sheet
 from .detect import (ALERTED, DECAY, INVESTIGATING, STATE_FLOOR_TICKS, SUS_MAX,
                      SUSPICIOUS, VISION, fill_rate, line_of_sight, zone)
 from .fixed import TPS, U, Rng, angle_to, dist2, tiles, turn_toward
@@ -60,6 +61,7 @@ class Member:
     wait_ticks: int = 0
     frozen_ticks: int = 0
     disarm_ticks: int = 0
+    still_ticks: int = 0
     caught: bool = False
     out: bool = False
     path: list = field(default_factory=list)
@@ -171,7 +173,7 @@ class Heist:
     DEFAULT_CREW = ("Scout", "Breaker", "Carrier", "Warden", "Mender")
 
     def __init__(self, island, policy, crew_roles=DEFAULT_CREW,
-                 realm_level: int = 3, crossing=()):
+                 realm_level: int = 3, crossing=(), sheet=None):
         """`crossing` is the outer realms the crew walks through on the way in.
 
         §12.6 splits a heist into Entry, Crossing, Vault and Escape, and gives the
@@ -186,7 +188,11 @@ class Heist:
         self.target = island
         self.policy = policy
         self.realm_level = realm_level
-        self.clock = min(MAX_TICKS, BASE_TICKS + LINK_TICKS * len(self.crossing))
+        #: §7.3: the realm's rule sheet, after its laws are woven. An empty sheet
+        #: is the default, which is the island with no laws on it.
+        self.sheet = sheet or Sheet()
+        self.clock = int(min(MAX_TICKS, BASE_TICKS + LINK_TICKS * len(self.crossing))
+                         / self.sheet.factor("clock_rate"))
         self.vault_health = VAULT_HEALTH_PER_LEVEL * realm_level
         self.vault_open = False
         self.exposed = sum(ROLES[r]["carry"] for r in crew_roles)
@@ -257,7 +263,8 @@ class Heist:
             goal = (wx * U + U // 2, wy * U + U // 2)
             if dist2(g.x, g.y, *goal) < (U // 3) ** 2:
                 g.leg += 1
-        speed = max(1, int(ROLES[g.role]["speed"] * U) // TPS)
+        speed = max(1, int(ROLES[g.role]["speed"] * U * self.sheet.factor("guard_speed"))
+                    // TPS)
         if g.state in ("investigating", "alerted"):
             speed = speed * 5 // 4
         if goal != (g.x, g.y):
@@ -283,15 +290,24 @@ class Heist:
         for m in self.crew:
             if m.out or m.caught:
                 continue
-            z = zone(g.role, g.x, g.y, g.facing, m.x, m.y)
+            z = zone(g.role, g.x, g.y, g.facing, m.x, m.y,
+                     reach=self.sheet.factor("sight_range"))
             if not z:
                 continue
-            if not line_of_sight(self.island, g.x, g.y, m.x, m.y):
+            # §7.7 Glass: "walls become see-through: nobody can hide behind them,
+            # though they still block movement."
+            if not self.sheet.flag("hide_behind_walls", 1):
+                pass
+            elif not line_of_sight(self.island, g.x, g.y, m.x, m.y):
                 continue
             tile = (m.x // U, m.y // U)
             hidden = self.island.hides(*tile) and not m.path and m.down_ticks == 0
+            # §7.7 Stillness: standing still for 1.5 s hides you from guards.
+            if self.sheet.flag("still_is_invisible") and m.still_ticks >= int(1.5 * TPS):
+                hidden = True
             rate = fill_rate(z, m.crouched, running=not m.crouched,
                              hidden=hidden, unlit=False)
+            rate = int(rate * self.sheet.factor("suspicion_fill"))
             if rate:
                 gained = max(gained, rate)
                 g.target = (m.x, m.y)
@@ -330,7 +346,10 @@ class Heist:
         tx, ty = m.path[0]
         goal = (tx * U + U // 2, ty * U + U // 2)
         d2 = dist2(m.x, m.y, *goal)
+        loaded = m.carried > 0
+        factor = self.sheet.factor("loaded_speed" if loaded else "crew_speed")
         step = m.step if m.crouched else m.step * 2
+        step = max(1, int(step * factor))
         if d2 <= step * step:
             m.x, m.y = goal
             m.path.pop(0)
@@ -432,6 +451,8 @@ class Heist:
                 continue
             self.decisions += self.policy.act(self)
             for m in self.crew:
+                moving = bool(m.path) and not m.wait_ticks and not m.frozen_ticks
+                m.still_ticks = 0 if moving else m.still_ticks + 1
                 if m.frozen_ticks:
                     m.frozen_ticks -= 1
                     continue

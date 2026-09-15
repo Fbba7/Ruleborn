@@ -104,8 +104,10 @@ class Policy:
         out = False
         if not island.hides(*tile):
             tx, ty = tile[0] * U + U // 2, tile[1] * U + U // 2
-            out = any(zone(g.role, g.x, g.y, g.facing, tx, ty)
-                      and line_of_sight(island, g.x, g.y, tx, ty)
+            reach = heist.sheet.factor("sight_range")
+            out = any(zone(g.role, g.x, g.y, g.facing, tx, ty, reach=reach)
+                      and (not heist.sheet.flag("hide_behind_walls", 1)
+                           or line_of_sight(island, g.x, g.y, tx, ty))
                       for g in heist.guards)
         self._memo[tile] = out
         return out
@@ -240,7 +242,8 @@ class Policy:
     def _at_vault(self, heist, i: int, m) -> int:
         if not heist.vault_open:
             if heist.tick % WIND_UP_TICKS == 0:
-                heist.vault_health -= ROLE_POWER[m.role] * (2 if m.role == "Breaker" else 1)
+                damage = ROLE_POWER[m.role] * (2 if m.role == "Breaker" else 1)
+                heist.vault_health -= int(damage * heist.sheet.factor("structure_damage"))
                 if heist.vault_health <= 0:
                     heist.vault_open = True
             return self._decide(heist, (i, "vault"), ("crack",), 1)

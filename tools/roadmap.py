@@ -101,17 +101,23 @@ dict(
              register=["F9"],
              gate="hold rate 30\u201345%, no layer above a quarter, design beating "
                   "progression 60/40 (\u00a713.4)"),
-        dict(id="T0.6", owner="claude", status="blocked",
+        dict(id="T0.6", owner="claude", status="done",
              title="Give the island generator laws, and measure it against the band",
-             detail="F9's caveat is the next task. The generator in the harness "
-                    "has hedges, grass, guards and wards, and no laws \u2014 so "
-                    "the 2% is a floor rather than a verdict. Weaving laws is what "
-                    "\u00a713.3 says the real generator does, and it is the only "
-                    "way to find out whether the band is reachable by generation "
-                    "at all.",
+             detail="Done, and it answered F9's caveat the other way. Adding laws "
+                    "does not rescue the hold rate \u2014 <strong>weaving the "
+                    "player's own laws at random makes the island weaker than "
+                    "weaving none</strong> (0\u20137% against 3\u201333%), "
+                    "because only five of the nineteen laws a rule sheet can "
+                    "express help the defender. A generator that reads the sign "
+                    "of each law recovers it (F11). Writing all 48 laws out "
+                    "against the rule sheet also settled \u00a712.21's rule: 16 "
+                    "are parameter changes, 32 need an engine feature (F10), and "
+                    "8 need a choice from the owner that a generator now has to "
+                    "make (F12).",
+             evidence="python3 tools/law_effects.py",
+             register=["F9", "F10", "F11", "F12"],
              gate="a generated island at every realm level holds 30\u201345% "
-                  "against a competent crew (\u00a713.2)",
-             blocked_by=["T0.4"]),
+                  "against a competent crew (\u00a713.2)"),
         dict(id="T0.5", owner="you", status="ready",
              title="Decide whether to send the prototype out anyway",
              detail="Not a disagreement with \u00a719.27, which argues its case "
