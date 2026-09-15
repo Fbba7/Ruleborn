@@ -21,8 +21,9 @@ Nothing should be built until the stage 0–3 work in
 is done. In short:
 
 0. Two gates — does a no-loss heist feel tense, and will players build islands?
-   Re-planned as a throwaway browser prototype, since a link is recruitable and
-   a room of thirty people is not
+   **The prototype that runs both is built and published**
+   ([`prototypes/heist-gate/`](prototypes/heist-gate/README.md)). What remains is
+   sending the link to 15-30 people and reading the codes back
 1. Reconcile 19 confirmed contradictions in the design document
 2. ~~Rebuild the economy model~~ — **done**, `tools/economy_model/`
 3. The determinism spike on real devices — this gates all gameplay code
@@ -34,9 +35,12 @@ is done. In short:
 docs/
   design/     the game design document, as delivered, plus a greppable extract
   analysis/   the deep analysis of that document — start here
+prototypes/
+  heist-gate/  a throwaway browser build that runs both pre-code gates
 tools/
   extract_design_doc.py         HTML -> greppable text
   check_design_consistency.py   machine checks behind the analysis
+  parse_gate_results.py         scores the gates from testers' result codes
   economy_model/                the day-by-day model §24 references but omits
 ```
 
@@ -86,4 +90,14 @@ python3 tools/check_design_consistency.py docs/design/ruleborn-game-design-v2.3.
 # economy model: reports and tests
 python3 -m tools.economy_model
 python3 -m tools.economy_model.test_economy_model
+
+# score the two pre-code gates from testers' result codes
+python3 tools/parse_gate_results.py results.txt
 ```
+
+## The prototype
+
+A playable four-minute test of the two riskiest premises is published at
+**https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E** — see
+[`prototypes/heist-gate/README.md`](prototypes/heist-gate/README.md) for how to
+run it, who to send it to, and how to read the results.

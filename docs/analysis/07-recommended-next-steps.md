@@ -70,6 +70,14 @@ so small samples are adequate. They are not adequate for tuning.
   15–30% → authorship with heavy scaffolding; <15% → pivot to generated islands
   the player curates (§13.3). The pivot is not a lesser game.
 
+### Status: built
+
+The prototype is written and published at
+**https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E**
+(`prototypes/heist-gate/`), with `tools/parse_gate_results.py` to score the
+codes testers send back against the thresholds above. What remains is
+recruitment: 15-30 sessions for gate 1, 15-20 completed builds for gate 2.
+
 ### What this changes about the order of work
 
 The browser prototype moves onto the critical path, ahead of the determinism
