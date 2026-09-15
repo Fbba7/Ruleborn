@@ -232,17 +232,17 @@
       from it.</p>
 
     <div class="summary">
-      <div><span class="n">58</span><span class="k">items tracked</span></div>
+      <div><span class="n">62</span><span class="k">items tracked</span></div>
       <div><span class="n">24</span><span class="k">open</span></div>
       <div><span class="n">10</span><span class="k">done or adopted</span></div>
-      <div><span class="n">12</span><span class="k">blocking the build</span></div>
+      <div><span class="n">14</span><span class="k">blocking the build</span></div>
       <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">58</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">15</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">9</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">3</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">15</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">62</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">17</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">9</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">5</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">15</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">8</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button>
   </nav>
 
   <main id="list">
@@ -432,6 +432,30 @@
         <p class="body">§8.5 calls chords “the late-game discovery” needing “three laws in play and a Lab of level 3”. Because 23 of the 48 laws carry two notes, <strong>all twelve chords are reachable with two laws</strong>, several with two commons. Slow rivers + Whispers gives Iron bell for 26 stability — inside a day-2 player's capacity of 51.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Require three distinct laws. It is a one-line rule change and it preserves the stated design intent; the alternatives are to reposition chords as a mid-game discovery, or to reduce two-note laws (which also helps D13).</p>
       </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="proposed">
+        <header class="item-head">
+          <span class="id">D16</span>
+          <h3>The Vault’s load rate is cut fivefold, from 150 a second to 30</h3>
+          <span class="kind">change</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§12.6</span><span class="ref">§11.1</span><span class="ref">§9.4</span></div>
+        <p class="body">§12.6’s 150-loot-a-second is a published number and this changes it to 30 for Carriers and 8 for everyone else, with every role able to load rather than Carriers only. The reason is F5: at 150 a second the phase the document calls its central decision is two seconds long and has one option.<br><br>The replacement rate is not a guess. §12.6 sets its own target of <strong>one decision every 8–12 seconds</strong>, and a loading window shorter than one decision cannot contain a decision; 30 a second puts a full crew load at exactly ten. The rate scales with character level alongside Carry (§11.4), so the ten seconds holds for the whole game.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Accepted in <code>docs/design/spec/vault.md</code>, flagged for sign-off because it is a large move on a published figure. The only alternative that preserves the decision is raising carry capacity fivefold, which breaks §9.4’s exposure percentages and §11.1’s role balance instead. Doing neither means deleting the sentence that calls the Vault phase a decision.</p>
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="proposed">
+        <header class="item-head">
+          <span class="id">D17</span>
+          <h3>Ambush damage gains a floor, so the document’s own rule becomes true</h3>
+          <span class="kind">change</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§12.8</span><span class="ref">§11.1</span></div>
+        <p class="body">§12.8’s ambush is triple Power. F4 measures what that delivers: the same section’s claim that two ambush hits drop an equal-level guard is true for three of twenty-five pairings. This adds a floor — an ambush deals triple Power <em>or</em> half the target’s maximum health, whichever is greater — which changes a formula the document states in order to satisfy a rule the document also states.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Where two of the document’s own sentences cannot both hold, the one expressing <em>intent</em> wins over the one expressing a coefficient: “two ambush hits knock out a guard” is a design statement about how stealth pays off, and “triple damage” is a number chosen to deliver it. Half is the value that makes the intent exactly true; a third would need three ambushers, which a crew of three (§12.5, before Keeper 8) cannot spare, quietly deleting the tactic for early players.</p>
+      </article>
       </section>
       <section class="group" id="g-blocking" data-group="blocking">
         <div class="group-head">
@@ -590,6 +614,30 @@
         <p class="body">§4 and §11.6 build the whole design on characters' time: “raiding more means earning less at home and defending worse”. A heist is 3 minutes and a clean escape rests the crew 45, so a crew of five raiding four times a day is withheld for 16 character-hours out of 744 — <strong>about 2% of production</strong>. With §9.6 returning 1–2%, the raid-versus-build tension is absent from the arithmetic entirely.</p>
         <p class="rec"><span class="arrow">&rarr;</span> The scarcity the design needs already exists in F1 — it is simply not connected to raiding. Make crew membership an assignment that excludes work, the way guarding does, so five of 38 are committed rather than 0.67. The alternative is to lengthen rest substantially, which §12.14's temporary-failure principle argues against. Doing neither means dropping the claim in §4 and §11.6.</p>
       </article>
+      <article class="item dsg" data-group="design"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F4</span>
+          <h3>§12.8’s knockout rule is true for three of twenty-five role pairings</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.8</span><span class="ref">§11.1</span><span class="ref">§11.4</span></div>
+        <p class="body">“Two ambush hits knock out a guard of equal level” is the only statement in the document about how a fight ends. Read with the one cadence the document gives — §12.8’s own 0.8-second wind-up, one hit for damage equal to Power — it holds for <strong>three of twenty-five</strong> role pairings, or five under the most generous reading, and four of those five need a Breaker. A Mender attacking a Warden needs <strong>68 hits, or 54 seconds</strong>, against a guard the ambush stunned for two. The rule requires Power = Health ÷ 4; the Breaker is 1.1× short and the other four roles are 2.5× to 5.4× short.<br><br>This is the same shape as C2 and F1: Power and Health were set for standing fights and home defence, where a Warden <em>should</em> take a long time to drop, and the ambush rule was written against them later without anyone multiplying the numbers together. <code>python3 tools/decision_support.py combat</code>.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Fixed in <code>docs/design/spec/fights.md</code> by giving the ambush a floor: triple Power <em>or</em> half the target’s maximum health, whichever is greater. Two ambushers then drop any equal-level guard in all 25 pairings — the stated rule, true by construction — while the Breaker’s one-shot on a Scout survives because the triple-Power term still wins there. The alternative, re-tuning Power or Health, moves home defence and every guard duel with it.</p>
+      </article>
+      <article class="item dsg" data-group="design"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F5</span>
+          <h3>The Vault’s loading phase lasts two seconds and 46% of crew capacity is unreachable</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§12.6</span><span class="ref">§11.1</span><span class="ref">§9.4</span></div>
+        <p class="body">§12.6 budgets the Vault phase at about 30 seconds and names “when to stop loading” as its central decision. Its own numbers say otherwise. A Carrier holds 300 loot and loads 150 a second, so loading takes <strong>2.0 seconds</strong>; and because §12.6 has only Carriers load, <strong>260 of a five-crew’s 560 units of capacity cannot be filled by any means the document describes</strong>. The thirty seconds is cracking, and cracking is a progress bar with no decision in it.<br><br>The same arithmetic produced the one place the document’s numbers <em>corroborate</em> each other: cracking takes 10–25 seconds across the whole game against a phase length written in a different section from Vault health, which was written in a different section again from role Power. <code>python3 tools/decision_support.py vault</code>.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <code>docs/design/spec/vault.md</code> lets every role load, at a rate scaling with Carry, so the crew fills in ten seconds — one decision by §12.6’s own 8–12 second cadence. That is a <strong>fivefold cut to a published rate</strong> and should be flagged as such at sign-off; the alternative, raising carry capacity fivefold, breaks §9.4’s exposure percentages instead.</p>
+      </article>
       </section>
       <section class="group" id="g-significant" data-group="significant">
         <div class="group-head">
@@ -730,16 +778,16 @@
         <p class="rec"><span class="arrow">&rarr;</span> Either add the attributes (a size or mass band on each creature; flight as a stated property) or rewrite the three laws to key off role, which does exist. §7.3's rule is that laws change a realm's rule sheet and never contain special cases; a law reading a parameter that does not exist is the same failure from the other side. Enforce it in the law data table.</p>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="gap" data-status="open">
+               data-kind="gap" data-status="proposed">
         <header class="item-head">
           <span class="id">G2</span>
           <h3>What happens when a guard catches you</h3>
           <span class="kind">unspecified</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§11.1</span><span class="ref">§13</span></div>
         <p class="body">§12.8 gives ambush rules and a level cap, and §12.17 says an alerted guard converges and is never lethal. But there is no combat resolution: roles have Power (6–40) and Health (130–420) and attacks have a 0.8s wind-up, yet there is no attack rate, damage formula or range. Nor is it stated whether the crew can choose to fight, or what happens to loot carried by someone knocked out mid-run (§13 and §12.6 cover the clock-end and post-capture cases only).</p>
-        
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/fights.md</code>, which like <code>movement.md</code> is largely new design. It adopts the only cadence the document states — one hit per 0.8s for damage equal to Power — and that choice is corroborated rather than assumed: it is the reading under which Vault health, role Power and §12.6's stated phase length agree (see G4). It then answers the three open questions: the crew may fight at any time, but damaging a guard that has not been ambushed sends it straight to suspicion 1000, so an open fight is an alarm with a priced cost rather than a forbidden move; a downed crew member drops its loot on the tile and has ten seconds — one decision by §12.6's cadence — before capture, revivable by an adjacent ally in 3s, or 1.5s for a Mender.<br><br>It also repairs F4 by giving the ambush a floor of half the target’s maximum health, which makes §12.8’s own sentence true for all 25 pairings instead of three.</p>
       </article>
       <article class="item sig" data-group="significant"
                data-kind="gap" data-status="open">
@@ -754,16 +802,16 @@
         
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="gap" data-status="open">
+               data-kind="gap" data-status="proposed">
         <header class="item-head">
           <span class="id">G4</span>
           <h3>The Vault's loading loop has no relationship to the payout</h3>
           <span class="kind">unspecified</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-proposed">Proposed</span>
         </header>
         <div class="refs"><span class="ref">§12.6</span><span class="ref">§9.6</span><span class="ref">§9.4</span></div>
         <p class="body">§12.6 gives Vault health, Breaker double damage, cracking noise and a 150-per-second load rate, and names “when to stop loading” as the Vault phase's core tension. But if §9.6's minted haul is authoritative (C2), loading longer earns nothing — so the phase's central decision currently has no mechanism behind it.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> Decide whether loading time scales the haul, or is purely a time-pressure device. Either is defensible; neither is stated.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/vault.md</code>. It reinstates the clause §9.6 deleted — §9.4’s “capped by the crew’s carrying capacity” — as a fill fraction on the formula in <code>economy.md</code>: what the crew banks is the raid’s full value times the share of its bags it filled. The faucet ceiling is untouched, so the inflation dial stays single, and loading longer earns more. It also prices two decisions the document names and never costed: dropping loot to run faster costs exactly the fraction dropped, and the stop-or-continue breakeven sits at <strong>70% full — §12.9’s Loud multiplier, with everything else cancelling</strong>. Tuning the tension of the game’s emotional peak is then one number that already exists.</p>
       </article>
       <article class="item sig" data-group="significant"
                data-kind="gap" data-status="done">

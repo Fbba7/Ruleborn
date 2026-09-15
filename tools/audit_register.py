@@ -209,6 +209,43 @@ dict(id="D14", kind="deviation", severity="change", status="proposed",
          "chords as a mid-game discovery, or to reduce two-note laws (which also "
          "helps D13)."),
 
+dict(id="D16", kind="deviation", severity="change", status="proposed",
+     title="The Vault\u2019s load rate is cut fivefold, from 150 a second to 30",
+     refs=["12.6", "11.1", "9.4"],
+     body="§12.6\u2019s 150-loot-a-second is a published number and this changes it "
+          "to 30 for Carriers and 8 for everyone else, with every role able to load "
+          "rather than Carriers only. The reason is F5: at 150 a second the phase "
+          "the document calls its central decision is two seconds long and has one "
+          "option.<br><br>The replacement rate is not a guess. §12.6 sets its own "
+          "target of <strong>one decision every 8\u201312 seconds</strong>, and a "
+          "loading window shorter than one decision cannot contain a decision; 30 a "
+          "second puts a full crew load at exactly ten. The rate scales with "
+          "character level alongside Carry (§11.4), so the ten seconds holds for the "
+          "whole game.",
+     rec="Accepted in <code>docs/design/spec/vault.md</code>, flagged for sign-off "
+         "because it is a large move on a published figure. The only alternative "
+         "that preserves the decision is raising carry capacity fivefold, which "
+         "breaks §9.4\u2019s exposure percentages and §11.1\u2019s role balance "
+         "instead. Doing neither means deleting the sentence that calls the Vault "
+         "phase a decision."),
+
+dict(id="D17", kind="deviation", severity="change", status="proposed",
+     title="Ambush damage gains a floor, so the document\u2019s own rule becomes true",
+     refs=["12.8", "11.1"],
+     body="§12.8\u2019s ambush is triple Power. F4 measures what that delivers: the "
+          "same section\u2019s claim that two ambush hits drop an equal-level guard "
+          "is true for three of twenty-five pairings. This adds a floor \u2014 an "
+          "ambush deals triple Power <em>or</em> half the target\u2019s maximum "
+          "health, whichever is greater \u2014 which changes a formula the document "
+          "states in order to satisfy a rule the document also states.",
+     rec="Where two of the document\u2019s own sentences cannot both hold, the one "
+         "expressing <em>intent</em> wins over the one expressing a coefficient: "
+         "\u201ctwo ambush hits knock out a guard\u201d is a design statement about "
+         "how stealth pays off, and \u201ctriple damage\u201d is a number chosen to "
+         "deliver it. Half is the value that makes the intent exactly true; a third "
+         "would need three ambushers, which a crew of three (§12.5, before Keeper 8) "
+         "cannot spare, quietly deleting the tactic for early players."),
+
 # ===========================================================================
 # Blocking — these prevent content authoring or core code
 # ===========================================================================
@@ -372,6 +409,54 @@ dict(id="F3", kind="finding", severity="design", status="open",
          "The alternative is to lengthen rest substantially, which §12.14's "
          "temporary-failure principle argues against. Doing neither means dropping "
          "the claim in §4 and §11.6."),
+
+dict(id="F4", kind="finding", severity="design", status="open",
+     title="§12.8\u2019s knockout rule is true for three of twenty-five role pairings",
+     refs=["12.8", "11.1", "11.4"],
+     body="\u201cTwo ambush hits knock out a guard of equal level\u201d is the only "
+          "statement in the document about how a fight ends. Read with the one "
+          "cadence the document gives \u2014 §12.8\u2019s own 0.8-second wind-up, "
+          "one hit for damage equal to Power \u2014 it holds for <strong>three of "
+          "twenty-five</strong> role pairings, or five under the most generous "
+          "reading, and four of those five need a Breaker. A Mender attacking a "
+          "Warden needs <strong>68 hits, or 54 seconds</strong>, against a guard the "
+          "ambush stunned for two. The rule requires Power = Health \u00f7 4; the "
+          "Breaker is 1.1\u00d7 short and the other four roles are 2.5\u00d7 to "
+          "5.4\u00d7 short.<br><br>This is the same shape as C2 and F1: Power and "
+          "Health were set for standing fights and home defence, where a Warden "
+          "<em>should</em> take a long time to drop, and the ambush rule was written "
+          "against them later without anyone multiplying the numbers together. "
+          "<code>python3 tools/decision_support.py combat</code>.",
+     rec="Fixed in <code>docs/design/spec/fights.md</code> by giving the ambush a "
+         "floor: triple Power <em>or</em> half the target\u2019s maximum health, "
+         "whichever is greater. Two ambushers then drop any equal-level guard in all "
+         "25 pairings \u2014 the stated rule, true by construction \u2014 while the "
+         "Breaker\u2019s one-shot on a Scout survives because the triple-Power term "
+         "still wins there. The alternative, re-tuning Power or Health, moves home "
+         "defence and every guard duel with it."),
+
+dict(id="F5", kind="finding", severity="design", status="open",
+     title="The Vault\u2019s loading phase lasts two seconds and 46% of crew capacity is unreachable",
+     refs=["12.6", "11.1", "9.4"],
+     body="§12.6 budgets the Vault phase at about 30 seconds and names "
+          "\u201cwhen to stop loading\u201d as its central decision. Its own "
+          "numbers say otherwise. A Carrier holds 300 loot and loads 150 a second, "
+          "so loading takes <strong>2.0 seconds</strong>; and because §12.6 has only "
+          "Carriers load, <strong>260 of a five-crew\u2019s 560 units of capacity "
+          "cannot be filled by any means the document describes</strong>. The thirty "
+          "seconds is cracking, and cracking is a progress bar with no decision in "
+          "it.<br><br>The same arithmetic produced the one place the document\u2019s "
+          "numbers <em>corroborate</em> each other: cracking takes 10\u201325 "
+          "seconds across the whole game against a phase length written in a "
+          "different section from Vault health, which was written in a different "
+          "section again from role Power. "
+          "<code>python3 tools/decision_support.py vault</code>.",
+     rec="<code>docs/design/spec/vault.md</code> lets every role load, at a rate "
+         "scaling with Carry, so the crew fills in ten seconds \u2014 one decision "
+         "by §12.6\u2019s own 8\u201312 second cadence. That is a <strong>fivefold "
+         "cut to a published rate</strong> and should be flagged as such at "
+         "sign-off; the alternative, raising carry capacity fivefold, breaks "
+         "§9.4\u2019s exposure percentages instead."),
 
 # ===========================================================================
 # Significant
@@ -559,7 +644,7 @@ dict(id="G12", kind="gap", severity="significant", status="open",
          "contain special cases; a law reading a parameter that does not exist is "
          "the same failure from the other side. Enforce it in the law data table."),
 
-dict(id="G2", kind="gap", severity="significant", status="open",
+dict(id="G2", kind="gap", severity="significant", status="proposed",
      title="What happens when a guard catches you",
      refs=["12.8", "12.17", "11.1", "13"],
      body="§12.8 gives ambush rules and a level cap, and §12.17 says an alerted "
@@ -568,7 +653,21 @@ dict(id="G2", kind="gap", severity="significant", status="open",
           "0.8s wind-up, yet there is no attack rate, damage formula or range. Nor "
           "is it stated whether the crew can choose to fight, or what happens to "
           "loot carried by someone knocked out mid-run (§13 and §12.6 cover the "
-          "clock-end and post-capture cases only)."),
+          "clock-end and post-capture cases only).",
+     rec="<strong>Drafted.</strong> <code>docs/design/spec/fights.md</code>, which "
+         "like <code>movement.md</code> is largely new design. It adopts the only "
+         "cadence the document states \u2014 one hit per 0.8s for damage equal to "
+         "Power \u2014 and that choice is corroborated rather than assumed: it is the "
+         "reading under which Vault health, role Power and §12.6's stated phase "
+         "length agree (see G4). It then answers the three open questions: the crew "
+         "may fight at any time, but damaging a guard that has not been ambushed "
+         "sends it straight to suspicion 1000, so an open fight is an alarm with a "
+         "priced cost rather than a forbidden move; a downed crew member drops its "
+         "loot on the tile and has ten seconds \u2014 one decision by §12.6's "
+         "cadence \u2014 before capture, revivable by an adjacent ally in 3s, or 1.5s "
+         "for a Mender.<br><br>It also repairs F4 by giving the ambush a floor of "
+         "half the target\u2019s maximum health, which makes §12.8\u2019s own "
+         "sentence true for all 25 pairings instead of three."),
 
 dict(id="G3", kind="gap", severity="significant", status="open",
      title="Ward placement, triggering and disarming",
@@ -580,7 +679,7 @@ dict(id="G3", kind="gap", severity="significant", status="open",
           "building table both assume; and ward health, given that Breakers deal "
           "double damage to them."),
 
-dict(id="G4", kind="gap", severity="significant", status="open",
+dict(id="G4", kind="gap", severity="significant", status="proposed",
      title="The Vault's loading loop has no relationship to the payout",
      refs=["12.6", "9.6", "9.4"],
      body="§12.6 gives Vault health, Breaker double damage, cracking noise and a "
@@ -588,8 +687,18 @@ dict(id="G4", kind="gap", severity="significant", status="open",
           "the Vault phase's core tension. But if §9.6's minted haul is "
           "authoritative (C2), loading longer earns nothing — so the phase's "
           "central decision currently has no mechanism behind it.",
-     rec="Decide whether loading time scales the haul, or is purely a time-pressure "
-         "device. Either is defensible; neither is stated."),
+     rec="<strong>Drafted.</strong> <code>docs/design/spec/vault.md</code>. It "
+         "reinstates the clause §9.6 deleted \u2014 §9.4\u2019s "
+         "\u201ccapped by the crew\u2019s carrying capacity\u201d \u2014 as a "
+         "fill fraction on the formula in <code>economy.md</code>: what the crew "
+         "banks is the raid\u2019s full value times the share of its bags it "
+         "filled. The faucet ceiling is untouched, so the inflation dial stays "
+         "single, and loading longer earns more. It also prices two decisions the "
+         "document names and never costed: dropping loot to run faster costs "
+         "exactly the fraction dropped, and the stop-or-continue breakeven sits at "
+         "<strong>70% full \u2014 §12.9\u2019s Loud multiplier, with everything "
+         "else cancelling</strong>. Tuning the tension of the game\u2019s "
+         "emotional peak is then one number that already exists."),
 
 dict(id="G5", kind="gap", severity="minor", status="open",
      title="Law pylons have no count, health or placement rule",

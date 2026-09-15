@@ -143,6 +143,19 @@ built and published, because a link is recruitable and a room is not. See
   the defender and apply symmetrically, defenders have both the least reason and
   the fewest options to weave Hush.
 
+- **Two systems are specified in numbers that were never multiplied together.**
+  §12.8 states that "two ambush hits knock out a guard of equal level"; under its
+  own Power, Health and 0.8-second wind-up that is true for **three of
+  twenty-five** role pairings, and a Mender attacking a Warden needs 68 hits.
+  §12.6 budgets the Vault phase at 30 seconds and calls "when to stop loading"
+  its core decision; at the stated 150 loot a second, loading takes **two
+  seconds**, and because only Carriers load, 260 of a crew's 560 units of
+  capacity cannot be filled at all. Both are drafted in `docs/design/spec/`
+  (`fights.md`, `vault.md`). The same exercise turned up the one place the
+  document's numbers *corroborate* each other: Vault health, role Power and the
+  Vault phase's stated length were written in three different sections and agree
+  to within a few seconds under a single reading of the wind-up.
+
 - **The core trade-off the design is built on does not bind.** §4 and §11.6 say
   the game turns on characters' time — "raiding more means earning less at home
   and defending worse". In the document's own numbers a crew of five raiding four

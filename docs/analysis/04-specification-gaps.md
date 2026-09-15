@@ -39,6 +39,8 @@ as a gate, not a polish item. Pikmin is cited as the model (§2.2) — that refe
 should be made concrete: what, exactly, is the Ruleborn equivalent of throwing a
 Pikmin?
 
+→ Drafted: [`spec/movement.md`](../design/spec/movement.md).
+
 ---
 
 ## G2. What a guard does when it catches you
@@ -57,6 +59,16 @@ hits knock out an equal-level guard) and a level cap. §12.17 says Alerted guard
   says "knocked-out raiders leave behind whatever they were carrying"; §12.6
   says anyone caught at the clock's end "drops what it carries" — but during the
   run is undefined.)
+
+**Measured since.** Reading §12.8's 0.8-second wind-up as the attack interval and
+Power as the damage — the only reading the document supports — its own knockout
+rule ("two ambush hits knock out a guard of equal level") holds for **three of
+twenty-five** role pairings, or five under the most generous reading. A Mender
+attacking a Warden needs 68 hits, or 54 seconds. The rule needs `Power = Health ÷ 4`;
+four of the five roles are two and a half to five times below it.
+`python3 tools/decision_support.py combat`.
+
+→ Drafted: [`spec/fights.md`](../design/spec/fights.md).
 
 ---
 
@@ -89,6 +101,19 @@ with the `grade` term?
 
 This is the decision the document identifies as the Vault phase's core tension
 ("when to stop loading") and it currently has no mechanism behind it.
+
+**Measured since.** The phase is not what it says it is. Cracking a Vault takes
+10–25 seconds across the whole game — which is a striking corroboration, since
+Vault health, role Power and the phase's stated length were written in three
+different sections and agree. Loading takes **two seconds**: one Carrier at
+150 loot/s fills its 300-unit bag, and because only Carriers load, **260 of the
+crew's 560 units of capacity cannot be filled at all**. So the sub-phase the
+document calls a decision has one option, and the thirty seconds it budgets is a
+progress bar. `python3 tools/decision_support.py vault`.
+
+→ Drafted: [`spec/vault.md`](../design/spec/vault.md), which reinstates §9.4's
+carry cap as a fill fraction on `economy.md`'s formula and finds the
+stop-or-continue breakeven sits exactly at §12.9's Loud multiplier.
 
 ---
 
@@ -127,6 +152,8 @@ also a natural first coding task — it needs no engine, no art and no phone, it
 validates the economy independently of the simulation spike, and it is the tool
 that will resolve C2 and C4.
 
+→ Rebuilt: [`tools/economy_model/`](../../tools/economy_model/README.md).
+
 ---
 
 ## G8. Offline and multi-device edge cases that are named but not resolved
@@ -152,6 +179,8 @@ player is told, and — critically — whether the island they build is then
 
 Given that this is the mitigation for the highest-ranked risk in the document, it
 deserves the same treatment §16 gives to the first session.
+
+→ Drafted: [`spec/first-build.md`](../design/spec/first-build.md).
 
 ---
 

@@ -15,6 +15,7 @@ So the same discipline applies here. This checks:
   * every spec file is listed in the spec index, and vice versa
   * every register item that names a spec file names one that exists
   * the published artifact URL is the same everywhere it appears
+  * counts quoted from a tool's output match what that tool prints today
 
 It fails the build. That is the point.
 """
@@ -133,6 +134,52 @@ def check_artifact_urls(files: list[pathlib.Path]) -> None:
                  f"URLs: {sorted(ids)}")
 
 
+def check_tool_output_counts(files: list[pathlib.Path]) -> None:
+    """Counts quoted from a tool's own output must match what it prints today.
+
+    docs/analysis/README.md said "six findings and eight other checks" until the
+    combat and Vault checks were added, at which point it was wrong and nothing
+    noticed. The same trap as C1 and C3, one level up.
+    """
+    import subprocess
+
+    claim = re.compile(
+        r"confirms (\w+) findings and passes (\w+) other", re.I)
+    words = {"six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+             "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14}
+
+    def to_int(word: str) -> int | None:
+        return words.get(word.lower(), int(word) if word.isdigit() else None)
+
+    result = None
+    for path in files:
+        text = path.read_text(encoding="utf-8")
+        for match in claim.finditer(text):
+            if result is None:
+                out = subprocess.run(
+                    [sys.executable, str(ROOT / "tools" / "check_design_consistency.py")],
+                    capture_output=True, text=True, cwd=ROOT,
+                ).stdout
+                result = (out.count("[FAIL]"), out.count("[PASS]"))
+            claimed = (to_int(match.group(1)), to_int(match.group(2)))
+            if claimed != result:
+                fail(f"{rel(path)}: claims {claimed[0]} findings and {claimed[1]} "
+                     f"passing checks; check_design_consistency.py reports "
+                     f"{result[0]} and {result[1]}")
+
+    tests = re.compile(r"economy model's (\w+) tests")
+    for path in files:
+        for match in tests.finditer(path.read_text(encoding="utf-8")):
+            claimed = to_int(match.group(1))
+            actual = sum(
+                1 for line in (ROOT / "tools" / "economy_model"
+                               / "test_economy_model.py").read_text(encoding="utf-8").split("\n")
+                if line.startswith("def test_")
+            )
+            if claimed != actual:
+                fail(f"{rel(path)}: claims {claimed} economy-model tests, there are {actual}")
+
+
 def check_generated_marked() -> None:
     """Generated files must carry their banner, so nobody edits one by hand."""
     for path in GENERATED.glob("*.md"):
@@ -149,6 +196,7 @@ def main() -> int:
     check_register_references()
     check_artifact_urls(files)
     check_generated_marked()
+    check_tool_output_counts(files)
 
     print(f"\nChecked {len(files)} markdown files against a register of "
           f"{len(REGISTER)} items.\n")

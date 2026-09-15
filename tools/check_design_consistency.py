@@ -186,6 +186,66 @@ def main() -> int:
         "the 9.6 formula yields 3-8%, an order of magnitude below the stated target",
     )
 
+    print("\nFights (12.8, 11.1)")
+    # §11.1's level-1 role stats, read straight from the table.
+    role_stats = {
+        "Scout": (12, 120, 60), "Breaker": (40, 180, 60), "Carrier": (8, 160, 300),
+        "Warden": (20, 420, 80), "Mender": (6, 130, 60),
+    }
+    # §12.8: "two ambush hits knock out a guard of equal level", with an ambush at
+    # triple damage and the section's own 0.8s wind-up as the attack interval.
+    holds = sum(
+        1
+        for power, _, _ in role_stats.values()
+        for _, health, _ in role_stats.values()
+        if 2 * 3 * power >= health
+    )
+    check(
+        "two ambush hits knock out an equal-level guard (12.8)",
+        holds == len(role_stats) ** 2,
+        f"true for {holds} of {len(role_stats) ** 2} role pairings; the rule needs "
+        f"Power = Health/4 and no role reaches it",
+    )
+    ratio, slowest, toughest = max(
+        (health / power, a, d)
+        for a, (power, _, _) in role_stats.items()
+        for d, (_, health, _) in role_stats.items()
+    )
+    # One ambush at triple damage, then the remainder, at one hit per 0.8s.
+    seconds = (1 + max(0, -(-(ratio - 3) // 1))) * 0.8
+    check(
+        "no single fight eats a tenth of the 3-minute heist (11.6, 12.6)",
+        seconds <= 18,
+        f"a {slowest} against a {toughest} takes {seconds:.0f}s, which is "
+        f"{100 * seconds / 180:.0f}% of the heist and a third of the 15-25 "
+        f"decisions 12.6 budgets for the whole run",
+    )
+
+    print("\nThe Vault phase (12.6, 11.1)")
+    capacity = sum(carry for _, _, carry in role_stats.values())
+    carrier_carry = role_stats["Carrier"][2]
+    check(
+        "a crew of five can fill its bags (12.6 loads Carriers only)",
+        capacity == carrier_carry,
+        f"{capacity - carrier_carry} of {capacity} units of crew capacity are "
+        f"unreachable: only Carriers load, and only into themselves",
+    )
+    check(
+        "loading lasts long enough to contain a decision (12.6: one per 8-12s)",
+        carrier_carry / 150 >= 8,
+        f"filling a Carrier at 150/s takes {carrier_carry / 150:.1f}s, against a "
+        f"phase budgeted at about 30s whose stated core decision is when to stop",
+    )
+    # The corroboration, stated as a passing check rather than a failure.
+    volley = sum(power * (2 if name == "Breaker" else 1)
+                 for name, (power, _, _) in role_stats.items())
+    crack = (1_500 * 6) / (volley * 1.08 ** 11 / 0.8)
+    check(
+        "cracking a level-6 Vault fits the 30-second phase (12.6)",
+        20 <= crack <= 30,
+        f"{crack:.0f}s at one hit per 0.8s for Power damage",
+    )
+
     print("\nStability arithmetic (5.5)")
     capacity = (30 + 8 * 10) + 7 * (8 + 5 * 10)
     check("Spire 10 + seven Anchor Stones 10 = 516 stability", capacity == 516, str(capacity))

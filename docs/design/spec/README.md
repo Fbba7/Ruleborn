@@ -14,13 +14,22 @@ Every file here is **proposed** until signed off. Nothing is locked (§26.7).
 | [`defence.md`](defence.md) | C5 — what an island may hold | Proposed: one table in §5.2, counting posts |
 | [`movement.md`](movement.md) | G1 — crew movement and control | Proposed, and partly new design |
 | [`first-build.md`](first-build.md) | G9 — the 60-second guided build | Proposed, and partly new design |
+| [`fights.md`](fights.md) | G2 — what happens when a guard catches you | Proposed, and largely new design |
+| [`vault.md`](vault.md) | G4 — cracking, loading, and what a full bag is worth | Proposed |
 | [`corrections.md`](corrections.md) | C7–C18, C20 — the clerical sweep | 13 single edits, one session |
 
 ## How these were written
 
-`movement.md` and `first-build.md` are the exceptions: the document leaves G1 and
-G9 empty, so those files are partly new design rather than reconciliations. Both
-say so at the top.
+`movement.md`, `first-build.md`, `fights.md` and `vault.md` are the exceptions:
+the document leaves G1, G2, G4 and G9 empty, so those files are partly new design
+rather than reconciliations. Each says so at the top.
+
+`fights.md` and `vault.md` are a pair. Neither can be settled alone — what a
+Vault costs to crack is a combat question, and what a fight costs is priced by
+the grade multiplier a fight forfeits. Together they are also the one place where
+the document's numbers *corroborate* each other: Vault health, role Power and the
+Vault phase's stated length were written in three different sections and agree to
+within a few seconds under a single reading of §12.8's wind-up.
 
 The others each take a contradiction the register records, works out which reading is
 authoritative, states that reading **once**, and then lists every other section

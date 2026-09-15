@@ -12,10 +12,15 @@ of taste rather than arithmetic.
   haul      C4 / C2 — what is L in B(L), and what growth rate would meet the
                       document's own stated target for raid income?
   staffing  F1 / Q1 — is character scarcity a feature, and which lever moves?
+  combat    G2      — what the document's own Power and Health numbers imply
+                      about fights, and which of its stated rules they contradict
+  vault     G4      — how long cracking and loading take, and where the
+                      "when to stop loading" decision actually sits
 """
 
 import collections
 import json
+import math
 import pathlib
 import sys
 
@@ -268,7 +273,171 @@ def staffing_report() -> None:
     print("  leaving all three tables as they are: they cannot all be right.")
 
 
-REPORTS = {"rarity": rarity_report, "haul": haul_report, "staffing": staffing_report}
+
+# ---------------------------------------------------------------------------
+# G2 — what a guard does when it catches you
+# ---------------------------------------------------------------------------
+
+#: §12.8 gives a 0.8-second wind-up before every guard attack. It is the only
+#: cadence in the document, so the model reads it as the universal attack
+#: interval: one hit per 0.8 s, for damage equal to the attacker's Power.
+WIND_UP = 0.8
+#: §12.8: the first hit on a guard that has not noticed the crew.
+AMBUSH_MULTIPLIER = 3.0
+#: §11.4: +8% health and power per character level.
+LEVEL_GROWTH = 1.08
+
+
+def hits_to_knock_out(power: float, health: float, ambush_floor: float = 0.0) -> int:
+    """Hits to drop a target, the first one an ambush.
+
+    ``ambush_floor`` is the proposed repair: an ambush hit deals triple Power or
+    this fraction of the target's maximum health, whichever is greater.
+    """
+    first = max(power * AMBUSH_MULTIPLIER, health * ambush_floor)
+    if first >= health:
+        return 1
+    return 1 + math.ceil((health - first) / power)
+
+
+def combat_report() -> None:
+    roles = {r["name"]: r for r in load("roles")}
+    names = list(roles)
+
+    print("G2 — fights, from the document's own numbers\n")
+    print("§11.1 gives Power and Health. §12.8 gives a 0.8-second wind-up, an")
+    print("ambush rule and a level cap, and then states:\n")
+    print('  "Two ambush hits knock out a guard of equal level."\n')
+    print("There is no attack rate and no damage formula, so this report assumes")
+    print("the only cadence the document states — one hit per 0.8 s for damage")
+    print("equal to Power — and asks whether that sentence is true.\n")
+
+    print("Hits to knock out an equal-level guard, the first hit an ambush:\n")
+    print(f"  {'raider':<9}" + "".join(f"{n:>9}" for n in names))
+    for a in names:
+        row = "".join(
+            f"{hits_to_knock_out(roles[a]['power'], roles[d]['health']):>9}" for d in names
+        )
+        print(f"  {a:<9}{row}")
+
+    print("\n  ...and in seconds at one hit per 0.8 s:\n")
+    print(f"  {'raider':<9}" + "".join(f"{n:>9}" for n in names))
+    for a in names:
+        row = "".join(
+            f"{hits_to_knock_out(roles[a]['power'], roles[d]['health']) * WIND_UP:>8.1f}s"
+            for d in names
+        )
+        print(f"  {a:<9}{row}")
+
+    two_hits = [(a, d) for a in names for d in names
+                if hits_to_knock_out(roles[a]["power"], roles[d]["health"]) <= 2]
+    two_ambush = [(a, d) for a in names for d in names
+                  if 2 * AMBUSH_MULTIPLIER * roles[a]["power"] >= roles[d]["health"]]
+
+    print(f"\n  The stated rule holds for {len(two_hits)} of 25 pairings read as")
+    print("  ambush-then-strike, and for "
+          f"{len(two_ambush)} of 25 read as two simultaneous ambushes:")
+    print(f"    {', '.join(a + '->' + d for a, d in two_ambush)}")
+    print("  Four of those five need a Breaker. The ratio the rule needs is")
+    print("  Power = Health / 4; what the roles have is:\n")
+    for n, r in roles.items():
+        ratio = r["power"] / r["health"]
+        print(f"    {n:<9} {r['power']:>3} / {r['health']:>3} = {ratio:.3f}"
+              f"   {0.25 / ratio:>4.1f}x short")
+    print("\n  No role reaches it. The Breaker is close; the other four are two")
+    print("  and a half to five times below, so the sentence is not a rounding")
+    print("  error — Power and Health were set for standing fights and the")
+    print("  ambush rule was written against them without being checked.\n")
+
+    print("  A repair that makes the sentence true by construction: an ambush hit")
+    print("  deals triple Power OR half the target's maximum health, whichever is")
+    print("  greater. Two ambushers then drop any equal-level guard, in all 25")
+    print("  pairings, exactly as §12.8 says. A lone ambusher still has to finish")
+    print("  the job, but is no longer wasting its time — seconds to knock out,")
+    print("  with the old figure alongside:\n")
+    print(f"  {'raider':<9}" + "".join(f"{n:^13}" for n in names))
+    for a in names:
+        cells = []
+        for d in names:
+            was = hits_to_knock_out(roles[a]["power"], roles[d]["health"]) * WIND_UP
+            now = hits_to_knock_out(roles[a]["power"], roles[d]["health"], 0.5) * WIND_UP
+            cells.append(f"{was:>5.1f}->{now:<6.1f}")
+        print(f"  {a:<9}" + "".join(cells))
+    print("\n  Drafted in docs/design/spec/fights.md.")
+
+
+# ---------------------------------------------------------------------------
+# G4 — the Vault and the loading loop
+# ---------------------------------------------------------------------------
+
+VAULT_HEALTH_PER_LEVEL = 1_500        # §12.6
+CRACKING_AWARENESS_PER_5S = 10        # §12.6, percent added to Heart guards
+LOAD_RATE_AS_WRITTEN = 150            # §12.6, loot per second per Carrier
+DECISION_CADENCE = (8, 12)            # §12.6: one decision every 8-12 seconds
+
+
+def crew_volley(roles: dict) -> float:
+    """Damage a full crew of five deals to the Vault in one 0.8-second volley."""
+    return sum(r["power"] * (2 if n == "Breaker" else 1) for n, r in roles.items())
+
+
+def vault_report() -> None:
+    roles = {r["name"]: r for r in load("roles")}
+
+    print("G4 — the Vault phase, which §12.6 budgets at about 30 seconds\n")
+    print("§12.6 names its core decision as \"when to stop loading\". The phase has")
+    print("two parts, and the numbers behind them behave very differently.\n")
+
+    capacity = sum(r["carry"] for r in roles.values())
+    carrier = roles["Carrier"]["carry"]
+    volley = crew_volley(roles)
+    print("Throughout: a reference crew of one of each role, which is the five §12.5")
+    print("allows from Keeper level 16.\n")
+    print(f"Cracking. Vault health is {VAULT_HEALTH_PER_LEVEL:,} per level and Breakers deal")
+    print(f"double damage, so the crew deals {volley:.0f} damage per volley at level 1:\n")
+    print(f"  {'crew':>6} {'vault':>6} {'health':>8} {'damage/s':>10} {'time':>8} "
+          f"{'awareness added':>17}")
+    for char_level, vault_level in ((1, 1), (5, 2), (8, 4), (12, 6), (18, 8), (25, 10)):
+        dps = volley * LEVEL_GROWTH ** (char_level - 1) / WIND_UP
+        health = VAULT_HEALTH_PER_LEVEL * vault_level
+        seconds = health / dps
+        print(f"  {'L' + str(char_level):>6} {'L' + str(vault_level):>6} {health:>8,} "
+              f"{dps:>10.0f} {seconds:>7.1f}s "
+              f"{CRACKING_AWARENESS_PER_5S * seconds / 5:>16.0f}%")
+    print("\n  That lands between 10 and 25 seconds across the whole game, against a")
+    print("  30-second budget the document set independently. Vault health, role")
+    print("  Power and the phase length were written in three different places and")
+    print("  they agree — which is the evidence that one hit per 0.8 s for Power")
+    print("  damage is the model §12.8's wind-up was describing.\n")
+
+    print(f"Loading, as written. The crew holds {capacity} loot ({carrier} of it in the")
+    print(f"Carrier), and §12.6 loads {LOAD_RATE_AS_WRITTEN} a second into each Carrier:\n")
+    print(f"  time to fill the Carrier   {carrier / LOAD_RATE_AS_WRITTEN:.1f}s")
+    print(f"  the other four bags        never — only Carriers load, so "
+          f"{capacity - carrier} of the {capacity}")
+    print("                             units of crew capacity are unreachable\n")
+    print("  So the phase the document calls a decision is two seconds long and")
+    print("  has one option. The 30 seconds is cracking, and cracking has no")
+    print("  decision in it at all.\n")
+
+    print("What the rate would have to be. §12.6 sets its own target: one decision")
+    print(f"every {DECISION_CADENCE[0]}-{DECISION_CADENCE[1]} seconds. A loading window "
+          "one decision long, with every crew")
+    print("member able to load and the rate scaling with carry:\n")
+    proposed = {"Carrier": 30, "other": 8}
+    for n, r in roles.items():
+        rate = proposed["Carrier"] if n == "Carrier" else proposed["other"]
+        print(f"    {n:<9} {r['carry']:>4} units at {rate:>2}/s = {r['carry'] / rate:>5.1f}s")
+    print(f"\n    crew full in {max(r['carry'] / (proposed['Carrier'] if n == 'Carrier' else proposed['other']) for n, r in roles.items()):.0f}s, "
+          "which is one decision by §12.6's own cadence, and")
+    print(f"    puts the whole phase at about "
+          f"{25 + 10}s against a budget of 30.\n")
+    print("  Drafted in docs/design/spec/vault.md, together with what the fill")
+    print("  fraction is worth — which is the part that turns a timer into a bet.")
+
+
+REPORTS = {"rarity": rarity_report, "haul": haul_report,
+           "staffing": staffing_report, "combat": combat_report, "vault": vault_report}
 
 
 def main() -> int:

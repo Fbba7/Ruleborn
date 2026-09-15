@@ -1,11 +1,15 @@
 # Quantitative findings
 
 Arithmetic and content-distribution analysis of design document v2.3. Everything
-here is reproducible with `tools/check_design_consistency.py` and
-`tools/economy_model/` (see its README for how the model was calibrated).
+here is reproducible with `tools/check_design_consistency.py`,
+`tools/decision_support.py` and `tools/economy_model/` (see its README for how
+the model was calibrated).
 
 Findings F1–F3 came out of rebuilding the economy model the document references
-but does not contain, and are the most consequential in this analysis.
+but does not contain, and are the most consequential in this analysis. F4 and F5
+came out of the opposite exercise — taking the document's combat and Vault
+numbers at face value and multiplying them together, which nobody appears to
+have done.
 
 ---
 
@@ -242,6 +246,102 @@ assignment that excludes work, the way guarding does. The second is closer to
 what §11.6 already claims.
 
 Reproduce with `python3 -m tools.economy_model raiding`.
+
+---
+
+## F4. §12.8's knockout rule is true for three of twenty-five role pairings
+
+One sentence in §12.8 is the only statement anywhere about how a fight ends:
+
+> Two ambush hits knock out a guard of equal level.
+
+There is exactly one cadence in the document — §12.8's own 0.8-second wind-up —
+so the reading is one hit per 0.8 s for damage equal to Power (§11.1). Hits to
+drop an equal-level guard, the first an ambush at triple damage:
+
+| raider ↓ / guard → | Scout | Breaker | Carrier | Warden | Mender |
+| --- | --- | --- | --- | --- | --- |
+| **Scout** | 8 | 13 | 12 | 33 | 9 |
+| **Breaker** | 1 | 3 | 2 | 9 | 2 |
+| **Carrier** | 13 | 21 | 18 | 51 | 15 |
+| **Warden** | 4 | 7 | 6 | 19 | 5 |
+| **Mender** | 18 | 28 | 25 | 68 | 20 |
+
+A Mender attacking a Warden needs 68 hits — **54 seconds**, against a guard the
+ambush stunned for two, and 30% of a three-minute heist (§11.6). The rule holds
+for three pairings read as ambush-then-strike and five read as two simultaneous
+ambushes; four of those five need a Breaker.
+
+The cause is a ratio. Two hits drop a target only if `Power = Health ÷ 4`:
+
+| Role | Power / Health | Short by |
+| --- | --- | --- |
+| Scout | 12 / 120 = 0.100 | 2.5× |
+| Breaker | 40 / 180 = 0.222 | 1.1× |
+| Carrier | 8 / 160 = 0.050 | 5.0× |
+| Warden | 20 / 420 = 0.048 | 5.2× |
+| Mender | 6 / 130 = 0.046 | 5.4× |
+
+**This is the same shape as C2 and F1.** Power and Health were set for standing
+fights and home defence, where a Warden *should* take a long time to drop, and
+the ambush rule was written against them later without anyone multiplying the
+numbers together.
+
+**Recommendation:** give the ambush a floor — triple Power *or* half the target's
+maximum health, whichever is greater. Two ambushers then drop any equal-level
+guard in all 25 pairings, which is the stated rule made true by construction,
+while the Breaker's one-shot on a Scout survives because the triple-Power term
+still wins there. Re-tuning Power or Health instead would move home defence and
+every guard duel with it. Drafted in `docs/design/spec/fights.md`.
+
+Reproduce with `python3 tools/decision_support.py combat`.
+
+---
+
+## F5. The Vault's loading phase lasts two seconds, and 46% of crew capacity is unreachable
+
+§12.6 budgets the Vault phase at "about 30 s" and names its decisions as "who
+cracks, who loads, **when to stop loading**". Its own numbers:
+
+| | As written |
+| --- | --- |
+| Crew carry capacity (§11.1, one of each role) | 560 loot |
+| Reachable capacity | **300** — only Carriers load, and only into themselves |
+| Time to fill a Carrier at 150/s | **2.0 s** |
+| Decisions available in those 2 seconds | none |
+
+So 260 of 560 units cannot be filled by any means the document describes, and the
+sub-phase it calls its central decision has one option. The thirty seconds is
+cracking, and cracking is a progress bar.
+
+### The one place the document's numbers corroborate each other
+
+The same arithmetic produced the opposite result for cracking. Vault health is
+1,500 per level (§12.6); the crew deals 126 damage per volley at level 1 (§11.1,
+Breaker doubled) at one volley per 0.8 s (§12.8):
+
+| Crew level | Vault level | Health | Time | Awareness added |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | 1,500 | 9.5 s | 19% |
+| 8 | 4 | 6,000 | 22.2 s | 44% |
+| 12 | 6 | 9,000 | 24.5 s | **49%** |
+| 25 | 10 | 15,000 | 15.0 s | 30% |
+
+Ten to twenty-five seconds across the whole game, against a phase length written
+in a different section from Vault health, which was written in a different
+section again from role Power. **They agree.** That is the strongest available
+evidence that one hit per 0.8 s for Power damage is the combat model §12.8's
+wind-up was written for — and it is why `spec/fights.md` adopts it rather than
+inventing one.
+
+**Recommendation:** let every role load, at a rate scaling with Carry, so the
+crew fills in ten seconds — one decision by §12.6's own 8–12 second cadence — and
+restore §9.4's `capped by the crew's carrying capacity` as a fill fraction on the
+payout formula. Drafted in `docs/design/spec/vault.md`, which also finds that the
+stop-or-continue breakeven sits at exactly 70% full: §12.9's Loud multiplier,
+with everything else cancelling.
+
+Reproduce with `python3 tools/decision_support.py vault`.
 
 ---
 
