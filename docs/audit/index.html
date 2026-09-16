@@ -298,7 +298,7 @@
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
       register directly (&sect;30.18). 26 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. 31 items
+      what it did &mdash; including where a fix stopped short. 32 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
@@ -310,10 +310,10 @@
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">95</span><span class="k">items tracked</span></div>
+      <div><span class="n">96</span><span class="k">items tracked</span></div>
       <div><span class="n">31</span><span class="k">open</span></div>
       <div><span class="n">26</span><span class="k">fixed in v3.0</span></div>
-      <div><span class="n">18</span><span class="k">done or adopted</span></div>
+      <div><span class="n">19</span><span class="k">done or adopted</span></div>
       <div><span class="n">27</span><span class="k">blocking the build</span></div>
       <div><span class="n">58</span><span class="k">edits drafted</span></div>
       <div><span class="n">16 Sep</span><span class="k">last generated</span></div>
@@ -321,8 +321,8 @@
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">95</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">26</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">18</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">23</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">96</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">27</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">18</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">23</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
   </nav>
 
   <main id="list">
@@ -666,6 +666,21 @@
                data-kind="deviation" data-status="done"
                data-edits="no">
         <header class="item-head">
+          <span class="id">D27</span>
+          <h3>The check for D26’s fault found four more, and one of them is the design’s own joke</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§9.5</span><span class="ref">§14.2</span><span class="ref">§5.4</span></div>
+        <p class="body">D26’s recommendation said a check for fields that are computed and never read “would have caught all three” of this session’s harness faults. <strong>That was wrong and is corrected.</strong> D25’s <code>heist.clock</code> was read in four places in <code>sim.py</code>; what was missing was that no <em>policy</em> read it. D24 was a wrong condition, not an unread field. The check catches D26’s class and no more, and its docstring now says so.<br><br>Built anyway, because that class is real, it immediately found four more:<br><br><code>Result.lost_to<br>State.aether<br>State.essence<br>Archetype.lab_experiments_per_day</code><br><br><strong><code>Result.lost_to</code> was the useful one.</strong> It records whether a foiled raid died to §5.4’s clock or to a guard, and nothing read it. Surfaced in the depth report it says the clock finding more sharply than anything else has: <strong>at most 5% of raids fail to the clock</strong>, and for the crews that play best it is 0%. Every other failure is a capture. The evidence for “the clock is not a price” was sitting in a field nobody consumed.<br><br><strong>And the joke.</strong> <code>State.aether</code> and <code>State.essence</code> accumulate every day of every run and are never read, and <code>Archetype.lab_experiments_per_day</code> is defined per archetype and never spent. The economy model has two currency balances with no readers, which is precisely the fault F17 records in the design — two currencies with no sinks. The model reproduced the thing it was built to measure.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <code>lost_to</code> is now a column in the depth report. The three economy fields are recorded in the check’s <code>KNOWN_UNREAD</code> table with a reason each rather than quietly allowed: making the model pay §9.5’s prices is a feature, not a fix, and <strong>F17’s numbers do not depend on it</strong> — they come from §9.3’s published table and the daily log, not from these balances. An entry in that table is a debt that has been looked at.<br><br>The check is a build gate and has a <code>--self-test</code>, on the same principle as <code>check_docs_consistency.py</code>: a checker that cannot demonstrate a failure has never been shown to work.<br><br>What no script catches, stated plainly because two of the three faults are in it: <strong>when the document states a number about behaviour, the test has to run the behaviour.</strong> D24 survived a test asserting <code>Carrier.carry / 30 == 10</code> while §12.19’s claim was about what a crew does.</p>
+        
+        
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done"
+               data-edits="no">
+        <header class="item-head">
           <span class="id">D26</span>
           <h3>Every guard began every raid at the same point of its patrol</h3>
           <span class="kind">change</span>
@@ -673,7 +688,7 @@
         </header>
         <div class="refs"><span class="ref">§12.17</span><span class="ref">§13.2</span><span class="ref">§13.4</span></div>
         <p class="body"><code>Patrol.phase</code> exists, is documented as where a guard is on its loop, and is computed by the island generator for every patrol. <strong>The simulation never read it.</strong> Guards were placed at <code>waypoints[0]</code> on every run, so the defence was always caught at the same moment of its cycle.<br><br>It was found while building a hand-designed island for F16: that island has one layout, so its only source of variation between raids is where the guards are — and there was none. Every run in a batch of 120 was the same run, every coalition value was 0 or 100, and the Shapley shares came back as the signature of a degenerate game: geometry 0.0%, three layers on exactly 33.3%.<br><br>Third of its kind this session, and the family is now clear enough to name: <strong>a field that is computed and never consumed</strong>. D24 was a phase that ended on the wrong condition, D25 a clock nobody read, this a starting position nobody applied. None of them failed a test, because the tests assert bands and a band absorbs a systematic simplification.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> Fixed: a guard now starts at the waypoint its phase implies. It changes the baseline — generated islands vary by layout as well, so it was masked there rather than absent — and the fingerprint test caught the change on the next build and had its digest updated deliberately, which is what that test is for.<br><br>The general guard is harder and worth stating: a check that every field the content and the generator produce is actually read somewhere would have caught all three. <code>Patrol.phase</code>, <code>heist.clock</code> and the Vault phase’s end condition were each one grep away from being obviously unused.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Fixed: a guard now starts at the waypoint its phase implies. It changes the baseline — generated islands vary by layout as well, so it was masked there rather than absent — and the fingerprint test caught the change on the next build and had its digest updated deliberately, which is what that test is for.<br><br>The general guard is now a build gate, <code>tools/check_unread_fields.py</code>, which reports any dataclass field that is assigned and never loaded.<br><br><strong>It catches this fault and not the other two</strong>, and an earlier version of this sentence claimed otherwise. <code>heist.clock</code> was read in four places in <code>sim.py</code> — what was missing was that no <em>policy</em> read it — and D24 was a wrong condition rather than an unread field. That correction, and the four further unread fields the check found on its first run, are D27.</p>
         
         
       </article>

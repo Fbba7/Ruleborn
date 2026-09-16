@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 95 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 31 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
+v3.0 answered the audit directly, in §30.18. Of 96 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 32 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 
@@ -89,6 +89,7 @@ v3.0 answered the audit directly, in §30.18. Of 95 items, **26 are fixed in the
 | **F14** | v3.0’s fill term cuts the number §9.6 calls load-bearing by three fifths, and it was not re-derived |
 | **F20** | The best fixed stopping rule is about 90% full, not §12.19’s 70% |
 | **F21** | Outcomes polarise with skill: the better a crew plays, the more it sweeps or comes home empty |
+| **D27** | The check for D26’s fault found four more, and one of them is the design’s own joke |
 | **D26** | Every guard began every raid at the same point of its patrol |
 | **D25** | No crew in the harness could see §5.4’s clock, so nothing priced in time could be measured at all |
 | **F18** | Withdrawn: §13.2’s populated middle holds for an ordinary crew — it is skilled play that breaks it (F21) |

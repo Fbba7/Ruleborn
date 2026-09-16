@@ -49,7 +49,7 @@ FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
     "D19", "D20", "D21", "D22", "D23",
     "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17",
-    "F18", "F19", "F20", "F21", "D24", "D25", "D26",
+    "F18", "F19", "F20", "F21", "D24", "D25", "D26", "D27",
 })
 
 REGISTER = [
@@ -1557,6 +1557,55 @@ dict(id="F21", kind="finding", severity="blocking", status="open",
          "which is why it is free to do it often. \u00a712.9\u2019s grades "
          "have no band between \u201cpartial\u201d and nothing."
          "<br><br><code>python3 -m tools.heist_harness depth</code>."),
+dict(id="D27", kind="deviation", severity="change", status="done",
+     title="The check for D26\u2019s fault found four more, and one of them is "
+           "the design\u2019s own joke",
+     refs=["9.5", "14.2", "5.4"],
+     body="D26\u2019s recommendation said a check for fields that are computed "
+          "and never read \u201cwould have caught all three\u201d of this "
+          "session\u2019s harness faults. <strong>That was wrong and is "
+          "corrected.</strong> D25\u2019s <code>heist.clock</code> was read in "
+          "four places in <code>sim.py</code>; what was missing was that no "
+          "<em>policy</em> read it. D24 was a wrong condition, not an unread "
+          "field. The check catches D26\u2019s class and no more, and its "
+          "docstring now says so.<br><br>Built anyway, because that class is "
+          "real, it immediately found four more:<br><br><code>"
+          "Result.lost_to<br>"
+          "State.aether<br>"
+          "State.essence<br>"
+          "Archetype.lab_experiments_per_day</code><br><br>"
+          "<strong><code>Result.lost_to</code> was the useful one.</strong> It "
+          "records whether a foiled raid died to \u00a75.4\u2019s clock or to "
+          "a guard, and nothing read it. Surfaced in the depth report it says "
+          "the clock finding more sharply than anything else has: <strong>at "
+          "most 5% of raids fail to the clock</strong>, and for the crews that "
+          "play best it is 0%. Every other failure is a capture. The evidence "
+          "for \u201cthe clock is not a price\u201d was sitting in a field "
+          "nobody consumed.<br><br><strong>And the joke.</strong> "
+          "<code>State.aether</code> and <code>State.essence</code> accumulate "
+          "every day of every run and are never read, and "
+          "<code>Archetype.lab_experiments_per_day</code> is defined per "
+          "archetype and never spent. The economy model has two currency "
+          "balances with no readers, which is precisely the fault F17 records in "
+          "the design \u2014 two currencies with no sinks. The model reproduced "
+          "the thing it was built to measure.",
+     rec="<code>lost_to</code> is now a column in the depth report. The three "
+         "economy fields are recorded in the check\u2019s "
+         "<code>KNOWN_UNREAD</code> table with a reason each rather than "
+         "quietly allowed: making the model pay \u00a79.5\u2019s prices is a "
+         "feature, not a fix, and <strong>F17\u2019s numbers do not depend on "
+         "it</strong> \u2014 they come from \u00a79.3\u2019s published table "
+         "and the daily log, not from these balances. An entry in that table is "
+         "a debt that has been looked at.<br><br>The check is a build gate and "
+         "has a <code>--self-test</code>, on the same principle as "
+         "<code>check_docs_consistency.py</code>: a checker that cannot "
+         "demonstrate a failure has never been shown to work."
+         "<br><br>What no script catches, stated plainly because two of the "
+         "three faults are in it: <strong>when the document states a number "
+         "about behaviour, the test has to run the behaviour.</strong> D24 "
+         "survived a test asserting <code>Carrier.carry / 30 == 10</code> while "
+         "\u00a712.19\u2019s claim was about what a crew does."),
+
 dict(id="D26", kind="deviation", severity="change", status="done",
      title="Every guard began every raid at the same point of its patrol",
      refs=["12.17", "13.2", "13.4"],
@@ -1581,12 +1630,16 @@ dict(id="D26", kind="deviation", severity="change", status="done",
          "changes the baseline \u2014 generated islands vary by layout as well, "
          "so it was masked there rather than absent \u2014 and the fingerprint "
          "test caught the change on the next build and had its digest updated "
-         "deliberately, which is what that test is for.<br><br>The general guard "
-         "is harder and worth stating: a check that every field the content and "
-         "the generator produce is actually read somewhere would have caught all "
-         "three. <code>Patrol.phase</code>, <code>heist.clock</code> and the "
-         "Vault phase\u2019s end condition were each one grep away from being "
-         "obviously unused."),
+         "deliberately, which is what that test is for.<br><br>The general "
+         "guard is now a build gate, <code>tools/check_unread_fields.py</code>, "
+         "which reports any dataclass field that is assigned and never loaded."
+         "<br><br><strong>It catches this fault and not the other two</strong>, "
+         "and an earlier version of this sentence claimed otherwise. "
+         "<code>heist.clock</code> was read in four places in "
+         "<code>sim.py</code> \u2014 what was missing was that no <em>policy</em> "
+         "read it \u2014 and D24 was a wrong condition rather than an unread "
+         "field. That correction, and the four further unread fields the check "
+         "found on its first run, are D27."),
 
 dict(id="D25", kind="deviation", severity="change", status="done",
      title="No crew in the harness could see \u00a75.4\u2019s clock, so nothing "

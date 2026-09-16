@@ -54,7 +54,8 @@ def tension_and_depth(n: int = 50, realm_level: int = 3) -> str:
     lines.append("them: a change of commitment where more than one option was open.")
     lines.append("")
     lines.append(f"{'realms':>7} {'policy':<10} {'runs':>5} {'success':>8} {'decisions':>10} "
-                 f"{'per-member':>11} {'run':>7} {'clock':>6} {'near-cap':>9} {'late':>6}")
+                 f"{'per-member':>11} {'run':>7} {'clock':>6} {'near-cap':>9} "
+                 f"{'late':>6} {'by clock':>9}")
     table = {}
     for links in (0, 1, 2, 3):
         for name in ("careless", "competent", "optimal"):
@@ -68,7 +69,12 @@ def tension_and_depth(n: int = 50, realm_level: int = 3) -> str:
                 f"{st.median(r.ticks / TPS for r in rs):>6.0f}s "
                 f"{rs[0].clock_ticks // TPS:>5}s "
                 f"{_pct([r.near_captures for r in rs]):>8}% "
-                f"{_pct([r.last_ten_decided for r in rs]):>5}%")
+                f"{_pct([r.last_ten_decided for r in rs]):>5}% "
+                # `Result.lost_to` was computed and never read until D27. It is
+                # the sharper half of the "late" column: of the raids that fail,
+                # how many die to §5.4's clock rather than to a guard. A clock
+                # that decides nothing should turn up here as a zero, and does.
+                f"{_pct([r.lost_to == 'clock' for r in rs]):>8}%")
     lines.append("")
 
     # The three verdicts §19.27 asks for.
