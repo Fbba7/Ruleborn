@@ -14,7 +14,8 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from audit_register import DEPENDS, EDITS, FOUND_IN_V3, REGISTER, V3  # noqa: E402
+from audit_register import (DEPENDS, EDITS, FOUND_IN_V3, REGISTER,  # noqa: E402
+                            RESEARCH, V3)
 
 from build_stamp import stamped  # noqa: E402
 
@@ -80,6 +81,135 @@ GROUPS = [
 
 def esc(text: str) -> str:
     return html.escape(text, quote=False)
+
+
+def plain(text: str) -> str:
+    """A title without its markup: two of them carry tags for the body copy."""
+    import html as _html
+    import re as _re
+    return _html.unescape(_re.sub(r"<[^>]+>", "", text))
+
+
+SETTLED = {"done", "adopted", "fixed", "withdrawn"}
+
+
+def _status_of(item: dict) -> str:
+    return V3.get(item["id"], {}).get("status") or item.get("status", "open")
+
+
+def _open(by_id: dict, item_id: str) -> bool:
+    item = by_id.get(item_id)
+    return bool(item) and _status_of(item) not in SETTLED
+
+
+def _unlocks(by_id: dict, item_id: str) -> set:
+    """Everything still open that waits on this, directly or through others."""
+    reverse: dict = {}
+    for item, needs in DEPENDS.items():
+        for need in needs:
+            reverse.setdefault(need, []).append(item)
+    seen, stack = set(), list(reverse.get(item_id, []))
+    while stack:
+        node = stack.pop()
+        if node in seen:
+            continue
+        seen.add(node)
+        stack.extend(reverse.get(node, []))
+    return {n for n in seen if _open(by_id, n)}
+
+
+def start_here_html() -> str:
+    """Where to begin, computed from the dependency graph rather than asserted.
+
+    The register says what is wrong a hundred times over and, without this,
+    nothing about the order. Most items cannot be started until something else
+    is settled, and which ones is not apparent from reading them.
+    """
+    by_id = {i["id"]: i for i in REGISTER}
+    opens = [i for i in REGISTER if _open(by_id, i["id"])]
+    ready = [i for i in opens
+             if not [d for d in DEPENDS.get(i["id"], []) if _open(by_id, d)]]
+    decisions = [i for i in opens if i["kind"] == "decision"]
+
+    def row(item):
+        n = len(_unlocks(by_id, item["id"]))
+        unl = f' <span class="unlocks">unlocks {n}</span>' if n else ""
+        return (f'<li><a href="#{item["id"]}">{item["id"]}</a> '
+                f'{esc(plain(item["title"]))}{unl}</li>')
+
+    dec = "".join(
+        f'<li><a href="#{d["id"]}">{d["id"]}</a> {esc(plain(d["title"]))}'
+        + (f' <span class="unlocks">unlocks {len(_unlocks(by_id, d["id"]))}</span>'
+           if _unlocks(by_id, d["id"]) else "")
+        + (f' <span class="held">held by '
+           + ", ".join(f'<a href="#{b}">{b}</a>'
+                       for b in DEPENDS.get(d["id"], []) if _open(by_id, b))
+           + "</span>"
+           if [b for b in DEPENDS.get(d["id"], []) if _open(by_id, b)] else "")
+        + "</li>"
+        for d in sorted(decisions, key=lambda i: -len(_unlocks(by_id, i["id"]))))
+
+    blocking_first = sorted(
+        ready, key=lambda i: ({"blocking": 0, "design": 1, "significant": 2,
+                               "change": 3, "minor": 4, "choice": 5}[i["severity"]],
+                              -len(_unlocks(by_id, i["id"])), i["id"]))
+
+    research = "".join(
+        f'<li><a href="#{k}">{k}</a> {esc(plain(by_id[k]["title"]))}'
+        f'<span class="q">{RESEARCH[k]}</span></li>'
+        for k in sorted(RESEARCH) if k in by_id)
+
+    return f"""
+  <section class="start">
+    <h2>Where to start</h2>
+    <p class="blurb">Computed from the dependency graph, not asserted: an item is
+      ready when nothing it waits on is still open. Every item below also carries
+      its own dependencies, both directions, in its entry.
+      <strong>{len(opens)} items are open, {len(ready)} of them can be worked
+      now.</strong> &ldquo;Open&rdquo; includes items whose resolution is drafted
+      and waiting for sign-off.</p>
+
+    <details open><summary>The decisions, and what each unlocks</summary>
+      <p class="blurb">These cannot be settled by reading the document more
+        carefully. The number is how much of the register waits on each, through
+        the whole chain rather than directly.</p>
+      <ol class="startlist">{dec}</ol>
+    </details>
+
+    <details><summary>Ready to work now &mdash; {len(ready)} items</summary>
+      <ol class="startlist">{"".join(row(i) for i in blocking_first)}</ol>
+    </details>
+
+    <details><summary>The four chains that carry most of the graph</summary>
+      <div class="chains">
+        <p><strong>The generator.</strong> <a href="#C5">C5</a> and
+          <a href="#Q8">Q8</a> settle how many guard posts a realm has &rarr;
+          <a href="#F22">F22</a> &rarr; <a href="#F11">F11</a> &rarr;
+          <a href="#F9">F9</a> and <a href="#F13">F13</a>. Nothing downstream is
+          fixable by improving the generator alone.</p>
+        <p><strong>The raid payout.</strong> <a href="#C4">C4</a> says what
+          &sect;9.6&rsquo;s level term is &rarr; <a href="#C2">C2</a> picks one
+          model &rarr; <a href="#F14">F14</a> re-derives the 0.46 the progression
+          curve rests on &rarr; <a href="#F19">F19</a> turns it into a band.</p>
+        <p><strong>Law rarity.</strong> <a href="#C8">C8</a> settles the Library,
+          which now decides the page economy &rarr; <a href="#Q3">Q3</a> &rarr;
+          <a href="#C3">C3</a> &rarr; <a href="#C23">C23</a>.</p>
+        <p><strong>Scope.</strong> <a href="#F10">F10</a> classifies the 48 laws
+          by what each needs from the engine &rarr; <a href="#D6">D6</a> &rarr;
+          <a href="#Q5">Q5</a> &rarr; <a href="#G11">G11</a>.</p>
+      </div>
+    </details>
+
+    <details><summary>What cannot be settled from inside this repository
+      &mdash; {len(RESEARCH)} questions</summary>
+      <p class="blurb">Everything else here is arithmetic against the design
+        document or a measurement the simulation harness can make. These are not:
+        each needs a number from the outside world. Each is written to stand
+        alone.</p>
+      <ol class="startlist research">{research}</ol>
+    </details>
+  </section>
+"""
 
 
 def deps_html(item: dict) -> str:
@@ -371,6 +501,49 @@ def build() -> str:
     font-variant-numeric: tabular-nums; opacity: 0.65;
   }}
 
+  /* --- where to start -------------------------------------------------- */
+  .start {{
+    margin: 28px 0 8px; padding: 18px 20px;
+    border: 1px solid var(--rule-strong); border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 5%, transparent);
+  }}
+  .start h2 {{ font-size: 21px; margin: 0 0 6px; }}
+  .start .blurb {{ color: var(--muted); font-size: 14px; max-width: 62ch; margin: 0 0 12px; }}
+  .start details {{ margin-top: 10px; }}
+  .start summary {{
+    cursor: pointer; font-family: "IBM Plex Mono", monospace; font-size: 12px;
+    letter-spacing: 0.04em; color: var(--accent); padding: 5px 0;
+    list-style: none; display: inline-flex; align-items: center; gap: 6px;
+  }}
+  .start summary::-webkit-details-marker {{ display: none; }}
+  .start summary::before {{ content: "\25B8"; font-size: 10px; }}
+  .start details[open] > summary::before {{ content: "\25BE"; }}
+  .start summary:hover {{ text-decoration: underline; }}
+  .startlist {{ margin: 8px 0 0; padding-left: 22px; }}
+  .startlist li {{ margin-bottom: 7px; font-size: 14px; }}
+  .startlist a {{
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 500;
+    color: var(--ground); background: var(--min); padding: 1px 6px;
+    border-radius: 4px; text-decoration: none; margin-right: 4px;
+  }}
+  .unlocks, .held {{
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    white-space: nowrap; margin-left: 4px;
+  }}
+  .unlocks {{ color: var(--cho); }}
+  .held {{ color: var(--blk); }}
+  .held a {{ background: transparent; color: inherit; padding: 0; }}
+  .research .q {{
+    display: block; color: var(--muted); font-size: 13px;
+    margin-top: 3px; max-width: 62ch;
+  }}
+  .chains p {{ font-size: 14px; margin: 0 0 9px; max-width: 64ch; color: var(--ink); }}
+  .chains a {{
+    font-family: "IBM Plex Mono", monospace; font-size: 12px;
+    color: var(--accent); text-decoration: none;
+  }}
+  .chains a:hover {{ text-decoration: underline; }}
+
   /* --- groups and items ---------------------------------------------- */
   .group {{ margin-top: 44px; }}
   .group-head {{ margin-bottom: 20px; }}
@@ -565,7 +738,7 @@ def build() -> str:
       <div><span class="n">{today.split()[0]} {today.split()[1][:3]}</span><span class="k">last generated</span></div>
     </div>
   </header>
-
+{start_here_html()}
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">{len(REGISTER)}</span></button>
     {chips}
