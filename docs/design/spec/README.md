@@ -29,6 +29,7 @@ still unadopted are `wards.md` (§10.3 is untouched), `economy.md`'s production 
 | [`loading.md`](loading.md) | F19, F20, F21 — when to stop loading | Proposed: the break-even is near 90%, and the answer is a rule rather than a number |
 | [`validation.md`](validation.md) | C29 — two phase gates need people the plan removed | Proposed, and one half is the owner's call (T1.10) |
 | [`generator.md`](generator.md) | F9, F11, F13, F22 — what a generated island has to hit | Proposed: two knobs, two targets, and a guard-post floor |
+| [`laws.md`](laws.md) | F10, F23 — the rule sheet, and what a scope cut costs | Proposed: cut by engine cost, and chords do not constrain it |
 
 ## How these were written
 

@@ -298,7 +298,7 @@
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
       register directly (&sect;30.18). 26 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. 35 items
+      what it did &mdash; including where a fix stopped short. 36 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
@@ -310,7 +310,7 @@
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">99</span><span class="k">items tracked</span></div>
+      <div><span class="n">100</span><span class="k">items tracked</span></div>
       <div><span class="n">32</span><span class="k">open</span></div>
       <div><span class="n">26</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">20</span><span class="k">done or adopted</span></div>
@@ -321,8 +321,8 @@
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">99</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">20</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">23</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">33</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">100</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">20</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">24</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">33</span></button>
   </nav>
 
   <main id="list">
@@ -983,7 +983,7 @@
         </header>
         <div class="refs"><span class="ref">§7.3</span><span class="ref">§12.21</span><span class="ref">§24</span><span class="ref">§26.1</span></div>
         <p class="body">§7.3 is the architectural claim the whole design rests on — laws change a realm’s rule sheet rather than containing special cases — and v3.0’s §12.21 turns it into a rule: “every tier effect of every law must be expressible as a change to a named parameter”. Written out for all 48 laws against a rule sheet of twenty named parameters:<br><br><code>parameter 16 &nbsp; authored 4 &nbsp; attribute 2 &nbsp; entity 10 &nbsp; event 16</code><br><br><strong>Sixteen are parameter changes and nothing else.</strong> Ten need the simulation to spawn and track an object it otherwise has no reason to know about — braziers, puffballs, afterimages, illusory guards. Sixteen need a periodic or conditional rule: Rewind restores world state from ten seconds ago, which §24.10’s input-log model keeps no snapshots for; Held breath advances time only while a crew member moves, which is not a parameter of the simulation but a different simulation.<br><br>This is not an argument against those laws. It is the engine budget §26.1 does not contain: 32 of them are features, and they were costed as content.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> Two things follow. <strong>Tag every law with its kind before authoring resumes</strong> — <code>python3 tools/law_effects.py --write</code> emits the table — so a scope cut can drop the expensive ones rather than the unpopular ones; D6’s proposed cut from 48 laws to 24 is a very different saving depending which 24. And <strong>state the rule sheet</strong>. §7.3 asserts laws are parameters without ever listing the parameters, and a vocabulary that grows to fit each new law is not a vocabulary.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Two things follow. <strong>Tag every law with its kind before authoring resumes</strong> — <code>python3 tools/law_effects.py --write</code> emits the table — so a scope cut can drop the expensive ones rather than the unpopular ones; D6’s proposed cut from 48 laws to 24 is a very different saving depending which 24. And <strong>state the rule sheet</strong>. §7.3 asserts laws are parameters without ever listing the parameters, and a vocabulary that grows to fit each new law is not a vocabulary.<br><br><strong>Both drafted</strong>, in <code>docs/design/spec/laws.md</code>: the twenty parameters are listed, and <code>tools/scope_cut.py</code> costs the cut this finding said would depend on <em>which</em> 24. It does. Weighting each kind by the engine work it needs, all 48 cost 84 points; a cost-aware 24 costs <strong>15</strong> and a 24 chosen by rank costs 39. <strong>Choosing which 24 by cost rather than by rank saves 62% of the cut’s remaining engine work for exactly the same amount of content</strong>, keeps all sixteen free laws, and still fills §7.7’s six schools evenly at four each.<br><br>The rank split is where the cost hides: of 18 Commons 9 are pure parameter changes, and of 12 Deep laws <strong>one</strong> is. Depth is bought with engine work — a reasonable design, and an unbudgeted one.</p>
         
         
       </article>
@@ -1535,6 +1535,21 @@
         
       </article>
       <article class="item sig" data-group="significant"
+               data-kind="finding" data-status="proposed"
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">F23</span>
+          <h3>Four laws reach all twelve chords, so the law table does not gate the “late-game discovery” at all</h3>
+          <span class="kind">finding</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§8.5</span><span class="ref">§8.8</span><span class="ref">§7.7</span><span class="ref">§26.1</span></div>
+        <p class="body">Found while costing D6’s scope cut, which is the useful part: a check built to <em>limit</em> the cut found that the constraint does not exist.<br><br>§8.5 calls chords “the late-game discovery”. Owning <strong>four</strong> well-chosen laws makes every one of the twelve reachable, and there are <strong>42</strong> different four-law sets that do it. The cheapest is Haste, Thorns, Whispers and Borrowed Face, 70 stability together.<br><br>Four is the floor rather than a search artefact: no law carries more than two notes and the wheel has eight, so three laws can never cover it. <strong>The whole chord table is reachable from one twelfth of the launch set.</strong><br><br>This is D14 again and harder. D14 found §8.8’s fix — three <em>distinct laws</em> rather than three notes — made §8.5’s sentence true without making chords late-game, because 23 of the 48 laws carry two notes. This puts a number on it: nothing in the collection is the gate.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> A cut to 24 laws cannot break chords, which is what this check was built to find out — and it cannot fix them either. If chords are meant to be a late-game discovery, <strong>the gate has to be stated somewhere other than the size of the law table</strong>. Two candidates already exist and neither is leaned on: the Lab at level 3 (Spire 5, about day 42), which §8.5 mentions and §8.8 does not, and the stability to weave three at once — the cheapest triple from the four above costs 49 against a day-2 capacity of 51.<br><br><code>python3 tools/scope_cut.py</code>.</p>
+        
+        
+      </article>
+      <article class="item sig" data-group="significant"
                data-kind="finding" data-status="open"
                data-edits="no">
         <header class="item-head">
@@ -1945,4 +1960,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build 195c39936a19d4d0 -->
+<!-- ruleborn-build d62e27b27667b4bc -->

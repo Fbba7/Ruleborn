@@ -50,7 +50,7 @@ FOUND_IN_V3 = frozenset({
     "D19", "D20", "D21", "D22", "D23",
     "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17",
     "F18", "F19", "F20", "F21", "D24", "D25", "D26", "D27", "D28",
-    "C29", "F22",
+    "C29", "F22", "F23",
 })
 
 REGISTER = [
@@ -1399,7 +1399,21 @@ dict(id="F10", kind="finding", severity="blocking", status="open",
          "from 48 laws to 24 is a very different saving depending which 24. And "
          "<strong>state the rule sheet</strong>. \u00a77.3 asserts laws are "
          "parameters without ever listing the parameters, and a vocabulary that "
-         "grows to fit each new law is not a vocabulary."),
+         "grows to fit each new law is not a vocabulary."
+         "<br><br><strong>Both drafted</strong>, in "
+         "<code>docs/design/spec/laws.md</code>: the twenty parameters are "
+         "listed, and <code>tools/scope_cut.py</code> costs the cut this "
+         "finding said would depend on <em>which</em> 24. It does. "
+         "Weighting each kind by the engine work it needs, all 48 cost 84 "
+         "points; a cost-aware 24 costs <strong>15</strong> and a 24 chosen "
+         "by rank costs 39. <strong>Choosing which 24 by cost rather than by "
+         "rank saves 62% of the cut\u2019s remaining engine work for exactly "
+         "the same amount of content</strong>, keeps all sixteen free laws, "
+         "and still fills \u00a77.7\u2019s six schools evenly at four each."
+         "<br><br>The rank split is where the cost hides: of 18 Commons 9 "
+         "are pure parameter changes, and of 12 Deep laws <strong>one</strong> "
+         "is. Depth is bought with engine work \u2014 a reasonable design, "
+         "and an unbudgeted one."),
 
 dict(id="F11", kind="finding", severity="blocking", status="open",
      title="Weaving the player\u2019s own laws makes a generated defence worse, not better",
@@ -1895,6 +1909,35 @@ dict(id="F18", kind="finding", severity="minor", status="withdrawn",
          "and because the route from the wrong version to the right one is the "
          "useful part: the first measurement conditioned on a model that did not "
          "implement \u00a712.19\u2019s own stated price."),
+dict(id="F23", kind="finding", severity="significant", status="proposed",
+     title="Four laws reach all twelve chords, so the law table does not gate "
+           "the \u201clate-game discovery\u201d at all",
+     refs=["8.5", "8.8", "7.7", "26.1"],
+     body="Found while costing D6\u2019s scope cut, which is the useful part: a "
+          "check built to <em>limit</em> the cut found that the constraint does "
+          "not exist.<br><br>\u00a78.5 calls chords \u201cthe late-game "
+          "discovery\u201d. Owning <strong>four</strong> well-chosen laws makes "
+          "every one of the twelve reachable, and there are <strong>42</strong> "
+          "different four-law sets that do it. The cheapest is Haste, Thorns, "
+          "Whispers and Borrowed Face, 70 stability together.<br><br>Four is the "
+          "floor rather than a search artefact: no law carries more than two "
+          "notes and the wheel has eight, so three laws can never cover it. "
+          "<strong>The whole chord table is reachable from one twelfth of the "
+          "launch set.</strong><br><br>This is D14 again and harder. D14 found "
+          "\u00a78.8\u2019s fix \u2014 three <em>distinct laws</em> rather than "
+          "three notes \u2014 made \u00a78.5\u2019s sentence true without "
+          "making chords late-game, because 23 of the 48 laws carry two notes. "
+          "This puts a number on it: nothing in the collection is the gate.",
+     rec="A cut to 24 laws cannot break chords, which is what this check was "
+         "built to find out \u2014 and it cannot fix them either. If chords are "
+         "meant to be a late-game discovery, <strong>the gate has to be stated "
+         "somewhere other than the size of the law table</strong>. Two "
+         "candidates already exist and neither is leaned on: the Lab at level 3 "
+         "(Spire 5, about day 42), which \u00a78.5 mentions and \u00a78.8 does "
+         "not, and the stability to weave three at once \u2014 the cheapest "
+         "triple from the four above costs 49 against a day-2 capacity of 51."
+         "<br><br><code>python3 tools/scope_cut.py</code>."),
+
 dict(id="F19", kind="finding", severity="significant", status="open",
      title="What a raid pays varies 1.5\u00d7 with how well it is played, and "
            "\u00a79.6 prices it as a constant",

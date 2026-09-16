@@ -44,6 +44,10 @@ python3 tools/build_stamp.py --self-test
 python3 tools/check_prototype_conformance.py
 
 echo
+echo "== the law scope cut is costed and chord-safe =="
+python3 tools/scope_cut.py --self-test
+
+echo
 echo "== every field the harness computes is read somewhere =="
 python3 tools/check_unread_fields.py --self-test
 python3 tools/check_unread_fields.py
