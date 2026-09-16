@@ -21,6 +21,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from audit_register import REGISTER, V3          # noqa: E402
 from roadmap import NOT_YET, STAGES              # noqa: E402
 
+from build_stamp import stamped  # noqa: E402
+
 OUT = pathlib.Path(__file__).resolve().parent.parent / "docs" / "roadmap" / "index.html"
 
 STATUS = {
@@ -477,7 +479,9 @@ def build() -> str:
 
 def main() -> int:
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(build(), encoding="utf-8")
+    # Carry a digest of this page, so the republish job can tell what
+    # is live without comparing calendar days (D28).
+    OUT.write_text(stamped(build()), encoding="utf-8")
     tasks = [t for s in STAGES for t in s["tasks"]]
     counts = {}
     for t in tasks:

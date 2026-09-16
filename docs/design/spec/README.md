@@ -95,9 +95,16 @@ generated, never authored.* So:
   were never enough: the page held `LOAD_PER_SECOND` correctly and then loaded
   five units a tick anyway.
 
-- **The `BUILD` stamp** in the generated block is a digest of the page with that
-  one line removed, so the page carries its own version. `--stamp` prints it and
-  `--self-test` proves it still moves when the page does.
+- **The build stamp** is a digest of the page with its own stamp line removed,
+  so the page carries its own version. `tools/build_stamp.py` holds the one
+  digest function, the list of published pages and the artifact each one goes
+  to; `--self-test` proves the stamps still move when a page does.
+
+  All three published pages carry one: the prototype as a JavaScript constant,
+  because it shows the stamp on its own intro screen, and the audit register and
+  roadmap as an HTML comment. One function strips either form — two
+  implementations of a stamp would be exactly the fault this repository exists
+  to record.
 
 The first three are build gates. A rule changes in Python, the page changes with
 it, and the hourly Routine republishes the artifact.

@@ -25,10 +25,8 @@ What this does NOT do, said plainly: it syncs the **numbers**, not the
 about what happens, and that is what `check_prototype_conformance.py` is for.
 """
 
-import hashlib
 import json
 import pathlib
-import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -38,9 +36,11 @@ PAGE = ROOT / "prototypes" / "heist-gate" / "index.html"
 OPEN = "  // <<< GENERATED FROM THE PYTHON — build_prototype.py writes this"
 CLOSE = "  // >>> END GENERATED"
 
-# The build stamp. `digest()` hashes the page with this line taken out, so the
-# stamp can live inside the page it describes without chasing its own tail.
-STAMP = re.compile(r'^ *BUILD: "[0-9a-f]*",\n', re.M)
+# The build stamp lives in tools/build_stamp.py, which every published page
+# in this repository shares. `digest` hashes the page with the stamp line
+# taken out, so a page can carry its own digest.
+from tools.build_stamp import CONSTANT as STAMP, digest  # noqa: E402
+
 PLACEHOLDER = '    BUILD: "",'
 
 
@@ -108,19 +108,6 @@ def block() -> str:
     out.append("  };")
     out.append(CLOSE)
     return "\n".join(out)
-
-
-def digest(page: str) -> str:
-    """The build stamp for a page: sixteen hex characters.
-
-    The stamp line itself is removed before hashing, so a page can carry its own
-    digest. Anything else that changes — a constant, a comment, a line of the
-    simulation — changes the stamp, which is the point: the republish job asks
-    "is the published page this page?" and gets a straight answer, rather than
-    comparing a commit date against a publish date that only names a day.
-    """
-    return hashlib.sha256(
-        STAMP.sub("", page).encode("utf-8")).hexdigest()[:16]
 
 
 def rebuilt() -> str:

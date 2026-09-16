@@ -40,6 +40,7 @@ echo
 echo "== the playable prototype matches the rules it claims to implement =="
 python3 tools/build_prototype.py --check
 python3 tools/build_prototype.py --self-test
+python3 tools/build_stamp.py --self-test
 python3 tools/check_prototype_conformance.py
 
 echo

@@ -1690,6 +1690,15 @@ dict(id="D28", kind="deviation", severity="change", status="done",
          "and both are build gates. The prompt now spells out the full-read "
          "requirement, and a final step requires the publish to report a new "
          "version number before the run may claim to have worked."
+         "<br><br>Generalised since: <code>tools/build_stamp.py</code> stamps "
+         "<strong>all three</strong> published pages — the prototype, this "
+         "register and the roadmap — and holds each one’s path and "
+         "artifact URL, so the job reads what to publish rather than carrying "
+         "a hard-coded list. The prototype keeps its stamp as a JavaScript "
+         "constant because it shows it on screen; the two generated pages "
+         "carry an HTML comment. One digest function strips either form, "
+         "because two implementations of a stamp would be the very fault this "
+         "register exists to record."
          "<br><br>The general rule, alongside D27’s: <strong>an automated "
          "job needs a check that its work landed, not just that it ran.</strong>"),
 
