@@ -24,17 +24,21 @@ DEPTH_SEPARATION = 35            # percentage points, optimal over careless
 
 
 def run_batch(n: int, links: int, realm_level: int, policy_name: str,
-              seed0: int = 0, laws: str = "none") -> list:
-    """`laws` is "none", "any" (woven at random) or "defensive" (sign-aware)."""
+              seed0: int = 0, laws: str = "none", shaped: bool = False) -> list:
+    """`laws` is "none", "any" (woven at random) or "defensive" (sign-aware).
+
+    `shaped` selects the generator F16 argued for; see `island.generate`.
+    """
     cls = POLICIES[policy_name]
     out = []
     for i in range(n):
         seed = seed0 + i
-        crossing = [generate(900_000 + seed * 8 + k, realm_level) for k in range(links)]
+        crossing = [generate(900_000 + seed * 8 + k, realm_level, shaped=shaped)
+                    for k in range(links)]
         sheet = (Sheet() if laws == "none"
                  else weave(seed, realm_level, favour_defender=laws == "defensive"))
         policy = cls()
-        result = Heist(generate(seed, realm_level), policy,
+        result = Heist(generate(seed, realm_level, shaped=shaped), policy,
                        realm_level=realm_level, crossing=crossing, sheet=sheet).run()
         result.sheet = sheet
         result.crew_decisions = policy.crew_decisions

@@ -140,12 +140,23 @@ LAYERS = ("geometry", "guards", "wards", "laws", "response")
 ALL_LAYERS = frozenset(LAYERS)
 
 
-def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS) -> Island:
+def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
+             shaped: bool = False) -> Island:
     """A small realm, laid out so a route exists and a guard can see it.
 
-    §5.2 gives realm grids by level; level 3 is 12x12. The layout is deliberately
-    plain — a room with cover and two corridors — because the harness measures the
-    decisions a heist offers, and an ornate island would measure the generator.
+    §5.2 gives realm grids by level; level 3 is 12x12. The default layout is
+    deliberately plain — a room with cover and two corridors — because the harness
+    measures the decisions a heist offers, and an ornate island would measure the
+    generator.
+
+    `shaped=True` is the generator F16 argued for and F9 and F11 measured the
+    need for, built from the three rules the register already named: put the
+    Vault far from the entry along the *route* rather than in a straight line,
+    keep one route long, and put cover off the path rather than on it. It is a
+    separate mode rather than a replacement, deliberately — every published
+    number in this register was measured on the plain layout, and silently
+    moving the floor under them would make the comparison meaningless. The
+    comparison is the finding.
     """
     rng = Rng(seed)
     w = h = {1: 10, 2: 11, 3: 12, 4: 13, 5: 14}[realm_level]
@@ -161,30 +172,49 @@ def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS) -> Island:
     # Geometry (§13.2, 25%): "which routes exist, what can be seen from where".
     # With the layer off the realm is a bare room, which is the island §13.3
     # promises never happens and the right floor to measure the layer against.
+    clumps = 0
     if "geometry" in layers:
-        # Two interior hedges, leaving a gap, so there is more than one way through.
-        band = h // 2
         gap = 1 + rng.below(w - 3)
-        for x in range(1, w - 1):
-            if abs(x - gap) > 1:
-                grid[band][x] = "hedge"
+        if shaped:
+            # One route, long. Bands with their gaps on alternating sides force
+            # the crew to double back across the realm instead of walking up the
+            # middle — §13.2's "which routes exist" doing actual work.
+            for i, band in enumerate(_bands(h)):
+                opening = 1 if i % 2 == 0 else w - 2
+                for x in range(1, w - 1):
+                    if x != opening:
+                        grid[band][x] = "hedge"
+        else:
+            # Two interior hedges, leaving a gap, so there is more than one way through.
+            band = h // 2
+            for x in range(1, w - 1):
+                if abs(x - gap) > 1:
+                    grid[band][x] = "hedge"
 
-        # Cover: tall grass in clumps, never on the gap tile.
-        for _ in range(3 + rng.below(3)):
-            cx, cy = 1 + rng.below(w - 2), 1 + rng.below(h - 2)
-            for dx in range(2):
-                for dy in range(2):
-                    x, y = cx + dx, cy + dy
-                    if 0 < x < w - 1 and 0 < y < h - 1 and grid[y][x] == "floor" \
-                            and (x, y) != (gap, band):
-                        grid[y][x] = "grass"
+        clumps = 3 + rng.below(3)
+        cover = [(1 + rng.below(w - 2), 1 + rng.below(h - 2)) for _ in range(clumps)]
+        if not shaped:
+            # Cover: tall grass in clumps, never on the gap tile.
+            for cx, cy in cover:
+                for dx in range(2):
+                    for dy in range(2):
+                        x, y = cx + dx, cy + dy
+                        if 0 < x < w - 1 and 0 < y < h - 1 and grid[y][x] == "floor" \
+                                and (x, y) != (gap, band):
+                            grid[y][x] = "grass"
     else:
         rng.below(w - 3)              # keep the stream aligned across variants
-        for _ in range(3 + rng.below(3)):
-            rng.below(w - 2), rng.below(h - 2)
+        cover = [(rng.below(w - 2), rng.below(h - 2)) for _ in range(3 + rng.below(3))]
 
     entry = (w // 2, h - 2)
     island = Island(w, h, grid, entry, (vx, vy), seed=seed, realm_level=realm_level)
+
+    if shaped and "geometry" in layers:
+        # Cover off the path. Tall grass hides the *raider* (§12.17), so a clump
+        # that lands on the route is cover handed to the attacker — which is what
+        # F16 found a good part of the old layer was. Placed only where it cannot
+        # shelter anyone walking the route, it is cover for a detour instead.
+        _cover_off_route(island, cover)
 
     # Wards (§5.2: 3 + realm level). Placed on the route, because a ward beside
     # the path is scenery: §13.4's whole point is that a layer must contribute.
@@ -211,6 +241,50 @@ def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS) -> Island:
 
     island.check()
     return island
+
+
+def _bands(h: int) -> list[int]:
+    """The rows a shaped realm walls off, from the top of the map downward.
+
+    Three on a realm tall enough to hold them, two otherwise, and never the row
+    the Vault or the entry stands on.
+    """
+    rows = [h // 4, h // 2, (3 * h) // 4] if h >= 12 else [h // 3, (2 * h) // 3]
+    return [r for r in rows if 2 < r < h - 2]
+
+
+def _cover_off_route(island: Island, clumps) -> None:
+    """Lay each clump of tall grass somewhere it cannot shelter the route.
+
+    Moving a clump rather than dropping it matters. §13.3 promises a generated
+    island is "never empty", and a realm with no cover at all is a different
+    defect from one that hands its cover to the raider. So each clump slides to
+    the nearest anchor whose whole footprint is clear of the route, and is only
+    dropped if the realm genuinely has nowhere to put it.
+    """
+    from .sim import path_to                                        # local: cycle
+    route = path_to(island, island.entry, island.vault) or []
+    beside = {(x + dx, y + dy) for x, y in route
+              for dx in (-1, 0, 1) for dy in (-1, 0, 1)}
+
+    def clear(ax, ay) -> bool:
+        for dx in range(2):
+            for dy in range(2):
+                x, y = ax + dx, ay + dy
+                if (x, y) in beside or island.at(x, y) != "floor":
+                    return False
+        return True
+
+    anchors = [(x, y) for y in range(1, island.height - 2)
+               for x in range(1, island.width - 2) if clear(x, y)]
+    for cx, cy in clumps:
+        if not anchors:
+            return
+        ax, ay = min(anchors, key=lambda a: (abs(a[0] - cx) + abs(a[1] - cy), a))
+        for dx in range(2):
+            for dy in range(2):
+                island.tiles[ay + dy][ax + dx] = "grass"
+        anchors = [a for a in anchors if clear(*a)]
 
 
 def _ward_spots(island: Island, route: list, count: int) -> list:
