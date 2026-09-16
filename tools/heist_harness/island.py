@@ -134,6 +134,11 @@ class Island:
                         f"island {self.seed}: a {p.role} patrols through {self.at(wx, wy)}")
 
 
+#: §5.2's guard posts by realm level: one at levels 1 and 2, rising to three.
+def POSTS(realm_level: int) -> int:
+    return 1 + (realm_level - 1) // 2
+
+
 #: §13.2's five layers, in the order it lists them. `laws` is applied by the
 #: rule sheet and `response` by the simulation; the other three shape the island.
 LAYERS = ("geometry", "guards", "wards", "laws", "response")
@@ -141,7 +146,7 @@ ALL_LAYERS = frozenset(LAYERS)
 
 
 def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
-             shaped: bool = False) -> Island:
+             shaped: bool | int = False, posts: int | None = None) -> Island:
     """A small realm, laid out so a route exists and a guard can see it.
 
     §5.2 gives realm grids by level; level 3 is 12x12. The default layout is
@@ -179,7 +184,17 @@ def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
             # One route, long. Bands with their gaps on alternating sides force
             # the crew to double back across the realm instead of walking up the
             # middle — §13.2's "which routes exist" doing actual work.
-            for i, band in enumerate(_bands(h)):
+            #
+            # `shaped` is how many of those bands to lay, not a switch. A realm
+            # has very few discrete defence settings — the guard posts are
+            # integers and there are one or two of them early — and with the
+            # geometry as an on/off choice realm 1 can only reach 6%, 15%, 16%
+            # or 51%, so §13.2's 30-45% band has no setting that lands in it.
+            # A layer that cannot be tuned cannot be balanced.
+            rows = _bands(h)
+            if shaped is not True:
+                rows = rows[:max(0, int(shaped))]
+            for i, band in enumerate(rows):
                 opening = 1 if i % 2 == 0 else w - 2
                 for x in range(1, w - 1):
                     if x != opening:
@@ -231,9 +246,12 @@ def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
     for i, spot in enumerate(spots):
         island.wards.append(Ward(kinds[i % len(kinds)], spot[0], spot[1], ward_level))
 
-    # One to three guards (§5.2), patrolling walkable loops.
+    # One to three guards (§5.2), patrolling walkable loops. `posts` overrides
+    # §5.2's own formula, so what that formula costs can be measured rather than
+    # argued: it is the only defence layer whose count is fixed by realm level.
     roles = ["Warden", "Scout", "Breaker"]
-    count = (1 + (realm_level - 1) // 2) if "guards" in layers else 0
+    allowed = POSTS(realm_level) if posts is None else posts
+    count = allowed if "guards" in layers else 0
     for i in range(count):
         route = _patrol_route(island, rng, i)
         island.patrols.append(Patrol(roles[i % len(roles)], route,

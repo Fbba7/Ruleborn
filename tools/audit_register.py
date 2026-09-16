@@ -50,7 +50,7 @@ FOUND_IN_V3 = frozenset({
     "D19", "D20", "D21", "D22", "D23",
     "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17",
     "F18", "F19", "F20", "F21", "D24", "D25", "D26", "D27", "D28",
-    "C29",
+    "C29", "F22",
 })
 
 REGISTER = [
@@ -1282,7 +1282,15 @@ dict(id="F9", kind="finding", severity="blocking", status="open",
          "sketch \u2014 hedges, tall grass, one to three guards, four to eight "
          "wards, no laws. A generator that weaves laws would hold better. That is "
          "the point: nothing says how well it has to hold, so nothing says when "
-         "it is finished."),
+         "it is finished."
+         "<br><br><strong>Both halves now done, and the cause has moved.</strong> "
+         "The generator weaves laws (F11) and the geometry it was missing is "
+         "built \u2014 <code>island.generate(shaped=)</code>, specified in "
+         "<code>docs/design/spec/generator.md</code>. Neither reaches "
+         "\u00a713.2\u2019s band at realms 1 and 2, and F22 measures why: at "
+         "\u00a75.2\u2019s one guard post the ceiling is 16.5% there, so no "
+         "generator can reach 30%. This item\u2019s claim survives; its "
+         "diagnosis does not."),
 
 dict(id="D21", kind="deviation", severity="change", status="done",
      title="\u00a719.27\u2019s harnesses were built, since they are now the critical path",
@@ -1303,6 +1311,65 @@ dict(id="D21", kind="deviation", severity="change", status="done",
      rec="Three findings on the first full run: F7, F8 and F9. The one that "
          "changes a decision is F9, because \u00a713.3 now rests on the generator "
          "and nothing states how well it has to hold."),
+
+dict(id="F22", kind="finding", severity="blocking", status="proposed",
+     title="\u00a75.2\u2019s one guard post puts \u00a713.2\u2019s band out of "
+           "reach at realms 1 and 2, whatever the generator does",
+     refs=["5.2", "13.2", "13.3", "12.22", "13.4"],
+     body="Found while building the generator F16 argued for, which is the "
+          "useful part: the fix worked and then stopped short of the band, and "
+          "the reason it stopped is not the generator.<br><br>\u00a75.2 gives a "
+          "realm <code>1 + (level \u2212 1) // 2</code> guard posts, so realms 1 "
+          "and 2 get <strong>one</strong>. Competent crew, sign-aware laws, two "
+          "realms crossed, 400 raids a cell:<br><br><code>"
+          "realm 1, 1 post &nbsp;&nbsp;0 bands &nbsp;5.5% &nbsp;1 band 12.0% "
+          "&nbsp;2 bands 16.5%<br>"
+          "realm 1, 2 posts &nbsp;0 bands 15.5% &nbsp;1 band <strong>44.8%</strong> "
+          "&nbsp;2 bands 51.5%<br>"
+          "realm 2, 1 post &nbsp;&nbsp;0 bands 13.0% &nbsp;1 band 17.5% "
+          "&nbsp;2 bands 21.5%<br>"
+          "realm 2, 2 posts &nbsp;0 bands <strong>30.2%</strong> &nbsp;1 band 56.8% "
+          "&nbsp;2 bands 68.8%</code><br><br>"
+          "<strong>At one post the band is unreachable.</strong> Realm 1 tops out "
+          "at 16.5% and realm 2 at 21.5%, against a band that starts at 30%. "
+          "Geometry is worth 11 points at realm 1; the gap to the band is 14 "
+          "points <em>after</em> geometry has done everything it can. The second "
+          "post is worth 35 points \u2014 more than every other lever "
+          "combined.<br><br>The mechanism is F15\u2019s, and this is the second "
+          "finding to land on it: guards are half of the island\u2019s only "
+          "detect-and-act chain. Geometry, wards and laws work by <em>delay</em>, "
+          "and delay reaches an outcome only through \u00a75.4\u2019s clock, "
+          "which has four times the slack any delay needs. One guard is almost no "
+          "detection, so there is very little for the delay to convert "
+          "into.<br><br><strong>Realms 1 and 2 are where every new player "
+          "starts</strong>, and F13 is this seen from the matchmaker: "
+          "\u00a712.22 promises a median target in a 55\u201370% raider-success "
+          "band, and this pool runs at 78\u201395%.<br><br>One thing checked "
+          "before it was claimed. The gain from geometry looks larger when a "
+          "second post is present \u2014 +7 points at one post against +29 at "
+          "two \u2014 which reads as the two layers multiplying. <strong>They do "
+          "not.</strong> On the log-odds scale, which is the scale a bounded "
+          "probability adds on, the interaction is +0.05 \u00b1 0.32 "
+          "(t = 0.15): geometry and guards are independent, and the apparent "
+          "synergy is the percentage scale compressing near zero. Unlike guards "
+          "and response (F15), which really are multiplicative, "
+          "\u00a713.2\u2019s separable shares are the right model here.",
+     rec="Specified in <code>docs/design/spec/generator.md</code>. <strong>A "
+         "floor of two posts at realms 1 and 2</strong> \u2014 one line in "
+         "\u00a75.2, and the only change measured that brings those realms "
+         "within reach at all.<br><br>Two further things fall out of the same "
+         "grid.<br><br><strong>The knobs are nearly orthogonal, which is the "
+         "specification \u00a713.3 is missing.</strong> Bands drive the decision "
+         "count (6 \u2192 13 \u2192 15 at realm 1) and barely touch the hold "
+         "rate\u2019s driver; posts drive the hold rate and move decisions by 0 "
+         "to 2. So: lay bands until \u00a719.27\u2019s 15\u201325 decisions is "
+         "met, then fill posts until \u00a713.2\u2019s 30\u201345% is met, in "
+         "that order.<br><br><strong>The geometry has to be a dial, not a "
+         "switch.</strong> On or off, realm 1 at two posts gives 15.5% or 51.5% "
+         "and steps straight over the band; one band lands at 44.8%. A realm has "
+         "very few discrete settings early \u2014 integer posts, "
+         "<code>3 + level</code> wards \u2014 and <strong>a layer offered as a "
+         "switch cannot be balanced against a 15-point band</strong>."),
 
 dict(id="F10", kind="finding", severity="blocking", status="open",
      title="Sixteen of forty-eight laws are parameter changes; the rest need an engine feature",
@@ -1367,7 +1434,12 @@ dict(id="F11", kind="finding", severity="blocking", status="open",
          "two of them are worse than nothing. And \u00a713.2\u2019s 30\u201345% "
          "band should be a stated requirement on the generator, not only on "
          "designed islands \u2014 F9 asked for that and this is why it matters. "
-         "<code>python3 -m tools.heist_harness defence</code>."),
+         "<code>python3 -m tools.heist_harness defence</code>."
+         "<br><br>Specified in <code>docs/design/spec/generator.md</code>, "
+         "which weaves by sign throughout and says what the generator "
+         "targets. The sign fix stands and is not enough on its own: with "
+         "sign-aware laws <em>and</em> the shaped geometry, realms 1 and 2 "
+         "still miss the band at \u00a75.2\u2019s one guard post (F22)."),
 
 dict(id="F12", kind="finding", severity="design", status="open",
      title="Eight laws need a decision from the owner that a generator has to make",
@@ -1427,7 +1499,14 @@ dict(id="F13", kind="finding", severity="blocking", status="open",
          "why F11 is blocking. Fix the generator and this resolves; leave it and "
          "\u00a712.22 promises something the target pool cannot supply, most "
          "visibly to new players. Worth stating in \u00a712.22 either way: what "
-         "the matchmaker does when the band is empty rather than merely sparse."),
+         "the matchmaker does when the band is empty rather than merely sparse."
+         "<br><br><strong>\u201cFix the generator\u201d turns out not to be "
+         "enough.</strong> The generator is fixed \u2014 sign-aware laws and "
+         "the shaped geometry, in <code>spec/generator.md</code> \u2014 and "
+         "realms 1 and 2 still run at 78\u201395% raider success, because "
+         "\u00a75.2 allows one guard post there and the ceiling without a "
+         "second is 16.5% (F22). This item resolves when \u00a75.2 changes, "
+         "not when the generator does."),
 
 dict(id="F14", kind="finding", severity="blocking", status="open",
      title="v3.0\u2019s fill term cuts the number \u00a79.6 calls load-bearing by three fifths, and it was not re-derived",

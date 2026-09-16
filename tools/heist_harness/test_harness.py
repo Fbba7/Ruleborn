@@ -404,6 +404,74 @@ def test_ablation_layers_change_only_themselves():
             assert len(full.wards) == len(without.wards), (off, seed)
 
 
+def test_one_guard_post_cannot_reach_13_2s_band():
+    """F22. §5.2 gives realms 1 and 2 one guard post, and that caps the defence
+    below §13.2's 30-45% band whatever the geometry does.
+
+    Asserted at the generator's *best* geometry, because the claim is a ceiling:
+    if the strongest island the generator can build still misses the band on one
+    post, no weaker one reaches it either. Weakening the geometry would make the
+    test pass more easily and prove less.
+
+    Sample size, since this is the shape of assertion that went flaky before:
+    measured at 16.5% over 400 raids. At n=200 the standard error is about 2.6
+    points, so the 28% bound sits 4.4 standard errors above the mean and the
+    test fails by chance on the order of once in a hundred thousand builds.
+    """
+    from .island import generate
+    from .laws import weave
+    from .policy import Competent
+    from .sim import Heist
+
+    held = 0
+    n = 200
+    for i in range(n):
+        island = generate(i, 1, shaped=True, posts=1)
+        heist = Heist(island, Competent(), realm_level=1, crossing=[],
+                      sheet=weave(i, 1, favour_defender=True))
+        if not heist.run().success:
+            held += 1
+    rate = 100 * held / n
+    assert rate < 28, (
+        f"a realm-1 island on §5.2's one guard post held {rate:.1f}% of raids. "
+        f"F22 measured 16.5% and concluded §13.2's 30-45% band is out of reach "
+        f"there; if this now reaches the band the finding is stale")
+
+
+def test_the_geometry_is_a_dial_and_not_a_switch():
+    """F22's second half. With the geometry on or off, a realm-1 island on two
+    posts holds 15.5% or 51.5% and steps straight over §13.2's band; one band
+    lands at 44.8%.
+
+    The assertion is ordering, not location — each extra band holds more than
+    the last — because the ordering is what makes the layer tunable, and it is a
+    far less noisy quantity than any of the three rates. The gaps measured at
+    n=400 are 29 and 7 points; this runs 120 a cell, where one standard error is
+    about 4.5 points, and asserts only the larger gap.
+    """
+    from .island import generate
+    from .laws import weave
+    from .policy import Competent
+    from .sim import Heist
+
+    def hold(bands: int, n: int = 120) -> float:
+        held = 0
+        for i in range(n):
+            island = generate(i, 1, shaped=bands, posts=2)
+            heist = Heist(island, Competent(), realm_level=1, crossing=[],
+                          sheet=weave(i, 1, favour_defender=True))
+            if not heist.run().success:
+                held += 1
+        return 100 * held / n
+
+    none, one = hold(0), hold(1)
+    assert one > none + 10, (
+        f"laying one switchback band moved the hold rate from {none:.1f}% to "
+        f"{one:.1f}%. F22 rests on the geometry being a strength the generator "
+        f"can turn; if one band changes nothing, it is a switch again")
+
+
+
 if __name__ == "__main__":
     passed = failed = 0
     for name, fn in sorted(globals().items()):

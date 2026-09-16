@@ -28,6 +28,7 @@ still unadopted are `wards.md` (§10.3 is untouched), `economy.md`'s production 
 | [`sinks.md`](sinks.md) | F17 — Aether and Essence have no sinks | Proposed: peg upkeep, then cut the faucets |
 | [`loading.md`](loading.md) | F19, F20, F21 — when to stop loading | Proposed: the break-even is near 90%, and the answer is a rule rather than a number |
 | [`validation.md`](validation.md) | C29 — two phase gates need people the plan removed | Proposed, and one half is the owner's call (T1.10) |
+| [`generator.md`](generator.md) | F9, F11, F13, F22 — what a generated island has to hit | Proposed: two knobs, two targets, and a guard-post floor |
 
 ## How these were written
 
