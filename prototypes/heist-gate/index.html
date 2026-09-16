@@ -352,19 +352,69 @@
    edges, the fill travelling from the guard's eyes toward the crew.
    =========================================================================== */
 
-const TPS = 30;          // §24.10: thirty ticks a second, fixed
-const U = 256;           // sub-tile units; no decimals decide anything
-const N = 10;            // a realm is 10 to 14 tiles across (§21.1)
-const CLOCK_TICKS = 150 * TPS;   // §5.4: 150 seconds plus links; one realm here
+  // <<< GENERATED FROM THE PYTHON — build_prototype.py writes this
+  // Every number below comes from content/ or from tools/heist_harness.
+  // Change a rule there and rebuild; do not edit it here.
+  const G = {
+    TPS: 30, U: 256,
+    // §5.4: 150s plus 15s a link, capped at 240s.
+    BASE_TICKS: 4500, LINK_TICKS: 450, MAX_TICKS: 7200,
+    // §12.19: every role loads at this rate, not Carriers alone.
+    LOAD_PER_SECOND: 30,
+    BREAKEVEN_FILL: 70,
+    VAULT_HEALTH_PER_LEVEL: 1500,
+    WIND_UP_TICKS: 24,
 
-// Suspicion, in points per tick, from §12.17's stated fill times.
-const SUS_MAX = 1000;
-const SUS_NEAR = 67;     // near zone fills in about half a second
-const SUS_MID = 33;      // middle zone in about a second
-const SUS_FAR = 12;      // far zone in just under three
-const SUS_DECAY = 20;    // empties more slowly than it fills (~1.7 s)
-const STATE_FLOOR_TICKS = 15;    // a state cannot fall back for half a second
+    // §12.17, from content/detection.json.
+    SUS_MAX: 1000,
+    SUS_FILL: {"near": 67, "mid": 33, "far": 12},
+    SUS_DECAY: 20,
+    STATE_FLOOR_TICKS: 15,
+    SUSPICIOUS: 200, INVESTIGATING: 600, ALERTED: 1000,
+
+    // §11.1, from content/roles.json.
+    ROLES: {
+      scout: { label: "Scout", speed: 4.5, hp: 120, power: 12, carry: 60 },
+      breaker: { label: "Breaker", speed: 3.2, hp: 180, power: 40, carry: 60 },
+      carrier: { label: "Carrier", speed: 3.6, hp: 160, power: 8, carry: 300 },
+      warden: { label: "Warden", speed: 2.6, hp: 420, power: 20, carry: 80 },
+      mender: { label: "Mender", speed: 3.4, hp: 130, power: 6, carry: 60 },
+    },
+
+    // Guard vision, from content/detection.json. Metres; a tile is a metre.
+    GUARDS: {
+      scout: { label: "Scout", cone: 45, near: 2.0, mid: 4.0, far: 6.0, periph: 110, turn: 6 },
+      warden: { label: "Warden", cone: 40, near: 1.5, mid: 3.0, far: 4.5, periph: 90, turn: 3 },
+      breaker: { label: "Breaker", cone: 35, near: 1.5, mid: 2.5, far: 3.5, periph: 70, turn: 8 },
+      carrier: { label: "Carrier", cone: 30, near: 1.0, mid: 2.0, far: 3.0, periph: 60, turn: 4 },
+      mender: { label: "Mender", cone: 40, near: 1.5, mid: 2.5, far: 0, periph: 100, turn: 4 },
+    },
+
+    // §9.6's grade multiplier, which is what a raid is finally worth.
+    GRADE: { clean: 1.0, loud: 0.7, partial: 0.4, foiled: 0.0 },
+  };
+  // >>> END GENERATED
+
+// Everything below reads from `G` above. Where a name is kept, it is because the
+// rest of this file already uses it; the VALUE is the Python's, not this file's.
+const TPS = G.TPS;
+const U = G.U;
+const N = 10;            // a realm is 10 to 14 tiles across (§21.1)
+const CLOCK_TICKS = G.BASE_TICKS;   // §5.4, one realm: no links from here
+
+const SUS_MAX = G.SUS_MAX;
+const SUS_NEAR = G.SUS_FILL.near;
+const SUS_MID = G.SUS_FILL.mid;
+const SUS_FAR = G.SUS_FILL.far;
+const SUS_DECAY = G.SUS_DECAY;
+const STATE_FLOOR_TICKS = G.STATE_FLOOR_TICKS;
 const GRAB_TICKS = Math.round(1.6 * TPS);  // how long a guard must hold you
+
+// §12.19: every role loads at this rate, and a full crew therefore takes about
+// ten seconds. This page loaded at five units a tick — 150 a second, §12.6's
+// superseded Carriers-only rate — until the generator was pointed at it, which
+// made the Vault phase two seconds long instead of ten (D24).
+const LOAD_PER_TICK = Math.max(1, Math.round(G.LOAD_PER_SECOND / TPS));
 
 // Tiles
 const FLOOR = 0, ROCK = 1, HEDGE = 2, GRASS = 3, STREAM = 4, LANTERN = 5;
@@ -398,17 +448,18 @@ const LAWS = {
     blurb: "Cut hedges grow back." },
 };
 
-const ROLES = {
-  scout:   { label: "Scout",   colour: "#7fd4e8", speed: 4.5, hp: 120, power: 12, carry: 60 },
-  breaker: { label: "Breaker", colour: "#f09a5c", speed: 3.2, hp: 180, power: 40, carry: 60 },
-  carrier: { label: "Carrier", colour: "#9ee38a", speed: 3.6, hp: 160, power: 8,  carry: 300 },
-};
+// Stats come from the generated block; the colours are this page's own, since
+// §21 gives the art direction and content/roles.json does not carry pixels.
+const ROLE_COLOUR = { scout: "#7fd4e8", breaker: "#f09a5c", carrier: "#9ee38a",
+                      warden: "#d8cfc2", mender: "#e3a8d6" };
+const ROLES = Object.fromEntries(Object.entries(G.ROLES).map(
+  ([id, r]) => [id, { ...r, colour: ROLE_COLOUR[id] }]));
 
 // Guard archetypes, §12.17. Distances in tiles; a tile is a metre (§21.1).
-const GUARDS = {
-  scout:  { label: "Scout",  cone: 45, near: 2,   mid: 4,   far: 6,   periph: 110, turn: 6, speed: 2.8, hp: 120 },
-  warden: { label: "Warden", cone: 40, near: 1.5, mid: 3,   far: 4.5, periph: 90,  turn: 3, speed: 2.0, hp: 420 },
-};
+// Vision comes from the generated block. Speed and health are the same
+// ruleborn stats the crew uses, since §13.2's guards are the defender's own.
+const GUARDS = Object.fromEntries(Object.entries(G.GUARDS).map(
+  ([id, g]) => [id, { ...g, speed: G.ROLES[id].speed, hp: G.ROLES[id].hp }]));
 
 // The island the player robs. Hand-built so every tester meets the same one.
 const LEVEL = {
@@ -547,7 +598,12 @@ function createSim(level, opts) {
     crew, guards,
     tick: 0, clock: CLOCK_TICKS,
     alarm: 0,                       // realm alarm, 0..6 (§12.17)
-    vault: { x: level.vault.x, y: level.vault.y, hp: 600, max: 600, open: false, left: 900 },
+    // §12.6: 1,500 health a Vault level. §12.19: the exposed share is what a
+    // full crew can carry, so 100% fill is exactly reachable and no more — the
+    // same quantity the harness uses, so the two agree on what a full bag means.
+    vault: { x: level.vault.x, y: level.vault.y,
+             hp: G.VAULT_HEALTH_PER_LEVEL, max: G.VAULT_HEALTH_PER_LEVEL,
+             open: false, left: crew.reduce((n, c) => n + c.capacity, 0) },
     loot: 0, banked: 0,
     sneak: false, selected: -1,
     calling: 0, skiffAt: null,
@@ -799,7 +855,7 @@ function step(sim) {
       if (c.down || c.path) continue;
       const t = tileOf(c);
       if (Math.abs(t.x - vt.x) + Math.abs(t.y - vt.y) <= 1 && c.carrying < c.capacity) {
-        const take = Math.min(5, c.capacity - c.carrying, vt.left);
+        const take = Math.min(LOAD_PER_TICK, c.capacity - c.carrying, vt.left);
         c.carrying += take; vt.left -= take; sim.loot += take;
       }
     }

@@ -37,6 +37,11 @@ echo "== heist harness =="
 python3 -m tools.heist_harness.test_harness
 
 echo
+echo "== the playable prototype matches the rules it claims to implement =="
+python3 tools/build_prototype.py --check
+python3 tools/check_prototype_conformance.py
+
+echo
 echo "== every field the harness computes is read somewhere =="
 python3 tools/check_unread_fields.py --self-test
 python3 tools/check_unread_fields.py

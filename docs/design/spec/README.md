@@ -75,6 +75,29 @@ retiring the older one, and listing the collateral is what stops that recurring.
 Where a decision is genuinely the owner's rather than clerical, these files price
 the options instead of picking — `tools/decision_support.py` produces the numbers.
 
+## The playable prototype
+
+`prototypes/heist-gate/index.html` is a second implementation of rules the
+harness already implements, and it drifted the way second implementations do: one
+commit, then nothing, while the harness changed eight times in a day. By the time
+anyone looked it was loading **150 units a second** per character against
+§12.19's 30 — the difference between a Vault phase of two seconds and one of ten,
+which is the thing this analysis spent the most effort getting right.
+
+§30.18 names the rule it broke, and it is the rule this repository enforces
+everywhere else: *a thing that exists only to restate something else should be
+generated, never authored.* So:
+
+- **`tools/build_prototype.py`** writes the page's constants from `content/` and
+  from the harness modules, and `--check` fails the build on drift.
+- **`tools/check_prototype_conformance.py`** opens the page in a real browser and
+  asks it what it believes, then compares that with the Python. Constants alone
+  were never enough: the page held `LOAD_PER_SECOND` correctly and then loaded
+  five units a tick anyway.
+
+Both are build gates. A rule changes in Python, the page changes with it, and the
+hourly Routine republishes the artifact.
+
 ## What is not here yet
 
 The blocking items still without a spec file:
