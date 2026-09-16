@@ -71,9 +71,16 @@ there.
 ### The clock has nearly three times more slack than any delay needs
 
 A defended run ends at about 63 seconds of §5.4's 165-second clock, and a bare
-one at 41. The Sage's Weight — loaded crew at 70% speed for 20 seconds — costs a
-crew a few seconds of a clock with a minute and a half spare. It is invisible for
-the same reason every other delay is.
+one at 41. The Sage's Weight — loaded crew at 70% speed for 20 seconds — cost a
+crew a few seconds of a clock with a minute and a half spare, and was invisible
+for the same reason every other delay was.
+
+**That last sentence was true when it was written and is now wrong**, and the
+reason is worth keeping. The crews in the harness could not see the clock (D25):
+a delay cost them nothing because nothing in them was watching the thing it
+spent. Once they leave when the time left no longer covers the walk home, Weight
+is the *larger* of this file's two effects — see below. A delay is only free
+against someone who is not counting.
 
 This is not new. `test_the_clock_is_not_a_pressure_device` has pinned it since
 the first harness: runs finish well inside the clock, and §19.27's target of a
@@ -228,7 +235,52 @@ rather than a level tax.
 | **Dark** | The crew cannot see guard cones for 20 seconds |
 
 Only Weight is modelled; Bar and Dark are specified for the document's sake and
-would need the harness extended. All three are deliberately small: a
+would need the harness extended.
+
+**Measured separately, Weight is the bigger half of this layer.** 200 raids each,
+varying only which of the two effects is on:
+
+| | haul the raider keeps | hold rate |
+| --- | ---: | ---: |
+| neither (the document as published) | 0.1216 | 45.5% |
+| the Sage's Weight alone | **0.0995** (−18%) | 47.0% |
+| the Spire's reach alone | 0.1141 (−6%) | 44.0% |
+| both | 0.0958 (−21%) | 45.5% |
+
+The two do different jobs, and the layer wants both. **The Spire's reach moves
+the raider's decision** — where they stop — at almost no cost in haul or hold
+rate. **The Sage's power takes haul**, 18% of it, at almost no cost in hold rate.
+Between them the response layer gets a contribution that does not pass through a
+guard and a lever on the raider's choice.
+
+### And it still does not fix F15
+
+That was the hope, and it is not what the ablation says. Running §13.4's 32
+coalitions on the haul metric, with the specified layer switched on:
+
+| | published | with the Spire's reach and the Sage's power |
+| --- | ---: | ---: |
+| guards' share | 39.0% | 39.1% |
+| response's share | 34.7% | 35.1% |
+| **response, alone, against a bare island** | **0.0%** | **0.0%** |
+| response alone, in the other seven no-guard coalitions | 0.0% everywhere | **0.3%** in four of them |
+| guards alone, same coalitions | 1.0–7.3% | 1.0–7.3% |
+
+The layer gains a foothold — 0.3% where it had nothing — and it is an order of
+magnitude below what guards do alone. **The shares do not move.**
+
+The reason is the same one that defeated the first attempt, and it is now
+well-established rather than guessed: both effects need the crew to have been
+slowed by something else first. On an island with no guards, no wards and no laws
+the crew reaches the Vault quickly, cracks it before the grace expires, and walks
+out inside a clock it never came close to spending. There is nothing for a
+re-seal to race and nothing for a slow to eat into.
+
+**So the response layer is a complement by construction, and specifying it does
+not change that.** The 68% ceiling breach is a fact about §13.2's table, not
+about the layer's contents — which makes recommendation 3 below the operative
+one, and this whole file a specification of what the layer *should do* rather
+than a fix for what it measures. All three are deliberately small: a
 once-per-heist effect that decides a raid would be the same fault as the one this
 file is about, one layer deciding outcomes.
 

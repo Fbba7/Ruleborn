@@ -138,7 +138,18 @@ dict(
                     "reaches an outcome only through a clock with four times the "
                     "slack it would need. Re-measured against what \u00a79.6 "
                     "actually pays (grade \u00d7 fill), the identity breaks and "
-                    "the 69% does not.",
+                    "the 69% does not.<br><br><strong>Finished:</strong> both "
+                    "effects are now specified and built, and they work \u2014 "
+                    "separately they cost a raider 6% and 18% of the haul with "
+                    "no guard involved, and the Spire\u2019s reach moves the "
+                    "raider\u2019s break-even from 100% to 80% at no cost in "
+                    "hold rate once \u00a79.6\u2019s own floor is applied to "
+                    "it. Run through the 32 coalitions they still change nothing: "
+                    "guards 39.0% \u2192 39.1%, response 34.7% \u2192 35.1%. "
+                    "Both need the crew slowed by something else first, so the "
+                    "layer is a complement by construction. <strong>The ceiling "
+                    "breach is a fact about \u00a713.2\u2019s table, not about "
+                    "the layer\u2019s contents.</strong>",
              evidence="python3 -m tools.heist_harness haul 120",
              register=["F15"],
              gate="the same 32 coalitions, on the metric \u00a79.6 pays on"),

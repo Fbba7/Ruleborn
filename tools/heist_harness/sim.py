@@ -238,6 +238,10 @@ class Heist:
         self.spire_grace = SPIRE_GRACE_SECONDS
         self.spire_reseal = SPIRE_RESEAL_PER_SECOND
         self.spire_floor = SPIRE_RESEAL_FLOOR_PERCENT
+        #: The Sage's single power, as a percentage slow on loaded crew. Zero
+        #: turns it off, which is how its contribution is measured separately
+        #: from the Spire's reach.
+        self.sage_percent = SAGE_SLOW_PERCENT
         self.sage_ticks = 0
         self.resealed = 0
         self._reseal_acc = 0
@@ -412,8 +416,8 @@ class Heist:
         factor = self.sheet.factor("loaded_speed" if loaded else "crew_speed")
         step = m.step if m.crouched else m.step * 2
         step = max(1, int(step * factor))
-        if self.sage_ticks and loaded:
-            step = max(1, step * (100 - SAGE_SLOW_PERCENT) // 100)
+        if self.sage_ticks and loaded and self.sage_percent:
+            step = max(1, step * (100 - self.sage_percent) // 100)
         if d2 <= step * step:
             m.x, m.y = goal
             m.path.pop(0)
