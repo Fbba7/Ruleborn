@@ -33,6 +33,10 @@ for g in DETECTION["guards"]:
         far=tiles(g["far_m"]) ** 2 if g["far_m"] else 0,
         turn=degrees(g["turn_degrees_per_tick"]),
     )
+    # The furthest this role can see anything, precomputed: `zone` is the
+    # harness's hottest function and most of its calls are a miss.
+    VISION[g["role"]]["outer"] = max(VISION[g["role"]]["mid"],
+                                     VISION[g["role"]]["far"])
 
 #: §12.17's modifiers, as numerator/denominator so the arithmetic stays integer.
 CROUCH = (1, 2)          # crouched halves how fast you are noticed
@@ -78,14 +82,24 @@ def zone(role: str, gx: int, gy: int, facing: int, tx: int, ty: int,
     rather than detail.
     """
     v = VISION[role]
-    # §7.3: a law scales a parameter. Ranges are squared here, so a multiplier on
-    # distance is its square on the comparison — done once, in integers.
-    scale = 1.0 if reach == 1.0 else reach * reach
-    near, mid, far = (int(v["near"] * scale), int(v["mid"] * scale),
-                      int(v["far"] * scale))
     d2 = dist2(gx, gy, tx, ty)
-    if d2 > max(far, mid):
-        return None
+    # §7.3: a law scales a parameter. Ranges are squared here, so a multiplier
+    # on distance is its square on the comparison — done once, in integers.
+    #
+    # The unscaled case is separated out and the distance is tested first because
+    # this function runs once per guard per crew member per tick and returns None
+    # on most of them. `int(n * 1.0) == n` for the integer ranges in VISION, so
+    # the two branches are the same arithmetic.
+    if reach == 1.0:
+        if d2 > v["outer"]:
+            return None
+        near, mid, far = v["near"], v["mid"], v["far"]
+    else:
+        scale = reach * reach
+        near, mid, far = (int(v["near"] * scale), int(v["mid"] * scale),
+                          int(v["far"] * scale))
+        if d2 > max(far, mid):
+            return None
     off = angle_diff(facing, angle_to(gx, gy, tx, ty))
     if off <= v["cone"]:
         if d2 <= near:

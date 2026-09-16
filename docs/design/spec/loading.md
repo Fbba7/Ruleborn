@@ -188,6 +188,26 @@ machinery they need:
 clock binding, and it is the one mechanism that also addresses F21 by setting the
 fill from outside the crew's own rule.
 
+**And it is the only one measured to work.** The same stopping-rule sweep, with
+the Spire's reach re-sealing 8 units a second from 22 seconds after the first hit
+on the Vault:
+
+| stops at | 50% | 60% | 70% | 80% | 90% | 100% | peak |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| published (no re-seal) | 0.096 | 0.106 | 0.122 | 0.120 | 0.160 | **0.164** | 100% |
+| re-seal at 8/s | 0.076 | 0.100 | 0.099 | 0.114 | **0.117** | 0.117 | **90%** |
+
+The peak moves down a step and the curve flattens above it, where cutting §5.4's
+clock by 45% moved neither. It also costs the raider about 29% of the haul, which
+is a large effect for a modest rate — so the rate is a dial to tune rather than a
+switch to throw.
+
+That the peak moves at all is the point: **a cost priced in loot changes where a
+crew stops, and a cost priced in time does not.** If the rate scales with the
+defender's Spire level, as `response.md` proposes, then a defender's spending
+sets the raider's break-even — which is a far better thing for a defence layer to
+do than making raids uniformly harder.
+
 ### 2. Say that the rule varies, and re-derive the number
 
 §12.19 specifies one threshold. The measurement says a crew reading the guards

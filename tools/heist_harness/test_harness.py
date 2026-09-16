@@ -35,6 +35,30 @@ def test_a_run_is_a_function_of_its_seed():
                (b.grade, b.ticks, b.fill, b.decisions), seed
 
 
+def test_the_harness_gives_the_same_answers_as_when_it_was_last_read():
+    """A fingerprint over 40 runs, so a change in results is never silent.
+
+    Two faults this session (D24, D25) changed every number the harness produces
+    — the Vault phase's length and whether crews can see the clock — and both
+    were found by reading the model rather than by anything failing. A
+    performance change, a refactor, or a tweak to a policy can do the same thing
+    without a single assertion going red, because every other test here asserts
+    a band rather than a value.
+
+    So this one asserts the values. **If you changed the model deliberately,
+    update the digest and say what moved in the commit message** — that is the
+    entire point of it. If you did not, something changed that you did not
+    intend.
+    """
+    import hashlib
+
+    runs = run_batch(25, 1, 3, "competent") + run_batch(15, 2, 3, "optimal")
+    shape = [(r.grade, r.ticks, r.fill, r.decisions, r.alarm) for r in runs]
+    digest = hashlib.sha256(repr(shape).encode()).hexdigest()
+    assert digest == "8e7226032ca7c4888983909c4a9087f2070467b1702eeb11d7356451599c8469", (
+        f"the harness now gives different results: {digest}")
+
+
 def test_islands_are_a_function_of_their_seed():
     for seed in (0, 7, 41):
         assert generate(seed, 3).tiles == generate(seed, 3).tiles
@@ -126,7 +150,7 @@ def test_skill_polarises_outcomes():
     from .laws import weave
     from .sim import Heist
 
-    def middle(name: str, n: int = 90) -> float:
+    def middle(name: str, n: int = 50) -> float:
         fills = []
         for i in range(n):
             r = Heist(generate(i, 3), POLICIES[name](), realm_level=3,

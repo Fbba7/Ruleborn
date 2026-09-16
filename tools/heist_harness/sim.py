@@ -329,27 +329,32 @@ class Heist:
 
     def _perceive(self, g: Guard) -> None:
         gained = 0
+        # Hoisted: these are the same for every crew member on this tick, and
+        # this loop runs once per guard per tick for the whole run.
+        reach = self.sheet.factor("sight_range")
+        walls_hide = self.sheet.flag("hide_behind_walls", 1)
+        still_hides = self.sheet.flag("still_is_invisible")
+        fill_factor = self.sheet.factor("suspicion_fill")
         for m in self.crew:
             if m.out or m.caught:
                 continue
-            z = zone(g.role, g.x, g.y, g.facing, m.x, m.y,
-                     reach=self.sheet.factor("sight_range"))
+            z = zone(g.role, g.x, g.y, g.facing, m.x, m.y, reach=reach)
             if not z:
                 continue
             # §7.7 Glass: "walls become see-through: nobody can hide behind them,
             # though they still block movement."
-            if not self.sheet.flag("hide_behind_walls", 1):
+            if not walls_hide:
                 pass
             elif not line_of_sight(self.island, g.x, g.y, m.x, m.y):
                 continue
             tile = (m.x // U, m.y // U)
             hidden = self.island.hides(*tile) and not m.path and m.down_ticks == 0
             # §7.7 Stillness: standing still for 1.5 s hides you from guards.
-            if self.sheet.flag("still_is_invisible") and m.still_ticks >= int(1.5 * TPS):
+            if still_hides and m.still_ticks >= int(1.5 * TPS):
                 hidden = True
             rate = fill_rate(z, m.crouched, running=not m.crouched,
                              hidden=hidden, unlit=False)
-            rate = int(rate * self.sheet.factor("suspicion_fill"))
+            rate = int(rate * fill_factor)
             if rate:
                 gained = max(gained, rate)
                 g.target = (m.x, m.y)
