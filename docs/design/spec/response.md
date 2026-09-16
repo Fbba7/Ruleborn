@@ -2,8 +2,13 @@
 
 **Status: proposed, and it starts by reporting a proposal that did not work.**
 This addresses F15: measured as §13.4 specifies, Guards and Response contribute
-*identically* — 34.5% each, 69% together, against §13.2's own ceiling of 25% for
+*identically* — 34.2% each, 68% together, against §13.2's own ceiling of 25% for
 any one layer.
+
+Every number here was re-measured after D24, a harness bug that had been ending
+the Vault phase after two seconds instead of §12.19's ten. The finding survived
+the correction almost unchanged, which is worth more than the original
+measurement was.
 
 F15's recommendation was to give Response an effect that works without a guard,
 using the two things §13.2 names and never defines: **the Spire's reach** and
@@ -24,12 +29,12 @@ value. At 120 raids a combination, 3,840 runs a column:
 
 | layer | §13.2's target | as published | with the two effects below |
 | --- | ---: | ---: | ---: |
-| geometry | 25% | 4.4% | 6.4% |
-| guards | 20% | **34.5%** | **34.2%** |
-| wards | 20% | 20.9% | 19.6% |
-| laws | 20% | 5.7% | 5.7% |
-| response | 15% | **34.5%** | **34.2%** |
-| | hold rate | 41.7% | 47.5% |
+| geometry | 25% | 5.4% | 5.7% |
+| guards | 20% | **34.2%** | **34.4%** |
+| wards | 20% | 21.1% | 19.6% |
+| laws | 20% | 5.2% | 5.9% |
+| response | 15% | **34.2%** | **34.4%** |
+| | hold rate | 43.3% | 46.7% |
 
 Guards and Response are equal to the decimal in both columns. That is a theorem,
 not a coincidence: in **every one of the eight coalitions**, guards without
@@ -37,7 +42,7 @@ response turn back 0% of raids and response without guards turns back 0%. Two
 players who are interchangeable in every coalition are symmetric, and the Shapley
 value must give symmetric players identical shares.
 
-The proposed effects moved the hold rate from 41.7% to 47.5% — **out of §13.2's
+The proposed effects moved the hold rate from 43.3% to 46.7% — **out of §13.2's
 own 30–45% band** — and moved the symmetry not at all.
 
 ---
@@ -46,25 +51,29 @@ own 30–45% band** — and moved the symmetry not at all.
 
 Two reasons, and neither is about the effects being too weak.
 
-### A crew already leaves half the loot behind
+### A crew already leaves a third of the loot behind
 
-On a bare island a competent crew banks **53% of its capacity** and walks out.
-The exposed share is 560; they take about 297 and leave 263 on the floor. The
-Spire's reach re-sealed 102 units on a typical run — all of it out of the 263
-they were never going to carry.
+A competent crew stops at §12.19's 70% break-even and walks out, leaving **30%
+of the exposed share on a bare island and 37% on a defended one**. The Spire's
+reach re-seals out of that remainder first, and the crew never notices.
 
-**Taking loot off the floor costs a crew nothing until it has taken 47% of it
-first.** Tuning the rate up until it does bite is what produced the 47.5% hold:
-the re-seal goes from costing nothing to costing everything with almost no
-range in between, because the two quantities it sits between — what the crew
-wants and what is there — are nearly equal.
+**Taking loot off the floor costs a crew nothing until it has taken everything
+it meant to take.** Tuning the rate up until it does bite is what produced the
+46.7% hold: the re-seal goes from costing nothing to costing everything with
+almost no range in between, because the two quantities it sits between — what
+the crew wants and what is there — are close together.
 
-### The clock has four times more slack than any delay needs
+F20 is the sharper version of this, and it arrived from the other direction:
+there is no stopping rule a crew should prefer to "take everything", so the
+remainder the re-seal eats is an artefact of a break-even that should not be
+there.
 
-A run ends at about 40 seconds of §5.4's 165-second clock. The Sage's Weight —
-loaded crew at 70% speed for 20 seconds — costs a crew about four seconds of a
-clock with two minutes spare. It is invisible for the same reason every other
-delay is.
+### The clock has nearly three times more slack than any delay needs
+
+A defended run ends at about 63 seconds of §5.4's 165-second clock, and a bare
+one at 41. The Sage's Weight — loaded crew at 70% speed for 20 seconds — costs a
+crew a few seconds of a clock with a minute and a half spare. It is invisible for
+the same reason every other delay is.
 
 This is not new. `test_the_clock_is_not_a_pressure_device` has pinned it since
 the first harness: runs finish well inside the clock, and §19.27's target of a
@@ -82,8 +91,24 @@ outcome only through the clock — and the clock, per above, has four times the
 slack a delay-based layer would need to matter.
 
 So the island has exactly **one** way to turn back a raid, it requires both
-halves of the pair, and §13.4's metric can see nothing else. The 69% is not two
+halves of the pair, and §13.4's metric can see nothing else. The 68% is not two
 layers being too strong. It is three layers having no path to the metric at all.
+
+### And it is the same cause as three other findings
+
+Once stated this way the clock stops being a detail of this file:
+
+| finding | what it says | through the clock |
+| --- | --- | --- |
+| **F15** here | guards and response are 68% of the defence | the other three layers only delay, and delay is free |
+| **F16** | geometry is 5% of a generated defence, 0.2% of the haul denied | geometry *is* delay |
+| **F18** | raids either sweep or come home empty | nothing charges for the seconds between |
+| **F20** | §12.19's break-even does not exist | it is priced against "the alarm clock", which does not bind |
+
+§12.19 states the mechanism itself, in one clause: *"loading longer earns more
+and **the alarm clock is the price**."* It is not a price. A defended run ends
+at 63 seconds of a 165-second clock, so the crew can always afford more time,
+and everything the design charges in time is therefore free.
 
 ---
 
@@ -100,25 +125,25 @@ move — over the same 32 coalitions and 120 raids each:
 
 | layer | by hold rate (§13.4) | by haul denied (§9.6) |
 | --- | ---: | ---: |
-| geometry | 4.4% | 1.6% |
-| guards | **34.5%** | **38.7%** |
-| wards | 20.9% | 20.8% |
-| laws | 5.7% | 3.5% |
-| response | **34.5%** | **35.4%** |
-| | 41.7% of raids held | 82.0% of the haul denied |
+| geometry | 5.4% | **0.2%** |
+| guards | **34.2%** | **40.1%** |
+| wards | 21.1% | 21.0% |
+| laws | 5.2% | 3.1% |
+| response | **34.2%** | **35.7%** |
+| | 43.3% of raids held | 81.6% of the haul denied |
 
-**The identity breaks** — 38.7% against 35.4%. A guard slows a crew even with
-nobody to tell, and the hold rate cannot see that; the haul metric can. So the
-*exact* equality was an artefact of §13.4's metric, not a property of the design.
+**The identity breaks** — 40.1% against 35.7%. A guard slows a crew and takes
+part of its haul with nobody to tell: guards alone deny 2.2% where every other
+layer alone denies zero. The hold rate cannot see that; the haul metric can. So
+the *exact* equality was an artefact of §13.4's metric, not a property of the
+design.
 
-How firmly: the gap rests on guards alone denying 1.6% of the haul, which is
-about two runs in 120. It is enough to show the two layers are not
-mathematically interchangeable. It is not enough to claim they are meaningfully
-different, and this file does not.
-
-**The 69% does not break.** Together they are 74% of the haul denied, and
-geometry and laws get *worse* — 1.6% and 3.5% — because on this metric guards and
-response are destroying 82% of the haul and there is even less left to divide.
+**The 68% does not break.** Together they are 76% of the haul denied, and
+geometry and laws get much *worse* — **0.2%** and 3.1% — because on this metric
+guards and response destroy 82% of the haul and there is even less left to
+divide. Geometry, the layer §13.2 gives the largest share and calls "the layer a
+thoughtful designer beats a richer player with", costs a raider two parts in a
+thousand of their haul.
 
 So the metric is a real fault and fixing it is worth doing, but it is not this
 fault's fix.

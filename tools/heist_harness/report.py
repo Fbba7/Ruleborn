@@ -152,7 +152,69 @@ def attribution(n: int = 50, realm_level: int = 3) -> str:
     return "\n".join(lines)
 
 
+def break_even(n: int = 100, realm_level: int = 3, links: int = 1) -> str:
+    """Is §12.19's 70% break-even where the expected haul actually peaks?
+
+    §12.19 states it as a fact and calls it load-bearing: "The break-even sits
+    at about 70% full — at that point the extra load is worth exactly what a
+    loud exit costs. That single number is the dial for the game's emotional
+    peak."
+
+    It is checkable. §9.6 pays `grade × fill`, so the quantity a crew
+    maximises is E[grade × fill] over attempts, and a break-even is where
+    that stops rising. Sweep the crew's stop rule and look for the peak.
+
+    This became measurable only when D24 was fixed — before that the Vault
+    phase ended on the first full bag, so every stop rule above about 53% was
+    the same rule.
+    """
+    from .island import ALL_LAYERS, generate
+    from .laws import weave
+    from .policy import Competent
+    from .sim import Heist
+
+    grade_value = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
+
+    def sweep(stop: int):
+        policy = type("Tuned", (Competent,), {"stop_at_fill": stop})
+        values, held, fills = [], 0, []
+        for i in range(n):
+            island = generate(i, realm_level, layers=ALL_LAYERS)
+            sheet = weave(i, realm_level, favour_defender=True)
+            crossing = [generate(900_000 + i * 8 + k, realm_level, layers=ALL_LAYERS)
+                        for k in range(links)]
+            r = Heist(island, policy(), realm_level=realm_level, crossing=crossing,
+                      sheet=sheet, response=True).run()
+            values.append(grade_value[r.grade] * r.fill / 100)
+            held += r.success
+            if r.success:
+                fills.append(r.fill)
+        return (st.mean(values), 100 * held / n,
+                st.mean(fills) if fills else 0.0)
+
+    lines = ["Is §12.19's 70% break-even where the haul actually peaks?", ""]
+    lines.append("§9.6 pays grade × fill, so that is what a crew maximises.")
+    lines.append("Sweeping the crew's stop rule over the same islands and seeds:")
+    lines.append("")
+    lines.append(f"  {'stop at':>8} {'E[grade x fill]':>16} {'success':>9} "
+                 f"{'fill on success':>16}")
+    rows = []
+    for stop in (40, 50, 60, 70, 80, 90, 95, 100):
+        value, success, fill = sweep(stop)
+        rows.append((stop, value, success, fill))
+        lines.append(f"  {stop:>7}% {value:>16.4f} {success:>8.1f}% {fill:>15.1f}%")
+    peak = max(rows, key=lambda r: r[1])
+    lines.append("")
+    lines.append(f"  The peak is at {peak[0]}%, not 70%.  "
+                 if peak[0] != 70 else "  The peak is at 70%, as §12.19 says.  ")
+    at_70 = next(r for r in rows if r[0] == 70)
+    lines.append(f"  E at 70% is {at_70[1]:.4f}; at the peak it is {peak[1]:.4f}, "
+                 f"{100 * (peak[1] / at_70[1] - 1):+.0f}%.")
+    lines.append(f"  {n} raids a row, {len(rows) * n:,} runs.")
+    return "\n".join(lines)
+
+
 def all_reports(n: int = 50) -> str:
     return "\n\n" + "\n\n\n".join(
         [tension_and_depth(n), defence_balance(max(20, n // 2)),
-         attribution(n)]) + "\n"
+         attribution(n), break_even(max(40, n))]) + "\n"

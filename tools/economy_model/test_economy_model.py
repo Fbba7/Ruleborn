@@ -174,15 +174,16 @@ def test_pegged_faucet_scales_with_how_much_a_player_raids():
     assert by_archetype["engaged"] < 0.35, by_archetype
 
 
-def test_finding_the_fill_term_halves_the_faucet():
+def test_finding_the_fill_term_cuts_the_faucet_by_three_fifths():
     """F14: §9.6 added `fill` and left its own 0.46 average per attempt alone.
 
     §9.6 calls 0.46 "the number the progression curve is built on". The fill
-    term multiplies the same haul, and the harness measures a crew that escapes
-    at about half its capacity — so the true figure is near 0.24. The test pins
-    the size of the gap so it cannot close quietly in either direction.
+    term multiplies the same haul, and the harness measures a crew playing to
+    §12.19's own break-even escaping with two fifths of its bags — so the true
+    figure is near 0.18. The test pins the size of the gap so it cannot close
+    quietly in either direction.
     """
-    assert abs(data.HAUL_VALUE_PER_ATTEMPT * data.MEASURED_FILL_ON_SUCCESS - 0.24) < 0.02
+    assert abs(data.HAUL_VALUE_PER_ATTEMPT * data.MEASURED_FILL_ON_SUCCESS - 0.18) < 0.02
 
     without, with_fill = (
         EconomyModel(Config(archetype="engaged", days=181, faucet="minted",
@@ -190,12 +191,18 @@ def test_finding_the_fill_term_halves_the_faucet():
         for fill in (False, True)
     )
     cut = 1 - with_fill / without
-    assert 0.40 < cut < 0.55, cut
+    assert 0.52 < cut < 0.68, cut
 
     # §9.6's own worked example: "an upgrade costing 25 clean raids takes about
     # 55 attempts". With fill it is about twice that.
     attempts = 25 / (data.HAUL_VALUE_PER_ATTEMPT * data.MEASURED_FILL_ON_SUCCESS)
-    assert 95 < attempts < 115, attempts
+    assert 125 < attempts < 150, attempts
+
+    # And the half §9.6 has no term for: the same formula, a crew that plays to
+    # 95% instead of §12.19's break-even. The faucet is skill-dependent and the
+    # progression curve is built on a single number.
+    spread = data.MEASURED_FILL_OPTIMAL / data.MEASURED_FILL_ON_SUCCESS
+    assert spread > 2.0, spread
 
 
 def test_the_fill_term_is_off_by_default():

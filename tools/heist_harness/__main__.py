@@ -21,6 +21,7 @@ REPORTS = {
     # rate; see docs/design/spec/response.md for why that is a different answer.
     "haul": lambda n=60: ablation.report(n, metric="haul"),
     "control": report.attribution,
+    "breakeven": report.break_even,
 }
 
 

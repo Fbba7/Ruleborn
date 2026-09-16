@@ -296,7 +296,7 @@
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
       register directly (&sect;30.18). 26 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. 24 items
+      what it did &mdash; including where a fix stopped short. 28 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
@@ -308,19 +308,19 @@
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">88</span><span class="k">items tracked</span></div>
-      <div><span class="n">30</span><span class="k">open</span></div>
+      <div><span class="n">92</span><span class="k">items tracked</span></div>
+      <div><span class="n">32</span><span class="k">open</span></div>
       <div><span class="n">26</span><span class="k">fixed in v3.0</span></div>
-      <div><span class="n">15</span><span class="k">done or adopted</span></div>
-      <div><span class="n">27</span><span class="k">blocking the build</span></div>
+      <div><span class="n">16</span><span class="k">done or adopted</span></div>
+      <div><span class="n">29</span><span class="k">blocking the build</span></div>
       <div><span class="n">58</span><span class="k">edits drafted</span></div>
       <div><span class="n">16 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">88</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">17</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">20</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">10</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">92</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">24</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">19</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">21</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">10</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
   </nav>
 
   <main id="list">
@@ -664,6 +664,21 @@
                data-kind="deviation" data-status="done"
                data-edits="no">
         <header class="item-head">
+          <span class="id">D24</span>
+          <h3>The Vault phase in the harness was two seconds long, and every number was measured through it</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§12.19</span><span class="ref">§12.6</span><span class="ref">§13.4</span></div>
+        <p class="body">§12.19 fixed §12.6’s Vault phase: “every role can load, at 30 units a second… a full crew fills in about ten seconds, which is one decision at the eight-to-twelve second cadence 12.6 sets for itself.”<br><br>The harness’s crew policy ended the phase the moment <em>any</em> member’s bag filled. A Scout holds 60 and fills in two seconds, so the whole crew left after two — with the Carrier, which is 300 of the crew’s 560, walking out on 60. <strong>Every crew banked 53% whatever the island did</strong>, and every fill, ablation and haul number this harness has produced was measured through it.<br><br>It is exactly the fault §12.6 was criticised for — “two seconds and one option” — reintroduced by the policy rather than by the spec, three sections after the spec fixed it.<br><br>The test that should have caught it is the reason it survived: <code>test_a_full_crew_loads_in_ten_seconds</code> asserted <code>Carrier carry / 30 == 10</code>, which is arithmetic about the content table. It was true throughout. A test that checks a constant when the claim is about behaviour is the same failure as D19’s hard-coded checks, one level in.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Fixed: a member who can carry no more now waits, and the phase ends when every bag is full, the exposed share is gone, or the crew’s own stop rule fires. Three things fell out of the fix that are worth more than the fix.<br><br><strong>§12.19’s ten seconds now reproduces exactly</strong> — a crew told to take everything spends 10.0 seconds loading and ends at 100% fill, from the role Carry values and the stated rate, unasserted. The document’s number falls out of the model instead of being quoted at it.<br><br><strong>A competent crew now stops at §12.19’s own 70% break-even instead of 53%</strong>, which is what the policy was written to do and had never once done.<br><br><strong>Skill separates on haul, which it could not before.</strong> Competent banks 40% of capacity on a successful run, optimal 89% — see F19. Both were pinned near 53% by the bug, so the harness was reporting that how well you play does not affect what you carry.<br><br>The test now runs a heist and checks the behaviour. <code>python3 -m tools.heist_harness.test_harness</code>.</p>
+        
+        
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done"
+               data-edits="no">
+        <header class="item-head">
           <span class="id">D23</span>
           <h3>§13.4's ablation was built exactly as specified, Shapley included</h3>
           <span class="kind">change</span>
@@ -915,15 +930,45 @@
                data-edits="yes">
         <header class="item-head">
           <span class="id">F14</span>
-          <h3>v3.0’s fill term halves the number §9.6 calls load-bearing, and it was not re-derived</h3>
+          <h3>v3.0’s fill term cuts the number §9.6 calls load-bearing by three fifths, and it was not re-derived</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
         </header>
         <div class="refs"><span class="ref">§9.6</span><span class="ref">§12.19</span><span class="ref">§14.4</span><span class="ref">§14.2</span></div>
-        <p class="body">§9.6 states its own key figure and says why it matters: “an attempt is worth about 46% of a clean same-level haul, <em>which is the number the progression curve is built on</em>: an upgrade costing 25 clean raids takes about 55 attempts, or nine days at six a day, at every level.” That 0.46 is E[grade] over all attempts, and it reconciles exactly: 62.5% succeed, split 35/40/25 clean/loud/partial, giving 0.456.<br><br>v3.0 then added <code>fill</code> to the same formula — “the share of the crew’s bags actually loaded” — and left 0.46 alone. Measured in the harness, a crew that gets out has filled about <strong>52%</strong> of its bags, because §12.19’s own break-even tells it to stop at 70% and interruptions take the rest. So an attempt is worth <strong>0.46 × 0.52 = 0.24</strong>, not 0.46.<br><br>Run through the economy model, that is a <strong>48% cut to the raid faucet</strong> (62% under the production peg), and §9.6’s own worked example becomes 105 attempts rather than 55. Every date in §14 moves.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> Re-derive 0.46 against the fill term, or state that fill is already inside it — but not both, and not neither. <code>Config(apply_fill=True)</code> in the economy model applies the measured value, and a test asserts the size of the gap so it cannot close quietly. This is C19’s pattern applied to the single number §9.6 names as the one the curve rests on.</p>
+        <p class="body">§9.6 states its own key figure and says why it matters: “an attempt is worth about 46% of a clean same-level haul, <em>which is the number the progression curve is built on</em>: an upgrade costing 25 clean raids takes about 55 attempts, or nine days at six a day, at every level.” That 0.46 is E[grade] over all attempts, and it reconciles exactly: 62.5% succeed, split 35/40/25 clean/loud/partial, giving 0.456.<br><br>v3.0 then added <code>fill</code> to the same formula — “the share of the crew’s bags actually loaded” — and left 0.46 alone. Measured in the harness, a crew playing to §12.19’s own 70% break-even gets out with <strong>40%</strong> of its bags filled: it reaches the break-even on 37% of successful runs and is interrupted before it on the rest. So an attempt is worth <strong>0.46 × 0.40 = 0.18</strong>, not 0.46.<br><br>Run through the economy model, that is a <strong>60% cut to the raid faucet</strong>, and §9.6’s own worked example becomes <strong>136 attempts</strong> rather than 55. Every date in §14 moves.<br><br>The measured figure was 52% until D24 was fixed, and the correction matters in both directions: the cut is larger than reported, and — more importantly — the 52% was a constant where the truth is a spread. See F19.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Re-derive 0.46 against the fill term, or state that fill is already inside it — but not both, and not neither. <code>Config(apply_fill=True)</code> in the economy model applies the measured value, and a test asserts the size of the gap so it cannot close quietly. This is C19’s pattern applied to the single number §9.6 names as the one the curve rests on.<br><br>Re-deriving it as a single number is not enough on its own: F19 shows the same term moves the haul 2.2× with how well the raid is played, so whatever 0.46 becomes is the centre of a band rather than a value.</p>
         
         <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;9.6</span></header><p class="e-find"><span class="e-lab">now</span><code>An attempt is worth about 46% of a clean same-level haul, which is the number the progression curve is built on: an upgrade costing 25 clean raids takes about 55 attempts, or nine days at six a day, at every level.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>An attempt is worth about 24% of a clean same-level haul — 46% from the grade split, times the roughly half a crew fills its bags before leaving (12.19) — which is the number the progression curve is built on: an upgrade costing 25 clean raids takes about 105 attempts, or seventeen days at six a day, at every level.</code></p><p class="e-why">The fill term was added to the same formula and 0.46 was not re-derived against it. Either this, or state that fill is already inside 0.46 — but not both, and not neither.</p></li></ol></details>
+      </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="finding" data-status="proposed"
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">F20</span>
+          <h3>§12.19’s break-even is real and sits at about 85%, not the 70% it states</h3>
+          <span class="kind">finding</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§12.19</span><span class="ref">§9.6</span><span class="ref">§5.4</span><span class="ref">§12.6</span></div>
+        <p class="body">§12.19 makes the most falsifiable claim in the document and says it is load-bearing: “The break-even sits at about 70% full — at that point the extra load is worth exactly what a loud exit costs. <em>That single number is the dial for the game’s emotional peak.</em>”<br><br>§9.6 says exactly what a raid is worth, and a stopping rule moves two of its terms — grade and fill. So what a crew maximises is E[grade × fill], and a break-even is where that stops rising. Hold everything else about a competent crew fixed and vary only the fill it stops at. At 400 raids a row:<br><br><code>stops at 70% (12.19’s) &nbsp;E = 0.1159 ± 0.0096 &nbsp;success 55.2%<br>stops at 85% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E = 0.1492 ± 0.0126 &nbsp;success 55.8%<br>stops at 100% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E = 0.1531 ± 0.0137 &nbsp;success 53.5%</code><br><br><strong>Loading past 70% is worth 29% more an attempt and costs nothing in success.</strong> Past 85% it is worth nothing measurable and starts costing success. So a break-even exists, as §12.19 says — about fifteen points above where §12.19 puts it, which makes the region the document calls the decision a slope.<br><br>Stated carefully: at 150 raids a row the curve rose all the way to 100%, which would have meant no break-even at all. That reading did not survive the larger sample and is not the finding. The 85% is itself only about two sigma — enough to say 70% is in the wrong place, not enough to lock 85%.<br><br>The reason is the part that generalises. §12.19 names the price in the same sentence — “the alarm clock is the price” — and it is not one: a defended run ends at 63 seconds of §5.4’s 165-second clock. The only other cost of staying is the grade multiplier, and clean → loud is ×0.7 against a load worth ×1.43. Only measurable since D24.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Specified in <code>docs/design/spec/loading.md</code>.<br><br><strong>Give staying a price that is not the clock</strong>, then re-derive the number instead of stating it. The cleanest candidate is the one <code>spec/response.md</code> already specifies for a different reason: the Spire’s reach, a Vault that re-seals while it is being robbed, which costs loot at a rate rather than costing time. F20 is a better argument for that mechanism than the one response.md made for it.<br><br>Deepening the grade penalty (loud 0.7 → 0.5) is the cheaper alternative and scales with what is at stake, but it also moves every number in §9.6.<br><br>Whatever the price becomes, <code>python3 -m tools.heist_harness breakeven</code> prints the curve and the break-even is where it turns over. If it does not turn over, there is no decision there yet.</p>
+        
+        
+      </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="finding" data-status="open"
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">F18</span>
+          <h3>Raids either sweep or come home empty — the shape §13.2 names as its own warning sign</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§13.2</span><span class="ref">§12.19</span><span class="ref">§12.9</span></div>
+        <p class="body">§13.2 is unusually explicit about what to watch: “The health signal is the shape of the outcomes, not the average. A game where raids either sweep or fail completely, with nothing in between, is a polarised one even if the mean looks right… We watch the spread of clean runs, partial hauls and foiled raids, and treat a <strong>populated middle</strong> as the goal.”<br><br>Measured over 200 raids, the fill on every successful run:<br><br><code>&nbsp;&nbsp;0–24% &nbsp;46 runs &nbsp;###############<br>&nbsp;25–49% &nbsp;22 runs &nbsp;#######<br>&nbsp;50–69% &nbsp;13 runs &nbsp;####<br>&nbsp;70–89% &nbsp;47 runs &nbsp;###############<br>&nbsp;90–100% &nbsp;0 runs</code><br><br><strong>Two peaks and a thin middle.</strong> 36% of successful raids bank under a quarter of a crew’s capacity and 37% bank 70% or more; only 27% land anywhere between. The mean, 40%, describes almost none of them.<br><br>The mechanism is §12.19’s break-even itself. A crew that reaches it stops there, which produces the upper peak exactly at 70–89%. A crew interrupted before it gets there leaves with whatever is in the bags, which is very little, because the Carrier — 300 of a crew’s 560 — is the slowest to fill. There is no mechanism that produces a middling haul, so there are almost no middling hauls.<br><br>Only visible since D24: the harness was pinning every crew near 53%, which is a populated middle and nothing else.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> This is §13.2’s own health metric failing, on its own terms, measured by §13.4’s own method. It is not a tuning problem: no value of the break-even produces a middle, because a single stop threshold is a cliff by construction — move it and the upper peak moves with it. F20 is the demonstration: the break-even belongs at about 85% rather than 70%, and moving it there makes the middle <em>emptier</em>.<br><br>What would populate the middle is a reason to leave at a fill the player did not choose in advance. Three candidates, all already in the document:<br><br><strong>1. Make the exposed share run out.</strong> §9.6’s richness term already varies “exposed wealth against the level median” between 0.7 and 1.3. If the Vault holds less than a crew can carry on poorer islands, fill is set by the island rather than by the crew’s rule.<br><br><strong>2. Make the Carrier’s bag matter.</strong> The two peaks are really “the Carrier filled” and “it did not”. A flatter Carry spread across the five roles turns one binary into five small ones.<br><br><strong>3. Give the response layer a rate rather than a switch</strong> — spec/response.md’s re-seal is one, and its problem there was that it had no middle range either, for the same reason.<br><br><code>python3 -m tools.heist_harness depth</code>.</p>
+        
+        
       </article>
       <article class="item blk" data-group="blocking"
                data-kind="finding" data-status="proposed"
@@ -1102,7 +1147,7 @@
                data-edits="no">
         <header class="item-head">
           <span class="id">F16</span>
-          <h3>Geometry is 4% of a generated defence, against a 25% target</h3>
+          <h3>Geometry is 5% of a generated defence, against a 25% target</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
         </header>
@@ -1411,6 +1456,21 @@
         <p class="rec"><span class="arrow">&rarr;</span> Add <code>size</code> and <code>flies</code> to the creature table and derive nothing from prose. <code>content/ruleborn.json</code> is the place to do it once; <code>tools/validate_content.py</code> already fails on any law that reads an attribute no creature has, so the check exists and is waiting for the data.</p>
         
         <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;11.1</span></header><p class="e-find"><span class="e-lab">now</span><code>| Job in a heist</code></p><p class="e-new"><span class="e-lab">add</span><code>Add two columns to the role table, or two rows to every entry in 11.11: &lt;b&gt;Size&lt;/b&gt; (small / standard / large, derived from the proportions already given) and &lt;b&gt;Flies&lt;/b&gt; (yes / no). 12.21 says both are stated properties; today flight is prose in 11.2’s Passive column, which is exactly the implication 12.21 says it must not be.</code></p><p class="e-why">Density, Heavy ground and Swarm birth read attributes no character carries.</p></li></ol></details>
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="finding" data-status="open"
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">F19</span>
+          <h3>What a raid pays varies 2.2× with how well it is played, and §9.6 prices it as a constant</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§9.6</span><span class="ref">§12.19</span><span class="ref">§14.2</span></div>
+        <p class="body">§9.6: <code>Haul = B(V) × grade × difficulty × richness × fatigue × fill</code>, and it calls 0.46 — the expected grade over all attempts — “the number the progression curve is built on”.<br><br>The <code>fill</code> term v3.0 added is the one that carries skill, and it is not small. Same islands, same seeds, same formula:<br><br><code>stops at 12.19’s break-even &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fill 0.40 &nbsp;→ 0.18 an attempt<br>reads the guards, then decides &nbsp;fill 0.89 &nbsp;→ 0.41 an attempt</code><br><br>The second crew is not braver, it is better informed: it uses what §12.17 already shows the player — a guard’s suspicion and the path of its cone — to push to 95% when nothing has noticed and leave at 35% when something has. That is the design working exactly as §12.17 intends, and it doubles the faucet.<br><br>§9.6’s own worked example — “an upgrade costing 25 clean raids takes about 55 attempts” — becomes <strong>136 attempts</strong> for the first and <strong>61</strong> for the second. The published figure is roughly right for an expert and two and a half times wrong for everybody else.<br><br>The grade multiplier is the only skill-like term in the formula and it moves the haul by 2.5× across four steps. <code>fill</code> moves it by 2.2× on its own, continuously, and §14.2’s archetype curves are computed with a single value of it.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Either accept that the faucet is skill-dependent and say so — which means §14.2 needs a band rather than a curve, because a player who fills to 95% reaches Keeper 40 substantially sooner than one who does not — or narrow the range, which means F18: the spread exists because fill is bimodal, and a populated middle is a narrower spread as well as a better game.<br><br>What is not defensible is §9.6 naming one number as the one the progression curve is built on while the term beside it moves that number by more than the grade does. <code>python3 -m tools.economy_model faucet</code>.</p>
+        
+        
       </article>
       <article class="item sig" data-group="significant"
                data-kind="contradiction" data-status="open"

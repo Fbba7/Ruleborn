@@ -46,7 +46,8 @@ HOLD_BAND = (30, 45)
 
 def hold_rate(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
               policy: str = "competent", law_mode: str = "defensive",
-              response_model: str = "published") -> float:
+              response_model: str = "published",
+              clock_pct: int = 100, exposed_pct: int = 100) -> float:
     """The share of raids this combination of layers turns back."""
     cls = POLICIES[policy]
     held = 0
@@ -58,7 +59,8 @@ def hold_rate(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
         crossing = [generate(900_000 + seed * 8, realm_level, layers=subset)]
         result = Heist(island, cls(), realm_level=realm_level, crossing=crossing,
                        sheet=sheet, response="response" in subset,
-                       response_model=response_model).run()
+                       response_model=response_model,
+                       clock_pct=clock_pct, exposed_pct=exposed_pct).run()
         held += not result.success
     return 100 * held / n
 
@@ -72,7 +74,8 @@ GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
 def haul_denied(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
                 policy: str = "competent", law_mode: str = "defensive",
                 response_model: str = "published",
-                baseline: float | None = None) -> float:
+                baseline: float | None = None,
+                clock_pct: int = 100, exposed_pct: int = 100) -> float:
     """The share of the raider's potential haul this combination of layers denies.
 
     §13.4 specifies the ablation against the **hold rate**, and that metric cannot
@@ -96,7 +99,8 @@ def haul_denied(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
         crossing = [generate(900_000 + seed * 8, realm_level, layers=subset)]
         r = Heist(island, cls(), realm_level=realm_level, crossing=crossing,
                   sheet=sheet, response="response" in subset,
-                  response_model=response_model).run()
+                  response_model=response_model,
+                  clock_pct=clock_pct, exposed_pct=exposed_pct).run()
         total += GRADE_VALUE[r.grade] * r.fill / 100
     mean = total / n
     if baseline is None:

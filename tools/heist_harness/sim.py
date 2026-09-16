@@ -192,7 +192,8 @@ class Heist:
 
     def __init__(self, island, policy, crew_roles=DEFAULT_CREW,
                  realm_level: int = 3, crossing=(), sheet=None, response: bool = True,
-                 response_model: str = "published"):
+                 response_model: str = "published",
+                 clock_pct: int = 100, exposed_pct: int = 100):
         """`crossing` is the outer realms the crew walks through on the way in.
 
         §12.6 splits a heist into Entry, Crossing, Vault and Escape, and gives the
@@ -229,9 +230,14 @@ class Heist:
         self._reseal_acc = 0
         self.clock = int(min(MAX_TICKS, BASE_TICKS + LINK_TICKS * len(self.crossing))
                          / self.sheet.factor("clock_rate"))
+        # §5.4's clock and §12.19's exposed share, as whole percentages, so
+        # they can be swept without editing the module. Both default to 100,
+        # which is exactly the document — `clock_pct` is applied after the
+        # division so the published value is reproduced bit for bit.
+        self.clock = self.clock * clock_pct // 100
         self.vault_health = VAULT_HEALTH_PER_LEVEL * realm_level
         self.vault_open = False
-        self.exposed = sum(ROLES[r]["carry"] for r in crew_roles)
+        self.exposed = sum(ROLES[r]["carry"] for r in crew_roles) * exposed_pct // 100
         self.crew = [Member(r, self.island.entry[0] * U + U // 2,
                             self.island.entry[1] * U + U // 2) for r in crew_roles]
         self.guards = []

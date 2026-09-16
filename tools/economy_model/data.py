@@ -211,13 +211,25 @@ HAUL_VALUE_PER_ATTEMPT = 0.46
 
 #: v3.0's §9.6 multiplied the haul by `fill`, "the share of the crew's bags
 #: actually loaded" (§12.19). 0.46 was not re-derived against it. Measured in the
-#: heist harness, a crew that gets out has filled about half its bags:
+#: heist harness, a crew that plays to §12.19's own break-even and gets out has
+#: filled about two fifths of its bags:
 #:
 #:     python3 -m tools.heist_harness depth
 #:
-#: so the value of an attempt is 0.46 x 0.52, not 0.46. This is the C19 pattern
+#: so the value of an attempt is 0.46 x 0.40, not 0.46. This is the C19 pattern
 #: applied to the one number §9.6 names as load-bearing.
-MEASURED_FILL_ON_SUCCESS = 0.52
+#:
+#: Was 0.52 until the Vault phase was fixed (D24). The harness was ending the
+#: phase when the *smallest* bag filled, which pinned every crew near 53%
+#: whatever it did — so the figure was not only wrong, it was a constant where
+#: the truth is a spread.
+MEASURED_FILL_ON_SUCCESS = 0.40
+
+#: And the spread, which is the part §9.6 has no term for at all. The same
+#: islands, the same seeds, a crew that plays to 95% instead of §12.19's 70%:
+#: 0.89. So what a raid pays varies by 2.2x with how well it is played, against
+#: a formula whose only skill-like term is the grade multiplier.
+MEASURED_FILL_OPTIMAL = 0.89
 #: §9.4's balance target: a successful heist yields this share of a day's production.
 HEIST_SHARE_OF_DAILY_PRODUCTION = 0.20
 

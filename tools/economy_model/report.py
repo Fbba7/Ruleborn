@@ -122,7 +122,9 @@ def faucet_comparison() -> str:
     # F14: v3.0 added `fill` to the same formula and left 0.46 alone.
     lines += ["", "What v3.0's `fill` term costs (F14). §9.6 calls 0.46 \"the number the",
               "progression curve is built on\" and then multiplied the haul by the share",
-              "of the crew's bags loaded, which the harness measures at about 52%:", ""]
+              "of the crew's bags loaded, which the harness measures at about 40%",
+              "for a crew playing to §12.19's own break-even — and 89% for one",
+              "playing to 95%, a spread §9.6 has no term for at all:", ""]
     lines.append(f"  {'day':>4} {'0.46':>12} {'0.46 x fill':>13} {'change':>8}")
     for day in (31, 91, 181, 301):
         pair = []
@@ -133,9 +135,17 @@ def faucet_comparison() -> str:
         if all(pair):
             lines.append(f"  {day:>4} {pair[0]:>12,.0f} {pair[1]:>13,.0f} "
                          f"{100 * (pair[1] / pair[0] - 1):>7.0f}%")
+    per_attempt = data.HAUL_VALUE_PER_ATTEMPT * data.MEASURED_FILL_ON_SUCCESS
+    best = data.HAUL_VALUE_PER_ATTEMPT * data.MEASURED_FILL_OPTIMAL
     lines += ["", "  §9.6's own worked example, \"an upgrade costing 25 clean raids takes",
-              f"  about 55 attempts\", becomes "
-              f"{25 / (data.HAUL_VALUE_PER_ATTEMPT * data.MEASURED_FILL_ON_SUCCESS):.0f}."]
+              f"  about 55 attempts\", becomes {25 / per_attempt:.0f} — or "
+              f"{25 / best:.0f} for a crew that plays to 95%.",
+              "",
+              "  That spread is the finding behind the finding. §9.6's formula has a",
+              "  grade multiplier and no fill-skill term, so the number it calls \"the",
+              f"  number the progression curve is built on\" varies "
+              f"{data.MEASURED_FILL_OPTIMAL / data.MEASURED_FILL_ON_SUCCESS:.1f}x with how",
+              "  well the same player plays the same island."]
     return "\n".join(lines)
 
 

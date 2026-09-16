@@ -259,6 +259,23 @@ class Policy:
                     o.path = []
                 return self._decide(heist, (i, "vault"), ("stop",), 2)
             return self._decide(heist, (i, "vault"), ("load",), 2)
+
+        # This member can carry no more. That is not the crew's cue to leave.
+        # §12.19 has every role loading its own bag at 30 a second, so a Scout's
+        # 60 is full in two seconds and a Carrier's 300 takes ten — "a full crew
+        # fills in about ten seconds, which is one decision at the eight-to-twelve
+        # second cadence 12.6 sets for itself".
+        #
+        # Ending the phase on the first full bag made it two seconds long and
+        # capped every crew at 53% fill whatever the island did, because the
+        # Carrier — 300 of the crew's 560 — left with 60. That is exactly the
+        # "two seconds and one option" §12.6 was criticised for and §12.19 was
+        # written to fix, reintroduced here by the policy rather than by the spec.
+        if not (heist.exposed <= 0
+                or all(o.carried >= o.capacity or o.out or o.caught
+                       for o in heist.crew)):
+            return 0
+
         heist.escaping = True
         for o in heist.crew:
             o.path = []

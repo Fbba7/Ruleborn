@@ -49,6 +49,7 @@ FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
     "D19", "D20", "D21", "D22", "D23",
     "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17",
+    "F18", "F19", "F20", "D24",
 })
 
 REGISTER = [
@@ -1379,7 +1380,7 @@ dict(id="F13", kind="finding", severity="blocking", status="open",
          "the matchmaker does when the band is empty rather than merely sparse."),
 
 dict(id="F14", kind="finding", severity="blocking", status="open",
-     title="v3.0\u2019s fill term halves the number \u00a79.6 calls load-bearing, and it was not re-derived",
+     title="v3.0\u2019s fill term cuts the number \u00a79.6 calls load-bearing by three fifths, and it was not re-derived",
      refs=["9.6", "12.19", "14.4", "14.2"],
      body="\u00a79.6 states its own key figure and says why it matters: \u201can "
           "attempt is worth about 46% of a clean same-level haul, <em>which is the "
@@ -1390,19 +1391,203 @@ dict(id="F14", kind="finding", severity="blocking", status="open",
           "giving 0.456.<br><br>v3.0 then added <code>fill</code> to the same "
           "formula \u2014 \u201cthe share of the crew\u2019s bags actually "
           "loaded\u201d \u2014 and left 0.46 alone. Measured in the harness, a "
-          "crew that gets out has filled about <strong>52%</strong> of its bags, "
-          "because \u00a712.19\u2019s own break-even tells it to stop at 70% and "
-          "interruptions take the rest. So an attempt is worth "
-          "<strong>0.46 \u00d7 0.52 = 0.24</strong>, not 0.46.<br><br>Run through "
-          "the economy model, that is a <strong>48% cut to the raid faucet</strong> "
-          "(62% under the production peg), and \u00a79.6\u2019s own worked example "
-          "becomes 105 attempts rather than 55. Every date in \u00a714 moves.",
+          "crew playing to \u00a712.19\u2019s own 70% break-even gets out with "
+          "<strong>40%</strong> of its bags filled: it reaches the break-even on "
+          "37% of successful runs and is interrupted before it on the rest. So an "
+          "attempt is worth <strong>0.46 \u00d7 0.40 = 0.18</strong>, not 0.46."
+          "<br><br>Run through the economy model, that is a <strong>60% cut to "
+          "the raid faucet</strong>, and \u00a79.6\u2019s own worked example "
+          "becomes <strong>136 attempts</strong> rather than 55. Every date in "
+          "\u00a714 moves.<br><br>The measured figure was 52% until D24 was "
+          "fixed, and the correction matters in both directions: the cut is "
+          "larger than reported, and \u2014 more importantly \u2014 the 52% was "
+          "a constant where the truth is a spread. See F19.",
      rec="Re-derive 0.46 against the fill term, or state that fill is already "
          "inside it \u2014 but not both, and not neither. "
          "<code>Config(apply_fill=True)</code> in the economy model applies the "
          "measured value, and a test asserts the size of the gap so it cannot "
          "close quietly. This is C19\u2019s pattern applied to the single number "
-         "\u00a79.6 names as the one the curve rests on."),
+         "\u00a79.6 names as the one the curve rests on.<br><br>Re-deriving it "
+         "as a single number is not enough on its own: F19 shows the same term "
+         "moves the haul 2.2\u00d7 with how well the raid is played, so whatever "
+         "0.46 becomes is the centre of a band rather than a value."),
+dict(id="F20", kind="finding", severity="blocking", status="proposed",
+     title="\u00a712.19\u2019s break-even is real and sits at about 85%, not the 70% it states",
+     refs=["12.19", "9.6", "5.4", "12.6"],
+     body="\u00a712.19 makes the most falsifiable claim in the document and says "
+          "it is load-bearing: \u201cThe break-even sits at about 70% full \u2014 "
+          "at that point the extra load is worth exactly what a loud exit costs. "
+          "<em>That single number is the dial for the game\u2019s emotional "
+          "peak.</em>\u201d<br><br>\u00a79.6 says exactly what a raid is worth, "
+          "and a stopping rule moves two of its terms \u2014 grade and fill. So "
+          "what a crew maximises is E[grade \u00d7 fill], and a break-even is "
+          "where that stops rising. Hold everything else about a competent crew "
+          "fixed and vary only the fill it stops at. At 400 raids a "
+          "row:<br><br><code>"
+          "stops at 70% (12.19\u2019s) &nbsp;E = 0.1159 \u00b1 0.0096 &nbsp;"
+          "success 55.2%<br>"
+          "stops at 85% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "&nbsp;&nbsp;E = 0.1492 \u00b1 0.0126 &nbsp;success 55.8%<br>"
+          "stops at 100% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "&nbsp;E = 0.1531 \u00b1 0.0137 &nbsp;success 53.5%</code><br><br>"
+          "<strong>Loading past 70% is worth 29% more an attempt and costs "
+          "nothing in success.</strong> Past 85% it is worth nothing measurable "
+          "and starts costing success. So a break-even exists, as "
+          "\u00a712.19 says \u2014 about fifteen points above where "
+          "\u00a712.19 puts it, which makes the region the document calls the "
+          "decision a slope.<br><br>Stated carefully: at 150 raids a row the "
+          "curve rose all the way to 100%, which would have meant no break-even "
+          "at all. That reading did not survive the larger sample and is not the "
+          "finding. The 85% is itself only about two sigma \u2014 enough to say "
+          "70% is in the wrong place, not enough to lock 85%.<br><br>The reason "
+          "is the part that generalises. \u00a712.19 names the price in the same "
+          "sentence \u2014 \u201cthe alarm clock is the price\u201d \u2014 and "
+          "it is not one: a defended run ends at 63 seconds of \u00a75.4\u2019s "
+          "165-second clock. The only other cost of staying is the grade "
+          "multiplier, and clean \u2192 loud is \u00d70.7 against a load worth "
+          "\u00d71.43. Only measurable since D24.",
+     rec="Specified in <code>docs/design/spec/loading.md</code>.<br><br>"
+         "<strong>Give staying a price that is not the clock</strong>, then "
+         "re-derive the number instead of stating it. The cleanest candidate is "
+         "the one <code>spec/response.md</code> already specifies for a different "
+         "reason: the Spire\u2019s reach, a Vault that re-seals while it is "
+         "being robbed, which costs loot at a rate rather than costing time. F20 "
+         "is a better argument for that mechanism than the one response.md made "
+         "for it.<br><br>Deepening the grade penalty (loud 0.7 \u2192 0.5) is "
+         "the cheaper alternative and scales with what is at stake, but it also "
+         "moves every number in \u00a79.6.<br><br>Whatever the price becomes, "
+         "<code>python3 -m tools.heist_harness breakeven</code> prints the curve "
+         "and the break-even is where it turns over. If it does not turn over, "
+         "there is no decision there yet."),
+
+dict(id="F18", kind="finding", severity="blocking", status="open",
+     title="Raids either sweep or come home empty \u2014 the shape \u00a713.2 "
+           "names as its own warning sign",
+     refs=["13.2", "12.19", "12.9"],
+     body="\u00a713.2 is unusually explicit about what to watch: \u201cThe "
+          "health signal is the shape of the outcomes, not the average. A game "
+          "where raids either sweep or fail completely, with nothing in between, "
+          "is a polarised one even if the mean looks right\u2026 We watch the "
+          "spread of clean runs, partial hauls and foiled raids, and treat a "
+          "<strong>populated middle</strong> as the goal.\u201d<br><br>Measured "
+          "over 200 raids, the fill on every successful run:<br><br><code>"
+          "&nbsp;&nbsp;0\u201324% &nbsp;46 runs &nbsp;###############<br>"
+          "&nbsp;25\u201349% &nbsp;22 runs &nbsp;#######<br>"
+          "&nbsp;50\u201369% &nbsp;13 runs &nbsp;####<br>"
+          "&nbsp;70\u201389% &nbsp;47 runs &nbsp;###############<br>"
+          "&nbsp;90\u2013100% &nbsp;0 runs</code><br><br><strong>Two peaks and a "
+          "thin middle.</strong> 36% of successful raids bank under a quarter of "
+          "a crew\u2019s capacity and 37% bank 70% or more; only 27% land "
+          "anywhere between. The mean, 40%, describes almost none of them.<br>"
+          "<br>The mechanism is \u00a712.19\u2019s break-even itself. A crew "
+          "that reaches it stops there, which produces the upper peak exactly at "
+          "70\u201389%. A crew interrupted before it gets there leaves with "
+          "whatever is in the bags, which is very little, because the Carrier "
+          "\u2014 300 of a crew\u2019s 560 \u2014 is the slowest to fill. "
+          "There is no mechanism that produces a middling haul, so there are "
+          "almost no middling hauls.<br><br>Only visible since D24: the harness "
+          "was pinning every crew near 53%, which is a populated middle and "
+          "nothing else.",
+     rec="This is \u00a713.2\u2019s own health metric failing, on its own "
+         "terms, measured by \u00a713.4\u2019s own method. It is not a tuning "
+         "problem: no value of the break-even produces a middle, because a "
+         "single stop threshold is a cliff by construction \u2014 move it and "
+         "the upper peak moves with it. F20 is the demonstration: the "
+         "break-even belongs at about 85% rather than 70%, and moving it there "
+         "makes the middle <em>emptier</em>.<br><br>What would populate the middle is "
+         "a reason to leave at a fill the player did not choose in advance. Three "
+         "candidates, all already in the document:<br><br><strong>1. Make the "
+         "exposed share run out.</strong> \u00a79.6\u2019s richness term "
+         "already varies \u201cexposed wealth against the level median\u201d "
+         "between 0.7 and 1.3. If the Vault holds less than a crew can carry on "
+         "poorer islands, fill is set by the island rather than by the crew\u2019s "
+         "rule.<br><br><strong>2. Make the Carrier\u2019s bag matter.</strong> "
+         "The two peaks are really \u201cthe Carrier filled\u201d and \u201cit "
+         "did not\u201d. A flatter Carry spread across the five roles turns one "
+         "binary into five small ones.<br><br><strong>3. Give the response layer "
+         "a rate rather than a switch</strong> \u2014 spec/response.md\u2019s "
+         "re-seal is one, and its problem there was that it had no middle range "
+         "either, for the same reason.<br><br><code>python3 -m "
+         "tools.heist_harness depth</code>."),
+
+dict(id="F19", kind="finding", severity="significant", status="open",
+     title="What a raid pays varies 2.2\u00d7 with how well it is played, and "
+           "\u00a79.6 prices it as a constant",
+     refs=["9.6", "12.19", "14.2"],
+     body="\u00a79.6: <code>Haul = B(V) \u00d7 grade \u00d7 difficulty "
+          "\u00d7 richness \u00d7 fatigue \u00d7 fill</code>, and it calls "
+          "0.46 \u2014 the expected grade over all attempts \u2014 "
+          "\u201cthe number the progression curve is built on\u201d.<br><br>"
+          "The <code>fill</code> term v3.0 added is the one that carries skill, "
+          "and it is not small. Same islands, same seeds, same "
+          "formula:<br><br><code>"
+          "stops at 12.19\u2019s break-even &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fill "
+          "0.40 &nbsp;\u2192 0.18 an attempt<br>"
+          "reads the guards, then decides &nbsp;fill 0.89 &nbsp;\u2192 0.41 an "
+          "attempt</code><br><br>The second crew is not braver, it is better "
+          "informed: it uses what \u00a712.17 already shows the player \u2014 a "
+          "guard\u2019s suspicion and the path of its cone \u2014 to push to 95% "
+          "when nothing has noticed and leave at 35% when something has. That is "
+          "the design working exactly as \u00a712.17 intends, and it doubles the "
+          "faucet.<br><br>\u00a79.6\u2019s own worked "
+          "example \u2014 \u201can upgrade costing 25 clean raids takes about "
+          "55 attempts\u201d \u2014 becomes <strong>136 attempts</strong> for "
+          "the first and <strong>61</strong> for the second. The published "
+          "figure is roughly right for an expert and two and a half times wrong "
+          "for everybody else.<br><br>The grade multiplier is the only skill-like "
+          "term in the formula and it moves the haul by 2.5\u00d7 across four "
+          "steps. <code>fill</code> moves it by 2.2\u00d7 on its own, "
+          "continuously, and \u00a714.2\u2019s archetype curves are computed "
+          "with a single value of it.",
+     rec="Either accept that the faucet is skill-dependent and say so \u2014 "
+         "which means \u00a714.2 needs a band rather than a curve, because a "
+         "player who fills to 95% reaches Keeper 40 substantially sooner than "
+         "one who does not \u2014 or narrow the range, which means F18: the "
+         "spread exists because fill is bimodal, and a populated middle is a "
+         "narrower spread as well as a better game.<br><br>What is not "
+         "defensible is \u00a79.6 naming one number as the one the progression "
+         "curve is built on while the term beside it moves that number by more "
+         "than the grade does. <code>python3 -m tools.economy_model faucet</code>."),
+
+dict(id="D24", kind="deviation", severity="change", status="done",
+     title="The Vault phase in the harness was two seconds long, and every "
+           "number was measured through it",
+     refs=["12.19", "12.6", "13.4"],
+     body="\u00a712.19 fixed \u00a712.6\u2019s Vault phase: \u201cevery role "
+          "can load, at 30 units a second\u2026 a full crew fills in about ten "
+          "seconds, which is one decision at the eight-to-twelve second cadence "
+          "12.6 sets for itself.\u201d<br><br>The harness\u2019s crew policy "
+          "ended the phase the moment <em>any</em> member\u2019s bag filled. A "
+          "Scout holds 60 and fills in two seconds, so the whole crew left after "
+          "two \u2014 with the Carrier, which is 300 of the crew\u2019s 560, "
+          "walking out on 60. <strong>Every crew banked 53% whatever the island "
+          "did</strong>, and every fill, ablation and haul number this harness "
+          "has produced was measured through it.<br><br>It is exactly the fault "
+          "\u00a712.6 was criticised for \u2014 \u201ctwo seconds and one "
+          "option\u201d \u2014 reintroduced by the policy rather than by the "
+          "spec, three sections after the spec fixed it.<br><br>The test that "
+          "should have caught it is the reason it survived: "
+          "<code>test_a_full_crew_loads_in_ten_seconds</code> asserted "
+          "<code>Carrier carry / 30 == 10</code>, which is arithmetic about the "
+          "content table. It was true throughout. A test that checks a constant "
+          "when the claim is about behaviour is the same failure as D19\u2019s "
+          "hard-coded checks, one level in.",
+     rec="Fixed: a member who can carry no more now waits, and the phase ends "
+         "when every bag is full, the exposed share is gone, or the crew\u2019s "
+         "own stop rule fires. Three things fell out of the fix that are worth "
+         "more than the fix.<br><br><strong>\u00a712.19\u2019s ten seconds now "
+         "reproduces exactly</strong> \u2014 a crew told to take everything "
+         "spends 10.0 seconds loading and ends at 100% fill, from the role Carry "
+         "values and the stated rate, unasserted. The document\u2019s number "
+         "falls out of the model instead of being quoted at it.<br><br><strong>A "
+         "competent crew now stops at \u00a712.19\u2019s own 70% break-even "
+         "instead of 53%</strong>, which is what the policy was written to do "
+         "and had never once done.<br><br><strong>Skill separates on haul, which "
+         "it could not before.</strong> Competent banks 40% of capacity on a "
+         "successful run, optimal 89% \u2014 see F19. Both were pinned near 53% "
+         "by the bug, so the harness was reporting that how well you play does "
+         "not affect what you carry.<br><br>The test now runs a heist and checks "
+         "the behaviour. <code>python3 -m tools.heist_harness.test_harness</code>."),
 
 dict(id="F15", kind="finding", severity="blocking", status="proposed",
      title="Guards and Response are not two layers; they are one, and three more have no path to the metric",
@@ -1466,7 +1651,7 @@ dict(id="F15", kind="finding", severity="blocking", status="proposed",
          "<code>python3 -m tools.heist_harness haul 120</code>."),
 
 dict(id="F16", kind="finding", severity="design", status="open",
-     title="Geometry is 4% of a generated defence, against a 25% target",
+     title="Geometry is 5% of a generated defence, against a 25% target",
      refs=["13.2", "13.3", "6"],
      body="\u00a713.2 gives Geometry the largest share of any layer, 25%, and the "
           "warmest description: \u201cfree, unlimited, and <em>the layer a "

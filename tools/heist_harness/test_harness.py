@@ -87,9 +87,79 @@ def test_suspicion_fills_at_12_17s_stated_seconds():
 
 
 def test_a_full_crew_loads_in_ten_seconds():
-    """§12.19: 30 units a second, and a Carrier holds 300."""
-    from .sim import LOAD_PER_SECOND, ROLES
+    """§12.19: "a full crew fills in about ten seconds".
+
+    The arithmetic — a Carrier's 300 at 30 a second — and then the simulation,
+    which is the half that matters. The first version of this test checked only
+    the arithmetic, and the simulation was meanwhile ending the Vault phase the
+    moment the *smallest* bag filled: two seconds, with the Carrier leaving on 60
+    of 300. Every crew banked 53% whatever the island did, and every ablation
+    number in this harness was measured through it (D24).
+
+    So the assertion is now on a run: a crew told to take everything must spend
+    ten seconds doing it, and must actually end up full.
+    """
+    from .island import generate
+    from .laws import Sheet
+    from .sim import LOAD_PER_SECOND, ROLES, Heist
+
     assert ROLES["Carrier"]["carry"] / LOAD_PER_SECOND == 10
+
+    heist = Heist(generate(0, 3, layers=frozenset()), POLICIES["careless"](),
+                  realm_level=3, crossing=[], sheet=Sheet(), response=False)
+    result = heist.run()
+    assert result.fill == 100, result.fill
+    carrier = next(m for m in heist.crew if m.role == "Carrier")
+    assert carrier.carried / LOAD_PER_SECOND == 10, carrier.carried
+
+
+def test_the_break_even_is_where_a_competent_crew_aims_and_not_where_it_lands():
+    """F18. §12.19 calls 70% "the dial for the game's emotional peak".
+
+    A competent crew is defined as stopping there. Measured, it banks about 40%,
+    and the distribution has two peaks with a thin middle — which is the exact
+    shape §13.2 names as its warning sign. Pinned as a gap between intent and
+    outcome rather than as either number, so re-tuning cannot close it silently.
+    """
+    import statistics as st
+    from .report import run_batch
+
+    runs = [r for r in run_batch(60, 1, 3, "competent") if r.success]
+    mean = st.mean(r.fill for r in runs) / 100
+    reached = sum(1 for r in runs if r.fill >= 70) / len(runs)
+    assert 0.30 < mean < 0.55, mean
+    assert reached < 0.60, reached
+
+
+def test_the_break_even_is_not_at_12_19s_seventy_per_cent():
+    """F20. §9.6 pays grade x fill, so that is what a stopping rule maximises.
+
+    §12.19 states the break-even as a fact and calls it "the dial for the game's
+    emotional peak". Measured, loading past 70% is plainly worth more and costs
+    nothing in success rate. Asserted as an inequality rather than as a location,
+    because 85% is a two-sigma measurement and 70% being wrong is not.
+    """
+    import statistics as st
+    from .island import ALL_LAYERS, generate
+    from .laws import weave
+    from .policy import Competent
+    from .sim import Heist
+
+    grade_value = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
+
+    def expected(stop: int, n: int = 120) -> float:
+        policy = type("Tuned", (Competent,), {"stop_at_fill": stop})
+        values = []
+        for i in range(n):
+            island = generate(i, 3, layers=ALL_LAYERS)
+            crossing = [generate(900_000 + i * 8, 3, layers=ALL_LAYERS)]
+            r = Heist(island, policy(), realm_level=3, crossing=crossing,
+                      sheet=weave(i, 3, favour_defender=True), response=True).run()
+            values.append(grade_value[r.grade] * r.fill / 100)
+        return st.mean(values)
+
+    at_70, higher = expected(70), expected(90)
+    assert higher > at_70 * 1.10, (at_70, higher)
 
 
 def test_islands_never_seal_the_route():

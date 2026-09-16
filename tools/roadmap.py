@@ -89,14 +89,14 @@ dict(
              title="The ablation harness \u2014 is the defence fair?",
              detail="Built exactly as \u00a713.4 specifies: all 32 layer "
                     "combinations, credit divided by Shapley value. The hold rate "
-                    "lands inside \u00a713.2's band (41.7%) and the shares do "
+                    "lands inside \u00a713.2's band (43.3%) and the shares do "
                     "not. <strong>Guards and Response measure identically because "
                     "they are the same layer</strong> \u2014 neither turns back a "
                     "single raid without the other, in any of the eight "
-                    "coalitions \u2014 and together they are 69% of the defence "
+                    "coalitions \u2014 and together they are 68% of the defence "
                     "against a 25% ceiling (F15). Geometry, which \u00a713.2 "
                     "gives the largest share and calls the layer a thoughtful "
-                    "designer wins with, measures 4.4% on a generated island "
+                    "designer wins with, measures 5.4% on a generated island "
                     "(F16).",
              evidence="python3 -m tools.heist_harness ablation",
              register=["F9", "F15", "F16"],
@@ -128,10 +128,10 @@ dict(
                     "Sage's single power. Both are specified in "
                     "<code>spec/response.md</code>, both were built into the "
                     "harness, and <strong>neither changes the shares</strong> "
-                    "\u2014 guards and response still measure 34.2% each. Why is "
-                    "the useful part: a crew already leaves 47% of the exposed "
+                    "\u2014 guards and response still measure 34.4% each. Why is "
+                    "the useful part: a crew already leaves 30% of the exposed "
                     "share behind, so taking loot off the floor costs it "
-                    "nothing, and a run ends at 40 seconds of \u00a75.4's 165, "
+                    "nothing, and a run ends at 63 seconds of \u00a75.4's 165, "
                     "so a delay costs it nothing either. <strong>Guards and "
                     "response are the island's only detect-and-act chain</strong> "
                     "\u2014 the other three layers work by delay, and delay "
@@ -297,6 +297,29 @@ dict(
                     "turn out not to bind either way (C28).",
              evidence="python3 -m tools.economy_model sinks",
              register=["F17", "C28", "C24"]),
+        dict(id="T0.8", owner="claude", status="done",
+             title="Fix the Vault phase, and re-measure everything that stood on it",
+             detail="The harness was ending the Vault phase the moment the "
+                    "<em>smallest</em> bag filled \u2014 two seconds, with the "
+                    "Carrier walking out on 60 of 300 \u2014 so every crew banked "
+                    "53% whatever the island did (D24). Fixed, "
+                    "<strong>\u00a712.19\u2019s \u201ca full crew fills in "
+                    "about ten seconds\u201d now reproduces exactly</strong>, "
+                    "from the role Carry values and the stated rate, and a "
+                    "competent crew stops at \u00a712.19\u2019s own 70% "
+                    "break-even for the first time. Three findings fell out that "
+                    "the bug had been hiding: the fill distribution is "
+                    "<strong>bimodal</strong>, which is the shape \u00a713.2 "
+                    "names as its own warning sign (F18); what a raid pays varies "
+                    "<strong>2.2\u00d7</strong> with how well it is played and "
+                    "\u00a79.6 prices it as a constant (F19); and "
+                    "\u00a712.19\u2019s break-even sits at about "
+                    "<strong>85%, not 70%</strong> (F20). F15 and F16 were "
+                    "re-measured through the fix and survived it.",
+             evidence="python3 -m tools.heist_harness breakeven",
+             register=["D24", "F18", "F19", "F20", "F14"],
+             gate="\u00a712.19\u2019s ten seconds reproduced by a run, not by "
+                  "arithmetic about a table"),
         dict(id="T2.5", owner="claude", status="done",
              title="Specify the Aether and Essence sinks, and withdraw the first fix",
              detail="F17 said the prices were too small. "
