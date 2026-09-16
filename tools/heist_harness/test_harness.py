@@ -207,6 +207,43 @@ def test_the_break_even_is_not_at_12_19s_seventy_per_cent():
     assert higher > at_70, (at_70, higher)
 
 
+
+def test_the_fill_term_cuts_9_6s_load_bearing_number_by_most_of_it():
+    """F14. §9.6 names 0.46 as "the number the progression curve is built on",
+    and that is E[grade] over all attempts. v3.0 then added a `fill` term to the
+    same formula and left 0.46 alone.
+
+    What §9.6 now pays is E[grade x fill], so that is what this measures, end to
+    end rather than as a product of two averages. A crew playing to §12.19's own
+    70% break-even earns about 0.13 an attempt.
+
+    Sized against its own noise: at 400 seeds the mean is 0.132 with a standard
+    error of 0.011, so the 0.25 bound below sits eleven standard errors above it
+    and this cannot fail by chance. The bound is deliberately loose — the finding
+    is that 0.46 is far too high, not that the true figure is exactly 0.13, and a
+    tight assertion here would break on any deliberate tuning of the Vault phase.
+    """
+    import statistics as st
+    from .island import ALL_LAYERS, generate
+    from .laws import weave
+    from .policy import Competent
+    from .sim import Heist
+
+    grade_value = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
+    tuned = type("Tuned", (Competent,), {"stop_at_fill": 70})
+    values = []
+    for i in range(200):
+        r = Heist(generate(i, 3, layers=ALL_LAYERS), tuned(), realm_level=3,
+                  crossing=[generate(900_000 + i * 8, 3, layers=ALL_LAYERS)],
+                  sheet=weave(i, 3, favour_defender=True), response=True).run()
+        values.append(grade_value[r.grade] * r.fill / 100)
+    got = st.mean(values)
+    assert got < 0.25, (
+        f"an attempt is worth {got:.3f} of a clean same-level haul. F14 rests on "
+        f"this being far below §9.6's stated 0.46; if it has risen to meet it, "
+        f"either the fill term was re-derived or the Vault phase changed")
+
+
 def test_designed_geometry_is_worth_several_times_generated_geometry():
     """F16's own caveat, which the finding could not settle without this.
 
@@ -265,7 +302,7 @@ def test_skill_separates_outcomes():
 
 
 def test_decisions_need_more_than_one_realm():
-    """The finding: §12.6's 15-25 band is reached by crossing realms, not inside one."""
+    """F7. §12.6's 15-25 band is reached by crossing realms, not inside one."""
     one = st.median(r.crew_decisions for r in run_batch(30, 0, 3, "optimal"))
     three = st.median(r.crew_decisions for r in run_batch(30, 2, 3, "optimal"))
     assert one < 15, one
@@ -273,7 +310,7 @@ def test_decisions_need_more_than_one_realm():
 
 
 def test_the_clock_is_not_a_pressure_device():
-    """The finding: runs finish well inside §5.4's clock, so the last ten seconds
+    """F8. Runs finish well inside §5.4's clock, so the last ten seconds
     decide almost nothing — against §19.27's target of a quarter of runs."""
     rs = run_batch(40, 1, 3, "optimal")
     late = 100 * sum(r.last_ten_decided for r in rs) / len(rs)

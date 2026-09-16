@@ -1568,7 +1568,17 @@ dict(id="F14", kind="finding", severity="blocking", status="open",
          "\u00a79.6 names as the one the curve rests on.<br><br>Re-deriving it "
          "as a single number is not enough on its own: F19 shows the same term "
          "moves the haul 2.2\u00d7 with how well the raid is played, so whatever "
-         "0.46 becomes is the centre of a band rather than a value."),
+         "0.46 becomes is the centre of a band rather than a value."
+         "<br><br><strong>Re-measured on the current harness</strong>, 1,200 "
+         "seeds: an attempt is worth <strong>0.122 \u00b1 0.006</strong> of a "
+         "clean same-level haul against the 0.127 recorded here, and mean fill "
+         "on a successful run is 40.8%. The finding reproduces.<br><br>F19\u2019s "
+         "multiplier in the sentence above is now <strong>1.39\u00d7</strong>, "
+         "not 2.2\u00d7: that item has been re-measured twice and the correction "
+         "belongs here too. <code>test_the_fill_term_cuts_9_6s_load_bearing_"
+         "number_by_most_of_it</code> now pins this, so it cannot drift again "
+         "without the build going red.",
+     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
 dict(id="F20", kind="finding", severity="significant", status="proposed",
      title="The best fixed stopping rule is about 90% full, not \u00a712.19\u2019s 70%",
      refs=["12.19", "9.6", "5.4", "12.17"],
@@ -1986,7 +1996,26 @@ dict(id="F19", kind="finding", severity="significant", status="open",
          "populates the middle also narrows this spread.<br><br>What is not "
          "defensible is \u00a79.6 naming one number as the one the progression "
          "curve is built on while two of its own terms move it by half as much "
-         "again. <code>python3 -m tools.heist_harness depth</code>."),
+         "again. <code>python3 -m tools.heist_harness depth</code>."
+         "<br><br><strong>Re-measured, and it needed four times the sample it "
+         "was first given.</strong> Paired over the same islands at 1,200 "
+         "seeds: 0.1222 at \u00a712.19\u2019s 70% rule against 0.1698 reading "
+         "the guards, a difference of <strong>+0.0476 \u00b1 0.0108, "
+         "t = 4.4</strong>. The finding stands and the number moves: "
+         "<strong>1.39\u00d7, not 1.47\u00d7</strong>.<br><br>How it was "
+         "reached is worth more than the revision. At 400 seeds the same "
+         "comparison gives <strong>t = 1.9</strong> \u2014 indistinguishable "
+         "from noise. The per-seed standard deviation of the paired difference "
+         "is 0.375 against an effect of 0.048, so about 560 seeds are needed "
+         "for t = 3 and 990 for t = 4, and the 1.47\u00d7 above was measured "
+         "at 300. <strong>The effect was real and the precision was never "
+         "earned</strong> \u2014 the same fault that withdrew this "
+         "item\u2019s first 2.2\u00d7 and F18 beside it. Three times now in "
+         "one register, which is a habit rather than an accident."
+         "<br><br>No test pins this one, deliberately: 560 seeds is about 1,100 "
+         "heists and would roughly triple the suite. It is the case "
+         "<code>measured=</code> exists for.",
+     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
 dict(id="D24", kind="deviation", severity="change", status="done",
      title="The Vault phase in the harness was two seconds long, and every "
            "number was measured through it",
