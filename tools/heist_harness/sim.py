@@ -275,11 +275,18 @@ class Heist:
     def _enter(self, island) -> None:
         """Place the guards of the realm the crew has just entered."""
         self.island = island
-        self.guards = [
-            Guard(p.role, p.waypoints[0][0] * U + U // 2,
-                  p.waypoints[0][1] * U + U // 2, 0, p.waypoints)
-            for p in island.patrols
-        ]
+        # §12.17's guards are somewhere on their loop when a raid starts, and
+        # `Patrol.phase` is what says where. It was computed by the generator and
+        # never read here (D26), so every guard began every raid at waypoint
+        # zero: the defence was always caught at the same moment of its cycle.
+        # The phase is in ticks over the whole loop, 30 to a waypoint.
+        self.guards = []
+        for p in island.patrols:
+            leg = (p.phase // 30) % len(p.waypoints) if p.waypoints else 0
+            wx, wy = p.waypoints[leg]
+            g = Guard(p.role, wx * U + U // 2, wy * U + U // 2, 0, p.waypoints)
+            g.leg = leg
+            self.guards.append(g)
 
     @property
     def goal_tile(self):

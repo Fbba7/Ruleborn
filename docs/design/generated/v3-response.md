@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 94 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 30 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
+v3.0 answered the audit directly, in §30.18. Of 95 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 31 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 
@@ -89,12 +89,13 @@ v3.0 answered the audit directly, in §30.18. Of 94 items, **26 are fixed in the
 | **F14** | v3.0’s fill term cuts the number §9.6 calls load-bearing by three fifths, and it was not re-derived |
 | **F20** | The best fixed stopping rule is about 90% full, not §12.19’s 70% |
 | **F21** | Outcomes polarise with skill: the better a crew plays, the more it sweeps or comes home empty |
+| **D26** | Every guard began every raid at the same point of its patrol |
 | **D25** | No crew in the harness could see §5.4’s clock, so nothing priced in time could be measured at all |
 | **F18** | Withdrawn: §13.2’s populated middle holds for an ordinary crew — it is skilled play that breaks it (F21) |
 | **F19** | What a raid pays varies 1.5× with how well it is played, and §9.6 prices it as a constant |
 | **D24** | The Vault phase in the harness was two seconds long, and every number was measured through it |
 | **F15** | Guards and Response are not two layers; they are one, and three more have no path to the metric |
-| **F16** | Geometry is 5% of a generated defence, against a 25% target |
+| **F16** | Geometry is 5% of a generated defence — and designed, it is worth four times as much |
 | **D23** | §13.4's ablation was built exactly as specified, Shapley included |
 | **C27** | Two rules for partial staffing: §9.2's table and §5.9's pro-rata share |
 | **F17** | Aether and Essence have no sinks, because every price in §9.5 is on the wrong kind of curve |

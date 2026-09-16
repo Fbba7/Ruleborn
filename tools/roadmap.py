@@ -153,6 +153,32 @@ dict(
              evidence="python3 -m tools.heist_harness haul 120",
              register=["F15"],
              gate="the same 32 coalitions, on the metric \u00a79.6 pays on"),
+        dict(id="T0.9", owner="claude", status="done",
+             title="Design an island by hand, and settle whether F16 is about "
+                   "the design or the generator",
+             detail="F16 measures geometry at 5% of a generated defence against "
+                    "\u00a713.2\u2019s 25% target, and always carried the "
+                    "caveat that \u00a713.2\u2019s claim is about <em>designed"
+                    "</em> islands. <code>heist_harness/designed.py</code> is "
+                    "one, laid out against \u00a713.2\u2019s own list \u2014 "
+                    "Vault in the middle of a spiral, one corridor in, a "
+                    "switchback route, a decoy ring, no cover on the true path. "
+                    "Same harness, same guards, same wards.<br><br>"
+                    "<strong>Designed geometry is worth four to seven times "
+                    "generated geometry</strong>: +82.0 points of hold rate "
+                    "against +18.0, and +45.8 of haul denied against +6.6. So "
+                    "\u00a713.2\u2019s claim survives and F16 is a finding "
+                    "about the generator \u2014 which scatters tall grass that "
+                    "<em>hides the raider</em>, anywhere, including on the "
+                    "route.<br><br>Building it turned up D26: <code>Patrol.phase"
+                    "</code> was computed by the generator and never read, so "
+                    "every guard began every raid at waypoint zero. The designed "
+                    "island has one layout, so that was its only source of "
+                    "variation \u2014 and there was none.",
+             evidence="python3 -m tools.heist_harness.test_harness",
+             register=["F16", "D26"],
+             gate="designed geometry worth at least 2.5\u00d7 generated, pinned "
+                  "by a test"),
         dict(id="T0.5", owner="you", status="ready",
              title="Decide whether to send the prototype out anyway",
              detail="Not a disagreement with \u00a719.27, which argues its case "

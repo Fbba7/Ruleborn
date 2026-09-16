@@ -49,7 +49,7 @@ FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
     "D19", "D20", "D21", "D22", "D23",
     "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17",
-    "F18", "F19", "F20", "F21", "D24", "D25",
+    "F18", "F19", "F20", "F21", "D24", "D25", "D26",
 })
 
 REGISTER = [
@@ -1557,6 +1557,37 @@ dict(id="F21", kind="finding", severity="blocking", status="open",
          "which is why it is free to do it often. \u00a712.9\u2019s grades "
          "have no band between \u201cpartial\u201d and nothing."
          "<br><br><code>python3 -m tools.heist_harness depth</code>."),
+dict(id="D26", kind="deviation", severity="change", status="done",
+     title="Every guard began every raid at the same point of its patrol",
+     refs=["12.17", "13.2", "13.4"],
+     body="<code>Patrol.phase</code> exists, is documented as where a guard is "
+          "on its loop, and is computed by the island generator for every "
+          "patrol. <strong>The simulation never read it.</strong> Guards were "
+          "placed at <code>waypoints[0]</code> on every run, so the defence was "
+          "always caught at the same moment of its cycle.<br><br>It was found "
+          "while building a hand-designed island for F16: that island has one "
+          "layout, so its only source of variation between raids is where the "
+          "guards are \u2014 and there was none. Every run in a batch of 120 "
+          "was the same run, every coalition value was 0 or 100, and the Shapley "
+          "shares came back as the signature of a degenerate game: geometry "
+          "0.0%, three layers on exactly 33.3%.<br><br>Third of its kind this "
+          "session, and the family is now clear enough to name: <strong>a field "
+          "that is computed and never consumed</strong>. D24 was a phase that "
+          "ended on the wrong condition, D25 a clock nobody read, this a "
+          "starting position nobody applied. None of them failed a test, because "
+          "the tests assert bands and a band absorbs a systematic "
+          "simplification.",
+     rec="Fixed: a guard now starts at the waypoint its phase implies. It "
+         "changes the baseline \u2014 generated islands vary by layout as well, "
+         "so it was masked there rather than absent \u2014 and the fingerprint "
+         "test caught the change on the next build and had its digest updated "
+         "deliberately, which is what that test is for.<br><br>The general guard "
+         "is harder and worth stating: a check that every field the content and "
+         "the generator produce is actually read somewhere would have caught all "
+         "three. <code>Patrol.phase</code>, <code>heist.clock</code> and the "
+         "Vault phase\u2019s end condition were each one grep away from being "
+         "obviously unused."),
+
 dict(id="D25", kind="deviation", severity="change", status="done",
      title="No crew in the harness could see \u00a75.4\u2019s clock, so nothing "
            "priced in time could be measured at all",
@@ -1789,32 +1820,58 @@ dict(id="F15", kind="finding", severity="blocking", status="proposed",
          "<br><br><code>python3 -m tools.heist_harness ablation 120</code> and "
          "<code>python3 -m tools.heist_harness haul 120</code>."),
 
-dict(id="F16", kind="finding", severity="design", status="open",
-     title="Geometry is 5% of a generated defence, against a 25% target",
-     refs=["13.2", "13.3", "6"],
-     body="\u00a713.2 gives Geometry the largest share of any layer, 25%, and the "
-          "warmest description: \u201cfree, unlimited, and <em>the layer a "
+dict(id="F16", kind="finding", severity="significant", status="proposed",
+     title="Geometry is 5% of a <em>generated</em> defence \u2014 and designed, it is worth four times as much",
+     refs=["13.2", "13.3", "13.4", "18.7"],
+     body="\u00a713.2 gives Geometry the largest share of any layer, 25%, and "
+          "the warmest description: \u201cfree, unlimited, and <em>the layer a "
           "thoughtful designer beats a richer player with</em>\u201d. It is the "
           "layer the whole authorship argument rests on.<br><br>Measured on "
-          "<strong>generated</strong> islands it contributes <strong>4.4%</strong>. "
-          "At a smaller sample it measured slightly negative \u2014 the hedges "
-          "and tall grass a naive generator lays down block a guard\u2019s sight "
-          "line as readily as a raider\u2019s, and tall grass is the "
-          "raider\u2019s cover by definition (\u00a712.17).<br><br>Stated "
-          "carefully, because the distinction is the finding: this measures "
-          "<em>generated</em> geometry, not designed geometry. \u00a713.2\u2019s "
-          "25% is a claim about an island someone thought about. v3.0\u2019s "
-          "\u00a713.3 made generated islands the default, so the two are no "
-          "longer the same population \u2014 and the layer that is supposed to "
-          "let design beat progression is the one a generator is worst at.",
+          "<strong>generated</strong> islands it contributes <strong>5.4%</strong> "
+          "of the defence, and <strong>0.2%</strong> of the haul denied. At a "
+          "smaller sample it measured slightly negative.<br><br><strong>The "
+          "cause is the generator, not the design.</strong> This item always "
+          "said the distinction was the finding \u2014 \u201cthis measures "
+          "<em>generated</em> geometry, not designed geometry\u201d \u2014 and "
+          "it has now been tested. <code>tools/heist_harness/designed.py</code> "
+          "is one island laid out by hand against \u00a713.2\u2019s own list: "
+          "the Vault in the middle of a spiral, one corridor in, a switchback "
+          "route, a decoy ring, and no cover on the true path. Same harness, "
+          "same guards, same wards, geometry turned off and "
+          "on:<br><br><code>"
+          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;off &nbsp;&nbsp;&nbsp;&nbsp;on "
+          "&nbsp;&nbsp;&nbsp;contribution<br>"
+          "generated &nbsp;30.7% &nbsp;48.7% &nbsp;<strong>+18.0</strong><br>"
+          "designed &nbsp;&nbsp;18.0% &nbsp;<strong>100.0%</strong> &nbsp;"
+          "<strong>+82.0</strong></code><br><br>On the haul metric it is +6.6 "
+          "against <strong>+45.8</strong>. <strong>Designed geometry is worth "
+          "four to seven times generated geometry</strong>, and "
+          "\u00a713.2\u2019s claim about the layer survives \u2014 what fails "
+          "is the generator.<br><br>Two things fall out. The designed island "
+          "turns back <strong>every</strong> raid, which is well above "
+          "\u00a713.2\u2019s 30\u201345% band: free, unlimited terrain in "
+          "thoughtful hands is strong enough to break the band on its own. And "
+          "its <em>geometry-off</em> hold rate is 18.0%, <em>below</em> the "
+          "generated island\u2019s 30.7%, because guards posted at chokepoints "
+          "are badly placed once the chokepoints are gone. Design cuts both "
+          "ways.",
      rec="This is the sharpest argument for the creator ladder \u00a718.7 "
-         "describes, and against treating generation as equivalent to design. If "
-         "geometry is 25% when designed and 4% when generated, then "
-         "\u00a713.2\u2019s \u201c60% from design rather than level\u201d is a "
-         "property of hand-built islands only, and the target pool is mostly not "
-         "those. Measure a hand-built island against the same harness before "
-         "accepting either number."),
-
+         "describes, and against treating generation as equivalent to design. "
+         "\u00a713.2\u2019s \u201c60% from design rather than level\u201d is "
+         "a property of hand-built islands, and v3.0\u2019s \u00a713.3 made "
+         "generated ones the default \u2014 so the two populations are no "
+         "longer the same, and the shipping one is the weak one.<br><br>"
+         "<strong>The generator is the thing to fix, and cheaply.</strong> It "
+         "lays one hedge band with a gap, then scatters three to five clumps of "
+         "tall grass \u2014 and tall grass <em>hides the raider</em> "
+         "(\u00a712.17), anywhere it lands, including on the route. A good part "
+         "of what it calls geometry is cover handed to the attacker. A generator "
+         "that placed the Vault away from the entry, kept one route long, and "
+         "put cover off the path rather than on it would close most of the gap "
+         "without any new mechanic.<br><br>Then re-check the band: a designed "
+         "island holding 100% is as much a problem as a generated one holding "
+         "5%. <code>python3 -m tools.heist_harness.test_harness</code>."),
 dict(id="D23", kind="deviation", severity="change", status="done",
      title="\u00a713.4's ablation was built exactly as specified, Shapley included",
      refs=["13.4", "13.2"],

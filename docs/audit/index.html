@@ -298,7 +298,7 @@
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
       register directly (&sect;30.18). 26 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. 30 items
+      what it did &mdash; including where a fix stopped short. 31 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
@@ -310,19 +310,19 @@
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">94</span><span class="k">items tracked</span></div>
-      <div><span class="n">32</span><span class="k">open</span></div>
+      <div><span class="n">95</span><span class="k">items tracked</span></div>
+      <div><span class="n">31</span><span class="k">open</span></div>
       <div><span class="n">26</span><span class="k">fixed in v3.0</span></div>
-      <div><span class="n">17</span><span class="k">done or adopted</span></div>
-      <div><span class="n">28</span><span class="k">blocking the build</span></div>
+      <div><span class="n">18</span><span class="k">done or adopted</span></div>
+      <div><span class="n">27</span><span class="k">blocking the build</span></div>
       <div><span class="n">58</span><span class="k">edits drafted</span></div>
       <div><span class="n">16 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">94</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">25</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">18</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">22</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">95</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">26</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">18</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">23</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
   </nav>
 
   <main id="list">
@@ -659,6 +659,21 @@
         <div class="refs"><span class="ref">§7.3</span><span class="ref">§12.21</span><span class="ref">§7.7</span></div>
         <p class="body">§7.3 claims laws are parameters and §12.21 makes it a rule, but the 48 law sheets state their effects in prose and nothing maps them onto anything. So the claim could not be checked, and was not.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <code>tools/law_effects.py</code> classifies every law against a twenty-parameter rule sheet and emits <code>content/law_effects.json</code>. It refuses to run if a law names a parameter outside the sheet, or if a law has no classification at all — so a new law in a future season cannot be added without saying what kind of thing it is. The harness weaves the nineteen it can apply, which is how F11 was measured.</p>
+        
+        
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done"
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">D26</span>
+          <h3>Every guard began every raid at the same point of its patrol</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§12.17</span><span class="ref">§13.2</span><span class="ref">§13.4</span></div>
+        <p class="body"><code>Patrol.phase</code> exists, is documented as where a guard is on its loop, and is computed by the island generator for every patrol. <strong>The simulation never read it.</strong> Guards were placed at <code>waypoints[0]</code> on every run, so the defence was always caught at the same moment of its cycle.<br><br>It was found while building a hand-designed island for F16: that island has one layout, so its only source of variation between raids is where the guards are — and there was none. Every run in a batch of 120 was the same run, every coalition value was 0 or 100, and the Shapley shares came back as the signature of a degenerate game: geometry 0.0%, three layers on exactly 33.3%.<br><br>Third of its kind this session, and the family is now clear enough to name: <strong>a field that is computed and never consumed</strong>. D24 was a phase that ended on the wrong condition, D25 a clock nobody read, this a starting position nobody applied. None of them failed a test, because the tests assert bands and a band absorbs a systematic simplification.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Fixed: a guard now starts at the waypoint its phase implies. It changes the baseline — generated islands vary by layout as well, so it was masked there rather than absent — and the fingerprint test caught the change on the next build and had its digest updated deliberately, which is what that test is for.<br><br>The general guard is harder and worth stating: a check that every field the content and the generator produce is actually read somewhere would have caught all three. <code>Patrol.phase</code>, <code>heist.clock</code> and the Vault phase’s end condition were each one grep away from being obviously unused.</p>
         
         
       </article>
@@ -1144,21 +1159,6 @@
         
         
       </article>
-      <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="open"
-               data-edits="no">
-        <header class="item-head">
-          <span class="id">F16</span>
-          <h3>Geometry is 5% of a generated defence, against a 25% target</h3>
-          <span class="kind">finding</span>
-          <span class="status s-open">Open</span>
-        </header>
-        <div class="refs"><span class="ref">§13.2</span><span class="ref">§13.3</span><span class="ref">§6</span></div>
-        <p class="body">§13.2 gives Geometry the largest share of any layer, 25%, and the warmest description: “free, unlimited, and <em>the layer a thoughtful designer beats a richer player with</em>”. It is the layer the whole authorship argument rests on.<br><br>Measured on <strong>generated</strong> islands it contributes <strong>4.4%</strong>. At a smaller sample it measured slightly negative — the hedges and tall grass a naive generator lays down block a guard’s sight line as readily as a raider’s, and tall grass is the raider’s cover by definition (§12.17).<br><br>Stated carefully, because the distinction is the finding: this measures <em>generated</em> geometry, not designed geometry. §13.2’s 25% is a claim about an island someone thought about. v3.0’s §13.3 made generated islands the default, so the two are no longer the same population — and the layer that is supposed to let design beat progression is the one a generator is worst at.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> This is the sharpest argument for the creator ladder §18.7 describes, and against treating generation as equivalent to design. If geometry is 25% when designed and 4% when generated, then §13.2’s “60% from design rather than level” is a property of hand-built islands only, and the target pool is mostly not those. Measure a hand-built island against the same harness before accepting either number.</p>
-        
-        
-      </article>
       </section>
       <section class="group" id="g-significant" data-group="significant">
         <div class="group-head">
@@ -1486,6 +1486,21 @@
         <div class="refs"><span class="ref">§9.6</span><span class="ref">§12.19</span><span class="ref">§12.17</span><span class="ref">§14.2</span></div>
         <p class="body">§9.6: <code>Haul = B(V) × grade × difficulty × richness × fatigue × fill</code>, and it calls 0.46 — E[grade] over all attempts — “the number the progression curve is built on”. Two of those terms move with how a raid is played, so the quantity to measure is E[grade × fill] per attempt. Same islands, same seeds, 300 raids each:<br><br><code>stops at 12.19’s break-even &nbsp;&nbsp;E = 0.127 an attempt<br>reads the guards, then decides &nbsp;E = 0.187 an attempt</code><br><br><strong>1.47×</strong>, and both are far below §9.6’s 0.46 — which is E[grade] alone and takes no account of the fill term v3.0 added beside it (F14).<br><br>The second crew is not braver. It uses what §12.17 already shows the player — a guard’s suspicion and the path of its cone — to push to 95% when nothing has noticed and leave at 35% when something has. <strong>Its mean fill on a successful run is <em>lower</em></strong>, 35% against 39%: it wins by converting more attempts into clean, full ones and abandoning the rest early, not by carrying more when it succeeds.<br><br>That distinction is the reason this finding was briefly withdrawn and then reinstated. Measured as “fill on a successful run” the effect reverses sign; measured as what §9.6 actually pays per attempt it is 1.47×. The first statistic is the wrong one, because it conditions on the outcome the skill is changing.<br><br>An earlier version of this item claimed 2.2×, measured before D25 with crews that could not see the clock.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either accept that the faucet is skill-dependent and say so — in which case §14.2 needs a band rather than a curve, because the gap compounds over hundreds of raids — or narrow it. <br><br>Narrowing it is the same question as F21: the informed crew earns more <em>by being more polarised</em>, taking 80–100% on a quarter of its runs and under 20% on more than half. Anything that populates the middle also narrows this spread.<br><br>What is not defensible is §9.6 naming one number as the one the progression curve is built on while two of its own terms move it by half as much again. <code>python3 -m tools.heist_harness depth</code>.</p>
+        
+        
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="finding" data-status="proposed"
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">F16</span>
+          <h3>Geometry is 5% of a &lt;em&gt;generated&lt;/em&gt; defence — and designed, it is worth four times as much</h3>
+          <span class="kind">finding</span>
+          <span class="status s-proposed">Proposed</span>
+        </header>
+        <div class="refs"><span class="ref">§13.2</span><span class="ref">§13.3</span><span class="ref">§13.4</span><span class="ref">§18.7</span></div>
+        <p class="body">§13.2 gives Geometry the largest share of any layer, 25%, and the warmest description: “free, unlimited, and <em>the layer a thoughtful designer beats a richer player with</em>”. It is the layer the whole authorship argument rests on.<br><br>Measured on <strong>generated</strong> islands it contributes <strong>5.4%</strong> of the defence, and <strong>0.2%</strong> of the haul denied. At a smaller sample it measured slightly negative.<br><br><strong>The cause is the generator, not the design.</strong> This item always said the distinction was the finding — “this measures <em>generated</em> geometry, not designed geometry” — and it has now been tested. <code>tools/heist_harness/designed.py</code> is one island laid out by hand against §13.2’s own list: the Vault in the middle of a spiral, one corridor in, a switchback route, a decoy ring, and no cover on the true path. Same harness, same guards, same wards, geometry turned off and on:<br><br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;off &nbsp;&nbsp;&nbsp;&nbsp;on &nbsp;&nbsp;&nbsp;contribution<br>generated &nbsp;30.7% &nbsp;48.7% &nbsp;<strong>+18.0</strong><br>designed &nbsp;&nbsp;18.0% &nbsp;<strong>100.0%</strong> &nbsp;<strong>+82.0</strong></code><br><br>On the haul metric it is +6.6 against <strong>+45.8</strong>. <strong>Designed geometry is worth four to seven times generated geometry</strong>, and §13.2’s claim about the layer survives — what fails is the generator.<br><br>Two things fall out. The designed island turns back <strong>every</strong> raid, which is well above §13.2’s 30–45% band: free, unlimited terrain in thoughtful hands is strong enough to break the band on its own. And its <em>geometry-off</em> hold rate is 18.0%, <em>below</em> the generated island’s 30.7%, because guards posted at chokepoints are badly placed once the chokepoints are gone. Design cuts both ways.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> This is the sharpest argument for the creator ladder §18.7 describes, and against treating generation as equivalent to design. §13.2’s “60% from design rather than level” is a property of hand-built islands, and v3.0’s §13.3 made generated ones the default — so the two populations are no longer the same, and the shipping one is the weak one.<br><br><strong>The generator is the thing to fix, and cheaply.</strong> It lays one hedge band with a gap, then scatters three to five clumps of tall grass — and tall grass <em>hides the raider</em> (§12.17), anywhere it lands, including on the route. A good part of what it calls geometry is cover handed to the attacker. A generator that placed the Vault away from the entry, kept one route long, and put cover off the path rather than on it would close most of the gap without any new mechanic.<br><br>Then re-check the band: a designed island holding 100% is as much a problem as a generated one holding 5%. <code>python3 -m tools.heist_harness.test_harness</code>.</p>
         
         
       </article>
