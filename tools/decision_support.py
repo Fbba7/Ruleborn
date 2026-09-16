@@ -18,6 +18,8 @@ of taste rather than arithmetic.
                       "when to stop loading" decision actually sits
   wards     G3 / G5 — what "effect +15%" scales, what a ward costs to get past,
                       and how much of a heist a law pylon is worth
+  pacing    Q6 / Q3 — what §5.9 did to the casual curve, and what the Library
+                      did to the page economy the rank split was argued on
 """
 
 import collections
@@ -530,9 +532,76 @@ def wards_report() -> None:
     print("  Drafted in docs/design/spec/wards.md.")
 
 
+# ---------------------------------------------------------------------------
+# Q6 and Q3 — the curve, and the page economy
+# ---------------------------------------------------------------------------
+
+#: §5.9's three decisions, which the published tables were never re-run against.
+V3_RULES = dict(producers_per_realm_override=1, staffing_rule="pro_rata",
+                crew_assigned_not_timed=True)
+
+
+def pacing_report() -> None:
+    from tools.economy_model import sinks                          # noqa: E402
+
+    print("Q6 \u2014 casual pacing, re-derived under \u00a75.9\u2019s rules\n")
+    print("\u00a727.3 puts the decision like this: \u201cat one session a day,")
+    print("finishing everything takes about 1,019 days. Either keep it, or add a")
+    print("catch-up discount on building levels the median player passed months ago.\u201d")
+    print("\nThat 1,019 was computed before \u00a75.9. Re-running the model under")
+    print("\u00a75.9\u2019s rules moves every archetype, and not evenly:\n")
+    under = "under \u00a75.9"
+    print(f"  {'archetype':<10} {'Keeper 40, published':>21} {under:>13} {'drift':>8}")
+    index = {"engaged": 0, "regular": 1, "casual": 2}
+    drift = {}
+    for arch in ("engaged", "regular", "casual"):
+        state = EconomyModel(Config(archetype=arch, days=1400, **V3_RULES)).run()
+        published = econ.PUBLISHED_KEEPER_DAYS[40][index[arch]]
+        reached = state.keeper_level_days.get(40)
+        drift[arch] = (reached - published) if reached else None
+        print(f"  {arch:<10} {published:>21} {reached if reached else '>1400':>13} "
+              f"{f'+{drift[arch]}' if drift[arch] else '':>8}")
+    print("\n  The engaged and regular curves each slip 94 days. The casual curve")
+    print("  slips 177 \u2014 nearly twice as far, because a flat five characters")
+    print("  withheld for a crew is a larger share of a smaller roster, and partial")
+    print("  staffing bites sooner when there is less of everything.\n")
+    scaled = round(1019 * (556 + drift["casual"]) / 556)
+    print("  Scaling \u00a727.3\u2019s own figure by that drift puts \u201cfinishing")
+    print(f"  everything\u201d at roughly {scaled:,} days rather than 1,019 "
+          "\u2014 about three")
+    print("  years and nine months. The decision is not less urgent than the")
+    print("  document thinks. It is more urgent, and it should be made against a")
+    print("  re-derived number rather than the one in \u00a727.3.\n")
+
+    print("\nQ3 \u2014 three law ranks or five, and what now decides it\n")
+    print("The rank split was argued partly on the page economy: \u00a714.4 totals")
+    print("the Codex at 1,485 pages and the split changes that total. v3.0 added")
+    print("the Library (\u00a710.5), and the Library dwarfs it.\n")
+    print(f"  {'Codex total':<26} {'pages':>6} {'no Library':>11} "
+          f"{'Library 5':>10} {'Library 10':>11}")
+    for rule, label in (("three_rank", "\u00a714.4 as published"),
+                        ("four_rank", "the re-tagged sheets")):
+        cost = sinks.codex_cost(rule)
+        cells = []
+        for level in (0, 5, 10):
+            per_day = 4.0 + sinks.library_pages(level)      # 4 heists a day
+            cells.append(f"{cost / per_day:>10.0f}d")
+        print(f"  {label:<26} {cost:>6.0f} " + " ".join(cells))
+    print("\n  The rank split moves the total by 11%. The Library moves the time to")
+    print("  gather it by FIVE TIMES \u2014 371 days at level 0 against 68 at")
+    print("  level 10. So the page economy no longer decides this question; a")
+    print("  building does.\n")
+    print("  Which frees Q3 to be decided on what \u00a77.10 says it is about:")
+    print("  RARITY BUYS SPECIFICITY, NOT STRENGTH. Pick the split that makes")
+    print("  the best collection, and regenerate every page total from the law")
+    print("  table afterwards rather than restating it in four places (C23).\n")
+    print("  One caveat, and it is C24: \u00a710.5 gives the Library three of its")
+    print("  ten levels, so the figures above interpolate the other seven.")
+
+
 REPORTS = {"rarity": rarity_report, "haul": haul_report,
            "staffing": staffing_report, "combat": combat_report, "vault": vault_report,
-           "wards": wards_report}
+           "wards": wards_report, "pacing": pacing_report}
 
 
 def main() -> int:

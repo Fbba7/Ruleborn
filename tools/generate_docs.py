@@ -189,16 +189,12 @@ def v3_response() -> str:
     finding: a summary of something else, authored separately, goes stale.
     """
     sys.path.insert(0, str(ROOT / "tools"))
-    from audit_register import REGISTER, V3               # noqa: E402
+    from audit_register import FOUND_IN_V3, REGISTER, V3   # noqa: E402
 
     by_id = {i["id"]: i for i in REGISTER}
     fixed = [k for k, v in V3.items() if v.get("status") == "fixed"]
     moved = [k for k, v in V3.items() if v.get("status") != "fixed"]
-    new = [i["id"] for i in REGISTER
-           if i["id"] in ("C21", "C22", "C23", "C24", "C25", "C26",
-                          "C27", "C28", "D19", "D20", "D21", "D22",
-                          "D23", "F7", "F8", "F9", "F10", "F11", "F12", "F13",
-                          "F14", "F15", "F16", "F17")]
+    new = [i["id"] for i in REGISTER if i["id"] in FOUND_IN_V3]
 
     def strip(html: str) -> str:
         import re as _re

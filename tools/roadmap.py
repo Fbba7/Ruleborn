@@ -176,11 +176,20 @@ dict(
              evidence="docs/design/spec/README.md",
              blocked_by=["T1.2"]),
         dict(id="T1.5", owner="you", status="yours",
-             title="Make the eight decisions that are genuinely yours",
-             detail="Where the answer is a judgement rather than arithmetic, the "
-                    "options are priced rather than picked. Character scarcity as "
-                    "a feature; the raid-versus-build trade-off; three law ranks "
-                    "or five; one producer per realm or two.",
+             title="Make the decisions that are genuinely yours",
+             detail="Four of the eight are settled: v3.0\u2019s \u00a75.9 answered "
+                    "character scarcity, the raid-versus-build trade-off and one "
+                    "producer per realm, and \u00a713.4 answered how many ruleborn "
+                    "stand at a post \u2014 \u201cone\u201d, with the "
+                    "acknowledgement that it was the missing conversion between "
+                    "two tables.<br><br>Four remain, and two of them now have "
+                    "numbers they did not have: <strong>Q6</strong>, where "
+                    "\u00a727.3\u2019s 1,019 days becomes about 1,343 under "
+                    "\u00a75.9\u2019s rules and the casual curve slips nearly "
+                    "twice as far as the others; and <strong>Q3</strong>, where "
+                    "the page economy it was argued on has been overtaken by the "
+                    "Library \u2014 the rank split moves the Codex total by 11% "
+                    "and the Library moves the time to gather it by five times.",
              evidence="python3 tools/decision_support.py",
              register_kinds=["decision"]),
         dict(id="T1.6", owner="claude", status="blocked",

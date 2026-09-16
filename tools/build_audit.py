@@ -14,7 +14,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from audit_register import EDITS, REGISTER, V3  # noqa: E402
+from audit_register import EDITS, FOUND_IN_V3, REGISTER, V3  # noqa: E402
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "docs" / "audit" / "index.html"
 
@@ -161,12 +161,7 @@ def build() -> str:
     done_count = sum(1 for i in REGISTER if status_of(i) in ("done", "adopted"))
     fixed_count = sum(1 for i in REGISTER if status_of(i) == "fixed")
     touched = sum(1 for i in REGISTER if i["id"] in V3)
-    new_in_v3 = sum(1 for i in REGISTER
-                    if i["id"] in ("C21", "C22", "C23", "C24", "C25", "C26",
-                                   "C27", "C28", "D19", "D20", "D21",
-                                   "D22", "D23", "F7", "F8", "F9", "F10",
-                                   "F11", "F12", "F13", "F14", "F15", "F16",
-                                   "F17"))
+    new_in_v3 = sum(1 for i in REGISTER if i["id"] in FOUND_IN_V3)
     today = datetime.date.today().strftime("%d %B %Y")
 
     chips = "".join(

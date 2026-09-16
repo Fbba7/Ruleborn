@@ -294,7 +294,7 @@
       document; the repository is the source of truth and this page is generated
       from it.</p>
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
-      register directly (&sect;30.18). 25 items are fixed in the
+      register directly (&sect;30.18). 26 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
       what it did &mdash; including where a fix stopped short. 24 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
@@ -309,8 +309,8 @@
 
     <div class="summary">
       <div><span class="n">88</span><span class="k">items tracked</span></div>
-      <div><span class="n">33</span><span class="k">open</span></div>
-      <div><span class="n">25</span><span class="k">fixed in v3.0</span></div>
+      <div><span class="n">32</span><span class="k">open</span></div>
+      <div><span class="n">26</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">15</span><span class="k">done or adopted</span></div>
       <div><span class="n">27</span><span class="k">blocking the build</span></div>
       <div><span class="n">54</span><span class="k">edits drafted</span></div>
@@ -320,7 +320,7 @@
 
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">88</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">17</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">20</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">10</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">25</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">17</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">20</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">10</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
   </nav>
 
   <main id="list">
@@ -1161,7 +1161,7 @@
         <div class="refs"><span class="ref">§9.1</span><span class="ref">§10.2</span></div>
         <p class="body">§9.1 gives the Aether cap as 5,000 per Spire level plus 3,000. §10.2's Spire table gives a flat 5,000 × level — 5,000 at level 1, 50,000 at level 10. The formula would give 8,000 and 53,000.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Small, but Aether is the weaving and upkeep currency, so the cap gates how much law a player can re-weave in one session.</p>
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Untouched: §9.1 still gives the Aether cap as 5,000 a Spire level plus 3,000 against §10.2’s flat 5,000 × level. F17 makes the question larger rather than smaller — either figure is far below what a day produces.</p>
         <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;9.1</span></header><p class="e-find"><span class="e-lab">now</span><code>| 5,000 per Spire level + 3,000</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| 5,000 per Spire level</code></p><p class="e-why">§10.2’s Spire table gives a flat 5,000 × level. Either this or the table, and the table is the one every other building follows. See also F17: the cap is far below production either way.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
@@ -1270,7 +1270,7 @@
         <div class="refs"><span class="ref">§22.2</span><span class="ref">§22.5</span></div>
         <p class="body">§22.5 says every figure in §22.2 assumes 15%. The low and base scenarios do — €2,720 and €25,500, both confirmed. The high scenario's €168,000 is computed at <strong>30%</strong>. That is arguably correct, since €204,000 a month crosses Apple's $1M small-business threshold — but it contradicts the stated assumption and makes the three scenarios non-comparable.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Keep the 30% figure and footnote the threshold crossing. Worth surfacing that the discontinuity is a real business fact: revenue between roughly €70k and €85k a month is partly a dead zone.</p>
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Untouched: §22.5 still says every figure in §22.2 assumes 15%, and the high scenario is still computed at 30%.</p>
         <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;22.5</span></header><p class="e-find"><span class="e-lab">now</span><code>Every revenue figure in 22.2 assumes 15%.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>Every revenue figure in 22.2 assumes 15%, except the high scenario, which is computed at 30% because €204,000 a month crosses the $1M threshold. The three are therefore not directly comparable, and revenue between roughly €70,000 and €85,000 a month is partly a dead zone.</code></p><p class="e-why">The high scenario’s €168,000 is arithmetically right at 30% and wrong at the 15% this sentence promises. Surfacing the threshold is more useful than hiding it.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
@@ -1635,7 +1635,7 @@
         <div class="refs"><span class="ref">§7.4</span><span class="ref">§7.10</span></div>
         <p class="body">C3. Both work; the reasoning in §7.10 survives either. Choosing five means re-tagging 14 laws and re-deriving the page economy.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> all law content authoring, and §14.4's page economy.<br><strong>The numbers</strong> (<code>decision_support.py rarity</code>): five ranks completes the collection 23% cheaper — 2,460 pages against 2,805 — pulling it in about a month at eleven pages a day. §14.4's own 1,485-page figure is the three-rank total, so three ranks is what generated the published curve.<br><strong>No recommendation.</strong> Five ranks needs fourteen Rares re-tagged, and the split is a judgement about complexity and excitement — §7.10 is explicit that rarity must not track power, which rules out the obvious cost-ordered answer.</p>
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Still open, the ground has moved under it, and <strong>the argument it was being decided on has stopped mattering</strong>.<br><br>v3.0 re-tagged twelve laws from Rare to Uncommon, so the sheets read 18/12/6/12 while §7.10’s table still says 18/14/10/6 and three other sections still price three ranks (C3, C23). The question is no longer “three or five” but “which four”, and it is half-made.<br><br>It was argued partly on the page economy. The rank split moves the Codex total by 11% — 1,485 pages against 1,320. v3.0’s Library moves the time to gather it by <strong>five times</strong>: 371 days at no Library, 114 at level 5, 68 at level 10. A building now decides the page economy, which frees this decision to be made on what §7.10 says it is about — rarity buying specificity rather than strength.</p>
         
       </article>
       <article class="item cho" data-group="choices"
@@ -1665,7 +1665,7 @@
         <div class="refs"><span class="ref">§26.1</span><span class="ref">§26.5</span></div>
         <p class="body">D6. Roughly 40% less launch content, protecting the Island Workshop.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> the vertical slice's content budget, and the contractor brief.<br><strong>The proposal</strong> (D6): 24 laws rather than 48, 3 form-notes rather than 8, ~20 resonances rather than 44, 2–3 languages rather than 12, constellations to v1.1, wards at 2 levels rather than 5 — roughly 40% less, protecting the Island Workshop.<br><strong>Leaning:</strong> take it. §26.5 says scope is the lever and §30.8 ranks execution as risk #2, but neither is applied to §26.1. The Codex already gates laws in chapters, so 24 laws is chapter 2, which an engaged player reaches on day 5.</p>
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Not a question for the document — it is a proposal to it (D6) — but v3.0 changed what the cut would save. F10 classifies the 48 laws: 16 are parameter changes and 32 need an engine feature, so cutting to 24 laws saves very different amounts depending which 24. The same is true of §11.10’s 144 forms, which is the largest single art number in the project.</p>
         
       </article>
       <article class="item cho" data-group="choices"
@@ -1680,22 +1680,22 @@
         <div class="refs"><span class="ref">§27.3</span><span class="ref">§14</span><span class="ref">§27.5</span></div>
         <p class="body">Open in the document since v0.3. At one session a day, finishing everything takes about 1,019 days. §27.5 settles on a visible, openly labelled catch-up discount, but it is not specified.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> nothing, and it has been open since v0.3.<br><strong>The numbers:</strong> at one session a day, finishing everything takes about 1,019 days. §27.5 already settles on a visible, openly labelled catch-up discount, citing [83] — disclosed assistance does not harm the experience — but never specifies it.<br><strong>Leaning:</strong> specify the discount. The decision is already made; only the mechanism is missing.</p>
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Still open, still listed in §27.3, and <strong>the number it rests on is now wrong in the harder direction</strong>. §27.5 settles the shape — “a visible, openly labelled catch-up discount on levels the median player passed long ago” — and nothing specifies it. The 1,019 days was computed before §5.9. Re-run under §5.9’s rules, Keeper 40 moves from day 181 to 275 for an engaged player, 274 to 368 for a regular one, and <strong>556 to 733 for a casual one</strong>. The casual curve slips 177 days against 94 for the other two, because a flat five characters withheld for a crew is a larger share of a smaller roster and partial staffing bites sooner when there is less of everything.<br><br>Scaling §27.3’s own figure by that drift puts finishing everything at roughly <strong>1,343 days</strong> — three years and nine months. <code>python3 tools/decision_support.py pacing</code>.</p>
         
       </article>
       <article class="item cho" data-group="choices"
-               data-kind="decision" data-status="open"
+               data-kind="decision" data-status="fixed"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q8</span>
           <h3>How many ruleborn stand at one Guardian Post?</h3>
           <span class="kind">decision</span>
-          <span class="status s-open">Open</span>
+          <span class="status s-fixed">Fixed in v3.0</span>
         </header>
         <div class="refs"><span class="ref">§5.2</span><span class="ref">§13.4</span><span class="ref">§10.2</span><span class="ref">§9.2</span></div>
         <p class="body">Never stated anywhere in the document, and it is the missing conversion between §5.2, which counts guard <em>posts</em>, and §13.4, which counts <em>guards</em> — one post against three guards at realm level 1, three posts against six at level 5, so no constant reconciles them. §10.2's Guardian Post entry gives the post's capability per level (“guard +10% health and sight”) but never a capacity.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> C5, and it swings Q1 by a factor of three.<br><strong>Leaning:</strong> one. It matches §9.2's phrasing, keeps §5.2's numbers intact, and keeps defence affordable against the roster. Anything higher means F1's arithmetic has to be redone first, because defence would then consume more characters than production.<br>A small question with a large blast radius — worth answering before Q1, not after.</p>
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Answered, and the document says so in the same breath: “<strong>One ruleborn stands at one Guardian Post.</strong> That was never stated anywhere, and it is the missing conversion between counting posts and counting guards — without it the two tables could not be reconciled and defence could have consumed more characters than production.” §13.4. That is exactly what this decision asked for, including why it mattered.</p>
         
       </article>
       <article class="item cho" data-group="choices"
@@ -1710,7 +1710,7 @@
         <div class="refs"><span class="ref">§27.3</span></div>
         <p class="body">Final names and the trade-mark check; whether the Island Fund survives its six-month test; whether to strengthen performative and emotional challenge after launch; Law Clash rules; soft-launch countries; whether the interface says “universe” or “your sky”; whether constellations later get a competitive mode.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> the name clearance blocks any public use (§26.9), and the soft-launch countries block the launch plan. The rest can wait.<br><strong>Order:</strong> the trade-mark check first, since §26.9 makes it a gate and it costs nothing; then soft-launch countries; then the Island Fund test, which cannot start until the Workshop ships.</p>
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Unchanged. §27.3 still lists eight decisions under “Decisions for Francisco”: casual pacing, final names and the trade-mark check, whether the Island Fund survives its own test, whether the two weak variables in §19.4 are worth strengthening, “universe” or “your sky”, Law Clash rules, soft-launch countries, and whether constellations get a competitive mode.</p>
         
       </article>
       </section>

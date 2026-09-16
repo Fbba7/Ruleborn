@@ -41,6 +41,16 @@ that tells you to replace a sentence the document does not contain.
 `regenerate` edits have no `find`; they name a generated file to paste from.
 """
 
+#: Items found by reading v3.0 itself, rather than carried over from the v2.3
+#: audit. They need no "what v3.0 did" note, because v3.0 is where they come
+#: from. Kept here because three different tools were each holding their own
+#: copy of this list, which is the drift this register exists to complain about.
+FOUND_IN_V3 = frozenset({
+    "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
+    "D19", "D20", "D21", "D22", "D23",
+    "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17",
+})
+
 REGISTER = [
 
 # ===========================================================================
@@ -1806,6 +1816,68 @@ V3 = {
 
 "C17": dict(note="Untouched: \u00a727.2 still reads \u201cFallbacks are Lawkeep "
                  "and Ruleborn\u201d, and Ruleborn is the chosen name."),
+
+"C12": dict(note="Untouched: \u00a722.5 still says every figure in \u00a722.2 "
+                 "assumes 15%, and the high scenario is still computed at 30%."),
+
+"C18": dict(note="Untouched: \u00a79.1 still gives the Aether cap as 5,000 a "
+                 "Spire level plus 3,000 against \u00a710.2\u2019s flat "
+                 "5,000 \u00d7 level. F17 makes the question larger rather than "
+                 "smaller \u2014 either figure is far below what a day produces."),
+
+"Q8": dict(status="fixed", note=
+    "Answered, and the document says so in the same breath: \u201c<strong>One "
+    "ruleborn stands at one Guardian Post.</strong> That was never stated "
+    "anywhere, and it is the missing conversion between counting posts and "
+    "counting guards \u2014 without it the two tables could not be reconciled and "
+    "defence could have consumed more characters than production.\u201d "
+    "\u00a713.4. That is exactly what this decision asked for, including why it "
+    "mattered."),
+
+"Q3": dict(note=
+    "Still open, the ground has moved under it, and <strong>the argument it was "
+    "being decided on has stopped mattering</strong>.<br><br>v3.0 re-tagged twelve "
+    "laws from Rare to Uncommon, so the sheets read 18/12/6/12 while "
+    "\u00a77.10\u2019s table still says 18/14/10/6 and three other sections "
+    "still price three ranks (C3, C23). The question is no longer \u201cthree or "
+    "five\u201d but \u201cwhich four\u201d, and it is half-made.<br><br>It was "
+    "argued partly on the page economy. The rank split moves the Codex total by "
+    "11% \u2014 1,485 pages against 1,320. v3.0\u2019s Library moves the time to "
+    "gather it by <strong>five times</strong>: 371 days at no Library, 114 at "
+    "level 5, 68 at level 10. A building now decides the page economy, which "
+    "frees this decision to be made on what \u00a77.10 says it is about \u2014 "
+    "rarity buying specificity rather than strength."),
+
+"Q5": dict(note=
+    "Not a question for the document \u2014 it is a proposal to it (D6) \u2014 "
+    "but v3.0 changed what the cut would save. F10 classifies the 48 laws: 16 are "
+    "parameter changes and 32 need an engine feature, so cutting to 24 laws saves "
+    "very different amounts depending which 24. The same is true of "
+    "\u00a711.10\u2019s 144 forms, which is the largest single art number in the "
+    "project."),
+
+"Q6": dict(note=
+    "Still open, still listed in \u00a727.3, and <strong>the number it rests on "
+    "is now wrong in the harder direction</strong>. \u00a727.5 settles the shape "
+    "\u2014 \u201ca visible, openly labelled catch-up discount on levels the "
+    "median player passed long ago\u201d \u2014 and nothing specifies it. The "
+    "1,019 days was computed before \u00a75.9. Re-run under \u00a75.9\u2019s "
+    "rules, Keeper 40 moves from day 181 to 275 for an engaged player, 274 to 368 "
+    "for a regular one, and <strong>556 to 733 for a casual one</strong>. The "
+    "casual curve slips 177 days against 94 for the other two, because a flat "
+    "five characters withheld for a crew is a larger share of a smaller roster "
+    "and partial staffing bites sooner when there is less of everything.<br><br>"
+    "Scaling \u00a727.3\u2019s own figure by that drift puts finishing "
+    "everything at roughly <strong>1,343 days</strong> \u2014 three years and "
+    "nine months. <code>python3 tools/decision_support.py pacing</code>."),
+
+"Q7": dict(note=
+    "Unchanged. \u00a727.3 still lists eight decisions under \u201cDecisions for "
+    "Francisco\u201d: casual pacing, final names and the trade-mark check, "
+    "whether the Island Fund survives its own test, whether the two weak "
+    "variables in \u00a719.4 are worth strengthening, \u201cuniverse\u201d or "
+    "\u201cyour sky\u201d, Law Clash rules, soft-launch countries, and whether "
+    "constellations get a competitive mode."),
 
 "C8": dict(note=
     "Half fixed, and the other half is a fifth supersession. \u00a710.5 gives the "

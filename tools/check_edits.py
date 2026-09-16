@@ -151,7 +151,7 @@ def main() -> int:
     # open for a version, because the first pass over the new document checked
     # the six blocking items and not this batch. An item with an edit is
     # re-checked here every build; an item without one is checked by nobody.
-    from audit_register import V3
+    from audit_register import FOUND_IN_V3, V3
     def status(item):
         return V3.get(item["id"], {}).get("status") or item.get("status", "open")
 
@@ -160,8 +160,25 @@ def main() -> int:
                  and status(i) not in ("fixed", "done", "adopted")
                  and i["id"] not in EDITS]
 
+    # The same gap one level up. Six clerical contradictions and one decision
+    # went on being reported open after v3.0 had settled them, because the sweep
+    # over the new document covered the category that was on my mind and not the
+    # others. An item with no V3 note has not been read against the current
+    # version by anybody.
+    unread = [i["id"] for i in REGISTER
+              if i["kind"] != "deviation"
+              and status(i) not in ("done", "adopted")
+              and i["id"] not in V3
+              and i["id"] not in FOUND_IN_V3]
+
     print(f"\nChecked {total} edits across {len(EDITS)} register items against "
           f"{DOC.name}.\n")
+    if unread:
+        print(f"  {len(unread)} items have no note saying what v3.0 did about "
+              f"them, so nothing")
+        print(f"  records whether they were read against the current version: "
+              f"{', '.join(sorted(unread))}")
+        print("  Not a failure — a to-do list.\n")
     if uncovered:
         print(f"  {len(uncovered)} open conflicts carry no edit, so nothing "
               f"re-checks them against")
