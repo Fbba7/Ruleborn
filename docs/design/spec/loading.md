@@ -70,6 +70,26 @@ measurable in success rate.** A break-even exists, as §12.19 says. It sits abou
 twenty points above where §12.19 puts it, which makes the region the document
 calls the decision a slope.
 
+### Settled at §13.4's own sample size
+
+The table above reads a peak off an argmax, which is a noisy statistic — and at
+these sample sizes the 70%-vs-90% comparison is only about t = 2.3, run several
+times. Marginal evidence, repeated, is how the two withdrawn findings below
+happened. So it was re-run paired over the same seeds at **700 raids a
+threshold**:
+
+| stops at | E[grade × fill] | vs 70% | success |
+| ---: | ---: | ---: | ---: |
+| 70% | 0.1231 | — | 53.3% |
+| 80% | 0.1370 | +0.0139 ± 0.0077 (t = 1.8) | 53.0% |
+| **90%** | **0.1595** | **+0.0364 ± 0.0080 (t = 4.5)** | 52.0% |
+
+That settles it. +30% an attempt for 1.3 points of success rate.
+
+It also sizes the test: `test_the_break_even_is_not_at_12_19s_seventy_per_cent`
+now runs 300 raids a threshold, because the per-seed standard deviation of 0.212
+makes a 120-raid version fail about one build in twelve for no reason.
+
 ### But no fixed rule is the best rule
 
 A crew that reads §12.17's visible suspicion — push to 95% when nothing has

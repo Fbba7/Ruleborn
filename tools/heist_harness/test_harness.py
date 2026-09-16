@@ -169,9 +169,18 @@ def test_the_break_even_is_not_at_12_19s_seventy_per_cent():
     """F20. §9.6 pays grade x fill, so that is what a stopping rule maximises.
 
     §12.19 states the break-even as a fact and calls it "the dial for the game's
-    emotional peak". Measured, loading past 70% is plainly worth more and costs
-    nothing in success rate. Asserted as an inequality rather than as a location,
-    because 85% is a two-sigma measurement and 70% being wrong is not.
+    emotional peak". Measured, loading past 70% is worth more and costs nothing
+    in success rate. Asserted as an inequality rather than as a location, because
+    where the curve turns over is a much noisier quantity than whether 70% is
+    below the turn.
+
+    The sample size is calculated, not guessed. Paired over seeds at 700 raids a
+    threshold, 90% beats 70% by +0.0364 with a per-seed standard deviation of
+    0.212 — t = 4.5, which is what settles the finding. At n it fails with
+    probability P(z < -0.0364 * sqrt(n) / 0.212): about 8% at n=120, which is a
+    flaky gate, and under 0.2% at n=300, which is not. An earlier version of this
+    test ran 120 and asserted a 10% margin on top, and would have failed roughly
+    one build in twelve for no reason at all.
     """
     import statistics as st
     from .island import ALL_LAYERS, generate
@@ -181,7 +190,7 @@ def test_the_break_even_is_not_at_12_19s_seventy_per_cent():
 
     grade_value = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
 
-    def expected(stop: int, n: int = 120) -> float:
+    def expected(stop: int, n: int = 300) -> float:
         policy = type("Tuned", (Competent,), {"stop_at_fill": stop})
         values = []
         for i in range(n):
@@ -193,7 +202,7 @@ def test_the_break_even_is_not_at_12_19s_seventy_per_cent():
         return st.mean(values)
 
     at_70, higher = expected(70), expected(90)
-    assert higher > at_70 * 1.10, (at_70, higher)
+    assert higher > at_70, (at_70, higher)
 
 
 def test_islands_never_seal_the_route():
