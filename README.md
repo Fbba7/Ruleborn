@@ -13,7 +13,7 @@ monetisation.
 
 **Pre-production — design document at v3.0, no code yet.**
 
-v3.0 answered the audit directly (§30.18): 19 of 88 register items are fixed in
+v3.0 answered the audit directly (§30.18): 25 of 88 register items are fixed in
 the document itself, including every one of the six systems that were specified
 twice. It also changed the plan — both pre-code player tests are gone, replaced
 by the simulation harnesses in §19.27, and the build-willingness risk is designed
@@ -163,7 +163,7 @@ document, as 88 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 41 are drafted across 21
+the sentence as it stands today, and what to put there. 54 are drafted across 32
 items, and every quoted sentence is checked against v3.0 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no

@@ -157,7 +157,13 @@ dict(
         dict(id="T1.3", owner="claude", status="doing",
              title="Draft a resolution for the rest",
              detail="The significant and minor conflicts, and the gaps below the "
-                    "blocking line.",
+                    "blocking line. <strong>Every open conflict now carries a "
+                    "drafted edit</strong> \u2014 the section, the sentence as it "
+                    "stands, and what to put there \u2014 and "
+                    "<code>check_edits.py</code> reports any that do not, because "
+                    "an item without an edit is checked by nobody. That is how "
+                    "six clerical items went on being reported open for a whole "
+                    "version after v3.0 had fixed them.",
              register_severity=["significant", "minor"]),
         dict(id="T1.4", owner="you", status="yours",
              title="Sign off, or overrule, each drafted resolution",

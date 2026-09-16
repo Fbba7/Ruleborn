@@ -294,15 +294,15 @@
       document; the repository is the source of truth and this page is generated
       from it.</p>
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
-      register directly (&sect;30.18). 18 items are fixed in the
+      register directly (&sect;30.18). 25 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
       what it did &mdash; including where a fix stopped short. 24 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
       out against the rule sheet &sect;7.3 claims they change.</p>
-    <p class="lede"><strong>44 edits are drafted</strong> across
-      23 items &mdash; the section to open, the sentence as it stands
+    <p class="lede"><strong>54 edits are drafted</strong> across
+      32 items &mdash; the section to open, the sentence as it stands
       today, and what to put there. Every quoted sentence is checked against the
       document by <code>tools/check_edits.py</code>, which fails the build if one
       is not there or appears twice.</p>
@@ -310,17 +310,17 @@
     <div class="summary">
       <div><span class="n">88</span><span class="k">items tracked</span></div>
       <div><span class="n">33</span><span class="k">open</span></div>
-      <div><span class="n">18</span><span class="k">fixed in v3.0</span></div>
+      <div><span class="n">25</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">15</span><span class="k">done or adopted</span></div>
       <div><span class="n">27</span><span class="k">blocking the build</span></div>
-      <div><span class="n">44</span><span class="k">edits drafted</span></div>
+      <div><span class="n">54</span><span class="k">edits drafted</span></div>
       <div><span class="n">16 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">88</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">17</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">20</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">10</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">23</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">17</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">20</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">10</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">25</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
   </nav>
 
   <main id="list">
@@ -699,7 +699,7 @@
       </article>
       <article class="item blk" data-group="blocking"
                data-kind="contradiction" data-status="proposed"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C2</span>
           <h3>Two incompatible raid-payout models, differing by 16–30×</h3>
@@ -710,7 +710,7 @@
         <p class="body">§9.4 pays a percentage of what the defender holds; §9.6 replaces it with a haul minted from the raider's own level and says so explicitly — but §9.4's percentages and §12.9's multipliers remain. Run through the economy model, <strong>§9.4 delivers 32% of a player's income, reproducing its own stated “roughly a third” almost exactly, while §9.6 delivers 1–2%</strong>. Strong evidence that §9.4 generated the published progression tables and §9.6 was added afterwards without re-running them.</p>
         <p class="rec"><span class="arrow">&rarr;</span> §9.6 is the better-reasoned model — minting is right when loot is created rather than transferred. Then: delete §9.4's percentages and §12.9's loot column; say what Carrier capacity now means (probably time pressure, not a cap on value — see G4); rewrite §9.4's and §12.1's resource-share claims; and resolve C4 first, since the formula's level term is undefined.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Half resolved. §9.4’s percentages are deleted — “the percentages this paragraph used to carry are gone” — and §9.6 is the one formula, now with a <code>fill</code> term. But §9.6 keeps <code>B(V)</code> rather than pegging to production, so the faucet still delivers 1–2% of income, while §9.4’s balance target (“a fifth of a day’s production… roughly a third”) and §12.1’s 40% are unchanged. The two-model contradiction is gone; the model-versus-target one is not.</p>
-        
+        <details class="edits"><summary>2 edits to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;9.4</span></header><p class="e-find"><span class="e-lab">now</span><code>Balance target: a successful heist against an even match brings about a fifth of a day's production, so heists supply roughly a third of an active player's resources.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>Balance target: a successful heist against an even match brings a few per cent of a day's production, so heists supply well under a tenth of an active player's resources. Raiding is a page faucet and a Renown faucet; it is not how a player gets rich.</code></p><p class="e-why">§9.6’s formula is the one that pays, and it delivers 1–2% of income — half that again once v3.0’s fill term is applied (F14). Either this sentence changes or the formula does; the register’s own recommendation is the production peg in docs/design/spec/economy.md, which would let it stand as written.</p></li><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;12.1</span></header><p class="e-find"><span class="e-lab">now</span><code>| About 40% of mid-game growth</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| A few per cent of mid-game growth, and most of the pages</code></p><p class="e-why">The same figure stated a third time, and the largest of the three.</p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
                data-kind="contradiction" data-status="open"
@@ -1136,7 +1136,7 @@
       </article>
       <article class="item sig" data-group="significant"
                data-kind="contradiction" data-status="open"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C8</span>
           <h3>The Library is load-bearing and specified nowhere</h3>
@@ -1146,12 +1146,12 @@
         <div class="refs"><span class="ref">§7.6</span><span class="ref">§12.1</span><span class="ref">§10.2</span><span class="ref">§26.1</span><span class="ref">§30.15</span></div>
         <p class="body">“A Library at the Heart produces about one page per realm every few hours” is the mitigation for the problem review 10 identified — that making pages raid-only punishes the large share of players who prefer building. It is referenced four times. It is <strong>not among the 16 building types</strong> in §10.2, has no cost, no levels and no placement rule, and §26.1 confirms 16 types at launch.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Add it as a 17th building with a full level table, or fold the trickle into the Observatory or the Spire and rewrite the four references. Do not leave a load-bearing economic faucet unspecified.</p>
-        <p class="v3"><span class="vlabel">v3.0</span> The Library exists: §10.5 gives it a placement and three levels. Three, not ten — levels 1, 5 and 10, where every other building lists every level. And §26.1 still says 16 building types while there are now 17 (C24).</p>
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Half fixed, and the other half is a fifth supersession. §10.5 gives the Library a placement and a table — 3 pages a day at level 1, 9 at 5, 18 at 10, “across the universe”. §7.6 still says it produces “about one page per realm every few hours”, which across seven realms is roughly 40 a day. The two differ by about four times, and §7.6’s is the sentence a reader meets first.<br><br>§10.5 also gives three of the ten levels — 1, 5 and 10 — where every other building in §10.2 lists every one, and §26.1 still counts 16 building types where there are now 17 (C24).</p>
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;7.6</span></header><p class="e-find"><span class="e-lab">now</span><code>A Library at the Heart produces about one page per realm every few hours</code></p><p class="e-new"><span class="e-lab">becomes</span><code>A Library at the Heart produces 3 pages a day at level 1, rising to 18 at level 10 (10.5)</code></p><p class="e-why">§10.5 gives the table; this sentence predates it and reads about four times higher across seven realms.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
                data-kind="contradiction" data-status="proposed"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C18</span>
           <h3>Aether storage: formula or table?</h3>
@@ -1162,66 +1162,66 @@
         <p class="body">§9.1 gives the Aether cap as 5,000 per Spire level plus 3,000. §10.2's Spire table gives a flat 5,000 × level — 5,000 at level 1, 50,000 at level 10. The formula would give 8,000 and 53,000.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Small, but Aether is the weaving and upkeep currency, so the cap gates how much law a player can re-weave in one session.</p>
         
-        
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;9.1</span></header><p class="e-find"><span class="e-lab">now</span><code>| 5,000 per Spire level + 3,000</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| 5,000 per Spire level</code></p><p class="e-why">§10.2’s Spire table gives a flat 5,000 × level. Either this or the table, and the table is the one every other building follows. See also F17: the cap is far below production either way.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed"
+               data-kind="contradiction" data-status="fixed"
                data-edits="no">
         <header class="item-head">
           <span class="id">C20</span>
           <h3>The 48 law sound signatures are six school sounds repeated</h3>
           <span class="kind">conflict</span>
-          <span class="status s-proposed">Proposed</span>
+          <span class="status s-fixed">Fixed in v3.0</span>
         </header>
         <div class="refs"><span class="ref">§21.8</span><span class="ref">§7.9</span><span class="ref">§21.9</span></div>
         <p class="body">§21.8 says “every law also has a sound signature, so a player can hear which rules are running with the screen half-watched”. Extracting all 48 law sheets gives <strong>6 distinct sounds, one per school, each repeated eight times</strong> — Motion laws all sound like “a rising whistle and a soft thump on landing”, Matter laws all like “a glassy chime and a low grind”. A player can hear which <em>school</em> is running, not which law, and a realm can hold several laws of one school. §21.9's asset list budgets 6 school stingers, so the budget matches the content and not the claim.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either correct §21.8 to say sounds are per school — which is a reasonable design, and cheaper — or budget 48 law sounds in §21.9 and author them. The claim as written is not met by the content.</p>
-        <p class="v3"><span class="vlabel">v3.0</span> Untouched: 48 laws still share 6 sound signatures.</p>
+        <p class="v3"><span class="vlabel">v3.0</span> Fixed, and the fix is the honest one. §21.8 no longer claims a signature per law: “Every school has a sound signature — six in all — so a player can hear which kind of rule is running.” Six signatures for six schools is what the content actually holds, so the sentence now describes the game rather than an aspiration.</p>
         
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed"
+               data-kind="contradiction" data-status="fixed"
                data-edits="no">
         <header class="item-head">
           <span class="id">C13</span>
           <h3>Matchmaking cannot reach its own worst difficulty tier</h3>
           <span class="kind">conflict</span>
-          <span class="status s-proposed">Proposed</span>
+          <span class="status s-fixed">Fixed in v3.0</span>
         </header>
         <div class="refs"><span class="ref">§12.3</span><span class="ref">§9.6</span></div>
         <p class="body">§12.3 offers targets within 3 Keeper levels. §9.6's difficulty multiplier has a tier for targets “three or more below” paying 0.25×. If the Observatory never offers such targets, that tier is unreachable in normal play.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either widen the offered band, or state that the 0.25 tier exists only for challenge links, friendly heists and Trace targets.</p>
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Fixed, and better than proposed. §12.22’s fifth step states it outright: “The 0.25 payout for targets three or more levels below is unreachable through normal matchmaking by design. It exists for challenge links, friendly heists and Trace targets.” An unreachable tier that says why it is unreachable is no longer a contradiction.</p>
         
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed"
+               data-kind="contradiction" data-status="fixed"
                data-edits="no">
         <header class="item-head">
           <span class="id">C14</span>
           <h3>Renown for a foiled heist is undefined</h3>
           <span class="kind">conflict</span>
-          <span class="status s-proposed">Proposed</span>
+          <span class="status s-fixed">Fixed in v3.0</span>
         </header>
         <div class="refs"><span class="ref">§12.9</span></div>
         <p class="body">The outcomes table gives Renown as a percentage — 100% / 80% / 50% / −50% — while the formula below it produces an absolute value of 8 to 40. “−50%” of a gain the raider did not make has no meaning.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Express all four outcomes as multipliers on the formula's output, and state the sign convention explicitly.</p>
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Fixed exactly as drafted. §12.9’s Renown column is now multipliers — ×1.0, ×0.8, ×0.5 — on the formula’s 8 to 40, and a foiled heist is a flat −8 with the reason stated: “rather than a share of a gain that was never made”. The Haul column was given the same treatment.</p>
         
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed"
+               data-kind="contradiction" data-status="fixed"
                data-edits="no">
         <header class="item-head">
           <span class="id">C9</span>
           <h3>The Codex screen says 36 laws; there are 48</h3>
           <span class="kind">conflict</span>
-          <span class="status s-proposed">Proposed</span>
+          <span class="status s-fixed">Fixed in v3.0</span>
         </header>
         <div class="refs"><span class="ref">§23.2</span><span class="ref">§7</span><span class="ref">§26.1</span></div>
         <p class="body">The Law Codex screen spec says “36 laws by school and rank”. 36 is the size of Codex chapter 3 (§7.6), so this is probably a stale number rather than a disagreement about the collection.</p>
         
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Fixed. §23.2’s Law Codex screen now reads “all 48 laws by school and rank”; the stale 36 — which was the size of Codex chapter 3 — is gone.</p>
         
       </article>
       <article class="item sig" data-group="significant"
@@ -1244,23 +1244,23 @@
 | +5 each season</code></p><p class="e-why">§11.3 enumerates 31. §17.3 also names a “rare Starborn trait” that appears in neither, so either add it to §11.3 and make this 32, or cut the reference.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed"
+               data-kind="contradiction" data-status="fixed"
                data-edits="no">
         <header class="item-head">
           <span class="id">C11</span>
           <h3>Screen count: 23 or 27?</h3>
           <span class="kind">conflict</span>
-          <span class="status s-proposed">Proposed</span>
+          <span class="status s-fixed">Fixed in v3.0</span>
         </header>
         <div class="refs"><span class="ref">§21.9</span><span class="ref">§23.2</span></div>
         <p class="body">§23.2 lists 27 screens to design; §21.9's asset list says 23. The difference is four screens of interface work and their icons.</p>
         
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Fixed. §21.9’s asset list now says 27 screens, matching §23.2. The four screens of interface work and their icons are budgeted.</p>
         
       </article>
       <article class="item sig" data-group="significant"
                data-kind="contradiction" data-status="proposed"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C12</span>
           <h3>The high revenue scenario quietly uses a different commission rate</h3>
@@ -1271,11 +1271,11 @@
         <p class="body">§22.5 says every figure in §22.2 assumes 15%. The low and base scenarios do — €2,720 and €25,500, both confirmed. The high scenario's €168,000 is computed at <strong>30%</strong>. That is arguably correct, since €204,000 a month crosses Apple's $1M small-business threshold — but it contradicts the stated assumption and makes the three scenarios non-comparable.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Keep the 30% figure and footnote the threshold crossing. Worth surfacing that the discontinuity is a real business fact: revenue between roughly €70k and €85k a month is partly a dead zone.</p>
         
-        
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;22.5</span></header><p class="e-find"><span class="e-lab">now</span><code>Every revenue figure in 22.2 assumes 15%.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>Every revenue figure in 22.2 assumes 15%, except the high scenario, which is computed at 30% because €204,000 a month crosses the $1M threshold. The three are therefore not directly comparable, and revenue between roughly €70,000 and €85,000 a month is partly a dead zone.</code></p><p class="e-why">The high scenario’s €168,000 is arithmetically right at 30% and wrong at the 15% this sentence promises. Surfacing the threshold is more useful than hiding it.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
                data-kind="gap" data-status="open"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">G12</span>
           <h3>Three laws key off creature attributes that no creature has</h3>
@@ -1286,7 +1286,7 @@
         <p class="body">Checked across all 48 law sheets against the role and creature tables. <strong>Density</strong> reads “Big characters get +30% health and −20% speed; small ones get +25% speed and −20% health” — but there is <strong>no size or mass attribute anywhere</strong>. §11.1's role table carries health, speed, power and carry, nothing else; §11.11's proportions are in heads, which is art direction for the character artist; §11.10's forms add quirks, never a size. A rare law's entire tier-1 effect has nothing to resolve against.<br><br><strong>Heavy ground</strong> grounds “flyers”, and flight exists only in §11.2's Featherkin passive — so under §11.11 (the spec C6 recommends adopting) half the law is inert and its stated weakness is false. <strong>Swarm birth</strong> is milder: “two small guards with 30% of its strength” describes what it creates rather than an attribute it reads, but 30% of <em>what</em> is undefined, and split guards have no role, so §12.17 gives them no perception profile.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either add the attributes (a size or mass band on each creature; flight as a stated property) or rewrite the three laws to key off role, which does exist. §7.3's rule is that laws change a realm's rule sheet and never contain special cases; a law reading a parameter that does not exist is the same failure from the other side. Enforce it in the law data table.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Same as G10. §12.21 declares size a band on every ruleborn and flight a stated property; §11.1 and §11.11 carry neither, and Featherkin’s flight is still prose in a Passive column.</p>
-        
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;11.11</span></header><p class="e-find"><span class="e-lab">now</span><code>Size is a band on every ruleborn: small, standard or large, derived from its proportions rather than invented separately.</code></p><p class="e-new"><span class="e-lab">add</span><code>Then put it in the table. §12.21 states size and flight as properties and no entry in §11.1 or §11.11 carries either, so Density, Heavy ground and Swarm birth still read attributes that do not exist. Two columns close it. Same edit as C26.</code></p><p class="e-why">A law reading a parameter that is not in any table is the failure §12.21 describes, still present in the section that describes it.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
                data-kind="gap" data-status="fixed"
@@ -1435,38 +1435,38 @@
         </div>
         
       <article class="item min" data-group="minor"
-               data-kind="contradiction" data-status="proposed"
+               data-kind="contradiction" data-status="fixed"
                data-edits="no">
         <header class="item-head">
           <span class="id">C15</span>
           <h3>Guard vision is given in tiles in one place and metres in another</h3>
           <span class="kind">conflict</span>
-          <span class="status s-proposed">Proposed</span>
+          <span class="status s-fixed">Fixed in v3.0</span>
         </header>
         <div class="refs"><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§21.1</span></div>
         <p class="body">§21.1 establishes that one tile is one metre, so the two reconcile — but the document should pick one unit and use it throughout.</p>
         
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Fixed by C1’s fix. §12.8 no longer gives sight in tiles; it points at §12.17, which is in metres throughout, and §21.1 establishes one tile as one metre.</p>
         
       </article>
       <article class="item min" data-group="minor"
-               data-kind="contradiction" data-status="proposed"
+               data-kind="contradiction" data-status="fixed"
                data-edits="no">
         <header class="item-head">
           <span class="id">C16</span>
           <h3>“Three-minute heist” against a 150–240 second clock</h3>
           <span class="kind">conflict</span>
-          <span class="status s-proposed">Proposed</span>
+          <span class="status s-fixed">Fixed in v3.0</span>
         </header>
         <div class="refs"><span class="ref">§12</span><span class="ref">§12.2</span><span class="ref">§5.4</span><span class="ref">§14.1</span></div>
         <p class="body">§12's opening calls a heist “a three-minute run”; the clock is 150–240 seconds and §12.2 correctly says 2.5–4 minutes. Harmless, but the marketing line and the spec should not disagree.</p>
         
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Fixed. §12 no longer calls a heist “a three-minute run”, so the opening line and §12.2’s 2.5 to 4 minutes no longer disagree.</p>
         
       </article>
       <article class="item min" data-group="minor"
                data-kind="contradiction" data-status="proposed"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C17</span>
           <h3>The game lists itself as its own fallback name</h3>
@@ -1476,12 +1476,12 @@
         <div class="refs"><span class="ref">§27.2</span><span class="ref">§26.9</span></div>
         <p class="body">§27.2 says “Fallbacks are Lawkeep and Ruleborn” — but Ruleborn <em>is</em> the chosen name. Almost certainly a leftover from the v2.2 rename.</p>
         
-        
-        
+        <p class="v3"><span class="vlabel">v3.0</span> Untouched: §27.2 still reads “Fallbacks are Lawkeep and Ruleborn”, and Ruleborn is the chosen name.</p>
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;27.2</span></header><p class="e-find"><span class="e-lab">now</span><code>Fallbacks are Lawkeep and Ruleborn</code></p><p class="e-new"><span class="e-lab">becomes</span><code>The fallback is Lawkeep</code></p><p class="e-why">Ruleborn is the chosen name. A leftover from the v2.2 rename.</p></li></ol></details>
       </article>
       <article class="item min" data-group="minor"
                data-kind="gap" data-status="proposed"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">G5</span>
           <h3>Law pylons have no count, health or placement rule</h3>
@@ -1492,7 +1492,7 @@
         <p class="body">Breaking a pylon switches its law off for the rest of a heist and yields a page, and the Spire's light going out when one breaks is the Heart's signature moment. §10.2 lists Law Pylon as a building with ten levels and health, but the relationship between pylons and the law slots they presumably represent is never stated.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Mostly a false alarm, and that is the useful part.</strong> §10.2’s Law Pylon row gives ten levels at 600 health each and states the relationship this item calls missing, in four words: <em>“One per law slot; per slot”</em>. This item was recorded without reading that table — its own text admits as much — and the same oversight produced half of G3.<br><br>What survives is one sentence: nothing says a raider can tell <em>which law</em> a pylon carries before committing to the detour, which both §12.6 and §5.7 assume. <code>docs/design/spec/wards.md</code> proposes the pylon show its school colour and note glyphs, with §15.3’s law banner naming it on approach, and prices the detour from §10.2’s health: 1% of a heist at pylon level 1, 9% at level 10.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Untouched. §12.6’s pylon sentence is unchanged, so a raider still cannot tell which law a pylon carries before committing.</p>
-        
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;12.6</span></header><p class="e-find"><span class="e-lab">now</span><code>Pylons: breaking one switches its law off for the rest of the heist and gives a page of it. It's often worth a detour.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>Pylons: breaking one switches its law off for the rest of the heist and gives a page of it. A pylon shows its law’s school colour and note glyphs, and the law banner names it on approach (15.3), so the detour is a choice rather than a gamble. It costs about 1% of a heist at pylon level 1 and 9% at level 10.</code></p><p class="e-why">§12.6 and §5.7 both assume the raider knows what they are breaking before committing, and nothing says they can. The level table and health are already in §10.2.</p></li></ol></details>
       </article>
       <article class="item min" data-group="minor"
                data-kind="gap" data-status="fixed"
@@ -1526,7 +1526,7 @@
       </article>
       <article class="item min" data-group="minor"
                data-kind="gap" data-status="open"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">G10</span>
           <h3>Some law tier effects cannot be expressed as parameters</h3>
@@ -1537,11 +1537,11 @@
         <p class="body">§7.3's best architectural decision is that laws change a realm's rule sheet and never contain special cases. But several tier values are qualitative rather than numeric — Glass at tier II “also reveals hidden wards” and at tier III “also shows guard vision cones” — so the principle is already bending. Density's “±40%/30%, ±50%/40%” needs a key.</p>
         <p class="rec"><span class="arrow">&rarr;</span> When the law data table is authored, every tier value must be expressible as a rule-sheet parameter change. Any that cannot is a design smell worth resolving then, not at implementation time.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §12.21 states the rule this gap asked for — “every tier effect of every law must be expressible as a change to a named parameter” — and names the three parameters that were missing. It does not apply it: no table carries size or flight (C26).</p>
-        
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;12.21</span></header><p class="e-find"><span class="e-lab">now</span><code>The rule: every tier effect of every law must be expressible as a change to a named parameter.</code></p><p class="e-new"><span class="e-lab">add</span><code>Then list the parameters. §7.3 asserts laws are parameters and the document never says what the parameters are, so the rule cannot be applied while authoring — which is when it says it should be. Written out against a twenty-word rule sheet, 16 of the 48 laws are parameter changes and nothing else; 10 need an object the simulation must spawn, 16 need a periodic or conditional rule, and 8 need a choice from the realm’s owner. Tag each law with which, so a scope cut can drop the expensive ones rather than the unpopular ones (F10).</code></p><p class="e-why">A vocabulary that grows to fit each new law is not a vocabulary. The classification is at tools/law_effects.py and the table at content/law_effects.json.</p></li></ol></details>
       </article>
       <article class="item min" data-group="minor"
                data-kind="gap" data-status="open"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">G11</span>
           <h3>Localisation of a coined vocabulary has no owner</h3>
@@ -1552,7 +1552,7 @@
         <p class="body">§25.4 sets a 70% post-tutorial comprehension gate and §26.9 says every new name is said aloud in the twelve launch languages. Twelve languages across roughly 130 coined proper nouns — 48 law names, 44 resonances, 12 chords, 18 creatures, 8 notes, 6 schools, 7 realms — is a large translation problem with no owner in §26.3's team. §20.6 also says launch is English and Portuguese, against §26.2's twelve.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Related to D6: shipping 2–3 languages and translating store pages more widely is §26.4's own plan.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Untouched: §20.6 still says English and Portuguese at launch, §26.2 still says twelve languages.</p>
-        
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;26.2</span></header><p class="e-find"><span class="e-lab">now</span><code>Languages at launch: English and Portuguese (Portugal and Brazil).</code></p><p class="e-new"><span class="e-lab">add</span><code>Reconcile with §26.2’s global launch line, which still promises twelve languages. Two at launch and twelve at global are compatible if the document says so; as written they read as a contradiction, and twelve languages against a coined vocabulary — 48 law names, 44 resonances, 12 chords, 18 creatures — has no owner in §26.3’s team.</code></p><p class="e-why">The scope decision in stage 4 turns on this: languages are the single largest line in §26.1 that nobody is assigned to.</p></li></ol></details>
       </article>
       <article class="item min" data-group="minor"
                data-kind="contradiction" data-status="open"

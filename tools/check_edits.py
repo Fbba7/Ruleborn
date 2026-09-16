@@ -39,6 +39,33 @@ def normalise(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+def duplicate_keys() -> list:
+    """Duplicate keys in the V3 and EDITS literals, which Python silently drops.
+
+    `{"C20": a, "C20": b}` is legal and keeps only the second, so the register
+    can lose an entry with no error anywhere. Once the module is imported the
+    evidence is gone, so this reads the source.
+    """
+    import ast
+    tree = ast.parse((ROOT / "tools" / "audit_register.py").read_text(encoding="utf-8"))
+    out = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign):
+            continue
+        names = [t.id for t in node.targets if isinstance(t, ast.Name)]
+        if not names or not isinstance(node.value, ast.Dict):
+            continue
+        seen = set()
+        for key in node.value.keys:
+            if not isinstance(key, ast.Constant):
+                continue
+            if key.value in seen:
+                out.append(f"{names[0]} has {key.value!r} twice — Python keeps the "
+                           f"second and drops the first silently")
+            seen.add(key.value)
+    return out
+
+
 def main() -> int:
     if not DOC.exists():
         print(f"{DOC} is missing — run tools/extract_design_doc.py", file=sys.stderr)
@@ -50,6 +77,8 @@ def main() -> int:
             json.loads((CONTENT / "laws.json").read_text(encoding="utf-8"))}
     creatures = {c["name"]: c for c in
                  json.loads((CONTENT / "ruleborn.json").read_text(encoding="utf-8"))}
+
+    problems.extend(duplicate_keys())
 
     known = {i["id"] for i in REGISTER}
     for item_id in EDITS:
@@ -118,8 +147,27 @@ def main() -> int:
                 problems.append(f"{where}: §{edit['section']} — {needle[:50]!r} "
                                 f"appears {hits} times, so \"replace it\" is ambiguous")
 
+    # Coverage. The six clerical items fixed in v3.0 went on being reported as
+    # open for a version, because the first pass over the new document checked
+    # the six blocking items and not this batch. An item with an edit is
+    # re-checked here every build; an item without one is checked by nobody.
+    from audit_register import V3
+    def status(item):
+        return V3.get(item["id"], {}).get("status") or item.get("status", "open")
+
+    uncovered = [i["id"] for i in REGISTER
+                 if i["kind"] in ("contradiction", "gap")
+                 and status(i) not in ("fixed", "done", "adopted")
+                 and i["id"] not in EDITS]
+
     print(f"\nChecked {total} edits across {len(EDITS)} register items against "
           f"{DOC.name}.\n")
+    if uncovered:
+        print(f"  {len(uncovered)} open conflicts carry no edit, so nothing "
+              f"re-checks them against")
+        print(f"  the document: {', '.join(sorted(uncovered))}")
+        print("  Not a failure — a to-do list. Drafting an edit is what puts an "
+              "item under\n  this check.\n")
     if problems:
         print(f"{len(problems)} edits do not match the document:\n")
         for p in problems:

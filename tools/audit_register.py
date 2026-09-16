@@ -1688,11 +1688,6 @@ V3 = {
     "and Rootrunner, plus fifteen wording differences. The decision was taken and "
     "the second copy was not retired."),
 
-"C8": dict(note=
-    "The Library exists: §10.5 gives it a placement and three levels. Three, not ten "
-    "\u2014 levels 1, 5 and 10, where every other building lists every level. And "
-    "§26.1 still says 16 building types while there are now 17 (C24)."),
-
 "C19": dict(note=
     "The decision is made (\u00a75.9) and the tables were not regenerated against "
     "it. Now measured, by re-running the model under \u00a75.9\u2019s three rules "
@@ -1768,6 +1763,62 @@ V3 = {
 
 "C7": dict(note="Untouched: 20 steps a second and 30 both still appear."),
 
+# -- the clerical sweep, re-checked -------------------------------------
+#
+# These six were missed on the first pass over v3.0: the six blocking items were
+# checked against the new document and this batch was not, so the register went
+# on reporting them open for a version. Worth recording as a process note rather
+# than quietly correcting — an audit that does not audit itself is the thing
+# this register exists to complain about.
+
+"C9": dict(status="fixed", note=
+    "Fixed. \u00a723.2\u2019s Law Codex screen now reads \u201call 48 laws by "
+    "school and rank\u201d; the stale 36 \u2014 which was the size of Codex "
+    "chapter 3 \u2014 is gone."),
+
+"C11": dict(status="fixed", note=
+    "Fixed. \u00a721.9\u2019s asset list now says 27 screens, matching "
+    "\u00a723.2. The four screens of interface work and their icons are budgeted."),
+
+"C13": dict(status="fixed", note=
+    "Fixed, and better than proposed. \u00a712.22\u2019s fifth step states it "
+    "outright: \u201cThe 0.25 payout for targets three or more levels below is "
+    "unreachable through normal matchmaking by design. It exists for challenge "
+    "links, friendly heists and Trace targets.\u201d An unreachable tier that "
+    "says why it is unreachable is no longer a contradiction."),
+
+"C14": dict(status="fixed", note=
+    "Fixed exactly as drafted. \u00a712.9\u2019s Renown column is now "
+    "multipliers \u2014 \u00d71.0, \u00d70.8, \u00d70.5 \u2014 on the "
+    "formula\u2019s 8 to 40, and a foiled heist is a flat \u22128 with the "
+    "reason stated: \u201crather than a share of a gain that was never "
+    "made\u201d. The Haul column was given the same treatment."),
+
+"C15": dict(status="fixed", note=
+    "Fixed by C1\u2019s fix. \u00a712.8 no longer gives sight in tiles; it "
+    "points at \u00a712.17, which is in metres throughout, and \u00a721.1 "
+    "establishes one tile as one metre."),
+
+"C16": dict(status="fixed", note=
+    "Fixed. \u00a712 no longer calls a heist \u201ca three-minute run\u201d, so "
+    "the opening line and \u00a712.2\u2019s 2.5 to 4 minutes no longer "
+    "disagree."),
+
+"C17": dict(note="Untouched: \u00a727.2 still reads \u201cFallbacks are Lawkeep "
+                 "and Ruleborn\u201d, and Ruleborn is the chosen name."),
+
+"C8": dict(note=
+    "Half fixed, and the other half is a fifth supersession. \u00a710.5 gives the "
+    "Library a placement and a table \u2014 3 pages a day at level 1, 9 at 5, 18 "
+    "at 10, \u201cacross the universe\u201d. \u00a77.6 still says it produces "
+    "\u201cabout one page per realm every few hours\u201d, which across seven "
+    "realms is roughly 40 a day. The two differ by about four times, and "
+    "\u00a77.6\u2019s is the sentence a reader meets first.<br><br>"
+    "\u00a710.5 also gives three of the ten levels \u2014 1, 5 and 10 \u2014 "
+    "where every other building in \u00a710.2 lists every one, and \u00a726.1 "
+    "still counts 16 building types where there are now 17 (C24)."),
+
+
 "C20": dict(status="fixed", note=
     "Fixed, and the fix is the honest one. \u00a721.8 no longer claims a signature "
     "per law: \u201cEvery school has a sound signature \u2014 six in all \u2014 so "
@@ -1775,7 +1826,6 @@ V3 = {
     "schools is what the content actually holds, so the sentence now describes the "
     "game rather than an aspiration."),
 "C10": dict(note="Untouched: 31 traits authored, 30 in §26.1, a 32nd named in §17.3."),
-"C20": dict(note="Untouched: 48 laws still share 6 sound signatures."),
 "F6": dict(note="Untouched. The Breaker is still 63% of the crew\u2019s damage against "
                 "every breakable object."),
 "G11": dict(note="Untouched: §20.6 still says English and Portuguese at launch, §26.2 "
@@ -2142,6 +2192,129 @@ EDITS = {
              "the cheapest chord costs 33 stability against a day-2 capacity of 51, "
              "and seven of twelve are still three commons. The Lab is doing the "
              "gating and \u00a78.8 does not lean on it."),
+],
+
+"C2": [
+    dict(section="9.4", action="replace",
+         find="Balance target: a successful heist against an even match brings "
+              "about a fifth of a day's production, so heists supply roughly a "
+              "third of an active player's resources.",
+         replace="Balance target: a successful heist against an even match brings "
+                 "a few per cent of a day's production, so heists supply well "
+                 "under a tenth of an active player's resources. Raiding is a "
+                 "page faucet and a Renown faucet; it is not how a player gets "
+                 "rich.",
+         why="\u00a79.6\u2019s formula is the one that pays, and it delivers "
+             "1\u20132% of income \u2014 half that again once v3.0\u2019s fill "
+             "term is applied (F14). Either this sentence changes or the formula "
+             "does; the register\u2019s own recommendation is the production peg "
+             "in docs/design/spec/economy.md, which would let it stand as "
+             "written."),
+    dict(section="12.1", action="replace",
+         find="| About 40% of mid-game growth",
+         replace="| A few per cent of mid-game growth, and most of the pages",
+         why="The same figure stated a third time, and the largest of the three."),
+],
+
+"G5": [
+    dict(section="12.6", action="replace",
+         find="Pylons: breaking one switches its law off for the rest of the heist "
+              "and gives a page of it. It's often worth a detour.",
+         replace="Pylons: breaking one switches its law off for the rest of the "
+                 "heist and gives a page of it. A pylon shows its law\u2019s "
+                 "school colour and note glyphs, and the law banner names it on "
+                 "approach (15.3), so the detour is a choice rather than a "
+                 "gamble. It costs about 1% of a heist at pylon level 1 and 9% at "
+                 "level 10.",
+         why="\u00a712.6 and \u00a75.7 both assume the raider knows what they "
+             "are breaking before committing, and nothing says they can. The "
+             "level table and health are already in \u00a710.2."),
+],
+
+"G11": [
+    dict(section="26.2", action="insert",
+         find="Languages at launch: English and Portuguese (Portugal and Brazil).",
+         replace="Reconcile with \u00a726.2\u2019s global launch line, which "
+                 "still promises twelve languages. Two at launch and twelve at "
+                 "global are compatible if the document says so; as written they "
+                 "read as a contradiction, and twelve languages against a coined "
+                 "vocabulary \u2014 48 law names, 44 resonances, 12 chords, 18 "
+                 "creatures \u2014 has no owner in \u00a726.3\u2019s team.",
+         why="The scope decision in stage 4 turns on this: languages are the "
+             "single largest line in \u00a726.1 that nobody is assigned to."),
+],
+
+"G10": [
+    dict(section="12.21", action="insert",
+         find="The rule: every tier effect of every law must be expressible as a "
+              "change to a named parameter.",
+         replace="Then list the parameters. \u00a77.3 asserts laws are parameters "
+                 "and the document never says what the parameters are, so the "
+                 "rule cannot be applied while authoring \u2014 which is when it "
+                 "says it should be. Written out against a twenty-word rule "
+                 "sheet, 16 of the 48 laws are parameter changes and nothing "
+                 "else; 10 need an object the simulation must spawn, 16 need a "
+                 "periodic or conditional rule, and 8 need a choice from the "
+                 "realm\u2019s owner. Tag each law with which, so a scope cut can "
+                 "drop the expensive ones rather than the unpopular ones "
+                 "(F10).",
+         why="A vocabulary that grows to fit each new law is not a vocabulary. "
+             "The classification is at tools/law_effects.py and the table at "
+             "content/law_effects.json."),
+],
+
+"G12": [
+    dict(section="11.11", action="insert",
+         find="Size is a band on every ruleborn: small, standard or large, derived "
+              "from its proportions rather than invented separately.",
+         replace="Then put it in the table. \u00a712.21 states size and flight as "
+                 "properties and no entry in \u00a711.1 or \u00a711.11 carries "
+                 "either, so Density, Heavy ground and Swarm birth still read "
+                 "attributes that do not exist. Two columns close it. Same edit "
+                 "as C26.",
+         why="A law reading a parameter that is not in any table is the failure "
+             "\u00a712.21 describes, still present in the section that "
+             "describes it."),
+],
+
+"C8": [
+    dict(section="7.6", action="replace",
+         find="A Library at the Heart produces about one page per realm every few "
+              "hours",
+         replace="A Library at the Heart produces 3 pages a day at level 1, rising "
+                 "to 18 at level 10 (10.5)",
+         why="\u00a710.5 gives the table; this sentence predates it and reads "
+             "about four times higher across seven realms."),
+],
+
+"C12": [
+    dict(section="22.5", action="replace",
+         find="Every revenue figure in 22.2 assumes 15%.",
+         replace="Every revenue figure in 22.2 assumes 15%, except the high "
+                 "scenario, which is computed at 30% because \u20ac204,000 a "
+                 "month crosses the $1M threshold. The three are therefore not "
+                 "directly comparable, and revenue between roughly \u20ac70,000 "
+                 "and \u20ac85,000 a month is partly a dead zone.",
+         why="The high scenario\u2019s \u20ac168,000 is arithmetically right at "
+             "30% and wrong at the 15% this sentence promises. Surfacing the "
+             "threshold is more useful than hiding it."),
+],
+
+"C17": [
+    dict(section="27.2", action="replace",
+         find="Fallbacks are Lawkeep and Ruleborn",
+         replace="The fallback is Lawkeep",
+         why="Ruleborn is the chosen name. A leftover from the v2.2 rename."),
+],
+
+"C18": [
+    dict(section="9.1", action="replace",
+         find="| 5,000 per Spire level + 3,000",
+         replace="| 5,000 per Spire level",
+         why="\u00a710.2\u2019s Spire table gives a flat 5,000 \u00d7 level. "
+             "Either this or the table, and the table is the one every other "
+             "building follows. See also F17: the cap is far below production "
+             "either way."),
 ],
 
 "C28": [
