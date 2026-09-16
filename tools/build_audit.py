@@ -82,6 +82,18 @@ def esc(text: str) -> str:
     return html.escape(text, quote=False)
 
 
+def measured_html(item: dict) -> str:
+    """A badge saying this item's numbers were re-run against the live harness.
+
+    Absence is the honest default: it means nobody has checked, not that the
+    numbers are wrong. `tools/check_findings_fresh.py` keeps the list.
+    """
+    if not item.get("measured"):
+        return ""
+    return ('<span class="measured" title="re-run against harness '
+            + item["measured"][:16] + '">re-measured</span>')
+
+
 def refs_html(refs: list[str]) -> str:
     return "".join(f'<span class="ref">§{esc(r)}</span>' for r in refs)
 
@@ -141,6 +153,7 @@ def item_html(item: dict) -> str:
           <h3>{esc(item['title'])}</h3>
           <span class="kind">{KIND[item['kind']]}</span>
           <span class="status s-{status}">{STATUS[status]}</span>
+          {measured_html(item)}
         </header>
         <div class="refs">{refs_html(item['refs'])}</div>
         <p class="body">{item['body']}</p>
@@ -384,6 +397,11 @@ def build() -> str:
     font-family: "IBM Plex Mono", monospace; font-size: 11px;
     letter-spacing: 0.06em; text-transform: uppercase;
     color: var(--faint); white-space: nowrap;
+  }}
+  .measured {{
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.05em; color: var(--cho); white-space: nowrap;
+    border: 1px solid currentColor; border-radius: 3px; padding: 0 5px;
   }}
   .status.s-done, .status.s-adopted {{ color: var(--cho); }}
   .status.s-proposed {{ color: var(--sig); }}

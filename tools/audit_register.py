@@ -1290,7 +1290,9 @@ dict(id="F9", kind="finding", severity="blocking", status="open",
          "\u00a713.2\u2019s band at realms 1 and 2, and F22 measures why: at "
          "\u00a75.2\u2019s one guard post the ceiling is 16.5% there, so no "
          "generator can reach 30%. This item\u2019s claim survives; its "
-         "diagnosis does not."),
+         "diagnosis does not."
+         "<br><br><strong>And this item\u2019s own numbers have moved.</strong> Re-measured on the current harness \u2014 competent crew, no laws, two realms crossed, 150 raids a cell \u2014 a generated island holds <strong>9%</strong> at realm 1, <strong>32%</strong> at realm 3 and <strong>44%</strong> at realm 5, against the 2%, 28% and \u201conly level 5 reaches the band\u201d recorded above. Realm 3 now reaches it. The direction survives \u2014 realms 1 and 2 miss badly \u2014 but the sentence \u201conly level 5 reaches \u00a713.2\u2019s band\u201d is no longer true, and the headline 2% is a figure from a harness with three faults since fixed (D24, D25, D26).<br><br>That is the whole argument for <code>check_findings_fresh.py</code>: this number sat in the register\u2019s blocking section, unchallenged, through every one of those fixes.",
+     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
 
 dict(id="D21", kind="deviation", severity="change", status="done",
      title="\u00a719.27\u2019s harnesses were built, since they are now the critical path",
@@ -1369,7 +1371,8 @@ dict(id="F22", kind="finding", severity="blocking", status="proposed",
          "and steps straight over the band; one band lands at 44.8%. A realm has "
          "very few discrete settings early \u2014 integer posts, "
          "<code>3 + level</code> wards \u2014 and <strong>a layer offered as a "
-         "switch cannot be balanced against a 15-point band</strong>."),
+         "switch cannot be balanced against a 15-point band</strong>.",
+     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
 
 dict(id="F10", kind="finding", severity="blocking", status="open",
      title="Sixteen of forty-eight laws are parameter changes; the rest need an engine feature",
@@ -1449,11 +1452,16 @@ dict(id="F11", kind="finding", severity="blocking", status="open",
          "band should be a stated requirement on the generator, not only on "
          "designed islands \u2014 F9 asked for that and this is why it matters. "
          "<code>python3 -m tools.heist_harness defence</code>."
+         "<br><br><strong>Re-measured on the current harness</strong>: the "
+         "no-laws row now reads 9/9/32/29/44 across realms 1 to 5 against "
+         "the 7/7/29/35/43 recorded here, every cell within about one "
+         "standard error at 150 raids a cell. The table stands."
          "<br><br>Specified in <code>docs/design/spec/generator.md</code>, "
          "which weaves by sign throughout and says what the generator "
          "targets. The sign fix stands and is not enough on its own: with "
          "sign-aware laws <em>and</em> the shaped geometry, realms 1 and 2 "
-         "still miss the band at \u00a75.2\u2019s one guard post (F22)."),
+         "still miss the band at \u00a75.2\u2019s one guard post (F22).",
+     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
 
 dict(id="F12", kind="finding", severity="design", status="open",
      title="Eight laws need a decision from the owner that a generator has to make",
@@ -2091,7 +2099,36 @@ dict(id="F15", kind="finding", severity="blocking", status="proposed",
          "breach is a fact about \u00a713.2\u2019s table rather than about the "
          "layer\u2019s contents, and change 3 is the operative one."
          "<br><br><code>python3 -m tools.heist_harness ablation 120</code> and "
-         "<code>python3 -m tools.heist_harness haul 120</code>."),
+         "<code>python3 -m tools.heist_harness haul 120</code>."
+         "<br><br><strong>Re-measured on the current harness, and against "
+         "the generator F16 asked for</strong> (80 raids a coalition, realm "
+         "3):<br><br><code>"
+         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+         "&nbsp;&nbsp;plain &nbsp;shaped &nbsp;target<br>"
+         "geometry &nbsp;&nbsp;8.5% &nbsp;<strong>16.0%</strong> &nbsp;&nbsp;25%<br>"
+         "guards &nbsp;&nbsp;&nbsp;31.5% &nbsp;&nbsp;28.8% &nbsp;&nbsp;20%<br>"
+         "wards &nbsp;&nbsp;&nbsp;&nbsp;22.5% &nbsp;&nbsp;18.2% &nbsp;&nbsp;20%<br>"
+         "laws &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.1% &nbsp;&nbsp;&nbsp;8.2% &nbsp;&nbsp;20%<br>"
+         "response &nbsp;31.5% &nbsp;&nbsp;28.8% &nbsp;&nbsp;15%</code>"
+         "<br><br>Three things, and the first is the one that matters."
+         "<br><br><strong>Guards and response are identical to the decimal "
+         "under both generators.</strong> 31.5/31.5 and 28.8/28.8. The "
+         "symmetry is a theorem about the coalitions, not an artefact of "
+         "the island it was first measured on, and changing the island "
+         "wholesale does not disturb it by a tenth of a point."
+         "<br><br><strong>Geometry\u2019s share nearly doubles</strong> "
+         "\u2014 8.5% to 16.0% on the hold rate, 0.4% to 7.7% on the haul "
+         "\u2014 which is F16\u2019s claim measured through \u00a713.4\u2019s "
+         "own method. A good part of what this item recorded as a fact about "
+         "the layer was a fact about the generator.<br><br><strong>The "
+         "ceiling breach shrinks and does not close.</strong> Guards and "
+         "response fall from 34.5% to 28.8%, still over \u00a713.2\u2019s "
+         "25%, and geometry rises to 16% against its 25% target. So this "
+         "item\u2019s conclusion stands \u2014 the breach is about "
+         "\u00a713.2\u2019s table \u2014 with one correction: it is "
+         "<em>partly</em> about the generator, and the earlier 4.4% "
+         "understated the layer.",
+     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
 
 dict(id="F16", kind="finding", severity="significant", status="proposed",
      title="Geometry is 5% of a <em>generated</em> defence \u2014 and designed, it is worth four times as much",
@@ -2144,7 +2181,10 @@ dict(id="F16", kind="finding", severity="significant", status="proposed",
          "put cover off the path rather than on it would close most of the gap "
          "without any new mechanic.<br><br>Then re-check the band: a designed "
          "island holding 100% is as much a problem as a generated one holding "
-         "5%. <code>python3 -m tools.heist_harness.test_harness</code>."),
+         "5%. <code>python3 -m tools.heist_harness.test_harness</code>."
+         "<br><br><strong>Re-measured on the current harness</strong> \u2014 competent crew, no laws, two realms crossed, 150 raids a cell:<br><br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;off &nbsp;&nbsp;&nbsp;&nbsp;on &nbsp;&nbsp;contribution<br>generated &nbsp;24.0% &nbsp;&nbsp;32.0% &nbsp;&nbsp;&nbsp;<strong>+8.0</strong><br>designed &nbsp;&nbsp;11.3% &nbsp;<strong>100.0%</strong> &nbsp;&nbsp;<strong>+88.7</strong></code><br><br>The finding holds and grows. Designed geometry is worth <strong>eleven times</strong> generated geometry, against the four to seven times first recorded. The designed island still turns back every raid, and its geometry-off hold rate is still <em>below</em> the generated one \u2014 guards posted at chokepoints are badly placed once the chokepoints are gone."
+         "<br><br>\u00a713.4\u2019s own method agrees: across all 32 coalitions, generated geometry takes 8.5% of the credit and the shaped generator this finding argued for takes 16.0% (F15).",
+     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
 dict(id="D23", kind="deviation", severity="change", status="done",
      title="\u00a713.4's ablation was built exactly as specified, Shapley included",
      refs=["13.4", "13.2"],
