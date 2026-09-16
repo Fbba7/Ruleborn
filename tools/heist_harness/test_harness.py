@@ -113,22 +113,32 @@ def test_a_full_crew_loads_in_ten_seconds():
     assert carrier.carried / LOAD_PER_SECOND == 10, carrier.carried
 
 
-def test_the_break_even_is_where_a_competent_crew_aims_and_not_where_it_lands():
-    """F18. §12.19 calls 70% "the dial for the game's emotional peak".
+def test_skill_polarises_outcomes():
+    """F21. §13.2 wants "a populated middle" and watches for the opposite.
 
-    A competent crew is defined as stopping there. Measured, it banks about 40%,
-    and the distribution has two peaks with a thin middle — which is the exact
-    shape §13.2 names as its warning sign. Pinned as a gap between intent and
-    outcome rather than as either number, so re-tuning cannot close it silently.
+    A competent crew has one. A crew that reads §12.17's guards does not: it
+    sweeps or comes home nearly empty, because the information turns every raid
+    into an early yes-or-no. Asserted as the *gap* between the two, because that
+    is the finding — the absolute shares move with tuning, the ordering should
+    not.
     """
-    import statistics as st
-    from .report import run_batch
+    from .island import generate
+    from .laws import weave
+    from .sim import Heist
 
-    runs = [r for r in run_batch(60, 1, 3, "competent") if r.success]
-    mean = st.mean(r.fill for r in runs) / 100
-    reached = sum(1 for r in runs if r.fill >= 70) / len(runs)
-    assert 0.30 < mean < 0.55, mean
-    assert reached < 0.60, reached
+    def middle(name: str, n: int = 90) -> float:
+        fills = []
+        for i in range(n):
+            r = Heist(generate(i, 3), POLICIES[name](), realm_level=3,
+                      crossing=[generate(900_000 + i * 8, 3)],
+                      sheet=weave(i, 3, favour_defender=True)).run()
+            if r.success:
+                fills.append(r.fill)
+        return sum(1 for f in fills if 20 <= f < 80) / len(fills)
+
+    competent, optimal = middle("competent"), middle("optimal")
+    assert competent > 0.55, competent
+    assert optimal < competent * 0.5, (competent, optimal)
 
 
 def test_the_break_even_is_not_at_12_19s_seventy_per_cent():

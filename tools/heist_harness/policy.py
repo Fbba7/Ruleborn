@@ -60,6 +60,8 @@ class Policy:
     holds_at_checkpoints = False
     #: The fill at which it stops loading. §12.19's break-even is 70.
     stop_at_fill = BREAKEVEN_FILL
+    #: Whether the crew watches §5.4's clock at all. See `_out_of_time`.
+    watches_clock = False
     #: The suspicion at which it abandons the run. None never leaves early.
     flees_at: int | None = ALERTED
     #: What it does about a live ward on the next step: "through", "around",
@@ -282,7 +284,26 @@ class Policy:
         return self._decide(heist, (i, "vault"), ("full",), 1)
 
     def _should_stop(self, heist, filled: int) -> bool:
-        return filled >= self.stop_at_fill
+        return filled >= self.stop_at_fill or self._out_of_time(heist)
+
+    #: Leave this many times the inbound journey in hand. 1.0 is "the way out
+    #: takes as long as the way in, and I have exactly that left" — no margin,
+    #: which is what a crew that has never been caught would do.
+    clock_margin = 1.15
+
+    def _out_of_time(self, heist) -> bool:
+        """§12.19: "loading longer earns more and the alarm clock is the price."
+
+        A price nobody can see is not a price, and until this was added no policy
+        read `heist.clock` at all — so shortening §5.4's clock could only kill a
+        crew outright, never change what it chose to do (D25). The estimate is
+        the one a player makes: the way out is the way in, so what it cost to
+        reach the Vault is what it will cost to leave.
+        """
+        if not self.watches_clock or heist.crack_started_at is None:
+            return False
+        inbound = heist.crack_started_at
+        return heist.clock - heist.tick <= inbound * self.clock_margin
 
 
 class Careless(Policy):
@@ -300,6 +321,7 @@ class Competent(Policy):
     """Crouches, routes around what it can see, stops at §12.19's break-even."""
     name = "competent"
     crouches = True
+    watches_clock = True
     routes_around_cones = True
     holds_at_checkpoints = False
     stop_at_fill = BREAKEVEN_FILL
@@ -328,6 +350,8 @@ class Optimal(Competent):
     flees_at = ALERTED
 
     def _should_stop(self, heist, filled: int) -> bool:
+        if self._out_of_time(heist):
+            return True
         pressure = max((g.suspicion for g in heist.guards), default=0)
         if pressure >= INVESTIGATING:
             return filled >= BREAKEVEN_FILL // 2

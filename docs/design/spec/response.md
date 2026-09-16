@@ -193,12 +193,20 @@ file is about, one layer deciding outcomes.
    sentence, and it is the difference between a measurement that can see four of
    the five layers and one that cannot. It is also strictly more information: the
    hold rate is the special case where grade × fill is zero.
-2. **§5.4: the clock is the reason three layers are decoration.** Four times the
-   slack means no amount of delay reaches the metric. Either tighten the clock
-   until delay converts to outcomes — which is also what §19.27's "a quarter of
-   runs decided in the last ten seconds" asks for, and it is currently not met —
-   or accept that geometry, wards and laws shape the haul rather than the
-   outcome, and rewrite §13.2's shares to say which layers do which.
+2. **§5.4: the clock is the reason three layers are decoration — but tightening
+   it is not the fix.** The obvious move is to shorten the clock until delay
+   converts to outcomes, which is also what §19.27's "a quarter of runs decided
+   in the last ten seconds" asks for and does not get. Measured, it does not
+   work: cutting §5.4's clock to 55% of its length raises the hold rate by five
+   points and moves the stopping decision not at all. A tighter clock kills
+   crews **on the way in**, where geometry and wards already act; it does not
+   make staying longer cost more.
+
+   So the honest recommendation is the other branch: accept that geometry, wards
+   and laws shape the haul rather than the outcome, rewrite §13.2's shares to say
+   which layers do which, and give the response layer a cost priced in **loot**
+   rather than in time — which is what the Spire's reach already is. `loading.md`
+   reaches the same place from the Vault's end.
 3. **§13.2: specify the Spire's reach and the Sage's power** as above, and stop
    claiming Response is independent of Guards. Measured, it is not, and
    **that is fine if the shares are written to admit it** — "detection and

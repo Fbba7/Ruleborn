@@ -298,26 +298,31 @@ dict(
              evidence="python3 -m tools.economy_model sinks",
              register=["F17", "C28", "C24"]),
         dict(id="T0.8", owner="claude", status="done",
-             title="Fix the Vault phase, and re-measure everything that stood on it",
-             detail="The harness was ending the Vault phase the moment the "
-                    "<em>smallest</em> bag filled \u2014 two seconds, with the "
-                    "Carrier walking out on 60 of 300 \u2014 so every crew banked "
-                    "53% whatever the island did (D24). Fixed, "
-                    "<strong>\u00a712.19\u2019s \u201ca full crew fills in "
-                    "about ten seconds\u201d now reproduces exactly</strong>, "
-                    "from the role Carry values and the stated rate, and a "
-                    "competent crew stops at \u00a712.19\u2019s own 70% "
-                    "break-even for the first time. Three findings fell out that "
-                    "the bug had been hiding: the fill distribution is "
-                    "<strong>bimodal</strong>, which is the shape \u00a713.2 "
-                    "names as its own warning sign (F18); what a raid pays varies "
-                    "<strong>2.2\u00d7</strong> with how well it is played and "
-                    "\u00a79.6 prices it as a constant (F19); and "
-                    "\u00a712.19\u2019s break-even sits at about "
-                    "<strong>85%, not 70%</strong> (F20). F15 and F16 were "
-                    "re-measured through the fix and survived it.",
+             title="Fix the Vault phase and the clock, and re-measure everything "
+                   "that stood on them",
+             detail="Two faults in the harness, found one after the other, and "
+                    "the second while writing up the first.<br><br><strong>D24:"
+                    "</strong> the Vault phase ended the moment the "
+                    "<em>smallest</em> bag filled \u2014 two seconds, the Carrier "
+                    "leaving on 60 of 300 \u2014 so every crew banked 53% "
+                    "whatever the island did. Fixed, \u00a712.19\u2019s \u201ca "
+                    "full crew fills in about ten seconds\u201d reproduces "
+                    "exactly.<br><br><strong>D25:</strong> no crew read "
+                    "\u00a75.4\u2019s clock at all, so nothing priced in time "
+                    "could be measured \u2014 including \u00a712.19\u2019s own "
+                    "\u201cthe alarm clock is the price\u201d.<br><br>Of the "
+                    "findings that came out, <strong>two were withdrawn on "
+                    "re-measurement</strong> and are recorded as such (F18, and "
+                    "the first version of F19). What holds: the best fixed "
+                    "stopping rule is near 90% rather than \u00a712.19\u2019s "
+                    "70%, and the best rule is not a fixed one at all (F20); "
+                    "what a raid pays varies 1.5\u00d7 with how it is played "
+                    "(F19); and <strong>outcomes polarise with skill</strong> "
+                    "\u2014 70% of an ordinary crew\u2019s raids land in "
+                    "\u00a713.2\u2019s middle against 16% of an informed "
+                    "crew\u2019s (F21).",
              evidence="python3 -m tools.heist_harness breakeven",
-             register=["D24", "F18", "F19", "F20", "F14"],
+             register=["D24", "D25", "F18", "F19", "F20", "F21", "F14"],
              gate="\u00a712.19\u2019s ten seconds reproduced by a run, not by "
                   "arithmetic about a table"),
         dict(id="T2.5", owner="claude", status="done",

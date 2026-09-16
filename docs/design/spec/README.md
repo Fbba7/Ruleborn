@@ -26,7 +26,7 @@ still unadopted are `wards.md` (§10.3 is untouched), `economy.md`'s production 
 | [`corrections.md`](corrections.md) | C7–C18, C20 — the clerical sweep | 13 single edits, one session |
 | [`response.md`](response.md) | F15 — guards and response measure as one layer | Proposed, and it reports a proposal that failed |
 | [`sinks.md`](sinks.md) | F17 — Aether and Essence have no sinks | Proposed: peg upkeep, then cut the faucets |
-| [`loading.md`](loading.md) | F18, F19, F20 — when to stop loading | Proposed: the break-even is at 85%, and nothing charges for getting there |
+| [`loading.md`](loading.md) | F19, F20, F21 — when to stop loading | Proposed: the break-even is near 90%, and the answer is a rule rather than a number |
 
 ## How these were written
 
@@ -47,12 +47,11 @@ spec says they are on the wrong kind of curve, withdraws the edit F17 first
 proposed, and shows what that edit would have cost.
 
 `loading.md` is the third, and it is the one that came closest to going out
-wrong. Its central measurement — that E[grade × fill] rises all the way to a full
-load, so §12.19's break-even does not exist — held at 150 raids a threshold and
-**did not survive 400**. The break-even is real; it sits at about 85% rather than
-the 70% the document states. The file reports both measurements and says which to
-believe, because a monotone curve over eight noisy thresholds is exactly the
-shape a small sample invents.
+wrong — twice. Two of the findings it started from were withdrawn after the
+harness was corrected, and it reports both rather than quietly dropping them,
+because the route from the wrong answer to the right one is what makes the
+remaining numbers worth anything. It is the file to read on how these
+measurements are checked, not just on what they say.
 
 `wards.md` is the third of these, and the first: it begins by **correcting this
 analysis**. Two things `04-specification-gaps.md`

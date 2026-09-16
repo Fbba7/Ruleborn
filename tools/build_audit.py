@@ -41,6 +41,10 @@ STATUS = {
     "adopted":  "Adopted",
     "done":     "Done",
     "fixed":    "Fixed in v3.0",
+    # An item raised, checked, and found not to hold. Kept rather than deleted:
+    # a check that was run and failed to confirm is evidence too, and the route
+    # from the wrong answer to the right one is usually where the fault was.
+    "withdrawn": "Withdrawn",
 }
 
 GROUPS = [
@@ -382,6 +386,8 @@ def build() -> str:
   .status.s-done, .status.s-adopted {{ color: var(--cho); }}
   .status.s-proposed {{ color: var(--sig); }}
   .status.s-fixed {{ color: var(--chg); font-weight: 500; }}
+  .status.s-withdrawn {{ color: var(--faint); text-decoration: line-through;
+                          text-decoration-thickness: 1px; }}
 
   /* What version 3.0 did about an item, as a layer over what was found. */
   .v3 {{
