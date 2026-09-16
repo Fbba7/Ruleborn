@@ -21,6 +21,10 @@ echo "== generated docs are in sync with the data =="
 python3 tools/generate_docs.py --check
 
 echo
+echo "== the register's edits match the document =="
+python3 tools/check_edits.py
+
+echo
 echo "== the proposed note rebalance is still valid =="
 python3 tools/note_rebalance.py | tail -14
 

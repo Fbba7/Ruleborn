@@ -14,7 +14,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from audit_register import REGISTER, V3  # noqa: E402
+from audit_register import EDITS, REGISTER, V3  # noqa: E402
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "docs" / "audit" / "index.html"
 
@@ -80,6 +80,45 @@ def refs_html(refs: list[str]) -> str:
     return "".join(f'<span class="ref">§{esc(r)}</span>' for r in refs)
 
 
+ACTION_LABEL = {
+    "replace": "Replace", "delete": "Delete", "insert": "Add",
+    "regenerate": "Regenerate", "retag": "Re-tag",
+}
+
+
+def edits_html(item_id: str) -> str:
+    """The work order: what to type, and where."""
+    edits = EDITS.get(item_id)
+    if not edits:
+        return ""
+    rows = []
+    for edit in edits:
+        action = edit["action"]
+        head = (f'<span class="e-act a-{action}">{ACTION_LABEL[action]}</span>'
+                f'<span class="e-sec">&sect;{esc(edit["section"])}</span>')
+        if edit.get("target"):
+            head += f'<span class="e-tgt">{esc(edit["target"])}</span>'
+        parts = [f'<header class="e-head">{head}</header>']
+        if edit.get("find"):
+            parts.append(f'<p class="e-find"><span class="e-lab">now</span>'
+                         f'<code>{esc(edit["find"])}</code></p>')
+        if edit.get("from_"):
+            parts.append(f'<p class="e-find"><span class="e-lab">paste from</span>'
+                         f'<code>docs/design/generated/{esc(edit["from_"])}</code></p>')
+        if edit.get("replace"):
+            label = "becomes" if edit["action"] == "replace" else (
+                "re-tag to" if edit["action"] == "retag" else "add")
+            parts.append(f'<p class="e-new"><span class="e-lab">{label}</span>'
+                         f'<code>{esc(edit["replace"])}</code></p>')
+        if edit.get("why"):
+            parts.append(f'<p class="e-why">{edit["why"]}</p>')
+        rows.append(f'<li class="edit">{"".join(parts)}</li>')
+    n = len(edits)
+    return (f'<details class="edits"><summary>{n} edit{"s" if n > 1 else ""} '
+            f'to the document</summary><ol class="edit-list">'
+            f'{"".join(rows)}</ol></details>')
+
+
 def item_html(item: dict) -> str:
     label, cls = SEVERITY[item["severity"]]
     v3 = V3.get(item["id"], {})
@@ -89,7 +128,8 @@ def item_html(item: dict) -> str:
                if v3.get("note") else "")
     return f"""
       <article class="item {cls}" data-group="{item['_group']}"
-               data-kind="{item['kind']}" data-status="{status}">
+               data-kind="{item['kind']}" data-status="{status}"
+               data-edits="{'yes' if item['id'] in EDITS else 'no'}">
         <header class="item-head">
           <span class="id">{esc(item['id'])}</span>
           <h3>{esc(item['title'])}</h3>
@@ -100,6 +140,7 @@ def item_html(item: dict) -> str:
         <p class="body">{item['body']}</p>
         {f'<p class="rec"><span class="arrow">&rarr;</span> {rec}</p>' if rec else ''}
         {v3_html}
+        {edits_html(item['id'])}
       </article>"""
 
 
@@ -137,6 +178,10 @@ def build() -> str:
               f'<span class="n">{gap_count}</span></button>')
     chips += (f'<button class="chip alt" data-filter="status:fixed">Fixed in v3.0'
               f'<span class="n">{fixed_count}</span></button>')
+    edit_items = sum(1 for i in REGISTER if i["id"] in EDITS)
+    edit_count = sum(len(v) for v in EDITS.values())
+    chips += (f'<button class="chip alt" data-filter="edits:yes">Has edits to make'
+              f'<span class="n">{edit_items}</span></button>')
 
     sections = []
     for group_id, title, blurb, _ in GROUPS:
@@ -355,6 +400,55 @@ def build() -> str:
     margin-right: 7px; font-weight: 500;
   }}
 
+  /* The work order: what to type, and where. Collapsed by default, because
+     most readings of this page are not an editing session. */
+  .edits {{ margin-top: 12px; max-width: 70ch; }}
+  .edits > summary {{
+    cursor: pointer; font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    letter-spacing: 0.04em; color: var(--accent); padding: 5px 0;
+    list-style: none; display: inline-flex; align-items: center; gap: 6px;
+  }}
+  .edits > summary::-webkit-details-marker {{ display: none; }}
+  .edits > summary::before {{ content: "▸"; font-size: 10px; }}
+  .edits[open] > summary::before {{ content: "▾"; }}
+  .edits > summary:hover {{ text-decoration: underline; }}
+  .edits > summary:focus-visible {{ outline: 2px solid var(--accent); outline-offset: 3px; }}
+
+  .edit-list {{ margin: 8px 0 0; padding: 0 0 0 20px; }}
+  .edit {{ margin-bottom: 16px; }}
+  .edit::marker {{ font-family: "IBM Plex Mono", monospace; font-size: 11px;
+                   color: var(--faint); }}
+  .e-head {{ display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+             margin-bottom: 6px; }}
+  .e-act {{
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.05em; text-transform: uppercase; color: var(--ground);
+    background: var(--muted); border-radius: 3px; padding: 1px 6px;
+  }}
+  .a-replace, .a-retag {{ background: var(--sig); }}
+  .a-delete {{ background: var(--blk); }}
+  .a-insert {{ background: var(--cho); }}
+  .a-regenerate {{ background: var(--chg); }}
+  .e-sec {{ font-family: "IBM Plex Mono", monospace; font-size: 12px;
+            color: var(--ink); font-weight: 500; }}
+  .e-tgt {{ font-size: 13px; color: var(--muted); font-style: italic; }}
+  .e-find, .e-new {{ margin: 0 0 5px; font-size: 13.5px; }}
+  .e-lab {{
+    font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--faint);
+    text-transform: uppercase; letter-spacing: 0.07em;
+    display: inline-block; min-width: 72px;
+  }}
+  .e-find code {{ background: transparent; border-left: 2px solid var(--blk);
+                  padding: 2px 0 2px 8px; color: var(--muted);
+                  display: inline-block; max-width: calc(100% - 78px);
+                  vertical-align: top; white-space: pre-wrap; }}
+  .e-new code {{ background: transparent; border-left: 2px solid var(--cho);
+                 padding: 2px 0 2px 8px; color: var(--ink);
+                 display: inline-block; max-width: calc(100% - 78px);
+                 vertical-align: top; white-space: pre-wrap; }}
+  .e-why {{ font-size: 13px; color: var(--muted); margin: 6px 0 0 0;
+            padding-left: 10px; border-left: 1px solid var(--rule-strong); }}
+
   .refs {{ display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 9px; }}
   .ref {{
     font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
@@ -406,6 +500,11 @@ def build() -> str:
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
       out against the rule sheet &sect;7.3 claims they change.</p>
+    <p class="lede"><strong>{edit_count} edits are drafted</strong> across
+      {edit_items} items &mdash; the section to open, the sentence as it stands
+      today, and what to put there. Every quoted sentence is checked against the
+      document by <code>tools/check_edits.py</code>, which fails the build if one
+      is not there or appears twice.</p>
 
     <div class="summary">
       <div><span class="n">{len(REGISTER)}</span><span class="k">items tracked</span></div>
@@ -413,6 +512,7 @@ def build() -> str:
       <div><span class="n">{fixed_count}</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">{done_count}</span><span class="k">done or adopted</span></div>
       <div><span class="n">{counts['blocking'] + counts['design']}</span><span class="k">blocking the build</span></div>
+      <div><span class="n">{edit_count}</span><span class="k">edits drafted</span></div>
       <div><span class="n">{today.split()[0]} {today.split()[1][:3]}</span><span class="k">last generated</span></div>
     </div>
   </header>

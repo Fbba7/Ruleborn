@@ -17,6 +17,28 @@ refs      design-document sections involved
 body      what it actually is — the conflict, the change, the gap
 rec       what to do about it
 status    open | proposed | adopted | done
+edits     the concrete changes to make in the design document (see below)
+
+The `edits` field
+-----------------
+`rec` says what should happen. `edits` says what to type, and where. It exists
+because a register that reads well and cannot be acted on is a diagnosis without
+a prescription — the point is to sit beside the document and work through it.
+
+Each edit is a dict:
+
+    section   the section to open, as it appears in the contents ("9.2")
+    action    replace | delete | insert | regenerate
+    find      the text as it stands today, verbatim, so it can be searched for
+    replace   the text to put there (omit for `delete`)
+    why       one line, if the reason is not obvious from the item
+
+**Every `find` string is checked against the design document by
+`tools/check_edits.py`, which runs in `check_all.sh` and fails if one does not
+appear verbatim.** That is the guard against the obvious failure mode: an edit
+that tells you to replace a sentence the document does not contain.
+
+`regenerate` edits have no `find`; they name a generated file to paste from.
 """
 
 REGISTER = [
@@ -1680,10 +1702,394 @@ V3 = {
     "§12.8 as its source."),
 
 "C7": dict(note="Untouched: 20 steps a second and 30 both still appear."),
+
+"C20": dict(status="fixed", note=
+    "Fixed, and the fix is the honest one. \u00a721.8 no longer claims a signature "
+    "per law: \u201cEvery school has a sound signature \u2014 six in all \u2014 so "
+    "a player can hear which kind of rule is running.\u201d Six signatures for six "
+    "schools is what the content actually holds, so the sentence now describes the "
+    "game rather than an aspiration."),
 "C10": dict(note="Untouched: 31 traits authored, 30 in §26.1, a 32nd named in §17.3."),
 "C20": dict(note="Untouched: 48 laws still share 6 sound signatures."),
 "F6": dict(note="Untouched. The Breaker is still 63% of the crew\u2019s damage against "
                 "every breakable object."),
 "G11": dict(note="Untouched: §20.6 still says English and Portuguese at launch, §26.2 "
                  "still says twelve languages."),
+}
+
+
+# ===========================================================================
+# What to type, and where
+# ===========================================================================
+#
+# `rec` above says what should happen. This says what to type. It is a separate
+# object for the same reason V3 is: "what was found" and "what to do about it"
+# change on different schedules, and an edit list wants to be read sitting beside
+# the document with both open.
+#
+# Each edit is a dict:
+#
+#   section   the section to open, as the contents lists it
+#   action    replace | delete | insert | regenerate | retag
+#   find      the text as it stands today, verbatim
+#   replace   what to put there (omit for `delete`)
+#   why       one line, where the reason is not obvious from the item
+#
+# `regenerate` names a file in docs/design/generated/ to paste from.
+# `retag` is a change to a content value rather than a sentence — a law's notes,
+# a creature's role — and names the law or creature in `target`.
+#
+# tools/check_edits.py verifies every `find` against the document (and every
+# `retag` against content/), and fails the build on a miss or an ambiguity.
+
+EDITS = {
+
+"C21": [
+    dict(section="29.1", action="replace",
+         find="+50% a second in sight, +75% within 3 tiles; investigate at 50%, "
+              "alarm at 100%",
+         replace="Suspicion 0\u20131000, filling 67 a tick in the near zone, 33 in "
+                 "the mid and 12 in the far, draining 20 a tick. Suspicious at 200, "
+                 "investigating at 600, alerted at 1000. A state cannot fall back "
+                 "for 15 ticks.",
+         why="\u00a712.8 says the percent-per-second rules are gone; the formulas "
+             "appendix is where an implementer looks for them."),
+    dict(section="29.1", action="replace",
+         find="First unseen hit: 2 s stun and triple damage; a level advantage "
+              "counts for at most 3 levels",
+         replace="First unseen hit: 2 s stun, and triple Power or half the "
+                 "target\u2019s full health, whichever is greater. A level "
+                 "advantage counts for at most 3 levels.",
+         why="\u00a712.8 added the floor and \u00a729.1 did not follow."),
+    dict(section="5.4", action="replace",
+         find="guards within 6 tiles of the landing spot start at 25% awareness",
+         replace="guards within 6 tiles of the landing spot start at 250 suspicion",
+         why="25% is a unit \u00a712.17 replaced. 250 of 1000 is the same fraction "
+             "in the unit that survives."),
+],
+
+"C22": [
+    dict(section="12.6", action="replace",
+         find="Once open, each Carrier loads 150 loot a second until full or until "
+              "the exposed share is gone.",
+         replace="Once open, every role loads 30 units a second until full or until "
+                 "the exposed share is gone, so a crew fills in about ten seconds "
+                 "(12.19).",
+         why="\u00a712.19 fixed the rate and the set of roles; \u00a712.6 still "
+             "carries the sentence \u00a712.19 was written to correct."),
+],
+
+"C23": [
+    dict(section="7.6", action="replace",
+         find="Restoring a law: 15 pages for a common law, 30 for a rare one, 60 "
+              "for a deep one.",
+         replace="Restoring a law: 10 pages for a common law, 20 for an uncommon "
+                 "one, 35 for a rare one, 60 for a deep one.",
+         why="Twelve laws were re-tagged to Uncommon and this sentence never "
+             "learned the rank exists."),
+    dict(section="14.4", action="replace",
+         find="Restoring all 48 laws: 15 commons \u00d7 15 + 18 rares \u00d7 30 + "
+              "12 deep \u00d7 60 = 1,485 pages (the three starting laws are free)",
+         replace="Restoring all 48 laws: 15 commons \u00d7 10 + 12 uncommons "
+                 "\u00d7 20 + 6 rares \u00d7 35 + 12 deep \u00d7 60 = 1,320 pages "
+                 "(the three starting laws are free)",
+         why="The change log gives 1,350, which counts all 18 commons; "
+             "\u00a714.4\u2019s own convention excludes the three free ones, so "
+             "the figure on that convention is 1,320."),
+    dict(section="9.5", action="replace",
+         find="| 15, 30 or 60 pages by rank\n\n| Tier II, tier III",
+         replace="| 10, 20, 35 or 60 pages by rank\n\n| Tier II, tier III",
+         why="The price list. Quoted with the row after it, because the same "
+             "cell also appears in \u00a729.2\u2019s glossary and the two have "
+             "to be found separately."),
+    dict(section="29.2", action="replace",
+         find="| 15, 30 or 60 pages by rank; tier II +20 pages and 2,000 Aether; "
+              "tier III +40 pages and 8,000 Aether",
+         replace="| 10, 20, 35 or 60 pages by rank; tier II +20 pages and 2,000 "
+                 "Aether; tier III +40 pages and 8,000 Aether",
+         why="The glossary, which carries the same figure a third time."),
+],
+
+"C24": [
+    dict(section="26.1", action="replace",
+         find="| Building types\n| 16",
+         replace="| Building types\n| 17",
+         why="\u00a710.5 added the Library and the launch table did not follow."),
+    dict(section="10.2", action="insert",
+         find="10.5 The Library",
+         replace="Move \u00a710.5\u2019s table into \u00a710.2, between Ward and "
+                 "Resonance Lab, and give it all ten levels rather than 1, 5 and "
+                 "10. \u00a710.2 is headed \u201cEvery level of every "
+                 "building\u201d and the economy model cannot price a faucet from "
+                 "three of its points.",
+         why="A building outside the building table is how C8 happened the first "
+             "time."),
+],
+
+"C25": [
+    dict(section="7.7", action="retag", target="Flock",
+         find="Bloom Glow", replace="Bloom Veil",
+         why="Six puffballs that wander, block paths and make guards react are "
+             "deception. Nothing about Flock lights up."),
+    dict(section="7.7", action="retag", target="Crystal growth",
+         find="Bloom Glow", replace="Bloom Veil",
+         why="Stone regrowing as crystal is a transformation, which is Veil\u2019s "
+             "own word."),
+    dict(section="7.7", action="retag", target="Leapfrog",
+         find="Flow Glow", replace="Flow Spark",
+         why="Nothing lights up; the second clause is a noisy landing, and an "
+             "impact is a burst."),
+    dict(section="7.7", action="retag", target="Soul swap",
+         find="Veil Flow", replace="Veil Hush",
+         why="The swap is a disappearance at the instant of a knockout, not a "
+             "change to how anyone moves."),
+    dict(section="7.7", action="retag", target="Aurora",
+         find="Glow Flow", replace="Glow",
+         why="Aurora moves nothing. It cannot take Hush instead \u2014 that is "
+             "Glow\u2019s opposite \u2014 so it becomes a one-note law, as 25 of "
+             "the 48 already are."),
+    dict(section="7.7", action="retag", target="Lodestones",
+         find="Weight Echo", replace="Weight",
+         why="Nothing in Lodestones returns, repeats or rewinds."),
+    dict(section="7.7", action="retag", target="Day and night",
+         find="Echo", replace="Echo Hush",
+         why="The light-and-dark law carries neither Glow nor Hush. "
+             "\u201cVision halves in the dark\u201d is Hush exactly."),
+    dict(section="7.7", action="retag", target="Honeycomb",
+         find="Weight", replace="Weight Hush",
+         why="Sticky ground is quieter; \u00a712.17\u2019s noise table has moss "
+             "quieter and water louder, which is why Slow rivers is not the "
+             "candidate."),
+    dict(section="7.7", action="retag", target="Rewind",
+         find="Echo", replace="Echo Bloom",
+         why="Restoring broken things is healing as much as repeating."),
+    dict(section="8.1", action="replace",
+         find="The number shows how many of the 48 laws carry each note.",
+         replace="The number shows how many of the 48 laws carry each note: nine "
+                 "of each, which is the balance 8.8 requires of every future "
+                 "season.",
+         why="The figure in the diagram has to move with the sheets."),
+],
+
+"C26": [
+    dict(section="11.1", action="insert",
+         find="| Job in a heist",
+         replace="Add two columns to the role table, or two rows to every entry in "
+                 "11.11: <b>Size</b> (small / standard / large, derived from the "
+                 "proportions already given) and <b>Flies</b> (yes / no). 12.21 "
+                 "says both are stated properties; today flight is prose in "
+                 "11.2\u2019s Passive column, which is exactly the implication "
+                 "12.21 says it must not be.",
+         why="Density, Heavy ground and Swarm birth read attributes no character "
+             "carries."),
+],
+
+"C27": [
+    dict(section="9.2", action="replace",
+         find="| Staffing sets 60%, 85% or 100% output",
+         replace="| A producer runs at the share of its worker slots that are "
+                 "filled (5.9)",
+         why="\u00a75.9 is the later rule and pro-rata is what makes partial "
+             "staffing a choice rather than a rounding."),
+],
+
+"C7": [
+    dict(section="7.3", action="replace",
+         find="The simulation runs at a fixed 20 steps a second so heists replay "
+              "identically on the server.",
+         replace="The simulation runs at a fixed 30 steps a second so heists replay "
+                 "identically on the server (24.10).",
+         why="\u00a724.10 is the simulation contract and is self-consistent: it "
+             "gives a heist as 4,500\u20137,200 ticks, which is 30 \u00d7 "
+             "150\u2013240 seconds. Settle it before the golden replays, which "
+             "encode it."),
+],
+
+"C6": [
+    dict(section="11.2", action="retag", target="Prism Mite",
+         find="Carrier", replace="Scout",
+         why="\u00a711.11 is the authoritative roster per \u00a730.18, and gives "
+             "Prism Mite as a Scout."),
+    dict(section="11.2", action="retag", target="Stormhound",
+         find="Scout", replace="Carrier"),
+    dict(section="11.2", action="retag", target="Rootrunner",
+         find="Carrier", replace="Scout"),
+    dict(section="11.2", action="regenerate", from_="roster.md",
+         replace="Replace \u00a711.2\u2019s whole table with the generated roster "
+                 "index, which is emitted from the same data \u00a711.11 "
+                 "describes. Fifteen further rows differ on ability wording, "
+                 "cooldown or resistance; regenerating fixes all of them at once "
+                 "and stops the pair drifting again."),
+],
+
+"C19": [
+    dict(section="9.3", action="regenerate", from_="pacing.md",
+         replace="Replace \u00a79.3\u2019s production table and \u00a714.2\u2019s "
+                 "Keeper days with the re-run under \u00a75.9\u2019s rules. The "
+                 "first month holds; from day 91 the published figures are up to "
+                 "twice what the rules produce, and Keeper 40 arrives 94 days "
+                 "late.",
+         why="This item\u2019s own recommendation was to regenerate rather than "
+             "hand-edit, because hand-editing is what produced it."),
+],
+
+"F14": [
+    dict(section="9.6", action="replace",
+         find="An attempt is worth about 46% of a clean same-level haul, which is "
+              "the number the progression curve is built on: an upgrade costing 25 "
+              "clean raids takes about 55 attempts, or nine days at six a day, at "
+              "every level.",
+         replace="An attempt is worth about 24% of a clean same-level haul \u2014 "
+                 "46% from the grade split, times the roughly half a crew fills its "
+                 "bags before leaving (12.19) \u2014 which is the number the "
+                 "progression curve is built on: an upgrade costing 25 clean raids "
+                 "takes about 105 attempts, or seventeen days at six a day, at "
+                 "every level.",
+         why="The fill term was added to the same formula and 0.46 was not "
+             "re-derived against it. Either this, or state that fill is already "
+             "inside 0.46 \u2014 but not both, and not neither."),
+],
+
+"F15": [
+    dict(section="13.2", action="insert",
+         find="| Bells, alarms, the Spire\u2019s reach, and the guardian "
+              "Sage\u2019s single power. What turns being seen into being caught",
+         replace="Give the response layer one effect that works without a guard, "
+                 "and specify it: the Spire\u2019s reach and the guardian "
+                 "Sage\u2019s power are both named here and neither is defined. "
+                 "Measured, guards and response contribute nothing whatsoever "
+                 "without each other, in any of the eight coalitions \u2014 so as "
+                 "written they are one layer at 69%, against this "
+                 "section\u2019s own 25% ceiling.",
+         why="\u201cWhat turns being seen into being caught\u201d makes the layer "
+             "multiplicative with guards, and two layers that multiply cannot have "
+             "independent shares."),
+],
+
+"C4": [
+    dict(section="9.6", action="replace",
+         find="the sealed share runs 40% at realm level 1 and rises by 3.5 points "
+              "a level to 71.5% at level 10 (9.4)",
+         replace="the sealed share runs 40% at Vault level 1 and rises by 3.5 "
+                 "points a level to 71.5% at Vault level 10 (9.4)",
+         why="One paragraph below the table that fixed this. \u00a79.4 already "
+             "says Vault level; the curve has ten steps and realms stop at five."),
+],
+
+"C3": [
+    dict(section="7.10", action="replace",
+         find="| Uncommon\n| 14\n| Conditional, with a mild cost\n| 20",
+         replace="| Uncommon\n| 12\n| Conditional, with a mild cost\n| 20",
+         why="The sheets say 12. If the table is right instead, re-tag two laws "
+             "\u2014 but one of the two has to move."),
+    dict(section="7.10", action="replace",
+         find="| Rare\n| 10\n| Strong inside a condition you have to build for\n| 35",
+         replace="| Rare\n| 6\n| Strong inside a condition you have to build for\n| 35",
+         why="The sheets say 6."),
+    dict(section="7.10", action="replace",
+         find="| Deep\n| 6\n| Changes how a realm works. Heavy stability cost and "
+              "a real trade-off. One per school\n| 60",
+         replace="| Deep\n| 12\n| Changes how a realm works. Heavy stability cost "
+                 "and a real trade-off. Two per school\n| 60",
+         why="The sheets say 12, which is two per school rather than one. This is "
+             "the one to look at hardest: Deep doubled, and \u201cone per "
+             "school\u201d was part of the argument for what Deep is."),
+],
+
+"C10": [
+    dict(section="26.1", action="replace",
+         find="| Traits\n| 30\n| +5 each season",
+         replace="| Traits\n| 31\n| +5 each season",
+         why="\u00a711.3 enumerates 31. \u00a717.3 also names a \u201crare "
+             "Starborn trait\u201d that appears in neither, so either add it to "
+             "\u00a711.3 and make this 32, or cut the reference."),
+],
+
+"G3": [
+    dict(section="10.3", action="insert",
+         find="A rope bridge can carry a Snap instead of a ward",
+         replace="Add a column saying which number \u00a710.2\u2019s \u201ceffect "
+                 "+15%\u201d scales, under one rule: <b>never a distance</b>, "
+                 "because a ward whose radius grows on upgrade covers tiles it did "
+                 "not cover when it was placed. Gravity Well scales its hold, "
+                 "Crystal Wall its health, Time Snare its freeze, Thorn Hedge and "
+                 "Static Coil their damage, Lantern Glare its reveal. Static Coil "
+                 "has no damage value at all and needs one \u2014 8% of maximum "
+                 "health a shock, following Thorn Hedge\u2019s units. Also state "
+                 "the three trigger kinds the wording already implies: passive "
+                 "(Crystal Wall, Thorn Hedge), aura (Static Coil), triggered "
+                 "(Gravity Well, Time Snare, Lantern Glare).",
+         why="Drafted in full at docs/design/spec/wards.md, with ward health and "
+             "the disarm action \u00a712.5\u2019s Tinker trait presumes."),
+],
+
+"F8": [
+    dict(section="12.6", action="replace",
+         find="| The clock turns red for its last 30 seconds",
+         replace="| The alarm meter, which is what actually rises. The clock turns "
+                 "red for its last 30 seconds, and rarely decides anything",
+         why="Simulated across four depths and three skill levels, the last ten "
+             "seconds decide 0% of runs \u2014 a median run finishes in 45 to 150 "
+             "seconds against a clock of 150 to 195. Near-captures happen in 100%. "
+             "The tension is in the guards and this sentence points at the clock."),
+],
+
+"F13": [
+    dict(section="12.22", action="insert",
+         find="the middle of the list is drawn from the 55 to 70% band (13.2)",
+         replace="Say what the matchmaker does when the band is <b>empty</b> rather "
+                 "than merely sparse. Measured, a generated island at realm level 1 "
+                 "or 2 holds 2\u201313% \u2014 a raider success rate of 87 to 98% "
+                 "\u2014 so there is no 55 to 70% candidate to draw a median from, "
+                 "and step 4\u2019s widening cannot produce a target that is not "
+                 "there.",
+         why="The promise depends on \u00a713.3\u2019s generator reaching "
+             "\u00a713.2\u2019s band, and F11 measures that it does not."),
+],
+
+"F11": [
+    dict(section="13.3", action="insert",
+         find="Generated from their realm, their laws and their ruleborn \u2014 "
+              "legal, coherent, and never empty",
+         replace="Add what the generator optimises for, and the band it must hit. "
+                 "\u201cGenerated from their laws\u201d has at least three "
+                 "meanings and two are worse than nothing: weaving the "
+                 "player\u2019s laws at random holds 2\u20139% against 7\u201343% "
+                 "for weaving none, because only five of the nineteen laws a rule "
+                 "sheet can express help the defender and laws apply to everyone in "
+                 "the realm (7.3). Reading the sign of each law recovers it "
+                 "(9\u201354%). And \u00a713.2\u2019s 30\u201345% hold rate "
+                 "should be a stated requirement on the generator, not only on "
+                 "designed islands.",
+         why="\u201cLegal, coherent and never empty\u201d are all true of these "
+             "islands. Effective is a different requirement and is not stated."),
+],
+
+"D14": [
+    dict(section="8.5", action="replace",
+         find="Chords are the late-game discovery: they need three distinct laws in "
+              "play and a Lab of level 3 to identify.",
+         replace="Chords are the late-game discovery: they need three distinct laws "
+                 "in play and a Lab of level 3 to identify, which is the gate that "
+                 "makes them late \u2014 a Lab of level 3 needs a Spire of 5, about "
+                 "day 42.",
+         why="The three-distinct-laws rule fixed the sentence and not the outcome: "
+             "the cheapest chord costs 33 stability against a day-2 capacity of 51, "
+             "and seven of twelve are still three commons. The Lab is doing the "
+             "gating and \u00a78.8 does not lean on it."),
+],
+
+"F7": [
+    dict(section="12.22", action="insert",
+         find="| Renown within 150, Keeper level within 3, and an island difficulty "
+              "rating within one band of the raider\u2019s recent success rate",
+         replace="Add depth to the band: the number of links between the landing "
+                 "realm and the Heart. Simulated, a heist carries 10 decisions "
+                 "across one realm, 17 across two, 24 across three and 31 across "
+                 "four \u2014 so 12.6\u2019s \u201c15 to 25 in a run\u201d is "
+                 "met at two to three realms and nowhere else.",
+         why="\u00a75.4 already prices the skiff by the number of links, so the "
+             "document knows depth varies; the matchmaker does not control it."),
+],
+
 }

@@ -391,8 +391,14 @@ def main() -> int:
                    f"with two laws, not the three \u00a78.5 describes "
                    f"({two_note} of {len(laws)} laws carry two notes)")
 
+    # v3.0's §21.8 now says "every school has a sound signature — six in all",
+    # which is what the content holds. The check only fires against the older
+    # wording, where every *law* had one.
+    doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.0.txt"
+    per_law_claimed = doc.exists() and "every law also has a sound signature" in \
+        doc.read_text(encoding="utf-8")
     sounds = collections.Counter(law["sound"] for law in laws)
-    if len(sounds) < len(laws):
+    if per_law_claimed and len(sounds) < len(laws):
         per_school = all(
             len({law["school"] for law in laws if law["sound"] == snd}) == 1
             for snd in sounds)

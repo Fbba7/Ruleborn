@@ -201,6 +201,55 @@
     margin-right: 7px; font-weight: 500;
   }
 
+  /* The work order: what to type, and where. Collapsed by default, because
+     most readings of this page are not an editing session. */
+  .edits { margin-top: 12px; max-width: 70ch; }
+  .edits > summary {
+    cursor: pointer; font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    letter-spacing: 0.04em; color: var(--accent); padding: 5px 0;
+    list-style: none; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .edits > summary::-webkit-details-marker { display: none; }
+  .edits > summary::before { content: "▸"; font-size: 10px; }
+  .edits[open] > summary::before { content: "▾"; }
+  .edits > summary:hover { text-decoration: underline; }
+  .edits > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .edit-list { margin: 8px 0 0; padding: 0 0 0 20px; }
+  .edit { margin-bottom: 16px; }
+  .edit::marker { font-family: "IBM Plex Mono", monospace; font-size: 11px;
+                   color: var(--faint); }
+  .e-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+             margin-bottom: 6px; }
+  .e-act {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.05em; text-transform: uppercase; color: var(--ground);
+    background: var(--muted); border-radius: 3px; padding: 1px 6px;
+  }
+  .a-replace, .a-retag { background: var(--sig); }
+  .a-delete { background: var(--blk); }
+  .a-insert { background: var(--cho); }
+  .a-regenerate { background: var(--chg); }
+  .e-sec { font-family: "IBM Plex Mono", monospace; font-size: 12px;
+            color: var(--ink); font-weight: 500; }
+  .e-tgt { font-size: 13px; color: var(--muted); font-style: italic; }
+  .e-find, .e-new { margin: 0 0 5px; font-size: 13.5px; }
+  .e-lab {
+    font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--faint);
+    text-transform: uppercase; letter-spacing: 0.07em;
+    display: inline-block; min-width: 72px;
+  }
+  .e-find code { background: transparent; border-left: 2px solid var(--blk);
+                  padding: 2px 0 2px 8px; color: var(--muted);
+                  display: inline-block; max-width: calc(100% - 78px);
+                  vertical-align: top; white-space: pre-wrap; }
+  .e-new code { background: transparent; border-left: 2px solid var(--cho);
+                 padding: 2px 0 2px 8px; color: var(--ink);
+                 display: inline-block; max-width: calc(100% - 78px);
+                 vertical-align: top; white-space: pre-wrap; }
+  .e-why { font-size: 13px; color: var(--muted); margin: 6px 0 0 0;
+            padding-left: 10px; border-left: 1px solid var(--rule-strong); }
+
   .refs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 9px; }
   .ref {
     font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
@@ -252,6 +301,11 @@
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
       out against the rule sheet &sect;7.3 claims they change.</p>
+    <p class="lede"><strong>41 edits are drafted</strong> across
+      21 items &mdash; the section to open, the sentence as it stands
+      today, and what to put there. Every quoted sentence is checked against the
+      document by <code>tools/check_edits.py</code>, which fails the build if one
+      is not there or appears twice.</p>
 
     <div class="summary">
       <div><span class="n">86</span><span class="k">items tracked</span></div>
@@ -259,13 +313,14 @@
       <div><span class="n">18</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">15</span><span class="k">done or adopted</span></div>
       <div><span class="n">26</span><span class="k">blocking the build</span></div>
+      <div><span class="n">41</span><span class="k">edits drafted</span></div>
       <div><span class="n">16 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">86</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">16</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">20</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">9</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">16</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">20</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">9</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">21</span></button>
   </nav>
 
   <main id="list">
@@ -276,7 +331,8 @@
         </div>
         
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="adopted">
+               data-kind="deviation" data-status="adopted"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D1</span>
           <h3>The build-willingness test runs first, not second</h3>
@@ -287,9 +343,11 @@
         <p class="body">§26.7 schedules the paper heist first and the build-willingness test after it. But the build test is ranked risk #1, and §26.7 itself calls it “the single decision that changes the most”. The heist test decides whether the game is fun; the build test decides <em>what game is being built</em> — authorship, authorship-with-scaffolding, or a pivot to generated islands the player curates.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Run both in parallel. Neither blocks the other, and the build test's answer changes what the rest of the plan is for.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="done">
+               data-kind="deviation" data-status="done"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D2</span>
           <h3>The paper prototype became a browser prototype</h3>
@@ -300,9 +358,11 @@
         <p class="body">Both pre-code gates as written assume about thirty people in a room — eight to twelve for the paper heist, fifteen to twenty for the build test. That cohort does not exist for this project. The questions did not change; the method did, because <strong>a link can be sent to strangers and a room cannot</strong>. §25.5 already budgets for recruited remote panels, so the route was costed.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Built and published. It also answers a question paper could not: whether a delegated crew feels like playing or watching (§30.7 premise 3), which cannot be tested on a board where a human moves the pieces.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Overtaken. §19.27 now answers every pre-code question by simulation rather than by people, so the published prototype is no longer on the critical path. It still runs, and it is still the only artefact that can answer the one question §19.27 says simulation cannot. See D20.</p>
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="adopted">
+               data-kind="deviation" data-status="adopted"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D3</span>
           <h3>The prototype sits ahead of the determinism spike on the critical path</h3>
@@ -313,9 +373,11 @@
         <p class="body">§26.7 puts the determinism spike immediately after the paper tests. Because the paper test became software, a few working sessions of engineering now precede the spike — exactly what the paper test was designed to avoid.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Accepted: §26.5's own rule is that scope is the lever, and buying the two project-deciding answers cheaply is worth it. This does <strong>not</strong> relax the rule that gameplay code waits for the spike. The prototype is throwaway and written as such.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="open">
+               data-kind="deviation" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D4</span>
           <h3>A reconciliation step was inserted before the specification locks</h3>
@@ -326,9 +388,11 @@
         <p class="body">§26.7 goes spike → lock the simulation contract → lock detection → lock the law schema → lock saves. Every one of those assumes there is one specification to lock. Four systems currently have two (C1, C2, C3, C6), and a fifth has two budgets (C5).</p>
         <p class="rec"><span class="arrow">&rarr;</span> Work the blocking half of this register before any lock. It is days of desk time and the cheapest work in the whole plan.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="done">
+               data-kind="deviation" data-status="done"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D5</span>
           <h3>The economy model was rebuilt from scratch</h3>
@@ -339,9 +403,11 @@
         <p class="body">§24 describes a Python model that generated roughly a quarter of the document's numbers. That model is not in the document, so none of those numbers could be re-derived or re-tuned (gap G7).</p>
         <p class="rec"><span class="arrow">&rarr;</span> Rebuilt at <code>tools/economy_model/</code>. It reproduces the first month to within 10% and the Keeper curve to within three days, and it produced findings F1, F2 and F3.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="proposed">
+               data-kind="deviation" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D6</span>
           <h3>A launch-scope cut of roughly 40% is proposed</h3>
@@ -352,9 +418,11 @@
         <p class="body">§26.1's launch table asks for 48 laws, 144 creature forms, 44 resonances, 39 terrain features, 16 buildings, 27 screens and 12 languages, from one designer, one coding agent and three contractors. §26.5 says scope discipline is the main risk control and §30.8 ranks execution as risk #2 — but neither is applied to §26.1.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Proposed: 24 laws rather than 48 (the Codex already gates in chapters); 3 form-notes rather than 8; ~20 resonances rather than 44; 2–3 languages rather than 12 (§20.6 already says this); constellations to v1.1; wards at 2 levels rather than 5. <strong>The Island Workshop is the one thing not to cut</strong> — it is the only credible answer to the content treadmill at this team size.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="adopted">
+               data-kind="deviation" data-status="adopted"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D7</span>
           <h3>A risk was added: delegated control reading as watching</h3>
@@ -365,9 +433,11 @@
         <p class="body">§30.7 marks premise 3 — that delegated control still feels like agency — as only <em>conditionally</em> supported, names the failure mode (“my units are stupid”), and sets a 70% felt-control threshold. It does not appear in §30.8's ranked register. Meanwhile §19.4 concedes performative challenge is “almost absent by design”, and the system that decides it — pathfinding and crew control — is the largest specification gap (G1).</p>
         <p class="rec"><span class="arrow">&rarr;</span> Added at rank ~4. The prototype measures it directly.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="adopted">
+               data-kind="deviation" data-status="adopted"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D8</span>
           <h3>Two risks were re-ranked</h3>
@@ -378,9 +448,11 @@
         <p class="body">Trust and safety moved from 6 to 8: the design has already engineered most of that risk away — no free text for minors, no uploads, structured data only, preset chat. Complexity overwhelming new players moved from 7 to 6: §19.4 calls it “the biggest risk in the whole design” and the four-interacting-rules cap is untested.</p>
         <p class="rec"><span class="arrow">&rarr;</span> No action beyond ordering the mitigations accordingly.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="proposed">
+               data-kind="deviation" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D9</span>
           <h3>Iteration is given a budget</h3>
@@ -391,9 +463,11 @@
         <p class="body">§26.8 estimates ~270 agent runs (≈810 focused hours) and then states plainly that the iteration needed to <em>find the fun</em> is unbudgeted. For a novel genre blend with no reference implementation, that iteration is normally the majority of the work. §19.17 alone lists nine A/B experiments, each needing a playable build and a tuning pass.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Budget iteration at 1–1.5× the build estimate (a further 200–400 runs) and treat the total as the reference-class figure §26.5 asks for.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="proposed">
+               data-kind="deviation" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D10</span>
           <h3>The document should split into a specification and a research archive</h3>
@@ -404,9 +478,11 @@
         <p class="body">The document is a buildable spec and an evidence archive in one file, and §19, §28 and §30 are roughly 40% of the text. Both halves are valuable. Keeping them together means the spec cannot be read, diffed or implemented without the archive — and it is part of why four systems reached v2.3 specified twice.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <code>docs/design/spec/</code> carries decisions, one file per system; <code>docs/design/research/</code> carries why. Cross-reference, never duplicate. <strong>Started:</strong> <code>spec/detection.md</code> is the first file, and the twelve content tables in <code>content/</code> are the data half of the same split.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="done">
+               data-kind="deviation" data-status="done"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D11</span>
           <h3>The prototype departs from the document's numbers on purpose</h3>
@@ -417,9 +493,11 @@
         <p class="body">Vault health is 600 rather than 1,500 so cracking takes about eight seconds; being caught takes 1.6 seconds of contact and takes one crew member at a time; there are two guards; the island is hand-built. The first build caught all three crew instantly, which read as unfair rather than tense and would have produced a false negative on gate 1.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Prototype-only. None of these numbers carries forward.</strong> The catch-takes-time change is worth considering for the real build, because instant total capture conflicts with §12.14's rule that failure stays temporary.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="adopted">
+               data-kind="deviation" data-status="adopted"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D12</span>
           <h3>The published prototype declares no runtime capabilities</h3>
@@ -430,9 +508,11 @@
         <p class="body">Server-side result collection would have been convenient, but declaring the database capability makes an artifact organisation-internal and unshareable publicly — which defeats the entire point of recruiting by link.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Results are collected in the browser and shown as a copyable code. <code>tools/parse_gate_results.py</code> scores them.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="proposed">
+               data-kind="deviation" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D13</span>
           <h3>The note distribution should be rebalanced before the law table is authored</h3>
@@ -443,9 +523,11 @@
         <p class="body">Parsed from all 48 law sheets: Glow is carried by 12 laws, its opposite Hush by 6. Hush is the <em>hiding</em> note — the raider-favouring one — and it is the scarcest, while the revealing note is the most abundant. Since laws are woven by the defender and apply symmetrically, defenders have both the least reason and the fewest options to weave Hush. Five of the twelve chords require it.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Rebalance toward roughly 8–9 laws per note. §24 freezes the note count at eight and makes laws the expansion axis, so this is a one-time cost now and a permanent constraint on every future season's six laws.</p>
         <p class="v3"><span class="vlabel">v3.0</span> <strong>Claimed, not done — and now written out.</strong> §8.8 states “The table now runs eight or nine laws per note”. Parsing all 48 law sheets gives Glow 12, Flow 11, Echo 10, Weight 9, Spark 8, Bloom 8, Veil 7, Hush 6 — unchanged from v2.3 (C25).<br><br><code>tools/note_rebalance.py</code> is the change that paragraph describes, law by law: <strong>nine edits reach nine laws for every note</strong>, each argued from §8.1’s own definition rather than chosen to make the arithmetic work. Flock and Crystal growth give up Glow for Veil because neither lights up and both transform; Aurora gives up Flow because it moves nothing; Day and night gains Hush because the light-and-dark law carried neither Glow nor Hush.<br><br>The tool refuses to emit a proposal that puts two opposite notes on one law — which it caught in the first draft, where Aurora would have carried Glow and Hush — and checks that every chord stays reachable afterwards. All twelve do, at unchanged cost.</p>
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="done">
+               data-kind="deviation" data-status="done"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D15</span>
           <h3>Summary tables are now generated, not authored</h3>
@@ -456,9 +538,11 @@
         <p class="body">Four register items — C1, C3, C6 and C19 — have one cause: the same facts written down twice by hand, and one copy updated. The structural fix is that a table which exists only to summarise something else is never authored, only emitted.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <code>tools/generate_docs.py</code> emits §11.2's roster index, §7.4's law summary and §29.1's formulas appendix from <code>content/</code>. <code>--check</code> fails the build if a generated file has been hand-edited, and <code>./tools/check_all.sh</code> runs it. This matters most for §29.1, which still carries the detection model §12.17 superseded — the worst place for a stale number, since it is where an implementer looks for it. It does not cover prose, which is what D10's split is for.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Vindicated in the worst way. §30.18 draws exactly this conclusion — “a table that exists only to summarise something else should be generated, never authored” — and then v3.0 fixed six systems and left stale copies of four of them (C21–C23, C6). §29.1 is the sharpest case: it is the formulas appendix, it carries the detection model §12.8 deleted, and it cites §12.8 as its source.</p>
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="fixed">
+               data-kind="deviation" data-status="fixed"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">D14</span>
           <h3>Chords should require three laws, not three notes</h3>
@@ -469,9 +553,11 @@
         <p class="body">§8.5 calls chords “the late-game discovery” needing “three laws in play and a Lab of level 3”. Because 23 of the 48 laws carry two notes, <strong>all twelve chords are reachable with two laws</strong>, several with two commons. Slow rivers + Whispers gives Iron bell for 26 stability — inside a day-2 player's capacity of 51.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Require three distinct laws. It is a one-line rule change and it preserves the stated design intent; the alternatives are to reposition chords as a mid-game discovery, or to reduce two-note laws (which also helps D13).</p>
         <p class="v3"><span class="vlabel">v3.0</span> §8.8 changes the rule to three <em>distinct laws</em>, which makes §8.5 true. It did not achieve what it argued for: the cheapest chord now costs 33 stability against a day-2 capacity of 51, up from 26, and seven of twelve are still three commons. The gate that actually makes a chord late-game is the Lab level 3 at Spire 5, about day 42 — which §8.5 mentions and §8.8 does not lean on.</p>
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;8.5</span></header><p class="e-find"><span class="e-lab">now</span><code>Chords are the late-game discovery: they need three distinct laws in play and a Lab of level 3 to identify.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>Chords are the late-game discovery: they need three distinct laws in play and a Lab of level 3 to identify, which is the gate that makes them late — a Lab of level 3 needs a Spire of 5, about day 42.</code></p><p class="e-why">The three-distinct-laws rule fixed the sentence and not the outcome: the cheapest chord costs 33 stability against a day-2 capacity of 51, and seven of twelve are still three commons. The Lab is doing the gating and §8.8 does not lean on it.</p></li></ol></details>
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="proposed">
+               data-kind="deviation" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D16</span>
           <h3>The Vault’s load rate is cut fivefold, from 150 a second to 30</h3>
@@ -482,9 +568,11 @@
         <p class="body">§12.6’s 150-loot-a-second is a published number and this changes it to 30 for Carriers and 8 for everyone else, with every role able to load rather than Carriers only. The reason is F5: at 150 a second the phase the document calls its central decision is two seconds long and has one option.<br><br>The replacement rate is not a guess. §12.6 sets its own target of <strong>one decision every 8–12 seconds</strong>, and a loading window shorter than one decision cannot contain a decision; 30 a second puts a full crew load at exactly ten. The rate scales with character level alongside Carry (§11.4), so the ten seconds holds for the whole game.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Accepted in <code>docs/design/spec/vault.md</code>, flagged for sign-off because it is a large move on a published figure. The only alternative that preserves the decision is raising carry capacity fivefold, which breaks §9.4’s exposure percentages and §11.1’s role balance instead. Doing neither means deleting the sentence that calls the Vault phase a decision.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="proposed">
+               data-kind="deviation" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D17</span>
           <h3>Ambush damage gains a floor, so the document’s own rule becomes true</h3>
@@ -495,9 +583,11 @@
         <p class="body">§12.8’s ambush is triple Power. F4 measures what that delivers: the same section’s claim that two ambush hits drop an equal-level guard is true for three of twenty-five pairings. This adds a floor — an ambush deals triple Power <em>or</em> half the target’s maximum health, whichever is greater — which changes a formula the document states in order to satisfy a rule the document also states.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Where two of the document’s own sentences cannot both hold, the one expressing <em>intent</em> wins over the one expressing a coefficient: “two ambush hits knock out a guard” is a design statement about how stealth pays off, and “triple damage” is a number chosen to deliver it. Half is the value that makes the intent exactly true; a third would need three ambushers, which a crew of three (§12.5, before Keeper 8) cannot spare, quietly deleting the tactic for early players.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="done">
+               data-kind="deviation" data-status="done"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D18</span>
           <h3>Two recorded gaps were wrong, and the register now says so</h3>
@@ -508,9 +598,11 @@
         <p class="body">G3 recorded that ward levels 2–5 are unspecified and G5 that law pylons have no health and no stated relationship to law slots. Both are in §10.2’s building tables — wards at effect +15/30/45/60% with resets 10→6 s, pylons at 600 health a level and “one per law slot”. G5’s own text admitted the table had not been examined; G3’s did not.<br><br>The cause is the one this whole register is about, turned on the analysis itself: <strong>a fact written in two places, and only one of them read</strong>. The design document specifies wards in §10.3 and prices them in §10.2, and reading either alone gives a wrong answer about the other.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Both items are corrected in place rather than deleted, because what survives of each is real and because a register that quietly drops its mistakes is not an audit. <code>docs/design/spec/wards.md</code> opens with the correction. The general lesson is recorded here rather than absorbed: <strong>before recording something as unspecified, check whether it is specified in a table somewhere else</strong> — which is exactly the failure mode the document itself keeps exhibiting.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="done">
+               data-kind="deviation" data-status="done"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D19</span>
           <h3>The checks were rewritten to read the document rather than remember it</h3>
@@ -521,9 +613,11 @@
         <p class="body">Four checks added while auditing v2.3 — the ambush rule, the load rate, crew capacity, the fight-length bound — hard-coded the role stats and the Vault rate instead of parsing them. Against v3.0 they reported exactly the same failures they had reported against v2.3, including for the two things v3.0 had fixed.<br><br>A check that cannot pass is not a check. It is a comment that runs.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <code>check_design_consistency.py</code> now parses §11.1’s role table, every load-rate sentence, §7.10’s rank table, §7.6’s restore costs and §12.8’s ambush wording out of the document. Two findings retired on the first run against v3.0, which is what retirement is supposed to look like. The fight-length bound was <strong>deleted</strong> rather than re-based: it measured a lone Mender attacking a Warden, which is a player mistake rather than a specification fault, and the health floor had already halved it.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="open">
+               data-kind="deviation" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D20</span>
           <h3>Both pre-code player gates are gone, and the prototype with them</h3>
@@ -534,9 +628,11 @@
         <p class="body">v3.0 removes both tests this analysis built a prototype for. §19.27 replaces them with simulation harnesses and states the cost plainly: “Simulation can prove a system is legible, balanced and decision-dense. It cannot prove a game is enjoyable — nothing except a person playing can, and that evidence now arrives at soft launch rather than before code.” §13.3 goes further and removes the build-willingness question itself: every player gets a generated defence, curation is the default creative act, and authoring becomes the deep end. <strong>Risk #1 is designed out rather than measured.</strong><br><br>Both are defensible and both are stated honestly. One premise is worth restating, because it is the premise the change rests on: §19.27 gives the reason as “that cohort does not exist for this project”, meaning thirty people in a room. That was D2’s finding too — and D2’s answer was that a link is recruitable where a room is not. The prototype exists, it is published, and sending it to twenty strangers costs an afternoon rather than a soft launch.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Not a disagreement with the decision, which is the owner’s and is argued well. Two things follow from it regardless.<br><br><strong>The harnesses in §19.27 are now on the critical path</strong>, ahead of the vertical slice, and they are buildable here: thousands of scripted heists at three skill levels, measuring decisions per run, near-captures, and whether the last ten seconds decide the outcome. §19.27 sets the thresholds — 15–25 decisions, a near-capture in half of runs, the optimal crew 35 points ahead of the careless one.<br><br><strong>The prototype stays published anyway.</strong> It costs nothing to leave up, and it is the only artefact in this repository that can answer the one question §19.27 says simulation cannot.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="done">
+               data-kind="deviation" data-status="done"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D21</span>
           <h3>§19.27’s harnesses were built, since they are now the critical path</h3>
@@ -547,9 +643,11 @@
         <p class="body">v3.0 replaced both pre-code player tests with simulation (D20), which puts the harnesses on the critical path ahead of the vertical slice. <code>tools/heist_harness/</code> is three of them: tension and depth, defence balance, and the attribution check.<br><br>It implements §12.17’s perception in full, §12.18’s movement rules, §12.19’s loading and §12.20’s capture and revive, with §5.4’s clock and §12.9’s grades. Every run is a function of its seed: integer arithmetic throughout, no random source consulted inside the loop, and a SplitMix64 reference stream in the tests so a port can be checked against it (§24.7).<br><br>It is not the engine and is not a step toward one. It answers questions, like the economy model, and §26.7’s rule that gameplay code waits for the determinism spike is untouched.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Three findings on the first full run: F7, F8 and F9. The one that changes a decision is F9, because §13.3 now rests on the generator and nothing states how well it has to hold.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="done">
+               data-kind="deviation" data-status="done"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D22</span>
           <h3>Law effects became a classified table, not prose to be read twice</h3>
@@ -560,9 +658,11 @@
         <p class="body">§7.3 claims laws are parameters and §12.21 makes it a rule, but the 48 law sheets state their effects in prose and nothing maps them onto anything. So the claim could not be checked, and was not.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <code>tools/law_effects.py</code> classifies every law against a twenty-parameter rule sheet and emits <code>content/law_effects.json</code>. It refuses to run if a law names a parameter outside the sheet, or if a law has no classification at all — so a new law in a future season cannot be added without saying what kind of thing it is. The harness weaves the nineteen it can apply, which is how F11 was measured.</p>
         
+        
       </article>
       <article class="item chg" data-group="changes"
-               data-kind="deviation" data-status="done">
+               data-kind="deviation" data-status="done"
+               data-edits="no">
         <header class="item-head">
           <span class="id">D23</span>
           <h3>§13.4's ablation was built exactly as specified, Shapley included</h3>
@@ -573,6 +673,7 @@
         <p class="body">§13.4 is the most precisely specified test in the document: “run the same thousand raids against the island with that layer switched off… do it for every combination of the five layers — there are only thirty-two — and divide the credit the way cooperative game theory does.”</p>
         <p class="rec"><span class="arrow">&rarr;</span> <code>tools/heist_harness/ablation.py</code> does that, with the Shapley value computed in full rather than sampled (five players is 120 orderings) and checked against two cases with known answers. Building it turned up a confound worth recording: the ward count was derived from the route length, so turning geometry off removed a ward too and the geometry share absorbed the ward’s. An ablation that moves two things at once measures neither, and a test now pins it.<br><br>One number in §13.4 does not survive contact: it says 12,800 runs is something “a deterministic simulation does in seconds”. In Python it is about twenty minutes. That is an argument for the Rust core, not against the method.</p>
         
+        
       </article>
       </section>
       <section class="group" id="g-blocking" data-group="blocking">
@@ -582,7 +683,8 @@
         </div>
         
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="fixed">
+               data-kind="contradiction" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C1</span>
           <h3>Two incompatible detection models</h3>
@@ -593,9 +695,11 @@
         <p class="body">§12.17 specifies three vision zones inside a 30–45° cone plus peripheral vision, a 0–1000 suspicion meter, six guard states and noise travelling along walkable paths. §12.8 specifies one 120° cone at 6 tiles, awareness in percent per second, and two states. §12.17 presents itself as the fix, but §12.8 is left intact, §5.4's landing rule is written in the old percentage model, and <strong>§29.1, the formulas appendix, encodes the old model</strong>.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/detection.md</code> states §12.17 once, with the four edits it forces spelled out: §12.8 becomes behavioural description only, §5.4's landing noise is restated as 250 of 1000 suspicion, §29.1 is regenerated, §21.12 is already correct. The numbers are data in <code>content/detection.json</code> and validated. Awaiting sign-off before the lock in §26.7.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §12.8 now says sight and awareness are “specified once, in 12.17” and that the older single-cone, percent-per-second rules are gone. The residue is tracked as C21: §29.1 still tabulates the deleted model, and cites §12.8 for it.</p>
+        
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C2</span>
           <h3>Two incompatible raid-payout models, differing by 16–30×</h3>
@@ -606,9 +710,11 @@
         <p class="body">§9.4 pays a percentage of what the defender holds; §9.6 replaces it with a haul minted from the raider's own level and says so explicitly — but §9.4's percentages and §12.9's multipliers remain. Run through the economy model, <strong>§9.4 delivers 32% of a player's income, reproducing its own stated “roughly a third” almost exactly, while §9.6 delivers 1–2%</strong>. Strong evidence that §9.4 generated the published progression tables and §9.6 was added afterwards without re-running them.</p>
         <p class="rec"><span class="arrow">&rarr;</span> §9.6 is the better-reasoned model — minting is right when loot is created rather than transferred. Then: delete §9.4's percentages and §12.9's loot column; say what Carrier capacity now means (probably time pressure, not a cap on value — see G4); rewrite §9.4's and §12.1's resource-share claims; and resolve C4 first, since the formula's level term is undefined.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Half resolved. §9.4’s percentages are deleted — “the percentages this paragraph used to carry are gone” — and §9.6 is the one formula, now with a <code>fill</code> term. But §9.6 keeps <code>B(V)</code> rather than pegging to production, so the faucet still delivers 1–2% of income, while §9.4’s balance target (“a fifth of a day’s production… roughly a third”) and §12.1’s 40% are unchanged. The two-model contradiction is gone; the model-versus-target one is not.</p>
+        
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C3</span>
           <h3>Two law-rarity taxonomies, and one of them has no laws in it</h3>
@@ -619,9 +725,29 @@
         <p class="body">What is <em>authored</em> (§7.4, §7.7, verified by parsing all 48 law sheets): three ranks — 18 Common, 18 Rare, 12 Deep — at 15/30/60 pages. §14.4's 1,485-page total is computed from exactly that, and the glossary agrees. What is <em>described</em> (§7.10, §27.2): five ranks — 18/14/10/6 plus 3 paradoxes — at 10/20/35/60/120 pages. <strong>No law anywhere in the document is tagged Uncommon.</strong> The two totals differ by 345 pages, which moves the whole late-game curve.</p>
         <p class="rec"><span class="arrow">&rarr;</span> §7.10's reasoning survives either way — rarity should buy specificity, not strength. Decide the split, then regenerate §7.4, §7.7, §7.6, §9.5, §14.4 and the glossary from one table. Choosing five ranks means re-tagging 14 laws and re-deriving the page economy.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Changed shape, not resolved. Twelve laws were re-tagged from Rare to Uncommon, so the sheets now read 18/12/6/12 — against §7.10’s own table of 18/14/10/6. Deep doubled from 6 to 12. And §7.6, §14.4 and the glossary still price three ranks at 15/30/60 pages (C23).</p>
+        <details class="edits"><summary>3 edits to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;7.10</span></header><p class="e-find"><span class="e-lab">now</span><code>| Uncommon
+| 14
+| Conditional, with a mild cost
+| 20</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| Uncommon
+| 12
+| Conditional, with a mild cost
+| 20</code></p><p class="e-why">The sheets say 12. If the table is right instead, re-tag two laws — but one of the two has to move.</p></li><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;7.10</span></header><p class="e-find"><span class="e-lab">now</span><code>| Rare
+| 10
+| Strong inside a condition you have to build for
+| 35</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| Rare
+| 6
+| Strong inside a condition you have to build for
+| 35</code></p><p class="e-why">The sheets say 6.</p></li><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;7.10</span></header><p class="e-find"><span class="e-lab">now</span><code>| Deep
+| 6
+| Changes how a realm works. Heavy stability cost and a real trade-off. One per school
+| 60</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| Deep
+| 12
+| Changes how a realm works. Heavy stability cost and a real trade-off. Two per school
+| 60</code></p><p class="e-why">The sheets say 12, which is two per school rather than one. This is the one to look at hardest: Deep doubled, and “one per school” was part of the argument for what Deep is.</p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="fixed">
+               data-kind="contradiction" data-status="fixed"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C4</span>
           <h3>The master inflation dial is keyed to a level range that does not exist</h3>
@@ -632,9 +758,11 @@
         <p class="body">§5.2's outer-realm table stops at level 5. §9.6's haul table quotes realm levels 2, 6 and 10, and attributes the 40%→71.5% sealed share to “realm level” — but §9.4 attributes that same share to the <em>Vault</em>, which does have ten levels. So §9.6 appears to have conflated the two and then built <code>B(L) = 100 × 1.5^(L−1)</code>, which §9.6 itself calls “the master inflation lever”, on top of the conflation. At L=10 that is 25× its value at L=5.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Decide what L is — most likely Vault level or a composite target-strength score. If realms really cap at 5, the entire payout table is wrong by about 7×.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §9.6’s base is now <code>B(V)</code> with V stated as “the target’s Vault level, one to ten — not the realm level, which stops at five”. One paragraph deeper, §9.6’s <em>what is exposed</em> still says the sealed share runs “40% at realm level 1” while §9.4 says Vault level 1.</p>
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;9.6</span></header><p class="e-find"><span class="e-lab">now</span><code>the sealed share runs 40% at realm level 1 and rises by 3.5 points a level to 71.5% at level 10 (9.4)</code></p><p class="e-new"><span class="e-lab">becomes</span><code>the sealed share runs 40% at Vault level 1 and rises by 3.5 points a level to 71.5% at Vault level 10 (9.4)</code></p><p class="e-why">One paragraph below the table that fixed this. §9.4 already says Vault level; the curve has ten steps and realms stop at five.</p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="fixed">
+               data-kind="contradiction" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C5</span>
           <h3>Two defence budget systems, with three different ward limits</h3>
@@ -645,9 +773,11 @@
         <p class="body">§5.5 has one universe-wide stability pool from the Spire and Anchor Stones, with laws costing 10–26. §13.4 introduces a <em>per-realm</em> pool of 100/336/1,504 with laws at a flat 30/40. Ward limits appear three times: §5.2 and §10.2 say 4–8 per realm (3 + realm level), §13 says “three to seven”, §13.4 says 2–9. Guard posts: §5.2 says 1–3, §13.4 says 3–10 guards.</p>
         <p class="rec"><span class="arrow">&rarr;</span> §13.4's <em>mechanism</em> is right — slot limits per layer are what enforce the “no layer above a quarter” rule, and cost alone cannot. Keep the limits, drop the second pool, price the layers in an explicitly named budget (parallel to terrain points), and reconcile the ward and guard numbers into one table in §5.2.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §13.4 keeps the slot limits and drops the second pool in as many words: “The older per-realm pool is gone, and these numbers now match 5.2 and 10.2 rather than competing with them.”</p>
+        
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C6</span>
           <h3>Two ruleborn rosters — and eleven are different creatures, not different wordings</h3>
@@ -658,9 +788,11 @@
         <p class="body">The same 18 creatures are specified twice. Prism Mite is a Carrier in §11.2 and a Scout in §11.11; Stormhound is a Scout then a Carrier; Rootrunner a Carrier then a Scout. That changes the role distribution (3 Scout / 4 Carrier versus 4 Scout / 3 Carrier), and role drives crew composition, guard behaviour (§12.8) and the Nursery's fewest-roles-first rule (§11.5). Most of the other fifteen disagree on ability, cooldown or resistance — Featherkin 12s or 14s, Echoplate returns at 50% or 40%, Rootrunner ignores Spores or Heavy ground.</p>
         <p class="rec"><span class="arrow">&rarr;</span> §11.11 is the richer and later spec. Make it authoritative, reduce §11.2 to a generated index, and hold both in <strong>one creature data table</strong> — exactly the server-side content data §24 describes.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §30.18 records “11.11 is the roster”, but §11.2 is still a full hand-authored table and still disagrees with it about Prism Mite, Stormhound and Rootrunner, plus fifteen wording differences. The decision was taken and the second copy was not retired.</p>
+        <details class="edits"><summary>4 edits to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;11.2</span><span class="e-tgt">Prism Mite</span></header><p class="e-find"><span class="e-lab">now</span><code>Carrier</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Scout</code></p><p class="e-why">§11.11 is the authoritative roster per §30.18, and gives Prism Mite as a Scout.</p></li><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;11.2</span><span class="e-tgt">Stormhound</span></header><p class="e-find"><span class="e-lab">now</span><code>Scout</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Carrier</code></p></li><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;11.2</span><span class="e-tgt">Rootrunner</span></header><p class="e-find"><span class="e-lab">now</span><code>Carrier</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Scout</code></p></li><li class="edit"><header class="e-head"><span class="e-act a-regenerate">Regenerate</span><span class="e-sec">&sect;11.2</span></header><p class="e-find"><span class="e-lab">paste from</span><code>docs/design/generated/roster.md</code></p><p class="e-new"><span class="e-lab">add</span><code>Replace §11.2’s whole table with the generated roster index, which is emitted from the same data §11.11 describes. Fifteen further rows differ on ability wording, cooldown or resistance; regenerating fixes all of them at once and stops the pair drifting again.</code></p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C19</span>
           <h3>The production tables describe a universe the build rules do not permit</h3>
@@ -671,9 +803,11 @@
         <p class="body">§9.3's published production figures fit a universe with <strong>one</strong> producer of each kind per realm, fully staffed. §5.2 permits <strong>two</strong> from realm level 3. And §11.5's roster ceiling of 38 characters cannot fully staff even the one-producer version, which needs 63 worker slots. All three tables cannot be correct at once. See findings F1 and F2.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Decide the building and roster rules, then regenerate §9.3, §10.2, §14.2 and §14.3 from the economy model rather than editing them by hand — hand-editing is what produced this.</p>
         <p class="v3"><span class="vlabel">v3.0</span> The decision is made (§5.9) and the tables were not regenerated against it. Now measured, by re-running the model under §5.9’s three rules — one producer per realm, pro-rata staffing, the crew assigned rather than timed:<br><br><code>day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31 &nbsp;&nbsp;&nbsp;&nbsp;91 &nbsp;&nbsp;&nbsp;181 &nbsp;&nbsp;&nbsp;301<br>published &nbsp;17,300 &nbsp;94,100 &nbsp;152,800 &nbsp;256,100<br>under §5.9 &nbsp;14,633 &nbsp;46,817 &nbsp;&nbsp;62,627 &nbsp;122,495<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-15% &nbsp;&nbsp;&nbsp;-50% &nbsp;&nbsp;&nbsp;&nbsp;-59% &nbsp;&nbsp;&nbsp;&nbsp;-52%</code><br><br><strong>The first month holds and then the curve breaks.</strong> Keeper 5 to 20 land within two days of published, which is the evidence the model reads §5.9 correctly; Keeper 28 is 18 days late and Keeper 40 is <strong>94 days late</strong> — half a year becomes nine months. Of the three rules, assigning the crew costs 27–35% from the first week and pro-rata staffing costs nothing until the roster binds. The re-run is generated at <code>docs/design/generated/pacing.md</code>.</p>
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-regenerate">Regenerate</span><span class="e-sec">&sect;9.3</span></header><p class="e-find"><span class="e-lab">paste from</span><code>docs/design/generated/pacing.md</code></p><p class="e-new"><span class="e-lab">add</span><code>Replace §9.3’s production table and §14.2’s Keeper days with the re-run under §5.9’s rules. The first month holds; from day 91 the published figures are up to twice what the rules produce, and Keeper 40 arrives 94 days late.</code></p><p class="e-why">This item’s own recommendation was to regenerate rather than hand-edit, because hand-editing is what produced it.</p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="gap" data-status="fixed">
+               data-kind="gap" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G1</span>
           <h3>Pathfinding and crew movement</h3>
@@ -684,9 +818,11 @@
         <p class="body">The document specifies in detail what guards perceive and what laws do to movement parameters, but never how a crew actually moves. Unanswered: is the world a tile grid or continuous (§6 is in tiles, §12.17's sub-metre zones and degrees-per-tick imply continuous); how does a player order movement at all (§12.7 covers abilities, never locomotion); what happens at an unplanned fork; how do 3–5 crew avoid each other; does the §12.5 route planner produce a literal path or waypoints re-pathed at runtime — which have very different determinism properties.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/movement.md</code>, which unlike the other spec files is partly new design, since the document leaves this empty. It settles the world model first — <strong>tile topology, continuous position</strong>, which is the only reading that satisfies both §6's per-tile terrain and §12.17's sub-metre vision zones and degrees-per-tick turning — then proposes tap-to-move with per-member selection, deterministic breadth-first pathfinding with a fixed neighbour order, and commands rather than paths in the input log (§24.10).<br><br>The rule that protects premise 3 is stated explicitly: <strong>the crew never makes a decision the player did not make</strong>. No auto-attack, no auto-avoid, no auto-retreat, no re-routing around a guard the player walked them into. A unit cannot look stupid for a decision it never made. The prototype implements this and the felt-control question is measured directly against §30.8's 70% threshold.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §12.18 settles it, and adopts the reading in <code>spec/movement.md</code>: tiles for terrain and building, continuous millitile position and facing, breadth-first pathfinding with a fixed neighbour order, the command recorded rather than the path, and crew passing through one another. The rule that protects premise 3 is stated as a heading: <strong>the crew never makes a decision the player did not make</strong>.</p>
+        
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="gap" data-status="fixed">
+               data-kind="gap" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G9</span>
           <h3>The 60-second guided build is the top risk's mitigation and is unspecified</h3>
@@ -697,9 +833,11 @@
         <p class="body">§13.1 makes “a 60-second guided build before the first player heist” the primary mitigation for the design's number-one risk, and §27.2 confirms it as a decision. What three terrain features, which guard, which law, what the player is told, and — critically — whether the island they build then becomes their actual defence, are all unstated.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/first-build.md</code>. The decision the sentence hides is whether the island becomes the player's <em>actual</em> defence — the document never says, and the two answers are different features. If it does not, this is a tutorial that is thrown away, and §49's finding is that people value what they built only when they finish it. The spec proposes it becomes the real defence, places it at the top of day 2 (after the player has met a cone from the outside, per §15.1's teach-in-context rule), and names the five placements that make a guard's cone mean something.<br><br>It also draws a distinction the document does not: <strong>the §13.3 test protocol and the shipped feature differ</strong>. The test tells the player they may stop, because stated willingness is worthless here. The shipped game says nothing and logs what they do. And it flags that §13.1's “not optional” sits oddly against §20.3's “no obligations” — reconcilable, since §20.3 is about recurring demands rather than onboarding, but the reason should be written down rather than assumed.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Resolved by removal rather than specification. §13.3 is now “Nobody has to build”: every player has a generated defence from the first minute, curation is the default creative act and authoring is the deep end. The 60-second guided build is no longer the mitigation for risk #1, because the risk is designed out instead of tested. See D20.</p>
+        
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C21</span>
           <h3>The formulas appendix still carries the detection model §12.8 deleted</h3>
@@ -710,9 +848,11 @@
         <p class="body">§12.8 in v3.0 states the old perception rules are gone and that §12.17 wins everywhere. <strong>§29.1 still tabulates them</strong> — “Awareness: +50% a second in sight, +75% within 3 tiles; investigate at 50%, alarm at 100%” — and gives §12.8 as the source, which is the section that deleted them. Its ambush row is stale the same way: “First unseen hit: 2 s stun and triple damage”, without the health floor §12.8 added. §5.4’s landing rule still starts guards at “25% awareness”, a unit that no longer exists.<br><br>This is the worst possible place for it: the formulas appendix is where an implementer looks for a number rather than a discussion.</p>
         <p class="rec"><span class="arrow">&rarr;</span> §29.1 should be generated, not authored — which is D15, already recorded and already built (<code>tools/generate_docs.py</code> emits it from <code>content/</code>). Adopting that is a one-line change to the build and it makes this class of item impossible rather than merely unlikely. §5.4 restates as 250 of 1000 suspicion, as <code>spec/detection.md</code> proposed.</p>
         
+        <details class="edits"><summary>3 edits to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;29.1</span></header><p class="e-find"><span class="e-lab">now</span><code>+50% a second in sight, +75% within 3 tiles; investigate at 50%, alarm at 100%</code></p><p class="e-new"><span class="e-lab">becomes</span><code>Suspicion 0–1000, filling 67 a tick in the near zone, 33 in the mid and 12 in the far, draining 20 a tick. Suspicious at 200, investigating at 600, alerted at 1000. A state cannot fall back for 15 ticks.</code></p><p class="e-why">§12.8 says the percent-per-second rules are gone; the formulas appendix is where an implementer looks for them.</p></li><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;29.1</span></header><p class="e-find"><span class="e-lab">now</span><code>First unseen hit: 2 s stun and triple damage; a level advantage counts for at most 3 levels</code></p><p class="e-new"><span class="e-lab">becomes</span><code>First unseen hit: 2 s stun, and triple Power or half the target’s full health, whichever is greater. A level advantage counts for at most 3 levels.</code></p><p class="e-why">§12.8 added the floor and §29.1 did not follow.</p></li><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;5.4</span></header><p class="e-find"><span class="e-lab">now</span><code>guards within 6 tiles of the landing spot start at 25% awareness</code></p><p class="e-new"><span class="e-lab">becomes</span><code>guards within 6 tiles of the landing spot start at 250 suspicion</code></p><p class="e-why">25% is a unit §12.17 replaced. 250 of 1000 is the same fraction in the unit that survives.</p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">F9</span>
           <h3>Generated defences hold 2% at realm level 1, against a target of 30–45%</h3>
@@ -723,9 +863,11 @@
         <p class="body">v3.0’s §13.3 is the biggest design change in the version: the build-willingness risk is removed rather than measured, and every player gets a defence generated “from their realm, their laws and their ruleborn — legal, coherent, and never empty”.<br><br>Simulated against a competent crew, a generated island at realm level 1 holds <strong>2%</strong> of the time. Level 3 holds 28%. Only level 5 reaches §13.2’s 30–45% band. Legal, coherent and never empty are all true of these islands, and none of them is the same requirement as effective.<br><br>This matters more in v3.0 than it would have in v2.3, because the generator is no longer a fallback for players who will not build — it is what most islands in the target pool now are.</p>
         <p class="rec"><span class="arrow">&rarr;</span> §13.3 should carry the hold-rate band as a stated requirement on the generator, the way §13.2 carries it for designed islands, and the generator should be measured against it before the Workshop is built. The harness does that: <code>python3 -m tools.heist_harness defence</code>. <br><br>Caveat, stated plainly: the generator in the harness is a first sketch — hedges, tall grass, one to three guards, four to eight wards, no laws. A generator that weaves laws would hold better. That is the point: nothing says how well it has to hold, so nothing says when it is finished.</p>
         
+        
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">F10</span>
           <h3>Sixteen of forty-eight laws are parameter changes; the rest need an engine feature</h3>
@@ -736,9 +878,11 @@
         <p class="body">§7.3 is the architectural claim the whole design rests on — laws change a realm’s rule sheet rather than containing special cases — and v3.0’s §12.21 turns it into a rule: “every tier effect of every law must be expressible as a change to a named parameter”. Written out for all 48 laws against a rule sheet of twenty named parameters:<br><br><code>parameter 16 &nbsp; authored 4 &nbsp; attribute 2 &nbsp; entity 10 &nbsp; event 16</code><br><br><strong>Sixteen are parameter changes and nothing else.</strong> Ten need the simulation to spawn and track an object it otherwise has no reason to know about — braziers, puffballs, afterimages, illusory guards. Sixteen need a periodic or conditional rule: Rewind restores world state from ten seconds ago, which §24.10’s input-log model keeps no snapshots for; Held breath advances time only while a crew member moves, which is not a parameter of the simulation but a different simulation.<br><br>This is not an argument against those laws. It is the engine budget §26.1 does not contain: 32 of them are features, and they were costed as content.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Two things follow. <strong>Tag every law with its kind before authoring resumes</strong> — <code>python3 tools/law_effects.py --write</code> emits the table — so a scope cut can drop the expensive ones rather than the unpopular ones; D6’s proposed cut from 48 laws to 24 is a very different saving depending which 24. And <strong>state the rule sheet</strong>. §7.3 asserts laws are parameters without ever listing the parameters, and a vocabulary that grows to fit each new law is not a vocabulary.</p>
         
+        
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">F11</span>
           <h3>Weaving the player’s own laws makes a generated defence worse, not better</h3>
@@ -749,9 +893,11 @@
         <p class="body">v3.0’s §13.3 gives every player a defence generated “from their realm, their laws and their ruleborn”. Of the nineteen laws whose effect a rule sheet can express, <strong>five help the defender</strong> — Glass, Kinship, Thorns, Regrowth, Whispers — and fourteen help the raider or cut both ways. Laws apply to everyone in the realm (§7.3), so that asymmetry is structural rather than accidental.<br><br>Simulated hold rate against a competent crew, by what the generator weaves:<br><br><code>realm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 &nbsp;&nbsp;&nbsp;2 &nbsp;&nbsp;&nbsp;3 &nbsp;&nbsp;&nbsp;4 &nbsp;&nbsp;&nbsp;5<br>no laws &nbsp;&nbsp;&nbsp;7% &nbsp;&nbsp;7% &nbsp;29% &nbsp;35% &nbsp;43%<br>any laws &nbsp;&nbsp;2% &nbsp;&nbsp;3% &nbsp;&nbsp;9% &nbsp;&nbsp;6% &nbsp;&nbsp;4%<br>sign-aware 9% &nbsp;13% &nbsp;40% &nbsp;44% &nbsp;54%</code> <span style="opacity:.7">(150 runs a cell)</span><br><br><strong>A generator that weaves the player’s laws naively produces a weaker island than one that weaves none</strong> — 2 to 9% against 7 to 43%, at every realm level. Reading the sign of each law recovers it and then some. This is the same shape as D13’s note imbalance: the law pool leans toward the side that is not paying for it.<br><br>Note the first two rows as well: <strong>no generator reaches §13.2’s band at realm level 1 or 2</strong>, which is where every new player starts and where most of the target pool sits early in a season.</p>
         <p class="rec"><span class="arrow">&rarr;</span> §13.3 should say what the generator optimises for, because “generated from their laws” has at least three meanings and two of them are worse than nothing. And §13.2’s 30–45% band should be a stated requirement on the generator, not only on designed islands — F9 asked for that and this is why it matters. <code>python3 -m tools.heist_harness defence</code>.</p>
         
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;13.3</span></header><p class="e-find"><span class="e-lab">now</span><code>Generated from their realm, their laws and their ruleborn — legal, coherent, and never empty</code></p><p class="e-new"><span class="e-lab">add</span><code>Add what the generator optimises for, and the band it must hit. “Generated from their laws” has at least three meanings and two are worse than nothing: weaving the player’s laws at random holds 2–9% against 7–43% for weaving none, because only five of the nineteen laws a rule sheet can express help the defender and laws apply to everyone in the realm (7.3). Reading the sign of each law recovers it (9–54%). And §13.2’s 30–45% hold rate should be a stated requirement on the generator, not only on designed islands.</code></p><p class="e-why">“Legal, coherent and never empty” are all true of these islands. Effective is a different requirement and is not stated.</p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">F13</span>
           <h3>§12.22’s matchmaking guarantee has no targets to draw from early</h3>
@@ -762,9 +908,11 @@
         <p class="body">§12.22 step 3 is a promise: “the list is built so the median offered target is winnable at the player’s chosen difficulty: candidates are sorted by predicted success and the middle of the list is drawn from the 55 to 70% band”. That band is §13.2’s 30–45% hold rate, seen from the raider’s side.<br><br>Measured, a generated island at realm level 1 or 2 holds 2–13% under every generator tried — <strong>a raider success rate of 87 to 98%</strong>. There is no band to draw the middle of the list from, because every candidate is far easier than the band’s easy end. §12.22’s step 4 does not help: it widens the bands when nothing matches, and widening cannot produce a target that is not there.<br><br>The chain is short and each link is the document’s own: §13.3 makes most islands generated, F11 measures what generated islands hold, and §12.22 promises a median drawn from a band those islands do not reach.</p>
         <p class="rec"><span class="arrow">&rarr;</span> This is F11’s consequence rather than a separate defect, and it is why F11 is blocking. Fix the generator and this resolves; leave it and §12.22 promises something the target pool cannot supply, most visibly to new players. Worth stating in §12.22 either way: what the matchmaker does when the band is empty rather than merely sparse.</p>
         
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;12.22</span></header><p class="e-find"><span class="e-lab">now</span><code>the middle of the list is drawn from the 55 to 70% band (13.2)</code></p><p class="e-new"><span class="e-lab">add</span><code>Say what the matchmaker does when the band is &lt;b&gt;empty&lt;/b&gt; rather than merely sparse. Measured, a generated island at realm level 1 or 2 holds 2–13% — a raider success rate of 87 to 98% — so there is no 55 to 70% candidate to draw a median from, and step 4’s widening cannot produce a target that is not there.</code></p><p class="e-why">The promise depends on §13.3’s generator reaching §13.2’s band, and F11 measures that it does not.</p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">F14</span>
           <h3>v3.0’s fill term halves the number §9.6 calls load-bearing, and it was not re-derived</h3>
@@ -775,9 +923,11 @@
         <p class="body">§9.6 states its own key figure and says why it matters: “an attempt is worth about 46% of a clean same-level haul, <em>which is the number the progression curve is built on</em>: an upgrade costing 25 clean raids takes about 55 attempts, or nine days at six a day, at every level.” That 0.46 is E[grade] over all attempts, and it reconciles exactly: 62.5% succeed, split 35/40/25 clean/loud/partial, giving 0.456.<br><br>v3.0 then added <code>fill</code> to the same formula — “the share of the crew’s bags actually loaded” — and left 0.46 alone. Measured in the harness, a crew that gets out has filled about <strong>52%</strong> of its bags, because §12.19’s own break-even tells it to stop at 70% and interruptions take the rest. So an attempt is worth <strong>0.46 × 0.52 = 0.24</strong>, not 0.46.<br><br>Run through the economy model, that is a <strong>48% cut to the raid faucet</strong> (62% under the production peg), and §9.6’s own worked example becomes 105 attempts rather than 55. Every date in §14 moves.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Re-derive 0.46 against the fill term, or state that fill is already inside it — but not both, and not neither. <code>Config(apply_fill=True)</code> in the economy model applies the measured value, and a test asserts the size of the gap so it cannot close quietly. This is C19’s pattern applied to the single number §9.6 names as the one the curve rests on.</p>
         
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;9.6</span></header><p class="e-find"><span class="e-lab">now</span><code>An attempt is worth about 46% of a clean same-level haul, which is the number the progression curve is built on: an upgrade costing 25 clean raids takes about 55 attempts, or nine days at six a day, at every level.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>An attempt is worth about 24% of a clean same-level haul — 46% from the grade split, times the roughly half a crew fills its bags before leaving (12.19) — which is the number the progression curve is built on: an upgrade costing 25 clean raids takes about 105 attempts, or seventeen days at six a day, at every level.</code></p><p class="e-why">The fill term was added to the same formula and 0.46 was not re-derived against it. Either this, or state that fill is already inside 0.46 — but not both, and not neither.</p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">F15</span>
           <h3>Guards and Response are not two layers; they are one, and it is 69% of the defence</h3>
@@ -788,6 +938,7 @@
         <p class="body">§13.2 lists five defence layers with target shares and one rule above them: <strong>no single layer above 25%</strong>, because “if one layer decides outcomes, the other four are decoration”. §13.4 specifies exactly how to check it — all 32 combinations, credit divided “the way cooperative game theory does”, which is the Shapley value. Run at 120 raids a combination (3,840 runs):<br><br><code>geometry &nbsp;4.4% &nbsp;(target 25%)<br>guards &nbsp;&nbsp;34.5% &nbsp;(target 20%)<br>wards &nbsp;&nbsp;&nbsp;20.9% &nbsp;(target 20%)<br>laws &nbsp;&nbsp;&nbsp;&nbsp;5.7% &nbsp;(target 20%)<br>response &nbsp;34.5% &nbsp;(target 15%)</code><br><br>Guards and Response are equal to the last decimal, and that is a theorem rather than a coincidence. Checked directly: in <strong>every one of the eight coalitions</strong>, guards without response turn back 0% of raids and response without guards turns back 0%. They are symmetric players, so the Shapley value must give them identical shares.<br><br>The cause is §13.2’s own definition. Response is “what turns being seen into being caught” — which makes it <em>multiplicative</em> with guards, not additive. Two layers that multiply cannot have independent shares. Counted together they are <strong>69% of the defence</strong>, against a ceiling of 25% for any one layer.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either fold Response into Guards and accept one layer at 69% — which fails §13.2’s own rule and makes the other three decoration, exactly what the rule exists to prevent — or give Response something it can do <em>without</em> a guard. §13.2 already names two candidates and specifies neither: <strong>the Spire’s reach</strong> and <strong>the guardian Sage’s single power</strong>. A ward that raises the alarm on its own is a third; Lantern Glare already does it. Any of them gives the layer a standalone contribution and the five shares a chance of summing the way §13.2 wants. <code>python3 -m tools.heist_harness ablation</code>.</p>
         
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;13.2</span></header><p class="e-find"><span class="e-lab">now</span><code>| Bells, alarms, the Spire’s reach, and the guardian Sage’s single power. What turns being seen into being caught</code></p><p class="e-new"><span class="e-lab">add</span><code>Give the response layer one effect that works without a guard, and specify it: the Spire’s reach and the guardian Sage’s power are both named here and neither is defined. Measured, guards and response contribute nothing whatsoever without each other, in any of the eight coalitions — so as written they are one layer at 69%, against this section’s own 25% ceiling.</code></p><p class="e-why">“What turns being seen into being caught” makes the layer multiplicative with guards, and two layers that multiply cannot have independent shares.</p></li></ol></details>
       </article>
       </section>
       <section class="group" id="g-design" data-group="design">
@@ -797,7 +948,8 @@
         </div>
         
       <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="fixed">
+               data-kind="finding" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">F1</span>
           <h3>The roster cannot staff the universe the rules permit</h3>
@@ -808,9 +960,11 @@
         <p class="body">Pure arithmetic from three published tables. A finished universe has <strong>152 character positions</strong> — 126 producer worker slots (7 realms × 2 of each producer × 3 kinds × 3 slots), 21 guard posts, a crew of five — against a <strong>roster ceiling of 38</strong> (3 at the Spire plus 7 Hearths × 5 homes). That is 25% coverage; the roster would need to be four times larger. Even production alone at one producer per realm needs 63 workers, before a single guard is posted.</p>
         <p class="rec"><span class="arrow">&rarr;</span> This may be intentional — §4 names characters' time as one of two scarce resources. But three things follow that the document has not absorbed: §9.3's production figures are unstaffable; 25% coverage reads as “most of my buildings are idle” rather than as interesting scarcity; and the marginal Star Well becomes worthless, which removes a large part of §10.2's Starlight sink. Decide which lever moves: more Hearth homes, fewer permitted producers, or partial staffing made genuinely worthwhile.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §5.9 decides it: one producer of each kind per realm, partial staffing paying pro-rata, and “the roster can never fill everything — 38 ruleborn against far more positions — and that is the scarcity the design is built on”. Scarcity is now a feature by decision rather than by accident.</p>
+        
       </article>
       <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="fixed">
+               data-kind="finding" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">F2</span>
           <h3>Building the second producer doubles income and breaks every pacing date</h3>
@@ -821,9 +975,11 @@
         <p class="body">Solving backwards from §9.3's day-301 figure implies about seven fully staffed Star Wells at level 9 — one per realm, not the fourteen §5.2 allows. Running the economy model under all four readings, only “one producer per realm, no binding roster cap” tracks the document (117% of published at day 301; Keeper 40 on day 171 against a published 181). Every other reading is out by 2–4×.</p>
         <p class="rec"><span class="arrow">&rarr;</span> A player who builds the second producer — a pure production gain, so everyone will — earns roughly <strong>twice</strong> what §14 predicts, and every “engaged player reaches this on day X” milestone becomes optimistic. Given F1, the second producer may be exactly the wrong thing to permit.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §5.9: one, not two, with the model’s reasoning quoted. The published tables in §9.3 were not regenerated against it — C19.</p>
+        
       </article>
       <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="fixed">
+               data-kind="finding" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">F3</span>
           <h3>The core trade-off the design is built on does not bind</h3>
@@ -834,9 +990,11 @@
         <p class="body">§4 and §11.6 build the whole design on characters' time: “raiding more means earning less at home and defending worse”. A heist is 3 minutes and a clean escape rests the crew 45, so a crew of five raiding four times a day is withheld for 16 character-hours out of 744 — <strong>about 2% of production</strong>. With §9.6 returning 1–2%, the raid-versus-build tension is absent from the arithmetic entirely.</p>
         <p class="rec"><span class="arrow">&rarr;</span> The scarcity the design needs already exists in F1 — it is simply not connected to raiding. Make crew membership an assignment that excludes work, the way guarding does, so five of 38 are committed rather than 0.67. The alternative is to lengthen rest substantially, which §12.14's temporary-failure principle argues against. Doing neither means dropping the claim in §4 and §11.6.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §5.9: “A crew on a heist is assigned to it, like a guard at a post, and does not work while assigned. Five of thirty-eight is a real choice.” This is the mechanism the finding recommended, taken whole.</p>
+        
       </article>
       <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="fixed">
+               data-kind="finding" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">F4</span>
           <h3>§12.8’s knockout rule is true for three of twenty-five role pairings</h3>
@@ -847,9 +1005,11 @@
         <p class="body">“Two ambush hits knock out a guard of equal level” is the only statement in the document about how a fight ends. Read with the one cadence the document gives — §12.8’s own 0.8-second wind-up, one hit for damage equal to Power — it holds for <strong>three of twenty-five</strong> role pairings, or five under the most generous reading, and four of those five need a Breaker. A Mender attacking a Warden needs <strong>68 hits, or 54 seconds</strong>, against a guard the ambush stunned for two. The rule requires Power = Health ÷ 4; the Breaker is 1.1× short and the other four roles are 2.5× to 5.4× short.<br><br>This is the same shape as C2 and F1: Power and Health were set for standing fights and home defence, where a Warden <em>should</em> take a long time to drop, and the ambush rule was written against them later without anyone multiplying the numbers together. <code>python3 tools/decision_support.py combat</code>.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Fixed in <code>docs/design/spec/fights.md</code> by giving the ambush a floor: triple Power <em>or</em> half the target’s maximum health, whichever is greater. Two ambushers then drop any equal-level guard in all 25 pairings — the stated rule, true by construction — while the Breaker’s one-shot on a Scout survives because the triple-Power term still wins there. The alternative, re-tuning Power or Health, moves home defence and every guard duel with it.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §12.8 now reads “triple Power, or half the guard’s full health, whichever is greater”, and says why: the rule below it was true for three of twenty-five pairings without it. Verified — 25 of 25 now. §29.1 still gives triple damage with no floor (C21).</p>
+        
       </article>
       <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="fixed">
+               data-kind="finding" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">F5</span>
           <h3>The Vault’s loading phase lasts two seconds and 46% of crew capacity is unreachable</h3>
@@ -860,9 +1020,11 @@
         <p class="body">§12.6 budgets the Vault phase at about 30 seconds and names “when to stop loading” as its central decision. Its own numbers say otherwise. A Carrier holds 300 loot and loads 150 a second, so loading takes <strong>2.0 seconds</strong>; and because §12.6 has only Carriers load, <strong>260 of a five-crew’s 560 units of capacity cannot be filled by any means the document describes</strong>. The thirty seconds is cracking, and cracking is a progress bar with no decision in it.<br><br>The same arithmetic produced the one place the document’s numbers <em>corroborate</em> each other: cracking takes 10–25 seconds across the whole game against a phase length written in a different section from Vault health, which was written in a different section again from role Power. <code>python3 tools/decision_support.py vault</code>.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <code>docs/design/spec/vault.md</code> lets every role load, at a rate scaling with Carry, so the crew fills in ten seconds — one decision by §12.6’s own 8–12 second cadence. That is a <strong>fivefold cut to a published rate</strong> and should be flagged as such at sign-off; the alternative, raising carry capacity fivefold, breaks §9.4’s exposure percentages instead.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §12.19. Loading is ten seconds, every role loads, and the fill fraction is a term in §9.6’s formula. The check retires — all 560 units of crew capacity are now reachable.</p>
+        
       </article>
       <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">F6</span>
           <h3>The Breaker is 63% of the crew's damage against every breakable object</h3>
@@ -873,9 +1035,11 @@
         <p class="body">§11.1 gives the Breaker double damage to wards, pylons and the Vault. Against all three its doubled Power of 80 is <strong>63% of a five-crew’s 126</strong>, so adding four characters to a lone Breaker cuts the time by 37%. §12.6 lists “who cracks” among the Vault phase’s decisions; it has one answer, in every situation, at every level — and so do “who smashes the ward” and “who breaks the pylon”. A Scout needs 14 seconds on the cheapest ward a Breaker clears in two.<br><br>This is the same shape as F5, reached from the other end: a sub-phase named as a decision that contains none.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Three defensible answers and the choice is a balance judgement: narrow the Power spread; give a second character on the same object a stacking bonus, so joining in is worth the exposure; or accept it as role identity and stop calling it a decision. What is not defensible is keeping the sentence while one role is two thirds of the answer. <code>python3 tools/decision_support.py wards</code>.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Untouched. The Breaker is still 63% of the crew’s damage against every breakable object.</p>
+        
       </article>
       <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">F7</span>
           <h3>§12.6’s 15–25 decisions implies crossing two to three realms</h3>
@@ -886,9 +1050,11 @@
         <p class="body">§12.6 budgets “roughly one decision every 8 to 12 seconds, or 15 to 25 in a run”, and §19.27 makes it a threshold. Simulated, the count is a function of how far in the target is:<br><br><code>1 realm &rarr; 10 &nbsp; 2 &rarr; 17 &nbsp; 3 &rarr; 24 &nbsp; 4 &rarr; 31</code> (optimal crew, median)<br><br>So the band is met at <strong>two to three realms crossed</strong>, fails below and overshoots above. That is a real design constraint hiding in a pacing sentence: it says how deep a heist has to go.<br><br>§5.4 already prices the skiff by the number of links, so the document knows heists vary in depth. §12.22, which chooses the target, filters on Renown, Keeper level and a difficulty rating, and <strong>says nothing about depth at all</strong>.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Add depth to §12.22’s band, or accept that the decision count varies three-fold with a dimension the matchmaker does not control. <code>python3 -m tools.heist_harness depth</code>.</p>
         
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;12.22</span></header><p class="e-find"><span class="e-lab">now</span><code>| Renown within 150, Keeper level within 3, and an island difficulty rating within one band of the raider’s recent success rate</code></p><p class="e-new"><span class="e-lab">add</span><code>Add depth to the band: the number of links between the landing realm and the Heart. Simulated, a heist carries 10 decisions across one realm, 17 across two, 24 across three and 31 across four — so 12.6’s “15 to 25 in a run” is met at two to three realms and nowhere else.</code></p><p class="e-why">§5.4 already prices the skiff by the number of links, so the document knows depth varies; the matchmaker does not control it.</p></li></ol></details>
       </article>
       <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">F8</span>
           <h3>The clock is not a pressure device: runs finish with a third of it unused</h3>
@@ -899,9 +1065,11 @@
         <p class="body">§12.6 makes the clock the escape phase’s tension — “the clock turns red for its last 30 seconds” — and §19.27 sets a threshold on it: the last ten seconds should decide the outcome in a quarter of runs. Simulated across four depths and three skill levels, it decides <strong>0%</strong>. A median run takes 45 to 150 seconds against a clock of 150 to 195.<br><br>Near-captures, by contrast, happen in <strong>100%</strong> of runs against a threshold of 50 — so the tension is all in the guards and none in the clock, and a close call is so common it cannot register as one.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Two dials, and they pull opposite ways. Shortening the clock makes it bite; it also makes §12.6’s crossing phase unaffordable at depth. The likelier answer is that the clock is not the pressure and should stop being described as it — the alarm is.</p>
         
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;12.6</span></header><p class="e-find"><span class="e-lab">now</span><code>| The clock turns red for its last 30 seconds</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| The alarm meter, which is what actually rises. The clock turns red for its last 30 seconds, and rarely decides anything</code></p><p class="e-why">Simulated across four depths and three skill levels, the last ten seconds decide 0% of runs — a median run finishes in 45 to 150 seconds against a clock of 150 to 195. Near-captures happen in 100%. The tension is in the guards and this sentence points at the clock.</p></li></ol></details>
       </article>
       <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">F12</span>
           <h3>Eight laws need a decision from the owner that a generator has to make</h3>
@@ -912,9 +1080,11 @@
         <p class="body">Tilt slopes the realm “toward a side the owner picks”. Current blows “one way, chosen by the owner”. Slow rivers lets “the owner draw streams on the realm’s grid”. Lodestones, Heat bloom and Soul lanterns are placements; Shifting stones is a loop the owner draws; Inward pull assumes a direction that is well defined for a realm with one Heart link and not for one with two.<br><br>Eight of forty-eight laws therefore carry a parameter that is not a number in a table but an act of authorship. That was fine while authorship was the default. <strong>§13.3 made curation the default and authorship the deep end</strong>, so for most islands the generator now makes these choices — and a badly chosen slope or stream turns the defender’s law into the raider’s.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either the generator gets an explicit rule for each (slope away from the entry, streams across the approach), or these eight laws are marked as ones a generated realm cannot weave. The first is better design and more work; the second is one column in the law table. Deciding nothing means the generator picks arbitrarily, which is the current state.</p>
         
+        
       </article>
       <article class="item dsg" data-group="design"
-               data-kind="finding" data-status="open">
+               data-kind="finding" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">F16</span>
           <h3>Geometry is 4% of a generated defence, against a 25% target</h3>
@@ -925,6 +1095,7 @@
         <p class="body">§13.2 gives Geometry the largest share of any layer, 25%, and the warmest description: “free, unlimited, and <em>the layer a thoughtful designer beats a richer player with</em>”. It is the layer the whole authorship argument rests on.<br><br>Measured on <strong>generated</strong> islands it contributes <strong>4.4%</strong>. At a smaller sample it measured slightly negative — the hedges and tall grass a naive generator lays down block a guard’s sight line as readily as a raider’s, and tall grass is the raider’s cover by definition (§12.17).<br><br>Stated carefully, because the distinction is the finding: this measures <em>generated</em> geometry, not designed geometry. §13.2’s 25% is a claim about an island someone thought about. v3.0’s §13.3 made generated islands the default, so the two are no longer the same population — and the layer that is supposed to let design beat progression is the one a generator is worst at.</p>
         <p class="rec"><span class="arrow">&rarr;</span> This is the sharpest argument for the creator ladder §18.7 describes, and against treating generation as equivalent to design. If geometry is 25% when designed and 4% when generated, then §13.2’s “60% from design rather than level” is a property of hand-built islands only, and the target pool is mostly not those. Measure a hand-built island against the same harness before accepting either number.</p>
         
+        
       </article>
       </section>
       <section class="group" id="g-significant" data-group="significant">
@@ -934,7 +1105,8 @@
         </div>
         
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C7</span>
           <h3>Tick rate: 20 Hz or 30 Hz?</h3>
@@ -945,9 +1117,11 @@
         <p class="body">§7.3 and §24's engine table both say 20 steps a second. §24.10, the later simulation contract, says 30 and is self-consistent — it states a heist is 4,500–7,200 ticks, which is exactly 30 × 150–240 seconds. It also says “drop to 20” if a cheap phone cannot hold it, so 20 may be a pre-emptive fallback that leaked upward.</p>
         <p class="rec"><span class="arrow">&rarr;</span> 30 Hz per §24.10; fix §7.3 and §24. Settle this <strong>before</strong> the golden replays are written, since they encode it and every duration expressed in ticks depends on it.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Untouched: 20 steps a second and 30 both still appear.</p>
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;7.3</span></header><p class="e-find"><span class="e-lab">now</span><code>The simulation runs at a fixed 20 steps a second so heists replay identically on the server.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>The simulation runs at a fixed 30 steps a second so heists replay identically on the server (24.10).</code></p><p class="e-why">§24.10 is the simulation contract and is self-consistent: it gives a heist as 4,500–7,200 ticks, which is 30 × 150–240 seconds. Settle it before the golden replays, which encode it.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C8</span>
           <h3>The Library is load-bearing and specified nowhere</h3>
@@ -958,9 +1132,11 @@
         <p class="body">“A Library at the Heart produces about one page per realm every few hours” is the mitigation for the problem review 10 identified — that making pages raid-only punishes the large share of players who prefer building. It is referenced four times. It is <strong>not among the 16 building types</strong> in §10.2, has no cost, no levels and no placement rule, and §26.1 confirms 16 types at launch.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Add it as a 17th building with a full level table, or fold the trickle into the Observatory or the Spire and rewrite the four references. Do not leave a load-bearing economic faucet unspecified.</p>
         <p class="v3"><span class="vlabel">v3.0</span> The Library exists: §10.5 gives it a placement and three levels. Three, not ten — levels 1, 5 and 10, where every other building lists every level. And §26.1 still says 16 building types while there are now 17 (C24).</p>
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C18</span>
           <h3>Aether storage: formula or table?</h3>
@@ -971,9 +1147,11 @@
         <p class="body">§9.1 gives the Aether cap as 5,000 per Spire level plus 3,000. §10.2's Spire table gives a flat 5,000 × level — 5,000 at level 1, 50,000 at level 10. The formula would give 8,000 and 53,000.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Small, but Aether is the weaving and upkeep currency, so the cap gates how much law a player can re-weave in one session.</p>
         
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C20</span>
           <h3>The 48 law sound signatures are six school sounds repeated</h3>
@@ -984,9 +1162,11 @@
         <p class="body">§21.8 says “every law also has a sound signature, so a player can hear which rules are running with the screen half-watched”. Extracting all 48 law sheets gives <strong>6 distinct sounds, one per school, each repeated eight times</strong> — Motion laws all sound like “a rising whistle and a soft thump on landing”, Matter laws all like “a glassy chime and a low grind”. A player can hear which <em>school</em> is running, not which law, and a realm can hold several laws of one school. §21.9's asset list budgets 6 school stingers, so the budget matches the content and not the claim.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either correct §21.8 to say sounds are per school — which is a reasonable design, and cheaper — or budget 48 law sounds in §21.9 and author them. The claim as written is not met by the content.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Untouched: 48 laws still share 6 sound signatures.</p>
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C13</span>
           <h3>Matchmaking cannot reach its own worst difficulty tier</h3>
@@ -997,9 +1177,11 @@
         <p class="body">§12.3 offers targets within 3 Keeper levels. §9.6's difficulty multiplier has a tier for targets “three or more below” paying 0.25×. If the Observatory never offers such targets, that tier is unreachable in normal play.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either widen the offered band, or state that the 0.25 tier exists only for challenge links, friendly heists and Trace targets.</p>
         
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C14</span>
           <h3>Renown for a foiled heist is undefined</h3>
@@ -1010,9 +1192,11 @@
         <p class="body">The outcomes table gives Renown as a percentage — 100% / 80% / 50% / −50% — while the formula below it produces an absolute value of 8 to 40. “−50%” of a gain the raider did not make has no meaning.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Express all four outcomes as multipliers on the formula's output, and state the sign convention explicitly.</p>
         
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C9</span>
           <h3>The Codex screen says 36 laws; there are 48</h3>
@@ -1023,9 +1207,11 @@
         <p class="body">The Law Codex screen spec says “36 laws by school and rank”. 36 is the size of Codex chapter 3 (§7.6), so this is probably a stale number rather than a disagreement about the collection.</p>
         
         
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C10</span>
           <h3>Trait count: 30, 31 or 32?</h3>
@@ -1036,9 +1222,15 @@
         <p class="body">§11.3 enumerates 31 traits (6 body, 5 heist, 11 law-linked, 9 home). §26.1's launch table says 30. §17.3 references “the rare Starborn trait”, which appears in no list. §11.5 also says strays arrive with three traits while §11.3 says every ruleborn is born with two.</p>
         
         <p class="v3"><span class="vlabel">v3.0</span> Untouched: 31 traits authored, 30 in §26.1, a 32nd named in §17.3.</p>
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;26.1</span></header><p class="e-find"><span class="e-lab">now</span><code>| Traits
+| 30
+| +5 each season</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| Traits
+| 31
+| +5 each season</code></p><p class="e-why">§11.3 enumerates 31. §17.3 also names a “rare Starborn trait” that appears in neither, so either add it to §11.3 and make this 32, or cut the reference.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C11</span>
           <h3>Screen count: 23 or 27?</h3>
@@ -1049,9 +1241,11 @@
         <p class="body">§23.2 lists 27 screens to design; §21.9's asset list says 23. The difference is four screens of interface work and their icons.</p>
         
         
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C12</span>
           <h3>The high revenue scenario quietly uses a different commission rate</h3>
@@ -1062,9 +1256,11 @@
         <p class="body">§22.5 says every figure in §22.2 assumes 15%. The low and base scenarios do — €2,720 and €25,500, both confirmed. The high scenario's €168,000 is computed at <strong>30%</strong>. That is arguably correct, since €204,000 a month crosses Apple's $1M small-business threshold — but it contradicts the stated assumption and makes the three scenarios non-comparable.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Keep the 30% figure and footnote the threshold crossing. Worth surfacing that the discontinuity is a real business fact: revenue between roughly €70k and €85k a month is partly a dead zone.</p>
         
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="gap" data-status="open">
+               data-kind="gap" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G12</span>
           <h3>Three laws key off creature attributes that no creature has</h3>
@@ -1075,9 +1271,11 @@
         <p class="body">Checked across all 48 law sheets against the role and creature tables. <strong>Density</strong> reads “Big characters get +30% health and −20% speed; small ones get +25% speed and −20% health” — but there is <strong>no size or mass attribute anywhere</strong>. §11.1's role table carries health, speed, power and carry, nothing else; §11.11's proportions are in heads, which is art direction for the character artist; §11.10's forms add quirks, never a size. A rare law's entire tier-1 effect has nothing to resolve against.<br><br><strong>Heavy ground</strong> grounds “flyers”, and flight exists only in §11.2's Featherkin passive — so under §11.11 (the spec C6 recommends adopting) half the law is inert and its stated weakness is false. <strong>Swarm birth</strong> is milder: “two small guards with 30% of its strength” describes what it creates rather than an attribute it reads, but 30% of <em>what</em> is undefined, and split guards have no role, so §12.17 gives them no perception profile.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either add the attributes (a size or mass band on each creature; flight as a stated property) or rewrite the three laws to key off role, which does exist. §7.3's rule is that laws change a realm's rule sheet and never contain special cases; a law reading a parameter that does not exist is the same failure from the other side. Enforce it in the law data table.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Same as G10. §12.21 declares size a band on every ruleborn and flight a stated property; §11.1 and §11.11 carry neither, and Featherkin’s flight is still prose in a Passive column.</p>
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="gap" data-status="fixed">
+               data-kind="gap" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G2</span>
           <h3>What happens when a guard catches you</h3>
@@ -1088,9 +1286,11 @@
         <p class="body">§12.8 gives ambush rules and a level cap, and §12.17 says an alerted guard converges and is never lethal. But there is no combat resolution: roles have Power (6–40) and Health (130–420) and attacks have a 0.8s wind-up, yet there is no attack rate, damage formula or range. Nor is it stated whether the crew can choose to fight, or what happens to loot carried by someone knocked out mid-run (§13 and §12.6 cover the clock-end and post-capture cases only).</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/fights.md</code>, which like <code>movement.md</code> is largely new design. It adopts the only cadence the document states — one hit per 0.8s for damage equal to Power — and that choice is corroborated rather than assumed: it is the reading under which Vault health, role Power and §12.6's stated phase length agree (see G4). It then answers the three open questions: the crew may fight at any time, but damaging a guard that has not been ambushed sends it straight to suspicion 1000, so an open fight is an alarm with a priced cost rather than a forbidden move; a downed crew member drops its loot on the tile and has ten seconds — one decision by §12.6's cadence — before capture, revivable by an adjacent ally in 3s, or 1.5s for a Mender.<br><br>It also repairs F4 by giving the ambush a floor of half the target’s maximum health, which makes §12.8’s own sentence true for all 25 pairings instead of three.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §12.20, with §12.8 rewritten around it. One hit per 0.8 s for Power damage on both sides; fighting allowed but an unambushed hit sends suspicion straight to 1000; ten seconds down, revived in 3 s or 1.5 s by a Mender; loot dropped on the tile. §29.1 was not updated — C21.</p>
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="gap" data-status="proposed">
+               data-kind="gap" data-status="proposed"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">G3</span>
           <h3>Ward placement, triggering and disarming</h3>
@@ -1101,9 +1301,11 @@
         <p class="body">§10.3 lists six wards with level-1 effects and reset timers. The Tinker trait “disarms wards 30% faster”, implying a disarm action that is never specified — who, how long, whether it makes noise. Also missing: what triggers a ward; levels 2–5, which the asset list and building table both assume; and ward health, given that Breakers deal double damage to them.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted, and smaller than recorded.</strong> Levels 2–5 do exist — §10.2’s Ward row gives effect +15/30/45/60% and resets 10→6 s. What is missing is the <em>key</em>: “effect +15%” never says which number it scales, and three of the six wards have more than one candidate. <code>docs/design/spec/wards.md</code> supplies it under one rule — <strong>never scale a distance</strong>, because a ward whose radius grows on upgrade covers tiles it did not cover when it was placed, and the editor cannot then draw its footprint. It also gives Static Coil the damage it has never had, names the three trigger kinds (passive, aura, triggered) that the wording already implies, specifies the disarm action §12.5’s Tinker trait presumes, and proposes ward health of 500 × level — which puts the smash-or-disarm crossover at ward level 3, and at level 2 with a Tinker.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Untouched. §10.3 still gives level-1 effects only, with no key for what §10.2’s “effect +15%” scales.</p>
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;10.3</span></header><p class="e-find"><span class="e-lab">now</span><code>A rope bridge can carry a Snap instead of a ward</code></p><p class="e-new"><span class="e-lab">add</span><code>Add a column saying which number §10.2’s “effect +15%” scales, under one rule: &lt;b&gt;never a distance&lt;/b&gt;, because a ward whose radius grows on upgrade covers tiles it did not cover when it was placed. Gravity Well scales its hold, Crystal Wall its health, Time Snare its freeze, Thorn Hedge and Static Coil their damage, Lantern Glare its reveal. Static Coil has no damage value at all and needs one — 8% of maximum health a shock, following Thorn Hedge’s units. Also state the three trigger kinds the wording already implies: passive (Crystal Wall, Thorn Hedge), aura (Static Coil), triggered (Gravity Well, Time Snare, Lantern Glare).</code></p><p class="e-why">Drafted in full at docs/design/spec/wards.md, with ward health and the disarm action §12.5’s Tinker trait presumes.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="gap" data-status="fixed">
+               data-kind="gap" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G4</span>
           <h3>The Vault's loading loop has no relationship to the payout</h3>
@@ -1114,9 +1316,11 @@
         <p class="body">§12.6 gives Vault health, Breaker double damage, cracking noise and a 150-per-second load rate, and names “when to stop loading” as the Vault phase's core tension. But if §9.6's minted haul is authoritative (C2), loading longer earns nothing — so the phase's central decision currently has no mechanism behind it.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Drafted.</strong> <code>docs/design/spec/vault.md</code>. It reinstates the clause §9.6 deleted — §9.4’s “capped by the crew’s carrying capacity” — as a fill fraction on the formula in <code>economy.md</code>: what the crew banks is the raid’s full value times the share of its bags it filled. The faucet ceiling is untouched, so the inflation dial stays single, and loading longer earns more. It also prices two decisions the document names and never costed: dropping loot to run faster costs exactly the fraction dropped, and the stop-or-continue breakeven sits at <strong>70% full — §12.9’s Loud multiplier, with everything else cancelling</strong>. Tuning the tension of the game’s emotional peak is then one number that already exists.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §12.19, adopting <code>spec/vault.md</code> whole: every role loads at 30 units a second, a crew fills in ten seconds, the haul is multiplied by the share of bags filled, and the break-even sits at 70%. §9.6 carries the new <code>fill</code> term. §12.6 still says 150 a second — C22.</p>
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="gap" data-status="done">
+               data-kind="gap" data-status="done"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G7</span>
           <h3>The economy model itself was missing</h3>
@@ -1127,9 +1331,11 @@
         <p class="body">§24 says a Python model “generated the tables in 10.2 and 14, and is re-run whenever a number changes”. That model was not in the document, and it is the source of roughly a quarter of its numbers.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Rebuilt at <code>tools/economy_model/</code> (D5). It produced F1, F2 and F3, and measured C2.</p>
         
+        
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C22</span>
           <h3>§12.6 still loads at 150 a second, five times §12.19's rate</h3>
@@ -1140,9 +1346,11 @@
         <p class="body">§12.19 opens by naming the problem — “12.6 called the loading phase the heist’s central decision, and its own numbers gave that decision two seconds and one option” — and fixes it: every role loads, at 30 units a second. §12.6’s own sentence was not changed. It still reads “each Carrier loads 150 loot a second until full”, which is both the wrong rate and the wrong set of roles.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Delete the sentence from §12.6 and point it at §12.19, the way §12.8 now points at §12.17. Both numbers are live in the file today, and the one in the moment-to-moment section is the one a reader meets first.</p>
         
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;12.6</span></header><p class="e-find"><span class="e-lab">now</span><code>Once open, each Carrier loads 150 loot a second until full or until the exposed share is gone.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>Once open, every role loads 30 units a second until full or until the exposed share is gone, so a crew fills in about ten seconds (12.19).</code></p><p class="e-why">§12.19 fixed the rate and the set of roles; §12.6 still carries the sentence §12.19 was written to correct.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C23</span>
           <h3>Three sections still price laws in three ranks after the sheets moved to four</h3>
@@ -1153,9 +1361,15 @@
         <p class="body">v3.0 re-tagged twelve laws from Rare to Uncommon. §7.6 still says “Restoring a law: 15 pages for a common law, 30 for a rare one, 60 for a deep one” — three ranks, and no mention of the rank twelve laws now carry. §14.4 still totals the Codex as “15 commons × 15 + 18 rares × 30 + 12 deep × 60 = 1,485 pages”, arithmetic that describes a roster of laws that no longer exists. The glossary and the price list still say “15, 30 or 60 pages by rank”.<br><br>The change log states the new figure as 1,350 pages. That counts all 18 commons; §14.4’s convention excludes the three free starting laws, so even the replacement figure is on a different basis from the number it replaces.</p>
         <p class="rec"><span class="arrow">&rarr;</span> This is C3’s collateral list, and C3 is still open — the sheets say 18/12/6/12 and §7.10 says 18/14/10/6. Settle the split first, then regenerate every page total from the law table rather than restating it.</p>
         
+        <details class="edits"><summary>4 edits to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;7.6</span></header><p class="e-find"><span class="e-lab">now</span><code>Restoring a law: 15 pages for a common law, 30 for a rare one, 60 for a deep one.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>Restoring a law: 10 pages for a common law, 20 for an uncommon one, 35 for a rare one, 60 for a deep one.</code></p><p class="e-why">Twelve laws were re-tagged to Uncommon and this sentence never learned the rank exists.</p></li><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;14.4</span></header><p class="e-find"><span class="e-lab">now</span><code>Restoring all 48 laws: 15 commons × 15 + 18 rares × 30 + 12 deep × 60 = 1,485 pages (the three starting laws are free)</code></p><p class="e-new"><span class="e-lab">becomes</span><code>Restoring all 48 laws: 15 commons × 10 + 12 uncommons × 20 + 6 rares × 35 + 12 deep × 60 = 1,320 pages (the three starting laws are free)</code></p><p class="e-why">The change log gives 1,350, which counts all 18 commons; §14.4’s own convention excludes the three free ones, so the figure on that convention is 1,320.</p></li><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;9.5</span></header><p class="e-find"><span class="e-lab">now</span><code>| 15, 30 or 60 pages by rank
+
+| Tier II, tier III</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| 10, 20, 35 or 60 pages by rank
+
+| Tier II, tier III</code></p><p class="e-why">The price list. Quoted with the row after it, because the same cell also appears in §29.2’s glossary and the two have to be found separately.</p></li><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;29.2</span></header><p class="e-find"><span class="e-lab">now</span><code>| 15, 30 or 60 pages by rank; tier II +20 pages and 2,000 Aether; tier III +40 pages and 8,000 Aether</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| 10, 20, 35 or 60 pages by rank; tier II +20 pages and 2,000 Aether; tier III +40 pages and 8,000 Aether</code></p><p class="e-why">The glossary, which carries the same figure a third time.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C25</span>
           <h3>§8.8 states the note rebalance as done; the law sheets are unchanged</h3>
@@ -1166,9 +1380,11 @@
         <p class="body">§8.8 reads: “The table now runs eight or nine laws per note, and since the note count is frozen at eight and laws are the expansion axis, that balance is a permanent constraint on every future season.” Parsing all 48 law sheets gives <strong>Glow 12, Flow 11, Echo 10, Weight 9, Spark 8, Bloom 8, Veil 7, Hush 6</strong> — identical to v2.3. The rebalance is described in the past tense and has not happened.<br><br>The asymmetry still runs the wrong way for the same reason: Hush is the hiding note, it is the scarcest, and laws are woven by the defender.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Retag or re-note about six laws to bring every pool to 8 or 9 — this is D13, which is still the right fix and is now also a correctness fix, since a section of the document asserts the result. <code>python3 tools/check_design_consistency.py</code> fails until the sheets match the claim.</p>
         
+        <details class="edits"><summary>10 edits to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;7.7</span><span class="e-tgt">Flock</span></header><p class="e-find"><span class="e-lab">now</span><code>Bloom Glow</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Bloom Veil</code></p><p class="e-why">Six puffballs that wander, block paths and make guards react are deception. Nothing about Flock lights up.</p></li><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;7.7</span><span class="e-tgt">Crystal growth</span></header><p class="e-find"><span class="e-lab">now</span><code>Bloom Glow</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Bloom Veil</code></p><p class="e-why">Stone regrowing as crystal is a transformation, which is Veil’s own word.</p></li><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;7.7</span><span class="e-tgt">Leapfrog</span></header><p class="e-find"><span class="e-lab">now</span><code>Flow Glow</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Flow Spark</code></p><p class="e-why">Nothing lights up; the second clause is a noisy landing, and an impact is a burst.</p></li><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;7.7</span><span class="e-tgt">Soul swap</span></header><p class="e-find"><span class="e-lab">now</span><code>Veil Flow</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Veil Hush</code></p><p class="e-why">The swap is a disappearance at the instant of a knockout, not a change to how anyone moves.</p></li><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;7.7</span><span class="e-tgt">Aurora</span></header><p class="e-find"><span class="e-lab">now</span><code>Glow Flow</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Glow</code></p><p class="e-why">Aurora moves nothing. It cannot take Hush instead — that is Glow’s opposite — so it becomes a one-note law, as 25 of the 48 already are.</p></li><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;7.7</span><span class="e-tgt">Lodestones</span></header><p class="e-find"><span class="e-lab">now</span><code>Weight Echo</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Weight</code></p><p class="e-why">Nothing in Lodestones returns, repeats or rewinds.</p></li><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;7.7</span><span class="e-tgt">Day and night</span></header><p class="e-find"><span class="e-lab">now</span><code>Echo</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Echo Hush</code></p><p class="e-why">The light-and-dark law carries neither Glow nor Hush. “Vision halves in the dark” is Hush exactly.</p></li><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;7.7</span><span class="e-tgt">Honeycomb</span></header><p class="e-find"><span class="e-lab">now</span><code>Weight</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Weight Hush</code></p><p class="e-why">Sticky ground is quieter; §12.17’s noise table has moss quieter and water louder, which is why Slow rivers is not the candidate.</p></li><li class="edit"><header class="e-head"><span class="e-act a-retag">Re-tag</span><span class="e-sec">&sect;7.7</span><span class="e-tgt">Rewind</span></header><p class="e-find"><span class="e-lab">now</span><code>Echo</code></p><p class="e-new"><span class="e-lab">re-tag to</span><code>Echo Bloom</code></p><p class="e-why">Restoring broken things is healing as much as repeating.</p></li><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;8.1</span></header><p class="e-find"><span class="e-lab">now</span><code>The number shows how many of the 48 laws carry each note.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>The number shows how many of the 48 laws carry each note: nine of each, which is the balance 8.8 requires of every future season.</code></p><p class="e-why">The figure in the diagram has to move with the sheets.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C26</span>
           <h3>§12.21 declares size and flight as properties; no table carries them</h3>
@@ -1179,9 +1395,11 @@
         <p class="body">§12.21 is the right answer to G12, stated well: “A law that reads a parameter which does not exist is the same failure as a law full of special cases, seen from the other side.” It then says size is a band on every ruleborn and flight is a stated property rather than an implication of a passive.<br><br>Neither exists as a field. §11.1 has health, speed, power and carry. §11.11 has proportions, which are art direction. <strong>Featherkin’s flight is still prose in a Passive column</strong> — “Flies; grounded by Heavy ground” — which is precisely the implication §12.21 says it must not be. Three laws (Density, Heavy ground, Swarm birth) still read attributes that no creature carries.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Add <code>size</code> and <code>flies</code> to the creature table and derive nothing from prose. <code>content/ruleborn.json</code> is the place to do it once; <code>tools/validate_content.py</code> already fails on any law that reads an attribute no creature has, so the check exists and is waiting for the data.</p>
         
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;11.1</span></header><p class="e-find"><span class="e-lab">now</span><code>| Job in a heist</code></p><p class="e-new"><span class="e-lab">add</span><code>Add two columns to the role table, or two rows to every entry in 11.11: &lt;b&gt;Size&lt;/b&gt; (small / standard / large, derived from the proportions already given) and &lt;b&gt;Flies&lt;/b&gt; (yes / no). 12.21 says both are stated properties; today flight is prose in 11.2’s Passive column, which is exactly the implication 12.21 says it must not be.</code></p><p class="e-why">Density, Heavy ground and Swarm birth read attributes no character carries.</p></li></ol></details>
       </article>
       <article class="item sig" data-group="significant"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C27</span>
           <h3>Two rules for partial staffing: §9.2's table and §5.9's pro-rata share</h3>
@@ -1192,6 +1410,7 @@
         <p class="body">§9.2: “<strong>Staffing sets 60%, 85% or 100% output.</strong>” §5.9, added in v3.0: “A producer runs at the <strong>share of its worker slots that are filled</strong>, so a half-staffed Well earns half.”<br><br>Those are different numbers wherever the roster binds, and §5.9 says it always binds: two of three slots is 85% under §9.2 and 67% under §5.9, one of three is 60% against 33%. §9.2 is the more generous rule at every partial count.<br><br>Worth about 11% of late-game production, and nothing at all until the roster starts binding — which is why it hid.</p>
         <p class="rec"><span class="arrow">&rarr;</span> §5.9 is the later and better-argued rule, and pro-rata is the one that makes partial staffing a real choice rather than a rounding. Delete §9.2’s sentence. This is the fourth instance of the same pattern in v3.0 (C21–C23) and the cheapest to fix.</p>
         
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;9.2</span></header><p class="e-find"><span class="e-lab">now</span><code>| Staffing sets 60%, 85% or 100% output</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| A producer runs at the share of its worker slots that are filled (5.9)</code></p><p class="e-why">§5.9 is the later rule and pro-rata is what makes partial staffing a choice rather than a rounding.</p></li></ol></details>
       </article>
       </section>
       <section class="group" id="g-minor" data-group="minor">
@@ -1201,7 +1420,8 @@
         </div>
         
       <article class="item min" data-group="minor"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C15</span>
           <h3>Guard vision is given in tiles in one place and metres in another</h3>
@@ -1212,9 +1432,11 @@
         <p class="body">§21.1 establishes that one tile is one metre, so the two reconcile — but the document should pick one unit and use it throughout.</p>
         
         
+        
       </article>
       <article class="item min" data-group="minor"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C16</span>
           <h3>“Three-minute heist” against a 150–240 second clock</h3>
@@ -1225,9 +1447,11 @@
         <p class="body">§12's opening calls a heist “a three-minute run”; the clock is 150–240 seconds and §12.2 correctly says 2.5–4 minutes. Harmless, but the marketing line and the spec should not disagree.</p>
         
         
+        
       </article>
       <article class="item min" data-group="minor"
-               data-kind="contradiction" data-status="proposed">
+               data-kind="contradiction" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">C17</span>
           <h3>The game lists itself as its own fallback name</h3>
@@ -1238,9 +1462,11 @@
         <p class="body">§27.2 says “Fallbacks are Lawkeep and Ruleborn” — but Ruleborn <em>is</em> the chosen name. Almost certainly a leftover from the v2.2 rename.</p>
         
         
+        
       </article>
       <article class="item min" data-group="minor"
-               data-kind="gap" data-status="proposed">
+               data-kind="gap" data-status="proposed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G5</span>
           <h3>Law pylons have no count, health or placement rule</h3>
@@ -1251,9 +1477,11 @@
         <p class="body">Breaking a pylon switches its law off for the rest of a heist and yields a page, and the Spire's light going out when one breaks is the Heart's signature moment. §10.2 lists Law Pylon as a building with ten levels and health, but the relationship between pylons and the law slots they presumably represent is never stated.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Mostly a false alarm, and that is the useful part.</strong> §10.2’s Law Pylon row gives ten levels at 600 health each and states the relationship this item calls missing, in four words: <em>“One per law slot; per slot”</em>. This item was recorded without reading that table — its own text admits as much — and the same oversight produced half of G3.<br><br>What survives is one sentence: nothing says a raider can tell <em>which law</em> a pylon carries before committing to the detour, which both §12.6 and §5.7 assume. <code>docs/design/spec/wards.md</code> proposes the pylon show its school colour and note glyphs, with §15.3’s law banner naming it on approach, and prices the detour from §10.2’s health: 1% of a heist at pylon level 1, 9% at level 10.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Untouched. §12.6’s pylon sentence is unchanged, so a raider still cannot tell which law a pylon carries before committing.</p>
+        
       </article>
       <article class="item min" data-group="minor"
-               data-kind="gap" data-status="fixed">
+               data-kind="gap" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G6</span>
           <h3>How the matchmaking rating actually combines its inputs</h3>
@@ -1264,9 +1492,11 @@
         <p class="body">§12.15 says skill and island difficulty use “a Bayesian rating with an explicit uncertainty term” and that a new island starts wide. §12.3 gives three filter bands. How Renown, Keeper level and the internal rating combine, how the “median target is winnable” guarantee is enforced, and what happens when all three filters return nothing, are not stated.</p>
         
         <p class="v3"><span class="vlabel">v3.0</span> §12.22 gives the five steps: the band, the Bayesian rating with its uncertainty term, the guarantee that the median offered target sits in the 55–70% band, the widening order when nothing matches, and why the 0.25 payout tier is unreachable through normal matchmaking.</p>
+        
       </article>
       <article class="item min" data-group="minor"
-               data-kind="gap" data-status="fixed">
+               data-kind="gap" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G8</span>
           <h3>Two offline edge cases named but not resolved</h3>
@@ -1277,9 +1507,11 @@
         <p class="body">§24.12 is otherwise excellent. Two gaps: the target lease is per snapshot, so two devices could hold two leases on the same target and nothing says what happens; and the entry fee (2% of Starlight, returned on a clean heist) has no stated debit point — lease, submission or validation — so an offline heist that is never submitted has an unclear fee state.</p>
         
         <p class="v3"><span class="vlabel">v3.0</span> §24.13 answers both: one lease per target per player, so a second device is handed the lease the first holds; and the entry fee is debited at validation rather than at lease, so an offline heist never submitted costs nothing.</p>
+        
       </article>
       <article class="item min" data-group="minor"
-               data-kind="gap" data-status="open">
+               data-kind="gap" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G10</span>
           <h3>Some law tier effects cannot be expressed as parameters</h3>
@@ -1290,9 +1522,11 @@
         <p class="body">§7.3's best architectural decision is that laws change a realm's rule sheet and never contain special cases. But several tier values are qualitative rather than numeric — Glass at tier II “also reveals hidden wards” and at tier III “also shows guard vision cones” — so the principle is already bending. Density's “±40%/30%, ±50%/40%” needs a key.</p>
         <p class="rec"><span class="arrow">&rarr;</span> When the law data table is authored, every tier value must be expressible as a rule-sheet parameter change. Any that cannot is a design smell worth resolving then, not at implementation time.</p>
         <p class="v3"><span class="vlabel">v3.0</span> §12.21 states the rule this gap asked for — “every tier effect of every law must be expressible as a change to a named parameter” — and names the three parameters that were missing. It does not apply it: no table carries size or flight (C26).</p>
+        
       </article>
       <article class="item min" data-group="minor"
-               data-kind="gap" data-status="open">
+               data-kind="gap" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">G11</span>
           <h3>Localisation of a coined vocabulary has no owner</h3>
@@ -1303,9 +1537,11 @@
         <p class="body">§25.4 sets a 70% post-tutorial comprehension gate and §26.9 says every new name is said aloud in the twelve launch languages. Twelve languages across roughly 130 coined proper nouns — 48 law names, 44 resonances, 12 chords, 18 creatures, 8 notes, 6 schools, 7 realms — is a large translation problem with no owner in §26.3's team. §20.6 also says launch is English and Portuguese, against §26.2's twelve.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Related to D6: shipping 2–3 languages and translating store pages more widely is §26.4's own plan.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Untouched: §20.6 still says English and Portuguese at launch, §26.2 still says twelve languages.</p>
+        
       </article>
       <article class="item min" data-group="minor"
-               data-kind="contradiction" data-status="open">
+               data-kind="contradiction" data-status="open"
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C24</span>
           <h3>Seventeen building types, and §26.1 still says sixteen</h3>
@@ -1316,6 +1552,9 @@
         <p class="body">§10.5 adds the Library and calls it “a building at the Heart, one per universe”, which closes the faucet C8 was about. Two counts did not follow: §26.1’s launch content table still says 16 building types, and §10.2 — headed <em>Every level of every building</em> — does not contain it. §10.5 also gives only levels 1, 5 and 10, where every other building lists all ten.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Move the Library into §10.2 with its full level table and raise §26.1 to 17. The seven missing levels matter more than they look: the Library is the faucet that keeps non-raiders progressing, and the economy model cannot price a curve given three of its points.</p>
         
+        <details class="edits"><summary>2 edits to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;26.1</span></header><p class="e-find"><span class="e-lab">now</span><code>| Building types
+| 16</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| Building types
+| 17</code></p><p class="e-why">§10.5 added the Library and the launch table did not follow.</p></li><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;10.2</span></header><p class="e-find"><span class="e-lab">now</span><code>10.5 The Library</code></p><p class="e-new"><span class="e-lab">add</span><code>Move §10.5’s table into §10.2, between Ward and Resonance Lab, and give it all ten levels rather than 1, 5 and 10. §10.2 is headed “Every level of every building” and the economy model cannot price a faucet from three of its points.</code></p><p class="e-why">A building outside the building table is how C8 happened the first time.</p></li></ol></details>
       </article>
       </section>
       <section class="group" id="g-choices" data-group="choices">
@@ -1325,7 +1564,8 @@
         </div>
         
       <article class="item cho" data-group="choices"
-               data-kind="decision" data-status="fixed">
+               data-kind="decision" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">Q1</span>
           <h3>Is character scarcity a feature or an accident?</h3>
@@ -1336,9 +1576,11 @@
         <p class="body">F1 shows 152 positions against a roster of 38. §4 claims characters' time is one of the game's two scarce resources, which would make this deliberate. But 25% coverage is not an allocation puzzle, and §9.3's production figures assume staffing the roster cannot supply.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> Q4, C19, the economy spec, and every pacing date in §14.<br><strong>The numbers</strong> (<code>decision_support.py staffing</code>): 152 positions against a roster of 38; only 12 characters free to work once guards and a crew are committed; no second or third worker slot is ever worth filling, though §10.2 grants them at building levels 4 and 7; and two independent caps — Hearth homes and §9.5's birth curve — both say 30–40 without referring to each other.<br><strong>Depends on Q8:</strong> if a Guardian Post holds more than one ruleborn, defence alone consumes 42–63 characters and the shortage stops being severe and becomes absolute.<br><strong>No recommendation.</strong> This is a design choice about whether scarcity is the point. What is not a choice is leaving all three tables as they are.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Answered by §5.9: scarcity is a feature.</p>
+        
       </article>
       <article class="item cho" data-group="choices"
-               data-kind="decision" data-status="fixed">
+               data-kind="decision" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">Q2</span>
           <h3>Should the raid-versus-build trade-off be made real, or dropped?</h3>
@@ -1349,9 +1591,11 @@
         <p class="body">F3 shows it is worth about 2% of production. It can be made real by making crew membership exclude work the way guarding does, or the claim can be removed from §4 and §11.6. What it cannot do is stay as written.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> nothing technical, but it decides whether §4's central claim survives.<br><strong>The numbers:</strong> a crew of five raiding four times a day is withheld from work for 16 character-hours out of 744 — about 2% of production.<br><strong>Leaning:</strong> make crew membership exclude work the way guarding does, so five of 38 are committed rather than 0.67. The scarcity needed already exists in F1; it is simply not connected to raiding. Lengthening rest instead runs against §12.14's rule that failure stays temporary.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Answered by §5.9: crew membership excludes work, so the trade-off binds.</p>
+        
       </article>
       <article class="item cho" data-group="choices"
-               data-kind="decision" data-status="open">
+               data-kind="decision" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">Q3</span>
           <h3>Three law ranks or five?</h3>
@@ -1362,9 +1606,11 @@
         <p class="body">C3. Both work; the reasoning in §7.10 survives either. Choosing five means re-tagging 14 laws and re-deriving the page economy.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> all law content authoring, and §14.4's page economy.<br><strong>The numbers</strong> (<code>decision_support.py rarity</code>): five ranks completes the collection 23% cheaper — 2,460 pages against 2,805 — pulling it in about a month at eleven pages a day. §14.4's own 1,485-page figure is the three-rank total, so three ranks is what generated the published curve.<br><strong>No recommendation.</strong> Five ranks needs fourteen Rares re-tagged, and the split is a judgement about complexity and excitement — §7.10 is explicit that rarity must not track power, which rules out the obvious cost-ordered answer.</p>
         
+        
       </article>
       <article class="item cho" data-group="choices"
-               data-kind="decision" data-status="fixed">
+               data-kind="decision" data-status="fixed"
+               data-edits="no">
         <header class="item-head">
           <span class="id">Q4</span>
           <h3>One producer per realm, or two?</h3>
@@ -1375,9 +1621,11 @@
         <p class="body">F2. Two doubles income against every published pacing date; one matches the tables but contradicts §5.2. Interacts with Q1.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> §9.3, §10.2, §14.2 and §14.3 — every published pacing date.<br><strong>The numbers</strong> (F2): only “one producer per realm, no binding roster cap” reproduces the document (117% of published at day 301; Keeper 40 on day 171 against 181). Every other reading is out by 2–4×. A player who builds the second producer — a pure gain, so everyone will — earns roughly twice what §14 predicts.<br><strong>Leaning:</strong> one per realm, given Q1. Under a roster that cannot staff what already exists, the second producer is not a decision, it is dead Starlight.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Answered by §5.9: one producer of each kind per realm.</p>
+        
       </article>
       <article class="item cho" data-group="choices"
-               data-kind="decision" data-status="open">
+               data-kind="decision" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">Q5</span>
           <h3>Accept the launch-scope cut?</h3>
@@ -1388,9 +1636,11 @@
         <p class="body">D6. Roughly 40% less launch content, protecting the Island Workshop.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> the vertical slice's content budget, and the contractor brief.<br><strong>The proposal</strong> (D6): 24 laws rather than 48, 3 form-notes rather than 8, ~20 resonances rather than 44, 2–3 languages rather than 12, constellations to v1.1, wards at 2 levels rather than 5 — roughly 40% less, protecting the Island Workshop.<br><strong>Leaning:</strong> take it. §26.5 says scope is the lever and §30.8 ranks execution as risk #2, but neither is applied to §26.1. The Codex already gates laws in chapters, so 24 laws is chapter 2, which an engaged player reaches on day 5.</p>
         
+        
       </article>
       <article class="item cho" data-group="choices"
-               data-kind="decision" data-status="open">
+               data-kind="decision" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">Q6</span>
           <h3>Casual pacing: leave it, or add the catch-up discount?</h3>
@@ -1401,9 +1651,11 @@
         <p class="body">Open in the document since v0.3. At one session a day, finishing everything takes about 1,019 days. §27.5 settles on a visible, openly labelled catch-up discount, but it is not specified.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> nothing, and it has been open since v0.3.<br><strong>The numbers:</strong> at one session a day, finishing everything takes about 1,019 days. §27.5 already settles on a visible, openly labelled catch-up discount, citing [83] — disclosed assistance does not harm the experience — but never specifies it.<br><strong>Leaning:</strong> specify the discount. The decision is already made; only the mechanism is missing.</p>
         
+        
       </article>
       <article class="item cho" data-group="choices"
-               data-kind="decision" data-status="open">
+               data-kind="decision" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">Q8</span>
           <h3>How many ruleborn stand at one Guardian Post?</h3>
@@ -1414,9 +1666,11 @@
         <p class="body">Never stated anywhere in the document, and it is the missing conversion between §5.2, which counts guard <em>posts</em>, and §13.4, which counts <em>guards</em> — one post against three guards at realm level 1, three posts against six at level 5, so no constant reconciles them. §10.2's Guardian Post entry gives the post's capability per level (“guard +10% health and sight”) but never a capacity.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> C5, and it swings Q1 by a factor of three.<br><strong>Leaning:</strong> one. It matches §9.2's phrasing, keeps §5.2's numbers intact, and keeps defence affordable against the roster. Anything higher means F1's arithmetic has to be redone first, because defence would then consume more characters than production.<br>A small question with a large blast radius — worth answering before Q1, not after.</p>
         
+        
       </article>
       <article class="item cho" data-group="choices"
-               data-kind="decision" data-status="open">
+               data-kind="decision" data-status="open"
+               data-edits="no">
         <header class="item-head">
           <span class="id">Q7</span>
           <h3>The document's own open list</h3>
@@ -1426,6 +1680,7 @@
         <div class="refs"><span class="ref">§27.3</span></div>
         <p class="body">Final names and the trade-mark check; whether the Island Fund survives its six-month test; whether to strengthen performative and emotional challenge after launch; Law Clash rules; soft-launch countries; whether the interface says “universe” or “your sky”; whether constellations later get a competitive mode.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Blocks:</strong> the name clearance blocks any public use (§26.9), and the soft-launch countries block the launch plan. The rest can wait.<br><strong>Order:</strong> the trade-mark check first, since §26.9 makes it a gate and it costs nothing; then soft-launch countries; then the Island Fund test, which cannot start until the Workshop ships.</p>
+        
         
       </article>
       </section>
