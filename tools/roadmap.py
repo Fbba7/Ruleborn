@@ -294,6 +294,28 @@ dict(
                     "question rather than a distribution one.",
              evidence="python3 tools/note_rebalance.py",
              register=["C25", "D13", "D14"]),
+        dict(id="T1.10", owner="you", status="yours",
+             title="Decide whether the ten playtesters exist",
+             detail="\u00a725.5 rules them out \u2014 <em>\u201cNo recruited "
+                    "panels, no paid playtesters, no thirty people in a "
+                    "room\u201d</em> \u2014 and \u00a719.27 moves every "
+                    "human instrument to soft launch. \u00a726.2 then exits "
+                    "phase 2 on <em>seven of ten outside playtesters asking "
+                    "for a second session</em> and phase 3 on <em>20% of "
+                    "testers still playing after a week</em>, both two phases "
+                    "earlier.<br><br>This is not a number disagreeing with a "
+                    "number. It is <strong>10 to 12 weeks of work whose exit "
+                    "test cannot be met as written</strong>, and the first "
+                    "testing venue named anywhere in the document is "
+                    "TestFlight, in phase 4.<br><br>Either the exit tests are "
+                    "rewritten against the harness \u2014 and phase 2 is then "
+                    "owed a gate it can actually pass \u2014 or the testers "
+                    "are real and the plan owes a recruitment route, a "
+                    "delivery channel, and a consent and privacy position. "
+                    "Worth weighing before deleting it: <em>would they come "
+                    "back unprompted</em> is the one question \u00a719.27 "
+                    "concedes simulation cannot answer.",
+             register=["C29"]),
     ],
 ),
 

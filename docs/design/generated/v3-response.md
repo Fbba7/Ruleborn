@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 97 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 33 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
+v3.0 answered the audit directly, in §30.18. Of 98 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 34 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 
@@ -69,6 +69,7 @@ v3.0 answered the audit directly, in §30.18. Of 97 items, **26 are fixed in the
 
 | | What it is |
 | --- | --- |
+| **C29** | v3.0 removed the playtesters and kept two phase gates that require them |
 | **C21** | The formulas appendix still carries the detection model §12.8 deleted |
 | **C22** | §12.6 still loads at 150 a second, five times §12.19's rate |
 | **C23** | Three sections still price laws in three ranks after the sheets moved to four |

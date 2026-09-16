@@ -298,7 +298,7 @@
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
       register directly (&sect;30.18). 26 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. 33 items
+      what it did &mdash; including where a fix stopped short. 34 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
@@ -310,19 +310,19 @@
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">97</span><span class="k">items tracked</span></div>
-      <div><span class="n">31</span><span class="k">open</span></div>
+      <div><span class="n">98</span><span class="k">items tracked</span></div>
+      <div><span class="n">32</span><span class="k">open</span></div>
       <div><span class="n">26</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">20</span><span class="k">done or adopted</span></div>
-      <div><span class="n">27</span><span class="k">blocking the build</span></div>
+      <div><span class="n">28</span><span class="k">blocking the build</span></div>
       <div><span class="n">58</span><span class="k">edits drafted</span></div>
       <div><span class="n">16 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">97</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">18</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">23</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">98</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">19</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">23</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
   </nav>
 
   <main id="list">
@@ -883,6 +883,21 @@
         <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-regenerate">Regenerate</span><span class="e-sec">&sect;9.3</span></header><p class="e-find"><span class="e-lab">paste from</span><code>docs/design/generated/pacing.md</code></p><p class="e-new"><span class="e-lab">add</span><code>Replace §9.3’s production table and §14.2’s Keeper days with the re-run under §5.9’s rules. The first month holds; from day 91 the published figures are up to twice what the rules produce, and Keeper 40 arrives 94 days late.</code></p><p class="e-why">This item’s own recommendation was to regenerate rather than hand-edit, because hand-editing is what produced it.</p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
+               data-kind="contradiction" data-status="open"
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">C29</span>
+          <h3>v3.0 removed the playtesters and kept two phase gates that require them</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§25.5</span><span class="ref">§19.27</span><span class="ref">§26.2</span></div>
+        <p class="body">§25.5 opens by ruling the panels out, in a sentence with no room in it: <em>“No recruited panels, no paid playtesters, no thirty people in a room.”</em> §19.27 moves every instrument that needs a person to soft launch — <em>“all that once needed a room now waits for soft launch”</em> — and states the cost plainly: nothing before soft launch tells us the game is fun.<br><br>§26.2 then gates two phases on exactly those people. Phase 2, the vertical slice, exits on <em>“At least 7 of 10 outside playtesters ask for a second session”</em>. Phase 3, alpha, exits on <em>“at least 20% of testers still playing after a week”</em>. Both sit <strong>two phases before soft launch</strong>, which is the earliest point §19.27 and §25.5 allow a player to exist.<br><br>This is the supersession pattern the register already tracks in C8, C10 and the detection model — a fix landing in one section and not in the ones that depend on it — but it is worse in kind. The others are a number that disagrees with another number. <strong>This is a phase gate that cannot be passed as written</strong>, on the critical path, twice. Phase 2 is 10 to 12 weeks of work that by its own exit test cannot be exited, and no section names where the ten testers would come from, how they are recruited, or what they are given to play. The first testing venue named anywhere in the document is TestFlight, in phase 4.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Decide which document is true, and say so in both places. Either (a) §25.5 is right and §26.2’s phase 2 and 3 exit tests are rewritten against the harness and the developer-as-player — in which case say what phase 2 <em>does</em> exit on, because “no gate” is not an answer for 10 to 12 weeks of work; or (b) the ten testers are real, in which case §25.5’s opening sentence is false and the plan owes a recruitment route, a delivery channel and a consent and privacy position, none of which exist.<br><br>Worth noting which way the evidence leans: §26.2’s phase 2 gate — <em>would they come back unprompted</em> — is the single most informative thing in the whole phase table, and it is the one §19.27 admits simulation cannot replace. Deleting it is cheap and costs the most. This is flagged blocking for that reason, not for the wording.</p>
+        
+        
+      </article>
+      <article class="item blk" data-group="blocking"
                data-kind="gap" data-status="fixed"
                data-edits="no">
         <header class="item-head">
@@ -1220,8 +1235,8 @@
           <span class="kind">conflict</span>
           <span class="status s-open">Open</span>
         </header>
-        <div class="refs"><span class="ref">§7.6</span><span class="ref">§12.1</span><span class="ref">§10.2</span><span class="ref">§26.1</span><span class="ref">§30.15</span></div>
-        <p class="body">“A Library at the Heart produces about one page per realm every few hours” is the mitigation for the problem review 10 identified — that making pages raid-only punishes the large share of players who prefer building. It is referenced four times. It is <strong>not among the 16 building types</strong> in §10.2, has no cost, no levels and no placement rule, and §26.1 confirms 16 types at launch.</p>
+        <div class="refs"><span class="ref">§7.6</span><span class="ref">§12.1</span><span class="ref">§10.2</span><span class="ref">§26.1</span><span class="ref">§21.9</span><span class="ref">§30.15</span></div>
+        <p class="body">“A Library at the Heart produces about one page per realm every few hours” is the mitigation for the problem review 10 identified — that making pages raid-only punishes the large share of players who prefer building. It is referenced four times. It is <strong>not among the 16 building types</strong> in §10.2, has no cost, no levels and no placement rule, and §26.1 confirms 16 types at launch.<br><br>The count reaches further than the two sections first recorded here. §21.9’s launch asset budget prices <code>Building looks (16 types × 4)</code> at 64, so the art schedule is short four building looks as well — a third place the same fix did not land.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Add it as a 17th building with a full level table, or fold the trickle into the Observatory or the Spire and rewrite the four references. Do not leave a load-bearing economic faucet unspecified.</p>
         <p class="v3"><span class="vlabel">v3.0</span> Half fixed, and the other half is a fifth supersession. §10.5 gives the Library a placement and a table — 3 pages a day at level 1, 9 at 5, 18 at 10, “across the universe”. §7.6 still says it produces “about one page per realm every few hours”, which across seven realms is roughly 40 a day. The two differ by about four times, and §7.6’s is the sentence a reader meets first.<br><br>§10.5 also gives three of the ten levels — 1, 5 and 10 — where every other building in §10.2 lists every one, and §26.1 still counts 16 building types where there are now 17 (C24).</p>
         <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;7.6</span></header><p class="e-find"><span class="e-lab">now</span><code>A Library at the Heart produces about one page per realm every few hours</code></p><p class="e-new"><span class="e-lab">becomes</span><code>A Library at the Heart produces 3 pages a day at level 1, rising to 18 at level 10 (10.5)</code></p><p class="e-why">§10.5 gives the table; this sentence predates it and reads about four times higher across seven realms.</p></li></ol></details>

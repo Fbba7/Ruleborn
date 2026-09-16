@@ -50,6 +50,7 @@ FOUND_IN_V3 = frozenset({
     "D19", "D20", "D21", "D22", "D23",
     "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17",
     "F18", "F19", "F20", "F21", "D24", "D25", "D26", "D27", "D28",
+    "C29",
 })
 
 REGISTER = [
@@ -550,16 +551,63 @@ dict(id="C7", kind="contradiction", severity="significant", status="proposed",
 
 dict(id="C8", kind="contradiction", severity="significant", status="open",
      title="The Library is load-bearing and specified nowhere",
-     refs=["7.6", "12.1", "10.2", "26.1", "30.15"],
+     refs=["7.6", "12.1", "10.2", "26.1", "21.9", "30.15"],
      body="“A Library at the Heart produces about one page per realm every few "
           "hours” is the mitigation for the problem review 10 identified — "
           "that making pages raid-only punishes the large share of players who "
           "prefer building. It is referenced four times. It is <strong>not among the "
           "16 building types</strong> in §10.2, has no cost, no levels and no "
-          "placement rule, and §26.1 confirms 16 types at launch.",
+          "placement rule, and §26.1 confirms 16 types at launch."
+          "<br><br>The count reaches further than the two sections first "
+          "recorded here. §21.9’s launch asset budget prices "
+          "<code>Building looks (16 types × 4)</code> at 64, so the "
+          "art schedule is short four building looks as well — a "
+          "third place the same fix did not land.",
      rec="Add it as a 17th building with a full level table, or fold the trickle "
          "into the Observatory or the Spire and rewrite the four references. Do not "
          "leave a load-bearing economic faucet unspecified."),
+
+dict(id="C29", kind="contradiction", severity="blocking", status="open",
+     title="v3.0 removed the playtesters and kept two phase gates that "
+           "require them",
+     refs=["25.5", "19.27", "26.2"],
+     body="§25.5 opens by ruling the panels out, in a sentence with no "
+          "room in it: <em>“No recruited panels, no paid playtesters, no "
+          "thirty people in a room.”</em> §19.27 moves every "
+          "instrument that needs a person to soft launch — <em>“all "
+          "that once needed a room now waits for soft launch”</em> — "
+          "and states the cost plainly: nothing before soft launch tells us "
+          "the game is fun.<br><br>§26.2 then gates two phases on exactly "
+          "those people. Phase 2, the vertical slice, exits on <em>“At "
+          "least 7 of 10 outside playtesters ask for a second "
+          "session”</em>. Phase 3, alpha, exits on <em>“at least 20% "
+          "of testers still playing after a week”</em>. Both sit "
+          "<strong>two phases before soft launch</strong>, which is the "
+          "earliest point §19.27 and §25.5 allow a player to "
+          "exist.<br><br>This is the supersession pattern the register already "
+          "tracks in C8, C10 and the detection model — a fix landing in "
+          "one section and not in the ones that depend on it — but it is "
+          "worse in kind. The others are a number that disagrees with another "
+          "number. <strong>This is a phase gate that cannot be passed as "
+          "written</strong>, on the critical path, twice. Phase 2 is 10 to 12 "
+          "weeks of work that by its own exit test cannot be exited, and no "
+          "section names where the ten testers would come from, how they are "
+          "recruited, or what they are given to play. The first testing venue "
+          "named anywhere in the document is TestFlight, in phase 4.",
+     rec="Decide which document is true, and say so in both places. Either "
+         "(a) §25.5 is right and §26.2’s phase 2 and 3 exit "
+         "tests are rewritten against the harness and the developer-as-player "
+         "— in which case say what phase 2 <em>does</em> exit on, because "
+         "“no gate” is not an answer for 10 to 12 weeks of work; or "
+         "(b) the ten testers are real, in which case §25.5’s "
+         "opening sentence is false and the plan owes a recruitment route, a "
+         "delivery channel and a consent and privacy position, none of which "
+         "exist.<br><br>Worth noting which way the evidence leans: "
+         "§26.2’s phase 2 gate — <em>would they come back "
+         "unprompted</em> — is the single most informative thing in the "
+         "whole phase table, and it is the one §19.27 admits simulation "
+         "cannot replace. Deleting it is cheap and costs the most. This is "
+         "flagged blocking for that reason, not for the wording."),
 
 dict(id="C18", kind="contradiction", severity="significant", status="proposed",
      title="Aether storage: formula or table?",
