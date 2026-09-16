@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 82 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 18 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
+v3.0 answered the audit directly, in §30.18. Of 85 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 21 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 
@@ -73,6 +73,9 @@ v3.0 answered the audit directly, in §30.18. Of 82 items, **18 are fixed in the
 | **D22** | Law effects became a classified table, not prose to be read twice |
 | **F13** | §12.22’s matchmaking guarantee has no targets to draw from early |
 | **F14** | v3.0’s fill term halves the number §9.6 calls load-bearing, and it was not re-derived |
+| **F15** | Guards and Response are not two layers; they are one, and it is 69% of the defence |
+| **F16** | Geometry is 4% of a generated defence, against a 25% target |
+| **D23** | §13.4's ablation was built exactly as specified, Shapley included |
 
 ## The shape of it
 

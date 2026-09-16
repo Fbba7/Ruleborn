@@ -11,11 +11,12 @@ A run is about 80 milliseconds, so a thousand a cell is a couple of minutes.
 
 import sys
 
-from . import report
+from . import ablation, report
 
 REPORTS = {
     "depth": report.tension_and_depth,
     "defence": report.defence_balance,
+    "ablation": ablation.report,
     "control": report.attribution,
 }
 

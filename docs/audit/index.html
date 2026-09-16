@@ -247,25 +247,25 @@
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
       register directly (&sect;30.18). 18 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. 18 items
+      what it did &mdash; including where a fix stopped short. 21 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
       out against the rule sheet &sect;7.3 claims they change.</p>
 
     <div class="summary">
-      <div><span class="n">82</span><span class="k">items tracked</span></div>
-      <div><span class="n">28</span><span class="k">open</span></div>
+      <div><span class="n">85</span><span class="k">items tracked</span></div>
+      <div><span class="n">30</span><span class="k">open</span></div>
       <div><span class="n">18</span><span class="k">fixed in v3.0</span></div>
-      <div><span class="n">14</span><span class="k">done or adopted</span></div>
-      <div><span class="n">24</span><span class="k">blocking the build</span></div>
-      <div><span class="n">15 Sep</span><span class="k">last generated</span></div>
+      <div><span class="n">15</span><span class="k">done or adopted</span></div>
+      <div><span class="n">26</span><span class="k">blocking the build</span></div>
+      <div><span class="n">16 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">82</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">22</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">15</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">19</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">9</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">85</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">16</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">19</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">9</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button>
   </nav>
 
   <main id="list">
@@ -561,6 +561,19 @@
         <p class="rec"><span class="arrow">&rarr;</span> <code>tools/law_effects.py</code> classifies every law against a twenty-parameter rule sheet and emits <code>content/law_effects.json</code>. It refuses to run if a law names a parameter outside the sheet, or if a law has no classification at all — so a new law in a future season cannot be added without saying what kind of thing it is. The harness weaves the nineteen it can apply, which is how F11 was measured.</p>
         
       </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done">
+        <header class="item-head">
+          <span class="id">D23</span>
+          <h3>§13.4's ablation was built exactly as specified, Shapley included</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§13.4</span><span class="ref">§13.2</span></div>
+        <p class="body">§13.4 is the most precisely specified test in the document: “run the same thousand raids against the island with that layer switched off… do it for every combination of the five layers — there are only thirty-two — and divide the credit the way cooperative game theory does.”</p>
+        <p class="rec"><span class="arrow">&rarr;</span> <code>tools/heist_harness/ablation.py</code> does that, with the Shapley value computed in full rather than sampled (five players is 120 orderings) and checked against two cases with known answers. Building it turned up a confound worth recording: the ward count was derived from the route length, so turning geometry off removed a ward too and the geometry share absorbed the ward’s. An ablation that moves two things at once measures neither, and a test now pins it.<br><br>One number in §13.4 does not survive contact: it says 12,800 runs is something “a deterministic simulation does in seconds”. In Python it is about twenty minutes. That is an argument for the Rust core, not against the method.</p>
+        
+      </article>
       </section>
       <section class="group" id="g-blocking" data-group="blocking">
         <div class="group-head">
@@ -763,6 +776,19 @@
         <p class="rec"><span class="arrow">&rarr;</span> Re-derive 0.46 against the fill term, or state that fill is already inside it — but not both, and not neither. <code>Config(apply_fill=True)</code> in the economy model applies the measured value, and a test asserts the size of the gap so it cannot close quietly. This is C19’s pattern applied to the single number §9.6 names as the one the curve rests on.</p>
         
       </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F15</span>
+          <h3>Guards and Response are not two layers; they are one, and it is 69% of the defence</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§13.2</span><span class="ref">§13.4</span></div>
+        <p class="body">§13.2 lists five defence layers with target shares and one rule above them: <strong>no single layer above 25%</strong>, because “if one layer decides outcomes, the other four are decoration”. §13.4 specifies exactly how to check it — all 32 combinations, credit divided “the way cooperative game theory does”, which is the Shapley value. Run at 120 raids a combination (3,840 runs):<br><br><code>geometry &nbsp;4.4% &nbsp;(target 25%)<br>guards &nbsp;&nbsp;34.5% &nbsp;(target 20%)<br>wards &nbsp;&nbsp;&nbsp;20.9% &nbsp;(target 20%)<br>laws &nbsp;&nbsp;&nbsp;&nbsp;5.7% &nbsp;(target 20%)<br>response &nbsp;34.5% &nbsp;(target 15%)</code><br><br>Guards and Response are equal to the last decimal, and that is a theorem rather than a coincidence. Checked directly: in <strong>every one of the eight coalitions</strong>, guards without response turn back 0% of raids and response without guards turns back 0%. They are symmetric players, so the Shapley value must give them identical shares.<br><br>The cause is §13.2’s own definition. Response is “what turns being seen into being caught” — which makes it <em>multiplicative</em> with guards, not additive. Two layers that multiply cannot have independent shares. Counted together they are <strong>69% of the defence</strong>, against a ceiling of 25% for any one layer.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Either fold Response into Guards and accept one layer at 69% — which fails §13.2’s own rule and makes the other three decoration, exactly what the rule exists to prevent — or give Response something it can do <em>without</em> a guard. §13.2 already names two candidates and specifies neither: <strong>the Spire’s reach</strong> and <strong>the guardian Sage’s single power</strong>. A ward that raises the alarm on its own is a third; Lantern Glare already does it. Any of them gives the layer a standalone contribution and the five shares a chance of summing the way §13.2 wants. <code>python3 -m tools.heist_harness ablation</code>.</p>
+        
+      </article>
       </section>
       <section class="group" id="g-design" data-group="design">
         <div class="group-head">
@@ -885,6 +911,19 @@
         <div class="refs"><span class="ref">§13.3</span><span class="ref">§7.7</span><span class="ref">§5.5</span></div>
         <p class="body">Tilt slopes the realm “toward a side the owner picks”. Current blows “one way, chosen by the owner”. Slow rivers lets “the owner draw streams on the realm’s grid”. Lodestones, Heat bloom and Soul lanterns are placements; Shifting stones is a loop the owner draws; Inward pull assumes a direction that is well defined for a realm with one Heart link and not for one with two.<br><br>Eight of forty-eight laws therefore carry a parameter that is not a number in a table but an act of authorship. That was fine while authorship was the default. <strong>§13.3 made curation the default and authorship the deep end</strong>, so for most islands the generator now makes these choices — and a badly chosen slope or stream turns the defender’s law into the raider’s.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Either the generator gets an explicit rule for each (slope away from the entry, streams across the approach), or these eight laws are marked as ones a generated realm cannot weave. The first is better design and more work; the second is one column in the law table. Deciding nothing means the generator picks arbitrarily, which is the current state.</p>
+        
+      </article>
+      <article class="item dsg" data-group="design"
+               data-kind="finding" data-status="open">
+        <header class="item-head">
+          <span class="id">F16</span>
+          <h3>Geometry is 4% of a generated defence, against a 25% target</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§13.2</span><span class="ref">§13.3</span><span class="ref">§6</span></div>
+        <p class="body">§13.2 gives Geometry the largest share of any layer, 25%, and the warmest description: “free, unlimited, and <em>the layer a thoughtful designer beats a richer player with</em>”. It is the layer the whole authorship argument rests on.<br><br>Measured on <strong>generated</strong> islands it contributes <strong>4.4%</strong>. At a smaller sample it measured slightly negative — the hedges and tall grass a naive generator lays down block a guard’s sight line as readily as a raider’s, and tall grass is the raider’s cover by definition (§12.17).<br><br>Stated carefully, because the distinction is the finding: this measures <em>generated</em> geometry, not designed geometry. §13.2’s 25% is a claim about an island someone thought about. v3.0’s §13.3 made generated islands the default, so the two are no longer the same population — and the layer that is supposed to let design beat progression is the one a generator is worst at.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> This is the sharpest argument for the creator ladder §18.7 describes, and against treating generation as equivalent to design. If geometry is 25% when designed and 4% when generated, then §13.2’s “60% from design rather than level” is a property of hand-built islands only, and the target pool is mostly not those. Measure a hand-built island against the same harness before accepting either number.</p>
         
       </article>
       </section>

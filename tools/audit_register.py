@@ -1372,6 +1372,89 @@ dict(id="F14", kind="finding", severity="blocking", status="open",
          "close quietly. This is C19\u2019s pattern applied to the single number "
          "\u00a79.6 names as the one the curve rests on."),
 
+dict(id="F15", kind="finding", severity="blocking", status="open",
+     title="Guards and Response are not two layers; they are one, and it is 69% of the defence",
+     refs=["13.2", "13.4"],
+     body="\u00a713.2 lists five defence layers with target shares and one rule "
+          "above them: <strong>no single layer above 25%</strong>, because "
+          "\u201cif one layer decides outcomes, the other four are "
+          "decoration\u201d. \u00a713.4 specifies exactly how to check it \u2014 "
+          "all 32 combinations, credit divided \u201cthe way cooperative game "
+          "theory does\u201d, which is the Shapley value. Run at 120 raids a "
+          "combination (3,840 runs):<br><br>"
+          "<code>geometry &nbsp;4.4% &nbsp;(target 25%)<br>"
+          "guards &nbsp;&nbsp;34.5% &nbsp;(target 20%)<br>"
+          "wards &nbsp;&nbsp;&nbsp;20.9% &nbsp;(target 20%)<br>"
+          "laws &nbsp;&nbsp;&nbsp;&nbsp;5.7% &nbsp;(target 20%)<br>"
+          "response &nbsp;34.5% &nbsp;(target 15%)</code><br><br>"
+          "Guards and Response are equal to the last decimal, and that is a "
+          "theorem rather than a coincidence. Checked directly: in <strong>every "
+          "one of the eight coalitions</strong>, guards without response turn "
+          "back 0% of raids and response without guards turns back 0%. They are "
+          "symmetric players, so the Shapley value must give them identical "
+          "shares.<br><br>The cause is \u00a713.2\u2019s own definition. Response "
+          "is \u201cwhat turns being seen into being caught\u201d \u2014 which "
+          "makes it <em>multiplicative</em> with guards, not additive. Two layers "
+          "that multiply cannot have independent shares. Counted together they "
+          "are <strong>69% of the defence</strong>, against a ceiling of 25% for "
+          "any one layer.",
+     rec="Either fold Response into Guards and accept one layer at 69% \u2014 "
+         "which fails \u00a713.2\u2019s own rule and makes the other three "
+         "decoration, exactly what the rule exists to prevent \u2014 or give "
+         "Response something it can do <em>without</em> a guard. \u00a713.2 "
+         "already names two candidates and specifies neither: <strong>the "
+         "Spire\u2019s reach</strong> and <strong>the guardian Sage\u2019s single "
+         "power</strong>. A ward that raises the alarm on its own is a third; "
+         "Lantern Glare already does it. Any of them gives the layer a standalone "
+         "contribution and the five shares a chance of summing the way \u00a713.2 "
+         "wants. <code>python3 -m tools.heist_harness ablation</code>."),
+
+dict(id="F16", kind="finding", severity="design", status="open",
+     title="Geometry is 4% of a generated defence, against a 25% target",
+     refs=["13.2", "13.3", "6"],
+     body="\u00a713.2 gives Geometry the largest share of any layer, 25%, and the "
+          "warmest description: \u201cfree, unlimited, and <em>the layer a "
+          "thoughtful designer beats a richer player with</em>\u201d. It is the "
+          "layer the whole authorship argument rests on.<br><br>Measured on "
+          "<strong>generated</strong> islands it contributes <strong>4.4%</strong>. "
+          "At a smaller sample it measured slightly negative \u2014 the hedges "
+          "and tall grass a naive generator lays down block a guard\u2019s sight "
+          "line as readily as a raider\u2019s, and tall grass is the "
+          "raider\u2019s cover by definition (\u00a712.17).<br><br>Stated "
+          "carefully, because the distinction is the finding: this measures "
+          "<em>generated</em> geometry, not designed geometry. \u00a713.2\u2019s "
+          "25% is a claim about an island someone thought about. v3.0\u2019s "
+          "\u00a713.3 made generated islands the default, so the two are no "
+          "longer the same population \u2014 and the layer that is supposed to "
+          "let design beat progression is the one a generator is worst at.",
+     rec="This is the sharpest argument for the creator ladder \u00a718.7 "
+         "describes, and against treating generation as equivalent to design. If "
+         "geometry is 25% when designed and 4% when generated, then "
+         "\u00a713.2\u2019s \u201c60% from design rather than level\u201d is a "
+         "property of hand-built islands only, and the target pool is mostly not "
+         "those. Measure a hand-built island against the same harness before "
+         "accepting either number."),
+
+dict(id="D23", kind="deviation", severity="change", status="done",
+     title="\u00a713.4's ablation was built exactly as specified, Shapley included",
+     refs=["13.4", "13.2"],
+     body="\u00a713.4 is the most precisely specified test in the document: "
+          "\u201crun the same thousand raids against the island with that layer "
+          "switched off\u2026 do it for every combination of the five layers "
+          "\u2014 there are only thirty-two \u2014 and divide the credit the way "
+          "cooperative game theory does.\u201d",
+     rec="<code>tools/heist_harness/ablation.py</code> does that, with the "
+         "Shapley value computed in full rather than sampled (five players is "
+         "120 orderings) and checked against two cases with known answers. "
+         "Building it turned up a confound worth recording: the ward count was "
+         "derived from the route length, so turning geometry off removed a ward "
+         "too and the geometry share absorbed the ward\u2019s. An ablation that "
+         "moves two things at once measures neither, and a test now pins it."
+         "<br><br>One number in \u00a713.4 does not survive contact: it says "
+         "12,800 runs is something \u201ca deterministic simulation does in "
+         "seconds\u201d. In Python it is about twenty minutes. That is an "
+         "argument for the Rust core, not against the method."),
+
 ]
 
 # ===========================================================================

@@ -173,7 +173,7 @@ class Heist:
     DEFAULT_CREW = ("Scout", "Breaker", "Carrier", "Warden", "Mender")
 
     def __init__(self, island, policy, crew_roles=DEFAULT_CREW,
-                 realm_level: int = 3, crossing=(), sheet=None):
+                 realm_level: int = 3, crossing=(), sheet=None, response: bool = True):
         """`crossing` is the outer realms the crew walks through on the way in.
 
         §12.6 splits a heist into Entry, Crossing, Vault and Escape, and gives the
@@ -191,6 +191,10 @@ class Heist:
         #: §7.3: the realm's rule sheet, after its laws are woven. An empty sheet
         #: is the default, which is the island with no laws on it.
         self.sheet = sheet or Sheet()
+        #: §13.2's response layer (15%): "bells, alarms, the Spire's reach... what
+        #: turns being seen into being caught." With it off a guard may reach
+        #: Alerted and still not converge, and the alarm does not spread.
+        self.response = response
         self.clock = int(min(MAX_TICKS, BASE_TICKS + LINK_TICKS * len(self.crossing))
                          / self.sheet.factor("clock_rate"))
         self.vault_health = VAULT_HEALTH_PER_LEVEL * realm_level
@@ -253,7 +257,7 @@ class Heist:
     # -- guards ------------------------------------------------------------
 
     def _guard_move(self, g: Guard) -> None:
-        if g.state == "alerted":
+        if g.state == "alerted" and self.response:
             target = self._nearest_visible_crew(g)
             goal = (target.x, target.y) if target else (g.x, g.y)
         elif g.state == "investigating" and g.target:
@@ -335,7 +339,7 @@ class Heist:
         g.state_ticks += 1
         if want != g.state and g.state_ticks >= STATE_FLOOR_TICKS:
             g.state, g.state_ticks = want, 0
-        if g.state == "alerted":
+        if g.state == "alerted" and self.response:
             self.alarm = True
 
     # -- the crew ----------------------------------------------------------
@@ -392,6 +396,8 @@ class Heist:
                 break
 
     def _capture_check(self) -> None:
+        if not self.response:
+            return
         for g in self.guards:
             if g.state != "alerted":
                 continue

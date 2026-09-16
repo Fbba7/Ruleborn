@@ -10,7 +10,7 @@ python3 -m tools.heist_harness depth 500        # more runs a cell
 python3 -m tools.heist_harness.test_harness     # tests
 ```
 
-Reports: `depth`, `defence`, `control`. A run takes about 80 ms, so §19.27's
+Reports: `depth`, `defence`, `ablation`, `control`. A run takes about 80 ms, so §19.27's
 "thousands of heists" is a couple of minutes.
 
 ## What it is for
@@ -90,6 +90,14 @@ full run against v3.0:
   Effective is a different requirement and is not stated.
 - **Skill separates outcomes comfortably**: 64 to 70 points between careless and
   optimal, against §19.27's threshold of 35.
+- **Guards and Response are the same layer.** §13.4's ablation, run in full with
+  Shapley values, gives them identical shares — because neither turns back a
+  single raid without the other, in any of the eight coalitions. §13.2 defines
+  Response as "what turns being seen into being caught", which makes it
+  multiplicative with Guards rather than additive. Together they are 69% of the
+  defence, against a ceiling of 25% for any one layer.
+- **Geometry is 4% of a generated defence**, against §13.2's 25% target — the
+  layer it calls "the layer a thoughtful designer beats a richer player with".
 - **The careful crew is never the best crew.** `optimal` matches or trails
   `competent` on success at every depth, because disarming wards and holding for
   cones costs more clock than it saves. Either those tools are underpriced or

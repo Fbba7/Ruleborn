@@ -142,6 +142,73 @@ def test_the_clock_is_not_a_pressure_device():
     assert used < 0.8, used
 
 
+# -- the ablation ----------------------------------------------------------
+
+def test_shapley_matches_two_known_cases():
+    """The attribution §13.4 asks for, checked against cases with known answers."""
+    import itertools
+    from .ablation import shapley
+    from .island import LAYERS
+
+    def coalitions(fn):
+        return {frozenset(c): fn(c)
+                for s in range(len(LAYERS) + 1)
+                for c in itertools.combinations(LAYERS, s)}
+
+    # One layer does everything: it takes all the credit. Compared with a
+    # tolerance, since the sum of 120 weighted terms does not land on 100.0
+    # exactly in binary floating point.
+    solo = shapley(coalitions(lambda c: 100.0 if "guards" in c else 0.0))
+    assert abs(solo["guards"] - 100.0) < 1e-9, solo
+    assert all(abs(v) < 1e-9 for k, v in solo.items() if k != "guards"), solo
+
+    # Perfectly additive: equal shares.
+    even = shapley(coalitions(lambda c: 10.0 * len(c)))
+    assert all(abs(v - 10.0) < 1e-9 for v in even.values()), even
+
+
+def test_guards_and_response_are_the_same_layer():
+    """F15. §13.2 counts them as two layers at 20% and 15%.
+
+    §13.2 defines response as "what turns being seen into being caught", which
+    makes it multiplicative with guards rather than additive. Neither turns back
+    a single raid without the other, in any coalition — so they are symmetric
+    players and the Shapley value must assign them identical shares.
+    """
+    import itertools
+    from .ablation import hold_rate
+    from .island import LAYERS
+
+    others = [x for x in LAYERS if x not in ("guards", "response")]
+    for size in range(len(others) + 1):
+        for combo in itertools.combinations(others, size):
+            s = frozenset(combo)
+            assert hold_rate(s | {"guards"}, 12, 3) == 0.0, combo
+            assert hold_rate(s | {"response"}, 12, 3) == 0.0, combo
+
+
+def test_no_layer_turns_back_a_raid_alone():
+    """§13.2: "no layer decides an outcome on its own" — much more so than meant."""
+    from .ablation import hold_rate
+    from .island import LAYERS
+    for layer in LAYERS:
+        assert hold_rate(frozenset({layer}), 15, 3) == 0.0, layer
+
+
+def test_ablation_layers_change_only_themselves():
+    """An ablation that moves two things at once measures the confound.
+
+    Turning geometry off once removed a ward as well, because the ward count was
+    derived from the route length.
+    """
+    from .island import ALL_LAYERS
+    for off in ("geometry", "guards"):
+        for seed in (0, 5, 17):
+            full = generate(seed, 3)
+            without = generate(seed, 3, layers=ALL_LAYERS - {off})
+            assert len(full.wards) == len(without.wards), (off, seed)
+
+
 if __name__ == "__main__":
     passed = failed = 0
     for name, fn in sorted(globals().items()):

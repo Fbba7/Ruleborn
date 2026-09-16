@@ -124,7 +124,7 @@ class Island:
             raise AssertionError(
                 f"island {self.seed}: {len(self.wards)} wards, §5.2 allows {limit} "
                 f"at realm level {self.realm_level}")
-        if not 1 <= len(self.patrols) <= 3:
+        if self.patrols and not 1 <= len(self.patrols) <= 3:
             raise AssertionError(
                 f"island {self.seed}: {len(self.patrols)} guard posts, §5.2 allows 1-3")
         for p in self.patrols:
@@ -134,7 +134,13 @@ class Island:
                         f"island {self.seed}: a {p.role} patrols through {self.at(wx, wy)}")
 
 
-def generate(seed: int, realm_level: int = 3) -> Island:
+#: §13.2's five layers, in the order it lists them. `laws` is applied by the
+#: rule sheet and `response` by the simulation; the other three shape the island.
+LAYERS = ("geometry", "guards", "wards", "laws", "response")
+ALL_LAYERS = frozenset(LAYERS)
+
+
+def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS) -> Island:
     """A small realm, laid out so a route exists and a guard can see it.
 
     §5.2 gives realm grids by level; level 3 is 12x12. The layout is deliberately
@@ -152,22 +158,30 @@ def generate(seed: int, realm_level: int = 3) -> Island:
     vx, vy = w // 2, 2
     grid[vy][vx] = "vault"
 
-    # Two interior hedges, leaving a gap, so there is more than one way through.
-    band = h // 2
-    gap = 1 + rng.below(w - 3)
-    for x in range(1, w - 1):
-        if abs(x - gap) > 1:
-            grid[band][x] = "hedge"
+    # Geometry (§13.2, 25%): "which routes exist, what can be seen from where".
+    # With the layer off the realm is a bare room, which is the island §13.3
+    # promises never happens and the right floor to measure the layer against.
+    if "geometry" in layers:
+        # Two interior hedges, leaving a gap, so there is more than one way through.
+        band = h // 2
+        gap = 1 + rng.below(w - 3)
+        for x in range(1, w - 1):
+            if abs(x - gap) > 1:
+                grid[band][x] = "hedge"
 
-    # Cover: tall grass in clumps, never on the gap tile.
-    for _ in range(3 + rng.below(3)):
-        cx, cy = 1 + rng.below(w - 2), 1 + rng.below(h - 2)
-        for dx in range(2):
-            for dy in range(2):
-                x, y = cx + dx, cy + dy
-                if 0 < x < w - 1 and 0 < y < h - 1 and grid[y][x] == "floor" \
-                        and (x, y) != (gap, band):
-                    grid[y][x] = "grass"
+        # Cover: tall grass in clumps, never on the gap tile.
+        for _ in range(3 + rng.below(3)):
+            cx, cy = 1 + rng.below(w - 2), 1 + rng.below(h - 2)
+            for dx in range(2):
+                for dy in range(2):
+                    x, y = cx + dx, cy + dy
+                    if 0 < x < w - 1 and 0 < y < h - 1 and grid[y][x] == "floor" \
+                            and (x, y) != (gap, band):
+                        grid[y][x] = "grass"
+    else:
+        rng.below(w - 3)              # keep the stream aligned across variants
+        for _ in range(3 + rng.below(3)):
+            rng.below(w - 2), rng.below(h - 2)
 
     entry = (w // 2, h - 2)
     island = Island(w, h, grid, entry, (vx, vy), seed=seed, realm_level=realm_level)
@@ -178,15 +192,18 @@ def generate(seed: int, realm_level: int = 3) -> Island:
     route = path_to(island, entry, (vx, vy))
     kinds = ["Time Snare", "Gravity Well", "Lantern Glare"]
     ward_level = 1 + (realm_level - 1) // 2
-    for i in range(min(3 + realm_level, max(0, len(route) - 2))):
-        spot = route[1 + (i * len(route)) // (3 + realm_level)]
-        if any((wd.x, wd.y) == spot for wd in island.wards):
-            continue
+    # §5.2 allows 3 + realm level. The count must not depend on any other layer,
+    # or an ablation measures the confound rather than the layer: an earlier
+    # version derived it from the route length, so turning geometry off removed a
+    # ward as well, and the geometry share absorbed the ward's.
+    ward_count = (3 + realm_level) if "wards" in layers else 0
+    spots = _ward_spots(island, route, ward_count)
+    for i, spot in enumerate(spots):
         island.wards.append(Ward(kinds[i % len(kinds)], spot[0], spot[1], ward_level))
 
     # One to three guards (§5.2), patrolling walkable loops.
     roles = ["Warden", "Scout", "Breaker"]
-    count = 1 + (realm_level - 1) // 2
+    count = (1 + (realm_level - 1) // 2) if "guards" in layers else 0
     for i in range(count):
         route = _patrol_route(island, rng, i)
         island.patrols.append(Patrol(roles[i % len(roles)], route,
@@ -194,6 +211,39 @@ def generate(seed: int, realm_level: int = 3) -> Island:
 
     island.check()
     return island
+
+
+def _ward_spots(island: Island, route: list, count: int) -> list:
+    """`count` distinct walkable tiles, on the route where it is long enough and
+    beside it where it is not, so the count never varies with another layer."""
+    out, used = [], set()
+    for i in range(count):
+        if route:
+            spot = route[(1 + (i * len(route)) // max(1, count)) % len(route)]
+        else:
+            spot = island.entry
+        if spot in used or spot in (island.entry, island.vault):
+            spot = _free_tile_near(island, spot, used)
+        if spot is None:
+            continue
+        used.add(spot)
+        out.append(spot)
+    return out
+
+
+def _free_tile_near(island: Island, origin, used: set):
+    """The nearest unused walkable tile, searched in a fixed order."""
+    for radius in range(1, max(island.width, island.height)):
+        for dy in range(-radius, radius + 1):
+            for dx in range(-radius, radius + 1):
+                if max(abs(dx), abs(dy)) != radius:
+                    continue
+                tile = (origin[0] + dx, origin[1] + dy)
+                if tile in used or tile in (island.entry, island.vault):
+                    continue
+                if island.walkable(*tile):
+                    return tile
+    return None
 
 
 def _patrol_route(island: Island, rng: Rng, index: int) -> list[tuple[int, int]]:

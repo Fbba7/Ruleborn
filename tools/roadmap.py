@@ -85,20 +85,21 @@ dict(
                     "command.",
              gate="no unattributed decisions in ten thousand replays",
              evidence="python3 -m tools.heist_harness control"),
-        dict(id="T0.4", owner="claude", status="doing",
+        dict(id="T0.4", owner="claude", status="done",
              title="The ablation harness \u2014 is the defence fair?",
-             detail="Hold rate is measured; the thirty-two layer combinations are "
-                    "not, because the harness has no laws yet. The first number "
-                    "is already the sharpest finding of the three: <strong>a "
-                    "generated island at realm level 1 holds 2% of the time "
-                    "against a competent crew</strong>, and only level 5 reaches "
-                    "\u00a713.2's band. v3.0's \u00a713.3 makes generated "
-                    "defences every player's default and requires them to be "
-                    "\u201clegal, coherent, and never empty\u201d \u2014 which "
-                    "they are. Effective is a different requirement and is not "
-                    "stated (F9).",
-             evidence="python3 -m tools.heist_harness defence",
-             register=["F9"],
+             detail="Built exactly as \u00a713.4 specifies: all 32 layer "
+                    "combinations, credit divided by Shapley value. The hold rate "
+                    "lands inside \u00a713.2's band (41.7%) and the shares do "
+                    "not. <strong>Guards and Response measure identically because "
+                    "they are the same layer</strong> \u2014 neither turns back a "
+                    "single raid without the other, in any of the eight "
+                    "coalitions \u2014 and together they are 69% of the defence "
+                    "against a 25% ceiling (F15). Geometry, which \u00a713.2 "
+                    "gives the largest share and calls the layer a thoughtful "
+                    "designer wins with, measures 4.4% on a generated island "
+                    "(F16).",
+             evidence="python3 -m tools.heist_harness ablation",
+             register=["F9", "F15", "F16"],
              gate="hold rate 30\u201345%, no layer above a quarter, design beating "
                   "progression 60/40 (\u00a713.4)"),
         dict(id="T0.6", owner="claude", status="done",
