@@ -14,7 +14,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from audit_register import EDITS, FOUND_IN_V3, REGISTER, V3  # noqa: E402
+from audit_register import DEPENDS, EDITS, FOUND_IN_V3, REGISTER, V3  # noqa: E402
 
 from build_stamp import stamped  # noqa: E402
 
@@ -82,6 +82,26 @@ def esc(text: str) -> str:
     return html.escape(text, quote=False)
 
 
+def deps_html(item: dict) -> str:
+    """What this item waits on, and what waits on it.
+
+    Both directions come from one table: `DEPENDS` records only "x needs y", and
+    the reverse is computed, so the two can never disagree.
+    """
+    needs = DEPENDS.get(item["id"], [])
+    blocks = sorted(k for k, v in DEPENDS.items() if item["id"] in v)
+    if not needs and not blocks:
+        return ""
+    parts = []
+    if needs:
+        parts.append("waits on " + ", ".join(
+            '<a href="#' + n + '">' + n + '</a>' for n in needs))
+    if blocks:
+        parts.append("unblocks " + ", ".join(
+            '<a href="#' + b + '">' + b + '</a>' for b in blocks))
+    return '<p class="deps">' + " &middot; ".join(parts) + '</p>'
+
+
 def measured_html(item: dict) -> str:
     """A badge saying this item's numbers were re-run against the live harness.
 
@@ -145,7 +165,7 @@ def item_html(item: dict) -> str:
     v3_html = (f'<p class="v3"><span class="vlabel">v3.0</span> {v3["note"]}</p>'
                if v3.get("note") else "")
     return f"""
-      <article class="item {cls}" data-group="{item['_group']}"
+      <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
                data-kind="{item['kind']}" data-status="{status}"
                data-edits="{'yes' if item['id'] in EDITS else 'no'}">
         <header class="item-head">
@@ -156,6 +176,7 @@ def item_html(item: dict) -> str:
           {measured_html(item)}
         </header>
         <div class="refs">{refs_html(item['refs'])}</div>
+        {deps_html(item)}
         <p class="body">{item['body']}</p>
         {f'<p class="rec"><span class="arrow">&rarr;</span> {rec}</p>' if rec else ''}
         {v3_html}
@@ -478,6 +499,12 @@ def build() -> str:
     padding: 1px 6px; border-radius: 3px; white-space: nowrap;
   }}
 
+  .deps {{
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    color: var(--muted); margin: 0 0 9px;
+  }}
+  .deps a {{ color: var(--accent); text-decoration: none; }}
+  .deps a:hover {{ text-decoration: underline; }}
   .item .body {{ color: var(--ink); max-width: 66ch; overflow-wrap: break-word; }}
   .item .rec {{
     margin-top: 10px; color: var(--muted); font-size: 14.5px; max-width: 66ch;

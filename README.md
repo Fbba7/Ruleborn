@@ -57,6 +57,7 @@ docs/
   analysis/   the deep analysis of that document — start here
 content/       the twelve content tables as data, plus the reconciled detection spec
 docs/design/spec/   the reconciled specification, one file per system
+docs/design/dependencies.md  what has to be settled before what, generated
 docs/audit/    the generated audit register page
 docs/roadmap/  the generated roadmap page
 prototypes/
@@ -72,6 +73,10 @@ tools/
   audit_register.py             the audit register, as data
   build_audit.py                renders the register to docs/audit/index.html
   check_edits.py                every drafted edit quotes the document correctly
+  check_dependencies.py         the ordering between items; writes dependencies.md
+  check_findings_fresh.py       which register numbers can be shown to be current
+  scope_cut.py                  costs a launch-scope cut by engine work
+  build_stamp.py                one build stamp for every published page
   law_effects.py                classifies all 48 laws against the rule sheet
   note_rebalance.py             the note rebalance §8.8 says is already done
   roadmap.py                    the roadmap, as data

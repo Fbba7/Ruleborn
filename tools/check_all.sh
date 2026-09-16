@@ -44,6 +44,11 @@ python3 tools/build_stamp.py --self-test
 python3 tools/check_prototype_conformance.py
 
 echo
+echo "== the dependency graph is well formed =="
+python3 tools/check_dependencies.py --self-test
+python3 tools/check_dependencies.py --write
+
+echo
 echo "== which register numbers can be shown to be current =="
 python3 tools/check_findings_fresh.py --self-test
 python3 tools/check_findings_fresh.py

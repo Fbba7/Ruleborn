@@ -1957,7 +1957,7 @@ dict(id="F23", kind="finding", severity="significant", status="proposed",
          "<br><br><code>python3 tools/scope_cut.py</code>."),
 
 dict(id="F19", kind="finding", severity="significant", status="open",
-     title="What a raid pays varies 1.5\u00d7 with how well it is played, and "
+     title="What a raid pays varies 1.4\u00d7 with how well it is played, and "
            "\u00a79.6 prices it as a constant",
      refs=["9.6", "12.19", "12.17", "14.2"],
      body="\u00a79.6: <code>Haul = B(V) \u00d7 grade \u00d7 difficulty \u00d7 "
@@ -2701,6 +2701,162 @@ V3 = {
 #
 # tools/check_edits.py verifies every `find` against the document (and every
 # `retag` against content/), and fails the build on a miss or an ambiguity.
+
+# ===========================================================================
+# What cannot be settled from inside this repository
+# ===========================================================================
+#
+# Most of the register is arithmetic against the document, or a measurement the
+# harness can make. These are the items that are not: they need a number from
+# the outside world, and no amount of re-reading §26.1 will produce it.
+#
+# Each entry is the question to take away, written so it stands alone.
+
+RESEARCH = {
+    "Q5": "How much content do comparable mobile builders actually ship at "
+          "launch, counted the way \u00a726.1 counts \u2014 distinct rules, "
+          "creature forms, building types, languages \u2014 and how much did "
+          "they add per season afterwards? \u00a726.1 asks a team of one "
+          "designer, one coding agent and three contractors for 48 laws, 144 "
+          "creature forms, 39 terrain features and 12 languages.",
+    "D6": "Which of a launch content set actually drives retention in this "
+          "genre: breadth of distinct rules, or depth in a few? The proposed "
+          "cut halves the laws and keeps the Island Workshop, and nothing "
+          "outside this repository has been consulted about that trade.",
+    "D9": "What is the reference-class ratio of iteration work to first-build "
+          "work for a novel genre blend with no reference implementation? "
+          "\u00a726.8 estimates ~270 agent runs to build and then states that "
+          "the iteration needed to find the fun is unbudgeted.",
+    "F10": "What does each kind of law effect really cost to build \u2014 a "
+           "parameter change against a spawned entity against a periodic rule "
+           "\u2014 on a deterministic fixed-tick mobile simulation? "
+           "`scope_cut.py` weights them 0 / 3 / 2 by judgement, and "
+           "the ordering is what the conclusion rests on.",
+    "C12": "What are the current Apple and Google commission tiers and the "
+           "revenue thresholds that move a developer between them, and what "
+           "does that do to a revenue band either side of the boundary? "
+           "\u00a722.2\u2019s high scenario is computed at a different rate "
+           "from the other two and \u00a722.5 does not say so.",
+    "G11": "What does it cost to localise a coined vocabulary \u2014 roughly "
+           "130 invented proper nouns \u2014 into twelve languages, and who "
+           "normally owns that work on a team of this size? \u00a726.3 "
+           "assigns nobody.",
+    "C29": "How do small teams recruit ten to twenty playtesters for a "
+           "pre-release mobile build, what does it cost, and what consent and "
+           "privacy position does handling pre-release content with outside "
+           "testers require? \u00a726.2 gates two phases on those people and "
+           "\u00a725.5 says they do not exist.",
+    "C20": "What does a per-school sound set cost against a per-law one, and "
+           "do players in comparable games actually distinguish audio cues at "
+           "that granularity? \u00a721.8 now claims six school signatures "
+           "where it once claimed 48.",
+    "Q6": "How do comparable games handle a player who is years behind the "
+          "curve, and does a visible, openly labelled catch-up discount hold "
+          "up in practice? \u00a727.5 settles on one and never specifies it, "
+          "against a finishing time of roughly 1,343 days.",
+    "Q7": "Trade-mark clearance for the name, in the launch territories. "
+          "\u00a726.9 makes it a gate on any public use and it costs nothing "
+          "to start.",
+    "F13": "How do comparable games fill a matchmaking band when the candidate "
+           "pool cannot supply it \u2014 bots, staged targets, widening, or "
+           "something else? \u00a712.22 promises a median target in a band "
+           "that does not exist early.",
+}
+
+
+# ===========================================================================
+# What has to be settled before what
+# ===========================================================================
+#
+# `DEPENDS[x] = [y, ...]` means **x cannot be finished until y is**. Kept here
+# rather than as a field on a hundred dicts, for the same reason EDITS is: one
+# table is reviewable, a hundred scattered lines are not.
+#
+# Three kinds of edge, all of them the same shape for the reader:
+#
+#   * a **decision** gates the work that rests on it (Q3 before C3);
+#   * a **measurement** gates the item it explains (F22 before F11, because the
+#     generator cannot reach the band until §5.2 allows a second guard post);
+#   * a **supersession** gates its own residue (C1 before C21, because §29.1
+#     cannot be regenerated until the model it restates is settled).
+#
+# Every edge below is argued in the item's own text. `tools/check_dependencies.py`
+# rejects an id that does not exist and a cycle, and `docs/design/dependencies.md`
+# is generated from it.
+
+DEPENDS = {
+    # -- detection: one model, and the copies that still carry the old one
+    "C21": ["C1", "D15"],
+    "C15": ["C1"],
+
+    # -- the raid payout, which is one chain from the level term outward
+    "C2": ["C4"],               # §9.6's L is undefined until C4 says what it is
+    "F14": ["C2", "D16"],       # the fill term hangs off §9.6's formula and the load rate
+    "F19": ["F14", "F21"],      # what an attempt pays, and how far skill moves it
+    "G4": ["C2", "D16"],
+
+    # -- sinks and storage
+    "C18": ["F17"],             # the cap only means something under a pegged upkeep
+    "C28": ["F17"],             # births only bind once Essence is scarce
+
+    # -- the economy tables, and the decisions §5.9 took
+    "Q1": ["Q8"],               # posts-to-guards is the missing conversion
+    "Q4": ["Q1"],
+    "C19": ["Q1", "Q4"],
+    "C27": ["Q1"],
+    "Q6": ["C19"],              # the 1,019 days predates §5.9's re-run
+
+    # -- law rarity, and the building that now decides the page economy
+    "C24": ["C8"],
+    "Q3": ["C8"],
+    "C3": ["Q3"],
+    "C23": ["C3"],
+
+    # -- the roster, and the attributes three laws read
+    "C6": ["D15"],              # §11.2 becomes a generated index
+    "G12": ["C26"],
+
+    # -- the generator: the chain this session measured end to end
+    "F22": ["C5", "Q8"],        # §5.2's post count is inside C5's budget question
+    "F11": ["F22"],
+    "F9": ["F22", "F11"],
+    "F13": ["F11"],
+    "F12": ["F11"],
+    "F16": ["F9"],
+
+    # -- defence balance
+    "F15": ["F16", "F8", "C5"],
+    "F20": ["D25", "F15"],      # the Spire's reach is what makes 70% nearly true
+    "F21": ["F20"],
+
+    # -- the Vault phase
+    "D16": ["F5"],
+    "C22": ["D16"],
+    "D17": ["F4"],
+    "G2": ["F4"],
+
+    # -- wards and pylons
+    "G3": ["C5"],
+    "G5": ["G3"],
+
+    # -- laws as engine features
+    "G10": ["F10"],             # F10 supplies the classification this gap asked for
+    "F10": ["C26"],             # three laws read attributes no table carries
+    "F23": ["D14"],
+    "D14": ["D13"],
+    "C25": ["D13"],
+
+    # -- scope, which everything about size runs through
+    "D6": ["F10"],
+    "Q5": ["D6", "F10", "F23"],
+    "G11": ["Q5"],
+
+    # -- validating without players
+    "C29": ["D20"],
+    "G9": ["D20"],
+    "D4": ["C1", "C2", "C3", "C5", "C6"],   # nothing locks while a system has two specs
+}
+
 
 EDITS = {
 

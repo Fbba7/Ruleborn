@@ -1,0 +1,244 @@
+#!/usr/bin/env python3
+"""What has to be settled before what, checked and then written out.
+
+    python3 tools/check_dependencies.py             # validate and summarise
+    python3 tools/check_dependencies.py --write     # also write docs/design/dependencies.md
+    python3 tools/check_dependencies.py --self-test # prove the checks can fail
+
+Why this exists
+---------------
+The register says what is wrong with the design, a hundred times over, and says
+nothing about the order. That is fine while one person holds it all in their
+head and useless the moment the work is handed on — most of these items cannot
+be worked at all until something else is settled, and which ones is not obvious
+from reading them.
+
+`DEPENDS` in `audit_register.py` records the edges. This rejects an edge to an
+id that does not exist and any cycle, then sorts the register into what can be
+worked now and what is waiting, and emits a self-contained brief that can be
+read without this repository.
+
+An edge is a claim, and like every other claim here it is only as good as the
+item text that argues for it. What this file guarantees is that the graph is
+well formed, not that it is right.
+"""
+
+import html
+import pathlib
+import re
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+
+OUT = ROOT / "docs" / "design" / "dependencies.md"
+
+#: A status that means the item no longer blocks anything.
+SETTLED = {"done", "adopted", "fixed", "withdrawn"}
+
+
+def plain(text: str) -> str:
+    """A register title without its markup. The register is rendered to HTML as
+    well as to this file, so a few titles carry tags; markdown would show them."""
+    return html.unescape(re.sub(r"<[^>]+>", "", text))
+
+
+def load():
+    from audit_register import DEPENDS, REGISTER, RESEARCH, V3
+
+    def status_of(item: dict) -> str:
+        """The same rule `build_audit.py` renders with, deliberately.
+
+        V3 records what version 3.0 did about an item, and that is *not* the same
+        as the item being settled: it carries a status only where v3.0 actually
+        resolved the item, and many entries are notes on a fix that stopped
+        short. An earlier draft of this file treated every V3 entry as fixed,
+        which quietly marked five blocking contradictions and four open decisions
+        as settled and emptied the decisions section of the brief.
+        """
+        return V3.get(item["id"], {}).get("status") or item.get("status", "open")
+
+    by_id = {i["id"]: {**i, "status": status_of(i)} for i in REGISTER}
+    return by_id, DEPENDS, RESEARCH
+
+
+def validate(by_id, depends) -> list:
+    problems = []
+    for item, needs in depends.items():
+        if item not in by_id:
+            problems.append(f"{item} has dependencies but is not in the register")
+        for need in needs:
+            if need not in by_id:
+                problems.append(f"{item} depends on {need}, which does not exist")
+            if need == item:
+                problems.append(f"{item} depends on itself")
+
+    # Cycles. A cycle means two items each wait for the other, which is never a
+    # plan — it is a sign the edge is pointing the wrong way somewhere.
+    state = {}
+
+    def walk(node, trail):
+        if state.get(node) == "done":
+            return
+        if state.get(node) == "open":
+            problems.append("a cycle: " + " -> ".join(trail + [node]))
+            return
+        state[node] = "open"
+        for nxt in depends.get(node, []):
+            if nxt in by_id:
+                walk(nxt, trail + [node])
+        state[node] = "done"
+
+    for node in list(by_id):
+        walk(node, [])
+    return problems
+
+
+def unsettled(by_id, item_id) -> bool:
+    item = by_id.get(item_id)
+    return bool(item) and item["status"] not in SETTLED
+
+
+def blockers(by_id, depends, item_id) -> list:
+    return [d for d in depends.get(item_id, []) if unsettled(by_id, d)]
+
+
+def unlocks(by_id, depends, item_id) -> set:
+    """Everything that is waiting on this item, directly or through others."""
+    reverse = {}
+    for item, needs in depends.items():
+        for need in needs:
+            reverse.setdefault(need, []).append(item)
+    seen, stack = set(), list(reverse.get(item_id, []))
+    while stack:
+        node = stack.pop()
+        if node in seen:
+            continue
+        seen.add(node)
+        stack.extend(reverse.get(node, []))
+    return {n for n in seen if unsettled(by_id, n)}
+
+
+def brief(by_id, depends, research) -> str:
+    """The portable version: readable with no access to this repository."""
+    open_items = [i for i in by_id.values() if unsettled(by_id, i["id"])]
+    ready = [i for i in open_items if not blockers(by_id, depends, i["id"])]
+    waiting = [i for i in open_items if blockers(by_id, depends, i["id"])]
+    decisions = [i for i in open_items if i["kind"] == "decision"]
+
+    out = ["# What has to be settled before what", "",
+           "Generated by `tools/check_dependencies.py` from the audit register, so "
+           "it cannot drift from the items it orders.", "",
+           f"{len(by_id)} items tracked, {len(open_items)} still open. "
+           f"**{len(ready)} can be worked now**; {len(waiting)} are waiting on "
+           "something else.", "",
+           "\"Open\" here means not yet settled, which includes items with a "
+           "drafted resolution waiting for sign-off. An item's dependencies are "
+           "argued in its own text; this file only puts them in order.", "",
+           "---", "", "## The decisions, and what each one unlocks", "",
+           "These cannot be settled by reading the document more carefully. Each is "
+           "a judgement, and the number beside it is how much of the register is "
+           "waiting on it, directly or through something else.", ""]
+
+    for item in sorted(decisions, key=lambda i: -len(unlocks(by_id, depends, i["id"]))):
+        waits = unlocks(by_id, depends, item["id"])
+        held = blockers(by_id, depends, item["id"])
+        out.append(f"### {item['id']} — {plain(item['title'])}")
+        out.append("")
+        out.append(f"Unlocks **{len(waits)}** item(s)"
+                   + (": " + ", ".join(sorted(waits)) if waits else "")
+                   + ".")
+        if held:
+            out.append("")
+            out.append(f"Cannot be settled yet — waiting on {', '.join(held)}.")
+        out.append("")
+
+    out += ["---", "", "## Ready to work now", "",
+            "Nothing these depend on is still open.", "",
+            "| item | severity | status | title | unlocks |", "|---|---|---|---|---|"]
+    for item in sorted(ready, key=lambda i: (i["severity"], i["id"])):
+        n = len(unlocks(by_id, depends, item["id"]))
+        out.append(f"| {item['id']} | {item['severity']} | {item['status']} | "
+                   f"{plain(item['title'])} | {n or ''} |")
+
+    out += ["", "---", "", "## Waiting on something else", "",
+            "| item | severity | title | blocked by |", "|---|---|---|---|"]
+    for item in sorted(waiting, key=lambda i: (i["severity"], i["id"])):
+        out.append(f"| {item['id']} | {item['severity']} | {plain(item['title'])} | "
+                   f"{', '.join(blockers(by_id, depends, item['id']))} |")
+
+    out += ["", "---", "", "## The chains worth knowing", "",
+            "Four runs of the graph carry most of it.", "",
+            "**The generator.** C5 and Q8 settle how many guard posts a realm has "
+            "→ F22 (one post puts §13.2's band out of reach at realms 1 and 2) → "
+            "F11 (weaving laws by sign) → F9 (generated defences miss the band) and "
+            "F13 (§12.22 has no targets to offer). Nothing downstream can be fixed "
+            "by improving the generator alone.", "",
+            "**The raid payout.** C4 says what §9.6's level term is → C2 picks one "
+            "payout model → F14 re-derives the 0.46 the progression curve rests on "
+            "→ F19 turns that into a band, because skill moves it 1.39×.", "",
+            "**Law rarity.** C8 settles the Library, which now decides the page "
+            "economy → Q3 chooses three ranks or five → C3 retags the sheets → C23 "
+            "fixes the three sections still pricing three ranks.", "",
+            "**Scope.** F10 classifies the 48 laws by what each needs from the "
+            "engine → D6 proposes which 24 to cut → Q5 is the decision → G11 "
+            "(languages) follows from it.", ""]
+
+    out += ["---", "", "## What cannot be settled from inside the repository", "",
+            "Everything above is arithmetic against the design document or a "
+            "measurement the simulation harness can make. These are not: each "
+            "needs a number from the outside world, and re-reading the document "
+            "will not produce it. Each question is written to stand alone.", ""]
+    for item_id, question in sorted(research.items()):
+        item = by_id.get(item_id)
+        if not item:
+            continue
+        out.append(f"**{item_id} — {plain(item['title'])}**  ")
+        out.append(f"*{item['severity']}, {item['status']}.* {question}")
+        out.append("")
+    return "\n".join(out)
+
+
+def main() -> int:
+    by_id, depends, research = load()
+
+    if "--self-test" in sys.argv:
+        fake = {"A": {"id": "A", "status": "open", "kind": "finding",
+                      "severity": "minor", "title": "a"},
+                "B": {"id": "B", "status": "open", "kind": "finding",
+                      "severity": "minor", "title": "b"}}
+        if not validate(fake, {"A": ["B"], "B": ["A"]}):
+            print("  a two-item cycle was not detected.")
+            return 1
+        if not validate(fake, {"A": ["ZZ"]}):
+            print("  an edge to a missing item was not detected.")
+            return 1
+        if validate(fake, {"A": ["B"]}):
+            print("  a well-formed graph was reported as broken.")
+            return 1
+        print("  the dependency check catches cycles and missing items.")
+        return 0
+
+    problems = validate(by_id, depends)
+    if problems:
+        print("\nThe dependency graph is malformed:")
+        for p in problems:
+            print(f"  {p}")
+        return 1
+
+    open_items = [i for i in by_id.values() if unsettled(by_id, i["id"])]
+    ready = [i for i in open_items if not blockers(by_id, depends, i["id"])]
+    edges = sum(len(v) for v in depends.values())
+    print(f"\n  {edges} dependencies across {len(depends)} items, no cycles.")
+    print(f"  {len(open_items)} items still open, of which {len(ready)} can be "
+          f"worked now.")
+
+    if "--write" in sys.argv:
+        OUT.write_text(brief(by_id, depends, research) + "\n", encoding="utf-8")
+        print(f"  {OUT.relative_to(ROOT)} written.")
+    print()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
