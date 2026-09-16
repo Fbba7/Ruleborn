@@ -164,9 +164,56 @@ choice, and they do **not** make Response independent of Guards.
 | What it is | The Vault answers to the Spire. §9.6 already distinguishes exposed wealth from sealed and prices a fully sealed island at 0.7, so the quantity exists |
 | Trigger | The first hit on the Vault. Cracking is loud (§12.17); the Spire is what hears it |
 | Grace | 25 seconds, minus the realm level — 22 s at realm 3, 20 s at realm 5 |
-| Then | The exposed share falls at 8 a second, whether or not the Vault is open yet |
+| Then | The exposed share falls at 20 a second, whether or not the Vault is open yet |
+| **Floor** | **It stops at 45% of what was there and never goes past it.** §9.6's own rule: "a clean raid on a fully sealed island still pays 0.7 — nobody ever leaves with nothing" |
 | Scaling | By Spire level, which is earned rather than bought — §13.4's own rule for this layer |
-| What it costs a crew | Nothing until they have taken 47% of the exposed share. See above; this is the dial that has no middle |
+| What it costs a crew | About 29% of the haul at 8 a second — and, more usefully, it moves where they stop |
+
+### And this is what the layer is actually for
+
+Measured after the harness was corrected, the re-seal does the one thing nothing
+else in the design does: **it moves the raider's stopping decision.** The same
+sweep as `loading.md`'s, varying only the re-seal rate:
+
+| | 50% | 60% | 70% | 80% | 90% | 100% | peak |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| no re-seal | 0.096 | 0.106 | 0.122 | 0.120 | 0.160 | **0.164** | 100% |
+| 8 a second | 0.076 | 0.100 | 0.099 | 0.114 | **0.117** | 0.117 | **90%** |
+| 15 a second | 0.076 | 0.093 | 0.091 | 0.088 | 0.088 | 0.088 | **60%** |
+
+The rate is a **dial on where the raider's break-even sits** — and §12.19's
+stated 70% falls between the two rates tested. So the document's number is not
+wrong; it is *unimplemented*. §12.19 describes the game as it would be with a
+mechanism §13.2 names and never specifies, and a re-seal somewhere near 11 or 12
+a second would make its sentence true.
+
+Compare what cutting §5.4's clock by 45% did to the same curve: nothing. That is
+the case for this layer, and it is much stronger than the one this file opened
+with.
+
+**The trade-off, and the rule in §9.6 that removes it.** Raising the rate costs
+hold rate: 45.0% with no re-seal, 48.5% at 8, 53.0% at 15, against §13.2's 30–45%
+band. The mechanism is blunt — a fast re-seal empties the Vault before a slow
+crew loads anything, so the raid banks zero and is foiled.
+
+§9.6 already forbids that: *"A clean raid on a fully sealed island still pays 0.7
+— nobody ever leaves with nothing."* With that floor applied to the re-seal:
+
+| | peak | hold |
+| --- | ---: | ---: |
+| no re-seal | 100% | 45.0% |
+| 12 a second, no floor | 60% | 53.0% |
+| 12 a second, floor 30% | 80% | 46.0% |
+| **20 a second, floor 45%** | **80%** | **44.5%** |
+
+The **floor** sets where the break-even lands; the **rate** only sharpens the
+approach. At 20 a second with a 45% floor the break-even moves from 100% to 80%
+and the hold rate is 44.5% — inside §13.2's band and within noise of the
+baseline.
+
+**So the layer costs the defender nothing in the metric §13.2 cares about, and
+buys the decision §12.6 asks for.** That is the case for specifying the Spire's
+reach, and it is a much better one than this file opened with.
 
 ### The guardian Sage's single power
 

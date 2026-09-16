@@ -60,7 +60,19 @@ CRACK_AWARENESS_PER_5S = 10              #: §12.6, percent added to Heart guard
 # `response_model="published"` is the default, so the harness keeps reproducing
 # the document as written unless it is asked for the proposal.
 SPIRE_GRACE_SECONDS = 25                 #: from the first hit on the Vault, minus the realm level
-SPIRE_RESEAL_PER_SECOND = 8              #: against an exposed share of 560
+SPIRE_RESEAL_PER_SECOND = 20             #: against an exposed share of 560
+#: §9.6's own floor, applied to the re-seal: "a clean raid on a fully sealed
+#: island still pays 0.7 — nobody ever leaves with nothing."
+#:
+#: Read as a guarantee rather than as a cap: **this share of the exposed loot is
+#: always reachable**, and the Spire races the crew for the rest. Without it a
+#: fast re-seal empties the Vault before a slow crew loads anything, so the raid
+#: banks zero and counts as foiled — which pushes the hold rate out of
+#: §13.2's 30–45% band as the rate rises. With it the mechanism moves
+#: the raider's stopping decision without ever taking the raid itself: measured,
+#: 20 a second stopping at 45% moves the break-even from 100% to 80% and leaves
+#: the hold rate at 44.5% against a 45.0% baseline.
+SPIRE_RESEAL_FLOOR_PERCENT = 45
 SAGE_SLOW_PERCENT = 30                   #: the Sage's single power: Weight
 SAGE_TICKS = 20 * TPS
 
@@ -225,6 +237,7 @@ class Heist:
         #: spec/response.md, proposes.
         self.spire_grace = SPIRE_GRACE_SECONDS
         self.spire_reseal = SPIRE_RESEAL_PER_SECOND
+        self.spire_floor = SPIRE_RESEAL_FLOOR_PERCENT
         self.sage_ticks = 0
         self.resealed = 0
         self._reseal_acc = 0
@@ -238,6 +251,8 @@ class Heist:
         self.vault_health = VAULT_HEALTH_PER_LEVEL * realm_level
         self.vault_open = False
         self.exposed = sum(ROLES[r]["carry"] for r in crew_roles) * exposed_pct // 100
+        #: What the Spire's reach re-seals *down to*, never past (§9.6's floor).
+        self.exposed_at_start = self.exposed
         self.crew = [Member(r, self.island.entry[0] * U + U // 2,
                             self.island.entry[1] * U + U // 2) for r in crew_roles]
         self.guards = []
@@ -513,12 +528,13 @@ class Heist:
         if not (self.response and self.response_model == "proposed"):
             return
         grace = max(2, self.spire_grace - self.realm_level) * TPS
-        if self.tick - self.crack_started_at < grace or self.exposed <= 0:
+        floor = self.exposed_at_start * self.spire_floor // 100
+        if self.tick - self.crack_started_at < grace or self.exposed <= floor:
             return
         # Accumulated rather than divided, so a rate that is not a whole number
         # of units a tick stays exact and stays deterministic.
         self._reseal_acc += self.spire_reseal
-        back = min(self.exposed, self._reseal_acc // TPS)
+        back = min(self.exposed - floor, self._reseal_acc // TPS)
         self._reseal_acc -= back * TPS
         self.exposed -= back
         self.resealed += back

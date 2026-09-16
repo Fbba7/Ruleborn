@@ -180,7 +180,7 @@ machinery they need:
 
 | | Change | What it costs a crew |
 | --- | --- | --- |
-| **a** | **The Spire's reach** (`response.md`) — the Vault re-seals while it is being robbed | Loot, at a rate, from a moment the defender's level sets |
+| **a** | **The Spire's reach with §9.6's floor** (`response.md`) — the Vault re-seals while it is being robbed, down to a share and no further | Loot, at a rate, from a moment the defender's level sets — **measured, and the only candidate that works** |
 | **b** | **Deepen the grade penalty** — loud 0.7 → 0.5, partial 0.4 → 0.25 | Multiplies the whole haul, so it scales with what is at stake |
 | ~~c~~ | ~~Tighten §5.4's clock~~ | **Measured and ruled out** — it kills crews on the way in |
 
@@ -207,6 +207,40 @@ crew stops, and a cost priced in time does not.** If the rate scales with the
 defender's Spire level, as `response.md` proposes, then a defender's spending
 sets the raider's break-even — which is a far better thing for a defence layer to
 do than making raids uniformly harder.
+
+### The trade-off it creates, and the rule in §9.6 that removes it
+
+Raising the rate buys a lower break-even and costs hold rate: 45.0% with no
+re-seal, 48.5% at 8 a second, 53.0% at 15, against §13.2's 30–45% band. The
+mechanism is blunt — a fast re-seal empties the Vault before a slow crew loads
+anything, so the raid banks zero and counts as foiled.
+
+**§9.6 already forbids that outcome**, in a clause written for a different
+purpose: *"A clean raid on a fully sealed island still pays 0.7 — nobody ever
+leaves with nothing."* Applied to the re-seal, the Vault stops sealing at a share
+of what was there and never goes past it:
+
+| | 50% | 60% | 70% | 80% | 90% | 100% | peak | hold |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| no re-seal | 0.096 | 0.106 | 0.122 | 0.120 | 0.160 | **0.164** | 100% | 45.0% |
+| 12/s, no floor | 0.075 | 0.096 | 0.094 | 0.083 | 0.083 | 0.083 | 60% | **53.0%** |
+| 12/s, floor 30% | 0.078 | 0.100 | 0.100 | **0.120** | 0.110 | 0.110 | **80%** | 46.0% |
+| 20/s, floor 30% | 0.075 | 0.091 | 0.086 | **0.096** | 0.096 | 0.096 | **80%** | 48.0% |
+| 20/s, floor 45% | 0.079 | 0.097 | 0.096 | **0.098** | 0.098 | 0.098 | **80%** | **44.5%** |
+
+With a floor in place the **floor** sets where the break-even lands and the
+**rate** only sharpens the approach to it. At 20 a second with a 45% floor the
+break-even moves from 100% to 80% and the hold rate is **44.5%** — inside
+§13.2's band, and within noise of the 45.0% baseline.
+
+So the mechanism costs the defender nothing in the metric §13.2 cares about, and
+buys the decision §12.6 asks for. 80% against §12.19's stated 70% is closer than
+these sweeps can distinguish.
+
+**Two things the document names and never specifies — §13.2's "the Spire's reach"
+and §9.6's floor — combine to make §12.19's sentence nearly true.** That is a
+better outcome than any of the three findings that led here: the numbers were not
+wrong, the mechanism that would have justified them was missing.
 
 ### 2. Say that the rule varies, and re-derive the number
 

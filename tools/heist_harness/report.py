@@ -152,7 +152,7 @@ def attribution(n: int = 50, realm_level: int = 3) -> str:
     return "\n".join(lines)
 
 
-def break_even(n: int = 100, realm_level: int = 3, links: int = 1) -> str:
+def break_even(n: int = 250, realm_level: int = 3, links: int = 1) -> str:
     """Is §12.19's 70% break-even where the expected haul actually peaks?
 
     §12.19 states it as a fact and calls it load-bearing: "The break-even sits
@@ -211,10 +211,16 @@ def break_even(n: int = 100, realm_level: int = 3, links: int = 1) -> str:
     lines.append(f"  E at 70% is {at_70[1]:.4f}; at the peak it is {peak[1]:.4f}, "
                  f"{100 * (peak[1] / at_70[1] - 1):+.0f}%.")
     lines.append(f"  {n} raids a row, {len(rows) * n:,} runs.")
+    lines.append("")
+    lines.append("  Read the shape, not the argmax. At 150 raids a row this curve")
+    lines.append("  rose monotonically to 100%, which would have meant no break-even")
+    lines.append("  at all; at 300 it turns over near 90%. A peak located from one")
+    lines.append("  small sweep is a peak located from noise \u2014 the finding that")
+    lines.append("  survives is that 70% is below the turn, not where the turn is.")
     return "\n".join(lines)
 
 
 def all_reports(n: int = 50) -> str:
     return "\n\n" + "\n\n\n".join(
         [tension_and_depth(n), defence_balance(max(20, n // 2)),
-         attribution(n), break_even(max(40, n))]) + "\n"
+         attribution(n), break_even(max(120, n))]) + "\n"
