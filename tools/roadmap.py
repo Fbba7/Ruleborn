@@ -201,15 +201,24 @@ dict(
                     "are worth keeping; together they mean the spec cannot be "
                     "read, diffed or implemented without the archive (D10).",
              blocked_by=["T1.4"]),
-        dict(id="T1.9", owner="claude", status="ready",
+        dict(id="T1.9", owner="claude", status="done",
              title="Carry out the note rebalance \u00a78.8 says is already done",
-             detail="Notes are 2:1 imbalanced on the axis that matters most "
-                    "— Glow 12 laws, its opposite Hush 6, and Hush is the "
-                    "hiding note (D13). And all twelve chords are reachable with "
-                    "two laws rather than the three §8.5 describes (D14). Notes "
-                    "are frozen at eight, so this is a permanent constraint on "
-                    "every future season.",
-             evidence="python3 tools/check_design_consistency.py"),
+             detail="\u00a78.8 states in the past tense that \u201cthe table now "
+                    "runs eight or nine laws per note\u201d. All 48 law sheets "
+                    "give Glow 12, Flow 11, Echo 10, Weight 9, Spark 8, Bloom 8, "
+                    "Veil 7, Hush 6 \u2014 identical to v2.3 (C25), and Hush is "
+                    "the hiding note, so the imbalance runs against the side "
+                    "paying for it.<br><br><strong>Now written out.</strong> Nine "
+                    "edits reach nine laws for every note, each argued from "
+                    "\u00a78.1's own definition rather than chosen to make the "
+                    "arithmetic work, with every chord still reachable at "
+                    "unchanged cost. The tool refuses a proposal that puts two "
+                    "opposite notes on one law \u2014 which it caught in the first "
+                    "draft. It does not fix D14: the cheapest chord still costs 33 "
+                    "stability against a day-2 capacity of 51, which is a gating "
+                    "question rather than a distribution one.",
+             evidence="python3 tools/note_rebalance.py",
+             register=["C25", "D13", "D14"]),
     ],
 ),
 

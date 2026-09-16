@@ -1655,11 +1655,21 @@ V3 = {
     "still runs, and it is still the only artefact that can answer the one question "
     "§19.27 says simulation cannot. See D20."),
 
-"D13": dict(note=
-    "<strong>Claimed, not done.</strong> §8.8 states \u201cThe table now runs eight or "
-    "nine laws per note\u201d. Parsing all 48 law sheets gives Glow 12, Flow 11, Echo "
-    "10, Weight 9, Spark 8, Bloom 8, Veil 7, Hush 6 \u2014 unchanged from v2.3. "
-    "Tracked as C25."),
+"D13": dict(status="proposed", note=
+    "<strong>Claimed, not done \u2014 and now written out.</strong> \u00a78.8 "
+    "states \u201cThe table now runs eight or nine laws per note\u201d. Parsing "
+    "all 48 law sheets gives Glow 12, Flow 11, Echo 10, Weight 9, Spark 8, Bloom "
+    "8, Veil 7, Hush 6 \u2014 unchanged from v2.3 (C25).<br><br>"
+    "<code>tools/note_rebalance.py</code> is the change that paragraph describes, "
+    "law by law: <strong>nine edits reach nine laws for every note</strong>, each "
+    "argued from \u00a78.1\u2019s own definition rather than chosen to make the "
+    "arithmetic work. Flock and Crystal growth give up Glow for Veil because "
+    "neither lights up and both transform; Aurora gives up Flow because it moves "
+    "nothing; Day and night gains Hush because the light-and-dark law carried "
+    "neither Glow nor Hush.<br><br>The tool refuses to emit a proposal that puts "
+    "two opposite notes on one law \u2014 which it caught in the first draft, "
+    "where Aurora would have carried Glow and Hush \u2014 and checks that every "
+    "chord stays reachable afterwards. All twelve do, at unchanged cost."),
 
 "D15": dict(note=
     "Vindicated in the worst way. §30.18 draws exactly this conclusion \u2014 "

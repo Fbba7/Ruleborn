@@ -181,8 +181,8 @@
       measured (&sect;13.3, &sect;19.27).</p>
 
     <div class="summary">
-      <div><span class="n">10</span><span class="k">tasks done</span></div>
-      <div><span class="n">7</span><span class="k">live now</span></div>
+      <div><span class="n">11</span><span class="k">tasks done</span></div>
+      <div><span class="n">6</span><span class="k">live now</span></div>
       <div><span class="n">5</span><span class="k">waiting on you</span></div>
       <div><span class="n">55/86</span><span class="k">register items drafted</span></div>
       <div><span class="n">33</span><span class="k">signed off</span></div>
@@ -198,7 +198,7 @@
   <nav class="filters" aria-label="Filter the roadmap">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">34</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">8</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">10</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">5</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">15</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">2</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">11</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">4</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">15</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">2</span></button>
   </nav>
 
   <main id="list">
@@ -329,7 +329,7 @@
             <h2>Reconcile the document</h2>
             <p class="sub">Days of desk time, and the cheapest work in the plan</p>
           </div>
-          <span class="scount">2/9</span>
+          <span class="scount">3/9</span>
         </div>
         <p class="blurb">Four systems are specified twice and the later spec never retired the earlier one. Nothing downstream can be locked while two answers exist. Most of this is drafted; none of it is signed off, and the design document itself is still untouched.</p>
         
@@ -477,18 +477,26 @@
         
         <p class="blockers">After <a href="#T1-4">T1.4</a> Sign off, or overrule, each drafted resolution</p>
       </article>
-      <article class="task st-ready" id="T1-9"
-               data-status="ready" data-owner="claude">
+      <article class="task st-done" id="T1-9"
+               data-status="done" data-owner="claude">
         <header class="task-head">
           <span class="tid">T1.9</span>
           <h3>Carry out the note rebalance §8.8 says is already done</h3>
-          <span class="status st-ready">Ready to start</span>
+          <span class="status st-done">Done</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">Notes are 2:1 imbalanced on the axis that matters most — Glow 12 laws, its opposite Hush 6, and Hush is the hiding note (D13). And all twelve chords are reachable with two laws rather than the three §8.5 describes (D14). Notes are frozen at eight, so this is a permanent constraint on every future season.</p>
+        <p class="detail">§8.8 states in the past tense that “the table now runs eight or nine laws per note”. All 48 law sheets give Glow 12, Flow 11, Echo 10, Weight 9, Spark 8, Bloom 8, Veil 7, Hush 6 — identical to v2.3 (C25), and Hush is the hiding note, so the imbalance runs against the side paying for it.<br><br><strong>Now written out.</strong> Nine edits reach nine laws for every note, each argued from §8.1's own definition rather than chosen to make the arithmetic work, with every chord still reachable at unchanged cost. The tool refuses a proposal that puts two opposite notes on one law — which it caught in the first draft. It does not fix D14: the cheapest chord still costs 33 stability against a day-2 capacity of 51, which is a gating question rather than a distribution one.</p>
         
+        <div class="prog" title="C25 D13 D14">
+          <div class="bar">
+            <span class="fill" style="width:66.7%"></span>
+            <span class="fill settled" style="width:33.3%"></span>
+          </div>
+          <p class="prog-n"><strong>2 of 3</strong> drafted &middot;
+             <strong>1</strong> signed off</p>
+        </div>
         
-        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 tools/check_design_consistency.py</code></p>
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 tools/note_rebalance.py</code></p>
         
       </article>
       </section>
