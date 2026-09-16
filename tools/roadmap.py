@@ -201,8 +201,8 @@ dict(
                     "are worth keeping; together they mean the spec cannot be "
                     "read, diffed or implemented without the archive (D10).",
              blocked_by=["T1.4"]),
-        dict(id="T1.9", owner="you", status="ready",
-             title="Two content-balance passes, before any law is authored",
+        dict(id="T1.9", owner="claude", status="ready",
+             title="Carry out the note rebalance \u00a78.8 says is already done",
              detail="Notes are 2:1 imbalanced on the axis that matters most "
                     "— Glow 12 laws, its opposite Hush 6, and Hush is the "
                     "hiding note (D13). And all twelve chords are reachable with "
@@ -245,7 +245,7 @@ dict(
                     "second page faucet \u2014 the Library \u2014 which the model "
                     "must carry before any page total can be re-derived. "
                     "\u00a710.5 gives three of its ten levels (C24)."),
-        dict(id="T2.4", owner="claude", status="ready",
+        dict(id="T2.4", owner="claude", status="done",
              title="Regenerate \u00a79.3, \u00a710.2, \u00a714.2 and \u00a714.3 from the model",
              detail="<strong>Unblocked by v3.0.</strong> \u00a75.9 settles the "
                     "building and roster rules \u2014 one producer of each kind "
@@ -253,9 +253,15 @@ dict(
                     "heist withheld from work. The published tables were not "
                     "re-run against that decision: day 2 is still 2,100 Starlight "
                     "and day 8 still 6,200. This is C19, and it is now the "
-                    "clearest instance of the thing the register exists to stop.",
-             evidence="python3 -m tools.economy_model production",
-             register=["C19"]),
+                    "clearest instance of the thing the register exists to stop."
+                    "<br><br><strong>Done.</strong> The re-run is generated at "
+                    "<code>docs/design/generated/pacing.md</code>, beside the "
+                    "published figures rather than replacing them \u2014 the delta "
+                    "is the decision. The first month holds; from day 91 the "
+                    "published figures are up to twice what \u00a75.9's rules "
+                    "produce, and Keeper 40 arrives 94 days late.",
+             evidence="docs/design/generated/pacing.md",
+             register=["C19", "C27"]),
     ],
 ),
 

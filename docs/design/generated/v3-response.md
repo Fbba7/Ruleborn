@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 85 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 21 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
+v3.0 answered the audit directly, in §30.18. Of 86 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 22 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 
@@ -39,7 +39,7 @@ v3.0 answered the audit directly, in §30.18. Of 85 items, **18 are fixed in the
 | **C7** | Tick rate: 20 Hz or 30 Hz? | Untouched: 20 steps a second and 30 both still appear. |
 | **C8** | The Library is load-bearing and specified nowhere | The Library exists: §10.5 gives it a placement and three levels. Three, not ten — levels 1, 5 and 10, where every other building lists every level. And §26.1 still says 16 building types while there are now 17 (C24). |
 | **C10** | Trait count: 30, 31 or 32? | Untouched: 31 traits authored, 30 in §26.1, a 32nd named in §17.3. |
-| **C19** | The production tables describe a universe the build rules do not permit | The decision is made (§5.9) and §9.3’s tables were not regenerated against it — day 2 is still 2,100 Starlight, day 8 still 6,200. This is the item whose recommendation was “regenerate from the model rather than editing by hand”, and it is now the clearest remaining instance. |
+| **C19** | The production tables describe a universe the build rules do not permit | The decision is made (§5.9) and the tables were not regenerated against it. Now measured, by re-running the model under §5.9’s three rules — one producer per realm, pro-rata staffing, the crew assigned rather than timed: day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31 &nbsp;&nbsp;&nbsp;&nbsp;91 &nbsp;&nbsp;&nbsp;181 &nbsp;&nbsp;&nbsp;301 published &nbsp;17,300 &nbsp;94,100 &nbsp;152,800 &nbsp;256,100 under §5.9 &nbsp;14,633 &nbsp;46,817 &nbsp;&nbsp;62,627 &nbsp;122,495 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-15% &nbsp;&nbsp;&nbsp;-50% &nbsp;&nbsp;&nbsp;&nbsp;-59% &nbsp;&nbsp;&nbsp;&nbsp;-52% The first month holds and then the curve breaks. Keeper 5 to 20 land within two days of published, which is the evidence the model reads §5.9 correctly; Keeper 28 is 18 days late and Keeper 40 is 94 days late — half a year becomes nine months. Of the three rules, assigning the crew costs 27–35% from the first week and pro-rata staffing costs nothing until the roster binds. The re-run is generated at docs/design/generated/pacing.md. |
 | **C20** | The 48 law sound signatures are six school sounds repeated | Untouched: 48 laws still share 6 sound signatures. |
 | **D2** | The paper prototype became a browser prototype | Overtaken. §19.27 now answers every pre-code question by simulation rather than by people, so the published prototype is no longer on the critical path. It still runs, and it is still the only artefact that can answer the one question §19.27 says simulation cannot. See D20. |
 | **D13** | The note distribution should be rebalanced before the law table is authored | Claimed, not done. §8.8 states “The table now runs eight or nine laws per note”. Parsing all 48 law sheets gives Glow 12, Flow 11, Echo 10, Weight 9, Spark 8, Bloom 8, Veil 7, Hush 6 — unchanged from v2.3. Tracked as C25. |
@@ -76,6 +76,7 @@ v3.0 answered the audit directly, in §30.18. Of 85 items, **18 are fixed in the
 | **F15** | Guards and Response are not two layers; they are one, and it is 69% of the defence |
 | **F16** | Geometry is 4% of a generated defence, against a 25% target |
 | **D23** | §13.4's ablation was built exactly as specified, Shapley included |
+| **C27** | Two rules for partial staffing: §9.2's table and §5.9's pro-rata share |
 
 ## The shape of it
 

@@ -142,6 +142,10 @@ class EconomyModel:
         (§11.6, §12.9), so a raider is unavailable for ~0.8 hours per heist, not
         for the day. This is what §11.6 calls the core trade-off of the game.
         """
+        if self.cfg.crew_assigned_not_timed:
+            # §5.9: the crew is assigned to the heist, like a guard to a post.
+            # Whether they raid once or four times a day does not change it.
+            return float(self.crew_size()) if self.arch.heists_per_day else 0.0
         hours_away = self.crew_size() * self.arch.heists_per_day * data.CREW_HOURS_PER_HEIST
         return hours_away / 24.0
 
@@ -185,10 +189,7 @@ class EconomyModel:
                     self._last_unstaffed_slots += slots - workers
                     if workers == 0:
                         continue
-                    staffing = (
-                        1.0 if (workers == slots and self.cfg.full_staffing_is_always_100)
-                        else data.STAFFING[min(workers, 3)]
-                    )
+                    staffing = self._staffing(workers, slots)
                     law_bonus = 1.0
                     realm_match = 1.0
                     if self.cfg.laws_match_realm_school and realm.kind == "outer":
@@ -200,6 +201,14 @@ class EconomyModel:
                         spec.hourly[lvl - 1] * staffing * law_bonus * realm_match * band
                     )
         return out
+
+    def _staffing(self, workers: int, slots: int) -> float:
+        """§9.2's table, or §5.9's pro-rata share. See Config.staffing_rule."""
+        if self.cfg.staffing_rule == "pro_rata":
+            return workers / slots
+        if workers == slots and self.cfg.full_staffing_is_always_100:
+            return 1.0
+        return data.STAFFING[min(workers, 3)]
 
     def daily_production(self) -> dict[str, float]:
         """What actually reaches the player, after the 12-hour storage cap (§14.1)."""

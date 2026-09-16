@@ -52,13 +52,34 @@ class Config:
     # because it materially affects early production.
     heart_second_producer_at_spire: int = 5
 
-    # -- Assumption: staffing ----------------------------------------------
+    # -- Contested since v3.0: how partial staffing pays -------------------
     #
-    # §9.2 gives staffing factors of 60% / 85% / 100% but does not say how they
-    # map onto buildings with one or two slots. The model treats a fully staffed
-    # building as 100% whatever its slot count, and applies 60% / 85% to the
-    # partial cases of a three-slot building.
+    # §9.2:  "Staffing sets 60%, 85% or 100% output."
+    # §5.9:  "A producer runs at the share of its worker slots that are filled,
+    #         so a half-staffed Well earns half."
+    #
+    # Those are different rules, and they diverge most where the roster binds:
+    # two of three slots is 85% under §9.2 and 67% under §5.9. v3.0 added §5.9
+    # and left §9.2 standing, which is C27.
+    #
+    # "table" reproduces the document as published; "pro_rata" is §5.9's rule.
+    staffing_rule: str = "table"
+
+    # §9.2's factors do not say how they map onto buildings with one or two
+    # slots. Under "table" the model treats a fully staffed building as 100%
+    # whatever its slot count.
     full_staffing_is_always_100: bool = True
+
+    # -- Contested since v3.0: what raiding costs --------------------------
+    #
+    # §11.6 has a raider away for the heist's three minutes plus rest, which
+    # works out at about 2% of the roster — finding F3.
+    # §5.9 replaces it: "A crew on a heist is assigned to it, like a guard at a
+    # post, and does not work while assigned. Five of thirty-eight is a real
+    # choice."
+    #
+    # False keeps the published behaviour; True is §5.9's rule.
+    crew_assigned_not_timed: bool = False
 
     # -- Assumption: law configuration --------------------------------------
     #

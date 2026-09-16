@@ -1455,6 +1455,24 @@ dict(id="D23", kind="deviation", severity="change", status="done",
          "seconds\u201d. In Python it is about twenty minutes. That is an "
          "argument for the Rust core, not against the method."),
 
+dict(id="C27", kind="contradiction", severity="significant", status="open",
+     title="Two rules for partial staffing: \u00a79.2's table and \u00a75.9's pro-rata share",
+     refs=["9.2", "5.9", "9.3"],
+     body="\u00a79.2: \u201c<strong>Staffing sets 60%, 85% or 100% output.</strong>"
+          "\u201d \u00a75.9, added in v3.0: \u201cA producer runs at the "
+          "<strong>share of its worker slots that are filled</strong>, so a "
+          "half-staffed Well earns half.\u201d<br><br>Those are different numbers "
+          "wherever the roster binds, and \u00a75.9 says it always binds: two of "
+          "three slots is 85% under \u00a79.2 and 67% under \u00a75.9, one of "
+          "three is 60% against 33%. \u00a79.2 is the more generous rule at every "
+          "partial count.<br><br>Worth about 11% of late-game production, and "
+          "nothing at all until the roster starts binding \u2014 which is why it "
+          "hid.",
+     rec="\u00a75.9 is the later and better-argued rule, and pro-rata is the one "
+         "that makes partial staffing a real choice rather than a rounding. "
+         "Delete \u00a79.2\u2019s sentence. This is the fourth instance of the "
+         "same pattern in v3.0 (C21\u2013C23) and the cheapest to fix."),
+
 ]
 
 # ===========================================================================
@@ -1589,10 +1607,23 @@ V3 = {
     "§26.1 still says 16 building types while there are now 17 (C24)."),
 
 "C19": dict(note=
-    "The decision is made (§5.9) and §9.3\u2019s tables were not regenerated against "
-    "it \u2014 day 2 is still 2,100 Starlight, day 8 still 6,200. This is the item "
-    "whose recommendation was \u201cregenerate from the model rather than editing by "
-    "hand\u201d, and it is now the clearest remaining instance."),
+    "The decision is made (\u00a75.9) and the tables were not regenerated against "
+    "it. Now measured, by re-running the model under \u00a75.9\u2019s three rules "
+    "\u2014 one producer per realm, pro-rata staffing, the crew assigned rather "
+    "than timed:<br><br><code>day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31 &nbsp;&nbsp;&nbsp;"
+    "&nbsp;91 &nbsp;&nbsp;&nbsp;181 &nbsp;&nbsp;&nbsp;301<br>"
+    "published &nbsp;17,300 &nbsp;94,100 &nbsp;152,800 &nbsp;256,100<br>"
+    "under \u00a75.9 &nbsp;14,633 &nbsp;46,817 &nbsp;&nbsp;62,627 &nbsp;122,495<br>"
+    "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-15% "
+    "&nbsp;&nbsp;&nbsp;-50% &nbsp;&nbsp;&nbsp;&nbsp;-59% &nbsp;&nbsp;&nbsp;&nbsp;"
+    "-52%</code><br><br>"
+    "<strong>The first month holds and then the curve breaks.</strong> Keeper 5 "
+    "to 20 land within two days of published, which is the evidence the model "
+    "reads \u00a75.9 correctly; Keeper 28 is 18 days late and Keeper 40 is "
+    "<strong>94 days late</strong> \u2014 half a year becomes nine months. Of the "
+    "three rules, assigning the crew costs 27\u201335% from the first week and "
+    "pro-rata staffing costs nothing until the roster binds. The re-run is "
+    "generated at <code>docs/design/generated/pacing.md</code>."),
 
 "G3": dict(note="Untouched. §10.3 still gives level-1 effects only, with no key for "
                 "what §10.2\u2019s \u201ceffect +15%\u201d scales."),

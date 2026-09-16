@@ -247,15 +247,15 @@
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
       register directly (&sect;30.18). 18 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. 21 items
+      what it did &mdash; including where a fix stopped short. 22 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
       out against the rule sheet &sect;7.3 claims they change.</p>
 
     <div class="summary">
-      <div><span class="n">85</span><span class="k">items tracked</span></div>
-      <div><span class="n">30</span><span class="k">open</span></div>
+      <div><span class="n">86</span><span class="k">items tracked</span></div>
+      <div><span class="n">31</span><span class="k">open</span></div>
       <div><span class="n">18</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">15</span><span class="k">done or adopted</span></div>
       <div><span class="n">26</span><span class="k">blocking the build</span></div>
@@ -264,8 +264,8 @@
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">85</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">16</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">19</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">9</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">86</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">16</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">20</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">9</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button>
   </nav>
 
   <main id="list">
@@ -670,7 +670,7 @@
         <div class="refs"><span class="ref">§9.3</span><span class="ref">§5.2</span><span class="ref">§11.5</span><span class="ref">§10.2</span><span class="ref">§14.2</span><span class="ref">§14.3</span></div>
         <p class="body">§9.3's published production figures fit a universe with <strong>one</strong> producer of each kind per realm, fully staffed. §5.2 permits <strong>two</strong> from realm level 3. And §11.5's roster ceiling of 38 characters cannot fully staff even the one-producer version, which needs 63 worker slots. All three tables cannot be correct at once. See findings F1 and F2.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Decide the building and roster rules, then regenerate §9.3, §10.2, §14.2 and §14.3 from the economy model rather than editing them by hand — hand-editing is what produced this.</p>
-        <p class="v3"><span class="vlabel">v3.0</span> The decision is made (§5.9) and §9.3’s tables were not regenerated against it — day 2 is still 2,100 Starlight, day 8 still 6,200. This is the item whose recommendation was “regenerate from the model rather than editing by hand”, and it is now the clearest remaining instance.</p>
+        <p class="v3"><span class="vlabel">v3.0</span> The decision is made (§5.9) and the tables were not regenerated against it. Now measured, by re-running the model under §5.9’s three rules — one producer per realm, pro-rata staffing, the crew assigned rather than timed:<br><br><code>day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31 &nbsp;&nbsp;&nbsp;&nbsp;91 &nbsp;&nbsp;&nbsp;181 &nbsp;&nbsp;&nbsp;301<br>published &nbsp;17,300 &nbsp;94,100 &nbsp;152,800 &nbsp;256,100<br>under §5.9 &nbsp;14,633 &nbsp;46,817 &nbsp;&nbsp;62,627 &nbsp;122,495<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-15% &nbsp;&nbsp;&nbsp;-50% &nbsp;&nbsp;&nbsp;&nbsp;-59% &nbsp;&nbsp;&nbsp;&nbsp;-52%</code><br><br><strong>The first month holds and then the curve breaks.</strong> Keeper 5 to 20 land within two days of published, which is the evidence the model reads §5.9 correctly; Keeper 28 is 18 days late and Keeper 40 is <strong>94 days late</strong> — half a year becomes nine months. Of the three rules, assigning the crew costs 27–35% from the first week and pro-rata staffing costs nothing until the roster binds. The re-run is generated at <code>docs/design/generated/pacing.md</code>.</p>
       </article>
       <article class="item blk" data-group="blocking"
                data-kind="gap" data-status="fixed">
@@ -1178,6 +1178,19 @@
         <div class="refs"><span class="ref">§12.21</span><span class="ref">§11.1</span><span class="ref">§11.2</span><span class="ref">§11.11</span><span class="ref">§7.7</span></div>
         <p class="body">§12.21 is the right answer to G12, stated well: “A law that reads a parameter which does not exist is the same failure as a law full of special cases, seen from the other side.” It then says size is a band on every ruleborn and flight is a stated property rather than an implication of a passive.<br><br>Neither exists as a field. §11.1 has health, speed, power and carry. §11.11 has proportions, which are art direction. <strong>Featherkin’s flight is still prose in a Passive column</strong> — “Flies; grounded by Heavy ground” — which is precisely the implication §12.21 says it must not be. Three laws (Density, Heavy ground, Swarm birth) still read attributes that no creature carries.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Add <code>size</code> and <code>flies</code> to the creature table and derive nothing from prose. <code>content/ruleborn.json</code> is the place to do it once; <code>tools/validate_content.py</code> already fails on any law that reads an attribute no creature has, so the check exists and is waiting for the data.</p>
+        
+      </article>
+      <article class="item sig" data-group="significant"
+               data-kind="contradiction" data-status="open">
+        <header class="item-head">
+          <span class="id">C27</span>
+          <h3>Two rules for partial staffing: §9.2's table and §5.9's pro-rata share</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§9.2</span><span class="ref">§5.9</span><span class="ref">§9.3</span></div>
+        <p class="body">§9.2: “<strong>Staffing sets 60%, 85% or 100% output.</strong>” §5.9, added in v3.0: “A producer runs at the <strong>share of its worker slots that are filled</strong>, so a half-staffed Well earns half.”<br><br>Those are different numbers wherever the roster binds, and §5.9 says it always binds: two of three slots is 85% under §9.2 and 67% under §5.9, one of three is 60% against 33%. §9.2 is the more generous rule at every partial count.<br><br>Worth about 11% of late-game production, and nothing at all until the roster starts binding — which is why it hid.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> §5.9 is the later and better-argued rule, and pro-rata is the one that makes partial staffing a real choice rather than a rounding. Delete §9.2’s sentence. This is the fourth instance of the same pattern in v3.0 (C21–C23) and the cheapest to fix.</p>
         
       </article>
       </section>
