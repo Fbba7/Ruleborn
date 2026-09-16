@@ -27,6 +27,7 @@ still unadopted are `wards.md` (§10.3 is untouched), `economy.md`'s production 
 | [`response.md`](response.md) | F15 — guards and response measure as one layer | Proposed, and it reports a proposal that failed |
 | [`sinks.md`](sinks.md) | F17 — Aether and Essence have no sinks | Proposed: peg upkeep, then cut the faucets |
 | [`loading.md`](loading.md) | F19, F20, F21 — when to stop loading | Proposed: the break-even is near 90%, and the answer is a rule rather than a number |
+| [`validation.md`](validation.md) | C29 — two phase gates need people the plan removed | Proposed, and one half is the owner's call (T1.10) |
 
 ## How these were written
 

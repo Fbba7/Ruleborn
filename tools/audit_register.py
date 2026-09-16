@@ -594,7 +594,9 @@ dict(id="C29", kind="contradiction", severity="blocking", status="open",
           "section names where the ten testers would come from, how they are "
           "recruited, or what they are given to play. The first testing venue "
           "named anywhere in the document is TestFlight, in phase 4.",
-     rec="Decide which document is true, and say so in both places. Either "
+     rec="Drafted in <code>docs/design/spec/validation.md</code>, with the "
+         "three edits it forces spelled out. Decide which document is "
+         "true, and say so in both places. Either "
          "(a) §25.5 is right and §26.2’s phase 2 and 3 exit "
          "tests are rewritten against the harness and the developer-as-player "
          "— in which case say what phase 2 <em>does</em> exit on, because "
@@ -2907,6 +2909,46 @@ EDITS = {
          why="\u00a712.6 and \u00a75.7 both assume the raider knows what they "
              "are breaking before committing, and nothing says they can. The "
              "level table and health are already in \u00a710.2."),
+],
+
+"C29": [
+    dict(section="26.2", action="replace",
+         find="At least 7 of 10 outside playtesters ask for a second session; "
+              "15 or more decisions per heist",
+         replace="On the slice\u2019s own two realms and eight laws rather than "
+                 "generated islands: 15 to 25 decisions a median run, a "
+                 "near-capture in half of runs, and a hold rate of 30 to 45% "
+                 "with no layer above a quarter (19.27, 13.4). And the one "
+                 "human instrument 19.27 offers: the developer opens the build "
+                 "unprompted on at least 10 of 14 consecutive days, logged by "
+                 "the build rather than remembered \u2014 one person, weak "
+                 "evidence, recorded as weak.",
+         why="\u00a725.5 rules out recruited playtesters and \u00a719.27 moves "
+             "every human instrument to soft launch, two phases later. As "
+             "written this gate cannot be met, so 10 to 12 weeks of work has no "
+             "exit. The replacement is weaker and says so: <em>would they come "
+             "back unprompted</em> is the question \u00a719.27 concedes "
+             "simulation cannot answer. Depends on T1.10. Drafted in full at "
+             "docs/design/spec/validation.md."),
+    dict(section="26.2", action="replace",
+         find="No dominant law in bot runs; at least 20% of testers still "
+              "playing after a week",
+         replace="No dominant law in bot runs (13.4)",
+         why="The first half already stands on the ablation and needs nobody. "
+             "The second needs recruited testers a phase before 19.27 allows a "
+             "player to exist."),
+    dict(section="25.5", action="insert",
+         find="No recruited panels, no paid playtesters, no thirty people in a "
+              "room.",
+         replace="If this sentence stands, say so in 26.2 as well, whose phase "
+                 "2 and phase 3 exit tests still require ten outside "
+                 "playtesters and a week of retention. If it does not stand, "
+                 "this sentence is the one to change \u2014 and the plan then "
+                 "owes a recruitment route, a delivery channel (TestFlight is "
+                 "phase 4) and a consent position for pre-release content, none "
+                 "of which the document contains.",
+         why="One of the two sections is stale and nothing says which. This is "
+             "the owner\u2019s decision, not a clerical fix \u2014 T1.10."),
 ],
 
 "G11": [

@@ -303,8 +303,8 @@
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
       out against the rule sheet &sect;7.3 claims they change.</p>
-    <p class="lede"><strong>58 edits are drafted</strong> across
-      32 items &mdash; the section to open, the sentence as it stands
+    <p class="lede"><strong>61 edits are drafted</strong> across
+      33 items &mdash; the section to open, the sentence as it stands
       today, and what to put there. Every quoted sentence is checked against the
       document by <code>tools/check_edits.py</code>, which fails the build if one
       is not there or appears twice.</p>
@@ -315,14 +315,14 @@
       <div><span class="n">26</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">20</span><span class="k">done or adopted</span></div>
       <div><span class="n">28</span><span class="k">blocking the build</span></div>
-      <div><span class="n">58</span><span class="k">edits drafted</span></div>
+      <div><span class="n">61</span><span class="k">edits drafted</span></div>
       <div><span class="n">16 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">98</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">19</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">23</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">19</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">23</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">33</span></button>
   </nav>
 
   <main id="list">
@@ -884,7 +884,7 @@
       </article>
       <article class="item blk" data-group="blocking"
                data-kind="contradiction" data-status="open"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">C29</span>
           <h3>v3.0 removed the playtesters and kept two phase gates that require them</h3>
@@ -893,9 +893,9 @@
         </header>
         <div class="refs"><span class="ref">§25.5</span><span class="ref">§19.27</span><span class="ref">§26.2</span></div>
         <p class="body">§25.5 opens by ruling the panels out, in a sentence with no room in it: <em>“No recruited panels, no paid playtesters, no thirty people in a room.”</em> §19.27 moves every instrument that needs a person to soft launch — <em>“all that once needed a room now waits for soft launch”</em> — and states the cost plainly: nothing before soft launch tells us the game is fun.<br><br>§26.2 then gates two phases on exactly those people. Phase 2, the vertical slice, exits on <em>“At least 7 of 10 outside playtesters ask for a second session”</em>. Phase 3, alpha, exits on <em>“at least 20% of testers still playing after a week”</em>. Both sit <strong>two phases before soft launch</strong>, which is the earliest point §19.27 and §25.5 allow a player to exist.<br><br>This is the supersession pattern the register already tracks in C8, C10 and the detection model — a fix landing in one section and not in the ones that depend on it — but it is worse in kind. The others are a number that disagrees with another number. <strong>This is a phase gate that cannot be passed as written</strong>, on the critical path, twice. Phase 2 is 10 to 12 weeks of work that by its own exit test cannot be exited, and no section names where the ten testers would come from, how they are recruited, or what they are given to play. The first testing venue named anywhere in the document is TestFlight, in phase 4.</p>
-        <p class="rec"><span class="arrow">&rarr;</span> Decide which document is true, and say so in both places. Either (a) §25.5 is right and §26.2’s phase 2 and 3 exit tests are rewritten against the harness and the developer-as-player — in which case say what phase 2 <em>does</em> exit on, because “no gate” is not an answer for 10 to 12 weeks of work; or (b) the ten testers are real, in which case §25.5’s opening sentence is false and the plan owes a recruitment route, a delivery channel and a consent and privacy position, none of which exist.<br><br>Worth noting which way the evidence leans: §26.2’s phase 2 gate — <em>would they come back unprompted</em> — is the single most informative thing in the whole phase table, and it is the one §19.27 admits simulation cannot replace. Deleting it is cheap and costs the most. This is flagged blocking for that reason, not for the wording.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Drafted in <code>docs/design/spec/validation.md</code>, with the three edits it forces spelled out. Decide which document is true, and say so in both places. Either (a) §25.5 is right and §26.2’s phase 2 and 3 exit tests are rewritten against the harness and the developer-as-player — in which case say what phase 2 <em>does</em> exit on, because “no gate” is not an answer for 10 to 12 weeks of work; or (b) the ten testers are real, in which case §25.5’s opening sentence is false and the plan owes a recruitment route, a delivery channel and a consent and privacy position, none of which exist.<br><br>Worth noting which way the evidence leans: §26.2’s phase 2 gate — <em>would they come back unprompted</em> — is the single most informative thing in the whole phase table, and it is the one §19.27 admits simulation cannot replace. Deleting it is cheap and costs the most. This is flagged blocking for that reason, not for the wording.</p>
         
-        
+        <details class="edits"><summary>3 edits to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;26.2</span></header><p class="e-find"><span class="e-lab">now</span><code>At least 7 of 10 outside playtesters ask for a second session; 15 or more decisions per heist</code></p><p class="e-new"><span class="e-lab">becomes</span><code>On the slice’s own two realms and eight laws rather than generated islands: 15 to 25 decisions a median run, a near-capture in half of runs, and a hold rate of 30 to 45% with no layer above a quarter (19.27, 13.4). And the one human instrument 19.27 offers: the developer opens the build unprompted on at least 10 of 14 consecutive days, logged by the build rather than remembered — one person, weak evidence, recorded as weak.</code></p><p class="e-why">§25.5 rules out recruited playtesters and §19.27 moves every human instrument to soft launch, two phases later. As written this gate cannot be met, so 10 to 12 weeks of work has no exit. The replacement is weaker and says so: <em>would they come back unprompted</em> is the question §19.27 concedes simulation cannot answer. Depends on T1.10. Drafted in full at docs/design/spec/validation.md.</p></li><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;26.2</span></header><p class="e-find"><span class="e-lab">now</span><code>No dominant law in bot runs; at least 20% of testers still playing after a week</code></p><p class="e-new"><span class="e-lab">becomes</span><code>No dominant law in bot runs (13.4)</code></p><p class="e-why">The first half already stands on the ablation and needs nobody. The second needs recruited testers a phase before 19.27 allows a player to exist.</p></li><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;25.5</span></header><p class="e-find"><span class="e-lab">now</span><code>No recruited panels, no paid playtesters, no thirty people in a room.</code></p><p class="e-new"><span class="e-lab">add</span><code>If this sentence stands, say so in 26.2 as well, whose phase 2 and phase 3 exit tests still require ten outside playtesters and a week of retention. If it does not stand, this sentence is the one to change — and the plan then owes a recruitment route, a delivery channel (TestFlight is phase 4) and a consent position for pre-release content, none of which the document contains.</code></p><p class="e-why">One of the two sections is stale and nothing says which. This is the owner’s decision, not a clerical fix — T1.10.</p></li></ol></details>
       </article>
       <article class="item blk" data-group="blocking"
                data-kind="gap" data-status="fixed"
@@ -1930,4 +1930,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build 46791e9c12c71ad8 -->
+<!-- ruleborn-build 20b5f5e7bff9a7b9 -->
