@@ -95,8 +95,29 @@ generated, never authored.* So:
   were never enough: the page held `LOAD_PER_SECOND` correctly and then loaded
   five units a tick anyway.
 
-Both are build gates. A rule changes in Python, the page changes with it, and the
-hourly Routine republishes the artifact.
+- **The `BUILD` stamp** in the generated block is a digest of the page with that
+  one line removed, so the page carries its own version. `--stamp` prints it and
+  `--self-test` proves it still moves when the page does.
+
+The first three are build gates. A rule changes in Python, the page changes with
+it, and the hourly Routine republishes the artifact.
+
+The stamp exists because the Routine's first version compared a commit date
+against a publish date, and `Artifact action: "list"` reports only a calendar
+day. A commit and a publish on the same day are indistinguishable, so from the
+day the two first coincided the job would have answered *already current* for
+ever, while reporting success. It has one job and it would never have done it
+again. Comparing stamps asks the question that actually matters — *is the
+published page this page?* — and gets a straight answer.
+
+That job's other failure is worth recording too, because it is the same shape as
+the harness faults in D24 to D26: the Routine ran, took fifty-eight seconds, and
+was recorded as having SUCCEEDED, because nothing threw. `Artifact action: "read"`
+hands back a saved file and only counts the version as viewed once every line of
+it has been Read; the prompt did not say so, so the read was partial, the publish
+was refused, and the turn ended cleanly having done nothing. **A job that cannot
+fail cannot be trusted when it passes.** Step 7 of the prompt now requires the
+publish to report a new version number before the run may claim to have worked.
 
 ## What is not here yet
 

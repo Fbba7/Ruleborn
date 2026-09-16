@@ -206,6 +206,11 @@
       caught wakes up at home. This is a test build: rough shapes, no sound,
       about four minutes.</p>
     <button class="primary" id="go-brief">Start</button>
+    <!-- Which build you are actually playing. The number is a digest of this
+         page, written by tools/build_prototype.py and checked by the hourly
+         republish job, so a stale page is visible rather than inferred. -->
+    <p class="muted" style="font-size:11px; opacity:0.55; text-align:center;">
+      build <code id="build-stamp">—</code></p>
   </section>
 
   <!-- ============================= BRIEF ============================= -->
@@ -356,6 +361,10 @@
   // Every number below comes from content/ or from tools/heist_harness.
   // Change a rule there and rebuild; do not edit it here.
   const G = {
+    // A digest of this page with this line removed. The hourly
+    // republish job compares it against the published page, so it
+    // knows what is live rather than guessing from a calendar day.
+    BUILD: "1c880811996e0c48",
     TPS: 30, U: 256,
     // §5.4: 150s plus 15s a link, capped at 240s.
     BASE_TICKS: 4500, LINK_TICKS: 450, MAX_TICKS: 7200,
@@ -1664,6 +1673,8 @@ window.addEventListener("resize", () => {
   if (sim && !$("#s-stage").hidden) board.draw(sim, landed ? {} : { entries: LEVEL.entries });
   if (bsim && !$("#s-build").hidden) drawBuild();
 });
+
+$("#build-stamp").textContent = G.BUILD;
 
 board.resize();
 bboard.resize();

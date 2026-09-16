@@ -3,6 +3,8 @@
 
     python3 tools/build_prototype.py
     python3 tools/build_prototype.py --check     # fails on drift
+    python3 tools/build_prototype.py --stamp     # prints the page's build stamp
+    python3 tools/build_prototype.py --self-test # proves the stamp actually moves
 
 The prototype at `prototypes/heist-gate/index.html` is a second implementation of
 rules the harness already implements, and it went one commit and then sat still
@@ -23,8 +25,10 @@ What this does NOT do, said plainly: it syncs the **numbers**, not the
 about what happens, and that is what `check_prototype_conformance.py` is for.
 """
 
+import hashlib
 import json
 import pathlib
+import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -33,6 +37,11 @@ sys.path.insert(0, str(ROOT))
 PAGE = ROOT / "prototypes" / "heist-gate" / "index.html"
 OPEN = "  // <<< GENERATED FROM THE PYTHON — build_prototype.py writes this"
 CLOSE = "  // >>> END GENERATED"
+
+# The build stamp. `digest()` hashes the page with this line taken out, so the
+# stamp can live inside the page it describes without chasing its own tail.
+STAMP = re.compile(r'^ *BUILD: "[0-9a-f]*",\n', re.M)
+PLACEHOLDER = '    BUILD: "",'
 
 
 def block() -> str:
@@ -49,7 +58,11 @@ def block() -> str:
     out = [OPEN,
            "  // Every number below comes from content/ or from tools/heist_harness.",
            "  // Change a rule there and rebuild; do not edit it here.",
-           "  const G = {"]
+           "  const G = {",
+           "    // A digest of this page with this line removed. The hourly",
+           "    // republish job compares it against the published page, so it",
+           "    // knows what is live rather than guessing from a calendar day.",
+           PLACEHOLDER]
 
     out.append(f"    TPS: {fixed.TPS}, U: {fixed.U},")
     out.append(f"    // §5.4: {sim.BASE_TICKS // fixed.TPS}s plus "
@@ -97,6 +110,19 @@ def block() -> str:
     return "\n".join(out)
 
 
+def digest(page: str) -> str:
+    """The build stamp for a page: sixteen hex characters.
+
+    The stamp line itself is removed before hashing, so a page can carry its own
+    digest. Anything else that changes — a constant, a comment, a line of the
+    simulation — changes the stamp, which is the point: the republish job asks
+    "is the published page this page?" and gets a straight answer, rather than
+    comparing a commit date against a publish date that only names a day.
+    """
+    return hashlib.sha256(
+        STAMP.sub("", page).encode("utf-8")).hexdigest()[:16]
+
+
 def rebuilt() -> str:
     text = PAGE.read_text(encoding="utf-8")
     if OPEN not in text or CLOSE not in text:
@@ -105,11 +131,39 @@ def rebuilt() -> str:
             f"lines around where the constants belong:\n  {OPEN}\n  {CLOSE}")
     head = text[:text.index(OPEN)]
     tail = text[text.index(CLOSE) + len(CLOSE):]
-    return head + block() + tail
+    fresh = head + block() + tail
+    return fresh.replace(PLACEHOLDER, f'    BUILD: "{digest(fresh)}",', 1)
 
 
 def main() -> int:
     current = PAGE.read_text(encoding="utf-8")
+    if "--self-test" in sys.argv:
+        # A stamp is only useful if it moves. Three things have to hold: the
+        # page carries its own digest, that digest survives a rebuild, and any
+        # other change to the page changes it. Without the third, the republish
+        # job would compare two constants and conclude "already current" for
+        # ever — which is exactly how the first version of this job failed.
+        stamp = digest(current)
+        embedded = STAMP.search(current)
+        if not embedded:
+            print("the page carries no BUILD stamp. Run the builder.")
+            return 1
+        if embedded.group(0).split('"')[1] != stamp:
+            print("the page's BUILD stamp is not its own digest. Run the builder.")
+            return 1
+        if digest(rebuilt()) != stamp:
+            print("rebuilding the page changes its stamp; the two disagree.")
+            return 1
+        if digest(current.replace("const TPS", "const TPS ", 1)) == stamp:
+            print("the stamp did not move when the page did — it is a constant.")
+            return 1
+        print(f"  the prototype's build stamp is live: {stamp}")
+        return 0
+    if "--stamp" in sys.argv:
+        # What the republish job compares against the published page. Printed
+        # bare, on one line, so a shell can use it without parsing anything.
+        print(digest(current))
+        return 0
     fresh = rebuilt()
     if "--check" in sys.argv:
         if current != fresh:

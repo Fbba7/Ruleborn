@@ -49,7 +49,7 @@ FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
     "D19", "D20", "D21", "D22", "D23",
     "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17",
-    "F18", "F19", "F20", "F21", "D24", "D25", "D26", "D27",
+    "F18", "F19", "F20", "F21", "D24", "D25", "D26", "D27", "D28",
 })
 
 REGISTER = [
@@ -1605,6 +1605,45 @@ dict(id="D27", kind="deviation", severity="change", status="done",
          "about behaviour, the test has to run the behaviour.</strong> D24 "
          "survived a test asserting <code>Carrier.carry / 30 == 10</code> while "
          "\u00a712.19\u2019s claim was about what a crew does."),
+
+dict(id="D28", kind="deviation", severity="change", status="done",
+     title="The job that keeps the playable build current ran, reported "
+           "success, and published nothing",
+     refs=["30.18", "26.7", "19.27"],
+     body="The prototype is the only artefact anyone outside this repository "
+          "can actually touch, so an hourly Routine republishes it when the "
+          "branch moves. It fired, took fifty-eight seconds, and was recorded "
+          "<code>SUCCEEDED</code>. The published page did not change. "
+          "<strong>Two faults, either one fatal on its own.</strong>"
+          "<br><br><strong>It could not tell new from old.</strong> The job "
+          "compared the prototype’s last commit date against the "
+          "artifact’s publish date, and <code>Artifact action: "
+          "\"list\"</code> reports only a calendar day. A commit and a publish "
+          "on the same day are indistinguishable — so from the first day "
+          "the two coincided, which was the day it was written, the job would "
+          "have answered <em>already current</em> for ever."
+          "<br><br><strong>It could not publish.</strong> "
+          "<code>Artifact action: \"read\"</code> saves the live page to a "
+          "file and counts the version as viewed only once every line of it "
+          "has been read. The prompt said to read it; it did not say that a "
+          "partial read does not count. So the read was partial, the publish "
+          "was refused, and the turn ended without error."
+          "<br><br>The second is the same shape as D24–D26 wearing "
+          "different clothes, and it is the one worth keeping: <strong>a job "
+          "that cannot fail cannot be trusted when it passes.</strong> Nothing "
+          "threw, so nothing was reported, so the artifact sat a day behind "
+          "the code while the dashboard read green.",
+     rec="Both fixed. The page now carries a <code>BUILD</code> stamp — a "
+         "digest of itself with that line removed — so the job compares "
+         "the published page against the current page instead of comparing two "
+         "dates: <em>is the published page this page?</em> "
+         "<code>build_prototype.py --stamp</code> prints it, "
+         "<code>--self-test</code> proves it still moves when the page moves, "
+         "and both are build gates. The prompt now spells out the full-read "
+         "requirement, and a final step requires the publish to report a new "
+         "version number before the run may claim to have worked."
+         "<br><br>The general rule, alongside D27’s: <strong>an automated "
+         "job needs a check that its work landed, not just that it ran.</strong>"),
 
 dict(id="D26", kind="deviation", severity="change", status="done",
      title="Every guard began every raid at the same point of its patrol",

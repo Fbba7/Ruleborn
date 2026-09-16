@@ -298,7 +298,7 @@
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
       register directly (&sect;30.18). 26 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. 32 items
+      what it did &mdash; including where a fix stopped short. 33 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
@@ -310,10 +310,10 @@
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">96</span><span class="k">items tracked</span></div>
+      <div><span class="n">97</span><span class="k">items tracked</span></div>
       <div><span class="n">31</span><span class="k">open</span></div>
       <div><span class="n">26</span><span class="k">fixed in v3.0</span></div>
-      <div><span class="n">19</span><span class="k">done or adopted</span></div>
+      <div><span class="n">20</span><span class="k">done or adopted</span></div>
       <div><span class="n">27</span><span class="k">blocking the build</span></div>
       <div><span class="n">58</span><span class="k">edits drafted</span></div>
       <div><span class="n">16 Sep</span><span class="k">last generated</span></div>
@@ -321,8 +321,8 @@
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">96</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">27</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">18</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">23</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">97</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">18</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">23</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">26</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">32</span></button>
   </nav>
 
   <main id="list">
@@ -674,6 +674,21 @@
         <div class="refs"><span class="ref">§9.5</span><span class="ref">§14.2</span><span class="ref">§5.4</span></div>
         <p class="body">D26’s recommendation said a check for fields that are computed and never read “would have caught all three” of this session’s harness faults. <strong>That was wrong and is corrected.</strong> D25’s <code>heist.clock</code> was read in four places in <code>sim.py</code>; what was missing was that no <em>policy</em> read it. D24 was a wrong condition, not an unread field. The check catches D26’s class and no more, and its docstring now says so.<br><br>Built anyway, because that class is real, it immediately found four more:<br><br><code>Result.lost_to<br>State.aether<br>State.essence<br>Archetype.lab_experiments_per_day</code><br><br><strong><code>Result.lost_to</code> was the useful one.</strong> It records whether a foiled raid died to §5.4’s clock or to a guard, and nothing read it. Surfaced in the depth report it says the clock finding more sharply than anything else has: <strong>at most 5% of raids fail to the clock</strong>, and for the crews that play best it is 0%. Every other failure is a capture. The evidence for “the clock is not a price” was sitting in a field nobody consumed.<br><br><strong>And the joke.</strong> <code>State.aether</code> and <code>State.essence</code> accumulate every day of every run and are never read, and <code>Archetype.lab_experiments_per_day</code> is defined per archetype and never spent. The economy model has two currency balances with no readers, which is precisely the fault F17 records in the design — two currencies with no sinks. The model reproduced the thing it was built to measure.</p>
         <p class="rec"><span class="arrow">&rarr;</span> <code>lost_to</code> is now a column in the depth report. The three economy fields are recorded in the check’s <code>KNOWN_UNREAD</code> table with a reason each rather than quietly allowed: making the model pay §9.5’s prices is a feature, not a fix, and <strong>F17’s numbers do not depend on it</strong> — they come from §9.3’s published table and the daily log, not from these balances. An entry in that table is a debt that has been looked at.<br><br>The check is a build gate and has a <code>--self-test</code>, on the same principle as <code>check_docs_consistency.py</code>: a checker that cannot demonstrate a failure has never been shown to work.<br><br>What no script catches, stated plainly because two of the three faults are in it: <strong>when the document states a number about behaviour, the test has to run the behaviour.</strong> D24 survived a test asserting <code>Carrier.carry / 30 == 10</code> while §12.19’s claim was about what a crew does.</p>
+        
+        
+      </article>
+      <article class="item chg" data-group="changes"
+               data-kind="deviation" data-status="done"
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">D28</span>
+          <h3>The job that keeps the playable build current ran, reported success, and published nothing</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+        </header>
+        <div class="refs"><span class="ref">§30.18</span><span class="ref">§26.7</span><span class="ref">§19.27</span></div>
+        <p class="body">The prototype is the only artefact anyone outside this repository can actually touch, so an hourly Routine republishes it when the branch moves. It fired, took fifty-eight seconds, and was recorded <code>SUCCEEDED</code>. The published page did not change. <strong>Two faults, either one fatal on its own.</strong><br><br><strong>It could not tell new from old.</strong> The job compared the prototype’s last commit date against the artifact’s publish date, and <code>Artifact action: "list"</code> reports only a calendar day. A commit and a publish on the same day are indistinguishable — so from the first day the two coincided, which was the day it was written, the job would have answered <em>already current</em> for ever.<br><br><strong>It could not publish.</strong> <code>Artifact action: "read"</code> saves the live page to a file and counts the version as viewed only once every line of it has been read. The prompt said to read it; it did not say that a partial read does not count. So the read was partial, the publish was refused, and the turn ended without error.<br><br>The second is the same shape as D24–D26 wearing different clothes, and it is the one worth keeping: <strong>a job that cannot fail cannot be trusted when it passes.</strong> Nothing threw, so nothing was reported, so the artifact sat a day behind the code while the dashboard read green.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Both fixed. The page now carries a <code>BUILD</code> stamp — a digest of itself with that line removed — so the job compares the published page against the current page instead of comparing two dates: <em>is the published page this page?</em> <code>build_prototype.py --stamp</code> prints it, <code>--self-test</code> proves it still moves when the page moves, and both are build gates. The prompt now spells out the full-read requirement, and a final step requires the publish to report a new version number before the run may claim to have worked.<br><br>The general rule, alongside D27’s: <strong>an automated job needs a check that its work landed, not just that it ran.</strong></p>
         
         
       </article>
