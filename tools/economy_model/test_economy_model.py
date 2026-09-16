@@ -207,6 +207,64 @@ def test_the_fill_term_is_off_by_default():
     assert Config().apply_fill is False
 
 
+def test_finding_every_aether_and_essence_price_is_on_the_wrong_curve():
+    """F17. The faucets multiply by 240 and 251; the prices aimed at them do not.
+
+    This is the cause behind the symptom `sink_audit` reports. Pinned as two
+    inequalities rather than as exact numbers, so re-tuning a price cannot make
+    the finding quietly disappear without also fixing it.
+    """
+    from . import sinks
+
+    rows = sinks.price_growth()
+    biggest = {}
+    for currency, _, _, _, mult in rows:
+        biggest[currency] = max(biggest.get(currency, 0), mult)
+
+    # Starlight's sink outruns its faucet; the other two fall far behind theirs.
+    assert biggest["Starlight"] / 122 > 5, biggest
+    assert biggest["Aether"] / 240 < 0.1, biggest
+    assert biggest["Essence"] / 251 < 0.5, biggest
+
+
+def test_finding_the_one_recurring_price_is_unreachable():
+    """F17. §9.5 charges to wake a rested character; rotation means nobody does.
+
+    §11.5 set the roster cap and §11.6 set the rest window. Divided into each
+    other they say the price falls due at 199 heists a day, against the four
+    §14.2's engaged player runs.
+    """
+    from . import sinks
+
+    at_cap = sinks.heists_before_waking(38, 5) * 16
+    assert at_cap > 150, at_cap
+    assert data.ARCHETYPES["engaged"].heists_per_day * 40 < at_cap, at_cap
+
+
+def test_the_flat_upkeep_means_two_different_things():
+    """F17's diagnosis: 0.5 an hour a point is not too cheap, it is unanchored.
+
+    On day 2 it takes most of a day's Aether; on day 301 it rounds to nothing.
+    The pegged rate holds its proportion by construction, which is why this test
+    asserts a *ratio* of ratios rather than either figure.
+    """
+    from . import sinks
+
+    def flat_share(day, points):
+        aether = data.PUBLISHED_DAILY_PRODUCTION[day][1]
+        return data.UPKEEP_AETHER_PER_POINT_HOUR * points * 24 / aether
+
+    early, late = flat_share(2, 40), flat_share(301, 516)
+    assert early > 0.5, early           # most of a day's Aether
+    assert late < 0.05, late            # a rounding error
+    assert early / late > 15, (early, late)
+
+    # Pegged, the same sheet costs the same share whatever the faucet is doing.
+    a, b = (sinks.pegged_upkeep_per_hour(x, 516) * 24 / x
+            for x in (data.PUBLISHED_DAILY_PRODUCTION[d][1] for d in (2, 301)))
+    assert abs(a - b) < 1e-9, (a, b)
+
+
 if __name__ == "__main__":
     passed = failed = 0
     for name, fn in sorted(globals().items()):

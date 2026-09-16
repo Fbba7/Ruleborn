@@ -24,6 +24,8 @@ still unadopted are `wards.md` (§10.3 is untouched), `economy.md`'s production 
 | [`vault.md`](vault.md) | G4 — cracking, loading, and what a full bag is worth | Proposed |
 | [`wards.md`](wards.md) | G3, G5 — wards, their levels, and law pylons | Proposed |
 | [`corrections.md`](corrections.md) | C7–C18, C20 — the clerical sweep | 13 single edits, one session |
+| [`response.md`](response.md) | F15 — guards and response measure as one layer | Proposed, and it reports a proposal that failed |
+| [`sinks.md`](sinks.md) | F17 — Aether and Essence have no sinks | Proposed: peg upkeep, then cut the faucets |
 
 ## How these were written
 
@@ -31,8 +33,20 @@ still unadopted are `wards.md` (§10.3 is untouched), `economy.md`'s production 
 the document leaves G1, G2, G4 and G9 empty, so those files are partly new design
 rather than reconciliations. Each says so at the top.
 
-`wards.md` is the exception to the exception, and worth reading for that alone:
-it begins by **correcting this analysis**. Two things `04-specification-gaps.md`
+`response.md` is the one to read if you only read one. It specifies the two
+things §13.2 names and never defines — the Spire's reach and the guardian Sage's
+single power — and then reports that building them **did not fix F15**, with the
+measurements that say why. The cause turned out to be two things neither the
+finding nor its recommendation had reached: guards-and-response is the island's
+only detect-and-act chain, and §13.4 measures the one quantity three of the five
+layers cannot reach.
+
+`sinks.md` does the same to F17. The finding said the prices were too small; the
+spec says they are on the wrong kind of curve, withdraws the edit F17 first
+proposed, and shows what that edit would have cost.
+
+`wards.md` is the third of these, and the first: it begins by **correcting this
+analysis**. Two things `04-specification-gaps.md`
 recorded as missing — ward levels 2–5 and the pylon-to-law-slot relationship —
 are in §10.2's building tables, which had not been read against §10.3. The gap
 that survives is smaller and sharper than the one that was recorded.

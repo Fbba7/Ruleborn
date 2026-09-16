@@ -151,11 +151,24 @@ def check_tool_output_counts(files: list[pathlib.Path]) -> None:
 
     claim = re.compile(
         r"confirms (\w+) findings and passes (\w+) other", re.I)
-    words = {"six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
-             "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14}
+    # Counts in prose are spelled out, so the table has to keep up with the
+    # counts. It stopped at fourteen and the seventeenth test reported itself as
+    # "claims None", which is a checker failing rather than a document failing.
+    words = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+             "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+             "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
+             "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18,
+             "nineteen": 19, "twenty": 20, "twenty-one": 21, "twenty-two": 22,
+             "twenty-three": 23, "twenty-four": 24, "twenty-five": 25,
+             "thirty": 30, "forty": 40, "fifty": 50}
 
     def to_int(word: str) -> int | None:
         return words.get(word.lower(), int(word) if word.isdigit() else None)
+
+    def unparsed(path, word: str, what: str) -> None:
+        fail(f"{rel(path)}: cannot read {word!r} as a number of {what} — "
+             f"add it to this check's word table rather than leaving the claim "
+             f"unchecked")
 
     result = None
     for path in files:
@@ -182,7 +195,9 @@ def check_tool_output_counts(files: list[pathlib.Path]) -> None:
                                / "test_economy_model.py").read_text(encoding="utf-8").split("\n")
                 if line.startswith("def test_")
             )
-            if claimed != actual:
+            if claimed is None:
+                unparsed(path, match.group(1), "tests")
+            elif claimed != actual:
                 fail(f"{rel(path)}: claims {claimed} economy-model tests, there are {actual}")
 
 

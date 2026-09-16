@@ -87,11 +87,11 @@ v3.0 answered the audit directly, in §30.18. Of 88 items, **26 are fixed in the
 | **D22** | Law effects became a classified table, not prose to be read twice |
 | **F13** | §12.22’s matchmaking guarantee has no targets to draw from early |
 | **F14** | v3.0’s fill term halves the number §9.6 calls load-bearing, and it was not re-derived |
-| **F15** | Guards and Response are not two layers; they are one, and it is 69% of the defence |
+| **F15** | Guards and Response are not two layers; they are one, and three more have no path to the metric |
 | **F16** | Geometry is 4% of a generated defence, against a 25% target |
 | **D23** | §13.4's ablation was built exactly as specified, Shapley included |
 | **C27** | Two rules for partial staffing: §9.2's table and §5.9's pro-rata share |
-| **F17** | Aether and Essence have no sinks: every price in §9.5 adds up to five days of income |
+| **F17** | Aether and Essence have no sinks, because every price in §9.5 is on the wrong kind of curve |
 | **C28** | Births are priced twice: §9.5’s geometric curve and §11.5’s linear one |
 
 ## The shape of it

@@ -46,6 +46,24 @@ WIND_UP_TICKS = int(0.8 * TPS)           #: §12.8, one hit per 0.8 s
 SKIFF_TICKS = 5 * TPS                    #: §12.6, an outer realm
 CRACK_AWARENESS_PER_5S = 10              #: §12.6, percent added to Heart guards
 
+# -- the proposed response layer (docs/design/spec/response.md) -------------
+#
+# §13.2 names four things in the response layer — "bells, alarms, the Spire's
+# reach, and the guardian Sage's single power" — and gives an effect to only the
+# first two, both of which move guards. That is F15: with nothing of its own the
+# layer is multiplicative with guards, and the Shapley value must then hand the
+# two identical shares. These are effects for the other two, chosen so that
+# neither passes through a guard. Both fire on the Vault opening, which is the
+# one event in every heist an island observes with nobody standing there — and
+# which §12.6 already makes the pivot into the Escape phase.
+#
+# `response_model="published"` is the default, so the harness keeps reproducing
+# the document as written unless it is asked for the proposal.
+SPIRE_GRACE_SECONDS = 25                 #: from the first hit on the Vault, minus the realm level
+SPIRE_RESEAL_PER_SECOND = 8              #: against an exposed share of 560
+SAGE_SLOW_PERCENT = 30                   #: the Sage's single power: Weight
+SAGE_TICKS = 20 * TPS
+
 #: §12.19's break-even, and the number the harness exists to test.
 BREAKEVEN_FILL = 70
 
@@ -173,7 +191,8 @@ class Heist:
     DEFAULT_CREW = ("Scout", "Breaker", "Carrier", "Warden", "Mender")
 
     def __init__(self, island, policy, crew_roles=DEFAULT_CREW,
-                 realm_level: int = 3, crossing=(), sheet=None, response: bool = True):
+                 realm_level: int = 3, crossing=(), sheet=None, response: bool = True,
+                 response_model: str = "published"):
         """`crossing` is the outer realms the crew walks through on the way in.
 
         §12.6 splits a heist into Entry, Crossing, Vault and Escape, and gives the
@@ -195,6 +214,19 @@ class Heist:
         #: turns being seen into being caught." With it off a guard may reach
         #: Alerted and still not converge, and the alarm does not spread.
         self.response = response
+        #: "published" reproduces §13.2 as written; "proposed" adds the two
+        #: effects spec/response.md specifies for the Spire and the Sage.
+        self.response_model = response_model
+        self.vault_opened_at = None
+        self.crack_started_at = None
+        #: Exposed per-instance so the two dials can be swept without editing
+        #: the module; the defaults are the ones spec/sinks.md's sibling file,
+        #: spec/response.md, proposes.
+        self.spire_grace = SPIRE_GRACE_SECONDS
+        self.spire_reseal = SPIRE_RESEAL_PER_SECOND
+        self.sage_ticks = 0
+        self.resealed = 0
+        self._reseal_acc = 0
         self.clock = int(min(MAX_TICKS, BASE_TICKS + LINK_TICKS * len(self.crossing))
                          / self.sheet.factor("clock_rate"))
         self.vault_health = VAULT_HEALTH_PER_LEVEL * realm_level
@@ -354,6 +386,8 @@ class Heist:
         factor = self.sheet.factor("loaded_speed" if loaded else "crew_speed")
         step = m.step if m.crouched else m.step * 2
         step = max(1, int(step * factor))
+        if self.sage_ticks and loaded:
+            step = max(1, step * (100 - SAGE_SLOW_PERCENT) // 100)
         if d2 <= step * step:
             m.x, m.y = goal
             m.path.pop(0)
@@ -431,6 +465,53 @@ class Heist:
             if not near:
                 m.down_ticks = 0
 
+    # -- response ----------------------------------------------------------
+
+    def _respond(self) -> None:
+        """The half of the response layer that works with no guard on the island.
+
+        Two effects, both triggered by the Vault rather than by a sighting, which
+        is what makes them independent of guards:
+
+          * **The Spire's reach.** Cracking is loud (§12.17). `SPIRE_GRACE_SECONDS`
+            after the first hit lands, the Vault starts sealing itself: the
+            exposed share falls at `SPIRE_RESEAL_PER_SECOND` whether or not it is
+            open yet. §9.6 already distinguishes exposed wealth from sealed, and
+            already prices a fully sealed island at 0.7, so the quantity exists.
+            A crew that cracks fast finds the Vault full; a slow crew finds it
+            emptying; a crew that is slow enough finds nothing, which is the case
+            that turns this into a hold rather than a smaller haul.
+          * **The guardian Sage's single power.** Spent once, the moment the
+            Vault opens. Modelled as *Weight*: loaded crew move at
+            100 - `SAGE_SLOW_PERCENT` per cent for `SAGE_TICKS`.
+
+        Neither exists in the document. §13.2 names both and specifies neither,
+        which is the gap F15 records.
+        """
+        if self.crack_started_at is None:
+            if self.vault_health < VAULT_HEALTH_PER_LEVEL * self.realm_level:
+                self.crack_started_at = self.tick
+            else:
+                return
+        if self.vault_open and self.vault_opened_at is None:
+            self.vault_opened_at = self.tick
+            if self.response and self.response_model == "proposed":
+                self.sage_ticks = SAGE_TICKS
+        if self.sage_ticks:
+            self.sage_ticks -= 1
+        if not (self.response and self.response_model == "proposed"):
+            return
+        grace = max(2, self.spire_grace - self.realm_level) * TPS
+        if self.tick - self.crack_started_at < grace or self.exposed <= 0:
+            return
+        # Accumulated rather than divided, so a rate that is not a whole number
+        # of units a tick stays exact and stays deterministic.
+        self._reseal_acc += self.spire_reseal
+        back = min(self.exposed, self._reseal_acc // TPS)
+        self._reseal_acc -= back * TPS
+        self.exposed -= back
+        self.resealed += back
+
     # -- grading -----------------------------------------------------------
 
     def _grade_now(self) -> str:
@@ -456,6 +537,7 @@ class Heist:
                 self.tick += TPS            # §12.6's one-second swoop
                 continue
             self.decisions += self.policy.act(self)
+            self._respond()
             for m in self.crew:
                 moving = bool(m.path) and not m.wait_ticks and not m.frozen_ticks
                 m.still_ticks = 0 if moving else m.still_ticks + 1

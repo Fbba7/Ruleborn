@@ -147,6 +147,30 @@ def main() -> int:
                 problems.append(f"{where}: §{edit['section']} — {needle[:50]!r} "
                                 f"appears {hits} times, so \"replace it\" is ambiguous")
 
+    # Two items editing the same sentence. The register is a work order, and a
+    # work order that tells the owner to replace one sentence two different ways
+    # is worse than one that says nothing — whichever edit is applied second
+    # cannot find its text. C18 and F17 both landed on §9.1's Aether cap this
+    # way, each without knowing about the other.
+    by_needle: dict = {}
+    for item_id, edits in EDITS.items():
+        for n, edit in enumerate(edits, 1):
+            if edit.get("action") not in ("replace", "delete", "insert"):
+                continue
+            needle = normalise(edit.get("find", ""))
+            if needle:
+                by_needle.setdefault(needle, []).append((item_id, n, edit["action"]))
+    for needle, owners in by_needle.items():
+        if len(owners) < 2:
+            continue
+        # Two inserts beside the same anchor are additive and fine; anything
+        # that rewrites the text is not.
+        if all(action == "insert" for _, _, action in owners):
+            continue
+        who = ", ".join(f"{i} edit {n} ({a})" for i, n, a in owners)
+        problems.append(f"{who} all act on {needle[:50]!r} — whichever is "
+                        f"applied first destroys the text the others look for")
+
     # Coverage. The six clerical items fixed in v3.0 went on being reported as
     # open for a version, because the first pass over the new document checked
     # the six blocking items and not this batch. An item with an edit is

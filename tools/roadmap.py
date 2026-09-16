@@ -119,6 +119,29 @@ dict(
              register=["F9", "F10", "F11", "F12"],
              gate="a generated island at every realm level holds 30\u201345% "
                   "against a competent crew (\u00a713.2)"),
+        dict(id="T0.7", owner="claude", status="done",
+             title="Specify the response layer \u2014 and report that the fix "
+                   "did not work",
+             detail="F15's recommendation was to give Response an effect that "
+                    "works without a guard, using the two things \u00a713.2 "
+                    "names and never defines: the Spire's reach and the guardian "
+                    "Sage's single power. Both are specified in "
+                    "<code>spec/response.md</code>, both were built into the "
+                    "harness, and <strong>neither changes the shares</strong> "
+                    "\u2014 guards and response still measure 34.2% each. Why is "
+                    "the useful part: a crew already leaves 47% of the exposed "
+                    "share behind, so taking loot off the floor costs it "
+                    "nothing, and a run ends at 40 seconds of \u00a75.4's 165, "
+                    "so a delay costs it nothing either. <strong>Guards and "
+                    "response are the island's only detect-and-act chain</strong> "
+                    "\u2014 the other three layers work by delay, and delay "
+                    "reaches an outcome only through a clock with four times the "
+                    "slack it would need. Re-measured against what \u00a79.6 "
+                    "actually pays (grade \u00d7 fill), the identity breaks and "
+                    "the 69% does not.",
+             evidence="python3 -m tools.heist_harness haul 120",
+             register=["F15"],
+             gate="the same 32 coalitions, on the metric \u00a79.6 pays on"),
         dict(id="T0.5", owner="you", status="ready",
              title="Decide whether to send the prototype out anyway",
              detail="Not a disagreement with \u00a719.27, which argues its case "
@@ -274,6 +297,26 @@ dict(
                     "turn out not to bind either way (C28).",
              evidence="python3 -m tools.economy_model sinks",
              register=["F17", "C28", "C24"]),
+        dict(id="T2.5", owner="claude", status="done",
+             title="Specify the Aether and Essence sinks, and withdraw the first fix",
+             detail="F17 said the prices were too small. "
+                    "<code>spec/sinks.md</code> says they are on the wrong kind "
+                    "of curve, which is a different fix. From day 2 to day 301 "
+                    "the faucets multiply by 122, 240 and 251; the prices aimed "
+                    "at them multiply by 1 to 88. <strong>Starlight's biggest "
+                    "sink outruns its faucet 12\u00d7 because \u00a710.2's "
+                    "building curve is geometric and never ends</strong>; nothing "
+                    "points a geometric curve at the other two. The spec "
+                    "withdraws F17's own first edit \u2014 raising upkeep to 15 "
+                    "an hour a point \u2014 because \u00a79.5's flat 0.5 is "
+                    "already 60% of a day's Aether on day 2 and 3.2% on day 301, "
+                    "so raising it buys about forty days and costs the early "
+                    "game. It also found the one recurring price in the document: "
+                    "waking a rested character, which at the roster cap falls due "
+                    "at 199 heists a day against the four an engaged player runs.",
+             evidence="python3 -m tools.economy_model scaling",
+             register=["F17", "C18"],
+             gate="every price checked against the faucet that pays it"),
         dict(id="T2.4", owner="claude", status="done",
              title="Regenerate \u00a79.3, \u00a710.2, \u00a714.2 and \u00a714.3 from the model",
              detail="<strong>Unblocked by v3.0.</strong> \u00a75.9 settles the "

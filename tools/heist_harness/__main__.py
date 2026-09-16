@@ -17,6 +17,9 @@ REPORTS = {
     "depth": report.tension_and_depth,
     "defence": report.defence_balance,
     "ablation": ablation.report,
+    # The same ablation valued by what §9.6 pays rather than by §13.4's hold
+    # rate; see docs/design/spec/response.md for why that is a different answer.
+    "haul": lambda n=60: ablation.report(n, metric="haul"),
     "control": report.attribution,
 }
 

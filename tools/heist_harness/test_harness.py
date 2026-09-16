@@ -187,6 +187,59 @@ def test_guards_and_response_are_the_same_layer():
             assert hold_rate(s | {"response"}, 12, 3) == 0.0, combo
 
 
+def test_the_harness_reproduces_the_document_unless_asked():
+    """spec/response.md's effects are a proposal, so they are off by default.
+
+    A proposal that silently changes the baseline is not a proposal, it is a
+    second version of the document — the same rule the economy model's
+    `apply_fill` follows.
+    """
+    from .island import generate
+    from .policy import POLICIES
+    from .sim import Heist
+    assert Heist(generate(0, 3), POLICIES["competent"]()).response_model == "published"
+
+
+def test_a_standalone_response_effect_does_not_break_the_symmetry():
+    """F15's first recommendation, measured and refused.
+
+    The Spire's reach and the Sage's power both act with no guard involved. They
+    still leave guards and response contributing nothing without each other, in
+    every coalition, because a crew already leaves 47% of the exposed share
+    behind and finishes at 40 seconds of a 165-second clock. See
+    docs/design/spec/response.md.
+    """
+    import itertools
+    from .ablation import hold_rate
+    from .island import LAYERS
+
+    others = [x for x in LAYERS if x not in ("guards", "response")]
+    for size in range(len(others) + 1):
+        for combo in itertools.combinations(others, size):
+            s = frozenset(combo)
+            assert hold_rate(s | {"response"}, 12, 3,
+                             response_model="proposed") == 0.0, combo
+
+
+def test_the_haul_metric_sees_what_the_hold_rate_cannot():
+    """§13.4 measures the hold rate; §9.6 pays on grade x fill.
+
+    The generated defence turns back about a third of raids and takes about four
+    fifths of what the raider would otherwise have banked, because §12.9's grades
+    multiply the haul by 1.0, 0.7, 0.4 and 0. Everything between "held" and
+    "clean" is invisible to §13.4's metric, which is spec/response.md's first
+    recommendation, pinned so it cannot quietly stop being true.
+    """
+    from .ablation import haul_denied, hold_rate
+    from .island import ALL_LAYERS
+
+    bare = haul_denied(frozenset(), 30, 3)
+    held = hold_rate(ALL_LAYERS, 30, 3)
+    denied = haul_denied(ALL_LAYERS, 30, 3, baseline=bare)
+    assert 25 < held < 50, held
+    assert denied > 2 * held, (held, denied)
+
+
 def test_no_layer_turns_back_a_raid_alone():
     """§13.2: "no layer decides an outcome on its own" — much more so than meant."""
     from .ablation import hold_rate

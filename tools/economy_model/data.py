@@ -356,3 +356,21 @@ LIBRARY_UNLOCK_KEEPER = 4
 PAGES_BY_RANK = {"Common": 15, "Rare": 30, "Deep": 60}
 #: §7.10's four-rank table, which the re-tagged law sheets now imply.
 PAGES_BY_RANK_V3 = {"Common": 10, "Uncommon": 20, "Rare": 35, "Deep": 60}
+
+# --------------------------------------------------------------------------
+# Rest, and the one recurring price in §9.5
+# --------------------------------------------------------------------------
+#
+# §11.6: "After a heist: 45 minutes after a clean escape, 60 after a loud one,
+# 180 if caught. Hearths shorten rest 5% per level. Waking early costs 2 Essence
+# per level per minute left." That last clause is the only price in the whole
+# document that a player pays again every time they play, which is what makes it
+# the one candidate for a recurring Essence sink.
+REST_MINUTES = {"clean": 45, "loud": 60, "caught": 180}
+HEARTH_REST_CUT_PER_LEVEL = 0.05
+WAKE_ESSENCE_PER_LEVEL_MINUTE = 2
+
+#: The proposal in docs/design/spec/sinks.md: upkeep as a share of the player's
+#: own hourly Aether production, per point of stability held, so the price sits
+#: on the same curve as the faucet that pays it.
+UPKEEP_PEGGED_SHARE_PER_POINT = 0.0005

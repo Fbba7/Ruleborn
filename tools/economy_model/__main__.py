@@ -14,6 +14,7 @@ REPORTS = {
     "raiding": report.raiding_trade_off,
     "faucet": report.faucet_comparison,
     "sinks": report.sink_audit,
+    "scaling": report.sink_scaling,
 }
 
 

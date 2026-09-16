@@ -1404,42 +1404,66 @@ dict(id="F14", kind="finding", severity="blocking", status="open",
          "close quietly. This is C19\u2019s pattern applied to the single number "
          "\u00a79.6 names as the one the curve rests on."),
 
-dict(id="F15", kind="finding", severity="blocking", status="open",
-     title="Guards and Response are not two layers; they are one, and it is 69% of the defence",
-     refs=["13.2", "13.4"],
+dict(id="F15", kind="finding", severity="blocking", status="proposed",
+     title="Guards and Response are not two layers; they are one, and three more have no path to the metric",
+     refs=["13.2", "13.4", "5.4", "9.6"],
      body="\u00a713.2 lists five defence layers with target shares and one rule "
           "above them: <strong>no single layer above 25%</strong>, because "
           "\u201cif one layer decides outcomes, the other four are "
           "decoration\u201d. \u00a713.4 specifies exactly how to check it \u2014 "
           "all 32 combinations, credit divided \u201cthe way cooperative game "
-          "theory does\u201d, which is the Shapley value. Run at 120 raids a "
-          "combination (3,840 runs):<br><br>"
-          "<code>geometry &nbsp;4.4% &nbsp;(target 25%)<br>"
+          "theory does\u201d, which is the Shapley value. At 120 raids a "
+          "combination:<br><br><code>"
+          "geometry &nbsp;4.4% &nbsp;(target 25%)<br>"
           "guards &nbsp;&nbsp;34.5% &nbsp;(target 20%)<br>"
           "wards &nbsp;&nbsp;&nbsp;20.9% &nbsp;(target 20%)<br>"
           "laws &nbsp;&nbsp;&nbsp;&nbsp;5.7% &nbsp;(target 20%)<br>"
           "response &nbsp;34.5% &nbsp;(target 15%)</code><br><br>"
-          "Guards and Response are equal to the last decimal, and that is a "
-          "theorem rather than a coincidence. Checked directly: in <strong>every "
-          "one of the eight coalitions</strong>, guards without response turn "
-          "back 0% of raids and response without guards turns back 0%. They are "
-          "symmetric players, so the Shapley value must give them identical "
-          "shares.<br><br>The cause is \u00a713.2\u2019s own definition. Response "
-          "is \u201cwhat turns being seen into being caught\u201d \u2014 which "
-          "makes it <em>multiplicative</em> with guards, not additive. Two layers "
-          "that multiply cannot have independent shares. Counted together they "
-          "are <strong>69% of the defence</strong>, against a ceiling of 25% for "
-          "any one layer.",
-     rec="Either fold Response into Guards and accept one layer at 69% \u2014 "
-         "which fails \u00a713.2\u2019s own rule and makes the other three "
-         "decoration, exactly what the rule exists to prevent \u2014 or give "
-         "Response something it can do <em>without</em> a guard. \u00a713.2 "
-         "already names two candidates and specifies neither: <strong>the "
-         "Spire\u2019s reach</strong> and <strong>the guardian Sage\u2019s single "
-         "power</strong>. A ward that raises the alarm on its own is a third; "
-         "Lantern Glare already does it. Any of them gives the layer a standalone "
-         "contribution and the five shares a chance of summing the way \u00a713.2 "
-         "wants. <code>python3 -m tools.heist_harness ablation</code>."),
+          "Guards and Response are equal to the decimal, and that is a theorem "
+          "rather than a coincidence: in <strong>every one of the eight "
+          "coalitions</strong>, guards without response turn back 0% of raids and "
+          "response without guards turns back 0%. Symmetric players must take "
+          "identical shares.<br><br><strong>The cause is not that Response lacks "
+          "an effect of its own.</strong> That was this item\u2019s first "
+          "recommendation; it was specified, built and measured, and it failed "
+          "\u2014 see <code>docs/design/spec/response.md</code>. The real cause "
+          "is that <strong>guards-and-response is the island\u2019s only "
+          "detect-and-act chain</strong>. Geometry, wards and laws all work by "
+          "<em>delay</em>, and delay reaches an outcome only through the clock "
+          "\u2014 which has four times the slack any delay would need, since a "
+          "run ends at about 40 seconds of \u00a75.4\u2019s 165. So the island "
+          "has exactly one way to turn back a raid, it needs both halves, and "
+          "\u00a713.4\u2019s metric can see nothing else.<br><br><strong>The "
+          "metric is half the fault.</strong> \u00a713.4 measures the hold rate. "
+          "\u00a712.9 grades a raid clean, loud, partial or foiled and "
+          "\u00a79.6 pays 1.0, 0.7, 0.4 and 0 \u2014 so a defence that turns "
+          "every clean run into a partial one takes 60% of the raider\u2019s "
+          "income and scores <em>zero</em>. Re-measured against grade \u00d7 "
+          "fill, the identity breaks (guards 38.7%, response 35.4%) and the 69% "
+          "does not: together they deny 74% of the haul, and geometry and laws "
+          "get worse, at 1.6% and 3.5%.",
+     rec="Three changes, in order, specified in "
+         "<code>docs/design/spec/response.md</code>.<br><br><strong>1. "
+         "\u00a713.4: measure against what \u00a79.6 pays, not the hold "
+         "rate.</strong> One sentence, and it is the difference between a "
+         "measurement that can see four of the five layers and one that cannot. "
+         "It is strictly more information \u2014 the hold rate is the special "
+         "case where grade \u00d7 fill is zero.<br><br><strong>2. \u00a75.4: "
+         "the clock is why three layers are decoration.</strong> Either tighten "
+         "it until delay converts to outcomes \u2014 which is also what "
+         "\u00a719.27\u2019s \u201ca quarter of runs decided in the last ten "
+         "seconds\u201d asks for and does not get \u2014 or accept that "
+         "geometry, wards and laws shape the haul rather than the outcome, and "
+         "rewrite \u00a713.2\u2019s shares to say which layers do "
+         "which.<br><br><strong>3. \u00a713.2: specify the Spire\u2019s reach "
+         "and the guardian Sage\u2019s power</strong> \u2014 both are named "
+         "there and neither is defined, and a layer whose two named components "
+         "have no rules is not a layer. But stop claiming Response is independent "
+         "of Guards. \u201cDetection and response, 35%\u201d is a layer; "
+         "\u201cGuards 20%, Response 15%\u201d is one layer counted twice, and "
+         "that is what breaks the ceiling on paper as well as in the harness."
+         "<br><br><code>python3 -m tools.heist_harness ablation 120</code> and "
+         "<code>python3 -m tools.heist_harness haul 120</code>."),
 
 dict(id="F16", kind="finding", severity="design", status="open",
      title="Geometry is 4% of a generated defence, against a 25% target",
@@ -1505,49 +1529,75 @@ dict(id="C27", kind="contradiction", severity="significant", status="open",
          "Delete \u00a79.2\u2019s sentence. This is the fourth instance of the "
          "same pattern in v3.0 (C21\u2013C23) and the cheapest to fix."),
 
-dict(id="F17", kind="finding", severity="blocking", status="open",
-     title="Aether and Essence have no sinks: every price in \u00a79.5 adds up to five days of income",
-     refs=["9.5", "9.3", "9.1", "10.2"],
-     body="\u00a79.1 runs the game on three resources. \u00a79.5 prices every sink "
-          "for all three. Totalling \u00a79.5\u2019s prices against "
-          "\u00a79.3\u2019s own published day-301 production \u2014 256,100 "
-          "Starlight, 192,100 Aether, 125,300 Essence a day \u2014 gives:"
-          "<br><br><code>"
-          "every birth to the roster cap of 38 &nbsp;&nbsp;133,688 = 1.1 days<br>"
-          "every character to level 10 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-          "524,813 = 4.2 days<br>"
-          "weaving a full 516-point sheet &nbsp;&nbsp;&nbsp;&nbsp;20,640 = 2.6 "
-          "hours<br>"
-          "upkeep on that sheet, a day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-          "&nbsp;6,192 = 46 minutes<br>"
-          "a Lab experiment at level 3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-          "&nbsp;1,200 = 9 minutes</code><br><br>"
-          "<strong>Every Essence sink in the document, added together, is five "
-          "days of income.</strong> Every Aether sink but upkeep is under three "
-          "hours, and upkeep at a full sheet is 3% of a day. The other 97% has "
-          "nowhere to go.<br><br>\u00a79.1 then caps Aether at 5,000 a Spire level "
-          "plus 3,000 \u2014 53,000 at Spire 10, against 192,100 produced a day "
-          "\u2014 so most of it is never banked. An Aether Spring above a certain "
-          "level therefore buys nothing, and \u00a710.2\u2019s upgrade costs for "
-          "it are a Starlight sink with no return.<br><br>Computed from "
-          "\u00a79.3\u2019s published table rather than from the model, so it "
-          "cannot be an artefact of how the model reads \u00a75.9.",
-     rec="Two of the three resources are decorative as priced. The design reads "
-         "as though it knows this \u2014 \u00a74 names <em>stability</em> and "
-         "<em>character time</em> as the two scarce things, and neither is "
-         "Aether or Essence.<br><br>Three ways out, and they are not "
-         "exclusive.<br><br><strong>1. Make upkeep the sink.</strong> It is the "
-         "only recurring price already in the document and it scales with the "
-         "thing the design wants players to push on. At 0.5 Aether an hour a "
-         "point it is 3% of income; at 15 it is most of it, and weaving a fuller "
-         "sheet becomes a real decision rather than a free one.<br><br>"
-         "<strong>2. Price the roster in Essence properly.</strong> \u00a75.9 "
-         "makes the roster the scarcity the design is built on, and births cost "
-         "one day of income to reach the cap. The Hearth cap does all the work "
-         "and the price does none.<br><br><strong>3. Cut the faucets.</strong> If "
-         "nothing needs 192,100 Aether a day, Aether Springs should not produce "
-         "it, and \u00a710.2 has ten levels of upgrades selling capacity nobody "
-         "can use. <code>python3 -m tools.economy_model sinks</code>."),
+dict(id="F17", kind="finding", severity="blocking", status="proposed",
+     title="Aether and Essence have no sinks, because every price in \u00a79.5 is on the wrong kind of curve",
+     refs=["9.5", "9.3", "9.1", "10.2", "11.6"],
+     body="\u00a79.1 runs the game on three resources and \u00a79.5 prices every "
+          "sink for all three. A total understates the problem, because a faucet "
+          "runs every day and almost every price in \u00a79.5 is paid once. "
+          "Totalled over a whole account to day 301:<br><br><code>"
+          "Aether &nbsp;&nbsp;produced 14,674,532 &nbsp;every price there is "
+          "2,968,032 &nbsp;faucet is &nbsp;5x the sink<br>"
+          "Essence &nbsp;produced &nbsp;6,660,571 &nbsp;every price there is "
+          "&nbsp;&nbsp;658,501 &nbsp;faucet is 10x the sink</code><br><br>"
+          "And that is the best case: at day 301 every Essence price is finished "
+          "\u2014 the roster is capped, every character is level 10 \u2014 while "
+          "the Gardens keep running.<br><br><strong>The cause is not the size of "
+          "the prices but their shape.</strong> From day 2 to day 301 the faucets "
+          "multiply by 122, 240 and 251. The prices aimed at them multiply "
+          "by:<br><br><code>"
+          "Starlight &nbsp;a Star Well level &nbsp;&nbsp;&nbsp;&nbsp;x1,478 "
+          "&nbsp;&nbsp;faucet x122 &nbsp;\u2192 outruns it 12x<br>"
+          "Aether &nbsp;&nbsp;&nbsp;&nbsp;weaving, upkeep, the Lab &nbsp;&nbsp;"
+          "&nbsp;&nbsp;&nbsp;x10 &nbsp;&nbsp;faucet x240 &nbsp;\u2192 behind it "
+          "24x<br>"
+          "Essence &nbsp;&nbsp;&nbsp;the next birth &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x88 &nbsp;&nbsp;faucet x251 &nbsp;"
+          "\u2192 behind it 3x</code><br><br>"
+          "Starlight is permanently scarce because \u00a710.2\u2019s building "
+          "curve is geometric and never ends. Nothing points a geometric curve at "
+          "the other two: every price aimed at them is flat (scouting), linear "
+          "(the Lab, waking) or capped (births at 38, levels at 10), and a "
+          "bounded price against an unbounded faucet loses by however long the "
+          "game runs.<br><br><strong>\u00a79.5 has exactly one recurring price "
+          "and the roster cap makes it unreachable.</strong> \u00a711.6 rests a "
+          "crew 45 minutes and \u00a79.5 charges 2 Essence a level a minute to "
+          "wake them early \u2014 the only price a player pays again every "
+          "session. It falls due only when nobody rested is left to send, which "
+          "at the roster cap of 38 is <strong>199 heists a day</strong>. "
+          "\u00a714.2\u2019s engaged player raids four times. Same shape as C19 "
+          "and F1: \u00a711.5 set the cap, \u00a711.6 set the rest window, "
+          "nobody divided one by the other.<br><br>Computed from \u00a79.3\u2019s "
+          "published table as well as from the model, so it cannot be an artefact "
+          "of how the model reads \u00a75.9.",
+     rec="Specified in <code>docs/design/spec/sinks.md</code>. Two changes, and "
+         "the second is the one that matters.<br><br><strong>1. Price upkeep off "
+         "the faucet that pays it.</strong> Not 15 Aether an hour a point, which "
+         "is what this finding first proposed and what the spec withdraws: "
+         "\u00a79.5\u2019s flat 0.5 is <strong>60% of a day\u2019s Aether on "
+         "day 2 and 3.2% on day 301</strong>, so raising it postpones the "
+         "late-game problem by about forty days and makes the early game "
+         "unplayable. Charge 0.05% of the player\u2019s own hourly Aether "
+         "production per point held, and a full sheet costs about a quarter of "
+         "income at every stage. It also repairs \u00a79.1\u2019s cap without "
+         "touching it: \u00a710.2\u2019s 50,000 at Spire 10 becomes about one "
+         "day\u2019s upkeep, where under the flat rate it was 8.5 days and never "
+         "bound (C18).<br><br><strong>2. Cut the faucets \u2014 this is the "
+         "fix.</strong> Pegging upkeep moves the share of a lifetime\u2019s "
+         "Aether the document can absorb from 12.3% to 18.5% and can do no more, "
+         "because a sheet grows x10 while Aether grows x240. Measured against "
+         "every price there is, an <strong>Aether Spring at level 5</strong> and "
+         "a <strong>Garden at level 3</strong> already produce more than the game "
+         "can spend; \u00a710.2 sells five and seven more levels above them, up "
+         "to 5x and 10x. Those upgrades cost Starlight and return a resource with "
+         "nothing to buy. Cutting them is cheap, because it deletes a Starlight "
+         "sink and Starlight is the one currency whose sink already outruns its "
+         "faucet.<br><br>A recurring Essence price (characters cost Essence to "
+         "keep) is the alternative to cutting the Garden ladder, and the spec "
+         "argues against it: \u00a71.2\u2019s \u201cnothing is wasted\u201d and "
+         "\u00a71.3\u2019s \u201ctired of endless timers\u201d rule out a "
+         "roster that starves while you are away. "
+         "<code>python3 -m tools.economy_model scaling</code>."),
 
 dict(id="C28", kind="contradiction", severity="minor", status="open",
      title="Births are priced twice: \u00a79.5\u2019s geometric curve and \u00a711.5\u2019s linear one",
@@ -2141,16 +2191,42 @@ EDITS = {
     dict(section="13.2", action="insert",
          find="| Bells, alarms, the Spire\u2019s reach, and the guardian "
               "Sage\u2019s single power. What turns being seen into being caught",
-         replace="Give the response layer one effect that works without a guard, "
-                 "and specify it: the Spire\u2019s reach and the guardian "
-                 "Sage\u2019s power are both named here and neither is defined. "
-                 "Measured, guards and response contribute nothing whatsoever "
-                 "without each other, in any of the eight coalitions \u2014 so as "
-                 "written they are one layer at 69%, against this "
-                 "section\u2019s own 25% ceiling.",
+         replace="Measured across all 32 combinations, guards and response "
+                 "contribute nothing whatsoever without each other, in any of the "
+                 "eight coalitions \u2014 so they are one layer at 69%, against "
+                 "this section\u2019s own 25% ceiling. Either merge them into one "
+                 "row (\u201cdetection and response\u201d) or say what the "
+                 "Spire\u2019s reach and the Sage\u2019s single power actually "
+                 "do; both are named here and neither is defined.",
          why="\u201cWhat turns being seen into being caught\u201d makes the layer "
              "multiplicative with guards, and two layers that multiply cannot have "
-             "independent shares."),
+             "independent shares. Giving response a standalone effect was tried "
+             "and measured and does not change the shares (spec/response.md)."),
+    dict(section="13.2", action="insert",
+         find="| Where the Vault sits, which routes exist, what can be seen from "
+              "where, chutes that force a choice, bridges that drop on alarm.",
+         replace="Geometry measures 4.4% of the defence, and wards and laws fare "
+                 "no better at 20.9% and 5.7%, because all three work by delay and "
+                 "delay reaches an outcome only through the clock \u2014 which "
+                 "ends a run at about 40 seconds of \u00a75.4\u2019s 165. Say "
+                 "which layers are meant to decide outcomes and which are meant to "
+                 "shape the haul; as written every share is a share of the same "
+                 "thing and three of them cannot reach it.",
+         why="The 25% ceiling is unreachable while three of the five layers have "
+             "no path to the quantity \u00a713.4 measures."),
+    dict(section="13.4", action="replace",
+         find="It means this, exactly: run the same thousand raids against the "
+              "island with that layer switched off, and see how much the hold "
+              "rate falls.",
+         replace="It means this, exactly: run the same thousand raids against the "
+                 "island with that layer switched off, and see how much of the "
+                 "haul it denies \u2014 grade \u00d7 fill, the two terms of "
+                 "9.6\u2019s formula a defence can move.",
+         why="The hold rate cannot see a defence that costs the raider loot "
+             "rather than the raid. A defence that turns every clean run into a "
+             "partial one takes 60% of the raider\u2019s income (9.6) and scores "
+             "zero. Measured this way the guards/response identity breaks; "
+             "measured by hold rate it cannot."),
 ],
 
 "C4": [
@@ -2385,8 +2461,10 @@ EDITS = {
          replace="| 5,000 per Spire level",
          why="\u00a710.2\u2019s Spire table gives a flat 5,000 \u00d7 level. "
              "Either this or the table, and the table is the one every other "
-             "building follows. See also F17: the cap is far below production "
-             "either way."),
+             "building follows. F17 settles which: under a pegged upkeep "
+             "(spec/sinks.md) 50,000 is about one day\u2019s running costs, "
+             "which is a cap that means something. Under the flat rate either "
+             "figure was 8.5 days and never bound."),
 ],
 
 "C28": [
@@ -2402,21 +2480,46 @@ EDITS = {
 "F17": [
     dict(section="9.5", action="replace",
          find="| 0.5 Aether an hour per point, paused after 24 hours away",
-         replace="| 15 Aether an hour per point, paused after 24 hours away",
-         why="Upkeep is the only recurring Aether sink in the document and at 0.5 "
-             "it is 3% of a day\u2019s income at a full sheet. At 15 it is most "
-             "of it, and weaving a fuller sheet becomes a decision rather than a "
-             "free upgrade. The figure is a starting point for tuning, not a "
-             "derivation \u2014 what is not defensible is a recurring cost that "
-             "rounds to nothing."),
-    dict(section="9.1", action="insert",
-         find="| 5,000 per Spire level + 3,000",
-         replace="Either raise the cap to something a day\u2019s production can "
-                 "reach, or cut what Aether Springs produce. 53,000 at Spire 10 "
-                 "against 192,100 produced a day means most Aether is never "
-                 "banked \u2014 which makes an Aether Spring above a certain "
-                 "level a building that costs Starlight and returns nothing.",
-         why="A cap this far below production is not a cap, it is a deletion."),
+         replace="| 0.05% of your hourly Aether production per point held, paused "
+                 "after 24 hours away",
+         why="A flat rate set once cannot stay a price against a faucet that "
+             "multiplies 240x. The same 0.5 is 60% of a day\u2019s Aether on day "
+             "2 and 3.2% on day 301 \u2014 one number doing two different jobs. "
+             "Pegged, a full sheet costs about a quarter of income at every "
+             "stage, and \u00a79.1\u2019s cap becomes about a day\u2019s "
+             "upkeep instead of 8.5 days. Withdraws this item\u2019s earlier "
+             "proposal of a flat 15, which would have made the early game "
+             "unplayable to postpone the late-game problem. See spec/sinks.md."),
+    dict(section="10.2", action="insert",
+         find="| 199 Aether an hour; 2 worker slots; holds 12 h",
+         replace="Stop the Aether Spring ladder here or flatten it. Level 5 "
+                 "already produces more Aether than every price in the document "
+                 "combined; levels 6 to 10 sell up to five times that, for a "
+                 "resource with nothing to buy, at 23,100 to 591,200 Starlight a "
+                 "level.",
+         why="An upgrade whose return is zero is not a weak upgrade. Cutting it "
+             "also deletes a Starlight sink, and Starlight is the one currency "
+             "whose sink already outruns its faucet twelvefold."),
+    dict(section="10.2", action="insert",
+         find="| 73 Essence an hour; 1 worker slot; holds 12 h",
+         replace="Stop the Garden ladder here or flatten it. Level 3 already "
+                 "produces more Essence than every price in the document "
+                 "combined \u2014 births to the roster cap and every character "
+                 "to level 10 \u2014 and both of those finish for good.",
+         why="Essence prices acquiring the roster and nothing about keeping it, "
+             "so once the roster is full the Gardens have 250 more days to run "
+             "with nothing to pay for."),
+    dict(section="11.6", action="insert",
+         find="| After a heist: 45 minutes after a clean escape, 60 after a loud "
+              "one, 180 if caught. Hearths shorten rest 5% per level. Waking "
+              "early costs 2 Essence per level per minute left.",
+         replace="Waking is the only price in the document a player pays again "
+                 "every session, and at the roster cap of 38 it falls due at 199 "
+                 "heists a day against the four an engaged player runs. Either "
+                 "say it is a first-week mechanic and let it fade, or delete it.",
+         why="A price charged at 2% of the rate anyone would have to play to meet "
+             "it is not a sink. \u00a711.5 set the cap and this section set the "
+             "rest window; nobody divided one by the other."),
 ],
 
 "F7": [

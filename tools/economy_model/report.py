@@ -210,3 +210,114 @@ def sink_audit() -> str:
         "  upgrade costs for it are a Starlight sink with no return.",
     ]
     return "\n".join(lines)
+
+
+def sink_scaling() -> str:
+    """Why Aether and Essence have no sinks, stated as one number each.
+
+    `sink_audit` above totals the prices and finds them small. That is the
+    symptom. This is the cause, and it is arithmetic rather than judgement: a
+    faucet that multiplies by 240 across the curve and a price that multiplies by
+    10 are not a balance problem, they are two things on different curves.
+    """
+    from . import sinks
+
+    lines = ["Do §9.5's prices travel with §9.3's production?", ""]
+    lines.append("Between day 2 and day 301 the three faucets multiply by:")
+    lines.append("  Starlight ×122     Aether ×240     Essence ×251")
+    lines.append("")
+    lines.append(f"  {'':<9} {'price':<42} {'start':>9} {'end':>11} {'travel':>8}")
+    rows = sinks.price_growth()
+    for currency, label, first, last, mult in rows:
+        lines.append(f"  {currency:<9} {label:<42} {first:>9,.0f} {last:>11,.0f} "
+                     f"{'×' + format(mult, ',.0f'):>8}")
+    lines.append("")
+
+    income = {"Starlight": 122, "Aether": 240, "Essence": 251}
+    lines.append("  The biggest sink in each currency, against that currency's faucet:")
+    for currency in ("Starlight", "Aether", "Essence"):
+        best = max(m for c, _, _, _, m in rows if c == currency)
+        ratio = best / income[currency]
+        verdict = (f"outruns its faucet {ratio:.0f}×" if ratio >= 1
+                   else f"falls behind its faucet {1 / ratio:.0f}×")
+        lines.append(f"    {currency:<10} biggest price travels ×{best:<6,.0f} "
+                     f"faucet ×{income[currency]:<4}  {verdict}")
+    lines.append("")
+    # The same comparison over a whole account, which is the honest one: a
+    # faucet runs every day and most of §9.5's prices are paid once.
+    from .config import Config
+    from .model import EconomyModel
+    state = EconomyModel(Config(archetype="engaged", days=301)).run()
+    lines.append("  Over a whole account to day 301, faucet against every price there is:")
+    for currency, (produced, priced, ratio) in sinks.lifetime_absorption(state).items():
+        lines.append(f"    {currency:<10} produced {produced:>12,.0f}   "
+                     f"every sink, ever {priced:>11,.0f}   faucet is {ratio:>4.0f}× the sink")
+    lines.append("")
+    lines.append("  That is the whole finding. Starlight is permanently scarce because")
+    lines.append("  §10.2's building curve is geometric and never ends. Nothing points a")
+    lines.append("  geometric curve at Aether or Essence, so both drown.")
+    lines.append("")
+
+    # The one recurring price, and why it is never charged.
+    lines.append("§9.5's one recurring price, and why nobody ever pays it")
+    lines.append("")
+    lines.append("  §11.6 rests a crew for 45 minutes after a clean escape and §9.5 charges")
+    lines.append("  2 Essence a level a minute to wake them early. It is the only price in")
+    lines.append("  the document a player pays again every session — and it only falls due")
+    lines.append("  when there is nobody rested left to send:")
+    lines.append("")
+    lines.append(f"    {'roster':>7} {'crews in one rest window':>26} {'heists a day before a wake':>28}")
+    for roster in (5, 10, 20, 38):
+        rate = sinks.heists_before_waking(roster, 5)
+        lines.append(f"    {roster:>7} {roster // 5:>26} {rate * 16:>28,.0f}")
+    lines.append("")
+    lines.append("  An engaged player raids four times a day (§14.2's archetypes). At the")
+    lines.append("  roster cap the price falls due at 199 a day, so it is charged at 2% of")
+    lines.append("  the rate it would need for anyone to meet it. Waking is not a sink that")
+    lines.append("  is too cheap; it is a sink the roster cap makes unreachable.")
+    lines.append("")
+
+    # The proposal.
+    lines.append("The proposal in spec/sinks.md: price upkeep off the faucet that pays it")
+    lines.append("")
+    lines.append(f"  {'day':>5} {'Aether a day':>13} {'points':>7} "
+                 f"{'flat, §9.5':>18} {'pegged':>18}")
+    for day, points in ((2, 40), (31, 113), (91, 285), (181, 446), (301, 516)):
+        aether = data.PUBLISHED_DAILY_PRODUCTION[day][1]
+        flat = data.UPKEEP_AETHER_PER_POINT_HOUR * points * 24
+        peg = sinks.pegged_upkeep_per_hour(aether, points) * 24
+        lines.append(f"  {day:>5} {aether:>13,} {points:>7} "
+                     f"{flat:>10,.0f} ({100 * flat / aether:>4.1f}%) "
+                     f"{peg:>10,.0f} ({100 * peg / aether:>4.1f}%)")
+    lines.append("")
+    lines.append("  §9.5's flat 0.5 an hour a point is 60% of a day's Aether on day 2 and")
+    lines.append("  3.2% on day 301. It is not mispriced; it is one number doing two")
+    lines.append("  different jobs, because production moved 240× underneath it. The")
+    lines.append("  pegged rate rises with the sheet instead of with the calendar, which")
+    lines.append("  is what makes weaving a fuller sheet a decision.")
+    lines.append("")
+
+    # And the part the peg cannot fix.
+    absorbed = sinks.lifetime_absorption(state)
+    lines.append("What the peg does not fix: the faucet is the other half")
+    lines.append("")
+    lines.append("  Pegging upkeep raises the share of a lifetime's Aether the document has")
+    lines.append("  a price for from about an eighth to about a fifth. It cannot do more:")
+    lines.append("  a sheet grows ×10 across the curve and Aether grows ×240, so even")
+    lines.append("  charging a full sheet's worth of income leaves most of the faucet")
+    lines.append("  unspent. Which level of each producer already covers every price there is:")
+    lines.append("")
+    for building, index, currency in (("Aether Spring", 1, "Aether"),
+                                      ("Garden", 2, "Essence")):
+        priced = absorbed[currency][1]
+        rows = sinks.absorption_ladder(state, building, index, priced)
+        enough = next((r for r in rows if r["covers"] >= 1), rows[-1])
+        lines.append(f"    {building:<14} level {enough['level']:>2} already produces "
+                     f"{enough['covers']:.1f}× every {currency} price in the document.")
+        lines.append(f"    {'':<14} §10.2 sells {10 - enough['level']} more levels above it, "
+                     f"up to {rows[-1]['covers']:.0f}×.")
+    lines.append("")
+    lines.append("  So the recommendation is the one §9.5's prices cannot reach on their")
+    lines.append("  own: cut the faucets. That is cheap to do — it deletes a Starlight")
+    lines.append("  sink, and Starlight is the one currency whose sink already outruns it.")
+    return "\n".join(lines)
