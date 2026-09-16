@@ -308,3 +308,51 @@ PUBLISHED_STABILITY = {
 #: Hours a crew member is unavailable per heist: 3 minutes of heist (§12.6)
 #: plus 45 minutes' rest after a clean escape (§11.6, §12.9).
 CREW_HOURS_PER_HEIST = 0.8
+
+
+# --------------------------------------------------------------------------
+# Aether and Essence sinks (§9.5)
+# --------------------------------------------------------------------------
+#
+# Until now the model produced these two and spent neither, which made every
+# law-restoration date indicative only. §9.5 prices every sink; these are those
+# prices, transcribed.
+
+#: §9.5: "A new ruleborn: 100 x 1.15^(ruleborn owned) Essence (about 400 for the
+#: 10th, 1,600 for the 20th, 6,600 for the 30th)". Those worked values match the
+#: formula, so §9.5 is internally consistent.
+BIRTH_BASE = 100
+BIRTH_GROWTH = 1.15
+
+#: §11.5, for the same thing: "A birth costs 100 Essence plus 40 per character
+#: already owned." Linear, not geometric. At the roster ceiling of 38 the two
+#: differ by eleven times. That is C28, and `Config.birth_rule` picks between
+#: them.
+BIRTH_LINEAR_BASE = 100
+BIRTH_LINEAR_STEP = 40
+
+#: §9.5 and §11.4: Essence to reach level n = 150 x 1.55^(n-2), up to level 10.
+CHARACTER_LEVEL_BASE = 150
+CHARACTER_LEVEL_GROWTH = 1.55
+MAX_CHARACTER_LEVEL = 10
+
+#: §9.5: weaving costs 40 Aether per point of stability, and upkeep 0.5 Aether an
+#: hour per point.
+WEAVE_AETHER_PER_POINT = 40
+UPKEEP_AETHER_PER_POINT_HOUR = 0.5
+
+#: §9.5: scouting is 20 Aether a realm, and §12.3 says a scout lasts 15 minutes.
+SCOUT_AETHER_PER_REALM = 20
+#: §9.5: a Lab experiment is 400 Aether x Lab level.
+LAB_AETHER_PER_LEVEL = 400
+
+#: §10.5, new in v3.0. Only levels 1, 5 and 10 are given — every other building
+#: in §10.2 lists all ten — so the missing seven are interpolated on the curve
+#: the three stated points imply. That interpolation is C24's cost.
+LIBRARY_PAGES = {1: 3, 5: 9, 10: 18}
+LIBRARY_UNLOCK_KEEPER = 4
+
+#: §7.6 and §14.4, the three-rank page costs still in the document (C23).
+PAGES_BY_RANK = {"Common": 15, "Rare": 30, "Deep": 60}
+#: §7.10's four-rank table, which the re-tagged law sheets now imply.
+PAGES_BY_RANK_V3 = {"Common": 10, "Uncommon": 20, "Rare": 35, "Deep": 60}

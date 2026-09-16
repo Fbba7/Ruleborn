@@ -1495,6 +1495,71 @@ dict(id="C27", kind="contradiction", severity="significant", status="open",
          "Delete \u00a79.2\u2019s sentence. This is the fourth instance of the "
          "same pattern in v3.0 (C21\u2013C23) and the cheapest to fix."),
 
+dict(id="F17", kind="finding", severity="blocking", status="open",
+     title="Aether and Essence have no sinks: every price in \u00a79.5 adds up to five days of income",
+     refs=["9.5", "9.3", "9.1", "10.2"],
+     body="\u00a79.1 runs the game on three resources. \u00a79.5 prices every sink "
+          "for all three. Totalling \u00a79.5\u2019s prices against "
+          "\u00a79.3\u2019s own published day-301 production \u2014 256,100 "
+          "Starlight, 192,100 Aether, 125,300 Essence a day \u2014 gives:"
+          "<br><br><code>"
+          "every birth to the roster cap of 38 &nbsp;&nbsp;133,688 = 1.1 days<br>"
+          "every character to level 10 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "524,813 = 4.2 days<br>"
+          "weaving a full 516-point sheet &nbsp;&nbsp;&nbsp;&nbsp;20,640 = 2.6 "
+          "hours<br>"
+          "upkeep on that sheet, a day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "&nbsp;6,192 = 46 minutes<br>"
+          "a Lab experiment at level 3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "&nbsp;1,200 = 9 minutes</code><br><br>"
+          "<strong>Every Essence sink in the document, added together, is five "
+          "days of income.</strong> Every Aether sink but upkeep is under three "
+          "hours, and upkeep at a full sheet is 3% of a day. The other 97% has "
+          "nowhere to go.<br><br>\u00a79.1 then caps Aether at 5,000 a Spire level "
+          "plus 3,000 \u2014 53,000 at Spire 10, against 192,100 produced a day "
+          "\u2014 so most of it is never banked. An Aether Spring above a certain "
+          "level therefore buys nothing, and \u00a710.2\u2019s upgrade costs for "
+          "it are a Starlight sink with no return.<br><br>Computed from "
+          "\u00a79.3\u2019s published table rather than from the model, so it "
+          "cannot be an artefact of how the model reads \u00a75.9.",
+     rec="Two of the three resources are decorative as priced. The design reads "
+         "as though it knows this \u2014 \u00a74 names <em>stability</em> and "
+         "<em>character time</em> as the two scarce things, and neither is "
+         "Aether or Essence.<br><br>Three ways out, and they are not "
+         "exclusive.<br><br><strong>1. Make upkeep the sink.</strong> It is the "
+         "only recurring price already in the document and it scales with the "
+         "thing the design wants players to push on. At 0.5 Aether an hour a "
+         "point it is 3% of income; at 15 it is most of it, and weaving a fuller "
+         "sheet becomes a real decision rather than a free one.<br><br>"
+         "<strong>2. Price the roster in Essence properly.</strong> \u00a75.9 "
+         "makes the roster the scarcity the design is built on, and births cost "
+         "one day of income to reach the cap. The Hearth cap does all the work "
+         "and the price does none.<br><br><strong>3. Cut the faucets.</strong> If "
+         "nothing needs 192,100 Aether a day, Aether Springs should not produce "
+         "it, and \u00a710.2 has ten levels of upgrades selling capacity nobody "
+         "can use. <code>python3 -m tools.economy_model sinks</code>."),
+
+dict(id="C28", kind="contradiction", severity="minor", status="open",
+     title="Births are priced twice: \u00a79.5\u2019s geometric curve and \u00a711.5\u2019s linear one",
+     refs=["9.5", "11.5"],
+     body="\u00a79.5: \u201cA new ruleborn: 100 \u00d7 1.15^(ruleborn owned) "
+          "Essence (about 400 for the 10th, 1,600 for the 20th, 6,600 for the "
+          "30th)\u201d. \u00a711.5: \u201cA birth costs 100 Essence plus 40 per "
+          "character already owned.\u201d<br><br>Geometric against linear. At the "
+          "10th character they are 405 and 500; at the roster ceiling of 38 they "
+          "are <strong>17,612 and 1,580</strong>, eleven times apart. "
+          "\u00a79.5 is the self-consistent one \u2014 its worked values match "
+          "its own formula.<br><br><strong>It matters less than it looks, and "
+          "that is the finding.</strong> Modelled, the roster fills to the Hearth "
+          "cap of 38 by day 31 under <em>either</em> formula, because Essence "
+          "income outruns both (F17). A price that cannot bind is not really a "
+          "price, so this is a tidy-up rather than a balance question \u2014 "
+          "until F17 is fixed, at which point it becomes one.",
+     rec="Take \u00a79.5\u2019s, delete \u00a711.5\u2019s sentence, and revisit "
+         "the growth rate when F17 is settled. If Essence is ever made scarce, "
+         "the difference between 1,580 and 17,612 at the ceiling is the "
+         "difference between a roster the player fills and one they build."),
+
 ]
 
 # ===========================================================================
@@ -2077,6 +2142,36 @@ EDITS = {
              "the cheapest chord costs 33 stability against a day-2 capacity of 51, "
              "and seven of twelve are still three commons. The Lab is doing the "
              "gating and \u00a78.8 does not lean on it."),
+],
+
+"C28": [
+    dict(section="11.5", action="replace",
+         find="A birth costs 100 Essence plus 40 per character already owned.",
+         replace="A birth costs 100 \u00d7 1.15 to the power of the characters "
+                 "already owned, in Essence (9.5).",
+         why="\u00a79.5 is the self-consistent one: its worked values \u2014 400 "
+             "for the 10th, 1,600 for the 20th, 6,600 for the 30th \u2014 match "
+             "its own formula."),
+],
+
+"F17": [
+    dict(section="9.5", action="replace",
+         find="| 0.5 Aether an hour per point, paused after 24 hours away",
+         replace="| 15 Aether an hour per point, paused after 24 hours away",
+         why="Upkeep is the only recurring Aether sink in the document and at 0.5 "
+             "it is 3% of a day\u2019s income at a full sheet. At 15 it is most "
+             "of it, and weaving a fuller sheet becomes a decision rather than a "
+             "free upgrade. The figure is a starting point for tuning, not a "
+             "derivation \u2014 what is not defensible is a recurring cost that "
+             "rounds to nothing."),
+    dict(section="9.1", action="insert",
+         find="| 5,000 per Spire level + 3,000",
+         replace="Either raise the cap to something a day\u2019s production can "
+                 "reach, or cut what Aether Springs produce. 53,000 at Spire 10 "
+                 "against 192,100 produced a day means most Aether is never "
+                 "banked \u2014 which makes an Aether Spring above a certain "
+                 "level a building that costs Starlight and returns nothing.",
+         why="A cap this far below production is not a cap, it is a deletion."),
 ],
 
 "F7": [

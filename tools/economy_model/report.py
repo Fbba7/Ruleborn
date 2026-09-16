@@ -145,4 +145,68 @@ def all_reports() -> str:
         position_budget(),
         raiding_trade_off(),
         faucet_comparison(),
+        sink_audit(),
     ])
+
+
+def sink_audit() -> str:
+    """What §9.5's prices add up to, against §9.3's own published production.
+
+    Deliberately computed from the document's published figures rather than from
+    the model, so the result cannot be an artefact of how the model reads §5.9.
+    """
+    from . import sinks
+
+    starlight, aether, essence = data.PUBLISHED_DAILY_PRODUCTION[301]
+    lines = ["Where does Aether and Essence go? (§9.5 against §9.3)", ""]
+    lines.append("§9.3 publishes what an engaged player makes on day 301:")
+    lines.append(f"  Starlight {starlight:>9,}   Aether {aether:>9,}   "
+                 f"Essence {essence:>9,}   a day")
+    lines.append("")
+    lines.append("§9.5 prices every sink. Totalled over a whole account:")
+    lines.append("")
+
+    births = sum(sinks.birth_cost(n, "geometric") for n in range(5, 38))
+    levels = 38 * sum(data.CHARACTER_LEVEL_BASE
+                      * data.CHARACTER_LEVEL_GROWTH ** (n - 2)
+                      for n in range(2, data.MAX_CHARACTER_LEVEL + 1))
+    capacity = data.spire_stability(10) + 7 * data.anchor_stability(10)
+    weave = data.WEAVE_AETHER_PER_POINT * capacity
+    upkeep_day = data.UPKEEP_AETHER_PER_POINT_HOUR * capacity * 24
+
+    rows = [
+        ("Essence", "every birth to the roster cap of 38", births, essence),
+        ("Essence", "every one of 38 characters to level 10", levels, essence),
+        ("Aether", "weaving a full 516-point sheet, once", weave, aether),
+        ("Aether", "upkeep on that sheet, a day", upkeep_day, aether),
+        ("Aether", "a Lab experiment at level 3", data.LAB_AETHER_PER_LEVEL * 3, aether),
+        ("Aether", "scouting all seven realms of a target", 7 * data.SCOUT_AETHER_PER_REALM,
+         aether),
+    ]
+    lines.append(f"  {'':<8} {'sink':<40} {'cost':>10} {'= days of day-301 income':>26}")
+    for currency, label, cost, income in rows:
+        days = cost / income
+        when = (f"{days:>7.1f} days" if days >= 1
+                else f"{days * 24:>7.1f} hours" if days * 24 >= 1
+                else f"{days * 24 * 60:>7.0f} minutes")
+        lines.append(f"  {currency:<8} {label:<40} {cost:>10,.0f} {when:>26}")
+
+    total_e, total_a = births + levels, weave + upkeep_day * 400
+    lines += [
+        "",
+        f"  Every Essence sink the document prices, added together, is "
+        f"{(total_e) / essence:.0f} days",
+        f"  of day-301 income. Every Aether sink except upkeep is under three hours.",
+        "",
+        "  Upkeep is the only recurring sink of any size, and at a full sheet it is "
+        f"{100 * upkeep_day / aether:.0f}%",
+        "  of a day's Aether. The other 97% has nowhere to go.",
+        "",
+        f"  §9.1 caps Aether at 5,000 a Spire level plus 3,000 — "
+        f"{5000 * 10 + 3000:,} at Spire 10 —",
+        f"  against {aether:,} produced a day, so most of it is never banked at all. "
+        "Which",
+        "  means an Aether Spring above a certain level buys nothing, and §10.2's",
+        "  upgrade costs for it are a Starlight sink with no return.",
+    ]
+    return "\n".join(lines)

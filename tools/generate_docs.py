@@ -196,9 +196,9 @@ def v3_response() -> str:
     moved = [k for k, v in V3.items() if v.get("status") != "fixed"]
     new = [i["id"] for i in REGISTER
            if i["id"] in ("C21", "C22", "C23", "C24", "C25", "C26",
-                          "C27", "D19", "D20", "D21", "D22", "D23",
-                          "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14",
-                          "F15", "F16")]
+                          "C27", "C28", "D19", "D20", "D21", "D22",
+                          "D23", "F7", "F8", "F9", "F10", "F11", "F12", "F13",
+                          "F14", "F15", "F16", "F17")]
 
     def strip(html: str) -> str:
         import re as _re

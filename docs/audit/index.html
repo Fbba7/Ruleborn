@@ -296,31 +296,31 @@
     <p class="lede">Read against <strong>version 3.0</strong>, which answered this
       register directly (&sect;30.18). 18 items are fixed in the
       document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. 22 items
+      what it did &mdash; including where a fix stopped short. 24 items
       are new: four are decisions v3.0 took and then left a stale copy of, which
       is the pattern the whole register is about; the rest came out of building
       the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
       out against the rule sheet &sect;7.3 claims they change.</p>
-    <p class="lede"><strong>41 edits are drafted</strong> across
-      21 items &mdash; the section to open, the sentence as it stands
+    <p class="lede"><strong>44 edits are drafted</strong> across
+      23 items &mdash; the section to open, the sentence as it stands
       today, and what to put there. Every quoted sentence is checked against the
       document by <code>tools/check_edits.py</code>, which fails the build if one
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">86</span><span class="k">items tracked</span></div>
-      <div><span class="n">31</span><span class="k">open</span></div>
+      <div><span class="n">88</span><span class="k">items tracked</span></div>
+      <div><span class="n">33</span><span class="k">open</span></div>
       <div><span class="n">18</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">15</span><span class="k">done or adopted</span></div>
-      <div><span class="n">26</span><span class="k">blocking the build</span></div>
-      <div><span class="n">41</span><span class="k">edits drafted</span></div>
+      <div><span class="n">27</span><span class="k">blocking the build</span></div>
+      <div><span class="n">44</span><span class="k">edits drafted</span></div>
       <div><span class="n">16 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">86</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">16</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">20</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">9</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">21</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">88</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">23</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">17</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">10</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">20</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">10</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">18</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">23</span></button>
   </nav>
 
   <main id="list">
@@ -940,6 +940,21 @@
         
         <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;13.2</span></header><p class="e-find"><span class="e-lab">now</span><code>| Bells, alarms, the Spire’s reach, and the guardian Sage’s single power. What turns being seen into being caught</code></p><p class="e-new"><span class="e-lab">add</span><code>Give the response layer one effect that works without a guard, and specify it: the Spire’s reach and the guardian Sage’s power are both named here and neither is defined. Measured, guards and response contribute nothing whatsoever without each other, in any of the eight coalitions — so as written they are one layer at 69%, against this section’s own 25% ceiling.</code></p><p class="e-why">“What turns being seen into being caught” makes the layer multiplicative with guards, and two layers that multiply cannot have independent shares.</p></li></ol></details>
       </article>
+      <article class="item blk" data-group="blocking"
+               data-kind="finding" data-status="open"
+               data-edits="yes">
+        <header class="item-head">
+          <span class="id">F17</span>
+          <h3>Aether and Essence have no sinks: every price in §9.5 adds up to five days of income</h3>
+          <span class="kind">finding</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§9.5</span><span class="ref">§9.3</span><span class="ref">§9.1</span><span class="ref">§10.2</span></div>
+        <p class="body">§9.1 runs the game on three resources. §9.5 prices every sink for all three. Totalling §9.5’s prices against §9.3’s own published day-301 production — 256,100 Starlight, 192,100 Aether, 125,300 Essence a day — gives:<br><br><code>every birth to the roster cap of 38 &nbsp;&nbsp;133,688 = 1.1 days<br>every character to level 10 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;524,813 = 4.2 days<br>weaving a full 516-point sheet &nbsp;&nbsp;&nbsp;&nbsp;20,640 = 2.6 hours<br>upkeep on that sheet, a day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6,192 = 46 minutes<br>a Lab experiment at level 3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,200 = 9 minutes</code><br><br><strong>Every Essence sink in the document, added together, is five days of income.</strong> Every Aether sink but upkeep is under three hours, and upkeep at a full sheet is 3% of a day. The other 97% has nowhere to go.<br><br>§9.1 then caps Aether at 5,000 a Spire level plus 3,000 — 53,000 at Spire 10, against 192,100 produced a day — so most of it is never banked. An Aether Spring above a certain level therefore buys nothing, and §10.2’s upgrade costs for it are a Starlight sink with no return.<br><br>Computed from §9.3’s published table rather than from the model, so it cannot be an artefact of how the model reads §5.9.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Two of the three resources are decorative as priced. The design reads as though it knows this — §4 names <em>stability</em> and <em>character time</em> as the two scarce things, and neither is Aether or Essence.<br><br>Three ways out, and they are not exclusive.<br><br><strong>1. Make upkeep the sink.</strong> It is the only recurring price already in the document and it scales with the thing the design wants players to push on. At 0.5 Aether an hour a point it is 3% of income; at 15 it is most of it, and weaving a fuller sheet becomes a real decision rather than a free one.<br><br><strong>2. Price the roster in Essence properly.</strong> §5.9 makes the roster the scarcity the design is built on, and births cost one day of income to reach the cap. The Hearth cap does all the work and the price does none.<br><br><strong>3. Cut the faucets.</strong> If nothing needs 192,100 Aether a day, Aether Springs should not produce it, and §10.2 has ten levels of upgrades selling capacity nobody can use. <code>python3 -m tools.economy_model sinks</code>.</p>
+        
+        <details class="edits"><summary>2 edits to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;9.5</span></header><p class="e-find"><span class="e-lab">now</span><code>| 0.5 Aether an hour per point, paused after 24 hours away</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| 15 Aether an hour per point, paused after 24 hours away</code></p><p class="e-why">Upkeep is the only recurring Aether sink in the document and at 0.5 it is 3% of a day’s income at a full sheet. At 15 it is most of it, and weaving a fuller sheet becomes a decision rather than a free upgrade. The figure is a starting point for tuning, not a derivation — what is not defensible is a recurring cost that rounds to nothing.</p></li><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;9.1</span></header><p class="e-find"><span class="e-lab">now</span><code>| 5,000 per Spire level + 3,000</code></p><p class="e-new"><span class="e-lab">add</span><code>Either raise the cap to something a day’s production can reach, or cut what Aether Springs produce. 53,000 at Spire 10 against 192,100 produced a day means most Aether is never banked — which makes an Aether Spring above a certain level a building that costs Starlight and returns nothing.</code></p><p class="e-why">A cap this far below production is not a cap, it is a deletion.</p></li></ol></details>
+      </article>
       </section>
       <section class="group" id="g-design" data-group="design">
         <div class="group-head">
@@ -1555,6 +1570,21 @@
         <details class="edits"><summary>2 edits to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;26.1</span></header><p class="e-find"><span class="e-lab">now</span><code>| Building types
 | 16</code></p><p class="e-new"><span class="e-lab">becomes</span><code>| Building types
 | 17</code></p><p class="e-why">§10.5 added the Library and the launch table did not follow.</p></li><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;10.2</span></header><p class="e-find"><span class="e-lab">now</span><code>10.5 The Library</code></p><p class="e-new"><span class="e-lab">add</span><code>Move §10.5’s table into §10.2, between Ward and Resonance Lab, and give it all ten levels rather than 1, 5 and 10. §10.2 is headed “Every level of every building” and the economy model cannot price a faucet from three of its points.</code></p><p class="e-why">A building outside the building table is how C8 happened the first time.</p></li></ol></details>
+      </article>
+      <article class="item min" data-group="minor"
+               data-kind="contradiction" data-status="open"
+               data-edits="yes">
+        <header class="item-head">
+          <span class="id">C28</span>
+          <h3>Births are priced twice: §9.5’s geometric curve and §11.5’s linear one</h3>
+          <span class="kind">conflict</span>
+          <span class="status s-open">Open</span>
+        </header>
+        <div class="refs"><span class="ref">§9.5</span><span class="ref">§11.5</span></div>
+        <p class="body">§9.5: “A new ruleborn: 100 × 1.15^(ruleborn owned) Essence (about 400 for the 10th, 1,600 for the 20th, 6,600 for the 30th)”. §11.5: “A birth costs 100 Essence plus 40 per character already owned.”<br><br>Geometric against linear. At the 10th character they are 405 and 500; at the roster ceiling of 38 they are <strong>17,612 and 1,580</strong>, eleven times apart. §9.5 is the self-consistent one — its worked values match its own formula.<br><br><strong>It matters less than it looks, and that is the finding.</strong> Modelled, the roster fills to the Hearth cap of 38 by day 31 under <em>either</em> formula, because Essence income outruns both (F17). A price that cannot bind is not really a price, so this is a tidy-up rather than a balance question — until F17 is fixed, at which point it becomes one.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Take §9.5’s, delete §11.5’s sentence, and revisit the growth rate when F17 is settled. If Essence is ever made scarce, the difference between 1,580 and 17,612 at the ceiling is the difference between a roster the player fills and one they build.</p>
+        
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-replace">Replace</span><span class="e-sec">&sect;11.5</span></header><p class="e-find"><span class="e-lab">now</span><code>A birth costs 100 Essence plus 40 per character already owned.</code></p><p class="e-new"><span class="e-lab">becomes</span><code>A birth costs 100 × 1.15 to the power of the characters already owned, in Essence (9.5).</code></p><p class="e-why">§9.5 is the self-consistent one: its worked values — 400 for the 10th, 1,600 for the 20th, 6,600 for the 30th — match its own formula.</p></li></ol></details>
       </article>
       </section>
       <section class="group" id="g-choices" data-group="choices">

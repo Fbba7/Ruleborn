@@ -246,14 +246,19 @@ dict(
                     "still hold, and that the payout peg behaves as its spec page "
                     "claims.",
              evidence="python3 -m tools.economy_model.test_economy_model"),
-        dict(id="T2.3", owner="claude", status="ready",
+        dict(id="T2.3", owner="claude", status="done",
              title="Model Aether and Essence spending, and the Library",
-             detail="Starlight currently drives all growth, so weaving upkeep, "
-                    "births and character levels are unmodelled and "
-                    "law-restoration dates are indicative only. v3.0 adds a "
-                    "second page faucet \u2014 the Library \u2014 which the model "
-                    "must carry before any page total can be re-derived. "
-                    "\u00a710.5 gives three of its ten levels (C24)."),
+             detail="Done, and the answer is that there is almost nothing to "
+                    "model. \u00a79.5 prices every sink; totalled against "
+                    "\u00a79.3's own published day-301 production, <strong>every "
+                    "Essence sink in the document is five days of income</strong> "
+                    "and every Aether sink but upkeep is under three hours. "
+                    "Upkeep at a full sheet is 3% of a day. Two of the three "
+                    "resources are decorative as priced (F17), and the two birth "
+                    "formulas that disagree by eleven times at the roster ceiling "
+                    "turn out not to bind either way (C28).",
+             evidence="python3 -m tools.economy_model sinks",
+             register=["F17", "C28", "C24"]),
         dict(id="T2.4", owner="claude", status="done",
              title="Regenerate \u00a79.3, \u00a710.2, \u00a714.2 and \u00a714.3 from the model",
              detail="<strong>Unblocked by v3.0.</strong> \u00a75.9 settles the "

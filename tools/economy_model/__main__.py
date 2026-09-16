@@ -13,6 +13,7 @@ REPORTS = {
     "positions": report.position_budget,
     "raiding": report.raiding_trade_off,
     "faucet": report.faucet_comparison,
+    "sinks": report.sink_audit,
 }
 
 

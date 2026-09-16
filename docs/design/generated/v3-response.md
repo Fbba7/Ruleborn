@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 86 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 22 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
+v3.0 answered the audit directly, in §30.18. Of 88 items, **18 are fixed in the design document itself**, 17 moved without being resolved, and 24 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 
@@ -77,6 +77,8 @@ v3.0 answered the audit directly, in §30.18. Of 86 items, **18 are fixed in the
 | **F16** | Geometry is 4% of a generated defence, against a 25% target |
 | **D23** | §13.4's ablation was built exactly as specified, Shapley included |
 | **C27** | Two rules for partial staffing: §9.2's table and §5.9's pro-rata share |
+| **F17** | Aether and Essence have no sinks: every price in §9.5 adds up to five days of income |
+| **C28** | Births are priced twice: §9.5’s geometric curve and §11.5’s linear one |
 
 ## The shape of it
 
