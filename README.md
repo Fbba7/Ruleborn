@@ -11,15 +11,22 @@ monetisation.
 
 ## Status
 
-**Pre-production — design document at v3.0, no code yet.**
+**Pre-production — design document at v3.1, no code yet.**
 
-v3.0 answered the audit directly (§30.18): 25 of 88 register items are fixed in
-the document itself, including every one of the six systems that were specified
-twice. It also changed the plan — both pre-code player tests are gone, replaced
-by the simulation harnesses in §19.27, and the build-willingness risk is designed
-out rather than measured (§13.3).
+Two versions have now answered the audit. **35 of 106 register items are fixed
+in the document itself** — 26 by v3.0 and 9 more by v3.1. v3.0 also changed the
+plan: both pre-code player tests are gone, replaced by the simulation harnesses
+in §19.27, and the build-willingness risk is designed out rather than measured
+(§13.3).
 
-What it did not finish is the same shape as what it fixed: four of those six
+v3.1 changed the plan less than its size suggests and changed how much of the
+document can be trusted more. It adds §31 — a build checker, constants pinned
+in data, generated blocks hashed — and closes four numbering holes v3.0 left.
+It is the first version whose fixes were checked here rather than taken from
+its own list, and the checking is what found F24 and F25, neither of which
+that list mentions.
+
+What v3.0 did not finish is the same shape as what it fixed: four of those six
 fixes left a stale copy standing, and §29.1 — the formulas appendix — still
 tabulates the detection model §12.8 deleted, citing §12.8 as its source. See
 [`docs/design/generated/v3-response.md`](docs/design/generated/v3-response.md),
@@ -53,7 +60,7 @@ is done. In short:
 
 ```
 docs/
-  design/     the design document at v3.0 and v2.3, plus greppable extracts
+  design/     the design document at v3.1, with v3.0 and v2.3 beside it, plus greppable extracts
   analysis/   the deep analysis of that document — start here
 content/       the twelve content tables as data, plus the reconciled detection spec
 docs/design/spec/   the reconciled specification, one file per system
@@ -91,6 +98,7 @@ tools/
   heist_harness/                  §19.27's simulation harnesses, built in v3.0's plan
   generator_settings.py           sweeps the generator against both bands the document sets
   post_ladder.py                  whether a steeper guard-post ladder closes F26's gap or moves it
+  ward_budget.py                  whether F26's ward budget lands every realm in both bands
   check_unread_fields.py          every field the harness computes is read somewhere
 ```
 
@@ -124,7 +132,7 @@ million monthly players.
 rewards, no engagement-tuned matchmaking — with the refusals written down so they
 cannot creep back in.
 
-Full detail: [`docs/design/ruleborn-game-design-v2.3.html`](docs/design/ruleborn-game-design-v2.3.html).
+Full detail: [`docs/design/ruleborn-game-design-v3.1.html`](docs/design/ruleborn-game-design-v3.1.html).
 
 ## Checks
 
@@ -141,8 +149,8 @@ that list shrinks as the document is reconciled.
 ```bash
 # regenerate the greppable text extract from the HTML design document
 python3 tools/extract_design_doc.py \
-    docs/design/ruleborn-game-design-v2.3.html \
-    docs/design/ruleborn-game-design-v2.3.txt
+    docs/design/ruleborn-game-design-v3.1.html \
+    docs/design/ruleborn-game-design-v3.1.txt
 
 # machine-check the design document: v3.1's own checks and this repository's,
 # in one verdict. Failures tracked by an open register item do not break the build.
@@ -179,8 +187,8 @@ document, as 106 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 54 are drafted across 32
-items, and every quoted sentence is checked against v3.0 by
+the sentence as it stands today, and what to put there. 70 are drafted across 40
+items, and every quoted sentence is checked against v3.1 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no
 edit at all.

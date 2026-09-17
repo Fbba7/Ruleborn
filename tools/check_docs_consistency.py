@@ -52,12 +52,31 @@ def rel(path: pathlib.Path) -> str:
 
 
 def check_counts(files: list[pathlib.Path]) -> None:
-    """Counts claimed in prose must match the register."""
+    """Counts claimed in prose must match the register.
+
+    Every number here was found wrong at least once. The README said 25 of 88
+    items fixed while the register had 35 of 106, and 54 edits across 32 items
+    while it had 70 across 40 — numbers that were true when they were typed
+    and that nothing re-derived. A count in prose is a copy of a fact, which
+    is 31.2's subject; the difference is that these copies are checkable.
+    """
+    from audit_register import EDITS, V3, V31
+
+    def status(item: dict) -> str:
+        return (V31.get(item["id"], {}).get("status")
+                or V3.get(item["id"], {}).get("status")
+                or item.get("status", "open"))
+
     kinds = {
         "contradiction": sum(1 for i in REGISTER if i["kind"] == "contradiction"),
         "gap": sum(1 for i in REGISTER if i["kind"] == "gap"),
     }
     total = len(REGISTER)
+    fixed = sum(1 for i in REGISTER if status(i) == "fixed")
+    by_v3 = sum(1 for i in REGISTER if V3.get(i["id"], {}).get("status") == "fixed")
+    by_v31 = sum(1 for i in REGISTER if V31.get(i["id"], {}).get("status") == "fixed")
+    edits = sum(len(v) for v in EDITS.values())
+    edited_items = len(EDITS)
 
     patterns = [
         (re.compile(r"(\d+)\s+confirmed internal contradictions"), kinds["contradiction"],
@@ -66,14 +85,37 @@ def check_counts(files: list[pathlib.Path]) -> None:
         (re.compile(r"as (\d+) tracked items"), total, "items tracked"),
         (re.compile(r"register is at (\d+)", re.I), total, "register size"),
         (re.compile(r"(\d+) (?:specification )?gaps\b"), kinds["gap"], "gaps"),
+        (re.compile(r"\*\*(\d+) of \d+ register items are fixed"), fixed,
+         "items fixed in the document"),
+        (re.compile(r"\*\*\d+ of (\d+) register items are fixed"), total,
+         "items tracked"),
+        (re.compile(r"(\d+) by v3\.0 and \d+ more by v3\.1"), by_v3,
+         "items fixed by v3.0"),
+        (re.compile(r"\d+ by v3\.0 and (\d+) more by v3\.1"), by_v31,
+         "items fixed by v3.1"),
+        (re.compile(r"(\d+) are drafted across \d+"), edits, "drafted edits"),
+        (re.compile(r"\d+ are drafted across (\d+)"), edited_items,
+         "items carrying an edit"),
     ]
-    for path in files:
-        text = path.read_text(encoding="utf-8")
+    def problems(text: str) -> list[str]:
+        """Every count in one document that disagrees with the register.
+
+        Pulled out of the loop so the self-test can feed it a sentence rather
+        than rewriting README.md on disk: a check that can only be exercised
+        by editing the repository is one nobody exercises.
+        """
+        out = []
         for pattern, expected, label in patterns:
             for match in pattern.finditer(text):
                 claimed = int(match.group(1))
                 if claimed != expected:
-                    fail(f"{rel(path)}: claims {claimed} {label}, register has {expected}")
+                    out.append(f"claims {claimed} {label}, register has {expected}")
+        return out
+
+    check_counts.problems = problems          # for the self-test
+    for path in files:
+        for problem in problems(path.read_text(encoding="utf-8")):
+            fail(f"{rel(path)}: {problem}")
 
 
 def check_links(files: list[pathlib.Path]) -> None:
@@ -153,6 +195,75 @@ def prose_files() -> list[pathlib.Path]:
                 continue
             out.append(path)
     return sorted(set(out))
+
+
+def current_version() -> str:
+    """The version of the design document this repository reads.
+
+    Taken from `check_document.DEFAULT_DOC` rather than from the newest file
+    on disk: the older versions are still in `docs/design/` on purpose, and
+    which one the checks read is the fact that matters. One home for it, which
+    is 31.2's rule applied to the tooling.
+    """
+    import check_document
+    m = re.search(r"-v(\d+\.\d+)\.html$", check_document.DEFAULT_DOC)
+    return m.group(1) if m else ""
+
+
+def check_document_version(files: list[pathlib.Path]) -> None:
+    """Prose naming the document's version must name the one being read.
+
+    The README opened "design document at v3.0" for as long as v3.1 had been
+    the one every tool read, and pointed "Full detail" at v2.3 — two versions
+    back. A reader who followed it would have been reading a document this
+    repository no longer checks anything against.
+
+    Only the present-tense forms are checked. "v3.0 answered the audit" is a
+    statement about what an older version did and stays as it is; "the design
+    document at v3.0" is a claim about now.
+    """
+    now = current_version()
+    if not now:
+        fail("the design document's version cannot be read from "
+             "check_document.DEFAULT_DOC, so nothing here can be checked against it")
+        return
+    present = re.compile(
+        r"(?:design document(?: is now)? at|read (?:now )?against|"
+        r"checked against|validated against) v(\d+\.\d+)", re.I)
+    for path in dict.fromkeys(files + [ROOT / "README.md"]):
+        text = path.read_text(encoding="utf-8")
+        for m in present.finditer(text):
+            if m.group(1) != now:
+                fail(f"{rel(path)}: says {m.group(0)!r}, and the checks read "
+                     f"v{now}")
+
+
+def check_document_links() -> None:
+    """A link to a design-document file must point at the current one.
+
+    `docs/analysis/` is exempt: it is the v2.3 audit and links to the document
+    it audited, which is the honest thing for an archive to do.
+    """
+    now = current_version()
+    named = re.compile(r"ruleborn-game-design-v(\d+\.\d+)\.(?:html|txt)")
+    # Every prose file, not only the markdown: three tools' usage examples
+    # told a reader to run them against v3.0, which is the version the content
+    # pipeline was quietly still reading (D30).
+    for path in prose_files():
+        name = rel(path)
+        if any(name.startswith(a) for a in ARCHIVES) or name in OWNED_ELSEWHERE:
+            continue
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for i, line in enumerate(lines):
+            # The file name carries the version, and HISTORICAL matches "v2.3"
+            # — so a link to the v2.3 document marks itself historical and the
+            # first version of this check passed on the two links that started
+            # it. The names are removed before the window is read.
+            window = named.sub("", " ".join(lines[max(0, i - 2):i + 3]))
+            for m in named.finditer(line):
+                if m.group(1) != now and not HISTORICAL.search(window):
+                    fail(f"{name}:{i + 1} points at "
+                         f"{m.group(0)}, and the current document is v{now}")
 
 
 def check_stale_citations() -> None:
@@ -336,6 +447,8 @@ def main() -> int:
     check_spec_index()
     check_tool_index()
     check_stale_citations()
+    check_document_version(files)
+    check_document_links()
     check_register_references()
     check_artifact_urls(files)
     check_generated_marked()
@@ -416,6 +529,42 @@ def _self_test() -> None:
     assert not got, f"{len(got)} stale citations in this repository: {got[:3]}"
     print(f"  and all {len(prose_files())} prose files cite only sections "
           f"v3.1 has")
+    # The counts the README states, each mutated by one and shown to fail.
+    check_counts(markdown_files())
+    del problems[:]
+    from audit_register import EDITS, V3, V31
+    fixed = sum(1 for i in REGISTER
+                if (V31.get(i["id"], {}).get("status")
+                    or V3.get(i["id"], {}).get("status")
+                    or i.get("status", "open")) == "fixed")
+    by_v3 = sum(1 for i in REGISTER if V3.get(i["id"], {}).get("status") == "fixed")
+    by_v31 = sum(1 for i in REGISTER if V31.get(i["id"], {}).get("status") == "fixed")
+    edits = sum(len(v) for v in EDITS.values())
+    sentences = {
+        "items fixed in the document":
+            f"**{{}} of {len(REGISTER)} register items are fixed",
+        "items tracked": f"**{fixed} of {{}} register items are fixed",
+        "items fixed by v3.0": f"{{}} by v3.0 and {by_v31} more by v3.1",
+        "items fixed by v3.1": f"{by_v3} by v3.0 and {{}} more by v3.1",
+        "drafted edits": f"{{}} are drafted across {len(EDITS)}",
+        "items carrying an edit": f"{edits} are drafted across {{}}",
+    }
+    truth = {"items fixed in the document": fixed, "items tracked": len(REGISTER),
+             "items fixed by v3.0": by_v3, "items fixed by v3.1": by_v31,
+             "drafted edits": edits, "items carrying an edit": len(EDITS)}
+    for label, shape in sentences.items():
+        right = check_counts.problems(shape.format(truth[label]))
+        wrong = check_counts.problems(shape.format(truth[label] + 1))
+        good = not right and any(label in w for w in wrong)
+        assert good, (label, right, wrong)
+    print(f"  all {len(sentences)} register counts the README states are "
+          f"checked, and each fails when it is off by one")
+
+    now = current_version()
+    assert re.fullmatch(r"\d+\.\d+", now), now
+    doc = ROOT / "docs" / "design" / f"ruleborn-game-design-v{now}.html"
+    assert doc.exists(), doc
+    print(f"  the version the checks read is v{now}, and that document exists")
     print("self-test passed")
 
 
