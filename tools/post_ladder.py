@@ -24,12 +24,12 @@ Two questions, and the second is the one that decides it.
 level. The sweep finds the smallest step that brings the best one-post island at
 realm 1 up to 30%.
 
-**What does that step cost everywhere else?** Realms 3, 4 and 5 already satisfy
-both bands — on one post, at post level 1, where the ladder's slope makes no
-difference at all. The risk is at the top of the ladder: a steeper slope means a
-maxed post holds more, and those realms have no headroom above 45%. A fix that
-breaks the realms that work is not a fix, and listing that collateral is the
-rule this repository's own spec files are written to.
+**What does that step cost everywhere else?** Realms 3, 4 and 5 satisfy both
+bands on one post at post level 1, where the ladder's slope makes no difference
+at all. The risk is at the top of the ladder: a steeper slope means a maxed post
+holds more, and those realms have no headroom above 45%. A fix that breaks the
+realms that work is not a fix, and listing that collateral is the rule this
+repository's own spec files are written to.
 """
 
 from __future__ import annotations
@@ -54,10 +54,17 @@ STEPS = (0.10, 0.20, 0.30, 0.40, 0.50)
 #: §19.27's.
 REALM_1 = dict(realm=1, depth=3, posts=1, bands=2)
 
-#: Where each realm already satisfies both bands, from F26's sweep. These are
-#: what a steeper ladder must not break.
-ALREADY_WORKING = (
-    dict(realm=2, depth=3, posts=1, bands=2),   # reachable only at level 3+
+#: The best configuration each upper realm has, from F26's sweep — the one a
+#: steeper ladder must not break.
+#:
+#: Not all of them satisfy both bands at post level 1: realm 2 reads 26.2%
+#: there and only enters the band at level 3. An earlier version of this called
+#: the list ALREADY_WORKING and the report printed it under "where both bands
+#: are already met", which its own level-1 column contradicted on the first
+#: row. The list is what it is — the upper realms at their best settings — and
+#: whether each is in the band is what the columns are for.
+UPPER_REALMS = (
+    dict(realm=2, depth=3, posts=1, bands=2),
     dict(realm=3, depth=3, posts=1, bands=1),
     dict(realm=4, depth=2, posts=1, bands=1),
     dict(realm=5, depth=2, posts=1, bands=1),
@@ -121,18 +128,19 @@ def report(n: int = 400) -> str:
                    "is not the fix.")
         return "\n".join(out)
 
-    # --- 2. what it costs where the bands are already met ----------------
+    # --- 2. what it costs the upper realms -------------------------------
     out.append("")
-    out.append(f"2. What a {enough * 100:.0f}%-a-level ladder does where both bands "
-               f"are already met.")
-    out.append("   Those realms sit in the band on a level-1 post, where the slope "
-               "does not apply;")
-    out.append("   the question is the top of the ladder, which a player will "
-               "eventually buy.")
+    out.append(f"2. What a {enough * 100:.0f}%-a-level ladder does to the upper "
+               f"realms, at their best settings.")
+    out.append("   The slope does not apply at level 1, so the level-1 column is "
+               "the same at every")
+    out.append("   slope and shows where each realm starts; the question is the top "
+               "of the ladder,")
+    out.append("   which a player will eventually buy.")
     out.append("")
     out.append(f"   {'realm':>5} {'depth':>5} {'level 1':>16} {'level 5':>16}   still in band?")
     broken = []
-    for cfg in ALREADY_WORKING:
+    for cfg in UPPER_REALMS:
         with ladder(enough):
             lo, lo_se, _ = measure(n, level=1, **cfg)
             hi, hi_se, dec = measure(n, level=5, **cfg)
@@ -145,9 +153,9 @@ def report(n: int = 400) -> str:
 
     out.append("")
     if broken:
-        out.append(f"   A {enough * 100:.0f}%-a-level ladder pushes "
-                   f"{len(broken)} of {len(ALREADY_WORKING)} working realms out "
-                   f"of the band at the top of the ladder:")
+        out.append(f"   A {enough * 100:.0f}%-a-level ladder puts "
+                   f"{len(broken)} of {len(UPPER_REALMS)} upper realms outside "
+                   f"the band at the top of the ladder:")
         for realm, hold in broken:
             out.append(f"     realm {realm}: {hold:.1f}%")
         out.append("")
