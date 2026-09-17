@@ -50,6 +50,31 @@ REALMS = (1, 2, 3, 4, 5)
 #: Realms crossed. Two and three are the depths §12.6's decision band implies.
 DEPTHS = (2, 3)
 BANDS = (0, 1, 2)
+#: §5.2 permits one to three guard posts, whatever the realm level. The sweep
+#: covers that whole range rather than an offset from §10.2's default, because
+#: the question F22 raises is which point in §5.2's *permitted* range works —
+#: not whether the range should be widened.
+POST_RANGE = (1, 2, 3)
+
+
+def validate_range() -> None:
+    """Refuse a sweep the island generator would reject, before measuring.
+
+    The first version of this tool swept ``POSTS(realm) + 2``, which asks for
+    four posts at realm 3 and up. ``island.check()`` enforces §5.2's limit of
+    three, so the run died — thirty minutes in, after eleven thousand heists,
+    on a cell it could have rejected before the first one.
+
+    D28's lesson was that a job which cannot fail cannot be trusted when it
+    passes. This is the same fault inverted: a job that can only fail late
+    throws away everything it did first. Both are fixed by asking the question
+    early rather than discovering the answer.
+    """
+    from tools.heist_harness.island import generate
+    for realm in REALMS:
+        for posts in POST_RANGE:
+            for bands in BANDS:
+                generate(0, realm, shaped=bands, posts=posts)
 
 
 def measure(n: int, realm: int, depth: int, posts: int, bands: int) -> tuple:
@@ -66,28 +91,50 @@ def inside(value: float, band: tuple) -> bool:
     return band[0] <= value <= band[1]
 
 
-def sweep(n: int = 200) -> list[dict]:
+def sweep(n: int = 120, refine: int = 400) -> list[dict]:
+    """Measure every cell cheaply, then re-measure the close ones properly.
+
+    A claim that *no* setting lands inside both bands is only as good as the
+    nearest miss, so the cells near a boundary are the ones that need the
+    sample. Measuring all ninety at the refined count would spend most of it on
+    cells that are nowhere near — realm 5 on three posts holds nearly always,
+    and no sample size changes that.
+    """
+    validate_range()
     rows = []
     for realm in REALMS:
         for depth in DEPTHS:
-            for posts in sorted({POSTS(realm), POSTS(realm) + 1, POSTS(realm) + 2}):
+            for posts in POST_RANGE:
                 for bands in BANDS:
                     hold, se, dec = measure(n, realm, depth, posts, bands)
                     rows.append(dict(realm=realm, depth=depth, posts=posts,
                                      bands=bands, hold=hold, se=se, decisions=dec,
-                                     hold_ok=inside(hold, HOLD_BAND),
-                                     dec_ok=inside(dec, DECISION_BAND)))
+                                     spec=posts == POSTS(realm), refined=False))
+
+    for row in rows:
+        near_hold = HOLD_BAND[0] - 10 <= row["hold"] <= HOLD_BAND[1] + 10
+        near_dec = DECISION_BAND[0] - 4 <= row["decisions"] <= DECISION_BAND[1] + 4
+        if near_hold and near_dec:
+            hold, se, dec = measure(refine, row["realm"], row["depth"],
+                                    row["posts"], row["bands"])
+            row.update(hold=hold, se=se, decisions=dec, refined=True)
+
+    for row in rows:
+        row["hold_ok"] = inside(row["hold"], HOLD_BAND)
+        row["dec_ok"] = inside(row["decisions"], DECISION_BAND)
     return rows
 
 
-def report(n: int = 200) -> str:
+def report(n: int = 120) -> str:
     rows = sweep(n)
     out = ["Can the generator meet both of the document's own bands?", ""]
     out.append(f"§13.2 wants a defence to hold {HOLD_BAND[0]:.0f}-{HOLD_BAND[1]:.0f}% "
                f"of raids; §19.27 wants a median run to carry "
                f"{DECISION_BAND[0]}-{DECISION_BAND[1]} decisions.")
-    out.append(f"Competent crew, sign-aware laws, {n} raids a cell. "
-               f"± is one standard error.")
+    refined = sum(1 for r in rows if r["refined"])
+    out.append(f"Competent crew, sign-aware laws, {n} raids a cell — and 400 for "
+               f"the {refined} cells near a boundary, marked +. ± is one standard "
+               f"error; * marks §10.2's own post count for that realm.")
     out.append("")
     out.append(f"{'realm':>5} {'depth':>5} {'posts':>5} {'bands':>5} "
                f"{'hold':>14} {'decisions':>9}   both?")
@@ -99,7 +146,9 @@ def report(n: int = 200) -> str:
             good = [r for r in here if r["hold_ok"] and r["dec_ok"]]
             (solved if good else unsolved).append((realm, depth, here, good))
             for r in here:
-                flags = ("H" if r["hold_ok"] else "·") + ("D" if r["dec_ok"] else "·")
+                flags = (("H" if r["hold_ok"] else "·") + ("D" if r["dec_ok"] else "·")
+                         + ("+" if r["refined"] else " ")
+                         + ("*" if r["spec"] else " "))
                 star = "  <<<" if (r["hold_ok"] and r["dec_ok"]) else ""
                 out.append(f"{r['realm']:>5} {r['depth']:>5} {r['posts']:>5} "
                            f"{r['bands']:>5} {r['hold']:>8.1f}% ±{r['se']:>3.1f} "
@@ -166,6 +215,19 @@ def self_test() -> int:
           f"against its recorded 44.8% — {'reproduces' if near else 'DOES NOT REPRODUCE'}")
     ok = ok and near
 
+    from tools.heist_harness.island import generate
+    validate_range()
+    print(f"  the sweep range validates: realms {REALMS}, posts {POST_RANGE}, "
+          f"bands {BANDS}")
+    try:
+        generate(0, 3, shaped=0, posts=4)
+    except AssertionError:
+        print("  and four posts is rejected, which is what the first run "
+              "discovered after 11,000 heists")
+    else:
+        print("    FAIL: four posts should be rejected — §5.2 allows 1 to 3")
+        ok = False
+
     for value, band, expect in ((30.0, HOLD_BAND, True), (29.9, HOLD_BAND, False),
                                 (45.0, HOLD_BAND, True), (45.1, HOLD_BAND, False)):
         if inside(value, band) is not expect:
@@ -179,7 +241,7 @@ def main() -> int:
     if "--self-test" in sys.argv:
         return self_test()
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    print(report(int(args[0]) if args else 200))
+    print(report(int(args[0]) if args else 120))
     return 0
 
 
