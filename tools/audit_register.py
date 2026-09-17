@@ -785,7 +785,7 @@ dict(id="F26", kind="finding", severity="blocking", status="open",
          "&nbsp;&nbsp;5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &nbsp;&nbsp;39.8% \u00b1 2.2 &nbsp;18 &nbsp;correct</code><br><br><strong>Every realm can satisfy both bands, "
          "and \u00a75.2\u2019s formula is right from realm 3 up and wrong "
          "below.</strong> <code>3 + realm level</code> gives 4, 5, 6, 7, 8; "
-         "what is needed is <strong>10, 8, 6, 7, 8</strong>. The formula "
+         "what is needed is <strong>11, 8, 6, 7, 8</strong> \u2014 ten at realm 1 in this table, eleven when the sweep is run as a whole, below. The formula "
          "increases with realm level and the need does not \u2014 realm 1 "
          "needs more wards than any other realm, and gets the fewest."
          "<br><br>That is not a paradox once the raider is looked at: the "
@@ -809,8 +809,38 @@ dict(id="F26", kind="finding", severity="blocking", status="open",
          "§19.27’s decision band actually implies, two posts "
          "<em>overshoot</em>. The floor F22 asks for is the right direction and "
          "it does not land in the band either. Both items are the same "
-         "quantisation seen from opposite sides.<br><br><code>python3 -m "
-         "tools.generator_settings</code>",
+         "quantisation seen from opposite sides.<br><br>"
+         "<strong>Run as a table rather than a column, the budget is "
+         "11, 8, 6, 7, 8.</strong> Everything above was measured one "
+         "realm at a time. <code>tools/ward_budget.py</code> sweeps the "
+         "ward count <em>and</em> the geometry band count at every "
+         "realm and reports what each one needs; four of the five rows "
+         "come back confirmed and realm 1 moves by one ward. At one "
+         "band, n=400: ten wards holds "
+         "<strong>29.5% \u00b1 2.3</strong> with 24 decisions \u2014 "
+         "half a point under \u00a713.2\u2019s floor \u2014 and "
+         "eleven holds <strong>32.5% \u00b1 2.3</strong> with 25. This "
+         "item already said \u201cten or eleven is the whole of "
+         "it\u201d; measured at four times the sample it is eleven, and "
+         "the window is one ward wide.<br><br>"
+         "<strong>Every realm is reachable, and none of them at nought "
+         "geometry bands.</strong> Across 150 settings \u2014 five "
+         "realms, three band counts, ten ward counts \u2014 every "
+         "setting that satisfies both bands has one band or two, and "
+         "at nought the ward count barely moves the defence at all: "
+         "realm 1 runs 4.0% at three wards to 13.0% at twelve. "
+         "<strong>A ward is worth almost nothing without geometry to "
+         "hide it behind</strong>, which \u00a713.4\u2019s "
+         "independent per-layer budget has no way to say \u2014 it "
+         "prices the layers separately and one of them is conditional "
+         "on another.<br><br>"
+         "<strong>The window widens with realm level</strong>, which is "
+         "the same fact as the budget running the other way to "
+         "\u00a75.2\u2019s formula: realm 1 has one setting in 30, "
+         "realm 2 has two, realm 4 has nine. The realms the formula "
+         "gives fewest wards are the realms with least room to be "
+         "wrong.<br><br><code>python3 -m tools.generator_settings</code> "
+         "\u00b7 <code>python3 -m tools.ward_budget</code>",
      measured="re-run against harness 496955db53f8d3c4"),
 
 dict(id="F27", kind="finding", severity="significant", status="open",
@@ -3355,9 +3385,11 @@ DESIGN_GATES = {
     "realms": dict(
         what="Terrain layout, what an island holds, how a realm is drawn",
         gates={
-            "F26": "how many wards a realm holds \u2014 measured at 10, 8, 6, 7, 8 "
-                   "against \u00a75.2's 4, 5, 6, 7, 8, so realms 1 and 2 are "
-                   "drawn with the wrong number of objects",
+            "F26": "how many wards a realm holds \u2014 measured at "
+                   "11, 8, 6, 7, 8 against \u00a75.2's 4, 5, 6, 7, 8, so "
+                   "realms 1 and 2 are drawn with less than half the "
+                   "objects they need, and no realm works at all "
+                   "without geometry to hide them behind",
             "F27": "where each realm's defence starts, which \u00a75.2's post "
                    "formula sets and gets right at one realm in five",
             "F22": "whether realms 1 and 2 get one guard post or two, which is "

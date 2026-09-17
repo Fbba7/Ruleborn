@@ -172,6 +172,41 @@ NO_EDIT_BECAUSE = {
 }
 
 
+def ward_budget_agrees() -> list:
+    """F26's ward budget must read the same everywhere the register states it.
+
+    It is stated three times — in F26's body, in its recommendation, and in
+    the design-gates panel, where it tells a designer how many objects a realm
+    holds. The measurement moved realm 1 from ten wards to eleven, and two of
+    the three would have kept saying ten.
+
+    `ward_budget.MEASURED` is the one home. This reads the register rather
+    than the tool's own tables, so a number typed into prose is checked
+    against the number the sweep produced.
+    """
+    import re as _re
+    import sys as _sys
+    _sys.path.insert(0, str(ROOT))
+    from audit_register import DESIGN_GATES
+    from tools.ward_budget import MEASURED
+    want = ", ".join(str(MEASURED[r]) for r in sorted(MEASURED))
+    blobs = [(i["id"] + " " + k, i.get(k, ""))
+             for i in REGISTER if i["id"] == "F26" for k in ("body", "rec")]
+    blobs += [("the design gates", DESIGN_GATES["realms"]["gates"].get("F26", ""))]
+    out = []
+    for where, text in blobs:
+        plain = _re.sub(r"<[^>]+>|&nbsp;", " ", text)
+        found = _re.findall(r"\b(\d+,\s*\d+,\s*\d+,\s*\d+,\s*\d+)\b", plain)
+        budgets = [f for f in found if f.replace(" ", "") != "4,5,6,7,8"]
+        if not budgets:
+            continue
+        for budget in budgets:
+            if _re.sub(r"\s+", " ", budget) != want:
+                out.append(f"{where}: states a ward budget of {budget}, and "
+                           f"ward_budget.MEASURED is {want}")
+    return out
+
+
 def markup_in_titles() -> list:
     """A register title must be plain text.
 
@@ -347,6 +382,17 @@ def self_test() -> int:
           f"replacement is {'caught' if caught else 'MISSED'}")
     ok = ok and caught and live
 
+    # The ward budget is stated three times and the measurement moved one of
+    # its five numbers.
+    from audit_register import DESIGN_GATES as _gates
+    was_gate = _gates["realms"]["gates"]["F26"]
+    _gates["realms"]["gates"]["F26"] = "measured at 10, 8, 6, 7, 8 against 4, 5, 6, 7, 8"
+    caught = bool(ward_budget_agrees())
+    _gates["realms"]["gates"]["F26"] = was_gate
+    print(f"  [{'PASS' if caught else 'FAIL'}] a ward budget that disagrees with "
+          f"the sweep is {'caught' if caught else 'MISSED'}")
+    ok = ok and caught and not ward_budget_agrees()
+
     # A title is escaped wherever it is used, so markup in one reaches a
     # reader as literal text. F16's carried an <em> into a page heading.
     first = REGISTER[0]
@@ -412,6 +458,7 @@ def main() -> int:
     problems.extend(dangling_prose_sections(doc_text))
     problems.extend(dangling_edit_citations(doc_text))
     problems.extend(markup_in_titles())
+    problems.extend(ward_budget_agrees())
     problems.extend(unexplained_missing_edits())
     problems.extend(bad_sides())
 

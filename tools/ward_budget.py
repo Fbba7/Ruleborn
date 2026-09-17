@@ -8,7 +8,10 @@ F26 found that §13.2's 30-45% hold band and §19.27's 15-25 decisions cannot
 both be met at realm 1 by any setting §5.2 and §10.2 permit, and that the one
 dial with the resolution to close it is the ward count. It recorded a measured
 need of **10, 8, 6, 7, 8** wards at realms 1 to 5, against §5.2's
-``3 + realm level`` — 4, 5, 6, 7, 8.
+``3 + realm level`` — 4, 5, 6, 7, 8. Run as a table, four of those five rows
+come back confirmed and realm 1 moves by one: ten wards holds 29.5% ± 2.3,
+half a point under §13.2's floor, and eleven holds 32.5% ± 2.3. The budget is
+**11, 8, 6, 7, 8**, and the window at realm 1 is one ward wide.
 
 **That budget was read off a sweep one realm at a time, and never run as the
 table it claims to be.** A defence budget is a table a player moves through,
@@ -57,6 +60,13 @@ def SPEC(realm: int) -> int:
 #: What F26 recorded, kept so the report can say what happened to it rather
 #: than quietly dropping it. It is not the proposal under test.
 RECORDED = {1: 10, 2: 8, 3: 6, 4: 7, 5: 8}
+
+#: What the sweep found, at one geometry band and n=400. The register states
+#: this figure in three places \u2014 F26's body, F26's recommendation and the
+#: design-gates panel \u2014 and `check_edits.ward_budget_agrees` checks all
+#: three against it, because a number with three homes is the register's own
+#: subject.
+MEASURED = {1: 11, 2: 8, 3: 6, 4: 7, 5: 8}
 
 #: The ward counts to sweep. \u00a75.2 gives 4 to 8 across the five realms and
 #: F26 records a need of 6 to 10, so the range runs past both ends \u2014 the

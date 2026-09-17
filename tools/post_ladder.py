@@ -51,7 +51,16 @@ STEPS = (0.10, 0.20, 0.30, 0.40, 0.50)
 
 #: The best one-post island at realm 1, from F26's sweep: the configuration that
 #: gets closest to the band from below while keeping the decision count inside
-#: §19.27's.
+#: §19.27's, **at §5.2's own ward count**.
+#:
+#: Two bands is right for this question and wrong for the next one, so it does
+#: not travel. This file asks what the post ladder can do to the island §5.2
+#: builds, and at four wards two bands is the strongest that island gets.
+#: `ward_budget.py` asks what realm 1 *needs*, and there the answer is one band
+#: with more wards — every ward adds decisions as well as hold, so a second
+#: band spends headroom the wards need. An earlier version of `ward_budget.py`
+#: imported this value, held it fixed, and reported F26 refuted on a
+#: configuration F26 had already ruled out.
 REALM_1 = dict(realm=1, depth=3, posts=1, bands=2)
 
 #: The best configuration each upper realm has, from F26's sweep — the one a
