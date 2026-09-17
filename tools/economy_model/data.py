@@ -358,10 +358,18 @@ SCOUT_AETHER_PER_REALM = 20
 #: §9.5: a Lab experiment is 400 Aether x Lab level.
 LAB_AETHER_PER_LEVEL = 400
 
-#: §10.5, new in v3.0. Only levels 1, 5 and 10 are given — every other building
-#: in §10.2 lists all ten — so the missing seven are interpolated on the curve
-#: the three stated points imply. That interpolation is C24's cost.
-LIBRARY_PAGES = {1: 3, 5: 9, 10: 18}
+#: §10.4's Library curve, all ten levels.
+#:
+#: v3.0 added the Library (as §10.5) and gave three levels — 1, 5 and
+#: 10 — so the other seven were interpolated on the curve those imply.
+#: v3.1 states all ten, and they are not that curve: it reads 5, 6 and 8 at
+#: levels 2 to 4 where the interpolation gives 3.7, 4.5 and 5.5, so the model
+#: understated the Library by up to a third at every level the document had
+#: not stated. The interpolation was honest about being one; what nobody had
+#: was a reason to look again, because the file it would have looked in was
+#: extracted from v3.0 too.
+LIBRARY_PAGES = {1: 3, 2: 5, 3: 6, 4: 8, 5: 9,
+                 6: 11, 7: 13, 8: 14, 9: 16, 10: 18}
 LIBRARY_UNLOCK_KEEPER = 4
 
 #: §7.6 and §14.4, the three-rank page costs still in the document (C23).

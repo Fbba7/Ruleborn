@@ -30,19 +30,25 @@ def birth_cost(owned: int, rule: str) -> float:
 
 
 def library_pages(level: int) -> float:
-    """§10.4 gives levels 1, 5 and 10. The rest are on the curve those imply.
+    """§10.4's pages a day at a Library level.
 
-    3 -> 9 -> 18 over ten levels is very close to geometric at 1.209 a level, so
-    the seven missing rows are interpolated on that. Every other building in
-    §10.2 lists every level; this is what C24 costs to work around.
+    v3.0 gave levels 1, 5 and 10 and this interpolated the other seven on the
+    geometric curve those imply. v3.1 states all ten and they are not that
+    curve — it is flatter early — so the interpolation ran about a
+    third low at levels 2 to 4 for as long as it stood.
+
+    The interpolation is gone rather than kept as a fallback: a fallback that
+    is never exercised is a second implementation nobody checks, and the
+    document now states every row. A level outside the table raises rather
+    than guessing, because guessing quietly is what this was.
     """
     if level <= 0:
         return 0.0
-    known = data.LIBRARY_PAGES
-    if level in known:
-        return float(known[level])
-    growth = (known[10] / known[1]) ** (1 / 9)
-    return known[1] * growth ** (level - 1)
+    if level not in data.LIBRARY_PAGES:
+        raise KeyError(
+            f"10.4 states Library levels {sorted(data.LIBRARY_PAGES)}; "
+            f"level {level} is not one of them")
+    return float(data.LIBRARY_PAGES[level])
 
 
 def roster_growth(state, rule: str = "geometric", housing_cap: int = 38) -> list:

@@ -24,7 +24,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SRC = ROOT / "docs" / "design" / "ruleborn-game-design-v3.0.txt"
+SRC = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
 OUT = ROOT / "content"
 
 NOTES = ["Flow", "Weight", "Glow", "Hush", "Bloom", "Spark", "Echo", "Veil"]
@@ -32,6 +32,23 @@ OPPOSITE = {"Flow": "Weight", "Weight": "Flow", "Glow": "Hush", "Hush": "Glow",
             "Bloom": "Spark", "Spark": "Bloom", "Echo": "Veil", "Veil": "Echo"}
 SCHOOLS = ["Motion", "Matter", "Time", "Energy", "Life", "Spirit"]
 ROLES = ["Scout", "Breaker", "Carrier", "Warden", "Mender"]
+
+
+def heading(text: str, title: str) -> str | None:
+    """The numbered heading for a section title, whatever number it carries.
+
+    Two of this file's markers named a number: ``"10.5 The Library"``. v3.1
+    renumbered that section to 10.4, so the Library dropped out of
+    ``buildings.json`` altogether and its level table was swallowed by the
+    ward extractor as ninety-nine extra wards named "1", "2", "900 Starlight".
+
+    A marker that names a number is a marker that a renumbering breaks, and
+    this document renumbers — D29 is the record of the same fault in forty-one
+    citations. Titles move far less often than numbers, so the markers are
+    written as titles and the number is looked up here.
+    """
+    m = re.search(rf"^(\d+\.\d+ {re.escape(title)})\s*$", text, re.M)
+    return m.group(1) if m else None
 
 
 def section(text: str, start: str, end: str) -> str:
@@ -127,11 +144,55 @@ CREATURE_FIELDS = {
 }
 
 
+#: How 11.2's column headings map onto the fields kept from it. v3.0's table
+#: had five columns; v3.1 added Size and Flies, which is C26's fix — 12.21
+#: declared size and flight as properties and no table carried them.
+SUMMARY_COLUMNS = {
+    "Ruleborn": "name", "School": "school", "Role": "role",
+    "Size": "size", "Flies": "flies",
+    "Ability (cooldown)": "ability", "Passive": "passive",
+}
+
+
+def summary_table(text: str) -> dict[str, dict]:
+    """11.2's summary of the 18 ruleborn, read by column heading.
+
+    It was read by offset — school at +1, role at +2, ability at +3, passive
+    at +4 — which is correct for exactly the width of table it was written
+    against. v3.1 inserted Size and Flies between Role and Ability, so every
+    creature's ability became "standard" and every passive became "yes" or
+    "no", and `content/ruleborn.json` would have carried that as fact.
+
+    Nothing would have caught it. C6 compares this table against 11.11's
+    character bible, so a shifted read makes eighteen creatures disagree
+    about their ability — which is what C6 says they do, and the check was
+    already open. A fault that produces the symptom the register is expecting
+    is the hardest kind to see.
+    """
+    block = section(text, "11.2 The 18 ruleborn", "11.3 Traits")
+    cells = [c.strip().lstrip("| ").strip() for c in block.split("\n") if c.strip()]
+    # section() hands back the heading line too, so skip forward to the header
+    # row rather than assuming it is first.
+    i = next((k for k, c in enumerate(cells) if c in SUMMARY_COLUMNS), len(cells))
+    heads = []
+    while i < len(cells) and cells[i] in SUMMARY_COLUMNS:
+        heads.append(SUMMARY_COLUMNS[cells[i]])
+        i += 1
+    if "name" not in heads or "role" not in heads:
+        raise SystemExit(
+            f"11.2's header row is {cells[:8]}, which this reader does not "
+            f"recognise. Add the new column to SUMMARY_COLUMNS rather than "
+            f"letting the row shift.")
+    out = {}
+    for j in range(i, len(cells) - len(heads) + 1, len(heads)):
+        row = dict(zip(heads, cells[j:j + len(heads)]))
+        if row.get("role") in ROLES:
+            out[row["name"]] = row
+    return out
+
+
 def extract_ruleborn(text: str) -> list[dict]:
-    # §11.2's summary table, for the cross-check.
-    table = section(text, "11.2 The 18 ruleborn", "11.3 Traits")
-    cells = [c.strip().lstrip("| ").strip() for c in table.split("\n") if c.strip()]
-    summary = {}
+    summary = summary_table(text)
     names = set()
     lines = text.split("\n")
     heads = []
@@ -140,12 +201,6 @@ def extract_ruleborn(text: str) -> list[dict]:
         if m:
             heads.append((i, m))
             names.add(m.group(1).strip())
-    for i, cell in enumerate(cells):
-        if cell in names and i + 4 < len(cells) and cells[i + 2] in ROLES:
-            summary[cell] = {
-                "school": cells[i + 1], "role": cells[i + 2],
-                "ability": cells[i + 3], "passive": cells[i + 4],
-            }
 
     out = []
     for idx, (i, m) in enumerate(heads):
@@ -182,6 +237,14 @@ def extract_ruleborn(text: str) -> list[dict]:
                     "role" if "role" in conflicts or "school" in conflicts else "wording")
                 entry["alt_11_2"] = conflicts
             entry["passive_11_2"] = alt["passive"]
+            # C26: 11.2 now carries size and flight, which 12.21 declared as
+            # properties and no table had. Unlike ability and passive they are
+            # stated in one place only, so they are not labelled 11_2 — the
+            # suffix marks a fact this document states twice, and these it
+            # states once.
+            for field in ("size", "flies"):
+                if field in alt:
+                    entry[field] = alt[field]
         out.append(entry)
     return out
 
@@ -306,9 +369,12 @@ def extract_roles(text: str) -> list[dict]:
 
 
 def extract_wards(text: str) -> list[dict]:
-    # v3.0 inserted 10.5 (the Library) between the ward table and 11.1, so the
-    # old end marker swallowed the Library's level table as four extra wards.
-    end = "10.5 The Library" if "10.5 The Library" in text else "11.1 Roles"
+    # v3.0 inserted the Library between the ward table and 11.1, so an end
+    # marker of "11.1 Roles" swallows the Library's level table as extra
+    # wards. v3.1 renumbered the Library from 10.5 to 10.4, which broke the
+    # fix and put the rows back — ninety-nine of them, because v3.1's table
+    # is longer. The marker is the title now.
+    end = heading(text, "The Library") or "11.1 Roles"
     rows = table(text, "10.3 Wards", end,
                  ["name", "school", "effect_level_1", "resets_after"],
                  ["Ward", "School", "Effect at level 1", "Resets after"])
@@ -357,9 +423,10 @@ def extract_library(text: str) -> dict | None:
     belongs with the others, and being outside the table is exactly how C8
     happened in the first place.
     """
-    if "10.5 The Library" not in text:
+    start = heading(text, "The Library")
+    if not start:
         return None
-    block = section(text, "10.5 The Library", "11Characters")
+    block = section(text, start, "11Characters")
     cells = [l.strip().lstrip("| ").strip() for l in block.split("\n") if l.strip()]
     levels = []
     for i, cell in enumerate(cells):
@@ -375,8 +442,17 @@ def extract_library(text: str) -> dict | None:
     return {
         "name": "The Library", "id": "library", "placement": "Heart; 1.",
         "levels": levels,
-        "note": "\u00a710.5 gives levels 1, 5 and 10 only; the other seven are "
-                "not stated. Every other building in \u00a710.2 lists every level.",
+        # The note was written when v3.0 gave three levels and would have gone
+        # on saying so after v3.1 gave ten, which is the fault this file's
+        # heading lookup is also about: a sentence about the data, kept beside
+        # the data, not derived from it.
+        "note": (f"\u00a7{start.split()[0]} gives all {len(levels)} levels, but "
+                 f"outside \u00a710.2's table of every level of every building"
+                 if len(levels) >= 10 else
+                 f"\u00a7{start.split()[0]} gives {len(levels)} levels "
+                 f"({', '.join(str(l['level']) for l in levels)}); the other "
+                 f"{10 - len(levels)} are not stated, and every other building "
+                 f"in \u00a710.2 lists every level"),
         "needs_decision": "C8",
     }
 

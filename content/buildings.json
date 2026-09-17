@@ -831,10 +831,52 @@
         "gives": "3 pages a day"
       },
       {
+        "level": 2,
+        "cost_starlight": 1790,
+        "needs": "Spire 2",
+        "gives": "5 pages a day"
+      },
+      {
+        "level": 3,
+        "cost_starlight": 3550,
+        "needs": "Spire 3",
+        "gives": "6 pages a day"
+      },
+      {
+        "level": 4,
+        "cost_starlight": 7050,
+        "needs": "Spire 4",
+        "gives": "8 pages a day"
+      },
+      {
         "level": 5,
         "cost_starlight": 14000,
         "needs": "Spire 5",
         "gives": "9 pages a day"
+      },
+      {
+        "level": 6,
+        "cost_starlight": 22500,
+        "needs": "Spire 6",
+        "gives": "11 pages a day"
+      },
+      {
+        "level": 7,
+        "cost_starlight": 36200,
+        "needs": "Spire 7",
+        "gives": "13 pages a day"
+      },
+      {
+        "level": 8,
+        "cost_starlight": 58100,
+        "needs": "Spire 8",
+        "gives": "14 pages a day"
+      },
+      {
+        "level": 9,
+        "cost_starlight": 93400,
+        "needs": "Spire 9",
+        "gives": "16 pages a day"
       },
       {
         "level": 10,
@@ -843,7 +885,7 @@
         "gives": "18 pages a day"
       }
     ],
-    "note": "§10.5 gives levels 1, 5 and 10 only; the other seven are not stated. Every other building in §10.2 lists every level.",
+    "note": "§10.4 gives all 10 levels, but outside §10.2's table of every level of every building",
     "needs_decision": "C8"
   }
 ]

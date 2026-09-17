@@ -295,7 +295,7 @@ dict(
                     "two tables.<br><br>Four remain, and two of them now have "
                     "numbers they did not have: <strong>Q6</strong>, where "
                     "\u00a727.3\u2019s 1,019 days becomes about 1,343 under "
-                    "\u00a75.9\u2019s rules and the casual curve slips nearly "
+                    "\u00a75.8\u2019s rules and the casual curve slips nearly "
                     "twice as far as the others; and <strong>Q3</strong>, where "
                     "the page economy it was argued on has been overtaken by the "
                     "Library \u2014 the rank split moves the Codex total by 11% "
@@ -351,7 +351,7 @@ dict(
              register=["C25", "D13", "D14"]),
         dict(id="T1.10", owner="you", status="yours",
              title="Decide whether the ten playtesters exist",
-             detail="\u00a725.5 rules them out \u2014 <em>\u201cNo recruited "
+             detail="\u00a725.4 rules them out \u2014 <em>\u201cNo recruited "
                     "panels, no paid playtesters, no thirty people in a "
                     "room\u201d</em> \u2014 and \u00a719.27 moves every "
                     "human instrument to soft launch. \u00a726.2 then exits "

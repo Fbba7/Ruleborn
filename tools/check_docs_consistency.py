@@ -122,9 +122,22 @@ RENUMBERED = {"5.9": "5.8", "7.10": "7.9", "10.5": "10.4", "25.5": "25.4"}
 #: knows is unchecked is the same as no check.
 ARCHIVES = ("docs/analysis/",)
 
+#: Files whose section references another check already owns, with its own
+#: table of deliberate exceptions. `check_edits.dangling_prose_sections` reads
+#: every reference in the register's prose and `check_edits.KNOWN_UNRESOLVABLE`
+#: says which are meant not to resolve — D29 quotes the old numbers because it
+#: is the record of the renumbering. Checking it here as well would mean two
+#: exception tables for one question, which is the fault both files exist to
+#: record.
+OWNED_ELSEWHERE = ("tools/audit_register.py",)
+
 #: A stale number is deliberate when the text around it says so. The phrases
 #: are the ones this repository actually uses for it — "v3.0's 5.9", "5.9 is
 #: now 5.8", "renumbered 5.8 in v3.1".
+#: A section citation, written with the character or with the
+#: six-character escape a Python source file may carry instead.
+CITE = re.compile(r"(?:§|\\u00a7)(\d+\.\d+)")
+
 HISTORICAL = re.compile(
     r"v2\.\d|v3\.0|renumber|is now \u00a7|was \u00a7|older version|earlier version",
     re.I)
@@ -166,12 +179,16 @@ def check_stale_citations() -> None:
     sections = set(re.findall(r"^(\d+\.\d+) ", doc, re.M))
     for path in prose_files():
         name = rel(path)
-        if any(name.startswith(a) for a in ARCHIVES):
+        if any(name.startswith(a) for a in ARCHIVES) or name in OWNED_ELSEWHERE:
             continue
         lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
         for i, line in enumerate(lines):
             window = " ".join(lines[max(0, i - 3):i + 4])
-            for m in re.finditer(r"\u00a7(\d+\.\d+)", line):
+            # A Python source file may write the section mark as the escape
+            # \u00a7 rather than the character, and four stale citations in
+            # decision_support.py hid behind exactly that: the first version of
+            # this check read the character only and reported the file clean.
+            for m in CITE.finditer(line):
                 num = m.group(1)
                 if num in sections or HISTORICAL.search(window):
                     continue
@@ -383,7 +400,7 @@ def _self_test() -> None:
                           ("v3.0's \u00a75.9, renumbered \u00a75.8 in v3.1", True),
                           ("an earlier version's \u00a713.5", True),
                           ("\u00a75.8 is the rule", True)):
-        stale = [m.group(1) for m in re.finditer(r"\u00a7(\d+\.\d+)", text)
+        stale = [m.group(1) for m in CITE.finditer(text)
                  if m.group(1) not in sections]
         passes = not stale or bool(HISTORICAL.search(text))
         assert passes is allowed, (text, stale, passes)

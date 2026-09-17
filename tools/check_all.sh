@@ -21,6 +21,7 @@ python3 tools/check_document.py
 
 echo
 echo "== content tables =="
+python3 tools/validate_content.py --self-test
 python3 tools/validate_content.py
 
 echo

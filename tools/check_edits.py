@@ -76,6 +76,8 @@ KNOWN_UNRESOLVABLE = {
                     "quotes the old numbers beside the new ones",
     ("D29", "25.5"): "deliberate, as above: the four §25.5 sentences in "
                      "spec/validation.md are what the item is about",
+    ("D30", "10.5"): "deliberate: D30 is about the Library moving from §10.5 "
+                     "to §10.4, and names both",
     ("D29", "13.5"): "deliberate: §13.5 is the reference D29 found that no "
                      "renumbering explains — the item exists because it "
                      "resolves to nothing",

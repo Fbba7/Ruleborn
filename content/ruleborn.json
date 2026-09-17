@@ -18,7 +18,9 @@
     "alt_11_2": {
       "ability": "Glide over one gap or wall (12 s)"
     },
-    "passive_11_2": "Flies; grounded by Heavy ground"
+    "passive_11_2": "Flies; grounded by Heavy ground",
+    "size": "standard",
+    "flies": "yes"
   },
   {
     "id": "skyskipper",
@@ -39,7 +41,9 @@
     "alt_11_2": {
       "ability": "Bound 4 tiles while loaded (10 s)"
     },
-    "passive_11_2": "Leaps one extra obstacle under Half gravity"
+    "passive_11_2": "Leaps one extra obstacle under Half gravity",
+    "size": "standard",
+    "flies": "no"
   },
   {
     "id": "rambler",
@@ -60,7 +64,9 @@
     "alt_11_2": {
       "ability": "Charge 5 tiles, breaking the first ward hit (14 s)"
     },
-    "passive_11_2": "Pushed less by Current and Inward pull"
+    "passive_11_2": "Pushed less by Current and Inward pull",
+    "size": "standard",
+    "flies": "no"
   },
   {
     "id": "glass_golem",
@@ -81,7 +87,9 @@
     "alt_11_2": {
       "ability": "Raise a crystal wall that blocks guards for 5 s (16 s)"
     },
-    "passive_11_2": "Sees through walls"
+    "passive_11_2": "Sees through walls",
+    "size": "large",
+    "flies": "no"
   },
   {
     "id": "quarryback",
@@ -102,12 +110,14 @@
     "alt_11_2": {
       "ability": "Break walls and the Vault 50% faster for 6 s (14 s)"
     },
-    "passive_11_2": "Takes less damage from Brittle stone"
+    "passive_11_2": "Takes less damage from Brittle stone",
+    "size": "standard",
+    "flies": "no"
   },
   {
     "id": "prism_mite",
     "name": "Prism Mite",
-    "role": "Scout",
+    "role": "Carrier",
     "school": "Matter",
     "source": "11.11",
     "look": "Tiny prism bug with a backpack",
@@ -119,12 +129,13 @@
     "best_at": "Scouting, Gardens",
     "sound": "a rapid glassy chirp",
     "needs_decision": "C6",
-    "conflict_severity": "role",
+    "conflict_severity": "wording",
     "alt_11_2": {
-      "role": "Carrier",
       "ability": "Split into two mites, each carrying half, for 5 s (15 s)"
     },
-    "passive_11_2": "Tiny and quick"
+    "passive_11_2": "Tiny and quick",
+    "size": "small",
+    "flies": "no"
   },
   {
     "id": "tidewalker",
@@ -145,7 +156,9 @@
     "alt_11_2": {
       "ability": "Ignore all slowing for 6 s (15 s)"
     },
-    "passive_11_2": "Ignores Slow rivers"
+    "passive_11_2": "Ignores Slow rivers",
+    "size": "standard",
+    "flies": "no"
   },
   {
     "id": "hourkeeper",
@@ -166,7 +179,9 @@
     "alt_11_2": {
       "ability": "Return an ally to its health of 5 seconds ago (16 s)"
     },
-    "passive_11_2": "Unaffected by Delay"
+    "passive_11_2": "Unaffected by Delay",
+    "size": "standard",
+    "flies": "no"
   },
   {
     "id": "stillwatch",
@@ -187,7 +202,9 @@
     "alt_11_2": {
       "ability": "Freeze one guard or ward for 2 s (12 s)"
     },
-    "passive_11_2": "Invisible while still, even without Stillness"
+    "passive_11_2": "Invisible while still, even without Stillness",
+    "size": "large",
+    "flies": "no"
   },
   {
     "id": "emberling",
@@ -208,12 +225,14 @@
     "alt_11_2": {
       "ability": "Burst a ward or pylon for heavy damage (10 s)"
     },
-    "passive_11_2": "Glows: seen in the dark, and lights its surroundings"
+    "passive_11_2": "Glows: seen in the dark, and lights its surroundings",
+    "size": "small",
+    "flies": "no"
   },
   {
     "id": "stormhound",
     "name": "Stormhound",
-    "role": "Carrier",
+    "role": "Scout",
     "school": "Energy",
     "source": "11.11",
     "look": "Lean fox-hound with a lightning mane",
@@ -225,12 +244,13 @@
     "best_at": "Chasing, Aether Springs",
     "sound": "a crackle and a happy yip",
     "needs_decision": "C6",
-    "conflict_severity": "role",
+    "conflict_severity": "wording",
     "alt_11_2": {
-      "role": "Scout",
       "ability": "Sprint 60% faster for 4 s; hits chain to a second target (12 s)"
     },
-    "passive_11_2": "Immune to Static"
+    "passive_11_2": "Immune to Static",
+    "size": "standard",
+    "flies": "no"
   },
   {
     "id": "sparkwright",
@@ -251,7 +271,9 @@
     "alt_11_2": {
       "ability": "Cut the Sage's power cooldowns by 5 s (20 s)"
     },
-    "passive_11_2": "Heals more near fire"
+    "passive_11_2": "Heals more near fire",
+    "size": "standard",
+    "flies": "no"
   },
   {
     "id": "mossbear",
@@ -272,7 +294,9 @@
     "alt_11_2": {
       "ability": "Root in place and heal 20% over 4 s (16 s)"
     },
-    "passive_11_2": "Unharmed by Thorns"
+    "passive_11_2": "Unharmed by Thorns",
+    "size": "large",
+    "flies": "no"
   },
   {
     "id": "bloomling",
@@ -293,12 +317,14 @@
     "alt_11_2": {
       "ability": "Heal all allies within 3 tiles, 6 a second for 5 s (15 s)"
     },
-    "passive_11_2": "Hedges part for it"
+    "passive_11_2": "Hedges part for it",
+    "size": "small",
+    "flies": "no"
   },
   {
     "id": "rootrunner",
     "name": "Rootrunner",
-    "role": "Scout",
+    "role": "Carrier",
     "school": "Life",
     "source": "11.11",
     "look": "Root-legged sprout with a basket",
@@ -310,12 +336,13 @@
     "best_at": "Gardens, routes",
     "sound": "creaking roots and soil",
     "needs_decision": "C6",
-    "conflict_severity": "role",
+    "conflict_severity": "wording",
     "alt_11_2": {
-      "role": "Carrier",
       "ability": "Grow a root bridge over a gap for 8 s (18 s)"
     },
-    "passive_11_2": "Ignores Spores"
+    "passive_11_2": "Ignores Spores",
+    "size": "standard",
+    "flies": "no"
   },
   {
     "id": "echoplate",
@@ -336,7 +363,9 @@
     "alt_11_2": {
       "ability": "Shield an ally, taking its next hit (12 s)"
     },
-    "passive_11_2": "Comes back once at 50% after being knocked out"
+    "passive_11_2": "Comes back once at 50% after being knocked out",
+    "size": "large",
+    "flies": "no"
   },
   {
     "id": "lantern_wisp",
@@ -357,7 +386,9 @@
     "alt_11_2": {
       "ability": "Light a 5-tile area for 6 s, revealing illusions and hidden wards (14 s)"
     },
-    "passive_11_2": "Carries its own light under Soul lanterns"
+    "passive_11_2": "Carries its own light under Soul lanterns",
+    "size": "small",
+    "flies": "yes"
   },
   {
     "id": "soulmender",
@@ -378,6 +409,8 @@
     "alt_11_2": {
       "ability": "Share incoming damage evenly across the crew for 6 s (18 s)"
     },
-    "passive_11_2": "Soul swap costs its partner less"
+    "passive_11_2": "Soul swap costs its partner less",
+    "size": "standard",
+    "flies": "yes"
   }
 ]

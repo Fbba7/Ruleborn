@@ -544,13 +544,13 @@ V3_RULES = dict(producers_per_realm_override=1, staffing_rule="pro_rata",
 def pacing_report() -> None:
     from tools.economy_model import sinks                          # noqa: E402
 
-    print("Q6 \u2014 casual pacing, re-derived under \u00a75.9\u2019s rules\n")
+    print("Q6 \u2014 casual pacing, re-derived under \u00a75.8\u2019s rules\n")
     print("\u00a727.3 puts the decision like this: \u201cat one session a day,")
     print("finishing everything takes about 1,019 days. Either keep it, or add a")
     print("catch-up discount on building levels the median player passed months ago.\u201d")
-    print("\nThat 1,019 was computed before \u00a75.9. Re-running the model under")
-    print("\u00a75.9\u2019s rules moves every archetype, and not evenly:\n")
-    under = "under \u00a75.9"
+    print("\nThat 1,019 was computed before \u00a75.8. Re-running the model under")
+    print("\u00a75.8\u2019s rules moves every archetype, and not evenly:\n")
+    under = "under \u00a75.8"
     print(f"  {'archetype':<10} {'Keeper 40, published':>21} {under:>13} {'drift':>8}")
     index = {"engaged": 0, "regular": 1, "casual": 2}
     drift = {}
@@ -591,12 +591,15 @@ def pacing_report() -> None:
     print("  gather it by FIVE TIMES \u2014 371 days at level 0 against 68 at")
     print("  level 10. So the page economy no longer decides this question; a")
     print("  building does.\n")
-    print("  Which frees Q3 to be decided on what \u00a77.10 says it is about:")
+    print("  Which frees Q3 to be decided on what \u00a77.9 says it is about:")
     print("  RARITY BUYS SPECIFICITY, NOT STRENGTH. Pick the split that makes")
     print("  the best collection, and regenerate every page total from the law")
     print("  table afterwards rather than restating it in four places (C23).\n")
-    print("  One caveat, and it is C24: \u00a710.5 gives the Library three of its")
-    print("  ten levels, so the figures above interpolate the other seven.")
+    print("  The caveat this carried is gone: v3.0 gave the Library three of\n"
+          "  its ten levels and these figures interpolated the other seven,\n"
+          "  about a third low. v3.1 states all ten (\u00a710.4) and they are\n"
+          "  read rather than fitted \u2014 what is left of C24 is that\n"
+          "  \u00a710.4 is not \u00a710.2, where every other building lives.")
 
 
 REPORTS = {"rarity": rarity_report, "haul": haul_report,

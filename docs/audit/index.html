@@ -443,10 +443,10 @@
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">105</span><span class="k">items tracked</span></div>
+      <div><span class="n">106</span><span class="k">items tracked</span></div>
       <div><span class="n">31</span><span class="k">open</span></div>
       <div><span class="n">35</span><span class="k">fixed in v3.0</span></div>
-      <div><span class="n">21</span><span class="k">done or adopted</span></div>
+      <div><span class="n">22</span><span class="k">done or adopted</span></div>
       <div><span class="n">32</span><span class="k">blocking the build</span></div>
       <div><span class="n">70</span><span class="k">edits drafted</span></div>
       <div><span class="n">17 Sep</span><span class="k">last generated</span></div>
@@ -454,22 +454,22 @@
 <nav class="tabs" aria-label="Backend or frontend">
       <button class="tab" data-side="all" aria-pressed="true">
         <span class="tab-head"><span class="tab-name">Everything</span>
-          <span class="tab-n">105</span></span>
+          <span class="tab-n">106</span></span>
         <span class="bar">
-          <span class="fill drafted" style="width:70.5%"></span>
-          <span class="fill settled" style="width:54.3%"></span>
+          <span class="fill drafted" style="width:70.8%"></span>
+          <span class="fill settled" style="width:54.7%"></span>
         </span>
-        <span class="tab-foot">57 settled &middot;
+        <span class="tab-foot">58 settled &middot;
           17 drafted &middot; 31 open</span>
       </button>
       <button class="tab" data-side="backend">
         <span class="tab-head"><span class="tab-name">Backend</span>
-          <span class="tab-n">99</span></span>
+          <span class="tab-n">100</span></span>
         <span class="bar">
-          <span class="fill drafted" style="width:69.7%"></span>
-          <span class="fill settled" style="width:52.5%"></span>
+          <span class="fill drafted" style="width:70.0%"></span>
+          <span class="fill settled" style="width:53.0%"></span>
         </span>
-        <span class="tab-foot">52 settled &middot;
+        <span class="tab-foot">53 settled &middot;
           17 drafted &middot; 30 open</span>
       </button>
       <button class="tab" data-side="frontend">
@@ -482,7 +482,7 @@
         <span class="tab-foot">9 settled &middot;
           4 drafted &middot; 4 open</span>
       </button></nav>
-    <p class="tabs-note">A bar measures the <em>audit</em>, not the build: an item is settled when the document answers it, which is what has to happen before the work starts. No realm, screen or character has been drawn yet &mdash; for what that is waiting on, see below. 11 items need both sides and count on both, so the two tabs add up to more than 105.</p>
+    <p class="tabs-note">A bar measures the <em>audit</em>, not the build: an item is settled when the document answers it, which is what has to happen before the work starts. No realm, screen or character has been drawn yet &mdash; for what that is waiting on, see below. 11 items need both sides and count on both, so the two tabs add up to more than 106.</p>
   </header>
 
   <section class="start">
@@ -545,8 +545,8 @@
   </section>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">105</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">29</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">23</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">25</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">40</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">106</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">30</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">23</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">25</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">40</span></button>
   </nav>
 
   <main id="list">
@@ -1032,6 +1032,26 @@
         
         <p class="body">The prototype is the only artefact anyone outside this repository can actually touch, so an hourly Routine republishes it when the branch moves. It fired, took fifty-eight seconds, and was recorded <code>SUCCEEDED</code>. The published page did not change. <strong>Two faults, either one fatal on its own.</strong><br><br><strong>It could not tell new from old.</strong> The job compared the prototype’s last commit date against the artifact’s publish date, and <code>Artifact action: "list"</code> reports only a calendar day. A commit and a publish on the same day are indistinguishable — so from the first day the two coincided, which was the day it was written, the job would have answered <em>already current</em> for ever.<br><br><strong>It could not publish.</strong> <code>Artifact action: "read"</code> saves the live page to a file and counts the version as viewed only once every line of it has been read. The prompt said to read it; it did not say that a partial read does not count. So the read was partial, the publish was refused, and the turn ended without error.<br><br>The second is the same shape as D24–D26 wearing different clothes, and it is the one worth keeping: <strong>a job that cannot fail cannot be trusted when it passes.</strong> Nothing threw, so nothing was reported, so the artifact sat a day behind the code while the dashboard read green.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Both fixed. The page now carries a <code>BUILD</code> stamp — a digest of itself with that line removed — so the job compares the published page against the current page instead of comparing two dates: <em>is the published page this page?</em> <code>build_prototype.py --stamp</code> prints it, <code>--self-test</code> proves it still moves when the page moves, and both are build gates. The prompt now spells out the full-read requirement, and a final step requires the publish to report a new version number before the run may claim to have worked.<br><br>Generalised since: <code>tools/build_stamp.py</code> stamps <strong>all three</strong> published pages — the prototype, this register and the roadmap — and holds each one’s path and artifact URL, so the job reads what to publish rather than carrying a hard-coded list. The prototype keeps its stamp as a JavaScript constant because it shows it on screen; the two generated pages carry an HTML comment. One digest function strips either form, because two implementations of a stamp would be the very fault this register exists to record.<br><br>The general rule, alongside D27’s: <strong>an automated job needs a check that its work landed, not just that it ran.</strong></p>
+        
+        
+        
+      </article>
+      <article class="item chg" id="D30" data-group="changes"
+               data-kind="deviation" data-status="done"
+               data-side="backend"
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">D30</span>
+          <h3>The content tables were extracted from v3.0, and the check that guards them read v3.0 too</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
+          
+        </header>
+        <div class="refs"><span class="ref">§31.2</span><span class="ref">§31.4</span><span class="ref">§11.2</span><span class="ref">§10.4</span><span class="ref">§26.1</span></div>
+        
+        <p class="body"><code>content/*.json</code> is the data half of §31.2’s split, and <code>tools/extract_content.py</code> built it from <code>ruleborn-game-design-v3.0.txt</code>. <code>tools/validate_content.py</code> validated it against the same file. So the tables described the previous version of the document and the gate compared them with the previous version of the document, and the pair agreed.<br><br><strong>Three things v3.1 did that nothing here could see.</strong><br><br><strong>1. §11.2 gained Size and Flies</strong>, which is C26’s fix. The reader took the summary table by column offset — school at +1, role at +2, ability at +3 — so two new columns made every creature’s ability read <code>standard</code> and every passive <code>yes</code> or <code>no</code>. That would have gone into the tables as fact, and nothing would have caught it: C6 compares §11.2 against §11.11’s character bible, so a shifted read makes eighteen creatures disagree about their ability — which is what C6 says they do. <strong>A fault that produces the symptom the register is already expecting is the hardest kind to see.</strong><br><br><strong>2. The Library moved from §10.5 to §10.4</strong> and gained all ten levels. Two markers named the number, so pointing the reader at v3.1 dropped the Library out of <code>buildings.json</code> altogether and fed its level table to the ward reader as ninety-nine wards named “1”, “2” and “900 Starlight”.<br><br><strong>3. The economy model was still interpolating the seven levels v3.1 states.</strong> v3.0 gave 1, 5 and 10 and the model fitted a geometric curve through them, honestly labelled. v3.1’s own figures are flatter early and the fit ran low at every level in between: <strong>3.7 against 5 at level 2, 4.5 against 6 at level 3, 5.5 against 8 at level 4</strong> — up to 47% understated, and 16.5% summed across the ladder. The Library is the non-raiding page source, so that is a faucet understated for as long as the fit stood: a Codex on a level-3 Library alone was modelled at 295 days against the document’s own 220.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> All three fixed, and the fourth fault — the one that let the other three stand — fixed with them.<br><br><strong>The markers are titles now.</strong> <code>heading()</code> finds a section by its title and reads its number, so a renumbering cannot silently move a table out from under a reader. <strong>The summary table is read by column heading</strong> and refuses to guess: an unrecognised header stops the extraction rather than shifting the row. <strong>The Library curve is the document’s</strong>, all ten levels, and a level outside the table raises rather than interpolating — a fallback that is never exercised is a second implementation nobody checks.<br><br><strong>And <code>validate_content.py</code> now has the four-state verdict <code>check_document.py</code> has had since the merge.</strong> It was reporting G12, C10 and D14 as open contradictions against a register that had all three closed, and nothing compared the two — which is C21 to C24 exactly, a fix that landed in one place and a copy nobody retired. A report about a closed item now fails the build and says the checker is the thing out of date.<br><br>Two of its constants were the copies: <strong>30 traits and 16 building types</strong>, both of which v3.1 recounted to 31 and 17. §26.1’s launch table is read now. G12 closed on its own once the size band and the flight flag were in the data, and its check — which asked whether “big” was the <em>name</em> of a creature, and so could never have gone green — asks whether any creature carries a value the word picks out. D14’s three numbers are pinned to its own note instead of reported as an open item, so if the content moves them the note is what the build calls stale.</p>
         
         
         
@@ -2839,4 +2859,4 @@
     apply();
   })();
 </script>
-<!-- ruleborn-build 0a5f8f84c683fcd2 -->
+<!-- ruleborn-build 34db5a4e8aec719f -->

@@ -23,6 +23,7 @@ import collections
 import itertools
 import json
 import pathlib
+import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -40,13 +41,37 @@ EXPECTED = {"notes": 8, "laws": 48, "resonances": 44, "chords": 12,
             "terrain": 39, "ruleborn": 18, "roles": 5,
             "wards": 6, "sages": 4, "eras": 8}
 
-#: §26.1 still says 16 building types. v3.0 added the Library as §10.5 without
-#: updating that count, so 17 is the correct extraction and 16 is the stale copy.
-BUILDINGS_IN_26_1 = 16
+#: 26.1's launch table, read rather than copied.
+#:
+#: Two of its rows were carried here as constants — 16 building types and 30
+#: traits — which were true of v3.0. v3.1 recounted both from the tables they
+#: summarise and made them 17 and 31, and this file went on reporting C8's
+#: count and C10 against a document that had answered them. A hand-written
+#: copy of a number the document states is the fault this repository exists
+#: to record, so the whole table is read and the rows are looked up by name.
+LAUNCH_ROWS = {
+    "laws": "Laws", "resonances": "Signature resonances and chords",
+    "ruleborn": "Ruleborn", "traits": "Traits", "sages": "Sages",
+    "eras": "Eras", "buildings": "Building types",
+    "terrain": "Terrain features",
+}
 
-#: Traits are counted separately: §26.1 says 30, §11.3 enumerates 31, and §17.3
-#: names a 32nd. That is contradiction C10, so it is reported, not failed.
-EXPECTED_TRAITS = 30
+
+def launch_table() -> dict[str, int]:
+    """What 26.1 claims the launch content is, by row name."""
+    doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
+    if not doc.exists():
+        return {}
+    block = re.search(r"^26\.1 .*?(?=^26\.2 )", doc.read_text(encoding="utf-8"),
+                      re.S | re.M)
+    if not block:
+        return {}
+    rows = dict(re.findall(r"^\| ([A-Za-z][^\n|]*)\n\| ([\d,]+)", block.group(0), re.M))
+    out = {}
+    for key, label in LAUNCH_ROWS.items():
+        if label in rows:
+            out[key] = int(rows[label].replace(",", ""))
+    return out
 
 #: A day-2 player's stability capacity, from the economy model. Used to ask
 #: whether a "late-game discovery" is actually gated.
@@ -71,9 +96,45 @@ def opn(item_id: str, msg: str) -> None:
     open_items.append((item_id, msg))
 
 
+#: Numbers a closed register item states, checked against the data on every
+#: build. A closed item's note is prose nobody re-derives, so a number inside
+#: one is exactly the kind that goes quietly wrong.
+pinned: list[tuple[str, str, object, object]] = []
+
+
+def pin(item_id: str, what: str, got, expected) -> None:
+    pinned.append((item_id, what, got, expected))
+
+
+def register_says_open(item_id: str) -> bool:
+    """Whether the audit register still has this item open.
+
+    `check_document.py` owns this question and this imports its answer rather
+    than working it out again, because two implementations of "is it open" is
+    the fault the whole register exists to record.
+    """
+    import check_document
+    return check_document._is_open(item_id)
+
+
+def stale_reports() -> list[tuple[str, str]]:
+    """Reports about items the register says are closed.
+
+    This file reported G12 on every build for as long as it read v3.0, and
+    would have gone on reporting it after v3.1 answered it \u2014 the register
+    had G12 closed, and nothing compared the two. That is C21 to C24 exactly:
+    a fix that landed in one place and a copy that nobody retired.
+
+    `check_document.py` has the four-state verdict for the same reason; this
+    is the third of its four states, the one that says the checker is now the
+    thing that is out of date.
+    """
+    return [(i, m) for i, m in open_items if not register_says_open(i)]
+
+
 def _doc_declares_attributes() -> bool:
     """Whether the design document claims size and flight are stated properties."""
-    doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.0.txt"
+    doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
     if not doc.exists():
         return False
     text = doc.read_text(encoding="utf-8")
@@ -209,7 +270,7 @@ def main() -> int:
         if levels != list(range(1, len(levels) + 1)):
             if b.get("needs_decision"):
                 opn(b["needs_decision"],
-                    f"building {b['name']}: \u00a710.5 states levels {levels} only. "
+                    f"building {b['name']}: \u00a710.4 states levels {levels} only. "
                     f"Every other building lists every level, and the economy model "
                     f"cannot price a faucet with seven levels missing")
             else:
@@ -285,42 +346,73 @@ def main() -> int:
     # §7.3's rule is that laws change a realm's rule sheet and never contain
     # special cases. A law reading an attribute no creature carries is the same
     # failure from the other side: the parameter it reads does not exist.
-    creature_attrs = set()
-    for r in data["roles"]:
-        creature_attrs.add(r["name"].lower())
-    for r in data["ruleborn"]:
-        creature_attrs.add(r["name"].lower())
-    #: Attributes a law may read, beyond role and creature names.
-    KNOWN_ATTRS = {"flyer", "flyers", "big", "small", "size", "mass"}
-    undefined = {a for a in KNOWN_ATTRS if a not in creature_attrs}
-    #: v3.0's §12.21 says these attributes now exist. They do not yet exist as
-    #: fields, which is the same gap re-stated rather than closed.
-    declares_attributes = any(
-        r.get("size") or r.get("flight") is not None for r in data["ruleborn"]
-    ) is False and _doc_declares_attributes()
+    #: What a law's vocabulary needs from the creature table, and which values
+    #: satisfy it. The first version of this asked whether "big" was the *name*
+    #: of a creature or a role, which it never could be, so the check reported
+    #: the gap correctly for the wrong reason and would have gone on reporting
+    #: it after the gap closed.
+    LAW_ATTRS = {
+        "big": ("size", {"large", "big"}),
+        "small": ("size", {"small"}),
+        "size": ("size", None),
+        "mass": ("size", None),
+        "flyer": ("flies", {"yes", "true"}),
+        "flyers": ("flies", {"yes", "true"}),
+    }
+
+    def unsatisfiable(word: str) -> str | None:
+        """Why the creature table has nothing for a law reading this word.
+
+        Two ways it can have nothing, and they are different problems even
+        though they are the same fault to a law at runtime. The field can be
+        absent from every creature — nothing to read. Or the field can exist
+        and no creature carry a value the word picks out: a size band whose
+        every entry reads "standard" leaves "big characters get +30% health"
+        applying to nobody, which is a content question and not a schema one.
+        Returning which it is keeps the report honest about what to fix.
+        """
+        field, wanted = LAW_ATTRS[word]
+        values = {str(r.get(field, "")).strip().lower()
+                  for r in data["ruleborn"] if r.get(field)}
+        if not values:
+            return f"no creature carries a {field}"
+        if wanted and not (values & wanted):
+            return (f"every creature has a {field}, but none of them is "
+                    f"{'/'.join(sorted(wanted))} \u2014 the values are "
+                    f"{sorted(values)}")
+        return None
+
+    undefined = {a: why for a in LAW_ATTRS if (why := unsatisfiable(a))}
+    #: 12.21 declares size a band on every ruleborn and flight a stated
+    #: property. Whether the tables carry them is the question, not whether
+    #: 12.21 says so, so the declaration only changes the wording of the report.
+    declares_attributes = bool(undefined) and _doc_declares_attributes()
     for law in laws:
         text = f"{law.get('tier_1', '')} {law.get('tiers_2_3', '')}".lower()
         hits = sorted(a for a in undefined if a in text.split()
                       or f"{a} characters" in text or f"{a} ones" in text)
         if hits:
-            where = ("\u00a712.21 declares size a band on every ruleborn and "
-                     "flight a stated property, but neither appears as a field in "
-                     "\u00a711.1 or \u00a711.11 \u2014 Featherkin's flight is "
-                     "still prose in a Passive column"
-                     if declares_attributes else
-                     "\u00a711.1 has health, speed, power and carry; "
-                     "\u00a711.11's proportions are art direction")
-            opn("G12", f"law {law['name']} keys off {hits} \u2014 no creature or "
-                       f"role carries that attribute ({where})")
+            why = "; ".join(dict.fromkeys(undefined[a] for a in hits))
+            note = (" \u2014 \u00a712.21 declares size a band on every ruleborn "
+                    "and flight a stated property"
+                    if declares_attributes else
+                    " \u2014 \u00a711.1 has health, speed, power and carry, and "
+                    "\u00a711.11's proportions are art direction")
+            opn("G12", f"law {law['name']} keys off {hits}: {why}{note}")
 
     # =====================================================================
     # Known open contradictions — reported, not failed
     # =====================================================================
 
+    launch = launch_table()
     n_traits = len(data["traits"])
-    if n_traits != EXPECTED_TRAITS:
+    claimed = launch.get("traits")
+    if claimed is None:
+        err("26.1's launch table has no trait count where this check looks "
+            "for it, so C10 cannot be judged either way")
+    elif n_traits != claimed:
         opn("C10", f"§11.3 enumerates {n_traits} traits, §26.1's launch table says "
-                   f"{EXPECTED_TRAITS}, and §17.3 names a \u201crare Starborn trait\u201d "
+                   f"{claimed}, and §17.3 names a \u201crare Starborn trait\u201d "
                    f"that appears in neither")
 
     names = {b["name"] for b in data["buildings"]}
@@ -329,11 +421,23 @@ def main() -> int:
         opn("C8", "the Library is referenced four times as the non-raiding page "
                   "source (§7.6, §12.1, §27.2, §30.15) but is not among the "
                   "building types in §10.2 — no cost, no levels, no placement rule")
-    elif len(data["buildings"]) != BUILDINGS_IN_26_1:
-        opn("C8", f"v3.0 added the Library as \u00a710.5, so there are now "
-                  f"{len(data['buildings'])} building types \u2014 but \u00a726.1's "
-                  f"launch table still says {BUILDINGS_IN_26_1}, and \u00a710.2's "
-                  f"table of every level of every building does not contain it")
+    elif launch.get("buildings") not in (None, len(data["buildings"])):
+        opn("C8", f"\u00a726.1's launch table says {launch['buildings']} building "
+                  f"types and \u00a710.2 plus the Library give "
+                  f"{len(data['buildings'])}")
+    elif outside := [b["name"] for b in data["buildings"]
+                     if b.get("needs_decision") == "C8"]:
+        # v3.1 answered half of C8: 26.1 now counts 17 and the Library has all
+        # ten levels. What is left is where it lives. An earlier version of
+        # this check reported only the count, so when v3.1 fixed the count the
+        # check went silent on an item that is still open — a check losing its
+        # subject, which is the same fault as one that cannot fail.
+        opn("C8", f"\u00a726.1 now counts {len(data['buildings'])} building types "
+                  f"and the Library has all ten levels, but "
+                  f"{', '.join(outside)} still sits outside \u00a710.2's table of "
+                  f"every level of every building \u2014 which is where every "
+                  f"other building is specified, and being outside it is how C8 "
+                  f"happened")
 
     if all(w.get("missing") == "levels 2-5" for w in data["wards"]):
         opn("G3", "§10.3 specifies ward level 1 only, but §10.2 gives the Ward "
@@ -378,14 +482,20 @@ def main() -> int:
         if best:
             cheapest = best[0] if cheapest is None else min(cheapest, best[0])
             all_common += set(best[1]) == {"Common"}
-    if cheapest is not None and cheapest <= DAY_2_STABILITY:
-        opn("D14", f"\u00a78.8 fixed the rule \u2014 a chord needs three distinct "
-                   f"laws \u2014 but not the outcome it argued for. The cheapest "
-                   f"chord now costs {cheapest} stability against a day-2 capacity "
-                   f"of {DAY_2_STABILITY}, up from 26, and {all_common} of "
-                   f"{len(data['chords'])} are still three commons. The gate that "
-                   f"makes a chord late-game is the Lab level 3 (Spire 5, about day "
-                   f"42), which \u00a78.5 mentions and \u00a78.8 does not lean on")
+    # D14 is closed: 8.8 changed the rule to three distinct laws, which was
+    # the item. What it did not do is make a chord late-game, and D14's own
+    # v3.0 note records the three numbers that show it \u2014 so this reported
+    # D14 as open on every build, against a register that had it fixed.
+    #
+    # The measurement is live and worth keeping; it is the label that was
+    # wrong. It is pinned to the note instead: if the content ever moves these
+    # numbers, the note is what has gone stale and the build says so. That is
+    # check_findings_fresh.py's rule \u2014 a number that cannot be shown to be
+    # stale will be trusted for ever \u2014 applied to a closed item.
+    if cheapest is not None:
+        pin("D14", "the cheapest chord's stability cost", cheapest, 33)
+        pin("D14", "chords costing three commons", all_common, 7)
+        pin("D14", "a day-2 stability capacity", DAY_2_STABILITY, 51)
     elif reachable_with_two:
         opn("D14", f"{reachable_with_two} of {len(data['chords'])} chords are reachable "
                    f"with two laws, not the three \u00a78.5 describes "
@@ -394,7 +504,7 @@ def main() -> int:
     # v3.0's §21.8 now says "every school has a sound signature — six in all",
     # which is what the content holds. The check only fires against the older
     # wording, where every *law* had one.
-    doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.0.txt"
+    doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
     per_law_claimed = doc.exists() and "every law also has a sound signature" in \
         doc.read_text(encoding="utf-8")
     sounds = collections.Counter(law["sound"] for law in laws)
@@ -429,7 +539,68 @@ def main() -> int:
                   f"{wording} more differ on ability wording")
 
     report()
-    return 1 if errors else 0
+    return 1 if (errors or stale_reports()
+                 or any(g != e for _, _, g, e in pinned)) else 0
+
+
+def self_test() -> int:
+    """The three states this file can report, each shown to be reachable.
+
+    It had none of this. It reported G12, C10 and D14 as open contradictions
+    against a document that had answered all three, for as long as it read
+    v3.0 \u2014 and the numbers it compared against, 30 traits and 16 building
+    types, were the only thing still saying so. Nothing compared its reports
+    against the register, so nothing could notice.
+    """
+    ok = True
+
+    launch = launch_table()
+    want = {"laws", "ruleborn", "traits", "buildings", "terrain"}
+    got = want & set(launch)
+    print(f"  26.1's launch table reads {len(launch)} rows, including "
+          f"{len(got)} of the {len(want)} this file compares against")
+    if got != want:
+        print(f"    FAIL: {sorted(want - got)} not found in 26.1")
+        ok = False
+
+    # A report about a closed item must be reported as stale, not as open.
+    before = len(open_items)
+    opn("D28", "planted: D28 is done and this claims otherwise")
+    caught = any(i == "D28" for i, _ in stale_reports())
+    del open_items[before:]
+    print(f"  [{'PASS' if caught else 'FAIL'}] a report about a closed item is "
+          f"{'reported stale' if caught else 'MISSED'}")
+    ok = ok and caught
+
+    # And a report about an open one must not be.
+    opn("G3", "planted: G3 is open and this is what that looks like")
+    wrongly = any(i == "G3" for i, _ in stale_reports())
+    del open_items[before:]
+    print(f"  [{'PASS' if not wrongly else 'FAIL'}] a report about an open item "
+          f"is {'left alone' if not wrongly else 'WRONGLY CALLED STALE'}")
+    ok = ok and not wrongly
+
+    # A pinned number that has moved must fail.
+    n = len(pinned)
+    pin("D28", "planted", 1, 2)
+    moved = any(g != e for _, _, g, e in pinned)
+    del pinned[n:]
+    print(f"  [{'PASS' if moved else 'FAIL'}] a pinned number that moved is "
+          f"{'caught' if moved else 'MISSED'}")
+    ok = ok and moved
+
+    # The Library curve is the document's, not a fit.
+    import importlib
+    eco = importlib.import_module("economy_model.sinks")
+    doc_levels = {lvl["level"]: int(lvl["gives"].split()[0])
+                  for b in load("buildings") if b["id"] == "library"
+                  for lvl in b["levels"]}
+    bad = [l for l, v in doc_levels.items() if eco.library_pages(l) != v]
+    print(f"  [{'PASS' if not bad else 'FAIL'}] the economy model's Library "
+          f"curve is 10.4's own at all {len(doc_levels)} levels"
+          + (f" \u2014 differs at {bad}" if bad else ""))
+    ok = ok and not bad
+    return 0 if ok else 1
 
 
 def report() -> None:
@@ -442,13 +613,32 @@ def report() -> None:
     else:
         print("ERRORS  none — every table is well formed and internally consistent\n")
 
-    if open_items:
-        print(f"OPEN    {len(open_items)} known contradictions in the design document")
+    moved = [(i, w, g, e) for i, w, g, e in pinned if g != e]
+    if moved:
+        print(f"MOVED   {len(moved)} number(s) a closed register item records\n")
+        for item_id, what, got, expected in moved:
+            print(f"  \u2717 [{item_id}] {what}: the data gives {got}, the item's "
+                  f"note says {expected}")
+        print()
+    elif pinned:
+        print("PINNED  every number these closed items record still holds: "
+              + ", ".join(f"{w} = {g}" for _, w, g, _ in pinned) + "\n")
+
+    stale = stale_reports()
+    live = [(i, m) for i, m in open_items if (i, m) not in stale]
+    if live:
+        print(f"OPEN    {len(live)} known contradictions in the design document")
         print("        (tracked in the audit register; expected until resolved)\n")
-        for item_id, msg in open_items:
+        for item_id, msg in live:
             print(f"  [{item_id}] {msg}")
+        print()
+    if stale:
+        print(f"STALE   {len(stale)} report(s) about items the register calls closed")
+        print("        (this file is the thing out of date, not the document)\n")
+        for item_id, msg in stale:
+            print(f"  \u2717 [{item_id}] {msg}")
         print()
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(self_test() if "--self-test" in sys.argv else main())
