@@ -188,7 +188,7 @@
       much of the document can now be trusted without re-reading it.</strong></p>
 
     <div class="summary">
-      <div><span class="n">17</span><span class="k">tasks done</span></div>
+      <div><span class="n">18</span><span class="k">tasks done</span></div>
       <div><span class="n">5</span><span class="k">live now</span></div>
       <div><span class="n">6</span><span class="k">waiting on you</span></div>
       <div><span class="n">67/104</span><span class="k">register items drafted</span></div>
@@ -203,9 +203,9 @@
   </header>
 
   <nav class="filters" aria-label="Filter the roadmap">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">40</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">41</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">9</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">17</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">15</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">18</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">15</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
   </nav>
 
   <main id="list">
@@ -216,7 +216,7 @@
             <h2>Validation without players</h2>
             <p class="sub">§19.27, rewritten in v3.0, unchanged in v3.1 — and the critical path</p>
           </div>
-          <span class="scount">7/8</span>
+          <span class="scount">8/9</span>
         </div>
         <p class="blurb">v3.0 removed both pre-code player tests and replaced them with harnesses, stating the cost plainly: simulation can prove a system is legible, balanced and decision-dense, and cannot prove a game is enjoyable. Each harness below is buildable here, needs no engine, and has a threshold §19.27 sets for itself.&lt;br&gt;&lt;br&gt;v3.1 left this decision alone. Its companion section moved — &lt;em&gt;How we will actually find out&lt;/em&gt; is §25.4 now, not §25.5 — because v3.1 closed four numbering holes v3.0 had left (§5.8, §7.8, §10.4, §25.3 were all missing). Every in-document citation was moved with them: 243 sections, no dangling reference. That is the kind of thing v3.1 is — a consistency release, not a design one.</p>
         
@@ -310,8 +310,30 @@
           <p class="prog-n"><strong>0 of 4</strong> drafted &middot;
              <strong>0</strong> signed off</p>
         </div>
-        <p class="gate"><span class="glabel">Passes when</span> a generated island at every realm level holds 30–45% against a competent crew (§13.2)</p>
+        <p class="gate"><span class="glabel">Passes when</span> a generated island at every realm level holds 30–45% against a competent crew (§13.2) — <strong>and this gate cannot be met</strong>, which T0.10 measured and F26 records</p>
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 tools/law_effects.py</code></p>
+        
+      </article>
+      <article class="task st-done" id="T0-10"
+               data-status="done" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T0.10</span>
+          <h3>Sweep the generator against both bands, and find one of them unreachable</h3>
+          <span class="status st-done">Done</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">T0.6 was marked done against a gate nobody had tested as a whole: <em>a generated island at every realm level holds 30–45%</em>. Swept across every setting §10.2 and §5.2 permit — one to three guard posts, nought to two geometry bands, Guardian Post levels 1 to 5 — at the depths §12.6’s own decision band implies. <strong>At realm 1 none of the 24 combinations reaches it.</strong> The strongest island on one post holds 24.2% and the weakest on two holds 62.4%, so §13.2’s 15-point band sits inside a 38-point gap (F26).<br><br>This is C29’s pattern turned on this roadmap: <strong>a gate that cannot be passed as written</strong>, on a task already marked done. T0.6’s work was real — the generator does weave laws and is measured — but its gate was never checkable at realm 1 and nothing said so.<br><br>The ladder was the obvious fix and it fails its collateral check: five times §10.2’s slope is needed to reach the band at realm 1, and at that slope a maxed post carries all four upper realms out of the top of it (F27).</p>
+        
+        <div class="prog" title="F26 F27">
+          <div class="bar">
+            <span class="fill" style="width:0.0%"></span>
+            <span class="fill settled" style="width:0.0%"></span>
+          </div>
+          <p class="prog-n"><strong>0 of 2</strong> drafted &middot;
+             <strong>0</strong> signed off</p>
+        </div>
+        <p class="gate"><span class="glabel">Passes when</span> every realm/depth pair either satisfies both bands or is recorded as unable to</p>
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.generator_settings</code></p>
         
       </article>
       <article class="task st-done" id="T0-7"
@@ -1055,4 +1077,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build 4c9976828dfa52f2 -->
+<!-- ruleborn-build ef621398d75d560c -->

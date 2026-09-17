@@ -125,7 +125,38 @@ dict(
              evidence="python3 tools/law_effects.py",
              register=["F9", "F10", "F11", "F12"],
              gate="a generated island at every realm level holds 30\u201345% "
-                  "against a competent crew (\u00a713.2)"),
+                  "against a competent crew (\u00a713.2) \u2014 <strong>and "
+                  "this gate cannot be met</strong>, which T0.10 measured "
+                  "and F26 records"),
+        dict(id="T0.10", owner="claude", status="done",
+             title="Sweep the generator against both bands, and find one "
+                   "of them unreachable",
+             detail="T0.6 was marked done against a gate nobody had tested "
+                    "as a whole: <em>a generated island at every realm "
+                    "level holds 30\u201345%</em>. Swept across every "
+                    "setting \u00a710.2 and \u00a75.2 permit \u2014 one to "
+                    "three guard posts, nought to two geometry bands, "
+                    "Guardian Post levels 1 to 5 \u2014 at the depths "
+                    "\u00a712.6\u2019s own decision band implies. "
+                    "<strong>At realm 1 none of the 24 combinations "
+                    "reaches it.</strong> The strongest island on one post "
+                    "holds 24.2% and the weakest on two holds 62.4%, so "
+                    "\u00a713.2\u2019s 15-point band sits inside a "
+                    "38-point gap (F26).<br><br>This is C29\u2019s pattern "
+                    "turned on this roadmap: <strong>a gate that cannot be "
+                    "passed as written</strong>, on a task already marked "
+                    "done. T0.6\u2019s work was real \u2014 the generator "
+                    "does weave laws and is measured \u2014 but its gate "
+                    "was never checkable at realm 1 and nothing said so."
+                    "<br><br>The ladder was the obvious fix and it fails "
+                    "its collateral check: five times \u00a710.2\u2019s "
+                    "slope is needed to reach the band at realm 1, and at "
+                    "that slope a maxed post carries all four upper realms "
+                    "out of the top of it (F27).",
+             evidence="python3 -m tools.generator_settings",
+             register=["F26", "F27"],
+             gate="every realm/depth pair either satisfies both bands or "
+                  "is recorded as unable to"),
         dict(id="T0.7", owner="claude", status="done",
              title="Specify the response layer \u2014 and report that the fix "
                    "did not work",
