@@ -3222,6 +3222,50 @@ DEPENDS = {
 
 EDITS = {
 
+"F26": [
+    dict(section="13.2", action="insert",
+         find="Below a quarter, defenders feel helpless and stop designing. "
+              "Above half, raiding feels futile",
+         replace="Say where this band applies. Measured across every setting "
+                 "10.2 and 5.2 permit \u2014 one to three guard posts, nought to "
+                 "two geometry bands, Guardian Post levels 1 to 5 \u2014 at the "
+                 "depths 12.6\u2019s decision target implies, <b>a generated "
+                 "island at realm 1 cannot reach it</b>: the strongest on one "
+                 "post holds 24.2% and the weakest on two holds 62.4%, so this "
+                 "15-point band sits inside a 38-point gap. Realm 2 reaches it "
+                 "only with a Guardian Post at level 3, which 10.2 says an "
+                 "engaged player builds on day 36, against a realm that opens on "
+                 "day 5. Either the band is a target for realms 3 and up and "
+                 "says so, or realms 1 and 2 need a lever finer than a whole "
+                 "guard.",
+         why="\u00a713.2 sets the number and nothing checks a realm against it. "
+             "The band is not merely missed at realm 1 \u2014 it is unreachable, "
+             "which is a different kind of problem from a tuning miss and has a "
+             "different fix. F26."),
+],
+
+"F27": [
+    dict(section="10.2", action="insert",
+         find="guard +10% health and sight",
+         replace="Say what a Guardian Post upgrade is for, because measured "
+                 "against 13.2\u2019s 30\u201345% hold band it does three "
+                 "different things depending on the realm. The ladder moves a "
+                 "defence about 12 points from level 1 to level 5, which is "
+                 "well matched to a 15-point band \u2014 but 5.2\u2019s post "
+                 "formula decides where each realm starts, and of five realms it "
+                 "lands one inside. At realm 2 the ladder is <b>required</b> to "
+                 "reach the band (26.2% to 38.8%); at realm 3 it is free (34.2% "
+                 "to 44.4%); at realms 4 and 5 it <b>carries the defence out of "
+                 "the band</b> (40.0% to 52.7% and 55.3%). A player buying an "
+                 "upgrade is not told they are leaving the design\u2019s own "
+                 "health metric.",
+         why="The ladder is the right instrument and the base is misaligned, so "
+             "the fix is 5.2\u2019s starting defence per realm rather than "
+             "10.2\u2019s slope \u2014 a steeper slope was measured and it moves "
+             "the problem up the realm levels instead of solving it. Either way "
+             "this row should say what the upgrade does to the band. F27."),
+],
+
 "F22": [
     dict(section="10.2", action="replace",
          find="Every realm; 1 to 3 by realm level.",

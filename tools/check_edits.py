@@ -138,6 +138,68 @@ def dangling_sections(doc: str) -> list:
     return out
 
 
+#: Why an open item carries no drafted edit. T1.3's rule is that an item
+#: without an edit is checked by nobody, so every exception is named here
+#: rather than re-reasoned each time somebody counts them.
+#:
+#: "covered by X" means the sentence this item wants changed is already quoted
+#: by X's edit. Drafting a second copy would be the register committing the
+#: fault it exists to record — one fact, two homes — so the link is the right
+#: answer and the check enforces that X really does carry an edit.
+NO_EDIT_BECAUSE = {
+    "F9":  "covered by F11",    # both ask §13.3 to state the hold-rate band
+    "F10": "covered by G10",    # both ask §12.21 to list the rule sheet
+    "F19": "covered by F14",    # both are about §9.6's 0.46
+    "F23": "covered by D14",    # both are about §8.5's chord gate
+    "D13": "covered by C25",    # the note rebalance is C25's ten edits
+    "F16": "no document sentence: the fix is the generator, in spec/generator.md",
+    "F24": "no document sentence: the fix is the checker, and half of it is built",
+    "F25": "no document sentence: the fix is the six items that have two homes",
+    "D6":  "a proposal to the owner, not a document fault",
+    "D9":  "a proposal to the owner, not a document fault",
+    "D16": "a proposal awaiting sign-off; it becomes an edit when accepted",
+    "D17": "a proposal awaiting sign-off; it becomes an edit when accepted",
+    "D20": "a record of what v3.0 did, not something to change",
+}
+
+
+def unexplained_missing_edits() -> list:
+    """Every open item either carries an edit or says why it does not.
+
+    Decisions are exempt: a Q item is the owner's to make and has no sentence
+    to draft. Everything else open or proposed needs an edit or an entry in
+    NO_EDIT_BECAUSE, and a "covered by X" entry is only honest if X has one.
+    """
+    from audit_register import V3, V31
+
+    def status(item):
+        return (V31.get(item["id"], {}).get("status")
+                or V3.get(item["id"], {}).get("status")
+                or item.get("status", "open"))
+
+    out = []
+    for item in REGISTER:
+        if status(item) not in ("open", "proposed") or item.get("kind") == "decision":
+            continue
+        if item["id"] in EDITS:
+            continue
+        reason = NO_EDIT_BECAUSE.get(item["id"])
+        if not reason:
+            out.append(f"{item['id']}: open with no drafted edit and no reason "
+                       f"in NO_EDIT_BECAUSE \u2014 T1.3's rule is that an item "
+                       f"without an edit is checked by nobody")
+        elif reason.startswith("covered by "):
+            other = reason.split()[-1]
+            if other not in EDITS:
+                out.append(f"{item['id']}: says it is covered by {other}, which "
+                           f"carries no edit either")
+    for item_id in NO_EDIT_BECAUSE:
+        if item_id in EDITS:
+            out.append(f"{item_id}: has a drafted edit and an entry in "
+                       f"NO_EDIT_BECAUSE saying why it has none")
+    return out
+
+
 def self_test() -> int:
     """Plant each shape this check exists for, and prove it sees them.
 
@@ -168,6 +230,32 @@ def self_test() -> int:
         ok = False
     else:
         print("  [PASS] and the register itself is clean")
+
+    # The other half: every open item accounted for, and a "covered by X" link
+    # that actually leads to an edit.
+    planted = dict(id="ZZ-selftest", kind="finding", severity="minor",
+                   status="open", title="planted", refs=[], body="", rec="")
+    REGISTER.append(planted)
+    caught = bool(unexplained_missing_edits())
+    REGISTER.remove(planted)
+    print(f"  [{'PASS' if caught else 'FAIL'}] an open item with no edit and no "
+          f"reason is {'caught' if caught else 'MISSED'}")
+    ok = ok and caught
+
+    first = next(k for k, v in NO_EDIT_BECAUSE.items() if v.startswith("covered by "))
+    was = NO_EDIT_BECAUSE[first]
+    NO_EDIT_BECAUSE[first] = "covered by D20"        # D20 carries no edit
+    caught = any("carries no edit either" in p for p in unexplained_missing_edits())
+    NO_EDIT_BECAUSE[first] = was
+    print(f"  [{'PASS' if caught else 'FAIL'}] a covered-by link to an item with "
+          f"no edit is {'caught' if caught else 'MISSED'}")
+    ok = ok and caught
+
+    if unexplained_missing_edits():
+        print("  [FAIL] the register has an unexplained missing edit")
+        ok = False
+    else:
+        print("  [PASS] and every open item carries an edit or a stated reason")
     return 0 if ok else 1
 
 
@@ -189,6 +277,7 @@ def main() -> int:
     doc_text = DOC.read_text(encoding="utf-8")
     problems.extend(dangling_sections(doc_text))
     problems.extend(dangling_prose_sections(doc_text))
+    problems.extend(unexplained_missing_edits())
 
     known = {i["id"] for i in REGISTER}
     for item_id in EDITS:

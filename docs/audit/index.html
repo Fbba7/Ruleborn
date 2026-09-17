@@ -368,8 +368,8 @@
       is <strong>F24</strong> and <strong>F25</strong>: a supersession check that
       passes on a document still containing the model it bans, and six facts that
       still have two homes against &sect;31.2's rule that each should have one.</p>
-    <p class="lede"><strong>66 edits are drafted</strong> across
-      38 items &mdash; the section to open, the sentence as it stands
+    <p class="lede"><strong>68 edits are drafted</strong> across
+      40 items &mdash; the section to open, the sentence as it stands
       today, and what to put there. Every quoted sentence is checked against the
       document by <code>tools/check_edits.py</code>, which fails the build if one
       is not there or appears twice.</p>
@@ -380,7 +380,7 @@
       <div><span class="n">35</span><span class="k">fixed in v3.0</span></div>
       <div><span class="n">20</span><span class="k">done or adopted</span></div>
       <div><span class="n">32</span><span class="k">blocking the build</span></div>
-      <div><span class="n">66</span><span class="k">edits drafted</span></div>
+      <div><span class="n">68</span><span class="k">edits drafted</span></div>
       <div><span class="n">17 Sep</span><span class="k">last generated</span></div>
     </div>
   </header>
@@ -437,7 +437,7 @@
 
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">104</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">23</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">25</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">38</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">23</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">25</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">40</span></button>
   </nav>
 
   <main id="list">
@@ -1140,7 +1140,7 @@
       </article>
       <article class="item blk" id="F26" data-group="blocking"
                data-kind="finding" data-status="open"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">F26</span>
           <h3>§13.2’s hold band falls inside a gap the defence cannot enter at realm 1</h3>
@@ -1154,7 +1154,7 @@
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Realm 1 needs a lever at the right scale, and does not have one.</strong> A maxed post leaves it 5.8 points below the band; a second post puts it at 62.4%. Nothing between those exists. The candidates are wards, grid size, or saying §13.2’s band does not apply at realm 1 — the post count is not one of them, and neither is the post ladder (F27).<br><br><strong>Fix realm 2’s window.</strong> The fix exists and arrives 31 days after the realm does. Front-load the post ladder, open realm 2 later, or start a realm’s first post above level 1 — the last is closest to §13.3’s own promise that a generated defence is “never empty”, which is currently a claim about contents rather than about strength.<br><br><strong>This is not F22 restated.</strong> F22 found the band unreachable at §5.2’s one post and recommended a floor of two; measured at the depth §19.27’s decision band actually implies, two posts <em>overshoot</em>. The floor F22 asks for is the right direction and it does not land in the band either. Both items are the same quantisation seen from opposite sides.<br><br><code>python3 -m tools.generator_settings</code></p>
         
         
-        
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;13.2</span></header><p class="e-find"><span class="e-lab">now</span><code>Below a quarter, defenders feel helpless and stop designing. Above half, raiding feels futile</code></p><p class="e-new"><span class="e-lab">add</span><code>Say where this band applies. Measured across every setting 10.2 and 5.2 permit — one to three guard posts, nought to two geometry bands, Guardian Post levels 1 to 5 — at the depths 12.6’s decision target implies, &lt;b&gt;a generated island at realm 1 cannot reach it&lt;/b&gt;: the strongest on one post holds 24.2% and the weakest on two holds 62.4%, so this 15-point band sits inside a 38-point gap. Realm 2 reaches it only with a Guardian Post at level 3, which 10.2 says an engaged player builds on day 36, against a realm that opens on day 5. Either the band is a target for realms 3 and up and says so, or realms 1 and 2 need a lever finer than a whole guard.</code></p><p class="e-why">§13.2 sets the number and nothing checks a realm against it. The band is not merely missed at realm 1 — it is unreachable, which is a different kind of problem from a tuning miss and has a different fix. F26.</p></li></ol></details>
       </article>
       <article class="item blk" id="F25" data-group="blocking"
                data-kind="finding" data-status="open"
@@ -1604,7 +1604,7 @@
       </article>
       <article class="item sig" id="F27" data-group="significant"
                data-kind="finding" data-status="open"
-               data-edits="no">
+               data-edits="yes">
         <header class="item-head">
           <span class="id">F27</span>
           <h3>§10.2’s post ladder is the right size and starts in the wrong place, so the same upgrade is required, free or harmful</h3>
@@ -1618,7 +1618,7 @@
         <p class="rec"><span class="arrow">&rarr;</span> <strong>Fix the base, not the dial.</strong> State a starting defence per realm chosen so the ladder spans the band — realm 2 higher, realms 4 and 5 lower — rather than letting it fall out of <code>1 + (level−1)÷2</code>. The ladder itself is the right instrument and needs no change.<br><br><strong>A steeper ladder is not the answer, and was measured rather than reasoned about.</strong> F26 first recommended doubling its effect to rescue realm 1. Doubling reaches 25.8% against a band starting at 30; it takes five times §10.2’s slope to reach 32.0%, and at that slope a maxed post carries all four upper realms out of the top — 54.2%, 60.2%, 66.2%, 62.7%. <strong>The ladder does not close realm 1’s gap; it moves it up the realm levels.</strong> One slope has to serve every realm, and the realms that work sit near the top of the band already, so any upgrade large enough to matter at realm 1 carries them out of it. Withdrawn with the numbers, on the same principle as F17’s and F20’s withdrawn edits.<br><br><strong>Say what an upgrade is for.</strong> If §13.2’s band is the health metric, §10.2 currently sells four realms an upgrade that leaves it. Either the band is not meant to hold for an upgraded island — in which case say so — or the base moves.<br><br><code>python3 -m tools.post_ladder</code></p>
         
         
-        
+        <details class="edits"><summary>1 edit to the document</summary><ol class="edit-list"><li class="edit"><header class="e-head"><span class="e-act a-insert">Add</span><span class="e-sec">&sect;10.2</span></header><p class="e-find"><span class="e-lab">now</span><code>guard +10% health and sight</code></p><p class="e-new"><span class="e-lab">add</span><code>Say what a Guardian Post upgrade is for, because measured against 13.2’s 30–45% hold band it does three different things depending on the realm. The ladder moves a defence about 12 points from level 1 to level 5, which is well matched to a 15-point band — but 5.2’s post formula decides where each realm starts, and of five realms it lands one inside. At realm 2 the ladder is &lt;b&gt;required&lt;/b&gt; to reach the band (26.2% to 38.8%); at realm 3 it is free (34.2% to 44.4%); at realms 4 and 5 it &lt;b&gt;carries the defence out of the band&lt;/b&gt; (40.0% to 52.7% and 55.3%). A player buying an upgrade is not told they are leaving the design’s own health metric.</code></p><p class="e-why">The ladder is the right instrument and the base is misaligned, so the fix is 5.2’s starting defence per realm rather than 10.2’s slope — a steeper slope was measured and it moves the problem up the realm levels instead of solving it. Either way this row should say what the upgrade does to the band. F27.</p></li></ol></details>
       </article>
       <article class="item sig" id="C18" data-group="significant"
                data-kind="contradiction" data-status="proposed"
@@ -2447,4 +2447,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build 7597addf619af56b -->
+<!-- ruleborn-build bb3748987c185fba -->
