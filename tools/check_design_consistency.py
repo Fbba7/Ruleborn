@@ -19,7 +19,7 @@ import itertools
 import re
 import sys
 
-DEFAULT_DOC = "docs/design/ruleborn-game-design-v3.0.txt"
+DEFAULT_DOC = "docs/design/ruleborn-game-design-v3.1.txt"
 
 # --------------------------------------------------------------------------
 # Supersession
@@ -221,7 +221,7 @@ def parse_load_rates(text: str) -> list[tuple[str, float, bool]]:
 
 def parse_rank_table(text: str) -> dict:
     """§7.10's Rank / Count / Pages table."""
-    block = section(text, "7.10 Rarity buys specificity", "This follows the published")
+    block = section(text, "7.9 Rarity buys specificity", "This follows the published")
     cells = [l.strip().lstrip("| ").strip() for l in block.split("\n") if l.strip()]
     out = {}
     for i, cell in enumerate(cells):
@@ -429,7 +429,7 @@ def main() -> int:
         f"wards, pylons and the Vault, so four extra characters cut the time by "
         f"{100 * (1 - breaker / volley):.0f}%",
     )
-    ward_block = section(text, "10.3 Wards", "10.5 The Library")
+    ward_block = section(text, "10.3 Wards", "10.4 The Library")
     check(
         "every ward's '+15% effect' names one quantity (10.2, 10.3)",
         "scales" in ward_block or "the level scales" in ward_block,

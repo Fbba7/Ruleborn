@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 98 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 34 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
+v3.0 answered the audit directly, in §30.18. Of 102 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 38 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 
@@ -70,6 +70,8 @@ v3.0 answered the audit directly, in §30.18. Of 98 items, **26 are fixed in the
 | | What it is |
 | --- | --- |
 | **C29** | v3.0 removed the playtesters and kept two phase gates that require them |
+| **F24** | v3.1’s supersession check passes on a document that still contains the model it was written to ban |
+| **F25** | §31.2 states “one fact, one home” and six facts still have two homes |
 | **C21** | The formulas appendix still carries the detection model §12.8 deleted |
 | **C22** | §12.6 still loads at 150 a second, five times §12.19's rate |
 | **C23** | Three sections still price laws in three ranks after the sheets moved to four |
@@ -82,6 +84,7 @@ v3.0 answered the audit directly, in §30.18. Of 98 items, **26 are fixed in the
 | **F8** | The clock is not a pressure device: runs finish with a third of it unused |
 | **F9** | Generated defences hold 2% at realm level 1, against a target of 30–45% |
 | **D21** | §19.27’s harnesses were built, since they are now the critical path |
+| **F22** | §5.2’s one guard post puts §13.2’s band out of reach at realms 1 and 2, whatever the generator does |
 | **F10** | Sixteen of forty-eight laws are parameter changes; the rest need an engine feature |
 | **F11** | Weaving the player’s own laws makes a generated defence worse, not better |
 | **F12** | Eight laws need a decision from the owner that a generator has to make |
@@ -95,7 +98,8 @@ v3.0 answered the audit directly, in §30.18. Of 98 items, **26 are fixed in the
 | **D26** | Every guard began every raid at the same point of its patrol |
 | **D25** | No crew in the harness could see §5.4’s clock, so nothing priced in time could be measured at all |
 | **F18** | Withdrawn: §13.2’s populated middle holds for an ordinary crew — it is skilled play that breaks it (F21) |
-| **F19** | What a raid pays varies 1.5× with how well it is played, and §9.6 prices it as a constant |
+| **F23** | Four laws reach all twelve chords, so the law table does not gate the “late-game discovery” at all |
+| **F19** | What a raid pays varies 1.4× with how well it is played, and §9.6 prices it as a constant |
 | **D24** | The Vault phase in the harness was two seconds long, and every number was measured through it |
 | **F15** | Guards and Response are not two layers; they are one, and three more have no path to the metric |
 | **F16** | Geometry is 5% of a generated defence — and designed, it is worth four times as much |

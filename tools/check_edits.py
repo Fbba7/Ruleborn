@@ -21,7 +21,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from audit_register import EDITS, REGISTER                          # noqa: E402
 
-DOC = ROOT / "docs" / "design" / "ruleborn-game-design-v3.0.txt"
+DOC = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
 GENERATED = ROOT / "docs" / "design" / "generated"
 CONTENT = ROOT / "content"
 ACTIONS = {"replace", "delete", "insert", "regenerate", "retag"}
@@ -209,13 +209,30 @@ def main() -> int:
         print(f"  the document: {', '.join(sorted(uncovered))}")
         print("  Not a failure — a to-do list. Drafting an edit is what puts an "
               "item under\n  this check.\n")
-    if problems:
-        print(f"{len(problems)} edits do not match the document:\n")
-        for p in problems:
+    # An edit whose target sentence has vanished is usually good news: the
+    # document was fixed and the edit retired with it. v3.1 retired twelve at
+    # once. An edit that now matches *twice*, or an item whose sentence never
+    # existed, is a different thing and still a failure.
+    from audit_register import V31
+    retired = [p for p in problems
+               if "does not contain" in p and p.split()[0] in V31]
+    real = [p for p in problems if p not in retired]
+
+    if retired:
+        print(f"  {len(retired)} edits no longer match, on items a later version "
+              f"closed:")
+        for p in retired:
+            print(f"    · {p.split(':')[0]}")
+        print("  Not a failure — this is what retirement looks like. The "
+              "sentence the edit\n  quoted is gone because it was fixed.\n")
+    if real:
+        print(f"{len(real)} edits do not match the document:\n")
+        for p in real:
             print(f"  ✗ {p}")
         print()
         return 1
-    print("  every quoted sentence is in the document, exactly once.\n")
+    print("  every quoted sentence is in the document, exactly once, or belongs "
+          "to an item\n  a later version closed.\n")
     return 0
 
 

@@ -1,0 +1,26 @@
+{
+ "tick_rate": {
+  "value": 30,
+  "unit": "simulation steps per second",
+  "home": "24.10 The shape of one heist, in numbers",
+  "pattern": "fixed (\\d+) steps a second"
+ },
+ "law_count": {
+  "value": 48,
+  "unit": "laws",
+  "home": "7.4 The law table",
+  "pattern": "The (\\d+) laws"
+ },
+ "crew_size": {
+  "value": "3 to 5",
+  "unit": "crew members per heist (3, 4 from Keeper 8, 5 from Keeper 16), plus a Sage",
+  "home": "12.5 Planning",
+  "pattern": "crew of (\\d+ to \\d+)"
+ },
+ "page_total": {
+  "value": "1,350",
+  "unit": "Library pages for the full Codex at tier I",
+  "home": "14.4 The page economy",
+  "pattern": "= ([\\d,]+) pages in total"
+ }
+}

@@ -50,7 +50,7 @@ FOUND_IN_V3 = frozenset({
     "D19", "D20", "D21", "D22", "D23",
     "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17",
     "F18", "F19", "F20", "F21", "D24", "D25", "D26", "D27", "D28",
-    "C29", "F22", "F23",
+    "C29", "F22", "F23", "F24", "F25",
 })
 
 REGISTER = [
@@ -610,6 +610,87 @@ dict(id="C29", kind="contradiction", severity="blocking", status="open",
          "whole phase table, and it is the one §19.27 admits simulation "
          "cannot replace. Deleting it is cheap and costs the most. This is "
          "flagged blocking for that reason, not for the wording."),
+
+dict(id="F24", kind="finding", severity="blocking", status="open",
+     title="v3.1\u2019s supersession check passes on a document that still "
+           "contains the model it was written to ban",
+     refs=["31.5", "31.9", "7.6", "9.5", "29.2"],
+     body="v3.1 bans four superseded models by regular expression and reports "
+          "all four absent. One of them is not.<br><br>The pattern for the "
+          "retired three-rank page costs is <code>15, 30 or 60 pages</code>. "
+          "\u00a79.5 and \u00a729.2 were both rewritten to the five-rank "
+          "<code>10, 20, 35 or 60</code>, so the pattern finds nothing and the "
+          "check goes green. <strong>\u00a77.6 still says it, in different "
+          "words</strong>, in normative text:<br><br><code>Restoring a law: 15 "
+          "pages for a common law, 30 for a rare one, 60 for a deep one.</code>"
+          "<br><br>Same model, same three ranks, same numbers, one clause "
+          "rearranged \u2014 and the check cannot see it. This register\u2019s "
+          "own <code>check_edits.py</code> found it from the other side: of "
+          "C23\u2019s four drafted edits, three no longer match the document "
+          "because the sentences were fixed, and <strong>the fourth still "
+          "matches exactly</strong>.<br><br>The general fault is not this "
+          "regex. It is that <strong>a banned-phrasing check can only prove a "
+          "phrasing absent, never a model</strong>, and it reports the stronger "
+          "claim. \u00a731.5 calls these checks \u201ca string or an "
+          "arithmetic comparison over the built artefact, so it cannot be "
+          "argued with\u201d \u2014 true, and the thing it cannot be argued "
+          "with about is narrower than the name on the check.",
+     rec="Two changes, and the second is the one that generalises."
+         "<br><br><strong>1. Fix \u00a77.6</strong>, which is C23\u2019s "
+         "surviving edit and a one-line replacement."
+         "<br><br><strong>2. Derive the ban from the data rather than from a "
+         "phrase.</strong> The page costs live in one place; a check that "
+         "recomputes every price in the document against that table catches any "
+         "phrasing, including ones nobody thought of. The same applies to the "
+         "other three bans: \u201cone 120\u00b0 cone\u201d does not cover "
+         "every way to write a single-cone model.<br><br>This is "
+         "\u00a731.4\u2019s own rule \u2014 generated, not authored \u2014 "
+         "pointed at the checks instead of the tables. A hand-written list of "
+         "forbidden strings is an authored artefact, and it drifts from the "
+         "thing it describes exactly as C21 to C24 did.",
+     measured=None),
+
+dict(id="F25", kind="finding", severity="blocking", status="open",
+     title="\u00a731.2 states \u201cone fact, one home\u201d and six facts "
+           "still have two homes",
+     refs=["31.2", "31.9", "7.9", "14.4", "12.6", "9.2", "9.5", "11.5"],
+     body="\u00a731.2\u2019s rule is the right one and is stated well: every "
+          "fact has exactly one place it is stated, and every other appearance "
+          "is a cross-reference or is generated. \u00a731.9 then lists eight "
+          "items closed and says the remaining forty-five are design questions "
+          "rather than bookkeeping.<br><br>Six of them are bookkeeping, and "
+          "each is the rule\u2019s own failure mode. Checked against the built "
+          "v3.1:<br><br><code>"
+          "C3 &nbsp;the rank split &nbsp;&nbsp;7.9 says 18/14/10/6 &nbsp;"
+          "&middot; the 48 sheets and 14.4 say 18/12/6/12<br>"
+          "C23 the page costs &nbsp;&nbsp;7.6 says 15/30/60 &nbsp;&middot; "
+          "9.5 and 29.2 say 10/20/35/60<br>"
+          "C22 the load rate &nbsp;&nbsp;&nbsp;12.6 says 150 a second, Carriers "
+          "&middot; 12.19 says 30, every role<br>"
+          "C27 partial staffing &nbsp;9.2 says 60/85/100% &nbsp;&middot; 5.8 "
+          "says pro-rata<br>"
+          "C28 a birth &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "9.5 is geometric &nbsp;&nbsp;&nbsp;&nbsp;&middot; 11.5 is linear<br>"
+          "C25 the notes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.8 "
+          "says 8-9 a note &nbsp;&nbsp;&middot; the sheets say 12 to 6"
+          "</code><br><br><strong>C3 is the one that costs something.</strong> "
+          "\u00a77.9\u2019s table implies a Codex of 1,170 pages; the 48 "
+          "authored sheets and \u00a714.4 both give <strong>1,350</strong>. "
+          "v3.1 pins 1,350 as a canonical constant and checks \u00a714.4\u2019s "
+          "arithmetic against itself, so the check passes \u2014 it never "
+          "compares the rank counts the arithmetic uses against the rank counts "
+          "\u00a77.9 publishes. The constant is guarded and the table it is "
+          "derived from is not.",
+     rec="Not a criticism of \u00a731 \u2014 it is what \u00a731 asks for, "
+         "applied to the six it did not reach. Each is a one-line deletion or "
+         "replacement and five of the six already carry a drafted edit in this "
+         "register.<br><br>The structural version: <code>data/constants.json</code> "
+         "holds four constants, and this register can name at least ten facts "
+         "that appear in more than one section. <strong>The constants file "
+         "should be the list of every such fact</strong>, not of the four that "
+         "were noticed. A practical test for what belongs in it: any figure "
+         "this register has ever recorded as stated twice.",
+     measured=None),
 
 dict(id="C18", kind="contradiction", severity="significant", status="proposed",
      title="Aether storage: formula or table?",
@@ -2357,6 +2438,103 @@ dict(id="C28", kind="contradiction", severity="minor", status="open",
 # `status` overrides the item's own. `fixed` means the design document itself
 # resolved it, as distinct from `done`, which means this repository did.
 # `note` says what v3.0 did, including where it stopped short.
+
+# ===========================================================================
+# What version 3.1 did
+# ===========================================================================
+#
+# A second layer over V3, not a replacement: v3.0's note stays, and this says
+# what happened next. Each entry is verified against the built document rather
+# than taken from §31.9's own summary — v3.0 also published a list of things it
+# had fixed, and C21 to C24 are what that list missed.
+#
+# `status="fixed"` here means the check that tracked the item now passes against
+# `docs/design/ruleborn-game-design-v3.1.txt`.
+
+V31 = {
+
+# -- closed, and independently verified ------------------------------------
+
+"C7": dict(status="fixed", note=
+    "Closed. <code>fixed 30 steps a second</code> appears once in the whole "
+    "document, in \u00a724.10, and \u00a77.3\u2019s 20 is gone. v3.1 also "
+    "pins it in <code>data/constants.json</code> with the section that owns it, "
+    "so a second copy fails the build rather than waiting for an audit."),
+
+"C10": dict(status="fixed", note=
+    "Closed. \u00a726.1 now says 31 traits, recounted from \u00a711.3, and "
+    "v3.1\u2019s checker recounts it from the table on every build."),
+
+"C17": dict(status="fixed", note=
+    "Closed, and better than the drafted edit. \u00a727.2 now reads "
+    "\u201cFallbacks, if clearance fails, are Lawkeep and Isleborn \u2014 the "
+    "name in use is never its own fallback\u201d. The rule is stated, not just "
+    "the correction."),
+
+"C21": dict(status="fixed", note=
+    "Closed. \u00a729.1\u2019s detection row is now a suspicion meter and its "
+    "ambush row carries \u00a712.8\u2019s health floor. The percent-awareness "
+    "phrasing is banned by a build check, so the deleted model cannot leak back "
+    "in by hand. All three of this item\u2019s drafted edits now fail to match "
+    "the document, which is what retirement looks like."),
+
+"C24": dict(status="fixed", note=
+    "Closed. 17 building types in \u00a726.1, and the Library moved into "
+    "\u00a710.4 with all ten levels and a stated cost curve \u2014 the seven "
+    "missing points this item said the economy model could not price. It is now "
+    "a line in \u00a714.4\u2019s page economy as well."),
+
+"C26": dict(status="fixed", note=
+    "Closed, and closed the way this item asked. <code>Size</code> and "
+    "<code>Flies</code> are columns in \u00a711.2 for all eighteen ruleborn, "
+    "held in <code>data/creatures.json</code>, and v3.1\u2019s checker "
+    "re-derives the size band from each creature\u2019s own head count rather "
+    "than trusting the column. G12\u2019s three laws now read attributes that "
+    "exist."),
+
+"G12": dict(status="fixed", note=
+    "Closed with C26: Density, Heavy ground and Swarm birth now read "
+    "<code>size</code> and <code>flies</code>, which \u00a711.2 carries."),
+
+"D4": dict(status="fixed", note=
+    "Closed. \u00a731.8 schedules reconciliation ahead of \u00a726.7\u2019s "
+    "locks and calls it a gate rather than a milestone \u2014 which is what "
+    "this item asked for, in the document\u2019s own voice."),
+
+"D10": dict(status="fixed", note=
+    "Closed. \u00a731.2 splits the repository four ways \u2014 "
+    "<code>/spec</code> for decisions, <code>/data</code> for numbers, "
+    "<code>/archive</code> for reasoning, <code>/build</code> for output that "
+    "nobody edits \u2014 which is this item\u2019s proposal with a fourth "
+    "compartment it did not think of: the generated one."),
+
+# -- half closed -----------------------------------------------------------
+
+"C23": dict(note=
+    "<strong>Three of four copies fixed; the fourth survives, and the check "
+    "written to catch it cannot see it.</strong> \u00a714.4 now derives the "
+    "Codex from the five-rank split, and \u00a79.5 and \u00a729.2 both price "
+    "<code>10, 20, 35 or 60 pages by rank</code> \u2014 all three of this "
+    "item\u2019s edits for those sections no longer match, which is what "
+    "retirement looks like.<br><br>\u00a77.6 still reads <em>\u201cRestoring "
+    "a law: 15 pages for a common law, 30 for a rare one, 60 for a deep "
+    "one.\u201d</em> v3.1 bans the retired scheme by the phrase "
+    "<code>15, 30 or 60 pages</code>, which this sentence does not use, so the "
+    "build reports the model absent. See F24."),
+
+
+"C6": dict(note=
+    "<strong>Half closed, and the half left open is left open on purpose.</strong> "
+    "\u00a711.2 and \u00a711.11 now agree on every ruleborn\u2019s role \u2014 "
+    "the check that failed since v2.3 passes \u2014 and v3.1 binds them with a "
+    "build check. The ability wordings and cooldowns still differ for all "
+    "eighteen, and \u00a731.9 says why: picking one set silently would be a "
+    "design decision disguised as a tidy-up. That is the right call, and it is "
+    "the first time this register\u2019s open half has been open by decision "
+    "rather than by oversight."),
+
+}
+
 
 V3 = {
 

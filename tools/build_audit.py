@@ -15,7 +15,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from audit_register import (DEPENDS, EDITS, FOUND_IN_V3, REGISTER,  # noqa: E402
-                            RESEARCH, V3)
+                            RESEARCH, V3, V31)
 
 from build_stamp import stamped  # noqa: E402
 
@@ -290,10 +290,16 @@ def edits_html(item_id: str) -> str:
 def item_html(item: dict) -> str:
     label, cls = SEVERITY[item["severity"]]
     v3 = V3.get(item["id"], {})
-    status = v3.get("status") or item.get("status", "open")
+    status = (V31.get(item["id"], {}).get("status")
+              or v3.get("status") or item.get("status", "open"))
     rec = item.get("rec")
     v3_html = (f'<p class="v3"><span class="vlabel">v3.0</span> {v3["note"]}</p>'
                if v3.get("note") else "")
+    # v3.1 is a second layer, not a replacement: what v3.0 did about an item is
+    # part of the item's history and stays on the page beneath it.
+    v31 = V31.get(item["id"], {})
+    v31_html = (f'<p class="v3 v31"><span class="vlabel">v3.1</span> {v31["note"]}</p>'
+                if v31.get("note") else "")
     return f"""
       <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
                data-kind="{item['kind']}" data-status="{status}"
@@ -310,6 +316,7 @@ def item_html(item: dict) -> str:
         <p class="body">{item['body']}</p>
         {f'<p class="rec"><span class="arrow">&rarr;</span> {rec}</p>' if rec else ''}
         {v3_html}
+        {v31_html}
         {edits_html(item['id'])}
       </article>"""
 
@@ -325,7 +332,9 @@ def build() -> str:
 
     counts = {g: sum(1 for i in REGISTER if i["_group"] == g) for g, *_ in GROUPS}
     def status_of(item: dict) -> str:
-        return V3.get(item["id"], {}).get("status") or item.get("status", "open")
+        return (V31.get(item["id"], {}).get("status")
+                or V3.get(item["id"], {}).get("status")
+                or item.get("status", "open"))
 
     open_count = sum(1 for i in REGISTER if status_of(i) == "open")
     done_count = sum(1 for i in REGISTER if status_of(i) in ("done", "adopted"))
@@ -610,6 +619,11 @@ def build() -> str:
     border-left: 2px solid var(--chg);
     color: var(--ink); font-size: 14px; max-width: 66ch;
   }}
+  .v3.v31 {{
+    background: color-mix(in srgb, var(--cho) 10%, transparent);
+    border-left-color: var(--cho);
+  }}
+  .v3.v31 .vlabel {{ color: var(--cho); }}
   .vlabel {{
     font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
     text-transform: uppercase; letter-spacing: 0.08em; color: var(--chg);
@@ -708,20 +722,26 @@ def build() -> str:
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Ruleborn &middot; design document v2.3</p>
+    <p class="eyebrow">Ruleborn &middot; design document v3.1</p>
     <h1>Audit register</h1>
     <p class="lede">Everything that changed about the plan, and everything that
       still needs fixing in the document. Section marks point into the design
       document; the repository is the source of truth and this page is generated
       from it.</p>
-    <p class="lede">Read against <strong>version 3.0</strong>, which answered this
-      register directly (&sect;30.18). {fixed_count} items are fixed in the
-      document itself and carry a <span class="vlabel">v3.0</span> note saying
-      what it did &mdash; including where a fix stopped short. {new_in_v3} items
-      are new: four are decisions v3.0 took and then left a stale copy of, which
-      is the pattern the whole register is about; the rest came out of building
-      the simulation harnesses &sect;19.27 now depends on, and writing all 48 laws
-      out against the rule sheet &sect;7.3 claims they change.</p>
+    <p class="lede">Read against <strong>version 3.1</strong>. Two versions have
+      now answered this register, and each item carries what they did: a
+      <span class="vlabel">v3.0</span> note, and a <span class="vlabel">v3.1</span>
+      note beneath it where v3.1 moved. {fixed_count} items are fixed in the
+      document itself &mdash; including where a fix stopped short.</p>
+    <p class="lede"><strong>v3.1 is the first version whose fixes were checked
+      rather than claimed.</strong> It ships a build checker, pins its constants
+      in data, and closes eight items &mdash; C7, C10, C17, C21, C24, C26, D4 and
+      D10 &mdash; every one of which was verified here against the built document
+      rather than taken from &sect;31.9's own list. v3.0 published a list like
+      that too, and C21 to C24 are what it missed.<br><br>What it did not reach
+      is <strong>F24</strong> and <strong>F25</strong>: a supersession check that
+      passes on a document still containing the model it bans, and six facts that
+      still have two homes against &sect;31.2's rule that each should have one.</p>
     <p class="lede"><strong>{edit_count} edits are drafted</strong> across
       {edit_items} items &mdash; the section to open, the sentence as it stands
       today, and what to put there. Every quoted sentence is checked against the

@@ -316,6 +316,27 @@ dict(
                     "back unprompted</em> is the one question \u00a719.27 "
                     "concedes simulation cannot answer.",
              register=["C29"]),
+        dict(id="T1.11", owner="claude", status="ready",
+             title="Merge the two checkers into one",
+             detail="v3.1 ships its own build checker, and it is good: it pins "
+                    "canonical constants in <code>data/</code>, recounts "
+                    "\u00a726.1 from the tables, re-derives each creature\u2019s "
+                    "size band from its head count rather than trusting the "
+                    "column, and hashes generated blocks so a hand edit fails "
+                    "the build.<br><br>There are now two checkers over one "
+                    "document and they catch different things. This "
+                    "repository\u2019s found the three-rank sentence v3.1\u2019s "
+                    "missed (F24) and the six facts with two homes (F25); "
+                    "v3.1\u2019s catches numbering holes, dangling citations "
+                    "and generated-block edits that this one never looked "
+                    "for.<br><br><strong>Two checkers over one artefact is the "
+                    "fault the register is about, applied to the tools.</strong> "
+                    "Merge them, keep every check from both, and make the "
+                    "banned-phrasing checks derive from <code>data/</code> "
+                    "rather than from a hand-written list \u2014 which is "
+                    "\u00a731.4\u2019s own rule pointed at the checks.",
+             evidence="tools/check_design_consistency.py",
+             register=["F24", "F25"]),
     ],
 ),
 
