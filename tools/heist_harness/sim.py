@@ -107,10 +107,21 @@ class Member:
         return max(1, int(ROLES[self.role]["speed"] * U) // TPS)
 
 
-#: §10.2's Guardian Post levels as a sight multiplier. Level 1 is the baseline
-#: the harness measured everything at before post levels existed, so it is 1.0
-#: and no published number moves.
-POST_SIGHT = {1: 1.0, 2: 1.1, 3: 1.2, 4: 1.3, 5: 1.4}
+#: §10.2's Guardian Post ladder, as what one level adds to a guard's sight.
+#: The document sells "+10% health and sight" a level, so 0.10; level 1 is the
+#: baseline, giving a multiplier of 1 + STEP x (level - 1) and leaving every
+#: number measured before post levels existed exactly where it was.
+#:
+#: It is a module constant rather than a literal because F26's recommendation
+#: turns on it: the ladder is the only dial the document has that is finer than
+#: a whole guard, and whether a *steeper* one would close F26's gap is a
+#: question worth being able to ask rather than assert. See
+#: tools/post_ladder.py.
+POST_SIGHT_STEP = 0.10
+
+
+def post_sight(level: int) -> float:
+    return 1.0 + POST_SIGHT_STEP * (level - 1)
 
 
 @dataclass
@@ -369,7 +380,7 @@ class Heist:
         # this loop runs once per guard per tick for the whole run.
         # §10.2 sells Guardian Post levels as "+10% health and sight". The
         # harness has no guard health, so only the sight half lands here.
-        reach = self.sheet.factor("sight_range") * POST_SIGHT[g.level]
+        reach = self.sheet.factor("sight_range") * post_sight(g.level)
         walls_hide = self.sheet.flag("hide_behind_walls", 1)
         still_hides = self.sheet.flag("still_is_invisible")
         fill_factor = self.sheet.factor("suspicion_fill")
