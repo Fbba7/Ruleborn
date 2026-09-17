@@ -230,7 +230,7 @@ def parse_load_rates(text: str) -> list[tuple[str, float, bool]]:
 
 
 def parse_rank_table(text: str) -> dict:
-    """§7.10's Rank / Count / Pages table."""
+    """§7.9's Rank / Count / Pages table."""
     block = section(text, "7.9 Rarity buys specificity", "This follows the published")
     cells = [l.strip().lstrip("| ").strip() for l in block.split("\n") if l.strip()]
     out = {}
@@ -294,12 +294,12 @@ def main(path: str | None = None, text: str | None = None) -> int:
     stated = parse_rank_table(text)
     stated_counts = {k: v[0] for k, v in stated.items() if k != "Paradox"}
     check(
-        "the authored law sheets match 7.10's own rank table",
+        "the authored law sheets match 7.9's own rank table",
         dict(ranks) == stated_counts,
-        f"authored {dict(ranks)} against 7.10's {stated_counts}",
+        f"authored {dict(ranks)} against 7.9's {stated_counts}",
     )
 
-    # 7.10 prices each rank in pages; 7.6 states the same thing in a sentence.
+    # 7.9 prices each rank in pages; 7.6 states the same thing in a sentence.
     restore = parse_restore_costs(text)
     stated_pages = {k: v[1] for k, v in stated.items()}
     missing = [r for r in ranks if restore and r.lower() not in restore.lower()]
@@ -307,9 +307,9 @@ def main(path: str | None = None, text: str | None = None) -> int:
         str(pages) in restore for rank, pages in stated_pages.items() if rank in ranks
     )
     check(
-        "7.6's restore costs match 7.10's pages column",
+        "7.6's restore costs match 7.9's pages column",
         agrees and not missing,
-        f"7.10 prices {stated_pages}; 7.6 says {restore!r}"
+        f"7.9 prices {stated_pages}; 7.6 says {restore!r}"
         + (f"; it never mentions {', '.join(missing)}" if missing else ""),
     )
 

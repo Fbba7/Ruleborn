@@ -73,13 +73,16 @@ dict(id="D1", kind="deviation", severity="change", status="adopted",
 
 dict(id="D2", kind="deviation", severity="change", status="done",
      title="The paper prototype became a browser prototype",
-     refs=["19.27", "26.7", "25.5"],
+     refs=["19.27", "26.7", "25.4"],
      body="Both pre-code gates as written assume about thirty people in a room — "
           "eight to twelve for the paper heist, fifteen to twenty for the build "
           "test. That cohort does not exist for this project. The questions did not "
           "change; the method did, because <strong>a link can be sent to strangers "
-          "and a room cannot</strong>. §25.5 already budgets for recruited remote "
-          "panels, so the route was costed.",
+          "and a room cannot</strong>. v2.3’s §25.5 — renumbered §25.4 in v3.1 — "
+          "budgeted for recruited remote panels, so the route was costed. "
+          "<strong>That sentence is no longer in the document:</strong> v3.0 "
+          "rewrote the section to rule panels out, which is what D20 and C29 "
+          "are about.",
      rec="Built and published. It also answers a question paper could not: whether "
          "a delegated crew feels like playing or watching (§30.7 premise 3), which "
          "cannot be tested on a board where a human moves the pieces."),
@@ -194,7 +197,7 @@ dict(id="D11", kind="deviation", severity="change", status="done",
 
 dict(id="D12", kind="deviation", severity="change", status="adopted",
      title="The published prototype declares no runtime capabilities",
-     refs=["13.3", "25.5"],
+     refs=["13.3", "25.4"],
      body="Server-side result collection would have been convenient, but declaring "
           "the database capability makes an artifact organisation-internal and "
           "unshareable publicly — which defeats the entire point of recruiting "
@@ -342,15 +345,15 @@ dict(id="C2", kind="contradiction", severity="blocking", status="proposed",
 
 dict(id="C3", kind="contradiction", severity="blocking", status="open",
      title="Two law-rarity taxonomies, and one of them has no laws in it",
-     refs=["7.4", "7.7", "7.10", "9.5", "14.4", "27.2", "29.2"],
+     refs=["7.4", "7.7", "7.9", "9.5", "14.4", "27.2", "29.2"],
      body="What is <em>authored</em> (§7.4, §7.7, verified by parsing all 48 law "
           "sheets): three ranks — 18 Common, 18 Rare, 12 Deep — at 15/30/60 "
           "pages. §14.4's 1,485-page total is computed from exactly that, and the "
-          "glossary agrees. What is <em>described</em> (§7.10, §27.2): five ranks "
+          "glossary agrees. What is <em>described</em> (§7.9, §27.2): five ranks "
           "— 18/14/10/6 plus 3 paradoxes — at 10/20/35/60/120 pages. "
           "<strong>No law anywhere in the document is tagged Uncommon.</strong> The "
           "two totals differ by 345 pages, which moves the whole late-game curve.",
-     rec="§7.10's reasoning survives either way — rarity should buy specificity, "
+     rec="§7.9's reasoning survives either way — rarity should buy specificity, "
          "not strength. Decide the split, then regenerate §7.4, §7.7, §7.6, §9.5, "
          "§14.4 and the glossary from one table. Choosing five ranks means "
          "re-tagging 14 laws and re-deriving the page economy."),
@@ -570,8 +573,8 @@ dict(id="C8", kind="contradiction", severity="significant", status="open",
 dict(id="C29", kind="contradiction", severity="blocking", status="open",
      title="v3.0 removed the playtesters and kept two phase gates that "
            "require them",
-     refs=["25.5", "19.27", "26.2"],
-     body="§25.5 opens by ruling the panels out, in a sentence with no "
+     refs=["25.4", "19.27", "26.2"],
+     body="§25.4 opens by ruling the panels out, in a sentence with no "
           "room in it: <em>“No recruited panels, no paid playtesters, no "
           "thirty people in a room.”</em> §19.27 moves every "
           "instrument that needs a person to soft launch — <em>“all "
@@ -583,7 +586,7 @@ dict(id="C29", kind="contradiction", severity="blocking", status="open",
           "session”</em>. Phase 3, alpha, exits on <em>“at least 20% "
           "of testers still playing after a week”</em>. Both sit "
           "<strong>two phases before soft launch</strong>, which is the "
-          "earliest point §19.27 and §25.5 allow a player to "
+          "earliest point §19.27 and §25.4 allow a player to "
           "exist.<br><br>This is the supersession pattern the register already "
           "tracks in C8, C10 and the detection model — a fix landing in "
           "one section and not in the ones that depend on it — but it is "
@@ -597,11 +600,11 @@ dict(id="C29", kind="contradiction", severity="blocking", status="open",
      rec="Drafted in <code>docs/design/spec/validation.md</code>, with the "
          "three edits it forces spelled out. Decide which document is "
          "true, and say so in both places. Either "
-         "(a) §25.5 is right and §26.2’s phase 2 and 3 exit "
+         "(a) §25.4 is right and §26.2’s phase 2 and 3 exit "
          "tests are rewritten against the harness and the developer-as-player "
          "— in which case say what phase 2 <em>does</em> exit on, because "
          "“no gate” is not an answer for 10 to 12 weeks of work; or "
-         "(b) the ten testers are real, in which case §25.5’s "
+         "(b) the ten testers are real, in which case §25.4’s "
          "opening sentence is false and the plan owes a recruitment route, a "
          "delivery channel and a consent and privacy position, none of which "
          "exist.<br><br>Worth noting which way the evidence leans: "
@@ -1076,8 +1079,8 @@ dict(id="Q2", kind="decision", severity="choice", status="open",
 
 dict(id="Q3", kind="decision", severity="choice", status="open",
      title="Three law ranks or five?",
-     refs=["7.4", "7.10"],
-     body="C3. Both work; the reasoning in §7.10 survives either. Choosing five means "
+     refs=["7.4", "7.9"],
+     body="C3. Both work; the reasoning in §7.9 survives either. Choosing five means "
           "re-tagging 14 laws and re-deriving the page economy.",
      rec="<strong>Blocks:</strong> all law content authoring, and §14.4's page "
          "economy.<br><strong>The numbers</strong> (<code>decision_support.py "
@@ -1086,7 +1089,7 @@ dict(id="Q3", kind="decision", severity="choice", status="open",
          "pages a day. §14.4's own 1,485-page figure is the three-rank total, so "
          "three ranks is what generated the published curve.<br><strong>No "
          "recommendation.</strong> Five ranks needs fourteen Rares re-tagged, and "
-         "the split is a judgement about complexity and excitement \u2014 §7.10 is "
+         "the split is a judgement about complexity and excitement \u2014 §7.9 is "
          "explicit that rarity must not track power, which rules out the obvious "
          "cost-ordered answer."),
 
@@ -1203,7 +1206,7 @@ dict(id="C22", kind="contradiction", severity="significant", status="open",
 
 dict(id="C23", kind="contradiction", severity="significant", status="open",
      title="Three sections still price laws in three ranks after the sheets moved to four",
-     refs=["7.6", "7.7", "7.10", "14.4", "29.2"],
+     refs=["7.6", "7.7", "7.9", "14.4", "29.2"],
      body="v3.0 re-tagged twelve laws from Rare to Uncommon. §7.6 still says "
           "\u201cRestoring a law: 15 pages for a common law, 30 for a rare one, 60 for "
           "a deep one\u201d \u2014 three ranks, and no mention of the rank twelve laws "
@@ -1216,17 +1219,17 @@ dict(id="C23", kind="contradiction", severity="significant", status="open",
           "even the replacement figure is on a different basis from the number it "
           "replaces.",
      rec="This is C3\u2019s collateral list, and C3 is still open \u2014 the sheets "
-         "say 18/12/6/12 and §7.10 says 18/14/10/6. Settle the split first, then "
+         "say 18/12/6/12 and §7.9 says 18/14/10/6. Settle the split first, then "
          "regenerate every page total from the law table rather than restating it."),
 
 dict(id="C24", kind="contradiction", severity="minor", status="open",
      title="Seventeen building types, and §26.1 still says sixteen",
-     refs=["10.5", "10.2", "26.1"],
-     body="§10.5 adds the Library and calls it \u201ca building at the Heart, one per "
+     refs=["10.4", "10.2", "26.1"],
+     body="§10.4 adds the Library and calls it \u201ca building at the Heart, one per "
           "universe\u201d, which closes the faucet C8 was about. Two counts did not "
           "follow: §26.1\u2019s launch content table still says 16 building types, and "
           "§10.2 \u2014 headed <em>Every level of every building</em> \u2014 does not "
-          "contain it. §10.5 also gives only levels 1, 5 and 10, where every other "
+          "contain it. §10.4 also gives only levels 1, 5 and 10, where every other "
           "building lists all ten.",
      rec="Move the Library into §10.2 with its full level table and raise §26.1 to "
          "17. The seven missing levels matter more than they look: the Library is "
@@ -1280,7 +1283,7 @@ dict(id="D19", kind="deviation", severity="change", status="done",
           "including for the two things v3.0 had fixed.<br><br>A check that cannot "
           "pass is not a check. It is a comment that runs.",
      rec="<code>check_design_consistency.py</code> now parses §11.1\u2019s role table, "
-         "every load-rate sentence, §7.10\u2019s rank table, §7.6\u2019s restore costs "
+         "every load-rate sentence, §7.9\u2019s rank table, §7.6\u2019s restore costs "
          "and §12.8\u2019s ambush wording out of the document. Two findings retired on "
          "the first run against v3.0, which is what retirement is supposed to look "
          "like. The fight-length bound was <strong>deleted</strong> rather than "
@@ -2333,19 +2336,19 @@ dict(id="D23", kind="deviation", severity="change", status="done",
          "argument for the Rust core, not against the method."),
 
 dict(id="C27", kind="contradiction", severity="significant", status="open",
-     title="Two rules for partial staffing: \u00a79.2's table and \u00a75.9's pro-rata share",
-     refs=["9.2", "5.9", "9.3"],
+     title="Two rules for partial staffing: \u00a79.2's table and \u00a75.8's pro-rata share",
+     refs=["9.2", "5.8", "9.3"],
      body="\u00a79.2: \u201c<strong>Staffing sets 60%, 85% or 100% output.</strong>"
-          "\u201d \u00a75.9, added in v3.0: \u201cA producer runs at the "
+          "\u201d \u00a75.8, added in v3.0: \u201cA producer runs at the "
           "<strong>share of its worker slots that are filled</strong>, so a "
           "half-staffed Well earns half.\u201d<br><br>Those are different numbers "
-          "wherever the roster binds, and \u00a75.9 says it always binds: two of "
-          "three slots is 85% under \u00a79.2 and 67% under \u00a75.9, one of "
+          "wherever the roster binds, and \u00a75.8 says it always binds: two of "
+          "three slots is 85% under \u00a79.2 and 67% under \u00a75.8, one of "
           "three is 60% against 33%. \u00a79.2 is the more generous rule at every "
           "partial count.<br><br>Worth about 11% of late-game production, and "
           "nothing at all until the roster starts binding \u2014 which is why it "
           "hid.",
-     rec="\u00a75.9 is the later and better-argued rule, and pro-rata is the one "
+     rec="\u00a75.8 is the later and better-argued rule, and pro-rata is the one "
          "that makes partial staffing a real choice rather than a rounding. "
          "Delete \u00a79.2\u2019s sentence. This is the fourth instance of the "
          "same pattern in v3.0 (C21\u2013C23) and the cheapest to fix."),
@@ -2390,7 +2393,7 @@ dict(id="F17", kind="finding", severity="blocking", status="proposed",
           "and F1: \u00a711.5 set the cap, \u00a711.6 set the rest window, "
           "nobody divided one by the other.<br><br>Computed from \u00a79.3\u2019s "
           "published table as well as from the model, so it cannot be an artefact "
-          "of how the model reads \u00a75.9.",
+          "of how the model reads \u00a75.8.",
      rec="Specified in <code>docs/design/spec/sinks.md</code>. Two changes, and "
          "the second is the one that matters.<br><br><strong>1. Price upkeep off "
          "the faucet that pays it.</strong> Not 15 Aether an hour a point, which "
@@ -2616,24 +2619,24 @@ V3 = {
     "capacity are now reachable."),
 
 "F1": dict(status="fixed", note=
-    "§5.9 decides it: one producer of each kind per realm, partial staffing paying "
+    "§5.8 decides it: one producer of each kind per realm, partial staffing paying "
     "pro-rata, and \u201cthe roster can never fill everything \u2014 38 ruleborn "
     "against far more positions \u2014 and that is the scarcity the design is built "
     "on\u201d. Scarcity is now a feature by decision rather than by accident."),
 
 "F2": dict(status="fixed", note=
-    "§5.9: one, not two, with the model\u2019s reasoning quoted. The published tables "
+    "§5.8: one, not two, with the model\u2019s reasoning quoted. The published tables "
     "in §9.3 were not regenerated against it \u2014 C19."),
 
 "F3": dict(status="fixed", note=
-    "§5.9: \u201cA crew on a heist is assigned to it, like a guard at a post, and "
+    "§5.8: \u201cA crew on a heist is assigned to it, like a guard at a post, and "
     "does not work while assigned. Five of thirty-eight is a real choice.\u201d This "
     "is the mechanism the finding recommended, taken whole."),
 
-"Q1": dict(status="fixed", note="Answered by §5.9: scarcity is a feature."),
-"Q4": dict(status="fixed", note="Answered by §5.9: one producer of each kind per realm."),
+"Q1": dict(status="fixed", note="Answered by §5.8: scarcity is a feature."),
+"Q4": dict(status="fixed", note="Answered by §5.8: one producer of each kind per realm."),
 "Q2": dict(status="fixed", note=
-    "Answered by §5.9: crew membership excludes work, so the trade-off binds."),
+    "Answered by §5.8: crew membership excludes work, so the trade-off binds."),
 
 "D14": dict(status="fixed", note=
     "§8.8 changes the rule to three <em>distinct laws</em>, which makes §8.5 true. "
@@ -2656,7 +2659,7 @@ V3 = {
 
 "C3": dict(note=
     "Changed shape, not resolved. Twelve laws were re-tagged from Rare to Uncommon, "
-    "so the sheets now read 18/12/6/12 \u2014 against §7.10\u2019s own table of "
+    "so the sheets now read 18/12/6/12 \u2014 against §7.9\u2019s own table of "
     "18/14/10/6. Deep doubled from 6 to 12. And §7.6, §14.4 and the glossary still "
     "price three ranks at 15/30/60 pages (C23)."),
 
@@ -2667,19 +2670,19 @@ V3 = {
     "the second copy was not retired."),
 
 "C19": dict(note=
-    "The decision is made (\u00a75.9) and the tables were not regenerated against "
-    "it. Now measured, by re-running the model under \u00a75.9\u2019s three rules "
+    "The decision is made (\u00a75.8) and the tables were not regenerated against "
+    "it. Now measured, by re-running the model under \u00a75.8\u2019s three rules "
     "\u2014 one producer per realm, pro-rata staffing, the crew assigned rather "
     "than timed:<br><br><code>day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31 &nbsp;&nbsp;&nbsp;"
     "&nbsp;91 &nbsp;&nbsp;&nbsp;181 &nbsp;&nbsp;&nbsp;301<br>"
     "published &nbsp;17,300 &nbsp;94,100 &nbsp;152,800 &nbsp;256,100<br>"
-    "under \u00a75.9 &nbsp;14,633 &nbsp;46,817 &nbsp;&nbsp;62,627 &nbsp;122,495<br>"
+    "under \u00a75.8 &nbsp;14,633 &nbsp;46,817 &nbsp;&nbsp;62,627 &nbsp;122,495<br>"
     "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-15% "
     "&nbsp;&nbsp;&nbsp;-50% &nbsp;&nbsp;&nbsp;&nbsp;-59% &nbsp;&nbsp;&nbsp;&nbsp;"
     "-52%</code><br><br>"
     "<strong>The first month holds and then the curve breaks.</strong> Keeper 5 "
     "to 20 land within two days of published, which is the evidence the model "
-    "reads \u00a75.9 correctly; Keeper 28 is 18 days late and Keeper 40 is "
+    "reads \u00a75.8 correctly; Keeper 28 is 18 days late and Keeper 40 is "
     "<strong>94 days late</strong> \u2014 half a year becomes nine months. Of the "
     "three rules, assigning the crew costs 27\u201335% from the first week and "
     "pro-rata staffing costs nothing until the roster binds. The re-run is "
@@ -2806,14 +2809,14 @@ V3 = {
     "Still open, the ground has moved under it, and <strong>the argument it was "
     "being decided on has stopped mattering</strong>.<br><br>v3.0 re-tagged twelve "
     "laws from Rare to Uncommon, so the sheets read 18/12/6/12 while "
-    "\u00a77.10\u2019s table still says 18/14/10/6 and three other sections "
+    "\u00a77.9\u2019s table still says 18/14/10/6 and three other sections "
     "still price three ranks (C3, C23). The question is no longer \u201cthree or "
     "five\u201d but \u201cwhich four\u201d, and it is half-made.<br><br>It was "
     "argued partly on the page economy. The rank split moves the Codex total by "
     "11% \u2014 1,485 pages against 1,320. v3.0\u2019s Library moves the time to "
     "gather it by <strong>five times</strong>: 371 days at no Library, 114 at "
     "level 5, 68 at level 10. A building now decides the page economy, which "
-    "frees this decision to be made on what \u00a77.10 says it is about \u2014 "
+    "frees this decision to be made on what \u00a77.9 says it is about \u2014 "
     "rarity buying specificity rather than strength."),
 
 "Q5": dict(note=
@@ -2829,7 +2832,7 @@ V3 = {
     "is now wrong in the harder direction</strong>. \u00a727.5 settles the shape "
     "\u2014 \u201ca visible, openly labelled catch-up discount on levels the "
     "median player passed long ago\u201d \u2014 and nothing specifies it. The "
-    "1,019 days was computed before \u00a75.9. Re-run under \u00a75.9\u2019s "
+    "1,019 days was computed before \u00a75.8. Re-run under \u00a75.8\u2019s "
     "rules, Keeper 40 moves from day 181 to 275 for an engaged player, 274 to 368 "
     "for a regular one, and <strong>556 to 733 for a casual one</strong>. The "
     "casual curve slips 177 days against 94 for the other two, because a flat "
@@ -2848,13 +2851,13 @@ V3 = {
     "constellations get a competitive mode."),
 
 "C8": dict(note=
-    "Half fixed, and the other half is a fifth supersession. \u00a710.5 gives the "
+    "Half fixed, and the other half is a fifth supersession. \u00a710.4 gives the "
     "Library a placement and a table \u2014 3 pages a day at level 1, 9 at 5, 18 "
     "at 10, \u201cacross the universe\u201d. \u00a77.6 still says it produces "
     "\u201cabout one page per realm every few hours\u201d, which across seven "
     "realms is roughly 40 a day. The two differ by about four times, and "
     "\u00a77.6\u2019s is the sentence a reader meets first.<br><br>"
-    "\u00a710.5 also gives three of the ten levels \u2014 1, 5 and 10 \u2014 "
+    "\u00a710.4 also gives three of the ten levels \u2014 1, 5 and 10 \u2014 "
     "where every other building in \u00a710.2 lists every one, and \u00a726.1 "
     "still counts 16 building types where there are now 17 (C24)."),
 
@@ -2940,7 +2943,7 @@ RESEARCH = {
            "pre-release mobile build, what does it cost, and what consent and "
            "privacy position does handling pre-release content with outside "
            "testers require? \u00a726.2 gates two phases on those people and "
-           "\u00a725.5 says they do not exist.",
+           "\u00a725.4 says they do not exist.",
     "C20": "What does a per-school sound set cost against a per-law one, and "
            "do players in comparable games actually distinguish audio cues at "
            "that granularity? \u00a721.8 now claims six school signatures "
@@ -2994,12 +2997,12 @@ DEPENDS = {
     "C18": ["F17"],             # the cap only means something under a pegged upkeep
     "C28": ["F17"],             # births only bind once Essence is scarce
 
-    # -- the economy tables, and the decisions §5.9 took
+    # -- the economy tables, and the decisions §5.8 took
     "Q1": ["Q8"],               # posts-to-guards is the missing conversion
     "Q4": ["Q1"],
     "C19": ["Q1", "Q4"],
     "C27": ["Q1"],
-    "Q6": ["C19"],              # the 1,019 days predates §5.9's re-run
+    "Q6": ["C19"],              # the 1,019 days predates §5.8's re-run
 
     # -- law rarity, and the building that now decides the page economy
     "C24": ["C8"],
@@ -3054,6 +3057,88 @@ DEPENDS = {
 
 
 EDITS = {
+
+"F22": [
+    dict(section="10.2", action="replace",
+         find="Every realm; 1 to 3 by realm level.",
+         replace="Every realm; 2 to 3 by realm level.",
+         why="The one change measured that brings realms 1 and 2 within reach of "
+             "§13.2’s 30–45% band at all. At one post the ceiling is "
+             "16.5% at realm 1 and 21.5% at realm 2, against a band that starts at "
+             "30% — so no generator can get there, whatever it does. The second "
+             "post is worth 35 points, more than every other lever combined. It "
+             "costs one ruleborn per realm against a roster of 38 (§13.4: one "
+             "ruleborn stands at one post), and realms 1 and 2 are where every new "
+             "player starts."),
+],
+
+"F6": [
+    dict(section="12.6", action="replace",
+         find="Who cracks, who loads, when to stop loading",
+         replace="Who loads, and when to stop loading",
+         why="“Who cracks” has one answer in every situation at every "
+             "level: the Breaker, whose doubled Power of 80 is 63% of a five-crew’s "
+             "126 against wards, pylons and the Vault. Adding four characters to a "
+             "lone Breaker cuts the time by 37%. Either drop it from the list of "
+             "decisions, or give a second character on the same object a stacking "
+             "bonus so joining in is worth the exposure — what is not defensible "
+             "is calling it a decision while one role is two thirds of the answer."),
+],
+
+"F20": [
+    dict(section="12.19", action="replace",
+         find="The break-even sits at about 70% full — at that point the extra "
+              "load is worth exactly what a loud exit costs.",
+         replace="The break-even sits at about 70% full once the Spire’s reach "
+                 "is re-sealing the Vault as the crew loads (13.2); with nothing "
+                 "re-sealing it, the best fixed rule is nearer 90%.",
+         why="Measured over 700 paired raids a threshold, stopping at 90% beats "
+             "§12.19’s 70% by +0.0364 ± 0.0080 an attempt (t = 4.5) "
+             "for 1.3 points of success rate. So the number is not wrong — it is "
+             "<em>unimplemented</em>: it describes the game as it would be with a "
+             "mechanism §13.2 names and never specifies. At a re-seal of 20 a "
+             "second with §9.6’s own floor applied, the peak moves to 80% "
+             "and the hold rate stays at 44.5%, inside the band."),
+],
+
+"F21": [
+    dict(section="13.2", action="insert",
+         find="We watch the spread of clean runs, partial hauls and foiled raids, "
+              "and treat a populated middle as the goal.",
+         replace="Say which population. An ordinary crew has exactly the populated "
+                 "middle this asks for — 70% of its successful raids land "
+                 "between 20% and 80% full. A crew that reads §12.17’s "
+                 "suspicion meters has <b>16%</b> in the middle: it sweeps on a "
+                 "quarter of its raids and comes home with almost nothing on more "
+                 "than half. The warning sign is tripped, and it is tripped for the "
+                 "players who read the game best — the ones who post replays and "
+                 "set what everyone else copies.",
+         why="The metric fails on its own terms, for the worst possible population, "
+             "and tuning the break-even does not fix it: F20 moves the threshold and "
+             "the polarisation moves with it. What would populate the middle is a "
+             "reason to leave at a fill the crew did not choose in advance — the "
+             "Spire’s reach, a flatter Carry spread, or a price on abandoning."),
+],
+
+"F12": [
+    dict(section="13.3", action="insert",
+         find="Swap a law, move a post, pick a different generated layout, name it.",
+         replace="Say what happens to the eight laws whose effect is an act of "
+                 "authorship rather than a number: Tilt slopes the realm “toward "
+                 "a side the owner picks”, Current blows “one way, chosen by "
+                 "the owner”, Slow rivers lets the owner “draw streams on the "
+                 "realm’s grid”, and Lodestones, Heat bloom, Soul lanterns and "
+                 "Shifting stones are placements. Either the generator gets a stated "
+                 "rule for each — slope away from the entry, streams across the "
+                 "approach — or they are marked as laws a generated realm cannot "
+                 "weave, which is one column in the law table.",
+         why="These were fine while authoring was the default. This section makes "
+             "curation the default and authorship the deep end, so for most islands "
+             "the generator now makes these choices — and a badly chosen slope or "
+             "stream turns the defender’s law into the raider’s. Deciding "
+             "nothing means the generator picks arbitrarily, which is the current "
+             "state."),
+],
 
 "C21": [
     dict(section="29.1", action="replace",
@@ -3125,10 +3210,10 @@ EDITS = {
     dict(section="26.1", action="replace",
          find="| Building types\n| 16",
          replace="| Building types\n| 17",
-         why="\u00a710.5 added the Library and the launch table did not follow."),
+         why="\u00a710.4 added the Library and the launch table did not follow."),
     dict(section="10.2", action="insert",
          find="10.5 The Library",
-         replace="Move \u00a710.5\u2019s table into \u00a710.2, between Ward and "
+         replace="Move \u00a710.4\u2019s table into \u00a710.2, between Ward and "
                  "Resonance Lab, and give it all ten levels rather than 1, 5 and "
                  "10. \u00a710.2 is headed \u201cEvery level of every "
                  "building\u201d and the economy model cannot price a faucet from "
@@ -3200,7 +3285,7 @@ EDITS = {
          find="| Staffing sets 60%, 85% or 100% output",
          replace="| A producer runs at the share of its worker slots that are "
                  "filled (5.9)",
-         why="\u00a75.9 is the later rule and pro-rata is what makes partial "
+         why="\u00a75.8 is the later rule and pro-rata is what makes partial "
              "staffing a choice rather than a rounding."),
 ],
 
@@ -3236,7 +3321,7 @@ EDITS = {
 "C19": [
     dict(section="9.3", action="regenerate", from_="pacing.md",
          replace="Replace \u00a79.3\u2019s production table and \u00a714.2\u2019s "
-                 "Keeper days with the re-run under \u00a75.9\u2019s rules. The "
+                 "Keeper days with the re-run under \u00a75.8\u2019s rules. The "
                  "first month holds; from day 91 the published figures are up to "
                  "twice what the rules produce, and Keeper 40 arrives 94 days "
                  "late.",
@@ -3314,16 +3399,16 @@ EDITS = {
 ],
 
 "C3": [
-    dict(section="7.10", action="replace",
+    dict(section="7.9", action="replace",
          find="| Uncommon\n| 14\n| Conditional, with a mild cost\n| 20",
          replace="| Uncommon\n| 12\n| Conditional, with a mild cost\n| 20",
          why="The sheets say 12. If the table is right instead, re-tag two laws "
              "\u2014 but one of the two has to move."),
-    dict(section="7.10", action="replace",
+    dict(section="7.9", action="replace",
          find="| Rare\n| 10\n| Strong inside a condition you have to build for\n| 35",
          replace="| Rare\n| 6\n| Strong inside a condition you have to build for\n| 35",
          why="The sheets say 6."),
-    dict(section="7.10", action="replace",
+    dict(section="7.9", action="replace",
          find="| Deep\n| 6\n| Changes how a realm works. Heavy stability cost and "
               "a real trade-off. One per school\n| 60",
          replace="| Deep\n| 12\n| Changes how a realm works. Heavy stability cost "
@@ -3465,7 +3550,7 @@ EDITS = {
                  "unprompted on at least 10 of 14 consecutive days, logged by "
                  "the build rather than remembered \u2014 one person, weak "
                  "evidence, recorded as weak.",
-         why="\u00a725.5 rules out recruited playtesters and \u00a719.27 moves "
+         why="\u00a725.4 rules out recruited playtesters and \u00a719.27 moves "
              "every human instrument to soft launch, two phases later. As "
              "written this gate cannot be met, so 10 to 12 weeks of work has no "
              "exit. The replacement is weaker and says so: <em>would they come "
@@ -3479,7 +3564,7 @@ EDITS = {
          why="The first half already stands on the ablation and needs nobody. "
              "The second needs recruited testers a phase before 19.27 allows a "
              "player to exist."),
-    dict(section="25.5", action="insert",
+    dict(section="25.4", action="insert",
          find="No recruited panels, no paid playtesters, no thirty people in a "
               "room.",
          replace="If this sentence stands, say so in 26.2 as well, whose phase "
@@ -3545,7 +3630,7 @@ EDITS = {
               "hours",
          replace="A Library at the Heart produces 3 pages a day at level 1, rising "
                  "to 18 at level 10 (10.5)",
-         why="\u00a710.5 gives the table; this sentence predates it and reads "
+         why="\u00a710.4 gives the table; this sentence predates it and reads "
              "about four times higher across seven realms."),
 ],
 

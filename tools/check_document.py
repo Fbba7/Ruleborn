@@ -83,8 +83,8 @@ CREATURES = os.path.join(ROOT, "content", "upstream", "creatures.json")
 #
 # Keys are check labels from check_design_consistency.run().
 TRACKED = {
-    "the authored law sheets match 7.10's own rank table": "C3",
-    "7.6's restore costs match 7.10's pages column": "C23",
+    "the authored law sheets match 7.9's own rank table": "C3",
+    "7.6's restore costs match 7.9's pages column": "C23",
     "the law rarity split is stated once (7.7)": "C23",
     "opposite note pairs are within 2 laws of each other": "D13",
     "8.8's claim that the note table 'now runs eight or nine laws per note' holds": "C25",

@@ -64,7 +64,7 @@ Nothing these depend on is still open.
 | C10 | significant | proposed | Trait count: 30, 31 or 32? |  |
 | C12 | significant | proposed | The high revenue scenario quietly uses a different commission rate |  |
 | C26 | significant | open | §12.21 declares size and flight as properties; no table carries them | 6 |
-| C27 | significant | open | Two rules for partial staffing: §9.2's table and §5.9's pro-rata share |  |
+| C27 | significant | open | Two rules for partial staffing: §9.2's table and §5.8's pro-rata share |  |
 | C7 | significant | proposed | Tick rate: 20 Hz or 30 Hz? |  |
 | C8 | significant | open | The Library is load-bearing and specified nowhere | 5 |
 | F23 | significant | proposed | Four laws reach all twelve chords, so the law table does not gate the “late-game discovery” at all | 2 |
@@ -132,7 +132,7 @@ Everything above is arithmetic against the design document or a measurement the 
 *significant, fixed.* What does a per-school sound set cost against a per-law one, and do players in comparable games actually distinguish audio cues at that granularity? §21.8 now claims six school signatures where it once claimed 48.
 
 **C29 — v3.0 removed the playtesters and kept two phase gates that require them**  
-*blocking, open.* How do small teams recruit ten to twenty playtesters for a pre-release mobile build, what does it cost, and what consent and privacy position does handling pre-release content with outside testers require? §26.2 gates two phases on those people and §25.5 says they do not exist.
+*blocking, open.* How do small teams recruit ten to twenty playtesters for a pre-release mobile build, what does it cost, and what consent and privacy position does handling pre-release content with outside testers require? §26.2 gates two phases on those people and §25.4 says they do not exist.
 
 **D6 — A launch-scope cut of roughly 40% is proposed**  
 *change, proposed.* Which of a launch content set actually drives retention in this genre: breadth of distinct rules, or depth in a few? The proposed cut halves the laws and keeps the Island Workshop, and nothing outside this repository has been consulted about that trade.

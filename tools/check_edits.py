@@ -66,6 +66,34 @@ def duplicate_keys() -> list:
     return out
 
 
+def dangling_sections(doc: str) -> list:
+    """Every section an edit or an item names must exist in the document.
+
+    Nothing checked this before, and the register had eight items and two edits
+    pointing at sections v3.1 had renumbered away — §5.9, §7.10, §10.5 and
+    §25.5. The quoted sentences still matched, because v3.1 moved the numbers
+    and not the text, so `check_edits.py` reported everything green while the
+    register's own navigation was broken.
+
+    That is the register committing the fault it exists to record: a fact — here
+    "where this lives" — written in two places, one of which moved. It is also
+    why a renumbering is never only clerical.
+    """
+    sections = set(re.findall(r"^(\d+\.\d+) ", doc, re.M))
+    out = []
+    for item_id, edits in EDITS.items():
+        for n, edit in enumerate(edits, 1):
+            if edit["section"] not in sections:
+                out.append(f"{item_id} edit {n}: names §{edit['section']}, which is "
+                           f"not a section of the document")
+    for item in REGISTER:
+        for ref in item.get("refs", []):
+            if re.fullmatch(r"\d+\.\d+", ref) and ref not in sections:
+                out.append(f"{item['id']}: refs §{ref}, which is not a section of "
+                           f"the document")
+    return out
+
+
 def main() -> int:
     if not DOC.exists():
         print(f"{DOC} is missing — run tools/extract_design_doc.py", file=sys.stderr)
@@ -79,6 +107,7 @@ def main() -> int:
                  json.loads((CONTENT / "ruleborn.json").read_text(encoding="utf-8"))}
 
     problems.extend(duplicate_keys())
+    problems.extend(dangling_sections(DOC.read_text(encoding="utf-8")))
 
     known = {i["id"] for i in REGISTER}
     for item_id in EDITS:
