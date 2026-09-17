@@ -366,7 +366,7 @@ LIBRARY_UNLOCK_KEEPER = 4
 
 #: §7.6 and §14.4, the three-rank page costs still in the document (C23).
 PAGES_BY_RANK = {"Common": 15, "Rare": 30, "Deep": 60}
-#: §7.10's four-rank table, which the re-tagged law sheets now imply.
+#: §7.9's four-rank table, which the re-tagged law sheets now imply.
 PAGES_BY_RANK_V3 = {"Common": 10, "Uncommon": 20, "Rare": 35, "Deep": 60}
 
 # --------------------------------------------------------------------------

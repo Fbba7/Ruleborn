@@ -107,6 +107,82 @@ def check_spec_index() -> None:
         fail(f"spec/README.md lists {name}, which does not exist")
 
 
+#: Sections v3.1 renumbered, and what each became. v3.1 filled four holes left
+#: by v3.0's deletions — 5.8, 7.8, 10.4 and 25.3 were all missing — which
+#: shifted the section after each of them down by one. The register records
+#: this as "a renumbering is never only clerical"; these are the four, and
+#: this repository had 41 references to the old numbers.
+RENUMBERED = {"5.9": "5.8", "7.10": "7.9", "10.5": "10.4", "25.5": "25.4"}
+
+#: Directories whose files describe an earlier version of the design document
+#: and use that version's numbering on purpose. Renumbering them would make
+#: the archive describe a document it never read, so their citations are read
+#: against the version each file names and are not checked here. They are
+#: listed rather than skipped silently, because an unchecked file that nobody
+#: knows is unchecked is the same as no check.
+ARCHIVES = ("docs/analysis/",)
+
+#: A stale number is deliberate when the text around it says so. The phrases
+#: are the ones this repository actually uses for it — "v3.0's 5.9", "5.9 is
+#: now 5.8", "renumbered 5.8 in v3.1".
+HISTORICAL = re.compile(
+    r"v2\.\d|v3\.0|renumber|is now \u00a7|was \u00a7|older version|earlier version",
+    re.I)
+
+
+def prose_files() -> list[pathlib.Path]:
+    """Every file in this repository that cites the design document in prose."""
+    out = []
+    for pattern in ("docs/**/*.md", "tools/**/*.py", "README.md"):
+        for path in ROOT.glob(pattern):
+            if any(part in (".git", "vendor", "upstream", "__pycache__")
+                   for part in path.parts):
+                continue
+            out.append(path)
+    return sorted(set(out))
+
+
+def check_stale_citations() -> None:
+    """A \u00a7N.M in this repository's own prose must be a section v3.1 has.
+
+    `check_edits.py` checks the register's citations and `check_document.py`
+    checks the document's own. Nothing checked the third set: the spec files,
+    the generated analyses and the tools' docstrings, which is most of the
+    prose here and all of the prose a contributor reads first.
+
+    It is the same fault this repository exists to record. v3.1 moved four
+    section numbers; the design document was updated and the repository that
+    audits it was not, so `docs/design/spec/validation.md` argued about
+    \u00a725.5 for four paragraphs after \u00a725.5 stopped existing.
+
+    Three ways a stale number is allowed, and each is a claim in itself:
+    the file is an archive of an earlier version (listed in ARCHIVES), the
+    text around it says it is historical (HISTORICAL), or the number is one
+    no version of this document has ever had \u2014 which is not allowed at
+    all, and is reported as the harder problem it is.
+    """
+    import check_document
+    doc = check_document.Doc(check_document.DEFAULT_DOC).text
+    sections = set(re.findall(r"^(\d+\.\d+) ", doc, re.M))
+    for path in prose_files():
+        name = rel(path)
+        if any(name.startswith(a) for a in ARCHIVES):
+            continue
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        for i, line in enumerate(lines):
+            window = " ".join(lines[max(0, i - 3):i + 4])
+            for m in re.finditer(r"\u00a7(\d+\.\d+)", line):
+                num = m.group(1)
+                if num in sections or HISTORICAL.search(window):
+                    continue
+                became = RENUMBERED.get(num)
+                fail(f"{name}:{i + 1} cites \u00a7{num}, "
+                     + (f"which v3.1 renumbered to \u00a7{became}"
+                        if became else
+                        "which is not a section of v3.1 and not one of the four "
+                        "v3.1 renumbered \u2014 so it names nothing"))
+
+
 def check_tool_index() -> None:
     """The README's tools/ listing and the tools directory must agree.
 
@@ -242,6 +318,7 @@ def main() -> int:
     check_links(files)
     check_spec_index()
     check_tool_index()
+    check_stale_citations()
     check_register_references()
     check_artifact_urls(files)
     check_generated_marked()
@@ -256,7 +333,7 @@ def main() -> int:
         print()
         return 1
     print("  no inconsistencies — counts, links, the spec index, the tools")
-    print("  listing and the artifact URLs all agree.\n")
+    print("  listing, the section citations and the artifact URLs all agree.\n")
     return 0
 
 
@@ -289,6 +366,39 @@ def _self_test() -> None:
     missing = {p.name for p in (ROOT / "tools").glob("*.py")} - listed
     assert not missing, missing
     print(f"  and README.md lists all {len(listed)} entries in tools/")
+    # The stale-citation check, which has three ways to let a number through
+    # and so three ways to be wrong.
+    import check_document
+    doc = check_document.Doc(check_document.DEFAULT_DOC).text
+    sections = set(re.findall(r"^(\d+\.\d+) ", doc, re.M))
+    assert "5.8" in sections and "5.9" not in sections, "5.9 should be gone"
+    assert "25.4" in sections and "25.5" not in sections, "25.5 should be gone"
+    for old_num, new_num in RENUMBERED.items():
+        assert old_num not in sections, f"{old_num} still exists"
+        assert new_num in sections, f"{new_num} does not exist"
+    print(f"  all {len(RENUMBERED)} renumbered sections are gone and their "
+          f"replacements exist")
+
+    for text, allowed in (("see \u00a75.9 for the rule", False),
+                          ("v3.0's \u00a75.9, renumbered \u00a75.8 in v3.1", True),
+                          ("an earlier version's \u00a713.5", True),
+                          ("\u00a75.8 is the rule", True)):
+        stale = [m.group(1) for m in re.finditer(r"\u00a7(\d+\.\d+)", text)
+                 if m.group(1) not in sections]
+        passes = not stale or bool(HISTORICAL.search(text))
+        assert passes is allowed, (text, stale, passes)
+    print("  a bare stale number is caught; one marked historical is allowed")
+
+    # Run the check for real rather than reading `problems`, which the
+    # self-test reaches before main() has filled it — an assertion against an
+    # empty list passes for ever and says nothing.
+    before = len(problems)
+    check_stale_citations()
+    got = problems[before:]
+    del problems[before:]
+    assert not got, f"{len(got)} stale citations in this repository: {got[:3]}"
+    print(f"  and all {len(prose_files())} prose files cite only sections "
+          f"v3.1 has")
     print("self-test passed")
 
 

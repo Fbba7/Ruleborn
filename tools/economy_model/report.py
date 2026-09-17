@@ -163,7 +163,7 @@ def sink_audit() -> str:
     """What §9.5's prices add up to, against §9.3's own published production.
 
     Deliberately computed from the document's published figures rather than from
-    the model, so the result cannot be an artefact of how the model reads §5.9.
+    the model, so the result cannot be an artefact of how the model reads §5.8.
     """
     from . import sinks
 

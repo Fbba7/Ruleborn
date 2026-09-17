@@ -3,7 +3,7 @@
 
 Generated from `content/laws.json`, which is extracted from §7.7's full
 sheets. This replaces §7.4, whose rank column is the one the five-rank
-prose in §7.10 contradicts (C3).
+prose in §7.9 contradicts (C3).
 
 ## Motion
 

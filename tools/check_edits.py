@@ -72,6 +72,13 @@ def duplicate_keys() -> list:
 KNOWN_UNRESOLVABLE = {
     ("D2", "25.5"): "deliberate: the sentence is about what v2.3's §25.5 said, "
                     "and names §25.4 as its replacement in the same breath",
+    ("D29", "5.9"): "deliberate: D29 is the record of v3.1's renumbering, so it "
+                    "quotes the old numbers beside the new ones",
+    ("D29", "25.5"): "deliberate, as above: the four §25.5 sentences in "
+                     "spec/validation.md are what the item is about",
+    ("D29", "13.5"): "deliberate: §13.5 is the reference D29 found that no "
+                     "renumbering explains — the item exists because it "
+                     "resolves to nothing",
 }
 
 

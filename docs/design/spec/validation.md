@@ -10,7 +10,7 @@ Reports: `python3 -m tools.heist_harness depth`, `defence`, `breakeven`.
 
 ## The contradiction, in three sentences the document already contains
 
-§25.5 rules the panels out, in a sentence with no room in it:
+§25.4 rules the panels out, in a sentence with no room in it:
 
 > No recruited panels, no paid playtesters, no thirty people in a room.
 
@@ -32,7 +32,7 @@ testing venue named anywhere in the document is TestFlight, in phase 4.
 
 ## The chosen reading
 
-**§25.5 and §19.27 are right and §26.2 is stale.** Three reasons, in order of
+**§25.4 and §19.27 are right and §26.2 is stale.** Three reasons, in order of
 weight.
 
 1. **It is the supersession pattern, not a disagreement.** §19.27's own text says
@@ -86,7 +86,7 @@ in §13.4, and `defence` measures it.
 ## What the other reading would owe
 
 If the ten testers are real — which is the owner's call, recorded as **T1.10** —
-then §25.5's opening sentence is false and three things are missing, none of
+then §25.4's opening sentence is false and three things are missing, none of
 which exist anywhere in the document:
 
 - **A recruitment route.** §19.27 says the cohort does not exist. Ten is not
@@ -113,7 +113,7 @@ finished until every section that restates it has been changed.
 |---|---|
 | §26.2 phase 2 | Exit test replaced — see the table above |
 | §26.2 phase 3 | *"at least 20% of testers still playing after a week"* deleted; the law-dominance half stands |
-| §25.5 | Either stands as written (chosen reading) or its opening sentence is corrected (other reading) |
+| §25.4 | Either stands as written (chosen reading) or its opening sentence is corrected (other reading) |
 | §19.27 | Unchanged either way; it is the section that is already right |
 | §26.7 | Unchanged — it already says no step waits for other people |
 

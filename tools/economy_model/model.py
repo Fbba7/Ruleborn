@@ -143,7 +143,7 @@ class EconomyModel:
         for the day. This is what §11.6 calls the core trade-off of the game.
         """
         if self.cfg.crew_assigned_not_timed:
-            # §5.9: the crew is assigned to the heist, like a guard to a post.
+            # §5.8: the crew is assigned to the heist, like a guard to a post.
             # Whether they raid once or four times a day does not change it.
             return float(self.crew_size()) if self.arch.heists_per_day else 0.0
         hours_away = self.crew_size() * self.arch.heists_per_day * data.CREW_HOURS_PER_HEIST

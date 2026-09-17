@@ -83,7 +83,7 @@ def law_summary() -> str:
     out = [BANNER, "# The 48 laws — summary\n\n",
            "Generated from `content/laws.json`, which is extracted from §7.7's full\n",
            "sheets. This replaces §7.4, whose rank column is the one the five-rank\n",
-           "prose in §7.10 contradicts (C3).\n\n"]
+           "prose in §7.9 contradicts (C3).\n\n"]
     for school in schools:
         rows = [law for law in laws if law["school"] == school]
         out.append(f"## {school}\n\nShape: {shapes[school]}. Boosts {boosts[school]}.\n\n")
@@ -271,7 +271,7 @@ def pacing() -> str:
     from tools.economy_model.config import Config                   # noqa: E402
     from tools.economy_model.model import EconomyModel              # noqa: E402
 
-    #: §5.9, in full: one producer of each kind per realm, partial staffing paid
+    #: §5.8, in full: one producer of each kind per realm, partial staffing paid
     #: pro-rata, and a crew on a heist assigned to it rather than timed out.
     RULES = dict(producers_per_realm_override=1, staffing_rule="pro_rata",
                  crew_assigned_not_timed=True)
@@ -288,11 +288,11 @@ def pacing() -> str:
         "against that decision. This is the re-run.",
         "",
         "Published figures are kept beside the modelled ones. The delta is the "
-        "point: it is what §5.9 costs, and it is not small.",
+        "point: it is what §5.8 costs, and it is not small.",
         "",
         "## Starlight a day — engaged player (§9.3)",
         "",
-        "| Day | Published | Under §5.9 | Difference |",
+        "| Day | Published | Under §5.8 | Difference |",
         "| --- | --- | --- | --- |",
     ]
     state = EconomyModel(Config(archetype="engaged", days=320, **RULES)).run()
@@ -308,12 +308,12 @@ def pacing() -> str:
     lines += [
         "",
         "The first month holds. From day 91 the published figures describe a "
-        "universe §5.9's rules cannot produce, and by day 301 they are roughly "
+        "universe §5.8's rules cannot produce, and by day 301 they are roughly "
         "twice what it does.",
         "",
         "## Keeper levels — engaged player (§14.2)",
         "",
-        "| Level | Published | Under §5.9 | Drift |",
+        "| Level | Published | Under §5.8 | Drift |",
         "| --- | --- | --- | --- |",
     ]
     late = EconomyModel(Config(archetype="engaged", days=500, **RULES)).run()
@@ -326,7 +326,7 @@ def pacing() -> str:
     lines += [
         "",
         "Levels 5 to 20 land within two days of the published curve, which is the "
-        "evidence that the model is reading §5.9 correctly. Level 28 is 18 days "
+        "evidence that the model is reading §5.8 correctly. Level 28 is 18 days "
         "late and level 40 is **94 days late** — half a year becomes nine months.",
         "",
         "## Which of the three rules costs what",
@@ -336,9 +336,9 @@ def pacing() -> str:
     ]
     variants = (
         ("§9.2's staffing table", dict(producers_per_realm_override=1)),
-        ("+ §5.9 pro-rata staffing",
+        ("+ §5.8 pro-rata staffing",
          dict(producers_per_realm_override=1, staffing_rule="pro_rata")),
-        ("+ §5.9 crew assigned", RULES),
+        ("+ §5.8 crew assigned", RULES),
     )
     for label, cfg in variants:
         log = {r["day"]: r for r in

@@ -180,7 +180,7 @@ more easily than it can afford two dead currencies.
 Aether has a recurring price to peg. **Essence has none at all**, and this is not
 an oversight that a number fixes:
 
-- **Births** end. §11.5 caps the roster at 38 homes, and §5.9 makes that cap the
+- **Births** end. §11.5 caps the roster at 38 homes, and §5.8 makes that cap the
   scarcity the whole design now rests on. Births *should* end.
 - **Character levels** end. §9.5 caps them at 10.
 - **Waking** is avoidable by rotation, as measured above, and rotation gets

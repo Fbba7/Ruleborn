@@ -30,7 +30,7 @@ def birth_cost(owned: int, rule: str) -> float:
 
 
 def library_pages(level: int) -> float:
-    """§10.5 gives levels 1, 5 and 10. The rest are on the curve those imply.
+    """§10.4 gives levels 1, 5 and 10. The rest are on the curve those imply.
 
     3 -> 9 -> 18 over ten levels is very close to geometric at 1.209 a level, so
     the seven missing rows are interpolated on that. Every other building in
@@ -70,7 +70,7 @@ def roster_growth(state, rule: str = "geometric", housing_cap: int = 38) -> list
 
 def page_income(state, library_level_by_day: dict, heists_per_day: int,
                 pages_per_heist: float = 1.0) -> list:
-    """Pages a day, from raiding and from the Library (§7.6, §10.5).
+    """Pages a day, from raiding and from the Library (§7.6, §10.4).
 
     §12.1 gives a heist "a page or two"; one is the conservative reading and the
     one that makes the Library's share look largest rather than smallest.

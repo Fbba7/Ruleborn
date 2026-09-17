@@ -74,11 +74,11 @@ class Config:
     #
     # §11.6 has a raider away for the heist's three minutes plus rest, which
     # works out at about 2% of the roster — finding F3.
-    # §5.9 replaces it: "A crew on a heist is assigned to it, like a guard at a
+    # §5.8 replaces it: "A crew on a heist is assigned to it, like a guard at a
     # post, and does not work while assigned. Five of thirty-eight is a real
     # choice."
     #
-    # False keeps the published behaviour; True is §5.9's rule.
+    # False keeps the published behaviour; True is §5.8's rule.
     crew_assigned_not_timed: bool = False
 
     # -- Assumption: law configuration --------------------------------------

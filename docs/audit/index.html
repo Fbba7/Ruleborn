@@ -443,10 +443,10 @@
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">104</span><span class="k">items tracked</span></div>
+      <div><span class="n">105</span><span class="k">items tracked</span></div>
       <div><span class="n">31</span><span class="k">open</span></div>
       <div><span class="n">35</span><span class="k">fixed in v3.0</span></div>
-      <div><span class="n">20</span><span class="k">done or adopted</span></div>
+      <div><span class="n">21</span><span class="k">done or adopted</span></div>
       <div><span class="n">32</span><span class="k">blocking the build</span></div>
       <div><span class="n">70</span><span class="k">edits drafted</span></div>
       <div><span class="n">17 Sep</span><span class="k">last generated</span></div>
@@ -454,22 +454,22 @@
 <nav class="tabs" aria-label="Backend or frontend">
       <button class="tab" data-side="all" aria-pressed="true">
         <span class="tab-head"><span class="tab-name">Everything</span>
-          <span class="tab-n">104</span></span>
+          <span class="tab-n">105</span></span>
         <span class="bar">
-          <span class="fill drafted" style="width:70.2%"></span>
-          <span class="fill settled" style="width:53.8%"></span>
+          <span class="fill drafted" style="width:70.5%"></span>
+          <span class="fill settled" style="width:54.3%"></span>
         </span>
-        <span class="tab-foot">56 settled &middot;
+        <span class="tab-foot">57 settled &middot;
           17 drafted &middot; 31 open</span>
       </button>
       <button class="tab" data-side="backend">
         <span class="tab-head"><span class="tab-name">Backend</span>
-          <span class="tab-n">98</span></span>
+          <span class="tab-n">99</span></span>
         <span class="bar">
-          <span class="fill drafted" style="width:69.4%"></span>
-          <span class="fill settled" style="width:52.0%"></span>
+          <span class="fill drafted" style="width:69.7%"></span>
+          <span class="fill settled" style="width:52.5%"></span>
         </span>
-        <span class="tab-foot">51 settled &middot;
+        <span class="tab-foot">52 settled &middot;
           17 drafted &middot; 30 open</span>
       </button>
       <button class="tab" data-side="frontend">
@@ -482,7 +482,7 @@
         <span class="tab-foot">9 settled &middot;
           4 drafted &middot; 4 open</span>
       </button></nav>
-    <p class="tabs-note">A bar measures the <em>audit</em>, not the build: an item is settled when the document answers it, which is what has to happen before the work starts. No realm, screen or character has been drawn yet &mdash; for what that is waiting on, see below. 11 items need both sides and count on both, so the two tabs add up to more than 104.</p>
+    <p class="tabs-note">A bar measures the <em>audit</em>, not the build: an item is settled when the document answers it, which is what has to happen before the work starts. No realm, screen or character has been drawn yet &mdash; for what that is waiting on, see below. 11 items need both sides and count on both, so the two tabs add up to more than 105.</p>
   </header>
 
   <section class="start">
@@ -545,8 +545,8 @@
   </section>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">104</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">23</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">25</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">40</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">105</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">29</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">23</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">25</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">40</span></button>
   </nav>
 
   <main id="list">
@@ -1032,6 +1032,26 @@
         
         <p class="body">The prototype is the only artefact anyone outside this repository can actually touch, so an hourly Routine republishes it when the branch moves. It fired, took fifty-eight seconds, and was recorded <code>SUCCEEDED</code>. The published page did not change. <strong>Two faults, either one fatal on its own.</strong><br><br><strong>It could not tell new from old.</strong> The job compared the prototype’s last commit date against the artifact’s publish date, and <code>Artifact action: "list"</code> reports only a calendar day. A commit and a publish on the same day are indistinguishable — so from the first day the two coincided, which was the day it was written, the job would have answered <em>already current</em> for ever.<br><br><strong>It could not publish.</strong> <code>Artifact action: "read"</code> saves the live page to a file and counts the version as viewed only once every line of it has been read. The prompt said to read it; it did not say that a partial read does not count. So the read was partial, the publish was refused, and the turn ended without error.<br><br>The second is the same shape as D24–D26 wearing different clothes, and it is the one worth keeping: <strong>a job that cannot fail cannot be trusted when it passes.</strong> Nothing threw, so nothing was reported, so the artifact sat a day behind the code while the dashboard read green.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Both fixed. The page now carries a <code>BUILD</code> stamp — a digest of itself with that line removed — so the job compares the published page against the current page instead of comparing two dates: <em>is the published page this page?</em> <code>build_prototype.py --stamp</code> prints it, <code>--self-test</code> proves it still moves when the page moves, and both are build gates. The prompt now spells out the full-read requirement, and a final step requires the publish to report a new version number before the run may claim to have worked.<br><br>Generalised since: <code>tools/build_stamp.py</code> stamps <strong>all three</strong> published pages — the prototype, this register and the roadmap — and holds each one’s path and artifact URL, so the job reads what to publish rather than carrying a hard-coded list. The prototype keeps its stamp as a JavaScript constant because it shows it on screen; the two generated pages carry an HTML comment. One digest function strips either form, because two implementations of a stamp would be the very fault this register exists to record.<br><br>The general rule, alongside D27’s: <strong>an automated job needs a check that its work landed, not just that it ran.</strong></p>
+        
+        
+        
+      </article>
+      <article class="item chg" id="D29" data-group="changes"
+               data-kind="deviation" data-status="done"
+               data-side="backend"
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">D29</span>
+          <h3>This repository cited 41 sections v3.1 had renumbered away</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
+          
+        </header>
+        <div class="refs"><span class="ref">§31.2</span><span class="ref">§25.4</span><span class="ref">§5.8</span><span class="ref">§7.9</span><span class="ref">§10.4</span></div>
+        
+        <p class="body">v3.1 filled four holes v3.0’s deletions had left — §5.8, §7.8, §10.4 and §25.3 were all missing — which shifted the section after each of them down by one: 5.9→5.8, 7.10→7.9, 10.5→10.4, 25.5→25.4.<br><br>The register’s own citations were checked when that was found: <code>check_edits.py</code> caught 37 of them and its docstring records that a renumbering is never only clerical. The sentence was right and the check was too narrow. It read the register; it did not read the twenty-nine spec files, the generated analyses or the tools’ own docstrings, which is most of the prose here and all of the prose a contributor reads first. There were <strong>67 more</strong>, and after excluding the ones whose text says they are historical, <strong>41 that a reader would follow and find nothing</strong>.<br><br>The worst of them is not a number. <code>docs/design/spec/validation.md</code> argues about §25.5 for four paragraphs — what it rules out, whether its opening sentence is false, what would have to change — and §25.5 has not existed since v3.1. The argument is sound and it is filed under a number nobody can look up.<br><br><code>docs/design/spec/wards.md</code> is the other kind: it cited §13.5 for “watch a raid on your island”, and §13 ends at 13.4 in v3.1 — no renumbering explains it, and no section of v3.1 carries that sentence. The feature the line needed is the replay allowance, which is in §10.2’s building table, so that reference was not only dead but pointing at the wrong kind of section.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> All 41 fixed and the check generalised. <code>check_docs_consistency.py</code> now reads every <code>.md</code> under <code>docs/</code>, every <code>.py</code> under <code>tools/</code> and the README, and fails on a §N.M that v3.1 does not have.<br><br>Three ways a stale number is allowed, and each is a claim rather than a silence. <strong>The file is an archive of an earlier version</strong> — <code>docs/analysis/</code> was written against v2.3 and renumbering it would make it describe a document it never read, so it is listed as exempt rather than skipped quietly. <strong>The text around the number says it is historical</strong>, which is how this repository already writes such references: “v3.0’s §5.9, renumbered §5.8 in v3.1”. <strong>Nothing else.</strong> A number no version has ever had is reported as the harder problem it is.<br><br>The generated documents were fixed at their generator and regenerated, because §31.4’s rule is that a generated file is never edited by hand — and two of the 41 were in <code>docs/design/generated/</code>, where a hand fix would have been undone by the next build.</p>
         
         
         
@@ -2819,4 +2839,4 @@
     apply();
   })();
 </script>
-<!-- ruleborn-build e0eb4079e522652c -->
+<!-- ruleborn-build 0a5f8f84c683fcd2 -->

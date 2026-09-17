@@ -2137,6 +2137,57 @@ dict(id="D28", kind="deviation", severity="change", status="done",
          "<br><br>The general rule, alongside D27’s: <strong>an automated "
          "job needs a check that its work landed, not just that it ran.</strong>"),
 
+dict(id="D29", kind="deviation", severity="change", status="done",
+     title="This repository cited 41 sections v3.1 had renumbered away",
+     refs=["31.2", "25.4", "5.8", "7.9", "10.4"],
+     body="v3.1 filled four holes v3.0\u2019s deletions had left \u2014 "
+          "\u00a75.8, \u00a77.8, \u00a710.4 and \u00a725.3 were all missing "
+          "\u2014 which shifted the section after each of them down by one: "
+          "5.9\u21925.8, 7.10\u21927.9, 10.5\u219210.4, 25.5\u219225.4."
+          "<br><br>The register\u2019s own citations were checked when that was "
+          "found: <code>check_edits.py</code> caught 37 of them and its "
+          "docstring records that a renumbering is never only clerical. The "
+          "sentence was right and the check was too narrow. It read the "
+          "register; it did not read the twenty-nine spec files, the generated "
+          "analyses or the tools\u2019 own docstrings, which is most of the "
+          "prose here and all of the prose a contributor reads first. There "
+          "were <strong>67 more</strong>, and after excluding the ones whose "
+          "text says they are historical, <strong>41 that a reader would "
+          "follow and find nothing</strong>."
+          "<br><br>The worst of them is not a number. "
+          "<code>docs/design/spec/validation.md</code> argues about "
+          "\u00a725.5 for four paragraphs \u2014 what it rules out, whether "
+          "its opening sentence is false, what would have to change \u2014 "
+          "and \u00a725.5 has not existed since v3.1. The argument is "
+          "sound and it is filed under a number nobody can look up."
+          "<br><br><code>docs/design/spec/wards.md</code> is the other kind: "
+          "it cited \u00a713.5 for \u201cwatch a raid on your island\u201d, "
+          "and \u00a713 ends at 13.4 in v3.1 \u2014 no renumbering explains "
+          "it, and no section of v3.1 carries that sentence. The feature the "
+          "line needed is the replay allowance, which is in \u00a710.2\u2019s "
+          "building table, so that reference was not only dead but pointing at "
+          "the wrong kind of section.",
+     rec="All 41 fixed and the check generalised. "
+         "<code>check_docs_consistency.py</code> now reads every <code>.md</code> "
+         "under <code>docs/</code>, every <code>.py</code> under "
+         "<code>tools/</code> and the README, and fails on a "
+         "\u00a7N.M that v3.1 does not have."
+         "<br><br>Three ways a stale number is allowed, and each is a claim "
+         "rather than a silence. <strong>The file is an archive of an earlier "
+         "version</strong> \u2014 <code>docs/analysis/</code> was written "
+         "against v2.3 and renumbering it would make it describe a document it "
+         "never read, so it is listed as exempt rather than skipped quietly. "
+         "<strong>The text around the number says it is historical</strong>, "
+         "which is how this repository already writes such references: "
+         "\u201cv3.0\u2019s \u00a75.9, renumbered \u00a75.8 in v3.1\u201d. "
+         "<strong>Nothing else.</strong> A number no version has ever had is "
+         "reported as the harder problem it is."
+         "<br><br>The generated documents were fixed at their generator and "
+         "regenerated, because \u00a731.4\u2019s rule is that a generated file "
+         "is never edited by hand \u2014 and two of the 41 were in "
+         "<code>docs/design/generated/</code>, where a hand fix would have been "
+         "undone by the next build."),
+
 dict(id="D26", kind="deviation", severity="change", status="done",
      title="Every guard began every raid at the same point of its patrol",
      refs=["12.17", "13.2", "13.4"],

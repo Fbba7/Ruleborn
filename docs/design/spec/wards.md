@@ -223,8 +223,13 @@ listing it as a decision while one role is two thirds of the answer.
   level 3. It is a fitted number, not a measured one, and the crossover is the
   thing to playtest rather than the health.
 - **Whether a disarmed ward should be visible as disarmed to the defender** in
-  the replay. §24.3's free analytics make this possible and §13.5's "watch a
-  raid on your island" makes it desirable, but it is a UI question.
+  the replay. §24.3's free analytics make this possible and the Observatory's
+  replay allowance — 5 at level 1, rising to 20 (§10.2) — makes it desirable,
+  but it is a UI question. This cited an earlier version's §13.5 and its "watch
+  a raid on your island" until the citation was checked: §13 ends at 13.4 and no
+  section of v3.1 carries that sentence. The feature the line needed is the
+  replay, and the replay is in §10.2's building table, so the reference was not
+  only stale but pointing at the wrong kind of section.
 - **Whether laws of the same school still strengthen wards by 25% (§10.3) on top
   of the level scaling.** They should, but 25% × 60% compounding is 100% at
   level 5, which may be more than intended.

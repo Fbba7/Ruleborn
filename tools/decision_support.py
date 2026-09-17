@@ -18,7 +18,7 @@ of taste rather than arithmetic.
                       "when to stop loading" decision actually sits
   wards     G3 / G5 — what "effect +15%" scales, what a ward costs to get past,
                       and how much of a heist a law pylon is worth
-  pacing    Q6 / Q3 — what §5.9 did to the casual curve, and what the Library
+  pacing    Q6 / Q3 — what §5.8 did to the casual curve, and what the Library
                       did to the page economy the rank split was argued on
 """
 
@@ -48,7 +48,7 @@ def load(name: str) -> list[dict]:
 
 #: §7.6 and §9.5, the three-rank costs actually used by §14.4.
 THREE_RANK_PAGES = {"Common": 15, "Rare": 30, "Deep": 60}
-#: §7.10's five-rank table.
+#: §7.9's five-rank table.
 FIVE_RANK_PAGES = {"Common": 10, "Uncommon": 20, "Rare": 35, "Deep": 60, "Paradox": 120}
 FIVE_RANK_COUNTS = {"Common": 18, "Uncommon": 14, "Rare": 10, "Deep": 6}
 
@@ -65,7 +65,7 @@ def rarity_report() -> None:
     print("C3 / Q3 — three law ranks, or five?\n")
     print("What is authored today (§7.4, §7.7, parsed from all 48 law sheets):")
     print(f"  {dict(counts)}   pages {THREE_RANK_PAGES}\n")
-    print("What §7.10 and §27.2 describe:")
+    print("What §7.9 and §27.2 describe:")
     print(f"  {FIVE_RANK_COUNTS} + 3 paradoxes   pages {FIVE_RANK_PAGES}\n")
 
     def total(counts_map, pages_map):
@@ -98,7 +98,7 @@ def rarity_report() -> None:
 
     # -- where would the 14 Uncommons come from? --------------------------
     print("If five ranks is chosen, 14 of the 18 Rares must become Uncommon.")
-    print("§7.10 says rarity tracks complexity, effect size and excitement — not")
+    print("§7.9 says rarity tracks complexity, effect size and excitement — not")
     print("power. Three proxies for that are in the data:\n")
 
     res = load("resonances")
@@ -119,7 +119,7 @@ def rarity_report() -> None:
     cheap = [s[3] for s in scored[:14]]
     print(f"\n  Cheapest 14 by stability cost: {', '.join(cheap)}")
     print("  That is one defensible split and it is not the only one. Cost is a")
-    print("  power proxy, and §7.10 is explicit that rarity should not track power —")
+    print("  power proxy, and §7.9 is explicit that rarity should not track power —")
     print("  so this is a starting point for a judgement, not an answer.\n")
 
 
@@ -536,7 +536,7 @@ def wards_report() -> None:
 # Q6 and Q3 — the curve, and the page economy
 # ---------------------------------------------------------------------------
 
-#: §5.9's three decisions, which the published tables were never re-run against.
+#: §5.8's three decisions, which the published tables were never re-run against.
 V3_RULES = dict(producers_per_realm_override=1, staffing_rule="pro_rata",
                 crew_assigned_not_timed=True)
 
