@@ -168,17 +168,24 @@
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Ruleborn &middot; against design document v2.3</p>
+    <p class="eyebrow">Ruleborn &middot; against design document v3.1</p>
     <h1>Roadmap</h1>
     <p class="lede">Every stage, what finishes it, and who it is waiting on.
       Progress against the register is computed rather than claimed &mdash; and
       <strong>drafted is not signed off</strong>, which is the distinction the
       two bars below keep separate.</p>
-    <p class="lede">Read against <strong>design document v3.0</strong>, which
-      took most of the audit and changed the plan underneath this page: both
-      pre-code player tests are gone, replaced by the simulation harnesses in
-      stage 0, and the build-willingness risk is designed out rather than
-      measured (&sect;13.3, &sect;19.27).</p>
+    <p class="lede">v3.0 changed the plan underneath this page: both pre-code
+      player tests are gone, replaced by the simulation harnesses in stage 0,
+      and the build-willingness risk is designed out rather than measured
+      (&sect;13.3, &sect;19.27).</p>
+    <p class="lede">Read now against <strong>design document v3.1</strong>,
+      which changed the plan <em>less</em> than its size suggests. It adds
+      &sect;31 &mdash; a build checker, constants pinned in data, and eight
+      audit items closed &mdash; and closes four numbering holes v3.0 left, so
+      &sect;5.9 is &sect;5.8 and &sect;25.5 is &sect;25.4. It adopted no further
+      spec file, and settled none of the four decisions below.
+      <strong>The queue that gates this roadmap did not move; what moved is how
+      much of the document can now be trusted without re-reading it.</strong></p>
 
     <div class="summary">
       <div><span class="n">16</span><span class="k">tasks done</span></div>
@@ -207,11 +214,11 @@
           <span class="sid">S0</span>
           <div>
             <h2>Validation without players</h2>
-            <p class="sub">§19.27, rewritten in v3.0 — and now the critical path</p>
+            <p class="sub">§19.27, rewritten in v3.0, unchanged in v3.1 — and the critical path</p>
           </div>
           <span class="scount">7/8</span>
         </div>
-        <p class="blurb">v3.0 removed both pre-code player tests and replaced them with harnesses, stating the cost plainly: simulation can prove a system is legible, balanced and decision-dense, and cannot prove a game is enjoyable. Each harness below is buildable here, needs no engine, and has a threshold §19.27 sets for itself.</p>
+        <p class="blurb">v3.0 removed both pre-code player tests and replaced them with harnesses, stating the cost plainly: simulation can prove a system is legible, balanced and decision-dense, and cannot prove a game is enjoyable. Each harness below is buildable here, needs no engine, and has a threshold §19.27 sets for itself.&lt;br&gt;&lt;br&gt;v3.1 left this decision alone. Its companion section moved — &lt;em&gt;How we will actually find out&lt;/em&gt; is §25.4 now, not §25.5 — because v3.1 closed four numbering holes v3.0 had left (§5.8, §7.8, §10.4, §25.3 were all missing). Every in-document citation was moved with them: 243 sections, no dangling reference. That is the kind of thing v3.1 is — a consistency release, not a design one.</p>
         
       <article class="task st-done" id="T0-1"
                data-status="done" data-owner="claude">
@@ -429,7 +436,7 @@
           <span class="status st-doing">Under way</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">The significant and minor conflicts, and the gaps below the blocking line. <strong>Every open conflict now carries a drafted edit</strong> — the section, the sentence as it stands, and what to put there — and <code>check_edits.py</code> reports any that do not, because an item without an edit is checked by nobody. That is how six clerical items went on being reported open for a whole version after v3.0 had fixed them.</p>
+        <p class="detail">The significant and minor conflicts, and the gaps below the blocking line. <strong>Every open conflict now carries a drafted edit</strong> — the section, the sentence as it stands, and what to put there — and <code>check_edits.py</code> reports any that do not, because an item without an edit is checked by nobody. That is how six clerical items went on being reported open for a whole version after v3.0 had fixed them.<br><br>The same discipline run in the other direction against v3.1: §31.9 publishes its own list of eight closed items, and all eight verify — but checking rather than believing it is what produced <strong>F24</strong> and <strong>F25</strong>, neither of which that list mentions.</p>
         
         <div class="prog" title="C10 C11 C12 C13 C14 C15 C16 C17 C18 C20 C22 C23 C24 C25 C26 C27 C28 C7 C8 C9 F16 F18 F19 F20 F23 G10 G11 G12 G2 G3 G4 G5 G6 G7 G8">
           <div class="bar">
@@ -451,7 +458,7 @@
           <span class="status st-yours">Waiting on you</span>
           <span class="owner o-you">needs you</span>
         </header>
-        <p class="detail">Most of this happened in v3.0, which adopted <code>movement.md</code>, <code>fights.md</code> and <code>vault.md</code> close to whole. What is left is the spec files v3.0 did not take up — <code>wards.md</code>, <code>economy.md</code>'s production peg — and the resolutions for the six items v3.0 introduced.</p>
+        <p class="detail">Most of this happened in v3.0, which adopted <code>movement.md</code>, <code>fights.md</code> and <code>vault.md</code> close to whole. What is left is the spec files v3.0 did not take up — <code>wards.md</code>, <code>economy.md</code>'s production peg, <code>first-build.md</code> — and the resolutions for the six items v3.0 introduced.<br><br><strong>v3.1 adopted none of them.</strong> §10.3 (wards), §9.6 (the <code>B(V)</code> production term) and §13.3 (the guided build) open word for word as they did in v3.0. This queue did not move, and it is the one that gates T1.6 and T1.8.</p>
         
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>docs/design/spec/README.md</code></p>
@@ -465,7 +472,7 @@
           <span class="status st-yours">Waiting on you</span>
           <span class="owner o-you">needs you</span>
         </header>
-        <p class="detail">Four of the eight are settled: v3.0’s §5.9 answered character scarcity, the raid-versus-build trade-off and one producer per realm, and §13.4 answered how many ruleborn stand at a post — “one”, with the acknowledgement that it was the missing conversion between two tables.<br><br>Four remain, and two of them now have numbers they did not have: <strong>Q6</strong>, where §27.3’s 1,019 days becomes about 1,343 under §5.9’s rules and the casual curve slips nearly twice as far as the others; and <strong>Q3</strong>, where the page economy it was argued on has been overtaken by the Library — the rank split moves the Codex total by 11% and the Library moves the time to gather it by five times.</p>
+        <p class="detail">Four of the eight are settled: v3.0’s §5.9 — §5.8 in v3.1 — answered character scarcity, the raid-versus-build trade-off and one producer per realm, and §13.4 answered how many ruleborn stand at a post — “one”, with the acknowledgement that it was the missing conversion between two tables.<br><br>Four remain, and two of them now have numbers they did not have: <strong>Q6</strong>, where §27.3’s 1,019 days becomes about 1,343 under §5.9’s rules and the casual curve slips nearly twice as far as the others; and <strong>Q3</strong>, where the page economy it was argued on has been overtaken by the Library — the rank split moves the Codex total by 11% and the Library moves the time to gather it by five times.<br><br><strong>v3.1 settled none of the four.</strong> It is the release that made the document check itself; the four questions left are the ones no checker can answer, which is why they are here.</p>
         
         <div class="prog" title="Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8">
           <div class="bar">
@@ -529,7 +536,7 @@
           <span class="status st-done">Done</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">§8.8 states in the past tense that “the table now runs eight or nine laws per note”. All 48 law sheets give Glow 12, Flow 11, Echo 10, Weight 9, Spark 8, Bloom 8, Veil 7, Hush 6 — identical to v2.3 (C25), and Hush is the hiding note, so the imbalance runs against the side paying for it.<br><br><strong>Now written out.</strong> Nine edits reach nine laws for every note, each argued from §8.1's own definition rather than chosen to make the arithmetic work, with every chord still reachable at unchanged cost. The tool refuses a proposal that puts two opposite notes on one law — which it caught in the first draft. It does not fix D14: the cheapest chord still costs 33 stability against a day-2 capacity of 51, which is a gating question rather than a distribution one.</p>
+        <p class="detail">§8.8 states in the past tense that “the table now runs eight or nine laws per note”. All 48 law sheets give Glow 12, Flow 11, Echo 10, Weight 9, Spark 8, Bloom 8, Veil 7, Hush 6 — identical to v2.3, and unchanged again in v3.0 and v3.1 (C25). Hush is the hiding note, so the imbalance runs against the side paying for it.<br><br><strong>Now written out.</strong> Nine edits reach nine laws for every note, each argued from §8.1's own definition rather than chosen to make the arithmetic work, with every chord still reachable at unchanged cost. The tool refuses a proposal that puts two opposite notes on one law — which it caught in the first draft. It does not fix D14: the cheapest chord still costs 33 stability against a day-2 capacity of 51, which is a gating question rather than a distribution one.</p>
         
         <div class="prog" title="C25 D13 D14">
           <div class="bar">
@@ -701,7 +708,7 @@
           <span class="status st-done">Done</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail"><strong>Unblocked by v3.0.</strong> §5.9 settles the building and roster rules — one producer of each kind per realm, partial staffing paying pro-rata, a crew on a heist withheld from work. The published tables were not re-run against that decision: day 2 is still 2,100 Starlight and day 8 still 6,200. This is C19, and it is now the clearest instance of the thing the register exists to stop.<br><br><strong>Done.</strong> The re-run is generated at <code>docs/design/generated/pacing.md</code>, beside the published figures rather than replacing them — the delta is the decision. The first month holds; from day 91 the published figures are up to twice what §5.9's rules produce, and Keeper 40 arrives 94 days late.</p>
+        <p class="detail"><strong>Unblocked by v3.0.</strong> §5.9 — renumbered §5.8 in v3.1 — settles the building and roster rules — one producer of each kind per realm, partial staffing paying pro-rata, a crew on a heist withheld from work. The published tables were not re-run against that decision: day 2 is still 2,100 Starlight and day 8 still 6,200. This is C19, and it is now the clearest instance of the thing the register exists to stop.<br><br><strong>Done.</strong> The re-run is generated at <code>docs/design/generated/pacing.md</code>, beside the published figures rather than replacing them — the delta is the decision. The first month holds; from day 91 the published figures are up to twice what §5.8's rules produce, and Keeper 40 arrives 94 days late.</p>
         
         <div class="prog" title="C19 C27">
           <div class="bar">
@@ -1048,4 +1055,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build ea487711b7408cc8 -->
+<!-- ruleborn-build af3c5cecd4477d31 -->

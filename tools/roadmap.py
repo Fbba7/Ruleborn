@@ -44,12 +44,19 @@ STAGES = [
 dict(
     id="S0",
     title="Validation without players",
-    subtitle="\u00a719.27, rewritten in v3.0 \u2014 and now the critical path",
+    subtitle="\u00a719.27, rewritten in v3.0, unchanged in v3.1 \u2014 and the critical path",
     blurb="v3.0 removed both pre-code player tests and replaced them with "
           "harnesses, stating the cost plainly: simulation can prove a system is "
           "legible, balanced and decision-dense, and cannot prove a game is "
           "enjoyable. Each harness below is buildable here, needs no engine, and "
-          "has a threshold \u00a719.27 sets for itself.",
+          "has a threshold \u00a719.27 sets for itself.<br><br>v3.1 left this "
+          "decision alone. Its companion section moved — "
+          "<em>How we will actually find out</em> is \u00a725.4 now, not "
+          "\u00a725.5 — because v3.1 closed four numbering holes v3.0 "
+          "had left (\u00a75.8, \u00a77.8, \u00a710.4, \u00a725.3 were all "
+          "missing). Every in-document citation was moved with them: 243 "
+          "sections, no dangling reference. That is the kind of thing "
+          "v3.1 is — a consistency release, not a design one.",
     tasks=[
         dict(id="T0.1", owner="claude", status="done",
              title="Build a browser prototype that runs the two old gates",
@@ -223,7 +230,13 @@ dict(
                     "<code>check_edits.py</code> reports any that do not, because "
                     "an item without an edit is checked by nobody. That is how "
                     "six clerical items went on being reported open for a whole "
-                    "version after v3.0 had fixed them.",
+                    "version after v3.0 had fixed them.<br><br>The same "
+                    "discipline run in the other direction against v3.1: "
+                    "\u00a731.9 publishes its own list of eight closed "
+                    "items, and all eight verify — but checking rather "
+                    "than believing it is what produced <strong>F24</strong> "
+                    "and <strong>F25</strong>, neither of which that list "
+                    "mentions.",
              register_severity=["significant", "minor"]),
         dict(id="T1.4", owner="you", status="yours",
              title="Sign off, or overrule, each drafted resolution",
@@ -231,13 +244,19 @@ dict(
                     "<code>movement.md</code>, <code>fights.md</code> and "
                     "<code>vault.md</code> close to whole. What is left is the "
                     "spec files v3.0 did not take up \u2014 <code>wards.md</code>, "
-                    "<code>economy.md</code>'s production peg \u2014 and the "
-                    "resolutions for the six items v3.0 introduced.",
+                    "<code>economy.md</code>'s production peg, "
+                    "<code>first-build.md</code> \u2014 and the "
+                    "resolutions for the six items v3.0 introduced."
+                    "<br><br><strong>v3.1 adopted none of them.</strong> "
+                    "\u00a710.3 (wards), \u00a79.6 (the <code>B(V)</code> "
+                    "production term) and \u00a713.3 (the guided build) open "
+                    "word for word as they did in v3.0. This queue did not "
+                    "move, and it is the one that gates T1.6 and T1.8.",
              evidence="docs/design/spec/README.md",
              blocked_by=["T1.2"]),
         dict(id="T1.5", owner="you", status="yours",
              title="Make the decisions that are genuinely yours",
-             detail="Four of the eight are settled: v3.0\u2019s \u00a75.9 answered "
+             detail="Four of the eight are settled: v3.0\u2019s \u00a75.9 \u2014 \u00a75.8 in v3.1 \u2014 answered "
                     "character scarcity, the raid-versus-build trade-off and one "
                     "producer per realm, and \u00a713.4 answered how many ruleborn "
                     "stand at a post \u2014 \u201cone\u201d, with the "
@@ -249,7 +268,11 @@ dict(
                     "twice as far as the others; and <strong>Q3</strong>, where "
                     "the page economy it was argued on has been overtaken by the "
                     "Library \u2014 the rank split moves the Codex total by 11% "
-                    "and the Library moves the time to gather it by five times.",
+                    "and the Library moves the time to gather it by five times."
+                    "<br><br><strong>v3.1 settled none of the four.</strong> "
+                    "It is the release that made the document check itself; "
+                    "the four questions left are the ones no checker can "
+                    "answer, which is why they are here.",
              evidence="python3 tools/decision_support.py",
              register_kinds=["decision"]),
         dict(id="T1.6", owner="claude", status="blocked",
@@ -281,7 +304,8 @@ dict(
              detail="\u00a78.8 states in the past tense that \u201cthe table now "
                     "runs eight or nine laws per note\u201d. All 48 law sheets "
                     "give Glow 12, Flow 11, Echo 10, Weight 9, Spark 8, Bloom 8, "
-                    "Veil 7, Hush 6 \u2014 identical to v2.3 (C25), and Hush is "
+                    "Veil 7, Hush 6 \u2014 identical to v2.3, and unchanged again "
+                    "in v3.0 and v3.1 (C25). Hush is "
                     "the hiding note, so the imbalance runs against the side "
                     "paying for it.<br><br><strong>Now written out.</strong> Nine "
                     "edits reach nine laws for every note, each argued from "
@@ -427,7 +451,7 @@ dict(
              gate="every price checked against the faucet that pays it"),
         dict(id="T2.4", owner="claude", status="done",
              title="Regenerate \u00a79.3, \u00a710.2, \u00a714.2 and \u00a714.3 from the model",
-             detail="<strong>Unblocked by v3.0.</strong> \u00a75.9 settles the "
+             detail="<strong>Unblocked by v3.0.</strong> \u00a75.9 \u2014 renumbered \u00a75.8 in v3.1 \u2014 settles the "
                     "building and roster rules \u2014 one producer of each kind "
                     "per realm, partial staffing paying pro-rata, a crew on a "
                     "heist withheld from work. The published tables were not "
@@ -438,7 +462,7 @@ dict(
                     "<code>docs/design/generated/pacing.md</code>, beside the "
                     "published figures rather than replacing them \u2014 the delta "
                     "is the decision. The first month holds; from day 91 the "
-                    "published figures are up to twice what \u00a75.9's rules "
+                    "published figures are up to twice what \u00a75.8's rules "
                     "produce, and Keeper 40 arrives 94 days late.",
              evidence="docs/design/generated/pacing.md",
              register=["C19", "C27"]),

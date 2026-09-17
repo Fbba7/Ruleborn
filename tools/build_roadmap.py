@@ -378,17 +378,24 @@ def build() -> str:
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Ruleborn &middot; against design document v2.3</p>
+    <p class="eyebrow">Ruleborn &middot; against design document v3.1</p>
     <h1>Roadmap</h1>
     <p class="lede">Every stage, what finishes it, and who it is waiting on.
       Progress against the register is computed rather than claimed &mdash; and
       <strong>drafted is not signed off</strong>, which is the distinction the
       two bars below keep separate.</p>
-    <p class="lede">Read against <strong>design document v3.0</strong>, which
-      took most of the audit and changed the plan underneath this page: both
-      pre-code player tests are gone, replaced by the simulation harnesses in
-      stage 0, and the build-willingness risk is designed out rather than
-      measured (&sect;13.3, &sect;19.27).</p>
+    <p class="lede">v3.0 changed the plan underneath this page: both pre-code
+      player tests are gone, replaced by the simulation harnesses in stage 0,
+      and the build-willingness risk is designed out rather than measured
+      (&sect;13.3, &sect;19.27).</p>
+    <p class="lede">Read now against <strong>design document v3.1</strong>,
+      which changed the plan <em>less</em> than its size suggests. It adds
+      &sect;31 &mdash; a build checker, constants pinned in data, and eight
+      audit items closed &mdash; and closes four numbering holes v3.0 left, so
+      &sect;5.9 is &sect;5.8 and &sect;25.5 is &sect;25.4. It adopted no further
+      spec file, and settled none of the four decisions below.
+      <strong>The queue that gates this roadmap did not move; what moved is how
+      much of the document can now be trusted without re-reading it.</strong></p>
 
     <div class="summary">
       <div><span class="n">{counts['done']}</span><span class="k">tasks done</span></div>

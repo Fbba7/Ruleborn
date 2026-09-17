@@ -12,6 +12,14 @@ its `fill` term, and `detection.md`'s reading became §12.8's own words. The thr
 still unadopted are `wards.md` (§10.3 is untouched), `economy.md`'s production peg
 (§9.6 kept `B(V)`), and `first-build.md` (§13.3 removed the feature instead).
 
+**v3.1 adopted none.** §10.3, §9.6 and §13.3 open word for word as they did in
+v3.0. v3.1 is a consistency release — it adds §31, pins its constants in
+`data/`, ships a build checker, and closes four numbering holes v3.0 had left
+(§5.8, §7.8, §10.4 and §25.3 were all missing, so §5.9 is now §5.8 and §25.5 is
+now §25.4, with every in-document citation moved to match). Worth saying
+plainly, because the size of the diff suggests otherwise: **the adoption queue
+did not move.**
+
 | File | Resolves | Status |
 | --- | --- | --- |
 | [`detection.md`](detection.md) | C1 — two detection models | Proposed: §12.17 authoritative |
