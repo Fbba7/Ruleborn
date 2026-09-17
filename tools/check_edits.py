@@ -163,6 +163,45 @@ NO_EDIT_BECAUSE = {
 }
 
 
+def dangling_edit_citations(doc: str) -> list:
+    """A citation inside the text an edit would type must resolve too.
+
+    `dangling_sections` checks where an edit *goes* and what an item *cites*.
+    It does not read the replacement text, which is the one string in the
+    register that is destined to become part of the document — so a drafted
+    edit could carry a dead cross-reference all the way in, and two did:
+
+        C27 replaces 9.2's sentence with one citing (5.9), which v3.1
+            renumbered to 5.8 — the number its own `why` field uses
+        C8  replaces 7.6's sentence with one citing (10.5), which v3.1
+            renumbered to 10.4 — again the number its own `why` field uses
+
+    Both are the same shape, and it is worth naming: the edit's prose for a
+    human reader had the right section and the text for the document had the
+    wrong one. Nothing compared them, because they are the same fact written
+    twice, which is 31.2's rule turned on this register rather than on the
+    document it audits.
+
+    The document's own citations are checked by `check_document.py`. This is
+    the same check moved one step earlier — before the sentence is typed,
+    rather than after.
+    """
+    sections = set(re.findall(r"^(\d+\.\d+) ", doc, re.M))
+    out = []
+    for item_id, edits in EDITS.items():
+        for n, edit in enumerate(edits, 1):
+            for field in ("replace", "why"):
+                for m in re.finditer(r"\((\d+\.\d+)\)", edit.get(field) or ""):
+                    if m.group(1) not in sections:
+                        out.append(
+                            f"{item_id} edit {n}: the {field} text cites "
+                            f"\u00a7{m.group(1)}, which is not a section of the "
+                            f"document"
+                            + (" \u2014 and this text is destined for the document"
+                               if field == "replace" else ""))
+    return out
+
+
 def unexplained_missing_edits() -> list:
     """Every open item either carries an edit or says why it does not.
 
@@ -270,6 +309,25 @@ def self_test() -> int:
     else:
         print("  [PASS] and the register itself is clean")
 
+    # The replacement text an edit would type in, which nothing read before.
+    victim = next(iter(EDITS))
+    planted = dict(section=EDITS[victim][0]["section"], action="replace",
+                   find="x", replace="see the rule at (99.9)", why="planted")
+    EDITS[victim].append(planted)
+    caught = any("99.9" in p for p in dangling_edit_citations(doc))
+    live = any("destined for the document" in p
+               for p in dangling_edit_citations(doc))
+    EDITS[victim].remove(planted)
+    print(f"  [{'PASS' if caught and live else 'FAIL'}] a dead citation inside a "
+          f"replacement is {'caught' if caught else 'MISSED'}")
+    ok = ok and caught and live
+
+    if dangling_edit_citations(doc):
+        print("  [FAIL] a drafted edit still carries a dead citation")
+        ok = False
+    else:
+        print("  [PASS] and every citation an edit would type in resolves")
+
     # The other half: every open item accounted for, and a "covered by X" link
     # that actually leads to an edit.
     planted = dict(id="ZZ-selftest", kind="finding", severity="minor",
@@ -316,6 +374,7 @@ def main() -> int:
     doc_text = DOC.read_text(encoding="utf-8")
     problems.extend(dangling_sections(doc_text))
     problems.extend(dangling_prose_sections(doc_text))
+    problems.extend(dangling_edit_citations(doc_text))
     problems.extend(unexplained_missing_edits())
     problems.extend(bad_sides())
 

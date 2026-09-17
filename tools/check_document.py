@@ -55,8 +55,10 @@ sentence in a clean document and showing the phrase ban miss it.
 from __future__ import annotations
 
 import collections
+import contextlib
 import hashlib
 import html
+import io
 import json
 import os
 import re
@@ -149,6 +151,9 @@ ADDED_BY_THE_MERGE = (
     "every page cost in the document agrees with the rank table",   # F24, derived not recognised
     "the rank table's counts match the 48 authored law sheets",     # C3, from the sheets
     "every section citation in the prose resolves",                 # v3.1's renumbering, verified
+    "a producer's partial output is stated once (5.8)",             # C27, two staffing rules
+    "a birth is priced once (9.5)",                                 # C28, two birth curves
+    "9.5's birth examples match 9.5's own birth formula",           # C28, and one cell
 )
 
 
@@ -557,6 +562,154 @@ def check_library_curve(doc: Doc, led: Ledger) -> None:
                   f"{len(costs)} costs and {len(mults)} multipliers found")
 
 
+# --------------------------------------------------------------------------
+# The two of F25's six twice-stated facts that nothing checked  (C27, C28)
+# --------------------------------------------------------------------------
+
+def staffing_rules(doc: Doc) -> tuple[dict[str, list[int] | None], list[str]]:
+    """Every section that states how a part-staffed producer pays, and what it says.
+
+    C27 was recorded as two homes, 9.2 against 5.8. It is three, and the third
+    is the one that matters: 9.2's caption and 9.3's production formula both
+    carry the stepped share, and the drafted edit deletes only the caption,
+    leaving the formula — which is the half that computes anything.
+
+    Returns (homes, cross_references). A home states the rule; a cross-
+    reference restates it and cites where it lives, which is what 31.2 asks
+    for and not a second home. 27.2 and 30.18 both do the second, and a check
+    that could not tell them apart would report five homes and be wrong about
+    three of them.
+
+    A home maps to the percentages it states, or to None where it states a
+    proportion instead. A proportion has no numbers in it, so what can be
+    compared is not the two rules against each other but each stepped figure
+    against the share it should have been.
+    """
+    homes: dict[str, list[int] | None] = {}
+    m = re.search(r"Staffing sets ((?:\d+%(?:, | or )?)+) output", doc.all_text)
+    if m:
+        homes["9.2"] = [int(x) for x in re.findall(r"(\d+)%", m.group(1))]
+    # 9.3's formula carries the same steps as a multiplier: "staffing (0.6, ...)".
+    f = re.search(r"staffing \(((?:[\d.]+(?:, | or )?)+)\)", doc.all_text)
+    if f:
+        homes["9.3"] = [round(100 * float(x)) for x in re.findall(r"[\d.]+", f.group(1))]
+    if re.search(r"runs at the share of its worker slots that are filled",
+                 doc.all_text):
+        homes["5.8"] = None
+
+    cited = []
+    for m in re.finditer(r"partial staffing (?:that )?pays pro-rata", doc.all_text):
+        tail = doc.all_text[m.end():m.end() + 140]
+        ref = re.search(r"\((\d+\.\d+)\)", tail)
+        if ref:
+            cited.append(ref.group(1))
+        else:
+            homes.setdefault("an uncited restatement", None)
+    return homes, cited
+
+
+def birth_prices(doc: Doc) -> dict:
+    """The two birth-cost formulas and 9.5's own worked examples, all evaluated.
+
+    9.5 prices a birth geometrically and 11.5 linearly. Quoting the two
+    sentences side by side understates it: they agree at the first birth and
+    diverge elevenfold by the roster ceiling, which is a number a reader can
+    act on and "geometric against linear" is not.
+
+    Both formulas are read at their plain reading — the exponent is the count
+    already owned, so the nth birth is priced at ``n - 1``. That reading is
+    forced by the words "ruleborn owned" and "per character already owned",
+    and by the two rows either side of it in the same table, which write their
+    offsets out as ``level − 2`` and ``level − 1``. The birth row is the only
+    one in 9.5 that leaves its offset to be inferred, which is why the check
+    also compares the formula against 9.5's own worked examples: those sit one
+    whole step of the curve higher, and one of the two is wrong.
+    """
+    geo = re.search(r"(\d+) × ([\d.]+)<sup>ruleborn owned</sup>", doc.raw)
+    lin = re.search(
+        r"A birth costs (\d+) Essence plus (\d+) per character already owned",
+        doc.all_text)
+    # Read only from the cell that carries the formula. An earlier version
+    # matched "about N for the Nth" across the whole document and so found the
+    # first example and missed the other two, because only the first is
+    # written with "about" — a check that looked satisfied on a third of its
+    # own evidence.
+    cell = re.search(r"ruleborn owned</sup> Essence \(([^)]*)\)", doc.raw)
+    out = {"examples": dict(
+        (int(n), int(c.replace(",", ""))) for c, n in re.findall(
+            r"([\d,]+) for the (\d+)(?:st|nd|rd|th)", cell.group(1) if cell else ""))}
+    #: The ordinals 9.5 works out, and the Hearth cap 11.5 gives the roster.
+    at = (10, 20, 30, 38)
+    if geo:
+        base, rate = int(geo.group(1)), float(geo.group(2))
+        out["geometric"] = {n: base * rate ** (n - 1) for n in at}
+        out["by_ordinal"] = {n: base * rate ** n for n in at}
+    if lin:
+        base, step = int(lin.group(1)), int(lin.group(2))
+        out["linear"] = {n: base + step * (n - 1) for n in at}
+    return out
+
+
+def check_twice_stated(doc: Doc, led: Ledger) -> None:
+    """C27 and C28: the two facts F25 lists that no other check reaches."""
+    homes, cited = staffing_rules(doc)
+    stepped = {k: v for k, v in homes.items() if v}
+    share = sorted(k for k, v in homes.items() if v is None)
+    if stepped and share:
+        n = max(len(v) for v in stepped.values())
+        says = " and ".join(f"\u00a7{k}" for k in sorted(stepped))
+        gives = " and ".join(f"\u00a7{k}" for k in share)
+        gaps = []
+        for i in range(n):
+            told = sorted({v[i] for v in stepped.values() if i < len(v)})
+            want = round(100 * (i + 1) / n)
+            if all(abs(t - 100 * (i + 1) / n) <= 1 for t in told):
+                continue
+            gaps.append(f"{i + 1}/{n} staffed: {says} say "
+                        f"{'/'.join(f'{t}%' for t in told)}, {gives} "
+                        f"{'give' if len(share) > 1 else 'gives'} {want}%")
+        led.check("a producer's partial output is stated once (5.8)", not gaps,
+                  f"{len(homes)} homes"
+                  + (f", plus {len(cited)} restatement(s) that cite "
+                     f"\u00a7{cited[0]} and so are not homes" if cited else "")
+                  + " \u2014 " + "; ".join(gaps), tracks="C27")
+    else:
+        # One rule, however many sections cite it, is what this check wants.
+        # None at all means it has lost its subject, and a check that has lost
+        # its subject passes for ever.
+        led.check("a producer's partial output is stated once (5.8)",
+                  bool(homes),
+                  f"homes: {homes}" if homes else
+                  "neither rule is where this check looks for it", tracks="C27")
+
+    b = birth_prices(doc)
+    geo, lin, examples = b.get("geometric"), b.get("linear"), b["examples"]
+    if geo and lin:
+        apart = [f"the {n}th: 9.5 gives {geo[n]:,.0f}, 11.5 gives {lin[n]:,.0f} "
+                 f"({geo[n] / lin[n]:.1f}×)"
+                 for n in sorted(geo) if abs(geo[n] - lin[n]) / lin[n] > 0.05]
+        led.check("a birth is priced once (9.5)", not apart, "; ".join(apart),
+                  tracks="C28")
+    else:
+        # Exactly one of the two formulas is what this check wants to see. None
+        # at all is not success — it means the check can no longer find its own
+        # subject, and a check that has lost its subject passes for ever.
+        led.check("a birth is priced once (9.5)", bool(geo or lin),
+                  f"9.5 formula {'found' if geo else 'missing'}, "
+                  f"11.5 formula {'found' if lin else 'missing'}",
+                  tracks="C28")
+
+    # A formula and the examples beside it are the same fact twice over, which
+    # is 31.2's rule at the smallest scale there is: inside one table cell.
+    if geo and examples:
+        off = [f"the {n}th: the formula gives {geo[n]:,.0f}, the cell says "
+               f"{c:,} (= {b['by_ordinal'][n]:,.0f}, one step higher)"
+               for n, c in sorted(examples.items())
+               if n in geo and abs(geo[n] - c) / c > 0.03]
+        led.check("9.5's birth examples match 9.5's own birth formula", not off,
+                  "; ".join(off), tracks="C28")
+
+
 def check_document_register(doc: Doc, led: Ledger) -> None:
     """The document's own audit table in 31.9 must carry nothing still open.
 
@@ -633,6 +786,7 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_page_economy(doc, led)
     check_banned_phrasings(doc, led)
     check_library_curve(doc, led)
+    check_twice_stated(doc, led)
     check_document_register(doc, led)
     check_structure(doc, led)
     check_cross_references(doc, led)
@@ -664,6 +818,139 @@ CLEAN = "Restoring a law: 10 pages for a common law, 20 for an uncommon one, 35 
 STALE = "Restoring a law: 15 pages for a common law, 30 for a rare one, 60 for a deep one."
 
 
+
+#: A price list and a birth rule, for the two checks F25's list needed. Both
+#: are written the way v3.1 writes them, so the self-test exercises the same
+#: patterns the real document does rather than a simplified stand-in.
+TWICE_DOC = """<!doctype html><html><body>
+<section id="economy"><h2><span class="num">9</span></h2>
+<h3>5.8 One producer of each kind per realm</h3>
+<p>A producer STAFFING_RULE, so a half-staffed Well earns half.</p>
+<h3>9.2 How everything connects</h3>
+<table><tr><td>Working</td><td>Wells</td><td>Ruleborn</td>
+<td>Staffing sets STEPS output</td></tr></table>
+<h3>9.3 Production</h3>
+<p>Output an hour = base &times; 1.35<sup>level &minus; 1</sup> &times; FORMULA_STAFFING</p>
+<h3>9.5 Price list</h3>
+<table><tr><td>A new ruleborn</td>
+<td data-label="Cost">100 \u00d7 1.15<sup>ruleborn owned</sup> Essence (EXAMPLES)</td>
+</tr></table>
+<h3>11.5 Where characters come from</h3>
+<p>BIRTH_RULE</p>
+<h3>27.2 Decisions taken</h3>
+<p>RESTATEMENT</p>
+</section></body></html>"""
+
+PRO_RATA = "runs at the share of its worker slots that are filled"
+STEPPED = "60%, 85% or 100%"
+PROPORTIONAL = "33%, 66% or 100%"
+FORMULA_STEPPED = "staffing (0.6, 0.85 or 1.0)"
+FORMULA_PLAIN = "staffing"
+CITED = "One of each kind per realm; partial staffing pays pro-rata (5.8)"
+UNCITED = "One of each kind per realm; partial staffing pays pro-rata, always"
+NOTHING = "One of each kind per realm."
+GEOMETRIC_EXAMPLES = "about 352 for the 10th, 1,423 for the 20th, 5,758 for the 30th"
+SHIFTED_EXAMPLES = "about 400 for the 10th, 1,600 for the 20th, 6,600 for the 30th"
+LINEAR = "A birth costs 100 Essence plus 40 per character already owned"
+NO_LINEAR = "Births draw their kind from the schools of the woven laws"
+
+
+def _twice_doc(steps: str, examples: str, birth: str,
+               formula: str = FORMULA_PLAIN, restated: str = NOTHING) -> Doc:
+    return Doc("<self-test>", TWICE_DOC
+               .replace("STAFFING_RULE", PRO_RATA)
+               .replace("FORMULA_STAFFING", formula)
+               .replace("RESTATEMENT", restated)
+               .replace("STEPS", steps)
+               .replace("EXAMPLES", examples)
+               .replace("BIRTH_RULE", birth))
+
+
+def _self_test_twice_stated() -> bool:
+    """C27 and C28 have to go green on a document that states each fact once.
+
+    A check that only ever fails is indistinguishable from one that is broken,
+    and both of these are failing against the real document today — so the
+    version that matters is the one where the fault is absent.
+    """
+    ok = True
+    cases = (
+        ("both faults present", dict(steps=STEPPED, examples=SHIFTED_EXAMPLES,
+                                     birth=LINEAR),
+         {"partial output": False, "priced once": False, "birth examples": False}),
+        ("each fact stated once", dict(steps=PROPORTIONAL,
+                                       examples=GEOMETRIC_EXAMPLES, birth=NO_LINEAR),
+         {"partial output": True, "priced once": True, "birth examples": True}),
+        ("only the staffing fault", dict(steps=STEPPED,
+                                         examples=GEOMETRIC_EXAMPLES, birth=NO_LINEAR),
+         {"partial output": False, "priced once": True, "birth examples": True}),
+        ("only the examples fault", dict(steps=PROPORTIONAL,
+                                         examples=SHIFTED_EXAMPLES, birth=NO_LINEAR),
+         {"partial output": True, "priced once": True, "birth examples": False}),
+        # The state C27's drafted edit would leave if it only deleted 9.2's
+        # caption: the table reads pro-rata and the formula still multiplies
+        # by 0.6. This is the case the check was widened for.
+        ("the caption fixed, the formula not",
+         dict(steps=PROPORTIONAL, examples=GEOMETRIC_EXAMPLES, birth=NO_LINEAR,
+              formula=FORMULA_STEPPED),
+         {"partial output": False, "priced once": True, "birth examples": True}),
+        # 31.2 allows a restatement that cites its home, so one must not read
+        # as a second home.
+        ("a restatement that cites its home",
+         dict(steps=PROPORTIONAL, examples=GEOMETRIC_EXAMPLES, birth=NO_LINEAR,
+              restated=CITED),
+         {"partial output": True, "priced once": True, "birth examples": True}),
+    )
+    for name, kw, expect in cases:
+        led = Ledger(quiet=True)
+        check_twice_stated(_twice_doc(**kw), led)
+        got = {}
+        for state, label, _detail, _tracks in led.rows:
+            for needle in expect:
+                if needle in label:
+                    # A tracked check that passes reports RETIRED rather than
+                    # PASS, because its register item is still open. Both mean
+                    # the fault is absent, which is what the case asserts.
+                    got[needle] = state in (PASS, RETIRED)
+        line = ", ".join(f"{k} {'green' if v else 'RED'}" for k, v in sorted(got.items()))
+        print(f"  {name}: {line}")
+        for needle, want in expect.items():
+            if got.get(needle) is not want:
+                print(f"    FAIL: {needle} should have been "
+                      f"{'green' if want else 'RED'}, was {got.get(needle)}")
+                ok = False
+    return ok
+
+def _self_test_f25_gate() -> bool:
+    """The coverage report has to fail when F25 names a fact nothing checks.
+
+    Otherwise it is a list printing itself back: every row green because every
+    row was written by somebody who knew the check existed. Planting an id with
+    no check is the only way to tell the two apart.
+    """
+    from audit_register import REGISTER
+    f25 = next((i for i in REGISTER if i["id"] == "F25"), None)
+    if not f25:
+        print("  [FAIL] F25 is not in the register, so its list cannot be read")
+        return False
+    was = f25["body"]
+    before = twice_stated_items()
+    f25["body"] = was.replace("<code>", "<code>C99 a planted fact &middot; nowhere<br>", 1)
+    listed = twice_stated_items()
+    try:
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = coverage()
+    finally:
+        f25["body"] = was
+    caught = rc == 1 and "C99" in out.getvalue()
+    print(f"  [{'PASS' if caught else 'FAIL'}] F25's list is read from F25 "
+          f"({len(before)} facts) and a fact nothing checks "
+          f"{'fails the coverage report' if caught else 'IS MISSED'}")
+    return caught and len(listed) == len(before) + 1
+
+
+
 def self_test() -> int:
     """Show the derived check catching what the phrase ban cannot.
 
@@ -691,6 +978,8 @@ def self_test() -> int:
         if name == "stale" and banned is not True:
             print("    note: the phrase ban caught it after all — the self-test is stale")
 
+    ok = _self_test_twice_stated() and ok
+    ok = _self_test_f25_gate() and ok
     ok = _self_test_citations() and ok
     ok = _self_test_ledger() and ok
 
@@ -761,15 +1050,53 @@ def _self_test_ledger() -> bool:
     return ok
 
 
+def twice_stated_items() -> list[str]:
+    """The register items F25 lists as facts with two homes, read from F25.
+
+    F25's list is prose, and prose is how a list stops being true. Reading the
+    ids out of it means the coverage report below fails when a fact is added to
+    that list and nothing checks it — which is what C27 and C28 were, sitting
+    unchecked in a list of six for as long as the list existed.
+    """
+    from audit_register import REGISTER
+    item = next((i for i in REGISTER if i["id"] == "F25"), None)
+    if not item:
+        return []
+    block = re.search(r"<code>(.*?)</code>", item["body"], re.S)
+    return re.findall(r"(?:^|>)\s*([CDFGQ]\d+)\s", block.group(1) if block else "")
+
+
 def coverage() -> int:
     """Fail if any check v3.1 performs is no longer covered here."""
-    labels = [row[1] for row in run(quiet=True).rows]
+    rows = run(quiet=True).rows
+    labels = [row[1] for row in rows]
     missing = [v for v in COVERS.values() if not any(v in lab for lab in labels)]
     for name, needle in COVERS.items():
         hit = any(needle in lab for lab in labels)
         print(f"  [{'ok ' if hit else 'GAP'}] {name}")
+    # This list is authored, which is the fault F24 is about, so it is checked
+    # the same way COVERS is: a label here that no check produces is a claim
+    # about work that is not being done. It is matched as a prefix rather than
+    # exactly, because a label may carry a live count — and the first version
+    # of this, which matched exactly, found that one already had.
     for label in ADDED_BY_THE_MERGE:
-        print(f"  [new] {label}")
+        hit = any(lab.startswith(label) for lab in labels)
+        print(f"  [{'new' if hit else 'GONE'}] {label}")
+        if not hit:
+            missing.append(label)
+    # F25's six twice-stated facts, each of which has to be checked by
+    # something here rather than only written down over there.
+    tracked = {row[3] for row in rows if row[3]}
+    listed = twice_stated_items()
+    if listed:
+        print()
+        for item_id in listed:
+            hit = item_id in tracked
+            print(f"  [{'ok ' if hit else 'GAP'}] F25's {item_id}: a fact with two "
+                  f"homes, {'checked here' if hit else 'CHECKED BY NOTHING'}")
+            if not hit:
+                missing.append(f"F25 lists {item_id} and no check tracks it")
+
     print(f"\n  {len(COVERS)} of v3.1's checks covered, "
           f"{len(ADDED_BY_THE_MERGE)} added, {len(labels)} checks run in total.")
     if missing:

@@ -203,7 +203,17 @@ class EconomyModel:
         return out
 
     def _staffing(self, workers: int, slots: int) -> float:
-        """§9.2's table, or §5.9's pro-rata share. See Config.staffing_rule."""
+        """§9.2's table, or §5.8's pro-rata share. See Config.staffing_rule.
+
+        §5.8 was §5.9 until v3.1 renumbered the chapter, and this line said
+        §5.9 until C27 was re-checked — which is the fault the register calls
+        a renumbering never being only clerical, committed by the code that
+        implements the rule.
+
+        §9.3's formula states the same table a third time, as the coefficient
+        `staffing (0.6, 0.85 or 1.0)`. That is the one this function is, and
+        it is why switching `staffing_rule` measures something.
+        """
         if self.cfg.staffing_rule == "pro_rata":
             return workers / slots
         if workers == slots and self.cfg.full_staffing_is_always_100:

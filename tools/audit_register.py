@@ -890,8 +890,8 @@ dict(id="F25", kind="finding", severity="blocking", status="open",
           "9.5 and 29.2 say 10/20/35/60<br>"
           "C22 the load rate &nbsp;&nbsp;&nbsp;12.6 says 150 a second, Carriers "
           "&middot; 12.19 says 30, every role<br>"
-          "C27 partial staffing &nbsp;9.2 says 60/85/100% &nbsp;&middot; 5.8 "
-          "says pro-rata<br>"
+          "C27 partial staffing &nbsp;9.2 <em>and 9.3</em> say 60/85/100% "
+          "&nbsp;&middot; 5.8 says pro-rata<br>"
           "C28 a birth &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
           "9.5 is geometric &nbsp;&nbsp;&nbsp;&nbsp;&middot; 11.5 is linear<br>"
           "C25 the notes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.8 "
@@ -906,8 +906,19 @@ dict(id="F25", kind="finding", severity="blocking", status="open",
           "derived from is not.",
      rec="Not a criticism of \u00a731 \u2014 it is what \u00a731 asks for, "
          "applied to the six it did not reach. Each is a one-line deletion or "
-         "replacement and five of the six already carry a drafted edit in this "
-         "register.<br><br>The structural version: <code>data/constants.json</code> "
+         "replacement, and all six now carry a drafted edit in this register "
+         "\u2014 five did when this was written, which is the kind of sentence "
+         "that goes quietly out of date and is why the count is stated rather "
+         "than implied.<br><br><strong>All six are now checked as well.</strong> "
+         "Four already were; C27 and C28 were the two nothing reached, and "
+         "<code>check_document.py</code> now derives both rather than "
+         "recognising a phrasing \u2014 it reads \u00a79.2\u2019s staffing "
+         "steps and \u00a75.8\u2019s share as numbers and says how far apart "
+         "they are at each staffing level, and it evaluates \u00a79.5\u2019s "
+         "and \u00a711.5\u2019s birth curves rather than quoting them. Writing "
+         "the second found a third fault inside \u00a79.5 and an arithmetic "
+         "error in C28\u2019s own body: see C28.<br><br>"
+         "The structural version: <code>data/constants.json</code> "
          "holds four constants, and this register can name at least ten facts "
          "that appear in more than one section. <strong>The constants file "
          "should be the list of every such fact</strong>, not of the four that "
@@ -2555,13 +2566,33 @@ dict(id="C27", kind="contradiction", severity="significant", status="open",
           "wherever the roster binds, and \u00a75.8 says it always binds: two of "
           "three slots is 85% under \u00a79.2 and 67% under \u00a75.8, one of "
           "three is 60% against 33%. \u00a79.2 is the more generous rule at every "
-          "partial count.<br><br>Worth about 11% of late-game production, and "
+          "partial count.<br><br><strong>There are three homes, not two, and the "
+          "third is the one that computes.</strong> \u00a79.3\u2019s production "
+          "formula multiplies by \u201cstaffing "
+          "<strong>(0.6, 0.85 or 1.0)</strong>\u201d, so the stepped rule is "
+          "stated once as a caption and once as a coefficient. This item was "
+          "recorded as two homes and its drafted edit was written for two: it "
+          "deleted \u00a79.2\u2019s sentence and left \u00a79.3\u2019s "
+          "multiplier standing, which would have fixed the caption and changed "
+          "nothing a reader computes. Both edits are drafted now, and "
+          "<code>check_document.py</code> reports the homes it finds rather than "
+          "the two this item remembered.<br><br>\u00a727.2 and \u00a730.18 also "
+          "say \u201cpartial staffing pays pro-rata\u201d, and both cite "
+          "\u00a75.8 \u2014 which is what \u00a731.2 asks for and not a fourth "
+          "home. The check tells the two apart, because a version that did not "
+          "would have reported five homes and been wrong about two of "
+          "them.<br><br>Worth about 11% of late-game production, and "
           "nothing at all until the roster starts binding \u2014 which is why it "
           "hid.",
      rec="\u00a75.8 is the later and better-argued rule, and pro-rata is the one "
          "that makes partial staffing a real choice rather than a rounding. "
-         "Delete \u00a79.2\u2019s sentence. This is the fourth instance of the "
-         "same pattern in v3.0 (C21\u2013C23) and the cheapest to fix."),
+         "Delete \u00a79.2\u2019s sentence <em>and</em> the coefficient in "
+         "\u00a79.3\u2019s formula; deleting only the first leaves the game "
+         "computing the rule it just deleted. This is the fourth instance of the "
+         "same pattern in v3.0 (C21\u2013C23) and the cheapest to fix. "
+         "<code>tools/economy_model</code> already switches between the two "
+         "\u2014 <code>Config.staffing_rule</code> \u2014 so the cost of the "
+         "change can be measured before it is made."),
 
 dict(id="F17", kind="finding", severity="blocking", status="proposed",
      title="Aether and Essence have no sinks, because every price in \u00a79.5 is on the wrong kind of curve",
@@ -2639,11 +2670,21 @@ dict(id="C28", kind="contradiction", severity="minor", status="open",
      body="\u00a79.5: \u201cA new ruleborn: 100 \u00d7 1.15^(ruleborn owned) "
           "Essence (about 400 for the 10th, 1,600 for the 20th, 6,600 for the "
           "30th)\u201d. \u00a711.5: \u201cA birth costs 100 Essence plus 40 per "
-          "character already owned.\u201d<br><br>Geometric against linear. At the "
-          "10th character they are 405 and 500; at the roster ceiling of 38 they "
-          "are <strong>17,612 and 1,580</strong>, eleven times apart. "
-          "\u00a79.5 is the self-consistent one \u2014 its worked values match "
-          "its own formula.<br><br><strong>It matters less than it looks, and "
+          "character already owned.\u201d<br><br>Geometric against linear. Both "
+          "say <em>owned</em>, so the nth birth is priced at n\u2009\u2212\u20091: "
+          "at the 10th they are 352 and 460, and at the roster ceiling of 38 they "
+          "are <strong>17,612 and 1,580</strong>, eleven times apart.<br><br>"
+          "<strong>\u00a79.5 is not the self-consistent one, which this item "
+          "said until it was checked.</strong> Its three worked examples \u2014 "
+          "400, 1,600 and 6,600 \u2014 are 405, 1,637 and 6,621: one whole step "
+          "of the curve above what its own formula gives. The two rows either "
+          "side of it in the same table write their offsets out, as "
+          "<code>level \u2212 2</code> and <code>level \u2212 1</code>; the "
+          "birth row is the only one in \u00a79.5 that leaves the reader to "
+          "infer one, and its examples and its formula infer differently. So "
+          "adopting \u00a79.5 means deciding which of the two is meant, and "
+          "this item is that decision as much as it is the deletion.<br><br>"
+          "<strong>It matters less than it looks, and "
           "that is the finding.</strong> Modelled, the roster fills to the Hearth "
           "cap of 38 by day 31 under <em>either</em> formula, because Essence "
           "income outruns both (F17). A price that cannot bind is not really a "
@@ -3654,9 +3695,16 @@ EDITS = {
     dict(section="9.2", action="replace",
          find="| Staffing sets 60%, 85% or 100% output",
          replace="| A producer runs at the share of its worker slots that are "
-                 "filled (5.9)",
+                 "filled (5.8)",
          why="\u00a75.8 is the later rule and pro-rata is what makes partial "
              "staffing a choice rather than a rounding."),
+    dict(section="9.3", action="replace",
+         find="staffing (0.6, 0.85 or 1.0)",
+         replace="staffing (the share of the worker slots that are filled)",
+         why="The caption in \u00a79.2 and this coefficient are the same rule "
+             "twice, and this is the half that computes. Deleting only the "
+             "caption leaves every production figure in the document derived "
+             "from the rule the caption was deleted for."),
 ],
 
 "C7": [
@@ -3999,7 +4047,7 @@ EDITS = {
          find="A Library at the Heart produces about one page per realm every few "
               "hours",
          replace="A Library at the Heart produces 3 pages a day at level 1, rising "
-                 "to 18 at level 10 (10.5)",
+                 "to 18 at level 10 (10.4)",
          why="\u00a710.4 gives the table; this sentence predates it and reads "
              "about four times higher across seven realms."),
 ],
@@ -4041,9 +4089,23 @@ EDITS = {
          find="A birth costs 100 Essence plus 40 per character already owned.",
          replace="A birth costs 100 \u00d7 1.15 to the power of the characters "
                  "already owned, in Essence (9.5).",
-         why="\u00a79.5 is the self-consistent one: its worked values \u2014 400 "
-             "for the 10th, 1,600 for the 20th, 6,600 for the 30th \u2014 match "
-             "its own formula."),
+         why="One curve, stated where the prices are. \u00a79.5 is the version "
+             "to keep because the price list is where a reader looks for a "
+             "price \u2014 not because it is self-consistent, which this "
+             "field claimed until it was checked: its worked examples sit one "
+             "step of the curve above its own formula. This wording takes the "
+             "formula, so \u00a79.5\u2019s examples need the second edit "
+             "below."),
+    dict(section="9.5", action="replace",
+         find="(about 400 for the 10th, 1,600 for the 20th, 6,600 for the 30th)",
+         replace="(about 350 for the 10th, 1,400 for the 20th, 5,750 for the "
+                 "30th)",
+         why="The examples are 405, 1,637 and 6,621 \u2014 one step of the "
+             "curve above 100 \u00d7 1.15 to the power of the characters "
+             "already owned, which is what the cell beside them says. The "
+             "formula is the normative half and the two rows either side of "
+             "it write their offsets out, so the examples are the half to "
+             "move."),
 ],
 
 "F17": [
