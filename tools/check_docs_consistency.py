@@ -107,6 +107,33 @@ def check_spec_index() -> None:
         fail(f"spec/README.md lists {name}, which does not exist")
 
 
+def check_tool_index() -> None:
+    """The README's tools/ listing and the tools directory must agree.
+
+    The spec index has been checked both ways since the day a spec file went
+    unlisted. The tools listing is the same promise to a reader — it is where
+    someone looks to find out what can be run — and it was not checked at all,
+    so it had drifted: five tools existed that it never mentioned. A listing
+    that is only ever added to by hand is a listing that is wrong.
+
+    Directories are listed with a trailing slash and checked the same way.
+    """
+    readme = ROOT / "README.md"
+    text = readme.read_text(encoding="utf-8")
+    block = re.search(r"^tools/\n((?:  .*\n)+)", text, re.M)
+    if not block:
+        fail("README.md has no tools/ listing to check")
+        return
+    listed = set(re.findall(r"^  ([a-z0-9_]+(?:\.py|/))", block.group(1), re.M))
+    on_disk = {p.name for p in (ROOT / "tools").glob("*.py")}
+    on_disk |= {p.name + "/" for p in (ROOT / "tools").iterdir()
+                if p.is_dir() and not p.name.startswith("__")}
+    for name in sorted(on_disk - listed):
+        fail(f"tools/{name} exists but is not listed in README.md")
+    for name in sorted(listed - on_disk):
+        fail(f"README.md lists tools/{name}, which does not exist")
+
+
 def check_register_references() -> None:
     """A register item naming a spec file must name one that exists."""
     named = re.compile(r"docs/design/spec/([a-z0-9_-]+\.md)")
@@ -214,6 +241,7 @@ def main() -> int:
     check_counts(files)
     check_links(files)
     check_spec_index()
+    check_tool_index()
     check_register_references()
     check_artifact_urls(files)
     check_generated_marked()
@@ -227,8 +255,8 @@ def main() -> int:
             print(f"  ✗ {p}")
         print()
         return 1
-    print("  no inconsistencies — counts, links, the spec index and the artifact")
-    print("  URLs all agree.\n")
+    print("  no inconsistencies — counts, links, the spec index, the tools")
+    print("  listing and the artifact URLs all agree.\n")
     return 0
 
 
@@ -240,7 +268,28 @@ def _self_test() -> None:
     pattern = re.compile(r"\(([a-z0-9_-]+\.md)\)")
     for name in ("first-build.md", "economy.md", "check_all_2.md"):
         assert pattern.findall(f"[x]({name})") == [name], name
-    print("self-test passed: hyphenated and numeric file names are matched")
+    print("  hyphenated and numeric spec file names are matched")
+
+    # The tools listing is read out of a fenced block by shape, so the shape is
+    # what can break: a row indented differently, or a directory without its
+    # slash, would silently drop out of the listing and stop being checked.
+    block = "tools/\n  a_tool.py      does a thing\n  sub_dir/       a directory\n"
+    rows = re.search(r"^tools/\n((?:  .*\n)+)", block, re.M)
+    assert rows, "the tools block was not found at all"
+    found = set(re.findall(r"^  ([a-z0-9_]+(?:\.py|/))", rows.group(1), re.M))
+    assert found == {"a_tool.py", "sub_dir/"}, found
+    print("  the tools listing is read as both files and directories")
+
+    # And it really is checked against the directory, not just parsed.
+    listed = set(re.findall(
+        r"^  ([a-z0-9_]+(?:\.py|/))",
+        re.search(r"^tools/\n((?:  .*\n)+)",
+                  (ROOT / "README.md").read_text(encoding="utf-8"),
+                  re.M).group(1), re.M))
+    missing = {p.name for p in (ROOT / "tools").glob("*.py")} - listed
+    assert not missing, missing
+    print(f"  and README.md lists all {len(listed)} entries in tools/")
+    print("self-test passed")
 
 
 if "--self-test" in sys.argv:

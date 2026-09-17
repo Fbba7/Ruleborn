@@ -83,6 +83,11 @@ echo "== audit register builds =="
 python3 tools/build_audit.py
 
 echo
+echo "== the audit page's tabs, bars and chips agree with the register =="
+python3 tools/check_audit_ui.py --self-test
+python3 tools/check_audit_ui.py
+
+echo
 echo "== roadmap builds and is internally consistent =="
 python3 tools/build_roadmap.py
 

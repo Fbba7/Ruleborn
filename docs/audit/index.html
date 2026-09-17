@@ -127,6 +127,10 @@
     display: inline-flex; align-items: center; gap: 7px;
   }
   .chip:hover { color: var(--ink); border-color: var(--faint); }
+  /* A chip the chosen side has nothing under: shown, so the reader can
+     see it is empty rather than wonder where it went. */
+  .chip:disabled { opacity: 0.38; cursor: default; }
+  .chip:disabled:hover { color: var(--muted); border-color: var(--rule-strong); }
   .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .chip[aria-pressed="true"] {
     color: var(--ground); background: var(--ink); border-color: var(--ink);
@@ -227,6 +231,47 @@
     letter-spacing: 0.06em; text-transform: uppercase;
     color: var(--faint); white-space: nowrap;
   }
+  /* --- the two parts, as tabs with their own progress ----------------- */
+  .tabs {
+    display: flex; gap: 10px; margin: 26px 0 0; flex-wrap: wrap;
+  }
+  .tab {
+    flex: 1 1 180px; min-width: 160px;
+    font-family: inherit; text-align: left; cursor: pointer;
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--rule-strong); border-radius: 10px;
+    padding: 12px 14px 11px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .tab:hover { border-color: var(--faint); }
+  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tab[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 7%, transparent);
+  }
+  .tab-head { display: flex; align-items: baseline; gap: 8px; }
+  .tab-name { font-size: 15px; font-weight: 600; }
+  .tab-n {
+    font-family: "IBM Plex Mono", monospace; font-size: 12px;
+    color: var(--muted); font-variant-numeric: tabular-nums; margin-left: auto;
+  }
+  .tab .bar {
+    position: relative; display: block; height: 7px; border-radius: 4px;
+    background: var(--rule); overflow: hidden;
+  }
+  .tab .fill {
+    position: absolute; inset: 0 auto 0 0; border-radius: 4px; display: block;
+  }
+  .tab .fill.settled { background: var(--cho); }
+  .tab .fill.drafted { background: var(--sig); opacity: 0.55; }
+  .tabs-note {
+    color: var(--muted); font-size: 13px; line-height: 1.5;
+    margin: 10px 0 0; max-width: 62ch;
+  }
+  .tab-foot {
+    font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+
   .side {
     font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
     letter-spacing: 0.05em; white-space: nowrap;
@@ -235,7 +280,6 @@
   .side-backend { color: var(--chg); }
   .side-frontend { color: var(--dsg); }
   .side-both { color: var(--sig); }
-  .chip.side-chip { border-width: 2px; }
 
   .gates { margin-top: 10px; }
   .gate-area { margin-bottom: 18px; }
@@ -407,6 +451,38 @@
       <div><span class="n">68</span><span class="k">edits drafted</span></div>
       <div><span class="n">17 Sep</span><span class="k">last generated</span></div>
     </div>
+<nav class="tabs" aria-label="Backend or frontend">
+      <button class="tab" data-side="all" aria-pressed="true">
+        <span class="tab-head"><span class="tab-name">Everything</span>
+          <span class="tab-n">104</span></span>
+        <span class="bar">
+          <span class="fill drafted" style="width:70.2%"></span>
+          <span class="fill settled" style="width:53.8%"></span>
+        </span>
+        <span class="tab-foot">56 settled &middot;
+          17 drafted &middot; 31 open</span>
+      </button>
+      <button class="tab" data-side="backend">
+        <span class="tab-head"><span class="tab-name">Backend</span>
+          <span class="tab-n">98</span></span>
+        <span class="bar">
+          <span class="fill drafted" style="width:69.4%"></span>
+          <span class="fill settled" style="width:52.0%"></span>
+        </span>
+        <span class="tab-foot">51 settled &middot;
+          17 drafted &middot; 30 open</span>
+      </button>
+      <button class="tab" data-side="frontend">
+        <span class="tab-head"><span class="tab-name">Frontend &amp; design</span>
+          <span class="tab-n">17</span></span>
+        <span class="bar">
+          <span class="fill drafted" style="width:76.5%"></span>
+          <span class="fill settled" style="width:52.9%"></span>
+        </span>
+        <span class="tab-foot">9 settled &middot;
+          4 drafted &middot; 4 open</span>
+      </button></nav>
+    <p class="tabs-note">A bar measures the <em>audit</em>, not the build: an item is settled when the document answers it, which is what has to happen before the work starts. No realm, screen or character has been drawn yet &mdash; for what that is waiting on, see below. 11 items need both sides and count on both, so the two tabs add up to more than 104.</p>
   </header>
 
   <section class="start">
@@ -470,7 +546,7 @@
 
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">104</span></button>
-    <button class="chip side-chip" data-filter="side:backend">Backend<span class="n">98</span></button><button class="chip side-chip" data-filter="side:frontend">Frontend &amp; design<span class="n">17</span></button><button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">23</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">25</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">40</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">23</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">25</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">40</span></button>
   </nav>
 
   <main id="list">
@@ -2646,25 +2722,52 @@
 <script>
   (function () {
     "use strict";
+    // Two axes, not one. The tabs pick a side; the chips pick a group, a kind
+    // or a status. A reader who wants the frontend's blocking items is asking
+    // both questions at once, so one control set would have thrown away
+    // whichever choice they made first.
+    var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
     var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
     var items = Array.prototype.slice.call(document.querySelectorAll(".item"));
     var groups = Array.prototype.slice.call(document.querySelectorAll(".group"));
     var empty = document.getElementById("empty");
     var KEY = "ruleborn-audit-filter";
+    var side = "all";
+    var chip = "all";
 
-    function matches(el, filter) {
+    // An item that needs backend and frontend work belongs to both sides, so
+    // each side shows the whole of its own work rather than a share of it.
+    function onSide(el, which) {
+      return which === "all" || el.dataset.side === which
+             || el.dataset.side === "both";
+    }
+
+    function onChip(el, filter) {
       if (filter === "all") return true;
       var parts = filter.split(":");
-      // An item that needs backend and frontend work shows under both, so each
-      // side's chip is the whole of that side rather than a share of it.
-      if (parts[0] === "side" && el.dataset.side === "both") return true;
       return el.dataset[parts[0]] === parts[1];
     }
 
-    function apply(filter) {
+    // The chip counts are the register's totals as built, which stop being
+    // true the moment a side is chosen. Recounting them against the live side
+    // keeps every number on the page answering the same question.
+    function recount() {
+      chips.forEach(function (c) {
+        var n = c.querySelector(".n");
+        if (!n) return;
+        var hits = 0;
+        items.forEach(function (el) {
+          if (onSide(el, side) && onChip(el, c.dataset.filter)) hits++;
+        });
+        n.textContent = String(hits);
+        c.disabled = hits === 0;
+      });
+    }
+
+    function apply() {
       var shown = 0;
       items.forEach(function (el) {
-        var on = matches(el, filter);
+        var on = onSide(el, side) && onChip(el, chip);
         el.hidden = !on;
         if (on) shown++;
       });
@@ -2674,21 +2777,46 @@
         g.hidden = !any;
       });
       empty.hidden = shown > 0;
-      chips.forEach(function (c) {
-        c.setAttribute("aria-pressed", String(c.dataset.filter === filter));
+      tabs.forEach(function (t) {
+        t.setAttribute("aria-pressed", String(t.dataset.side === side));
       });
-      try { localStorage.setItem(KEY, filter); } catch (e) { /* private mode */ }
+      chips.forEach(function (c) {
+        c.setAttribute("aria-pressed", String(c.dataset.filter === chip));
+      });
+      recount();
+      try {
+        localStorage.setItem(KEY, JSON.stringify({side: side, chip: chip}));
+      } catch (e) { /* private mode */ }
     }
 
+    tabs.forEach(function (t) {
+      t.addEventListener("click", function () {
+        side = t.dataset.side;
+        // A chip the new side has nothing under would show an empty page and
+        // look broken, so the side's choice wins and the chip goes back to all.
+        if (!items.some(function (el) {
+          return onSide(el, side) && onChip(el, chip);
+        })) chip = "all";
+        apply();
+      });
+    });
     chips.forEach(function (c) {
-      c.addEventListener("click", function () { apply(c.dataset.filter); });
+      c.addEventListener("click", function () { chip = c.dataset.filter; apply(); });
     });
 
     var saved = null;
-    try { saved = localStorage.getItem(KEY); } catch (e) { saved = null; }
-    if (saved && chips.some(function (c) { return c.dataset.filter === saved; })) {
-      apply(saved);
+    try { saved = JSON.parse(localStorage.getItem(KEY) || "null"); }
+    catch (e) { saved = null; }
+    if (saved && typeof saved === "object") {
+      if (tabs.some(function (t) { return t.dataset.side === saved.side; })) {
+        side = saved.side;
+      }
+      if (saved.chip === "all"
+          || chips.some(function (c) { return c.dataset.filter === saved.chip; })) {
+        chip = saved.chip;
+      }
     }
+    apply();
   })();
 </script>
-<!-- ruleborn-build d3b4a64218e8fc13 -->
+<!-- ruleborn-build 991227b21a13f1fd -->

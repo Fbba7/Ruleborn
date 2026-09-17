@@ -118,10 +118,83 @@ def _unlocks(by_id: dict, item_id: str) -> set:
     return {n for n in seen if _open(by_id, n)}
 
 
+#: What counts as finished, for the progress bars on the tabs.
+#:
+#: Two tones, the same distinction the roadmap's bars make: an item whose
+#: resolution is *drafted* is not the same as one that is settled, and the
+#: register spent most of this session proving that difference matters. So
+#: "proposed" fills the paler half and never the darker one.
+SETTLED = ("fixed", "done", "adopted", "withdrawn")
+DRAFTED = ("proposed",)
+
+
+def side_progress(side: str) -> dict:
+    """How far along one side of the work is.
+
+    An item that needs both sides counts on both, so each bar is the whole of
+    that side rather than a share of it — the same rule the tab's own
+    filter follows, so the bar and the list it opens count the same items.
+    The three bars therefore add up to more than the register, which is
+    the honest answer to "how much of the frontend is done".
+    """
+    items = [i for i in REGISTER
+             if side == "all" or side_of(i["id"]) in (side, "both")]
+    stat = [(V31.get(i["id"], {}).get("status")
+             or V3.get(i["id"], {}).get("status")
+             or i.get("status", "open")) for i in items]
+    settled = sum(1 for x in stat if x in SETTLED)
+    drafted = sum(1 for x in stat if x in DRAFTED)
+    total = len(items) or 1
+    return dict(total=len(items), settled=settled, drafted=drafted,
+                open=len(items) - settled - drafted,
+                settled_pct=100 * settled / total,
+                drafted_pct=100 * (settled + drafted) / total)
+
+
+def tabs_html() -> str:
+    """Two tabs and an everything tab, each with its own progress bar.
+
+    The bar answers the question the tab raises: having split the register in
+    two, how far along is each half? The darker fill is settled, the paler one
+    adds what is drafted and waiting for sign-off.
+
+    A tab picks a *side*, which is a different axis from the chips below it:
+    choosing the frontend and then choosing one of its groups is the question
+    a reader actually has, and a single control set would have made the two
+    choices overwrite each other.
+    """
+    tabs = [("all", "Everything"), ("backend", "Backend"),
+            ("frontend", "Frontend &amp; design")]
+    out = []
+    for key, label in tabs:
+        p = side_progress(key)
+        pressed = ' aria-pressed="true"' if key == "all" else ""
+        out.append(f"""
+      <button class="tab" data-side="{key}"{pressed}>
+        <span class="tab-head"><span class="tab-name">{label}</span>
+          <span class="tab-n">{p['total']}</span></span>
+        <span class="bar">
+          <span class="fill drafted" style="width:{p['drafted_pct']:.1f}%"></span>
+          <span class="fill settled" style="width:{p['settled_pct']:.1f}%"></span>
+        </span>
+        <span class="tab-foot">{p['settled']} settled &middot;
+          {p['drafted']} drafted &middot; {p['open']} open</span>
+      </button>""")
+    both = sum(1 for i in REGISTER if side_of(i["id"]) == "both")
+    return (f'<nav class="tabs" aria-label="Backend or frontend">'
+            f'{"".join(out)}</nav>\n'
+            f'    <p class="tabs-note">A bar measures the <em>audit</em>, not the '
+            f'build: an item is settled when the document answers it, which is '
+            f'what has to happen before the work starts. No realm, screen or '
+            f'character has been drawn yet &mdash; for what that is waiting on, '
+            f'see below. {both} items need both sides and count on both, so the '
+            f'two tabs add up to more than {len(REGISTER)}.</p>')
+
+
 def design_gates_html() -> str:
     """When the design of realms, screens and characters can start.
 
-    The backend/frontend chips say where an item's work happens. This says what
+    The backend and frontend tabs say where an item's work happens. This says what
     the design work is waiting on, which is the question the split was asked
     for, and it is a different question: almost everything that gates a
     designer is a backend item.
@@ -402,15 +475,6 @@ def build() -> str:
         for g, title, _, _ in GROUPS
     )
     gap_count = sum(1 for i in REGISTER if i["kind"] == "gap")
-    backend = sum(1 for i in REGISTER if side_of(i["id"]) in ("backend", "both"))
-    frontend = sum(1 for i in REGISTER if side_of(i["id"]) in ("frontend", "both"))
-    # An item that needs both sides counts on both chips, so each chip shows the
-    # whole of that side's work rather than a share of it.
-    chips = (f'<button class="chip side-chip" data-filter="side:backend">Backend'
-             f'<span class="n">{backend}</span></button>'
-             f'<button class="chip side-chip" data-filter="side:frontend">'
-             f'Frontend &amp; design<span class="n">{frontend}</span></button>'
-             ) + chips
     chips += (f'<button class="chip alt" data-filter="kind:gap">Specified nowhere'
               f'<span class="n">{gap_count}</span></button>')
     chips += (f'<button class="chip alt" data-filter="status:fixed">Fixed in v3.0'
@@ -563,6 +627,10 @@ def build() -> str:
     display: inline-flex; align-items: center; gap: 7px;
   }}
   .chip:hover {{ color: var(--ink); border-color: var(--faint); }}
+  /* A chip the chosen side has nothing under: shown, so the reader can
+     see it is empty rather than wonder where it went. */
+  .chip:disabled {{ opacity: 0.38; cursor: default; }}
+  .chip:disabled:hover {{ color: var(--muted); border-color: var(--rule-strong); }}
   .chip:focus-visible {{ outline: 2px solid var(--accent); outline-offset: 2px; }}
   .chip[aria-pressed="true"] {{
     color: var(--ground); background: var(--ink); border-color: var(--ink);
@@ -663,6 +731,47 @@ def build() -> str:
     letter-spacing: 0.06em; text-transform: uppercase;
     color: var(--faint); white-space: nowrap;
   }}
+  /* --- the two parts, as tabs with their own progress ----------------- */
+  .tabs {{
+    display: flex; gap: 10px; margin: 26px 0 0; flex-wrap: wrap;
+  }}
+  .tab {{
+    flex: 1 1 180px; min-width: 160px;
+    font-family: inherit; text-align: left; cursor: pointer;
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--rule-strong); border-radius: 10px;
+    padding: 12px 14px 11px;
+    display: flex; flex-direction: column; gap: 8px;
+  }}
+  .tab:hover {{ border-color: var(--faint); }}
+  .tab:focus-visible {{ outline: 2px solid var(--accent); outline-offset: 2px; }}
+  .tab[aria-pressed="true"] {{
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 7%, transparent);
+  }}
+  .tab-head {{ display: flex; align-items: baseline; gap: 8px; }}
+  .tab-name {{ font-size: 15px; font-weight: 600; }}
+  .tab-n {{
+    font-family: "IBM Plex Mono", monospace; font-size: 12px;
+    color: var(--muted); font-variant-numeric: tabular-nums; margin-left: auto;
+  }}
+  .tab .bar {{
+    position: relative; display: block; height: 7px; border-radius: 4px;
+    background: var(--rule); overflow: hidden;
+  }}
+  .tab .fill {{
+    position: absolute; inset: 0 auto 0 0; border-radius: 4px; display: block;
+  }}
+  .tab .fill.settled {{ background: var(--cho); }}
+  .tab .fill.drafted {{ background: var(--sig); opacity: 0.55; }}
+  .tabs-note {{
+    color: var(--muted); font-size: 13px; line-height: 1.5;
+    margin: 10px 0 0; max-width: 62ch;
+  }}
+  .tab-foot {{
+    font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;
+  }}
+
   .side {{
     font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
     letter-spacing: 0.05em; white-space: nowrap;
@@ -671,7 +780,6 @@ def build() -> str:
   .side-backend {{ color: var(--chg); }}
   .side-frontend {{ color: var(--dsg); }}
   .side-both {{ color: var(--sig); }}
-  .chip.side-chip {{ border-width: 2px; }}
 
   .gates {{ margin-top: 10px; }}
   .gate-area {{ margin-bottom: 18px; }}
@@ -843,6 +951,7 @@ def build() -> str:
       <div><span class="n">{edit_count}</span><span class="k">edits drafted</span></div>
       <div><span class="n">{today.split()[0]} {today.split()[1][:3]}</span><span class="k">last generated</span></div>
     </div>
+{tabs_html()}
   </header>
 {start_here_html()}
   <nav class="filters" aria-label="Filter the register">
@@ -873,25 +982,52 @@ def build() -> str:
 <script>
   (function () {{
     "use strict";
+    // Two axes, not one. The tabs pick a side; the chips pick a group, a kind
+    // or a status. A reader who wants the frontend's blocking items is asking
+    // both questions at once, so one control set would have thrown away
+    // whichever choice they made first.
+    var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
     var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
     var items = Array.prototype.slice.call(document.querySelectorAll(".item"));
     var groups = Array.prototype.slice.call(document.querySelectorAll(".group"));
     var empty = document.getElementById("empty");
     var KEY = "ruleborn-audit-filter";
+    var side = "all";
+    var chip = "all";
 
-    function matches(el, filter) {{
+    // An item that needs backend and frontend work belongs to both sides, so
+    // each side shows the whole of its own work rather than a share of it.
+    function onSide(el, which) {{
+      return which === "all" || el.dataset.side === which
+             || el.dataset.side === "both";
+    }}
+
+    function onChip(el, filter) {{
       if (filter === "all") return true;
       var parts = filter.split(":");
-      // An item that needs backend and frontend work shows under both, so each
-      // side's chip is the whole of that side rather than a share of it.
-      if (parts[0] === "side" && el.dataset.side === "both") return true;
       return el.dataset[parts[0]] === parts[1];
     }}
 
-    function apply(filter) {{
+    // The chip counts are the register's totals as built, which stop being
+    // true the moment a side is chosen. Recounting them against the live side
+    // keeps every number on the page answering the same question.
+    function recount() {{
+      chips.forEach(function (c) {{
+        var n = c.querySelector(".n");
+        if (!n) return;
+        var hits = 0;
+        items.forEach(function (el) {{
+          if (onSide(el, side) && onChip(el, c.dataset.filter)) hits++;
+        }});
+        n.textContent = String(hits);
+        c.disabled = hits === 0;
+      }});
+    }}
+
+    function apply() {{
       var shown = 0;
       items.forEach(function (el) {{
-        var on = matches(el, filter);
+        var on = onSide(el, side) && onChip(el, chip);
         el.hidden = !on;
         if (on) shown++;
       }});
@@ -901,21 +1037,46 @@ def build() -> str:
         g.hidden = !any;
       }});
       empty.hidden = shown > 0;
-      chips.forEach(function (c) {{
-        c.setAttribute("aria-pressed", String(c.dataset.filter === filter));
+      tabs.forEach(function (t) {{
+        t.setAttribute("aria-pressed", String(t.dataset.side === side));
       }});
-      try {{ localStorage.setItem(KEY, filter); }} catch (e) {{ /* private mode */ }}
+      chips.forEach(function (c) {{
+        c.setAttribute("aria-pressed", String(c.dataset.filter === chip));
+      }});
+      recount();
+      try {{
+        localStorage.setItem(KEY, JSON.stringify({{side: side, chip: chip}}));
+      }} catch (e) {{ /* private mode */ }}
     }}
 
+    tabs.forEach(function (t) {{
+      t.addEventListener("click", function () {{
+        side = t.dataset.side;
+        // A chip the new side has nothing under would show an empty page and
+        // look broken, so the side's choice wins and the chip goes back to all.
+        if (!items.some(function (el) {{
+          return onSide(el, side) && onChip(el, chip);
+        }})) chip = "all";
+        apply();
+      }});
+    }});
     chips.forEach(function (c) {{
-      c.addEventListener("click", function () {{ apply(c.dataset.filter); }});
+      c.addEventListener("click", function () {{ chip = c.dataset.filter; apply(); }});
     }});
 
     var saved = null;
-    try {{ saved = localStorage.getItem(KEY); }} catch (e) {{ saved = null; }}
-    if (saved && chips.some(function (c) {{ return c.dataset.filter === saved; }})) {{
-      apply(saved);
+    try {{ saved = JSON.parse(localStorage.getItem(KEY) || "null"); }}
+    catch (e) {{ saved = null; }}
+    if (saved && typeof saved === "object") {{
+      if (tabs.some(function (t) {{ return t.dataset.side === saved.side; }})) {{
+        side = saved.side;
+      }}
+      if (saved.chip === "all"
+          || chips.some(function (c) {{ return c.dataset.filter === saved.chip; }})) {{
+        chip = saved.chip;
+      }}
     }}
+    apply();
   }})();
 </script>
 """

@@ -63,29 +63,35 @@ docs/roadmap/  the generated roadmap page
 prototypes/
   heist-gate/  a throwaway browser build that runs both pre-code gates
 tools/
-  extract_design_doc.py         HTML -> greppable text
-  check_document.py             every check over the document, in one verdict
+  extract_design_doc.py           HTML -> greppable text
+  check_document.py               every check over the document, in one verdict
   check_design_consistency.py     the design half, which check_document.py runs
   vendor/                         v3.1's own checker, kept unmodified to diff against
-  extract_content.py            design document -> content/*.json
-  validate_content.py           schema and cross-reference checks on content/
-  generate_docs.py              content/ -> the design document's summary tables
-  check_docs_consistency.py     this repository's own documents, against each other
-  decision_support.py           prices the decisions that are the owner's
-  audit_register.py             the audit register, as data
-  build_audit.py                renders the register to docs/audit/index.html
-  check_edits.py                every drafted edit quotes the document correctly
-  check_dependencies.py         the ordering between items; writes dependencies.md
-  check_findings_fresh.py       which register numbers can be shown to be current
-  scope_cut.py                  costs a launch-scope cut by engine work
-  build_stamp.py                one build stamp for every published page
-  law_effects.py                classifies all 48 laws against the rule sheet
-  note_rebalance.py             the note rebalance §8.8 says is already done
-  roadmap.py                    the roadmap, as data
-  build_roadmap.py              renders it, computing progress from the register
-  parse_gate_results.py         scores the gates from testers' result codes
-  economy_model/                the day-by-day model §24 references but omits
-  heist_harness/                §19.27's simulation harnesses, built in v3.0's plan
+  extract_content.py              design document -> content/*.json
+  validate_content.py             schema and cross-reference checks on content/
+  generate_docs.py                content/ -> the design document's summary tables
+  check_docs_consistency.py       this repository's own documents, against each other
+  decision_support.py             prices the decisions that are the owner's
+  audit_register.py               the audit register, as data
+  build_audit.py                  renders the register to docs/audit/index.html
+  check_audit_ui.py               the audit page's tabs, bars and chips, against the register
+  check_edits.py                  every drafted edit quotes the document correctly
+  check_dependencies.py           the ordering between items; writes dependencies.md
+  check_findings_fresh.py         which register numbers can be shown to be current
+  scope_cut.py                    costs a launch-scope cut by engine work
+  build_stamp.py                  one build stamp for every published page
+  law_effects.py                  classifies all 48 laws against the rule sheet
+  note_rebalance.py               the note rebalance §8.8 says is already done
+  roadmap.py                      the roadmap, as data
+  build_roadmap.py                renders it, computing progress from the register
+  parse_gate_results.py           scores the gates from testers' result codes
+  build_prototype.py              renders the throwaway browser build of the two pre-code gates
+  check_prototype_conformance.py  the prototype implements the rules it claims to
+  economy_model/                  the day-by-day model §24 references but omits
+  heist_harness/                  §19.27's simulation harnesses, built in v3.0's plan
+  generator_settings.py           sweeps the generator against both bands the document sets
+  post_ladder.py                  whether a steeper guard-post ladder closes F26's gap or moves it
+  check_unread_fields.py          every field the harness computes is read somewhere
 ```
 
 ## The design in one page
