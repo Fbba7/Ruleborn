@@ -576,6 +576,47 @@ def test_wards_are_the_lever_realm_1_has_and_5_2_rations():
         "counterfactual cannot be mistaken for a legal island")
 
 
+def test_a_flat_ward_count_breaks_the_realms_that_work():
+    """F26's collateral check, and the reason the fix is per realm.
+
+    Ten wards is what realm 1 needs to reach §13.2's band. Applied everywhere it
+    loses the band at realms 3 and 5, which satisfy it on §5.2's own count — the
+    same shape as F27's steeper post ladder, which reached realm 1 and carried
+    all four upper realms out of the top.
+
+    Asserted at realm 3, where the break is largest and least ambiguous: 34.4%
+    on §5.2's six wards against 53.6% on ten. The assertion is that ten wards
+    pushes realm 3 clear of the band, not where it lands, because a fix that
+    breaks a working realm is refuted by the direction alone.
+    """
+    from .island import generate
+    from .laws import weave
+    from .policy import Competent
+    from .sim import Heist
+
+    def hold(realm: int, wards: int, bands: int, n: int = 200) -> float:
+        held = 0
+        for i in range(n):
+            crossing = [generate(900_000 + i * 8 + k, realm, shaped=bands,
+                                 posts=1, wards=wards) for k in range(2)]
+            heist = Heist(generate(i, realm, shaped=bands, posts=1, wards=wards),
+                          Competent(), realm_level=realm, crossing=crossing,
+                          sheet=weave(i, realm, favour_defender=True))
+            if not heist.run().success:
+                held += 1
+        return 100 * held / n
+
+    lawful = hold(realm=3, wards=6, bands=1)      # §5.2's own count
+    flat_ten = hold(realm=3, wards=10, bands=1)   # what realm 1 needs
+    assert 30 <= lawful <= 45, (
+        f"realm 3 no longer satisfies §13.2's band on §5.2's own six wards "
+        f"({lawful:.1f}%), so this test's premise is gone")
+    assert flat_ten > 45, (
+        f"ten wards at realm 3 held {flat_ten:.1f}%, inside §13.2's band. F26 "
+        f"measured 53.6% and concluded a flat ward count breaks the realms that "
+        f"work, which is why its recommendation is a per-realm table")
+
+
 def test_the_geometry_is_a_dial_and_not_a_switch():
     """F22's second half. With the geometry on or off, a realm-1 island on two
     posts holds 15.5% or 51.5% and steps straight over §13.2's band; one band
