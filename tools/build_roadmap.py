@@ -13,6 +13,7 @@ how many have been signed off — which are deliberately different numbers.
 """
 
 import datetime
+import re
 import html
 import pathlib
 import sys
@@ -156,8 +157,51 @@ def validate(tasks: list[dict], by_id: dict) -> None:
             problems.append(f"{task['id']} is blocked by nothing")
         if task["status"] == "yours" and task["owner"] != "you":
             problems.append(f"{task['id']} is 'waiting on you' but owned by claude")
+    problems.extend(stale_blockers())
     if problems:
         raise SystemExit("roadmap is inconsistent:\n  " + "\n  ".join(problems))
+
+
+def stale_blockers() -> list:
+    """Every register item the roadmap names as a blocker must still be open.
+
+    The roadmap says things like "C1, C5 and C6 each change what several
+    screens show" in prose, and nothing was checking them. That line was
+    published while v3.0 had already closed C1 and C5, so the page told a
+    designer that screen design was gated by three items when it was gated by
+    one.
+
+    This is the same guard as check_edits.bad_sides() over the audit's design
+    gates, and it exists because the first draft of *that* listed eight closed
+    items. A repository that tracks whether the document is stale should be at
+    least as strict about its own pages.
+
+    Only NOT_YET is scanned: a task's `register` list is what it *tracks*, and
+    tracking a closed item is how progress gets shown. A blocker is a different
+    claim — it says the work cannot start — and a closed blocker is false.
+    """
+    from audit_register import REGISTER, V3, V31
+
+    by_id = {i["id"]: i for i in REGISTER}
+
+    def status(item_id):
+        item = by_id.get(item_id)
+        if item is None:
+            return None
+        return (V31.get(item_id, {}).get("status")
+                or V3.get(item_id, {}).get("status")
+                or item.get("status", "open"))
+
+    out = []
+    for what, why in NOT_YET:
+        for item_id in set(re.findall(r"\b([CDFGQ]\d{1,2})\b", why)):
+            st = status(item_id)
+            if st is None:
+                out.append(f"{what!r} names {item_id}, which is not in the register")
+            elif st not in ("open", "proposed"):
+                out.append(f"{what!r} says {item_id} holds it up, but the "
+                           f"register has it {st}")
+    return out
 
 
 def build() -> str:

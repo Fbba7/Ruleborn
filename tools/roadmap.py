@@ -679,10 +679,30 @@ NOT_YET = [
     ("Gameplay code", "The determinism spike gates it. Anti-cheat, replay "
                       "validation, free analytics, rehearsals, balance bots and "
                       "the whole cost model fail together if it does not pass."),
-    ("Character art", "The form-notes decision in stage 4 changes the quantity "
-                      "by 3× — 144 forms against 54."),
-    ("Detailed screen design", "C1, C5 and C6 each change what several screens "
-                               "show."),
+    ("Realm design", "The most blocked of the three design areas, and eight of "
+                     "its nine gates are this session's generator work: how "
+                     "many wards a realm holds (F26), where its defence starts "
+                     "(F27), one guard post or two (F22), what hold rate a "
+                     "generated realm must reach (F9), what the generator "
+                     "optimises for (F11), the eight laws whose effect is an "
+                     "act of authorship (F12), what a ward does at each level "
+                     "(G3), whether a pylon shows its law (G5), and how many "
+                     "producers a realm holds (C19)."),
+    ("Character art", "Two things, and neither is the art. <strong>C6</strong> "
+                      "— the two rosters disagree about eleven of the eighteen "
+                      "creatures, not about eleven wordings — and the "
+                      "form-notes decision in stage 4, which changes the "
+                      "quantity threefold: 144 forms against 54, the largest "
+                      "single art number in the project (D6, Q5)."),
+    ("Detailed screen design", "<strong>C6</strong>, which roster the character "
+                               "screens read from; <strong>C3</strong>, how "
+                               "many law ranks the Codex displays; and "
+                               "<strong>C8</strong>, whether the Library is a "
+                               "seventeenth building with a screen of its own. "
+                               "An earlier version of this line named two more "
+                               "items \u2014 the detection model and the defence "
+                               "budget \u2014 and v3.0 closed both, so screen "
+                               "design is less blocked than this page said."),
     ("Localisation", "Twelve languages against a coined vocabulary is a large "
                      "translation problem with no owner in the team model, and "
                      "§20.6 already says two at launch (G11)."),
