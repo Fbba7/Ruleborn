@@ -670,6 +670,75 @@ dict(id="F24", kind="finding", severity="blocking", status="open",
          "fault is not, and those were always two different things.",
      measured=None),
 
+dict(id="F26", kind="finding", severity="blocking", status="open",
+     title="\u00a713.2\u2019s hold band falls inside a gap the defence cannot "
+           "enter, because one guard is worth two and a half of it",
+     refs=["13.2", "19.27", "10.2", "5.2", "12.6", "14.2"],
+     body="\u00a713.2 wants a defence to hold 30 to 45% of raids. "
+          "\u00a719.27 wants a median run to carry 15 to 25 decisions. The two "
+          "are set in different sections and never checked against each other, "
+          "and F7 already showed the second is a statement about <em>depth</em> "
+          "\u2014 10 decisions across one realm, 17 across two, 24 across "
+          "three. So the depth is fixed by \u00a719.27 before the hold rate is "
+          "measured at all.<br><br>Swept across every setting \u00a710.2 and "
+          "\u00a75.2 permit \u2014 one to three guard posts, nought to two "
+          "geometry bands, Guardian Post levels 1 to 5 \u2014 at the depths "
+          "\u00a712.6\u2019s decision band implies. <strong>At realm 1, none "
+          "of the 24 combinations reaches both bands.</strong> Not one.<br><br>"
+          "The reason is not tuning. At three realms crossed, with the decision "
+          "count comfortably inside \u00a719.27\u2019s band:<br><br>"
+          "<code>strongest island on one post &nbsp;<strong>24.2% \u00b1 1.5</strong> "
+          "&nbsp;3.8 SE below the band<br>"
+          "weakest island on two posts &nbsp;&nbsp;<strong>62.4% \u00b1 1.7</strong> "
+          "&nbsp;10.1 SE above it</code> <span style=\"opacity:.7\">(n=800 a cell)</span>"
+          "<br><br><strong>A 38-point gap, and \u00a713.2\u2019s band is 15 "
+          "points wide and sits entirely inside it.</strong> The smallest unit "
+          "of defence the document has is one guard, and at realm 1 that unit is "
+          "worth two and a half times the width of the band it has to land in. "
+          "You cannot tune an integer.<br><br>\u00a710.2\u2019s Guardian Post "
+          "ladder is the one dial finer than a whole guard, and it was built "
+          "into the harness for this item rather than assumed away. Its entire "
+          "range \u2014 every upgrade the document sells, levels 1 to 5 \u2014 "
+          "is worth about five points at realm 1: 15.0% to 20.0%. The mechanism "
+          "is F15\u2019s: guards and response are the island\u2019s only "
+          "detect-and-act chain, so the defence\u2019s whole resolution is "
+          "quantised at one guard.<br><br><strong>Realm 2 is the interesting "
+          "case, because it can be fixed and the fix arrives late.</strong> One "
+          "post and two bands holds 21.5% at post level 1 and <strong>31.5% at "
+          "level 5</strong>, which is inside the band \u2014 so the ladder is "
+          "decisive there. But \u00a710.2 prices a level-3 post at 4,060 "
+          "Starlight and its own column says an engaged player builds one on "
+          "<strong>day 36</strong>, while \u00a75.2 opens realm 2 at Keeper 6 "
+          "and \u00a714.2 puts an engaged player there on <strong>day 5</strong>. "
+          "<strong>Thirty-one days defending a realm that cannot reach the band "
+          "the document sets for it</strong>, and longer for everyone slower: "
+          "day 8 for a regular player, day 16 for a casual one.",
+     rec="This is not F22 restated. F22 found the band unreachable at "
+         "\u00a75.2\u2019s one post and recommended a floor of two; measured "
+         "at the depth \u00a719.27\u2019s decision band actually implies, two "
+         "posts <em>overshoot</em> \u2014 62.4% against a band ending at 45%. "
+         "<strong>The floor F22 asks for is the right change and it does not "
+         "land in the band either.</strong> Both items are about the same "
+         "quantisation seen from opposite sides."
+         "<br><br><strong>1. Widen \u00a713.2\u2019s band at low realm levels, "
+         "or say it does not apply there.</strong> A 15-point band is a "
+         "specification for a defence with finer resolution than this one has. "
+         "It is met from realm 3 upward, where more posts and more wards make "
+         "the steps smaller relative to the whole."
+         "<br><br><strong>2. Or give the defence a dial finer than a guard that "
+         "bites at realm 1.</strong> \u00a710.2\u2019s post ladder is exactly "
+         "the right shape and it is too weak there \u2014 five points across "
+         "its whole range. Doubling its effect would make realm 1 reachable and "
+         "is one number in one table."
+         "<br><br><strong>3. Either way, fix the window at realm 2.</strong> The "
+         "fix exists and arrives 31 days after the realm does. Front-load the "
+         "post ladder, or open realm 2 later, or start a realm\u2019s first "
+         "post above level 1 \u2014 the third is closest to \u00a713.3\u2019s "
+         "own promise that a generated defence is \u201cnever empty\u201d, "
+         "which is a claim about the floor and currently only about its "
+         "contents.<br><br><code>python3 -m tools.generator_settings</code>",
+     measured="re-run against harness 496955db53f8d3c4"),
+
 dict(id="F25", kind="finding", severity="blocking", status="open",
      title="\u00a731.2 states \u201cone fact, one home\u201d and six facts "
            "still have two homes",
@@ -3021,7 +3090,8 @@ DEPENDS = {
     "G12": ["C26"],
 
     # -- the generator: the chain this session measured end to end
-    "F22": ["C5", "Q8"],        # §5.2's post count is inside C5's budget question
+    "F22": ["C5", "Q8"],
+    "F26": ["F22", "F7"],        # §5.2's post count is inside C5's budget question
     "F11": ["F22"],
     "F9": ["F22", "F11"],
     "F13": ["F11"],

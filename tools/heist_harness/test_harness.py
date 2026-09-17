@@ -484,6 +484,57 @@ def test_one_guard_post_cannot_reach_13_2s_band():
         f"reaches the band the finding is stale")
 
 
+def test_13_2s_band_falls_inside_a_gap_the_defence_cannot_enter():
+    """F26. At realm 1, §13.2's 30-45% hold band lies entirely between what one
+    guard post can reach and what two cannot avoid.
+
+    Measured with the decision count inside §19.27's 15-25 band, because a hold
+    rate at a depth §12.6's decision target excludes is a hold rate for a heist
+    the document does not want. At three realms crossed:
+
+        strongest island on one post    24.2% ± 1.5   (n=800)
+        weakest island on two posts     62.4% ± 1.7
+
+    A 38-point gap around a 15-point band. §10.2's Guardian Post ladder is the
+    only dial finer than a whole guard, and its entire range is worth about five
+    points here — 15.0% at level 1 to 20.0% at level 5.
+
+    The assertion is the **gap**, not either edge. The edges are a 3.8 and a
+    10.1 standard-error claim at n=800, which this suite cannot afford to
+    re-measure on every build; the gap is a far less noisy quantity and it is
+    what the finding is about. The precise edges carry `measured=` provenance in
+    the register instead, for the same reason F19 does.
+    """
+    from .island import generate
+    from .laws import weave
+    from .policy import Competent
+    from .sim import Heist
+
+    def hold(posts: int, bands: int, level: int, n: int = 250) -> float:
+        held = 0
+        for i in range(n):
+            crossing = [generate(900_000 + i * 8 + k, 1, shaped=bands,
+                                 posts=posts, post_level=level) for k in range(2)]
+            heist = Heist(generate(i, 1, shaped=bands, posts=posts,
+                                   post_level=level), Competent(), realm_level=1,
+                          crossing=crossing, sheet=weave(i, 1, favour_defender=True))
+            if not heist.run().success:
+                held += 1
+        return 100 * held / n
+
+    one_post = hold(posts=1, bands=2, level=5)     # the best one post can do
+    two_posts = hold(posts=2, bands=1, level=1)    # the least two can do
+    gap = two_posts - one_post
+    assert gap > 20, (
+        f"the gap between one guard post ({one_post:.1f}%) and two "
+        f"({two_posts:.1f}%) has closed to {gap:.1f} points. F26 measured 38 "
+        f"and concluded §13.2's 15-point band cannot be reached at realm 1; if "
+        f"the defence now has that resolution the finding is stale")
+    assert one_post < 30 < 45 < two_posts, (
+        f"§13.2's band no longer falls inside the gap: one post {one_post:.1f}%, "
+        f"two posts {two_posts:.1f}%")
+
+
 def test_the_geometry_is_a_dial_and_not_a_switch():
     """F22's second half. With the geometry on or off, a realm-1 island on two
     posts holds 15.5% or 51.5% and steps straight over §13.2's band; one band
