@@ -172,6 +172,22 @@ NO_EDIT_BECAUSE = {
 }
 
 
+def markup_in_titles() -> list:
+    """A register title must be plain text.
+
+    A title is a value, not prose. It is escaped into the page, put in a
+    `title=` attribute on the roadmap's progress bars, and quoted in the
+    roadmap's "waits on" lists — three places where a tag cannot render. F16's
+    carried an `<em>`, so the audit page showed a reader the literal text
+    "<em>generated</em>" in a heading. The body and rec fields are prose and
+    may carry inline markup; the title may not.
+    """
+    return [f"{item['id']}: the title carries markup ({m.group(0)}), and a "
+            f"title is escaped wherever it is used"
+            for item in REGISTER
+            for m in [re.search(r"</?[a-z]+>", item["title"])] if m]
+
+
 def dangling_edit_citations(doc: str) -> list:
     """A citation inside the text an edit would type must resolve too.
 
@@ -331,6 +347,17 @@ def self_test() -> int:
           f"replacement is {'caught' if caught else 'MISSED'}")
     ok = ok and caught and live
 
+    # A title is escaped wherever it is used, so markup in one reaches a
+    # reader as literal text. F16's carried an <em> into a page heading.
+    first = REGISTER[0]
+    was_title = first["title"]
+    first["title"] = "a <em>planted</em> title"
+    caught = bool(markup_in_titles())
+    first["title"] = was_title
+    print(f"  [{'PASS' if caught else 'FAIL'}] markup in a register title is "
+          f"{'caught' if caught else 'MISSED'}")
+    ok = ok and caught and not markup_in_titles()
+
     if dangling_edit_citations(doc):
         print("  [FAIL] a drafted edit still carries a dead citation")
         ok = False
@@ -384,6 +411,7 @@ def main() -> int:
     problems.extend(dangling_sections(doc_text))
     problems.extend(dangling_prose_sections(doc_text))
     problems.extend(dangling_edit_citations(doc_text))
+    problems.extend(markup_in_titles())
     problems.extend(unexplained_missing_edits())
     problems.extend(bad_sides())
 

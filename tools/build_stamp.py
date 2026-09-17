@@ -44,6 +44,27 @@ ARTIFACTS = [
 ]
 
 
+#: Inline tags the published pages are written with. Prose that reaches a page
+#: with one of these escaped is prose a reader sees as "<strong>".
+ESCAPED_TAG = re.compile(r"&lt;/?(?:strong|em|code|br|p|a|li|ul)\b[^&]*&gt;")
+
+
+def escaped_markup(page: str) -> list[str]:
+    """Inline markup that reached the page as visible text.
+
+    The roadmap had two conventions for its own prose and no rule: a task's
+    detail was interpolated raw and rendered, a stage's blurb went through
+    `esc` and did not, so eleven tags appeared as literal text — in the two
+    entries a designer reads first, which is how it survived so long. Nothing
+    checked the built page, because both halves of the bug are valid HTML.
+
+    Every page published from here is checked, not only the one that had it:
+    the fault is a property of building a page out of prose fields, and all
+    three do that.
+    """
+    return [m.group(0) for m in ESCAPED_TAG.finditer(page)]
+
+
 def digest(page: str) -> str:
     """Sixteen hex characters identifying this page, stamp line excluded."""
     bare = CONSTANT.sub("", COMMENT.sub("", page))
@@ -57,6 +78,23 @@ def stamped(html: str) -> str:
     if "</body>" in bare:
         return bare.replace("</body>", mark + "</body>", 1)
     return bare + mark
+
+
+def _self_test_escaping() -> bool:
+    """The escaped-markup check has to fire on the shape that shipped."""
+    ok = True
+    for name, page, expect in (
+            ("prose that renders", "<p><strong>C6</strong> and <em>this</em></p>", 0),
+            ("prose escaped like a value",
+             "<p>&lt;strong&gt;C6&lt;/strong&gt; and &lt;em&gt;this&lt;/em&gt;</p>", 4),
+            ("an inequality, which is not markup", "<p>a &lt; b and c &gt; d</p>", 0),
+            ("a quoted tag name in prose", "<p>the &lt;br&gt; tag</p>", 1)):
+        got = len(escaped_markup(page))
+        print(f"  escaping, {name}: {got} found, expected {expect}")
+        if got != expect:
+            print("    FAIL")
+            ok = False
+    return ok
 
 
 def self_test() -> int:
@@ -86,21 +124,28 @@ def self_test() -> int:
             print(f"  {name} carries no build stamp. Rebuild it.")
             return 1
     print(f"  {len(ARTIFACTS)} published pages carry a live build stamp.")
-    return 0
+    return 0 if _self_test_escaping() else 1
 
 
 def main() -> int:
     if "--self-test" in sys.argv:
         return self_test()
-    missing = 0
+    missing, leaked = 0, 0
     for name, rel, url in ARTIFACTS:
         path = ROOT / rel
         if not path.exists():
             print(f"  {name:10} MISSING  {rel}")
             missing += 1
             continue
-        print(f"  {name:10} {digest(path.read_text(encoding='utf-8'))}  {rel}  {url}")
-    return 1 if missing else 0
+        page = path.read_text(encoding="utf-8")
+        print(f"  {name:10} {digest(page)}  {rel}  {url}")
+        for tag in escaped_markup(page):
+            print(f"  {'':10} \u2717 markup escaped into the text: {tag}")
+            leaked += 1
+    if leaked:
+        print(f"\n  {leaked} tag(s) reach a reader as literal text \u2014 a prose "
+              f"field was escaped like a value.")
+    return 1 if (missing or leaked) else 0
 
 
 if __name__ == "__main__":

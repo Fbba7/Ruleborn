@@ -48,7 +48,30 @@ def status_of(item: dict) -> str:
 
 
 def esc(text: str) -> str:
+    """For a value that is data: an id, a title, a path, a URL."""
     return html.escape(text, quote=False)
+
+
+#: The inline markup this page's prose is written in. Four tags, all of them
+#: already used in `roadmap.py`, none of which can carry an attribute.
+INLINE = re.compile(r"&lt;(/?(?:strong|em|code|br))&gt;")
+
+
+def prose(text: str) -> str:
+    """For a field written as prose, which may carry inline markup.
+
+    The page had two conventions and no rule. A task's `detail` was
+    interpolated raw, so its `<strong>` rendered; a stage's `blurb` and a
+    NOT_YET reason went through `esc`, so theirs came out as the literal text
+    "<strong>" on the published page — eleven of them, in the two entries a
+    designer reads first.
+
+    Escaping everything and then putting four known tags back is the version
+    that is safe in both directions: a stray `<` in prose still cannot open a
+    tag, and prose written the way the rest of the file is written renders.
+    """
+    out = html.escape(text, quote=False)
+    return INLINE.sub(r"<\1>", out)
 
 
 def anchor(task_id: str) -> str:
@@ -232,7 +255,7 @@ def build() -> str:
           </div>
           <span class="scount">{done}/{len(st)}</span>
         </div>
-        <p class="blurb">{esc(stage['blurb'])}</p>
+        <p class="blurb">{prose(stage['blurb'])}</p>
         {''.join(task_html(t, by_id) for t in st)}
       </section>"""
 
@@ -243,7 +266,7 @@ def build() -> str:
     )
 
     not_yet = "".join(
-        f'<li><strong>{esc(t)}</strong> &mdash; {esc(why)}</li>' for t, why in NOT_YET
+        f'<li><strong>{esc(t)}</strong> &mdash; {prose(why)}</li>' for t, why in NOT_YET
     )
 
     yours_list = "".join(

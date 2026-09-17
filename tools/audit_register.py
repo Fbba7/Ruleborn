@@ -2603,7 +2603,7 @@ dict(id="F15", kind="finding", severity="blocking", status="proposed",
      measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
 
 dict(id="F16", kind="finding", severity="significant", status="proposed",
-     title="Geometry is 5% of a <em>generated</em> defence \u2014 and designed, it is worth four times as much",
+     title="Geometry is 5% of a generated defence \u2014 and designed, it is worth four times as much",
      refs=["13.2", "13.3", "13.4", "18.7"],
      body="\u00a713.2 gives Geometry the largest share of any layer, 25%, and "
           "the warmest description: \u201cfree, unlimited, and <em>the layer a "
