@@ -32,10 +32,21 @@ TERRAIN = {
 
 @dataclass
 class Patrol:
-    """A guard's route, as tile waypoints it walks between and back."""
+    """A guard's route, as tile waypoints it walks between and back.
+
+    `level` is §10.2's Guardian Post level, 1 to 5. §10.2 sells each level as
+    "guard +10% health and sight"; only the sight half is modelled, because the
+    harness has no guard health — a crew never wins a fight by attrition here.
+
+    The baseline is ambiguous in the document: §10.2 gives level 1 as "+10%"
+    without saying what it is 10% above, and guards exist only at posts. This
+    reads level 1 as the baseline, so the multiplier is 1 + 0.1 x (level - 1)
+    and every measurement taken before post levels existed is unchanged.
+    """
     role: str
     waypoints: list[tuple[int, int]]
     phase: int = 0
+    level: int = 1
 
 
 @dataclass
@@ -124,6 +135,11 @@ class Island:
             raise AssertionError(
                 f"island {self.seed}: {len(self.wards)} wards, §5.2 allows {limit} "
                 f"at realm level {self.realm_level}")
+        for p in self.patrols:
+            if not 1 <= p.level <= 5:
+                raise AssertionError(
+                    f"island {self.seed}: Guardian Post level {p.level}, "
+                    f"§10.2 gives levels 1 to 5")
         if self.patrols and not 1 <= len(self.patrols) <= 3:
             raise AssertionError(
                 f"island {self.seed}: {len(self.patrols)} guard posts, §5.2 allows 1-3")
@@ -146,7 +162,8 @@ ALL_LAYERS = frozenset(LAYERS)
 
 
 def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
-             shaped: bool | int = False, posts: int | None = None) -> Island:
+             shaped: bool | int = False, posts: int | None = None,
+             post_level: int = 1) -> Island:
     """A small realm, laid out so a route exists and a guard can see it.
 
     §5.2 gives realm grids by level; level 3 is 12x12. The default layout is
@@ -255,7 +272,8 @@ def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
     for i in range(count):
         route = _patrol_route(island, rng, i)
         island.patrols.append(Patrol(roles[i % len(roles)], route,
-                                     phase=rng.below(max(1, len(route) * 30))))
+                                     phase=rng.below(max(1, len(route) * 30)),
+                                     level=post_level))
 
     island.check()
     return island

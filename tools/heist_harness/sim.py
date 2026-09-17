@@ -107,6 +107,12 @@ class Member:
         return max(1, int(ROLES[self.role]["speed"] * U) // TPS)
 
 
+#: §10.2's Guardian Post levels as a sight multiplier. Level 1 is the baseline
+#: the harness measured everything at before post levels existed, so it is 1.0
+#: and no published number moves.
+POST_SIGHT = {1: 1.0, 2: 1.1, 3: 1.2, 4: 1.3, 5: 1.4}
+
+
 @dataclass
 class Guard:
     role: str
@@ -119,6 +125,9 @@ class Guard:
     state: str = "unaware"
     state_ticks: int = 0
     target: tuple | None = None
+    #: §10.2's Guardian Post level, 1 to 5, as a sight multiplier of
+    #: 1 + 0.1 x (level - 1). See island.Patrol for why level 1 is the baseline.
+    level: int = 1
 
 
 @dataclass
@@ -284,7 +293,8 @@ class Heist:
         for p in island.patrols:
             leg = (p.phase // 30) % len(p.waypoints) if p.waypoints else 0
             wx, wy = p.waypoints[leg]
-            g = Guard(p.role, wx * U + U // 2, wy * U + U // 2, 0, p.waypoints)
+            g = Guard(p.role, wx * U + U // 2, wy * U + U // 2, 0, p.waypoints,
+                      level=p.level)
             g.leg = leg
             self.guards.append(g)
 
@@ -357,7 +367,9 @@ class Heist:
         gained = 0
         # Hoisted: these are the same for every crew member on this tick, and
         # this loop runs once per guard per tick for the whole run.
-        reach = self.sheet.factor("sight_range")
+        # §10.2 sells Guardian Post levels as "+10% health and sight". The
+        # harness has no guard health, so only the sight half lands here.
+        reach = self.sheet.factor("sight_range") * POST_SIGHT[g.level]
         walls_hide = self.sheet.flag("hide_behind_walls", 1)
         still_hides = self.sheet.flag("still_is_invisible")
         fill_factor = self.sheet.factor("suspicion_fill")
