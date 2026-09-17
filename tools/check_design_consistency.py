@@ -15,6 +15,8 @@ same failure against any version — including one that had fixed them.
 """
 
 import collections
+import contextlib
+import io
 import itertools
 import re
 import sys
@@ -123,9 +125,17 @@ ROLES = ["Scout", "Breaker", "Carrier", "Warden", "Mender"]
 
 failures: list[str] = []
 
+#: Every check, in order, as (label, ok, detail). ``run()`` returns this so the
+#: merged checker can fold these results into one ledger instead of re-deriving
+#: them. ``quiet`` suppresses the printing when that is who is calling.
+results: list[tuple[str, bool, str]] = []
+quiet = False
+
 
 def check(label: str, ok: bool, detail: str = "") -> None:
-    print(f"  [{'PASS' if ok else 'FAIL'}] {label}{(': ' + detail) if detail else ''}")
+    if not quiet:
+        print(f"  [{'PASS' if ok else 'FAIL'}] {label}{(': ' + detail) if detail else ''}")
+    results.append((label, ok, detail))
     if not ok:
         failures.append(label)
 
@@ -247,9 +257,32 @@ def ambush_has_floor(text: str) -> bool:
     return bool(re.search(r"half the guard's full health|half the target's", block))
 
 
-def main() -> int:
-    path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_DOC
-    text = open(path, encoding="utf-8").read()
+def run(path: str = DEFAULT_DOC, text: str | None = None) -> list[tuple[str, bool, str]]:
+    """Run every check and return the results, printing nothing.
+
+    The merged checker (``check_document.py``) calls this and folds the results
+    into its own ledger, so these checks exist once rather than twice. ``text``
+    lets the caller pass a text view it has already derived from the HTML, which
+    is how the merged checker guarantees both halves read the same artefact.
+    """
+    global quiet
+    quiet, was = True, quiet
+    results.clear()
+    failures.clear()
+    try:
+        # The section headings are bare prints rather than checks, so silence
+        # the stream as well as the check lines.
+        with contextlib.redirect_stdout(io.StringIO()):
+            main(path, text)
+    finally:
+        quiet = was
+    return list(results)
+
+
+def main(path: str | None = None, text: str | None = None) -> int:
+    path = path or (sys.argv[1] if len(sys.argv) > 1 else DEFAULT_DOC)
+    if text is None:
+        text = open(path, encoding="utf-8").read()
     lines = text.split("\n")
     laws = parse_laws(lines)
 
@@ -467,9 +500,10 @@ def main() -> int:
         "but it contradicts 22.5",
     )
 
-    print(f"\n{len(failures)} inconsistencies confirmed:")
-    for f in failures:
-        print(f"  - {f}")
+    if not quiet:
+        print(f"\n{len(failures)} inconsistencies confirmed:")
+        for f in failures:
+            print(f"  - {f}")
     return 0
 
 

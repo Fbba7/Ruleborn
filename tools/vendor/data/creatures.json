@@ -1,0 +1,92 @@
+{
+ "Featherkin": {
+  "heads": 2.2,
+  "size": "standard",
+  "flies": true
+ },
+ "Skyskipper": {
+  "heads": 2.4,
+  "size": "standard",
+  "flies": false
+ },
+ "Rambler": {
+  "heads": 2.0,
+  "size": "standard",
+  "flies": false
+ },
+ "Glass Golem": {
+  "heads": 2.6,
+  "size": "large",
+  "flies": false
+ },
+ "Quarryback": {
+  "heads": 2.1,
+  "size": "standard",
+  "flies": false
+ },
+ "Prism Mite": {
+  "heads": 1.9,
+  "size": "small",
+  "flies": false
+ },
+ "Tidewalker": {
+  "heads": 2.3,
+  "size": "standard",
+  "flies": false
+ },
+ "Hourkeeper": {
+  "heads": 2.5,
+  "size": "standard",
+  "flies": false
+ },
+ "Stillwatch": {
+  "heads": 2.8,
+  "size": "large",
+  "flies": false
+ },
+ "Emberling": {
+  "heads": 1.8,
+  "size": "small",
+  "flies": false
+ },
+ "Stormhound": {
+  "heads": 2.2,
+  "size": "standard",
+  "flies": false
+ },
+ "Sparkwright": {
+  "heads": 2.0,
+  "size": "standard",
+  "flies": false
+ },
+ "Mossbear": {
+  "heads": 2.9,
+  "size": "large",
+  "flies": false
+ },
+ "Bloomling": {
+  "heads": 1.9,
+  "size": "small",
+  "flies": false
+ },
+ "Rootrunner": {
+  "heads": 2.1,
+  "size": "standard",
+  "flies": false
+ },
+ "Echoplate": {
+  "heads": 2.7,
+  "size": "large",
+  "flies": false
+ },
+ "Lantern Wisp": {
+  "heads": 1.7,
+  "size": "small",
+  "flies": true
+ },
+ "Soulmender": {
+  "heads": 2.4,
+  "size": "standard",
+  "flies": true
+ }
+}

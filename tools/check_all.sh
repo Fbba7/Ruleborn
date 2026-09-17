@@ -3,14 +3,21 @@
 #
 #   ./tools/check_all.sh
 #
-# Non-zero exit means something is actually wrong. Known contradictions in the
-# design document are reported by validate_content.py but do not fail — they are
-# tracked in the audit register and shrink as the document is reconciled.
+# Non-zero exit means something is actually wrong.
+#
+# A known contradiction in the design document is not "something wrong" — it is
+# work not yet done, and it is tracked in the audit register. check_document.py
+# tells the two apart: a check that fails while its register item is open is
+# reported OPEN and passes the gate; one that fails with no item, or with an
+# item the register calls fixed, breaks the build. validate_content.py reports
+# the same way over content/.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 echo "== design document consistency =="
-python3 tools/check_design_consistency.py
+python3 tools/check_document.py --self-test
+python3 tools/check_document.py --coverage
+python3 tools/check_document.py
 
 echo
 echo "== content tables =="

@@ -647,7 +647,24 @@ dict(id="F24", kind="finding", severity="blocking", status="open",
          "\u00a731.4\u2019s own rule \u2014 generated, not authored \u2014 "
          "pointed at the checks instead of the tables. A hand-written list of "
          "forbidden strings is an authored artefact, and it drifts from the "
-         "thing it describes exactly as C21 to C24 did.",
+         "thing it describes exactly as C21 to C24 did."
+         "<br><br><strong>The second half is built; the first is still "
+         "yours.</strong> <code>tools/check_document.py</code> derives the page "
+         "costs rather than recognising them: it reads the rank table, reads all "
+         "48 sheets, and then checks every rank-to-pages claim in the document "
+         "in each of the three grammatical forms that carry one \u2014 the "
+         "enumerated <em>\u201c10, 20, 35 or 60 pages by rank\u201d</em>, the "
+         "arithmetic <em>\u201c18 common \u00d7 10 + \u2026\u201d</em>, and "
+         "the prose form \u00a77.6 uses. It reports \u00a77.6. "
+         "<code>--self-test</code> plants that sentence in an otherwise clean "
+         "document and prints both verdicts side by side, so the gap is "
+         "demonstrated rather than described.<br><br>v3.1\u2019s four phrase "
+         "bans are <strong>kept</strong> alongside it, because a verbatim "
+         "reintroduction is a real way for a deleted model to return and they "
+         "catch it for nothing. What changed is that they are no longer the only "
+         "guard on their models. <strong>This item stays open because \u00a77.6 "
+         "still says it</strong> \u2014 the checking gap is closed, the document "
+         "fault is not, and those were always two different things.",
      measured=None),
 
 dict(id="F25", kind="finding", severity="blocking", status="open",

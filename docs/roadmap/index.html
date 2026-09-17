@@ -188,8 +188,8 @@
       much of the document can now be trusted without re-reading it.</strong></p>
 
     <div class="summary">
-      <div><span class="n">16</span><span class="k">tasks done</span></div>
-      <div><span class="n">6</span><span class="k">live now</span></div>
+      <div><span class="n">17</span><span class="k">tasks done</span></div>
+      <div><span class="n">5</span><span class="k">live now</span></div>
       <div><span class="n">6</span><span class="k">waiting on you</span></div>
       <div><span class="n">67/102</span><span class="k">register items drafted</span></div>
       <div><span class="n">46</span><span class="k">signed off</span></div>
@@ -205,7 +205,7 @@
   <nav class="filters" aria-label="Filter the roadmap">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">40</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">9</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">16</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">4</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">15</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">17</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">15</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
   </nav>
 
   <main id="list">
@@ -380,7 +380,7 @@
             <h2>Reconcile the document</h2>
             <p class="sub">Days of desk time, and the cheapest work in the plan</p>
           </div>
-          <span class="scount">3/11</span>
+          <span class="scount">4/11</span>
         </div>
         <p class="blurb">Four systems are specified twice and the later spec never retired the earlier one. Nothing downstream can be locked while two answers exist. Most of this is drafted; none of it is signed off, and the design document itself is still untouched.</p>
         
@@ -572,15 +572,15 @@
         
         
       </article>
-      <article class="task st-ready" id="T1-11"
-               data-status="ready" data-owner="claude">
+      <article class="task st-done" id="T1-11"
+               data-status="done" data-owner="claude">
         <header class="task-head">
           <span class="tid">T1.11</span>
           <h3>Merge the two checkers into one</h3>
-          <span class="status st-ready">Ready to start</span>
+          <span class="status st-done">Done</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">v3.1 ships its own build checker, and it is good: it pins canonical constants in <code>data/</code>, recounts §26.1 from the tables, re-derives each creature’s size band from its head count rather than trusting the column, and hashes generated blocks so a hand edit fails the build.<br><br>There are now two checkers over one document and they catch different things. This repository’s found the three-rank sentence v3.1’s missed (F24) and the six facts with two homes (F25); v3.1’s catches numbering holes, dangling citations and generated-block edits that this one never looked for.<br><br><strong>Two checkers over one artefact is the fault the register is about, applied to the tools.</strong> Merge them, keep every check from both, and make the banned-phrasing checks derive from <code>data/</code> rather than from a hand-written list — which is §31.4’s own rule pointed at the checks.</p>
+        <p class="detail">v3.1 ships its own build checker, and it is good: it pins canonical constants in <code>data/</code>, recounts §26.1 from the tables, re-derives each creature’s size band from its head count rather than trusting the column, and hashes generated blocks so a hand edit fails the build.<br><br>There are now two checkers over one document and they catch different things. This repository’s found the three-rank sentence v3.1’s missed (F24) and the six facts with two homes (F25); v3.1’s catches numbering holes, dangling citations and generated-block edits that this one never looked for.<br><br><strong>Two checkers over one artefact is the fault the register is about, applied to the tools.</strong> Merge them, keep every check from both, and make the banned-phrasing checks derive from <code>data/</code> rather than from a hand-written list — which is §31.4’s own rule pointed at the checks.<br><br><strong>Done: <code>tools/check_document.py</code>.</strong> 69 checks over one artefact — it takes the HTML and derives the text from it, so the two halves cannot read different versions, which two checkers pointed at two paths always could.<br><br>The merge needed a verdict neither had. v3.1’s checker exits non-zero on any failure, because it is a gate; this repository’s always exits zero, because most of what it reports is an open register item. So every check now declares which it is, and there are four outcomes rather than two: <strong>PASS</strong>, <strong>OPEN</strong> (failing, and its register item is open — expected), <strong>RETIRED</strong> (a tracked check that now passes: close the item) and <strong>BREAK</strong>. On v3.1: 56 pass, 13 open and tracked, nothing broken — <strong>so the document checks can be a build gate for the first time</strong>.<br><br>BREAK includes one case neither checker could reach: <strong>a check failing while the register calls its item fixed</strong>. That is the register lying about the document, which is exactly what C21–C24 were, and it now fails the build.<br><br><strong>Three checks were rewritten rather than copied</strong>, and that is what made the merge worth doing. The page costs are no longer guarded by a banned phrase but derived: read the rank table, read all 48 sheets, then check every rank-to-pages claim in the document in each of its three grammatical forms. <code>--self-test</code> plants §7.6’s sentence in a clean document and shows the phrase ban report green on it (F24). <code>--coverage</code> keeps the superset claim honest: it names all 28 of v3.1’s checks and fails if one stops being covered.</p>
         
         <div class="prog" title="F24 F25">
           <div class="bar">
@@ -591,7 +591,7 @@
              <strong>0</strong> signed off</p>
         </div>
         
-        <p class="evidence"><span class="glabel">Check it at</span> <code>tools/check_design_consistency.py</code></p>
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 tools/check_document.py --coverage</code></p>
         
       </article>
       </section>
@@ -1055,4 +1055,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build af3c5cecd4477d31 -->
+<!-- ruleborn-build 738229b1e6485386 -->

@@ -249,7 +249,7 @@ docs/
   decisions/                         one file per resolved contradiction, dated
 tools/
   extract_design_doc.py              HTML → text
-  check_design_consistency.py        the machine checks behind this analysis
+  check_document.py                  every check over the document, one verdict
   economy_model/                     stage 2
 sim/                                 the deterministic core (stage 3 onward)
 ```
@@ -260,9 +260,13 @@ Two conventions worth adopting now:
   `docs/decisions/`, naming the sections it supersedes. The document reached v2.3
   with four systems specified twice precisely because superseded text was never
   retired; a decision log is the cheapest way to stop that recurring.
-- **`tools/check_design_consistency.py` runs in CI once there is CI.** Every
-  finding in this analysis that could be mechanised is asserted there, so the
-  same class of drift is caught automatically next time.
+- **`tools/check_document.py` runs in CI once there is CI.** Every finding in
+  this analysis that could be mechanised is asserted there, so the same class of
+  drift is caught automatically next time. It can serve as a gate because it
+  distinguishes a check failing against an open register item from one failing
+  with no item behind it — the first is work not yet done, the second is a
+  regression, and a checker that cannot tell them apart is either ignored or
+  permanently red.
 
 ---
 

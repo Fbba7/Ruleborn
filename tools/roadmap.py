@@ -340,7 +340,7 @@ dict(
                     "back unprompted</em> is the one question \u00a719.27 "
                     "concedes simulation cannot answer.",
              register=["C29"]),
-        dict(id="T1.11", owner="claude", status="ready",
+        dict(id="T1.11", owner="claude", status="done",
              title="Merge the two checkers into one",
              detail="v3.1 ships its own build checker, and it is good: it pins "
                     "canonical constants in <code>data/</code>, recounts "
@@ -358,8 +358,37 @@ dict(
                     "Merge them, keep every check from both, and make the "
                     "banned-phrasing checks derive from <code>data/</code> "
                     "rather than from a hand-written list \u2014 which is "
-                    "\u00a731.4\u2019s own rule pointed at the checks.",
-             evidence="tools/check_design_consistency.py",
+                    "\u00a731.4\u2019s own rule pointed at the checks."
+                    "<br><br><strong>Done: <code>tools/check_document.py</code>.</strong> "
+                    "69 checks over one artefact \u2014 it takes the HTML and "
+                    "derives the text from it, so the two halves cannot read "
+                    "different versions, which two checkers pointed at two paths "
+                    "always could.<br><br>The merge needed a verdict neither had. "
+                    "v3.1\u2019s checker exits non-zero on any failure, because it "
+                    "is a gate; this repository\u2019s always exits zero, because "
+                    "most of what it reports is an open register item. So every "
+                    "check now declares which it is, and there are four outcomes "
+                    "rather than two: <strong>PASS</strong>, <strong>OPEN</strong> "
+                    "(failing, and its register item is open \u2014 expected), "
+                    "<strong>RETIRED</strong> (a tracked check that now passes: "
+                    "close the item) and <strong>BREAK</strong>. On v3.1: 56 pass, "
+                    "13 open and tracked, nothing broken \u2014 <strong>so the "
+                    "document checks can be a build gate for the first time</strong>."
+                    "<br><br>BREAK includes one case neither checker could reach: "
+                    "<strong>a check failing while the register calls its item "
+                    "fixed</strong>. That is the register lying about the document, "
+                    "which is exactly what C21\u2013C24 were, and it now fails the "
+                    "build.<br><br><strong>Three checks were rewritten rather than "
+                    "copied</strong>, and that is what made the merge worth doing. "
+                    "The page costs are no longer guarded by a banned phrase but "
+                    "derived: read the rank table, read all 48 sheets, then check "
+                    "every rank-to-pages claim in the document in each of its three "
+                    "grammatical forms. <code>--self-test</code> plants \u00a77.6\u2019s "
+                    "sentence in a clean document and shows the phrase ban report "
+                    "green on it (F24). <code>--coverage</code> keeps the superset "
+                    "claim honest: it names all 28 of v3.1\u2019s checks and fails "
+                    "if one stops being covered.",
+             evidence="python3 tools/check_document.py --coverage",
              register=["F24", "F25"]),
     ],
 ),

@@ -26,17 +26,19 @@ python3 tools/extract_design_doc.py \
     docs/design/ruleborn-game-design-v2.3.html \
     docs/design/ruleborn-game-design-v3.1.txt
 
-# re-run the document consistency checks
-python3 tools/check_design_consistency.py docs/design/ruleborn-game-design-v3.1.txt
+# re-run every document check, v3.1's and this repository's, in one verdict
+python3 tools/check_document.py docs/design/ruleborn-game-design-v3.1.html
 
 # re-run the economy model's reports and its tests
 python3 -m tools.economy_model
 python3 -m tools.economy_model.test_economy_model
 ```
 
-`check_design_consistency.py` confirms eleven findings and passes fifteen other
-checks, read against v3.1. Three retired when v3.1 fixed them: the detection model,
-the ambush floor, and the roster's disagreement about roles. The economy model's seventeen tests assert both that it still reproduces the
+`check_document.py` runs 69 checks against v3.1: **56 pass, 13 fail and every one
+of the 13 is an open register item** — so the checker can now be a build gate,
+which neither of the two checkers it replaces could be. Three checks retired when
+v3.1 fixed what they were about: the detection model, the ambush floor, and the
+roster's disagreement about roles. The economy model's seventeen tests assert both that it still reproduces the
 document where the document is self-consistent, that findings F1–F3 still hold,
 and that the payout peg proposed in `spec/economy.md` behaves as that page
 claims. Run both against any later version of the document to see what stands.

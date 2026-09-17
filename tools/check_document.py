@@ -1,0 +1,792 @@
+#!/usr/bin/env python3
+"""Every check over the design document, in one place, with one verdict.
+
+Usage:
+    python3 tools/check_document.py [path to the built HTML]
+    python3 tools/check_document.py --self-test
+
+Until now this repository ran two checkers over one document, which is the
+fault the audit register exists to record, applied to the tools (T1.11).
+
+  * ``tools/vendor/check.py`` shipped with v3.1. It reads the **HTML** and
+    checks structure: canonical constants, section numbering, citations both
+    ways, generated-block hashes, content inventory recounted from the tables.
+    It exits non-zero on any failure, because it is a build gate.
+
+  * ``tools/check_design_consistency.py`` is this repository's. It reads the
+    **text** and checks design claims: the note economy, chord reachability,
+    what a raid pays, the Vault phase, supersession. It always exits zero,
+    because most of what it reports is an open register item rather than a
+    build break.
+
+Merging them needs three things, and only the third is interesting.
+
+**One artefact.** The two read different files. Two checkers pointed at two
+paths can silently check two different versions of the document; this one takes
+the HTML and derives the text from it with ``extract_design_doc``, so the two
+views cannot disagree about what they are reading.
+
+**One verdict.** Their exit conventions are incompatible on purpose, so the
+merge needs a third state. Every check here declares whether it is *structural*
+— it must pass, and a failure breaks the build — or *tracked*, meaning it is
+expected to fail while a named register item is open. That makes four outcomes
+rather than two, and two of them are news:
+
+    PASS      structural, passing
+    OPEN      tracked, failing, and its register item is open — expected
+    RETIRED   tracked, now passing: the document was fixed, so close the item
+    BREAK     structural failure, or a tracked check failing while the register
+              says its item is closed — the register is lying about the document
+
+**Checks that derive rather than recognise.** This is the part worth the work,
+and F24 is why. v3.1's checker bans the phrase ``15, 30 or 60 pages`` to enforce
+the four-rank page costs, and reports green on v3.1 — while 7.6 still says
+*"15 pages for a common law, 30 for a rare one, 60 for a deep one"*, which is
+the same model in different words. **A banned phrase can prove a phrasing
+absent; it can never prove a model absent, and it reports the stronger claim.**
+
+So the page costs are checked by derivation instead: read the rank table, read
+all 48 law sheets, then find every place in the document that associates a rank
+with a page count *in any of its three grammatical forms* and check each one
+against the table. ``--self-test`` proves the difference by planting 7.6's
+sentence in a clean document and showing the phrase ban miss it.
+"""
+
+from __future__ import annotations
+
+import collections
+import hashlib
+import html
+import json
+import os
+import re
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import check_design_consistency as design          # noqa: E402
+from extract_design_doc import extract             # noqa: E402
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEFAULT_DOC = os.path.join(ROOT, "docs", "design", "ruleborn-game-design-v3.1.html")
+CONSTANTS = os.path.join(ROOT, "content", "upstream", "constants.json")
+CREATURES = os.path.join(ROOT, "content", "upstream", "creatures.json")
+
+# --------------------------------------------------------------------------
+# What each tracked check is waiting on
+# --------------------------------------------------------------------------
+#
+# A tracked check is one the document is expected to fail while a register item
+# is open. The item id is the whole point: it means a failure here is already
+# written down somewhere a person reads, and it means a tracked check that
+# starts passing can be reported as a retirement rather than ignored.
+#
+# Keys are check labels from check_design_consistency.run().
+TRACKED = {
+    "the authored law sheets match 7.10's own rank table": "C3",
+    "7.6's restore costs match 7.10's pages column": "C23",
+    "the law rarity split is stated once (7.7)": "C23",
+    "opposite note pairs are within 2 laws of each other": "D13",
+    "8.8's claim that the note table 'now runs eight or nine laws per note' holds": "C25",
+    "heists supply 'roughly a third' of resources (9.4) / '40% of mid-game growth' (12.1)": "C2",
+    "the document states one loading rate": "C22",
+    "the Vault loading rate is stated once (12.19)": "C22",
+    "'who cracks' is a decision (12.6) rather than always the Breaker": "F6",
+    "every ward's '+15% effect' names one quantity (10.2, 10.3)": "G3",
+    "high scenario ≈ €168,000 at the stated 15% commission (22.5)": "C12",
+}
+
+PASS, OPEN, RETIRED, BREAK = "PASS", "OPEN", "RETIRED", "BREAK"
+
+# --------------------------------------------------------------------------
+# What each of v3.1's own checks became here
+# --------------------------------------------------------------------------
+#
+# "Keep every check from both" is easy to claim and easy to get wrong, so the
+# claim is machine-checked. Each key is a check v3.1's tools/vendor/check.py
+# performs; each value is a substring of the merged check that subsumes it.
+# ``--coverage`` runs both sides and fails if any of these no longer matches a
+# check this file actually ran.
+#
+# Three entries point at a *stronger* check rather than a copy, and those are
+# the merge's whole justification: v3.1 guards its page costs with a banned
+# phrase, and a banned phrase cannot see 7.6 (F24).
+COVERS = {
+    "constant <name> == <value>":        "everywhere it appears",
+    "constant stated in declared home":  "is stated in its declared home",
+    "retired name absent":               "retired name absent:",
+    "law table totals 48":               "48 laws specified in 7.7",
+    "law count in prose matches table":  "the law count in the prose matches the authored sheets",
+    "five-rank scheme populated":        "every rank in the scheme has laws in it",
+    "no stale three-rank prose":         "superseded phrasing absent: three-rank prose",
+    "stated page total":                 "the stated Codex total equals the sheets' own arithmetic",
+    "restore figure":                    "the restore figure equals the Codex total less the starting laws",
+    "inline products multiply out":      "every inline product multiplies out",
+    "26.1 content counts":               "count matches the tables it summarises",
+    "creature size and flight":          "size and flight re-derive",
+    "roster and bible agree on role":    "11.2 and 11.11 agree on every ruleborn",
+    "proportions inside the art range":  "sit inside the stated art range",
+    "Library cost multipliers":          "the Library cost table reproduces its stated multipliers",
+    "superseded: percent awareness":     "superseded phrasing absent: percent awareness",
+    "superseded: single vision cone":    "superseded phrasing absent: single vision cone",
+    "superseded: three-rank page costs": "superseded phrasing absent: three-rank page costs, verbatim",
+    "superseded: cuteness range":        "superseded phrasing absent: cuteness range",
+    "section numbers unique":            "section numbers unique and ascending",
+    "subsections ascending":             "subsection numbers ascending within each section",
+    "subsections contiguous":            "subsection numbers contiguous from 1",
+    "every section has subsections":     "every section has subsections",
+    "no dangling citations":             "no dangling citations",
+    "no uncited sources":                "no uncited sources",
+    "internal links resolve":            "all internal links resolve",
+    "generated blocks hashed":           "generated blocks match their hash",
+    "register closed":                   "31.9 lists no open items",
+}
+
+#: Checks here that v3.1's has no counterpart for. Each is either a design claim
+#: (the whole of check_design_consistency) or one of the three added by the
+#: merge itself.
+ADDED_BY_THE_MERGE = (
+    "every page cost in the document agrees with the rank table",   # F24, derived not recognised
+    "the rank table's counts match the 48 authored law sheets",     # C3, from the sheets
+    "every section citation in the prose resolves",                 # v3.1's renumbering, verified
+)
+
+
+class Ledger:
+    """The four-state verdict, and the one thing every check reports into."""
+
+    def __init__(self, quiet: bool = False) -> None:
+        self.rows: list[tuple[str, str, str, str | None]] = []
+        self.quiet = quiet
+
+    def check(self, label: str, ok: bool, detail: str = "", tracks: str | None = None) -> None:
+        """Record one result, in the four states the merge needs.
+
+        The register is consulted, not assumed, so the two can disagree and the
+        disagreement is itself a failure. A tracked check that passes while its
+        item is still open is a retirement; one that fails while its item is
+        closed means the register claims a fix the document does not carry,
+        which is the exact fault C21-C24 were — and it now breaks the build.
+        """
+        still_open = _is_open(tracks) if tracks else False
+        if ok:
+            state = RETIRED if (tracks and still_open) else PASS
+        else:
+            state = OPEN if (tracks and still_open) else BREAK
+        self.rows.append((state, label, detail, tracks))
+
+    def of(self, state: str) -> list:
+        return [r for r in self.rows if r[0] == state]
+
+    def report(self) -> int:
+        if not self.quiet:
+            for state in (BREAK, RETIRED, OPEN, PASS):
+                rows = self.of(state)
+                if not rows:
+                    continue
+                print(f"\n{_HEADINGS[state]}  ({len(rows)})")
+                for _, label, detail, tracks in rows:
+                    tag = f"[{tracks}] " if tracks else ""
+                    line = f"  {tag}{label}"
+                    if detail and state in (BREAK, OPEN):
+                        line += f"\n      {detail}"
+                    print(line)
+            print()
+            print(f"{len(self.of(PASS))} passing, "
+                  f"{len(self.of(OPEN))} open and tracked, "
+                  f"{len(self.of(RETIRED))} newly retired, "
+                  f"{len(self.of(BREAK))} broken.")
+        return 1 if self.of(BREAK) else 0
+
+
+_HEADINGS = {
+    BREAK: "BROKEN — the document contradicts itself, or the register is stale",
+    RETIRED: "RETIRED — fixed in the document; close the register item",
+    OPEN: "OPEN — failing, and tracked in the register",
+    PASS: "PASS",
+}
+
+
+def _is_open(item_id: str) -> bool:
+    """Is this register item still open, according to the register itself?"""
+    from audit_register import REGISTER, V3, V31
+    for item in REGISTER:
+        if isinstance(item, dict) and item.get("id") == item_id:
+            status = (V31.get(item_id, {}).get("status")
+                      or V3.get(item_id, {}).get("status")
+                      or item.get("status", "open"))
+            return status not in ("fixed", "done", "adopted", "withdrawn")
+    return True
+
+
+# --------------------------------------------------------------------------
+# Views of the document
+# --------------------------------------------------------------------------
+
+def strip(x: str) -> str:
+    return html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", x)))
+
+
+class Doc:
+    """One artefact, two views, so the halves cannot read different versions."""
+
+    def __init__(self, path: str, raw: str | None = None) -> None:
+        self.path = path
+        self.raw = raw if raw is not None else open(path, encoding="utf-8").read()
+        body = re.sub(r"<style.*?</style>|<script.*?</script>|<svg.*?</svg>",
+                      " ", self.raw, flags=re.S)
+        # Normative text excludes the sources list, the research log and the
+        # rename tables, which quote retired names deliberately.
+        norm = re.sub(r'<section id="(research|references)">.*?</section>', " ", body, flags=re.S)
+        norm = re.sub(r"<!--allow-retired-->.*?<!--/allow-retired-->", " ", norm, flags=re.S)
+        self.all_text = strip(body)
+        self.norm_text = strip(norm)
+        self.text = extract(self.raw)          # the .txt view, derived here
+
+    def section(self, sid: str) -> str:
+        i = self.raw.find(f'<section id="{sid}">')
+        if i < 0:
+            return ""
+        return self.raw[i:self.raw.find("</section>", i)]
+
+
+# --------------------------------------------------------------------------
+# The page economy, derived rather than recognised  (F24)
+# --------------------------------------------------------------------------
+
+RANK_WORDS = ("common", "uncommon", "rare", "deep", "paradox")
+
+
+def rank_prices(doc: Doc) -> dict[str, int]:
+    """Rank -> pages to restore, read out of the rank table itself."""
+    prices: dict[str, int] = {}
+    lines = [ln.strip() for ln in doc.text.split("\n")]
+    for i, line in enumerate(lines):
+        if line[2:].strip().lower() in RANK_WORDS and line.startswith("|"):
+            cells = []
+            for nxt in lines[i + 1:i + 5]:
+                if not nxt.startswith("|"):
+                    break
+                cells.append(nxt[1:].strip())
+            if len(cells) == 3 and cells[0].isdigit() and cells[2].isdigit():
+                prices[line[2:].strip().capitalize()] = int(cells[2])
+    return prices
+
+
+def authored_ranks(doc: Doc) -> dict[str, int]:
+    """Rank -> how many of the 48 law sheets actually carry it."""
+    return collections.Counter(
+        m.group(1) for m in re.finditer(
+            r"(Common|Uncommon|Rare|Deep) · (?:Motion|Matter|Time|Energy|Life|Spirit) · cost \d+",
+            doc.text))
+
+
+def page_cost_claims(text: str) -> list[tuple[str, str, int, str]]:
+    """Every place the document associates a rank with a page count.
+
+    Returns (form, rank, pages, excerpt). Three grammatical forms carry this
+    fact, and a phrase ban only ever covers the one it was written against:
+
+      enumerated   "10, 20, 35 or 60 pages by rank"
+      prose        "15 pages for a common law, 30 for a rare one, 60 for a deep one"
+      arithmetic   "18 common × 10 + 12 uncommon × 20 + ..."
+
+    The prose form is the one 7.6 uses and the one v3.1's phrase ban misses.
+    """
+    claims: list[tuple[str, str, int, str]] = []
+
+    # arithmetic: "<count> <rank> × <pages>"
+    for m in re.finditer(r"(\d+)\s+(common|uncommon|rare|deep)s?\s*×\s*(\d+)", text, re.I):
+        claims.append(("arithmetic", m.group(2).capitalize(), int(m.group(3)), m.group(0)))
+
+    # prose: inside any sentence that mentions pages, bind each rank word to
+    # the nearest preceding number. This is what catches 7.6.
+    for sentence in re.split(r"(?<=[.;])\s+", text):
+        if "page" not in sentence.lower():
+            continue
+        if re.search(r"×", sentence):          # already counted as arithmetic
+            continue
+        tokens = [(m.start(), m.group(0)) for m in
+                  re.finditer(r"\d[\d,]*|common|uncommon|rare|deep|paradox", sentence, re.I)]
+        pending: int | None = None
+        for _, tok in tokens:
+            if tok[0].isdigit():
+                pending = int(tok.replace(",", ""))
+            elif pending is not None:
+                claims.append(("prose", tok.capitalize(), pending, sentence.strip()[:110]))
+                pending = None
+
+    # enumerated: "a, b, c or d pages by rank"
+    for m in re.finditer(r"((?:\d+,\s*)+\d+\s+or\s+\d+)\s+pages by rank", text, re.I):
+        for n in re.findall(r"\d+", m.group(1)):
+            claims.append(("enumerated", "*", int(n), m.group(0)))
+
+    return claims
+
+
+def check_page_economy(doc: Doc, led: Ledger) -> None:
+    prices = rank_prices(doc)
+    sheets = authored_ranks(doc)
+
+    led.check("the rank table states a page cost for every rank",
+              set(prices) >= {"Common", "Uncommon", "Rare", "Deep"}, str(prices))
+    if not prices:
+        return
+
+    legal = set(prices.values())
+    wrong_rank, wrong_enum = [], []
+    for form, rank, pages, excerpt in page_cost_claims(doc.norm_text):
+        if rank == "*":
+            if pages not in legal:
+                wrong_enum.append(f"{pages} in {excerpt!r}")
+        elif rank in prices and form == "arithmetic" and pages != prices[rank]:
+            wrong_rank.append(f"{form}: {rank} at {pages}, table says {prices[rank]} — {excerpt!r}")
+        elif rank in prices and form == "prose" and pages != prices[rank] and pages in (15, 30, 60):
+            # 15/30/60 is the retired three-rank scale specifically. Restricting
+            # the prose form to it keeps this from firing on every sentence that
+            # happens to put a number near a rank word, while still catching the
+            # model v3.1 believes it has deleted.
+            wrong_rank.append(f"{form}: {rank} at {pages}, table says {prices[rank]} — {excerpt!r}")
+
+    led.check(
+        "every page cost in the document agrees with the rank table",
+        not (wrong_rank or wrong_enum),
+        "; ".join(wrong_rank + wrong_enum)[:400],
+        tracks="C23")
+
+    # the authored sheets and the table must agree on how many laws carry a rank
+    disagree = {r: (sheets.get(r, 0), c) for r, c in
+                [(r, int(n)) for r, n in _table_counts(doc).items()]
+                if sheets.get(r, 0) != c}
+    led.check("the rank table's counts match the 48 authored law sheets",
+              not disagree,
+              "; ".join(f"{r}: sheets {a}, table {b}" for r, (a, b) in disagree.items()),
+              tracks="C3")
+
+
+def _table_counts(doc: Doc) -> dict[str, str]:
+    counts: dict[str, str] = {}
+    lines = [ln.strip() for ln in doc.text.split("\n")]
+    for i, line in enumerate(lines):
+        if line.startswith("|") and line[2:].strip().lower() in ("common", "uncommon", "rare", "deep"):
+            nxt = lines[i + 1] if i + 1 < len(lines) else ""
+            if nxt.startswith("|") and nxt[1:].strip().isdigit():
+                counts[line[2:].strip().capitalize()] = nxt[1:].strip()
+    return counts
+
+
+# --------------------------------------------------------------------------
+# Structural checks — the half v3.1 shipped, reimplemented on our side
+# --------------------------------------------------------------------------
+
+def check_constants(doc: Doc, led: Ledger) -> None:
+    if not os.path.exists(CONSTANTS):
+        return
+    for key, spec in json.load(open(CONSTANTS, encoding="utf-8")).items():
+        found = set(re.findall(spec["pattern"], doc.all_text))
+        led.check(f"constant {key} == {spec['value']}, everywhere it appears",
+                  bool(found) and found <= {str(spec["value"])}, f"found {sorted(found)}")
+        num = spec["home"].split()[0]
+        i = doc.raw.find(f"<h3>{num} ")
+        nxt = doc.raw.find("<h3>", i + 1) if i >= 0 else -1
+        home = strip(doc.raw[i:nxt if nxt > 0 else i + 6000]) if i >= 0 else ""
+        led.check(f"constant {key} is stated in its declared home ({num})",
+                  bool(home) and str(spec["value"]).replace(",", "") in home.replace(",", ""),
+                  "heading not found" if i < 0 else "the home section does not contain the value")
+
+
+def check_retired_names(doc: Doc, led: Ledger) -> None:
+    for name in ("Lawbound", "lawborn", "Echo Knight", "Moss Giant", "Creator Fund", "Masquerade"):
+        n = doc.norm_text.count(name)
+        led.check(f"retired name absent: {name}", n == 0, f"{n} outside the rename table")
+
+
+def check_arithmetic(doc: Doc, led: Ledger) -> None:
+    bad = [f"{a}×{b}≠{c}" for a, b, c in re.findall(r"(\d+) × (\d+) = ([\d,]+)", doc.all_text)
+           if int(a) * int(b) != int(c.replace(",", ""))]
+    led.check("every inline product multiplies out", not bad, str(bad[:5]))
+
+    prices = rank_prices(doc)
+    sheets = authored_ranks(doc)
+    if prices and sheets:
+        derived = sum(prices[r] * n for r, n in sheets.items() if r in prices)
+        m = re.search(r"= ([\d,]+) pages in total", doc.all_text)
+        led.check("the stated Codex total equals the sheets' own arithmetic",
+                  bool(m) and int(m.group(1).replace(",", "")) == derived,
+                  f"stated {m.group(1) if m else 'nothing'}, derived {derived:,}")
+
+        # 14.4 states the restore figure as the total less the three free
+        # commons. Both halves of that subtraction have to hold.
+        m2 = re.search(r"([\d,]+) − 30 = ([\d,]+) pages", doc.all_text)
+        led.check("the restore figure equals the Codex total less the starting laws",
+                  bool(m2)
+                  and int(m2.group(1).replace(",", "")) == derived
+                  and int(m2.group(2).replace(",", "")) == derived - 30,
+                  str(m2.groups()) if m2 else "the formula is missing")
+
+    led.check("every rank in the scheme has laws in it",
+              all(sheets.get(r) for r in ("Common", "Uncommon", "Rare", "Deep")), str(dict(sheets)))
+
+    prose = re.search(r"The (\d+) laws", doc.all_text)
+    led.check("the law count in the prose matches the authored sheets",
+              bool(prose) and int(prose.group(1)) == sum(sheets.values()),
+              f"prose says {prose.group(1) if prose else 'nothing'}, "
+              f"sheets give {sum(sheets.values())}")
+
+
+def check_inventory(doc: Doc, led: Ledger) -> None:
+    roster = doc.section("characters")
+    creatures = re.findall(r'<td data-label="Ruleborn"><strong>([^<]+)</strong>',
+                           roster[roster.find("11.2"):roster.find("11.3")])
+    buildings = re.findall(r"<h4[^>]*>(.*?)</h4>", doc.section("buildings"), flags=re.S)
+    inventory = {
+        "Laws": sum(authored_ranks(doc).values()),
+        "Ruleborn": len(creatures),
+        "Building types": len(buildings) + 1,      # 10.2's sixteen, plus the Library in 10.4
+    }
+    for label, actual in inventory.items():
+        m = re.search(r'<td data-label="Content">' + re.escape(label) + r"</td><td[^>]*>(\d+)</td>",
+                      doc.raw)
+        led.check(f"26.1's {label.lower()} count matches the tables it summarises",
+                  bool(m) and int(m.group(1)) == actual,
+                  f"stated {m.group(1) if m else 'nothing'}, counted {actual}")
+
+
+def check_creatures(doc: Doc, led: Ledger) -> None:
+    if not os.path.exists(CREATURES):
+        return
+    creatures = json.load(open(CREATURES, encoding="utf-8"))
+    bad = []
+    for name, d in creatures.items():
+        row = re.search(r'<td data-label="Ruleborn"><strong>' + re.escape(name) + r"</strong></td>.*?</tr>",
+                        doc.raw, flags=re.S)
+        if not row:
+            bad.append(f"{name}: no row")
+            continue
+        size = re.search(r'<td data-label="Size">([^<]+)</td>', row.group(0))
+        flies = re.search(r'<td data-label="Flies">([^<]+)</td>', row.group(0))
+        if not size or size.group(1) != d["size"]:
+            bad.append(f"{name}: size")
+        if not flies or flies.group(1) != ("yes" if d["flies"] else "no"):
+            bad.append(f"{name}: flies")
+        band = "small" if d["heads"] < 2.0 else ("large" if d["heads"] > 2.5 else "standard")
+        if band != d["size"]:
+            bad.append(f"{name}: size does not re-derive from {d['heads']} heads")
+    led.check(f"every creature's size and flight re-derive ({len(creatures)} creatures)",
+              not bad, str(bad[:6]))
+
+    art = re.search(r"([\d.]+) to ([\d.]+) heads tall", doc.all_text)
+    lo, hi = (float(art.group(1)), float(art.group(2))) if art else (0.0, 0.0)
+    outside = [n for n, d in creatures.items() if not (lo <= d["heads"] <= hi)]
+    led.check(f"every creature's proportions sit inside the stated art range ({lo}–{hi} heads)",
+              bool(art) and not outside, str(outside[:6]))
+
+
+def check_banned_phrasings(doc: Doc, led: Ledger) -> None:
+    """v3.1's phrase bans, kept — but no longer the only guard on their models.
+
+    These are cheap and they catch a verbatim reintroduction, which is a real
+    way for a deleted model to come back. What they cannot do is notice the
+    same model stated differently, which is why check_page_economy exists.
+    """
+    for label, pat in (
+        ("percent awareness", r"\d+%\s*awareness|awareness[^.]{0,30}\d+%"),
+        ("single vision cone", r"one 120° cone"),
+        ("three-rank page costs, verbatim", r"15, 30 or 60 pages"),
+        ("three-rank prose",
+         r"three common, three rare and two deep|three common, three rare|"
+         r"common, rare and deep"),
+        ("cuteness range that excludes its own creatures",
+         r"two to two and a half heads tall;|explicit: two to two and a half heads"),
+    ):
+        hits = re.findall(pat, doc.norm_text, flags=re.I)
+        led.check(f"superseded phrasing absent: {label}", not hits, str(hits[:3]))
+
+
+def check_structure(doc: Doc, led: Ledger) -> None:
+    nums = [int(x) for x in re.findall(r'<h2><span class="num">(\d+)</span>', doc.raw)]
+    led.check("section numbers unique and ascending",
+              nums == sorted(set(nums)) and len(nums) == len(set(nums)), str(nums))
+
+    subs: dict[int, list[int]] = collections.defaultdict(list)
+    for h in re.findall(r"<h3[^>]*>(.*?)</h3>", doc.raw, flags=re.S):
+        m = re.match(r"\s*(\d+)\.(\d+)", strip(h))
+        if m:
+            subs[int(m.group(1))].append(int(m.group(2)))
+    bad = {k: v for k, v in subs.items() if v != sorted(v) or len(v) != len(set(v))}
+    led.check("subsection numbers ascending within each section", not bad, str(bad))
+    gaps = {k: v for k, v in subs.items() if v != list(range(1, len(v) + 1))}
+    led.check("subsection numbers contiguous from 1 (no holes left by deletions)", not gaps, str(gaps))
+    led.check("every section has subsections", set(subs) <= set(nums),
+              str(sorted(set(subs) - set(nums))))
+
+    anchors = set(re.findall(r'id="(ref-\d+)"', doc.raw))
+    cited = set(re.findall(r'href="#(ref-\d+)"', doc.raw))
+    led.check("no dangling citations", not (cited - anchors), str(sorted(cited - anchors)[:8]))
+    led.check("no uncited sources", not (anchors - cited), str(sorted(anchors - cited)[:8]))
+
+    ids = set(re.findall(r'id="([^"]+)"', doc.raw))
+    links = set(re.findall(r'href="#([^"]+)"', doc.raw))
+    led.check("all internal links resolve", not (links - ids), str(sorted(links - ids)[:8]))
+
+    gen = re.findall(r"<!--gen:([0-9a-f]{12})-->(.*?)<!--/gen-->", doc.raw, flags=re.S)
+    bad_gen = [h for h, blk in gen
+               if hashlib.sha256(strip(blk).strip().encode()).hexdigest()[:12] != h]
+    led.check(f"generated blocks match their hash ({len(gen)} block(s))", not bad_gen, str(bad_gen))
+
+
+def check_library_curve(doc: Doc, led: Ledger) -> None:
+    """10.4's cost table must reproduce the multipliers its own formula states.
+
+    C24 closed on the Library gaining all ten levels rather than three. This is
+    the check that keeps the ten honest: a cost curve stated as a formula and
+    also written out as a table is the same fact in two places, which is the
+    register's whole subject.
+    """
+    lib = doc.raw[doc.raw.find("<h3>10.4"):doc.raw.find("<h3>11.1")]
+    costs = [int(x.replace(",", "")) for x in re.findall(r'data-label="Cost">([\d,]+)', lib)]
+    mults = re.findall(r"× ([\d.]+) a level", strip(lib))
+    if len(costs) == 10 and len(mults) == 2:
+        g1, g2 = float(mults[0]), float(mults[1])
+        bad = [f"{i + 1}->{i + 2}: {r:.3f}" for i, r in
+               enumerate(b / a for a, b in zip(costs, costs[1:]))
+               if abs(r - (g1 if i < 4 else g2)) / (g1 if i < 4 else g2) > 0.02]
+        led.check("the Library cost table reproduces its stated multipliers", not bad, str(bad))
+    else:
+        led.check("the Library cost table reproduces its stated multipliers", False,
+                  f"{len(costs)} costs and {len(mults)} multipliers found")
+
+
+def check_document_register(doc: Doc, led: Ledger) -> None:
+    """The document's own audit table in 31.9 must carry nothing still open.
+
+    This is v3.1's check on itself, kept. It is not the same as this
+    repository's register, and the difference is the point of F24 and F25:
+    31.9 lists what v3.1 believes it closed, and believing it is what this
+    whole file exists to avoid.
+    """
+    reg = doc.section("decisions")
+    still_open = re.findall(r">(OPEN|PROPOSED)<", reg)
+    led.check("31.9 lists no open items in the document's own register",
+              not still_open, str(collections.Counter(still_open)))
+
+
+def check_cross_references(doc: Doc, led: Ledger) -> None:
+    """Every "(12.17)"-style citation in the prose points at a section that exists.
+
+    Not in either checker. v3.1 renumbered four chapters — 5.9 became 5.8,
+    25.5 became 25.4 — and moved every citation with them. Nothing was checking
+    that, and a renumbering that misses one leaves a reference pointing at
+    whatever now holds that number, which reads correct and is not.
+    """
+    sections, dangling = _citations(doc)
+    led.check(f"every section citation in the prose resolves ({len(sections)} sections)",
+              not dangling, str(sorted(dangling)[:10]))
+
+
+def _citations(doc: Doc) -> tuple[set[str], set[str]]:
+    """Separate "(12.17, 5.4)" citations from "(1.0, 1.3, 1.6)" values.
+
+    The document writes both as bare numbers in parentheses, so the two have to
+    be told apart before either can be checked. A group counts as citations only
+    when *every* decimal token in it could be a section: a chapter that exists,
+    and a subsection of 1 or more. That rejects effect sizes (0.27, 0.40), which
+    have no chapter 0, and 5.5's law-cost tiers (1.0, 1.3, 1.6), which are
+    disqualified by the 1.0 — a subsection 0 does not exist anywhere.
+
+    On v3.1 this accepts 275 groups, rejects exactly those four, and finds
+    nothing dangling, which is what makes v3.1's renumbering trustworthy rather
+    than merely claimed.
+    """
+    sections = set(re.findall(r"^(\d+\.\d+) ", doc.text, re.M))
+    chapters = {s.split(".")[0] for s in sections}
+
+    def could_be_a_section(tok: str) -> bool:
+        if not re.fullmatch(r"[1-9]\d*\.\d+", tok):
+            return False
+        chapter, sub = tok.split(".")
+        return chapter in chapters and not sub.startswith("0") and int(sub) >= 1
+
+    dangling: set[str] = set()
+    for m in re.finditer(r"\(([0-9][0-9.,\s]*[0-9])\)", doc.norm_text):
+        tokens = [t.strip() for t in m.group(1).split(",")]
+        decimals = [t for t in tokens if re.fullmatch(r"\d+\.\d+", t)]
+        if not decimals or not all(could_be_a_section(t) for t in decimals):
+            continue
+        dangling |= {t for t in decimals if t not in sections}
+    return sections, dangling
+
+
+# --------------------------------------------------------------------------
+# Running everything
+# --------------------------------------------------------------------------
+
+def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
+    doc = Doc(path)
+    led = Ledger(quiet=quiet)
+
+    check_constants(doc, led)
+    check_retired_names(doc, led)
+    check_arithmetic(doc, led)
+    check_inventory(doc, led)
+    check_creatures(doc, led)
+    check_page_economy(doc, led)
+    check_banned_phrasings(doc, led)
+    check_library_curve(doc, led)
+    check_document_register(doc, led)
+    check_structure(doc, led)
+    check_cross_references(doc, led)
+
+    # The design checks, run against the text view derived from this same HTML.
+    for label, ok, detail in design.run(path, text=doc.text):
+        led.check(label, ok, detail, tracks=TRACKED.get(label))
+
+    return led
+
+
+# --------------------------------------------------------------------------
+# Self-test
+# --------------------------------------------------------------------------
+
+SELF_TEST_DOC = """<!doctype html><html><body>
+<section id="laws"><h2><span class="num">7</span></h2>
+<h3>7.6 Getting and improving laws</h3>
+<p>PLACEHOLDER</p>
+<h3>7.9 Rarity buys specificity</h3>
+<table><tr><td>Rank</td><td>Count</td><td>Character</td><td>Pages to restore</td></tr>
+<tr><td>Common</td><td>18</td><td>x</td><td>10</td></tr>
+<tr><td>Uncommon</td><td>12</td><td>x</td><td>20</td></tr>
+<tr><td>Rare</td><td>6</td><td>x</td><td>35</td></tr>
+<tr><td>Deep</td><td>12</td><td>x</td><td>60</td></tr></table>
+</section></body></html>"""
+
+CLEAN = "Restoring a law: 10 pages for a common law, 20 for an uncommon one, 35 for a rare one."
+STALE = "Restoring a law: 15 pages for a common law, 30 for a rare one, 60 for a deep one."
+
+
+def self_test() -> int:
+    """Show the derived check catching what the phrase ban cannot.
+
+    This is F24 reduced to eleven lines. The planted sentence states the retired
+    three-rank costs without using the banned phrase, so the phrase ban reports
+    green on a document that carries the model it exists to delete.
+    """
+    ok = True
+
+    for name, sentence, expect_clean in (("clean", CLEAN, True), ("stale", STALE, False)):
+        doc = Doc("<self-test>", SELF_TEST_DOC.replace("PLACEHOLDER", sentence))
+
+        banned = not re.findall(r"15, 30 or 60 pages", doc.norm_text, re.I)
+        prices = rank_prices(doc)
+        derived = not [c for c in page_cost_claims(doc.norm_text)
+                       if c[1] in prices and c[2] != prices[c[1]] and c[2] in (15, 30, 60)]
+
+        print(f"  {name} document: phrase ban says {'green' if banned else 'RED'}; "
+              f"derived check says {'green' if derived else 'RED'}")
+
+        if derived is not expect_clean:
+            print(f"    FAIL: the derived check should have said "
+                  f"{'green' if expect_clean else 'RED'}")
+            ok = False
+        if name == "stale" and banned is not True:
+            print("    note: the phrase ban caught it after all — the self-test is stale")
+
+    ok = _self_test_citations() and ok
+    ok = _self_test_ledger() and ok
+
+    if ok:
+        print("\n  self-test: the derived check catches the three-rank model stated in\n"
+              "  7.6's own words, which the banned phrase reports green. That is F24,\n"
+              "  and it is the reason the two checkers were worth merging rather than\n"
+              "  concatenating.")
+    return 0 if ok else 1
+
+
+CITE_DOC = """<!doctype html><html><body>
+<section id="a"><h2><span class="num">5</span></h2>
+<h3>5.1 One</h3><p>a</p><h3>5.2 Two</h3><p>PLACEHOLDER</p></section>
+</body></html>"""
+
+
+def _self_test_citations() -> bool:
+    """A renumbering that misses a citation must be caught, and a value must not.
+
+    Both halves matter. The check earns nothing if it cannot see a reference
+    left pointing at a deleted section; it is worse than nothing if it reports
+    every effect size and tier multiplier in the document as a broken link,
+    which is what the first version of it did.
+    """
+    cases = [
+        ("a resolving citation", "The rule is stated once (5.1).", set()),
+        ("a citation left behind by a renumbering", "The rule is stated once (5.9).", {"5.9"}),
+        ("an effect size, not a citation", "Rewards reduce later interest (0.40).", set()),
+        ("5.5's law-cost tiers, not citations", "Base × tier (1.0, 1.3, 1.6).", set()),
+    ]
+    ok = True
+    for name, sentence, expect in cases:
+        _, dangling = _citations(Doc("<self-test>", CITE_DOC.replace("PLACEHOLDER", sentence)))
+        good = dangling == expect
+        print(f"  citations, {name}: {'caught' if dangling else 'clean'}"
+              f"{'' if good else '  <-- FAIL, expected ' + (str(expect) or 'clean')}")
+        ok = ok and good
+    return ok
+
+
+def _self_test_ledger() -> bool:
+    """The four states, including the one neither checker could reach.
+
+    A tracked check failing while the register calls its item fixed is the
+    register lying about the document. Nothing caught that before: v3.1's
+    checker has no register to consult, and this repository's could not fail
+    the build. It is the fault C21-C24 all were, and it is now a build break.
+    """
+    import unittest.mock as mock
+    cases = [
+        ("structural, passing", True, None, True, PASS),
+        ("structural, failing", False, None, True, BREAK),
+        ("tracked, failing, item open", False, "C23", True, OPEN),
+        ("tracked, passing, item open", True, "C23", True, RETIRED),
+        ("tracked, failing, item closed", False, "C7", False, BREAK),
+        ("tracked, passing, item closed", True, "C7", False, PASS),
+    ]
+    ok = True
+    for name, result, tracks, item_open, expect in cases:
+        led = Ledger(quiet=True)
+        with mock.patch(__name__ + "._is_open", return_value=item_open):
+            led.check("x", result, "", tracks=tracks)
+        got = led.rows[0][0]
+        good = got == expect
+        print(f"  ledger, {name}: {got}{'' if good else '  <-- FAIL, expected ' + expect}")
+        ok = ok and good
+    return ok
+
+
+def coverage() -> int:
+    """Fail if any check v3.1 performs is no longer covered here."""
+    labels = [row[1] for row in run(quiet=True).rows]
+    missing = [v for v in COVERS.values() if not any(v in lab for lab in labels)]
+    for name, needle in COVERS.items():
+        hit = any(needle in lab for lab in labels)
+        print(f"  [{'ok ' if hit else 'GAP'}] {name}")
+    for label in ADDED_BY_THE_MERGE:
+        print(f"  [new] {label}")
+    print(f"\n  {len(COVERS)} of v3.1's checks covered, "
+          f"{len(ADDED_BY_THE_MERGE)} added, {len(labels)} checks run in total.")
+    if missing:
+        print(f"  {len(missing)} GAP(S): {missing}")
+    return 1 if missing else 0
+
+
+def main() -> int:
+    if "--self-test" in sys.argv:
+        return self_test()
+    if "--coverage" in sys.argv:
+        return coverage()
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    path = args[0] if args else DEFAULT_DOC
+    print(f"Checking {os.path.relpath(path, ROOT)}")
+    return run(path).report()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -64,7 +64,9 @@ prototypes/
   heist-gate/  a throwaway browser build that runs both pre-code gates
 tools/
   extract_design_doc.py         HTML -> greppable text
-  check_design_consistency.py   machine checks behind the analysis
+  check_document.py             every check over the document, in one verdict
+  check_design_consistency.py     the design half, which check_document.py runs
+  vendor/                         v3.1's own checker, kept unmodified to diff against
   extract_content.py            design document -> content/*.json
   validate_content.py           schema and cross-reference checks on content/
   generate_docs.py              content/ -> the design document's summary tables
@@ -136,8 +138,11 @@ python3 tools/extract_design_doc.py \
     docs/design/ruleborn-game-design-v2.3.html \
     docs/design/ruleborn-game-design-v2.3.txt
 
-# machine-check the design document for the inconsistencies found in the analysis
-python3 tools/check_design_consistency.py docs/design/ruleborn-game-design-v2.3.txt
+# machine-check the design document: v3.1's own checks and this repository's,
+# in one verdict. Failures tracked by an open register item do not break the build.
+python3 tools/check_document.py
+python3 tools/check_document.py --coverage    # every v3.1 check is still covered
+python3 tools/check_document.py --self-test   # the derived checks catch what a phrase ban cannot
 
 # economy model: reports and tests
 python3 -m tools.economy_model

@@ -18,5 +18,24 @@ they do not cover rather than what they get wrong — F24 and F25 — and neithe
 is an argument against the tooling, which is better than what this repository
 had for the same job.
 
-**Do not edit these files.** They are someone else's source of truth. When the
-two checkers are merged (roadmap T1.11), the merge happens on our side.
+**Do not edit these files.** They are someone else's source of truth.
+
+## The merge happened, and this stayed
+
+`tools/check_document.py` now runs every check in this directory alongside this
+repository's own, against one artefact, under one verdict (T1.11). These files
+are kept anyway, for two reasons.
+
+**They are the control.** `check_document.py --coverage` names each of the 28
+checks here and the merged check that subsumes it, and fails if any stops being
+covered. That comparison needs something to compare against, and a description
+of the checks would not do — only the checks themselves.
+
+**Three of them were re-implemented as something stronger rather than copied**,
+and keeping the originals is what makes the difference legible. The clearest is
+the page costs: this checker bans the phrase `15, 30 or 60 pages` and reports
+green on v3.1, while 7.6 still says *"15 pages for a common law, 30 for a rare
+one, 60 for a deep one"*. `check_document.py --self-test` plants that sentence
+in a clean document and shows the two verdicts side by side. **A banned phrase
+can prove a phrasing absent; it can never prove a model absent, and it reports
+the stronger claim** (F24).
