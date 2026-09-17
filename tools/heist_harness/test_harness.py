@@ -451,9 +451,17 @@ def test_one_guard_post_cannot_reach_13_2s_band():
     test pass more easily and prove less.
 
     Sample size, since this is the shape of assertion that went flaky before:
-    measured at 16.5% over 400 raids. At n=200 the standard error is about 2.6
-    points, so the 28% bound sits 4.4 standard errors above the mean and the
-    test fails by chance on the order of once in a hundred thousand builds.
+    at n=200 the standard error here is about 2.3 points, so the 28% bound sits
+    well over 6 standard errors above the mean and the test fails by chance
+    essentially never.
+
+    The depth is worth stating, because an earlier version of this docstring got
+    it wrong. F22's table is measured across **two** realms, where this cell
+    reads 16.5%; this test crosses **one** (``crossing=[]``), where it reads
+    12.5%. Both are under the 28% bound and the conclusion is the same, so the
+    test was stricter than its own justification rather than weaker — but a
+    sample-size argument computed against a different configuration from the one
+    the test runs is not a justification, whichever way the error points.
     """
     from .island import generate
     from .laws import weave
@@ -471,8 +479,9 @@ def test_one_guard_post_cannot_reach_13_2s_band():
     rate = 100 * held / n
     assert rate < 28, (
         f"a realm-1 island on §5.2's one guard post held {rate:.1f}% of raids. "
-        f"F22 measured 16.5% and concluded §13.2's 30-45% band is out of reach "
-        f"there; if this now reaches the band the finding is stale")
+        f"F22 measured 12.5% at this depth and 16.5% across two realms, and "
+        f"concluded §13.2's 30-45% band is out of reach there; if this now "
+        f"reaches the band the finding is stale")
 
 
 def test_the_geometry_is_a_dial_and_not_a_switch():

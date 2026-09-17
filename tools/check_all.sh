@@ -44,6 +44,10 @@ echo "== heist harness =="
 python3 -m tools.heist_harness.test_harness
 
 echo
+echo "== the generator's settings, against both bands the document sets =="
+python3 -m tools.generator_settings --self-test
+
+echo
 echo "== the playable prototype matches the rules it claims to implement =="
 python3 tools/build_prototype.py --check
 python3 tools/build_prototype.py --self-test
