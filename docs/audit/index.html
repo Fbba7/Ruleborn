@@ -227,6 +227,30 @@
     letter-spacing: 0.06em; text-transform: uppercase;
     color: var(--faint); white-space: nowrap;
   }
+  .side {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.05em; white-space: nowrap;
+    border: 1px solid currentColor; border-radius: 3px; padding: 0 5px;
+  }
+  .side-backend { color: var(--chg); }
+  .side-frontend { color: var(--dsg); }
+  .side-both { color: var(--sig); }
+  .chip.side-chip { border-width: 2px; }
+
+  .gates { margin-top: 10px; }
+  .gate-area { margin-bottom: 18px; }
+  .gate-area h3 { font-size: 15px; margin-bottom: 2px; }
+  .gate-area .what { color: var(--muted); font-size: 13.5px; margin-bottom: 8px; }
+  .gate-area ul { margin: 0; padding-left: 20px; }
+  .gate-area li { font-size: 14px; margin-bottom: 6px; }
+  .gate-area .clear { color: var(--cho); font-size: 14px; }
+  .gate-count {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px;
+    color: var(--ground); background: var(--blk);
+    padding: 1px 6px; border-radius: 4px; margin-left: 6px;
+  }
+  .gate-count.none { background: var(--cho); }
+
   .measured {
     font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
     letter-spacing: 0.05em; color: var(--cho); white-space: nowrap;
@@ -433,11 +457,20 @@
         alone.</p>
       <ol class="startlist research"><li><a href="#C12">C12</a> The high revenue scenario quietly uses a different commission rate<span class="q">What are the current Apple and Google commission tiers and the revenue thresholds that move a developer between them, and what does that do to a revenue band either side of the boundary? §22.2’s high scenario is computed at a different rate from the other two and §22.5 does not say so.</span></li><li><a href="#C20">C20</a> The 48 law sound signatures are six school sounds repeated<span class="q">What does a per-school sound set cost against a per-law one, and do players in comparable games actually distinguish audio cues at that granularity? §21.8 now claims six school signatures where it once claimed 48.</span></li><li><a href="#C29">C29</a> v3.0 removed the playtesters and kept two phase gates that require them<span class="q">How do small teams recruit ten to twenty playtesters for a pre-release mobile build, what does it cost, and what consent and privacy position does handling pre-release content with outside testers require? §26.2 gates two phases on those people and §25.4 says they do not exist.</span></li><li><a href="#D6">D6</a> A launch-scope cut of roughly 40% is proposed<span class="q">Which of a launch content set actually drives retention in this genre: breadth of distinct rules, or depth in a few? The proposed cut halves the laws and keeps the Island Workshop, and nothing outside this repository has been consulted about that trade.</span></li><li><a href="#D9">D9</a> Iteration is given a budget<span class="q">What is the reference-class ratio of iteration work to first-build work for a novel genre blend with no reference implementation? §26.8 estimates ~270 agent runs to build and then states that the iteration needed to find the fun is unbudgeted.</span></li><li><a href="#F10">F10</a> Sixteen of forty-eight laws are parameter changes; the rest need an engine feature<span class="q">What does each kind of law effect really cost to build — a parameter change against a spawned entity against a periodic rule — on a deterministic fixed-tick mobile simulation? `scope_cut.py` weights them 0 / 3 / 2 by judgement, and the ordering is what the conclusion rests on.</span></li><li><a href="#F13">F13</a> §12.22’s matchmaking guarantee has no targets to draw from early<span class="q">How do comparable games fill a matchmaking band when the candidate pool cannot supply it — bots, staged targets, widening, or something else? §12.22 promises a median target in a band that does not exist early.</span></li><li><a href="#G11">G11</a> Localisation of a coined vocabulary has no owner<span class="q">What does it cost to localise a coined vocabulary — roughly 130 invented proper nouns — into twelve languages, and who normally owns that work on a team of this size? §26.3 assigns nobody.</span></li><li><a href="#Q5">Q5</a> Accept the launch-scope cut?<span class="q">How much content do comparable mobile builders actually ship at launch, counted the way §26.1 counts — distinct rules, creature forms, building types, languages — and how much did they add per season afterwards? §26.1 asks a team of one designer, one coding agent and three contractors for 48 laws, 144 creature forms, 39 terrain features and 12 languages.</span></li><li><a href="#Q6">Q6</a> Casual pacing: leave it, or add the catch-up discount?<span class="q">How do comparable games handle a player who is years behind the curve, and does a visible, openly labelled catch-up discount hold up in practice? §27.5 settles on one and never specifies it, against a finishing time of roughly 1,343 days.</span></li><li><a href="#Q7">Q7</a> The document's own open list<span class="q">Trade-mark clearance for the name, in the launch territories. §26.9 makes it a gate on any public use and it costs nothing to start.</span></li></ol>
     </details>
+
+    <details><summary>When the design of realms, screens and characters can
+      start</summary>
+      <p class="blurb">Each area lists the items still open that decide
+        something a designer would otherwise have to guess, and what each one
+        changes about the drawing. Almost all of them are backend items: the
+        split says where work happens, this says what it holds up.</p>
+      <div class="gates"><div class="gate-area"><h3>Realms<span class="gate-count">9 open</span></h3><p class="what">Terrain layout, what an island holds, how a realm is drawn</p><ul><li><a href="#F26">F26</a> how many wards a realm holds — measured at 10, 8, 6, 7, 8 against §5.2's 4, 5, 6, 7, 8, so realms 1 and 2 are drawn with the wrong number of objects <span style="opacity:.65">&mdash; §13.2’s hold band falls inside a gap the defence cannot enter at realm 1</span></li><li><a href="#F27">F27</a> where each realm's defence starts, which §5.2's post formula sets and gets right at one realm in five <span style="opacity:.65">&mdash; §10.2’s post ladder is the right size and starts in the wrong place, so the same upgrade is required, free or harmful</span></li><li><a href="#F22">F22</a> whether realms 1 and 2 get one guard post or two, which is one or two patrol routes to lay out <span style="opacity:.65">&mdash; §5.2’s one guard post puts §13.2’s band out of reach at realms 1 and 2, whatever the generator does</span></li><li><a href="#F9">F9</a> what hold rate a generated realm has to reach, which nothing currently states <span style="opacity:.65">&mdash; Generated defences hold 2% at realm level 1, against a target of 30–45%</span></li><li><a href="#F11">F11</a> what the generator optimises for — “generated from their laws” has three meanings and two are worse than weaving none <span style="opacity:.65">&mdash; Weaving the player’s own laws makes a generated defence worse, not better</span></li><li><a href="#F12">F12</a> eight laws whose effect is an act of authorship: a slope, a wind direction, streams drawn on the grid <span style="opacity:.65">&mdash; Eight laws need a decision from the owner that a generator has to make</span></li><li><a href="#G3">G3</a> what a ward does at each level, so it can be placed and drawn <span style="opacity:.65">&mdash; Ward placement, triggering and disarming</span></li><li><a href="#G5">G5</a> whether a raider can tell which law a pylon carries before committing to the detour <span style="opacity:.65">&mdash; Law pylons have no count, health or placement rule</span></li><li><a href="#C19">C19</a> how many producers a realm holds, which is what stands on it <span style="opacity:.65">&mdash; The production tables describe a universe the build rules do not permit</span></li></ul></div><div class="gate-area"><h3>Screens<span class="gate-count">3 open</span></h3><p class="what">The 27 screens in §23, their contents and their counts</p><ul><li><a href="#C6">C6</a> which roster the character screens read from — the two disagree about eleven creatures <span style="opacity:.65">&mdash; Two ruleborn rosters — and eleven are different creatures, not different wordings</span></li><li><a href="#C3">C3</a> how many law ranks the Codex has to display, three or four <span style="opacity:.65">&mdash; Two law-rarity taxonomies, and one of them has no laws in it</span></li><li><a href="#C8">C8</a> whether the Library is a seventeenth building with a screen of its own <span style="opacity:.65">&mdash; The Library is load-bearing and specified nowhere</span></li></ul></div><div class="gate-area"><h3>Characters<span class="gate-count">3 open</span></h3><p class="what">The 18 ruleborn, their forms, and what the art has to show</p><ul><li><a href="#C6">C6</a> eleven of the eighteen are different creatures in the two rosters, not different wordings <span style="opacity:.65">&mdash; Two ruleborn rosters — and eleven are different creatures, not different wordings</span></li><li><a href="#D6">D6</a> 144 forms or 54 — the largest single art number in the project, and a threefold difference <span style="opacity:.65">&mdash; A launch-scope cut of roughly 40% is proposed</span></li><li><a href="#Q5">Q5</a> accepting or refusing that cut is the decision underneath it <span style="opacity:.65">&mdash; Accept the launch-scope cut?</span></li></ul></div></div>
+    </details>
   </section>
 
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">104</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">23</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">25</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">40</span></button>
+    <button class="chip side-chip" data-filter="side:backend">Backend<span class="n">98</span></button><button class="chip side-chip" data-filter="side:frontend">Frontend &amp; design<span class="n">17</span></button><button class="chip" data-filter="group:changes">What changed about the approach<span class="n">28</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">23</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">25</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">11</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">40</span></button>
   </nav>
 
   <main id="list">
@@ -449,12 +482,14 @@
         
       <article class="item chg" id="D1" data-group="changes"
                data-kind="deviation" data-status="adopted"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D1</span>
           <h3>The build-willingness test runs first, not second</h3>
           <span class="kind">change</span>
           <span class="status s-adopted">Adopted</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§26.7</span><span class="ref">§13.3</span><span class="ref">§30.8</span></div>
@@ -467,12 +502,14 @@
       </article>
       <article class="item chg" id="D2" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D2</span>
           <h3>The paper prototype became a browser prototype</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§19.27</span><span class="ref">§26.7</span><span class="ref">§25.4</span></div>
@@ -485,12 +522,14 @@
       </article>
       <article class="item chg" id="D3" data-group="changes"
                data-kind="deviation" data-status="adopted"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D3</span>
           <h3>The prototype sits ahead of the determinism spike on the critical path</h3>
           <span class="kind">change</span>
           <span class="status s-adopted">Adopted</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§26.7</span><span class="ref">§24.2</span><span class="ref">§26.5</span></div>
@@ -503,12 +542,14 @@
       </article>
       <article class="item chg" id="D4" data-group="changes"
                data-kind="deviation" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D4</span>
           <h3>A reconciliation step was inserted before the specification locks</h3>
           <span class="kind">change</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§26.7</span></div>
@@ -521,12 +562,14 @@
       </article>
       <article class="item chg" id="D5" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D5</span>
           <h3>The economy model was rebuilt from scratch</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§24</span><span class="ref">§10.2</span><span class="ref">§14.2</span><span class="ref">§14.3</span><span class="ref">§9.3</span></div>
@@ -539,12 +582,14 @@
       </article>
       <article class="item chg" id="D6" data-group="changes"
                data-kind="deviation" data-status="proposed"
+               data-side="both"
                data-edits="no">
         <header class="item-head">
           <span class="id">D6</span>
           <h3>A launch-scope cut of roughly 40% is proposed</h3>
           <span class="kind">change</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-both">both</span>
           
         </header>
         <div class="refs"><span class="ref">§26.1</span><span class="ref">§26.5</span><span class="ref">§26.8</span><span class="ref">§30.8</span></div>
@@ -557,12 +602,14 @@
       </article>
       <article class="item chg" id="D7" data-group="changes"
                data-kind="deviation" data-status="adopted"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D7</span>
           <h3>A risk was added: delegated control reading as watching</h3>
           <span class="kind">change</span>
           <span class="status s-adopted">Adopted</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§30.7</span><span class="ref">§30.8</span><span class="ref">§19.4</span></div>
@@ -575,12 +622,14 @@
       </article>
       <article class="item chg" id="D8" data-group="changes"
                data-kind="deviation" data-status="adopted"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D8</span>
           <h3>Two risks were re-ranked</h3>
           <span class="kind">change</span>
           <span class="status s-adopted">Adopted</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§30.8</span><span class="ref">§19.4</span><span class="ref">§20.10</span></div>
@@ -593,12 +642,14 @@
       </article>
       <article class="item chg" id="D9" data-group="changes"
                data-kind="deviation" data-status="proposed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D9</span>
           <h3>Iteration is given a budget</h3>
           <span class="kind">change</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§26.8</span><span class="ref">§19.17</span><span class="ref">§26.5</span></div>
@@ -611,12 +662,14 @@
       </article>
       <article class="item chg" id="D10" data-group="changes"
                data-kind="deviation" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D10</span>
           <h3>The document should split into a specification and a research archive</h3>
           <span class="kind">change</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§19</span><span class="ref">§28</span><span class="ref">§30</span></div>
@@ -629,12 +682,14 @@
       </article>
       <article class="item chg" id="D11" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D11</span>
           <h3>The prototype departs from the document's numbers on purpose</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.6</span><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§5.4</span></div>
@@ -647,12 +702,14 @@
       </article>
       <article class="item chg" id="D12" data-group="changes"
                data-kind="deviation" data-status="adopted"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D12</span>
           <h3>The published prototype declares no runtime capabilities</h3>
           <span class="kind">change</span>
           <span class="status s-adopted">Adopted</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§13.3</span><span class="ref">§25.4</span></div>
@@ -665,12 +722,14 @@
       </article>
       <article class="item chg" id="D13" data-group="changes"
                data-kind="deviation" data-status="proposed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D13</span>
           <h3>The note distribution should be rebalanced before the law table is authored</h3>
           <span class="kind">change</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§8.1</span><span class="ref">§7.4</span><span class="ref">§24</span></div>
@@ -683,12 +742,14 @@
       </article>
       <article class="item chg" id="D15" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D15</span>
           <h3>Summary tables are now generated, not authored</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§11.2</span><span class="ref">§7.4</span><span class="ref">§29.1</span><span class="ref">§24.9</span></div>
@@ -701,12 +762,14 @@
       </article>
       <article class="item chg" id="D14" data-group="changes"
                data-kind="deviation" data-status="fixed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">D14</span>
           <h3>Chords should require three laws, not three notes</h3>
           <span class="kind">change</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§8.5</span></div>
@@ -719,12 +782,14 @@
       </article>
       <article class="item chg" id="D16" data-group="changes"
                data-kind="deviation" data-status="proposed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D16</span>
           <h3>The Vault’s load rate is cut fivefold, from 150 a second to 30</h3>
           <span class="kind">change</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.6</span><span class="ref">§11.1</span><span class="ref">§9.4</span></div>
@@ -737,12 +802,14 @@
       </article>
       <article class="item chg" id="D17" data-group="changes"
                data-kind="deviation" data-status="proposed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D17</span>
           <h3>Ambush damage gains a floor, so the document’s own rule becomes true</h3>
           <span class="kind">change</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.8</span><span class="ref">§11.1</span></div>
@@ -755,12 +822,14 @@
       </article>
       <article class="item chg" id="D18" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D18</span>
           <h3>Two recorded gaps were wrong, and the register now says so</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§10.2</span><span class="ref">§10.3</span><span class="ref">§12.6</span></div>
@@ -773,12 +842,14 @@
       </article>
       <article class="item chg" id="D19" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D19</span>
           <h3>The checks were rewritten to read the document rather than remember it</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§29.1</span><span class="ref">§11.1</span><span class="ref">§12.6</span></div>
@@ -791,12 +862,14 @@
       </article>
       <article class="item chg" id="D20" data-group="changes"
                data-kind="deviation" data-status="open"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D20</span>
           <h3>Both pre-code player gates are gone, and the prototype with them</h3>
           <span class="kind">change</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§19.27</span><span class="ref">§13.3</span><span class="ref">§26.7</span><span class="ref">§30.8</span></div>
@@ -809,12 +882,14 @@
       </article>
       <article class="item chg" id="D21" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D21</span>
           <h3>§19.27’s harnesses were built, since they are now the critical path</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§19.27</span><span class="ref">§12.17</span><span class="ref">§12.18</span><span class="ref">§12.19</span><span class="ref">§12.20</span><span class="ref">§5.4</span></div>
@@ -827,12 +902,14 @@
       </article>
       <article class="item chg" id="D22" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D22</span>
           <h3>Law effects became a classified table, not prose to be read twice</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§7.3</span><span class="ref">§12.21</span><span class="ref">§7.7</span></div>
@@ -845,12 +922,14 @@
       </article>
       <article class="item chg" id="D27" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D27</span>
           <h3>The check for D26’s fault found four more, and one of them is the design’s own joke</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§9.5</span><span class="ref">§14.2</span><span class="ref">§5.4</span></div>
@@ -863,12 +942,14 @@
       </article>
       <article class="item chg" id="D28" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D28</span>
           <h3>The job that keeps the playable build current ran, reported success, and published nothing</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§30.18</span><span class="ref">§26.7</span><span class="ref">§19.27</span></div>
@@ -881,12 +962,14 @@
       </article>
       <article class="item chg" id="D26" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D26</span>
           <h3>Every guard began every raid at the same point of its patrol</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.17</span><span class="ref">§13.2</span><span class="ref">§13.4</span></div>
@@ -899,12 +982,14 @@
       </article>
       <article class="item chg" id="D25" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D25</span>
           <h3>No crew in the harness could see §5.4’s clock, so nothing priced in time could be measured at all</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§5.4</span><span class="ref">§12.19</span><span class="ref">§12.6</span></div>
@@ -917,12 +1002,14 @@
       </article>
       <article class="item chg" id="D24" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D24</span>
           <h3>The Vault phase in the harness was two seconds long, and every number was measured through it</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.19</span><span class="ref">§12.6</span><span class="ref">§13.4</span></div>
@@ -935,12 +1022,14 @@
       </article>
       <article class="item chg" id="D23" data-group="changes"
                data-kind="deviation" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">D23</span>
           <h3>§13.4's ablation was built exactly as specified, Shapley included</h3>
           <span class="kind">change</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§13.4</span><span class="ref">§13.2</span></div>
@@ -960,12 +1049,14 @@
         
       <article class="item blk" id="C1" data-group="blocking"
                data-kind="contradiction" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">C1</span>
           <h3>Two incompatible detection models</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§5.4</span><span class="ref">§29.1</span></div>
@@ -978,12 +1069,14 @@
       </article>
       <article class="item blk" id="C2" data-group="blocking"
                data-kind="contradiction" data-status="proposed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C2</span>
           <h3>Two incompatible raid-payout models, differing by 16–30×</h3>
           <span class="kind">conflict</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§9.4</span><span class="ref">§9.6</span><span class="ref">§12.1</span><span class="ref">§12.9</span></div>
@@ -996,12 +1089,14 @@
       </article>
       <article class="item blk" id="C3" data-group="blocking"
                data-kind="contradiction" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C3</span>
           <h3>Two law-rarity taxonomies, and one of them has no laws in it</h3>
           <span class="kind">conflict</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§7.4</span><span class="ref">§7.7</span><span class="ref">§7.9</span><span class="ref">§9.5</span><span class="ref">§14.4</span><span class="ref">§27.2</span><span class="ref">§29.2</span></div>
@@ -1032,12 +1127,14 @@
       </article>
       <article class="item blk" id="C4" data-group="blocking"
                data-kind="contradiction" data-status="fixed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C4</span>
           <h3>The master inflation dial is keyed to a level range that does not exist</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§5.2</span><span class="ref">§9.4</span><span class="ref">§9.6</span><span class="ref">§13.4</span></div>
@@ -1050,12 +1147,14 @@
       </article>
       <article class="item blk" id="C5" data-group="blocking"
                data-kind="contradiction" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">C5</span>
           <h3>Two defence budget systems, with three different ward limits</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§5.2</span><span class="ref">§5.5</span><span class="ref">§13</span><span class="ref">§13.4</span><span class="ref">§10.2</span></div>
@@ -1068,12 +1167,14 @@
       </article>
       <article class="item blk" id="C6" data-group="blocking"
                data-kind="contradiction" data-status="proposed"
+               data-side="both"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C6</span>
           <h3>Two ruleborn rosters — and eleven are different creatures, not different wordings</h3>
           <span class="kind">conflict</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-both">both</span>
           
         </header>
         <div class="refs"><span class="ref">§11.2</span><span class="ref">§11.11</span><span class="ref">§11.5</span><span class="ref">§12.8</span></div>
@@ -1086,12 +1187,14 @@
       </article>
       <article class="item blk" id="C19" data-group="blocking"
                data-kind="contradiction" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C19</span>
           <h3>The production tables describe a universe the build rules do not permit</h3>
           <span class="kind">conflict</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§9.3</span><span class="ref">§5.2</span><span class="ref">§11.5</span><span class="ref">§10.2</span><span class="ref">§14.2</span><span class="ref">§14.3</span></div>
@@ -1104,12 +1207,14 @@
       </article>
       <article class="item blk" id="C29" data-group="blocking"
                data-kind="contradiction" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C29</span>
           <h3>v3.0 removed the playtesters and kept two phase gates that require them</h3>
           <span class="kind">conflict</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§25.4</span><span class="ref">§19.27</span><span class="ref">§26.2</span></div>
@@ -1122,12 +1227,14 @@
       </article>
       <article class="item blk" id="F24" data-group="blocking"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F24</span>
           <h3>v3.1’s supersession check passes on a document that still contains the model it was written to ban</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§31.5</span><span class="ref">§31.9</span><span class="ref">§7.6</span><span class="ref">§9.5</span><span class="ref">§29.2</span></div>
@@ -1140,12 +1247,14 @@
       </article>
       <article class="item blk" id="F26" data-group="blocking"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F26</span>
           <h3>§13.2’s hold band falls inside a gap the defence cannot enter at realm 1</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           <span class="measured" title="re-run against harness re-run against h">re-measured</span>
         </header>
         <div class="refs"><span class="ref">§13.2</span><span class="ref">§19.27</span><span class="ref">§10.2</span><span class="ref">§5.2</span><span class="ref">§12.6</span><span class="ref">§13.3</span></div>
@@ -1158,12 +1267,14 @@
       </article>
       <article class="item blk" id="F25" data-group="blocking"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F25</span>
           <h3>§31.2 states “one fact, one home” and six facts still have two homes</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§31.2</span><span class="ref">§31.9</span><span class="ref">§7.9</span><span class="ref">§14.4</span><span class="ref">§12.6</span><span class="ref">§9.2</span><span class="ref">§9.5</span><span class="ref">§11.5</span></div>
@@ -1176,12 +1287,14 @@
       </article>
       <article class="item blk" id="G1" data-group="blocking"
                data-kind="gap" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">G1</span>
           <h3>Pathfinding and crew movement</h3>
           <span class="kind">unspecified</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.5</span><span class="ref">§12.6</span><span class="ref">§12.7</span><span class="ref">§6</span><span class="ref">§30.7</span></div>
@@ -1194,12 +1307,14 @@
       </article>
       <article class="item blk" id="G9" data-group="blocking"
                data-kind="gap" data-status="fixed"
+               data-side="frontend"
                data-edits="no">
         <header class="item-head">
           <span class="id">G9</span>
           <h3>The 60-second guided build is the top risk's mitigation and is unspecified</h3>
           <span class="kind">unspecified</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-frontend">frontend &amp; design</span>
           
         </header>
         <div class="refs"><span class="ref">§13.1</span><span class="ref">§27.2</span><span class="ref">§16</span></div>
@@ -1212,12 +1327,14 @@
       </article>
       <article class="item blk" id="C21" data-group="blocking"
                data-kind="contradiction" data-status="fixed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C21</span>
           <h3>The formulas appendix still carries the detection model §12.8 deleted</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§29.1</span><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§5.4</span></div>
@@ -1230,12 +1347,14 @@
       </article>
       <article class="item blk" id="F9" data-group="blocking"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F9</span>
           <h3>Generated defences hold 2% at realm level 1, against a target of 30–45%</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           <span class="measured" title="re-run against harness 496955db53f8d3c4">re-measured</span>
         </header>
         <div class="refs"><span class="ref">§13.3</span><span class="ref">§13.2</span><span class="ref">§13.4</span><span class="ref">§5.2</span></div>
@@ -1248,12 +1367,14 @@
       </article>
       <article class="item blk" id="F22" data-group="blocking"
                data-kind="finding" data-status="proposed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F22</span>
           <h3>§5.2’s one guard post puts §13.2’s band out of reach at realms 1 and 2, whatever the generator does</h3>
           <span class="kind">finding</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           <span class="measured" title="re-run against harness 496955db53f8d3c4">re-measured</span>
         </header>
         <div class="refs"><span class="ref">§5.2</span><span class="ref">§13.2</span><span class="ref">§13.3</span><span class="ref">§12.22</span><span class="ref">§13.4</span></div>
@@ -1266,12 +1387,14 @@
       </article>
       <article class="item blk" id="F10" data-group="blocking"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F10</span>
           <h3>Sixteen of forty-eight laws are parameter changes; the rest need an engine feature</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§7.3</span><span class="ref">§12.21</span><span class="ref">§24</span><span class="ref">§26.1</span></div>
@@ -1284,12 +1407,14 @@
       </article>
       <article class="item blk" id="F11" data-group="blocking"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F11</span>
           <h3>Weaving the player’s own laws makes a generated defence worse, not better</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           <span class="measured" title="re-run against harness 496955db53f8d3c4">re-measured</span>
         </header>
         <div class="refs"><span class="ref">§13.3</span><span class="ref">§13.2</span><span class="ref">§7.3</span><span class="ref">§5.5</span></div>
@@ -1302,12 +1427,14 @@
       </article>
       <article class="item blk" id="F13" data-group="blocking"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F13</span>
           <h3>§12.22’s matchmaking guarantee has no targets to draw from early</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.22</span><span class="ref">§13.2</span><span class="ref">§13.3</span></div>
@@ -1320,12 +1447,14 @@
       </article>
       <article class="item blk" id="F14" data-group="blocking"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F14</span>
           <h3>v3.0’s fill term cuts the number §9.6 calls load-bearing by three fifths, and it was not re-derived</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           <span class="measured" title="re-run against harness 496955db53f8d3c4">re-measured</span>
         </header>
         <div class="refs"><span class="ref">§9.6</span><span class="ref">§12.19</span><span class="ref">§14.4</span><span class="ref">§14.2</span></div>
@@ -1338,12 +1467,14 @@
       </article>
       <article class="item blk" id="F21" data-group="blocking"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F21</span>
           <h3>Outcomes polarise with skill: the better a crew plays, the more it sweeps or comes home empty</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§13.2</span><span class="ref">§12.17</span><span class="ref">§12.19</span></div>
@@ -1356,12 +1487,14 @@
       </article>
       <article class="item blk" id="F15" data-group="blocking"
                data-kind="finding" data-status="proposed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F15</span>
           <h3>Guards and Response are not two layers; they are one, and three more have no path to the metric</h3>
           <span class="kind">finding</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           <span class="measured" title="re-run against harness 496955db53f8d3c4">re-measured</span>
         </header>
         <div class="refs"><span class="ref">§13.2</span><span class="ref">§13.4</span><span class="ref">§5.4</span><span class="ref">§9.6</span></div>
@@ -1374,12 +1507,14 @@
       </article>
       <article class="item blk" id="F17" data-group="blocking"
                data-kind="finding" data-status="proposed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F17</span>
           <h3>Aether and Essence have no sinks, because every price in §9.5 is on the wrong kind of curve</h3>
           <span class="kind">finding</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§9.5</span><span class="ref">§9.3</span><span class="ref">§9.1</span><span class="ref">§10.2</span><span class="ref">§11.6</span></div>
@@ -1399,12 +1534,14 @@
         
       <article class="item dsg" id="F1" data-group="design"
                data-kind="finding" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F1</span>
           <h3>The roster cannot staff the universe the rules permit</h3>
           <span class="kind">finding</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§5.2</span><span class="ref">§10.2</span><span class="ref">§11.5</span><span class="ref">§9.3</span><span class="ref">§4</span></div>
@@ -1417,12 +1554,14 @@
       </article>
       <article class="item dsg" id="F2" data-group="design"
                data-kind="finding" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F2</span>
           <h3>Building the second producer doubles income and breaks every pacing date</h3>
           <span class="kind">finding</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§9.3</span><span class="ref">§5.2</span><span class="ref">§14.2</span><span class="ref">§14.3</span></div>
@@ -1435,12 +1574,14 @@
       </article>
       <article class="item dsg" id="F3" data-group="design"
                data-kind="finding" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F3</span>
           <h3>The core trade-off the design is built on does not bind</h3>
           <span class="kind">finding</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§4</span><span class="ref">§11.6</span><span class="ref">§12.6</span><span class="ref">§12.9</span><span class="ref">§9.6</span></div>
@@ -1453,12 +1594,14 @@
       </article>
       <article class="item dsg" id="F4" data-group="design"
                data-kind="finding" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F4</span>
           <h3>§12.8’s knockout rule is true for three of twenty-five role pairings</h3>
           <span class="kind">finding</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.8</span><span class="ref">§11.1</span><span class="ref">§11.4</span></div>
@@ -1471,12 +1614,14 @@
       </article>
       <article class="item dsg" id="F5" data-group="design"
                data-kind="finding" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F5</span>
           <h3>The Vault’s loading phase lasts two seconds and 46% of crew capacity is unreachable</h3>
           <span class="kind">finding</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.6</span><span class="ref">§11.1</span><span class="ref">§9.4</span></div>
@@ -1489,12 +1634,14 @@
       </article>
       <article class="item dsg" id="F6" data-group="design"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F6</span>
           <h3>The Breaker is 63% of the crew's damage against every breakable object</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§11.1</span><span class="ref">§12.6</span><span class="ref">§10.2</span><span class="ref">§12.5</span></div>
@@ -1507,12 +1654,14 @@
       </article>
       <article class="item dsg" id="F7" data-group="design"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F7</span>
           <h3>§12.6’s 15–25 decisions implies crossing two to three realms</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.6</span><span class="ref">§19.2</span><span class="ref">§12.22</span><span class="ref">§5.4</span></div>
@@ -1525,12 +1674,14 @@
       </article>
       <article class="item dsg" id="F8" data-group="design"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F8</span>
           <h3>The clock is not a pressure device: runs finish with a third of it unused</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§19.27</span><span class="ref">§12.6</span><span class="ref">§5.4</span></div>
@@ -1543,12 +1694,14 @@
       </article>
       <article class="item dsg" id="F12" data-group="design"
                data-kind="finding" data-status="open"
+               data-side="both"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F12</span>
           <h3>Eight laws need a decision from the owner that a generator has to make</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-both">both</span>
           
         </header>
         <div class="refs"><span class="ref">§13.3</span><span class="ref">§7.7</span><span class="ref">§5.5</span></div>
@@ -1568,12 +1721,14 @@
         
       <article class="item sig" id="C7" data-group="significant"
                data-kind="contradiction" data-status="fixed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C7</span>
           <h3>Tick rate: 20 Hz or 30 Hz?</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§7.3</span><span class="ref">§24</span><span class="ref">§24.10</span></div>
@@ -1586,12 +1741,14 @@
       </article>
       <article class="item sig" id="C8" data-group="significant"
                data-kind="contradiction" data-status="open"
+               data-side="both"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C8</span>
           <h3>The Library is load-bearing and specified nowhere</h3>
           <span class="kind">conflict</span>
           <span class="status s-open">Open</span>
+          <span class="side side-both">both</span>
           
         </header>
         <div class="refs"><span class="ref">§7.6</span><span class="ref">§12.1</span><span class="ref">§10.2</span><span class="ref">§26.1</span><span class="ref">§21.9</span><span class="ref">§30.15</span></div>
@@ -1604,12 +1761,14 @@
       </article>
       <article class="item sig" id="F27" data-group="significant"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F27</span>
           <h3>§10.2’s post ladder is the right size and starts in the wrong place, so the same upgrade is required, free or harmful</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           <span class="measured" title="re-run against harness re-run against h">re-measured</span>
         </header>
         <div class="refs"><span class="ref">§10.2</span><span class="ref">§13.2</span><span class="ref">§5.2</span></div>
@@ -1622,12 +1781,14 @@
       </article>
       <article class="item sig" id="C18" data-group="significant"
                data-kind="contradiction" data-status="proposed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C18</span>
           <h3>Aether storage: formula or table?</h3>
           <span class="kind">conflict</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§9.1</span><span class="ref">§10.2</span></div>
@@ -1640,12 +1801,14 @@
       </article>
       <article class="item sig" id="C20" data-group="significant"
                data-kind="contradiction" data-status="fixed"
+               data-side="frontend"
                data-edits="no">
         <header class="item-head">
           <span class="id">C20</span>
           <h3>The 48 law sound signatures are six school sounds repeated</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-frontend">frontend &amp; design</span>
           
         </header>
         <div class="refs"><span class="ref">§21.8</span><span class="ref">§7.9</span><span class="ref">§21.9</span></div>
@@ -1658,12 +1821,14 @@
       </article>
       <article class="item sig" id="C13" data-group="significant"
                data-kind="contradiction" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">C13</span>
           <h3>Matchmaking cannot reach its own worst difficulty tier</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.3</span><span class="ref">§9.6</span></div>
@@ -1676,12 +1841,14 @@
       </article>
       <article class="item sig" id="C14" data-group="significant"
                data-kind="contradiction" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">C14</span>
           <h3>Renown for a foiled heist is undefined</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.9</span></div>
@@ -1694,12 +1861,14 @@
       </article>
       <article class="item sig" id="C9" data-group="significant"
                data-kind="contradiction" data-status="fixed"
+               data-side="frontend"
                data-edits="no">
         <header class="item-head">
           <span class="id">C9</span>
           <h3>The Codex screen says 36 laws; there are 48</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-frontend">frontend &amp; design</span>
           
         </header>
         <div class="refs"><span class="ref">§23.2</span><span class="ref">§7</span><span class="ref">§26.1</span></div>
@@ -1712,12 +1881,14 @@
       </article>
       <article class="item sig" id="C10" data-group="significant"
                data-kind="contradiction" data-status="fixed"
+               data-side="both"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C10</span>
           <h3>Trait count: 30, 31 or 32?</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-both">both</span>
           
         </header>
         <div class="refs"><span class="ref">§11.3</span><span class="ref">§17.3</span><span class="ref">§26.1</span><span class="ref">§11.5</span></div>
@@ -1734,12 +1905,14 @@
       </article>
       <article class="item sig" id="C11" data-group="significant"
                data-kind="contradiction" data-status="fixed"
+               data-side="frontend"
                data-edits="no">
         <header class="item-head">
           <span class="id">C11</span>
           <h3>Screen count: 23 or 27?</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-frontend">frontend &amp; design</span>
           
         </header>
         <div class="refs"><span class="ref">§21.9</span><span class="ref">§23.2</span></div>
@@ -1752,12 +1925,14 @@
       </article>
       <article class="item sig" id="C12" data-group="significant"
                data-kind="contradiction" data-status="proposed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C12</span>
           <h3>The high revenue scenario quietly uses a different commission rate</h3>
           <span class="kind">conflict</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§22.2</span><span class="ref">§22.5</span></div>
@@ -1770,12 +1945,14 @@
       </article>
       <article class="item sig" id="G12" data-group="significant"
                data-kind="gap" data-status="fixed"
+               data-side="both"
                data-edits="yes">
         <header class="item-head">
           <span class="id">G12</span>
           <h3>Three laws key off creature attributes that no creature has</h3>
           <span class="kind">unspecified</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-both">both</span>
           
         </header>
         <div class="refs"><span class="ref">§7.4</span><span class="ref">§7.3</span><span class="ref">§11.1</span><span class="ref">§11.11</span><span class="ref">§11.10</span></div>
@@ -1788,12 +1965,14 @@
       </article>
       <article class="item sig" id="G2" data-group="significant"
                data-kind="gap" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">G2</span>
           <h3>What happens when a guard catches you</h3>
           <span class="kind">unspecified</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§11.1</span><span class="ref">§13</span></div>
@@ -1806,12 +1985,14 @@
       </article>
       <article class="item sig" id="G3" data-group="significant"
                data-kind="gap" data-status="proposed"
+               data-side="both"
                data-edits="yes">
         <header class="item-head">
           <span class="id">G3</span>
           <h3>Ward placement, triggering and disarming</h3>
           <span class="kind">unspecified</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-both">both</span>
           
         </header>
         <div class="refs"><span class="ref">§10.3</span><span class="ref">§12.5</span><span class="ref">§11.1</span><span class="ref">§21.9</span></div>
@@ -1824,12 +2005,14 @@
       </article>
       <article class="item sig" id="G4" data-group="significant"
                data-kind="gap" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">G4</span>
           <h3>The Vault's loading loop has no relationship to the payout</h3>
           <span class="kind">unspecified</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.6</span><span class="ref">§9.6</span><span class="ref">§9.4</span></div>
@@ -1842,12 +2025,14 @@
       </article>
       <article class="item sig" id="G7" data-group="significant"
                data-kind="gap" data-status="done"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">G7</span>
           <h3>The economy model itself was missing</h3>
           <span class="kind">unspecified</span>
           <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§24</span><span class="ref">§10.2</span><span class="ref">§14.2</span><span class="ref">§14.3</span></div>
@@ -1860,12 +2045,14 @@
       </article>
       <article class="item sig" id="C22" data-group="significant"
                data-kind="contradiction" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C22</span>
           <h3>§12.6 still loads at 150 a second, five times §12.19's rate</h3>
           <span class="kind">conflict</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.6</span><span class="ref">§12.19</span><span class="ref">§9.6</span></div>
@@ -1878,12 +2065,14 @@
       </article>
       <article class="item sig" id="C23" data-group="significant"
                data-kind="contradiction" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C23</span>
           <h3>Three sections still price laws in three ranks after the sheets moved to four</h3>
           <span class="kind">conflict</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§7.6</span><span class="ref">§7.7</span><span class="ref">§7.9</span><span class="ref">§14.4</span><span class="ref">§29.2</span></div>
@@ -1900,12 +2089,14 @@
       </article>
       <article class="item sig" id="C25" data-group="significant"
                data-kind="contradiction" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C25</span>
           <h3>§8.8 states the note rebalance as done; the law sheets are unchanged</h3>
           <span class="kind">conflict</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§8.8</span><span class="ref">§7.7</span><span class="ref">§8.1</span></div>
@@ -1918,12 +2109,14 @@
       </article>
       <article class="item sig" id="C26" data-group="significant"
                data-kind="contradiction" data-status="fixed"
+               data-side="both"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C26</span>
           <h3>§12.21 declares size and flight as properties; no table carries them</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-both">both</span>
           
         </header>
         <div class="refs"><span class="ref">§12.21</span><span class="ref">§11.1</span><span class="ref">§11.2</span><span class="ref">§11.11</span><span class="ref">§7.7</span></div>
@@ -1936,12 +2129,14 @@
       </article>
       <article class="item sig" id="F20" data-group="significant"
                data-kind="finding" data-status="proposed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F20</span>
           <h3>The best fixed stopping rule is about 90% full, not §12.19’s 70%</h3>
           <span class="kind">finding</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.19</span><span class="ref">§9.6</span><span class="ref">§5.4</span><span class="ref">§12.17</span></div>
@@ -1954,12 +2149,14 @@
       </article>
       <article class="item sig" id="F23" data-group="significant"
                data-kind="finding" data-status="proposed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F23</span>
           <h3>Four laws reach all twelve chords, so the law table does not gate the “late-game discovery” at all</h3>
           <span class="kind">finding</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§8.5</span><span class="ref">§8.8</span><span class="ref">§7.7</span><span class="ref">§26.1</span></div>
@@ -1972,12 +2169,14 @@
       </article>
       <article class="item sig" id="F19" data-group="significant"
                data-kind="finding" data-status="open"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F19</span>
           <h3>What a raid pays varies 1.4× with how well it is played, and §9.6 prices it as a constant</h3>
           <span class="kind">finding</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           <span class="measured" title="re-run against harness 496955db53f8d3c4">re-measured</span>
         </header>
         <div class="refs"><span class="ref">§9.6</span><span class="ref">§12.19</span><span class="ref">§12.17</span><span class="ref">§14.2</span></div>
@@ -1990,12 +2189,14 @@
       </article>
       <article class="item sig" id="F16" data-group="significant"
                data-kind="finding" data-status="proposed"
+               data-side="both"
                data-edits="no">
         <header class="item-head">
           <span class="id">F16</span>
           <h3>Geometry is 5% of a &lt;em&gt;generated&lt;/em&gt; defence — and designed, it is worth four times as much</h3>
           <span class="kind">finding</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-both">both</span>
           <span class="measured" title="re-run against harness 496955db53f8d3c4">re-measured</span>
         </header>
         <div class="refs"><span class="ref">§13.2</span><span class="ref">§13.3</span><span class="ref">§13.4</span><span class="ref">§18.7</span></div>
@@ -2008,12 +2209,14 @@
       </article>
       <article class="item sig" id="C27" data-group="significant"
                data-kind="contradiction" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C27</span>
           <h3>Two rules for partial staffing: §9.2's table and §5.8's pro-rata share</h3>
           <span class="kind">conflict</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§9.2</span><span class="ref">§5.8</span><span class="ref">§9.3</span></div>
@@ -2033,12 +2236,14 @@
         
       <article class="item min" id="C15" data-group="minor"
                data-kind="contradiction" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">C15</span>
           <h3>Guard vision is given in tiles in one place and metres in another</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.8</span><span class="ref">§12.17</span><span class="ref">§21.1</span></div>
@@ -2051,12 +2256,14 @@
       </article>
       <article class="item min" id="C16" data-group="minor"
                data-kind="contradiction" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">C16</span>
           <h3>“Three-minute heist” against a 150–240 second clock</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12</span><span class="ref">§12.2</span><span class="ref">§5.4</span><span class="ref">§14.1</span></div>
@@ -2069,12 +2276,14 @@
       </article>
       <article class="item min" id="C17" data-group="minor"
                data-kind="contradiction" data-status="fixed"
+               data-side="frontend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C17</span>
           <h3>The game lists itself as its own fallback name</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-frontend">frontend &amp; design</span>
           
         </header>
         <div class="refs"><span class="ref">§27.2</span><span class="ref">§26.9</span></div>
@@ -2087,12 +2296,14 @@
       </article>
       <article class="item min" id="G5" data-group="minor"
                data-kind="gap" data-status="proposed"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">G5</span>
           <h3>Law pylons have no count, health or placement rule</h3>
           <span class="kind">unspecified</span>
           <span class="status s-proposed">Proposed</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.6</span><span class="ref">§5.7</span><span class="ref">§10.2</span><span class="ref">§5.1</span></div>
@@ -2105,12 +2316,14 @@
       </article>
       <article class="item min" id="G6" data-group="minor"
                data-kind="gap" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">G6</span>
           <h3>How the matchmaking rating actually combines its inputs</h3>
           <span class="kind">unspecified</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§12.15</span><span class="ref">§12.3</span></div>
@@ -2123,12 +2336,14 @@
       </article>
       <article class="item min" id="G8" data-group="minor"
                data-kind="gap" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">G8</span>
           <h3>Two offline edge cases named but not resolved</h3>
           <span class="kind">unspecified</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§24.12</span><span class="ref">§9.4</span></div>
@@ -2141,12 +2356,14 @@
       </article>
       <article class="item min" id="G10" data-group="minor"
                data-kind="gap" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">G10</span>
           <h3>Some law tier effects cannot be expressed as parameters</h3>
           <span class="kind">unspecified</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§7.7</span><span class="ref">§7.3</span></div>
@@ -2159,12 +2376,14 @@
       </article>
       <article class="item min" id="G11" data-group="minor"
                data-kind="gap" data-status="open"
+               data-side="frontend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">G11</span>
           <h3>Localisation of a coined vocabulary has no owner</h3>
           <span class="kind">unspecified</span>
           <span class="status s-open">Open</span>
+          <span class="side side-frontend">frontend &amp; design</span>
           
         </header>
         <div class="refs"><span class="ref">§25.4</span><span class="ref">§26.9</span><span class="ref">§26.3</span><span class="ref">§20.6</span><span class="ref">§26.2</span></div>
@@ -2177,12 +2396,14 @@
       </article>
       <article class="item min" id="C24" data-group="minor"
                data-kind="contradiction" data-status="fixed"
+               data-side="both"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C24</span>
           <h3>Seventeen building types, and §26.1 still says sixteen</h3>
           <span class="kind">conflict</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-both">both</span>
           
         </header>
         <div class="refs"><span class="ref">§10.4</span><span class="ref">§10.2</span><span class="ref">§26.1</span></div>
@@ -2197,12 +2418,14 @@
       </article>
       <article class="item min" id="F18" data-group="minor"
                data-kind="finding" data-status="withdrawn"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">F18</span>
           <h3>Withdrawn: §13.2’s populated middle holds for an ordinary crew — it is skilled play that breaks it (F21)</h3>
           <span class="kind">finding</span>
           <span class="status s-withdrawn">Withdrawn</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§13.2</span><span class="ref">§12.19</span></div>
@@ -2215,12 +2438,14 @@
       </article>
       <article class="item min" id="C28" data-group="minor"
                data-kind="contradiction" data-status="open"
+               data-side="backend"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C28</span>
           <h3>Births are priced twice: §9.5’s geometric curve and §11.5’s linear one</h3>
           <span class="kind">conflict</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§9.5</span><span class="ref">§11.5</span></div>
@@ -2240,12 +2465,14 @@
         
       <article class="item cho" id="Q1" data-group="choices"
                data-kind="decision" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q1</span>
           <h3>Is character scarcity a feature or an accident?</h3>
           <span class="kind">decision</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§4</span><span class="ref">§11.5</span><span class="ref">§5.2</span><span class="ref">§9.3</span></div>
@@ -2258,12 +2485,14 @@
       </article>
       <article class="item cho" id="Q2" data-group="choices"
                data-kind="decision" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q2</span>
           <h3>Should the raid-versus-build trade-off be made real, or dropped?</h3>
           <span class="kind">decision</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§4</span><span class="ref">§11.6</span><span class="ref">§12.9</span></div>
@@ -2276,12 +2505,14 @@
       </article>
       <article class="item cho" id="Q3" data-group="choices"
                data-kind="decision" data-status="open"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q3</span>
           <h3>Three law ranks or five?</h3>
           <span class="kind">decision</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§7.4</span><span class="ref">§7.9</span></div>
@@ -2294,12 +2525,14 @@
       </article>
       <article class="item cho" id="Q4" data-group="choices"
                data-kind="decision" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q4</span>
           <h3>One producer per realm, or two?</h3>
           <span class="kind">decision</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§5.2</span><span class="ref">§9.3</span></div>
@@ -2312,12 +2545,14 @@
       </article>
       <article class="item cho" id="Q5" data-group="choices"
                data-kind="decision" data-status="open"
+               data-side="both"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q5</span>
           <h3>Accept the launch-scope cut?</h3>
           <span class="kind">decision</span>
           <span class="status s-open">Open</span>
+          <span class="side side-both">both</span>
           
         </header>
         <div class="refs"><span class="ref">§26.1</span><span class="ref">§26.5</span></div>
@@ -2330,12 +2565,14 @@
       </article>
       <article class="item cho" id="Q6" data-group="choices"
                data-kind="decision" data-status="open"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q6</span>
           <h3>Casual pacing: leave it, or add the catch-up discount?</h3>
           <span class="kind">decision</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§27.3</span><span class="ref">§14</span><span class="ref">§27.5</span></div>
@@ -2348,12 +2585,14 @@
       </article>
       <article class="item cho" id="Q8" data-group="choices"
                data-kind="decision" data-status="fixed"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q8</span>
           <h3>How many ruleborn stand at one Guardian Post?</h3>
           <span class="kind">decision</span>
           <span class="status s-fixed">Fixed in v3.0</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§5.2</span><span class="ref">§13.4</span><span class="ref">§10.2</span><span class="ref">§9.2</span></div>
@@ -2366,12 +2605,14 @@
       </article>
       <article class="item cho" id="Q7" data-group="choices"
                data-kind="decision" data-status="open"
+               data-side="backend"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q7</span>
           <h3>The document's own open list</h3>
           <span class="kind">decision</span>
           <span class="status s-open">Open</span>
+          <span class="side side-backend">backend</span>
           
         </header>
         <div class="refs"><span class="ref">§27.3</span></div>
@@ -2414,6 +2655,9 @@
     function matches(el, filter) {
       if (filter === "all") return true;
       var parts = filter.split(":");
+      // An item that needs backend and frontend work shows under both, so each
+      // side's chip is the whole of that side rather than a share of it.
+      if (parts[0] === "side" && el.dataset.side === "both") return true;
       return el.dataset[parts[0]] === parts[1];
     }
 
@@ -2447,4 +2691,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build 218f18ac8f89aefa -->
+<!-- ruleborn-build d3b4a64218e8fc13 -->

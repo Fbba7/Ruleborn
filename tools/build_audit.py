@@ -14,8 +14,8 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from audit_register import (DEPENDS, EDITS, FOUND_IN_V3, REGISTER,  # noqa: E402
-                            RESEARCH, V3, V31)
+from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,  # noqa: E402
+                            REGISTER, RESEARCH, V3, V31, side_of)
 
 from build_stamp import stamped  # noqa: E402
 
@@ -118,6 +118,46 @@ def _unlocks(by_id: dict, item_id: str) -> set:
     return {n for n in seen if _open(by_id, n)}
 
 
+def design_gates_html() -> str:
+    """When the design of realms, screens and characters can start.
+
+    The backend/frontend chips say where an item's work happens. This says what
+    the design work is waiting on, which is the question the split was asked
+    for, and it is a different question: almost everything that gates a
+    designer is a backend item.
+
+    Written from the register's own statuses rather than from memory. The first
+    draft of this listed eight gates that v3.0 and v3.1 had already closed —
+    C5, Q8, C11, C9, C1, C26, G12, C10 — which would have told a designer to
+    wait for finished work. `check_edits.bad_sides()` now refuses a gate whose
+    item is not open.
+    """
+    by_id = {i["id"]: i for i in REGISTER}
+    out = []
+    for area, spec in DESIGN_GATES.items():
+        gates = spec["gates"]
+        cls = "" if gates else " none"
+        rows = "".join(
+            f'<li><a href="#{gid}">{gid}</a> {why} '
+            f'<span style="opacity:.65">&mdash; {esc(by_id[gid]["title"])}</span></li>'
+            for gid, why in gates.items())
+        body = (f"<ul>{rows}</ul>" if gates else
+                '<p class="clear">Nothing open. This can start now.</p>')
+        out.append(
+            f'<div class="gate-area"><h3>{esc(area.capitalize())}'
+            f'<span class="gate-count{cls}">{len(gates)} open</span></h3>'
+            f'<p class="what">{spec["what"]}</p>{body}</div>')
+    return f"""
+    <details><summary>When the design of realms, screens and characters can
+      start</summary>
+      <p class="blurb">Each area lists the items still open that decide
+        something a designer would otherwise have to guess, and what each one
+        changes about the drawing. Almost all of them are backend items: the
+        split says where work happens, this says what it holds up.</p>
+      <div class="gates">{''.join(out)}</div>
+    </details>"""
+
+
 def start_here_html() -> str:
     """Where to begin, computed from the dependency graph rather than asserted.
 
@@ -208,6 +248,7 @@ def start_here_html() -> str:
         alone.</p>
       <ol class="startlist research">{research}</ol>
     </details>
+{design_gates_html()}
   </section>
 """
 
@@ -287,6 +328,16 @@ def edits_html(item_id: str) -> str:
             f'{"".join(rows)}</ol></details>')
 
 
+#: What each side is called on the page. "Frontend" carries "and design"
+#: because that is what the split is for: screens, art and the layout of a
+#: realm are one side of the work, and the rules are the other.
+SIDE_LABEL = {
+    "backend": "backend",
+    "frontend": "frontend &amp; design",
+    "both": "both",
+}
+
+
 def item_html(item: dict) -> str:
     label, cls = SEVERITY[item["severity"]]
     v3 = V3.get(item["id"], {})
@@ -303,12 +354,14 @@ def item_html(item: dict) -> str:
     return f"""
       <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
                data-kind="{item['kind']}" data-status="{status}"
+               data-side="{side_of(item['id'])}"
                data-edits="{'yes' if item['id'] in EDITS else 'no'}">
         <header class="item-head">
           <span class="id">{esc(item['id'])}</span>
           <h3>{esc(item['title'])}</h3>
           <span class="kind">{KIND[item['kind']]}</span>
           <span class="status s-{status}">{STATUS[status]}</span>
+          <span class="side side-{side_of(item['id'])}">{SIDE_LABEL[side_of(item['id'])]}</span>
           {measured_html(item)}
         </header>
         <div class="refs">{refs_html(item['refs'])}</div>
@@ -349,6 +402,15 @@ def build() -> str:
         for g, title, _, _ in GROUPS
     )
     gap_count = sum(1 for i in REGISTER if i["kind"] == "gap")
+    backend = sum(1 for i in REGISTER if side_of(i["id"]) in ("backend", "both"))
+    frontend = sum(1 for i in REGISTER if side_of(i["id"]) in ("frontend", "both"))
+    # An item that needs both sides counts on both chips, so each chip shows the
+    # whole of that side's work rather than a share of it.
+    chips = (f'<button class="chip side-chip" data-filter="side:backend">Backend'
+             f'<span class="n">{backend}</span></button>'
+             f'<button class="chip side-chip" data-filter="side:frontend">'
+             f'Frontend &amp; design<span class="n">{frontend}</span></button>'
+             ) + chips
     chips += (f'<button class="chip alt" data-filter="kind:gap">Specified nowhere'
               f'<span class="n">{gap_count}</span></button>')
     chips += (f'<button class="chip alt" data-filter="status:fixed">Fixed in v3.0'
@@ -601,6 +663,30 @@ def build() -> str:
     letter-spacing: 0.06em; text-transform: uppercase;
     color: var(--faint); white-space: nowrap;
   }}
+  .side {{
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.05em; white-space: nowrap;
+    border: 1px solid currentColor; border-radius: 3px; padding: 0 5px;
+  }}
+  .side-backend {{ color: var(--chg); }}
+  .side-frontend {{ color: var(--dsg); }}
+  .side-both {{ color: var(--sig); }}
+  .chip.side-chip {{ border-width: 2px; }}
+
+  .gates {{ margin-top: 10px; }}
+  .gate-area {{ margin-bottom: 18px; }}
+  .gate-area h3 {{ font-size: 15px; margin-bottom: 2px; }}
+  .gate-area .what {{ color: var(--muted); font-size: 13.5px; margin-bottom: 8px; }}
+  .gate-area ul {{ margin: 0; padding-left: 20px; }}
+  .gate-area li {{ font-size: 14px; margin-bottom: 6px; }}
+  .gate-area .clear {{ color: var(--cho); font-size: 14px; }}
+  .gate-count {{
+    font-family: "IBM Plex Mono", monospace; font-size: 11px;
+    color: var(--ground); background: var(--blk);
+    padding: 1px 6px; border-radius: 4px; margin-left: 6px;
+  }}
+  .gate-count.none {{ background: var(--cho); }}
+
   .measured {{
     font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
     letter-spacing: 0.05em; color: var(--cho); white-space: nowrap;
@@ -796,6 +882,9 @@ def build() -> str:
     function matches(el, filter) {{
       if (filter === "all") return true;
       var parts = filter.split(":");
+      // An item that needs backend and frontend work shows under both, so each
+      // side's chip is the whole of that side rather than a share of it.
+      if (parts[0] === "side" && el.dataset.side === "both") return true;
       return el.dataset[parts[0]] === parts[1];
     }}
 

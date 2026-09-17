@@ -3120,6 +3120,118 @@ V3 = {
 #
 # Each entry is the question to take away, written so it stands alone.
 
+# ---------------------------------------------------------------------------
+# Backend or frontend
+# ---------------------------------------------------------------------------
+#
+# The split exists to answer one question: when can the design of realms,
+# screens and characters start? So the rule is about *who does the work*, not
+# about which chapter the item lives in.
+#
+#   backend   resolved by changing a rule, a number, a formula or simulation
+#             code. An engineer or a systems designer does it, and nothing is
+#             drawn.
+#   frontend  resolved by drawing, writing, laying out, recording or building a
+#             screen. An artist, a level designer or a UI designer does it.
+#   both      genuinely needs each. Nine items, and each is listed with why —
+#             a count that is also an art budget, a roster whose rows are both
+#             stats and creatures.
+#
+# Most items are backend, so only the exceptions are listed. `check_sides()` in
+# check_edits.py fails if an id here is not in the register.
+#
+# Being on the backend side does not mean an item is irrelevant to design. Most
+# of what gates the design work is backend, which is the point of DESIGN_GATES
+# below: the question is not which side an item is on but what it holds up.
+FRONTEND = {
+    "C9":  "the Codex screen's own text — fixed by editing a screen spec",
+    "C11": "how many screens there are to draw",
+    "C20": "author 48 law sounds, or correct the claim to six school sounds",
+    "C17": "the game's public name and its fallback",
+    "G9":  "the 60-second guided build: an onboarding flow and its screens",
+    "G11": "localising a coined vocabulary into twelve languages",
+}
+
+BOTH = {
+    "C6":  "roles are stats; eleven of the eighteen are different creatures, "
+           "which is character art",
+    "C8":  "the Library is an economic faucet and a seventeenth building to draw",
+    "C10": "a trait count in the data, and a line in \u00a726.1's launch content",
+    "C24": "seventeen building types: a count, and four building looks "
+           "\u00a721.9 does not budget",
+    "C26": "size and flight as columns, and as properties the art must show",
+    "G12": "the same, seen from the three laws that read those attributes",
+    "G3":  "ward rules and levels, and the ward art \u00a721.9 budgets",
+    "D6":  "the scope cut halves the laws (backend) and the forms, resonances "
+           "and languages (frontend)",
+    "Q5":  "accepting that cut is one decision over both",
+    "F16": "designed geometry beats generated eleven to one, which is a "
+           "statement about level design as much as about the generator",
+    "F12": "eight laws need an act of authorship from whoever lays out a realm",
+}
+
+
+def side_of(item_id: str) -> str:
+    if item_id in FRONTEND:
+        return "frontend"
+    if item_id in BOTH:
+        return "both"
+    return "backend"
+
+
+# ---------------------------------------------------------------------------
+# What the design work is waiting on
+# ---------------------------------------------------------------------------
+#
+# The two-part split says where an item's work happens. This says when the
+# design of each thing can start, which is the question the split was asked
+# for. Each entry names the open items that decide something a designer would
+# otherwise have to guess, and what each one changes about the drawing.
+#
+# An area with nothing open is one where design can start now.
+DESIGN_GATES = {
+    "realms": dict(
+        what="Terrain layout, what an island holds, how a realm is drawn",
+        gates={
+            "F26": "how many wards a realm holds \u2014 measured at 10, 8, 6, 7, 8 "
+                   "against \u00a75.2's 4, 5, 6, 7, 8, so realms 1 and 2 are "
+                   "drawn with the wrong number of objects",
+            "F27": "where each realm's defence starts, which \u00a75.2's post "
+                   "formula sets and gets right at one realm in five",
+            "F22": "whether realms 1 and 2 get one guard post or two, which is "
+                   "one or two patrol routes to lay out",
+            "F9":  "what hold rate a generated realm has to reach, which nothing "
+                   "currently states",
+            "F11": "what the generator optimises for \u2014 \u201cgenerated from "
+                   "their laws\u201d has three meanings and two are worse than "
+                   "weaving none",
+            "F12": "eight laws whose effect is an act of authorship: a slope, a "
+                   "wind direction, streams drawn on the grid",
+            "G3":  "what a ward does at each level, so it can be placed and drawn",
+            "G5":  "whether a raider can tell which law a pylon carries before "
+                   "committing to the detour",
+            "C19": "how many producers a realm holds, which is what stands on it",
+        }),
+    "screens": dict(
+        what="The 27 screens in \u00a723, their contents and their counts",
+        gates={
+            "C6":  "which roster the character screens read from \u2014 the two "
+                   "disagree about eleven creatures",
+            "C3":  "how many law ranks the Codex has to display, three or four",
+            "C8":  "whether the Library is a seventeenth building with a screen "
+                   "of its own",
+        }),
+    "characters": dict(
+        what="The 18 ruleborn, their forms, and what the art has to show",
+        gates={
+            "C6":  "eleven of the eighteen are different creatures in the two "
+                   "rosters, not different wordings",
+            "D6":  "144 forms or 54 \u2014 the largest single art number in the "
+                   "project, and a threefold difference",
+            "Q5":  "accepting or refusing that cut is the decision underneath it",
+        }),
+}
+
 RESEARCH = {
     "Q5": "How much content do comparable mobile builders actually ship at "
           "launch, counted the way \u00a726.1 counts \u2014 distinct rules, "

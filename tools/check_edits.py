@@ -200,6 +200,45 @@ def unexplained_missing_edits() -> list:
     return out
 
 
+def bad_sides() -> list:
+    """Every id in FRONTEND, BOTH and DESIGN_GATES must be a real item.
+
+    And a design gate must name something still open: an area gated by an item
+    the register has closed is telling a designer to wait for work that is done.
+    """
+    from audit_register import BOTH, DESIGN_GATES, FRONTEND, V3, V31
+
+    known = {i["id"] for i in REGISTER}
+    out = []
+    for name, table in (("FRONTEND", FRONTEND), ("BOTH", BOTH)):
+        for item_id in table:
+            if item_id not in known:
+                out.append(f"{name} names {item_id}, which is not in the register")
+    overlap = set(FRONTEND) & set(BOTH)
+    if overlap:
+        out.append(f"both frontend and both: {sorted(overlap)}")
+
+    def status(item_id):
+        item = next((i for i in REGISTER if i["id"] == item_id), None)
+        if item is None:
+            return None
+        return (V31.get(item_id, {}).get("status")
+                or V3.get(item_id, {}).get("status")
+                or item.get("status", "open"))
+
+    for area, spec in DESIGN_GATES.items():
+        for item_id in spec["gates"]:
+            st = status(item_id)
+            if st is None:
+                out.append(f"DESIGN_GATES[{area}] names {item_id}, which is not "
+                           f"in the register")
+            elif st not in ("open", "proposed"):
+                out.append(f"DESIGN_GATES[{area}] says {item_id} gates the "
+                           f"design, but the register has it {st} \u2014 a "
+                           f"designer would be waiting for finished work")
+    return out
+
+
 def self_test() -> int:
     """Plant each shape this check exists for, and prove it sees them.
 
@@ -278,6 +317,7 @@ def main() -> int:
     problems.extend(dangling_sections(doc_text))
     problems.extend(dangling_prose_sections(doc_text))
     problems.extend(unexplained_missing_edits())
+    problems.extend(bad_sides())
 
     known = {i["id"] for i in REGISTER}
     for item_id in EDITS:
