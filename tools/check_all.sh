@@ -29,6 +29,7 @@ python3 tools/generate_docs.py --check
 
 echo
 echo "== the register's edits match the document =="
+python3 tools/check_edits.py --self-test
 python3 tools/check_edits.py
 
 echo

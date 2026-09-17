@@ -19,7 +19,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
-from audit_register import EDITS, REGISTER                          # noqa: E402
+from audit_register import EDITS, REGISTER, V3, V31                  # noqa: E402
 
 DOC = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
 GENERATED = ROOT / "docs" / "design" / "generated"
@@ -66,6 +66,50 @@ def duplicate_keys() -> list:
     return out
 
 
+#: Section references in register prose that cannot resolve and are meant not
+#: to, with a reason each. The pattern is check_unread_fields.py's KNOWN_UNREAD:
+#: an entry here is debt somebody has looked at, not debt nobody has noticed.
+KNOWN_UNRESOLVABLE = {
+    ("D2", "25.5"): "deliberate: the sentence is about what v2.3's §25.5 said, "
+                    "and names §25.4 as its replacement in the same breath",
+}
+
+
+def dangling_prose_sections(doc: str) -> list:
+    """Every §N and §N.M written in register prose must resolve.
+
+    `refs` lists and edit sections were already checked. The prose was not, and
+    it holds 678 references — by far the largest surface. v3.1's renumbering
+    left 37 of them pointing at sections that no longer existed, and they were
+    found by hand rather than by anything running.
+
+    Chapters are read from the document's own chapter headings rather than from
+    the prefixes of subsection numbers. Chapter 4 has no subsections, so a set
+    built from "N.M" prefixes does not contain it and four true references to
+    §4 look broken — which is what the first version of this did.
+    """
+    sections = set(re.findall(r"^(\d+\.\d+) ", doc, re.M))
+    chapters = set(re.findall(r"^(\d+)[A-Z]", doc, re.M))
+
+    out = []
+
+    def scan(item_id: str, field: str, text: str) -> None:
+        for ref in re.findall(r"\u00a7(\d+(?:\.\d+)?)", text or ""):
+            resolves = ref in sections if "." in ref else ref in chapters
+            if resolves or (item_id, ref) in KNOWN_UNRESOLVABLE:
+                continue
+            out.append(f"{item_id}: {field} cites \u00a7{ref}, which is not a "
+                       f"section or chapter of the document")
+
+    for item in REGISTER:
+        for field in ("title", "body", "rec"):
+            scan(item["id"], field, item.get(field, ""))
+    for name, table in (("v3.0 note", V3), ("v3.1 note", V31)):
+        for item_id, entry in table.items():
+            scan(item_id, name, entry.get("note", ""))
+    return out
+
+
 def dangling_sections(doc: str) -> list:
     """Every section an edit or an item names must exist in the document.
 
@@ -94,7 +138,42 @@ def dangling_sections(doc: str) -> list:
     return out
 
 
+def self_test() -> int:
+    """Plant each shape this check exists for, and prove it sees them.
+
+    Three shapes, because all three happened. A section v3.1 renumbered away
+    (37 of those, found by hand). A bibliography reference written as a section
+    — G9's rec cited §49, which is the IKEA-effect citation [49] and not a
+    section of a document with 31 chapters. And a chapter that is real but has
+    no subsections, which a naive chapter set misses: §4 Core loops.
+    """
+    doc = DOC.read_text(encoding="utf-8")
+    item = next(i for i in REGISTER if i["id"] == "F26")
+    was, ok = item["rec"], True
+
+    for label, planted, should_fire in (
+        ("a section renumbered away", "see \u00a75.9 for the rule", True),
+        ("a reference cited as one", "the finding at \u00a749 says", True),
+        ("a chapter with no subsections", "\u00a74 names the loops", False),
+    ):
+        item["rec"] = planted
+        fired = bool(dangling_prose_sections(doc))
+        print(f"  [{'PASS' if fired == should_fire else 'FAIL'}] {label}: "
+              f"{'caught' if fired else 'allowed'}")
+        ok = ok and fired == should_fire
+    item["rec"] = was
+
+    if dangling_prose_sections(doc):
+        print("  [FAIL] the register does not pass its own check with nothing planted")
+        ok = False
+    else:
+        print("  [PASS] and the register itself is clean")
+    return 0 if ok else 1
+
+
 def main() -> int:
+    if "--self-test" in sys.argv:
+        return self_test()
     if not DOC.exists():
         print(f"{DOC} is missing — run tools/extract_design_doc.py", file=sys.stderr)
         return 1
@@ -107,7 +186,9 @@ def main() -> int:
                  json.loads((CONTENT / "ruleborn.json").read_text(encoding="utf-8"))}
 
     problems.extend(duplicate_keys())
-    problems.extend(dangling_sections(DOC.read_text(encoding="utf-8")))
+    doc_text = DOC.read_text(encoding="utf-8")
+    problems.extend(dangling_sections(doc_text))
+    problems.extend(dangling_prose_sections(doc_text))
 
     known = {i["id"] for i in REGISTER}
     for item_id in EDITS:
