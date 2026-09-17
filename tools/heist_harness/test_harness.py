@@ -535,6 +535,47 @@ def test_13_2s_band_falls_inside_a_gap_the_defence_cannot_enter():
         f"two posts {two_posts:.1f}%")
 
 
+def test_wards_are_the_lever_realm_1_has_and_5_2_rations():
+    """F26's fix. §5.2 gives realm 1 four wards and the band needs about ten.
+
+    The assertion is the *ordering*, not the crossing point. Where the ward axis
+    crosses 30% is a location and therefore noisy — 30.8% ± 1.6 at n=800, half a
+    standard error inside — while "ten wards hold materially more than four" is
+    a difference, and the difference is what the recommendation rests on.
+
+    This is also the counterfactual guard: an island built with more wards than
+    §5.2 allows sets `ward_budget`, so nothing here can be mistaken for a legal
+    island. If §5.2's ward formula changes, this test is what says whether the
+    new number reaches the band.
+    """
+    from .island import generate
+    from .laws import weave
+    from .policy import Competent
+    from .sim import Heist
+
+    def hold(wards: int, n: int = 200) -> float:
+        held = 0
+        for i in range(n):
+            crossing = [generate(900_000 + i * 8 + k, 1, shaped=1, posts=1,
+                                 wards=wards) for k in range(2)]
+            heist = Heist(generate(i, 1, shaped=1, posts=1, wards=wards),
+                          Competent(), realm_level=1, crossing=crossing,
+                          sheet=weave(i, 1, favour_defender=True))
+            if not heist.run().success:
+                held += 1
+        return 100 * held / n
+
+    lawful, doubled = hold(4), hold(10)
+    assert doubled - lawful > 6, (
+        f"ten wards held {doubled:.1f}% against four at {lawful:.1f}%, a gap of "
+        f"{doubled - lawful:.1f} points. F26 measured 11.6 and concluded the ward "
+        f"axis is the one lever that reaches §13.2's band at realm 1; if that gap "
+        f"has closed, the recommendation is stale")
+    assert generate(0, 1, wards=10).ward_budget == 10, (
+        "an island past §5.2's ward limit must carry ward_budget, so a "
+        "counterfactual cannot be mistaken for a legal island")
+
+
 def test_the_geometry_is_a_dial_and_not_a_switch():
     """F22's second half. With the geometry on or off, a realm-1 island on two
     posts holds 15.5% or 51.5% and steps straight over §13.2's band; one band

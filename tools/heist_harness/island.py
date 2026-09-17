@@ -86,6 +86,13 @@ class Island:
     vault: tuple[int, int]
     patrols: list[Patrol] = field(default_factory=list)
     wards: list = field(default_factory=list)
+    #: When set, the ward count was overridden past §5.2's own limit on purpose,
+    #: and `check()` measures against this instead. F26 asks what realm 1 would
+    #: need to reach §13.2's band, and §5.2 already places its maximum there —
+    #: four wards, no headroom — so the question cannot be asked inside the
+    #: rule. An island built this way is a *counterfactual*, not a legal island,
+    #: and any number measured from it says what §5.2 would have to allow.
+    ward_budget: int | None = None
     seed: int = 0
     realm_level: int = 3
 
@@ -130,11 +137,12 @@ class Island:
             raise AssertionError(
                 f"island {self.seed}: no route from the entry to the Vault — "
                 "§6.1 forbids sealing the last path to the Heart")
-        limit = 3 + self.realm_level
+        limit = self.ward_budget if self.ward_budget is not None else 3 + self.realm_level
         if len(self.wards) > limit:
             raise AssertionError(
-                f"island {self.seed}: {len(self.wards)} wards, §5.2 allows {limit} "
-                f"at realm level {self.realm_level}")
+                f"island {self.seed}: {len(self.wards)} wards, "
+                f"{'the override' if self.ward_budget is not None else '§5.2'} "
+                f"allows {limit} at realm level {self.realm_level}")
         for p in self.patrols:
             if not 1 <= p.level <= 5:
                 raise AssertionError(
@@ -163,7 +171,7 @@ ALL_LAYERS = frozenset(LAYERS)
 
 def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
              shaped: bool | int = False, posts: int | None = None,
-             post_level: int = 1) -> Island:
+             post_level: int = 1, wards: int | None = None) -> Island:
     """A small realm, laid out so a route exists and a guard can see it.
 
     §5.2 gives realm grids by level; level 3 is 12x12. The default layout is
@@ -258,7 +266,9 @@ def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
     # or an ablation measures the confound rather than the layer: an earlier
     # version derived it from the route length, so turning geometry off removed a
     # ward as well, and the geometry share absorbed the ward's.
-    ward_count = (3 + realm_level) if "wards" in layers else 0
+    ward_count = (3 + realm_level if wards is None else wards) if "wards" in layers else 0
+    if wards is not None:
+        island.ward_budget = wards
     spots = _ward_spots(island, route, ward_count)
     for i, spot in enumerate(spots):
         island.wards.append(Ward(kinds[i % len(kinds)], spot[0], spot[1], ward_level))
