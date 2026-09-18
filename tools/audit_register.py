@@ -2433,6 +2433,46 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D36", kind="deviation", severity="change", status="done",
+     title="Nine copies of \u201cwhich version are we on\u201d, and D30 is what "
+           "happens when two of them disagree",
+     refs=["31.2", "31.4"],
+     body="The design document\u2019s filename carries its version, so every "
+          "tool that opens it holds a copy of which version this repository "
+          "reads. There were <strong>nine, across six files</strong>, and "
+          "nothing compared them."
+          "<br><br><strong>D30 is that fault, already suffered.</strong> "
+          "<code>extract_content.py</code> built the content tables from v3.0 "
+          "and <code>validate_content.py</code> validated them against v3.0, so "
+          "the pair agreed and three of v3.1\u2019s improvements were invisible "
+          "\u2014 one of which had the economy model understating the Library "
+          "faucet by up to 47%. <strong>D30 was fixed by editing the two "
+          "filenames</strong>, which left the other seven for the next version "
+          "to find."
+          "<br><br><code>check_document_version</code> could not help, and it "
+          "is worth being exact about why: it reads <em>prose</em> naming a "
+          "version \u2014 \u201cthe design document at v3.0\u201d \u2014 and "
+          "these are paths. A path is not prose, so a file pinned to an old "
+          "document passes every check in the repository and disagrees with "
+          "every other file silently.",
+     rec="Fixed. <code>tools/design_doc.py</code> declares the version once and "
+         "derives both filenames from it; the six tools import them. Moving to "
+         "v3.2 is one line."
+         "<br><br><code>check_docs_consistency.check_one_document_home()</code> "
+         "refuses a version-pinned document filename anywhere else, with two "
+         "exceptions that are honest: <code>extract_design_doc</code> converts "
+         "one version\u2019s HTML into its own text and shows both in its usage "
+         "line, and <code>tools/vendor/</code> is the document\u2019s own "
+         "shipped checker, which belongs to the document and is right to pin "
+         "itself to the version it shipped with."
+         "<br><br>It also reports a <em>newer</em> document sitting in "
+         "<code>docs/design/</code> that nothing reads. The version is a "
+         "declared constant rather than \u201cthe newest file present\u201d on "
+         "purpose: reading the newest would never go stale and would also "
+         "repoint every gate the moment a draft landed, before anyone decided "
+         "it was the one to read. The constant keeps that a decision and makes "
+         "forgetting it a build message rather than a silence."),
+
 dict(id="D35", kind="deviation", severity="significant", status="done",
      title="An item\u2019s status was worked out in twelve places, and four of "
            "them had never heard of v3.1",

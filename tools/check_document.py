@@ -70,7 +70,11 @@ import check_design_consistency as design          # noqa: E402
 from extract_design_doc import extract             # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT_DOC = os.path.join(ROOT, "docs", "design", "ruleborn-game-design-v3.1.html")
+from design_doc import HTML as _HTML                              # noqa: E402
+
+#: The document every check reads. Its version lives in design_doc.py and
+#: nowhere else — there were nine copies of it, which is D36.
+DEFAULT_DOC = str(_HTML)
 CONSTANTS = os.path.join(ROOT, "content", "upstream", "constants.json")
 CREATURES = os.path.join(ROOT, "content", "upstream", "creatures.json")
 

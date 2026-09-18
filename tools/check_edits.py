@@ -21,7 +21,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from audit_register import EDITS, REGISTER, V3, V31, status          # noqa: E402
 
-DOC = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
+from design_doc import TEXT as DOC                                # noqa: E402
 GENERATED = ROOT / "docs" / "design" / "generated"
 CONTENT = ROOT / "content"
 ACTIONS = {"replace", "delete", "insert", "regenerate", "retag"}

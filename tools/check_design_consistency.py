@@ -21,7 +21,9 @@ import itertools
 import re
 import sys
 
-DEFAULT_DOC = "docs/design/ruleborn-game-design-v3.1.txt"
+from design_doc import TEXT as _TEXT
+
+DEFAULT_DOC = str(_TEXT)
 
 # --------------------------------------------------------------------------
 # Supersession

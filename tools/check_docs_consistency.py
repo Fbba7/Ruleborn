@@ -545,6 +545,51 @@ def check_one_status_home() -> None:
                  f"import audit_register.status instead")
 
 
+def check_one_document_home() -> None:
+    """D36. Only design_doc.py may name a version-pinned document filename.
+
+    The document's filename carries its version, so every tool that opens it
+    holds a copy of "which version are we on". There were nine, across six
+    files, and nothing compared them — which is D30 exactly: the content
+    tables were built from v3.0 and validated against v3.0, so the pair agreed
+    and three of v3.1's improvements were invisible.
+
+    `check_document_version` could not help. It reads prose that names a
+    version; these are paths, and a path is not prose.
+
+    Two exceptions, both honest. `extract_design_doc` converts one version's
+    HTML into its own text and shows both in its usage line, which is what a
+    usage line is for. `tools/vendor/` is the design document's own shipped
+    checker: it belongs to the document, not to this repository, and pinning
+    itself to the version it shipped with is correct.
+    """
+    versioned = re.compile(r"ruleborn-game-design-v\d")
+    allowed = {"design_doc.py", "check_docs_consistency.py", "audit_register.py"}
+    for path in sorted((ROOT / "tools").rglob("*.py")):
+        if any(part in ("__pycache__", "vendor") for part in path.parts):
+            continue
+        if path.name in allowed:
+            continue
+        text = path.read_text(encoding="utf-8")
+        for n, line in enumerate(text.splitlines(), 1):
+            if not versioned.search(line):
+                continue
+            # A usage example in a docstring is documentation, not a constant.
+            if path.name == "extract_design_doc.py" and n < 30:
+                continue
+            fail(f"{rel(path)}:{n} names a version-pinned document filename; "
+                 f"import design_doc.HTML or design_doc.TEXT instead")
+
+    # And the declared version must be the one every other check reads.
+    import design_doc
+    if design_doc.VERSION != current_version():
+        fail(f"design_doc.VERSION is {design_doc.VERSION} and the checks read "
+             f"v{current_version()}")
+    for newer in design_doc.newer_on_disk():
+        fail(f"docs/design has a v{newer} document and nothing reads it — "
+             f"move design_doc.VERSION, or say why it is sitting there")
+
+
 def check_artifact_urls(files: list[pathlib.Path]) -> None:
     """One artifact, one URL, everywhere it is mentioned."""
     url = re.compile(r"https://claude\.ai/artifact/([A-Za-z0-9]+)")
@@ -651,6 +696,7 @@ def main() -> int:
     check_spec_status()
     check_tools_parse()
     check_one_status_home()
+    check_one_document_home()
     check_artifact_urls(files)
     check_generated_marked()
     check_tool_output_counts(files)
@@ -779,6 +825,30 @@ def _self_test() -> None:
     assert caught, "a second copy of the effective status went unnoticed"
     print("  a tool working out an item's status for itself is caught")
 
+    # A tool pinning itself to a version, and a newer document nobody reads.
+    # Both planted on disk rather than in a string: the check walks the tree
+    # and a fixture would prove the regex works, not that the walk arrives.
+    import design_doc
+    pinned = ROOT / "tools" / "_selftest_pinned.py"
+    # Built rather than written out, so this file does not itself contain a
+    # version-pinned filename for the checks above to find.
+    stem = "ruleborn-game-design-v"
+    pinned.write_text(f'DOC = "docs/design/{stem}3.0.txt"\n', encoding="utf-8")
+    ahead = design_doc.DESIGN / f"{stem}9.9.txt"
+    ahead.write_text("a draft nobody reads\n", encoding="utf-8")
+    was, problems = problems, []
+    try:
+        check_one_document_home()
+        found = "; ".join(problems)
+    finally:
+        problems = was
+        pinned.unlink()
+        ahead.unlink()
+    assert "_selftest_pinned" in found, "a pinned document filename went unnoticed"
+    assert "v9.9" in found, "a newer document nobody reads went unnoticed"
+    print("  a tool pinned to a document version is caught, and so is a newer\n"
+          "  document sitting unread")
+
     for text, allowed in (("see \u00a75.9 for the rule", False),
                           ("v3.0's \u00a75.9, renumbered \u00a75.8 in v3.1", True),
                           ("an earlier version's \u00a713.5", True),
@@ -829,7 +899,7 @@ def _self_test() -> None:
 
     now = current_version()
     assert re.fullmatch(r"\d+\.\d+", now), now
-    doc = ROOT / "docs" / "design" / f"ruleborn-game-design-v{now}.html"
+    doc = design_doc.HTML
     assert doc.exists(), doc
     print(f"  the version the checks read is v{now}, and that document exists")
     print("self-test passed")

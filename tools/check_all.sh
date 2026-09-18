@@ -14,6 +14,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+echo "== which design document every check reads =="
+python3 tools/design_doc.py
+
+echo
 echo "== design document consistency =="
 python3 tools/check_document.py --self-test
 python3 tools/check_document.py --coverage

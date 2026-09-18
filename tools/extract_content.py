@@ -24,7 +24,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SRC = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
+from design_doc import TEXT as SRC                                # noqa: E402
 OUT = ROOT / "content"
 
 NOTES = ["Flow", "Weight", "Glow", "Hush", "Bloom", "Spark", "Echo", "Veil"]

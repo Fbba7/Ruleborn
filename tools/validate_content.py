@@ -27,6 +27,8 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+from design_doc import TEXT as DOC_TEXT                              # noqa: E402
 CONTENT = ROOT / "content"
 
 NOTES = ["Flow", "Weight", "Glow", "Hush", "Bloom", "Spark", "Echo", "Veil"]
@@ -59,7 +61,7 @@ LAUNCH_ROWS = {
 
 def launch_table() -> dict[str, int]:
     """What 26.1 claims the launch content is, by row name."""
-    doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
+    doc = DOC_TEXT
     if not doc.exists():
         return {}
     block = re.search(r"^26\.1 .*?(?=^26\.2 )", doc.read_text(encoding="utf-8"),
@@ -140,7 +142,7 @@ def _doc_declares_attributes() -> bool:
     the sentence that says so — the content reader keys off it, so if the
     declaration ever leaves the document the tables stop claiming the fields.
     """
-    doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
+    doc = DOC_TEXT
     if not doc.exists():
         return False
     text = doc.read_text(encoding="utf-8")
@@ -544,7 +546,7 @@ def main() -> int:
     # v3.0's §21.8 now says "every school has a sound signature — six in all",
     # which is what the content holds. The check only fires against the older
     # wording, where every *law* had one.
-    doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
+    doc = DOC_TEXT
     per_law_claimed = doc.exists() and "every law also has a sound signature" in \
         doc.read_text(encoding="utf-8")
     sounds = collections.Counter(law["sound"] for law in laws)
