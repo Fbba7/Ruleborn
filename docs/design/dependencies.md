@@ -45,7 +45,7 @@ Nothing these depend on is still open.
 | C19 | blocking | open | The production tables describe a universe the build rules do not permit | 1 |
 | C2 | blocking | proposed | Two incompatible raid-payout models, differing by 16–30× | 3 |
 | C21 | blocking | open | The formulas appendix still carries the detection model §12.8 deleted |  |
-| C6 | blocking | proposed | Two ruleborn rosters — and eleven are different creatures, not different wordings | 1 |
+| C6 | blocking | proposed | Two ruleborn rosters — the roles now agree, the abilities do not | 1 |
 | F17 | blocking | proposed | Aether and Essence have no sinks, because every price in §9.5 is on the wrong kind of curve | 2 |
 | F22 | blocking | proposed | §5.2’s one guard post puts §13.2’s band out of reach at realms 1 and 2, whatever the generator does | 11 |
 | F24 | blocking | open | v3.1’s supersession check passes on a document that still contains the model it was written to ban |  |

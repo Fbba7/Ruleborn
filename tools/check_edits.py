@@ -12,7 +12,7 @@ So every `find` string is searched for verbatim, and a miss fails the build.
 The same check catches the subtler case: a `find` that appears more than once,
 which makes "replace it" ambiguous.
 """
-
+import itertools
 import pathlib
 import re
 import sys
@@ -345,11 +345,30 @@ def bad_sides() -> list:
                            f"which is not in the register")
             elif st in ("open", "proposed"):
                 out.append(f"DESIGN_GATES[{area}] counts {item_id} as a gate "
-                           f"already cleared, but the register has it {st}")
-        both = set(spec["gates"]) & set(spec.get("closed", {}))
-        if both:
-            out.append(f"DESIGN_GATES[{area}] lists {sorted(both)} as both open "
-                       f"and cleared")
+                           f"already cleared, but the register has it {st} "
+                           f"\u2014 put it under `partly` if only this area's "
+                           f"half of it is done")
+        # `partly` is for an item that still gates something and no longer gates
+        # *this*: C6 blocked character art while the two rosters disagreed about
+        # what three creatures were, and stopped when v3.1 reconciled them —
+        # while staying open for the ability text, which is not something an
+        # artist draws. The mirror of the rule above: an entry here whose item
+        # has closed belongs under `closed`, or the area undercounts itself.
+        for item_id in spec.get("partly", {}):
+            st = status(item_id)
+            if st is None:
+                out.append(f"DESIGN_GATES[{area}] partly names {item_id}, "
+                           f"which is not in the register")
+            elif st not in ("open", "proposed"):
+                out.append(f"DESIGN_GATES[{area}] has {item_id} partly cleared, "
+                           f"but the register has it {st} \u2014 it belongs "
+                           f"under `closed`")
+        lists = ("gates", "closed", "partly")
+        for a, b in itertools.combinations(lists, 2):
+            both = set(spec.get(a, {})) & set(spec.get(b, {}))
+            if both:
+                out.append(f"DESIGN_GATES[{area}] lists {sorted(both)} under "
+                           f"both {a} and {b}")
     return out
 
 

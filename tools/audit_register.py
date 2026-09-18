@@ -388,19 +388,46 @@ dict(id="C5", kind="contradiction", severity="blocking", status="proposed",
          "ward and guard numbers into one table in §5.2."),
 
 dict(id="C6", kind="contradiction", severity="blocking", status="proposed",
-     title="Two ruleborn rosters — and eleven are different creatures, not different wordings",
+     title="Two ruleborn rosters — the roles now agree, the abilities do not",
      refs=["11.2", "11.11", "11.5", "12.8"],
-     body="The same 18 creatures are specified twice. Prism Mite is a Carrier in "
-          "§11.2 and a Scout in §11.11; Stormhound is a Scout then a Carrier; "
-          "Rootrunner a Carrier then a Scout. That changes the role distribution "
-          "(3 Scout / 4 Carrier versus 4 Scout / 3 Carrier), and role drives crew "
-          "composition, guard behaviour (§12.8) and the Nursery's "
-          "fewest-roles-first rule (§11.5). Most of the other fifteen disagree on "
-          "ability, cooldown or resistance — Featherkin 12s or 14s, Echoplate "
-          "returns at 50% or 40%, Rootrunner ignores Spores or Heavy ground.",
+     body="The same 18 creatures are specified twice. Against v2.3 and v3.0 the "
+          "two disagreed about what three of them <em>were</em>: Prism Mite a "
+          "Carrier in §11.2 and a Scout in §11.11, Stormhound a Scout "
+          "then a Carrier, Rootrunner a Carrier then a Scout — a different "
+          "role distribution (3 Scout / 4 Carrier against 4 Scout / 3 Carrier), "
+          "and role drives crew composition, guard behaviour (§12.8) and "
+          "the Nursery’s fewest-roles-first rule (§11.5)."
+          "<br><br><strong>v3.1 closed that half, and nothing said so.</strong> "
+          "Read out of the built document, the two sections now agree on every "
+          "creature’s school and role, with identical distributions: "
+          "3 Scout, 3 Breaker, 4 Carrier, 4 Warden, 4 Mender. This item kept "
+          "its old headline for a version. <code>validate_content.py</code> "
+          "reported the role conflicts and nothing else, so the moment the "
+          "roles reconciled it went silent on an open item — a check "
+          "losing its subject, which reads exactly like a check passing."
+          "<br><br>What is left is one field: <strong>all 18 give different "
+          "ability text</strong>. Featherkin glides for 12s or 14s, Echoplate "
+          "returns 50% or 40%, Rambler charges 4 tiles breaking a wall or 5 "
+          "breaking a ward. Real work and a real contradiction — but the "
+          "two sections are one reconciliation apart rather than two rosters "
+          "apart.<br><br><strong>Nothing an artist reads is in dispute.</strong> "
+          "§11.2 carries name, school, role, size, flight, ability and "
+          "passive; look, proportions, personality and habits are "
+          "§11.11’s alone, so there was never a second opinion about "
+          "them. With the roles agreed, character design is no longer waiting "
+          "on this item.",
      rec="§11.11 is the richer and later spec. Make it authoritative, reduce §11.2 "
          "to a generated index, and hold both in <strong>one creature data "
-         "table</strong> — exactly the server-side content data §24 describes."),
+         "table</strong> — exactly the server-side content data §24 describes. "
+         "<code>content/ruleborn.json</code> already holds both readings: every "
+         "creature carries §11.11’s fields and an <code>alt_11_2</code> "
+         "with whatever §11.2 says differently, so the reconciliation is 18 "
+         "rows to read rather than two sections to diff."
+         "<br><br>The scope is smaller than this item was written for. Since the "
+         "roles agree, adopting §11.11’s ability text changes no crew "
+         "composition, no guard behaviour and no Nursery weighting — it "
+         "changes 18 sentences and the cooldowns in them. That is a sitting, not "
+         "a decision.<br><br><code>python3 tools/validate_content.py</code>"),
 
 dict(id="C19", kind="contradiction", severity="blocking", status="open",
      title="The production tables describe a universe the build rules do not permit",
@@ -3420,8 +3447,10 @@ DESIGN_GATES = {
     "screens": dict(
         what="The 27 screens in \u00a723, their contents and their counts",
         gates={
-            "C6":  "which roster the character screens read from \u2014 the two "
-                   "disagree about eleven creatures",
+            "C6":  "which ability text a character screen shows \u2014 the two "
+                   "sections agree on every role now and differ on all 18 "
+                   "abilities, so it is content to pick rather than a layout "
+                   "to change",
             "C3":  "how many law ranks the Codex has to display, three or four",
             "C8":  "whether the Library is a seventeenth building with a screen "
                    "of its own",
@@ -3435,8 +3464,6 @@ DESIGN_GATES = {
     "characters": dict(
         what="The 18 ruleborn, their forms, and what the art has to show",
         gates={
-            "C6":  "eleven of the eighteen are different creatures in the two "
-                   "rosters, not different wordings",
             "D6":  "144 forms or 54 \u2014 the largest single art number in the "
                    "project, and a threefold difference",
             "Q5":  "accepting or refusing that cut is the decision underneath it",
@@ -3445,6 +3472,12 @@ DESIGN_GATES = {
             "C26": "size and flight are stated properties of every ruleborn, "
                    "so the art has a band to draw to",
             "G12": "the three laws that read those properties now have them",
+        },
+        partly={
+            "C6":  "what each of the eighteen is \u2014 v3.1 reconciled the "
+                   "three role swaps, and look, proportions and personality "
+                   "were only ever in \u00a711.11. The item stays open for "
+                   "the ability text, which is not something an artist draws",
         }),
 }
 

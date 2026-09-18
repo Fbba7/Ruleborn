@@ -534,9 +534,22 @@ def main() -> int:
     role_conflicts = [r["name"] for r in data["ruleborn"]
                       if r.get("conflict_severity") == "role"]
     wording = sum(1 for r in data["ruleborn"] if r.get("conflict_severity") == "wording")
+    # The wording half was never reported. `if role_conflicts:` meant that the
+    # moment v3.1 reconciled the three role swaps this check went silent on an
+    # item the register still had open — a check losing its subject, which
+    # reads exactly like a check passing.
     if role_conflicts:
-        opn("C6", f"§11.2 and §11.11 give different roles for {', '.join(role_conflicts)}; "
-                  f"{wording} more differ on ability wording")
+        opn("C6", f"§11.2 and §11.11 give different roles for "
+                  f"{', '.join(role_conflicts)}, which changes crew "
+                  f"composition, guard behaviour and the Nursery's "
+                  f"fewest-roles-first rule; {wording} more differ on ability "
+                  f"wording")
+    elif wording:
+        opn("C6", f"§11.2 and §11.11 agree on every ruleborn's school "
+                  f"and role — v3.1 closed that half — but all "
+                  f"{wording} still give different ability text, so the two "
+                  f"sections are one reconciliation apart rather than two "
+                  f"rosters apart")
 
     report()
     return 1 if (errors or stale_reports()

@@ -152,20 +152,28 @@ def side_progress(side: str) -> dict:
 
 
 def areas_of(item_id: str) -> list[str]:
-    """Which design areas this item gates, open or already cleared.
+    """Which design areas this item has ever gated, in any state.
 
-    An item can gate more than one: C6's two rosters decide both which roster
-    a character screen reads from and what eleven of the eighteen creatures
-    actually are.
+    An item can gate more than one and be in a different state in each: C6
+    still decides which ability text a character screen shows, and has stopped
+    deciding anything a character artist draws.
     """
     return [area for area, spec in DESIGN_GATES.items()
-            if item_id in spec["gates"] or item_id in spec.get("closed", {})]
+            if any(item_id in spec.get(k, {})
+                   for k in ("gates", "closed", "partly"))]
 
 
 def area_gates(area: str) -> tuple[list[str], list[str]]:
-    """The register items that gate one design area: cleared, then still open."""
+    """One design area's gates: those cleared for it, then those still open.
+
+    An item under `partly` counts as cleared *for this area* while staying
+    open elsewhere. That is the honest arithmetic — the bar answers "can the
+    drawing start", and an item that has stopped blocking the drawing has
+    stopped blocking the drawing whatever else it still decides.
+    """
     spec = DESIGN_GATES[area]
-    return list(spec.get("closed", {})), list(spec["gates"])
+    return (list(spec.get("closed", {})) + list(spec.get("partly", {})),
+            list(spec["gates"]))
 
 
 def area_progress(area: str) -> dict:
@@ -261,19 +269,33 @@ def design_gates_html() -> str:
             f'<li><a href="#{gid}">{gid}</a> {why} '
             f'<span style="opacity:.65">&mdash; {esc(by_id[gid]["title"])}</span></li>'
             for gid, why in gates.items())
+        # What this area no longer waits on, so the panel says how far it has
+        # come rather than only what is left. Nine of these were cleared by
+        # v3.0 and v3.1 and the page never said so.
+        done = {**spec.get("closed", {}), **spec.get("partly", {})}
+        cleared = "".join(
+            f'<li><a href="#{gid}">{gid}</a> {why}</li>'
+            for gid, why in done.items())
+        settled = (f'<details class="cleared"><summary>{len(done)} already '
+                   f'settled</summary><ul>{cleared}</ul></details>'
+                   if done else "")
         body = (f"<ul>{rows}</ul>" if gates else
                 '<p class="clear">Nothing open. This can start now.</p>')
         out.append(
             f'<div class="gate-area"><h3>{esc(area.capitalize())}'
             f'<span class="gate-count{cls}">{len(gates)} open</span></h3>'
-            f'<p class="what">{spec["what"]}</p>{body}</div>')
+            f'<p class="what">{spec["what"]}</p>{body}{settled}</div>')
     return f"""
     <details><summary>When the design of realms, screens and characters can
       start</summary>
       <p class="blurb">Each area lists the items still open that decide
         something a designer would otherwise have to guess, and what each one
-        changes about the drawing. Almost all of them are backend items: the
-        split says where work happens, this says what it holds up.</p>
+        changes about the drawing, then what it has already settled. Almost all
+        of them are backend items: the split says where work happens, this says
+        what it holds up. An item can be settled for one area and open for
+        another &mdash; C6 stopped deciding anything a character artist draws
+        when v3.1 reconciled the two rosters&rsquo; roles, and still decides
+        which ability text a screen shows.</p>
       <div class="gates">{''.join(out)}</div>
     </details>"""
 
@@ -842,6 +864,15 @@ def build() -> str:
   .gate-area ul {{ margin: 0; padding-left: 20px; }}
   .gate-area li {{ font-size: 14px; margin-bottom: 6px; }}
   .gate-area .clear {{ color: var(--cho); font-size: 14px; }}
+  .cleared {{ margin-top: 8px; }}
+  .cleared > summary {{
+    cursor: pointer; font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px; color: var(--cho); list-style: none;
+  }}
+  .cleared > summary::-webkit-details-marker {{ display: none; }}
+  .cleared > summary::before {{ content: "\2713 "; }}
+  .cleared > summary:hover {{ text-decoration: underline; }}
+  .cleared li {{ color: var(--muted); font-size: 13.5px; }}
   .gate-count {{
     font-family: "IBM Plex Mono", monospace; font-size: 11px;
     color: var(--ground); background: var(--blk);
