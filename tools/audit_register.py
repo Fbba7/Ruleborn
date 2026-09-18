@@ -2433,6 +2433,58 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D35", kind="deviation", severity="significant", status="done",
+     title="An item\u2019s status was worked out in twelve places, and four of "
+           "them had never heard of v3.1",
+     refs=["31.2", "31.4"],
+     body="A register item carries three opinions about itself: the "
+          "<code>status</code> written when it was found, what "
+          "<code>V3</code> records v3.0 did about it, and what <code>V31</code> "
+          "records v3.1 did. The effective status is the latest of the three "
+          "that has an opinion, and that expression \u2014 three lines of "
+          "<code>or</code> \u2014 <strong>existed twelve times across seven "
+          "files</strong>."
+          "<br><br><strong>Four of the copies were written before "
+          "<code>V31</code> existed and never learned about it.</strong> "
+          "<code>build_audit._status_of</code>, "
+          "<code>build_roadmap.status_of</code>, "
+          "<code>check_dependencies.status_of</code> and "
+          "<code>check_edits</code>\u2019s coverage report each read v3.0\u2019s "
+          "answer and stopped, so the nine items v3.1 closed \u2014 C7, C10, "
+          "C17, C21, C24, C26, D4, D10, G12 \u2014 read as open in all four."
+          "<br><br><strong>The audit page said two different things about "
+          "itself.</strong> Its header counted with the v3.1-aware copy; its "
+          "<em>Where to start</em> section counted with the v3.0-only one and "
+          "reported <strong>60 items open and 30 workable against a true 51 "
+          "and 25</strong>. Nine settled items were listed as work to do, and "
+          "F10 was shown blocked by something already fixed. Two functions in "
+          "one file, answering one question two ways, on the page the project "
+          "is read through."
+          "<br><br><code>SETTLED</code> had four homes as well, twice in "
+          "<code>build_audit.py</code> alone \u2014 once as a set and once as "
+          "a tuple with the same members.",
+     rec="Fixed. <code>audit_register.status()</code> and "
+         "<code>is_open()</code> are the home, beside the data rather than in "
+         "any one reader, and all twelve call sites import them."
+         "<br><br><code>check_docs_consistency.check_one_status_home()</code> "
+         "refuses a second copy: a <code>V31.get(\u2026)[\u2018status\u2019]</code> "
+         "chained to a fallback, anywhere but the register, fails the build. "
+         "Counting what one particular version fixed is a different question "
+         "and still allowed, which is why the check looks for the chain rather "
+         "than the lookup. <code>--self-test</code> plants the exact expression "
+         "that was in the four files."
+         "<br><br>Two labels on the page were true only because of the bug and "
+         "are corrected with it: the header\u2019s <em>open</em> now reads "
+         "<em>open, none drafted</em>, since it excludes drafted items where "
+         "<em>Where to start</em> includes them; and <em>fixed in v3.0</em> "
+         "now reads <em>fixed in the document</em>, because the count it "
+         "labels stopped being v3.0-only the moment this was fixed."
+         "<br><br>This is \u00a731.2 \u2014 one fact, one home \u2014 broken "
+         "by the tool that reports it, on the page it reports it on. It was "
+         "found by making the same mistake by hand: reading an item\u2019s raw "
+         "<code>status</code> field, concluding C21 had been closed without "
+         "anyone noticing, and being wrong because V31 had said so all along."),
+
 dict(id="D34", kind="deviation", severity="significant", status="open",
      title="The clock D25 made readable reaches one crew of three, and for "
            "that one it is a wall rather than a price",
@@ -3997,6 +4049,48 @@ DEPENDS = {
     "G9": ["D20"],
     "D4": ["C1", "C2", "C3", "C5", "C6"],   # nothing locks while a system has two specs
 }
+
+
+#: An item's effective status, and the one place it is worked out.
+#:
+#: A register item carries a `status` written when it was found, and V3 and V31
+#: record what each version of the document did about it. The effective status
+#: is the latest of the three that has an opinion — v3.1 first, then v3.0, then
+#: the item's own field.
+#:
+#: **This existed twelve times.** Every tool that needed it wrote the three-line
+#: expression again, and four of those copies were written before V31 existed
+#: and never learned about it: `build_audit._status_of`, `build_roadmap.status_of`,
+#: `check_dependencies.status_of` and `check_edits`'s coverage report each read
+#: v3.0's answer and stopped. The nine items v3.1 closed therefore read as open
+#: in all four — which is why the audit page's own "Where to start" section
+#: said sixty items were open under a header that said thirty-four, and listed
+#: nine settled items as work to do.
+#:
+#: That is §31.2's rule — one fact, one home — broken by the tool that reports
+#: it, on the page it reports it on. So it lives here, beside the data, and
+#: `check_docs_consistency.check_one_status_home` refuses a second copy.
+SETTLED = frozenset({"fixed", "done", "adopted", "withdrawn"})
+
+#: Resolved on paper and waiting for sign-off: not settled, not untouched.
+DRAFTED = frozenset({"proposed"})
+
+
+def status(item) -> str:
+    """The effective status of a register item, by id or by the item itself."""
+    item_id = item if isinstance(item, str) else item["id"]
+    own = {} if isinstance(item, str) else item
+    return (V31.get(item_id, {}).get("status")
+            or V3.get(item_id, {}).get("status")
+            or own.get("status")
+            or next((i.get("status", "open") for i in REGISTER
+                     if i["id"] == item_id), "open"))
+
+
+def is_open(item) -> bool:
+    """Whether there is still work in it — drafted but unsigned counts as open."""
+    return status(item) not in SETTLED
+
 
 
 EDITS = {

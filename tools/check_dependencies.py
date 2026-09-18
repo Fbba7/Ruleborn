@@ -44,7 +44,7 @@ def plain(text: str) -> str:
 
 
 def load():
-    from audit_register import DEPENDS, REGISTER, RESEARCH, V3
+    from audit_register import DEPENDS, REGISTER, RESEARCH, status
 
     def status_of(item: dict) -> str:
         """The same rule `build_audit.py` renders with, deliberately.
@@ -56,7 +56,7 @@ def load():
         which quietly marked five blocking contradictions and four open decisions
         as settled and emptied the decisions section of the brief.
         """
-        return V3.get(item["id"], {}).get("status") or item.get("status", "open")
+        return status(item)
 
     by_id = {i["id"]: {**i, "status": status_of(i)} for i in REGISTER}
     return by_id, DEPENDS, RESEARCH

@@ -214,13 +214,9 @@ _HEADINGS = {
 
 def _is_open(item_id: str) -> bool:
     """Is this register item still open, according to the register itself?"""
-    from audit_register import REGISTER, V3, V31
-    for item in REGISTER:
-        if isinstance(item, dict) and item.get("id") == item_id:
-            status = (V31.get(item_id, {}).get("status")
-                      or V3.get(item_id, {}).get("status")
-                      or item.get("status", "open"))
-            return status not in ("fixed", "done", "adopted", "withdrawn")
+    from audit_register import REGISTER, is_open
+    if any(isinstance(i, dict) and i.get("id") == item_id for i in REGISTER):
+        return is_open(item_id)
     return True
 
 

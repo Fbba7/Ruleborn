@@ -15,6 +15,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,
+                            status as reg_status,
                             GATE_OWNER,  # noqa: E402
                             REGISTER, RESEARCH, V3, V31, side_of)
 
@@ -91,11 +92,11 @@ def plain(text: str) -> str:
     return _html.unescape(_re.sub(r"<[^>]+>", "", text))
 
 
-SETTLED = {"done", "adopted", "fixed", "withdrawn"}
-
-
 def _status_of(item: dict) -> str:
-    return V3.get(item["id"], {}).get("status") or item.get("status", "open")
+    """The register's own answer. This file had a second, v3.0-only copy of it,
+    so the page's header and its "Where to start" section counted the same
+    items two different ways — D35."""
+    return reg_status(item)
 
 
 def _open(by_id: dict, item_id: str) -> bool:
@@ -140,9 +141,7 @@ def side_progress(side: str) -> dict:
     """
     items = [i for i in REGISTER
              if side == "all" or side_of(i["id"]) in (side, "both")]
-    stat = [(V31.get(i["id"], {}).get("status")
-             or V3.get(i["id"], {}).get("status")
-             or i.get("status", "open")) for i in items]
+    stat = [reg_status(i) for i in items]
     settled = sum(1 for x in stat if x in SETTLED)
     drafted = sum(1 for x in stat if x in DRAFTED)
     total = len(items) or 1
@@ -578,8 +577,7 @@ SIDE_LABEL = {
 def item_html(item: dict) -> str:
     label, cls = SEVERITY[item["severity"]]
     v3 = V3.get(item["id"], {})
-    status = (V31.get(item["id"], {}).get("status")
-              or v3.get("status") or item.get("status", "open"))
+    state = reg_status(item)
     rec = item.get("rec")
     v3_html = (f'<p class="v3"><span class="vlabel">v3.0</span> {v3["note"]}</p>'
                if v3.get("note") else "")
@@ -590,7 +588,7 @@ def item_html(item: dict) -> str:
                 if v31.get("note") else "")
     return f"""
       <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
-               data-kind="{item['kind']}" data-status="{status}"
+               data-kind="{item['kind']}" data-status="{state}"
                data-side="{side_of(item['id'])}"
                data-areas="{' '.join(areas_of(item['id']))}"
                data-edits="{'yes' if item['id'] in EDITS else 'no'}">
@@ -598,7 +596,7 @@ def item_html(item: dict) -> str:
           <span class="id">{esc(item['id'])}</span>
           <h3>{esc(item['title'])}</h3>
           <span class="kind">{KIND[item['kind']]}</span>
-          <span class="status s-{status}">{STATUS[status]}</span>
+          <span class="status s-{state}">{STATUS[state]}</span>
           <span class="side side-{side_of(item['id'])}">{SIDE_LABEL[side_of(item['id'])]}</span>
           {measured_html(item)}
         </header>
@@ -623,9 +621,7 @@ def build() -> str:
 
     counts = {g: sum(1 for i in REGISTER if i["_group"] == g) for g, *_ in GROUPS}
     def status_of(item: dict) -> str:
-        return (V31.get(item["id"], {}).get("status")
-                or V3.get(item["id"], {}).get("status")
-                or item.get("status", "open"))
+        return reg_status(item)
 
     open_count = sum(1 for i in REGISTER if status_of(i) == "open")
     done_count = sum(1 for i in REGISTER if status_of(i) in ("done", "adopted"))
@@ -1174,8 +1170,8 @@ def build() -> str:
 
     <div class="summary">
       <div><span class="n">{len(REGISTER)}</span><span class="k">items tracked</span></div>
-      <div><span class="n">{open_count}</span><span class="k">open</span></div>
-      <div><span class="n">{fixed_count}</span><span class="k">fixed in v3.0</span></div>
+      <div><span class="n">{open_count}</span><span class="k">open, none drafted</span></div>
+      <div><span class="n">{fixed_count}</span><span class="k">fixed in the document</span></div>
       <div><span class="n">{done_count}</span><span class="k">done or adopted</span></div>
       <div><span class="n">{counts['blocking'] + counts['design']}</span><span class="k">blocking the build</span></div>
       <div><span class="n">{edit_count}</span><span class="k">edits drafted</span></div>

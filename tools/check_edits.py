@@ -19,7 +19,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
-from audit_register import EDITS, REGISTER, V3, V31                  # noqa: E402
+from audit_register import EDITS, REGISTER, V3, V31, status          # noqa: E402
 
 DOC = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
 GENERATED = ROOT / "docs" / "design" / "generated"
@@ -275,12 +275,6 @@ def unexplained_missing_edits() -> list:
     to draft. Everything else open or proposed needs an edit or an entry in
     NO_EDIT_BECAUSE, and a "covered by X" entry is only honest if X has one.
     """
-    from audit_register import V3, V31
-
-    def status(item):
-        return (V31.get(item["id"], {}).get("status")
-                or V3.get(item["id"], {}).get("status")
-                or item.get("status", "open"))
 
     out = []
     for item in REGISTER:
@@ -323,13 +317,10 @@ def bad_sides() -> list:
     if overlap:
         out.append(f"both frontend and both: {sorted(overlap)}")
 
-    def status(item_id):
-        item = next((i for i in REGISTER if i["id"] == item_id), None)
-        if item is None:
+    def status_or_none(item_id):
+        if not any(i["id"] == item_id for i in REGISTER):
             return None
-        return (V31.get(item_id, {}).get("status")
-                or V3.get(item_id, {}).get("status")
-                or item.get("status", "open"))
+        return status(item_id)
 
     for area, spec in DESIGN_GATES.items():
         for item_id in spec["gates"]:
@@ -701,10 +692,7 @@ def main() -> int:
     # open for a version, because the first pass over the new document checked
     # the six blocking items and not this batch. An item with an edit is
     # re-checked here every build; an item without one is checked by nobody.
-    from audit_register import FOUND_IN_V3, V3
-    def status(item):
-        return V3.get(item["id"], {}).get("status") or item.get("status", "open")
-
+    from audit_register import FOUND_IN_V3
     uncovered = [i["id"] for i in REGISTER
                  if i["kind"] in ("contradiction", "gap")
                  and status(i) not in ("fixed", "done", "adopted")

@@ -19,7 +19,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from audit_register import REGISTER, V3          # noqa: E402
+from audit_register import REGISTER, V3, status as reg_status  # noqa: E402
 from roadmap import NOT_YET, STAGES              # noqa: E402
 
 from build_stamp import stamped  # noqa: E402
@@ -43,8 +43,8 @@ SETTLED = ("adopted", "done", "fixed")
 
 
 def status_of(item: dict) -> str:
-    """An item's status, with what v3.0 did about it taking precedence."""
-    return V3.get(item["id"], {}).get("status") or item.get("status", "open")
+    """The register's own answer. A v3.0-only copy until D35."""
+    return reg_status(item)
 
 
 def esc(text: str) -> str:
@@ -203,17 +203,12 @@ def stale_blockers() -> list:
     tracking a closed item is how progress gets shown. A blocker is a different
     claim — it says the work cannot start — and a closed blocker is false.
     """
-    from audit_register import REGISTER, V3, V31
+    from audit_register import REGISTER
 
     by_id = {i["id"]: i for i in REGISTER}
 
     def status(item_id):
-        item = by_id.get(item_id)
-        if item is None:
-            return None
-        return (V31.get(item_id, {}).get("status")
-                or V3.get(item_id, {}).get("status")
-                or item.get("status", "open"))
+        return reg_status(item_id) if item_id in by_id else None
 
     out = []
     for what, why in NOT_YET:

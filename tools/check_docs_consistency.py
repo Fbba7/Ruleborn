@@ -61,12 +61,7 @@ def check_counts(files: list[pathlib.Path]) -> None:
     and that nothing re-derived. A count in prose is a copy of a fact, which
     is 31.2's subject; the difference is that these copies are checkable.
     """
-    from audit_register import EDITS, V3, V31
-
-    def status(item: dict) -> str:
-        return (V31.get(item["id"], {}).get("status")
-                or V3.get(item["id"], {}).get("status")
-                or item.get("status", "open"))
+    from audit_register import EDITS, V3, V31, status
 
     kinds = {
         "contradiction": sum(1 for i in REGISTER if i["kind"] == "contradiction"),
@@ -512,6 +507,44 @@ def check_tools_parse() -> None:
             print(f"    {name}")
 
 
+def check_one_status_home() -> None:
+    """No tool may work out an item's effective status for itself.
+
+    The register carries three opinions about every item — its own `status`,
+    what V3 records v3.0 did, and what V31 records v3.1 did — and the effective
+    answer is the latest of the three. That expression existed **twelve times**
+    across seven files, and four of the copies were written before V31 and
+    never learned about it, so the nine items v3.1 closed read as open in all
+    four. The audit page's own "Where to start" section therefore said sixty
+    items were open, listed nine settled ones as work to do, and called F10
+    blocked by something already fixed.
+
+    §31.2's rule, broken by the tool that reports it, on the page it reports it
+    on. `audit_register.status` is the home now, and this refuses a second
+    copy: a `V31.get(...)["status"]` chained to a `V3.get(...)` anywhere but
+    there is the fault coming back.
+
+    Counting what one particular version fixed is a different question and is
+    allowed — `by_v3` below asks it deliberately.
+    """
+    # Only the *chained* form is the effective-status expression. Counting
+    # what one version fixed — `by_v31` below — asks a different question and
+    # is allowed, so the pattern requires the fallback rather than the lookup.
+    chained = re.compile(
+        r"V31\.get\([^)]*\)\.get\([^)]*\)\s*\n?\s*or\s", re.S)
+    v3_then_own = re.compile(
+        r"V3\.get\([^)]*\)\.get\(\s*[\"']status[\"']\s*\)\s*or\s+\w+\.get\(")
+    for path in sorted((ROOT / "tools").rglob("*.py")):
+        if any(part in ("__pycache__", "vendor") for part in path.parts):
+            continue
+        if path.name == "audit_register.py":
+            continue
+        text = path.read_text(encoding="utf-8")
+        if chained.search(text) or v3_then_own.search(text):
+            fail(f"{rel(path)} works out an item's effective status itself; "
+                 f"import audit_register.status instead")
+
+
 def check_artifact_urls(files: list[pathlib.Path]) -> None:
     """One artifact, one URL, everywhere it is mentioned."""
     url = re.compile(r"https://claude\.ai/artifact/([A-Za-z0-9]+)")
@@ -617,6 +650,7 @@ def main() -> int:
     check_handoff_table()
     check_spec_status()
     check_tools_parse()
+    check_one_status_home()
     check_artifact_urls(files)
     check_generated_marked()
     check_tool_output_counts(files)
@@ -727,6 +761,24 @@ def _self_test() -> None:
     assert caught, "a tool that does not parse went unnoticed"
     print("  a tool under tools/ that stops parsing is caught")
 
+    # A second home for the effective status. Planted as the exact expression
+    # that was in four files, because that is the one that came back.
+    copy = ROOT / "tools" / "_selftest_status.py"
+    copy.write_text(
+        'def status_of(item):\n'
+        '    return (V31.get(item["id"], {}).get("status")\n'
+        '            or V3.get(item["id"], {}).get("status")\n'
+        '            or item.get("status", "open"))\n', encoding="utf-8")
+    was, problems = problems, []
+    try:
+        check_one_status_home()
+        caught = any("_selftest_status" in p for p in problems)
+    finally:
+        problems = was
+        copy.unlink()
+    assert caught, "a second copy of the effective status went unnoticed"
+    print("  a tool working out an item's status for itself is caught")
+
     for text, allowed in (("see \u00a75.9 for the rule", False),
                           ("v3.0's \u00a75.9, renumbered \u00a75.8 in v3.1", True),
                           ("an earlier version's \u00a713.5", True),
@@ -750,11 +802,8 @@ def _self_test() -> None:
     # The counts the README states, each mutated by one and shown to fail.
     check_counts(markdown_files())
     del problems[:]
-    from audit_register import EDITS, V3, V31
-    fixed = sum(1 for i in REGISTER
-                if (V31.get(i["id"], {}).get("status")
-                    or V3.get(i["id"], {}).get("status")
-                    or i.get("status", "open")) == "fixed")
+    from audit_register import EDITS, V3, V31, status
+    fixed = sum(1 for i in REGISTER if status(i) == "fixed")
     by_v3 = sum(1 for i in REGISTER if V3.get(i["id"], {}).get("status") == "fixed")
     by_v31 = sum(1 for i in REGISTER if V31.get(i["id"], {}).get("status") == "fixed")
     edits = sum(len(v) for v in EDITS.values())
