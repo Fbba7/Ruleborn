@@ -321,6 +321,58 @@ def test_the_clock_is_not_a_pressure_device():
 
 # -- the ablation ----------------------------------------------------------
 
+def test_the_clock_reaches_only_the_crew_that_cannot_use_it():
+    """D25, D34. What reading §5.4's clock actually changes, policy by policy.
+
+    D25 added the reading: until then no policy touched `heist.clock`, so
+    shortening it could kill a crew outright but never change what one chose to
+    do. This is that experiment re-run against the fix, and the fix reaches one
+    policy of three.
+
+    A competent crew with `watches_clock` on banks exactly what the same crew
+    with it off banks, at every clock length tested — the same mean to the
+    decimal, because `_out_of_time` needs the inbound journey to be long
+    against what is left and a crew that does not hold at checkpoints never
+    gets there. A value that is read and changes nothing is indistinguishable
+    from one that is not read, which is D25's own lesson and D26's.
+
+    The one crew it does reach is the optimal one, and there it is a wall
+    rather than a price: it holds for cones, arrives late, and aborts loading
+    altogether. §12.19 asks for a dial — "loading longer earns more and the
+    alarm clock is the price" — and neither a no-op nor a cliff is one.
+
+    Asserted as the comparison rather than the absolute numbers, because the
+    means move with tuning and the shape is the finding.
+    """
+    from .island import generate
+    from .laws import Sheet
+    from .policy import Competent
+    from .sim import Heist
+
+    class Blind(Competent):
+        name = "blind"
+        watches_clock = False
+
+    def banked(cls, clock_pct: int, n: int = 40) -> float:
+        fills = []
+        for i in range(n):
+            fills.append(Heist(generate(i, 3), cls(), realm_level=3,
+                               crossing=[generate(900_000 + i * 8, 3)],
+                               sheet=Sheet(), clock_pct=clock_pct).run().fill)
+        return st.mean(fills)
+
+    for clock_pct in (100, 70, 55):
+        seeing = banked(POLICIES["competent"], clock_pct)
+        blind = banked(Blind, clock_pct)
+        assert seeing == blind, (clock_pct, seeing, blind)
+
+    # And the crew it does reach loses everything rather than some of it.
+    full, short = (banked(POLICIES["optimal"], 100),
+                   banked(POLICIES["optimal"], 55))
+    assert full > 10, full
+    assert short < full * 0.1, (full, short)
+
+
 def test_shapley_matches_two_known_cases():
     """The attribution §13.4 asks for, checked against cases with known answers."""
     import itertools

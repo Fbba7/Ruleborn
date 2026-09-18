@@ -44,6 +44,12 @@ import pathlib
 import re
 import sys
 
+
+def plain(text: str) -> str:
+    """Register titles carry inline markup; this is for a terminal."""
+    return re.sub(r"<[^>]+>", "", text)
+
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
@@ -66,25 +72,73 @@ def current_fingerprint() -> str:
     return found.group(1)
 
 
-def pinned_by_tests() -> dict:
-    """Which register items a harness test asserts, read off the tests themselves.
+#: Files that are not checks and must not be scanned for pins.
+NOT_CHECKS = ("__pycache__", "vendor")
 
-    The convention the suite already follows: a test that exists to pin a finding
-    opens its docstring with that finding's id, as in `F20. Section 9.6 pays
-    grade x fill...`. Parsing it keeps one list instead of two, which is the rule
-    this repository applies to everything else it generates.
+
+def check_files() -> list[pathlib.Path]:
+    """Every check in this repository, not only the harness suite."""
+    return sorted(p for p in (ROOT / "tools").rglob("*.py")
+                  if not any(part in NOT_CHECKS for part in p.parts))
+
+
+def pinned_by_a_check() -> dict:
+    """Which register items a check in this repository asserts.
+
+    The convention the suite already follows: a function that exists to pin a
+    finding opens its docstring with that finding's id, as in `F20. Section 9.6
+    pays grade x fill...`. Parsing it keeps one list instead of two, which is
+    the rule this repository applies to everything else it generates.
+
+    **This used to read one file.** It opened `heist_harness/test_harness.py`
+    and nothing else, because the findings it was written for came out of the
+    harness. Every check written since lives somewhere else, so four items were
+    reported as having no provenance while a check asserted each of them:
+    `check_document.check_twice_stated` pins C27, `law_effects.generator_report`
+    pins F12, and two economy-model tests pin C2 and F17. A provenance report
+    that looks in one place reports the part it can see, which is the fault it
+    exists to catch, committed inside it.
     """
-    text = (ROOT / "tools" / "heist_harness" / "test_harness.py").read_text(
-        encoding="utf-8")
     out: dict = {}
-    for name, body in zip(*[iter(re.split(r"\ndef (test_\w+)", text)[1:])] * 2):
-        doc = re.search(r'"""(.*)', body)
-        if not doc:
-            continue
-        lead = re.match(r"([CDFG]\d{1,2})", doc.group(1).strip())
-        if lead:
-            out.setdefault(lead.group(1), []).append(name)
+    for path in check_files():
+        text = path.read_text(encoding="utf-8")
+        for m in re.finditer(r'\ndef (\w+)\([^)]*\)[^:]*:\n\s+"""([^\n]*)', text):
+            # A check may assert more than one finding, and several do:
+            # `law_effects.classify` is both F10's count and D22's table. The
+            # lead is therefore a list, not a single id.
+            lead = LEAD.match(m.group(2).strip())
+            if lead:
+                for item in re.findall(r"[CDFGQT]\d{1,2}", lead.group(1)):
+                    out.setdefault(item, []).append(f"{path.name}:{m.group(1)}")
     return out
+
+
+#: The ids a docstring opens with. A list, because a check may assert more than
+#: one finding - `law_effects.classify` is both F10's count and D22's table -
+#: and ending on a word boundary rather than on punctuation, because the
+#: convention in the suite includes the possessive: `F16's own caveat, which
+#: the finding could not settle without this`. An earlier version of this
+#: pattern required a full stop or a space and silently dropped that pin, which
+#: is this file's own subject: a check that stops asserting something reads
+#: exactly like a check that never did.
+LEAD = re.compile(r"((?:[CDFGQT]\d{1,2})(?:,\s*[CDFGQT]\d{1,2})*)\b")
+
+
+#: A register item that names a tool rests on a number that tool produced, and
+#: the tool can move. `tools/x.py` and `tools/x/` both count.
+NAMES_A_TOOL = re.compile(r"tools/([a-z_]+)(?:\.py|/)")
+
+
+def rests_on_a_tool(item: dict) -> list[str]:
+    """Which tools an item's own text says its numbers came from.
+
+    Broader than `quotes_the_harness` and for the same reason the register
+    exists: a number produced by `law_ranks.py` or `ability_text.py` is exactly
+    as unverifiable in prose as one produced by the harness, and there are
+    almost three times as many of them.
+    """
+    text = item.get("body", "") + item.get("rec", "")
+    return sorted(set(NAMES_A_TOOL.findall(text)))
 
 
 def quotes_the_harness(item: dict) -> bool:
@@ -116,9 +170,41 @@ def main() -> int:
             print("  a deliberately stale fingerprint compared equal to the live one.")
             return 1
         print("  the freshness check can tell a stale fingerprint from the live one.")
+        # The four shapes the suite's docstrings actually use. The possessive
+        # is the one that broke: tightening this pattern once dropped F16's pin
+        # without dropping F16 from the report, so the report simply said the
+        # finding had no provenance.
+        shapes = {
+            "F20. Section 9.6 pays grade x fill": ["F20"],
+            "F16's own caveat, which the finding could not settle": ["F16"],
+            "F10, D22. Every law written down as the kind of change": ["F10", "D22"],
+            "C27 - two rules for partial staffing": ["C27"],
+            "The clock follows 5.4": [],
+        }
+        for text, want in shapes.items():
+            got = re.findall(r"[CDFGQT]\d{1,2}", m.group(1)) if (
+                m := LEAD.match(text)) else []
+            if got != want:
+                print(f"  the docstring lead {text!r} read as {got}, want {want}")
+                return 1
+        print(f"  and all {len(shapes)} docstring lead shapes are read the same way.")
+        # The scan must reach past the harness. It read one file until four
+        # checks elsewhere were reported as asserting nothing.
+        files = {f.name for f in check_files()}
+        if len(files) < 5 or "law_effects.py" not in files:
+            print(f"  the scan reaches {len(files)} file(s), not the whole of tools/.")
+            return 1
+        outside = {k: v for k, v in pinned_by_a_check().items()
+                   if not any("test_harness" in n for n in v)}
+        if not outside:
+            print("  no pin was found outside the harness suite, so the scan is "
+                  "still reading one file.")
+            return 1
+        print(f"  the scan covers {len(files)} files and finds "
+              f"{len(outside)} pin(s) outside the harness suite.")
         return 0
 
-    pinned = pinned_by_tests()
+    pinned = pinned_by_a_check()
     rests = [i for i in REGISTER if quotes_the_harness(i)]
     tested = [i for i in rests if i["id"] in pinned]
     rest = [i for i in rests if i["id"] not in pinned]
@@ -152,6 +238,25 @@ def main() -> int:
         print("\n  Not a failure — a to-do list, and the better way to clear it "
               "is a test\n  that pins the finding rather than a fingerprint typed "
               "in once. Three\n  harness faults in one session is why this exists.")
+
+    # And the same question asked of every tool, not only the harness.
+    on_tools = [(i, rests_on_a_tool(i)) for i in REGISTER if rests_on_a_tool(i)]
+    held = [(i, t) for i, t in on_tools if i["id"] in pinned]
+    loose = [(i, t) for i, t in on_tools if i["id"] not in pinned]
+    print(f"\n{len(on_tools)} register items rest on a number some tool in this "
+          f"repository produced.")
+    print(f"  {len(held):>3} pinned by a check that names them")
+    print(f"  {len(loose):>3} resting on a tool with nothing asserting the "
+          f"number")
+    if loose:
+        print("\n  Nothing asserts these, so the tool can move and the register "
+              "will not know:")
+        for i, tools in loose:
+            print(f"    {i['id']:5} {', '.join(tools):<28} "
+                  f"{plain(i['title'])[:50]}")
+        print("\n  To clear one, open a function's docstring in that tool with "
+              "the item's id.\n  The check is then read off the code rather "
+              "than listed twice.")
     print()
     return 0
 

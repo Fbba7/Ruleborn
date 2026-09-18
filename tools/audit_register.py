@@ -2412,6 +2412,58 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D34", kind="deviation", severity="significant", status="open",
+     title="The clock D25 made readable reaches one crew of three, and for "
+           "that one it is a wall rather than a price",
+     refs=["5.4", "12.19", "12.6", "13.2"],
+     body="D25 found that no policy in <code>tools/heist_harness/</code> read "
+          "<code>heist.clock</code>, so shortening \u00a75.4\u2019s clock "
+          "could kill a crew outright but never change what one chose to do "
+          "\u2014 and nothing priced in time could be measured at all. The "
+          "reading was added. <strong>Nothing checked what reading it "
+          "did.</strong>"
+          "<br><br>Re-running D25\u2019s own experiment against the fix: a "
+          "competent crew with <code>watches_clock</code> on banks "
+          "<strong>exactly what the same crew with it off banks</strong>, at "
+          "every clock length tested \u2014 24.1, 22.4 and 22.4 at 100%, 70% "
+          "and 55%, the same mean to the decimal. <code>_out_of_time</code> "
+          "needs the inbound journey to be long against what is left, and a "
+          "crew that does not hold at checkpoints never gets there. <strong>A "
+          "value that is read and changes nothing is indistinguishable from "
+          "one that is not read</strong>, which is D25\u2019s own lesson and "
+          "D26\u2019s."
+          "<br><br>The one crew it reaches is the optimal one, which holds for "
+          "cones, arrives late, and then aborts loading altogether: 20.9 mean "
+          "fill at the full clock, <strong>1.1 at 70% and 0.0 at 55%</strong>. "
+          "Not less loot for less time \u2014 none."
+          "<br><br>\u00a712.19 asks for a dial: <em>\u201cloading longer "
+          "earns more and the alarm clock is the price\u201d</em>, with the "
+          "break-even at about 70% full <em>\u201cthe dial for the "
+          "game\u2019s emotional peak\u201d</em>. A no-op is not a price and "
+          "a cliff is not a price. So the number that sentence rests on is "
+          "still not measurable, two fixes after D25 said so.",
+     rec="The stopping rule has to trade fill against time rather than switch "
+         "on it. <code>_out_of_time</code> is a boolean \u2014 leave now if "
+         "the way home is longer than what is left \u2014 and a boolean can "
+         "only ever produce all or nothing."
+         "<br><br><strong>Make it a target rather than a trigger.</strong> The "
+         "crew loads to whatever fill the remaining clock affords, at "
+         "\u00a712.19\u2019s 30 units a second, and leaves with that. Then "
+         "cutting the clock cuts the haul smoothly, \u00a712.19\u2019s "
+         "sentence becomes true of the model, and the 70% break-even becomes "
+         "something a sweep can find rather than a number the document asserts."
+         "<br><br>Until then, treat every result computed across clock lengths "
+         "as measuring a wall. <code>test_the_clock_reaches_only_the_crew_that_"
+         "cannot_use_it</code> pins both halves, so neither can be fixed "
+         "quietly or broken quietly."
+         "<br><br><strong>F8 is not affected, and that is worth saying.</strong> "
+         "Its claim \u2014 runs finish with a third of the clock unused "
+         "\u2014 holds under the competent crew (0.36 of the clock used) more "
+         "strongly than under the optimal one (0.61), so it is not an artefact "
+         "of a crew that gives up. F21 is not affected either: the optimal "
+         "crew coming home empty is the polarisation F21 records and its test "
+         "already asserts."),
+
 dict(id="D33", kind="deviation", severity="change", status="done",
      title="Four spec files send a contributor to settle work that v3.0 and "
            "v3.1 finished",

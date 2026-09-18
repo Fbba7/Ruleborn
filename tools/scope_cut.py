@@ -200,7 +200,7 @@ def report(size: int) -> str:
 
 
 def self_test() -> int:
-    """Pin F23 and the cut, all of it exact rather than sampled.
+    """F23. Pin F23 and the cut, all of it exact rather than sampled.
 
     Nothing here draws a sample, so unlike the harness's findings these assert
     values and not bands. If one fails, the content changed under the finding.

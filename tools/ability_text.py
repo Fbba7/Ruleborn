@@ -171,7 +171,7 @@ CREW = (3, 5)
 
 
 def cadence(rows: list[dict], key: str) -> dict:
-    """How many ability windows a heist affords, against §12.6's own budget.
+    """D32. How many ability windows a heist affords, against §12.6's own budget.
 
     This is the question under the cooldown column, and neither table was
     written against it. An ability comes off cooldown every `c` seconds per
@@ -427,7 +427,7 @@ def passives(roster: list, laws: list) -> list[dict]:
 
 
 def picks(rows: list[dict]) -> list[dict]:
-    """Each creature with its pick attached."""
+    """C6. Each creature with its pick attached."""
     out = []
     for r in rows:
         side, text, why = PICK.get(r["id"], (None, "", ""))

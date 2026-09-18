@@ -474,7 +474,7 @@ def building_types(doc: Doc) -> int:
 
 
 def check_asset_budget(doc: Doc, led: Ledger) -> None:
-    """21.9's launch asset budget against the counts it is a budget for.
+    """C8. 21.9's launch asset budget against the counts it is a budget for.
 
     The art schedule is sized from the content list, so every row in 21.9 is a
     second home for a number specified somewhere else. 26.1 moved to seventeen

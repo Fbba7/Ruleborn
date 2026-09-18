@@ -174,6 +174,7 @@ NO_EDIT_BECAUSE = {
     # would be drafting a contradiction, and drafting one would be making the
     # decision rather than putting it.
     "D32": "two mutually exclusive edits; the reading has to be chosen first",
+    "D34": "no document sentence: the fix is the harness's stopping rule",
 }
 
 

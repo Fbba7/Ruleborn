@@ -109,6 +109,14 @@ def sources() -> list:
 
 
 def unread(extra_source: str = "") -> list:
+    """D26. Fields the harness computes that nothing reads.
+
+    D26 was a guard waypoint every guard started at, written and never read.
+    The value was there, it was wrong, and no result depended on it, so
+    nothing failed - which is how it survived every run. This is that fault
+    turned into a check over every dataclass in the harness and the economy
+    model.
+    """
     paths = sources()
     read = attribute_reads(paths)
     if extra_source:

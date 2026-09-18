@@ -161,7 +161,7 @@ def uneven_ranks(split: dict, schools: int = 6) -> list[str]:
 
 
 def splits(laws: list) -> list[dict]:
-    """Each live statement, priced and costed."""
+    """C3. Each live statement of the split, priced and costed."""
     out = []
     for name, split in SPLITS.items():
         pages = codex_pages(split)
@@ -181,7 +181,7 @@ def splits(laws: list) -> list[dict]:
 
 
 def principle(laws: list) -> dict:
-    """§7.9's rule, measured against the sheets §7.9 governs.
+    """D31. §7.9's rule, measured against the sheets §7.9 governs.
 
     Two correlations and one pair count. The pair count is there because a
     correlation over four ordered labels is easy to argue with and "how often

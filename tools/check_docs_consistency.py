@@ -21,6 +21,7 @@ It fails the build. That is the point.
 """
 
 import pathlib
+import ast
 import re
 import sys
 
@@ -457,6 +458,60 @@ def check_spec_status() -> None:
                      f"register has it settled")
 
 
+def check_tools_parse() -> None:
+    """Every file under tools/ is valid Python, and every one is run by something.
+
+    `check_all.sh` runs most of them, so most breakage surfaces. Not all: a
+    tool nothing in the suite invokes can be left unparseable and the build
+    stays green. This is the cheapest possible guard against that, and it was
+    written after a patch script re-led a one-line docstring and swallowed its
+    closing quotes in two files at once.
+
+    The second half is a backlog rather than a failure. A tool nobody runs is
+    not wrong, but it is not checked either, and the register's whole argument
+    is that those are the same thing eventually.
+    """
+    suite = (ROOT / "tools" / "check_all.sh").read_text(encoding="utf-8")
+    # A module the suite never names is still exercised if something the suite
+    # runs imports it: `heist_harness/sim.py` is most of the harness and the
+    # suite names only the test module. So the question is whether anything at
+    # all reaches it, not whether the shell script says its name.
+    imported = set()
+    for path in (ROOT / "tools").rglob("*.py"):
+        if "__pycache__" in path.parts:
+            continue
+        text = path.read_text(encoding="utf-8")
+        for m in re.finditer(r"^\s*(?:from|import)\s+([.\w]+)", text, re.M):
+            imported.update(m.group(1).lstrip(".").split("."))
+        # `from . import sinks` names the module after the keyword, not
+        # before it. The first version read only the dotted path, so every
+        # relative-imported module in the harness and the economy model read
+        # as run by nothing.
+        for m in re.finditer(r"^\s*from\s+\.\S*\s+import\s+([\w,\s]+)",
+                             text, re.M):
+            imported.update(n.strip() for n in m.group(1).split(","))
+    unrun = []
+    for path in sorted((ROOT / "tools").rglob("*.py")):
+        if any(part in ("__pycache__", "vendor") for part in path.parts):
+            continue
+        try:
+            ast.parse(path.read_text(encoding="utf-8"))
+        except SyntaxError as exc:
+            fail(f"{rel(path)} does not parse: line {exc.lineno}, {exc.msg}")
+            continue
+        stem = path.stem
+        if stem.startswith(("test_", "__")):
+            continue
+        module = f"{path.parent.name}.{stem}" if path.parent.name != "tools" else stem
+        if stem not in suite and module not in suite and stem not in imported:
+            unrun.append(rel(path))
+    if unrun:
+        print(f"\n  {len(unrun)} tool(s) that nothing runs and nothing imports, "
+              f"so a fault in one\n  would not fail the build:")
+        for name in unrun:
+            print(f"    {name}")
+
+
 def check_artifact_urls(files: list[pathlib.Path]) -> None:
     """One artifact, one URL, everywhere it is mentioned."""
     url = re.compile(r"https://claude\.ai/artifact/([A-Za-z0-9]+)")
@@ -561,6 +616,7 @@ def main() -> int:
     check_register_references()
     check_handoff_table()
     check_spec_status()
+    check_tools_parse()
     check_artifact_urls(files)
     check_generated_marked()
     check_tool_output_counts(files)
@@ -654,6 +710,22 @@ def _self_test() -> None:
             (ROOT / "README.md").write_text(text, encoding="utf-8")
         assert caught, f"{label} went unnoticed"
         print(f"  a README verdict table with {label} is caught")
+
+    # A tool that stops parsing. Planted in the tree rather than in a string,
+    # because the check walks the tree — a fixture would prove the `ast` call
+    # works and not that the walk reaches anything.
+    broken = ROOT / "tools" / "_selftest_broken.py"
+    broken.write_text('def f(:\n', encoding="utf-8")
+    was, problems = problems, []
+    try:
+        check_tools_parse()
+        caught = any("_selftest_broken" in p and "does not parse" in p
+                     for p in problems)
+    finally:
+        problems = was
+        broken.unlink()
+    assert caught, "a tool that does not parse went unnoticed"
+    print("  a tool under tools/ that stops parsing is caught")
 
     for text, allowed in (("see \u00a75.9 for the rule", False),
                           ("v3.0's \u00a75.9, renumbered \u00a75.8 in v3.1", True),

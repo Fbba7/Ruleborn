@@ -277,6 +277,15 @@ def load_laws() -> list:
 
 
 def classify(laws: list) -> dict:
+    """F10, D22. Every law written down as the kind of change it is.
+
+    F10 is the count this produces - sixteen of the forty-eight are parameter
+    changes and the rest need something the engine does not have - and D22 is
+    the fact that it exists at all: §7.3 claims laws are parameters and §12.21
+    makes it a rule, and before this the claim could not be checked because the
+    48 sheets state their effects in prose and nothing mapped them onto
+    anything.
+    """
     out = {}
     for law in laws:
         spec = EFFECTS.get(law["id"])

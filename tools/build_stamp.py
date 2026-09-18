@@ -50,7 +50,7 @@ ESCAPED_TAG = re.compile(r"&lt;/?(?:strong|em|code|br|p|a|li|ul)\b[^&]*&gt;")
 
 
 def escaped_markup(page: str) -> list[str]:
-    """Inline markup that reached the page as visible text.
+    """D28. Inline markup that reached the page as visible text.
 
     The roadmap had two conventions for its own prose and no rule: a task's
     detail was interpolated raw and rendered, a stage's blurb went through
