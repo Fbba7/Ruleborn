@@ -249,6 +249,12 @@
     border-color: var(--accent);
     background: color-mix(in srgb, var(--accent) 7%, transparent);
   }
+  /* The three design areas answer a different question from the three sides,
+     so they read as a second row rather than as more of the same. */
+  .tab.area { border-style: dashed; flex-basis: 150px; }
+  .tab.area[aria-pressed="true"] { border-style: solid; }
+  .tab.area .fill.settled { background: var(--dsg); }
+  .tab.area .fill.drafted { background: var(--dsg); opacity: 0.25; }
   .tab-head { display: flex; align-items: baseline; gap: 8px; }
   .tab-name { font-size: 15px; font-weight: 600; }
   .tab-n {
@@ -449,40 +455,64 @@
       <div><span class="n">22</span><span class="k">done or adopted</span></div>
       <div><span class="n">32</span><span class="k">blocking the build</span></div>
       <div><span class="n">70</span><span class="k">edits drafted</span></div>
-      <div><span class="n">17 Sep</span><span class="k">last generated</span></div>
+      <div><span class="n">18 Sep</span><span class="k">last generated</span></div>
     </div>
 <nav class="tabs" aria-label="Backend or frontend">
-      <button class="tab" data-side="all" aria-pressed="true">
+      <button class="tab" data-side="all" title="every item in the register" aria-pressed="true">
         <span class="tab-head"><span class="tab-name">Everything</span>
           <span class="tab-n">106</span></span>
         <span class="bar">
           <span class="fill drafted" style="width:70.8%"></span>
           <span class="fill settled" style="width:54.7%"></span>
         </span>
-        <span class="tab-foot">58 settled &middot;
-          17 drafted &middot; 31 open</span>
+        <span class="tab-foot">58 settled &middot; 17 drafted &middot; 31 open</span>
       </button>
-      <button class="tab" data-side="backend">
+      <button class="tab" data-side="backend" title="rules, numbers and the simulation">
         <span class="tab-head"><span class="tab-name">Backend</span>
           <span class="tab-n">100</span></span>
         <span class="bar">
           <span class="fill drafted" style="width:70.0%"></span>
           <span class="fill settled" style="width:53.0%"></span>
         </span>
-        <span class="tab-foot">53 settled &middot;
-          17 drafted &middot; 30 open</span>
+        <span class="tab-foot">53 settled &middot; 17 drafted &middot; 30 open</span>
       </button>
-      <button class="tab" data-side="frontend">
+      <button class="tab" data-side="frontend" title="anything a player sees">
         <span class="tab-head"><span class="tab-name">Frontend &amp; design</span>
           <span class="tab-n">17</span></span>
         <span class="bar">
           <span class="fill drafted" style="width:76.5%"></span>
           <span class="fill settled" style="width:52.9%"></span>
         </span>
-        <span class="tab-foot">9 settled &middot;
-          4 drafted &middot; 4 open</span>
+        <span class="tab-foot">9 settled &middot; 4 drafted &middot; 4 open</span>
+      </button>
+      <button class="tab area" data-side="area:realms" title="Terrain layout, what an island holds, how a realm is drawn">
+        <span class="tab-head"><span class="tab-name">Realms</span>
+          <span class="tab-n">14</span></span>
+        <span class="bar">
+          <span class="fill drafted" style="width:35.7%"></span>
+          <span class="fill settled" style="width:35.7%"></span>
+        </span>
+        <span class="tab-foot">5 of 14 gates cleared</span>
+      </button>
+      <button class="tab area" data-side="area:screens" title="The 27 screens in §23, their contents and their counts">
+        <span class="tab-head"><span class="tab-name">Screens</span>
+          <span class="tab-n">7</span></span>
+        <span class="bar">
+          <span class="fill drafted" style="width:57.1%"></span>
+          <span class="fill settled" style="width:57.1%"></span>
+        </span>
+        <span class="tab-foot">4 of 7 gates cleared</span>
+      </button>
+      <button class="tab area" data-side="area:characters" title="The 18 ruleborn, their forms, and what the art has to show">
+        <span class="tab-head"><span class="tab-name">Characters</span>
+          <span class="tab-n">5</span></span>
+        <span class="bar">
+          <span class="fill drafted" style="width:40.0%"></span>
+          <span class="fill settled" style="width:40.0%"></span>
+        </span>
+        <span class="tab-foot">2 of 5 gates cleared</span>
       </button></nav>
-    <p class="tabs-note">A bar measures the <em>audit</em>, not the build: an item is settled when the document answers it, which is what has to happen before the work starts. No realm, screen or character has been drawn yet &mdash; for what that is waiting on, see below. 11 items need both sides and count on both, so the two tabs add up to more than 106.</p>
+    <p class="tabs-note">The first three bars measure the <em>audit</em>: an item is settled when the document answers it. 11 items need both sides and count on both, so those two add up to more than 106.<br><br><strong>The last three answer a different question &mdash; when can the drawing start?</strong> Each counts only the items that decide something its designer would otherwise have to guess, so 100% means that area can begin, not that the project is done. Nothing has been drawn yet; these say what each area is waiting on, and the panel above lists every gate by name.</p>
   </header>
 
   <section class="start">
@@ -559,6 +589,7 @@
       <article class="item chg" id="D1" data-group="changes"
                data-kind="deviation" data-status="adopted"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D1</span>
@@ -579,6 +610,7 @@
       <article class="item chg" id="D2" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D2</span>
@@ -599,6 +631,7 @@
       <article class="item chg" id="D3" data-group="changes"
                data-kind="deviation" data-status="adopted"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D3</span>
@@ -619,6 +652,7 @@
       <article class="item chg" id="D4" data-group="changes"
                data-kind="deviation" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D4</span>
@@ -639,6 +673,7 @@
       <article class="item chg" id="D5" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D5</span>
@@ -659,6 +694,7 @@
       <article class="item chg" id="D6" data-group="changes"
                data-kind="deviation" data-status="proposed"
                data-side="both"
+               data-areas="characters"
                data-edits="no">
         <header class="item-head">
           <span class="id">D6</span>
@@ -679,6 +715,7 @@
       <article class="item chg" id="D7" data-group="changes"
                data-kind="deviation" data-status="adopted"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D7</span>
@@ -699,6 +736,7 @@
       <article class="item chg" id="D8" data-group="changes"
                data-kind="deviation" data-status="adopted"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D8</span>
@@ -719,6 +757,7 @@
       <article class="item chg" id="D9" data-group="changes"
                data-kind="deviation" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D9</span>
@@ -739,6 +778,7 @@
       <article class="item chg" id="D10" data-group="changes"
                data-kind="deviation" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D10</span>
@@ -759,6 +799,7 @@
       <article class="item chg" id="D11" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D11</span>
@@ -779,6 +820,7 @@
       <article class="item chg" id="D12" data-group="changes"
                data-kind="deviation" data-status="adopted"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D12</span>
@@ -799,6 +841,7 @@
       <article class="item chg" id="D13" data-group="changes"
                data-kind="deviation" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D13</span>
@@ -819,6 +862,7 @@
       <article class="item chg" id="D15" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D15</span>
@@ -839,6 +883,7 @@
       <article class="item chg" id="D14" data-group="changes"
                data-kind="deviation" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">D14</span>
@@ -859,6 +904,7 @@
       <article class="item chg" id="D16" data-group="changes"
                data-kind="deviation" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D16</span>
@@ -879,6 +925,7 @@
       <article class="item chg" id="D17" data-group="changes"
                data-kind="deviation" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D17</span>
@@ -899,6 +946,7 @@
       <article class="item chg" id="D18" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D18</span>
@@ -919,6 +967,7 @@
       <article class="item chg" id="D19" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D19</span>
@@ -939,6 +988,7 @@
       <article class="item chg" id="D20" data-group="changes"
                data-kind="deviation" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D20</span>
@@ -959,6 +1009,7 @@
       <article class="item chg" id="D21" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D21</span>
@@ -979,6 +1030,7 @@
       <article class="item chg" id="D22" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D22</span>
@@ -999,6 +1051,7 @@
       <article class="item chg" id="D27" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D27</span>
@@ -1019,6 +1072,7 @@
       <article class="item chg" id="D28" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D28</span>
@@ -1039,6 +1093,7 @@
       <article class="item chg" id="D30" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D30</span>
@@ -1059,6 +1114,7 @@
       <article class="item chg" id="D29" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D29</span>
@@ -1079,6 +1135,7 @@
       <article class="item chg" id="D26" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D26</span>
@@ -1099,6 +1156,7 @@
       <article class="item chg" id="D25" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D25</span>
@@ -1119,6 +1177,7 @@
       <article class="item chg" id="D24" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D24</span>
@@ -1139,6 +1198,7 @@
       <article class="item chg" id="D23" data-group="changes"
                data-kind="deviation" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">D23</span>
@@ -1166,6 +1226,7 @@
       <article class="item blk" id="C1" data-group="blocking"
                data-kind="contradiction" data-status="fixed"
                data-side="backend"
+               data-areas="realms"
                data-edits="no">
         <header class="item-head">
           <span class="id">C1</span>
@@ -1186,6 +1247,7 @@
       <article class="item blk" id="C2" data-group="blocking"
                data-kind="contradiction" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C2</span>
@@ -1206,6 +1268,7 @@
       <article class="item blk" id="C3" data-group="blocking"
                data-kind="contradiction" data-status="open"
                data-side="backend"
+               data-areas="screens"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C3</span>
@@ -1244,6 +1307,7 @@
       <article class="item blk" id="C4" data-group="blocking"
                data-kind="contradiction" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C4</span>
@@ -1264,6 +1328,7 @@
       <article class="item blk" id="C5" data-group="blocking"
                data-kind="contradiction" data-status="fixed"
                data-side="backend"
+               data-areas="realms"
                data-edits="no">
         <header class="item-head">
           <span class="id">C5</span>
@@ -1284,6 +1349,7 @@
       <article class="item blk" id="C6" data-group="blocking"
                data-kind="contradiction" data-status="proposed"
                data-side="both"
+               data-areas="screens characters"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C6</span>
@@ -1304,6 +1370,7 @@
       <article class="item blk" id="C19" data-group="blocking"
                data-kind="contradiction" data-status="open"
                data-side="backend"
+               data-areas="realms"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C19</span>
@@ -1324,6 +1391,7 @@
       <article class="item blk" id="C29" data-group="blocking"
                data-kind="contradiction" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C29</span>
@@ -1344,6 +1412,7 @@
       <article class="item blk" id="F24" data-group="blocking"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F24</span>
@@ -1364,6 +1433,7 @@
       <article class="item blk" id="F26" data-group="blocking"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas="realms"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F26</span>
@@ -1384,6 +1454,7 @@
       <article class="item blk" id="F25" data-group="blocking"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F25</span>
@@ -1404,6 +1475,7 @@
       <article class="item blk" id="G1" data-group="blocking"
                data-kind="gap" data-status="fixed"
                data-side="backend"
+               data-areas="realms"
                data-edits="no">
         <header class="item-head">
           <span class="id">G1</span>
@@ -1424,6 +1496,7 @@
       <article class="item blk" id="G9" data-group="blocking"
                data-kind="gap" data-status="fixed"
                data-side="frontend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">G9</span>
@@ -1444,6 +1517,7 @@
       <article class="item blk" id="C21" data-group="blocking"
                data-kind="contradiction" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C21</span>
@@ -1464,6 +1538,7 @@
       <article class="item blk" id="F9" data-group="blocking"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas="realms"
                data-edits="no">
         <header class="item-head">
           <span class="id">F9</span>
@@ -1484,6 +1559,7 @@
       <article class="item blk" id="F22" data-group="blocking"
                data-kind="finding" data-status="proposed"
                data-side="backend"
+               data-areas="realms"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F22</span>
@@ -1504,6 +1580,7 @@
       <article class="item blk" id="F10" data-group="blocking"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F10</span>
@@ -1524,6 +1601,7 @@
       <article class="item blk" id="F11" data-group="blocking"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas="realms"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F11</span>
@@ -1544,6 +1622,7 @@
       <article class="item blk" id="F13" data-group="blocking"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">F13</span>
@@ -1564,6 +1643,7 @@
       <article class="item blk" id="F14" data-group="blocking"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">F14</span>
@@ -1584,6 +1664,7 @@
       <article class="item blk" id="F21" data-group="blocking"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">F21</span>
@@ -1604,6 +1685,7 @@
       <article class="item blk" id="F15" data-group="blocking"
                data-kind="finding" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">F15</span>
@@ -1624,6 +1706,7 @@
       <article class="item blk" id="F17" data-group="blocking"
                data-kind="finding" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">F17</span>
@@ -1651,6 +1734,7 @@
       <article class="item dsg" id="F1" data-group="design"
                data-kind="finding" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F1</span>
@@ -1671,6 +1755,7 @@
       <article class="item dsg" id="F2" data-group="design"
                data-kind="finding" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F2</span>
@@ -1691,6 +1776,7 @@
       <article class="item dsg" id="F3" data-group="design"
                data-kind="finding" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F3</span>
@@ -1711,6 +1797,7 @@
       <article class="item dsg" id="F4" data-group="design"
                data-kind="finding" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F4</span>
@@ -1731,6 +1818,7 @@
       <article class="item dsg" id="F5" data-group="design"
                data-kind="finding" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F5</span>
@@ -1751,6 +1839,7 @@
       <article class="item dsg" id="F6" data-group="design"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">F6</span>
@@ -1771,6 +1860,7 @@
       <article class="item dsg" id="F7" data-group="design"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">F7</span>
@@ -1791,6 +1881,7 @@
       <article class="item dsg" id="F8" data-group="design"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">F8</span>
@@ -1811,6 +1902,7 @@
       <article class="item dsg" id="F12" data-group="design"
                data-kind="finding" data-status="open"
                data-side="both"
+               data-areas="realms"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F12</span>
@@ -1838,6 +1930,7 @@
       <article class="item sig" id="C7" data-group="significant"
                data-kind="contradiction" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C7</span>
@@ -1858,6 +1951,7 @@
       <article class="item sig" id="C8" data-group="significant"
                data-kind="contradiction" data-status="open"
                data-side="both"
+               data-areas="screens"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C8</span>
@@ -1878,6 +1972,7 @@
       <article class="item sig" id="F27" data-group="significant"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas="realms"
                data-edits="yes">
         <header class="item-head">
           <span class="id">F27</span>
@@ -1898,6 +1993,7 @@
       <article class="item sig" id="C18" data-group="significant"
                data-kind="contradiction" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C18</span>
@@ -1918,6 +2014,7 @@
       <article class="item sig" id="C20" data-group="significant"
                data-kind="contradiction" data-status="fixed"
                data-side="frontend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">C20</span>
@@ -1938,6 +2035,7 @@
       <article class="item sig" id="C13" data-group="significant"
                data-kind="contradiction" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">C13</span>
@@ -1958,6 +2056,7 @@
       <article class="item sig" id="C14" data-group="significant"
                data-kind="contradiction" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">C14</span>
@@ -1978,6 +2077,7 @@
       <article class="item sig" id="C9" data-group="significant"
                data-kind="contradiction" data-status="fixed"
                data-side="frontend"
+               data-areas="screens"
                data-edits="no">
         <header class="item-head">
           <span class="id">C9</span>
@@ -1998,6 +2098,7 @@
       <article class="item sig" id="C10" data-group="significant"
                data-kind="contradiction" data-status="fixed"
                data-side="both"
+               data-areas="screens"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C10</span>
@@ -2022,6 +2123,7 @@
       <article class="item sig" id="C11" data-group="significant"
                data-kind="contradiction" data-status="fixed"
                data-side="frontend"
+               data-areas="screens"
                data-edits="no">
         <header class="item-head">
           <span class="id">C11</span>
@@ -2042,6 +2144,7 @@
       <article class="item sig" id="C12" data-group="significant"
                data-kind="contradiction" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C12</span>
@@ -2062,6 +2165,7 @@
       <article class="item sig" id="G12" data-group="significant"
                data-kind="gap" data-status="fixed"
                data-side="both"
+               data-areas="characters"
                data-edits="yes">
         <header class="item-head">
           <span class="id">G12</span>
@@ -2082,6 +2186,7 @@
       <article class="item sig" id="G2" data-group="significant"
                data-kind="gap" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">G2</span>
@@ -2102,6 +2207,7 @@
       <article class="item sig" id="G3" data-group="significant"
                data-kind="gap" data-status="proposed"
                data-side="both"
+               data-areas="realms"
                data-edits="yes">
         <header class="item-head">
           <span class="id">G3</span>
@@ -2122,6 +2228,7 @@
       <article class="item sig" id="G4" data-group="significant"
                data-kind="gap" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">G4</span>
@@ -2142,6 +2249,7 @@
       <article class="item sig" id="G7" data-group="significant"
                data-kind="gap" data-status="done"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">G7</span>
@@ -2162,6 +2270,7 @@
       <article class="item sig" id="C22" data-group="significant"
                data-kind="contradiction" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C22</span>
@@ -2182,6 +2291,7 @@
       <article class="item sig" id="C23" data-group="significant"
                data-kind="contradiction" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C23</span>
@@ -2206,6 +2316,7 @@
       <article class="item sig" id="C25" data-group="significant"
                data-kind="contradiction" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C25</span>
@@ -2226,6 +2337,7 @@
       <article class="item sig" id="C26" data-group="significant"
                data-kind="contradiction" data-status="fixed"
                data-side="both"
+               data-areas="characters"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C26</span>
@@ -2246,6 +2358,7 @@
       <article class="item sig" id="F20" data-group="significant"
                data-kind="finding" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">F20</span>
@@ -2266,6 +2379,7 @@
       <article class="item sig" id="F23" data-group="significant"
                data-kind="finding" data-status="proposed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F23</span>
@@ -2286,6 +2400,7 @@
       <article class="item sig" id="F19" data-group="significant"
                data-kind="finding" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F19</span>
@@ -2306,6 +2421,7 @@
       <article class="item sig" id="F16" data-group="significant"
                data-kind="finding" data-status="proposed"
                data-side="both"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F16</span>
@@ -2326,6 +2442,7 @@
       <article class="item sig" id="C27" data-group="significant"
                data-kind="contradiction" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C27</span>
@@ -2353,6 +2470,7 @@
       <article class="item min" id="C15" data-group="minor"
                data-kind="contradiction" data-status="fixed"
                data-side="backend"
+               data-areas="realms"
                data-edits="no">
         <header class="item-head">
           <span class="id">C15</span>
@@ -2373,6 +2491,7 @@
       <article class="item min" id="C16" data-group="minor"
                data-kind="contradiction" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">C16</span>
@@ -2393,6 +2512,7 @@
       <article class="item min" id="C17" data-group="minor"
                data-kind="contradiction" data-status="fixed"
                data-side="frontend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C17</span>
@@ -2413,6 +2533,7 @@
       <article class="item min" id="G5" data-group="minor"
                data-kind="gap" data-status="proposed"
                data-side="backend"
+               data-areas="realms"
                data-edits="yes">
         <header class="item-head">
           <span class="id">G5</span>
@@ -2433,6 +2554,7 @@
       <article class="item min" id="G6" data-group="minor"
                data-kind="gap" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">G6</span>
@@ -2453,6 +2575,7 @@
       <article class="item min" id="G8" data-group="minor"
                data-kind="gap" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">G8</span>
@@ -2473,6 +2596,7 @@
       <article class="item min" id="G10" data-group="minor"
                data-kind="gap" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">G10</span>
@@ -2493,6 +2617,7 @@
       <article class="item min" id="G11" data-group="minor"
                data-kind="gap" data-status="open"
                data-side="frontend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">G11</span>
@@ -2513,6 +2638,7 @@
       <article class="item min" id="C24" data-group="minor"
                data-kind="contradiction" data-status="fixed"
                data-side="both"
+               data-areas="screens"
                data-edits="yes">
         <header class="item-head">
           <span class="id">C24</span>
@@ -2535,6 +2661,7 @@
       <article class="item min" id="F18" data-group="minor"
                data-kind="finding" data-status="withdrawn"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">F18</span>
@@ -2555,6 +2682,7 @@
       <article class="item min" id="C28" data-group="minor"
                data-kind="contradiction" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="yes">
         <header class="item-head">
           <span class="id">C28</span>
@@ -2582,6 +2710,7 @@
       <article class="item cho" id="Q1" data-group="choices"
                data-kind="decision" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">Q1</span>
@@ -2602,6 +2731,7 @@
       <article class="item cho" id="Q2" data-group="choices"
                data-kind="decision" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">Q2</span>
@@ -2622,6 +2752,7 @@
       <article class="item cho" id="Q3" data-group="choices"
                data-kind="decision" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">Q3</span>
@@ -2642,6 +2773,7 @@
       <article class="item cho" id="Q4" data-group="choices"
                data-kind="decision" data-status="fixed"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">Q4</span>
@@ -2662,6 +2794,7 @@
       <article class="item cho" id="Q5" data-group="choices"
                data-kind="decision" data-status="open"
                data-side="both"
+               data-areas="characters"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q5</span>
@@ -2682,6 +2815,7 @@
       <article class="item cho" id="Q6" data-group="choices"
                data-kind="decision" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">Q6</span>
@@ -2702,6 +2836,7 @@
       <article class="item cho" id="Q8" data-group="choices"
                data-kind="decision" data-status="fixed"
                data-side="backend"
+               data-areas="realms"
                data-edits="no">
         <header class="item-head">
           <span class="id">Q8</span>
@@ -2722,6 +2857,7 @@
       <article class="item cho" id="Q7" data-group="choices"
                data-kind="decision" data-status="open"
                data-side="backend"
+               data-areas=""
                data-edits="no">
         <header class="item-head">
           <span class="id">Q7</span>
@@ -2778,8 +2914,14 @@
     // An item that needs backend and frontend work belongs to both sides, so
     // each side shows the whole of its own work rather than a share of it.
     function onSide(el, which) {
-      return which === "all" || el.dataset.side === which
-             || el.dataset.side === "both";
+      if (which === "all") return true;
+      // A design-area tab is a different question from a side: it asks which
+      // items gate the drawing of that area, and most of them are backend.
+      if (which.indexOf("area:") === 0) {
+        var want = which.slice(5);
+        return (el.dataset.areas || "").split(" ").indexOf(want) >= 0;
+      }
+      return el.dataset.side === which || el.dataset.side === "both";
     }
 
     function onChip(el, filter) {
@@ -2859,4 +3001,4 @@
     apply();
   })();
 </script>
-<!-- ruleborn-build d8a670b3bee64853 -->
+<!-- ruleborn-build 8d3a6346e5ba13c8 -->

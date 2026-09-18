@@ -335,6 +335,21 @@ def bad_sides() -> list:
                 out.append(f"DESIGN_GATES[{area}] says {item_id} gates the "
                            f"design, but the register has it {st} \u2014 a "
                            f"designer would be waiting for finished work")
+        # And the mirror. `closed` is what gives each area a denominator, so a
+        # gate listed there that is still open would count the area further
+        # along than it is — the same lie as the one above, told the other way.
+        for item_id in spec.get("closed", {}):
+            st = status(item_id)
+            if st is None:
+                out.append(f"DESIGN_GATES[{area}] closed names {item_id}, "
+                           f"which is not in the register")
+            elif st in ("open", "proposed"):
+                out.append(f"DESIGN_GATES[{area}] counts {item_id} as a gate "
+                           f"already cleared, but the register has it {st}")
+        both = set(spec["gates"]) & set(spec.get("closed", {}))
+        if both:
+            out.append(f"DESIGN_GATES[{area}] lists {sorted(both)} as both open "
+                       f"and cleared")
     return out
 
 

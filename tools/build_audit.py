@@ -151,6 +151,40 @@ def side_progress(side: str) -> dict:
                 drafted_pct=100 * (settled + drafted) / total)
 
 
+def areas_of(item_id: str) -> list[str]:
+    """Which design areas this item gates, open or already cleared.
+
+    An item can gate more than one: C6's two rosters decide both which roster
+    a character screen reads from and what eleven of the eighteen creatures
+    actually are.
+    """
+    return [area for area, spec in DESIGN_GATES.items()
+            if item_id in spec["gates"] or item_id in spec.get("closed", {})]
+
+
+def area_gates(area: str) -> tuple[list[str], list[str]]:
+    """The register items that gate one design area: cleared, then still open."""
+    spec = DESIGN_GATES[area]
+    return list(spec.get("closed", {})), list(spec["gates"])
+
+
+def area_progress(area: str) -> dict:
+    """How close one design area is to being able to start.
+
+    A different question from `side_progress`, and the one actually asked:
+    not how much of the register is done, but **how many of the things a
+    character artist or a screen designer would otherwise have to guess are
+    settled**. The denominator is this area's own gates and nothing else, so
+    100% means the drawing can start rather than that the project is finished.
+    """
+    closed, open_ = area_gates(area)
+    total = len(closed) + len(open_) or 1
+    return dict(total=len(closed) + len(open_), settled=len(closed),
+                drafted=0, open=len(open_),
+                settled_pct=100 * len(closed) / total,
+                drafted_pct=100 * len(closed) / total)
+
+
 def tabs_html() -> str:
     """Two tabs and an everything tab, each with its own progress bar.
 
@@ -163,32 +197,45 @@ def tabs_html() -> str:
     a reader actually has, and a single control set would have made the two
     choices overwrite each other.
     """
-    tabs = [("all", "Everything"), ("backend", "Backend"),
-            ("frontend", "Frontend &amp; design")]
+    tabs = [("all", "Everything", "every item in the register"),
+            ("backend", "Backend", "rules, numbers and the simulation"),
+            ("frontend", "Frontend &amp; design", "anything a player sees"),
+            ("area:realms", "Realms", DESIGN_GATES["realms"]["what"]),
+            ("area:screens", "Screens", DESIGN_GATES["screens"]["what"]),
+            ("area:characters", "Characters", DESIGN_GATES["characters"]["what"])]
     out = []
-    for key, label in tabs:
-        p = side_progress(key)
+    for key, label, what in tabs:
+        area = key.split(":")[1] if key.startswith("area:") else None
+        p = area_progress(area) if area else side_progress(key)
         pressed = ' aria-pressed="true"' if key == "all" else ""
+        cls = "tab area" if area else "tab"
         out.append(f"""
-      <button class="tab" data-side="{key}"{pressed}>
+      <button class="{cls}" data-side="{key}" title="{esc(what)}"{pressed}>
         <span class="tab-head"><span class="tab-name">{label}</span>
           <span class="tab-n">{p['total']}</span></span>
         <span class="bar">
           <span class="fill drafted" style="width:{p['drafted_pct']:.1f}%"></span>
           <span class="fill settled" style="width:{p['settled_pct']:.1f}%"></span>
         </span>
-        <span class="tab-foot">{p['settled']} settled &middot;
-          {p['drafted']} drafted &middot; {p['open']} open</span>
+        <span class="tab-foot">{
+            f"{p['settled']} of {p['total']} gates cleared"
+            if area else
+            f"{p['settled']} settled &middot; {p['drafted']} drafted "
+            f"&middot; {p['open']} open"}</span>
       </button>""")
     both = sum(1 for i in REGISTER if side_of(i["id"]) == "both")
     return (f'<nav class="tabs" aria-label="Backend or frontend">'
             f'{"".join(out)}</nav>\n'
-            f'    <p class="tabs-note">A bar measures the <em>audit</em>, not the '
-            f'build: an item is settled when the document answers it, which is '
-            f'what has to happen before the work starts. No realm, screen or '
-            f'character has been drawn yet &mdash; for what that is waiting on, '
-            f'see below. {both} items need both sides and count on both, so the '
-            f'two tabs add up to more than {len(REGISTER)}.</p>')
+            f'    <p class="tabs-note">The first three bars measure the '
+            f'<em>audit</em>: an item is settled when the document answers it. '
+            f'{both} items need both sides and count on both, so those two add '
+            f'up to more than {len(REGISTER)}.<br><br>'
+            f'<strong>The last three answer a different question &mdash; when '
+            f'can the drawing start?</strong> Each counts only the items that '
+            f'decide something its designer would otherwise have to guess, so '
+            f'100% means that area can begin, not that the project is done. '
+            f'Nothing has been drawn yet; these say what each area is waiting '
+            f'on, and the panel above lists every gate by name.</p>')
 
 
 def design_gates_html() -> str:
@@ -428,6 +475,7 @@ def item_html(item: dict) -> str:
       <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
                data-kind="{item['kind']}" data-status="{status}"
                data-side="{side_of(item['id'])}"
+               data-areas="{' '.join(areas_of(item['id']))}"
                data-edits="{'yes' if item['id'] in EDITS else 'no'}">
         <header class="item-head">
           <span class="id">{esc(item['id'])}</span>
@@ -749,6 +797,12 @@ def build() -> str:
     border-color: var(--accent);
     background: color-mix(in srgb, var(--accent) 7%, transparent);
   }}
+  /* The three design areas answer a different question from the three sides,
+     so they read as a second row rather than as more of the same. */
+  .tab.area {{ border-style: dashed; flex-basis: 150px; }}
+  .tab.area[aria-pressed="true"] {{ border-style: solid; }}
+  .tab.area .fill.settled {{ background: var(--dsg); }}
+  .tab.area .fill.drafted {{ background: var(--dsg); opacity: 0.25; }}
   .tab-head {{ display: flex; align-items: baseline; gap: 8px; }}
   .tab-name {{ font-size: 15px; font-weight: 600; }}
   .tab-n {{
@@ -998,8 +1052,14 @@ def build() -> str:
     // An item that needs backend and frontend work belongs to both sides, so
     // each side shows the whole of its own work rather than a share of it.
     function onSide(el, which) {{
-      return which === "all" || el.dataset.side === which
-             || el.dataset.side === "both";
+      if (which === "all") return true;
+      // A design-area tab is a different question from a side: it asks which
+      // items gate the drawing of that area, and most of them are backend.
+      if (which.indexOf("area:") === 0) {{
+        var want = which.slice(5);
+        return (el.dataset.areas || "").split(" ").indexOf(want) >= 0;
+      }}
+      return el.dataset.side === which || el.dataset.side === "both";
     }}
 
     function onChip(el, filter) {{

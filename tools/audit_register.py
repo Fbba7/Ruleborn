@@ -3405,6 +3405,17 @@ DESIGN_GATES = {
             "G5":  "whether a raider can tell which law a pylon carries before "
                    "committing to the detour",
             "C19": "how many producers a realm holds, which is what stands on it",
+        },
+        closed={
+            "C5":  "how many wards and posts a realm may hold \u2014 three "
+                   "different limits, now one",
+            "Q8":  "how many ruleborn stand at one Guardian Post: one",
+            "C1":  "one detection model, so a guard's sight cone is a shape "
+                   "that can be drawn",
+            "C15": "guard vision in tiles rather than metres, which is the "
+                   "unit a layout is drawn in",
+            "G1":  "how a crew moves through a realm, which decides what a "
+                   "route has to look like",
         }),
     "screens": dict(
         what="The 27 screens in \u00a723, their contents and their counts",
@@ -3414,6 +3425,12 @@ DESIGN_GATES = {
             "C3":  "how many law ranks the Codex has to display, three or four",
             "C8":  "whether the Library is a seventeenth building with a screen "
                    "of its own",
+        },
+        closed={
+            "C11": "how many screens there are: 27, not 23",
+            "C9":  "how many laws the Codex screen shows: 48, not 36",
+            "C10": "how many traits a character screen lists: 31",
+            "C24": "how many building types the build screen offers: 17",
         }),
     "characters": dict(
         what="The 18 ruleborn, their forms, and what the art has to show",
@@ -3423,6 +3440,11 @@ DESIGN_GATES = {
             "D6":  "144 forms or 54 \u2014 the largest single art number in the "
                    "project, and a threefold difference",
             "Q5":  "accepting or refusing that cut is the decision underneath it",
+        },
+        closed={
+            "C26": "size and flight are stated properties of every ruleborn, "
+                   "so the art has a band to draw to",
+            "G12": "the three laws that read those properties now have them",
         }),
 }
 

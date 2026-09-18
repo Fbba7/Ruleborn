@@ -40,12 +40,38 @@ PAGE = ROOT / "docs" / "audit" / "index.html"
 ITEM = re.compile(r'<article class="item [^"]*" id="([^"]+)"([^>]*)>')
 ATTR = re.compile(r'data-([a-z]+)="([^"]*)"')
 TAB = re.compile(
-    r'<button class="tab" data-side="([a-z]+)"[^>]*>.*?'
+    r'<button class="tab(?: area)?" data-side="([a-z:]+)"[^>]*>.*?'
     r'<span class="tab-n">(\d+)</span>.*?'
     r'<span class="fill drafted" style="width:([\d.]+)%">.*?'
     r'<span class="fill settled" style="width:([\d.]+)%">.*?'
-    r'<span class="tab-foot">(\d+) settled &middot;\s*(\d+) drafted &middot; (\d+) open',
+    r'<span class="tab-foot">(.*?)</span>',
     re.S)
+
+#: The two shapes a tab's foot takes. A side tab counts the register three
+#: ways; a design-area tab counts one thing, because a gate is cleared or it
+#: is not — there is no drafted state for "this question is answered".
+FOOT_SIDE = re.compile(r"(\d+) settled &middot;\s*(\d+) drafted &middot; (\d+) open")
+FOOT_AREA = re.compile(r"(\d+) of (\d+) gates cleared")
+
+
+def tabs(html: str) -> list[tuple]:
+    """(side, total, drafted_width, settled_width, settled, drafted, open)."""
+    out = []
+    for side, total, dw, sw, foot in TAB.findall(html):
+        m = FOOT_SIDE.search(foot)
+        if m:
+            settled, drafted, open_ = (int(x) for x in m.groups())
+        else:
+            m = FOOT_AREA.search(foot)
+            if not m:
+                out.append((side, int(total), dw, sw, None, None, None))
+                continue
+            settled, drafted = int(m.group(1)), 0
+            open_ = int(m.group(2)) - settled
+        out.append((side, int(total), dw, sw, settled, drafted, open_))
+    return out
+
+
 CHIP = re.compile(r'<button class="chip[^"]*" data-filter="([^"]+)"[^>]*>'
                   r'(?:[^<]*)(?:<span class="n">(\d+)</span>)?')
 
@@ -66,7 +92,11 @@ def chips(html: str) -> list[tuple[str, int | None]]:
 
 
 def on_side(item: dict, side: str) -> bool:
-    return side == "all" or item.get("side") in (side, "both")
+    if side == "all":
+        return True
+    if side.startswith("area:"):
+        return side[5:] in (item.get("areas") or "").split()
+    return item.get("side") in (side, "both")
 
 
 def on_chip(item: dict, filt: str) -> bool:
@@ -82,14 +112,20 @@ def check(html: str) -> list[str]:
     if not rows:
         return ["no items parsed out of the page — the markup changed shape"]
 
-    tabs = TAB.findall(html)
-    if len(tabs) != 3:
-        bad.append(f"expected three tabs, found {len(tabs)}")
+    rows_of_tabs = tabs(html)
+    # Six: three sides and three design areas. The first version of this
+    # matched `data-side="([a-z]+)"`, which cannot match `area:realms`, so it
+    # found three, asserted three, and passed while half the tabs went
+    # unchecked — a gate with a blind spot reports on the part it can see.
+    if len(rows_of_tabs) != 6:
+        bad.append(f"expected six tabs, found {len(rows_of_tabs)}")
     seen = set()
-    for side, total, drafted_w, settled_w, settled, drafted, open_ in tabs:
+    for side, total, drafted_w, settled_w, settled, drafted, open_ in rows_of_tabs:
         seen.add(side)
-        total, settled, drafted, open_ = (int(total), int(settled),
-                                          int(drafted), int(open_))
+        if settled is None:
+            bad.append(f"{side}: its foot is neither a side count nor a gate "
+                       f"count, so nothing below can be checked")
+            continue
         here = [i for i in rows if on_side(i, side)]
         if len(here) != total:
             bad.append(f"{side} tab counts {total} items, the page carries "
@@ -109,8 +145,24 @@ def check(html: str) -> list[str]:
             if abs(expect - float(width)) > 0.06:
                 bad.append(f"{side} tab: the {name} fill is {width}% but "
                            f"{want} of {total} is {expect:.1f}%")
-    if seen != {"all", "backend", "frontend"}:
-        bad.append(f"the tabs cover {sorted(seen)}, not all/backend/frontend")
+    want = {"all", "backend", "frontend",
+            "area:realms", "area:screens", "area:characters"}
+    if seen != want:
+        bad.append(f"the tabs cover {sorted(seen)}, not {sorted(want)}")
+
+    # A design-area tab whose bar is full would tell a designer to start, so
+    # its arithmetic is checked against the items themselves rather than
+    # against the number printed beside it.
+    for side, total, _dw, _sw, settled, drafted, open_ in rows_of_tabs:
+        if not side.startswith("area:") or settled is None:
+            continue
+        if int(drafted):
+            bad.append(f"{side}: a gate cannot be 'drafted' \u2014 it is "
+                       f"cleared or it is not")
+        gating = [i for i in rows if on_side(i, side)]
+        if len(gating) != total:
+            bad.append(f"{side} counts {total} gates, {len(gating)} items "
+                       f"carry that area")
 
     for filt, count in chips(html):
         hits = sum(1 for i in rows if on_chip(i, filt))
@@ -252,6 +304,21 @@ def self_test() -> int:
         print("  and an item moved to the wrong side is caught")
     else:
         print("    FAIL: an item on the wrong side went unnoticed")
+        ok = False
+
+    # A design-area tab's item list is what tells a designer what to wait for,
+    # so an item losing its area has to be caught the same way one losing its
+    # side is.
+    broken = html.replace('data-areas="characters"', 'data-areas=""', 1)
+    if broken != html and any("gates" in b or "tab counts" in b
+                              for b in check(broken)):
+        print("  and an item dropped from a design area is caught")
+    elif broken == html:
+        print("    FAIL: no item carries data-areas, so the area tabs filter "
+              "nothing")
+        ok = False
+    else:
+        print("    FAIL: an item dropped from a design area went unnoticed")
         ok = False
 
     if shutil.which("node"):
