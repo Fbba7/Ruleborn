@@ -443,11 +443,10 @@ def check_inventory(doc: Doc, led: Ledger) -> None:
     roster = doc.section("characters")
     creatures = re.findall(r'<td data-label="Ruleborn"><strong>([^<]+)</strong>',
                            roster[roster.find("11.2"):roster.find("11.3")])
-    buildings = re.findall(r"<h4[^>]*>(.*?)</h4>", doc.section("buildings"), flags=re.S)
     inventory = {
         "Laws": sum(authored_ranks(doc).values()),
         "Ruleborn": len(creatures),
-        "Building types": len(buildings) + 1,      # 10.2's sixteen, plus the Library in 10.4
+        "Building types": building_types(doc),
     }
     for label, actual in inventory.items():
         m = re.search(r'<td data-label="Content">' + re.escape(label) + r"</td><td[^>]*>(\d+)</td>",
@@ -455,6 +454,60 @@ def check_inventory(doc: Doc, led: Ledger) -> None:
         led.check(f"26.1's {label.lower()} count matches the tables it summarises",
                   bool(m) and int(m.group(1)) == actual,
                   f"stated {m.group(1) if m else 'nothing'}, counted {actual}")
+
+
+def building_types(doc: Doc) -> int:
+    """How many building types the document specifies.
+
+    10.2 is headed "Every level of every building" and contains sixteen; the
+    Library is specified in 10.4 instead, which is C8. An earlier version wrote
+    `len(buildings) + 1` for that, and the +1 is an assumption rather than a
+    count: the moment C8 is fixed by folding 10.4 into 10.2 this would read
+    eighteen, 26.1 would look wrong, and the fix would look like the fault.
+    Counting the names makes it true either way.
+    """
+    names = {b.strip() for b in
+             re.findall(r"<h4[^>]*>(.*?)</h4>", doc.section("buildings"), flags=re.S)}
+    if "The Library" in doc.raw:
+        names.add("The Library")
+    return len(names)
+
+
+def check_asset_budget(doc: Doc, led: Ledger) -> None:
+    """21.9's launch asset budget against the counts it is a budget for.
+
+    The art schedule is sized from the content list, so every row in 21.9 is a
+    second home for a number specified somewhere else. 26.1 moved to seventeen
+    building types in v3.1 and 21.9 still prices sixteen, so the schedule is
+    four building looks short - which C8 records and no check could see,
+    because "16 types x 4 = 64" is correct arithmetic about the wrong sixteen
+    and the check that multiplies out every inline product passes it happily.
+
+    That is F24's rule for the third time: a check that recognises a product
+    can never question either factor. These rows are derived from the same
+    inventory 26.1 is checked against, so the budget cannot drift from the
+    content again.
+    """
+    roster = doc.section("characters")
+    creatures = re.findall(r'<td data-label="Ruleborn"><strong>([^<]+)</strong>',
+                           roster[roster.find("11.2"):roster.find("11.3")])
+    #: what 21.9 budgets for -> (how to read its number, the count it must
+    #: match, where that count is specified, the item that owns the
+    #: disagreement where the register already records one)
+    rows = [
+        ("building looks", r"Building looks \((\d+) types",
+         building_types(doc), "10.2 and 10.4, which 26.1 counts", "C8"),
+        ("law signatures", r"Law signatures and paradoxes</td><td[^>]*>(\d+)",
+         sum(authored_ranks(doc).values()), "7.7's sheets", None),
+        ("ruleborn", r"Characters: ruleborn[^<]*</td><td[^>]*>(\d+)",
+         len(creatures), "11.2's roster", None),
+    ]
+    for label, pattern, expected, home, tracks in rows:
+        m = re.search(pattern, doc.raw)
+        led.check(f"21.9's launch budget for {label} matches {home}",
+                  bool(m) and int(m.group(1)) == expected,
+                  f"21.9 budgets for {m.group(1) if m else 'nothing'} "
+                  f"{label}; {home} gives {expected}", tracks=tracks)
 
 
 def check_creatures(doc: Doc, led: Ledger) -> None:
@@ -782,6 +835,7 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_retired_names(doc, led)
     check_arithmetic(doc, led)
     check_inventory(doc, led)
+    check_asset_budget(doc, led)
     check_creatures(doc, led)
     check_page_economy(doc, led)
     check_banned_phrasings(doc, led)

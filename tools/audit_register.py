@@ -343,20 +343,47 @@ dict(id="C2", kind="contradiction", severity="blocking", status="proposed",
          "resource-share claims; and resolve C4 first, since the formula's level "
          "term is undefined."),
 
-dict(id="C3", kind="contradiction", severity="blocking", status="open",
-     title="Two law-rarity taxonomies, and one of them has no laws in it",
-     refs=["7.4", "7.7", "7.9", "9.5", "14.4", "27.2", "29.2"],
-     body="What is <em>authored</em> (§7.4, §7.7, verified by parsing all 48 law "
-          "sheets): three ranks — 18 Common, 18 Rare, 12 Deep — at 15/30/60 "
-          "pages. §14.4's 1,485-page total is computed from exactly that, and the "
-          "glossary agrees. What is <em>described</em> (§7.9, §27.2): five ranks "
-          "— 18/14/10/6 plus 3 paradoxes — at 10/20/35/60/120 pages. "
-          "<strong>No law anywhere in the document is tagged Uncommon.</strong> The "
-          "two totals differ by 345 pages, which moves the whole late-game curve.",
-     rec="§7.9's reasoning survives either way — rarity should buy specificity, "
-         "not strength. Decide the split, then regenerate §7.4, §7.7, §7.6, §9.5, "
-         "§14.4 and the glossary from one table. Choosing five ranks means "
-         "re-tagging 14 laws and re-deriving the page economy."),
+dict(id="C3", kind="contradiction", severity="significant", status="open",
+     title="Two law-rarity taxonomies, and v3.1 already chose between them "
+           "everywhere but two sentences",
+     refs=["7.4", "7.6", "7.7", "7.9", "9.5", "14.4", "27.2", "29.2"],
+     body="Against v2.3 and v3.0 this was a 345-page decision. <em>What is "
+          "authored</em> \u2014 the 48 law sheets in \u00a77.7 \u2014 said "
+          "three ranks at 15/30/60, \u00a714.4 totalled 1,485 pages from "
+          "exactly that, and \u00a77.9 described five ranks at 10/20/35/60/120. "
+          "<strong>v3.1 settled it and the register did not notice.</strong> The "
+          "sheets carry 18 common, 12 uncommon, 6 rare and 12 deep; "
+          "\u00a714.4 now computes <code>18 \u00d7 10 + 12 \u00d7 20 + 6 "
+          "\u00d7 35 + 12 \u00d7 60 = 1,350</code> from that split; "
+          "\u00a77.1\u2019s glossary and the change log say the same."
+          "<br><br><strong>Two sentences in the whole document still "
+          "disagree.</strong> \u00a77.6\u2019s restore line prices three ranks "
+          "and never mentions Uncommon at all \u2014 that is F24\u2019s "
+          "sentence and C23\u2019s one surviving edit. \u00a77.9\u2019s table "
+          "still counts 18/14/10/6."
+          "<br><br><code>tools/law_ranks.py</code> prices all three. The sheets\u2019 "
+          "split costs nothing to adopt, because it is what the sheets are "
+          "already tagged with and what \u00a714.4 already computes. "
+          "\u00a77.9\u2019s would move six sheets and is the only one of the "
+          "three that cannot give every school the same ladder \u2014 14 and 10 "
+          "do not divide by six, and \u00a77.9\u2019s own table asserts the "
+          "even spread for the two ranks that do (<em>\u201cThree per "
+          "school\u201d</em>, <em>\u201cOne per school\u201d</em>) and says "
+          "nothing about the two that do not. The sheets give every school "
+          "3 / 2 / 1 / 2.",
+     rec="Adopt the sheets: change four numbers in \u00a77.9\u2019s table and "
+         "one sentence in \u00a77.6, both drafted below. Nothing is re-tagged "
+         "and no total moves, because every other statement in the document is "
+         "already on this split."
+         "<br><br><strong>The Codex screen is no longer waiting on this.</strong> "
+         "It shows 48 laws in four ranks at 10/20/35/60, which is what the "
+         "sheets, \u00a714.4 and the glossary have said since v3.1 \u2014 so "
+         "this is a document contradiction to close rather than a screen "
+         "decision to make."
+         "<br><br>What is still a decision is the rule underneath the counts, "
+         "which \u00a77.9 exists to state and the sheets do not obey. That is "
+         "D31, and it is separated out because re-costing 48 laws is a "
+         "different job from correcting a table."),
 
 dict(id="C4", kind="contradiction", severity="blocking", status="proposed",
      title="The master inflation dial is keyed to a level range that does not exist",
@@ -388,46 +415,59 @@ dict(id="C5", kind="contradiction", severity="blocking", status="proposed",
          "ward and guard numbers into one table in §5.2."),
 
 dict(id="C6", kind="contradiction", severity="blocking", status="proposed",
-     title="Two ruleborn rosters — the roles now agree, the abilities do not",
-     refs=["11.2", "11.11", "11.5", "12.8"],
+     title="Two ruleborn rosters \u2014 the roles agree now, and the abilities "
+           "are two designs rather than two wordings",
+     refs=["11.2", "11.11", "11.5", "12.5", "12.8"],
      body="The same 18 creatures are specified twice. Against v2.3 and v3.0 the "
           "two disagreed about what three of them <em>were</em>: Prism Mite a "
-          "Carrier in §11.2 and a Scout in §11.11, Stormhound a Scout "
-          "then a Carrier, Rootrunner a Carrier then a Scout — a different "
-          "role distribution (3 Scout / 4 Carrier against 4 Scout / 3 Carrier), "
-          "and role drives crew composition, guard behaviour (§12.8) and "
-          "the Nursery’s fewest-roles-first rule (§11.5)."
+          "Carrier in \u00a711.2 and a Scout in \u00a711.11, Stormhound a Scout "
+          "then a Carrier, Rootrunner a Carrier then a Scout \u2014 a different "
+          "role distribution, and role drives crew composition, guard behaviour "
+          "(\u00a712.8) and the Nursery\u2019s fewest-roles-first rule "
+          "(\u00a711.5)."
           "<br><br><strong>v3.1 closed that half, and nothing said so.</strong> "
-          "Read out of the built document, the two sections now agree on every "
-          "creature’s school and role, with identical distributions: "
-          "3 Scout, 3 Breaker, 4 Carrier, 4 Warden, 4 Mender. This item kept "
-          "its old headline for a version. <code>validate_content.py</code> "
-          "reported the role conflicts and nothing else, so the moment the "
-          "roles reconciled it went silent on an open item — a check "
-          "losing its subject, which reads exactly like a check passing."
-          "<br><br>What is left is one field: <strong>all 18 give different "
-          "ability text</strong>. Featherkin glides for 12s or 14s, Echoplate "
-          "returns 50% or 40%, Rambler charges 4 tiles breaking a wall or 5 "
-          "breaking a ward. Real work and a real contradiction — but the "
-          "two sections are one reconciliation apart rather than two rosters "
-          "apart.<br><br><strong>Nothing an artist reads is in dispute.</strong> "
-          "§11.2 carries name, school, role, size, flight, ability and "
-          "passive; look, proportions, personality and habits are "
-          "§11.11’s alone, so there was never a second opinion about "
-          "them. With the roles agreed, character design is no longer waiting "
-          "on this item.",
-     rec="§11.11 is the richer and later spec. Make it authoritative, reduce §11.2 "
-         "to a generated index, and hold both in <strong>one creature data "
-         "table</strong> — exactly the server-side content data §24 describes. "
-         "<code>content/ruleborn.json</code> already holds both readings: every "
-         "creature carries §11.11’s fields and an <code>alt_11_2</code> "
-         "with whatever §11.2 says differently, so the reconciliation is 18 "
-         "rows to read rather than two sections to diff."
-         "<br><br>The scope is smaller than this item was written for. Since the "
-         "roles agree, adopting §11.11’s ability text changes no crew "
-         "composition, no guard behaviour and no Nursery weighting — it "
-         "changes 18 sentences and the cooldowns in them. That is a sitting, not "
-         "a decision.<br><br><code>python3 tools/validate_content.py</code>"),
+          "Both sections now give the same school and role for all 18, with the "
+          "same distribution \u2014 3 Scout, 3 Breaker, 4 Carrier, 4 Warden, 4 "
+          "Mender. The check that was watching this reported only role "
+          "conflicts, so it went silent the moment they reconciled. A check that "
+          "loses its subject reads exactly like a check that passes."
+          "<br><br><strong>What is left was recorded as wording, and it is "
+          "not.</strong> <code>tools/ability_text.py</code> reads the 18 pairs "
+          "out of <code>content/ruleborn.json</code>:"
+          "<br><br><strong>Cooldowns run one way.</strong> Fifteen pairs state "
+          "one on both sides; \u00a711.2\u2019s is shorter in thirteen, equal "
+          "in one, longer in one, with a median gap of four seconds. A "
+          "difference that runs one way in thirteen of fifteen is two balance "
+          "passes, not two people wording one number."
+          "<br><br><strong>Twelve of the eighteen do a different thing.</strong> "
+          "Mossbear takes 50% less damage in \u00a711.11 and heals 20% in "
+          "\u00a711.2 \u2014 mitigation and healing are different resources. "
+          "Prism Mite splits into copies with half the <em>health</em>, or into "
+          "mites each carrying half the <em>loot</em>. Echoplate shields the "
+          "whole crew and reflects at 40%, or shields one ally and reflects "
+          "nothing. Quarryback, Tidewalker and Echoplate state no cooldown in "
+          "\u00a711.11 at all, because there \u00a711.11 describes something "
+          "continuous and \u00a711.2 an activated power. Even Sparkwright, the "
+          "one pair whose numbers agree exactly, cuts <em>an ally\u2019s</em> "
+          "cooldown in one and <em>the Sage\u2019s</em> in the other \u2014 "
+          "and \u00a712.5 makes the Sage a separate slot from the crew.",
+     rec="Design the eighteen abilities once, then give them one home."
+         "<br><br><strong>\u00a711.11 is the home</strong> \u2014 it is the "
+         "character bible and it already carries look, proportions, personality "
+         "and habits, none of which \u00a711.2 has an opinion about. "
+         "\u00a711.2 becomes a summary that cites it, which is \u00a731.2\u2019s "
+         "rule and the same fix C27 and C28 need."
+         "<br><br><strong>The twelve effect differences are the work; the "
+         "cooldowns come with them.</strong> They are not a reconciliation to "
+         "type up \u2014 they are twelve abilities to choose between, and each "
+         "choice changes what a Warden or a Mender is for. "
+         "<code>tools/ability_text.py</code> prints both texts and the reason "
+         "the pair is one kind or the other, so the decision is eighteen reads "
+         "rather than two sections."
+         "<br><br><strong>This holds the screens and not the art.</strong> A "
+         "character screen shows the ability text, so it cannot be drawn; a "
+         "character\u2019s portrait needs a look, a role and a school, and all "
+         "three have been settled since v3.1."),
 
 dict(id="C19", kind="contradiction", severity="blocking", status="open",
      title="The production tables describe a universe the build rules do not permit",
@@ -579,23 +619,45 @@ dict(id="C7", kind="contradiction", severity="significant", status="proposed",
          "the golden replays are written, since they encode it and every duration "
          "expressed in ticks depends on it."),
 
-dict(id="C8", kind="contradiction", severity="significant", status="open",
-     title="The Library is load-bearing and specified nowhere",
-     refs=["7.6", "12.1", "10.2", "26.1", "21.9", "30.15"],
-     body="“A Library at the Heart produces about one page per realm every few "
-          "hours” is the mitigation for the problem review 10 identified — "
-          "that making pages raid-only punishes the large share of players who "
-          "prefer building. It is referenced four times. It is <strong>not among the "
-          "16 building types</strong> in §10.2, has no cost, no levels and no "
-          "placement rule, and §26.1 confirms 16 types at launch."
-          "<br><br>The count reaches further than the two sections first "
-          "recorded here. §21.9’s launch asset budget prices "
-          "<code>Building looks (16 types × 4)</code> at 64, so the "
-          "art schedule is short four building looks as well — a "
-          "third place the same fix did not land.",
-     rec="Add it as a 17th building with a full level table, or fold the trickle "
-         "into the Observatory or the Spire and rewrite the four references. Do not "
-         "leave a load-bearing economic faucet unspecified."),
+dict(id="C8", kind="contradiction", severity="minor", status="open",
+     title="The Library was specified in v3.1; the art schedule was not told",
+     refs=["7.6", "10.2", "10.4", "12.1", "21.9", "26.1", "30.15"],
+     body="\u201cA Library at the Heart produces about one page per realm every "
+          "few hours\u201d is the mitigation for the problem review 10 "
+          "identified \u2014 that making pages raid-only punishes the large "
+          "share of players who prefer building. It was referenced four times "
+          "and specified nowhere: not among \u00a710.2\u2019s sixteen building "
+          "types, no cost, no levels, no placement rule, and \u00a726.1 "
+          "confirmed sixteen types at launch."
+          "<br><br><strong>v3.1 specified it.</strong> \u00a710.4 opens "
+          "<em>\u201ca load-bearing faucet that four sections referenced and no "
+          "table contained: the seventeenth building type, at the Heart, one per "
+          "universe\u201d</em> and gives all ten levels, from 900 Starlight and "
+          "3 pages a day at level 1. \u00a726.1 says seventeen. The build "
+          "screen has a building to draw and the economy model has a curve to "
+          "price \u2014 both of which it now does, at all ten levels rather "
+          "than three (D30)."
+          "<br><br><strong>Two places did not follow.</strong> \u00a710.2 is "
+          "headed <em>Every level of every building</em> and still does not "
+          "contain it, which is how this happened the first time. And "
+          "\u00a721.9\u2019s launch asset budget still prices <code>Building "
+          "looks (16 types \u00d7 4)</code> at 64, so the art schedule is four "
+          "building looks short."
+          "<br><br>The second is the one worth the check rather than the edit. "
+          "\u00a721.9 is a budget for the content \u00a726.1 lists, so every "
+          "row in it is a second home for a number specified elsewhere, and "
+          "nothing compared the two \u2014 <code>16 \u00d7 4 = 64</code> is "
+          "correct arithmetic about the wrong sixteen, so the check that "
+          "multiplies out every inline product passes it. "
+          "<code>tools/check_document.py</code> now derives the budget rows from "
+          "the same inventory \u00a726.1 is checked against.",
+     rec="Move \u00a710.4\u2019s table into \u00a710.2 between Ward and "
+         "Resonance Lab, which C24 drafts, and raise \u00a721.9 to "
+         "<code>17 types \u00d7 4</code> = 68."
+         "<br><br><strong>The Library screen is no longer waiting on this.</strong> "
+         "It is a building with ten levels, a cost curve and a place, which is "
+         "everything a build-screen entry needs. What is left is where the table "
+         "is printed and four looks in the art schedule."),
 
 dict(id="C29", kind="contradiction", severity="blocking", status="open",
      title="v3.0 removed the playtesters and kept two phase gates that "
@@ -1476,23 +1538,33 @@ dict(id="C22", kind="contradiction", severity="significant", status="open",
          "points at §12.17. Both numbers are live in the file today, and the one in "
          "the moment-to-moment section is the one a reader meets first."),
 
-dict(id="C23", kind="contradiction", severity="significant", status="open",
-     title="Three sections still price laws in three ranks after the sheets moved to four",
+dict(id="C23", kind="contradiction", severity="minor", status="open",
+     title="One sentence still prices laws in three ranks, and it is the only "
+           "one left",
      refs=["7.6", "7.7", "7.9", "14.4", "29.2"],
-     body="v3.0 re-tagged twelve laws from Rare to Uncommon. §7.6 still says "
-          "\u201cRestoring a law: 15 pages for a common law, 30 for a rare one, 60 for "
-          "a deep one\u201d \u2014 three ranks, and no mention of the rank twelve laws "
-          "now carry. §14.4 still totals the Codex as \u201c15 commons \u00d7 15 + 18 "
-          "rares \u00d7 30 + 12 deep \u00d7 60 = 1,485 pages\u201d, arithmetic that "
-          "describes a roster of laws that no longer exists. The glossary and the "
-          "price list still say \u201c15, 30 or 60 pages by rank\u201d.<br><br>The "
-          "change log states the new figure as 1,350 pages. That counts all 18 "
-          "commons; §14.4\u2019s convention excludes the three free starting laws, so "
-          "even the replacement figure is on a different basis from the number it "
-          "replaces.",
-     rec="This is C3\u2019s collateral list, and C3 is still open \u2014 the sheets "
-         "say 18/12/6/12 and §7.9 says 18/14/10/6. Settle the split first, then "
-         "regenerate every page total from the law table rather than restating it."),
+     body="This was C3\u2019s collateral list: v3.0 re-tagged twelve laws from "
+          "Rare to Uncommon and four statements did not follow \u2014 "
+          "\u00a77.6\u2019s restore line, \u00a714.4\u2019s "
+          "<code>15 \u00d7 15 + 18 \u00d7 30 + 12 \u00d7 60 = 1,485</code>, "
+          "the glossary and the price list."
+          "<br><br><strong>v3.1 fixed three of the four.</strong> \u00a714.4 "
+          "now totals 1,350 from the sheets\u2019 own split, \u00a77.1 says "
+          "rank sets acquisition time rather than page cost, and \u00a729.2 "
+          "carries the five-rank figures. What is left is one sentence in "
+          "\u00a77.6:<br><br><code>Restoring a law: 15 pages for a common law, "
+          "30 for a rare one, 60 for a deep one.</code><br><br>Three ranks, "
+          "three prices, and no mention of the rank twelve laws have carried "
+          "since v3.0. It is normative text \u2014 it is where a player is told "
+          "what restoring costs \u2014 and it is the sentence F24 is about: "
+          "v3.1\u2019s ban on the retired three-rank model searches for "
+          "<code>15, 30 or 60 pages</code> and reports it absent, because this "
+          "says the same thing with the clause rearranged.",
+     rec="One replacement, drafted below, and it can be made without waiting on "
+         "C3 \u2014 \u00a77.6 disagrees with \u00a77.9 and \u00a714.4 alike, "
+         "so no reading of C3 leaves this sentence standing. "
+         "<code>tools/check_document.py</code> derives every page price from the "
+         "rank table rather than recognising a phrase, which is what caught it "
+         "and what will keep catching the next rearrangement."),
 
 dict(id="C24", kind="contradiction", severity="minor", status="open",
      title="Seventeen building types, and §26.1 still says sixteen",
@@ -2263,6 +2335,60 @@ dict(id="D30", kind="deviation", severity="change", status="done",
          "numbers are pinned to its own note instead of reported as an open "
          "item, so if the content moves them the note is what the build calls "
          "stale."),
+
+dict(id="D31", kind="deviation", severity="significant", status="open",
+     title="\u00a77.9\u2019s two dials are one dial, measured across all 48 "
+           "law sheets",
+     refs=["7.1", "7.9", "7.7", "12.4", "12.5"],
+     body="\u00a77.9 is titled <em>Rarity buys specificity, not strength</em> "
+          "and states the rule the whole rank system exists to enforce: "
+          "<em>\u201crarity governs how long a law takes to get, while "
+          "stability cost and conditions govern how strong it is. These are two "
+          "dials, and the earlier version tied them together.\u201d</em> "
+          "\u00a77.1 restates it as a property of every law: <em>\u201cRank "
+          "sets how long a law takes to acquire \u2014 not how strong it "
+          "is.\u201d</em>"
+          "<br><br><strong>Across the 48 sheets, rank predicts stability cost "
+          "at r = +0.80.</strong> In 732 of 828 cross-rank pairs (88%) the rarer "
+          "law costs more. The medians climb with the ladder: common 14, "
+          "uncommon 17, rare 17, deep 22. Rank predicts conditions \u2014 the "
+          "other dial \u00a77.9 names \u2014 at r = \u22120.04, which is "
+          "nothing, and common laws carry marginally <em>more</em> conditional "
+          "text than rare ones. So v2.0 split the ranks and the sheets tied them "
+          "back together."
+          "<br><br><strong>\u00a77.9\u2019s own remedy makes it "
+          "worse.</strong> <em>\u201cIf playtests show rare and deep laws still "
+          "producing materially higher defence rates than common ones, the "
+          "answer is more stability cost or a tighter condition, not a smaller "
+          "number.\u201d</em> Raising a rare law\u2019s stability cost raises "
+          "the correlation that is the fault."
+          "<br><br><strong>And the mechanism it names as the primary reason the "
+          "split is fair does not discriminate by rank.</strong> \u00a77.9 says "
+          "<em>\u201cevery rare and deep law appears in the scout report "
+          "(12.5)\u201d</em> and charges that visibility against the law\u2019s "
+          "strength. The scout report is \u00a712.4, not \u00a712.5; what it "
+          "shows, for 20 Aether a realm and fifteen minutes, is "
+          "<em>\u201ceach realm\u2019s laws\u201d</em> \u2014 every rank "
+          "alike. Visibility cannot be charged against a deep law\u2019s "
+          "strength when a common law pays the same price for it.",
+     rec="Two dials or one, and say which. Either is defensible; what is not is "
+         "stating the separation and authoring the coupling."
+         "<br><br><strong>Keep the separation.</strong> Re-cost the sheets so "
+         "stability cost stops tracking rank \u2014 the deep laws are the "
+         "expensive ones and the change is theirs to absorb \u2014 and give "
+         "rarity its own currency, which \u00a77.6 already has in pages. Then "
+         "the rare laws have to earn their rank on specificity, and r = "
+         "\u22120.04 says they currently do not."
+         "<br><br><strong>Or drop it.</strong> Rewrite \u00a77.9 to say rank is "
+         "a strength ladder paid for in pages, which is what the sheets "
+         "describe and what \u00a77.9\u2019s own counter-evidence "
+         "[208] says every shipped game does anyway. \u00a77.1\u2019s "
+         "glossary line goes with it."
+         "<br><br>The scout-report paragraph is wrong either way and is drafted "
+         "below. <code>tools/law_ranks.py</code> runs the measurement and "
+         "<code>tools/validate_content.py</code> reports it on every build, so "
+         "whichever way this goes the sheets cannot drift back without saying "
+         "so."),
 
 dict(id="D29", kind="deviation", severity="change", status="done",
      title="This repository cited 41 sections v3.1 had renumbered away",
@@ -3447,13 +3573,23 @@ DESIGN_GATES = {
     "screens": dict(
         what="The 27 screens in \u00a723, their contents and their counts",
         gates={
-            "C6":  "which ability text a character screen shows \u2014 the two "
-                   "sections agree on every role now and differ on all 18 "
-                   "abilities, so it is content to pick rather than a layout "
-                   "to change",
-            "C3":  "how many law ranks the Codex has to display, three or four",
+            "C6":  "which ability text a character screen shows \u2014 and it "
+                   "is not a phrasing to pick. Twelve of the eighteen do a "
+                   "different thing in the two sections, and \u00a711.2\u2019s "
+                   "cooldown is shorter in thirteen of the fifteen that state "
+                   "one on both sides, so the eighteen abilities have to be "
+                   "designed once before the screen has anything to show",
+        },
+        partly={
             "C8":  "whether the Library is a seventeenth building with a screen "
-                   "of its own",
+                   "of its own \u2014 it is, with all ten levels priced since "
+                   "v3.1, so the build screen has its entry. What is left is "
+                   "\u00a710.2\u2019s table, which still does not contain it",
+            "C3":  "how many law ranks the Codex has to display \u2014 four, at "
+                   "10/20/35/60, which the sheets, \u00a714.4 and the glossary "
+                   "have all said since v3.1. The screen can be drawn; what is "
+                   "left is \u00a77.9\u2019s table and \u00a77.6\u2019s "
+                   "restore line, which contradict them and not the screen",
         },
         closed={
             "C11": "how many screens there are: 27, not 23",
@@ -3631,6 +3767,28 @@ DEPENDS = {
 
 EDITS = {
 
+"D31": [
+    dict(section="7.9", action="replace",
+         find="A deep law is more dramatic, not more efficient - and every rare "
+              "and deep law appears in the scout report (12.5). Raiders can see "
+              "it coming and plan around it. This visibility is charged against "
+              "the law's strength the way range is charged against a "
+              "character's kit, and it is the primary reason a rare law can be "
+              "exciting without being unfair.",
+         replace="A deep law is more dramatic, not more efficient. Every law in "
+                 "a realm appears in the paid scout (12.4), at 20 Aether per "
+                 "realm and valid for fifteen minutes, so raiders can see one "
+                 "coming and plan around it - but they see a common law "
+                 "coming on the same terms, which means visibility cannot be "
+                 "what pays for a deep law's strength. What pays for it is "
+                 "stability cost, and that is the dial this section separates "
+                 "from rarity.",
+         why="\u00a712.5 is Planning; the scout report is \u00a712.4, and it "
+             "shows every rank alike. The paragraph names this as the primary "
+             "reason the split is fair, so a mechanism that does not "
+             "discriminate by rank cannot be left standing as one. D31."),
+],
+
 "F26": [
     dict(section="13.2", action="insert",
          find="Below a quarter, defenders feel helpless and stop designing. "
@@ -3801,7 +3959,10 @@ EDITS = {
          replace="Restoring a law: 10 pages for a common law, 20 for an uncommon "
                  "one, 35 for a rare one, 60 for a deep one.",
          why="Twelve laws were re-tagged to Uncommon and this sentence never "
-             "learned the rank exists."),
+             "learned the rank exists. The last three-rank statement left in "
+             "the document, and the one v3.1\u2019s banned-phrase check cannot "
+             "see, because it says the same thing with the clause rearranged "
+             "(F24)."),
     dict(section="14.4", action="replace",
          find="Restoring all 48 laws: 15 commons \u00d7 15 + 18 rares \u00d7 30 + "
               "12 deep \u00d7 60 = 1,485 pages (the three starting laws are free)",
@@ -4027,21 +4188,29 @@ EDITS = {
 "C3": [
     dict(section="7.9", action="replace",
          find="| Uncommon\n| 14\n| Conditional, with a mild cost\n| 20",
-         replace="| Uncommon\n| 12\n| Conditional, with a mild cost\n| 20",
-         why="The sheets say 12. If the table is right instead, re-tag two laws "
-             "\u2014 but one of the two has to move."),
+         replace="| Uncommon\n| 12\n| Conditional, with a mild cost. Two per "
+                 "school\n| 20",
+         why="The sheets say 12, and 14 cannot divide by six schools \u2014 so "
+             "the table\u2019s own \u201cThree per school\u201d and \u201cOne "
+             "per school\u201d cannot both be honoured at 14. The per-school "
+             "cell is added because the two ranks that carry one are the two "
+             "that already divided evenly, which is how the other two went four "
+             "versions without anyone noticing they could not."),
     dict(section="7.9", action="replace",
          find="| Rare\n| 10\n| Strong inside a condition you have to build for\n| 35",
-         replace="| Rare\n| 6\n| Strong inside a condition you have to build for\n| 35",
-         why="The sheets say 6."),
+         replace="| Rare\n| 6\n| Strong inside a condition you have to build "
+                 "for. One per school\n| 35",
+         why="The sheets say 6. 10 does not divide by six either."),
     dict(section="7.9", action="replace",
          find="| Deep\n| 6\n| Changes how a realm works. Heavy stability cost and "
               "a real trade-off. One per school\n| 60",
          replace="| Deep\n| 12\n| Changes how a realm works. Heavy stability cost "
                  "and a real trade-off. Two per school\n| 60",
-         why="The sheets say 12, which is two per school rather than one. This is "
-             "the one to look at hardest: Deep doubled, and \u201cone per "
-             "school\u201d was part of the argument for what Deep is."),
+         why="The sheets say 12, which is two per school rather than one. This "
+             "is the one to look at hardest: Deep doubled, and \u201cone per "
+             "school\u201d was part of the argument for what Deep is. "
+             "\u00a714.4\u2019s 1,350 is computed from 12, so the page economy "
+             "has already been written on the sheets\u2019 reading."),
 ],
 
 "C10": [
@@ -4251,6 +4420,14 @@ EDITS = {
 ],
 
 "C8": [
+    dict(section="21.9", action="replace",
+         find="| Building looks (16 types x 4) | 64",
+         replace="| Building looks (17 types x 4) | 68",
+         why="\u00a726.1 and \u00a710.4 both say seventeen. The art schedule "
+             "is the third place the Library did not reach, and the only one "
+             "that costs money. \u201c16 \u00d7 4 = 64\u201d is correct "
+             "arithmetic about the wrong sixteen, which is why the check that "
+             "multiplies out every inline product never saw it."),
     dict(section="7.6", action="replace",
          find="A Library at the Heart produces about one page per realm every few "
               "hours",

@@ -38,6 +38,14 @@ echo "== the proposed note rebalance is still valid =="
 python3 tools/note_rebalance.py | tail -14
 
 echo
+echo "== C3's rank splits, and whether §7.9's rule survives the sheets =="
+python3 tools/law_ranks.py --self-test
+
+echo
+echo "== C6's 18 ability pairs, sorted by what kind of difference they are =="
+python3 tools/ability_text.py --self-test
+
+echo
 echo "== economy model =="
 python3 -m tools.economy_model.test_economy_model
 

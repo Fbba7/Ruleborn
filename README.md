@@ -13,7 +13,7 @@ monetisation.
 
 **Pre-production — design document at v3.1, no code yet.**
 
-Two versions have now answered the audit. **35 of 106 register items are fixed
+Two versions have now answered the audit. **35 of 107 register items are fixed
 in the document itself** — 26 by v3.0 and 9 more by v3.1. v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
 in §19.27, and the build-willingness risk is designed out rather than measured
@@ -99,6 +99,8 @@ tools/
   generator_settings.py           sweeps the generator against both bands the document sets
   post_ladder.py                  whether a steeper guard-post ladder closes F26's gap or moves it
   ward_budget.py                  whether F26's ward budget lands every realm in both bands
+  law_ranks.py                    prices C3's three rank splits, and tests §7.9's rule against the sheets
+  ability_text.py                 C6's 18 ability pairs: which differ by how much, and which by what they do
   check_unread_fields.py          every field the harness computes is read somewhere
 ```
 
@@ -183,11 +185,11 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 106 tracked items with section references and status:
+document, as 107 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 70 are drafted across 40
+the sentence as it stands today, and what to put there. 72 are drafted across 41
 items, and every quoted sentence is checked against v3.1 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no

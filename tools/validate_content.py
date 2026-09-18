@@ -443,13 +443,47 @@ def main() -> int:
         opn("G3", "§10.3 specifies ward level 1 only, but §10.2 gives the Ward "
                   "building five levels and §21.9 budgets 6 types x 5 levels of props")
 
+    # C3 used to be reported here as `if "Uncommon" not in ranks`, which stopped
+    # being true the moment v3.0 re-tagged twelve laws into Uncommon \u2014 so for
+    # two versions this file said nothing about the blocking item it was written
+    # to watch. That is C6's fault and the UI gate's fault a third time: a check
+    # that loses its subject reads exactly like a check that passes.
+    #
+    # What is left of C3 is a decision, so it is reported as one. The
+    # comparison against \u00a77.9's table belongs to check_document.py, which
+    # reads the document; this reports what the sheets cost to keep, which
+    # nothing else measures.
+    import law_ranks
     ranks = collections.Counter(law["rank"] for law in laws)
-    if "Uncommon" not in ranks:
-        opn("C3", f"law ranks are {dict(ranks)} \u2014 \u00a77.10's own table says "
-                  f"18/14/10/6 plus 3 paradoxes. v3.0 re-tagged 12 laws from Rare "
-                  f"to Uncommon, which moved the split without matching it, and "
-                  f"left \u00a77.6, \u00a714.4 and the glossary on the old "
-                  f"three-rank page costs")
+    if dict(ranks) != law_ranks.SPLITS["sheets"]["counts"]:
+        err(f"law ranks are {dict(ranks)}, but law_ranks.SPLITS['sheets'] has "
+            f"{law_ranks.SPLITS['sheets']['counts']} \u2014 the sheets moved and "
+            f"the split that prices them did not")
+    else:
+        moves = law_ranks.retag_cost(law_ranks.SPLITS["7.9"], laws)
+        uneven = law_ranks.uneven_ranks(law_ranks.SPLITS["7.9"])
+        opn("C3", f"the 48 sheets carry {ranks['Common']}/{ranks['Uncommon']}/"
+                  f"{ranks['Rare']}/{ranks['Deep']}, which is what \u00a714.4's "
+                  f"1,350 pages is computed from and gives every school the same "
+                  f"3/2/1/2 ladder; \u00a77.9's table still says 18/14/10/6, which "
+                  f"would move {moves} sheets and leaves {' and '.join(uneven)} "
+                  f"unable to divide by six schools. \u00a77.6 is the last "
+                  f"three-rank statement in the document")
+
+    # D31. \u00a77.1 and \u00a77.9 both state that rank sets how long a law takes to
+    # acquire and not how strong it is. The sheets are where that is either
+    # true or not, and it is measured rather than asserted \u2014 an earlier
+    # version of this file took \u00a77.9's word for it, which is how a design rule
+    # goes four versions without anyone checking whether the content obeys it.
+    pr = law_ranks.principle(laws)
+    if pr["cost_r"] > 0.5 or abs(pr["condition_r"]) > 0.3:
+        opn("D31", f"\u00a77.9 splits rarity from strength into \"two dials\", and "
+                   f"\u00a77.1 restates it per law \u2014 but across the 48 sheets rank "
+                   f"predicts stability cost at r={pr['cost_r']:+.2f} "
+                   f"({pr['dearer']} of {pr['pairs']} cross-rank pairs have the "
+                   f"rarer law costing more) and predicts conditions, the other "
+                   f"dial, at r={pr['condition_r']:+.2f}. The two dials are one "
+                   f"dial, and it is the one \u00a77.9 says it must not be")
 
     pools = collections.Counter()
     for law in laws:
@@ -545,11 +579,23 @@ def main() -> int:
                   f"fewest-roles-first rule; {wording} more differ on ability "
                   f"wording")
     elif wording:
+        # Recorded as wording for two versions, and it is not: `ability_text`
+        # reads the eighteen pairs and twelve of them do a different thing.
+        # Calling it wording is the third way this check has understated its
+        # own subject, after the role branch that went silent when the roles
+        # reconciled.
+        import ability_text
+        rows = ability_text.pairs(data["ruleborn"])
+        cd = ability_text.cooldowns(rows)
+        effect = sum(1 for r in rows if r["kind"] == ability_text.EFFECT)
         opn("C6", f"§11.2 and §11.11 agree on every ruleborn's school "
                   f"and role — v3.1 closed that half — but all "
-                  f"{wording} still give different ability text, so the two "
-                  f"sections are one reconciliation apart rather than two "
-                  f"rosters apart")
+                  f"{wording} still give different ability text, and it is not "
+                  f"wording: {effect} of {len(rows)} do a different thing rather "
+                  f"than the same thing by a different amount, and of the "
+                  f"{cd['both']} that state a cooldown on both sides "
+                  f"§11.2's is shorter in {cd['shorter']}. Two balance "
+                  f"passes, not two phrasings")
 
     report()
     return 1 if (errors or stale_reports()

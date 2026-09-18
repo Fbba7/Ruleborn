@@ -372,6 +372,44 @@ def bad_sides() -> list:
     return out
 
 
+def orphan_references() -> list:
+    """Every id named anywhere in the register must resolve to an item.
+
+    `bad_sides` covers FRONTEND, BOTH and DESIGN_GATES. The other six tables
+    name items too, and nothing read them: EDITS, V3, V31, FOUND_IN_V3,
+    RESEARCH and DEPENDS.
+
+    The reason this is worth its own check is narrower than tidiness. **An item
+    that is deleted by accident reads exactly like an item that was never
+    there.** The register is one long Python literal edited by patch scripts,
+    and a range that starts at one id and ends at another deletes whatever
+    happens to sit between them \u2014 which is not alphabetical and not
+    chronological. Seven items went that way in one edit while this file was
+    being written, and the only thing that noticed was `build_audit.py` raising
+    KeyError on a design gate. The README's item count is no guard either,
+    because the same hand that loses an item updates the count to match.
+
+    These six tables are the anchor: they were written when the items existed,
+    they are spread through the file, and an item cannot vanish without leaving
+    at least one of them pointing at nothing.
+    """
+    from audit_register import (BOTH, DEPENDS, EDITS, FOUND_IN_V3, FRONTEND,
+                                REGISTER as ITEMS, RESEARCH, V3, V31)
+
+    known = {i["id"] for i in ITEMS}
+    out = []
+    tables = [("EDITS", set(EDITS)), ("V3", set(V3)), ("V31", set(V31)),
+              ("FOUND_IN_V3", set(FOUND_IN_V3)), ("RESEARCH", set(RESEARCH))]
+    # DEPENDS names items on both sides of each arrow.
+    depends = set(DEPENDS) | {d for deps in DEPENDS.values() for d in deps}
+    tables.append(("DEPENDS", depends))
+    for name, ids in tables:
+        for item_id in sorted(ids - known):
+            out.append(f"{name} names {item_id}, which is not in the register "
+                       f"\u2014 either the id is wrong or the item was lost")
+    return out
+
+
 def self_test() -> int:
     """Plant each shape this check exists for, and prove it sees them.
 
@@ -402,6 +440,20 @@ def self_test() -> int:
         ok = False
     else:
         print("  [PASS] and the register itself is clean")
+
+    # A lost item, which is the shape `orphan_references` is really for. It is
+    # planted by removing an item rather than by adding a bad reference,
+    # because that is how it happens: nobody types a wrong id, they delete a
+    # dict and the tables that named it are left pointing at nothing.
+    from audit_register import REGISTER as ITEMS
+    victim = next(i for i in ITEMS if i["id"] == "C19")
+    at = ITEMS.index(victim)
+    ITEMS.remove(victim)
+    caught = any("C19" in p for p in orphan_references())
+    ITEMS.insert(at, victim)
+    print(f"  [{'PASS' if caught else 'FAIL'}] an item deleted from the register "
+          f"is {'caught' if caught else 'MISSED'} by the tables that name it")
+    ok = ok and caught and not orphan_references()
 
     # The replacement text an edit would type in, which nothing read before.
     victim = next(iter(EDITS))
@@ -495,6 +547,7 @@ def main() -> int:
     problems.extend(ward_budget_agrees())
     problems.extend(unexplained_missing_edits())
     problems.extend(bad_sides())
+    problems.extend(orphan_references())
 
     known = {i["id"] for i in REGISTER}
     for item_id in EDITS:

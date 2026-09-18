@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 106 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 38 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
+v3.0 answered the audit directly, in §30.18. Of 107 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 38 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 
@@ -42,10 +42,10 @@ v3.0 answered the audit directly, in §30.18. Of 106 items, **26 are fixed in th
 | | What it was | Where it stands |
 | --- | --- | --- |
 | **C2** | Two incompatible raid-payout models, differing by 16–30× | Half resolved. §9.4’s percentages are deleted — “the percentages this paragraph used to carry are gone” — and §9.6 is the one formula, now with a fill term. But §9.6 keeps B(V) rather than pegging to production, so the faucet still delivers 1–2% of income, while §9.4’s balance target (“a fifth of a day’s production… roughly a third”) and §12.1’s 40% are unchanged. The two-model contradiction is gone; the model-versus-target one is not. |
-| **C3** | Two law-rarity taxonomies, and one of them has no laws in it | Changed shape, not resolved. Twelve laws were re-tagged from Rare to Uncommon, so the sheets now read 18/12/6/12 — against §7.9’s own table of 18/14/10/6. Deep doubled from 6 to 12. And §7.6, §14.4 and the glossary still price three ranks at 15/30/60 pages (C23). |
-| **C6** | Two ruleborn rosters — the roles now agree, the abilities do not | §30.18 records “11.11 is the roster”, but §11.2 is still a full hand-authored table and still disagrees with it about Prism Mite, Stormhound and Rootrunner, plus fifteen wording differences. The decision was taken and the second copy was not retired. |
+| **C3** | Two law-rarity taxonomies, and v3.1 already chose between them everywhere but two sentences | Changed shape, not resolved. Twelve laws were re-tagged from Rare to Uncommon, so the sheets now read 18/12/6/12 — against §7.9’s own table of 18/14/10/6. Deep doubled from 6 to 12. And §7.6, §14.4 and the glossary still price three ranks at 15/30/60 pages (C23). |
+| **C6** | Two ruleborn rosters — the roles agree now, and the abilities are two designs rather than two wordings | §30.18 records “11.11 is the roster”, but §11.2 is still a full hand-authored table and still disagrees with it about Prism Mite, Stormhound and Rootrunner, plus fifteen wording differences. The decision was taken and the second copy was not retired. |
 | **C7** | Tick rate: 20 Hz or 30 Hz? | Untouched: 20 steps a second and 30 both still appear. |
-| **C8** | The Library is load-bearing and specified nowhere | Half fixed, and the other half is a fifth supersession. §10.4 gives the Library a placement and a table — 3 pages a day at level 1, 9 at 5, 18 at 10, “across the universe”. §7.6 still says it produces “about one page per realm every few hours”, which across seven realms is roughly 40 a day. The two differ by about four times, and §7.6’s is the sentence a reader meets first. §10.4 also gives three of the ten levels — 1, 5 and 10 — where every other building in §10.2 lists every one, and §26.1 still counts 16 building types where there are now 17 (C24). |
+| **C8** | The Library was specified in v3.1; the art schedule was not told | Half fixed, and the other half is a fifth supersession. §10.4 gives the Library a placement and a table — 3 pages a day at level 1, 9 at 5, 18 at 10, “across the universe”. §7.6 still says it produces “about one page per realm every few hours”, which across seven realms is roughly 40 a day. The two differ by about four times, and §7.6’s is the sentence a reader meets first. §10.4 also gives three of the ten levels — 1, 5 and 10 — where every other building in §10.2 lists every one, and §26.1 still counts 16 building types where there are now 17 (C24). |
 | **C10** | Trait count: 30, 31 or 32? | Untouched: 31 traits authored, 30 in §26.1, a 32nd named in §17.3. |
 | **C12** | The high revenue scenario quietly uses a different commission rate | Untouched: §22.5 still says every figure in §22.2 assumes 15%, and the high scenario is still computed at 30%. |
 | **C17** | The game lists itself as its own fallback name | Untouched: §27.2 still reads “Fallbacks are Lawkeep and Ruleborn”, and Ruleborn is the chosen name. |
@@ -74,7 +74,7 @@ v3.0 answered the audit directly, in §30.18. Of 106 items, **26 are fixed in th
 | **F25** | §31.2 states “one fact, one home” and six facts still have two homes |
 | **C21** | The formulas appendix still carries the detection model §12.8 deleted |
 | **C22** | §12.6 still loads at 150 a second, five times §12.19's rate |
-| **C23** | Three sections still price laws in three ranks after the sheets moved to four |
+| **C23** | One sentence still prices laws in three ranks, and it is the only one left |
 | **C24** | Seventeen building types, and §26.1 still says sixteen |
 | **C25** | §8.8 states the note rebalance as done; the law sheets are unchanged |
 | **C26** | §12.21 declares size and flight as properties; no table carries them |
