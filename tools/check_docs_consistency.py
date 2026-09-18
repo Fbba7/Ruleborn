@@ -212,7 +212,7 @@ def current_version() -> str:
 
 
 def check_document_version(files: list[pathlib.Path]) -> None:
-    """Prose naming the document's version must name the one being read.
+    """D30. Prose naming the document's version must name the one being read.
 
     The README opened "design document at v3.0" for as long as v3.1 had been
     the one every tool read, and pointed "Full detail" at v2.3 — two versions

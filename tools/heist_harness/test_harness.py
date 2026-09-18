@@ -113,7 +113,7 @@ def test_suspicion_fills_at_12_17s_stated_seconds():
 
 
 def test_a_full_crew_loads_in_ten_seconds():
-    """§12.19: "a full crew fills in about ten seconds".
+    """D24. §12.19: "a full crew fills in about ten seconds".
 
     The arithmetic — a Carrier's 300 at 30 a second — and then the simulation,
     which is the half that matters. The first version of this test checked only
@@ -374,7 +374,13 @@ def test_the_clock_reaches_only_the_crew_that_cannot_use_it():
 
 
 def test_shapley_matches_two_known_cases():
-    """The attribution §13.4 asks for, checked against cases with known answers."""
+    """D23. The attribution §13.4 asks for, checked against cases with known answers.
+
+    §13.4 is the most precisely specified test in the document — thirty-two
+    combinations of five layers, credit divided the way cooperative game theory
+    does. D23 records that it was built exactly as specified; this is the half
+    of that claim which can be checked against answers known in advance.
+    """
     import itertools
     from .ablation import shapley
     from .island import LAYERS
@@ -417,11 +423,15 @@ def test_guards_and_response_are_the_same_layer():
 
 
 def test_the_harness_reproduces_the_document_unless_asked():
-    """spec/response.md's effects are a proposal, so they are off by default.
+    """D21. spec/response.md's effects are a proposal, so they are off by default.
 
     A proposal that silently changes the baseline is not a proposal, it is a
     second version of the document — the same rule the economy model's
     `apply_fill` follows.
+        D21 records that §19.27's harnesses were built and what they implement.
+    This is the assertion behind it: the simulation reproduces the document's
+    own numbers where it is not deliberately varying one.
+
     """
     from .island import generate
     from .policy import POLICIES

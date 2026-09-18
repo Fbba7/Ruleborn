@@ -43,6 +43,7 @@ python3 tools/law_ranks.py --self-test
 
 echo
 echo "== the three decisions 12.8, 12.19 and 12.6 turn on (F4, F5, F6) =="
+python3 tools/decision_support.py --self-test
 python3 tools/decision_support.py > /dev/null
 
 echo

@@ -330,6 +330,15 @@ def page_cost_claims(text: str) -> list[tuple[str, str, int, str]]:
 
 
 def check_page_economy(doc: Doc, led: Ledger) -> None:
+    """C23, F24. Every page price in the document, against the rank table.
+
+    C23 is the finding: one sentence still prices laws in three ranks. F24 is
+    why it took a derived check to see it — v3.1 bans the retired model by
+    searching for the string `15, 30 or 60 pages`, and §7.6 says the same thing
+    with the clause rearranged, so the ban reports it absent. This reads the
+    rank table and the 48 sheets and recomputes every price claim in each of
+    the three grammatical forms that carry one.
+    """
     prices = rank_prices(doc)
     sheets = authored_ranks(doc)
 

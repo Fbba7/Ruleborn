@@ -129,6 +129,22 @@ LEAD = re.compile(r"((?:[CDFGQT]\d{1,2})(?:,\s*[CDFGQT]\d{1,2})*)\b")
 NAMES_A_TOOL = re.compile(r"tools/([a-z_]+)(?:\.py|/)")
 
 
+#: Items that name a tool without resting on a number it produced, with the
+#: reason. `rests_on_a_tool` is a text match and cannot tell a measurement from
+#: a mention, so the exceptions are named here rather than left to widen the
+#: pattern until it stops catching anything.
+NOT_A_MEASUREMENT = {
+    "D12": "a decision about what the published artifact declares, not a "
+           "number: parse_gate_results is named as the thing that would have "
+           "scored results the declaration was rejected in order to avoid "
+           "collecting",
+    "C29": "a contradiction between \u00a725.4 and \u00a726.2 about people, "
+           "not a harness figure: the harness is named as what replaced them",
+    "D20": "a record of what v3.0 removed and why, with the harness named as "
+           "the replacement rather than as the source of a number",
+}
+
+
 def rests_on_a_tool(item: dict) -> list[str]:
     """Which tools an item's own text says its numbers came from.
 
@@ -137,6 +153,8 @@ def rests_on_a_tool(item: dict) -> list[str]:
     as unverifiable in prose as one produced by the harness, and there are
     almost three times as many of them.
     """
+    if item["id"] in NOT_A_MEASUREMENT:
+        return []
     text = item.get("body", "") + item.get("rec", "")
     return sorted(set(NAMES_A_TOOL.findall(text)))
 
@@ -147,6 +165,8 @@ def quotes_the_harness(item: dict) -> bool:
     Deliberately broad. A false positive costs one line of `measured=`; a false
     negative is a stale number nobody is looking at.
     """
+    if item["id"] in NOT_A_MEASUREMENT:
+        return False
     text = (item.get("body", "") + item.get("rec", "")).lower()
     return any(s in text for s in ("heist_harness", "the harness", "simulated",
                                    "raids a cell", "runs a cell", "a coalition"))
@@ -202,6 +222,32 @@ def main() -> int:
             return 1
         print(f"  the scan covers {len(files)} files and finds "
               f"{len(outside)} pin(s) outside the harness suite.")
+        # An exemption that is also pinned, or that names no tool, is a line
+        # of prose nobody re-derives - which is what this file is about.
+        for item_id, why in NOT_A_MEASUREMENT.items():
+            item = next((i for i in REGISTER if i["id"] == item_id), None)
+            if item is None:
+                print(f"  NOT_A_MEASUREMENT names {item_id}, which is not in "
+                      f"the register.")
+                return 1
+            if item_id in pinned_by_a_check():
+                print(f"  {item_id} is exempted from the provenance report and "
+                      f"also pinned by a check.")
+                return 1
+            # An exemption is only meaningful for an item one of the two
+            # reports would otherwise list. Both predicates are consulted,
+            # because an item can reach the report through either: C29 names
+            # the harness in prose and no tools/ path at all.
+            text = item.get("body", "") + item.get("rec", "")
+            harness_words = ("heist_harness", "the harness", "simulated",
+                             "raids a cell", "runs a cell", "a coalition")
+            if not (NAMES_A_TOOL.search(text)
+                    or any(w in text.lower() for w in harness_words)):
+                print(f"  {item_id} is exempted from a report it would not "
+                      f"appear in: it names neither a tool nor the harness.")
+                return 1
+        print(f"  and all {len(NOT_A_MEASUREMENT)} exemption(s) name a tool or the harness, "
+              f"are in the register, and are not pinned twice.")
         return 0
 
     pinned = pinned_by_a_check()

@@ -73,7 +73,13 @@ def roster() -> str:
 
 
 def law_summary() -> str:
-    """The §7.4 summary. The full sheets in §7.7 stay the source."""
+    """D15. The §7.4 summary. The full sheets in §7.7 stay the source.
+
+    D15 is the structural fix behind C1, C3, C6 and C19: a table that exists
+    only to summarise something else is never authored, only emitted. This is
+    one of those tables, and `--check` fails the build if the file on disk
+    stops matching what the data emits.
+    """
     laws = load("laws")
     schools = ["Motion", "Matter", "Time", "Energy", "Life", "Spirit"]
     boosts = {"Motion": "Starlight", "Matter": "Starlight", "Time": "Aether",
@@ -99,11 +105,16 @@ def law_summary() -> str:
 
 
 def formulas() -> str:
-    """The §29.1 appendix.
+    """C21. The §29.1 appendix.
 
     §29.1 currently encodes the SUPERSEDED detection model (C1) — the worst
     place for a stale number, because it is where an implementer looks. Emitting
     it from content/detection.json makes that impossible.
+        C21 is that §29.1 still tabulates the detection model §12.8 deleted, and
+    cites §12.8 as its source — the section that deleted it. The appendix is
+    a summary of numbers that live elsewhere, so it is emitted from them here
+    rather than kept by hand.
+
     """
     det = load("detection")
     sus = det["suspicion"]

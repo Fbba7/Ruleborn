@@ -133,7 +133,13 @@ def stale_reports() -> list[tuple[str, str]]:
 
 
 def _doc_declares_attributes() -> bool:
-    """Whether the design document claims size and flight are stated properties."""
+    """C26. Whether the design document claims size and flight are stated properties.
+
+    C26 was that §12.21 declared size and flight as properties of every
+    ruleborn and no table carried them. v3.1 put them in §11.2, and this is
+    the sentence that says so — the content reader keys off it, so if the
+    declaration ever leaves the document the tables stop claiming the fields.
+    """
     doc = ROOT / "docs" / "design" / "ruleborn-game-design-v3.1.txt"
     if not doc.exists():
         return False

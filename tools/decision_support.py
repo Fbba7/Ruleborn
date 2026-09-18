@@ -607,7 +607,85 @@ REPORTS = {"rarity": rarity_report, "haul": haul_report,
            "wards": wards_report, "pacing": pacing_report}
 
 
+def self_test() -> int:
+    """F4, F5, F6. The three findings this file produced, asserted.
+
+    It ran on every build and asserted nothing: `check_findings_fresh` listed
+    all three as resting on a tool with no check behind them, which is the
+    register's own complaint about the design document turned on its own
+    tooling. Every number below is quoted verbatim in the register, so a change
+    to §11.1's role table fails here and names the item to re-read rather than
+    silently rewriting three findings.
+    """
+    ok = True
+
+    def check(name: str, got, want) -> None:
+        nonlocal ok
+        good = got == want
+        ok = ok and good
+        print(f"  [{'ok ' if good else 'FAIL'}] {name}"
+              f"{'' if good else f'  got {got!r}, want {want!r}'}")
+
+    roles = {r["name"]: r for r in load("roles")}
+    names = list(roles)
+    check("§11.1 still has the five roles", len(roles), 5)
+
+    # -- F4: "two ambush hits knock out a guard of equal level" -------------
+    two_hits = [(a, d) for a in names for d in names
+                if hits_to_knock_out(roles[a]["power"], roles[d]["health"]) <= 2]
+    two_ambush = [(a, d) for a in names for d in names
+                  if 2 * AMBUSH_MULTIPLIER * roles[a]["power"] >= roles[d]["health"]]
+    check("F4: the rule holds for 3 of 25 pairings read as ambush-then-strike",
+          (len(two_hits), len(names) ** 2), (3, 25))
+    check("F4: and 5 read as two simultaneous ambushes", len(two_ambush), 5)
+    check("F4: four of those five need a Breaker",
+          sum(1 for a, d in two_ambush if "Breaker" in (a, d)), 4)
+    worst = max(((a, d, hits_to_knock_out(roles[a]["power"], roles[d]["health"]))
+                 for a in names for d in names), key=lambda t: t[2])
+    check("F4: a Mender needs 68 hits on a Warden", worst, ("Mender", "Warden", 68))
+    check("F4: which is 54 seconds at §12.8's cadence",
+          round(worst[2] * WIND_UP), 54)
+    short = {n: round((r["health"] / 4) / r["power"], 1) for n, r in roles.items()}
+    check("F4: the Breaker is 1.1x short of Power = Health / 4",
+          short["Breaker"], 1.1)
+    check("F4: and the other four are 2.5x to 5.4x short",
+          (min(v for n, v in short.items() if n != "Breaker"),
+           max(short.values())), (2.5, 5.4))
+    # The repair the report proposes, checked rather than asserted in prose:
+    # two ambushers each dealing at least half the target's health always
+    # reach it, whatever the roles are.
+    floor = 0.5
+    check("F4: the proposed floor makes the sentence true in all 25 pairings",
+          all(2 * max(AMBUSH_MULTIPLIER * roles[a]["power"],
+                      floor * roles[d]["health"]) >= roles[d]["health"]
+              for a in names for d in names), True)
+
+    # -- F5: the Vault phase -------------------------------------------------
+    capacity = sum(r["carry"] for r in roles.values())
+    carrier = roles["Carrier"]["carry"]
+    check("F5: a five-crew holds 560 units", capacity, 560)
+    check("F5: a Carrier holds 300 of them", carrier, 300)
+    check("F5: which load in 2.0 seconds at §12.6's rate",
+          carrier / LOAD_RATE_AS_WRITTEN, 2.0)
+    check("F5: leaving 260 units no Carrier can reach", capacity - carrier, 260)
+    check("F5: which is 46% of the crew",
+          round(100 * (capacity - carrier) / capacity), 46)
+
+    # -- F6: who breaks things ----------------------------------------------
+    volley = crew_volley(roles)
+    breaker = roles["Breaker"]["power"] * 2
+    check("F6: a five-crew's volley is 126", volley, 126)
+    check("F6: the Breaker is 80 of it", breaker, 80)
+    check("F6: which is 63% of the crew's damage",
+          round(100 * breaker / volley), 63)
+    check("F6: so four more characters cut the time by 37%",
+          round(100 * (1 - breaker / volley)), 37)
+    return 0 if ok else 1
+
+
 def main() -> int:
+    if "--self-test" in sys.argv:
+        return self_test()
     if len(sys.argv) > 1:
         name = sys.argv[1]
         if name not in REPORTS:

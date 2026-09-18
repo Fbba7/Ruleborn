@@ -106,6 +106,13 @@ def load() -> list:
 
 
 def apply_edits(laws: list) -> list:
+    """C25. The note rebalance §8.8 states in the past tense, applied.
+
+    §8.8 says the table "now runs eight or nine laws per note". The 48 sheets
+    give 12, 11, 10, 9, 8, 8, 7, 6 — identical to v2.3. This is the change it
+    describes, law by law, and the check is that applying it reaches the count
+    §8.8 claims without leaving a chord unreachable.
+    """
     out = []
     for law in laws:
         notes = list(law["notes"])

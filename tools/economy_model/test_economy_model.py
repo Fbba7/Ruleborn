@@ -40,7 +40,12 @@ def test_building_costs_follow_a_geometric_curve():
 
 
 def test_producer_output_follows_the_published_curve():
-    """§9.3: output = base x 1.35^(level-1)."""
+    """G7. §9.3: output = base x 1.35^(level-1).
+
+    G7 was that §24's Python model — the source of roughly a quarter of the
+    document's numbers — was not in the document. This is the rebuilt model
+    reproducing one of the curves it is supposed to have generated.
+    """
     for name in ("Star Well", "Aether Spring", "Garden"):
         spec = data.BUILDINGS[name]
         for level, hourly in enumerate(spec.hourly[1:], start=2):
@@ -58,7 +63,12 @@ def test_keeper_curve_matches_the_stated_target():
 # -- the model reproduces the early game ----------------------------------
 
 def test_early_production_is_close_to_published():
-    """The first month should land within 10% of §9.3, or the model is wrong."""
+    """D5. The first month should land within 10% of §9.3, or the model is wrong.
+
+    D5 records the rebuild. This is the assertion that it is a rebuild of the
+    same model rather than a different one: the first month has to land within
+    10% of what §9.3 publishes.
+    """
     model = EconomyModel(Config(archetype="engaged", days=31))
     state = model.run()
     by_day = {row["day"]: row for row in state.log}
