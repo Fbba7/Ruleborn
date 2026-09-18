@@ -182,12 +182,16 @@ production fixes raiding automatically, and the two can no longer drift apart.
 
 ---
 
+## Settled since this was written
+
+- **F3 / Q2 — the cost side of the trade-off.** This spec fixed the *return*
+  side and asked for the other half: crew membership excluding work, the way
+  guarding does. v3.0's §5.8 does exactly that — *"A crew on a heist is
+  assigned to it, like a guard at a post, and does not work while assigned.
+  Five of thirty-eight is a real choice."* The trade-off binds.
+
 ## Still open
 
-- **F3 / Q2** — this fixes the *return* side of the raid-versus-build trade-off
-  but not the *cost* side. Raiding still withholds only about 2% of the roster
-  from work. Making crew membership exclude work, the way guarding does, is the
-  other half.
 - **The 0.20 coefficient** is §9.4's own figure and has never been playtested.
   It is now the single dial, so it should be the one number soft launch watches
   hardest.

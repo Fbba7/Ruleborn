@@ -165,13 +165,27 @@ happens when a guard catches you is otherwise unspecified.
 
 ---
 
+## Settled since this was written
+
+All three of this spec's open questions were answered, two by v3.0 and one by
+v3.1. They are kept here with what answered them, because a spec that silently
+drops a question reads as if it never asked one.
+
+- **G2 — combat resolution.** §12.20: one hit every 0.8 seconds for damage
+  equal to Power, on both sides; the crew may fight at any moment, but hitting
+  a guard that has not been ambushed sends its suspicion straight to 1000.
+  §12.8 was rewritten around it.
+- **G1 — pathfinding and the world model.** §12.18, adopting the reading in
+  [`movement.md`](movement.md): tiles for terrain and building, continuous
+  millitile position and facing, breadth-first pathfinding with a fixed
+  neighbour order. The numbers below are on that model.
+- **C7 — the tick rate.** 30 steps a second, stated once in §24.10, with §7.3's
+  conflicting 20 gone. v3.1 pins it in `data/constants.json` beside the section
+  that owns it, and `tools/check_document.py` fails the build if a second copy
+  disagrees. **The golden replays can be written.**
+
 ## Still open
 
-- **G2.** There is no combat resolution. Roles carry Power (6–40) and Health
-  (130–420) and attacks have a wind-up, but there is no attack rate, damage
-  formula or range, and it is not stated whether the crew can choose to fight.
-- **G1.** Pathfinding and crew movement are unspecified, and detection assumes
-  continuous positions and headings (sub-metre zones, degrees per tick) while §6
-  is written in tiles. Settle the world model before locking these numbers.
-- **C7.** The per-tick rates above assume 30 Hz. At 20 Hz they all change. Settle
-  the tick rate before writing the golden replays, which encode it.
+- **Height and detection.** §12.17 gives a guard a metre more sight from above
+  and no far zone from below. What that does to the zone boundaries at each of
+  §6.2's four height levels is not stated, and this spec assumes the flat case.

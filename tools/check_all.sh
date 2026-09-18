@@ -42,6 +42,10 @@ echo "== C3's rank splits, and whether §7.9's rule survives the sheets =="
 python3 tools/law_ranks.py --self-test
 
 echo
+echo "== F12's eight authored laws, and the rule the generator gets =="
+python3 tools/law_effects.py --self-test
+
+echo
 echo "== C6's 18 ability pairs, sorted by what kind of difference they are =="
 python3 tools/ability_text.py --self-test
 

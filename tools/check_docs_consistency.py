@@ -394,6 +394,69 @@ def check_handoff_table() -> None:
              f"area")
 
 
+def spec_open_claims(text: str) -> list[str]:
+    """Register ids a "Still open" section claims are outstanding work.
+
+    Only the *subject* of a bullet counts. A bullet may cite a settled item as
+    context for a question that is genuinely open - `first-build.md` asks
+    whether a day-2 guard counts against the roster and explains why with
+    "Under F1 the roster is the binding constraint", and `vault.md` notes that
+    a refinement "is not needed to close G4". Neither claims the item is open,
+    and flagging them would send someone to fix a file that is right.
+
+    `check_spec_index`'s own docstring records what that costs: a false
+    positive here sent me to correct a correct file and I added a duplicate row
+    before noticing. So the rule is narrow - the id must be in the bullet's
+    leading bold run, which is where these files put the subject.
+    """
+    out = []
+    for line in text.splitlines():
+        bullet = re.match(r"\s*[-*]\s+(.*)", line)
+        if not bullet:
+            continue
+        lead = re.match(r"\*\*(.+?)\*\*", bullet.group(1))
+        if not lead:
+            continue
+        out += re.findall(r"\b([A-Z]{1,2}\d{1,2})\b", lead.group(1))
+    return sorted(set(out))
+
+
+def check_spec_status() -> None:
+    """A spec file's "Still open" list must contain only items the register has
+    open.
+
+    The spec files are what a contributor reads to find out what to do, and
+    each ends with a list of what it is still waiting on. Those lists are
+    hand-written and nothing compared them with the register, so five of them
+    sent a reader to settle work that v3.0 and v3.1 had finished.
+    `spec/detection.md` still said "Settle the tick rate before writing the
+    golden replays" against a register that has C7 fixed and a build check
+    asserting `tick_rate == 30`.
+
+    Citations were already checked here and did not catch it, because the fault
+    is not in the numbers: every section these files cite still exists. It is
+    the claim about an item's state that went stale, which is C21 to C24
+    exactly, told about this repository's own documents instead of the design
+    document's.
+    """
+    sys.path.insert(0, str(ROOT / "tools"))
+    import check_document
+
+    known = {i["id"] for i in REGISTER}
+    for path in sorted(SPEC_DIR.glob("*.md")):
+        text = path.read_text(encoding="utf-8")
+        m = re.search(r"^##+ Still open\s*$(.*?)(?=^##|\Z)", text, re.M | re.S)
+        if not m:
+            continue
+        for item in spec_open_claims(m.group(1)):
+            if item not in known:
+                fail(f"spec/{path.name} lists {item} as still open, and there "
+                     f"is no such register item")
+            elif not check_document._is_open(item):
+                fail(f"spec/{path.name} lists {item} as still open; the "
+                     f"register has it settled")
+
+
 def check_artifact_urls(files: list[pathlib.Path]) -> None:
     """One artifact, one URL, everywhere it is mentioned."""
     url = re.compile(r"https://claude\.ai/artifact/([A-Za-z0-9]+)")
@@ -497,6 +560,7 @@ def main() -> int:
     check_document_links()
     check_register_references()
     check_handoff_table()
+    check_spec_status()
     check_artifact_urls(files)
     check_generated_marked()
     check_tool_output_counts(files)
@@ -563,8 +627,14 @@ def _self_test() -> None:
     global problems
     text = (ROOT / "README.md").read_text(encoding="utf-8")
     for label, planted, expect in (
+        # The plant is derived, not typed: an earlier version replaced the
+        # literal "| **Screens** | Not yet |" and stopped planting anything the
+        # day screens moved to "Waiting on you" — a self-test whose fixture is
+        # a copy of live state, which is the fault this whole file checks for,
+        # committed inside the check for it.
         ("a Ready that is not true",
-         text.replace("| **Screens** | Not yet |", "| **Screens** | Ready |"),
+         re.sub(r"^(\| \*\*[A-Za-z]+\*\* \| )(?!Ready)[^|]+(\|)",
+                r"\1Ready \2", text, count=1, flags=re.M),
          "its gates make it"),
         ("a gate quietly dropped from the list",
          re.sub(r"(your decision: )[A-Z]+\d+, ", r"\1", text, count=1),

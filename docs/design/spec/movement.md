@@ -191,13 +191,18 @@ holding in reserve:
 
 ---
 
+## Settled since this was written
+
+- **G2 — combat resolution.** This spec assumed the crew mostly cannot choose
+  to fight, and said so was an assumption. §12.20 settles it the other way and
+  prices it: one hit every 0.8 seconds for Power damage on both sides, fighting
+  allowed at any moment, and an unambushed hit sending a guard's suspicion
+  straight to 1000. An open fight is an alarm with a price rather than a
+  forbidden move, so the assumption below about movement under threat holds for
+  a different reason than the one given.
+
 ## Still open
 
-- **G2 — combat resolution.** Roles carry Power (6–40) and Health (130–420) and
-  §12.8 gives ambush rules and a 0.8 s wind-up, but there is no attack rate,
-  damage formula or range, and it is not stated whether the crew can choose to
-  fight at all. This spec assumes they mostly cannot, which is consistent with
-  §12.8's "clever beats strong", but that is an assumption.
 - **Height.** §6.2 gives four height levels with one-way drops, and §12.17 gives
   guards a metre more sight from above and no far zone from below. Movement
   between levels — ramps, stairs, vines, leaps — is specified as terrain but not

@@ -457,13 +457,22 @@ dict(id="C6", kind="contradiction", severity="blocking", status="proposed",
          "and habits, none of which \u00a711.2 has an opinion about. "
          "\u00a711.2 becomes a summary that cites it, which is \u00a731.2\u2019s "
          "rule and the same fix C27 and C28 need."
-         "<br><br><strong>The twelve effect differences are the work; the "
-         "cooldowns come with them.</strong> They are not a reconciliation to "
-         "type up \u2014 they are twelve abilities to choose between, and each "
-         "choice changes what a Warden or a Mender is for. "
-         "<code>tools/ability_text.py</code> prints both texts and the reason "
-         "the pair is one kind or the other, so the decision is eighteen reads "
-         "rather than two sections."
+         "<br><br><strong>All eighteen are now drafted.</strong> "
+         "<code>tools/ability_text.py</code> picks one text for each \u2014 "
+         "seven from \u00a711.11, six from \u00a711.2, five that need both "
+         "\u2014 and argues every pick from the creature\u2019s role or from "
+         "a system the document already has, never from taste. Eighteen picks "
+         "argued from taste is a redesign and needs a designer; eighteen argued "
+         "from \u00a712.6, \u00a712.19 and \u00a711.11 is a reading of the "
+         "document that can be disagreed with line by line. The table is in "
+         "<code>docs/design/spec/ruleborn.md</code> and the reasons are printed "
+         "in full by the tool."
+         "<br><br><strong>The cooldowns are not picked, because they cannot be "
+         "picked from a column.</strong> Both tables are two to three times "
+         "over \u00a712.6\u2019s budget for the whole run, so either column "
+         "takes its number from a table that does not fit the game around it. "
+         "That is D32, it is one decision rather than eighteen, and every "
+         "cooldown follows from it."
          "<br><br><strong>This holds the screens and not the art.</strong> A "
          "character screen shows the ability text, so it cannot be drawn; a "
          "character\u2019s portrait needs a look, a role and a school, and all "
@@ -1929,12 +1938,32 @@ dict(id="F12", kind="finding", severity="design", status="open",
           "default and authorship the deep end</strong>, so for most islands the "
           "generator now makes these choices \u2014 and a badly chosen slope or "
           "stream turns the defender\u2019s law into the raider\u2019s.",
-     rec="Either the generator gets an explicit rule for each (slope away from "
-         "the entry, streams across the approach), or these eight laws are "
-         "marked as ones a generated realm cannot weave. The first is better "
-         "design and more work; the second is one column in the law table. "
-         "Deciding nothing means the generator picks arbitrarily, which is the "
-         "current state."),
+     rec="<strong>Drafted \u2014 one rule, and the eight are instances of "
+         "it.</strong> <em>Place every authored parameter against the shortest "
+         "route from the landing edge to the Heart: along it for what costs a "
+         "crosser to pass, across it for what costs a crosser to cross, and "
+         "never so that the route is sealed.</em>"
+         "<br><br>Three things the document already states make that the cheap "
+         "rule rather than a new system. \u00a76.1 forbids sealing the route, "
+         "so the generator <em>already computes it</em> \u2014 this needs no "
+         "machinery it does not have. \u00a712.5 has the raider enter at an "
+         "edge and move inward, so \u201ctoward the Heart\u201d and "
+         "\u201cagainst the raider\u201d are the same direction. And "
+         "\u00a712.7 makes the loaded escape the tense half, so anything that "
+         "costs speed is worth more pointed at the way out than the way in "
+         "\u2014 which is what decides Tilt and Current, the two F12 names "
+         "first."
+         "<br><br>Lodestones is the only one placed <em>off</em> the route: a "
+         "pull on the route drags a crew along it, so it has to flank one, and "
+         "the clearance keeps \u00a76.1 true by construction rather than by a "
+         "check afterwards. <code>tools/law_effects.py</code> prints all eight "
+         "with the argument for each, and its self-test fails if a law moves "
+         "in or out of the authored set without a rule moving with it."
+         "<br><br>The alternative F12 originally offered \u2014 marking these "
+         "eight as laws a generated realm cannot weave \u2014 is still open "
+         "and is one column in the law table. It costs a sixth of the law "
+         "pool on every curated island, which is why the rule is worth the "
+         "page it takes."),
 
 dict(id="D22", kind="deviation", severity="change", status="done",
      title="Law effects became a classified table, not prose to be read twice",
@@ -2335,6 +2364,92 @@ dict(id="D30", kind="deviation", severity="change", status="done",
          "numbers are pinned to its own note instead of reported as an open "
          "item, so if the content moves them the note is what the build calls "
          "stale."),
+
+dict(id="D32", kind="deviation", severity="significant", status="open",
+     title="Both ability tables hand a crew two to three times the decisions "
+           "\u00a712.6 budgets for the whole run",
+     refs=["12.6", "12.5", "11.2", "11.11"],
+     body="\u00a712.6 sets the game\u2019s pace in its own words: <em>\u201ca "
+          "string of small, tense decisions: roughly one every 8 to 12 seconds, "
+          "or 15 to 25 in a run\u2026 never about tapping faster\u201d</em>, "
+          "and it names <em>\u201cwhen to use abilities and casts\u201d</em> "
+          "as one of the decisions it is counting."
+          "<br><br>An ability comes off cooldown every <em>c</em> seconds per "
+          "character, so a crew of <em>n</em> over a clock of <em>t</em> gets "
+          "<code>t\u00d7n/c</code> windows. \u00a712.5 puts the crew at 3, 4 "
+          "from Keeper 8 and 5 from Keeper 16, and the clock at 150 to 240 "
+          "seconds. Against \u00a711.11\u2019s median 18-second cooldowns that "
+          "is <strong>25 windows at the smallest and 67 at the largest</strong>; "
+          "against \u00a711.2\u2019s median 14, <strong>31 and 83</strong>."
+          "<br><br>So the smallest case in the document \u2014 a crew of three "
+          "on a short route \u2014 exactly reaches the top of \u00a712.6\u2019s "
+          "budget, and every case above it overruns. <strong>The overrun is not "
+          "a tuning miss; it grows with the player.</strong> The crew goes 3 to "
+          "5 and the clock 150 to 240 as Keeper levels rise, so the game gets "
+          "roughly two and a half times more frantic between Keeper 1 and "
+          "Keeper 16, and \u00a712.6 describes the first of those and not the "
+          "second."
+          "<br><br>For one ability to come off cooldown at \u00a712.6\u2019s "
+          "own 8-to-12-second cadence, cooldowns would have to be 24\u201336 "
+          "seconds at a crew of three and 40\u201360 at a crew of five. Both "
+          "tables are 8\u201324.",
+     rec="Answer one question and all eighteen cooldowns follow from it: "
+         "<strong>is using an ability one of the decisions \u00a712.6 is "
+         "counting, or is it texture between them?</strong>"
+         "<br><br><strong>A decision.</strong> Cooldowns go to roughly 24 to 60 "
+         "seconds and scale with crew size, so a character\u2019s ability fires "
+         "once or twice in a heist and choosing the moment is the point. "
+         "\u00a712.6\u2019s count stands as written. This is the reading its "
+         "own words support."
+         "<br><br><strong>Texture.</strong> Keep the short cooldowns and rewrite "
+         "\u00a712.6\u2019s count to be about routes, pylons and greed, with "
+         "abilities explicitly outside it. Then say what stops the phone "
+         "becoming a tapping game, which \u00a712.6 currently rules out in the "
+         "same paragraph."
+         "<br><br>Either way the number is one decision rather than eighteen, "
+         "which is why C6\u2019s drafted abilities settle the effects and leave "
+         "the cooldowns here. <code>tools/ability_text.py --self-test</code> "
+         "pins the overrun, so a re-cost that brings a table inside the budget "
+         "fails the build and sends someone back to this item."),
+
+dict(id="D33", kind="deviation", severity="change", status="done",
+     title="Four spec files send a contributor to settle work that v3.0 and "
+           "v3.1 finished",
+     refs=["31.2", "31.4"],
+     body="Each file in <code>docs/design/spec/</code> ends with a "
+          "<em>Still open</em> list, and those lists are what a contributor "
+          "reads to find out what to do. They were hand-written and nothing "
+          "compared them with the register, so seven entries across four files "
+          "named items the register has fixed."
+          "<br><br><code>spec/detection.md</code> was the worst of them: three "
+          "of three, including <em>\u201cSettle the tick rate before writing "
+          "the golden replays, which encode it\u201d</em> \u2014 against a "
+          "register that has C7 fixed, a document that states 30 steps a second "
+          "once, and a build check that fails if a second copy disagrees. "
+          "<code>spec/economy.md</code> asked for crew membership to exclude "
+          "work, which \u00a75.8 does. <code>spec/movement.md</code> and "
+          "<code>spec/ruleborn.md</code> each named one more."
+          "<br><br><strong>The citation check could not see it.</strong> Every "
+          "section these files cite still exists; what went stale is the claim "
+          "about an item\u2019s state. That is C21 to C24 in this "
+          "repository\u2019s own documents rather than the design "
+          "document\u2019s, and it is the reason \u00a731.4\u2019s rule "
+          "\u2014 generated, not authored \u2014 has to reach the prose that "
+          "describes the data and not only the data.",
+     rec="Fixed, and checked. Each file now carries a <em>Settled since this "
+         "was written</em> section naming what answered each question, because "
+         "a spec that silently drops a question reads as if it never asked one. "
+         "<code>check_docs_consistency.check_spec_status()</code> compares "
+         "every <em>Still open</em> list against the register on each build."
+         "<br><br>It reads only the <strong>subject</strong> of each bullet. A "
+         "bullet may cite a settled item as context for a question that is "
+         "genuinely open \u2014 <code>first-build.md</code> explains an open "
+         "question with \u201cUnder F1 the roster is the binding "
+         "constraint\u201d and <code>vault.md</code> notes a refinement "
+         "\u201cis not needed to close G4\u201d \u2014 and flagging those "
+         "would send someone to correct a file that is right. "
+         "<code>check_spec_index</code>\u2019s own docstring records what that "
+         "costs, which is why the rule here is narrow."),
 
 dict(id="D31", kind="deviation", severity="significant", status="open",
      title="\u00a77.9\u2019s two dials are one dial, measured across all 48 "
@@ -3565,12 +3680,12 @@ GATE_OWNER = {
     "F22": "yours",    # the harness prices one post against two at realms 1-2
     "F9":  "yours",    # 13.2 states 30-45%; what is missing is whether it binds a generated realm
     "F11": "yours",    # three readings of "generated from their laws", all three costed
-    "F12": "mine",     # law_effects.py names the eight; nothing has proposed how the generator chooses
+    "F12": "yours",    # eight generator rules drafted in law_effects.GENERATOR_RULE
     "G3":  "yours",    # drafted in full at docs/design/spec/wards.md
-    "G5":  "mine",     # nothing has measured what a hidden pylon costs a raider
+    "G5":  "yours",    # answered in spec/wards.md and drafted as a \u00a712.6 edit
     "C19": "yours",    # the economy model implies one producer per realm; that needs saying, not deciding
     # -- screens --------------------------------------------------------------
-    "C6":  "mine",     # 18 abilities, 12 of them two different designs; none drafted yet
+    "C6":  "yours",    # all 18 drafted in docs/design/spec/ruleborn.md; sign-off, plus D32
     # -- characters -----------------------------------------------------------
     "D6":  "yours",    # tools/scope_cut.py costs 144 forms against 54 both ways
     "Q5":  "outside",  # what comparable builders shipped, which nothing here can answer
@@ -3946,21 +4061,27 @@ EDITS = {
 "F12": [
     dict(section="13.3", action="insert",
          find="Swap a law, move a post, pick a different generated layout, name it.",
-         replace="Say what happens to the eight laws whose effect is an act of "
-                 "authorship rather than a number: Tilt slopes the realm “toward "
-                 "a side the owner picks”, Current blows “one way, chosen by "
-                 "the owner”, Slow rivers lets the owner “draw streams on the "
-                 "realm’s grid”, and Lodestones, Heat bloom, Soul lanterns and "
-                 "Shifting stones are placements. Either the generator gets a stated "
-                 "rule for each — slope away from the entry, streams across the "
-                 "approach — or they are marked as laws a generated realm cannot "
-                 "weave, which is one column in the law table.",
-         why="These were fine while authoring was the default. This section makes "
-             "curation the default and authorship the deep end, so for most islands "
-             "the generator now makes these choices — and a badly chosen slope or "
-             "stream turns the defender’s law into the raider’s. Deciding "
-             "nothing means the generator picks arbitrarily, which is the current "
-             "state."),
+         replace="State one rule for the eight laws whose effect is an act of "
+                 "authorship rather than a number: <b>place every authored "
+                 "parameter against the shortest route from the landing edge "
+                 "to the Heart \u2014 along it for what costs a crosser to "
+                 "pass, across it for what costs a crosser to cross, and never "
+                 "so that the route is sealed.</b> \u00a76.1 already makes the "
+                 "generator compute that route, so this needs no machinery it "
+                 "does not have; \u00a712.5 makes \u201ctoward the "
+                 "Heart\u201d and \u201cagainst the raider\u201d the same "
+                 "direction; and \u00a712.7 makes the loaded escape the half "
+                 "worth spending on. The eight: Current blowing toward the Heart; Heat bloom braziers on the route, at the Vault approach; Inward pull the shortest-path direction to the Heart, per tile; Lodestones flanking the route, two tiles clear of it; Shifting stones a loop crossing the route at right angles; Slow rivers streams across the route, in the inner third; Soul lanterns lanterns on the route, covering each Guardian Post’s approach; Tilt downhill toward the Heart. Lodestones "
+                 "is the only one placed off the route \u2014 a pull on the "
+                 "route drags a crew along it rather than off it \u2014 and "
+                 "its clearance is what keeps \u00a76.1 true without a second "
+                 "check.",
+         why="These were fine while authoring was the default. \u00a713.3 "
+             "makes curation the default and authorship the deep end, so for "
+             "most islands the generator now makes these choices \u2014 and a "
+             "badly chosen slope or stream turns the defender\u2019s law into "
+             "the raider\u2019s. Each of the eight is argued from the document "
+             "by <code>python3 tools/law_effects.py</code>."),
 ],
 
 "C21": [

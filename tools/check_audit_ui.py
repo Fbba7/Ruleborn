@@ -381,12 +381,19 @@ def self_test() -> int:
     # and the first is the one that costs: "Ready" over an area with an open
     # gate sends someone to draw a thing nobody has decided.
     for label, broken, want in (
+        # Both plants are derived from what the page currently says. Typing
+        # the class and the word in was how the first version worked, and it
+        # stopped planting anything the day the last area moved off "Not yet"
+        # — a self-test whose fixture is a copy of live state passes by
+        # planting nothing, which is this register's own recurring fault
+        # committed inside the check for it.
         ("an area shown Ready with a gate still open",
-         html.replace('<div class="ho mine"', '<div class="ho ready"', 1),
+         re.sub(r'<div class="ho (?!ready)\w+"', '<div class="ho ready"',
+                html, count=1),
          "is shown as 'ready'"),
         ("a verdict word that does not match its own class",
-         html.replace('<p class="verdict">Not yet</p>',
-                      '<p class="verdict">Ready</p>', 1),
+         re.sub(r'<p class="verdict">(?!Ready<)[^<]+</p>',
+                '<p class="verdict">Ready</p>', html, count=1),
          "which is not the word for"),
         ("a card that lists none of what it waits on",
          BAND.sub(lambda m: m.group(0).replace(

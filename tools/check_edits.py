@@ -169,6 +169,11 @@ NO_EDIT_BECAUSE = {
     "D16": "a proposal awaiting sign-off; it becomes an edit when accepted",
     "D17": "a proposal awaiting sign-off; it becomes an edit when accepted",
     "D20": "a record of what v3.0 did, not something to change",
+    # Two edits exist and they contradict each other: one rewrites the
+    # cooldowns, the other rewrites \u00a712.6's decision count. Drafting both
+    # would be drafting a contradiction, and drafting one would be making the
+    # decision rather than putting it.
+    "D32": "two mutually exclusive edits; the reading has to be chosen first",
 }
 
 

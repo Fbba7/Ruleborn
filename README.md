@@ -22,15 +22,15 @@ a band at the top.
 
 | Area | Verdict | Waiting on |
 | --- | --- | --- |
-| **Realms** | Not yet | still mine to draft: F12, G5; your decision: F26, F27, F22, F9, F11, G3, C19 |
-| **Screens** | Not yet | still mine to draft: C6 |
+| **Realms** | Waiting on you | your decision: F26, F27, F22, F9, F11, F12, G3, G5, C19 |
+| **Screens** | Waiting on you | your decision: C6 |
 | **Characters** | Waiting on you | your decision: D6; needs outside evidence: Q5 |
 
 **Ready means hand it over.** Until then the verdict says who is holding it: a
 decision only you can make, evidence nobody here can produce, or drafting that is
 still mine to do.
 
-Two versions have now answered the audit. **35 of 107 register items are fixed
+Two versions have now answered the audit. **35 of 109 register items are fixed
 in the document itself** — 26 by v3.0 and 9 more by v3.1. v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
 in §19.27, and the build-willingness risk is designed out rather than measured
@@ -202,7 +202,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 107 tracked items with section references and status:
+document, as 109 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
