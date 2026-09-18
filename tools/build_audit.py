@@ -14,7 +14,8 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,  # noqa: E402
+from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,
+                            GATE_OWNER,  # noqa: E402
                             REGISTER, RESEARCH, V3, V31, side_of)
 
 from build_stamp import stamped  # noqa: E402
@@ -244,6 +245,100 @@ def tabs_html() -> str:
             f'100% means that area can begin, not that the project is done. '
             f'Nothing has been drawn yet; these say what each area is waiting '
             f'on, and the panel above lists every gate by name.</p>')
+
+
+def handoff(area: str) -> dict:
+    """Whether this area can be handed to someone who will draw it, and if not,
+    who is holding it.
+
+    The gate panel answers "how far along is this", and that turned out to be
+    the wrong question. The one actually asked is **when can I hand realms, or
+    screens, or characters, to someone and have them start** - and a percentage
+    cannot answer it, because an area at 6 of 7 with the last gate unanswerable
+    is further from starting than an area at 3 of 5 whose two are a decision
+    away.
+
+    So the verdict is one of three, derived from the open gates and their
+    owners rather than typed anywhere:
+
+        ready   No open gates. The drawing can start.
+        yours   Every open gate is a decision, or needs evidence from outside.
+                Everything that could be measured has been and every edit is
+                drafted; this is one conversation from starting.
+        mine    At least one open gate still has analysis or drafting in it.
+                Handing this over now would be handing over the questions too.
+
+    `mine` wins over `yours` when both are present, because an area is held by
+    the slowest thing in it.
+    """
+    open_ = list(DESIGN_GATES[area]["gates"])
+    owners = [GATE_OWNER[g] for g in open_]
+    if not open_:
+        verdict = "ready"
+    elif "mine" in owners:
+        verdict = "mine"
+    else:
+        verdict = "yours"
+    return dict(
+        area=area, verdict=verdict, open=open_,
+        mine=[g for g in open_ if GATE_OWNER[g] == "mine"],
+        yours=[g for g in open_ if GATE_OWNER[g] == "yours"],
+        outside=[g for g in open_ if GATE_OWNER[g] == "outside"],
+    )
+
+
+#: What each verdict says, in the words the question was asked in.
+HANDOFF_WORDS = {
+    "ready": ("Ready", "Hand it over. Nothing open decides anything a "
+                       "designer would otherwise have to guess."),
+    "yours": ("Waiting on you", "Everything that can be measured has been and "
+                                "every edit is drafted. What is left is yours "
+                                "to answer."),
+    "mine":  ("Not yet", "Still has drafting in it. Handing it over now would "
+                         "hand over the questions with it."),
+}
+
+
+def handoff_html() -> str:
+    """The verdict band: three areas, three words, and what each is waiting on.
+
+    Outside a <details>, and above everything else, because it is the question
+    the register is read to answer and it was previously three clicks down
+    inside a progress panel.
+    """
+    by_id = {i["id"]: i for i in REGISTER}
+    cards = []
+    for area in DESIGN_GATES:
+        h = handoff(area)
+        word, gloss = HANDOFF_WORDS[h["verdict"]]
+        groups = []
+        for key, label in (("mine", "still being worked"),
+                           ("yours", "your decision"),
+                           ("outside", "needs evidence from outside")):
+            if h[key]:
+                links = ", ".join(
+                    f'<a href="#{g}">{g}</a>' for g in h[key])
+                groups.append(f'<li><span class="who {key}">{label}</span> {links}'
+                              f'<span class="gt">{esc(plain(by_id[h[key][0]]["title"]))}'
+                              f'{"" if len(h[key]) == 1 else " &hellip;"}</span></li>')
+        body = (f'<ul class="waiting">{"".join(groups)}</ul>' if groups
+                else '<p class="waiting none">Nothing open.</p>')
+        cards.append(
+            f'<div class="ho {h["verdict"]}">'
+            f'<h3>{esc(area.capitalize())}</h3>'
+            f'<p class="verdict">{word}</p>'
+            f'<p class="gloss">{gloss}</p>{body}</div>')
+    return f"""
+  <section class="handoff">
+    <h2>Can the drawing start?</h2>
+    <p class="blurb">One verdict per area, derived from the gates below and who
+      has to move next on each &mdash; not typed anywhere, so it cannot say
+      &ldquo;ready&rdquo; while something is still open. <strong>Ready means
+      hand it over.</strong> Until then this says who is holding it: a decision
+      only you can make, evidence nobody here can produce, or drafting that is
+      still mine to do.</p>
+    <div class="hos">{''.join(cards)}</div>
+  </section>"""
 
 
 def design_gates_html() -> str:
@@ -710,6 +805,56 @@ def build() -> str:
     font-variant-numeric: tabular-nums; opacity: 0.65;
   }}
 
+  /* --- can the drawing start? ------------------------------------------- */
+  .handoff {{
+    margin: 28px 0 8px; padding: 18px 20px;
+    border: 1px solid var(--rule-strong); border-radius: 10px;
+    background: var(--raised);
+  }}
+  .handoff h2 {{ font-size: 21px; margin: 0 0 6px; }}
+  .handoff .blurb {{
+    color: var(--muted); font-size: 14px; max-width: 62ch; margin: 0 0 14px;
+  }}
+  .hos {{ display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }}
+  @media (max-width: 760px) {{ .hos {{ grid-template-columns: 1fr; }} }}
+  .ho {{
+    border: 1px solid var(--rule); border-radius: 9px; padding: 14px 15px;
+    border-left: 4px solid var(--rule-strong); background: var(--ground);
+  }}
+  .ho h3 {{
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    margin: 0 0 6px; font-weight: 600;
+  }}
+  .ho .verdict {{ font-size: 20px; font-weight: 650; margin: 0; line-height: 1.2; }}
+  .ho .gloss {{
+    color: var(--muted); font-size: 13px; margin: 6px 0 10px; line-height: 1.45;
+  }}
+  .ho.ready {{ border-left-color: var(--cho); }}
+  .ho.ready .verdict {{ color: var(--cho); }}
+  .ho.yours {{ border-left-color: var(--sig); }}
+  .ho.yours .verdict {{ color: var(--sig); }}
+  .ho.mine {{ border-left-color: var(--min); }}
+  .ho.mine .verdict {{ color: var(--ink); }}
+  .waiting {{ margin: 0; padding: 0; list-style: none; }}
+  .waiting li {{
+    border-top: 1px solid var(--rule); padding: 8px 0 0; margin-top: 8px;
+    font-size: 13.5px;
+  }}
+  .waiting li:first-child {{ border-top: 0; margin-top: 0; }}
+  .waiting .who {{
+    display: block; font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 3px;
+  }}
+  .waiting .who.mine {{ color: var(--min); }}
+  .waiting .who.yours {{ color: var(--sig); }}
+  .waiting .who.outside {{ color: var(--chg); }}
+  .waiting .gt {{
+    display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px;
+    line-height: 1.4;
+  }}
+  .waiting.none {{ color: var(--cho); font-size: 13.5px; margin: 0; }}
+
   /* --- where to start -------------------------------------------------- */
   .start {{
     margin: 28px 0 8px; padding: 18px 20px;
@@ -1038,6 +1183,7 @@ def build() -> str:
     </div>
 {tabs_html()}
   </header>
+{handoff_html()}
 {start_here_html()}
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">{len(REGISTER)}</span></button>

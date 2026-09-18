@@ -13,6 +13,23 @@ monetisation.
 
 **Pre-production — design document at v3.1, no code yet.**
 
+### Can the drawing start?
+
+An area is ready to hand to whoever will draw it when nothing still open decides
+something they would otherwise have to guess. The audit page computes this from
+the gates themselves — it cannot read "Ready" while one is open — and shows it in
+a band at the top.
+
+| Area | Verdict | Waiting on |
+| --- | --- | --- |
+| **Realms** | Not yet | still mine to draft: F12, G5; your decision: F26, F27, F22, F9, F11, G3, C19 |
+| **Screens** | Not yet | still mine to draft: C6 |
+| **Characters** | Waiting on you | your decision: D6; needs outside evidence: Q5 |
+
+**Ready means hand it over.** Until then the verdict says who is holding it: a
+decision only you can make, evidence nobody here can produce, or drafting that is
+still mine to do.
+
 Two versions have now answered the audit. **35 of 107 register items are fixed
 in the document itself** — 26 by v3.0 and 9 more by v3.1. v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses

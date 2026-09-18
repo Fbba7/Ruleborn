@@ -36,6 +36,9 @@ import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PAGE = ROOT / "docs" / "audit" / "index.html"
+sys.path.insert(0, str(ROOT / "tools"))
+import build_audit                                                  # noqa: E402
+from audit_register import DESIGN_GATES                             # noqa: E402
 
 ITEM = re.compile(r'<article class="item [^"]*" id="([^"]+)"([^>]*)>')
 ATTR = re.compile(r'data-([a-z]+)="([^"]*)"')
@@ -106,6 +109,29 @@ def on_chip(item: dict, filt: str) -> bool:
     return item.get(key) == value
 
 
+#: The verdict band, and one card inside it. The band is bounded first and the
+#: cards split out of it, rather than each card matched with a lookahead for
+#: the next: the last card ends at the section instead, and a pattern that
+#: cannot match it would read two cards out of three and check both happily.
+BAND = re.compile(r'<div class="hos">(.*?)</div>\s*</section>', re.S)
+HO = re.compile(r'^(ready|yours|mine)"><h3>([^<]+)</h3>'
+                r'<p class="verdict">([^<]+)</p>', re.S)
+HO_LINK = re.compile(r'<a href="#([A-Z]+\d+)">')
+
+
+def handoffs(html: str) -> list[tuple[str, str, str, list[str]]]:
+    """(verdict class, area, the word shown, the gates it lists)."""
+    band = BAND.search(html)
+    if not band:
+        return []
+    out = []
+    for chunk in band.group(1).split('<div class="ho ')[1:]:
+        m = HO.match(chunk)
+        if m:
+            out.append((m.group(1), m.group(2), m.group(3), HO_LINK.findall(chunk)))
+    return out
+
+
 def check(html: str) -> list[str]:
     bad = []
     rows = items(html)
@@ -173,6 +199,36 @@ def check(html: str) -> list[str]:
         key = filt.partition(":")[0]
         if filt != "all" and not any(key in i for i in rows):
             bad.append(f'chip "{filt}" filters on data-{key}, which no item has')
+
+    # The handoff band is the one thing on the page that answers a yes/no, so
+    # it is the one place a wrong answer costs most: "Ready" on an area with an
+    # open gate would send someone to draw a thing nobody has decided. Read it
+    # back off the page and re-derive it from the register.
+    cards = handoffs(html)
+    if len(cards) != len(DESIGN_GATES):
+        bad.append(f"the handoff band shows {len(cards)} areas, the register "
+                   f"has {len(DESIGN_GATES)}")
+    for cls, area, word, listed in cards:
+        key = area.lower()
+        if key not in DESIGN_GATES:
+            bad.append(f"the handoff band shows {area!r}, which is not a "
+                       f"design area")
+            continue
+        want = build_audit.handoff(key)
+        if cls != want["verdict"]:
+            bad.append(f"{key} is shown as {cls!r}, the register's gates make "
+                       f"it {want['verdict']!r}")
+        if word != build_audit.HANDOFF_WORDS[want["verdict"]][0]:
+            bad.append(f"{key} reads {word!r}, which is not the word for "
+                       f"{want['verdict']!r}")
+        if sorted(listed) != sorted(want["open"]):
+            bad.append(f"{key} lists {sorted(listed)} as what it waits on, "
+                       f"the register has {sorted(want['open'])}")
+        # The one that would be silent: a card with nothing listed reads like
+        # an area with nothing open, whatever word is above it.
+        if not listed and want["open"]:
+            bad.append(f"{key} lists nothing to wait on and has "
+                       f"{len(want['open'])} open gates")
 
     every = {k for i in rows for k in i if k != "id"}
     if "side" not in every:
@@ -320,6 +376,35 @@ def self_test() -> int:
     else:
         print("    FAIL: an item dropped from a design area went unnoticed")
         ok = False
+
+    # The handoff band. These four are the ways a yes/no answer goes wrong,
+    # and the first is the one that costs: "Ready" over an area with an open
+    # gate sends someone to draw a thing nobody has decided.
+    for label, broken, want in (
+        ("an area shown Ready with a gate still open",
+         html.replace('<div class="ho mine"', '<div class="ho ready"', 1),
+         "is shown as 'ready'"),
+        ("a verdict word that does not match its own class",
+         html.replace('<p class="verdict">Not yet</p>',
+                      '<p class="verdict">Ready</p>', 1),
+         "which is not the word for"),
+        ("a card that lists none of what it waits on",
+         BAND.sub(lambda m: m.group(0).replace(
+             m.group(1).split('<div class="ho ')[1].split('<ul class="waiting">')[-1]
+             .split("</ul>")[0], "", 1), html, count=1),
+         "lists"),
+        ("a design area missing from the band altogether",
+         html.replace('<div class="ho ', '<div class="gone ', 1),
+         "shows 2 areas"),
+    ):
+        if broken != html and any(want in b for b in check(broken)):
+            print(f"  and {label} is caught")
+        elif broken == html:
+            print(f"    FAIL: could not plant {label}")
+            ok = False
+        else:
+            print(f"    FAIL: {label} went unnoticed")
+            ok = False
 
     if shutil.which("node"):
         # The mistake this half exists for: a side test that forgets "both".

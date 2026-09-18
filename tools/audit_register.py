@@ -3534,6 +3534,52 @@ def side_of(item_id: str) -> str:
 # otherwise have to guess, and what each one changes about the drawing.
 #
 # An area with nothing open is one where design can start now.
+#: Who has to move next on each gate, so an area can say whether the drawing
+#: can start rather than only how far along it is.
+#:
+#: The question this answers is "when do I hand realms, screens or characters
+#: to someone who will draw them", and the useful answer is not a percentage.
+#: It is one of three things:
+#:
+#:   yours    Everything that can be measured has been, the edit is drafted,
+#:            and what is left is a decision only the owner of the project can
+#:            make. Nothing here moves without an answer.
+#:   mine     There is still analysis or drafting in it. It is not a clean
+#:            choice yet, and presenting it as one would be asking the owner
+#:            to decide something nobody has laid out.
+#:   outside  It needs something this repository cannot produce: a playtest, or
+#:            evidence about what other games shipped.
+#:
+#: An area is ready to hand over when it has no open gates at all. Until then
+#: the verdict says who is holding it, which is the thing worth knowing: an
+#: area waiting only on `yours` is one conversation from starting, and an area
+#: with a `mine` in it is not, however few gates it has left.
+#:
+#: Keyed by item rather than by (area, item), because the owner is a property
+#: of the question. C6 gates the screens and partly gates the characters, and
+#: who has to answer it does not change between them.
+GATE_OWNER = {
+    # -- realms ---------------------------------------------------------------
+    "F26": "yours",    # measured at 11/8/6/7/8 by tools/ward_budget.py; edit drafted
+    "F27": "yours",    # measured by tools/post_ladder.py; edit drafted
+    "F22": "yours",    # the harness prices one post against two at realms 1-2
+    "F9":  "yours",    # 13.2 states 30-45%; what is missing is whether it binds a generated realm
+    "F11": "yours",    # three readings of "generated from their laws", all three costed
+    "F12": "mine",     # law_effects.py names the eight; nothing has proposed how the generator chooses
+    "G3":  "yours",    # drafted in full at docs/design/spec/wards.md
+    "G5":  "mine",     # nothing has measured what a hidden pylon costs a raider
+    "C19": "yours",    # the economy model implies one producer per realm; that needs saying, not deciding
+    # -- screens --------------------------------------------------------------
+    "C6":  "mine",     # 18 abilities, 12 of them two different designs; none drafted yet
+    # -- characters -----------------------------------------------------------
+    "D6":  "yours",    # tools/scope_cut.py costs 144 forms against 54 both ways
+    "Q5":  "outside",  # what comparable builders shipped, which nothing here can answer
+}
+
+#: The three verdicts an area can carry, worst first. `ready` is the only one
+#: that means the drawing can start.
+HANDOFF = ("mine", "yours", "ready")
+
 DESIGN_GATES = {
     "realms": dict(
         what="Terrain layout, what an island holds, how a realm is drawn",

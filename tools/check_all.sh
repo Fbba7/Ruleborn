@@ -87,6 +87,7 @@ python3 tools/check_unread_fields.py
 
 echo
 echo "== this repository's own documents agree with each other =="
+python3 tools/check_docs_consistency.py --self-test
 python3 tools/check_docs_consistency.py
 
 echo

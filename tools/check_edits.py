@@ -372,6 +372,37 @@ def bad_sides() -> list:
     return out
 
 
+def gate_owners() -> list:
+    """Every open design gate names who has to move next, and nothing else does.
+
+    The handoff verdict on the audit page is derived from these, so a gate with
+    no owner would crash the build and a stale owner would quietly widen the
+    set the verdict is computed from. Neither is allowed to be a judgement call
+    at read time.
+
+    The rule that matters is the third one: an owner recorded for an item that
+    is no longer an open gate is the shape every stale copy in this register
+    has taken \u2014 the fix landed and the note about it did not.
+    """
+    from audit_register import DESIGN_GATES, GATE_OWNER, HANDOFF
+
+    out = []
+    open_gates = {g for spec in DESIGN_GATES.values() for g in spec["gates"]}
+    for gate in sorted(open_gates - set(GATE_OWNER)):
+        out.append(f"GATE_OWNER does not say who has to move next on {gate}, "
+                   f"which is an open design gate")
+    for gate in sorted(set(GATE_OWNER) - open_gates):
+        out.append(f"GATE_OWNER names {gate}, which is not an open design gate "
+                   f"\u2014 either it was cleared and this was not removed, or "
+                   f"it belongs under `closed` or `partly`")
+    allowed = set(HANDOFF) - {"ready"} | {"outside"}
+    for gate, owner in sorted(GATE_OWNER.items()):
+        if owner not in allowed:
+            out.append(f"GATE_OWNER[{gate}] is {owner!r}, which is not one of "
+                       f"{sorted(allowed)}")
+    return out
+
+
 def orphan_references() -> list:
     """Every id named anywhere in the register must resolve to an item.
 
@@ -454,6 +485,25 @@ def self_test() -> int:
     print(f"  [{'PASS' if caught else 'FAIL'}] an item deleted from the register "
           f"is {'caught' if caught else 'MISSED'} by the tables that name it")
     ok = ok and caught and not orphan_references()
+
+    # A gate whose owner was left behind after it cleared. The handoff verdict
+    # is computed from the open gates, so a stale owner does not change it
+    # today - it changes it the day that item becomes a gate again for a
+    # different reason, which is exactly when nobody will be looking.
+    from audit_register import DESIGN_GATES as _dg, GATE_OWNER as _owner
+    _owner["C11"] = "yours"
+    stale = any("C11" in p for p in gate_owners())
+    del _owner["C11"]
+    area = next(a for a in _dg if _dg[a]["gates"])
+    gate, why = next(iter(_dg[area]["gates"].items()))
+    was = _owner.pop(gate)
+    missing = any(gate in p for p in gate_owners())
+    _owner[gate] = was
+    print(f"  [{'PASS' if stale else 'FAIL'}] an owner left behind after its "
+          f"gate cleared is {'caught' if stale else 'MISSED'}")
+    print(f"  [{'PASS' if missing else 'FAIL'}] an open gate with nobody named "
+          f"is {'caught' if missing else 'MISSED'}")
+    ok = ok and stale and missing and not gate_owners()
 
     # The replacement text an edit would type in, which nothing read before.
     victim = next(iter(EDITS))
@@ -548,6 +598,7 @@ def main() -> int:
     problems.extend(unexplained_missing_edits())
     problems.extend(bad_sides())
     problems.extend(orphan_references())
+    problems.extend(gate_owners())
 
     known = {i["id"] for i in REGISTER}
     for item_id in EDITS:

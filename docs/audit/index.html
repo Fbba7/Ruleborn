@@ -140,6 +140,56 @@
     font-variant-numeric: tabular-nums; opacity: 0.65;
   }
 
+  /* --- can the drawing start? ------------------------------------------- */
+  .handoff {
+    margin: 28px 0 8px; padding: 18px 20px;
+    border: 1px solid var(--rule-strong); border-radius: 10px;
+    background: var(--raised);
+  }
+  .handoff h2 { font-size: 21px; margin: 0 0 6px; }
+  .handoff .blurb {
+    color: var(--muted); font-size: 14px; max-width: 62ch; margin: 0 0 14px;
+  }
+  .hos { display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 760px) { .hos { grid-template-columns: 1fr; } }
+  .ho {
+    border: 1px solid var(--rule); border-radius: 9px; padding: 14px 15px;
+    border-left: 4px solid var(--rule-strong); background: var(--ground);
+  }
+  .ho h3 {
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    margin: 0 0 6px; font-weight: 600;
+  }
+  .ho .verdict { font-size: 20px; font-weight: 650; margin: 0; line-height: 1.2; }
+  .ho .gloss {
+    color: var(--muted); font-size: 13px; margin: 6px 0 10px; line-height: 1.45;
+  }
+  .ho.ready { border-left-color: var(--cho); }
+  .ho.ready .verdict { color: var(--cho); }
+  .ho.yours { border-left-color: var(--sig); }
+  .ho.yours .verdict { color: var(--sig); }
+  .ho.mine { border-left-color: var(--min); }
+  .ho.mine .verdict { color: var(--ink); }
+  .waiting { margin: 0; padding: 0; list-style: none; }
+  .waiting li {
+    border-top: 1px solid var(--rule); padding: 8px 0 0; margin-top: 8px;
+    font-size: 13.5px;
+  }
+  .waiting li:first-child { border-top: 0; margin-top: 0; }
+  .waiting .who {
+    display: block; font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 3px;
+  }
+  .waiting .who.mine { color: var(--min); }
+  .waiting .who.yours { color: var(--sig); }
+  .waiting .who.outside { color: var(--chg); }
+  .waiting .gt {
+    display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px;
+    line-height: 1.4;
+  }
+  .waiting.none { color: var(--cho); font-size: 13.5px; margin: 0; }
+
   /* --- where to start -------------------------------------------------- */
   .start {
     margin: 28px 0 8px; padding: 18px 20px;
@@ -523,6 +573,17 @@
       </button></nav>
     <p class="tabs-note">The first three bars measure the <em>audit</em>: an item is settled when the document answers it. 11 items need both sides and count on both, so those two add up to more than 107.<br><br><strong>The last three answer a different question &mdash; when can the drawing start?</strong> Each counts only the items that decide something its designer would otherwise have to guess, so 100% means that area can begin, not that the project is done. Nothing has been drawn yet; these say what each area is waiting on, and the panel above lists every gate by name.</p>
   </header>
+
+  <section class="handoff">
+    <h2>Can the drawing start?</h2>
+    <p class="blurb">One verdict per area, derived from the gates below and who
+      has to move next on each &mdash; not typed anywhere, so it cannot say
+      &ldquo;ready&rdquo; while something is still open. <strong>Ready means
+      hand it over.</strong> Until then this says who is holding it: a decision
+      only you can make, evidence nobody here can produce, or drafting that is
+      still mine to do.</p>
+    <div class="hos"><div class="ho mine"><h3>Realms</h3><p class="verdict">Not yet</p><p class="gloss">Still has drafting in it. Handing it over now would hand over the questions with it.</p><ul class="waiting"><li><span class="who mine">still being worked</span> <a href="#F12">F12</a>, <a href="#G5">G5</a><span class="gt">Eight laws need a decision from the owner that a generator has to make &hellip;</span></li><li><span class="who yours">your decision</span> <a href="#F26">F26</a>, <a href="#F27">F27</a>, <a href="#F22">F22</a>, <a href="#F9">F9</a>, <a href="#F11">F11</a>, <a href="#G3">G3</a>, <a href="#C19">C19</a><span class="gt">§13.2’s hold band falls inside a gap the defence cannot enter at realm 1 &hellip;</span></li></ul></div><div class="ho mine"><h3>Screens</h3><p class="verdict">Not yet</p><p class="gloss">Still has drafting in it. Handing it over now would hand over the questions with it.</p><ul class="waiting"><li><span class="who mine">still being worked</span> <a href="#C6">C6</a><span class="gt">Two ruleborn rosters — the roles agree now, and the abilities are two designs rather than two wordings</span></li></ul></div><div class="ho yours"><h3>Characters</h3><p class="verdict">Waiting on you</p><p class="gloss">Everything that can be measured has been and every edit is drafted. What is left is yours to answer.</p><ul class="waiting"><li><span class="who yours">your decision</span> <a href="#D6">D6</a><span class="gt">A launch-scope cut of roughly 40% is proposed</span></li><li><span class="who outside">needs evidence from outside</span> <a href="#Q5">Q5</a><span class="gt">Accept the launch-scope cut?</span></li></ul></div></div>
+  </section>
 
   <section class="start">
     <h2>Where to start</h2>
@@ -3035,4 +3096,4 @@
     apply();
   })();
 </script>
-<!-- ruleborn-build bb11588b64551639 -->
+<!-- ruleborn-build 688da93425b1a517 -->

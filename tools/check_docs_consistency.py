@@ -348,6 +348,52 @@ def check_register_references() -> None:
                 fail(f"register {item['id']}: names spec/{name}, which does not exist")
 
 
+def check_handoff_table() -> None:
+    """The README's verdict table against the register's own gates.
+
+    The table answers one question - can realms, screens or characters be
+    handed to someone who will draw them - and a hand-typed answer to that
+    question is the worst thing in this repository to get wrong: it is read
+    to decide whether to start work, and a stale "Ready" costs whoever acts
+    on it.
+
+    So it is checked the way the audit page's band is: derived from
+    DESIGN_GATES and GATE_OWNER, both directions. Every area must appear, with
+    the right verdict and exactly the gates it is waiting on. This is the same
+    rule the register applies to the design document - a number restated
+    somewhere else is checked against its home or it is not allowed to be
+    restated - turned on the README.
+    """
+    sys.path.insert(0, str(ROOT / "tools"))
+    import build_audit
+    from audit_register import DESIGN_GATES
+
+    text = (ROOT / "README.md").read_text(encoding="utf-8")
+    rows = {area.lower(): (word.strip(), waiting) for area, word, waiting in
+            re.findall(r"^\| \*\*([A-Za-z]+)\*\* \| ([^|]+) \| ([^|]*)\|",
+                       text, re.M)}
+    if not rows:
+        fail("README.md has no handoff verdict table to check")
+        return
+    for area in DESIGN_GATES:
+        if area not in rows:
+            fail(f"README.md's verdict table does not mention {area}")
+            continue
+        word, waiting = rows[area]
+        want = build_audit.handoff(area)
+        expect = build_audit.HANDOFF_WORDS[want["verdict"]][0]
+        if word != expect:
+            fail(f"README.md says {area} is {word!r}; its gates make it "
+                 f"{expect!r}")
+        listed = set(re.findall(r"\b([A-Z]+\d+)\b", waiting))
+        if listed != set(want["open"]):
+            fail(f"README.md has {area} waiting on {sorted(listed)}; the "
+                 f"register has {sorted(want['open'])}")
+    for area in set(rows) - set(DESIGN_GATES):
+        fail(f"README.md's verdict table names {area}, which is not a design "
+             f"area")
+
+
 def check_artifact_urls(files: list[pathlib.Path]) -> None:
     """One artifact, one URL, everywhere it is mentioned."""
     url = re.compile(r"https://claude\.ai/artifact/([A-Za-z0-9]+)")
@@ -450,6 +496,7 @@ def main() -> int:
     check_document_version(files)
     check_document_links()
     check_register_references()
+    check_handoff_table()
     check_artifact_urls(files)
     check_generated_marked()
     check_tool_output_counts(files)
@@ -508,6 +555,35 @@ def _self_test() -> None:
         assert new_num in sections, f"{new_num} does not exist"
     print(f"  all {len(RENUMBERED)} renumbered sections are gone and their "
           f"replacements exist")
+
+    # The verdict table, which is the one thing in the README somebody acts on
+    # directly. It is checked in place rather than against a fixture: a table
+    # planted in a string would prove the regex works and not that the README
+    # is wired to it.
+    global problems
+    text = (ROOT / "README.md").read_text(encoding="utf-8")
+    for label, planted, expect in (
+        ("a Ready that is not true",
+         text.replace("| **Screens** | Not yet |", "| **Screens** | Ready |"),
+         "its gates make it"),
+        ("a gate quietly dropped from the list",
+         re.sub(r"(your decision: )[A-Z]+\d+, ", r"\1", text, count=1),
+         "waiting on"),
+        ("an area missing from the table",
+         re.sub(r"^\| \*\*Characters\*\*.*\n", "", text, flags=re.M),
+         "does not mention"),
+    ):
+        assert planted != text, f"could not plant {label}"
+        (ROOT / "README.md").write_text(planted, encoding="utf-8")
+        was, problems = problems, []
+        try:
+            check_handoff_table()
+            caught = any(expect in p for p in problems)
+        finally:
+            problems = was
+            (ROOT / "README.md").write_text(text, encoding="utf-8")
+        assert caught, f"{label} went unnoticed"
+        print(f"  a README verdict table with {label} is caught")
 
     for text, allowed in (("see \u00a75.9 for the rule", False),
                           ("v3.0's \u00a75.9, renumbered \u00a75.8 in v3.1", True),
