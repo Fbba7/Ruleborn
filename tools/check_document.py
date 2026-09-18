@@ -549,6 +549,149 @@ def check_creatures(doc: Doc, led: Ledger) -> None:
               bool(art) and not outside, str(outside[:6]))
 
 
+#: §12.17's vision table: role, cone, three zones, corner of the eye, turn rate.
+VISION_ROW = 7
+
+
+def vision_table(doc: Doc) -> dict:
+    """§12.17's own table, read out of the document.
+
+    The table is the evidence that the model is three zones inside a cone
+    rather than one cone. Reading it is what lets `check_detection_model`
+    assert the model instead of asserting that a sentence is absent.
+    """
+    seg = doc.raw[doc.raw.index("12.17 How guards perceive"):]
+    seg = seg[:seg.index("12.18")]
+    out = {}
+    for row in re.findall(r"<tr>(.*?)</tr>", seg, flags=re.S):
+        # `strip` here removes markup, not whitespace. An earlier version
+        # keyed the table on "Scout " and then reported every role missing
+        # from a table it had just read.
+        cells = [strip(c).strip()
+                 for c in re.findall(r"<td[^>]*>(.*?)</td>", row, flags=re.S)]
+        if len(cells) == VISION_ROW and cells[1].endswith("\u00b0"):
+            out[cells[0]] = cells[1:]
+    return out
+
+
+def states_table(doc: Doc) -> dict:
+    """§12.17's guard states and the suspicion each is reached at."""
+    seg = doc.raw[doc.raw.index("Being noticed takes time"):]
+    seg = seg[:seg.index("Noise travels")]
+    out = {}
+    for row in re.findall(r"<tr>(.*?)</tr>", seg, flags=re.S):
+        cells = [strip(c).strip()
+                 for c in re.findall(r"<td[^>]*>(.*?)</td>", row, flags=re.S)]
+        if len(cells) != 3:
+            continue
+        # "under 200" is a ceiling, not the value the state is reached at:
+        # Unaware is everything below Suspicious. Reading it as 200 made the
+        # content file look wrong for saying 0.
+        if re.match(r"under\b", cells[1], flags=re.I):
+            out[cells[0].lower()] = 0
+            continue
+        m = re.search(r"(\d[\d,]*)", cells[1])
+        if m:
+            out[cells[0].lower()] = int(m.group(1).replace(",", ""))
+    return out
+
+
+def _metres(cell: str) -> float | None:
+    """The outer edge of a zone cell, or None where the zone does not exist."""
+    if "none" in cell.lower():
+        return None
+    nums = re.findall(r"[\d.]+", cell)
+    return float(nums[-1]) if nums else None
+
+
+def check_detection_model(doc: Doc, led: Ledger) -> None:
+    """C21, C1. The detection model, derived rather than recognised.
+
+    F24's rule, applied to the second of v3.1's four supersession bans. The ban
+    for the retired model is the string `one 120° cone`, and the one for
+    percent awareness is a regular expression over the words. Both report a
+    phrasing absent and are read as reporting a model gone, which is the
+    stronger claim and not the one they make.
+
+    What the model actually is, is in §12.17's own two tables, and both are
+    readable:
+
+      * **Not one cone.** Every guard row gives a cone, at least two graded
+        zones inside it, and a corner-of-the-eye angle *wider* than the cone.
+        A single-cone model cannot state a peripheral angle wider than its
+        own cone, so this is a property the retired model does not have and
+        cannot be given by rewording.
+      * **Not percentages.** Every state the document names is reached at a
+        suspicion value, and every threshold stated anywhere in the prose has
+        to resolve against §12.17's table. `investigate at 50%` fails not
+        because of the percent sign but because 50 is not 600.
+
+    C21 is the item this is tracked to, and it was closed by v3.1 while the
+    register kept it open and blocking for a version — the phrase ban passed
+    on every build, and a passing ban cannot retire the item it is about. A
+    derived check can, and this one does.
+    """
+    vision = vision_table(doc)
+    led.check("12.17 gives every guard role a vision row", len(vision) == 5,
+              f"read {sorted(vision)}")
+    for role, cells in vision.items():
+        cone = float(cells[0].rstrip("\u00b0"))
+        zones = [_metres(c) for c in cells[1:4]]
+        peripheral = float(cells[4].rstrip("\u00b0"))
+        graded = [z for z in zones if z is not None]
+        led.check(f"{role}'s vision is graded zones inside a cone, not one cone",
+                  len(graded) >= 2 and graded == sorted(graded)
+                  and peripheral > cone,
+                  f"cone {cone}\u00b0, zones {zones}, peripheral {peripheral}\u00b0",
+                  tracks="C1")
+
+    states = states_table(doc)
+    led.check("12.17 states a suspicion value for every guard state it names",
+              set(states) >= {"suspicious", "investigating", "alerted"},
+              str(states))
+    # Every threshold the prose states, anywhere, against the table above.
+    stated = re.findall(
+        r"\b(suspicious|investigating|investigate|alerted|alarm)\s+at\s+"
+        r"([\d,]+)\s*(%?)", doc.norm_text, flags=re.I)
+    wrong = []
+    for word, value, percent in stated:
+        key = {"investigate": "investigating", "alarm": "alerted"}.get(
+            word.lower(), word.lower())
+        want = states.get(key)
+        got = int(value.replace(",", ""))
+        if percent or (want is not None and got != want):
+            wrong.append(f"{word} at {value}{percent}, 12.17 says {want}")
+    led.check("every guard-state threshold in the document is 12.17's own",
+              not wrong, "; ".join(wrong), tracks="C21")
+
+    # And the content table the harness reads, against the same two tables.
+    path = os.path.join(ROOT, "content", "detection.json")
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+        bad = []
+        for guard in data["guards"]:
+            cells = vision.get(guard["role"])
+            if cells is None:
+                bad.append(f"{guard['role']} is not in 12.17's table")
+                continue
+            want = (float(cells[0].rstrip("\u00b0")), _metres(cells[1]),
+                    _metres(cells[2]), _metres(cells[3]),
+                    float(cells[4].rstrip("\u00b0")),
+                    float(re.findall(r"[\d.]+", cells[5])[0]))
+            got = (float(guard["cone_degrees"]), guard["near_m"], guard["mid_m"],
+                   guard.get("far_m"), float(guard["peripheral_degrees"]),
+                   float(guard["turn_degrees_per_tick"]))
+            if want != got:
+                bad.append(f"{guard['role']}: 12.17 {want}, content {got}")
+        for name, want in states.items():
+            got = next((st["at"] for st in data["states"] if st["id"] == name), None)
+            if got is not None and got != want:
+                bad.append(f"{name}: 12.17 says {want}, content says {got}")
+        led.check("content/detection.json reproduces 12.17's own tables",
+                  not bad, "; ".join(bad))
+
+
 def check_banned_phrasings(doc: Doc, led: Ledger) -> None:
     """v3.1's phrase bans, kept — but no longer the only guard on their models.
 
@@ -848,6 +991,7 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_creatures(doc, led)
     check_page_economy(doc, led)
     check_banned_phrasings(doc, led)
+    check_detection_model(doc, led)
     check_library_curve(doc, led)
     check_twice_stated(doc, led)
     check_document_register(doc, led)
@@ -1014,6 +1158,59 @@ def _self_test_f25_gate() -> bool:
 
 
 
+def _self_test_detection() -> bool:
+    """The same gap, for the second of the four bans.
+
+    The retired model was "one 120 degree cone" and awareness in percent per
+    second. Both bans search for those words. A document that states the same
+    model in other words — a single undifferentiated cone, and a threshold as a
+    percentage — passes both and fails the derived check, which reads §12.17's
+    own two tables instead.
+    """
+    ok = True
+    states = {"suspicious": 200, "investigating": 600, "alerted": 1000}
+
+    for name, text, expect_clean in (
+        ("12.17's own thresholds", "Suspicious at 200, investigating at 600, "
+                                   "alerted at 1000.", True),
+        ("the retired model in other words", "The guard investigates at 50 and "
+                                             "the alarm at 100%.", False),
+    ):
+        banned = not re.findall(r"\d+%\s*awareness|awareness[^.]{0,30}\d+%|"
+                                r"one 120\u00b0 cone", text, flags=re.I)
+        wrong = []
+        for word, value, percent in re.findall(
+                r"\b(suspicious|investigating|investigate|alerted|alarm)\s+at\s+"
+                r"([\d,]+)\s*(%?)", text, flags=re.I):
+            key = {"investigate": "investigating", "alarm": "alerted"}.get(
+                word.lower(), word.lower())
+            if percent or int(value.replace(",", "")) != states.get(key):
+                wrong.append(word)
+        derived = not wrong
+        print(f"  detection, {name}: phrase ban says "
+              f"{'green' if banned else 'RED'}; derived check says "
+              f"{'green' if derived else 'RED'}")
+        if derived is not expect_clean:
+            print("    FAIL: the derived check read it the wrong way round")
+            ok = False
+        if not expect_clean and not banned:
+            print("    note: the phrase ban caught it too — the self-test is stale")
+
+    # And the property a single cone cannot have: peripheral wider than cone.
+    for label, cone, zones, peripheral, want in (
+        ("three zones inside a cone", 45.0, [2.0, 4.0, 6.0], 110.0, True),
+        ("one cone, no zones", 120.0, [6.0, None, None], 120.0, False),
+    ):
+        graded = [z for z in zones if z is not None]
+        got = len(graded) >= 2 and graded == sorted(graded) and peripheral > cone
+        print(f"  detection, {label}: reads as "
+              f"{'graded zones' if got else 'a single cone'}")
+        if got is not want:
+            print("    FAIL: the zone test read it the wrong way round")
+            ok = False
+    return ok
+
+
 def self_test() -> int:
     """Show the derived check catching what the phrase ban cannot.
 
@@ -1045,6 +1242,7 @@ def self_test() -> int:
     ok = _self_test_f25_gate() and ok
     ok = _self_test_citations() and ok
     ok = _self_test_ledger() and ok
+    ok = _self_test_detection() and ok
 
     if ok:
         print("\n  self-test: the derived check catches the three-rank model stated in\n"
