@@ -175,6 +175,8 @@ NO_EDIT_BECAUSE = {
     # decision rather than putting it.
     "D32": "two mutually exclusive edits; the reading has to be chosen first",
     "D34": "no document sentence: the fix is the harness's stopping rule",
+    "D38": "no document sentence: the fix is four more derived checks, which "
+           "is F24's programme rather than an edit to \u00a731.5",
 }
 
 
