@@ -49,7 +49,7 @@ import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 COST = {"parameter": 0, "attribute": 1, "event": 2, "authored": 2, "entity": 3}
-SCHOOLS = ("Motion", "Matter", "Time", "Energy", "Life", "Spirit")
+from design_facts import SCHOOLS                  # read off the sheets (D37)
 
 
 def load():

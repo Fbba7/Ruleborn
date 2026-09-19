@@ -37,8 +37,7 @@ CONTENT = ROOT / "content"
 
 #: §8.1. A law may not carry two opposite notes, and a chord needs three
 #: different notes none of which are opposites (§8.5).
-OPPOSITE = {"Flow": "Weight", "Weight": "Flow", "Glow": "Hush", "Hush": "Glow",
-            "Bloom": "Spark", "Spark": "Bloom", "Echo": "Veil", "Veil": "Echo"}
+from design_facts import OPPOSITE                 # 8.1 (D37)
 
 #: §8.1's own words for what each note means. Every edit below cites one.
 MEANS = {

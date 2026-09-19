@@ -49,8 +49,7 @@ import sys
 
 from tools.heist_harness.report import run_batch
 
-HOLD_BAND = (30.0, 45.0)
-DECISION_BAND = (15, 25)
+from tools.design_facts import DECISION_BAND, HOLD_BAND   # 13.2, 12.6 (D37)
 
 #: §5.2 as written: a realm at level L holds 3 + L wards.
 def SPEC(realm: int) -> int:

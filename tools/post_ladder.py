@@ -42,8 +42,8 @@ import sys
 from tools.heist_harness import sim
 from tools.heist_harness.report import run_batch
 
-HOLD_BAND = (30.0, 45.0)
-DECISION_BAND = (15, 25)
+from tools.design_facts import HOLD_BAND          # 13.2 (D37)
+from tools.design_facts import DECISION_BAND      # 12.6 (D37)
 
 #: §10.2's own slope: "+10% health and sight" a level.
 DOCUMENT_STEP = 0.10

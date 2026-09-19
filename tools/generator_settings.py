@@ -41,10 +41,7 @@ import sys
 from tools.heist_harness.island import POSTS
 from tools.heist_harness.report import run_batch
 
-#: §13.2's band for how often a defence should hold.
-HOLD_BAND = (30.0, 45.0)
-#: §19.27's band for how many decisions a median run should carry.
-DECISION_BAND = (15, 25)
+from tools.design_facts import DECISION_BAND, HOLD_BAND  # 13.2, 12.6 (D37)
 
 REALMS = (1, 2, 3, 4, 5)
 #: Realms crossed. Two and three are the depths §12.6's decision band implies.

@@ -40,7 +40,7 @@ ROLES = {r["name"]: r for r in
 BASE_TICKS = 150 * TPS
 LINK_TICKS = 15 * TPS
 MAX_TICKS = 240 * TPS
-VAULT_HEALTH_PER_LEVEL = 1_500           #: §12.6
+from ..design_facts import VAULT_HEALTH_PER_LEVEL  # 12.6 (D37)
 LOAD_PER_SECOND = 30                     #: §12.19
 WIND_UP_TICKS = int(0.8 * TPS)           #: §12.8, one hit per 0.8 s
 SKIFF_TICKS = 5 * TPS                    #: §12.6, an outer realm
@@ -171,7 +171,7 @@ class Result:
         return self.grade != self.grade_ten_seconds_earlier
 
 
-GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
+from ..design_facts import GRADE_VALUE             # 12.9 (D37)
 
 
 def path_to(island, start, goal, avoid=None, exact=False) -> list:

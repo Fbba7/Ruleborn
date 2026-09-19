@@ -285,9 +285,9 @@ def staffing_report() -> None:
 #: §12.8 gives a 0.8-second wind-up before every guard attack. It is the only
 #: cadence in the document, so the model reads it as the universal attack
 #: interval: one hit per 0.8 s, for damage equal to the attacker's Power.
-WIND_UP = 0.8
+from design_facts import WIND_UP                  # 12.8 (D37)
 #: §12.8: the first hit on a guard that has not noticed the crew.
-AMBUSH_MULTIPLIER = 3.0
+from design_facts import AMBUSH_MULTIPLIER        # 12.8 (D37)
 #: §11.4: +8% health and power per character level.
 LEVEL_GROWTH = 1.08
 
@@ -374,7 +374,7 @@ def combat_report() -> None:
 # G4 — the Vault and the loading loop
 # ---------------------------------------------------------------------------
 
-VAULT_HEALTH_PER_LEVEL = 1_500        # §12.6
+from design_facts import VAULT_HEALTH_PER_LEVEL   # 12.6 (D37)
 CRACKING_AWARENESS_PER_5S = 10        # §12.6, percent added to Heart guards
 LOAD_RATE_AS_WRITTEN = 150            # §12.6, loot per second per Carrier
 DECISION_CADENCE = (8, 12)            # §12.6: one decision every 8-12 seconds

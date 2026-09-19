@@ -16,6 +16,7 @@ cd "$(dirname "$0")/.."
 
 echo "== which design document every check reads =="
 python3 tools/design_doc.py
+python3 tools/design_facts.py > /dev/null
 
 echo
 echo "== design document consistency =="

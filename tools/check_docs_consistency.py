@@ -590,6 +590,70 @@ def check_one_document_home() -> None:
              f"move design_doc.VERSION, or say why it is sitting there")
 
 
+#: Files allowed to state a design fact for themselves, and why. Each is a
+#: place where importing the shared answer would make a check vacuous or a
+#: parser impossible.
+OWN_READING = {
+    "design_facts.py": "the home",
+    "extract_content.py":
+        "produces content/*.json, so it needs a vocabulary to recognise the "
+        "document's tables before that content exists",
+    "validate_content.py":
+        "verifies content/*.json against the document. design_facts derives "
+        "the notes and roles FROM that content, so importing them here would "
+        "turn the check into x == x — a check that cannot fail",
+    "check_design_consistency.py":
+        "reads the document directly and uses the role and note names as a "
+        "parsing vocabulary, the same bootstrap as extract_content",
+}
+
+
+def check_one_fact_home() -> None:
+    """D37. A fact the design document states is written down once.
+
+    §31.4 pins four constants in the document's own data and the build checker
+    verifies them against the prose. That rule stopped at the document. One
+    level out, in the tools that check it, eleven more of its facts were each
+    written down two to four times — and three of those sets disagreed:
+    `SETTLED` was missing `withdrawn` in one of four homes, `HOLD_BAND` was
+    `(30, 45)` in one of four and `(30.0, 45.0)` in the rest, and `CREW` meant
+    the range 3-to-5 in one tool and the number 5 in another, which is the same
+    name for two facts rather than the same fact twice.
+
+    Four of the repeats restated data this repository had already extracted:
+    `content/notes.json` carries the eight notes and their oppositions and
+    `content/roles.json` carries the five roles, and four tools typed each out
+    again.
+
+    The exceptions in `OWN_READING` are the interesting part. A verifier that
+    imports the thing it verifies has written a check that cannot fail, which
+    is the fault this whole register is about — so `validate_content` keeps its
+    own list on purpose, and the reason is recorded rather than left to be
+    rediscovered.
+    """
+    import design_facts
+
+    owned = {n for n in vars(design_facts)
+             if n.isupper() and n not in ("ROOT", "CONTENT", "HOME")}
+    for path in sorted((ROOT / "tools").rglob("*.py")):
+        if any(part in ("__pycache__", "vendor") for part in path.parts):
+            continue
+        if path.name in OWN_READING:
+            continue
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+        except SyntaxError:
+            continue                      # check_tools_parse reports this
+        for node in tree.body:
+            if not isinstance(node, ast.Assign):
+                continue
+            for target in node.targets:
+                if isinstance(target, ast.Name) and target.id in owned:
+                    fail(f"{rel(path)}:{node.lineno} states {target.id} for "
+                         f"itself; import it from design_facts "
+                         f"({design_facts.HOME.get(target.id, 'see that file')})")
+
+
 def check_artifact_urls(files: list[pathlib.Path]) -> None:
     """One artifact, one URL, everywhere it is mentioned."""
     url = re.compile(r"https://claude\.ai/artifact/([A-Za-z0-9]+)")
@@ -697,6 +761,7 @@ def main() -> int:
     check_tools_parse()
     check_one_status_home()
     check_one_document_home()
+    check_one_fact_home()
     check_artifact_urls(files)
     check_generated_marked()
     check_tool_output_counts(files)
@@ -846,8 +911,20 @@ def _self_test() -> None:
         ahead.unlink()
     assert "_selftest_pinned" in found, "a pinned document filename went unnoticed"
     assert "v9.9" in found, "a newer document nobody reads went unnoticed"
-    print("  a tool pinned to a document version is caught, and so is a newer\n"
-          "  document sitting unread")
+
+    # A tool stating a design fact for itself.
+    restated = ROOT / "tools" / "_selftest_fact.py"
+    restated.write_text("HOLD_BAND = (30, 45)\n", encoding="utf-8")
+    was, problems = problems, []
+    try:
+        check_one_fact_home()
+        caught = any("_selftest_fact" in p and "HOLD_BAND" in p for p in problems)
+    finally:
+        problems = was
+        restated.unlink()
+    assert caught, "a tool restating a design fact went unnoticed"
+    print("  a tool pinned to a document version is caught, a newer document\n"
+          "  sitting unread is caught, and so is a tool restating a design fact")
 
     for text, allowed in (("see \u00a75.9 for the rule", False),
                           ("v3.0's \u00a75.9, renumbered \u00a75.8 in v3.1", True),

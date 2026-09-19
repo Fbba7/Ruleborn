@@ -41,7 +41,7 @@ from .sim import Heist
 #: §13.2's targets, and the ceiling that matters more than any of them.
 TARGET_SHARE = {"geometry": 25, "guards": 20, "wards": 20, "laws": 20, "response": 15}
 LAYER_CEILING = 25
-HOLD_BAND = (30, 45)
+from ..design_facts import HOLD_BAND              # 13.2 (D37)
 
 
 def hold_rate(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
@@ -69,7 +69,7 @@ def hold_rate(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
 #: §9.6's grade multiplier. Haul = B(V) × grade × difficulty × richness ×
 #: fatigue × fill, so what a defence actually denies a raider is the product of
 #: the two terms a defence can move: the grade and the fill.
-GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
+from .sim import GRADE_VALUE                      # 12.9, one home (D37)
 
 
 def haul_denied(subset: frozenset, n: int, realm_level: int, seed0: int = 0,

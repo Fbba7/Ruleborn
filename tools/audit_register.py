@@ -2433,6 +2433,51 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D37", kind="deviation", severity="change", status="done",
+     title="\u00a731.4 pins four constants in the document; eleven more were "
+           "written down two to four times in the tools",
+     refs=["31.2", "31.4"],
+     body="\u00a731.4 pins tick rate, law count, crew size and page total in "
+          "the document\u2019s own data, and the build checker verifies each "
+          "against the prose. <strong>That rule stops at the document.</strong> "
+          "One level out, in the tools that check it, eleven more of the "
+          "document\u2019s facts were each written down two to four times."
+          "<br><br><strong>Three of the sets disagreed.</strong> "
+          "<code>SETTLED</code> had four homes and <code>build_roadmap</code>\u2019s "
+          "was missing <code>withdrawn</code>, so a withdrawn item counted as "
+          "open on the roadmap and settled everywhere else. "
+          "<code>HOLD_BAND</code> had four, <code>(30, 45)</code> in one and "
+          "<code>(30.0, 45.0)</code> in three. And <code>CREW</code> meant the "
+          "range 3-to-5 in one tool and the number 5 in another \u2014 "
+          "<strong>one name for two facts, which is worse than one fact in two "
+          "places</strong>, because nothing about the name says which you have. "
+          "<code>ROLES</code> was the same: a tuple of five names here and the "
+          "full stats table in the harness."
+          "<br><br><strong>Four of the repeats restated data already "
+          "extracted.</strong> <code>content/notes.json</code> carries the "
+          "eight notes and their oppositions and <code>content/roles.json</code> "
+          "carries the five roles \u2014 and four tools typed out the notes "
+          "again and four typed out the roles.",
+     rec="Fixed. <code>tools/design_facts.py</code> derives what "
+         "<code>content/</code> already holds and declares the rest with the "
+         "section that owns it, and "
+         "<code>check_docs_consistency.check_one_fact_home()</code> refuses a "
+         "second copy. Writing the check found three more the sweep had missed, "
+         "including one in a file written two days ago."
+         "<br><br><strong>The exceptions are the interesting part, and they are "
+         "named with reasons rather than left to be rediscovered.</strong> "
+         "<code>extract_content</code> produces <code>content/*.json</code>, so "
+         "it needs a vocabulary to recognise the document\u2019s tables before "
+         "that content exists. <code>check_design_consistency</code> parses the "
+         "document directly and needs the same bootstrap. And "
+         "<code>validate_content</code> keeps its own list on purpose: it "
+         "verifies the content against the document, and <code>design_facts</code> "
+         "derives the notes and roles <em>from</em> that content, so importing "
+         "them there would turn the check into <code>x == x</code>. <strong>A "
+         "verifier that imports the thing it verifies has written a check that "
+         "cannot fail</strong>, which is the fault this register exists to "
+         "record."),
+
 dict(id="D36", kind="deviation", severity="change", status="done",
      title="Nine copies of \u201cwhich version are we on\u201d, and D30 is what "
            "happens when two of them disagree",

@@ -159,9 +159,9 @@ KIND = {
 
 #: §12.6 sets the game's own pace: "roughly one every 8 to 12 seconds, or 15 to
 #: 25 in a run", and names "when to use abilities and casts" as one of the
-#: decisions it is counting.
-DECISION_SECONDS = (8, 12)
-DECISIONS_PER_RUN = (15, 25)
+#: decisions it is counting. Both live in design_facts (D37); this file had a
+#: second name for the second of them.
+from design_facts import DECISION_BAND as DECISIONS_PER_RUN, DECISION_SECONDS
 
 #: §12.5. The clock is 150 s plus 15 s per link, capped at 240.
 CLOCK = (150, 240)
