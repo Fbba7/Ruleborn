@@ -22,18 +22,25 @@ four systems at three different values.
 
 What is exempt, and why
 -----------------------
-Three kinds of section restate on purpose, and each is named here with its
-reason rather than filtered by a rule that would quietly grow:
+Nothing is exempt by rule. Every exemption is a named section or a named pair
+with the reason written beside it, because a rule would quietly grow and a
+list has to be re-read. `RESTATING` holds sections whose job is to restate —
+the evidence log, the decision log, the sources list, "claims we don't rely
+on" — and `COVERED` holds pairs something else already answers, each naming
+what answers it.
 
-  §30   the evidence log. Restating the evidence it logs is what a log is.
-  §27   the decision log, for the same reason.
-  7.4/7.7  D39, which checks those 240 facts field by field instead.
+D44 is the pass that read the residue. Of the eleven pairs nothing covered,
+four became exemptions, four were already register items that said so badly,
+three were faults, and one stayed live: §5.1 and §7.1 price a law's economy
+with the clauses reversed, agreeing today and guarded by nothing.
 
-**§29.1 is deliberately not exempt.** It is the formulas appendix, which is
-the same kind of index — and C21 is the proof that this kind drifts: it
-carried the detection model §12.8 had deleted, and cited §12.8 as the source.
-An index that restates is exactly as dangerous as any other second home, and
-the answer for it is D15's: generate it.
+**§29.1 is not exempt, and neither is a cell that cites its own home.** The
+appendix is an index, and C21 is the proof that this kind drifts: it carried
+the detection model §12.8 had deleted, and cited §12.8 as the source. The §19
+evidence tables cite their homes too, and two of them have already drifted
+apart about whether tracks start partly filled. A citation makes a
+restatement *checkable*, which is not the same as safe — D43 is the check it
+makes possible.
 """
 
 import argparse
@@ -61,14 +68,41 @@ SHARED_WORDS, OVERLAP = 6, 0.5
 #: and pair on their shape rather than their content.
 MIN_LEN, MAX_LEN = 25, 220
 
-#: Section prefixes whose job is to restate, with the reason.
-LOGS = {
+#: Sections whose job is to restate, with the reason each one is allowed to.
+#: A prefix, so "30." covers the whole evidence log and "19.8" one subsection.
+RESTATING = {
     "30.": "the evidence log; restating the evidence it logs is what a log is",
     "27.": "the decision log, for the same reason",
+    "28.3": "the sources list; an annotated entry states what its source "
+            "found, and the body cites it by number",
+    "19.8": "\u201cclaims we don\u2019t rely on\u201d; naming a rejected "
+            "claim requires stating what replaces it",
 }
 
-#: Pairs a register item already covers with a stronger check.
-COVERED = {("7.4", "7.7"): "D39 compares all 240 facts field by field"}
+#: Pairs something else already answers, with what answers them. Each was read
+#: against its two sections once, which is the only way a list like this stays
+#: worth having: an unexamined row is a row nobody is responsible for.
+COVERED = {
+    ("7.4", "7.7"): "D39 compares all 240 facts field by field",
+    ("21.7", "7.7"): "D39; one of the 48 movement signatures it compares",
+    ("11.10", "18.3"): "D40; one revive threshold from four systems at three "
+                       "values",
+    ("29.1", "5.4"): "D43 checks every appendix row against the section it "
+                     "cites",
+    ("29.1", "9.5"): "D43, the same row-by-row comparison",
+    ("12.5", "5.4"): "D44; the heist clock has three homes and only \u00a712.5 "
+                     "carries the Haste clause",
+    ("2.7", "25.1"): "D44; \u00a72.7 derives its monthly players from "
+                     "\u00a725.1\u2019s gate, and rounds outward",
+    # The §19 evidence tables summarise a rule in an "In Ruleborn" column
+    # and cite its home in the same cell. That is the best shape a restatement
+    # can have and it is still not safety — C21 cited its home too. It
+    # makes the restatement *checkable*, which is a different thing, and the
+    # drift these two already carry ("Albums" against "Albums and tracks",
+    # both citing §14.8) is what it looks like when nobody checks.
+    ("19.11", "19.2"): "D44; an evidence cell citing its home, already drifted",
+    ("19.2", "19.4"): "D44; the same, still agreeing",
+}
 
 
 def sections(doc) -> dict:
@@ -117,7 +151,7 @@ def restatements(doc) -> list[dict]:
 
 
 def why_exempt(row: dict) -> str | None:
-    for prefix, reason in LOGS.items():
+    for prefix, reason in RESTATING.items():
         if row["a"].startswith(prefix) or row["b"].startswith(prefix):
             return reason
     return COVERED.get((row["a"], row["b"]))
@@ -133,7 +167,8 @@ def report(doc) -> int:
           f"{len({(r['a'], r['b']) for r in rows})} section pairs\n")
     for reason, n in exempt.most_common():
         print(f"  {n:>3} exempt — {reason}")
-    print(f"  {len(live):>3} live, in {len(by_pair)} pairs\n")
+    print(f"  {len(live):>3} live, in {len(by_pair)} "
+          f"pair{'' if len(by_pair) == 1 else 's'}\n")
     for (a, b), n in sorted(by_pair.items(), key=lambda kv: (-kv[1], kv[0])):
         print(f"  §{a} / §{b}" + (f"   {n} sentences" if n > 1 else ""))
         for row in live:
@@ -184,7 +219,7 @@ def self_test() -> int:
     # that will quietly widen.
     used = {why_exempt(r) for r in restatements(doc)} - {None}
     check("every exemption is doing work",
-          sorted(used), sorted(set(LOGS.values()) | set(COVERED.values())))
+          sorted(used), sorted(set(RESTATING.values()) | set(COVERED.values())))
     return 0 if ok else 1
 
 

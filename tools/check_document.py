@@ -658,6 +658,125 @@ def check_law_table_against_sheets(doc: Doc, led: Ledger) -> None:
               not wrong, "; ".join(wrong[:2]))
 
 
+
+# --------------------------------------------------------------------------
+# The formulas appendix, against the sections it cites  (D43, C21, C2)
+# --------------------------------------------------------------------------
+
+#: Numbers §29.1 writes as digits and its home sections write as words. Every
+#: entry was read in both places before it was added; the table is not a
+#: loosener but a translation, and anything outside it is reported.
+SPELLED = {
+    "0.5": ("half a second", "half"),
+    "1": ("a second", "one"),
+    "2": ("two",),
+    "3": ("three",),
+    "5": ("five",),
+    "10": ("ten",),
+}
+
+
+def formula_rows(doc: Doc) -> list[tuple[str, str, list[str]]]:
+    """§29.1's table as (what, formula, cited sections).
+
+    The appendix is the one table in the document that names its own sources:
+    a third column giving the section each formula is copied from. That column
+    is what makes the appendix checkable, and C21 is what makes it worth
+    checking — a row that had outlived the section it cited, citing the very
+    section that had deleted it.
+    """
+    text = doc.text
+    start = text.index("\n29.1 Formulas")
+    end = re.search(r"\n\d+\.\d+ |\n\d+[A-Z]", text[start + 10:])
+    body = text[start:start + 10 + end.start()] if end else text[start:]
+    cells = [ln.strip().lstrip("| ").strip()
+             for ln in body.splitlines()[1:] if ln.strip().startswith("|")]
+    rows = [cells[i:i + 3] for i in range(0, len(cells) // 3 * 3, 3)]
+    if not rows or rows[0][0].lower() != "what":
+        return []
+    return [(w, f, [s.strip() for s in secs.split(",") if s.strip()])
+            for w, f, secs in rows[1:]]
+
+
+#: A comma only groups thousands when three digits follow it, so "10, 20"
+#: is two numbers and "8,000" is one.
+_NUMBER = re.compile(r"\d+(?:,\d{3})*(?:\.\d+)?")
+
+
+def _stated_in(number: str, home: str) -> bool:
+    """Does the home section carry this number, as a digit or as a word?"""
+    bare = number.replace(",", "")
+    for token in _NUMBER.findall(home):
+        if token.replace(",", "") == bare:
+            return True
+    return any(word in home.lower() for word in SPELLED.get(bare, ()))
+
+
+def check_formula_appendix(doc: Doc, led: Ledger) -> None:
+    """D43, C21, C2. Every §29.1 row against the section it cites.
+
+    C21 was one row of this table carrying a detection model §12.8 had
+    deleted, and it was fixed by deleting the row. Nothing was built that
+    would catch the second one, and there is a second one: the *Heist take*
+    row still prices a raid as "up to 25% of the Vault's exposed amount and
+    50% of each Storehouse passed" and cites §9.4 — the section that now says,
+    in so many words, "the percentages this paragraph used to carry are gone".
+    That is C2's fix seen from the other side. The fact was removed from its
+    home and left standing in the index, and the index still points at the
+    home to prove it.
+
+    The rule this check applies is the weakest one that would have caught
+    C21: **every number in a formula must appear in the section the formula
+    says it came from.** It cannot tell a right formula from a wrong one. It
+    can only tell an index entry from an orphan — which is the whole defect,
+    because an index entry whose home no longer agrees is indistinguishable
+    from prose until somebody reads both.
+
+    Three of the twenty rows fail it today, and each fails differently:
+
+      Heist take     cites §9.4, which deleted the percentages (C2's residue)
+      Restoring a law  cites §7.6, which still carries the retired three-rank
+                       scheme — the same sentence C23 is about, reached from
+                       the other end
+      Vault, Suspicion  state 8,000 x 1.85^(level-1) and 2.8 s, which appear
+                        nowhere else in the document at all
+
+    The last pair is the quieter fault and the more interesting one. Those two
+    numbers are load-bearing — the Vault's capacity curve and the far zone's
+    fill time, which ``content/detection.json`` carries as 2.8 and the
+    simulation reads every tick — and the appendix is the only place either is
+    written down. So §29.1 is normative for two facts and an index for
+    eighteen, and nothing in the table says which row is which.
+    """
+    rows = formula_rows(doc)
+    led.check("29.1 parses as a table of formulas with their sources",
+              len(rows) >= 15, f"got {len(rows)} rows")
+    if not rows:
+        return
+
+    text = doc.text
+    bodies = {}
+    for part in re.split(r"\n(?=\d+\.\d+ )", text):
+        m = re.match(r"(\d+\.\d+) ", part)
+        if m:
+            bodies[m.group(1)] = part
+
+    missing_home = [(w, s) for w, _, secs in rows for s in secs if s not in bodies]
+    led.check("every formula cites a section that exists",
+              not missing_home,
+              "; ".join(f"{w} -> {s}" for w, s in missing_home))
+
+    orphans = []
+    for what, formula, secs in rows:
+        home = " ".join(bodies.get(s, "") for s in secs)
+        absent = [n for n in _NUMBER.findall(formula) if not _stated_in(n, home)]
+        if absent:
+            orphans.append(f"{what} (cites {', '.join(secs)}): "
+                           f"{', '.join(sorted(set(absent)))} not stated there")
+    led.check("every number in the formulas appendix is stated in the section "
+              "the appendix cites for it",
+              not orphans, " | ".join(orphans), tracks="D43")
+
 def check_arithmetic(doc: Doc, led: Ledger) -> None:
     bad = [f"{a}×{b}≠{c}" for a, b, c in re.findall(r"(\d+) × (\d+) = ([\d,]+)", doc.all_text)
            if int(a) * int(b) != int(c.replace(",", ""))]
@@ -1232,6 +1351,7 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_rank_scheme_stated_once(doc, led)
     check_no_single_cone_claim(doc, led)
     check_law_table_against_sheets(doc, led)
+    check_formula_appendix(doc, led)
     check_arithmetic(doc, led)
     check_inventory(doc, led)
     check_asset_budget(doc, led)
@@ -1458,6 +1578,52 @@ def _self_test_detection() -> bool:
     return ok
 
 
+def _self_test_formula_appendix() -> bool:
+    """C21's failure, replayed: edit the home and leave the index alone.
+
+    The plant is derived from the committed document rather than written into
+    a fixture, because a fixture is a thing that can stop resembling the
+    document without anything saying so. §5.4 states the skiff's flight times
+    and §29.1's *Skiff arrival* row copies them, citing §5.4. Changing the
+    times in §5.4 alone is exactly what happened to the detection model, and
+    the appendix has to start reporting its own row as an orphan.
+    """
+    ok = True
+    raw = open(DEFAULT_DOC, encoding="utf-8").read()
+    home = "It takes 5 seconds to reach an outer realm and 20 seconds"
+    edited = "It takes 7 seconds to reach an outer realm and 25 seconds"
+    if raw.count(home) < 1:
+        print("  formula appendix: FAIL — §5.4's skiff sentence has moved, "
+              "so this test plants nothing")
+        return False
+
+    def orphans_for(document: Doc, what: str) -> list[str]:
+        bodies = {}
+        for part in re.split(r"\n(?=\d+\.\d+ )", document.text):
+            m = re.match(r"(\d+\.\d+) ", part)
+            if m:
+                bodies[m.group(1)] = part
+        for name, formula, secs in formula_rows(document):
+            if name != what:
+                continue
+            text = " ".join(bodies.get(sec, "") for sec in secs)
+            return [n for n in _NUMBER.findall(formula) if not _stated_in(n, text)]
+        return ["<row missing>"]
+
+    for label, document, want in (
+        ("as shipped", Doc(DEFAULT_DOC, raw), []),
+        ("home edited, index not", Doc(DEFAULT_DOC, raw.replace(home, edited, 1)),
+         ["5", "20"]),
+    ):
+        got = orphans_for(document, "Skiff arrival")
+        print(f"  formula appendix, {label}: Skiff arrival cites §5.4 for "
+              f"{got or 'nothing it does not carry'}")
+        if got != want:
+            print(f"    FAIL: expected {want}")
+            ok = False
+    return ok
+
+
 def self_test() -> int:
     """Show the derived check catching what the phrase ban cannot.
 
@@ -1490,6 +1656,7 @@ def self_test() -> int:
     ok = _self_test_citations() and ok
     ok = _self_test_ledger() and ok
     ok = _self_test_detection() and ok
+    ok = _self_test_formula_appendix() and ok
 
     if ok:
         print("\n  self-test: the derived check catches the three-rank model stated in\n"

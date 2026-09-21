@@ -2441,6 +2441,152 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D43", kind="deviation", severity="significant", status="open",
+     title="Twenty formulas name their own source, and four name a section "
+           "that does not carry them",
+     refs=["29.1", "9.4", "9.6", "10.2", "7.6", "12.17"],
+     body="§29.1 is the one table in the document that cites itself: a "
+          "third column giving the section each formula was copied from. That "
+          "column is what makes the appendix checkable, and C21 is what makes "
+          "it worth checking — a row that had outlived the section it "
+          "cited, <em>citing the very section that deleted it</em>. C21 was "
+          "fixed by deleting the row. Nothing was built that would find the "
+          "next one."
+          "<br><br><strong>Four of the twenty rows fail the weakest possible "
+          "test — every number in a formula must appear in the section "
+          "the formula says it came from — and they fail it in four "
+          "different ways, only one of which is dangerous today.</strong>"
+          "<br><br><strong>1. The fact was deleted from its home and left in "
+          "the index.</strong> <em>Heist take</em> still prices a raid at "
+          "“up to 25% of the Vault’s exposed amount and 50% of each "
+          "Storehouse passed” and gives §9.4 as its source. "
+          "§9.4 now reads: <em>“The percentages this paragraph used "
+          "to carry are gone: they described a world where the loot left the "
+          "defender, and it does not.”</em> The real home is §9.6’s "
+          "minted haul, which the row does not mention. <strong>This is C21 "
+          "repeating, in the same table, and it is C2’s fix seen from the "
+          "other side</strong> — the edit removed the fact from its home "
+          "and the index still points at the home to prove it."
+          "<br><br><strong>2. A right formula with a wrong address.</strong> "
+          "<em>Vault</em> gives <code>8,000 × 1.85<sup>level−1</sup></code> "
+          "and cites §9.4, which says nothing about capacity. Its home is "
+          "§10.2’s building ladder, which tabulates every level: "
+          "8,000 at level 1 to 2,030,700 at level 10, and 14,800 ÷ 8,000 "
+          "is 1.85 exactly. Nothing is wrong but the citation, which is "
+          "precisely why it survived — a wrong address is invisible from "
+          "either end."
+          "<br><br><strong>3. The index is more precise than the section it "
+          "indexes.</strong> <em>Suspicion</em> says the far zone fills in "
+          "<strong>2.8 s</strong>. §12.17 says “just under three” "
+          "and gives no figure. <code>content/detection.json</code> and the "
+          "simulation carry 2.8, and 12 suspicion a tick at 30 ticks a second "
+          "is 2.78, so the appendix is right and it is the only prose in the "
+          "document that says so. <strong>§29.1 is normative for that one "
+          "number and an index for the rest, and nothing in the table says "
+          "which row is which.</strong>"
+          "<br><br><strong>4. The home is the stale one.</strong> "
+          "<em>Restoring a law</em> cites §7.6, which still prices laws "
+          "in three ranks. That is C23, reached from the other end: two "
+          "independent checks now fail on that one sentence."
+
+          "<br><br>Reading the four rows against their homes turned up a fifth "
+          "fault the check itself cannot see, because it is a word rather than a "
+          "number: §9.6 keys the Vault’s sealed share to <em>realm</em> "
+          "level and then runs it “to 71.5% at level 10”, and realm levels "
+          "stop at five. <strong>That is already C4’s drafted edit</strong> "
+          "— it was written up here as a new item and withdrawn on finding it. "
+          "Worth recording as a small confirmation that the drafted edits are aimed "
+          "at real things, and as the reason a register is read before an item is "
+          "added.",
+     rec="The check is built and the edits are drafted below. "
+         "<code>check_document.check_formula_appendix()</code> applies the "
+         "weakest rule that would have caught C21, and it cannot tell a right "
+         "formula from a wrong one — only an index entry from an orphan. "
+         "That turns out to be enough, because all four faults are faults of "
+         "address rather than of arithmetic."
+         "<br><br>The digits-to-words table (“half a second” for 0.5) "
+         "is a translation, not a loosener: every entry was read in both "
+         "places before it was added, and anything outside it is reported."
+         "<br><br>One refinement to C4’s drafted edit, offered rather than "
+         "applied: it keeps the citation “(9.4)”, and §10.2 is the "
+         "only one of that rule’s four homes that tabulates it level by level "
+         "instead of restating it. §9.4, §9.6 and §29.1 could all "
+         "cite §10.2 and stop carrying the numbers."
+         "<br><br>D15’s generated appendix would make all four impossible "
+         "rather than merely caught, and <code>tools/generate_docs.py</code> "
+         "already emits one. Until the build adopts it, this check is what "
+         "stands between §29.1 and the next C21."),
+
+dict(id="D44", kind="deviation", severity="minor", status="proposed",
+     title="Eleven surviving restatements, read one at a time: three small "
+           "faults, four honest second homes and one left live",
+     refs=["31.2", "5.4", "12.5", "19.2", "19.11", "2.7", "25.1", "5.1", "7.1"],
+     body="<code>tools/twice_stated.py</code> found 89 restated sentences and "
+          "exempted 77 with reasons, leaving twelve in eleven section pairs "
+          "that nothing had examined. Each was read against its two sections. "
+          "The residue is the point: an unexamined list is a list nobody is "
+          "responsible for."
+          "<br><br><strong>Three are faults.</strong>"
+          "<br><br>• <strong>The heist clock has three homes and only one "
+          "of them knows about Haste.</strong> §5.4, §12.5 and "
+          "§29.1 all give “150 s + 15 s per link, up to 240 s”. "
+          "Only §12.5 adds <em>“Haste makes the clock run 25% faster "
+          "while the crew is in its realm”</em>. A player pricing a route "
+          "from §5.4 or from the appendix is wrong by a quarter in any "
+          "realm running Haste, and both copies look complete."
+          "<br><br>• <strong>Two cells cite §14.8 and have already "
+          "drifted apart.</strong> §19.2: “Albums start partly "
+          "filled and show what’s left (14.8)”. §19.11: "
+          "“Albums <em>and tracks</em> start partly filled and show "
+          "what’s left (14.8)”. §14.8 settles it — "
+          "“the season track’s first tier is complete on day "
+          "one” — so §19.2 is the stale one. A small drift, and "
+          "the exact shape the scan was written to find: two summaries of one "
+          "home, both citing it, no longer saying the same thing."
+          "<br><br>• <strong>§2.7’s “plain arithmetic” "
+          "rounds outward.</strong> $5.5 m a day at 30 and 15 cents is 18.3 m "
+          "and 36.7 m daily players; at §25.1’s gate of a third of "
+          "monthly players a day that is <strong>55 to 110 million "
+          "monthly</strong>, and the paragraph says 60 to 120. Round numbers "
+          "— but the passage’s whole claim is that the forecast is "
+          "earned by arithmetic, and the last step is not the arithmetic. It "
+          "also leans on §25.1’s gate without citing it, so moving "
+          "the gate leaves the derivation stale in silence."
+          "<br><br><strong>Four are honest second homes, now exempt with "
+          "reasons rather than left live.</strong> §28.3 is the sources "
+          "list, where an annotated entry states what its source found and the "
+          "body cites it by number. §19.8 is “claims we don’t "
+          "rely on”, and naming a rejected claim requires stating what "
+          "replaces it. The two §19 evidence tables summarise a rule in "
+          "an “In Ruleborn” column and cite its home in the same "
+          "cell — <em>which C21 proves is not safety</em>, only "
+          "checkability, and the albums drift above is what it looks like when "
+          "nobody checks."
+          "<br><br><strong>Four were already covered and said so badly.</strong> "
+          "§11.10/§18.3 is D40, §21.7/§7.7 is one of "
+          "D39’s 48 movement signatures, and the two §29.1 pairs are "
+          "D43, which now compares every appendix row to its cited home."
+          "<br><br><strong>One stays live, and should.</strong> §5.1 and "
+          "§7.1 both price the economy of a law — “a crown law "
+          "adds 5% to its school’s resource in every realm; a realm law "
+          "adds 10% in its own” against “a realm law adds 10% to its "
+          "school’s resource in its realm; a crown law adds 5% "
+          "everywhere” — the same rule with the clauses reversed, "
+          "agreeing today and guarded by nothing. It is the only row on the "
+          "list that is neither a register item nor an exemption, which is "
+          "what a curated list is for: <strong>one pair left, and it is a real "
+          "one.</strong>",
+     rec="The three faults are one-line edits, drafted below. The clock keeps "
+         "its home in §5.4 and gains the Haste clause, because how a "
+         "clock runs belongs with the clock; §12.5’s copy becomes a "
+         "citation. §19.2 gains “and tracks”. §2.7 states "
+         "55 to 110 million and names the gate it divides by."
+         "<br><br>The exemptions live in <code>twice_stated.py</code> with the "
+         "reason beside each, in the same form as the logs. The scan’s "
+         "live list is now curated: every row on it is a register item, an "
+         "exemption with a reason, or a fault awaiting an edit — so a new "
+         "row appearing means something new was written twice."),
+
 dict(id="D42", kind="deviation", severity="significant", status="done",
      title="The guard written for D41 found the same bug in a second "
            "extractor, on its first run",
@@ -4488,6 +4634,86 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+
+"D43": [
+    dict(section="29.1", action="replace",
+         find="Up to 25% of the Vault's exposed amount and 50% of each "
+              "Storehouse passed, capped by carrying capacity, plus 10% and a "
+              "league bonus",
+         replace="B(V) × grade × difficulty × richness × "
+                 "fatigue × fill, where B(V) = 100 × "
+                 "1.5<sup>V−1</sup> on the target's Vault level",
+         why="§9.4 says in so many words that the percentages this row "
+             "copies are gone, and this row cites §9.4. The live model is "
+             "§9.6's minted haul. The Section column changes to 9.6 with "
+             "it. D43, C2, C21."),
+    dict(section="29.1", action="replace",
+         find="8,000 × 1.85level − 1 each of Starlight and Essence; "
+              "sealed share 40% + 3.5 points per level above 1",
+         replace="8,000 × 1.85<sup>level − 1</sup> each of Starlight "
+                 "and Essence, sealed share 40% + 3.5 points per <b>Vault</b> "
+                 "level above 1; every level is listed in 10.2",
+         why="The formula is right and the address is wrong: the Vault's "
+             "capacity ladder is tabulated in §10.2, level by level, from "
+             "8,000 to 2,030,700, and §9.4 says nothing about capacity, "
+             "so the Section column becomes 10.2. A wrong address is invisible "
+             "from either end, which is why this one survived. The row then "
+             "follows the form the <em>Building cost</em> row in the same table "
+             "already uses — “every level is listed in 10.2” — "
+             "and naming the Vault level settles C4’s question in the fourth "
+             "place that rule is stated. D43."),
+    dict(section="12.17", action="replace",
+         find="the far zone in just under three",
+         replace="the far zone in 2.8 seconds",
+         why="§29.1 gives 2.8 s and §12.17 gives a phrase, so the "
+             "appendix is the only prose in the document carrying a number "
+             "the simulation reads every tick — 12 suspicion a tick at 30 "
+             "ticks a second, which content/detection.json already stores as "
+             "2.8. The precise value belongs in the section that specifies "
+             "the model. D43."),
+],
+
+"D44": [
+    dict(section="5.4", action="replace",
+         find="150 seconds plus 15 seconds for each link on the shortest "
+              "route from the landing realm to the Heart, up to 240 seconds.",
+         replace="150 seconds plus 15 seconds for each link on the shortest "
+                 "route from the landing realm to the Heart, up to 240 "
+                 "seconds. Haste makes the clock run 25% faster while the crew "
+                 "is in its realm.",
+         why="The clock's home is here and the Haste clause is only in "
+             "§12.5, so a player pricing a route from this row is wrong "
+             "by a quarter in any realm running Haste. How a clock runs "
+             "belongs with the clock. D44."),
+    dict(section="12.5", action="replace",
+         find="Heist clock = 150 seconds + 15 seconds × links on the "
+              "shortest route from the landing realm to the Heart, up to 240 "
+              "seconds. Haste makes the clock run 25% faster while the crew "
+              "is in its realm.",
+         replace="The heist clock is set at landing and depends on the route "
+                 "chosen here (5.4).",
+         why="The second of the clock's three homes. Once §5.4 carries "
+             "the Haste clause this paragraph adds nothing but a copy to keep "
+             "in step. §31.2. D44."),
+    dict(section="19.2", action="replace",
+         find="Albums start partly filled and show what's left (14.8)",
+         replace="Albums and tracks start partly filled and show what's left "
+                 "(14.8)",
+         why="§19.11 says “albums and tracks” and §14.8 "
+             "settles it — “the season track's first tier is "
+             "complete on day one”. Two cells citing one home and no "
+             "longer agreeing. D44."),
+    dict(section="2.7", action="replace",
+         find="With a third of monthly players playing on a given day, that "
+              "means 60 to 120 million monthly players.",
+         replace="With a third of monthly players playing on a given day "
+                 "— 25.1's gate — that means 55 to 110 million "
+                 "monthly players.",
+         why="18.3 m and 36.7 m daily players divided by a third is 55 m and "
+             "110 m. The paragraph's claim is that the forecast is earned by "
+             "arithmetic, so the last step should be the arithmetic, and the "
+             "gate it divides by should be named where it is used. D44."),
+],
 
 "D31": [
     dict(section="7.9", action="replace",
