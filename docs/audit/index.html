@@ -508,10 +508,10 @@
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">116</span><span class="k">items tracked</span></div>
+      <div><span class="n">117</span><span class="k">items tracked</span></div>
       <div><span class="n">36</span><span class="k">open, none drafted</span></div>
       <div><span class="n">35</span><span class="k">fixed in the document</span></div>
-      <div><span class="n">27</span><span class="k">done or adopted</span></div>
+      <div><span class="n">28</span><span class="k">done or adopted</span></div>
       <div><span class="n">31</span><span class="k">blocking the build</span></div>
       <div><span class="n">72</span><span class="k">edits drafted</span></div>
       <div><span class="n">21 Sep</span><span class="k">last generated</span></div>
@@ -519,21 +519,21 @@
 <nav class="tabs" aria-label="Backend or frontend">
       <button class="tab" data-side="all" title="every item in the register" aria-pressed="true">
         <span class="tab-head"><span class="tab-name">Everything</span>
-          <span class="tab-n">116</span></span>
+          <span class="tab-n">117</span></span>
         <span class="bar">
-          <span class="fill drafted" style="width:69.0%"></span>
-          <span class="fill settled" style="width:54.3%"></span>
+          <span class="fill drafted" style="width:69.2%"></span>
+          <span class="fill settled" style="width:54.7%"></span>
         </span>
-        <span class="tab-foot">63 settled &middot; 17 drafted &middot; 36 open</span>
+        <span class="tab-foot">64 settled &middot; 17 drafted &middot; 36 open</span>
       </button>
       <button class="tab" data-side="backend" title="rules, numbers and the simulation">
         <span class="tab-head"><span class="tab-name">Backend</span>
-          <span class="tab-n">110</span></span>
+          <span class="tab-n">111</span></span>
         <span class="bar">
-          <span class="fill drafted" style="width:68.2%"></span>
-          <span class="fill settled" style="width:52.7%"></span>
+          <span class="fill drafted" style="width:68.5%"></span>
+          <span class="fill settled" style="width:53.2%"></span>
         </span>
-        <span class="tab-foot">58 settled &middot; 17 drafted &middot; 35 open</span>
+        <span class="tab-foot">59 settled &middot; 17 drafted &middot; 35 open</span>
       </button>
       <button class="tab" data-side="frontend" title="anything a player sees">
         <span class="tab-head"><span class="tab-name">Frontend &amp; design</span>
@@ -571,7 +571,7 @@
         </span>
         <span class="tab-foot">3 of 5 gates cleared</span>
       </button></nav>
-    <p class="tabs-note">The first three bars measure the <em>audit</em>: an item is settled when the document answers it. 11 items need both sides and count on both, so those two add up to more than 116.<br><br><strong>The last three answer a different question &mdash; when can the drawing start?</strong> Each counts only the items that decide something its designer would otherwise have to guess, so 100% means that area can begin, not that the project is done. Nothing has been drawn yet; these say what each area is waiting on, and the panel above lists every gate by name.</p>
+    <p class="tabs-note">The first three bars measure the <em>audit</em>: an item is settled when the document answers it. 11 items need both sides and count on both, so those two add up to more than 117.<br><br><strong>The last three answer a different question &mdash; when can the drawing start?</strong> Each counts only the items that decide something its designer would otherwise have to guess, so 100% means that area can begin, not that the project is done. Nothing has been drawn yet; these say what each area is waiting on, and the panel above lists every gate by name.</p>
   </header>
 
   <section class="handoff">
@@ -649,8 +649,8 @@
   </section>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">116</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">40</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">22</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">24</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">13</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">41</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">117</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">41</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">22</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">24</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">13</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">41</span></button>
   </nav>
 
   <main id="list">
@@ -1202,6 +1202,27 @@
         
         <p class="body">§12.6 sets the game’s pace in its own words: <em>“a string of small, tense decisions: roughly one every 8 to 12 seconds, or 15 to 25 in a run… never about tapping faster”</em>, and it names <em>“when to use abilities and casts”</em> as one of the decisions it is counting.<br><br>An ability comes off cooldown every <em>c</em> seconds per character, so a crew of <em>n</em> over a clock of <em>t</em> gets <code>t×n/c</code> windows. §12.5 puts the crew at 3, 4 from Keeper 8 and 5 from Keeper 16, and the clock at 150 to 240 seconds. Against §11.11’s median 18-second cooldowns that is <strong>25 windows at the smallest and 67 at the largest</strong>; against §11.2’s median 14, <strong>31 and 83</strong>.<br><br>So the smallest case in the document — a crew of three on a short route — exactly reaches the top of §12.6’s budget, and every case above it overruns. <strong>The overrun is not a tuning miss; it grows with the player.</strong> The crew goes 3 to 5 and the clock 150 to 240 as Keeper levels rise, so the game gets roughly two and a half times more frantic between Keeper 1 and Keeper 16, and §12.6 describes the first of those and not the second.<br><br>For one ability to come off cooldown at §12.6’s own 8-to-12-second cadence, cooldowns would have to be 24–36 seconds at a crew of three and 40–60 at a crew of five. Both tables are 8–24.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Answer one question and all eighteen cooldowns follow from it: <strong>is using an ability one of the decisions §12.6 is counting, or is it texture between them?</strong><br><br><strong>A decision.</strong> Cooldowns go to roughly 24 to 60 seconds and scale with crew size, so a character’s ability fires once or twice in a heist and choosing the moment is the point. §12.6’s count stands as written. This is the reading its own words support.<br><br><strong>Texture.</strong> Keep the short cooldowns and rewrite §12.6’s count to be about routes, pylons and greed, with abilities explicitly outside it. Then say what stops the phone becoming a tapping game, which §12.6 currently rules out in the same paragraph.<br><br>Either way the number is one decision rather than eighteen, which is why C6’s drafted abilities settle the effects and leave the cooldowns here. <code>tools/ability_text.py --self-test</code> pins the overrun, so a re-cost that brings a table inside the budget fails the build and sends someone back to this item.</p>
+        
+        
+        
+      </article>
+      <article class="item sig" id="D41" data-group="changes"
+               data-kind="deviation" data-status="done"
+               data-side="backend"
+               data-areas=""
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">D41</span>
+          <h3>One law sheet’s block ran to the end of the document, and a field label became a field value</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
+          
+        </header>
+        <div class="refs"><span class="ref">§31.2</span><span class="ref">§31.4</span><span class="ref">§7.7</span><span class="ref">§21.7</span></div>
+        
+        <p class="body"><code>content/laws.json</code> gave Mirror images a world signature of <strong><code>“How characters move”</code></strong> — a column heading, sitting where a sentence belongs, in the content file every tool in this repository reads.<br><br><strong>The cause.</strong> <code>extract_content.fields()</code> pairs a table’s cells by position, and <code>extract_laws</code> bounded each sheet at the next sheet — with the last one running to the end of the document. Mirror images is the last of the 48. Its block was <strong>10,616 lines instead of 28</strong>, so every table in §7.8 onward was re-paired into it and the last cell following a matching label won. §21.7’s column header <em>“How the realm looks”</em> is one of those labels, and the cell after it is <em>“How characters move”</em>.<br><br>One field of one law of forty-eight. The other seven survived by luck rather than by design: any table after §7.8 containing a cell equal to one of the eight labels would have overwritten its field too.<br><br><strong>How it surfaced.</strong> Not from the content side — <code>validate_content</code> checked that every required field was present and never that a value was a value. It came from <code>twice_stated.py</code>: §21.7 restates every law’s look and movement, so it is a third home for facts §7.7 owns (D39 found the second, §7.4), and comparing the two homes is what showed one of them was a label. <strong>The argument for comparing second homes, demonstrated by a second home finding a real error.</strong></p>
+        <p class="rec"><span class="arrow">&rarr;</span> Fixed, three ways, because the fault had three chances to be caught and took none.<br><br><strong>The bug.</strong> The last sheet is now bounded at the next section heading. Re-extracting changes exactly one field, and it changes it to what §7.7 and §21.7 both say.<br><br><strong>The class.</strong> <code>validate_content</code> now refuses any extracted value equal to one of the labels the extractor keys on. That is cheap and general: a mis-paired table almost always leaves a heading where a sentence should be.<br><br><strong>The third home.</strong> <code>check_document</code> now compares §21.7’s movement signature against §7.7’s for all 48 laws, beside D39’s §7.4 comparison. Between them the law content has three homes and 336 facts, and all three are now read against each other on every build — which is the weaker answer, as D39 says. §7.4 and §21.7 should both be generated from §7.7.</p>
         
         
         
@@ -3285,4 +3306,4 @@
     apply();
   })();
 </script>
-<!-- ruleborn-build a7bc30fbce82d4dd -->
+<!-- ruleborn-build 4e8ef83dc0f993f3 -->

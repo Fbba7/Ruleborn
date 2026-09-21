@@ -184,6 +184,29 @@ def main() -> int:
         if back and back["opposite"] != n["name"]:
             err(f"opposition is not symmetric: {n['name']} <-> {n['opposite']}")
 
+    # -- a value that is really a label -------------------------------------
+    # D41. `extract_content.fields()` pairs a table's cells by position, so a
+    # block that runs past its own section re-pairs every table after it and
+    # the last matching label wins. Mirror images is the last law sheet, its
+    # block ran to the end of the document, and §21.7's column header "How the
+    # realm looks" overwrote its `world` with the *label* "How characters
+    # move". One field of one law, wrong in the content every tool reads, and
+    # nothing looked.
+    #
+    # The shape is general and the check is cheap: an extracted value must
+    # never be one of the labels the extractor keys on.
+    import extract_content
+    labels = set(extract_content.FIELD_MAP) | set(extract_content.FIELD_MAP.values())
+    for name, rows in data.items():
+        for row in rows if isinstance(rows, list) else [rows]:
+            if not isinstance(row, dict):
+                continue
+            for key, value in row.items():
+                if isinstance(value, str) and value.strip() in labels:
+                    err(f"{name}: {row.get('name', row.get('id', '?'))}.{key} "
+                        f"is {value!r}, which is a field label rather than a "
+                        f"value \u2014 the extractor mis-paired a table")
+
     # -- laws --------------------------------------------------------------
     ids = [law["id"] for law in laws]
     for dup, count in collections.Counter(ids).items():

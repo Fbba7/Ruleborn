@@ -630,6 +630,33 @@ def check_law_table_against_sheets(doc: Doc, led: Ledger) -> None:
               f"({len(shared) * len(fields)} of them)",
               not disagree, "; ".join(disagree[:2]))
 
+    # §21.7 is the third home. It gives every law's world and movement
+    # signature, both of which are fields of §7.7's sheet, so 48 laws by two
+    # fields is another 96 restated facts. It is also where D41 came from: the
+    # extractor's last-sheet block ran past its own section and §21.7's column
+    # header overwrote a value, and comparing the two is what showed it.
+    try:
+        screen = _section_text(doc, "21.7 ", "21.8 ")
+    except ValueError:
+        return
+    rows_217 = {}
+    for name, world, move in re.findall(
+            r"\n\| ([A-Z][^\n|]*)\n\| ([^\n]*)\n\| ([^\n]*)", screen):
+        if name.strip() in full:
+            rows_217[name.strip()] = dict(world=world.strip(),
+                                          movement=move.strip())
+    led.check("21.7 lists a look and a movement for every law 7.7 sheets",
+              len(rows_217) == len(full),
+              f"21.7 has {len(rows_217)} of 7.7's {len(full)}")
+    wrong = []
+    for name, seen in sorted(rows_217.items()):
+        if seen["movement"] != full[name]["movement"]:
+            wrong.append(f"{name}: 21.7 \u201c{seen['movement'][:34]}\u201d "
+                         f"vs 7.7 \u201c{full[name]['movement'][:34]}\u201d")
+    led.check(f"every movement signature \u00a721.7 restates from \u00a77.7 "
+              f"still matches ({len(rows_217)} of them)",
+              not wrong, "; ".join(wrong[:2]))
+
 
 def check_arithmetic(doc: Doc, led: Ledger) -> None:
     bad = [f"{a}×{b}≠{c}" for a, b, c in re.findall(r"(\d+) × (\d+) = ([\d,]+)", doc.all_text)

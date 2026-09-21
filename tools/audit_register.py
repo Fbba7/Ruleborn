@@ -2441,6 +2441,56 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D41", kind="deviation", severity="significant", status="done",
+     title="One law sheet\u2019s block ran to the end of the document, and a "
+           "field label became a field value",
+     refs=["31.2", "31.4", "7.7", "21.7"],
+     body="<code>content/laws.json</code> gave Mirror images a world signature "
+          "of <strong><code>\u201cHow characters move\u201d</code></strong> "
+          "\u2014 a column heading, sitting where a sentence belongs, in the "
+          "content file every tool in this repository reads."
+          "<br><br><strong>The cause.</strong> "
+          "<code>extract_content.fields()</code> pairs a table\u2019s cells by "
+          "position, and <code>extract_laws</code> bounded each sheet at the "
+          "next sheet \u2014 with the last one running to the end of the "
+          "document. Mirror images is the last of the 48. Its block was "
+          "<strong>10,616 lines instead of 28</strong>, so every table in "
+          "\u00a77.8 onward was re-paired into it and the last cell following "
+          "a matching label won. \u00a721.7\u2019s column header <em>\u201cHow "
+          "the realm looks\u201d</em> is one of those labels, and the cell "
+          "after it is <em>\u201cHow characters move\u201d</em>."
+          "<br><br>One field of one law of forty-eight. The other seven "
+          "survived by luck rather than by design: any table after \u00a77.8 "
+          "containing a cell equal to one of the eight labels would have "
+          "overwritten its field too."
+          "<br><br><strong>How it surfaced.</strong> Not from the content side "
+          "\u2014 <code>validate_content</code> checked that every required "
+          "field was present and never that a value was a value. It came from "
+          "<code>twice_stated.py</code>: \u00a721.7 restates every law\u2019s "
+          "look and movement, so it is a third home for facts \u00a77.7 owns "
+          "(D39 found the second, \u00a77.4), and comparing the two homes is "
+          "what showed one of them was a label. <strong>The argument for "
+          "comparing second homes, demonstrated by a second home finding a "
+          "real error.</strong>",
+     rec="Fixed, three ways, because the fault had three chances to be caught "
+         "and took none."
+         "<br><br><strong>The bug.</strong> The last sheet is now bounded at "
+         "the next section heading. Re-extracting changes exactly one field, "
+         "and it changes it to what \u00a77.7 and \u00a721.7 both say."
+         "<br><br><strong>The class.</strong> "
+         "<code>validate_content</code> now refuses any extracted value equal "
+         "to one of the labels the extractor keys on. That is cheap and "
+         "general: a mis-paired table almost always leaves a heading where a "
+         "sentence should be."
+         "<br><br><strong>The third home.</strong> "
+         "<code>check_document</code> now compares \u00a721.7\u2019s movement "
+         "signature against \u00a77.7\u2019s for all 48 laws, beside "
+         "D39\u2019s \u00a77.4 comparison. Between them the law content has "
+         "three homes and 336 facts, and all three are now read against each "
+         "other on every build \u2014 which is the weaker answer, as D39 says. "
+         "\u00a77.4 and \u00a721.7 should both be generated from "
+         "\u00a77.7."),
+
 dict(id="D40", kind="deviation", severity="significant", status="open",
      title="\u201cReturns once at N%\u201d is granted by four systems at three "
            "values, and the rule sheet has no parameter for it",

@@ -103,7 +103,15 @@ def extract_laws(text: str) -> list[dict]:
 
     laws = []
     for idx, (i, m) in enumerate(heads):
-        end = heads[idx + 1][0] if idx + 1 < len(heads) else len(lines)
+        # The last sheet used to run to the end of the document — 10,616 lines
+        # instead of 28 — so `fields()` re-paired every table in §7.8 onward
+        # into it, and whatever cell followed a matching label overwrote the
+        # real value. §21.7's column header "How the realm looks" is one, which
+        # is how Mirror images ended up with `world` set to the *label* "How
+        # characters move" (D41). Bound it at the next section heading.
+        end = (heads[idx + 1][0] if idx + 1 < len(heads)
+               else next((k for k in range(i + 1, len(lines))
+                          if re.match(r"\d+\.\d+ ", lines[k])), len(lines)))
         block = "\n".join(lines[i + 1:end])
         j = i + 1
         while not lines[j].strip():
