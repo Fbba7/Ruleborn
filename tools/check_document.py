@@ -881,6 +881,300 @@ def check_asset_budget(doc: Doc, led: Ledger) -> None:
                   f"{label}; {home} gives {expected}", tracks=tracks)
 
 
+
+# --------------------------------------------------------------------------
+# The launch inventory, wherever the document states it  (D45, F25)
+# --------------------------------------------------------------------------
+
+#: Every content table, the count derived from it, and how the document's
+#: prose names the thing it counts. The counts come from ``content/``, which
+#: ``validate_content.py`` checks back against the sections it was extracted
+#: from, so this compares the document against itself rather than against a
+#: number typed here.
+#:
+#: Forms are the one derived count: 18 kinds by 8 notes, which is the
+#: derivation §11.10 states in words. That matters because D6 proposes
+#: cutting it to 54, and a cut made by editing the number would have to find
+#: every one of its homes.
+def inventory() -> dict[str, tuple[int, str]]:
+    def n(name: str) -> int:
+        with open(os.path.join(ROOT, "content", f"{name}.json"), encoding="utf-8") as fh:
+            return len(json.load(fh))
+    return {
+        "laws":             (n("laws"), r"laws"),
+        "ruleborn":         (n("ruleborn"), r"ruleborn"),
+        "traits":           (n("traits"), r"traits"),
+        "Sages":            (n("sages"), r"Sages"),
+        "eras":             (n("eras"), r"eras"),
+        "terrain features": (n("terrain"), r"terrain features"),
+        "resonances":       (n("resonances"), r"(?:signature )?resonances"),
+        "chords":           (n("chords"), r"chords"),
+        "building types":   (n("buildings"), r"building types"),
+        "notes":            (n("notes"), r"notes"),
+        "forms":            (n("ruleborn") * n("notes"),
+                             r"(?:creature |law-shaped |note-)?forms"),
+    }
+
+
+#: §26.1's rows, against the table each one summarises. The four it does
+#: not reach are named rather than dropped, so the check reports its own
+#: coverage instead of implying it is complete.
+LAUNCH_ROWS = {
+    "Laws": "laws", "Ruleborn": "ruleborn", "Traits": "traits",
+    "Sages": "Sages", "Eras": "eras", "Terrain features": "terrain features",
+    "Building types": "building types", "Law-shaped forms": "forms",
+}
+NOT_DERIVED = {
+    "Realms": "“Heart + 6 types” is the six schools, and no content "
+              "table enumerates realms",
+    "Paradoxes": "the three paradoxes are prose in §7.2, outside laws.json",
+    "Visitors, paradox-born, anomalies": "no content table enumerates them",
+    "Modes": "a list of names, not a count",
+}
+
+#: Sections that tabulate what someone *has* at a point in time rather than
+#: what exists. A staged count is not a wrong total; it is a different fact.
+#: Only the two that actually trip the rule are declared. §14.3's
+#: milestones and §15.2's tutorial realm are staged in the same way and
+#: state one kind at a time, so naming them here would be an exemption doing
+#: no work — and an exemption nothing exercises is one that has stopped
+#: describing the document without saying so.
+STAGED = {
+    "14.2": "the progression table: what a player has unlocked at each stage, "
+            "not what exists",
+    "26.2": "the build phases: what each release contains, not what exists",
+}
+
+
+#: Sections that count a stage or a part rather than the whole, with what they
+#: are counting. Named rather than pattern-matched, because "8 forms" is a
+#: total for one ruleborn and a fifth of the launch inventory, and only a
+#: reading tells them apart.
+PARTIAL = {
+    ("laws", "7.6"): "the Codex opens in chapters \u2014 12 findable at the "
+                     "start, then 24, 36, 42 and all 48",
+    ("laws", "14.2"): "the 3 a player starts with, and the Codex chapters "
+                      "\u2014 the same table also states the total, which is "
+                      "why a per-section rule missed these",
+    ("laws", "14.3"): "12, 24 and 36 owned, as milestones, beside the 48 that "
+                      "closes the ladder",
+    ("laws", "14.4"): "the 22 a finished universe can weave at once",
+    ("laws", "14.8"): "the 12 in the first law album",
+    ("laws", "26.2"): "the 18 the open beta ships with",
+    ("forms", "14.9"): "all 8 forms of one ruleborn",
+    ("ruleborn", "14.2"): "the 5 a player has on day one",
+    ("ruleborn", "14.3"): "10, 20 and 30 owned, as milestones",
+    ("ruleborn", "26.2"): "the 6 a closed beta ships with",
+    ("ruleborn", "5.8"): "38 characters a roster can hold, against 18 kinds "
+                         "\u2014 a different quantity with the same noun",
+    ("Sages", "26.2"): "the 2 a closed beta ships with",
+    ("traits", "31.1"): "the audit\u2019s own record of C10, in the past tense",
+}
+
+def launch_table(doc: Doc) -> list[tuple[str, str]]:
+    """§26.1's rows as (label, what it says about launch)."""
+    text = doc.text
+    start = text.index("\n26.1 ")
+    body = text[start:text.index("\n26.2 ")]
+    cells = [ln.strip().lstrip("| ").strip()
+             for ln in body.splitlines() if ln.strip().startswith("|")]
+    rows = [cells[i:i + 3] for i in range(0, len(cells) // 3 * 3, 3)]
+    return [(label, launch) for label, launch, _ in rows[1:]] if rows else []
+
+
+def check_launch_inventory(doc: Doc, led: Ledger) -> None:
+    """D45. §26.1's launch table against the tables it summarises.
+
+    §26.1 is the project's own statement of scope, and three of its
+    thirteen rows were checked: laws, ruleborn and building types. The other
+    ten were not, and two of the register's closed items are rows of this
+    table — C24 was *Building types*, off by one, and C10 was *Traits*,
+    which said 30 against a table of 31. Both were found by reading.
+    """
+    counts = inventory()
+    rows = dict(launch_table(doc))
+    led.check("26.1's launch table parses", len(rows) >= 12, f"got {len(rows)} rows")
+    if not rows:
+        return
+
+    wrong = []
+    for label, kind in LAUNCH_ROWS.items():
+        want = counts[kind][0]
+        said = re.findall(r"\d+", rows.get(label, ""))
+        if said != [str(want)]:
+            wrong.append(f"{label}: 26.1 says {said or 'nothing'}, "
+                         f"content/{kind} has {want}")
+    # The one row that states two counts in one cell.
+    pair = re.findall(r"\d+", rows.get("Signature resonances and chords", ""))
+    if pair != [str(counts["resonances"][0]), str(counts["chords"][0])]:
+        wrong.append(f"Signature resonances and chords: says {pair}")
+    led.check("every countable row of 26.1 matches the table it summarises",
+              not wrong, "; ".join(wrong))
+
+    unknown = [r for r in rows if r not in LAUNCH_ROWS
+               and r != "Signature resonances and chords" and r not in NOT_DERIVED]
+    led.check("every row of 26.1 is either checked or named as uncheckable",
+              not unknown, f"unclassified: {unknown}")
+
+
+def inventory_summaries(doc: Doc) -> list[tuple[str, dict, str]]:
+    """Lines that state two or more inventory counts at once.
+
+    A line naming several kinds together is summarising the inventory; a
+    partial claim never takes that shape, because it is about one kind
+    ("12 laws are findable from the start, 24 from Keeper level 6"). The two
+    tables that break the rule are staged rather than total, and they are
+    named in STAGED with the reason rather than filtered by a pattern.
+    """
+    counts = inventory()
+    out, pos = [], 0
+    for line in doc.text.splitlines():
+        at = doc.text.find(line, pos)
+        pos = at + len(line) if at >= 0 else pos
+        cell = line.strip().lstrip("| ").strip()
+        found = {}
+        for kind, (_, noun) in counts.items():
+            m = re.search(r"\b(\d+)\s+(?:" + noun + r")\b", cell)
+            if m:
+                found[kind] = int(m.group(1))
+        if len(found) >= 2:
+            out.append((_section_of(doc, at), found, cell))
+    return out
+
+
+def _section_of(doc: Doc, offset: int) -> str:
+    text = doc.text
+    heads = [(m.start(), m.group(1))
+             for m in re.finditer(r"^(\d+\.\d+) ", text, re.M)]
+    last = "?"
+    for start, num in heads:
+        if start <= offset:
+            last = num
+        else:
+            break
+    return last
+
+
+def check_inventory_summaries(doc: Doc, led: Ledger) -> None:
+    """D45, F25. Six sections restate the launch inventory, and all six agree.
+
+    §26.1 is not the only place the counts live. §19.13, §26.8,
+    §27.2, §30.6, §30.8 and §30.11 each state several of
+    them together, and §23.2's screens tell a designer to draw
+    “all 48 laws” and “144 forms”. Every one of those
+    agrees today, which is exactly why none of them is guarded: F25's whole
+    point is that the facts with two homes are found by reading only after
+    they have already diverged.
+
+    **It matters now rather than later.** D6 proposes cutting the forms from
+    144 to 54. That number has eight homes. An edit that found seven of them
+    would leave the document stating both, and nothing but this would say so.
+    """
+    counts = inventory()
+    wrong, staged = [], set()
+    for section, found, cell in inventory_summaries(doc):
+        if section in STAGED:
+            staged.add(section)
+            continue
+        for kind, said in found.items():
+            if said != counts[kind][0]:
+                wrong.append(f"§{section} says {said} {kind}, "
+                             f"content has {counts[kind][0]}: “{cell[:60]}”")
+    led.check("every section that restates the launch inventory states the "
+              "same totals", not wrong, "; ".join(wrong[:3]))
+    led.check("every declared staged table is one the rule actually reaches",
+              staged == set(STAGED),
+              f"matched {sorted(staged)}, declared {sorted(STAGED)}")
+
+
+def check_screen_counts(doc: Doc, led: Ledger) -> None:
+    """D45. §23.2 tells a designer what to draw, in counts.
+
+    Four register items were wrong counts in this chapter — C9 (the Codex
+    showed 36 laws of 48), C10 (23 traits of 31), C11 (23 screens of 27) and
+    C24 (16 building types of 17) — and all four were found by reading.
+    A screen whose count is stale is drawn wrong, which is the most expensive
+    place in the project for a stale number to sit.
+
+    *Must show* means all of them, so every count in that column is a total.
+    “39 features” is the terrain table under the name the screen
+    uses for it.
+    """
+    counts = inventory()
+    text = doc.text
+    start = text.index("\n23.2 Every screen to design")
+    body = text[start:text.index("\n23.3 ")]
+    cells = [ln.strip().lstrip("| ").strip()
+             for ln in body.splitlines() if ln.strip().startswith("|")]
+    rows = [cells[i:i + 3] for i in range(0, len(cells) // 3 * 3, 3)]
+    led.check("23.2 lists 27 screens with a job and a must-show for each",
+              len(rows) - 1 == 27, f"got {len(rows) - 1}")
+
+    nouns = dict(counts)
+    nouns["terrain features"] = (counts["terrain features"][0],
+                                 r"(?:terrain )?features")
+    wrong = []
+    for name, _job, show in rows[1:]:
+        for kind, (want, noun) in nouns.items():
+            for m in re.finditer(r"\b(\d+)\s+(?:" + noun + r")\b", show):
+                if int(m.group(1)) != want:
+                    wrong.append(f"{name}: {m.group(0)}, against {want}")
+    led.check("every count 23.2 tells a designer to draw is the whole table",
+              not wrong, "; ".join(wrong))
+
+
+def check_every_inventory_mention(doc: Doc, led: Ledger) -> None:
+    """D45, F25. Every count of a content table, everywhere in the document.
+
+    The three checks above reach \u00a726.1, \u00a723.2 and the six sections
+    that state several counts at once. That left sixteen sections stating a
+    total that nothing read \u2014 the law count alone lives in fifteen
+    places \u2014 and the reason it was left is that a bare \u201c12
+    laws\u201d is a partial claim, not a stale total: \u00a77.6's Codex opens
+    in chapters.
+
+    ``tools/inventory_homes.py`` prints every one of those mentions, and
+    reading them showed there are only eleven partials in the whole document.
+    So the rule can be the strong one after all: **every number the document
+    attaches to a content table's own noun is either that table's length or a
+    declared partial.** PARTIAL is that declaration, with what each one counts
+    instead, and `inventory_homes --self-test` fails if one of them stops
+    being a partial \u2014 which is how a list like this stops describing the
+    document without saying so.
+
+    The cost of the strong rule is that adding a real new partial fails the
+    build until it is named. That is the intended price: a partial and a stale
+    total are the same shape, and the difference is a reading.
+    """
+    counts = inventory()
+    heads = [(m.start(), m.group(1))
+             for m in re.finditer(r"^(\d+\.\d+) ", doc.text, re.M)]
+
+    def section_at(offset: int) -> str:
+        last = "?"
+        for start, num in heads:
+            if start <= offset:
+                last = num
+            else:
+                break
+        return last
+
+    undeclared = []
+    for kind, (want, noun) in counts.items():
+        for m in re.finditer(r"(?<![.\d])\b(\d+)\s+(?:" + noun + r")\b",
+                             doc.text):
+            if int(m.group(1)) == want:
+                continue
+            sec = section_at(m.start())
+            if (kind, sec) in PARTIAL:
+                continue
+            line = doc.text[doc.text.rfind("\n", 0, m.start()) + 1:
+                            doc.text.find("\n", m.end())]
+            undeclared.append(f"\u00a7{sec} says {m.group(0)} against "
+                              f"{want}: \u201c{line.strip().lstrip('| ')[:70]}\u201d")
+    led.check("every count of a content table is that table's length or a "
+              "declared partial", not undeclared, "; ".join(undeclared[:3]))
+
 def check_creatures(doc: Doc, led: Ledger) -> None:
     if not os.path.exists(CREATURES):
         return
@@ -1355,6 +1649,10 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_arithmetic(doc, led)
     check_inventory(doc, led)
     check_asset_budget(doc, led)
+    check_launch_inventory(doc, led)
+    check_inventory_summaries(doc, led)
+    check_screen_counts(doc, led)
+    check_every_inventory_mention(doc, led)
     check_creatures(doc, led)
     check_page_economy(doc, led)
     check_banned_phrasings(doc, led)
@@ -1624,6 +1922,58 @@ def _self_test_formula_appendix() -> bool:
     return ok
 
 
+def _self_test_inventory() -> bool:
+    """The scope cut D6 proposes, applied to one home out of eight.
+
+    D6 would take the forms from 144 to 54. The number lives in \u00a726.1's
+    launch table, in \u00a723.2's Forms album, and in six sections that
+    summarise the inventory. This edits the canonical one and leaves the rest,
+    which is what a careful editor who searched for the table would do, and
+    every other home has to start disagreeing with it.
+
+    The plant is derived from the committed document rather than a fixture:
+    the count comes from ``content/``, so if the forms are ever really cut
+    this test changes with them instead of quietly testing an old number.
+    """
+    ok = True
+    raw = open(DEFAULT_DOC, encoding="utf-8").read()
+    counts = inventory()
+    forms, laws = counts["forms"][0], counts["laws"][0]
+    home = f'Law-shaped forms</td><td class="n" data-label="Launch">{forms}<'
+    if raw.count(home) != 1:
+        print(f"  inventory: FAIL \u2014 26.1's forms row is not where this "
+              f"test expects it ({raw.count(home)} matches), so it would "
+              f"plant nothing or plant it twice")
+        return False
+    cut = raw.replace(home, home.replace(f">{forms}<", f">{forms // 8 * 3}<"), 1)
+
+    for label, document, want_rows, want_summaries in (
+        ("as shipped", Doc(DEFAULT_DOC, raw), True, True),
+        ("26.1 cut, the other homes not", Doc(DEFAULT_DOC, cut), False, True),
+    ):
+        led = Ledger(quiet=True)
+        check_launch_inventory(document, led)
+        check_inventory_summaries(document, led)
+        rows_ok = not [r for r in led.rows if r[0] != PASS]
+        # The summaries still agree with content/, because only 26.1 moved.
+        summaries = [r for r in led.rows if "restates the launch inventory" in r[1]]
+        print(f"  inventory, {label}: 26.1 "
+              f"{'matches' if rows_ok else 'disagrees with'} the content "
+              f"tables; the six summaries still say {forms} forms and "
+              f"{laws} laws")
+        if rows_ok is not want_rows:
+            print(f"    FAIL: expected 26.1 to "
+                  f"{'pass' if want_rows else 'fail'}")
+            ok = False
+        if bool(summaries and summaries[0][0] == PASS) is not want_summaries:
+            print("    FAIL: the summaries read the wrong way round")
+            ok = False
+    if ok:
+        print("  inventory: so a cut made in 26.1 alone leaves seven homes "
+              "stating the old number, and the check says which")
+    return ok
+
+
 def self_test() -> int:
     """Show the derived check catching what the phrase ban cannot.
 
@@ -1657,6 +2007,7 @@ def self_test() -> int:
     ok = _self_test_ledger() and ok
     ok = _self_test_detection() and ok
     ok = _self_test_formula_appendix() and ok
+    ok = _self_test_inventory() and ok
 
     if ok:
         print("\n  self-test: the derived check catches the three-rank model stated in\n"

@@ -30,6 +30,10 @@ python3 tools/mutation_gate.py
 python3 tools/twice_stated.py --self-test
 
 echo
+echo "== where every launch-inventory count lives =="
+python3 tools/inventory_homes.py --self-test
+
+echo
 echo "== content tables =="
 python3 tools/validate_content.py --self-test
 python3 tools/validate_content.py
