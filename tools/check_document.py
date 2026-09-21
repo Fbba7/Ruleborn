@@ -676,6 +676,83 @@ SPELLED = {
 }
 
 
+
+# --------------------------------------------------------------------------
+# The section index, in one place  (D46)
+# --------------------------------------------------------------------------
+
+def section_spans(doc: Doc) -> list[tuple[int, int, str]]:
+    """Every section as (start, end, number), in document order.
+
+    Splitting on lines that *look* like a heading is wrong, and it was wrong
+    in three tools before this one existed. \u00a731's change log writes
+    paragraphs that open with the section they are about \u2014 \u201c12.6
+    called the loading phase the heist's central decision\u201d \u2014 at the
+    start of a line, so a split index built a \u00a712.6 out of that sentence
+    and **overwrote the real one**. \u00a712.6 owns the decision cadence, 8 to
+    12 seconds and 15 to 25 a run, restated in four other sections; every scan
+    over it had been reading a 958-character fragment of an audit note
+    instead, and reported nothing, because a check that loses its subject
+    reads exactly like a check that passes.
+
+    Two sections were affected, \u00a712.6 and \u00a713.2, and both are ones
+    the audit talks about most, which is why they are the ones \u00a731 quotes
+    by number.
+
+    The rule that fixes it is one the document already guarantees and the
+    build already checks: **section numbers ascend.** A line-start number
+    lower than the last heading is a reference, not a heading. That yields
+    243 sections, which is what ``check_cross_references`` independently
+    counts.
+    """
+    heads: list[tuple[int, str]] = []
+    last = (0, 0)
+    for m in re.finditer(r"^(\d+)\.(\d+) ", doc.text, re.M):
+        key = (int(m.group(1)), int(m.group(2)))
+        if key <= last:
+            continue                      # a reference at the start of a line
+        last = key
+        heads.append((m.start(), f"{key[0]}.{key[1]}"))
+    return [(start, heads[i + 1][0] if i + 1 < len(heads) else len(doc.text), num)
+            for i, (start, num) in enumerate(heads)]
+
+
+def section_index(doc: Doc) -> dict[str, str]:
+    """Every section of the document, by number. See ``section_spans``."""
+    return {num: doc.text[start:end] for start, end, num in section_spans(doc)}
+
+
+def section_at(doc: Doc, offset: int) -> str:
+    """Which section an offset falls in. See ``section_spans``."""
+    for start, end, num in section_spans(doc):
+        if start <= offset < end:
+            return num
+    return "?"
+
+
+def check_section_index(doc: Doc, led: Ledger) -> None:
+    """D46. The index finds every section and invents none.
+
+    The count is compared against ``check_cross_references``, which reaches
+    the same number by a different route \u2014 reading the HTML's own
+    headings rather than the derived text. Two indexes agreeing is the only
+    evidence here that either is right.
+    """
+    index = section_index(doc)
+    from_html = len(re.findall(r"<h3>\d+\.\d+ ", doc.raw))
+    led.check("the section index finds every section the HTML heads",
+              len(index) == from_html,
+              f"text index has {len(index)}, HTML has {from_html}")
+    ascending = list(index) == sorted(
+        index, key=lambda n: tuple(int(p) for p in n.split(".")))
+    led.check("the section index is in document order", ascending, "")
+    led.check("12.6 is the section, not 31's sentence about it",
+              "Moment to moment" in index.get("12.6", ""),
+              f"12.6 reads: {index.get('12.6', '')[:60]!r}")
+    led.check("13.2 is the section, not 31's sentence about it",
+              "What a fair defence looks like" in index.get("13.2", ""),
+              f"13.2 reads: {index.get('13.2', '')[:60]!r}")
+
 def formula_rows(doc: Doc) -> list[tuple[str, str, list[str]]]:
     """§29.1's table as (what, formula, cited sections).
 
@@ -754,12 +831,7 @@ def check_formula_appendix(doc: Doc, led: Ledger) -> None:
     if not rows:
         return
 
-    text = doc.text
-    bodies = {}
-    for part in re.split(r"\n(?=\d+\.\d+ )", text):
-        m = re.match(r"(\d+\.\d+) ", part)
-        if m:
-            bodies[m.group(1)] = part
+    bodies = section_index(doc)
 
     missing_home = [(w, s) for w, _, secs in rows for s in secs if s not in bodies]
     led.check("every formula cites a section that exists",
@@ -1038,21 +1110,8 @@ def inventory_summaries(doc: Doc) -> list[tuple[str, dict, str]]:
             if m:
                 found[kind] = int(m.group(1))
         if len(found) >= 2:
-            out.append((_section_of(doc, at), found, cell))
+            out.append((section_at(doc, at), found, cell))
     return out
-
-
-def _section_of(doc: Doc, offset: int) -> str:
-    text = doc.text
-    heads = [(m.start(), m.group(1))
-             for m in re.finditer(r"^(\d+\.\d+) ", text, re.M)]
-    last = "?"
-    for start, num in heads:
-        if start <= offset:
-            last = num
-        else:
-            break
-    return last
 
 
 def check_inventory_summaries(doc: Doc, led: Ledger) -> None:
@@ -1147,17 +1206,6 @@ def check_every_inventory_mention(doc: Doc, led: Ledger) -> None:
     total are the same shape, and the difference is a reading.
     """
     counts = inventory()
-    heads = [(m.start(), m.group(1))
-             for m in re.finditer(r"^(\d+\.\d+) ", doc.text, re.M)]
-
-    def section_at(offset: int) -> str:
-        last = "?"
-        for start, num in heads:
-            if start <= offset:
-                last = num
-            else:
-                break
-        return last
 
     undeclared = []
     for kind, (want, noun) in counts.items():
@@ -1165,7 +1213,7 @@ def check_every_inventory_mention(doc: Doc, led: Ledger) -> None:
                              doc.text):
             if int(m.group(1)) == want:
                 continue
-            sec = section_at(m.start())
+            sec = section_at(doc, m.start())
             if (kind, sec) in PARTIAL:
                 continue
             line = doc.text[doc.text.rfind("\n", 0, m.start()) + 1:
@@ -1174,6 +1222,83 @@ def check_every_inventory_mention(doc: Doc, led: Ledger) -> None:
                               f"{want}: \u201c{line.strip().lstrip('| ')[:70]}\u201d")
     led.check("every count of a content table is that table's length or a "
               "declared partial", not undeclared, "; ".join(undeclared[:3]))
+
+
+# --------------------------------------------------------------------------
+# The evidence tables, against the sections they cite  (D47)
+# --------------------------------------------------------------------------
+
+#: The \u00a719 tables whose right-hand column says what Ruleborn does about a
+#: finding and cites where that is specified. Structurally this is \u00a729.1:
+#: a cell that is one claim plus the section it came from, which is the only
+#: shape the rule below can be applied to. It does **not** hold for prose or
+#: for table cells generally \u2014 see the docstring.
+EVIDENCE_TABLES = ("19.2", "19.4", "19.6", "19.11")
+
+_CITE = re.compile(r"\(([\d.,\s]+)\)")
+
+
+def evidence_cells(doc: Doc) -> list[tuple[str, str, list[str], list[str]]]:
+    """(section, cell, cited sections, numbers the cited sections do not state)."""
+    index = section_index(doc)
+    out = []
+    for sec in EVIDENCE_TABLES:
+        for line in index.get(sec, "").splitlines():
+            if not line.strip().startswith("|"):
+                continue
+            cell = line.strip().lstrip("| ").strip()
+            targets = []
+            for m in _CITE.finditer(cell):
+                parts = [x.strip() for x in m.group(1).split(",") if x.strip()]
+                if parts and all(x in index for x in parts):
+                    targets += parts          # every element a real section
+            if not targets:
+                continue
+            body = re.sub(r"\[\d+\]", " ", cell)      # [159] is a source, not a value
+            body = _CITE.sub(" ", body)
+            said = {n.replace(",", "") for n in _NUMBER.findall(body) if n not in index}
+            if not said:
+                continue
+            home = " ".join(index[x] for x in targets)
+            hn = {n.replace(",", "") for n in _NUMBER.findall(home)}
+            out.append((sec, cell, targets, sorted(said - hn)))
+    return out
+
+
+def check_evidence_cells(doc: Doc, led: Ledger) -> None:
+    """D47. \u00a719's evidence tables state a rule and cite its home.
+
+    This is D43's rule moved to the other table that has \u00a729.1's shape:
+    the cell is one claim, and the citation says where the claim is
+    specified, so a number in the cell that the cited section does not carry
+    is a restatement that has drifted from its home.
+
+    **It does not generalise further, and that was measured rather than
+    assumed.** Applied to every sentence in the document carrying a number and
+    a citation, the rule fails on 73% of them; applied to every table cell, on
+    36%. Both are false-positive rates, not findings: in prose a citation
+    marks one clause and the other numbers in the sentence belong to other
+    clauses \u2014 \u00a721.1's "a closer follow camera at 50\u00b0 pitch
+    showing about 12 tiles across (12.6)" cites \u00a712.6 for the tiles, not
+    the pitch. Only where a cell *is* one claim does the citation cover
+    everything in it. That is \u00a729.1 and these four tables, and the list
+    is written out rather than detected.
+
+    Four cells across the four tables carry a number and a citation. One
+    fails, and it has failed since v2.3: \u00a719.2 tells the fun-variables
+    table that Ruleborn uses **44-point targets**, citing \u00a712.7, which
+    says *"each at least 9 mm across, which is roughly 48 points"*. \u00a730.4
+    then reviewed the design and concluded a 44-point minimum is below the
+    evidence \u2014 correcting a rule \u00a712.7 never stated, and not
+    reaching the one section that does.
+    """
+    rows = evidence_cells(doc)
+    led.check("19's evidence tables still cite sections with numbers in them",
+              len(rows) >= 3, f"found {len(rows)} cells with a number and a citation")
+    wrong = [f"\u00a7{sec} cites {', '.join(t)} for {miss}: \u201c{cell[:64]}\u201d"
+             for sec, cell, t, miss in rows if miss]
+    led.check("every number in 19's evidence tables is stated in the section "
+              "the cell cites for it", not wrong, " | ".join(wrong), tracks="D47")
 
 def check_creatures(doc: Doc, led: Ledger) -> None:
     if not os.path.exists(CREATURES):
@@ -1645,6 +1770,7 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_rank_scheme_stated_once(doc, led)
     check_no_single_cone_claim(doc, led)
     check_law_table_against_sheets(doc, led)
+    check_section_index(doc, led)
     check_formula_appendix(doc, led)
     check_arithmetic(doc, led)
     check_inventory(doc, led)
@@ -1653,6 +1779,7 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_inventory_summaries(doc, led)
     check_screen_counts(doc, led)
     check_every_inventory_mention(doc, led)
+    check_evidence_cells(doc, led)
     check_creatures(doc, led)
     check_page_economy(doc, led)
     check_banned_phrasings(doc, led)
@@ -1974,6 +2101,60 @@ def _self_test_inventory() -> bool:
     return ok
 
 
+def _self_test_section_index() -> bool:
+    """The split index against the ascending one, on the committed document.
+
+    D46's bug raised nothing: a section shrank to a fragment of the section
+    after it and every scan over it went quiet. So this plants no fault \u2014
+    it runs the *old* method beside the new one and shows the two disagreeing
+    about the real document, which is the only evidence a silent bug leaves.
+
+    Four sections are wrong under the old method, in two ways. \u00a712.19 and
+    \u00a713.4 open with a sentence naming the section they revise, so the
+    split cuts them off at their first paragraph and they keep nothing but
+    their heading. \u00a712.6 and \u00a713.2 are the sections named, so they
+    are *replaced* by the remainder of that paragraph.
+    """
+    ok = True
+    doc = Doc(DEFAULT_DOC)
+
+    split: dict[str, str] = {}
+    for part in re.split(r"\n(?=\d+\.\d+ )", doc.text):
+        m = re.match(r"(\d+\.\d+) ", part)
+        if m:
+            split[m.group(1)] = part               # the bug: a later line wins
+    good = section_index(doc)
+
+    # The split drops the leading newline, so compare on the stripped text.
+    wrong = sorted(k for k in good if split.get(k, "").strip() != good[k].strip())
+    print(f"  section index: splitting on what looks like a heading gets "
+          f"{len(wrong)} section(s) wrong: {wrong}")
+    if wrong != ["12.19", "12.6", "13.2", "13.4"]:
+        print("    FAIL: expected 12.6, 12.19, 13.2 and 13.4 \u2014 if this "
+              "moved, the register's account of D46 is stale")
+        ok = False
+
+    for num, title in (("12.6", "Moment to moment"),
+                       ("13.2", "What a fair defence looks like"),
+                       ("12.19", "The Vault, and when to stop loading"),
+                       ("13.4", "Budgets, and how a layer")):
+        body, was = good.get(num, ""), split.get(num, "")
+        kind = "replaced by" if title not in was else "truncated to"
+        print(f"  section index: \u00a7{num} is {len(body)} chars; the split "
+              f"{kind} {len(was)}")
+        if title not in body:
+            print(f"    FAIL: \u00a7{num} is not the section")
+            ok = False
+        if len(was) >= len(body) and title in was:
+            print(f"    note: the split no longer truncates \u00a7{num} \u2014 "
+                  f"this test is stale")
+    # 12.6 owns the decision cadence; losing it is what made the bug matter.
+    if "8 to 12 seconds" not in good.get("12.6", ""):
+        print("    FAIL: 12.6 no longer carries the decision cadence")
+        ok = False
+    return ok
+
+
 def self_test() -> int:
     """Show the derived check catching what the phrase ban cannot.
 
@@ -2008,6 +2189,7 @@ def self_test() -> int:
     ok = _self_test_detection() and ok
     ok = _self_test_formula_appendix() and ok
     ok = _self_test_inventory() and ok
+    ok = _self_test_section_index() and ok
 
     if ok:
         print("\n  self-test: the derived check catches the three-rank model stated in\n"

@@ -106,16 +106,12 @@ COVERED = {
 
 
 def sections(doc) -> dict:
-    """The document split by subsection number."""
-    out, current = {}, None
-    for part in re.split(r"\n(?=\d+\.\d+ )", doc.text):
-        m = re.match(r"(\d+\.\d+) ", part)
-        if m:
-            current = m.group(1)
-            out[current] = part
-        elif current:
-            out[current] += part
-    return out
+    """The document by subsection number — check_document's index, not a
+    split of our own. D46: splitting on what looks like a heading built a
+    §12.6 out of §31's sentence about §12.6 and overwrote the
+    real one, so this scan had never read the section that owns the decision
+    cadence."""
+    return check_document.section_index(doc)
 
 
 def numeric_sentences(body: str) -> list[tuple[str, set]]:

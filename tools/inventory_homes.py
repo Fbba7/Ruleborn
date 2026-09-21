@@ -67,31 +67,16 @@ ONLY_IN_LAUNCH_TABLE = {
 }
 
 
-def sections(text: str) -> list[tuple[int, str]]:
-    return [(m.start(), m.group(1)) for m in re.finditer(r"^(\d+\.\d+) ", text, re.M)]
-
-
-def section_of(heads: list, offset: int) -> str:
-    last = "?"
-    for start, num in heads:
-        if start <= offset:
-            last = num
-        else:
-            break
-    return last
-
-
 def homes(doc) -> dict:
     """kind -> {section: [(number, the line it is on)]}, totals and partials."""
     counts = check_document.inventory()
-    heads = sections(doc.text)
     out: dict = {}
     for kind, (_, noun) in counts.items():
         found = collections.defaultdict(list)
         for m in re.finditer(r"(?<![.\d])\b(\d+)\s+(?:" + noun + r")\b", doc.text):
             # "11.7 Sages, the heroes" is a heading, and its 7 is a section
             # number. Anything preceded by a dot and a digit is one.
-            sec = section_of(heads, m.start())
+            sec = check_document.section_at(doc, m.start())
             line = doc.text[doc.text.rfind("\n", 0, m.start()) + 1:
                             doc.text.find("\n", m.end())]
             found[sec].append((int(m.group(1)), line.strip().lstrip("| ").strip()))
