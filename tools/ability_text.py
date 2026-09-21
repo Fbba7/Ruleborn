@@ -143,10 +143,11 @@ KIND = {
         "Both grow a root bridge over a gap. §11.2 gives it a life - 8 s - "
         "and a shorter cooldown."),
     "echoplate": (EFFECT,
-        "§11.11 blocks one hit “for the crew” and returns it at "
-        "40%. §11.2 shields “an ally”, takes its next hit, and "
-        "reflects nothing. Crew against one ally, and a reflect on one side "
-        "only."),
+        "§11.11 blocks one hit “for the crew” and adds "
+        "“returns once at 40%”; §11.2 shields “an "
+        "ally” and takes its next hit, with no such clause. Crew against "
+        "one ally, and a clause on one side only — one whose meaning is "
+        "itself unsettled (D40)."),
     "lantern_wisp": (MAGNITUDE,
         "Both reveal hidden wards within a radius: 6 tiles or a 5-tile area "
         "held for 6 s. §11.2 also names illusions, which is a kind of "

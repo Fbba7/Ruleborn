@@ -27,6 +27,7 @@ python3 tools/check_document.py
 echo
 echo "== §31.5's own fifteen breakages, and the same defects reworded =="
 python3 tools/mutation_gate.py
+python3 tools/twice_stated.py --self-test
 
 echo
 echo "== content tables =="
