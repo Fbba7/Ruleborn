@@ -177,6 +177,9 @@ NO_EDIT_BECAUSE = {
     "D34": "no document sentence: the fix is the harness's stopping rule",
     "D38": "no document sentence: the fix is four more derived checks, which "
            "is F24's programme rather than an edit to \u00a731.5",
+    "D39": "no document sentence to replace: \u00a77.4 becomes generated from "
+           "\u00a77.7 (D15's fix), and until it does the divergence is checked "
+           "rather than prevented",
 }
 
 

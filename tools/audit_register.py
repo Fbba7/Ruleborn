@@ -2441,6 +2441,58 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D39", kind="deviation", severity="significant", status="open",
+     title="\u00a77.4 and \u00a77.7 state 240 facts twice, and they all agree "
+           "\u2014 which is why nobody found them",
+     refs=["31.2", "31.4", "7.4", "7.7"],
+     body="\u00a77.4 <em>The 48 laws</em> gives each law\u2019s rank, stability "
+          "cost, notes, tier I effect, tiers II and III, and how characters "
+          "move. \u00a77.7 <em>Every law in full</em> gives all six again, word "
+          "for word, and adds five more fields. <strong>\u00a77.4 is a subset of "
+          "\u00a77.7</strong>, so forty-eight laws by five compared fields is "
+          "<strong>240 facts with two homes</strong>, every one of them agreeing "
+          "today and guarded by nothing."
+          "<br><br><strong>F25 lists six twice-stated facts. It missed these "
+          "because they agree.</strong> All six of F25\u2019s were found by "
+          "reading for contradictions, so all six had already diverged \u2014 "
+          "the rank split, the page costs, the load rate, partial staffing, the "
+          "birth cost, the notes. \u00a731.2\u2019s rule is about <em>one "
+          "home</em>, not about agreement, and a fact stated twice that agrees "
+          "today is the next C3 rather than a fact that is fine. The load rate, "
+          "the rank split and the two rosters all agreed until one copy was "
+          "edited."
+          "<br><br><code>extract_content.py</code> reads \u00a77.7 and its own "
+          "comment calls it <em>\u201cthe richest of the three places laws "
+          "appear\u201d</em> \u2014 so whoever wrote the extractor knew, chose "
+          "one, and nothing compared the other two."
+          "<br><br><strong>How it was found.</strong> Not by reading. The same "
+          "method that found D37\u2019s eleven duplicated constants in the "
+          "tooling, pointed at the document: every numeric sentence, paired "
+          "across sections by word overlap. The \u00a77.4/\u00a77.7 pair came "
+          "back with forty near-identical sentences, more than every other pair "
+          "in the document put together. The eight other pairs it surfaced are "
+          "research citations restated in \u00a730\u2019s evidence log, which is "
+          "what an evidence log is for, and one small genuine one: \u00a75.1 and "
+          "\u00a77.1 both price a crown law at 5% and a realm law at 10%, with "
+          "the clauses in opposite order.",
+     rec="<strong>\u00a77.4 should be generated from \u00a77.7, which is "
+         "D15\u2019s fix applied to the largest summary table in the "
+         "document.</strong> \u00a731.4\u2019s rule is already \u2018generated, "
+         "not authored\u2019, and \u00a77.4 is six columns of pure summary: "
+         "every one of them is in \u00a77.7 and none is anywhere else."
+         "<br><br><strong>Until then the divergence is checked rather than "
+         "prevented.</strong> <code>check_law_table_against_sheets</code> reads "
+         "both sections out of the document and compares all 240 facts on every "
+         "build, so the two cannot drift apart silently the way C3, C6 and C22 "
+         "did. It reads both sides from the document on purpose: comparing "
+         "\u00a77.4 against <code>content/laws.json</code> would be comparing "
+         "the document against an extraction of \u00a77.7, which is one side "
+         "twice \u2014 the trap D37 records."
+         "<br><br>Worth saying plainly: <strong>the check is the weaker "
+         "answer.</strong> It catches a divergence after someone writes it, "
+         "where generating \u00a77.4 would make writing one impossible. It is "
+         "here because the edit is the owner\u2019s and the guard is not."),
+
 dict(id="D38", kind="deviation", severity="significant", status="done",
      title="\u00a731.5\u2019s fifteen breakages all pass, and six restatements "
            "of the same defects all survive",

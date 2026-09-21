@@ -544,6 +544,93 @@ def check_no_single_cone_claim(doc: Doc, led: Ledger) -> None:
               not asserted, "; ".join(a[:70] for a in asserted[:2]), tracks="C1")
 
 
+#: §7.4's table row: name, rank and cost, notes, tier I, tiers II-III, movement.
+LAW_ROW = re.compile(
+    r"\n\| ([A-Z][^\n|]*)\n\| (\w+), (\d+)\n\| ([^\n]*)\n\| ([^\n]*)\n"
+    r"\| ([^\n]*)\n\| ([^\n]*)")
+
+#: §7.7's sheet header: "BounceCommon \u00b7 Motion \u00b7 cost 14".
+LAW_SHEET = re.compile(
+    r"([A-Z][^\n\u00b7]*?)(Common|Uncommon|Rare|Deep) \u00b7 (\w+) \u00b7 cost (\d+)\n")
+
+
+def _section_text(doc: Doc, first: str, second: str) -> str:
+    text = doc.text
+    return text[text.index("\n" + first):text.index("\n" + second)]
+
+
+def check_law_table_against_sheets(doc: Doc, led: Ledger) -> None:
+    """D39, F25. §7.4's table and §7.7's sheets state the same facts twice.
+
+    §7.4 *The 48 laws* gives each law's rank, stability cost, notes, tier I
+    effect, tiers II and III, and how characters move. §7.7 *Every law in full*
+    gives all six again, word for word, and adds five more fields. So §7.4 is a
+    subset of §7.7 and **240 facts have two homes** \u2014 forty-eight laws by
+    five compared fields \u2014 every one of them agreeing today and guarded by
+    nothing.
+
+    F25 lists six twice-stated facts. All six are ones that have already
+    *diverged*, because they were found by reading for contradictions. These
+    agree, which is why nobody saw them, and which is exactly what makes them
+    the next C3: the load rate, the rank split and the two rosters all agreed
+    until one copy was edited.
+
+    `extract_content.py` reads §7.7 and its own comment calls it "the richest
+    of the three places laws appear" \u2014 so the extractor's author knew, and
+    picked one. Nothing compared the others.
+
+    Both sides are read from the document. Comparing §7.4 against
+    `content/laws.json` would compare the document against an extraction of
+    §7.7, which is one side twice.
+    """
+    try:
+        table = _section_text(doc, "7.4 ", "7.5 ")
+        sheets = _section_text(doc, "7.7 ", "7.8 ")
+    except ValueError:
+        led.check("7.4's table and 7.7's sheets are both present", False,
+                  "one of the two sections could not be found")
+        return
+
+    rows = {}
+    for name, rank, cost, notes, tier1, tiers, move in LAW_ROW.findall(table):
+        rows[name.strip()] = dict(rank=rank, cost=cost, notes=notes.strip(),
+                                  tier_1=tier1.strip(), tiers=tiers.strip(),
+                                  movement=move.strip())
+
+    blocks = re.split(r"\n(?=[A-Z][^\n\u00b7]*?(?:Common|Uncommon|Rare|Deep) "
+                      r"\u00b7 \w+ \u00b7 cost \d+\n)", sheets)
+    full = {}
+    for block in blocks:
+        head = LAW_SHEET.match(block)
+        if not head:
+            continue
+        def field(label: str) -> str:
+            m = re.search(r"\n\| " + re.escape(label) + r"\n\| ([^\n]*)", block)
+            return m.group(1).strip() if m else ""
+        full[head.group(1).strip()] = dict(
+            rank=head.group(2), cost=head.group(4),
+            tier_1=field("Tier I"), tiers=field("Tiers II and III"),
+            movement=field("How characters move"))
+
+    led.check("7.4's table and 7.7's sheets list the same 48 laws",
+              set(rows) == set(full) and len(rows) == 48,
+              f"7.4 has {len(rows)}, 7.7 has {len(full)}; "
+              f"only in one: {sorted(set(rows) ^ set(full))[:4]}")
+
+    shared = sorted(set(rows) & set(full))
+    fields = ("rank", "cost", "tier_1", "tiers", "movement")
+    disagree = []
+    for name in shared:
+        for key in fields:
+            a, b = rows[name][key], full[name][key]
+            if a != b:
+                disagree.append(f"{name}.{key}: 7.4 \u201c{a[:38]}\u201d "
+                                f"vs 7.7 \u201c{b[:38]}\u201d")
+    led.check(f"every fact \u00a77.4 restates from \u00a77.7 still matches "
+              f"({len(shared) * len(fields)} of them)",
+              not disagree, "; ".join(disagree[:2]))
+
+
 def check_arithmetic(doc: Doc, led: Ledger) -> None:
     bad = [f"{a}×{b}≠{c}" for a, b, c in re.findall(r"(\d+) × (\d+) = ([\d,]+)", doc.all_text)
            if int(a) * int(b) != int(c.replace(",", ""))]
@@ -1117,6 +1204,7 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_constant_restatements(doc, led)
     check_rank_scheme_stated_once(doc, led)
     check_no_single_cone_claim(doc, led)
+    check_law_table_against_sheets(doc, led)
     check_arithmetic(doc, led)
     check_inventory(doc, led)
     check_asset_budget(doc, led)
