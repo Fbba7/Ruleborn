@@ -410,9 +410,138 @@ def check_constants(doc: Doc, led: Ledger) -> None:
 
 
 def check_retired_names(doc: Doc, led: Ledger) -> None:
-    for name in ("Lawbound", "lawborn", "Echo Knight", "Moss Giant", "Creator Fund", "Masquerade"):
-        n = doc.norm_text.count(name)
-        led.check(f"retired name absent: {name}", n == 0, f"{n} outside the rename table")
+    """D38. A retired name is retired in every case and every inflection.
+
+    v3.1's own check counts the exact string, so `Lawbound` is banned and
+    `lawbound` is not — and prose lower-cases a proper noun the moment it
+    becomes an adjective ("the lawbound era"). The rename tables stay exempt:
+    they are marked `<!--allow-retired-->` and excluded from `norm_text`,
+    because quoting a retired name to say it is retired is the one place it
+    belongs.
+    """
+    for name in ("Lawbound", "lawborn", "Echo Knight", "Moss Giant",
+                 "Creator Fund", "Masquerade"):
+        pattern = (r"\b" + re.escape(name).replace(r"\ ", r"\s+")
+                   + r"(?:s|\u2019s|'s)?\b")
+        hits = re.findall(pattern, doc.norm_text, flags=re.I)
+        led.check(f"retired name absent: {name}", not hits,
+                  f"{len(hits)} outside the rename table: {sorted(set(hits))[:3]}")
+
+
+#: A number restated about a constant, in the words the document uses for that
+#: constant's unit rather than in the one sentence that defines it. The
+#: declared `pattern` in `constants.json` finds the home; these find every
+#: other mention, which is where a second value hides.
+CONSTANT_UNITS = {
+    "tick_rate":  r"([\d,]+)\s*(?:simulation\s+)?steps a second",
+    "law_count":  r"(?:there are |all )([\d,]+) laws\b",
+    "crew_size":  r"crew of (\d+ to \d+)",
+    "page_total": r"([\d,]+) pages in total",
+}
+
+#: A restatement in the past tense is a record, not a claim. §31's own table of
+#: what went wrong says "The simulation ran at 20 steps a second in 7.3" — the
+#: contradiction C7 was, quoted in order to say it is closed. A check that
+#: cannot tell that from a live second value would report the document's own
+#: audit history as a fault.
+PAST_TENSE = re.compile(r"\b(ran|was|were|used to|previously|had)\b"
+                        r"|the contradiction", re.I)
+
+
+def check_constant_restatements(doc: Doc, led: Ledger) -> None:
+    """D38. Every number the document attaches to a constant's unit.
+
+    `check_constants` compares each constant against the one pattern
+    `constants.json` declares for it — `fixed (\d+) steps a second` — so a
+    second value stated in any other words is compared against nothing. That
+    is C7 reintroduced, and v3.1's gate would report it green.
+
+    This reads the unit instead of the sentence, which is what
+    `check_page_economy` does for page prices, applied to the other four.
+    """
+    if not os.path.exists(CONSTANTS):
+        return
+    declared = json.load(open(CONSTANTS, encoding="utf-8"))
+    for key, pattern in CONSTANT_UNITS.items():
+        want = str(declared[key]["value"]).replace(",", "")
+        wrong = []
+        for m in re.finditer(pattern, doc.norm_text, flags=re.I):
+            if m.group(1).replace(",", "") == want:
+                continue
+            window = doc.norm_text[max(0, m.start() - 90):m.end() + 40]
+            if PAST_TENSE.search(window):
+                continue               # the document's own audit history
+            wrong.append(f"{m.group(1)} against {declared[key]['value']}"
+                         f" \u2014 \u201c{window[-70:].strip()}\u201d")
+        led.check(f"every mention of {key} in its own units agrees with "
+                  f"\u00a7{declared[key]['home'].split()[0]}",
+                  not wrong, "; ".join(wrong[:2]))
+
+
+def _content_laws() -> list:
+    """The 48 authored law sheets, as extracted."""
+    with open(os.path.join(ROOT, "content", "laws.json"), encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def check_rank_scheme_stated_once(doc: Doc, led: Ledger) -> None:
+    """D38, C3. A per-school rank distribution stated anywhere must be the
+    sheets'.
+
+    The ban on the retired three-rank scheme lists three phrasings, all
+    singular, so the plural evades it. The distribution is a number per rank
+    and the 48 sheets state it, so it can be compared rather than recognised:
+    a sentence saying what each school has either matches 3/2/1/2 or does not.
+    """
+    per_school = collections.Counter(law["rank"] for law in _content_laws())
+    schools = len({law["school"] for law in _content_laws()}) or 1
+    want = {rank: n // schools for rank, n in per_school.items()}
+    words = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+             "six": 6, "seven": 7, "eight": 8}
+    wrong = []
+    # "…laws" is not required: a restatement may say "three commons, three
+    # rares and two deeps" and mean exactly the same distribution. The anchor
+    # is the claim, not the noun after it.
+    for m in re.finditer(r"[Ee]ach school has ([^.]+)", doc.norm_text,
+                         flags=re.S):
+        stated = {}
+        for count, rank in re.findall(
+                r"(\w+)\s+(common|uncommon|rare|deep)s?\b",
+                m.group(1), flags=re.I):
+            stated[rank.capitalize()] = words.get(count.lower())
+        if stated and stated != want:
+            wrong.append(f"{stated} against the sheets' {want}")
+    # Deliberately untracked. C3 is open because §7.9's table and §7.6's
+    # restore line disagree with the sheets, and this covers neither — a
+    # tracked check that passes while its item is open reports a retirement,
+    # and "C3 can be closed" is exactly the wrong thing for it to say.
+    led.check("every per-school rank distribution matches the 48 sheets",
+              not wrong, "; ".join(wrong[:2]))
+
+
+#: Asserting the retired single-cone model, as opposed to saying it is gone.
+#: §12.8 says "The older single-cone and percent-per-second rules are gone" and
+#: §12.17 opens "Vision is not one cone but three zones inside a cone" — both
+#: name the model in order to bury it, and a check that cannot tell an
+#: assertion from a burial reports the fix as the fault.
+SINGLE_CONE = re.compile(r"\b(?:one|a single|single(?:-|\s))\s*[\w-]*\s*cone\b",
+                         re.I)
+NOT_ASSERTED = re.compile(r"\bnot\b|\bno longer\b|\bgone\b|retired|superseded"
+                          r"|older|deleted", re.I)
+
+
+def check_no_single_cone_claim(doc: Doc, led: Ledger) -> None:
+    """D38, C1. No sentence may describe a guard's vision as one cone.
+
+    §12.17's table gives every guard graded zones and a peripheral angle wider
+    than its cone, and `check_detection_model` asserts that. What it does not
+    do is read the rest of the document for a sentence contradicting the table
+    it just read, which is where the retired model would actually come back.
+    """
+    asserted = [s.strip() for s in re.split(r"(?<=[.!?])\s+", doc.norm_text)
+                if SINGLE_CONE.search(s) and not NOT_ASSERTED.search(s)]
+    led.check("no sentence describes a guard's vision as a single cone",
+              not asserted, "; ".join(a[:70] for a in asserted[:2]), tracks="C1")
 
 
 def check_arithmetic(doc: Doc, led: Ledger) -> None:
@@ -985,6 +1114,9 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
 
     check_constants(doc, led)
     check_retired_names(doc, led)
+    check_constant_restatements(doc, led)
+    check_rank_scheme_stated_once(doc, led)
+    check_no_single_cone_claim(doc, led)
     check_arithmetic(doc, led)
     check_inventory(doc, led)
     check_asset_budget(doc, led)

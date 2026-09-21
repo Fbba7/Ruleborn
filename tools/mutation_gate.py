@@ -104,7 +104,7 @@ RESTATEMENTS = [
 #: an *improvement* that nobody notices: derive one of the remaining bans and
 #: a restatement flips to caught, and this says so rather than passing quietly.
 EXPECTED_VENDOR = 0
-EXPECTED_OURS = {"percent awareness, as a threshold", "the page costs, rearranged"}
+EXPECTED_OURS = {name for name, *_ in RESTATEMENTS}
 
 
 def vendor_copy(tmp: pathlib.Path) -> pathlib.Path:
@@ -204,11 +204,12 @@ def report(quick: bool = False) -> int:
         vendor_caught = sum(1 for r in rows if r["vendor"])
         ours = {r["name"] for r in rows if r["ours"]}
         print(f"  The shipped gate catches {vendor_caught} of {len(rows)}; this "
-              f"repository's catches {len(ours)}.")
-        print("  The ones it catches are exactly the two bans F24's rule has "
-              "already replaced\n  with a check derived from the document's own "
-              "tables. The other four are\n  still phrase bans, in both "
-              "checkers, and that is F24's remaining programme.")
+              f"repository's catches {len(ours)} of {len(rows)}.")
+        print("  All four bans are derived now: from the constants' own units, "
+              "the 48 sheets'\n  per-school distribution, \u00a712.17's vision "
+              "table, and a retired name read\n  case-insensitively. That is "
+              "F24's programme finished, and D38 is the measurement\n  that "
+              "said which four were still phrase bans.")
         if vendor_caught != EXPECTED_VENDOR or ours != EXPECTED_OURS:
             print(f"\n  This has moved: expected the shipped gate to catch "
                   f"{EXPECTED_VENDOR} and ours to catch {sorted(EXPECTED_OURS)}.")
