@@ -508,10 +508,10 @@
       is not there or appears twice.</p>
 
     <div class="summary">
-      <div><span class="n">117</span><span class="k">items tracked</span></div>
+      <div><span class="n">118</span><span class="k">items tracked</span></div>
       <div><span class="n">36</span><span class="k">open, none drafted</span></div>
       <div><span class="n">35</span><span class="k">fixed in the document</span></div>
-      <div><span class="n">28</span><span class="k">done or adopted</span></div>
+      <div><span class="n">29</span><span class="k">done or adopted</span></div>
       <div><span class="n">31</span><span class="k">blocking the build</span></div>
       <div><span class="n">72</span><span class="k">edits drafted</span></div>
       <div><span class="n">21 Sep</span><span class="k">last generated</span></div>
@@ -519,21 +519,21 @@
 <nav class="tabs" aria-label="Backend or frontend">
       <button class="tab" data-side="all" title="every item in the register" aria-pressed="true">
         <span class="tab-head"><span class="tab-name">Everything</span>
-          <span class="tab-n">117</span></span>
+          <span class="tab-n">118</span></span>
         <span class="bar">
-          <span class="fill drafted" style="width:69.2%"></span>
-          <span class="fill settled" style="width:54.7%"></span>
+          <span class="fill drafted" style="width:69.5%"></span>
+          <span class="fill settled" style="width:55.1%"></span>
         </span>
-        <span class="tab-foot">64 settled &middot; 17 drafted &middot; 36 open</span>
+        <span class="tab-foot">65 settled &middot; 17 drafted &middot; 36 open</span>
       </button>
       <button class="tab" data-side="backend" title="rules, numbers and the simulation">
         <span class="tab-head"><span class="tab-name">Backend</span>
-          <span class="tab-n">111</span></span>
+          <span class="tab-n">112</span></span>
         <span class="bar">
-          <span class="fill drafted" style="width:68.5%"></span>
-          <span class="fill settled" style="width:53.2%"></span>
+          <span class="fill drafted" style="width:68.8%"></span>
+          <span class="fill settled" style="width:53.6%"></span>
         </span>
-        <span class="tab-foot">59 settled &middot; 17 drafted &middot; 35 open</span>
+        <span class="tab-foot">60 settled &middot; 17 drafted &middot; 35 open</span>
       </button>
       <button class="tab" data-side="frontend" title="anything a player sees">
         <span class="tab-head"><span class="tab-name">Frontend &amp; design</span>
@@ -571,7 +571,7 @@
         </span>
         <span class="tab-foot">3 of 5 gates cleared</span>
       </button></nav>
-    <p class="tabs-note">The first three bars measure the <em>audit</em>: an item is settled when the document answers it. 11 items need both sides and count on both, so those two add up to more than 117.<br><br><strong>The last three answer a different question &mdash; when can the drawing start?</strong> Each counts only the items that decide something its designer would otherwise have to guess, so 100% means that area can begin, not that the project is done. Nothing has been drawn yet; these say what each area is waiting on, and the panel above lists every gate by name.</p>
+    <p class="tabs-note">The first three bars measure the <em>audit</em>: an item is settled when the document answers it. 11 items need both sides and count on both, so those two add up to more than 118.<br><br><strong>The last three answer a different question &mdash; when can the drawing start?</strong> Each counts only the items that decide something its designer would otherwise have to guess, so 100% means that area can begin, not that the project is done. Nothing has been drawn yet; these say what each area is waiting on, and the panel above lists every gate by name.</p>
   </header>
 
   <section class="handoff">
@@ -649,8 +649,8 @@
   </section>
 
   <nav class="filters" aria-label="Filter the register">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">117</span></button>
-    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">41</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">22</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">24</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">13</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">41</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">118</span></button>
+    <button class="chip" data-filter="group:changes">What changed about the approach<span class="n">42</span></button><button class="chip" data-filter="group:blocking">Blocking<span class="n">22</span></button><button class="chip" data-filter="group:design">Design findings<span class="n">9</span></button><button class="chip" data-filter="group:significant">Significant<span class="n">24</span></button><button class="chip" data-filter="group:minor">Minor<span class="n">13</span></button><button class="chip" data-filter="group:choices">Decisions that are yours<span class="n">8</span></button><button class="chip alt" data-filter="kind:gap">Specified nowhere<span class="n">12</span></button><button class="chip alt" data-filter="status:fixed">Fixed in v3.0<span class="n">35</span></button><button class="chip alt" data-filter="edits:yes">Has edits to make<span class="n">41</span></button>
   </nav>
 
   <main id="list">
@@ -1202,6 +1202,27 @@
         
         <p class="body">§12.6 sets the game’s pace in its own words: <em>“a string of small, tense decisions: roughly one every 8 to 12 seconds, or 15 to 25 in a run… never about tapping faster”</em>, and it names <em>“when to use abilities and casts”</em> as one of the decisions it is counting.<br><br>An ability comes off cooldown every <em>c</em> seconds per character, so a crew of <em>n</em> over a clock of <em>t</em> gets <code>t×n/c</code> windows. §12.5 puts the crew at 3, 4 from Keeper 8 and 5 from Keeper 16, and the clock at 150 to 240 seconds. Against §11.11’s median 18-second cooldowns that is <strong>25 windows at the smallest and 67 at the largest</strong>; against §11.2’s median 14, <strong>31 and 83</strong>.<br><br>So the smallest case in the document — a crew of three on a short route — exactly reaches the top of §12.6’s budget, and every case above it overruns. <strong>The overrun is not a tuning miss; it grows with the player.</strong> The crew goes 3 to 5 and the clock 150 to 240 as Keeper levels rise, so the game gets roughly two and a half times more frantic between Keeper 1 and Keeper 16, and §12.6 describes the first of those and not the second.<br><br>For one ability to come off cooldown at §12.6’s own 8-to-12-second cadence, cooldowns would have to be 24–36 seconds at a crew of three and 40–60 at a crew of five. Both tables are 8–24.</p>
         <p class="rec"><span class="arrow">&rarr;</span> Answer one question and all eighteen cooldowns follow from it: <strong>is using an ability one of the decisions §12.6 is counting, or is it texture between them?</strong><br><br><strong>A decision.</strong> Cooldowns go to roughly 24 to 60 seconds and scale with crew size, so a character’s ability fires once or twice in a heist and choosing the moment is the point. §12.6’s count stands as written. This is the reading its own words support.<br><br><strong>Texture.</strong> Keep the short cooldowns and rewrite §12.6’s count to be about routes, pylons and greed, with abilities explicitly outside it. Then say what stops the phone becoming a tapping game, which §12.6 currently rules out in the same paragraph.<br><br>Either way the number is one decision rather than eighteen, which is why C6’s drafted abilities settle the effects and leave the cooldowns here. <code>tools/ability_text.py --self-test</code> pins the overrun, so a re-cost that brings a table inside the budget fails the build and sends someone back to this item.</p>
+        
+        
+        
+      </article>
+      <article class="item sig" id="D42" data-group="changes"
+               data-kind="deviation" data-status="done"
+               data-side="backend"
+               data-areas=""
+               data-edits="no">
+        <header class="item-head">
+          <span class="id">D42</span>
+          <h3>The guard written for D41 found the same bug in a second extractor, on its first run</h3>
+          <span class="kind">change</span>
+          <span class="status s-done">Done</span>
+          <span class="side side-backend">backend</span>
+          
+        </header>
+        <div class="refs"><span class="ref">§31.2</span><span class="ref">§31.4</span><span class="ref">§11.7</span><span class="ref">§11.11</span></div>
+        
+        <p class="body">D41 was a law sheet whose block ran to the end of the document, so a column heading from §21.7 landed in §7.7’s content. The fix was one line of bounding; the interesting question was what else that shape had done.<br><br><strong>A general guard for it: every extracted value has to be inside the section it was read from.</strong> That is independent of how the extractor pairs cells, which is the part that keeps going wrong — <code>fields()</code> and <code>table()</code> both zip by position, so one stray cell shifts every row after it, and a shifted value almost always comes from outside its own section.<br><br><strong>It found a second one immediately.</strong> <code>content/ruleborn.json</code> gave Soulmender a look of <strong><code>“The Archivist”</code></strong> — a Sage’s name from §11.7. §11.11 says <em>“Hooded moth-like spirit”</em>. Same cause exactly: Soulmender is the eighteenth and last creature in the bible, its block was unbounded, and a later <code>| Look</code> pair overwrote it.<br><br>Two extractors, the same last-block bug, one field wrong in each. Both files are read by every tool in this repository and both were wrong for as long as the extraction has existed.<br><br><strong>The two guards catch different things, which is why there are two.</strong> D41’s bad value was the label <em>“How characters move”</em>, which <em>is</em> inside §7.7 — provenance would have passed it, and the label check catches it. D42’s was a sentence from another section — the label check passes it, and provenance catches it. Neither is the whole net.</p>
+        <p class="rec"><span class="arrow">&rarr;</span> Fixed. Both extractors bound their last block at the next section heading, and re-extracting changes exactly one field in each: Mirror images’ world signature and Soulmender’s look, both to what the document says.<br><br><code>validate_content.check_provenance()</code> declares where each of the twelve content files is read from and refuses a value that is not there. Two kinds of exception are named rather than filtered: the keys this repository <em>adds</em> to the document’s content — which register item a row waits on, what the document does not state about it — and the files with two sources, which are <code>ruleborn.json</code> (§11.11’s bible plus the columns §11.2 adds) and <code>buildings.json</code>, where the Library is in §10.4 instead of §10.2 and being outside §10.2 is C8.<br><br>Ten of the twelve files came back clean on the first run, which is the useful half of the result: the extraction is sound apart from a bug that only ever bites the last row, and now there is something that would say so.</p>
         
         
         
@@ -3306,4 +3327,4 @@
     apply();
   })();
 </script>
-<!-- ruleborn-build 4e8ef83dc0f993f3 -->
+<!-- ruleborn-build 2fc1509de424e442 -->

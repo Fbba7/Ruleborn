@@ -2441,6 +2441,57 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D42", kind="deviation", severity="significant", status="done",
+     title="The guard written for D41 found the same bug in a second "
+           "extractor, on its first run",
+     refs=["31.2", "31.4", "11.7", "11.11"],
+     body="D41 was a law sheet whose block ran to the end of the document, so "
+          "a column heading from \u00a721.7 landed in \u00a77.7\u2019s content. "
+          "The fix was one line of bounding; the interesting question was what "
+          "else that shape had done."
+          "<br><br><strong>A general guard for it: every extracted value has "
+          "to be inside the section it was read from.</strong> That is "
+          "independent of how the extractor pairs cells, which is the part "
+          "that keeps going wrong \u2014 <code>fields()</code> and "
+          "<code>table()</code> both zip by position, so one stray cell shifts "
+          "every row after it, and a shifted value almost always comes from "
+          "outside its own section."
+          "<br><br><strong>It found a second one immediately.</strong> "
+          "<code>content/ruleborn.json</code> gave Soulmender a look of "
+          "<strong><code>\u201cThe Archivist\u201d</code></strong> \u2014 a "
+          "Sage\u2019s name from \u00a711.7. \u00a711.11 says <em>\u201cHooded "
+          "moth-like spirit\u201d</em>. Same cause exactly: Soulmender is the "
+          "eighteenth and last creature in the bible, its block was unbounded, "
+          "and a later <code>| Look</code> pair overwrote it."
+          "<br><br>Two extractors, the same last-block bug, one field wrong in "
+          "each. Both files are read by every tool in this repository and both "
+          "were wrong for as long as the extraction has existed."
+          "<br><br><strong>The two guards catch different things, which is why "
+          "there are two.</strong> D41\u2019s bad value was the label "
+          "<em>\u201cHow characters move\u201d</em>, which <em>is</em> inside "
+          "\u00a77.7 \u2014 provenance would have passed it, and the "
+          "label check catches it. D42\u2019s was a sentence from another "
+          "section \u2014 the label check passes it, and provenance catches "
+          "it. Neither is the whole net.",
+     rec="Fixed. Both extractors bound their last block at the next section "
+         "heading, and re-extracting changes exactly one field in each: Mirror "
+         "images\u2019 world signature and Soulmender\u2019s look, both to what "
+         "the document says."
+         "<br><br><code>validate_content.check_provenance()</code> declares "
+         "where each of the twelve content files is read from and refuses a "
+         "value that is not there. Two kinds of exception are named rather "
+         "than filtered: the keys this repository <em>adds</em> to the "
+         "document\u2019s content \u2014 which register item a row waits on, "
+         "what the document does not state about it \u2014 and the files with "
+         "two sources, which are <code>ruleborn.json</code> "
+         "(\u00a711.11\u2019s bible plus the columns \u00a711.2 adds) and "
+         "<code>buildings.json</code>, where the Library is in \u00a710.4 "
+         "instead of \u00a710.2 and being outside \u00a710.2 is C8."
+         "<br><br>Ten of the twelve files came back clean on the first run, "
+         "which is the useful half of the result: the extraction is sound "
+         "apart from a bug that only ever bites the last row, and now there is "
+         "something that would say so."),
+
 dict(id="D41", kind="deviation", severity="significant", status="done",
      title="One law sheet\u2019s block ran to the end of the document, and a "
            "field label became a field value",

@@ -212,7 +212,14 @@ def extract_ruleborn(text: str) -> list[dict]:
 
     out = []
     for idx, (i, m) in enumerate(heads):
-        end = heads[idx + 1][0] if idx + 1 < len(heads) else len(lines)
+        # The same unbounded last block as the law sheets (D41): the eighteenth
+        # creature's ran to the end of the document, so a later "| Look" pair
+        # overwrote Soulmender's with a Sage's name. Bound it at the next
+        # section heading. D42.
+        end = (heads[idx + 1][0] if idx + 1 < len(heads)
+               else next((k for k in range(i + 1, len(lines))
+                          if re.match(r"\d+\.\d+ |^\d+[A-Z]", lines[k])),
+                         len(lines)))
         raw = fields("\n".join(lines[i + 1:end]))
         name = m.group(1).strip()
         entry = {

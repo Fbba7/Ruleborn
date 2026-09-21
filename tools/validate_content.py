@@ -90,6 +90,88 @@ errors: list[str] = []
 open_items: list[tuple[str, str]] = []
 
 
+#: Where each content file's values come from, as (first heading, next
+#: heading) pairs in the design document. A file may have more than one source:
+#: `ruleborn.json` carries \u00a711.11's bible and the columns \u00a711.2 adds,
+#: and `buildings.json` carries \u00a710.2's table plus the Library, which
+#: \u00a710.4 specifies instead \u2014 and being outside \u00a710.2 is C8.
+EXTRACTED_FROM = {
+    "laws":       [("7.7 Every law in full", "7.8 ")],
+    "ruleborn":   [("11.11 The character bible", "12Heists"),
+                   ("11.2 The 18 ruleborn", "11.3 ")],
+    "terrain":    [("6.2 The 39 features", "6.3 ")],
+    "notes":      [("8.1 The eight notes", "8.2 ")],
+    "resonances": [("8.4 Signature resonances", "8.5 ")],
+    "chords":     [("8.5 Chords", "8.6 ")],
+    "roles":      [("11.1 Roles", "11.2 ")],
+    "traits":     [("11.3 Traits", "11.4 ")],
+    "buildings":  [("10.2 Every level of every building", "10.3 "),
+                   ("10.4 The Library", "11Characters")],
+    "wards":      [("10.3 Wards", "10.4 ")],
+    "eras":       [("18.3 Eras", "18.4 ")],
+    "sages":      [("11.7 Sages, the heroes", "11.8 ")],
+}
+
+#: Keys the extractor *adds* rather than reads. These are this repository's
+#: annotations on the document's content \u2014 which register item a row waits
+#: on, what the document does not state about it \u2014 so they have no
+#: provenance in the document by design.
+ANNOTATIONS = {"id", "source", "needs_decision", "conflict_severity",
+               "missing", "note", "_source", "_status", "_note", "_tick_rate"}
+
+
+def check_provenance() -> list[str]:
+    """D42. Every extracted value must be inside the section it was read from.
+
+    D41 was a law sheet whose block ran to the end of the document, so the
+    extractor re-paired every table after it and a column heading from
+    \u00a721.7 landed in \u00a77.7's content. The bug was in the bounding, and
+    nothing in this file could see it: it checked that every required field was
+    *present*, never that a value came from where it claims to.
+
+    This is the general guard for that class, and it is independent of how the
+    extractor pairs cells \u2014 which is the part that keeps going wrong.
+    `fields()` and `table()` both zip by position, so one stray cell shifts
+    every row after it, and a shifted value almost always comes from outside
+    its own section.
+
+    It is not the whole net. D41's actual bad value was the *label* "How
+    characters move", which does appear inside \u00a77.7 \u2014 that one is
+    caught by the label check above. A value pulled from a neighbouring section
+    is caught here. The two overlap in neither direction, which is why both
+    exist.
+    """
+    doc = DOC_TEXT.read_text(encoding="utf-8")
+    out = []
+    for name, sources in EXTRACTED_FROM.items():
+        path = CONTENT / f"{name}.json"
+        if not path.exists():
+            continue
+        spans = []
+        for first, nxt in sources:
+            try:
+                start = doc.index("\n" + first)
+                spans.append(doc[start:doc.index("\n" + nxt, start)])
+            except ValueError:
+                out.append(f"{name}: the document has no section "
+                           f"\u201c{first}\u201d to read it from")
+        if not spans:
+            continue
+        rows = json.loads(path.read_text(encoding="utf-8"))
+        for row in (rows if isinstance(rows, list) else [rows]):
+            if not isinstance(row, dict):
+                continue
+            for key, value in row.items():
+                if key in ANNOTATIONS or not isinstance(value, str):
+                    continue
+                if value.strip() and not any(value.strip() in s for s in spans):
+                    out.append(
+                        f"{name}: {row.get('name', row.get('id', '?'))}.{key} "
+                        f"is \u201c{value.strip()[:44]}\u201d, which is not in "
+                        f"{' or '.join(a for a, _ in sources)}")
+    return out
+
+
 def err(msg: str) -> None:
     errors.append(msg)
 
@@ -206,6 +288,9 @@ def main() -> int:
                     err(f"{name}: {row.get('name', row.get('id', '?'))}.{key} "
                         f"is {value!r}, which is a field label rather than a "
                         f"value \u2014 the extractor mis-paired a table")
+
+    for problem in check_provenance():
+        err(problem)
 
     # -- laws --------------------------------------------------------------
     ids = [law["id"] for law in laws]
@@ -690,6 +775,24 @@ def self_test() -> int:
           f"curve is 10.4's own at all {len(doc_levels)} levels"
           + (f" \u2014 differs at {bad}" if bad else ""))
     ok = ok and not bad
+
+    # D42's guard, shown to fail. Planted in the content rather than in a
+    # fixture, because the check walks the committed files and a fixture would
+    # prove the `in` works rather than that the walk arrives.
+    import json as _json
+    path = CONTENT / "ruleborn.json"
+    original = path.read_text(encoding="utf-8")
+    rows = _json.loads(original)
+    rows[0]["look"] = "The Archivist"          # a Sage's name, from \u00a711.7
+    path.write_text(_json.dumps(rows, indent=1, ensure_ascii=False) + "\n",
+                    encoding="utf-8")
+    try:
+        caught = any("look" in p and "not in" in p for p in check_provenance())
+    finally:
+        path.write_text(original, encoding="utf-8")
+    print(f"  [{'PASS' if caught else 'FAIL'}] a value read from outside its "
+          f"own section is caught")
+    ok = ok and caught
     return 0 if ok else 1
 
 
