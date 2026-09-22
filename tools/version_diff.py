@@ -118,6 +118,76 @@ def report(old: str, new: str, items: bool) -> int:
     return 0
 
 
+
+def fact_numbers(value) -> list[str]:
+    """The numbers a design fact is made of, as the document would write them."""
+    if isinstance(value, dict):
+        value = tuple(value.values())
+    if not isinstance(value, (tuple, list)):
+        value = (value,)
+    out = []
+    for v in value:
+        if isinstance(v, (int, float)):
+            out.append(str(int(v)) if float(v).is_integer() else str(v))
+    return out
+
+
+def facts_moved(old: str, new: str) -> list[tuple[str, str, list[str], bool, bool]]:
+    """Each design fact, and whether its home still states it in each version.
+
+    A section can be rewritten without the fact in it moving \u2014 v3.2
+    rewrote \u00a713.2 at length and left the 30 to 45% hold band alone. Every
+    finding measured against that band therefore stands, and no amount of
+    reading the new prose would establish it as cheaply as this does.
+
+    This is the difference between *cites* and *measures*. ``--items`` diffs at
+    the section, which over-reports: it put every realm finding on the
+    worklist because \u00a713.2 moved. A finding survives a version unless the
+    number it was measured against moved.
+    """
+    import design_facts
+    a = check_document.section_index(load(old))
+    b = check_document.section_index(load(new))
+    rows = []
+    for name, home in sorted(design_facts.HOME.items()):
+        if not re.fullmatch(r"\d+\.\d+", home):
+            continue                      # lives in content/, not a section
+        want = fact_numbers(getattr(design_facts, name))
+        if not want:
+            continue
+        def states(index):
+            body = index.get(home, "")
+            nums = {n.replace(",", "") for n in re.findall(
+                r"\d+(?:,\d{3})*(?:\.\d+)?", body)}
+            return all(w in nums for w in want)
+        rows.append((name, home, want, states(a), states(b)))
+    return rows
+
+
+def facts_report(old: str, new: str) -> int:
+    rows = facts_moved(old, new)
+    d = compare(old, new)
+    changed = set(d["changed"])
+    print(f"Every fact the measurements read, against the section that owns "
+          f"it.\n")
+    moved = []
+    for name, home, want, was, now in rows:
+        mark = ("held" if was and now else
+                "GONE" if was and not now else
+                "new " if now else "absent in both")
+        note = " (section rewritten)" if home in changed else ""
+        print(f"  {mark}  {name:24} \u00a7{home:6} {' '.join(want)}{note}")
+        if was and not now:
+            moved.append(name)
+    print(f"\n  {len(rows)} facts read from a section; {len(moved)} moved.")
+    print("\n  A finding measured against a fact that held cannot have changed, "
+          "whatever\n  its sections did. \u00a713.2 was rewritten at length in "
+          "v3.2 and the hold band\n  it owns is the same 30 to 45% \u2014 so "
+          "every realm finding measured against\n  that band stands, and "
+          "reading the new prose would not have settled it faster.")
+    return 0
+
+
 def section_diff(old: str, new: str, num: str) -> int:
     a = check_document.section_index(load(old)).get(num, "")
     b = check_document.section_index(load(new)).get(num, "")
@@ -174,6 +244,7 @@ def main() -> int:
     ap.add_argument("--from", dest="old", default=None)
     ap.add_argument("--to", dest="new", default=VERSION)
     ap.add_argument("--items", action="store_true")
+    ap.add_argument("--facts", action="store_true")
     ap.add_argument("--section")
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args()
@@ -182,6 +253,8 @@ def main() -> int:
     old = args.old or previous()
     if args.section:
         return section_diff(old, args.new, args.section)
+    if args.facts:
+        return facts_report(old, args.new)
     return report(old, args.new, args.items)
 
 

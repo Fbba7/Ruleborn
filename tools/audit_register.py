@@ -2441,6 +2441,93 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D54", kind="deviation", severity="significant", status="done",
+     title="v3.2 rewrote §13.2 at length and moved no number the realm "
+           "findings are measured against",
+     refs=["13.2", "5.2", "10.2", "10.3", "12.17", "6.1"],
+     body="Six of the nine open realm gates — F9, F11, F16, F22, F26, "
+          "F27 — are measurements, not readings. v3.2 rewrote "
+          "§13.2, which is where F26 and F9 are aimed, so the question "
+          "is whether the measurements moved."
+          "<br><br><strong>They cannot have.</strong> Every input is "
+          "byte-identical between v3.1 and v3.2:"
+          "<br><code>§5.2 &nbsp;ward and guard-post counts &nbsp;unchanged<br>"
+          "§10.2 the Guardian Post ladder &nbsp;&nbsp;&nbsp;unchanged<br>"
+          "§10.3 ward effects &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unchanged<br>"
+          "§6.1 &nbsp;terrain points &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unchanged<br>"
+          "§12.17 guard vision &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unchanged<br>"
+          "§13.2 the 30–45% hold band &nbsp;&nbsp;<strong>rewritten, "
+          "band unchanged</strong></code>"
+          "<br><br>Re-running <code>tools/post_ladder.py</code> against v3.2 "
+          "reproduces F27's figures to the digit — 26.2%, 34.2%, 40.0%, "
+          "40.0% at realm level 1 — which is the empirical half of the "
+          "same answer."
+          "<br><br><strong>What §13.2 gained is real and it is about "
+          "something else.</strong> It now says the health signal is the "
+          "shape of the outcomes rather than the average, cites Supercell on "
+          "polarisation, and then reports that applied to a single crew the "
+          "signal inverts — a crew reading suspicion and vision cones "
+          "puts 16% of its runs in the middle bands against a fixed "
+          "threshold's 70%. That is F21, answered, and F21 is closed. It says "
+          "nothing about whether a realm can reach the band, which is what "
+          "the other six are about.",
+     rec="Recorded so it does not have to be re-derived next version. "
+         "<code>python3 tools/version_diff.py --facts</code> reads every "
+         "constant in <code>design_facts.py</code> against the section that "
+         "owns it, in both versions, and prints which moved. Eight facts, "
+         "none moved."
+         "<br><br><strong>The distinction is worth keeping.</strong> "
+         "<code>--items</code> diffs at the section and put all six of these "
+         "on the worklist because §13.2 moved; <code>--facts</code> "
+         "diffs at the number and takes them off it. A finding survives a "
+         "version unless the number it was measured against moved, and "
+         "reading the new prose would not have established that faster or "
+         "more surely."
+         "<br><br>So <strong>Realms is exactly where it was</strong>: nine "
+         "gates, none cleared by v3.2, and all nine waiting on a decision "
+         "rather than on more measurement."),
+
+dict(id="D53", kind="contradiction", severity="significant", status="open",
+     title="§13.4 names §5.2 as the home of the law slots and then "
+           "gives different ones",
+     refs=["13.4", "5.2", "31.2", "32.3"],
+     body="v3.2 added a limits table to §13.4 — what a realm may hold "
+          "at each level — and wrote the contradiction into the section "
+          "itself:"
+          "<br><br><em>“Law slots do not yet agree — 5.2 gives "
+          "1/1/2/2/3 across realm levels 1 to 5 and the table below gives "
+          "1/3/5, and <strong>5.2 is the home</strong>.”</em>"
+          "<br><br>Read off both tables: wards agree at 4, 6 and 8, guard "
+          "posts agree at 1, 2 and 3, and <strong>law slots differ at realms "
+          "3 and 5</strong> — two against three, and three against five. "
+          "The agreement of the other two columns is what makes this a "
+          "disagreement rather than two tables written to different purposes."
+          "<br><br><strong>It is the honest form of the fault and it is still "
+          "the fault.</strong> Naming which table is the home is §31.2 "
+          "done properly, and better than every other instance this register "
+          "records, because a reader who hits the contradiction is told how "
+          "to resolve it. Leaving the other table wrong is §32.3's "
+          "category — decided, not applied — appearing inside a "
+          "table rather than in the list of four the document keeps for "
+          "exactly that."
+          "<br><br>It is not cosmetic. Law slots decide how many laws a realm "
+          "can weave, which is what a generated defence is built from: at "
+          "realm 5 the difference is three laws against five, and F11 is the "
+          "finding that weaving the player's own laws makes a generated "
+          "defence <em>worse</em>. Whichever number is right changes what "
+          "that measurement is measuring.",
+     rec="Take §5.2's, which §13.4 already says is the home: 1, 3 "
+         "and 5 become 1, 2 and 3. Drafted below."
+         "<br><br><code>check_document.check_realm_budgets()</code> compares "
+         "the two tables column by column, so the next edit to either is "
+         "checked against the other. Both parse; §13.4's rows are ragged "
+         "— only the first carries the price cell — so it is read "
+         "as runs of four numbers rather than by a fixed width, which is what "
+         "a first attempt got wrong."),
+
 dict(id="D51", kind="deviation", severity="minor", status="open",
      title="v3.2 invented the home marker the audit had been asking for, and "
            "one of its six points at the wrong section",
@@ -5219,6 +5306,20 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+
+"D53": [
+    dict(section="13.4", action="replace",
+         find="Wards follow the rule already in 5.2: three plus the realm "
+              "level.",
+         replace="Wards follow the rule already in 5.2: three plus the realm "
+                 "level. Law slots follow 5.2 too \u2014 one at realm levels "
+                 "1 and 2, two at 3 and 4, three at 5 \u2014 so the column "
+                 "above reads 1, 2, 3 at the levels it shows.",
+         why="\u00a713.4 says \u00a75.2 is the home of the law slots and "
+             "then tabulates 1/3/5 where \u00a75.2 gives 1/2/3 at the same "
+             "levels. Wards and guard posts already agree; this is the one "
+             "column that does not. D53."),
+],
 
 "D51": [
     dict(section="9.6", action="replace",

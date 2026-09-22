@@ -1408,6 +1408,93 @@ def check_home_markers(doc: Doc, led: Ledger) -> None:
     led.check("every fact marked as owned elsewhere agrees with the section "
               "that owns it", not wrong, " | ".join(wrong), tracks="D51")
 
+
+# --------------------------------------------------------------------------
+# 13.4's limits against 5.2's realm table  (D53)
+# --------------------------------------------------------------------------
+
+def realm_limits(doc: Doc) -> dict[int, dict[str, int]]:
+    """\u00a75.2's per-realm table: law slots, ward limit, guard posts."""
+    body = section_index(doc).get("5.2", "")
+    cells = [ln.strip().lstrip("| ").strip()
+             for ln in body.splitlines() if ln.strip().startswith("|")]
+    try:
+        head = cells.index("Level")
+    except ValueError:
+        return {}
+    width = cells[head:].index("1")          # the header runs to the first row
+    cols = cells[head:head + width]
+    rows = cells[head + width:]
+    out = {}
+    for i in range(0, len(rows) - width + 1, width):
+        row = dict(zip(cols, rows[i:i + width]))
+        if not row.get("Level", "").isdigit():
+            break
+        out[int(row["Level"])] = {
+            k: int(row[k]) for k in ("Law slots", "Ward limit", "Guard posts")
+            if row.get(k, "").isdigit()}
+    return out
+
+
+def budget_table(doc: Doc) -> dict[int, dict[str, int]]:
+    """\u00a713.4's limits table, which v3.2 added.
+
+    Its rows are ragged: only the first carries the price cell, so the row
+    width is five once and four after. Reading it by a fixed width gets the
+    first row and then walks into the next table, which is what happened.
+    Runs of four consecutive numbers are what the table actually is.
+    """
+    body = section_index(doc).get("13.4", "")
+    cells = [ln.strip().lstrip("| ").strip()
+             for ln in body.splitlines() if ln.strip().startswith("|")]
+    if "Realm level" not in cells:
+        return {}
+    out, i = {}, cells.index("Realm level")
+    while i < len(cells) - 3:
+        run = cells[i:i + 4]
+        if all(c.isdigit() for c in run):
+            level, posts, wards, slots = (int(c) for c in run)
+            out[level] = {"Guard posts": posts, "Ward limit": wards,
+                          "Law slots": slots}
+            i += 4
+        else:
+            i += 1
+    return out
+
+
+def check_realm_budgets(doc: Doc, led: Ledger) -> None:
+    """D53. \u00a713.4's limits against \u00a75.2's, which it names as the home.
+
+    v3.2 added a limits table to \u00a713.4 and wrote the contradiction into
+    the section itself: *"Law slots do not yet agree \u2014 5.2 gives 1/1/2/2/3
+    across realm levels 1 to 5 and the table below gives 1/3/5, and 5.2 is the
+    home."*
+
+    That is the honest form of the fault and it is still the fault. Saying
+    which table is the home is \u00a731.2 done properly; leaving the other one
+    wrong is \u00a732.3's category \u2014 decided, not applied \u2014 in a
+    table rather than in the list of four the document keeps for those.
+
+    Wards and guard posts agree across both tables, which is what makes the
+    law-slot column a real disagreement rather than two tables written to
+    different purposes.
+    """
+    five, thirteen = realm_limits(doc), budget_table(doc)
+    led.check("5.2 and 13.4 both state per-realm limits",
+              len(five) >= 5 and len(thirteen) >= 3,
+              f"5.2 gave {len(five)} rows, 13.4 gave {len(thirteen)}")
+    if not five or not thirteen:
+        return
+    wrong = []
+    for level, limits in sorted(thirteen.items()):
+        for key, value in limits.items():
+            home = five.get(level, {}).get(key)
+            if home is not None and home != value:
+                wrong.append(f"realm {level} {key.lower()}: 5.2 says {home}, "
+                             f"13.4 says {value}")
+    led.check("13.4's limits match 5.2's, which 13.4 names as the home",
+              not wrong, "; ".join(wrong), tracks="D53")
+
 def check_creatures(doc: Doc, led: Ledger) -> None:
     if not os.path.exists(CREATURES):
         return
@@ -1889,6 +1976,7 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_every_inventory_mention(doc, led)
     check_evidence_cells(doc, led)
     check_home_markers(doc, led)
+    check_realm_budgets(doc, led)
     check_creatures(doc, led)
     check_page_economy(doc, led)
     check_banned_phrasings(doc, led)
