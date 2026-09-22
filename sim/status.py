@@ -70,8 +70,9 @@ def targets() -> list[dict]:
 def main() -> int:
     floats_ok = subprocess.run([sys.executable, "no_floats.py"], cwd=HERE,
                                capture_output=True).returncode == 0
-    checked, wrong = content_gate.compare(
-        json.loads(content_gate.CONTENT.read_text()), content_gate.source_text())
+    gate = content_gate.compare(*content_gate.load(), content_gate.source_text())
+    checked, wrong = gate["checked"], gate["wrong"] + [
+        f"{p} — compared by nothing and listed nowhere" for p in gate["uncovered"]]
     t = tests()
     g = goldens()
     x = targets()
@@ -88,6 +89,7 @@ def main() -> int:
             "disagree": wrong,
             "not_modelled": [f"{what} — {why}"
                              for what, why in content_gate.NOT_MODELLED],
+            "readings": gate["readings"],
         },
     }
     (HERE / "status.json").write_text(json.dumps(status, indent=1) + "\n")
@@ -95,7 +97,7 @@ def main() -> int:
     passed = sum(1 for v in t.values() if v == "passed")
     agree = sum(1 for r in x if r["agree"])
     print(f"  float ban: {'holds' if floats_ok else 'BROKEN'}")
-    print(f"  content: {len(checked)} values agree with content/detection.json"
+    print(f"  content: {len(checked)} values agree with content/detection.json and roles.json"
           + (f", {len(wrong)} DISAGREE" if wrong else ""))
     print(f"  tests: {passed} of {len(t)} passed")
     print(f"  goldens: {sum(r['verifies'] for r in g)} of {len(g)} verify, "

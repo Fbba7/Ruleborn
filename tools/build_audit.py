@@ -420,12 +420,16 @@ def built_html() -> str:
                         for w in bad)
         lines += "".join(f'<li class="bs waiting"><span class="bv">Not modelled</span> {esc(n)}</li>'
                          for n in content["not_modelled"])
+        lines += "".join(f'<li class="bs waiting"><span class="bv">Not in the document</span> {esc(n)}</li>'
+                         for n in content.get("readings", []))
         content_html = f"""
-    <h3 class="bh">The simulation against <code>content/detection.json</code></h3>
+    <h3 class="bh">The simulation against <code>content/</code></h3>
     <p class="blurb">{content["agree"]} values the simulation carries as constants
-      agree with the content file{f", <strong>{len(bad)} disagree</strong>" if bad else ""}.
-      Every other value in the file is named below as not modelled yet, so none
-      passes as agreeing by being absent.</p>
+      agree with <code>detection.json</code> and <code>roles.json</code>{f", <strong>{len(bad)} disagree</strong>" if bad else ""}.
+      Every other number in those files is named below as not modelled yet, and
+      the gate fails on any it neither compares nor names &mdash; so none passes
+      as agreeing by being absent. Last come the numbers the simulation needs
+      that the document does not give.</p>
     <ul class="blist">{lines}</ul>"""
 
     built = sum(1 for r in rows if r["verdict"] == "built")

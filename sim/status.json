@@ -4,11 +4,13 @@
  "floats_absent": true,
  "tests": {
   "a_command_for_a_crew_member_who_is_not_there_is_dropped": "passed",
+  "a_crew_member_covers_its_roles_distance_whatever_the_tile_edges": "passed",
   "a_crew_member_never_re_routes_itself": "passed",
   "a_diagonal_through_a_corner_crosses_both_side_tiles": "passed",
   "a_fence_stops_feet_and_not_eyes": "passed",
   "a_fog_bank_stops_eyes_and_not_feet": "passed",
   "a_full_length_heist_fits_the_size_budget": "passed",
+  "a_gait_command_changes_the_gait_and_a_bad_one_is_dropped": "passed",
   "a_guard_can_always_see_out_of_its_own_tile": "passed",
   "a_guard_turns_toward_the_way_around_not_toward_the_raider": "passed",
   "a_heist_is_reproducible_from_its_seed": "passed",
@@ -27,6 +29,7 @@
   "a_straight_line_crosses_only_its_own_row": "passed",
   "a_tile_index_round_trips_through_its_coordinates": "passed",
   "a_truncated_or_padded_file_is_refused": "passed",
+  "a_walk_on_gravel_is_heard_where_the_same_walk_on_grass_is_not": "passed",
   "a_walking_raider_is_heard_and_a_standing_one_is_not": "passed",
   "alerted_searches_twenty_seconds_after_losing_sight_then_returns": "passed",
   "an_alert_reaches_guards_within_four_metres_half_a_second_later": "passed",
@@ -39,27 +42,34 @@
   "division_undoes_multiplication_to_within_one_unit": "passed",
   "every_fixture_guard_stands_inside_the_realm": "passed",
   "fixed_point_round_trips_whole_numbers": "passed",
+  "gait_and_light_multiply_the_rate_once": "passed",
   "golden_replays_are_different_heists": "passed",
   "golden_replays_still_verify": "passed",
+  "gravel_and_water_carry_further_and_moss_less": "passed",
   "integer_square_root_is_exact_for_squares": "passed",
   "integer_square_root_never_overshoots": "passed",
   "investigating_walks_to_the_spot_searches_ten_seconds_then_walks_home": "passed",
   "multiplication_is_commutative_and_has_an_identity": "passed",
   "realm_grids_are_the_sizes_5_2_states": "passed",
   "rounding_is_the_same_on_both_sides_of_zero": "passed",
+  "running_is_heard_further_than_walking": "passed",
   "sine_has_the_values_it_must": "passed",
   "sine_is_exactly_odd": "passed",
   "slow_ground_does_change_how_long_the_walk_takes": "passed",
   "slow_ground_does_not_move_the_route": "passed",
   "sounds_carry_the_documents_distances": "passed",
+  "standing_still_in_tall_grass_hides_until_a_guard_walks_in": "passed",
   "streams_are_independent": "passed",
   "suspicion_stays_inside_the_documents_range": "passed",
   "the_checksum_notices_a_single_unit_of_difference": "passed",
+  "the_corner_of_the_eye_notices_at_half_the_rate": "passed",
+  "the_crew_and_the_guards_move_at_their_roles_speeds": "passed",
   "the_generator_is_reproducible": "passed",
   "the_neighbour_order_is_north_east_south_west": "passed",
   "the_pythagorean_identity_holds_to_the_tables_resolution": "passed",
   "the_realm_alarm_climbs_once_every_thirty_seconds_to_six": "passed",
   "the_same_route_is_found_every_time_and_by_both_ends_of_the_grid": "passed",
+  "the_seed_cannot_change_what_a_guard_does": "passed",
   "verification_names_the_second_that_diverges": "passed",
   "walls_change_what_the_guards_notice": "passed"
  },
@@ -88,52 +98,58 @@
  "cross_target": [
   {
    "seed": "1",
-   "native": "86aba7437d5ca5e4",
-   "wasm": "86aba7437d5ca5e4",
+   "native": "1679faf21b4a8d5c",
+   "wasm": "1679faf21b4a8d5c",
    "agree": true,
    "bytes": 1236
   },
   {
    "seed": "6840123409045651457",
-   "native": "78df4db79655cceb",
-   "wasm": "78df4db79655cceb",
+   "native": "6133d3d1936cb8f6",
+   "wasm": "6133d3d1936cb8f6",
    "agree": true,
    "bytes": 1215
   },
   {
    "seed": "18446744073709551615",
-   "native": "d3f87b981410dde3",
-   "wasm": "d3f87b981410dde3",
+   "native": "e19dd92c363e7749",
+   "wasm": "e19dd92c363e7749",
    "agree": true,
    "bytes": 1225
   },
   {
    "seed": "42",
-   "native": "072aba5bc70dbb26",
-   "wasm": "072aba5bc70dbb26",
+   "native": "fb7e2a407519d466",
+   "wasm": "fb7e2a407519d466",
    "agree": true,
    "bytes": 1179
   },
   {
    "seed": "999983",
-   "native": "f4c7c14aad4f96c7",
-   "wasm": "f4c7c14aad4f96c7",
+   "native": "9d01af2c4f5280be",
+   "wasm": "9d01af2c4f5280be",
    "agree": true,
    "bytes": 1181
   }
  ],
  "content": {
-  "agree": 47,
+  "agree": 64,
   "disagree": [],
   "not_modelled": [
-   "guards[].peripheral_degrees \u2014 peripheral vision is not in perception yet",
-   "modifiers: higher_ground, lower_ground \u2014 the fixture has one level",
-   "modifiers: running, unlit, still_in_grass \u2014 no running, lighting or grass yet",
+   "modifiers.higher_ground \u2014 the fixture has one level",
+   "modifiers.lower_ground \u2014 the fixture has one level",
+   "noise.sources.landing_1_level \u2014 the fixture has one level",
+   "noise.sources.landing_3_levels \u2014 the fixture has one level",
    "noise.off_screen_multiplier \u2014 the simulation has no screen",
-   "noise.sources: landing_1_level, landing_3_levels \u2014 the fixture has one level",
-   "noise.surfaces \u2014 no surface materials yet",
    "alarm.realm_alarm_per_guard_found \u2014 no knockouts yet, so none are found",
-   "ambush \u2014 \u00a712.8's ambush is not built"
+   "ambush \u2014 \u00a712.8's ambush is not built",
+   "roles.health \u2014 no fights yet (\u00a712.20)",
+   "roles.power \u2014 no fights yet (\u00a712.20)",
+   "roles.carry \u2014 no loading yet (\u00a712.19)"
+  ],
+  "readings": [
+   "CROUCH_PACE = (1, 2) \u2014 crouched speed against \u00a711.1's; no section gives one",
+   "RUN_PACE = (2, 1) \u2014 running speed against \u00a711.1's; no section gives one"
   ]
  }
 }

@@ -43,7 +43,7 @@ pub mod rng;
 pub mod trig;
 
 use fixed::{Ang, Fx};
-use grid::{Feature, Grid, Terrain};
+use grid::{Feature, Grid, Surface, Terrain};
 use replay::{Command, Heist, Kind};
 use rng::{Rng, Stream};
 
@@ -70,6 +70,112 @@ pub const FILL_FAR: i32 = 12;
 /// §12.17: "It empties more slowly than it fills — about 1.7 seconds":
 /// 1000 / 51 ticks.
 pub const DECAY_PER_TICK: i32 = 20;
+
+/// §12.17's modifiers on the fill rate, as (numerator, denominator). They
+/// multiply together and the one division happens last, so crouched in the
+/// dark is exactly a quarter rather than a half of a half rounded twice.
+///
+///   "Being crouched halves how fast you are noticed, running raises it by
+///   three quarters, an unlit tile halves it again" — and spec/detection.md:
+///   "Inside the peripheral arc, outside the cone: x 0.5".
+pub const CROUCHED: (i32, i32) = (1, 2);
+pub const RUNNING: (i32, i32) = (7, 4);
+pub const UNLIT: (i32, i32) = (1, 2);
+pub const PERIPHERAL: (i32, i32) = (1, 2);
+
+/// How fast a crouched or running crew member moves against §11.1's speed.
+///
+/// **Neither figure is in the document.** §12.17 prices both gaits for eyes
+/// and ears — crouching halves the rate and carries 1 m, running adds three
+/// quarters and carries 4.5 m — and no section gives either a speed. Without
+/// one, crouching is free and strictly better than walking, and running is
+/// strictly worse; the choice spec/movement.md proposes ("slow and quiet
+/// against fast and loud") needs both numbers. These are the simulation's
+/// reading, stated once here so they are found rather than assumed. The
+/// Python harness took a different one — its crouch is §11.1's speed and its
+/// run is double — which is the same gap answered twice.
+pub const CROUCH_PACE: (i64, i64) = (1, 2);
+pub const RUN_PACE: (i64, i64) = (2, 1);
+
+/// §11.1's five roles. The discriminant is the role's row in `ROLES`, which
+/// is §12.17's table, and §12.17 lists them in a different order from §11.1.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Role {
+    Scout = 0,
+    Warden = 1,
+    Breaker = 2,
+    Carrier = 3,
+    Mender = 4,
+}
+
+impl Role {
+    fn from_row(row: usize) -> Role {
+        [Role::Scout, Role::Warden, Role::Breaker, Role::Carrier, Role::Mender][row % 5]
+    }
+
+    /// §11.1's speed column, in tenths of a tile a second.
+    pub fn speed_tenths(self) -> i64 {
+        match self {
+            Role::Scout => 45,
+            Role::Breaker => 32,
+            Role::Carrier => 36,
+            Role::Warden => 26,
+            Role::Mender => 34,
+        }
+    }
+
+    /// Per tick.
+    pub fn speed(self) -> Fx {
+        Fx::from_ratio(self.speed_tenths(), 10 * TICKS_PER_SECOND as i64)
+    }
+}
+
+/// A fixture crew's roles, in §11.1's order.
+const CREW: [Role; 5] = [Role::Scout, Role::Breaker, Role::Carrier, Role::Warden, Role::Mender];
+
+/// How a crew member moves. §12.17 prices all three for eyes and ears.
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
+pub enum Gait {
+    #[default]
+    Walk = 0,
+    Crouch = 1,
+    Run = 2,
+}
+
+impl Gait {
+    fn from_command(x: i16) -> Option<Gait> {
+        match x {
+            0 => Some(Gait::Walk),
+            1 => Some(Gait::Crouch),
+            2 => Some(Gait::Run),
+            _ => None,
+        }
+    }
+
+    pub fn pace(self) -> (i64, i64) {
+        match self {
+            Gait::Walk => (1, 1),
+            Gait::Crouch => CROUCH_PACE,
+            Gait::Run => RUN_PACE,
+        }
+    }
+
+    pub fn noticed(self) -> (i32, i32) {
+        match self {
+            Gait::Walk => (1, 1),
+            Gait::Crouch => CROUCHED,
+            Gait::Run => RUNNING,
+        }
+    }
+
+    pub fn sound(self) -> noise::Sound {
+        match self {
+            Gait::Walk => noise::Sound::Walking,
+            Gait::Crouch => noise::Sound::CrouchedWalk,
+            Gait::Run => noise::Sound::Running,
+        }
+    }
+}
 
 /// A point, in tiles. §21.1: "One tile is one metre."
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
@@ -127,7 +233,11 @@ pub struct Guard {
     pub near: Fx,
     pub mid: Fx,
     pub far: Fx,
+    /// §12.17's "corner of the eye": the whole arc, like `cone`.
+    pub peripheral: Ang,
     pub turn_per_tick: Ang,
+    /// §11.1's speed for its role, per tick, for the states that walk.
+    pub speed: Fx,
     pub suspicion: i32,
     /// §12.17's six states. See `guard.rs`.
     pub state: guard::State,
@@ -159,19 +269,20 @@ impl Guard {
 }
 
 /// §12.17's five guard rows: role, cone in degrees, then near, mid and far in
-/// half metres (so 1.5 m is 3), then turn in degrees a tick. Kept as data so
-/// the reinforcing Warden at alarm 5 is built from the same row as the first.
-const ROLES: [(u32, i32, i64, i64, i64, i32); 5] = [
-    (0, 45, 4, 8, 12, 6),     // Scout    0-2 / 2-4 / 4-6 m
-    (1, 40, 3, 6, 9, 3),      // Warden   0-1.5 / 1.5-3 / 3-4.5 m
-    (2, 35, 3, 5, 7, 8),      // Breaker  0-1.5 / 1.5-2.5 / 2.5-3.5 m
-    (3, 30, 2, 4, 6, 4),      // Carrier  0-1 / 1-2 / 2-3 m
-    (4, 40, 3, 5, 0, 4),      // Mender   0-1.5 / 1.5-2.5 m, no far zone
+/// half metres (so 1.5 m is 3), turn in degrees a tick, and the corner of the
+/// eye in degrees. Kept as data so the reinforcing Warden at alarm 5 is built
+/// from the same row as the first.
+const ROLES: [(u32, i32, i64, i64, i64, i32, i32); 5] = [
+    (0, 45, 4, 8, 12, 6, 110),    // Scout    0-2 / 2-4 / 4-6 m
+    (1, 40, 3, 6, 9, 3, 90),      // Warden   0-1.5 / 1.5-3 / 3-4.5 m
+    (2, 35, 3, 5, 7, 8, 70),      // Breaker  0-1.5 / 1.5-2.5 / 2.5-3.5 m
+    (3, 30, 2, 4, 6, 4, 60),      // Carrier  0-1 / 1-2 / 2-3 m
+    (4, 40, 3, 5, 0, 4, 100),     // Mender   0-1.5 / 1.5-2.5 m, no far zone
 ];
 const WARDEN: usize = 1;
 
 fn make_guard(id: u32, row: usize, post: grid::TileIndex, grid: &Grid) -> Guard {
-    let (_, cone, near, mid, far, turn) = ROLES[row];
+    let (_, cone, near, mid, far, turn, peripheral) = ROLES[row];
     let (x, y) = grid.centre(post);
     Guard {
         id,
@@ -181,7 +292,9 @@ fn make_guard(id: u32, row: usize, post: grid::TileIndex, grid: &Grid) -> Guard 
         near: Fx::from_ratio(near, 2),
         mid: Fx::from_ratio(mid, 2),
         far: Fx::from_ratio(far, 2),
+        peripheral: Ang::from_degrees(peripheral),
         turn_per_tick: Ang::from_degrees(turn),
+        speed: Role::from_row(row).speed(),
         suspicion: 0,
         state: guard::State::Unaware,
         state_since: 0,
@@ -200,7 +313,9 @@ fn make_guard(id: u32, row: usize, post: grid::TileIndex, grid: &Grid) -> Guard 
 #[derive(Clone, Debug)]
 pub struct Raider {
     pub id: u32,
+    pub role: Role,
     pub at: Point,
+    /// §11.1's speed for its role, per tick, before gait, ground and laws.
     pub speed: Fx,
     /// The route computed when the last command was given, and how far along
     /// it the crew member is. §12.18: "The command, never the path" — this is
@@ -212,15 +327,13 @@ pub struct Raider {
     /// the rule, not a limitation.
     pub route: Vec<grid::TileIndex>,
     pub along: usize,
-    pub crouching: bool,
+    pub gait: Gait,
 }
 
 impl Raider {
-    /// Where it is walking to now: the centre of the next tile on its route.
-    fn next_step(&self, grid: &Grid) -> Option<Point> {
-        let tile = *self.route.get(self.along)?;
-        let (x, y) = grid.centre(tile);
-        Some(Point { x, y })
+    /// Standing still: no route, or at the end of it.
+    pub fn still(&self) -> bool {
+        self.along >= self.route.len()
     }
 }
 
@@ -249,14 +362,20 @@ pub struct World {
     /// Held rather than consumed, so the same log can be replayed again.
     commands: Vec<Command>,
     next_command: usize,
-    perception: Rng,
-    movement: Rng,
+    /// The spike's one realm law, as a factor on every crew member's pace.
+    pub law_pace: Fx,
 }
 
 impl World {
-    /// The spike's fixture: five guards on §12.17's five role rows, three
-    /// raiders on a route across them. Every number here is the document's.
-    pub fn new(seed: u64, crew: u8, commands: Vec<Command>) -> World {
+    /// The spike's fixture: five guards on §12.17's five role rows, a crew
+    /// in §11.1's roles. Every number here is the document's except the two
+    /// gait speeds, which it does not give (`CROUCH_PACE`, `RUN_PACE`).
+    ///
+    /// The seed is accepted and not read. Nothing §12.17 describes draws from
+    /// it — "nothing here is random" — and the systems that may (§24.7's
+    /// seeded generator is for loot and island generation) are not built.
+    /// `the_seed_cannot_change_what_a_guard_does` holds that in place.
+    pub fn new(_seed: u64, crew: u8, commands: Vec<Command>) -> World {
         debug_assert!(
             commands.windows(2).all(|w| w[0].tick <= w[1].tick),
             "the input log has to be in tick order or the inputs phase is not a phase");
@@ -284,6 +403,27 @@ impl World {
         grid.place(6, 8, Feature::FogBank);
         grid.set(3, 3, Terrain::Pace(60));
         grid.set(10, 9, Terrain::Pace(115));
+        // §12.17's remaining modifiers, each where a route or a guard meets it:
+        //   tall grass west of the wall   invisible if still, until a guard
+        //                                 walks into the tile
+        //   a gravel run through the gap  louder, at the one place every
+        //                                 crossing has to use
+        //   moss in the south-east        quieter
+        //   a dark corner by the entrance "an unlit tile halves it again"
+        for x in 1..4 {
+            grid.place(x, 7, Feature::TallGrass);
+        }
+        for x in 5..10 {
+            grid.set_surface(x, 6, Surface::Gravel);
+        }
+        for x in 8..11 {
+            grid.set_surface(x, 12, Surface::Moss);
+        }
+        for y in 10..14 {
+            for x in 10..14 {
+                grid.darken(x, y);
+            }
+        }
 
         // Guards on tile centres, on both sides of the wall, so that the
         // wall, the fence and the fog each stand between some guard and some
@@ -303,17 +443,18 @@ impl World {
 
         let mut raiders = Vec::with_capacity(crew as usize);
         for i in 0..crew as i32 {
+            let role = CREW[i as usize % CREW.len()];
             raiders.push(Raider {
                 id: i as u32,
+                role,
                 at: {
                     let (x, y) = grid.centre(grid.index(i as u16, 0).unwrap_or(0));
                     Point { x, y }
                 },
-                // §12.18's walk is 3 tiles a second; per tick that is 1/10.
-                speed: Fx::from_ratio(1, 10),
+                speed: role.speed(),
                 route: Vec::new(),
                 along: 0,
-                crouching: false,
+                gait: Gait::Walk,
             });
         }
         World {
@@ -328,8 +469,7 @@ impl World {
             grid,
             commands,
             next_command: 0,
-            perception: Rng::new(seed, Stream::Perception),
-            movement: Rng::new(seed, Stream::Movement),
+            law_pace: Fx::ONE,
         }
     }
 
@@ -374,7 +514,12 @@ impl World {
                     };
                     raider.along = 0;
                 }
-                Kind::Crouch => raider.crouching = command.x != 0,
+                // An unknown gait is dropped like an unknown crew member.
+                Kind::Gait => {
+                    if let Some(gait) = Gait::from_command(command.x) {
+                        raider.gait = gait;
+                    }
+                }
                 Kind::Halt => {
                     raider.route.clear();
                     raider.along = 0;
@@ -383,26 +528,24 @@ impl World {
         }
     }
 
-    /// Laws. The spike carries one: a realm law that slows everything by a
+    /// Laws. The spike carries one: a realm law that slows the crew by a
     /// tenth every other second, which is enough to put a fixed-point multiply
-    /// on the hot path where a law would be.
+    /// on the hot path where a law would be. It acts on a factor of its own,
+    /// not on §11.1's speeds, so a role's speed is always its role's.
     fn phase_laws(&mut self) {
-        if self.tick % (TICKS_PER_SECOND * 2) != 0 {
+        if self.tick == 0 || self.tick % (TICKS_PER_SECOND * 2) != 0 {
             return;
         }
-        let slow = Fx::from_ratio(9, 10);
-        for raider in self.raiders.iter_mut() {
-            raider.speed = raider.speed.mul(slow);
-            // A floor, so the law cannot drive speed to zero over a long run
-            // and make the rest of the tick trivial.
-            if raider.speed < Fx::from_ratio(1, 100) {
-                raider.speed = Fx::from_ratio(1, 10);
-            }
+        self.law_pace = self.law_pace.mul(Fx::from_ratio(9, 10));
+        // Back to full once it falls below a tenth, so a long run does not
+        // grind the crew to nothing and make the rest of the tick trivial.
+        if self.law_pace < Fx::from_ratio(1, 10) {
+            self.law_pace = Fx::ONE;
         }
     }
 
     /// Perception. §12.17: three graded zones inside a cone, filling at
-    /// different rates; crouching halves how fast you are noticed.
+    /// different rates, a weaker corner of the eye, and four modifiers.
     fn phase_perception(&mut self) {
         for gi in 0..self.guards.len() {
             let mut gain = 0i32;
@@ -410,67 +553,95 @@ impl World {
             // guard's interest is the same spot on every machine.
             let mut most: Option<(i32, grid::TileIndex)> = None;
             for ri in 0..self.raiders.len() {
-                let guard = &self.guards[gi];
-                let raider = &self.raiders[ri];
-                let d = guard.at.distance(raider.at);
-                if guard.far.0 > 0 && d > guard.far {
-                    continue;
-                }
-                if d > guard.mid && guard.far.0 == 0 {
-                    continue;
-                }
-                let bearing = guard.at.bearing_to(raider.at);
-                let off = bearing.delta(guard.facing).0.abs();
-                if off > guard.cone.0 / 2 {
-                    continue;
-                }
-                // In range and in the cone is not enough: something between
-                // may stop sight. Checked last because it is the costly test,
-                // and the order of pure checks cannot change the answer.
-                let (Some(from), Some(to)) = (
-                    self.grid.tile_at(guard.at.x, guard.at.y),
-                    self.grid.tile_at(raider.at.x, raider.at.y),
-                ) else {
-                    continue;
-                };
-                if !sight::visible(&self.grid, from, to) {
-                    continue;
-                }
-                let per_tick = if d <= guard.near {
-                    FILL_NEAR
-                } else if d <= guard.mid {
-                    FILL_MID
-                } else {
-                    FILL_FAR
-                };
-                let halved = if raider.crouching { per_tick / 2 } else { per_tick };
-                gain += halved;
-                if most.is_none_or(|(g, _)| halved > g) {
-                    most = Some((halved, to));
+                let Some((per_tick, to)) = self.noticed(gi, ri) else { continue };
+                gain += per_tick;
+                if most.is_none_or(|(g, _)| per_tick > g) {
+                    most = Some((per_tick, to));
                 }
             }
-            // One draw a tick whether or not anything was seen, so the stream
-            // advances at the same rate regardless of the world's state. A
-            // stream that advances only on some ticks makes every later draw
-            // depend on the whole history, which is a needless coupling.
-            let jitter = (self.perception.below(3) as i32) - 1;
+            // No jitter. §12.17: "nothing here is random: a player who scouts
+            // an island can predict exactly what will happen." The spike's
+            // first version added a random -1 to +1 a tick here, to put the
+            // generator on the hot path, and in doing so broke the one
+            // promise this section makes about itself.
             let guard = &mut self.guards[gi];
             guard.saw = most.is_some();
             if let Some((_, at)) = most {
                 guard.interest = Some(at);
             }
             if gain > 0 {
-                guard.suspicion = (guard.suspicion + gain + jitter).min(SUSPICION_MAX);
+                guard.suspicion = (guard.suspicion + gain).min(SUSPICION_MAX);
             } else {
                 guard.suspicion = (guard.suspicion - DECAY_PER_TICK).max(0);
             }
         }
     }
 
+    /// How much one guard notices one raider this tick, and on which tile, or
+    /// `None` if it does not. Pure: it reads the world and changes nothing,
+    /// so the perception phase's order of guards cannot change its answer.
+    pub fn noticed(&self, gi: usize, ri: usize) -> Option<(i32, grid::TileIndex)> {
+        let guard = &self.guards[gi];
+        let raider = &self.raiders[ri];
+        let d = guard.at.distance(raider.at);
+        let reach = if guard.far.0 > 0 { guard.far } else { guard.mid };
+        if d > reach {
+            return None;
+        }
+        // The corner of the eye uses the same zones at half the rate.
+        // §12.17 says only "weak peripheral awareness"; the half is
+        // spec/detection.md's, and content/detection.json's.
+        let bearing = guard.at.bearing_to(raider.at);
+        let off = bearing.delta(guard.facing).0.abs();
+        let in_cone = off <= guard.cone.0 / 2;
+        if !in_cone && off > guard.peripheral.0 / 2 {
+            return None;
+        }
+        // In range and in the cone is not enough: something between
+        // may stop sight. Checked last because it is the costly test,
+        // and the order of pure checks cannot change the answer.
+        let (Some(from), Some(to)) = (
+            self.grid.tile_at(guard.at.x, guard.at.y),
+            self.grid.tile_at(raider.at.x, raider.at.y),
+        ) else {
+            return None;
+        };
+        // "Standing still in tall grass makes you invisible until a
+        // guard walks into the tile."
+        if raider.still() && from != to
+            && self.grid.feature(to) == Some(Feature::TallGrass)
+        {
+            return None;
+        }
+        if !sight::visible(&self.grid, from, to) {
+            return None;
+        }
+        let zone = if d <= guard.near {
+            FILL_NEAR
+        } else if d <= guard.mid {
+            FILL_MID
+        } else {
+            FILL_FAR
+        };
+        let (mut num, mut den) = raider.gait.noticed();
+        if self.grid.is_unlit(to) {
+            num *= UNLIT.0;
+            den *= UNLIT.1;
+        }
+        if !in_cone {
+            num *= PERIPHERAL.0;
+            den *= PERIPHERAL.1;
+        }
+        let per_tick = zone * num / den;
+        Some((per_tick, to))
+    }
+
     /// Movement. Raiders walk their route; guards sweep their cone.
     fn phase_movement(&mut self) {
         for raider in self.raiders.iter_mut() {
-            let Some(target) = raider.next_step(&self.grid) else { continue };
+            if raider.still() {
+                continue;
+            }
             // The tile stood on sets the pace, not the tile being entered:
             // a character is slowed by the mud it is in. Breadth-first chose
             // the route without consulting this, which is §12.18's rule that
@@ -478,28 +649,24 @@ impl World {
             // walks through mud.
             let here = self.grid.tile_at(raider.at.x, raider.at.y);
             let pace = here.map_or(Fx::ONE, |t| self.grid.at(t).pace());
-            let step = raider.speed.mul(pace);
-            let d = raider.at.distance(target);
-            if d <= step {
-                raider.at = target;
-                raider.along += 1;        // arrived at this tile; next one
-                continue;
-            }
-            let bearing = raider.at.bearing_to(target);
-            raider.at = Point {
-                x: raider.at.x + trig::cos(bearing).mul(step),
-                y: raider.at.y + trig::sin(bearing).mul(step),
-            };
+            let (num, den) = raider.gait.pace();
+            let step = raider.speed.mul(pace).mul(self.law_pace).mul(Fx::from_ratio(num, den));
+            let (at, along) = walk_route(&self.grid, raider.at, &raider.route, raider.along, step);
+            raider.at = at;
+            raider.along = along;
         }
-        // One draw a tick, whatever the guards are doing, so the stream's
-        // position depends on the tick and not on the world.
-        let sweep = (self.movement.below(2) as i32) * 2 - 1;   // -1 or +1
-        let walk = Fx::from_ratio(1, 10);                       // §12.18's walk
+        // A guard that is not walking turns steadily at its role's rate, one
+        // way, so a player watching it can say where it will face next. The
+        // first version chose the direction at random each tick, which
+        // §12.17 forbids for the same reason as the jitter above.
+        let sweep = 1;
         for guard in self.guards.iter_mut() {
+            let walk = guard.speed;                             // §11.1's, by role
             use guard::State::*;
             match guard.state {
-                // "Patrols or holds its post" — the fixture holds. "Wider,
-                // faster searching" has no figure, so Searching sweeps too.
+                // "Patrols or holds its post" — the fixture holds, turning.
+                // "Wider, faster searching" has no figure, so Searching turns
+                // the same way.
                 Unaware | Searching => {
                     guard.facing = Ang(guard.facing.0 + guard.turn_per_tick.0 * sweep).wrapped();
                 }
@@ -514,18 +681,11 @@ impl World {
                 Investigating | Alerted | Returning => {
                     match guard.next_step(&self.grid) {
                         Some(target) => {
-                            let d = guard.at.distance(target);
-                            if d <= walk {
-                                guard.at = target;
-                                guard.along += 1;
-                            } else {
-                                let bearing = guard.at.bearing_to(target);
-                                guard.facing = bearing;
-                                guard.at = Point {
-                                    x: guard.at.x + trig::cos(bearing).mul(walk),
-                                    y: guard.at.y + trig::sin(bearing).mul(walk),
-                                };
-                            }
+                            guard.facing = guard.at.bearing_to(target);
+                            let (at, along) =
+                                walk_route(&self.grid, guard.at, &guard.route, guard.along, walk);
+                            guard.at = at;
+                            guard.along = along;
                         }
                         None => {
                             // Arrived. Investigating starts its ten seconds
@@ -557,12 +717,13 @@ impl World {
         let mut nearest: Vec<Option<(u16, grid::TileIndex, Option<grid::TileIndex>)>> =
             vec![None; self.guards.len()];
         for raider in self.raiders.iter() {
-            if raider.along >= raider.route.len() {
+            if raider.still() {
                 continue;                             // standing still is silent
             }
-            let sound = if raider.crouching { noise::Sound::CrouchedWalk } else { noise::Sound::Walking };
             let Some(source) = self.grid.tile_at(raider.at.x, raider.at.y) else { continue };
-            let field = noise::field(&self.grid, source, sound.steps());
+            // What it is walking on decides how far its gait carries.
+            let reach = raider.gait.sound().steps_on(self.grid.surface(source));
+            let field = noise::field(&self.grid, source, reach);
             for (gi, guard) in self.guards.iter().enumerate() {
                 let Some(at) = self.grid.tile_at(guard.at.x, guard.at.y) else { continue };
                 let d = field[at as usize];
@@ -741,6 +902,7 @@ impl World {
         mix(self.alarm as i64);
         mix(self.reinforced as i64);
         mix(self.spreads.len() as i64);
+        mix(self.law_pace.0);
         for guard in self.guards.iter() {
             mix(guard.id as i64);
             mix(guard.at.x.0);
@@ -761,10 +923,42 @@ impl World {
             mix(raider.route.len() as i64);
             mix(raider.along as i64);
             mix(raider.route.get(raider.along).map_or(-1, |t| *t as i64));
-            mix(raider.crouching as i64);
+            mix(raider.gait as i64);
         }
         h
     }
+}
+
+/// Walk `step` tiles along a route from `at`, which is heading for
+/// `route[along]`. Returns the new position and index.
+///
+/// Reaching a tile centre part-way through a tick spends only the distance
+/// to it, and the rest of the step carries on toward the next tile. Dropping
+/// the remainder — which the first version did — makes every character walk
+/// up to one tick a tile slower than §11.1 says, by an amount that depends on
+/// how its speed divides a tile: a Scout covered 4.3 tiles a second, not 4.5.
+fn walk_route(grid: &Grid, mut at: Point, route: &[grid::TileIndex], mut along: usize,
+              step: Fx) -> (Point, usize) {
+    let mut left = step;
+    while left.0 > 0 {
+        let Some(tile) = route.get(along) else { break };
+        let (x, y) = grid.centre(*tile);
+        let target = Point { x, y };
+        let d = at.distance(target);
+        if d <= left {
+            at = target;
+            along += 1;
+            left = left - d;
+            continue;
+        }
+        let bearing = at.bearing_to(target);
+        at = Point {
+            x: at.x + trig::cos(bearing).mul(left),
+            y: at.y + trig::sin(bearing).mul(left),
+        };
+        break;
+    }
+    (at, along)
 }
 
 /// Run a heist and return the per-second checksums, which is what §24.10 says
@@ -841,8 +1035,8 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
         });
         if rng.below(3) == 0 {
             commands.push(Command {
-                tick, actor, kind: Kind::Crouch,
-                x: rng.below(2) as i16, y: 0,
+                tick, actor, kind: Kind::Gait,
+                x: rng.below(3) as i16, y: 0,
             });
         }
     }

@@ -38,7 +38,7 @@ would show.
 | Floating point differs between processors | There is none. Fixed point throughout: 64-bit with 32 fractional bits for positions, 32-bit with 16 for angles | `fixed.rs` |
 | `sin` and `cos` differ between libm builds | A quarter turn of sine, computed in exact decimal arithmetic and checked in. Angles are a fraction of a turn, so π never appears | `trig.rs`, `sin_table.rs` |
 | Square roots differ | Newton's method on integers, which terminates exactly | `fixed.rs` |
-| Random numbers differ | SplitMix64 into xoshiro256++, one stream per subsystem, pure integer operations | `rng.rs` |
+| Random numbers differ | SplitMix64 into xoshiro256++, one stream per subsystem, pure integer operations — and none drawn by anything §12.17 describes, which "nothing here is random" forbids | `rng.rs` |
 | Map iteration order differs | There is no map. Entities are vectors indexed by id, iterated in order | `lib.rs` |
 | Overflow wraps on one target and traps on another | `overflow-checks = true` in release as well as debug | `Cargo.toml` |
 | A phase reading another's half-finished state | The six phases run in §24.10's fixed order: inputs, laws, perception, movement, noise, states, checksum | `lib.rs` |
@@ -171,8 +171,55 @@ searches for twenty; both then walk home as Returning, where a new sighting
 re-raises them. An Alerted guard's call reaches every guard within four metres
 half a second later. The realm alarm climbs once every thirty seconds to six,
 plus one per knocked-out guard found; at five one more Warden walks in from
-the entrance. The noise roll the first fixture had is gone — the document
-never had one; the stream number is kept retired so the others do not move.
+the entrance.
+
+## No dice
+
+§12.17: *"nothing here is random: a player who scouts an island can predict
+exactly what will happen."* The spike broke that three times, each to put the
+random generator on the hot path for the determinism test: a noise roll, a
+random -1 to +1 on suspicion every tick, and a random direction for every idle
+guard's turn each tick. All three are gone. A guard that is not walking now
+turns steadily one way at its role's rate. The stream numbers stay taken so a
+later subsystem cannot reuse one.
+
+`the_seed_cannot_change_what_a_guard_does` holds this in place: the same
+commands on seed 1 and seed 2^64-1 must give the same checksum every tick for
+3,000 ticks. The seed still travels in the replay header, for the systems
+§24.7 does give dice to — loot and island generation — which are not built.
+
+## Detection modifiers, roles and gaits
+
+The rest of §12.17's modifiers. A raider in a guard's corner of the eye is
+noticed at half the rate, over the same zones. Crouched halves the rate,
+running multiplies it by 7/4, and an unlit tile halves it again. The factors
+multiply and the one division comes last, so crouched in the dark is a
+quarter, not a half of a half rounded twice. Standing still in tall grass is
+invisible until a guard walks into the tile. Grass does not block sight past
+it, as a fog bank does. Gravel and water carry sound five quarters as far,
+and moss three quarters. That is applied to the radius before it is cut to
+whole steps: walking on gravel reaches three steps, and a crouched walk on
+moss reaches none.
+
+Crew and guards move at §11.1's speed for their role — a Scout 4.5 tiles a
+second, a Warden 2.6 — and a `Gait` command switches between walk, crouch and
+run. **The document gives no speed for crouching or running.** It prices both
+for eyes and ears and stops there, and without a speed cost crouching is
+strictly better than walking. `CROUCH_PACE` (half) and `RUN_PACE` (double)
+are the simulation's reading. They are stated once, and the audit page lists
+them under *not in the document*. The Python harness answered the same gap
+differently: its crouch is §11.1's speed and its run is double. The harness
+also gives the corner of the eye the far zone's rate at any distance, where
+`content/detection.json` halves the zone's rate. This simulation follows the
+content file.
+
+Building this found a bug in the spike's movement. A character that reached a
+tile centre part-way through a tick threw away the rest of that tick's step,
+so everyone walked up to a tick per tile slower than §11.1 says. The Scout
+managed 4.3 tiles a second, not 4.5.
+`a_crew_member_covers_its_roles_distance_whatever_the_tile_edges` failed on
+it (5.5 tiles where 5.7 is right), and `walk_route` now carries the remainder
+on to the next tile.
 
 ## The simulation against the content file
 
@@ -182,12 +229,14 @@ result is decided. Two copies of one fact drift, and they had: the first
 fixture had the Scout's zones at **half** §12.17's size — 1, 2 and 3 metres for
 2, 4 and 6 — and nothing noticed until the guard work reread §12.17 by hand.
 
-`content_gate.py` compares all 47 values the simulation carries against the
-file and fails on any disagreement; its self-test plants the halved Scout, a
-moved state floor and a deleted role, and must catch all three. Every value in
-the file the simulation does not use yet — peripheral vision, height, lighting,
-surfaces, the ambush — is listed by name, on the command line and on the audit
-page, so none passes as agreeing by being absent.
+`content_gate.py` compares the 64 values the simulation carries against
+`detection.json` and `roles.json`. It walks every number in both files, and
+each has to be compared, named as not modelled yet, or named as derived from
+one that is. Anything else fails the gate. The first version only *said* this,
+and the peripheral modifier sat in the file neither compared nor listed. The
+self-test plants seven faults and must catch all seven: the halved Scout, a
+moved state floor, a deleted role, a wrong multiplier, a slow Scout, an
+uncompared number and a deleted test.
 
 ## How progress is reported
 
@@ -206,7 +255,7 @@ a test that does not exist, so the band cannot drift from the code.
     src/trig.rs       turn-based angles against the committed sine table
     src/sin_table.rs  generated, 1025 entries, exact at both ends
     src/lib.rs        the world, the six phases, the checksum
-    src/grid.rs       tiles, terrain and the fixed neighbour order
+    src/grid.rs       tiles, terrain, features, light, surfaces, neighbour order
     src/path.rs       breadth-first routing, §12.18's two tie-breakers
     src/sight.rs      supercover line of sight, the same from either end
     src/noise.rs      sound along the walkable path, and the way around

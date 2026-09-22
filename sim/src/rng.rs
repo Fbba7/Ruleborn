@@ -34,6 +34,9 @@ impl SplitMix64 {
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[repr(u64)]
 pub enum Stream {
+    /// Retired, like Noise: §12.17 says "nothing here is random". The spike
+    /// drew suspicion jitter and a guard's turning direction from these two,
+    /// and both contradicted it.
     Perception = 1,
     Movement = 2,
     /// Retired: §12.17's noise has no dice in it. The number stays taken, so

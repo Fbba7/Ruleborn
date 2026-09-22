@@ -49,6 +49,14 @@ impl Sound {
     pub fn steps(self) -> u16 {
         self.half_metres() / 2
     }
+
+    /// The same, made on a surface. The factor is applied to the radius before
+    /// it is cut to whole steps, in one division, so walking on gravel carries
+    /// 2.5 x 1.25 = 3.1 m — three steps — rather than 2 x 1.25 rounded.
+    pub fn steps_on(self, surface: crate::grid::Surface) -> u16 {
+        let (num, den) = surface.carry();
+        self.half_metres() * num / (den * 2)
+    }
 }
 
 /// Not reached within the radius.

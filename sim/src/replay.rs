@@ -48,8 +48,9 @@ pub const CHECKSUM_BYTES: usize = 4;
 pub enum Kind {
     /// Walk to a tile.
     MoveTo = 0,
-    /// Crouch or stand. §12.17: crouching halves how fast you are noticed.
-    Crouch = 1,
+    /// Change gait: `x` is 0 to walk, 1 to crouch, 2 to run. §12.17 prices
+    /// all three; the number is the one byte a gait costs in the log.
+    Gait = 1,
     /// Stand still.
     Halt = 2,
 }
@@ -58,7 +59,7 @@ impl Kind {
     fn from_u8(v: u8) -> Option<Kind> {
         match v {
             0 => Some(Kind::MoveTo),
-            1 => Some(Kind::Crouch),
+            1 => Some(Kind::Gait),
             2 => Some(Kind::Halt),
             _ => None,
         }

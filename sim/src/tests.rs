@@ -961,3 +961,240 @@ fn a_raider_held_in_the_near_zone_raises_a_guard_to_alerted() {
     assert_eq!(&seen[..3], &[State::Suspicious, State::Investigating, State::Alerted],
                "through the table in order");
 }
+
+// --------------------------------------------------------------------------
+// Roles and gaits (§11.1's speeds; §12.17 prices crouching and running)
+// --------------------------------------------------------------------------
+
+use crate::{Gait, Role};
+use crate::grid::Surface;
+use crate::noise::Sound as S;
+
+/// Walk crew member 0, a Warden, east along an open row for two seconds and
+/// return where it ends up, in tiles.
+fn two_seconds_east(gait: Gait) -> Fx {
+    let heist = fixture(3, 60, 1);
+    let mut world = World::new(heist.seed, 1, Vec::new());
+    world.grid = Grid::new(14, 14);
+    world.guards.clear();
+    world.raiders[0].role = Role::Warden;
+    world.raiders[0].speed = Role::Warden.speed();
+    world.raiders[0].gait = gait;
+    let start = world.grid.index(0, 0).unwrap();
+    let end = world.grid.index(13, 0).unwrap();
+    world.raiders[0].route = path::find(&world.grid, start, end).unwrap();
+    for _ in 0..60 {
+        world.step();
+    }
+    world.raiders[0].at.x
+}
+
+#[test]
+fn a_crew_member_covers_its_roles_distance_whatever_the_tile_edges() {
+    // §11.1: a Warden walks 2.6 tiles a second, so two seconds from the centre
+    // of tile 0 end at 0.5 + 5.2 = 5.7. Reaching a tile centre part-way
+    // through a tick must not throw the rest of that tick's step away — the
+    // first version did, and every role walked up to a tick a tile slower
+    // than §11.1 says.
+    let near = |at: Fx, want_tenths: i64| (at - Fx::from_ratio(want_tenths, 10)).0.abs()
+        < Fx::from_ratio(1, 100).0;
+    let walk = two_seconds_east(Gait::Walk);
+    assert!(near(walk, 57), "walking: 5.7, got {} in 2^-32 tiles", walk.0);
+    let crouch = two_seconds_east(Gait::Crouch);
+    assert!(near(crouch, 31), "crouched, at half: 3.1");
+    let run = two_seconds_east(Gait::Run);
+    assert!(near(run, 109), "running, at double: 10.9");
+}
+
+/// An open 14x14 realm with one Scout at the centre of (6, 6) facing east and
+/// one raider `metres_tenths` away at `degrees` off its facing, standing still.
+fn scout_and_raider(metres_tenths: i64, degrees: i32) -> World {
+    let heist = fixture(3, 60, 1);
+    let mut world = World::new(heist.seed, 1, Vec::new());
+    world.grid = Grid::new(14, 14);
+    world.guards.truncate(1);                     // row 0 is the Scout
+    let post = world.grid.index(6, 6).unwrap();
+    let (gx, gy) = world.grid.centre(post);
+    world.guards[0].at = Point { x: gx, y: gy };
+    world.guards[0].facing = Ang::from_degrees(0);
+    let r = Fx::from_ratio(metres_tenths, 10);
+    let a = Ang::from_degrees(degrees);
+    world.raiders[0].at = Point { x: gx + trig::cos(a).mul(r), y: gy + trig::sin(a).mul(r) };
+    world.raiders[0].route.clear();
+    world
+}
+
+fn rate(world: &World) -> Option<i32> {
+    world.noticed(0, 0).map(|(per_tick, _)| per_tick)
+}
+
+#[test]
+fn the_corner_of_the_eye_notices_at_half_the_rate() {
+    // The Scout's cone is 45 degrees, so 22.5 either side; its corner of the
+    // eye is 110, so 55 either side. 1.5 m is inside its near zone.
+    assert_eq!(rate(&scout_and_raider(15, 0)), Some(67), "in the cone, near: 67");
+    assert_eq!(rate(&scout_and_raider(15, 40)), Some(33), "corner of the eye: half");
+    assert_eq!(rate(&scout_and_raider(15, 320)), Some(33), "on either side");
+    assert_eq!(rate(&scout_and_raider(15, 70)), None, "outside both arcs: nothing");
+    // The same zones reach the same distances: 5 m is the far zone either way.
+    assert_eq!(rate(&scout_and_raider(50, 0)), Some(12));
+    assert_eq!(rate(&scout_and_raider(50, 40)), Some(6));
+    assert_eq!(rate(&scout_and_raider(65, 40)), None, "past the far zone");
+}
+
+#[test]
+fn gait_and_light_multiply_the_rate_once() {
+    // §12.17: crouched halves, running adds three quarters, unlit halves
+    // again. The factors multiply and one division comes last.
+    let with = |gait: Gait, dark: bool, degrees: i32| {
+        let mut world = scout_and_raider(15, degrees);
+        world.raiders[0].gait = gait;
+        if dark {
+            let (x, y) = world.grid.coords(
+                world.grid.tile_at(world.raiders[0].at.x, world.raiders[0].at.y).unwrap());
+            world.grid.darken(x, y);
+        }
+        rate(&world)
+    };
+    assert_eq!(with(Gait::Walk, false, 0), Some(67));
+    assert_eq!(with(Gait::Crouch, false, 0), Some(33));
+    assert_eq!(with(Gait::Run, false, 0), Some(117), "67 x 7/4 = 117.25");
+    assert_eq!(with(Gait::Walk, true, 0), Some(33), "unlit");
+    assert_eq!(with(Gait::Crouch, true, 0), Some(16), "a quarter: 67/4");
+    assert_eq!(with(Gait::Run, true, 0), Some(58), "67 x 7/8 = 58.6");
+    // All three halvings at once: an eighth of 67, from one division.
+    assert_eq!(with(Gait::Crouch, true, 40), Some(8));
+}
+
+#[test]
+fn standing_still_in_tall_grass_hides_until_a_guard_walks_in() {
+    // 2 m puts the raider on the centre of (8, 6), so a guard a quarter-tile
+    // short of it is inside the tile and still facing it.
+    let hidden = |moving: bool, guard_inside: bool| {
+        let mut world = scout_and_raider(20, 0);
+        let tile = world.grid.tile_at(world.raiders[0].at.x, world.raiders[0].at.y).unwrap();
+        let (x, y) = world.grid.coords(tile);
+        world.grid.place(x, y, Feature::TallGrass);
+        if moving {
+            let next = world.grid.index(x, y + 1).unwrap();
+            world.raiders[0].route = vec![next];
+        }
+        if guard_inside {
+            let (cx, cy) = world.grid.centre(tile);
+            world.guards[0].at = Point { x: cx - Fx::from_ratio(1, 4), y: cy };
+        }
+        rate(&world).is_none()
+    };
+    assert!(hidden(false, false), "still in grass: invisible");
+    assert!(!hidden(true, false), "moving through it: seen");
+    assert!(!hidden(false, true), "\"until a guard walks into the tile\"");
+    // And grass does not block sight past it, as a fog bank does.
+    let mut grid = Grid::new(10, 10);
+    grid.place(3, 2, Feature::TallGrass);
+    assert!(sight::visible(&grid, grid.index(1, 2).unwrap(), grid.index(5, 2).unwrap()));
+}
+
+#[test]
+fn gravel_and_water_carry_further_and_moss_less() {
+    // Spec: louder x1.25, quieter x0.75, applied to the radius before it is
+    // cut to whole steps.
+    assert_eq!(S::Walking.steps_on(Surface::Plain), 2, "2.5 m");
+    assert_eq!(S::Walking.steps_on(Surface::Gravel), 3, "3.1 m");
+    assert_eq!(S::Walking.steps_on(Surface::Moss), 1, "1.9 m");
+    assert_eq!(S::Running.steps_on(Surface::Water), 5, "5.6 m");
+    assert_eq!(S::CrouchedWalk.steps_on(Surface::Moss), 0, "0.75 m: under a step");
+    assert_eq!(S::CrouchedWalk.steps_on(Surface::Plain), 1);
+}
+
+#[test]
+fn a_walk_on_gravel_is_heard_where_the_same_walk_on_grass_is_not() {
+    // A guard three steps from a walking raider, facing away: plain ground
+    // carries two steps and gravel three.
+    let wakes = |surface: Surface| {
+        let heist = fixture(3, 60, 1);
+        let mut world = World::new(heist.seed, 1, Vec::new());
+        world.grid = Grid::new(14, 14);
+        world.guards.truncate(1);
+        let post = world.grid.index(2, 2).unwrap();
+        let (gx, gy) = world.grid.centre(post);
+        world.guards[0].at = Point { x: gx, y: gy };
+        world.guards[0].facing = Ang::from_degrees(270);
+        world.grid.set_surface(2, 5, surface);
+        let start = world.grid.index(2, 5).unwrap();
+        let (rx, ry) = world.grid.centre(start);
+        world.raiders[0].at = Point { x: rx, y: ry };
+        world.raiders[0].route = vec![world.grid.index(2, 6).unwrap()];
+        world.step();
+        world.guards[0].state
+    };
+    assert_eq!(wakes(Surface::Plain), State::Unaware);
+    assert_eq!(wakes(Surface::Gravel), State::Investigating);
+}
+
+#[test]
+fn running_is_heard_further_than_walking() {
+    let wakes = |gait: Gait| {
+        let heist = fixture(3, 60, 1);
+        let mut world = World::new(heist.seed, 1, Vec::new());
+        world.grid = Grid::new(14, 14);
+        world.guards.truncate(1);
+        let post = world.grid.index(2, 2).unwrap();
+        let (gx, gy) = world.grid.centre(post);
+        world.guards[0].at = Point { x: gx, y: gy };
+        world.guards[0].facing = Ang::from_degrees(270);
+        let start = world.grid.index(2, 6).unwrap();
+        let (rx, ry) = world.grid.centre(start);
+        world.raiders[0].at = Point { x: rx, y: ry };
+        world.raiders[0].gait = gait;
+        world.raiders[0].route = vec![world.grid.index(2, 7).unwrap()];
+        world.step();
+        world.guards[0].state
+    };
+    assert_eq!(wakes(Gait::Walk), State::Unaware, "four steps: walking carries two");
+    assert_eq!(wakes(Gait::Run), State::Investigating, "running carries four");
+}
+
+#[test]
+fn a_gait_command_changes_the_gait_and_a_bad_one_is_dropped() {
+    let heist = fixture(3, 60, 1);
+    let commands = vec![
+        Command { tick: 0, actor: 0, kind: Kind::Gait, x: 2, y: 0 },
+        Command { tick: 1, actor: 0, kind: Kind::Gait, x: 7, y: 0 },
+    ];
+    let mut world = World::new(heist.seed, 1, commands);
+    world.step();
+    assert_eq!(world.raiders[0].gait, Gait::Run);
+    world.step();
+    assert_eq!(world.raiders[0].gait, Gait::Run, "no gait 7: dropped, not guessed");
+}
+
+#[test]
+fn the_crew_and_the_guards_move_at_their_roles_speeds() {
+    // §11.1's column, per tick at 30 ticks a second.
+    let heist = fixture(3, 60, 1);
+    let world = World::new(heist.seed, 5, Vec::new());
+    let roles: Vec<Role> = world.raiders.iter().map(|r| r.role).collect();
+    assert_eq!(roles, [Role::Scout, Role::Breaker, Role::Carrier, Role::Warden, Role::Mender],
+               "a fixture crew in \u{a7}11.1's order");
+    for raider in &world.raiders {
+        assert_eq!(raider.speed, Fx::from_ratio(raider.role.speed_tenths(), 300));
+    }
+    assert_eq!(Role::Scout.speed_tenths(), 45);
+    assert_eq!(Role::Warden.speed_tenths(), 26);
+    // Guard rows are §12.17's order: Scout, Warden, Breaker, Carrier, Mender.
+    assert_eq!(world.guards[1].speed, Role::Warden.speed());
+    assert_eq!(world.guards[3].speed, Role::Carrier.speed());
+}
+
+#[test]
+fn the_seed_cannot_change_what_a_guard_does() {
+    // §12.17: "nothing here is random: a player who scouts an island can
+    // predict exactly what will happen." The same commands on two seeds must
+    // produce the same heist, tick for tick.
+    let commands = fixture(11, 3000, 3).commands;
+    let mut a = World::new(1, 3, commands.clone());
+    let mut b = World::new(u64::MAX, 3, commands);
+    for _ in 0..3000 {
+        assert_eq!(a.step(), b.step(), "a guard's behaviour depended on the seed");
+    }
+}

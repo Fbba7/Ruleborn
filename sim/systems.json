@@ -145,12 +145,13 @@
       "name": "Guard states",
       "section": "12.17",
       "task": "T5.2",
-      "what": "Unaware, Suspicious, Investigating, Alerted, Searching, Returning, at the document's thresholds. No fall-back inside half a second; ten seconds searching the spot, twenty after losing sight, then home.",
+      "what": "Unaware, Suspicious, Investigating, Alerted, Searching, Returning, at the document's thresholds. No fall-back inside half a second; ten seconds searching the spot, twenty after losing sight, then home. Nothing random in it: §12.17 promises a scouting player can predict exactly what will happen.",
       "tests": [
         "a_raider_held_in_the_near_zone_raises_a_guard_to_alerted",
         "a_state_does_not_fall_back_within_half_a_second",
         "investigating_walks_to_the_spot_searches_ten_seconds_then_walks_home",
-        "alerted_searches_twenty_seconds_after_losing_sight_then_returns"
+        "alerted_searches_twenty_seconds_after_losing_sight_then_returns",
+        "the_seed_cannot_change_what_a_guard_does"
       ]
     },
     {
@@ -162,6 +163,31 @@
         "an_alert_reaches_guards_within_four_metres_half_a_second_later",
         "the_realm_alarm_climbs_once_every_thirty_seconds_to_six",
         "at_alarm_five_one_more_warden_arrives_at_the_entrance"
+      ]
+    },
+    {
+      "name": "Detection modifiers",
+      "section": "12.17",
+      "task": "T5.2",
+      "what": "The corner of the eye at half the rate; crouched halves, running adds three quarters, an unlit tile halves again, multiplied once; still in tall grass is invisible until a guard walks into the tile; gravel and water carry sound further, moss less.",
+      "tests": [
+        "the_corner_of_the_eye_notices_at_half_the_rate",
+        "gait_and_light_multiply_the_rate_once",
+        "standing_still_in_tall_grass_hides_until_a_guard_walks_in",
+        "gravel_and_water_carry_further_and_moss_less",
+        "a_walk_on_gravel_is_heard_where_the_same_walk_on_grass_is_not",
+        "running_is_heard_further_than_walking"
+      ]
+    },
+    {
+      "name": "Roles and gaits",
+      "section": "11.1",
+      "task": "T5.5",
+      "what": "Crew and guards move at §11.1's speed for their role, over any number of tile edges. Walk, crouch or run by command; the two gait speeds are the simulation's reading, since the document gives neither.",
+      "tests": [
+        "a_crew_member_covers_its_roles_distance_whatever_the_tile_edges",
+        "a_gait_command_changes_the_gait_and_a_bad_one_is_dropped",
+        "the_crew_and_the_guards_move_at_their_roles_speeds"
       ]
     }
   ],

@@ -66,6 +66,39 @@ pub struct Grid {
     /// walked through; a rock pillar does both. One flag for both would make
     /// two of those three wrong.
     sight_blocked: Vec<bool>,
+    /// The feature placed on each tile, if any, so a rule that reads one
+    /// (§12.17's tall grass) asks the tile rather than a second list.
+    features: Vec<Option<Feature>>,
+    /// §12.17: "an unlit tile halves it again". Lit unless made dark.
+    unlit: Vec<bool>,
+    /// §12.17: "Gravel and water are louder, moss is quieter (6.1)."
+    surfaces: Vec<Surface>,
+}
+
+/// What a tile is underfoot, for noise. §12.17 names three that differ from
+/// plain ground; the spec gives the factors: louder x1.25, quieter x0.75.
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
+pub enum Surface {
+    #[default]
+    Plain,
+    Gravel,
+    Water,
+    Moss,
+}
+
+/// Louder surfaces carry a sound five quarters as far, quieter three quarters.
+/// As (numerator, denominator), so the one division happens once, at the end.
+pub const LOUD_SURFACE: (u16, u16) = (5, 4);
+pub const QUIET_SURFACE: (u16, u16) = (3, 4);
+
+impl Surface {
+    pub fn carry(self) -> (u16, u16) {
+        match self {
+            Surface::Gravel | Surface::Water => LOUD_SURFACE,
+            Surface::Moss => QUIET_SURFACE,
+            Surface::Plain => (1, 1),
+        }
+    }
 }
 
 /// §6.2's features, by what they do to feet and to eyes. Named from the
@@ -80,25 +113,37 @@ pub enum Feature {
     Fence,
     /// Walkable / "Hides anyone inside and blocks sight through it".
     FogBank,
+    /// Walkable, and does not block sight. §12.17: "standing still in tall
+    /// grass makes you invisible until a guard walks into the tile" — which
+    /// is a rule about the one standing in it, not about the line through it.
+    TallGrass,
 }
 
 impl Feature {
     fn terrain(self) -> Terrain {
         match self {
             Feature::RockPillar | Feature::RuinWall | Feature::Fence => Terrain::Blocked,
-            Feature::FogBank => Terrain::Open,
+            Feature::FogBank | Feature::TallGrass => Terrain::Open,
         }
     }
 
     fn blocks_sight(self) -> bool {
-        !matches!(self, Feature::Fence)
+        !matches!(self, Feature::Fence | Feature::TallGrass)
     }
 }
 
 impl Grid {
     pub fn new(width: u16, height: u16) -> Grid {
         let n = width as usize * height as usize;
-        Grid { width, height, tiles: vec![Terrain::Open; n], sight_blocked: vec![false; n] }
+        Grid {
+            width,
+            height,
+            tiles: vec![Terrain::Open; n],
+            sight_blocked: vec![false; n],
+            features: vec![None; n],
+            unlit: vec![false; n],
+            surfaces: vec![Surface::Plain; n],
+        }
     }
 
     /// §5.2's grid for a realm level, 1 to 5: 10x10, 11x11, 12x12, 13x13, 14x14.
@@ -143,7 +188,32 @@ impl Grid {
         if let Some(i) = self.index(x, y) {
             self.tiles[i as usize] = feature.terrain();
             self.sight_blocked[i as usize] = feature.blocks_sight();
+            self.features[i as usize] = Some(feature);
         }
+    }
+
+    pub fn feature(&self, index: TileIndex) -> Option<Feature> {
+        self.features.get(index as usize).copied().flatten()
+    }
+
+    pub fn darken(&mut self, x: u16, y: u16) {
+        if let Some(i) = self.index(x, y) {
+            self.unlit[i as usize] = true;
+        }
+    }
+
+    pub fn is_unlit(&self, index: TileIndex) -> bool {
+        self.unlit.get(index as usize).copied().unwrap_or(false)
+    }
+
+    pub fn set_surface(&mut self, x: u16, y: u16, surface: Surface) {
+        if let Some(i) = self.index(x, y) {
+            self.surfaces[i as usize] = surface;
+        }
+    }
+
+    pub fn surface(&self, index: TileIndex) -> Surface {
+        self.surfaces.get(index as usize).copied().unwrap_or_default()
     }
 
     /// Whether this tile stops a line of sight. Off the grid counts as
