@@ -871,7 +871,7 @@ dict(id="F26", kind="finding", severity="blocking", status="open",
           "have — that is F16’s finding — so this is about the "
           "islands most players will defend and raid, not about what the editor "
           "can build."
-          "<br><br><strong>Re-measured after D55, in part</strong> (generator sweep, same seeds and sample sizes): 3 of 10 realm/depth combinations have a setting inside both bands, as before, and the nearest misses are the same cells within a few points. The ward-budget half is still running; this item stays on the old fingerprint until it lands.",
+          "<br><br><strong>Re-measured after D55, in part</strong> (generator sweep, same seeds and sample sizes): 3 of 10 realm/depth combinations have a setting inside both bands, as before, and the nearest misses are the same cells within a few points. The ward budget agrees on both harnesses: the recorded ward needs for realms 2–5 are confirmed. For realm 1 the recorded 10 does not land both bands — 11 wards with one band does — and that was already so before D55, so it is a correction to this item rather than something D55 moved.",
      rec="<strong>The lever is wards, and §5.2 allows 40% of what is "
          "needed.</strong> An earlier draft of this recommendation said realm 1 "
          "had no lever at the right scale, and listed wards, grid size and a "
@@ -969,7 +969,7 @@ dict(id="F26", kind="finding", severity="blocking", status="open",
          "gives fewest wards are the realms with least room to be "
          "wrong.<br><br><code>python3 -m tools.generator_settings</code> "
          "\u00b7 <code>python3 -m tools.ward_budget</code>",
-     measured="re-run against harness 496955db53f8d3c4"),
+     measured="re-run against harness ef4163da978cc0f0 (D55)"),
 
 dict(id="F27", kind="finding", severity="significant", status="open",
      title="§10.2’s post ladder is the right size and starts in the "
@@ -2706,7 +2706,7 @@ dict(id="D55", kind="deviation", severity="significant", status="done",
      rec="Align the harness with the content file and re-run the findings it "
          "carries, or record why the harness should keep its own reading. "
          "Either way one reading, not two."
-         "<br><br><strong>Done.</strong> <code>detect.zone</code> now answers the zone by distance inside the corner of the eye and <code>fill_rate</code> halves it, with the factor read from the content file. Every harness-pinned finding was measured twice — the harness before and after, same seeds, same sample sizes, in separate worktrees — and <strong>one number changed a claim</strong>: realm 1 needs twice §10.2’s ladder slope to reach the band, not five times (F27, corrected in place). Its conclusion holds. F9, F11, F15, F16, F20 and F21 moved within sampling noise and every verdict held. F19 is not re-measured, because no report runs its two crews; F22 has since been re-measured on the generator sweep and holds; F26 holds on the sweep and waits on the ward budget. Harness fingerprint 496955db → ef4163da.",
+         "<br><br><strong>Done.</strong> <code>detect.zone</code> now answers the zone by distance inside the corner of the eye and <code>fill_rate</code> halves it, with the factor read from the content file. Every harness-pinned finding was measured twice — the harness before and after, same seeds, same sample sizes, in separate worktrees — and <strong>one number changed a claim</strong>: realm 1 needs twice §10.2’s ladder slope to reach the band, not five times (F27, corrected in place). Its conclusion holds. F9, F11, F15, F16, F20 and F21 moved within sampling noise and every verdict held. F19 is not re-measured, because no report runs its two crews; F22 and F26 have since been re-measured on the generator sweep and the ward budget and hold; F26's realm-1 ward need is 11, not the recorded 10, on either harness. Harness fingerprint 496955db → ef4163da.",
      measured="harness ef4163da978cc0f0"),
 dict(id="D53", kind="contradiction", severity="significant", status="open",
      title="§13.4 names §5.2 as the home of the law slots and then "
