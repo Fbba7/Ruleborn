@@ -539,7 +539,7 @@ dict(
           "rehearsals, balance bots, co-op and a $5–15/month infrastructure "
           "bill at a million players. If it fails they all fail together.",
     tasks=[
-        dict(id="T3.1", owner="claude", status="blocked",
+        dict(id="T3.1", owner="claude", status="ready",
              title="One function, the same checksum on four targets",
              detail="Desktop, server (WebAssembly), a cheap Android and an "
                     "iPhone. <strong>Put the server Wasm build in the first "

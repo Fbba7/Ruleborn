@@ -178,6 +178,17 @@ def validate(tasks: list[dict], by_id: dict) -> None:
                     f"which is {by_id[b]['status']!r}")
         if task["status"] == "blocked" and not blockers:
             problems.append(f"{task['id']} is blocked by nothing")
+        # The check above ran in one direction only: it caught a task marked
+        # ready that waits on something unfinished, and never a task marked
+        # blocked that waits on nothing still open. T3.1 — the determinism
+        # spike, which the README calls the thing that gates all gameplay
+        # code — sat as "blocked" from the moment T0.2 finished, and the
+        # roadmap said so on every build without anything reading it.
+        if task["status"] == "blocked" and blockers and all(
+                by_id[b]["status"] == "done" for b in blockers if b in by_id):
+            problems.append(
+                f"{task['id']} is 'blocked' but every blocker "
+                f"({', '.join(blockers)}) is done \u2014 it is ready")
         if task["status"] == "yours" and task["owner"] != "you":
             problems.append(f"{task['id']} is 'waiting on you' but owned by claude")
     problems.extend(stale_blockers())
