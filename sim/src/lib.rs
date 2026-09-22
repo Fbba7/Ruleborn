@@ -30,6 +30,7 @@
 #![deny(unsafe_code)]
 
 pub mod fixed;
+pub mod replay;
 
 #[cfg(test)]
 mod tests;
@@ -37,6 +38,7 @@ pub mod rng;
 pub mod trig;
 
 use fixed::{Ang, Fx};
+use replay::{Command, Heist, Kind};
 use rng::{Rng, Stream};
 
 /// §24.10: "Tick rate — 30 a second, fixed."
@@ -110,15 +112,15 @@ pub struct Guard {
     pub suspicion: i32,
 }
 
-/// A raider. The spike moves them along a fixed route; the real simulation
-/// takes commands, which is §24.10's "commands, never state".
+/// A raider. Where it is going is set by a command, never stored in a replay:
+/// §24.10's "commands, never state".
 #[derive(Clone, Debug)]
 pub struct Raider {
     pub id: u32,
     pub at: Point,
     pub speed: Fx,
-    pub route: [Point; 4],
-    pub leg: usize,
+    /// Where it was last told to go. `None` is standing still.
+    pub going_to: Option<Point>,
     pub crouching: bool,
 }
 
@@ -129,6 +131,10 @@ pub struct World {
     pub guards: Vec<Guard>,
     pub raiders: Vec<Raider>,
     pub alarm: i32,
+    /// The input log, in tick order, and how far through it the tick loop is.
+    /// Held rather than consumed, so the same log can be replayed again.
+    commands: Vec<Command>,
+    next_command: usize,
     perception: Rng,
     movement: Rng,
     noise: Rng,
@@ -137,7 +143,10 @@ pub struct World {
 impl World {
     /// The spike's fixture: five guards on §12.17's five role rows, three
     /// raiders on a route across them. Every number here is the document's.
-    pub fn new(seed: u64) -> World {
+    pub fn new(seed: u64, crew: u8, commands: Vec<Command>) -> World {
+        debug_assert!(
+            commands.windows(2).all(|w| w[0].tick <= w[1].tick),
+            "the input log has to be in tick order or the inputs phase is not a phase");
         // role, cone°, near, mid, far (metres), turn °/tick — §12.17's table.
         let roles: [(i32, i32, i32, i32, i32, i32); 5] = [
             (0, 45, 2, 4, 6, 6),      // Scout
@@ -166,21 +175,15 @@ impl World {
                 suspicion: 0,
             });
         }
-        let mut raiders = Vec::with_capacity(3);
-        for i in 0..3i32 {
+        let mut raiders = Vec::with_capacity(crew as usize);
+        for i in 0..crew as i32 {
             raiders.push(Raider {
                 id: i as u32,
                 at: Point { x: Fx::from_int(i), y: Fx::ZERO },
                 // §12.18's walk is 3 tiles a second; per tick that is 1/10.
                 speed: Fx::from_ratio(1, 10),
-                route: [
-                    Point { x: Fx::from_int(4 + 5 * i), y: Fx::from_int(4) },
-                    Point { x: Fx::from_int(20 - 3 * i), y: Fx::from_int(7) },
-                    Point { x: Fx::from_int(6 + i), y: Fx::from_int(12) },
-                    Point { x: Fx::from_int(24), y: Fx::from_int(2) },
-                ],
-                leg: 0,
-                crouching: i % 2 == 0,
+                going_to: None,
+                crouching: false,
             });
         }
         World {
@@ -188,6 +191,8 @@ impl World {
             guards,
             raiders,
             alarm: 0,
+            commands,
+            next_command: 0,
             perception: Rng::new(seed, Stream::Perception),
             movement: Rng::new(seed, Stream::Movement),
             noise: Rng::new(seed, Stream::Noise),
@@ -196,6 +201,7 @@ impl World {
 
     /// One tick, in §24.10's six phases. Returns the checksum after it.
     pub fn step(&mut self) -> u64 {
+        self.phase_inputs();
         self.phase_laws();
         self.phase_perception();
         self.phase_movement();
@@ -203,6 +209,31 @@ impl World {
         self.phase_states();
         self.tick += 1;
         self.checksum()
+    }
+
+    /// Inputs. §24.10 puts this phase first, and first is the point: every
+    /// command for this tick is applied before anything reads the world, so
+    /// no part of the tick sees a half-applied input.
+    fn phase_inputs(&mut self) {
+        while self.next_command < self.commands.len()
+            && self.commands[self.next_command].tick == self.tick
+        {
+            let command = self.commands[self.next_command];
+            self.next_command += 1;
+            let Some(raider) = self.raiders.get_mut(command.actor as usize) else {
+                continue;                 // a command for a crew member who is
+                                          // not here is dropped, not fatal: the
+                                          // server re-simulates untrusted logs
+            };
+            match command.kind {
+                Kind::MoveTo => {
+                    let (x, y) = command.target();
+                    raider.going_to = Some(Point { x, y });
+                }
+                Kind::Crouch => raider.crouching = command.x != 0,
+                Kind::Halt => raider.going_to = None,
+            }
+        }
     }
 
     /// Laws. The spike carries one: a realm law that slows everything by a
@@ -275,11 +306,11 @@ impl World {
     /// Movement. Raiders walk their route; guards sweep their cone.
     fn phase_movement(&mut self) {
         for raider in self.raiders.iter_mut() {
-            let target = raider.route[raider.leg];
+            let Some(target) = raider.going_to else { continue };
             let d = raider.at.distance(target);
             if d <= raider.speed {
                 raider.at = target;
-                raider.leg = (raider.leg + 1) % raider.route.len();
+                raider.going_to = None;   // arrived; the next command decides
                 continue;
             }
             let bearing = raider.at.bearing_to(target);
@@ -356,18 +387,20 @@ impl World {
             mix(raider.at.x.0);
             mix(raider.at.y.0);
             mix(raider.speed.0);
-            mix(raider.leg as i64);
+            mix(raider.going_to.map_or(0, |p| p.x.0));
+            mix(raider.going_to.map_or(0, |p| p.y.0));
+            mix(raider.crouching as i64);
         }
         h
     }
 }
 
-/// Run a whole heist and return the per-second checksums, which is what
-/// §24.10 says is kept. A heist is 4,500 to 7,200 ticks.
-pub fn run(seed: u64, ticks: u32) -> Vec<u64> {
-    let mut world = World::new(seed);
-    let mut kept = Vec::with_capacity((ticks / TICKS_PER_SECOND) as usize + 1);
-    for _ in 0..ticks {
+/// Run a heist and return the per-second checksums, which is what §24.10 says
+/// is kept: "every tick in memory, one a second kept".
+pub fn run(heist: &Heist) -> Vec<u64> {
+    let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
+    let mut kept = Vec::with_capacity((heist.ticks / TICKS_PER_SECOND) as usize + 1);
+    for _ in 0..heist.ticks {
         let sum = world.step();
         if world.tick % TICKS_PER_SECOND == 0 {
             kept.push(sum);
@@ -376,16 +409,91 @@ pub fn run(seed: u64, ticks: u32) -> Vec<u64> {
     kept
 }
 
-/// The one number two targets have to agree on: a hash of every kept checksum.
-pub fn digest(seed: u64, ticks: u32) -> u64 {
+/// Re-simulate a heist and check it against the checksums it carries.
+///
+/// This is what the server does with a replay, and §24.10 says what a
+/// mismatch buys: "the first mismatched second narrows a divergence to thirty
+/// ticks". So the answer is not a boolean \u2014 it is *which second*.
+pub fn verify(heist: &Heist) -> Result<(), usize> {
+    let kept = run(heist);
+    for (i, expected) in heist.checksums.iter().enumerate() {
+        match kept.get(i) {
+            Some(actual) if truncate(*actual) == *expected => {}
+            _ => return Err(i + 1),        // seconds are one-based for a human
+        }
+    }
+    Ok(())
+}
+
+/// The low bytes of a checksum, which is what a replay stores. `replay.rs`
+/// says why it is not all eight.
+pub fn truncate(sum: u64) -> u32 {
+    sum as u32
+}
+
+/// The one number two targets have to agree on: a hash over every kept sum.
+pub fn digest(heist: &Heist) -> u64 {
     let mut h: u64 = 0xcbf2_9ce4_8422_2325;
-    for sum in run(seed, ticks) {
+    for sum in run(heist) {
         for byte in sum.to_le_bytes() {
             h ^= byte as u64;
             h = h.wrapping_mul(0x0000_0100_0000_01b3);
         }
     }
     h
+}
+
+/// A heist built from a seed alone, for the cross-target spike.
+///
+/// The commands are drawn from the seed rather than played by a person: the
+/// spike needs an input log long enough to matter and identical on every
+/// target, and a recorded session would do the same job without being
+/// reproducible from eight bytes. §12.6 budgets 15 to 25 decisions in a run,
+/// so this draws in that range and spreads them across the ticks.
+pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
+    let mut rng = Rng::new(seed, Stream::Loot);
+    let decisions = 15 + rng.below(11) as u32;      // 15 to 25, §12.6
+    let mut commands = Vec::with_capacity(decisions as usize * 2);
+    for i in 0..decisions {
+        let tick = (ticks / decisions) * i + (rng.below(20) as u32);
+        let actor = rng.below(crew as u64) as u8;
+        commands.push(Command {
+            tick,
+            actor,
+            kind: Kind::MoveTo,
+            x: rng.below(24 * 256) as i16,
+            y: rng.below(14 * 256) as i16,
+        });
+        if rng.below(3) == 0 {
+            commands.push(Command {
+                tick, actor, kind: Kind::Crouch,
+                x: rng.below(2) as i16, y: 0,
+            });
+        }
+    }
+    commands.sort_by_key(|c| (c.tick, c.actor, c.kind as u8));
+
+    let mut heist = Heist {
+        seed,
+        // The island and the rule set stand in for §24.8's content hashes.
+        // What matters for the spike is that they are pinned and travel with
+        // the replay (§24.11), not what they are digests of.
+        island: digest_bytes(seed, 0x15_1A_4D),
+        rules: digest_bytes(seed, 0x2D_1E_5F),
+        ticks, crew, commands,
+        checksums: Vec::new(),
+    };
+    heist.checksums = run(&heist).iter().map(|s| truncate(*s)).collect();
+    heist
+}
+
+fn digest_bytes(seed: u64, salt: u64) -> [u8; 32] {
+    let mut out = [0u8; 32];
+    let mut rng = Rng::new(seed ^ salt, Stream::Loot);
+    for chunk in out.chunks_mut(8) {
+        chunk.copy_from_slice(&rng.next_u64().to_le_bytes());
+    }
+    out
 }
 
 // --------------------------------------------------------------------------
@@ -403,5 +511,5 @@ pub fn digest(seed: u64, ticks: u32) -> u64 {
 #[unsafe(no_mangle)]
 pub extern "C" fn rb_digest(seed_hi: u32, seed_lo: u32, ticks: u32) -> u64 {
     let seed = ((seed_hi as u64) << 32) | seed_lo as u64;
-    digest(seed, ticks)
+    digest(&fixture(seed, ticks, 3))
 }

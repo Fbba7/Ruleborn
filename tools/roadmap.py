@@ -561,11 +561,9 @@ dict(
              gate="identical checksums on all four, or take the C# fallback "
                   "without renegotiating (\u00a724.7)",
              blocked_by=["T0.2"]),
-        dict(id="T3.2", owner="claude", status="blocked",
+        dict(id="T3.2", owner="claude", status="doing",
              title="Fixed-point module and golden replays, portable from day one",
-             detail="Written so that switching to the fallback costs the spike "
-                    "and nothing else. The tick rate has to be settled first "
-                    "(C7), because the replays encode it.",
+             detail="Written so that switching to the fallback costs the spike and nothing else. The tick rate has to be settled first (C7), because the replays encode it \u2014 and C7 is closed.<br><br><strong>Built.</strong> <code>sim/replay.rs</code> is \u00a724.10's \u201ccommands, never state\u201d: a header pinning \u00a724.11's four things, a varint-delta command log, and one checksum a second. <code>sim/golden/*.rbh</code> are four heists encoded by a build that is now history; a test decodes each, re-simulates it and names the second any divergence starts at. Checked against a real regression rather than assumed: changing suspicion decay by one a tick fails at second 4 of 150.<br><br>Building it settled a number \u00a724.10 leaves open. Its own budget \u2014 120 bytes of header, 300 to 700 of commands, a checksum a second, under 2 KB \u2014 does not close at eight bytes a checksum: a 240-second heist would be 2,740. The stored sum is therefore the low four bytes and a full-length heist measures 1,215.",
              blocked_by=["T3.1", "T1.4"]),
     ],
 ),

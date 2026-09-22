@@ -189,7 +189,7 @@
 
     <div class="summary">
       <div><span class="n">18</span><span class="k">tasks done</span></div>
-      <div><span class="n">6</span><span class="k">live now</span></div>
+      <div><span class="n">7</span><span class="k">live now</span></div>
       <div><span class="n">6</span><span class="k">waiting on you</span></div>
       <div><span class="n">90/130</span><span class="k">register items drafted</span></div>
       <div><span class="n">75</span><span class="k">signed off</span></div>
@@ -205,7 +205,7 @@
   <nav class="filters" aria-label="Filter the roadmap">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">41</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">9</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">18</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">3</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">14</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">18</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">4</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">13</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
   </nav>
 
   <main id="list">
@@ -770,15 +770,15 @@
         
         <p class="blockers">After <a href="#T0-2">T0.2</a> The heist harness</p>
       </article>
-      <article class="task st-blocked" id="T3-2"
-               data-status="blocked" data-owner="claude">
+      <article class="task st-doing" id="T3-2"
+               data-status="doing" data-owner="claude">
         <header class="task-head">
           <span class="tid">T3.2</span>
           <h3>Fixed-point module and golden replays, portable from day one</h3>
-          <span class="status st-blocked">Blocked</span>
+          <span class="status st-doing">Under way</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">Written so that switching to the fallback costs the spike and nothing else. The tick rate has to be settled first (C7), because the replays encode it.</p>
+        <p class="detail">Written so that switching to the fallback costs the spike and nothing else. The tick rate has to be settled first (C7), because the replays encode it — and C7 is closed.<br><br><strong>Built.</strong> <code>sim/replay.rs</code> is §24.10's “commands, never state”: a header pinning §24.11's four things, a varint-delta command log, and one checksum a second. <code>sim/golden/*.rbh</code> are four heists encoded by a build that is now history; a test decodes each, re-simulates it and names the second any divergence starts at. Checked against a real regression rather than assumed: changing suspicion decay by one a tick fails at second 4 of 150.<br><br>Building it settled a number §24.10 leaves open. Its own budget — 120 bytes of header, 300 to 700 of commands, a checksum a second, under 2 KB — does not close at eight bytes a checksum: a 240-second heist would be 2,740. The stored sum is therefore the low four bytes and a full-length heist measures 1,215.</p>
         
         
         
@@ -1077,4 +1077,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build 9d421c7625fe424c -->
+<!-- ruleborn-build e688a50646ab01e1 -->

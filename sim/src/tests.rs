@@ -4,7 +4,8 @@
 
 use crate::fixed::{isqrt_u64, Ang, Fx, ANG_TURN};
 use crate::rng::{Rng, Stream};
-use crate::{trig, World, TICKS_PER_SECOND};
+use crate::replay::{Command, Heist, Kind, MAX_HEIST_BYTES};
+use crate::{fixture, trig, verify, World, TICKS_PER_SECOND};
 
 #[test]
 fn fixed_point_round_trips_whole_numbers() {
@@ -150,22 +151,99 @@ fn below_stays_in_range_and_covers_it() {
 fn a_heist_is_reproducible_from_its_seed() {
     // §24.10: "What is recorded — commands, never state. State is always
     // recoverable by re-simulating."
-    let a = crate::run(0x1234_5678, 900);
-    let b = crate::run(0x1234_5678, 900);
-    assert_eq!(a, b, "same seed, same checksums");
+    let heist = fixture(0x1234_5678, 900, 3);
+    assert_eq!(crate::run(&heist), crate::run(&heist), "same log, same checksums");
 }
 
 #[test]
 fn different_seeds_produce_different_heists() {
-    let a = crate::digest(1, 900);
-    let b = crate::digest(2, 900);
+    let a = crate::digest(&fixture(1, 900, 3));
+    let b = crate::digest(&fixture(2, 900, 3));
     assert_ne!(a, b, "the seed has to matter or the spike proves nothing");
+}
+
+#[test]
+fn a_heist_round_trips_through_bytes() {
+    let heist = fixture(0xFEED, 1800, 4);
+    let bytes = heist.encode();
+    let back = Heist::decode(&bytes).expect("a heist we encoded must decode");
+    assert_eq!(back, heist, "encoding is lossless");
+}
+
+#[test]
+fn a_full_length_heist_fits_the_size_budget() {
+    // §24.10: "Size of a heist — under 2 kilobytes." 7,200 ticks is the long
+    // end of "4,500 to 7,200", so this is the worst case the document names.
+    for seed in [1u64, 7, 12345, u64::MAX] {
+        let heist = fixture(seed, 7_200, 5);
+        let size = heist.encode().len();
+        assert!(size <= MAX_HEIST_BYTES,
+                "seed {seed}: {size} bytes, over the {MAX_HEIST_BYTES} limit");
+    }
+}
+
+#[test]
+fn a_truncated_or_padded_file_is_refused() {
+    // A replay arriving from a client is untrusted input. §24.9 is about
+    // tests an agent cannot satisfy by cheating; this is the same idea for a
+    // decoder — it must refuse, not guess.
+    let bytes = fixture(3, 600, 3).encode();
+    assert!(Heist::decode(&bytes[..bytes.len() - 1]).is_none(), "truncated");
+    let mut longer = bytes.clone();
+    longer.push(0);
+    assert!(Heist::decode(&longer).is_none(), "trailing bytes");
+    let mut wrong_magic = bytes.clone();
+    wrong_magic[0] = b'X';
+    assert!(Heist::decode(&wrong_magic).is_none(), "wrong magic");
+}
+
+#[test]
+fn verification_names_the_second_that_diverges() {
+    // §24.10: "the first mismatched second narrows a divergence to thirty
+    // ticks". A boolean would not, so verify returns the second.
+    let mut heist = fixture(11, 900, 3);
+    assert_eq!(verify(&heist), Ok(()), "an untouched heist verifies");
+    let target = 7usize;
+    heist.checksums[target - 1] ^= 1;
+    assert_eq!(verify(&heist), Err(target), "the second is reported, not just failure");
+}
+
+#[test]
+fn commands_are_what_drives_the_crew() {
+    // If the crew moved without commands, the input log would not be the
+    // whole record and §24.10's "commands, never state" would be false.
+    let quiet = Heist {
+        commands: Vec::new(),
+        checksums: Vec::new(),
+        ..fixture(5, 300, 3)
+    };
+    let mut world = World::new(quiet.seed, quiet.crew, Vec::new());
+    let start: Vec<_> = world.raiders.iter().map(|r| r.at).collect();
+    for _ in 0..300 {
+        world.step();
+    }
+    let end: Vec<_> = world.raiders.iter().map(|r| r.at).collect();
+    assert_eq!(start, end, "no commands, no movement");
+}
+
+#[test]
+fn a_command_for_a_crew_member_who_is_not_there_is_dropped() {
+    // The server re-simulates logs it did not write. A command naming crew
+    // member nine must not panic the simulation.
+    let heist = Heist {
+        crew: 3,
+        commands: vec![Command { tick: 1, actor: 9, kind: Kind::MoveTo, x: 100, y: 100 }],
+        checksums: Vec::new(),
+        ..fixture(5, 60, 3)
+    };
+    let _ = crate::run(&heist);
 }
 
 #[test]
 fn suspicion_stays_inside_the_documents_range() {
     // §12.17: "Each guard carries a suspicion value from 0 to 1000."
-    let mut world = World::new(0xABCD);
+    let heist = fixture(0xABCD, TICKS_PER_SECOND * 240, 3);
+    let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
     for _ in 0..(TICKS_PER_SECOND * 240) {
         world.step();
         for guard in world.guards.iter() {
@@ -180,11 +258,76 @@ fn suspicion_stays_inside_the_documents_range() {
 fn the_checksum_notices_a_single_unit_of_difference() {
     // A checksum that ignored the low bits of a position would agree across
     // targets while hiding exactly the divergence it exists to find.
-    let mut world = World::new(5);
+    let heist = fixture(5, 300, 3);
+    let mut world = World::new(heist.seed, heist.crew, heist.commands);
     for _ in 0..100 {
         world.step();
     }
     let before = world.checksum();
     world.raiders[0].at.x = Fx(world.raiders[0].at.x.0 + 1);
     assert_ne!(before, world.checksum(), "one unit in the last place must show");
+}
+
+// --------------------------------------------------------------------------
+// Golden replays (T3.2)
+// --------------------------------------------------------------------------
+
+/// Every committed replay still decodes, still verifies, and still fits.
+///
+/// This is the regression harness the spike exists to become. The bytes in
+/// `golden/` were written by a build that is now history; a change that moves
+/// any number in the simulation fails here and names the second it moved at.
+/// §24.11's promise depends on it: "Old replays stay valid forever against the
+/// rules they were played under."
+#[test]
+fn golden_replays_still_verify() {
+    let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("golden");
+    let mut names: Vec<_> = std::fs::read_dir(&dir)
+        .expect("golden/ should exist — cargo run --bin golden -- --write")
+        .filter_map(|e| e.ok().map(|e| e.path()))
+        .filter(|p| p.extension().is_some_and(|x| x == "rbh"))
+        .collect();
+    names.sort();
+    assert!(names.len() >= 4, "found {} golden replays, expected at least 4",
+            names.len());
+
+    for path in names {
+        let bytes = std::fs::read(&path).expect("read a golden replay");
+        let name = path.file_name().unwrap().to_string_lossy().to_string();
+
+        assert!(bytes.len() <= MAX_HEIST_BYTES,
+                "{name}: {} bytes, over §24.10's limit", bytes.len());
+
+        let heist = Heist::decode(&bytes)
+            .unwrap_or_else(|| panic!("{name}: the format no longer decodes it"));
+
+        assert_eq!(heist.encode(), bytes, "{name}: re-encoding changed the bytes");
+
+        match verify(&heist) {
+            Ok(()) => {}
+            Err(second) => panic!(
+                "{name}: the simulation has changed — the replay and the \
+                 re-simulation part company at second {second} of {}. \
+                 If that change was intended, rewrite the goldens in a \
+                 commit of their own so the diff is visible.",
+                heist.checksums.len()),
+        }
+    }
+}
+
+/// The goldens have to disagree with each other, or four files are testing
+/// one thing.
+#[test]
+fn golden_replays_are_different_heists() {
+    let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("golden");
+    let mut digests = Vec::new();
+    for entry in std::fs::read_dir(&dir).expect("golden/").flatten() {
+        if entry.path().extension().is_some_and(|x| x == "rbh") {
+            let bytes = std::fs::read(entry.path()).unwrap();
+            let heist = Heist::decode(&bytes).unwrap();
+            digests.push(crate::digest(&heist));
+        }
+    }
+    let unique: std::collections::BTreeSet<_> = digests.iter().collect();
+    assert_eq!(unique.len(), digests.len(), "two goldens are the same heist");
 }

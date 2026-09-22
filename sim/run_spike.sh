@@ -22,6 +22,10 @@ echo "== the float ban (24.10: 'refuses to compile if one appears')"
 python3 no_floats.py
 
 echo
+echo "== the golden replays (T3.2)"
+cargo run --release --quiet --bin golden
+
+echo
 echo "== building both targets"
 cargo build --release --quiet
 cargo build --release --quiet --target wasm32-unknown-unknown
@@ -30,10 +34,12 @@ echo
 echo "== $TICKS ticks per seed, native against WebAssembly"
 fail=0
 for seed in "${SEEDS[@]}"; do
-  native=$(cargo run --release --quiet --bin spike -- "$seed" "$TICKS" | awk '/^digest/{print $2}')
+  out=$(cargo run --release --quiet --bin spike -- "$seed" "$TICKS")
+  native=$(printf '%s' "$out" | awk '/^digest/{print $2}')
+  size=$(printf '%s' "$out" | awk '/^encoded/{print $2}')
   wasm=$(node wasm_spike.mjs "$seed" "$TICKS" | awk '/^digest/{print $2}')
   if [ "$native" = "$wasm" ]; then
-    printf '  seed %-21s %s  agree\n' "$seed" "$native"
+    printf '  seed %-21s %s  agree   %s bytes\n' "$seed" "$native" "$size"
   else
     printf '  seed %-21s native %s  wasm %s  DIVERGED\n' "$seed" "$native" "$wasm"
     fail=1

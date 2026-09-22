@@ -42,13 +42,25 @@ BANNED = [
 ALLOW = re.compile(r"^\s*(//|///|//!|\*)")
 
 
+#: A string literal is text, not arithmetic. "§24.10" in a panic message is a
+#: section number and `0.5` in one is a number a human will read — neither is
+#: an expression a processor evaluates, and the ban is about expressions. This
+#: strips quoted spans before the rules run, which is what stopped the check
+#: reporting its own error messages.
+TEXT = re.compile(r'"(?:[^"\\]|\\.)*"')
+
+
+def strip_text(code: str) -> str:
+    return TEXT.sub('""', code)
+
+
 def main() -> int:
     problems = []
     for path in sorted(SRC.rglob("*.rs")):
         for n, line in enumerate(path.read_text().splitlines(), 1):
             if ALLOW.match(line):
                 continue
-            code = line.split("//")[0]
+            code = strip_text(line.split("//")[0])
             for pattern, what in BANNED:
                 m = pattern.search(code)
                 if m:
