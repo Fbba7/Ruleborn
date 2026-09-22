@@ -620,13 +620,29 @@ dict(
         dict(id="T5.4", owner="claude", status="blocked",
              title="Lock saves, bundles and versions (§24.11)",
              blocked_by=["T5.1"]),
-        dict(id="T5.5", owner="claude", status="blocked",
+        dict(id="T5.5", owner="claude", status="doing",
              title="Specify pathfinding and crew control before building it",
-             detail="The largest gap and the system most likely to fail §30.7's "
-                    "premise 3 — that delegated control still feels like "
-                    "agency. Drafted in <code>spec/movement.md</code>; make felt "
-                    "control a gate on the slice, not a polish item.",
-             gate="≥ 70% felt control (§30.8)",
+             detail="The largest gap and the system most likely to fail "
+                    "\u00a730.7's premise 3 \u2014 that delegated control "
+                    "still feels like agency. Drafted in "
+                    "<code>spec/movement.md</code>; make felt control a gate "
+                    "on the slice, not a polish item.<br><br><strong>The "
+                    "buildable half is built.</strong> <code>sim/path.rs</code> "
+                    "is \u00a712.18's pathfinder: breadth-first, four "
+                    "neighbours in a fixed north-east-south-west order, ties "
+                    "by tile index. Breadth-first rather than A* because A*'s "
+                    "answer depends on the heuristic and on how a priority "
+                    "queue returns equal keys \u2014 two places correct "
+                    "implementations differ. Terrain slows the walk and cannot "
+                    "bend the route, which is the spec's rule: a pathfinder "
+                    "that went round mud would be choosing for the "
+                    "player.<br><br>\u00a712.18's four behavioural clauses are "
+                    "tests rather than prose \u2014 no re-routing, no picking "
+                    "a different door, crew pass through one another, the "
+                    "command and never the path. What is left is the half a "
+                    "measurement cannot settle: whether it <em>feels</em> like "
+                    "agency, which is \u00a730.8's 70% gate and needs people.",
+             gate="\u2265 70% felt control (\u00a730.8)",
              blocked_by=["T1.4"]),
     ],
 ),

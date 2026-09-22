@@ -10,8 +10,13 @@
 //! them: a test that computes the expected answer with the same code it is
 //! testing passes whatever the code does. These bytes were produced by a
 //! build that is now history, and nothing in the repository can quietly
-//! change them — a rewrite that needs them updated has to update them, in a
-//! commit, where the diff is visible.
+//! change them.
+//!
+//! Regenerating is therefore a decision, and the one failure mode to guard
+//! against is making it reflexively. The rule is: work out what moved and why
+//! before running this, put the rewrite in the same commit as the change that
+//! needed it — splitting them leaves a commit whose tests fail — and say in
+//! the message which second moved.
 
 use ruleborn_sim::{fixture, replay::MAX_HEIST_BYTES};
 use std::path::Path;

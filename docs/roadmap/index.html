@@ -189,7 +189,7 @@
 
     <div class="summary">
       <div><span class="n">18</span><span class="k">tasks done</span></div>
-      <div><span class="n">7</span><span class="k">live now</span></div>
+      <div><span class="n">8</span><span class="k">live now</span></div>
       <div><span class="n">6</span><span class="k">waiting on you</span></div>
       <div><span class="n">90/130</span><span class="k">register items drafted</span></div>
       <div><span class="n">75</span><span class="k">signed off</span></div>
@@ -205,7 +205,7 @@
   <nav class="filters" aria-label="Filter the roadmap">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">41</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">9</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">18</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">4</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">13</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">18</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">5</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">12</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
   </nav>
 
   <main id="list">
@@ -892,15 +892,15 @@
         
         <p class="blockers">After <a href="#T5-1">T5.1</a> Lock the simulation contract (§24.10)</p>
       </article>
-      <article class="task st-blocked" id="T5-5"
-               data-status="blocked" data-owner="claude">
+      <article class="task st-doing" id="T5-5"
+               data-status="doing" data-owner="claude">
         <header class="task-head">
           <span class="tid">T5.5</span>
           <h3>Specify pathfinding and crew control before building it</h3>
-          <span class="status st-blocked">Blocked</span>
+          <span class="status st-doing">Under way</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">The largest gap and the system most likely to fail §30.7's premise 3 — that delegated control still feels like agency. Drafted in <code>spec/movement.md</code>; make felt control a gate on the slice, not a polish item.</p>
+        <p class="detail">The largest gap and the system most likely to fail §30.7's premise 3 — that delegated control still feels like agency. Drafted in <code>spec/movement.md</code>; make felt control a gate on the slice, not a polish item.<br><br><strong>The buildable half is built.</strong> <code>sim/path.rs</code> is §12.18's pathfinder: breadth-first, four neighbours in a fixed north-east-south-west order, ties by tile index. Breadth-first rather than A* because A*'s answer depends on the heuristic and on how a priority queue returns equal keys — two places correct implementations differ. Terrain slows the walk and cannot bend the route, which is the spec's rule: a pathfinder that went round mud would be choosing for the player.<br><br>§12.18's four behavioural clauses are tests rather than prose — no re-routing, no picking a different door, crew pass through one another, the command and never the path. What is left is the half a measurement cannot settle: whether it <em>feels</em> like agency, which is §30.8's 70% gate and needs people.</p>
         
         <p class="gate"><span class="glabel">Passes when</span> ≥ 70% felt control (§30.8)</p>
         
@@ -1077,4 +1077,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build e688a50646ab01e1 -->
+<!-- ruleborn-build f4a8a681f4ac09a7 -->

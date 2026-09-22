@@ -308,8 +308,11 @@ fn golden_replays_still_verify() {
             Err(second) => panic!(
                 "{name}: the simulation has changed — the replay and the \
                  re-simulation part company at second {second} of {}. \
-                 If that change was intended, rewrite the goldens in a \
-                 commit of their own so the diff is visible.",
+                 Decide whether that was intended before regenerating: if it \
+                 was, `cargo run --bin golden -- --write` in the same commit \
+                 as the change, and say in the message what moved. \
+                 Regenerating to make a red test green is how a regression \
+                 gets committed.",
                 heist.checksums.len()),
         }
     }
@@ -330,4 +333,210 @@ fn golden_replays_are_different_heists() {
     }
     let unique: std::collections::BTreeSet<_> = digests.iter().collect();
     assert_eq!(unique.len(), digests.len(), "two goldens are the same heist");
+}
+
+// --------------------------------------------------------------------------
+// The tile grid and the pathfinder (T5.5, §12.18)
+// --------------------------------------------------------------------------
+
+use crate::grid::{Grid, Terrain};
+use crate::path;
+
+#[test]
+fn realm_grids_are_the_sizes_5_2_states() {
+    // §5.2: 10x10 at realm level 1, rising to 14x14 at 5.
+    for (level, side) in [(1u8, 10u16), (2, 11), (3, 12), (4, 13), (5, 14)] {
+        let grid = Grid::for_realm_level(level);
+        assert_eq!((grid.width, grid.height), (side, side), "realm level {level}");
+    }
+}
+
+#[test]
+fn a_tile_index_round_trips_through_its_coordinates() {
+    let grid = Grid::new(14, 14);
+    for y in 0..grid.height {
+        for x in 0..grid.width {
+            let i = grid.index(x, y).expect("inside the grid");
+            assert_eq!(grid.coords(i), (x, y), "round trip at {x},{y}");
+        }
+    }
+    assert_eq!(grid.index(14, 0), None, "off the east edge");
+    assert_eq!(grid.index(0, 14), None, "off the south edge");
+}
+
+#[test]
+fn a_position_lands_in_the_tile_whose_centre_it_is() {
+    let grid = Grid::new(14, 14);
+    for i in [0u32, 1, 13, 14, 97, 195] {
+        let (x, y) = grid.centre(i);
+        assert_eq!(grid.tile_at(x, y), Some(i), "centre of tile {i}");
+    }
+}
+
+#[test]
+fn the_neighbour_order_is_north_east_south_west() {
+    // §12.18 makes this part of the contract: "a fixed neighbour order".
+    // Changing it changes every route in every replay ever recorded, so the
+    // order is asserted rather than assumed.
+    let grid = Grid::new(5, 5);
+    let middle = grid.index(2, 2).unwrap();
+    let n = grid.neighbours(middle);
+    assert_eq!(n[0], grid.index(2, 1), "first neighbour is north");
+    assert_eq!(n[1], grid.index(3, 2), "second is east");
+    assert_eq!(n[2], grid.index(2, 3), "third is south");
+    assert_eq!(n[3], grid.index(1, 2), "fourth is west");
+
+    let corner = grid.index(0, 0).unwrap();
+    let c = grid.neighbours(corner);
+    assert_eq!(c[0], None, "no north from the top row");
+    assert_eq!(c[3], None, "no west from the first column");
+}
+
+#[test]
+fn a_route_is_the_shortest_one() {
+    let grid = Grid::new(10, 10);
+    let from = grid.index(0, 0).unwrap();
+    let to = grid.index(3, 4).unwrap();
+    let route = path::find(&grid, from, to).expect("open grid, a route exists");
+    // Four neighbours, so the shortest route is the Manhattan distance.
+    assert_eq!(route.len(), 3 + 4, "shortest is |dx| + |dy|");
+    assert_eq!(*route.last().unwrap(), to, "a route ends at the goal");
+}
+
+#[test]
+fn a_route_bends_around_a_wall_and_takes_the_gap() {
+    let mut grid = Grid::new(10, 10);
+    for y in 0..10 {
+        if y != 7 {
+            grid.set(5, y, Terrain::Blocked);
+        }
+    }
+    let from = grid.index(0, 0).unwrap();
+    let to = grid.index(9, 0).unwrap();
+    let route = path::find(&grid, from, to).expect("the gap makes one");
+    let gap = grid.index(5, 7).unwrap();
+    assert!(route.contains(&gap), "the only way through is the gap at (5,7)");
+    for tile in route.iter() {
+        assert!(grid.at(*tile).passable(), "a route never enters a wall");
+    }
+}
+
+#[test]
+fn a_sealed_goal_has_no_route_and_that_is_the_answer() {
+    // §12.18: "no automatic re-routing ... no picking a different door."
+    // The pathfinder says there is no route; it does not find a nearby one.
+    let mut grid = Grid::new(10, 10);
+    for (x, y) in [(8, 8), (9, 8), (8, 9)] {
+        grid.set(x, y, Terrain::Blocked);
+    }
+    let from = grid.index(0, 0).unwrap();
+    let to = grid.index(9, 9).unwrap();
+    assert_eq!(path::find(&grid, from, to), None, "walled in is walled in");
+}
+
+#[test]
+fn a_route_into_a_wall_is_refused_rather_than_approximated() {
+    let mut grid = Grid::new(10, 10);
+    grid.set(4, 4, Terrain::Blocked);
+    let from = grid.index(0, 0).unwrap();
+    let into_wall = grid.index(4, 4).unwrap();
+    assert_eq!(path::find(&grid, from, into_wall), None, "a wall is not a destination");
+}
+
+#[test]
+fn the_same_route_is_found_every_time_and_by_both_ends_of_the_grid() {
+    // Determinism by construction, which is what §12.18 claims. Two runs and
+    // two grids that differ only in an unrelated tile must agree.
+    let mut grid = Grid::new(12, 12);
+    grid.set(6, 0, Terrain::Blocked);
+    grid.set(6, 1, Terrain::Blocked);
+    let from = grid.index(1, 5).unwrap();
+    let to = grid.index(10, 5).unwrap();
+    let first = path::find(&grid, from, to).unwrap();
+    let second = path::find(&grid, from, to).unwrap();
+    assert_eq!(first, second, "the same call gives the same route");
+
+    let mut elsewhere = grid.clone();
+    elsewhere.set(11, 11, Terrain::Pace(60));   // slower, not blocked
+    assert_eq!(path::find(&elsewhere, from, to).unwrap(), first,
+               "a change that does not block does not move the route");
+}
+
+#[test]
+fn slow_ground_does_not_move_the_route() {
+    // Breadth-first counts tiles, so mud cannot bend a path. §12.18 is
+    // explicit that this is the rule and not a shortcoming: a pathfinder
+    // that routed around mud would be choosing for the player.
+    let mut grid = Grid::new(10, 10);
+    let from = grid.index(0, 5).unwrap();
+    let to = grid.index(9, 5).unwrap();
+    let clear = path::find(&grid, from, to).unwrap();
+    for x in 1..9 {
+        grid.set(x, 5, Terrain::Pace(40));      // very slow, straight ahead
+    }
+    assert_eq!(path::find(&grid, from, to).unwrap(), clear,
+               "the shortest route in tiles is unchanged by how slow it is");
+}
+
+#[test]
+fn slow_ground_does_change_how_long_the_walk_takes() {
+    // ...but it must change the walk, or Terrain::Pace would be decoration.
+    let ticks = |pace: Terrain| {
+        let heist = fixture(1, 600, 3);
+        let mut world = World::new(heist.seed, 1, Vec::new());
+        for x in 0..world.grid.width {
+            world.grid.set(x, 0, pace);
+        }
+        let to = world.grid.index(6, 0).unwrap();
+        let from = world.grid.tile_at(world.raiders[0].at.x, world.raiders[0].at.y).unwrap();
+        world.raiders[0].route = path::find(&world.grid, from, to).unwrap();
+        let mut n = 0;
+        while world.raiders[0].along < world.raiders[0].route.len() && n < 10_000 {
+            world.step();
+            n += 1;
+        }
+        n
+    };
+    let normal = ticks(Terrain::Open);
+    let slow = ticks(Terrain::Pace(50));
+    assert!(slow > normal, "half speed should take longer: {slow} against {normal}");
+}
+
+#[test]
+fn a_crew_member_never_re_routes_itself() {
+    // §12.18: "no automatic re-routing around a guard the player walked them
+    // into". Once a route is set, only a command replaces it.
+    let heist = fixture(9, 600, 3);
+    let mut world = World::new(heist.seed, 1, Vec::new());
+    let from = world.grid.tile_at(world.raiders[0].at.x, world.raiders[0].at.y).unwrap();
+    let to = world.grid.index(2, 9).unwrap();
+    world.raiders[0].route = path::find(&world.grid, from, to).unwrap();
+    let planned = world.raiders[0].route.clone();
+    for _ in 0..300 {
+        world.step();
+        assert_eq!(world.raiders[0].route, planned,
+                   "the route changed without a command");
+    }
+}
+
+#[test]
+fn crew_pass_through_one_another() {
+    // §12.18: "They pass through one another. Collision between friends is a
+    // source of non-determinism and of the exact frustration this rule exists
+    // to prevent." Two crew sent to one tile must both reach it.
+    let heist = fixture(4, 900, 2);
+    let mut world = World::new(heist.seed, 2, Vec::new());
+    let target = world.grid.index(6, 9).unwrap();
+    for i in 0..2 {
+        let from = world.grid.tile_at(world.raiders[i].at.x, world.raiders[i].at.y).unwrap();
+        world.raiders[i].route = path::find(&world.grid, from, target).unwrap();
+    }
+    for _ in 0..900 {
+        world.step();
+    }
+    let (x, y) = world.grid.centre(target);
+    for raider in world.raiders.iter() {
+        assert_eq!((raider.at.x, raider.at.y), (x, y),
+                   "crew member {} did not reach the shared tile", raider.id);
+    }
 }

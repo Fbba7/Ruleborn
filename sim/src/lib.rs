@@ -30,6 +30,8 @@
 #![deny(unsafe_code)]
 
 pub mod fixed;
+pub mod grid;
+pub mod path;
 pub mod replay;
 
 #[cfg(test)]
@@ -38,6 +40,7 @@ pub mod rng;
 pub mod trig;
 
 use fixed::{Ang, Fx};
+use grid::{Grid, Terrain};
 use replay::{Command, Heist, Kind};
 use rng::{Rng, Stream};
 
@@ -119,9 +122,26 @@ pub struct Raider {
     pub id: u32,
     pub at: Point,
     pub speed: Fx,
-    /// Where it was last told to go. `None` is standing still.
-    pub going_to: Option<Point>,
+    /// The route computed when the last command was given, and how far along
+    /// it the crew member is. §12.18: "The command, never the path" — this is
+    /// recomputed from the command on every machine, never transmitted.
+    ///
+    /// It is computed **once**, when the command lands. §12.18: "no automatic
+    /// re-routing around a guard the player walked them into." A crew member
+    /// walked into a dead end stays in it until told otherwise, and that is
+    /// the rule, not a limitation.
+    pub route: Vec<grid::TileIndex>,
+    pub along: usize,
     pub crouching: bool,
+}
+
+impl Raider {
+    /// Where it is walking to now: the centre of the next tile on its route.
+    fn next_step(&self, grid: &Grid) -> Option<Point> {
+        let tile = *self.route.get(self.along)?;
+        let (x, y) = grid.centre(tile);
+        Some(Point { x, y })
+    }
 }
 
 /// The whole simulated world. Vectors indexed by id, never a map.
@@ -131,6 +151,8 @@ pub struct World {
     pub guards: Vec<Guard>,
     pub raiders: Vec<Raider>,
     pub alarm: i32,
+    /// The realm's tiles. §12.18's "terrain, laws and building are per tile".
+    pub grid: Grid,
     /// The input log, in tick order, and how far through it the tick loop is.
     /// Held rather than consumed, so the same log can be replayed again.
     commands: Vec<Command>,
@@ -175,14 +197,31 @@ impl World {
                 suspicion: 0,
             });
         }
+        // §5.2's realm 5 is 14x14, the largest, so the spike uses it. The
+        // blocked tiles are a fixture: a wall with one gap, which is the
+        // smallest arrangement that makes a route bend and therefore makes
+        // the neighbour order and the tie-breaking observable.
+        let mut grid = Grid::for_realm_level(5);
+        for y in 0..grid.height {
+            if y != 6 {
+                grid.set(7, y, Terrain::Blocked);
+            }
+        }
+        grid.set(3, 3, Terrain::Pace(60));      // §6.2's "40% slower"
+        grid.set(10, 9, Terrain::Pace(115));    // and its "15% faster"
+
         let mut raiders = Vec::with_capacity(crew as usize);
         for i in 0..crew as i32 {
             raiders.push(Raider {
                 id: i as u32,
-                at: Point { x: Fx::from_int(i), y: Fx::ZERO },
+                at: {
+                    let (x, y) = grid.centre(grid.index(i as u16, 0).unwrap_or(0));
+                    Point { x, y }
+                },
                 // §12.18's walk is 3 tiles a second; per tick that is 1/10.
                 speed: Fx::from_ratio(1, 10),
-                going_to: None,
+                route: Vec::new(),
+                along: 0,
                 crouching: false,
             });
         }
@@ -191,6 +230,7 @@ impl World {
             guards,
             raiders,
             alarm: 0,
+            grid,
             commands,
             next_command: 0,
             perception: Rng::new(seed, Stream::Perception),
@@ -228,10 +268,23 @@ impl World {
             match command.kind {
                 Kind::MoveTo => {
                     let (x, y) = command.target();
-                    raider.going_to = Some(Point { x, y });
+                    let from = self.grid.tile_at(raider.at.x, raider.at.y);
+                    let to = self.grid.tile_at(x, y);
+                    // A destination off the grid or inside a wall is not
+                    // re-aimed at the nearest open tile. §12.18: "the crew
+                    // never makes a decision the player did not make."
+                    raider.route = match (from, to) {
+                        (Some(a), Some(b)) => path::find(&self.grid, a, b)
+                            .unwrap_or_default(),
+                        _ => Vec::new(),
+                    };
+                    raider.along = 0;
                 }
                 Kind::Crouch => raider.crouching = command.x != 0,
-                Kind::Halt => raider.going_to = None,
+                Kind::Halt => {
+                    raider.route.clear();
+                    raider.along = 0;
+                }
             }
         }
     }
@@ -306,17 +359,25 @@ impl World {
     /// Movement. Raiders walk their route; guards sweep their cone.
     fn phase_movement(&mut self) {
         for raider in self.raiders.iter_mut() {
-            let Some(target) = raider.going_to else { continue };
+            let Some(target) = raider.next_step(&self.grid) else { continue };
+            // The tile stood on sets the pace, not the tile being entered:
+            // a character is slowed by the mud it is in. Breadth-first chose
+            // the route without consulting this, which is §12.18's rule that
+            // the crew does not decide — a player who routes through mud
+            // walks through mud.
+            let here = self.grid.tile_at(raider.at.x, raider.at.y);
+            let pace = here.map_or(Fx::ONE, |t| self.grid.at(t).pace());
+            let step = raider.speed.mul(pace);
             let d = raider.at.distance(target);
-            if d <= raider.speed {
+            if d <= step {
                 raider.at = target;
-                raider.going_to = None;   // arrived; the next command decides
+                raider.along += 1;        // arrived at this tile; next one
                 continue;
             }
             let bearing = raider.at.bearing_to(target);
             raider.at = Point {
-                x: raider.at.x + trig::cos(bearing).mul(raider.speed),
-                y: raider.at.y + trig::sin(bearing).mul(raider.speed),
+                x: raider.at.x + trig::cos(bearing).mul(step),
+                y: raider.at.y + trig::sin(bearing).mul(step),
             };
         }
         let sweep = (self.movement.below(2) as i32) * 2 - 1;   // -1 or +1
@@ -387,8 +448,9 @@ impl World {
             mix(raider.at.x.0);
             mix(raider.at.y.0);
             mix(raider.speed.0);
-            mix(raider.going_to.map_or(0, |p| p.x.0));
-            mix(raider.going_to.map_or(0, |p| p.y.0));
+            mix(raider.route.len() as i64);
+            mix(raider.along as i64);
+            mix(raider.route.get(raider.along).map_or(-1, |t| *t as i64));
             mix(raider.crouching as i64);
         }
         h

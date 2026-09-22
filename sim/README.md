@@ -7,8 +7,9 @@ Writing it twice — once in the client's language and once in the server's —
 would mean maintaining two implementations that must agree forever, and they
 would eventually not."*
 
-This is **T3.1, the determinism spike**, and **T3.2, the golden replays**. It
-is not the game.
+This is **T3.1** (the determinism spike), **T3.2** (the golden replays) and
+the buildable half of **T5.5** (pathfinding and crew control). It is not the
+game.
 
 ## What it proves, and what it does not
 
@@ -93,6 +94,42 @@ The harness was checked against a real regression rather than assumed to work:
 changing suspicion decay from 20 to 21 a tick — the smallest plausible balance
 tweak — fails at second 4 of 150.
 
+## Pathfinding and crew control
+
+§12.18 specifies this more tightly than most of the document, and every clause
+is load-bearing:
+
+> *"Breadth-first on the tile graph with a fixed neighbour order, ties broken
+> by tile index. Deterministic by construction (24.10)."*
+
+**Breadth-first rather than A\*, and that is a decision rather than an
+economy.** A\*'s answer depends on the heuristic, on tie-breaking inside the
+open set, and on the order a priority queue returns equal keys in — three
+places two correct implementations can differ. Breadth-first on a small grid
+has one answer, and reaching it needs nothing beyond the neighbour order and
+the tile index, both of which are stated.
+
+**Four neighbours, not eight.** Breadth-first counts steps. With eight, a
+diagonal step counts the same as an orthogonal one, which is false — it is
+1.41 tiles of walking — so the "shortest" path would not be shortest. With
+four, breadth-first is exactly shortest in the metric it counts. The order is
+north, east, south, west, written out in one place, because changing it
+changes every route in every replay ever recorded.
+
+**Terrain slows the walk and cannot bend the route.** Breadth-first counts
+tiles, so §6.2's "40% slower" changes how long a crossing takes and not which
+way it goes. That is the spec's rule and not a shortcoming: a pathfinder that
+routed around mud would be choosing for the player.
+
+§12.18's other clauses are tests rather than prose:
+
+| The rule | The test |
+| --- | --- |
+| "no automatic re-routing around a guard the player walked them into" | `a_crew_member_never_re_routes_itself` — 300 ticks, the route never changes without a command |
+| "no picking a different door" | `a_sealed_goal_has_no_route_and_that_is_the_answer`, `a_route_into_a_wall_is_refused_rather_than_approximated` |
+| "They pass through one another" | `crew_pass_through_one_another` — two crew sent to one tile both arrive |
+| "The command, never the path" | the route is recomputed from the command and never encoded |
+
 ## Layout
 
     src/fixed.rs      Fx (i64, 32 fractional bits) and Ang (i32, 16)
@@ -100,6 +137,8 @@ tweak — fails at second 4 of 150.
     src/trig.rs       turn-based angles against the committed sine table
     src/sin_table.rs  generated, 1025 entries, exact at both ends
     src/lib.rs        the world, the six phases, the checksum
+    src/grid.rs       tiles, terrain and the fixed neighbour order
+    src/path.rs       breadth-first routing, §12.18's two tie-breakers
     src/replay.rs     the heist as bytes: header, command log, checksums
     src/tests.rs      the invariants the checksum rests on
     golden/*.rbh      replays committed today, re-simulated on every build

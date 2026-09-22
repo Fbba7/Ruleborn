@@ -1,0 +1,145 @@
+//! The tile grid. §12.18: "Both, deliberately. Terrain, laws and building are
+//! per tile; position and facing are continuous, in millitiles. That is the
+//! only reading under which one-metre tiles and sub-metre vision zones are
+//! both true."
+//!
+//! So a tile decides what is *there* and a position decides where a character
+//! *is*. This file is the first half. `Fx` carries positions at 2^-32 of a
+//! tile, which is finer than §12.18's millitiles and therefore satisfies it —
+//! a coarser unit would not.
+//!
+//! Terrain comes in three kinds and only the first affects a route:
+//!
+//!   blocking      §6.2's "Blocks movement", "Impassable line", deep water
+//!   slowing       "40% slower", "15% faster" — these change the walk, not
+//!                 the path, because §12.18 specifies breadth-first and
+//!                 breadth-first counts tiles rather than seconds
+//!   special       launches, pushes, hidden paths — out of scope here
+//!
+//! That separation is the spec's, not a simplification: a pathfinder that
+//! routed around mud would be choosing for the player, which §12.18 forbids
+//! in the same table.
+
+use crate::fixed::Fx;
+
+/// A tile, by index. §12.18: "ties broken by tile index", so the index is part
+/// of the contract rather than an implementation detail.
+pub type TileIndex = u32;
+
+/// What a tile does to a character standing on or entering it.
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
+pub enum Terrain {
+    /// Open ground.
+    #[default]
+    Open,
+    /// §6.2's blocking features. A route may not pass through.
+    Blocked,
+    /// Passable and slower or faster, as a percentage of normal speed.
+    /// 60 is §6.2's "40% slower"; 115 is its "15% faster".
+    Pace(u8),
+}
+
+impl Terrain {
+    /// Whether a route may enter this tile.
+    pub fn passable(self) -> bool {
+        !matches!(self, Terrain::Blocked)
+    }
+
+    /// Speed here, as a fraction of the character's own speed.
+    pub fn pace(self) -> Fx {
+        match self {
+            Terrain::Pace(percent) => Fx::from_ratio(percent as i64, 100),
+            _ => Fx::ONE,
+        }
+    }
+}
+
+/// One realm's tiles. §5.2 sizes them 10x10 at realm level 1 up to 14x14 at 5.
+#[derive(Clone, Debug)]
+pub struct Grid {
+    pub width: u16,
+    pub height: u16,
+    tiles: Vec<Terrain>,
+}
+
+impl Grid {
+    pub fn new(width: u16, height: u16) -> Grid {
+        Grid { width, height, tiles: vec![Terrain::Open; width as usize * height as usize] }
+    }
+
+    /// §5.2's grid for a realm level, 1 to 5: 10x10, 11x11, 12x12, 13x13, 14x14.
+    pub fn for_realm_level(level: u8) -> Grid {
+        let side = 9 + level.clamp(1, 5) as u16;
+        Grid::new(side, side)
+    }
+
+    pub fn len(&self) -> usize {
+        self.tiles.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.tiles.is_empty()
+    }
+
+    /// Row-major, which is what makes a tile index comparable: §12.18 breaks
+    /// ties by it, so the ordering has to be stated rather than inherited.
+    pub fn index(&self, x: u16, y: u16) -> Option<TileIndex> {
+        if x >= self.width || y >= self.height {
+            return None;
+        }
+        Some(y as TileIndex * self.width as TileIndex + x as TileIndex)
+    }
+
+    pub fn coords(&self, index: TileIndex) -> (u16, u16) {
+        ((index % self.width as TileIndex) as u16, (index / self.width as TileIndex) as u16)
+    }
+
+    pub fn at(&self, index: TileIndex) -> Terrain {
+        self.tiles.get(index as usize).copied().unwrap_or(Terrain::Blocked)
+    }
+
+    pub fn set(&mut self, x: u16, y: u16, terrain: Terrain) {
+        if let Some(i) = self.index(x, y) {
+            self.tiles[i as usize] = terrain;
+        }
+    }
+
+    /// The centre of a tile, in tiles. A character walks between centres; the
+    /// half-tile offset is what makes a one-metre tile and a sub-metre vision
+    /// zone consistent, which is §12.18's stated reason for having both.
+    pub fn centre(&self, index: TileIndex) -> (Fx, Fx) {
+        let (x, y) = self.coords(index);
+        (Fx::from_ratio(x as i64 * 2 + 1, 2), Fx::from_ratio(y as i64 * 2 + 1, 2))
+    }
+
+    /// The tile a position falls in, or `None` outside the grid.
+    pub fn tile_at(&self, x: Fx, y: Fx) -> Option<TileIndex> {
+        if x.0 < 0 || y.0 < 0 {
+            return None;
+        }
+        self.index(x.to_int() as u16, y.to_int() as u16)
+    }
+
+    /// The four neighbours, **in this order**: north, east, south, west.
+    ///
+    /// §12.18: "a fixed neighbour order, ties broken by tile index". The order
+    /// is fixed here and nowhere else, so changing it changes every route in
+    /// every replay ever recorded — which is why it is written out rather
+    /// than generated.
+    ///
+    /// Four rather than eight, because §12.18 specifies breadth-first and
+    /// breadth-first counts steps. With eight neighbours a diagonal step
+    /// counts the same as an orthogonal one, which is geometrically false
+    /// — it is 1.41 tiles of walking, not 1 — so the "shortest" path would
+    /// not be the shortest. With four, breadth-first is exactly shortest in
+    /// the metric it is counting.
+    pub fn neighbours(&self, index: TileIndex) -> [Option<TileIndex>; 4] {
+        let (x, y) = self.coords(index);
+        [
+            if y > 0 { self.index(x, y - 1) } else { None },              // north
+            self.index(x + 1, y),                                          // east
+            self.index(x, y + 1),                                          // south
+            if x > 0 { self.index(x - 1, y) } else { None },              // west
+        ]
+    }
+}
