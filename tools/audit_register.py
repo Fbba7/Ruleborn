@@ -2490,6 +2490,148 @@ dict(id="D54", kind="deviation", severity="significant", status="done",
          "gates, none cleared by v3.2, and all nine waiting on a decision "
          "rather than on more measurement."),
 
+dict(id="F28", kind="finding", severity="significant", status="open",
+     title="§12.6’s crack noise is erased by §12.17’s decay before it can move "
+           "a guard",
+     refs=["12.6", "12.17"],
+     body="§12.6: “Cracking is loud: every 5 seconds adds 100 suspicion to "
+          "every guard in the Heart.” §12.17 empties suspicion at 20 a tick "
+          "whenever a guard sees nothing, so an unaware guard’s 100 is gone "
+          "in five ticks — a sixth of a second — and never reaches Suspicious "
+          "at 200. Twelve seconds of cracking leave every guard that cannot "
+          "see the Vault exactly where it was.<br><br>Found by building it, "
+          "not by reading: the simulation in <code>sim/</code> applies both "
+          "rules as written, and "
+          "<code>the_crack_noise_empties_before_it_can_matter</code> measures a "
+          "guard 20 tiles away through twenty seconds of cracking. Peak "
+          "suspicion 100; state never leaves Unaware.<br><br>What does make "
+          "cracking loud is §12.17’s own noise table — “Breaking something, "
+          "5 m” — which the simulation applies to every hit on the Vault. So "
+          "the Vault is loud to guards within five walkable metres and silent "
+          "to the rest of the Heart, which is not what §12.6 says it is.",
+     rec="Make the crack noise a sound rather than a number: every hit is heard "
+         "within 5 m as breaking something already is, and every 5 seconds "
+         "every guard in the Heart hears the Vault and starts investigating it "
+         "— §12.17’s “600, or on hearing something”. That keeps §12.6’s "
+         "intent, rising pressure through the perception system, and gives it "
+         "an effect. Adding more suspicion does not work at any size below "
+         "600: it drains at the same 20 a tick.",
+     measured="sim/: the_crack_noise_empties_before_it_can_matter"),
+dict(id="F29", kind="finding", severity="significant", status="open",
+     title="On plain ground §12.8’s ambush cannot be reached: the last "
+           "crouched step behind a guard is heard",
+     refs=["12.8", "12.17"],
+     body="§12.8: “the first hit on a guard that has not noticed the crew "
+          "stuns it for 2 seconds and deals triple Power” — the rule that "
+          "lets clever beat strong, and how Scouts are beaten (“a quick "
+          "ambush”). To hit, the crew stands beside the guard; the tile "
+          "beside it is 1 m away. §12.17’s noise table: a crouched walk is "
+          "heard within 1 m. So the step that arrives is heard, the guard "
+          "investigates, and it is no longer a guard that has not noticed the "
+          "crew.<br><br>The only silent gait, crawling, has no control and no "
+          "speed anywhere in the document. The only other way in is a quiet "
+          "surface: moss carries a crouched walk three quarters of a metre, "
+          "under a step. Measured in <code>sim/</code>: "
+          "<code>a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss</code>. "
+          "The planned heist that ends Clean does so only because the fixture "
+          "puts moss behind two posts.",
+     rec="Say the crouched walk’s 1 m is the tile it is made on, so the tile "
+         "beside a guard can be reached unheard and the ambush has a way in. "
+         "The alternatives are a crawl control (a ninth button against "
+         "§12.7’s eight) or accepting that ambushes need a quiet surface — "
+         "which would make moss a defensive decision, and should then be "
+         "said.",
+     measured="sim/: a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss"),
+dict(id="F30", kind="finding", severity="minor", status="open",
+     title="“Cracking is 10 to 25 seconds” holds only with a Breaker in the "
+           "crew",
+     refs=["12.19", "12.6", "11.1"],
+     body="At Vault level 1 (1,500 health, §12.6), one hit every 0.8 s for "
+          "Power (§12.20), Breakers double: a Breaker alone opens it in 15.2 s "
+          "and Scout, Breaker and Carrier in 12 s — inside §12.19’s band. A "
+          "full crew takes 9.6 s, just under it. Four crew without a Breaker "
+          "take 26.4 s, and a lone Scout 100 s.<br><br>So the band is a claim "
+          "about crews that bring a Breaker, and §12.19 states it as a fact "
+          "about cracking.",
+     rec="State the assumption: 10 to 25 seconds with a Breaker in the crew. "
+         "If a crew without one is meant to be able to crack at all, that is "
+         "the number to decide.",
+     measured="sim/: cracking_takes_ten_to_twenty_five_seconds_only_with_a_breaker"),
+dict(id="G13", kind="gap", severity="significant", status="open",
+     title="No speed for crouching or running, so crouching is free",
+     refs=["12.17", "11.1", "12.18"],
+     body="§12.17 prices both gaits for eyes and ears — crouched halves the "
+          "rate you are noticed at and carries 1 m, running adds three "
+          "quarters and carries 4.5 m — and no section gives either a speed. "
+          "§11.1 gives one speed per role. Without a speed cost crouching is "
+          "strictly better than walking and running strictly worse, and the "
+          "choice <code>spec/movement.md</code> proposes (“slow and quiet "
+          "against fast and loud”) does not exist.<br><br>Two implementations "
+          "in this repository have now filled it differently: the Python "
+          "harness crouches at §11.1’s speed and runs at double; "
+          "<code>sim/</code> crouches at half and runs at double.",
+     rec="State both against §11.1’s speed. Half and double is what "
+         "<code>sim/</code> uses, and the audit page lists it as the "
+         "simulation’s reading until this is signed off.",
+     measured="sim/: CROUCH_PACE, RUN_PACE"),
+dict(id="G14", kind="gap", severity="minor", status="open",
+     title="A revived crew member comes back with no stated health",
+     refs=["12.20"],
+     body="§12.20: “An ally standing adjacent revives it in 3 seconds, a Mender "
+          "in 1.5.” With what health is not said. At full health a revive is a "
+          "free reset and an Alerted guard knocks the same member down again "
+          "at no cost to the crew’s tempo; at one point it is a formality.",
+     rec="A quarter of the role’s health, which is what <code>sim/</code> "
+         "uses: enough to walk to the skiff, not enough to stand in a fight.",
+     measured="sim/: REVIVE_HEALTH"),
+dict(id="G15", kind="gap", severity="significant", status="open",
+     title="Bags are measured in Carry and the Vault in Starlight, and nothing "
+           "converts one to the other",
+     refs=["12.6", "12.19", "9.6", "11.1"],
+     body="§12.6: loading stops when “the target fill is reached, the bags are "
+          "full, or the exposed share is gone”. Bags hold §11.1’s Carry — 60 "
+          "to 300 units. The exposed share is §9.6’s, in Starlight and "
+          "Essence. To know whether a crew empties a Vault before its bags "
+          "fill, the two have to be the same unit, and no section says how "
+          "many Starlight one unit of Carry is.<br><br><code>sim/</code> "
+          "holds 560 units in its fixture’s Vault — a five-crew’s Carry — "
+          "and says so on the audit page rather than presenting it as the "
+          "document’s.",
+     rec="Either state the exposed share in bag units, or state the "
+         "conversion. It is a pricing decision, so it is yours to make.",
+     measured="sim/: FIXTURE_EXPOSED"),
+dict(id="C31", kind="contradiction", severity="minor", status="open",
+     title="Patrols that “shift slightly each run” against “nothing here is "
+           "random”",
+     refs=["12.12", "12.17"],
+     body="§12.12: “guards’ patrols shift slightly each run”. §12.17: "
+          "“nothing here is random: a player who scouts an island can predict "
+          "exactly what will happen.” Both can hold only if the shift is drawn "
+          "once, from the heist’s seed, when it starts, and is what a scout "
+          "then sees. Read the other way — varying during a run — a scout "
+          "cannot predict it and §12.17’s promise is false.",
+     rec="Say the shift is drawn once at the start of a heist, from its "
+         "seed. That is also the only form the server can re-simulate "
+         "(§24.10).",
+     measured=""),
+dict(id="D55", kind="deviation", severity="significant", status="open",
+     title="The Python harness and the content file read peripheral vision "
+           "differently",
+     refs=["12.17"],
+     body="§12.17 says only “weak peripheral awareness”. The content file, from "
+          "<code>spec/detection.md</code>, reads it as the zone’s rate "
+          "halved: 33 a tick at near distance. The harness’s "
+          "<code>detect.zone</code> returns the far zone’s rate at any "
+          "distance: 12. Every harness measurement that involves a guard "
+          "glimpsing a crew out of the corner of its eye — F9, F15, F16, F21, "
+          "F26, F27 — was taken with the second reading.<br><br>Found while "
+          "checking <code>sim/</code> against the content file, which it "
+          "follows. The two implementations also disagree on crouched speed "
+          "(G13).",
+     rec="Align the harness with the content file and re-run the findings it "
+         "carries, or record why the harness should keep its own reading. "
+         "Either way one reading, not two.",
+     measured=""),
 dict(id="D53", kind="contradiction", severity="significant", status="open",
      title="§13.4 names §5.2 as the home of the law slots and then "
            "gives different ones",
@@ -5306,6 +5448,67 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+
+"F28": [
+    dict(section="12.6", action="replace",
+         find="every 5 seconds adds 100 suspicion to every guard in the Heart",
+         replace="every hit is heard within 5 m, as breaking something is, and "
+                 "every 5 seconds every guard in the Heart hears the Vault and "
+                 "starts investigating it",
+         why="Suspicion added to an unaware guard drains at 20 a tick "
+             "(\u00a712.17), so 100 is gone in five ticks and never moves "
+             "it. A sound moves it: \u00a712.17's \"600, or on hearing "
+             "something\". F28."),
+],
+
+"F29": [
+    dict(section="12.17", action="replace",
+         find="Guards far off screen hear at half strength",
+         replace="A crouched walk is heard only on the tile it is made on, so a "
+                 "crew can step up beside a guard unheard \u2014 the way into "
+                 "12.8's ambush. Guards far off screen hear at half strength",
+         why="The tile beside a guard is 1 m away and a crouched walk carries "
+             "1 m, so the last step of every approach is heard and the ambush "
+             "cannot be reached on plain ground. F29."),
+],
+
+"F30": [
+    dict(section="12.19", action="replace",
+         find="Cracking is 10 to 25 seconds of pressure with no decision in it",
+         replace="Cracking takes 10 to 25 seconds with a Breaker in the crew "
+                 "\u2014 without one it takes 26 or more \u2014 and it is "
+                 "pressure with no decision in it",
+         why="Measured against 12.6's 1,500 health and 12.20's cadence: the "
+             "band holds only for crews with a Breaker. F30."),
+],
+
+"G13": [
+    dict(section="12.17", action="replace",
+         find="Being crouched halves how fast you are noticed, running raises it "
+              "by three quarters",
+         replace="Being crouched halves how fast you are noticed and halves your "
+                 "speed, running raises it by three quarters and doubles your "
+                 "speed",
+         why="Neither gait has a speed anywhere, so crouching is free and the "
+             "slow-and-quiet choice does not exist. G13."),
+],
+
+"G14": [
+    dict(section="12.20", action="replace",
+         find="An ally standing adjacent revives it in 3 seconds, a Mender in 1.5",
+         replace="An ally standing adjacent revives it in 3 seconds, a Mender in "
+                 "1.5, at a quarter of its health",
+         why="The revive's health is unstated. G14."),
+],
+
+"C31": [
+    dict(section="12.12", action="replace",
+         find="guards' patrols shift slightly each run",
+         replace="guards' patrols shift slightly each run \u2014 drawn once from "
+                 "the heist's seed as it starts, so a scout still sees exactly "
+                 "what will happen (12.17)",
+         why="Otherwise \u00a712.17's \"nothing here is random\" is false. C31."),
+],
 
 "D53": [
     dict(section="13.4", action="replace",
