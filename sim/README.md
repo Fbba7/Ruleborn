@@ -9,7 +9,7 @@ would eventually not."*
 
 This is **T3.1** (the determinism spike), **T3.2** (the golden replays) and
 the buildable half of **T5.5** (pathfinding and crew control), and §12.17's line
-of sight. It is not the game.
+of sight, noise, guard states and realm alarm. It is not the game.
 
 ## What it proves, and what it does not
 
@@ -153,10 +153,46 @@ checks every pair of tiles in a 7x7 grid.
 `walls_change_what_the_guards_notice` exists so this cannot be decoration: the
 same heist with sight-blocking removed must produce different suspicion.
 
+## Noise, guard states and the realm alarm
+
+§12.17: *"Noise travels the way a crew walks"* — along the walkable path, never
+through walls, *"so a guard turns toward the way around rather than toward the
+source."* `noise::field` is the same breadth-first walk `path::find` uses, so
+that heading is literal. A sound's reach is §12.17's metres converted to steps
+a crew would take; a guard that hears one turns toward the neighbouring tile one
+step nearer the source, which on the far side of a wall is the gap, not the
+raider. `a_guard_turns_toward_the_way_around_not_toward_the_raider` puts a
+raider directly behind the ruin wall and checks the guard faces the gap.
+
+The six states sit on §12.17's thresholds. A rise is immediate; a fall waits
+half a second (the document's floor, so a guard cannot flicker). Investigating
+walks to the spot and searches it for ten seconds; Alerted, having lost sight,
+searches for twenty; both then walk home as Returning, where a new sighting
+re-raises them. An Alerted guard's call reaches every guard within four metres
+half a second later. The realm alarm climbs once every thirty seconds to six,
+plus one per knocked-out guard found; at five one more Warden walks in from
+the entrance. The noise roll the first fixture had is gone — the document
+never had one; the stream number is kept retired so the others do not move.
+
+## The simulation against the content file
+
+`content/detection.json` holds §12.17 as data; the simulation holds the same
+numbers as Rust constants, because §24.7 forbids reading decimals where a
+result is decided. Two copies of one fact drift, and they had: the first
+fixture had the Scout's zones at **half** §12.17's size — 1, 2 and 3 metres for
+2, 4 and 6 — and nothing noticed until the guard work reread §12.17 by hand.
+
+`content_gate.py` compares all 47 values the simulation carries against the
+file and fails on any disagreement; its self-test plants the halved Scout, a
+moved state floor and a deleted role, and must catch all three. Every value in
+the file the simulation does not use yet — peripheral vision, height, lighting,
+surfaces, the ambush — is listed by name, on the command line and on the audit
+page, so none passes as agreeing by being absent.
+
 ## How progress is reported
 
-`status.py` runs every gate — the float ban, every test by name, the goldens,
-native against WebAssembly — and writes `status.json`. `systems.json` says
+`status.py` runs every gate — the float ban, the content file, every test by
+name, the goldens, native against WebAssembly — and writes `status.json`. `systems.json` says
 which tests prove which system. The audit page's **What is built** band reads
 the two: a system shows as built only if every test naming it passed on the
 last run, and a renamed or deleted test makes it read *proof missing*, never
@@ -173,6 +209,8 @@ a test that does not exist, so the band cannot drift from the code.
     src/grid.rs       tiles, terrain and the fixed neighbour order
     src/path.rs       breadth-first routing, §12.18's two tie-breakers
     src/sight.rs      supercover line of sight, the same from either end
+    src/noise.rs      sound along the walkable path, and the way around
+    src/guard.rs      §12.17's six states, their timings, the realm alarm
     src/replay.rs     the heist as bytes: header, command log, checksums
     src/tests.rs      the invariants the checksum rests on
     golden/*.rbh      replays committed today, re-simulated on every build
@@ -180,6 +218,7 @@ a test that does not exist, so the band cannot drift from the code.
     src/bin/golden.rs writes the golden replays
     wasm_spike.mjs    the WebAssembly runner
     no_floats.py      §24.10's float ban
+    content_gate.py   the simulation's numbers against content/detection.json
     status.py         runs every gate, writes status.json
     systems.json      which tests prove which system, for the audit page
     examples/         where_diverge: which second each golden parts company at
@@ -189,8 +228,10 @@ a test that does not exist, so the band cannot drift from the code.
 
 Enough of a heist to exercise every operation that can diverge, and no more:
 §12.17's five guard roles with their cones and graded zones, three raiders on a
-route, suspicion filling and draining at the document's rates, a realm law that
-scales speed, and a noise roll. Every number in the fixture is the document's.
+route, suspicion filling and draining at the document's rates, sound, the six
+guard states and the realm alarm, and a realm law that scales speed. Every
+number in the fixture is the document's, and `content_gate.py` checks that
+rather than this sentence asserting it.
 
 The crew is driven by the command log and nothing else — `commands_are_what_
 drives_the_crew` asserts that with no commands nothing moves, because if the

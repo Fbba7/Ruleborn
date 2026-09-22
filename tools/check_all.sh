@@ -33,6 +33,7 @@ echo
 echo "== the simulation core: every test, the goldens, and native against WebAssembly =="
 # Writes sim/status.json, which the audit page's "What is built" band reads
 # further down — so this has to run before build_audit.py, and does.
+python3 sim/content_gate.py --self-test
 bash sim/run_spike.sh
 
 echo

@@ -19,6 +19,8 @@ import re
 import subprocess
 import sys
 
+import content_gate
+
 HERE = pathlib.Path(__file__).resolve().parent
 SEEDS = [1, 6840123409045651457, 18446744073709551615, 42, 999983]
 TICKS = 7200
@@ -68,6 +70,8 @@ def targets() -> list[dict]:
 def main() -> int:
     floats_ok = subprocess.run([sys.executable, "no_floats.py"], cwd=HERE,
                                capture_output=True).returncode == 0
+    checked, wrong = content_gate.compare(
+        json.loads(content_gate.CONTENT.read_text()), content_gate.source_text())
     t = tests()
     g = goldens()
     x = targets()
@@ -79,12 +83,20 @@ def main() -> int:
         "tests": dict(sorted(t.items())),
         "goldens": g,
         "cross_target": x,
+        "content": {
+            "agree": len(checked),
+            "disagree": wrong,
+            "not_modelled": [f"{what} — {why}"
+                             for what, why in content_gate.NOT_MODELLED],
+        },
     }
     (HERE / "status.json").write_text(json.dumps(status, indent=1) + "\n")
 
     passed = sum(1 for v in t.values() if v == "passed")
     agree = sum(1 for r in x if r["agree"])
     print(f"  float ban: {'holds' if floats_ok else 'BROKEN'}")
+    print(f"  content: {len(checked)} values agree with content/detection.json"
+          + (f", {len(wrong)} DISAGREE" if wrong else ""))
     print(f"  tests: {passed} of {len(t)} passed")
     print(f"  goldens: {sum(r['verifies'] for r in g)} of {len(g)} verify, "
           f"largest {max(r['bytes'] for r in g)} bytes of 2048")
@@ -104,7 +116,7 @@ def main() -> int:
     if vanished:
         print(f"  tests systems.json names that do not exist: {', '.join(vanished)}")
 
-    ok = floats_ok and passed == len(t) and all(r["verifies"] for r in g) \
+    ok = floats_ok and not wrong and passed == len(t) and all(r["verifies"] for r in g) \
         and agree == len(x) and not unclaimed and not vanished
     print(f"\n  {'every gate holds' if ok else 'A GATE FAILED'} — "
           f"written to sim/status.json")

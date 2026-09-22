@@ -10,20 +10,28 @@
   "a_fog_bank_stops_eyes_and_not_feet": "passed",
   "a_full_length_heist_fits_the_size_budget": "passed",
   "a_guard_can_always_see_out_of_its_own_tile": "passed",
+  "a_guard_turns_toward_the_way_around_not_toward_the_raider": "passed",
   "a_heist_is_reproducible_from_its_seed": "passed",
   "a_heist_round_trips_through_bytes": "passed",
   "a_line_is_the_same_from_either_end": "passed",
   "a_position_lands_in_the_tile_whose_centre_it_is": "passed",
+  "a_raider_held_in_the_near_zone_raises_a_guard_to_alerted": "passed",
   "a_rock_pillar_hides_what_is_behind_it": "passed",
   "a_route_bends_around_a_wall_and_takes_the_gap": "passed",
   "a_route_into_a_wall_is_refused_rather_than_approximated": "passed",
   "a_route_is_the_shortest_one": "passed",
   "a_ruin_wall_hides_the_far_side_except_through_its_gap": "passed",
   "a_sealed_goal_has_no_route_and_that_is_the_answer": "passed",
+  "a_sound_goes_round_a_wall_not_through_it": "passed",
+  "a_state_does_not_fall_back_within_half_a_second": "passed",
   "a_straight_line_crosses_only_its_own_row": "passed",
   "a_tile_index_round_trips_through_its_coordinates": "passed",
   "a_truncated_or_padded_file_is_refused": "passed",
+  "a_walking_raider_is_heard_and_a_standing_one_is_not": "passed",
+  "alerted_searches_twenty_seconds_after_losing_sight_then_returns": "passed",
+  "an_alert_reaches_guards_within_four_metres_half_a_second_later": "passed",
   "angles_wrap_rather_than_accumulate": "passed",
+  "at_alarm_five_one_more_warden_arrives_at_the_entrance": "passed",
   "below_stays_in_range_and_covers_it": "passed",
   "commands_are_what_drives_the_crew": "passed",
   "crew_pass_through_one_another": "passed",
@@ -35,6 +43,7 @@
   "golden_replays_still_verify": "passed",
   "integer_square_root_is_exact_for_squares": "passed",
   "integer_square_root_never_overshoots": "passed",
+  "investigating_walks_to_the_spot_searches_ten_seconds_then_walks_home": "passed",
   "multiplication_is_commutative_and_has_an_identity": "passed",
   "realm_grids_are_the_sizes_5_2_states": "passed",
   "rounding_is_the_same_on_both_sides_of_zero": "passed",
@@ -42,12 +51,14 @@
   "sine_is_exactly_odd": "passed",
   "slow_ground_does_change_how_long_the_walk_takes": "passed",
   "slow_ground_does_not_move_the_route": "passed",
+  "sounds_carry_the_documents_distances": "passed",
   "streams_are_independent": "passed",
   "suspicion_stays_inside_the_documents_range": "passed",
   "the_checksum_notices_a_single_unit_of_difference": "passed",
   "the_generator_is_reproducible": "passed",
   "the_neighbour_order_is_north_east_south_west": "passed",
   "the_pythagorean_identity_holds_to_the_tables_resolution": "passed",
+  "the_realm_alarm_climbs_once_every_thirty_seconds_to_six": "passed",
   "the_same_route_is_found_every_time_and_by_both_ends_of_the_grid": "passed",
   "verification_names_the_second_that_diverges": "passed",
   "walls_change_what_the_guards_notice": "passed"
@@ -77,38 +88,52 @@
  "cross_target": [
   {
    "seed": "1",
-   "native": "c7689a28c2119f7b",
-   "wasm": "c7689a28c2119f7b",
+   "native": "86aba7437d5ca5e4",
+   "wasm": "86aba7437d5ca5e4",
    "agree": true,
    "bytes": 1236
   },
   {
    "seed": "6840123409045651457",
-   "native": "64d5e696ba559e76",
-   "wasm": "64d5e696ba559e76",
+   "native": "78df4db79655cceb",
+   "wasm": "78df4db79655cceb",
    "agree": true,
    "bytes": 1215
   },
   {
    "seed": "18446744073709551615",
-   "native": "bcf27928e0822b94",
-   "wasm": "bcf27928e0822b94",
+   "native": "d3f87b981410dde3",
+   "wasm": "d3f87b981410dde3",
    "agree": true,
    "bytes": 1225
   },
   {
    "seed": "42",
-   "native": "8b572fcd743b5154",
-   "wasm": "8b572fcd743b5154",
+   "native": "072aba5bc70dbb26",
+   "wasm": "072aba5bc70dbb26",
    "agree": true,
    "bytes": 1179
   },
   {
    "seed": "999983",
-   "native": "dcc48fb9ce71fa28",
-   "wasm": "dcc48fb9ce71fa28",
+   "native": "f4c7c14aad4f96c7",
+   "wasm": "f4c7c14aad4f96c7",
    "agree": true,
    "bytes": 1181
   }
- ]
+ ],
+ "content": {
+  "agree": 47,
+  "disagree": [],
+  "not_modelled": [
+   "guards[].peripheral_degrees \u2014 peripheral vision is not in perception yet",
+   "modifiers: higher_ground, lower_ground \u2014 the fixture has one level",
+   "modifiers: running, unlit, still_in_grass \u2014 no running, lighting or grass yet",
+   "noise.off_screen_multiplier \u2014 the simulation has no screen",
+   "noise.sources: landing_1_level, landing_3_levels \u2014 the fixture has one level",
+   "noise.surfaces \u2014 no surface materials yet",
+   "alarm.realm_alarm_per_guard_found \u2014 no knockouts yet, so none are found",
+   "ambush \u2014 \u00a712.8's ambush is not built"
+  ]
+ }
 }

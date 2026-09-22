@@ -411,6 +411,23 @@ def built_html() -> str:
                 f'<span class="bref">{esc(t["how"])}</span></li>')
     target_rows = "".join(target_row(t) for t in status["targets_manifest"])
 
+    content = status.get("content")
+    if content is None:
+        content_html = ""
+    else:
+        bad = content["disagree"]
+        lines = "".join(f'<li class="bs failing"><span class="bv">Disagrees</span> {esc(w)}</li>'
+                        for w in bad)
+        lines += "".join(f'<li class="bs waiting"><span class="bv">Not modelled</span> {esc(n)}</li>'
+                         for n in content["not_modelled"])
+        content_html = f"""
+    <h3 class="bh">The simulation against <code>content/detection.json</code></h3>
+    <p class="blurb">{content["agree"]} values the simulation carries as constants
+      agree with the content file{f", <strong>{len(bad)} disagree</strong>" if bad else ""}.
+      Every other value in the file is named below as not modelled yet, so none
+      passes as agreeing by being absent.</p>
+    <ul class="blist">{lines}</ul>"""
+
     built = sum(1 for r in rows if r["verdict"] == "built")
     return f"""
   <section class="built">
@@ -431,7 +448,7 @@ def built_html() -> str:
     <h3 class="bh">The same checksum on every target (T3.1)</h3>
     <p class="blurb">{len(cross)} seeds, {status.get("ticks", 0):,} ticks each.
       \u00a724.7 names four targets; two can be run here.</p>
-    <ul class="blist">{target_rows}</ul>
+    <ul class="blist">{target_rows}</ul>{content_html}
   </section>
 """
 

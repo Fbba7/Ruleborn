@@ -611,7 +611,11 @@ dict(
         dict(id="T5.2", owner="claude", status="blocked",
              title="Lock the detection numbers (§12.17)",
              detail="Unblocked by C1, and the numbers are already data in "
-                    "<code>content/detection.json</code>.",
+                    "<code>content/detection.json</code>. Built ahead of the "
+                    "sign-off in <code>sim/</code>: noise along the walkable path, "
+                    "the six guard states and the realm alarm, with 47 of the "
+                    "file's values checked against the simulation by "
+                    "<code>sim/content_gate.py</code>. Locking still waits on T1.4.",
              blocked_by=["T1.4"]),
         dict(id="T5.3", owner="claude", status="blocked",
              title="Lock the law schema (§7, §8.7)",

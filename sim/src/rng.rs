@@ -36,6 +36,8 @@ impl SplitMix64 {
 pub enum Stream {
     Perception = 1,
     Movement = 2,
+    /// Retired: §12.17's noise has no dice in it. The number stays taken, so
+    /// no later stream can reuse it and silently share a seed with old replays.
     Noise = 3,
     Loot = 4,
 }

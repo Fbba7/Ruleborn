@@ -128,12 +128,59 @@
         "every_fixture_guard_stands_inside_the_realm",
         "walls_change_what_the_guards_notice"
       ]
+    },
+    {
+      "name": "Noise",
+      "section": "12.17",
+      "task": "T5.2",
+      "what": "Sound travels along the walkable path, never through walls: a guard turns toward the way around, not toward the source. The document's five carrying distances, in steps a crew would walk.",
+      "tests": [
+        "sounds_carry_the_documents_distances",
+        "a_sound_goes_round_a_wall_not_through_it",
+        "a_guard_turns_toward_the_way_around_not_toward_the_raider",
+        "a_walking_raider_is_heard_and_a_standing_one_is_not"
+      ]
+    },
+    {
+      "name": "Guard states",
+      "section": "12.17",
+      "task": "T5.2",
+      "what": "Unaware, Suspicious, Investigating, Alerted, Searching, Returning, at the document's thresholds. No fall-back inside half a second; ten seconds searching the spot, twenty after losing sight, then home.",
+      "tests": [
+        "a_raider_held_in_the_near_zone_raises_a_guard_to_alerted",
+        "a_state_does_not_fall_back_within_half_a_second",
+        "investigating_walks_to_the_spot_searches_ten_seconds_then_walks_home",
+        "alerted_searches_twenty_seconds_after_losing_sight_then_returns"
+      ]
+    },
+    {
+      "name": "Realm alarm",
+      "section": "12.17",
+      "task": "T5.2",
+      "what": "An alert reaches guards within four metres half a second later; the realm alarm climbs once every thirty seconds to six; at five one more Warden arrives at the entrance.",
+      "tests": [
+        "an_alert_reaches_guards_within_four_metres_half_a_second_later",
+        "the_realm_alarm_climbs_once_every_thirty_seconds_to_six",
+        "at_alarm_five_one_more_warden_arrives_at_the_entrance"
+      ]
     }
   ],
   "targets": [
-    {"name": "Native x86-64", "how": "run here"},
-    {"name": "WebAssembly (the server)", "how": "run here, under Node"},
-    {"name": "iPhone", "how": "needs a device"},
-    {"name": "Android", "how": "needs a device"}
+    {
+      "name": "Native x86-64",
+      "how": "run here"
+    },
+    {
+      "name": "WebAssembly (the server)",
+      "how": "run here, under Node"
+    },
+    {
+      "name": "iPhone",
+      "how": "needs a device"
+    },
+    {
+      "name": "Android",
+      "how": "needs a device"
+    }
   ]
 }

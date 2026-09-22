@@ -86,7 +86,7 @@ docs/audit/    the generated audit register page
 docs/roadmap/  the generated roadmap page
 prototypes/
   heist-gate/  a throwaway browser build that runs both pre-code gates
-sim/            the heist simulation core in Rust, and the determinism spike (T3.1)
+sim/            the heist simulation core in Rust: determinism spike (T3.1), replays (T3.2), pathfinding, sight, noise, guard states
 tools/
   extract_design_doc.py           HTML -> greppable text
   check_document.py               every check over the document, in one verdict

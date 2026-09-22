@@ -690,3 +690,274 @@ fn walls_change_what_the_guards_notice() {
     };
     assert_ne!(total(false), total(true), "line of sight changed nothing");
 }
+
+// --------------------------------------------------------------------------
+// Noise (§12.17: "Noise travels the way a crew walks")
+// --------------------------------------------------------------------------
+
+use crate::guard::{self, State};
+use crate::Point;
+use crate::noise::{self, Sound};
+
+#[test]
+fn sounds_carry_the_documents_distances() {
+    // §12.17's table, in whole steps of one metre (§21.1). Walking is 2.5 m,
+    // which reaches two steps and not three.
+    assert_eq!(Sound::Crawling.steps(), 0, "crawling is silent");
+    assert_eq!(Sound::CrouchedWalk.steps(), 1, "crouched walk, 1 m");
+    assert_eq!(Sound::Walking.steps(), 2, "walking, 2.5 m");
+    assert_eq!(Sound::Running.steps(), 4, "running, 4.5 m");
+    assert_eq!(Sound::Breaking.steps(), 5, "breaking something, 5 m");
+}
+
+#[test]
+fn a_sound_goes_round_a_wall_not_through_it() {
+    // Two tiles apart in a straight line with a wall between: a walking sound
+    // would reach through, and must not, because the walk round is longer.
+    let mut grid = Grid::new(10, 10);
+    for y in 0..9 {
+        grid.place(4, y, Feature::RockPillar);
+    }
+    let source = grid.index(3, 2).unwrap();
+    let listener = grid.index(5, 2).unwrap();
+    let field = noise::field(&grid, source, Sound::Walking.steps());
+    assert_eq!(field[listener as usize], noise::UNHEARD, "no hearing through a wall");
+
+    let open = Grid::new(10, 10);
+    let field = noise::field(&open, source, Sound::Walking.steps());
+    assert_eq!(field[listener as usize], 2, "and heard at two steps without it");
+}
+
+#[test]
+fn a_guard_turns_toward_the_way_around_not_toward_the_raider() {
+    // §12.17: "a guard turns toward the way around, not toward you". The
+    // raider is west of the guard behind a wall; the gap is to the south; the
+    // first step of the walk back is south, not west into the wall.
+    let mut grid = Grid::new(10, 10);
+    for y in 0..9 {
+        grid.place(4, y, Feature::RockPillar);          // gap at (4, 9)
+    }
+    let source = grid.index(3, 6).unwrap();
+    let listener = grid.index(5, 6).unwrap();
+    let field = noise::field(&grid, source, 20);
+    let step = noise::way_around(&grid, &field, listener).expect("a way round exists");
+    assert_eq!(step, grid.index(5, 7).unwrap(), "south, toward the gap");
+    assert_ne!(step, grid.index(4, 6).unwrap(), "not west, into the wall");
+}
+
+/// A world with no crew and every guard parked well apart, for state tests.
+fn quiet_world() -> World {
+    let heist = fixture(3, 60, 1);
+    World::new(heist.seed, 0, Vec::new())
+}
+
+#[test]
+fn a_walking_raider_is_heard_and_a_standing_one_is_not() {
+    // Standing still is silent; walking carries 2.5 m. The raider is behind
+    // the guard — due south while it faces north — so sight cannot be what
+    // wakes it.
+    let run = |walking: bool| {
+        let heist = fixture(3, 60, 1);
+        let mut world = World::new(heist.seed, 1, Vec::new());
+        let post = world.grid.index(2, 3).unwrap();
+        let (gx, gy) = world.grid.centre(post);
+        world.guards[0].at = Point { x: gx, y: gy };
+        world.guards[0].home = post;
+        world.guards[0].facing = Ang::from_degrees(270);
+        let start = world.grid.index(2, 5).unwrap();
+        let (rx, ry) = world.grid.centre(start);
+        world.raiders[0].at = Point { x: rx, y: ry };
+        if walking {
+            let to = world.grid.index(2, 6).unwrap();
+            world.raiders[0].route = path::find(&world.grid, start, to).unwrap();
+        }
+        world.step();
+        world.guards[0].state
+    };
+    assert_eq!(run(false), State::Unaware, "a standing raider makes no sound");
+    assert_eq!(run(true), State::Investigating,
+               "\u{a7}12.17: Investigating at \"600, or on hearing something\"");
+}
+
+// --------------------------------------------------------------------------
+// Guard states (§12.17's table)
+// --------------------------------------------------------------------------
+
+#[test]
+fn a_state_does_not_fall_back_within_half_a_second() {
+    // "A state cannot fall back for half a second once reached, so nothing
+    // flickers at the edge of a zone."
+    let mut world = quiet_world();
+    world.guards[0].suspicion = 250;
+    world.step();
+    assert_eq!(world.guards[0].state, State::Suspicious, "rising is immediate");
+    let entered = world.guards[0].state_since;
+    // Suspicion drains 20 a tick with nothing in sight, so it is below 200
+    // within three ticks. The state must still hold for the full half second.
+    while world.tick < entered + guard::HOLD_TICKS {
+        world.step();
+        if world.tick < entered + guard::HOLD_TICKS {
+            assert_eq!(world.guards[0].state, State::Suspicious,
+                       "fell back {} ticks in", world.tick - entered);
+        }
+    }
+    for _ in 0..3 {
+        world.step();
+    }
+    assert_eq!(world.guards[0].state, State::Unaware, "and then it does fall back");
+}
+
+#[test]
+fn investigating_walks_to_the_spot_searches_ten_seconds_then_walks_home() {
+    let mut world = quiet_world();
+    let home = world.guards[0].home;
+    let spot = world.grid.index(2, 6).unwrap();
+    world.guards[0].interest = Some(spot);
+    world.enter(0, State::Investigating);
+
+    let mut arrived = None;
+    for _ in 0..600 {
+        world.step();
+        if world.guards[0].arrived_at.is_some() {
+            arrived = world.guards[0].arrived_at;
+            break;
+        }
+    }
+    let arrived = arrived.expect("reaches the spot");
+    let (sx, sy) = world.grid.centre(spot);
+    assert_eq!((world.guards[0].at.x, world.guards[0].at.y), (sx, sy), "at the spot");
+
+    // "Searches nearby for ten seconds."
+    while world.tick < arrived + guard::SEARCH_SPOT_TICKS {
+        assert_eq!(world.guards[0].state, State::Investigating, "still searching");
+        world.step();
+    }
+    world.step();
+    assert_eq!(world.guards[0].state, State::Returning, "gives up after ten seconds");
+
+    for _ in 0..600 {
+        world.step();
+        if world.guards[0].state == State::Unaware {
+            break;
+        }
+    }
+    let (hx, hy) = world.grid.centre(home);
+    assert_eq!(world.guards[0].state, State::Unaware, "home and settled");
+    assert_eq!((world.guards[0].at.x, world.guards[0].at.y), (hx, hy), "back at its post");
+}
+
+#[test]
+fn alerted_searches_twenty_seconds_after_losing_sight_then_returns() {
+    // Entered directly: with nobody in view, perception drains suspicion
+    // before the states phase reads it, so setting 1000 and stepping would
+    // test the drain rather than the state.
+    let mut world = quiet_world();
+    world.enter(0, State::Alerted);
+    // Nobody is there, so it has lost sight; after the hold it searches.
+    for _ in 0..guard::HOLD_TICKS + 1 {
+        world.step();
+    }
+    assert_eq!(world.guards[0].state, State::Searching, "\"after losing sight\"");
+    let since = world.guards[0].state_since;
+    while world.tick <= since + guard::SEARCHING_TICKS {
+        world.step();
+    }
+    assert_eq!(world.guards[0].state, State::Returning, "\"after giving up\"");
+}
+
+#[test]
+fn an_alert_reaches_guards_within_four_metres_half_a_second_later() {
+    // "Alarm spreads by distance, not everywhere at once: guards within four
+    // metres start investigating half a second later."
+    let mut world = quiet_world();
+    let place = |world: &mut World, g: usize, x: u16, y: u16| {
+        let t = world.grid.index(x, y).unwrap();
+        let (cx, cy) = world.grid.centre(t);
+        world.guards[g].at = Point { x: cx, y: cy };
+        world.guards[g].home = t;
+    };
+    place(&mut world, 0, 2, 2);
+    place(&mut world, 1, 2, 5);     // three metres away
+    place(&mut world, 2, 2, 11);    // nine metres away
+    world.enter(0, State::Alerted);
+    let raised = world.tick;
+    while world.tick < raised + guard::SPREAD_DELAY_TICKS {
+        assert_eq!(world.guards[1].state, State::Unaware, "not before half a second");
+        world.step();
+    }
+    world.step();
+    assert_eq!(world.guards[1].state, State::Investigating, "then investigating");
+    assert_ne!(world.guards[2].state, State::Investigating, "not nine metres away");
+}
+
+// --------------------------------------------------------------------------
+// The realm alarm (§12.17, §12.6)
+// --------------------------------------------------------------------------
+
+#[test]
+fn the_realm_alarm_climbs_once_every_thirty_seconds_to_six() {
+    let mut world = quiet_world();
+    for level in 0..=6 {
+        while world.tick < level as u32 * guard::ALARM_STEP_TICKS {
+            world.step();
+        }
+        world.step();
+        assert_eq!(world.alarm, level, "{} seconds in", world.tick / TICKS_PER_SECOND);
+    }
+    for _ in 0..guard::ALARM_STEP_TICKS * 2 {
+        world.step();
+    }
+    assert_eq!(world.alarm, guard::ALARM_MAX, "and never above six");
+}
+
+#[test]
+fn at_alarm_five_one_more_warden_arrives_at_the_entrance() {
+    // "At 5 another Warden arrives at an entrance." Once, not once a tick.
+    let mut world = quiet_world();
+    let before = world.guards.len();
+    while world.alarm < guard::REINFORCE_AT {
+        world.step();
+        if world.alarm < guard::REINFORCE_AT {
+            assert_eq!(world.guards.len(), before, "nobody arrives early");
+        }
+    }
+    assert_eq!(world.guards.len(), before + 1, "one Warden");
+    let warden = world.guards.last().unwrap();
+    let (ex, ey) = world.grid.centre(world.entrance);
+    assert_eq!((warden.at.x, warden.at.y), (ex, ey), "at the entrance");
+    assert_eq!(warden.cone, Ang::from_degrees(40), "with the Warden's cone");
+    for _ in 0..guard::ALARM_STEP_TICKS * 2 {
+        world.step();
+    }
+    assert_eq!(world.guards.len(), before + 1, "and only one, through alarm 6");
+}
+
+#[test]
+fn a_raider_held_in_the_near_zone_raises_a_guard_to_alerted() {
+    // The real route to Alerted: §12.17's near zone fills in about half a
+    // second, so a raider standing a metre in front of a guard takes it from
+    // Unaware through every state to Alerted in about fifteen ticks.
+    let heist = fixture(3, 60, 1);
+    let mut world = World::new(heist.seed, 1, Vec::new());
+    let post = world.grid.index(2, 4).unwrap();
+    let (gx, gy) = world.grid.centre(post);
+    world.guards[0].at = Point { x: gx, y: gy };
+    world.guards[0].home = post;
+    world.guards[0].turn_per_tick = Ang::ZERO;           // hold the gaze still
+    let spot = world.grid.index(2, 3).unwrap();          // one tile north
+    let (rx, ry) = world.grid.centre(spot);
+    world.raiders[0].at = Point { x: rx, y: ry };
+    world.guards[0].facing = world.guards[0].at.bearing_to(world.raiders[0].at);
+    let mut seen = Vec::new();
+    for _ in 0..40 {
+        world.step();
+        if seen.last() != Some(&world.guards[0].state) {
+            seen.push(world.guards[0].state);
+        }
+    }
+    assert_eq!(world.guards[0].state, State::Alerted, "seen up close for long enough");
+    // The first tick is spent noticing: the guard is still Unaware after it.
+    seen.retain(|s| *s != State::Unaware);
+    assert_eq!(&seen[..3], &[State::Suspicious, State::Investigating, State::Alerted],
+               "through the table in order");
+}

@@ -486,6 +486,22 @@ def _self_test_built() -> bool:
         ok = ok and good
         print(f"  [{'PASS' if good else 'FAIL'}] {label} in "
               f"\u201c{victim['name']}\u201d reads {got!r} on the page")
+
+    # A value the simulation and content/detection.json disagree on must be
+    # named on the page, not folded into the count of values that agree.
+    planted = json.loads(json.dumps(status))
+    planted.setdefault("content", {"agree": 0, "disagree": [], "not_modelled": []})
+    planted["content"]["disagree"] = ["Scout near: content 4, simulation 2"]
+    original = (build_audit.SIM / "status.json").read_text()
+    try:
+        (build_audit.SIM / "status.json").write_text(json.dumps(planted))
+        html = build_audit.built_html()
+    finally:
+        (build_audit.SIM / "status.json").write_text(original)
+    good = "Scout near: content 4, simulation 2" in html and "1 disagree" in html
+    ok = ok and good
+    print(f"  [{'PASS' if good else 'FAIL'}] a content value the simulation "
+          f"disagrees with is named on the page")
     return ok
 
 

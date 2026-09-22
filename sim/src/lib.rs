@@ -31,6 +31,8 @@
 
 pub mod fixed;
 pub mod grid;
+pub mod guard;
+pub mod noise;
 pub mod path;
 pub mod replay;
 pub mod sight;
@@ -58,6 +60,16 @@ pub const SUSPICION_MAX: i32 = 1000;
 pub const SUSPICIOUS_AT: i32 = 200;
 pub const INVESTIGATING_AT: i32 = 600;
 pub const ALERTED_AT: i32 = 1000;
+
+/// §12.17: near fills in about half a second, mid in about a second, far in
+/// just under three. At 30 ticks a second that is 67, 33 and 12 a tick.
+pub const FILL_NEAR: i32 = 67;
+pub const FILL_MID: i32 = 33;
+pub const FILL_FAR: i32 = 12;
+
+/// §12.17: "It empties more slowly than it fills — about 1.7 seconds":
+/// 1000 / 51 ticks.
+pub const DECAY_PER_TICK: i32 = 20;
 
 /// A point, in tiles. §21.1: "One tile is one metre."
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
@@ -117,6 +129,70 @@ pub struct Guard {
     pub far: Fx,
     pub turn_per_tick: Ang,
     pub suspicion: i32,
+    /// §12.17's six states. See `guard.rs`.
+    pub state: guard::State,
+    /// The tick the current state was entered, for the half-second hold.
+    pub state_since: u32,
+    /// Its post. Returning walks here; Unaware holds it.
+    pub home: grid::TileIndex,
+    /// Where it is walking, computed once when a state that walks is entered.
+    pub route: Vec<grid::TileIndex>,
+    pub along: usize,
+    /// The spot it is interested in: where it last saw someone, or where a
+    /// sound came from.
+    pub interest: Option<grid::TileIndex>,
+    /// Whether it saw a raider this tick. Alerted falls to Searching "after
+    /// losing sight", which needs this and not suspicion.
+    pub saw: bool,
+    /// Where it heard something this tick, if it did.
+    heard: Option<grid::TileIndex>,
+    /// When it reached the spot it was investigating, for the ten seconds.
+    arrived_at: Option<u32>,
+}
+
+impl Guard {
+    fn next_step(&self, grid: &Grid) -> Option<Point> {
+        let tile = *self.route.get(self.along)?;
+        let (x, y) = grid.centre(tile);
+        Some(Point { x, y })
+    }
+}
+
+/// §12.17's five guard rows: role, cone in degrees, then near, mid and far in
+/// half metres (so 1.5 m is 3), then turn in degrees a tick. Kept as data so
+/// the reinforcing Warden at alarm 5 is built from the same row as the first.
+const ROLES: [(u32, i32, i64, i64, i64, i32); 5] = [
+    (0, 45, 4, 8, 12, 6),     // Scout    0-2 / 2-4 / 4-6 m
+    (1, 40, 3, 6, 9, 3),      // Warden   0-1.5 / 1.5-3 / 3-4.5 m
+    (2, 35, 3, 5, 7, 8),      // Breaker  0-1.5 / 1.5-2.5 / 2.5-3.5 m
+    (3, 30, 2, 4, 6, 4),      // Carrier  0-1 / 1-2 / 2-3 m
+    (4, 40, 3, 5, 0, 4),      // Mender   0-1.5 / 1.5-2.5 m, no far zone
+];
+const WARDEN: usize = 1;
+
+fn make_guard(id: u32, row: usize, post: grid::TileIndex, grid: &Grid) -> Guard {
+    let (_, cone, near, mid, far, turn) = ROLES[row];
+    let (x, y) = grid.centre(post);
+    Guard {
+        id,
+        at: Point { x, y },
+        facing: Ang::from_degrees(270),
+        cone: Ang::from_degrees(cone),
+        near: Fx::from_ratio(near, 2),
+        mid: Fx::from_ratio(mid, 2),
+        far: Fx::from_ratio(far, 2),
+        turn_per_tick: Ang::from_degrees(turn),
+        suspicion: 0,
+        state: guard::State::Unaware,
+        state_since: 0,
+        home: post,
+        route: Vec::new(),
+        along: 0,
+        interest: None,
+        saw: false,
+        heard: None,
+        arrived_at: None,
+    }
 }
 
 /// A raider. Where it is going is set by a command, never stored in a replay:
@@ -154,7 +230,19 @@ pub struct World {
     pub tick: u32,
     pub guards: Vec<Guard>,
     pub raiders: Vec<Raider>,
+    /// The realm alarm, 0 to 6. §12.17: "climbs from 0 to 6 — once every
+    /// thirty seconds and once per knocked-out guard discovered".
     pub alarm: i32,
+    /// Knocked-out guards found by other guards. Always zero until the crew
+    /// can knock anyone out; held so the alarm's rule is whole rather than
+    /// half-written.
+    pub knockouts_discovered: i32,
+    /// Where a reinforcing Warden arrives, and whether one has.
+    pub entrance: grid::TileIndex,
+    pub reinforced: bool,
+    /// "Alarm spreads by distance": (tick due, guard index, the spot), kept in
+    /// that order so the same spreads land in the same order everywhere.
+    spreads: Vec<(u32, usize, grid::TileIndex)>,
     /// The realm's tiles. §12.18's "terrain, laws and building are per tile".
     pub grid: Grid,
     /// The input log, in tick order, and how far through it the tick loop is.
@@ -163,7 +251,6 @@ pub struct World {
     next_command: usize,
     perception: Rng,
     movement: Rng,
-    noise: Rng,
 }
 
 impl World {
@@ -173,14 +260,6 @@ impl World {
         debug_assert!(
             commands.windows(2).all(|w| w[0].tick <= w[1].tick),
             "the input log has to be in tick order or the inputs phase is not a phase");
-        // role, cone°, near, mid, far (metres), turn °/tick — §12.17's table.
-        let roles: [(i32, i32, i32, i32, i32, i32); 5] = [
-            (0, 45, 2, 4, 6, 6),      // Scout
-            (1, 40, 3, 6, 9, 3),      // Warden   (1.5/3/4.5, doubled below)
-            (2, 35, 3, 5, 7, 8),      // Breaker  (1.5/2.5/3.5)
-            (3, 30, 2, 4, 6, 4),      // Carrier  (1/2/3)
-            (4, 40, 3, 5, 0, 4),      // Mender   (1.5/2.5, no far zone)
-        ];
         // §5.2's realm 5 is 14x14, the largest, so the spike uses it. The
         // features are §6.2's, chosen because they pull feet and eyes apart:
         //
@@ -211,22 +290,17 @@ impl World {
         // route. Every guard is inside the grid: a guard off it would see
         // nothing and make its whole row of §12.17's table untested.
         let posts: [(u16, u16); 5] = [(2, 10), (5, 12), (9, 4), (11, 10), (12, 2)];
-        let mut guards = Vec::with_capacity(5);
-        for (i, (id, cone, near, mid, far, turn)) in roles.iter().enumerate() {
-            let (px, py) = posts[i];
-            let (cx, cy) = grid.centre(grid.index(px, py).unwrap_or(0));
-            guards.push(Guard {
-                id: *id as u32,
-                at: Point { x: cx, y: cy },
-                facing: Ang::from_degrees(270),
-                cone: Ang::from_degrees(*cone),
-                near: Fx::from_ratio(*near as i64, 2),
-                mid: Fx::from_ratio(*mid as i64, 2),
-                far: Fx::from_ratio(*far as i64, 2),
-                turn_per_tick: Ang::from_degrees(*turn),
-                suspicion: 0,
-            });
-        }
+        let guards: Vec<Guard> = posts
+            .iter()
+            .enumerate()
+            .map(|(row, (px, py))| {
+                make_guard(row as u32, row, grid.index(*px, *py).unwrap_or(0), &grid)
+            })
+            .collect();
+        // The fixture's entrance, where §12.17's reinforcing Warden arrives:
+        // the far corner from the crew's start, on the guards' side.
+        let entrance = grid.index(grid.width - 1, grid.height - 1).unwrap_or(0);
+
         let mut raiders = Vec::with_capacity(crew as usize);
         for i in 0..crew as i32 {
             raiders.push(Raider {
@@ -247,12 +321,15 @@ impl World {
             guards,
             raiders,
             alarm: 0,
+            knockouts_discovered: 0,
+            entrance,
+            reinforced: false,
+            spreads: Vec::new(),
             grid,
             commands,
             next_command: 0,
             perception: Rng::new(seed, Stream::Perception),
             movement: Rng::new(seed, Stream::Movement),
-            noise: Rng::new(seed, Stream::Noise),
         }
     }
 
@@ -329,6 +406,9 @@ impl World {
     fn phase_perception(&mut self) {
         for gi in 0..self.guards.len() {
             let mut gain = 0i32;
+            // The raider noticed most this tick, ties to the lower id, so a
+            // guard's interest is the same spot on every machine.
+            let mut most: Option<(i32, grid::TileIndex)> = None;
             for ri in 0..self.raiders.len() {
                 let guard = &self.guards[gi];
                 let raider = &self.raiders[ri];
@@ -356,18 +436,18 @@ impl World {
                 if !sight::visible(&self.grid, from, to) {
                     continue;
                 }
-                // §12.17: near fills in about half a second, mid in about a
-                // second, far in just under three. At 30 ticks a second that
-                // is 67, 33 and 12 suspicion a tick.
                 let per_tick = if d <= guard.near {
-                    67
+                    FILL_NEAR
                 } else if d <= guard.mid {
-                    33
+                    FILL_MID
                 } else {
-                    12
+                    FILL_FAR
                 };
                 let halved = if raider.crouching { per_tick / 2 } else { per_tick };
                 gain += halved;
+                if most.is_none_or(|(g, _)| halved > g) {
+                    most = Some((halved, to));
+                }
             }
             // One draw a tick whether or not anything was seen, so the stream
             // advances at the same rate regardless of the world's state. A
@@ -375,12 +455,14 @@ impl World {
             // depend on the whole history, which is a needless coupling.
             let jitter = (self.perception.below(3) as i32) - 1;
             let guard = &mut self.guards[gi];
+            guard.saw = most.is_some();
+            if let Some((_, at)) = most {
+                guard.interest = Some(at);
+            }
             if gain > 0 {
                 guard.suspicion = (guard.suspicion + gain + jitter).min(SUSPICION_MAX);
             } else {
-                // §12.17: "It empties more slowly than it fills — about 1.7
-                // seconds" — 1000 / 51 ticks.
-                guard.suspicion = (guard.suspicion - 20).max(0);
+                guard.suspicion = (guard.suspicion - DECAY_PER_TICK).max(0);
             }
         }
     }
@@ -409,44 +491,236 @@ impl World {
                 y: raider.at.y + trig::sin(bearing).mul(step),
             };
         }
+        // One draw a tick, whatever the guards are doing, so the stream's
+        // position depends on the tick and not on the world.
         let sweep = (self.movement.below(2) as i32) * 2 - 1;   // -1 or +1
+        let walk = Fx::from_ratio(1, 10);                       // §12.18's walk
         for guard in self.guards.iter_mut() {
-            guard.facing = Ang(guard.facing.0 + guard.turn_per_tick.0 * sweep).wrapped();
-        }
-    }
-
-    /// Noise. §12.17 makes ground type and gait audible; the spike draws one
-    /// value a tick and adds it to the nearest guard, which is enough to put
-    /// the stream and the ordering on the hot path.
-    fn phase_noise(&mut self) {
-        let loud = self.noise.below(100) < 10;
-        if !loud || self.raiders.is_empty() {
-            return;
-        }
-        let source = self.raiders[(self.tick as usize) % self.raiders.len()].at;
-        // Nearest by distance, ties broken by id: §24.10's "entities by
-        // number" is what makes a tie resolve the same way everywhere.
-        let mut best: Option<(Fx, usize)> = None;
-        for (i, guard) in self.guards.iter().enumerate() {
-            let d = guard.at.distance(source);
-            match best {
-                Some((bd, _)) if bd <= d => {}
-                _ => best = Some((d, i)),
+            use guard::State::*;
+            match guard.state {
+                // "Patrols or holds its post" — the fixture holds. "Wider,
+                // faster searching" has no figure, so Searching sweeps too.
+                Unaware | Searching => {
+                    guard.facing = Ang(guard.facing.0 + guard.turn_per_tick.0 * sweep).wrapped();
+                }
+                // "Stops, turns toward it."
+                Suspicious => {
+                    if let Some(spot) = guard.interest {
+                        let (x, y) = self.grid.centre(spot);
+                        guard.facing = guard.at.bearing_to(Point { x, y });
+                    }
+                }
+                // These walk a route, facing the way they go.
+                Investigating | Alerted | Returning => {
+                    match guard.next_step(&self.grid) {
+                        Some(target) => {
+                            let d = guard.at.distance(target);
+                            if d <= walk {
+                                guard.at = target;
+                                guard.along += 1;
+                            } else {
+                                let bearing = guard.at.bearing_to(target);
+                                guard.facing = bearing;
+                                guard.at = Point {
+                                    x: guard.at.x + trig::cos(bearing).mul(walk),
+                                    y: guard.at.y + trig::sin(bearing).mul(walk),
+                                };
+                            }
+                        }
+                        None => {
+                            // Arrived. Investigating starts its ten seconds
+                            // here; everyone else looks about.
+                            if guard.state == Investigating && guard.arrived_at.is_none() {
+                                guard.arrived_at = Some(self.tick);
+                            }
+                            guard.facing =
+                                Ang(guard.facing.0 + guard.turn_per_tick.0 * sweep).wrapped();
+                        }
+                    }
+                }
             }
         }
-        if let Some((_, i)) = best {
-            self.guards[i].suspicion = (self.guards[i].suspicion + 40).min(SUSPICION_MAX);
+    }
+
+    /// Noise. §12.17: a sound carries a walkable distance, and a guard that
+    /// hears one turns toward "the way around, not toward you" and starts
+    /// investigating — the table's "600, or on hearing something".
+    ///
+    /// A raider makes the sound of its gait while it is walking a route; one
+    /// standing still is silent. Raiders are taken in id order and each guard
+    /// keeps the nearest sound it heard, ties to the earlier raider, so two
+    /// sounds at the same distance resolve the same way everywhere.
+    fn phase_noise(&mut self) {
+        for guard in self.guards.iter_mut() {
+            guard.heard = None;
+        }
+        let mut nearest: Vec<Option<(u16, grid::TileIndex, Option<grid::TileIndex>)>> =
+            vec![None; self.guards.len()];
+        for raider in self.raiders.iter() {
+            if raider.along >= raider.route.len() {
+                continue;                             // standing still is silent
+            }
+            let sound = if raider.crouching { noise::Sound::CrouchedWalk } else { noise::Sound::Walking };
+            let Some(source) = self.grid.tile_at(raider.at.x, raider.at.y) else { continue };
+            let field = noise::field(&self.grid, source, sound.steps());
+            for (gi, guard) in self.guards.iter().enumerate() {
+                let Some(at) = self.grid.tile_at(guard.at.x, guard.at.y) else { continue };
+                let d = field[at as usize];
+                if d == noise::UNHEARD {
+                    continue;
+                }
+                if nearest[gi].is_none_or(|(best, _, _)| d < best) {
+                    nearest[gi] = Some((d, source, noise::way_around(&self.grid, &field, at)));
+                }
+            }
+        }
+        for (gi, heard) in nearest.into_iter().enumerate() {
+            let Some((_, source, step)) = heard else { continue };
+            let guard = &mut self.guards[gi];
+            guard.heard = Some(source);
+            // Turn toward the way around. Behind a wall that is along the
+            // wall to its gap; in the open it is toward the raider.
+            let look = step.unwrap_or(source);
+            let (x, y) = self.grid.centre(look);
+            guard.facing = guard.at.bearing_to(Point { x, y });
         }
     }
 
-    /// States. The realm alarm climbs when any guard is alerted.
+    /// States. §12.17's table, the spread of an alarm by distance, and the
+    /// realm alarm with its one stated consequence.
     fn phase_states(&mut self) {
-        let alerted = self.guards.iter().filter(|g| g.suspicion >= ALERTED_AT).count();
-        if alerted > 0 {
-            self.alarm = (self.alarm + alerted as i32).min(6 * 30);
-        } else if self.tick % TICKS_PER_SECOND == 0 {
-            self.alarm = (self.alarm - 1).max(0);
+        use guard::State::*;
+        let now = self.tick;
+
+        // Spreads that are due. They were queued in (tick, guard) order and
+        // are taken in that order.
+        let due: Vec<_> = self.spreads.iter().copied().filter(|s| s.0 <= now).collect();
+        self.spreads.retain(|s| s.0 > now);
+        for (_, gi, spot) in due {
+            if self.guards[gi].state.rank() < Investigating.rank() {
+                self.guards[gi].interest = Some(spot);
+                self.enter(gi, Investigating);
+            }
         }
+
+        for gi in 0..self.guards.len() {
+            let g = &self.guards[gi];
+            let current = g.state;
+            let held = now.saturating_sub(g.state_since);
+            let by_suspicion = guard::State::from_suspicion(g.suspicion);
+            let mut next = current;
+
+            // Hearing: "600, or on hearing something". Never a step down.
+            if let Some(spot) = g.heard {
+                if current.rank() < Investigating.rank() {
+                    next = Investigating;
+                    self.guards[gi].interest = Some(spot);
+                }
+            }
+            // Rising on suspicion is immediate.
+            if by_suspicion.rank() > next.rank() {
+                next = by_suspicion;
+            }
+            // Falling waits half a second, then follows the table.
+            if next == current && held >= guard::HOLD_TICKS {
+                let g = &self.guards[gi];
+                next = match current {
+                    Suspicious if by_suspicion == Unaware => Unaware,
+                    Investigating => match g.arrived_at {
+                        Some(t) if now - t >= guard::SEARCH_SPOT_TICKS
+                            && by_suspicion.rank() < Suspicious.rank() => Returning,
+                        _ => Investigating,
+                    },
+                    Alerted if !g.saw => Searching,
+                    Searching if held >= guard::SEARCHING_TICKS => Returning,
+                    Returning if g.along >= g.route.len() => Unaware,
+                    other => other,
+                };
+            }
+            // Alerted converges on where it last saw someone; a new sighting
+            // on a different tile re-aims it.
+            if next == Alerted && current == Alerted {
+                let g = &self.guards[gi];
+                if g.saw && g.interest.is_some() && g.route.last() != g.interest.as_ref() {
+                    self.aim(gi, g.interest);
+                }
+            }
+            if next != current {
+                self.enter(gi, next);
+            }
+        }
+
+        // The realm alarm: one level every thirty seconds, one per knocked-out
+        // guard discovered, never above six.
+        self.alarm = ((now / guard::ALARM_STEP_TICKS) as i32 + self.knockouts_discovered)
+            .min(guard::ALARM_MAX);
+        // "At 5 another Warden arrives at an entrance."
+        if self.alarm >= guard::REINFORCE_AT && !self.reinforced {
+            self.reinforced = true;
+            let id = self.guards.len() as u32;
+            let mut warden = make_guard(id, WARDEN, self.entrance, &self.grid);
+            warden.state_since = now;
+            self.guards.push(warden);
+        }
+    }
+
+    /// Enter a state, and do what entering it means.
+    fn enter(&mut self, gi: usize, state: guard::State) {
+        use guard::State::*;
+        let now = self.tick;
+        {
+            let g = &mut self.guards[gi];
+            g.state = state;
+            g.state_since = now;
+            g.arrived_at = None;
+        }
+        match state {
+            Investigating | Alerted => {
+                let spot = self.guards[gi].interest;
+                self.aim(gi, spot);
+            }
+            Returning => {
+                let home = self.guards[gi].home;
+                self.aim(gi, Some(home));
+            }
+            _ => {
+                let g = &mut self.guards[gi];
+                g.route.clear();
+                g.along = 0;
+            }
+        }
+        // "Calls out ... raises the alarm", and "alarm spreads by distance,
+        // not everywhere at once: guards within four metres start
+        // investigating half a second later."
+        if state == Alerted {
+            let here = self.guards[gi].at;
+            let spot = self.grid.tile_at(here.x, here.y);
+            let reach = Fx::from_int(guard::SPREAD_METRES);
+            for other in 0..self.guards.len() {
+                if other == gi || self.guards[other].at.distance(here) > reach {
+                    continue;
+                }
+                if let Some(spot) = spot {
+                    self.spreads.push((now + guard::SPREAD_DELAY_TICKS, other, spot));
+                }
+            }
+            self.spreads.sort();
+        }
+    }
+
+    /// Point a guard's route at a spot, by the same breadth-first walk the
+    /// crew uses. A spot it cannot reach leaves it where it is, which is
+    /// §12.18's rule for the crew applied to the other side.
+    fn aim(&mut self, gi: usize, spot: Option<grid::TileIndex>) {
+        let at = self.guards[gi].at;
+        let from = self.grid.tile_at(at.x, at.y);
+        let route = match (from, spot) {
+            (Some(a), Some(b)) => path::find(&self.grid, a, b).unwrap_or_default(),
+            _ => Vec::new(),
+        };
+        let g = &mut self.guards[gi];
+        g.route = route;
+        g.along = 0;
     }
 
     /// §24.10: "Checksums — every tick in memory, one a second kept."
@@ -465,12 +739,19 @@ impl World {
         };
         mix(self.tick as i64);
         mix(self.alarm as i64);
+        mix(self.reinforced as i64);
+        mix(self.spreads.len() as i64);
         for guard in self.guards.iter() {
             mix(guard.id as i64);
             mix(guard.at.x.0);
             mix(guard.at.y.0);
             mix(guard.facing.0 as i64);
             mix(guard.suspicion as i64);
+            mix(guard.state as i64);
+            mix(guard.state_since as i64);
+            mix(guard.route.len() as i64);
+            mix(guard.along as i64);
+            mix(guard.interest.map_or(-1, |t| t as i64));
         }
         for raider in self.raiders.iter() {
             mix(raider.id as i64);
