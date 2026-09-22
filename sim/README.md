@@ -316,9 +316,11 @@ laws whose pylons still stand. Everything downstream reads it:
 - Glass ("walls become see-through") and Stillness ("standing still for 1.5
   seconds becomes invisible").
 
-Five parameters are carried on the sheet and read by nothing yet. The gate
-names each one: climbing, leaping, health drain and regen, and regrowth. It
-fails on any sheet parameter the simulation neither reads nor names.
+The simulation reads 13 of the sheet's 20 parameters. Five that laws set are
+carried on the sheet and read by nothing yet: climbing, leaping, health drain
+and regen, and regrowth. Two more are set by no law (carry weight, cone
+angle). The gate names all seven, and fails on any sheet parameter the
+simulation neither reads nor names.
 
 A Law Pylon has 600 health (§10.2, level 1). Whoever is told to break one hits
 it from beside it, and a Breaker hits for double. At zero, its law is off from

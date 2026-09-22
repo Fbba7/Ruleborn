@@ -621,7 +621,16 @@ dict(
              blocked_by=["T1.4"]),
         dict(id="T5.3", owner="claude", status="blocked",
              title="Lock the law schema (§7, §8.7)",
-             detail="Unblocked by C3 and the note rebalance.",
+             detail="Unblocked by C3 and the note rebalance.<br><br><strong>The "
+                    "rule sheet is built ahead of the lock.</strong> "
+                    "<code>sim/</code> carries all 48 laws as exact ratios "
+                    "generated from <code>content/law_effects.json</code>, and "
+                    "reads 13 of the sheet's 20 parameters each tick from the "
+                    "laws whose pylons stand. Breaking a pylon switches its law "
+                    "off from the next tick. The gate names the other seven "
+                    "— five a law sets that nothing applies yet, two no law "
+                    "sets — so the schema's gaps are listed rather than "
+                    "hidden.",
              blocked_by=["T1.4", "T1.9"]),
         dict(id="T5.4", owner="claude", status="blocked",
              title="Lock saves, bundles and versions (§24.11)",
