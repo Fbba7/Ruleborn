@@ -30,7 +30,7 @@ a band at the top.
 decision only you can make, evidence nobody here can produce, or drafting that is
 still mine to do.
 
-Two versions have now answered the audit. **42 of 138 register items are fixed
+Two versions have now answered the audit. **42 of 139 register items are fixed
 in the document itself** — 26 by v3.0 and 9 more by v3.1. v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
 in §19.27, and the build-willingness risk is designed out rather than measured
@@ -209,7 +209,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 138 tracked items with section references and status:
+document, as 139 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,

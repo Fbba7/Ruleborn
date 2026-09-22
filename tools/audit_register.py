@@ -2614,6 +2614,41 @@ dict(id="C31", kind="contradiction", severity="minor", status="open",
          "seed. That is also the only form the server can re-simulate "
          "(§24.10).",
      measured=""),
+dict(id="F31", kind="finding", severity="significant", status="open",
+     title="One rule-sheet parameter for four different rules: who heals, who "
+           "is hurt, and when",
+     refs=["12.21", "7.3", "13.3"],
+     body="§12.21: “every tier effect of every law must be expressible as a "
+          "change to a named parameter.” Four laws meet that to the letter and "
+          "not in substance, because the parameter they set does not say whom "
+          "it changes:<br><br><code>Kinship &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "health_regen 1.5%/s &nbsp;characters next to an ally<br>"
+          "Regrowth &nbsp;&nbsp;&nbsp;&nbsp;health_regen 2%/s &nbsp;&nbsp;"
+          "buildings, wards and guards<br>"
+          "Thorns &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;health_drain 5% &nbsp;"
+          "&nbsp;&nbsp;&nbsp;per touch of a wall or hedge<br>"
+          "Soul lanterns health_drain 1%/s &nbsp;&nbsp;everyone outside "
+          "lantern light</code><br><br>Two numbers with one name, each meaning "
+          "two rules. A simulation reading the sheet cannot apply either "
+          "without knowing which law set it — which is a law containing a "
+          "special case, the thing §7.3 rules out.<br><br>It has already "
+          "cost a measurement. The harness decides which side a law helps from "
+          "its parameters, and scores <code>health_regen</code> for the "
+          "defender because “Regrowth heals guards too”. Kinship inherits "
+          "that score, though what it heals is whoever stands beside an ally "
+          "— most often a crew that moves together. F11’s “5 of the 19 "
+          "laws help the defender” counts it on the strength of a sentence "
+          "about a different law.<br><br>Found while building the law engine "
+          "in <code>sim/</code>, which reads 13 of the sheet’s 20 "
+          "parameters and cannot honestly read these two.",
+     rec="Split each into parameters whose names carry their subject: "
+         "<code>ally_regen</code> (Kinship), <code>structure_regen</code> "
+         "(Regrowth), <code>touch_damage</code> (Thorns) and "
+         "<code>unlit_drain</code> (Soul lanterns). The vocabulary grows by two, "
+         "and each new name is a rule rather than a law, so it stays a "
+         "vocabulary. Then re-score Kinship for the generator, which moves "
+         "F11’s count.",
+     measured="sim/: laws_table.rs; tools/heist_harness/laws.py _helps_defender"),
 dict(id="D55", kind="deviation", severity="significant", status="open",
      title="The Python harness and the content file read peripheral vision "
            "differently",
@@ -6333,7 +6368,9 @@ EDITS = {
                  "periodic or conditional rule, and 8 need a choice from the "
                  "realm\u2019s owner. Tag each law with which, so a scope cut can "
                  "drop the expensive ones rather than the unpopular ones "
-                 "(F10).",
+                 "(F10). And let each parameter's name say whom it changes: "
+                 "healing allies who stand together and healing structures and "
+                 "guards are two parameters, not one (F31).",
          why="A vocabulary that grows to fit each new law is not a vocabulary. "
              "The classification is at tools/law_effects.py and the table at "
              "content/law_effects.json."),

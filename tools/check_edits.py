@@ -156,6 +156,7 @@ def dangling_sections(doc: str) -> list:
 #: fault it exists to record — one fact, two homes — so the link is the right
 #: answer and the check enforces that X really does carry an edit.
 NO_EDIT_BECAUSE = {
+    "F31": "covered by G10",    # both are about \u00a712.21's parameter list
     "G15": "a pricing decision for the owner: the conversion has to be chosen "
            "before there is a sentence to draft",
     "D55": "no document sentence: the fix is the harness",
