@@ -60,11 +60,45 @@ pub struct Grid {
     pub width: u16,
     pub height: u16,
     tiles: Vec<Terrain>,
+    /// Whether a tile stops sight, which is a separate question from whether
+    /// it stops feet. §6.2 is explicit that they come apart: a fence "blocks
+    /// walking" and "doesn't block sight"; a fog bank blocks sight and can be
+    /// walked through; a rock pillar does both. One flag for both would make
+    /// two of those three wrong.
+    sight_blocked: Vec<bool>,
+}
+
+/// §6.2's features, by what they do to feet and to eyes. Named from the
+/// document so a fixture that uses them can be traced back to it.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Feature {
+    /// "Blocks; can't be broken" / "Blocks sight".
+    RockPillar,
+    /// "Blocks, with gaps" / "Cover; blocks sight".
+    RuinWall,
+    /// "Blocks walking; can be leapt" / "Doesn't block sight".
+    Fence,
+    /// Walkable / "Hides anyone inside and blocks sight through it".
+    FogBank,
+}
+
+impl Feature {
+    fn terrain(self) -> Terrain {
+        match self {
+            Feature::RockPillar | Feature::RuinWall | Feature::Fence => Terrain::Blocked,
+            Feature::FogBank => Terrain::Open,
+        }
+    }
+
+    fn blocks_sight(self) -> bool {
+        !matches!(self, Feature::Fence)
+    }
 }
 
 impl Grid {
     pub fn new(width: u16, height: u16) -> Grid {
-        Grid { width, height, tiles: vec![Terrain::Open; width as usize * height as usize] }
+        let n = width as usize * height as usize;
+        Grid { width, height, tiles: vec![Terrain::Open; n], sight_blocked: vec![false; n] }
     }
 
     /// §5.2's grid for a realm level, 1 to 5: 10x10, 11x11, 12x12, 13x13, 14x14.
@@ -102,6 +136,20 @@ impl Grid {
         if let Some(i) = self.index(x, y) {
             self.tiles[i as usize] = terrain;
         }
+    }
+
+    /// Place one of §6.2's features: its effect on feet and on eyes together.
+    pub fn place(&mut self, x: u16, y: u16, feature: Feature) {
+        if let Some(i) = self.index(x, y) {
+            self.tiles[i as usize] = feature.terrain();
+            self.sight_blocked[i as usize] = feature.blocks_sight();
+        }
+    }
+
+    /// Whether this tile stops a line of sight. Off the grid counts as
+    /// blocking, so a guard at the edge cannot see past the realm.
+    pub fn blocks_sight(&self, index: TileIndex) -> bool {
+        self.sight_blocked.get(index as usize).copied().unwrap_or(true)
     }
 
     /// The centre of a tile, in tiles. A character walks between centres; the

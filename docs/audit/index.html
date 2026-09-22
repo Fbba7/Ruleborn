@@ -190,6 +190,38 @@
   }
   .waiting.none { color: var(--cho); font-size: 13.5px; margin: 0; }
 
+  /* --- what is built --------------------------------------------------- */
+  .built {
+    margin: 28px 0 8px; padding: 18px 20px;
+    border: 1px solid var(--rule-strong); border-radius: 10px;
+    background: var(--raised);
+  }
+  .built h2 { font-size: 21px; margin: 0 0 6px; }
+  .built .blurb { color: var(--muted); font-size: 14px; max-width: 62ch; margin: 0 0 12px; }
+  .built .bh { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em;
+               color: var(--muted); margin: 16px 0 6px; font-family: "IBM Plex Mono", monospace; }
+  .bsum { display: flex; flex-wrap: wrap; border-top: 1px solid var(--rule);
+          border-bottom: 1px solid var(--rule); padding-block: 10px; }
+  .bsum div { flex: 1 1 110px; padding-right: 12px; }
+  .bsum .n { font-family: "IBM Plex Mono", monospace; font-size: 20px; display: block; }
+  .bsum .k { font-size: 12px; color: var(--muted); }
+  .blist { list-style: none; margin: 0; padding: 0; }
+  .blist li { border-top: 1px solid var(--rule); padding: 8px 0 8px 10px;
+              border-left: 3px solid var(--rule-strong); margin-bottom: 2px; font-size: 14px; }
+  .blist li.built { border-left-color: var(--cho); }
+  .blist li.failing { border-left-color: var(--blk); }
+  .blist li.missing { border-left-color: var(--sig); }
+  .blist li.waiting { border-left-color: var(--min); }
+  .bv { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; text-transform: uppercase;
+        letter-spacing: 0.06em; margin-right: 6px; }
+  .built li.built .bv { color: var(--cho); }
+  .built li.failing .bv { color: var(--blk); }
+  .built li.missing .bv { color: var(--sig); }
+  .built li.waiting .bv { color: var(--muted); }
+  .bref { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--faint);
+          margin-left: 6px; }
+  .bwhat { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+
   /* --- where to start -------------------------------------------------- */
   .start {
     margin: 28px 0 8px; padding: 18px 20px;
@@ -589,6 +621,28 @@
       still mine to do.</p>
     <div class="hos"><div class="ho yours"><h3>Realms</h3><p class="verdict">Waiting on you</p><p class="gloss">Everything that can be measured has been and every edit is drafted. What is left is yours to answer.</p><ul class="waiting"><li><span class="who yours">your decision</span> <a href="#F26">F26</a>, <a href="#F27">F27</a>, <a href="#F22">F22</a>, <a href="#F9">F9</a>, <a href="#F11">F11</a>, <a href="#F12">F12</a>, <a href="#G3">G3</a>, <a href="#G5">G5</a>, <a href="#C19">C19</a><span class="gt">§13.2’s hold band falls inside a gap the defence cannot enter at realm 1 &hellip;</span></li></ul></div><div class="ho yours"><h3>Screens</h3><p class="verdict">Waiting on you</p><p class="gloss">Everything that can be measured has been and every edit is drafted. What is left is yours to answer.</p><ul class="waiting"><li><span class="who yours">your decision</span> <a href="#C6">C6</a><span class="gt">Two ruleborn rosters — the roles agree now, and the abilities are two designs rather than two wordings</span></li></ul></div><div class="ho yours"><h3>Characters</h3><p class="verdict">Waiting on you</p><p class="gloss">Everything that can be measured has been and every edit is drafted. What is left is yours to answer.</p><ul class="waiting"><li><span class="who yours">your decision</span> <a href="#D6">D6</a><span class="gt">A launch-scope cut of roughly 40% is proposed</span></li><li><span class="who outside">needs evidence from outside</span> <a href="#Q5">Q5</a><span class="gt">Accept the launch-scope cut?</span></li></ul></div></div>
   </section>
+
+  <section class="built">
+    <h2>What is built</h2>
+    <p class="blurb">The simulation core in <code>sim/</code>, read from the last
+      run of its own gate rather than from anything typed here. A system reads
+      <strong>built</strong> only if every test that proves it passed; a test
+      that is renamed or deleted makes its system read <em>proof missing</em>,
+      never built.</p>
+    <div class="bsum">
+      <div><span class="n">10/10</span><span class="k">systems built</span></div>
+      <div><span class="n">48/48</span><span class="k">tests passing</span></div>
+      <div><span class="n">4/4</span><span class="k">golden replays verify</span></div>
+      <div><span class="n">1215</span><span class="k">bytes, largest heist of 2,048</span></div>
+    </div>
+    <h3 class="bh">Systems</h3>
+    <ul class="blist"><li class="bs built"><span class="bv">Built</span> <strong>Fixed-point arithmetic</strong> <span class="bref">§24.7 · T3.1 · 6/6 tests</span><span class="bwhat">64-bit with 32 fractional bits for positions, 32-bit with 16 for angles. No floating point anywhere in the simulation.</span></li><li class="bs built"><span class="bv">Built</span> <strong>Angles and trigonometry</strong> <span class="bref">§24.7 · T3.1 · 4/4 tests</span><span class="bwhat">Angles as a fraction of a turn, sine from a committed table computed in exact decimal arithmetic.</span></li><li class="bs built"><span class="bv">Built</span> <strong>Seeded randomness</strong> <span class="bref">§24.7 · T3.1 · 3/3 tests</span><span class="bwhat">SplitMix64 into xoshiro256++, one stream per subsystem so one subsystem's draws cannot shift another's.</span></li><li class="bs built"><span class="bv">Built</span> <strong>The tick and its checksum</strong> <span class="bref">§24.10 · T3.1 · 4/4 tests</span><span class="bwhat">Six phases in a fixed order; a checksum every tick, one a second kept, sensitive to one unit in the last place.</span></li><li class="bs built"><span class="bv">Built</span> <strong>Replay format</strong> <span class="bref">§24.10 · T3.2 · 6/6 tests</span><span class="bwhat">Commands, never state. A header pinning 24.11's four things, a varint command log, and a four-byte checksum a second, under 2 KB.</span></li><li class="bs built"><span class="bv">Built</span> <strong>Golden replays</strong> <span class="bref">§24.11 · T3.2 · 2/2 tests</span><span class="bwhat">Heists encoded by an earlier build and committed; every build re-simulates them and names the second any divergence starts at.</span></li><li class="bs built"><span class="bv">Built</span> <strong>Tile grid</strong> <span class="bref">§12.18 · T5.5 · 4/4 tests</span><span class="bwhat">Per-tile terrain and continuous positions; 5.2's realm sizes; a fixed north-east-south-west neighbour order.</span></li><li class="bs built"><span class="bv">Built</span> <strong>Pathfinding</strong> <span class="bref">§12.18 · T5.5 · 7/7 tests</span><span class="bwhat">Breadth-first, ties by tile index. Terrain slows the walk and cannot bend the route.</span></li><li class="bs built"><span class="bv">Built</span> <strong>Crew control</strong> <span class="bref">§12.18 · T5.5 · 2/2 tests</span><span class="bwhat">The crew never makes a decision the player did not make: no re-routing, no different door, friends pass through one another.</span></li><li class="bs built"><span class="bv">Built</span> <strong>Line of sight</strong> <span class="bref">§12.17 · T5.2 · 10/10 tests</span><span class="bwhat">Per tile, as 21.12 requires. Feet and eyes are separate properties, as 6.2's fence and fog bank require. The same line from either end.</span></li></ul>
+    <h3 class="bh">The same checksum on every target (T3.1)</h3>
+    <p class="blurb">5 seeds, 7,200 ticks each.
+      §24.7 names four targets; two can be run here.</p>
+    <ul class="blist"><li class="bt built"><span class="bv">Agrees</span> Native x86-64 <span class="bref">run here</span></li><li class="bt built"><span class="bv">Agrees</span> WebAssembly (the server) <span class="bref">run here, under Node</span></li><li class="bt waiting"><span class="bv">Needs a device</span> iPhone</li><li class="bt waiting"><span class="bv">Needs a device</span> Android</li></ul>
+  </section>
+
 
   <section class="start">
     <h2>Where to start</h2>
@@ -3584,4 +3638,4 @@
     apply();
   })();
 </script>
-<!-- ruleborn-build d001200dc04a7b67 -->
+<!-- ruleborn-build 689dd16d08f78dec -->

@@ -8,8 +8,8 @@ would mean maintaining two implementations that must agree forever, and they
 would eventually not."*
 
 This is **T3.1** (the determinism spike), **T3.2** (the golden replays) and
-the buildable half of **T5.5** (pathfinding and crew control). It is not the
-game.
+the buildable half of **T5.5** (pathfinding and crew control), and §12.17's line
+of sight. It is not the game.
 
 ## What it proves, and what it does not
 
@@ -130,6 +130,39 @@ routed around mud would be choosing for the player.
 | "They pass through one another" | `crew_pass_through_one_another` — two crew sent to one tile both arrive |
 | "The command, never the path" | the route is recomputed from the command and never encoded |
 
+## Line of sight
+
+§21.12: *"Sharp edges, no gradients. A tile is inside or outside."* So sight is
+per tile, and the question is whether any tile between a guard and a target
+stops it.
+
+**Feet and eyes are separate properties of a tile**, because §6.2's features
+pull them apart: a fence "blocks walking" and "doesn't block sight", a fog bank
+is walkable and "blocks sight through it", a rock pillar does both. One flag
+would make two of those three wrong. `a_fence_stops_feet_and_not_eyes` and
+`a_fog_bank_stops_eyes_and_not_feet` are the tests that say so.
+
+The line between two tiles is a **supercover** line — every tile the segment
+passes through — with one rule for the case that needs one: a line exactly
+through a corner counts both side tiles as crossed. That is a determinism
+choice before it is a taste one. The common alternative steps in one axis on a
+tie, which gives a different set of tiles from each end, so a guard could see
+a raider whose line back says it is hidden. `a_line_is_the_same_from_either_end`
+checks every pair of tiles in a 7x7 grid.
+
+`walls_change_what_the_guards_notice` exists so this cannot be decoration: the
+same heist with sight-blocking removed must produce different suspicion.
+
+## How progress is reported
+
+`status.py` runs every gate — the float ban, every test by name, the goldens,
+native against WebAssembly — and writes `status.json`. `systems.json` says
+which tests prove which system. The audit page's **What is built** band reads
+the two: a system shows as built only if every test naming it passed on the
+last run, and a renamed or deleted test makes it read *proof missing*, never
+built. `status.py` also fails if a test belongs to no system or a system names
+a test that does not exist, so the band cannot drift from the code.
+
 ## Layout
 
     src/fixed.rs      Fx (i64, 32 fractional bits) and Ang (i32, 16)
@@ -139,6 +172,7 @@ routed around mud would be choosing for the player.
     src/lib.rs        the world, the six phases, the checksum
     src/grid.rs       tiles, terrain and the fixed neighbour order
     src/path.rs       breadth-first routing, §12.18's two tie-breakers
+    src/sight.rs      supercover line of sight, the same from either end
     src/replay.rs     the heist as bytes: header, command log, checksums
     src/tests.rs      the invariants the checksum rests on
     golden/*.rbh      replays committed today, re-simulated on every build
@@ -146,6 +180,9 @@ routed around mud would be choosing for the player.
     src/bin/golden.rs writes the golden replays
     wasm_spike.mjs    the WebAssembly runner
     no_floats.py      §24.10's float ban
+    status.py         runs every gate, writes status.json
+    systems.json      which tests prove which system, for the audit page
+    examples/         where_diverge: which second each golden parts company at
     build_table.py    the table generator; runs once, output committed
 
 ## What the simulation contains

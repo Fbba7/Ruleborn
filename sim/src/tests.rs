@@ -540,3 +540,153 @@ fn crew_pass_through_one_another() {
                    "crew member {} did not reach the shared tile", raider.id);
     }
 }
+
+// --------------------------------------------------------------------------
+// Line of sight (§12.17, §21.12, §6.2)
+// --------------------------------------------------------------------------
+
+use crate::grid::Feature;
+use crate::sight;
+
+#[test]
+fn a_straight_line_crosses_only_its_own_row() {
+    let grid = Grid::new(10, 10);
+    let from = grid.index(1, 4).unwrap();
+    let to = grid.index(8, 4).unwrap();
+    let tiles = sight::line(&grid, from, to);
+    assert_eq!(tiles.len(), 8, "eight tiles from column 1 to column 8");
+    for t in tiles {
+        assert_eq!(grid.coords(t).1, 4, "a horizontal line stays in its row");
+    }
+}
+
+#[test]
+fn a_line_is_the_same_from_either_end() {
+    // The reason for the supercover rule: a guard must not see a raider whose
+    // line back to the guard says it is hidden. Checked over every pair of
+    // tiles in a small grid rather than a handful of chosen ones.
+    let grid = Grid::new(7, 7);
+    for a in 0..grid.len() as u32 {
+        for b in 0..grid.len() as u32 {
+            let mut there = sight::line(&grid, a, b);
+            let mut back = sight::line(&grid, b, a);
+            there.sort();
+            back.sort();
+            assert_eq!(there, back, "the line {a}->{b} is not the line {b}->{a}");
+        }
+    }
+}
+
+#[test]
+fn a_diagonal_through_a_corner_crosses_both_side_tiles() {
+    // Two pillars meeting at a corner leave no window. A line that stepped in
+    // one axis on a tie would see through the gap from one side only.
+    let grid = Grid::new(5, 5);
+    let tiles = sight::line(&grid, grid.index(0, 0).unwrap(), grid.index(2, 2).unwrap());
+    for (x, y) in [(1, 0), (0, 1), (1, 1), (2, 1), (1, 2)] {
+        assert!(tiles.contains(&grid.index(x, y).unwrap()),
+                "the corner crossing should include ({x},{y})");
+    }
+}
+
+#[test]
+fn a_rock_pillar_hides_what_is_behind_it() {
+    let mut grid = Grid::new(10, 10);
+    grid.place(5, 5, Feature::RockPillar);
+    let guard = grid.index(2, 5).unwrap();
+    let behind = grid.index(8, 5).unwrap();
+    let beside = grid.index(8, 8).unwrap();
+    assert!(!sight::visible(&grid, guard, behind), "the pillar is in the way");
+    assert!(sight::visible(&grid, guard, beside), "the pillar is not in this line");
+}
+
+#[test]
+fn a_fence_stops_feet_and_not_eyes() {
+    // §6.2: a fence "blocks walking" and "doesn't block sight". The two
+    // properties are separate on the tile, and this is the feature that
+    // proves they have to be.
+    let mut grid = Grid::new(10, 10);
+    for y in 0..10 {
+        grid.place(5, y, Feature::Fence);
+    }
+    let guard = grid.index(2, 4).unwrap();
+    let across = grid.index(8, 4).unwrap();
+    assert!(sight::visible(&grid, guard, across), "a guard sees over a fence");
+    assert_eq!(path::find(&grid, guard, across), None, "and nobody walks through it");
+}
+
+#[test]
+fn a_fog_bank_stops_eyes_and_not_feet() {
+    // §6.2: fog "hides anyone inside and blocks sight through it", and it
+    // is ground, not a wall.
+    let mut grid = Grid::new(10, 10);
+    grid.place(5, 4, Feature::FogBank);
+    let guard = grid.index(2, 4).unwrap();
+    let inside = grid.index(5, 4).unwrap();
+    let beyond = grid.index(8, 4).unwrap();
+    assert!(!sight::visible(&grid, guard, inside), "hides anyone inside");
+    assert!(!sight::visible(&grid, guard, beyond), "and blocks sight through it");
+    assert!(path::find(&grid, guard, beyond).is_some(), "but it can be walked through");
+}
+
+#[test]
+fn a_guard_can_always_see_out_of_its_own_tile() {
+    // The observer's tile never blocks: a guard standing in fog is looking
+    // out of it, not at it.
+    let mut grid = Grid::new(10, 10);
+    grid.place(2, 4, Feature::FogBank);
+    let guard = grid.index(2, 4).unwrap();
+    let target = grid.index(5, 4).unwrap();
+    assert!(sight::visible(&grid, guard, target), "fog under the guard does not blind it");
+}
+
+#[test]
+fn a_ruin_wall_hides_the_far_side_except_through_its_gap() {
+    // The fixture's own wall, as §6.2 describes it: "Blocks, with gaps".
+    let heist = fixture(1, 60, 3);
+    let world = World::new(heist.seed, 3, Vec::new());
+    let west = world.grid.index(3, 6).unwrap();
+    let through_gap = world.grid.index(11, 6).unwrap();
+    let past_wall = world.grid.index(11, 2).unwrap();
+    assert!(sight::visible(&world.grid, west, through_gap), "straight through the gap");
+    assert!(!sight::visible(&world.grid, west, past_wall), "the wall hides the rest");
+}
+
+#[test]
+fn every_fixture_guard_stands_inside_the_realm() {
+    // A guard off the grid sees nothing, which would leave its row of §12.17's
+    // table untested while every other check still passed.
+    let heist = fixture(1, 60, 3);
+    let world = World::new(heist.seed, 3, Vec::new());
+    for guard in world.guards.iter() {
+        assert!(world.grid.tile_at(guard.at.x, guard.at.y).is_some(),
+                "guard {} is off the grid", guard.id);
+    }
+}
+
+#[test]
+fn walls_change_what_the_guards_notice() {
+    // If line of sight never changed an outcome it would be decoration. Run
+    // the same heist with sight blocked everywhere it is blocked and with the
+    // blocking removed, and the guards' suspicion must differ.
+    let heist = fixture(0x5EED_0000_0000_0001, 2400, 5);
+    let total = |clear: bool| {
+        let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
+        if clear {
+            for y in 0..world.grid.height {
+                for x in 0..world.grid.width {
+                    if world.grid.blocks_sight(world.grid.index(x, y).unwrap()) {
+                        world.grid.place(x, y, Feature::Fence);   // feet blocked, eyes clear
+                    }
+                }
+            }
+        }
+        let mut sum = 0i64;
+        for _ in 0..heist.ticks {
+            world.step();
+            sum += world.guards.iter().map(|g| g.suspicion as i64).sum::<i64>();
+        }
+        sum
+    };
+    assert_ne!(total(false), total(true), "line of sight changed nothing");
+}

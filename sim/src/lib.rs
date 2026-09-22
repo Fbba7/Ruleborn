@@ -33,6 +33,7 @@ pub mod fixed;
 pub mod grid;
 pub mod path;
 pub mod replay;
+pub mod sight;
 
 #[cfg(test)]
 mod tests;
@@ -40,9 +41,12 @@ pub mod rng;
 pub mod trig;
 
 use fixed::{Ang, Fx};
-use grid::{Grid, Terrain};
+use grid::{Feature, Grid, Terrain};
 use replay::{Command, Heist, Kind};
 use rng::{Rng, Stream};
+
+/// The realm the fixture is built on. §5.2: level 5 is 14 by 14, the largest.
+pub const FIXTURE_REALM_LEVEL: u8 = 5;
 
 /// §24.10: "Tick rate — 30 a second, fixed."
 pub const TICKS_PER_SECOND: u32 = 30;
@@ -177,17 +181,43 @@ impl World {
             (3, 30, 2, 4, 6, 4),      // Carrier  (1/2/3)
             (4, 40, 3, 5, 0, 4),      // Mender   (1.5/2.5, no far zone)
         ];
+        // §5.2's realm 5 is 14x14, the largest, so the spike uses it. The
+        // features are §6.2's, chosen because they pull feet and eyes apart:
+        //
+        //   a ruin wall with one gap    blocks both; the gap makes a route
+        //                               bend, so the neighbour order and the
+        //                               tie-breaking are observable
+        //   a rock pillar               blocks both, in open ground
+        //   a fence                     blocks walking, "doesn't block sight"
+        //   a fog bank                  walkable, blocks sight through it
+        //   mud and a fast path         §6.2's "40% slower" and "15% faster"
+        let mut grid = Grid::for_realm_level(FIXTURE_REALM_LEVEL);
+        for y in 0..grid.height {
+            if y != 6 {
+                grid.place(7, y, Feature::RuinWall);
+            }
+        }
+        grid.place(4, 5, Feature::RockPillar);
+        for x in 9..12 {
+            grid.place(x, 7, Feature::Fence);
+        }
+        grid.place(5, 8, Feature::FogBank);
+        grid.place(6, 8, Feature::FogBank);
+        grid.set(3, 3, Terrain::Pace(60));
+        grid.set(10, 9, Terrain::Pace(115));
+
+        // Guards on tile centres, on both sides of the wall, so that the
+        // wall, the fence and the fog each stand between some guard and some
+        // route. Every guard is inside the grid: a guard off it would see
+        // nothing and make its whole row of §12.17's table untested.
+        let posts: [(u16, u16); 5] = [(2, 10), (5, 12), (9, 4), (11, 10), (12, 2)];
         let mut guards = Vec::with_capacity(5);
         for (i, (id, cone, near, mid, far, turn)) in roles.iter().enumerate() {
+            let (px, py) = posts[i];
+            let (cx, cy) = grid.centre(grid.index(px, py).unwrap_or(0));
             guards.push(Guard {
                 id: *id as u32,
-                // Spread along a line, at half-metre spacing from the halved
-                // zone figures above, so the fixture uses the document's
-                // numbers without needing fractions in this table.
-                at: Point {
-                    x: Fx::from_int(4 + 5 * i as i32),
-                    y: Fx::from_int(8),
-                },
+                at: Point { x: cx, y: cy },
                 facing: Ang::from_degrees(270),
                 cone: Ang::from_degrees(*cone),
                 near: Fx::from_ratio(*near as i64, 2),
@@ -197,19 +227,6 @@ impl World {
                 suspicion: 0,
             });
         }
-        // §5.2's realm 5 is 14x14, the largest, so the spike uses it. The
-        // blocked tiles are a fixture: a wall with one gap, which is the
-        // smallest arrangement that makes a route bend and therefore makes
-        // the neighbour order and the tie-breaking observable.
-        let mut grid = Grid::for_realm_level(5);
-        for y in 0..grid.height {
-            if y != 6 {
-                grid.set(7, y, Terrain::Blocked);
-            }
-        }
-        grid.set(3, 3, Terrain::Pace(60));      // §6.2's "40% slower"
-        grid.set(10, 9, Terrain::Pace(115));    // and its "15% faster"
-
         let mut raiders = Vec::with_capacity(crew as usize);
         for i in 0..crew as i32 {
             raiders.push(Raider {
@@ -325,6 +342,18 @@ impl World {
                 let bearing = guard.at.bearing_to(raider.at);
                 let off = bearing.delta(guard.facing).0.abs();
                 if off > guard.cone.0 / 2 {
+                    continue;
+                }
+                // In range and in the cone is not enough: something between
+                // may stop sight. Checked last because it is the costly test,
+                // and the order of pure checks cannot change the answer.
+                let (Some(from), Some(to)) = (
+                    self.grid.tile_at(guard.at.x, guard.at.y),
+                    self.grid.tile_at(raider.at.x, raider.at.y),
+                ) else {
+                    continue;
+                };
+                if !sight::visible(&self.grid, from, to) {
                     continue;
                 }
                 // §12.17: near fills in about half a second, mid in about a
@@ -515,6 +544,7 @@ pub fn digest(heist: &Heist) -> u64 {
 pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
     let mut rng = Rng::new(seed, Stream::Loot);
     let decisions = 15 + rng.below(11) as u32;      // 15 to 25, §12.6
+    let side = Grid::for_realm_level(FIXTURE_REALM_LEVEL).width as u64;
     let mut commands = Vec::with_capacity(decisions as usize * 2);
     for i in 0..decisions {
         let tick = (ticks / decisions) * i + (rng.below(20) as u32);
@@ -523,8 +553,10 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
             tick,
             actor,
             kind: Kind::MoveTo,
-            x: rng.below(24 * 256) as i16,
-            y: rng.below(14 * 256) as i16,
+            // Aimed inside the fixture's realm. A destination off the grid is
+            // a command that does nothing, which is legal and tests nothing.
+            x: rng.below(side * 256) as i16,
+            y: rng.below(side * 256) as i16,
         });
         if rng.below(3) == 0 {
             commands.push(Command {

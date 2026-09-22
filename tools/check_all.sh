@@ -30,12 +30,10 @@ python3 tools/mutation_gate.py
 python3 tools/twice_stated.py --self-test
 
 echo
-echo "== the simulation core: determinism across targets (T3.1) =="
+echo "== the simulation core: every test, the goldens, and native against WebAssembly =="
+# Writes sim/status.json, which the audit page's "What is built" band reads
+# further down — so this has to run before build_audit.py, and does.
 bash sim/run_spike.sh
-
-echo
-echo "== the simulation core: arithmetic invariants =="
-(cd sim && cargo test --release --quiet 2>&1 | grep -E "^test result|^error" || true)
 
 echo
 echo "== what changed since the previous version =="

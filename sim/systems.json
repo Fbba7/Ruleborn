@@ -1,0 +1,139 @@
+{
+  "_what": "Every system in sim/, the document section it implements, the roadmap task it belongs to, and the tests that prove it. The audit page reads this with status.json: a system is shown as built only if every test named here passed on the last run of status.py. A test that is renamed or deleted makes its system read 'missing', never 'built'.",
+  "systems": [
+    {
+      "name": "Fixed-point arithmetic",
+      "section": "24.7",
+      "task": "T3.1",
+      "what": "64-bit with 32 fractional bits for positions, 32-bit with 16 for angles. No floating point anywhere in the simulation.",
+      "tests": [
+        "fixed_point_round_trips_whole_numbers",
+        "multiplication_is_commutative_and_has_an_identity",
+        "division_undoes_multiplication_to_within_one_unit",
+        "rounding_is_the_same_on_both_sides_of_zero",
+        "integer_square_root_is_exact_for_squares",
+        "integer_square_root_never_overshoots"
+      ]
+    },
+    {
+      "name": "Angles and trigonometry",
+      "section": "24.7",
+      "task": "T3.1",
+      "what": "Angles as a fraction of a turn, sine from a committed table computed in exact decimal arithmetic.",
+      "tests": [
+        "sine_has_the_values_it_must",
+        "sine_is_exactly_odd",
+        "the_pythagorean_identity_holds_to_the_tables_resolution",
+        "angles_wrap_rather_than_accumulate"
+      ]
+    },
+    {
+      "name": "Seeded randomness",
+      "section": "24.7",
+      "task": "T3.1",
+      "what": "SplitMix64 into xoshiro256++, one stream per subsystem so one subsystem's draws cannot shift another's.",
+      "tests": [
+        "streams_are_independent",
+        "the_generator_is_reproducible",
+        "below_stays_in_range_and_covers_it"
+      ]
+    },
+    {
+      "name": "The tick and its checksum",
+      "section": "24.10",
+      "task": "T3.1",
+      "what": "Six phases in a fixed order; a checksum every tick, one a second kept, sensitive to one unit in the last place.",
+      "tests": [
+        "a_heist_is_reproducible_from_its_seed",
+        "different_seeds_produce_different_heists",
+        "the_checksum_notices_a_single_unit_of_difference",
+        "suspicion_stays_inside_the_documents_range"
+      ]
+    },
+    {
+      "name": "Replay format",
+      "section": "24.10",
+      "task": "T3.2",
+      "what": "Commands, never state. A header pinning 24.11's four things, a varint command log, and a four-byte checksum a second, under 2 KB.",
+      "tests": [
+        "a_heist_round_trips_through_bytes",
+        "a_full_length_heist_fits_the_size_budget",
+        "a_truncated_or_padded_file_is_refused",
+        "verification_names_the_second_that_diverges",
+        "commands_are_what_drives_the_crew",
+        "a_command_for_a_crew_member_who_is_not_there_is_dropped"
+      ]
+    },
+    {
+      "name": "Golden replays",
+      "section": "24.11",
+      "task": "T3.2",
+      "what": "Heists encoded by an earlier build and committed; every build re-simulates them and names the second any divergence starts at.",
+      "tests": [
+        "golden_replays_still_verify",
+        "golden_replays_are_different_heists"
+      ]
+    },
+    {
+      "name": "Tile grid",
+      "section": "12.18",
+      "task": "T5.5",
+      "what": "Per-tile terrain and continuous positions; 5.2's realm sizes; a fixed north-east-south-west neighbour order.",
+      "tests": [
+        "realm_grids_are_the_sizes_5_2_states",
+        "a_tile_index_round_trips_through_its_coordinates",
+        "a_position_lands_in_the_tile_whose_centre_it_is",
+        "the_neighbour_order_is_north_east_south_west"
+      ]
+    },
+    {
+      "name": "Pathfinding",
+      "section": "12.18",
+      "task": "T5.5",
+      "what": "Breadth-first, ties by tile index. Terrain slows the walk and cannot bend the route.",
+      "tests": [
+        "a_route_is_the_shortest_one",
+        "a_route_bends_around_a_wall_and_takes_the_gap",
+        "a_sealed_goal_has_no_route_and_that_is_the_answer",
+        "a_route_into_a_wall_is_refused_rather_than_approximated",
+        "the_same_route_is_found_every_time_and_by_both_ends_of_the_grid",
+        "slow_ground_does_not_move_the_route",
+        "slow_ground_does_change_how_long_the_walk_takes"
+      ]
+    },
+    {
+      "name": "Crew control",
+      "section": "12.18",
+      "task": "T5.5",
+      "what": "The crew never makes a decision the player did not make: no re-routing, no different door, friends pass through one another.",
+      "tests": [
+        "a_crew_member_never_re_routes_itself",
+        "crew_pass_through_one_another"
+      ]
+    },
+    {
+      "name": "Line of sight",
+      "section": "12.17",
+      "task": "T5.2",
+      "what": "Per tile, as 21.12 requires. Feet and eyes are separate properties, as 6.2's fence and fog bank require. The same line from either end.",
+      "tests": [
+        "a_straight_line_crosses_only_its_own_row",
+        "a_line_is_the_same_from_either_end",
+        "a_diagonal_through_a_corner_crosses_both_side_tiles",
+        "a_rock_pillar_hides_what_is_behind_it",
+        "a_fence_stops_feet_and_not_eyes",
+        "a_fog_bank_stops_eyes_and_not_feet",
+        "a_guard_can_always_see_out_of_its_own_tile",
+        "a_ruin_wall_hides_the_far_side_except_through_its_gap",
+        "every_fixture_guard_stands_inside_the_realm",
+        "walls_change_what_the_guards_notice"
+      ]
+    }
+  ],
+  "targets": [
+    {"name": "Native x86-64", "how": "run here"},
+    {"name": "WebAssembly (the server)", "how": "run here, under Node"},
+    {"name": "iPhone", "how": "needs a device"},
+    {"name": "Android", "how": "needs a device"}
+  ]
+}

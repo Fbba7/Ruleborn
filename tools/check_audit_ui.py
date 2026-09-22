@@ -445,7 +445,48 @@ def self_test() -> int:
             print("  the built page's script shows what its tabs promise")
     else:
         print("  node is missing — the script half of this gate did not run")
+
+    ok = _self_test_built() and ok
     return 0 if ok else 1
+
+
+def _self_test_built() -> bool:
+    """The build band must not report more than the last run proved.
+
+    Two plants against the committed status file: a test result flipped to
+    failed, and a test renamed so the manifest's name no longer finds it. The
+    first must read failing and the second proof missing. Neither may read
+    built — a system whose proof has lost its subject reading as proven
+    is the fault this repository exists to catch.
+    """
+    import json
+    import build_audit
+    ok = True
+    real = build_audit.built_systems
+    status = json.loads((build_audit.SIM / "status.json").read_text())
+    manifest = json.loads((build_audit.SIM / "systems.json").read_text())
+    victim = manifest["systems"][0]
+    test = victim["tests"][0]
+
+    for label, change, want in (
+        ("a failed test", lambda t: t.__setitem__(test, "failed"), "failing"),
+        ("a renamed test", lambda t: t.pop(test), "missing"),
+    ):
+        planted = json.loads(json.dumps(status))
+        change(planted["tests"])
+        original = (build_audit.SIM / "status.json").read_text()
+        try:
+            (build_audit.SIM / "status.json").write_text(json.dumps(planted))
+            rows, _ = real()
+            got = next(r["verdict"] for r in rows if r["name"] == victim["name"])
+            html = build_audit.built_html()
+        finally:
+            (build_audit.SIM / "status.json").write_text(original)
+        good = got == want and f'class="bs {want}"' in html
+        ok = ok and good
+        print(f"  [{'PASS' if good else 'FAIL'}] {label} in "
+              f"\u201c{victim['name']}\u201d reads {got!r} on the page")
+    return ok
 
 
 def main() -> int:

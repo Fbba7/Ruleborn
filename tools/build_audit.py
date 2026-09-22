@@ -340,6 +340,101 @@ def handoff_html() -> str:
   </section>"""
 
 
+
+# --------------------------------------------------------------------------
+# What is built — derived from sim/status.json, never typed
+# --------------------------------------------------------------------------
+
+SIM = pathlib.Path(__file__).resolve().parent.parent / "sim"
+
+
+def built_systems() -> tuple[list[dict], dict]:
+    """Each system in sim/systems.json with a verdict read from sim/status.json.
+
+    A system is **built** only if every test that proves it passed on the last
+    run of ``sim/status.py``. A test that has been renamed or deleted is
+    **missing**, never built: a system whose proof has lost its subject must
+    not read as proven, which is the fault this repository keeps finding in
+    the document and is not going to commit in its own progress report.
+    """
+    import json
+    manifest = json.loads((SIM / "systems.json").read_text(encoding="utf-8"))
+    status = json.loads((SIM / "status.json").read_text(encoding="utf-8"))
+    results = status.get("tests", {})
+    rows = []
+    for system in manifest["systems"]:
+        got = [results.get(t) for t in system["tests"]]
+        if any(g is None for g in got):
+            verdict = "missing"
+        elif all(g == "passed" for g in got):
+            verdict = "built"
+        else:
+            verdict = "failing"
+        rows.append(dict(system, verdict=verdict,
+                         passed=sum(1 for g in got if g == "passed")))
+    return rows, dict(status, targets_manifest=manifest["targets"])
+
+
+BUILT_WORDS = {
+    "built": "Built",
+    "failing": "Failing",
+    "missing": "Proof missing",
+}
+
+
+def built_html() -> str:
+    try:
+        rows, status = built_systems()
+    except FileNotFoundError:
+        return ""
+    cross = status.get("cross_target", [])
+    agree = cross and all(r["agree"] for r in cross)
+    goldens = status.get("goldens", [])
+    tests = status.get("tests", {})
+    passed = sum(1 for v in tests.values() if v == "passed")
+    largest = max((g["bytes"] for g in goldens), default=0)
+
+    sys_rows = "".join(
+        f'<li class="bs {r["verdict"]}"><span class="bv">{BUILT_WORDS[r["verdict"]]}</span> '
+        f'<strong>{esc(r["name"])}</strong> '
+        f'<span class="bref">\u00a7{esc(r["section"])} \u00b7 {esc(r["task"])} '
+        f'\u00b7 {r["passed"]}/{len(r["tests"])} tests</span>'
+        f'<span class="bwhat">{esc(r["what"])}</span></li>'
+        for r in rows)
+
+    def target_row(t: dict) -> str:
+        if t["how"].startswith("needs"):
+            return (f'<li class="bt waiting"><span class="bv">Needs a device</span> '
+                    f'{esc(t["name"])}</li>')
+        return (f'<li class="bt {"built" if agree else "failing"}"><span class="bv">'
+                f'{"Agrees" if agree else "Diverges"}</span> {esc(t["name"])} '
+                f'<span class="bref">{esc(t["how"])}</span></li>')
+    target_rows = "".join(target_row(t) for t in status["targets_manifest"])
+
+    built = sum(1 for r in rows if r["verdict"] == "built")
+    return f"""
+  <section class="built">
+    <h2>What is built</h2>
+    <p class="blurb">The simulation core in <code>sim/</code>, read from the last
+      run of its own gate rather than from anything typed here. A system reads
+      <strong>built</strong> only if every test that proves it passed; a test
+      that is renamed or deleted makes its system read <em>proof missing</em>,
+      never built.</p>
+    <div class="bsum">
+      <div><span class="n">{built}/{len(rows)}</span><span class="k">systems built</span></div>
+      <div><span class="n">{passed}/{len(tests)}</span><span class="k">tests passing</span></div>
+      <div><span class="n">{sum(1 for g in goldens if g["verifies"])}/{len(goldens)}</span><span class="k">golden replays verify</span></div>
+      <div><span class="n">{largest}</span><span class="k">bytes, largest heist of 2,048</span></div>
+    </div>
+    <h3 class="bh">Systems</h3>
+    <ul class="blist">{sys_rows}</ul>
+    <h3 class="bh">The same checksum on every target (T3.1)</h3>
+    <p class="blurb">{len(cross)} seeds, {status.get("ticks", 0):,} ticks each.
+      \u00a724.7 names four targets; two can be run here.</p>
+    <ul class="blist">{target_rows}</ul>
+  </section>
+"""
+
 def design_gates_html() -> str:
     """When the design of realms, screens and characters can start.
 
@@ -855,6 +950,38 @@ def build() -> str:
   }}
   .waiting.none {{ color: var(--cho); font-size: 13.5px; margin: 0; }}
 
+  /* --- what is built --------------------------------------------------- */
+  .built {{
+    margin: 28px 0 8px; padding: 18px 20px;
+    border: 1px solid var(--rule-strong); border-radius: 10px;
+    background: var(--raised);
+  }}
+  .built h2 {{ font-size: 21px; margin: 0 0 6px; }}
+  .built .blurb {{ color: var(--muted); font-size: 14px; max-width: 62ch; margin: 0 0 12px; }}
+  .built .bh {{ font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em;
+               color: var(--muted); margin: 16px 0 6px; font-family: "IBM Plex Mono", monospace; }}
+  .bsum {{ display: flex; flex-wrap: wrap; border-top: 1px solid var(--rule);
+          border-bottom: 1px solid var(--rule); padding-block: 10px; }}
+  .bsum div {{ flex: 1 1 110px; padding-right: 12px; }}
+  .bsum .n {{ font-family: "IBM Plex Mono", monospace; font-size: 20px; display: block; }}
+  .bsum .k {{ font-size: 12px; color: var(--muted); }}
+  .blist {{ list-style: none; margin: 0; padding: 0; }}
+  .blist li {{ border-top: 1px solid var(--rule); padding: 8px 0 8px 10px;
+              border-left: 3px solid var(--rule-strong); margin-bottom: 2px; font-size: 14px; }}
+  .blist li.built {{ border-left-color: var(--cho); }}
+  .blist li.failing {{ border-left-color: var(--blk); }}
+  .blist li.missing {{ border-left-color: var(--sig); }}
+  .blist li.waiting {{ border-left-color: var(--min); }}
+  .bv {{ font-family: "IBM Plex Mono", monospace; font-size: 10.5px; text-transform: uppercase;
+        letter-spacing: 0.06em; margin-right: 6px; }}
+  .built li.built .bv {{ color: var(--cho); }}
+  .built li.failing .bv {{ color: var(--blk); }}
+  .built li.missing .bv {{ color: var(--sig); }}
+  .built li.waiting .bv {{ color: var(--muted); }}
+  .bref {{ font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--faint);
+          margin-left: 6px; }}
+  .bwhat {{ display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }}
+
   /* --- where to start -------------------------------------------------- */
   .start {{
     margin: 28px 0 8px; padding: 18px 20px;
@@ -1189,6 +1316,7 @@ def build() -> str:
 {tabs_html()}
   </header>
 {handoff_html()}
+{built_html()}
 {start_here_html()}
   <nav class="filters" aria-label="Filter the register">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">{len(REGISTER)}</span></button>
