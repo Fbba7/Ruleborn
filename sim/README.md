@@ -296,6 +296,45 @@ a crew member at a quarter of its health (`REVIVE_HEALTH`). Its Vault holds
 Starlight and nothing converts that to Carry. Both are listed on the audit
 page beside the gait speeds.
 
+## Laws and pylons
+
+§7.3: "laws change a realm's rule sheet rather than containing special
+cases". The sheet is §12.21's twenty parameters. `build_laws.py` turns all 48
+laws in `content/law_effects.json` into `src/laws_table.rs` as exact ratios,
+so 1.25 becomes 5/4 and 0.65 becomes 13/20. The simulation cannot read JSON
+and decides nothing in decimals. The table is committed, and the content gate
+regenerates it and fails on any difference. The Python harness multiplies
+floats. This does not.
+
+Each tick the laws phase — §24.10 puts it second — builds the sheet from the
+laws whose pylons still stand. Everything downstream reads it:
+- crew, guard and loaded speed;
+- sight range, suspicion fill and decay, and noise radius;
+- damage to structures and in fights;
+- the alarm's spread;
+- the heist clock ("Haste: the heist clock runs 25% faster");
+- Glass ("walls become see-through") and Stillness ("standing still for 1.5
+  seconds becomes invisible").
+
+Five parameters are carried on the sheet and read by nothing yet. The gate
+names each one: climbing, leaping, health drain and regen, and regrowth. It
+fails on any sheet parameter the simulation neither reads nor names.
+
+A Law Pylon has 600 health (§10.2, level 1). Whoever is told to break one hits
+it from beside it, and a Breaker hits for double. At zero, its law is off from
+the next tick — the same tick on every machine — and its page is the crew's.
+
+The laws belong to the heist, not the world: §24.11 says a replay "records the
+exact set of laws it was made under". `World::from_heist` weaves them, and the
+replay header's rules field is now a digest of the law list and where each
+pylon stands, not placeholder bytes. The fixture realm runs Haste, Brittle
+stone and Glowing dark, the three §5.2 allows at realm level 5. The planned
+heist breaks Haste's pylon on the way in, so the clock stops running fast,
+and it still ends Clean with every bag full and one page.
+
+The spike's old stand-in law, which slowed the crew by a tenth every two
+seconds, is gone.
+
 ## The simulation against the content file
 
 `content/detection.json` holds §12.17 as data; the simulation holds the same
@@ -338,6 +377,7 @@ a test that does not exist, so the band cannot drift from the code.
     src/noise.rs      sound along the walkable path, and the way around
     src/guard.rs      §12.17's six states, their timings, the realm alarm
     src/heist.rs      the Vault, fights, knockouts, the skiff, the grades
+    src/laws_table.rs generated from content/law_effects.json: 48 laws as ratios
     src/replay.rs     the heist as bytes: header, command log, checksums
     src/tests.rs      the invariants the checksum rests on
     golden/*.rbh      replays committed today, re-simulated on every build
@@ -345,7 +385,8 @@ a test that does not exist, so the band cannot drift from the code.
     src/bin/golden.rs writes the golden replays
     wasm_spike.mjs    the WebAssembly runner
     no_floats.py      §24.10's float ban
-    content_gate.py   the simulation's numbers against content/detection.json
+    content_gate.py   the simulation's numbers against content/ and design_facts
+    build_laws.py     writes src/laws_table.rs; --check compares it
     status.py         runs every gate, writes status.json
     systems.json      which tests prove which system, for the audit page
     examples/         where_diverge: which second each golden parts company at;
@@ -355,12 +396,12 @@ a test that does not exist, so the band cannot drift from the code.
 
 ## What the simulation contains
 
-Enough of a heist to exercise every operation that can diverge, and no more:
-§12.17's five guard roles with their cones and graded zones, three raiders on a
-route, suspicion filling and draining at the document's rates, sound, the six
-guard states and the realm alarm, and a realm law that scales speed. Every
-number in the fixture is the document's, and `content_gate.py` checks that
-rather than this sentence asserting it.
+A whole heist in one realm: §12.17's five guard roles on their posts, a crew
+of three to five in §11.1's roles, sight, sound, the six guard states and the
+realm alarm, the Vault, fights, capture, the skiff, three woven laws with
+their pylons, and §12.9's grade at the end. Every number in the fixture is
+the document's except the ones listed as the simulation's reading, and
+`content_gate.py` checks that rather than this sentence asserting it.
 
 The crew is driven by the command log and nothing else — `commands_are_what_
 drives_the_crew` asserts that with no commands nothing moves, because if the

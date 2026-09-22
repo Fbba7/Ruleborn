@@ -59,6 +59,13 @@ pub const AMBUSH_STUN_TICKS: u32 = TICKS_PER_SECOND * 2;
 pub const AMBUSH_POWER: (i32, i32) = (3, 1);
 pub const AMBUSH_HEALTH_FLOOR: (i32, i32) = (1, 2);
 
+/// §10.2, the Law Pylon at level 1: "600 health".
+pub const PYLON_HEALTH: i32 = 600;
+
+/// §7, Stillness: "Anyone standing still for 1.5 seconds becomes invisible to
+/// guards and wards."
+pub const STILL_TICKS: u32 = TICKS_PER_SECOND * 3 / 2;
+
 /// What a crew member is doing, beyond walking. §12.18: the crew "never makes
 /// a decision the player did not make", so each of these is set by a command
 /// and stays until another replaces it.
@@ -70,6 +77,8 @@ pub enum Task {
     Load = 2,
     /// Hit one guard, by index.
     Attack = 3,
+    /// Break one structure, by tile.
+    Break = 4,
 }
 
 /// Where a crew member stands in the heist.
@@ -127,4 +136,6 @@ pub struct Outcome {
     pub capacity: i32,
     pub caught: u32,
     pub out: u32,
+    /// Laws whose pylon the crew broke: a page of each (§12.6).
+    pub pages: u32,
 }

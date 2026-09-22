@@ -120,12 +120,16 @@ pub enum Feature {
     /// §12.6's Vault: a structure, walled on every side, cracked and loaded
     /// from the tiles beside it.
     Vault,
+    /// §10.2's Law Pylon: one per law, walled like the Vault, but thin — it
+    /// does not stop sight.
+    Pylon,
 }
 
 impl Feature {
     fn terrain(self) -> Terrain {
         match self {
-            Feature::RockPillar | Feature::RuinWall | Feature::Fence | Feature::Vault => {
+            Feature::RockPillar | Feature::RuinWall | Feature::Fence | Feature::Vault
+            | Feature::Pylon => {
                 Terrain::Blocked
             }
             Feature::FogBank | Feature::TallGrass => Terrain::Open,
@@ -133,7 +137,7 @@ impl Feature {
     }
 
     fn blocks_sight(self) -> bool {
-        !matches!(self, Feature::Fence | Feature::TallGrass)
+        !matches!(self, Feature::Fence | Feature::TallGrass | Feature::Pylon)
     }
 }
 

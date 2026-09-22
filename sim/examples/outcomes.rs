@@ -10,8 +10,7 @@ fn main() {
     let mut grades = std::collections::BTreeMap::new();
     for seed in 1..=200u64 {
         let heist = fixture(seed, 150 * 30, 3);
-        let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
-        world.clock = heist.ticks;
+        let mut world = World::from_heist(&heist);
         for _ in 0..heist.ticks {
             world.step();
         }

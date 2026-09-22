@@ -33,6 +33,7 @@ pub mod fixed;
 pub mod grid;
 pub mod guard;
 pub mod heist;
+pub mod laws_table;
 pub mod noise;
 pub mod path;
 pub mod replay;
@@ -46,6 +47,68 @@ pub mod trig;
 use fixed::{Ang, Fx};
 use grid::{Feature, Grid, Surface, Terrain};
 use heist::{Grade, Outcome, Skiff, Standing, Task, Vault};
+use laws_table::{Param, LAWS};
+
+/// The laws the fixture's realm is woven with: three, the most §5.2 allows at
+/// realm level 5, all three whole-parameter laws so every effect is one the
+/// simulation applies. With their pylons.
+pub const FIXTURE_LAWS: [(&str, (u16, u16)); 3] = [
+    ("haste", (1, 3)),
+    ("brittle_stone", (5, 10)),
+    ("glowing_dark", (12, 8)),
+];
+
+/// A realm's rule sheet for one tick: every parameter as an exact ratio, the
+/// product of the unbroken laws that set it. §7.3: "laws change a realm's rule
+/// sheet rather than containing special cases".
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Sheet {
+    factors: [(i64, i64); 20],
+    set: [bool; 20],
+}
+
+impl Sheet {
+    pub fn plain() -> Sheet {
+        Sheet { factors: [(1, 1); 20], set: [false; 20] }
+    }
+
+    /// A parameter as (numerator, denominator); (1, 1) if no law sets it.
+    pub fn factor(&self, p: Param) -> (i64, i64) {
+        self.factors[p as usize]
+    }
+
+    /// A flag's value if a law sets it. §7.3 flags are set, not multiplied.
+    pub fn flag(&self, p: Param) -> Option<i64> {
+        self.set[p as usize].then(|| self.factors[p as usize].0 / self.factors[p as usize].1)
+    }
+
+    fn apply(&mut self, p: Param, n: i64, d: i64) {
+        let i = p as usize;
+        let (a, b) = self.factors[i];
+        let (a, b) = (a * n, b * d);
+        let g = gcd(a.abs(), b).max(1);
+        self.factors[i] = (a / g, b / g);
+        self.set[i] = true;
+    }
+}
+
+fn gcd(a: i64, b: i64) -> i64 {
+    if b == 0 { a } else { gcd(b, a % b) }
+}
+
+/// A law woven into the realm, and its pylon.
+#[derive(Clone, Debug)]
+pub struct Law {
+    /// Its row in `laws_table::LAWS`.
+    pub def: usize,
+    pub pylon: grid::TileIndex,
+    pub health: i32,
+    pub broken_at: Option<u32>,
+}
+
+fn scale(x: Fx, (n, d): (i64, i64)) -> Fx {
+    x.mul(Fx::from_ratio(n, d))
+}
 use replay::{Command, Heist, Kind};
 use rng::{Rng, Stream};
 
@@ -403,6 +466,8 @@ pub struct Raider {
     /// Ticks into the current swing, at the Vault or at a guard.
     pub swing: u32,
     pub standing: Standing,
+    /// How many ticks it has stood still, for Stillness.
+    pub still_for: u32,
     /// When it went down, and how long an ally has been reviving it.
     pub down_since: u32,
     pub revive: u32,
@@ -444,8 +509,12 @@ pub struct World {
     /// Held rather than consumed, so the same log can be replayed again.
     commands: Vec<Command>,
     next_command: usize,
-    /// The spike's one realm law, as a factor on every crew member's pace.
-    pub law_pace: Fx,
+    /// The realm's laws and their pylons, and this tick's sheet from them.
+    pub laws: Vec<Law>,
+    pub sheet: Sheet,
+    /// How far the heist clock has run, in thousandths of a tick. Haste runs
+    /// it "25% faster in this realm", so it is not the tick count.
+    pub clock_run: u64,
     pub vault: Vault,
     pub skiff: Option<Skiff>,
     /// Loot dropped by a crew member knocked down: (tile, units). §12.20:
@@ -567,6 +636,7 @@ impl World {
                 target: 0,
                 swing: 0,
                 standing: Standing::Active,
+                still_for: 0,
                 down_since: 0,
                 revive: 0,
             });
@@ -583,7 +653,9 @@ impl World {
             grid,
             commands,
             next_command: 0,
-            law_pace: Fx::ONE,
+            laws: Vec::new(),
+            sheet: Sheet::plain(),
+            clock_run: 0,
             vault: Vault {
                 tile: vault_tile,
                 health: heist::VAULT_HEALTH_PER_LEVEL,
@@ -596,6 +668,28 @@ impl World {
             clock: u32::MAX,
             alarm_raised: false,
         }
+    }
+
+    /// Weave laws into the realm, each with a pylon on the given tile. §24.11:
+    /// a heist "records the exact set of laws it was made under", so the laws
+    /// travel with the heist and `from_heist` weaves them, not `new`.
+    pub fn weave(&mut self, laws: &[(&str, (u16, u16))]) {
+        for (id, (x, y)) in laws {
+            let Some(def) = LAWS.iter().position(|l| l.id == *id) else { continue };
+            let Some(pylon) = self.grid.index(*x, *y) else { continue };
+            self.grid.place(*x, *y, Feature::Pylon);
+            self.laws.push(Law { def, pylon, health: heist::PYLON_HEALTH, broken_at: None });
+        }
+        self.refresh_sheet();
+    }
+
+    /// The world a replay describes: the fixture realm, the heist's crew and
+    /// commands, its laws, and its clock.
+    pub fn from_heist(heist: &Heist) -> World {
+        let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
+        world.weave(&FIXTURE_LAWS);
+        world.clock = heist.ticks;
+        world
     }
 
     /// Replace the input log, for a test that builds its world by hand.
@@ -665,6 +759,13 @@ impl World {
                     raider.task = Task::Attack;
                     raider.target = command.x.max(0) as u32;
                 }
+                Kind::Break => {
+                    let (x, y) = command.target();
+                    if let Some(tile) = self.grid.tile_at(x, y) {
+                        raider.task = Task::Break;
+                        raider.target = tile;
+                    }
+                }
                 Kind::Load => {
                     raider.task = Task::Load;
                     raider.target_fill = (command.x as i32).clamp(0, 100);
@@ -688,20 +789,26 @@ impl World {
         }
     }
 
-    /// Laws. The spike carries one: a realm law that slows the crew by a
-    /// tenth every other second, which is enough to put a fixed-point multiply
-    /// on the hot path where a law would be. It acts on a factor of its own,
-    /// not on §11.1's speeds, so a role's speed is always its role's.
+    /// Laws. The sheet for this tick, from every law whose pylon still
+    /// stands, so a pylon broken during a tick switches its law off from the
+    /// next — the same tick on every machine. Parameters the simulation cannot
+    /// apply yet are carried on the sheet and read by nothing; the content
+    /// gate lists them.
     fn phase_laws(&mut self) {
-        if self.tick == 0 || self.tick % (TICKS_PER_SECOND * 2) != 0 {
-            return;
+        self.refresh_sheet();
+        // "the heist clock runs 25% faster in this realm"
+        let (n, d) = self.sheet.factor(Param::ClockRate);
+        self.clock_run += (1000 * n / d) as u64;
+    }
+
+    fn refresh_sheet(&mut self) {
+        let mut sheet = Sheet::plain();
+        for law in self.laws.iter().filter(|l| l.broken_at.is_none()) {
+            for &(p, n, d) in LAWS[law.def].params {
+                sheet.apply(p, n, d);
+            }
         }
-        self.law_pace = self.law_pace.mul(Fx::from_ratio(9, 10));
-        // Back to full once it falls below a tenth, so a long run does not
-        // grind the crew to nothing and make the rest of the tick trivial.
-        if self.law_pace < Fx::from_ratio(1, 10) {
-            self.law_pace = Fx::ONE;
-        }
+        self.sheet = sheet;
     }
 
     /// Perception. §12.17: three graded zones inside a cone, filling at
@@ -746,7 +853,8 @@ impl World {
             if gain > 0 {
                 guard.suspicion = (guard.suspicion + gain).min(SUSPICION_MAX);
             } else {
-                guard.suspicion = (guard.suspicion - DECAY_PER_TICK).max(0);
+                let (n, d) = self.sheet.factor(Param::SuspicionDecay);
+                guard.suspicion = (guard.suspicion - DECAY_PER_TICK * n as i32 / d as i32).max(0);
             }
         }
     }
@@ -760,6 +868,13 @@ impl World {
         if !raider.active() || !guard.awake(self.tick) {
             return None;
         }
+        // Stillness: "Anyone standing still for 1.5 seconds becomes
+        // invisible to guards."
+        if self.sheet.flag(Param::StillIsInvisible) == Some(1)
+            && raider.still_for >= heist::STILL_TICKS
+        {
+            return None;
+        }
         // In range and in the cone is not enough: something between may
         // stop sight, checked below, last, because it is the costly test.
         let (d, in_cone, from, to) = self.sees_geometry(gi, raider.at)?;
@@ -770,17 +885,21 @@ impl World {
         {
             return None;
         }
-        if !sight::visible(&self.grid, from, to) {
+        if !self.line_clear(from, to) {
             return None;
         }
-        let zone = if d <= guard.near {
+        let sight = self.sheet.factor(Param::SightRange);
+        let zone = if d <= scale(guard.near, sight) {
             FILL_NEAR
-        } else if d <= guard.mid {
+        } else if d <= scale(guard.mid, sight) {
             FILL_MID
         } else {
             FILL_FAR
         };
         let (mut num, mut den) = raider.gait.noticed();
+        let (fn_, fd) = self.sheet.factor(Param::SuspicionFill);
+        num *= fn_ as i32;
+        den *= fd as i32;
         if self.grid.is_unlit(to) {
             num *= UNLIT.0;
             den *= UNLIT.1;
@@ -798,7 +917,13 @@ impl World {
     /// the tile seen. Used for finding knocked-out guards.
     fn sees(&self, gi: usize, at: Point) -> Option<grid::TileIndex> {
         let (_, _, from, to) = self.sees_geometry(gi, at)?;
-        sight::visible(&self.grid, from, to).then_some(to)
+        self.line_clear(from, to).then_some(to)
+    }
+
+    /// Whether sight passes between two tiles. Glass: "Walls become
+    /// see-through: nobody can hide behind them".
+    fn line_clear(&self, from: grid::TileIndex, to: grid::TileIndex) -> bool {
+        self.sheet.flag(Param::HideBehindWalls) == Some(0) || sight::visible(&self.grid, from, to)
     }
 
     /// Distance, whether in the cone proper, and the two tiles — or `None`
@@ -807,7 +932,13 @@ impl World {
         -> Option<(Fx, bool, grid::TileIndex, grid::TileIndex)> {
         let guard = &self.guards[gi];
         let d = guard.at.distance(at);
-        let reach = if guard.far.0 > 0 { guard.far } else { guard.mid };
+        // A law may shorten sight — Glowing dark halves it, Sleepwalk closes
+        // the guards' eyes — so every range is read through the sheet.
+        let sight = self.sheet.factor(Param::SightRange);
+        if sight.0 == 0 {
+            return None;
+        }
+        let reach = scale(if guard.far.0 > 0 { guard.far } else { guard.mid }, sight);
         if d > reach {
             return None;
         }
@@ -831,6 +962,11 @@ impl World {
     /// Movement. Raiders walk their route; guards sweep their cone.
     fn phase_movement(&mut self) {
         for raider in self.raiders.iter_mut() {
+            raider.still_for = if raider.still() && raider.active() {
+                raider.still_for.saturating_add(1)
+            } else {
+                0
+            };
             if raider.still() || !raider.active() {
                 continue;
             }
@@ -842,11 +978,14 @@ impl World {
             let here = self.grid.tile_at(raider.at.x, raider.at.y);
             let pace = here.map_or(Fx::ONE, |t| self.grid.at(t).pace());
             let (num, den) = raider.gait.pace();
-            let mut step =
-                raider.speed.mul(pace).mul(self.law_pace).mul(Fx::from_ratio(num, den));
-            if raider.role == Role::Carrier && raider.carried > 0 {
-                let (n, d) = heist::CARRIER_LOADED_PACE;
-                step = step.mul(Fx::from_ratio(n, d));
+            let mut step = scale(raider.speed.mul(pace).mul(Fx::from_ratio(num, den)),
+                                 self.sheet.factor(Param::CrewSpeed));
+            if raider.carried > 0 {
+                step = scale(step, self.sheet.factor(Param::LoadedSpeed));
+                if raider.role == Role::Carrier {
+                    let (n, d) = heist::CARRIER_LOADED_PACE;
+                    step = step.mul(Fx::from_ratio(n, d));
+                }
             }
             let (at, along) = walk_route(&self.grid, raider.at, &raider.route, raider.along, step);
             raider.at = at;
@@ -858,11 +997,12 @@ impl World {
         // §12.17 forbids for the same reason as the jitter above.
         let sweep = 1;
         let now = self.tick;
+        let guard_speed = self.sheet.factor(Param::GuardSpeed);
         for guard in self.guards.iter_mut() {
             if !guard.awake(now) {
                 continue;
             }
-            let walk = guard.speed;                             // §11.1's, by role
+            let walk = scale(guard.speed, guard_speed);         // §11.1's, by role
             use guard::State::*;
             match guard.state {
                 // "Patrols or holds its post" — the fixture holds, facing the
@@ -938,18 +1078,26 @@ impl World {
         for raider in self.raiders.iter() {
             // A hit on the Vault is §12.17's "Breaking something — 5 m",
             // made on the tick the hit lands (the states phase lands it).
-            let breaking = raider.active() && raider.task == heist::Task::Crack
-                && self.vault.opened_at.is_none()
-                && raider.swing + 1 >= heist::HIT_TICKS
-                && self.grid.tile_at(raider.at.x, raider.at.y)
-                    .is_some_and(|t| self.grid.neighbours(self.vault.tile).contains(&Some(t)));
+            // A hit on the Vault or on a pylon is breaking something. The two
+            // structures are told apart by the task; the tile beside is the
+            // same test.
+            let beside = |tile: grid::TileIndex| self.grid.tile_at(raider.at.x, raider.at.y)
+                .is_some_and(|t| self.grid.neighbours(tile).contains(&Some(t)));
+            let landing = raider.active() && raider.swing + 1 >= heist::HIT_TICKS;
+            let breaking = landing && match raider.task {
+                heist::Task::Crack => self.vault.opened_at.is_none() && beside(self.vault.tile),
+                heist::Task::Break => beside(raider.target) && self.laws.iter()
+                    .any(|l| l.pylon == raider.target && l.broken_at.is_none()),
+                _ => false,
+            };
             if !breaking && (raider.still() || !raider.active()) {
                 continue;                             // standing still is silent
             }
             let Some(source) = self.grid.tile_at(raider.at.x, raider.at.y) else { continue };
             // What it is walking on decides how far its gait carries.
             let sound = if breaking { noise::Sound::Breaking } else { raider.gait.sound() };
-            let reach = sound.steps_on(self.grid.surface(source));
+            let reach = sound.steps_scaled(self.grid.surface(source),
+                                           self.sheet.factor(Param::NoiseRadius));
             let field = noise::field(&self.grid, source, reach);
             for (gi, guard) in self.guards.iter().enumerate() {
                 if !guard.awake(self.tick) {
@@ -1093,8 +1241,9 @@ impl World {
                     g.swing += 1;
                     if g.swing >= heist::HIT_TICKS {
                         g.swing = 0;
-                        let power = g.power;
-                        self.raiders[ri].health -= power;
+                        let (n, d) = self.sheet.factor(Param::Damage);
+                        let power = g.power as i64 * n / d;
+                        self.raiders[ri].health -= power as i32;
                     }
                 }
             }
@@ -1129,7 +1278,8 @@ impl World {
                 continue;
             }
             self.raiders[ri].swing = 0;
-            let power = self.raiders[ri].role.power();
+            let (dn, dd) = self.sheet.factor(Param::Damage);
+            let power = (self.raiders[ri].role.power() as i64 * dn / dd) as i32;
             let g = &mut self.guards[gi];
             let unaware = now < g.stunned_until || g.state == guard::State::Unaware;
             if unaware {
@@ -1235,7 +1385,9 @@ impl World {
                     } else {
                         (1, 1)
                     };
-                    self.vault.health -= raider.role.power() * n / d;
+                    let (sn, sd) = self.sheet.factor(Param::StructureDamage);
+                    self.vault.health -=
+                        (raider.role.power() as i64 * n as i64 * sn / (d as i64 * sd)) as i32;
                     self.vault.first_hit.get_or_insert(now);
                 }
             }
@@ -1272,6 +1424,38 @@ impl World {
             }
         }
 
+        // Law Pylons (§12.6), struck like the Vault by whoever was told to
+        // break one, from beside it; Breakers double (§11.1: "Double damage to
+        // wards, pylons and the Vault"). At zero its law is off from the next
+        // tick for the rest of the heist, and its page is the crew's.
+        for ri in 0..self.raiders.len() {
+            let r = &self.raiders[ri];
+            if r.task != Task::Break {
+                continue;
+            }
+            let li = self.laws.iter().position(|l| l.pylon == r.target && l.broken_at.is_none());
+            let beside = self.grid.tile_at(r.at.x, r.at.y)
+                .is_some_and(|t| self.grid.neighbours(r.target).contains(&Some(t)));
+            let (Some(li), true, true) = (li, beside, r.active()) else {
+                self.raiders[ri].swing = 0;
+                continue;
+            };
+            self.raiders[ri].swing += 1;
+            if self.raiders[ri].swing < heist::HIT_TICKS {
+                continue;
+            }
+            self.raiders[ri].swing = 0;
+            let role = self.raiders[ri].role;
+            let (n, d) = if role == Role::Breaker { heist::BREAKER_VAULT_DAMAGE } else { (1, 1) };
+            let (sn, sd) = self.sheet.factor(Param::StructureDamage);
+            let law = &mut self.laws[li];
+            law.health -= (role.power() as i64 * n as i64 * sn / (d as i64 * sd)) as i32;
+            if law.health <= 0 {
+                law.health = 0;
+                law.broken_at = Some(now);
+            }
+        }
+
         // §5.4: "The crew must hold the spot until it arrives." Anyone on the
         // spot once it has arrived is aboard, with what it carries banked.
         if let Some(skiff) = self.skiff {
@@ -1290,7 +1474,7 @@ impl World {
 
         // §12.6: "Anyone still inside when the clock ends is caught and drops
         // what it carries."
-        if now + 1 >= self.clock {
+        if self.clock_run >= self.clock as u64 * 1000 {
             for raider in self.raiders.iter_mut() {
                 if matches!(raider.standing, Standing::Active | Standing::Down) {
                     raider.standing = Standing::Caught;
@@ -1323,7 +1507,8 @@ impl World {
         } else {
             Grade::Clean
         };
-        Outcome { grade, banked, capacity, caught, out }
+        let pages = self.laws.iter().filter(|l| l.broken_at.is_some()).count() as u32;
+        Outcome { grade, banked, capacity, caught, out, pages }
     }
 
     /// Enter a state, and do what entering it means.
@@ -1358,7 +1543,9 @@ impl World {
             self.alarm_raised = true;
             let here = self.guards[gi].at;
             let spot = self.grid.tile_at(here.x, here.y);
-            let reach = Fx::from_int(guard::SPREAD_METRES);
+            // Whispers sets the range to the whole universe (999).
+            let (an, ad) = self.sheet.factor(Param::AlarmRange);
+            let reach = Fx::from_int((guard::SPREAD_METRES as i64 * an / ad).min(1 << 20) as i32);
             for other in 0..self.guards.len() {
                 if other == gi || self.guards[other].knocked_out
                     || self.guards[other].at.distance(here) > reach {
@@ -1405,7 +1592,12 @@ impl World {
         mix(self.alarm as i64);
         mix(self.reinforced as i64);
         mix(self.spreads.len() as i64);
-        mix(self.law_pace.0);
+        mix(self.clock_run as i64);
+        for law in self.laws.iter() {
+            mix(law.def as i64);
+            mix(law.health as i64);
+            mix(law.broken_at.map_or(-1, |t| t as i64));
+        }
         mix(self.vault.health as i64);
         mix(self.vault.exposed as i64);
         mix(self.vault.opened_at.map_or(-1, |t| t as i64));
@@ -1445,6 +1637,7 @@ impl World {
             mix(raider.swing as i64);
             mix(raider.standing as i64);
             mix(raider.revive as i64);
+            mix(raider.still_for as i64);
         }
         h
     }
@@ -1485,8 +1678,7 @@ fn walk_route(grid: &Grid, mut at: Point, route: &[grid::TileIndex], mut along: 
 /// Run a heist and return the per-second checksums, which is what §24.10 says
 /// is kept: "every tick in memory, one a second kept".
 pub fn run(heist: &Heist) -> Vec<u64> {
-    let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
-    world.clock = heist.ticks;
+    let mut world = World::from_heist(heist);
     let mut kept = Vec::with_capacity((heist.ticks / TICKS_PER_SECOND) as usize + 1);
     for _ in 0..heist.ticks {
         let sum = world.step();
@@ -1556,7 +1748,7 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
         };
         // Most decisions are moves; the rest are §12.6's others — a gait,
         // who cracks, who loads and how full, and where the skiff comes.
-        match rng.below(10) {
+        match rng.below(11) {
             0..=5 => {
                 // Aimed inside the fixture's realm. A destination off the
                 // grid is a command that does nothing, which is legal and
@@ -1576,6 +1768,12 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
                 push(Kind::MoveTo, aim(bx, by));
                 push(Kind::Load, (50 + rng.below(51) as i16, 0));
             }
+            9 => {
+                // A pylon: to the tile north of it, and break it.
+                let (_, (px, py)) = FIXTURE_LAWS[rng.below(FIXTURE_LAWS.len() as u64) as usize];
+                push(Kind::MoveTo, aim(px as u64, py as u64 - 1));
+                push(Kind::Break, aim(px as u64, py as u64));
+            }
             _ => {
                 // An edge tile: a side, then a place along it.
                 let along = rng.below(side);
@@ -1594,11 +1792,10 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
 
     let mut heist = Heist {
         seed,
-        // The island and the rule set stand in for §24.8's content hashes.
-        // What matters for the spike is that they are pinned and travel with
-        // the replay (§24.11), not what they are digests of.
+        // The island stands in for §24.8's content hash. The rules are the
+        // real thing: a digest of the laws the heist was made under (§24.11).
         island: digest_bytes(seed, 0x15_1A_4D),
-        rules: digest_bytes(seed, 0x2D_1E_5F),
+        rules: rules_digest(&FIXTURE_LAWS),
         ticks, crew, commands,
         checksums: Vec::new(),
     };
@@ -1622,14 +1819,18 @@ pub fn planned() -> Heist {
         commands.push(Command { tick, actor, kind, x, y });
     };
     PLAN.iter().for_each(|&(s, actor, kind, x, y)| {
-        let target = if matches!(kind, Kind::MoveTo | Kind::Skiff) { at(x, y) } else { (x, y) };
+        let target = if matches!(kind, Kind::MoveTo | Kind::Skiff | Kind::Break) {
+            at(x, y)
+        } else {
+            (x, y)
+        };
         say(t(s), actor, kind, target);
     });
     commands.sort_by_key(|c| (c.tick, c.actor, c.kind as u8));
     let mut heist = Heist {
         seed: 0x5EED_0F_A_7EA1,
         island: digest_bytes(0, 0x15_1A_4D),
-        rules: digest_bytes(0, 0x2D_1E_5F),
+        rules: rules_digest(&FIXTURE_LAWS),
         ticks: t(165),                    // §5.4: 150 s + 15 for one link
         crew: 3,
         commands,
@@ -1642,16 +1843,20 @@ pub fn planned() -> Heist {
 /// The plan: (second, crew member, command, x, y). Crew 0 is a Scout, 1 a
 /// Breaker, 2 a Carrier. Guards are numbered by §12.17's rows: 2 is the
 /// Breaker at (9, 4) and 4 the Mender at (12, 2), both posted facing north.
+/// The realm runs `FIXTURE_LAWS`: Haste, Brittle stone and Glowing dark.
 ///
-///   0 s   crouched — the gravel in the gap would carry a walk to the
-///         Breaker guard — the Scout and the Breaker go round to the moss
-///         behind it; the Carrier waits by the gap
-///  12 s   both attack at once: the Scout's ambush stuns it, the Breaker's
+///   0 s   everyone crouches. The Breaker breaks Haste's pylon beside the
+///         landing, out of every guard's hearing — Haste runs the heist clock
+///         a quarter fast, and that is worth a detour (§12.6). The Scout goes
+///         round to the moss behind the Breaker guard; the Carrier waits by
+///         the gap
+///   7 s   the Breaker follows the Scout
+///  18 s   both attack at once: the Scout's ambush stuns it, the Breaker's
 ///         lands while it is still stunned, and two ambush hits knock it out
-///  14 s   the same two go round to the moss behind the Mender guard
-///  20 s   and ambush it the same way
-///  23 s   all three walk to the Vault and crack, and the skiff is called to
-///         the east edge beside it: twenty seconds to fight the winds
+///  20 s   the same two go round to the moss behind the Mender guard
+///  26 s   and ambush it the same way
+///  29 s   all three walk to the Vault and crack — Brittle stone doubles
+///         every hit — and the skiff is called to the east edge beside it
 ///  40 s   the Vault is open: everyone loads to full
 ///  52 s   everyone walks to the skiff
 const PLAN: &[(u32, u8, Kind, i16, i16)] = &[
@@ -1659,24 +1864,26 @@ const PLAN: &[(u32, u8, Kind, i16, i16)] = &[
     (0, 1, Kind::Gait, 1, 0),
     (0, 2, Kind::Gait, 1, 0),
     (0, 0, Kind::MoveTo, 9, 5),
-    (0, 1, Kind::MoveTo, 9, 5),
+    (0, 1, Kind::MoveTo, 1, 2),
     (0, 2, Kind::MoveTo, 7, 6),
-    (12, 0, Kind::Attack, 2, 0),
-    (12, 1, Kind::Attack, 2, 0),
-    (14, 0, Kind::MoveTo, 12, 3),
-    (14, 1, Kind::MoveTo, 12, 3),
-    (20, 0, Kind::Attack, 4, 0),
-    (20, 1, Kind::Attack, 4, 0),
-    (23, 0, Kind::Gait, 0, 0),
-    (23, 1, Kind::Gait, 0, 0),
-    (23, 2, Kind::Gait, 0, 0),
-    (23, 0, Kind::MoveTo, 11, 4),
-    (23, 1, Kind::MoveTo, 12, 5),
-    (23, 2, Kind::MoveTo, 10, 5),
-    (23, 0, Kind::Crack, 0, 0),
-    (23, 1, Kind::Crack, 0, 0),
-    (23, 2, Kind::Crack, 0, 0),
-    (23, 0, Kind::Skiff, 13, 5),
+    (0, 1, Kind::Break, 1, 3),
+    (7, 1, Kind::MoveTo, 9, 5),
+    (18, 0, Kind::Attack, 2, 0),
+    (18, 1, Kind::Attack, 2, 0),
+    (20, 0, Kind::MoveTo, 12, 3),
+    (20, 1, Kind::MoveTo, 12, 3),
+    (26, 0, Kind::Attack, 4, 0),
+    (26, 1, Kind::Attack, 4, 0),
+    (29, 0, Kind::Gait, 0, 0),
+    (29, 1, Kind::Gait, 0, 0),
+    (29, 2, Kind::Gait, 0, 0),
+    (29, 0, Kind::MoveTo, 11, 4),
+    (29, 1, Kind::MoveTo, 12, 5),
+    (29, 2, Kind::MoveTo, 10, 5),
+    (29, 0, Kind::Crack, 0, 0),
+    (29, 1, Kind::Crack, 0, 0),
+    (29, 2, Kind::Crack, 0, 0),
+    (29, 0, Kind::Skiff, 13, 5),
     (40, 0, Kind::Load, 100, 0),
     (40, 1, Kind::Load, 100, 0),
     (40, 2, Kind::Load, 100, 0),
@@ -1684,6 +1891,21 @@ const PLAN: &[(u32, u8, Kind, i16, i16)] = &[
     (52, 1, Kind::MoveTo, 13, 5),
     (52, 2, Kind::MoveTo, 13, 5),
 ];
+
+/// §24.11: "Every island and every replay records the exact set of laws it
+/// was made under." FNV-1a over each law's id and pylon, in weaving order,
+/// spread to 32 bytes: a replay made under different laws carries a
+/// different header.
+pub fn rules_digest(laws: &[(&str, (u16, u16))]) -> [u8; 32] {
+    let mut h: u64 = 0xcbf2_9ce4_8422_2325;
+    for (id, (x, y)) in laws {
+        for byte in id.bytes().chain(x.to_le_bytes()).chain(y.to_le_bytes()) {
+            h ^= byte as u64;
+            h = h.wrapping_mul(0x0000_0100_0000_01b3);
+        }
+    }
+    digest_bytes(h, 0x2D_1E_5F)
+}
 
 fn digest_bytes(seed: u64, salt: u64) -> [u8; 32] {
     let mut out = [0u8; 32];

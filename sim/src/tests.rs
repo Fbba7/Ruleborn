@@ -1391,7 +1391,6 @@ fn loading_stops_when_the_exposed_share_is_gone() {
 fn the_carrier_walks_fifteen_percent_slower_loaded() {
     let walk = |carried: i32| {
         let mut world = vault_world(3);
-        world.law_pace = Fx::ONE;
         put(&mut world, 2, 0, 0);
         world.raiders[2].carried = carried;
         let end = world.grid.index(13, 0).unwrap();
@@ -1637,8 +1636,7 @@ fn a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss() {
 #[test]
 fn the_planned_heist_ends_clean_with_every_bag_full() {
     let heist = planned();
-    let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
-    world.clock = heist.ticks;
+    let mut world = World::from_heist(&heist);
     for _ in 0..heist.ticks {
         world.step();
     }
@@ -1647,5 +1645,155 @@ fn the_planned_heist_ends_clean_with_every_bag_full() {
     assert_eq!(o.banked, o.capacity, "every bag full");
     assert_eq!(world.guards.iter().filter(|g| g.knocked_out).count(), 2,
                "two guards ambushed, and nobody found them");
+    assert_eq!(o.pages, 1, "Haste's pylon broken on the way in: a page of it");
     assert!(heist.size_fits());
+}
+
+// --------------------------------------------------------------------------
+// Laws and pylons (§7.3, §12.6, §12.21)
+// --------------------------------------------------------------------------
+
+use crate::laws_table::{Param, LAWS};
+use crate::Sheet;
+
+#[test]
+fn every_law_is_in_the_table_and_the_sheet_multiplies_the_ones_that_stand() {
+    assert_eq!(LAWS.len(), 48, "\u{a7}7's 48 laws");
+    let mut world = vault_world(0);
+    world.weave(&[("tilt", (0, 13)), ("current", (1, 13))]);
+    assert_eq!(world.sheet.factor(Param::CrewSpeed), (169, 100), "1.3 x 1.3, exactly");
+    world.laws[0].broken_at = Some(0);
+    world.step();
+    assert_eq!(world.sheet.factor(Param::CrewSpeed), (13, 10), "one pylon down");
+    assert_eq!(Sheet::plain().factor(Param::CrewSpeed), (1, 1));
+}
+
+#[test]
+fn haste_runs_everyone_and_the_clock_a_quarter_fast() {
+    // "Everyone moves 25% faster, and the heist clock runs 25% faster."
+    let mut world = vault_world(1);
+    world.weave(&[("haste", (0, 13))]);
+    world.clock = 100;
+    let mut ticks = 0;
+    while world.raiders[0].standing == Standing::Active {
+        world.step();
+        ticks += 1;
+    }
+    assert_eq!(ticks, 80, "a 100-tick clock ends at tick 80");
+    assert_eq!(world.sheet.factor(Param::GuardSpeed), (5, 4));
+}
+
+#[test]
+fn glowing_dark_halves_sight_and_sleepwalk_closes_the_guards_eyes() {
+    let with = |law: &str, tenths: i64| {
+        let mut world = scout_and_raider(tenths, 0);
+        world.weave(&[(law, (0, 13))]);
+        rate(&world)
+    };
+    // The Scout's zones are 2, 4 and 6 m; halved, 1, 2 and 3.
+    assert_eq!(with("glowing_dark", 15), Some(33), "1.5 m: mid, not near");
+    assert_eq!(with("glowing_dark", 50), None, "5 m: out of sight");
+    assert_eq!(with("sleepwalk", 15), None, "eyes closed");
+}
+
+#[test]
+fn glass_lets_a_guard_see_through_a_wall() {
+    let behind = |law: Option<&str>| {
+        let mut world = scout_and_raider(30, 0);
+        world.grid.place(7, 6, Feature::RockPillar);  // between them
+        if let Some(l) = law {
+            world.weave(&[(l, (0, 13))]);
+        }
+        rate(&world)
+    };
+    assert_eq!(behind(None), None, "the pillar hides the raider");
+    assert_eq!(behind(Some("glass")), Some(33), "\"nobody can hide behind them\"");
+}
+
+#[test]
+fn stillness_hides_whoever_stands_still_for_a_second_and_a_half() {
+    let mut world = scout_and_raider(15, 0);
+    world.weave(&[("stillness", (0, 13))]);
+    world.guards[0].facing = Ang::from_degrees(180);  // away, so it stays calm
+    for _ in 0..(h::STILL_TICKS - 1) {
+        world.step();
+    }
+    world.guards[0].facing = Ang::from_degrees(0);
+    assert_eq!(rate(&world), Some(67), "still for less than 1.5 s: seen");
+    world.step();
+    world.guards[0].facing = Ang::from_degrees(0);
+    assert_eq!(rate(&world), None, "still for 1.5 s: invisible");
+}
+
+#[test]
+fn brittle_stone_doubles_every_hit_on_a_structure() {
+    let hit = |law: Option<&str>| {
+        let mut world = vault_world(2);
+        if let Some(l) = law {
+            world.weave(&[(l, (0, 13))]);
+        }
+        put(&mut world, 1, 7, 6);
+        world.raiders[1].task = Task::Crack;
+        for _ in 0..h::HIT_TICKS {
+            world.step();
+        }
+        1500 - world.vault.health
+    };
+    assert_eq!(hit(None), 80, "a Breaker: twice its 40");
+    assert_eq!(hit(Some("brittle_stone")), 160, "and twice again");
+}
+
+#[test]
+fn whispers_carries_an_alert_to_every_guard() {
+    // "When one guard raises the alarm, every guard in the universe hears it."
+    let spread = |law: Option<&str>| {
+        let mut world = vault_world(0);
+        if let Some(l) = law {
+            world.weave(&[(l, (0, 13))]);
+        }
+        let a = post(&mut world, 0, 1, 1);
+        post(&mut world, 1, 12, 12);              // far beyond 4 m
+        world.enter(a, State::Alerted);
+        for _ in 0..(guard::SPREAD_DELAY_TICKS + 1) {
+            world.step();
+        }
+        world.guards[1].state
+    };
+    assert_eq!(spread(None), State::Unaware, "4 m, and it is further");
+    assert_eq!(spread(Some("whispers")), State::Investigating);
+}
+
+#[test]
+fn breaking_a_pylon_switches_its_law_off_and_earns_its_page() {
+    // §10.2: a level-1 pylon has 600 health. A Breaker deals twice its 40.
+    let mut world = vault_world(2);
+    world.weave(&[("haste", (3, 3))]);
+    put(&mut world, 1, 3, 4);
+    let tile = world.grid.index(3, 3).unwrap();
+    world.raiders[1].task = Task::Break;
+    world.raiders[1].target = tile;
+    let mut broke = None;
+    for _ in 0..(10 * h::HIT_TICKS) {
+        world.step();
+        if broke.is_none() && world.laws[0].broken_at.is_some() {
+            broke = Some(world.tick);
+            assert_eq!(world.sheet.factor(Param::CrewSpeed), (5, 4),
+                       "still in force on the tick it breaks");
+        }
+    }
+    assert_eq!(broke, Some(8 * h::HIT_TICKS), "600 / 80: eight hits");
+    assert_eq!(world.sheet.factor(Param::CrewSpeed), (1, 1), "off from the next tick");
+    assert_eq!(world.outcome().pages, 1);
+}
+
+#[test]
+fn a_replay_carries_the_laws_it_was_made_under() {
+    // §24.11. The header's rules field is a digest of the woven laws, so two
+    // rule sets cannot share one.
+    use crate::{rules_digest, FIXTURE_LAWS};
+    let heist = planned();
+    assert_eq!(heist.rules, rules_digest(&FIXTURE_LAWS));
+    assert_ne!(rules_digest(&FIXTURE_LAWS), rules_digest(&FIXTURE_LAWS[..2]));
+    assert_ne!(rules_digest(&[("haste", (1, 3))]), rules_digest(&[("haste", (1, 4))]),
+               "and where its pylon stands");
 }

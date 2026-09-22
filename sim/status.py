@@ -72,8 +72,9 @@ def main() -> int:
                                capture_output=True).returncode == 0
     gate = content_gate.compare(*content_gate.load(), content_gate.source_text())
     facts = content_gate.facts_compare(content_gate.source_text())
-    gate["checked"] += facts["checked"]
-    gate["wrong"] += facts["wrong"]
+    laws = content_gate.laws_compare(content_gate.source_text())
+    gate["checked"] += facts["checked"] + laws["checked"]
+    gate["wrong"] += facts["wrong"] + laws["wrong"]
     checked, wrong = gate["checked"], gate["wrong"] + [
         f"{p} — compared by nothing and listed nowhere" for p in gate["uncovered"]]
     t = tests()
@@ -91,7 +92,9 @@ def main() -> int:
             "agree": len(checked),
             "disagree": wrong,
             "not_modelled": [f"{what} — {why}"
-                             for what, why in content_gate.NOT_MODELLED],
+                             for what, why in content_gate.NOT_MODELLED]
+                            + [f"rule sheet {what} — {why}"
+                               for what, why in content_gate.LAW_PARAMS_NOT_MODELLED],
             "readings": gate["readings"],
         },
     }

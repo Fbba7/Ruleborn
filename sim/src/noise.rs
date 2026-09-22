@@ -54,8 +54,15 @@ impl Sound {
     /// it is cut to whole steps, in one division, so walking on gravel carries
     /// 2.5 x 1.25 = 3.1 m — three steps — rather than 2 x 1.25 rounded.
     pub fn steps_on(self, surface: crate::grid::Surface) -> u16 {
+        self.steps_scaled(surface, (1, 1))
+    }
+
+    /// The same, with a realm law's `noise_radius` on top, still in one
+    /// division at the end.
+    pub fn steps_scaled(self, surface: crate::grid::Surface, (ln, ld): (i64, i64)) -> u16 {
         let (num, den) = surface.carry();
-        self.half_metres() * num / (den * 2)
+        let reach = self.half_metres() as i64 * num as i64 * ln / (den as i64 * 2 * ld);
+        reach.clamp(0, u16::MAX as i64 - 1) as u16
     }
 }
 

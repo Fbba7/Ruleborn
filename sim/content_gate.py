@@ -42,6 +42,18 @@ NOT_MODELLED = [
     ("ambush.level_advantage_cap", "every character is level 1: there are no levels yet"),
 ]
 
+# Rule-sheet parameters (§12.21) the simulation does not read yet. Every
+# other parameter must appear as `Param::Name` in the simulation's source.
+LAW_PARAMS_NOT_MODELLED = [
+    ("climb_levels", "the fixture has one level"),
+    ("leap_obstacles", "no leaping: a fence stops feet"),
+    ("health_drain", "set by Thorns and Soul lanterns; not applied yet"),
+    ("health_regen", "set by Kinship and Regrowth; not applied yet"),
+    ("regrow_seconds", "set by Crystal growth and Bloom; nothing regrows yet"),
+    ("carry_weight", "no law sets it"),
+    ("cone_angle", "no law sets it"),
+]
+
 # Values that restate another value in different units, and are covered by
 # the comparison of the value they restate.
 DERIVED = [
@@ -283,6 +295,32 @@ def facts_compare(text: str) -> dict:
     return {"checked": checked, "wrong": wrong}
 
 
+def laws_compare(text: str) -> dict:
+    """The generated law table against the content file, and the rule sheet
+    against what the simulation reads."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("build_laws", HERE / "build_laws.py")
+    build = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(build)
+    checked, wrong = [], []
+    table = (HERE / "src" / "laws_table.rs").read_text()
+    (checked if table == build.render() else wrong).append(
+        "sim/src/laws_table.rs against content/law_effects.json (48 laws)")
+    sheet = json.loads((HERE.parent / "content" / "law_effects.json").read_text())["_rule_sheet"]
+    unread = dict(LAW_PARAMS_NOT_MODELLED)
+    camel = lambda n: "".join(p.capitalize() for p in n.split("_"))
+    lib = (HERE / "src" / "lib.rs").read_text()
+    for p in sheet:
+        read = f"Param::{camel(p)}" in lib
+        if read and p in unread:
+            wrong.append(f"rule sheet {p}: listed as not modelled, but the simulation reads it")
+        elif read:
+            checked.append(f"rule sheet {p}: read by the simulation")
+        elif p not in unread:
+            wrong.append(f"rule sheet {p}: read by nothing and listed nowhere")
+    return {"checked": checked, "wrong": wrong}
+
+
 def source_text() -> str:
     return "\n".join((HERE / p).read_text() for p in SOURCES) + \
         (HERE / "src/tests.rs").read_text()
@@ -328,9 +366,27 @@ def self_test() -> int:
     got = facts_compare(text.replace("LOAD_PER_SECOND: i32 = 30", "LOAD_PER_SECOND: i32 = 25"))
     assert any(w.startswith("design_facts.LOAD_PER_SECOND") for w in got["wrong"]), got
     assert not facts_compare(text)["wrong"], facts_compare(text)["wrong"]
+    assert not laws_compare(text)["wrong"], laws_compare(text)["wrong"]
+    # A hand edit to the generated law table, and a rule-sheet parameter the
+    # simulation stops reading without saying so.
+    table = HERE / "src" / "laws_table.rs"
+    real = table.read_text()
+    try:
+        table.write_text(real.replace("(Param::ClockRate, 5, 4)", "(Param::ClockRate, 3, 2)"))
+        assert any("laws_table" in w for w in laws_compare(text)["wrong"])
+    finally:
+        table.write_text(real)
+    lib = HERE / "src" / "lib.rs"
+    real_lib = lib.read_text()
+    try:
+        lib.write_text(real_lib.replace("Param::AlarmRange", "Param::Alarm_Range"))
+        assert any("alarm_range" in w for w in laws_compare(text)["wrong"])
+    finally:
+        lib.write_text(real_lib)
     print("content_gate self-test: halved Scout, moved floor, missing role, wrong "
-          "multiplier, slow Scout, weak Warden, an uncompared number, a deleted test "
-          "and a drifted design fact all caught")
+          "multiplier, slow Scout, weak Warden, an uncompared number, a deleted test, "
+          "a drifted design fact, a hand-edited law table and an unread rule-sheet "
+          "parameter all caught")
     return 0
 
 
@@ -339,8 +395,9 @@ def main() -> int:
         return self_test()
     r = compare(*load(), source_text())
     facts = facts_compare(source_text())
-    r["checked"] += facts["checked"]
-    r["wrong"] += facts["wrong"]
+    laws = laws_compare(source_text())
+    r["checked"] += facts["checked"] + laws["checked"]
+    r["wrong"] += facts["wrong"] + laws["wrong"]
     print(f"  content: {len(r['checked'])} values agree with content/detection.json, "
           f"roles.json and tools/design_facts.py")
     for line in r["wrong"]:
@@ -349,6 +406,8 @@ def main() -> int:
         print(f"  UNCOVERED {line} — compared by nothing and listed nowhere")
     for what, why in NOT_MODELLED:
         print(f"  not modelled: {what} — {why}")
+    for what, why in LAW_PARAMS_NOT_MODELLED:
+        print(f"  not modelled: rule sheet {what} — {why}")
     for line in r["readings"]:
         print(f"  the simulation's reading: {line}")
     return 1 if r["wrong"] or r["uncovered"] else 0

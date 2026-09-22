@@ -232,6 +232,23 @@
         "the_four_grades_follow_12_9",
         "the_planned_heist_ends_clean_with_every_bag_full"
       ]
+    },
+    {
+      "name": "Laws and pylons",
+      "section": "12.21",
+      "task": "T5.3",
+      "what": "All 48 laws as exact ratios, generated from content/law_effects.json. Each tick the rule sheet is the product of the laws whose pylons stand: speed, sight, suspicion, noise, structure and fight damage, alarm range, the clock, Glass and Stillness. A pylon broken — 600 health, Breakers double — switches its law off from the next tick and earns its page. A replay's rules field is a digest of the laws it was made under.",
+      "tests": [
+        "every_law_is_in_the_table_and_the_sheet_multiplies_the_ones_that_stand",
+        "haste_runs_everyone_and_the_clock_a_quarter_fast",
+        "glowing_dark_halves_sight_and_sleepwalk_closes_the_guards_eyes",
+        "glass_lets_a_guard_see_through_a_wall",
+        "stillness_hides_whoever_stands_still_for_a_second_and_a_half",
+        "brittle_stone_doubles_every_hit_on_a_structure",
+        "whispers_carries_an_alert_to_every_guard",
+        "breaking_a_pylon_switches_its_law_off_and_earns_its_page",
+        "a_replay_carries_the_laws_it_was_made_under"
+      ]
     }
   ],
   "targets": [

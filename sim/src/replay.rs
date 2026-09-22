@@ -64,6 +64,10 @@ pub enum Kind {
     /// Attack guard number `x` while standing beside it. §12.20: "May a crew
     /// fight? Yes, at any moment."
     Attack = 6,
+    /// Break the structure at (`x`, `y`) while standing beside it: a Law
+    /// Pylon. §12.6: "breaking one switches its law off for the rest of the
+    /// heist and gives a page of it."
+    Break = 7,
 }
 
 impl Kind {
@@ -76,6 +80,7 @@ impl Kind {
             4 => Some(Kind::Load),
             5 => Some(Kind::Skiff),
             6 => Some(Kind::Attack),
+            7 => Some(Kind::Break),
             _ => None,
         }
     }
@@ -139,7 +144,7 @@ impl Heist {
             write_varint(&mut out, (command.tick - previous) as u64);
             previous = command.tick;
             // Actor in the high nibble, kind in the low one. A crew is at most
-            // five (§12.5) and there are seven kinds, so one byte is plenty
+            // five (§12.5) and there are eight kinds, so one byte is plenty
             // and the packing is stated rather than assumed.
             out.push((command.actor << 4) | (command.kind as u8));
             out.extend_from_slice(&command.x.to_le_bytes());
