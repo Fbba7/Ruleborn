@@ -104,10 +104,15 @@ def _helps_defender(law: dict) -> bool:
             score -= 1 if value > 1 else 0
         elif key in _RAIDER_HELPED_IF_BELOW_ONE:
             score += 1 if value > 1 else -1
-        elif key in ("health_drain", "structure_damage"):
-            score += 1 if key == "health_drain" else -1
+        elif key in ("touch_damage", "unlit_drain"):
+            score += 1                      # hurts whoever moves: the crew
+        elif key == "structure_damage":
+            score -= 1
         elif key == "hide_behind_walls":
             score += 1                      # Glass: nobody hides behind a wall
-        elif key == "health_regen":
-            score += 1                      # Regrowth heals guards too
+        elif key == "structure_regen":
+            score += 1                      # Regrowth: buildings, wards, guards
+        # ally_regen (Kinship) heals whoever stands beside an ally, crew and
+        # guards alike, so it cuts both ways and scores nothing. It used to
+        # share health_regen with Regrowth and inherit Regrowth's +1 (F31).
     return score > 0

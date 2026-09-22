@@ -68,11 +68,13 @@
   "integer_square_root_is_exact_for_squares": "passed",
   "integer_square_root_never_overshoots": "passed",
   "investigating_walks_to_the_spot_searches_ten_seconds_then_walks_home": "passed",
+  "kinship_heals_whoever_stands_beside_an_ally": "passed",
   "loading_is_thirty_a_second_to_the_target": "passed",
   "loading_stops_when_the_clock_left_only_covers_getting_out": "passed",
   "loading_stops_when_the_exposed_share_is_gone": "passed",
   "multiplication_is_commutative_and_has_an_identity": "passed",
   "realm_grids_are_the_sizes_5_2_states": "passed",
+  "regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing": "passed",
   "rounding_is_the_same_on_both_sides_of_zero": "passed",
   "running_is_heard_further_than_walking": "passed",
   "sine_has_the_values_it_must": "passed",
@@ -168,7 +170,7 @@
   }
  ],
  "content": {
-  "agree": 112,
+  "agree": 114,
   "disagree": [],
   "not_modelled": [
    "modifiers.higher_ground \u2014 the fixture has one level",
@@ -179,8 +181,8 @@
    "ambush.level_advantage_cap \u2014 every character is level 1: there are no levels yet",
    "rule sheet climb_levels \u2014 the fixture has one level",
    "rule sheet leap_obstacles \u2014 no leaping: a fence stops feet",
-   "rule sheet health_drain \u2014 set by Thorns and Soul lanterns; not applied yet",
-   "rule sheet health_regen \u2014 set by Kinship and Regrowth; not applied yet",
+   "rule sheet touch_damage \u2014 Thorns: \"touching walls or hedges costs 5% health\" \u2014 and the document never says what a touch is",
+   "rule sheet unlit_drain \u2014 Soul lanterns: needs lantern light, an object not built",
    "rule sheet regrow_seconds \u2014 set by Crystal growth and Bloom; nothing regrows yet",
    "rule sheet carry_weight \u2014 no law sets it",
    "rule sheet cone_angle \u2014 no law sets it"

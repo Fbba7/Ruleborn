@@ -115,8 +115,9 @@ dict(
                     "does not rescue the hold rate \u2014 <strong>weaving the "
                     "player's own laws at random makes the island weaker than "
                     "weaving none</strong> (0\u20137% against 3\u201333%), "
-                    "because only five of the nineteen laws a rule sheet can "
-                    "express help the defender. A generator that reads the sign "
+                    "because only four of the nineteen laws a rule sheet can "
+                    "express help the defender (five, until F31 found one "
+                    "counted on a comment about another law). A generator that reads the sign "
                     "of each law recovers it (F11). Writing all 48 laws out "
                     "against the rule sheet also settled \u00a712.21's rule: 16 "
                     "are parameter changes, 32 need an engine feature (F10), and "
@@ -627,12 +628,13 @@ dict(
                     "rule sheet is built ahead of the lock.</strong> "
                     "<code>sim/</code> carries all 48 laws as exact ratios "
                     "generated from <code>content/law_effects.json</code>, and "
-                    "reads 13 of the sheet's 20 parameters each tick from the "
+                    "reads 15 of the sheet's 22 parameters each tick from the "
                     "laws whose pylons stand. Breaking a pylon switches its law "
                     "off from the next tick. The gate names the other seven "
                     "— five a law sets that nothing applies yet, two no law "
                     "sets — so the schema's gaps are listed rather than "
-                    "hidden.",
+                    "hidden. Building it split two health parameters that each "
+                    "meant two rules (F31).",
              blocked_by=["T1.4", "T1.9"]),
         dict(id="T5.4", owner="claude", status="blocked",
              title="Lock saves, bundles and versions (§24.11)",

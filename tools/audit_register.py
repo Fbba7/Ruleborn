@@ -2622,7 +2622,7 @@ dict(id="C31", kind="contradiction", severity="minor", status="open",
          "seed. That is also the only form the server can re-simulate "
          "(§24.10).",
      measured=""),
-dict(id="F31", kind="finding", severity="significant", status="open",
+dict(id="F31", kind="finding", severity="significant", status="proposed",
      title="One rule-sheet parameter for four different rules: who heals, who "
            "is hurt, and when",
      refs=["12.21", "7.3", "13.3"],
@@ -2655,7 +2655,21 @@ dict(id="F31", kind="finding", severity="significant", status="open",
          "<code>unlit_drain</code> (Soul lanterns). The vocabulary grows by two, "
          "and each new name is a rule rather than a law, so it stays a "
          "vocabulary. Then re-score Kinship for the generator, which moves "
-         "F11’s count.",
+         "F11’s count."
+         "<br><br><strong>Split in this repository.</strong> "
+         "<code>tools/law_effects.py</code> now carries <code>ally_regen</code>, "
+         "<code>structure_regen</code>, <code>touch_damage</code> and "
+         "<code>unlit_drain</code>, same values and classifications, so F10’s "
+         "counts do not move. The harness scores Kinship as cutting both ways, "
+         "and F11’s count is <strong>4 of 19</strong> — exact, not sampled; the "
+         "drafted §13.3 edit and T0.6 say so. <code>sim/</code> applies Kinship "
+         "and Regrowth once a second. The document’s §12.21 still needs G10’s "
+         "edit.<br><br><strong>Measured, against the D55 harness with and without "
+         "the split:</strong> the sign-aware generator by realm holds 12 → 10%, "
+         "20 → 18%, 48 → 45%, 35 → 45%, 58 → 55% — no longer weaving Kinship "
+         "as a defender’s law puts realms 3 and 4 inside §13.2’s band, where "
+         "before only realm 4 was. The ablation’s shares and F21’s polarisation "
+         "move within noise.",
      measured="sim/: laws_table.rs; tools/heist_harness/laws.py _helps_defender"),
 dict(id="D55", kind="deviation", severity="significant", status="done",
      title="The Python harness and the content file read peripheral vision "
@@ -6252,7 +6266,7 @@ EDITS = {
                  "\u201cGenerated from their laws\u201d has at least three "
                  "meanings and two are worse than nothing: weaving the "
                  "player\u2019s laws at random holds 2\u20139% against 7\u201343% "
-                 "for weaving none, because only five of the nineteen laws a rule "
+                 "for weaving none, because only four of the nineteen laws a rule "
                  "sheet can express help the defender and laws apply to everyone in "
                  "the realm (7.3). Reading the sign of each law recovers it "
                  "(9\u201354%). And \u00a713.2\u2019s 30\u201345% hold rate "

@@ -1460,6 +1460,15 @@ impl World {
             }
         }
 
+        // Healing laws, once a second (§7): Kinship — "characters standing
+        // next to an ally heal each other 1.5% a second" — and Regrowth —
+        // "buildings, wards and guards heal 2% of their health each second".
+        // A share of full health, rounded down. Nothing broken or knocked out
+        // comes back: a law that revives is a different rule.
+        if now % TICKS_PER_SECOND == 0 {
+            self.heal();
+        }
+
         // §5.4: "The crew must hold the spot until it arrives." Anyone on the
         // spot once it has arrived is aboard, with what it carries banked.
         if let Some(skiff) = self.skiff {
@@ -1489,6 +1498,58 @@ impl World {
                         raider.carried = 0;
                     }
                 }
+            }
+        }
+    }
+
+    fn heal(&mut self) {
+        let now = self.tick;
+        if self.sheet.flag(Param::AllyRegen).is_some() {
+            let (n, d) = self.sheet.factor(Param::AllyRegen);
+            let tile_of = |p: Point| self.grid.tile_at(p.x, p.y);
+            let beside = |a: Option<grid::TileIndex>, b: Option<grid::TileIndex>| {
+                a.zip(b).is_some_and(|(a, b)| self.grid.adjacent(a, b))
+            };
+            // Who stands beside an ally, decided before anyone heals.
+            let crew: Vec<bool> = (0..self.raiders.len()).map(|i| {
+                let r = &self.raiders[i];
+                r.active() && self.raiders.iter().enumerate().any(|(j, o)| {
+                    j != i && o.active() && beside(tile_of(r.at), tile_of(o.at))
+                })
+            }).collect();
+            let posts: Vec<bool> = (0..self.guards.len()).map(|i| {
+                let g = &self.guards[i];
+                g.awake(now) && self.guards.iter().enumerate().any(|(j, o)| {
+                    j != i && o.awake(now) && beside(tile_of(g.at), tile_of(o.at))
+                })
+            }).collect();
+            for (r, heal) in self.raiders.iter_mut().zip(crew) {
+                if heal {
+                    let full = r.role.health();
+                    r.health = (r.health + (full as i64 * n / d) as i32).min(full);
+                }
+            }
+            for (g, heal) in self.guards.iter_mut().zip(posts) {
+                if heal {
+                    let full = g.role.health();
+                    g.health = (g.health + (full as i64 * n / d) as i32).min(full);
+                }
+            }
+        }
+        if self.sheet.flag(Param::StructureRegen).is_some() {
+            let (n, d) = self.sheet.factor(Param::StructureRegen);
+            let share = |full: i32| (full as i64 * n / d) as i32;
+            for g in self.guards.iter_mut().filter(|g| !g.knocked_out) {
+                let full = g.role.health();
+                g.health = (g.health + share(full)).min(full);
+            }
+            if self.vault.opened_at.is_none() {
+                let full = heist::VAULT_HEALTH_PER_LEVEL;
+                self.vault.health = (self.vault.health + share(full)).min(full);
+            }
+            for law in self.laws.iter_mut().filter(|l| l.broken_at.is_none()) {
+                let full = heist::PYLON_HEALTH;
+                law.health = (law.health + share(full)).min(full);
             }
         }
     }

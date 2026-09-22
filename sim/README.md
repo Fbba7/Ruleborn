@@ -324,11 +324,25 @@ laws whose pylons still stand. Everything downstream reads it:
 - Glass ("walls become see-through") and Stillness ("standing still for 1.5
   seconds becomes invisible").
 
-The simulation reads 13 of the sheet's 20 parameters. Five that laws set are
-carried on the sheet and read by nothing yet: climbing, leaping, health drain
-and regen, and regrowth. Two more are set by no law (carry weight, cone
-angle). The gate names all seven, and fails on any sheet parameter the
-simulation neither reads nor names.
+The sheet had one health parameter for two rules each: Kinship and Regrowth
+both set `health_regen`, Thorns and Soul lanterns both set `health_drain`.
+A simulation reading the sheet cannot apply either without asking which law
+set it, which is a law containing a special case (F31). They are now four
+parameters, each named for whom it changes. The simulation applies two of
+them, once a second:
+- `ally_regen` (Kinship): anyone standing beside an ally heals 1.5% of full
+  health, crew and guards alike;
+- `structure_regen` (Regrowth): guards, pylons and the Vault heal 2%.
+Nothing knocked out or broken comes back.
+
+The simulation reads 15 of the sheet's 22 parameters. The other seven are
+named by the gate:
+- five that laws set: climbing, leaping, regrowth, Thorns' `touch_damage` —
+  the document never says what a touch is — and Soul lanterns'
+  `unlit_drain`, which needs lantern light;
+- two that no law sets: carry weight and cone angle.
+The gate fails on any sheet parameter the simulation neither reads nor names,
+and on a named one the sheet no longer has.
 
 A Law Pylon has 600 health (§10.2, level 1). Whoever is told to break one hits
 it from beside it, and a Breaker hits for double. At zero, its law is off from

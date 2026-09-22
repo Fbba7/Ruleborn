@@ -47,8 +47,9 @@ NOT_MODELLED = [
 LAW_PARAMS_NOT_MODELLED = [
     ("climb_levels", "the fixture has one level"),
     ("leap_obstacles", "no leaping: a fence stops feet"),
-    ("health_drain", "set by Thorns and Soul lanterns; not applied yet"),
-    ("health_regen", "set by Kinship and Regrowth; not applied yet"),
+    ("touch_damage", "Thorns: \"touching walls or hedges costs 5% health\" — "
+                     "and the document never says what a touch is"),
+    ("unlit_drain", "Soul lanterns: needs lantern light, an object not built"),
     ("regrow_seconds", "set by Crystal growth and Bloom; nothing regrows yet"),
     ("carry_weight", "no law sets it"),
     ("cone_angle", "no law sets it"),
@@ -310,6 +311,10 @@ def laws_compare(text: str) -> dict:
     unread = dict(LAW_PARAMS_NOT_MODELLED)
     camel = lambda n: "".join(p.capitalize() for p in n.split("_"))
     lib = (HERE / "src" / "lib.rs").read_text()
+    for p in unread:
+        if p not in sheet:
+            wrong.append(f"rule sheet {p}: listed as not modelled, but the sheet has "
+                         f"no such parameter")
     for p in sheet:
         read = f"Param::{camel(p)}" in lib
         if read and p in unread:

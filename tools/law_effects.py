@@ -51,7 +51,10 @@ RULE_SHEET = {
     "crew_speed", "guard_speed", "loaded_speed", "clock_rate",
     "sight_range", "cone_angle", "suspicion_fill", "suspicion_decay",
     "noise_radius", "alarm_range",
-    "structure_damage", "damage", "health_regen", "health_drain",
+    "structure_damage", "damage",
+    # Health, by whom it changes (F31): one name for two rules is a special case
+    # the simulation would have to resolve per law.
+    "ally_regen", "structure_regen", "touch_damage", "unlit_drain",
     "regrow_seconds", "hide_behind_walls", "still_is_invisible",
     "climb_levels", "leap_obstacles", "carry_weight",
 }
@@ -138,21 +141,21 @@ EFFECTS = {
 
     # -- Life --------------------------------------------------------------
     "bloom": (["parameter"], {"regrow_seconds": 10}, [], ""),
-    "kinship": (["parameter"], {"health_regen": 0.015}, [], ""),
+    "kinship": (["parameter"], {"ally_regen": 0.015}, [], ""),
     "wild_paths": (["event"], {"crew_speed": 1.20}, [],
                    "Tiles changing after three crossings is per-tile state that "
                    "accumulates during the run."),
     "flock": (["entity"], {}, [], "Six wandering bodies that block and bleat."),
     "spores": (["entity"], {"crew_speed": 0.50}, [], "Drifting clouds with position."),
-    "thorns": (["parameter"], {"health_drain": 0.05}, [], ""),
-    "regrowth": (["parameter"], {"health_regen": 0.02}, [], ""),
+    "thorns": (["parameter"], {"touch_damage": 0.05}, [], ""),
+    "regrowth": (["parameter"], {"structure_regen": 0.02}, [], ""),
     "swarm_birth": (["event", "attribute"], {}, [],
                     "Splitting a guard into two creates characters mid-run. "
                     "§12.21 fixes the attribute half and not this half."),
 
     # -- Spirit ------------------------------------------------------------
     "haunting": (["entity", "parameter"], {"guard_speed": 1.50}, [], ""),
-    "soul_lanterns": (["entity", "authored"], {"health_drain": 0.01},
+    "soul_lanterns": (["entity", "authored"], {"unlit_drain": 0.01},
                       ["lantern placements"], ""),
     "whispers": (["parameter"], {"alarm_range": 999}, [],
                  "A range parameter set to the whole universe — which is the "

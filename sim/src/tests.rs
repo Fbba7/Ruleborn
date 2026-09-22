@@ -1848,3 +1848,43 @@ fn dropping_loot_costs_exactly_the_fraction_dropped() {
     assert_eq!(crate::step_for(&world.grid, &sheet, r, None, false), Role::Carrier.speed(),
                "empty-handed: \u{a7}11.1's full 3.6 tiles a second");
 }
+
+#[test]
+fn kinship_heals_whoever_stands_beside_an_ally() {
+    // "Characters standing next to an ally heal each other 1.5% a second."
+    let mut world = vault_world(4);
+    world.weave(&[("kinship", (0, 13))]);
+    put(&mut world, 3, 3, 3);                     // the Warden, 420
+    put(&mut world, 1, 3, 4);                     // the Breaker, 180, beside it
+    put(&mut world, 0, 10, 10);                   // the Scout, alone
+    put(&mut world, 2, 10, 12);
+    for ri in 0..4 {
+        world.raiders[ri].health = 50;
+    }
+    world.step();                                 // tick 0: once a second
+    assert_eq!(world.raiders[3].health, 50 + 6, "1.5% of 420, rounded down");
+    assert_eq!(world.raiders[1].health, 50 + 2, "1.5% of 180");
+    assert_eq!(world.raiders[0].health, 50, "nobody beside the Scout");
+}
+
+#[test]
+fn regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing() {
+    // "Buildings, wards and guards heal 2% of their health each second."
+    let mut world = vault_world(0);
+    world.weave(&[("regrowth", (0, 13)), ("haste", (1, 13))]);
+    let g = post(&mut world, 2, 3, 3);            // the Breaker guard, 180
+    let down = post(&mut world, 1, 9, 9);
+    world.guards[g].health = 100;
+    world.guards[down].knocked_out = true;
+    world.guards[down].health = 0;
+    world.vault.health = 1000;
+    world.laws[0].health = 300;
+    world.laws[1].health = 0;
+    world.laws[1].broken_at = Some(0);
+    world.step();
+    assert_eq!(world.guards[g].health, 100 + 3, "2% of 180");
+    assert_eq!(world.guards[down].health, 0, "knocked out stays down");
+    assert_eq!(world.vault.health, 1000 + 30, "2% of 1,500");
+    assert_eq!(world.laws[0].health, 300 + 12, "2% of a pylon's 600");
+    assert_eq!(world.laws[1].health, 0, "a broken pylon is not rebuilt");
+}

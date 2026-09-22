@@ -6,6 +6,7 @@
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Param {
     AlarmRange,
+    AllyRegen,
     CarryWeight,
     ClimbLevels,
     ClockRate,
@@ -13,8 +14,6 @@ pub enum Param {
     CrewSpeed,
     Damage,
     GuardSpeed,
-    HealthDrain,
-    HealthRegen,
     HideBehindWalls,
     LeapObstacles,
     LoadedSpeed,
@@ -23,8 +22,11 @@ pub enum Param {
     SightRange,
     StillIsInvisible,
     StructureDamage,
+    StructureRegen,
     SuspicionDecay,
     SuspicionFill,
+    TouchDamage,
+    UnlitDrain,
 }
 
 /// One of §7's laws: what it sets, as exact ratios, and whether its whole
@@ -71,15 +73,15 @@ pub const LAWS: [LawDef; 48] = [
     LawDef { id: "overcharge", name: "Overcharge", simulated: false, params: &[] },
     LawDef { id: "sunburst", name: "Sunburst", simulated: false, params: &[] },
     LawDef { id: "bloom", name: "Bloom", simulated: true, params: &[(Param::RegrowSeconds, 10, 1)] },
-    LawDef { id: "kinship", name: "Kinship", simulated: true, params: &[(Param::HealthRegen, 3, 200)] },
+    LawDef { id: "kinship", name: "Kinship", simulated: true, params: &[(Param::AllyRegen, 3, 200)] },
     LawDef { id: "wild_paths", name: "Wild paths", simulated: false, params: &[(Param::CrewSpeed, 6, 5)] },
     LawDef { id: "flock", name: "Flock", simulated: false, params: &[] },
     LawDef { id: "spores", name: "Spores", simulated: false, params: &[(Param::CrewSpeed, 1, 2)] },
-    LawDef { id: "thorns", name: "Thorns", simulated: true, params: &[(Param::HealthDrain, 1, 20)] },
-    LawDef { id: "regrowth", name: "Regrowth", simulated: true, params: &[(Param::HealthRegen, 1, 50)] },
+    LawDef { id: "thorns", name: "Thorns", simulated: true, params: &[(Param::TouchDamage, 1, 20)] },
+    LawDef { id: "regrowth", name: "Regrowth", simulated: true, params: &[(Param::StructureRegen, 1, 50)] },
     LawDef { id: "swarm_birth", name: "Swarm birth", simulated: false, params: &[] },
     LawDef { id: "haunting", name: "Haunting", simulated: false, params: &[(Param::GuardSpeed, 3, 2)] },
-    LawDef { id: "soul_lanterns", name: "Soul lanterns", simulated: false, params: &[(Param::HealthDrain, 1, 100)] },
+    LawDef { id: "soul_lanterns", name: "Soul lanterns", simulated: false, params: &[(Param::UnlitDrain, 1, 100)] },
     LawDef { id: "whispers", name: "Whispers", simulated: true, params: &[(Param::AlarmRange, 999, 1)] },
     LawDef { id: "echoes", name: "Echoes", simulated: false, params: &[] },
     LawDef { id: "sleepwalk", name: "Sleepwalk", simulated: true, params: &[(Param::SightRange, 0, 1), (Param::NoiseRadius, 1, 1)] },
