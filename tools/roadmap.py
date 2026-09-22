@@ -539,12 +539,25 @@ dict(
           "rehearsals, balance bots, co-op and a $5–15/month infrastructure "
           "bill at a million players. If it fails they all fail together.",
     tasks=[
-        dict(id="T3.1", owner="claude", status="ready",
+        dict(id="T3.1", owner="claude", status="doing",
              title="One function, the same checksum on four targets",
              detail="Desktop, server (WebAssembly), a cheap Android and an "
                     "iPhone. <strong>Put the server Wasm build in the first "
                     "round</strong> rather than deferring it — the whole "
-                    "architecture rests on the same code running in both places.",
+                    "architecture rests on the same code running in both "
+                    "places.<br><br><strong>Two of the four are done.</strong> "
+                    "<code>sim/</code> is the Rust crate: fixed point "
+                    "throughout, a committed sine table, xoshiro256++ per "
+                    "subsystem, vectors rather than maps, and \u00a724.10's six "
+                    "phases in order. <code>bash sim/run_spike.sh</code> builds "
+                    "it for native x86-64 and WebAssembly and runs a full "
+                    "240-second heist at five seeds under both: <strong>every "
+                    "digest agrees</strong>. Different instruction sets and "
+                    "different compiler backends, which is what makes it "
+                    "evidence rather than a tautology.<br><br>The two that "
+                    "remain are a real iPhone and a real Android, and they need "
+                    "devices. Until then the fallback in \u00a724.7 is not "
+                    "triggered and not ruled out.",
              gate="identical checksums on all four, or take the C# fallback "
                   "without renegotiating (\u00a724.7)",
              blocked_by=["T0.2"]),

@@ -205,7 +205,7 @@
   <nav class="filters" aria-label="Filter the roadmap">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">41</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">9</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">18</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">2</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">4</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">14</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">18</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">3</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">14</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
   </nav>
 
   <main id="list">
@@ -756,15 +756,15 @@
         </div>
         <p class="blurb">One simulation written once and compiled twice buys server-authoritative anti-cheat, free replays, free analytics, rehearsals, balance bots, co-op and a $5–15/month infrastructure bill at a million players. If it fails they all fail together.</p>
         
-      <article class="task st-ready" id="T3-1"
-               data-status="ready" data-owner="claude">
+      <article class="task st-doing" id="T3-1"
+               data-status="doing" data-owner="claude">
         <header class="task-head">
           <span class="tid">T3.1</span>
           <h3>One function, the same checksum on four targets</h3>
-          <span class="status st-ready">Ready to start</span>
+          <span class="status st-doing">Under way</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">Desktop, server (WebAssembly), a cheap Android and an iPhone. <strong>Put the server Wasm build in the first round</strong> rather than deferring it — the whole architecture rests on the same code running in both places.</p>
+        <p class="detail">Desktop, server (WebAssembly), a cheap Android and an iPhone. <strong>Put the server Wasm build in the first round</strong> rather than deferring it — the whole architecture rests on the same code running in both places.<br><br><strong>Two of the four are done.</strong> <code>sim/</code> is the Rust crate: fixed point throughout, a committed sine table, xoshiro256++ per subsystem, vectors rather than maps, and §24.10's six phases in order. <code>bash sim/run_spike.sh</code> builds it for native x86-64 and WebAssembly and runs a full 240-second heist at five seeds under both: <strong>every digest agrees</strong>. Different instruction sets and different compiler backends, which is what makes it evidence rather than a tautology.<br><br>The two that remain are a real iPhone and a real Android, and they need devices. Until then the fallback in §24.7 is not triggered and not ruled out.</p>
         
         <p class="gate"><span class="glabel">Passes when</span> identical checksums on all four, or take the C# fallback without renegotiating (§24.7)</p>
         
@@ -1077,4 +1077,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build add0cad310acb77f -->
+<!-- ruleborn-build 9d421c7625fe424c -->

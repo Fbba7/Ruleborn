@@ -30,6 +30,14 @@ python3 tools/mutation_gate.py
 python3 tools/twice_stated.py --self-test
 
 echo
+echo "== the simulation core: determinism across targets (T3.1) =="
+bash sim/run_spike.sh
+
+echo
+echo "== the simulation core: arithmetic invariants =="
+(cd sim && cargo test --release --quiet 2>&1 | grep -E "^test result|^error" || true)
+
+echo
 echo "== what changed since the previous version =="
 python3 tools/version_diff.py --self-test
 

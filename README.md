@@ -70,7 +70,7 @@ is done. In short:
 1. Finish the fixes v3.0 started — retiring the superseded copies is the work,
    not restating the decisions
 2. ~~Rebuild the economy model~~ — **done**, `tools/economy_model/`
-3. The determinism spike on real devices — this gates all gameplay code
+3. The determinism spike — **two of four targets done** ([`sim/`](sim/README.md)): native x86-64 and WebAssembly agree bit for bit over a 240-second heist at five seeds. A real iPhone and a real Android are the rest of the gate
 4. A launch-scope decision
 
 ## Repository layout
@@ -86,6 +86,7 @@ docs/audit/    the generated audit register page
 docs/roadmap/  the generated roadmap page
 prototypes/
   heist-gate/  a throwaway browser build that runs both pre-code gates
+sim/            the heist simulation core in Rust, and the determinism spike (T3.1)
 tools/
   extract_design_doc.py           HTML -> greppable text
   check_document.py               every check over the document, in one verdict
