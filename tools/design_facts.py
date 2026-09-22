@@ -82,6 +82,34 @@ AMBUSH_MULTIPLIER = 3.0
 #: §12.6. The Vault's health, per Vault level.
 VAULT_HEALTH_PER_LEVEL = 1_500
 
+#: §12.6: "Breakers deal double damage to it."
+BREAKER_VAULT_MULTIPLIER = 2
+
+#: §12.6: "Cracking is loud: every 5 seconds adds 100 suspicion to every
+#: guard in the Heart."
+CRACK_NOISE = 100
+CRACK_NOISE_SECONDS = 5
+
+#: §12.19: "Every role can load, at 30 units a second."
+LOAD_PER_SECOND = 30
+
+#: §11.1, the Carrier: "15% slower when loaded".
+CARRIER_LOADED_PACE = 0.85
+
+#: §12.8: the ambush "stuns it for 2 seconds".
+AMBUSH_STUN_SECONDS = 2
+
+#: §12.20: "has ten seconds before capture. An ally standing adjacent revives
+#: it in 3 seconds, a Mender in 1.5."
+DOWN_SECONDS = 10
+REVIVE_SECONDS = 3.0
+MENDER_REVIVE_SECONDS = 1.5
+
+#: §5.4: the skiff "takes 5 seconds to reach an outer realm and 20 seconds to
+#: fight the winds around the Heart".
+SKIFF_OUTER_SECONDS = 5
+SKIFF_HEART_SECONDS = 20
+
 #: §12.9's grades, as the value each is worth when a run is scored.
 GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
 
@@ -99,6 +127,17 @@ HOME = {
     "WIND_UP": "12.8",
     "AMBUSH_MULTIPLIER": "12.8",
     "VAULT_HEALTH_PER_LEVEL": "12.6",
+    "BREAKER_VAULT_MULTIPLIER": "12.6",
+    "CRACK_NOISE": "12.6",
+    "CRACK_NOISE_SECONDS": "12.6",
+    "LOAD_PER_SECOND": "12.19",
+    "CARRIER_LOADED_PACE": "11.1",
+    "AMBUSH_STUN_SECONDS": "12.8",
+    "DOWN_SECONDS": "12.20",
+    "REVIVE_SECONDS": "12.20",
+    "MENDER_REVIVE_SECONDS": "12.20",
+    "SKIFF_OUTER_SECONDS": "5.4",
+    "SKIFF_HEART_SECONDS": "5.4",
     "GRADE_VALUE": "12.9",
 }
 

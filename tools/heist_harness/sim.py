@@ -40,11 +40,12 @@ ROLES = {r["name"]: r for r in
 BASE_TICKS = 150 * TPS
 LINK_TICKS = 15 * TPS
 MAX_TICKS = 240 * TPS
-from ..design_facts import VAULT_HEALTH_PER_LEVEL  # 12.6 (D37)
-LOAD_PER_SECOND = 30                     #: §12.19
+from ..design_facts import (VAULT_HEALTH_PER_LEVEL, LOAD_PER_SECOND,  # D37
+                            CRACK_NOISE, DOWN_SECONDS, REVIVE_SECONDS,
+                            MENDER_REVIVE_SECONDS, SKIFF_OUTER_SECONDS)
 WIND_UP_TICKS = int(0.8 * TPS)           #: §12.8, one hit per 0.8 s
-SKIFF_TICKS = 5 * TPS                    #: §12.6, an outer realm
-CRACK_AWARENESS_PER_5S = 10              #: §12.6, percent added to Heart guards
+SKIFF_TICKS = SKIFF_OUTER_SECONDS * TPS  #: §5.4, an outer realm
+CRACK_AWARENESS_PER_5S = CRACK_NOISE // 10   #: §12.6, as a percent of 1,000
 
 # -- the proposed response layer (docs/design/spec/response.md) -------------
 #
@@ -500,7 +501,7 @@ class Heist:
                     continue
                 if dist2(g.x, g.y, m.x, m.y) <= (U * 3 // 4) ** 2:
                     m.down_ticks += 1
-                    if m.down_ticks >= 10 * TPS:      # §12.20
+                    if m.down_ticks >= DOWN_SECONDS * TPS:      # §12.20
                         m.caught = True
                         m.carried = 0                 # dropped on the tile
         # §12.20: an ally standing adjacent revives in 3 s, a Mender in 1.5.
@@ -514,7 +515,8 @@ class Heist:
                 None)
             if helper:
                 m.revive_ticks += 1
-                need = int(1.5 * TPS) if helper.role == "Mender" else 3 * TPS
+                need = int((MENDER_REVIVE_SECONDS if helper.role == "Mender"
+                            else REVIVE_SECONDS) * TPS)
                 if m.revive_ticks >= need:
                     m.down_ticks = m.revive_ticks = 0
                 continue

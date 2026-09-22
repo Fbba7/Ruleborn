@@ -53,6 +53,17 @@ pub enum Kind {
     Gait = 1,
     /// Stand still.
     Halt = 2,
+    /// Hit the Vault while standing next to it. §12.6: "Who cracks".
+    Crack = 3,
+    /// Load from the open Vault to `x` per cent of the bag. §12.6: "The
+    /// player sets how full they want the crew before it leaves."
+    Load = 4,
+    /// Call the skiff to the edge tile at (`x`, `y`). §5.4: "At any time the
+    /// crew can call the skiff to any edge tile of any realm."
+    Skiff = 5,
+    /// Attack guard number `x` while standing beside it. §12.20: "May a crew
+    /// fight? Yes, at any moment."
+    Attack = 6,
 }
 
 impl Kind {
@@ -61,6 +72,10 @@ impl Kind {
             0 => Some(Kind::MoveTo),
             1 => Some(Kind::Gait),
             2 => Some(Kind::Halt),
+            3 => Some(Kind::Crack),
+            4 => Some(Kind::Load),
+            5 => Some(Kind::Skiff),
+            6 => Some(Kind::Attack),
             _ => None,
         }
     }
@@ -124,7 +139,7 @@ impl Heist {
             write_varint(&mut out, (command.tick - previous) as u64);
             previous = command.tick;
             // Actor in the high nibble, kind in the low one. A crew is at most
-            // five (§12.5) and there are three kinds, so one byte is plenty
+            // five (§12.5) and there are seven kinds, so one byte is plenty
             // and the packing is stated rather than assumed.
             out.push((command.actor << 4) | (command.kind as u8));
             out.extend_from_slice(&command.x.to_le_bytes());

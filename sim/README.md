@@ -221,6 +221,81 @@ managed 4.3 tiles a second, not 4.5.
 it (5.5 tiles where 5.7 is right), and `walk_route` now carries the remainder
 on to the next tile.
 
+## The Vault, the fight and the end of a heist
+
+§12.6, §12.19, §12.20, §12.8, §5.4 and §12.9, in `heist.rs` (the numbers) and
+in the states phase (the rules). Everything that moves a crew member between
+Active, Down, Caught and Out happens in one fixed order each tick: guards'
+hits → crew hits → knockouts → revives and captures → the Vault → loading →
+the skiff → the clock.
+
+- **The Vault.** It has 1,500 health per Vault level. It is cracked from a
+  tile beside it, one hit every 0.8 s for Power, and Breakers deal double.
+  Each hit is §12.17's "Breaking something", heard 5 m away along the
+  walkable path. Once open, anyone told to load does so at 30 a second, until
+  it reaches the player's target fill, fills its bag, or empties the exposed
+  share. A loaded Carrier walks 15% slower.
+- **Fights.** An Alerted guard beside a crew member hits it every 0.8 s for
+  its §11.1 Power. The crew hits back when told to. A guard that has not
+  noticed the crew is ambushed: it is stunned for 2 s, and the hit deals
+  triple Power or half the guard's health, whichever is greater. Any other
+  hit sends its suspicion to 1000. A knocked-out guard stays down, and
+  another guard that sees it raises the realm alarm.
+- **Capture.** At zero health a crew member drops its loot on the tile. It
+  has ten seconds, and an ally beside it revives it in 3 s (a Mender in
+  1.5 s). Anyone inside when the clock ends is caught.
+- **The skiff** comes to an edge tile only, 20 s after the call at the Heart,
+  and takes whoever holds the spot.
+- **§12.9's grades** follow from who got out with what: Clean, Loud, Partial
+  or Foiled.
+
+`planned()` is a heist played as a player would play it. The crew crouches
+past the gravel, ambushes the Breaker guard from the moss behind its post,
+then does the same to the Mender guard. It cracks the Vault in 13 s, loads
+every bag in 10, and leaves by skiff at 55 s. The outcome is **Clean**, 420
+of 420. It is committed as `golden/planned-clean.rbh`, because the seeded
+heists almost never open the Vault: 199 of 200 end Foiled.
+`cargo run --release --example planned` prints it second by second.
+
+### What building it found
+
+Four things about the document, each pinned by a test rather than argued:
+
+1. **§12.6's crack noise does nothing.** "Every 5 seconds adds 100 suspicion
+   to every guard in the Heart" — but §12.17 empties suspicion at 20 a tick,
+   so an unaware guard's 100 is gone in five ticks and never reaches
+   Suspicious at 200. What does make cracking loud is §12.17's own noise
+   table: "Breaking something — 5 m". (`the_crack_noise_empties_before_it_can_matter`)
+2. **§12.8's ambush has no way in on plain ground.** A crouched walk carries
+   1 m and the tile behind a guard is 1 m away, so the last step of any
+   approach is heard. The guard has then noticed, and "a guard that has not
+   noticed the crew" is never reached. Crawling is silent in the table but
+   has no control and no speed. Only a quiet surface lets you in. The fixture
+   has moss behind two posts for that reason.
+   (`a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss`)
+3. **"Cracking is 10 to 25 seconds" (§12.19) assumes a Breaker.** A Breaker
+   alone takes 15.2 s, and Scout, Breaker and Carrier take 12 s. A full crew
+   takes 9.6 s, just under the band. Four crew with no Breaker take 26 s, and
+   a lone Scout 100 s. (`cracking_takes_ten_to_twenty_five_seconds_only_with_a_breaker`)
+4. **§12.12 against §12.17.** "Guards' patrols shift slightly each run" sits
+   beside "nothing here is random: a player who scouts an island can predict
+   exactly what will happen". The two agree only if the shift is drawn once,
+   at set-up, from the seed, and is visible to a scout. The fixture's guards
+   hold posts, so the question does not arise yet.
+
+And three bugs in this code, each caught by the trace or a test before
+commit. An Alerted guard that converged onto a raider's own spot could not
+see it: at zero distance the bearing is undefined and came out as east. The
+Vault and the attack shared a swing counter and each reset the other's. And
+idle guards turned at their full turn rate — a Scout through 240° a second —
+which left no back to ambush. A posted guard now holds its facing.
+
+The simulation also needs two numbers the document does not give. It revives
+a crew member at a quarter of its health (`REVIVE_HEALTH`). Its Vault holds
+560 bag units (`FIXTURE_EXPOSED`), because §9.6 prices the exposed share in
+Starlight and nothing converts that to Carry. Both are listed on the audit
+page beside the gait speeds.
+
 ## The simulation against the content file
 
 `content/detection.json` holds §12.17 as data; the simulation holds the same
@@ -229,8 +304,10 @@ result is decided. Two copies of one fact drift, and they had: the first
 fixture had the Scout's zones at **half** §12.17's size — 1, 2 and 3 metres for
 2, 4 and 6 — and nothing noticed until the guard work reread §12.17 by hand.
 
-`content_gate.py` compares the 64 values the simulation carries against
-`detection.json` and `roles.json`. It walks every number in both files, and
+`content_gate.py` compares the 98 values the simulation carries against
+`detection.json`, `roles.json` and — for the §12.6, §12.19, §12.20 and §5.4
+numbers that have no content file — `tools/design_facts.py`, which is now
+their one home; the Python harness imports them from there. It walks every number in both files, and
 each has to be compared, named as not modelled yet, or named as derived from
 one that is. Anything else fails the gate. The first version only *said* this,
 and the peripheral modifier sat in the file neither compared nor listed. The
@@ -260,6 +337,7 @@ a test that does not exist, so the band cannot drift from the code.
     src/sight.rs      supercover line of sight, the same from either end
     src/noise.rs      sound along the walkable path, and the way around
     src/guard.rs      §12.17's six states, their timings, the realm alarm
+    src/heist.rs      the Vault, fights, knockouts, the skiff, the grades
     src/replay.rs     the heist as bytes: header, command log, checksums
     src/tests.rs      the invariants the checksum rests on
     golden/*.rbh      replays committed today, re-simulated on every build
@@ -270,7 +348,9 @@ a test that does not exist, so the band cannot drift from the code.
     content_gate.py   the simulation's numbers against content/detection.json
     status.py         runs every gate, writes status.json
     systems.json      which tests prove which system, for the audit page
-    examples/         where_diverge: which second each golden parts company at
+    examples/         where_diverge: which second each golden parts company at;
+                      planned: the planned heist second by second;
+                      outcomes: what 200 seeded heists come to
     build_table.py    the table generator; runs once, output committed
 
 ## What the simulation contains

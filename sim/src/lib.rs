@@ -32,6 +32,7 @@
 pub mod fixed;
 pub mod grid;
 pub mod guard;
+pub mod heist;
 pub mod noise;
 pub mod path;
 pub mod replay;
@@ -44,6 +45,7 @@ pub mod trig;
 
 use fixed::{Ang, Fx};
 use grid::{Feature, Grid, Surface, Terrain};
+use heist::{Grade, Outcome, Skiff, Standing, Task, Vault};
 use replay::{Command, Heist, Kind};
 use rng::{Rng, Stream};
 
@@ -124,11 +126,45 @@ impl Role {
         }
     }
 
+    /// §11.1's Health, Power and Carry columns.
+    pub fn health(self) -> i32 {
+        match self {
+            Role::Scout => 120,
+            Role::Breaker => 180,
+            Role::Carrier => 160,
+            Role::Warden => 420,
+            Role::Mender => 130,
+        }
+    }
+
+    pub fn power(self) -> i32 {
+        match self {
+            Role::Scout => 12,
+            Role::Breaker => 40,
+            Role::Carrier => 8,
+            Role::Warden => 20,
+            Role::Mender => 6,
+        }
+    }
+
+    pub fn carry(self) -> i32 {
+        match self {
+            Role::Scout => 60,
+            Role::Breaker => 60,
+            Role::Carrier => 300,
+            Role::Warden => 80,
+            Role::Mender => 60,
+        }
+    }
+
     /// Per tick.
     pub fn speed(self) -> Fx {
         Fx::from_ratio(self.speed_tenths(), 10 * TICKS_PER_SECOND as i64)
     }
 }
+
+/// Where the fixture's Vault stands.
+pub const VAULT_AT: (u16, u16) = (11, 5);
 
 /// A fixture crew's roles, in §11.1's order.
 const CREW: [Role; 5] = [Role::Scout, Role::Breaker, Role::Carrier, Role::Warden, Role::Mender];
@@ -227,6 +263,7 @@ impl Point {
 #[derive(Clone, Debug)]
 pub struct Guard {
     pub id: u32,
+    pub role: Role,
     pub at: Point,
     pub facing: Ang,
     pub cone: Ang,
@@ -238,6 +275,21 @@ pub struct Guard {
     pub turn_per_tick: Ang,
     /// §11.1's speed for its role, per tick, for the states that walk.
     pub speed: Fx,
+    /// §11.1: "When guarding at home, every role fights with its power and
+    /// health."
+    pub power: i32,
+    /// Ticks into the current swing. §12.8: "every guard attack shows a
+    /// 0.8-second wind-up"; the hit lands at the end of it.
+    pub swing: u32,
+    pub health: i32,
+    /// Stunned by an ambush until this tick. A stunned guard does nothing:
+    /// it does not see, hear, move, change state or swing.
+    pub stunned_until: u32,
+    /// §12.8: "A knocked-out guard stays down unless a law brings it back."
+    pub knocked_out: bool,
+    /// Whether another guard has found it, which is what moves the realm
+    /// alarm: "once per knocked-out guard discovered".
+    pub found: bool,
     pub suspicion: i32,
     /// §12.17's six states. See `guard.rs`.
     pub state: guard::State,
@@ -261,6 +313,11 @@ pub struct Guard {
 }
 
 impl Guard {
+    /// Neither knocked out nor stunned: able to see, hear, move and act.
+    pub fn awake(&self, now: u32) -> bool {
+        !self.knocked_out && now >= self.stunned_until
+    }
+
     fn next_step(&self, grid: &Grid) -> Option<Point> {
         let tile = *self.route.get(self.along)?;
         let (x, y) = grid.centre(tile);
@@ -286,6 +343,7 @@ fn make_guard(id: u32, row: usize, post: grid::TileIndex, grid: &Grid) -> Guard 
     let (x, y) = grid.centre(post);
     Guard {
         id,
+        role: Role::from_row(row),
         at: Point { x, y },
         facing: Ang::from_degrees(270),
         cone: Ang::from_degrees(cone),
@@ -295,6 +353,12 @@ fn make_guard(id: u32, row: usize, post: grid::TileIndex, grid: &Grid) -> Guard 
         peripheral: Ang::from_degrees(peripheral),
         turn_per_tick: Ang::from_degrees(turn),
         speed: Role::from_row(row).speed(),
+        power: Role::from_row(row).power(),
+        swing: 0,
+        health: Role::from_row(row).health(),
+        stunned_until: 0,
+        knocked_out: false,
+        found: false,
         suspicion: 0,
         state: guard::State::Unaware,
         state_since: 0,
@@ -328,9 +392,27 @@ pub struct Raider {
     pub route: Vec<grid::TileIndex>,
     pub along: usize,
     pub gait: Gait,
+    pub health: i32,
+    /// What it carries, and how full the player asked it to load, in per cent
+    /// of §11.1's Carry.
+    pub carried: i32,
+    pub target_fill: i32,
+    pub task: Task,
+    /// The guard an Attack task is aimed at.
+    pub target: u32,
+    /// Ticks into the current swing, at the Vault or at a guard.
+    pub swing: u32,
+    pub standing: Standing,
+    /// When it went down, and how long an ally has been reviving it.
+    pub down_since: u32,
+    pub revive: u32,
 }
 
 impl Raider {
+    pub fn active(&self) -> bool {
+        self.standing == Standing::Active
+    }
+
     /// Standing still: no route, or at the end of it.
     pub fn still(&self) -> bool {
         self.along >= self.route.len()
@@ -364,6 +446,19 @@ pub struct World {
     next_command: usize,
     /// The spike's one realm law, as a factor on every crew member's pace.
     pub law_pace: Fx,
+    pub vault: Vault,
+    pub skiff: Option<Skiff>,
+    /// Loot dropped by a crew member knocked down: (tile, units). §12.20:
+    /// "Drops its loot on the tile." Picking it up again is not built.
+    pub dropped: Vec<(grid::TileIndex, i32)>,
+    /// The heist clock, in ticks. §12.6: "Anyone still inside when the clock
+    /// ends is caught and drops what it carries." `run` sets it from the
+    /// replay; a world made directly has no end.
+    pub clock: u32,
+    /// Whether any guard has reached Alerted, which "raises the alarm" —
+    /// §12.9's line between Clean and Loud. Not the realm alarm, which climbs
+    /// every thirty seconds whatever the crew does.
+    pub alarm_raised: bool,
 }
 
 impl World {
@@ -419,11 +514,20 @@ impl World {
         for x in 8..11 {
             grid.set_surface(x, 12, Surface::Moss);
         }
+        // Moss behind two posts. A crouched walk carries 1 m and the tile
+        // behind a guard is 1 m away, so the last step of any approach on
+        // plain ground is heard; on moss a crouched walk carries nothing.
+        // Without these §12.8's ambush has no way in (see the README).
+        grid.set_surface(9, 5, Surface::Moss);
+        grid.set_surface(12, 3, Surface::Moss);
         for y in 10..14 {
             for x in 10..14 {
                 grid.darken(x, y);
             }
         }
+        // The Vault, past the wall's gap and the gravel, between the Breaker's
+        // post and the Mender's: the fixture realm is the Heart.
+        grid.place(VAULT_AT.0, VAULT_AT.1, Feature::Vault);
 
         // Guards on tile centres, on both sides of the wall, so that the
         // wall, the fence and the fog each stand between some guard and some
@@ -440,6 +544,7 @@ impl World {
         // The fixture's entrance, where §12.17's reinforcing Warden arrives:
         // the far corner from the crew's start, on the guards' side.
         let entrance = grid.index(grid.width - 1, grid.height - 1).unwrap_or(0);
+        let vault_tile = grid.index(VAULT_AT.0, VAULT_AT.1).unwrap_or(0);
 
         let mut raiders = Vec::with_capacity(crew as usize);
         for i in 0..crew as i32 {
@@ -455,6 +560,15 @@ impl World {
                 route: Vec::new(),
                 along: 0,
                 gait: Gait::Walk,
+                health: role.health(),
+                carried: 0,
+                target_fill: 100,
+                task: Task::None,
+                target: 0,
+                swing: 0,
+                standing: Standing::Active,
+                down_since: 0,
+                revive: 0,
             });
         }
         World {
@@ -470,7 +584,25 @@ impl World {
             commands,
             next_command: 0,
             law_pace: Fx::ONE,
+            vault: Vault {
+                tile: vault_tile,
+                health: heist::VAULT_HEALTH_PER_LEVEL,
+                exposed: heist::FIXTURE_EXPOSED,
+                first_hit: None,
+                opened_at: None,
+            },
+            skiff: None,
+            dropped: Vec::new(),
+            clock: u32::MAX,
+            alarm_raised: false,
         }
+    }
+
+    /// Replace the input log, for a test that builds its world by hand.
+    #[cfg(test)]
+    pub(crate) fn commands_for_test(&mut self, commands: Vec<Command>) {
+        self.commands = commands;
+        self.next_command = 0;
     }
 
     /// One tick, in §24.10's six phases. Returns the checksum after it.
@@ -499,6 +631,10 @@ impl World {
                                           // not here is dropped, not fatal: the
                                           // server re-simulates untrusted logs
             };
+            // Down, caught or gone: nothing to command.
+            if !raider.active() {
+                continue;
+            }
             match command.kind {
                 Kind::MoveTo => {
                     let (x, y) = command.target();
@@ -524,6 +660,30 @@ impl World {
                     raider.route.clear();
                     raider.along = 0;
                 }
+                Kind::Crack => raider.task = Task::Crack,
+                Kind::Attack => {
+                    raider.task = Task::Attack;
+                    raider.target = command.x.max(0) as u32;
+                }
+                Kind::Load => {
+                    raider.task = Task::Load;
+                    raider.target_fill = (command.x as i32).clamp(0, 100);
+                }
+                // One skiff, called once; an inland tile, or a wall, is not a
+                // place a skiff can come, and the call is dropped.
+                Kind::Skiff => {
+                    let (x, y) = command.target();
+                    if let Some(tile) = self.grid.tile_at(x, y) {
+                        if self.skiff.is_none() && self.grid.is_edge(tile)
+                            && self.grid.at(tile).passable()
+                        {
+                            self.skiff = Some(Skiff {
+                                tile,
+                                arrives: self.tick + heist::SKIFF_HEART_TICKS,
+                            });
+                        }
+                    }
+                }
             }
         }
     }
@@ -547,7 +707,21 @@ impl World {
     /// Perception. §12.17: three graded zones inside a cone, filling at
     /// different rates, a weaker corner of the eye, and four modifiers.
     fn phase_perception(&mut self) {
+        let now = self.tick;
         for gi in 0..self.guards.len() {
+            if !self.guards[gi].awake(now) {
+                continue;                     // down or stunned: sees nothing
+            }
+            // §12.17: the realm alarm climbs "once per knocked-out guard
+            // discovered". Found by being seen, exactly as a raider is.
+            for other in 0..self.guards.len() {
+                if other != gi && self.guards[other].knocked_out && !self.guards[other].found
+                    && self.sees(gi, self.guards[other].at).is_some()
+                {
+                    self.guards[other].found = true;
+                    self.knockouts_discovered += 1;
+                }
+            }
             let mut gain = 0i32;
             // The raider noticed most this tick, ties to the lower id, so a
             // guard's interest is the same spot on every machine.
@@ -583,29 +757,12 @@ impl World {
     pub fn noticed(&self, gi: usize, ri: usize) -> Option<(i32, grid::TileIndex)> {
         let guard = &self.guards[gi];
         let raider = &self.raiders[ri];
-        let d = guard.at.distance(raider.at);
-        let reach = if guard.far.0 > 0 { guard.far } else { guard.mid };
-        if d > reach {
+        if !raider.active() || !guard.awake(self.tick) {
             return None;
         }
-        // The corner of the eye uses the same zones at half the rate.
-        // §12.17 says only "weak peripheral awareness"; the half is
-        // spec/detection.md's, and content/detection.json's.
-        let bearing = guard.at.bearing_to(raider.at);
-        let off = bearing.delta(guard.facing).0.abs();
-        let in_cone = off <= guard.cone.0 / 2;
-        if !in_cone && off > guard.peripheral.0 / 2 {
-            return None;
-        }
-        // In range and in the cone is not enough: something between
-        // may stop sight. Checked last because it is the costly test,
-        // and the order of pure checks cannot change the answer.
-        let (Some(from), Some(to)) = (
-            self.grid.tile_at(guard.at.x, guard.at.y),
-            self.grid.tile_at(raider.at.x, raider.at.y),
-        ) else {
-            return None;
-        };
+        // In range and in the cone is not enough: something between may
+        // stop sight, checked below, last, because it is the costly test.
+        let (d, in_cone, from, to) = self.sees_geometry(gi, raider.at)?;
         // "Standing still in tall grass makes you invisible until a
         // guard walks into the tile."
         if raider.still() && from != to
@@ -636,10 +793,45 @@ impl World {
         Some((per_tick, to))
     }
 
+    /// Whether a guard can see a point at all: in reach, in the cone or the
+    /// corner of the eye, and not behind anything that stops sight. Returns
+    /// the tile seen. Used for finding knocked-out guards.
+    fn sees(&self, gi: usize, at: Point) -> Option<grid::TileIndex> {
+        let (_, _, from, to) = self.sees_geometry(gi, at)?;
+        sight::visible(&self.grid, from, to).then_some(to)
+    }
+
+    /// Distance, whether in the cone proper, and the two tiles — or `None`
+    /// if the point is out of reach or outside both arcs.
+    fn sees_geometry(&self, gi: usize, at: Point)
+        -> Option<(Fx, bool, grid::TileIndex, grid::TileIndex)> {
+        let guard = &self.guards[gi];
+        let d = guard.at.distance(at);
+        let reach = if guard.far.0 > 0 { guard.far } else { guard.mid };
+        if d > reach {
+            return None;
+        }
+        // The corner of the eye uses the same zones at half the rate.
+        // §12.17 says only "weak peripheral awareness"; the half is
+        // spec/detection.md's, and content/detection.json's.
+        // At no distance there is no bearing — `bearing_to` answers east —
+        // and a guard standing on someone sees them. The first version let
+        // an Alerted guard converge onto a raider's own spot and lose it.
+        let bearing = guard.at.bearing_to(at);
+        let off = bearing.delta(guard.facing).0.abs();
+        let in_cone = d.0 == 0 || off <= guard.cone.0 / 2;
+        if !in_cone && off > guard.peripheral.0 / 2 {
+            return None;
+        }
+        let from = self.grid.tile_at(guard.at.x, guard.at.y)?;
+        let to = self.grid.tile_at(at.x, at.y)?;
+        Some((d, in_cone, from, to))
+    }
+
     /// Movement. Raiders walk their route; guards sweep their cone.
     fn phase_movement(&mut self) {
         for raider in self.raiders.iter_mut() {
-            if raider.still() {
+            if raider.still() || !raider.active() {
                 continue;
             }
             // The tile stood on sets the pace, not the tile being entered:
@@ -650,7 +842,12 @@ impl World {
             let here = self.grid.tile_at(raider.at.x, raider.at.y);
             let pace = here.map_or(Fx::ONE, |t| self.grid.at(t).pace());
             let (num, den) = raider.gait.pace();
-            let step = raider.speed.mul(pace).mul(self.law_pace).mul(Fx::from_ratio(num, den));
+            let mut step =
+                raider.speed.mul(pace).mul(self.law_pace).mul(Fx::from_ratio(num, den));
+            if raider.role == Role::Carrier && raider.carried > 0 {
+                let (n, d) = heist::CARRIER_LOADED_PACE;
+                step = step.mul(Fx::from_ratio(n, d));
+            }
             let (at, along) = walk_route(&self.grid, raider.at, &raider.route, raider.along, step);
             raider.at = at;
             raider.along = along;
@@ -660,14 +857,21 @@ impl World {
         // first version chose the direction at random each tick, which
         // §12.17 forbids for the same reason as the jitter above.
         let sweep = 1;
+        let now = self.tick;
         for guard in self.guards.iter_mut() {
+            if !guard.awake(now) {
+                continue;
+            }
             let walk = guard.speed;                             // §11.1's, by role
             use guard::State::*;
             match guard.state {
-                // "Patrols or holds its post" — the fixture holds, turning.
-                // "Wider, faster searching" has no figure, so Searching turns
-                // the same way.
-                Unaware | Searching => {
+                // "Patrols or holds its post" — the fixture holds, facing the
+                // way it was posted. The first version turned it at its full
+                // turn rate, a Scout through 240 degrees a second, which is a
+                // maximum, not an idle glance — and left no back to ambush.
+                Unaware => {}
+                // "Wider, faster searching" has no figure; Searching turns.
+                Searching => {
                     guard.facing = Ang(guard.facing.0 + guard.turn_per_tick.0 * sweep).wrapped();
                 }
                 // "Stops, turns toward it."
@@ -689,12 +893,27 @@ impl World {
                         }
                         None => {
                             // Arrived. Investigating starts its ten seconds
-                            // here; everyone else looks about.
+                            // here. Alerted has "converged" and faces what it
+                            // converged on — turning away from a crew beside
+                            // it would lose sight, drop it to Searching and
+                            // restart its swing, which the first version did
+                            // once a second. Everyone else looks about.
                             if guard.state == Investigating && guard.arrived_at.is_none() {
                                 guard.arrived_at = Some(self.tick);
                             }
-                            guard.facing =
-                                Ang(guard.facing.0 + guard.turn_per_tick.0 * sweep).wrapped();
+                            match (guard.state, guard.interest) {
+                                (Alerted, Some(spot)) => {
+                                    let (x, y) = self.grid.centre(spot);
+                                    let p = Point { x, y };
+                                    if p != guard.at {
+                                        guard.facing = guard.at.bearing_to(p);
+                                    }
+                                }
+                                _ => {
+                                    guard.facing = Ang(guard.facing.0
+                                        + guard.turn_per_tick.0 * sweep).wrapped();
+                                }
+                            }
                         }
                     }
                 }
@@ -717,14 +936,25 @@ impl World {
         let mut nearest: Vec<Option<(u16, grid::TileIndex, Option<grid::TileIndex>)>> =
             vec![None; self.guards.len()];
         for raider in self.raiders.iter() {
-            if raider.still() {
+            // A hit on the Vault is §12.17's "Breaking something — 5 m",
+            // made on the tick the hit lands (the states phase lands it).
+            let breaking = raider.active() && raider.task == heist::Task::Crack
+                && self.vault.opened_at.is_none()
+                && raider.swing + 1 >= heist::HIT_TICKS
+                && self.grid.tile_at(raider.at.x, raider.at.y)
+                    .is_some_and(|t| self.grid.neighbours(self.vault.tile).contains(&Some(t)));
+            if !breaking && (raider.still() || !raider.active()) {
                 continue;                             // standing still is silent
             }
             let Some(source) = self.grid.tile_at(raider.at.x, raider.at.y) else { continue };
             // What it is walking on decides how far its gait carries.
-            let reach = raider.gait.sound().steps_on(self.grid.surface(source));
+            let sound = if breaking { noise::Sound::Breaking } else { raider.gait.sound() };
+            let reach = sound.steps_on(self.grid.surface(source));
             let field = noise::field(&self.grid, source, reach);
             for (gi, guard) in self.guards.iter().enumerate() {
+                if !guard.awake(self.tick) {
+                    continue;
+                }
                 let Some(at) = self.grid.tile_at(guard.at.x, guard.at.y) else { continue };
                 let d = field[at as usize];
                 if d == noise::UNHEARD {
@@ -758,13 +988,16 @@ impl World {
         let due: Vec<_> = self.spreads.iter().copied().filter(|s| s.0 <= now).collect();
         self.spreads.retain(|s| s.0 > now);
         for (_, gi, spot) in due {
-            if self.guards[gi].state.rank() < Investigating.rank() {
+            if self.guards[gi].awake(now) && self.guards[gi].state.rank() < Investigating.rank() {
                 self.guards[gi].interest = Some(spot);
                 self.enter(gi, Investigating);
             }
         }
 
         for gi in 0..self.guards.len() {
+            if !self.guards[gi].awake(now) {
+                continue;
+            }
             let g = &self.guards[gi];
             let current = g.state;
             let held = now.saturating_sub(g.state_since);
@@ -823,10 +1056,278 @@ impl World {
             warden.state_since = now;
             self.guards.push(warden);
         }
+
+        self.settle();
+    }
+
+    /// The rest of the states phase: every rule that moves a crew member
+    /// between Active, Down, Caught and Out, and the Vault between sealed and
+    /// open. In this order, so that a hit, a revive and a boarding on the
+    /// same tick resolve the same way everywhere:
+    ///
+    ///   guards' hits → knockouts → revives and captures → the Vault →
+    ///   loading → the skiff → the clock
+    fn settle(&mut self) {
+        let now = self.tick;
+
+        // §12.20: an Alerted guard hits a crew member beside it once every
+        // 0.8 seconds for its Power. The wind-up runs while anyone is in
+        // reach and restarts when nobody is; the hit lands on the lowest id
+        // in reach, so "one at a time" is the order everywhere.
+        for gi in 0..self.guards.len() {
+            let g = &self.guards[gi];
+            let in_reach = if g.state == guard::State::Alerted && g.awake(now) {
+                self.grid.tile_at(g.at.x, g.at.y).and_then(|gt| {
+                    self.raiders.iter().position(|r| {
+                        r.active() && self.grid.tile_at(r.at.x, r.at.y)
+                            .is_some_and(|rt| self.grid.adjacent(gt, rt))
+                    })
+                })
+            } else {
+                None
+            };
+            let g = &mut self.guards[gi];
+            match in_reach {
+                None => g.swing = 0,
+                Some(ri) => {
+                    g.swing += 1;
+                    if g.swing >= heist::HIT_TICKS {
+                        g.swing = 0;
+                        let power = g.power;
+                        self.raiders[ri].health -= power;
+                    }
+                }
+            }
+        }
+
+        // §12.20: the crew hits back, "at any moment", once every 0.8
+        // seconds for its Power, at the guard it was told to attack. §12.8:
+        // a guard that has not noticed the crew is ambushed — stunned for two
+        // seconds for triple Power or half its full health, whichever is
+        // greater — and a stunned guard still has not noticed, so "two
+        // ambush hits knock out a guard of equal level". Any other hit sends
+        // its suspicion "straight to 1000".
+        for ri in 0..self.raiders.len() {
+            let r = &self.raiders[ri];
+            if r.task != Task::Attack {
+                continue;                     // its swing, if any, is at the Vault
+            }
+            let gi = r.target as usize;
+            let reach = r.active()
+                && self.guards.get(gi).is_some_and(|g| {
+                    !g.knocked_out
+                        && self.grid.tile_at(g.at.x, g.at.y)
+                            .zip(self.grid.tile_at(r.at.x, r.at.y))
+                            .is_some_and(|(a, b)| self.grid.adjacent(a, b))
+                });
+            if !reach {
+                self.raiders[ri].swing = 0;
+                continue;
+            }
+            self.raiders[ri].swing += 1;
+            if self.raiders[ri].swing < heist::HIT_TICKS {
+                continue;
+            }
+            self.raiders[ri].swing = 0;
+            let power = self.raiders[ri].role.power();
+            let g = &mut self.guards[gi];
+            let unaware = now < g.stunned_until || g.state == guard::State::Unaware;
+            if unaware {
+                let (pn, pd) = heist::AMBUSH_POWER;
+                let (hn, hd) = heist::AMBUSH_HEALTH_FLOOR;
+                let full = g.role.health();
+                g.health -= (power * pn / pd).max(full * hn / hd);
+                g.stunned_until = now + heist::AMBUSH_STUN_TICKS;
+                // "A stun ... during it cancels the attack."
+                g.swing = 0;
+            } else {
+                g.health -= power;
+                g.suspicion = SUSPICION_MAX;
+            }
+            if g.health <= 0 {
+                g.health = 0;
+                g.knocked_out = true;
+                g.swing = 0;
+                g.route.clear();
+                g.along = 0;
+            }
+        }
+        // A guard coming out of a stun has been hit: it wakes at 1000.
+        for g in self.guards.iter_mut() {
+            if !g.knocked_out && g.stunned_until != 0 && now + 1 == g.stunned_until {
+                g.suspicion = SUSPICION_MAX;
+            }
+        }
+
+        // "A crew member at zero health drops its loot on the tile."
+        for raider in self.raiders.iter_mut() {
+            if raider.active() && raider.health <= 0 {
+                raider.health = 0;
+                raider.standing = Standing::Down;
+                raider.down_since = now;
+                raider.revive = 0;
+                raider.route.clear();
+                raider.along = 0;
+                if raider.carried > 0 {
+                    if let Some(t) = self.grid.tile_at(raider.at.x, raider.at.y) {
+                        self.dropped.push((t, raider.carried));
+                    }
+                    raider.carried = 0;
+                }
+            }
+        }
+
+        // "An ally standing adjacent revives it in 3 seconds, a Mender in
+        // 1.5", else "ten seconds before capture". The helper is the lowest
+        // id beside it; with none, the revive starts again.
+        for ri in 0..self.raiders.len() {
+            if self.raiders[ri].standing != Standing::Down {
+                continue;
+            }
+            let here = self.grid.tile_at(self.raiders[ri].at.x, self.raiders[ri].at.y);
+            let helper = self.raiders.iter().enumerate().find(|(oi, o)| {
+                *oi != ri && o.active()
+                    && here.zip(self.grid.tile_at(o.at.x, o.at.y))
+                        .is_some_and(|(a, b)| self.grid.adjacent(a, b))
+            }).map(|(_, o)| o.role);
+            let r = &mut self.raiders[ri];
+            match helper {
+                Some(role) => {
+                    r.revive += 1;
+                    let need = if role == Role::Mender {
+                        heist::MENDER_REVIVE_TICKS
+                    } else {
+                        heist::REVIVE_TICKS
+                    };
+                    if r.revive >= need {
+                        let (n, d) = heist::REVIVE_HEALTH;
+                        r.health = (r.role.health() * n / d).max(1);
+                        r.standing = Standing::Active;
+                        r.revive = 0;
+                        continue;
+                    }
+                }
+                None => r.revive = 0,
+            }
+            if now - r.down_since >= heist::DOWN_TICKS {
+                r.standing = Standing::Caught;
+            }
+        }
+
+        // The Vault. A crew member told to crack, standing beside it, swings
+        // every 0.8 seconds for its Power, a Breaker for double.
+        if self.vault.opened_at.is_none() {
+            for raider in self.raiders.iter_mut() {
+                let beside = self.grid.tile_at(raider.at.x, raider.at.y)
+                    .is_some_and(|t| self.grid.neighbours(self.vault.tile).contains(&Some(t)));
+                if raider.task != Task::Crack {
+                    continue;                 // its swing, if any, is at a guard
+                }
+                if !(raider.active() && beside) {
+                    raider.swing = 0;
+                    continue;
+                }
+                raider.swing += 1;
+                if raider.swing >= heist::HIT_TICKS {
+                    raider.swing = 0;
+                    let (n, d) = if raider.role == Role::Breaker {
+                        heist::BREAKER_VAULT_DAMAGE
+                    } else {
+                        (1, 1)
+                    };
+                    self.vault.health -= raider.role.power() * n / d;
+                    self.vault.first_hit.get_or_insert(now);
+                }
+            }
+            // "Cracking is loud: every 5 seconds adds 100 suspicion to every
+            // guard in the Heart."
+            if let Some(t) = self.vault.first_hit {
+                if now > t && (now - t) % heist::CRACK_NOISE_TICKS == 0 {
+                    for g in self.guards.iter_mut().filter(|g| g.awake(now)) {
+                        g.suspicion = (g.suspicion + heist::CRACK_NOISE).min(SUSPICION_MAX);
+                    }
+                }
+            }
+            if self.vault.health <= 0 {
+                self.vault.health = 0;
+                self.vault.opened_at = Some(now);
+            }
+        } else {
+            // §12.19: "Every role can load, at 30 units a second", to the
+            // target, until the bag is full or the exposed share is gone. In
+            // id order, so who gets the last units is the same everywhere.
+            let per_tick = heist::LOAD_PER_SECOND / TICKS_PER_SECOND as i32;
+            for raider in self.raiders.iter_mut() {
+                let beside = self.grid.tile_at(raider.at.x, raider.at.y)
+                    .is_some_and(|t| self.grid.neighbours(self.vault.tile).contains(&Some(t)));
+                if !(raider.active() && raider.task == Task::Load && beside) {
+                    continue;
+                }
+                let target = raider.role.carry() * raider.target_fill / 100;
+                let take = per_tick.min(target - raider.carried).min(self.vault.exposed);
+                if take > 0 {
+                    raider.carried += take;
+                    self.vault.exposed -= take;
+                }
+            }
+        }
+
+        // §5.4: "The crew must hold the spot until it arrives." Anyone on the
+        // spot once it has arrived is aboard, with what it carries banked.
+        if let Some(skiff) = self.skiff {
+            if now >= skiff.arrives {
+                for raider in self.raiders.iter_mut() {
+                    if raider.active()
+                        && self.grid.tile_at(raider.at.x, raider.at.y) == Some(skiff.tile)
+                    {
+                        raider.standing = Standing::Out;
+                        raider.route.clear();
+                        raider.along = 0;
+                    }
+                }
+            }
+        }
+
+        // §12.6: "Anyone still inside when the clock ends is caught and drops
+        // what it carries."
+        if now + 1 >= self.clock {
+            for raider in self.raiders.iter_mut() {
+                if matches!(raider.standing, Standing::Active | Standing::Down) {
+                    raider.standing = Standing::Caught;
+                    if raider.carried > 0 {
+                        if let Some(t) = self.grid.tile_at(raider.at.x, raider.at.y) {
+                            self.dropped.push((t, raider.carried));
+                        }
+                        raider.carried = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    /// §12.9's outcome, from the crew's standings. Meaningful once the clock
+    /// has run or everyone is out or caught; before that it says what the
+    /// heist would come to if it stopped now.
+    pub fn outcome(&self) -> Outcome {
+        let banked: i32 = self.raiders.iter()
+            .filter(|r| r.standing == Standing::Out).map(|r| r.carried).sum();
+        let capacity: i32 = self.raiders.iter().map(|r| r.role.carry()).sum();
+        let caught = self.raiders.iter().filter(|r| r.standing == Standing::Caught).count() as u32;
+        let out = self.raiders.iter().filter(|r| r.standing == Standing::Out).count() as u32;
+        let grade = if banked == 0 {
+            Grade::Foiled
+        } else if out as usize != self.raiders.len() {
+            Grade::Partial
+        } else if self.alarm_raised {
+            Grade::Loud
+        } else {
+            Grade::Clean
+        };
+        Outcome { grade, banked, capacity, caught, out }
     }
 
     /// Enter a state, and do what entering it means.
-    fn enter(&mut self, gi: usize, state: guard::State) {
+    pub(crate) fn enter(&mut self, gi: usize, state: guard::State) {
         use guard::State::*;
         let now = self.tick;
         {
@@ -854,11 +1355,13 @@ impl World {
         // not everywhere at once: guards within four metres start
         // investigating half a second later."
         if state == Alerted {
+            self.alarm_raised = true;
             let here = self.guards[gi].at;
             let spot = self.grid.tile_at(here.x, here.y);
             let reach = Fx::from_int(guard::SPREAD_METRES);
             for other in 0..self.guards.len() {
-                if other == gi || self.guards[other].at.distance(here) > reach {
+                if other == gi || self.guards[other].knocked_out
+                    || self.guards[other].at.distance(here) > reach {
                     continue;
                 }
                 if let Some(spot) = spot {
@@ -903,6 +1406,12 @@ impl World {
         mix(self.reinforced as i64);
         mix(self.spreads.len() as i64);
         mix(self.law_pace.0);
+        mix(self.vault.health as i64);
+        mix(self.vault.exposed as i64);
+        mix(self.vault.opened_at.map_or(-1, |t| t as i64));
+        mix(self.skiff.map_or(-1, |s| s.tile as i64));
+        mix(self.dropped.len() as i64);
+        mix(self.alarm_raised as i64);
         for guard in self.guards.iter() {
             mix(guard.id as i64);
             mix(guard.at.x.0);
@@ -914,6 +1423,11 @@ impl World {
             mix(guard.route.len() as i64);
             mix(guard.along as i64);
             mix(guard.interest.map_or(-1, |t| t as i64));
+            mix(guard.swing as i64);
+            mix(guard.health as i64);
+            mix(guard.stunned_until as i64);
+            mix(guard.knocked_out as i64);
+            mix(guard.found as i64);
         }
         for raider in self.raiders.iter() {
             mix(raider.id as i64);
@@ -924,6 +1438,13 @@ impl World {
             mix(raider.along as i64);
             mix(raider.route.get(raider.along).map_or(-1, |t| *t as i64));
             mix(raider.gait as i64);
+            mix(raider.health as i64);
+            mix(raider.carried as i64);
+            mix(raider.task as i64);
+            mix(raider.target as i64);
+            mix(raider.swing as i64);
+            mix(raider.standing as i64);
+            mix(raider.revive as i64);
         }
         h
     }
@@ -965,6 +1486,7 @@ fn walk_route(grid: &Grid, mut at: Point, route: &[grid::TileIndex], mut along: 
 /// is kept: "every tick in memory, one a second kept".
 pub fn run(heist: &Heist) -> Vec<u64> {
     let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
+    world.clock = heist.ticks;
     let mut kept = Vec::with_capacity((heist.ticks / TICKS_PER_SECOND) as usize + 1);
     for _ in 0..heist.ticks {
         let sum = world.step();
@@ -1021,23 +1543,51 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
     let decisions = 15 + rng.below(11) as u32;      // 15 to 25, §12.6
     let side = Grid::for_realm_level(FIXTURE_REALM_LEVEL).width as u64;
     let mut commands = Vec::with_capacity(decisions as usize * 2);
+    // A tile, as a command aims at it: its centre, at 1/256 of a tile.
+    let aim = |x: u64, y: u64| ((x * 256 + 128) as i16, (y * 256 + 128) as i16);
+    // The four tiles beside the Vault, north, east, south, west.
+    let (vx, vy) = (VAULT_AT.0 as u64, VAULT_AT.1 as u64);
+    let beside = [(vx, vy - 1), (vx + 1, vy), (vx, vy + 1), (vx - 1, vy)];
     for i in 0..decisions {
         let tick = (ticks / decisions) * i + (rng.below(20) as u32);
         let actor = rng.below(crew as u64) as u8;
-        commands.push(Command {
-            tick,
-            actor,
-            kind: Kind::MoveTo,
-            // Aimed inside the fixture's realm. A destination off the grid is
-            // a command that does nothing, which is legal and tests nothing.
-            x: rng.below(side * 256) as i16,
-            y: rng.below(side * 256) as i16,
-        });
-        if rng.below(3) == 0 {
-            commands.push(Command {
-                tick, actor, kind: Kind::Gait,
-                x: rng.below(3) as i16, y: 0,
-            });
+        let mut push = |kind: Kind, (x, y): (i16, i16)| {
+            commands.push(Command { tick, actor, kind, x, y });
+        };
+        // Most decisions are moves; the rest are §12.6's others — a gait,
+        // who cracks, who loads and how full, and where the skiff comes.
+        match rng.below(10) {
+            0..=5 => {
+                // Aimed inside the fixture's realm. A destination off the
+                // grid is a command that does nothing, which is legal and
+                // tests nothing.
+                let x = rng.below(side * 256) as i16;
+                let y = rng.below(side * 256) as i16;
+                push(Kind::MoveTo, (x, y));
+            }
+            6 => push(Kind::Gait, (rng.below(3) as i16, 0)),
+            7 => {
+                let (bx, by) = beside[rng.below(4) as usize];
+                push(Kind::MoveTo, aim(bx, by));
+                push(Kind::Crack, (0, 0));
+            }
+            8 => {
+                let (bx, by) = beside[rng.below(4) as usize];
+                push(Kind::MoveTo, aim(bx, by));
+                push(Kind::Load, (50 + rng.below(51) as i16, 0));
+            }
+            _ => {
+                // An edge tile: a side, then a place along it.
+                let along = rng.below(side);
+                let (x, y) = match rng.below(4) {
+                    0 => (along, 0),
+                    1 => (side - 1, along),
+                    2 => (along, side - 1),
+                    _ => (0, along),
+                };
+                push(Kind::Skiff, aim(x, y));
+                push(Kind::MoveTo, aim(x, y));
+            }
         }
     }
     commands.sort_by_key(|c| (c.tick, c.actor, c.kind as u8));
@@ -1055,6 +1605,85 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
     heist.checksums = run(&heist).iter().map(|s| truncate(*s)).collect();
     heist
 }
+
+/// A heist planned the way a player would play it, rather than drawn from a
+/// seed: three crew cross through the wall's gap, the Breaker cracks while the
+/// others wait beside the Vault, everyone loads, and the skiff is called to the
+/// nearest edge in time to be there when the bags are full.
+///
+/// The seeded fixture almost never opens the Vault — random moves rarely put
+/// a Breaker beside it for fifteen seconds — so without this no golden replay
+/// would carry cracking, loading, banking or a graded outcome.
+pub fn planned() -> Heist {
+    let t = |seconds: u32| seconds * TICKS_PER_SECOND;
+    let at = |x: i16, y: i16| (x * 256 + 128, y * 256 + 128);
+    let mut commands = Vec::new();
+    let mut say = |tick: u32, actor: u8, kind: Kind, (x, y): (i16, i16)| {
+        commands.push(Command { tick, actor, kind, x, y });
+    };
+    PLAN.iter().for_each(|&(s, actor, kind, x, y)| {
+        let target = if matches!(kind, Kind::MoveTo | Kind::Skiff) { at(x, y) } else { (x, y) };
+        say(t(s), actor, kind, target);
+    });
+    commands.sort_by_key(|c| (c.tick, c.actor, c.kind as u8));
+    let mut heist = Heist {
+        seed: 0x5EED_0F_A_7EA1,
+        island: digest_bytes(0, 0x15_1A_4D),
+        rules: digest_bytes(0, 0x2D_1E_5F),
+        ticks: t(165),                    // §5.4: 150 s + 15 for one link
+        crew: 3,
+        commands,
+        checksums: Vec::new(),
+    };
+    heist.checksums = run(&heist).iter().map(|s| truncate(*s)).collect();
+    heist
+}
+
+/// The plan: (second, crew member, command, x, y). Crew 0 is a Scout, 1 a
+/// Breaker, 2 a Carrier. Guards are numbered by §12.17's rows: 2 is the
+/// Breaker at (9, 4) and 4 the Mender at (12, 2), both posted facing north.
+///
+///   0 s   crouched — the gravel in the gap would carry a walk to the
+///         Breaker guard — the Scout and the Breaker go round to the moss
+///         behind it; the Carrier waits by the gap
+///  12 s   both attack at once: the Scout's ambush stuns it, the Breaker's
+///         lands while it is still stunned, and two ambush hits knock it out
+///  14 s   the same two go round to the moss behind the Mender guard
+///  20 s   and ambush it the same way
+///  23 s   all three walk to the Vault and crack, and the skiff is called to
+///         the east edge beside it: twenty seconds to fight the winds
+///  40 s   the Vault is open: everyone loads to full
+///  52 s   everyone walks to the skiff
+const PLAN: &[(u32, u8, Kind, i16, i16)] = &[
+    (0, 0, Kind::Gait, 1, 0),
+    (0, 1, Kind::Gait, 1, 0),
+    (0, 2, Kind::Gait, 1, 0),
+    (0, 0, Kind::MoveTo, 9, 5),
+    (0, 1, Kind::MoveTo, 9, 5),
+    (0, 2, Kind::MoveTo, 7, 6),
+    (12, 0, Kind::Attack, 2, 0),
+    (12, 1, Kind::Attack, 2, 0),
+    (14, 0, Kind::MoveTo, 12, 3),
+    (14, 1, Kind::MoveTo, 12, 3),
+    (20, 0, Kind::Attack, 4, 0),
+    (20, 1, Kind::Attack, 4, 0),
+    (23, 0, Kind::Gait, 0, 0),
+    (23, 1, Kind::Gait, 0, 0),
+    (23, 2, Kind::Gait, 0, 0),
+    (23, 0, Kind::MoveTo, 11, 4),
+    (23, 1, Kind::MoveTo, 12, 5),
+    (23, 2, Kind::MoveTo, 10, 5),
+    (23, 0, Kind::Crack, 0, 0),
+    (23, 1, Kind::Crack, 0, 0),
+    (23, 2, Kind::Crack, 0, 0),
+    (23, 0, Kind::Skiff, 13, 5),
+    (40, 0, Kind::Load, 100, 0),
+    (40, 1, Kind::Load, 100, 0),
+    (40, 2, Kind::Load, 100, 0),
+    (52, 0, Kind::MoveTo, 13, 5),
+    (52, 1, Kind::MoveTo, 13, 5),
+    (52, 2, Kind::MoveTo, 13, 5),
+];
 
 fn digest_bytes(seed: u64, salt: u64) -> [u8; 32] {
     let mut out = [0u8; 32];

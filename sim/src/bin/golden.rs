@@ -18,7 +18,7 @@
 //! needed it — splitting them leaves a commit whose tests fail — and say in
 //! the message which second moved.
 
-use ruleborn_sim::{fixture, replay::MAX_HEIST_BYTES};
+use ruleborn_sim::{fixture, planned, replay::{Heist, MAX_HEIST_BYTES}};
 use std::path::Path;
 
 /// (name, seed, ticks, crew). Chosen to span what §24.10 and §12.5 allow: the
@@ -34,8 +34,14 @@ const GOLDEN: &[(&str, u64, u32, u8)] = &[
 fn main() {
     let write = std::env::args().any(|a| a == "--write");
     let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("golden");
-    for (name, seed, ticks, crew) in GOLDEN {
-        let heist = fixture(*seed, *ticks, *crew);
+    // The seeded heists, and one played as a player would: the seeded ones
+    // almost never open the Vault, so without it no golden would carry
+    // cracking, loading, a fight or a graded outcome.
+    let mut all: Vec<(&str, Heist)> = GOLDEN.iter()
+        .map(|(name, seed, ticks, crew)| (*name, fixture(*seed, *ticks, *crew)))
+        .collect();
+    all.push(("planned-clean", planned()));
+    for (name, heist) in all {
         let bytes = heist.encode();
         assert!(bytes.len() <= MAX_HEIST_BYTES,
                 "{name} is {} bytes, over the limit", bytes.len());

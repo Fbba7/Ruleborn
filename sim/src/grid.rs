@@ -117,12 +117,17 @@ pub enum Feature {
     /// grass makes you invisible until a guard walks into the tile" — which
     /// is a rule about the one standing in it, not about the line through it.
     TallGrass,
+    /// §12.6's Vault: a structure, walled on every side, cracked and loaded
+    /// from the tiles beside it.
+    Vault,
 }
 
 impl Feature {
     fn terrain(self) -> Terrain {
         match self {
-            Feature::RockPillar | Feature::RuinWall | Feature::Fence => Terrain::Blocked,
+            Feature::RockPillar | Feature::RuinWall | Feature::Fence | Feature::Vault => {
+                Terrain::Blocked
+            }
             Feature::FogBank | Feature::TallGrass => Terrain::Open,
         }
     }
@@ -236,6 +241,18 @@ impl Grid {
             return None;
         }
         self.index(x.to_int() as u16, y.to_int() as u16)
+    }
+
+    /// Whether two tiles are the same or side by side. §12.20's "an ally
+    /// standing adjacent" in the grid's own four-neighbour sense.
+    pub fn adjacent(&self, a: TileIndex, b: TileIndex) -> bool {
+        a == b || self.neighbours(a).contains(&Some(b))
+    }
+
+    /// On the realm's edge. §5.4: the skiff comes "to any edge tile".
+    pub fn is_edge(&self, index: TileIndex) -> bool {
+        let (x, y) = self.coords(index);
+        x == 0 || y == 0 || x + 1 == self.width || y + 1 == self.height
     }
 
     /// The four neighbours, **in this order**: north, east, south, west.

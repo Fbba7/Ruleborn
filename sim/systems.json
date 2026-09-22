@@ -189,6 +189,49 @@
         "a_gait_command_changes_the_gait_and_a_bad_one_is_dropped",
         "the_crew_and_the_guards_move_at_their_roles_speeds"
       ]
+    },
+    {
+      "name": "The Vault and loading",
+      "section": "12.19",
+      "task": "T5.5",
+      "what": "1,500 health a Vault level, cracked from beside it one hit every 0.8 s, Breakers for double; every hit is heard 5 m away. Once open, every crew member loads at 30 a second to the fill the player set, until the bag is full or the exposed share is gone — a full crew in ten seconds. A loaded Carrier walks 15% slower.",
+      "tests": [
+        "a_breaker_cracks_at_double_damage_one_hit_every_eight_tenths",
+        "cracking_takes_ten_to_twenty_five_seconds_only_with_a_breaker",
+        "a_hit_on_the_vault_is_heard_five_steps_away",
+        "the_crack_noise_empties_before_it_can_matter",
+        "loading_is_thirty_a_second_to_the_target",
+        "a_full_five_crew_load_takes_ten_seconds",
+        "loading_stops_when_the_exposed_share_is_gone",
+        "the_carrier_walks_fifteen_percent_slower_loaded"
+      ]
+    },
+    {
+      "name": "Fights, knockouts and capture",
+      "section": "12.20",
+      "task": "T5.5",
+      "what": "One hit every 0.8 s for Power, on both sides. An ambush on a guard that has not noticed the crew stuns it and two knock it out; an open hit sends it to 1000. A crew member at zero health drops its loot and is caught in ten seconds unless an ally revives it (3 s, a Mender 1.5). A knocked-out guard found by another raises the realm alarm.",
+      "tests": [
+        "an_alerted_guard_hits_once_every_eight_tenths_for_its_power",
+        "a_downed_crew_member_is_caught_after_ten_seconds_unless_revived",
+        "two_ambush_hits_knock_out_a_guard_of_equal_level_in_every_pairing",
+        "an_open_hit_sends_suspicion_straight_to_1000",
+        "a_knocked_out_guard_found_by_another_raises_the_realm_alarm",
+        "a_posted_guard_holds_its_facing",
+        "a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss"
+      ]
+    },
+    {
+      "name": "The skiff, the clock and the outcome",
+      "section": "12.9",
+      "task": "T5.5",
+      "what": "The skiff comes to an edge tile in 20 s at the Heart and takes whoever holds the spot; anyone inside when the clock ends is caught. §12.9's four grades from who got out with what. A heist planned as a player would play it ends Clean with every bag full.",
+      "tests": [
+        "the_skiff_comes_to_an_edge_after_twenty_seconds_and_nowhere_else",
+        "anyone_inside_when_the_clock_ends_is_caught",
+        "the_four_grades_follow_12_9",
+        "the_planned_heist_ends_clean_with_every_bag_full"
+      ]
     }
   ],
   "targets": [

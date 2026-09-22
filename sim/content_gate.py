@@ -29,7 +29,7 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 CONTENT = HERE.parent / "content" / "detection.json"
 ROLES = HERE.parent / "content" / "roles.json"
-SOURCES = ["src/lib.rs", "src/guard.rs", "src/noise.rs", "src/grid.rs"]
+SOURCES = ["src/lib.rs", "src/guard.rs", "src/noise.rs", "src/grid.rs", "src/heist.rs"]
 
 # Values the content files hold that the simulation does not yet use, by path
 # prefix. Each is reported so none passes as agreeing by being absent.
@@ -39,11 +39,7 @@ NOT_MODELLED = [
     ("noise.sources.landing_1_level", "the fixture has one level"),
     ("noise.sources.landing_3_levels", "the fixture has one level"),
     ("noise.off_screen_multiplier", "the simulation has no screen"),
-    ("alarm.realm_alarm_per_guard_found", "no knockouts yet, so none are found"),
-    ("ambush", "§12.8's ambush is not built"),
-    ("roles.health", "no fights yet (§12.20)"),
-    ("roles.power", "no fights yet (§12.20)"),
-    ("roles.carry", "no loading yet (§12.19)"),
+    ("ambush.level_advantage_cap", "every character is level 1: there are no levels yet"),
 ]
 
 # Values that restate another value in different units, and are covered by
@@ -57,12 +53,20 @@ DERIVED = [
 # a number. The gate checks the test exists; status.py checks it passed.
 HELD_BY_TEST = {
     "modifiers.still_in_grass": "standing_still_in_tall_grass_hides_until_a_guard_walks_in",
+    "alarm.realm_alarm_per_guard_found":
+        "a_knocked_out_guard_found_by_another_raises_the_realm_alarm",
+    "ambush.hits_to_down_equal_level_guard":
+        "two_ambush_hits_knock_out_a_guard_of_equal_level_in_every_pairing",
 }
 
 # Numbers the simulation needs and the document does not give.
 READINGS = [
     ("CROUCH_PACE", "crouched speed against §11.1's", "no section gives one"),
     ("RUN_PACE", "running speed against §11.1's", "no section gives one"),
+    ("REVIVE_HEALTH", "the health a revived crew member gets back",
+     "§12.20 says an ally \"revives it\" and not with what"),
+    ("FIXTURE_EXPOSED", "what the fixture's Vault holds, in bag units",
+     "§9.6 prices the exposed share in Starlight and nothing converts it to Carry"),
 ]
 
 
@@ -87,9 +91,11 @@ def roles(text: str) -> dict[str, tuple[int, ...]]:
                                  r"\s*// (\w+)", text)}
 
 
-def speeds(text: str) -> dict[str, int]:
-    body = re.search(r"fn speed_tenths\(self\) -> i64 \{(.*?)\n    \}", text, re.S)
-    return {n: int(v) for n, v in re.findall(r"Role::(\w+) => (\d+)", body.group(1))} if body else {}
+def column(text: str, fn: str) -> dict[str, int]:
+    """A §11.1 column as `Role::fn` states it: `Role::Scout => 45` and so on."""
+    body = re.search(rf"fn {fn}\(self\) -> i\d+ \{{(.*?)\n    \}}", text, re.S)
+    return {n: int(v) for n, v in re.findall(r"Role::(\w+) => (\d+)", body.group(1))} \
+        if body else {}
 
 
 def sounds(text: str) -> dict[str, int]:
@@ -211,10 +217,20 @@ def compare(content: dict, role_rows: list, text: str) -> dict:
         (checked if f"fn {test}()" in text else wrong).append(
             f"{path}: held by the test {test}")
 
-    speed = speeds(text)
-    for row in role_rows:
-        same(f"roles.speed.{row['name']}", f"{row['name']} speed (tenths of a tile/s)",
-             round(row["speed"] * 10), speed.get(row["name"]))
+    for field, fn, scale in (("speed", "speed_tenths", 10), ("health", "health", 1),
+                             ("power", "power", 1), ("carry", "carry", 1)):
+        have = column(text, fn)
+        for row in role_rows:
+            same(f"roles.{field}.{row['name']}", f"{row['name']} {field}",
+                 round(row[field] * scale), have.get(row["name"]))
+
+    am = content["ambush"]
+    same("ambush.stun_seconds", "ambush stun (ticks)",
+         am["stun_seconds"] * content["_tick_rate"], k.get("AMBUSH_STUN_TICKS"))
+    same("ambush.damage_multiplier", "ambush multiplies Power",
+         (am["damage_multiplier"], 1), k.get("AMBUSH_POWER"))
+    same("ambush.wind_up_seconds", "wind-up (ticks)",
+         round(am["wind_up_seconds"] * content["_tick_rate"]), k.get("HIT_TICKS"))
 
     # Coverage: every number in both files is compared, not modelled, derived
     # or held by a test. Anything else is a value that could drift unseen.
@@ -228,6 +244,43 @@ def compare(content: dict, role_rows: list, text: str) -> dict:
                  and not any(p.startswith(t + ".") or p == t for t in touched)]
     return {"checked": checked, "wrong": wrong, "uncovered": uncovered,
             "readings": [f"{n} = {k.get(n)} — {what}; {why}" for n, what, why in READINGS]}
+
+
+def facts_compare(text: str) -> dict:
+    """The simulation's copies of the facts `tools/design_facts.py` declares.
+
+    Those are the document's numbers that have no content file — the Vault,
+    loading, knockouts, the skiff — declared once there with the section that
+    owns each. The harness imports them; the simulation cannot, being Rust,
+    so it is checked against them here.
+    """
+    sys.path.insert(0, str(HERE.parent / "tools"))
+    import design_facts as f
+    k = constants(text)
+    tps = k.get("TICKS_PER_SECOND")
+    rows = [
+        ("VAULT_HEALTH_PER_LEVEL", f.VAULT_HEALTH_PER_LEVEL, k.get("VAULT_HEALTH_PER_LEVEL")),
+        ("BREAKER_VAULT_MULTIPLIER", (f.BREAKER_VAULT_MULTIPLIER, 1), k.get("BREAKER_VAULT_DAMAGE")),
+        ("CRACK_NOISE", f.CRACK_NOISE, k.get("CRACK_NOISE")),
+        ("CRACK_NOISE_SECONDS", f.CRACK_NOISE_SECONDS * tps, k.get("CRACK_NOISE_TICKS")),
+        ("LOAD_PER_SECOND", f.LOAD_PER_SECOND, k.get("LOAD_PER_SECOND")),
+        ("CARRIER_LOADED_PACE", (round(f.CARRIER_LOADED_PACE * 100), 100),
+         k.get("CARRIER_LOADED_PACE")),
+        ("AMBUSH_STUN_SECONDS", f.AMBUSH_STUN_SECONDS * tps, k.get("AMBUSH_STUN_TICKS")),
+        ("AMBUSH_MULTIPLIER", (round(f.AMBUSH_MULTIPLIER), 1), k.get("AMBUSH_POWER")),
+        ("WIND_UP", round(f.WIND_UP * tps), k.get("HIT_TICKS")),
+        ("DOWN_SECONDS", f.DOWN_SECONDS * tps, k.get("DOWN_TICKS")),
+        ("REVIVE_SECONDS", round(f.REVIVE_SECONDS * tps), k.get("REVIVE_TICKS")),
+        ("MENDER_REVIVE_SECONDS", round(f.MENDER_REVIVE_SECONDS * tps),
+         k.get("MENDER_REVIVE_TICKS")),
+        ("SKIFF_OUTER_SECONDS", f.SKIFF_OUTER_SECONDS * tps, k.get("SKIFF_OUTER_TICKS")),
+        ("SKIFF_HEART_SECONDS", f.SKIFF_HEART_SECONDS * tps, k.get("SKIFF_HEART_TICKS")),
+    ]
+    checked, wrong = [], []
+    for name, want, have in rows:
+        (checked if want == have else wrong).append(
+            f"design_facts.{name}: {want}, simulation {have}")
+    return {"checked": checked, "wrong": wrong}
 
 
 def source_text() -> str:
@@ -263,6 +316,7 @@ def self_test() -> int:
     caught("running at double", "running multiplies",
            t=text.replace("RUNNING: (i32, i32) = (7, 4)", "RUNNING: (i32, i32) = (2, 1)"))
     caught("slow Scout", "Scout speed", t=text.replace("Role::Scout => 45", "Role::Scout => 40"))
+    caught("weak Warden", "Warden health", t=text.replace("Role::Warden => 420", "Role::Warden => 400"))
     # The gap the first version had: a number in the file nothing compares.
     planted = json.loads(json.dumps(content))
     planted["modifiers"].append({"id": "in_rain", "effect": "rate", "multiplier": 0.8})
@@ -270,8 +324,13 @@ def self_test() -> int:
     # A rule held by a test whose test is deleted.
     caught("test gone", "modifiers.still_in_grass",
            t=text.replace("fn standing_still_in_tall_grass_hides_until_a_guard_walks_in()", "fn x()"))
+    # And a design fact the simulation restates differently.
+    got = facts_compare(text.replace("LOAD_PER_SECOND: i32 = 30", "LOAD_PER_SECOND: i32 = 25"))
+    assert any(w.startswith("design_facts.LOAD_PER_SECOND") for w in got["wrong"]), got
+    assert not facts_compare(text)["wrong"], facts_compare(text)["wrong"]
     print("content_gate self-test: halved Scout, moved floor, missing role, wrong "
-          "multiplier, slow Scout, an uncompared number and a deleted test all caught")
+          "multiplier, slow Scout, weak Warden, an uncompared number, a deleted test "
+          "and a drifted design fact all caught")
     return 0
 
 
@@ -279,8 +338,11 @@ def main() -> int:
     if "--self-test" in sys.argv:
         return self_test()
     r = compare(*load(), source_text())
-    print(f"  content: {len(r['checked'])} values agree with content/detection.json "
-          f"and roles.json")
+    facts = facts_compare(source_text())
+    r["checked"] += facts["checked"]
+    r["wrong"] += facts["wrong"]
+    print(f"  content: {len(r['checked'])} values agree with content/detection.json, "
+          f"roles.json and tools/design_facts.py")
     for line in r["wrong"]:
         print(f"  DISAGREES {line}")
     for line in r["uncovered"]:

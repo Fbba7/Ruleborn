@@ -645,9 +645,18 @@ dict(
                     "player.<br><br>\u00a712.18's four behavioural clauses are "
                     "tests rather than prose \u2014 no re-routing, no picking "
                     "a different door, crew pass through one another, the "
-                    "command and never the path. What is left is the half a "
-                    "measurement cannot settle: whether it <em>feels</em> like "
-                    "agency, which is \u00a730.8's 70% gate and needs people.",
+                    "command and never the path.<br><br><strong>A whole heist "
+                    "now runs.</strong> The Vault, loading, fights, ambushes, "
+                    "knockouts, capture, the skiff and \u00a712.9's grades are in "
+                    "<code>sim/</code>, and a heist planned the way a player would "
+                    "play it ends Clean with every bag full. It is committed as "
+                    "a golden replay. Building it found that \u00a712.6's crack "
+                    "noise is erased by \u00a712.17's decay before it can matter, "
+                    "and that on plain ground \u00a712.8's ambush cannot be "
+                    "reached: the last crouched step behind a guard is heard. "
+                    "What is left is the half a measurement cannot settle: "
+                    "whether it <em>feels</em> like agency, which is "
+                    "\u00a730.8's 70% gate and needs people.",
              gate="\u2265 70% felt control (\u00a730.8)",
              blocked_by=["T1.4"]),
     ],

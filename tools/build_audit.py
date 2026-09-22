@@ -425,7 +425,8 @@ def built_html() -> str:
         content_html = f"""
     <h3 class="bh">The simulation against <code>content/</code></h3>
     <p class="blurb">{content["agree"]} values the simulation carries as constants
-      agree with <code>detection.json</code> and <code>roles.json</code>{f", <strong>{len(bad)} disagree</strong>" if bad else ""}.
+      agree with <code>detection.json</code>, <code>roles.json</code> and, for the
+      numbers with no content file, <code>tools/design_facts.py</code>{f", <strong>{len(bad)} disagree</strong>" if bad else ""}.
       Every other number in those files is named below as not modelled yet, and
       the gate fails on any it neither compares nor names &mdash; so none passes
       as agreeing by being absent. Last come the numbers the simulation needs

@@ -1040,6 +1040,10 @@ fn the_corner_of_the_eye_notices_at_half_the_rate() {
     assert_eq!(rate(&scout_and_raider(50, 0)), Some(12));
     assert_eq!(rate(&scout_and_raider(50, 40)), Some(6));
     assert_eq!(rate(&scout_and_raider(65, 40)), None, "past the far zone");
+    // And a guard standing on the raider sees it, whichever way it faces.
+    let mut world = scout_and_raider(0, 0);
+    world.guards[0].facing = Ang::from_degrees(90);
+    assert_eq!(rate(&world), Some(67), "on the same spot: near, and in view");
 }
 
 #[test]
@@ -1197,4 +1201,451 @@ fn the_seed_cannot_change_what_a_guard_does() {
     for _ in 0..3000 {
         assert_eq!(a.step(), b.step(), "a guard's behaviour depended on the seed");
     }
+}
+
+// --------------------------------------------------------------------------
+// The Vault, loading and the skiff (§12.6, §12.19, §5.4)
+// --------------------------------------------------------------------------
+
+use crate::heist::{self as h, Grade, Standing, Task};
+use crate::{make_guard, planned, SUSPICION_MAX};
+
+/// An open 14x14 realm with the Vault at (6, 6), no guards, and `crew` crew
+/// members in §11.1's order.
+fn vault_world(crew: u8) -> World {
+    let mut world = World::new(1, crew, Vec::new());
+    world.grid = Grid::new(14, 14);
+    world.grid.place(6, 6, Feature::Vault);
+    world.vault.tile = world.grid.index(6, 6).unwrap();
+    world.guards.clear();
+    world
+}
+
+fn put(world: &mut World, ri: usize, x: u16, y: u16) {
+    let (px, py) = world.grid.centre(world.grid.index(x, y).unwrap());
+    world.raiders[ri].at = Point { x: px, y: py };
+    world.raiders[ri].route.clear();
+}
+
+/// The four tiles beside (6, 6), and one more on the first so a fifth crew
+/// member has somewhere to stand.
+const BESIDE: [(u16, u16); 5] = [(6, 5), (7, 6), (6, 7), (5, 6), (6, 5)];
+
+fn ticks_to_open(roles: &[usize]) -> u32 {
+    let mut world = vault_world(5);
+    for (slot, &ri) in roles.iter().enumerate() {
+        let (x, y) = BESIDE[slot];
+        put(&mut world, ri, x, y);
+        world.raiders[ri].task = Task::Crack;
+    }
+    for ri in 0..5 {
+        if !roles.contains(&ri) {
+            put(&mut world, ri, 0, 13);
+        }
+    }
+    while world.vault.opened_at.is_none() && world.tick < 10_000 {
+        world.step();
+    }
+    world.tick
+}
+
+#[test]
+fn a_breaker_cracks_at_double_damage_one_hit_every_eight_tenths() {
+    let mut world = vault_world(2);
+    put(&mut world, 0, 6, 5);                     // the Scout
+    put(&mut world, 1, 7, 6);                     // the Breaker
+    world.raiders[0].task = Task::Crack;
+    world.raiders[1].task = Task::Crack;
+    for _ in 0..h::HIT_TICKS - 1 {
+        world.step();
+    }
+    assert_eq!(world.vault.health, 1500, "nothing lands before the 0.8 s wind-up ends");
+    world.step();
+    assert_eq!(world.vault.health, 1500 - 12 - 2 * 40, "Scout 12, Breaker twice 40");
+}
+
+#[test]
+fn cracking_takes_ten_to_twenty_five_seconds_only_with_a_breaker() {
+    // §12.19: "Cracking is 10 to 25 seconds." At Vault level 1, 1,500 health.
+    let secs = |roles: &[usize]| ticks_to_open(roles) / TICKS_PER_SECOND;
+    let breaker = secs(&[1]);
+    let three = secs(&[0, 1, 2]);
+    for (label, s) in [("a Breaker alone", breaker), ("Scout, Breaker, Carrier", three)] {
+        assert!((10..=25).contains(&s), "{label}: {s} s, outside 12.19's band");
+    }
+    // A full crew hits for 126 every 0.8 s: twelve hits, 9.6 s — just under
+    // the band's floor. Pinned at its value rather than rounded into it.
+    assert_eq!(ticks_to_open(&[0, 1, 2, 3, 4]), 12 * h::HIT_TICKS);
+    // Without one it is not: four crew with no Breaker hit for 46 every 0.8 s.
+    let no_breaker = secs(&[0, 2, 3, 4]);
+    assert!(no_breaker > 25, "no Breaker: {no_breaker} s — the band assumes one");
+}
+
+#[test]
+fn a_hit_on_the_vault_is_heard_five_steps_away() {
+    // §12.17's "Breaking something — 5 m". A guard five steps from the
+    // cracker, facing away, investigates when the hit lands.
+    let mut world = vault_world(2);
+    put(&mut world, 1, 5, 6);                     // the Breaker, west of the Vault
+    world.raiders[1].task = Task::Crack;
+    put(&mut world, 0, 13, 13);
+    let mut g = make_guard(0, 0, world.grid.index(0, 6).unwrap(), &world.grid);
+    g.facing = Ang::from_degrees(180);            // west, away
+    world.guards.push(g);
+    for _ in 0..h::HIT_TICKS {
+        world.step();
+    }
+    assert_eq!(world.guards[0].state, State::Investigating);
+}
+
+#[test]
+fn the_crack_noise_empties_before_it_can_matter() {
+    // §12.6: "every 5 seconds adds 100 suspicion to every guard in the
+    // Heart". §12.17 empties suspicion at 20 a tick, so an unaware guard's
+    // 100 is gone in five ticks and it never reaches Suspicious at 200.
+    // This pins the collision between the two sections, measured rather
+    // than argued: see the README.
+    let mut world = vault_world(2);
+    put(&mut world, 1, 5, 6);
+    world.raiders[1].task = Task::Crack;
+    put(&mut world, 0, 13, 13);
+    // Far enough that the hit itself is not heard, and facing away.
+    let mut g = make_guard(0, 1, world.grid.index(13, 0).unwrap(), &world.grid);
+    g.facing = Ang::from_degrees(0);
+    world.guards.push(g);
+    let mut peak = 0;
+    let mut state_seen = State::Unaware;
+    for _ in 0..(20 * TICKS_PER_SECOND) {
+        world.step();
+        peak = peak.max(world.guards[0].suspicion);
+        if world.guards[0].state != State::Unaware {
+            state_seen = world.guards[0].state;
+        }
+    }
+    assert!(world.vault.first_hit.is_some(), "cracking happened");
+    assert_eq!(peak, h::CRACK_NOISE, "the 100 arrives");
+    assert_eq!(state_seen, State::Unaware, "and never moves the guard");
+}
+
+#[test]
+fn loading_is_thirty_a_second_to_the_target() {
+    let mut world = vault_world(3);
+    world.vault.health = 0;
+    world.vault.opened_at = Some(0);
+    put(&mut world, 2, 6, 5);                     // the Carrier
+    world.raiders[2].task = Task::Load;
+    world.raiders[2].target_fill = 50;
+    put(&mut world, 0, 13, 13);
+    put(&mut world, 1, 13, 13);
+    for _ in 0..TICKS_PER_SECOND {
+        world.step();
+    }
+    assert_eq!(world.raiders[2].carried, 30, "30 in a second");
+    for _ in 0..(10 * TICKS_PER_SECOND) {
+        world.step();
+    }
+    assert_eq!(world.raiders[2].carried, 150, "and stops at half of 300");
+}
+
+#[test]
+fn a_full_five_crew_load_takes_ten_seconds() {
+    // §12.6: "A full five-crew load therefore takes about ten seconds."
+    let mut world = vault_world(5);
+    world.vault.health = 0;
+    world.vault.opened_at = Some(0);
+    for ri in 0..5 {
+        let (x, y) = BESIDE[ri];
+        put(&mut world, ri, x, y);
+        world.raiders[ri].task = Task::Load;
+    }
+    let full = |w: &World| w.raiders.iter().all(|r| r.carried == r.role.carry());
+    for _ in 0..(10 * TICKS_PER_SECOND - 1) {
+        world.step();
+    }
+    assert!(!full(&world), "not before ten seconds");
+    world.step();
+    assert!(full(&world), "every bag full at ten: the Carrier's 300 at 30 a second");
+    assert_eq!(world.vault.exposed, 0, "560 exposed, 560 carried");
+}
+
+#[test]
+fn loading_stops_when_the_exposed_share_is_gone() {
+    let mut world = vault_world(2);
+    world.vault.health = 0;
+    world.vault.opened_at = Some(0);
+    world.vault.exposed = 45;
+    for ri in 0..2 {
+        let (x, y) = BESIDE[ri];
+        put(&mut world, ri, x, y);
+        world.raiders[ri].task = Task::Load;
+    }
+    for _ in 0..(5 * TICKS_PER_SECOND) {
+        world.step();
+    }
+    let carried: i32 = world.raiders.iter().map(|r| r.carried).sum();
+    assert_eq!(carried, 45);
+    assert_eq!(world.raiders[0].carried, 23, "in id order: the Scout takes the odd unit");
+}
+
+#[test]
+fn the_carrier_walks_fifteen_percent_slower_loaded() {
+    let walk = |carried: i32| {
+        let mut world = vault_world(3);
+        world.law_pace = Fx::ONE;
+        put(&mut world, 2, 0, 0);
+        world.raiders[2].carried = carried;
+        let end = world.grid.index(13, 0).unwrap();
+        let start = world.grid.index(0, 0).unwrap();
+        world.raiders[2].route = path::find(&world.grid, start, end).unwrap();
+        put(&mut world, 0, 0, 13);
+        put(&mut world, 1, 1, 13);
+        world.raiders[2].route = path::find(&world.grid, start, end).unwrap();
+        for _ in 0..TICKS_PER_SECOND {
+            world.step();
+        }
+        world.raiders[2].at.x - Fx::from_ratio(1, 2)
+    };
+    let empty = walk(0);
+    let loaded = walk(1);
+    // 3.6 tiles a second, and 85% of that: 3.06.
+    assert!((empty - Fx::from_ratio(36, 10)).0.abs() < Fx::from_ratio(1, 100).0);
+    assert!((loaded - Fx::from_ratio(306, 100)).0.abs() < Fx::from_ratio(1, 100).0);
+}
+
+#[test]
+fn the_skiff_comes_to_an_edge_after_twenty_seconds_and_nowhere_else() {
+    // §5.4: "20 seconds to fight the winds around the Heart", "to any edge
+    // tile", and "the crew must hold the spot until it arrives".
+    let inland = vec![Command { tick: 0, actor: 0, kind: Kind::Skiff,
+                                x: 5 * 256 + 128, y: 5 * 256 + 128 }];
+    let mut world = World::new(1, 1, inland);
+    world.step();
+    assert!(world.skiff.is_none(), "an inland tile is not a place a skiff comes");
+
+    let mut world = vault_world(1);
+    world.commands_for_test(vec![Command { tick: 0, actor: 0, kind: Kind::Skiff,
+                                           x: 13 * 256 + 128, y: 5 * 256 + 128 }]);
+    world.raiders[0].carried = 40;
+    put(&mut world, 0, 13, 5);
+    for _ in 0..(20 * TICKS_PER_SECOND) {
+        world.step();
+        assert_eq!(world.raiders[0].standing, Standing::Active, "held, not yet aboard");
+    }
+    world.step();                                 // tick 600: it arrives
+    assert_eq!(world.raiders[0].standing, Standing::Out);
+    assert_eq!(world.outcome().banked, 40);
+}
+
+#[test]
+fn anyone_inside_when_the_clock_ends_is_caught() {
+    let mut world = vault_world(2);
+    world.clock = 90;
+    world.raiders[1].carried = 25;
+    for _ in 0..90 {
+        world.step();
+    }
+    assert!(world.raiders.iter().all(|r| r.standing == Standing::Caught));
+    assert_eq!(world.raiders[1].carried, 0, "and drops what it carries");
+    assert_eq!(world.dropped.len(), 1);
+    assert_eq!(world.outcome().grade, Grade::Foiled);
+}
+
+#[test]
+fn the_four_grades_follow_12_9() {
+    let grade = |standings: [Standing; 2], carried: [i32; 2], alarm: bool| {
+        let mut world = vault_world(2);
+        for ri in 0..2 {
+            world.raiders[ri].standing = standings[ri];
+            world.raiders[ri].carried = carried[ri];
+        }
+        world.alarm_raised = alarm;
+        world.outcome().grade
+    };
+    use Standing::*;
+    assert_eq!(grade([Out, Out], [10, 0], false), Grade::Clean, "no alarm; everyone out");
+    assert_eq!(grade([Out, Out], [10, 0], true), Grade::Loud, "alarm raised; everyone out");
+    assert_eq!(grade([Out, Caught], [10, 0], false), Grade::Partial, "some caught; some out");
+    assert_eq!(grade([Out, Out], [0, 0], false), Grade::Foiled, "no loot out");
+    assert_eq!(grade([Caught, Caught], [0, 0], true), Grade::Foiled);
+}
+
+// --------------------------------------------------------------------------
+// Fights, knockouts and capture (§12.20, §12.8)
+// --------------------------------------------------------------------------
+
+/// A guard of §12.17 row `row` at (x, y), facing north, in `world`.
+fn post(world: &mut World, row: usize, x: u16, y: u16) -> usize {
+    let id = world.guards.len() as u32;
+    let g = make_guard(id, row, world.grid.index(x, y).unwrap(), &world.grid);
+    world.guards.push(g);
+    id as usize
+}
+
+#[test]
+fn an_alerted_guard_hits_once_every_eight_tenths_for_its_power() {
+    // The Breaker guard, Power 40, beside the crew's Scout, Health 120:
+    // three hits, the third at 2.4 s, and the Scout's loot on the tile.
+    let mut world = vault_world(1);
+    put(&mut world, 0, 3, 4);
+    world.raiders[0].carried = 30;
+    let gi = post(&mut world, 2, 3, 3);
+    world.guards[gi].facing = Ang::from_degrees(90);  // south, at the Scout
+    world.enter(gi, State::Alerted);
+    world.guards[gi].route.clear();
+    world.guards[gi].interest = world.grid.index(3, 4);
+    for _ in 0..(2 * h::HIT_TICKS) {
+        world.step();
+    }
+    assert_eq!(world.raiders[0].health, 120 - 80, "two hits in 1.6 s");
+    for _ in 0..h::HIT_TICKS {
+        world.step();
+    }
+    assert_eq!(world.raiders[0].standing, Standing::Down);
+    assert_eq!(world.dropped, vec![(world.grid.index(3, 4).unwrap(), 30)]);
+}
+
+#[test]
+fn a_downed_crew_member_is_caught_after_ten_seconds_unless_revived() {
+    let down = |helper: Option<usize>| {
+        let mut world = vault_world(5);
+        for ri in 0..5 {
+            put(&mut world, ri, 13, ri as u16 * 2);
+        }
+        put(&mut world, 0, 3, 3);
+        world.raiders[0].health = 0;
+        if let Some(ri) = helper {
+            put(&mut world, ri, 3, 4);            // adjacent
+        }
+        let mut revived_at = None;
+        for _ in 0..(11 * TICKS_PER_SECOND) {
+            world.step();
+            if revived_at.is_none() && world.raiders[0].standing == Standing::Active
+                && world.tick > 1
+            {
+                revived_at = Some(world.tick);
+            }
+        }
+        (world.raiders[0].standing, revived_at, world.raiders[0].health)
+    };
+    let (alone, _, _) = down(None);
+    assert_eq!(alone, Standing::Caught, "ten seconds and nobody came");
+    let (_, by_breaker, health) = down(Some(1));
+    // Down on tick 0; the revive runs from tick 0 and completes after 90.
+    assert_eq!(by_breaker, Some(h::REVIVE_TICKS), "an ally: three seconds");
+    assert_eq!(health, 120 / 4, "back at a quarter — the simulation's reading");
+    let (_, by_mender, _) = down(Some(4));
+    assert_eq!(by_mender, Some(h::MENDER_REVIVE_TICKS), "a Mender: one and a half");
+}
+
+#[test]
+fn two_ambush_hits_knock_out_a_guard_of_equal_level_in_every_pairing() {
+    // §12.8: triple Power or half the guard's full health, whichever is
+    // greater, "so two ambush hits now knock out a guard of equal level in
+    // every pairing". All 25, from §11.1's columns.
+    let roles = [Role::Scout, Role::Warden, Role::Breaker, Role::Carrier, Role::Mender];
+    for a in roles {
+        for g in roles {
+            let hit = (a.power() * 3).max(g.health() / 2);
+            assert!(2 * hit >= g.health(), "{a:?} on {g:?}");
+        }
+    }
+    // And in the world: a Scout and a Breaker behind the Warden guard (420).
+    let mut world = vault_world(2);
+    let gi = post(&mut world, 1, 3, 3);
+    put(&mut world, 0, 3, 4);
+    put(&mut world, 1, 3, 4);
+    for ri in 0..2 {
+        world.raiders[ri].task = Task::Attack;
+        world.raiders[ri].target = gi as u32;
+    }
+    for _ in 0..h::HIT_TICKS {
+        world.step();
+    }
+    assert!(world.guards[gi].knocked_out, "210 and 210: down in one exchange");
+    assert!(!world.alarm_raised, "an ambush raises nothing");
+}
+
+#[test]
+fn an_open_hit_sends_suspicion_straight_to_1000() {
+    let mut world = vault_world(1);
+    let gi = post(&mut world, 1, 3, 3);
+    // Searching, facing away: it has noticed the crew, so this is no ambush,
+    // and its suspicion has drained to nothing by the time the hit lands.
+    world.guards[gi].state = State::Searching;
+    world.guards[gi].suspicion = 300;
+    put(&mut world, 0, 3, 4);
+    world.raiders[0].task = Task::Attack;
+    world.raiders[0].target = gi as u32;
+    for _ in 0..h::HIT_TICKS {
+        world.step();
+    }
+    assert_eq!(world.guards[gi].health, 420 - 12, "Power, not an ambush");
+    assert_eq!(world.guards[gi].suspicion, SUSPICION_MAX);
+}
+
+#[test]
+fn a_knocked_out_guard_found_by_another_raises_the_realm_alarm() {
+    // §12.17: "once per knocked-out guard discovered".
+    let mut world = vault_world(0);
+    let seer = post(&mut world, 0, 3, 6);         // a Scout, facing north
+    let down = post(&mut world, 1, 3, 3);         // three tiles in front of it
+    world.guards[down].knocked_out = true;
+    world.step();
+    assert!(world.guards[down].found);
+    assert_eq!(world.knockouts_discovered, 1);
+    assert_eq!(world.alarm, 1, "the alarm climbs with it");
+    world.step();
+    assert_eq!(world.knockouts_discovered, 1, "found once, counted once");
+    let _ = seer;
+}
+
+#[test]
+fn a_posted_guard_holds_its_facing() {
+    let mut world = vault_world(0);
+    let gi = post(&mut world, 0, 3, 3);
+    let facing = world.guards[gi].facing;
+    for _ in 0..90 {
+        world.step();
+    }
+    assert_eq!(world.guards[gi].facing, facing, "holds its post, facing where posted");
+}
+
+#[test]
+fn a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss() {
+    // A crouched walk carries 1 m (§12.17), and the tile behind a guard is 1 m
+    // from it — so on plain ground the last step of an approach is heard,
+    // the guard has noticed, and §12.8's ambush ("a guard that has not
+    // noticed the crew") cannot be reached. Moss, x0.75, carries it nowhere.
+    let approach = |surface: Surface| {
+        let mut world = vault_world(1);
+        let gi = post(&mut world, 1, 3, 3);       // facing north
+        world.grid.set_surface(3, 4, surface);
+        put(&mut world, 0, 3, 6);
+        world.raiders[0].gait = Gait::Crouch;
+        let from = world.grid.index(3, 6).unwrap();
+        let to = world.grid.index(3, 4).unwrap();
+        world.raiders[0].route = path::find(&world.grid, from, to).unwrap();
+        for _ in 0..(3 * TICKS_PER_SECOND) {
+            world.step();
+        }
+        world.guards[gi].state
+    };
+    assert_ne!(approach(Surface::Plain), State::Unaware, "heard on the last step");
+    assert_eq!(approach(Surface::Moss), State::Unaware, "silent on moss");
+}
+
+#[test]
+fn the_planned_heist_ends_clean_with_every_bag_full() {
+    let heist = planned();
+    let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
+    world.clock = heist.ticks;
+    for _ in 0..heist.ticks {
+        world.step();
+    }
+    let o = world.outcome();
+    assert_eq!(o.grade, Grade::Clean, "{o:?}");
+    assert_eq!(o.banked, o.capacity, "every bag full");
+    assert_eq!(world.guards.iter().filter(|g| g.knocked_out).count(), 2,
+               "two guards ambushed, and nobody found them");
+    assert!(heist.size_fits());
 }
