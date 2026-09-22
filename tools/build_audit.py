@@ -17,7 +17,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,
                             status as reg_status,
                             GATE_OWNER,  # noqa: E402
-                            REGISTER, RESEARCH, V3, V31, side_of)
+                            REGISTER, RESEARCH, V3, V31, V32, side_of)
 
 from build_stamp import stamped  # noqa: E402
 
@@ -586,6 +586,10 @@ def item_html(item: dict) -> str:
     v31 = V31.get(item["id"], {})
     v31_html = (f'<p class="v3 v31"><span class="vlabel">v3.1</span> {v31["note"]}</p>'
                 if v31.get("note") else "")
+    # and v3.2 a third, for the same reason.
+    v32 = V32.get(item["id"], {})
+    v31_html += (f'<p class="v3 v32"><span class="vlabel">v3.2</span> {v32["note"]}</p>'
+                 if v32.get("note") else "")
     return f"""
       <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
                data-kind="{item['kind']}" data-status="{state}"
@@ -1044,6 +1048,11 @@ def build() -> str:
     border-left-color: var(--cho);
   }}
   .v3.v31 .vlabel {{ color: var(--cho); }}
+  .v3.v32 {{
+    background: color-mix(in srgb, var(--dsg) 10%, transparent);
+    border-left-color: var(--dsg);
+  }}
+  .v3.v32 .vlabel {{ color: var(--dsg); }}
   .vlabel {{
     font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
     text-transform: uppercase; letter-spacing: 0.08em; color: var(--chg);

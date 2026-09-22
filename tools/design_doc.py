@@ -41,7 +41,7 @@ DESIGN = ROOT / "docs" / "design"
 
 #: The version every check in this repository reads. Changing it is the whole
 #: of moving to a new document; nothing else names a version.
-VERSION = "3.1"
+VERSION = "3.2"
 
 STEM = f"ruleborn-game-design-v{VERSION}"
 HTML = DESIGN / f"{STEM}.html"

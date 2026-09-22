@@ -244,9 +244,38 @@ class Doc:
         # rename tables, which quote retired names deliberately.
         norm = re.sub(r'<section id="(research|references)">.*?</section>', " ", body, flags=re.S)
         norm = re.sub(r"<!--allow-retired-->.*?<!--/allow-retired-->", " ", norm, flags=re.S)
+        # v3.2's 31.5 gained a column that quotes each defect to say which
+        # check catches it — "F24 — the retired three-rank costs
+        # restated as '15 pages for a common law, 30 for a rare one'". That is
+        # the same kind of text as the rename tables and the document's own
+        # convention is to mark it, which this column is not (D49). Quoting a
+        # defect in order to say it is caught is the one place it belongs, so
+        # it is excluded here and the missing marker is a drafted edit.
+        norm = re.sub(r'<td[^>]*data-label="What it would have caught"[^>]*>.*?</td>',
+                      " ", norm, flags=re.S)
+        norm_raw = re.sub(r"<!--allow-retired-->.*?<!--/allow-retired-->", " ",
+                          self.raw, flags=re.S)
+        norm_raw = re.sub(
+            r'<td[^>]*data-label="What it would have caught"[^>]*>.*?</td>',
+            " ", norm_raw, flags=re.S)
         self.all_text = strip(body)
         self.norm_text = strip(norm)
         self.text = extract(self.raw)          # the .txt view, derived here
+        self._norm_raw = norm_raw              # the same exclusions, still HTML
+
+    @property
+    def normative_text(self) -> str:
+        """``text``, minus what the document marks as quotation.
+
+        ``check_design_consistency`` searches for retired phrasings, and v3.2's
+        \u00a731.5 quotes those phrasings in order to say which check bans
+        them. Both halves of the merged checker have to agree on what counts as
+        normative or one of them reports the other's exemption as a fault, and
+        one did (D50).
+        """
+        if not hasattr(self, "_normative_text"):
+            self._normative_text = extract(self._norm_raw)
+        return self._normative_text
 
     def section(self, sid: str) -> str:
         i = self.raw.find(f'<section id="{sid}">')
@@ -424,8 +453,12 @@ def check_retired_names(doc: Doc, led: Ledger) -> None:
         pattern = (r"\b" + re.escape(name).replace(r"\ ", r"\s+")
                    + r"(?:s|\u2019s|'s)?\b")
         hits = re.findall(pattern, doc.norm_text, flags=re.I)
+        # Only the one v3.2 reintroduced is tracked; the other five are
+        # structural, and a regression in any of them should break the build
+        # rather than read as a known item.
         led.check(f"retired name absent: {name}", not hits,
-                  f"{len(hits)} outside the rename table: {sorted(set(hits))[:3]}")
+                  f"{len(hits)} outside the rename table: {sorted(set(hits))[:3]}",
+                  tracks="D50" if name == "Creator Fund" else None)
 
 
 #: A number restated about a constant, in the words the document uses for that
@@ -1221,7 +1254,8 @@ def check_every_inventory_mention(doc: Doc, led: Ledger) -> None:
             undeclared.append(f"\u00a7{sec} says {m.group(0)} against "
                               f"{want}: \u201c{line.strip().lstrip('| ')[:70]}\u201d")
     led.check("every count of a content table is that table's length or a "
-              "declared partial", not undeclared, "; ".join(undeclared[:3]))
+              "declared partial", not undeclared, "; ".join(undeclared[:3]),
+              tracks="D49")
 
 
 # --------------------------------------------------------------------------
@@ -1791,7 +1825,7 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_cross_references(doc, led)
 
     # The design checks, run against the text view derived from this same HTML.
-    for label, ok, detail in design.run(path, text=doc.text):
+    for label, ok, detail in design.run(path, text=doc.normative_text):
         led.check(label, ok, detail, tracks=TRACKED.get(label))
 
     return led
@@ -2127,17 +2161,38 @@ def _self_test_section_index() -> bool:
 
     # The split drops the leading newline, so compare on the stripped text.
     wrong = sorted(k for k in good if split.get(k, "").strip() != good[k].strip())
+
+    # Which sections *should* be affected is derived, not listed: a section
+    # whose body opens by naming another section is truncated there, and the
+    # section it names is replaced. v3.1 had two such pairs; v3.2 has three,
+    # and a frozen list would have had to be edited to say so.
+    expect = set()
+    for num, body in good.items():
+        for line in body.splitlines()[1:]:
+            if not line.strip():
+                continue
+            m = re.match(r"(\d+\.\d+) ", line.strip())
+            if m and m.group(1) in good:
+                expect |= {num, m.group(1)}
+            break
     print(f"  section index: splitting on what looks like a heading gets "
           f"{len(wrong)} section(s) wrong: {wrong}")
-    if wrong != ["12.19", "12.6", "13.2", "13.4"]:
-        print("    FAIL: expected 12.6, 12.19, 13.2 and 13.4 \u2014 if this "
-              "moved, the register's account of D46 is stale")
+    print(f"  section index: the sections that open by naming another, and the "
+          f"ones they name: {sorted(expect)}")
+    if sorted(expect) != wrong:
+        print("    FAIL: the damage does not match the cause, so one of the "
+              "two is wrong")
+        ok = False
+    if len(wrong) < 4:
+        print("    FAIL: the old method now looks harmless \u2014 this test "
+              "proves nothing")
         ok = False
 
     for num, title in (("12.6", "Moment to moment"),
                        ("13.2", "What a fair defence looks like"),
                        ("12.19", "The Vault, and when to stop loading"),
-                       ("13.4", "Budgets, and how a layer")):
+                       ("13.4", "Budgets, and how a layer"),
+                       ("31.5", "What the build checks")):
         body, was = good.get(num, ""), split.get(num, "")
         kind = "replaced by" if title not in was else "truncated to"
         print(f"  section index: \u00a7{num} is {len(body)} chars; the split "

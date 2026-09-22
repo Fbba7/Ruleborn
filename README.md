@@ -11,7 +11,7 @@ monetisation.
 
 ## Status
 
-**Pre-production — design document at v3.1, no code yet.**
+**Pre-production — design document at v3.2, no code yet.**
 
 ### Can the drawing start?
 
@@ -30,7 +30,7 @@ a band at the top.
 decision only you can make, evidence nobody here can produce, or drafting that is
 still mine to do.
 
-Two versions have now answered the audit. **35 of 124 register items are fixed
+Two versions have now answered the audit. **42 of 126 register items are fixed
 in the document itself** — 26 by v3.0 and 9 more by v3.1. v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
 in §19.27, and the build-willingness risk is designed out rather than measured
@@ -77,7 +77,7 @@ is done. In short:
 
 ```
 docs/
-  design/     the design document at v3.1, with v3.0 and v2.3 beside it, plus greppable extracts
+  design/     the design document at v3.2, with v3.0 and v2.3 beside it, plus greppable extracts
   analysis/   the deep analysis of that document — start here
 content/       the twelve content tables as data, plus the reconciled detection spec
 docs/design/spec/   the reconciled specification, one file per system
@@ -156,7 +156,7 @@ million monthly players.
 rewards, no engagement-tuned matchmaking — with the refusals written down so they
 cannot creep back in.
 
-Full detail: [`docs/design/ruleborn-game-design-v3.1.html`](docs/design/ruleborn-game-design-v3.1.html).
+Full detail: [`docs/design/ruleborn-game-design-v3.2.html`](docs/design/ruleborn-game-design-v3.2.html).
 
 ## Checks
 
@@ -173,8 +173,8 @@ that list shrinks as the document is reconciled.
 ```bash
 # regenerate the greppable text extract from the HTML design document
 python3 tools/extract_design_doc.py \
-    docs/design/ruleborn-game-design-v3.1.html \
-    docs/design/ruleborn-game-design-v3.1.txt
+    docs/design/ruleborn-game-design-v3.2.html \
+    docs/design/ruleborn-game-design-v3.2.txt
 
 # machine-check the design document: v3.1's own checks and this repository's,
 # in one verdict. Failures tracked by an open register item do not break the build.
@@ -207,12 +207,12 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 124 tracked items with section references and status:
+document, as 126 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 82 are drafted across 45
-items, and every quoted sentence is checked against v3.1 by
+the sentence as it stands today, and what to put there. 85 are drafted across 47
+items, and every quoted sentence is checked against v3.2 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no
 edit at all.

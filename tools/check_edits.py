@@ -735,14 +735,15 @@ def main() -> int:
     # document was fixed and the edit retired with it. v3.1 retired twelve at
     # once. An edit that now matches *twice*, or an item whose sentence never
     # existed, is a different thing and still a failure.
-    from audit_register import V31
+    from audit_register import V31, V32
+    closed = set(V31) | set(V32)
     retired = [p for p in problems
-               if "does not contain" in p and p.split()[0] in V31]
+               if "does not contain" in p and p.split()[0] in closed]
     real = [p for p in problems if p not in retired]
 
     if retired:
         print(f"  {len(retired)} edits no longer match, on items a later version "
-              f"closed:")
+              f"acted on:")
         for p in retired:
             print(f"    · {p.split(':')[0]}")
         print("  Not a failure — this is what retirement looks like. The "

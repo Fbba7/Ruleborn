@@ -2441,6 +2441,107 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D49", kind="contradiction", severity="blocking", status="open",
+     title="The scope cut is decided in §32.5 and the document still says "
+           "144 forms in nine places",
+     refs=["32.5", "32.3", "11.10", "26.1", "23.2", "2.6", "19.13", "21.6",
+           "26.8", "30.6", "30.11"],
+     body="§32.5, in the table of questions nobody has answered, records a "
+          "decision: <em>“Absent it, <strong>54 ships</strong> because it "
+          "is the reversible direction: forms can be added, a shipped 144 "
+          "cannot be withdrawn.”</em> That is D6’s launch-scope cut "
+          "and Q5’s decision, taken."
+          "<br><br><strong>Nine sections still say 144.</strong> §2.6, "
+          "§11.10, §19.13, §21.6, §23.2, §26.1, "
+          "§26.8, §30.6 and §30.11 — and §30.8 adds "
+          "“whether the 144-form collection sustains a chase” as a "
+          "thing to playtest. §11.10 is the home and it derives the old "
+          "number from its own rule: <em>“Eighteen kinds and eight notes "
+          "make 144 forms”</em>, with a table of all eight notes beneath "
+          "it. 54 is eighteen kinds by three notes, and no section says which "
+          "three."
+          "<br><br><strong>§32.3 is the list of decided-but-unpropagated "
+          "mechanisms, and this is not on it.</strong> That section names four "
+          "— rewind cut, guards and response as one layer, the guaranteed "
+          "ambush, doubled cooldowns — and says <em>“these four are "
+          "the largest design consequences of the research”</em>. A cut "
+          "that removes <strong>90 of 144 creature forms</strong> is the "
+          "largest single art number in the project and a 2.7× reduction "
+          "in the collection the endgame is built on. It is recorded under an "
+          "unanswered <em>question</em> instead, which is the one place a "
+          "reader looking for decisions would not check."
+          "<br><br>This is the defect §32.3 opens by naming: "
+          "<em>“writing the conclusion in this section and letting the "
+          "rest of the document go on describing the old mechanism — "
+          "precisely the defect this revision exists to remove”</em>. The "
+          "revision found it in four places and this is a fifth.",
+     rec="Either propagate it or move it. Both are cheap and only one is "
+         "correct, and which one is the owner’s call:"
+         "<br><br><strong>If 54 ships</strong>, nine sections change and "
+         "§11.10 needs a new rule, because 54 is not eighteen kinds by "
+         "eight notes. Three notes per kind is the obvious reading and the "
+         "document does not say it. <code>python3 "
+         "tools/inventory_homes.py</code> prints the nine sections; "
+         "<code>content/</code> needs no change, because forms are derived "
+         "from the ruleborn and note tables rather than stored, so fixing "
+         "§11.10’s rule fixes the count everywhere the tools read it."
+         "<br><br><strong>If 54 is provisional</strong>, it belongs in "
+         "§32.3’s table beside the other four, where the document "
+         "already has a place for a decision it has not applied — and a "
+         "check that fails while it stays there, which §32.3 says exists "
+         "for the other four."
+         "<br><br>D45 predicted this shape one version early, which is worth "
+         "recording only because it says the check was aimed at something "
+         "real: <em>“An edit made by finding §26.1’s launch "
+         "table — the obvious place to look — would leave eight "
+         "sections stating the old one.”</em> What happened is the same "
+         "fault one step further back: the decision never reached "
+         "§26.1 either."),
+
+dict(id="D50", kind="deviation", severity="minor", status="open",
+     title="v3.2’s two new meta-sections reintroduce the two things its "
+           "own conventions exist to stop",
+     refs=["31.5", "32.5", "26.9", "31.2"],
+     body="Both are small, and both are the document’s own rules failing "
+          "in the sections written to explain those rules."
+          "<br><br><strong>1. §31.5 quotes a retired model without the "
+          "marker it invented for quoting retired models.</strong> Its new "
+          "<em>“What it would have caught”</em> column says: "
+          "<em>“F24 — the retired three-rank costs restated as "
+          "‘<strong>15 pages for a common law, 30 for a rare "
+          "one</strong>’, which the phrase ban could not see”</em>. "
+          "That sentence is the defect, in normative text. The document "
+          "already has a convention for this — the rename tables are "
+          "wrapped in <code>&lt;!--allow-retired--&gt;</code> so a checker "
+          "reads them as quotation — and this column is not. The derived "
+          "page-cost check read it as a live price claim, which is correct "
+          "behaviour: it cannot tell a quotation from a claim, and that is "
+          "exactly why the marker exists."
+          "<br><br><strong>2. §32.5 calls the Island Fund “the "
+          "creator fund”.</strong> §26.9 records the rename — "
+          "<em>“the Creator Fund became the Island Fund”</em> "
+          "— and both rename tables are correctly marked. §32.5 "
+          "then writes <em>“The creator fund therefore ships with a "
+          "stated review date”</em>, which is this project’s fund "
+          "under its retired name, lower-cased. The earlier clause in the same "
+          "sentence — <em>“criteria by which comparable programmes "
+          "decide to continue a creator fund”</em> — is generic "
+          "industry usage and defensible; the second is not."
+          "<br><br>D38 is why the second one is visible at all: v3.1’s own "
+          "ban counts <code>“Creator Fund”</code> case-sensitively, "
+          "and prose lower-cases a proper noun the moment it stops being one. "
+          "A case-sensitive ban would have reported this green.",
+     rec="Two edits, drafted below: wrap §31.5’s quoting column in "
+         "the marker the document already uses, and give §32.5 the "
+         "current name."
+         "<br><br>Until the first is made, <code>check_document.Doc</code> "
+         "excludes that column from normative text by its "
+         "<code>data-label</code>, with the reason recorded beside it. That is "
+         "a workaround in the right direction — the column <em>is</em> "
+         "quotation — but it is the checker knowing a fact about the "
+         "document’s prose that the document should be stating itself, "
+         "which is the thing §31.4 is against."),
+
 dict(id="D48", kind="gap", severity="significant", status="open",
      title="§23.2 tells a designer to draw a co-op lobby, for a mode that "
            "ships in 1.1 in the form §30.8 rejected",
@@ -4077,6 +4178,118 @@ dict(id="C28", kind="contradiction", severity="minor", status="open",
 # `status="fixed"` here means the check that tracked the item now passes against
 # `docs/design/ruleborn-game-design-v3.1.txt`.
 
+V32 = {
+
+# What version 3.2 did, verified here against the built document rather than
+# taken from its own list. Each entry is a check that RETIRED when v3.2 was
+# read: it passed while the item was still open, which is the ledger's way of
+# saying the document has moved past the register.
+
+"F8": dict(status="fixed", note=
+    "Closed, by naming a different device rather than retuning this one. "
+    "\u00a712.6 now says the realm alarm <em>\u201cis the pressure device "
+    "here\u201d</em> and gives it a 0\u20136 climb \u2014 once every thirty "
+    "seconds and once per knocked-out guard discovered. The finding was that "
+    "runs finish with a third of the clock unused, so the clock is not the "
+    "tension; the answer is that something else is."),
+
+"F21": dict(status="fixed", note=
+    "Closed with a measurement and a reframing. \u00a713.2: <em>\u201cthe "
+    "health signal is the shape of the outcomes, not the average\u201d</em>, "
+    "and a polarised game is named as the failure. Measured over 300 raids on "
+    "identical seeds, a crew following a fixed stopping threshold puts 70% of "
+    "its runs in one bucket \u2014 which is the finding, stated as a property "
+    "of the design rather than a defect in it."),
+
+"C8": dict(status="open", note=
+    "<strong>Half closed.</strong> \u00a77.6 now gives the Library a passive "
+    "page rate from its own table \u2014 <em>\u201c3 a day at level "
+    "1\u201d</em> \u2014 so the economy half is specified. The art half is "
+    "not: \u00a721.9 still budgets 16 building looks against the 17 "
+    "\u00a710.2 and \u00a710.4 hold, and the check still fails on it."),
+
+"C2": dict(status="open", note=
+    "<strong>Acted on, not closed.</strong> v3.2 fixed the derivation half "
+    "(F14) and \u00a79.4 was rewritten, but the share-of-income claim still "
+    "does not reconcile: run through the economy model, \u00a79.6's formula "
+    "yields 3\u20138% of a player's resources against the \u201croughly a "
+    "third\u201d \u00a79.4 states and the 40% of mid-game growth "
+    "\u00a712.1 states. The check that says so is the same one, unchanged, "
+    "and it still fails."),
+
+"F17": dict(status="open", note=
+    "Acted on \u2014 \u00a79.5's upkeep row was rewritten, so the drafted "
+    "edit no longer quotes anything. Whether the sinks now work is a question "
+    "for the economy model rather than for a string comparison, and it has "
+    "not been re-run against v3.2."),
+
+"F14": dict(status="fixed", note=
+    "Closed, and the document states the cause in the audit's own terms. "
+    "\u00a79.6: <em>\u201cAn earlier version of this section put the figure "
+    "at 46%, which is the expected grade alone\u201d</em> \u2014 a fill term "
+    "was added beside grade in the same formula and the number was never "
+    "re-derived. Measured, it is 13% to 19%, so an upgrade takes 32 to 46 days "
+    "rather than nine."
+    "<br><br>\u00a731.5 now carries a check for it by name \u2014 "
+    "<em>\u201cPacing re-derives from its band\u201d</em>, credited to "
+    "<strong>C2 and F14</strong>."),
+
+"D43": dict(status="open", note=
+    "<strong>Half closed.</strong> Two of the four appendix rows were fixed as "
+    "drafted. <em>Heist take</em> now reads <code>Haul = B(V) \u00d7 grade "
+    "\u00d7 difficulty \u00d7 richness \u00d7 fatigue \u00d7 fill</code> and "
+    "cites \u00a79.6 instead of the \u00a79.4 that had deleted it \u2014 "
+    "C21's second instance, gone. <em>Restoring a law</em> passes because "
+    "\u00a77.6 was fixed (C23)."
+    "<br><br>Two remain, and they are the two that were never a contradiction: "
+    "<em>Vault</em> still cites \u00a79.4 for a capacity curve that lives in "
+    "\u00a710.2's ladder, and <em>Suspicion</em>'s 2.8 s still appears nowhere "
+    "but the appendix. A wrong address and a number with no home are the "
+    "quieter half, and they are what is left."),
+
+"C4": dict(status="fixed", note=
+    "Closed, and the drafted edit was taken almost word for word. \u00a79.6 now "
+    "reads <em>\u201cthe sealed share runs 40% at <strong>Vault level</strong> "
+    "1 and rises by 3.5 points a level to 71.5% at Vault level 10 "
+    "(9.4 owns this)\u201d</em>. The parenthesis is \u00a731.2's rule stated "
+    "where the restatement is rather than only in \u00a731, which is more than "
+    "the edit asked for."),
+
+"F20": dict(status="fixed", note=
+    "Closed. \u00a712.19 now states <em>\u201cthe curve peaks at about 90% "
+    "full and turns over after it\u201d</em>, measured over 300 raids with "
+    "only the stopping point varying. \u00a732.1 adds why the old figure was "
+    "wrong in a way worth keeping: 70% is close to the threshold the one "
+    "peer-reviewed study of this exact decision names as the rule "
+    "<em>first-time players</em> intuitively choose, and trained agents beat "
+    "it."),
+
+"C22": dict(status="fixed", note=
+    "Closed, and it was the last of the four v3.0 fixes that left a stale copy "
+    "standing. The document now states one loading rate: <code>"
+    "check_document</code>'s two independent checks — that the rate is "
+    "stated once, and that §12.19 owns it — both passed while this "
+    "item was still open, which is what a retirement is."),
+
+"C23": dict(status="fixed", note=
+    "Closed. §7.6 now reads <em>“Restoring a law: 10 pages for a "
+    "common law, 20 for an uncommon, 35 for a rare and 60 for a deep "
+    "one”</em> — and adds <em>“This is the home of the page "
+    "costs”</em>, which is §31.2's rule stated in the section it "
+    "governs rather than only in §31."
+    "<br><br>The derived page-cost check retired on it: every price claim in "
+    "the document, in all three grammatical forms, now agrees with the rank "
+    "table. F24's programme reached the sentence it was written for."),
+
+"C27": dict(status="fixed", note=
+    "Closed. A producer's partial output is stated once, in §5.8, and "
+    "§9.2's competing 60/85/100% steps are gone — including the "
+    "coefficient in §9.3's formula, which the item warned would otherwise "
+    "leave the game computing the rule it had just deleted."),
+
+}
+
+
 V31 = {
 
 # -- closed, and independently verified ------------------------------------
@@ -4891,7 +5104,8 @@ def status(item) -> str:
     """The effective status of a register item, by id or by the item itself."""
     item_id = item if isinstance(item, str) else item["id"]
     own = {} if isinstance(item, str) else item
-    return (V31.get(item_id, {}).get("status")
+    return (V32.get(item_id, {}).get("status")
+            or V31.get(item_id, {}).get("status")
             or V3.get(item_id, {}).get("status")
             or own.get("status")
             or next((i.get("status", "open") for i in REGISTER
@@ -4905,6 +5119,44 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+
+"D49": [
+    dict(section="11.10", action="replace",
+         find="Eighteen kinds and eight notes make 144 forms.",
+         replace="Eighteen kinds and three notes make 54 forms, the launch "
+                 "figure 32.5 settles. Say which three, because the table "
+                 "below still lists eight and the note a form takes is what "
+                 "decides its look and its quirk.",
+         why="\u00a732.5 decides that 54 ships and nine sections still say "
+             "144. This is the home and the only one that <em>derives</em> "
+             "the number, so it is the one that has to change first \u2014 "
+             "and 54 is not eighteen by eight, so the rule has to change with "
+             "it. If 54 is provisional rather than settled, the row belongs "
+             "in 32.3 instead, with the other four decided-not-applied "
+             "mechanisms. D49."),
+],
+
+"D50": [
+    dict(section="32.5", action="replace",
+         find="The creator fund therefore ships with a stated review date",
+         replace="The Island Fund therefore ships with a stated review date",
+         why="\u00a726.9 records that the Creator Fund became the Island "
+             "Fund, and both rename tables are marked as quotation. This "
+             "sentence is the project's own fund under its retired name. "
+             "D50."),
+    dict(section="31.5", action="insert",
+         find="which the phrase ban could not see",
+         replace="Wrap this column in the "
+                 "<code>&lt;!--allow-retired--&gt;</code> marker the rename "
+                 "tables use. It quotes retired models in order to say they "
+                 "are banned, which is the one place they belong and exactly "
+                 "what the marker is for \u2014 without it a checker reads "
+                 "the quotation as the claim, and one did.",
+         why="The column is quotation and nothing says so, so the derived "
+             "page-cost check reported \u00a731.5 as carrying the retired "
+             "three-rank costs. It cannot tell a quotation from a claim; the "
+             "marker is how the document tells it. D50."),
+],
 
 "D47": [
     dict(section="19.2", action="replace",

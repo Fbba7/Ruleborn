@@ -49,6 +49,7 @@ import tempfile
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from design_doc import HTML as DOC                                # noqa: E402
+import check_document                                             # noqa: E402
 
 VENDOR = ROOT / "tools" / "vendor"
 UPSTREAM = ROOT / "content" / "upstream"
@@ -123,6 +124,26 @@ def run_vendor(tmp: pathlib.Path, doc: pathlib.Path) -> str:
                           cwd=tmp, capture_output=True, text=True).stdout
 
 
+
+#: The document states how many breakages its own gate carries. v3.1 said
+#: fifteen and shipped fifteen; v3.2 says twenty-one and this repository still
+#: holds v3.1's checker, so six of them cannot be run here. Deriving the claim
+#: rather than printing a number means the gap reports itself.
+WORDS = {"twelve": 12, "thirteen": 13, "fourteen": 14, "fifteen": 15,
+         "sixteen": 16, "seventeen": 17, "eighteen": 18, "nineteen": 19,
+         "twenty": 20, "twenty-one": 21, "twenty-two": 22, "twenty-three": 23}
+
+
+def claimed_breakages(doc) -> int | None:
+    """How many deliberate breakages \u00a731.5 says the gate carries."""
+    body = check_document.section_index(doc).get("31.5", "")
+    m = re.search(r"([\w-]+|\d+)\s+deliberate breakages", body)
+    if not m:
+        return None
+    token = m.group(1).lower()
+    return int(token) if token.isdigit() else WORDS.get(token)
+
+
 def shipped_suite(tmp: pathlib.Path) -> tuple[int, int, list[str]]:
     """§31.5's own fifteen breakages, run against the current document.
 
@@ -173,13 +194,25 @@ def report(quick: bool = False) -> int:
 
         if not quick:
             caught, total, survived = shipped_suite(tmp)
-            print(f"§31.5's own fifteen breakages, against v{DOC.stem[-3:]}\n")
+            doc_ = check_document.Doc(str(DOC))
+            claim = claimed_breakages(doc_)
+            print(f"§31.5's breakages, against v{DOC.stem[-3:]}\n")
             print(f"  {caught} of {total} caught")
+            if claim is not None and claim != total:
+                print(f"  §31.5 says {claim}; the checker in tools/vendor/ "
+                      f"carries {total}.")
+                print(f"  That copy is the one v3.1 shipped, so "
+                      f"{claim - total} of the document's own breakages are "
+                      f"not run here.")
             for line in survived:
                 print(f"    {line}")
             if caught != total or total != 15:
-                print("  §31.5 says fifteen, and each must be caught.")
+                print("  Each of these must be caught.")
                 ok = False
+            elif claim is not None and claim != total:
+                print("  The fifteen that can be run here all pass, so the "
+                      "gate has teeth against\n  the defects v3.1 named. What "
+                      "v3.2 added to it is unverified.\n")
             else:
                 print("  The claim holds. The shipped gate has teeth against the "
                       "defects it names.\n")
