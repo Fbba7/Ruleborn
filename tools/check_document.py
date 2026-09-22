@@ -1334,6 +1334,80 @@ def check_evidence_cells(doc: Doc, led: Ledger) -> None:
     led.check("every number in 19's evidence tables is stated in the section "
               "the cell cites for it", not wrong, " | ".join(wrong), tracks="D47")
 
+
+# --------------------------------------------------------------------------
+# The home markers v3.2 introduced  (D51, F25)
+# --------------------------------------------------------------------------
+
+#: A restatement that names the section owning the fact. v3.2 wrote six of
+#: these and v3.1 had none — "(12.19 owns this rate)", "(7.6 owns this)".
+#: It is §31.2's rule stated *at the restatement* rather than only in
+#: §31, and it is what makes D43's rule work outside §29.1: the
+#: general version failed on 36% of table cells because nothing said which
+#: cells were a single claim, and a marker says exactly that.
+HOME_MARKER = re.compile(r"\(?\b(\d+\.\d+) owns th\w+[^)]*\)?")
+
+
+def home_markers(doc: Doc) -> list[tuple[str, str, str, list[str]]]:
+    """(section, home, the sentence, numbers the home does not state)."""
+    index = section_index(doc)
+    out = []
+    for m in HOME_MARKER.finditer(doc.text):
+        home = m.group(1)
+        if home not in index:
+            out.append((section_at(doc, m.start()), home, "", ["<no such section>"]))
+            continue
+        # A marker binds to the clause it sits in, not to the line. \u00a712.6
+        # writes "1,500 health per Vault level; ... loads at 30 a second
+        # (12.19 owns this rate)" and \u00a712.19 owns the rate, not the
+        # health; \u00a79.3 attaches one to a single term of a six-term
+        # product. Reading the whole line reported both as faults, which is
+        # D47's measurement repeating: the scope of a citation is the scope of
+        # the claim, and here the marker says where that scope begins.
+        line_start = doc.text.rfind("\n", 0, m.start()) + 1
+        end = doc.text.find("\n", m.end())
+        line = doc.text[line_start:end if end > 0 else len(doc.text)]
+        offset = m.start() - line_start
+        cut = max(line.rfind(sep, 0, offset)
+                  for sep in (". ", "; ", " \u00d7 ", ": "))
+        # ...and it ends at the marker: the marker closes the clause it owns.
+        sentence = line[cut + 1:m.start() - line_start] if cut > 0 \
+            else line[:m.start() - line_start]
+        body = HOME_MARKER.sub(" ", sentence)
+        body = re.sub(r"\[\d+\]", " ", body)
+        said = {n.replace(",", "") for n in _NUMBER.findall(body) if n not in index}
+        hn = {n.replace(",", "") for n in _NUMBER.findall(index[home])}
+        out.append((section_at(doc, m.start()), home,
+                    sentence.strip().lstrip("| "), sorted(said - hn)))
+    return out
+
+
+def check_home_markers(doc: Doc, led: Ledger) -> None:
+    """D51, F25. Every "(N.M owns this)" against the section it names.
+
+    v3.2 introduced this marker and used it six times; v3.1 had none. It is
+    the thing F25 asked for — §31.2's rule applied where the
+    restatement is rather than stated once in §31 — and it is worth
+    more than a convention, because it makes the restatement *checkable*.
+
+    D47 measured what happens without it: applied to every sentence carrying a
+    number and a citation the rule fails on 73%, and to every table cell on
+    36%, because a citation marks one clause and nothing says which clause.
+    A marker says which. So this is the same comparison as D43's, on the
+    sentences the document has volunteered for it.
+
+    It is not free. A marker is a promise, and a promise nothing checks is how
+    §29.1 became C21. This is the check that makes the promise cost
+    something.
+    """
+    rows = home_markers(doc)
+    led.check("the document still marks which section owns a restated fact",
+              len(rows) >= 5, f"found {len(rows)} home markers")
+    wrong = [f"\u00a7{sec} says \u00a7{home} owns {miss}: \u201c{txt[:58]}\u201d"
+             for sec, home, txt, miss in rows if miss]
+    led.check("every fact marked as owned elsewhere agrees with the section "
+              "that owns it", not wrong, " | ".join(wrong), tracks="D51")
+
 def check_creatures(doc: Doc, led: Ledger) -> None:
     if not os.path.exists(CREATURES):
         return
@@ -1814,6 +1888,7 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_screen_counts(doc, led)
     check_every_inventory_mention(doc, led)
     check_evidence_cells(doc, led)
+    check_home_markers(doc, led)
     check_creatures(doc, led)
     check_page_economy(doc, led)
     check_banned_phrasings(doc, led)

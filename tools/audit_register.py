@@ -2441,6 +2441,95 @@ dict(id="D32", kind="deviation", severity="significant", status="open",
          "pins the overrun, so a re-cost that brings a table inside the budget "
          "fails the build and sends someone back to this item."),
 
+dict(id="D51", kind="deviation", severity="minor", status="open",
+     title="v3.2 invented the home marker the audit had been asking for, and "
+           "one of its six points at the wrong section",
+     refs=["31.2", "9.2", "9.3", "9.5", "9.6", "12.6", "7.6", "10.2"],
+     body="v3.2 writes <code>(12.19 owns this rate)</code>, <code>(7.6 owns "
+          "this)</code>, <code>(5.8 owns this rule)</code>. Six of them; v3.1 "
+          "had none. §7.6 goes further and says it in words: "
+          "<em>“This is the home of the page costs”</em>."
+          "<br><br><strong>That is §31.2’s rule stated at the "
+          "restatement rather than once in §31</strong>, and it is worth "
+          "more than a convention, because it makes the restatement "
+          "<em>checkable</em>. D47 measured what the absence costs: applied to "
+          "every sentence carrying a number and a citation the rule fails on "
+          "73%, and to every table cell on 36% — not findings but noise, "
+          "because a citation marks one clause and nothing says which. "
+          "<strong>A marker says which.</strong>"
+          "<br><br><strong>Five of the six hold. One does not.</strong> "
+          "§9.6 marks §9.4 as owning the sealed share and then "
+          "states a slope §9.4 does not carry: <em>“rises by "
+          "<strong>3.5 points a level</strong>”</em>. §9.4 gives the "
+          "two ends — 40% at Vault level 1, 71.5% at level 10 — and "
+          "never the step. The section that does carry it is §10.2, whose "
+          "Vault ladder tabulates all ten rows at 3.5-point intervals."
+          "<br><br>That is the residue of C4, which v3.2 closed: the drafted "
+          "edit fixed <em>which level</em> and kept the citation pointing at "
+          "§9.4. The observation that §10.2 is the only one of the "
+          "four homes that tabulates the rule rather than restating it was "
+          "recorded in D43 at the time and offered rather than applied. This "
+          "is what it looks like a version later.",
+     rec="One citation: §9.6’s marker becomes "
+         "<code>(10.2 owns this)</code>, drafted below. §10.2 states the "
+         "40%, the 71.5% and every step between, so the marker then points at "
+         "the only section that can answer a reader who asks what the slope "
+         "is."
+         "<br><br><code>check_document.check_home_markers()</code> reads every "
+         "marker against the section it names. The scope is the marker’s "
+         "own clause, which had to be measured rather than assumed: reading "
+         "the whole line reported §9.3 and §12.6 as faults, and both "
+         "were the line carrying a second fact — §12.6 writes "
+         "“1,500 health per Vault level; … loads at 30 a second "
+         "(12.19 owns this rate)” and §12.19 owns the rate, not the "
+         "health. Scoped to the clause, five pass and the sixth is real."
+         "<br><br><strong>A marker is a promise, and a promise nothing checks "
+         "is how §29.1 became C21.</strong> This is the check that makes "
+         "it cost something — and it is the answer to F25 that F25 did "
+         "not propose, because it needs the document to volunteer which "
+         "sentences are single claims, and now it does."),
+
+dict(id="D52", kind="deviation", severity="significant", status="open",
+     title="v3.2 says it answers all fifty-two; twenty-two of them sit on "
+           "sections it did not touch",
+     refs=["32.1", "32.3", "31.9"],
+     body="v3.2’s changelog: <em>“An updated audit of version 3.1 "
+          "left fifty-two open items. Version 3.2 <strong>answers all "
+          "fifty-two and applies most of them</strong>.”</em>"
+          "<br><br><code>tools/version_diff.py</code> compares the two "
+          "versions section by section. <strong>v3.2 changed 21 of "
+          "v3.1’s 243 sections and added 7.</strong> Mapping the open "
+          "register onto that list: 30 items cite a section that moved, and "
+          "<strong>22 cite nothing that moved at all</strong> — D6, C6, "
+          "C25, D13, F10, F12, F23, D31, D39, D40, D44, D47, D48, C12, C18, "
+          "G3, G10, G11, D9, D17, Q3 and Q5."
+          "<br><br>The claim is not false, and the distinction matters: "
+          "<em>answered</em> and <em>applied</em> are different words and "
+          "§32.3 is explicit about four mechanisms that are the first "
+          "without the second. §32 is new, so an item answered there has "
+          "its answer in a section its own refs never pointed at. What this "
+          "measures is narrower and harder to argue with: <strong>for "
+          "twenty-two open items, the sections the item is about still say "
+          "exactly what they said.</strong>"
+          "<br><br>Some of those are the largest items in the register. C6 is "
+          "the eighteen abilities — §31.9 names it as deliberately "
+          "left. D6 and Q5 are the launch scope cut, which §32.5 decides "
+          "and D49 is about. C3, C25 and D13 are the law table, and "
+          "<strong>not one row of any content table changed</strong>: the 48 "
+          "laws, 18 ruleborn, 31 traits, 39 terrain features and 17 buildings "
+          "re-extract byte-identical to v3.1.",
+     rec="Nothing to fix in the document — this is a reading aid and a "
+         "guard against the next version being taken at its word."
+         "<br><br><code>python3 tools/version_diff.py --items</code> prints "
+         "the worklist: which open items sit on ground that moved, and which "
+         "do not. Reading twenty-one sections is a morning; reading 250 is "
+         "not, and reading none and believing the changelog is how C21 to C24 "
+         "survived v3.0."
+         "<br><br>It cannot say a changed section <em>fixed</em> the item, "
+         "and two of v3.2’s twenty-one moved for reasons unrelated to "
+         "the items citing them. The output is a worklist, not a verdict. "
+         "What it removes is the other 222 sections."),
+
 dict(id="D49", kind="contradiction", severity="blocking", status="open",
      title="The scope cut is decided in §32.5 and the document still says "
            "144 forms in nine places",
@@ -4217,11 +4306,22 @@ V32 = {
     "\u00a712.1 states. The check that says so is the same one, unchanged, "
     "and it still fails."),
 
+"Q6": dict(status="adopted", note=
+    "Answered. \u00a727.3: <em>\u201cThe curve is cut, and a catch-up "
+    "discount ships as well. The discount is keyed to the median player's "
+    "progress rather than to calendar time or to the player's own rate\u201d"
+    "</em>. Both branches of the question taken, and the keying is the part "
+    "the item said was never specified."),
+
 "F17": dict(status="open", note=
-    "Acted on \u2014 \u00a79.5's upkeep row was rewritten, so the drafted "
-    "edit no longer quotes anything. Whether the sinks now work is a question "
-    "for the economy model rather than for a string comparison, and it has "
-    "not been re-run against v3.2."),
+    "<strong>Half closed, and it is the half the spec argued for.</strong> "
+    "<code>sinks.md</code> said the prices were on the wrong kind of curve and "
+    "proposed pegging upkeep to production before cutting faucets. "
+    "\u00a75.6 and \u00a79.5 now do the peg: upkeep is "
+    "<em>\u201c15% of hourly Aether production at a full stability budget, "
+    "pro-rata below it\u201d</em> rather than a flat 0.5 an hour per point."
+    "<br><br>Whether the sinks now hold is a question for the economy model, "
+    "not for a string comparison, and it has not been re-run against v3.2."),
 
 "F14": dict(status="fixed", note=
     "Closed, and the document states the cause in the audit's own terms. "
@@ -5119,6 +5219,18 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+
+"D51": [
+    dict(section="9.6", action="replace",
+         find="rises by 3.5 points a level to 71.5% at Vault level 10 "
+              "(9.4 owns this)",
+         replace="rises by 3.5 points a level to 71.5% at Vault level 10 "
+                 "(10.2 owns this)",
+         why="\u00a79.4 gives the two ends and never the step, so a reader "
+             "sent there cannot check the 3.5. \u00a710.2's Vault ladder "
+             "tabulates all ten rows at 3.5-point intervals and is the only "
+             "one of the rule's homes that does. D51."),
+],
 
 "D49": [
     dict(section="11.10", action="replace",

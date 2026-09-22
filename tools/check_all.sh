@@ -30,6 +30,10 @@ python3 tools/mutation_gate.py
 python3 tools/twice_stated.py --self-test
 
 echo
+echo "== what changed since the previous version =="
+python3 tools/version_diff.py --self-test
+
+echo
 echo "== where every launch-inventory count lives =="
 python3 tools/inventory_homes.py --self-test
 
