@@ -870,7 +870,8 @@ dict(id="F26", kind="finding", severity="blocking", status="open",
           "designer can place geometry at a resolution the post count does not "
           "have — that is F16’s finding — so this is about the "
           "islands most players will defend and raid, not about what the editor "
-          "can build.",
+          "can build."
+          "<br><br><strong>Re-measured after D55, in part</strong> (generator sweep, same seeds and sample sizes): 3 of 10 realm/depth combinations have a setting inside both bands, as before, and the nearest misses are the same cells within a few points. The ward-budget half is still running; this item stays on the old fingerprint until it lands.",
      rec="<strong>The lever is wards, and §5.2 allows 40% of what is "
          "needed.</strong> An earlier draft of this recommendation said realm 1 "
          "had no lever at the right scale, and listed wards, grid size and a "
@@ -1840,7 +1841,8 @@ dict(id="F22", kind="finding", severity="blocking", status="proposed",
           "(t = 0.15): geometry and guards are independent, and the apparent "
           "synergy is the percentage scale compressing near zero. Unlike guards "
           "and response (F15), which really are multiplicative, "
-          "\u00a713.2\u2019s separable shares are the right model here.",
+          "\u00a713.2\u2019s separable shares are the right model here."
+          "<br><br><strong>Re-measured after D55</strong> (generator sweep, same seeds and sample sizes): at one post realm 1 still peaks at 16.7% (was 15.0%) and realm 2 at 29.8% (was 26.2%), under §13.2’s 30% floor. Realm 1 with two posts and one band moved from 44.8% to 48.8%, now just over the band rather than inside it. The finding holds: one post cannot reach the band.",
      rec="Specified in <code>docs/design/spec/generator.md</code>. <strong>A "
          "floor of two posts at realms 1 and 2</strong> \u2014 one line, and "
          "the only change measured that brings those realms within reach at "
@@ -1863,7 +1865,7 @@ dict(id="F22", kind="finding", severity="blocking", status="proposed",
          "very few discrete settings early \u2014 integer posts, "
          "<code>3 + level</code> wards \u2014 and <strong>a layer offered as a "
          "switch cannot be balanced against a 15-point band</strong>.",
-     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
+     measured="re-run against harness ef4163da978cc0f0 (D55)"),
 
 dict(id="F10", kind="finding", severity="blocking", status="open",
      title="Sixteen of forty-eight laws are parameter changes; the rest need an engine feature",
@@ -2704,7 +2706,7 @@ dict(id="D55", kind="deviation", severity="significant", status="done",
      rec="Align the harness with the content file and re-run the findings it "
          "carries, or record why the harness should keep its own reading. "
          "Either way one reading, not two."
-         "<br><br><strong>Done.</strong> <code>detect.zone</code> now answers the zone by distance inside the corner of the eye and <code>fill_rate</code> halves it, with the factor read from the content file. Every harness-pinned finding was measured twice — the harness before and after, same seeds, same sample sizes, in separate worktrees — and <strong>one number changed a claim</strong>: realm 1 needs twice §10.2’s ladder slope to reach the band, not five times (F27, corrected in place). Its conclusion holds. F9, F11, F15, F16, F20 and F21 moved within sampling noise and every verdict held. F19 is not re-measured, because no report runs its two crews; F22 and F26 wait on the generator sweep and stay on the old fingerprint until it lands. Harness fingerprint 496955db → ef4163da.",
+         "<br><br><strong>Done.</strong> <code>detect.zone</code> now answers the zone by distance inside the corner of the eye and <code>fill_rate</code> halves it, with the factor read from the content file. Every harness-pinned finding was measured twice — the harness before and after, same seeds, same sample sizes, in separate worktrees — and <strong>one number changed a claim</strong>: realm 1 needs twice §10.2’s ladder slope to reach the band, not five times (F27, corrected in place). Its conclusion holds. F9, F11, F15, F16, F20 and F21 moved within sampling noise and every verdict held. F19 is not re-measured, because no report runs its two crews; F22 has since been re-measured on the generator sweep and holds; F26 holds on the sweep and waits on the ward budget. Harness fingerprint 496955db → ef4163da.",
      measured="harness ef4163da978cc0f0"),
 dict(id="D53", kind="contradiction", severity="significant", status="open",
      title="§13.4 names §5.2 as the home of the law slots and then "
