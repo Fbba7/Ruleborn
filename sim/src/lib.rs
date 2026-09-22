@@ -759,6 +759,16 @@ impl World {
                     raider.task = Task::Attack;
                     raider.target = command.x.max(0) as u32;
                 }
+                Kind::Drop => {
+                    let share = (command.x as i32).clamp(0, 100);
+                    let dropped = raider.carried * share / 100;
+                    if dropped > 0 {
+                        raider.carried -= dropped;
+                        if let Some(t) = self.grid.tile_at(raider.at.x, raider.at.y) {
+                            self.dropped.push((t, dropped));
+                        }
+                    }
+                }
                 Kind::Break => {
                     let (x, y) = command.target();
                     if let Some(tile) = self.grid.tile_at(x, y) {
@@ -970,23 +980,8 @@ impl World {
             if raider.still() || !raider.active() {
                 continue;
             }
-            // The tile stood on sets the pace, not the tile being entered:
-            // a character is slowed by the mud it is in. Breadth-first chose
-            // the route without consulting this, which is §12.18's rule that
-            // the crew does not decide — a player who routes through mud
-            // walks through mud.
             let here = self.grid.tile_at(raider.at.x, raider.at.y);
-            let pace = here.map_or(Fx::ONE, |t| self.grid.at(t).pace());
-            let (num, den) = raider.gait.pace();
-            let mut step = scale(raider.speed.mul(pace).mul(Fx::from_ratio(num, den)),
-                                 self.sheet.factor(Param::CrewSpeed));
-            if raider.carried > 0 {
-                step = scale(step, self.sheet.factor(Param::LoadedSpeed));
-                if raider.role == Role::Carrier {
-                    let (n, d) = heist::CARRIER_LOADED_PACE;
-                    step = step.mul(Fx::from_ratio(n, d));
-                }
-            }
+            let step = step_for(&self.grid, &self.sheet, raider, here, raider.carried > 0);
             let (at, along) = walk_route(&self.grid, raider.at, &raider.route, raider.along, step);
             raider.at = at;
             raider.along = along;
@@ -1409,12 +1404,21 @@ impl World {
             // target, until the bag is full or the exposed share is gone. In
             // id order, so who gets the last units is the same everywhere.
             let per_tick = heist::LOAD_PER_SECOND / TICKS_PER_SECOND as i32;
-            for raider in self.raiders.iter_mut() {
+            for ri in 0..self.raiders.len() {
+                let raider = &self.raiders[ri];
                 let beside = self.grid.tile_at(raider.at.x, raider.at.y)
                     .is_some_and(|t| self.grid.neighbours(self.vault.tile).contains(&Some(t)));
                 if !(raider.active() && raider.task == Task::Load && beside) {
                     continue;
                 }
+                // §12.6: "the crew loads to whatever that target and the
+                // remaining clock afford". It stops when the clock left no
+                // longer covers getting out — the walk to the skiff, or the
+                // skiff's own arrival if that is later.
+                if !self.clock_affords(ri) {
+                    continue;
+                }
+                let raider = &mut self.raiders[ri];
                 let target = raider.role.carry() * raider.target_fill / 100;
                 let take = per_tick.min(target - raider.carried).min(self.vault.exposed);
                 if take > 0 {
@@ -1487,6 +1491,59 @@ impl World {
                 }
             }
         }
+    }
+
+    /// Whether the heist clock still covers getting crew member `ri` out:
+    /// walking, loaded, from where it stands to the skiff (or, if none is
+    /// called, the nearest edge), and waiting for the skiff if it is later.
+    /// Exactly covers — the document gives no margin, so none is added.
+    fn clock_affords(&self, ri: usize) -> bool {
+        if self.clock == u32::MAX {
+            return true;                      // a world with no clock
+        }
+        let r = &self.raiders[ri];
+        let Some(from) = self.grid.tile_at(r.at.x, r.at.y) else { return false };
+        let exit = match self.skiff {
+            Some(s) => Some(s.tile),
+            None => {
+                // The nearest edge by the walk, ties to the lower index.
+                let field = noise::field(&self.grid, from, u16::MAX - 1);
+                (0..self.grid.len() as grid::TileIndex)
+                    .filter(|t| self.grid.is_edge(*t) && field[*t as usize] != noise::UNHEARD)
+                    .min_by_key(|t| (field[*t as usize], *t))
+            }
+        };
+        let Some(exit) = exit else { return false };
+        let route = if exit == from {
+            Vec::new()
+        } else {
+            match path::find(&self.grid, from, exit) {
+                Some(route) => route,
+                None => return false,
+            }
+        };
+        let mut walk: u64 = 0;
+        let mut on = from;
+        for next in route {
+            let step = step_for(&self.grid, &self.sheet, r, Some(on), true);
+            if step.0 <= 0 {
+                return false;
+            }
+            // Ticks to cross one tile, rounded up: a part-tick is a tick.
+            let t = Fx::ONE.div(step).0;
+            walk += ((t + fixed::FX_ONE - 1) / fixed::FX_ONE) as u64;
+            on = next;
+        }
+        let wait = match self.skiff {
+            Some(s) => s.arrives.saturating_sub(self.tick) as u64,
+            None => heist::SKIFF_HEART_TICKS as u64,
+        };
+        let need = walk.max(wait);
+        // Clock left, in ticks, at this realm's clock rate.
+        let (n, d) = self.sheet.factor(Param::ClockRate);
+        let left_milli = (self.clock as u64 * 1000).saturating_sub(self.clock_run);
+        let left = left_milli * d as u64 / (1000 * n as u64);
+        left > need
     }
 
     /// §12.9's outcome, from the crew's standings. Meaningful once the clock
@@ -1641,6 +1698,31 @@ impl World {
         }
         h
     }
+}
+
+/// How far a crew member moves in one tick standing on `here`: §11.1's speed,
+/// its gait, the ground, the laws, and — if it is carrying — a law's loaded
+/// speed and the Carrier's 15%. One function, so the walk and the estimate of
+/// the walk home cannot disagree.
+///
+/// The tile stood on sets the pace, not the tile being entered: a character
+/// is slowed by the mud it is in. Breadth-first chose the route without
+/// consulting this, which is §12.18's rule that the crew does not decide — a
+/// player who routes through mud walks through mud.
+fn step_for(grid: &Grid, sheet: &Sheet, raider: &Raider, here: Option<grid::TileIndex>,
+            loaded: bool) -> Fx {
+    let pace = here.map_or(Fx::ONE, |t| grid.at(t).pace());
+    let (num, den) = raider.gait.pace();
+    let mut step = scale(raider.speed.mul(pace).mul(Fx::from_ratio(num, den)),
+                         sheet.factor(Param::CrewSpeed));
+    if loaded {
+        step = scale(step, sheet.factor(Param::LoadedSpeed));
+        if raider.role == Role::Carrier {
+            let (n, d) = heist::CARRIER_LOADED_PACE;
+            step = step.mul(Fx::from_ratio(n, d));
+        }
+    }
+    step
 }
 
 /// Walk `step` tiles along a route from `at`, which is heading for

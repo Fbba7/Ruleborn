@@ -225,12 +225,14 @@
       "name": "The skiff, the clock and the outcome",
       "section": "12.9",
       "task": "T5.5",
-      "what": "The skiff comes to an edge tile in 20 s at the Heart and takes whoever holds the spot; anyone inside when the clock ends is caught. §12.9's four grades from who got out with what. A heist planned as a player would play it ends Clean with every bag full.",
+      "what": "The skiff comes to an edge tile in 20 s at the Heart and takes whoever holds the spot; anyone inside when the clock ends is caught. §12.9's four grades from who got out with what. A heist planned as a player would play it ends Clean with every bag full. Loading stops when the clock left no longer covers getting out; dropping loot costs exactly the fraction dropped.",
       "tests": [
         "the_skiff_comes_to_an_edge_after_twenty_seconds_and_nowhere_else",
         "anyone_inside_when_the_clock_ends_is_caught",
         "the_four_grades_follow_12_9",
-        "the_planned_heist_ends_clean_with_every_bag_full"
+        "the_planned_heist_ends_clean_with_every_bag_full",
+        "loading_stops_when_the_clock_left_only_covers_getting_out",
+        "dropping_loot_costs_exactly_the_fraction_dropped"
       ]
     },
     {

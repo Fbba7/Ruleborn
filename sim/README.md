@@ -246,6 +246,14 @@ the skiff → the clock.
   1.5 s). Anyone inside when the clock ends is caught.
 - **The skiff** comes to an edge tile only, 20 s after the call at the Heart,
   and takes whoever holds the spot.
+- **The escape's two decisions.** Loading stops when the clock left no longer
+  covers getting out ("the crew loads to whatever that target and the
+  remaining clock afford"). Getting out means the loaded walk to the skiff —
+  or to the nearest edge if none is called — or the skiff's own arrival,
+  whichever is later. The document gives no margin, so none is added; the
+  Python harness adds 15%, which it calls chosen, not derived. `Drop` leaves a
+  share of the load on the tile, which "costs exactly the fraction dropped"
+  and frees a Carrier's pace only when the bag is empty.
 - **§12.9's grades** follow from who got out with what: Clean, Loud, Partial
   or Foiled.
 

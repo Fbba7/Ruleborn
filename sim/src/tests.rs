@@ -1797,3 +1797,54 @@ fn a_replay_carries_the_laws_it_was_made_under() {
     assert_ne!(rules_digest(&[("haste", (1, 3))]), rules_digest(&[("haste", (1, 4))]),
                "and where its pylon stands");
 }
+
+// --------------------------------------------------------------------------
+// The escape (§12.6): loading to what the clock affords, and dropping loot
+// --------------------------------------------------------------------------
+
+#[test]
+fn loading_stops_when_the_clock_left_only_covers_getting_out() {
+    // §12.6: "the crew loads to whatever that target and the remaining clock
+    // afford". With no skiff called, getting out is the nearest edge and the
+    // Heart's 20-second skiff: 600 ticks. A 700-tick clock affords loading
+    // while more than 600 remain — the first 99 ticks, 99 units.
+    let load = |clock: u32| {
+        let mut world = vault_world(3);
+        world.vault.health = 0;
+        world.vault.opened_at = Some(0);
+        put(&mut world, 2, 6, 5);                 // the Carrier, beside it
+        put(&mut world, 0, 13, 13);
+        put(&mut world, 1, 12, 13);
+        world.raiders[2].task = Task::Load;
+        world.clock = clock;
+        for _ in 0..200 {
+            world.step();
+        }
+        world.raiders[2].carried
+    };
+    assert_eq!(load(700), 99, "stops when the clock no longer covers the skiff");
+    assert_eq!(load(u32::MAX), 200, "with no clock, 30 a second throughout");
+}
+
+#[test]
+fn dropping_loot_costs_exactly_the_fraction_dropped() {
+    // §12.19: "Dropping loot to run faster costs exactly the fraction
+    // dropped." A Carrier with 300 drops half: 150 stays on the tile, and it
+    // is still loaded, so still 15% slower. Dropping all of it frees its pace.
+    let mut world = vault_world(3);
+    put(&mut world, 2, 3, 3);
+    world.raiders[2].carried = 300;
+    world.commands_for_test(vec![
+        Command { tick: 0, actor: 2, kind: Kind::Drop, x: 50, y: 0 },
+        Command { tick: 1, actor: 2, kind: Kind::Drop, x: 100, y: 0 },
+    ]);
+    world.step();
+    assert_eq!(world.raiders[2].carried, 150);
+    assert_eq!(world.dropped, vec![(world.grid.index(3, 3).unwrap(), 150)]);
+    world.step();
+    assert_eq!(world.raiders[2].carried, 0);
+    let sheet = world.sheet;
+    let r = &world.raiders[2];
+    assert_eq!(crate::step_for(&world.grid, &sheet, r, None, false), Role::Carrier.speed(),
+               "empty-handed: \u{a7}11.1's full 3.6 tiles a second");
+}
