@@ -253,6 +253,22 @@
         "kinship_heals_whoever_stands_beside_an_ally",
         "regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing"
       ]
+    },
+    {
+      "name": "Wards",
+      "section": "10.3",
+      "task": "T5.5",
+      "what": "All six of §10.3's wards at level 1, as spec/wards.md reads them: Crystal Wall and Thorn Hedge passive, Static Coil an aura, Gravity Well, Time Snare and Lantern Glare triggered by the first crew member in reach and then resetting. A ward can be disarmed from beside it — four seconds, silent, never resets — or smashed, loudly, Breakers double.",
+      "tests": [
+        "a_time_snare_freezes_the_first_to_step_on_it_then_waits_twelve_seconds",
+        "a_gravity_well_pulls_everyone_within_three_tiles_and_holds_them_two_seconds",
+        "a_static_coil_shocks_everyone_within_two_tiles_every_three_seconds",
+        "a_thorn_hedge_hurts_whoever_pushes_through_five_percent_a_second",
+        "a_lantern_glare_shows_the_crew_to_every_guard_and_blinds_it",
+        "a_crystal_wall_blocks_until_it_is_broken",
+        "disarming_takes_four_seconds_at_level_one_is_silent_and_never_resets",
+        "smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits"
+      ]
     }
   ],
   "targets": [

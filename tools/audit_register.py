@@ -2608,6 +2608,22 @@ dict(id="G15", kind="gap", severity="significant", status="open",
      rec="Either state the exposed share in bag units, or state the "
          "conversion. It is a pricing decision, so it is yours to make.",
      measured="sim/: FIXTURE_EXPOSED"),
+dict(id="C32", kind="contradiction", severity="minor", status="open",
+     title="Two reset times for the same ward at level 1",
+     refs=["10.2", "10.3"],
+     body="§10.2’s Ward row: level 1 “resets 10 s”, falling a second a level to 6. "
+          "§10.3’s own table, in a column headed <em>Resets after</em>: Gravity "
+          "Well 10 s, Time Snare <strong>12 s</strong>, Lantern Glare <strong>20 "
+          "s</strong>. Two sections give the same fact for two of the three "
+          "triggered wards, and they disagree. <code>spec/wards.md</code> took "
+          "§10.2’s column without noticing §10.3’s.<br><br>Found building wards "
+          "in <code>sim/</code>, which has to pick one: it takes §10.3’s, each "
+          "ward’s own section, and says so.",
+     rec="Keep §10.3’s per-ward times as each ward’s level-1 reset, and make "
+         "§10.2’s column a reduction by level — 0, 10, 20, 30, 40% — so an "
+         "upgrade still shortens every window and a Lantern Glare stays the "
+         "slowest to come back. One home for the base, one for the scaling.",
+     measured="sim/: heist.rs ward resets"),
 dict(id="C31", kind="contradiction", severity="minor", status="open",
      title="Patrols that “shift slightly each run” against “nothing here is "
            "random”",
@@ -5508,6 +5524,15 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+
+"C32": [
+    dict(section="10.2", action="replace",
+         find="effect +0%, resets 10 s",
+         replace="effect +0%, resets as 10.3 gives each ward",
+         why="\u00a710.3 gives Time Snare 12 s and Lantern Glare 20 s at level 1; "
+             "this row gives every ward 10 s. The later rows become a reduction "
+             "by level (\u221210, \u221220, \u221230, \u221240%). C32."),
+],
 
 "F28": [
     dict(section="12.6", action="replace",

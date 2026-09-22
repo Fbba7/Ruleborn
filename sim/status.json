@@ -8,6 +8,7 @@
   "a_crew_member_covers_its_roles_distance_whatever_the_tile_edges": "passed",
   "a_crew_member_never_re_routes_itself": "passed",
   "a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss": "passed",
+  "a_crystal_wall_blocks_until_it_is_broken": "passed",
   "a_diagonal_through_a_corner_crosses_both_side_tiles": "passed",
   "a_downed_crew_member_is_caught_after_ten_seconds_unless_revived": "passed",
   "a_fence_stops_feet_and_not_eyes": "passed",
@@ -15,12 +16,14 @@
   "a_full_five_crew_load_takes_ten_seconds": "passed",
   "a_full_length_heist_fits_the_size_budget": "passed",
   "a_gait_command_changes_the_gait_and_a_bad_one_is_dropped": "passed",
+  "a_gravity_well_pulls_everyone_within_three_tiles_and_holds_them_two_seconds": "passed",
   "a_guard_can_always_see_out_of_its_own_tile": "passed",
   "a_guard_turns_toward_the_way_around_not_toward_the_raider": "passed",
   "a_heist_is_reproducible_from_its_seed": "passed",
   "a_heist_round_trips_through_bytes": "passed",
   "a_hit_on_the_vault_is_heard_five_steps_away": "passed",
   "a_knocked_out_guard_found_by_another_raises_the_realm_alarm": "passed",
+  "a_lantern_glare_shows_the_crew_to_every_guard_and_blinds_it": "passed",
   "a_line_is_the_same_from_either_end": "passed",
   "a_position_lands_in_the_tile_whose_centre_it_is": "passed",
   "a_posted_guard_holds_its_facing": "passed",
@@ -34,8 +37,11 @@
   "a_sealed_goal_has_no_route_and_that_is_the_answer": "passed",
   "a_sound_goes_round_a_wall_not_through_it": "passed",
   "a_state_does_not_fall_back_within_half_a_second": "passed",
+  "a_static_coil_shocks_everyone_within_two_tiles_every_three_seconds": "passed",
   "a_straight_line_crosses_only_its_own_row": "passed",
+  "a_thorn_hedge_hurts_whoever_pushes_through_five_percent_a_second": "passed",
   "a_tile_index_round_trips_through_its_coordinates": "passed",
+  "a_time_snare_freezes_the_first_to_step_on_it_then_waits_twelve_seconds": "passed",
   "a_truncated_or_padded_file_is_refused": "passed",
   "a_walk_on_gravel_is_heard_where_the_same_walk_on_grass_is_not": "passed",
   "a_walking_raider_is_heard_and_a_standing_one_is_not": "passed",
@@ -53,6 +59,7 @@
   "cracking_takes_ten_to_twenty_five_seconds_only_with_a_breaker": "passed",
   "crew_pass_through_one_another": "passed",
   "different_seeds_produce_different_heists": "passed",
+  "disarming_takes_four_seconds_at_level_one_is_silent_and_never_resets": "passed",
   "division_undoes_multiplication_to_within_one_unit": "passed",
   "dropping_loot_costs_exactly_the_fraction_dropped": "passed",
   "every_fixture_guard_stands_inside_the_realm": "passed",
@@ -81,6 +88,7 @@
   "sine_is_exactly_odd": "passed",
   "slow_ground_does_change_how_long_the_walk_takes": "passed",
   "slow_ground_does_not_move_the_route": "passed",
+  "smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits": "passed",
   "sounds_carry_the_documents_distances": "passed",
   "standing_still_in_tall_grass_hides_until_a_guard_walks_in": "passed",
   "stillness_hides_whoever_stands_still_for_a_second_and_a_half": "passed",
@@ -108,17 +116,17 @@
  "goldens": [
   {
    "file": "edge-seed-max.rbh",
-   "bytes": 871,
+   "bytes": 865,
    "verifies": true
   },
   {
    "file": "long-crew5.rbh",
-   "bytes": 1245,
+   "bytes": 1263,
    "verifies": true
   },
   {
    "file": "mid-crew4.rbh",
-   "bytes": 1052,
+   "bytes": 1046,
    "verifies": true
   },
   {
@@ -128,49 +136,49 @@
   },
   {
    "file": "short-crew3.rbh",
-   "bytes": 906,
+   "bytes": 942,
    "verifies": true
   }
  ],
  "cross_target": [
   {
    "seed": "1",
-   "native": "b72490d88f62677e",
-   "wasm": "b72490d88f62677e",
+   "native": "0b382612413fe2b1",
+   "wasm": "0b382612413fe2b1",
    "agree": true,
-   "bytes": 1266
+   "bytes": 1302
   },
   {
    "seed": "6840123409045651457",
-   "native": "1f36e55488d803ba",
-   "wasm": "1f36e55488d803ba",
+   "native": "fc728450d9af85e5",
+   "wasm": "fc728450d9af85e5",
    "agree": true,
-   "bytes": 1245
+   "bytes": 1263
   },
   {
    "seed": "18446744073709551615",
-   "native": "0d101fd9043f3fcb",
-   "wasm": "0d101fd9043f3fcb",
+   "native": "34e2a8a3451749b9",
+   "wasm": "34e2a8a3451749b9",
    "agree": true,
-   "bytes": 1231
+   "bytes": 1225
   },
   {
    "seed": "42",
-   "native": "9293076cd8c3fa25",
-   "wasm": "9293076cd8c3fa25",
+   "native": "06a36da450166711",
+   "wasm": "06a36da450166711",
    "agree": true,
-   "bytes": 1191
+   "bytes": 1179
   },
   {
    "seed": "999983",
-   "native": "7d1d0a9c2893d4c2",
-   "wasm": "7d1d0a9c2893d4c2",
+   "native": "fafb8881d3d816c2",
+   "wasm": "fafb8881d3d816c2",
    "agree": true,
    "bytes": 1193
   }
  ],
  "content": {
-  "agree": 114,
+  "agree": 126,
   "disagree": [],
   "not_modelled": [
    "modifiers.higher_ground \u2014 the fixture has one level",
@@ -191,7 +199,10 @@
    "CROUCH_PACE = (1, 2) \u2014 crouched speed against \u00a711.1's; no section gives one",
    "RUN_PACE = (2, 1) \u2014 running speed against \u00a711.1's; no section gives one",
    "REVIVE_HEALTH = (1, 4) \u2014 the health a revived crew member gets back; \u00a712.20 says an ally \"revives it\" and not with what",
-   "FIXTURE_EXPOSED = 560 \u2014 what the fixture's Vault holds, in bag units; \u00a79.6 prices the exposed share in Starlight and nothing converts it to Carry"
+   "FIXTURE_EXPOSED = 560 \u2014 what the fixture's Vault holds, in bag units; \u00a79.6 prices the exposed share in Starlight and nothing converts it to Carry",
+   "WARD_HEALTH_PER_LEVEL = 500 \u2014 a ward's health, from spec/wards.md's proposal; \u00a710.3 gives health to the Crystal Wall alone",
+   "COIL_DAMAGE = (8, 100) \u2014 the Static Coil's shock, from spec/wards.md's proposal; \u00a710.3 gives it no damage",
+   "GLARE_BLIND_TICKS = 60 \u2014 Lantern Glare's blind, read as the crew unable to act; \u00a710.3 says \"blinds them\" and not what a blinded crew cannot do"
   ]
  }
 }

@@ -73,8 +73,9 @@ def main() -> int:
     gate = content_gate.compare(*content_gate.load(), content_gate.source_text())
     facts = content_gate.facts_compare(content_gate.source_text())
     laws = content_gate.laws_compare(content_gate.source_text())
-    gate["checked"] += facts["checked"] + laws["checked"]
-    gate["wrong"] += facts["wrong"] + laws["wrong"]
+    wards = content_gate.wards_compare(content_gate.source_text())
+    gate["checked"] += facts["checked"] + laws["checked"] + wards["checked"]
+    gate["wrong"] += facts["wrong"] + laws["wrong"] + wards["wrong"]
     checked, wrong = gate["checked"], gate["wrong"] + [
         f"{p} — compared by nothing and listed nowhere" for p in gate["uncovered"]]
     t = tests()

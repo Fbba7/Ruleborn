@@ -359,6 +359,36 @@ and it still ends Clean with every bag full and one page.
 The spike's old stand-in law, which slowed the crew by a tenth every two
 seconds, is gone.
 
+## Wards
+
+§10.3's six wards at level 1, built to `docs/design/spec/wards.md` (G3's
+drafted resolution), which gives each ward one of three kinds:
+- **Passive.** Crystal Wall is a wall with 800 health until it is broken.
+  Thorn Hedge is passable and costs 5% of full health a second.
+- **Aura.** Static Coil shocks everyone within 2 tiles every 3 seconds.
+- **Triggered.** Gravity Well, Time Snare and Lantern Glare fire on the first
+  crew member in reach, then stay inert until they reset.
+  - A Gravity Well pulls everyone within 3 tiles to its centre and holds them
+    2 seconds. Their route is recomputed from there to the tile they were sent
+    to: the order was the tile, not the path.
+  - A Lantern Glare shows the crew to every guard in the realm for 5 seconds
+    and blinds the crew for 2.
+
+A ward can be disarmed from beside it: 3 s + 1 s a level, silent, cancelled
+by moving, and never reset. Or it can be smashed, loudly, with Breakers
+doubled.
+
+The document's numbers are read out of `content/wards.json`'s own sentences
+by the content gate: a rewording that stops a number parsing fails there. The
+numbers the spec had to add — ward health 500 a level, Static Coil 8% a
+shock — are listed as not the document's. So is the reading of "blinds
+them" as a crew unable to act.
+
+Reset times come from §10.3 — Time Snare 12 s, Lantern Glare 20 s — although
+§10.2's Ward row gives every ward 10 s at level 1. Building this found that
+contradiction (C32). The fixture puts one of each ward in the south half of
+the realm, where the planned heist does not go.
+
 ## The simulation against the content file
 
 `content/detection.json` holds §12.17 as data; the simulation holds the same

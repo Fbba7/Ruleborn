@@ -123,13 +123,15 @@ pub enum Feature {
     /// §10.2's Law Pylon: one per law, walled like the Vault, but thin — it
     /// does not stop sight.
     Pylon,
+    /// §10.3's Crystal Wall: a wall until it is broken.
+    CrystalWall,
 }
 
 impl Feature {
     fn terrain(self) -> Terrain {
         match self {
             Feature::RockPillar | Feature::RuinWall | Feature::Fence | Feature::Vault
-            | Feature::Pylon => {
+            | Feature::Pylon | Feature::CrystalWall => {
                 Terrain::Blocked
             }
             Feature::FogBank | Feature::TallGrass => Terrain::Open,
@@ -198,6 +200,17 @@ impl Grid {
             self.tiles[i as usize] = feature.terrain();
             self.sight_blocked[i as usize] = feature.blocks_sight();
             self.features[i as usize] = Some(feature);
+        }
+    }
+
+    /// Take a feature away: the tile is open ground again. A broken Crystal
+    /// Wall is the one thing that does this.
+    pub fn clear(&mut self, index: TileIndex) {
+        let i = index as usize;
+        if i < self.tiles.len() {
+            self.tiles[i] = Terrain::Open;
+            self.sight_blocked[i] = false;
+            self.features[i] = None;
         }
     }
 

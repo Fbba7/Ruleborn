@@ -80,6 +80,12 @@ READINGS = [
      "§12.20 says an ally \"revives it\" and not with what"),
     ("FIXTURE_EXPOSED", "what the fixture's Vault holds, in bag units",
      "§9.6 prices the exposed share in Starlight and nothing converts it to Carry"),
+    ("WARD_HEALTH_PER_LEVEL", "a ward's health, from spec/wards.md's proposal",
+     "§10.3 gives health to the Crystal Wall alone"),
+    ("COIL_DAMAGE", "the Static Coil's shock, from spec/wards.md's proposal",
+     "§10.3 gives it no damage"),
+    ("GLARE_BLIND_TICKS", "Lantern Glare's blind, read as the crew unable to act",
+     "§10.3 says \"blinds them\" and not what a blinded crew cannot do"),
 ]
 
 
@@ -326,6 +332,56 @@ def laws_compare(text: str) -> dict:
     return {"checked": checked, "wrong": wrong}
 
 
+def wards_compare(text: str) -> dict:
+    """§10.3's level-1 wards against the simulation's constants.
+
+    `content/wards.json` holds each effect as the document's own sentence, so
+    the numbers are read out of the prose: a sentence reworded so a number no
+    longer parses fails here rather than passing unread.
+    """
+    k = constants(text)
+    tps = k.get("TICKS_PER_SECOND")
+    wards = {w["id"]: w for w in json.loads((HERE.parent / "content" / "wards.json").read_text())}
+    checked, wrong = [], []
+
+    def num(ward: str, pattern: str) -> float | None:
+        m = re.search(pattern, wards[ward]["effect_level_1"])
+        return float(m.group(1)) if m else None
+
+    def reset(ward: str) -> int | None:
+        m = re.fullmatch(r"(\d+) s", wards[ward]["resets_after"])
+        return int(m.group(1)) * tps if m else None
+
+    body = re.search(r"fn reset_ticks\(self\) -> u32 \{(.*?)\n    \}", text, re.S)
+    resets = {n: int(v) * tps for n, v in re.findall(
+        r"WardKind::(\w+) => TICKS_PER_SECOND \* (\d+)", body.group(1))} if body else {}
+
+    rows = [
+        ("gravity_well radius", num("gravity_well", r"within (\d+) tiles"), k.get("WELL_RADIUS")),
+        ("gravity_well hold (ticks)", num("gravity_well", r"holds them (\d+) seconds") * tps,
+         k.get("WELL_HOLD_TICKS")),
+        ("gravity_well reset", reset("gravity_well"), resets.get("GravityWell")),
+        ("crystal_wall health", num("crystal_wall", r"\((\d+) health\)"), k.get("CRYSTAL_WALL_HEALTH")),
+        ("time_snare freeze (ticks)", num("time_snare", r"for ([\d.]+) seconds") * tps,
+         k.get("SNARE_FREEZE_TICKS")),
+        ("time_snare reset", reset("time_snare"), resets.get("TimeSnare")),
+        ("static_coil radius", num("static_coil", r"within (\d+) tiles"), k.get("COIL_RADIUS")),
+        ("static_coil period (ticks)", num("static_coil", r"every (\d+) seconds") * tps,
+         k.get("COIL_PERIOD_TICKS")),
+        ("thorn_hedge damage (%)", num("thorn_hedge", r"\((\d+)% health a second\)"),
+         (k.get("HEDGE_DAMAGE") or (0, 1))[0] * 100 / (k.get("HEDGE_DAMAGE") or (0, 1))[1]),
+        ("lantern_glare reveal (ticks)", num("lantern_glare", r"for (\d+) seconds") * tps,
+         k.get("GLARE_REVEAL_TICKS")),
+        ("lantern_glare blind (ticks)", num("lantern_glare", r"blinds them for (\d+)") * tps,
+         k.get("GLARE_BLIND_TICKS")),
+        ("lantern_glare reset", reset("lantern_glare"), resets.get("LanternGlare")),
+    ]
+    for what, want, have in rows:
+        ok = want is not None and have is not None and float(want) == float(have)
+        (checked if ok else wrong).append(f"wards.json {what}: content {want}, simulation {have}")
+    return {"checked": checked, "wrong": wrong}
+
+
 def source_text() -> str:
     return "\n".join((HERE / p).read_text() for p in SOURCES) + \
         (HERE / "src/tests.rs").read_text()
@@ -372,6 +428,10 @@ def self_test() -> int:
     assert any(w.startswith("design_facts.LOAD_PER_SECOND") for w in got["wrong"]), got
     assert not facts_compare(text)["wrong"], facts_compare(text)["wrong"]
     assert not laws_compare(text)["wrong"], laws_compare(text)["wrong"]
+    assert not wards_compare(text)["wrong"], wards_compare(text)["wrong"]
+    moved = wards_compare(text.replace("SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 5 / 2",
+                                       "SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 2"))
+    assert any("time_snare freeze" in w for w in moved["wrong"]), moved
     # A hand edit to the generated law table, and a rule-sheet parameter the
     # simulation stops reading without saying so.
     table = HERE / "src" / "laws_table.rs"
@@ -401,10 +461,11 @@ def main() -> int:
     r = compare(*load(), source_text())
     facts = facts_compare(source_text())
     laws = laws_compare(source_text())
-    r["checked"] += facts["checked"] + laws["checked"]
-    r["wrong"] += facts["wrong"] + laws["wrong"]
-    print(f"  content: {len(r['checked'])} values agree with content/detection.json, "
-          f"roles.json and tools/design_facts.py")
+    wards = wards_compare(source_text())
+    r["checked"] += facts["checked"] + laws["checked"] + wards["checked"]
+    r["wrong"] += facts["wrong"] + laws["wrong"] + wards["wrong"]
+    print(f"  content: {len(r['checked'])} values agree with content/ (detection, roles, wards, law effects), "
+          f"and tools/design_facts.py")
     for line in r["wrong"]:
         print(f"  DISAGREES {line}")
     for line in r["uncovered"]:

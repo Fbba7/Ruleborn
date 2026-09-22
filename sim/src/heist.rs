@@ -79,6 +79,8 @@ pub enum Task {
     Attack = 3,
     /// Break one structure, by tile.
     Break = 4,
+    /// Disarm one ward, by tile.
+    Disarm = 5,
 }
 
 /// Where a crew member stands in the heist.
@@ -138,4 +140,108 @@ pub struct Outcome {
     pub out: u32,
     /// Laws whose pylon the crew broke: a page of each (§12.6).
     pub pages: u32,
+}
+
+// --------------------------------------------------------------------------
+// Wards (§10.3), as spec/wards.md reads them at level 1
+// --------------------------------------------------------------------------
+
+/// §10.3's six wards.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum WardKind {
+    /// Passive: "A breakable wall (800 health) that blocks a path."
+    CrystalWall = 0,
+    /// Passive: "Blocks a path and hurts anyone pushing through (5% health a
+    /// second)". A wall you choose to push through (spec/wards.md): passable,
+    /// and it hurts.
+    ThornHedge = 1,
+    /// Aura: "Shocks anyone within 2 tiles every 3 seconds."
+    StaticCoil = 2,
+    /// Triggered: "Pulls anyone within 3 tiles to its centre and holds them 2
+    /// seconds."
+    GravityWell = 3,
+    /// Triggered: "Freezes the first character to step on it for 2.5 seconds."
+    TimeSnare = 4,
+    /// Triggered: "Shows the crew to every guard in the realm for 5 seconds
+    /// and blinds them for 2."
+    LanternGlare = 5,
+}
+
+impl WardKind {
+    pub fn passive(self) -> bool {
+        matches!(self, WardKind::CrystalWall | WardKind::ThornHedge)
+    }
+
+    /// §10.3's "Resets after", at level 1. §10.2's row says 10 s for every
+    /// ward; §10.3 gives Time Snare 12 and Lantern Glare 20. The simulation
+    /// takes each ward's own section (C32).
+    pub fn reset_ticks(self) -> u32 {
+        match self {
+            WardKind::GravityWell => TICKS_PER_SECOND * 10,
+            WardKind::TimeSnare => TICKS_PER_SECOND * 12,
+            WardKind::LanternGlare => TICKS_PER_SECOND * 20,
+            _ => 0,
+        }
+    }
+}
+
+pub const CRYSTAL_WALL_HEALTH: i32 = 800;
+/// spec/wards.md: "ward health = 500 × level" — **a proposal, not the
+/// document's**: §11.1 gives Breakers "double damage to wards", so wards must
+/// have health, and §10.3 gives it to the Crystal Wall alone.
+pub const WARD_HEALTH_PER_LEVEL: i32 = 500;
+pub const HEDGE_DAMAGE: (i32, i32) = (5, 100);
+pub const COIL_RADIUS: i32 = 2;
+pub const COIL_PERIOD_TICKS: u32 = TICKS_PER_SECOND * 3;
+/// spec/wards.md: "Static Coil's 8% is new. The document gives it no damage at
+/// all." **A proposal, not the document's.**
+pub const COIL_DAMAGE: (i32, i32) = (8, 100);
+pub const WELL_RADIUS: i32 = 3;
+pub const WELL_HOLD_TICKS: u32 = TICKS_PER_SECOND * 2;
+pub const SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 5 / 2;
+pub const GLARE_REVEAL_TICKS: u32 = TICKS_PER_SECOND * 5;
+/// "blinds them for 2": the crew, read as unable to act — the only sense the
+/// simulation has in which a crew member sees.
+pub const GLARE_BLIND_TICKS: u32 = TICKS_PER_SECOND * 2;
+/// spec/wards.md: "3 s + 1 s per ward level", silent; "moving cancels it;
+/// progress is kept for 5 s".
+pub const DISARM_BASE_TICKS: u32 = TICKS_PER_SECOND * 3;
+pub const DISARM_PER_LEVEL_TICKS: u32 = TICKS_PER_SECOND;
+pub const DISARM_KEEP_TICKS: u32 = TICKS_PER_SECOND * 5;
+
+/// A ward on the island.
+#[derive(Clone, Debug)]
+pub struct Ward {
+    pub kind: WardKind,
+    pub tile: crate::grid::TileIndex,
+    pub level: u8,
+    pub health: i32,
+    /// A triggered ward is inert until this tick.
+    pub armed_at: u32,
+    pub disarmed: bool,
+    pub broken: bool,
+    /// Disarm progress, and the tick it last advanced.
+    pub disarm: u32,
+    pub disarm_touched: u32,
+}
+
+impl Ward {
+    pub fn new(kind: WardKind, tile: crate::grid::TileIndex) -> Ward {
+        let health = if kind == WardKind::CrystalWall {
+            CRYSTAL_WALL_HEALTH
+        } else {
+            WARD_HEALTH_PER_LEVEL
+        };
+        Ward { kind, tile, level: 1, health, armed_at: 0, disarmed: false, broken: false,
+               disarm: 0, disarm_touched: 0 }
+    }
+
+    /// Still doing anything at all.
+    pub fn live(&self) -> bool {
+        !self.disarmed && !self.broken
+    }
+
+    pub fn disarm_ticks(&self) -> u32 {
+        DISARM_BASE_TICKS + DISARM_PER_LEVEL_TICKS * self.level as u32
+    }
 }

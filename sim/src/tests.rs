@@ -1888,3 +1888,145 @@ fn regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing() {
     assert_eq!(world.laws[0].health, 300 + 12, "2% of a pylon's 600");
     assert_eq!(world.laws[1].health, 0, "a broken pylon is not rebuilt");
 }
+
+// --------------------------------------------------------------------------
+// Wards (§10.3, as spec/wards.md reads them at level 1)
+// --------------------------------------------------------------------------
+
+use crate::heist::WardKind;
+
+fn ward_world(crew: u8, kind: WardKind, at: (u16, u16)) -> World {
+    let mut world = vault_world(crew);
+    world.place_wards(&[(kind, at)]);
+    world
+}
+
+#[test]
+fn a_time_snare_freezes_the_first_to_step_on_it_then_waits_twelve_seconds() {
+    let mut world = ward_world(2, WardKind::TimeSnare, (3, 3));
+    put(&mut world, 0, 3, 3);                     // on it
+    put(&mut world, 1, 3, 4);                     // beside it, not on it
+    world.step();
+    assert_eq!(world.raiders[0].frozen_until, h::SNARE_FREEZE_TICKS, "2.5 s from tick 0");
+    assert_eq!(world.raiders[1].frozen_until, 0, "only the first to step on it");
+    assert_eq!(world.wards[0].armed_at, 12 * TICKS_PER_SECOND, "\u{a7}10.3's 12 s (C32)");
+    // Frozen means it does not walk its route.
+    let before = world.raiders[0].at;
+    world.raiders[0].route = vec![world.grid.index(4, 3).unwrap()];
+    for _ in 0..30 {
+        world.step();
+    }
+    assert_eq!(world.raiders[0].at, before, "frozen: no step");
+}
+
+#[test]
+fn a_gravity_well_pulls_everyone_within_three_tiles_and_holds_them_two_seconds() {
+    let mut world = ward_world(3, WardKind::GravityWell, (6, 3));
+    put(&mut world, 0, 8, 3);                     // 2 tiles away
+    put(&mut world, 1, 6, 0);                     // 3 tiles away
+    put(&mut world, 2, 11, 3);                    // 5 away: out of reach
+    let goal = world.grid.index(13, 3).unwrap();
+    let from = world.grid.index(8, 3).unwrap();
+    world.raiders[0].route = path::find(&world.grid, from, goal).unwrap();
+    world.step();
+    let (cx, cy) = world.grid.centre(world.grid.index(6, 3).unwrap());
+    assert_eq!(world.raiders[0].at, Point { x: cx, y: cy }, "pulled to its centre");
+    assert_eq!(world.raiders[1].at, Point { x: cx, y: cy });
+    assert_ne!(world.raiders[2].at, Point { x: cx, y: cy }, "five tiles off: untouched");
+    assert_eq!(world.raiders[0].frozen_until, h::WELL_HOLD_TICKS);
+    assert_eq!(world.raiders[0].route.last(), Some(&goal),
+               "still going where it was told, from where it now is");
+}
+
+#[test]
+fn a_static_coil_shocks_everyone_within_two_tiles_every_three_seconds() {
+    let mut world = ward_world(2, WardKind::StaticCoil, (6, 6));
+    put(&mut world, 0, 6, 8);                     // 2 tiles
+    put(&mut world, 1, 6, 9);                     // 3 tiles
+    for _ in 0..=h::COIL_PERIOD_TICKS {
+        world.step();
+    }
+    assert_eq!(world.raiders[0].health, 120 - 120 * 8 / 100, "8% of the Scout's 120");
+    assert_eq!(world.raiders[1].health, 180, "out of reach");
+}
+
+#[test]
+fn a_thorn_hedge_hurts_whoever_pushes_through_five_percent_a_second() {
+    let mut world = ward_world(2, WardKind::ThornHedge, (3, 3));
+    put(&mut world, 1, 3, 3);                     // the Breaker, 180, in it
+    for _ in 0..=TICKS_PER_SECOND {
+        world.step();
+    }
+    assert_eq!(world.raiders[1].health, 180 - 2 * 9, "two ticks on a second boundary: 9 each");
+}
+
+#[test]
+fn a_lantern_glare_shows_the_crew_to_every_guard_and_blinds_it() {
+    let mut world = ward_world(1, WardKind::LanternGlare, (3, 3));
+    let far = post(&mut world, 1, 12, 12);        // nowhere near, facing away
+    put(&mut world, 0, 3, 3);
+    world.step();
+    assert_eq!(world.revealed_until, h::GLARE_REVEAL_TICKS);
+    assert_eq!(world.raiders[0].frozen_until, h::GLARE_BLIND_TICKS, "blinded for 2 s");
+    for _ in 0..20 {
+        world.step();
+    }
+    assert!(world.guards[far].state.rank() >= State::Investigating.rank(),
+            "shown the crew from across the realm");
+}
+
+#[test]
+fn a_crystal_wall_blocks_until_it_is_broken() {
+    let mut world = ward_world(2, WardKind::CrystalWall, (3, 3));
+    let wall = world.grid.index(3, 3).unwrap();
+    assert!(!world.grid.at(wall).passable(), "a wall");
+    put(&mut world, 1, 3, 4);                     // the Breaker, beside it
+    world.raiders[1].task = Task::Break;
+    world.raiders[1].target = wall;
+    let mut hits = 0;
+    while world.grid.at(wall) != crate::grid::Terrain::Open && hits < 50 {
+        for _ in 0..h::HIT_TICKS {
+            world.step();
+        }
+        hits += 1;
+    }
+    assert_eq!(hits, 10, "800 health, 80 a hit");
+    assert!(world.wards[0].broken);
+    assert!(!world.grid.blocks_sight(wall), "and open to the eye");
+}
+
+#[test]
+fn disarming_takes_four_seconds_at_level_one_is_silent_and_never_resets() {
+    let mut world = ward_world(1, WardKind::TimeSnare, (3, 3));
+    let snare = world.grid.index(3, 3).unwrap();
+    let g = post(&mut world, 1, 3, 6);            // two steps away, facing away:
+    world.guards[g].facing = Ang::from_degrees(90); // only a sound could wake it
+    put(&mut world, 0, 3, 4);
+    world.raiders[0].task = Task::Disarm;
+    world.raiders[0].target = snare;
+    for _ in 0..(h::DISARM_BASE_TICKS + h::DISARM_PER_LEVEL_TICKS - 1) {
+        world.step();
+    }
+    assert!(!world.wards[0].disarmed, "not before four seconds");
+    world.step();
+    assert!(world.wards[0].disarmed);
+    assert_eq!(world.guards[g].state, State::Unaware, "silent");
+    // Walk onto it: nothing.
+    put(&mut world, 0, 3, 3);
+    world.step();
+    assert_eq!(world.raiders[0].frozen_until, 0, "a disarmed ward does not reset");
+}
+
+#[test]
+fn smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits() {
+    // spec/wards.md: 500 health at level 1; §11.1: Breakers double, 80 a hit.
+    let mut world = ward_world(2, WardKind::StaticCoil, (3, 3));
+    let coil = world.grid.index(3, 3).unwrap();
+    put(&mut world, 1, 2, 3);
+    world.raiders[1].task = Task::Break;
+    world.raiders[1].target = coil;
+    for _ in 0..(7 * h::HIT_TICKS) {
+        world.step();
+    }
+    assert!(world.wards[0].broken, "560 >= 500");
+}

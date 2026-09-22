@@ -46,7 +46,7 @@ pub mod trig;
 
 use fixed::{Ang, Fx};
 use grid::{Feature, Grid, Surface, Terrain};
-use heist::{Grade, Outcome, Skiff, Standing, Task, Vault};
+use heist::{Grade, Outcome, Skiff, Standing, Task, Vault, Ward, WardKind};
 use laws_table::{Param, LAWS};
 
 /// The laws the fixture's realm is woven with: three, the most §5.2 allows at
@@ -56,6 +56,18 @@ pub const FIXTURE_LAWS: [(&str, (u16, u16)); 3] = [
     ("haste", (1, 3)),
     ("brittle_stone", (5, 10)),
     ("glowing_dark", (12, 8)),
+];
+
+/// The fixture realm's wards: one of each of §10.3's six, in the south half
+/// where the planned heist does not go, so the seeded heists meet them and
+/// the planned one is unchanged. Six of the eight §5.2 allows at realm 5.
+pub const FIXTURE_WARDS: [(WardKind, (u16, u16)); 6] = [
+    (WardKind::TimeSnare, (3, 9)),
+    (WardKind::GravityWell, (9, 10)),
+    (WardKind::StaticCoil, (1, 12)),
+    (WardKind::LanternGlare, (6, 11)),
+    (WardKind::CrystalWall, (8, 11)),
+    (WardKind::ThornHedge, (4, 11)),
 ];
 
 /// A realm's rule sheet for one tick: every parameter as an exact ratio, the
@@ -466,6 +478,9 @@ pub struct Raider {
     /// Ticks into the current swing, at the Vault or at a guard.
     pub swing: u32,
     pub standing: Standing,
+    /// Frozen — by a Time Snare, a Gravity Well's hold or a Lantern Glare's
+    /// blind — until this tick: it neither moves nor acts.
+    pub frozen_until: u32,
     /// How many ticks it has stood still, for Stillness.
     pub still_for: u32,
     /// When it went down, and how long an ally has been reviving it.
@@ -476,6 +491,11 @@ pub struct Raider {
 impl Raider {
     pub fn active(&self) -> bool {
         self.standing == Standing::Active
+    }
+
+    /// Active and not frozen: able to move, swing, load or disarm.
+    pub fn acting(&self, now: u32) -> bool {
+        self.active() && now >= self.frozen_until
     }
 
     /// Standing still: no route, or at the end of it.
@@ -509,6 +529,11 @@ pub struct World {
     /// Held rather than consumed, so the same log can be replayed again.
     commands: Vec<Command>,
     next_command: usize,
+    /// The island's wards (§10.3), and a Lantern Glare's reveal: every guard
+    /// shown the crew until `revealed_until`, looking at `reveal_spot`.
+    pub wards: Vec<Ward>,
+    pub revealed_until: u32,
+    pub reveal_spot: Option<grid::TileIndex>,
     /// The realm's laws and their pylons, and this tick's sheet from them.
     pub laws: Vec<Law>,
     pub sheet: Sheet,
@@ -637,6 +662,7 @@ impl World {
                 swing: 0,
                 standing: Standing::Active,
                 still_for: 0,
+                frozen_until: 0,
                 down_since: 0,
                 revive: 0,
             });
@@ -653,6 +679,9 @@ impl World {
             grid,
             commands,
             next_command: 0,
+            wards: Vec::new(),
+            revealed_until: 0,
+            reveal_spot: None,
             laws: Vec::new(),
             sheet: Sheet::plain(),
             clock_run: 0,
@@ -683,11 +712,24 @@ impl World {
         self.refresh_sheet();
     }
 
+    /// Place wards on the island. A Crystal Wall is a wall on its tile; the
+    /// rest lie on open ground and act through the states phase.
+    pub fn place_wards(&mut self, wards: &[(WardKind, (u16, u16))]) {
+        for (kind, (x, y)) in wards {
+            let Some(tile) = self.grid.index(*x, *y) else { continue };
+            if *kind == WardKind::CrystalWall {
+                self.grid.place(*x, *y, Feature::CrystalWall);
+            }
+            self.wards.push(Ward::new(*kind, tile));
+        }
+    }
+
     /// The world a replay describes: the fixture realm, the heist's crew and
     /// commands, its laws, and its clock.
     pub fn from_heist(heist: &Heist) -> World {
         let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
         world.weave(&FIXTURE_LAWS);
+        world.place_wards(&FIXTURE_WARDS);
         world.clock = heist.ticks;
         world
     }
@@ -767,6 +809,13 @@ impl World {
                         if let Some(t) = self.grid.tile_at(raider.at.x, raider.at.y) {
                             self.dropped.push((t, dropped));
                         }
+                    }
+                }
+                Kind::Disarm => {
+                    let (x, y) = command.target();
+                    if let Some(tile) = self.grid.tile_at(x, y) {
+                        raider.task = Task::Disarm;
+                        raider.target = tile;
                     }
                 }
                 Kind::Break => {
@@ -855,6 +904,16 @@ impl World {
             // first version added a random -1 to +1 a tick here, to put the
             // generator on the hot path, and in doing so broke the one
             // promise this section makes about itself.
+            // Lantern Glare: "shows the crew to every guard in the realm" —
+            // as if in its near zone, looking at the tile that set it off.
+            if now < self.revealed_until && self.raiders.iter().any(|r| r.active()) {
+                if let Some(spot) = self.reveal_spot {
+                    gain = gain.max(FILL_NEAR);
+                    if most.is_none() {
+                        most = Some((FILL_NEAR, spot));
+                    }
+                }
+            }
             let guard = &mut self.guards[gi];
             guard.saw = most.is_some();
             if let Some((_, at)) = most {
@@ -977,7 +1036,7 @@ impl World {
             } else {
                 0
             };
-            if raider.still() || !raider.active() {
+            if raider.still() || !raider.acting(self.tick) {
                 continue;
             }
             let here = self.grid.tile_at(raider.at.x, raider.at.y);
@@ -1081,8 +1140,9 @@ impl World {
             let landing = raider.active() && raider.swing + 1 >= heist::HIT_TICKS;
             let breaking = landing && match raider.task {
                 heist::Task::Crack => self.vault.opened_at.is_none() && beside(self.vault.tile),
-                heist::Task::Break => beside(raider.target) && self.laws.iter()
-                    .any(|l| l.pylon == raider.target && l.broken_at.is_none()),
+                heist::Task::Break => beside(raider.target) && (self.laws.iter()
+                    .any(|l| l.pylon == raider.target && l.broken_at.is_none())
+                    || self.wards.iter().any(|w| w.tile == raider.target && w.live())),
                 _ => false,
             };
             if !breaking && (raider.still() || !raider.active()) {
@@ -1257,7 +1317,7 @@ impl World {
                 continue;                     // its swing, if any, is at the Vault
             }
             let gi = r.target as usize;
-            let reach = r.active()
+            let reach = r.acting(now)
                 && self.guards.get(gi).is_some_and(|g| {
                     !g.knocked_out
                         && self.grid.tile_at(g.at.x, g.at.y)
@@ -1303,6 +1363,8 @@ impl World {
                 g.suspicion = SUSPICION_MAX;
             }
         }
+
+        self.wards_act();
 
         // "A crew member at zero health drops its loot on the tile."
         for raider in self.raiders.iter_mut() {
@@ -1368,7 +1430,7 @@ impl World {
                 if raider.task != Task::Crack {
                     continue;                 // its swing, if any, is at a guard
                 }
-                if !(raider.active() && beside) {
+                if !(raider.acting(now) && beside) {
                     raider.swing = 0;
                     continue;
                 }
@@ -1408,7 +1470,7 @@ impl World {
                 let raider = &self.raiders[ri];
                 let beside = self.grid.tile_at(raider.at.x, raider.at.y)
                     .is_some_and(|t| self.grid.neighbours(self.vault.tile).contains(&Some(t)));
-                if !(raider.active() && raider.task == Task::Load && beside) {
+                if !(raider.acting(now) && raider.task == Task::Load && beside) {
                     continue;
                 }
                 // §12.6: "the crew loads to whatever that target and the
@@ -1438,12 +1500,13 @@ impl World {
                 continue;
             }
             let li = self.laws.iter().position(|l| l.pylon == r.target && l.broken_at.is_none());
+            let wi = self.wards.iter().position(|w| w.tile == r.target && w.live());
             let beside = self.grid.tile_at(r.at.x, r.at.y)
                 .is_some_and(|t| self.grid.neighbours(r.target).contains(&Some(t)));
-            let (Some(li), true, true) = (li, beside, r.active()) else {
+            if (li.is_none() && wi.is_none()) || !beside || !r.acting(now) {
                 self.raiders[ri].swing = 0;
                 continue;
-            };
+            }
             self.raiders[ri].swing += 1;
             if self.raiders[ri].swing < heist::HIT_TICKS {
                 continue;
@@ -1452,11 +1515,27 @@ impl World {
             let role = self.raiders[ri].role;
             let (n, d) = if role == Role::Breaker { heist::BREAKER_VAULT_DAMAGE } else { (1, 1) };
             let (sn, sd) = self.sheet.factor(Param::StructureDamage);
-            let law = &mut self.laws[li];
-            law.health -= (role.power() as i64 * n as i64 * sn / (d as i64 * sd)) as i32;
-            if law.health <= 0 {
-                law.health = 0;
-                law.broken_at = Some(now);
+            let hit = (role.power() as i64 * n as i64 * sn / (d as i64 * sd)) as i32;
+            if let Some(li) = li {
+                let law = &mut self.laws[li];
+                law.health -= hit;
+                if law.health <= 0 {
+                    law.health = 0;
+                    law.broken_at = Some(now);
+                }
+            } else if let Some(wi) = wi {
+                // §11.1: "Double damage to wards". A broken Crystal Wall is
+                // open ground again.
+                let w = &mut self.wards[wi];
+                w.health -= hit;
+                if w.health <= 0 {
+                    w.health = 0;
+                    w.broken = true;
+                    if w.kind == WardKind::CrystalWall {
+                        let t = w.tile;
+                        self.grid.clear(t);
+                    }
+                }
             }
         }
 
@@ -1498,6 +1577,110 @@ impl World {
                         raider.carried = 0;
                     }
                 }
+            }
+        }
+    }
+
+    /// §10.3's wards, as spec/wards.md reads them: disarming, then the
+    /// triggered wards (the first crew member in the area, in id order), the
+    /// Static Coil's pulse and the Thorn Hedge's thorns. Damage is a share of
+    /// the target's full health, rounded down.
+    fn wards_act(&mut self) {
+        let now = self.tick;
+        // Disarming: from beside the ward, standing still, silent. Moving
+        // does not advance it; progress lapses after five seconds untouched.
+        for ri in 0..self.raiders.len() {
+            let r = &self.raiders[ri];
+            if r.task != Task::Disarm || !r.acting(now) || !r.still() {
+                continue;
+            }
+            let here = self.grid.tile_at(r.at.x, r.at.y);
+            let Some(wi) = self.wards.iter().position(|w| {
+                w.tile == r.target && w.live() && !w.kind.passive()
+                    && here.is_some_and(|t| self.grid.neighbours(w.tile).contains(&Some(t)))
+            }) else { continue };
+            let w = &mut self.wards[wi];
+            if now.saturating_sub(w.disarm_touched) > heist::DISARM_KEEP_TICKS {
+                w.disarm = 0;
+            }
+            w.disarm += 1;
+            w.disarm_touched = now;
+            if w.disarm >= w.disarm_ticks() {
+                w.disarmed = true;
+            }
+        }
+
+        let tile_of = |p: Point, g: &Grid| g.tile_at(p.x, p.y);
+        for wi in 0..self.wards.len() {
+            let w = self.wards[wi].clone();
+            if !w.live() {
+                continue;
+            }
+            let (wx, wy) = self.grid.centre(w.tile);
+            let centre = Point { x: wx, y: wy };
+            let within = |p: Point, r: i32| p.distance(centre) <= Fx::from_int(r);
+            match w.kind {
+                WardKind::StaticCoil if now > 0 && now % heist::COIL_PERIOD_TICKS == 0 => {
+                    let (n, d) = heist::COIL_DAMAGE;
+                    for r in self.raiders.iter_mut() {
+                        if r.active() && within(r.at, heist::COIL_RADIUS) {
+                            r.health -= r.role.health() * n / d;
+                        }
+                    }
+                }
+                WardKind::ThornHedge if now % TICKS_PER_SECOND == 0 => {
+                    let (n, d) = heist::HEDGE_DAMAGE;
+                    for r in self.raiders.iter_mut() {
+                        if r.active() && tile_of(r.at, &self.grid) == Some(w.tile) {
+                            r.health -= r.role.health() * n / d;
+                        }
+                    }
+                }
+                WardKind::TimeSnare | WardKind::GravityWell | WardKind::LanternGlare
+                    if now >= w.armed_at =>
+                {
+                    let trips = |r: &Raider| r.active() && match w.kind {
+                        WardKind::GravityWell => within(r.at, heist::WELL_RADIUS),
+                        _ => tile_of(r.at, &self.grid) == Some(w.tile),
+                    };
+                    let Some(first) = self.raiders.iter().position(trips) else { continue };
+                    self.wards[wi].armed_at = now + w.kind.reset_ticks();
+                    match w.kind {
+                        WardKind::TimeSnare => {
+                            self.raiders[first].frozen_until = now + heist::SNARE_FREEZE_TICKS;
+                        }
+                        WardKind::GravityWell => {
+                            // Everyone within the radius to the centre, held.
+                            // Where they were going stands: the route is
+                            // recomputed from the well to the same tile,
+                            // because the order was the tile, not the path.
+                            for ri in 0..self.raiders.len() {
+                                let r = &self.raiders[ri];
+                                if !(r.active() && within(r.at, heist::WELL_RADIUS)) {
+                                    continue;
+                                }
+                                let goal = r.route.last().copied();
+                                let route = goal.and_then(|g| path::find(&self.grid, w.tile, g))
+                                    .unwrap_or_default();
+                                let r = &mut self.raiders[ri];
+                                r.at = centre;
+                                r.route = route;
+                                r.along = 0;
+                                r.frozen_until = now + heist::WELL_HOLD_TICKS;
+                            }
+                        }
+                        _ => {
+                            // Lantern Glare: every guard is shown the crew,
+                            // and the crew is blinded.
+                            self.revealed_until = now + heist::GLARE_REVEAL_TICKS;
+                            self.reveal_spot = Some(w.tile);
+                            for r in self.raiders.iter_mut().filter(|r| r.active()) {
+                                r.frozen_until = r.frozen_until.max(now + heist::GLARE_BLIND_TICKS);
+                            }
+                        }
+                    }
+                }
+                _ => {}
             }
         }
     }
@@ -1711,6 +1894,14 @@ impl World {
         mix(self.reinforced as i64);
         mix(self.spreads.len() as i64);
         mix(self.clock_run as i64);
+        mix(self.revealed_until as i64);
+        for w in self.wards.iter() {
+            mix(w.kind as i64);
+            mix(w.health as i64);
+            mix(w.armed_at as i64);
+            mix(w.disarmed as i64 * 2 + w.broken as i64);
+            mix(w.disarm as i64);
+        }
         for law in self.laws.iter() {
             mix(law.def as i64);
             mix(law.health as i64);
@@ -1756,6 +1947,7 @@ impl World {
             mix(raider.standing as i64);
             mix(raider.revive as i64);
             mix(raider.still_for as i64);
+            mix(raider.frozen_until as i64);
         }
         h
     }
@@ -1891,7 +2083,7 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
         };
         // Most decisions are moves; the rest are §12.6's others — a gait,
         // who cracks, who loads and how full, and where the skiff comes.
-        match rng.below(11) {
+        match rng.below(12) {
             0..=5 => {
                 // Aimed inside the fixture's realm. A destination off the
                 // grid is a command that does nothing, which is legal and
@@ -1916,6 +2108,12 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
                 let (_, (px, py)) = FIXTURE_LAWS[rng.below(FIXTURE_LAWS.len() as u64) as usize];
                 push(Kind::MoveTo, aim(px as u64, py as u64 - 1));
                 push(Kind::Break, aim(px as u64, py as u64));
+            }
+            10 => {
+                // A ward: to the tile north of it, and disarm it.
+                let (_, (wx, wy)) = FIXTURE_WARDS[rng.below(FIXTURE_WARDS.len() as u64) as usize];
+                push(Kind::MoveTo, aim(wx as u64, wy as u64 - 1));
+                push(Kind::Disarm, aim(wx as u64, wy as u64));
             }
             _ => {
                 // An edge tile: a side, then a place along it.
