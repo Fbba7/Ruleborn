@@ -43,6 +43,13 @@ CROUCH = (1, 2)          # crouched halves how fast you are noticed
 RUN = (7, 4)             # running raises it by three quarters
 UNLIT = (1, 2)           # an unlit tile halves it again
 
+#: The corner of the eye, from the content file rather than typed here: the
+#: zone's own rate, halved (spec/detection.md). D55 — the harness used to give
+#: the far zone's rate at any distance, a second reading of one sentence.
+_PERIPHERAL = next(m["multiplier"] for m in DETECTION["modifiers"]
+                   if m["id"] == "peripheral")
+PERIPHERAL = (round(_PERIPHERAL * 4), 4)
+
 
 def line_of_sight(island, ax: int, ay: int, bx: int, by: int) -> bool:
     """Whether b is visible from a, in position units, blocked per tile (§6.2).
@@ -77,9 +84,10 @@ def zone(role: str, gx: int, gy: int, facing: int, tx: int, ty: int,
     """Which of a guard's three zones a point falls in, or None.
 
     Outside the cone but inside the peripheral arc, §12.17 gives "weak peripheral
-    awareness": the harness reads that as the far zone's rate only, and never the
-    near or mid rate, since the point of the arc is that it notices movement
-    rather than detail.
+    awareness". `content/detection.json` reads that as the same zones at half
+    the rate, and so does `sim/`; the zone comes back prefixed "p:" so
+    `fill_rate` can halve it. The harness used to answer the far zone's rate at
+    any distance — a second reading of the same sentence (D55).
     """
     v = VISION[role]
     d2 = dist2(gx, gy, tx, ty)
@@ -110,7 +118,11 @@ def zone(role: str, gx: int, gy: int, facing: int, tx: int, ty: int,
             return "far"
         return None
     if off <= v["peripheral"] and d2 <= max(mid, far):
-        return "far"
+        if d2 <= near:
+            return "p:near"
+        if d2 <= mid:
+            return "p:mid"
+        return "p:far"
     return None
 
 
@@ -123,7 +135,10 @@ def fill_rate(zone_name: str, crouched: bool, running: bool, hidden: bool,
     """
     if hidden:
         return 0
-    rate = FILL[zone_name]
+    peripheral = zone_name.startswith("p:")
+    rate = FILL[zone_name[2:] if peripheral else zone_name]
+    if peripheral:
+        rate = rate * PERIPHERAL[0] // PERIPHERAL[1]
     if crouched:
         rate = rate * CROUCH[0] // CROUCH[1]
     if running:

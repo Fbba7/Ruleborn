@@ -55,10 +55,26 @@ def test_the_harness_gives_the_same_answers_as_when_it_was_last_read():
     runs = run_batch(25, 1, 3, "competent") + run_batch(15, 2, 3, "optimal")
     shape = [(r.grade, r.ticks, r.fill, r.decisions, r.alarm) for r in runs]
     digest = hashlib.sha256(repr(shape).encode()).hexdigest()
-    # Changed once, deliberately, by D26: guards now start where `Patrol.phase`
-    # says rather than always at waypoint zero.
-    assert digest == "496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d", (
+    # Changed deliberately by D26 (guards start where `Patrol.phase` says) and
+    # by D55 (the corner of the eye is the zone's rate halved, as the content
+    # file reads it, not the far zone's rate at any distance).
+    assert digest == "ef4163da978cc0f00abbfc0575f20ca4c585aa5d4ff25a08ed223e2696e6701f", (
         f"the harness now gives different results: {digest}")
+
+
+def test_the_corner_of_the_eye_is_the_zone_halved():
+    """D55: the content file's reading, which `sim/` also follows.
+
+    The Scout's cone is 45 degrees and its corner of the eye 110. Just over a
+    tile away and 39 degrees off its facing, a raider is in the corner of its eye at near
+    distance: half of near's 67, not far's 12 as the harness used to say.
+    """
+    from .fixed import tiles
+    # (1, 0.8) tiles: 1.28 m away, 38.7 degrees off — in the corner of the eye.
+    z = detect.zone("Scout", 0, 0, 0, tiles(1), tiles(1) * 8 // 10)
+    assert z == "p:near", z
+    assert detect.fill_rate(z, False, False, False, False) == 33
+    assert detect.fill_rate("near", False, False, False, False) == 67
 
 
 def test_islands_are_a_function_of_their_seed():

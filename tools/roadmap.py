@@ -149,10 +149,12 @@ dict(
                     "does weave laws and is measured \u2014 but its gate "
                     "was never checkable at realm 1 and nothing said so."
                     "<br><br>The ladder was the obvious fix and it fails "
-                    "its collateral check: five times \u00a710.2\u2019s "
-                    "slope is needed to reach the band at realm 1, and at "
-                    "that slope a maxed post carries all four upper realms "
-                    "out of the top of it (F27).",
+                    "its collateral check: twice \u00a710.2\u2019s slope "
+                    "is needed to reach the band at realm 1 \u2014 five "
+                    "times, before the harness's peripheral vision was "
+                    "corrected (D55) \u2014 and at that slope a maxed post "
+                    "carries all four upper realms out of the top of it "
+                    "(F27).",
              evidence="python3 -m tools.generator_settings",
              register=["F26", "F27"],
              gate="every realm/depth pair either satisfies both bands or "

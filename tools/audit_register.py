@@ -1007,7 +1007,8 @@ dict(id="F27", kind="finding", severity="significant", status="open",
           "that a number near a boundary moved once the sample was earned, and "
           "the claim it would have supported — that the ladder takes every "
           "upper realm out of the band — is wider than the evidence "
-          "carries.",
+          "carries."
+          "<br><br><strong>Re-measured after D55</strong> (the harness now reads peripheral vision as the content file does; same seeds and sample sizes): <strong>one number changed and the verdict did not.</strong> Realm 1 needs <em>twice</em> §10.2’s slope to reach the band (20% a level: 33.2%), not five times — the corner of the eye now carries more of what sight buys, so a sight upgrade buys more. At that slope a maxed post still carries all four upper realms out of the top: 52.2%, 58.2%, 64.0%, 62.0%. So the ladder still does not close the gap; it moves it up the realm levels, at a smaller slope than recorded.",
      rec="<strong>Fix the base, not the dial.</strong> State a starting defence "
          "per realm chosen so the ladder spans the band — realm 2 higher, "
          "realms 4 and 5 lower — rather than letting it fall out of "
@@ -1015,10 +1016,10 @@ dict(id="F27", kind="finding", severity="significant", status="open",
          "right instrument and needs no change."
          "<br><br><strong>A steeper ladder is not the answer, and was measured "
          "rather than reasoned about.</strong> F26 first recommended doubling "
-         "its effect to rescue realm 1. Doubling reaches 25.8% against a band "
-         "starting at 30; it takes five times §10.2’s slope to reach "
-         "32.0%, and at that slope a maxed post carries all four upper realms "
-         "out of the top — 54.2%, 60.2%, 66.2%, 62.7%. <strong>The ladder "
+         "its effect to rescue realm 1, and since D55 doubling does reach "
+         "the band there — 20% a level holds 33.2% (before D55 it took five "
+         "times §10.2’s slope). But at that slope a maxed post carries all "
+         "four upper realms out of the top — 52.2%, 58.2%, 64.0%, 62.0%. <strong>The ladder "
          "does not close realm 1’s gap; it moves it up the realm "
          "levels.</strong> One slope has to serve every realm, and the realms "
          "that work sit near the top of the band already, so any upgrade large "
@@ -1029,7 +1030,7 @@ dict(id="F27", kind="finding", severity="significant", status="open",
          "sells four realms an upgrade that leaves it. Either the band is not "
          "meant to hold for an upgraded island — in which case say so — "
          "or the base moves.<br><br><code>python3 -m tools.post_ladder</code>",
-     measured="re-run against harness 496955db53f8d3c4"),
+     measured="re-run against harness ef4163da978cc0f0 (D55)"),
 dict(id="F25", kind="finding", severity="blocking", status="open",
      title="\u00a731.2 states \u201cone fact, one home\u201d and six facts "
            "still have two homes",
@@ -1755,7 +1756,8 @@ dict(id="F9", kind="finding", severity="blocking", status="open",
           "requirement as effective.<br><br>This matters more in v3.0 than it "
           "would have in v2.3, because the generator is no longer a fallback for "
           "players who will not build \u2014 it is what most islands in the target "
-          "pool now are.",
+          "pool now are."
+          "<br><br><strong>Re-measured after D55</strong> (the harness now reads peripheral vision as the content file does; same seeds and sample sizes): competent crew, no laws, 50 raids a cell, by realm: 2 → 8%, 10 → 12%, 48 → 45%, 32 → 38%, 50 → 48%. Realm 1 is still far below §13.2’s band, which is the finding. (Realm 3’s 28% above predates the current harness: it already read 48% before D55.)",
      rec="\u00a713.3 should carry the hold-rate band as a stated requirement on "
          "the generator, the way \u00a713.2 carries it for designed islands, and "
          "the generator should be measured against it before the Workshop is "
@@ -1775,7 +1777,7 @@ dict(id="F9", kind="finding", severity="blocking", status="open",
          "generator can reach 30%. This item\u2019s claim survives; its "
          "diagnosis does not."
          "<br><br><strong>And this item\u2019s own numbers have moved.</strong> Re-measured on the current harness \u2014 competent crew, no laws, two realms crossed, 150 raids a cell \u2014 a generated island holds <strong>9%</strong> at realm 1, <strong>32%</strong> at realm 3 and <strong>44%</strong> at realm 5, against the 2%, 28% and \u201conly level 5 reaches the band\u201d recorded above. Realm 3 now reaches it. The direction survives \u2014 realms 1 and 2 miss badly \u2014 but the sentence \u201conly level 5 reaches \u00a713.2\u2019s band\u201d is no longer true, and the headline 2% is a figure from a harness with three faults since fixed (D24, D25, D26).<br><br>That is the whole argument for <code>check_findings_fresh.py</code>: this number sat in the register\u2019s blocking section, unchallenged, through every one of those fixes.",
-     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
+     measured="re-run against harness ef4163da978cc0f0 (D55)"),
 
 dict(id="D21", kind="deviation", severity="change", status="done",
      title="\u00a719.27\u2019s harnesses were built, since they are now the critical path",
@@ -1934,7 +1936,8 @@ dict(id="F11", kind="finding", severity="blocking", status="open",
           "side that is not paying for it.<br><br>Note the first two rows as "
           "well: <strong>no generator reaches \u00a713.2\u2019s band at realm "
           "level 1 or 2</strong>, which is where every new player starts and "
-          "where most of the target pool sits early in a season.",
+          "where most of the target pool sits early in a season."
+          "<br><br><strong>Re-measured after D55</strong> (the harness now reads peripheral vision as the content file does; same seeds and sample sizes): random laws still weaken the defence against none at every realm, and sign-aware laws still recover it (realm 3: 10% random, 48% sign-aware; realm 5: 5% and 58%). The finding holds. (The count of defender-helping laws is F31’s question, not D55’s.)",
      rec="\u00a713.3 should say what the generator optimises for, because "
          "\u201cgenerated from their laws\u201d has at least three meanings and "
          "two of them are worse than nothing. And \u00a713.2\u2019s 30\u201345% "
@@ -1950,7 +1953,7 @@ dict(id="F11", kind="finding", severity="blocking", status="open",
          "targets. The sign fix stands and is not enough on its own: with "
          "sign-aware laws <em>and</em> the shaped geometry, realms 1 and 2 "
          "still miss the band at \u00a75.2\u2019s one guard post (F22).",
-     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
+     measured="re-run against harness ef4163da978cc0f0 (D55)"),
 
 dict(id="F12", kind="finding", severity="design", status="open",
      title="Eight laws need a decision from the owner that a generator has to make",
@@ -2133,7 +2136,8 @@ dict(id="F20", kind="finding", severity="significant", status="proposed",
           "<br><br>Measured twice more than it should have needed besides: at "
           "150 raids a row the curve rose all the way to 100%, which would have "
           "meant no break-even at all, and that did not survive a larger sample; "
-          "the numbers above are after D25.",
+          "the numbers above are after D25."
+          "<br><br><strong>Re-measured after D55</strong> (the harness now reads peripheral vision as the content file does; same seeds and sample sizes): the best fixed stopping point is still 95% (E 0.1760 → 0.1805), and stopping at 70% still costs about a third: +37% at the peak against +33%. The finding holds.",
      rec="Specified in <code>docs/design/spec/loading.md</code>.<br><br>"
          "<strong>1. Re-derive the number rather than asserting it.</strong> "
          "<code>python3 -m tools.heist_harness breakeven</code> prints the curve "
@@ -2170,7 +2174,8 @@ dict(id="F20", kind="finding", severity="significant", status="proposed",
          "and never specifies \u2014 \u00a713.2\u2019s \u201cthe Spire\u2019s "
          "reach\u201d and \u00a79.6\u2019s floor \u2014 combine to make "
          "\u00a712.19\u2019s sentence very nearly true. The number was not "
-         "wrong; the mechanism that would have justified it was missing."),
+         "wrong; the mechanism that would have justified it was missing.",
+     measured="re-run against harness ef4163da978cc0f0 (D55)"),
 
 dict(id="F21", kind="finding", severity="blocking", status="open",
      title="Outcomes polarise with skill: the better a crew plays, the more it "
@@ -2209,7 +2214,8 @@ dict(id="F21", kind="finding", severity="blocking", status="open",
           "\u00a713.2\u2019s warning is tripped, and it is tripped "
           "<em>specifically for the players who read the game best</em> \u2014 "
           "the ones most likely to be visible, to post replays and to set what "
-          "everyone else copies.",
+          "everyone else copies."
+          "<br><br><strong>Re-measured after D55</strong> (the harness now reads peripheral vision as the content file does; same seeds and sample sizes): measured with <code>test_skill_polarises_outcomes</code>’s setup (realm 3, one link, sign-aware laws, 300 raids), which does not reproduce the 30.0% and 58.0% above exactly. On it the polarisation holds on both harnesses: successful raids filling 20–79% are 74% → 70% of a competent crew’s and 9% → 9% of an optimal one’s.",
      rec="This is \u00a713.2\u2019s own health metric failing on its own terms, "
          "and the population it fails for is the worst one to fail for. It is "
          "also not fixable by tuning the break-even: F20 moves the threshold and "
@@ -2226,7 +2232,9 @@ dict(id="F21", kind="finding", severity="blocking", status="open",
          "Leaving at 35% currently counts as a success and pays almost nothing, "
          "which is why it is free to do it often. \u00a712.9\u2019s grades "
          "have no band between \u201cpartial\u201d and nothing."
-         "<br><br><code>python3 -m tools.heist_harness depth</code>."),
+         "<br><br><code>python3 -m tools.heist_harness depth</code>.",
+     measured="re-run against harness ef4163da978cc0f0 (D55)"),
+
 dict(id="D27", kind="deviation", severity="change", status="done",
      title="The check for D26\u2019s fault found four more, and one of them is "
            "the design\u2019s own joke",
@@ -2649,7 +2657,7 @@ dict(id="F31", kind="finding", severity="significant", status="open",
          "vocabulary. Then re-score Kinship for the generator, which moves "
          "F11’s count.",
      measured="sim/: laws_table.rs; tools/heist_harness/laws.py _helps_defender"),
-dict(id="D55", kind="deviation", severity="significant", status="open",
+dict(id="D55", kind="deviation", severity="significant", status="done",
      title="The Python harness and the content file read peripheral vision "
            "differently",
      refs=["12.17"],
@@ -2665,8 +2673,9 @@ dict(id="D55", kind="deviation", severity="significant", status="open",
           "(G13).",
      rec="Align the harness with the content file and re-run the findings it "
          "carries, or record why the harness should keep its own reading. "
-         "Either way one reading, not two.",
-     measured=""),
+         "Either way one reading, not two."
+         "<br><br><strong>Done.</strong> <code>detect.zone</code> now answers the zone by distance inside the corner of the eye and <code>fill_rate</code> halves it, with the factor read from the content file. Every harness-pinned finding was measured twice — the harness before and after, same seeds, same sample sizes, in separate worktrees — and <strong>one number changed a claim</strong>: realm 1 needs twice §10.2’s ladder slope to reach the band, not five times (F27, corrected in place). Its conclusion holds. F9, F11, F15, F16, F20 and F21 moved within sampling noise and every verdict held. F19 is not re-measured, because no report runs its two crews; F22 and F26 wait on the generator sweep and stay on the old fingerprint until it lands. Harness fingerprint 496955db → ef4163da.",
+     measured="harness ef4163da978cc0f0"),
 dict(id="D53", kind="contradiction", severity="significant", status="open",
      title="§13.4 names §5.2 as the home of the law slots and then "
            "gives different ones",
@@ -4224,7 +4233,8 @@ dict(id="F15", kind="finding", severity="blocking", status="proposed",
           "income and scores <em>zero</em>. Re-measured against grade \u00d7 "
           "fill, the identity breaks (guards 38.7%, response 35.4%) and the 69% "
           "does not: together they deny 74% of the haul, and geometry and laws "
-          "get worse, at 1.6% and 3.5%.",
+          "get worse, at 1.6% and 3.5%."
+          "<br><br><strong>Re-measured after D55</strong> (the harness now reads peripheral vision as the content file does; same seeds and sample sizes): Guards and Response still measure identically — 32.5% each by hold rate (was 30.9%), 40.7% and 35.5% by haul (was 39.6% and 35.3%) — and both stay over §13.2’s 25% ceiling. The generated defence holds 42.5% (was 47.5%), inside the band at 120 raids a coalition. The finding holds.",
      rec="Three changes, in order, specified in "
          "<code>docs/design/spec/response.md</code>.<br><br><strong>1. "
          "\u00a713.4: measure against what \u00a79.6 pays, not the hold "
@@ -4288,7 +4298,7 @@ dict(id="F15", kind="finding", severity="blocking", status="proposed",
          "\u00a713.2\u2019s table \u2014 with one correction: it is "
          "<em>partly</em> about the generator, and the earlier 4.4% "
          "understated the layer.",
-     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
+     measured="re-run against harness ef4163da978cc0f0 (D55)"),
 
 dict(id="F16", kind="finding", severity="significant", status="proposed",
      title="Geometry is 5% of a generated defence \u2014 and designed, it is worth four times as much",
@@ -4325,7 +4335,8 @@ dict(id="F16", kind="finding", severity="significant", status="proposed",
           "its <em>geometry-off</em> hold rate is 18.0%, <em>below</em> the "
           "generated island\u2019s 30.7%, because guards posted at chokepoints "
           "are badly placed once the chokepoints are gone. Design cuts both "
-          "ways.",
+          "ways."
+          "<br><br><strong>Re-measured after D55</strong> (the harness now reads peripheral vision as the content file does; same seeds and sample sizes): generated geometry 25.3% off, 33.3% on (+8.0, unchanged); designed 8.7% off, 97.3% on (+88.7, unchanged). Designed geometry is still worth eleven times generated. The designed island now holds 97.3% rather than every raid.",
      rec="This is the sharpest argument for the creator ladder \u00a718.7 "
          "describes, and against treating generation as equivalent to design. "
          "\u00a713.2\u2019s \u201c60% from design rather than level\u201d is "
@@ -4344,7 +4355,7 @@ dict(id="F16", kind="finding", severity="significant", status="proposed",
          "5%. <code>python3 -m tools.heist_harness.test_harness</code>."
          "<br><br><strong>Re-measured on the current harness</strong> \u2014 competent crew, no laws, two realms crossed, 150 raids a cell:<br><br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;off &nbsp;&nbsp;&nbsp;&nbsp;on &nbsp;&nbsp;contribution<br>generated &nbsp;24.0% &nbsp;&nbsp;32.0% &nbsp;&nbsp;&nbsp;<strong>+8.0</strong><br>designed &nbsp;&nbsp;11.3% &nbsp;<strong>100.0%</strong> &nbsp;&nbsp;<strong>+88.7</strong></code><br><br>The finding holds and grows. Designed geometry is worth <strong>eleven times</strong> generated geometry, against the four to seven times first recorded. The designed island still turns back every raid, and its geometry-off hold rate is still <em>below</em> the generated one \u2014 guards posted at chokepoints are badly placed once the chokepoints are gone."
          "<br><br>\u00a713.4\u2019s own method agrees: across all 32 coalitions, generated geometry takes 8.5% of the credit and the shaped generator this finding argued for takes 16.0% (F15).",
-     measured="496955db53f8d3c4e13f7d1683dd4c47fb49a682f43301859cf1276e10b3c13d"),
+     measured="re-run against harness ef4163da978cc0f0 (D55)"),
 dict(id="D23", kind="deviation", severity="change", status="done",
      title="\u00a713.4's ablation was built exactly as specified, Shapley included",
      refs=["13.4", "13.2"],
