@@ -871,7 +871,7 @@ dict(id="F26", kind="finding", severity="blocking", status="open",
           "have — that is F16’s finding — so this is about the "
           "islands most players will defend and raid, not about what the editor "
           "can build."
-          "<br><br><strong>Re-measured after D55, in part</strong> (generator sweep, same seeds and sample sizes): 3 of 10 realm/depth combinations have a setting inside both bands, as before, and the nearest misses are the same cells within a few points. The ward budget agrees on both harnesses: the recorded ward needs for realms 2–5 are confirmed. For realm 1 the recorded 10 does not land both bands — 11 wards with one band does — and that was already so before D55, so it is a correction to this item rather than something D55 moved.",
+          "<br><br><strong>Re-measured after D55, in part</strong> (generator sweep, same seeds and sample sizes): 3 of 10 realm/depth combinations have a setting inside both bands, as before, and the nearest misses are the same cells within a few points. The ward budget agrees on both harnesses: the recorded ward needs for realms 2–5 are confirmed. For realm 1 the recorded 10 did not land both bands on the D55 harness — 11 did — but with F31’s split on top it lands again: on the current harness every recorded need, realm 1’s 10 included, is confirmed.",
      rec="<strong>The lever is wards, and §5.2 allows 40% of what is "
          "needed.</strong> An earlier draft of this recommendation said realm 1 "
          "had no lever at the right scale, and listed wards, grid size and a "
@@ -1842,7 +1842,7 @@ dict(id="F22", kind="finding", severity="blocking", status="proposed",
           "synergy is the percentage scale compressing near zero. Unlike guards "
           "and response (F15), which really are multiplicative, "
           "\u00a713.2\u2019s separable shares are the right model here."
-          "<br><br><strong>Re-measured after D55</strong> (generator sweep, same seeds and sample sizes): at one post realm 1 still peaks at 16.7% (was 15.0%) and realm 2 at 29.8% (was 26.2%), under §13.2’s 30% floor. Realm 1 with two posts and one band moved from 44.8% to 48.8%, now just over the band rather than inside it. The finding holds: one post cannot reach the band.",
+          "<br><br><strong>Re-measured after D55</strong> (generator sweep, same seeds and sample sizes): at one post realm 1 still peaks at 16.7% (was 15.0%) and realm 2 at 29.8% (was 26.2%), under §13.2’s 30% floor. Realm 1 with two posts and one band moved from 44.8% to 48.8%, now just over the band rather than inside it. The finding holds: one post cannot reach the band. With F31’s split on top it still holds — realm 1 peaks at 19.5%, realm 2 at 28.5%.",
      rec="Specified in <code>docs/design/spec/generator.md</code>. <strong>A "
          "floor of two posts at realms 1 and 2</strong> \u2014 one line, and "
          "the only change measured that brings those realms within reach at "
@@ -2715,7 +2715,10 @@ dict(id="F31", kind="finding", severity="significant", status="proposed",
          "20 → 18%, 48 → 45%, 35 → 45%, 58 → 55% — no longer weaving Kinship "
          "as a defender’s law puts realms 3 and 4 inside §13.2’s band, where "
          "before only realm 4 was. The ablation’s shares and F21’s polarisation "
-         "move within noise.",
+         "move within noise. The generator sweep finds 4 of 10 realm/depth "
+         "combinations with a setting inside both bands, up from 3 — realm 3 "
+         "with two realms crossed reaches 31.8% ±2.3, one standard error in — "
+         "and the ward budget confirms every need F26 records.",
      measured="sim/: laws_table.rs; tools/heist_harness/laws.py _helps_defender"),
 dict(id="D55", kind="deviation", severity="significant", status="done",
      title="The Python harness and the content file read peripheral vision "
@@ -2734,7 +2737,7 @@ dict(id="D55", kind="deviation", severity="significant", status="done",
      rec="Align the harness with the content file and re-run the findings it "
          "carries, or record why the harness should keep its own reading. "
          "Either way one reading, not two."
-         "<br><br><strong>Done.</strong> <code>detect.zone</code> now answers the zone by distance inside the corner of the eye and <code>fill_rate</code> halves it, with the factor read from the content file. Every harness-pinned finding was measured twice — the harness before and after, same seeds, same sample sizes, in separate worktrees — and <strong>one number changed a claim</strong>: realm 1 needs twice §10.2’s ladder slope to reach the band, not five times (F27, corrected in place). Its conclusion holds. F9, F11, F15, F16, F20 and F21 moved within sampling noise and every verdict held. F19 is not re-measured, because no report runs its two crews; F22 and F26 have since been re-measured on the generator sweep and the ward budget and hold; F26's realm-1 ward need is 11, not the recorded 10, on either harness. Harness fingerprint 496955db → ef4163da.",
+         "<br><br><strong>Done.</strong> <code>detect.zone</code> now answers the zone by distance inside the corner of the eye and <code>fill_rate</code> halves it, with the factor read from the content file. Every harness-pinned finding was measured twice — the harness before and after, same seeds, same sample sizes, in separate worktrees — and <strong>one number changed a claim</strong>: realm 1 needs twice §10.2’s ladder slope to reach the band, not five times (F27, corrected in place). Its conclusion holds. F9, F11, F15, F16, F20 and F21 moved within sampling noise and every verdict held. F19 is not re-measured, because no report runs its two crews; F22 and F26 have since been re-measured on the generator sweep and the ward budget and hold. Harness fingerprint 496955db → ef4163da.",
      measured="harness ef4163da978cc0f0"),
 dict(id="D53", kind="contradiction", severity="significant", status="open",
      title="§13.4 names §5.2 as the home of the law slots and then "
