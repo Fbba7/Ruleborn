@@ -93,6 +93,13 @@ FIELD_MAP = {
 }
 
 
+#: 7.10's engine-cost ladder, cheapest first, with the points each rung costs.
+ENGINE_RUNGS = {
+    "Parameter": 0, "Placement or attribute": 1, "Conditional or periodic": 2,
+    "Spawned entity": 4, "Rewind": 8,
+}
+
+
 def extract_laws(text: str) -> list[dict]:
     lines = text.split("\n")
     heads = []
@@ -129,6 +136,14 @@ def extract_laws(text: str) -> list[dict]:
         for src, dst in FIELD_MAP.items():
             if src in raw:
                 law[dst] = raw[src]
+        # v3.3: every sheet names the engine work its effect needs — a rung of
+        # 7.10's ladder — and whether it ships at launch. Both are data 7.10
+        # computes from, so they are kept as data rather than as the sentence.
+        kind = raw.get("Effect kind", "")
+        rung = next((r for r in ENGINE_RUNGS if kind.startswith(r + ":")), None)
+        if rung:
+            law["engine_rung"] = rung
+            law["launch"] = "Ships at launch" in kind
         laws.append(law)
     return laws
 
@@ -159,6 +174,9 @@ SUMMARY_COLUMNS = {
     "Ruleborn": "name", "School": "school", "Role": "role",
     "Size": "size", "Flies": "flies",
     "Ability (cooldown)": "ability", "Passive": "passive",
+    # v3.3: abilities have two uses a heist and no cooldown (12.6), and the
+    # last column is the law family each ruleborn resists (11.11).
+    "Ability (two uses a heist)": "ability", "Resists": "resists",
 }
 
 
@@ -238,7 +256,11 @@ def extract_ruleborn(text: str) -> list[dict]:
                 conflicts["school"] = alt["school"]
             if alt["role"] != entry["role"]:
                 conflicts["role"] = alt["role"]
-            if alt["ability"] != entry.get("ability"):
+            # v3.3 generates 11.2 from 11.11's cards (C6's fix), dropping the
+            # card's closing "Two uses a heist" — the column heading says it.
+            # A difference in that clause alone is the summary, not a conflict.
+            card = re.sub(r"\.\s*Two uses a heist\.?$", "", entry.get("ability") or "")
+            if alt.get("ability") not in (entry.get("ability"), card):
                 conflicts["ability"] = alt["ability"]
             if conflicts:
                 # C6: the document specifies these creatures twice and the two
@@ -251,7 +273,10 @@ def extract_ruleborn(text: str) -> list[dict]:
                 entry["conflict_severity"] = (
                     "role" if "role" in conflicts or "school" in conflicts else "wording")
                 entry["alt_11_2"] = conflicts
-            entry["passive_11_2"] = alt["passive"]
+            if "passive" in alt:
+                entry["passive_11_2"] = alt["passive"]
+            if "resists" in alt:
+                entry["resists"] = alt["resists"]
             # C26: 11.2 now carries size and flight, which 12.21 declared as
             # properties and no table had. Unlike ability and passive they are
             # stated in one place only, so they are not labelled 11_2 — the
@@ -390,6 +415,16 @@ def extract_wards(text: str) -> list[dict]:
     # fix and put the rows back — ninety-nine of them, because v3.1's table
     # is longer. The marker is the title now.
     end = heading(text, "The Library") or "11.1 Roles"
+    # v3.3 answered G3: seven columns, a sensor for each ward, what an upgrade
+    # scales, and whether the ward is seen. Levels 2-5 scale "the number in the
+    # column above" by 10.2's effect ladder, so no ward is missing its levels.
+    headers = ["Ward", "School", "Sensor: kind and radius",
+               "Effect at level 1: what, where, how much, how long",
+               "An upgrade scales", "Resets after", "Seen"]
+    if headers[2] in text:
+        return table(text, "10.3 Wards", end,
+                     ["name", "school", "sensor", "effect_level_1", "scales",
+                      "resets_after", "seen"], headers)
     rows = table(text, "10.3 Wards", end,
                  ["name", "school", "effect_level_1", "resets_after"],
                  ["Ward", "School", "Effect at level 1", "Resets after"])
@@ -428,7 +463,9 @@ def extract_traits(text: str) -> list[dict]:
 BUILDING_NAMES = ["Keeper's Spire", "Vault", "Anchor Stone", "Star Well",
                   "Aether Spring", "Garden", "Storehouse", "Law Pylon", "Hearth",
                   "Nursery", "Guardian Post", "Ward", "Resonance Lab",
-                  "Observatory", "Beacon", "Visitor's Dock"]
+                  "Observatory", "Beacon", "Visitor's Dock",
+                  # v3.3 moved the Library's ten levels into 10.2 (C8).
+                  "Library"]
 
 
 def extract_library(text: str) -> dict | None:
@@ -482,7 +519,11 @@ def extract_buildings(text: str) -> list[dict]:
             return
         levels, i = [], 0
         while i + 3 < len(cells):
-            if re.fullmatch(r"\d+", cells[i]):
+            # A level row: a level number then a Starlight cost. v3.3 added a
+            # per-realm table of Guardian Post starts ("1", "+6%", ...) inside
+            # the Guardian Post's block; it is not a level ladder.
+            if (re.fullmatch(r"\d+", cells[i])
+                    and re.fullmatch(r"[\d,]+", cells[i + 1])):
                 levels.append({
                     "level": int(cells[i]),
                     "cost_starlight": int(cells[i + 1].replace(",", "")),
@@ -536,7 +577,12 @@ def main() -> int:
     write("ruleborn", extract_ruleborn(text))
     write("traits", extract_traits(text))
     buildings = extract_buildings(text)
-    library = extract_library(text)
+    # Before v3.3 the Library lived outside 10.2's table; read it from there
+    # only when 10.2 does not carry it.
+    in_table = any(b["id"] == "library" and b["levels"] for b in buildings)
+    library = None if in_table else extract_library(text)
+    if not in_table:
+        buildings = [b for b in buildings if b["id"] != "library"]
     if library:
         buildings.append(library)
     write("buildings", buildings)

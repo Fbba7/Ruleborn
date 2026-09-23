@@ -27,7 +27,7 @@
       "Echo",
       "Hush"
     ],
-    "effect": "Knocked-out characters drift back to where they entered the realm instead of being caught."
+    "effect": "Knocked-out characters drift back to where they entered the realm instead of being caught (Knockout, 7.3)."
   },
   {
     "id": "fair_lights",
@@ -97,7 +97,7 @@
       "Bloom",
       "Echo"
     ],
-    "effect": "Lanterns heal anyone in their light and revive each character once."
+    "effect": "Lanterns heal anyone in their light, and each character returns once at the revive health, 30% of its role's health (Revival, 7.3; 12.20)."
   },
   {
     "id": "quicksand",

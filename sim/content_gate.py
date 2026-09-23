@@ -24,6 +24,7 @@ passing for the document's.
 import json
 import pathlib
 import re
+from fractions import Fraction
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -69,17 +70,13 @@ HELD_BY_TEST = {
 }
 
 # Numbers the simulation needs and the document does not give.
+# v3.3 answered five that used to be here — the crouched and running paces
+# (G13), revive health (G14), the Vault in bag units (G15) and the Static
+# Coil's shock (G3) — and they are compared below now, not read.
 READINGS = [
-    ("CROUCH_PACE", "crouched speed against §11.1's", "no section gives one"),
-    ("RUN_PACE", "running speed against §11.1's", "no section gives one"),
-    ("REVIVE_HEALTH", "the health a revived crew member gets back",
-     "§12.20 says an ally \"revives it\" and not with what"),
-    ("FIXTURE_EXPOSED", "what the fixture's Vault holds, in bag units",
-     "§9.6 prices the exposed share in Starlight and nothing converts it to Carry"),
-    ("WARD_HEALTH_PER_LEVEL", "a ward's health, from spec/wards.md's proposal",
-     "§10.3 gives health to the Crystal Wall alone"),
-    ("COIL_DAMAGE", "the Static Coil's shock, from spec/wards.md's proposal",
-     "§10.3 gives it no damage"),
+    ("WARD_HEALTH_PER_LEVEL", "a ward's health, 550 a level",
+     "§10.3 states 500 in its first paragraph and 550 in its last (C34); "
+     "the simulation takes 550, the value the section derives"),
     ("LandingTwo", "landing from two levels, 3 m",
      "§12.17 gives one level (2 m) and three (4 m) and nothing between"),
     ("GLARE_BLIND_TICKS", "Lantern Glare's blind, read as the crew unable to act",
@@ -274,6 +271,15 @@ def reading_value(name: str, k: dict, text: str):
     return f"{m.group(1)} half metres" if m else None
 
 
+def ratio(value) -> Fraction | None:
+    """A fact as a fraction: 0.3 and (30, 100) are the same number."""
+    if value is None:
+        return None
+    if isinstance(value, tuple):
+        return Fraction(value[0], value[1])
+    return Fraction(value).limit_denominator(1000)
+
+
 def facts_compare(text: str) -> dict:
     """The simulation's copies of the facts `tools/design_facts.py` declares.
 
@@ -303,6 +309,15 @@ def facts_compare(text: str) -> dict:
          k.get("MENDER_REVIVE_TICKS")),
         ("SKIFF_OUTER_SECONDS", f.SKIFF_OUTER_SECONDS * tps, k.get("SKIFF_OUTER_TICKS")),
         ("SKIFF_HEART_SECONDS", f.SKIFF_HEART_SECONDS * tps, k.get("SKIFF_HEART_TICKS")),
+        ("CROUCH_PACE", ratio(f.CROUCH_PACE), ratio(k.get("CROUCH_PACE"))),
+        ("RUN_PACE", ratio(f.RUN_PACE), ratio(k.get("RUN_PACE"))),
+        ("REVIVE_HEALTH", ratio(f.REVIVE_HEALTH), ratio(k.get("REVIVE_HEALTH"))),
+        # §9.6: exposed share in bag units = a full five-crew's carry at the
+        # level median, which is what the fixture's Vault is.
+        ("FIXTURE_EXPOSED (9.6: a full five-crew's carry)",
+         sum(r["carry"] for r in json.loads((HERE.parent / "content" / "roles.json")
+                                            .read_text(encoding="utf-8"))),
+         k.get("FIXTURE_EXPOSED")),
     ]
     checked, wrong = [], []
     for name, want, have in rows:
@@ -377,7 +392,9 @@ def wards_compare(text: str) -> dict:
         ("static_coil radius", num("static_coil", r"within (\d+) tiles"), k.get("COIL_RADIUS")),
         ("static_coil period (ticks)", num("static_coil", r"every (\d+) seconds") * tps,
          k.get("COIL_PERIOD_TICKS")),
-        ("thorn_hedge damage (%)", num("thorn_hedge", r"\((\d+)% health a second\)"),
+        ("static_coil damage (%)", num("static_coil", r"for (\d+)% of their maximum health"),
+         (k.get("COIL_DAMAGE") or (0, 1))[0] * 100 / (k.get("COIL_DAMAGE") or (0, 1))[1]),
+        ("thorn_hedge damage (%)", num("thorn_hedge", r"(\d+)% (?:of their )?health a second"),
          (k.get("HEDGE_DAMAGE") or (0, 1))[0] * 100 / (k.get("HEDGE_DAMAGE") or (0, 1))[1]),
         ("lantern_glare reveal (ticks)", num("lantern_glare", r"for (\d+) seconds") * tps,
          k.get("GLARE_REVEAL_TICKS")),

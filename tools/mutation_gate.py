@@ -108,6 +108,45 @@ EXPECTED_VENDOR = 0
 EXPECTED_OURS = {name for name, *_ in RESTATEMENTS}
 
 
+#: Breakages in the shipped suite whose anchor text a later version moved.
+#: mutate.py hard-codes v3.1's wording, and nothing here may edit it, so a
+#: moved anchor would silently shrink the suite: v3.3 wrote the Codex total as
+#: 1,200 and moved the Library's ten levels into 10.2's table (C8). Each entry
+#: is the same defect planted at the anchor the current document uses, and
+#: this repository's checker must catch it. The shipped checker is not asked,
+#: because it cannot read v3.3's layout at all — its Library and 26.1 checks
+#: fail on the clean document.
+REANCHORED = {
+    "page arithmetic no longer re-derives": (
+        "= 1,200 pages in total", "= 1,250 pages in total"),
+    "the Library cost table stops matching its own curve": (
+        '<td class="n" data-label="Cost (Starlight)">36,200</td>',
+        '<td class="n" data-label="Cost (Starlight)">45,000</td>'),
+}
+
+
+def reanchored(names: list[str]) -> dict[str, bool | None]:
+    """Each moved breakage, planted at its new anchor: caught by ours?"""
+    source = DOC.read_text(encoding="utf-8")
+    clean = _verdict_lines(DOC)
+    out: dict[str, bool | None] = {}
+    for name in names:
+        if name not in REANCHORED:
+            out[name] = None
+            continue
+        old, new = REANCHORED[name]
+        if source.count(old) != 1:
+            out[name] = None
+            continue
+        with tempfile.NamedTemporaryFile("w", suffix=".html", delete=False,
+                                         encoding="utf-8") as fh:
+            fh.write(source.replace(old, new, 1))
+            path = pathlib.Path(fh.name)
+        out[name] = bool(_verdict_lines(path) - clean)
+        path.unlink()
+    return out
+
+
 def vendor_copy(tmp: pathlib.Path) -> pathlib.Path:
     """The shipped checker, unmodified, with the data it reads beside it."""
     (tmp / "tools").mkdir(parents=True, exist_ok=True)
@@ -204,8 +243,18 @@ def report(quick: bool = False) -> int:
                 print(f"  That copy is the one v3.1 shipped, so "
                       f"{claim - total} of the document's own breakages are "
                       f"not run here.")
+            moved = [l.split("  ", 1)[1].split("  --")[0].strip()
+                     for l in survived if l.startswith("SKIP")
+                     and "anchor text moved" in l]
+            again = reanchored(moved)
             for line in survived:
                 print(f"    {line}")
+            for name, hit in again.items():
+                print(f"    re-planted at v{DOC.stem[-3:]}'s anchor: {name} -- "
+                      + ("caught by ours" if hit else
+                         "NOT caught" if hit is False else "no anchor known"))
+            if again and all(again.values()) and len(again) == total - caught:
+                caught = total
             if caught != total or total != 15:
                 print("  Each of these must be caught.")
                 ok = False

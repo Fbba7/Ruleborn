@@ -10,21 +10,21 @@ only to be scanned.
 
 | Ruleborn | School | Role | Ability | Resists |
 | --- | --- | --- | --- | --- |
-| Featherkin | Motion | Scout | Glide 3 tiles, ignoring one height level; 14 s cooldown | Ignores Half gravity's overshoot |
-| Rambler | Motion | Breaker | Charge 4 tiles, breaking one wall or boulder; 16 s | Immune to being pushed by Current or Tilt |
-| Skyskipper | Motion | Carrier | Carries 40% more and hops over one obstacle per 8 s | Unbothered by Leapfrog's noise |
-| Glass Golem | Matter | Warden | Raises a crystal wall for 6 s; 20 s | Takes half damage from Spark laws |
-| Prism Mite | Matter | Carrier | Splits into two half-health copies for 10 s; 22 s | Sees through Glass and Mirror images |
-| Quarryback | Matter | Breaker | Rolls 5 tiles then slams; double damage to walls | Ignores Brittle stone's crumbling ground |
-| Hourkeeper | Time | Mender | Rewinds an ally 3 s, undoing damage; 24 s | Unaffected by Delay |
-| Stillwatch | Time | Warden | Freezes one guard for 2.5 s; 18 s | Hides perfectly under Stillness |
-| Tidewalker | Time | Carrier | Wades at full speed and carries one ally through water | Ignores Slow rivers and Rapids |
-| Emberling | Energy | Breaker | Bursts for area damage and a 1 s stun; 15 s | Immune to Heat bloom and ember vents |
-| Sparkwright | Energy | Mender | Cuts one ally's cooldown by 5 s; 20 s | Unaffected by Overcharge's surges |
-| Stormhound | Energy | Scout | Sprints 40% faster for 5 s, carrying anything; 18 s | Immune to Static and Chain lightning |
-| Bloomling | Life | Mender | Heals all nearby allies 15%; 18 s | Immune to Spores |
-| Mossbear | Life | Warden | Roots in place, taking 50% less damage for 6 s; 20 s | Immune to Thorns |
-| Rootrunner | Life | Carrier | Grows a root bridge across one gap; 20 s | Ignores Heavy ground |
-| Echoplate | Spirit | Warden | Shield flare, blocking one hit for the crew; returns once at 40% | Returns automatically under Echoes |
-| Lantern Wisp | Spirit | Scout | Reveals hidden wards and guards within 6 tiles; 16 s | Cannot be hidden by Glowing dark |
-| Soulmender | Spirit | Mender | Links the crew: damage is shared for 8 s; 22 s | Unaffected by Haunting's trails |
+| Featherkin | Motion | Scout | Glides 3 tiles in one move, crossing a gap and rising or dropping one height level on the way. Two uses a heist | Ignores Half gravity's overshoot |
+| Rambler | Motion | Breaker | Charges 4 tiles in a straight line and breaks the first wall, hedge or boulder in its way. Two uses a heist | Immune to being pushed by Current or Tilt |
+| Skyskipper | Motion | Carrier | Stuffs its satchel: loads at 60 a second instead of 30 for 5 s. Two uses a heist | Unbothered by Leapfrog's noise |
+| Glass Golem | Matter | Warden | Raises a crystal wall 3 tiles long for 6 s: nothing passes it, and it does not block sight. Two uses a heist | Takes half damage from Spark laws |
+| Prism Mite | Matter | Carrier | Splits into two mites for 8 s, each with half its load and half its health; they can go different ways, a caught mite loses only its half, and they rejoin when it ends. Two uses a heist | Sees through Glass and Mirror images |
+| Quarryback | Matter | Breaker | Pounds: for 6 s its hits on the Vault, pylons and wards deal 50% more. Two uses a heist | Ignores Brittle stone's crumbling ground |
+| Hourkeeper | Time | Mender | Gives one ally back all the health it lost in the last 5 s. Two uses a heist | Unaffected by Delay |
+| Stillwatch | Time | Warden | Freezes one guard or ward for 2.5 s: it cannot move, act, see or grow suspicious. Two uses a heist | Hides perfectly under Stillness |
+| Tidewalker | Time | Carrier | For 6 s nothing slows it: terrain, laws and its own load leave it at full speed. Two uses a heist | Ignores Slow rivers and Rapids |
+| Emberling | Energy | Breaker | Bursts, dealing triple its Power at once to every ward and pylon within 1 tile. Two uses a heist | Immune to Heat bloom and ember vents |
+| Sparkwright | Energy | Mender | Cuts the Sage's cooldown by 10 s, so its next power comes sooner (11.7). Two uses a heist | Unaffected by Overcharge's surges |
+| Stormhound | Energy | Scout | Sprints 60% faster for 4 s. Two uses a heist | Immune to Static and Chain lightning |
+| Bloomling | Life | Mender | Heals every ally within 3 tiles by 15% of its full health, at once. Two uses a heist | Immune to Spores |
+| Mossbear | Life | Warden | Roots in place for 6 s, taking half damage; it cannot move while rooted. Two uses a heist | Immune to Thorns |
+| Rootrunner | Life | Carrier | Grows a root bridge over one gap of up to 3 tiles for 8 s; anyone can cross it, guards included. Two uses a heist | Ignores Heavy ground |
+| Echoplate | Spirit | Warden | Stands over the crew for 8 s: a crew member knocked out within 3 tiles of it, itself included, returns at once at 40% of its full health (12.20). Two uses a heist | Returns automatically under Echoes |
+| Lantern Wisp | Spirit | Scout | Reveals every hidden ward, hidden guard and illusion within 6 tiles for 6 s. Two uses a heist | Cannot be hidden by Glowing dark |
+| Soulmender | Spirit | Mender | Links the crew for 6 s: every hit on one of them is shared evenly across all. Two uses a heist | Unaffected by Haunting's trails |

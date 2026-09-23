@@ -85,15 +85,9 @@ RESTATING = {
 COVERED = {
     ("7.4", "7.7"): "D39 compares all 240 facts field by field",
     ("21.7", "7.7"): "D39; one of the 48 movement signatures it compares",
-    ("11.10", "18.3"): "D40; one revive threshold from four systems at three "
-                       "values",
     ("29.1", "5.4"): "D43 checks every appendix row against the section it "
                      "cites",
     ("29.1", "9.5"): "D43, the same row-by-row comparison",
-    ("12.5", "5.4"): "D44; the heist clock has three homes and only \u00a712.5 "
-                     "carries the Haste clause",
-    ("2.7", "25.1"): "D44; \u00a72.7 derives its monthly players from "
-                     "\u00a725.1\u2019s gate, and rounds outward",
     # The §19 evidence tables summarise a rule in an "In Ruleborn" column
     # and cite its home in the same cell. That is the best shape a restatement
     # can have and it is still not safety — C21 cited its home too. It

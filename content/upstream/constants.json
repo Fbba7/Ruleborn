@@ -18,9 +18,51 @@
   "pattern": "crew of (\\d+ to \\d+)"
  },
  "page_total": {
-  "value": "1,350",
+  "value": "1,200",
   "unit": "Library pages for the full Codex at tier I",
   "home": "14.4 The page economy",
   "pattern": "= ([\\d,]+) pages in total"
+ },
+ "heist_clock": {
+  "value": 150,
+  "unit": "seconds at the start of a heist, plus 15 a link on the shortest route to the Heart, up to 240; 25% faster in a Haste realm",
+  "home": "5.4 Landing and leaving",
+  "pattern": "(\\d+) seconds plus 15 seconds for each link"
+ },
+ "crown_law_share": {
+  "value": 5,
+  "unit": "percent added to its school's resource in every realm",
+  "home": "5.1 Where rules apply",
+  "pattern": "A crown law adds (\\d+)% to its school"
+ },
+ "realm_law_share": {
+  "value": 10,
+  "unit": "percent added to its school's resource in its own realm",
+  "home": "5.1 Where rules apply",
+  "pattern": "a realm law adds (\\d+)% in its own realm"
+ },
+ "decision_budget": {
+  "value": "15 to 25",
+  "unit": "decisions in a run, one every 8 to 12 seconds",
+  "home": "12.6 Moment to moment",
+  "pattern": "or (\\d+ to \\d+) in a run"
+ },
+ "law_shaped_forms": {
+  "value": 54,
+  "unit": "forms at launch: eighteen kinds, each in the same three notes",
+  "home": "11.10 Law-shaped forms",
+  "pattern": "make (\\d+) forms"
+ },
+ "building_types": {
+  "value": 17,
+  "unit": "building types",
+  "home": "26.1 Launch content",
+  "pattern": "Building types\\W+(\\d+)"
+ },
+ "aether_cap_top": {
+  "value": "151,000",
+  "unit": "Aether storage at Spire level 10; every level holds one day of Aether production at that level, from 3,000 at level 1",
+  "home": "10.2 Every level of every building",
+  "pattern": "([\\d,]+) Aether storage; buildings up to level 10"
  }
 }

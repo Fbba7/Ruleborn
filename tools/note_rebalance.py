@@ -157,6 +157,21 @@ def chord_cost(laws: list, chords: list) -> dict:
 def main() -> int:
     laws = load()
     chords = json.loads((CONTENT / "chords.json").read_text(encoding="utf-8"))
+    # v3.3 re-noted nine laws its own way and generates §8.8's counts from the
+    # sheets, which closed C25. The proposal below is then history; what is
+    # left to check is the balance §8.8 now states, against the sheets.
+    from audit_register import is_open
+    if not is_open("C25"):
+        now = pools(laws)
+        spread = sorted(set(now.values()))
+        print("C25 is closed: v3.3 re-noted the laws itself, so the rebalance "
+              "proposed here is history.\n")
+        for note in sorted(now, key=lambda n: (-now[n], n)):
+            print(f"  {note:<8} {now[note]:>3}")
+        ok = min(spread) >= 8 and max(spread) <= 10
+        print(f"\n  every note on {min(spread)} to {max(spread)} laws, which is "
+              f"the 8 to 10 \u00a78.8 states: {'holds' if ok else 'BROKEN'}")
+        return 0 if ok else 1
     before, after = pools(laws), pools(apply_edits(laws))
     fixed = apply_edits(laws)
 

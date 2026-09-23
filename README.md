@@ -11,7 +11,7 @@ monetisation.
 
 ## Status
 
-**Pre-production — design document at v3.2, no code yet.**
+**Pre-production — design document at v3.3, no code yet.**
 
 ### Can the drawing start?
 
@@ -22,16 +22,29 @@ a band at the top.
 
 | Area | Verdict | Waiting on |
 | --- | --- | --- |
-| **Realms** | Waiting on you | your decision: F26, F27, F22, F9, F11, F12, G3, G5, C19 |
-| **Screens** | Waiting on you | your decision: C6 |
-| **Characters** | Waiting on you | your decision: D6; needs outside evidence: Q5 |
+| **Realms** | Waiting on you | your decision: C19 |
+| **Screens** | Waiting on you | your decision: C37 |
+| **Characters** | Ready | — |
 
 **Ready means hand it over.** Until then the verdict says who is holding it: a
 decision only you can make, evidence nobody here can produce, or drafting that is
 still mine to do.
 
-Two versions have now answered the audit. **42 of 141 register items are fixed
-in the document itself** — 26 by v3.0 and 9 more by v3.1. v3.0 also changed the
+Four versions have now answered the audit. **97 of 148 register items are fixed
+in the document itself** — 26 by v3.0, 9 by v3.1, 7 by v3.2 and 55 by v3.3.
+Only 16 are still open.
+
+v3.3 closed 55 of the 64 items open against v3.2. Each was checked by section and
+line, not taken from its own list. It takes the launch cut (24 laws chosen by
+engine cost, 54 forms), makes the ambush a guaranteed knockout, and replaces
+cooldowns with two ability uses a heist. Where it decided differently from the
+recommendation, the register says so. Reading v3.3 against itself found seven
+new items (C34 to C39, D56). The main ones: a ward's health given as both 500 and
+550, a Codex finished on day 69 and on day 234, upgrade pacing that assumes six
+heists a day for a player who makes four, and `sim/` and the harness still
+running five rules v3.3 replaced.
+
+v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
 in §19.27, and the build-willingness risk is designed out rather than measured
 (§13.3).
@@ -77,7 +90,7 @@ is done. In short:
 
 ```
 docs/
-  design/     the design document at v3.2, with v3.0 and v2.3 beside it, plus greppable extracts
+  design/     the design document at v3.3, with every earlier version beside it, plus greppable extracts
   analysis/   the deep analysis of that document — start here
 content/       the twelve content tables as data, plus the reconciled detection spec
 docs/design/spec/   the reconciled specification, one file per system
@@ -158,7 +171,7 @@ million monthly players.
 rewards, no engagement-tuned matchmaking — with the refusals written down so they
 cannot creep back in.
 
-Full detail: [`docs/design/ruleborn-game-design-v3.2.html`](docs/design/ruleborn-game-design-v3.2.html).
+Full detail: [`docs/design/ruleborn-game-design-v3.3.html`](docs/design/ruleborn-game-design-v3.3.html).
 
 ## Checks
 
@@ -175,8 +188,8 @@ that list shrinks as the document is reconciled.
 ```bash
 # regenerate the greppable text extract from the HTML design document
 python3 tools/extract_design_doc.py \
-    docs/design/ruleborn-game-design-v3.2.html \
-    docs/design/ruleborn-game-design-v3.2.txt
+    docs/design/ruleborn-game-design-v3.3.html \
+    docs/design/ruleborn-game-design-v3.3.txt
 
 # machine-check the design document: v3.1's own checks and this repository's,
 # in one verdict. Failures tracked by an open register item do not break the build.
@@ -209,12 +222,12 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 141 tracked items with section references and status:
+document, as 148 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 97 are drafted across 57
-items, and every quoted sentence is checked against v3.2 by
+the sentence as it stands today, and what to put there. 102 are drafted across 60
+items, and every quoted sentence is checked against v3.3 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no
 edit at all.

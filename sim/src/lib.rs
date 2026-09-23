@@ -162,15 +162,11 @@ pub const PERIPHERAL: (i32, i32) = (1, 2);
 
 /// How fast a crouched or running crew member moves against §11.1's speed.
 ///
-/// **Neither figure is in the document.** §12.17 prices both gaits for eyes
-/// and ears — crouching halves the rate and carries 1 m, running adds three
-/// quarters and carries 4.5 m — and no section gives either a speed. Without
-/// one, crouching is free and strictly better than walking, and running is
-/// strictly worse; the choice spec/movement.md proposes ("slow and quiet
-/// against fast and loud") needs both numbers. These are the simulation's
-/// reading, stated once here so they are found rather than assumed. The
-/// Python harness took a different one — its crouch is §11.1's speed and its
-/// run is double — which is the same gap answered twice.
+/// §12.17 (v3.3, G13): "crouched, a crew member moves at half its role's
+/// speed (11.1), and running, at double". These were the simulation's own
+/// reading before the document stated them, and the document took the same
+/// two numbers. The Python harness took a different reading — its crouch is
+/// §11.1's full speed — and has not moved yet (D56).
 pub const CROUCH_PACE: (i64, i64) = (1, 2);
 pub const RUN_PACE: (i64, i64) = (2, 1);
 
@@ -224,11 +220,11 @@ impl Role {
 
     pub fn carry(self) -> i32 {
         match self {
-            Role::Scout => 60,
-            Role::Breaker => 60,
+            Role::Scout => 104,
+            Role::Breaker => 104,
             Role::Carrier => 300,
-            Role::Warden => 80,
-            Role::Mender => 60,
+            Role::Warden => 138,
+            Role::Mender => 104,
         }
     }
 

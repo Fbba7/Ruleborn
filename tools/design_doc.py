@@ -41,7 +41,7 @@ DESIGN = ROOT / "docs" / "design"
 
 #: The version every check in this repository reads. Changing it is the whole
 #: of moving to a new document; nothing else names a version.
-VERSION = "3.2"
+VERSION = "3.3"
 
 STEM = f"ruleborn-game-design-v{VERSION}"
 HTML = DESIGN / f"{STEM}.html"
@@ -56,6 +56,15 @@ def on_disk() -> list[str]:
     seen = {m.group(1) for p in DESIGN.glob("*")
             if (m := VERSIONED.fullmatch(p.name))}
     return sorted(seen, key=lambda v: [int(x) for x in v.split(".")])
+
+
+def text_of(version: str) -> pathlib.Path:
+    """The text view of any version on disk, for a tool that reads history.
+
+    Only this module writes versioned filenames; a tool that needs an older
+    version asks for it by number rather than spelling the name.
+    """
+    return DESIGN / f"ruleborn-game-design-v{version}.txt"
 
 
 def newer_on_disk() -> list[str]:

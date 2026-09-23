@@ -103,17 +103,17 @@
     "id": "evergreen",
     "name": "Evergreen",
     "laws": [
-      "rewind",
+      "tidemark",
       "regrowth"
     ],
     "law_names": [
-      "Rewind",
+      "Tidemark",
       "Regrowth"
     ],
     "shared_notes": [
       "Echo"
     ],
-    "effect": "Each rewind fully heals structures."
+    "effect": "Each return at the tide mark fully heals structures."
   },
   {
     "id": "frozen_reflections",
@@ -157,7 +157,6 @@
       "Sunburst"
     ],
     "shared_notes": [
-      "Glow",
       "Spark"
     ],
     "effect": "Each flash lights a fire where it strikes."
@@ -276,7 +275,9 @@
       "Day and night",
       "Stillness"
     ],
-    "shared_notes": [],
+    "shared_notes": [
+      "Hush"
+    ],
     "effect": "In the dark phase, anyone who stops moving is invisible at once."
   },
   {
@@ -368,7 +369,9 @@
       "Day and night",
       "Bloom"
     ],
-    "shared_notes": [],
+    "shared_notes": [
+      "Hush"
+    ],
     "effect": "Hedges regrow twice as fast, but only in the dark phase."
   },
   {
@@ -445,17 +448,17 @@
     "id": "echoing_hours",
     "name": "Echoing hours",
     "laws": [
-      "rewind",
+      "tidemark",
       "echoes"
     ],
     "law_names": [
-      "Rewind",
+      "Tidemark",
       "Echoes"
     ],
     "shared_notes": [
       "Echo"
     ],
-    "effect": "Each rewind also brings back one knocked-out guard."
+    "effect": "Each return at the tide mark also brings back one knocked-out guard."
   },
   {
     "id": "charged_pollen",
@@ -482,9 +485,7 @@
       "Leapfrog",
       "Flock"
     ],
-    "shared_notes": [
-      "Glow"
-    ],
+    "shared_notes": [],
     "effect": "Landing on a puffball is silent, so hopping across the flock makes no noise."
   },
   {
@@ -512,7 +513,9 @@
       "Honeycomb",
       "Bloom"
     ],
-    "shared_notes": [],
+    "shared_notes": [
+      "Hush"
+    ],
     "effect": "Regrown hedges drip honey: anyone touching one sticks for a second."
   },
   {
@@ -614,9 +617,7 @@
       "Flock",
       "Whispers"
     ],
-    "shared_notes": [
-      "Glow"
-    ],
+    "shared_notes": [],
     "effect": "The flock follows the nearest guard, hiding it in the crowd."
   },
   {

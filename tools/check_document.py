@@ -59,6 +59,7 @@ import contextlib
 import hashlib
 import html
 import io
+import itertools
 import json
 import os
 import re
@@ -626,7 +627,10 @@ def check_law_table_against_sheets(doc: Doc, led: Ledger) -> None:
 
     rows = {}
     for name, rank, cost, notes, tier1, tiers, move in LAW_ROW.findall(table):
-        rows[name.strip()] = dict(rank=rank, cost=cost, notes=notes.strip(),
+        # v3.3 marks the 24 laws that ship first with a "Launch" badge after
+        # the name in 7.4 only; the law is the same law.
+        name = re.sub(r" Launch$", "", name.strip())
+        rows[name] = dict(rank=rank, cost=cost, notes=notes.strip(),
                                   tier_1=tier1.strip(), tiers=tiers.strip(),
                                   movement=move.strip())
 
@@ -920,12 +924,13 @@ def check_inventory(doc: Doc, led: Ledger) -> None:
     creatures = re.findall(r'<td data-label="Ruleborn"><strong>([^<]+)</strong>',
                            roster[roster.find("11.2"):roster.find("11.3")])
     inventory = {
-        "Laws": sum(authored_ranks(doc).values()),
+        # v3.3 ships 24 of the 48 (7.10); 26.1 states the launch count.
+        "Laws": launch_counts()["laws"],
         "Ruleborn": len(creatures),
         "Building types": building_types(doc),
     }
     for label, actual in inventory.items():
-        m = re.search(r'<td data-label="Content">' + re.escape(label) + r"</td><td[^>]*>(\d+)</td>",
+        m = re.search(r'<td data-label="Content">' + re.escape(label) + r"</td><td[^>]*>(\d+)\b",
                       doc.raw)
         led.check(f"26.1's {label.lower()} count matches the tables it summarises",
                   bool(m) and int(m.group(1)) == actual,
@@ -944,7 +949,7 @@ def building_types(doc: Doc) -> int:
     """
     names = {b.strip() for b in
              re.findall(r"<h4[^>]*>(.*?)</h4>", doc.section("buildings"), flags=re.S)}
-    if "The Library" in doc.raw:
+    if "The Library" in doc.raw and "Library" not in names:
         names.add("The Library")
     return len(names)
 
@@ -973,8 +978,8 @@ def check_asset_budget(doc: Doc, led: Ledger) -> None:
     rows = [
         ("building looks", r"Building looks \((\d+) types",
          building_types(doc), "10.2 and 10.4, which 26.1 counts", "C8"),
-        ("law signatures", r"Law signatures and paradoxes</td><td[^>]*>(\d+)",
-         sum(authored_ranks(doc).values()), "7.7's sheets", None),
+        ("law signatures", r"Law signatures[^<]*and paradoxes</td><td[^>]*>(\d+)",
+         launch_counts()["laws"], "7.7's sheets' launch tags", None),
         ("ruleborn", r"Characters: ruleborn[^<]*</td><td[^>]*>(\d+)",
          len(creatures), "11.2's roster", None),
     ]
@@ -1016,9 +1021,57 @@ def inventory() -> dict[str, tuple[int, str]]:
         "chords":           (n("chords"), r"chords"),
         "building types":   (n("buildings"), r"building types"),
         "notes":            (n("notes"), r"notes"),
-        "forms":            (n("ruleborn") * n("notes"),
+        "forms":            (n("ruleborn") * len(form_notes()),
                              r"(?:creature |law-shaped |note-)?forms"),
     }
+
+
+def _content(name: str) -> list:
+    with open(os.path.join(ROOT, "content", f"{name}.json"), encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def form_notes() -> list[str]:
+    """The notes a form can take, from 11.10's table.
+
+    Up to v3.2 every one of the eight notes made a form, 18 x 8 = 144. v3.3
+    adopted D6's cut: three notes for every kind, 54 forms. Read from the
+    table rather than typed, so the count follows the document.
+    """
+    import design_doc
+    text = design_doc.TEXT.read_text(encoding="utf-8")
+    start = text.index("\n11.10 ")
+    body = text[start:text.index("\n11.11 ", start)]
+    notes = {n["name"] for n in _content("notes")}
+    head = body.find("| Note of the form")
+    if head < 0:
+        return sorted(notes)
+    cells = [ln[2:].strip() for ln in body[head:].splitlines() if ln.startswith("| ")]
+    return [c for c in cells[3::3] if c in notes]
+
+
+def launch_counts() -> dict[str, int]:
+    """What ships at launch, where v3.3 cut the catalogue (7.10, 26.1).
+
+    Laws are the sheets tagged "Ships at launch"; the signature resonances
+    that ship are those whose two laws both do (8.4). Every other table ships
+    whole, so its launch count is its length.
+    """
+    laws = _content("laws")
+    ships = {l["id"] for l in laws if l.get("launch", True)}
+    return {
+        "laws": len(ships),
+        "resonances": sum(all(x in ships for x in r["laws"])
+                          for r in _content("resonances")),
+    }
+
+
+def allowed(kind: str) -> set[int]:
+    """The counts a sentence may state for a kind: the whole table, or, for
+    the two that were cut, what ships at launch."""
+    counts = {inventory()[kind][0]}
+    counts.add(launch_counts().get(kind, next(iter(counts))))
+    return counts
 
 
 #: §26.1's rows, against the table each one summarises. The four it does
@@ -1035,6 +1088,8 @@ NOT_DERIVED = {
     "Paradoxes": "the three paradoxes are prose in §7.2, outside laws.json",
     "Visitors, paradox-born, anomalies": "no content table enumerates them",
     "Modes": "a list of names, not a count",
+    "Ward levels": "levels, not a content table; 10.3 specifies all five",
+    "Languages": "a list of names, not a count",
 }
 
 #: Sections that tabulate what someone *has* at a point in time rather than
@@ -1056,17 +1111,13 @@ STAGED = {
 #: total for one ruleborn and a fifth of the launch inventory, and only a
 #: reading tells them apart.
 PARTIAL = {
-    ("laws", "7.6"): "the Codex opens in chapters \u2014 12 findable at the "
-                     "start, then 24, 36, 42 and all 48",
     ("laws", "14.2"): "the 3 a player starts with, and the Codex chapters "
                       "\u2014 the same table also states the total, which is "
                       "why a per-section rule missed these",
     ("laws", "14.3"): "12, 24 and 36 owned, as milestones, beside the 48 that "
                       "closes the ladder",
     ("laws", "14.4"): "the 22 a finished universe can weave at once",
-    ("laws", "14.8"): "the 12 in the first law album",
     ("laws", "26.2"): "the 18 the open beta ships with",
-    ("forms", "14.9"): "all 8 forms of one ruleborn",
     ("ruleborn", "14.2"): "the 5 a player has on day one",
     ("ruleborn", "14.3"): "10, 20 and 30 owned, as milestones",
     ("ruleborn", "26.2"): "the 6 a closed beta ships with",
@@ -1103,15 +1154,16 @@ def check_launch_inventory(doc: Doc, led: Ledger) -> None:
         return
 
     wrong = []
+    launch = launch_counts()
     for label, kind in LAUNCH_ROWS.items():
-        want = counts[kind][0]
+        want = launch.get(kind, counts[kind][0])
         said = re.findall(r"\d+", rows.get(label, ""))
         if said != [str(want)]:
             wrong.append(f"{label}: 26.1 says {said or 'nothing'}, "
                          f"content/{kind} has {want}")
     # The one row that states two counts in one cell.
     pair = re.findall(r"\d+", rows.get("Signature resonances and chords", ""))
-    if pair != [str(counts["resonances"][0]), str(counts["chords"][0])]:
+    if pair[:2] != [str(launch["resonances"]), str(counts["chords"][0])]:
         wrong.append(f"Signature resonances and chords: says {pair}")
     led.check("every countable row of 26.1 matches the table it summarises",
               not wrong, "; ".join(wrong))
@@ -1120,6 +1172,191 @@ def check_launch_inventory(doc: Doc, led: Ledger) -> None:
                and r != "Signature resonances and chords" and r not in NOT_DERIVED]
     led.check("every row of 26.1 is either checked or named as uncheckable",
               not unknown, f"unclassified: {unknown}")
+
+
+#: 7.10's ladder: the engine points each rung costs.
+ENGINE_POINTS = {"Parameter": 0, "Placement or attribute": 1,
+                 "Conditional or periodic": 2, "Spawned entity": 4, "Rewind": 8}
+RANK_ORDER = {"Common": 0, "Uncommon": 1, "Rare": 2, "Deep": 3}
+
+
+def check_launch_cut(doc: Doc, led: Ledger) -> None:
+    """D6, F10, Q5. v3.3's launch cut, re-derived from the 48 sheets.
+
+    v3.3 ships 24 of the 48 laws, chosen by a rule stated in 7.10: every
+    parameter law, then the cheapest others by rung, stability cost and name
+    until each school has four, Tidemark left out. Each sheet in 7.7 carries
+    its rung and whether it ships, as data. So the cut is three statements of
+    one fact — the sheets' tags, 7.4's "Launch" badges and 7.10's table — plus
+    a rule that should reproduce all three, and a set of claims about what the
+    24 reach. Every one of them is checkable, and none of them was before.
+    """
+    laws = _content("laws")
+    if not all("engine_rung" in l for l in laws):
+        led.check("every law sheet carries its engine rung (7.10)", False,
+                  "a sheet without an Effect kind tag")
+        return
+    tagged = {l["name"] for l in laws if l["launch"]}
+    points = lambda ls: sum(ENGINE_POINTS[l["engine_rung"]] for l in ls)
+
+    text = doc.text
+    sec = text[text.index("\n7.10 "):text.index("\n8.1 ")]
+    table = {}
+    for m in re.finditer(r"\n\| (Motion|Matter|Time|Energy|Life|Spirit)\n\| ([^\n]+)"
+                         r"\n\| ([^\n]+)", sec):
+        table[m.group(1)] = [x.strip() for x in m.group(2).split(",")]
+    listed = {n for names in table.values() for n in names}
+    badged = {re.sub(r" Launch$", "", n.strip()) for n in re.findall(
+        r"\n\| ([^\n|]+ Launch)\n", text[text.index("\n7.4 "):text.index("\n7.5 ")])}
+    led.check("7.7's launch tags, 7.4's badges and 7.10's table name the same 24",
+              tagged == listed == badged and len(tagged) == 24,
+              f"tags {len(tagged)}, badges {len(badged)}, 7.10 {len(listed)}; "
+              f"differ: {sorted((tagged ^ listed) | (tagged ^ badged))[:4]}")
+
+    # The rule, applied from scratch.
+    chosen = set()
+    for school in dict.fromkeys(l["school"] for l in laws):
+        mine = [l for l in laws if l["school"] == school]
+        params = [l for l in mine if l["engine_rung"] == "Parameter"]
+        rest = sorted((l for l in mine if l["engine_rung"] != "Parameter"
+                       and l["name"] != "Tidemark"),
+                      key=lambda l: (ENGINE_POINTS[l["engine_rung"]],
+                                     l["stability_cost"], l["name"]))
+        chosen |= {l["name"] for l in params + rest[:max(0, 4 - len(params))]}
+    led.check("7.10's rule reproduces the launch 24", chosen == tagged,
+              f"the rule picks {sorted(chosen - tagged)}, the sheets "
+              f"{sorted(tagged - chosen)}")
+
+    rungs = collections.Counter(l["engine_rung"] for l in laws)
+    stated = dict(re.findall(r"\n\| (Parameter|Placement or attribute|Conditional "
+                             r"or periodic|Spawned entity|Rewind)\n\| [^\n]+\n\| \d+"
+                             r"\n\| (\d+)", sec))
+    led.check("7.10's ladder counts match the sheets' rungs",
+              all(int(stated.get(r, -1)) == rungs.get(r, 0) for r in ENGINE_POINTS),
+              f"stated {stated}, sheets {dict(rungs)}")
+
+    by_rank = []
+    for school in dict.fromkeys(l["school"] for l in laws):
+        by_rank += sorted((l for l in laws if l["school"] == school),
+                          key=lambda l: (RANK_ORDER[l["rank"]], l["stability_cost"],
+                                         l["name"]))[:4]
+    want = re.search(r"All 48 cost (\d+) engine points", sec)
+    cost = re.search(r"The 24 cost (\d+) engine points, against (\d+) for a 24 "
+                     r"chosen by rank", sec)
+    got = (points(laws), points(l for l in laws if l["launch"]), points(by_rank))
+    led.check("7.10's engine-point totals re-derive: all 48, the launch 24, and "
+              "a 24 chosen by rank",
+              bool(want and cost) and (int(want.group(1)), int(cost.group(1)),
+                                       int(cost.group(2))) == got,
+              f"stated {want and want.group(1)}, {cost and cost.groups()}; "
+              f"derived {got}")
+
+    order = re.search(r"The 24 that wait, in cut order\.[^:]*: (.*?)\. The table above",
+                      sec, flags=re.S)
+    # Read by position rather than by splitting: "Day and night" is one law.
+    body = order.group(1) if order else ""
+    found = {}
+    for law in laws:
+        m = re.search(r"(?:^|, |and |then )" + re.escape(law["name"])
+                      + r"(?=,|;| and|$)", body)
+        if m:
+            found[law["name"]] = m.start()
+    said = sorted(found, key=found.get)
+    wait = [l["name"] for l in sorted(
+        (l for l in laws if not l["launch"]),
+        key=lambda l: (-ENGINE_POINTS[l["engine_rung"]], -l["stability_cost"], l["name"]))]
+    led.check("7.10's cut order is its rule read backwards", said == wait,
+              f"stated {said[:5]}…, rule {wait[:5]}…")
+
+    ships = {l["id"] for l in laws if l["launch"]}
+    notes = {l["id"]: set(l["notes"]) for l in laws}
+    unreached = [c["name"] for c in _content("chords")
+                 if not any(all(n in notes[t] for n, t in zip(c["notes"], trio))
+                            for trio in itertools.permutations(sorted(ships), 3))]
+    starting = re.search(r"Starting laws: ([^.]+?), all at tier I", text)
+    start = {x.strip() for x in re.split(r",| and ", starting.group(1))} if starting else set()
+    held = launch_counts()["resonances"]
+    claim = re.search(r"hold (\d+) of the (\d+) signature resonances", sec)
+    led.check("the launch 24 reach every chord, hold the starting laws and the "
+              "stated signature resonances (7.10)",
+              not unreached and start and start <= tagged and bool(claim)
+              and int(claim.group(1)) == held
+              and int(claim.group(2)) == len(_content("resonances")),
+              f"unreached chords {unreached}; starting {sorted(start - tagged)} "
+              f"missing; resonances held {held}, stated {claim and claim.groups()}")
+
+    # 11.10 chooses the three form notes from the launch 24.
+    carried = collections.Counter(n for l in laws if l["launch"] for n in l["notes"])
+    chords = _content("chords")
+    in_chords = {n: sum(n in c["notes"] for c in chords) for n in carried}
+    ranked = sorted(carried, key=lambda n: (-carried[n], -in_chords[n], n))[:3]
+    led.check("11.10's three form notes are the three the launch 24 carry most, "
+              "by its own tie-breaks",
+              sorted(ranked) == sorted(form_notes()),
+              f"rule gives {ranked}, 11.10 gives {form_notes()}")
+
+
+def check_v33_findings(doc: Doc, led: Ledger) -> None:
+    """C34 to C38. What reading v3.3 against itself found, as checks.
+
+    Each is a fact v3.3 states twice with two values, or a figure derived from
+    one that moved. They are checks rather than notes so that the version
+    that fixes them retires them, instead of a reader having to notice.
+    """
+    idx = section_index(doc)
+
+    # C34: 10.3 opens with one ward health and closes with another.
+    wards = idx.get("10.3", "")
+    health = set(re.findall(r"Health is (\d+) a level|has (\d+) health a level", wards))
+    values = sorted({int(a or b) for a, b in health})
+    led.check("a ward's health is stated once (10.3)", len(values) == 1,
+              f"10.3 gives {values} a level", tracks="C34")
+
+    # C35: the engaged player's full Codex, by 14.3's milestones and 14.4's pages.
+    owns = re.search(r"all 48 by about day (\d+)", idx.get("14.3", ""))
+    pages = re.search(r"Engaged: [^\n]*?about (\d+) days", idx.get("14.4", ""))
+    if owns and pages:
+        a, b = int(owns.group(1)), int(pages.group(1))
+        led.check("14.3 and 14.4 give an engaged player's full Codex the same day",
+                  abs(a - b) <= 0.1 * max(a, b),
+                  f"14.3 says day {a}; 14.4 says about {b} days", tracks="C35")
+
+    # C36: how many heists an engaged player makes in a day.
+    words = {"four": 4, "five": 5, "six": 6}
+    paced = re.search(r"(\w+) (?:raids )?a day for 25 clean raids|at (\w+) a day —",
+                      doc.text)
+    engaged = re.search(r"Engaged: \d+ sessions and (\d+) heists a day", doc.text)
+    if paced and engaged:
+        word = (paced.group(1) or paced.group(2)).lower()
+        n = words.get(word, int(word) if word.isdigit() else -1)
+        led.check("9.6's upgrade pacing uses 14.2's engaged heists a day",
+                  n == int(engaged.group(1)),
+                  f"9.6 paces at {word} a day; 14.2's engaged player makes "
+                  f"{engaged.group(1)}", tracks="C36")
+
+    # C37: 12.12 promises the scout the shifted patrol; 12.4 says what a scout shows.
+    promises = "the scout sees the shifted patrol" in doc.text
+    shows = "patrol" in idx.get("12.4", "").lower()
+    led.check("what 12.12 says a scout sees is something 12.4's scout shows",
+              not promises or shows,
+              "12.12: “the scout sees the shifted patrol”; 12.4's paid "
+              "scout shows laws, guard numbers and roles, and ward counts, "
+              "and no patrols", tracks="C37")
+
+    # C38: the Island Fund's 10% at 22.2's scenarios.
+    fund = re.search(r"At the base scenario in 22.2 that is roughly €([\d,]+) a month; "
+                     r"at the high scenario about €([\d,]+)", doc.text)
+    table = dict((k, int(v.replace(",", ""))) for k, v in re.findall(
+        r"\n\| (Base|High)\n\| [\d,]+\n\| \d+%\n\| €\d+\n\| about €([\d,]+)",
+        doc.text))
+    if fund and len(table) == 2:
+        base, high = (int(x.replace(",", "")) for x in fund.groups())
+        off = [f"{name}: 10% of €{table[name]:,} is €{table[name] // 10:,}, "
+               f"18.9 says €{said:,}"
+               for name, said in (("Base", base), ("High", high))
+               if abs(said - table[name] / 10) > 0.05 * table[name] / 10]
+        led.check("18.9's Island Fund is 10% of 22.2's scenarios", not off,
+                  "; ".join(off), tracks="C38")
 
 
 def inventory_summaries(doc: Doc) -> list[tuple[str, dict, str]]:
@@ -1169,7 +1406,7 @@ def check_inventory_summaries(doc: Doc, led: Ledger) -> None:
             staged.add(section)
             continue
         for kind, said in found.items():
-            if said != counts[kind][0]:
+            if said not in allowed(kind):
                 wrong.append(f"§{section} says {said} {kind}, "
                              f"content has {counts[kind][0]}: “{cell[:60]}”")
     led.check("every section that restates the launch inventory states the "
@@ -1196,6 +1433,11 @@ def check_screen_counts(doc: Doc, led: Ledger) -> None:
     text = doc.text
     start = text.index("\n23.2 Every screen to design")
     body = text[start:text.index("\n23.3 ")]
+    # v3.3 moved the two version-1.1 screens into a second table after the
+    # launch list, and says neither belongs to it.
+    later = body.find("\nVersion 1.1 adds")
+    if later >= 0:
+        body = body[:later]
     cells = [ln.strip().lstrip("| ").strip()
              for ln in body.splitlines() if ln.strip().startswith("|")]
     rows = [cells[i:i + 3] for i in range(0, len(cells) // 3 * 3, 3)]
@@ -1209,7 +1451,7 @@ def check_screen_counts(doc: Doc, led: Ledger) -> None:
     for name, _job, show in rows[1:]:
         for kind, (want, noun) in nouns.items():
             for m in re.finditer(r"\b(\d+)\s+(?:" + noun + r")\b", show):
-                if int(m.group(1)) != want:
+                if int(m.group(1)) not in allowed(kind):
                     wrong.append(f"{name}: {m.group(0)}, against {want}")
     led.check("every count 23.2 tells a designer to draw is the whole table",
               not wrong, "; ".join(wrong))
@@ -1244,7 +1486,12 @@ def check_every_inventory_mention(doc: Doc, led: Ledger) -> None:
     for kind, (want, noun) in counts.items():
         for m in re.finditer(r"(?<![.\d])\b(\d+)\s+(?:" + noun + r")\b",
                              doc.text):
-            if int(m.group(1)) == want:
+            if int(m.group(1)) in allowed(kind):
+                continue
+            # "18, 12, 12 and 6 laws" is a split, and its last term is a
+            # part by construction: the noun belongs to the whole list.
+            if re.search(r"\d+,\s*(?:\d+,\s*)*\d+\s+(?:and|or)\s*$",
+                         doc.text[max(0, m.start() - 40):m.start()]):
                 continue
             sec = section_at(doc, m.start())
             if (kind, sec) in PARTIAL:
@@ -1731,6 +1978,13 @@ def check_library_curve(doc: Doc, led: Ledger) -> None:
     """
     lib = doc.raw[doc.raw.find("<h3>10.4"):doc.raw.find("<h3>11.1")]
     costs = [int(x.replace(",", "")) for x in re.findall(r'data-label="Cost">([\d,]+)', lib)]
+    if not costs:
+        # v3.3 moved the ten levels into 10.2's table with every other
+        # building (C8); 10.4 keeps the formula.
+        at = doc.raw.find("<h4>Library</h4>")
+        table = doc.raw[at:doc.raw.find("</table>", at)] if at >= 0 else ""
+        costs = [int(x.replace(",", "")) for x in
+                 re.findall(r'data-label="Cost \(Starlight\)">([\d,]+)', table)]
     mults = re.findall(r"× ([\d.]+) a level", strip(lib))
     if len(costs) == 10 and len(mults) == 2:
         g1, g2 = float(mults[0]), float(mults[1])
@@ -1815,7 +2069,9 @@ def birth_prices(doc: Doc) -> dict:
     # first example and missed the other two, because only the first is
     # written with "about" — a check that looked satisfied on a third of its
     # own evidence.
-    cell = re.search(r"ruleborn owned</sup> Essence \(([^)]*)\)", doc.raw)
+    # v3.3 writes the offset out ("where owned is n − 1 for the nth birth")
+    # before the examples, so allow a clause between.
+    cell = re.search(r"ruleborn owned</sup> Essence[^(<]*\(([^)]*)\)", doc.raw)
     out = {"examples": dict(
         (int(n), int(c.replace(",", ""))) for c, n in re.findall(
             r"([\d,]+) for the (\d+)(?:st|nd|rd|th)", cell.group(1) if cell else ""))}
@@ -1971,6 +2227,8 @@ def run(path: str = DEFAULT_DOC, quiet: bool = False) -> Ledger:
     check_inventory(doc, led)
     check_asset_budget(doc, led)
     check_launch_inventory(doc, led)
+    check_launch_cut(doc, led)
+    check_v33_findings(doc, led)
     check_inventory_summaries(doc, led)
     check_screen_counts(doc, led)
     check_every_inventory_mention(doc, led)

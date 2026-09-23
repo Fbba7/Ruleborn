@@ -71,13 +71,15 @@ ORDER = ("Common", "Uncommon", "Rare", "Deep")
 #: `counts` is None where the statement gives prices without counts - §7.6 does
 #: exactly that, which is half of why it survived four versions unnoticed.
 SPLITS = {
+    # v3.3 moved each school's cheaper deep law to rare, so the sheets now
+    # carry the split §7.9 states (C3, closed).
     "sheets": dict(
         where="§7.7, the 48 authored law sheets, and §14.4's arithmetic",
-        counts={"Common": 18, "Uncommon": 12, "Rare": 6, "Deep": 12},
+        counts={"Common": 18, "Uncommon": 12, "Rare": 12, "Deep": 6},
         pages={"Common": 10, "Uncommon": 20, "Rare": 35, "Deep": 60},
     ),
     "7.9": dict(
-        where="§7.9's rank table",
+        where="§7.9's rank table before v3.3",
         counts={"Common": 18, "Uncommon": 14, "Rare": 10, "Deep": 6},
         pages={"Common": 10, "Uncommon": 20, "Rare": 35, "Deep": 60},
     ),
@@ -238,16 +240,22 @@ def report(laws: list) -> None:
           f"law sheets are")
     print(f"  already tagged with, and what §14.4 already computes "
           f"{sheets['pages']:,} from. Adopting")
-    print(f"  §7.9's would move {nine['retag']} sheets; §7.6's would move "
+    print(f"  §7.9's old split would move {nine['retag']} sheets; §7.6's would move "
           f"{six['retag']} and delete a rank the sheets use.\n")
-    print(f"  §7.9's is also the only one of the three that cannot give every "
+    print(f"  §7.9's old split is also the only one of the three that cannot give every "
           f"school the same")
     print(f"  ladder: {' and '.join(nine['uneven'])} do not divide by six. Its "
           f"table asserts the even spread")
     print(f"  for the two ranks that do - Common \"Three per school\", Deep "
           f"\"One per school\" - and")
+    per_school = " / ".join(str(n // 6) for n in sheets["counts"].values())
     print(f"  says nothing about the two that do not. The sheets give every "
-          f"school 3 / 2 / 1 / 2.\n")
+          f"school {per_school}.\n")
+    print("  v3.3 closed C3 the sheets' way: §7.9's table now states the "
+          "sheets' split, and")
+    print("  it closed D31 by withdrawing the two-dials claim below: rank is "
+          "\"a strength")
+    print("  ladder, paid for in pages\". What follows is the record of why.\n")
 
     p = principle(laws)
     print("D31: the rule behind the split, measured against the sheets\n")
@@ -301,10 +309,10 @@ def self_test() -> int:
 
     # §14.4 states this arithmetic in the document. If the sheets' split ever
     # stops reproducing it, one of the two has moved and the build should say so.
-    check("the sheets' split reproduces §14.4's 1,350",
-          codex_pages(SPLITS["sheets"]), 1350)
+    check("the sheets' split reproduces §14.4's 1,200",
+          codex_pages(SPLITS["sheets"]), 1200)
     check("§14.4's restore total, less the three starting commons",
-          restore_pages(SPLITS["sheets"]), 1320)
+          restore_pages(SPLITS["sheets"]), 1170)
     # C23 quotes the pre-v3.1 §14.4: 15 commons x 15 + 18 rares x 30 + 12 deep
     # x 60 = 1,485. That is the restore total, not the Codex total, because the
     # old convention also dropped the three starting laws.
@@ -318,7 +326,7 @@ def self_test() -> int:
     # differences and so reported every move twice.
     laws = load_laws()
     check("the sheets cost nothing to adopt", retag_cost(SPLITS["sheets"], laws), 0)
-    check("§7.9's split moves six sheets", retag_cost(SPLITS["7.9"], laws), 6)
+    check("§7.9's old split moves two sheets", retag_cost(SPLITS["7.9"], laws), 2)
     # Only one of the three divides by six schools, which is the argument §7.9
     # makes and then breaks.
     # §7.6's 18/18/12 divides by six as well, so symmetry does not pick the

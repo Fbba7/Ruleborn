@@ -2,7 +2,7 @@
   {
     "name": "The Archivist",
     "unlocks": "Start",
-    "heist_powers": "Suspend: switch off one law in the current realm for 10 s (1 use). Reveal: show every ward in the realm (2 uses). Recall: bring a knocked-out character back at 40% (1 use).",
+    "heist_powers": "Suspend: switch off one law in the current realm for 10 s (1 use). Reveal: show every ward in the realm (2 uses). Recall: bring a knocked-out character back at 40% (1 use; the Revival row, 7.3; 12.20).",
     "at_home": "Lab experiments 20% faster. On guard: when an alarm sounds, the crew is shown to every guard for 5 s.",
     "id": "the_archivist"
   },

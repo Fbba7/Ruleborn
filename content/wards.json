@@ -2,55 +2,61 @@
   {
     "name": "Gravity Well",
     "school": "Motion",
-    "effect_level_1": "Pulls anyone within 3 tiles to its centre and holds them 2 seconds.",
+    "sensor": "Triggered: a crew member comes within 3 tiles",
+    "effect_level_1": "Pulls everyone within 3 tiles to its centre and holds them 2 seconds. No damage.",
+    "scales": "The hold",
     "resets_after": "10 s",
-    "id": "gravity_well",
-    "needs_decision": "G3",
-    "missing": "levels 2-5"
+    "seen": "Hidden until revealed or fired",
+    "id": "gravity_well"
   },
   {
     "name": "Crystal Wall",
     "school": "Matter",
+    "sensor": "Passive: no sensor",
     "effect_level_1": "A breakable wall (800 health) that blocks a path. It can never close the last route to the Heart.",
+    "scales": "The wall's health",
     "resets_after": "Stays broken",
-    "id": "crystal_wall",
-    "needs_decision": "G3",
-    "missing": "levels 2-5"
+    "seen": "Always",
+    "id": "crystal_wall"
   },
   {
     "name": "Time Snare",
     "school": "Time",
-    "effect_level_1": "Freezes the first character to step on it for 2.5 seconds.",
+    "sensor": "Triggered: a crew member steps on its tile",
+    "effect_level_1": "Freezes that character for 2.5 seconds. No damage.",
+    "scales": "The freeze",
     "resets_after": "12 s",
-    "id": "time_snare",
-    "needs_decision": "G3",
-    "missing": "levels 2-5"
+    "seen": "Hidden until revealed or fired",
+    "id": "time_snare"
   },
   {
     "name": "Static Coil",
     "school": "Energy",
-    "effect_level_1": "Shocks anyone within 2 tiles every 3 seconds.",
+    "sensor": "Aura: anyone within 2 tiles",
+    "effect_level_1": "Shocks everyone within 2 tiles every 3 seconds, for 8% of their maximum health a shock.",
+    "scales": "The shock's damage",
     "resets_after": "Always on",
-    "id": "static_coil",
-    "needs_decision": "G3",
-    "missing": "levels 2-5"
+    "seen": "Hidden until revealed or it first shocks",
+    "id": "static_coil"
   },
   {
     "name": "Thorn Hedge",
     "school": "Life",
-    "effect_level_1": "Blocks a path and hurts anyone pushing through (5% health a second).",
+    "sensor": "Passive: no sensor",
+    "effect_level_1": "Blocks a path and hurts anyone pushing through, 5% of their health a second while they are in it.",
+    "scales": "The damage",
     "resets_after": "Regrows only with Bloom",
-    "id": "thorn_hedge",
-    "needs_decision": "G3",
-    "missing": "levels 2-5"
+    "seen": "Always",
+    "id": "thorn_hedge"
   },
   {
     "name": "Lantern Glare",
     "school": "Spirit",
-    "effect_level_1": "Shows the crew to every guard in the realm for 5 seconds and blinds them for 2.",
+    "sensor": "Triggered: a crew member comes within 2 tiles",
+    "effect_level_1": "Shows the crew to every guard in the realm for 5 seconds and blinds them for 2. No damage.",
+    "scales": "The reveal",
     "resets_after": "20 s",
-    "id": "lantern_glare",
-    "needs_decision": "G3",
-    "missing": "levels 2-5"
+    "seen": "Hidden until revealed or fired",
+    "id": "lantern_glare"
   }
 ]

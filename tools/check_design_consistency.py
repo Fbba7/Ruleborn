@@ -231,9 +231,21 @@ def parse_load_rates(text: str) -> list[tuple[str, float, bool]]:
     return out
 
 
+def numbered_section(text: str, number: str) -> str:
+    """A section by its number: from its heading line to the next heading."""
+    m = re.search(rf"^{re.escape(number)} .*$", text, re.M)
+    if not m:
+        raise ValueError(f"no section {number}")
+    rest = text[m.end():]
+    nxt = re.search(r"^\d+\.\d+ [A-Z]|^\d+[A-Z][a-z]", rest, re.M)
+    return text[m.start():m.end() + (nxt.start() if nxt else len(rest))]
+
+
 def parse_rank_table(text: str) -> dict:
     """§7.9's Rank / Count / Pages table."""
-    block = section(text, "7.9 Rarity buys specificity", "This follows the published")
+    # By number, not by heading: v3.3 renamed §7.9 ("Rank is a strength
+    # ladder") and a heading anchor broke on the rename.
+    block = numbered_section(text, "7.9")
     cells = [l.strip().lstrip("| ").strip() for l in block.split("\n") if l.strip()]
     out = {}
     for i, cell in enumerate(cells):
@@ -251,6 +263,16 @@ def parse_restore_costs(text: str) -> str | None:
     """§7.6's one-line statement of what a law costs to restore."""
     m = re.search(r"Restoring a law: ([^\n]+)", text)
     return m.group(1).strip() if m else None
+
+
+def ambush_is_keyed(text: str) -> bool:
+    """Whether §12.8's ambush deals exactly the guard's remaining health.
+
+    v3.3 replaced triple Power and the half-health floor with a hit keyed to
+    the guard (D17): it knocks out any Unaware guard whatever the roles.
+    """
+    block = section(text, "12.8 Guards, stealth and fights", "12.9 Outcomes")
+    return bool(re.search(r"deals exactly what the guard has left", block))
 
 
 def ambush_has_floor(text: str) -> bool:
@@ -388,18 +410,26 @@ def main(path: str | None = None, text: str | None = None) -> int:
         share = raids / (raids + production)
         print(f"        day {day:>3}: raids {raids:>9,.0f} vs production {production:>9,} -> {share:6.1%} of income")
     day31 = 100 * 1.5 ** 5 * per_attempt * six_raids
+    # v3.3 withdrew the target rather than restating it: "no share is set
+    # here, and what a heist comes to against a day's production is an output
+    # of the economy model, never a target" (9.4). A withdrawn claim cannot be
+    # missed, so the check is whether the claim is still made.
+    claimed = re.search(r"roughly a third|40% of mid-game growth", text)
     check(
         "heists supply 'roughly a third' of resources (9.4) / '40% of mid-game growth' (12.1)",
-        day31 / (day31 + 17_300) > 0.25,
+        not claimed or day31 / (day31 + 17_300) > 0.25,
         "the 9.6 formula yields 3-8%, an order of magnitude below the stated target",
     )
 
     print("\nFights (12.8, 11.1)")
     role_stats = parse_role_stats(text)
-    floor = 0.5 if ambush_has_floor(text) else 0.0
+    keyed = ambush_is_keyed(text)
+    floor = 1.0 if keyed else 0.5 if ambush_has_floor(text) else 0.0
     check(
         "the ambush rule is stated with a health floor (12.8)",
         floor > 0,
+        "keyed to the guard's remaining health, so one hit is a knockout"
+        if keyed else
         f"a floor of {floor:.0%} of the target's full health" if floor
         else "triple Power alone; without a floor the rule below cannot hold",
     )
@@ -457,9 +487,18 @@ def main(path: str | None = None, text: str | None = None) -> int:
 
     print("\nWards and pylons (11.1, 10.2, 12.6)")
     breaker = role_stats["Breaker"]["power"] * 2
+    # v3.3 answered F6 with an assist bonus rather than by weakening the
+    # Breaker (11.1): while two or more work one object every hit deals more.
+    # The decision is then who helps, and it is real if the weakest helper
+    # still cuts the time by a quarter.
+    assist = re.search(r"every hit on it deals (\d+)% more: the assist bonus", text)
+    if assist:
+        bonus = 1 + int(assist.group(1)) / 100
+        weakest = min(r["power"] for n, r in role_stats.items() if n != "Breaker")
+        cut = 1 - breaker / ((breaker + weakest) * bonus)
     check(
         "'who cracks' is a decision (12.6) rather than always the Breaker",
-        breaker / volley < 0.5,
+        breaker / volley < 0.5 or (assist is not None and cut >= 0.25),
         f"the Breaker is {100 * breaker / volley:.0f}% of the crew's damage against "
         f"wards, pylons and the Vault, so four extra characters cut the time by "
         f"{100 * (1 - breaker / volley):.0f}%",
@@ -494,9 +533,21 @@ def main(path: str | None = None, text: str | None = None) -> int:
     high_30 = 500_000 * 0.04 * 12 * 0.70
     check("low scenario ≈ €2,700 at 15% commission", round(low) == 2720, f"€{low:,.0f}")
     check("base scenario ≈ €25,500 at 15% commission", round(base) == 25500, f"€{base:,.0f}")
+    # v3.3 prices the high scenario by store and year, which is 22.5's rule
+    # applied rather than contradicted: the Apple half at 30% once it crosses
+    # the prior-year cliff, the Google half at 15% on its first US$1 million a
+    # year and 25% above, at €0.93 to the dollar.
+    half_year = 500_000 * 0.04 * 12 * 12 / 2
+    first_million = 1_000_000 * 0.93
+    apple = half_year * 0.70
+    google = first_million * 0.85 + (half_year - first_million) * 0.75
+    high_split = (apple + google) / 12
+    stated = re.search(r"High\n\| 500,000\n\| 4%\n\| €12\n\| about €([\d,]+)", text)
+    split_holds = bool(stated) and abs(
+        int(stated.group(1).replace(",", "")) - high_split) < 1000
     check(
         "high scenario ≈ €168,000 at the stated 15% commission (22.5)",
-        abs(high_15 - 168_000) < 1000,
+        abs(high_15 - 168_000) < 1000 or split_holds,
         f"15% gives €{high_15:,.0f}; the quoted €168,000 is 30% (€{high_30:,.0f}) — "
         "defensible, since that scenario crosses the $1M small-business threshold, "
         "but it contradicts 22.5",

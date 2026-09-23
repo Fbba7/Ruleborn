@@ -55,10 +55,12 @@ def test_the_harness_gives_the_same_answers_as_when_it_was_last_read():
     runs = run_batch(25, 1, 3, "competent") + run_batch(15, 2, 3, "optimal")
     shape = [(r.grade, r.ticks, r.fill, r.decisions, r.alarm) for r in runs]
     digest = hashlib.sha256(repr(shape).encode()).hexdigest()
-    # Changed deliberately by D26 (guards start where `Patrol.phase` says) and
-    # by D55 (the corner of the eye is the zone's rate halved, as the content
-    # file reads it, not the far zone's rate at any distance).
-    assert digest == "ef4163da978cc0f00abbfc0575f20ca4c585aa5d4ff25a08ed223e2696e6701f", (
+    # Changed deliberately by D26 (guards start where `Patrol.phase` says), by
+    # D55 (the corner of the eye is the zone's rate halved, as the content
+    # file reads it, not the far zone's rate at any distance), and by v3.3's
+    # bags (D16: Carry 104, 104, 300, 138 and 104, read from content/roles.json
+    # — the only content change that moves it).
+    assert digest == "392187af80966d54a4ca7420f96ced4c9af347a6d14a96f421cc28971f5784fa", (
         f"the harness now gives different results: {digest}")
 
 

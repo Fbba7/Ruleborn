@@ -8,61 +8,61 @@
         "level": 1,
         "cost_starlight": 1000,
         "needs": "Keeper level 1",
-        "gives": "+38 stability; 5,000 Aether storage; buildings up to level 1"
+        "gives": "+38 stability; 3,000 Aether storage; buildings up to level 1"
       },
       {
         "level": 2,
         "cost_starlight": 2200,
         "needs": "Keeper level 5",
-        "gives": "+46 stability; 10,000 Aether storage; buildings up to level 2"
+        "gives": "+46 stability; 6,000 Aether storage; buildings up to level 2"
       },
       {
         "level": 3,
         "cost_starlight": 4840,
         "needs": "Keeper level 9",
-        "gives": "+54 stability; 15,000 Aether storage; buildings up to level 3"
+        "gives": "+54 stability; 11,000 Aether storage; buildings up to level 3"
       },
       {
         "level": 4,
         "cost_starlight": 10600,
         "needs": "Keeper level 13",
-        "gives": "+62 stability; 20,000 Aether storage; buildings up to level 4"
+        "gives": "+62 stability; 18,000 Aether storage; buildings up to level 4"
       },
       {
         "level": 5,
         "cost_starlight": 23400,
         "needs": "Keeper level 17",
-        "gives": "+70 stability; 25,000 Aether storage; buildings up to level 5"
+        "gives": "+70 stability; 29,000 Aether storage; buildings up to level 5"
       },
       {
         "level": 6,
         "cost_starlight": 51500,
         "needs": "Keeper level 21",
-        "gives": "+78 stability; 30,000 Aether storage; buildings up to level 6"
+        "gives": "+78 stability; 39,000 Aether storage; buildings up to level 6"
       },
       {
         "level": 7,
         "cost_starlight": 113400,
         "needs": "Keeper level 25",
-        "gives": "+86 stability; 35,000 Aether storage; buildings up to level 7"
+        "gives": "+86 stability; 61,000 Aether storage; buildings up to level 7"
       },
       {
         "level": 8,
         "cost_starlight": 249400,
         "needs": "Keeper level 29",
-        "gives": "+94 stability; 40,000 Aether storage; buildings up to level 8"
+        "gives": "+94 stability; 83,000 Aether storage; buildings up to level 8"
       },
       {
         "level": 9,
         "cost_starlight": 548800,
         "needs": "Keeper level 33",
-        "gives": "+102 stability; 45,000 Aether storage; buildings up to level 9"
+        "gives": "+102 stability; 112,000 Aether storage; buildings up to level 9"
       },
       {
         "level": 10,
         "cost_starlight": 1207300,
         "needs": "Keeper level 37",
-        "gives": "+110 stability; 50,000 Aether storage; buildings up to level 10"
+        "gives": "+110 stability; 151,000 Aether storage; buildings up to level 10"
       }
     ]
   },
@@ -203,7 +203,7 @@
   {
     "id": "star_well",
     "name": "Star Well",
-    "placement": "Every realm; 1, or 2 from realm level 3.",
+    "placement": "Every realm; one at every realm level (5.8).",
     "levels": [
       {
         "level": 1,
@@ -270,7 +270,7 @@
   {
     "id": "aether_spring",
     "name": "Aether Spring",
-    "placement": "Every realm; 1, or 2 from realm level 3.",
+    "placement": "Every realm; one at every realm level (5.8).",
     "levels": [
       {
         "level": 1,
@@ -337,7 +337,7 @@
   {
     "id": "garden",
     "name": "Garden",
-    "placement": "Every realm; 1, or 2 from realm level 3.",
+    "placement": "Every realm; one at every realm level (5.8).",
     "levels": [
       {
         "level": 1,
@@ -612,7 +612,7 @@
   {
     "id": "guardian_post",
     "name": "Guardian Post",
-    "placement": "Every realm; 1 to 3 by realm level.",
+    "placement": "Every realm; 1, 1, 2, 3 and 3 by realm level (5.2). One ruleborn stands at each (13.4).",
     "levels": [
       {
         "level": 1,
@@ -649,7 +649,7 @@
   {
     "id": "ward",
     "name": "Ward",
-    "placement": "Every realm; 3 + realm level.",
+    "placement": "Every realm; 8, 8, 6, 7 and 8 by realm level (5.2). Levels 1 and 2 ship at launch; 3 to 5 follow (10.3).",
     "levels": [
       {
         "level": 1,
@@ -680,6 +680,73 @@
         "cost_starlight": 13700,
         "needs": "Spire 9",
         "gives": "effect +60%, resets 6 s"
+      }
+    ]
+  },
+  {
+    "id": "library",
+    "name": "Library",
+    "placement": "Heart; 1 per universe (10.4).",
+    "levels": [
+      {
+        "level": 1,
+        "cost_starlight": 900,
+        "needs": "Keeper level 4",
+        "gives": "3 pages a day"
+      },
+      {
+        "level": 2,
+        "cost_starlight": 1790,
+        "needs": "Keeper level 7; Spire 2",
+        "gives": "5 pages a day"
+      },
+      {
+        "level": 3,
+        "cost_starlight": 3550,
+        "needs": "Keeper level 10; Spire 3",
+        "gives": "6 pages a day"
+      },
+      {
+        "level": 4,
+        "cost_starlight": 7050,
+        "needs": "Keeper level 13; Spire 4",
+        "gives": "8 pages a day"
+      },
+      {
+        "level": 5,
+        "cost_starlight": 14000,
+        "needs": "Keeper level 16; Spire 5",
+        "gives": "9 pages a day, roughly one every three hours"
+      },
+      {
+        "level": 6,
+        "cost_starlight": 22500,
+        "needs": "Keeper level 20; Spire 6",
+        "gives": "11 pages a day"
+      },
+      {
+        "level": 7,
+        "cost_starlight": 36200,
+        "needs": "Keeper level 24; Spire 7",
+        "gives": "13 pages a day"
+      },
+      {
+        "level": 8,
+        "cost_starlight": 58100,
+        "needs": "Keeper level 28; Spire 8",
+        "gives": "14 pages a day"
+      },
+      {
+        "level": 9,
+        "cost_starlight": 93400,
+        "needs": "Keeper level 34; Spire 9",
+        "gives": "16 pages a day"
+      },
+      {
+        "level": 10,
+        "cost_starlight": 150000,
+        "needs": "Keeper level 40; Spire 10",
+        "gives": "18 pages a day: more than a single heist earns (14.4), never enough to raise a school alone"
       }
     ]
   },
@@ -760,7 +827,7 @@
   {
     "id": "beacon",
     "name": "Beacon",
-    "placement": "Heart; 1.",
+    "placement": "Heart; 1. At launch it carries the friends' feed (17.6); its page requests and borrowed crew work inside a constellation, so they arrive with constellations in version 1.1 (17.4).",
     "levels": [
       {
         "level": 1,
@@ -818,74 +885,5 @@
         "gives": "3 visitor(s) a day; Collector swaps 5 for 2"
       }
     ]
-  },
-  {
-    "name": "The Library",
-    "id": "library",
-    "placement": "Heart; 1.",
-    "levels": [
-      {
-        "level": 1,
-        "cost_starlight": 900,
-        "needs": "Spire 1",
-        "gives": "3 pages a day"
-      },
-      {
-        "level": 2,
-        "cost_starlight": 1790,
-        "needs": "Spire 2",
-        "gives": "5 pages a day"
-      },
-      {
-        "level": 3,
-        "cost_starlight": 3550,
-        "needs": "Spire 3",
-        "gives": "6 pages a day"
-      },
-      {
-        "level": 4,
-        "cost_starlight": 7050,
-        "needs": "Spire 4",
-        "gives": "8 pages a day"
-      },
-      {
-        "level": 5,
-        "cost_starlight": 14000,
-        "needs": "Spire 5",
-        "gives": "9 pages a day"
-      },
-      {
-        "level": 6,
-        "cost_starlight": 22500,
-        "needs": "Spire 6",
-        "gives": "11 pages a day"
-      },
-      {
-        "level": 7,
-        "cost_starlight": 36200,
-        "needs": "Spire 7",
-        "gives": "13 pages a day"
-      },
-      {
-        "level": 8,
-        "cost_starlight": 58100,
-        "needs": "Spire 8",
-        "gives": "14 pages a day"
-      },
-      {
-        "level": 9,
-        "cost_starlight": 93400,
-        "needs": "Spire 9",
-        "gives": "16 pages a day"
-      },
-      {
-        "level": 10,
-        "cost_starlight": 150000,
-        "needs": "Spire 10",
-        "gives": "18 pages a day"
-      }
-    ],
-    "note": "§10.4 gives all 10 levels, but outside §10.2's table of every level of every building",
-    "needs_decision": "C8"
   }
 ]

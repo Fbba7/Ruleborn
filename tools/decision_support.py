@@ -663,13 +663,16 @@ def self_test() -> int:
     # -- F5: the Vault phase -------------------------------------------------
     capacity = sum(r["carry"] for r in roles.values())
     carrier = roles["Carrier"]["carry"]
-    check("F5: a five-crew holds 560 units", capacity, 560)
+    # v3.3 (D16) set the bags to 104, 104, 300, 138 and 104 and every role
+    # loading at 30 a second, which is F5's answer: the Carrier's 300 is 40%
+    # of the crew, so the other four hold 60% and loading is a crew's job.
+    check("F5: a five-crew holds 750 units", capacity, 750)
     check("F5: a Carrier holds 300 of them", carrier, 300)
     check("F5: which load in 2.0 seconds at §12.6's rate",
           carrier / LOAD_RATE_AS_WRITTEN, 2.0)
-    check("F5: leaving 260 units no Carrier can reach", capacity - carrier, 260)
-    check("F5: which is 46% of the crew",
-          round(100 * (capacity - carrier) / capacity), 46)
+    check("F5: leaving 450 units no Carrier can reach", capacity - carrier, 450)
+    check("F5: which is 60% of the crew",
+          round(100 * (capacity - carrier) / capacity), 60)
 
     # -- F6: who breaks things ----------------------------------------------
     volley = crew_volley(roles)

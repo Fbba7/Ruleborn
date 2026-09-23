@@ -118,9 +118,13 @@ EFFECTS = {
     "held_breath": (["event"], {}, [],
                     "Time advancing only while a crew member moves is not a "
                     "parameter of the simulation; it is a different simulation."),
-    "rewind": (["event"], {}, [],
-               "Restoring world state to 10 seconds earlier needs a snapshot "
-               "history, which §24.10's input-log model does not keep."),
+    # v3.3 replaced Rewind, which restored the whole world ten seconds back
+    # and needed a snapshot history §24.10 does not keep, with Tidemark: a
+    # periodic mark, and broken structures returning to it by checkpoint
+    # replay (7.10's conditional rung).
+    "tidemark": (["event"], {}, [],
+                 "Every 20 seconds a mark; 10 seconds later, what broke since "
+                 "returns. Only structures, and only from one checkpoint."),
 
     # -- Energy ------------------------------------------------------------
     "glowing_dark": (["parameter"], {"sight_range": 0.50}, [], ""),

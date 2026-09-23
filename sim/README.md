@@ -203,12 +203,12 @@ moss reaches none.
 
 Crew and guards move at §11.1's speed for their role — a Scout 4.5 tiles a
 second, a Warden 2.6 — and a `Gait` command switches between walk, crouch and
-run. **The document gives no speed for crouching or running.** It prices both
-for eyes and ears and stops there, and without a speed cost crouching is
-strictly better than walking. `CROUCH_PACE` (half) and `RUN_PACE` (double)
-are the simulation's reading. They are stated once, and the audit page lists
-them under *not in the document*. The Python harness answered the same gap
-differently: its crouch is §11.1's speed and its run is double. The harness
+run. Until v3.3 the document gave no speed for crouching or running, and
+`CROUCH_PACE` (half) and `RUN_PACE` (double) were the simulation's reading.
+v3.3's §12.17 took the same two numbers (G13), so the content gate now
+compares them with `tools/design_facts.py` instead of listing them. The Python
+harness answered the same gap differently — its crouch is §11.1's speed and its
+run is double — and has not moved yet (D56). The harness
 also gives the corner of the eye the far zone's rate at any distance, where
 `content/detection.json` halves the zone's rate. This simulation follows the
 content file.
@@ -298,11 +298,13 @@ Vault and the attack shared a swing counter and each reset the other's. And
 idle guards turned at their full turn rate — a Scout through 240° a second —
 which left no back to ambush. A posted guard now holds its facing.
 
-The simulation also needs two numbers the document does not give. It revives
-a crew member at a quarter of its health (`REVIVE_HEALTH`). Its Vault holds
-560 bag units (`FIXTURE_EXPOSED`), because §9.6 prices the exposed share in
-Starlight and nothing converts that to Carry. Both are listed on the audit
-page beside the gait speeds.
+It also needed two numbers the document did not give until v3.3, and both
+are the document's now and compared by the content gate. A revived crew
+member returns at 30% of its health (`REVIVE_HEALTH`, §12.20, G14), where the
+simulation had read a quarter. The fixture's Vault holds 750 bag units
+(`FIXTURE_EXPOSED`), a full five-crew's carry, which is §9.6's conversion at a
+target's level median (G15); it had held 560, the sum of the old Carry
+column.
 
 ## Laws and pylons
 
@@ -380,9 +382,17 @@ doubled.
 
 The document's numbers are read out of `content/wards.json`'s own sentences
 by the content gate: a rewording that stops a number parsing fails there. The
-numbers the spec had to add — ward health 500 a level, Static Coil 8% a
-shock — are listed as not the document's. So is the reading of "blinds
-them" as a crew unable to act.
+two numbers the spec had to add are the document's since v3.3: Static Coil's
+8% a shock is compared, and ward health is 550 a level. §10.3 also still says
+500 in its first paragraph (C34), so that one stays listed as a reading, with
+the reason. So does "blinds them", read as a crew unable to act.
+
+v3.3 changed four ward and fight rules this simulation has not followed yet:
+the ambush is a knockout keyed to the guard's remaining health, cracking makes
+every guard in the Heart investigate, disarming takes 15 seconds on the tile,
+and Lantern Glare triggers within 2 tiles. `tools/design_facts.py` reports the
+first three as behind the document rather than agreeing with it, and D56 owns
+all four.
 
 Reset times come from §10.3 — Time Snare 12 s, Lantern Glare 20 s — although
 §10.2's Ward row gives every ward 10 s at level 1. Building this found that

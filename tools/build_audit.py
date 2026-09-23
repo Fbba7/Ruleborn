@@ -14,10 +14,12 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from design_doc import VERSION as DOC_VERSION                     # noqa: E402
 from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,
                             status as reg_status,
                             GATE_OWNER,  # noqa: E402
-                            REGISTER, RESEARCH, V3, V31, V32, side_of)
+                            REGISTER, RESEARCH, SETTLED, V3, V31, V32, V33, FOUND_IN_V33, side_of,
+                            status_before_v33)
 
 from build_stamp import stamped  # noqa: E402
 
@@ -45,7 +47,7 @@ STATUS = {
     "proposed": "Proposed",
     "adopted":  "Adopted",
     "done":     "Done",
-    "fixed":    "Fixed in v3.0",
+    "fixed":    "Fixed in the document",
     # An item raised, checked, and found not to hold. Kept rather than deleted:
     # a check that was run and failed to confirm is evidence too, and the route
     # from the wrong answer to the right one is usually where the fault was.
@@ -707,6 +709,10 @@ def item_html(item: dict) -> str:
     v32 = V32.get(item["id"], {})
     v31_html += (f'<p class="v3 v32"><span class="vlabel">v3.2</span> {v32["note"]}</p>'
                  if v32.get("note") else "")
+    # and v3.3 a fourth.
+    v33 = V33.get(item["id"], {})
+    v31_html += (f'<p class="v3 v33"><span class="vlabel">v3.3</span> {v33["note"]}</p>'
+                 if v33.get("note") else "")
     return f"""
       <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
                data-kind="{item['kind']}" data-status="{state}"
@@ -748,6 +754,9 @@ def build() -> str:
     done_count = sum(1 for i in REGISTER if status_of(i) in ("done", "adopted"))
     fixed_count = sum(1 for i in REGISTER if status_of(i) == "fixed")
     touched = sum(1 for i in REGISTER if i["id"] in V3)
+    answered = [k for k in V33 if status_before_v33(k) not in SETTLED]
+    v33_closed = sum(1 for k in answered if V33[k]["status"] != "open")
+    v33_open = ", ".join(sorted(k for k in answered if V33[k]["status"] == "open"))
     new_in_v3 = sum(1 for i in REGISTER if i["id"] in FOUND_IN_V3)
     today = datetime.date.today().strftime("%d %B %Y")
 
@@ -759,7 +768,7 @@ def build() -> str:
     gap_count = sum(1 for i in REGISTER if i["kind"] == "gap")
     chips += (f'<button class="chip alt" data-filter="kind:gap">Specified nowhere'
               f'<span class="n">{gap_count}</span></button>')
-    chips += (f'<button class="chip alt" data-filter="status:fixed">Fixed in v3.0'
+    chips += (f'<button class="chip alt" data-filter="status:fixed">Fixed in the document'
               f'<span class="n">{fixed_count}</span></button>')
     edit_items = sum(1 for i in REGISTER if i["id"] in EDITS)
     edit_count = sum(len(v) for v in EDITS.values())
@@ -1202,6 +1211,11 @@ def build() -> str:
     border-left-color: var(--dsg);
   }}
   .v3.v32 .vlabel {{ color: var(--dsg); }}
+  .v3.v33 {{
+    background: color-mix(in srgb, var(--sig) 10%, transparent);
+    border-left-color: var(--sig);
+  }}
+  .v3.v33 .vlabel {{ color: var(--sig); }}
   .vlabel {{
     font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
     text-transform: uppercase; letter-spacing: 0.08em; color: var(--chg);
@@ -1300,26 +1314,26 @@ def build() -> str:
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Ruleborn &middot; design document v3.1</p>
+    <p class="eyebrow">Ruleborn &middot; design document v{DOC_VERSION}</p>
     <h1>Audit register</h1>
     <p class="lede">Everything that changed about the plan, and everything that
       still needs fixing in the document. Section marks point into the design
       document; the repository is the source of truth and this page is generated
       from it.</p>
-    <p class="lede">Read against <strong>version 3.1</strong>. Two versions have
-      now answered this register, and each item carries what they did: a
-      <span class="vlabel">v3.0</span> note, and a <span class="vlabel">v3.1</span>
-      note beneath it where v3.1 moved. {fixed_count} items are fixed in the
-      document itself &mdash; including where a fix stopped short.</p>
-    <p class="lede"><strong>v3.1 is the first version whose fixes were checked
-      rather than claimed.</strong> It ships a build checker, pins its constants
-      in data, and closes eight items &mdash; C7, C10, C17, C21, C24, C26, D4 and
-      D10 &mdash; every one of which was verified here against the built document
-      rather than taken from &sect;31.9's own list. v3.0 published a list like
-      that too, and C21 to C24 are what it missed.<br><br>What it did not reach
-      is <strong>F24</strong> and <strong>F25</strong>: a supersession check that
-      passes on a document still containing the model it bans, and six facts that
-      still have two homes against &sect;31.2's rule that each should have one.</p>
+    <p class="lede">Read against <strong>version {DOC_VERSION}</strong>. Four
+      versions have now answered this register, and each item carries what each
+      one did, as a note per version beneath it. {fixed_count} items are fixed
+      in the document itself &mdash; including where a fix stopped short.</p>
+    <p class="lede"><strong>v3.3 closes {v33_closed} of the {len(answered)} items that
+      were open against v3.2.</strong> Each was read against the built document by
+      section and line rather than taken from &sect;31.9's own list, and every
+      check that tracked one was re-run; where v3.3 decided differently from the
+      recommendation, the note says so. Nine stay open: two v3.3 never claimed,
+      and seven it claimed and only partly did &mdash; {v33_open}.<br><br>Reading
+      it against itself found {len(FOUND_IN_V33)} more: one section giving a
+      ward's health as 500 and as 550, a Codex finished on day 69 and on day 234,
+      upgrade pacing at six heists a day for a player who makes four, and a
+      simulation and harness that still run five rules v3.3 replaced.</p>
     <p class="lede"><strong>{edit_count} edits are drafted</strong> across
       {edit_items} items &mdash; the section to open, the sentence as it stands
       today, and what to put there. Every quoted sentence is checked against the

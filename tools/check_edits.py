@@ -19,7 +19,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
-from audit_register import EDITS, REGISTER, V3, V31, status          # noqa: E402
+from audit_register import EDITS, REGISTER, SETTLED, V3, V31, status  # noqa: E402
 
 from design_doc import TEXT as DOC                                # noqa: E402
 GENERATED = ROOT / "docs" / "design" / "generated"
@@ -156,7 +156,14 @@ def dangling_sections(doc: str) -> list:
 #: fault it exists to record — one fact, two homes — so the link is the right
 #: answer and the check enforces that X really does carry an edit.
 NO_EDIT_BECAUSE = {
-    "F31": "covered by G10",    # both are about \u00a712.21's parameter list
+    "F31": "a decision for the owner first: \u00a77.3 now closes the rule "
+           "sheet at twenty parameters, so splitting two means a twenty-second",
+    "C35": "no sentence to draft until one model run sets both: \u00a714.3's "
+           "milestone rows are the earlier run's (C19)",
+    "C36": "a pacing decision for the owner: which daily heist count the "
+           "upgrade pacing is priced at",
+    "C37": "a decision for the owner: whether a scout shows patrol routes",
+    "D56": "no document sentence: the fix is sim/ and the harness",
     "G15": "a pricing decision for the owner: the conversion has to be chosen "
            "before there is a sentence to draft",
     "D55": "no document sentence: the fix is the harness",
@@ -531,10 +538,14 @@ def self_test() -> int:
     # The ward budget is stated three times and the measurement moved one of
     # its five numbers.
     from audit_register import DESIGN_GATES as _gates
-    was_gate = _gates["realms"]["gates"]["F26"]
+    # F26 closed with v3.3, so the gate may not be there to overwrite.
+    was_gate = _gates["realms"]["gates"].get("F26")
     _gates["realms"]["gates"]["F26"] = "measured at 10, 8, 6, 7, 8 against 4, 5, 6, 7, 8"
     caught = bool(ward_budget_agrees())
-    _gates["realms"]["gates"]["F26"] = was_gate
+    if was_gate is None:
+        del _gates["realms"]["gates"]["F26"]
+    else:
+        _gates["realms"]["gates"]["F26"] = was_gate
     print(f"  [{'PASS' if caught else 'FAIL'}] a ward budget that disagrees with "
           f"the sweep is {'caught' if caught else 'MISSED'}")
     ok = ok and caught and not ward_budget_agrees()
@@ -567,7 +578,8 @@ def self_test() -> int:
           f"reason is {'caught' if caught else 'MISSED'}")
     ok = ok and caught
 
-    first = next(k for k, v in NO_EDIT_BECAUSE.items() if v.startswith("covered by "))
+    first = next(k for k, v in NO_EDIT_BECAUSE.items()
+                 if v.startswith("covered by ") and status(k) in ("open", "proposed"))
     was = NO_EDIT_BECAUSE[first]
     NO_EDIT_BECAUSE[first] = "covered by D20"        # D20 carries no edit
     caught = any("carries no edit either" in p for p in unexplained_missing_edits())
@@ -627,6 +639,11 @@ def main() -> int:
                 continue
             if not edit.get("section"):
                 problems.append(f"{where}: no section")
+            if action == "retag" and status(item_id) in SETTLED:
+                # A settled item's retags are retired with it, exactly as its
+                # replacements are: v3.3 re-noted C25's laws its own way, and
+                # the edit that proposed another way is history, not a fault.
+                continue
             if action == "retag":
                 target = edit.get("target", "")
                 current = edit.get("find", "")
@@ -716,16 +733,19 @@ def main() -> int:
     # over the new document covered the category that was on my mind and not the
     # others. An item with no V3 note has not been read against the current
     # version by anybody.
+    # v3.3 was read item by item (its layer in audit_register), so an item
+    # with a note in any layer, or found in v3.3 itself, has been read.
+    from audit_register import V31 as _v31, V32 as _v32, V33 as _v33, FOUND_IN_V33
     unread = [i["id"] for i in REGISTER
               if i["kind"] != "deviation"
               and status(i) not in ("done", "adopted")
-              and i["id"] not in V3
-              and i["id"] not in FOUND_IN_V3]
+              and not any(i["id"] in layer for layer in (V3, _v31, _v32, _v33))
+              and i["id"] not in FOUND_IN_V3 | FOUND_IN_V33]
 
     print(f"\nChecked {total} edits across {len(EDITS)} register items against "
           f"{DOC.name}.\n")
     if unread:
-        print(f"  {len(unread)} items have no note saying what v3.0 did about "
+        print(f"  {len(unread)} items have no note saying what any version did about "
               f"them, so nothing")
         print(f"  records whether they were read against the current version: "
               f"{', '.join(sorted(unread))}")
@@ -740,8 +760,8 @@ def main() -> int:
     # document was fixed and the edit retired with it. v3.1 retired twelve at
     # once. An edit that now matches *twice*, or an item whose sentence never
     # existed, is a different thing and still a failure.
-    from audit_register import V31, V32
-    closed = set(V31) | set(V32)
+    from audit_register import V31, V32, V33
+    closed = set(V31) | set(V32) | {k for k, v in V33.items() if v["status"] != "open"}
     retired = [p for p in problems
                if "does not contain" in p and p.split()[0] in closed]
     real = [p for p in problems if p not in retired]

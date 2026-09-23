@@ -575,9 +575,11 @@ def main() -> int:
         err(f"law ranks are {dict(ranks)}, but law_ranks.SPLITS['sheets'] has "
             f"{law_ranks.SPLITS['sheets']['counts']} \u2014 the sheets moved and "
             f"the split that prices them did not")
-    else:
+    elif law_ranks.uneven_ranks(law_ranks.SPLITS["sheets"]):
+        # v3.3 closed C3 the sheets' way, so this fires only if the sheets
+        # stop giving every school the same ladder again.
         moves = law_ranks.retag_cost(law_ranks.SPLITS["7.9"], laws)
-        uneven = law_ranks.uneven_ranks(law_ranks.SPLITS["7.9"])
+        uneven = law_ranks.uneven_ranks(law_ranks.SPLITS["sheets"])
         opn("C3", f"the 48 sheets carry {ranks['Common']}/{ranks['Uncommon']}/"
                   f"{ranks['Rare']}/{ranks['Deep']}, which is what \u00a714.4's "
                   f"1,350 pages is computed from and gives every school the same "
@@ -592,7 +594,11 @@ def main() -> int:
     # version of this file took \u00a77.9's word for it, which is how a design rule
     # goes four versions without anyone checking whether the content obeys it.
     pr = law_ranks.principle(laws)
-    if pr["cost_r"] > 0.5 or abs(pr["condition_r"]) > 0.3:
+    # v3.3 withdrew the rule rather than enforcing it (7.9: "rank is a strength
+    # ladder"), so the measurement contradicts the document only while the
+    # document still claims two dials.
+    claims = DOC_TEXT.exists() and "two dials" in DOC_TEXT.read_text(encoding="utf-8")
+    if claims and (pr["cost_r"] > 0.5 or abs(pr["condition_r"]) > 0.3):
         opn("D31", f"\u00a77.9 splits rarity from strength into \"two dials\", and "
                    f"\u00a77.1 restates it per law \u2014 but across the 48 sheets rank "
                    f"predicts stability cost at r={pr['cost_r']:+.2f} "
@@ -617,15 +623,21 @@ def main() -> int:
     # v3.0's §8.8 changed the rule to three *distinct laws*, which makes §8.5
     # true. Whether it makes a chord late-game is a different question, and the
     # cheapest three-law combination is how to answer it.
-    by_id = {law["id"]: law for law in laws}
+    #
+    # A chord is "three different notes, none of them opposites, carried by
+    # three distinct laws" (8.5): each law contributes one of the chord's
+    # notes, and nothing bars a contributing law from carrying another. An
+    # earlier version dropped any law carrying a note opposite to one in the
+    # chord, which is a stricter game than the document's — §8.8's own
+    # cheapest triple, Bloom with Brittle stone and Tilt, carries Bloom
+    # against the chord's Spark, and that version priced it out.
     cheapest, all_common = None, 0
     for c in data["chords"]:
-        banned = {OPPOSITE[n] for n in c["notes"]}
-        pool = [law for law in laws
-                if set(law["notes"]) & set(c["notes"]) and not set(law["notes"]) & banned]
+        pool = [law for law in laws if set(law["notes"]) & set(c["notes"])]
         best = None
         for combo in itertools.combinations(pool, 3):
-            if set(c["notes"]) <= set().union(*(set(l["notes"]) for l in combo)):
+            offers = [[n for n in l["notes"] if n in c["notes"]] for l in combo]
+            if any(set(pick) == set(c["notes"]) for pick in itertools.product(*offers)):
                 cost = sum(l["stability_cost"] for l in combo)
                 if best is None or cost < best[0]:
                     best = (cost, [l["rank"] for l in combo])
@@ -643,8 +655,8 @@ def main() -> int:
     # check_findings_fresh.py's rule \u2014 a number that cannot be shown to be
     # stale will be trusted for ever \u2014 applied to a closed item.
     if cheapest is not None:
-        pin("D14", "the cheapest chord's stability cost", cheapest, 33)
-        pin("D14", "chords costing three commons", all_common, 7)
+        pin("D14", "the cheapest chord's stability cost", cheapest, 32)
+        pin("D14", "chords costing three commons", all_common, 8)
         pin("D14", "a day-2 stability capacity", DAY_2_STABILITY, 51)
     elif reachable_with_two:
         opn("D14", f"{reachable_with_two} of {len(data['chords'])} chords are reachable "
@@ -748,8 +760,12 @@ def self_test() -> int:
     ok = ok and caught
 
     # And a report about an open one must not be.
-    opn("G3", "planted: G3 is open and this is what that looks like")
-    wrongly = any(i == "G3" for i, _ in stale_reports())
+    # Whichever item is open today: a planted report must not depend on
+    # the register standing still (G3 was the example until v3.3 closed it).
+    from audit_register import REGISTER, is_open
+    live = next(i["id"] for i in REGISTER if is_open(i))
+    opn(live, f"planted: {live} is open and this is what that looks like")
+    wrongly = any(i == live for i, _ in stale_reports())
     del open_items[before:]
     print(f"  [{'PASS' if not wrongly else 'FAIL'}] a report about an open item "
           f"is {'left alone' if not wrongly else 'WRONGLY CALLED STALE'}")

@@ -45,6 +45,11 @@ that tells you to replace a sentence the document does not contain.
 #: audit. They need no "what v3.0 did" note, because v3.0 is where they come
 #: from. Kept here because three different tools were each holding their own
 #: copy of this list, which is the drift this register exists to complain about.
+#: Found by reading v3.3 against itself, as the six v3.3 verification passes
+#: went: each is a statement v3.3 makes twice, or a figure that did not move
+#: with the one it was derived from.
+FOUND_IN_V33 = frozenset({"C34", "C35", "C36", "C37", "C38", "C39", "D56"})
+
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
     "D19", "D20", "D21", "D22", "D23",
@@ -4578,6 +4583,145 @@ dict(id="C28", kind="contradiction", severity="minor", status="open",
          "the difference between 1,580 and 17,612 at the ceiling is the "
          "difference between a roster the player fills and one they build."),
 
+# ===========================================================================
+# Found reading v3.3
+# ===========================================================================
+
+dict(id="C34", kind="contradiction", severity="significant", status="open",
+     title="§10.3 gives a ward’s health as 500 a level, then as 550",
+     refs=["10.3", "11.1", "12.20"],
+     body="§10.3 opens: <em>“Health is 500 a level for every ward except "
+          "Crystal Wall.”</em> The same section closes: <em>“Every ward has "
+          "550 health a level”</em>, and explains the move: at 500 a level-2 "
+          "ward fell to a Breaker in 10.4 seconds and beat a Tinker’s "
+          "disarm, so the coefficient became 550, <em>“the smallest multiple "
+          "of 50 at which the crossover lands there”</em>. The smash timings "
+          "and the measurement ledger use 550. The first sentence is the one "
+          "the edit did not reach.<br><br>It is G3’s own subject, which v3.3 "
+          "otherwise closed, and it decides whether smashing or disarming is "
+          "the quicker answer to a level-2 ward.",
+     rec="Delete the number from the opening sentence and let it point at the "
+         "paragraph that derives 550.",
+     measured="check_document: a ward's health is stated once (10.3)"),
+
+dict(id="C35", kind="contradiction", severity="significant", status="open",
+     title="An engaged player completes the Codex on about day 69 (§14.4) "
+           "and about day 234 (§14.3)",
+     refs=["14.3", "14.4", "7.6"],
+     body="§14.4 works it out: 1,170 pages at 16 a day for 60 days and 23 a "
+          "day after, <em>“about 69 days”</em>, and the measurement ledger "
+          "repeats it. §14.3: an engaged player owns <em>“all 48 by about day "
+          "234”</em>. Chapter gating does not reconcile them: the last "
+          "chapter opens at Keeper level 24, which an engaged player passes "
+          "before day 90.<br><br>v3.2 had the same pair at 76 and 234. v3.3 "
+          "re-derived §14.4 and left §14.3, whose milestone rows ship at the "
+          "earlier run (C19). The Codex is the collection the game is paced "
+          "around, so the two numbers are two different games.",
+     rec="Generate §14.3’s row from the same model run as §14.4, or say what "
+         "§14.3 counts that §14.4 does not.",
+     measured="check_document: 14.3 and 14.4 give an engaged player's full "
+              "Codex the same day"),
+
+dict(id="C36", kind="contradiction", severity="significant", status="open",
+     title="Upgrade pacing assumes six heists a day; the engaged player makes "
+           "four",
+     refs=["9.6", "14.2", "29.1"],
+     body="§9.6 prices an upgrade costing 25 clean raids at <em>“213 to 296 "
+          "attempts, or 35 to 49 days at six a day”</em>, and the opening "
+          "summary and the measurement ledger repeat it. §14.2’s engaged "
+          "player makes <em>“5 sessions and 4 heists a day”</em>, and §29.1’s "
+          "raid-worth check uses four. At four a day the same attempts take "
+          "53 to 74 days. With §9.6’s own fatigue term, which the sentence "
+          "says it must carry, six raids a day are worth 4.15 and four are "
+          "worth 3.19, so the upgrade takes about 51 to 71 days at six and "
+          "67 to 93 at four. Neither is the 35 to 49 printed.",
+     rec="Price the pacing at §14.2’s four, or say why the upgrade pacing "
+         "assumes a player who raids more than the engaged one.",
+     measured="check_document: 9.6's upgrade pacing uses 14.2's engaged "
+              "heists a day"),
+
+dict(id="C37", kind="contradiction", severity="minor", status="open",
+     title="§12.12 says the scout sees the shifted patrol; §12.4’s scout "
+           "shows no patrols",
+     refs=["12.12", "12.4", "12.5"],
+     body="C31’s fix: the patrol shift is drawn from the heist’s seed when "
+          "the target is chosen, <em>“the scout sees the shifted patrol”</em>. "
+          "§12.4 lists what a paid scout shows: each realm’s laws, the number "
+          "and roles of its guards, and how many wards of each type. No "
+          "patrols, and no positions. Either the scout shows more than "
+          "§12.4 says, and the scouting screen in §23.2 is drawn short, or "
+          "the sentence promises something nothing delivers.",
+     rec="Decide whether a scout shows patrol routes. If it does, add them to "
+         "§12.4 and to the scout-report screen.",
+     measured="check_document: what 12.12 says a scout sees is something "
+              "12.4's scout shows"),
+
+dict(id="C38", kind="contradiction", severity="minor", status="open",
+     title="§18.9’s Island Fund still quotes the high scenario C12 replaced",
+     refs=["18.9", "22.2"],
+     body="§18.9: 10% of revenue is <em>“roughly €2,500 a month”</em> at the "
+          "base scenario and <em>“about €16,800”</em> at the high one. The "
+          "second is 10% of the €168,000 that C12 corrected; §22.2 now gives "
+          "about €182,000, so the fund is about €18,200.",
+     rec="Derive §18.9’s figures from §22.2’s table, or drop them for the "
+         "percentage.",
+     measured="check_document: 18.9's Island Fund is 10% of 22.2's scenarios"),
+
+dict(id="C39", kind="contradiction", severity="minor", status="open",
+     title="Five sentences v3.3’s own edits left behind",
+     refs=["12.11", "12.19", "12.21", "10.4", "31.9", "13.2"],
+     body="Each is small, and each was checked against the text:"
+          "<br><br>· §12.11 says <em>“In either form”</em> after v3.3 "
+          "removed the second form (D48)."
+          "<br>· §12.19’s fallback deletes <em>“the break-even sentence "
+          "above”</em>, which v3.3 already withdrew (D34)."
+          "<br>· §12.21: <em>“Three laws read properties no creature "
+          "had”</em>, then names two."
+          "<br>· §12.19: cracking takes <em>“about 8 to 25 seconds … with a "
+          "Breaker in the crew”</em>. The lower figures re-derive; nothing "
+          "gives 25 (a Breaker alone takes 15 seconds at Vault level 1 and "
+          "30 at level 2)."
+          "<br>· §10.4’s Library formula is <em>“rounded to three "
+          "figures”</em> and does not reproduce §10.2’s table: 3,560 against "
+          "3,550 at level 3, 153,000 against 150,000 at level 10. Within 2%, "
+          "so the curve check passes; exact, it does not."
+          "<br><br>And one claim in §31.9: F9 is listed as answered by "
+          "<em>“generated hold rates re-measured on the aligned "
+          "harness”</em>, while §13.2 says they were measured before it.",
+     rec="Six one-line edits. None changes a rule."),
+
+dict(id="D56", kind="deviation", severity="significant", status="open",
+     title="sim/ and the harness run five rules v3.3 replaced",
+     refs=["12.8", "12.6", "12.17", "10.3"],
+     body="v3.3 changed rules this repository had already built. Brought "
+          "across with the document: role Carry (104, 104, 300, 138, 104), "
+          "revive health (30%), the fixture Vault in bag units (750, G15), "
+          "and the Static Coil’s damage, which is now the document’s rather "
+          "than a proposal. <strong>Not yet brought across</strong>:"
+          "<br><br>· <strong>The ambush</strong> is a knockout keyed to the "
+          "guard’s remaining health, with a 2-second takedown and a body a "
+          "guard can find (§12.8). The simulation and the harness still "
+          "triple Power with a half-health floor and a 2-second stun."
+          "<br>· <strong>Cracking</strong> is a heard event: every hit heard "
+          "within 5 m, and every five seconds every guard in the Heart starts "
+          "Investigating (§12.6, §12.17). The simulation adds 100 suspicion."
+          "<br>· <strong>Disarming</strong> is 15 seconds standing on the "
+          "ward’s tile, restarting if the disarmer steps off (§10.3). The "
+          "simulation takes 3 seconds plus one a level, kept for 5 seconds."
+          "<br>· <strong>Lantern Glare</strong> triggers within 2 tiles "
+          "(§10.3). The simulation triggers it on its own tile."
+          "<br>· <strong>Crouching</strong> is half a role’s speed (§12.17, "
+          "G13). The simulation already moved at half; the Python harness "
+          "crouches at full speed and runs at double, so every harness "
+          "measurement since F1 prices a crouched approach twice as fast "
+          "as the document now does."
+          "<br><br><code>tools/design_facts.py</code> now checks every fact "
+          "it declares against the section it names, and reports these as "
+          "behind the document under this item rather than as agreeing.",
+     rec="Port the five rules to <code>sim/</code> and the harness, re-record "
+         "the goldens, and re-measure what reads the ambush or the crouch.",
+     measured="tools/design_facts.py: BEHIND"),
+
 ]
 
 # ===========================================================================
@@ -4724,6 +4868,371 @@ V32 = {
     "§9.2's competing 60/85/100% steps are gone — including the "
     "coefficient in §9.3's formula, which the item warned would otherwise "
     "leave the game computing the rule it had just deleted."),
+
+}
+
+
+# ===========================================================================
+# What version 3.3 did
+# ===========================================================================
+#
+# A fourth layer, for the same reason as the others. v3.3's §31.9 lists 62
+# items as answered and applied; each was read against the built document by
+# section and line, and the checks that tracked them were re-run. 55 of the
+# 64 items open against v3.2 close here. Nine do not: two v3.3 never claimed
+# (C33, F31, both registered after its snapshot), and seven it claimed and
+# only partly did (C19, C32, D43, F16, F17, F19, F25). Where v3.3 decided
+# differently from the recommendation, the note says so: a closed item is one
+# the document settled, not one it settled our way.
+
+V33 = {
+
+"D6": dict(status="fixed", note=
+    "<strong>Decided: the cut is taken.</strong> §26.1 ships 24 laws "
+    "<em>“chosen by engine cost”</em>, 54 forms, 12 signature "
+    "resonances, two ward levels and two languages, with constellations in "
+    "version 1.1 and the Workshop kept. The 24 are a rule rather than a "
+    "choice (§7.10), and <code>check_document</code> now re-derives "
+    "them from the 48 sheets: the rule, the badges, the table and the "
+    "engine-point totals (78, 14, and 36 for a 24 chosen by rank) all agree."),
+
+"Q5": dict(status="fixed", note=
+    "Decided with D6. The cut differs from D6's proposal in detail — 12 "
+    "resonances rather than about 20, two languages — and is recorded in "
+    "§26.1 with its rule."),
+
+"F10": dict(status="fixed", note=
+    "Every sheet in §7.7 now carries an <em>Effect kind</em> tag, and "
+    "§7.10 is the ladder they sit on: 16 parameter, 6 placement or "
+    "attribute, 16 conditional, 10 spawned, none on the rewind rung. "
+    "Tidemark replaces Rewind as a checkpoint return. The extraction keeps "
+    "the tag as data (<code>content/laws.json</code>: "
+    "<code>engine_rung</code>, <code>launch</code>)."),
+
+"C3": dict(status="fixed", note=
+    "<strong>Closed a different way.</strong> v3.3 kept four ranks at "
+    "18/12/12/6 by moving each school’s cheaper deep law to rare, "
+    "rather than the 18/12/6/12 proposed. The 48 sheets count 18/12/12/6, "
+    "every school is 3/2/2/1, and every statement of the split agrees at "
+    "1,200 pages."),
+
+"Q3": dict(status="fixed", note="Decided with C3: four ranks, 18/12/12/6."),
+
+"D31": dict(status="fixed", note=
+    "<strong>Decided by withdrawing the claim.</strong> §7.9 is now "
+    "<em>“Rank is a strength ladder, paid for in pages”</em> and "
+    "says the earlier claim is withdrawn rather than enforced. Its figures "
+    "check against the sheets: r = +0.79, medians 13.5, 17, 19 and 22.5."),
+
+"F24": dict(status="fixed", note=
+    "§7.6 prices all four ranks at 10, 20, 35 and 60 pages. The retired "
+    "phrasing survives only as the quotation in §31.5’s check "
+    "table, which is marked to be allowed."),
+
+"G3": dict(status="fixed", note=
+    "Every ward now has a sensor, what an upgrade scales, and a rule that a "
+    "level never scales a distance; Static Coil has damage; disarming is "
+    "specified. <strong>One contradiction came with it</strong>: §10.3 "
+    "gives ward health as 500 a level in its first paragraph and 550 in its "
+    "last. That is C34, not a reason to keep this open."),
+
+"Q7": dict(status="fixed", note=
+    "§27.3: <em>“Nothing in this section is open.”</em> Each "
+    "question is answered in the section that owns it. Soft-launch markets "
+    "are settled as a rule for choosing three, not as named countries, "
+    "which is enough for everything the document plans before them."),
+
+"F29": dict(status="fixed", note=
+    "Decided by the quiet-surface route rather than the drafted §12.17 "
+    "edit: the crouched step stays heard at 1 m and only moss, at 0.75 m, "
+    "lets a crew member arrive unheard. §6.1 and §12.8 name "
+    "clearing moss as a defensive choice, which turns the finding into a "
+    "decision on both sides of the board."),
+
+"D49": dict(status="fixed", note=
+    "§11.10: <em>“Eighteen kinds and three notes make 54 "
+    "forms”</em> — Hush, Spark and Echo, the three the launch 24 "
+    "carry most, by a stated tie-break that re-derives. No count of 144 "
+    "forms is left, and the check reads the three notes from the table."),
+
+"D40": dict(status="fixed", note=
+    "§7.3 has a Revival row with three shapes and a rule that the "
+    "highest N applies, once. Echoplate reads 40% in both §11.2 and "
+    "§11.11."),
+
+"F15": dict(status="fixed", note=
+    "<strong>Changed rather than tuned.</strong> Detection and response are "
+    "one layer at 35%, the 25% ceiling became a rule that no layer decides "
+    "an outcome alone, and §13.4 measures haul denied across all 16 "
+    "combinations of four layers. Geometry at 25% and laws at 20% remain "
+    "targets for the measurement ledger (§32)."),
+
+"D9": dict(status="fixed", note=
+    "§26.8 budgets iteration as its own line at 1× the build, a "
+    "floor: 229 to 405 runs, plan total 458 to 810, about 640. The "
+    "arithmetic re-derives."),
+
+"C6": dict(status="fixed", note=
+    "§11.2 is generated from the §11.11 cards. All 18 rows agree "
+    "on school, role, ability and resist, and the extraction reports no "
+    "conflicts. Cooldowns are gone: two uses a heist (D32)."),
+
+"F26": dict(status="fixed", note=
+    "<strong>Decided.</strong> The ward limit is eight at most, set per "
+    "level by the hold band (8, 8, 6, 7, 8), and generated islands at realm "
+    "level 1 get their own band, 25 to 40%, by a stated rule. The holds are "
+    "measured before the peripheral-vision alignment, and realm level 4 at "
+    "two posts rather than three; §13.2 says both and defers them to "
+    "the re-run."),
+
+"F22": dict(status="fixed", note=
+    "<strong>Closed another way.</strong> Not a second post: realm levels 1 "
+    "and 2 get eight wards, realm 2 measures 37.6% at one post, and realm 1 "
+    "keeps one post under its own band."),
+
+"G5": dict(status="fixed", note=
+    "A pylon shows its law’s glyph and a tag names it on first sight "
+    "(§12.6, §15.3), and the detour is priced: about 1% of a heist "
+    "at pylon level 1, 9% at level 10."),
+
+"C25": dict(status="fixed", note=
+    "§8.8’s note counts are generated from the sheets and match "
+    "them: Echo and Hush 10, Flow, Glow and Weight 9, the rest 8. The band "
+    "is 8 to 10 rather than the 8 to 9 proposed; what matters is that the "
+    "sentence is now true."),
+
+"D13": dict(status="fixed", note=
+    "Nine laws were re-noted. Opposite pairs are within two laws of each "
+    "other, no law carries a note and its opposite, and every chord stays "
+    "reachable."),
+
+"F11": dict(status="fixed", note=
+    "§13.3: the generator weaves only the laws that help the defender "
+    "and must hold its realm level’s band."),
+
+"F30": dict(status="fixed", note=
+    "§12.19 now says <em>“with a Breaker in the crew”</em> "
+    "and prices the crews without one (about 26 seconds, 22 with the assist "
+    "bonus). The lower figures re-derive; the upper end of "
+    "<em>“8 to 25 seconds”</em> has no case that gives it, which "
+    "C39 records."),
+
+"C31": dict(status="fixed", note=
+    "The patrol shift is drawn once from the heist’s seed as it starts; "
+    "nothing moves at random during a run. The same sentence says the scout "
+    "sees the shifted patrol, which §12.4’s scout does not show: "
+    "C37."),
+
+"D50": dict(status="fixed", note=
+    "All 33 cells of §31.5’s last column are marked as allowed "
+    "quotation, and §32.5 says Island Fund."),
+
+"D39": dict(status="fixed", note=
+    "§7.4 is generated from §7.7. The two differ in none of the "
+    "shared fields; the only difference is the <em>Launch</em> badge after "
+    "24 names in §7.4, which the check now reads as a badge."),
+
+"D20": dict(status="fixed", note=
+    "Decided: the harnesses are on the critical path and built before the "
+    "vertical slice; the browser prototype stays up and nobody is recruited "
+    "to it (§19.27, §26.7)."),
+
+"F12": dict(status="fixed", note=
+    "One placement rule for all eight authored choices (§7.10): against "
+    "the shortest route to the Heart, never sealing it. Each sheet states "
+    "its instance, and Inward pull’s choice is fixed."),
+
+"G13": dict(status="fixed", note=
+    "§12.17: crouched is half a role’s speed and running double. "
+    "<code>sim/</code> had read exactly that and now matches a stated "
+    "figure."),
+
+"G10": dict(status="fixed", note=
+    "§7.3 has exactly twenty parameters and every law appears in one; "
+    "Glass is the named view-layer exception."),
+
+"F27": dict(status="fixed", note=
+    "The Guardian Post ladder keeps one slope and sets its start per realm "
+    "level, so each level’s midpoint sits in its band. The starts for "
+    "realm levels 1 and 2 are computed until the aligned re-run."),
+
+"D48": dict(status="fixed", note=
+    "Co-op is asynchronous and turn-based, in version 1.1, with no lobby "
+    "(§12.11, §23.2)."),
+
+"D34": dict(status="fixed", note=
+    "Decided in the text: the harness crew loads to a target, and the clock "
+    "experiment passes only if mean fill falls as the clock shortens, with "
+    "stated fallbacks. The measurement has not run; §32.9 carries it."),
+
+"D16": dict(status="fixed", note=
+    "<strong>Decided differently.</strong> Every role loads at 30 a second, "
+    "not 30 for the Carrier and 8 for the rest; bags are 104, 104, 300, 138 "
+    "and 104, which sum to 750. <code>sim/</code> follows."),
+
+"F6": dict(status="fixed", note=
+    "<strong>Decided with an assist bonus</strong>: while two or more work "
+    "one object every hit deals 25% more. The decision is who helps, and it "
+    "is real: the weakest helper still cuts a Breaker’s time by more "
+    "than a quarter, which the check now computes. §11.1 also writes "
+    "the fallback if the harness cannot size it."),
+
+"G11": dict(status="fixed", note=
+    "Two languages at launch, English and Brazilian Portuguese, with a named "
+    "owner for translation (§20.6, §26.3)."),
+
+"F7": dict(status="fixed", note=
+    "The matchmaker controls depth, and depth sets the decision count "
+    "(§12.22, §12.6)."),
+
+"F13": dict(status="fixed", note=
+    "§12.22 says what happens when a band is empty, and the ward budget "
+    "that emptied it changed (F26). The holds are pre-alignment and "
+    "disclosed as such."),
+
+"G14": dict(status="fixed", note=
+    "A revived crew member returns at 30% of its role’s health "
+    "(§12.20), rather than the 25% proposed. <code>sim/</code> "
+    "follows."),
+
+"D53": dict(status="fixed", note=
+    "§13.4’s limits now follow §5.2."),
+
+"D47": dict(status="fixed", note=
+    "§19.2 cites 12.7 and 21.8 and states 9 mm. The 44-point figure "
+    "survives only in the evidence log’s review records."),
+
+"C28": dict(status="fixed", note=
+    "One birth price, §9.5’s, with the offset written out and "
+    "examples that match it; §11.5 defers."),
+
+"D17": dict(status="fixed", note=
+    "<strong>Changed rather than repaired.</strong> The ambush is a "
+    "guaranteed knockout keyed to the guard’s remaining health, so no "
+    "Power, level or trait can break it; triple Power and the floor are "
+    "gone, and its cost is an unseen, unheard approach and a body. "
+    "<code>sim/</code> and the harness still run the old rule: D56."),
+
+"C8": dict(status="fixed", note=
+    "The Library’s ten levels are in §10.2 with every other "
+    "building, and §21.9 budgets 17 types × 4 = 68."),
+
+"C18": dict(status="fixed", note=
+    "Aether storage is one day of production at the Spire’s level, "
+    "stated in §10.2 and cited by §9.1."),
+
+"F9": dict(status="fixed", note=
+    "The hold band is a stated requirement on the generator (§13.3), "
+    "per realm level. v3.3’s own list says the holds were re-measured "
+    "on the aligned harness; §13.2 says they were measured before it. "
+    "The requirement is what F9 asked for, so this closes, and the claim is "
+    "C39."),
+
+"D32": dict(status="fixed", note=
+    "Decided by uses rather than longer cooldowns: two a heist, a ten-second "
+    "lockout, six to ten ability choices a crew whatever the clock."),
+
+"G15": dict(status="fixed", note=
+    "§9.6: exposed share in bag units = a full five-crew’s carry "
+    "× the richness ratio, so 750 at the level median. "
+    "<code>sim/</code>’s fixture Vault now holds that, and it is "
+    "compared rather than read."),
+
+"D51": dict(status="fixed", note=
+    "§9.6 defers to §10.2, which lists every 3.5-point step."),
+
+"F23": dict(status="fixed", note=
+    "The gate is the chord’s own stability draw, 192, derived in "
+    "§8.5 from the cheapest chord on day 41. The derivation checks."),
+
+"C2": dict(status="fixed", note=
+    "<strong>Closed by withdrawing the target.</strong> §9.4 sets no "
+    "share of income for raiding; what a heist comes to is an output of "
+    "the economy model. B(V) is keyed to the target’s Vault level, and "
+    "a raid-worth criterion raised its base from 100 to 2,400."),
+
+"C29": dict(status="fixed", note=
+    "No phase before soft launch needs a player other than the developer; "
+    "the exit tests are harness gates."),
+
+"C12": dict(status="fixed", note=
+    "§22.2 prices each scenario by store and year; the high scenario "
+    "re-derives at about €182,000 a month. §18.9 still quotes the "
+    "old figure: C38."),
+
+"F28": dict(status="fixed", note=
+    "Cracking is a heard event: every five seconds every guard in the Heart "
+    "starts Investigating the Vault, instead of 100 suspicion that drains."),
+
+"D52": dict(status="fixed", note=
+    "§31.9 keeps answered and applied apart, and a build check "
+    "enforces it."),
+
+"D44": dict(status="fixed", note=
+    "The heist clock, the albums and the monthly-player figure each have "
+    "one home."),
+
+# Still open.
+
+"C32": dict(status="open", note=
+    "<strong>Half done.</strong> §10.3 adds the reconciling rule "
+    "— each level takes a tenth of the level-1 reset off — but "
+    "§10.2’s Ward row still reads <em>“resets 10 s”</em> "
+    "with nothing saying it is only the ten-second case."),
+
+"C19": dict(status="open", note=
+    "<strong>Rules fixed, tables not.</strong> One producer of each kind "
+    "per realm, and §9.3 is regenerated. §14.2, §14.3 and "
+    "§10.2’s day and income columns ship at the earlier run, as "
+    "§14.2 says, so the Keeper-40 sentence (day 181) stands against "
+    "the partial re-run’s day 275, §10.2’s Spire-10 income "
+    "hours imply about 2.4× §9.3’s production, and "
+    "§5.8 still claims the old curve within 10%."),
+
+"D43": dict(status="open", note=
+    "All four rows named are repaired. One number is left by the check’s "
+    "own rule: the Vault row’s <em>“8,000 × "
+    "1.85<sup>level − 1</sup>”</em> cites §10.2, whose "
+    "table implies 1.85 and never states it."),
+
+"F16": dict(status="open", note=
+    "The generator fix is in, and hold bands are split by origin. The layer "
+    "shares are not: geometry 25% and about 60% from design are still "
+    "stated for every island, authored or generated."),
+
+"F17": dict(status="open", note=
+    "Upkeep is a share of production and Essence gained a recurring keep. "
+    "The waking price is unchanged and still never falls due at a full "
+    "roster, and by §9.5’s own figures the Aether ladder’s "
+    "fallback looks unavoidable while §32.9 ships none."),
+
+"F19": dict(status="open", note=
+    "§9.6 publishes a band with its n and error. §14.2 still "
+    "states one target curve with no allowance for skill."),
+
+"F25": dict(status="open", note=
+    "All six facts named have one home now. The new claim is the problem: "
+    "§31.3 says <em>“every single figure the audit register has "
+    "ever recorded as stated twice is on it”</em>, and its table "
+    "holds the page total and none of the other five."),
+
+"F31": dict(status="open", note=
+    "Not claimed by v3.3. §7.3 still has one Drain and one Healing "
+    "parameter for two subjects each, and now also says the list of twenty "
+    "is closed, so the split needs that decision."),
+
+"D14": dict(status="fixed", note=
+    "v3.3 re-noted nine laws (D13), and its \u00a78.8 reads the chord rule "
+    "less strictly than this repository\u2019s validator did: a law may carry "
+    "a note opposite to one in the chord, so long as each law contributes one "
+    "of its three. By the document\u2019s reading the cheapest chord costs 32 "
+    "(Bloom, Brittle stone and Tilt, as \u00a78.8 says) and 8 of the 12 can "
+    "be completed by three commons. What makes chords late now is \u00a78.5\u2019s "
+    "draw of 192 stability (F23), not the table."),
+
+"C33": dict(status="open", note=
+    "Not claimed by v3.3. The three §6.2 cells are unchanged, and the "
+    "stairs row has no §12.17 counterpart at all."),
 
 }
 
@@ -5262,20 +5771,9 @@ def side_of(item_id: str) -> str:
 #: who has to answer it does not change between them.
 GATE_OWNER = {
     # -- realms ---------------------------------------------------------------
-    "F26": "yours",    # measured at 11/8/6/7/8 by tools/ward_budget.py; edit drafted
-    "F27": "yours",    # measured by tools/post_ladder.py; edit drafted
-    "F22": "yours",    # the harness prices one post against two at realms 1-2
-    "F9":  "yours",    # 13.2 states 30-45%; what is missing is whether it binds a generated realm
-    "F11": "yours",    # three readings of "generated from their laws", all three costed
-    "F12": "yours",    # eight generator rules drafted in law_effects.GENERATOR_RULE
-    "G3":  "yours",    # drafted in full at docs/design/spec/wards.md
-    "G5":  "yours",    # answered in spec/wards.md and drafted as a \u00a712.6 edit
-    "C19": "yours",    # the economy model implies one producer per realm; that needs saying, not deciding
+    "C19": "yours",    # the rule is stated; 14.2, 14.3 and 10.2 still ship the earlier run
     # -- screens --------------------------------------------------------------
-    "C6":  "yours",    # all 18 drafted in docs/design/spec/ruleborn.md; sign-off, plus D32
-    # -- characters -----------------------------------------------------------
-    "D6":  "yours",    # tools/scope_cut.py costs 144 forms against 54 both ways
-    "Q5":  "outside",  # what comparable builders shipped, which nothing here can answer
+    "C37": "yours",    # whether the scout report shows patrols is a design call, one line either way
 }
 
 #: The three verdicts an area can carry, worst first. `ready` is the only one
@@ -5286,26 +5784,9 @@ DESIGN_GATES = {
     "realms": dict(
         what="Terrain layout, what an island holds, how a realm is drawn",
         gates={
-            "F26": "how many wards a realm holds \u2014 measured at "
-                   "11, 8, 6, 7, 8 against \u00a75.2's 4, 5, 6, 7, 8, so "
-                   "realms 1 and 2 are drawn with less than half the "
-                   "objects they need, and no realm works at all "
-                   "without geometry to hide them behind",
-            "F27": "where each realm's defence starts, which \u00a75.2's post "
-                   "formula sets and gets right at one realm in five",
-            "F22": "whether realms 1 and 2 get one guard post or two, which is "
-                   "one or two patrol routes to lay out",
-            "F9":  "what hold rate a generated realm has to reach, which nothing "
-                   "currently states",
-            "F11": "what the generator optimises for \u2014 \u201cgenerated from "
-                   "their laws\u201d has three meanings and two are worse than "
-                   "weaving none",
-            "F12": "eight laws whose effect is an act of authorship: a slope, a "
-                   "wind direction, streams drawn on the grid",
-            "G3":  "what a ward does at each level, so it can be placed and drawn",
-            "G5":  "whether a raider can tell which law a pylon carries before "
-                   "committing to the detour",
-            "C19": "how many producers a realm holds, which is what stands on it",
+            "C19": "how many producers a realm holds is now stated \u2014 one "
+                   "of each \u2014 but the day and income columns a realm is "
+                   "paced by still ship from the earlier run",
         },
         closed={
             "C5":  "how many wards and posts a realm may hold \u2014 three "
@@ -5317,51 +5798,51 @@ DESIGN_GATES = {
                    "unit a layout is drawn in",
             "G1":  "how a crew moves through a realm, which decides what a "
                    "route has to look like",
+            "F26": "how many wards a realm holds: 8, 8, 6, 7 and 8, set by "
+                   "the hold band (v3.3)",
+            "F27": "where each realm's defence starts: one post slope, a start "
+                   "per realm level (v3.3)",
+            "F22": "one guard post at realms 1 and 2, with eight wards (v3.3)",
+            "F9":  "the hold band a generated realm must reach, stated per "
+                   "realm level (v3.3)",
+            "F11": "the generator weaves only laws that help the defender "
+                   "(v3.3)",
+            "F12": "one placement rule for the eight authored law choices "
+                   "(v3.3)",
+            "G3":  "what a ward senses, what a level scales, and that a "
+                   "footprint never grows (v3.3)",
+            "G5":  "a pylon shows its law before the detour (v3.3)",
         }),
     "screens": dict(
         what="The 27 screens in \u00a723, their contents and their counts",
         gates={
-            "C6":  "which ability text a character screen shows \u2014 and it "
-                   "is not a phrasing to pick. Twelve of the eighteen do a "
-                   "different thing in the two sections, and \u00a711.2\u2019s "
-                   "cooldown is shorter in thirteen of the fifteen that state "
-                   "one on both sides, so the eighteen abilities have to be "
-                   "designed once before the screen has anything to show",
-        },
-        partly={
-            "C8":  "whether the Library is a seventeenth building with a screen "
-                   "of its own \u2014 it is, with all ten levels priced since "
-                   "v3.1, so the build screen has its entry. What is left is "
-                   "\u00a710.2\u2019s table, which still does not contain it",
-            "C3":  "how many law ranks the Codex has to display \u2014 four, at "
-                   "10/20/35/60, which the sheets, \u00a714.4 and the glossary "
-                   "have all said since v3.1. The screen can be drawn; what is "
-                   "left is \u00a77.9\u2019s table and \u00a77.6\u2019s "
-                   "restore line, which contradict them and not the screen",
+            "C37": "what the scout report shows: \u00a712.12 says the scout "
+                   "sees the shifted patrol, and \u00a712.4\u2019s scout "
+                   "shows no patrols, so the screen is drawn one of two ways",
         },
         closed={
             "C11": "how many screens there are: 27, not 23",
             "C9":  "how many laws the Codex screen shows: 48, not 36",
             "C10": "how many traits a character screen lists: 31",
             "C24": "how many building types the build screen offers: 17",
+            "C6":  "which ability text a character screen shows: \u00a711.2 "
+                   "is generated from the \u00a711.11 cards (v3.3)",
+            "C8":  "the Library is in \u00a710.2 with every other building "
+                   "(v3.3)",
+            "C3":  "four ranks at 10/20/35/60, stated one way everywhere "
+                   "(v3.3)",
         }),
     "characters": dict(
         what="The 18 ruleborn, their forms, and what the art has to show",
-        gates={
-            "D6":  "144 forms or 54 \u2014 the largest single art number in the "
-                   "project, and a threefold difference",
-            "Q5":  "accepting or refusing that cut is the decision underneath it",
-        },
+        gates={},
         closed={
             "C26": "size and flight are stated properties of every ruleborn, "
                    "so the art has a band to draw to",
             "G12": "the three laws that read those properties now have them",
-        },
-        partly={
-            "C6":  "what each of the eighteen is \u2014 v3.1 reconciled the "
-                   "three role swaps, and look, proportions and personality "
-                   "were only ever in \u00a711.11. The item stays open for "
-                   "the ability text, which is not something an artist draws",
+            "D6":  "54 forms: three notes for every kind (v3.3)",
+            "Q5":  "the cut is taken (v3.3)",
+            "C6":  "what each of the eighteen is, and its ability, from one "
+                   "card (v3.3)",
         }),
 }
 
@@ -5542,12 +6023,22 @@ def status(item) -> str:
     """The effective status of a register item, by id or by the item itself."""
     item_id = item if isinstance(item, str) else item["id"]
     own = {} if isinstance(item, str) else item
-    return (V32.get(item_id, {}).get("status")
+    return (V33.get(item_id, {}).get("status")
+            or V32.get(item_id, {}).get("status")
             or V31.get(item_id, {}).get("status")
             or V3.get(item_id, {}).get("status")
             or own.get("status")
             or next((i.get("status", "open") for i in REGISTER
                      if i["id"] == item_id), "open"))
+
+
+def status_before_v33(item_id: str) -> str:
+    """What an item's status was before v3.3's layer, for counting what it did."""
+    own = next((i for i in REGISTER if i["id"] == item_id), {})
+    return (V32.get(item_id, {}).get("status")
+            or V31.get(item_id, {}).get("status")
+            or V3.get(item_id, {}).get("status")
+            or own.get("status", "open"))
 
 
 def is_open(item) -> bool:
@@ -5557,6 +6048,41 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+
+"C34": [
+    dict(section="10.3", action="replace",
+         find="Health is 500 a level for every ward except Crystal Wall, whose "
+              "health is its effect; disarming is below.",
+         replace="Every ward except Crystal Wall has health, set below with "
+                 "smashing and disarming; Crystal Wall's health is its effect.",
+         why="\u00a710.3's last paragraph derives 550 and moved it from 500 on "
+             "purpose; the opening sentence is the copy the edit missed. C34."),
+],
+
+"C38": [
+    dict(section="18.9", action="replace",
+         find="at the high scenario about \u20ac16,800",
+         replace="at the high scenario about \u20ac18,200",
+         why="10% of \u00a722.2's high scenario, about \u20ac182,000 since C12. "
+             "C38."),
+],
+
+"C39": [
+    dict(section="12.11", action="replace",
+         find="In either form, two or three friends",
+         replace="Two or three friends",
+         why="Only the asynchronous form is left (D48). C39."),
+    dict(section="12.21", action="replace",
+         find="Three laws read properties no creature had",
+         replace="Two laws read properties no creature had",
+         why="The sentence names two, Density and Heavy ground. C39."),
+    dict(section="31.9", action="replace",
+         find="Brief 5: generated hold rates re-measured on the aligned harness",
+         replace="Brief 5: generated hold rates as a band the generator must "
+                 "hold; the aligned re-measurement is pending (13.2)",
+         why="\u00a713.2 says the holds were measured before the alignment. "
+             "C39."),
+],
 
 "C33": [
     dict(section="6.2", action="replace",

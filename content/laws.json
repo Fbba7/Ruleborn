@@ -16,7 +16,9 @@
     "raider_use": "Ricochet past a guard you cannot out-fight.",
     "defender_use": "Line wards along walls so a bounce lands the crew in them.",
     "weakness": "Wardens are heavy enough to absorb a rebound.",
-    "sound": "a rising whistle and a soft thump on landing"
+    "sound": "a rising whistle and a soft thump on landing",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "half_gravity",
@@ -34,7 +36,9 @@
     "raider_use": "Leap the gaps the defender cannot wall off; reach roofs and ledges.",
     "defender_use": "Put loot where only a long leap reaches it, then watch that landing.",
     "weakness": "Heavy carriers barely rise; wind and slopes push a leaping crew off course.",
-    "sound": "a rising whistle and a soft thump on landing"
+    "sound": "a rising whistle and a soft thump on landing",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "tilt",
@@ -52,7 +56,9 @@
     "raider_use": "Run downhill on the approach and drop loot so it rolls to the edge.",
     "defender_use": "Point the slope inward so every escape is uphill.",
     "weakness": "A Weight-note law woven beside it blunts the slide.",
-    "sound": "a rising whistle and a soft thump on landing"
+    "sound": "a rising whistle and a soft thump on landing",
+    "engine_rung": "Placement or attribute",
+    "launch": false
   },
   {
     "id": "current",
@@ -70,7 +76,9 @@
     "raider_use": "Ride it outward on the escape.",
     "defender_use": "Blow it toward the Heart so raiders fight it all the way in.",
     "weakness": "Cover breaks the wind; so does Stillness.",
-    "sound": "a rising whistle and a soft thump on landing"
+    "sound": "a rising whistle and a soft thump on landing",
+    "engine_rung": "Placement or attribute",
+    "launch": false
   },
   {
     "id": "heavy_ground",
@@ -88,7 +96,9 @@
     "raider_use": "Slows the guards as much as the crew; Carriers are the ones who suffer.",
     "defender_use": "Pair it with a long route to the Vault.",
     "weakness": "Featherkin and Half gravity shrug it off.",
-    "sound": "a rising whistle and a soft thump on landing"
+    "sound": "a rising whistle and a soft thump on landing",
+    "engine_rung": "Placement or attribute",
+    "launch": false
   },
   {
     "id": "leapfrog",
@@ -107,12 +117,14 @@
     "raider_use": "Hop fences and streams without a ramp.",
     "defender_use": "Gravel and bells under every hop landing.",
     "weakness": "The noise gives you away in a quiet realm.",
-    "sound": "a rising whistle and a soft thump on landing"
+    "sound": "a rising whistle and a soft thump on landing",
+    "engine_rung": "Conditional or periodic",
+    "launch": false
   },
   {
     "id": "frictionless",
     "name": "Frictionless",
-    "rank": "Deep",
+    "rank": "Rare",
     "school": "Motion",
     "stability_cost": 20,
     "notes": [
@@ -126,7 +138,9 @@
     "raider_use": "Slide a whole crew past a patrol in one push.",
     "defender_use": "Put pits and edges where a slide ends.",
     "weakness": "Nobody stops where they meant to, including you.",
-    "sound": "a rising whistle and a soft thump on landing"
+    "sound": "a rising whistle and a soft thump on landing",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "inward_pull",
@@ -144,7 +158,9 @@
     "raider_use": "Dropped loot drifts toward the Heart, which is where you are going anyway.",
     "defender_use": "Makes the escape a climb out of a bowl.",
     "weakness": "Heavy crews barely feel it.",
-    "sound": "a rising whistle and a soft thump on landing"
+    "sound": "a rising whistle and a soft thump on landing",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "brittle_stone",
@@ -162,7 +178,9 @@
     "raider_use": "Break a wall instead of walking around it.",
     "defender_use": "Guards hear every break; wall the noisy routes.",
     "weakness": "The defender can break their own walls to open a charge.",
-    "sound": "a glassy chime and a low grind"
+    "sound": "a glassy chime and a low grind",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "crystal_growth",
@@ -172,7 +190,7 @@
     "stability_cost": 15,
     "notes": [
       "Bloom",
-      "Glow"
+      "Veil"
     ],
     "tier_1": "Broken walls and hedges regrow as clear crystal after 8 seconds.",
     "tiers_2_3": "6 s, 4 s",
@@ -181,7 +199,9 @@
     "raider_use": "Growing crystal blocks a chase behind you.",
     "defender_use": "Regrow cover after every break, so routes never stay open.",
     "weakness": "It grows on both sides of a fight.",
-    "sound": "a glassy chime and a low grind"
+    "sound": "a glassy chime and a low grind",
+    "engine_rung": "Conditional or periodic",
+    "launch": false
   },
   {
     "id": "glass",
@@ -193,13 +213,15 @@
       "Glow"
     ],
     "tier_1": "Walls become see-through: nobody can hide behind them, though they still block movement.",
-    "tiers_2_3": "Also reveals hidden wards; also shows guard vision cones",
+    "tiers_2_3": "Reveal (view layer, 7.3): hidden wards; then hidden wards and guard vision cones",
     "movement": "Characters crouch behind glass walls, in vain.",
     "world": "Walls turn clear with coloured edges.",
     "raider_use": "See the patrol before you commit.",
     "defender_use": "They see you too: use it where you want them watched.",
     "weakness": "Shattered glass slows whoever is standing on it.",
-    "sound": "a glassy chime and a low grind"
+    "sound": "a glassy chime and a low grind",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "density",
@@ -211,13 +233,15 @@
       "Weight"
     ],
     "tier_1": "Big characters get +30% health and -20% speed; small ones get +25% speed and -20% health.",
-    "tiers_2_3": "±40%/30%, ±50%/40%",
+    "tiers_2_3": "Each size band gains the first figure in its strength and loses the second in its weakness: large +40% health, -30% speed; small +40% speed, -30% health. Then 50% and 40%",
     "movement": "Big characters lumber in slow motion; small ones scurry double-time.",
     "world": "Grass and props look slightly oversized.",
     "raider_use": "Send the small ones through and the big ones around.",
     "defender_use": "Design a route only small bodies fit.",
     "weakness": "Your Breakers become slow targets.",
-    "sound": "a glassy chime and a low grind"
+    "sound": "a glassy chime and a low grind",
+    "engine_rung": "Placement or attribute",
+    "launch": true
   },
   {
     "id": "honeycomb",
@@ -226,7 +250,8 @@
     "school": "Matter",
     "stability_cost": 17,
     "notes": [
-      "Weight"
+      "Weight",
+      "Hush"
     ],
     "tier_1": "The ground is sticky: everyone moves 20% slower but can climb walls and cliffs one level.",
     "tiers_2_3": "Climb two levels; climbers can't be seen while on a wall",
@@ -235,7 +260,9 @@
     "raider_use": "Climb any cliff the defender thought was a wall.",
     "defender_use": "Everything is slower, including the escape with a full sack.",
     "weakness": "Fire and Spark laws burn the stickiness away.",
-    "sound": "a glassy chime and a low grind"
+    "sound": "a glassy chime and a low grind",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "lodestones",
@@ -254,12 +281,14 @@
     "raider_use": "Pull a dropped sack back to you across a gap.",
     "defender_use": "Drag loot toward a guarded room.",
     "weakness": "Metal-heavy crews are pulled off their line.",
-    "sound": "a glassy chime and a low grind"
+    "sound": "a glassy chime and a low grind",
+    "engine_rung": "Spawned entity",
+    "launch": false
   },
   {
     "id": "shifting_stones",
     "name": "Shifting stones",
-    "rank": "Deep",
+    "rank": "Rare",
     "school": "Matter",
     "stability_cost": 22,
     "notes": [
@@ -273,7 +302,9 @@
     "raider_use": "Wait for the gap and walk a wall that was not there.",
     "defender_use": "A maze that never repeats the same way twice.",
     "weakness": "Guards get stuck behind their own walls.",
-    "sound": "a glassy chime and a low grind"
+    "sound": "a glassy chime and a low grind",
+    "engine_rung": "Conditional or periodic",
+    "launch": false
   },
   {
     "id": "transmute",
@@ -291,7 +322,9 @@
     "raider_use": "Turn awkward loot into something a Carrier can hold.",
     "defender_use": "Make the haul unpredictable so raiders cannot plan.",
     "weakness": "You cannot count your haul until you are out.",
-    "sound": "a glassy chime and a low grind"
+    "sound": "a glassy chime and a low grind",
+    "engine_rung": "Conditional or periodic",
+    "launch": false
   },
   {
     "id": "day_and_night",
@@ -300,7 +333,8 @@
     "school": "Time",
     "stability_cost": 17,
     "notes": [
-      "Echo"
+      "Echo",
+      "Hush"
     ],
     "tier_1": "The realm switches between light and dark every 30 seconds; vision halves in the dark.",
     "tiers_2_3": "Dark phases 35 s, 40 s",
@@ -309,7 +343,9 @@
     "raider_use": "Time the run to the dark phase.",
     "defender_use": "Guards with lanterns own the dark; raiders must wait.",
     "weakness": "The cycle is public: both sides can plan around it.",
-    "sound": "a slow tick that stretches and snaps back"
+    "sound": "a slow tick that stretches and snaps back",
+    "engine_rung": "Conditional or periodic",
+    "launch": false
   },
   {
     "id": "slow_rivers",
@@ -327,7 +363,9 @@
     "raider_use": "Water becomes cover you can stand in.",
     "defender_use": "A moat with no bridge.",
     "weakness": "Tidewalkers and Swimmers ignore it entirely.",
-    "sound": "a slow tick that stretches and snaps back"
+    "sound": "a slow tick that stretches and snaps back",
+    "engine_rung": "Placement or attribute",
+    "launch": true
   },
   {
     "id": "stillness",
@@ -345,7 +383,9 @@
     "raider_use": "Stop moving and disappear.",
     "defender_use": "Guards that stand still cannot be tracked either.",
     "weakness": "Any Glow law breaks the hiding.",
-    "sound": "a slow tick that stretches and snaps back"
+    "sound": "a slow tick that stretches and snaps back",
+    "engine_rung": "Conditional or periodic",
+    "launch": true
   },
   {
     "id": "afterimage",
@@ -364,7 +404,9 @@
     "raider_use": "Leave a copy where you are not.",
     "defender_use": "Guards chase ghosts, which buys time.",
     "weakness": "Your afterimages point at the route you took.",
-    "sound": "a slow tick that stretches and snaps back"
+    "sound": "a slow tick that stretches and snaps back",
+    "engine_rung": "Spawned entity",
+    "launch": false
   },
   {
     "id": "delay",
@@ -373,7 +415,8 @@
     "school": "Time",
     "stability_cost": 14,
     "notes": [
-      "Veil"
+      "Veil",
+      "Hush"
     ],
     "tier_1": "Wards and abilities take effect 3 seconds after they are triggered.",
     "tiers_2_3": "3.5 s, 4 s",
@@ -382,7 +425,9 @@
     "raider_use": "Wards fire late, so you are already past.",
     "defender_use": "Alarms land after the crew has committed.",
     "weakness": "Your own guards react late too.",
-    "sound": "a slow tick that stretches and snaps back"
+    "sound": "a slow tick that stretches and snaps back",
+    "engine_rung": "Conditional or periodic",
+    "launch": true
   },
   {
     "id": "haste",
@@ -401,44 +446,50 @@
     "raider_use": "Cross open ground before anyone finishes looking.",
     "defender_use": "Guards reach the alarm faster than you reach the Vault.",
     "weakness": "Everything gets harder to control at speed.",
-    "sound": "a slow tick that stretches and snaps back"
+    "sound": "a slow tick that stretches and snaps back",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "held_breath",
     "name": "Held breath",
-    "rank": "Deep",
+    "rank": "Rare",
     "school": "Time",
     "stability_cost": 25,
     "notes": [
       "Hush",
       "Weight"
     ],
-    "tier_1": "Guards, wards and the crew's cooldowns only move while a crew member moves. The heist clock never stops.",
+    "tier_1": "Guards, wards, the crew's ability lockouts and the Sage's cooldown only move while a crew member moves. The heist clock never stops.",
     "tiers_2_3": "The heist clock runs 20%, then 40% faster here",
     "movement": "When the crew stops, everything freezes mid-motion; the crew breathes in deeply.",
     "world": "Floating dust hangs still in the air.",
     "raider_use": "The world waits while you plan the next step.",
     "defender_use": "The clock does not wait: it burns while you stand still.",
     "weakness": "Stand-still crews are still visible.",
-    "sound": "a slow tick that stretches and snaps back"
+    "sound": "a slow tick that stretches and snaps back",
+    "engine_rung": "Conditional or periodic",
+    "launch": false
   },
   {
-    "id": "rewind",
-    "name": "Rewind",
+    "id": "tidemark",
+    "name": "Tidemark",
     "rank": "Deep",
     "school": "Time",
     "stability_cost": 26,
     "notes": [
       "Echo"
     ],
-    "tier_1": "Every 20 seconds, broken things return to how they were 10 seconds earlier.",
+    "tier_1": "Every 20 seconds the tide leaves a mark on the realm; 10 seconds later, everything broken since returns to how it stood at the mark.",
     "tiers_2_3": "Every 16 s, 12 s",
-    "movement": "Characters glance back as debris flies back into place.",
-    "world": "Broken pieces whoosh back where they were.",
-    "raider_use": "Undo a broken plan once.",
-    "defender_use": "Bring back the pylon they just broke.",
-    "weakness": "It returns the defender's losses as readily as yours.",
-    "sound": "a slow tick that stretches and snaps back"
+    "movement": "Characters glance at the tide line as debris flies back to it.",
+    "world": "A thin silver tide line sweeps the ground at each mark; broken pieces whoosh back to it when it ebbs.",
+    "raider_use": "Break what blocks you just after a return, and be through before the next one.",
+    "defender_use": "Bring back the pylon a crew broke since the last mark.",
+    "weakness": "It returns the defender's losses as readily as yours, and the timing is shown to everyone.",
+    "sound": "a slow tick that stretches and snaps back",
+    "engine_rung": "Conditional or periodic",
+    "launch": false
   },
   {
     "id": "glowing_dark",
@@ -456,7 +507,9 @@
     "raider_use": "The dark is cover.",
     "defender_use": "Put your glowing ruleborn on the routes that matter.",
     "weakness": "Anything that glows is a target.",
-    "sound": "a crackle building to a short clap"
+    "sound": "a crackle building to a short clap",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "heat_bloom",
@@ -465,8 +518,7 @@
     "school": "Energy",
     "stability_cost": 17,
     "notes": [
-      "Spark",
-      "Glow"
+      "Spark"
     ],
     "tier_1": "Anyone within 2 tiles of a fire deals 25% more damage. The owner places braziers.",
     "tiers_2_3": "+30%, +35%",
@@ -475,7 +527,9 @@
     "raider_use": "Fight near fire and hit harder.",
     "defender_use": "Bait the crew into fighting where your guards are strongest.",
     "weakness": "Your guards are stronger there too, but so are theirs.",
-    "sound": "a crackle building to a short clap"
+    "sound": "a crackle building to a short clap",
+    "engine_rung": "Spawned entity",
+    "launch": false
   },
   {
     "id": "spark_trails",
@@ -493,7 +547,9 @@
     "raider_use": "Walk, do not run, and leave nothing.",
     "defender_use": "Punish the crew for hurrying.",
     "weakness": "Your own patrols leave trails a raider can read.",
-    "sound": "a crackle building to a short clap"
+    "sound": "a crackle building to a short clap",
+    "engine_rung": "Spawned entity",
+    "launch": false
   },
   {
     "id": "aurora",
@@ -502,8 +558,7 @@
     "school": "Energy",
     "stability_cost": 18,
     "notes": [
-      "Glow",
-      "Flow"
+      "Glow"
     ],
     "tier_1": "Bands of light sweep the realm every 10 seconds. Inside a band everyone can be seen from twice as far; between bands, vision halves.",
     "tiers_2_3": "Wider bands; every 8 s",
@@ -512,7 +567,9 @@
     "raider_use": "Move between the bands and you are nearly invisible.",
     "defender_use": "Time patrols to the bands.",
     "weakness": "The pattern is readable, so it rewards patience on both sides.",
-    "sound": "a crackle building to a short clap"
+    "sound": "a crackle building to a short clap",
+    "engine_rung": "Conditional or periodic",
+    "launch": true
   },
   {
     "id": "chain_lightning",
@@ -530,7 +587,9 @@
     "raider_use": "One good hit clears a knot of guards.",
     "defender_use": "Keep guards apart and the chain dies.",
     "weakness": "It jumps between your crew as well.",
-    "sound": "a crackle building to a short clap"
+    "sound": "a crackle building to a short clap",
+    "engine_rung": "Conditional or periodic",
+    "launch": true
   },
   {
     "id": "static",
@@ -548,12 +607,14 @@
     "raider_use": "Chain a stun through a clustered patrol.",
     "defender_use": "Cluster nothing; spread your guards.",
     "weakness": "Crews that bunch up get stunned together.",
-    "sound": "a crackle building to a short clap"
+    "sound": "a crackle building to a short clap",
+    "engine_rung": "Conditional or periodic",
+    "launch": true
   },
   {
     "id": "overcharge",
     "name": "Overcharge",
-    "rank": "Deep",
+    "rank": "Rare",
     "school": "Energy",
     "stability_cost": 21,
     "notes": [
@@ -567,7 +628,9 @@
     "raider_use": "Every third ability is a hammer.",
     "defender_use": "Wards hit three times as hard on the beat.",
     "weakness": "The beat is visible: count it.",
-    "sound": "a crackle building to a short clap"
+    "sound": "a crackle building to a short clap",
+    "engine_rung": "Conditional or periodic",
+    "launch": false
   },
   {
     "id": "sunburst",
@@ -586,7 +649,9 @@
     "raider_use": "Shade is a safe lane if you read it.",
     "defender_use": "Remove the shade and the route becomes a gauntlet.",
     "weakness": "Your guards burn in the open too.",
-    "sound": "a crackle building to a short clap"
+    "sound": "a crackle building to a short clap",
+    "engine_rung": "Conditional or periodic",
+    "launch": false
   },
   {
     "id": "bloom",
@@ -595,7 +660,8 @@
     "school": "Life",
     "stability_cost": 11,
     "notes": [
-      "Bloom"
+      "Bloom",
+      "Hush"
     ],
     "tier_1": "Cut hedges regrow after 10 seconds.",
     "tiers_2_3": "8 s, 6 s",
@@ -604,7 +670,9 @@
     "raider_use": "Cut through and the hedge closes behind you.",
     "defender_use": "Regrown hedges reroute a chase.",
     "weakness": "It hides the crew as readily as it blocks them.",
-    "sound": "a kalimba phrase and rustling leaves"
+    "sound": "a kalimba phrase and rustling leaves",
+    "engine_rung": "Conditional or periodic",
+    "launch": true
   },
   {
     "id": "kinship",
@@ -622,7 +690,9 @@
     "raider_use": "Keep the crew together and they hold longer.",
     "defender_use": "Guards near each other heal each other.",
     "weakness": "Splitting the crew loses the bonus.",
-    "sound": "a kalimba phrase and rustling leaves"
+    "sound": "a kalimba phrase and rustling leaves",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "wild_paths",
@@ -641,7 +711,9 @@
     "raider_use": "Use the guards' own worn paths to move fast.",
     "defender_use": "Your patrol routes become raider highways.",
     "weakness": "The paths reveal where your guards walk.",
-    "sound": "a kalimba phrase and rustling leaves"
+    "sound": "a kalimba phrase and rustling leaves",
+    "engine_rung": "Spawned entity",
+    "launch": false
   },
   {
     "id": "flock",
@@ -650,8 +722,7 @@
     "school": "Life",
     "stability_cost": 16,
     "notes": [
-      "Bloom",
-      "Glow"
+      "Bloom"
     ],
     "tier_1": "A flock of six puffballs wanders the realm and blocks narrow paths. Bumping one makes it bleat: guards within 5 tiles become 30% more aware.",
     "tiers_2_3": "9 puffs, 12 puffs",
@@ -660,7 +731,9 @@
     "raider_use": "Hide in the flock and move with it.",
     "defender_use": "A living alarm nobody can predict.",
     "weakness": "Puffballs block your guards' paths too.",
-    "sound": "a kalimba phrase and rustling leaves"
+    "sound": "a kalimba phrase and rustling leaves",
+    "engine_rung": "Spawned entity",
+    "launch": false
   },
   {
     "id": "spores",
@@ -679,7 +752,9 @@
     "raider_use": "Cross the sleeping guards, not the awake ones.",
     "defender_use": "A pollen field in front of the Vault.",
     "weakness": "Wind carries it back over your own posts.",
-    "sound": "a kalimba phrase and rustling leaves"
+    "sound": "a kalimba phrase and rustling leaves",
+    "engine_rung": "Spawned entity",
+    "launch": false
   },
   {
     "id": "thorns",
@@ -698,12 +773,14 @@
     "raider_use": "Avoid the walls; the middle is safer.",
     "defender_use": "Make every shortcut cost health.",
     "weakness": "Your own guards cannot hug the hedges either.",
-    "sound": "a kalimba phrase and rustling leaves"
+    "sound": "a kalimba phrase and rustling leaves",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "regrowth",
     "name": "Regrowth",
-    "rank": "Deep",
+    "rank": "Rare",
     "school": "Life",
     "stability_cost": 16,
     "notes": [
@@ -717,7 +794,9 @@
     "raider_use": "Take the fights you can finish quickly.",
     "defender_use": "Guards come back from almost anything.",
     "weakness": "Healing does nothing against a knockout.",
-    "sound": "a kalimba phrase and rustling leaves"
+    "sound": "a kalimba phrase and rustling leaves",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "swarm_birth",
@@ -735,7 +814,9 @@
     "raider_use": "Ignore the small ones and keep moving.",
     "defender_use": "Every knockout becomes two more bodies.",
     "weakness": "The swarm gets in your guards' way.",
-    "sound": "a kalimba phrase and rustling leaves"
+    "sound": "a kalimba phrase and rustling leaves",
+    "engine_rung": "Spawned entity",
+    "launch": false
   },
   {
     "id": "haunting",
@@ -754,7 +835,9 @@
     "raider_use": "Drop the loot and the trail dies.",
     "defender_use": "Make carrying loot the dangerous part.",
     "weakness": "The trail also shows a defender where a raid went.",
-    "sound": "a distant choir swell and a single bell"
+    "sound": "a distant choir swell and a single bell",
+    "engine_rung": "Spawned entity",
+    "launch": false
   },
   {
     "id": "soul_lanterns",
@@ -772,7 +855,9 @@
     "raider_use": "Lantern light is safe ground.",
     "defender_use": "Light exactly the routes you can watch.",
     "weakness": "Light where you stand is light where you are seen.",
-    "sound": "a distant choir swell and a single bell"
+    "sound": "a distant choir swell and a single bell",
+    "engine_rung": "Placement or attribute",
+    "launch": false
   },
   {
     "id": "whispers",
@@ -791,7 +876,9 @@
     "raider_use": "Keep it clean; one alarm tells everyone.",
     "defender_use": "The whole universe answers a single shout.",
     "weakness": "Your guards' confusion also travels.",
-    "sound": "a distant choir swell and a single bell"
+    "sound": "a distant choir swell and a single bell",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "echoes",
@@ -802,14 +889,16 @@
     "notes": [
       "Echo"
     ],
-    "tier_1": "Knocked-out characters and guards return once, at 60% strength.",
+    "tier_1": "Revival (7.3): knocked-out characters and guards return once, at N = 60%.",
     "tiers_2_3": "70%, 80%",
     "movement": "Knocked-out characters rise as translucent echoes that float a little.",
     "world": "Soft chimes; faint silhouettes.",
     "raider_use": "A knocked-out crew member comes back once.",
     "defender_use": "So do knocked-out guards.",
     "weakness": "Echoes are visible: they mark where you fell.",
-    "sound": "a distant choir swell and a single bell"
+    "sound": "a distant choir swell and a single bell",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "sleepwalk",
@@ -828,7 +917,9 @@
     "raider_use": "Walk, never run, and they never see you.",
     "defender_use": "Silent patrols that cannot be baited by sight.",
     "weakness": "Sleeping guards cannot raise an alarm quickly.",
-    "sound": "a distant choir swell and a single bell"
+    "sound": "a distant choir swell and a single bell",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "soul_swap",
@@ -837,8 +928,7 @@
     "school": "Spirit",
     "stability_cost": 20,
     "notes": [
-      "Veil",
-      "Flow"
+      "Veil"
     ],
     "tier_1": "A character about to be knocked out swaps places with its nearest ally, who takes half the blow.",
     "tiers_2_3": "Ally takes 40%, 30%",
@@ -847,12 +937,14 @@
     "raider_use": "Trade places to pull someone out of trouble.",
     "defender_use": "Guards trade places across a chokepoint.",
     "weakness": "The swirl shows exactly where both ends are.",
-    "sound": "a distant choir swell and a single bell"
+    "sound": "a distant choir swell and a single bell",
+    "engine_rung": "Parameter",
+    "launch": true
   },
   {
     "id": "borrowed_face",
     "name": "Borrowed Face",
-    "rank": "Deep",
+    "rank": "Rare",
     "school": "Spirit",
     "stability_cost": 21,
     "notes": [
@@ -866,7 +958,9 @@
     "raider_use": "Walk in with the patrol for ten seconds.",
     "defender_use": "Raiders cannot tell your guards apart either.",
     "weakness": "Running breaks the disguise instantly.",
-    "sound": "a distant choir swell and a single bell"
+    "sound": "a distant choir swell and a single bell",
+    "engine_rung": "Conditional or periodic",
+    "launch": false
   },
   {
     "id": "mirror_images",
@@ -884,6 +978,8 @@
     "raider_use": "Half the guards are not there.",
     "defender_use": "A patrol that looks twice its size.",
     "weakness": "Illusions pop on contact: one hit tells the truth.",
-    "sound": "a distant choir swell and a single bell"
+    "sound": "a distant choir swell and a single bell",
+    "engine_rung": "Spawned entity",
+    "launch": false
   }
 ]

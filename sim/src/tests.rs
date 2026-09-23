@@ -1365,7 +1365,7 @@ fn a_full_five_crew_load_takes_ten_seconds() {
     assert!(!full(&world), "not before ten seconds");
     world.step();
     assert!(full(&world), "every bag full at ten: the Carrier's 300 at 30 a second");
-    assert_eq!(world.vault.exposed, 0, "560 exposed, 560 carried");
+    assert_eq!(world.vault.exposed, 0, "750 exposed, 750 carried");
 }
 
 #[test]
@@ -1531,7 +1531,7 @@ fn a_downed_crew_member_is_caught_after_ten_seconds_unless_revived() {
     let (_, by_breaker, health) = down(Some(1));
     // Down on tick 0; the revive runs from tick 0 and completes after 90.
     assert_eq!(by_breaker, Some(h::REVIVE_TICKS), "an ally: three seconds");
-    assert_eq!(health, 120 / 4, "back at a quarter — the simulation's reading");
+    assert_eq!(health, 120 * 30 / 100, "back at 30% of full health (§12.20)");
     let (_, by_mender, _) = down(Some(4));
     assert_eq!(by_mender, Some(h::MENDER_REVIVE_TICKS), "a Mender: one and a half");
 }
@@ -2019,7 +2019,8 @@ fn disarming_takes_four_seconds_at_level_one_is_silent_and_never_resets() {
 
 #[test]
 fn smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits() {
-    // spec/wards.md: 500 health at level 1; §11.1: Breakers double, 80 a hit.
+    // §10.3: 550 health at level 1, smashed "in about 6 seconds"; §11.1:
+    // Breakers double, 80 a hit, so seven hits — 5.6 seconds.
     let mut world = ward_world(2, WardKind::StaticCoil, (3, 3));
     let coil = world.grid.index(3, 3).unwrap();
     put(&mut world, 1, 2, 3);
@@ -2028,7 +2029,7 @@ fn smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits() {
     for _ in 0..(7 * h::HIT_TICKS) {
         world.step();
     }
-    assert!(world.wards[0].broken, "560 >= 500");
+    assert!(world.wards[0].broken, "560 >= 550");
 }
 
 // --------------------------------------------------------------------------

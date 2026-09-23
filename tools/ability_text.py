@@ -458,7 +458,26 @@ def off_role(rows: list[dict]) -> list[str]:
 
 
 def load() -> list:
-    return json.loads((CONTENT / "ruleborn.json").read_text(encoding="utf-8"))
+    """The eighteen pairs C6 is about.
+
+    v3.3 generates \u00a711.2 from the \u00a711.11 cards, so the current
+    extraction has no second reading left to compare, and C6 is closed. The
+    classification below is the record of what the two disagreed about, so it
+    reads the last version on disk that had them apart, extracted the same way.
+    """
+    roster = json.loads((CONTENT / "ruleborn.json").read_text(encoding="utf-8"))
+    if any("alt_11_2" in c for c in roster):
+        return roster
+    import design_doc
+    import extract_content
+    for version in reversed(design_doc.on_disk()):
+        path = design_doc.text_of(version)
+        if not path.exists():
+            continue
+        older = extract_content.extract_ruleborn(path.read_text(encoding="utf-8"))
+        if any("alt_11_2" in c for c in older):
+            return older
+    return roster
 
 
 def cooldown(text: str, table: bool) -> float | None:
@@ -661,6 +680,11 @@ def main() -> int:
     args = ap.parse_args()
     if args.self_test:
         return self_test()
+    current = json.loads((CONTENT / "ruleborn.json").read_text(encoding="utf-8"))
+    if not any("alt_11_2" in c for c in current):
+        print("C6 is closed: the current version generates \u00a711.2 from the "
+              "\u00a711.11 cards.\nWhat follows reads the last version on disk "
+              "that had them apart, as the record.\n")
     report(pairs(load()))
     return 0
 

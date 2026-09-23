@@ -123,7 +123,7 @@
     "id": "echo_touched",
     "name": "Echo-touched",
     "family": "Law-linked",
-    "effect": "returns once at 50% even without Echoes"
+    "effect": "returns once at 50% after being knocked out, even without Echoes (the Revival row, 7.3; 12.20)"
   },
   {
     "id": "lantern_born",

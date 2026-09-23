@@ -288,9 +288,12 @@ dict(
                     "move, and it is the one that gates T1.6 and T1.8.",
              evidence="docs/design/spec/README.md",
              blocked_by=["T1.2"]),
-        dict(id="T1.5", owner="you", status="yours",
+        dict(id="T1.5", owner="you", status="done",
              title="Make the decisions that are genuinely yours",
-             detail="Four of the eight are settled: v3.0\u2019s \u00a75.9 \u2014 \u00a75.8 in v3.1 \u2014 answered "
+             detail="<strong>Done in v3.3</strong>, which decided the last "
+                    "of them: four ranks at 18/12/12/6 (Q3), the launch cut "
+                    "(Q5), and every open question in \u00a727.3 (Q7). No "
+                    "decision item is open in the register.<br><br>Four of the eight are settled: v3.0\u2019s \u00a75.9 \u2014 \u00a75.8 in v3.1 \u2014 answered "
                     "character scarcity, the raid-versus-build trade-off and one "
                     "producer per realm, and \u00a713.4 answered how many ruleborn "
                     "stand at a post \u2014 \u201cone\u201d, with the "
@@ -352,9 +355,12 @@ dict(
                     "question rather than a distribution one.",
              evidence="python3 tools/note_rebalance.py",
              register=["C25", "D13", "D14"]),
-        dict(id="T1.10", owner="you", status="yours",
+        dict(id="T1.10", owner="you", status="done",
              title="Decide whether the ten playtesters exist",
-             detail="\u00a725.4 rules them out \u2014 <em>\u201cNo recruited "
+             detail="<strong>Decided in v3.3: they do not.</strong> Phases 2 "
+                    "and 3 exit on the harness gates in \u00a719.27, and no "
+                    "phase before soft launch needs a player other than the "
+                    "developer (C29).<br><br>\u00a725.4 rules them out \u2014 <em>\u201cNo recruited "
                     "panels, no paid playtesters, no thirty people in a "
                     "room\u201d</em> \u2014 and \u00a719.27 moves every "
                     "human instrument to soft launch. \u00a726.2 then exits "
@@ -581,9 +587,12 @@ dict(
           "agent and three contractors. §26.8's own estimate leaves the iteration "
           "needed to find the fun unbudgeted.",
     tasks=[
-        dict(id="T4.1", owner="you", status="ready",
+        dict(id="T4.1", owner="you", status="done",
              title="Decide launch content against the team that exists",
-             detail="A ~40% cut is priced that preserves everything "
+             detail="<strong>Decided in v3.3</strong> (\u00a726.1, \u00a77.10): "
+                    "24 laws chosen by engine cost, 54 forms, 12 signature "
+                    "resonances, two ward levels, two languages, constellations "
+                    "to v1.1, and the Workshop kept. The proposal it answered: A ~40% cut is priced that preserves everything "
                     "distinctively Ruleborn: 24 laws rather than 48, 3 form-notes "
                     "rather than 8, ~20 resonances, 2–3 languages (§20.6 "
                     "already says this), constellations to v1.1, wards at 2 "
@@ -591,9 +600,11 @@ dict(
                     "cut</strong> — it is the only credible answer to the "
                     "content treadmill at this team size.",
              evidence="docs/analysis/06-build-readiness.md"),
-        dict(id="T4.2", owner="you", status="ready",
+        dict(id="T4.2", owner="you", status="done",
              title="Budget the iteration that finds the fun",
-             detail="§26.8 estimates ~270 agent runs and then says plainly that "
+             detail="<strong>Budgeted in v3.3</strong> at 1\u00d7 the build as "
+                    "a floor: 229 to 405 runs, about 640 in all (\u00a726.8). "
+                    "The proposal it answered: §26.8 estimates ~270 agent runs and then says plainly that "
                     "the iteration is unbudgeted. For a novel genre blend with no "
                     "reference implementation that iteration is normally most of "
                     "the work. Proposed: 1–1.5× the build estimate (D9)."),
@@ -734,33 +745,25 @@ NOT_YET = [
     ("Gameplay code", "The determinism spike gates it. Anti-cheat, replay "
                       "validation, free analytics, rehearsals, balance bots and "
                       "the whole cost model fail together if it does not pass."),
-    ("Realm design", "The most blocked of the three design areas, and eight of "
-                     "its nine gates are this session's generator work: how "
-                     "many wards a realm holds (F26), where its defence starts "
-                     "(F27), one guard post or two (F22), what hold rate a "
-                     "generated realm must reach (F9), what the generator "
-                     "optimises for (F11), the eight laws whose effect is an "
-                     "act of authorship (F12), what a ward does at each level "
-                     "(G3), whether a pylon shows its law (G5), and how many "
-                     "producers a realm holds (C19)."),
-    ("Character art", "Two things, and neither is the art. <strong>C6</strong> "
-                      "— the two rosters disagree about eleven of the eighteen "
-                      "creatures, not about eleven wordings — and the "
-                      "form-notes decision in stage 4, which changes the "
-                      "quantity threefold: 144 forms against 54, the largest "
-                      "single art number in the project (D6, Q5)."),
-    ("Detailed screen design", "<strong>C6</strong>, which roster the character "
-                               "screens read from; <strong>C3</strong>, how "
-                               "many law ranks the Codex displays; and "
-                               "<strong>C8</strong>, whether the Library is a "
-                               "seventeenth building with a screen of its own. "
-                               "An earlier version of this line named two more "
-                               "items \u2014 the detection model and the defence "
-                               "budget \u2014 and v3.0 closed both, so screen "
-                               "design is less blocked than this page said."),
-    ("Localisation", "Twelve languages against a coined vocabulary is a large "
-                     "translation problem with no owner in the team model, and "
-                     "§20.6 already says two at launch (G11)."),
+    ("Realm design", "One gate left, and it is a table rather than a rule: "
+                     "the day and income columns a realm is paced by still "
+                     "ship from the economy model's earlier run (C19). v3.3 "
+                     "settled the other eight \u2014 the ward budget, the post "
+                     "ladder, the hold band, what the generator weaves, the "
+                     "authored laws, ward levels and pylons."),
+    ("Character art", "Nothing in the register blocks it since v3.3 \u2014 one "
+                      "card per ruleborn and 54 forms \u2014 but \u00a726.2 "
+                      "puts the art-style test on target devices first, so the "
+                      "style is settled before the quantity is drawn."),
+    ("Detailed screen design", "One question: whether the scout report shows "
+                               "patrol routes, which \u00a712.12 promises and "
+                               "\u00a712.4 does not list (<strong>C37</strong>). "
+                               "v3.3 settled the roster the character screens "
+                               "read, the ranks the Codex shows and the "
+                               "Library's place on the build screen."),
+    ("Localisation", "Two launch languages with a named owner since v3.3, but "
+                     "the coined vocabulary gets its native-speaker read-aloud "
+                     "(\u00a726.9) before anything is translated."),
     ("Claiming the name publicly", "§26.9 makes trademark clearance a gate, and "
                                    "it has not been done."),
 ]

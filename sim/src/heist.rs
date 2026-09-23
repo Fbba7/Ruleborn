@@ -44,16 +44,15 @@ pub const MENDER_REVIVE_TICKS: u32 = TICKS_PER_SECOND * 3 / 2;
 pub const SKIFF_OUTER_TICKS: u32 = TICKS_PER_SECOND * 5;
 pub const SKIFF_HEART_TICKS: u32 = TICKS_PER_SECOND * 20;
 
-/// How much health a revived crew member gets back. **Not in the document**:
-/// §12.20 says an ally "revives it" and not with what. A quarter, so a revive
-/// is a second chance rather than a full reset.
-pub const REVIVE_HEALTH: (i32, i32) = (1, 4);
+/// §12.20 (v3.3, G14): a revived crew member "returns at 30% of its full
+/// health: enough to reach the skiff, not enough to stand in a fight".
+pub const REVIVE_HEALTH: (i32, i32) = (30, 100);
 
 /// How much the fixture's Vault holds, in the units bags are measured in.
-/// **Not a document number**: §9.6 prices the exposed share in Starlight and
-/// the bags in §11.1's Carry, and nothing converts one to the other. 560 is a
-/// five-crew's Carry, so a full crew can empty it and a smaller one cannot.
-pub const FIXTURE_EXPOSED: i32 = 560;
+/// §9.6 (v3.3, G15): "exposed share in bag units = a full five-crew's carry ×
+/// the richness ratio", so a target at its level median exposes 750 — the
+/// sum of §11.1's Carry column. A full crew can empty it; a smaller one cannot.
+pub const FIXTURE_EXPOSED: i32 = 750;
 
 /// §12.8: "the first hit on a guard that has not noticed the crew stuns it
 /// for 2 seconds and deals triple Power, or half the guard's full health,
@@ -189,15 +188,15 @@ impl WardKind {
 }
 
 pub const CRYSTAL_WALL_HEALTH: i32 = 800;
-/// spec/wards.md: "ward health = 500 × level" — **a proposal, not the
-/// document's**: §11.1 gives Breakers "double damage to wards", so wards must
-/// have health, and §10.3 gives it to the Crystal Wall alone.
-pub const WARD_HEALTH_PER_LEVEL: i32 = 500;
+/// §10.3 (v3.3): "Every ward has 550 health a level", moved from 500 so a
+/// level-2 ward outlasts a Tinker's disarm. The same section's first paragraph
+/// still says 500 (C34); this takes the value the section derives.
+pub const WARD_HEALTH_PER_LEVEL: i32 = 550;
 pub const HEDGE_DAMAGE: (i32, i32) = (5, 100);
 pub const COIL_RADIUS: i32 = 2;
 pub const COIL_PERIOD_TICKS: u32 = TICKS_PER_SECOND * 3;
-/// spec/wards.md: "Static Coil's 8% is new. The document gives it no damage at
-/// all." **A proposal, not the document's.**
+/// §10.3 (v3.3): "Shocks everyone within 2 tiles every 3 seconds, for 8% of
+/// their maximum health a shock" — spec/wards.md's proposal, now the document's.
 pub const COIL_DAMAGE: (i32, i32) = (8, 100);
 pub const WELL_RADIUS: i32 = 3;
 pub const WELL_HOLD_TICKS: u32 = TICKS_PER_SECOND * 2;

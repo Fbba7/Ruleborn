@@ -148,9 +148,12 @@ def check_spec_index() -> None:
 #: Sections v3.1 renumbered, and what each became. v3.1 filled four holes left
 #: by v3.0's deletions — 5.8, 7.8, 10.4 and 25.3 were all missing — which
 #: shifted the section after each of them down by one. The register records
-#: this as "a renumbering is never only clerical"; these are the four, and
+#: this as "a renumbering is never only clerical"; these were the four, and
 #: this repository had 41 references to the old numbers.
-RENUMBERED = {"5.9": "5.8", "7.10": "7.9", "10.5": "10.4", "25.5": "25.4"}
+# v3.1 moved 7.10 to 7.9, and v3.3 reused the number for a new section (what a
+# law costs to build, and the 24 that ship first), so a citation of 7.10 is
+# current again and can no longer be told from a stale one by number alone.
+RENUMBERED = {"5.9": "5.8", "10.5": "10.4", "25.5": "25.4"}
 
 #: Directories whose files describe an earlier version of the design document
 #: and use that version's numbering on purpose. Renumbering them would make
@@ -838,7 +841,9 @@ def _self_test() -> None:
                 r"\1Ready \2", text, count=1, flags=re.M),
          "its gates make it"),
         ("a gate quietly dropped from the list",
-         re.sub(r"(your decision: )[A-Z]+\d+, ", r"\1", text, count=1),
+         # The first id, whether or not others follow: since v3.3 each area
+         # waits on one item, and a plant that needs two plants nothing.
+         re.sub(r"(your decision: )[A-Z]+\d+(?:, )?", r"\1", text, count=1),
          "waiting on"),
         ("an area missing from the table",
          re.sub(r"^\| \*\*Characters\*\*.*\n", "", text, flags=re.M),

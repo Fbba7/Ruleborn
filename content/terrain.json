@@ -126,7 +126,7 @@
     "sight": "Blocks sight",
     "points": "3",
     "found_in": "Tidehold, Skyfield",
-    "with_laws": "Rewind pulls the water back up",
+    "with_laws": "Tidemark pulls the water back up at each return",
     "keeper_level": 6,
     "family": "Water",
     "id": "waterfall"
@@ -420,7 +420,7 @@
   {
     "name": "Bell post",
     "movement": "Rings if bumped",
-    "sight": "Raises the realm's alarm by 20%",
+    "sight": "Raises the realm's alarm one level (12.17)",
     "points": "2",
     "found_in": "All",
     "with_laws": "Delay makes the ring come late",

@@ -32,6 +32,7 @@ the section that owns it where it does not, and
 
 import json
 import pathlib
+import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -100,10 +101,17 @@ CARRIER_LOADED_PACE = 0.85
 AMBUSH_STUN_SECONDS = 2
 
 #: §12.20: "has ten seconds before capture. An ally standing adjacent revives
-#: it in 3 seconds, a Mender in 1.5."
+#: it in 3 seconds, a Mender in 1.5, and it returns at 30% of its full health"
+#: (v3.3, G14).
 DOWN_SECONDS = 10
 REVIVE_SECONDS = 3.0
 MENDER_REVIVE_SECONDS = 1.5
+REVIVE_HEALTH = 0.30
+
+#: §12.17 (v3.3, G13): "crouched, a crew member moves at half its role's
+#: speed (11.1), and running, at double".
+CROUCH_PACE = 0.5
+RUN_PACE = 2.0
 
 #: §5.4: the skiff "takes 5 seconds to reach an outer realm and 20 seconds to
 #: fight the winds around the Heart".
@@ -136,10 +144,103 @@ HOME = {
     "DOWN_SECONDS": "12.20",
     "REVIVE_SECONDS": "12.20",
     "MENDER_REVIVE_SECONDS": "12.20",
+    "REVIVE_HEALTH": "12.20",
+    "CROUCH_PACE": "12.17",
+    "RUN_PACE": "12.17",
     "SKIFF_OUTER_SECONDS": "5.4",
     "SKIFF_HEART_SECONDS": "5.4",
     "GRADE_VALUE": "12.9",
 }
+
+
+#: How each declared fact reads in its home section, so the value here can be
+#: checked against the document rather than trusted. Until v3.3 nothing did:
+#: the rule above stops a second copy in the tools, and nothing stopped the one
+#: copy going stale when the document moved. The pattern captures the value;
+#: the function turns the capture into this module's unit.
+_words = {"half": 0.5, "double": 2.0, "ten": 10, "two": 2, "three": 3}
+_n = lambda x: _words.get(x, None) if x in _words else float(x.replace(",", ""))
+STATED = {
+    "HOLD_BAND": (r"Authored islands are held to (\d+) to (\d+)%",
+                  lambda m: (float(m[0]), float(m[1]))),
+    "DECISION_BAND": (r"or (\d+) to (\d+) in a run", lambda m: (int(m[0]), int(m[1]))),
+    "DECISION_SECONDS": (r"roughly one every (\d+) to (\d+) seconds",
+                         lambda m: (int(m[0]), int(m[1]))),
+    "CREW_RANGE": (r"A crew of (\d+) to (\d+)", lambda m: (int(m[0]), int(m[1]))),
+    "WIND_UP": (r"shows a ([\d.]+)-second wind-up", lambda m: float(m[0])),
+    "AMBUSH_MULTIPLIER": (r"(triple|double|quadruple)s? (?:its )?Power(?! and the half)",
+                          lambda m: {"double": 2.0, "triple": 3.0,
+                                     "quadruple": 4.0}[m[0].lower()]),
+    "VAULT_HEALTH_PER_LEVEL": (r"([\d,]+) health per Vault level", lambda m: int(_n(m[0]))),
+    "BREAKER_VAULT_MULTIPLIER": (r"Breakers deal (double) damage to it",
+                                 lambda m: int(_n(m[0]))),
+    "CRACK_NOISE": (r"adds (\d+) suspicion", lambda m: int(m[0])),
+    "CRACK_NOISE_SECONDS": (r"every (\d+) seconds of cracking", lambda m: int(m[0])),
+    "LOAD_PER_SECOND": (r"Every role can load, at (\d+) units a second",
+                        lambda m: int(m[0])),
+    "CARRIER_LOADED_PACE": (r"(\d+)% slower when loaded", lambda m: 1 - int(m[0]) / 100),
+    "AMBUSH_STUN_SECONDS": (r"stuns it for (\d+) seconds", lambda m: int(m[0])),
+    "DOWN_SECONDS": (r"has (\w+) seconds before capture", lambda m: int(_n(m[0]))),
+    "REVIVE_SECONDS": (r"revives it in (\d+) seconds", lambda m: float(m[0])),
+    "MENDER_REVIVE_SECONDS": (r"a Mender in ([\d.]+)", lambda m: float(m[0])),
+    "REVIVE_HEALTH": (r"returns at (\d+)% of its full health", lambda m: int(m[0]) / 100),
+    "CROUCH_PACE": (r"crouched, a crew member moves at (half) its role's speed",
+                    lambda m: _n(m[0])),
+    "RUN_PACE": (r"and running, at (double)", lambda m: _n(m[0])),
+    "SKIFF_OUTER_SECONDS": (r"takes (\d+) seconds to reach an outer realm",
+                            lambda m: int(m[0])),
+    "SKIFF_HEART_SECONDS": (r"and (\d+) seconds to (?:fight the winds around|reach) the Heart",
+                            lambda m: int(m[0])),
+    "GRADE_VALUE": (r"\| Clean\n[^\n]*\n\| ×([\d.]+)[\s\S]*?\| Loud\n[^\n]*\n\| ×([\d.]+)"
+                    r"[\s\S]*?\| Partial\n[^\n]*\n\| ×([\d.]+)[\s\S]*?\| Foiled\n[^\n]*\n\| ×([\d.]+)",
+                    lambda m: {"clean": float(m[0]), "loud": float(m[1]),
+                               "partial": float(m[2]), "foiled": float(m[3])}),
+}
+
+#: Facts the document has moved past and this repository has not, each with
+#: the register item that owns the gap. Reported as behind, not as agreeing:
+#: the simulation still reads these values, so they stay declared until the
+#: port lands, and then they go.
+BEHIND = {
+    "AMBUSH_MULTIPLIER": ("D56", "v3.3's ambush knocks out an Unaware guard, "
+                                 "keyed to its remaining health (12.8)"),
+    "AMBUSH_STUN_SECONDS": ("D56", "v3.3's ambush knocks out rather than "
+                                   "stuns; the takedown takes 2 seconds (12.8)"),
+    "CRACK_NOISE": ("D56", "v3.3 makes cracking a heard event: every guard in "
+                           "the Heart starts Investigating (12.6, 12.17)"),
+}
+
+
+def against_document() -> tuple[list[str], list[str]]:
+    """(disagreements, facts behind the document), for every declared fact."""
+    import design_doc
+    sys.path.insert(0, str(ROOT / "tools"))
+    import check_document
+    from audit_register import is_open
+    doc = check_document.Doc(str(design_doc.HTML))
+    index = check_document.section_index(doc)
+    wrong, behind = [], []
+    for name, (pattern, read) in STATED.items():
+        home = HOME[name]
+        m = re.search(pattern, index.get(home, ""))
+        value = read(m.groups()) if m else None
+        if name in BEHIND:
+            item, now = BEHIND[name]
+            behind.append(f"{name} ({home}): {now} [{item}]")
+            if not is_open(item):
+                wrong.append(f"{name}: listed as behind under {item}, which "
+                             f"the register calls settled")
+            if m and value == globals()[name]:
+                wrong.append(f"{name}: listed as behind under {item}, but "
+                             f"{home} still states {value!r}")
+            continue
+        if value != globals()[name]:
+            wrong.append(f"{name}: declared {globals()[name]!r}, {home} "
+                         f"{'states ' + repr(value) if m else 'no longer states it'}")
+    unstated = sorted(n for n, h in HOME.items()
+                      if not h.startswith("content/") and n not in STATED)
+    wrong += [f"{n}: declared with no pattern to check it by" for n in unstated]
+    return wrong, behind
 
 
 def main() -> int:
@@ -152,11 +253,23 @@ def main() -> int:
     missing = sorted(set(HOME) - set(globals()))
     extra = sorted(n for n in globals()
                    if n.isupper() and len(n) > 2 and n not in HOME
-                   and n not in ("ROOT", "CONTENT", "HOME"))
+                   and n not in ("ROOT", "CONTENT", "HOME", "STATED", "BEHIND"))
     if missing or extra:
         print(f"\n  HOME and the module disagree: missing {missing}, "
               f"undeclared {extra}")
         return 1
+    wrong, behind = against_document()
+    if behind:
+        print("\n  Behind the document, and owned by a register item:")
+        for line in behind:
+            print(f"    {line}")
+    if wrong:
+        print("\n  Declared facts the document no longer states:")
+        for line in wrong:
+            print(f"    {line}")
+        return 1
+    print(f"\n  {len(STATED) - len(behind)} declared facts read back from their "
+          f"home sections.")
     return 0
 
 

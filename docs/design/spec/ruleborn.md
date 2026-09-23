@@ -1,11 +1,13 @@
 # The eighteen ruleborn — reconciled specification
 
-**Status: proposed.** This resolves C6 by making §11.11 the home and retiring
-§11.2 as a second spec. It needs sign-off before content is authored (§26.7).
+**Status: settled by v3.3.** v3.3 took this file's route: §11.2 is now
+generated from the §11.11 cards, so C6 is closed, and abilities have two uses a
+heist rather than cooldowns, which closes D32 by the "decision" branch below.
+What follows is kept as the record of what the two tables disagreed about.
 
-Data: [`content/ruleborn.json`](../../../content/ruleborn.json) — which
-deliberately still carries **both** readings, marked, until this is signed off.
-Every count below is printed by `python3 tools/ability_text.py`, not typed here.
+Data: [`content/ruleborn.json`](../../../content/ruleborn.json) now carries one
+reading. `python3 tools/ability_text.py` still prints every count below, read
+from the last version on disk that had the two tables apart.
 
 ---
 
@@ -164,11 +166,9 @@ follows from it.
 
 ---
 
-## Still open
+## Settled
 
-- **C6 itself** until this is signed off.
-- **D32** — whether an ability is a decision or texture, which sets all
-  eighteen cooldowns.
-- **G10** — several tier II/III values are qualitative ("also reveals hidden
-  wards") rather than parameter changes, so the same class of problem is
-  present in the law tier table.
+- **C6**: v3.3 generates §11.2 from §11.11.
+- **D32**: two uses a heist and a ten-second lockout, not a cooldown.
+- **G10**: §7.3 names every parameter, and Glass's tiers are its one
+  view-layer exception.

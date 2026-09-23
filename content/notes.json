@@ -44,7 +44,7 @@
   {
     "id": "echo",
     "name": "Echo",
-    "does": "Return, repeat and rewind",
+    "does": "Return, repeat and restore",
     "opposite": "Veil",
     "symbol": "A ring"
   },

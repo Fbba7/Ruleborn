@@ -147,42 +147,42 @@
  "cross_target": [
   {
    "seed": "1",
-   "native": "801f21140a081f3a",
-   "wasm": "801f21140a081f3a",
+   "native": "817c47d24e5155c0",
+   "wasm": "817c47d24e5155c0",
    "agree": true,
    "bytes": 1302
   },
   {
    "seed": "6840123409045651457",
-   "native": "59e5c242b11bc502",
-   "wasm": "59e5c242b11bc502",
+   "native": "a62713ef2261a997",
+   "wasm": "a62713ef2261a997",
    "agree": true,
    "bytes": 1263
   },
   {
    "seed": "18446744073709551615",
-   "native": "5501511a6e9facc3",
-   "wasm": "5501511a6e9facc3",
+   "native": "5166ad913a7076be",
+   "wasm": "5166ad913a7076be",
    "agree": true,
    "bytes": 1225
   },
   {
    "seed": "42",
-   "native": "dbc6003e735e2453",
-   "wasm": "dbc6003e735e2453",
+   "native": "eee66cfd13afae78",
+   "wasm": "eee66cfd13afae78",
    "agree": true,
    "bytes": 1179
   },
   {
    "seed": "999983",
-   "native": "fa9cfdb146262cf8",
-   "wasm": "fa9cfdb146262cf8",
+   "native": "b8bbcbbcce077b47",
+   "wasm": "b8bbcbbcce077b47",
    "agree": true,
    "bytes": 1193
   }
  ],
  "content": {
-  "agree": 132,
+  "agree": 137,
   "disagree": [],
   "not_modelled": [
    "noise.off_screen_multiplier \u2014 the simulation has no screen",
@@ -194,12 +194,7 @@
    "rule sheet cone_angle \u2014 no law sets it"
   ],
   "readings": [
-   "CROUCH_PACE = (1, 2) \u2014 crouched speed against \u00a711.1's; no section gives one",
-   "RUN_PACE = (2, 1) \u2014 running speed against \u00a711.1's; no section gives one",
-   "REVIVE_HEALTH = (1, 4) \u2014 the health a revived crew member gets back; \u00a712.20 says an ally \"revives it\" and not with what",
-   "FIXTURE_EXPOSED = 560 \u2014 what the fixture's Vault holds, in bag units; \u00a79.6 prices the exposed share in Starlight and nothing converts it to Carry",
-   "WARD_HEALTH_PER_LEVEL = 500 \u2014 a ward's health, from spec/wards.md's proposal; \u00a710.3 gives health to the Crystal Wall alone",
-   "COIL_DAMAGE = (8, 100) \u2014 the Static Coil's shock, from spec/wards.md's proposal; \u00a710.3 gives it no damage",
+   "WARD_HEALTH_PER_LEVEL = 550 \u2014 a ward's health, 550 a level; \u00a710.3 states 500 in its first paragraph and 550 in its last (C34); the simulation takes 550, the value the section derives",
    "LandingTwo = 6 half metres \u2014 landing from two levels, 3 m; \u00a712.17 gives one level (2 m) and three (4 m) and nothing between",
    "GLARE_BLIND_TICKS = 60 \u2014 Lantern Glare's blind, read as the crew unable to act; \u00a710.3 says \"blinds them\" and not what a blinded crew cannot do"
   ]
