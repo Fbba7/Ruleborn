@@ -65,8 +65,8 @@ HELD_BY_TEST = {
     "modifiers.still_in_grass": "standing_still_in_tall_grass_hides_until_a_guard_walks_in",
     "alarm.realm_alarm_per_guard_found":
         "a_knocked_out_guard_found_by_another_raises_the_realm_alarm",
-    "ambush.hits_to_down_equal_level_guard":
-        "two_ambush_hits_knock_out_a_guard_of_equal_level_in_every_pairing",
+    "ambush.knockout_pairings":
+        "an_ambush_knocks_out_every_role_of_guard_after_a_two_second_takedown",
 }
 
 # Numbers the simulation needs and the document does not give.
@@ -241,10 +241,8 @@ def compare(content: dict, role_rows: list, text: str) -> dict:
                  round(row[field] * scale), have.get(row["name"]))
 
     am = content["ambush"]
-    same("ambush.stun_seconds", "ambush stun (ticks)",
-         am["stun_seconds"] * content["_tick_rate"], k.get("AMBUSH_STUN_TICKS"))
-    same("ambush.damage_multiplier", "ambush multiplies Power",
-         (am["damage_multiplier"], 1), k.get("AMBUSH_POWER"))
+    same("ambush.takedown_seconds", "ambush takedown (ticks)",
+         am["takedown_seconds"] * content["_tick_rate"], k.get("TAKEDOWN_TICKS"))
     same("ambush.wind_up_seconds", "wind-up (ticks)",
          round(am["wind_up_seconds"] * content["_tick_rate"]), k.get("HIT_TICKS"))
 
@@ -295,13 +293,13 @@ def facts_compare(text: str) -> dict:
     rows = [
         ("VAULT_HEALTH_PER_LEVEL", f.VAULT_HEALTH_PER_LEVEL, k.get("VAULT_HEALTH_PER_LEVEL")),
         ("BREAKER_VAULT_MULTIPLIER", (f.BREAKER_VAULT_MULTIPLIER, 1), k.get("BREAKER_VAULT_DAMAGE")),
-        ("CRACK_NOISE", f.CRACK_NOISE, k.get("CRACK_NOISE")),
         ("CRACK_NOISE_SECONDS", f.CRACK_NOISE_SECONDS * tps, k.get("CRACK_NOISE_TICKS")),
         ("LOAD_PER_SECOND", f.LOAD_PER_SECOND, k.get("LOAD_PER_SECOND")),
         ("CARRIER_LOADED_PACE", (round(f.CARRIER_LOADED_PACE * 100), 100),
          k.get("CARRIER_LOADED_PACE")),
-        ("AMBUSH_STUN_SECONDS", f.AMBUSH_STUN_SECONDS * tps, k.get("AMBUSH_STUN_TICKS")),
-        ("AMBUSH_MULTIPLIER", (round(f.AMBUSH_MULTIPLIER), 1), k.get("AMBUSH_POWER")),
+        ("TAKEDOWN_SECONDS", f.TAKEDOWN_SECONDS * tps, k.get("TAKEDOWN_TICKS")),
+        ("ASSIST_BONUS", ratio(1 + f.ASSIST_BONUS), ratio(k.get("ASSIST_BONUS"))),
+        ("DISARM_SECONDS", f.DISARM_SECONDS * tps, k.get("DISARM_TICKS")),
         ("WIND_UP", round(f.WIND_UP * tps), k.get("HIT_TICKS")),
         ("DOWN_SECONDS", f.DOWN_SECONDS * tps, k.get("DOWN_TICKS")),
         ("REVIVE_SECONDS", round(f.REVIVE_SECONDS * tps), k.get("REVIVE_TICKS")),
@@ -372,6 +370,10 @@ def wards_compare(text: str) -> dict:
         m = re.search(pattern, wards[ward]["effect_level_1"])
         return float(m.group(1)) if m else None
 
+    def sensor(ward: str, pattern: str) -> float | None:
+        m = re.search(pattern, wards[ward].get("sensor", ""))
+        return float(m.group(1)) if m else None
+
     def reset(ward: str) -> int | None:
         m = re.fullmatch(r"(\d+) s", wards[ward]["resets_after"])
         return int(m.group(1)) * tps if m else None
@@ -390,6 +392,11 @@ def wards_compare(text: str) -> dict:
          k.get("SNARE_FREEZE_TICKS")),
         ("time_snare reset", reset("time_snare"), resets.get("TimeSnare")),
         ("static_coil radius", num("static_coil", r"within (\d+) tiles"), k.get("COIL_RADIUS")),
+        # v3.3's wards carry their sensor as its own column (10.3).
+        ("lantern_glare sensor radius", sensor("lantern_glare", r"within (\d+) tiles"),
+         k.get("GLARE_RADIUS")),
+        ("gravity_well sensor radius", sensor("gravity_well", r"within (\d+) tiles"),
+         k.get("WELL_RADIUS")),
         ("static_coil period (ticks)", num("static_coil", r"every (\d+) seconds") * tps,
          k.get("COIL_PERIOD_TICKS")),
         ("static_coil damage (%)", num("static_coil", r"for (\d+)% of their maximum health"),
@@ -442,6 +449,9 @@ def self_test() -> int:
            t=text.replace("RUNNING: (i32, i32) = (7, 4)", "RUNNING: (i32, i32) = (2, 1)"))
     caught("slow Scout", "Scout speed", t=text.replace("Role::Scout => 45", "Role::Scout => 40"))
     caught("weak Warden", "Warden health", t=text.replace("Role::Warden => 420", "Role::Warden => 400"))
+    # v3.3's takedown: a two-second knockout, not three.
+    caught("slow takedown", "ambush takedown",
+           t=text.replace("TAKEDOWN_TICKS: u32 = TICKS_PER_SECOND * 2", "TAKEDOWN_TICKS: u32 = TICKS_PER_SECOND * 3"))
     # The gap the first version had: a number in the file nothing compares.
     planted = json.loads(json.dumps(content))
     planted["modifiers"].append({"id": "in_rain", "effect": "rate", "multiplier": 0.8})
@@ -475,7 +485,7 @@ def self_test() -> int:
     finally:
         lib.write_text(real_lib)
     print("content_gate self-test: halved Scout, moved floor, missing role, wrong "
-          "multiplier, slow Scout, weak Warden, an uncompared number, a deleted test, "
+          "multiplier, a slow takedown, slow Scout, weak Warden, an uncompared number, a deleted test, "
           "a drifted design fact, a hand-edited law table and an unread rule-sheet "
           "parameter all caught")
     return 0

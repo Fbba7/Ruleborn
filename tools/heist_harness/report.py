@@ -26,7 +26,7 @@ DEPTH_SEPARATION = 35            # percentage points, optimal over careless
 def run_batch(n: int, links: int, realm_level: int, policy_name: str,
               seed0: int = 0, laws: str = "none", shaped: bool = False,
               posts: int | None = None, post_level: int = 1,
-              wards: int | None = None) -> list:
+              wards: int | None = None, crack_noise: bool = True) -> list:
     """`laws` is "none", "any" (woven at random) or "defensive" (sign-aware).
 
     `shaped` selects the generator F16 argued for; see `island.generate`.
@@ -43,7 +43,8 @@ def run_batch(n: int, links: int, realm_level: int, policy_name: str,
         policy = cls()
         result = Heist(generate(seed, realm_level, shaped=shaped, posts=posts,
                                 post_level=post_level, wards=wards), policy,
-                       realm_level=realm_level, crossing=crossing, sheet=sheet).run()
+                       realm_level=realm_level, crossing=crossing, sheet=sheet,
+                       crack_noise=crack_noise).run()
         result.sheet = sheet
         result.crew_decisions = policy.crew_decisions
         result.member_decisions = policy.member_decisions

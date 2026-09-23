@@ -48,7 +48,7 @@ def hold_rate(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
               policy: str = "competent", law_mode: str = "defensive",
               response_model: str = "published",
               clock_pct: int = 100, exposed_pct: int = 100,
-              island_fn=generate) -> float:
+              island_fn=generate, crack_noise: bool = True) -> float:
     """The share of raids this combination of layers turns back."""
     cls = POLICIES[policy]
     held = 0
@@ -61,7 +61,8 @@ def hold_rate(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
         result = Heist(island, cls(), realm_level=realm_level, crossing=crossing,
                        sheet=sheet, response="response" in subset,
                        response_model=response_model,
-                       clock_pct=clock_pct, exposed_pct=exposed_pct).run()
+                       clock_pct=clock_pct, exposed_pct=exposed_pct,
+                       crack_noise=crack_noise).run()
         held += not result.success
     return 100 * held / n
 

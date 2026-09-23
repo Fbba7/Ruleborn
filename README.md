@@ -30,19 +30,27 @@ a band at the top.
 decision only you can make, evidence nobody here can produce, or drafting that is
 still mine to do.
 
-Four versions have now answered the audit. **97 of 148 register items are fixed
+Four versions have now answered the audit. **97 of 150 register items are fixed
 in the document itself** — 26 by v3.0, 9 by v3.1, 7 by v3.2 and 55 by v3.3.
-Only 16 are still open.
+17 are still open.
 
 v3.3 closed 55 of the 64 items open against v3.2. Each was checked by section and
 line, not taken from its own list. It takes the launch cut (24 laws chosen by
 engine cost, 54 forms), makes the ambush a guaranteed knockout, and replaces
 cooldowns with two ability uses a heist. Where it decided differently from the
-recommendation, the register says so. Reading v3.3 against itself found seven
-new items (C34 to C39, D56). The main ones: a ward's health given as both 500 and
-550, a Codex finished on day 69 and on day 234, upgrade pacing that assumes six
-heists a day for a player who makes four, and `sim/` and the harness still
-running five rules v3.3 replaced.
+recommendation, the register says so. Reading v3.3 against itself found six
+new contradictions (C34 to C39): among them a ward's health given as both 500
+and 550, a Codex finished on day 69 and on day 234, and upgrade pacing that
+assumes six heists a day for a player who makes four.
+
+Porting v3.3's new rules into `sim/` and the harness (D56, done) found the
+biggest one, **F32**. Five seconds of cracking now calls every guard in the Heart
+to the Vault, and no ordinary crack is shorter than five seconds. A crew that
+has not cleared the Heart first is found at the Vault: in the harness an
+optimal crew's success falls from 65% to 7.5%, and §19.27's skill gate fails at
+every depth. `sim/`'s planned heist shows the other way to play, taking four
+guards down first and cracking in 4.2 s. Whether that is the intended game is
+your call.
 
 v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
@@ -222,7 +230,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 148 tracked items with section references and status:
+document, as 150 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,

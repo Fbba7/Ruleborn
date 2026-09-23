@@ -70,10 +70,9 @@
   },
 
   "ambush": {
-    "_source": "§12.8, the one part of the older model that survives",
-    "stun_seconds": 2,
-    "damage_multiplier": 3,
-    "hits_to_down_equal_level_guard": 2,
+    "_source": "§12.8 (v3.3): the first hit on an Unaware guard knocks it out, dealing exactly its remaining health, after a 2 s takedown; triple Power and the half-health floor are gone",
+    "takedown_seconds": 2,
+    "knockout_pairings": 25,
     "wind_up_seconds": 0.8,
     "level_advantage_cap": 3
   }

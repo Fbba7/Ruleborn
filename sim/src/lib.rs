@@ -612,6 +612,13 @@ impl World {
         // Without these §12.8's ambush has no way in (see the README).
         grid.set_surface(9, 5, Surface::Moss);
         grid.set_surface(12, 3, Surface::Moss);
+        // And behind two more, since v3.3's crack noise brings every guard in
+        // the Heart to the Vault five seconds into cracking: a crew that wants
+        // to load has to have put the guards down first, and the moss is the
+        // Keeper's decision that allows it (§6.1). The Warden's rise has no
+        // way behind it, so one guard always answers the noise.
+        grid.set_surface(2, 11, Surface::Moss);
+        grid.set_surface(11, 11, Surface::Moss);
         for y in 10..14 {
             for x in 10..14 {
                 grid.darken(x, y);
@@ -820,6 +827,10 @@ impl World {
                         }
                     }
                 }
+                Kind::Drag => {
+                    raider.task = Task::Drag;
+                    raider.target = command.x.max(0) as u32;
+                }
                 Kind::Disarm => {
                     let (x, y) = command.target();
                     if let Some(tile) = self.grid.tile_at(x, y) {
@@ -893,7 +904,7 @@ impl World {
             // discovered". Found by being seen, exactly as a raider is.
             for other in 0..self.guards.len() {
                 if other != gi && self.guards[other].knocked_out && !self.guards[other].found
-                    && self.sees(gi, self.guards[other].at).is_some()
+                    && self.sees_body(gi, self.guards[other].at)
                 {
                     self.guards[other].found = true;
                     self.knockouts_discovered += 1;
@@ -993,12 +1004,45 @@ impl World {
         Some((per_tick, to))
     }
 
-    /// Whether a guard can see a point at all: in reach, in the cone or the
-    /// corner of the eye, and not behind anything that stops sight. Returns
-    /// the tile seen. Used for finding knocked-out guards.
-    fn sees(&self, gi: usize, at: Point) -> Option<grid::TileIndex> {
-        let (_, _, from, to) = self.sees_geometry(gi, at)?;
-        self.line_clear(from, to).then_some(to)
+    /// Whether a guard sees a body. §12.8 (v3.3): "a body is seen exactly as
+    /// a still crew member lying on its tile would be, so tall grass, a bush,
+    /// fog or a tunnel hides it" — so it is `noticed`'s rules for a still
+    /// raider, Stillness included, since a body has never moved.
+    fn sees_body(&self, gi: usize, at: Point) -> bool {
+        if self.sheet.flag(Param::StillIsInvisible) == Some(1) {
+            return false;
+        }
+        let Some((_, _, from, to)) = self.sees_geometry(gi, at) else { return false };
+        if from != to && self.grid.feature(to) == Some(Feature::TallGrass) {
+            return false;
+        }
+        self.line_clear(from, to)
+    }
+
+    /// The body a raider is dragging, if it is: a Drag task on a knocked-out
+    /// guard lying on its tile or beside it. Beside is how a drag starts; once
+    /// moving, the body is on the dragger's tile.
+    fn dragging(&self, ri: usize) -> Option<usize> {
+        let r = &self.raiders[ri];
+        if r.task != Task::Drag || !r.acting(self.tick) {
+            return None;
+        }
+        let gi = r.target as usize;
+        let g = self.guards.get(gi).filter(|g| g.knocked_out)?;
+        let body = self.grid.tile_at(g.at.x, g.at.y)?;
+        let here = self.grid.tile_at(r.at.x, r.at.y)?;
+        (body == here || self.grid.adjacent(body, here)).then_some(gi)
+    }
+
+    /// The open tile beside `tile` nearest to `from`, ties to the lower index:
+    /// where a guard stands to investigate something it cannot stand on.
+    fn beside(&self, tile: grid::TileIndex, from: Point) -> Option<grid::TileIndex> {
+        self.grid.neighbours(tile).into_iter().flatten()
+            .filter(|&t| self.grid.at(t).passable())
+            .min_by_key(|&t| {
+                let (x, y) = self.grid.centre(t);
+                (from.distance(Point { x, y }).0, t)
+            })
     }
 
     /// Whether sight passes between two tiles. Glass: "Walls become
@@ -1058,7 +1102,11 @@ impl World {
 
     /// Movement. Raiders walk their route; guards sweep their cone.
     fn phase_movement(&mut self) {
-        for raider in self.raiders.iter_mut() {
+        // Which bodies are being dragged, decided before anyone moves, so the
+        // answer does not depend on the order raiders are taken in.
+        let drags: Vec<Option<usize>> = (0..self.raiders.len())
+            .map(|ri| self.dragging(ri)).collect();
+        for (ri, raider) in self.raiders.iter_mut().enumerate() {
             raider.landed = 0;
             raider.still_for = if raider.still() && raider.active() {
                 raider.still_for.saturating_add(1)
@@ -1069,10 +1117,16 @@ impl World {
                 continue;
             }
             let here = self.grid.tile_at(raider.at.x, raider.at.y);
-            let step = step_for(&self.grid, &self.sheet, raider, here, raider.carried > 0);
+            // "At crouching speed", whatever gait the player last chose.
+            let gait = if drags[ri].is_some() { Gait::Crouch } else { raider.gait };
+            let step = step_for(&self.grid, &self.sheet, raider, gait, here,
+                                raider.carried > 0);
             let (at, along) = walk_route(&self.grid, raider.at, &raider.route, raider.along, step);
             raider.at = at;
             raider.along = along;
+            if let Some(gi) = drags[ri] {
+                self.guards[gi].at = at;           // the body comes along
+            }
             // Dropped a level or more this tick: §12.17's landing noise.
             let there = self.grid.tile_at(at.x, at.y);
             raider.landed = match (here, there) {
@@ -1192,10 +1246,20 @@ impl World {
             let Some(source) = self.grid.tile_at(raider.at.x, raider.at.y) else { continue };
             // What it is walking on decides how far its gait carries. A
             // landing or a break is louder than any gait and is the sound made.
+            let gait = if raider.task == heist::Task::Drag
+                && self.guards.get(raider.target as usize).is_some_and(|g| g.knocked_out)
+                && self.grid.tile_at(raider.at.x, raider.at.y) == self.guards
+                    .get(raider.target as usize)
+                    .and_then(|g| self.grid.tile_at(g.at.x, g.at.y))
+            {
+                Gait::Crouch                       // a body is dragged crouched
+            } else {
+                raider.gait
+            };
             let sound = if breaking {
                 noise::Sound::Breaking
             } else {
-                landing.unwrap_or(raider.gait.sound())
+                landing.unwrap_or(gait.sound())
             };
             let reach = sound.steps_scaled(self.grid.surface(source),
                                            self.sheet.factor(Param::NoiseRadius));
@@ -1375,22 +1439,22 @@ impl World {
                 continue;
             }
             self.raiders[ri].swing += 1;
-            if self.raiders[ri].swing < heist::HIT_TICKS {
+            // Against an Unaware guard the swing is a takedown, and lands at
+            // two seconds; against any other, at the ordinary 0.8. A guard
+            // that notices mid-takedown has, by then, a swing past 0.8 on it,
+            // which lands at once as an ordinary hit.
+            let unaware = self.guards[gi].state == guard::State::Unaware;
+            let due = if unaware { heist::TAKEDOWN_TICKS } else { heist::HIT_TICKS };
+            if self.raiders[ri].swing < due {
                 continue;
             }
             self.raiders[ri].swing = 0;
             let (dn, dd) = self.sheet.factor(Param::Damage);
             let power = (self.raiders[ri].role.power() as i64 * dn / dd) as i32;
             let g = &mut self.guards[gi];
-            let unaware = now < g.stunned_until || g.state == guard::State::Unaware;
             if unaware {
-                let (pn, pd) = heist::AMBUSH_POWER;
-                let (hn, hd) = heist::AMBUSH_HEALTH_FLOOR;
-                let full = g.role.health();
-                g.health -= (power * pn / pd).max(full * hn / hd);
-                g.stunned_until = now + heist::AMBUSH_STUN_TICKS;
-                // "A stun ... during it cancels the attack."
-                g.swing = 0;
+                // "It deals exactly what the guard has left."
+                g.health = 0;
             } else {
                 g.health -= power;
                 g.suspicion = SUSPICION_MAX;
@@ -1401,12 +1465,6 @@ impl World {
                 g.swing = 0;
                 g.route.clear();
                 g.along = 0;
-            }
-        }
-        // A guard coming out of a stun has been hit: it wakes at 1000.
-        for g in self.guards.iter_mut() {
-            if !g.knocked_out && g.stunned_until != 0 && now + 1 == g.stunned_until {
-                g.suspicion = SUSPICION_MAX;
             }
         }
 
@@ -1470,6 +1528,17 @@ impl World {
         // The Vault. A crew member told to crack, standing beside it, swings
         // every 0.8 seconds for its Power, a Breaker for double.
         if self.vault.opened_at.is_none() {
+            // §11.1 (v3.3), the assist bonus: "While two or more characters
+            // work the same object, every hit on it deals 25% more. It does
+            // not stack." Counted before anyone swings, so it does not depend
+            // on the order the crew is taken in.
+            let vault = self.vault.tile;
+            let working = self.raiders.iter().filter(|r| {
+                r.task == Task::Crack && r.acting(now)
+                    && self.grid.tile_at(r.at.x, r.at.y)
+                        .is_some_and(|t| self.grid.neighbours(vault).contains(&Some(t)))
+            }).count();
+            let (an, ad) = if working >= 2 { heist::ASSIST_BONUS } else { (1, 1) };
             for raider in self.raiders.iter_mut() {
                 let beside = self.grid.tile_at(raider.at.x, raider.at.y)
                     .is_some_and(|t| self.grid.neighbours(self.vault.tile).contains(&Some(t)));
@@ -1489,17 +1558,29 @@ impl World {
                         (1, 1)
                     };
                     let (sn, sd) = self.sheet.factor(Param::StructureDamage);
-                    self.vault.health -=
-                        (raider.role.power() as i64 * n as i64 * sn / (d as i64 * sd)) as i32;
+                    self.vault.health -= (raider.role.power() as i64 * n as i64 * sn * an
+                        / (d as i64 * sd * ad)) as i32;
                     self.vault.first_hit.get_or_insert(now);
                 }
             }
-            // "Cracking is loud: every 5 seconds adds 100 suspicion to every
-            // guard in the Heart."
+            // "Every 5 seconds of cracking every guard in the Heart hears the
+            // Vault and starts Investigating it" — a heard event, so it
+            // steps a guard up to Investigating and never down, exactly as
+            // any other sound does, and re-aims one already investigating.
             if let Some(t) = self.vault.first_hit {
                 if now > t && (now - t) % heist::CRACK_NOISE_TICKS == 0 {
-                    for g in self.guards.iter_mut().filter(|g| g.awake(now)) {
-                        g.suspicion = (g.suspicion + heist::CRACK_NOISE).min(SUSPICION_MAX);
+                    for gi in 0..self.guards.len() {
+                        let g = &self.guards[gi];
+                        if !g.awake(now) || g.state.rank() > guard::State::Investigating.rank() {
+                            continue;
+                        }
+                        let spot = self.beside(self.vault.tile, g.at);
+                        self.guards[gi].interest = spot;
+                        if self.guards[gi].state == guard::State::Investigating {
+                            self.aim(gi, spot);
+                        } else {
+                            self.enter(gi, guard::State::Investigating);
+                        }
                     }
                 }
             }
@@ -1540,6 +1621,13 @@ impl World {
         // break one, from beside it; Breakers double (§11.1: "Double damage to
         // wards, pylons and the Vault"). At zero its law is off from the next
         // tick for the rest of the heist, and its page is the crew's.
+        // Who is working which structure, before anyone swings: the assist
+        // bonus is per object.
+        let breakers: Vec<Option<grid::TileIndex>> = self.raiders.iter().map(|r| {
+            let beside = self.grid.tile_at(r.at.x, r.at.y)
+                .is_some_and(|t| self.grid.neighbours(r.target).contains(&Some(t)));
+            (r.task == Task::Break && r.acting(now) && beside).then_some(r.target)
+        }).collect();
         for ri in 0..self.raiders.len() {
             let r = &self.raiders[ri];
             if r.task != Task::Break {
@@ -1561,7 +1649,9 @@ impl World {
             let role = self.raiders[ri].role;
             let (n, d) = if role == Role::Breaker { heist::BREAKER_VAULT_DAMAGE } else { (1, 1) };
             let (sn, sd) = self.sheet.factor(Param::StructureDamage);
-            let hit = (role.power() as i64 * n as i64 * sn / (d as i64 * sd)) as i32;
+            let together = breakers.iter().filter(|t| **t == Some(self.raiders[ri].target)).count();
+            let (an, ad) = if together >= 2 { heist::ASSIST_BONUS } else { (1, 1) };
+            let hit = (role.power() as i64 * n as i64 * sn * an / (d as i64 * sd * ad)) as i32;
             if let Some(li) = li {
                 let law = &mut self.laws[li];
                 law.health -= hit;
@@ -1627,30 +1717,37 @@ impl World {
         }
     }
 
-    /// §10.3's wards, as spec/wards.md reads them: disarming, then the
-    /// triggered wards (the first crew member in the area, in id order), the
-    /// Static Coil's pulse and the Thorn Hedge's thorns. Damage is a share of
-    /// the target's full health, rounded down.
+    /// §10.3's wards: disarming, then the triggered wards (the first crew
+    /// member in the area, in id order), the Static Coil's pulse and the
+    /// Thorn Hedge's thorns. Damage is a share of the target's full health,
+    /// rounded down.
     fn wards_act(&mut self) {
         let now = self.tick;
-        // Disarming: from beside the ward, standing still, silent. Moving
-        // does not advance it; progress lapses after five seconds untouched.
-        for ri in 0..self.raiders.len() {
-            let r = &self.raiders[ri];
-            if r.task != Task::Disarm || !r.acting(now) || !r.still() {
+        // Disarming (v3.3): standing on the ward's own tile, still, for
+        // fifteen seconds at every level, silent. A frozen or blinded
+        // disarmer is still on the tile, so its progress waits rather than
+        // resets; "stepping off starts it again". The ward's own sensor is
+        // not switched off by standing on it — §10.3 does not say it is —
+        // so a Time Snare freezes its disarmer and a Glare shows it.
+        for wi in 0..self.wards.len() {
+            let w = &self.wards[wi];
+            if !w.live() || w.kind.passive() {
                 continue;
             }
-            let here = self.grid.tile_at(r.at.x, r.at.y);
-            let Some(wi) = self.wards.iter().position(|w| {
-                w.tile == r.target && w.live() && !w.kind.passive()
-                    && here.is_some_and(|t| self.grid.neighbours(w.tile).contains(&Some(t)))
-            }) else { continue };
-            let w = &mut self.wards[wi];
-            if now.saturating_sub(w.disarm_touched) > heist::DISARM_KEEP_TICKS {
-                w.disarm = 0;
+            let on = self.raiders.iter().position(|r| {
+                r.task == Task::Disarm && r.target == w.tile && r.active()
+                    && self.grid.tile_at(r.at.x, r.at.y) == Some(w.tile)
+            });
+            let Some(ri) = on else {
+                self.wards[wi].disarm = 0;
+                continue;
+            };
+            let r = &self.raiders[ri];
+            if !r.acting(now) || !r.still() {
+                continue;
             }
+            let w = &mut self.wards[wi];
             w.disarm += 1;
-            w.disarm_touched = now;
             if w.disarm >= w.disarm_ticks() {
                 w.disarmed = true;
             }
@@ -1687,6 +1784,7 @@ impl World {
                 {
                     let trips = |r: &Raider| r.active() && match w.kind {
                         WardKind::GravityWell => within(r.at, heist::WELL_RADIUS),
+                        WardKind::LanternGlare => within(r.at, heist::GLARE_RADIUS),
                         _ => tile_of(r.at, &self.grid) == Some(w.tile),
                     };
                     let Some(first) = self.raiders.iter().position(trips) else { continue };
@@ -1815,7 +1913,7 @@ impl World {
         let mut walk: u64 = 0;
         let mut on = from;
         for next in route {
-            let step = step_for(&self.grid, &self.sheet, r, Some(on), true);
+            let step = step_for(&self.grid, &self.sheet, r, r.gait, Some(on), true);
             if step.0 <= 0 {
                 return false;
             }
@@ -2009,10 +2107,10 @@ impl World {
 /// is slowed by the mud it is in. Breadth-first chose the route without
 /// consulting this, which is §12.18's rule that the crew does not decide — a
 /// player who routes through mud walks through mud.
-fn step_for(grid: &Grid, sheet: &Sheet, raider: &Raider, here: Option<grid::TileIndex>,
-            loaded: bool) -> Fx {
+fn step_for(grid: &Grid, sheet: &Sheet, raider: &Raider, gait: Gait,
+            here: Option<grid::TileIndex>, loaded: bool) -> Fx {
     let pace = here.map_or(Fx::ONE, |t| grid.at(t).pace());
-    let (num, den) = raider.gait.pace();
+    let (num, den) = gait.pace();
     let mut step = scale(raider.speed.mul(pace).mul(Fx::from_ratio(num, den)),
                          sheet.factor(Param::CrewSpeed));
     if loaded {
@@ -2157,9 +2255,9 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
                 push(Kind::Break, aim(px as u64, py as u64));
             }
             10 => {
-                // A ward: to the tile north of it, and disarm it.
+                // A ward: onto its tile, and disarm it (§10.3, v3.3).
                 let (_, (wx, wy)) = FIXTURE_WARDS[rng.below(FIXTURE_WARDS.len() as u64) as usize];
-                push(Kind::MoveTo, aim(wx as u64, wy as u64 - 1));
+                push(Kind::MoveTo, aim(wx as u64, wy as u64));
                 push(Kind::Disarm, aim(wx as u64, wy as u64));
             }
             _ => {
@@ -2229,55 +2327,72 @@ pub fn planned() -> Heist {
 }
 
 /// The plan: (second, crew member, command, x, y). Crew 0 is a Scout, 1 a
-/// Breaker, 2 a Carrier. Guards are numbered by §12.17's rows: 2 is the
-/// Breaker at (9, 4) and 4 the Mender at (12, 2), both posted facing north.
-/// The realm runs `FIXTURE_LAWS`: Haste, Brittle stone and Glowing dark.
+/// Breaker, 2 a Carrier. Guards are numbered by §12.17's rows: 0 the Scout at
+/// (2, 10), 1 the Warden on its rise at (5, 12), 2 the Breaker at (9, 4), 3
+/// the Carrier at (11, 10) and 4 the Mender at (12, 2), all posted facing
+/// north. The realm runs `FIXTURE_LAWS`: Haste, Brittle stone and Glowing dark.
+///
+/// v3.3 made this a different heist. The ambush is a two-second takedown and
+/// a knockout (§12.8), and five seconds of cracking send every guard in the
+/// Heart to the Vault (§12.6) — so the crew puts down every guard it can reach
+/// unheard, and cracks fast enough that the noise never sounds:
 ///
 ///   0 s   everyone crouches. The Breaker breaks Haste's pylon beside the
-///         landing, out of every guard's hearing — Haste runs the heist clock
-///         a quarter fast, and that is worth a detour (§12.6). The Scout goes
-///         round to the moss behind the Breaker guard; the Carrier waits by
-///         the gap
-///   7 s   the Breaker follows the Scout
-///  18 s   both attack at once: the Scout's ambush stuns it, the Breaker's
-///         lands while it is still stunned, and two ambush hits knock it out
-///  20 s   the same two go round to the moss behind the Mender guard
-///  26 s   and ambush it the same way
-///  29 s   all three walk to the Vault and crack — Brittle stone doubles
-///         every hit — and the skiff is called to the east edge beside it
-///  40 s   the Vault is open: everyone loads to full
-///  52 s   everyone walks to the skiff
+///         landing. The Scout goes down the west edge, outside the Scout
+///         guard's cone and the south-west wards, to the moss behind it
+///   7 s   the Breaker goes to the moss behind the Breaker guard
+///   8 s   the Scout takes the Scout guard down: a knockout at about 11 s
+///  13 s   the Scout goes east to the Mender; the Breaker's takedown lands
+///         at about 17 s
+///  18 s   the Breaker goes round the east edge. The moss behind the Carrier
+///         guard is inside the Gravity Well's three tiles, so the well pulls
+///         the Breaker in and holds it; the waypoint given during the hold
+///         (26 s) takes it round, not through the guard's tile, while the
+///         well resets, and the takedown lands at about 32 s
+///  20 s   the skiff is called to the east edge beside the Vault
+///  33 s   everyone walks to the Vault. The Warden cannot be reached — its
+///         rise has one ramp, in front of it — so it is the one guard left
+///  36 s   all three crack at once: Brittle stone doubles every hit and the
+///         assist bonus adds a quarter (§11.1), and the Vault opens in under
+///         five seconds, before the crack noise can call the Warden
+///  42 s   everyone loads. The Scout and the Breaker are full in 3.5 s and
+///         leave at 46 s; the Carrier, on the Vault's far side from the
+///         Warden, fills its 300 and leaves at 53 s
 const PLAN: &[(u32, u8, Kind, i16, i16)] = &[
     (0, 0, Kind::Gait, 1, 0),
     (0, 1, Kind::Gait, 1, 0),
     (0, 2, Kind::Gait, 1, 0),
-    (0, 0, Kind::MoveTo, 9, 5),
+    (0, 0, Kind::MoveTo, 0, 11),
     (0, 1, Kind::MoveTo, 1, 2),
-    (0, 2, Kind::MoveTo, 7, 6),
+    (0, 2, Kind::MoveTo, 6, 5),
     (0, 1, Kind::Break, 1, 3),
     (7, 1, Kind::MoveTo, 9, 5),
-    (18, 0, Kind::Attack, 2, 0),
-    (18, 1, Kind::Attack, 2, 0),
-    (20, 0, Kind::MoveTo, 12, 3),
-    (20, 1, Kind::MoveTo, 12, 3),
-    (26, 0, Kind::Attack, 4, 0),
-    (26, 1, Kind::Attack, 4, 0),
-    (29, 0, Kind::Gait, 0, 0),
-    (29, 1, Kind::Gait, 0, 0),
-    (29, 2, Kind::Gait, 0, 0),
-    (29, 0, Kind::MoveTo, 11, 4),
-    (29, 1, Kind::MoveTo, 12, 5),
-    (29, 2, Kind::MoveTo, 10, 5),
-    (29, 0, Kind::Crack, 0, 0),
-    (29, 1, Kind::Crack, 0, 0),
-    (29, 2, Kind::Crack, 0, 0),
-    (29, 0, Kind::Skiff, 13, 5),
-    (40, 0, Kind::Load, 100, 0),
-    (40, 1, Kind::Load, 100, 0),
-    (40, 2, Kind::Load, 100, 0),
-    (52, 0, Kind::MoveTo, 13, 5),
-    (52, 1, Kind::MoveTo, 13, 5),
-    (52, 2, Kind::MoveTo, 13, 5),
+    (7, 1, Kind::Attack, 2, 0),
+    (8, 0, Kind::MoveTo, 2, 11),
+    (8, 0, Kind::Attack, 0, 0),
+    (13, 0, Kind::MoveTo, 12, 3),
+    (13, 0, Kind::Attack, 4, 0),
+    (18, 1, Kind::MoveTo, 13, 11),
+    (20, 0, Kind::Skiff, 13, 5),
+    (25, 1, Kind::MoveTo, 11, 11),
+    (26, 1, Kind::MoveTo, 9, 11),
+    (29, 1, Kind::MoveTo, 11, 11),
+    (29, 1, Kind::Attack, 3, 0),
+    (33, 0, Kind::Gait, 0, 0),
+    (33, 1, Kind::Gait, 0, 0),
+    (33, 2, Kind::Gait, 0, 0),
+    (33, 0, Kind::MoveTo, 11, 4),
+    (33, 1, Kind::MoveTo, 11, 6),
+    (33, 2, Kind::MoveTo, 12, 5),
+    (36, 0, Kind::Crack, 0, 0),
+    (36, 1, Kind::Crack, 0, 0),
+    (36, 2, Kind::Crack, 0, 0),
+    (42, 0, Kind::Load, 100, 0),
+    (42, 1, Kind::Load, 100, 0),
+    (42, 2, Kind::Load, 100, 0),
+    (46, 0, Kind::MoveTo, 13, 5),
+    (46, 1, Kind::MoveTo, 13, 5),
+    (53, 2, Kind::MoveTo, 13, 5),
 ];
 
 /// §24.11: "Every island and every replay records the exact set of laws it

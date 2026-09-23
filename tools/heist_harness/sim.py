@@ -21,6 +21,7 @@ narrowing it — so leaving them out makes the harness's answer conservative.
 
 import json
 import pathlib
+from fractions import Fraction
 from dataclasses import dataclass, field
 
 from . import detect
@@ -41,11 +42,26 @@ BASE_TICKS = 150 * TPS
 LINK_TICKS = 15 * TPS
 MAX_TICKS = 240 * TPS
 from ..design_facts import (VAULT_HEALTH_PER_LEVEL, LOAD_PER_SECOND,  # D37
-                            CRACK_NOISE, DOWN_SECONDS, REVIVE_SECONDS,
+                            CRACK_NOISE_SECONDS, DOWN_SECONDS, REVIVE_SECONDS,
                             MENDER_REVIVE_SECONDS, SKIFF_OUTER_SECONDS)
 WIND_UP_TICKS = int(0.8 * TPS)           #: §12.8, one hit per 0.8 s
 SKIFF_TICKS = SKIFF_OUTER_SECONDS * TPS  #: §5.4, an outer realm
-CRACK_AWARENESS_PER_5S = CRACK_NOISE // 10   #: §12.6, as a percent of 1,000
+#: §12.6 (v3.3): "every 5 seconds of cracking every guard in the Heart hears
+#: the Vault and starts Investigating it". Before v3.3 this module imported
+#: §12.6's "100 suspicion" and never applied it, so the harness had no crack
+#: noise at all (D56).
+CRACK_NOISE_TICKS = CRACK_NOISE_SECONDS * TPS
+#: §12.17 (v3.3): a crouched crew member moves at half its role's speed, as a
+#: ratio of whole numbers so no float reaches a result. Read from
+#: design_facts, the fact's one home; a module constant so its effect can be
+#: measured by setting it back to (1, 1).
+from ..design_facts import CROUCH_PACE as _CROUCH                 # 12.17 (D37)
+CROUCH_RATIO = Fraction(_CROUCH).limit_denominator(100).as_integer_ratio()
+#: §12.17: Investigating walks to the spot and searches it for ten seconds.
+SEARCH_TICKS = 10 * TPS
+#: §12.17's states by how alarmed, so a heard event can step a guard up and
+#: never down.
+RANK = {"unaware": 0, "suspicious": 1, "investigating": 2, "alerted": 3}
 
 # -- the proposed response layer (docs/design/spec/response.md) -------------
 #
@@ -140,6 +156,10 @@ class Guard:
     #: §10.2's Guardian Post level, 1 to 5, as a sight multiplier of
     #: 1 + 0.1 x (level - 1). See island.Patrol for why level 1 is the baseline.
     level: int = 1
+    #: Where it heard something it is investigating, and how long it has
+    #: searched there. The harness has no hearing but this: the Vault's crack.
+    heard: tuple | None = None
+    search_ticks: int = 0
 
 
 @dataclass
@@ -226,7 +246,8 @@ class Heist:
     def __init__(self, island, policy, crew_roles=DEFAULT_CREW,
                  realm_level: int = 3, crossing=(), sheet=None, response: bool = True,
                  response_model: str = "published",
-                 clock_pct: int = 100, exposed_pct: int = 100):
+                 clock_pct: int = 100, exposed_pct: int = 100,
+                 crack_noise: bool = True):
         """`crossing` is the outer realms the crew walks through on the way in.
 
         §12.6 splits a heist into Entry, Crossing, Vault and Escape, and gives the
@@ -251,6 +272,11 @@ class Heist:
         #: "published" reproduces §13.2 as written; "proposed" adds the two
         #: effects spec/response.md specifies for the Spire and the Sage.
         self.response_model = response_model
+        #: §12.6's crack noise (v3.3). On is the document. Off is an ablation,
+        #: like `response`: F32 is that with it on, the noise decides nearly
+        #: every raid these crews play, so a question about any other layer is
+        #: asked with it off and says so.
+        self.crack_noise = crack_noise
         self.vault_opened_at = None
         self.crack_started_at = None
         #: Exposed per-instance so the two dials can be swept without editing
@@ -429,6 +455,14 @@ class Heist:
             want = "suspicious"
         elif g.suspicion == 0:
             want = "unaware"
+        # A heard spot holds Investigating until it has been searched.
+        if g.heard is not None:
+            if dist2(g.x, g.y, *g.heard) <= (U // 2) ** 2:
+                g.search_ticks += 1
+            if g.search_ticks >= SEARCH_TICKS:
+                g.heard, g.search_ticks = None, 0
+            elif RANK[want] < RANK["investigating"]:
+                want = "investigating"
         g.state_ticks += 1
         if want != g.state and g.state_ticks >= STATE_FLOOR_TICKS:
             g.state, g.state_ticks = want, 0
@@ -445,7 +479,11 @@ class Heist:
         d2 = dist2(m.x, m.y, *goal)
         loaded = m.carried > 0
         factor = self.sheet.factor("loaded_speed" if loaded else "crew_speed")
-        step = m.step if m.crouched else m.step * 2
+        # §12.17 (v3.3, G13): "crouched, a crew member moves at half its
+        # role's speed (11.1), and running, at double". The harness has two
+        # gaits, not three; before v3.3 its crouch was §11.1's full speed.
+        step = (max(1, m.step * CROUCH_RATIO[0] // CROUCH_RATIO[1]) if m.crouched
+                else m.step * 2)
         step = max(1, int(step * factor))
         if self.sage_ticks and loaded and self.sage_percent:
             step = max(1, step * (100 - self.sage_percent) // 100)
@@ -575,6 +613,26 @@ class Heist:
         self.exposed -= back
         self.resealed += back
 
+    def _crack_noise(self) -> None:
+        """§12.6 (v3.3): every five seconds of cracking, every guard in the
+        Heart hears the Vault and starts Investigating it. A heard event
+        steps a guard up to Investigating and never down, and re-aims one that
+        is already investigating something else."""
+        if (not self.crack_noise or self.crack_started_at is None or self.vault_open
+                or self.island is not self.target):
+            return
+        since = self.tick - self.crack_started_at
+        if since <= 0 or since % CRACK_NOISE_TICKS:
+            return
+        vx, vy = self.target.vault
+        spot = (vx * U + U // 2, vy * U + U // 2)
+        for g in self.guards:
+            if RANK[g.state] > RANK["investigating"]:
+                continue
+            g.heard, g.target, g.search_ticks = spot, spot, 0
+            if g.state != "investigating":
+                g.state, g.state_ticks = "investigating", 0
+
     # -- grading -----------------------------------------------------------
 
     def _grade_now(self) -> str:
@@ -601,6 +659,7 @@ class Heist:
                 continue
             self.decisions += self.policy.act(self)
             self._respond()
+            self._crack_noise()
             for m in self.crew:
                 moving = bool(m.path) and not m.wait_ticks and not m.frozen_ticks
                 m.still_ticks = 0 if moving else m.still_ticks + 1

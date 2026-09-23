@@ -76,8 +76,10 @@ def validate_range() -> None:
 
 def measure(n: int, realm: int, depth: int, posts: int, bands: int) -> tuple:
     """Hold rate, its standard error, and the median decision count."""
+    # Without v3.3's crack noise: this sweep asks what posts and geometry do,
+    # and with the noise on it answers nothing else (F32).
     rs = run_batch(n, depth - 1, realm, "competent", laws="defensive",
-                   shaped=bands, posts=posts)
+                   shaped=bands, posts=posts, crack_noise=False)
     held = sum(1 for r in rs if not r.success)
     p = held / len(rs)
     se = 100 * math.sqrt(p * (1 - p) / len(rs))
@@ -206,10 +208,13 @@ def self_test() -> int:
 
     # F22's own cell, at the depth its text states. Reproducing a published
     # number before building on it is the whole discipline here.
+    # Recorded at 44.8% under v3.2's full-speed crouch; D56 re-measured it
+    # at 66.0% under v3.3's half-speed one, and that is the number F22's note
+    # now carries.
     hold, se, _ = measure(200, realm=1, depth=2, posts=2, bands=1)
-    near = abs(hold - 44.8) <= 3 * se
+    near = abs(hold - 66.0) <= 3 * se
     print(f"  F22's realm-1 cell at two realms crossed: {hold:.1f}% ±{se:.1f} "
-          f"against its recorded 44.8% — {'reproduces' if near else 'DOES NOT REPRODUCE'}")
+          f"against its recorded 66.0% — {'reproduces' if near else 'DOES NOT REPRODUCE'}")
     ok = ok and near
 
     from tools.heist_harness.island import generate

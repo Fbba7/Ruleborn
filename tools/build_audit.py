@@ -1332,8 +1332,10 @@ def build() -> str:
       and seven it claimed and only partly did &mdash; {v33_open}.<br><br>Reading
       it against itself found {len(FOUND_IN_V33)} more: one section giving a
       ward's health as 500 and as 550, a Codex finished on day 69 and on day 234,
-      upgrade pacing at six heists a day for a player who makes four, and a
-      simulation and harness that still run five rules v3.3 replaced.</p>
+      and upgrade pacing at six heists a day for a player who makes four. Porting
+      v3.3's rules into the simulation and the harness (D56) found the largest:
+      <strong>F32</strong>, five seconds of cracking calling every guard in the
+      Heart to a crew that cannot crack in five.</p>
     <p class="lede"><strong>{edit_count} edits are drafted</strong> across
       {edit_items} items &mdash; the section to open, the sentence as it stands
       today, and what to put there. Every quoted sentence is checked against the

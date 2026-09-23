@@ -20,7 +20,7 @@ number, since it is where an implementer looks for it.
 | States | Unaware 0, Suspicious 200, Investigating 600, Alerted 1000 |
 | Alarm spread | guards within 4.0 m, 15 ticks later |
 | Realm alarm | 0 to 6; +1 per 30 s and +1 per guard found; reinforcement at 5 |
-| Ambush | first unseen hit: 2 s stun and 3x damage; level advantage counts for at most 3 levels |
+| Ambush | first hit on an Unaware guard: a knockout after a 2 s takedown, in all 25 role pairings; level advantage counts for at most 3 levels |
 
 ### Guard vision
 

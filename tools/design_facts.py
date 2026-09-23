@@ -75,10 +75,20 @@ DECISION_SECONDS = (8, 12)
 CREW_RANGE = (3, 5)
 
 #: §12.8 and §12.20. One hit every 0.8 seconds for damage equal to Power, on
-#: both sides; the first hit on a guard that has not noticed the crew is
-#: tripled. The 0.8 is the only cadence the document states.
+#: both sides. The 0.8 is the only cadence the document states.
 WIND_UP = 0.8
-AMBUSH_MULTIPLIER = 3.0
+
+#: §12.8 (v3.3): the first hit on an Unaware guard is a knockout "after a 2 s
+#: takedown" (§29.1). v3.2's triple Power and half-health floor are gone.
+TAKEDOWN_SECONDS = 2
+
+#: §11.1 (v3.3): "While two or more characters work the same object, every
+#: hit on it deals 25% more: the assist bonus."
+ASSIST_BONUS = 0.25
+
+#: §10.3 (v3.3): "The disarmer stands on the ward's tile for 15 seconds at
+#: every ward level".
+DISARM_SECONDS = 15
 
 #: §12.6. The Vault's health, per Vault level.
 VAULT_HEALTH_PER_LEVEL = 1_500
@@ -86,9 +96,8 @@ VAULT_HEALTH_PER_LEVEL = 1_500
 #: §12.6: "Breakers deal double damage to it."
 BREAKER_VAULT_MULTIPLIER = 2
 
-#: §12.6: "Cracking is loud: every 5 seconds adds 100 suspicion to every
-#: guard in the Heart."
-CRACK_NOISE = 100
+#: §12.6 (v3.3): "every 5 seconds of cracking every guard in the Heart hears
+#: the Vault and starts Investigating it" — a heard event, not suspicion.
 CRACK_NOISE_SECONDS = 5
 
 #: §12.19: "Every role can load, at 30 units a second."
@@ -96,9 +105,6 @@ LOAD_PER_SECOND = 30
 
 #: §11.1, the Carrier: "15% slower when loaded".
 CARRIER_LOADED_PACE = 0.85
-
-#: §12.8: the ambush "stuns it for 2 seconds".
-AMBUSH_STUN_SECONDS = 2
 
 #: §12.20: "has ten seconds before capture. An ally standing adjacent revives
 #: it in 3 seconds, a Mender in 1.5, and it returns at 30% of its full health"
@@ -133,14 +139,14 @@ HOME = {
     "DECISION_SECONDS": "12.6",
     "CREW_RANGE": "12.5",
     "WIND_UP": "12.8",
-    "AMBUSH_MULTIPLIER": "12.8",
+    "TAKEDOWN_SECONDS": "29.1",
+    "ASSIST_BONUS": "11.1",
+    "DISARM_SECONDS": "10.3",
     "VAULT_HEALTH_PER_LEVEL": "12.6",
     "BREAKER_VAULT_MULTIPLIER": "12.6",
-    "CRACK_NOISE": "12.6",
     "CRACK_NOISE_SECONDS": "12.6",
     "LOAD_PER_SECOND": "12.19",
     "CARRIER_LOADED_PACE": "11.1",
-    "AMBUSH_STUN_SECONDS": "12.8",
     "DOWN_SECONDS": "12.20",
     "REVIVE_SECONDS": "12.20",
     "MENDER_REVIVE_SECONDS": "12.20",
@@ -168,18 +174,17 @@ STATED = {
                          lambda m: (int(m[0]), int(m[1]))),
     "CREW_RANGE": (r"A crew of (\d+) to (\d+)", lambda m: (int(m[0]), int(m[1]))),
     "WIND_UP": (r"shows a ([\d.]+)-second wind-up", lambda m: float(m[0])),
-    "AMBUSH_MULTIPLIER": (r"(triple|double|quadruple)s? (?:its )?Power(?! and the half)",
-                          lambda m: {"double": 2.0, "triple": 3.0,
-                                     "quadruple": 4.0}[m[0].lower()]),
+    "TAKEDOWN_SECONDS": (r"after a (\d+) s takedown", lambda m: int(m[0])),
+    "ASSIST_BONUS": (r"every hit on it deals (\d+)% more: the assist bonus",
+                     lambda m: int(m[0]) / 100),
+    "DISARM_SECONDS": (r"stands on the ward's tile for (\d+) seconds", lambda m: int(m[0])),
     "VAULT_HEALTH_PER_LEVEL": (r"([\d,]+) health per Vault level", lambda m: int(_n(m[0]))),
     "BREAKER_VAULT_MULTIPLIER": (r"Breakers deal (double) damage to it",
                                  lambda m: int(_n(m[0]))),
-    "CRACK_NOISE": (r"adds (\d+) suspicion", lambda m: int(m[0])),
     "CRACK_NOISE_SECONDS": (r"every (\d+) seconds of cracking", lambda m: int(m[0])),
     "LOAD_PER_SECOND": (r"Every role can load, at (\d+) units a second",
                         lambda m: int(m[0])),
     "CARRIER_LOADED_PACE": (r"(\d+)% slower when loaded", lambda m: 1 - int(m[0]) / 100),
-    "AMBUSH_STUN_SECONDS": (r"stuns it for (\d+) seconds", lambda m: int(m[0])),
     "DOWN_SECONDS": (r"has (\w+) seconds before capture", lambda m: int(_n(m[0]))),
     "REVIVE_SECONDS": (r"revives it in (\d+) seconds", lambda m: float(m[0])),
     "MENDER_REVIVE_SECONDS": (r"a Mender in ([\d.]+)", lambda m: float(m[0])),
@@ -201,13 +206,9 @@ STATED = {
 #: the register item that owns the gap. Reported as behind, not as agreeing:
 #: the simulation still reads these values, so they stay declared until the
 #: port lands, and then they go.
-BEHIND = {
-    "AMBUSH_MULTIPLIER": ("D56", "v3.3's ambush knocks out an Unaware guard, "
-                                 "keyed to its remaining health (12.8)"),
-    "AMBUSH_STUN_SECONDS": ("D56", "v3.3's ambush knocks out rather than "
-                                   "stuns; the takedown takes 2 seconds (12.8)"),
-    "CRACK_NOISE": ("D56", "v3.3 makes cracking a heard event: every guard in "
-                           "the Heart starts Investigating (12.6, 12.17)"),
+BEHIND: dict[str, tuple[str, str]] = {
+    # Empty since D56: the ambush, the crack noise and disarming were ported
+    # to sim/ and the harness, and their v3.2 facts deleted rather than kept.
 }
 
 

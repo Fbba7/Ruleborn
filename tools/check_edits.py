@@ -164,6 +164,10 @@ NO_EDIT_BECAUSE = {
            "upgrade pacing is priced at",
     "C37": "a decision for the owner: whether a scout shows patrol routes",
     "D56": "no document sentence: the fix is sim/ and the harness",
+    "F32": "a design decision for the owner: whether the Heart is cleared "
+           "before every crack, which decides whether the noise changes",
+    "G16": "a decision for the owner: whether a ward's sensor ignores the "
+           "crew member disarming it",
     "G15": "a pricing decision for the owner: the conversion has to be chosen "
            "before there is a sentence to draft",
     "D55": "no document sentence: the fix is the harness",

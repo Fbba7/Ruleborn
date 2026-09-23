@@ -287,7 +287,11 @@ def staffing_report() -> None:
 #: interval: one hit per 0.8 s, for damage equal to the attacker's Power.
 from design_facts import WIND_UP                  # 12.8 (D37)
 #: §12.8: the first hit on a guard that has not noticed the crew.
-from design_facts import AMBUSH_MULTIPLIER        # 12.8 (D37)
+#: v3.2's §12.8, which F4 is arithmetic about: the first hit on an unaware
+#: guard dealt triple Power. v3.3 replaced it with a keyed knockout (D17), so
+#: this is the retired rule, kept here as the record F4 was measured against
+#: rather than declared as a current fact in design_facts.
+AMBUSH_MULTIPLIER = 3.0
 #: §11.4: +8% health and power per character level.
 LEVEL_GROWTH = 1.08
 

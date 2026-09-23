@@ -231,16 +231,23 @@ the skiff → the clock.
 
 - **The Vault.** It has 1,500 health per Vault level. It is cracked from a
   tile beside it, one hit every 0.8 s for Power, and Breakers deal double.
-  Each hit is §12.17's "Breaking something", heard 5 m away along the
-  walkable path. Once open, anyone told to load does so at 30 a second, until
+  While two or more crack it, every hit deals a quarter more: v3.3's assist
+  bonus (§11.1), which also applies to pylons and wards. Each hit is §12.17's
+  "Breaking something", heard 5 m away along the walkable path, and every
+  five seconds of cracking send every guard in the Heart to investigate the
+  Vault, from the open tile beside it nearest each guard (§12.6, v3.3). Once open, anyone told to load does so at 30 a second, until
   it reaches the player's target fill, fills its bag, or empties the exposed
   share. A loaded Carrier walks 15% slower.
 - **Fights.** An Alerted guard beside a crew member hits it every 0.8 s for
   its §11.1 Power. The crew hits back when told to. A guard that has not
-  noticed the crew is ambushed: it is stunned for 2 s, and the hit deals
-  triple Power or half the guard's health, whichever is greater. Any other
-  hit sends its suspicion to 1000. A knocked-out guard stays down, and
-  another guard that sees it raises the realm alarm.
+  noticed the crew is taken down: the swing is a two-second takedown, and if
+  the guard is still Unaware when it lands, the guard is knocked out whatever
+  either role (§12.8, v3.3; §29.1 orders the two). A guard that notices first
+  takes an ordinary hit. Any other hit sends its suspicion to 1000. A
+  knocked-out guard stays down; its body is seen exactly as a still crew
+  member lying on its tile, so tall grass hides it, and a `Drag` command pulls
+  it along at crouching speed. Another guard that sees it raises the realm
+  alarm, once.
 - **Capture.** At zero health a crew member drops its loot on the tile. It
   has ten seconds, and an ally beside it revives it in 3 s (a Mender in
   1.5 s). Anyone inside when the clock ends is caught.
@@ -257,11 +264,16 @@ the skiff → the clock.
 - **§12.9's grades** follow from who got out with what: Clean, Loud, Partial
   or Foiled.
 
-`planned()` is a heist played as a player would play it. The crew crouches
-past the gravel, ambushes the Breaker guard from the moss behind its post,
-then does the same to the Mender guard. It cracks the Vault in 13 s, loads
-every bag in 10, and leaves by skiff at 55 s. The outcome is **Clean**, 420
-of 420. It is committed as `golden/planned-clean.rbh`, because the seeded
+`planned()` is a heist played as a player would play it. v3.3 made it a
+different heist: the crack noise would bring every guard to the Vault, so the
+crew first takes down every guard it can reach unheard — the Scout, Breaker,
+Mender and Carrier guards, from the moss behind each, the last one reached by
+letting a Gravity Well pull the Breaker in and stepping round during its
+reset. The Warden's rise has one ramp, in front of it, so the Warden is left.
+All three then crack at once, Brittle stone doubling and the assist bonus
+adding a quarter, and the Vault opens in 4.2 s, before the noise can sound.
+The Scout and Breaker fill and leave; the Carrier fills its 300 on the
+Vault's far side and leaves at 53 s. The outcome is **Clean**, 508 of 508. It is committed as `golden/planned-clean.rbh`, because the seeded
 heists almost never open the Vault: 199 of 200 end Foiled.
 `cargo run --release --example planned` prints it second by second.
 
@@ -269,11 +281,13 @@ heists almost never open the Vault: 199 of 200 end Foiled.
 
 Four things about the document, each pinned by a test rather than argued:
 
-1. **§12.6's crack noise does nothing.** "Every 5 seconds adds 100 suspicion
-   to every guard in the Heart" — but §12.17 empties suspicion at 20 a tick,
-   so an unaware guard's 100 is gone in five ticks and never reaches
-   Suspicious at 200. What does make cracking loud is §12.17's own noise
-   table: "Breaking something — 5 m". (`the_crack_noise_empties_before_it_can_matter`)
+1. **§12.6's crack noise did nothing, and then it did everything.** v3.2's
+   "every 5 seconds adds 100 suspicion" drained away in five ticks (F28).
+   v3.3 made it a heard event that sends every guard in the Heart to the
+   Vault — and no ordinary crack is shorter than five seconds, so a crew that
+   has not cleared the Heart is found at the Vault. In the Python harness,
+   whose crews do not, an optimal crew's success falls from 65% to 7.5% (F32).
+   (`every_five_seconds_of_cracking_sends_every_guard_to_investigate_the_vault`)
 2. **§12.8's ambush has no way in on plain ground.** A crouched walk carries
    1 m and the tile behind a guard is 1 m away, so the last step of any
    approach is heard. The guard has then noticed, and "a guard that has not
@@ -281,10 +295,10 @@ Four things about the document, each pinned by a test rather than argued:
    has no control and no speed. Only a quiet surface lets you in. The fixture
    has moss behind two posts for that reason.
    (`a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss`)
-3. **"Cracking is 10 to 25 seconds" (§12.19) assumes a Breaker.** A Breaker
-   alone takes 15.2 s, and Scout, Breaker and Carrier take 12 s. A full crew
-   takes 9.6 s, just under the band. Four crew with no Breaker take 26 s, and
-   a lone Scout 100 s. (`cracking_takes_ten_to_twenty_five_seconds_only_with_a_breaker`)
+3. **"Cracking is 10 to 25 seconds" (§12.19) assumed a Breaker** (F30).
+   v3.3 now says so and adds the assist bonus: a Breaker alone takes 15.2 s,
+   a full crew 8 s and four with no Breaker 21.6 s, each exactly what §12.19
+   states. (`cracking_takes_what_12_19_says_with_and_without_a_breaker`)
 4. **§12.12 against §12.17.** "Guards' patrols shift slightly each run" sits
    beside "nothing here is random: a player who scouts an island can predict
    exactly what will happen". The two agree only if the shift is drawn once,
@@ -387,12 +401,12 @@ two numbers the spec had to add are the document's since v3.3: Static Coil's
 500 in its first paragraph (C34), so that one stays listed as a reading, with
 the reason. So does "blinds them", read as a crew unable to act.
 
-v3.3 changed four ward and fight rules this simulation has not followed yet:
-the ambush is a knockout keyed to the guard's remaining health, cracking makes
-every guard in the Heart investigate, disarming takes 15 seconds on the tile,
-and Lantern Glare triggers within 2 tiles. `tools/design_facts.py` reports the
-first three as behind the document rather than agreeing with it, and D56 owns
-all four.
+v3.3 changed four ward and fight rules, and they are ported (D56). Disarming
+is fifteen seconds standing on the ward's tile, restarting if the disarmer
+steps off. §10.3 does not switch a ward's sensor off for the one disarming it,
+so a Time Snare freezes its own disarmer and a Lantern Glare, which now fires
+within 2 tiles, shows the crew to every guard; that reading is G16. The ambush
+and the crack noise are under the Vault and fights below.
 
 Reset times come from §10.3 — Time Snare 12 s, Lantern Glare 20 s — although
 §10.2's Ward row gives every ward 10 s at level 1. Building this found that

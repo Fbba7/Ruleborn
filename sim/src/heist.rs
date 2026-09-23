@@ -18,10 +18,16 @@ pub const BREAKER_VAULT_DAMAGE: (i32, i32) = (2, 1);
 /// wind-up is the cadence: a hit lands 24 ticks after the swing starts.
 pub const HIT_TICKS: u32 = TICKS_PER_SECOND * 8 / 10;
 
-/// §12.6: "Cracking is loud: every 5 seconds adds 100 suspicion to every guard
-/// in the Heart." The fixture realm is the Heart, so that is every guard.
+/// §12.6 (v3.3): "every hit is heard within 5 m, and every 5 seconds of
+/// cracking every guard in the Heart hears the Vault and starts Investigating
+/// it". §12.17 gives the reason: "a heard event, not a suspicion increment,
+/// because suspicion added below 600 drains". The fixture realm is the Heart,
+/// so that is every guard. The hit itself is `Sound::Breaking`.
 pub const CRACK_NOISE_TICKS: u32 = TICKS_PER_SECOND * 5;
-pub const CRACK_NOISE: i32 = 100;
+
+/// §11.1 (v3.3): "While two or more characters work the same object, every
+/// hit on it deals 25% more: the assist bonus. It does not stack."
+pub const ASSIST_BONUS: (i64, i64) = (125, 100);
 
 /// §12.19: "Every role can load, at 30 units a second" — one a tick.
 pub const LOAD_PER_SECOND: i32 = 30;
@@ -54,12 +60,14 @@ pub const REVIVE_HEALTH: (i32, i32) = (30, 100);
 /// sum of §11.1's Carry column. A full crew can empty it; a smaller one cannot.
 pub const FIXTURE_EXPOSED: i32 = 750;
 
-/// §12.8: "the first hit on a guard that has not noticed the crew stuns it
-/// for 2 seconds and deals triple Power, or half the guard's full health,
-/// whichever is greater."
-pub const AMBUSH_STUN_TICKS: u32 = TICKS_PER_SECOND * 2;
-pub const AMBUSH_POWER: (i32, i32) = (3, 1);
-pub const AMBUSH_HEALTH_FLOOR: (i32, i32) = (1, 2);
+/// §12.8 (v3.3): "the first hit on a guard that has not noticed the crew
+/// knocks it out, whatever its role or level ... it deals exactly what the
+/// guard has left", and "the takedown takes 2 seconds, in which the attacker
+/// does nothing else". §29.1 orders the two: "a knockout ... after a 2 s
+/// takedown", and §12.8 requires the guard to be "still Unaware when the hit
+/// lands" — so the hit lands at the end of the two seconds, and a guard that
+/// notices before then takes an ordinary hit instead.
+pub const TAKEDOWN_TICKS: u32 = TICKS_PER_SECOND * 2;
 
 /// §10.2, the Law Pylon at level 1: "600 health".
 pub const PYLON_HEALTH: i32 = 600;
@@ -83,6 +91,9 @@ pub enum Task {
     Break = 4,
     /// Disarm one ward, by tile.
     Disarm = 5,
+    /// Drag one knocked-out guard, by index. §12.8: "A crew member can drag
+    /// a body at crouching speed and hide it."
+    Drag = 6,
 }
 
 /// Where a crew member stands in the heist.
@@ -202,14 +213,16 @@ pub const WELL_RADIUS: i32 = 3;
 pub const WELL_HOLD_TICKS: u32 = TICKS_PER_SECOND * 2;
 pub const SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 5 / 2;
 pub const GLARE_REVEAL_TICKS: u32 = TICKS_PER_SECOND * 5;
+/// §10.3 (v3.3), Lantern Glare's sensor: "a crew member comes within 2 tiles".
+pub const GLARE_RADIUS: i32 = 2;
 /// "blinds them for 2": the crew, read as unable to act — the only sense the
 /// simulation has in which a crew member sees.
 pub const GLARE_BLIND_TICKS: u32 = TICKS_PER_SECOND * 2;
-/// spec/wards.md: "3 s + 1 s per ward level", silent; "moving cancels it;
-/// progress is kept for 5 s".
-pub const DISARM_BASE_TICKS: u32 = TICKS_PER_SECOND * 3;
-pub const DISARM_PER_LEVEL_TICKS: u32 = TICKS_PER_SECOND;
-pub const DISARM_KEEP_TICKS: u32 = TICKS_PER_SECOND * 5;
+/// §10.3 (v3.3): "The disarmer stands on the ward's tile for 15 seconds at
+/// every ward level ... and cannot move, hide or use an ability until it
+/// finishes; stepping off starts it again." The Tinker trait's 30% is not
+/// modelled: the simulation has no traits yet.
+pub const DISARM_TICKS: u32 = TICKS_PER_SECOND * 15;
 
 /// A ward on the island.
 #[derive(Clone, Debug)]
@@ -222,9 +235,8 @@ pub struct Ward {
     pub armed_at: u32,
     pub disarmed: bool,
     pub broken: bool,
-    /// Disarm progress, and the tick it last advanced.
+    /// Disarm progress, in ticks on the tile.
     pub disarm: u32,
-    pub disarm_touched: u32,
 }
 
 impl Ward {
@@ -235,7 +247,7 @@ impl Ward {
             WARD_HEALTH_PER_LEVEL
         };
         Ward { kind, tile, level: 1, health, armed_at: 0, disarmed: false, broken: false,
-               disarm: 0, disarm_touched: 0 }
+               disarm: 0 }
     }
 
     /// Still doing anything at all.
@@ -244,6 +256,6 @@ impl Ward {
     }
 
     pub fn disarm_ticks(&self) -> u32 {
-        DISARM_BASE_TICKS + DISARM_PER_LEVEL_TICKS * self.level as u32
+        DISARM_TICKS
     }
 }

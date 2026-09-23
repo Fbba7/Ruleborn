@@ -72,9 +72,12 @@ pub enum Kind {
     /// drop loot to run faster"; §12.19: it "costs exactly the fraction
     /// dropped".
     Drop = 8,
-    /// Disarm the ward at (`x`, `y`) from beside it. spec/wards.md: silent,
-    /// 3 s + 1 s a level, cancelled by moving.
+    /// Disarm the ward at (`x`, `y`), standing on its tile. §10.3 (v3.3):
+    /// fifteen seconds at every level, silent; stepping off starts it again.
     Disarm = 9,
+    /// Drag knocked-out guard number `x`. §12.8: "A crew member can drag a
+    /// body at crouching speed and hide it."
+    Drag = 10,
 }
 
 impl Kind {
@@ -90,6 +93,7 @@ impl Kind {
             7 => Some(Kind::Break),
             8 => Some(Kind::Drop),
             9 => Some(Kind::Disarm),
+            10 => Some(Kind::Drag),
             _ => None,
         }
     }

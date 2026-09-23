@@ -1250,7 +1250,7 @@ fn ticks_to_open(roles: &[usize]) -> u32 {
 }
 
 #[test]
-fn a_breaker_cracks_at_double_damage_one_hit_every_eight_tenths() {
+fn a_breaker_cracks_at_double_damage_and_a_helper_adds_a_quarter() {
     let mut world = vault_world(2);
     put(&mut world, 0, 6, 5);                     // the Scout
     put(&mut world, 1, 7, 6);                     // the Breaker
@@ -1261,24 +1261,21 @@ fn a_breaker_cracks_at_double_damage_one_hit_every_eight_tenths() {
     }
     assert_eq!(world.vault.health, 1500, "nothing lands before the 0.8 s wind-up ends");
     world.step();
-    assert_eq!(world.vault.health, 1500 - 12 - 2 * 40, "Scout 12, Breaker twice 40");
+    // §11.1 (v3.3): two working one object, every hit a quarter more.
+    assert_eq!(world.vault.health, 1500 - 15 - 100, "Scout 12 and Breaker 80, each x1.25");
 }
 
 #[test]
-fn cracking_takes_ten_to_twenty_five_seconds_only_with_a_breaker() {
-    // §12.19: "Cracking is 10 to 25 seconds." At Vault level 1, 1,500 health.
-    let secs = |roles: &[usize]| ticks_to_open(roles) / TICKS_PER_SECOND;
-    let breaker = secs(&[1]);
-    let three = secs(&[0, 1, 2]);
-    for (label, s) in [("a Breaker alone", breaker), ("Scout, Breaker, Carrier", three)] {
-        assert!((10..=25).contains(&s), "{label}: {s} s, outside 12.19's band");
-    }
-    // A full crew hits for 126 every 0.8 s: twelve hits, 9.6 s — just under
-    // the band's floor. Pinned at its value rather than rounded into it.
-    assert_eq!(ticks_to_open(&[0, 1, 2, 3, 4]), 12 * h::HIT_TICKS);
-    // Without one it is not: four crew with no Breaker hit for 46 every 0.8 s.
-    let no_breaker = secs(&[0, 2, 3, 4]);
-    assert!(no_breaker > 25, "no Breaker: {no_breaker} s — the band assumes one");
+fn cracking_takes_what_12_19_says_with_and_without_a_breaker() {
+    // §12.19 (v3.3): "at Vault level 1, 15 seconds for a Breaker alone and 8
+    // for a full crew with the assist bonus ... about 26 seconds for four at
+    // Vault level 1 without the assist bonus, and about 22 with it."
+    // Alone: 80 a hit, nineteen hits: 15.2 s.
+    assert_eq!(ticks_to_open(&[1]), 19 * h::HIT_TICKS);
+    // All five: 15 + 100 + 10 + 25 + 7 = 157 a hit, ten hits: 8 s.
+    assert_eq!(ticks_to_open(&[0, 1, 2, 3, 4]), 10 * h::HIT_TICKS);
+    // Four with no Breaker: 15 + 10 + 25 + 7 = 57 a hit, 27 hits: 21.6 s.
+    assert_eq!(ticks_to_open(&[0, 2, 3, 4]), 27 * h::HIT_TICKS);
 }
 
 #[test]
@@ -1299,12 +1296,10 @@ fn a_hit_on_the_vault_is_heard_five_steps_away() {
 }
 
 #[test]
-fn the_crack_noise_empties_before_it_can_matter() {
-    // §12.6: "every 5 seconds adds 100 suspicion to every guard in the
-    // Heart". §12.17 empties suspicion at 20 a tick, so an unaware guard's
-    // 100 is gone in five ticks and it never reaches Suspicious at 200.
-    // This pins the collision between the two sections, measured rather
-    // than argued: see the README.
+fn every_five_seconds_of_cracking_sends_every_guard_to_investigate_the_vault() {
+    // §12.6 (v3.3): "every 5 seconds of cracking every guard in the Heart
+    // hears the Vault and starts Investigating it" — a heard event, which
+    // replaced v3.2's 100 suspicion that §12.17's drain emptied in five ticks.
     let mut world = vault_world(2);
     put(&mut world, 1, 5, 6);
     world.raiders[1].task = Task::Crack;
@@ -1313,18 +1308,19 @@ fn the_crack_noise_empties_before_it_can_matter() {
     let mut g = make_guard(0, 1, world.grid.index(13, 0).unwrap(), &world.grid);
     g.facing = Ang::from_degrees(0);
     world.guards.push(g);
-    let mut peak = 0;
-    let mut state_seen = State::Unaware;
-    for _ in 0..(20 * TICKS_PER_SECOND) {
+    while world.vault.first_hit.is_none() {
         world.step();
-        peak = peak.max(world.guards[0].suspicion);
-        if world.guards[0].state != State::Unaware {
-            state_seen = world.guards[0].state;
-        }
     }
-    assert!(world.vault.first_hit.is_some(), "cracking happened");
-    assert_eq!(peak, h::CRACK_NOISE, "the 100 arrives");
-    assert_eq!(state_seen, State::Unaware, "and never moves the guard");
+    let first = world.vault.first_hit.unwrap();
+    while world.tick <= first + h::CRACK_NOISE_TICKS - 1 {
+        world.step();
+    }
+    assert_eq!(world.guards[0].state, State::Unaware, "the hit alone is not heard");
+    world.step();
+    assert_eq!(world.guards[0].state, State::Investigating, "five seconds in, it hears the Vault");
+    let spot = world.guards[0].interest.expect("an interest");
+    assert!(world.grid.adjacent(spot, world.vault.tile), "a tile beside the Vault");
+    assert!(world.grid.at(spot).passable(), "one it can stand on");
 }
 
 #[test]
@@ -1537,31 +1533,51 @@ fn a_downed_crew_member_is_caught_after_ten_seconds_unless_revived() {
 }
 
 #[test]
-fn two_ambush_hits_knock_out_a_guard_of_equal_level_in_every_pairing() {
-    // §12.8: triple Power or half the guard's full health, whichever is
-    // greater, "so two ambush hits now knock out a guard of equal level in
-    // every pairing". All 25, from §11.1's columns.
+fn an_ambush_knocks_out_every_role_of_guard_after_a_two_second_takedown() {
+    // §12.8 (v3.3): the first hit on an Unaware guard "knocks it out,
+    // whatever its role or level ... a build test asserts it for all
+    // twenty-five pairings of attacker and guard role". §29.1: "a knockout
+    // ... after a 2 s takedown". This is that build test.
     let roles = [Role::Scout, Role::Warden, Role::Breaker, Role::Carrier, Role::Mender];
-    for a in roles {
-        for g in roles {
-            let hit = (a.power() * 3).max(g.health() / 2);
-            assert!(2 * hit >= g.health(), "{a:?} on {g:?}");
+    for (row, guard_role) in roles.iter().enumerate() {
+        for attacker in roles {
+            let mut world = vault_world(1);
+            let gi = post(&mut world, row, 3, 3);
+            world.guards[gi].facing = Ang::from_degrees(270);   // north, away
+            world.raiders[0].role = attacker;
+            put(&mut world, 0, 3, 4);                          // behind it
+            world.raiders[0].task = Task::Attack;
+            world.raiders[0].target = gi as u32;
+            for _ in 0..(h::TAKEDOWN_TICKS - 1) {
+                world.step();
+            }
+            assert!(!world.guards[gi].knocked_out, "{attacker:?} on {guard_role:?}: not before 2 s");
+            world.step();
+            assert!(world.guards[gi].knocked_out, "{attacker:?} on {guard_role:?}: down at 2 s");
+            assert_eq!(world.guards[gi].health, 0, "exactly what it had left");
+            assert!(!world.alarm_raised, "an ambush raises nothing");
         }
     }
-    // And in the world: a Scout and a Breaker behind the Warden guard (420).
-    let mut world = vault_world(2);
-    let gi = post(&mut world, 1, 3, 3);
+}
+
+#[test]
+fn a_guard_that_notices_mid_takedown_takes_an_ordinary_hit() {
+    // "The guard must still be Unaware when the hit lands." Past the 0.8 s
+    // an ordinary swing needs, the swing lands at once, for Power.
+    let mut world = vault_world(1);
+    let gi = post(&mut world, 1, 3, 3);           // the Warden, 420
     put(&mut world, 0, 3, 4);
-    put(&mut world, 1, 3, 4);
-    for ri in 0..2 {
-        world.raiders[ri].task = Task::Attack;
-        world.raiders[ri].target = gi as u32;
-    }
-    for _ in 0..h::HIT_TICKS {
+    world.raiders[0].task = Task::Attack;
+    world.raiders[0].target = gi as u32;
+    for _ in 0..TICKS_PER_SECOND {
         world.step();
     }
-    assert!(world.guards[gi].knocked_out, "210 and 210: down in one exchange");
-    assert!(!world.alarm_raised, "an ambush raises nothing");
+    world.guards[gi].state = State::Suspicious;   // it turns, a second in
+    world.guards[gi].suspicion = 400;
+    world.guards[gi].state_since = world.tick;
+    world.step();
+    assert!(!world.guards[gi].knocked_out);
+    assert_eq!(world.guards[gi].health, 420 - 12, "the Scout's Power, not a knockout");
 }
 
 #[test]
@@ -1596,6 +1612,52 @@ fn a_knocked_out_guard_found_by_another_raises_the_realm_alarm() {
     world.step();
     assert_eq!(world.knockouts_discovered, 1, "found once, counted once");
     let _ = seer;
+}
+
+#[test]
+fn a_body_in_tall_grass_is_not_found() {
+    // §12.8 (v3.3): "a body is seen exactly as a still crew member lying on
+    // its tile would be, so tall grass ... hides it".
+    let mut world = vault_world(0);
+    post(&mut world, 0, 3, 6);                    // a Scout, facing north
+    let down = post(&mut world, 1, 3, 3);         // three tiles in front of it
+    world.grid.place(3, 3, Feature::TallGrass);
+    world.guards[down].knocked_out = true;
+    for _ in 0..TICKS_PER_SECOND {
+        world.step();
+    }
+    assert!(!world.guards[down].found);
+    assert_eq!(world.knockouts_discovered, 0);
+}
+
+#[test]
+fn a_dragged_body_goes_with_its_dragger_at_crouching_speed() {
+    // "A crew member can drag a body at crouching speed and hide it."
+    let mut world = vault_world(1);
+    let down = post(&mut world, 1, 3, 3);
+    world.guards[down].knocked_out = true;
+    put(&mut world, 0, 3, 4);
+    world.raiders[0].gait = Gait::Run;            // whatever the gait
+    world.raiders[0].task = Task::Drag;
+    world.raiders[0].target = down as u32;
+    let from = world.grid.index(3, 4).unwrap();
+    let to = world.grid.index(3, 10).unwrap();
+    world.raiders[0].route = path::find(&world.grid, from, to).unwrap();
+    world.step();
+    let r = &world.raiders[0];
+    let crouched = crate::step_for(&world.grid, &world.sheet, r, Gait::Crouch, Some(from), false);
+    let (_, y0) = world.grid.centre(from);
+    // Within a millionth of a tile: the step is walked along a bearing, and
+    // the cosine carries its own last-bit rounding.
+    let moved = world.raiders[0].at.y - y0;
+    assert!((moved - crouched).0.abs() < 1 << 12, "one tick at crouching speed, not running: \
+            {moved:?} against {crouched:?}");
+    assert_eq!(world.guards[down].at, world.raiders[0].at, "and the body with it");
+    for _ in 0..(10 * TICKS_PER_SECOND) {
+        world.step();
+    }
+    assert_eq!(world.grid.tile_at(world.guards[down].at.x, world.guards[down].at.y), Some(to),
+               "left where the dragger stopped");
 }
 
 #[test]
@@ -1643,8 +1705,11 @@ fn the_planned_heist_ends_clean_with_every_bag_full() {
     let o = world.outcome();
     assert_eq!(o.grade, Grade::Clean, "{o:?}");
     assert_eq!(o.banked, o.capacity, "every bag full");
-    assert_eq!(world.guards.iter().filter(|g| g.knocked_out).count(), 2,
-               "two guards ambushed, and nobody found them");
+    assert_eq!(world.guards.iter().filter(|g| g.knocked_out).count(), 4,
+               "four guards taken down; the Warden on its rise is out of reach");
+    assert_eq!(world.knockouts_discovered, 0, "and nobody found them");
+    assert_eq!(world.guards[1].state, State::Unaware,
+               "the Vault opened before five seconds of cracking, so the Warden never heard it");
     assert_eq!(o.pages, 1, "Haste's pylon broken on the way in: a page of it");
     assert!(heist.size_fits());
 }
@@ -1845,7 +1910,7 @@ fn dropping_loot_costs_exactly_the_fraction_dropped() {
     assert_eq!(world.raiders[2].carried, 0);
     let sheet = world.sheet;
     let r = &world.raiders[2];
-    assert_eq!(crate::step_for(&world.grid, &sheet, r, None, false), Role::Carrier.speed(),
+    assert_eq!(crate::step_for(&world.grid, &sheet, r, r.gait, None, false), Role::Carrier.speed(),
                "empty-handed: \u{a7}11.1's full 3.6 tiles a second");
 }
 
@@ -1996,25 +2061,67 @@ fn a_crystal_wall_blocks_until_it_is_broken() {
 }
 
 #[test]
-fn disarming_takes_four_seconds_at_level_one_is_silent_and_never_resets() {
-    let mut world = ward_world(1, WardKind::TimeSnare, (3, 3));
-    let snare = world.grid.index(3, 3).unwrap();
-    let g = post(&mut world, 1, 3, 6);            // two steps away, facing away:
-    world.guards[g].facing = Ang::from_degrees(90); // only a sound could wake it
-    put(&mut world, 0, 3, 4);
+fn disarming_takes_fifteen_seconds_on_the_tile_is_silent_and_stepping_off_restarts_it() {
+    // §10.3 (v3.3): "stands on the ward's tile for 15 seconds at every ward
+    // level ... stepping off starts it again. Disarming makes no noise." A
+    // Static Coil, whose shock does not stop the disarmer: 5 of them, 40%.
+    let mut world = ward_world(1, WardKind::StaticCoil, (3, 3));
+    let coil = world.grid.index(3, 3).unwrap();
+    let g = post(&mut world, 1, 3, 6);
+    world.guards[g].facing = Ang::from_degrees(90);
+    put(&mut world, 0, 3, 3);
     world.raiders[0].task = Task::Disarm;
-    world.raiders[0].target = snare;
-    for _ in 0..(h::DISARM_BASE_TICKS + h::DISARM_PER_LEVEL_TICKS - 1) {
+    world.raiders[0].target = coil;
+    for _ in 0..(10 * TICKS_PER_SECOND) {
         world.step();
     }
-    assert!(!world.wards[0].disarmed, "not before four seconds");
+    put(&mut world, 0, 3, 4);                     // steps off
     world.step();
-    assert!(world.wards[0].disarmed);
-    assert_eq!(world.guards[g].state, State::Unaware, "silent");
-    // Walk onto it: nothing.
+    assert_eq!(world.wards[0].disarm, 0, "stepping off starts it again");
     put(&mut world, 0, 3, 3);
+    for _ in 0..(h::DISARM_TICKS - 1) {
+        world.step();
+    }
+    assert!(!world.wards[0].disarmed, "not before fifteen seconds");
     world.step();
-    assert_eq!(world.raiders[0].frozen_until, 0, "a disarmed ward does not reset");
+    assert!(world.wards[0].disarmed, "fifteen seconds on the tile");
+    assert_eq!(world.guards[g].state, State::Unaware, "silent");
+}
+
+#[test]
+fn a_time_snare_freezes_its_own_disarmer_and_the_disarm_waits() {
+    // §10.3 does not switch a ward's sensor off for the one disarming it, so
+    // standing on a Time Snare trips it. A frozen disarmer is still on the
+    // tile: its fifteen seconds wait for the freeze and do not restart.
+    let mut world = ward_world(1, WardKind::TimeSnare, (3, 3));
+    let snare = world.grid.index(3, 3).unwrap();
+    put(&mut world, 0, 3, 3);
+    world.raiders[0].task = Task::Disarm;
+    world.raiders[0].target = snare;
+    // Frozen 2.5 s; working until the snare re-arms at 12 s and freezes it
+    // again; then the rest of the fifteen. Without the second freeze it
+    // would be done at 17.5 s; with it, by 20.
+    for _ in 0..(h::SNARE_FREEZE_TICKS + h::DISARM_TICKS) {
+        world.step();
+    }
+    assert!(!world.wards[0].disarmed, "the snare's reset froze it a second time");
+    for _ in 0..h::SNARE_FREEZE_TICKS {
+        world.step();
+    }
+    assert!(world.wards[0].disarmed, "two freezes and fifteen seconds of work");
+}
+
+#[test]
+fn a_lantern_glare_fires_when_a_crew_member_comes_within_two_tiles() {
+    // §10.3 (v3.3): "Triggered: a crew member comes within 2 tiles".
+    let at = |x: u16, y: u16| {
+        let mut world = ward_world(1, WardKind::LanternGlare, (3, 3));
+        put(&mut world, 0, x, y);
+        world.step();
+        world.revealed_until
+    };
+    assert_eq!(at(3, 5), h::GLARE_REVEAL_TICKS, "two tiles away: it fires");
+    assert_eq!(at(3, 6), 0, "three tiles away: it does not");
 }
 
 #[test]
@@ -2118,3 +2225,4 @@ fn a_drop_is_heard_two_metres_off_for_one_level_and_four_for_three() {
     assert_eq!(wakes(false), State::Unaware, "a crouched step carries one tile");
     assert_eq!(wakes(true), State::Investigating, "the landing carries two");
 }
+

@@ -160,6 +160,22 @@ dict(
              register=["F26", "F27"],
              gate="every realm/depth pair either satisfies both bands or "
                   "is recorded as unable to"),
+        dict(id="T0.11", owner="claude", status="ready",
+             title="Give the harness a crew that clears the Heart before it "
+                   "cracks",
+             gate="a harness crew that takes guards down from behind before "
+                  "the Vault, measured against \u00a713.2's bands and "
+                  "\u00a719.27's gates with v3.3's crack noise on",
+             detail="v3.3's crack noise calls every guard in the Heart to "
+                    "the Vault five seconds into cracking, and no ordinary "
+                    "crack is shorter. The harness's crews never take a guard "
+                    "down, so with the rule ported an optimal crew succeeds "
+                    "7.5% of the time against 65% without it, and every band "
+                    "is overshot (F32). <code>sim/</code>'s planned heist shows "
+                    "the other game: four guards down from the moss behind "
+                    "them, a crack in 4.2 seconds, and the noise never sounds. "
+                    "Until a harness crew plays that game, nothing measured "
+                    "here says whether v3.3's Heart is fair."),
         dict(id="T0.7", owner="claude", status="done",
              title="Specify the response layer \u2014 and report that the fix "
                    "did not work",

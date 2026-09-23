@@ -109,8 +109,9 @@ def measure(n: int, realm: int, depth: int, posts: int, bands: int,
     about fifteen points, which is how `generator_settings.py` started and why
     it says so in its own docstring.
     """
+    # Without v3.3's crack noise, which swamps the wards it measures (F32).
     rs = run_batch(n, depth - 1, realm, "competent", laws="defensive",
-                   shaped=bands, posts=posts, wards=wards)
+                   shaped=bands, posts=posts, wards=wards, crack_noise=False)
     p = sum(1 for r in rs if not r.success) / len(rs)
     return (100 * p, 100 * math.sqrt(p * (1 - p) / len(rs)),
             statistics.median(r.crew_decisions for r in rs))

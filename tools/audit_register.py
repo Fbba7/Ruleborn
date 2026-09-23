@@ -48,7 +48,8 @@ that tells you to replace a sentence the document does not contain.
 #: Found by reading v3.3 against itself, as the six v3.3 verification passes
 #: went: each is a statement v3.3 makes twice, or a figure that did not move
 #: with the one it was derived from.
-FOUND_IN_V33 = frozenset({"C34", "C35", "C36", "C37", "C38", "C39", "D56"})
+FOUND_IN_V33 = frozenset({"C34", "C35", "C36", "C37", "C38", "C39", "D56",
+                          "F32", "G16"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -4404,7 +4405,8 @@ dict(id="F16", kind="finding", severity="significant", status="proposed",
           "generated island\u2019s 30.7%, because guards posted at chokepoints "
           "are badly placed once the chokepoints are gone. Design cuts both "
           "ways."
-          "<br><br><strong>Re-measured after D55</strong> (the harness now reads peripheral vision as the content file does; same seeds and sample sizes): generated geometry 25.3% off, 33.3% on (+8.0, unchanged); designed 8.7% off, 97.3% on (+88.7, unchanged). Designed geometry is still worth eleven times generated. The designed island now holds 97.3% rather than every raid.",
+          "<br><br><strong>Re-measured after D55</strong> (the harness now reads peripheral vision as the content file does; same seeds and sample sizes): generated geometry 25.3% off, 33.3% on (+8.0, unchanged); designed 8.7% off, 97.3% on (+88.7, unchanged). Designed geometry is still worth eleven times generated. The designed island now holds 97.3% rather than every raid."
+          "<br><br><strong>Re-measured after D56</strong> (v3.3's half-speed crouch; the crack noise off, because with it on it decides the answer itself, F32; n=40 a cell, all layers against all but geometry): generated geometry is worth \u22127.5 points, which is zero inside the noise, and designed geometry 57.5. With the noise on, \u221230.0 and 30.0. The finding holds in the form that matters \u2014 the generator's geometry adds nothing and a designed island's adds a great deal \u2014 and the ratio the test used to assert has become a difference, since a ratio to zero is not a claim.",
      rec="This is the sharpest argument for the creator ladder \u00a718.7 "
          "describes, and against treating generation as equivalent to design. "
          "\u00a713.2\u2019s \u201c60% from design rather than level\u201d is "
@@ -4423,7 +4425,7 @@ dict(id="F16", kind="finding", severity="significant", status="proposed",
          "5%. <code>python3 -m tools.heist_harness.test_harness</code>."
          "<br><br><strong>Re-measured on the current harness</strong> \u2014 competent crew, no laws, two realms crossed, 150 raids a cell:<br><br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;off &nbsp;&nbsp;&nbsp;&nbsp;on &nbsp;&nbsp;contribution<br>generated &nbsp;24.0% &nbsp;&nbsp;32.0% &nbsp;&nbsp;&nbsp;<strong>+8.0</strong><br>designed &nbsp;&nbsp;11.3% &nbsp;<strong>100.0%</strong> &nbsp;&nbsp;<strong>+88.7</strong></code><br><br>The finding holds and grows. Designed geometry is worth <strong>eleven times</strong> generated geometry, against the four to seven times first recorded. The designed island still turns back every raid, and its geometry-off hold rate is still <em>below</em> the generated one \u2014 guards posted at chokepoints are badly placed once the chokepoints are gone."
          "<br><br>\u00a713.4\u2019s own method agrees: across all 32 coalitions, generated geometry takes 8.5% of the credit and the shaped generator this finding argued for takes 16.0% (F15).",
-     measured="re-run against harness ef4163da978cc0f0 (D55)"),
+     measured="re-run against harness 8e73e394d1cdb9a0 (D56)"),
 dict(id="D23", kind="deviation", severity="change", status="done",
      title="\u00a713.4's ablation was built exactly as specified, Shapley included",
      refs=["13.4", "13.2"],
@@ -4690,7 +4692,7 @@ dict(id="C39", kind="contradiction", severity="minor", status="open",
           "harness”</em>, while §13.2 says they were measured before it.",
      rec="Six one-line edits. None changes a rule."),
 
-dict(id="D56", kind="deviation", severity="significant", status="open",
+dict(id="D56", kind="deviation", severity="significant", status="done",
      title="sim/ and the harness run five rules v3.3 replaced",
      refs=["12.8", "12.6", "12.17", "10.3"],
      body="v3.3 changed rules this repository had already built. Brought "
@@ -4719,8 +4721,95 @@ dict(id="D56", kind="deviation", severity="significant", status="open",
           "it declares against the section it names, and reports these as "
           "behind the document under this item rather than as agreeing.",
      rec="Port the five rules to <code>sim/</code> and the harness, re-record "
-         "the goldens, and re-measure what reads the ambush or the crouch.",
-     measured="tools/design_facts.py: BEHIND"),
+         "the goldens, and re-measure what reads the ambush or the crouch."
+         "<br><br><strong>Done.</strong> <code>sim/</code>: the takedown is "
+         "two seconds and a knockout keyed to the guard's remaining health, "
+         "landing only if the guard is still Unaware (§29.1 orders it: "
+         "\u201ca knockout \u2026 after a 2 s takedown\u201d), and a build "
+         "test runs all 25 role pairings; a body is seen as a still crew "
+         "member lying on its tile, and can be dragged at crouching speed; "
+         "five seconds of cracking send every guard in the Heart to "
+         "investigate the Vault; disarming is fifteen seconds on the ward's "
+         "tile and restarts when the disarmer steps off; Lantern Glare fires "
+         "within 2 tiles. v3.3's new assist bonus is in too. The planned "
+         "golden heist had to be replanned rather than retimed: it now takes "
+         "four guards down from the moss behind them and cracks in under five "
+         "seconds, so the noise never sounds. The harness crouches at half "
+         "speed and hears the crack; it had imported v3.2's 100-suspicion "
+         "crack noise and never applied it. <code>design_facts</code> now "
+         "reads every declared fact back from its home section, and nothing "
+         "is behind. Harness fingerprint 392187af \u2192 8e73e394. Hearing "
+         "the crack turned out to decide nearly every raid the harness plays; "
+         "that is F32.",
+     measured="harness 8e73e394d1cdb9a0"),
+
+dict(id="F32", kind="finding", severity="design", status="open",
+     title="Five seconds of cracking calls every guard in the Heart to the "
+           "crew, and no ordinary crack is shorter than five seconds",
+     refs=["12.6", "12.17", "12.19", "13.2", "19.27"],
+     body="§12.6 (v3.3): <em>\u201cevery 5 seconds of cracking every guard in "
+          "the Heart hears the Vault and starts Investigating it\u201d</em>. "
+          "§12.19: cracking a level-1 Vault takes 15 seconds for a Breaker alone "
+          "and 8 for a full crew with the assist bonus. So the noise sounds "
+          "before any ordinary Vault opens, and every guard in the Heart walks "
+          "to the one place the crew has to stand for the next 10 seconds of "
+          "loading.<br><br>With the rule ported (D56), the harness measures what "
+          "that does. Same seeds, same crews, noise off against on:<br><br><code>"
+          "optimal crew succeeds, realm 3, two realms        65.0% \u2192 7.5%<br>"
+          "careless crew succeeds, the same                   0.0% \u2192 0.0%<br>"
+          "held, realm 1, one post at level 5, three realms  42.0% \u2192 67.6%<br>"
+          "held, realm 3, \u00a75.2's six wards, three realms   48.0% \u2192 80.0%<br>"
+          "competent crew's banked fill, realm 3, no laws    23.7% \u2192 4.0%</code>"
+          "<br><br>§19.27's depth gate asks the optimal crew to beat the careless "
+          "one by 35 points. With the noise it beats it by 4 to 8 points at "
+          "every depth from one realm to four (<code>python3 -m "
+          "tools.heist_harness depth</code>, against 58 to 82 before), so the "
+          "gate phases 2 and 3 exit on fails, and §13.2's bands are overshot "
+          "by 20 to 50 points from realm level 2 up. And the economy stands on it: "
+          "what an attempt is worth, grade times fill, falls from 0.137 to 0.027 "
+          "for a crew stopping at 70% and from 0.170 to 0.044 for one that "
+          "fills (<code>breakeven</code>), where §9.6 publishes 0.122 to 0.170 "
+          "\u2014 so §9.6's band, and the 35 to 49 days of upgrade pacing built "
+          "on it (C36), are numbers for a game without the rule. v3.3's own hold table (§13.2, 34.4% at realm 3) "
+          "reads like this harness without the noise, which suggests it was "
+          "measured before the rule arrived.<br><br><strong>What this does not "
+          "show.</strong> No harness crew takes a guard down first, and the "
+          "harness prices a Vault at its realm level, so a realm-3 Vault holds "
+          "4,500 and takes three times §12.19's example to crack. A crew that "
+          "clears the Heart first is not caught this way: <code>sim/</code>'s "
+          "planned heist takes four of five guards down from the moss behind "
+          "them and cracks in 4.2 seconds with Brittle stone and the assist "
+          "bonus, so the noise never sounds. So the rule does not make raiding "
+          "impossible. It makes it a different game, in which the Heart is "
+          "cleared before the Vault is touched, and nothing in §13.2, §19.27 or "
+          "this harness has been measured for that game yet.",
+     rec="Yours: decide whether the Heart is meant to be cleared before "
+         "every crack. If it is, keep the rule, and the next build step is a "
+         "harness crew that ambushes first \u2014 then §13.2's bands and "
+         "§19.27's gates are re-measured against it. If it is not, the noise "
+         "needs a reach (every hit is already heard within 5 m) or an interval "
+         "a full crew beats at Vault level 1 (8 s, so 10 s would do), and "
+         "either can be measured here with one constant.",
+     measured="harness 8e73e394d1cdb9a0; test_the_crack_noise_decides_nearly_every_raid"),
+
+dict(id="G16", kind="gap", severity="minor", status="open",
+     title="A disarmer stands on the ward it is disarming, and nothing says "
+           "whether the ward fires at it",
+     refs=["10.3"],
+     body="§10.3 (v3.3): the disarmer \u201cstands on the ward's tile for 15 "
+          "seconds\u201d. Three of the four triggered wards fire on exactly "
+          "that: Time Snare on its tile, Gravity Well within 3 tiles and "
+          "Lantern Glare within 2. §10.3 does not say that disarming switches "
+          "the sensor off, so read literally a Time Snare freezes its own "
+          "disarmer, re-arms after 12 seconds and freezes it again \u2014 20 "
+          "seconds for a 15-second job \u2014 and a Lantern Glare shows the "
+          "crew to every guard in the realm the moment anyone steps up to "
+          "disarm it. <code>sim/</code> takes that reading, says so, and pins "
+          "it with a test.",
+     rec="One sentence in §10.3: whether a ward's sensor ignores the crew "
+         "member disarming it. If it does, the Glare stays disarmable; if it "
+         "does not, say that the Glare can only be smashed.",
+     measured="sim/: a_time_snare_freezes_its_own_disarmer_and_the_disarm_waits"),
 
 ]
 
@@ -4983,12 +5072,22 @@ V33 = {
     "level 1 get their own band, 25 to 40%, by a stated rule. The holds are "
     "measured before the peripheral-vision alignment, and realm level 4 at "
     "two posts rather than three; §13.2 says both and defers them to "
-    "the re-run."),
+    "the re-run.<br><br><strong>Re-measured under v3.3's rules</strong> (D56, "
+    "crack noise off): realm 3 on its six wards holds 48.0%, three points "
+    "over the band, and a flat ten 68.0%. With the noise on, 80.0% and "
+    "90.0% (F32)."),
 
 "F22": dict(status="fixed", note=
     "<strong>Closed another way.</strong> Not a second post: realm levels 1 "
     "and 2 get eight wards, realm 2 measures 37.6% at one post, and realm 1 "
-    "keeps one post under its own band."),
+    "keeps one post under its own band."
+    "<br><br><strong>Re-measured under v3.3's rules</strong> (D56, crack "
+    "noise off): at realm 1 across three realms, one post at level 5 holds "
+    "42.0% and two posts 80.0% \u2014 the same 38-point gap, with the "
+    "half-speed crouch lifting one post into the band. With the noise on, "
+    "67.6% and 92.8% (F32). The cell F22 was first measured in \u2014 two "
+    "posts, two realms \u2014 reads 66.0%, against 44.8% under v3.2's "
+    "rules; <code>generator_settings --self-test</code> pins the new value."),
 
 "G5": dict(status="fixed", note=
     "A pylon shows its law’s glyph and a tag names it on first sight "

@@ -149,8 +149,9 @@ def formulas() -> str:
                    f"+1 per 30 s and +1 per guard found; "
                    f"reinforcement at {det['alarm']['reinforcement_at']}"))
     amb = det["ambush"]
-    out.append(row("Ambush", f"first unseen hit: {amb['stun_seconds']} s stun and "
-                             f"{amb['damage_multiplier']}x damage; "
+    out.append(row("Ambush", f"first hit on an Unaware guard: a knockout after a "
+                             f"{amb['takedown_seconds']} s takedown, in all "
+                             f"{amb['knockout_pairings']} role pairings; "
                              f"level advantage counts for at most "
                              f"{amb['level_advantage_cap']} levels"))
     out.append("\n### Guard vision\n\n")
