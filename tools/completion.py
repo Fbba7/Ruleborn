@@ -38,6 +38,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 from design_doc import TEXT  # noqa: E402
 
 SIM = ROOT / "sim"
+CLIENT = ROOT / "client"
 SERVER = ROOT / "server"
 CONTENT = ROOT / "content"
 
@@ -74,6 +75,18 @@ def server_tests(*names: str):
         missing = [n for n in names if n not in results]
         passed = [n for n in names if results.get(n) == "passed"]
         return (len(passed) / len(names), f"{len(passed)} of {len(names)} server tests pass",
+                missing)
+    return proof
+
+
+def client_tests(*names: str):
+    """Client tests by name, from the last headless run of client/status.py."""
+    def proof():
+        path = CLIENT / "status.json"
+        results = json.loads(path.read_text(encoding="utf-8"))["tests"] if path.exists() else {}
+        missing = [n for n in names if n not in results]
+        passed = [n for n in names if results.get(n) == "passed"]
+        return (len(passed) / len(names), f"{len(passed)} of {len(names)} client tests pass",
                 missing)
     return proof
 
@@ -143,10 +156,16 @@ DELIVERABLES = [
 
     ("2", "Project structure", FRONTEND, not_started("a client project builds on both stores' targets")),
     ("2", "Localisation", FRONTEND, not_started("the client loads its strings from a catalogue")),
-    ("2", "Portrait interface", FRONTEND, not_started("the client's portrait layout renders")),
+    ("2", "Portrait interface", FRONTEND, client_tests(
+        "every control is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:19.5",
+        "every control is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:16",
+        "no text is smaller than 13 points (§21.8)")),
     ("2", "Save and settings", FRONTEND, not_started("the client saves and restores its settings")),
 
-    ("3", "Render a replay", FRONTEND, not_started("the client plays a golden replay back on screen")),
+    ("3", "Render a replay", FRONTEND, client_tests(
+        "the client's simulation is the rules version every golden replay names",
+        "every golden replay re-simulates in the client, every second agreeing with its checksums",
+        "the replay screen plays a golden to its end and shows its grade")),
     ("3", "Capture input", FRONTEND, not_started("taps become sim/ commands in a replay")),
     ("3", "Show a result", FRONTEND, not_started("the result screen reads the validator's verdict")),
 

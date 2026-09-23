@@ -115,7 +115,7 @@
       "name": "Line of sight",
       "section": "12.17",
       "task": "T5.2",
-      "what": "Per tile, as 21.12 requires. Feet and eyes are separate properties, as 6.2's fence and fog bank require. The same line from either end.",
+      "what": "Per tile, as 21.12 requires. Feet and eyes are separate properties, as 6.2's fence and fog bank require. The same line from either end. What a guard's cone reaches is drawn from the same rule, tile by tile (21.12).",
       "tests": [
         "a_straight_line_crosses_only_its_own_row",
         "a_line_is_the_same_from_either_end",
@@ -126,7 +126,9 @@
         "a_guard_can_always_see_out_of_its_own_tile",
         "a_ruin_wall_hides_the_far_side_except_through_its_gap",
         "every_fixture_guard_stands_inside_the_realm",
-        "walls_change_what_the_guards_notice"
+        "walls_change_what_the_guards_notice",
+        "every_tile_a_guards_drawn_cone_covers_is_one_where_a_walker_is_noticed",
+        "a_rock_pillar_takes_the_tiles_behind_it_out_of_the_drawn_cone"
       ]
     },
     {

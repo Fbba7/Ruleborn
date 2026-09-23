@@ -1,0 +1,21 @@
+[package]
+name = "ruleborn-godot"
+version = "0.1.0"
+edition = "2021"
+description = "sim/, as a GDExtension: the client's copy of the rules is the server's (24.7)."
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+godot = { version = "=0.5.5", features = ["api-4-5"] }
+ruleborn-sim = { path = "../../sim" }
+
+[profile.release]
+# The same settings as sim/'s own release build, so the arithmetic compiled
+# into the client is compiled the same way.
+opt-level = 2
+lto = false
+codegen-units = 1
+panic = "abort"
+overflow-checks = true

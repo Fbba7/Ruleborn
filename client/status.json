@@ -1,0 +1,12 @@
+{
+ "_what": "Written by client/status.py. Results, not claims: tools/completion.py reads what is built from this file.",
+ "tests": {
+  "every control is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:16": "passed",
+  "every control is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:19.5": "passed",
+  "every golden replay re-simulates in the client, every second agreeing with its checksums": "passed",
+  "no text is smaller than 13 points (§21.8)": "passed",
+  "the client's simulation is the rules version every golden replay names": "passed",
+  "the planned heist plays out Clean with every bag banked (§12.9)": "passed",
+  "the replay screen plays a golden to its end and shows its grade": "passed"
+ }
+}

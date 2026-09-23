@@ -2429,3 +2429,48 @@ fn a_vault_a_level_up_holds_more() {
     let four = World::on_ground(&island, 3, vec![]).vault.health;
     assert_eq!(four, one * 4, "§12.6: health a Vault level");
 }
+
+#[test]
+fn every_tile_a_guards_drawn_cone_covers_is_one_where_a_walker_is_noticed() {
+    // §21.12: the selected guard's vision is drawn, "a tile is inside or
+    // outside". The client draws `seen_tiles`, so each tile in it must be one
+    // where a crew member walking there is noticed in the cone proper — the
+    // drawing and the rule are one rule.
+    let mut world = World::new(0, 1, Vec::new());
+    let seen = world.seen_tiles(0);
+    assert!(seen.len() > 3, "a guard on its post sees some of the realm");
+    for &tile in &seen {
+        // Tall grass hides a crew member standing still in it (§12.17), and
+        // one placed by hand is standing still; the tile is still drawn as
+        // seen, because the guard sees the grass.
+        if world.grid.feature(tile) == Some(Feature::TallGrass) {
+            continue;
+        }
+        let (x, y) = world.grid.centre(tile);
+        world.raiders[0].at = Point { x, y };
+        world.raiders[0].route.clear();
+        world.raiders[0].still_for = 0;
+        assert!(world.noticed(0, 0).is_some(), "tile {tile} is drawn and not seen");
+    }
+}
+
+#[test]
+fn a_rock_pillar_takes_the_tiles_behind_it_out_of_the_drawn_cone() {
+    // §6.2: a rock pillar "blocks sight". Put one on the nearest tile the
+    // guard sees and at least one tile beyond it along the same line drops out.
+    let world = World::new(0, 1, Vec::new());
+    let before = world.seen_tiles(0);
+    let from = world.grid.tile_at(world.guards[0].at.x, world.guards[0].at.y).unwrap();
+    let near = *before.iter().filter(|&&t| t != from)
+        .min_by_key(|&&t| {
+            let (x, y) = world.grid.centre(t);
+            (world.guards[0].at.distance(Point { x, y }).0, t)
+        })
+        .unwrap();
+    let mut walled = world.clone();
+    let (nx, ny) = (near % walled.grid.width as u32, near / walled.grid.width as u32);
+    walled.grid.place(nx as u16, ny as u16, Feature::RockPillar);
+    let after = walled.seen_tiles(0);
+    assert!(after.len() < before.len(), "{} tiles before, {} after", before.len(), after.len());
+    assert!(!after.contains(&near), "the pillar's own tile is not seen through");
+}

@@ -705,6 +705,29 @@ dict(
              evidence="node --no-warnings --test server/test/*.test.mjs; "
                       "bash sim/run_spike.sh",
              register=["G17", "D58", "G20", "G21"]),
+        dict(id="T3.4", owner="claude", status="doing",
+             title="The client's half: the simulation inside Godot, and a "
+                   "replay on screen",
+             detail="\u00a724.7: the simulation is <em>\u201cwritten once and "
+                    "compiled for every target it runs on\u201d</em>, as a Rust "
+                    "GDExtension. <strong>Built for the desktop.</strong> "
+                    "<code>client/</code> is a Godot 4.5 project in \u00a721.1's "
+                    "9:19.5 portrait frame with <code>sim/</code> linked in: the "
+                    "replay screen re-simulates a golden replay one tick at a "
+                    "time and draws it, and every second compares its own "
+                    "checksum with the replay's, so a phone that drifted from "
+                    "the server would say so on screen. All five goldens agree "
+                    "at every second. A guard's cone is drawn tile by tile from "
+                    "the simulation's own sight rule (\u00a721.12), and every "
+                    "control is checked against \u00a721.1's size, reach, corner "
+                    "and safe-area rules. The drawing is flat and top-down; the "
+                    "diorama is the art pass.<br><br><strong>Not yet:</strong> "
+                    "the phone half of \u00a724.7's spike \u2014 the extension "
+                    "building and loading on a real iPhone and Android, whose "
+                    "failure \u00a724.7 says moves the simulation to C# \u2014 "
+                    "and input, so the screen plays heists and does not yet "
+                    "record them.",
+             evidence="python3 client/status.py"),
     ],
 ),
 

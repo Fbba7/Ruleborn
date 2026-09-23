@@ -84,6 +84,13 @@ base they are in. Target lists are §24.8's static files, one a band (**G21**:
 neither the band nor how often a list is rebuilt is defined). And the 54
 law-shaped forms of §11.10 are now validated content.
 
+The frontend has started (T3.4). [`client/`](client/README.md) is a Godot 4.5
+project with `sim/` linked in as a Rust GDExtension, as §24.7 plans: its replay
+screen re-simulates a heist on the device a tick at a time and draws it, and
+every second checks its own checksum against the replay's. All five golden
+replays agree at every second, so the client runs the server's rules, not a copy
+of them. It is a desktop build for now; the phone builds are §24.7's spike.
+
 v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
 in §19.27, and the build-willingness risk is designed out rather than measured
@@ -144,6 +151,7 @@ prototypes/
   heist-gate/  a throwaway browser build that runs both pre-code gates
 sim/            the heist simulation core in Rust: determinism spike (T3.1), replays (T3.2), pathfinding, sight, noise, guard states, island bundles and the validator (T3.3)
 server/         the edge functions of §24.1: lease, validate, grant, over §24.8's tables (T3.3)
+client/         the Godot 4.5 client, with sim/ as a GDExtension: the replay screen (T3.4)
 tools/
   extract_design_doc.py           HTML -> greppable text
   check_document.py               every check over the document, in one verdict

@@ -1,0 +1,28 @@
+; Ruleborn's client (§24.7: Godot, with the simulation linked in as a Rust
+; GDExtension). Portrait-first at 9:19.5 (§21.1), so the base frame is
+; 1080 × 2340 and wider screens show more sky, never more island (§23.3).
+
+config_version=5
+
+[application]
+
+config/name="Ruleborn"
+config/description="The client: the simulation, re-simulated and drawn."
+run/main_scene="res://scenes/replay_screen.tscn"
+config/features=PackedStringArray("4.5")
+
+[display]
+
+window/size/viewport_width=1080
+window/size/viewport_height=2340
+window/size/window_width_override=540
+window/size/window_height_override=1170
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.6235, 0.7255, 0.9412, 1)

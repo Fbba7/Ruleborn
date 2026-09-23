@@ -950,6 +950,31 @@ impl World {
         Some((per_tick, to))
     }
 
+    /// The tiles a guard's cone reaches, walls and laws included: what §21.12
+    /// draws for the selected guard ("A tile is inside or outside"). Each
+    /// tile's centre is put to the same geometry and sight line `noticed`
+    /// uses, so the drawing cannot disagree with the rule. The corner of the
+    /// eye is left out, since §21.12 draws the cone; a sleeping or stunned
+    /// guard sees nothing.
+    pub fn seen_tiles(&self, gi: usize) -> Vec<grid::TileIndex> {
+        let Some(guard) = self.guards.get(gi) else { return Vec::new() };
+        if !guard.awake(self.tick) {
+            return Vec::new();
+        }
+        let mut out = Vec::new();
+        for i in 0..self.grid.len() {
+            let tile = i as grid::TileIndex;
+            let (x, y) = self.grid.centre(tile);
+            let Some((_, in_cone, from, to)) = self.sees_geometry(gi, Point { x, y }) else {
+                continue;
+            };
+            if in_cone && self.line_clear(from, to) {
+                out.push(tile);
+            }
+        }
+        out
+    }
+
     /// Whether a guard sees a body. §12.8 (v3.3): "a body is seen exactly as
     /// a still crew member lying on its tile would be, so tall grass, a bush,
     /// fog or a tunnel hides it" — so it is `noticed`'s rules for a still

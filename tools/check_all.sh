@@ -42,6 +42,10 @@ python3 tools/design_facts.py --check-json server/src/facts.json
 python3 server/status.py
 
 echo
+echo "== the client: the same simulation inside Godot, and its screen =="
+python3 client/status.py
+
+echo
 echo "== what changed since the previous version =="
 python3 tools/version_diff.py --self-test
 
