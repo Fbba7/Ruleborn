@@ -164,6 +164,11 @@ NO_EDIT_BECAUSE = {
            "upgrade pacing is priced at",
     "C37": "a decision for the owner: whether a scout shows patrol routes",
     "D56": "no document sentence: the fix is sim/ and the harness",
+    "D57": "no document sentence: the fix is the harness",
+    "F33": "a design decision for the owner: whether the Lantern Glare is "
+           "budgeted apart or made a dial, which decides the sentence",
+    "F34": "a re-measurement first: \u00a713.2 already defers its table to "
+           "the aligned re-run (32), and that re-run sets the numbers",
     "F32": "a design decision for the owner: whether the Heart is cleared "
            "before every crack, which decides whether the noise changes",
     "G16": "a decision for the owner: whether a ward's sensor ignores the "

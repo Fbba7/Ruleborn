@@ -71,15 +71,17 @@ def validate_range() -> None:
     for realm in REALMS:
         for posts in POST_RANGE:
             for bands in BANDS:
-                generate(0, realm, shaped=bands, posts=posts)
+                generate(0, realm, shaped=bands, posts=posts, rules="v3.2")
 
 
 def measure(n: int, realm: int, depth: int, posts: int, bands: int) -> tuple:
     """Hold rate, its standard error, and the median decision count."""
     # Without v3.3's crack noise: this sweep asks what posts and geometry do,
-    # and with the noise on it answers nothing else (F32).
+    # and with the noise on it answers nothing else (F32). On v3.2's wards and
+    # budgets, which are what F22's table was measured on; v3.3's sensor
+    # reach makes the wards a different layer (F33).
     rs = run_batch(n, depth - 1, realm, "competent", laws="defensive",
-                   shaped=bands, posts=posts, crack_noise=False)
+                   shaped=bands, posts=posts, crack_noise=False, rules="v3.2")
     held = sum(1 for r in rs if not r.success)
     p = held / len(rs)
     se = 100 * math.sqrt(p * (1 - p) / len(rs))
@@ -108,7 +110,7 @@ def sweep(n: int = 120, refine: int = 400) -> list[dict]:
                     hold, se, dec = measure(n, realm, depth, posts, bands)
                     rows.append(dict(realm=realm, depth=depth, posts=posts,
                                      bands=bands, hold=hold, se=se, decisions=dec,
-                                     spec=posts == POSTS(realm), refined=False))
+                                     spec=posts == POSTS(realm, "v3.2"), refined=False))
 
     for row in rows:
         near_hold = HOLD_BAND[0] - 10 <= row["hold"] <= HOLD_BAND[1] + 10
@@ -209,12 +211,12 @@ def self_test() -> int:
     # F22's own cell, at the depth its text states. Reproducing a published
     # number before building on it is the whole discipline here.
     # Recorded at 44.8% under v3.2's full-speed crouch; D56 re-measured it
-    # at 66.0% under v3.3's half-speed one, and that is the number F22's note
-    # now carries.
+    # at 66.0% under v3.3's half-speed one, and D57's fixes to the crews moved
+    # it to 70.0%, the number F22's note now carries.
     hold, se, _ = measure(200, realm=1, depth=2, posts=2, bands=1)
-    near = abs(hold - 66.0) <= 3 * se
+    near = abs(hold - 70.0) <= 3 * se
     print(f"  F22's realm-1 cell at two realms crossed: {hold:.1f}% ±{se:.1f} "
-          f"against its recorded 66.0% — {'reproduces' if near else 'DOES NOT REPRODUCE'}")
+          f"against its recorded 70.0% — {'reproduces' if near else 'DOES NOT REPRODUCE'}")
     ok = ok and near
 
     from tools.heist_harness.island import generate

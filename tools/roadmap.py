@@ -160,7 +160,7 @@ dict(
              register=["F26", "F27"],
              gate="every realm/depth pair either satisfies both bands or "
                   "is recorded as unable to"),
-        dict(id="T0.11", owner="claude", status="ready",
+        dict(id="T0.11", owner="claude", status="done",
              title="Give the harness a crew that clears the Heart before it "
                    "cracks",
              gate="a harness crew that takes guards down from behind before "
@@ -175,7 +175,37 @@ dict(
                     "the other game: four guards down from the moss behind "
                     "them, a crack in 4.2 seconds, and the noise never sounds. "
                     "Until a harness crew plays that game, nothing measured "
-                    "here says whether v3.3's Heart is fair."),
+                    "here says whether v3.3's Heart is fair.<br><br><strong>"
+                    "Built.</strong> The clearing crew waits beside a "
+                    "guard's path, as \u00a712.8 describes, and takes each "
+                    "Heart guard down in two seconds before anyone cracks. "
+                    "In the Heart alone at realm 3 with no wards it succeeds "
+                    "65.0% against the optimal crew's 20.0% with the noise "
+                    "on (n=80), and the two are level without it. On the "
+                    "full island the Lantern Glares decide first (F33), so "
+                    "the bands wait on T0.12.",
+             evidence="python3 -m tools.heist_harness.test_harness "
+                      "(test_a_crew_that_clears_the_heart_first_survives_the_crack_noise)",
+             register=["F32"]),
+        dict(id="T0.12", owner="claude", status="ready",
+             title="Measure F33's Glare options, then re-run \u00a713.2's "
+                   "table at \u00a75.2's posts",
+             gate="\u00a713.2's table re-measured at the posts \u00a75.2 "
+                  "gives, with v3.3's wards and the crack noise on, against "
+                  "both the optimal and the clearing crew",
+             detail="On v3.3's rules one Lantern Glare takes realm 3 from "
+                    "42.5% held to 71.2%, and two to 97.5%, while \u00a75.2's "
+                    "six wards there without one hold 46.2% (F33). And "
+                    "\u00a713.2's table was measured at one guard post in "
+                    "every realm: at \u00a75.2's posts realms 3 to 5 hold "
+                    "91 to 99.5% (F34). Each Glare option F33 names is one "
+                    "constant or flag here, so each is measured before the "
+                    "owner picks; then the table is re-run as it states "
+                    "itself.",
+             evidence="python3 -m tools.heist_harness.test_harness "
+                      "(test_one_lantern_glare_outweighs_a_realm_of_other_wards, "
+                      "test_13_2s_hold_table_was_measured_at_one_guard_post)",
+             register=["F33", "F34"]),
         dict(id="T0.7", owner="claude", status="done",
              title="Specify the response layer \u2014 and report that the fix "
                    "did not work",

@@ -16,6 +16,7 @@ a malformed island, because an island the generator can produce is an island a
 player will be given.
 """
 
+import pathlib
 from dataclasses import dataclass, field
 
 from .fixed import U, Rng, tiles
@@ -49,6 +50,43 @@ class Patrol:
     level: int = 1
 
 
+#: §10.3 (v3.3): each triggered ward's level-1 reset, and its sensor's reach.
+#: Read from content/wards.json, the table's one home, rather than typed.
+def _ward_table() -> tuple[dict, dict]:
+    import json
+    import re as _re
+    rows = json.loads((pathlib.Path(__file__).resolve().parents[2] / "content"
+                       / "wards.json").read_text(encoding="utf-8"))
+    resets, reach = {}, {}
+    for r in rows:
+        m = _re.fullmatch(r"(\d+) s", r.get("resets_after", ""))
+        if m:
+            resets[r["name"]] = int(m.group(1))
+        within = _re.search(r"within (\d+) tiles", r.get("sensor", ""))
+        reach[r["name"]] = int(within.group(1)) if within else 0
+    return resets, reach
+
+
+from ..design_facts import DISARM_SECONDS                   # 10.3 (D37)
+from ..design_facts import GUARD_POSTS, WARD_LIMITS          # 5.2 (D37)
+RESET_SECONDS, REACH_TILES = _ward_table()
+
+#: The triggered wards the generator places, cycled in this order. `generate`
+#: takes another kit as `ward_kinds`: F33 is that which kinds are in it
+#: matters more, under v3.3's sensor reach, than how many.
+WARD_KINDS = ("Time Snare", "Gravity Well", "Lantern Glare")
+
+#: Which document's wards and budgets an island is built to. "v3.3" is the
+#: document and the default. "v3.2" is what every ward and budget number in
+#: this register before D56's second pass was measured on — a ward fires on
+#: its own tile only, disarms in 3 s + 1 s a level from beside it, resets in
+#: 10 s less a second a level, §5.2 allows 3 + realm level of them and posts
+#: 1, 1, 2, 2 and 3 guards — kept so those numbers stay reproducible, as
+#: `crack_noise=False` keeps the layer numbers F32 would otherwise swamp.
+#: F33 is the difference between the two.
+RULES = ("v3.2", "v3.3")
+
+
 @dataclass
 class Ward:
     """A ward on a tile (§10.3), with the level scaling §10.2 prices.
@@ -65,16 +103,32 @@ class Ward:
     spent: bool = False
     disarmed: bool = False
     reset_at: int = 0
+    rules: str = "v3.3"
 
     @property
     def disarm_ticks(self) -> int:
-        """§12.5 implies a disarm action; spec/wards.md specifies 3 s + 1 s a level."""
-        return (3 + self.level) * 30
+        """§10.3 (v3.3): fifteen seconds standing on the ward's tile, at every
+        level. (v3.2: spec/wards.md's 3 s + 1 s a level, from beside it.)"""
+        if self.rules == "v3.2":
+            return (3 + self.level) * 30
+        return DISARM_SECONDS * 30
 
     @property
     def reset_ticks(self) -> int:
-        """§10.2: 10 s at level 1, one second less a level."""
-        return (11 - self.level) * 30
+        """§10.3 (v3.3): each ward's own level-1 reset — Gravity Well 10 s,
+        Time Snare 12, Lantern Glare 20 — and "each level also takes a tenth
+        of the level-1 reset off" (C32's reconciliation). (v3.2: §10.2's
+        10 s at level 1, one second less a level.)"""
+        if self.rules == "v3.2":
+            return (11 - self.level) * 30
+        base = RESET_SECONDS[self.kind] * 30
+        return base * (11 - self.level) // 10
+
+    @property
+    def reach(self) -> int:
+        """§10.3 (v3.3), the sensor: tiles from the ward's centre, 0 for its
+        own tile. (v3.2: every ward, its own tile.)"""
+        return 0 if self.rules == "v3.2" else REACH_TILES[self.kind]
 
 
 @dataclass
@@ -95,6 +149,7 @@ class Island:
     ward_budget: int | None = None
     seed: int = 0
     realm_level: int = 3
+    rules: str = "v3.3"
 
     def at(self, x: int, y: int) -> str:
         if not (0 <= x < self.width and 0 <= y < self.height):
@@ -137,7 +192,7 @@ class Island:
             raise AssertionError(
                 f"island {self.seed}: no route from the entry to the Vault — "
                 "§6.1 forbids sealing the last path to the Heart")
-        limit = self.ward_budget if self.ward_budget is not None else 3 + self.realm_level
+        limit = self.ward_budget if self.ward_budget is not None else WARDS(self.realm_level, self.rules)
         if len(self.wards) > limit:
             raise AssertionError(
                 f"island {self.seed}: {len(self.wards)} wards, "
@@ -159,8 +214,19 @@ class Island:
 
 
 #: §5.2's guard posts by realm level: one at levels 1 and 2, rising to three.
-def POSTS(realm_level: int) -> int:
-    return 1 + (realm_level - 1) // 2
+def POSTS(realm_level: int, rules: str = "v3.3") -> int:
+    """§5.2's guard posts by realm level (v3.3: 1, 1, 2, 3 and 3)."""
+    if rules == "v3.2":
+        return 1 + (realm_level - 1) // 2
+    return GUARD_POSTS[realm_level - 1]
+
+
+def WARDS(realm_level: int, rules: str = "v3.3") -> int:
+    """§5.2's ward limit by realm level (v3.3: 8, 8, 6, 7 and 8; v3.2: three
+    plus the realm level)."""
+    if rules == "v3.2":
+        return 3 + realm_level
+    return WARD_LIMITS[realm_level - 1]
 
 
 #: §13.2's five layers, in the order it lists them. `laws` is applied by the
@@ -171,7 +237,8 @@ ALL_LAYERS = frozenset(LAYERS)
 
 def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
              shaped: bool | int = False, posts: int | None = None,
-             post_level: int = 1, wards: int | None = None) -> Island:
+             post_level: int = 1, wards: int | None = None,
+             rules: str = "v3.3", ward_kinds: tuple | None = None) -> Island:
     """A small realm, laid out so a route exists and a guard can see it.
 
     §5.2 gives realm grids by level; level 3 is 12x12. The default layout is
@@ -247,7 +314,9 @@ def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
         cover = [(rng.below(w - 2), rng.below(h - 2)) for _ in range(3 + rng.below(3))]
 
     entry = (w // 2, h - 2)
-    island = Island(w, h, grid, entry, (vx, vy), seed=seed, realm_level=realm_level)
+    assert rules in RULES, rules
+    island = Island(w, h, grid, entry, (vx, vy), seed=seed, realm_level=realm_level,
+                    rules=rules)
 
     if shaped and "geometry" in layers:
         # Cover off the path. Tall grass hides the *raider* (§12.17), so a clump
@@ -256,28 +325,32 @@ def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
         # shelter anyone walking the route, it is cover for a detour instead.
         _cover_off_route(island, cover)
 
-    # Wards (§5.2: 3 + realm level). Placed on the route, because a ward beside
-    # the path is scenery: §13.4's whole point is that a layer must contribute.
+    # Wards (§5.2's budget). Placed on the route, because a ward beside the path
+    # is scenery: §13.4's whole point is that a layer must contribute — but
+    # never where its sensor reaches the entry. A crew picks its landing along
+    # a whole edge (§5.4), so no Keeper can ward every landing, and one ward
+    # covering the harness's single entry would decide every raid on it.
     from .sim import path_to                                        # local: cycle
     route = path_to(island, entry, (vx, vy))
-    kinds = ["Time Snare", "Gravity Well", "Lantern Glare"]
+    kinds = list(ward_kinds or WARD_KINDS)
     ward_level = 1 + (realm_level - 1) // 2
-    # §5.2 allows 3 + realm level. The count must not depend on any other layer,
+    # §5.2 sets the count. It must not depend on any other layer,
     # or an ablation measures the confound rather than the layer: an earlier
     # version derived it from the route length, so turning geometry off removed a
     # ward as well, and the geometry share absorbed the ward's.
-    ward_count = (3 + realm_level if wards is None else wards) if "wards" in layers else 0
+    ward_count = (WARDS(realm_level, rules) if wards is None else wards) if "wards" in layers else 0
     if wards is not None:
         island.ward_budget = wards
-    spots = _ward_spots(island, route, ward_count)
+    spots = _ward_spots(island, route, ward_count, kinds)
     for i, spot in enumerate(spots):
-        island.wards.append(Ward(kinds[i % len(kinds)], spot[0], spot[1], ward_level))
+        island.wards.append(Ward(kinds[i % len(kinds)], spot[0], spot[1], ward_level,
+                                 rules=rules))
 
     # One to three guards (§5.2), patrolling walkable loops. `posts` overrides
     # §5.2's own formula, so what that formula costs can be measured rather than
     # argued: it is the only defence layer whose count is fixed by realm level.
     roles = ["Warden", "Scout", "Breaker"]
-    allowed = POSTS(realm_level) if posts is None else posts
+    allowed = POSTS(realm_level, rules) if posts is None else posts
     count = allowed if "guards" in layers else 0
     for i in range(count):
         route = _patrol_route(island, rng, i)
@@ -333,17 +406,21 @@ def _cover_off_route(island: Island, clumps) -> None:
         anchors = [a for a in anchors if clear(*a)]
 
 
-def _ward_spots(island: Island, route: list, count: int) -> list:
+def _ward_spots(island: Island, route: list, count: int, kinds: list) -> list:
     """`count` distinct walkable tiles, on the route where it is long enough and
-    beside it where it is not, so the count never varies with another layer."""
+    beside it where it is not, so the count never varies with another layer —
+    and none whose sensor would reach the entry (see `generate`)."""
     out, used = [], set()
+    ex, ey = island.entry
     for i in range(count):
+        reach = 0 if island.rules == "v3.2" else REACH_TILES[kinds[i % len(kinds)]]
+        clear = lambda t, r=reach: (t[0] - ex) ** 2 + (t[1] - ey) ** 2 > r * r
         if route:
             spot = route[(1 + (i * len(route)) // max(1, count)) % len(route)]
         else:
             spot = island.entry
-        if spot in used or spot in (island.entry, island.vault):
-            spot = _free_tile_near(island, spot, used)
+        if spot in used or spot in (island.entry, island.vault) or not clear(spot):
+            spot = _free_tile_near(island, spot, used, clear)
         if spot is None:
             continue
         used.add(spot)
@@ -351,7 +428,7 @@ def _ward_spots(island: Island, route: list, count: int) -> list:
     return out
 
 
-def _free_tile_near(island: Island, origin, used: set):
+def _free_tile_near(island: Island, origin, used: set, ok=lambda t: True):
     """The nearest unused walkable tile, searched in a fixed order."""
     for radius in range(1, max(island.width, island.height)):
         for dy in range(-radius, radius + 1):
@@ -361,7 +438,7 @@ def _free_tile_near(island: Island, origin, used: set):
                 tile = (origin[0] + dx, origin[1] + dy)
                 if tile in used or tile in (island.entry, island.vault):
                     continue
-                if island.walkable(*tile):
+                if island.walkable(*tile) and ok(tile):
                     return tile
     return None
 

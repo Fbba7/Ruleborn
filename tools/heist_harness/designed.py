@@ -103,7 +103,8 @@ WARD_SPOTS = ((8, 8), (8, 4), (6, 3), (3, 5), (4, 8), (6, 6))
 WARD_KINDS = ("Time Snare", "Gravity Well", "Lantern Glare")
 
 
-def designed(seed: int = 0, realm_level: int = 3, layers=frozenset()) -> Island:
+def designed(seed: int = 0, realm_level: int = 3, layers=frozenset(),
+             rules: str = "v3.3") -> Island:
     """The hand-built island, ablated the same way `generate` is.
 
     The layout does not vary with the seed — there is one designed island, and
@@ -118,12 +119,13 @@ def designed(seed: int = 0, realm_level: int = 3, layers=frozenset()) -> Island:
     """
     grid, entry, vault = _grid("geometry" in layers)
     island = Island(len(grid[0]), len(grid), grid, entry, vault,
-                    seed=seed, realm_level=realm_level)
+                    seed=seed, realm_level=realm_level, rules=rules)
 
     if "wards" in layers:
         level = 1 + (realm_level - 1) // 2
         for i, (x, y) in enumerate(WARD_SPOTS):
-            island.wards.append(Ward(WARD_KINDS[i % len(WARD_KINDS)], x, y, level))
+            island.wards.append(Ward(WARD_KINDS[i % len(WARD_KINDS)], x, y, level,
+                                     rules=rules))
 
     if "guards" in layers:
         rng = Rng(seed)

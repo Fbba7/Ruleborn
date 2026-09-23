@@ -74,6 +74,11 @@ DECISION_SECONDS = (8, 12)
 #: §12.5. Three characters, four from Keeper level 8, five from level 16.
 CREW_RANGE = (3, 5)
 
+#: §5.2 (v3.3): wards and guard posts by realm level 1 to 5, "a measured
+#: budget, not a formula". v3.2's were 3 + realm level and 1 + (level - 1) // 2.
+WARD_LIMITS = (8, 8, 6, 7, 8)
+GUARD_POSTS = (1, 1, 2, 3, 3)
+
 #: §12.8 and §12.20. One hit every 0.8 seconds for damage equal to Power, on
 #: both sides. The 0.8 is the only cadence the document states.
 WIND_UP = 0.8
@@ -138,6 +143,8 @@ HOME = {
     "DECISION_BAND": "12.6",
     "DECISION_SECONDS": "12.6",
     "CREW_RANGE": "12.5",
+    "WARD_LIMITS": "5.2",
+    "GUARD_POSTS": "10.2",
     "WIND_UP": "12.8",
     "TAKEDOWN_SECONDS": "29.1",
     "ASSIST_BONUS": "11.1",
@@ -173,6 +180,10 @@ STATED = {
     "DECISION_SECONDS": (r"roughly one every (\d+) to (\d+) seconds",
                          lambda m: (int(m[0]), int(m[1]))),
     "CREW_RANGE": (r"A crew of (\d+) to (\d+)", lambda m: (int(m[0]), int(m[1]))),
+    "WARD_LIMITS": (r"the legibility cap 13.2 sets: (\d+), (\d+), (\d+), (\d+) and (\d+)",
+                    lambda m: tuple(int(x) for x in m)),
+    "GUARD_POSTS": (r"Every realm; (\d+), (\d+), (\d+), (\d+) and (\d+) by realm level "
+                    r"\(5\.2\)\. One ruleborn", lambda m: tuple(int(x) for x in m)),
     "WIND_UP": (r"shows a ([\d.]+)-second wind-up", lambda m: float(m[0])),
     "TAKEDOWN_SECONDS": (r"after a (\d+) s takedown", lambda m: int(m[0])),
     "ASSIST_BONUS": (r"every hit on it deals (\d+)% more: the assist bonus",

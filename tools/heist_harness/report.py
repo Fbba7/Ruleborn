@@ -26,23 +26,28 @@ DEPTH_SEPARATION = 35            # percentage points, optimal over careless
 def run_batch(n: int, links: int, realm_level: int, policy_name: str,
               seed0: int = 0, laws: str = "none", shaped: bool = False,
               posts: int | None = None, post_level: int = 1,
-              wards: int | None = None, crack_noise: bool = True) -> list:
+              wards: int | None = None, crack_noise: bool = True,
+              rules: str = "v3.3", ward_kinds: tuple | None = None) -> list:
     """`laws` is "none", "any" (woven at random) or "defensive" (sign-aware).
 
     `shaped` selects the generator F16 argued for; see `island.generate`.
+    `rules` is which document's wards and budgets; see `island.RULES`.
     """
     cls = POLICIES[policy_name]
     out = []
     for i in range(n):
         seed = seed0 + i
         crossing = [generate(900_000 + seed * 8 + k, realm_level, shaped=shaped,
-                             posts=posts, post_level=post_level, wards=wards)
+                             posts=posts, post_level=post_level, wards=wards,
+                             rules=rules, ward_kinds=ward_kinds)
                     for k in range(links)]
         sheet = (Sheet() if laws == "none"
                  else weave(seed, realm_level, favour_defender=laws == "defensive"))
         policy = cls()
         result = Heist(generate(seed, realm_level, shaped=shaped, posts=posts,
-                                post_level=post_level, wards=wards), policy,
+                                post_level=post_level, wards=wards, rules=rules,
+                                ward_kinds=ward_kinds),
+                       policy,
                        realm_level=realm_level, crossing=crossing, sheet=sheet,
                        crack_noise=crack_noise).run()
         result.sheet = sheet

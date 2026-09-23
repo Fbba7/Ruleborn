@@ -1335,7 +1335,10 @@ def build() -> str:
       and upgrade pacing at six heists a day for a player who makes four. Porting
       v3.3's rules into the simulation and the harness (D56) found the largest:
       <strong>F32</strong>, five seconds of cracking calling every guard in the
-      Heart to a crew that cannot crack in five.</p>
+      Heart to a crew that cannot crack in five. Porting its wards (D57) found
+      two behind it: one Lantern Glare outweighs a realm of other wards
+      (<strong>F33</strong>), and &sect;13.2's hold table was measured at one
+      guard post where &sect;5.2 gives two and three (<strong>F34</strong>).</p>
     <p class="lede"><strong>{edit_count} edits are drafted</strong> across
       {edit_items} items &mdash; the section to open, the sentence as it stands
       today, and what to put there. Every quoted sentence is checked against the

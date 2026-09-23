@@ -49,7 +49,7 @@ that tells you to replace a sentence the document does not contain.
 #: went: each is a statement v3.3 makes twice, or a figure that did not move
 #: with the one it was derived from.
 FOUND_IN_V33 = frozenset({"C34", "C35", "C36", "C37", "C38", "C39", "D56",
-                          "F32", "G16"})
+                          "F32", "G16", "D57", "F33", "F34"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -4425,7 +4425,7 @@ dict(id="F16", kind="finding", severity="significant", status="proposed",
          "5%. <code>python3 -m tools.heist_harness.test_harness</code>."
          "<br><br><strong>Re-measured on the current harness</strong> \u2014 competent crew, no laws, two realms crossed, 150 raids a cell:<br><br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;off &nbsp;&nbsp;&nbsp;&nbsp;on &nbsp;&nbsp;contribution<br>generated &nbsp;24.0% &nbsp;&nbsp;32.0% &nbsp;&nbsp;&nbsp;<strong>+8.0</strong><br>designed &nbsp;&nbsp;11.3% &nbsp;<strong>100.0%</strong> &nbsp;&nbsp;<strong>+88.7</strong></code><br><br>The finding holds and grows. Designed geometry is worth <strong>eleven times</strong> generated geometry, against the four to seven times first recorded. The designed island still turns back every raid, and its geometry-off hold rate is still <em>below</em> the generated one \u2014 guards posted at chokepoints are badly placed once the chokepoints are gone."
          "<br><br>\u00a713.4\u2019s own method agrees: across all 32 coalitions, generated geometry takes 8.5% of the credit and the shaped generator this finding argued for takes 16.0% (F15).",
-     measured="re-run against harness 8e73e394d1cdb9a0 (D56)"),
+     measured="re-run against harness 30af740ce1811dbd (D57)"),
 dict(id="D23", kind="deviation", severity="change", status="done",
      title="\u00a713.4's ablation was built exactly as specified, Shapley included",
      refs=["13.4", "13.2"],
@@ -4757,23 +4757,29 @@ dict(id="F32", kind="finding", severity="design", status="open",
           "that does. Same seeds, same crews, noise off against on:<br><br><code>"
           "optimal crew succeeds, realm 3, two realms        65.0% \u2192 7.5%<br>"
           "careless crew succeeds, the same                   0.0% \u2192 0.0%<br>"
-          "held, realm 1, one post at level 5, three realms  42.0% \u2192 67.6%<br>"
-          "held, realm 3, \u00a75.2's six wards, three realms   48.0% \u2192 80.0%<br>"
-          "competent crew's banked fill, realm 3, no laws    23.7% \u2192 4.0%</code>"
+          "held, realm 1, one post at level 5, three realms  43.6% \u2192 70.4%<br>"
+          "held, realm 3, \u00a75.2's six wards, three realms   50.5% \u2192 78.0%<br>"
+          "competent crew's banked fill, realm 3, no laws    21.5% \u2192 2.7%</code>"
+          "<br><br>(On v3.2's wards, after D57's fixes; before them 42.0, 48.0 "
+          "and 23.7% rose to 67.6, 80.0 and 4.0%.)"
           "<br><br>§19.27's depth gate asks the optimal crew to beat the careless "
           "one by 35 points. With the noise it beats it by 4 to 8 points at "
           "every depth from one realm to four (<code>python3 -m "
-          "tools.heist_harness depth</code>, against 58 to 82 before), so the "
+          "tools.heist_harness depth</code>, against 58 to 82 before; that was "
+          "on v3.2's wards, and on v3.3's the report reads \u221220 to 0, F33), so the "
           "gate phases 2 and 3 exit on fails, and §13.2's bands are overshot "
           "by 20 to 50 points from realm level 2 up. And the economy stands on it: "
           "what an attempt is worth, grade times fill, falls from 0.137 to 0.027 "
           "for a crew stopping at 70% and from 0.170 to 0.044 for one that "
-          "fills (<code>breakeven</code>), where §9.6 publishes 0.122 to 0.170 "
+          "fills (<code>breakeven</code>, on v3.2's wards; on v3.3's, 0.003 "
+          "and 0.005), where §9.6 publishes 0.122 to 0.170 "
           "\u2014 so §9.6's band, and the 35 to 49 days of upgrade pacing built "
           "on it (C36), are numbers for a game without the rule. v3.3's own hold table (§13.2, 34.4% at realm 3) "
           "reads like this harness without the noise, which suggests it was "
-          "measured before the rule arrived.<br><br><strong>What this does not "
-          "show.</strong> No harness crew takes a guard down first, and the "
+          "measured before the rule arrived \u2014 and at one guard post, F34 "
+          "found.<br><br><strong>What this does not "
+          "show.</strong> When this was found no harness crew took a guard down "
+          "first (one does now; see below), and the "
           "harness prices a Vault at its realm level, so a realm-3 Vault holds "
           "4,500 and takes three times §12.19's example to crack. A crew that "
           "clears the Heart first is not caught this way: <code>sim/</code>'s "
@@ -4789,8 +4795,19 @@ dict(id="F32", kind="finding", severity="design", status="open",
          "§19.27's gates are re-measured against it. If it is not, the noise "
          "needs a reach (every hit is already heard within 5 m) or an interval "
          "a full crew beats at Vault level 1 (8 s, so 10 s would do), and "
-         "either can be measured here with one constant.",
-     measured="harness 8e73e394d1cdb9a0; test_the_crack_noise_decides_nearly_every_raid"),
+         "either can be measured here with one constant."
+         "<br><br><strong>The crew that clears first is built</strong> "
+         "(T0.11). In the Heart alone at realm 3, with no wards, it succeeds "
+         "65.0% of the time with the noise on against the optimal crew\u2019s "
+         "20.0% (n=80), knocking out 1.27 of the two guards a raid, and a "
+         "guard finds a body in about one raid in four; without the noise the "
+         "two are level, 92.5% and 88.8%. So clearing the Heart is a game the "
+         "rule leaves open, and it pays. On the full island with v3.3\u2019s "
+         "wards it succeeds 8.3% against 1.7% (n=60): the Glares decide "
+         "first (F33), so §13.2\u2019s bands cannot be re-measured against "
+         "this crew until F33 is settled.",
+     measured="harness 30af740ce1811dbd; test_the_crack_noise_decides_nearly_every_raid; "
+              "test_a_crew_that_clears_the_heart_first_survives_the_crack_noise"),
 
 dict(id="G16", kind="gap", severity="minor", status="open",
      title="A disarmer stands on the ward it is disarming, and nothing says "
@@ -4810,6 +4827,155 @@ dict(id="G16", kind="gap", severity="minor", status="open",
          "member disarming it. If it does, the Glare stays disarmable; if it "
          "does not, say that the Glare can only be smashed.",
      measured="sim/: a_time_snare_freezes_its_own_disarmer_and_the_disarm_waits"),
+
+dict(id="D57", kind="deviation", severity="significant", status="done",
+     title="The harness ran v3.2\u2019s wards and budgets, and its crews stood "
+           "still wherever a ward had no way round",
+     refs=["10.3", "5.2", "10.2", "11.1", "13.3"],
+     body="D56 ported v3.3\u2019s rules to <code>sim/</code> and the harness\u2019s "
+          "crouch and crack. The harness\u2019s wards were still v3.2\u2019s: every "
+          "ward fired on its own tile, disarmed in 3 s plus 1 s a level from "
+          "beside it, reset in 10 s less one a level, and §5.2\u2019s budgets were "
+          "<code>3 + realm level</code> wards and 1, 1, 2, 2 and 3 posts. v3.3 "
+          "gives the Gravity Well a 3-tile sensor and the Lantern Glare a "
+          "2-tile one, a 15-second disarm standing on the ward, resets of 10, "
+          "12 and 20 s, a measured budget of 8, 8, 6, 7 and 8 wards and 1, 1, "
+          "2, 3 and 3 posts, and a 25% assist bonus.<br><br>Porting them "
+          "exposed two faults in the crews, both older than v3.3. <strong>A "
+          "crew that found no way round a live ward stood in front of it</strong>: "
+          "it recorded \u201cthrough\u201d, stopped for the tick, and asked "
+          "again the next, counting a crew decision every other second while "
+          "it did. <strong>A member beside a crossing realm\u2019s link "
+          "re-planned to another tile beside it</strong>, and where the tiles "
+          "between were covered the nearest was the long way round, so the "
+          "crew was never beside the link at once. On-tile wards rarely left "
+          "no way round; a Glare two tiles from a Vault always does, and with "
+          "v3.3\u2019s sensors every raid on a wards-only realm ran out its "
+          "clock in the first realm.<br><br>What the fixes moved on v3.2\u2019s "
+          "wards, same seeds, 180 raids across realms 1, 3 and 5, three "
+          "realms crossed: held 64.4% \u2192 68.3%, median crew decisions 21 "
+          "\u2192 19. The decision count moved most where wards are dense: "
+          "realm 1 on eleven wards went from 33 to 26 decisions (n=200). And "
+          "what an attempt is worth at realm 3, stopping at 70%, fell from "
+          "0.111 to 0.059 (n=300): standing still in front of a ward is also "
+          "never walking into it, so the old crews were kept out of the "
+          "Glares they could not go round, by the fault.<br><br>Walking "
+          "through exposed a third: a crew stopped to crack wherever it first "
+          "stood beside the Vault, so three members could stand on a Glare "
+          "there and re-light it at every reset until the clock ran out. A "
+          "crew that goes round wards now moves to a tile beside the Vault no "
+          "ward reaches, where there is one.",
+     rec="<strong>Done.</strong> The harness builds v3.3\u2019s wards and "
+         "budgets by default, reading sensor reach and resets from "
+         "<code>content/wards.json</code> and the budgets from "
+         "<code>design_facts</code>, and plays the assist bonus. "
+         "<code>generate(rules=\"v3.2\")</code> builds the islands every "
+         "earlier ward and budget number was measured on, and the tests "
+         "that pin another layer\u2019s finding use it, as they switch the "
+         "crack noise off for F32 \u2014 because v3.3\u2019s Glares decide "
+         "nearly every raid the generator\u2019s islands hold (F33). The two "
+         "faults are fixed and pinned. Re-measured after the fixes (crack "
+         "noise off, v3.2\u2019s wards): F22\u2019s cell 66.0% \u2192 70.0%; "
+         "F26\u2019s realm 1 at one post and level 5, 42.0% \u2192 43.6%, "
+         "and two posts 80.0% \u2192 81.2%; realm 3 on six wards 48.0% "
+         "\u2192 50.5%, on ten 68.0% \u2192 74.5%; designed geometry "
+         "about three times the generator\u2019s (F16). "
+         "T0.11\u2019s crew that clears the Heart first is in as well "
+         "(F32).",
+     measured="harness 30af740ce1811dbd; test_a_crew_with_no_way_round_a_ward_walks_through_it"),
+
+dict(id="F33", kind="finding", severity="design", status="open",
+     title="One Lantern Glare outweighs a realm of other wards, so a ward "
+           "count is not the dial §5.2 budgets",
+     refs=["10.3", "5.2", "13.2", "13.3", "12.17"],
+     body="§10.3: the Lantern Glare <em>\u201cshows the crew to every guard "
+          "in the realm for 5 seconds\u201d</em>. At §12.17\u2019s near-zone "
+          "fill that is every guard Alerted in half a second: the response "
+          "layer, set off by a ward. §5.2 budgets wards by count and lets a "
+          "Keeper choose the kinds. Measured with v3.3\u2019s rules (D57) at "
+          "realm 3 on §5.2\u2019s two posts, one geometry band, three realms "
+          "crossed, crack noise off, n=80 a cell:<br><br><code>"
+          "wards &nbsp;&nbsp;Glares only &nbsp;&nbsp;no Glare &nbsp;&nbsp;the "
+          "generator\u2019s mix<br>"
+          "&nbsp;&nbsp;0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;42.5% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;42.5% &nbsp;&nbsp;&nbsp;42.5%<br>"
+          "&nbsp;&nbsp;1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;71.2% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;41.2% &nbsp;&nbsp;&nbsp;41.2%<br>"
+          "&nbsp;&nbsp;2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;97.5% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;43.8% &nbsp;&nbsp;&nbsp;43.8%<br>"
+          "&nbsp;&nbsp;3 &nbsp;&nbsp;&nbsp;&nbsp;100.0% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;67.5% &nbsp;&nbsp;&nbsp;92.5% "
+          "&nbsp;the first Glare<br>"
+          "&nbsp;&nbsp;6 &nbsp;&nbsp;&nbsp;&nbsp;100.0% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;46.2% &nbsp;&nbsp;&nbsp;96.2% "
+          "&nbsp;§5.2\u2019s budget<br>"
+          "&nbsp;&nbsp;8 &nbsp;&nbsp;&nbsp;&nbsp;100.0% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;96.2% &nbsp;&nbsp;100.0%</code>"
+          "<br><br>Without a Glare, one to seven wards hold realm 3 at 41 to "
+          "68%, not monotonically \u2014 six, §5.2\u2019s whole budget there, "
+          "hold 46% \u2014 and only the eighth closes it; with one Glare the "
+          "realm is at 71%, and with two it is shut. At realm 1 (one post) no "
+          "Glare-free kit holds more than 26% at any count, and Glares alone "
+          "reach 66%. v3.2\u2019s on-tile sensors show the same switch, a "
+          "little weaker: one Glare 60.0%, two 88.8%. So the resolution F26 "
+          "credited to the ward axis \u2014 two to four points a ward \u2014 "
+          "was a Glare arriving every third ward in the generator\u2019s "
+          "order. A defence budget counted in wards is a budget a Keeper "
+          "spends on Glares.<br><br><strong>What this does not show.</strong> "
+          "The harness\u2019s crews know where every ward is, and v3.3\u2019s "
+          "are hidden until revealed or fired, so a real crew does worse; "
+          "and the generator places wards along the shortest route, as "
+          "§13.3 says, which is where a Glare\u2019s two tiles reach the "
+          "most tiles a crew must cross.<br><br><strong>What it does to "
+          "skill.</strong> At \u00a75.2's own settings, with the crack noise "
+          "on, no harness crew succeeds more than one raid in seven at realm "
+          "3, and the optimal crew does no better than the careless one "
+          "whatever its answer to each kind \u2014 disarm, walk through, or go "
+          "round: <code>python3 -m tools.heist_harness depth</code> reads "
+          "\u00a719.27's skill gap at \u221220, \u221212, \u22122 and 0 "
+          "points from one realm to four, against the 35 it asks for.",
+     rec="Yours: the Glare is either budgeted apart \u2014 at most one a "
+         "realm, or a cost that counts it as several wards \u2014 or made "
+         "a dial: shown to the guards whose cones or hearing cover the spot "
+         "rather than to every guard, or raising them to Investigating the "
+         "spot rather than to Alerted. §13.2\u2019s build-blocking check "
+         "(31.5) then has to run over the kits a Keeper can build, not only "
+         "the counts, or it certifies a budget a Keeper can spend on a "
+         "switch. Each option is one constant or one flag in the harness "
+         "and can be measured before it is chosen.",
+     measured="harness 30af740ce1811dbd; test_one_lantern_glare_outweighs_a_realm_of_other_wards"),
+
+dict(id="F34", kind="finding", severity="significant", status="open",
+     title="§13.2\u2019s hold table was measured at one guard post, and at "
+           "§5.2\u2019s posts no realm from 3 up is near its band",
+     refs=["13.2", "5.2", "10.2", "31.5"],
+     body="§13.2 (v3.3) tabulates generated islands <em>\u201cat one geometry "
+          "band and 5.2\u2019s wards and posts\u201d</em>: realm 3 on six wards "
+          "and two posts holds 34.4%, realm 4 on seven and three 40.4% "
+          "(<em>\u201cmeasured at two guard posts rather than 5.2\u2019s "
+          "three\u201d</em>), realm 5 on eight and three 39.8%. Those are "
+          "F26\u2019s per-realm numbers, and F26\u2019s sweep held the post "
+          "count at one in every realm, with realms 4 and 5 two realms deep "
+          "rather than three (<code>ward_budget.SETTINGS</code>). On the "
+          "harness they were measured on, before v3.3 (crack noise off, "
+          "v3.2\u2019s wards, n=200): realm 3 on one post 42.0% and on two "
+          "86.0%; realm 4 on one post 38.0%, on two 85.0%, on three 94.0%; "
+          "realm 5 on one post 39.5% and on three 96.0%. The table\u2019s "
+          "holds are one-post holds; its posts column is §5.2\u2019s.<br><br>"
+          "Re-run as the table states it, on this harness now (v3.3\u2019s "
+          "wards and crouch, crack noise off, three realms, n=200):<br><br>"
+          "<code>realm &nbsp;wards &nbsp;posts &nbsp;&nbsp;held &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;one post<br>"
+          "&nbsp;&nbsp;1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 &nbsp;&nbsp;62.5% \u00b1 3.4 &nbsp;&nbsp;\u2014<br>"
+          "&nbsp;&nbsp;2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 &nbsp;&nbsp;71.0% \u00b1 3.2 &nbsp;&nbsp;\u2014<br>"
+          "&nbsp;&nbsp;3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 &nbsp;&nbsp;91.0% \u00b1 2.0 &nbsp;&nbsp;47.0%<br>"
+          "&nbsp;&nbsp;4 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3 &nbsp;&nbsp;99.0% \u00b1 0.7 &nbsp;&nbsp;53.5%<br>"
+          "&nbsp;&nbsp;5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3 &nbsp;&nbsp;99.5% \u00b1 0.5 &nbsp;&nbsp;72.5%</code><br><br>"
+          "No realm is inside its band, and from realm 3 up the defence "
+          "holds nearly every raid. On v3.2\u2019s wards the same cells read "
+          "56.0, 65.0, 94.5, 100 and 100%. With the crack noise on (F32) "
+          "every number rises.",
+     rec="Re-run §13.2\u2019s table at the posts §5.2 gives, which the "
+         "aligned re-run §13.2 already schedules (32) can do in one pass, "
+         "and state the depth each row was measured at. On this "
+         "harness\u2019s numbers that re-run moves realms 3 to 5 far above "
+         "30\u201345%, and §13.2\u2019s rule then moves their bands; before "
+         "it does, F33 says why: the posts and the Glares multiply, and "
+         "§5.2 budgets neither against the other.",
+     measured="harness 30af740ce1811dbd; test_13_2s_hold_table_was_measured_at_one_guard_post"),
 
 ]
 
@@ -5075,7 +5241,10 @@ V33 = {
     "the re-run.<br><br><strong>Re-measured under v3.3's rules</strong> (D56, "
     "crack noise off): realm 3 on its six wards holds 48.0%, three points "
     "over the band, and a flat ten 68.0%. With the noise on, 80.0% and "
-    "90.0% (F32)."),
+    "90.0% (F32). After D57's fixes, 50.5% and 74.5%, and 78.0% and 93.0% "
+    "with the noise. All of that is at one post and on v3.2's wards: the "
+    "table \u00a713.2 quotes was measured at one post in every realm (F34), "
+    "and on v3.3's wards a count is not the dial (F33)."),
 
 "F22": dict(status="fixed", note=
     "<strong>Closed another way.</strong> Not a second post: realm levels 1 "
@@ -5087,7 +5256,10 @@ V33 = {
     "half-speed crouch lifting one post into the band. With the noise on, "
     "67.6% and 92.8% (F32). The cell F22 was first measured in \u2014 two "
     "posts, two realms \u2014 reads 66.0%, against 44.8% under v3.2's "
-    "rules; <code>generator_settings --self-test</code> pins the new value."),
+    "rules; <code>generator_settings --self-test</code> pins the new value."
+    "<br><br>After D57's fixes, on v3.2's wards: one post at level 5 43.6% "
+    "and two posts 81.2% (70.4% and 92.8% with the noise), and F22's cell "
+    "70.0%."),
 
 "G5": dict(status="fixed", note=
     "A pylon shows its law’s glyph and a tag names it on first sight "
@@ -5297,7 +5469,13 @@ V33 = {
 "F16": dict(status="open", note=
     "The generator fix is in, and hold bands are split by origin. The layer "
     "shares are not: geometry 25% and about 60% from design are still "
-    "stated for every island, authored or generated."),
+    "stated for every island, authored or generated."
+    "<br><br><strong>Re-measured after D57</strong> (crack noise off, "
+    "v3.2's wards, n=160): turning geometry on adds 14.4 points to the "
+    "generator's island and 44.4 to the designed one \u2014 about three "
+    "times, which is \u00a713.3's <em>\u201cseveral times\u201d</em>. At the "
+    "n=40 the test runs, 15.0 against 62.5, where it read \u22127.5 against "
+    "57.5 before D57."),
 
 "F17": dict(status="open", note=
     "Upkeep is a share of production and Essence gained a recurring keep. "

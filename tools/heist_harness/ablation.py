@@ -48,16 +48,18 @@ def hold_rate(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
               policy: str = "competent", law_mode: str = "defensive",
               response_model: str = "published",
               clock_pct: int = 100, exposed_pct: int = 100,
-              island_fn=generate, crack_noise: bool = True) -> float:
+              island_fn=generate, crack_noise: bool = True,
+              rules: str = "v3.3") -> float:
     """The share of raids this combination of layers turns back."""
     cls = POLICIES[policy]
     held = 0
     for i in range(n):
         seed = seed0 + i
-        island = island_fn(seed, realm_level, layers=subset)
+        island = island_fn(seed, realm_level, layers=subset, rules=rules)
         sheet = (weave(seed, realm_level, favour_defender=law_mode == "defensive")
                  if "laws" in subset else Sheet())
-        crossing = [island_fn(900_000 + seed * 8, realm_level, layers=subset)]
+        crossing = [island_fn(900_000 + seed * 8, realm_level, layers=subset,
+                              rules=rules)]
         result = Heist(island, cls(), realm_level=realm_level, crossing=crossing,
                        sheet=sheet, response="response" in subset,
                        response_model=response_model,
@@ -78,7 +80,8 @@ def haul_denied(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
                 response_model: str = "published",
                 baseline: float | None = None,
                 clock_pct: int = 100, exposed_pct: int = 100,
-                island_fn=generate) -> float:
+                island_fn=generate, rules: str = "v3.3",
+                crack_noise: bool = True) -> float:
     """The share of the raider's potential haul this combination of layers denies.
 
     §13.4 specifies the ablation against the **hold rate**, and that metric cannot
@@ -96,14 +99,16 @@ def haul_denied(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
     total = 0.0
     for i in range(n):
         seed = seed0 + i
-        island = island_fn(seed, realm_level, layers=subset)
+        island = island_fn(seed, realm_level, layers=subset, rules=rules)
         sheet = (weave(seed, realm_level, favour_defender=law_mode == "defensive")
                  if "laws" in subset else Sheet())
-        crossing = [island_fn(900_000 + seed * 8, realm_level, layers=subset)]
+        crossing = [island_fn(900_000 + seed * 8, realm_level, layers=subset,
+                              rules=rules)]
         r = Heist(island, cls(), realm_level=realm_level, crossing=crossing,
                   sheet=sheet, response="response" in subset,
                   response_model=response_model,
-                  clock_pct=clock_pct, exposed_pct=exposed_pct).run()
+                  clock_pct=clock_pct, exposed_pct=exposed_pct,
+                  crack_noise=crack_noise).run()
         total += GRADE_VALUE[r.grade] * r.fill / 100
     mean = total / n
     if baseline is None:

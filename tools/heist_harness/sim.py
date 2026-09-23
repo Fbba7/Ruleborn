@@ -43,6 +43,7 @@ LINK_TICKS = 15 * TPS
 MAX_TICKS = 240 * TPS
 from ..design_facts import (VAULT_HEALTH_PER_LEVEL, LOAD_PER_SECOND,  # D37
                             CRACK_NOISE_SECONDS, DOWN_SECONDS, REVIVE_SECONDS,
+                            TAKEDOWN_SECONDS, ASSIST_BONUS,
                             MENDER_REVIVE_SECONDS, SKIFF_OUTER_SECONDS)
 WIND_UP_TICKS = int(0.8 * TPS)           #: §12.8, one hit per 0.8 s
 SKIFF_TICKS = SKIFF_OUTER_SECONDS * TPS  #: §5.4, an outer realm
@@ -51,6 +52,14 @@ SKIFF_TICKS = SKIFF_OUTER_SECONDS * TPS  #: §5.4, an outer realm
 #: §12.6's "100 suspicion" and never applied it, so the harness had no crack
 #: noise at all (D56).
 CRACK_NOISE_TICKS = CRACK_NOISE_SECONDS * TPS
+#: §12.8 (v3.3): a takedown takes two seconds and ends in a knockout if the
+#: guard is still Unaware. §12.8 does not say whether a guard walking a patrol
+#: keeps walking while it is taken down; if it did, no patrol could ever be
+#: taken, so the harness reads the takedown as holding it in place.
+TAKEDOWN_TICKS = TAKEDOWN_SECONDS * TPS
+#: §11.1 (v3.3): two or more working one object hit a quarter harder. As a
+#: ratio of whole numbers, so no float reaches a result.
+ASSIST = Fraction(1 + ASSIST_BONUS).limit_denominator(100).as_integer_ratio()
 #: §12.17 (v3.3): a crouched crew member moves at half its role's speed, as a
 #: ratio of whole numbers so no float reaches a result. Read from
 #: design_facts, the fact's one home; a module constant so its effect can be
@@ -113,6 +122,10 @@ class Member:
     out: bool = False
     path: list = field(default_factory=list)
     crouched: bool = True
+    #: The guard it is taking down, by index, and how far into the two
+    #: seconds it is (§12.8, v3.3).
+    takedown: int | None = None
+    takedown_ticks: int = 0
 
     @property
     def capacity(self) -> int:
@@ -160,6 +173,11 @@ class Guard:
     #: searched there. The harness has no hearing but this: the Vault's crack.
     heard: tuple | None = None
     search_ticks: int = 0
+    #: Knocked out by a takedown (§12.8); whether another guard has found the
+    #: body; and whether a takedown is holding it this tick.
+    down: bool = False
+    found: bool = False
+    held: bool = False
 
 
 @dataclass
@@ -182,6 +200,9 @@ class Result:
     wards_disarmed: int = 0
     crossings: int = 0
     clock_ticks: int = 0
+    #: Guards taken down, and bodies another guard found (§12.8, v3.3).
+    knockouts: int = 0
+    bodies_found: int = 0
 
     @property
     def success(self) -> bool:
@@ -277,6 +298,10 @@ class Heist:
         #: every raid these crews play, so a question about any other layer is
         #: asked with it off and says so.
         self.crack_noise = crack_noise
+        #: Which document's wards the Heart was built to (island.RULES). The
+        #: v3.3 rules the harness also plays by — the assist bonus — follow
+        #: it, so a v3.2 island is the v3.2 heist it was measured on.
+        self.rules = getattr(island, "rules", "v3.3")
         self.vault_opened_at = None
         self.crack_started_at = None
         #: Exposed per-instance so the two dials can be swept without editing
@@ -318,6 +343,8 @@ class Heist:
         self.wards_triggered = 0
         self.wards_disarmed = 0
         self.crossings = 0
+        self.knockouts = 0
+        self.bodies_found = 0
 
     def _enter(self, island) -> None:
         """Place the guards of the realm the crew has just entered."""
@@ -369,6 +396,8 @@ class Heist:
     # -- guards ------------------------------------------------------------
 
     def _guard_move(self, g: Guard) -> None:
+        if g.held:
+            return                        # being taken down: it does not walk on
         if g.state == "alerted" and self.response:
             target = self._nearest_visible_crew(g)
             goal = (target.x, target.y) if target else (g.x, g.y)
@@ -402,6 +431,19 @@ class Heist:
         return best
 
     def _perceive(self, g: Guard) -> None:
+        # §12.8 (v3.3): a body is seen as a still crew member lying on its tile
+        # would be, so cover hides it; the first guard to see it raises the
+        # realm alarm by one. The harness has no realm alarm, so it counts.
+        reach_body = self.sheet.factor("sight_range") * post_sight(g.level)
+        for other in self.guards:
+            if not other.down or other.found:
+                continue
+            if self.island.hides(other.x // U, other.y // U):
+                continue
+            if (zone(g.role, g.x, g.y, g.facing, other.x, other.y, reach=reach_body)
+                    and line_of_sight(self.island, g.x, g.y, other.x, other.y)):
+                other.found = True
+                self.bodies_found += 1
         gained = 0
         # Hoisted: these are the same for every crew member on this tick, and
         # this loop runs once per guard per tick for the whole run.
@@ -512,12 +554,22 @@ class Heist:
             for m in self.crew:
                 if m.out or m.caught:
                     continue
-                if (m.x // U, m.y // U) != (w.x, w.y):
+                # §10.3 (v3.3): Time Snare on its tile, Gravity Well within 3
+                # tiles and Lantern Glare within 2 — tile centres, straight line.
+                cx, cy = w.x * U + U // 2, w.y * U + U // 2
+                if w.reach == 0:
+                    if (m.x // U, m.y // U) != (w.x, w.y):
+                        continue
+                elif dist2(m.x, m.y, cx, cy) > (w.reach * U) ** 2:
                     continue
                 scale = 100 + 15 * (w.level - 1)
                 if w.kind == "Time Snare":
                     m.frozen_ticks = int(2.5 * TPS) * scale // 100
                 elif w.kind == "Gravity Well":
+                    # "Pulls everyone within 3 tiles to its centre" — the harness
+                    # pulls the first, which is the one whose route it breaks.
+                    if w.reach:                            # v3.2: no pull
+                        m.x, m.y, m.path = cx, cy, []
                     m.frozen_ticks = 2 * TPS * scale // 100
                 elif w.kind == "Lantern Glare":
                     # Shows the crew to every guard in the realm for 5 s (§10.3).
@@ -532,7 +584,7 @@ class Heist:
         if not self.response:
             return
         for g in self.guards:
-            if g.state != "alerted":
+            if g.down or g.state != "alerted":
                 continue
             for m in self.crew:
                 if m.out or m.caught:
@@ -559,7 +611,7 @@ class Heist:
                     m.down_ticks = m.revive_ticks = 0
                 continue
             m.revive_ticks = 0
-            near = any(g.state == "alerted"
+            near = any(not g.down and g.state == "alerted"
                        and dist2(g.x, g.y, m.x, m.y) <= (U * 3 // 4) ** 2
                        for g in self.guards)
             if not near:
@@ -613,6 +665,43 @@ class Heist:
         self.exposed -= back
         self.resealed += back
 
+    def _takedowns(self) -> None:
+        """§12.8 (v3.3): a takedown on an Unaware guard, from beside it, takes
+        two seconds in which the attacker does nothing else, and knocks the
+        guard out if it is still Unaware when it lands. A guard that notices
+        first is not knocked out; the harness has no fights, so the attempt
+        simply fails with the guard now aware at arm's length."""
+        for g in self.guards:
+            g.held = False
+        for m in self.crew:
+            if m.takedown is None:
+                continue
+            g = self.guards[m.takedown] if m.takedown < len(self.guards) else None
+            beside = (g is not None and not g.down
+                      and dist2(g.x, g.y, m.x, m.y) <= (U * 3 // 2) ** 2)
+            if (not beside or m.out or m.caught or m.down_ticks
+                    or (m.takedown_ticks == 0 and g.state != "unaware")):
+                m.takedown, m.takedown_ticks = None, 0
+                continue
+            g.held = True
+            m.takedown_ticks += 1
+            if m.takedown_ticks < TAKEDOWN_TICKS:
+                continue
+            if g.state == "unaware":
+                g.down, g.held = True, False
+                g.state, g.heard, g.target = "unaware", None, None
+                self.knockouts += 1
+            m.takedown, m.takedown_ticks = None, 0
+
+    def crackers(self) -> int:
+        """How many are working the Vault now, for the assist bonus."""
+        if self.vault_open or self.island is not self.target:
+            return 0
+        vx, vy = self.island.vault
+        return sum(1 for m in self.crew
+                   if not (m.out or m.caught or m.down_ticks or self.escaping)
+                   and max(abs(m.x // U - vx), abs(m.y // U - vy)) <= 1)
+
     def _crack_noise(self) -> None:
         """§12.6 (v3.3): every five seconds of cracking, every guard in the
         Heart hears the Vault and starts Investigating it. A heard event
@@ -627,7 +716,7 @@ class Heist:
         vx, vy = self.target.vault
         spot = (vx * U + U // 2, vy * U + U // 2)
         for g in self.guards:
-            if RANK[g.state] > RANK["investigating"]:
+            if g.down or RANK[g.state] > RANK["investigating"]:
                 continue
             g.heard, g.target, g.search_ticks = spot, spot, 0
             if g.state != "investigating":
@@ -651,6 +740,8 @@ class Heist:
     def run(self) -> Result:
         while self.tick < self.clock:
             for g in self.guards:
+                if g.down:
+                    continue
                 self._guard_move(g)
                 self._perceive(g)
             self._wards()
@@ -658,6 +749,7 @@ class Heist:
                 self.tick += TPS            # §12.6's one-second swoop
                 continue
             self.decisions += self.policy.act(self)
+            self._takedowns()
             self._respond()
             self._crack_noise()
             for m in self.crew:
@@ -667,7 +759,8 @@ class Heist:
                     m.frozen_ticks -= 1
                     continue
                 if not m.out and not m.caught and m.down_ticks == 0 \
-                        and m.wait_ticks == 0 and m.disarm_ticks == 0:
+                        and m.wait_ticks == 0 and m.disarm_ticks == 0 \
+                        and m.takedown_ticks == 0:
                     self._advance(m)
             self._capture_check()
             self.grade_history.append(self._grade_now())
@@ -701,4 +794,5 @@ class Heist:
             wards_triggered=self.wards_triggered,
             wards_disarmed=self.wards_disarmed,
             crossings=self.crossings, clock_ticks=self.clock,
+            knockouts=self.knockouts, bodies_found=self.bodies_found,
         )

@@ -195,7 +195,9 @@ def haul_report() -> None:
 # F1 / Q1 — is character scarcity a feature, and which lever moves?
 # ---------------------------------------------------------------------------
 
-GUARD_POSTS = 6 * 3 + 3        # §5.2, outer realms at level 5, plus the Heart
+from design_facts import GUARD_POSTS as _POSTS_BY_LEVEL   # 5.2, 10.2 (D37)
+#: Six outer realms and the Heart, all at realm level 5.
+STAFFED_POSTS = 7 * _POSTS_BY_LEVEL[-1]
 CREW = 5                       # §12.5, from Keeper level 16
 BIRTH_BASE, BIRTH_GROWTH = 100, 1.15   # §9.5
 
@@ -220,8 +222,8 @@ def staffing_report() -> None:
         rows[per_realm] = {
             "buildings": buildings,
             "slots": buildings * slots_each,
-            "workers": max(0, roster - GUARD_POSTS - CREW),
-            "empty": max(0, buildings - max(0, roster - GUARD_POSTS - CREW)),
+            "workers": max(0, roster - STAFFED_POSTS - CREW),
+            "empty": max(0, buildings - max(0, roster - STAFFED_POSTS - CREW)),
         }
         r = rows[per_realm]
         r["output"] = min(r["workers"], buildings) * econ.STAFFING[1]
@@ -235,9 +237,9 @@ def staffing_report() -> None:
           f"{rows[1]['nameplate_pct']:>20.0%}")
 
     print(f"\n  Roster is {roster} (3 at the Spire + 7 Hearths x "
-          f"{econ.HEARTH_HOMES[-1]} homes, §11.5). Post the {GUARD_POSTS} guard")
+          f"{econ.HEARTH_HOMES[-1]} homes, §11.5). Post the {STAFFED_POSTS} guard")
     print(f"  posts §5.2 allows and field a crew of {CREW}, and "
-          f"{max(0, roster - GUARD_POSTS - CREW)} characters are left to work.")
+          f"{max(0, roster - STAFFED_POSTS - CREW)} characters are left to work.")
     print("\n  Consequence: NO second or third worker slot is ever worth filling.")
     print("  §10.2 grants a second slot at building level 4 and a third at level 7.")
     print("  Both are dead content under this roster — and §14.3 still lists")
@@ -254,7 +256,7 @@ def staffing_report() -> None:
 
     print("The three levers, priced:\n")
     print("  A. Raise the roster to match the buildings.")
-    print(f"     Needs ~{rows[1]['slots'] + GUARD_POSTS + CREW} characters for one producer per realm.")
+    print(f"     Needs ~{rows[1]['slots'] + STAFFED_POSTS + CREW} characters for one producer per realm.")
     print("     Requires changing BOTH caps: Hearth homes ~3x, and the birth")
     print(f"     growth rate, since the 89th ruleborn currently costs "
           f"{BIRTH_BASE * BIRTH_GROWTH ** 89:,.0f} Essence")
@@ -263,8 +265,8 @@ def staffing_report() -> None:
     print("     time is scarce goes with it.\n")
     print("  B. Cut the buildings to match the roster.")
     print("     One producer of each kind per realm, one worker slot each: 21 slots,")
-    print(f"     {GUARD_POSTS} guard posts, a crew of {CREW} = "
-          f"{21 + GUARD_POSTS + CREW} positions against {roster}.")
+    print(f"     {STAFFED_POSTS} guard posts, a crew of {CREW} = "
+          f"{21 + STAFFED_POSTS + CREW} positions against {roster}.")
     print("     Cost: removes a Starlight sink, and §10.2's level-4 and level-7")
     print("     slot grants become meaningless and should be deleted.\n")
     print("  C. Keep the shortage and design around it.")

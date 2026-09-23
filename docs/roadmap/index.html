@@ -188,11 +188,11 @@
       much of the document can now be trusted without re-reading it.</strong></p>
 
     <div class="summary">
-      <div><span class="n">22</span><span class="k">tasks done</span></div>
+      <div><span class="n">23</span><span class="k">tasks done</span></div>
       <div><span class="n">7</span><span class="k">live now</span></div>
       <div><span class="n">2</span><span class="k">waiting on you</span></div>
-      <div><span class="n">132/150</span><span class="k">register items drafted</span></div>
-      <div><span class="n">132</span><span class="k">signed off</span></div>
+      <div><span class="n">133/153</span><span class="k">register items drafted</span></div>
+      <div><span class="n">133</span><span class="k">signed off</span></div>
       <div><span class="n">23 Sep</span><span class="k">last generated</span></div>
     </div>
 
@@ -203,9 +203,9 @@
   </header>
 
   <nav class="filters" aria-label="Filter the roadmap">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">42</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">43</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">9</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">22</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">5</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">2</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">12</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">1</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">23</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">5</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">2</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">12</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">1</span></button>
   </nav>
 
   <main id="list">
@@ -216,7 +216,7 @@
             <h2>Validation without players</h2>
             <p class="sub">§19.27, rewritten in v3.0, unchanged in v3.1 — and the critical path</p>
           </div>
-          <span class="scount">8/10</span>
+          <span class="scount">9/11</span>
         </div>
         <p class="blurb">v3.0 removed both pre-code player tests and replaced them with harnesses, stating the cost plainly: simulation can prove a system is legible, balanced and decision-dense, and cannot prove a game is enjoyable. Each harness below is buildable here, needs no engine, and has a threshold §19.27 sets for itself.<br><br>v3.1 left this decision alone. Its companion section moved — <em>How we will actually find out</em> is §25.4 now, not §25.5 — because v3.1 closed four numbering holes v3.0 had left (§5.8, §7.8, §10.4, §25.3 were all missing). Every in-document citation was moved with them: 243 sections, no dangling reference. That is the kind of thing v3.1 is — a consistency release, not a design one.</p>
         
@@ -336,18 +336,48 @@
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.generator_settings</code></p>
         
       </article>
-      <article class="task st-ready" id="T0-11"
-               data-status="ready" data-owner="claude">
+      <article class="task st-done" id="T0-11"
+               data-status="done" data-owner="claude">
         <header class="task-head">
           <span class="tid">T0.11</span>
           <h3>Give the harness a crew that clears the Heart before it cracks</h3>
+          <span class="status st-done">Done</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">v3.3's crack noise calls every guard in the Heart to the Vault five seconds into cracking, and no ordinary crack is shorter. The harness's crews never take a guard down, so with the rule ported an optimal crew succeeds 7.5% of the time against 65% without it, and every band is overshot (F32). <code>sim/</code>'s planned heist shows the other game: four guards down from the moss behind them, a crack in 4.2 seconds, and the noise never sounds. Until a harness crew plays that game, nothing measured here says whether v3.3's Heart is fair.<br><br><strong>Built.</strong> The clearing crew waits beside a guard's path, as §12.8 describes, and takes each Heart guard down in two seconds before anyone cracks. In the Heart alone at realm 3 with no wards it succeeds 65.0% against the optimal crew's 20.0% with the noise on (n=80), and the two are level without it. On the full island the Lantern Glares decide first (F33), so the bands wait on T0.12.</p>
+        
+        <div class="prog" title="F32">
+          <div class="bar">
+            <span class="fill" style="width:0.0%"></span>
+            <span class="fill settled" style="width:0.0%"></span>
+          </div>
+          <p class="prog-n"><strong>0 of 1</strong> drafted &middot;
+             <strong>0</strong> signed off</p>
+        </div>
+        <p class="gate"><span class="glabel">Passes when</span> a harness crew that takes guards down from behind before the Vault, measured against §13.2's bands and §19.27's gates with v3.3's crack noise on</p>
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness.test_harness (test_a_crew_that_clears_the_heart_first_survives_the_crack_noise)</code></p>
+        
+      </article>
+      <article class="task st-ready" id="T0-12"
+               data-status="ready" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T0.12</span>
+          <h3>Measure F33's Glare options, then re-run §13.2's table at §5.2's posts</h3>
           <span class="status st-ready">Ready to start</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">v3.3's crack noise calls every guard in the Heart to the Vault five seconds into cracking, and no ordinary crack is shorter. The harness's crews never take a guard down, so with the rule ported an optimal crew succeeds 7.5% of the time against 65% without it, and every band is overshot (F32). <code>sim/</code>'s planned heist shows the other game: four guards down from the moss behind them, a crack in 4.2 seconds, and the noise never sounds. Until a harness crew plays that game, nothing measured here says whether v3.3's Heart is fair.</p>
+        <p class="detail">On v3.3's rules one Lantern Glare takes realm 3 from 42.5% held to 71.2%, and two to 97.5%, while §5.2's six wards there without one hold 46.2% (F33). And §13.2's table was measured at one guard post in every realm: at §5.2's posts realms 3 to 5 hold 91 to 99.5% (F34). Each Glare option F33 names is one constant or flag here, so each is measured before the owner picks; then the table is re-run as it states itself.</p>
         
-        <p class="gate"><span class="glabel">Passes when</span> a harness crew that takes guards down from behind before the Vault, measured against §13.2's bands and §19.27's gates with v3.3's crack noise on</p>
-        
+        <div class="prog" title="F33 F34">
+          <div class="bar">
+            <span class="fill" style="width:0.0%"></span>
+            <span class="fill settled" style="width:0.0%"></span>
+          </div>
+          <p class="prog-n"><strong>0 of 2</strong> drafted &middot;
+             <strong>0</strong> signed off</p>
+        </div>
+        <p class="gate"><span class="glabel">Passes when</span> §13.2's table re-measured at the posts §5.2 gives, with v3.3's wards and the crack noise on, against both the optimal and the clearing crew</p>
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness.test_harness (test_one_lantern_glare_outweighs_a_realm_of_other_wards, test_13_2s_hold_table_was_measured_at_one_guard_post)</code></p>
         
       </article>
       <article class="task st-done" id="T0-7"
@@ -430,12 +460,12 @@
         </header>
         <p class="detail">Every contradiction, gap and measured finding, each with the sections involved and a recommended resolution.</p>
         
-        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C21 C22 C23 C24 C25 C26 C27 C28 C29 C3 C31 C32 C33 C34 C35 C36 C37 C38 C39 C4 C5 C6 C7 C8 C9 D48 D49 D53 F1 F10 F11 F12 F13 F14 F15 F16 F17 F18 F19 F2 F20 F21 F22 F23 F24 F25 F26 F27 F28 F29 F3 F30 F31 F32 F4 F5 F6 F7 F8 F9 G1 G10 G11 G12 G13 G14 G15 G16 G2 G3 G4 G5 G6 G7 G8 G9">
+        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C21 C22 C23 C24 C25 C26 C27 C28 C29 C3 C31 C32 C33 C34 C35 C36 C37 C38 C39 C4 C5 C6 C7 C8 C9 D48 D49 D53 F1 F10 F11 F12 F13 F14 F15 F16 F17 F18 F19 F2 F20 F21 F22 F23 F24 F25 F26 F27 F28 F29 F3 F30 F31 F32 F33 F34 F4 F5 F6 F7 F8 F9 G1 G10 G11 G12 G13 G14 G15 G16 G2 G3 G4 G5 G6 G7 G8 G9">
           <div class="bar">
-            <span class="fill" style="width:80.9%"></span>
-            <span class="fill settled" style="width:80.9%"></span>
+            <span class="fill" style="width:79.1%"></span>
+            <span class="fill settled" style="width:79.1%"></span>
           </div>
-          <p class="prog-n"><strong>72 of 89</strong> drafted &middot;
+          <p class="prog-n"><strong>72 of 91</strong> drafted &middot;
              <strong>72</strong> signed off</p>
         </div>
         
@@ -474,12 +504,12 @@
         </header>
         <p class="detail">The significant and minor conflicts, and the gaps below the blocking line. <strong>Every open conflict now carries a drafted edit</strong> — the section, the sentence as it stands, and what to put there — and <code>check_edits.py</code> reports any that do not, because an item without an edit is checked by nobody. That is how six clerical items went on being reported open for a whole version after v3.0 had fixed them.<br><br>The same discipline run in the other direction against v3.1: §31.9 publishes its own list of eight closed items, and all eight verify — but checking rather than believing it is what produced <strong>F24</strong> and <strong>F25</strong>, neither of which that list mentions.</p>
         
-        <div class="prog" title="C10 C11 C12 C13 C14 C15 C16 C17 C18 C20 C22 C23 C24 C25 C26 C27 C28 C3 C31 C32 C33 C34 C35 C36 C37 C38 C39 C7 C8 C9 D48 D53 F16 F18 F19 F20 F23 F27 F28 F29 F30 F31 G10 G11 G12 G13 G14 G15 G16 G2 G3 G4 G5 G6 G7 G8">
+        <div class="prog" title="C10 C11 C12 C13 C14 C15 C16 C17 C18 C20 C22 C23 C24 C25 C26 C27 C28 C3 C31 C32 C33 C34 C35 C36 C37 C38 C39 C7 C8 C9 D48 D53 F16 F18 F19 F20 F23 F27 F28 F29 F30 F31 F34 G10 G11 G12 G13 G14 G15 G16 G2 G3 G4 G5 G6 G7 G8">
           <div class="bar">
-            <span class="fill" style="width:76.8%"></span>
-            <span class="fill settled" style="width:76.8%"></span>
+            <span class="fill" style="width:75.4%"></span>
+            <span class="fill settled" style="width:75.4%"></span>
           </div>
-          <p class="prog-n"><strong>43 of 56</strong> drafted &middot;
+          <p class="prog-n"><strong>43 of 57</strong> drafted &middot;
              <strong>43</strong> signed off</p>
         </div>
         
@@ -1091,4 +1121,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build 19984146968080a2 -->
+<!-- ruleborn-build ea58fa355440c4fe -->

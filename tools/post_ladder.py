@@ -98,9 +98,11 @@ def ladder(step: float):
 
 def measure(n: int, realm: int, depth: int, posts: int, bands: int,
             level: int) -> tuple[float, float, float]:
-    # Without v3.3's crack noise, which swamps the ladder it measures (F32).
+    # Without v3.3's crack noise, which swamps the ladder it measures (F32),
+    # and on the v3.2 wards F22 and F26 were measured on (F33).
     rs = run_batch(n, depth - 1, realm, "competent", laws="defensive",
-                   shaped=bands, posts=posts, post_level=level, crack_noise=False)
+                   shaped=bands, posts=posts, post_level=level, crack_noise=False,
+                   rules="v3.2")
     p = sum(1 for r in rs if not r.success) / len(rs)
     return (100 * p, 100 * math.sqrt(p * (1 - p) / len(rs)),
             statistics.median(r.crew_decisions for r in rs))

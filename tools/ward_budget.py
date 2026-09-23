@@ -51,9 +51,11 @@ from tools.heist_harness.report import run_batch
 
 from tools.design_facts import DECISION_BAND, HOLD_BAND   # 13.2, 12.6 (D37)
 
-#: §5.2 as written: a realm at level L holds 3 + L wards.
+#: §5.2 as written. v3.2 said 3 + realm level; v3.3 replaced the formula with
+#: a measured budget, 8, 8, 6, 7 and 8 (F26), declared once in design_facts.
 def SPEC(realm: int) -> int:
-    return 3 + realm
+    from tools.design_facts import WARD_LIMITS            # 5.2 (D37)
+    return WARD_LIMITS[realm - 1]
 
 
 #: What F26 recorded, kept so the report can say what happened to it rather
@@ -89,8 +91,8 @@ WARDS = range(3, 13)
 #: is part of the answer.
 BANDS = (0, 1, 2)
 
-#: The depth and post count each realm uses: the depth \u00a712.6's decision
-#: target implies and the post count \u00a710.2 gives it.
+#: The depth and post count each realm uses: the depth §12.6's decision
+#: target implies, and one post at every realm, as F26's sweep ran.
 SETTINGS = {
     1: dict(depth=3, posts=1),
     2: dict(depth=3, posts=1),
@@ -98,6 +100,13 @@ SETTINGS = {
     4: dict(depth=2, posts=1),
     5: dict(depth=2, posts=1),
 }
+
+#: Which document's wards the sweep builds (island.RULES). F26 measured
+#: v3.2's — every ward on its own tile — and v3.3 adopted its answer. Under
+#: v3.3's sensor reach the ward count stops being a dial at all (F33): which
+#: kinds a realm holds matters more than how many, so this sweep, which asks
+#: "how many", is a v3.2 question and is kept as one.
+RULES = "v3.2"
 
 
 def measure(n: int, realm: int, depth: int, posts: int, bands: int,
@@ -111,7 +120,8 @@ def measure(n: int, realm: int, depth: int, posts: int, bands: int,
     """
     # Without v3.3's crack noise, which swamps the wards it measures (F32).
     rs = run_batch(n, depth - 1, realm, "competent", laws="defensive",
-                   shaped=bands, posts=posts, wards=wards, crack_noise=False)
+                   shaped=bands, posts=posts, wards=wards, crack_noise=False,
+                   rules=RULES)
     p = sum(1 for r in rs if not r.success) / len(rs)
     return (100 * p, 100 * math.sqrt(p * (1 - p) / len(rs)),
             statistics.median(r.crew_decisions for r in rs))
@@ -319,8 +329,8 @@ def self_test() -> int:
     #    because they say so.
     from tools.heist_harness.island import generate
     try:
-        generate(0, 1, shaped=2, posts=1, wards=None)
-        g = generate(0, 1, shaped=2, posts=1, wards=10)
+        generate(0, 1, shaped=2, posts=1, wards=None, rules=RULES)
+        g = generate(0, 1, shaped=2, posts=1, wards=10, rules=RULES)
     except AssertionError as exc:
         print(f"    FAIL: a ward override was rejected: {exc}")
         return 1

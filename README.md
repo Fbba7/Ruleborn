@@ -30,9 +30,9 @@ a band at the top.
 decision only you can make, evidence nobody here can produce, or drafting that is
 still mine to do.
 
-Four versions have now answered the audit. **97 of 150 register items are fixed
+Four versions have now answered the audit. **97 of 153 register items are fixed
 in the document itself** — 26 by v3.0, 9 by v3.1, 7 by v3.2 and 55 by v3.3.
-17 are still open.
+19 are still open.
 
 v3.3 closed 55 of the 64 items open against v3.2. Each was checked by section and
 line, not taken from its own list. It takes the launch cut (24 laws chosen by
@@ -50,7 +50,16 @@ has not cleared the Heart first is found at the Vault: in the harness an
 optimal crew's success falls from 65% to 7.5%, and §19.27's skill gate fails at
 every depth. `sim/`'s planned heist shows the other way to play, taking four
 guards down first and cracking in 4.2 s. Whether that is the intended game is
-your call.
+your call. The harness now has a crew that plays it (T0.11): clearing the Heart
+first, it succeeds 65% against the optimal crew's 20% with the noise on.
+
+Porting v3.3's wards into the harness (D57) found two more. **F33**: one Lantern
+Glare outweighs a realm of other wards — it shows the crew to every guard, so one
+takes realm 3 from 42% held to 71% and two to 97%, while the six wards §5.2
+allows there, none of them a Glare, hold 46%. §5.2 budgets wards by count, and a
+count is a budget a Keeper spends on Glares. **F34**: §13.2's hold table was
+measured at one guard post in every realm; at the posts §5.2 actually gives,
+realms 3 to 5 hold 91 to 99.5% of raids.
 
 v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
@@ -230,7 +239,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 150 tracked items with section references and status:
+document, as 153 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,

@@ -22,6 +22,15 @@ from .policy import POLICIES
 from .report import run_batch
 from .sim import BASE_TICKS, LINK_TICKS, Heist, path_to
 
+#: The wards a question about another layer is asked on (island.RULES). On
+#: the generator's islands v3.3's wards, whose sensors reach two and three
+#: tiles, hold nearly every raid between them (F33), so — as
+#: `crack_noise=False` does for F32 — the tests that pin what skill, depth,
+#: the clock, the load, the posts or the geometry do are measured on v3.2's
+#: on-tile wards and say so. The tests that pin what v3.3's wards do are
+#: F33's, and run on the document.
+LAYER = "v3.2"
+
 SEEDS = range(40)
 
 
@@ -61,8 +70,12 @@ def test_the_harness_gives_the_same_answers_as_when_it_was_last_read():
     # bags (D16: Carry 104, 104, 300, 138 and 104, read from content/roles.json
     # — the only content change that moves it), and by D56: v3.3's half-speed
     # crouch and its crack noise (F32), both on here because both are the
-    # document.
-    assert digest == "8e73e394d1cdb9a0f8a02baf5fa8b450bd3a8c4441b6eca18175ccf94dcb2263", (
+    # document; and by D57: v3.3's wards and budgets (sensor reach, per-ward
+    # resets, the 15-second disarm on the tile, 8/8/6/7/8 wards and 1/1/2/3/3
+    # posts), the assist bonus, the two crew faults — standing still in
+    # front of a ward with no way round, and wandering at a reached link —
+    # and a crew that no longer stops to crack inside a ward's sensor.
+    assert digest == "30af740ce1811dbd9b06781d7a0bbd1cc472cfb00e7469e633fd948c04e6ce95", (
         f"the harness now gives different results: {digest}")
 
 
@@ -175,8 +188,8 @@ def test_skill_polarises_outcomes():
     def middle(name: str, n: int = 50) -> float:
         fills = []
         for i in range(n):
-            r = Heist(generate(i, 3), POLICIES[name](), realm_level=3,
-                      crossing=[generate(900_000 + i * 8, 3)],
+            r = Heist(generate(i, 3, rules=LAYER), POLICIES[name](), realm_level=3,
+                      crossing=[generate(900_000 + i * 8, 3, rules=LAYER)],
                       sheet=weave(i, 3, favour_defender=True), crack_noise=False).run()
             if r.success:
                 fills.append(r.fill)
@@ -216,13 +229,16 @@ def test_the_break_even_is_not_at_12_19s_seventy_per_cent():
         policy = type("Tuned", (Competent,), {"stop_at_fill": stop})
         values = []
         for i in range(n):
-            island = generate(i, 3, layers=ALL_LAYERS)
-            crossing = [generate(900_000 + i * 8, 3, layers=ALL_LAYERS)]
+            island = generate(i, 3, layers=ALL_LAYERS, rules=LAYER)
+            crossing = [generate(900_000 + i * 8, 3, layers=ALL_LAYERS, rules=LAYER)]
             r = Heist(island, policy(), realm_level=3, crossing=crossing,
-                      sheet=weave(i, 3, favour_defender=True), response=True).run()
+                      sheet=weave(i, 3, favour_defender=True), response=True,
+                      crack_noise=False).run()
             values.append(grade_value[r.grade] * r.fill / 100)
         return st.mean(values)
 
+    # Without the crack noise (F32) and on v3.2's wards (LAYER): with the
+    # noise every stop rule is worth under 0.02 and the curve has no shape.
     at_70, higher = expected(70), expected(90)
     assert higher > at_70, (at_70, higher)
 
@@ -235,7 +251,9 @@ def test_the_fill_term_cuts_9_6s_load_bearing_number_by_most_of_it():
 
     What §9.6 now pays is E[grade x fill], so that is what this measures, end to
     end rather than as a product of two averages. A crew playing to §12.19's own
-    70% break-even earns about 0.13 an attempt.
+    70% break-even earns about 0.13 an attempt. (Since v3.3's half-speed
+    crouch and D57's crews, on v3.2's wards and without the crack noise, it
+    is 0.059 at n=300; with the noise, under 0.02 — F32.)
 
     Sized against its own noise: at 400 seeds the mean is 0.132 with a standard
     error of 0.011, so the 0.25 bound below sits eleven standard errors above it
@@ -253,9 +271,10 @@ def test_the_fill_term_cuts_9_6s_load_bearing_number_by_most_of_it():
     tuned = type("Tuned", (Competent,), {"stop_at_fill": 70})
     values = []
     for i in range(200):
-        r = Heist(generate(i, 3, layers=ALL_LAYERS), tuned(), realm_level=3,
-                  crossing=[generate(900_000 + i * 8, 3, layers=ALL_LAYERS)],
-                  sheet=weave(i, 3, favour_defender=True), response=True).run()
+        r = Heist(generate(i, 3, layers=ALL_LAYERS, rules=LAYER), tuned(), realm_level=3,
+                  crossing=[generate(900_000 + i * 8, 3, layers=ALL_LAYERS, rules=LAYER)],
+                  sheet=weave(i, 3, favour_defender=True), response=True,
+                  crack_noise=False).run()
         values.append(grade_value[r.grade] * r.fill / 100)
     got = st.mean(values)
     assert got < 0.25, (
@@ -264,34 +283,35 @@ def test_the_fill_term_cuts_9_6s_load_bearing_number_by_most_of_it():
         f"either the fill term was re-derived or the Vault phase changed")
 
 
-def test_designed_geometry_is_worth_several_times_generated_geometry():
+def test_designed_geometry_is_worth_more_than_generated_geometry():
     """F16's own caveat, which the finding could not settle without this.
 
     F16 measures geometry at a few per cent and says the thing that matters: it
     is measuring *generated* geometry, and §13.2's 25% is a claim about an island
     someone thought about. `designed.py` is that island. Turning the layer off
-    and on with everything else held equal, designed geometry is worth several
-    times what the generator's is — so §13.2's claim survives and F16 is a
-    finding about the generator.
+    and on with everything else held equal, designed geometry is worth more
+    than the generator's — about three times, which is §13.3's "several
+    times" — so §13.2's claim survives and F16 is a finding about the
+    generator.
 
-    Asserted as a ratio, because the absolute numbers move with every change to
-    the crew and the generator and the ratio is the claim.
+    Asserted as a difference, because the absolute numbers move with every
+    change to the crew and the generator and the gap is the claim.
     """
     from .ablation import hold_rate
     from .designed import designed
     from .island import ALL_LAYERS, generate
 
-    # Without the crack noise, which would decide the answer itself (F32).
-    # Under v3.3's slower crouch the generator's geometry is worth nothing —
-    # -7.5 points at n=40, inside the noise of zero — and the designed
-    # island's 57.5, so the claim is now a difference, not a ratio: a ratio
-    # to a number that is zero is not a claim.
+    # Without the crack noise, which would decide the answer itself (F32),
+    # and on v3.2's wards (LAYER). After D57's fixes to the crews the
+    # generator's geometry is worth 14.4 points at n=160 and the designed
+    # island's 44.4, about three times; at the n=40 run here, 15.0 and 62.5
+    # (-7.5 and 57.5 before). What is asserted is the difference.
     no_geometry = ALL_LAYERS - {"geometry"}
-    made = (hold_rate(ALL_LAYERS, 40, 3, crack_noise=False)
-            - hold_rate(no_geometry, 40, 3, crack_noise=False))
-    drawn = (hold_rate(ALL_LAYERS, 40, 3, island_fn=designed, crack_noise=False)
-             - hold_rate(no_geometry, 40, 3, island_fn=designed, crack_noise=False))
-    assert made < 10, made
+    made = (hold_rate(ALL_LAYERS, 40, 3, crack_noise=False, rules=LAYER)
+            - hold_rate(no_geometry, 40, 3, crack_noise=False, rules=LAYER))
+    drawn = (hold_rate(ALL_LAYERS, 40, 3, island_fn=designed, crack_noise=False, rules=LAYER)
+             - hold_rate(no_geometry, 40, 3, island_fn=designed, crack_noise=False, rules=LAYER))
+    assert made < 20, made
     assert drawn > made + 30, (made, drawn)
 
 
@@ -303,8 +323,12 @@ def test_islands_never_seal_the_route():
 
 
 def test_wards_stay_inside_5_2s_limit():
+    """§5.2's limit: v3.3's measured 8, 8, 6, 7 and 8, and v3.2's 3 + level."""
+    from tools.design_facts import WARD_LIMITS
     for level in (1, 3, 5):
         island = generate(11, level)
+        assert len(island.wards) <= WARD_LIMITS[level - 1], (level, len(island.wards))
+        island = generate(11, level, rules="v3.2")
         assert len(island.wards) <= 3 + level, (level, len(island.wards))
 
 
@@ -320,11 +344,36 @@ def test_the_exit_is_reachable_exactly():
 
 def test_skill_separates_outcomes():
     """§19.27's depth threshold: optimal at least 35 points above careless."""
-    careless = run_batch(40, 1, 3, "careless", crack_noise=False)
-    optimal = run_batch(40, 1, 3, "optimal", crack_noise=False)
+    careless = run_batch(40, 1, 3, "careless", crack_noise=False, rules=LAYER)
+    optimal = run_batch(40, 1, 3, "optimal", crack_noise=False, rules=LAYER)
     gap = (100 * sum(r.success for r in optimal) / len(optimal)
            - 100 * sum(r.success for r in careless) / len(careless))
     assert gap >= 35, gap
+
+
+def test_a_crew_that_clears_the_heart_first_survives_the_crack_noise():
+    """F32's other half, and T0.11. The noise decides a raid for a crew that
+    cracks with the Heart's guards still standing; this crew takes them down
+    first, waiting beside their patrols as §12.8 describes. In the Heart alone
+    at realm 3, with no wards so that only the guards and the noise are in
+    play, it succeeds 65.0% of the time with the noise on, where the optimal
+    crew succeeds 20.0% (n=80); it knocks out 1.27 of the two guards a raid,
+    and a guard finds a body in about one raid in four. Without the noise the
+    two crews are level, 92.5% and 88.8%. The harness judges the approach by
+    sight alone, so the clearing crew's number is an upper bound.
+    """
+    from .island import generate
+    from .laws import Sheet
+    from .sim import Heist
+
+    def success(name: str, n: int = 40) -> float:
+        wins = sum(Heist(generate(i, 3, wards=0), POLICIES[name](), realm_level=3,
+                         crossing=[], sheet=Sheet()).run().success for i in range(n))
+        return 100 * wins / n
+
+    clearing, optimal = success("clearing"), success("optimal")
+    assert clearing >= 2 * optimal, (clearing, optimal)
+    assert clearing >= 40, clearing
 
 
 def test_the_crack_noise_decides_nearly_every_raid():
@@ -338,8 +387,8 @@ def test_the_crack_noise_decides_nearly_every_raid():
     it, 65%. The same noise lifts §19.27's skill gap below its 35-point floor
     (7.5 against 65), which is the gate the document exits phases 2 and 3 on.
     """
-    loud = run_batch(40, 1, 3, "optimal")
-    quiet = run_batch(40, 1, 3, "optimal", crack_noise=False)
+    loud = run_batch(40, 1, 3, "optimal", rules=LAYER)
+    quiet = run_batch(40, 1, 3, "optimal", crack_noise=False, rules=LAYER)
     with_noise = 100 * sum(r.success for r in loud) / len(loud)
     without = 100 * sum(r.success for r in quiet) / len(quiet)
     assert with_noise <= 20, with_noise
@@ -348,8 +397,8 @@ def test_the_crack_noise_decides_nearly_every_raid():
 
 def test_decisions_need_more_than_one_realm():
     """F7. §12.6's 15-25 band is reached by crossing realms, not inside one."""
-    one = st.median(r.crew_decisions for r in run_batch(30, 0, 3, "optimal"))
-    three = st.median(r.crew_decisions for r in run_batch(30, 2, 3, "optimal"))
+    one = st.median(r.crew_decisions for r in run_batch(30, 0, 3, "optimal", rules=LAYER))
+    three = st.median(r.crew_decisions for r in run_batch(30, 2, 3, "optimal", rules=LAYER))
     assert one < 15, one
     assert three >= one * 1.8, (one, three)
 
@@ -357,7 +406,7 @@ def test_decisions_need_more_than_one_realm():
 def test_the_clock_is_not_a_pressure_device():
     """F8. Runs finish well inside §5.4's clock, so the last ten seconds
     decide almost nothing — against §19.27's target of a quarter of runs."""
-    rs = run_batch(40, 1, 3, "optimal")
+    rs = run_batch(40, 1, 3, "optimal", rules=LAYER)
     late = 100 * sum(r.last_ten_decided for r in rs) / len(rs)
     used = st.median(r.ticks / r.clock_ticks for r in rs)
     assert late < 25, late
@@ -401,17 +450,18 @@ def test_the_clock_reaches_only_the_crew_that_cannot_use_it():
     def banked(cls, clock_pct: int, n: int = 40) -> float:
         fills = []
         for i in range(n):
-            fills.append(Heist(generate(i, 3), cls(), realm_level=3,
-                               crossing=[generate(900_000 + i * 8, 3)],
+            fills.append(Heist(generate(i, 3, rules=LAYER), cls(), realm_level=3,
+                               crossing=[generate(900_000 + i * 8, 3, rules=LAYER)],
                                sheet=Sheet(), clock_pct=clock_pct,
                                crack_noise=False).run().fill)
         return st.mean(fills)
 
     # v3.3's half-speed crouch makes the inbound journey long against what is
     # left, so `_out_of_time` now fires for the competent crew too: at 55% of
-    # the clock it banks 20.4 where the blind crew banks 23.7. That is the
-    # dial §12.19 asks for, reached by a slower crew rather than by a change
-    # to the policy. Measured without the crack noise (F32).
+    # the clock it banks 14.6 where the blind crew banks 17.0 (after D57;
+    # 20.4 and 23.7 before). That is the dial §12.19 asks for, reached by a
+    # slower crew rather than by a change to the policy. Measured without the
+    # crack noise (F32), on v3.2's wards (LAYER).
     seeing = banked(POLICIES["competent"], 55)
     blind = banked(Blind, 55)
     assert seeing < blind, (seeing, blind)
@@ -522,9 +572,11 @@ def test_the_haul_metric_sees_what_the_hold_rate_cannot():
     from .ablation import haul_denied, hold_rate
     from .island import ALL_LAYERS
 
-    bare = haul_denied(frozenset(), 30, 3)
-    held = hold_rate(ALL_LAYERS, 30, 3)
-    denied = haul_denied(ALL_LAYERS, 30, 3, baseline=bare)
+    # Without the crack noise (F32), which puts the hold at 83%.
+    bare = haul_denied(frozenset(), 30, 3, rules=LAYER, crack_noise=False)
+    held = hold_rate(ALL_LAYERS, 30, 3, rules=LAYER, crack_noise=False)
+    denied = haul_denied(ALL_LAYERS, 30, 3, baseline=bare, rules=LAYER,
+                         crack_noise=False)
     # The level is not what this test is about — D26 moved it, and §13.2's band
     # is checked by `defence_balance`. What is asserted is the relationship.
     assert 20 < held < 75, held
@@ -537,6 +589,28 @@ def test_no_layer_turns_back_a_raid_alone():
     from .island import LAYERS
     for layer in LAYERS:
         assert hold_rate(frozenset({layer}), 15, 3) == 0.0, layer
+
+
+def test_a_crew_with_no_way_round_a_ward_walks_through_it():
+    """D57. Two faults v3.3's sensor reach exposed. A crew that found no way
+    round a live ward stood in front of it re-planning, and counted a crew
+    decision every other second while it did; and a member beside a crossing
+    realm's link re-planned to another tile beside it, the long way round
+    wherever the tiles between were covered, so the crew was never beside
+    the link at once. On a realm with nothing but v3.3's wards — whose
+    sensors cover every tile beside the Vault here — every raid used to run
+    out the clock in the first realm."""
+    from .ablation import hold_rate
+    from .sim import Heist
+
+    wards = frozenset({"wards"})
+    assert hold_rate(wards, 10, 3) == 0.0
+    heist = Heist(generate(0, 3, layers=wards), POLICIES["competent"](),
+                  realm_level=3, crossing=[generate(900_000, 3, layers=wards)],
+                  response=False)
+    result = heist.run()
+    assert heist.crossings == 1 and result.success, (heist.crossings, result.grade)
+    assert heist.policy.crew_decisions <= 5, heist.policy.crew_decisions
 
 
 def test_ablation_layers_change_only_themselves():
@@ -583,7 +657,7 @@ def test_one_guard_post_cannot_reach_13_2s_band():
     held = 0
     n = 200
     for i in range(n):
-        island = generate(i, 1, shaped=True, posts=1)
+        island = generate(i, 1, shaped=True, posts=1, rules=LAYER)
         heist = Heist(island, Competent(), realm_level=1, crossing=[],
                       sheet=weave(i, 1, favour_defender=True), crack_noise=False)
         if not heist.run().success:
@@ -626,9 +700,9 @@ def test_13_2s_band_falls_inside_a_gap_the_defence_cannot_enter():
         held = 0
         for i in range(n):
             crossing = [generate(900_000 + i * 8 + k, 1, shaped=bands,
-                                 posts=posts, post_level=level) for k in range(2)]
+                                 posts=posts, post_level=level, rules=LAYER) for k in range(2)]
             heist = Heist(generate(i, 1, shaped=bands, posts=posts,
-                                   post_level=level), Competent(), realm_level=1,
+                                   post_level=level, rules=LAYER), Competent(), realm_level=1,
                           crossing=crossing, sheet=weave(i, 1, favour_defender=True),
                           crack_noise=False)
             if not heist.run().success:
@@ -644,13 +718,14 @@ def test_13_2s_band_falls_inside_a_gap_the_defence_cannot_enter():
         f"and concluded §13.2's 15-point band cannot be reached at realm 1; if "
         f"the defence now has that resolution the finding is stale")
     # v3.3 halved the crouch (G13), and a slower crew is caught more: the
-    # best one post can do rose from 24.2% to 42.0%, inside the band, while
-    # two posts rose from 62.4% to 80.0%. The gap is the same 38 points; the
-    # band now sits at its lower edge rather than inside it. Measured without
-    # the crack noise, which swamps both (F32).
+    # best one post can do rose from 24.2% to 43.6%, inside the band, while
+    # two posts rose from 62.4% to 81.2% (after D57; 42.0 and 80.0 before).
+    # The gap is the same 38 points; the band now sits at its lower edge
+    # rather than inside it. Measured without the crack noise, which swamps
+    # both (F32), and on v3.2's wards (LAYER).
     assert 30 <= one_post, (
         f"one guard post at its best holds {one_post:.1f}%, under §13.2's band "
-        f"again; under v3.3's crouch it measured 42.0%")
+        f"again; under v3.3's crouch it measured 43.6%")
 
 
 def test_wards_are_the_lever_realm_1_has_and_5_2_rations():
@@ -675,8 +750,8 @@ def test_wards_are_the_lever_realm_1_has_and_5_2_rations():
         held = 0
         for i in range(n):
             crossing = [generate(900_000 + i * 8 + k, 1, shaped=1, posts=1,
-                                 wards=wards) for k in range(2)]
-            heist = Heist(generate(i, 1, shaped=1, posts=1, wards=wards),
+                                 wards=wards, rules=LAYER) for k in range(2)]
+            heist = Heist(generate(i, 1, shaped=1, posts=1, wards=wards, rules=LAYER),
                           Competent(), realm_level=1, crossing=crossing,
                           sheet=weave(i, 1, favour_defender=True))
             if not heist.run().success:
@@ -689,7 +764,7 @@ def test_wards_are_the_lever_realm_1_has_and_5_2_rations():
         f"{doubled - lawful:.1f} points. F26 measured 11.6 and concluded the ward "
         f"axis is the one lever that reaches §13.2's band at realm 1; if that gap "
         f"has closed, the recommendation is stale")
-    assert generate(0, 1, wards=10).ward_budget == 10, (
+    assert generate(0, 1, wards=10, rules=LAYER).ward_budget == 10, (
         "an island past §5.2's ward limit must carry ward_budget, so a "
         "counterfactual cannot be mistaken for a legal island")
 
@@ -716,8 +791,8 @@ def test_a_flat_ward_count_breaks_the_realms_that_work():
         held = 0
         for i in range(n):
             crossing = [generate(900_000 + i * 8 + k, realm, shaped=bands,
-                                 posts=1, wards=wards) for k in range(2)]
-            heist = Heist(generate(i, realm, shaped=bands, posts=1, wards=wards),
+                                 posts=1, wards=wards, rules=LAYER) for k in range(2)]
+            heist = Heist(generate(i, realm, shaped=bands, posts=1, wards=wards, rules=LAYER),
                           Competent(), realm_level=realm, crossing=crossing,
                           sheet=weave(i, realm, favour_defender=True),
                           crack_noise=False)
@@ -727,10 +802,11 @@ def test_a_flat_ward_count_breaks_the_realms_that_work():
 
     lawful = hold(realm=3, wards=6, bands=1)      # §5.2's own count
     flat_ten = hold(realm=3, wards=10, bands=1)   # what realm 1 needs
-    # Under v3.3's slower crouch realm 3 on its six wards reads 48.0%, three
+    # Under v3.3's slower crouch realm 3 on its six wards reads 50.5%, five
     # points over the band rather than inside it (it was 42.0%); ten wards
-    # reads 68.0%. The claim is the distance between them. Without the crack
-    # noise (F32), which puts both near 80-90%.
+    # reads 74.5% (after D57; 48.0 and 68.0 before). The claim is the
+    # distance between them. Without the crack noise (F32), which puts both
+    # near 80-90%, and on v3.2's wards (LAYER).
     assert flat_ten - lawful >= 15, (
         f"six wards {lawful:.1f}%, ten {flat_ten:.1f}%: a flat ten no longer "
         f"moves realm 3 far past what its own six do")
@@ -738,6 +814,48 @@ def test_a_flat_ward_count_breaks_the_realms_that_work():
         f"ten wards at realm 3 held {flat_ten:.1f}%, inside §13.2's band. F26 "
         f"measured 53.6% and concluded a flat ward count breaks the realms that "
         f"work, which is why its recommendation is a per-realm table")
+
+
+def test_one_lantern_glare_outweighs_a_realm_of_other_wards():
+    """F33. §5.2 budgets wards by count; the Lantern Glare is a switch.
+
+    §10.3's Glare "shows the crew to every guard in the realm", which with
+    §12.17's near-zone fill is every guard Alerted within half a second — the
+    response layer, set off by a ward. On v3.3's rules, at realm 3 on §5.2's
+    two posts, one geometry band and three realms crossed (n=80): no ward
+    holds 42.5%; one Glare 71.2%, two 97.5%, three or more every raid; while
+    a kit with no Glare at all holds 41 to 68% at any count from one to
+    seven, not monotonically, and 46.2% at §5.2's six. The resolution F26 credited to the ward
+    count was a Glare arriving every third ward in the generator's order.
+    """
+    def held(kinds, wards: int, n: int = 60) -> float:
+        rs = run_batch(n, 2, 3, "competent", laws="defensive", shaped=1, posts=2,
+                       wards=wards, crack_noise=False, ward_kinds=kinds)
+        return 100 * sum(not r.success for r in rs) / n
+
+    two_glares = held(("Lantern Glare",), 2)
+    six_others = held(("Time Snare", "Gravity Well"), 6)
+    assert two_glares >= 85, two_glares
+    assert two_glares - six_others >= 25, (two_glares, six_others)
+
+
+def test_13_2s_hold_table_was_measured_at_one_guard_post():
+    """F34. §13.2 (v3.3) lists realm 3's hold, 34.4%, at six wards and §5.2's
+    two guard posts. F26's sweep, which that table quotes, ran one post in
+    every realm. On the harness it was measured on (v3.2's wards, crack
+    noise off, one band, three realms), realm 3 at six wards holds 50.5% on
+    one post and 94.5% on two (n=200): the second post §5.2 gives it
+    is worth some forty-five points, and the table's posts column is not the
+    setting its holds were measured at.
+    """
+    def held(posts: int, n: int = 60) -> float:
+        rs = run_batch(n, 2, 3, "competent", laws="defensive", shaped=1,
+                       posts=posts, wards=6, crack_noise=False, rules=LAYER)
+        return 100 * sum(not r.success for r in rs) / n
+
+    one, two = held(1), held(2)
+    assert two >= 75, two
+    assert two - one >= 30, (one, two)
 
 
 def test_the_geometry_is_a_dial_and_not_a_switch():
@@ -759,7 +877,7 @@ def test_the_geometry_is_a_dial_and_not_a_switch():
     def hold(bands: int, n: int = 120) -> float:
         held = 0
         for i in range(n):
-            island = generate(i, 1, shaped=bands, posts=2)
+            island = generate(i, 1, shaped=bands, posts=2, rules=LAYER)
             heist = Heist(island, Competent(), realm_level=1, crossing=[],
                           sheet=weave(i, 1, favour_defender=True))
             if not heist.run().success:
