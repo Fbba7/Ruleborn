@@ -2610,6 +2610,34 @@ dict(id="G15", kind="gap", severity="significant", status="open",
      rec="Either state the exposed share in bag units, or state the "
          "conversion. It is a pricing decision, so it is yours to make.",
      measured="sim/: FIXTURE_EXPOSED"),
+dict(id="C33", kind="contradiction", severity="significant", status="open",
+     title="§6.2’s terrain table restates three detection rules and gets all "
+           "three different from §12.17",
+     refs=["6.2", "12.17", "12.8"],
+     body="§12.8: “where any other section still describes perception, 12.17 "
+          "wins.” §6.2’s terrain table still describes it, three times, and "
+          "each time says something else:<br><br><code>"
+          "Raised ground &nbsp;§6.2 &nbsp;“see 2 tiles further per level”<br>"
+          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "§12.17 “sees a metre further”<br>"
+          "Tall grass &nbsp;&nbsp;&nbsp;§6.2 &nbsp;“hides anyone inside from guards "
+          "more than 2 tiles away”<br>"
+          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "§12.17 “standing still … invisible until a guard walks into the tile”<br>"
+          "Gravel path &nbsp;&nbsp;§6.2 &nbsp;“footsteps carry 1 tile further”<br>"
+          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+          "§12.17 louder ×1.25 — 0.6 m on a walk</code><br><br>"
+          "The tall-grass pair is the sharpest: §6.2 hides a <em>moving</em> "
+          "crew member from anything beyond two tiles, §12.17 hides only a "
+          "<em>still</em> one, from everything outside the tile. A level "
+          "designer reading §6.2 places grass as cover for a route; one reading "
+          "§12.17 places it as a place to stop.<br><br>Found while building "
+          "height in <code>sim/</code>, which follows §12.17 on all three, as "
+          "§12.8 says it must. §6.2’s stairs (“footsteps carry 1 tile "
+          "further”) have no §12.17 counterpart at all.",
+     rec="Let §6.2’s cells point at §12.17 rather than restate it — the one "
+         "home the document already names. Three edits, drafted.",
+     measured=""),
 dict(id="C32", kind="contradiction", severity="minor", status="open",
      title="Two reset times for the same ward at level 1",
      refs=["10.2", "10.3"],
@@ -5526,6 +5554,22 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+
+"C33": [
+    dict(section="6.2", action="replace",
+         find="Guards on higher ground see 2 tiles further per level",
+         replace="Guards on higher ground see further (12.17 owns how far)",
+         why="\u00a712.17: \"a level higher sees a metre further\". C33."),
+    dict(section="6.2", action="replace",
+         find="Hides anyone inside from guards more than 2 tiles away",
+         replace="Hides anyone standing still inside (12.17 owns the rule)",
+         why="\u00a712.17 hides only a still crew member, from everything outside "
+             "the tile. C33."),
+    dict(section="6.2", action="replace",
+         find="Crunchy: footsteps carry 1 tile further",
+         replace="Crunchy: louder underfoot (12.17 owns how much)",
+         why="\u00a712.17 makes gravel \u00d71.25, not a tile further. C33."),
+],
 
 "C32": [
     dict(section="10.2", action="replace",

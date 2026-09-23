@@ -2030,3 +2030,90 @@ fn smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits() {
     }
     assert!(world.wards[0].broken, "560 >= 500");
 }
+
+// --------------------------------------------------------------------------
+// Height (§6.2's raised ground, §12.17's higher and lower ground)
+// --------------------------------------------------------------------------
+
+#[test]
+fn climbing_a_level_needs_a_ramp_and_dropping_is_free_and_one_way() {
+    let mut grid = Grid::new(6, 3);
+    for y in 0..3 {
+        grid.set_height(3, y, 1);
+        grid.set_height(4, y, 1);
+        grid.set_height(5, y, 1);
+    }
+    let low = grid.index(1, 1).unwrap();
+    let high = grid.index(4, 1).unwrap();
+    assert!(path::find(&grid, low, high).is_none(), "a cliff: no way up");
+    assert!(path::find(&grid, high, low).is_some(), "and a free way down");
+    grid.make_climbable(3, 0);
+    let up = path::find(&grid, low, high).expect("a ramp makes it climbable");
+    assert!(up.contains(&grid.index(3, 0).unwrap()), "by way of the ramp");
+    // Two levels at once is a cliff even with a ramp.
+    grid.set_height(4, 1, 3);
+    let (a, b) = (grid.index(3, 1).unwrap(), grid.index(4, 1).unwrap());
+    assert!(!grid.can_step(a, b), "1 to 3 is not a climb");
+    assert!(grid.can_step(b, a), "3 to 1 is a drop");
+}
+
+#[test]
+fn honeycomb_lets_anyone_climb_one_level() {
+    // "everyone moves 20% slower but can climb walls and cliffs one level."
+    let mut world = vault_world(1);
+    world.weave(&[("honeycomb", (0, 13))]);
+    for y in 0..14 {
+        world.grid.set_height(9, y, 1);
+    }
+    world.step();
+    let (a, b) = (world.grid.index(8, 4).unwrap(), world.grid.index(9, 4).unwrap());
+    assert!(world.grid.can_step(a, b), "up a level with no ramp");
+}
+
+#[test]
+fn a_guard_a_level_up_sees_a_metre_further_and_one_below_loses_its_far_zone() {
+    // The Scout's far zone ends at 6 m. At 6.5 m, level ground: nothing.
+    let at = |guard_h: u8, raider_h: u8, tenths: i64| {
+        let mut world = scout_and_raider(tenths, 0);
+        let g = world.grid.tile_at(world.guards[0].at.x, world.guards[0].at.y).unwrap();
+        let r = world.grid.tile_at(world.raiders[0].at.x, world.raiders[0].at.y).unwrap();
+        let (gx, gy) = world.grid.coords(g);
+        let (rx, ry) = world.grid.coords(r);
+        world.grid.set_height(gx, gy, guard_h);
+        world.grid.set_height(rx, ry, raider_h);
+        rate(&world)
+    };
+    assert_eq!(at(0, 0, 65), None, "6.5 m on level ground: beyond the far zone");
+    assert_eq!(at(1, 0, 65), Some(12), "a level up: a metre further, still the far rate");
+    assert_eq!(at(0, 0, 50), Some(12), "5 m on level ground: far zone");
+    assert_eq!(at(0, 1, 50), None, "looking up: no far zone at all");
+    assert_eq!(at(0, 1, 35), Some(33), "but the mid zone still sees");
+}
+
+#[test]
+fn a_drop_is_heard_two_metres_off_for_one_level_and_four_for_three() {
+    use crate::noise::Sound as S2;
+    assert_eq!(S2::LandingOne.steps(), 2, "\u{a7}12.17: landing from one level, 2 m");
+    assert_eq!(S2::LandingThree.steps(), 4, "from three, 4 m");
+    // In the world: a Scout drops a level beside a guard facing away three
+    // steps off. A walk there carries two steps; the landing carries two too,
+    // so put the guard two steps away and walk crouched — only the landing
+    // can reach it.
+    let wakes = |drop: bool| {
+        let mut world = vault_world(1);
+        if drop {
+            world.grid.set_height(3, 3, 1);
+        }
+        let g = post(&mut world, 1, 3, 6);
+        world.guards[g].facing = Ang::from_degrees(90);  // away
+        put(&mut world, 0, 3, 3);
+        world.raiders[0].gait = Gait::Crouch;              // carries 1 step
+        world.raiders[0].route = vec![world.grid.index(3, 4).unwrap()];
+        for _ in 0..40 {
+            world.step();
+        }
+        world.guards[g].state
+    };
+    assert_eq!(wakes(false), State::Unaware, "a crouched step carries one tile");
+    assert_eq!(wakes(true), State::Investigating, "the landing carries two");
+}

@@ -34,10 +34,6 @@ SOURCES = ["src/lib.rs", "src/guard.rs", "src/noise.rs", "src/grid.rs", "src/hei
 # Values the content files hold that the simulation does not yet use, by path
 # prefix. Each is reported so none passes as agreeing by being absent.
 NOT_MODELLED = [
-    ("modifiers.higher_ground", "the fixture has one level"),
-    ("modifiers.lower_ground", "the fixture has one level"),
-    ("noise.sources.landing_1_level", "the fixture has one level"),
-    ("noise.sources.landing_3_levels", "the fixture has one level"),
     ("noise.off_screen_multiplier", "the simulation has no screen"),
     ("ambush.level_advantage_cap", "every character is level 1: there are no levels yet"),
 ]
@@ -45,8 +41,6 @@ NOT_MODELLED = [
 # Rule-sheet parameters (§12.21) the simulation does not read yet. Every
 # other parameter must appear as `Param::Name` in the simulation's source.
 LAW_PARAMS_NOT_MODELLED = [
-    ("climb_levels", "the fixture has one level"),
-    ("leap_obstacles", "no leaping: a fence stops feet"),
     ("touch_damage", "Thorns: \"touching walls or hedges costs 5% health\" — "
                      "and the document never says what a touch is"),
     ("unlit_drain", "Soul lanterns: needs lantern light, an object not built"),
@@ -65,6 +59,8 @@ DERIVED = [
 # Rules the content file states in words, held by a named test rather than by
 # a number. The gate checks the test exists; status.py checks it passed.
 HELD_BY_TEST = {
+    "modifiers.lower_ground":
+        "a_guard_a_level_up_sees_a_metre_further_and_one_below_loses_its_far_zone",
     "modifiers.still_in_grass": "standing_still_in_tall_grass_hides_until_a_guard_walks_in",
     "alarm.realm_alarm_per_guard_found":
         "a_knocked_out_guard_found_by_another_raises_the_realm_alarm",
@@ -84,6 +80,8 @@ READINGS = [
      "§10.3 gives health to the Crystal Wall alone"),
     ("COIL_DAMAGE", "the Static Coil's shock, from spec/wards.md's proposal",
      "§10.3 gives it no damage"),
+    ("LandingTwo", "landing from two levels, 3 m",
+     "§12.17 gives one level (2 m) and three (4 m) and nothing between"),
     ("GLARE_BLIND_TICKS", "Lantern Glare's blind, read as the crew unable to act",
      "§10.3 says \"blinds them\" and not what a blinded crew cannot do"),
 ]
@@ -118,7 +116,8 @@ def column(text: str, fn: str) -> dict[str, int]:
 
 
 def sounds(text: str) -> dict[str, int]:
-    snake = lambda s: re.sub(r"(?<!^)([A-Z])", r"_\1", s).lower()
+    named = {"LandingOne": "landing_1_level", "LandingThree": "landing_3_levels"}
+    snake = lambda s: named.get(s) or re.sub(r"(?<!^)([A-Z])", r"_\1", s).lower()
     body = re.search(r"fn half_metres\(self\) -> u16 \{(.*?)\n    \}", text, re.S)
     return {snake(n): int(v) for n, v in re.findall(r"Sound::(\w+) => (\d+)", body.group(1))} \
         if body else {}
@@ -184,6 +183,9 @@ def compare(content: dict, role_rows: list, text: str) -> dict:
                  k.get(f"{state['id'].upper()}_AT"))
 
     for m in content["modifiers"]:
+        if m["id"] == "higher_ground":
+            same("modifiers.higher_ground.delta_m", "higher ground sees further (m a level)",
+                 m["delta_m"], k.get("HIGHER_GROUND_METRES"))
         if "multiplier" in m:
             const = {"crouched": "CROUCHED", "running": "RUNNING", "unlit": "UNLIT",
                      "peripheral": "PERIPHERAL"}.get(m["id"])
@@ -210,8 +212,6 @@ def compare(content: dict, role_rows: list, text: str) -> dict:
 
     heard = sounds(text)
     for src in content["noise"]["sources"]:
-        if src["id"].startswith("landing"):
-            continue
         same(f"noise.sources.{src['id']}.heard_within_m",
              f"{src['id']} carries (half metres)", round(src["heard_within_m"] * 2),
              heard.get(src["id"]))
@@ -262,7 +262,16 @@ def compare(content: dict, role_rows: list, text: str) -> dict:
                  and not any(p == c or p.startswith(c + ".") for c in covered)
                  and not any(p.startswith(t + ".") or p == t for t in touched)]
     return {"checked": checked, "wrong": wrong, "uncovered": uncovered,
-            "readings": [f"{n} = {k.get(n)} — {what}; {why}" for n, what, why in READINGS]}
+            "readings": [f"{n} = {reading_value(n, k, text)} — {what}; {why}"
+                         for n, what, why in READINGS]}
+
+
+def reading_value(name: str, k: dict, text: str):
+    """A reading is a constant, or — for a sound — its carry in half metres."""
+    if name in k:
+        return k[name]
+    m = re.search(rf"Sound::{name} => (\d+)", text)
+    return f"{m.group(1)} half metres" if m else None
 
 
 def facts_compare(text: str) -> dict:

@@ -29,6 +29,9 @@ pub const LOAD_PER_SECOND: i32 = 30;
 /// §11.1, the Carrier: "15% slower when loaded".
 pub const CARRIER_LOADED_PACE: (i64, i64) = (85, 100);
 
+/// §12.17: "A guard standing a level higher sees a metre further." Per level.
+pub const HIGHER_GROUND_METRES: i32 = 1;
+
 /// §12.20: "Drops its loot on the tile and has ten seconds before capture. An
 /// ally standing adjacent revives it in 3 seconds, a Mender in 1.5."
 pub const DOWN_TICKS: u32 = TICKS_PER_SECOND * 10;

@@ -11,12 +11,14 @@
   "a_crystal_wall_blocks_until_it_is_broken": "passed",
   "a_diagonal_through_a_corner_crosses_both_side_tiles": "passed",
   "a_downed_crew_member_is_caught_after_ten_seconds_unless_revived": "passed",
+  "a_drop_is_heard_two_metres_off_for_one_level_and_four_for_three": "passed",
   "a_fence_stops_feet_and_not_eyes": "passed",
   "a_fog_bank_stops_eyes_and_not_feet": "passed",
   "a_full_five_crew_load_takes_ten_seconds": "passed",
   "a_full_length_heist_fits_the_size_budget": "passed",
   "a_gait_command_changes_the_gait_and_a_bad_one_is_dropped": "passed",
   "a_gravity_well_pulls_everyone_within_three_tiles_and_holds_them_two_seconds": "passed",
+  "a_guard_a_level_up_sees_a_metre_further_and_one_below_loses_its_far_zone": "passed",
   "a_guard_can_always_see_out_of_its_own_tile": "passed",
   "a_guard_turns_toward_the_way_around_not_toward_the_raider": "passed",
   "a_heist_is_reproducible_from_its_seed": "passed",
@@ -55,6 +57,7 @@
   "below_stays_in_range_and_covers_it": "passed",
   "breaking_a_pylon_switches_its_law_off_and_earns_its_page": "passed",
   "brittle_stone_doubles_every_hit_on_a_structure": "passed",
+  "climbing_a_level_needs_a_ramp_and_dropping_is_free_and_one_way": "passed",
   "commands_are_what_drives_the_crew": "passed",
   "cracking_takes_ten_to_twenty_five_seconds_only_with_a_breaker": "passed",
   "crew_pass_through_one_another": "passed",
@@ -72,6 +75,7 @@
   "golden_replays_still_verify": "passed",
   "gravel_and_water_carry_further_and_moss_less": "passed",
   "haste_runs_everyone_and_the_clock_a_quarter_fast": "passed",
+  "honeycomb_lets_anyone_climb_one_level": "passed",
   "integer_square_root_is_exact_for_squares": "passed",
   "integer_square_root_never_overshoots": "passed",
   "investigating_walks_to_the_spot_searches_ten_seconds_then_walks_home": "passed",
@@ -143,52 +147,46 @@
  "cross_target": [
   {
    "seed": "1",
-   "native": "0b382612413fe2b1",
-   "wasm": "0b382612413fe2b1",
+   "native": "801f21140a081f3a",
+   "wasm": "801f21140a081f3a",
    "agree": true,
    "bytes": 1302
   },
   {
    "seed": "6840123409045651457",
-   "native": "fc728450d9af85e5",
-   "wasm": "fc728450d9af85e5",
+   "native": "59e5c242b11bc502",
+   "wasm": "59e5c242b11bc502",
    "agree": true,
    "bytes": 1263
   },
   {
    "seed": "18446744073709551615",
-   "native": "34e2a8a3451749b9",
-   "wasm": "34e2a8a3451749b9",
+   "native": "5501511a6e9facc3",
+   "wasm": "5501511a6e9facc3",
    "agree": true,
    "bytes": 1225
   },
   {
    "seed": "42",
-   "native": "06a36da450166711",
-   "wasm": "06a36da450166711",
+   "native": "dbc6003e735e2453",
+   "wasm": "dbc6003e735e2453",
    "agree": true,
    "bytes": 1179
   },
   {
    "seed": "999983",
-   "native": "fafb8881d3d816c2",
-   "wasm": "fafb8881d3d816c2",
+   "native": "fa9cfdb146262cf8",
+   "wasm": "fa9cfdb146262cf8",
    "agree": true,
    "bytes": 1193
   }
  ],
  "content": {
-  "agree": 126,
+  "agree": 132,
   "disagree": [],
   "not_modelled": [
-   "modifiers.higher_ground \u2014 the fixture has one level",
-   "modifiers.lower_ground \u2014 the fixture has one level",
-   "noise.sources.landing_1_level \u2014 the fixture has one level",
-   "noise.sources.landing_3_levels \u2014 the fixture has one level",
    "noise.off_screen_multiplier \u2014 the simulation has no screen",
    "ambush.level_advantage_cap \u2014 every character is level 1: there are no levels yet",
-   "rule sheet climb_levels \u2014 the fixture has one level",
-   "rule sheet leap_obstacles \u2014 no leaping: a fence stops feet",
    "rule sheet touch_damage \u2014 Thorns: \"touching walls or hedges costs 5% health\" \u2014 and the document never says what a touch is",
    "rule sheet unlit_drain \u2014 Soul lanterns: needs lantern light, an object not built",
    "rule sheet regrow_seconds \u2014 set by Crystal growth and Bloom; nothing regrows yet",
@@ -202,6 +200,7 @@
    "FIXTURE_EXPOSED = 560 \u2014 what the fixture's Vault holds, in bag units; \u00a79.6 prices the exposed share in Starlight and nothing converts it to Carry",
    "WARD_HEALTH_PER_LEVEL = 500 \u2014 a ward's health, from spec/wards.md's proposal; \u00a710.3 gives health to the Crystal Wall alone",
    "COIL_DAMAGE = (8, 100) \u2014 the Static Coil's shock, from spec/wards.md's proposal; \u00a710.3 gives it no damage",
+   "LandingTwo = 6 half metres \u2014 landing from two levels, 3 m; \u00a712.17 gives one level (2 m) and three (4 m) and nothing between",
    "GLARE_BLIND_TICKS = 60 \u2014 Lantern Glare's blind, read as the crew unable to act; \u00a710.3 says \"blinds them\" and not what a blinded crew cannot do"
   ]
  }

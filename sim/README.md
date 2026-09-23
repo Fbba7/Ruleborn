@@ -389,6 +389,28 @@ Reset times come from §10.3 — Time Snare 12 s, Lantern Glare 20 s — althoug
 contradiction (C32). The fixture puts one of each ward in the south half of
 the realm, where the planned heist does not go.
 
+## Height
+
+§6.2's raised ground runs from 0 to 3 levels.
+- **Climbing one level** needs a ramp, stairs or vines on either tile, or a
+  law that lets anyone climb (Honeycomb, or Half gravity's leap). Two levels
+  at once is a cliff.
+- **Dropping** is "free and one-way", so the pathfinder's steps are now
+  directed: a route can go down a cliff that no route comes back up.
+- **Landing** is heard 2 m off from one level and 4 m from three (§12.17).
+  §12.17 gives nothing between, so two levels is 3 m, listed as the
+  simulation's reading.
+- **Sight** follows §12.17, which §12.8 says wins. A guard a level higher
+  sees a metre further per level, and one looking up loses its far zone
+  entirely. §6.2's table says higher ground sees "2 tiles further per level".
+  Building this found that, and two more places where §6.2 restates §12.17
+  differently: tall grass and gravel (C33).
+- **Sound** ignores height and travels any walkable path both ways: a cliff
+  stops feet, not noise.
+
+The fixture puts the Warden's post on a one-level rise with a ramp up from
+the north.
+
 ## The simulation against the content file
 
 `content/detection.json` holds §12.17 as data; the simulation holds the same

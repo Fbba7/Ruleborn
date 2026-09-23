@@ -49,7 +49,8 @@ pub fn find(grid: &Grid, from: TileIndex, to: TileIndex) -> Option<Route> {
 
     while let Some(tile) = frontier.pop_front() {
         for neighbour in grid.neighbours(tile).into_iter().flatten() {
-            if seen[neighbour as usize] || !grid.at(neighbour).passable() {
+            // Height makes a step one-way: down a cliff, never up it.
+            if seen[neighbour as usize] || !grid.can_step(tile, neighbour) {
                 continue;
             }
             seen[neighbour as usize] = true;

@@ -269,6 +269,18 @@
         "disarming_takes_four_seconds_at_level_one_is_silent_and_never_resets",
         "smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits"
       ]
+    },
+    {
+      "name": "Height",
+      "section": "12.17",
+      "task": "T5.2",
+      "what": "§6.2's raised ground, 0 to 3 levels: climbing one needs a ramp, stairs or vines, or Honeycomb or Half gravity; dropping is free and one-way, and is heard — 2 m from one level, 4 m from three. A guard a level up sees a metre further per level; one looking up loses its far zone.",
+      "tests": [
+        "climbing_a_level_needs_a_ramp_and_dropping_is_free_and_one_way",
+        "honeycomb_lets_anyone_climb_one_level",
+        "a_guard_a_level_up_sees_a_metre_further_and_one_below_loses_its_far_zone",
+        "a_drop_is_heard_two_metres_off_for_one_level_and_four_for_three"
+      ]
     }
   ],
   "targets": [

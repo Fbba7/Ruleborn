@@ -73,6 +73,15 @@ pub struct Grid {
     unlit: Vec<bool>,
     /// §12.17: "Gravel and water are louder, moss is quieter (6.1)."
     surfaces: Vec<Surface>,
+    /// §6.2's raised ground: "Heights 0 to 3".
+    heights: Vec<u8>,
+    /// A ramp, stairs or vines: "climbing a level needs a ramp, stairs,
+    /// vines or a leap".
+    climbable: Vec<bool>,
+    /// Anyone may climb one level anywhere: Honeycomb ("can climb walls and
+    /// cliffs one level") or Half gravity ("turns one-level climbs into
+    /// leaps"). Set each tick from the rule sheet.
+    pub free_climb: bool,
 }
 
 /// What a tile is underfoot, for noise. §12.17 names three that differ from
@@ -154,6 +163,9 @@ impl Grid {
             features: vec![None; n],
             unlit: vec![false; n],
             surfaces: vec![Surface::Plain; n],
+            heights: vec![0; n],
+            climbable: vec![false; n],
+            free_climb: false,
         }
     }
 
@@ -258,6 +270,41 @@ impl Grid {
             return None;
         }
         self.index(x.to_int() as u16, y.to_int() as u16)
+    }
+
+    pub fn set_height(&mut self, x: u16, y: u16, h: u8) {
+        if let Some(i) = self.index(x, y) {
+            self.heights[i as usize] = h.min(3);
+        }
+    }
+
+    pub fn height(&self, index: TileIndex) -> u8 {
+        self.heights.get(index as usize).copied().unwrap_or(0)
+    }
+
+    /// A ramp, stairs or vines on this tile.
+    pub fn make_climbable(&mut self, x: u16, y: u16) {
+        if let Some(i) = self.index(x, y) {
+            self.climbable[i as usize] = true;
+        }
+    }
+
+    /// Whether a character may step from `a` to its neighbour `b`. §6.2:
+    /// dropping is "free and one-way"; climbing one level needs a ramp,
+    /// stairs or vines on either tile, or a law that lets anyone climb; two
+    /// levels at once is a cliff.
+    pub fn can_step(&self, a: TileIndex, b: TileIndex) -> bool {
+        if !self.at(b).passable() {
+            return false;
+        }
+        let (ha, hb) = (self.height(a), self.height(b));
+        if hb <= ha {
+            return true;
+        }
+        hb == ha + 1
+            && (self.free_climb
+                || self.climbable.get(a as usize).copied().unwrap_or(false)
+                || self.climbable.get(b as usize).copied().unwrap_or(false))
     }
 
     /// Whether two tiles are the same or side by side. §12.20's "an ally

@@ -481,6 +481,8 @@ pub struct Raider {
     /// Frozen — by a Time Snare, a Gravity Well's hold or a Lantern Glare's
     /// blind — until this tick: it neither moves nor acts.
     pub frozen_until: u32,
+    /// Levels dropped this tick, for §12.17's landing noise.
+    pub landed: u8,
     /// How many ticks it has stood still, for Stillness.
     pub still_for: u32,
     /// When it went down, and how long an ally has been reviving it.
@@ -619,6 +621,16 @@ impl World {
                 grid.darken(x, y);
             }
         }
+        // A rise for the Warden's post: §6.2's raised ground, one level, with a
+        // ramp up from the north. From up there it sees a metre further toward
+        // anyone below (§12.17); a raider up there hides its far zone from the
+        // guards below.
+        for y in 12..14 {
+            for x in 4..7 {
+                grid.set_height(x, y, 1);
+            }
+        }
+        grid.make_climbable(5, 11);
         // The Vault, past the wall's gap and the gravel, between the Breaker's
         // post and the Mender's: the fixture realm is the Heart.
         grid.place(VAULT_AT.0, VAULT_AT.1, Feature::Vault);
@@ -662,6 +674,7 @@ impl World {
                 swing: 0,
                 standing: Standing::Active,
                 still_for: 0,
+                landed: 0,
                 frozen_until: 0,
                 down_since: 0,
                 revive: 0,
@@ -855,6 +868,8 @@ impl World {
     /// gate lists them.
     fn phase_laws(&mut self) {
         self.refresh_sheet();
+        self.grid.free_climb = self.sheet.flag(Param::ClimbLevels).is_some_and(|v| v >= 1)
+            || self.sheet.flag(Param::LeapObstacles).is_some_and(|v| v >= 1);
         // "the heist clock runs 25% faster in this realm"
         let (n, d) = self.sheet.factor(Param::ClockRate);
         self.clock_run += (1000 * n / d) as u64;
@@ -958,6 +973,7 @@ impl World {
             return None;
         }
         let sight = self.sheet.factor(Param::SightRange);
+        // Beyond mid is the far zone, which height stretches or removes.
         let zone = if d <= scale(guard.near, sight) {
             FILL_NEAR
         } else if d <= scale(guard.mid, sight) {
@@ -1007,7 +1023,9 @@ impl World {
         if sight.0 == 0 {
             return None;
         }
-        let reach = scale(if guard.far.0 > 0 { guard.far } else { guard.mid }, sight);
+        let from = self.grid.tile_at(guard.at.x, guard.at.y)?;
+        let to = self.grid.tile_at(at.x, at.y)?;
+        let reach = scale(self.outer_zone(gi, from, to), sight);
         if d > reach {
             return None;
         }
@@ -1023,14 +1041,29 @@ impl World {
         if !in_cone && off > guard.peripheral.0 / 2 {
             return None;
         }
-        let from = self.grid.tile_at(guard.at.x, guard.at.y)?;
-        let to = self.grid.tile_at(at.x, at.y)?;
         Some((d, in_cone, from, to))
+    }
+
+    /// How far a guard's outermost zone reaches toward a tile. §12.17: "A guard
+    /// standing a level higher sees a metre further; one standing below loses
+    /// its far zone entirely." A metre per level of the difference.
+    fn outer_zone(&self, gi: usize, from: grid::TileIndex, to: grid::TileIndex) -> Fx {
+        let g = &self.guards[gi];
+        let (hg, ht) = (self.grid.height(from) as i32, self.grid.height(to) as i32);
+        let outer = if g.far.0 > 0 { g.far } else { g.mid };
+        if hg > ht {
+            outer + Fx::from_int((hg - ht) * heist::HIGHER_GROUND_METRES)
+        } else if hg < ht {
+            g.mid
+        } else {
+            outer
+        }
     }
 
     /// Movement. Raiders walk their route; guards sweep their cone.
     fn phase_movement(&mut self) {
         for raider in self.raiders.iter_mut() {
+            raider.landed = 0;
             raider.still_for = if raider.still() && raider.active() {
                 raider.still_for.saturating_add(1)
             } else {
@@ -1044,6 +1077,12 @@ impl World {
             let (at, along) = walk_route(&self.grid, raider.at, &raider.route, raider.along, step);
             raider.at = at;
             raider.along = along;
+            // Dropped a level or more this tick: §12.17's landing noise.
+            let there = self.grid.tile_at(at.x, at.y);
+            raider.landed = match (here, there) {
+                (Some(a), Some(b)) => self.grid.height(a).saturating_sub(self.grid.height(b)),
+                _ => 0,
+            };
         }
         // A guard that is not walking turns steadily at its role's rate, one
         // way, so a player watching it can say where it will face next. The
@@ -1145,12 +1184,23 @@ impl World {
                     || self.wards.iter().any(|w| w.tile == raider.target && w.live())),
                 _ => false,
             };
-            if !breaking && (raider.still() || !raider.active()) {
+            let landing = match raider.landed {
+                0 => None,
+                1 => Some(noise::Sound::LandingOne),
+                2 => Some(noise::Sound::LandingTwo),
+                _ => Some(noise::Sound::LandingThree),
+            };
+            if !breaking && landing.is_none() && (raider.still() || !raider.active()) {
                 continue;                             // standing still is silent
             }
             let Some(source) = self.grid.tile_at(raider.at.x, raider.at.y) else { continue };
-            // What it is walking on decides how far its gait carries.
-            let sound = if breaking { noise::Sound::Breaking } else { raider.gait.sound() };
+            // What it is walking on decides how far its gait carries. A
+            // landing or a break is louder than any gait and is the sound made.
+            let sound = if breaking {
+                noise::Sound::Breaking
+            } else {
+                landing.unwrap_or(raider.gait.sound())
+            };
             let reach = sound.steps_scaled(self.grid.surface(source),
                                            self.sheet.factor(Param::NoiseRadius));
             let field = noise::field(&self.grid, source, reach);
@@ -1948,6 +1998,7 @@ impl World {
             mix(raider.revive as i64);
             mix(raider.still_for as i64);
             mix(raider.frozen_until as i64);
+            mix(raider.landed as i64);
         }
         h
     }

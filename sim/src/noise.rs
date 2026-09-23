@@ -26,6 +26,13 @@ pub enum Sound {
     Crawling,
     /// "Crouched walk — 1 m."
     CrouchedWalk,
+    /// "Landing from one level — 2 m."
+    LandingOne,
+    /// Landing from two. **Not in the document**: §12.17 gives one level
+    /// (2 m) and three (4 m) and nothing between; 3 m is the line through them.
+    LandingTwo,
+    /// "Landing from three — 4 m."
+    LandingThree,
     /// "Walking — 2.5 m."
     Walking,
     /// "Running — 4.5 m."
@@ -42,6 +49,9 @@ impl Sound {
             Sound::Walking => 5,
             Sound::Running => 9,
             Sound::Breaking => 10,
+            Sound::LandingOne => 4,
+            Sound::LandingTwo => 6,
+            Sound::LandingThree => 8,
         }
     }
 
