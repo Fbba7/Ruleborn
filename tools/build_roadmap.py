@@ -23,6 +23,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from audit_register import REGISTER, V3, status as reg_status  # noqa: E402
 from roadmap import NOT_YET, STAGES              # noqa: E402
 from design_doc import VERSION as DOC_VERSION     # noqa: E402
+import completion                                  # noqa: E402
 
 from build_stamp import stamped  # noqa: E402
 
@@ -239,6 +240,54 @@ def stale_blockers() -> list:
     return out
 
 
+def completion_html() -> str:
+    """The two numbers asked for: how close the app is to built, by side.
+
+    Read from tools/completion.py, which weighs §26.8's own phase costs and
+    counts a deliverable only through a passing proof — so the page cannot
+    claim progress the tests do not show, and moves by itself when they do.
+    """
+    result = completion.compute()
+    cards, lists = "", ""
+    for side, label in (("backend", "Backend"), ("frontend", "Frontend")):
+        pct = result["percent"][side]
+        runs = result["runs"][side]
+        rows = [r for r in result["rows"] if r["side"] == side]
+        done_runs = sum(r["weight"] * r["done"] for r in rows)
+        cards += f"""
+      <div class="done-card">
+        <span class="done-k">{label}</span>
+        <span class="done-n">{pct:.2f}%</span>
+        <span class="bar"><span class="fill settled" style="width:{pct:.2f}%"></span></span>
+        <span class="done-f">{done_runs:.1f} of {runs:.1f} agent runs of &sect;26.8's build</span>
+      </div>"""
+        items = "".join(
+            f'<li class="{"d-done" if r["done"] >= 1 else "d-part" if r["done"] > 0 else "d-none"}">'
+            f'<span class="d-pct">{100 * r["done"]:.2f}%</span> '
+            f'<strong>{esc(r["name"])}</strong> '
+            f'<span class="d-ph">phase {esc(r["phase"])} &middot; {r["weight"]:.1f} runs</span>'
+            f'<span class="d-ev">{esc(r["evidence"])}</span></li>'
+            for r in rows)
+        lists += f"""
+      <details class="done-list"><summary>{label}: every deliverable and its proof</summary>
+        <ul>{items}</ul>
+      </details>"""
+    return f"""
+    <section class="done">
+      <h2>How close the app is to built</h2>
+      <div class="done-cards">{cards}
+      </div>
+      <p class="done-note">Computed on every build, never typed. The weights are
+        &sect;26.8's own cost of each build phase in agent runs, read from the
+        document (midpoints); the deliverables are the ones each phase names; and
+        a deliverable counts only through its proof &mdash; <code>sim/</code>
+        systems whose every test passed, server tests by name, the targets that
+        agree, or a count from <code>content/</code>. Phase 15, finding the fun,
+        comes after the build and is not in these. <code>python3
+        tools/completion.py</code> prints the same breakdown.</p>{lists}
+    </section>"""
+
+
 def build() -> str:
     tasks = [t for s in STAGES for t in s["tasks"]]
     by_id = {t["id"]: t for t in tasks}
@@ -354,6 +403,34 @@ def build() -> str:
   .summary .n {{ font-family: "IBM Plex Mono", monospace; font-size: 23px; font-weight: 500;
                  font-variant-numeric: tabular-nums; display: block; line-height: 1.2; }}
   .summary .k {{ font-size: 12.5px; color: var(--muted); }}
+
+  .done {{ margin-top: 28px; padding: 18px 20px; border: 1px solid var(--rule-strong);
+           border-radius: 10px; background: var(--raised); }}
+  .done h2 {{ font-size: 21px; margin: 0 0 12px; }}
+  .done-cards {{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }}
+  @media (max-width: 560px) {{ .done-cards {{ grid-template-columns: 1fr; }} }}
+  .done-card {{ display: flex; flex-direction: column; gap: 7px; padding: 12px 14px;
+                border: 1px solid var(--rule); border-radius: 9px; background: var(--ground); }}
+  .done-k {{ font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.08em;
+             text-transform: uppercase; color: var(--muted); }}
+  .done-n {{ font-family: "IBM Plex Mono", monospace; font-size: 34px; font-weight: 500;
+             line-height: 1.1; font-variant-numeric: tabular-nums; }}
+  .done-card .bar {{ display: block; }}
+  .done-f {{ font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }}
+  .done-note {{ color: var(--muted); font-size: 13px; margin-top: 12px; max-width: 66ch; }}
+  .done-list {{ margin-top: 10px; }}
+  .done-list summary {{ cursor: pointer; font-family: "IBM Plex Mono", monospace;
+                        font-size: 12px; color: var(--accent); }}
+  .done-list ul {{ list-style: none; margin: 8px 0 0; padding: 0; }}
+  .done-list li {{ border-left: 3px solid var(--rule-strong); padding: 5px 0 5px 10px;
+                   margin-bottom: 3px; font-size: 13.5px; }}
+  .done-list li.d-done {{ border-left-color: var(--done); }}
+  .done-list li.d-part {{ border-left-color: var(--ready); }}
+  .d-pct {{ font-family: "IBM Plex Mono", monospace; font-size: 12px; display: inline-block;
+            min-width: 62px; font-variant-numeric: tabular-nums; }}
+  .d-ph {{ font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--faint);
+           margin-left: 4px; }}
+  .d-ev {{ display: block; color: var(--muted); font-size: 12.5px; margin-left: 66px; }}
 
   .callout {{ border: 1px solid var(--yours); border-radius: 8px;
               padding: 16px 18px; margin-top: 28px; }}
@@ -474,6 +551,8 @@ def build() -> str:
       harness (T0.13). <strong>What gates this roadmap now is measurement,
       not decisions</strong>: the Glare and guard-post questions (T0.12) and
       the economy re-run v3.4 hands to this repository (T2.6).</p>
+
+{completion_html()}
 
     <div class="summary">
       <div><span class="n">{counts['done']}</span><span class="k">tasks done</span></div>

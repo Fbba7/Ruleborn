@@ -87,7 +87,10 @@ which is generated from the register so it cannot drift.
 Live progress: **https://claude.ai/artifact/Yb1WxZ2eJCCbByitnd7fJf** — every
 stage, what finishes it, and who it is waiting on, generated from
 [`tools/roadmap.py`](tools/roadmap.py) with progress computed from the audit
-register rather than claimed.
+register rather than claimed. At its top are two numbers, to two decimals: how
+close the app is to built on the **backend** and on the **frontend**, weighed by
+§26.8's own cost of each build phase and counted only through passing tests
+([`tools/completion.py`](tools/completion.py)).
 
 The game is fully designed in `docs/design/`. The first step was a deep analysis
 of that design, which is in `docs/analysis/`.
@@ -145,6 +148,7 @@ tools/
   note_rebalance.py               the note rebalance §8.8 says is already done
   roadmap.py                      the roadmap, as data
   build_roadmap.py                renders it, computing progress from the register
+  completion.py                   how close the app is to built, backend and frontend, from §26.8's costs and passing proofs
   parse_gate_results.py           scores the gates from testers' result codes
   build_prototype.py              renders the throwaway browser build of the two pre-code gates
   check_prototype_conformance.py  the prototype implements the rules it claims to

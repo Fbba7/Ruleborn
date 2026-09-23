@@ -39,7 +39,7 @@ bash sim/run_spike.sh
 echo
 echo "== the server: lease, validate, grant, against the simulation build just made =="
 python3 tools/design_facts.py --check-json server/src/facts.json
-node --no-warnings --test server/test/*.test.mjs 2>&1 | tail -9
+python3 server/status.py
 
 echo
 echo "== what changed since the previous version =="
@@ -140,6 +140,7 @@ python3 tools/check_audit_ui.py
 
 echo
 echo "== roadmap builds and is internally consistent =="
+python3 tools/completion.py --self-test
 python3 tools/build_roadmap.py
 
 echo

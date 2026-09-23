@@ -66,6 +66,34 @@
                  font-variant-numeric: tabular-nums; display: block; line-height: 1.2; }
   .summary .k { font-size: 12.5px; color: var(--muted); }
 
+  .done { margin-top: 28px; padding: 18px 20px; border: 1px solid var(--rule-strong);
+           border-radius: 10px; background: var(--raised); }
+  .done h2 { font-size: 21px; margin: 0 0 12px; }
+  .done-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (max-width: 560px) { .done-cards { grid-template-columns: 1fr; } }
+  .done-card { display: flex; flex-direction: column; gap: 7px; padding: 12px 14px;
+                border: 1px solid var(--rule); border-radius: 9px; background: var(--ground); }
+  .done-k { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.08em;
+             text-transform: uppercase; color: var(--muted); }
+  .done-n { font-family: "IBM Plex Mono", monospace; font-size: 34px; font-weight: 500;
+             line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .done-card .bar { display: block; }
+  .done-f { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .done-note { color: var(--muted); font-size: 13px; margin-top: 12px; max-width: 66ch; }
+  .done-list { margin-top: 10px; }
+  .done-list summary { cursor: pointer; font-family: "IBM Plex Mono", monospace;
+                        font-size: 12px; color: var(--accent); }
+  .done-list ul { list-style: none; margin: 8px 0 0; padding: 0; }
+  .done-list li { border-left: 3px solid var(--rule-strong); padding: 5px 0 5px 10px;
+                   margin-bottom: 3px; font-size: 13.5px; }
+  .done-list li.d-done { border-left-color: var(--done); }
+  .done-list li.d-part { border-left-color: var(--ready); }
+  .d-pct { font-family: "IBM Plex Mono", monospace; font-size: 12px; display: inline-block;
+            min-width: 62px; font-variant-numeric: tabular-nums; }
+  .d-ph { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--faint);
+           margin-left: 4px; }
+  .d-ev { display: block; color: var(--muted); font-size: 12.5px; margin-left: 66px; }
+
   .callout { border: 1px solid var(--yours); border-radius: 8px;
               padding: 16px 18px; margin-top: 28px; }
   .callout h2 { font-size: 19px; color: var(--yours); }
@@ -185,6 +213,39 @@
       harness (T0.13). <strong>What gates this roadmap now is measurement,
       not decisions</strong>: the Glare and guard-post questions (T0.12) and
       the economy re-run v3.4 hands to this repository (T2.6).</p>
+
+
+    <section class="done">
+      <h2>How close the app is to built</h2>
+      <div class="done-cards">
+      <div class="done-card">
+        <span class="done-k">Backend</span>
+        <span class="done-n">45.14%</span>
+        <span class="bar"><span class="fill settled" style="width:45.14%"></span></span>
+        <span class="done-f">70.3 of 155.6 agent runs of &sect;26.8's build</span>
+      </div>
+      <div class="done-card">
+        <span class="done-k">Frontend</span>
+        <span class="done-n">0.00%</span>
+        <span class="bar"><span class="fill settled" style="width:0.00%"></span></span>
+        <span class="done-f">0.0 of 82.3 agent runs of &sect;26.8's build</span>
+      </div>
+      </div>
+      <p class="done-note">Computed on every build, never typed. The weights are
+        &sect;26.8's own cost of each build phase in agent runs, read from the
+        document (midpoints); the deliverables are the ones each phase names; and
+        a deliverable counts only through its proof &mdash; <code>sim/</code>
+        systems whose every test passed, server tests by name, the targets that
+        agree, or a count from <code>content/</code>. Phase 15, finding the fun,
+        comes after the build and is not in these. <code>python3
+        tools/completion.py</code> prints the same breakdown.</p>
+      <details class="done-list"><summary>Backend: every deliverable and its proof</summary>
+        <ul><li class="d-part"><span class="d-pct">50.00%</span> <strong>Same checksums on native, WebAssembly, iPhone and Android</strong> <span class="d-ph">phase 0 &middot; 10.0 runs</span><span class="d-ev">2 of 4 targets agree on every seed</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>Tick loop</strong> <span class="d-ph">phase 1 &middot; 6.3 runs</span><span class="d-ev">4 of 4 sim/ systems built</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>Crews</strong> <span class="d-ph">phase 1 &middot; 6.3 runs</span><span class="d-ev">8 of 8 sim/ systems built</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>Stealth</strong> <span class="d-ph">phase 1 &middot; 6.3 runs</span><span class="d-ev">6 of 6 sim/ systems built</span></li><li class="d-part"><span class="d-pct">62.50%</span> <strong>The law engine</strong> <span class="d-ph">phase 1 &middot; 6.3 runs</span><span class="d-ev">15 of 24 launch laws simulated</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Resonances and chords</strong> <span class="d-ph">phase 1 &middot; 6.3 runs</span><span class="d-ev">not started — counts when sim/ applies §8's resonances and chords, each proved by a test</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>Golden harness</strong> <span class="d-ph">phase 1 &middot; 6.3 runs</span><span class="d-ev">2 of 2 sim/ systems built</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>Bundle serialisation</strong> <span class="d-ph">phase 4 &middot; 4.8 runs</span><span class="d-ev">2 of 2 sim/ systems built</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>24 laws as validated data</strong> <span class="d-ph">phase 5 &middot; 4.7 runs</span><span class="d-ev">content/laws.json: 24 of 24</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>54 forms as validated data</strong> <span class="d-ph">phase 5 &middot; 4.7 runs</span><span class="d-ev">not started — counts when content/ holds §11.10's 54 forms, validated — they are derivable from 18 kinds and three notes, and nothing extracts them yet</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>39 terrain features as validated data</strong> <span class="d-ph">phase 5 &middot; 4.7 runs</span><span class="d-ev">content/terrain.json: 39 of 39</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>Schema</strong> <span class="d-ph">phase 6 &middot; 4.6 runs</span><span class="d-ev">1 of 1 server tests pass</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>Identity: session tokens</strong> <span class="d-ph">phase 6 &middot; 4.6 runs</span><span class="d-ev">1 of 1 server tests pass</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Identity: platform sign-in</strong> <span class="d-ph">phase 6 &middot; 4.6 runs</span><span class="d-ev">not started — counts when a Game Center or Play Games credential is verified with the store</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>Publishing</strong> <span class="d-ph">phase 6 &middot; 4.6 runs</span><span class="d-ev">2 of 2 server tests pass</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>The validator</strong> <span class="d-ph">phase 6 &middot; 4.6 runs</span><span class="d-ev">3 of 3 server tests pass</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Target lists</strong> <span class="d-ph">phase 6 &middot; 4.6 runs</span><span class="d-ev">not started — counts when the server writes §24.8's target-list file</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Rate limits</strong> <span class="d-ph">phase 6 &middot; 4.6 runs</span><span class="d-ev">not started — counts when §9.6's daily and weekly caps are enforced</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Workshop services: publish, browse, moderate, remix</strong> <span class="d-ph">phase 7 &middot; 7.0 runs</span><span class="d-ev">not started — counts when the server stores, lists, moderates and forks shared islands</span></li><li class="d-done"><span class="d-pct">100.00%</span> <strong>Currencies</strong> <span class="d-ph">phase 8 &middot; 3.6 runs</span><span class="d-ev">2 of 2 server tests pass</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Cosmetics</strong> <span class="d-ph">phase 8 &middot; 3.6 runs</span><span class="d-ev">not started — counts when cosmetic items are owned and applied server-side</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Purchases and receipts</strong> <span class="d-ph">phase 8 &middot; 3.6 runs</span><span class="d-ev">not started — counts when store receipts are verified and granted</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>The season track</strong> <span class="d-ph">phase 8 &middot; 3.6 runs</span><span class="d-ev">not started — counts when the season track's tiers are granted</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Leagues</strong> <span class="d-ph">phase 9 &middot; 4.0 runs</span><span class="d-ev">not started — counts when league placement and rewards run on the server</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Crews (clans)</strong> <span class="d-ph">phase 9 &middot; 4.0 runs</span><span class="d-ev">not started — counts when crews are stored and joinable</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Season rollover</strong> <span class="d-ph">phase 9 &middot; 4.0 runs</span><span class="d-ev">not started — counts when a season closes and the next opens</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Compliance: store declarations</strong> <span class="d-ph">phase 10 to 13 &middot; 7.2 runs</span><span class="d-ev">not started — counts when the age, privacy and store declarations are filed</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Telemetry</strong> <span class="d-ph">phase 10 to 13 &middot; 7.2 runs</span><span class="d-ev">not started — counts when §24's events are logged and queryable</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Load testing</strong> <span class="d-ph">phase 14 &middot; 4.5 runs</span><span class="d-ev">not started — counts when the server holds its target load</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Balance pass</strong> <span class="d-ph">phase 14 &middot; 4.5 runs</span><span class="d-ev">not started — counts when the launch balance pass is signed off</span></li></ul>
+      </details>
+      <details class="done-list"><summary>Frontend: every deliverable and its proof</summary>
+        <ul><li class="d-none"><span class="d-pct">0.00%</span> <strong>Project structure</strong> <span class="d-ph">phase 2 &middot; 4.0 runs</span><span class="d-ev">not started — counts when a client project builds on both stores' targets</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Localisation</strong> <span class="d-ph">phase 2 &middot; 4.0 runs</span><span class="d-ev">not started — counts when the client loads its strings from a catalogue</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Portrait interface</strong> <span class="d-ph">phase 2 &middot; 4.0 runs</span><span class="d-ev">not started — counts when the client's portrait layout renders</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Save and settings</strong> <span class="d-ph">phase 2 &middot; 4.0 runs</span><span class="d-ev">not started — counts when the client saves and restores its settings</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Render a replay</strong> <span class="d-ph">phase 3 &middot; 4.7 runs</span><span class="d-ev">not started — counts when the client plays a golden replay back on screen</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Capture input</strong> <span class="d-ph">phase 3 &middot; 4.7 runs</span><span class="d-ev">not started — counts when taps become sim/ commands in a replay</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Show a result</strong> <span class="d-ph">phase 3 &middot; 4.7 runs</span><span class="d-ev">not started — counts when the result screen reads the validator's verdict</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Terrain editing</strong> <span class="d-ph">phase 4 &middot; 4.8 runs</span><span class="d-ev">not started — counts when the builder places §6.2's features on a grid</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Laws on the island</strong> <span class="d-ph">phase 4 &middot; 4.8 runs</span><span class="d-ev">not started — counts when the builder weaves laws and places pylons</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Testing your own defence</strong> <span class="d-ph">phase 4 &middot; 4.8 runs</span><span class="d-ev">not started — counts when a player can raid their own island from the builder</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Workshop screens</strong> <span class="d-ph">phase 7 &middot; 7.0 runs</span><span class="d-ev">not started — counts when the Workshop's screens exist in the client</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Shop, track and wallet screens</strong> <span class="d-ph">phase 8 &middot; 3.6 runs</span><span class="d-ev">not started — counts when those screens exist in the client</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Social screens</strong> <span class="d-ph">phase 9 &middot; 4.0 runs</span><span class="d-ev">not started — counts when the league and crew screens exist in the client</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Localisation: English and Brazilian Portuguese</strong> <span class="d-ph">phase 10 to 13 &middot; 7.2 runs</span><span class="d-ev">not started — counts when every string ships in both languages</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Accessibility</strong> <span class="d-ph">phase 10 to 13 &middot; 7.2 runs</span><span class="d-ev">not started — counts when §21's accessibility set is in the client</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Real-device matrix</strong> <span class="d-ph">phase 14 &middot; 4.5 runs</span><span class="d-ev">not started — counts when the client runs on the device matrix</span></li><li class="d-none"><span class="d-pct">0.00%</span> <strong>Fix buffer</strong> <span class="d-ph">phase 14 &middot; 4.5 runs</span><span class="d-ev">not started — counts when launch fixes are closed</span></li></ul>
+      </details>
+    </section>
 
     <div class="summary">
       <div><span class="n">24</span><span class="k">tasks done</span></div>
@@ -1186,4 +1247,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build c80f4be3745dfe42 -->
+<!-- ruleborn-build cdcd88f6c0ef0e44 -->
