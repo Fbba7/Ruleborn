@@ -1,6 +1,10 @@
 // Run the server locally:
 //
-//     node server/src/main.mjs [port]
+//     node server/src/main.mjs [port] [--example]
+//
+// RULEBORN_DATA names the data directory (server/.data/ by default).
+// --example publishes the simulation's example Heart, undefended, from an
+// account of its own, so a client has an island to lease on a fresh database.
 //
 // The edge function (`http.mjs`) behind a plain node:http listener, with the
 // database and the object store on disk under server/.data/ and the one
@@ -21,7 +25,7 @@ import { Store } from "./store.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
-const data = join(here, "..", ".data");
+const data = process.env.RULEBORN_DATA ?? join(here, "..", ".data");
 
 const service = new Service({
   db: open(join(data, "ruleborn.sqlite")),
@@ -38,7 +42,14 @@ const TARGET_LISTS_MS = 15 * 60 * 1000;
 service.targetLists();
 setInterval(() => service.targetLists(), TARGET_LISTS_MS).unref();
 
-const port = Number(process.argv[2] ?? 8787);
+if (process.argv.includes("--example")) {
+  const { account } = service.session("example:defender");
+  const { bundle } = service.publish(account, service.builds.current.exampleIsland(true));
+  service.targetLists();
+  console.log(`example island ${bundle.slice(0, 12)} published`);
+}
+
+const port = Number(process.argv.slice(2).find((a) => /^\d+$/.test(a)) ?? 8787);
 createServer(async (req, res) => {
   const chunks = [];
   for await (const chunk of req) chunks.push(chunk);

@@ -3,6 +3,9 @@
 
     python3 client/status.py
 
+It starts server/ on a free port with a fresh database for the one test that
+plays a heist against it, and stops it afterwards.
+
 The client's counterpart to server/status.py: every test by name with its
 outcome, so what reads "built" elsewhere (tools/completion.py) is read from a
 run rather than typed. It exits non-zero if any test failed, which is what
@@ -10,12 +13,38 @@ makes it a gate in tools/check_all.sh.
 """
 
 import json
+import os
 import pathlib
 import re
+import socket
 import subprocess
 import sys
+import tempfile
 
 HERE = pathlib.Path(__file__).resolve().parent
+ROOT = HERE.parent
+
+
+def free_port() -> int:
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
+def start_server() -> tuple[subprocess.Popen, str, tempfile.TemporaryDirectory]:
+    """server/ on a free port and a fresh database, with the example island
+    published: what the client's online test leases and raids."""
+    port = free_port()
+    data = tempfile.TemporaryDirectory()
+    proc = subprocess.Popen(["node", "--no-warnings", str(ROOT / "server/src/main.mjs"),
+                             str(port), "--example"],
+                            env={**os.environ, "RULEBORN_DATA": data.name},
+                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    for line in proc.stdout:
+        if "ruleborn server on" in line:
+            return proc, f"http://127.0.0.1:{port}", data
+    proc.wait()
+    raise SystemExit("server/src/main.mjs did not start")
 
 
 def run() -> dict[str, str]:
@@ -24,8 +53,16 @@ def run() -> dict[str, str]:
         sys.stdout.write(build.stdout + build.stderr)
         raise SystemExit("client/build.sh failed")
     godot = build.stdout.strip().splitlines()[-1]
-    out = subprocess.run([godot, "--headless", "--path", str(HERE), "-s", "res://tests/run.gd"],
-                         capture_output=True, text=True, timeout=600)
+    server, url, data = start_server()
+    try:
+        out = subprocess.run([godot, "--headless", "--path", str(HERE), "-s", "res://tests/run.gd"],
+                             capture_output=True, text=True, timeout=600,
+                             env={**os.environ, "RULEBORN_SERVER": url,
+                                  "RULEBORN_CREDENTIAL": "test:client"})
+    finally:
+        server.terminate()
+        server.wait()
+        data.cleanup()
     results = {}
     for m in re.finditer(r"^(not ok|ok) \d+ - (.+)$", out.stdout, re.M):
         results[m.group(2).strip()] = "passed" if m.group(1) == "ok" else "failed"

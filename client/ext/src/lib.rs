@@ -25,6 +25,8 @@ unsafe impl ExtensionLibrary for Ruleborn {}
 pub struct RulebornReplay {
     heist: Option<Heist>,
     world: Option<World>,
+    /// The realm being played or watched; the fixture when none was given.
+    island: Option<Island>,
     /// The first second whose checksum disagreed with the replay's, or 0.
     mismatch: i64,
     /// Seconds whose checksums have been compared and agreed.
@@ -37,6 +39,15 @@ fn tiles(f: Fx) -> f32 {
 
 fn radians(a: Ang) -> f32 {
     (a.0 as f64 / ANG_TURN as f64 * std::f64::consts::TAU) as f32
+}
+
+/// An island from its bundle bytes, or the fixture realm for none.
+fn realm_of(bytes: &PackedByteArray) -> Option<Island> {
+    if bytes.is_empty() {
+        Some(Island::fixture())
+    } else {
+        Island::decode(bytes.as_slice()).ok()
+    }
 }
 
 fn hex(bytes: &[u8]) -> GString {
@@ -58,41 +69,45 @@ impl RulebornReplay {
     #[func]
     fn load(&mut self, replay: PackedByteArray, island: PackedByteArray) -> bool {
         let Some(heist) = Heist::decode(replay.as_slice()) else { return false };
-        let world = if island.is_empty() {
-            World::from_heist(&heist)
-        } else {
-            let Ok(realm) = Island::decode(island.as_slice()) else { return false };
-            if realm.digest() != heist.island {
-                return false;
-            }
-            World::from_island(&realm, &heist)
-        };
-        self.world = Some(world);
+        let Some(realm) = realm_of(&island) else { return false };
+        if !island.is_empty() && realm.digest() != heist.island {
+            return false;
+        }
+        self.world = Some(World::from_island(&realm, &heist));
+        self.island = Some(realm);
         self.heist = Some(heist);
         self.mismatch = 0;
         self.agreed = 0;
         true
     }
 
-    /// Start a heist to be played rather than watched: the fixture realm,
-    /// this seed, clock and crew, and no commands yet. Taps become commands
+    /// Start a heist to be played rather than watched: on `island` (a
+    /// bundle, as a lease names it; empty for the fixture realm), with this
+    /// seed, clock and crew, and no commands yet. Taps become commands
     /// through `give`, and `record` writes the replay the server checks.
     #[func]
-    fn start(&mut self, seed: i64, ticks: i64, crew: i64) -> bool {
+    ///
+    /// The seed is decimal text: a lease's seed is an unsigned 64-bit number,
+    /// and GDScript's integers are signed, so half of all seeds would not
+    /// survive the trip as one.
+    fn start(&mut self, seed: GString, ticks: i64, crew: i64, island: PackedByteArray) -> bool {
         if !(3..=5).contains(&crew) || ticks <= 0 {
             return false;
         }
+        let Ok(seed) = seed.to_string().parse::<u64>() else { return false };
+        let Some(realm) = realm_of(&island) else { return false };
         let heist = Heist {
-            seed: seed as u64,
-            island: Island::fixture().digest(),
+            seed,
+            island: realm.digest(),
             rules: sim::rules_version(),
             ticks: ticks as u32,
             crew: crew as u8,
             commands: Vec::new(),
             checksums: Vec::new(),
         };
-        self.world = Some(World::from_heist(&heist));
+        self.world = Some(World::from_island(&realm, &heist));
         self.heist = Some(heist);
+        self.island = Some(realm);
         self.mismatch = 0;
         self.agreed = 0;
         true
@@ -116,25 +131,28 @@ impl RulebornReplay {
     /// re-simulating the log from the start.
     #[func]
     fn record(&self) -> PackedByteArray {
-        let (Some(world), Some(heist)) = (self.world.as_ref(), self.heist.as_ref()) else {
+        let (Some(world), Some(heist), Some(realm)) =
+            (self.world.as_ref(), self.heist.as_ref(), self.island.as_ref())
+        else {
             return PackedByteArray::new();
         };
-        let bytes = sim::record(&Island::fixture(), heist.seed, heist.ticks, heist.crew,
+        let bytes = sim::record(realm, heist.seed, heist.ticks, heist.crew,
                                 world.commands().to_vec()).encode();
         PackedByteArray::from(bytes.as_slice())
     }
 
-    /// What the server does with a replay (§24.12's Validate), on the fixture
-    /// realm: `{"ok": true, "grade": …}` or `{"ok": false, "refused": …}`.
+    /// What the server does with a replay (§24.12's Validate), on `island`
+    /// (empty for the fixture realm): `{"ok": true, "grade": …}` or
+    /// `{"ok": false, "refused": …}`.
     #[func]
-    fn validate(replay: PackedByteArray) -> VarDictionary {
+    fn validate(replay: PackedByteArray, island: PackedByteArray) -> VarDictionary {
         let mut d = VarDictionary::new();
-        let Some(heist) = Heist::decode(replay.as_slice()) else {
+        let (Some(heist), Some(realm)) = (Heist::decode(replay.as_slice()), realm_of(&island)) else {
             d.set("ok", false);
             d.set("refused", &GString::from("malformed"));
             return d;
         };
-        match sim::verify_on(&Island::fixture(), &heist) {
+        match sim::verify_on(&realm, &heist) {
             Ok(o) => {
                 d.set("ok", true);
                 d.set("grade", &GString::from(&format!("{:?}", o.grade)));
@@ -193,10 +211,11 @@ impl RulebornReplay {
         out
     }
 
-    /// The loaded or started heist's seed and crew size.
+    /// The loaded or started heist's seed, as decimal text (see `start`), and
+    /// its crew size.
     #[func]
-    fn seed(&self) -> i64 {
-        self.heist.as_ref().map_or(0, |h| h.seed as i64)
+    fn seed(&self) -> GString {
+        self.heist.as_ref().map_or(GString::new(), |h| GString::from(&h.seed.to_string()))
     }
 
     #[func]

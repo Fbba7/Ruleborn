@@ -29,12 +29,16 @@ its tick, crew member and target"*). Tap a crew member to select it, tap the
 ground to send it there; Crack, Load and Get out act for the selected member,
 and Get out calls the skiff (§5.4) to the next tile tapped. When the clock runs
 out the command log is written down as the replay a device queues (§24.12) and
-checked the way the server checks it. There is no server connection yet, so the
-seed is fixed where a lease would bring one.
+checked. With a server (`RULEBORN_SERVER`, or the project setting
+`ruleborn/server_url`) the screen signs in, takes the first island in §24.8's
+target lists that is not the player's own, leases it and plays it, and the
+replay is submitted to `server/`, which re-simulates it and settles the fee and
+the haul (§24.12). Without one it plays the fixture realm on a fixed seed and
+checks the replay with the same function on the phone.
 
-**The result screen.** The grade the check gave, never the device's own claim:
-a replay the re-simulation refuses pays nothing (§24.12). Watch it, play again,
-or go home.
+**The result screen.** The grade the check gave, never the device's own claim,
+and — from the server — what it minted and the fee: a replay the re-simulation
+refuses pays nothing (§24.12). Watch it, play again, or go home.
 
 **The replay screen** (`scenes/replay_screen.tscn`). The heist just played,
 then the golden replays, each re-simulated one tick at a time through
@@ -71,6 +75,10 @@ and what the player does is what the server re-plays.
 - the heist just played replays with every second agreeing, and a replay with
   an altered checksum is refused;
 - the result screen shows the verdict, grade or refusal;
+- the whole loop against a real server — `status.py` starts `server/` on a free
+  port and a fresh database with the example island published: sign in, take
+  a target, lease it, play it through the heist screen's own controls, submit,
+  and the server re-simulates it and pays 5,400;
 - every control on every screen meets §21.1's size, reach, corner and
   safe-area rules, in a 9:19.5 frame and a 9:16 one (a headless run has no
   screen, so the test sets the window to each), and no text is smaller than 13
@@ -93,9 +101,10 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.5-stable_linux.x
 - **The rest of the crew's commands.** The heist screen gives move, crack,
   load and the skiff. Gait, halt, attack, break, drop, disarm and drag are in
   the simulation and the replay format but have no control yet.
-- **The server.** A heist is checked on the phone by the same function the
-  server runs; sending it to `server/` for a lease and a grant is the network
-  client, next.
+- **Sign-in.** The server's sign-in takes a platform credential; a desktop
+  build has no Game Center or Play Games, so it sends a stand-in the local
+  server accepts. §12.22's target choice is not built either: the client takes
+  the first island in the lists that is not its own.
 - **Fonts.** §21.8 names Baloo 2 and Marcellus; the client uses Godot's default
   font until they are added.
 - **The law banner.** §21.8 puts the realm's laws at the top left of the heist
@@ -109,7 +118,8 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.5-stable_linux.x
     ext/                    the extension: RulebornReplay, over sim/
     scenes/                 home, heist, result and replay screens
     scripts/                the screens, the realm view and heads-up display,
-                            the shared UI pieces, the palette, the session hand-off
+                            the shared UI pieces, the palette, the session hand-off,
+                            and server_client.gd, server/'s edge functions over HTTP
     tests/run.gd            headless tests, TAP
     tests/screenshot.gd     a still, under a virtual display
     build.sh, status.py     build, test, write status.json

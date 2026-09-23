@@ -33,13 +33,20 @@ func _ready() -> void:
 
 
 func show_verdict(v: Dictionary, replay_bytes: int) -> void:
+	var by_server: bool = v.get("server", false)
 	if v.get("ok", false):
 		grade_label.text = str(v["grade"])
-		detail_label.text = "%d loot banked" % int(v["banked"])
-		check_label.text = "Re-simulated as the server would: accepted\n%d-byte replay" % replay_bytes
+		if by_server:
+			detail_label.text = "%d loot banked — the server minted %d (fee %d)" % [
+				int(v["banked"]), int(v["haul"]), int(v["fee"])]
+			check_label.text = "Re-simulated by the server: accepted\n%d-byte replay" % replay_bytes
+		else:
+			detail_label.text = "%d loot banked" % int(v["banked"])
+			check_label.text = "Re-simulated as the server would: accepted\n%d-byte replay" % replay_bytes
 		check_label.add_theme_color_override("font_color", Palette.SUCCESS.darkened(0.3))
 	else:
 		grade_label.text = "Not accepted"
 		detail_label.text = str(v.get("refused", "no heist"))
-		check_label.text = "The server would pay nothing for this replay"
+		check_label.text = ("The server paid nothing for this replay" if by_server
+			else "The server would pay nothing for this replay")
 		check_label.add_theme_color_override("font_color", Palette.ALARM)

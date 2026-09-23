@@ -171,7 +171,8 @@ DELIVERABLES = [
         "a heist played live on the heist screen records the golden replay byte for byte, and the server's check grades it Clean",
         "a replay whose last checksum was altered is refused, as the server would refuse it")),
     ("3", "Show a result", FRONTEND, client_tests(
-        "the result screen shows the validator's verdict: the re-simulation's grade, or nothing paid when refused")),
+        "the result screen shows the validator's verdict: the re-simulation's grade, or nothing paid when refused",
+        "a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server")),
 
     ("4", "Terrain editing", FRONTEND, not_started("the builder places §6.2's features on a grid")),
     ("4", "Laws on the island", FRONTEND, not_started("the builder weaves laws and places pylons")),

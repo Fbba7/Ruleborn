@@ -7,6 +7,7 @@ only then mint what it earned.
 
     node --no-warnings --test server/test/*.test.mjs   # the tests (build sim/ first)
     node server/src/main.mjs                           # run it locally, on 127.0.0.1:8787
+    node server/src/main.mjs 8787 --example            # and publish the example island to raid
 
 It needs Node 22.5 or later and nothing else — no packages. The simulation is
 `sim/`'s WebAssembly build (`bash sim/run_spike.sh` builds it), and SQLite is
@@ -82,6 +83,8 @@ by hash like a bundle, so an unchanged band keeps its edge cache. Two readings
   Center or Play Games credential needs the stores' services, so `Service`
   takes a `verifyPlatform` function and the tests give it a fake one.
   `main.mjs` accepts any credential and must not face a network.
+  `RULEBORN_DATA` moves its database and bundles out of `server/.data/`, which
+  is how `client/status.py` gives each test run a fresh one.
 - **Crossing realms.** The simulation plays the Heart alone, so every lease
   is §5.4's 150 seconds with no links.
 - **Leagues, clans, the Workshop, Renown**, the defender's "5% of what the

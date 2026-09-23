@@ -91,8 +91,10 @@ recorded as the replay a device queues and checked as the server checks it —
 and watched: the replay screen re-simulates a heist a tick at a time and every
 second checks its own checksum against the replay's. All five golden replays
 agree at every second, so the client runs the server's rules, not a copy of
-them. It is a desktop build for now; the phone builds are §24.7's spike. The
-look is a stand-in: the diorama of §21 is the art pass.
+them. Against `server/` the loop is whole: the client leases a target from the
+lists, plays it, submits, and the server re-simulates the replay and pays. It is
+a desktop build for now; the phone builds are §24.7's spike. The look is a
+stand-in: the diorama of §21 is the art pass.
 
 v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses

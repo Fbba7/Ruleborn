@@ -726,13 +726,16 @@ dict(
                     "the log is recorded as the replay a device queues, and the "
                     "result screen shows the check's verdict. The planned heist's "
                     "commands given live record the golden replay byte for "
-                    "byte.<br><br><strong>Not yet:</strong> the phone half of "
-                    "\u00a724.7's spike \u2014 the extension building and "
-                    "loading on a real iPhone and Android, whose failure "
-                    "\u00a724.7 says moves the simulation to C# \u2014 the "
-                    "network client that takes a lease and submits to "
-                    "<code>server/</code>, and controls for the other seven "
-                    "command kinds.",
+                    "byte. And the whole of \u00a724.12 runs end to end: the "
+                    "client signs in to <code>server/</code>, takes a target "
+                    "from \u00a724.8's lists, leases it, plays it, and submits; "
+                    "the server re-simulates the replay and pays.<br><br>"
+                    "<strong>Not yet:</strong> the phone half of \u00a724.7's "
+                    "spike \u2014 the extension building and loading on a real "
+                    "iPhone and Android, whose failure \u00a724.7 says moves the "
+                    "simulation to C# \u2014 platform sign-in, \u00a712.22's "
+                    "target choice, and controls for the other seven command "
+                    "kinds.",
              evidence="python3 client/status.py"),
     ],
 ),

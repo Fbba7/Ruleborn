@@ -51,6 +51,9 @@ func _mount(scene: String) -> Control:
 
 
 func _run() -> void:
+	# The offline tests first, with no server; status.py names one for the end.
+	var server_url := OS.get_environment("RULEBORN_SERVER")
+	OS.unset_environment("RULEBORN_SERVER")
 	var goldens := ReplayScreen.find_goldens()
 
 	# §24.7: one simulation, compiled for every target. The client's build must
@@ -133,7 +136,7 @@ func _run() -> void:
 		again != null and again.mismatch() == 0
 			and again.seconds_agreed() * RulebornReplay.ticks_per_second() == again.ticks(),
 		"mismatch %s" % (again.mismatch() if again else "unloadable"))
-	var refused := RulebornReplay.validate(Session.replay.slice(0, Session.replay.size() - 4) + PackedByteArray([0, 0, 0, 0]))
+	var refused := RulebornReplay.validate(Session.replay.slice(0, Session.replay.size() - 4) + PackedByteArray([0, 0, 0, 0]), PackedByteArray())
 	check("a replay whose last checksum was altered is refused, as the server would refuse it",
 		not refused.get("ok", true), str(refused))
 	heist.queue_free()
@@ -143,13 +146,62 @@ func _run() -> void:
 	# an accepted heist shows the re-simulation's grade, a refused one pays
 	# nothing.
 	var result: ResultScreen = await _mount("result_screen")
-	result.show_verdict(RulebornReplay.validate(_golden("planned-clean")), 1)
+	result.show_verdict(RulebornReplay.validate(_golden("planned-clean"), PackedByteArray()), 1)
 	var accepted := result.grade_label.text == "Clean" and result.check_label.text.contains("accepted")
 	result.show_verdict(refused, 1)
 	var turned_away := result.grade_label.text == "Not accepted" and result.check_label.text.contains("nothing")
 	check("the result screen shows the validator's verdict: the re-simulation's grade, or nothing paid when refused",
 		accepted and turned_away, "%s / %s" % [result.grade_label.text, result.check_label.text])
 	result.queue_free()
+
+	# The whole loop against the server (§24.12): sign in, take a target from
+	# §24.8's lists, lease it, play it through the heist screen's own controls,
+	# submit, and read what the server re-simulated and paid. The plan is the
+	# open example Heart's clean heist, the one server/test plays.
+	if server_url == "":
+		check("a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server",
+			false, "no server: run through client/status.py, which starts one")
+	else:
+		OS.set_environment("RULEBORN_SERVER", server_url)
+		var online: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
+		root.add_child(online)
+		online.set_process(false)
+		for i in 600:
+			if not online.lease.is_empty() or online.hint_label.text.begins_with("No heist"):
+				break
+			await process_frame
+		var played := {}
+		if not online.lease.is_empty():
+			var go := func(seconds: int): online.advance(seconds * 30 - online.world.tick())
+			for step in [[0, Vector2i(6, 8)], [1, Vector2i(7, 9)], [2, Vector2i(5, 9)]]:
+				online.select(step[0])
+				online.tap_tile(step[1])
+			go.call(15)
+			for m in 3:
+				online.select(m)
+				online.crack()
+			go.call(50)
+			for m in 3:
+				online.select(m)
+				online.load_up(100)
+			online.select(0)
+			online.get_out()
+			online.tap_tile(Vector2i(6, 11))
+			go.call(62)
+			for m in 3:
+				online.select(m)
+				online.tap_tile(Vector2i(6, 11))
+			online.advance(int(online.lease["ticks"]))
+			if Session.verdict.is_empty() or not Session.verdict.get("server", false):
+				await online.finished
+			played = Session.verdict
+		# Vault level 3: 5,400 × 1 × 1 × 1 × 1 × fill 1 (server/test's figure).
+		check("a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server",
+			played.get("ok", false) and played.get("grade") == "Clean" and int(played.get("haul", 0)) == 5400,
+			"%s; %s" % [played, online.hint_label.text])
+		online.queue_free()
+		OS.unset_environment("RULEBORN_SERVER")
+		await process_frame
 
 	# §21.1's control rules and §21.8's smallest text, on every screen, in a
 	# phone's portrait frame: §21.1's 9:19.5 and an older 9:16. A headless run
