@@ -168,7 +168,7 @@
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Ruleborn &middot; against design document v3.1</p>
+    <p class="eyebrow">Ruleborn &middot; against design document v3.4</p>
     <h1>Roadmap</h1>
     <p class="lede">Every stage, what finishes it, and who it is waiting on.
       Progress against the register is computed rather than claimed &mdash; and
@@ -178,14 +178,13 @@
       player tests are gone, replaced by the simulation harnesses in stage 0,
       and the build-willingness risk is designed out rather than measured
       (&sect;13.3, &sect;19.27).</p>
-    <p class="lede">Read now against <strong>design document v3.1</strong>,
-      which changed the plan <em>less</em> than its size suggests. It adds
-      &sect;31 &mdash; a build checker, constants pinned in data, and eight
-      audit items closed &mdash; and closes four numbering holes v3.0 left, so
-      &sect;5.9 is &sect;5.8 and &sect;25.5 is &sect;25.4. It adopted no further
-      spec file, and settled none of the four decisions below.
-      <strong>The queue that gates this roadmap did not move; what moved is how
-      much of the document can now be trusted without re-reading it.</strong></p>
+    <p class="lede">Read now against <strong>design document v3.4</strong>.
+      v3.1 added &sect;31's build checker; v3.3 took the launch cut and decided
+      the last open questions; v3.4 answered the seventeen items left after
+      that and changed two heist rules, both now in the simulation and the
+      harness (T0.13). <strong>What gates this roadmap now is measurement,
+      not decisions</strong>: the Glare and guard-post questions (T0.12) and
+      the economy re-run v3.4 hands to this repository (T2.6).</p>
 
     <div class="summary">
       <div><span class="n">24</span><span class="k">tasks done</span></div>
@@ -810,10 +809,10 @@
         <p class="evidence"><span class="glabel">Check it at</span> <code>docs/design/generated/pacing.md</code></p>
         
       </article>
-      <article class="task st-ready" id="T2-5"
+      <article class="task st-ready" id="T2-6"
                data-status="ready" data-owner="claude">
         <header class="task-head">
-          <span class="tid">T2.5</span>
+          <span class="tid">T2.6</span>
           <h3>Port §9.6's raid pay to the economy model, then run §32.9's full re-run</h3>
           <span class="status st-ready">Ready to start</span>
           <span class="owner o-claude">from here</span>
@@ -1132,7 +1131,7 @@
     <h2>Not blocked, and still not yet</h2>
     <p class="blurb">These look available. Starting any of them now spends work
       that a decision above will throw away.</p>
-    <ul><li><strong>Gameplay code</strong> &mdash; The determinism spike gates it. Anti-cheat, replay validation, free analytics, rehearsals, balance bots and the whole cost model fail together if it does not pass.</li><li><strong>Realm design</strong> &mdash; One gate left, and it is a table rather than a rule: the day and income columns a realm is paced by still ship from the economy model's earlier run (C19), and v3.4 hands that re-run to this repository (T2.5). v3.3 settled the other eight — the ward budget, the post ladder, the hold band, what the generator weaves, the authored laws, ward levels and pylons.</li><li><strong>Character art</strong> &mdash; Nothing in the register blocks it since v3.3 — one card per ruleborn and 54 forms — but §26.2 puts the art-style test on target devices first, so the style is settled before the quantity is drawn.</li><li><strong>Detailed screen design</strong> &mdash; Nothing in the register blocks it since v3.4, which settled the last question: the scout report shows no patrol positions (brief 38). v3.3 settled the roster the character screens read, the ranks the Codex shows and the Library's place on the build screen. §26.2's art-style test still comes first, as it does for the characters.</li><li><strong>Localisation</strong> &mdash; Two launch languages with a named owner since v3.3, but the coined vocabulary gets its native-speaker read-aloud (§26.9) before anything is translated.</li><li><strong>Claiming the name publicly</strong> &mdash; §26.9 makes trademark clearance a gate, and it has not been done.</li></ul>
+    <ul><li><strong>Gameplay code</strong> &mdash; The determinism spike gates it. Anti-cheat, replay validation, free analytics, rehearsals, balance bots and the whole cost model fail together if it does not pass.</li><li><strong>Realm design</strong> &mdash; One gate left, and it is a table rather than a rule: the day and income columns a realm is paced by still ship from the economy model's earlier run (C19), and v3.4 hands that re-run to this repository (T2.6). v3.3 settled the other eight — the ward budget, the post ladder, the hold band, what the generator weaves, the authored laws, ward levels and pylons.</li><li><strong>Character art</strong> &mdash; Nothing in the register blocks it since v3.3 — one card per ruleborn and 54 forms — but §26.2 puts the art-style test on target devices first, so the style is settled before the quantity is drawn.</li><li><strong>Detailed screen design</strong> &mdash; Nothing in the register blocks it since v3.4, which settled the last question: the scout report shows no patrol positions (brief 38). v3.3 settled the roster the character screens read, the ranks the Codex shows and the Library's place on the build screen. §26.2's art-style test still comes first, as it does for the characters.</li><li><strong>Localisation</strong> &mdash; Two launch languages with a named owner since v3.3, but the coined vocabulary gets its native-speaker read-aloud (§26.9) before anything is translated.</li><li><strong>Claiming the name publicly</strong> &mdash; §26.9 makes trademark clearance a gate, and it has not been done.</li></ul>
   </section>
 
   <footer>
@@ -1187,4 +1186,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build 0c2b6b15e1e65224 -->
+<!-- ruleborn-build c80f4be3745dfe42 -->

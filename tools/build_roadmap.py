@@ -12,6 +12,7 @@ kinds or severities reports how many of those items have moved past `open`, and
 how many have been signed off — which are deliberately different numbers.
 """
 
+import collections
 import datetime
 import re
 import html
@@ -21,6 +22,7 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from audit_register import REGISTER, V3, status as reg_status  # noqa: E402
 from roadmap import NOT_YET, STAGES              # noqa: E402
+from design_doc import VERSION as DOC_VERSION     # noqa: E402
 
 from build_stamp import stamped  # noqa: E402
 
@@ -166,6 +168,10 @@ def validate(tasks: list[dict], by_id: dict) -> None:
     it is edited.
     """
     problems = []
+    # Two tasks with one id: the page would link and count both as one. It
+    # happened (a second T2.5), and `by_id` silently kept the later of the two.
+    seen = collections.Counter(t["id"] for t in tasks)
+    problems += [f"{i} is the id of {n} tasks" for i, n in seen.items() if n > 1]
     for task in tasks:
         blockers = task.get("blocked_by") or []
         for b in blockers:
@@ -451,7 +457,7 @@ def build() -> str:
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Ruleborn &middot; against design document v3.1</p>
+    <p class="eyebrow">Ruleborn &middot; against design document v{DOC_VERSION}</p>
     <h1>Roadmap</h1>
     <p class="lede">Every stage, what finishes it, and who it is waiting on.
       Progress against the register is computed rather than claimed &mdash; and
@@ -461,14 +467,13 @@ def build() -> str:
       player tests are gone, replaced by the simulation harnesses in stage 0,
       and the build-willingness risk is designed out rather than measured
       (&sect;13.3, &sect;19.27).</p>
-    <p class="lede">Read now against <strong>design document v3.1</strong>,
-      which changed the plan <em>less</em> than its size suggests. It adds
-      &sect;31 &mdash; a build checker, constants pinned in data, and eight
-      audit items closed &mdash; and closes four numbering holes v3.0 left, so
-      &sect;5.9 is &sect;5.8 and &sect;25.5 is &sect;25.4. It adopted no further
-      spec file, and settled none of the four decisions below.
-      <strong>The queue that gates this roadmap did not move; what moved is how
-      much of the document can now be trusted without re-reading it.</strong></p>
+    <p class="lede">Read now against <strong>design document v{DOC_VERSION}</strong>.
+      v3.1 added &sect;31's build checker; v3.3 took the launch cut and decided
+      the last open questions; v3.4 answered the seventeen items left after
+      that and changed two heist rules, both now in the simulation and the
+      harness (T0.13). <strong>What gates this roadmap now is measurement,
+      not decisions</strong>: the Glare and guard-post questions (T0.12) and
+      the economy re-run v3.4 hands to this repository (T2.6).</p>
 
     <div class="summary">
       <div><span class="n">{counts['done']}</span><span class="k">tasks done</span></div>

@@ -610,7 +610,7 @@ dict(
                     "produce, and Keeper 40 arrives 94 days late.",
              evidence="docs/design/generated/pacing.md",
              register=["C19", "C27"]),
-        dict(id="T2.5", owner="claude", status="ready",
+        dict(id="T2.6", owner="claude", status="ready",
              title="Port \u00a79.6's raid pay to the economy model, then run "
                    "\u00a732.9's full re-run",
              gate="the model mints from design_facts' B(V) on the target's "
@@ -867,7 +867,7 @@ NOT_YET = [
     ("Realm design", "One gate left, and it is a table rather than a rule: "
                      "the day and income columns a realm is paced by still "
                      "ship from the economy model's earlier run (C19), and "
-                     "v3.4 hands that re-run to this repository (T2.5). v3.3 "
+                     "v3.4 hands that re-run to this repository (T2.6). v3.3 "
                      "settled the other eight \u2014 the ward budget, the post "
                      "ladder, the hold band, what the generator weaves, the "
                      "authored laws, ward levels and pylons."),

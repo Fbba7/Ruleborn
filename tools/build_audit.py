@@ -715,7 +715,7 @@ def item_html(item: dict) -> str:
                  if v33.get("note") else "")
     # and v3.4 a fifth.
     v34 = V34.get(item["id"], {})
-    v31_html += (f'<p class="v3 v33"><span class="vlabel">v3.4</span> {v34["note"]}</p>'
+    v31_html += (f'<p class="v3 v34"><span class="vlabel">v3.4</span> {v34["note"]}</p>'
                  if v34.get("note") else "")
     return f"""
       <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
@@ -1220,6 +1220,11 @@ def build() -> str:
     border-left-color: var(--sig);
   }}
   .v3.v33 .vlabel {{ color: var(--sig); }}
+  .v3.v34 {{
+    background: color-mix(in srgb, var(--blk) 8%, transparent);
+    border-left-color: var(--blk);
+  }}
+  .v3.v34 .vlabel {{ color: var(--blk); }}
   .vlabel {{
     font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
     text-transform: uppercase; letter-spacing: 0.08em; color: var(--chg);
