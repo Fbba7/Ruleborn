@@ -733,9 +733,9 @@ dict(
                     "<strong>Not yet:</strong> the phone half of \u00a724.7's "
                     "spike \u2014 the extension building and loading on a real "
                     "iPhone and Android, whose failure \u00a724.7 says moves the "
-                    "simulation to C# \u2014 platform sign-in, \u00a712.22's "
-                    "target choice, and controls for the other seven command "
-                    "kinds.",
+                    "simulation to C# \u2014 platform sign-in and \u00a712.22's "
+                    "target choice. Every one of \u00a724.10's eleven command "
+                    "kinds has a control: a tap is read by what is on the tile.",
              evidence="python3 client/status.py"),
     ],
 ),

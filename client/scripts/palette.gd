@@ -43,3 +43,10 @@ const GUARD_STATE := {
 	"Suspicious": MOTION, "Investigating": MOTION, "Searching": MOTION,
 	"Alerted": ALARM,
 }
+
+
+## Each ward in its school's colour, by content/wards.json's schools (§10.3).
+const WARD := {
+	"GravityWell": MOTION, "CrystalWall": MATTER, "TimeSnare": TIME,
+	"StaticCoil": ENERGY, "ThornHedge": LIFE, "LanternGlare": SPIRIT,
+}

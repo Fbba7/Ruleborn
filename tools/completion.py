@@ -168,6 +168,7 @@ DELIVERABLES = [
         "the replay screen plays a golden to its end and shows its grade")),
     ("3", "Capture input", FRONTEND, client_tests(
         "every tap on the heist screen makes the one command it names, stamped with the tick it was made",
+        "a tap on a guard, the Vault, a pylon or a ward makes the command it calls for, and the gait button cycles walk, crouch, run",
         "a heist played live on the heist screen records the golden replay byte for byte, and the server's check grades it Clean",
         "a replay whose last checksum was altered is refused, as the server would refuse it")),
     ("3", "Show a result", FRONTEND, client_tests(

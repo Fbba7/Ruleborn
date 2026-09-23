@@ -4,6 +4,7 @@
   "a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server": "passed",
   "a heist played live on the heist screen records the golden replay byte for byte, and the server's check grades it Clean": "passed",
   "a replay whose last checksum was altered is refused, as the server would refuse it": "passed",
+  "a tap on a guard, the Vault, a pylon or a ward makes the command it calls for, and the gait button cycles walk, crouch, run": "passed",
   "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:16": "passed",
   "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:19.5": "passed",
   "every golden replay re-simulates in the client, every second agreeing with its checksums": "passed",

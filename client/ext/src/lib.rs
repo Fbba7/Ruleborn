@@ -285,6 +285,7 @@ impl RulebornReplay {
             d.set("carry", r.role.carry());
             d.set("health", r.health);
             d.set("standing", &GString::from(&format!("{:?}", r.standing)));
+            d.set("gait", &GString::from(&format!("{:?}", r.gait)));
             out.push(&d);
         }
         out
@@ -302,6 +303,22 @@ impl RulebornReplay {
             d.set("far", tiles(g.far));
             d.set("state", &GString::from(&format!("{:?}", g.state)));
             d.set("down", g.knocked_out);
+            out.push(&d);
+        }
+        out
+    }
+
+    /// §10.3's wards on the island: kind, tile, and whether it still acts.
+    #[func]
+    fn wards(&self) -> Array<VarDictionary> {
+        let mut out = Array::new();
+        let Some(w) = self.world.as_ref() else { return out };
+        for ward in &w.wards {
+            let mut d = VarDictionary::new();
+            let (x, y) = w.grid.centre(ward.tile);
+            d.set("at", Vector2::new(tiles(x), tiles(y)));
+            d.set("kind", &GString::from(&format!("{:?}", ward.kind)));
+            d.set("live", ward.live());
             out.push(&d);
         }
         out

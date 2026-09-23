@@ -25,9 +25,13 @@ Four screens, opened from `scenes/home.tscn`:
 **The heist screen** (`scenes/heist_screen.tscn`). A heist on the fixture
 realm, played: the world steps in real time and every tap becomes a simulation
 command stamped with the tick it was made (§24.10: *"a move or an ability with
-its tick, crew member and target"*). Tap a crew member to select it, tap the
-ground to send it there; Crack, Load and Get out act for the selected member,
-and Get out calls the skiff (§5.4) to the next tile tapped. When the clock runs
+its tick, crew member and target"*). A tap is read by what is on the tile, and
+is always the one command the player chose (§12.18): a crew member is selected;
+a guard is attacked, or dragged if it is down; the Vault is cracked, or loaded
+to full once open; a pylon is broken; a live ward is disarmed; anything else is
+walked to. The buttons cycle the selected member's gait (walk, crouch, run),
+halt it, drop half its loot, and — Get out — call the skiff (§5.4) to the next
+tile tapped. Every one of §24.10's eleven command kinds has a control. When the clock runs
 out the command log is written down as the replay a device queues (§24.12) and
 checked. With a server (`RULEBORN_SERVER`, or the project setting
 `ruleborn/server_url`) the screen signs in, takes the first island in §24.8's
@@ -69,7 +73,9 @@ and what the player does is what the server re-plays.
 - every golden replay re-simulates with every second agreeing with its
   checksums, and the planned heist plays out Clean;
 - the replay screen plays a golden to its end and shows its grade;
-- every tap makes the one command it names, stamped with the tick it was made;
+- every tap makes the one command it names, stamped with the tick it was made,
+  and a tap on a guard, the Vault, a pylon or a ward makes the command it
+  calls for;
 - the planned heist's commands, given live on the heist screen, record the
   golden replay byte for byte, and the check grades it Clean;
 - the heist just played replays with every second agreeing, and a replay with
@@ -82,7 +88,7 @@ and what the player does is what the server re-plays.
 - every control on every screen meets §21.1's size, reach, corner and
   safe-area rules, in a 9:19.5 frame and a 9:16 one (a headless run has no
   screen, so the test sets the window to each), and no text is smaller than 13
-  points (§21.8).
+  points (§21.8); nothing asks for more width than the phone has.
 
 To look at it without a desktop, `tests/screenshot.gd` renders a still under a
 virtual display:
@@ -98,9 +104,6 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.5-stable_linux.x
   and Android need their export templates and toolchains, and §24.7's spike —
   the extension building and loading on a real iPhone and Android — is the
   gate for them.
-- **The rest of the crew's commands.** The heist screen gives move, crack,
-  load and the skiff. Gait, halt, attack, break, drop, disarm and drag are in
-  the simulation and the replay format but have no control yet.
 - **Sign-in.** The server's sign-in takes a platform credential; a desktop
   build has no Game Center or Play Games, so it sends a stand-in the local
   server accepts. §12.22's target choice is not built either: the client takes

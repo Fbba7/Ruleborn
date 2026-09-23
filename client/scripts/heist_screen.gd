@@ -6,10 +6,10 @@ extends Control
 ## written down as the replay a device queues (§24.12) and checked the way the
 ## server checks it.
 ##
-## One crew member is selected at a time. A tap on a crew member selects it; a
-## tap on open ground sends the selected member there. Crack, Load and Get out
-## act for the selected member; Get out calls the skiff (§5.4) to the next tile
-## tapped. §21.8 puts crew portraits at the bottom left and actions at the
+## One crew member is selected at a time, and a tap on the realm gives it the
+## command the tapped thing calls for (see `tap_tile`). The buttons cycle its
+## gait, halt it, drop half its loot, and — Get out — call the skiff (§5.4) to
+## the next tile tapped. §21.8 puts crew portraits at the bottom left and actions at the
 ## bottom right; both rows here sit above the corners, which §21.1 keeps clear.
 
 enum Kind { MOVE_TO, GAIT, HALT, CRACK, LOAD, SKIFF, ATTACK, BREAK, DROP, DISARM, DRAG }
@@ -30,6 +30,7 @@ var _owed := 0.0
 var view: RealmView
 var hud: HeistHud
 var hint_label: Label
+var gait_button: Button
 var crew_buttons: Array[Button] = []
 
 
@@ -95,8 +96,16 @@ func select(member: int) -> void:
 	_refresh()
 
 
-## A tap on the realm's tile `t`: select the crew member standing there, or
-## send the selected one there, or — after Get out — call the skiff to it.
+## A tap on the realm's tile `t`, read by what is on it. Each tap is one
+## command the player chose, never one the crew chose for them (§12.18):
+##
+##   after Get out      call the skiff here (§5.4)
+##   a crew member      select it
+##   a guard            attack it (§12.20), or drag it if it is down (§12.8)
+##   the Vault          crack it (§12.6), or load to full once it is open
+##   a law pylon        break it (§12.6)
+##   a live ward        disarm it, standing on its tile (§10.3)
+##   anything else      walk there (§12.18)
 func tap_tile(t: Vector2i) -> void:
 	if t.x < 0:
 		return
@@ -104,13 +113,63 @@ func tap_tile(t: Vector2i) -> void:
 	if calling_skiff:
 		world.give(selected, Kind.SKIFF, at.x, at.y)
 		calling_skiff = false
-	else:
-		var crew := world.crew()
-		for i in crew.size():
-			if Vector2i(crew[i]["at"]) == t and i != selected and crew[i]["standing"] == "Active":
-				select(i)
-				return
-		world.give(selected, Kind.MOVE_TO, at.x, at.y)
+		_refresh()
+		return
+	var crew := world.crew()
+	for i in crew.size():
+		if Vector2i(crew[i]["at"]) == t and i != selected and crew[i]["standing"] == "Active":
+			select(i)
+			return
+	var guards := world.guards()
+	for g in guards.size():
+		if Vector2i(guards[g]["at"]) == t:
+			world.give(selected, Kind.DRAG if guards[g]["down"] else Kind.ATTACK, g, 0)
+			_refresh()
+			return
+	var vault := world.vault()
+	if Vector2i(vault["at"]) == t:
+		if vault["open"]:
+			load_up(100)
+		else:
+			crack()
+		_refresh()
+		return
+	var features := world.features()
+	var size := world.size()
+	if features[t.y * size.x + t.x] == RealmView.Tile.PYLON:
+		world.give(selected, Kind.BREAK, at.x, at.y)
+		_refresh()
+		return
+	for w in world.wards():
+		if Vector2i(w["at"]) == t and w["live"]:
+			world.give(selected, Kind.DISARM, at.x, at.y)
+			_refresh()
+			return
+	world.give(selected, Kind.MOVE_TO, at.x, at.y)
+	_refresh()
+
+
+const GAITS := ["Walk", "Crouch", "Run"]
+
+
+## The selected member's next gait: walk, crouch, run, and round again
+## (§12.17 prices all three for eyes and ears).
+func next_gait() -> void:
+	var now: String = world.crew()[selected]["gait"]
+	var next := (GAITS.find(now) + 1) % GAITS.size()
+	world.give(selected, Kind.GAIT, next, 0)
+	_refresh()
+
+
+func halt() -> void:
+	world.give(selected, Kind.HALT, 0, 0)
+	_refresh()
+
+
+## §12.19: dropping loot "costs exactly the fraction dropped"; half, from the
+## button.
+func drop_half() -> void:
+	world.give(selected, Kind.DROP, 50, 0)
 	_refresh()
 
 
@@ -185,8 +244,10 @@ func _refresh() -> void:
 	if hud == null:
 		return
 	hud.show_state(world)
+	var me: Dictionary = world.crew()[selected]
 	hint_label.text = "Tap an edge tile for the skiff" if calling_skiff else \
-		"%s selected — tap the ground to move" % world.crew()[selected]["role"]
+		"%s — tap ground, a guard, the Vault, a pylon or a ward" % me["role"]
+	gait_button.text = str(me["gait"])
 	for i in crew_buttons.size():
 		var b := crew_buttons[i]
 		b.modulate = Color.WHITE if i == selected else Color(1, 1, 1, 0.6)
@@ -203,9 +264,18 @@ func _build() -> void:
 		if event is InputEventMouseButton and event.pressed:
 			tap_tile(view.tile_at(event.position)))
 	column.add_child(view)
-	hint_label = UI.label()
+	hint_label = UI.label("", UI.TEXT_POINTS, true)
 	column.add_child(hint_label)
 
+	var actions := UI.row()
+	column.add_child(actions)
+	gait_button = UI.button("Walk", next_gait)
+	actions.add_child(gait_button)
+	actions.add_child(UI.button("Halt", halt))
+	actions.add_child(UI.button("Drop", drop_half))
+	actions.add_child(UI.button("Get out", get_out, true))
+	# The crew's portraits lowest, where the thumb rests (§21.8 puts them at
+	# the bottom); a narrow row, so it stays clear of the corners.
 	var crew_row := UI.row()
 	column.add_child(crew_row)
 	var crew := world.crew()
@@ -214,9 +284,3 @@ func _build() -> void:
 		var b := UI.button(role.substr(0, 2), select.bind(i), false, Palette.ROLE.get(role, Palette.PAPER))
 		crew_buttons.append(b)
 		crew_row.add_child(b)
-
-	var actions := UI.row()
-	column.add_child(actions)
-	actions.add_child(UI.button("Crack", crack))
-	actions.add_child(UI.button("Load", load_up.bind(100)))
-	actions.add_child(UI.button("Get out", get_out, true))

@@ -113,6 +113,41 @@ func _run() -> void:
 	check("every tap on the heist screen makes the one command it names, stamped with the tick it was made",
 		log == want, "got %s" % [log])
 
+	# A tap is read by what is on the tile, and each is the one command the
+	# player chose (§12.18): a guard is attacked, the Vault cracked, a pylon
+	# broken, a ward disarmed. The gait button walks, crouches and runs.
+	heist.begin(HeistScreen.SEED, HeistScreen.TICKS, HeistScreen.CREW)
+	heist.select(1)
+	var first: Dictionary = heist.world.guards()[1]
+	var pylon := -1
+	var features := heist.world.features()
+	for i in features.size():
+		if features[i] == RealmView.Tile.PYLON:
+			pylon = i
+			break
+	var width := heist.world.size().x
+	var ward: Dictionary = heist.world.wards()[0] if heist.world.wards().size() > 0 else {}
+	heist.tap_tile(Vector2i(first["at"]))
+	heist.tap_tile(Vector2i(heist.world.vault()["at"]))
+	heist.tap_tile(Vector2i(pylon % width, pylon / width))
+	if not ward.is_empty():
+		heist.tap_tile(Vector2i(ward["at"]))
+	heist.next_gait()
+	heist.advance(1)
+	heist.next_gait()
+	heist.advance(1)
+	heist.next_gait()
+	heist.halt()
+	heist.drop_half()
+	var kinds := heist.world.commands().map(func(c): return [c["kind"], c["x"]])
+	var K := HeistScreen.Kind
+	var expected := [[K.ATTACK, 1], [K.CRACK, 0], [K.BREAK, (pylon % width) * 256 + 128]]
+	if not ward.is_empty():
+		expected.append([K.DISARM, int(Vector2i(ward["at"]).x) * 256 + 128])
+	expected += [[K.GAIT, 1], [K.GAIT, 2], [K.GAIT, 0], [K.HALT, 0], [K.DROP, 50]]
+	check("a tap on a guard, the Vault, a pylon or a ward makes the command it calls for, and the gait button cycles walk, crouch, run",
+		kinds == expected and pylon >= 0 and not ward.is_empty(), "got %s, wanted %s" % [kinds, expected])
+
 	# And the heist it plays is the heist it records. The planned golden's
 	# commands, given live at their ticks on the heist screen, must record the
 	# golden byte for byte, which the server's check then grades Clean.
@@ -242,6 +277,13 @@ func _control_problems(screen: Control) -> Array:
 	var problems := []
 	if frame.y <= frame.x:
 		problems.append("the frame is %s, not portrait" % frame)
+	# Nothing may ask for more width than the phone has: a label that will not
+	# wrap stretches the whole column and pushes every row off-centre.
+	var widest := 0.0
+	for c in screen.find_children("*", "Control", true, false):
+		widest = max(widest, c.get_combined_minimum_size().x)
+	if widest > frame.x:
+		problems.append("something asks for %d px of a %d px frame" % [widest, frame.x])
 	var buttons := screen.find_children("*", "Button", true, false)
 	if buttons.is_empty():
 		problems.append("no controls")

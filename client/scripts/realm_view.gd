@@ -63,6 +63,8 @@ func _draw() -> void:
 				draw_rect(r, Palette.STONE.darkened(0.08 * h))
 			_draw_feature(_features[i], r, t)
 	_draw_vault(t)
+	for ward in replay.wards():
+		_draw_ward(ward, t)
 	var guards := replay.guards()
 	var shown := selected_guard
 	if shown < 0 or shown >= guards.size() or guards[shown]["down"]:
@@ -98,6 +100,17 @@ func _draw_feature(code: int, r: Rect2, t: float) -> void:
 			draw_colored_polygon(PackedVector2Array([c + Vector2(0, -d), c + Vector2(d, 0), c + Vector2(0, d), c + Vector2(-d, 0)]), Palette.MATTER)
 		Tile.CRYSTAL_WALL:
 			draw_rect(r.grow(-t * 0.1), Palette.TIME)
+
+
+## A ward as a ring in its school's colour; hollow once disarmed or broken.
+func _draw_ward(w: Dictionary, t: float) -> void:
+	var c := to_screen(w["at"])
+	var colour: Color = Palette.WARD.get(w["kind"], Palette.INK)
+	var d := t * 0.28
+	var diamond := PackedVector2Array([c + Vector2(0, -d), c + Vector2(d, 0), c + Vector2(0, d), c + Vector2(-d, 0), c + Vector2(0, -d)])
+	if w["live"]:
+		draw_colored_polygon(diamond.slice(0, 4), Color(colour, 0.85))
+	draw_polyline(diamond, Palette.INK, max(1.5, t * 0.05))
 
 
 func _draw_vault(t: float) -> void:
