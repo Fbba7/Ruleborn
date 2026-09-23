@@ -721,12 +721,18 @@ dict(
                     "the simulation's own sight rule (\u00a721.12), and every "
                     "control is checked against \u00a721.1's size, reach, corner "
                     "and safe-area rules. The drawing is flat and top-down; the "
-                    "diorama is the art pass.<br><br><strong>Not yet:</strong> "
-                    "the phone half of \u00a724.7's spike \u2014 the extension "
-                    "building and loading on a real iPhone and Android, whose "
-                    "failure \u00a724.7 says moves the simulation to C# \u2014 "
-                    "and input, so the screen plays heists and does not yet "
-                    "record them.",
+                    "diorama is the art pass.<br><br>A heist can be played too: "
+                    "each tap is a command stamped with the tick it was made, "
+                    "the log is recorded as the replay a device queues, and the "
+                    "result screen shows the check's verdict. The planned heist's "
+                    "commands given live record the golden replay byte for "
+                    "byte.<br><br><strong>Not yet:</strong> the phone half of "
+                    "\u00a724.7's spike \u2014 the extension building and "
+                    "loading on a real iPhone and Android, whose failure "
+                    "\u00a724.7 says moves the simulation to C# \u2014 the "
+                    "network client that takes a lease and submits to "
+                    "<code>server/</code>, and controls for the other seven "
+                    "command kinds.",
              evidence="python3 client/status.py"),
     ],
 ),

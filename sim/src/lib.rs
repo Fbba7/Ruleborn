@@ -696,6 +696,24 @@ impl World {
         world
     }
 
+    /// A command given now, as a player's tap is: §24.10's "a move or an
+    /// ability with its tick, crew member and target", stamped with the tick
+    /// the world is about to run, so it lands in this tick's inputs phase.
+    /// The log stays in tick order because a tap can only be now. Returns
+    /// false, and changes nothing, once the heist's clock has run out.
+    pub fn give(&mut self, actor: u8, kind: Kind, x: i16, y: i16) -> bool {
+        if self.tick >= self.clock {
+            return false;
+        }
+        self.commands.push(Command { tick: self.tick, actor, kind, x, y });
+        true
+    }
+
+    /// The input log so far: what a device records and the server replays.
+    pub fn commands(&self) -> &[Command] {
+        &self.commands
+    }
+
     /// Replace the input log, for a test that builds its world by hand.
     #[cfg(test)]
     pub(crate) fn commands_for_test(&mut self, commands: Vec<Command>) {

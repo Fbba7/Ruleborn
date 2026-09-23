@@ -72,6 +72,7 @@
   "brittle_stone_doubles_every_hit_on_a_structure": "passed",
   "climbing_a_level_needs_a_ramp_and_dropping_is_free_and_one_way": "passed",
   "commands_are_what_drives_the_crew": "passed",
+  "commands_given_live_record_the_same_heist_as_the_log_they_make": "passed",
   "cracking_takes_what_12_19_says_with_and_without_a_breaker": "passed",
   "crew_pass_through_one_another": "passed",
   "different_seeds_produce_different_heists": "passed",

@@ -61,7 +61,8 @@
         "a_truncated_or_padded_file_is_refused",
         "verification_names_the_second_that_diverges",
         "commands_are_what_drives_the_crew",
-        "a_command_for_a_crew_member_who_is_not_there_is_dropped"
+        "a_command_for_a_crew_member_who_is_not_there_is_dropped",
+        "commands_given_live_record_the_same_heist_as_the_log_they_make"
       ]
     },
     {

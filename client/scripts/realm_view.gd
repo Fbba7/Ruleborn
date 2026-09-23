@@ -140,3 +140,29 @@ func _draw_member(m: Dictionary, t: float) -> void:
 	var share: float = float(m["carried"]) / max(1, m["carry"])
 	if share > 0.0:
 		draw_arc(c, radius * 1.35, -PI / 2, -PI / 2 + TAU * share, 20, Palette.MOTION, max(2.0, t * 0.08))
+
+
+## The guard nearest a point on screen becomes the one whose cone is drawn.
+func select_guard_near(at: Vector2) -> void:
+	var guards := replay.guards()
+	var best := -1
+	var best_d := INF
+	for gi in guards.size():
+		var d := to_screen(guards[gi]["at"]).distance_to(at)
+		if d < best_d:
+			best_d = d
+			best = gi
+	selected_guard = best
+	queue_redraw()
+
+
+## The tile under a point on screen, or (-1, -1) off the realm.
+func tile_at(at: Vector2) -> Vector2i:
+	var l := layout()
+	if l[0] <= 0.0:
+		return Vector2i(-1, -1)
+	var p: Vector2 = (at - l[1]) / l[0]
+	var t := Vector2i(floori(p.x), floori(p.y))
+	if t.x < 0 or t.y < 0 or t.x >= _size.x or t.y >= _size.y:
+		return Vector2i(-1, -1)
+	return t

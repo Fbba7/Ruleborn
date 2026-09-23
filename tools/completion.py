@@ -157,17 +157,21 @@ DELIVERABLES = [
     ("2", "Project structure", FRONTEND, not_started("a client project builds on both stores' targets")),
     ("2", "Localisation", FRONTEND, not_started("the client loads its strings from a catalogue")),
     ("2", "Portrait interface", FRONTEND, client_tests(
-        "every control is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:19.5",
-        "every control is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:16",
-        "no text is smaller than 13 points (§21.8)")),
+        "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:19.5",
+        "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:16",
+        "no text on any screen is smaller than 13 points (§21.8)")),
     ("2", "Save and settings", FRONTEND, not_started("the client saves and restores its settings")),
 
     ("3", "Render a replay", FRONTEND, client_tests(
         "the client's simulation is the rules version every golden replay names",
         "every golden replay re-simulates in the client, every second agreeing with its checksums",
         "the replay screen plays a golden to its end and shows its grade")),
-    ("3", "Capture input", FRONTEND, not_started("taps become sim/ commands in a replay")),
-    ("3", "Show a result", FRONTEND, not_started("the result screen reads the validator's verdict")),
+    ("3", "Capture input", FRONTEND, client_tests(
+        "every tap on the heist screen makes the one command it names, stamped with the tick it was made",
+        "a heist played live on the heist screen records the golden replay byte for byte, and the server's check grades it Clean",
+        "a replay whose last checksum was altered is refused, as the server would refuse it")),
+    ("3", "Show a result", FRONTEND, client_tests(
+        "the result screen shows the validator's verdict: the re-simulation's grade, or nothing paid when refused")),
 
     ("4", "Terrain editing", FRONTEND, not_started("the builder places §6.2's features on a grid")),
     ("4", "Laws on the island", FRONTEND, not_started("the builder weaves laws and places pylons")),

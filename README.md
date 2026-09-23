@@ -85,11 +85,14 @@ neither the band nor how often a list is rebuilt is defined). And the 54
 law-shaped forms of §11.10 are now validated content.
 
 The frontend has started (T3.4). [`client/`](client/README.md) is a Godot 4.5
-project with `sim/` linked in as a Rust GDExtension, as §24.7 plans: its replay
-screen re-simulates a heist on the device a tick at a time and draws it, and
-every second checks its own checksum against the replay's. All five golden
-replays agree at every second, so the client runs the server's rules, not a copy
-of them. It is a desktop build for now; the phone builds are §24.7's spike.
+project with `sim/` linked in as a Rust GDExtension, as §24.7 plans. A heist
+can be played on it — every tap becomes a command stamped with its tick,
+recorded as the replay a device queues and checked as the server checks it —
+and watched: the replay screen re-simulates a heist a tick at a time and every
+second checks its own checksum against the replay's. All five golden replays
+agree at every second, so the client runs the server's rules, not a copy of
+them. It is a desktop build for now; the phone builds are §24.7's spike. The
+look is a stand-in: the diorama of §21 is the art pass.
 
 v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses

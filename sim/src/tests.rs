@@ -2474,3 +2474,27 @@ fn a_rock_pillar_takes_the_tiles_behind_it_out_of_the_drawn_cone() {
     assert!(after.len() < before.len(), "{} tiles before, {} after", before.len(), after.len());
     assert!(!after.contains(&near), "the pillar's own tile is not seen through");
 }
+
+#[test]
+fn commands_given_live_record_the_same_heist_as_the_log_they_make() {
+    // A device plays a heist by giving commands as the player taps, then
+    // records the log it made (§24.12's Play and Queue). The world it showed
+    // must be the one the recording reproduces: the planned heist's commands,
+    // given one at a time at their ticks, end in the same checksum and make
+    // the same replay.
+    let planned = planned();
+    let mut live = World::from_heist(&Heist { commands: Vec::new(), ..planned.clone() });
+    let mut pending = planned.commands.iter().peekable();
+    let mut last = 0;
+    while live.tick < planned.ticks {
+        while let Some(c) = pending.next_if(|c| c.tick == live.tick) {
+            assert!(live.give(c.actor, c.kind, c.x, c.y));
+        }
+        last = live.step();
+    }
+    assert!(!live.give(0, Kind::Halt, 0, 0), "no command after the clock");
+    let recorded = crate::record(&crate::island::Island::fixture(), planned.seed, planned.ticks, planned.crew,
+                          live.commands().to_vec());
+    assert_eq!(recorded, planned);
+    assert_eq!(crate::truncate(last), *planned.checksums.last().unwrap());
+}

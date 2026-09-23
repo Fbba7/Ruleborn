@@ -1,12 +1,17 @@
 {
  "_what": "Written by client/status.py. Results, not claims: tools/completion.py reads what is built from this file.",
  "tests": {
-  "every control is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:16": "passed",
-  "every control is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:19.5": "passed",
+  "a heist played live on the heist screen records the golden replay byte for byte, and the server's check grades it Clean": "passed",
+  "a replay whose last checksum was altered is refused, as the server would refuse it": "passed",
+  "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:16": "passed",
+  "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:19.5": "passed",
   "every golden replay re-simulates in the client, every second agreeing with its checksums": "passed",
-  "no text is smaller than 13 points (§21.8)": "passed",
+  "every tap on the heist screen makes the one command it names, stamped with the tick it was made": "passed",
+  "no text on any screen is smaller than 13 points (§21.8)": "passed",
   "the client's simulation is the rules version every golden replay names": "passed",
+  "the heist just played replays on this phone with every second agreeing": "passed",
   "the planned heist plays out Clean with every bag banked (§12.9)": "passed",
-  "the replay screen plays a golden to its end and shows its grade": "passed"
+  "the replay screen plays a golden to its end and shows its grade": "passed",
+  "the result screen shows the validator's verdict: the re-simulation's grade, or nothing paid when refused": "passed"
  }
 }

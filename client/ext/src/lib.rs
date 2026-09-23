@@ -74,6 +74,80 @@ impl RulebornReplay {
         true
     }
 
+    /// Start a heist to be played rather than watched: the fixture realm,
+    /// this seed, clock and crew, and no commands yet. Taps become commands
+    /// through `give`, and `record` writes the replay the server checks.
+    #[func]
+    fn start(&mut self, seed: i64, ticks: i64, crew: i64) -> bool {
+        if !(3..=5).contains(&crew) || ticks <= 0 {
+            return false;
+        }
+        let heist = Heist {
+            seed: seed as u64,
+            island: Island::fixture().digest(),
+            rules: sim::rules_version(),
+            ticks: ticks as u32,
+            crew: crew as u8,
+            commands: Vec::new(),
+            checksums: Vec::new(),
+        };
+        self.world = Some(World::from_heist(&heist));
+        self.heist = Some(heist);
+        self.mismatch = 0;
+        self.agreed = 0;
+        true
+    }
+
+    /// A command, now: `kind` is replay.rs's Kind (0 MoveTo, 1 Gait, 2 Halt,
+    /// 3 Crack, 4 Load, 5 Skiff, 6 Attack, 7 Break, 8 Drop, 9 Disarm, 10
+    /// Drag), `x` and `y` a tile position at 1/256 of a tile or the kind's
+    /// own argument. False if there is no such kind or the clock has run out.
+    #[func]
+    fn give(&mut self, actor: i64, kind: i64, x: i64, y: i64) -> bool {
+        let (Some(world), Some(kind)) = (self.world.as_mut(), sim::replay::Kind::from_u8(kind as u8))
+        else {
+            return false;
+        };
+        world.give(actor as u8, kind, x as i16, y as i16)
+    }
+
+    /// The heist as played so far, written down as the replay a device queues
+    /// (§24.12): the header, the command log and a checksum a second, made by
+    /// re-simulating the log from the start.
+    #[func]
+    fn record(&self) -> PackedByteArray {
+        let (Some(world), Some(heist)) = (self.world.as_ref(), self.heist.as_ref()) else {
+            return PackedByteArray::new();
+        };
+        let bytes = sim::record(&Island::fixture(), heist.seed, heist.ticks, heist.crew,
+                                world.commands().to_vec()).encode();
+        PackedByteArray::from(bytes.as_slice())
+    }
+
+    /// What the server does with a replay (§24.12's Validate), on the fixture
+    /// realm: `{"ok": true, "grade": …}` or `{"ok": false, "refused": …}`.
+    #[func]
+    fn validate(replay: PackedByteArray) -> VarDictionary {
+        let mut d = VarDictionary::new();
+        let Some(heist) = Heist::decode(replay.as_slice()) else {
+            d.set("ok", false);
+            d.set("refused", &GString::from("malformed"));
+            return d;
+        };
+        match sim::verify_on(&Island::fixture(), &heist) {
+            Ok(o) => {
+                d.set("ok", true);
+                d.set("grade", &GString::from(&format!("{:?}", o.grade)));
+                d.set("banked", o.banked);
+            }
+            Err(r) => {
+                d.set("ok", false);
+                d.set("refused", &GString::from(&format!("{r:?}")));
+            }
+        }
+        d
+    }
+
     /// One tick. False once the heist's clock has run out.
     #[func]
     fn step(&mut self) -> bool {
@@ -99,6 +173,35 @@ impl RulebornReplay {
     #[func]
     fn rules(&self) -> GString {
         self.heist.as_ref().map_or(GString::new(), |h| hex(&h.rules))
+    }
+
+    /// The command log so far, one dictionary a command: tick, actor, kind
+    /// (replay.rs's number), x, y.
+    #[func]
+    fn commands(&self) -> Array<VarDictionary> {
+        let mut out = Array::new();
+        let Some(w) = self.world.as_ref() else { return out };
+        for c in w.commands() {
+            let mut d = VarDictionary::new();
+            d.set("tick", c.tick as i64);
+            d.set("actor", c.actor as i64);
+            d.set("kind", c.kind as u8 as i64);
+            d.set("x", c.x as i64);
+            d.set("y", c.y as i64);
+            out.push(&d);
+        }
+        out
+    }
+
+    /// The loaded or started heist's seed and crew size.
+    #[func]
+    fn seed(&self) -> i64 {
+        self.heist.as_ref().map_or(0, |h| h.seed as i64)
+    }
+
+    #[func]
+    fn crew_size(&self) -> i64 {
+        self.heist.as_ref().map_or(0, |h| h.crew as i64)
     }
 
     #[func]
