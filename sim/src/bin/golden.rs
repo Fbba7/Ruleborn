@@ -18,18 +18,8 @@
 //! needed it — splitting them leaves a commit whose tests fail — and say in
 //! the message which second moved.
 
-use ruleborn_sim::{fixture, planned, replay::{Heist, MAX_HEIST_BYTES}};
+use ruleborn_sim::{fixture, planned, replay::{Heist, MAX_HEIST_BYTES}, GOLDEN};
 use std::path::Path;
-
-/// (name, seed, ticks, crew). Chosen to span what §24.10 and §12.5 allow: the
-/// short and long ends of "4,500 to 7,200 ticks", and a crew of three, four
-/// and five.
-const GOLDEN: &[(&str, u64, u32, u8)] = &[
-    ("short-crew3", 0x0000_0000_0000_0001, 4_500, 3),
-    ("long-crew5", 0x5EED_0000_0000_0001, 7_200, 5),
-    ("mid-crew4", 0x0BAD_C0FF_EE00_1234, 6_000, 4),
-    ("edge-seed-max", u64::MAX, 4_500, 3),
-];
 
 fn main() {
     let write = std::env::args().any(|a| a == "--write");

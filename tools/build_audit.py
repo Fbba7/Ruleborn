@@ -1338,7 +1338,10 @@ def build() -> str:
       Heart to a crew that cannot crack in five. Porting its wards (D57) found
       two behind it: one Lantern Glare outweighs a realm of other wards
       (<strong>F33</strong>), and &sect;13.2's hold table was measured at one
-      guard post where &sect;5.2 gives two and three (<strong>F34</strong>).</p>
+      guard post where &sect;5.2 gives two and three (<strong>F34</strong>).
+      Starting the server that validates heists (T3.3) found four settlement
+      terms the document leaves open (<strong>G17</strong>) and an economy
+      model still minting from v3.2's raid base (<strong>D58</strong>).</p>
     <p class="lede"><strong>{edit_count} edits are drafted</strong> across
       {edit_items} items &mdash; the section to open, the sentence as it stands
       today, and what to put there. Every quoted sentence is checked against the

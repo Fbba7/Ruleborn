@@ -81,7 +81,7 @@ pub enum Kind {
 }
 
 impl Kind {
-    fn from_u8(v: u8) -> Option<Kind> {
+    pub fn from_u8(v: u8) -> Option<Kind> {
         match v {
             0 => Some(Kind::MoveTo),
             1 => Some(Kind::Gait),

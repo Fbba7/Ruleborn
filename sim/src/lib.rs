@@ -23,20 +23,23 @@
 //! on every machine; perception after movement would make the result depend on
 //! which entity was updated first.
 
-// `deny` rather than `forbid`, so that the one exception below can be written
-// down and argued for instead of the ban being dropped quietly. There is
-// exactly one, it is a symbol-name declaration rather than an operation, and
-// nothing in the simulation itself is unsafe.
+// `deny` rather than `forbid`, so that the exceptions can be written down and
+// argued for instead of the ban being dropped quietly. They are all in
+// `ffi.rs`, each is a symbol-name declaration on an export rather than an
+// operation, and nothing in the simulation itself is unsafe.
 #![deny(unsafe_code)]
 
+pub mod ffi;
 pub mod fixed;
 pub mod grid;
 pub mod guard;
 pub mod heist;
+pub mod island;
 pub mod laws_table;
 pub mod noise;
 pub mod path;
 pub mod replay;
+pub mod sha256;
 pub mod sight;
 
 #[cfg(test)]
@@ -45,7 +48,7 @@ pub mod rng;
 pub mod trig;
 
 use fixed::{Ang, Fx};
-use grid::{Feature, Grid, Surface, Terrain};
+use grid::{Feature, Grid};
 use heist::{Grade, Outcome, Skiff, Standing, Task, Vault, Ward, WardKind};
 use laws_table::{Param, LAWS};
 
@@ -563,97 +566,26 @@ impl World {
     /// seeded generator is for loot and island generation) are not built.
     /// `the_seed_cannot_change_what_a_guard_does` holds that in place.
     pub fn new(_seed: u64, crew: u8, commands: Vec<Command>) -> World {
+        World::on_ground(&island::Island::fixture(), crew, commands)
+    }
+
+    /// An island's ground, guards, Vault and crew: everything but its laws and
+    /// wards, which `from_island` adds as the heist it is. `new` is this on
+    /// the fixture realm, which is what the tests that weave their own laws
+    /// build on.
+    pub fn on_ground(island: &island::Island, crew: u8, commands: Vec<Command>) -> World {
         debug_assert!(
             commands.windows(2).all(|w| w[0].tick <= w[1].tick),
             "the input log has to be in tick order or the inputs phase is not a phase");
-        // §5.2's realm 5 is 14x14, the largest, so the spike uses it. The
-        // features are §6.2's, chosen because they pull feet and eyes apart:
-        //
-        //   a ruin wall with one gap    blocks both; the gap makes a route
-        //                               bend, so the neighbour order and the
-        //                               tie-breaking are observable
-        //   a rock pillar               blocks both, in open ground
-        //   a fence                     blocks walking, "doesn't block sight"
-        //   a fog bank                  walkable, blocks sight through it
-        //   mud and a fast path         §6.2's "40% slower" and "15% faster"
-        let mut grid = Grid::for_realm_level(FIXTURE_REALM_LEVEL);
-        for y in 0..grid.height {
-            if y != 6 {
-                grid.place(7, y, Feature::RuinWall);
-            }
-        }
-        grid.place(4, 5, Feature::RockPillar);
-        for x in 9..12 {
-            grid.place(x, 7, Feature::Fence);
-        }
-        grid.place(5, 8, Feature::FogBank);
-        grid.place(6, 8, Feature::FogBank);
-        grid.set(3, 3, Terrain::Pace(60));
-        grid.set(10, 9, Terrain::Pace(115));
-        // §12.17's remaining modifiers, each where a route or a guard meets it:
-        //   tall grass west of the wall   invisible if still, until a guard
-        //                                 walks into the tile
-        //   a gravel run through the gap  louder, at the one place every
-        //                                 crossing has to use
-        //   moss in the south-east        quieter
-        //   a dark corner by the entrance "an unlit tile halves it again"
-        for x in 1..4 {
-            grid.place(x, 7, Feature::TallGrass);
-        }
-        for x in 5..10 {
-            grid.set_surface(x, 6, Surface::Gravel);
-        }
-        for x in 8..11 {
-            grid.set_surface(x, 12, Surface::Moss);
-        }
-        // Moss behind two posts. A crouched walk carries 1 m and the tile
-        // behind a guard is 1 m away, so the last step of any approach on
-        // plain ground is heard; on moss a crouched walk carries nothing.
-        // Without these §12.8's ambush has no way in (see the README).
-        grid.set_surface(9, 5, Surface::Moss);
-        grid.set_surface(12, 3, Surface::Moss);
-        // And behind two more, since v3.3's crack noise brings every guard in
-        // the Heart to the Vault five seconds into cracking: a crew that wants
-        // to load has to have put the guards down first, and the moss is the
-        // Keeper's decision that allows it (§6.1). The Warden's rise has no
-        // way behind it, so one guard always answers the noise.
-        grid.set_surface(2, 11, Surface::Moss);
-        grid.set_surface(11, 11, Surface::Moss);
-        for y in 10..14 {
-            for x in 10..14 {
-                grid.darken(x, y);
-            }
-        }
-        // A rise for the Warden's post: §6.2's raised ground, one level, with a
-        // ramp up from the north. From up there it sees a metre further toward
-        // anyone below (§12.17); a raider up there hides its far zone from the
-        // guards below.
-        for y in 12..14 {
-            for x in 4..7 {
-                grid.set_height(x, y, 1);
-            }
-        }
-        grid.make_climbable(5, 11);
-        // The Vault, past the wall's gap and the gravel, between the Breaker's
-        // post and the Mender's: the fixture realm is the Heart.
-        grid.place(VAULT_AT.0, VAULT_AT.1, Feature::Vault);
-
-        // Guards on tile centres, on both sides of the wall, so that the
-        // wall, the fence and the fog each stand between some guard and some
-        // route. Every guard is inside the grid: a guard off it would see
-        // nothing and make its whole row of §12.17's table untested.
-        let posts: [(u16, u16); 5] = [(2, 10), (5, 12), (9, 4), (11, 10), (12, 2)];
-        let guards: Vec<Guard> = posts
+        let grid = island.ground();
+        let tile = |(x, y): (u8, u8)| grid.index(x as u16, y as u16).unwrap_or(0);
+        let guards: Vec<Guard> = island.guards
             .iter()
             .enumerate()
-            .map(|(row, (px, py))| {
-                make_guard(row as u32, row, grid.index(*px, *py).unwrap_or(0), &grid)
-            })
+            .map(|(id, post)| make_guard(id as u32, post.row as usize, tile((post.x, post.y)), &grid))
             .collect();
-        // The fixture's entrance, where §12.17's reinforcing Warden arrives:
-        // the far corner from the crew's start, on the guards' side.
-        let entrance = grid.index(grid.width - 1, grid.height - 1).unwrap_or(0);
-        let vault_tile = grid.index(VAULT_AT.0, VAULT_AT.1).unwrap_or(0);
+        let entrance = tile(island.entrance);
+        let vault_tile = tile(island.vault);
 
         let mut raiders = Vec::with_capacity(crew as usize);
         for i in 0..crew as i32 {
@@ -703,8 +635,8 @@ impl World {
             clock_run: 0,
             vault: Vault {
                 tile: vault_tile,
-                health: heist::VAULT_HEALTH_PER_LEVEL,
-                exposed: heist::FIXTURE_EXPOSED,
+                health: heist::VAULT_HEALTH_PER_LEVEL * island.vault_level as i32,
+                exposed: island.exposed as i32,
                 first_hit: None,
                 opened_at: None,
             },
@@ -743,9 +675,23 @@ impl World {
     /// The world a replay describes: the fixture realm, the heist's crew and
     /// commands, its laws, and its clock.
     pub fn from_heist(heist: &Heist) -> World {
-        let mut world = World::new(heist.seed, heist.crew, heist.commands.clone());
-        world.weave(&FIXTURE_LAWS);
-        world.place_wards(&FIXTURE_WARDS);
+        World::from_island(&island::Island::fixture(), heist)
+    }
+
+    /// The world a replay describes on the island it names: its ground and
+    /// guards, its laws woven and its wards placed, the replay's crew and
+    /// commands, and its clock. Whether `island` is the one the replay's
+    /// header names is the caller's to check — `verify_on` does.
+    pub fn from_island(island: &island::Island, heist: &Heist) -> World {
+        let mut world = World::on_ground(island, heist.crew, heist.commands.clone());
+        let laws: Vec<(&str, (u16, u16))> = island.laws.iter()
+            .map(|(id, x, y)| (id.as_str(), (*x as u16, *y as u16)))
+            .collect();
+        world.weave(&laws);
+        let wards: Vec<(heist::WardKind, (u16, u16))> = island.wards.iter()
+            .map(|(k, x, y)| (*k, (*x as u16, *y as u16)))
+            .collect();
+        world.place_wards(&wards);
         world.clock = heist.ticks;
         world
     }
@@ -2203,23 +2149,46 @@ pub fn digest(heist: &Heist) -> u64 {
     h
 }
 
-/// A heist built from a seed alone, for the cross-target spike.
-///
-/// The commands are drawn from the seed rather than played by a person: the
+/// A heist built from a seed alone, for the cross-target spike: `draw`'s
+/// commands on the fixture realm, recorded.
+pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
+    record(&island::Island::fixture(), seed, ticks, crew, draw(&island::Island::fixture(), seed, ticks, crew))
+}
+
+/// Play a command log on an island and write it down as a replay: the
+/// header §24.11 asks for — the seed, the island's hash and the rules
+/// version — and the checksum of every second. This is the device's half of
+/// §24.12: what it queues and the server re-simulates.
+pub fn record(island: &island::Island, seed: u64, ticks: u32, crew: u8,
+              commands: Vec<Command>) -> Heist {
+    let mut heist = Heist {
+        seed,
+        island: island.digest(),
+        rules: rules_version(),
+        ticks, crew, commands,
+        checksums: Vec::new(),
+    };
+    heist.checksums = run_on(island, &heist).iter().map(|s| truncate(*s)).collect();
+    heist
+}
+
+/// A command log drawn from a seed rather than played by a person: the
 /// spike needs an input log long enough to matter and identical on every
 /// target, and a recorded session would do the same job without being
 /// reproducible from eight bytes. §12.6 budgets 15 to 25 decisions in a run,
-/// so this draws in that range and spreads them across the ticks.
-pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
+/// so this draws in that range and spreads them across the ticks. It aims at
+/// the island it is given — its Vault, its pylons, its wards, its edges — so
+/// the server's tests can play any island with it.
+pub fn draw(island: &island::Island, seed: u64, ticks: u32, crew: u8) -> Vec<Command> {
     let mut rng = Rng::new(seed, Stream::Loot);
     let decisions = 15 + rng.below(11) as u32;      // 15 to 25, §12.6
-    let side = Grid::for_realm_level(FIXTURE_REALM_LEVEL).width as u64;
+    let side = island.side() as u64;
     let mut commands = Vec::with_capacity(decisions as usize * 2);
     // A tile, as a command aims at it: its centre, at 1/256 of a tile.
     let aim = |x: u64, y: u64| ((x * 256 + 128) as i16, (y * 256 + 128) as i16);
     // The four tiles beside the Vault, north, east, south, west.
-    let (vx, vy) = (VAULT_AT.0 as u64, VAULT_AT.1 as u64);
-    let beside = [(vx, vy - 1), (vx + 1, vy), (vx, vy + 1), (vx - 1, vy)];
+    let (vx, vy) = (island.vault.0 as u64, island.vault.1 as u64);
+    let beside = [(vx, vy.saturating_sub(1)), (vx + 1, vy), (vx, vy + 1), (vx.saturating_sub(1), vy)];
     for i in 0..decisions {
         let tick = (ticks / decisions) * i + (rng.below(20) as u32);
         let actor = rng.below(crew as u64) as u8;
@@ -2248,15 +2217,15 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
                 push(Kind::MoveTo, aim(bx, by));
                 push(Kind::Load, (50 + rng.below(51) as i16, 0));
             }
-            9 => {
+            9 if !island.laws.is_empty() => {
                 // A pylon: to the tile north of it, and break it.
-                let (_, (px, py)) = FIXTURE_LAWS[rng.below(FIXTURE_LAWS.len() as u64) as usize];
-                push(Kind::MoveTo, aim(px as u64, py as u64 - 1));
+                let (_, px, py) = island.laws[rng.below(island.laws.len() as u64) as usize];
+                push(Kind::MoveTo, aim(px as u64, (py as u64).saturating_sub(1)));
                 push(Kind::Break, aim(px as u64, py as u64));
             }
-            10 => {
+            10 if !island.wards.is_empty() => {
                 // A ward: onto its tile, and disarm it (§10.3, v3.3).
-                let (_, (wx, wy)) = FIXTURE_WARDS[rng.below(FIXTURE_WARDS.len() as u64) as usize];
+                let (_, wx, wy) = island.wards[rng.below(island.wards.len() as u64) as usize];
                 push(Kind::MoveTo, aim(wx as u64, wy as u64));
                 push(Kind::Disarm, aim(wx as u64, wy as u64));
             }
@@ -2275,18 +2244,7 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
         }
     }
     commands.sort_by_key(|c| (c.tick, c.actor, c.kind as u8));
-
-    let mut heist = Heist {
-        seed,
-        // The island stands in for §24.8's content hash. The rules are the
-        // real thing: a digest of the laws the heist was made under (§24.11).
-        island: digest_bytes(seed, 0x15_1A_4D),
-        rules: rules_digest(&FIXTURE_LAWS),
-        ticks, crew, commands,
-        checksums: Vec::new(),
-    };
-    heist.checksums = run(&heist).iter().map(|s| truncate(*s)).collect();
-    heist
+    commands
 }
 
 /// A heist planned the way a player would play it, rather than drawn from a
@@ -2313,18 +2271,11 @@ pub fn planned() -> Heist {
         say(t(s), actor, kind, target);
     });
     commands.sort_by_key(|c| (c.tick, c.actor, c.kind as u8));
-    let mut heist = Heist {
-        seed: 0x5EED_0F_A_7EA1,
-        island: digest_bytes(0, 0x15_1A_4D),
-        rules: rules_digest(&FIXTURE_LAWS),
-        ticks: t(165),                    // §5.4: 150 s + 15 for one link
-        crew: 3,
-        commands,
-        checksums: Vec::new(),
-    };
-    heist.checksums = run(&heist).iter().map(|s| truncate(*s)).collect();
-    heist
+    // §5.4: 150 s + 15 for one link.
+    record(&island::Island::fixture(), PLANNED_SEED, t(165), 3, commands)
 }
+
+const PLANNED_SEED: u64 = 0x5EED_0F_A_7EA1;
 
 /// The plan: (second, crew member, command, x, y). Crew 0 is a Scout, 1 a
 /// Breaker, 2 a Carrier. Guards are numbered by §12.17's rows: 0 the Scout at
@@ -2395,44 +2346,162 @@ const PLAN: &[(u32, u8, Kind, i16, i16)] = &[
     (53, 2, Kind::MoveTo, 13, 5),
 ];
 
-/// §24.11: "Every island and every replay records the exact set of laws it
-/// was made under." FNV-1a over each law's id and pylon, in weaving order,
-/// spread to 32 bytes: a replay made under different laws carries a
-/// different header.
-pub fn rules_digest(laws: &[(&str, (u16, u16))]) -> [u8; 32] {
+/// The golden replays, by what they are drawn from: (name, seed, ticks,
+/// crew). Chosen to span what §24.10 and §12.5 allow: the short and long
+/// ends of "4,500 to 7,200 ticks", and a crew of three, four and five. The
+/// fifth, `planned-clean`, is `planned()`. `bin/golden.rs` writes them and
+/// `rules_version` fingerprints the build with them.
+pub const GOLDEN: &[(&str, u64, u32, u8)] = &[
+    ("short-crew3", 0x0000_0000_0000_0001, 4_500, 3),
+    ("long-crew5", 0x5EED_0000_0000_0001, 7_200, 5),
+    ("mid-crew4", 0x0BAD_C0FF_EE00_1234, 6_000, 4),
+    ("edge-seed-max", u64::MAX, 4_500, 3),
+];
+
+/// §24.11's rules version: what a replay's `rules` header names, and what
+/// the server keeps a build of for as long as any replay needs it — "old
+/// replays stay valid forever against the rules they were played under".
+///
+/// It has to move whenever anything the simulation decides moves, or an old
+/// replay would be re-simulated under rules it was not played under. A
+/// number bumped by hand would be forgotten, so it is computed: SHA-256 of
+///
+///   * the law table — every law's id and every parameter it sets, exactly;
+///   * a behaviour fingerprint — the digest this build gives each golden
+///     heist, drawn from its seed and plan and re-simulated on the fixture.
+///
+/// So any change the golden replays can see changes the version by itself,
+/// and `golden_replays_still_verify` fails until they are re-recorded under
+/// it. A change they cannot see does not move it — the same reach the goldens
+/// have as a regression test, and the reason to keep adding them.
+pub fn rules_version() -> [u8; 32] {
+    use std::sync::OnceLock;
+    static VERSION: OnceLock<[u8; 32]> = OnceLock::new();
+    *VERSION.get_or_init(|| {
+        let mut bytes = b"RBR1".to_vec();
+        for law in laws_table::LAWS.iter() {
+            bytes.extend_from_slice(law.id.as_bytes());
+            bytes.push(0);
+            bytes.push(law.simulated as u8);
+            for (param, n, d) in law.params {
+                bytes.push(*param as u8);
+                bytes.extend_from_slice(&n.to_le_bytes());
+                bytes.extend_from_slice(&d.to_le_bytes());
+            }
+            bytes.push(0xFF);
+        }
+        let fixture = island::Island::fixture();
+        let bare = |seed: u64, ticks: u32, crew: u8, commands: Vec<Command>| Heist {
+            seed, island: [0; 32], rules: [0; 32], ticks, crew, commands,
+            checksums: Vec::new(),
+        };
+        let mut heists: Vec<Heist> = GOLDEN.iter()
+            .map(|(_, seed, ticks, crew)| bare(*seed, *ticks, *crew,
+                                               draw(&fixture, *seed, *ticks, *crew)))
+            .collect();
+        let mut plan: Vec<Command> = PLAN.iter().map(|&(s, actor, kind, x, y)| {
+            let (x, y) = if matches!(kind, Kind::MoveTo | Kind::Skiff | Kind::Break) {
+                (x * 256 + 128, y * 256 + 128)
+            } else {
+                (x, y)
+            };
+            Command { tick: s * TICKS_PER_SECOND, actor, kind, x, y }
+        }).collect();
+        plan.sort_by_key(|c| (c.tick, c.actor, c.kind as u8));
+        heists.push(bare(PLANNED_SEED, 165 * TICKS_PER_SECOND, 3, plan));
+        for heist in &heists {
+            bytes.extend_from_slice(&digest_on(&fixture, heist).to_le_bytes());
+        }
+        sha256::sha256(&bytes)
+    })
+}
+
+/// Run a heist on an island and return the per-second checksums.
+pub fn run_on(island: &island::Island, heist: &Heist) -> Vec<u64> {
+    let mut world = World::from_island(island, heist);
+    let mut kept = Vec::with_capacity((heist.ticks / TICKS_PER_SECOND) as usize + 1);
+    for _ in 0..heist.ticks {
+        let sum = world.step();
+        if world.tick % TICKS_PER_SECOND == 0 {
+            kept.push(sum);
+        }
+    }
+    kept
+}
+
+fn digest_on(island: &island::Island, heist: &Heist) -> u64 {
     let mut h: u64 = 0xcbf2_9ce4_8422_2325;
-    for (id, (x, y)) in laws {
-        for byte in id.bytes().chain(x.to_le_bytes()).chain(y.to_le_bytes()) {
+    for sum in run_on(island, heist) {
+        for byte in sum.to_le_bytes() {
             h ^= byte as u64;
             h = h.wrapping_mul(0x0000_0100_0000_01b3);
         }
     }
-    digest_bytes(h, 0x2D_1E_5F)
+    h
 }
 
-fn digest_bytes(seed: u64, salt: u64) -> [u8; 32] {
-    let mut out = [0u8; 32];
-    let mut rng = Rng::new(seed ^ salt, Stream::Loot);
-    for chunk in out.chunks_mut(8) {
-        chunk.copy_from_slice(&rng.next_u64().to_le_bytes());
+/// §24.10's heist length: "A heist is 4,500 to 7,200 ticks".
+pub const MIN_TICKS: u32 = 4_500;
+pub const MAX_TICKS: u32 = 7_200;
+
+/// Why the server will not accept a replay, before or after re-simulating it.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Refusal {
+    /// The header names a different island from the one it is checked on.
+    Island,
+    /// The header names a rules version this build is not.
+    Rules,
+    /// §12.5: "A crew of 3 to 5".
+    Crew,
+    /// Outside §24.10's 4,500 to 7,200 ticks.
+    Length,
+    /// Not in tick order, or a command past the end of the heist.
+    Log,
+    /// Not one checksum a second. A replay with none would otherwise verify
+    /// against anything.
+    Checksums,
+    /// The re-simulation and the replay part company at this second.
+    Diverged(usize),
+}
+
+/// What the server does with a replay (§24.12's "Validate"): check that it
+/// names this island and these rules, that it is the shape §24.10 gives a
+/// heist, re-simulate it, and compare every second. The outcome is the
+/// re-simulation's, never anything the device claims — the replay carries no
+/// outcome at all, only commands and checksums.
+pub fn verify_on(island: &island::Island, heist: &Heist) -> Result<heist::Outcome, Refusal> {
+    if heist.island != island.digest() {
+        return Err(Refusal::Island);
     }
-    out
+    if heist.rules != rules_version() {
+        return Err(Refusal::Rules);
+    }
+    if !(3..=5).contains(&heist.crew) {
+        return Err(Refusal::Crew);
+    }
+    if !(MIN_TICKS..=MAX_TICKS).contains(&heist.ticks) {
+        return Err(Refusal::Length);
+    }
+    if !heist.commands.windows(2).all(|w| w[0].tick <= w[1].tick)
+        || heist.commands.iter().any(|c| c.tick >= heist.ticks)
+    {
+        return Err(Refusal::Log);
+    }
+    if heist.checksums.len() != (heist.ticks / TICKS_PER_SECOND) as usize {
+        return Err(Refusal::Checksums);
+    }
+    let mut world = World::from_island(island, heist);
+    let mut second = 0usize;
+    for _ in 0..heist.ticks {
+        let sum = world.step();
+        if world.tick % TICKS_PER_SECOND == 0 {
+            if truncate(sum) != heist.checksums[second] {
+                return Err(Refusal::Diverged(second + 1));
+            }
+            second += 1;
+        }
+    }
+    Ok(world.outcome())
 }
 
-// --------------------------------------------------------------------------
-// The WebAssembly surface. §24.7: the same library, compiled for the server.
-// --------------------------------------------------------------------------
-
-/// Exported to WebAssembly so the server can run the identical logic. No
-/// allocator crossing the boundary, no strings: one call in, one number out.
-///
-/// The `unsafe` is the export itself: Rust requires it because two libraries
-/// could claim the same symbol, and the linker's behaviour would then be
-/// undefined. It is a declaration about a name, not an operation on memory,
-/// and it is the only one in the crate.
-#[allow(unsafe_code)]
-#[unsafe(no_mangle)]
-pub extern "C" fn rb_digest(seed_hi: u32, seed_lo: u32, ticks: u32) -> u64 {
-    let seed = ((seed_hi as u64) << 32) | seed_lo as u64;
-    digest(&fixture(seed, ticks, 3))
-}
+// The WebAssembly surface is `ffi.rs`.

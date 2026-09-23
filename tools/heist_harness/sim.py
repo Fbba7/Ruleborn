@@ -38,9 +38,10 @@ ROLES = {r["name"]: r for r in
 #: the landing realm to the Heart, up to 240 seconds." The clock is therefore a
 #: function of how far in the Vault is, which is why the harness crosses realms
 #: rather than modelling one.
-BASE_TICKS = 150 * TPS
-LINK_TICKS = 15 * TPS
-MAX_TICKS = 240 * TPS
+from ..design_facts import HEIST_CLOCK                   # 5.4 (D37)
+BASE_TICKS = HEIST_CLOCK[0] * TPS
+LINK_TICKS = HEIST_CLOCK[1] * TPS
+MAX_TICKS = HEIST_CLOCK[2] * TPS
 from ..design_facts import (VAULT_HEALTH_PER_LEVEL, LOAD_PER_SECOND,  # D37
                             CRACK_NOISE_SECONDS, DOWN_SECONDS, REVIVE_SECONDS,
                             TAKEDOWN_SECONDS, ASSIST_BONUS,

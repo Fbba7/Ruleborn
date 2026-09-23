@@ -30,7 +30,8 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 CONTENT = HERE.parent / "content" / "detection.json"
 ROLES = HERE.parent / "content" / "roles.json"
-SOURCES = ["src/lib.rs", "src/guard.rs", "src/noise.rs", "src/grid.rs", "src/heist.rs"]
+SOURCES = ["src/lib.rs", "src/guard.rs", "src/noise.rs", "src/grid.rs", "src/heist.rs",
+           "src/island.rs"]
 
 # Values the content files hold that the simulation does not yet use, by path
 # prefix. Each is reported so none passes as agreeing by being absent.
@@ -317,6 +318,11 @@ def facts_compare(text: str) -> dict:
                                             .read_text(encoding="utf-8"))),
          k.get("FIXTURE_EXPOSED")),
     ]
+    # §5.2's budgets by realm level, which `island.rs` publishes against.
+    arrays = {n: tuple(int(v) for v in re.findall(r"\d+", body))
+              for n, body in re.findall(r"pub const (\w+): \[u8; 5\] = \[([\d,\s]+)\];", text)}
+    for name in ("WARD_LIMITS", "GUARD_POSTS", "LAW_SLOTS"):
+        rows.append((name, tuple(getattr(f, name)), arrays.get(name)))
     checked, wrong = [], []
     for name, want, have in rows:
         (checked if want == have else wrong).append(

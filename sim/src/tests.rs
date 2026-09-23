@@ -303,6 +303,16 @@ fn golden_replays_still_verify() {
 
         assert_eq!(heist.encode(), bytes, "{name}: re-encoding changed the bytes");
 
+        // §24.11's four things: the header names the island by its hash and
+        // the rules by the version this build is. A behaviour change moves the
+        // version, so a golden recorded before it no longer claims to be
+        // playable here — which is the pin §24.11 asks for.
+        assert_eq!(heist.island, crate::island::Island::fixture().digest(),
+                   "{name}: the header does not name the fixture realm");
+        assert_eq!(heist.rules, crate::rules_version(),
+                   "{name}: recorded under another rules version — the \
+                    simulation's behaviour has moved; see `rules_version`");
+
         match verify(&heist) {
             Ok(()) => {}
             Err(second) => panic!(
@@ -1853,14 +1863,20 @@ fn breaking_a_pylon_switches_its_law_off_and_earns_its_page() {
 
 #[test]
 fn a_replay_carries_the_laws_it_was_made_under() {
-    // §24.11. The header's rules field is a digest of the woven laws, so two
-    // rule sets cannot share one.
-    use crate::{rules_digest, FIXTURE_LAWS};
+    // §24.11: "Every island and every replay records the exact set of laws it
+    // was made under." Which laws a realm runs, and where their pylons stand,
+    // are the island's, so they are in the island's hash; what each law does
+    // is the rules version's. Both are in the header.
+    use crate::island::Island;
     let heist = planned();
-    assert_eq!(heist.rules, rules_digest(&FIXTURE_LAWS));
-    assert_ne!(rules_digest(&FIXTURE_LAWS), rules_digest(&FIXTURE_LAWS[..2]));
-    assert_ne!(rules_digest(&[("haste", (1, 3))]), rules_digest(&[("haste", (1, 4))]),
-               "and where its pylon stands");
+    assert_eq!(heist.island, Island::fixture().digest());
+    assert_eq!(heist.rules, crate::rules_version());
+    let mut fewer = Island::fixture();
+    fewer.laws.pop();
+    assert_ne!(fewer.digest(), Island::fixture().digest(), "a law fewer");
+    let mut moved = Island::fixture();
+    moved.laws[0].2 += 1;
+    assert_ne!(moved.digest(), Island::fixture().digest(), "and where its pylon stands");
 }
 
 // --------------------------------------------------------------------------
@@ -2226,3 +2242,151 @@ fn a_drop_is_heard_two_metres_off_for_one_level_and_four_for_three() {
     assert_eq!(wakes(true), State::Investigating, "the landing carries two");
 }
 
+
+
+// --------------------------------------------------------------------------
+// The server's half: SHA-256, the island bundle, the rules version and the
+// validator (§24.8, §24.11, §24.12)
+// --------------------------------------------------------------------------
+
+fn hex(d: &[u8; 32]) -> String {
+    crate::sha256::hex(d)
+}
+
+#[test]
+fn sha256_gives_the_standards_answers() {
+    use crate::sha256::sha256;
+    // FIPS 180-4's examples, and the empty message: one block, two blocks, and
+    // the padding edge where the length no longer fits the first block.
+    assert_eq!(hex(&sha256(b"")),
+               "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+    assert_eq!(hex(&sha256(b"abc")),
+               "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+    assert_eq!(hex(&sha256(b"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq")),
+               "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1");
+    assert_eq!(hex(&sha256(&vec![b'a'; 1_000_000])),
+               "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0");
+    assert_eq!(hex(&sha256(&[0u8; 55])).len(), 64);
+    assert_ne!(sha256(&[0u8; 55]), sha256(&[0u8; 56]));
+}
+
+#[test]
+fn an_island_is_one_encoding_and_one_hash() {
+    use crate::island::Island;
+    for island in [Island::fixture(), Island::example()] {
+        let bytes = island.encode();
+        let back = Island::decode(&bytes).expect("an island decodes what it encodes");
+        assert_eq!(back, island);
+        assert_eq!(back.encode(), bytes);
+        assert_eq!(back.digest(), crate::sha256::sha256(&bytes));
+    }
+    assert_ne!(Island::fixture().digest(), Island::example().digest());
+}
+
+#[test]
+fn a_second_encoding_of_an_island_is_refused() {
+    use crate::island::{Island, Malformed};
+    let good = Island::example().encode();
+    let tile0 = 4 + 10;                  // the first tile's three bytes
+    let mut trailing = good.clone();
+    trailing.push(0);
+    assert_eq!(Island::decode(&trailing), Err(Malformed::TrailingBytes));
+    let mut hundred = good.clone();
+    hundred[tile0 + 1] = 100;            // a pace of 100 is written as 0
+    assert_eq!(Island::decode(&hundred), Err(Malformed::NonCanonicalPace));
+    let mut flags = good.clone();
+    flags[tile0 + 2] = 4;
+    assert_eq!(Island::decode(&flags), Err(Malformed::FlagBits));
+    let mut feature = good.clone();
+    feature[tile0] = 9;
+    assert_eq!(Island::decode(&feature), Err(Malformed::UnknownFeature));
+    let mut magic = good.clone();
+    magic[3] = b'2';
+    assert_eq!(Island::decode(&magic), Err(Malformed::Magic));
+    let mut off = good.clone();
+    off[10] = 12;                        // the Vault's x, on a 12-wide realm
+    assert_eq!(Island::decode(&off), Err(Malformed::OffGrid));
+    assert_eq!(Island::decode(&good[..good.len() - 1]), Err(Malformed::Truncated));
+}
+
+#[test]
+fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
+    use crate::heist::WardKind;
+    use crate::island::{Island, Problem};
+    assert_eq!(Island::example().check(), vec![]);
+    // The fixture is a test realm: every row of §12.17's guards, five posts
+    // where §5.2 gives realm level 5 three.
+    assert_eq!(Island::fixture().check(), vec![Problem::TooManyGuards]);
+
+    let mut crowded = Island::example();
+    crowded.wards.push((WardKind::TimeSnare, 6, 9));      // on the Vault
+    assert!(crowded.check().contains(&Problem::Crowded));
+
+    let mut sealed = Island::example();
+    sealed.wards.push((WardKind::CrystalWall, 9, 5));     // in the wall's gap
+    assert_eq!(sealed.check(), vec![Problem::Sealed]);
+
+    let mut many = Island::example();
+    many.laws.push(("glass".to_string(), 11, 4));
+    assert_eq!(many.check(), vec![Problem::TooManyLaws]);
+
+    let mut unknown = Island::example();
+    unknown.laws[0].0 = "no_such_law".to_string();
+    assert_eq!(unknown.check(), vec![Problem::UnknownLaw]);
+
+    let mut landing = Island::example();
+    landing.tiles[2].feature = Some(crate::grid::Feature::RockPillar);   // (2, 0)
+    assert_eq!(landing.check(), vec![Problem::LandingBlocked]);
+}
+
+#[test]
+fn a_replay_verifies_on_its_island_and_nowhere_else() {
+    use crate::island::Island;
+    use crate::{draw, record, verify_on, Refusal};
+    let island = Island::example();
+    let heist = record(&island, 42, 4_500, 4, draw(&island, 42, 4_500, 4));
+    let outcome = verify_on(&island, &heist).expect("a replay verifies on its own island");
+    assert_eq!(outcome.capacity, 104 + 104 + 300 + 138, "a crew of four's Carry");
+
+    // Named for another island, or played on one it does not name.
+    assert_eq!(verify_on(&Island::fixture(), &heist), Err(Refusal::Island));
+    let mut other_rules = heist.clone();
+    other_rules.rules[0] ^= 1;
+    assert_eq!(verify_on(&island, &other_rules), Err(Refusal::Rules));
+
+    // A tampered second is found, and named.
+    let mut tampered = heist.clone();
+    tampered.checksums[60] ^= 1;
+    assert_eq!(verify_on(&island, &tampered), Err(Refusal::Diverged(61)));
+
+    // A replay that carries no checksums would verify against anything.
+    let mut bare = heist.clone();
+    bare.checksums.clear();
+    assert_eq!(verify_on(&island, &bare), Err(Refusal::Checksums));
+
+    // The shape §24.10 and §12.5 give a heist.
+    let short = record(&island, 42, 900, 3, draw(&island, 42, 900, 3));
+    assert_eq!(verify_on(&island, &short), Err(Refusal::Length));
+    let two = record(&island, 42, 4_500, 2, draw(&island, 42, 4_500, 2));
+    assert_eq!(verify_on(&island, &two), Err(Refusal::Crew));
+    let mut late = heist.clone();
+    late.commands.push(Command { tick: 4_500, actor: 0, kind: Kind::Halt, x: 0, y: 0 });
+    assert_eq!(verify_on(&island, &late), Err(Refusal::Log));
+}
+
+#[test]
+fn the_rules_version_is_the_same_every_time_it_is_asked() {
+    assert_eq!(crate::rules_version(), crate::rules_version());
+    assert_ne!(crate::rules_version(), [0u8; 32]);
+}
+
+#[test]
+fn a_vault_a_level_up_holds_more() {
+    use crate::island::Island;
+    let mut island = Island::example();
+    island.vault_level = 1;
+    let one = World::on_ground(&island, 3, vec![]).vault.health;
+    island.vault_level = 4;
+    let four = World::on_ground(&island, 3, vec![]).vault.health;
+    assert_eq!(four, one * 4, "§12.6: health a Vault level");
+}

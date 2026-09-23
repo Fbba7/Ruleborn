@@ -35,12 +35,14 @@
   "a_posted_guard_holds_its_facing": "passed",
   "a_raider_held_in_the_near_zone_raises_a_guard_to_alerted": "passed",
   "a_replay_carries_the_laws_it_was_made_under": "passed",
+  "a_replay_verifies_on_its_island_and_nowhere_else": "passed",
   "a_rock_pillar_hides_what_is_behind_it": "passed",
   "a_route_bends_around_a_wall_and_takes_the_gap": "passed",
   "a_route_into_a_wall_is_refused_rather_than_approximated": "passed",
   "a_route_is_the_shortest_one": "passed",
   "a_ruin_wall_hides_the_far_side_except_through_its_gap": "passed",
   "a_sealed_goal_has_no_route_and_that_is_the_answer": "passed",
+  "a_second_encoding_of_an_island_is_refused": "passed",
   "a_sound_goes_round_a_wall_not_through_it": "passed",
   "a_state_does_not_fall_back_within_half_a_second": "passed",
   "a_static_coil_shocks_everyone_within_two_tiles_every_three_seconds": "passed",
@@ -50,12 +52,15 @@
   "a_time_snare_freezes_its_own_disarmer_and_the_disarm_waits": "passed",
   "a_time_snare_freezes_the_first_to_step_on_it_then_waits_twelve_seconds": "passed",
   "a_truncated_or_padded_file_is_refused": "passed",
+  "a_vault_a_level_up_holds_more": "passed",
   "a_walk_on_gravel_is_heard_where_the_same_walk_on_grass_is_not": "passed",
   "a_walking_raider_is_heard_and_a_standing_one_is_not": "passed",
   "alerted_searches_twenty_seconds_after_losing_sight_then_returns": "passed",
   "an_alert_reaches_guards_within_four_metres_half_a_second_later": "passed",
   "an_alerted_guard_hits_once_every_eight_tenths_for_its_power": "passed",
   "an_ambush_knocks_out_every_role_of_guard_after_a_two_second_takedown": "passed",
+  "an_island_is_one_encoding_and_one_hash": "passed",
+  "an_island_keeps_to_5_2_and_6_1_or_is_not_published": "passed",
   "an_open_hit_sends_suspicion_straight_to_1000": "passed",
   "angles_wrap_rather_than_accumulate": "passed",
   "anyone_inside_when_the_clock_ends_is_caught": "passed",
@@ -95,6 +100,7 @@
   "regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing": "passed",
   "rounding_is_the_same_on_both_sides_of_zero": "passed",
   "running_is_heard_further_than_walking": "passed",
+  "sha256_gives_the_standards_answers": "passed",
   "sine_has_the_values_it_must": "passed",
   "sine_is_exactly_odd": "passed",
   "slow_ground_does_change_how_long_the_walk_takes": "passed",
@@ -115,6 +121,7 @@
   "the_planned_heist_ends_clean_with_every_bag_full": "passed",
   "the_pythagorean_identity_holds_to_the_tables_resolution": "passed",
   "the_realm_alarm_climbs_once_every_thirty_seconds_to_six": "passed",
+  "the_rules_version_is_the_same_every_time_it_is_asked": "passed",
   "the_same_route_is_found_every_time_and_by_both_ends_of_the_grid": "passed",
   "the_seed_cannot_change_what_a_guard_does": "passed",
   "the_skiff_comes_to_an_edge_after_twenty_seconds_and_nowhere_else": "passed",
@@ -154,6 +161,14 @@
    "seed": "1",
    "native": "74c48294e51eafed",
    "wasm": "74c48294e51eafed",
+   "validator_agree": true,
+   "validator": [
+    "Foiled",
+    "0",
+    "4",
+    "0",
+    "646"
+   ],
    "agree": true,
    "bytes": 1302
   },
@@ -161,6 +176,14 @@
    "seed": "6840123409045651457",
    "native": "223b955f8b4a8720",
    "wasm": "223b955f8b4a8720",
+   "validator_agree": true,
+   "validator": [
+    "Foiled",
+    "1",
+    "3",
+    "0",
+    "646"
+   ],
    "agree": true,
    "bytes": 1263
   },
@@ -168,6 +191,14 @@
    "seed": "18446744073709551615",
    "native": "f837d6d3136c381e",
    "wasm": "f837d6d3136c381e",
+   "validator_agree": true,
+   "validator": [
+    "Foiled",
+    "0",
+    "4",
+    "0",
+    "646"
+   ],
    "agree": true,
    "bytes": 1225
   },
@@ -175,6 +206,14 @@
    "seed": "42",
    "native": "fb575c3ca29926e7",
    "wasm": "fb575c3ca29926e7",
+   "validator_agree": true,
+   "validator": [
+    "Foiled",
+    "0",
+    "4",
+    "0",
+    "646"
+   ],
    "agree": true,
    "bytes": 1179
   },
@@ -182,12 +221,20 @@
    "seed": "999983",
    "native": "3b8d8c38ee6ccf6b",
    "wasm": "3b8d8c38ee6ccf6b",
+   "validator_agree": true,
+   "validator": [
+    "Foiled",
+    "0",
+    "4",
+    "0",
+    "646"
+   ],
    "agree": true,
    "bytes": 1193
   }
  ],
  "content": {
-  "agree": 138,
+  "agree": 141,
   "disagree": [],
   "not_modelled": [
    "noise.off_screen_multiplier \u2014 the simulation has no screen",

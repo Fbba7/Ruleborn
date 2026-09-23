@@ -189,7 +189,7 @@ def formulas() -> str:
                    "150 s + 15 s per link on the shortest route, up to 240 s", "5.4"))
     out.append(row("Keeper curve",
                    "day ~ 0.13 x level^1.96 for an engaged player", "14.2"))
-    out.append(row("Births", f"{econ.HAUL_BASE} x 1.15^(ruleborn owned) Essence", "9.5"))
+    out.append(row("Births", f"{econ.BIRTH_BASE} x {econ.BIRTH_GROWTH}^(ruleborn owned) Essence", "9.5"))
     out.append(row("Haul", "see docs/design/spec/economy.md — C2 and C4 unresolved", "9.6"))
     return "".join(out)
 

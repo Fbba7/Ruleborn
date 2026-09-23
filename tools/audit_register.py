@@ -49,7 +49,7 @@ that tells you to replace a sentence the document does not contain.
 #: went: each is a statement v3.3 makes twice, or a figure that did not move
 #: with the one it was derived from.
 FOUND_IN_V33 = frozenset({"C34", "C35", "C36", "C37", "C38", "C39", "D56",
-                          "F32", "G16", "D57", "F33", "F34"})
+                          "F32", "G16", "D57", "F33", "F34", "G17", "D58"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -4976,6 +4976,61 @@ dict(id="F34", kind="finding", severity="significant", status="open",
          "it does, F33 says why: the posts and the Glares multiply, and "
          "§5.2 budgets neither against the other.",
      measured="harness 30af740ce1811dbd; test_13_2s_hold_table_was_measured_at_one_guard_post"),
+
+dict(id="G17", kind="gap", severity="minor", status="open",
+     title="Four things a server needs to settle a raid that the document "
+           "leaves open",
+     refs=["9.6", "9.4", "24.12", "32.9"],
+     body="Building §24.12's Validate and Grant (the server, T3.3) needs every "
+          "term of what a raid settles as a number. Four are not stated:"
+          "<br><br>\u00b7 <strong>Difficulty.</strong> §9.6: <em>\u201cLevel "
+          "or above 1.0 to 1.2\u201d</em>. Nothing says where in the range a "
+          "target above the raider falls, though §9.6's own per-raid cap "
+          "(1.65 \u00d7 1.2 = 1.98) needs 1.2 to be reachable."
+          "<br>\u00b7 <strong>What a haul is minted in.</strong> §9.6 gives one "
+          "number. Only §32.9's measurement ledger says, deriving the birth "
+          "curve from <em>\u201craid Essence at base 2,400 (half of each "
+          "haul)\u201d</em>."
+          "<br>\u00b7 <strong>A fee below its floor.</strong> §9.4: "
+          "<em>\u201c2% of the raider's Starlight, from 100 to 25,000\u201d</em>. "
+          "A raider holding less than 100 owes more than it has."
+          "<br>\u00b7 <strong>The grace submission.</strong> §24.12: an expired "
+          "lease gets <em>\u201cNo reward, with one grace submission "
+          "allowed\u201d</em> \u2014 one per lease, per player, per day, or per "
+          "season is not said.",
+     rec="One clause each in §9.6, §9.4 and §24.12. The server takes, and names "
+         "in <code>server/src/economy.mjs</code> and <code>service.mjs</code>: "
+         "0.1 a Keeper level above, capped at 1.2; half of each haul Essence, "
+         "the rest Starlight; a fee of whatever the raider holds, never a "
+         "negative balance; and one expired submission honoured a day. Each is "
+         "a one-line change once the document decides.",
+     measured="server/test: economy.test.mjs, service.test.mjs"),
+
+dict(id="D58", kind="deviation", severity="significant", status="open",
+     title="The economy model mints raids from v3.2's base of 100, keyed to "
+           "the raider, where v3.3 mints from 2,400 keyed to the target",
+     refs=["9.6", "32.9"],
+     body="§9.6 (v3.3): <em>\u201cB(V), the base \u2014 2,400 \u00d7 "
+          "1.5<sup>(V\u22121)</sup> \u2026 V is the target's Vault level\u201d</em>, "
+          "raised from 100 because <em>\u201cthe old base of 100 failed it at "
+          "every level\u201d</em> of the raid-worth check. "
+          "<code>tools/economy_model</code> still mints from 100, and keys the "
+          "base with <code>Config.haul_level</code> from the raider's own "
+          "Vault, realm or Keeper level. Every economy figure this repository "
+          "publishes from the model \u2014 days to upgrade, the birth curve, "
+          "what a heist is worth against a day's production \u2014 is therefore "
+          "a v3.2 figure; §32.9's ledger, which does use 2,400, was not "
+          "computed with this model. Found building the server (T3.3), which "
+          "mints from the document's base.<br><br>Not silent any more: the "
+          "document's base is <code>design_facts.HAUL_BASE</code>, read back "
+          "from §9.6, and the model's is named <code>MODEL_HAUL_BASE</code> "
+          "beside a pointer here, so the difference is visible where it is "
+          "used.",
+     rec="Port §9.6's B(V) to the model \u2014 the base from "
+         "<code>design_facts</code>, keyed to the target's Vault level through "
+         "the matchmaker's level spread (§12.22) \u2014 and re-run its checks, "
+         "pacing and the raid-worth criterion first. Then compare the pacing it "
+         "prints with §9.6's 35 to 49 days."),
 
 ]
 

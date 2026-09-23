@@ -78,6 +78,8 @@ CREW_RANGE = (3, 5)
 #: budget, not a formula". v3.2's were 3 + realm level and 1 + (level - 1) // 2.
 WARD_LIMITS = (8, 8, 6, 7, 8)
 GUARD_POSTS = (1, 1, 2, 3, 3)
+#: §5.2's law slots by realm level, from its "Outer realm levels" table.
+LAW_SLOTS = (1, 1, 2, 2, 3)
 
 #: §12.8 and §12.20. One hit every 0.8 seconds for damage equal to Power, on
 #: both sides. The 0.8 is the only cadence the document states.
@@ -132,6 +134,29 @@ SKIFF_HEART_SECONDS = 20
 #: §12.9's grades, as the value each is worth when a run is scored.
 GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
 
+#: §9.6, what a raid pays: "Haul = B(V) × grade × difficulty × richness ×
+#: fatigue × fill", with "B(V), the base — 2,400 × 1.5^(V−1)" keyed to the
+#: target's Vault level; fatigue "0.85 on each successive raid that day";
+#: richness "clamped between 0.6 and 1.8, with a reduction above 1.5" (the
+#: excess halved); difficulty "Level or above 1.0 to 1.2, one below 0.8, two
+#: below 0.5, three or more below 0.25". The server mints from these (D58: the
+#: economy model still runs v3.2's base).
+HAUL_BASE = 2400
+HAUL_GROWTH = 1.5
+HAUL_FATIGUE = 0.85
+RICHNESS_CLAMP = (0.6, 1.8, 1.5)
+DIFFICULTY = (1.0, 1.2, 0.8, 0.5, 0.25)
+
+#: §5.4, "the clock's one home": "150 seconds plus 15 seconds for each link on
+#: the shortest route from the landing realm to the Heart, up to 240 seconds".
+HEIST_CLOCK = (150, 15, 240)
+
+#: §9.4: "Entry fee: 2% of the raider's Starlight, from 100 to 25,000,
+#: returned in full after a clean heist."
+ENTRY_FEE_RATE = 0.02
+ENTRY_FEE_MIN = 100
+ENTRY_FEE_MAX = 25_000
+
 #: Where each declared fact is stated, so the report can cite it and a reader
 #: can check it. The derived ones cite the content file instead.
 HOME = {
@@ -145,6 +170,7 @@ HOME = {
     "CREW_RANGE": "12.5",
     "WARD_LIMITS": "5.2",
     "GUARD_POSTS": "10.2",
+    "LAW_SLOTS": "5.2",
     "WIND_UP": "12.8",
     "TAKEDOWN_SECONDS": "29.1",
     "ASSIST_BONUS": "11.1",
@@ -163,6 +189,15 @@ HOME = {
     "SKIFF_OUTER_SECONDS": "5.4",
     "SKIFF_HEART_SECONDS": "5.4",
     "GRADE_VALUE": "12.9",
+    "HAUL_BASE": "9.6",
+    "HAUL_GROWTH": "9.6",
+    "HAUL_FATIGUE": "9.6",
+    "RICHNESS_CLAMP": "9.6",
+    "DIFFICULTY": "9.6",
+    "HEIST_CLOCK": "5.4",
+    "ENTRY_FEE_RATE": "9.4",
+    "ENTRY_FEE_MIN": "9.4",
+    "ENTRY_FEE_MAX": "9.4",
 }
 
 
@@ -184,6 +219,9 @@ STATED = {
                     lambda m: tuple(int(x) for x in m)),
     "GUARD_POSTS": (r"Every realm; (\d+), (\d+), (\d+), (\d+) and (\d+) by realm level "
                     r"\(5\.2\)\. One ruleborn", lambda m: tuple(int(x) for x in m)),
+    "LAW_SLOTS": (r"\| 10 by 10\n\| (\d+)\n[\s\S]*?\| 11 by 11\n\| (\d+)\n[\s\S]*?"
+                  r"\| 12 by 12\n\| (\d+)\n[\s\S]*?\| 13 by 13\n\| (\d+)\n[\s\S]*?"
+                  r"\| 14 by 14\n\| (\d+)\n", lambda m: tuple(int(x) for x in m)),
     "WIND_UP": (r"shows a ([\d.]+)-second wind-up", lambda m: float(m[0])),
     "TAKEDOWN_SECONDS": (r"after a (\d+) s takedown", lambda m: int(m[0])),
     "ASSIST_BONUS": (r"every hit on it deals (\d+)% more: the assist bonus",
@@ -211,6 +249,22 @@ STATED = {
                     r"[\s\S]*?\| Partial\n[^\n]*\n\| ×([\d.]+)[\s\S]*?\| Foiled\n[^\n]*\n\| ×([\d.]+)",
                     lambda m: {"clean": float(m[0]), "loud": float(m[1]),
                                "partial": float(m[2]), "foiled": float(m[3])}),
+    "HAUL_BASE": (r"\| ([\d,]+) × [\d.]+\(V−1\)", lambda m: int(m[0].replace(",", ""))),
+    "HAUL_GROWTH": (r"\| [\d,]+ × ([\d.]+)\(V−1\)", lambda m: float(m[0])),
+    "HAUL_FATIGUE": (r"\| Fatigue\n\| ([\d.]+) on each successive raid", lambda m: float(m[0])),
+    "RICHNESS_CLAMP": (r"clamped between ([\d.]+) and ([\d.]+), with a reduction above ([\d.]+)",
+                       lambda m: tuple(float(x) for x in m)),
+    "DIFFICULTY": (r"Level or above ([\d.]+) to ([\d.]+), one below ([\d.]+), two below "
+                   r"([\d.]+), three or more below ([\d.]+)",
+                   lambda m: tuple(float(x) for x in m)),
+    "HEIST_CLOCK": (r"\| (\d+) seconds plus (\d+) seconds for each link on the shortest route "
+                    r"from the landing realm to the Heart, up to (\d+) seconds",
+                    lambda m: tuple(int(x) for x in m)),
+    "ENTRY_FEE_RATE": (r"Entry fee: (\d+)% of the raider's Starlight", lambda m: int(m[0]) / 100),
+    "ENTRY_FEE_MIN": (r"Entry fee: \d+% of the raider's Starlight, from ([\d,]+) to",
+                      lambda m: int(m[0].replace(",", ""))),
+    "ENTRY_FEE_MAX": (r"Entry fee: \d+% of the raider's Starlight, from [\d,]+ to ([\d,]+)",
+                      lambda m: int(m[0].replace(",", ""))),
 }
 
 #: Facts the document has moved past and this repository has not, each with
@@ -255,7 +309,26 @@ def against_document() -> tuple[list[str], list[str]]:
     return wrong, behind
 
 
+def as_json() -> str:
+    """Every declared fact, for the tools that cannot import Python — the
+    server (server/src/facts.json). Generated, never edited: `--check-json`
+    fails when the copy has drifted from this file."""
+    facts = {name: globals()[name] for name in HOME}
+    return json.dumps(facts, indent=1, sort_keys=True) + "\n"
+
+
 def main() -> int:
+    if "--json" in sys.argv:
+        sys.stdout.write(as_json())
+        return 0
+    if "--check-json" in sys.argv:
+        path = pathlib.Path(sys.argv[sys.argv.index("--check-json") + 1])
+        if path.read_text(encoding="utf-8") != as_json():
+            print(f"{path} has drifted from tools/design_facts.py; regenerate it with "
+                  f"python3 tools/design_facts.py --json > {path}")
+            return 1
+        print(f"{path} matches tools/design_facts.py")
+        return 0
     print("What the design document says, and where each tool should read it "
           "from\n")
     width = max(len(k) for k in HOME)

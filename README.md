@@ -30,9 +30,9 @@ a band at the top.
 decision only you can make, evidence nobody here can produce, or drafting that is
 still mine to do.
 
-Four versions have now answered the audit. **97 of 153 register items are fixed
+Four versions have now answered the audit. **97 of 155 register items are fixed
 in the document itself** — 26 by v3.0, 9 by v3.1, 7 by v3.2 and 55 by v3.3.
-19 are still open.
+21 are still open.
 
 v3.3 closed 55 of the 64 items open against v3.2. Each was checked by section and
 line, not taken from its own list. It takes the launch cut (24 laws chosen by
@@ -60,6 +60,16 @@ allows there, none of them a Glare, hold 46%. §5.2 budgets wards by count, and 
 count is a budget a Keeper spends on Glares. **F34**: §13.2's hold table was
 measured at one guard post in every realm; at the posts §5.2 actually gives,
 realms 3 to 5 hold 91 to 99.5% of raids.
+
+The backend has started (T3.3). An island is now a content-addressed bundle
+that the simulation loads and checks against §5.2 and §6.1. A replay pins the
+island's hash and a rules version the build computes from its own behaviour.
+[`server/`](server/README.md) is §24.12's lease, validate and grant as edge
+functions over §24.8's tables: it re-simulates each heist in the same
+WebAssembly build, settles the entry fee and §9.6's haul in one transaction,
+and never pays a retry twice. Building it found **G17**, four settlement terms
+the document leaves open, and **D58**: the economy model still mints raids
+from v3.2's base of 100 where v3.3 uses 2,400.
 
 v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
@@ -100,7 +110,7 @@ is done. In short:
 1. Finish the fixes v3.0 started — retiring the superseded copies is the work,
    not restating the decisions
 2. ~~Rebuild the economy model~~ — **done**, `tools/economy_model/`
-3. The determinism spike — **two of four targets done** ([`sim/`](sim/README.md)): native x86-64 and WebAssembly agree bit for bit over a 240-second heist at five seeds. A real iPhone and a real Android are the rest of the gate
+3. The determinism spike — **two of four targets done** ([`sim/`](sim/README.md)): native x86-64 and WebAssembly agree bit for bit over a 240-second heist at five seeds, and on the validator's verdict. A real iPhone and a real Android are the rest of the gate. The server that runs the WebAssembly half is started ([`server/`](server/README.md), T3.3)
 4. A launch-scope decision
 
 ## Repository layout
@@ -116,7 +126,8 @@ docs/audit/    the generated audit register page
 docs/roadmap/  the generated roadmap page
 prototypes/
   heist-gate/  a throwaway browser build that runs both pre-code gates
-sim/            the heist simulation core in Rust: determinism spike (T3.1), replays (T3.2), pathfinding, sight, noise, guard states
+sim/            the heist simulation core in Rust: determinism spike (T3.1), replays (T3.2), pathfinding, sight, noise, guard states, island bundles and the validator (T3.3)
+server/         the edge functions of §24.1: lease, validate, grant, over §24.8's tables (T3.3)
 tools/
   extract_design_doc.py           HTML -> greppable text
   check_document.py               every check over the document, in one verdict
@@ -239,7 +250,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 153 tracked items with section references and status:
+document, as 155 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,

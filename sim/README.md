@@ -94,6 +94,48 @@ The harness was checked against a real regression rather than assumed to work:
 changing suspicion decay from 20 to 21 a tick — the smallest plausible balance
 tweak — fails at second 4 of 150.
 
+## Islands, the rules version and the validator (the server's half)
+
+§24.11: *"Any past heist — reproducible forever from four things: the seed,
+the input log, the island and the rules version."* Until this, the header's
+island was a placeholder and every heist ran on the one fixture realm. Now:
+
+- **An island is a bundle** (`island.rs`). One canonical encoding, addressed
+  by its SHA-256 (`sha256.rs`, checked against FIPS 180-4's vectors here and
+  against Node's own SHA-256 on every island the server stores). `decode`
+  refuses anything `encode` would not write, so one island has one hash.
+  Each tile fact has one home: the ground layer carries §6.2's features,
+  pace, surface, height, light and climbing aids; the Vault, the pylons and
+  the Crystal Walls come from their own lists. Every world is built from an
+  island — the fixture realm is `Island::fixture()` — and the goldens'
+  command and checksum bytes did not move when that changed, only their
+  headers, which now carry the real hashes.
+- **Publishing rules** (`Island::check`): §5.2's ward limit, guard posts and
+  law slots for the realm level, one thing a tile, open landing tiles, and
+  §6.1's route to the Vault with every Crystal Wall standing. The fixture
+  fails one of them on purpose — five posts where realm level 5 has three —
+  and `Island::example()` is a legal realm-3 Heart for the server's tests.
+- **The rules version** (`rules_version`) is SHA-256 of the law table and of
+  this build's digest of every golden heist. A number bumped by hand would be
+  forgotten; this one moves whenever anything the goldens can see moves, and
+  `golden_replays_still_verify` then fails until they are re-recorded under
+  it. The server keeps one build per version (§24.11: "pin, do not patch").
+- **The validator** (`verify_on`) checks that a replay names this island and
+  these rules, is the shape §24.10 and §12.5 give a heist — 4,500 to 7,200
+  ticks, a crew of three to five, commands in order, one checksum a second —
+  re-simulates it and compares every second. The outcome is the
+  re-simulation's; a replay carries no outcome at all.
+- **The WebAssembly surface** (`ffi.rs`): numbers in and out and one shared
+  buffer, which the host writes between calls. Still no imports.
+  `wasm_spike.mjs` and the native `spike` both print a validator line — the
+  rules version, the example island's hash, a replay recorded on it and the
+  verdict — and `status.py` requires them to agree.
+
+One convention stands in for a missing command. §5.4 lets the crew land
+anywhere along an edge, and the replay has no landing yet, so a crew lands on
+the first tiles of the north edge, one a tile, and `check` requires those
+tiles to be open. A landing command in the input log removes it.
+
 ## Pathfinding and crew control
 
 §12.18 specifies this more tightly than most of the document, and every clause
@@ -479,6 +521,9 @@ a test that does not exist, so the band cannot drift from the code.
     src/heist.rs      the Vault, fights, knockouts, the skiff, the grades
     src/laws_table.rs generated from content/law_effects.json: 48 laws as ratios
     src/replay.rs     the heist as bytes: header, command log, checksums
+    src/island.rs     an island as a bundle; §5.2's and §6.1's publishing rules
+    src/sha256.rs     FIPS 180-4, for §24.8's content addressing
+    src/ffi.rs        the WebAssembly surface the server calls
     src/tests.rs      the invariants the checksum rests on
     golden/*.rbh      replays committed today, re-simulated on every build
     src/bin/spike.rs  the native runner

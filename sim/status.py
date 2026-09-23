@@ -62,8 +62,13 @@ def targets() -> list[dict]:
         nd = re.search(r"^digest (\w+)", native, re.M).group(1)
         wd = re.search(r"^digest (\w+)", wasm, re.M).group(1)
         size = int(re.search(r"^encoded (\d+)", native, re.M).group(1))
+        # The server's half: rules version, island hash, a recorded replay's
+        # hash and the verdict on it, from each build (§24.12).
+        nv = re.search(r"^validator (.+)$", native, re.M).group(1)
+        wv = re.search(r"^validator (.+)$", wasm, re.M).group(1)
         rows.append({"seed": str(seed), "native": nd, "wasm": wd,
-                     "agree": nd == wd, "bytes": size})
+                     "validator_agree": nv == wv, "validator": nv.split()[-5:],
+                     "agree": nd == wd and nv == wv, "bytes": size})
     return rows
 
 

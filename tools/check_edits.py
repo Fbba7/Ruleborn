@@ -167,6 +167,9 @@ NO_EDIT_BECAUSE = {
     "D57": "no document sentence: the fix is the harness",
     "F33": "a design decision for the owner: whether the Lantern Glare is "
            "budgeted apart or made a dial, which decides the sentence",
+    "G17": "four one-clause decisions for the owner; the server's readings "
+           "are named where it takes them",
+    "D58": "no document sentence: the fix is the economy model",
     "F34": "a re-measurement first: \u00a713.2 already defers its table to "
            "the aligned re-run (32), and that re-run sets the numbers",
     "F32": "a design decision for the owner: whether the Heart is cleared "

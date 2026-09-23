@@ -200,9 +200,17 @@ STARLIGHT_PER_XP = 40               # 1 XP for every 40 Starlight spent
 # Raiding (§9.6 and §9.4)
 # --------------------------------------------------------------------------
 
-HAUL_BASE = 100
-HAUL_GROWTH = 1.5                   # B(L) = 100 x 1.5^(L-1); the master inflation lever
-HAUL_FATIGUE = 0.85                 # per successive raid in a day
+try:                                        # as tools.economy_model, or with
+    from ..design_facts import HAUL_FATIGUE, HAUL_GROWTH         # tools/ on the path
+except ImportError:
+    from design_facts import HAUL_FATIGUE, HAUL_GROWTH           # 9.6 (D37)
+#: The base the model mints from. §9.6 (v3.3) sets it at 2,400 — "the smallest
+#: hundred that passes at every level" of its raid-worth check — and keys it to
+#: the target's Vault level; the model still runs v3.2's 100, keyed by
+#: `Config.haul_level`. D58 owns the port. Named for the model rather than as
+#: the document's fact, which is `design_facts.HAUL_BASE` and what the server
+#: mints from.
+MODEL_HAUL_BASE = 100
 #: An attempt is worth this fraction of a clean same-level haul (§9.6), which
 #: that section calls "the number the progression curve is built on". It is
 #: E[grade] over all attempts: 62.5% succeed, split 35% clean / 40% loud / 25%
@@ -244,8 +252,10 @@ def heist_success_rate(day: int) -> float:
     return 0.60
 
 
-ENTRY_FEE_RATE = 0.02               # of the raider's Starlight, 100 to 25,000 (§9.4)
-ENTRY_FEE_MIN, ENTRY_FEE_MAX = 100, 25_000
+try:
+    from ..design_facts import ENTRY_FEE_MAX, ENTRY_FEE_MIN, ENTRY_FEE_RATE
+except ImportError:
+    from design_facts import ENTRY_FEE_MAX, ENTRY_FEE_MIN, ENTRY_FEE_RATE  # 9.4 (D37)
 
 # --------------------------------------------------------------------------
 # Player archetypes (§14.1)

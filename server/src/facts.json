@@ -1,0 +1,120 @@
+{
+ "ASSIST_BONUS": 0.25,
+ "BREAKER_VAULT_MULTIPLIER": 2,
+ "CARRIER_LOADED_PACE": 0.85,
+ "CRACK_NOISE_SECONDS": 5,
+ "CREW_RANGE": [
+  3,
+  5
+ ],
+ "CROUCH_PACE": 0.5,
+ "DECISION_BAND": [
+  15,
+  25
+ ],
+ "DECISION_SECONDS": [
+  8,
+  12
+ ],
+ "DIFFICULTY": [
+  1.0,
+  1.2,
+  0.8,
+  0.5,
+  0.25
+ ],
+ "DISARM_SECONDS": 15,
+ "DOWN_SECONDS": 10,
+ "ENTRY_FEE_MAX": 25000,
+ "ENTRY_FEE_MIN": 100,
+ "ENTRY_FEE_RATE": 0.02,
+ "GRADE_VALUE": {
+  "clean": 1.0,
+  "foiled": 0.0,
+  "loud": 0.7,
+  "partial": 0.4
+ },
+ "GUARD_POSTS": [
+  1,
+  1,
+  2,
+  3,
+  3
+ ],
+ "HAUL_BASE": 2400,
+ "HAUL_FATIGUE": 0.85,
+ "HAUL_GROWTH": 1.5,
+ "HEIST_CLOCK": [
+  150,
+  15,
+  240
+ ],
+ "HOLD_BAND": [
+  30.0,
+  45.0
+ ],
+ "LAW_SLOTS": [
+  1,
+  1,
+  2,
+  2,
+  3
+ ],
+ "LOAD_PER_SECOND": 30,
+ "MENDER_REVIVE_SECONDS": 1.5,
+ "NOTES": [
+  "Flow",
+  "Weight",
+  "Glow",
+  "Hush",
+  "Bloom",
+  "Spark",
+  "Echo",
+  "Veil"
+ ],
+ "OPPOSITE": {
+  "Bloom": "Spark",
+  "Echo": "Veil",
+  "Flow": "Weight",
+  "Glow": "Hush",
+  "Hush": "Glow",
+  "Spark": "Bloom",
+  "Veil": "Echo",
+  "Weight": "Flow"
+ },
+ "REVIVE_HEALTH": 0.3,
+ "REVIVE_SECONDS": 3.0,
+ "RICHNESS_CLAMP": [
+  0.6,
+  1.8,
+  1.5
+ ],
+ "ROLE_NAMES": [
+  "Scout",
+  "Breaker",
+  "Carrier",
+  "Warden",
+  "Mender"
+ ],
+ "RUN_PACE": 2.0,
+ "SCHOOLS": [
+  "Motion",
+  "Matter",
+  "Time",
+  "Energy",
+  "Life",
+  "Spirit"
+ ],
+ "SKIFF_HEART_SECONDS": 20,
+ "SKIFF_OUTER_SECONDS": 5,
+ "TAKEDOWN_SECONDS": 2,
+ "VAULT_HEALTH_PER_LEVEL": 1500,
+ "WARD_LIMITS": [
+  8,
+  8,
+  6,
+  7,
+  8
+ ],
+ "WIND_UP": 0.8
+}

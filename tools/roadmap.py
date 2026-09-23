@@ -620,6 +620,32 @@ dict(
              title="Fixed-point module and golden replays, portable from day one",
              detail="Written so that switching to the fallback costs the spike and nothing else. The tick rate has to be settled first (C7), because the replays encode it \u2014 and C7 is closed.<br><br><strong>Built.</strong> <code>sim/replay.rs</code> is \u00a724.10's \u201ccommands, never state\u201d: a header pinning \u00a724.11's four things, a varint-delta command log, and one checksum a second. <code>sim/golden/*.rbh</code> are four heists encoded by a build that is now history; a test decodes each, re-simulates it and names the second any divergence starts at. Checked against a real regression rather than assumed: changing suspicion decay by one a tick fails at second 4 of 150.<br><br>Building it settled a number \u00a724.10 leaves open. Its own budget \u2014 120 bytes of header, 300 to 700 of commands, a checksum a second, under 2 KB \u2014 does not close at eight bytes a checksum: a 240-second heist would be 2,740. The stored sum is therefore the low four bytes and a full-length heist measures 1,215.",
              blocked_by=["T3.1", "T1.4"]),
+        dict(id="T3.3", owner="claude", status="doing",
+             title="The server's half: island bundles, the validator and the "
+                   "ledger",
+             detail="\u00a724.1: <em>\u201cthe server only re-simulates to "
+                    "check.\u201d</em> Until this, a replay's header named its "
+                    "island with a placeholder and every heist ran on one fixture "
+                    "realm. <strong>Built.</strong> An island is a bundle with "
+                    "one canonical encoding, addressed by its SHA-256 and "
+                    "refused if it breaks \u00a75.2's budgets or \u00a76.1's "
+                    "route; the rules version is a hash of the law table and "
+                    "the build's behaviour on the golden heists, so it moves by "
+                    "itself; the validator re-simulates a replay on the island "
+                    "and rules its header names. Native and WebAssembly agree on "
+                    "all of it, and the goldens' command and checksum bytes did "
+                    "not move. <code>server/</code> is \u00a724.12's lease, "
+                    "validate and grant as edge functions over \u00a724.8's "
+                    "tables in SQLite: one lease per target (a unique index), "
+                    "the entry fee and the haul settled in one transaction, an "
+                    "append-only ledger held by triggers, retries that pay "
+                    "nothing twice. Building it found G17 and D58."
+                    "<br><br><strong>Not yet:</strong> platform sign-in (needs "
+                    "the stores), crossing realms, the daily and weekly caps, "
+                    "target lists, and a landing command in the replay.",
+             evidence="node --no-warnings --test server/test/*.test.mjs; "
+                      "bash sim/run_spike.sh",
+             register=["G17", "D58"]),
     ],
 ),
 

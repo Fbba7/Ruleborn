@@ -253,7 +253,7 @@ class EconomyModel:
         level = self.cfg.haul_level(
             self.vault_level(), self.mean_realm_level(), self.s.keeper_level
         )
-        base = data.HAUL_BASE * data.HAUL_GROWTH ** (level - 1)
+        base = data.MODEL_HAUL_BASE * data.HAUL_GROWTH ** (level - 1)
         fatigue = sum(data.HAUL_FATIGUE ** i for i in range(n))
         return base * self._value_per_attempt() * fatigue
 

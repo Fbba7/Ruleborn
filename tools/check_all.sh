@@ -37,6 +37,11 @@ python3 sim/content_gate.py --self-test
 bash sim/run_spike.sh
 
 echo
+echo "== the server: lease, validate, grant, against the simulation build just made =="
+python3 tools/design_facts.py --check-json server/src/facts.json
+node --no-warnings --test server/test/*.test.mjs 2>&1 | tail -9
+
+echo
 echo "== what changed since the previous version =="
 python3 tools/version_diff.py --self-test
 

@@ -214,7 +214,10 @@
       "tests": [
         "an_alerted_guard_hits_once_every_eight_tenths_for_its_power",
         "a_downed_crew_member_is_caught_after_ten_seconds_unless_revived",
-        "an_ambush_knocks_out_every_role_of_guard_after_a_two_second_takedown", "a_guard_that_notices_mid_takedown_takes_an_ordinary_hit", "a_body_in_tall_grass_is_not_found", "a_dragged_body_goes_with_its_dragger_at_crouching_speed",
+        "an_ambush_knocks_out_every_role_of_guard_after_a_two_second_takedown",
+        "a_guard_that_notices_mid_takedown_takes_an_ordinary_hit",
+        "a_body_in_tall_grass_is_not_found",
+        "a_dragged_body_goes_with_its_dragger_at_crouching_speed",
         "an_open_hit_sends_suspicion_straight_to_1000",
         "a_knocked_out_guard_found_by_another_raises_the_realm_alarm",
         "a_posted_guard_holds_its_facing",
@@ -266,7 +269,9 @@
         "a_thorn_hedge_hurts_whoever_pushes_through_five_percent_a_second",
         "a_lantern_glare_shows_the_crew_to_every_guard_and_blinds_it",
         "a_crystal_wall_blocks_until_it_is_broken",
-        "disarming_takes_fifteen_seconds_on_the_tile_is_silent_and_stepping_off_restarts_it", "a_time_snare_freezes_its_own_disarmer_and_the_disarm_waits", "a_lantern_glare_fires_when_a_crew_member_comes_within_two_tiles",
+        "disarming_takes_fifteen_seconds_on_the_tile_is_silent_and_stepping_off_restarts_it",
+        "a_time_snare_freezes_its_own_disarmer_and_the_disarm_waits",
+        "a_lantern_glare_fires_when_a_crew_member_comes_within_two_tiles",
         "smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits"
       ]
     },
@@ -280,6 +285,39 @@
         "honeycomb_lets_anyone_climb_one_level",
         "a_guard_a_level_up_sees_a_metre_further_and_one_below_loses_its_far_zone",
         "a_drop_is_heard_two_metres_off_for_one_level_and_four_for_three"
+      ]
+    },
+    {
+      "name": "Island bundles",
+      "section": "24.8",
+      "task": "T3.3",
+      "what": "An island as one canonical encoding, addressed by its SHA-256; refused if it is any other encoding. The fixture realm and a legal example Heart are bundles, and every world is built from one.",
+      "tests": [
+        "sha256_gives_the_standards_answers",
+        "an_island_is_one_encoding_and_one_hash",
+        "a_second_encoding_of_an_island_is_refused",
+        "a_vault_a_level_up_holds_more"
+      ]
+    },
+    {
+      "name": "Publishing rules",
+      "section": "5.2",
+      "task": "T3.3",
+      "what": "5.2's ward limit, guard posts and law slots by realm level, one thing a tile, open landing tiles, and 6.1's route to the Vault with every Crystal Wall standing.",
+      "tests": [
+        "an_island_keeps_to_5_2_and_6_1_or_is_not_published"
+      ]
+    },
+    {
+      "name": "Rules version and the validator",
+      "section": "24.11",
+      "task": "T3.3",
+      "what": "The rules version is a hash of the law table and this build's behaviour on the golden heists, so it moves by itself; the validator re-simulates a replay on the island and rules its header names and returns the re-simulation's outcome.",
+      "tests": [
+        "the_rules_version_is_the_same_every_time_it_is_asked",
+        "a_replay_verifies_on_its_island_and_nowhere_else",
+        "a_replay_carries_the_laws_it_was_made_under",
+        "golden_replays_still_verify"
       ]
     }
   ],

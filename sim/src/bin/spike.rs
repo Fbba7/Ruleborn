@@ -6,8 +6,11 @@
 //! size against §24.10's two-kilobyte limit. The WebAssembly build runs the
 //! same library and the two digests are compared by `run_spike.sh`.
 
+use ruleborn_sim::island::Island;
 use ruleborn_sim::replay::{Heist, MAX_HEIST_BYTES};
-use ruleborn_sim::{digest, fixture, run, verify, TICKS_PER_SECOND};
+use ruleborn_sim::sha256::{hex, sha256};
+use ruleborn_sim::{digest, draw, fixture, record, rules_version, run, verify, verify_on,
+                   TICKS_PER_SECOND};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -46,4 +49,17 @@ fn main() {
         }
     }
     println!("digest {:016x}", digest(&heist));
+
+    // The server's half (§24.12): the rules version, the example island's
+    // hash, a replay recorded on it from this seed, and the verdict of
+    // re-simulating it. `wasm_spike.mjs` prints the same line from the
+    // WebAssembly build, and `status.py` compares them.
+    let island = Island::example();
+    let replay = record(&island, seed, 4_500, 4, draw(&island, seed, 4_500, 4));
+    let verdict = match verify_on(&island, &replay) {
+        Ok(o) => format!("ok {:?} {} {} {} {}", o.grade, o.out, o.caught, o.banked, o.capacity),
+        Err(r) => format!("refused {r:?}"),
+    };
+    println!("validator {} {} {} {verdict}", hex(&rules_version()), hex(&island.digest()),
+             hex(&sha256(&replay.encode())));
 }
