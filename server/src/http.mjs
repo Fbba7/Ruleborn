@@ -8,6 +8,10 @@
 //   POST /v1/leases              {"bundle": hash}            → the lease
 //   POST /v1/heists/:token       replay bytes                → what was settled
 //   GET  /v1/balance                                         → {starlight, essence}
+//   GET  /v1/targets                                         → {band: list hash}
+//
+// A target list is fetched like a bundle, by its hash (§24.8: "a file, not a
+// query"); the index naming the current ones is the only thing that changes.
 //
 // Everything but the session and a bundle needs `Authorization: Bearer …`.
 
@@ -64,6 +68,9 @@ export function handler(service) {
         }
         case "GET /v1/balance":
           return json(service.balance(who()));
+        case "GET /v1/targets":
+          who();
+          return json(service.targets());
         default:
           return json({ error: "no_such_route" }, 404);
       }

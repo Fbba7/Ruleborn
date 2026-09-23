@@ -3,7 +3,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { base, difficulty, entryFee, fatigue, FULL_CREW_CARRY, haul, richness } from "../src/economy.mjs";
+import { base, capHaul, dayCeiling, difficulty, entryFee, fatigue, FULL_CREW_CARRY, haul, perRaidCap,
+         richness, weekCeiling } from "../src/economy.mjs";
 
 const value = ([n, d]) => Number(n) / Number(d);
 
@@ -72,4 +73,49 @@ test("the entry fee is 2% of Starlight, from 100 to 25,000 (§9.4), never more t
   assert.equal(entryFee(10_000_000), 25_000);
   assert.equal(entryFee(40), 40, "G17: a raider holding less than 100 pays what it holds");
   assert.equal(entryFee(0), 0);
+});
+
+test("the per-raid cap is 1.98 times the base, derived from richness and difficulty (§9.6)", () => {
+  for (const v of [1, 4, 10]) assert.equal(perRaidCap(v), BigInt(Math.floor(value(base(v)) * 1.98)));
+});
+
+test("a day's ceiling is half again above the whole fatigue curve; a week's is five days of it", () => {
+  // 2,400 × (1 + 0.85 + 0.85² + …) = 2,400 ÷ 0.15 = 16,000 a day at the curve.
+  assert.equal(dayCeiling(1), 24_000n);
+  assert.equal(weekCeiling(1), 80_000n);
+  assert.equal(weekCeiling(2), 120_000n);
+});
+
+test("a haul is cut by the first cap it meets, and re-split half Essence", () => {
+  const pay = { total: 4000, essence: 2000, starlight: 2000 };
+  const ctx = { targetVaultLevel: 1, raiderVaultLevel: 1, paidToday: 0, paidThisWeek: 0 };
+  assert.equal(capHaul(pay, ctx).cappedBy, null);
+  assert.equal(capHaul({ total: 9000, essence: 4500, starlight: 4500 }, ctx).total, 4752,
+               "2,400 × 1.98");
+  const day = capHaul(pay, { ...ctx, paidToday: 21_001 });
+  assert.deepEqual([day.total, day.essence, day.starlight, day.cappedBy], [2999, 1499, 1500, "day"]);
+  const week = capHaul(pay, { ...ctx, paidThisWeek: 79_000 });
+  assert.deepEqual([week.total, week.cappedBy], [1000, "week"]);
+  assert.equal(capHaul(pay, { ...ctx, paidThisWeek: 90_000 }).total, 0, "never negative");
+});
+
+test("missing two days a week costs little, and grinding all seven gains nothing (§9.6)", () => {
+  // Twenty clean same-level raids a day at Vault level 1, capped as the server caps them.
+  const week = (days) => {
+    let paidThisWeek = 0;
+    for (let d = 0; d < days; d++) {
+      let paidToday = 0;
+      for (let k = 0; k < 20; k++) {
+        const total = Math.floor(2400 * value(fatigue(k)));
+        const pay = capHaul({ total, essence: 0, starlight: total },
+                            { targetVaultLevel: 1, raiderVaultLevel: 1, paidToday, paidThisWeek });
+        paidToday += pay.total;
+        paidThisWeek += pay.total;
+      }
+    }
+    return paidThisWeek;
+  };
+  assert.equal(week(7), 80_000, "the week's ceiling binds");
+  assert.equal(week(6), 80_000);
+  assert.ok(week(5) / week(7) > 0.95, `five days earn ${week(5)} of ${week(7)}`);
 });

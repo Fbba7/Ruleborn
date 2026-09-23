@@ -10,7 +10,28 @@ python3 -m tools.economy_model positions           # one report
 python3 -m tools.economy_model.test_economy_model  # tests
 ```
 
-Reports: `production`, `positions`, `raiding`, `faucet`.
+Reports: `production`, `positions`, `raiding`, `faucet`, `sinks`, `scaling`,
+`raidworth` and `rerun`.
+
+## The document's own run
+
+`Config.document("low" | "high")` is the model as §14.1 and §14.2 say the
+document's tables are generated: §5.8's three rules, §9.6's haul from
+`design_facts` (2,400 and the 0.1222–0.1698 band, keyed to the target's Vault
+level), §10.2 read from `content/buildings.json`, births bought in Essence at
+§9.5's rate after the roster's keep, and §7.6's pages and Codex chapters.
+Everything else in `config.py` keeps the model the findings were measured on,
+so they still reproduce.
+
+```bash
+python3 -m tools.economy_model raidworth   # §9.6's raid-worth check (F36)
+python3 -m tools.economy_model rerun       # §32.9's full re-run, as pacing.md prints it
+```
+
+`rerun.py` sets the base, then the birth rate (§9.5's order), and prints every
+table at both edges of the band; `tools/generate_docs.py` writes it to
+`docs/design/generated/pacing.md`. What it does not carry is listed at the foot
+of that page.
 
 ## What it is for
 

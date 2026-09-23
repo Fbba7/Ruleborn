@@ -22,7 +22,7 @@ a band at the top.
 
 | Area | Verdict | Waiting on |
 | --- | --- | --- |
-| **Realms** | Not yet | my drafting: C19 |
+| **Realms** | Waiting on you | your decision: C19 |
 | **Screens** | Ready | — |
 | **Characters** | Ready | — |
 
@@ -30,10 +30,11 @@ a band at the top.
 decision only you can make, evidence nobody here can produce, or drafting that is
 still mine to do. v3.4 settled the screens' last gate (C37: the scout shows no
 patrol positions), and handed the realms' one to this repository: §32.9's full
-economy re-run, which needs the model ported to v3.3's raid pay first (D58).
+economy re-run. That run is done, so the realms now wait on the document taking
+its tables.
 
-Five versions have now answered the audit. **112 of 159 register items are fixed
-in the document itself**, the latest 15 by v3.4. 9 are still open.
+Five versions have now answered the audit. **112 of 164 register items are fixed
+in the document itself**, the latest 15 by v3.4. 13 are still open.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -55,8 +56,21 @@ made a fifteen-second job and playing below the competent crew.
 Still open from v3.3, and not in v3.4's list because they came after its
 snapshot: **F33** (one Lantern Glare outweighs a realm of other wards), **F34**
 (§13.2's hold table was measured at one guard post; at §5.2's posts realms 3 to
-5 hold 91 to 99.5%), **G17** (four settlement terms the server needs) and
-**D58** (the economy model still mints raids from v3.2's base).
+5 hold 91 to 99.5%) and **G17** (four settlement terms the server needs).
+
+**The full economy re-run is done** (T2.6), at
+[`docs/design/generated/pacing.md`](docs/design/generated/pacing.md): §9.3,
+§10.2's day columns, all 40 Keeper levels and §14.3's milestones, each at both
+edges of §9.6's band. The model first had to be ported to v3.3's raid pay
+(D58, done) and read §10.2 from `content/`. The curve is much slower than the
+tables it replaces: an engaged player reaches Keeper 40 on day 332–343 (the
+target curve says 179) and has everything built on day 621–641 (§14.3 says 378).
+The Codex fills on day 95–97, when Keeper 24 opens its last chapter, which
+settles C35's two numbers with a third. The run found **F36** (the raid-worth
+check passes on the day a Vault level arrives and fails on the days after, and
+§32.9's rule would then raise the base to 3,200), **F37** (a player who never
+raids stops levelling in the first week, so never reaches the Library the design
+calls their floor) and **G19** (the Heart has no ward or post count).
 
 The backend has started (T3.3). An island is now a content-addressed bundle
 that the simulation loads and checks against §5.2 and §6.1. A replay pins the
@@ -64,7 +78,11 @@ island's hash and a rules version the build computes from its own behaviour.
 [`server/`](server/README.md) is §24.12's lease, validate and grant as edge
 functions over §24.8's tables: it re-simulates each heist in the same
 WebAssembly build, settles the entry fee and §9.6's haul in one transaction,
-and never pays a retry twice.
+and never pays a retry twice. It enforces §9.6's three caps (a raid, a day and a
+week), and building them found **G20**: the day and week caps do not say whose
+base they are in. Target lists are §24.8's static files, one a band (**G21**:
+neither the band nor how often a list is rebuilt is defined). And the 54
+law-shaped forms of §11.10 are now validated content.
 
 v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
@@ -249,11 +267,11 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 159 tracked items with section references and status:
+document, as 164 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 105 are drafted across 62
+the sentence as it stands today, and what to put there. 107 are drafted across 63
 items, and every quoted sentence is checked against v3.4 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no

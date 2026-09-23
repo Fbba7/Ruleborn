@@ -282,6 +282,118 @@ def test_the_flat_upkeep_means_two_different_things():
     assert abs(a - b) < 1e-9, (a, b)
 
 
+# -- §9.6 as v3.3 settled it (D58) -------------------------------------------
+
+def test_the_document_preset_mints_from_the_documents_base_and_band():
+    """D58: the model minted from v3.2's 100. `Config.document()` reads §9.6's
+    2,400 and band from design_facts, which reads them back from the text."""
+    low, high = Config.document("low"), Config.document("high")
+    assert low.haul_base == data.HAUL_BASE == 2400
+    assert (low.attempt_value, high.attempt_value) == data.ATTEMPT_BAND
+    assert low.faucet == "minted" and low.haul_level_source == "target"
+    # §5.8's three rules, which §14.2 says generate the tables.
+    assert (low.producers_per_realm_override, low.staffing_rule,
+            low.crew_assigned_not_timed) == (1, "pro_rata", True)
+
+
+def test_four_raids_are_worth_3_19_and_six_4_15():
+    """§9.6's two worked fatigue figures."""
+    assert round(EconomyModel.fatigue_sum(4), 2) == 3.19
+    assert round(EconomyModel.fatigue_sum(6), 2) == 4.15
+
+
+def test_a_days_raids_pay_the_base_times_the_band_times_fatigue():
+    model = EconomyModel(Config.document("high", days=10))
+    model.run()
+    expected = (data.HAUL_BASE * data.HAUL_GROWTH ** (model.vault_level() - 1)
+                * data.ATTEMPT_BAND[1] * EconomyModel.fatigue_sum(4))
+    assert abs(model.heist_income(0.0) - expected) < 1e-6
+
+
+def test_the_raid_worth_check_reproduces_the_documents_base_on_its_own_reading():
+    """§9.6 set 2,400 as "the smallest hundred that passes at every level",
+    from §10.2's build days. On the day each Vault level arrives this model's
+    roster puts it one step below, at 2,300 — the model reads §9.6's inputs
+    as the document did — and a worker makes about the 109 an hour §9.6
+    quotes at Vault level 2."""
+    from . import raidworth as rw
+    first = rw.smallest_passing_base(Config.document(), 400, first_day_only=True)
+    assert data.HAUL_BASE - 100 <= first <= data.HAUL_BASE, first
+    model = EconomyModel(Config.document())
+    while model.vault_level() < 2:
+        model.step()
+    staffed = min(model.producer_slots(),
+                  model.roster_size() - model.workers_withheld_by_raiding())
+    per_worker = sum(model.hourly_production().values()) / staffed
+    assert abs(per_worker - 109) / 109 < 0.10, per_worker
+
+
+def test_finding_on_every_day_the_raid_worth_check_needs_a_higher_base():
+    """F36. Checked on every day at a level, not only the day it arrives,
+    an attempt at 2,400 pays 0.77 of staying home at Vault level 2, and
+    §32.9's rule raises the base until it passes."""
+    from . import raidworth as rw
+    rows = {r.vault: r for r in rw.levels(Config.document(), 400)}
+    assert rows[2].ratio < 0.8 and rows[2].ratio_first > 1.0, rows[2]
+    assert rw.smallest_passing_base(Config.document(), 400) > data.HAUL_BASE
+
+
+# -- the full re-run (T2.6, C19) ---------------------------------------------
+
+def test_the_documents_ladders_come_from_content_and_differ_only_where_v3_3_moved():
+    """The transcription sold the Aether Spring ten levels after v3.3 cut it
+    to five; the re-run reads §10.2 from content/buildings.json instead."""
+    v34 = data.buildings_v34()
+    assert len(v34["Aether Spring"].costs) == 5
+    assert v34["Library"].keeper_required[:3] == (4, 7, 10)
+    for name, spec in data.BUILDINGS.items():
+        if name != "Aether Spring":
+            assert v34[name].costs == spec.costs, name
+            assert v34[name].hourly == spec.hourly, name
+
+
+def test_the_codex_is_1200_pages_and_the_launch_set_510():
+    """§14.4's two totals, from content/laws.json's ranks at §7.6's costs."""
+    assert sum(data.codex(launch_only=False)) == 1200
+    assert sum(data.codex(launch_only=True)) == 510
+
+
+def test_an_engaged_player_earns_14_4s_pages():
+    """§14.4: "about 16 a day over the first 60 days and about 23 a day after"."""
+    model = EconomyModel(Config.document())
+    early = []
+    for _ in range(120):
+        model.step()
+        early.append(model.pages_today())
+    assert 14 <= sum(early[:60]) / 60 <= 18, sum(early[:60]) / 60
+    assert 20 <= sum(early[90:]) / 30 <= 26, sum(early[90:]) / 30
+
+
+def test_a_birth_costs_1_3265_to_the_number_owned():
+    """§9.5's worked prices: about 1,270 for the 10th and 21,500 for the 20th."""
+    price = lambda n: data.BIRTH_BASE * data.BIRTH_GROWTH_V34 ** (n - 1)
+    assert round(price(10), -1) == 1270
+    assert round(price(20), -2) == 21500
+
+
+def test_the_shipped_birth_rate_fills_the_roster_before_the_last_building():
+    """§9.5 tunes the rate so the 38th birth lands on the day everything is
+    built. On the full re-run the shipped 1.3265 is early, and a higher rate
+    moves the 38th later, so the rule raises it (the re-run sets 1.3488)."""
+    from . import rerun
+    assert rerun.birth_gap(data.BIRTH_GROWTH_V34) < 0
+    assert rerun.birth_gap(1.36) > 0
+
+
+def test_finding_a_player_who_never_raids_stops_levelling():
+    """F37. Experience from spending is capped by the Spire, the Spire by the
+    Keeper level, and pages by a Library that opens at Keeper 4."""
+    model = EconomyModel(Config.document(archetype="never_raids"))
+    state = model.run(400)
+    assert state.keeper_level < data.LIBRARY_UNLOCK_KEEPER, state.keeper_level
+    assert "Codex restored" not in state.milestones
+
+
 if __name__ == "__main__":
     passed = failed = 0
     for name, fn in sorted(globals().items()):

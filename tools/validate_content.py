@@ -110,6 +110,8 @@ EXTRACTED_FROM = {
     "wards":      [("10.3 Wards", "10.4 ")],
     "eras":       [("18.3 Eras", "18.4 ")],
     "sages":      [("11.7 Sages, the heroes", "11.8 ")],
+    "forms":      [("11.10 Law-shaped forms", "11.11 "),
+                   ("11.11 The character bible", "12Heists")],
 }
 
 #: Keys the extractor *adds* rather than reads. These are this repository's
@@ -239,8 +241,40 @@ def load(name: str) -> list[dict]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def check_forms(forms, ruleborn, laws, chords, note_names) -> list[str]:
+    """§11.10: "Eighteen kinds and three notes make 54 forms. The three notes
+    are the same for every kind: Hush, Spark and Echo, the three most carried
+    by the 24 laws that ship at launch … Ties go to the note that completes
+    more chords … and then to alphabetical order." Every clause recomputed."""
+    out = []
+    constants = json.loads((CONTENT / "upstream" / "constants.json").read_text(encoding="utf-8"))
+    want = int(constants["law_shaped_forms"]["value"])
+    if len(forms) != want:
+        out.append(f"forms: {len(forms)} entries, §11.10 says {want}")
+    kinds = {r["name"] for r in ruleborn}
+    form_notes = sorted({f["note"] for f in forms})
+    pairs = collections.Counter((f["kind"], f["note"]) for f in forms)
+    for (kind, note), n in pairs.items():
+        if n > 1:
+            out.append(f"forms: {kind} in {note} appears {n} times")
+        if kind not in kinds:
+            out.append(f"forms: {kind} is not one of §11.11's eighteen kinds")
+    if len(pairs) != len(kinds) * len(form_notes):
+        out.append(f"forms: {len(pairs)} kind-and-note pairs, not every kind in every "
+                   f"note ({len(kinds)} × {len(form_notes)})")
+    carried = collections.Counter(n for law in laws if law.get("launch") for n in law["notes"])
+    in_chords = collections.Counter(n for c in chords for n in c["notes"])
+    ranked = sorted(carried, key=lambda n: (-carried[n], -in_chords[n], n))
+    if form_notes != sorted(ranked[:len(form_notes)]):
+        out.append(f"forms: the notes are {form_notes}; the launch laws' most carried, "
+                   f"ties to chords then the alphabet, are {ranked[:len(form_notes)]}")
+    out += [f"forms: {n} is not one of §8.1's notes" for n in form_notes
+            if n not in note_names]
+    return out
+
+
 def main() -> int:
-    data = {name: load(name) for name in list(EXPECTED) + ["traits", "buildings"]}
+    data = {name: load(name) for name in list(EXPECTED) + ["traits", "buildings", "forms"]}
     if errors:
         report()
         return 1
@@ -351,6 +385,11 @@ def main() -> int:
         for a, b in itertools.combinations(c["notes"], 2):
             if OPPOSITE.get(a) == b:
                 err(f"chord {c['name']}: contains the opposite pair {a}/{b}")
+
+    # -- forms (§11.10) ------------------------------------------------------
+    for problem in check_forms(data["forms"], data["ruleborn"], laws, data["chords"],
+                               note_names):
+        err(problem)
 
     # -- terrain -----------------------------------------------------------
     unlock_levels = {1, 3, 6, 10, 15, 21}
@@ -809,6 +848,17 @@ def self_test() -> int:
     print(f"  [{'PASS' if caught else 'FAIL'}] a value read from outside its "
           f"own section is caught")
     ok = ok and caught
+
+    # §11.10's note rule, shown to fail: Weight carries as many launch laws as
+    # Echo and completes fewer chords, so forms in Weight break the tie-break.
+    forms, laws, chords = load("forms"), load("laws"), load("chords")
+    names = [n["name"] for n in load("notes")]
+    clean = not check_forms(forms, load("ruleborn"), laws, chords, names)
+    planted = [dict(f, note="Weight") if f["note"] == "Echo" else f for f in forms]
+    caught = any("tie" in p for p in check_forms(planted, load("ruleborn"), laws, chords, names))
+    print(f"  [{'PASS' if clean and caught else 'FAIL'}] §11.10's forms pass, and "
+          f"forms in the wrong note are {'caught' if caught else 'MISSED'}")
+    ok = ok and clean and caught
     return 0 if ok else 1
 
 

@@ -6,17 +6,21 @@ Changing one and re-running is how those contradictions get resolved with number
 rather than argument.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+
+from . import data
 
 
 @dataclass
 class Config:
     # -- Contested: which raid-payout model is in force (C2) ----------------
     #
-    # "share"   §9.4: a successful heist yields ~20% of a day's production.
-    #           This is what §14.1 says the published tables were generated with.
-    # "minted"  §9.6: Haul = B(L) x grade x difficulty x richness x fatigue.
-    #           This is the current, better-argued model.
+    # "share"   §9.4 until v3.3: a successful heist yields ~20% of a day's
+    #           production. What the earlier tables were generated with; v3.3
+    #           deleted the target ("No balance target", 9.4).
+    # "minted"  §9.6: Haul = B(V) x grade x difficulty x richness x fatigue x
+    #           fill. What §14.1 now generates the tables with;
+    #           `Config.document()` mints it from the document's base and band.
     # "pegged"  The proposal in docs/design/spec/economy.md: the same formula with
     #           B(L) replaced by the raider's OWN daily production times a share.
     #           §9.6's objection to a percentage was to pegging against what a
@@ -42,7 +46,36 @@ class Config:
     # §9.6 quotes haul figures for levels 2, 6 and 10, but §5.2 caps outer realms
     # at level 5. "vault" reads L as the Vault's level, which does run 1-10 and
     # does carry the 40%->71.5% sealed share §9.6 attributes to it.
-    haul_level_source: str = "vault"      # "vault" | "realm" | "keeper_div_4"
+    haul_level_source: str = "vault"      # "vault" | "realm" | "keeper_div_4" | "target"
+    #
+    # "target" is §9.6 as v3.3 settled it: V is the *target's* Vault level. The
+    # model has no population, so the target is §12.22's median offered one —
+    # the list is built so its middle entry sits in the raider's band — at the
+    # raider's own Vault level, difficulty 1.0 and richness 1.0: the "clean
+    # same-level haul" §9.6 prices its own table and band against. The
+    # `raid_worth` report prints what a one-level spread either side moves.
+
+    # -- §9.6's base, and what an attempt is worth against it ------------------
+    #
+    # v3.2 minted from 100; v3.3's raid-worth check raised it to 2,400 (D58).
+    haul_base: int = data.V32_HAUL_BASE
+    #: What an attempt pays as a fraction of a clean same-level haul. None keeps
+    #: v3.2's expected grade (0.46, times the measured fill under `apply_fill`);
+    #: a number is §9.6's band, grade and fill already in it.
+    attempt_value: float | None = None
+
+    # -- v3.4's economy: ladders from content/, births, keep, pages -----------
+    #
+    # §14.1: "Pages and Insight arrive as described in 7.6 and 11.7; births
+    # and levels are bought whenever Essence allows, after upkeep and the
+    # roster's keep (9.5)." False keeps the model the findings were measured
+    # on — every home filled for free, Essence never spent, a flat page rate.
+    v34_economy: bool = False
+    #: Which Codex the run restores: §7.10's launch 24 or §7.9's full 48.
+    codex: str = "full"                   # "full" | "launch"
+    #: §9.5's birth price growth. None is the shipped rate; `rerun.tune_birth_rate`
+    #: finds the one §9.5's rule sets.
+    birth_growth: float | None = None
 
     # -- Assumption: producers in the Heart --------------------------------
     #
@@ -122,8 +155,25 @@ class Config:
     days: int = 400
     archetype: str = "engaged"
 
+    @classmethod
+    def document(cls, edge: str = "low", **overrides) -> "Config":
+        """The model as §14.1 and §14.2 say the document's tables are generated.
+
+        §5.8's three rules — one producer of each kind per realm, pro-rata
+        staffing, the crew assigned rather than timed — and §9.6's haul at one
+        edge of its band: "low" for the crew that stops at a fixed 70% fill,
+        "high" for the one that reads the guards. The full re-run publishes
+        every milestone at both (14.2).
+        """
+        base = cls(producers_per_realm_override=1, staffing_rule="pro_rata",
+                   crew_assigned_not_timed=True, faucet="minted",
+                   haul_level_source="target", haul_base=data.HAUL_BASE,
+                   v34_economy=True,
+                   attempt_value=data.ATTEMPT_BAND[{"low": 0, "high": 1}[edge]])
+        return replace(base, **overrides)
+
     def haul_level(self, vault_level: int, realm_level: int, keeper_level: int) -> int:
-        if self.haul_level_source == "vault":
+        if self.haul_level_source in ("vault", "target"):
             return max(1, vault_level)
         if self.haul_level_source == "realm":
             return max(1, realm_level)

@@ -20,6 +20,18 @@
 //   * The entry fee's floor is 100 Starlight, and nothing says what a raider
 //     holding less pays. Read as whatever they hold: the ledger never goes
 //     below zero.
+//
+// And three for §9.6's caps (register G20):
+//
+//   * "Per day: the fatigue curve, plus a hard ceiling half again above it"
+//     does not say whose base the curve is in. Read as the raider's own Vault
+//     level: the ceiling is there "for players punching up", so it is measured
+//     from where the raider stands.
+//   * "Per week: five days' worth" is read as five days of the whole fatigue
+//     curve at that base, which is what makes "grinding every day gains
+//     little" true; five of the day's hard ceiling would let a player raiding
+//     every day at the curve never meet it.
+//   * A week starts on Monday, UTC, like the day.
 
 import { readFileSync } from "node:fs";
 
@@ -130,4 +142,64 @@ export function entryFee(starlight) {
   const fee = Number((BigInt(Math.max(0, starlight)) * n) / d);
   const clamped = Math.min(facts.ENTRY_FEE_MAX, Math.max(facts.ENTRY_FEE_MIN, fee));
   return Math.min(clamped, Math.max(0, starlight));
+}
+
+// -- the caps (§9.6) ---------------------------------------------------------
+
+/** 1 + 0.85 + 0.85² + … — a whole day of the fatigue curve, in first raids. */
+function wholeCurve() {
+  const [n, d] = ratio(facts.HAUL_FATIGUE);
+  return [d, d - n];
+}
+
+/**
+ * "Per raid: never more than 1.98 times the base … richness is clamped at
+ * 1.8 but the excess above 1.5 is halved, so the most any hoard can pay is
+ * 1.65, and the difficulty bonus tops out at 1.2". Derived from those two
+ * terms rather than typed, so it moves if either does.
+ */
+export function perRaidCap(vaultLevel) {
+  const [, hi, knee] = facts.RICHNESS_CLAMP.map(ratio);
+  const richest = [knee[0] * hi[1] + hi[0] * knee[1], 2n * knee[1] * hi[1]];
+  return floor(mul(base(vaultLevel), mul(richest, ratio(facts.DIFFICULTY[1]))));
+}
+
+/** §9.6: "a hard ceiling half again above" the day's fatigue curve. */
+export const HALF_AGAIN = [3n, 2n];
+
+/** §9.6: "Per week: five days' worth, not seven". */
+export const DAYS_A_WEEK_PAID = 5n;
+
+export function dayCeiling(raiderVaultLevel) {
+  return floor(mul(mul(base(raiderVaultLevel), wholeCurve()), HALF_AGAIN));
+}
+
+export function weekCeiling(raiderVaultLevel) {
+  return floor(mul(mul(base(raiderVaultLevel), wholeCurve()), [DAYS_A_WEEK_PAID, 1n]));
+}
+
+/**
+ * A haul after §9.6's three caps: this raid's, then what is left of the day's
+ * and the week's. Returns the haul re-split half Essence, and which cap cut
+ * it, if one did.
+ */
+export function capHaul(pay, { targetVaultLevel, raiderVaultLevel, paidToday, paidThisWeek }) {
+  const limits = [
+    ["raid", perRaidCap(targetVaultLevel)],
+    ["day", dayCeiling(raiderVaultLevel) - BigInt(paidToday)],
+    ["week", weekCeiling(raiderVaultLevel) - BigInt(paidThisWeek)],
+  ];
+  let total = BigInt(pay.total);
+  let cappedBy = null;
+  for (const [name, left] of limits) {
+    const room = left > 0n ? left : 0n;
+    if (total > room) {
+      total = room;
+      cappedBy = name;
+    }
+  }
+  if (cappedBy === null) return { ...pay, cappedBy };
+  const essence = total / 2n;
+  return { ...pay, total: Number(total), essence: Number(essence),
+           starlight: Number(total - essence), cappedBy };
 }

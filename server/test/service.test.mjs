@@ -108,6 +108,50 @@ test("the second raid of the day pays 0.85 of the first, and the fee is 2% (§9.
                    { starlight: 2700 + 2295, essence: 2700 + 2295 });
 });
 
+test("a haul is capped by what the raider was already paid today (§9.6, §24.12)", () => {
+  const t = twoPlayers();
+  // 20,000 of the day's 24,000 already paid (the raider stands at Vault level 1).
+  t.service.db.prepare(
+    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 20000, 'haul (9.6)', ?)")
+    .run(t.raider.account, t.clock.now - 60_000);
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  assert.equal(out.haul.total, 4000, "5,400 cut to the 4,000 left of 24,000");
+  assert.equal(out.haul.cappedBy, "day");
+  // The day turns over at midnight UTC, and yesterday's pay counts only to the week.
+  t.clock.now += 24 * 60 * 60 * 1000;
+  const next = t.service.lease(t.raider.account, t.bundle);
+  const fresh = t.service.submit(t.raider.account, next.token, play(t, next, { plan: openPlan() }));
+  assert.equal(fresh.haul.total, 5400);
+  assert.equal(fresh.haul.cappedBy, null);
+});
+
+test("target lists are files, one a band, holding every island's current snapshot (§24.8)", () => {
+  const t = twoPlayers(false);
+  const other = t.service.session("gc:another");
+  t.service.publish(other.account, t.build.exampleIsland(true));
+  const index = t.service.targetLists();
+  assert.deepEqual(Object.keys(index), ["realm-level-3"]);
+  const list = JSON.parse(new TextDecoder().decode(t.service.bundle(index["realm-level-3"])));
+  assert.equal(list.candidates.length, 2);
+  assert.ok(list.candidates.every((c) => c.keeperLevel === 1 && c.realmLevel === 3));
+  // The defender republishes: the old snapshot is kept (never edited) but is
+  // no longer anybody's target.
+  t.service.publish(t.defender.account, t.build.exampleIsland(true));
+  const after = JSON.parse(new TextDecoder().decode(
+    t.service.bundle(t.service.targetLists()["realm-level-3"])));
+  assert.ok(!after.candidates.some((c) => c.bundle === t.bundle), "the old snapshot is gone");
+  assert.equal(after.candidates.length, 2);
+  assert.deepEqual(t.service.targets(), t.service.targetLists());
+});
+
+test("an unchanged band regenerates to the same file, so the edge keeps its cache", () => {
+  const t = twoPlayers();
+  const first = t.service.targetLists();
+  t.clock.now += 15 * 60 * 1000;
+  assert.deepEqual(t.service.targetLists(), first);
+});
+
 test("a foiled raider pays the fee to the defender (§12.9)", () => {
   const t = twoPlayers(false);                 // the defended example
   // A raider with Starlight, so there is a fee to pay.

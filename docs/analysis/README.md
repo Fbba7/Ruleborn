@@ -38,7 +38,7 @@ python3 -m tools.economy_model.test_economy_model
 of the 13 is an open register item** — so the checker can now be a build gate,
 which neither of the two checkers it replaces could be. Three checks retired when
 v3.1 fixed what they were about: the detection model, the ambush floor, and the
-roster's disagreement about roles. The economy model's seventeen tests assert both that it still reproduces the
+roster's disagreement about roles. The economy model's twenty-eight tests assert both that it still reproduces the
 document where the document is self-consistent, that findings F1–F3 still hold,
 and that the payout peg proposed in `spec/economy.md` behaves as that page
 claims. Run both against any later version of the document to see what stands.

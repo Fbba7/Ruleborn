@@ -1,5 +1,9 @@
 {
  "ASSIST_BONUS": 0.25,
+ "ATTEMPT_BAND": [
+  0.1222,
+  0.1698
+ ],
  "BREAKER_VAULT_MULTIPLIER": 2,
  "CARRIER_LOADED_PACE": 0.85,
  "CRACK_NOISE_SECONDS": 5,
@@ -97,6 +101,7 @@
   "Warden",
   "Mender"
  ],
+ "ROSTER_KEEP_SHARE": 0.25,
  "RUN_PACE": 2.0,
  "SCHOOLS": [
   "Motion",

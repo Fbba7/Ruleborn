@@ -17,6 +17,7 @@ python3 tools/validate_content.py   # schema + cross-reference checks
 | `chords.json` | 12 | §8.5 |
 | `terrain.json` | 39 | §6.2 |
 | `ruleborn.json` | 18 | §11.11, cross-checked against §11.2 |
+| `forms.json` | 54 | §11.10's three notes × §11.11's eighteen kinds; the notes recomputed from the launch laws |
 
 ## Two rules
 

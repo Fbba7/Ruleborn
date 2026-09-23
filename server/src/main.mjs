@@ -32,6 +32,12 @@ const service = new Service({
 });
 const handle = handler(service);
 
+// §24.8's lists are "generated periodically"; how often is not said. Every
+// fifteen minutes here, and once at start.
+const TARGET_LISTS_MS = 15 * 60 * 1000;
+service.targetLists();
+setInterval(() => service.targetLists(), TARGET_LISTS_MS).unref();
+
 const port = Number(process.argv[2] ?? 8787);
 createServer(async (req, res) => {
   const chunks = [];

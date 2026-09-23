@@ -42,19 +42,31 @@ class State:
     starlight_spent: float = 0.0
     laws_restored: int = 3          # Half gravity, Slow rivers, Bloom (§7.6)
     pages: float = 0.0
+    owned: int = data.STARTING_ROSTER   # ruleborn born so far (v34_economy only)
+    crew_levels: list[int] = field(default_factory=lambda: [1] * 5)
     realms: list[Realm] = field(default_factory=list)
     log: list[dict] = field(default_factory=list)
     milestones: dict[str, int] = field(default_factory=dict)
     keeper_level_days: dict[int, int] = field(default_factory=dict)
+    #: §10.2's two day columns: (building, level) -> (day, income hours), for
+    #: the first building of a kind to reach each level.
+    built: dict[tuple[str, int], tuple[int, float]] = field(default_factory=dict)
 
     def mark(self, name: str) -> None:
         self.milestones.setdefault(name, self.day)
 
 
 class EconomyModel:
+    #: What a new universe's Heart holds at level 1 (§11.5, §10.2).
+    STARTING = ("Star Well", "Aether Spring", "Garden", "Vault", "Hearth")
+
     def __init__(self, config: Config | None = None):
         self.cfg = config or Config()
         self.arch = data.ARCHETYPES[self.cfg.archetype]
+        self.v34 = self.cfg.v34_economy
+        #: §10.2's ladders: read from content/ under v3.4, transcribed otherwise.
+        self.B = data.buildings_v34() if self.v34 else data.BUILDINGS
+        self.codex = data.codex(self.cfg.codex == "launch") if self.v34 else []
         self.s = State()
         heart = Realm("heart")
         heart.levels("Star Well").append(1)
@@ -67,13 +79,21 @@ class EconomyModel:
 
     # -- capacity ---------------------------------------------------------
 
-    def roster_size(self) -> int:
+    def housing(self) -> int:
         """§11.5: three places at the Spire plus the places in every Hearth."""
         homes = 0
         for realm in self.s.realms:
             for lvl in realm.levels("Hearth"):
                 homes += data.HEARTH_HOMES[lvl - 1]
         return 3 + homes
+
+    def roster_size(self) -> int:
+        """The characters the player has. Before v3.4 the model filled every
+        home for free; §9.5 prices each birth in Essence, so under v3.4 the
+        roster is what was bought, up to the homes there are."""
+        if self.v34:
+            return min(self.housing(), self.s.owned)
+        return self.housing()
 
     def stability_capacity(self) -> int:
         cap = data.spire_stability(self.s.spire_level)
@@ -153,7 +173,7 @@ class EconomyModel:
         """Total worker slots across every producing building the player owns."""
         total = 0
         for realm in self.s.realms:
-            for spec in data.BUILDINGS.values():
+            for spec in self.B.values():
                 if not spec.resource:
                     continue
                 for lvl in realm.levels(spec.name):
@@ -175,7 +195,7 @@ class EconomyModel:
         band = self.band_multiplier()
         self._last_unstaffed_slots = 0
 
-        producers = [b for b in data.BUILDINGS.values() if b.resource]
+        producers = [b for b in self.B.values() if b.resource]
         for realm in self.s.realms:
             law_slots = (
                 data.HEART_LAW_SLOTS if realm.kind == "heart"
@@ -246,16 +266,23 @@ class EconomyModel:
             # docs/design/spec/economy.md: B(L) replaced by the raider's own
             # daily production. Every other term of §9.6 is unchanged, so the
             # fatigue curve and the average-per-attempt factor still apply.
-            fatigue = sum(data.HAUL_FATIGUE ** i for i in range(n))
             return (daily_starlight * self.cfg.peg_share
-                    * self._value_per_attempt() * fatigue)
-        # §9.6: minted from the raider's own level, decaying through the day.
+                    * self._value_per_attempt() * self.fatigue_sum(n))
+        # §9.6: minted from a Vault level's base, decaying through the day.
+        return self.haul_base() * self._value_per_attempt() * self.fatigue_sum(n)
+
+    def haul_base(self) -> float:
+        """B(V) at the level `Config.haul_level_source` reads (§9.6)."""
         level = self.cfg.haul_level(
             self.vault_level(), self.mean_realm_level(), self.s.keeper_level
         )
-        base = data.MODEL_HAUL_BASE * data.HAUL_GROWTH ** (level - 1)
-        fatigue = sum(data.HAUL_FATIGUE ** i for i in range(n))
-        return base * self._value_per_attempt() * fatigue
+        return self.cfg.haul_base * data.HAUL_GROWTH ** (level - 1)
+
+    @staticmethod
+    def fatigue_sum(n: int) -> float:
+        """What n raids in a day are worth in first raids: 0.85 each after the
+        first (§9.6), so four are worth 3.19 and six 4.15."""
+        return sum(data.HAUL_FATIGUE ** i for i in range(n))
 
     def _value_per_attempt(self) -> float:
         """§9.6's 0.46, times v3.0's `fill` term where it is being applied.
@@ -265,6 +292,8 @@ class EconomyModel:
         puts the measured value in, which is how the size of that omission gets
         a number rather than an argument.
         """
+        if self.cfg.attempt_value is not None:
+            return self.cfg.attempt_value         # §9.6's band: grade and fill in it
         value = data.HAUL_VALUE_PER_ATTEMPT
         if self.cfg.apply_fill:
             value *= data.MEASURED_FILL_ON_SUCCESS
@@ -300,7 +329,7 @@ class EconomyModel:
                         (data.REALM_LEVEL_COSTS[idx], "realm-level", realm, "", realm.level + 1)
                     )
 
-            for name, spec in data.BUILDINGS.items():
+            for name, spec in self.B.items():
                 if spec.placement == "heart" and realm.kind != "heart":
                     continue
                 if spec.placement == "outer" and realm.kind != "outer":
@@ -313,21 +342,31 @@ class EconomyModel:
                 current = realm.levels(name)
 
                 # Build a new one of this kind.
-                if len(current) < allowed and self.s.spire_level >= spec.spire_required[0]:
+                if (len(current) < allowed and self.s.spire_level >= spec.spire_required[0]
+                        and self._keeper_allows(spec, 0)):
                     options.append((spec.costs[0], "build", realm, name, 1))
 
                 # Upgrade an existing one, cheapest (lowest-level) first.
                 for i, lvl in enumerate(current):
                     if lvl >= len(spec.costs):
                         continue
-                    if self.s.spire_level < spec.spire_required[lvl]:
+                    if (self.s.spire_level < spec.spire_required[lvl]
+                            or not self._keeper_allows(spec, lvl)):
                         continue
                     options.append((spec.costs[lvl], "upgrade", realm, name, i))
                     break
 
         return options
 
+    def _keeper_allows(self, spec: data.Building, index: int) -> bool:
+        return not spec.keeper_required or self.s.keeper_level >= spec.keeper_required[index]
+
     def _allowed_count(self, spec: data.Building, realm: Realm) -> int:
+        if self.v34 and spec.name in ("Ward", "Guardian Post"):
+            # §5.2: by realm level. The Heart has none, and no count of its
+            # own (G19); the model gives it level 1's, as it did before v3.4.
+            table = data.WARDS_BY_REALM_LEVEL if spec.name == "Ward" else data.GUARD_POSTS
+            return table[realm.level - 1] if realm.kind == "outer" else table[0]
         if not spec.resource:
             if spec.name == "Law Pylon":
                 return (
@@ -345,8 +384,20 @@ class EconomyModel:
             return 2 if self.s.spire_level >= self.cfg.heart_second_producer_at_spire else 1
         return data.PRODUCERS_PER_REALM[realm.level - 1]
 
+    def _record(self, name: str, level: int, cost: float) -> None:
+        """§10.2: "the day an engaged player's first building of that kind
+        reaches the level", and the cost over that moment's hourly Starlight."""
+        if level == 1 and name in self.STARTING:
+            return                     # the Heart starts with one; no build day
+        if (name, level) not in self.s.built:
+            hourly = self.hourly_production()["starlight"]
+            self.s.built[(name, level)] = (self.s.day, cost / hourly if hourly else float("inf"))
+
     def _buy(self, option: tuple[float, str, Realm, str, int]) -> None:
         cost, kind, realm, name, target = option
+        if kind in ("build", "upgrade"):
+            level = 1 if kind == "build" else realm.levels(name)[target] + 1
+            self._record(name, level, cost)
         self.s.starlight -= cost
         self.s.starlight_spent += cost
         if kind == "realm-open":
@@ -369,6 +420,7 @@ class EconomyModel:
         for _ in range(60):   # bounded: at most sixty purchases in a day
             spire = self._spire_upgrade()
             if spire and self.s.starlight >= spire[2]:
+                self._record("Keeper's Spire", spire[1], spire[2])
                 self.s.starlight -= spire[2]
                 self.s.starlight_spent += spire[2]
                 self.s.spire_level += 1
@@ -406,6 +458,8 @@ class EconomyModel:
 
     def restore_laws(self) -> None:
         """A coarse page economy: §14.4 says an engaged player earns ~11 pages a day."""
+        if self.v34:
+            return self._restore_laws_v34()
         pages_per_heist = 2.5 + 1.0          # study + a pylon or a new law met
         self.s.pages += self.arch.heists_per_day * pages_per_heist + 2   # + daily goals
         # Restore in rank order: 18 commons at 15, then 18 rares at 30, then 12 deep at 60.
@@ -415,11 +469,99 @@ class EconomyModel:
             if self.s.pages < cost:
                 break
             self.s.pages -= cost
-            self.s.laws_restored += 1
-            lvl = self.s.keeper_level
-            self.s.keeper_xp += data.XP_PER_LAW_RESTORED[0] + data.XP_PER_LAW_RESTORED[1] * lvl
-            if self.s.laws_restored in (12, 24, 36, 48):
-                self.s.mark(f"{self.s.laws_restored} laws owned")
+            self._restored()
+
+    def _restored(self) -> None:
+        self.s.laws_restored += 1
+        lvl = self.s.keeper_level
+        self.s.keeper_xp += data.XP_PER_LAW_RESTORED[0] + data.XP_PER_LAW_RESTORED[1] * lvl
+        if self.s.laws_restored in (12, 24, 36, 48):
+            self.s.mark(f"{self.s.laws_restored} laws owned")
+        if self.s.laws_restored == len(self.codex):
+            self.s.mark("Codex restored")
+
+    def pages_today(self) -> float:
+        """§7.6 and §14.4, source by source.
+
+        A successful heist studies a law (2 pages, 3 if clean) and breaks a
+        pylon (1); a foiled one gives 1; daily goals about 2; the Library its
+        §10.4 rate. Meeting a law for the first time (1 each, at most 45 in a
+        life) and Lab experiments that find nothing are left out, so this errs
+        low. A player who never raids earns the Library alone (§14.4).
+        """
+        library = sum(data.LIBRARY_PAGES[lvl] for lvl in self.s.realms[0].levels("Library"))
+        n = self.arch.heists_per_day
+        if not n:
+            return float(library)
+        rate = data.heist_success_rate(self.s.day)
+        study = data.PAGES_STUDY + data.PAGES_STUDY_CLEAN_BONUS * data.CLEAN_SHARE_OF_SUCCESSES
+        return (n * rate * (study + data.PAGES_PYLON) + n * (1 - rate) * data.PAGES_FOILED
+                + data.PAGES_DAILY_GOALS + library)
+
+    def codex_open(self) -> int:
+        """§7.6's chapters: how many laws the Codex holds at this Keeper level."""
+        open_ = max(count for level, count in data.CODEX_CHAPTERS
+                    if self.s.keeper_level >= level)
+        return min(open_, len(self.codex))
+
+    def _restore_laws_v34(self) -> None:
+        """Cheapest open law first; the three starting commons are owned.
+
+        Which laws each chapter holds is not stated by rank, so the cheapest
+        remaining law is always taken to be open — the fastest the Codex can
+        fill, which is the reading §14.4's own arithmetic uses."""
+        self.s.pages += self.pages_today()
+        while self.s.laws_restored < self.codex_open():
+            cost = self.codex[self.s.laws_restored]
+            if self.s.pages < cost:
+                break
+            self.s.pages -= cost
+            self._restored()
+
+    # -- Essence: births and levels (§9.5) -----------------------------------
+
+    def character_cap(self) -> int:
+        """§10.2's Hearth: characters rise to the level the best Hearth allows."""
+        best = max((lvl for r in self.s.realms for lvl in r.levels("Hearth")), default=0)
+        return data.HEARTH_CHARACTER_CAP[best - 1] if best else 1
+
+    def spend_essence(self) -> None:
+        """§14.1: "births and levels are bought whenever Essence allows, after
+        upkeep and the roster's keep". Births first, because a character works;
+        then the main crew's levels, lowest first."""
+        while self.s.owned < self.housing():
+            growth = self.cfg.birth_growth or data.BIRTH_GROWTH_V34
+            price = data.BIRTH_BASE * growth ** self.s.owned
+            if self.s.essence < price:
+                break
+            self.s.essence -= price
+            self.s.owned += 1
+            if self.s.owned in (10, 20, 30, data.ROSTER_CEILING):
+                self.s.mark(f"{self.s.owned} ruleborn")
+        cap = self.character_cap()
+        while True:
+            i = min(range(len(self.s.crew_levels)), key=self.s.crew_levels.__getitem__)
+            nxt = self.s.crew_levels[i] + 1
+            if nxt > cap:
+                break
+            price = data.CHARACTER_LEVEL_BASE * data.CHARACTER_LEVEL_GROWTH ** (nxt - 2)
+            if self.s.essence < price:
+                break
+            self.s.essence -= price
+            self.s.crew_levels[i] = nxt
+            if min(self.s.crew_levels) in (4, 6, 8, 10):
+                self.s.mark(f"Main crew at level {min(self.s.crew_levels)}")
+
+    def _mark_buildings(self) -> None:
+        """§14.3's building milestones, once every realm is open."""
+        if len(self.s.realms) < 7:
+            return
+        wells = [max(r.levels("Star Well"), default=0) for r in self.s.realms]
+        for level in (5, 8, 10):
+            if min(wells) >= level:
+                self.s.mark(f"Every Star Well at level {level}")
+        if self.s.spire_level == 10 and not self._available_upgrades():
+            self.s.mark("Everything built and at its highest level")
 
     # -- the loop ---------------------------------------------------------
 
@@ -428,13 +570,23 @@ class EconomyModel:
         produced = self.daily_production()
         self.s.starlight += produced["starlight"]
         self.s.aether += produced["aether"]
-        self.s.essence += produced["essence"]
-
-        self.s.starlight += self.heist_income(produced["starlight"])
+        haul = self.heist_income(produced["starlight"])
+        if self.v34:
+            # §9.5: the keep is "taken as it is collected and never from stock";
+            # half of each haul is Essence (G17).
+            self.s.essence += produced["essence"] * (1 - data.ROSTER_KEEP_SHARE)
+            self.s.essence += haul * data.HAUL_ESSENCE_SHARE
+            self.s.starlight += haul * (1 - data.HAUL_ESSENCE_SHARE)
+        else:
+            self.s.essence += produced["essence"]
+            self.s.starlight += haul
 
         before = self.s.starlight_spent
         self.spend()
         spent_today = self.s.starlight_spent - before
+        if self.v34:
+            self.spend_essence()
+            self._mark_buildings()
 
         rate = data.heist_success_rate(self.s.day)
         successes = round(self.arch.heists_per_day * rate)
@@ -450,7 +602,7 @@ class EconomyModel:
             "starlight_per_day": produced["starlight"],
             "aether_per_day": produced["aether"],
             "essence_per_day": produced["essence"],
-            "heist_income": self.heist_income(produced["starlight"]),
+            "heist_income": haul,
             "stability_capacity": self.stability_capacity(),
             "laws_restored": self.s.laws_restored,
             "laws_woven": self.laws_woven(),

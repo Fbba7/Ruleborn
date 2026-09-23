@@ -96,6 +96,17 @@ CREATE TABLE IF NOT EXISTS heists (
 );
 CREATE INDEX IF NOT EXISTS heists_by_day ON heists (attacker, day, validated);
 
+-- §24.8: "Target selection is a file, not a query. Candidate lists per
+-- difficulty band are generated periodically as static objects". The lists
+-- themselves are content-addressed objects in storage; this row names the
+-- current one for each band, and is the only thing a regeneration changes.
+CREATE TABLE IF NOT EXISTS target_lists (
+  band         TEXT PRIMARY KEY,
+  list         TEXT NOT NULL,
+  candidates   INTEGER NOT NULL,
+  generated_at INTEGER NOT NULL
+);
+
 -- §24.12: "Grant — only then is the haul minted, into an append-only ledger."
 CREATE TABLE IF NOT EXISTS ledger (
   id       INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -610,7 +610,7 @@ dict(
                     "produce, and Keeper 40 arrives 94 days late.",
              evidence="docs/design/generated/pacing.md",
              register=["C19", "C27"]),
-        dict(id="T2.6", owner="claude", status="ready",
+        dict(id="T2.6", owner="claude", status="done",
              title="Port \u00a79.6's raid pay to the economy model, then run "
                    "\u00a732.9's full re-run",
              gate="the model mints from design_facts' B(V) on the target's "
@@ -619,15 +619,22 @@ dict(
              detail="v3.4 moved every pacing sentence to what is measured and "
                     "left one number open: <em>\u201cthe full economy re-run "
                     "that regenerates 14.2, 14.3 and 10.2's day columns "
-                    "(32.9)\u201d</em>. That re-run is this repository's model, "
-                    "and the model still mints raids from v3.2's base of 100, "
-                    "keyed to the raider (D58). So D58 first, then the re-run "
-                    "\u2014 which closes C19 and C35 (\u00a714.3's \u201c48 laws "
-                    "owned \u2014 Day 235\u201d against \u00a714.4's 69) and "
-                    "publishes each milestone at the bottom and the top of the "
-                    "1.39\u00d7 band (F19).",
-             evidence="python3 -m tools.economy_model",
-             register=["D58", "C19", "C35"]),
+                    "(32.9)\u201d</em>.<br><br><strong>Done.</strong> D58 "
+                    "first: <code>Config.document()</code> mints from "
+                    "\u00a79.6's 2,400 and band on the target's Vault level, and "
+                    "reads \u00a710.2 from <code>content/</code>, with births "
+                    "bought in Essence, the roster's keep and \u00a77.6's pages "
+                    "and chapters. Then the re-run, in \u00a79.5's order: the "
+                    "raid-worth check keeps 2,400 on the document's reading "
+                    "(3,200 on every day, F36), the birth rate moves to 1.3488, "
+                    "and every table is printed at both edges. An engaged player "
+                    "reaches Keeper 40 on day 332\u2013343 and has everything "
+                    "built on day 621\u2013641; the Codex fills on day 95\u201397, "
+                    "the day Keeper 24 opens its last chapter (C35). A player who "
+                    "never raids stops levelling in the first week (F37). The "
+                    "tables are the document's to take now (C19).",
+             evidence="docs/design/generated/pacing.md; python3 -m tools.economy_model rerun",
+             register=["D58", "C19", "C35", "F36", "F37", "G19"]),
     ],
 ),
 
@@ -686,13 +693,18 @@ dict(
                     "tables in SQLite: one lease per target (a unique index), "
                     "the entry fee and the haul settled in one transaction, an "
                     "append-only ledger held by triggers, retries that pay "
-                    "nothing twice. Building it found G17 and D58."
+                    "nothing twice. Building it found G17 and D58. \u00a79.6's "
+                    "three caps are enforced at grant \u2014 1.98 times the base "
+                    "a raid, half again above the fatigue curve a day, five "
+                    "days of it a week \u2014 and building them found G20. "
+                    "Target lists are \u00a724.8's static files, one a band, "
+                    "content-addressed so an unchanged band keeps its cache (G21)."
                     "<br><br><strong>Not yet:</strong> platform sign-in (needs "
-                    "the stores), crossing realms, the daily and weekly caps, "
-                    "target lists, and a landing command in the replay.",
+                    "the stores), crossing realms, \u00a712.22's ratings and "
+                    "fallback targets, and a landing command in the replay.",
              evidence="node --no-warnings --test server/test/*.test.mjs; "
                       "bash sim/run_spike.sh",
-             register=["G17", "D58"]),
+             register=["G17", "D58", "G20", "G21"]),
     ],
 ),
 

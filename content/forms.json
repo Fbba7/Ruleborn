@@ -1,0 +1,380 @@
+[
+  {
+    "id": "featherkin_hush",
+    "kind": "Featherkin",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "featherkin_spark",
+    "kind": "Featherkin",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "featherkin_echo",
+    "kind": "Featherkin",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "skyskipper_hush",
+    "kind": "Skyskipper",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "skyskipper_spark",
+    "kind": "Skyskipper",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "skyskipper_echo",
+    "kind": "Skyskipper",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "rambler_hush",
+    "kind": "Rambler",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "rambler_spark",
+    "kind": "Rambler",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "rambler_echo",
+    "kind": "Rambler",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "glass_golem_hush",
+    "kind": "Glass Golem",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "glass_golem_spark",
+    "kind": "Glass Golem",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "glass_golem_echo",
+    "kind": "Glass Golem",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "quarryback_hush",
+    "kind": "Quarryback",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "quarryback_spark",
+    "kind": "Quarryback",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "quarryback_echo",
+    "kind": "Quarryback",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "prism_mite_hush",
+    "kind": "Prism Mite",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "prism_mite_spark",
+    "kind": "Prism Mite",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "prism_mite_echo",
+    "kind": "Prism Mite",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "tidewalker_hush",
+    "kind": "Tidewalker",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "tidewalker_spark",
+    "kind": "Tidewalker",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "tidewalker_echo",
+    "kind": "Tidewalker",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "hourkeeper_hush",
+    "kind": "Hourkeeper",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "hourkeeper_spark",
+    "kind": "Hourkeeper",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "hourkeeper_echo",
+    "kind": "Hourkeeper",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "stillwatch_hush",
+    "kind": "Stillwatch",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "stillwatch_spark",
+    "kind": "Stillwatch",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "stillwatch_echo",
+    "kind": "Stillwatch",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "emberling_hush",
+    "kind": "Emberling",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "emberling_spark",
+    "kind": "Emberling",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "emberling_echo",
+    "kind": "Emberling",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "stormhound_hush",
+    "kind": "Stormhound",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "stormhound_spark",
+    "kind": "Stormhound",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "stormhound_echo",
+    "kind": "Stormhound",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "sparkwright_hush",
+    "kind": "Sparkwright",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "sparkwright_spark",
+    "kind": "Sparkwright",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "sparkwright_echo",
+    "kind": "Sparkwright",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "mossbear_hush",
+    "kind": "Mossbear",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "mossbear_spark",
+    "kind": "Mossbear",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "mossbear_echo",
+    "kind": "Mossbear",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "bloomling_hush",
+    "kind": "Bloomling",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "bloomling_spark",
+    "kind": "Bloomling",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "bloomling_echo",
+    "kind": "Bloomling",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "rootrunner_hush",
+    "kind": "Rootrunner",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "rootrunner_spark",
+    "kind": "Rootrunner",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "rootrunner_echo",
+    "kind": "Rootrunner",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "echoplate_hush",
+    "kind": "Echoplate",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "echoplate_spark",
+    "kind": "Echoplate",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "echoplate_echo",
+    "kind": "Echoplate",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "lantern_wisp_hush",
+    "kind": "Lantern Wisp",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "lantern_wisp_spark",
+    "kind": "Lantern Wisp",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "lantern_wisp_echo",
+    "kind": "Lantern Wisp",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  },
+  {
+    "id": "soulmender_hush",
+    "kind": "Soulmender",
+    "note": "Hush",
+    "look": "Midnight colours and soft, silent edges",
+    "quirk": "Noticed 10% later"
+  },
+  {
+    "id": "soulmender_spark",
+    "kind": "Soulmender",
+    "note": "Spark",
+    "look": "Crackling tips and ember flecks",
+    "quirk": "+5% power"
+  },
+  {
+    "id": "soulmender_echo",
+    "kind": "Soulmender",
+    "note": "Echo",
+    "look": "Faint ghost outlines that trail a step behind",
+    "quirk": "Returns once after a knockout, at N = 20% (Revival, 7.3)"
+  }
+]

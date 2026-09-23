@@ -158,8 +158,6 @@ def dangling_sections(doc: str) -> list:
 NO_EDIT_BECAUSE = {
     "F31": "a decision for the owner first: \u00a77.3 now closes the rule "
            "sheet at twenty parameters, so splitting two means a twenty-second",
-    "C35": "no sentence to draft until one model run sets both: \u00a714.3's "
-           "milestone rows are the earlier run's (C19)",
     "C36": "a pacing decision for the owner: which daily heist count the "
            "upgrade pacing is priced at",
     "C37": "a decision for the owner: whether a scout shows patrol routes",
@@ -171,6 +169,15 @@ NO_EDIT_BECAUSE = {
            "are named where it takes them",
     "D58": "no document sentence: the fix is the economy model",
     "D59": "no document sentence: the fix is the harness",
+    "F36": "a decision for the owner: which day the raid-worth check is read "
+           "on, which sets the base and the sentence",
+    "F37": "a decision for the owner: where a non-raider's experience comes "
+           "from, which decides the sentence",
+    "G19": "a decision for the owner: the Heart's own ward and post counts",
+    "G20": "a decision for the owner: whose base the day and week caps are in; "
+           "the server's reading is named where it takes it",
+    "G21": "a decision for the owner: what a target list's band is and how often "
+           "it is rebuilt; the server's reading is named where it takes it",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "
            "sentence",

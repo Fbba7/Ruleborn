@@ -147,7 +147,7 @@ def haul_report() -> None:
         row = state.log[-1]
         level = model.cfg.haul_level(model.vault_level(), model.mean_realm_level(),
                                      state.keeper_level)
-        base = econ.MODEL_HAUL_BASE * econ.HAUL_GROWTH ** (level - 1)
+        base = econ.V32_HAUL_BASE * econ.HAUL_GROWTH ** (level - 1)
         raids = base * per_attempt * six
         share = raids / (raids + row["starlight_per_day"])
         print(f"{label:<22}{level:>13}{base:>9,.0f}{raids:>13,.0f}{share:>7.1%}")
@@ -168,7 +168,7 @@ def haul_report() -> None:
         raids_needed = target_share / (1 - target_share) * production
         base_needed = raids_needed / (per_attempt * six)
         level = max(2, model.vault_level())
-        growth = (base_needed / econ.MODEL_HAUL_BASE) ** (1 / (level - 1))
+        growth = (base_needed / econ.V32_HAUL_BASE) ** (1 / (level - 1))
         print(f"{day:>5}{production:>16,.0f}{base_needed:>13,.0f}{level:>4}{growth:>15.2f}")
 
     print("\nThe growth rate needed is not constant, and that is the real finding.")

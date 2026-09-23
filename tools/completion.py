@@ -158,9 +158,7 @@ DELIVERABLES = [
 
     ("5", "24 laws as validated data", BACKEND, content_count(
         "laws.json", 24, lambda rows: [r for r in rows if r.get("launch")])),
-    ("5", "54 forms as validated data", BACKEND, not_started(
-        "content/ holds §11.10's 54 forms, validated — they are derivable from 18 kinds and "
-        "three notes, and nothing extracts them yet")),
+    ("5", "54 forms as validated data", BACKEND, content_count("forms.json", 54)),
     ("5", "39 terrain features as validated data", BACKEND, content_count("terrain.json", 39)),
 
     ("6", "Schema", BACKEND, server_tests("snapshots and the ledger cannot be edited")),
@@ -175,8 +173,13 @@ DELIVERABLES = [
         "a planned clean heist is re-simulated, and its haul minted with the fee returned",
         "a replay that does not reproduce pays nothing, takes nothing, and is flagged (§24.12)",
         "a replay must be the heist its lease allowed: the snapshot, the seed, the clock")),
-    ("6", "Target lists", BACKEND, not_started("the server writes §24.8's target-list file")),
-    ("6", "Rate limits", BACKEND, not_started("§9.6's daily and weekly caps are enforced")),
+    ("6", "Target lists", BACKEND, server_tests(
+        "target lists are files, one a band, holding every island's current snapshot (§24.8)",
+        "an unchanged band regenerates to the same file, so the edge keeps its cache")),
+    ("6", "Rate limits", BACKEND, server_tests(
+        "the per-raid cap is 1.98 times the base, derived from richness and difficulty (§9.6)",
+        "a day's ceiling is half again above the whole fatigue curve; a week's is five days of it",
+        "a haul is capped by what the raider was already paid today (§9.6, §24.12)")),
 
     ("7", "Workshop services: publish, browse, moderate, remix", BACKEND, not_started(
         "the server stores, lists, moderates and forks shared islands")),

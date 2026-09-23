@@ -60,6 +60,21 @@ Four things the document leaves open are read in `src/economy.mjs` and
 - §24.12's expired lease gets "No reward, with one grace submission allowed":
   read as one expired submission honoured a day.
 
+§9.6's three caps are enforced at grant, where §24.12's Validate "checks …
+the caps": a raid never pays more than 1.98 times its base (derived from the
+richness and difficulty terms that set it), a day never more than "half again
+above" the whole fatigue curve, and a week never more than "five days' worth"
+of it. Three readings are taken there (register **G20**): the curve is in the
+raider's own Vault level's base, "five days' worth" is five days of the curve
+rather than of the ceiling, and the week starts on Monday, UTC.
+
+Target lists are §24.8's "file, not a query": `Service.targetLists()` writes
+one content-addressed list a band, holding every island's current snapshot, and
+`GET /v1/targets` names the current file for each; the file itself is fetched
+by hash like a bundle, so an unchanged band keeps its edge cache. Two readings
+(register **G21**): until §12.22's ratings exist a band is a realm level, and
+"generated periodically" is every fifteen minutes (`main.mjs`).
+
 ## What is not built
 
 - **Platform sign-in.** §24.8: "Platform identity is exchanged for a
@@ -69,11 +84,8 @@ Four things the document leaves open are read in `src/economy.mjs` and
   `main.mjs` accepts any credential and must not face a network.
 - **Crossing realms.** The simulation plays the Heart alone, so every lease
   is §5.4's 150 seconds with no links.
-- **The daily and weekly caps** (§9.6: "a hard ceiling half again above" the
-  fatigue curve, and "five days' worth" a week). Fatigue is applied; the two
-  ceilings need the season's calendar and are not.
-- **Target lists** (§24.8: "a file, not a query"), leagues, clans, the
-  Workshop, Renown, and the defender's "5% of what the crew was carrying".
+- **Leagues, clans, the Workshop, Renown**, the defender's "5% of what the
+  crew was carrying", and §12.22's ratings, echoes and fallback targets.
 - **The landing.** The replay has no landing command yet; see `sim/README.md`.
 
 ## Layout

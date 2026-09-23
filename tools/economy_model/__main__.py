@@ -6,7 +6,7 @@
 
 import sys
 
-from . import report
+from . import report, rerun
 
 REPORTS = {
     "production": report.production_vs_published,
@@ -15,6 +15,8 @@ REPORTS = {
     "faucet": report.faucet_comparison,
     "sinks": report.sink_audit,
     "scaling": report.sink_scaling,
+    "raidworth": report.raid_worth,
+    "rerun": rerun.render,
 }
 
 

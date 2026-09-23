@@ -8,7 +8,12 @@ contradicts itself, both values are recorded and the choice is made in
 Section references are to the design document.
 """
 
+import json
+import pathlib
+import re
 from dataclasses import dataclass, field
+
+_ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 # --------------------------------------------------------------------------
 # Buildings (§10.2)
@@ -26,6 +31,7 @@ class Building:
     hourly: tuple[int, ...] = ()     # output per hour at each level
     slots: tuple[int, ...] = ()      # worker slots at each level
     resource: str = ""
+    keeper_required: tuple[int, ...] = ()   # the Library's Keeper gate (10.4)
 
 
 def _spire_every_level(n: int) -> tuple[int, ...]:
@@ -201,16 +207,16 @@ STARLIGHT_PER_XP = 40               # 1 XP for every 40 Starlight spent
 # --------------------------------------------------------------------------
 
 try:                                        # as tools.economy_model, or with
-    from ..design_facts import HAUL_FATIGUE, HAUL_GROWTH         # tools/ on the path
+    from ..design_facts import (ATTEMPT_BAND, DIFFICULTY,         # tools/ on the path
+                                HAUL_BASE, HAUL_FATIGUE, HAUL_GROWTH)
 except ImportError:
-    from design_facts import HAUL_FATIGUE, HAUL_GROWTH           # 9.6 (D37)
-#: The base the model mints from. §9.6 (v3.3) sets it at 2,400 — "the smallest
-#: hundred that passes at every level" of its raid-worth check — and keys it to
-#: the target's Vault level; the model still runs v3.2's 100, keyed by
-#: `Config.haul_level`. D58 owns the port. Named for the model rather than as
-#: the document's fact, which is `design_facts.HAUL_BASE` and what the server
-#: mints from.
-MODEL_HAUL_BASE = 100
+    from design_facts import (ATTEMPT_BAND, DIFFICULTY,           # 9.6 (D37)
+                              HAUL_BASE, HAUL_FATIGUE, HAUL_GROWTH)
+#: v3.2's base, before §9.6's raid-worth check raised it to 2,400
+#: (`design_facts.HAUL_BASE`). Kept because the findings measured against the
+#: old formula (F14, C4) reproduce on it; `Config.document()` mints from
+#: the document's base (D58).
+V32_HAUL_BASE = 100
 #: An attempt is worth this fraction of a clean same-level haul (§9.6), which
 #: that section calls "the number the progression curve is built on". It is
 #: E[grade] over all attempts: 62.5% succeed, split 35% clean / 40% loud / 25%
@@ -274,6 +280,9 @@ ARCHETYPES = {
     "engaged": Archetype("engaged", 5, 4, 3),
     "regular": Archetype("regular", 3, 2, 2),
     "casual": Archetype("casual", 1, 1, 1),
+    # §14.4's "player who never raids": the model gives them the engaged
+    # player's sessions, since §14.4 prices only their pages.
+    "never_raids": Archetype("never_raids", 5, 0, 3),
 }
 
 # --------------------------------------------------------------------------
@@ -404,3 +413,110 @@ WAKE_ESSENCE_PER_LEVEL_MINUTE = 2
 #: own hourly Aether production, per point of stability held, so the price sits
 #: on the same curve as the faucet that pays it.
 UPKEEP_PEGGED_SHARE_PER_POINT = 0.0005
+
+
+# --------------------------------------------------------------------------
+# v3.4, read from content/ rather than transcribed (Config.document)
+# --------------------------------------------------------------------------
+#
+# Everything above was transcribed from v2.3 and is kept, because the findings
+# measured on it reproduce there. The document's own run reads the ladders from
+# content/buildings.json, which check_all re-extracts from §10.2, so the model
+# cannot fall behind the text the way this file did: the Aether Spring stopped
+# at level 5 in v3.3 and the transcription still sold it ten.
+
+_PLACEMENT = {"Heart": "heart", "Every realm": "every", "Outer realms": "outer",
+              "One per law slot": "every"}
+
+
+def _needs(text: str) -> tuple[int, int]:
+    """(Spire, Keeper) from a §10.2 "Needs" cell."""
+    spire = re.search(r"Spire (\d+)", text)
+    keeper = re.search(r"Keeper level (\d+)", text)
+    return (int(spire[1]) if spire else 0, int(keeper[1]) if keeper else 0)
+
+
+def buildings_v34() -> dict[str, Building]:
+    rows = json.loads((_ROOT / "content" / "buildings.json").read_text(encoding="utf-8"))
+    out: dict[str, Building] = {}
+    for b in rows:
+        if b["name"] == "Keeper's Spire":
+            continue
+        levels = b["levels"]
+        needs = [_needs(lv["needs"]) for lv in levels]
+        made = [re.match(r"([\d,]+) (Starlight|Aether|Essence) an hour; (\d+) worker slot",
+                         lv["gives"]) for lv in levels]
+        placement = next(v for k, v in _PLACEMENT.items() if b["placement"].startswith(k))
+        out[b["name"]] = Building(
+            b["name"], tuple(lv["cost_starlight"] for lv in levels),
+            tuple(n[0] for n in needs), placement,
+            hourly=tuple(int(m[1].replace(",", "")) for m in made) if all(made) else (),
+            slots=tuple(int(m[3]) for m in made) if all(made) else (),
+            resource=made[0][2].lower() if all(made) else "",
+            keeper_required=tuple(n[1] for n in needs))
+    return out
+
+
+def _constant(name: str) -> str:
+    table = json.loads((_ROOT / "content" / "upstream" / "constants.json")
+                       .read_text(encoding="utf-8"))
+    return table[name]["value"]
+
+
+#: §5.2 and §10.2: wards and guard posts by realm level. The Heart has no
+#: realm level and no count of its own (G19); the model gives it level 1's.
+WARDS_BY_REALM_LEVEL = (8, 8, 6, 7, 8)
+try:
+    from ..design_facts import GUARD_POSTS, ROSTER_KEEP_SHARE
+except ImportError:
+    from design_facts import GUARD_POSTS, ROSTER_KEEP_SHARE      # 5.2, 9.5 (D37)
+
+#: §10.2's Hearth: "characters up to level 2" at level 1, rising two a level.
+HEARTH_CHARACTER_CAP = (2, 4, 6, 8, 10)
+
+#: §9.5: "A new ruleborn: 100 × 1.3265^owned Essence, owned = n − 1 for the nth
+#: birth" — the rate v3.3 retuned so the 38th arrives with the last building.
+BIRTH_GROWTH_V34 = float(_constant("birth_rate"))
+#: §11.5: a new universe starts with five, and houses at most 38.
+STARTING_ROSTER = 5
+ROSTER_CEILING = 38
+
+#: §32.9 derives the birth curve from "raid Essence at base 2,400 (half of each
+#: haul)"; the server mints the same split (G17).
+HAUL_ESSENCE_SHARE = 0.5
+
+#: §7.6's page sources, per heist and per day.
+PAGES_STUDY = 2               # "receives 2 of its pages, 3 if the heist was clean"
+PAGES_STUDY_CLEAN_BONUS = 1
+#: §9.6's split of a successful heist: 35% clean, 40% loud, 25% partial.
+CLEAN_SHARE_OF_SUCCESSES = 0.35
+PAGES_PYLON = 1               # "Breaking a pylon gives a page"; the model breaks one a success
+PAGES_FOILED = 1              # "a foiled heist gives one"
+PAGES_DAILY_GOALS = 2         # §14.4: "About 2"
+
+#: §7.6's chapters: the Keeper level at which the Codex holds each count of
+#: laws. The launch Codex is the first two; the full 48 all five.
+CODEX_CHAPTERS = ((1, 12), (6, 24), (12, 36), (18, 42), (24, 48))
+#: §7.6: "Half gravity, Slow rivers and Bloom", three commons.
+STARTING_LAWS = 3
+
+
+def codex(launch_only: bool) -> list[int]:
+    """Page costs of every law, by rank, from content/laws.json (7.9, 7.10)."""
+    laws = json.loads((_ROOT / "content" / "laws.json").read_text(encoding="utf-8"))
+    laws = laws["laws"] if isinstance(laws, dict) else laws
+    return sorted(PAGES_BY_RANK_V3[law["rank"]] for law in laws
+                  if law.get("launch") or not launch_only)
+
+
+#: §9.3 as v3.3 re-ran it under §5.8's rules: Starlight, Aether and Essence a
+#: day for an engaged player. The v2.3 table above is the one the findings
+#: were measured against.
+PUBLISHED_DAILY_PRODUCTION_V34 = {
+    2: (2_100, 800, 500),
+    8: (6_200, 4_600, 3_100),
+    31: (14_600, 11_000, 7_400),
+    91: (46_800, 35_100, 23_400),
+    181: (62_600, 47_000, 31_300),
+    301: (122_500, 91_900, 59_900),
+}

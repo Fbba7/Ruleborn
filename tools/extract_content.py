@@ -460,6 +460,19 @@ def extract_traits(text: str) -> list[dict]:
     return out
 
 
+def extract_forms(text: str, ruleborn: list[dict]) -> list[dict]:
+    """§11.10: "Eighteen kinds and three notes make 54 forms. The three notes
+    are the same for every kind", so the forms are the product of §11.11's
+    kinds and §11.10's note table, one row each — the table a Forms album, a
+    Nursery's odds and a hatch all read."""
+    notes = table(text, "11.10 Law-shaped forms", "11.11 The character bible",
+                  ["note", "look", "quirk"],
+                  ["Note of the form", "How it looks", "Its small quirk"])
+    return [{"id": f"{kind['id']}_{note['id']}", "kind": kind["name"],
+             "note": note["note"], "look": note["look"], "quirk": note["quirk"]}
+            for kind in ruleborn for note in notes]
+
+
 BUILDING_NAMES = ["Keeper's Spire", "Vault", "Anchor Stone", "Star Well",
                   "Aether Spring", "Garden", "Storehouse", "Law Pylon", "Hearth",
                   "Nursery", "Guardian Post", "Ward", "Resonance Lab",
@@ -574,7 +587,9 @@ def main() -> int:
     write("chords", extract_chords(text))
     write("terrain", extract_terrain(text))
     write("roles", extract_roles(text))
-    write("ruleborn", extract_ruleborn(text))
+    ruleborn = extract_ruleborn(text)
+    write("ruleborn", ruleborn)
+    write("forms", extract_forms(text, ruleborn))
     write("traits", extract_traits(text))
     buildings = extract_buildings(text)
     # Before v3.3 the Library lived outside 10.2's table; read it from there

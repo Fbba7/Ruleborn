@@ -148,13 +148,24 @@ GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
 #: target's Vault level; fatigue "0.85 on each successive raid that day";
 #: richness "clamped between 0.6 and 1.8, with a reduction above 1.5" (the
 #: excess halved); difficulty "Level or above 1.0 to 1.2, one below 0.8, two
-#: below 0.5, three or more below 0.25". The server mints from these (D58: the
-#: economy model still runs v3.2's base).
+#: below 0.5, three or more below 0.25". The server and the economy model both
+#: mint from these.
 HAUL_BASE = 2400
 HAUL_GROWTH = 1.5
 HAUL_FATIGUE = 0.85
 RICHNESS_CLAMP = (0.6, 1.8, 1.5)
 DIFFICULTY = (1.0, 1.2, 0.8, 0.5, 0.25)
+#: §9.6's band: "an attempt is worth 12% to 17% of a clean same-level haul —
+#: 0.1222 for a crew that stops at a fixed 70% fill and 0.1698 for one that
+#: reads the guards". Expected grade times fill over every attempt, foiled ones
+#: included, so it replaces both the old 0.46 and the fill term. The lower edge
+#: prices the raid-worth check; the full re-run publishes at both edges (14.2).
+ATTEMPT_BAND = (0.1222, 0.1698)
+
+#: §9.5's roster's keep: "25% of Essence production, taken as it is collected
+#: and never from stock". It ships at a quarter until the sink search sets it
+#: (32.9); the economy model charges it.
+ROSTER_KEEP_SHARE = 0.25
 
 #: §5.4, "the clock's one home": "150 seconds plus 15 seconds for each link on
 #: the shortest route from the landing realm to the Heart, up to 240 seconds".
@@ -205,6 +216,8 @@ HOME = {
     "HAUL_FATIGUE": "9.6",
     "RICHNESS_CLAMP": "9.6",
     "DIFFICULTY": "9.6",
+    "ATTEMPT_BAND": "9.6",
+    "ROSTER_KEEP_SHARE": "9.5",
     "HEIST_CLOCK": "5.4",
     "ENTRY_FEE_RATE": "9.4",
     "ENTRY_FEE_MIN": "9.4",
@@ -271,6 +284,10 @@ STATED = {
     "DIFFICULTY": (r"Level or above ([\d.]+) to ([\d.]+), one below ([\d.]+), two below "
                    r"([\d.]+), three or more below ([\d.]+)",
                    lambda m: tuple(float(x) for x in m)),
+    "ROSTER_KEEP_SHARE": (r"\| The roster's keep\n\| (\d+)% of Essence production",
+                          lambda m: int(m[0]) / 100),
+    "ATTEMPT_BAND": (r"(0\.\d+) for a crew that stops at a fixed 70% fill and (0\.\d+) for one "
+                     r"that reads the guards", lambda m: (float(m[0]), float(m[1]))),
     "HEIST_CLOCK": (r"\| (\d+) seconds plus (\d+) seconds for each link on the shortest route "
                     r"from the landing realm to the Heart, up to (\d+) seconds",
                     lambda m: tuple(int(x) for x in m)),

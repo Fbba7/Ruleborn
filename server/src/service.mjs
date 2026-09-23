@@ -23,7 +23,7 @@ import { randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
-import { entryFee, haul } from "./economy.mjs";
+import { capHaul, entryFee, haul } from "./economy.mjs";
 import { readHeader } from "./sim.mjs";
 import { sha256 } from "./store.mjs";
 import { check, issue } from "./tokens.mjs";
@@ -57,6 +57,10 @@ export class Refused extends Error {
 }
 
 const day = (ms) => new Date(ms).toISOString().slice(0, 10);
+const DAY_MS = 24 * 60 * 60 * 1000;
+/** Midnight UTC at the start of `ms`'s day, and of its week (Monday, G20). */
+const dayStart = (ms) => ms - (ms % DAY_MS);
+const weekStart = (ms) => dayStart(ms) - ((new Date(ms).getUTCDay() + 6) % 7) * DAY_MS;
 
 export class Service {
   /**
@@ -124,6 +128,63 @@ export class Service {
 
   bundle(key) {
     return this.store.get(key);
+  }
+
+  // -- target lists -----------------------------------------------------------
+
+  /**
+   * §24.8: "Candidate lists per difficulty band are generated periodically as
+   * static objects, so choosing a target costs a cached download rather than
+   * a database search."
+   *
+   * One list a band, holding every island's current snapshot — a republished
+   * island's old one is no longer a target — in one canonical encoding, so an
+   * unchanged band regenerates to the same file and the edge keeps its cache.
+   * Until §12.22's ratings exist, a band is a realm level: §12.22 draws "the
+   * middle of the list … from the raider-success band for the target's realm
+   * level". The raider's own filters (Keeper level within 3, Renown within
+   * 150, not their own island) run on the device against the list.
+   */
+  targetLists() {
+    const now = this.now();
+    const rows = this.db.prepare(
+      `SELECT s.bundle, s.owner, s.realm, s.realm_level, s.vault_level, s.exposed,
+              COALESCE(s.band, 'realm-level-' || s.realm_level) AS band, a.keeper_level
+         FROM islands i
+         JOIN snapshots s ON s.bundle = i.bundle
+         JOIN accounts a ON a.id = s.owner
+        ORDER BY s.bundle`).all();
+    const bands = new Map();
+    for (const r of rows) {
+      if (!bands.has(r.band)) bands.set(r.band, []);
+      bands.get(r.band).push({
+        bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
+        vaultLevel: r.vault_level, exposed: r.exposed, keeperLevel: r.keeper_level,
+      });
+    }
+    const index = {};
+    transaction(this.db, () => {
+      for (const [band, candidates] of [...bands].sort(([a], [b]) => (a < b ? -1 : 1))) {
+        const bytes = new TextEncoder().encode(JSON.stringify({ band, candidates }));
+        const list = this.store.put(bytes);
+        this.db.prepare(
+          `INSERT INTO target_lists (band, list, candidates, generated_at) VALUES (?, ?, ?, ?)
+           ON CONFLICT (band) DO UPDATE SET list = excluded.list,
+             candidates = excluded.candidates, generated_at = excluded.generated_at`)
+          .run(band, list, candidates.length, now);
+        index[band] = list;
+      }
+    });
+    return index;
+  }
+
+  /** The current list for each band: a small index, then one cached file each. */
+  targets() {
+    const out = {};
+    for (const r of this.db.prepare("SELECT band, list FROM target_lists ORDER BY band").all()) {
+      out[r.band] = r.list;
+    }
+    return out;
   }
 
   // -- the lease -----------------------------------------------------------
@@ -268,7 +329,12 @@ export class Service {
 
     const fee = entryFee(this.balance(attacker).starlight);
     book(attacker, "starlight", -fee, "entry fee (9.4)");
-    const pay = haul({
+    // §24.12's Validate "checks the token, the expiry and the caps": §9.6's
+    // three, against what this raider was paid today and this week.
+    const paidSince = (from) => Number(this.db.prepare(
+      `SELECT COALESCE(SUM(amount), 0) AS n FROM ledger
+        WHERE account = ? AND reason = 'haul (9.6)' AND at >= ?`).get(attacker, from).n);
+    const pay = capHaul(haul({
       vaultLevel: snapshot.vault_level,
       gradeName: verdict.grade,
       raiderLevel: level(attacker),
@@ -277,6 +343,11 @@ export class Service {
       raidsEarlierToday,
       banked: verdict.banked,
       capacity: verdict.capacity,
+    }), {
+      targetVaultLevel: snapshot.vault_level,
+      raiderVaultLevel: this.vaultLevel(attacker),
+      paidToday: paidSince(dayStart(now)),
+      paidThisWeek: paidSince(weekStart(now)),
     });
     book(attacker, "starlight", pay.starlight, "haul (9.6)");
     book(attacker, "essence", pay.essence, "haul (9.6)");
@@ -287,6 +358,15 @@ export class Service {
       book(snapshot.owner, "starlight", fee, "a foiled raider's entry fee (12.9)");
     }
     return { verdict, fee, haul: pay };
+  }
+
+  /** The raider's own Vault level, from their Heart's current snapshot; a
+   *  player with no island published stands at level 1. */
+  vaultLevel(account) {
+    const row = this.db.prepare(
+      `SELECT s.vault_level FROM islands i JOIN snapshots s ON s.bundle = i.bundle
+        WHERE i.owner = ? AND i.realm = 'heart'`).get(account);
+    return row ? row.vault_level : 1;
   }
 
   // -- balances --------------------------------------------------------------

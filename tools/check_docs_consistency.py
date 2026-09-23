@@ -485,9 +485,13 @@ def check_tools_parse() -> None:
         # before it. The first version read only the dotted path, so every
         # relative-imported module in the harness and the economy model read
         # as run by nothing.
-        for m in re.finditer(r"^\s*from\s+\.\S*\s+import\s+([\w,\s]+)",
+        # One line at a time, with any `as` alias dropped: `[\w,\s]+` ran on
+        # past the newline into the next statement, so `from . import sinks`
+        # followed by code read as a module called "sinks\n\n    starlight",
+        # and `import raidworth as rw` as one called "raidworth as rw".
+        for m in re.finditer(r"^[ \t]*from[ \t]+\.\S*[ \t]+import[ \t]+\(?([\w, \t]+)",
                              text, re.M):
-            imported.update(n.strip() for n in m.group(1).split(","))
+            imported.update(n.split()[0] for n in m.group(1).split(",") if n.strip())
     unrun = []
     for path in sorted((ROOT / "tools").rglob("*.py")):
         if any(part in ("__pycache__", "vendor") for part in path.parts):

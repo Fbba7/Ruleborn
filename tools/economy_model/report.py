@@ -149,6 +149,43 @@ def faucet_comparison() -> str:
     return "\n".join(lines)
 
 
+def raid_worth(days: int = 1000) -> str:
+    """§9.6's raid-worth check on the model's own roster, and the base it sets."""
+    from . import raidworth as rw
+
+    cfg = Config.document()
+    lines = ["§9.6's raid-worth check, run with the roster the model staffs", "",
+             f"  B(V) = {cfg.haul_base:,} × {data.HAUL_GROWTH}^(V−1); an attempt at the "
+             f"band's lower edge ({data.ATTEMPT_BAND[0]}) with fatigue averaged over "
+             f"{rw.HEISTS} heists", f"  against the crew's output over "
+             f"{rw.HOURS_AWAY:g} hours (3 minutes away, 45 resting), all three "
+             "currencies.", ""]
+    lines.append(f"  {'Vault':>5} {'days at it':>11} {'crew':>5} {'a worker/h':>11} "
+                 f"{'stay home':>10} {'an attempt':>11} {'on arrival':>11} {'worst day':>15}")
+    for r in rw.levels(cfg, days):
+        lines.append(f"  {r.vault:>5} {f'{r.first_day}–{r.last_day}':>11} {r.crew:>5} "
+                     f"{r.per_worker_hour:>11,.0f} {r.stay_home:>10,.0f} {r.attempt:>11,.0f} "
+                     f"{r.ratio_first:>10.2f}× {r.ratio:>7.2f}× day {r.binding_day:<4}")
+    first = rw.smallest_passing_base(cfg, days, first_day_only=True)
+    every = rw.smallest_passing_base(cfg, days)
+    lines += ["",
+              f"  Smallest hundred that passes, on the day each level arrives "
+              f"(§9.6's reading, §10.2's build days): {first:,}",
+              f"  Smallest hundred that passes on every day at every level:"
+              f"                    {every:,}",
+              f"  The document ships {data.HAUL_BASE:,}. §32.9: \"if an attempt fails at "
+              "any level, the base", "  rises until it passes, and the pacing is recomputed.\""]
+    # What §12.22's spread would move, were the model to carry a population.
+    low, same, up = data.DIFFICULTY[2], data.DIFFICULTY[0], (data.DIFFICULTY[0]
+                                                             + data.DIFFICULTY[1]) / 2
+    spread = (low / data.HAUL_GROWTH + same + up * data.HAUL_GROWTH) / 3
+    lines += ["", "  The target is §12.22's median offer, at the raider's own Vault level. "
+              "A target drawn", "  evenly from one Vault level below, level and one above "
+              f"(difficulty {low}, {same}, {up:.1f})", f"  would pay {spread:.3f}× that — "
+              "so the median is the conservative reading."]
+    return "\n".join(lines)
+
+
 def all_reports() -> str:
     return "\n\n".join([
         production_vs_published(),
