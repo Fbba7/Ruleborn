@@ -2,7 +2,7 @@
  "_source": "tools/law_effects.py, classified against §7.3 and §12.21",
  "_rule_sheet": [
   "alarm_range",
-  "ally_regen",
+  "ally_healing",
   "carry_weight",
   "climb_levels",
   "clock_rate",
@@ -18,7 +18,7 @@
   "sight_range",
   "still_is_invisible",
   "structure_damage",
-  "structure_regen",
+  "structure_regrowth",
   "suspicion_decay",
   "suspicion_fill",
   "touch_damage",
@@ -716,7 +716,7 @@
     "parameter"
    ],
    "params": {
-    "ally_regen": 0.015
+    "ally_healing": 0.015
    },
    "authored": [],
    "note": "",
@@ -819,7 +819,7 @@
     "parameter"
    ],
    "params": {
-    "structure_regen": 0.02
+    "structure_regrowth": 0.02
    },
    "authored": [],
    "note": "",

@@ -27,7 +27,9 @@ def run_batch(n: int, links: int, realm_level: int, policy_name: str,
               seed0: int = 0, laws: str = "none", shaped: bool = False,
               posts: int | None = None, post_level: int = 1,
               wards: int | None = None, crack_noise: bool = True,
-              rules: str = "v3.3", ward_kinds: tuple | None = None) -> list:
+              rules: str = "v3.4", ward_kinds: tuple | None = None,
+              crack_reach: int | None = None, crack_seconds: int | None = None,
+              disarm_approach: bool = False) -> list:
     """`laws` is "none", "any" (woven at random) or "defensive" (sign-aware).
 
     `shaped` selects the generator F16 argued for; see `island.generate`.
@@ -49,7 +51,9 @@ def run_batch(n: int, links: int, realm_level: int, policy_name: str,
                                 ward_kinds=ward_kinds),
                        policy,
                        realm_level=realm_level, crossing=crossing, sheet=sheet,
-                       crack_noise=crack_noise).run()
+                       crack_noise=crack_noise, crack_reach=crack_reach,
+                       crack_seconds=crack_seconds,
+                       disarm_approach=disarm_approach).run()
         result.sheet = sheet
         result.crew_decisions = policy.crew_decisions
         result.member_decisions = policy.member_decisions
@@ -111,6 +115,83 @@ def tension_and_depth(n: int = 50, realm_level: int = 3) -> str:
         ok = gap >= DEPTH_SEPARATION
         lines.append(f"  {'PASS' if ok else 'FAIL'}  {links + 1} realm(s): optimal "
                      f"succeeds {gap} points more often than careless, against 35")
+    return "\n".join(lines)
+
+
+#: §13.2's generated hold bands by realm level (v3.4): 25 to 40% at realm
+#: level 1, 30 to 45% from 2 up.
+def _hold_band(level: int) -> tuple[float, float]:
+    from ..design_facts import HOLD_BAND
+    return (HOLD_BAND[0] - 5, HOLD_BAND[1] - 5) if level == 1 else HOLD_BAND
+
+
+def _reach_cell(job) -> dict:
+    """One setting of brief 37's sweep: every number the rule reads."""
+    label, n, kw = job
+    depth = {}
+    for links in (0, 1, 2, 3):
+        best = _pct([r.success for r in run_batch(n, links, 3, "optimal", **kw)])
+        worst = _pct([r.success for r in run_batch(n, links, 3, "careless", **kw)])
+        depth[links + 1] = (best, worst)
+    holds = {level: 100 - _pct([r.success for r in run_batch(
+                 n, 2, level, "competent", laws="defensive", shaped=1, **kw)])
+             for level in (1, 2, 3, 4, 5)}
+    clearing = _pct([r.success for r in run_batch(n, 0, 3, "clearing", **kw)])
+    return dict(label=label, depth=depth, holds=holds, clearing=clearing)
+
+
+def crack_reach_sweep(n: int = 40, workers: int = 4) -> str:
+    """Brief 37's rule (§32.9, v3.4), run as it is written.
+
+    "The smallest whole number of metres at which the optimal crew beats the
+    careless one by at least 35 points and hold rates sit inside every realm
+    level's band (13.2). If none up to the Heart's width does both, the whole
+    Heart is called every 10 seconds with a countdown on the Vault; if that
+    fails, the timed call is deleted. An ambush-first crew runs beside the
+    sweep."
+
+    The countdown is shown to a player; these crews do not read it, so the
+    ten-second row is the call without it. Holds are §13.2's: the competent
+    crew, three realms, one geometry band, §5.2's wards and posts, the
+    sign-aware generator's laws.
+    """
+    import multiprocessing as mp
+    width = generate(0, 3).width
+    jobs = ([("no call", n, dict(crack_noise=False))]
+            + [(f"{r} m", n, dict(crack_reach=r)) for r in range(1, width + 1)]
+            + [("Heart, 10 s", n, dict(crack_reach=10 ** 6, crack_seconds=10)),
+               ("Heart, 5 s (v3.3)", n, dict(crack_reach=10 ** 6))])
+    with mp.Pool(workers) as pool:
+        cells = pool.map(_reach_cell, jobs)
+    lines = ["Brief 37: how far the crack's call reaches (§12.6, §32.9)", "",
+             f"n = {n} a cell. Depth: optimal minus careless success, realm 3, "
+             f"1 to 4 realms. Holds: realm levels 1 to 5.", "",
+             f"{'setting':<18} {'depth 1':>8} {'2':>4} {'3':>4} {'4':>4}   "
+             f"{'hold 1':>6} {'2':>4} {'3':>4} {'4':>4} {'5':>4}   "
+             f"{'ambush':>6}  verdict"]
+    chosen = None
+    for c in cells:
+        gaps = {k: b - w for k, (b, w) in c["depth"].items()}
+        deep = all(g >= DEPTH_SEPARATION for g in gaps.values())
+        banded = all(_hold_band(lv)[0] <= h <= _hold_band(lv)[1]
+                     for lv, h in c["holds"].items())
+        verdict = ("both" if deep and banded else "depth only" if deep
+                   else "holds only" if banded else "neither")
+        if deep and banded and chosen is None and c["label"] != "no call":
+            chosen = c["label"]
+        lines.append(
+            f"{c['label']:<18} " + " ".join(f"{gaps[k]:>+4}" if k > 1 else f"{gaps[k]:>+8}"
+                                             for k in (1, 2, 3, 4))
+            + "   " + " ".join(f"{c['holds'][lv]:>4}" if lv > 1 else f"{c['holds'][lv]:>6}"
+                               for lv in (1, 2, 3, 4, 5))
+            + f"   {c['clearing']:>5}%  {verdict}")
+    lines += ["", "  depth passes at +35 (§19.27); holds pass inside §13.2's bands "
+              "(25-40% at realm level 1, 30-45% above).", ""]
+    if chosen:
+        lines.append(f"The rule picks {chosen}.")
+    else:
+        lines.append("No reach passes both, nor does the ten-second call, so the rule "
+                     "as written deletes the timed call.")
     return "\n".join(lines)
 
 

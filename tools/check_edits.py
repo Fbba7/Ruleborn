@@ -170,6 +170,10 @@ NO_EDIT_BECAUSE = {
     "G17": "four one-clause decisions for the owner; the server's readings "
            "are named where it takes them",
     "D58": "no document sentence: the fix is the economy model",
+    "D59": "no document sentence: the fix is the harness",
+    "F35": "a design decision for the owner: how the reach is sized, and "
+           "whether a hit on the Vault is heard at 5 m, which decides the "
+           "sentence",
     "F34": "a re-measurement first: \u00a713.2 already defers its table to "
            "the aligned re-run (32), and that re-run sets the numbers",
     "F32": "a design decision for the owner: whether the Heart is cleared "
@@ -590,12 +594,15 @@ def self_test() -> int:
           f"reason is {'caught' if caught else 'MISSED'}")
     ok = ok and caught
 
-    first = next(k for k, v in NO_EDIT_BECAUSE.items()
-                 if v.startswith("covered by ") and status(k) in ("open", "proposed"))
-    was = NO_EDIT_BECAUSE[first]
-    NO_EDIT_BECAUSE[first] = "covered by D20"        # D20 carries no edit
+    # Planted rather than borrowed: it used to take the first open item
+    # already "covered by" another, and v3.4 closed the last of them.
+    planted = dict(id="ZZ-covered", kind="finding", severity="minor",
+                   status="open", title="planted", refs=[], body="", rec="")
+    REGISTER.append(planted)
+    NO_EDIT_BECAUSE["ZZ-covered"] = "covered by D20"   # D20 carries no edit
     caught = any("carries no edit either" in p for p in unexplained_missing_edits())
-    NO_EDIT_BECAUSE[first] = was
+    del NO_EDIT_BECAUSE["ZZ-covered"]
+    REGISTER.remove(planted)
     print(f"  [{'PASS' if caught else 'FAIL'}] a covered-by link to an item with "
           f"no edit is {'caught' if caught else 'MISSED'}")
     ok = ok and caught
@@ -747,12 +754,13 @@ def main() -> int:
     # version by anybody.
     # v3.3 was read item by item (its layer in audit_register), so an item
     # with a note in any layer, or found in v3.3 itself, has been read.
-    from audit_register import V31 as _v31, V32 as _v32, V33 as _v33, FOUND_IN_V33
+    from audit_register import (V31 as _v31, V32 as _v32, V33 as _v33, V34 as _v34,
+                                FOUND_IN_V33, FOUND_IN_V34)
     unread = [i["id"] for i in REGISTER
               if i["kind"] != "deviation"
               and status(i) not in ("done", "adopted")
-              and not any(i["id"] in layer for layer in (V3, _v31, _v32, _v33))
-              and i["id"] not in FOUND_IN_V3 | FOUND_IN_V33]
+              and not any(i["id"] in layer for layer in (V3, _v31, _v32, _v33, _v34))
+              and i["id"] not in FOUND_IN_V3 | FOUND_IN_V33 | FOUND_IN_V34]
 
     print(f"\nChecked {total} edits across {len(EDITS)} register items against "
           f"{DOC.name}.\n")
@@ -772,8 +780,9 @@ def main() -> int:
     # document was fixed and the edit retired with it. v3.1 retired twelve at
     # once. An edit that now matches *twice*, or an item whose sentence never
     # existed, is a different thing and still a failure.
-    from audit_register import V31, V32, V33
-    closed = set(V31) | set(V32) | {k for k, v in V33.items() if v["status"] != "open"}
+    from audit_register import V31, V32, V33, V34
+    closed = (set(V31) | set(V32) | {k for k, v in V33.items() if v["status"] != "open"}
+              | {k for k, v in V34.items() if v["status"] != "open"})
     retired = [p for p in problems
                if "does not contain" in p and p.split()[0] in closed]
     real = [p for p in problems if p not in retired]

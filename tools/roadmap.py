@@ -201,11 +201,40 @@ dict(
                     "91 to 99.5% (F34). Each Glare option F33 names is one "
                     "constant or flag here, so each is measured before the "
                     "owner picks; then the table is re-run as it states "
-                    "itself.",
+                    "itself.<br><br>v3.4 answered neither (both were "
+                    "registered after its snapshot), and its brief 37 sweep "
+                    "needs them: every realm level holds above its band with "
+                    "no crack call at all, so the reach cannot be sized "
+                    "against the bands until this is done (F35).",
              evidence="python3 -m tools.heist_harness.test_harness "
                       "(test_one_lantern_glare_outweighs_a_realm_of_other_wards, "
                       "test_13_2s_hold_table_was_measured_at_one_guard_post)",
              register=["F33", "F34"]),
+        dict(id="T0.13", owner="claude", status="done",
+             title="Port v3.4's two heist rules, and run brief 37's sweep",
+             gate="the crack's reach and the disarmer rule in sim/ and the "
+                  "harness, and \u00a732.9's sweep command runnable",
+             detail="v3.4 gave the crack's call a reach \u2014 the guards within "
+                    "5 m of the Vault by the walking path \u2014 and made a "
+                    "ward's sensor ignore the crew member disarming it (briefs "
+                    "37, F32 and G16). <strong>Ported:</strong> "
+                    "<code>sim/</code>'s <code>path::steps_to</code> counts the "
+                    "walk backwards from the Vault, and two goldens diverged "
+                    "(seconds 15 and 43) and were re-recorded; the harness "
+                    "takes rules \u201cv3.4\u201d by default, with v3.3 kept "
+                    "so earlier numbers reproduce. Porting found that the "
+                    "harness's optimal crew had been disarming what v3.3 made "
+                    "a fifteen-second job and playing below the competent crew "
+                    "(D59, fixed), and that the sensor rule covers the tile "
+                    "and not the walk to it (G18).<br><br><strong>The "
+                    "sweep</strong> (<code>depth --sweep crack_reach</code>) "
+                    "cannot choose a reach: with no call at all the depth gate "
+                    "fails from two realms up and every realm level holds far "
+                    "above its band, and against the no-call baseline the 5 m "
+                    "shipped costs the optimal crew 38 points of lead (F35).",
+             evidence="python3 -m tools.heist_harness depth --sweep crack_reach; "
+                      "cargo test in sim/",
+             register=["F32", "G16", "G18", "D59", "F35"]),
         dict(id="T0.7", owner="claude", status="done",
              title="Specify the response layer \u2014 and report that the fix "
                    "did not work",
@@ -581,6 +610,24 @@ dict(
                     "produce, and Keeper 40 arrives 94 days late.",
              evidence="docs/design/generated/pacing.md",
              register=["C19", "C27"]),
+        dict(id="T2.5", owner="claude", status="ready",
+             title="Port \u00a79.6's raid pay to the economy model, then run "
+                   "\u00a732.9's full re-run",
+             gate="the model mints from design_facts' B(V) on the target's "
+                  "Vault level, and regenerates \u00a714.2, \u00a714.3 and "
+                  "\u00a710.2's day columns at both edges of \u00a79.6's band",
+             detail="v3.4 moved every pacing sentence to what is measured and "
+                    "left one number open: <em>\u201cthe full economy re-run "
+                    "that regenerates 14.2, 14.3 and 10.2's day columns "
+                    "(32.9)\u201d</em>. That re-run is this repository's model, "
+                    "and the model still mints raids from v3.2's base of 100, "
+                    "keyed to the raider (D58). So D58 first, then the re-run "
+                    "\u2014 which closes C19 and C35 (\u00a714.3's \u201c48 laws "
+                    "owned \u2014 Day 235\u201d against \u00a714.4's 69) and "
+                    "publishes each milestone at the bottom and the top of the "
+                    "1.39\u00d7 band (F19).",
+             evidence="python3 -m tools.economy_model",
+             register=["D58", "C19", "C35"]),
     ],
 ),
 
@@ -819,7 +866,8 @@ NOT_YET = [
                       "the whole cost model fail together if it does not pass."),
     ("Realm design", "One gate left, and it is a table rather than a rule: "
                      "the day and income columns a realm is paced by still "
-                     "ship from the economy model's earlier run (C19). v3.3 "
+                     "ship from the economy model's earlier run (C19), and "
+                     "v3.4 hands that re-run to this repository (T2.5). v3.3 "
                      "settled the other eight \u2014 the ward budget, the post "
                      "ladder, the hold band, what the generator weaves, the "
                      "authored laws, ward levels and pylons."),
@@ -827,12 +875,14 @@ NOT_YET = [
                       "card per ruleborn and 54 forms \u2014 but \u00a726.2 "
                       "puts the art-style test on target devices first, so the "
                       "style is settled before the quantity is drawn."),
-    ("Detailed screen design", "One question: whether the scout report shows "
-                               "patrol routes, which \u00a712.12 promises and "
-                               "\u00a712.4 does not list (<strong>C37</strong>). "
+    ("Detailed screen design", "Nothing in the register blocks it since v3.4, "
+                               "which settled the last question: the scout "
+                               "report shows no patrol positions (brief 38). "
                                "v3.3 settled the roster the character screens "
                                "read, the ranks the Codex shows and the "
-                               "Library's place on the build screen."),
+                               "Library's place on the build screen. "
+                               "\u00a726.2's art-style test still comes first, "
+                               "as it does for the characters."),
     ("Localisation", "Two launch languages with a named owner since v3.3, but "
                      "the coined vocabulary gets its native-speaker read-aloud "
                      "(\u00a726.9) before anything is translated."),

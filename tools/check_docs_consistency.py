@@ -842,8 +842,12 @@ def _self_test() -> None:
          "its gates make it"),
         ("a gate quietly dropped from the list",
          # The first id, whether or not others follow: since v3.3 each area
-         # waits on one item, and a plant that needs two plants nothing.
-         re.sub(r"(your decision: )[A-Z]+\d+(?:, )?", r"\1", text, count=1),
+         # waits on one item, and a plant that needs two plants nothing. And
+         # whoever holds it: v3.4 moved the one left from "your decision" to
+         # "my drafting", and a plant keyed to one owner's words planted
+         # nothing the day the owner changed.
+         re.sub(r"^(\| \*\*[A-Za-z]+\*\* \| [^|]+ \| [^|]*?)\b[A-Z]+\d+\b(?:, )?",
+                r"\1", text, count=1, flags=re.M),
          "waiting on"),
         ("an area missing from the table",
          re.sub(r"^\| \*\*Characters\*\*.*\n", "", text, flags=re.M),

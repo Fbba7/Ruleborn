@@ -74,8 +74,12 @@ def test_the_harness_gives_the_same_answers_as_when_it_was_last_read():
     # resets, the 15-second disarm on the tile, 8/8/6/7/8 wards and 1/1/2/3/3
     # posts), the assist bonus, the two crew faults — standing still in
     # front of a ward with no way round, and wandering at a reached link —
-    # and a crew that no longer stops to crack inside a ward's sensor.
-    assert digest == "30af740ce1811dbd9b06781d7a0bbd1cc472cfb00e7469e633fd948c04e6ce95", (
+    # and a crew that no longer stops to crack inside a ward's sensor; and by
+    # v3.4, now the default rules: the crack calls only guards within 5 m of
+    # the Vault by the walking path (F32, F35), a ward ignores its disarmer on
+    # its tile (G16), and the optimal crew goes round what takes fifteen
+    # seconds to disarm (D59).
+    assert digest == "4838533026da80b5f722f2ad5b102d0ae774d283cd956acc1aecc41b04f4541c", (
         f"the harness now gives different results: {digest}")
 
 
@@ -361,13 +365,17 @@ def test_a_crew_that_clears_the_heart_first_survives_the_crack_noise():
     and a guard finds a body in about one raid in four. Without the noise the
     two crews are level, 92.5% and 88.8%. The harness judges the approach by
     sight alone, so the clearing crew's number is an upper bound.
+
+    Measured on v3.3's call to the whole Heart, which is what T0.11 was built
+    against, and pinned there; v3.4's reach is F35's.
     """
     from .island import generate
     from .laws import Sheet
     from .sim import Heist
 
     def success(name: str, n: int = 40) -> float:
-        wins = sum(Heist(generate(i, 3, wards=0), POLICIES[name](), realm_level=3,
+        wins = sum(Heist(generate(i, 3, wards=0, rules="v3.3"), POLICIES[name](),
+                         realm_level=3,
                          crossing=[], sheet=Sheet()).run().success for i in range(n))
         return 100 * wins / n
 
@@ -890,6 +898,73 @@ def test_the_geometry_is_a_dial_and_not_a_switch():
         f"{one:.1f}%. F22 rests on the geometry being a strength the generator "
         f"can turn; if one band changes nothing, it is a switch again")
 
+
+
+# -- v3.4 ------------------------------------------------------------------
+
+def test_a_ward_ignores_its_disarmer_on_the_tile_and_not_on_the_way():
+    """G16 and G18. §10.3 (v3.4): "While it disarms, the ward's sensor ignores
+    that crew member … it still fires on anyone else in reach." A disarmer
+    stands on the ward's tile, so the text covers the tile and not the walk
+    there; `disarm_approach` is the generous reading that covers both."""
+    from .island import Ward
+    from .sim import U, Heist
+
+    def fired(kind, where, walking_to=False, approach=False, disarming=True):
+        island = generate(0, 3, wards=0)
+        ward = Ward(kind, 5, 5)
+        island.wards = [ward]
+        heist = Heist(island, POLICIES["competent"](), crossing=[],
+                      disarm_approach=approach)
+        m = heist.crew[0]
+        m.x, m.y = where[0] * U + U // 2, where[1] * U + U // 2
+        m.disarming = ward if disarming else None
+        m.path = [(5, 5)] if walking_to else []
+        heist._wards()
+        return ward.spent
+
+    assert not fired("Time Snare", (5, 5)), "its disarmer, on the tile"
+    assert fired("Time Snare", (5, 5), disarming=False), "anyone else"
+    assert fired("Lantern Glare", (5, 7), walking_to=True), "G18: the walk is not covered"
+    assert not fired("Lantern Glare", (5, 7), walking_to=True, approach=True), (
+        "the generous reading covers the walk")
+
+
+def test_the_optimal_crew_goes_round_what_takes_fifteen_seconds_to_disarm():
+    """D59. The optimal crew's ward answers were set for v3.2's disarm, three
+    seconds and one a level from beside the ward, and kept for v3.3's fifteen
+    on the tile. At realm 3 with the crack noise off (n=40) the crew that
+    disarmed succeeded 10.0% of the time, the competent crew 45.0%, and the
+    same optimal crew going round every ward 52.5%. v3.4's answers go round."""
+    from .policy import Optimal
+    from .sim import Heist
+
+    class Disarms(Optimal):
+        ward_answer_v34 = None                    # v3.3's answers on a v3.4 island
+
+    def success(cls, n: int = 40) -> float:
+        wins = sum(Heist(generate(i, 3), cls(), realm_level=3, crossing=[],
+                         crack_noise=False).run().success for i in range(n))
+        return 100 * wins / n
+
+    around, disarms = success(POLICIES["optimal"]), success(Disarms)
+    assert around - disarms >= 25, (around, disarms)
+
+
+def test_every_metre_of_the_cracks_reach_costs_the_optimal_crew_depth():
+    """F35. Brief 37's sweep (§32.9, v3.4). One realm at realm level 3: the
+    optimal crew's lead over the careless one is +44 points with no call and
+    +3 at the 5 m v3.4 ships (n=40 a cell, `depth --sweep crack_reach`). The
+    harness has no hearing but the call, so its 5 m is also the design's
+    per-hit 5 m, which v3.4 took to be the no-call case."""
+    def gap(**kw) -> float:
+        best = run_batch(60, 0, 3, "optimal", **kw)
+        worst = run_batch(60, 0, 3, "careless", **kw)
+        return 100 * (sum(r.success for r in best) - sum(r.success for r in worst)) / 60
+
+    quiet, five = gap(crack_noise=False), gap(crack_reach=5)
+    assert quiet >= 30, quiet
+    assert quiet - five >= 25, (quiet, five)
 
 
 if __name__ == "__main__":

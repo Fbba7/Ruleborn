@@ -427,16 +427,32 @@ def check_constants(doc: Doc, led: Ledger) -> None:
     if not os.path.exists(CONSTANTS):
         return
     for key, spec in json.load(open(CONSTANTS, encoding="utf-8")).items():
-        found = set(re.findall(spec["pattern"], doc.all_text))
+        want = _figures(spec["value"])
+        found = {_figures(m) for m in re.findall(spec["pattern"], doc.all_text)}
         led.check(f"constant {key} == {spec['value']}, everywhere it appears",
-                  bool(found) and found <= {str(spec["value"])}, f"found {sorted(found)}")
+                  bool(found) and found <= {want},
+                  f"found {sorted(' / '.join(f) for f in found)}")
         num = spec["home"].split()[0]
         i = doc.raw.find(f"<h3>{num} ")
         nxt = doc.raw.find("<h3>", i + 1) if i >= 0 else -1
         home = strip(doc.raw[i:nxt if nxt > 0 else i + 6000]) if i >= 0 else ""
+        stated = {_figures(m) for m in re.findall(spec["pattern"], home)}
         led.check(f"constant {key} is stated in its declared home ({num})",
-                  bool(home) and str(spec["value"]).replace(",", "") in home.replace(",", ""),
+                  bool(home) and (want in stated or (len(want) == 1 and str(spec["value"])
+                                  .replace(",", "") in home.replace(",", ""))),
                   "heading not found" if i < 0 else "the home section does not contain the value")
+
+
+def _figures(value) -> tuple:
+    """A constant's figures, in order, whatever joins them.
+
+    v3.4 made table-shaped facts constants: the rank split is "18 / 12 / 12 /
+    6" in §31.3 and "18 common, 12 uncommon, 12 rare and 6 deep" in its home.
+    Both are the same four numbers, and that is what is compared.
+    """
+    parts = value if isinstance(value, tuple) else (str(value),)
+    return tuple(n.replace(",", "") for p in parts
+                 for n in re.findall(r"\d[\d,]*(?:\.\d+)?", p))
 
 
 def check_retired_names(doc: Doc, led: Ledger) -> None:
@@ -1313,13 +1329,20 @@ def check_v33_findings(doc: Doc, led: Ledger) -> None:
               f"10.3 gives {values} a level", tracks="C34")
 
     # C35: the engaged player's full Codex, by 14.3's milestones and 14.4's pages.
-    owns = re.search(r"all 48 by about day (\d+)", idx.get("14.3", ""))
+    # v3.3 said it in a 14.3 sentence; v3.4 moved the sentence to 14.4's figure
+    # and left the milestone row, so the row is what 14.3 still says. Either
+    # form is read, and finding neither is a failure, not a skip: a check whose
+    # anchor was reworded away has stopped checking without saying so.
+    s143 = idx.get("14.3", "")
+    owns = (re.search(r"\| 48 laws owned\n\| Day (\d+)", s143)
+            or re.search(r"all 48 by about day (\d+)", s143))
     pages = re.search(r"Engaged: [^\n]*?about (\d+) days", idx.get("14.4", ""))
-    if owns and pages:
-        a, b = int(owns.group(1)), int(pages.group(1))
-        led.check("14.3 and 14.4 give an engaged player's full Codex the same day",
-                  abs(a - b) <= 0.1 * max(a, b),
-                  f"14.3 says day {a}; 14.4 says about {b} days", tracks="C35")
+    a, b = (int(owns.group(1)) if owns else None), (int(pages.group(1)) if pages else None)
+    led.check("14.3 and 14.4 give an engaged player's full Codex the same day",
+              a is not None and b is not None and abs(a - b) <= 0.1 * max(a, b),
+              f"14.3 says day {a}; 14.4 says about {b} days" if a and b else
+              "the milestone row or 14.4's engaged figure was not found",
+              tracks="C35")
 
     # C36: how many heists an engaged player makes in a day.
     words = {"four": 4, "five": 5, "six": 6}
@@ -1344,19 +1367,22 @@ def check_v33_findings(doc: Doc, led: Ledger) -> None:
               "and no patrols", tracks="C37")
 
     # C38: the Island Fund's 10% at 22.2's scenarios.
-    fund = re.search(r"At the base scenario in 22.2 that is roughly €([\d,]+) a month; "
-                     r"at the high scenario about €([\d,]+)", doc.text)
+    fund = (re.search(r"At the base scenario in 22.2 that is roughly €([\d,]+) a month; "
+                      r"at the high scenario about €([\d,]+)", doc.text)
+            or re.search(r"At 22.2’s base scenario that is about €([\d,]+) a month, "
+                         r"and at its high scenario about €([\d,]+)", doc.text))
     table = dict((k, int(v.replace(",", ""))) for k, v in re.findall(
         r"\n\| (Base|High)\n\| [\d,]+\n\| \d+%\n\| €\d+\n\| about €([\d,]+)",
         doc.text))
+    off = ["18.9's figures or 22.2's table were not found"]
     if fund and len(table) == 2:
         base, high = (int(x.replace(",", "")) for x in fund.groups())
         off = [f"{name}: 10% of €{table[name]:,} is €{table[name] // 10:,}, "
                f"18.9 says €{said:,}"
                for name, said in (("Base", base), ("High", high))
                if abs(said - table[name] / 10) > 0.05 * table[name] / 10]
-        led.check("18.9's Island Fund is 10% of 22.2's scenarios", not off,
-                  "; ".join(off), tracks="C38")
+    led.check("18.9's Island Fund is 10% of 22.2's scenarios", not off,
+              "; ".join(off), tracks="C38")
 
 
 def inventory_summaries(doc: Doc) -> list[tuple[str, dict, str]]:

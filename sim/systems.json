@@ -194,12 +194,13 @@
       "name": "The Vault and loading",
       "section": "12.19",
       "task": "T5.5",
-      "what": "1,500 health a Vault level, cracked from beside it one hit every 0.8 s, Breakers for double and a quarter more while two or more work it (the assist bonus, v3.3); every hit is heard 5 m away, and every five seconds of cracking sends every guard in the Heart to investigate the Vault. Once open, every crew member loads at 30 a second to the fill the player set, until the bag is full or the exposed share is gone — a full crew in ten seconds. A loaded Carrier walks 15% slower.",
+      "what": "1,500 health a Vault level, cracked from beside it one hit every 0.8 s, Breakers for double and a quarter more while two or more work it (the assist bonus, v3.3); every hit is heard 5 m away, and every five seconds of cracking sends every guard within the crack's reach, 5 m from the Vault by the walking path (v3.4), to investigate it. Once open, every crew member loads at 30 a second to the fill the player set, until the bag is full or the exposed share is gone — a full crew in ten seconds. A loaded Carrier walks 15% slower.",
       "tests": [
         "a_breaker_cracks_at_double_damage_and_a_helper_adds_a_quarter",
         "cracking_takes_what_12_19_says_with_and_without_a_breaker",
         "a_hit_on_the_vault_is_heard_five_steps_away",
-        "every_five_seconds_of_cracking_sends_every_guard_to_investigate_the_vault",
+        "every_five_seconds_of_cracking_calls_the_guards_within_its_reach",
+        "the_cracks_reach_is_counted_along_the_walk_not_across_a_wall",
         "loading_is_thirty_a_second_to_the_target",
         "a_full_five_crew_load_takes_ten_seconds",
         "loading_stops_when_the_exposed_share_is_gone",
@@ -261,7 +262,7 @@
       "name": "Wards",
       "section": "10.3",
       "task": "T5.5",
-      "what": "All six of §10.3's wards at level 1, as spec/wards.md reads them: Crystal Wall and Thorn Hedge passive, Static Coil an aura, Gravity Well, Time Snare and Lantern Glare triggered by the first crew member in reach and then resetting. Lantern Glare fires within 2 tiles (v3.3). A ward can be disarmed standing on its tile — fifteen seconds at every level, silent, restarting if the disarmer steps off, and not switching the ward's own sensor off — or smashed, loudly, Breakers double.",
+      "what": "All six of §10.3's wards at level 1, as spec/wards.md reads them: Crystal Wall and Thorn Hedge passive, Static Coil an aura, Gravity Well, Time Snare and Lantern Glare triggered by the first crew member in reach and then resetting. Lantern Glare fires within 2 tiles (v3.3). A ward can be disarmed standing on its tile — fifteen seconds at every level, silent, restarting if the disarmer steps off; the ward's sensor ignores the one on its tile disarming it and fires on anyone else (v3.4), but not on the walk there (G18) — or smashed, loudly, Breakers double.",
       "tests": [
         "a_time_snare_freezes_the_first_to_step_on_it_then_waits_twelve_seconds",
         "a_gravity_well_pulls_everyone_within_three_tiles_and_holds_them_two_seconds",
@@ -270,7 +271,8 @@
         "a_lantern_glare_shows_the_crew_to_every_guard_and_blinds_it",
         "a_crystal_wall_blocks_until_it_is_broken",
         "disarming_takes_fifteen_seconds_on_the_tile_is_silent_and_stepping_off_restarts_it",
-        "a_time_snare_freezes_its_own_disarmer_and_the_disarm_waits",
+        "a_ward_ignores_the_crew_member_disarming_it_and_fires_on_anyone_else",
+        "a_glare_still_fires_on_a_disarmer_walking_to_it",
         "a_lantern_glare_fires_when_a_crew_member_comes_within_two_tiles",
         "smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits"
       ]

@@ -3,6 +3,7 @@
     python3 -m tools.heist_harness                 # every report
     python3 -m tools.heist_harness depth           # one report
     python3 -m tools.heist_harness depth 500       # more runs a cell
+    python3 -m tools.heist_harness depth --sweep crack_reach [n]   # brief 37
 
 §19.27 asks for "thousands of heists". The defaults are smaller so the reports
 are quick to re-run while a number is being changed; pass a count to widen them.
@@ -27,6 +28,12 @@ REPORTS = {
 
 def main() -> int:
     args = sys.argv[1:]
+    if args[:3] == ["depth", "--sweep", "crack_reach"]:
+        # §32.9 names this command for brief 37's rule.
+        rest = args[3:]
+        print(report.crack_reach_sweep(int(rest[0])) if rest else
+              report.crack_reach_sweep())
+        return 0
     runs = None
     if args and args[-1].isdigit():
         runs = int(args.pop())

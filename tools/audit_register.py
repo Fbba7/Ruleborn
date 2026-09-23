@@ -51,6 +51,9 @@ that tells you to replace a sentence the document does not contain.
 FOUND_IN_V33 = frozenset({"C34", "C35", "C36", "C37", "C38", "C39", "D56",
                           "F32", "G16", "D57", "F33", "F34", "G17", "D58"})
 
+#: Found by reading v3.4 against itself and running the sweep it names.
+FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35"})
+
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
     "D19", "D20", "D21", "D22", "D23",
@@ -5030,7 +5033,148 @@ dict(id="D58", kind="deviation", severity="significant", status="open",
          "<code>design_facts</code>, keyed to the target's Vault level through "
          "the matchmaker's level spread (§12.22) \u2014 and re-run its checks, "
          "pacing and the raid-worth criterion first. Then compare the pacing it "
-         "prints with §9.6's 35 to 49 days."),
+         "prints with §9.6's 46 to 64 days (v3.4; 35 to 49 in v3.3). v3.4 makes this the gate on C19: §32.9's one open command is the full re-run, and this is the model it runs."),
+
+# Found reading v3.4
+
+dict(id="C40", kind="contradiction", severity="minor", status="open",
+     title="§31.3 makes four table-shaped facts constants, and its next "
+           "sentence says they are guarded by recomputation instead",
+     refs=["31.3", "10.4", "7.9"],
+     body="§31.3 (v3.4) adds four rows to the constants table and says so: "
+          "<em>\u201cand the rank split, the page costs, the load rate and the "
+          "birth rate in version 3.4\u201d</em>. The paragraph\u2019s next "
+          "sentence is v3.3\u2019s, unchanged: <em>\u201cThe facts the register "
+          "recorded twice that are tables or curves rather than one figure "
+          "\u2014 the rank split and page costs, the load rate, partial "
+          "staffing, the birth curve and the notes each law carries \u2014 are "
+          "guarded by recomputation instead (31.5)\u201d</em>. Three of the "
+          "five it names are rows of the table above it.<br><br>And the "
+          "table homes the rank split in §10.4, whose sentence cites §7.9 for "
+          "it (<em>\u201c18 common, 12 uncommon, 12 rare and 6 deep laws, "
+          "\u2026 (7.9)\u201d</em>); §7.9 is where the split is decided and "
+          "tabulated.",
+     rec="Two small edits, drafted: the second sentence keeps only what is "
+         "still recomputed rather than pinned (partial staffing, the birth "
+         "curve and the notes each law carries), and the rank split\u2019s "
+         "home becomes §7.9."),
+
+dict(id="G18", kind="gap", severity="minor", status="open",
+     title="A ward ignores its disarmer only on its tile, so a Well or a "
+           "Glare still fires on the walk there",
+     refs=["10.3", "12.4"],
+     body="§10.3 (v3.4, brief 37): <em>\u201cWhile it disarms, the ward\u2019s "
+          "sensor ignores that crew member, so every known ward can be "
+          "disarmed; it still fires on anyone else in reach.\u201d</em> The "
+          "disarmer <em>\u201cstands on the ward's tile\u201d</em>. A Time "
+          "Snare\u2019s sensor is its tile, so for it the sentence is whole. A "
+          "Gravity Well senses <em>\u201cwithin 3 tiles\u201d</em> and a Lantern "
+          "Glare <em>\u201cwithin 2\u201d</em>, so the walk to the tile crosses "
+          "the sensor first, and nothing says it is ignored there: a Glare "
+          "shows the crew to every guard before its disarmer arrives. Smashing "
+          "has the same shape, from beside the ward. Read as written, "
+          "<em>\u201cevery known ward can be disarmed\u201d</em> holds for one "
+          "kind in three.<br><br>Both readings are built: <code>sim/</code> and "
+          "the harness take the text (a test pins that a Glare fires on a "
+          "disarmer walking in), and the harness takes the generous one as "
+          "<code>disarm_approach=True</code>. On the balance numbers here it "
+          "moves little, because going round beats a fifteen-second disarm "
+          "anyway (D59): at realm 3 with the crack noise off the optimal crew "
+          "succeeds 52.5% on the text and 40.0% on the generous reading, "
+          "which disarms a Glare it cannot go round (n=40, inside the noise).",
+     rec="One clause in §10.3, either way: the sensor ignores a crew member "
+         "from when it starts toward a known ward to disarm it, stepping aside "
+         "ending that; or a Glare and a Well can only be gone round or set "
+         "off, and brief 37\u2019s <em>\u201cevery known ward\u201d</em> becomes "
+         "<em>\u201ca known Time Snare\u201d</em>. The first is brief 37\u2019s "
+         "stated intent.",
+     measured="harness 4838533026da80b5; test_a_ward_ignores_its_disarmer_on_the_tile_and_not_on_the_way; "
+              "sim: a_glare_still_fires_on_a_disarmer_walking_to_it"),
+
+dict(id="D59", kind="deviation", severity="significant", status="done",
+     title="The harness\u2019s optimal crew disarmed what v3.3 made a "
+           "fifteen-second job, and played below the competent crew",
+     refs=["10.3", "19.27", "12.6"],
+     body="The optimal crew disarmed Time Snares and Gravity Wells and went "
+          "round Glares. Those answers were set when a disarm took three "
+          "seconds and one a level from beside the ward (v3.2), and D57 kept "
+          "them for v3.3\u2019s fifteen seconds on the tile. At realm 3 with the "
+          "crack noise off (n=40): the optimal crew succeeded 10.0% of the "
+          "time, the competent crew 45.0%, and the same optimal crew going "
+          "round every ward 52.5%. So every depth figure measured against the "
+          "optimal crew on v3.3\u2019s wards \u2014 the <em>\u201c\u221220 to "
+          "0\u201d</em> F32 and F33 quote \u2014 compared the careless crew with "
+          "a crew playing below competent. F33\u2019s hold numbers are the "
+          "competent crew\u2019s and do not move.",
+     rec="<strong>Done.</strong> On a v3.4 island the optimal crew goes round "
+         "every ward (<code>ward_answer_v34</code>), walking through one only "
+         "where there is no way round; v3.3\u2019s answers are kept for v3.3 "
+         "islands so D57\u2019s numbers reproduce. A test pins the 25-point "
+         "difference. The same measurement is the case against a "
+         "fifteen-second disarm on these islands, which is the design\u2019s to "
+         "weigh: disarming exists for the ward with no way round it.",
+     measured="harness 4838533026da80b5; test_the_optimal_crew_goes_round_what_takes_fifteen_seconds_to_disarm"),
+
+dict(id="F35", kind="finding", severity="design", status="open",
+     title="Brief 37\u2019s rule cannot size the crack\u2019s reach, and the 5 m "
+           "v3.4 ships removes the depth it was meant to keep",
+     refs=["12.6", "12.17", "32.9", "19.27", "13.2"],
+     body="§32.9 (v3.4), brief 37: the reach is <em>\u201cthe smallest whole "
+          "number of metres at which the optimal crew beats the careless one by "
+          "at least 35 points and hold rates sit inside every realm level\u2019s "
+          "band (13.2). If none up to the Heart\u2019s width does both, the whole "
+          "Heart is called every 10 seconds with a countdown on the Vault; if "
+          "that fails, the timed call is deleted.\u201d</em> §12.17 ships 5 m, "
+          "<em>\u201cthe per-hit distance, which the harness measured as the "
+          "noise-off case (the optimal crew beats the careless one by 58 to 82 "
+          "points)\u201d</em>.<br><br>Built and run as written "
+          "(<code>python3 -m tools.heist_harness depth --sweep crack_reach</code>, "
+          "n=40 a cell, every reach from 1 m to the Heart\u2019s 12, then both "
+          "whole-Heart calls): <strong>no setting passes either test, including "
+          "no call at all.</strong> With no call the optimal crew leads by +44 "
+          "points in one realm and +12, +5 and +2 across two to four, and realm "
+          "levels 1 to 5 hold 72, 78, 92, 100 and 100% against bands of 25\u201340 "
+          "and 30\u201345. So the rule ends at <em>\u201cthe timed call is "
+          "deleted\u201d</em> on evidence that says nothing about the call: the "
+          "holds are F33\u2019s and F34\u2019s, and the multi-realm depth fails "
+          "before the crack is considered.<br><br>Read against the no-call "
+          "baseline instead, which is the question brief 37 asks, the call "
+          "costs depth at every metre. Re-run at n=200, realm 3:<br><br>"
+          "<code>call &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;optimal &nbsp;careless &nbsp;lead, 1 realm &nbsp;lead, 2 &nbsp;ambush-first<br>"
+          "none &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50.0% &nbsp;&nbsp;&nbsp;8.0% &nbsp;&nbsp;&nbsp;+42.0 \u00b1 4.0 &nbsp;&nbsp;&nbsp;+24.5 &nbsp;&nbsp;45.0%<br>"
+          "3 m &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.5% &nbsp;&nbsp;&nbsp;7.0% &nbsp;&nbsp;&nbsp;+15.5 \u00b1 3.5 &nbsp;&nbsp;&nbsp;+11.0 &nbsp;&nbsp;24.0%<br>"
+          "5 m (v3.4) &nbsp;14.5% &nbsp;&nbsp;10.5% &nbsp;&nbsp;&nbsp;&nbsp;+4.0 \u00b1 3.3 &nbsp;&nbsp;&nbsp;&nbsp;+3.0 &nbsp;&nbsp;16.0%<br>"
+          "Heart, 5 s &nbsp;&nbsp;6.0% &nbsp;&nbsp;11.5% &nbsp;&nbsp;&nbsp;\u22125.5 \u00b1 2.9 &nbsp;&nbsp;&nbsp;\u22123.0 &nbsp;&nbsp;11.5%</code><br><br>"
+          "The 5 m call costs the optimal crew 38 points of lead against no "
+          "call (t \u2248 7). It is better than v3.3\u2019s whole Heart, and it does "
+          "not keep the depth.<br><br><strong>Why v3.4 expected otherwise.</strong> "
+          "The 58 to 82 it cites was measured on v3.2\u2019s wards, on a harness "
+          "with no hearing at all: the crack was either the whole-Heart call or "
+          "silent, and every hit was silent. The design hears every hit within "
+          "5 m (§12.17, and <code>sim/</code> models it), so the design\u2019s "
+          "no-call case is this harness\u2019s 5 m row, not its first. A crew "
+          "cracking beside a Vault is heard by any guard whose route passes "
+          "within 5 m of it, and on these islands the Heart\u2019s posts do. "
+          "The harness\u2019s missing per-hit hearing makes its no-call row kinder "
+          "than the design, which is why it is the baseline and not the target. "
+          "And the brief\u2019s ambush-first crew, the one F32 found the "
+          "whole-Heart call rewarded, is worse off at every reach than with no "
+          "call, because it too cracks in earshot of any guard it has not "
+          "reached.",
+     rec="Yours, in two parts. <strong>The rule:</strong> the reach cannot be "
+         "sized against §13.2\u2019s hold bands while F33 and F34 put every realm "
+         "level above them with no call at all; either settle those first, or "
+         "size the reach against the no-call baseline alone (the largest reach "
+         "whose depth loss is inside the noise), which on these numbers is under "
+         "3 m. <strong>The premise:</strong> 5 m is the per-hit distance, so "
+         "any reach up to 5 m adds almost nothing to what §12.17 already "
+         "makes heard, and the choice brief 37 made is really about whether a "
+         "hit on the Vault is heard at 5 m. If it is, depth at the Vault has "
+         "to come from somewhere else \u2014 a quieter crack for a crew "
+         "working together, or a Vault guarded from further off. The sweep "
+         "re-runs in five minutes once any of it moves.",
+     measured="harness 4838533026da80b5; depth --sweep crack_reach (n=40); n=200 re-run of the four rows; "
+              "test_every_metre_of_the_cracks_reach_costs_the_optimal_crew_depth"),
 
 ]
 
@@ -5569,6 +5713,169 @@ V33 = {
 }
 
 
+# ===========================================================================
+# What version 3.4 did
+# ===========================================================================
+#
+# A fifth layer. v3.4's §31.9 answers the seventeen items open against v3.3,
+# one row each, two of them by briefs 37 and 38. Each was read against the
+# built document by section and line, and every check that tracked one was
+# re-run: fifteen close, two do not (C19 and C35, both the same unfinished
+# re-run). The four items registered after v3.4's snapshot (F33, F34, G17,
+# D58) are not in its list and get no note here.
+
+V34 = {
+
+"C19": dict(status="open", note=
+    "<strong>Sentences moved; tables not, as v3.4 says.</strong> §5.8 now "
+    "says its 10% was against the curve published before v3.3, and states "
+    "the re-run’s shortfall under all three of its rules (15%, 50%, 59% "
+    "and 52% at days 31, 91, 181 and 301). §14.3’s Keeper sentence "
+    "quotes the partial re-run (28 on day 108, 40 on day 275), and §14.2 "
+    "adds that the full re-run publishes every milestone twice, at both "
+    "edges of §9.6’s band. The tables themselves — §14.2, §14.3 "
+    "and §10.2’s day columns — still ship the earlier run, and "
+    "§32.9 makes the full re-run its one open command.<br><br>That command "
+    "is this repository’s to run: <code>tools/economy_model</code> is "
+    "the model, and it still mints raids from v3.2’s base (D58). So "
+    "C19 waits on D58, and both are mine."),
+
+"C32": dict(status="fixed", note=
+    "Closed as recommended. §10.2’s Ward row reads <em>“effect "
+    "+0%, its own reset (10.3)”</em>, then 10%, 20%, 30% and 40% "
+    "shorter; §10.3 keeps each ward’s level-1 reset and says the "
+    "table shows the ten-second case. One home for the base, one for the "
+    "scaling."),
+
+"C33": dict(status="fixed", note=
+    "Closed as drafted. §6.2’s three cells defer to §12.17 "
+    "(<em>“see further”</em>, <em>“standing still in it "
+    "until a guard walks into the tile”</em>, <em>“louder "
+    "underfoot”</em>), and §12.17 carries all three; the stairs row, "
+    "which had no §12.17 counterpart, is a dash. "
+    "<code>content/terrain.json</code> re-extracted."),
+
+"C34": dict(status="fixed", note=
+    "Closed. §10.3’s caption gives no number and points at the "
+    "derivation, which keeps 550. The check retires, and 550 is now a "
+    "declared fact (<code>design_facts.WARD_HEALTH_PER_LEVEL</code>) that "
+    "<code>sim/</code>’s constant is compared against, instead of a "
+    "reading the simulation took on its own."),
+
+"C35": dict(status="open", note=
+    "<strong>The sentence moved; the row did not.</strong> §14.3’s prose "
+    "now quotes §14.4 — all 48 in about 69 days engaged, 195 for a "
+    "player who never raids — and names §14.4 the Codex’s one home. "
+    "The milestone table directly above it still reads <em>“48 laws "
+    "owned — Day 235”</em> for the engaged player, and the prose "
+    "under it says <em>“the 36- and 48-law rows are the full "
+    "table’s”</em>. The table is the earlier run, so this closes "
+    "with C19’s re-run; until then §14.3 states both. The check read "
+    "v3.3’s sentence and went silent when it moved; it reads the row "
+    "now, and a missing anchor fails instead of skipping."),
+
+"C36": dict(status="fixed", note=
+    "Closed as recommended: priced at §14.2’s four a day, with fatigue. "
+    "Re-derived here: four raids are worth 3.19, so 25 clean raids take "
+    "25 ÷ (0.1698 × 3.187) = 46.2 to 25 ÷ (0.1222 × "
+    "3.187) = 64.2 days, 185 to 257 attempts; every cell of §9.6’s "
+    "new four-raid column (1,402 to 49,928) reproduces. The summary and "
+    "§32.9 agree."),
+
+"C37": dict(status="fixed", note=
+    "<strong>Decided by brief 38: the scout shows no positions.</strong> "
+    "§12.12 now says patrols are learned in the heist, and what the crew "
+    "sees of one is exactly what it does, because the shift is fixed "
+    "from the seed before the heist starts. §12.4 and the scout-report "
+    "screen need nothing added. This was the screens’ last open gate."),
+
+"C38": dict(status="fixed", note=
+    "Closed: §18.9 derives both from §22.2’s table, about €2,550 and "
+    "€18,200 — 10% of €25,500 and €182,000. The check "
+    "re-reads the new wording."),
+
+"C39": dict(status="fixed", note=
+    "All six closed: §12.11’s <em>“In either form”</em> is gone; "
+    "§12.19’s fallback no longer deletes a withdrawn sentence; §12.21 "
+    "says two laws; cracking is <em>“about 8 to 15 seconds … at "
+    "Vault level 1”</em>; §10.4’s curve is <em>“a fit within "
+    "2% of 10.2’s table, and the table governs”</em>; §31.9’s "
+    "brief 5 row says the holds were measured before the alignment."),
+
+"D43": dict(status="fixed", note=
+    "Closed. §10.2’s Vault row states <em>“Capacity 8,000 of each "
+    "of Starlight and Essence at level 1, × 1.85 a level”</em>, so "
+    "every number in §29.1 is now stated in the section it cites, and the "
+    "check retires."),
+
+"F16": dict(status="fixed", note=
+    "<strong>Closed by stating shares by origin.</strong> §13.2’s "
+    "<em>“about 60%”</em> and §27.2’s geometry 25% are now "
+    "targets for authored islands; a generated island’s shares are "
+    "measured by §13.4’s ablation (geometry <em>“about 16% of the "
+    "credit on the shaped generator”</em>). The claim this item was "
+    "about — that a generated island’s geometry is worth what a "
+    "designed one’s is — is no longer made."),
+
+"F17": dict(status="fixed", note=
+    "<strong>Closed by the ladder rule, as the spec argued.</strong> The "
+    "Aether Spring stops at level 5 (§10.2), because by §9.5’s own "
+    "figures the Aether share fails at one half; the Spire’s storage "
+    "follows (29,000 at level 6, 34,000 from 7 — re-derived here from "
+    "the level-5 Spring’s 199 an hour and the realms open at each Keeper "
+    "level), and §9.3, §9.5, §29.1, §31.3 and §32.9 with it. Waking is "
+    "<em>“a convenience, not a sink”</em>. The Garden keeps ten "
+    "levels, because Essence has its keep. Whether one cut is enough is the "
+    "re-run’s to say; §10.2 names level 5 as next if not. "
+    "<code>content/buildings.json</code> re-extracted."),
+
+"F19": dict(status="fixed", note=
+    "Closed: §14.2 says pacing is a band, and the full re-run publishes "
+    "every milestone at the bottom and the top of §9.6’s 1.39× "
+    "band, with the sentences quoting the band. The numbers wait on "
+    "C19’s re-run."),
+
+"F25": dict(status="fixed", note=
+    "Closed: §31.3 adds the rank split, the page costs, the load rate and "
+    "the birth rate, and says partial staffing is a rule with one home "
+    "(§5.8). All four read back from their declared homes "
+    "(<code>content/upstream/constants.json</code>; "
+    "<code>check_constants</code> now compares a table-shaped constant by "
+    "its figures, so “18 / 12 / 12 / 6” and “18 common, 12 "
+    "uncommon, 12 rare and 6 deep” are the same fact). The same "
+    "paragraph kept one sentence the change made false (C40)."),
+
+"F31": dict(status="fixed", note=
+    "<strong>Closed: rule sheet version 2.</strong> §7.3 has twenty-two "
+    "parameters: Touch damage, Unlit drain, Ally healing and Structure "
+    "regrowth replace Drain and Healing and regrowth, and §7.7 and §11.11 "
+    "name them. That is the split this repository had made; its two names "
+    "that differed now follow the document (<code>ally_healing</code>, "
+    "<code>structure_regrowth</code>). No parameter’s position moved, "
+    "so the rules version and the goldens did not."),
+
+"F32": dict(status="fixed", note=
+    "<strong>Decided by brief 37: a reach, drawn as a ring.</strong> Every "
+    "five seconds of cracking calls the guards within 5 m of the Vault by "
+    "the walking path, and §32.9 sizes the reach by a sweep "
+    "(<code>python3 -m tools.heist_harness depth --sweep "
+    "crack_reach</code>). Ported to <code>sim/</code> "
+    "(<code>path::steps_to</code>; two goldens diverge, at seconds 15 and "
+    "43, and were re-recorded) and to the harness, whose rules default is "
+    "now v3.4. The sweep is built and run: see F35."),
+
+"G16": dict(status="fixed", note=
+    "<strong>Decided by brief 37: the sensor ignores its disarmer.</strong> "
+    "Ported: in <code>sim/</code> a raider standing on the tile it was sent "
+    "to disarm no longer trips it, and the test that pinned the literal "
+    "reading now pins this one; the harness does the same. It covers the "
+    "disarmer <em>“while it disarms”</em>, and a disarmer stands on "
+    "the tile, so the walk into a Well’s or a Glare’s reach is not "
+    "covered: see G18."),
+
+}
+
+
 V31 = {
 
 # -- closed, and independently verified ------------------------------------
@@ -6103,9 +6410,7 @@ def side_of(item_id: str) -> str:
 #: who has to answer it does not change between them.
 GATE_OWNER = {
     # -- realms ---------------------------------------------------------------
-    "C19": "yours",    # the rule is stated; 14.2, 14.3 and 10.2 still ship the earlier run
-    # -- screens --------------------------------------------------------------
-    "C37": "yours",    # whether the scout report shows patrols is a design call, one line either way
+    "C19": "mine",     # v3.4 hands the re-run over (§32.9); the model needs D58 first
 }
 
 #: The three verdicts an area can carry, worst first. `ready` is the only one
@@ -6116,9 +6421,10 @@ DESIGN_GATES = {
     "realms": dict(
         what="Terrain layout, what an island holds, how a realm is drawn",
         gates={
-            "C19": "how many producers a realm holds is now stated \u2014 one "
+            "C19": "how many producers a realm holds is stated \u2014 one "
                    "of each \u2014 but the day and income columns a realm is "
-                   "paced by still ship from the earlier run",
+                   "paced by still ship from the earlier run, and v3.4 makes "
+                   "the re-run this repository's (D58 first)",
         },
         closed={
             "C5":  "how many wards and posts a realm may hold \u2014 three "
@@ -6147,12 +6453,10 @@ DESIGN_GATES = {
         }),
     "screens": dict(
         what="The 27 screens in \u00a723, their contents and their counts",
-        gates={
-            "C37": "what the scout report shows: \u00a712.12 says the scout "
-                   "sees the shifted patrol, and \u00a712.4\u2019s scout "
-                   "shows no patrols, so the screen is drawn one of two ways",
-        },
+        gates={},
         closed={
+            "C37": "what the scout report shows: no patrol positions; "
+                   "patrols are learned in the heist (v3.4, brief 38)",
             "C11": "how many screens there are: 27, not 23",
             "C9":  "how many laws the Codex screen shows: 48, not 36",
             "C10": "how many traits a character screen lists: 31",
@@ -6355,7 +6659,8 @@ def status(item) -> str:
     """The effective status of a register item, by id or by the item itself."""
     item_id = item if isinstance(item, str) else item["id"]
     own = {} if isinstance(item, str) else item
-    return (V33.get(item_id, {}).get("status")
+    return (V34.get(item_id, {}).get("status")
+            or V33.get(item_id, {}).get("status")
             or V32.get(item_id, {}).get("status")
             or V31.get(item_id, {}).get("status")
             or V3.get(item_id, {}).get("status")
@@ -6373,6 +6678,16 @@ def status_before_v33(item_id: str) -> str:
             or own.get("status", "open"))
 
 
+def status_before_v34(item_id: str) -> str:
+    """What an item's status was before v3.4's layer, for counting what it did."""
+    own = next((i for i in REGISTER if i["id"] == item_id), {})
+    return (V33.get(item_id, {}).get("status")
+            or V32.get(item_id, {}).get("status")
+            or V31.get(item_id, {}).get("status")
+            or V3.get(item_id, {}).get("status")
+            or own.get("status", "open"))
+
+
 def is_open(item) -> bool:
     """Whether there is still work in it — drafted but unsigned counts as open."""
     return status(item) not in SETTLED
@@ -6380,6 +6695,36 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+
+"C40": [
+    dict(section="31.3", action="replace",
+         find="The facts the register recorded twice that are tables or curves "
+              "rather than one figure \u2014 the rank split and page costs, the "
+              "load rate, partial staffing, the birth curve and the notes each "
+              "law carries \u2014 are guarded by recomputation instead (31.5)",
+         replace="The facts the register recorded twice that are rules or curves "
+                 "rather than one figure \u2014 partial staffing, the birth curve "
+                 "and the notes each law carries \u2014 are guarded by "
+                 "recomputation instead (31.5)",
+         why="The rank split, the page costs and the load rate are rows of the "
+             "table above as of v3.4. C40."),
+    dict(section="31.3", action="regenerate",
+         replace="In data/constants.json, set rank_split's home to "
+                 "\u201c7.9 Rank is a strength ladder, paid for in pages\u201d "
+                 "and regenerate the table: \u00a710.4 cites \u00a77.9 for the split.",
+         why="A declared home should not defer to another section. C40."),
+],
+
+"G18": [
+    dict(section="10.3", action="replace",
+         find="While it disarms, the ward\u2019s sensor ignores that crew member, "
+              "so every known ward can be disarmed",
+         replace="From the moment a crew member sets out to disarm a known ward "
+                 "until it finishes or turns aside, the ward\u2019s sensor "
+                 "ignores it, so every known ward can be disarmed",
+         why="A disarmer stands on the tile; a Well senses 3 tiles out and a "
+             "Glare 2, so the walk there crosses the sensor. G18."),
+],
 
 "C34": [
     dict(section="10.3", action="replace",

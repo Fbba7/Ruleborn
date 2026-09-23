@@ -74,10 +74,9 @@ HELD_BY_TEST = {
 # v3.3 answered five that used to be here — the crouched and running paces
 # (G13), revive health (G14), the Vault in bag units (G15) and the Static
 # Coil's shock (G3) — and they are compared below now, not read.
+# v3.4 answered a sixth: a ward's health, which §10.3 gave as 500 and 550
+# until C34, is one value now and compared below.
 READINGS = [
-    ("WARD_HEALTH_PER_LEVEL", "a ward's health, 550 a level",
-     "§10.3 states 500 in its first paragraph and 550 in its last (C34); "
-     "the simulation takes 550, the value the section derives"),
     ("LandingTwo", "landing from two levels, 3 m",
      "§12.17 gives one level (2 m) and three (4 m) and nothing between"),
     ("GLARE_BLIND_TICKS", "Lantern Glare's blind, read as the crew unable to act",
@@ -295,6 +294,8 @@ def facts_compare(text: str) -> dict:
         ("VAULT_HEALTH_PER_LEVEL", f.VAULT_HEALTH_PER_LEVEL, k.get("VAULT_HEALTH_PER_LEVEL")),
         ("BREAKER_VAULT_MULTIPLIER", (f.BREAKER_VAULT_MULTIPLIER, 1), k.get("BREAKER_VAULT_DAMAGE")),
         ("CRACK_NOISE_SECONDS", f.CRACK_NOISE_SECONDS * tps, k.get("CRACK_NOISE_TICKS")),
+        ("CRACK_REACH_METRES", f.CRACK_REACH_METRES, k.get("CRACK_REACH_METRES")),
+        ("WARD_HEALTH_PER_LEVEL", f.WARD_HEALTH_PER_LEVEL, k.get("WARD_HEALTH_PER_LEVEL")),
         ("LOAD_PER_SECOND", f.LOAD_PER_SECOND, k.get("LOAD_PER_SECOND")),
         ("CARRIER_LOADED_PACE", (round(f.CARRIER_LOADED_PACE * 100), 100),
          k.get("CARRIER_LOADED_PACE")),

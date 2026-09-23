@@ -60,9 +60,33 @@
   "pattern": "Building types\\W+(\\d+)"
  },
  "aether_cap_top": {
-  "value": "151,000",
-  "unit": "Aether storage at Spire level 10; every level holds one day of Aether production at that level, from 3,000 at level 1",
+  "value": "34,000",
+  "unit": "Aether storage at Spire level 10; every level holds one day of Aether production at that level, from 3,000 at level 1, the Spring stopping at level 5",
   "home": "10.2 Every level of every building",
   "pattern": "([\\d,]+) Aether storage; buildings up to level 10"
+ },
+ "rank_split": {
+  "value": "18 / 12 / 12 / 6",
+  "unit": "laws by rank in the full table: common, uncommon, rare, deep",
+  "home": "10.4 The Library",
+  "pattern": "(\\d+) common, (\\d+) uncommon, (\\d+) rare and (\\d+) deep"
+ },
+ "page_costs": {
+  "value": "10, 20, 35 or 60",
+  "unit": "pages to restore a law, by rank",
+  "home": "7.6 Getting and improving laws",
+  "pattern": "(\\d+), (\\d+), (\\d+) or (\\d+) pages"
+ },
+ "load_rate": {
+  "value": 30,
+  "unit": "units a second, every role",
+  "home": "12.19 The Vault, and when to stop loading",
+  "pattern": "(?:loads?|loaded) (?:at )?(\\d+) (?:units )?a second(?! instead)"
+ },
+ "birth_rate": {
+  "value": "1.3265",
+  "unit": "birth price growth: 100 × rate^owned Essence",
+  "home": "9.5 Price list",
+  "pattern": "100 × (1\\.\\d+)"
  }
 }

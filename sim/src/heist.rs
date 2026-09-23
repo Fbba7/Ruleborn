@@ -18,12 +18,17 @@ pub const BREAKER_VAULT_DAMAGE: (i32, i32) = (2, 1);
 /// wind-up is the cadence: a hit lands 24 ticks after the swing starts.
 pub const HIT_TICKS: u32 = TICKS_PER_SECOND * 8 / 10;
 
-/// §12.6 (v3.3): "every hit is heard within 5 m, and every 5 seconds of
-/// cracking every guard in the Heart hears the Vault and starts Investigating
-/// it". §12.17 gives the reason: "a heard event, not a suspicion increment,
-/// because suspicion added below 600 drains". The fixture realm is the Heart,
-/// so that is every guard. The hit itself is `Sound::Breaking`.
+/// §12.6 (v3.4): "every hit is heard within 5 m, and every 5 seconds of
+/// cracking every guard within the crack's reach of the Vault, 5 m by the
+/// walking path, hears it and starts Investigating it". §12.17 gives the
+/// reason: "a heard event, not a suspicion increment, because suspicion added
+/// below 600 drains". The hit itself is `Sound::Breaking`. (v3.3 called every
+/// guard in the Heart; brief 37 gave the call a reach, F32.)
 pub const CRACK_NOISE_TICKS: u32 = TICKS_PER_SECOND * 5;
+
+/// §12.6 (v3.4): the crack's reach, in steps of the walking path to the
+/// Vault. One tile is one metre (§21.1).
+pub const CRACK_REACH_METRES: u16 = 5;
 
 /// §11.1 (v3.3): "While two or more characters work the same object, every
 /// hit on it deals 25% more: the assist bonus. It does not stack."
@@ -200,8 +205,7 @@ impl WardKind {
 
 pub const CRYSTAL_WALL_HEALTH: i32 = 800;
 /// §10.3 (v3.3): "Every ward has 550 health a level", moved from 500 so a
-/// level-2 ward outlasts a Tinker's disarm. The same section's first paragraph
-/// still says 500 (C34); this takes the value the section derives.
+/// level-2 ward outlasts a Tinker's disarm. One value since v3.4 (C34).
 pub const WARD_HEALTH_PER_LEVEL: i32 = 550;
 pub const HEDGE_DAMAGE: (i32, i32) = (5, 100);
 pub const COIL_RADIUS: i32 = 2;

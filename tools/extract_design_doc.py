@@ -7,8 +7,8 @@ design can be searched, diffed between versions, and cross-checked by scripts.
 
 Usage:
     python3 tools/extract_design_doc.py \
-        docs/design/ruleborn-game-design-v3.3.html \
-        docs/design/ruleborn-game-design-v3.3.txt
+        docs/design/ruleborn-game-design-v3.4.html \
+        docs/design/ruleborn-game-design-v3.4.txt
 
 Table cells are emitted as "| cell" lines, one per line, which is what the
 consistency checks in tools/ rely on.

@@ -11,7 +11,7 @@ monetisation.
 
 ## Status
 
-**Pre-production — design document at v3.3, no code yet.**
+**Pre-production — design document at v3.4; the simulation core and the server have started.**
 
 ### Can the drawing start?
 
@@ -22,44 +22,41 @@ a band at the top.
 
 | Area | Verdict | Waiting on |
 | --- | --- | --- |
-| **Realms** | Waiting on you | your decision: C19 |
-| **Screens** | Waiting on you | your decision: C37 |
+| **Realms** | Not yet | my drafting: C19 |
+| **Screens** | Ready | — |
 | **Characters** | Ready | — |
 
 **Ready means hand it over.** Until then the verdict says who is holding it: a
 decision only you can make, evidence nobody here can produce, or drafting that is
-still mine to do.
+still mine to do. v3.4 settled the screens' last gate (C37: the scout shows no
+patrol positions), and handed the realms' one to this repository: §32.9's full
+economy re-run, which needs the model ported to v3.3's raid pay first (D58).
 
-Four versions have now answered the audit. **97 of 155 register items are fixed
-in the document itself** — 26 by v3.0, 9 by v3.1, 7 by v3.2 and 55 by v3.3.
-21 are still open.
+Five versions have now answered the audit. **112 of 159 register items are fixed
+in the document itself**, the latest 15 by v3.4. 9 are still open.
 
-v3.3 closed 55 of the 64 items open against v3.2. Each was checked by section and
-line, not taken from its own list. It takes the launch cut (24 laws chosen by
-engine cost, 54 forms), makes the ambush a guaranteed knockout, and replaces
-cooldowns with two ability uses a heist. Where it decided differently from the
-recommendation, the register says so. Reading v3.3 against itself found six
-new contradictions (C34 to C39): among them a ward's health given as both 500
-and 550, a Codex finished on day 69 and on day 234, and upgrade pacing that
-assumes six heists a day for a player who makes four.
+v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
+checked by section and line, not taken from its own list. The two that do not
+(C19, C35) wait on the same economy re-run. Its two rule changes are ported to
+`sim/` and the harness: cracking calls only the guards within 5 m of the Vault
+by the walking path, and a ward ignores the crew member disarming it.
 
-Porting v3.3's new rules into `sim/` and the harness (D56, done) found the
-biggest one, **F32**. Five seconds of cracking now calls every guard in the Heart
-to the Vault, and no ordinary crack is shorter than five seconds. A crew that
-has not cleared the Heart first is found at the Vault: in the harness an
-optimal crew's success falls from 65% to 7.5%, and §19.27's skill gate fails at
-every depth. `sim/`'s planned heist shows the other way to play, taking four
-guards down first and cracking in 4.2 s. Whether that is the intended game is
-your call. The harness now has a crew that plays it (T0.11): clearing the Heart
-first, it succeeds 65% against the optimal crew's 20% with the noise on.
+Running the sweep v3.4 names for the crack's reach found **F35**: the rule cannot
+choose a reach, because with no call at all the depth gate already fails from
+two realms up and every realm level holds far above its band — and against the
+no-call baseline, the 5 m shipped takes the optimal crew's lead over the
+careless one from +42 points to +4 (n=200). The design hears every hit within
+5 m anyway, so the question is really whether cracking is heard at all. Porting
+also found **G18** (a ward ignores its disarmer on the tile, not on the walk
+into a Well's or a Glare's reach), **C40** (a sentence §31.3's own change made
+false) and **D59**, the harness's own: its optimal crew was disarming what v3.3
+made a fifteen-second job and playing below the competent crew.
 
-Porting v3.3's wards into the harness (D57) found two more. **F33**: one Lantern
-Glare outweighs a realm of other wards — it shows the crew to every guard, so one
-takes realm 3 from 42% held to 71% and two to 97%, while the six wards §5.2
-allows there, none of them a Glare, hold 46%. §5.2 budgets wards by count, and a
-count is a budget a Keeper spends on Glares. **F34**: §13.2's hold table was
-measured at one guard post in every realm; at the posts §5.2 actually gives,
-realms 3 to 5 hold 91 to 99.5% of raids.
+Still open from v3.3, and not in v3.4's list because they came after its
+snapshot: **F33** (one Lantern Glare outweighs a realm of other wards), **F34**
+(§13.2's hold table was measured at one guard post; at §5.2's posts realms 3 to
+5 hold 91 to 99.5%), **G17** (four settlement terms the server needs) and
+**D58** (the economy model still mints raids from v3.2's base).
 
 The backend has started (T3.3). An island is now a content-addressed bundle
 that the simulation loads and checks against §5.2 and §6.1. A replay pins the
@@ -67,9 +64,7 @@ island's hash and a rules version the build computes from its own behaviour.
 [`server/`](server/README.md) is §24.12's lease, validate and grant as edge
 functions over §24.8's tables: it re-simulates each heist in the same
 WebAssembly build, settles the entry fee and §9.6's haul in one transaction,
-and never pays a retry twice. Building it found **G17**, four settlement terms
-the document leaves open, and **D58**: the economy model still mints raids
-from v3.2's base of 100 where v3.3 uses 2,400.
+and never pays a retry twice.
 
 v3.0 also changed the
 plan: both pre-code player tests are gone, replaced by the simulation harnesses
@@ -117,7 +112,7 @@ is done. In short:
 
 ```
 docs/
-  design/     the design document at v3.3, with every earlier version beside it, plus greppable extracts
+  design/     the design document at v3.4, with every earlier version beside it, plus greppable extracts
   analysis/   the deep analysis of that document — start here
 content/       the twelve content tables as data, plus the reconciled detection spec
 docs/design/spec/   the reconciled specification, one file per system
@@ -199,7 +194,7 @@ million monthly players.
 rewards, no engagement-tuned matchmaking — with the refusals written down so they
 cannot creep back in.
 
-Full detail: [`docs/design/ruleborn-game-design-v3.3.html`](docs/design/ruleborn-game-design-v3.3.html).
+Full detail: [`docs/design/ruleborn-game-design-v3.4.html`](docs/design/ruleborn-game-design-v3.4.html).
 
 ## Checks
 
@@ -216,8 +211,8 @@ that list shrinks as the document is reconciled.
 ```bash
 # regenerate the greppable text extract from the HTML design document
 python3 tools/extract_design_doc.py \
-    docs/design/ruleborn-game-design-v3.3.html \
-    docs/design/ruleborn-game-design-v3.3.txt
+    docs/design/ruleborn-game-design-v3.4.html \
+    docs/design/ruleborn-game-design-v3.4.txt
 
 # machine-check the design document: v3.1's own checks and this repository's,
 # in one verdict. Failures tracked by an open register item do not break the build.
@@ -250,12 +245,12 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 155 tracked items with section references and status:
+document, as 159 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 102 are drafted across 60
-items, and every quoted sentence is checked against v3.3 by
+the sentence as it stands today, and what to put there. 105 are drafted across 62
+items, and every quoted sentence is checked against v3.4 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no
 edit at all.

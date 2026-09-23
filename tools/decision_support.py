@@ -454,8 +454,10 @@ def vault_report() -> None:
 WARD_LEVELS = [(1, 0.00, 10), (2, 0.15, 9), (3, 0.30, 8), (4, 0.45, 7), (5, 0.60, 6)]
 #: §10.2's Law Pylon table: health, one pylon per law slot.
 PYLON_HEALTH_PER_LEVEL = 600
-#: Proposed in spec/wards.md.
-WARD_HEALTH_PER_LEVEL = 500
+#: Proposed in spec/wards.md, which is what this report argued from. v3.3 took
+#: it and moved it to 550 (§10.3, `design_facts.WARD_HEALTH_PER_LEVEL`); the
+#: report keeps the proposal it was written against.
+SPEC_WARD_HEALTH_PER_LEVEL = 500
 DISARM_BASE, DISARM_PER_LEVEL, TINKER = 3.0, 1.0, 0.70
 
 
@@ -505,7 +507,7 @@ def wards_report() -> None:
     print(f"  {'ward level':>11} {'health':>7} {'Breaker L12':>12} {'Scout L12':>11} "
           f"{'disarm':>8} {'Tinker':>8}")
     for level, _, _ in WARD_LEVELS:
-        health = WARD_HEALTH_PER_LEVEL * level
+        health = SPEC_WARD_HEALTH_PER_LEVEL * level
         disarm = DISARM_BASE + DISARM_PER_LEVEL * level
         print(f"  {level:>11} {health:>7,} "
               f"{health / damage_per_second(roles, 'Breaker', 12):>11.1f}s "

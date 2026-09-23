@@ -1306,18 +1306,25 @@ fn a_hit_on_the_vault_is_heard_five_steps_away() {
 }
 
 #[test]
-fn every_five_seconds_of_cracking_sends_every_guard_to_investigate_the_vault() {
-    // §12.6 (v3.3): "every 5 seconds of cracking every guard in the Heart
-    // hears the Vault and starts Investigating it" — a heard event, which
-    // replaced v3.2's 100 suspicion that §12.17's drain emptied in five ticks.
+fn every_five_seconds_of_cracking_calls_the_guards_within_its_reach() {
+    // §12.6 (v3.4): "every 5 seconds of cracking every guard within the
+    // crack's reach of the Vault, 5 m by the walking path, hears it and
+    // starts Investigating it" — a heard event, which replaced v3.2's 100
+    // suspicion that §12.17's drain emptied in five ticks. v3.3 called every
+    // guard in the Heart (F32); brief 37 gave the call a reach.
+    //
+    // The Breaker cracks from the Vault's west side. Two guards stand east
+    // of it, five and six steps from the Vault — and seven and eight round
+    // it from the Breaker, beyond the hit's own five, so neither hears a hit.
     let mut world = vault_world(2);
     put(&mut world, 1, 5, 6);
     world.raiders[1].task = Task::Crack;
     put(&mut world, 0, 13, 13);
-    // Far enough that the hit itself is not heard, and facing away.
-    let mut g = make_guard(0, 1, world.grid.index(13, 0).unwrap(), &world.grid);
-    g.facing = Ang::from_degrees(0);
-    world.guards.push(g);
+    for (id, x) in [(0, 11), (1, 12)] {
+        let mut g = make_guard(id, 1, world.grid.index(x, 6).unwrap(), &world.grid);
+        g.facing = Ang::from_degrees(0);          // east, away
+        world.guards.push(g);
+    }
     while world.vault.first_hit.is_none() {
         world.step();
     }
@@ -1327,10 +1334,29 @@ fn every_five_seconds_of_cracking_sends_every_guard_to_investigate_the_vault() {
     }
     assert_eq!(world.guards[0].state, State::Unaware, "the hit alone is not heard");
     world.step();
-    assert_eq!(world.guards[0].state, State::Investigating, "five seconds in, it hears the Vault");
+    assert_eq!(world.guards[0].state, State::Investigating,
+               "five steps from the Vault, five seconds in, it is called");
+    assert_eq!(world.guards[1].state, State::Unaware, "six steps is beyond the reach");
     let spot = world.guards[0].interest.expect("an interest");
     assert!(world.grid.adjacent(spot, world.vault.tile), "a tile beside the Vault");
     assert!(world.grid.at(spot).passable(), "one it can stand on");
+}
+
+#[test]
+fn the_cracks_reach_is_counted_along_the_walk_not_across_a_wall() {
+    // "5 m by the walking path": a guard two metres from the Vault across a
+    // wall, with the only way round seven steps long, is not called.
+    let mut world = vault_world(1);
+    for y in 0..13 {
+        world.grid.place(8, y, Feature::RockPillar);
+    }
+    let steps = crate::path::steps_to(&world.grid, world.vault.tile, h::CRACK_REACH_METRES);
+    let across = world.grid.index(9, 6).unwrap();
+    let beside = world.grid.index(7, 6).unwrap();
+    assert_eq!(steps[beside as usize], Some(1));
+    assert_eq!(steps[across as usize], None, "three tiles away, but not within five steps");
+    assert_eq!(steps[world.grid.index(6, 1).unwrap() as usize], Some(5));
+    assert_eq!(steps[world.grid.index(6, 0).unwrap() as usize], None);
 }
 
 #[test]
@@ -2105,26 +2131,39 @@ fn disarming_takes_fifteen_seconds_on_the_tile_is_silent_and_stepping_off_restar
 }
 
 #[test]
-fn a_time_snare_freezes_its_own_disarmer_and_the_disarm_waits() {
-    // §10.3 does not switch a ward's sensor off for the one disarming it, so
-    // standing on a Time Snare trips it. A frozen disarmer is still on the
-    // tile: its fifteen seconds wait for the freeze and do not restart.
-    let mut world = ward_world(1, WardKind::TimeSnare, (3, 3));
+fn a_ward_ignores_the_crew_member_disarming_it_and_fires_on_anyone_else() {
+    // §10.3 (v3.4, G16): "While it disarms, the ward's sensor ignores that
+    // crew member, so every known ward can be disarmed; it still fires on
+    // anyone else in reach." v3.3 said nothing, and a Time Snare froze its
+    // own disarmer twice in a fifteen-second job.
+    let mut world = ward_world(2, WardKind::TimeSnare, (3, 3));
     let snare = world.grid.index(3, 3).unwrap();
     put(&mut world, 0, 3, 3);
     world.raiders[0].task = Task::Disarm;
     world.raiders[0].target = snare;
-    // Frozen 2.5 s; working until the snare re-arms at 12 s and freezes it
-    // again; then the rest of the fifteen. Without the second freeze it
-    // would be done at 17.5 s; with it, by 20.
-    for _ in 0..(h::SNARE_FREEZE_TICKS + h::DISARM_TICKS) {
+    put(&mut world, 1, 3, 3);                     // a second member, not disarming
+    world.step();
+    assert!(world.raiders[1].frozen_until > world.tick, "it fires on anyone else");
+    assert!(world.raiders[0].frozen_until <= world.tick, "and not on its disarmer");
+    put(&mut world, 1, 6, 6);
+    for _ in 0..h::DISARM_TICKS {
         world.step();
     }
-    assert!(!world.wards[0].disarmed, "the snare's reset froze it a second time");
-    for _ in 0..h::SNARE_FREEZE_TICKS {
-        world.step();
-    }
-    assert!(world.wards[0].disarmed, "two freezes and fifteen seconds of work");
+    assert!(world.wards[0].disarmed, "fifteen seconds of work, never frozen");
+}
+
+#[test]
+fn a_glare_still_fires_on_a_disarmer_walking_to_it() {
+    // G18: the sensor ignores a crew member "while it disarms", and a
+    // disarmer stands on the tile. A Lantern Glare's reach is two tiles, so
+    // the walk there crosses it, and nothing in §10.3 covers the walk.
+    let mut world = ward_world(1, WardKind::LanternGlare, (3, 3));
+    let glare = world.grid.index(3, 3).unwrap();
+    put(&mut world, 0, 3, 5);                     // two tiles off, on its way
+    world.raiders[0].task = Task::Disarm;
+    world.raiders[0].target = glare;
+    world.step();
+    assert!(world.wards[0].armed_at > world.tick, "the Glare fired on the way in");
 }
 
 #[test]

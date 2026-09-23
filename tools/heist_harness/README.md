@@ -7,6 +7,7 @@ simulation. This is that simulation.
 python3 -m tools.heist_harness                  # every report
 python3 -m tools.heist_harness depth            # one report
 python3 -m tools.heist_harness depth 500        # more runs a cell
+python3 -m tools.heist_harness depth --sweep crack_reach   # brief 37 (§32.9, F35)
 python3 -m tools.heist_harness.test_harness     # tests
 ```
 
@@ -101,4 +102,7 @@ full run against v3.0:
 - **The careful crew is never the best crew.** `optimal` matches or trails
   `competent` on success at every depth, because disarming wards and holding for
   cones costs more clock than it saves. Either those tools are underpriced or
-  `optimal` is not optimal — and the harness is how to settle it.
+  `optimal` is not optimal — and the harness is how to settle it. For
+  disarming it is settled (D59): at fifteen seconds on the tile, going round
+  beats disarming by some forty points at realm 3, and on a v3.4 island the
+  optimal crew goes round every ward it can.

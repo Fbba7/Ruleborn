@@ -276,8 +276,10 @@ the skiff → the clock.
   While two or more crack it, every hit deals a quarter more: v3.3's assist
   bonus (§11.1), which also applies to pylons and wards. Each hit is §12.17's
   "Breaking something", heard 5 m away along the walkable path, and every
-  five seconds of cracking send every guard in the Heart to investigate the
-  Vault, from the open tile beside it nearest each guard (§12.6, v3.3). Once open, anyone told to load does so at 30 a second, until
+  five seconds of cracking send every guard within the crack's reach — 5 m
+  from the Vault by the walking path, `path::steps_to` — to investigate it,
+  from the open tile beside it nearest each guard (§12.6, v3.4; v3.3 called
+  every guard in the Heart). Once open, anyone told to load does so at 30 a second, until
   it reaches the player's target fill, fills its bag, or empties the exposed
   share. A loaded Carrier walks 15% slower.
 - **Fights.** An Alerted guard beside a crew member hits it every 0.8 s for
@@ -329,7 +331,9 @@ Four things about the document, each pinned by a test rather than argued:
    Vault — and no ordinary crack is shorter than five seconds, so a crew that
    has not cleared the Heart is found at the Vault. In the Python harness,
    whose crews do not, an optimal crew's success falls from 65% to 7.5% (F32).
-   (`every_five_seconds_of_cracking_sends_every_guard_to_investigate_the_vault`)
+   v3.4 gave the call a reach, 5 m by the walking path — the distance a hit
+   is already heard at, so here it adds little to what every hit does (F35).
+   (`every_five_seconds_of_cracking_calls_the_guards_within_its_reach`)
 2. **§12.8's ambush has no way in on plain ground.** A crouched walk carries
    1 m and the tile behind a guard is 1 m away, so the last step of any
    approach is heard. The guard has then noticed, and "a guard that has not
@@ -388,9 +392,9 @@ A simulation reading the sheet cannot apply either without asking which law
 set it, which is a law containing a special case (F31). They are now four
 parameters, each named for whom it changes. The simulation applies two of
 them, once a second:
-- `ally_regen` (Kinship): anyone standing beside an ally heals 1.5% of full
+- `ally_healing` (Kinship): anyone standing beside an ally heals 1.5% of full
   health, crew and guards alike;
-- `structure_regen` (Regrowth): guards, pylons and the Vault heal 2%.
+- `structure_regrowth` (Regrowth): guards, pylons and the Vault heal 2%.
 Nothing knocked out or broken comes back.
 
 The simulation reads 15 of the sheet's 22 parameters. The other seven are
@@ -445,10 +449,11 @@ the reason. So does "blinds them", read as a crew unable to act.
 
 v3.3 changed four ward and fight rules, and they are ported (D56). Disarming
 is fifteen seconds standing on the ward's tile, restarting if the disarmer
-steps off. §10.3 does not switch a ward's sensor off for the one disarming it,
-so a Time Snare freezes its own disarmer and a Lantern Glare, which now fires
-within 2 tiles, shows the crew to every guard; that reading is G16. The ambush
-and the crack noise are under the Vault and fights below.
+steps off. v3.4 answered G16: a ward's sensor ignores the crew member standing
+on its tile to disarm it, and fires on anyone else. It says nothing of the walk
+there, so a Lantern Glare, which fires within 2 tiles, still shows the crew to
+every guard as its disarmer arrives; that reading is G18, and a test pins it.
+The ambush and the crack noise are under the Vault and fights below.
 
 Reset times come from §10.3 — Time Snare 12 s, Lantern Glare 20 s — although
 §10.2's Ward row gives every ward 10 s at level 1. Building this found that

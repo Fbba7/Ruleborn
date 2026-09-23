@@ -1509,15 +1509,23 @@ impl World {
                     self.vault.first_hit.get_or_insert(now);
                 }
             }
-            // "Every 5 seconds of cracking every guard in the Heart hears the
-            // Vault and starts Investigating it" — a heard event, so it
-            // steps a guard up to Investigating and never down, exactly as
-            // any other sound does, and re-aims one already investigating.
+            // "Every 5 seconds of cracking every guard within the crack's
+            // reach of the Vault, 5 m by the walking path, hears it and
+            // starts Investigating it" (v3.4) — a heard event, so it steps a
+            // guard up to Investigating and never down, exactly as any other
+            // sound does, and re-aims one already investigating.
             if let Some(t) = self.vault.first_hit {
                 if now > t && (now - t) % heist::CRACK_NOISE_TICKS == 0 {
+                    let reach = path::steps_to(&self.grid, self.vault.tile,
+                                               heist::CRACK_REACH_METRES);
                     for gi in 0..self.guards.len() {
                         let g = &self.guards[gi];
                         if !g.awake(now) || g.state.rank() > guard::State::Investigating.rank() {
+                            continue;
+                        }
+                        let within = self.grid.tile_at(g.at.x, g.at.y)
+                            .is_some_and(|tile| reach[tile as usize].is_some());
+                        if !within {
                             continue;
                         }
                         let spot = self.beside(self.vault.tile, g.at);
@@ -1672,9 +1680,11 @@ impl World {
         // Disarming (v3.3): standing on the ward's own tile, still, for
         // fifteen seconds at every level, silent. A frozen or blinded
         // disarmer is still on the tile, so its progress waits rather than
-        // resets; "stepping off starts it again". The ward's own sensor is
-        // not switched off by standing on it — §10.3 does not say it is —
-        // so a Time Snare freezes its disarmer and a Glare shows it.
+        // resets; "stepping off starts it again". v3.4 (G16, brief 37):
+        // "while it disarms, the ward's sensor ignores that crew member" —
+        // below, a raider standing on the tile it was sent to disarm does
+        // not trip it. The walk there is not covered, so a Well or a Glare
+        // still fires on a disarmer crossing its reach (G18).
         for wi in 0..self.wards.len() {
             let w = &self.wards[wi];
             if !w.live() || w.kind.passive() {
@@ -1728,7 +1738,9 @@ impl World {
                 WardKind::TimeSnare | WardKind::GravityWell | WardKind::LanternGlare
                     if now >= w.armed_at =>
                 {
-                    let trips = |r: &Raider| r.active() && match w.kind {
+                    let disarming = |r: &Raider| r.task == Task::Disarm && r.target == w.tile
+                        && tile_of(r.at, &self.grid) == Some(w.tile);
+                    let trips = |r: &Raider| r.active() && !disarming(r) && match w.kind {
                         WardKind::GravityWell => within(r.at, heist::WELL_RADIUS),
                         WardKind::LanternGlare => within(r.at, heist::GLARE_RADIUS),
                         _ => tile_of(r.at, &self.grid) == Some(w.tile),
@@ -1777,8 +1789,8 @@ impl World {
 
     fn heal(&mut self) {
         let now = self.tick;
-        if self.sheet.flag(Param::AllyRegen).is_some() {
-            let (n, d) = self.sheet.factor(Param::AllyRegen);
+        if self.sheet.flag(Param::AllyHealing).is_some() {
+            let (n, d) = self.sheet.factor(Param::AllyHealing);
             let tile_of = |p: Point| self.grid.tile_at(p.x, p.y);
             let beside = |a: Option<grid::TileIndex>, b: Option<grid::TileIndex>| {
                 a.zip(b).is_some_and(|(a, b)| self.grid.adjacent(a, b))
@@ -1809,8 +1821,8 @@ impl World {
                 }
             }
         }
-        if self.sheet.flag(Param::StructureRegen).is_some() {
-            let (n, d) = self.sheet.factor(Param::StructureRegen);
+        if self.sheet.flag(Param::StructureRegrowth).is_some() {
+            let (n, d) = self.sheet.factor(Param::StructureRegrowth);
             let share = |full: i32| (full as i64 * n / d) as i32;
             for g in self.guards.iter_mut().filter(|g| !g.knocked_out) {
                 let full = g.role.health();

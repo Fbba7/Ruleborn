@@ -2,7 +2,7 @@
   {
     "name": "Raised ground",
     "movement": "Heights 0 to 3; climbing a level needs a ramp, stairs, vines or a leap",
-    "sight": "Guards on higher ground see 2 tiles further per level",
+    "sight": "Guards on higher ground see further (12.17)",
     "points": "2 per tile per level",
     "found_in": "All",
     "with_laws": "Half gravity turns one-level climbs into leaps",
@@ -24,7 +24,7 @@
   {
     "name": "Stairs",
     "movement": "Climb one level 20% faster than a ramp",
-    "sight": "Footsteps on stairs carry 1 tile further",
+    "sight": "—",
     "points": "1",
     "found_in": "All",
     "with_laws": "Leapfrog skips whole flights",
@@ -167,7 +167,7 @@
   {
     "name": "Tall grass",
     "movement": "—",
-    "sight": "Hides anyone inside from guards more than 2 tiles away",
+    "sight": "Hides a character standing still in it until a guard walks into the tile (12.17)",
     "points": "1 per tile",
     "found_in": "All",
     "with_laws": "Glowing dark makes it almost impossible to watch",
@@ -266,7 +266,7 @@
   {
     "name": "Gravel path",
     "movement": "15% faster",
-    "sight": "Crunchy: footsteps carry 1 tile further",
+    "sight": "Crunchy: louder underfoot (12.17)",
     "points": "1 per tile",
     "found_in": "All",
     "with_laws": "Wild paths flowers grow here first",

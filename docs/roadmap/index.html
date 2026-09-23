@@ -188,11 +188,11 @@
       much of the document can now be trusted without re-reading it.</strong></p>
 
     <div class="summary">
-      <div><span class="n">23</span><span class="k">tasks done</span></div>
-      <div><span class="n">8</span><span class="k">live now</span></div>
+      <div><span class="n">24</span><span class="k">tasks done</span></div>
+      <div><span class="n">9</span><span class="k">live now</span></div>
       <div><span class="n">2</span><span class="k">waiting on you</span></div>
-      <div><span class="n">133/155</span><span class="k">register items drafted</span></div>
-      <div><span class="n">133</span><span class="k">signed off</span></div>
+      <div><span class="n">149/159</span><span class="k">register items drafted</span></div>
+      <div><span class="n">149</span><span class="k">signed off</span></div>
       <div><span class="n">23 Sep</span><span class="k">last generated</span></div>
     </div>
 
@@ -203,9 +203,9 @@
   </header>
 
   <nav class="filters" aria-label="Filter the roadmap">
-    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">44</span></button>
+    <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">46</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">9</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">23</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">6</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">2</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">12</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">1</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">24</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">6</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">3</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">12</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">1</span></button>
   </nav>
 
   <main id="list">
@@ -216,7 +216,7 @@
             <h2>Validation without players</h2>
             <p class="sub">§19.27, rewritten in v3.0, unchanged in v3.1 — and the critical path</p>
           </div>
-          <span class="scount">9/11</span>
+          <span class="scount">10/12</span>
         </div>
         <p class="blurb">v3.0 removed both pre-code player tests and replaced them with harnesses, stating the cost plainly: simulation can prove a system is legible, balanced and decision-dense, and cannot prove a game is enjoyable. Each harness below is buildable here, needs no engine, and has a threshold §19.27 sets for itself.<br><br>v3.1 left this decision alone. Its companion section moved — <em>How we will actually find out</em> is §25.4 now, not §25.5 — because v3.1 closed four numbering holes v3.0 had left (§5.8, §7.8, §10.4, §25.3 were all missing). Every in-document citation was moved with them: 243 sections, no dangling reference. That is the kind of thing v3.1 is — a consistency release, not a design one.</p>
         
@@ -282,11 +282,11 @@
         
         <div class="prog" title="F15 F16 F9">
           <div class="bar">
-            <span class="fill" style="width:66.7%"></span>
-            <span class="fill settled" style="width:66.7%"></span>
+            <span class="fill" style="width:100.0%"></span>
+            <span class="fill settled" style="width:100.0%"></span>
           </div>
-          <p class="prog-n"><strong>2 of 3</strong> drafted &middot;
-             <strong>2</strong> signed off</p>
+          <p class="prog-n"><strong>3 of 3</strong> drafted &middot;
+             <strong>3</strong> signed off</p>
         </div>
         <p class="gate"><span class="glabel">Passes when</span> hold rate 30–45%, no layer above a quarter, design beating progression 60/40 (§13.4)</p>
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness ablation</code></p>
@@ -348,11 +348,11 @@
         
         <div class="prog" title="F32">
           <div class="bar">
-            <span class="fill" style="width:0.0%"></span>
-            <span class="fill settled" style="width:0.0%"></span>
+            <span class="fill" style="width:100.0%"></span>
+            <span class="fill settled" style="width:100.0%"></span>
           </div>
-          <p class="prog-n"><strong>0 of 1</strong> drafted &middot;
-             <strong>0</strong> signed off</p>
+          <p class="prog-n"><strong>1 of 1</strong> drafted &middot;
+             <strong>1</strong> signed off</p>
         </div>
         <p class="gate"><span class="glabel">Passes when</span> a harness crew that takes guards down from behind before the Vault, measured against §13.2's bands and §19.27's gates with v3.3's crack noise on</p>
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness.test_harness (test_a_crew_that_clears_the_heart_first_survives_the_crack_noise)</code></p>
@@ -366,7 +366,7 @@
           <span class="status st-ready">Ready to start</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">On v3.3's rules one Lantern Glare takes realm 3 from 42.5% held to 71.2%, and two to 97.5%, while §5.2's six wards there without one hold 46.2% (F33). And §13.2's table was measured at one guard post in every realm: at §5.2's posts realms 3 to 5 hold 91 to 99.5% (F34). Each Glare option F33 names is one constant or flag here, so each is measured before the owner picks; then the table is re-run as it states itself.</p>
+        <p class="detail">On v3.3's rules one Lantern Glare takes realm 3 from 42.5% held to 71.2%, and two to 97.5%, while §5.2's six wards there without one hold 46.2% (F33). And §13.2's table was measured at one guard post in every realm: at §5.2's posts realms 3 to 5 hold 91 to 99.5% (F34). Each Glare option F33 names is one constant or flag here, so each is measured before the owner picks; then the table is re-run as it states itself.<br><br>v3.4 answered neither (both were registered after its snapshot), and its brief 37 sweep needs them: every realm level holds above its band with no crack call at all, so the reach cannot be sized against the bands until this is done (F35).</p>
         
         <div class="prog" title="F33 F34">
           <div class="bar">
@@ -378,6 +378,28 @@
         </div>
         <p class="gate"><span class="glabel">Passes when</span> §13.2's table re-measured at the posts §5.2 gives, with v3.3's wards and the crack noise on, against both the optimal and the clearing crew</p>
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness.test_harness (test_one_lantern_glare_outweighs_a_realm_of_other_wards, test_13_2s_hold_table_was_measured_at_one_guard_post)</code></p>
+        
+      </article>
+      <article class="task st-done" id="T0-13"
+               data-status="done" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T0.13</span>
+          <h3>Port v3.4's two heist rules, and run brief 37's sweep</h3>
+          <span class="status st-done">Done</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">v3.4 gave the crack's call a reach — the guards within 5 m of the Vault by the walking path — and made a ward's sensor ignore the crew member disarming it (briefs 37, F32 and G16). <strong>Ported:</strong> <code>sim/</code>'s <code>path::steps_to</code> counts the walk backwards from the Vault, and two goldens diverged (seconds 15 and 43) and were re-recorded; the harness takes rules “v3.4” by default, with v3.3 kept so earlier numbers reproduce. Porting found that the harness's optimal crew had been disarming what v3.3 made a fifteen-second job and playing below the competent crew (D59, fixed), and that the sensor rule covers the tile and not the walk to it (G18).<br><br><strong>The sweep</strong> (<code>depth --sweep crack_reach</code>) cannot choose a reach: with no call at all the depth gate fails from two realms up and every realm level holds far above its band, and against the no-call baseline the 5 m shipped costs the optimal crew 38 points of lead (F35).</p>
+        
+        <div class="prog" title="D59 F32 F35 G16 G18">
+          <div class="bar">
+            <span class="fill" style="width:60.0%"></span>
+            <span class="fill settled" style="width:60.0%"></span>
+          </div>
+          <p class="prog-n"><strong>3 of 5</strong> drafted &middot;
+             <strong>3</strong> signed off</p>
+        </div>
+        <p class="gate"><span class="glabel">Passes when</span> the crack's reach and the disarmer rule in sim/ and the harness, and §32.9's sweep command runnable</p>
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness depth --sweep crack_reach; cargo test in sim/</code></p>
         
       </article>
       <article class="task st-done" id="T0-7"
@@ -414,11 +436,11 @@
         
         <div class="prog" title="D26 F16">
           <div class="bar">
-            <span class="fill" style="width:50.0%"></span>
-            <span class="fill settled" style="width:50.0%"></span>
+            <span class="fill" style="width:100.0%"></span>
+            <span class="fill settled" style="width:100.0%"></span>
           </div>
-          <p class="prog-n"><strong>1 of 2</strong> drafted &middot;
-             <strong>1</strong> signed off</p>
+          <p class="prog-n"><strong>2 of 2</strong> drafted &middot;
+             <strong>2</strong> signed off</p>
         </div>
         <p class="gate"><span class="glabel">Passes when</span> designed geometry worth at least 2.5× generated, pinned by a test</p>
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness.test_harness</code></p>
@@ -460,13 +482,13 @@
         </header>
         <p class="detail">Every contradiction, gap and measured finding, each with the sections involved and a recommended resolution.</p>
         
-        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C21 C22 C23 C24 C25 C26 C27 C28 C29 C3 C31 C32 C33 C34 C35 C36 C37 C38 C39 C4 C5 C6 C7 C8 C9 D48 D49 D53 F1 F10 F11 F12 F13 F14 F15 F16 F17 F18 F19 F2 F20 F21 F22 F23 F24 F25 F26 F27 F28 F29 F3 F30 F31 F32 F33 F34 F4 F5 F6 F7 F8 F9 G1 G10 G11 G12 G13 G14 G15 G16 G17 G2 G3 G4 G5 G6 G7 G8 G9">
+        <div class="prog" title="C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C21 C22 C23 C24 C25 C26 C27 C28 C29 C3 C31 C32 C33 C34 C35 C36 C37 C38 C39 C4 C40 C5 C6 C7 C8 C9 D48 D49 D53 F1 F10 F11 F12 F13 F14 F15 F16 F17 F18 F19 F2 F20 F21 F22 F23 F24 F25 F26 F27 F28 F29 F3 F30 F31 F32 F33 F34 F35 F4 F5 F6 F7 F8 F9 G1 G10 G11 G12 G13 G14 G15 G16 G17 G18 G2 G3 G4 G5 G6 G7 G8 G9">
           <div class="bar">
-            <span class="fill" style="width:78.3%"></span>
-            <span class="fill settled" style="width:78.3%"></span>
+            <span class="fill" style="width:90.5%"></span>
+            <span class="fill settled" style="width:90.5%"></span>
           </div>
-          <p class="prog-n"><strong>72 of 92</strong> drafted &middot;
-             <strong>72</strong> signed off</p>
+          <p class="prog-n"><strong>86 of 95</strong> drafted &middot;
+             <strong>86</strong> signed off</p>
         </div>
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>docs/audit/index.html</code></p>
@@ -484,11 +506,11 @@
         
         <div class="prog" title="C1 C19 C2 C21 C29 C4 C5 C6 D49 F10 F11 F13 F14 F15 F17 F21 F22 F24 F25 F26 F9 G1 G9">
           <div class="bar">
-            <span class="fill" style="width:87.0%"></span>
-            <span class="fill settled" style="width:87.0%"></span>
+            <span class="fill" style="width:95.7%"></span>
+            <span class="fill settled" style="width:95.7%"></span>
           </div>
-          <p class="prog-n"><strong>20 of 23</strong> drafted &middot;
-             <strong>20</strong> signed off</p>
+          <p class="prog-n"><strong>22 of 23</strong> drafted &middot;
+             <strong>22</strong> signed off</p>
         </div>
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>docs/design/spec/</code></p>
@@ -504,13 +526,13 @@
         </header>
         <p class="detail">The significant and minor conflicts, and the gaps below the blocking line. <strong>Every open conflict now carries a drafted edit</strong> — the section, the sentence as it stands, and what to put there — and <code>check_edits.py</code> reports any that do not, because an item without an edit is checked by nobody. That is how six clerical items went on being reported open for a whole version after v3.0 had fixed them.<br><br>The same discipline run in the other direction against v3.1: §31.9 publishes its own list of eight closed items, and all eight verify — but checking rather than believing it is what produced <strong>F24</strong> and <strong>F25</strong>, neither of which that list mentions.</p>
         
-        <div class="prog" title="C10 C11 C12 C13 C14 C15 C16 C17 C18 C20 C22 C23 C24 C25 C26 C27 C28 C3 C31 C32 C33 C34 C35 C36 C37 C38 C39 C7 C8 C9 D48 D53 F16 F18 F19 F20 F23 F27 F28 F29 F30 F31 F34 G10 G11 G12 G13 G14 G15 G16 G17 G2 G3 G4 G5 G6 G7 G8">
+        <div class="prog" title="C10 C11 C12 C13 C14 C15 C16 C17 C18 C20 C22 C23 C24 C25 C26 C27 C28 C3 C31 C32 C33 C34 C35 C36 C37 C38 C39 C40 C7 C8 C9 D48 D53 F16 F18 F19 F20 F23 F27 F28 F29 F30 F31 F34 G10 G11 G12 G13 G14 G15 G16 G17 G18 G2 G3 G4 G5 G6 G7 G8">
           <div class="bar">
-            <span class="fill" style="width:74.1%"></span>
-            <span class="fill settled" style="width:74.1%"></span>
+            <span class="fill" style="width:90.0%"></span>
+            <span class="fill settled" style="width:90.0%"></span>
           </div>
-          <p class="prog-n"><strong>43 of 58</strong> drafted &middot;
-             <strong>43</strong> signed off</p>
+          <p class="prog-n"><strong>54 of 60</strong> drafted &middot;
+             <strong>54</strong> signed off</p>
         </div>
         
         
@@ -650,11 +672,11 @@
         
         <div class="prog" title="F24 F25">
           <div class="bar">
-            <span class="fill" style="width:50.0%"></span>
-            <span class="fill settled" style="width:50.0%"></span>
+            <span class="fill" style="width:100.0%"></span>
+            <span class="fill settled" style="width:100.0%"></span>
           </div>
-          <p class="prog-n"><strong>1 of 2</strong> drafted &middot;
-             <strong>1</strong> signed off</p>
+          <p class="prog-n"><strong>2 of 2</strong> drafted &middot;
+             <strong>2</strong> signed off</p>
         </div>
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 tools/check_document.py --coverage</code></p>
@@ -668,7 +690,7 @@
             <h2>The economy model</h2>
             <p class="sub">Done, and it has already paid for itself</p>
           </div>
-          <span class="scount">6/6</span>
+          <span class="scount">6/7</span>
         </div>
         <p class="blurb">§24 says a Python model generated roughly a quarter of the document's numbers. That model is not in the document, so none of those numbers could be re-derived. Rebuilt from the published formulas, it reproduces the first month to within 10% and the Keeper curve to within three days.</p>
         
@@ -712,11 +734,11 @@
         
         <div class="prog" title="C24 C28 F17">
           <div class="bar">
-            <span class="fill" style="width:66.7%"></span>
-            <span class="fill settled" style="width:66.7%"></span>
+            <span class="fill" style="width:100.0%"></span>
+            <span class="fill settled" style="width:100.0%"></span>
           </div>
-          <p class="prog-n"><strong>2 of 3</strong> drafted &middot;
-             <strong>2</strong> signed off</p>
+          <p class="prog-n"><strong>3 of 3</strong> drafted &middot;
+             <strong>3</strong> signed off</p>
         </div>
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.economy_model sinks</code></p>
@@ -734,11 +756,11 @@
         
         <div class="prog" title="D24 D25 F14 F18 F19 F20 F21">
           <div class="bar">
-            <span class="fill" style="width:71.4%"></span>
-            <span class="fill settled" style="width:71.4%"></span>
+            <span class="fill" style="width:85.7%"></span>
+            <span class="fill settled" style="width:85.7%"></span>
           </div>
-          <p class="prog-n"><strong>5 of 7</strong> drafted &middot;
-             <strong>5</strong> signed off</p>
+          <p class="prog-n"><strong>6 of 7</strong> drafted &middot;
+             <strong>6</strong> signed off</p>
         </div>
         <p class="gate"><span class="glabel">Passes when</span> §12.19’s ten seconds reproduced by a run, not by arithmetic about a table</p>
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.heist_harness breakeven</code></p>
@@ -756,11 +778,11 @@
         
         <div class="prog" title="C18 F17">
           <div class="bar">
-            <span class="fill" style="width:50.0%"></span>
-            <span class="fill settled" style="width:50.0%"></span>
+            <span class="fill" style="width:100.0%"></span>
+            <span class="fill settled" style="width:100.0%"></span>
           </div>
-          <p class="prog-n"><strong>1 of 2</strong> drafted &middot;
-             <strong>1</strong> signed off</p>
+          <p class="prog-n"><strong>2 of 2</strong> drafted &middot;
+             <strong>2</strong> signed off</p>
         </div>
         <p class="gate"><span class="glabel">Passes when</span> every price checked against the faucet that pays it</p>
         <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.economy_model scaling</code></p>
@@ -786,6 +808,28 @@
         </div>
         
         <p class="evidence"><span class="glabel">Check it at</span> <code>docs/design/generated/pacing.md</code></p>
+        
+      </article>
+      <article class="task st-ready" id="T2-5"
+               data-status="ready" data-owner="claude">
+        <header class="task-head">
+          <span class="tid">T2.5</span>
+          <h3>Port §9.6's raid pay to the economy model, then run §32.9's full re-run</h3>
+          <span class="status st-ready">Ready to start</span>
+          <span class="owner o-claude">from here</span>
+        </header>
+        <p class="detail">v3.4 moved every pacing sentence to what is measured and left one number open: <em>“the full economy re-run that regenerates 14.2, 14.3 and 10.2's day columns (32.9)”</em>. That re-run is this repository's model, and the model still mints raids from v3.2's base of 100, keyed to the raider (D58). So D58 first, then the re-run — which closes C19 and C35 (§14.3's “48 laws owned — Day 235” against §14.4's 69) and publishes each milestone at the bottom and the top of the 1.39× band (F19).</p>
+        
+        <div class="prog" title="C19 C35 D58">
+          <div class="bar">
+            <span class="fill" style="width:0.0%"></span>
+            <span class="fill settled" style="width:0.0%"></span>
+          </div>
+          <p class="prog-n"><strong>0 of 3</strong> drafted &middot;
+             <strong>0</strong> signed off</p>
+        </div>
+        <p class="gate"><span class="glabel">Passes when</span> the model mints from design_facts' B(V) on the target's Vault level, and regenerates §14.2, §14.3 and §10.2's day columns at both edges of §9.6's band</p>
+        <p class="evidence"><span class="glabel">Check it at</span> <code>python3 -m tools.economy_model</code></p>
         
       </article>
       </section>
@@ -1088,7 +1132,7 @@
     <h2>Not blocked, and still not yet</h2>
     <p class="blurb">These look available. Starting any of them now spends work
       that a decision above will throw away.</p>
-    <ul><li><strong>Gameplay code</strong> &mdash; The determinism spike gates it. Anti-cheat, replay validation, free analytics, rehearsals, balance bots and the whole cost model fail together if it does not pass.</li><li><strong>Realm design</strong> &mdash; One gate left, and it is a table rather than a rule: the day and income columns a realm is paced by still ship from the economy model's earlier run (C19). v3.3 settled the other eight — the ward budget, the post ladder, the hold band, what the generator weaves, the authored laws, ward levels and pylons.</li><li><strong>Character art</strong> &mdash; Nothing in the register blocks it since v3.3 — one card per ruleborn and 54 forms — but §26.2 puts the art-style test on target devices first, so the style is settled before the quantity is drawn.</li><li><strong>Detailed screen design</strong> &mdash; One question: whether the scout report shows patrol routes, which §12.12 promises and §12.4 does not list (<strong>C37</strong>). v3.3 settled the roster the character screens read, the ranks the Codex shows and the Library's place on the build screen.</li><li><strong>Localisation</strong> &mdash; Two launch languages with a named owner since v3.3, but the coined vocabulary gets its native-speaker read-aloud (§26.9) before anything is translated.</li><li><strong>Claiming the name publicly</strong> &mdash; §26.9 makes trademark clearance a gate, and it has not been done.</li></ul>
+    <ul><li><strong>Gameplay code</strong> &mdash; The determinism spike gates it. Anti-cheat, replay validation, free analytics, rehearsals, balance bots and the whole cost model fail together if it does not pass.</li><li><strong>Realm design</strong> &mdash; One gate left, and it is a table rather than a rule: the day and income columns a realm is paced by still ship from the economy model's earlier run (C19), and v3.4 hands that re-run to this repository (T2.5). v3.3 settled the other eight — the ward budget, the post ladder, the hold band, what the generator weaves, the authored laws, ward levels and pylons.</li><li><strong>Character art</strong> &mdash; Nothing in the register blocks it since v3.3 — one card per ruleborn and 54 forms — but §26.2 puts the art-style test on target devices first, so the style is settled before the quantity is drawn.</li><li><strong>Detailed screen design</strong> &mdash; Nothing in the register blocks it since v3.4, which settled the last question: the scout report shows no patrol positions (brief 38). v3.3 settled the roster the character screens read, the ranks the Codex shows and the Library's place on the build screen. §26.2's art-style test still comes first, as it does for the characters.</li><li><strong>Localisation</strong> &mdash; Two launch languages with a named owner since v3.3, but the coined vocabulary gets its native-speaker read-aloud (§26.9) before anything is translated.</li><li><strong>Claiming the name publicly</strong> &mdash; §26.9 makes trademark clearance a gate, and it has not been done.</li></ul>
   </section>
 
   <footer>
@@ -1143,4 +1187,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build af10e1c13edc0795 -->
+<!-- ruleborn-build 0c2b6b15e1e65224 -->

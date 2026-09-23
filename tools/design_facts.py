@@ -107,6 +107,15 @@ BREAKER_VAULT_MULTIPLIER = 2
 #: the Vault and starts Investigating it" — a heard event, not suspicion.
 CRACK_NOISE_SECONDS = 5
 
+#: §10.3 (v3.3; one value since v3.4, C34): "Every ward has 550 health a
+#: level", the smallest multiple of 50 at which smashing a level-2 ward loses
+#: to a Tinker's disarm.
+WARD_HEALTH_PER_LEVEL = 550
+
+#: §12.6 (v3.4, brief 37): "every guard within the crack's reach of the Vault,
+#: 5 m by the walking path, hears it". One tile is one metre (§21.1).
+CRACK_REACH_METRES = 5
+
 #: §12.19: "Every role can load, at 30 units a second."
 LOAD_PER_SECOND = 30
 
@@ -178,6 +187,8 @@ HOME = {
     "VAULT_HEALTH_PER_LEVEL": "12.6",
     "BREAKER_VAULT_MULTIPLIER": "12.6",
     "CRACK_NOISE_SECONDS": "12.6",
+    "CRACK_REACH_METRES": "12.6",
+    "WARD_HEALTH_PER_LEVEL": "10.3",
     "LOAD_PER_SECOND": "12.19",
     "CARRIER_LOADED_PACE": "11.1",
     "DOWN_SECONDS": "12.20",
@@ -231,6 +242,9 @@ STATED = {
     "BREAKER_VAULT_MULTIPLIER": (r"Breakers deal (double) damage to it",
                                  lambda m: int(_n(m[0]))),
     "CRACK_NOISE_SECONDS": (r"every (\d+) seconds of cracking", lambda m: int(m[0])),
+    "CRACK_REACH_METRES": (r"crack’s reach of the Vault, (\d+) m by the walking path",
+                           lambda m: int(m[0])),
+    "WARD_HEALTH_PER_LEVEL": (r"Every ward has (\d+) health a level", lambda m: int(m[0])),
     "LOAD_PER_SECOND": (r"Every role can load, at (\d+) units a second",
                         lambda m: int(m[0])),
     "CARRIER_LOADED_PACE": (r"(\d+)% slower when loaded", lambda m: 1 - int(m[0]) / 100),

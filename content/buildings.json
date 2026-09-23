@@ -38,38 +38,38 @@
         "level": 6,
         "cost_starlight": 51500,
         "needs": "Keeper level 21",
-        "gives": "+78 stability; 39,000 Aether storage; buildings up to level 6"
+        "gives": "+78 stability; 29,000 Aether storage; buildings up to level 6"
       },
       {
         "level": 7,
         "cost_starlight": 113400,
         "needs": "Keeper level 25",
-        "gives": "+86 stability; 61,000 Aether storage; buildings up to level 7"
+        "gives": "+86 stability; 34,000 Aether storage; buildings up to level 7"
       },
       {
         "level": 8,
         "cost_starlight": 249400,
         "needs": "Keeper level 29",
-        "gives": "+94 stability; 83,000 Aether storage; buildings up to level 8"
+        "gives": "+94 stability; 34,000 Aether storage; buildings up to level 8"
       },
       {
         "level": 9,
         "cost_starlight": 548800,
         "needs": "Keeper level 33",
-        "gives": "+102 stability; 112,000 Aether storage; buildings up to level 9"
+        "gives": "+102 stability; 34,000 Aether storage; buildings up to level 9"
       },
       {
         "level": 10,
         "cost_starlight": 1207300,
         "needs": "Keeper level 37",
-        "gives": "+110 stability; 151,000 Aether storage; buildings up to level 10"
+        "gives": "+110 stability; 34,000 Aether storage; buildings up to level 10"
       }
     ]
   },
   {
     "id": "vault",
     "name": "Vault",
-    "placement": "Heart; 1.",
+    "placement": "Heart; 1. Capacity 8,000 of each of Starlight and Essence at level 1, × 1.85 a level.",
     "levels": [
       {
         "level": 1,
@@ -270,7 +270,7 @@
   {
     "id": "aether_spring",
     "name": "Aether Spring",
-    "placement": "Every realm; one at every realm level (5.8).",
+    "placement": "Every realm; one at every realm level (5.8). Five levels.",
     "levels": [
       {
         "level": 1,
@@ -301,36 +301,6 @@
         "cost_starlight": 10300,
         "needs": "Spire 5",
         "gives": "199 Aether an hour; 2 worker slots; holds 12 h"
-      },
-      {
-        "level": 6,
-        "cost_starlight": 23100,
-        "needs": "Spire 6",
-        "gives": "269 Aether an hour; 2 worker slots; holds 12 h"
-      },
-      {
-        "level": 7,
-        "cost_starlight": 51900,
-        "needs": "Spire 7",
-        "gives": "363 Aether an hour; 3 worker slots; holds 12 h"
-      },
-      {
-        "level": 8,
-        "cost_starlight": 116800,
-        "needs": "Spire 8",
-        "gives": "490 Aether an hour; 3 worker slots; holds 12 h"
-      },
-      {
-        "level": 9,
-        "cost_starlight": 262700,
-        "needs": "Spire 9",
-        "gives": "662 Aether an hour; 3 worker slots; holds 12 h"
-      },
-      {
-        "level": 10,
-        "cost_starlight": 591200,
-        "needs": "Spire 10",
-        "gives": "894 Aether an hour; 3 worker slots; holds 12 h"
       }
     ]
   },
@@ -655,31 +625,31 @@
         "level": 1,
         "cost_starlight": 350,
         "needs": "Spire 1",
-        "gives": "effect +0%, resets 10 s"
+        "gives": "effect +0%, its own reset (10.3)"
       },
       {
         "level": 2,
         "cost_starlight": 880,
         "needs": "Spire 3",
-        "gives": "effect +15%, resets 9 s"
+        "gives": "effect +15%, reset 10% shorter"
       },
       {
         "level": 3,
         "cost_starlight": 2190,
         "needs": "Spire 5",
-        "gives": "effect +30%, resets 8 s"
+        "gives": "effect +30%, reset 20% shorter"
       },
       {
         "level": 4,
         "cost_starlight": 5500,
         "needs": "Spire 7",
-        "gives": "effect +45%, resets 7 s"
+        "gives": "effect +45%, reset 30% shorter"
       },
       {
         "level": 5,
         "cost_starlight": 13700,
         "needs": "Spire 9",
-        "gives": "effect +60%, resets 6 s"
+        "gives": "effect +60%, reset 40% shorter"
       }
     ]
   },

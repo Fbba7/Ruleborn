@@ -70,6 +70,15 @@ class Policy:
     ward_answer = "through"
     #: The answer on a v3.2 island (island.RULES), where it differs.
     ward_answer_v32 = None
+    #: The answer on a v3.4 island, where it differs.
+    ward_answer_v34 = None
+    #: The answer under G18's generous reading of v3.4, where a ward ignores
+    #: a crew member walking to disarm it, where it differs.
+    ward_answer_approach = None
+    #: What it does about a ward it meant to go round and cannot: walk
+    #: through it, or — when the ward will not fire at it on the way —
+    #: disarm it.
+    no_way_round = "through"
 
     def __init__(self) -> None:
         self.crew_decisions = 0
@@ -172,7 +181,22 @@ class Policy:
         a = self.ward_answer
         if ward.rules == "v3.2" and self.ward_answer_v32 is not None:
             a = self.ward_answer_v32
+        elif ward.approach and self.ward_answer_approach is not None:
+            a = self.ward_answer_approach
+        elif ward.rules == "v3.4" and self.ward_answer_v34 is not None:
+            a = self.ward_answer_v34
         return a.get(ward.kind, "around") if isinstance(a, dict) else a
+
+    def _when_no_way_round(self, ward) -> str:
+        """The answer to a ward this crew would go round and cannot.
+
+        Walking through is the default. `no_way_round = "disarm"` disarms
+        instead where the ward will not fire on the way (G18's reading), and
+        otherwise still walks through, since a disarmer that sets the ward off
+        getting there has paid for both."""
+        if self.no_way_round == "disarm" and ward.approach:
+            return "disarm"
+        return "through"
 
     def _plan(self, heist, m, goal) -> None:
         """One route, planned once per leg, and the checkpoints along it.
@@ -187,7 +211,9 @@ class Policy:
                 return True
             return self.routes_around_cones and self._threatened(heist, t)
 
-        answers = [a for a in (self.ward_answer, self.ward_answer_v32 or "")
+        answers = [a for a in (self.ward_answer, self.ward_answer_v32 or "",
+                               self.ward_answer_v34 or "",
+                               self.ward_answer_approach or "")
                    for a in (a.values() if isinstance(a, dict) else (a,))]
         rounds = "around" in answers
         avoid = avoid_tile if (self.routes_around_cones or rounds) else None
@@ -298,12 +324,14 @@ class Policy:
                     if w:
                         w.disarmed = True
                         heist.wards_disarmed += 1
+                    m.disarming = None
                     self._plan(heist, m, goal)
                 continue
             here = next((w for w in island.wards if (w.x, w.y) == tile
                          and not w.disarmed and self._answer(w) == "disarm"), None)
             if here is not None and self.commitment.get((i, "ward"), (None,))[0] == "disarm":
                 m.disarm_ticks = here.disarm_ticks
+                m.disarming = here
                 continue
             ward = self._live_ward(heist, m.path[0]) if m.path else None
             if ward is not None:
@@ -311,7 +339,7 @@ class Policy:
                 # spend the time to disarm it.
                 choice = self._answer(ward)
                 if choice == "around" and (i, id(ward)) in self._no_way_round:
-                    choice = "through"
+                    choice = self._when_no_way_round(ward)
                 decisions += self._decide(heist, (i, "ward"), (choice, ward.kind), 3)
                 if choice == "disarm" and ward.rules == "v3.2":
                     m.disarm_ticks = ward.disarm_ticks
@@ -319,6 +347,7 @@ class Policy:
                 if choice == "disarm":
                     # Onto its tile first: a disarmer stands on the ward.
                     m.path = path_to(island, tile, (ward.x, ward.y)) or m.path
+                    m.disarming = ward
                     choice = "through"
                 if choice == "around":
                     before = tuple(m.path)
@@ -330,7 +359,8 @@ class Policy:
                     # re-planning every tick, which on-tile wards almost never
                     # reached and v3.3's reach, covering every tile beside a
                     # Vault, reached on most islands.
-                    self.commitment[(i, "ward")] = ("through", ward.kind)
+                    self.commitment[(i, "ward")] = (self._when_no_way_round(ward),
+                                                    ward.kind)
                     self._no_way_round.add((i, id(ward)))
                     m.path = m.path or list(before)
 
@@ -364,7 +394,7 @@ class Policy:
         if not heist.vault_open:
             if heist.tick % WIND_UP_TICKS == 0:
                 damage = ROLE_POWER[m.role] * (2 if m.role == "Breaker" else 1)
-                if heist.rules == "v3.3" and heist.crackers() >= 2:   # §11.1, assist
+                if heist.rules != "v3.2" and heist.crackers() >= 2:   # §11.1, assist
                     damage = damage * ASSIST[0] // ASSIST[1]
                 heist.vault_health -= int(damage * heist.sheet.factor("structure_damage"))
                 if heist.vault_health <= 0:
@@ -462,9 +492,23 @@ class Optimal(Competent):
     #: v3.3's disarm is fifteen seconds on the ward's own tile, where the ward
     #: fires at its disarmer (G16). A Snare's freeze and a Well's pull cost
     #: seconds, so those are disarmed; a Glare shows the crew to every guard,
-    #: so the optimal crew goes round it.
+    #: so the optimal crew goes round it. v3.4's sensor ignores its disarmer
+    #: once it stands on the tile, and a Glare's 2 tiles still fire on the
+    #: walk there (G18), so the answer holds.
     ward_answer = {"Time Snare": "disarm", "Gravity Well": "disarm",
                    "Lantern Glare": "around"}
+    #: v3.4 (D59): measured, going round beats disarming every kind. Fifteen
+    #: seconds on a tile is dearer than the few tiles round a sensor — at
+    #: realm 3 with the crack noise off the crew that disarmed succeeded
+    #: 10.0% of the time and the one that went round 52.5% (n=40) — so the
+    #: answers above, set for v3.2's four-second disarm, left this crew
+    #: below the competent one. The v3.3 answers stay, so D57's, F33's and
+    #: F34's numbers reproduce.
+    ward_answer_v34 = "around"
+    #: G18's generous reading: nothing fires on the walk to a ward being
+    #: disarmed, so one with no way round it is disarmed, not walked into.
+    ward_answer_approach = "around"
+    no_way_round = "disarm"
     #: v3.2: spec/wards.md put the smash-or-disarm crossover at ward level 3.
     #: Disarming was silent where going around costs distance and exposure, so
     #: the optimal crew paid the seconds.

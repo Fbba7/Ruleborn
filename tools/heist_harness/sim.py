@@ -53,6 +53,9 @@ SKIFF_TICKS = SKIFF_OUTER_SECONDS * TPS  #: §5.4, an outer realm
 #: §12.6's "100 suspicion" and never applied it, so the harness had no crack
 #: noise at all (D56).
 CRACK_NOISE_TICKS = CRACK_NOISE_SECONDS * TPS
+from ..design_facts import CRACK_REACH_METRES            # 12.6, v3.4 (brief 37)
+#: v3.3's call reached "every guard in the Heart": a reach no island exceeds.
+WHOLE_HEART = 10 ** 6
 #: §12.8 (v3.3): a takedown takes two seconds and ends in a knockout if the
 #: guard is still Unaware. §12.8 does not say whether a guard walking a patrol
 #: keeps walking while it is taken down; if it did, no patrol could ever be
@@ -127,6 +130,10 @@ class Member:
     #: seconds it is (§12.8, v3.3).
     takedown: int | None = None
     takedown_ticks: int = 0
+    #: The ward it has chosen to disarm and is walking to or standing on
+    #: (§10.3, v3.4: "while it disarms, the ward's sensor ignores that crew
+    #: member").
+    disarming: object = None
 
     @property
     def capacity(self) -> int:
@@ -269,7 +276,8 @@ class Heist:
                  realm_level: int = 3, crossing=(), sheet=None, response: bool = True,
                  response_model: str = "published",
                  clock_pct: int = 100, exposed_pct: int = 100,
-                 crack_noise: bool = True):
+                 crack_noise: bool = True, crack_reach: int | None = None,
+                 crack_seconds: int | None = None, disarm_approach: bool = False):
         """`crossing` is the outer realms the crew walks through on the way in.
 
         §12.6 splits a heist into Entry, Crossing, Vault and Escape, and gives the
@@ -302,7 +310,21 @@ class Heist:
         #: Which document's wards the Heart was built to (island.RULES). The
         #: v3.3 rules the harness also plays by — the assist bonus — follow
         #: it, so a v3.2 island is the v3.2 heist it was measured on.
-        self.rules = getattr(island, "rules", "v3.3")
+        self.rules = getattr(island, "rules", "v3.4")
+        #: §12.6 (v3.4): the crack calls the guards within this many metres of
+        #: the Vault by the walking path. None is the rules' own — 5 m under
+        #: v3.4, the whole Heart before it — and brief 37's sweep sets it.
+        self.crack_reach = (crack_reach if crack_reach is not None
+                            else WHOLE_HEART if self.rules in ("v3.2", "v3.3")
+                            else CRACK_REACH_METRES)
+        self._heard_from_vault = None
+        #: How often the call sounds: §12.6's five seconds, or brief 37's
+        #: fallback of ten with the whole Heart.
+        self.crack_every = (crack_seconds * TPS if crack_seconds
+                            else CRACK_NOISE_TICKS)
+        for isl in self.islands:
+            for w in isl.wards:
+                w.approach = disarm_approach
         self.vault_opened_at = None
         self.crack_started_at = None
         #: Exposed per-instance so the two dials can be swept without editing
@@ -555,6 +577,14 @@ class Heist:
             for m in self.crew:
                 if m.out or m.caught:
                     continue
+                # §10.3 (v3.4, G16): "while it disarms, the ward's sensor
+                # ignores that crew member" — on the ward's tile, having chosen
+                # to. G18's generous reading ignores the walk there too.
+                if w.rules not in ("v3.2", "v3.3") and m.disarming is w:
+                    here = (m.x // U, m.y // U) == (w.x, w.y)
+                    going = bool(m.path) and m.path[-1] == (w.x, w.y)
+                    if here or (w.approach and going):
+                        continue
                 # §10.3 (v3.3): Time Snare on its tile, Gravity Well within 3
                 # tiles and Lantern Glare within 2 — tile centres, straight line.
                 cx, cy = w.x * U + U // 2, w.y * U + U // 2
@@ -703,21 +733,49 @@ class Heist:
                    if not (m.out or m.caught or m.down_ticks or self.escaping)
                    and max(abs(m.x // U - vx), abs(m.y // U - vy)) <= 1)
 
+    def _within_crack_reach(self) -> set:
+        """The tiles within the crack's reach of the Vault by the walking path
+        (§12.6, v3.4): breadth-first from the Vault over walkable tiles, the
+        same four-neighbour graph the crew routes on. One tile is one metre
+        (§21.1)."""
+        if self._heard_from_vault is None:
+            island = self.target
+            start = tuple(island.vault)
+            seen, frontier = {start: 0}, [start]
+            while frontier:
+                nxt = []
+                for cur in frontier:
+                    if seen[cur] >= self.crack_reach:
+                        continue
+                    for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
+                        n = (cur[0] + dx, cur[1] + dy)
+                        if n not in seen and island.walkable(*n):
+                            seen[n] = seen[cur] + 1
+                            nxt.append(n)
+                frontier = nxt
+            self._heard_from_vault = set(seen)
+        return self._heard_from_vault
+
     def _crack_noise(self) -> None:
-        """§12.6 (v3.3): every five seconds of cracking, every guard in the
-        Heart hears the Vault and starts Investigating it. A heard event
-        steps a guard up to Investigating and never down, and re-aims one that
-        is already investigating something else."""
+        """§12.6: every five seconds of cracking, the guards within the crack's
+        reach hear the Vault and start Investigating it — v3.4's 5 m by the
+        walking path, v3.3's whole Heart. A heard event steps a guard up to
+        Investigating and never down, and re-aims one that is already
+        investigating something else."""
         if (not self.crack_noise or self.crack_started_at is None or self.vault_open
                 or self.island is not self.target):
             return
         since = self.tick - self.crack_started_at
-        if since <= 0 or since % CRACK_NOISE_TICKS:
+        if since <= 0 or since % self.crack_every:
             return
         vx, vy = self.target.vault
         spot = (vx * U + U // 2, vy * U + U // 2)
+        near = (None if self.crack_reach >= WHOLE_HEART
+                else self._within_crack_reach())
         for g in self.guards:
             if g.down or RANK[g.state] > RANK["investigating"]:
+                continue
+            if near is not None and (g.x // U, g.y // U) not in near:
                 continue
             g.heard, g.target, g.search_ticks = spot, spot, 0
             if g.state != "investigating":

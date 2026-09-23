@@ -64,6 +64,40 @@ pub fn find(grid: &Grid, from: TileIndex, to: TileIndex) -> Option<Route> {
     None
 }
 
+/// How many steps each tile is from walking to `to`, up to `limit`; `None`
+/// beyond it or where no walk exists. §12.6 (v3.4): the crack calls "every
+/// guard within the crack's reach of the Vault, 5 m by the walking path".
+///
+/// Breadth-first backwards from `to`, in §12.18's neighbour order, so a step
+/// counts in the direction it is walked: a tile above a drop can reach the
+/// tile below it and not the other way round. `to` itself may be impassable —
+/// the Vault is — and its neighbours are then one step from it.
+pub fn steps_to(grid: &Grid, to: TileIndex, limit: u16) -> Vec<Option<u16>> {
+    let mut steps: Vec<Option<u16>> = vec![None; grid.len()];
+    let mut frontier = std::collections::VecDeque::with_capacity(grid.len());
+    steps[to as usize] = Some(0);
+    frontier.push_back(to);
+    while let Some(tile) = frontier.pop_front() {
+        let here = steps[tile as usize].unwrap_or(0);
+        if here >= limit {
+            continue;
+        }
+        for neighbour in grid.neighbours(tile).into_iter().flatten() {
+            let walks = if tile == to {
+                grid.at(neighbour).passable()
+            } else {
+                grid.at(neighbour).passable() && grid.can_step(neighbour, tile)
+            };
+            if steps[neighbour as usize].is_some() || !walks {
+                continue;
+            }
+            steps[neighbour as usize] = Some(here + 1);
+            frontier.push_back(neighbour);
+        }
+    }
+    steps
+}
+
 fn walk_back(came_from: &[Option<TileIndex>], from: TileIndex, to: TileIndex) -> Route {
     let mut route = Vec::new();
     let mut at = to;

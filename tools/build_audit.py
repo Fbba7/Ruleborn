@@ -18,8 +18,8 @@ from design_doc import VERSION as DOC_VERSION                     # noqa: E402
 from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,
                             status as reg_status,
                             GATE_OWNER,  # noqa: E402
-                            REGISTER, RESEARCH, SETTLED, V3, V31, V32, V33, FOUND_IN_V33, side_of,
-                            status_before_v33)
+                            REGISTER, RESEARCH, SETTLED, V3, V31, V32, V33, V34,
+                            FOUND_IN_V33, FOUND_IN_V34, side_of, status_before_v34)
 
 from build_stamp import stamped  # noqa: E402
 
@@ -713,6 +713,10 @@ def item_html(item: dict) -> str:
     v33 = V33.get(item["id"], {})
     v31_html += (f'<p class="v3 v33"><span class="vlabel">v3.3</span> {v33["note"]}</p>'
                  if v33.get("note") else "")
+    # and v3.4 a fifth.
+    v34 = V34.get(item["id"], {})
+    v31_html += (f'<p class="v3 v33"><span class="vlabel">v3.4</span> {v34["note"]}</p>'
+                 if v34.get("note") else "")
     return f"""
       <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
                data-kind="{item['kind']}" data-status="{state}"
@@ -754,9 +758,9 @@ def build() -> str:
     done_count = sum(1 for i in REGISTER if status_of(i) in ("done", "adopted"))
     fixed_count = sum(1 for i in REGISTER if status_of(i) == "fixed")
     touched = sum(1 for i in REGISTER if i["id"] in V3)
-    answered = [k for k in V33 if status_before_v33(k) not in SETTLED]
-    v33_closed = sum(1 for k in answered if V33[k]["status"] != "open")
-    v33_open = ", ".join(sorted(k for k in answered if V33[k]["status"] == "open"))
+    answered = [k for k in V34 if status_before_v34(k) not in SETTLED]
+    v34_closed = sum(1 for k in answered if V34[k]["status"] != "open")
+    v34_open = ", ".join(sorted(k for k in answered if V34[k]["status"] == "open"))
     new_in_v3 = sum(1 for i in REGISTER if i["id"] in FOUND_IN_V3)
     today = datetime.date.today().strftime("%d %B %Y")
 
@@ -1320,28 +1324,32 @@ def build() -> str:
       still needs fixing in the document. Section marks point into the design
       document; the repository is the source of truth and this page is generated
       from it.</p>
-    <p class="lede">Read against <strong>version {DOC_VERSION}</strong>. Four
+    <p class="lede">Read against <strong>version {DOC_VERSION}</strong>. Five
       versions have now answered this register, and each item carries what each
       one did, as a note per version beneath it. {fixed_count} items are fixed
       in the document itself &mdash; including where a fix stopped short.</p>
-    <p class="lede"><strong>v3.3 closes {v33_closed} of the {len(answered)} items that
-      were open against v3.2.</strong> Each was read against the built document by
-      section and line rather than taken from &sect;31.9's own list, and every
-      check that tracked one was re-run; where v3.3 decided differently from the
-      recommendation, the note says so. Nine stay open: two v3.3 never claimed,
-      and seven it claimed and only partly did &mdash; {v33_open}.<br><br>Reading
-      it against itself found {len(FOUND_IN_V33)} more: one section giving a
-      ward's health as 500 and as 550, a Codex finished on day 69 and on day 234,
-      and upgrade pacing at six heists a day for a player who makes four. Porting
-      v3.3's rules into the simulation and the harness (D56) found the largest:
-      <strong>F32</strong>, five seconds of cracking calling every guard in the
-      Heart to a crew that cannot crack in five. Porting its wards (D57) found
-      two behind it: one Lantern Glare outweighs a realm of other wards
-      (<strong>F33</strong>), and &sect;13.2's hold table was measured at one
-      guard post where &sect;5.2 gives two and three (<strong>F34</strong>).
-      Starting the server that validates heists (T3.3) found four settlement
-      terms the document leaves open (<strong>G17</strong>) and an economy
-      model still minting from v3.2's raid base (<strong>D58</strong>).</p>
+    <p class="lede"><strong>v3.4 closes {v34_closed} of the {len(answered)} items it
+      answers.</strong> Each was read against the built document by section and
+      line rather than taken from &sect;31.9's own list, every check that tracked
+      one was re-run, and the rules it changed were ported to the simulation and
+      the harness the same day. Two stay open, both waiting on the same
+      economy re-run &mdash; {v34_open} &mdash; and that re-run is this
+      repository's to do (<strong>D58</strong> first). The four items registered
+      after v3.4's snapshot (F33, F34, G17, D58) are not in its list.<br><br>Reading
+      it against itself, and running the sweep it names, found
+      {len(FOUND_IN_V34)} more. <strong>F35</strong>: brief 37's rule for the
+      crack's reach cannot choose one, because with no call at all the depth
+      gate fails from two realms up and every realm level holds far above its
+      band &mdash; so its fallback would delete the call on evidence that says
+      nothing about the call; read on its own, every metre of reach costs depth,
+      and the 5 m shipped removes it. <strong>G18</strong>: a ward ignores its
+      disarmer only while it stands on the tile, so a Well or a Glare still fires
+      on the walk there. <strong>C40</strong>: one sentence &sect;31.3's own
+      change made false. And <strong>D59</strong>, the harness's own: its
+      optimal crew disarmed what v3.3 made a fifteen-second job and played below
+      the competent crew, which every depth figure on v3.3's wards measured.
+      <br><br>Before that, v3.3 closed 55 of 64; reading v3.3 against itself and
+      porting it found F32 to F34, and the server found G17 and D58.</p>
     <p class="lede"><strong>{edit_count} edits are drafted</strong> across
       {edit_items} items &mdash; the section to open, the sentence as it stands
       today, and what to put there. Every quoted sentence is checked against the

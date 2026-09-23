@@ -53,8 +53,9 @@ RULE_SHEET = {
     "noise_radius", "alarm_range",
     "structure_damage", "damage",
     # Health, by whom it changes (F31): one name for two rules is a special case
-    # the simulation would have to resolve per law.
-    "ally_regen", "structure_regen", "touch_damage", "unlit_drain",
+    # the simulation would have to resolve per law. v3.4's rule sheet version 2
+    # made the same split and named the four as these are named (§7.3).
+    "ally_healing", "structure_regrowth", "touch_damage", "unlit_drain",
     "regrow_seconds", "hide_behind_walls", "still_is_invisible",
     "climb_levels", "leap_obstacles", "carry_weight",
 }
@@ -145,14 +146,14 @@ EFFECTS = {
 
     # -- Life --------------------------------------------------------------
     "bloom": (["parameter"], {"regrow_seconds": 10}, [], ""),
-    "kinship": (["parameter"], {"ally_regen": 0.015}, [], ""),
+    "kinship": (["parameter"], {"ally_healing": 0.015}, [], ""),
     "wild_paths": (["event"], {"crew_speed": 1.20}, [],
                    "Tiles changing after three crossings is per-tile state that "
                    "accumulates during the run."),
     "flock": (["entity"], {}, [], "Six wandering bodies that block and bleat."),
     "spores": (["entity"], {"crew_speed": 0.50}, [], "Drifting clouds with position."),
     "thorns": (["parameter"], {"touch_damage": 0.05}, [], ""),
-    "regrowth": (["parameter"], {"structure_regen": 0.02}, [], ""),
+    "regrowth": (["parameter"], {"structure_regrowth": 0.02}, [], ""),
     "swarm_birth": (["event", "attribute"], {}, [],
                     "Splitting a guard into two creates characters mid-run. "
                     "§12.21 fixes the attribute half and not this half."),
