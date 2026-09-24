@@ -169,20 +169,20 @@ def raid_worth(days: int = 1000) -> str:
     first = rw.smallest_passing_base(cfg, days, first_day_only=True)
     every = rw.smallest_passing_base(cfg, days)
     lines += ["",
-              f"  Smallest hundred that passes, on the day each level arrives "
-              f"(§9.6's reading, §10.2's build days): {first:,}",
-              f"  Smallest hundred that passes on every day at every level:"
-              f"                    {every:,}",
-              f"  The document ships {data.HAUL_BASE:,}. §32.9: \"if an attempt fails at "
-              "any level, the base", "  rises until it passes, and the pacing is recomputed.\""]
-    # What §12.22's spread would move, were the model to carry a population.
-    low, same, up = data.DIFFICULTY[2], data.DIFFICULTY[0], (data.DIFFICULTY[0]
-                                                             + data.DIFFICULTY[1]) / 2
-    spread = (low / data.HAUL_GROWTH + same + up * data.HAUL_GROWTH) / 3
-    lines += ["", "  The target is §12.22's median offer, at the raider's own Vault level. "
-              "A target drawn", "  evenly from one Vault level below, level and one above "
-              f"(difficulty {low}, {same}, {up:.1f})", f"  would pay {spread:.3f}× that — "
-              "so the median is the conservative reading."]
+              f"  Smallest hundred that passes on the day each Vault level arrives: {first:,}",
+              f"  Smallest hundred that passes on every day at every level:        {every:,}",
+              f"  The document ships {data.HAUL_BASE:,}, from its own arithmetic: at Vault level 2 a "
+              "crew of four",
+              "  and \"about 109 an hour a worker\" — the three level-3 producers' mean.",
+              "",
+              "  Both results are this model's: they move with who staffs which producer,",
+              "  when the Vault is upgraded and whether posts are staffed (F36), so they",
+              "  are a range to decide against, not a value §32.9's rule can set.",
+              "",
+              "  The target is at the raider's own Vault level, difficulty 1.0: the",
+              "  \"clean same-level haul\" §9.6's table and check are indexed by. §12.22",
+              "  matches on Keeper level, not Vault level, so no spread of Vault levels",
+              "  follows from it."]
     return "\n".join(lines)
 
 

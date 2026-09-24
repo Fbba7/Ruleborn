@@ -5,7 +5,7 @@
 //   POST /v1/session             {"credential": …}          → {account, token}
 //   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
-//   POST /v1/leases              {"bundle": hash}            → the lease
+//   POST /v1/leases              {"bundle": hash, "owner"?}  → the lease
 //   POST /v1/heists/:token       replay bytes                → what was settled
 //   GET  /v1/balance                                         → {starlight, essence}
 //   GET  /v1/targets                                         → {band: list hash}
@@ -59,8 +59,8 @@ export function handler(service) {
         }
         case "POST /v1/leases": {
           const attacker = who();
-          const { bundle } = await request.json();
-          return json(service.lease(attacker, bundle), 201);
+          const { bundle, owner = null } = await request.json();
+          return json(service.lease(attacker, bundle, owner), 201);
         }
         case "POST /v1/heists": {
           const attacker = who();

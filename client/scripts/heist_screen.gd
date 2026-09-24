@@ -80,7 +80,7 @@ func begin_online(url: String) -> String:
 	if target.has("error"):
 		return str(target["error"])
 	var bundle := await server.fetch(target["bundle"])
-	lease = await server.lease(target["bundle"])
+	lease = await server.lease(target["bundle"], target["owner"])
 	if lease.has("error") or bundle.is_empty():
 		return str(lease.get("error", "no bundle"))
 	if not begin(str(lease["seed"]), int(lease["ticks"]), CREW, bundle):

@@ -66,6 +66,10 @@ CREATE TABLE IF NOT EXISTS leases (
   token       TEXT PRIMARY KEY,
   attacker    TEXT NOT NULL REFERENCES accounts(id),
   bundle      TEXT NOT NULL REFERENCES snapshots(bundle),
+  -- Whose island is raided. A snapshot is keyed by its bytes, so two players
+  -- who publish the same island share one; the defender is the player whose
+  -- island the lease was taken on, not whoever published the bytes first.
+  defender    TEXT NOT NULL REFERENCES accounts(id),
   seed        TEXT NOT NULL,
   ticks       INTEGER NOT NULL,
   rules       TEXT NOT NULL,

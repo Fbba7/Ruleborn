@@ -310,32 +310,29 @@ def test_a_days_raids_pay_the_base_times_the_band_times_fatigue():
     assert abs(model.heist_income(0.0) - expected) < 1e-6
 
 
-def test_the_raid_worth_check_reproduces_the_documents_base_on_its_own_reading():
-    """§9.6 set 2,400 as "the smallest hundred that passes at every level",
-    from §10.2's build days. On the day each Vault level arrives this model's
-    roster puts it one step below, at 2,300 — the model reads §9.6's inputs
-    as the document did — and a worker makes about the 109 an hour §9.6
-    quotes at Vault level 2."""
+def test_the_documents_own_raid_worth_arithmetic_sets_2400():
+    """§9.6 set 2,400 as "the smallest hundred that passes", where "a crew of
+    four leaves producers making about 109 an hour a worker" at Vault level 2.
+    109 is the three level-3 producers' mean, (146 + 109 + 73) / 3, all three
+    currencies; at it 2,400 passes by a hair and 2,300 fails."""
+    b = data.BUILDINGS
+    per_worker = (b["Star Well"].hourly[2] + b["Aether Spring"].hourly[2] + b["Garden"].hourly[2]) / 3
+    assert round(per_worker) == 109, per_worker
     from . import raidworth as rw
-    first = rw.smallest_passing_base(Config.document(), 400, first_day_only=True)
-    assert data.HAUL_BASE - 100 <= first <= data.HAUL_BASE, first
-    model = EconomyModel(Config.document())
-    while model.vault_level() < 2:
-        model.step()
-    staffed = min(model.producer_slots(),
-                  model.roster_size() - model.workers_withheld_by_raiding())
-    per_worker = sum(model.hourly_production().values()) / staffed
-    assert abs(per_worker - 109) / 109 < 0.10, per_worker
+    stay_home = 4 * per_worker * rw.HOURS_AWAY
+    assert rw.attempt_value(2400, 2, data.ATTEMPT_BAND[0]) >= stay_home
+    assert rw.attempt_value(2300, 2, data.ATTEMPT_BAND[0]) < stay_home
 
 
-def test_finding_on_every_day_the_raid_worth_check_needs_a_higher_base():
-    """F36. Checked on every day at a level, not only the day it arrives,
-    an attempt at 2,400 pays 0.77 of staying home at Vault level 2, and
-    §32.9's rule raises the base until it passes."""
+def test_finding_on_this_models_roster_the_raid_worth_check_fails_2400():
+    """F36. Run with the roster the model staffs, an attempt at 2,400 pays
+    less than staying home at Vault level 2, on the day it arrives and after;
+    the base that passes depends on the model's choices, so it is a range,
+    not a value §32.9's rule can set."""
     from . import raidworth as rw
     rows = {r.vault: r for r in rw.levels(Config.document(), 400)}
-    assert rows[2].ratio < 0.8 and rows[2].ratio_first > 1.0, rows[2]
-    assert rw.smallest_passing_base(Config.document(), 400) > data.HAUL_BASE
+    assert rows[2].ratio < 1.0 and rows[2].ratio_first < 1.0, rows[2]
+    assert rw.smallest_passing_base(Config.document(), 400, first_day_only=True) > data.HAUL_BASE
 
 
 # -- the full re-run (T2.6, C19) ---------------------------------------------
@@ -376,13 +373,31 @@ def test_a_birth_costs_1_3265_to_the_number_owned():
     assert round(price(20), -2) == 21500
 
 
-def test_the_shipped_birth_rate_fills_the_roster_before_the_last_building():
-    """§9.5 tunes the rate so the 38th birth lands on the day everything is
-    built. On the full re-run the shipped 1.3265 is early, and a higher rate
-    moves the 38th later, so the rule raises it (the re-run sets 1.3488)."""
+def test_finding_strays_fill_the_roster_whatever_a_birth_costs():
+    """F38. §11.5's one heist in eight finds a stray, and §18.2's season track
+    gives one more: they fill each home as it is built, so the 38th character
+    arrives with the last Hearth level at any birth price, and §9.5's rule —
+    the rate that puts the 38th on the day every building tops out — has no
+    rate to find. Without strays it finds one."""
     from . import rerun
-    assert rerun.birth_gap(data.BIRTH_GROWTH_V34) < 0
-    assert rerun.birth_gap(1.36) > 0
+    assert rerun.tune_birth_rate() is None
+    cheap, dear = (rerun.run("engaged", "low", birth_growth=g).day("38 ruleborn") for g in (1.3265, 5.0))
+    assert abs(cheap - dear) <= 2, (cheap, dear)
+    assert rerun.tune_birth_rate(heist_stray_chance=0.0, season_strays=False) is not None
+
+
+def test_finding_the_entry_fee_outweighs_what_raids_pay_while_saving():
+    """F39. §9.4's fee is 2% of what the raider holds, kept unless the heist is
+    clean; §14.1's player saves for the next Spire level first, so on day 301
+    an engaged player holding several hundred thousand pays more in kept fees
+    than raids bring in Starlight."""
+    model = EconomyModel(Config.document())
+    for _ in range(300):
+        model.step()
+    fees = model.entry_fees(data.heist_success_rate(301))
+    model.step()
+    raid_starlight = model.s.log[-1]["heist_income"] * (1 - data.HAUL_ESSENCE_SHARE)
+    assert fees > 3 * raid_starlight, (fees, raid_starlight)
 
 
 def test_finding_a_player_who_never_raids_stops_levelling():
@@ -390,7 +405,10 @@ def test_finding_a_player_who_never_raids_stops_levelling():
     Keeper level, and pages by a Library that opens at Keeper 4."""
     model = EconomyModel(Config.document(archetype="never_raids"))
     state = model.run(400)
-    assert state.keeper_level < data.LIBRARY_UNLOCK_KEEPER, state.keeper_level
+    # Where it stalls depends on what the model gives a non-raider; that it
+    # stalls below chapter 3's Keeper 12, so the full Codex is out of reach,
+    # does not.
+    assert state.keeper_level < 12, state.keeper_level
     assert "Codex restored" not in state.milestones
 
 

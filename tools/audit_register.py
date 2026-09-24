@@ -55,7 +55,9 @@ FOUND_IN_V33 = frozenset({"C34", "C35", "C36", "C37", "C38", "C39", "D56",
 FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # found running the full re-run v3.4 hands over,
                           # and building the server's caps
-                          "F36", "F37", "G19", "G20", "G21"})
+                          "F36", "F37", "G19", "G20", "G21",
+                          # and by the adversarial review of that re-run
+                          "F38", "F39", "C41", "C42", "G22", "D60"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5040,21 +5042,19 @@ dict(id="D58", kind="deviation", severity="significant", status="done",
          "<br><br><strong>Done.</strong> <code>Config.document()</code> mints "
          "from <code>design_facts.HAUL_BASE</code> and "
          "<code>ATTEMPT_BAND</code> (0.1222 and 0.1698, both read back from "
-         "§9.6), keyed to the target\u2019s Vault level at §12.22\u2019s median "
-         "offer \u2014 the raider\u2019s own level, difficulty and richness 1.0; a "
-         "target drawn evenly from a level either side would pay 6% more, so "
-         "the median is the conservative reading \u2014 with fatigue, and half "
-         "of each haul in Essence (G17). §9.6\u2019s 46 to 64 days is page "
-         "arithmetic the model reproduces (four raids are worth 3.19). Porting "
-         "it found the transcription behind the text in three more places, all "
-         "now read from <code>content/</code>: the Aether Spring stops at level "
-         "5, wards and posts are counted by realm level, and the Library is a "
-         "building.<br><br>The raid-worth check is <code>python3 -m "
-         "tools.economy_model raidworth</code>. On §9.6\u2019s own reading, the "
-         "day each Vault level arrives, the smallest passing hundred is 2,300, "
-         "one step under the shipped 2,400, and a worker makes 104 an hour at "
-         "Vault level 2 against §9.6\u2019s 109: the model reads §9.6\u2019s "
-         "inputs as the document did. Read on every day it is 3,200 (F36)."),
+         "§9.6), with fatigue, and half of each haul in Essence (G17); an "
+         "adversarial review reproduced the arithmetic exactly over 400 days at "
+         "both edges. V is the raider\u2019s own Vault level, difficulty and "
+         "richness 1.0: the \u201cclean same-level haul\u201d §9.6\u2019s table "
+         "and raid-worth check are indexed by. That is the same arithmetic as the "
+         "old raider-keyed reading, and it is §9.6\u2019s convention, not "
+         "something §12.22 gives \u2014 §12.22 matches on Keeper level, so the "
+         "matchmaker\u2019s spread this item\u2019s recommendation asked for has no "
+         "Vault-level form to take. Porting found the transcription behind the "
+         "text in three places, now read from <code>content/</code>: the Aether "
+         "Spring stops at level 5, wards and posts are counted by realm level, "
+         "and the Library is a building. The raid-worth check is "
+         "<code>python3 -m tools.economy_model raidworth</code> (F36)."),
 
 # Found reading v3.4
 
@@ -5200,64 +5200,71 @@ dict(id="F35", kind="finding", severity="design", status="open",
 # Found running the full re-run (T2.6)
 
 dict(id="F36", kind="finding", severity="significant", status="open",
-     title="The raid-worth check passes on the day each Vault level arrives "
-           "and fails on the days after, which sets the base at 3,200",
-     refs=["9.6", "32.9", "10.2", "14.1"],
+     title="Run on the model\u2019s roster, the raid-worth check fails 2,400, "
+           "and the base it needs depends on choices the document does not make",
+     refs=["9.6", "32.9", "10.2", "14.1", "9.2"],
      body="§9.6: <em>\u201cat every Vault level, an average attempt pays at "
           "least what the same characters would have produced working over the "
-          "heist and its rest\u201d</em>, computed <em>\u201cfrom 10.2\u2019s "
-          "producer ladders and build days\u201d</em> \u2014 the day each level "
-          "arrives. A player then stays at that Vault level for weeks while "
-          "the producers under it grow. Run with the roster the model staffs "
-          "(<code>python3 -m tools.economy_model raidworth</code>), an attempt "
-          "at 2,400 pays 1.05\u00d7 staying home on the day Vault level 2 "
-          "arrives (day 8) and 0.77\u00d7 on day 21, a crew of four at 143 an "
-          "hour each. Every other level passes on every day, level 1 by "
-          "1.09\u00d7 at worst and levels 3 to 10 by 1.4\u00d7 to "
-          "6\u00d7. So the check holds on the day it is computed and fails on "
-          "the days a player at Vault level 2 decides whether to raid.<br><br>"
-          "§32.9\u2019s rule \u2014 <em>\u201cif an attempt fails at any level, "
-          "the base rises until it passes\u201d</em> \u2014 then sets 3,200. The "
-          "re-run publishes at the shipped 2,400 and prints the 3,200 row beside "
-          "it: an engaged player\u2019s Keeper 40 moves from day 332\u2013343 "
-          "to 322\u2013334, and everything built from 621\u2013641 to "
-          "600\u2013625.",
-     rec="Say which day the check is read on. <strong>Every day</strong> is "
-         "the choice the sentence describes \u2014 a raid that pays less than "
-         "staying home is skipped whichever day it is \u2014 and it sets 3,200, "
-         "at which the re-run is re-published with one argument. <strong>The "
-         "arrival day</strong> keeps 2,400, and §9.6\u2019s check sentence "
-         "should say so, so the next re-run does not read it the other way.",
-     measured="test_finding_on_every_day_the_raid_worth_check_needs_a_higher_base"),
+          "heist and its rest\u201d</em>, and §32.9 hands the re-check to the "
+          "economy model: <em>\u201cif an attempt fails at any level, the base "
+          "rises until it passes\u201d</em>. The document\u2019s own derivation is "
+          "sound on its own terms: \u201cabout 109 an hour a worker\u201d is the "
+          "three level-3 producers\u2019 mean, (146 + 109 + 73) / 3, and at a "
+          "crew of four 2,400 passes by a hair where 2,300 fails.<br><br>Run on "
+          "the roster the model actually staffs "
+          "(<code>python3 -m tools.economy_model raidworth</code>), 2,400 fails "
+          "at Vault levels 1 and 2: the smallest passing hundred is 2,900 on the "
+          "day each level arrives and 4,600 on every day at a level, binding at "
+          "Vault level 1 (0.52\u00d7 on day 15), because the player opens realms "
+          "and grows producers before the Vault. An adversarial review showed "
+          "both numbers move with choices §14.1 does not make: which producer a "
+          "worker staffs, when the Vault is bought, whether posts are staffed, "
+          "and whether the crew\u2019s cost is an average or a margin. Under the "
+          "alternatives the first re-run tried, the base came out anywhere from "
+          "2,500 to 3,700. Every one of them fails 2,400, so the direction holds "
+          "and the value does not.",
+     rec="Say what the check is computed against: which roster (the one §10.2\u2019s "
+         "build days imply, or the one the model staffs), which staffing order, "
+         "and whether a posted guard counts as working. Until then the re-run "
+         "publishes at 2,400 and prints the alternatives beside it; §32.9\u2019s "
+         "rule cannot set a value while its inputs are choices.",
+     measured="test_finding_on_this_models_roster_the_raid_worth_check_fails_2400; "
+              "test_the_documents_own_raid_worth_arithmetic_sets_2400"),
 
 dict(id="F37", kind="finding", severity="design", status="open",
-     title="A player who never raids stops levelling in the first week, so "
-           "never reaches the Library the design calls their floor",
-     refs=["14.4", "14.2", "10.4", "13.3", "7.6"],
+     title="A player who never raids stops levelling below Keeper 12, so never "
+           "reaches the full Codex §14.4 prices for them",
+     refs=["14.4", "14.2", "10.4", "13.3", "7.6", "12.10"],
      body="§14.4: <em>\u201cA player who never raids earns the Library alone, "
           "which is the floor the whole design rests on (13.3)\u201d</em> \u2014 "
-          "about 195 days to the full Codex and 80 to the launch 24. §14.2 "
-          "gives Keeper experience four sources: successful heists, foiled "
-          "heists, spending (1 for every 40 Starlight) and restoring laws. A "
-          "player who never raids has the last two. The Library opens at "
-          "Keeper level 4 and pages come from nowhere else, so restoring is "
-          "shut until then; and spending is capped by the Spire, whose level 2 "
-          "needs Keeper 5. Run through the re-run\u2019s model, that player buys "
-          "everything Spire level 1 allows in the first week and stops at "
-          "Keeper 2, 12.5 experience short of 3, for good: no Library, no law "
-          "restored, no second Spire level.<br><br>Giving them §14.4\u2019s "
-          "daily goals as well (about 2 pages a day) moves the stall without "
-          "removing it. The launch 24 are restored on day 78 \u2014 §14.4 says "
-          "80, so its page arithmetic holds \u2014 and the player then stops at "
-          "Keeper 8, a level short of Spire 3, with no law left open to "
-          "restore. The full Codex, whose last chapter opens at Keeper 24, is "
-          "never reached.",
-     rec="The floor needs experience that does not need a raid, and the "
-         "cheapest source is already in §14.2: say that a <em>foiled "
-         "heist</em> is the defender\u2019s, and give the rate an island is "
-         "raided at, so the model can run the floor. A Library at Keeper 1 and "
-         "daily goals a non-raider can meet are not enough on their own: the "
-         "run above stalls at Keeper 8 with both.",
+          "about 195 days to the full Codex, 80 to the launch 24. §14.2 gives "
+          "Keeper experience four sources: successful heists, foiled heists, "
+          "spending (1 for every 40 Starlight) and restoring laws. A player who "
+          "never raids has the last two, and both are gated: spending by the "
+          "Spire, whose levels need Keeper levels, and restoring by pages, which "
+          "\u2014 on §14.4\u2019s premise \u2014 come from a Library that opens at "
+          "Keeper 4 and needs Keeper 10 and Spire 3 for the 6 a day §14.4 "
+          "averages. So the player plateaus. Where depends on things the "
+          "document leaves open: the Library alone gives Keeper 1 or 2 (on "
+          "whether the Lab, Observatory and Beacon come built); the tutorial\u2019s "
+          "two Drifting-ruin heists, if ruins pay §14.2\u2019s heist experience, "
+          "give Keeper 10; any page trickle of about 2 a day, Keeper 8. Every "
+          "reading stays below Keeper 12, where chapter 3 opens, so the full "
+          "Codex (Keeper 24) is never reached and §14.4\u2019s 195 days cannot "
+          "be.<br><br>And §14.4\u2019s arithmetic fails a second way. §10.4\u2019s "
+          "Library gives pages only for schools the player already has laws in, "
+          "which reaches 12 of the launch 24 and 24 of the 48 \u2014 so the 80 "
+          "and 195 days fail on schools as well as on experience. The document "
+          "also lists page sources a non-raider can reach (the Lab, daily goals, "
+          "the free season track, friendly heists), which §14.4\u2019s "
+          "\u201cthe Library alone\u201d excludes.",
+     rec="Decide where a non-raider\u2019s experience comes from: say that a "
+         "foiled heist\u2019s experience is the defender\u2019s and give the rate an "
+         "island is raided at; say whether ruin heists (the tutorial\u2019s "
+         "included) pay §14.2\u2019s heist experience; and say whether an empty "
+         "Lab pairing can be re-run for pages. Then recompute §14.4\u2019s "
+         "never-raids figures with §10.4\u2019s school rule and the Keeper gates "
+         "on the Library and the Codex.",
      measured="test_finding_a_player_who_never_raids_stops_levelling"),
 
 dict(id="G19", kind="gap", severity="minor", status="open",
@@ -5276,7 +5283,7 @@ dict(id="G19", kind="gap", severity="minor", status="open",
      rec="One clause in each row: the Heart\u2019s own count, or the realm "
          "level it counts as."),
 
-dict(id="G20", kind="gap", severity="minor", status="open",
+dict(id="G20", kind="gap", severity="significant", status="open",
      title="§9.6\u2019s day and week caps do not say whose base they are in, "
            "or what \u201cfive days\u2019 worth\u201d is five days of",
      refs=["9.6", "24.12"],
@@ -5291,11 +5298,15 @@ dict(id="G20", kind="gap", severity="minor", status="open",
           "<em>\u201cgrinding every day gains little\u201d</em> true: at five "
           "of the ceiling, a player raiding every day at the curve never meets "
           "the week\u2019s cap. And nothing says when a week starts.",
-     rec="One clause: the ceilings are in the raider\u2019s own Vault "
-         "level\u2019s base, the week is five days of the whole fatigue curve, "
-         "and it starts on Monday, UTC. That is what the server enforces "
-         "(<code>server/src/economy.mjs</code>), so the clause costs one line "
-         "if the document reads it another way.",
+     rec="Say which unit each cap is in. The server reads the ceilings in the "
+         "raider\u2019s own Vault level\u2019s base, the week as five days of the "
+         "whole fatigue curve, and the week from Monday, UTC. An adversarial "
+         "review showed that under that reading no player §14.1 models reaches "
+         "either cap (four raids are 3.19 first raids, the curve is 6.67), so "
+         "<em>\u201cmissing two days a week costs nothing\u201d</em> is false for "
+         "them: two days missed cost two sevenths. §9.6\u2019s own \u201cA full "
+         "day, four raids\u201d column would make it true, but in that unit the "
+         "day\u2019s ceiling would cap a single clean raid.",
      measured="server/test: economy.test.mjs (the three caps; five days against "
               "seven), service.test.mjs (a haul capped by the day)"),
 
@@ -5315,8 +5326,123 @@ dict(id="G21", kind="gap", severity="minor", status="open",
           "fifteen minutes; each list is content-addressed, so an unchanged band "
           "keeps its edge cache.",
      rec="One sentence in §24.8: what a band is (the realm level, or a rating "
-         "band inside it) and how often the lists are rebuilt.",
+         "band inside it) and how often the lists are rebuilt. The review of the "
+         "server found three faults in how this build does it, now fixed: a band "
+         "every island had left kept serving its last list; two players who "
+         "publish the same bytes share one snapshot, so the list named the first "
+         "owner twice and the second could lease their own island; and a lease "
+         "on a superseded snapshot was granted, letting a raider pick an older, "
+         "richer version.",
      measured="server/test: service.test.mjs (target lists)"),
+
+# Found by the adversarial review of the full re-run (T2.6)
+
+dict(id="F38", kind="finding", severity="significant", status="open",
+     title="Strays fill the roster as fast as homes are built, so §9.5\u2019s rule "
+           "has no birth rate to set",
+     refs=["9.5", "11.5", "18.2", "14.3", "32.9"],
+     body="§9.5: <em>\u201cThe growth rate in the birth row is the one at which "
+          "an engaged player\u2019s 38th character arrives on the day every "
+          "building reaches its top level\u201d</em>. §11.5: <em>\u201cAbout one "
+          "heist in eight finds a stray in the target universe; carrying it out "
+          "adds it to the roster\u201d</em>; §18.2\u2019s free season track "
+          "<em>\u201cgives pages, Essence and a stray\u201d</em>. An engaged player "
+          "carries out about 0.3 strays a day, more than enough to fill each "
+          "home as it is built. In the re-run the 38th character arrives on day "
+          "244\u2013249 \u2014 with the last Hearth level \u2014 at a birth rate of "
+          "1.3265 and at 5.0 alike, while every building tops out on day "
+          "699\u2013719. No rate moves the 38th, so the rule cannot be met. Left "
+          "without strays the rule sets 1.3455 and the 38th arrives on day 548. "
+          "§9.5\u2019s own derivation of the shipped rate prices every character "
+          "as a birth, which is the model it was derived on.",
+     rec="Either tune the birth rate against the roster net of strays (births "
+         "are then a small share of the roster, and the rate matters little), or "
+         "make strays wait for an empty Nursery slot rather than a free home, or "
+         "state the horizon for the roster rather than for its births. The last "
+         "is one sentence: the roster fills around day 250 for an engaged "
+         "player, and births matter for the characters strays do not bring.",
+     measured="test_finding_strays_fill_the_roster_whatever_a_birth_costs"),
+
+dict(id="F39", kind="finding", severity="significant", status="open",
+     title="The entry fee is charged on what a player holds, so a player saving "
+           "for the Spire as §14.1 says pays more in fees than raids bring",
+     refs=["9.4", "14.1", "9.6", "10.2"],
+     body="§9.4: <em>\u201cEntry fee: 2% of the raider\u2019s Starlight, from 100 "
+          "to 25,000, returned in full after a clean heist\u201d</em>. §14.1\u2019s "
+          "player <em>\u201csave[s] for the next Spire level first\u201d</em>, and "
+          "the late Spire levels cost 250,000 to 1.2 million. In the re-run an "
+          "engaged player on day 301 holds about 706,000 Starlight, so each "
+          "raid\u2019s fee is about 14,000, kept unless the heist is clean "
+          "\u2014 about 44,600 a day \u2014 while the raids bring about 5,300 "
+          "Starlight. Raiding while saving loses money eightfold. Left out, the "
+          "fee would put Keeper 40 on day 318 rather than 357 and everything "
+          "built on day 611 rather than 719. §9.6\u2019s raid-worth check does "
+          "not count the fee at all.",
+     rec="Key the fee to something a saver does not pile up \u2014 the raider\u2019s "
+         "production, or B(V) at the target\u2019s level \u2014 or cap it far "
+         "below 25,000, or exempt Starlight set aside for the Spire. Then add the "
+         "fee to the raid-worth check, which prices a raid against staying "
+         "home and today leaves the fee out of the raid.",
+     measured="test_finding_the_entry_fee_outweighs_what_raids_pay_while_saving"),
+
+dict(id="C41", kind="contradiction", severity="minor", status="open",
+     title="§9.4 returns the entry fee after a clean heist only; §12.9 returns "
+           "it after a loud one and half after a partial",
+     refs=["9.4", "12.9"],
+     body="§9.4: <em>\u201creturned in full after a clean heist\u201d</em>. "
+          "§12.9\u2019s outcome table returns it after a loud heist as well and "
+          "half of it after a partial. The server and the economy model take "
+          "§9.4; under §12.9 an engaged player keeps about half as much of it "
+          "(F39\u2019s losses roughly halve).",
+     rec="One home for the fee\u2019s return, and the other section cites it."),
+
+dict(id="C42", kind="contradiction", severity="minor", status="open",
+     title="§11.5 finds a stray on one heist in eight; §14.6 gives one heist in "
+           "eight a stray or a bonus page",
+     refs=["11.5", "14.6"],
+     body="§11.5: <em>\u201cAbout one heist in eight finds a stray\u201d</em>. "
+          "§14.6: <em>\u201cany heist has about a one-in-eight chance of a stray "
+          "or a bonus page\u201d</em>, which makes a stray rarer than one in "
+          "eight. The re-run takes §11.5; at one in sixteen nothing it publishes "
+          "moves, because homes, not strays, limit the roster (F38).",
+     rec="One rate, in one place."),
+
+dict(id="G22", kind="gap", severity="significant", status="open",
+     title="§14.1 names neither a staffing order nor a realm order, and each "
+           "moves the regenerated tables by months",
+     refs=["14.1", "9.2", "5.2", "13.2", "14.2"],
+     body="§14.1 lists what the economy model assumes, and §14.2 says the "
+          "tables are its output. The adversarial review of the re-run found "
+          "three things the tables turn on that §14.1 never states. Which "
+          "producer a new worker staffs: §9.2 says <em>\u201cchoosing which "
+          "producer goes short is the decision\u201d</em>; filling the Heart "
+          "first puts Keeper 40 on day 357, one worker to each producer in turn "
+          "on day 424. Which realm types open first: §5.2 leaves it to the "
+          "player; across all 90 orders Keeper 40 falls between day 337 and 385 "
+          "and everything built between 667 and 788 (Starlight realms first is "
+          "fastest). And whether posts are staffed: §13.2\u2019s posts "
+          "<em>\u201chold stability only while staffed\u201d</em>, and one "
+          "ruleborn at every post built pushes Keeper 40 past day 1,100. "
+          "<code>docs/design/generated/pacing.md</code> prints each.",
+     rec="Add the model\u2019s choices to §14.1\u2019s list, as sentences: how "
+         "workers are assigned, which realm types open first, and whether posts "
+         "are staffed. Each is a design position, not a model detail, since the "
+         "published tables are its consequence."),
+
+dict(id="D60", kind="deviation", severity="significant", status="open",
+     title="The server takes a bundle\u2019s Vault level and exposed loot on the "
+           "client\u2019s word",
+     refs=["24.12", "9.6", "24.8"],
+     body="A published island is a bundle the simulation checks against §5.2 "
+          "and §6.1 \u2014 terrain, wards, posts, laws \u2014 but its Vault level "
+          "and exposed amount are two bytes the client writes. The target\u2019s "
+          "B(V) and richness come from them, and so do the raider\u2019s day and "
+          "week ceilings (G20). Until the server holds each player\u2019s "
+          "buildings and currencies, a client can publish a Vault level it has "
+          "not bought. Found reviewing the server\u2019s caps.",
+     rec="When the economy moves server-side, derive both from the player\u2019s "
+         "own ledger and buildings, and refuse a bundle that disagrees. Until "
+         "then it is a known limit of this build, not of the design."),
 
 ]
 
@@ -5890,11 +6016,25 @@ V34 = {
     "it replaces: an engaged player reaches Keeper 28 on day 140\u2013144 "
     "and 40 on day 332\u2013343, against §14.2\u2019s target curve of 89 "
     "and 179 and the partial re-run\u2019s 108 and 275, and has everything "
-    "built on day 621\u2013641 rather than 378. Day 8 makes 2,900 Starlight "
-    "against §9.3\u2019s 6,200: with a crew of four assigned out of six, two "
-    "characters work. §14.2\u2019s rule is that the pacing sentences move, "
-    "never the table, so what is left is the document\u2019s: take the "
-    "tables and move the sentences. F36 and F37 are what the run found."),
+    "built on day 621\u2013641 rather than 378.<br><br><strong>Then an "
+    "adversarial review</strong> attacked every claim of the run, each "
+    "attack re-checked by an independent judge. Every number reproduced; "
+    "several rested on choices the document does not make. The run is "
+    "rebuilt on what it found: §9.1\u2019s storage, §9.4\u2019s entry fee, "
+    "§11.5\u2019s and §18.2\u2019s strays, §9.3\u2019s bonuses to the matching "
+    "school only, the Codex\u2019s launch chapters, the Spire saved for "
+    "first (§14.1), the first realm on day 3 (§16 says day 1), every "
+    "character levelled, and no free buildings when a realm opens. It now "
+    "puts Keeper 40 on day 349\u2013357 and everything built on day "
+    "699\u2013719, adds §5.2\u2019s realm levels and §5.5\u2019s capacities, "
+    "and prints what each open choice moves: the staffing order, the realm "
+    "order (Keeper 40 anywhere from 337 to 385) and staffed posts (G22). "
+    "The review also found F38 (strays leave §9.5\u2019s birth rule nothing "
+    "to set), F39 (the entry fee outweighs raids for a player saving for "
+    "the Spire), C41 and C42, and reframed F36 and F37. §14.2\u2019s rule is "
+    "that the pacing sentences move, never the table; what is left is the "
+    "document\u2019s: decide G22 and F38, take the tables, and move the "
+    "sentences."),
 
 "C32": dict(status="fixed", note=
     "Closed as recommended. §10.2’s Ward row reads <em>“effect "
@@ -5929,12 +6069,15 @@ V34 = {
     "with C19’s re-run; until then §14.3 states both. The check read "
     "v3.3’s sentence and went silent when it moved; it reads the row "
     "now, and a missing anchor fails instead of skipping.<br><br><strong>The "
-    "re-run gives one number</strong>, and it is neither: an engaged player "
-    "restores all 48 on day 95\u201397. §14.4\u2019s pages arrive at its own "
-    "rates, about 16 a day for 60 days and 23 after, so 69 days of pages is "
-    "right; but the last chapter opens at Keeper level 24 (7.6), which the "
-    "run reaches on day 95\u201397. The launch 24 land on day 29, §14.4\u2019s "
-    "30. The edit is drafted."),
+    "re-run gives one number</strong>, and it is neither. An engaged player "
+    "restores the launch 24 on day 31 (§14.4 says 30) and all 48 on day 92: "
+    "pages alone would cover 1,200 by day 68, but the last chapter opens at "
+    "Keeper level 24 (7.6), which the run reaches on day 92. The review "
+    "added the condition that makes a 48-law day meaningful at all: laws 25 "
+    "to 48 ship six a season (26.1), so the day is for a player who starts "
+    "once they have. Pages are one pool in the model where the document "
+    "keeps them per law, so both days are lower bounds. The edits are "
+    "drafted, and land with C19\u2019s regeneration, not before."),
 
 "C36": dict(status="fixed", note=
     "Closed as recommended: priced at §14.2’s four a day, with fatigue. "
@@ -7544,10 +7687,13 @@ EDITS = {
                  "\u201cEngaged player builds it\u201d and \u201cIncome hours to "
                  "afford\u201d columns, \u00a714.2\u2019s Keeper days and "
                  "\u00a714.3\u2019s milestone rows with the full re-run, each "
-                 "cell a band across \u00a79.6\u2019s two edges, and \u00a79.5\u2019s "
-                 "birth rate with the 1.3488 the run sets. Then move every pacing "
-                 "sentence the tables break: Keeper 40 is day 332\u2013343, not "
-                 "275; everything is built on day 621\u2013641, not 378.",
+                 "cell a band across \u00a79.6\u2019s two edges, and \u00a75.2\u2019s "
+                 "realm-level column and \u00a75.5\u2019s capacities with the same "
+                 "run. Then move every pacing sentence the tables break: Keeper 40 "
+                 "is day 349\u2013357, not 275; everything is built on day "
+                 "699\u2013719, not 378. First decide G22\u2019s three choices, "
+                 "since the tables are their consequence, and F38, since "
+                 "\u00a79.5\u2019s birth rule has no rate to set until it is.",
          why="This item\u2019s own recommendation was to regenerate rather than "
              "hand-edit, because hand-editing is what produced it."),
 ],
@@ -7557,17 +7703,27 @@ EDITS = {
          find="Engaged: 60 days \u00d7 16 = 960, then 210 \u00f7 23 = 9 more \u2014 "
               "about 69 days",
          replace="Engaged: 60 days \u00d7 16 = 960, then 210 \u00f7 23 = 9 more "
-                 "\u2014 about 69 days of pages; but the last chapter opens at "
-                 "Keeper level 24 (7.6), so the full Codex is restored the day "
-                 "that level arrives, day 95 to 97 in the re-run (14.2)",
+                 "\u2014 about 69 days of pages (68 in the re-run); but the last "
+                 "chapter opens at Keeper level 24 (7.6), so a player who starts "
+                 "once all 48 have shipped restores them no earlier than the day "
+                 "that level arrives, day 92 in the re-run (14.2)",
          why="The full re-run gives one day for both \u00a714.3 and \u00a714.4, "
-             "and it is the chapter gate\u2019s, not the pages\u2019."),
+             "and it is the chapter gate\u2019s, not the pages\u2019. It reads right "
+             "only beside C19\u2019s regenerated \u00a714.2, whose Keeper 24 is day "
+             "92; land the two together."),
     dict(section="14.3", action="replace",
-         find="all 48 in about 69 days for an engaged player",
-         replace="all 48 on day 95 to 97 for an engaged player, when Keeper "
-                 "level 24 opens the last chapter",
-         why="The same run as \u00a714.3\u2019s regenerated \u201c48 laws "
-             "owned\u201d row, so the prose and the row agree."),
+         find="all 48 in about 69 days for an engaged player and about 195 for "
+              "one who never raids, the launch 24 in about 30 and 80.",
+         replace="the launch 24 on day 31 for an engaged player, and all 48 \u2014 "
+                 "for one who starts once every season\u2019s laws have shipped "
+                 "(26.1) \u2014 no earlier than Keeper level 24, day 92. A player "
+                 "who never raids does not reach Keeper level 12 on these rules "
+                 "(14.2), so their figures wait on where such a player\u2019s "
+                 "experience comes from.",
+         why="The headline is the launch set, which a player at launch can "
+             "restore; the full Codex is published with its condition. The "
+             "never-raids figures cannot be computed until F37 is decided, and "
+             "a sentence should not quote a number no rule reaches."),
 ],
 
 "F14": [

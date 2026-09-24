@@ -627,14 +627,22 @@ dict(
                     "and chapters. Then the re-run, in \u00a79.5's order: the "
                     "raid-worth check keeps 2,400 on the document's reading "
                     "(3,200 on every day, F36), the birth rate moves to 1.3488, "
-                    "and every table is printed at both edges. An engaged player "
-                    "reaches Keeper 40 on day 332\u2013343 and has everything "
-                    "built on day 621\u2013641; the Codex fills on day 95\u201397, "
-                    "the day Keeper 24 opens its last chapter (C35). A player who "
-                    "never raids stops levelling in the first week (F37). The "
-                    "tables are the document's to take now (C19).",
+                    "and every table is printed at both edges.<br><br>Then an "
+                    "adversarial review: each claim attacked by one agent and "
+                    "re-checked by an independent judge (17 agents). Every number "
+                    "reproduced; several rested on choices the document does not "
+                    "make. The run was rebuilt on the review \u2014 storage, the "
+                    "entry fee, strays, school-only bonuses, the Codex's launch "
+                    "chapters, the Spire saved for first \u2014 and prints what "
+                    "each open choice moves. An engaged player reaches Keeper 40 "
+                    "on day 349\u2013357 and has everything built on day "
+                    "699\u2013719. It found G22 (three choices \u00a714.1 does not "
+                    "state, each worth months), F38 (strays leave the birth rule "
+                    "nothing to set), F39 (the fee outweighs raids while saving), "
+                    "C41 and C42, and reframed F36 and F37. The tables are the "
+                    "document's to take once G22 and F38 are decided (C19).",
              evidence="docs/design/generated/pacing.md; python3 -m tools.economy_model rerun",
-             register=["D58", "C19", "C35", "F36", "F37", "G19"]),
+             register=["D58", "C19", "C35", "F36", "F37", "G19", "F38", "F39", "G22"]),
     ],
 ),
 

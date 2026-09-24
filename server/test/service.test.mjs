@@ -145,6 +145,39 @@ test("target lists are files, one a band, holding every island's current snapsho
   assert.deepEqual(t.service.targets(), t.service.targetLists());
 });
 
+test("two players with the same island are two targets, and a foiled fee goes to the one raided", () => {
+  const t = twoPlayers(false);
+  const twin = t.service.session("gc:twin");
+  t.service.publish(twin.account, t.build.exampleIsland(false));   // the defender's bytes
+  const list = JSON.parse(new TextDecoder().decode(
+    t.service.bundle(t.service.targetLists()["realm-level-3"])));
+  assert.deepEqual(list.candidates.map((c) => c.owner).sort(),
+                   [t.defender.account, twin.account].sort());
+  refusal(() => t.service.lease(twin.account, t.bundle), "own_island");
+  t.service.db.prepare(
+    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
+    .run(t.raider.account);
+  const lease = t.service.lease(t.raider.account, t.bundle, twin.account);
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
+  assert.equal(out.verdict.grade, "foiled");
+  assert.equal(t.service.balance(twin.account).starlight, 1_000, "the twin was raided");
+  assert.equal(t.service.balance(t.defender.account).starlight, 0);
+});
+
+test("a snapshot no island is on any more cannot be leased", () => {
+  const t = twoPlayers(false);
+  t.service.publish(t.defender.account, t.build.exampleIsland(true));   // moves on
+  refusal(() => t.service.lease(t.raider.account, t.bundle), "superseded");
+});
+
+test("a band every island has left keeps no list", () => {
+  const t = twoPlayers();
+  assert.ok("realm-level-3" in t.service.targetLists());
+  t.service.db.prepare("DELETE FROM islands").run();
+  assert.deepEqual(t.service.targetLists(), {});
+  assert.deepEqual(t.service.targets(), {});
+});
+
 test("an unchanged band regenerates to the same file, so the edge keeps its cache", () => {
   const t = twoPlayers();
   const first = t.service.targetLists();

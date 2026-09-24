@@ -63,9 +63,12 @@ func fetch(hash: String) -> PackedByteArray:
 
 
 ## §24.12: "a target snapshot, a seed, a single-use token and an expiry".
-func lease(bundle: String) -> Dictionary:
-	return await _json(HTTPClient.METHOD_POST, "/v1/leases",
-		JSON.stringify({"bundle": bundle}).to_utf8_buffer())
+## The owner names whose island it is: two players can publish the same one.
+func lease(bundle: String, owner := "") -> Dictionary:
+	var body := {"bundle": bundle}
+	if owner != "":
+		body["owner"] = owner
+	return await _json(HTTPClient.METHOD_POST, "/v1/leases", JSON.stringify(body).to_utf8_buffer())
 
 
 ## §24.12's Validate and Grant: what the server decided, and what it paid.

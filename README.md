@@ -33,8 +33,8 @@ patrol positions), and handed the realms' one to this repository: §32.9's full
 economy re-run. That run is done, so the realms now wait on the document taking
 its tables.
 
-Five versions have now answered the audit. **112 of 164 register items are fixed
-in the document itself**, the latest 15 by v3.4. 13 are still open.
+Five versions have now answered the audit. **112 of 170 register items are fixed
+in the document itself**, the latest 15 by v3.4. 19 are still open.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -60,17 +60,34 @@ snapshot: **F33** (one Lantern Glare outweighs a realm of other wards), **F34**
 
 **The full economy re-run is done** (T2.6), at
 [`docs/design/generated/pacing.md`](docs/design/generated/pacing.md): §9.3,
-§10.2's day columns, all 40 Keeper levels and §14.3's milestones, each at both
-edges of §9.6's band. The model first had to be ported to v3.3's raid pay
-(D58, done) and read §10.2 from `content/`. The curve is much slower than the
-tables it replaces: an engaged player reaches Keeper 40 on day 332–343 (the
-target curve says 179) and has everything built on day 621–641 (§14.3 says 378).
-The Codex fills on day 95–97, when Keeper 24 opens its last chapter, which
-settles C35's two numbers with a third. The run found **F36** (the raid-worth
-check passes on the day a Vault level arrives and fails on the days after, and
-§32.9's rule would then raise the base to 3,200), **F37** (a player who never
-raids stops levelling in the first week, so never reaches the Library the design
-calls their floor) and **G19** (the Heart has no ward or post count).
+§10.2's day columns, all 40 Keeper levels, §14.3's milestones, §5.2's realm
+levels and §5.5's capacities, each at both edges of §9.6's band. The model was
+first ported to v3.3's raid pay (D58, done), and then **reviewed
+adversarially**: each claim attacked by one agent and re-checked by an
+independent judge. Every number reproduced, but several rested on choices the
+document never makes, so the run was rebuilt on what the review found — the
+document's storage caps, entry fee, strays, school-only bonuses and Codex
+chapters are in it now — and every open choice is printed beside the tables
+with what the alternative moves.
+
+The curve is much slower than the tables it replaces: an engaged player reaches
+Keeper 40 on day 349–357 (the target curve says 179) and has everything built
+on day 699–719 (§14.3 says 378). The findings:
+
+- **G22** — §14.1 names no staffing order, no realm order and no rule on
+  staffing posts, and each moves the tables by months (Keeper 40 anywhere from
+  day 337 to 385 on realm order alone).
+- **F38** — strays fill the roster as fast as homes are built, so §9.5's rule
+  has no birth rate to set.
+- **F39** — the entry fee is 2% of what a player holds, so a player saving for
+  the Spire, as §14.1 says, pays about eight times more in fees than raids
+  bring.
+- **F36** — run on the model's roster the raid-worth check fails 2,400, but the
+  base it needs depends on those same open choices.
+- **F37** — a player who never raids stops levelling below Keeper 12, so never
+  reaches the full Codex §14.4 prices for them.
+- **C41**, **C42** — the fee's return and the stray rate are each stated two
+  ways; **G19** — the Heart has no ward or post count.
 
 The backend has started (T3.3). An island is now a content-addressed bundle
 that the simulation loads and checks against §5.2 and §6.1. A replay pins the
@@ -79,8 +96,10 @@ island's hash and a rules version the build computes from its own behaviour.
 functions over §24.8's tables: it re-simulates each heist in the same
 WebAssembly build, settles the entry fee and §9.6's haul in one transaction,
 and never pays a retry twice. It enforces §9.6's three caps (a raid, a day and a
-week), and building them found **G20**: the day and week caps do not say whose
-base they are in. Target lists are §24.8's static files, one a band (**G21**:
+week), and building them found **G20**: the caps do not say which unit they are
+in, and under the server's reading no player type §14.1 models ever reaches one.
+The review also found **D60**: a bundle's Vault level and exposed loot are the
+client's word until the economy is server-side. Target lists are §24.8's static files, one a band (**G21**:
 neither the band nor how often a list is rebuilt is defined). And the 54
 law-shaped forms of §11.10 are now validated content.
 
@@ -280,7 +299,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 164 tracked items with section references and status:
+document, as 170 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,

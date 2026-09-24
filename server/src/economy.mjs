@@ -28,9 +28,12 @@
 //     level: the ceiling is there "for players punching up", so it is measured
 //     from where the raider stands.
 //   * "Per week: five days' worth" is read as five days of the whole fatigue
-//     curve at that base, which is what makes "grinding every day gains
-//     little" true; five of the day's hard ceiling would let a player raiding
-//     every day at the curve never meet it.
+//     curve at that base. Under it no player type §14.1 models reaches either
+//     cap — four raids a day are 3.19 first raids, not 6.67 — so §9.6's
+//     "missing two days a week costs nothing" does not hold for them: missing
+//     two days costs two sevenths. §9.6's own "A full day, four raids" column
+//     would make it hold, but in that unit the day's ceiling would cap a single
+//     clean raid, so §9.6 has to say which unit each cap is in (G20).
 //   * A week starts on Monday, UTC, like the day.
 
 import { readFileSync } from "node:fs";

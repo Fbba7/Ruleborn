@@ -178,6 +178,14 @@ NO_EDIT_BECAUSE = {
            "the server's reading is named where it takes it",
     "G21": "a decision for the owner: what a target list's band is and how often "
            "it is rebuilt; the server's reading is named where it takes it",
+    "F38": "a design decision for the owner: what the birth rate is tuned "
+           "against once strays fill the roster",
+    "F39": "a design decision for the owner: what the entry fee is keyed to",
+    "C41": "a decision for the owner: which section owns the fee's return",
+    "C42": "a decision for the owner: the stray rate",
+    "G22": "decisions for the owner: the staffing order, the realm order and "
+           "whether posts are staffed, which decide the sentences",
+    "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "
            "sentence",

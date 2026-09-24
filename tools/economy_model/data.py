@@ -32,6 +32,7 @@ class Building:
     slots: tuple[int, ...] = ()      # worker slots at each level
     resource: str = ""
     keeper_required: tuple[int, ...] = ()   # the Library's Keeper gate (10.4)
+    holds: tuple[int, ...] = ()             # Starlight and Essence each (9.1)
 
 
 def _spire_every_level(n: int) -> tuple[int, ...]:
@@ -447,13 +448,15 @@ def buildings_v34() -> dict[str, Building]:
         made = [re.match(r"([\d,]+) (Starlight|Aether|Essence) an hour; (\d+) worker slot",
                          lv["gives"]) for lv in levels]
         placement = next(v for k, v in _PLACEMENT.items() if b["placement"].startswith(k))
+        held = [re.match(r"([\d,]+) Starlight and Essence each", lv["gives"]) for lv in levels]
         out[b["name"]] = Building(
             b["name"], tuple(lv["cost_starlight"] for lv in levels),
             tuple(n[0] for n in needs), placement,
             hourly=tuple(int(m[1].replace(",", "")) for m in made) if all(made) else (),
             slots=tuple(int(m[3]) for m in made) if all(made) else (),
             resource=made[0][2].lower() if all(made) else "",
-            keeper_required=tuple(n[1] for n in needs))
+            keeper_required=tuple(n[1] for n in needs),
+            holds=tuple(int(m[1].replace(",", "")) for m in held) if all(held) else ())
     return out
 
 
@@ -490,6 +493,19 @@ PAGES_STUDY = 2               # "receives 2 of its pages, 3 if the heist was cle
 PAGES_STUDY_CLEAN_BONUS = 1
 #: §9.6's split of a successful heist: 35% clean, 40% loud, 25% partial.
 CLEAN_SHARE_OF_SUCCESSES = 0.35
+
+#: Free characters. §11.5: "About one heist in eight finds a stray in the
+#: target universe; carrying it out adds it to the roster" — so one in eight
+#: of the heists that succeed. §14.6 puts it as "a one-in-eight chance of a
+#: stray or a bonus page" (C42). §18.2: the season track's free tier "gives
+#: pages, Essence and a stray", once a season: "A season lasts eight weeks"
+#: (§18.2).
+HEIST_STRAY_CHANCE = 1 / 8
+SEASON_DAYS = 56
+
+#: The school each resource belongs to (§5.2's boosted resources), for §9.3's
+#: "matching school" bonuses.
+RESOURCES = ("starlight", "aether", "essence")
 PAGES_PYLON = 1               # "Breaking a pylon gives a page"; the model breaks one a success
 PAGES_FOILED = 1              # "a foiled heist gives one"
 PAGES_DAILY_GOALS = 2         # §14.4: "About 2"
@@ -502,11 +518,14 @@ STARTING_LAWS = 3
 
 
 def codex(launch_only: bool) -> list[int]:
-    """Page costs of every law, by rank, from content/laws.json (7.9, 7.10)."""
+    """Page costs of every law, in the order the Codex opens them (7.6): the
+    launch 24 are chapters 1 and 2, the other 24 chapters 3 to 5, and each
+    part cheapest first. From content/laws.json's ranks and launch flags."""
     laws = json.loads((_ROOT / "content" / "laws.json").read_text(encoding="utf-8"))
     laws = laws["laws"] if isinstance(laws, dict) else laws
-    return sorted(PAGES_BY_RANK_V3[law["rank"]] for law in laws
-                  if law.get("launch") or not launch_only)
+    launch = sorted(PAGES_BY_RANK_V3[law["rank"]] for law in laws if law.get("launch"))
+    later = sorted(PAGES_BY_RANK_V3[law["rank"]] for law in laws if not law.get("launch"))
+    return launch if launch_only else launch + later
 
 
 #: §9.3 as v3.3 re-ran it under §5.8's rules: Starlight, Aether and Essence a

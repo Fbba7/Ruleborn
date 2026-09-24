@@ -99,13 +99,13 @@ test("a haul is cut by the first cap it meets, and re-split half Essence", () =>
   assert.equal(capHaul(pay, { ...ctx, paidThisWeek: 90_000 }).total, 0, "never negative");
 });
 
-test("missing two days a week costs little, and grinding all seven gains nothing (§9.6)", () => {
-  // Twenty clean same-level raids a day at Vault level 1, capped as the server caps them.
-  const week = (days) => {
+test("the week's cap binds a grinder, and at §14.1's four raids a day never binds (G20)", () => {
+  // Clean same-level raids at Vault level 1, capped as the server caps them.
+  const week = (days, raidsADay) => {
     let paidThisWeek = 0;
     for (let d = 0; d < days; d++) {
       let paidToday = 0;
-      for (let k = 0; k < 20; k++) {
+      for (let k = 0; k < raidsADay; k++) {
         const total = Math.floor(2400 * value(fatigue(k)));
         const pay = capHaul({ total, essence: 0, starlight: total },
                             { targetVaultLevel: 1, raiderVaultLevel: 1, paidToday, paidThisWeek });
@@ -115,7 +115,11 @@ test("missing two days a week costs little, and grinding all seven gains nothing
     }
     return paidThisWeek;
   };
-  assert.equal(week(7), 80_000, "the week's ceiling binds");
-  assert.equal(week(6), 80_000);
-  assert.ok(week(5) / week(7) > 0.95, `five days earn ${week(5)} of ${week(7)}`);
+  // Twenty a day: the week's ceiling binds, and the sixth and seventh days add nothing.
+  assert.equal(week(7, 20), 80_000);
+  assert.equal(week(6, 20), 80_000);
+  // Four a day, the engaged player's: no cap binds, so two days missed cost
+  // two sevenths — §9.6's "missing two days a week costs nothing" does not
+  // hold under this reading.
+  assert.equal(week(5, 4) / week(7, 4), 5 / 7);
 });

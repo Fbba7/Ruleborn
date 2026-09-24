@@ -37,14 +37,18 @@ MILESTONES = (
 NOT_MODELLED = (
     "tier II and III laws (they compete with restoring for pages and need Aether)",
     "the main Sage's levels (Insight, 11.7)",
-    "guards on posts (each is a worker less, 5.8)",
     "worker bonuses (+15% school, +25% trait, 9.2)",
     "Aether upkeep, which gates nothing the model buys",
-    "raids against the player, and the experience a foiled one might pay",
-    "pages for meeting a law and for Lab experiments that find nothing (7.6)",
+    "raids against the player: defence rewards, and the experience a foiled one might pay",
+    "pages for meeting a law, Lab experiments that find nothing, and the Beacon (7.6); "
+    "and pages are one pool, where the document keeps them per law (7.6, 10.4)",
+    "the Dock's Stray visitor (11.8), whose rate is not stated",
+    "strain from each law's own cost: the model uses a mean cost by rank, and stays "
+    "Steady where §5.5's worked example is Humming or higher",
     "27.3's catch-up discount",
+    "time inside a day: production collected on day d is spent on day d, and what it "
+    "buys produces from day d+1, which puts engaged milestones 2 to 5 days late",
 )
-
 
 @dataclass
 class Run:
@@ -91,8 +95,8 @@ def codex_days(edge: str = "low", **overrides) -> dict[str, int | None]:
 
 
 def birth_gap(growth: float, edge: str = "low", days: int = DAYS, **overrides) -> int | None:
-    """Days from the 38th birth to the last building's top level; negative
-    when the roster fills first. None if either never happens."""
+    """Days from the 38th character's arrival to the last building's top level;
+    negative when the roster fills first. None if either never happens."""
     r = run("engaged", edge, days, birth_growth=growth, **overrides)
     born, built = r.day("38 ruleborn"), r.day("Everything built and at its highest level")
     if born is None:
@@ -101,71 +105,128 @@ def birth_gap(growth: float, edge: str = "low", days: int = DAYS, **overrides) -
 
 
 def tune_birth_rate(edge: str = "low", lo: float = 1.20, hi: float = 1.60,
-                    **overrides) -> float:
+                    **overrides) -> float | None:
     """§9.5: "The growth rate in the birth row is the one at which an engaged
     player's 38th character arrives on the day every building reaches its top
-    level", tuned "in both directions" (32.9, brief 35), to four places.
+    level", tuned "in both directions" (32.9, brief 35), to four places: the
+    smallest rate, in steps of 0.0001, at which the 38th arrives no earlier
+    than the last building.
 
-    Bisects on the sign of the gap: a slower birth curve moves the 38th birth
-    later much faster than the smaller roster it leaves moves the last
-    building, so the gap rises with the rate."""
+    None when no rate does it — which is what §11.5's strays make of the rule:
+    they fill each home as it is built, so the 38th arrives with the last
+    Hearth level whatever a birth costs (F38)."""
     def gap(g):
         v = birth_gap(g, edge, **overrides)
         return 10**6 if v is None else v
     if gap(lo) > 0 or gap(hi) < 0:
-        raise ValueError(f"no birth rate in [{lo}, {hi}] puts the 38th birth on the last "
-                         f"building's day")
+        return None
     while hi - lo > 0.00005:
         mid = (lo + hi) / 2
         if gap(mid) < 0:
             lo = mid
         else:
             hi = mid
-    return round(hi, 4)
+    rate = round(hi, 4)
+    while gap(rate) < 0:
+        rate = round(rate + 0.0001, 4)
+    while gap(round(rate - 0.0001, 4)) >= 0:
+        rate = round(rate - 0.0001, 4)
+    return rate
 
 
 @dataclass
 class Settled:
-    """What the re-run sets before it prints a table, in §9.5's order: the
-    raid base (9.6), then the sinks, then the birth rate."""
-    base: int                  # the shipped base, or higher if the check fails
-    base_first_day: int        # smallest hundred passing on arrival days
+    """What the re-run sets before it prints a table. §9.5's order is the raid
+    base, then the sinks, then the birth rate; the sink search (T2.5) is not
+    run here, so the keep stays at the quarter it ships at."""
+    base: int                  # the shipped base; the check below does not move it
+    base_first_day: int        # smallest hundred passing on the day each level arrives
     base_every_day: int        # smallest hundred passing on every day (F36)
-    birth_rate: float          # tuned at the band's lower edge
-    birth_rate_high: float     # the same rule at the upper edge
-    keep: float                # §9.5's keep, as shipped until the sink search
+    birth_rate: float | None   # §9.5's rule, or None when no rate satisfies it (F38)
+    birth_rate_no_strays: float | None   # the same rule with strays left out
+    stray_roster_day: int      # the 38th character's day with strays, at the shipped rate
+    keep: float                # §9.5's keep, as shipped
 
 
 def settle() -> Settled:
     from . import raidworth as rw
+    cfg = Config.document()
+    # An engaged player reaches Vault level 10 around day 700.
+    first = rw.smallest_passing_base(cfg, 1200, first_day_only=True)
+    every = rw.smallest_passing_base(cfg, 1200)
     rate = tune_birth_rate("low")
-    cfg = Config.document(birth_growth=rate)
-    # An engaged player reaches Vault level 10 around day 640.
-    first = rw.smallest_passing_base(cfg, 1000, first_day_only=True)
-    every = rw.smallest_passing_base(cfg, 1000)
-    base = max(data.HAUL_BASE, first)        # §32.9: the base only ever rises
-    if base != data.HAUL_BASE:
-        rate = tune_birth_rate("low", haul_base=base)
-    return Settled(base, first, every, rate,
-                   tune_birth_rate("high", haul_base=base), data.ROSTER_KEEP_SHARE)
+    no_strays = tune_birth_rate("low", heist_stray_chance=0.0, season_strays=False)
+    roster = run("engaged", "low").day("38 ruleborn")
+    return Settled(data.HAUL_BASE, first, every, rate, no_strays, roster, data.ROSTER_KEEP_SHARE)
+
+
+#: The choices the document leaves open, and the rules the first re-run read
+#: another way: (what, the run's reading, the alternative, Config overrides).
+CHOICES = (
+    ("Which producer a new worker staffs (9.2)", "the Heart first, then each realm; Well, Spring, Garden",
+     "one worker to each producer in turn", dict(staffing_order="even")),
+    ("Guardian Posts (13.2)", "left empty", "one ruleborn at every post built", dict(staff_posts=True)),
+    ("\"Save for the next Spire level first\" (14.1)", "the Spire's cost set aside once its Keeper gate opens",
+     "bought when a day's stock covers it", dict(spire_reserve=False)),
+    ("Opening a realm (16)", "bought with the producers, first", "bought by cost with everything else",
+     dict(realm_open_first=False)),
+    ("Heist strays (11.5, 14.6)", "one in eight successful heists", "one in sixteen (14.6's \"stray or a bonus page\")",
+     dict(heist_stray_chance=1 / 16)),
+    ("Strays at all", "§11.5's and §18.2's", "none", dict(heist_stray_chance=0.0, season_strays=False)),
+    ("Storage (9.1)", "Vault and Storehouses", "unlimited", dict(storage_caps=False)),
+    ("The entry fee (9.4)", "2%, kept unless clean", "none", dict(entry_fee=False)),
+    ("§9.3's school bonuses", "the realm's own resource only", "every producer in an outer realm (the first re-run)",
+     dict(school_bonuses=False)),
+    ("B(V)'s base (9.6, F36)", "2,400", "3,200", dict(haul_base=3200)),
+)
+
+
+def choice_rows(edge: str = "low") -> list[tuple]:
+    """What each alternative moves, engaged, at one edge: (what, reading,
+    alternative, (K40, built, 38th) as run, (K40, built, 38th) with it)."""
+    def key(r):
+        return (r.keeper_day(40), r.day(MILESTONES[-1]), r.day("38 ruleborn"))
+    base = key(run("engaged", edge))
+    return [(what, ours, other, base, key(run("engaged", edge, **over)))
+            for what, ours, other, over in CHOICES]
+
+
+def realm_order_spread(edge: str = "low") -> dict:
+    """§5.2: "the player picks each one's type". Every order of the six outer
+    realms' boosted resources (90), engaged, at one edge."""
+    import itertools
+    orders = sorted(set(itertools.permutations(data.RESOURCES * 2)))
+    got = []
+    for order in orders:
+        r = run("engaged", edge, realm_order=order)
+        got.append((r.keeper_day(40), r.day(MILESTONES[-1]), order))
+    k40 = sorted(g[0] for g in got)
+    built = sorted(g[1] for g in got)
+    return {"orders": len(orders), "k40": (k40[0], k40[len(k40) // 2], k40[-1]),
+            "built": (built[0], built[len(built) // 2], built[-1]),
+            "fastest": min(got)[2], "slowest": max(got)[2]}
 
 
 def render() -> str:
     """The page docs/design/generated/pacing.md is: every table the document
-    takes from this run, with the values the run set first. Every day is a
-    band across §9.6's two edges, or one day where they agree."""
+    takes from this run, the values the run set first, and what each choice
+    the document leaves open moves. Every day is a band across §9.6's two
+    edges, or one day where they agree."""
     got = settle()
-    over = dict(birth_growth=got.birth_rate, haul_base=got.base)
+    over = dict(haul_base=got.base) | ({"birth_growth": got.birth_rate} if got.birth_rate else {})
     runs = {(a, e): run(a, e, **over) for a in ARCHETYPES for e in EDGES}
     eng = {e: runs[("engaged", e)] for e in EDGES}
 
     def cell(archetype, value):
         return band(runs, archetype, value)
 
+    rate_cell = (f"{got.birth_rate}" if got.birth_rate else
+                 f"none: strays fill the roster by day {got.stray_roster_day} at any price (F38); "
+                 f"{got.birth_rate_no_strays} with strays left out")
     lines = [
         "<!-- GENERATED by tools/generate_docs.py — do not edit by hand -->",
         "",
-        "# The full re-run: §9.3, §10.2, §14.2, §14.3 and §14.4",
+        "# The full re-run: §9.3, §10.2, §14.2, §14.3, §14.4, §5.2 and §5.5",
         "",
         "§32.9's one open command. §14.2: the tables are \"generated by the "
         "economy model under 5.8's rules — one producer of each kind per realm, "
@@ -176,21 +237,25 @@ def render() -> str:
         f"({data.ATTEMPT_BAND[0]} to {data.ATTEMPT_BAND[1]}), or one day where "
         "both edges agree.",
         "",
+        "It was reviewed adversarially before publication, claim by claim, and "
+        "rebuilt on what the review found: the document's storage, entry fee, "
+        "strays, school bonuses and Codex chapters are in it, and every choice the "
+        "document leaves to the player is named below with what the alternative "
+        "moves. Where the document is silent the tables are the model's, not the "
+        "document's; read them with the choices section.",
+        "",
         "## What the run sets first",
         "",
-        "§9.5 fixes the order: the raid base, then the sinks, then the birth rate.",
-        "",
-        "| Value | Ships | The run | Rule |",
+        "| Value | Ships | The run | How |",
         "| --- | --- | --- | --- |",
-        f"| B(V) base (9.6) | {data.HAUL_BASE:,} | {got.base:,} | smallest hundred "
-        f"passing the raid-worth check on the day each Vault level arrives is "
-        f"{got.base_first_day:,}, and the base only rises; on every day at a level "
-        f"it is {got.base_every_day:,} (F36) |",
+        f"| B(V) base (9.6) | {data.HAUL_BASE:,} | {got.base:,} | the raid-worth check, run on "
+        f"this model's roster, needs {got.base_first_day:,} on the day each Vault level "
+        f"arrives and {got.base_every_day:,} on every day at a level; both depend on the "
+        "choices below, so the base is left where it ships (F36) |",
         f"| Roster's keep (9.5) | {data.ROSTER_KEEP_SHARE:.0%} | {got.keep:.0%} | "
-        "ships at a quarter until the sink search sets it (T2.5) |",
-        f"| Birth rate (9.5) | {data.BIRTH_GROWTH_V34} | {got.birth_rate} | the rate "
-        "at which an engaged player's 38th birth lands on the day every building "
-        f"tops out, at the band's lower edge; {got.birth_rate_high} at its upper |",
+        "ships at a quarter; the sink search that sets it (T2.5) is not run here |",
+        f"| Birth rate (9.5) | {data.BIRTH_GROWTH_V34} | {rate_cell} | the rate at which an "
+        "engaged player's 38th character arrives on the day every building tops out |",
         "",
         "## Production a day — engaged player (§9.3)",
         "",
@@ -208,8 +273,8 @@ def render() -> str:
                      f"{span('essence_per_day')} | {span('heist_income')} | {published:,} |")
     lines += [
         "",
-        "Raids pay in the fifth column, half of it Essence (G17); it is an output, "
-        "never a target (9.4).",
+        "Raids pay in the fifth column, half of it Essence (G17), before the entry "
+        "fee; it is an output, never a target (9.4).",
         "",
         "## Keeper levels (§14.2)",
         "",
@@ -237,6 +302,31 @@ def render() -> str:
     for m in MILESTONES:
         lines.append(f"| {m} | " + " | ".join(
             cell(a, lambda r, m=m: r.day(m)) for a in ARCHETYPES) + " |")
+    lines += [
+        "",
+        "## Realm levels (§5.2) and stability (§5.5), engaged",
+        "",
+        "§5.2's \"Engaged\" column is the first day any outer realm reaches each level; "
+        "§5.5's worked table is stability capacity on its days.",
+        "",
+        "| Realm level | §5.2 | The run |",
+        "| --- | --- | --- |",
+    ]
+    for level, published in zip((2, 3, 4, 5), (17, 46, 104, 155)):
+        lines.append(f"| {level} | Day {published} | "
+                     f"{cell('engaged', lambda r, lv=level: r.day(f'A realm at level {lv}'))} |")
+    lines += ["", "| Day | §5.5 capacity | The run |", "| --- | --- | --- |"]
+    for day, published in ((2, 51), (8, 100), (31, 202), (41, None), (61, 276), (91, 347),
+                           (181, 446), (366, 516)):
+        vals = sorted({eng[e].production(day)["stability_capacity"] for e in EDGES})
+        shown = "–".join(str(v) for v in vals)
+        lines.append(f"| {day} | {published if published else '—'} | {shown} |")
+    lines += [
+        "",
+        "Day 41's capacity is the one §8.5's chord draw is derived from (§32.9: "
+        "\"capacity is the economy model's day-41 figure for an engaged player\"); "
+        "the document assumed 215.",
+    ]
     codex = {e: codex_days(e, **over) for e in EDGES}
 
     def pair(key):
@@ -251,14 +341,14 @@ def render() -> str:
         "",
         "| Codex | Engaged | Never raids |",
         "| --- | --- | --- |",
-        f"| The full 48, 1,200 pages | {pair('full engaged')} | {pair('full never_raids')} |",
         f"| The launch 24, 510 pages | {pair('launch engaged')} | {pair('launch never_raids')} |",
+        f"| All 48, 1,200 pages | {pair('full engaged')} | {pair('full never_raids')} |",
         "",
-        "§14.4's arithmetic gives about 69 and 195 days for the full Codex, 30 and "
-        "80 for the launch set. The engaged player's pages match §14.4's rates — "
-        "about 16 a day over the first 60 days and 23 after — but the last chapter "
-        "opens at Keeper level 24 (7.6), so the full Codex lands on the day that "
-        "level does, not the day the pages are there.",
+        "The launch 24 are chapters 1 and 2 (§7.6), restored cheapest first. All 48 "
+        "is for a player who starts once every season's laws have shipped (§26.1: "
+        "six a season): the last chapter opens at Keeper level 24, so it lands no "
+        "earlier than the day that level does. Pages are one pool here, where the "
+        "document keeps them per law, so both days are lower bounds.",
         "",
         "## Build days and income hours — engaged player (§10.2)",
         "",
@@ -269,8 +359,7 @@ def render() -> str:
         "| --- |" + " --- |" * 10,
     ]
     built = eng["low"].state.built
-    names = ["Keeper's Spire"] + list(eng["low"].model.B)
-    for name in names:
+    for name in ["Keeper's Spire"] + list(eng["low"].model.B):
         cells = []
         for level in range(1, 11):
             if (name, level) in built:
@@ -280,29 +369,34 @@ def render() -> str:
                 cells.append("")
         if any(cells):
             lines.append(f"| {name} | " + " | ".join(cells) + " |")
-    alt = {e: run("engaged", e, birth_growth=got.birth_rate,
-                    haul_base=got.base_every_day) for e in EDGES}
-    alt_runs = {("engaged", e): alt[e] for e in EDGES}
     lines += [
         "",
-        "Starting buildings (the Heart's Well, Spring, Garden, Vault and Hearth at "
-        "level 1) have no build day.",
+        "The Heart's starting Well, Spring, Garden, Vault and Hearth have no level-1 "
+        "build day.",
         "",
-        f"## At a base of {got.base_every_day:,} (F36)",
+        "## Choices the document leaves open, and what each moves",
         "",
-        "If the raid-worth check is read on every day rather than on the day each "
-        "Vault level arrives:",
+        "Engaged player, the band's lower edge. The run's reading first, then the "
+        "alternative: Keeper 40 / everything built / the 38th character.",
         "",
-        "| Engaged | Keeper 16 | Keeper 28 | Keeper 40 | Everything built |",
+        "| Choice | The run | The alternative | As run | With the alternative |",
         "| --- | --- | --- | --- | --- |",
-        "| At " + f"{got.base:,} | " + " | ".join(
-            cell("engaged", f) for f in (lambda r: r.keeper_day(16), lambda r: r.keeper_day(28),
-                                        lambda r: r.keeper_day(40),
-                                        lambda r: r.day(MILESTONES[-1]))) + " |",
-        "| At " + f"{got.base_every_day:,} | " + " | ".join(
-            band(alt_runs, "engaged", f) for f in (
-                lambda r: r.keeper_day(16), lambda r: r.keeper_day(28),
-                lambda r: r.keeper_day(40), lambda r: r.day(MILESTONES[-1]))) + " |",
+    ]
+
+    def trio(t):
+        return " / ".join(str(v) if v is not None else "never" for v in t)
+    for what, ours, other, base, alt in choice_rows("low"):
+        lines.append(f"| {what} | {ours} | {other} | {trio(base)} | {trio(alt)} |")
+    spread = realm_order_spread("low")
+    lines += [
+        f"| Which realm types open first (5.2) | the median of all {spread['orders']} orders | "
+        f"every order | Keeper 40 day {spread['k40'][1]}, built {spread['built'][1]} | "
+        f"Keeper 40 day {spread['k40'][0]}–{spread['k40'][2]}, built "
+        f"{spread['built'][0]}–{spread['built'][2]} |",
+        "",
+        "The fastest order opens both Starlight realms first; the slowest leaves "
+        "them last. No choice here is the document's to guess: each is one sentence "
+        "in §14.1 when it decides.",
         "",
         "## What the run does not carry",
         "",

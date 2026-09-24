@@ -73,6 +73,8 @@ side.
 
 ## Known limits
 
+The historical model (the default `Config()`):
+
 - One-day granularity: within-day ordering of collection, spending and heists is
   approximated.
 - The page economy is coarse — a flat rate per heist rather than per-law tracking
@@ -84,6 +86,12 @@ side.
 
 None of these affect the four findings, which turn on building counts, worker
 slots and the payout formulas rather than on timing detail.
+
+`Config.document()` spends Essence on births and levels, keeps pages by §7.6's
+sources and chapters, and carries storage, the entry fee and strays. What it
+still leaves out is `rerun.NOT_MODELLED`, printed at the foot of `pacing.md`;
+what it chooses where the document is silent is `rerun.CHOICES`, printed with
+what each alternative moves.
 
 ## Where the assumptions live
 

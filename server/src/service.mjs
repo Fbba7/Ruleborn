@@ -147,13 +147,15 @@ export class Service {
    */
   targetLists() {
     const now = this.now();
+    // The owner is the island's, not the snapshot's: two players who publish
+    // the same bytes share a snapshot, and each is a target of their own.
     const rows = this.db.prepare(
-      `SELECT s.bundle, s.owner, s.realm, s.realm_level, s.vault_level, s.exposed,
+      `SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed,
               COALESCE(s.band, 'realm-level-' || s.realm_level) AS band, a.keeper_level
          FROM islands i
          JOIN snapshots s ON s.bundle = i.bundle
-         JOIN accounts a ON a.id = s.owner
-        ORDER BY s.bundle`).all();
+         JOIN accounts a ON a.id = i.owner
+        ORDER BY s.bundle, i.owner`).all();
     const bands = new Map();
     for (const r of rows) {
       if (!bands.has(r.band)) bands.set(r.band, []);
@@ -174,6 +176,12 @@ export class Service {
           .run(band, list, candidates.length, now);
         index[band] = list;
       }
+      // A band every island has left keeps no list: its last one would name
+      // only superseded snapshots.
+      const current = Object.keys(index);
+      this.db.prepare(
+        `DELETE FROM target_lists WHERE band NOT IN (${current.map(() => "?").join(", ") || "''"})`)
+        .run(...current);
     });
     return index;
   }
@@ -193,11 +201,19 @@ export class Service {
    * §24.12's lease, and §24.13: "A second device asking for the same target
    * is handed the lease the first already holds, not a new one."
    */
-  lease(attacker, bundle) {
+  lease(attacker, bundle, owner = null) {
     const now = this.now();
     const snapshot = this.db.prepare("SELECT owner FROM snapshots WHERE bundle = ?").get(bundle);
     if (!snapshot) throw new Refused(404, "no_such_snapshot");
-    if (snapshot.owner === attacker) throw new Refused(409, "own_island");
+    // Whose island this is: the one named, if they hold it, else the first
+    // player (by account) whose current island it is.
+    const holders = this.db.prepare(
+      "SELECT owner FROM islands WHERE bundle = ? ORDER BY owner").all(bundle).map((r) => r.owner);
+    if (holders.includes(attacker)) throw new Refused(409, "own_island");
+    // A snapshot no island is on any more is not a target: its owner has
+    // moved on, and a raider could otherwise pick an older, richer version.
+    if (holders.length === 0) throw new Refused(410, "superseded");
+    const defender = owner && holders.includes(owner) ? owner : holders[0];
     return transaction(this.db, () => {
       const held = this.db.prepare(
         "SELECT * FROM leases WHERE attacker = ? AND bundle = ? AND state = 'open'")
@@ -210,7 +226,7 @@ export class Service {
       }
       const row = {
         token: this.random(16).toString("hex"),
-        attacker, bundle,
+        attacker, bundle, defender,
         seed: this.random(8).readBigUInt64LE(0).toString(),
         ticks: clockTicks(0),
         rules: this.builds.current.rulesVersion,
@@ -218,8 +234,8 @@ export class Service {
         expires_at: now + LEASE_MS,
       };
       this.db.prepare(
-        `INSERT INTO leases (token, attacker, bundle, seed, ticks, rules, issued_at, expires_at)
-         VALUES (:token, :attacker, :bundle, :seed, :ticks, :rules, :issued_at, :expires_at)`)
+        `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at)
+         VALUES (:token, :attacker, :bundle, :defender, :seed, :ticks, :rules, :issued_at, :expires_at)`)
         .run(row);
       return this.leaseView(row);
     });
@@ -338,7 +354,7 @@ export class Service {
       vaultLevel: snapshot.vault_level,
       gradeName: verdict.grade,
       raiderLevel: level(attacker),
-      targetLevel: level(snapshot.owner),
+      targetLevel: level(lease.defender),
       exposed: snapshot.exposed,
       raidsEarlierToday,
       banked: verdict.banked,
@@ -355,7 +371,7 @@ export class Service {
       book(attacker, "starlight", fee, "entry fee returned after a clean heist (9.4)");
     } else if (verdict.grade === "foiled") {
       // §12.9: "A foiled heist gives the defender the raider's entry fee".
-      book(snapshot.owner, "starlight", fee, "a foiled raider's entry fee (12.9)");
+      book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
     }
     return { verdict, fee, haul: pay };
   }

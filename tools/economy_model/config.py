@@ -48,12 +48,13 @@ class Config:
     # does carry the 40%->71.5% sealed share §9.6 attributes to it.
     haul_level_source: str = "vault"      # "vault" | "realm" | "keeper_div_4" | "target"
     #
-    # "target" is §9.6 as v3.3 settled it: V is the *target's* Vault level. The
-    # model has no population, so the target is §12.22's median offered one —
-    # the list is built so its middle entry sits in the raider's band — at the
-    # raider's own Vault level, difficulty 1.0 and richness 1.0: the "clean
-    # same-level haul" §9.6 prices its own table and band against. The
-    # `raid_worth` report prints what a one-level spread either side moves.
+    # "target" is §9.6 as v3.3 settled it: V is the *target's* Vault level.
+    # The model has no population of targets, so it takes the target at the
+    # raider's own Vault level, difficulty 1.0 and richness 1.0 — the "clean
+    # same-level haul" §9.6's own table and raid-worth check are indexed by.
+    # That is the same arithmetic as "vault", and it is §9.6's convention, not
+    # something §12.22 gives: §12.22 matches on Renown, Keeper level, rating
+    # and depth, and its guarantee is a success band, not a level.
 
     # -- §9.6's base, and what an attempt is worth against it ------------------
     #
@@ -76,6 +77,49 @@ class Config:
     #: §9.5's birth price growth. None is the shipped rate; `rerun.tune_birth_rate`
     #: finds the one §9.5's rule sets.
     birth_growth: float | None = None
+
+    # -- v3.4's rules the first re-run left out (the review, T2.6) -------------
+    #
+    # Each is the document's reading where the document is explicit; the ones
+    # it leaves to the player are named choices, and rerun.py prints what each
+    # alternative moves.
+    #: §9.1: Starlight and Essence are held in the "Vault and Storehouses".
+    storage_caps: bool = False
+    #: §9.4: "Entry fee: 2% of the raider's Starlight, from 100 to 25,000,
+    #: returned in full after a clean heist."
+    entry_fee: bool = False
+    #: §11.5's heist strays (one heist in eight) and §18.2's season stray.
+    heist_stray_chance: float = 0.0
+    season_strays: bool = False
+    #: §14.1: "Players save for the next Spire level first". True reserves the
+    #: next Spire level's cost once its Keeper gate is open; False buys it only
+    #: when a day's stock covers it, which the first re-run did.
+    spire_reserve: bool = False
+    #: §16's first week opens the first outer realm on day 1: opening a realm
+    #: is bought with the producers, ahead of everything else.
+    realm_open_first: bool = False
+    #: §9.3's bonuses to "a matching school" only: the realm's own resource
+    #: gets ×1.1 and +10% per realm law, a crown law +5% to its school's
+    #: resource everywhere. False gives every producer in an outer realm both,
+    #: as the first re-run did.
+    school_bonuses: bool = False
+    #: Which resource each outer realm boosts, in the order they open. §5.2
+    #: leaves the choice to the player: "the player picks each one's type".
+    #: The default is the order at the median of all 90 (rerun.py prints the
+    #: spread): Keeper 40 and "everything built" land mid-range with it.
+    realm_order: tuple = ("aether", "starlight", "essence", "aether", "starlight", "essence")
+    #: The school of the Heart's two realm laws and of the crown laws, by the
+    #: resource they boost. The player's choice; Starlight is the scarce one.
+    heart_law_resource: str = "starlight"
+    crown_law_resource: str = "starlight"
+    #: Which empty slot a new worker fills. §9.2: "choosing which producer goes
+    #: short is the decision", and no order is stated. "heart_first" fills
+    #: the Heart, then each realm in turn, Well, Spring, Garden; "even" gives
+    #: each producer one worker in turn.
+    staffing_order: str = "heart_first"
+    #: One ruleborn at every Guardian Post built (§10.2), withheld from work.
+    #: §13.2: posts "hold stability only while staffed", so it is a choice.
+    staff_posts: bool = False
 
     # -- Assumption: producers in the Heart --------------------------------
     #
@@ -168,7 +212,9 @@ class Config:
         base = cls(producers_per_realm_override=1, staffing_rule="pro_rata",
                    crew_assigned_not_timed=True, faucet="minted",
                    haul_level_source="target", haul_base=data.HAUL_BASE,
-                   v34_economy=True,
+                   v34_economy=True, storage_caps=True, entry_fee=True,
+                   heist_stray_chance=data.HEIST_STRAY_CHANCE, season_strays=True,
+                   spire_reserve=True, realm_open_first=True, school_bonuses=True,
                    attempt_value=data.ATTEMPT_BAND[{"low": 0, "high": 1}[edge]])
         return replace(base, **overrides)
 
