@@ -192,6 +192,10 @@ NO_EDIT_BECAUSE = {
     "G25": "decisions for the owner: each row's rule is a design choice the "
            "readings only stand in for",
     "D61": "a limit of this build, not a sentence in the document",
+    "G26": "decisions for the owner: each figure and list is a design choice the "
+           "server's constants only stand in for",
+    "D62": "limits of this build, not sentences in the document",
+    "C43": "a decision for the owner: whether players 16 and over may type island names",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

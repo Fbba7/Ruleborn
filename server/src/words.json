@@ -1,0 +1,199 @@
+{
+ "_what": "§18.6: \"island names come from word lists\". The document gives no lists, so these are this server's (G26). A name is an adjective and a noun, stored as two indices, so every client shows it in its own language: English puts the adjective first; Brazilian Portuguese puts the noun first and the adjective in the noun's gender. Indices are never reused or reordered: a published name is two numbers.",
+ "adjectives": [
+  {
+   "en": "Amber",
+   "pt_BR": {
+    "m": "Âmbar",
+    "f": "Âmbar"
+   }
+  },
+  {
+   "en": "Hidden",
+   "pt_BR": {
+    "m": "Oculto",
+    "f": "Oculta"
+   }
+  },
+  {
+   "en": "Quiet",
+   "pt_BR": {
+    "m": "Silencioso",
+    "f": "Silenciosa"
+   }
+  },
+  {
+   "en": "Drifting",
+   "pt_BR": {
+    "m": "Errante",
+    "f": "Errante"
+   }
+  },
+  {
+   "en": "Golden",
+   "pt_BR": {
+    "m": "Dourado",
+    "f": "Dourada"
+   }
+  },
+  {
+   "en": "Sleeping",
+   "pt_BR": {
+    "m": "Adormecido",
+    "f": "Adormecida"
+   }
+  },
+  {
+   "en": "Winding",
+   "pt_BR": {
+    "m": "Sinuoso",
+    "f": "Sinuosa"
+   }
+  },
+  {
+   "en": "Crooked",
+   "pt_BR": {
+    "m": "Torto",
+    "f": "Torta"
+   }
+  },
+  {
+   "en": "Silver",
+   "pt_BR": {
+    "m": "Prateado",
+    "f": "Prateada"
+   }
+  },
+  {
+   "en": "Misty",
+   "pt_BR": {
+    "m": "Nebuloso",
+    "f": "Nebulosa"
+   }
+  },
+  {
+   "en": "Sunken",
+   "pt_BR": {
+    "m": "Afundado",
+    "f": "Afundada"
+   }
+  },
+  {
+   "en": "Bright",
+   "pt_BR": {
+    "m": "Brilhante",
+    "f": "Brilhante"
+   }
+  },
+  {
+   "en": "Hollow",
+   "pt_BR": {
+    "m": "Oco",
+    "f": "Oca"
+   }
+  },
+  {
+   "en": "Mossy",
+   "pt_BR": {
+    "m": "Musgoso",
+    "f": "Musgosa"
+   }
+  },
+  {
+   "en": "Windy",
+   "pt_BR": {
+    "m": "Ventoso",
+    "f": "Ventosa"
+   }
+  },
+  {
+   "en": "Starry",
+   "pt_BR": {
+    "m": "Estrelado",
+    "f": "Estrelada"
+   }
+  }
+ ],
+ "nouns": [
+  {
+   "en": "Garden",
+   "pt_BR": "Jardim",
+   "gender": "m"
+  },
+  {
+   "en": "Maze",
+   "pt_BR": "Labirinto",
+   "gender": "m"
+  },
+  {
+   "en": "Harbour",
+   "pt_BR": "Porto",
+   "gender": "m"
+  },
+  {
+   "en": "Tower",
+   "pt_BR": "Torre",
+   "gender": "f"
+  },
+  {
+   "en": "Grove",
+   "pt_BR": "Bosque",
+   "gender": "m"
+  },
+  {
+   "en": "Bridge",
+   "pt_BR": "Ponte",
+   "gender": "f"
+  },
+  {
+   "en": "Meadow",
+   "pt_BR": "Campina",
+   "gender": "f"
+  },
+  {
+   "en": "Cove",
+   "pt_BR": "Enseada",
+   "gender": "f"
+  },
+  {
+   "en": "Ruin",
+   "pt_BR": "Ruína",
+   "gender": "f"
+  },
+  {
+   "en": "Isle",
+   "pt_BR": "Ilha",
+   "gender": "f"
+  },
+  {
+   "en": "Keep",
+   "pt_BR": "Fortaleza",
+   "gender": "f"
+  },
+  {
+   "en": "Path",
+   "pt_BR": "Trilha",
+   "gender": "f"
+  },
+  {
+   "en": "Lagoon",
+   "pt_BR": "Lagoa",
+   "gender": "f"
+  },
+  {
+   "en": "Cliff",
+   "pt_BR": "Penhasco",
+   "gender": "m"
+  },
+  {
+   "en": "Orchard",
+   "pt_BR": "Pomar",
+   "gender": "m"
+  },
+  {
+   "en": "Well",
+   "pt_BR": "Poço",
+   "gender": "m"
+  }
+ ]
+}

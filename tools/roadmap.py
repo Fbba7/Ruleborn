@@ -707,12 +707,19 @@ dict(
                     "days of it a week \u2014 and building them found G20. "
                     "Target lists are \u00a724.8's static files, one a band, "
                     "content-addressed so an unchanged band keeps its cache (G21)."
+                    "<br><br>The Island Workshop runs on it too (\u00a718.6): "
+                    "publishing only what its creator has cleared, by a replay "
+                    "the server re-simulates; browsing, with 13-to-15s on the "
+                    "curated list; completions once a player on \u00a718.7's "
+                    "ladder; ratings, reports a person resolves inside 24 hours, "
+                    "bans that take a player's islands out everywhere, and "
+                    "one-tap remixes. Building it found G26, D62 and C43."
                     "<br><br><strong>Not yet:</strong> platform sign-in (needs "
                     "the stores), crossing realms, \u00a712.22's ratings and "
                     "fallback targets, and a landing command in the replay.",
              evidence="node --no-warnings --test server/test/*.test.mjs; "
                       "bash sim/run_spike.sh",
-             register=["G17", "D58", "G20", "G21"]),
+             register=["G17", "D58", "G20", "G21", "G26", "D62", "C43"]),
         dict(id="T3.4", owner="claude", status="doing",
              title="The client's half: the simulation inside Godot, and a "
                    "replay on screen",

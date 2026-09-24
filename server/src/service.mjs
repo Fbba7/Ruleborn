@@ -79,7 +79,11 @@ export class Service {
     const identity = this.verifyPlatform(credential);
     if (!identity) throw new Refused(401, "platform_identity_refused");
     const now = this.now();
-    let row = this.db.prepare("SELECT id FROM accounts WHERE platform_identity = ?").get(identity);
+    let row = this.db.prepare("SELECT id, banned_at FROM accounts WHERE platform_identity = ?")
+      .get(identity);
+    // §20.4: "Repeat offenders are muted, then banned." The identity is kept
+    // so the ban holds (§20.12).
+    if (row?.banned_at) throw new Refused(403, "banned");
     if (!row) {
       const id = this.random(12).toString("hex");
       this.db.prepare("INSERT INTO accounts (id, platform_identity, created_at) VALUES (?, ?, ?)")
@@ -155,6 +159,7 @@ export class Service {
          FROM islands i
          JOIN snapshots s ON s.bundle = i.bundle
          JOIN accounts a ON a.id = i.owner
+        WHERE a.banned_at IS NULL
         ORDER BY s.bundle, i.owner`).all();
     const bands = new Map();
     for (const r of rows) {
@@ -207,8 +212,10 @@ export class Service {
     if (!snapshot) throw new Refused(404, "no_such_snapshot");
     // Whose island this is: the one named, if they hold it, else the first
     // player (by account) whose current island it is.
+    // A banned player's islands have left matchmaking (§20.12).
     const holders = this.db.prepare(
-      "SELECT owner FROM islands WHERE bundle = ? ORDER BY owner").all(bundle).map((r) => r.owner);
+      `SELECT i.owner FROM islands i JOIN accounts a ON a.id = i.owner
+        WHERE i.bundle = ? AND a.banned_at IS NULL ORDER BY i.owner`).all(bundle).map((r) => r.owner);
     if (holders.includes(attacker)) throw new Refused(409, "own_island");
     // A snapshot no island is on any more is not a target: its owner has
     // moved on, and a raider could otherwise pick an older, richer version.

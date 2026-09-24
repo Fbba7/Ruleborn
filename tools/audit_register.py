@@ -58,7 +58,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           "F36", "F37", "G19", "G20", "G21",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
-                          "G23", "G24", "G25", "D61"})
+                          "G23", "G24", "G25", "D61", "G26", "D62", "C43"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5553,6 +5553,66 @@ dict(id="D61", kind="deviation", severity="minor", status="open",
          "chords against its universe\u2019s stability, and carry the crown laws "
          "in the bundle (or beside it) so the realm plays what its owner wove. "
          "Until then it is a limit of this build, not of the design."),
+
+dict(id="G26", kind="gap", severity="significant", status="open",
+     title="§18.6 and §20.12 describe the Workshop\u2019s rules without the "
+           "figures and lists a server has to enforce them by",
+     refs=["18.6", "18.7", "20.4", "20.7", "20.12"],
+     body="The server now runs the Workshop: publish, browse, play, rate, "
+          "report, moderate and remix. Each needed something the document "
+          "names and does not give. <em>\u201cIsland names come from word "
+          "lists\u201d</em> \u2014 no lists, so the server carries sixteen "
+          "adjectives and sixteen nouns in both launch languages. "
+          "<em>\u201cBetween five and ten published islands per account\u201d</em> "
+          "with <em>\u201c3 extra island slots\u201d</em> for a Builder \u2014 read as "
+          "five, and eight for a Builder. <em>\u201ca storage quota per "
+          "account\u201d</em> with no size \u2014 64 KiB, counting everything ever "
+          "published, since nothing is deleted. <em>\u201ccleared by its "
+          "creator\u201d</em> \u2014 read as a heist that banks loot, every grade "
+          "but foiled. <em>\u201cevery island can be reported\u201d</em>, for no "
+          "stated reasons \u2014 five. <em>\u201csudden spikes are reviewed by a "
+          "person\u201d</em>, with no measure of sudden \u2014 a day of fifty "
+          "completions or more, above five times the week before\u2019s daily "
+          "mean. And a remix names its original, which §18.7 neither credits nor "
+          "rules out. Each figure is a named constant in "
+          "<code>server/src/workshop.mjs</code>, and each rule a test.",
+     rec="State the word lists (or where they live), the slot count and quota, "
+         "what clearing an island means, the report reasons, what counts as a "
+         "spike, and whether a remix earns its original anything."),
+
+dict(id="D62", kind="deviation", severity="significant", status="open",
+     title="The Workshop publishes without the authored hold-band check, counts "
+           "every completion whole, and pays no Island Fund",
+     refs=["13.2", "18.6", "18.7", "18.9", "20.5"],
+     body="Three of the Workshop\u2019s rules wait on systems this build does not "
+          "have. §18.7: <em>\u201cA published island is checked against the "
+          "authored hold band before the Workshop lets it out\u201d</em> \u2014 a "
+          "hold rate is measured over hundreds of raids (13.4), which only the "
+          "harness can run, and not per publish; the server checks the rules "
+          "and the creator\u2019s clear. <em>\u201ccompletions from a creator's "
+          "own constellation count at a quarter\u201d</em> \u2014 constellations "
+          "are not built, so every completion counts whole. §18.9\u2019s Island "
+          "Fund needs revenue and the stores. And the age band a player browses "
+          "by is declared, not verified, as §20.5\u2019s neutral gate allows. "
+          "Found building the Workshop.",
+     rec="Run the hold-band measurement when an island is submitted (a queue, "
+         "not the request), weigh completions once crews exist, and build the "
+         "fund with purchases. Until then these are limits of this build."),
+
+dict(id="C43", kind="contradiction", severity="minor", status="open",
+     title="§18.6 gives every island a word-list name; §20.7 gives one only to "
+           "players aged 13 to 15",
+     refs=["18.6", "20.7", "20.4"],
+     body="§18.6: <em>\u201cisland names come from word lists\u201d</em>, for "
+          "everyone. §20.7\u2019s table: publishing is <em>\u201cYes, names from "
+          "word lists\u201d</em> for 13 to 15 and a plain <em>\u201cYes\u201d</em> "
+          "for 16 and over, which reads as free names for older players \u2014 "
+          "and §20.4\u2019s word filter covers chat, player names and "
+          "constellation names, not island names. The server takes §18.6: every "
+          "name is from the lists, so none needs filtering.",
+     rec="One rule. If older players may type names, add island names to "
+         "§20.4\u2019s filter and the 24-hour review; if not, §20.7\u2019s row "
+         "says word lists for everyone."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

@@ -32,7 +32,10 @@ export function server() {
   let counter = 0;
   const random = (n) => {
     const out = Buffer.alloc(n);
-    for (let i = 0; i < n; i++) out[i] = (++counter * 37 + i * 11) & 255;
+    // One count a draw, and its high bits mixed in, so a test that makes
+    // hundreds of accounts and plays never wraps onto an id it already used.
+    counter++;
+    for (let i = 0; i < n; i++) out[i] = (counter * 37 + i * 11 + (counter >> 8) * (i + 1) * 53) & 255;
     return out;
   };
   const service = new Service({

@@ -243,8 +243,17 @@ DELIVERABLES = [
         "a day's ceiling is half again above the whole fatigue curve; a week's is five days of it",
         "a haul is capped by what the raider was already paid today (§9.6, §24.12)")),
 
-    ("7", "Workshop services: publish, browse, moderate, remix", BACKEND, not_started(
-        "the server stores, lists, moderates and forks shared islands")),
+    ("7", "Workshop services: publish, browse, moderate, remix", BACKEND, server_tests(
+        "an island reaches the Workshop only once its creator has cleared it (18.6)",
+        "a creator holds five islands, eight once a Builder, and a withdrawn one frees its slot (20.12, 18.7)",
+        "a completion counts once a player, never the creator's own, and climbs the ladder (18.7)",
+        "a player aged 13 to 15 browses the curated list only (20.7)",
+        "islands are rated for fun, cleverness and fairness by those who played them (18.6)",
+        "reports wait for a person, a removal gives its reason, and a ban takes everything out (20.4, 20.12)",
+        "remixing hands over the island, and publishing the remix names the original (25.1)",
+        "a Workshop island is never edited or deleted (18.6)",
+        "a sudden spike in completions is flagged for a person to review (18.7)",
+        "the Workshop over HTTP: publish a cleared island, browse, play, rate, remix and report")),
     ("7", "Workshop screens", FRONTEND, not_started("the Workshop's screens exist in the client")),
 
     ("8", "Currencies", BACKEND, server_tests(
