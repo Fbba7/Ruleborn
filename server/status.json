@@ -21,6 +21,7 @@
   "a defender's worn cosmetics travel with the lease, so the raider sees them": "passed",
   "a device's batch is checked whole: known events, known fields, no positions, sensible times (24.3)": "passed",
   "a foiled heist costs the raider a flat 8, and the defender gains what the raider lost (12.9)": "passed",
+  "a foiled heist pays the defender the fee and 5% of what the crew was carrying (9.4)": "passed",
   "a foiled raider pays the fee to the defender (§12.9)": "passed",
   "a full five-crew carries 750 (§9.6, from content/roles.json)": "passed",
   "a haul is capped by what the raider was already paid today (§9.6, §24.12)": "passed",
@@ -45,6 +46,7 @@
   "a session is a signed token, and a forged one is refused": "passed",
   "a snapshot no island is on any more is an echo for 14 days, and then cannot be leased (12.3)": "passed",
   "a sudden spike in completions is flagged for a person to review (18.7)": "passed",
+  "a week in which enough players change their defence holds the share where it is (13.1)": "passed",
   "above its floor, the defender loses the mirror amount (12.9)": "passed",
   "account deletion from inside the game, over HTTP (20.5)": "passed",
   "an expired lease is honoured once a day, and then pays nothing (§24.12, G17)": "passed",
@@ -88,6 +90,7 @@
   "the track's first tier is free on day one, and each after costs a tier's stars, in order (18.2)": "passed",
   "the track, the shop and the wardrobe over HTTP": "passed",
   "the week's cap binds a grinder, and at §14.1's four raids a day never binds (G20)": "passed",
-  "two players with the same island are two targets, and a foiled fee goes to the one raided": "passed"
+  "two players with the same island are two targets, and a foiled fee goes to the one raided": "passed",
+  "while fewer than 15% change their defence, the share rises 5 points a season, to 20% at most (13.1)": "passed"
  }
 }

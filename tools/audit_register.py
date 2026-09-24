@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5898,7 +5898,8 @@ dict(id="G30", kind="gap", severity="minor", status="open",
           "the middle of the list is the in-band candidate nearest the band\u2019s "
           "middle, with one easier and one harder beside it; an echo moves no "
           "Renown, earns its owner nothing and rates nothing; the new-player "
-          "protection covers echoes too. Found building matchmaking.",
+          "protection covers echoes too, and not §13.1\u2019s seeded islands, "
+          "which are the game\u2019s own. Found building matchmaking.",
      rec="State a band\u2019s width, the window of \u201crecent\u201d, the score of a "
          "partial heist, and whether echoes move Renown."),
 
@@ -5921,6 +5922,30 @@ dict(id="D66", kind="deviation", severity="significant", status="open",
           "matchmaking.",
      rec="Port the reference crews and the generator into the simulation, so "
          "the server can rate a new island and make fallbacks itself."),
+
+dict(id="G31", kind="gap", severity="minor", status="open",
+     title="The defence reward is a share of \u201cwhat the crew was carrying\u201d, "
+           "with no price on it, and §13.1\u2019s measure is two measures",
+     refs=["9.4", "12.20", "13.1"],
+     body="§9.4: <em>\u201ca foiled heist gives the defender the entry fee plus 5% "
+          "of what the crew was carrying, a share that rises by 13.1's "
+          "rule\u201d</em>. A crew carries bag units, not currency, and nothing "
+          "says what they are worth. §13.1 measures the <em>\u201cShare of active "
+          "players who changed their defence in the last 7 days, and who "
+          "published a defence of their own in their first week\u201d</em> \u2014 two "
+          "shares \u2014 and then says <em>\u201cBelow 15%\u201d</em> of one. The "
+          "readings: the simulation now reports what a crew took and did not "
+          "bank (dropped, or held by whoever was caught), and the server values "
+          "it as the clean haul it would have been, before the raider\u2019s fatigue "
+          "and caps, and pays the share of that half in Essence; the measure is "
+          "the first share, taken over each season\u2019s last seven days, with a "
+          "session as activity and a publish as a change, seeded accounts left "
+          "out; the rule sets the next season\u2019s share at each close. The page "
+          "a defender gets when a raider cast a law during a foiled heist waits "
+          "on casting, which the simulation does not have. Found building the "
+          "defence reward.",
+     rec="Price what a crew carries, say which share §13.1\u2019s 15% reads, and "
+         "when in a season it is measured."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

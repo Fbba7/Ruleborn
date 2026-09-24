@@ -157,6 +157,12 @@ transaction as the grant:
   `tools/league_model.py` fits to §14.7's season-end shares, over a
   simulated population of players raiding each other — register **G27**.
   `bash tools/check_all.sh` fails if the copy drifts from the model.
+- **Defending pays.** A foiled heist gives the defender the raider's entry
+  fee and §9.4's "5% of what the crew was carrying": the simulation reports
+  what the crew took and did not bank, valued as the clean haul it would
+  have been. §13.1's rule raises the share five points a season, to 20% at
+  most, while fewer than 15% of the season's last-week players changed their
+  defence (G31).
 - **Seasons** last eight weeks, back to back from `RULEBORN_SEASON_START`.
   `Seasons.rollover` closes every ended season once — each player's final
   Renown, league and reward written down, Star, Nova and Paradox's season
@@ -267,8 +273,7 @@ built — register **D63**.
   is §5.4's 150 seconds with no links.
 - **Receipt verification** with the App Store and Google Play, and family
   approval for 13 to 15 (D64).
-- The defender's "5% of what the crew was carrying", and §12.22's generated
-  fallback targets (D66).
+- §12.22's generated fallback targets (D66).
 - **Constellation chat, votes and anomalies** (D63).
 - **The landing.** The replay has no landing command yet; see `sim/README.md`.
 

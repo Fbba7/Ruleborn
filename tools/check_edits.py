@@ -216,6 +216,8 @@ NO_EDIT_BECAUSE = {
            "server's constants only stand in for",
     "D66": "limits of this build: the reference crews and the generator live "
            "in the harness",
+    "G31": "decisions for the owner: the price of a carried bag, and which "
+           "share the rule reads",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

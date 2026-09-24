@@ -24,7 +24,7 @@ import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
-import { capHaul, entryFee, haul } from "./economy.mjs";
+import { capHaul, defenceShare, entryFee, haul } from "./economy.mjs";
 import { Matchmaking } from "./matchmaking.mjs";
 import { Seasons } from "./seasons.mjs";
 import { Shop } from "./shop.mjs";
@@ -440,9 +440,20 @@ export class Service {
     book(attacker, "essence", pay.essence, "haul (9.6)");
     if (verdict.grade === "clean") {
       book(attacker, "starlight", fee, "entry fee returned after a clean heist (9.4)");
-    } else if (verdict.grade === "foiled" && !lease.echo) {
-      // §12.9: "A foiled heist gives the defender the raider's entry fee".
+    }
+    // §9.4: "a foiled heist gives the defender the entry fee plus 5% of what
+    // the crew was carrying", the share §13.1's rule has set this season.
+    let defence = null;
+    if (verdict.grade === "foiled" && !lease.echo) {
       book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
+      const percent = this.seasons.defenceShare(this.seasons.current(now).id);
+      const share = defenceShare({
+        vaultLevel: snapshot.vault_level, raiderLevel: level(attacker), targetLevel: level(lease.defender),
+        exposed: snapshot.exposed, left: verdict.left ?? 0, capacity: verdict.capacity, percent,
+      });
+      book(lease.defender, "starlight", share.starlight, `${percent}% of what a foiled crew carried (9.4)`);
+      book(lease.defender, "essence", share.essence, `${percent}% of what a foiled crew carried (9.4)`);
+      defence = { percent, ...share };
     }
     // §12.9's Renown, §18.2's season stars and §12.22's ratings, in the same
     // transaction as the haul. An echo is nobody's defence: it moves no
@@ -451,7 +462,7 @@ export class Service {
     const renown = lease.echo ? { raider: 0, defender: 0 } : this.seasons.settle(lease, verdict, now);
     const stars = this.track.settle(lease, verdict, season, now, { echo: Boolean(lease.echo) });
     const rating = lease.echo ? null : this.matchmaking.settle(lease, snapshot.realm, verdict, now);
-    return { verdict, fee, haul: pay, renown, stars, rating };
+    return { verdict, fee, haul: pay, renown, stars, rating, defence };
   }
 
   /** The raider's own Vault level, from their Heart's current snapshot; a

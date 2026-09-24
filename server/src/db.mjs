@@ -396,6 +396,15 @@ CREATE TRIGGER IF NOT EXISTS purchases_append_only_update BEFORE UPDATE ON purch
 CREATE TRIGGER IF NOT EXISTS purchases_append_only_delete BEFORE DELETE ON purchases
   BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
 
+-- §13.1's rule, season by season: the defence reward's share of what a
+-- foiled crew carried, and the weekly measure that set it (seasons.mjs).
+CREATE TABLE IF NOT EXISTS defence_shares (
+  season   INTEGER PRIMARY KEY,
+  percent  INTEGER NOT NULL,
+  measured REAL,
+  set_at   INTEGER NOT NULL
+);
+
 -- §12.22's Glicko-2 ratings: a raider's skill by account, an island's
 -- difficulty by owner and realm (matchmaking.mjs).
 CREATE TABLE IF NOT EXISTS ratings (

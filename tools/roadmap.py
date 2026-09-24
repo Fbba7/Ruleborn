@@ -747,7 +747,9 @@ dict(
                     "drawn from the raider-success band, counts echoes when "
                     "the band is thin, and holds \u00a712.3's new-player "
                     "protection and Trace (G30, D66); building it found F44 "
-                    "and F45."
+                    "and F45. A foiled heist now pays the defender \u00a79.4's "
+                    "share of what the crew carried, which the simulation "
+                    "reports, rising by \u00a713.1's rule each season (G31)."
                     "<br><br><strong>Not yet:</strong> platform sign-in and receipt checks (need "
                     "the stores), crossing realms, \u00a712.22's generated "
                     "fallback targets, and a landing command in the replay.",
@@ -755,7 +757,8 @@ dict(
                       "bash sim/run_spike.sh",
              register=["G17", "D58", "G20", "G21", "G26", "D62", "C43",
                        "F40", "G27", "D63", "F41", "F42", "G28", "D64",
-                       "G29", "D65", "F43", "F44", "F45", "G30", "D66"]),
+                       "G29", "D65", "F43", "F44", "F45", "G30", "D66",
+                       "G31"]),
         dict(id="T3.4", owner="claude", status="doing",
              title="The client's half: the simulation inside Godot, and a "
                    "replay on screen",

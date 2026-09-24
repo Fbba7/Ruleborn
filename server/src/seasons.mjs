@@ -193,12 +193,57 @@ export class Seasons {
           if (prize) this.grantCosmetic(s.account, prize);
         }
         this.rankConstellations(season.id);
+        this.setDefenceShare(season);
         this.db.prepare("UPDATE seasons SET closed_at = ? WHERE id = ?").run(now, season.id);
       });
       closed.push(season.id);
     }
     this.current(now);
     return closed;
+  }
+
+  /** The defence reward's share of a foiled crew's load this season, in
+   *  per cent: §9.4's 5 until §13.1's rule has raised it. */
+  defenceShare(season = this.current().id) {
+    const row = this.db.prepare(
+      "SELECT percent FROM defence_shares WHERE season <= ? ORDER BY season DESC LIMIT 1").get(season);
+    return row ? row.percent : facts.DEFENCE_SHARE;
+  }
+
+  /**
+   * §13.1's weekly measure, taken over a season's last seven days: the
+   * "Share of active players who changed their defence in the last 7 days".
+   * Active is a session in that week; changing a defence is publishing an
+   * island. Seeded accounts are the game's, and not counted (G31). Null
+   * when nobody was active.
+   */
+  defenceMeasure(end) {
+    const since = end - 7 * DAY_MS;
+    const active = new Set(this.db.prepare(
+      "SELECT DISTINCT who FROM events WHERE kind = 'session' AND at > ? AND at <= ?").all(since, end)
+      .map((r) => r.who));
+    for (const r of this.db.prepare("SELECT id FROM accounts WHERE seeded = 1").all()) {
+      active.delete(this.service.telemetry.pseudonym(r.id));
+    }
+    if (active.size === 0) return null;
+    const changed = this.db.prepare(
+      "SELECT DISTINCT owner FROM snapshots WHERE published_at > ? AND published_at <= ?").all(since, end)
+      .map((r) => this.service.telemetry.pseudonym(r.owner)).filter((w) => active.has(w));
+    return (100 * changed.length) / active.size;
+  }
+
+  /** §13.1: "Below 15%, the defence reward's share … rises by 5 points a
+   *  season, at most three times, from 5% to 20%; nothing further is tried".
+   *  Set for the season after the one closing. */
+  setDefenceShare(season) {
+    const [below, step, most, from, to] = facts.DEFENCE_SHARE_RISE;
+    const now = this.defenceShare(season.id);
+    const measured = this.defenceMeasure(season.ends_at);
+    const rises = Math.round((now - from) / step);
+    const next = measured !== null && measured < below && rises < most ? Math.min(to, now + step) : now;
+    this.db.prepare(
+      "INSERT OR REPLACE INTO defence_shares (season, percent, measured, set_at) VALUES (?, ?, ?, ?)")
+      .run(season.id + 1, next, measured, season.ends_at);
   }
 
   grantCosmetic(account, id) {

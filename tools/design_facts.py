@@ -237,6 +237,15 @@ TRACE_HOURS = 24
 #: §12.3's echoes: "snapshots of real universes from the last 14 days".
 ECHO_DAYS = 14
 
+#: §9.4: "a foiled heist gives the defender the entry fee plus 5% of what the
+#: crew was carrying, a share that rises by 13.1's rule". Per cent.
+DEFENCE_SHARE = 5
+
+#: §13.1's rule: "Below 15%, the defence reward's share of what a foiled crew
+#: was carrying (9.4) rises by 5 points a season, at most three times, from 5%
+#: to 20%". (threshold %, step, most rises, from %, to %)
+DEFENCE_SHARE_RISE = (15, 5, 3, 5, 20)
+
 #: §18.2: "Fifty tiers, climbed with season points from heists, defences and
 #: discoveries."
 SEASON_TIERS = 50
@@ -314,6 +323,8 @@ HOME = {
     "NEW_PLAYER_SHIELD_HOURS": "12.3",
     "TRACE_HOURS": "12.3",
     "ECHO_DAYS": "12.3",
+    "DEFENCE_SHARE": "9.4",
+    "DEFENCE_SHARE_RISE": "13.1",
     "SEASON_TIERS": "18.2",
     "PREMIUM_TRACK_EUR": "22.1",
     "STARGLASS_PACKS_EUR": "22.1",
@@ -426,6 +437,12 @@ STATED = {
                                 lambda m: int(m[0])),
     "TRACE_HOURS": (r"Trace: within (\d+) hours of being robbed", lambda m: int(m[0])),
     "ECHO_DAYS": (r"snapshots of real universes from the last (\d+) days", lambda m: int(m[0])),
+    "DEFENCE_SHARE": (r"a foiled heist gives the defender the entry fee plus (\d+)% of what the crew "
+                      r"was carrying", lambda m: int(m[0])),
+    "DEFENCE_SHARE_RISE": (r"Below (\d+)%, the defence reward's share of what a foiled crew was carrying "
+                           r"\(9\.4\) rises by (\d+) points a season, at most (\w+) times, from (\d+)% to (\d+)%",
+                           lambda m: (int(m[0]), int(m[1]), {"two": 2, "three": 3, "four": 4}.get(m[2]),
+                                      int(m[3]), int(m[4]))),
     "SEASON_TIERS": (r"(\w+) tiers, climbed with season points",
                      lambda m: {"Forty": 40, "Fifty": 50, "Sixty": 60, "Seventy": 70, "Eighty": 80,
                                 "Ninety": 90, "A hundred": 100}.get(m[0])),

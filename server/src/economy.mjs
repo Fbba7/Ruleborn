@@ -136,6 +136,21 @@ export function haul({ vaultLevel, gradeName, raiderLevel, targetLevel, exposed,
 }
 
 /**
+ * §9.4's defence reward: "5% of what the crew was carrying", at `percent`.
+ * What was carried is valued as the clean haul it would have made, before
+ * the raider's fatigue and caps, which are the raider's and not the
+ * defender's (G31); paid half Essence, as a haul is.
+ */
+export function defenceShare({ vaultLevel, raiderLevel, targetLevel, exposed, left, capacity, percent }) {
+  if (left <= 0) return { total: 0, essence: 0, starlight: 0 };
+  const worth = haul({ vaultLevel, gradeName: "clean", raiderLevel, targetLevel, exposed,
+                       raidsEarlierToday: 0, banked: left, capacity }).total;
+  const total = Math.floor((worth * percent) / 100);
+  const essence = Math.floor(total / 2);
+  return { total, essence, starlight: total - essence };
+}
+
+/**
  * §9.4: "Entry fee: 2% of the raider's Starlight, from 100 to 25,000,
  * returned in full after a clean heist." Never more than the raider holds
  * (G17).

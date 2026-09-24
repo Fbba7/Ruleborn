@@ -163,6 +163,11 @@ pub struct Outcome {
     /// How much each leaves is not stated (G25), so the count is reported
     /// and nothing is paid for it yet.
     pub cracked: u32,
+    /// What the crew took from the Vault and did not bank: dropped when
+    /// knocked down or by choice, or still carried by whoever was not out.
+    /// §9.4's "what the crew was carrying", a share of which a foiled heist
+    /// pays the defender.
+    pub left: i32,
 }
 
 // --------------------------------------------------------------------------

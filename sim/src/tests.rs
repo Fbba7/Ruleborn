@@ -1465,6 +1465,7 @@ fn the_skiff_comes_to_an_edge_after_twenty_seconds_and_nowhere_else() {
     world.step();                                 // tick 600: it arrives
     assert_eq!(world.raiders[0].standing, Standing::Out);
     assert_eq!(world.outcome().banked, 40);
+    assert_eq!(world.outcome().left, 0, "banked is not left");
 }
 
 #[test]
@@ -1479,6 +1480,7 @@ fn anyone_inside_when_the_clock_ends_is_caught() {
     assert_eq!(world.raiders[1].carried, 0, "and drops what it carries");
     assert_eq!(world.dropped.len(), 1);
     assert_eq!(world.outcome().grade, Grade::Foiled);
+    assert_eq!(world.outcome().left, 25, "what the crew was carrying, left behind (9.4)");
 }
 
 #[test]
