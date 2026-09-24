@@ -294,7 +294,12 @@ DELIVERABLES = [
     ("10 to 13", "Accessibility", FRONTEND, not_started("§21's accessibility set is in the client")),
     ("10 to 13", "Compliance: store declarations", BACKEND, not_started(
         "the age, privacy and store declarations are filed")),
-    ("10 to 13", "Telemetry", BACKEND, not_started("§24's events are logged and queryable")),
+    ("10 to 13", "Telemetry", BACKEND, server_tests(
+        "the server records sessions, heists and purchases under a pseudonym, never the account (24, 20.5)",
+        "a device's batch is checked whole: known events, known fields, no positions, sensible times (24.3)",
+        "the launch gates' figures: players, crash-free sessions, heists, worth-your-time, buyers (22.2, 25.3)",
+        "retention by cohort, day 1, 7 and 30, outlives the raw events discarded after 90 days (24.3)",
+        "telemetry over HTTP: a batch from the device, and the report for analysts only")),
 
     ("14", "Load testing", BACKEND, not_started("the server holds its target load")),
     ("14", "Real-device matrix", FRONTEND, not_started("the client runs on the device matrix")),

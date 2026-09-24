@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   age_band          TEXT NOT NULL DEFAULT '18+' CHECK (age_band IN ('13-15', '16-17', '18+')),
   -- §20.4: a person reviews reports; this marks who may act on them.
   moderator         INTEGER NOT NULL DEFAULT 0,
+  -- Who may read the telemetry report (telemetry.mjs).
+  analyst           INTEGER NOT NULL DEFAULT 0,
   -- §20.12: "Their islands leave matchmaking and the Workshop immediately."
   banned_at         INTEGER,
   banned_reason     TEXT
@@ -382,6 +384,44 @@ CREATE TRIGGER IF NOT EXISTS purchases_append_only_update BEFORE UPDATE ON purch
   BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
 CREATE TRIGGER IF NOT EXISTS purchases_append_only_delete BEFORE DELETE ON purchases
   BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
+
+-- First-party telemetry (§24, §24.3; telemetry.mjs). Keyed by a pseudonym,
+-- never an account (§20.5), and discarded after 90 days: not append-only,
+-- because §24.3 says the raw events go.
+CREATE TABLE IF NOT EXISTS events (
+  id   INTEGER PRIMARY KEY AUTOINCREMENT,
+  who  TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  data TEXT NOT NULL,
+  at   INTEGER NOT NULL,
+  day  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS events_by_day ON events (kind, day);
+CREATE INDEX IF NOT EXISTS events_by_who ON events (who, kind, day);
+
+-- A player's first session day, kept for good, so a cohort is still a
+-- cohort after its events are gone.
+CREATE TABLE IF NOT EXISTS first_seen (
+  who TEXT PRIMARY KEY,
+  day TEXT NOT NULL
+);
+
+-- What stays of the raw events: each cohort's returns on day 1, 7 and 30,
+-- and each day's count of each kind.
+CREATE TABLE IF NOT EXISTS cohorts (
+  day     TEXT PRIMARY KEY,
+  players INTEGER NOT NULL,
+  day1    INTEGER NOT NULL,
+  day7    INTEGER NOT NULL,
+  day30   INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS event_days (
+  day     TEXT NOT NULL,
+  kind    TEXT NOT NULL,
+  events  INTEGER NOT NULL,
+  players INTEGER NOT NULL,
+  PRIMARY KEY (day, kind)
+);
 `;
 
 /** Columns added to a table after a database was first made: `CREATE TABLE IF
@@ -394,6 +434,7 @@ const ADDED = [
   // The cosmetics a player wears, slot by slot (shop.mjs).
   ["accounts", "equipped", "TEXT NOT NULL DEFAULT '{}'"],
   ["standings", "tier_stars", "INTEGER"],
+  ["accounts", "analyst", "INTEGER NOT NULL DEFAULT 0"],
 ];
 
 /** A ledger made before Starglass: its currency check predates it, and a

@@ -126,6 +126,7 @@ export class Shop {
         "INSERT INTO purchases (store, txn, account, product, price, intent, at) VALUES (?, ?, ?, ?, ?, ?, ?)")
         .run(store, proof.transaction, account, proof.product, price, proof.intent ?? null, now);
       this.service.book(account, "starglass", price, `${proof.product} bought (22.1)`, now);
+      this.service.telemetry.record(account, "purchase", { product: proof.product, cents: price }, now);
       return { product: proof.product, starglass: price };
     });
   }

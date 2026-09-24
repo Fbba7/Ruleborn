@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5784,6 +5784,46 @@ dict(id="D64", kind="deviation", severity="minor", status="open",
      rec="Wire the stores\u2019 receipt services with platform sign-in; move "
          "pages and the roster to the server before the track ships, so a tier "
          "is granted rather than recorded; author the launch cosmetic sets."),
+
+dict(id="G29", kind="gap", severity="minor", status="open",
+     title="Telemetry is named event by event, and nothing says what a session "
+           "is, how long raw events stay inside 30 to 90 days, or how often a "
+           "player is surveyed",
+     refs=["20.3", "20.5", "24", "24.1", "24.3", "25.3", "25.4"],
+     body="§24 lists the events and §24.3 the rules: first-party, pseudonymous, "
+          "no coordinates, raw logs <em>\u201ckept 30 to 90 days, long enough "
+          "for validation and analysis, then aggregated and discarded\u201d</em>. "
+          "The server\u2019s readings, each a named constant in "
+          "<code>telemetry.mjs</code>: a session is a sign-in; raw events stay "
+          "the full 90 days; a cohort\u2019s day-1, day-7 and day-30 returns and "
+          "each day\u2019s counts are what stay; a pseudonym is an HMAC of the "
+          "account; a batch is at most 100 events, dated no more than seven "
+          "days back; the eleven-item inventory is answered on a seven-point "
+          "scale. And §24 names <em>\u201cthe monthly survey in 25\u201d</em>, "
+          "while §25.4 says surveys come <em>\u201cnever more than once a "
+          "quarter per player\u201d</em>: read as a survey sent every month to a "
+          "rotating sample, which the server holds to once a quarter a player. "
+          "Found building telemetry.",
+     rec="Define a session, choose the retention inside 30 to 90 days, give the "
+         "survey\u2019s scale, and say whether the monthly survey is a monthly "
+         "sample or a monthly ask."),
+
+dict(id="D65", kind="deviation", severity="minor", status="open",
+     title="Telemetry logs and reports on the server, without §24.3\u2019s heatmaps "
+           "or an error reporter",
+     refs=["24", "24.3", "25.2", "25.3"],
+     body="The server records sessions, heists (outcome, laws crossed, crew) and "
+          "purchases itself, takes the device\u2019s weaving, births, session ends, "
+          "\u201cworth your time\u201d ratings and surveys in batches it checks "
+          "whole, and reports the launch gates\u2019 figures and §25.3\u2019s "
+          "recency of absence to analysts. Not built: §24.3\u2019s route, "
+          "detection and failure heatmaps from re-simulated replays (the "
+          "simulation does not yet report positions over a heist); the free-tier "
+          "error reporter, so crash-free sessions are counted from the "
+          "device\u2019s own session-end flag; and §25.2\u2019s funnel. Found "
+          "building telemetry.",
+     rec="Add a per-tick position export to the simulation for sampled "
+         "re-simulation, and choose the error reporter."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

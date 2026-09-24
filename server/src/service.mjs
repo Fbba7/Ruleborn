@@ -30,6 +30,7 @@ import { Shop } from "./shop.mjs";
 import { readHeader } from "./sim.mjs";
 import { sha256 } from "./store.mjs";
 import { check, issue } from "./tokens.mjs";
+import { Telemetry, lawsOf } from "./telemetry.mjs";
 import { Track } from "./track.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
@@ -79,6 +80,7 @@ export class Service {
     Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random, verifyReceipt });
     this.seasons = new Seasons(this, seasonStart);
     this.track = new Track(this);
+    this.telemetry = new Telemetry(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), catalogue: cosmetics });
   }
 
@@ -99,6 +101,8 @@ export class Service {
         .run(id, identity, now);
       row = { id };
     }
+    // §24's analytics: a sign-in is a session.
+    this.telemetry.record(row.id, "session", {}, now);
     return { account: row.id, token: issue(this.secret, row.id, now) };
   }
 
@@ -343,6 +347,11 @@ export class Service {
              decision.validated ? 1 : 0, JSON.stringify(outcome), decision.review ? 1 : 0,
              decision.grace ? 1 : 0, now, day(now));
       this.db.prepare("UPDATE leases SET state = 'settled' WHERE token = ?").run(lease.token);
+      // §24's analytics: a heist's "outcome, laws crossed, crew".
+      this.telemetry.record(lease.attacker, "heist", decision.validated
+        ? { validated: true, grade: decision.verdict.grade, crew: decision.verdict.crew,
+            laws: lawsOf(this.store.get(lease.bundle)) }
+        : { validated: false, reason: decision.reason }, now);
       return outcome;
     });
   }

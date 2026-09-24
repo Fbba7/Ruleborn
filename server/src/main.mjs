@@ -76,3 +76,9 @@ createServer(async (req, res) => {
 }).listen(port, "127.0.0.1", () => {
   console.log(`ruleborn server on http://127.0.0.1:${port} (rules ${service.builds.current.rulesVersion.slice(0, 12)})`);
 });
+
+// §24.3: raw events older than 90 days are "aggregated and discarded", once a
+// day; compacting twice is a no-op.
+const DAY_MS = 24 * 60 * 60 * 1000;
+service.telemetry.compact();
+setInterval(() => service.telemetry.compact(), DAY_MS).unref();

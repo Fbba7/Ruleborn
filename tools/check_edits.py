@@ -207,6 +207,8 @@ NO_EDIT_BECAUSE = {
            "server's constants only stand in for",
     "D64": "limits of this build: the stores, the device's inventories, and "
            "cosmetics not yet authored",
+    "G29": "decisions for the owner: what a session is, the retention and the survey",
+    "D65": "limits of this build: the heatmaps need the simulation, and the reporter a choice",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

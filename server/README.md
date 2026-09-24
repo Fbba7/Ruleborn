@@ -171,6 +171,31 @@ are named constants, register **G28**. What Starglass is meant to be is
 **F41**; what is not built is **D64**. A database made before Starglass has
 its ledger rebuilt around its rows when opened.
 
+## Telemetry
+
+`src/telemetry.mjs` is §24's first-party analytics, under §20.5 and §24.3's
+rules:
+
+- **What is logged.** The server records what it decides: a session (a
+  sign-in), a heist's "outcome, laws crossed, crew", and a purchase. The
+  device sends the rest to `POST /v1/events` in batches — weaving, births,
+  session ends, the one-tap "Was this worth your time?" and the survey — and a
+  batch is checked whole: known events, known fields of known types, times no
+  later than now, and no field that is a position ("The client never sends
+  coordinates"). A player is surveyed at most once a quarter (§25.4).
+- **Pseudonymous.** Every row is keyed by an HMAC of the account under the
+  server's secret, so the events alone name nobody.
+- **Kept 90 days.** `Telemetry.compact`, run daily by `main.mjs`, writes each
+  finished cohort's day-1, day-7 and day-30 returns and each day's counts, and
+  discards the raw events past 90 days.
+- **Queryable.** `GET /v1/metrics` gives analysts the figures the launch
+  gates read — players, sessions and the crash-free share, heists by
+  outcome, the average "worth your time", the share who bought, and cohort
+  retention — and `/v1/metrics/absence` §25.3's churn early warning.
+
+The readings are register **G29**; the heatmaps and the error reporter are
+**D65**.
+
 ## Constellations and crews
 
 `src/social.mjs` is §17.1's constellations and §17.7's crews:
@@ -222,6 +247,7 @@ built — register **D63**.
     src/track.mjs     §18.2's season track: stars, tiers, the premium track
     src/shop.mjs      Starglass packs, §20.2's caps, cosmetics owned and worn
     src/cosmetics.json  the cosmetics sold for Starglass (none authored yet)
+    src/telemetry.mjs first-party events, pseudonymous, kept 90 days, and the report
     src/workshop.mjs  §18.6's Workshop: publish, browse, play, rate, report, moderate, remix
     src/words.json    the word lists Workshop names come from
     src/http.mjs      the edge function: Request in, Response out

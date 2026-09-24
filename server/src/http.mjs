@@ -58,6 +58,12 @@
 //   POST /v1/cosmetics/:id/buy                               → bought with Starglass
 //   POST /v1/cosmetics/equip     {"kind", "item", "target"?} → what is worn
 //
+// Telemetry (§24, §24.3; telemetry.mjs):
+//
+//   POST /v1/events              [{"kind", "data", "at"?}, …] → {recorded}, a batch from the device
+//   GET  /v1/metrics?from=&to=                               → the launch gates' figures (analysts)
+//   GET  /v1/metrics/absence                                 → §25.3's recency of absence (analysts)
+//
 // A target list is fetched like a bundle, by its hash (§24.8: "a file, not a
 // query"); the index naming the current ones is the only thing that changes.
 //
@@ -206,6 +212,17 @@ export function handler(service) {
       if (["league", "seasons", "constellations", "crews"].includes(parts[1])) {
         const out = await socialRoute(service, social, request, parts, who);
         return out ?? json({ error: "no_such_route" }, 404);
+      }
+      if (parts[1] === "events" && request.method === "POST") {
+        return json(service.telemetry.batch(who(), await body(request)), 202);
+      }
+      if (parts[1] === "metrics" && request.method === "GET") {
+        const me = who();
+        if (!service.db.prepare("SELECT analyst FROM accounts WHERE id = ?").get(me).analyst) {
+          throw new Refused(403, "analysts_only");
+        }
+        if (parts[2] === "absence") return json(service.telemetry.absence());
+        return json(service.telemetry.report({ from: url.searchParams.get("from"), to: url.searchParams.get("to") }));
       }
       if (["track", "shop", "cosmetics"].includes(parts[1])) {
         const out = await shopRoute(service, request, url, parts, who);
