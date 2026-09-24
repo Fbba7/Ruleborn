@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5946,6 +5946,63 @@ dict(id="G31", kind="gap", severity="minor", status="open",
           "defence reward.",
      rec="Price what a crew carries, say which share §13.1\u2019s 15% reads, and "
          "when in a season it is measured."),
+
+dict(id="F46", kind="finding", severity="significant", status="open",
+     title="Every island\u2019s layout is public before any scout, so §12.4\u2019s "
+           "paid scout sells what a download gives free",
+     refs=["12.4", "24.1", "24.8"],
+     body="§12.4: a paid scout shows a realm\u2019s laws, guards and ward counts "
+          "<em>\u201cbut not where they are. Ward positions come from a Lantern "
+          "Wisp during the heist, the Archivist's Reveal, or the Cartographer's "
+          "maps.\u201d</em> §24.1 serves islands as <em>\u201cImmutable, "
+          "content-addressed island bundles on zero-egress object storage, "
+          "cached at the edge for a year\u201d</em>, and §24.8 lists every target "
+          "by its bundle\u2019s hash (<em>\u201cTarget selection is a file, not a "
+          "query\u201d</em>). So anyone can fetch any listed island, ward positions "
+          "and guard posts included, before paying for a scout or taking a lease "
+          "\u2014 and the device must hold the whole island to simulate the heist "
+          "anyway (§24.1). What §12.4 sells is hidden only by the client "
+          "choosing not to show it, which a modified client will not do. The "
+          "server serves bundles by hash, as §24.1 says. Found building the "
+          "Apple proofs, reading §12.4 for what the server must keep back.",
+     rec="Either accept that scouting is a client courtesy and price it as "
+         "one, or serve a target\u2019s bundle only with its lease \u2014 giving up "
+         "the year-long edge cache for targets \u2014 and keep ward positions out "
+         "of what the list and the free scout reveal."),
+
+dict(id="G32", kind="gap", severity="minor", status="open",
+     title="Platform sign-in and receipts are named, and nothing says how "
+           "fresh a proof must be or how a refund lands",
+     refs=["20.2", "22.1", "24.8"],
+     body="§24.8 exchanges platform identity for a token and §22.1 sells "
+          "Starglass; neither says how a proof is checked. The server\u2019s "
+          "readings, in <code>stores.mjs</code>: a Game Center identity is "
+          "Apple\u2019s signature over the player, the app, a timestamp and a salt, "
+          "with the key fetched only from apple.com over HTTPS and checked to a "
+          "pinned root, and the signature at most five minutes old; an App "
+          "Store purchase is a StoreKit 2 signed transaction checked to the same "
+          "root, for this app, not revoked, and the purchase intent rides it as "
+          "its appAccountToken, so an intent\u2019s id is a UUID; the pinned roots "
+          "and the app\u2019s bundle ID are the operator\u2019s configuration. Nothing "
+          "says what a refund after a grant does to Starglass already spent. "
+          "Found building the Apple proofs.",
+     rec="Say how a refunded purchase is taken back, and whether Starglass "
+         "can go below nothing."),
+
+dict(id="D67", kind="deviation", severity="minor", status="open",
+     title="Apple\u2019s proofs are checked on the server; Google Play\u2019s, and "
+           "refunds, are not",
+     refs=["20.2", "22.1", "24.8"],
+     body="Game Center sign-in and App Store purchases are verified against a "
+          "pinned Apple root, and a purchase is granted once per transaction. "
+          "Not built: Google Play Games sign-in and Google Play purchases, both "
+          "of which need Google\u2019s API to verify (a server auth code exchanged, "
+          "a purchase token looked up); App Store Server Notifications, which "
+          "tell the server of a refund after the grant; and the real Apple root, "
+          "which is configuration the operator supplies. Found building the "
+          "Apple proofs.",
+     rec="Wire Google\u2019s two APIs and Apple\u2019s notifications before soft "
+         "launch in a Google Play market."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

@@ -240,6 +240,7 @@ export function handler(service) {
       switch (route) {
         case "POST /v1/session": {
           const { credential } = await request.json();
+          await service.preparePlatform(credential);
           return json(service.session(credential));
         }
         case "PUT /v1/islands": {

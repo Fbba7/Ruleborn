@@ -226,8 +226,9 @@ DELIVERABLES = [
     ("6", "Schema", BACKEND, server_tests("snapshots and the ledger cannot be edited")),
     ("6", "Identity: session tokens", BACKEND, server_tests(
         "a session is a signed token, and a forged one is refused")),
-    ("6", "Identity: platform sign-in", BACKEND, not_started(
-        "a Game Center or Play Games credential is verified with the store")),
+    ("6", "Identity: platform sign-in", BACKEND, server_tests(
+        "a Game Center identity is Apple's: its key from apple.com, this app, a fresh timestamp, a true signature (24.8)",
+        "sign-in over HTTP with a Game Center credential")),
     ("6", "Publishing", BACKEND, server_tests(
         "publishing is content-addressed and idempotent",
         "an island §5.2 or §6.1 forbids is refused, with the rule named")),
@@ -262,9 +263,12 @@ DELIVERABLES = [
     ("8", "Cosmetics", BACKEND, server_tests(
         "a cosmetic is bought with Starglass at its euro price, owned once, and worn in its slot (22.1)",
         "a defender's worn cosmetics travel with the lease, so the raider sees them")),
-    # The grant side is built (intents, §20.2's caps, one grant a store
-    # transaction); verifying a receipt with the stores is not (D64).
-    ("8", "Purchases and receipts", BACKEND, not_started("store receipts are verified with the stores and granted")),
+    # Apple's side; Google Play's needs Google's API (D67).
+    ("8", "Purchases and receipts", BACKEND, server_tests(
+        "a StoreKit 2 transaction counts only with its chain and signature intact, for this app (22.1)",
+        "a Starglass pack bought through the App Store is granted from its signed transaction, once (22.1)",
+        "a Starglass purchase is granted once per store transaction, from a verified receipt (22.1)",
+        "a minor's month is capped, €25 at 13 to 15 and €50 at 16 and 17, and an adult gets a summary (20.2)")),
     ("8", "The season track", BACKEND, server_tests(
         "a heist earns season stars: the raider by its grade, the defender by what it held (18.2)",
         "the track's first tier is free on day one, and each after costs a tier's stars, in order (18.2)",

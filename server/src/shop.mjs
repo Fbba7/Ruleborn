@@ -41,6 +41,16 @@ const TARGETS = {
  *  and the tests bring their own. */
 export const CATALOGUE = JSON.parse(readFileSync(new URL("./cosmetics.json", import.meta.url), "utf8"));
 
+/** Sixteen random bytes as a version-4 UUID: StoreKit's appAccountToken is
+ *  one, so an intent's id can ride the purchase and come back signed. */
+export function uuid(bytes) {
+  const b = Buffer.from(bytes);
+  b[6] = (b[6] & 0x0f) | 0x40;
+  b[8] = (b[8] & 0x3f) | 0x80;
+  const h = b.toString("hex");
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20, 32)}`;
+}
+
 /** Midnight UTC on the first of `ms`'s month. */
 const monthStart = (ms) => { const d = new Date(ms); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1); };
 const month = (ms) => new Date(ms).toISOString().slice(0, 7);
@@ -88,7 +98,7 @@ export class Shop {
       if (left !== null && price > left) {
         throw new Refused(403, "monthly_cap", { left, cap: facts.SPENDING_CAPS_EUR[this.ageBand(account)] * 100 });
       }
-      const id = this.service.random(12).toString("hex");
+      const id = uuid(this.service.random(16));
       this.db.prepare(
         "INSERT INTO purchase_intents (id, account, product, price, created_at) VALUES (?, ?, ?, ?, ?)")
         .run(id, account, product, price, now);

@@ -70,6 +70,11 @@ export class Service {
    * the stores' own services (see tokens.mjs).
    */
   /**
+   * `preparePlatform(credential)` is the asynchronous half of sign-in — Game
+   * Center's certificate fetched and cached (stores.mjs) — run by the edge
+   * before the synchronous `session`.
+   */
+  /**
    * `seasonStart` is when season 1 began (§18.1): seasons run back to back,
    * eight weeks each, from it. `verifyReceipt(store, receipt)` is the same
    * seam to the stores for purchases (shop.mjs); without one, every receipt
@@ -77,8 +82,9 @@ export class Service {
    */
   constructor({ db, store, builds, secret, verifyPlatform, now = () => Date.now(),
                 random = randomBytes, seasonStart = 0, verifyReceipt = () => null,
-                cosmetics = undefined }) {
-    Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random, verifyReceipt });
+                cosmetics = undefined, preparePlatform = async () => {} }) {
+    Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random, verifyReceipt,
+                          preparePlatform });
     this.seasons = new Seasons(this, seasonStart);
     this.track = new Track(this);
     this.telemetry = new Telemetry(this);

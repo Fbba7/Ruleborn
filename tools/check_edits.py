@@ -218,6 +218,10 @@ NO_EDIT_BECAUSE = {
            "in the harness",
     "G31": "decisions for the owner: the price of a carried bag, and which "
            "share the rule reads",
+    "F46": "a decision for the owner: whether scouting is enforced, at the cost "
+           "of the edge cache",
+    "G32": "decisions for the owner: a proof's freshness and how refunds land",
+    "D67": "limits of this build: Google's APIs and Apple's notifications need the network",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

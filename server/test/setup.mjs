@@ -27,7 +27,7 @@ export function simulation() {
 
 export const T0 = Date.UTC(2026, 8, 23, 9, 0, 0);
 
-export function server() {
+export function server(options = {}) {
   const clock = { now: T0 };
   let counter = 0;
   const random = (n) => {
@@ -47,6 +47,7 @@ export function server() {
     now: () => clock.now,
     random,
     seasonStart: T0,
+    ...options,
   });
   return { service, clock, handle: handler(service), build: simulation() };
 }

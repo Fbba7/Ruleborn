@@ -10,12 +10,19 @@
 //
 // The edge function (`http.mjs`) behind a plain node:http listener, with the
 // database and the object store on disk under server/.data/ and the one
-// simulation build this checkout compiles. Platform sign-in is stubbed — a
-// credential is taken as the identity it names — because Game Center and Play
-// Games need the stores' services; do not expose this to a network.
+// simulation build this checkout compiles.
+//
+// Apple's proofs (stores.mjs) are checked once RULEBORN_APPLE_ROOTS names the
+// pinned root certificates (PEM or DER files, comma-separated; Apple Root CA
+// G3 and the CA that issues Game Center's key) and RULEBORN_BUNDLE_ID the
+// app: then a Game Center identity signs in and an App Store transaction
+// pays. Without them sign-in is stubbed — a credential is taken as the
+// identity it names — and every receipt is refused; do not expose that to a
+// network.
 
 import { createServer } from "node:http";
-import { randomBytes } from "node:crypto";
+import { X509Certificate, randomBytes } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -24,19 +31,35 @@ import { handler } from "./http.mjs";
 import { Service } from "./service.mjs";
 import { Builds } from "./sim.mjs";
 import { Store } from "./store.mjs";
+import { GameCenter, appStoreTransaction } from "./stores.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
 const data = process.env.RULEBORN_DATA ?? join(here, "..", ".data");
+
+const roots = (process.env.RULEBORN_APPLE_ROOTS ?? "").split(",").filter(Boolean)
+  .map((path) => new X509Certificate(readFileSync(path)));
+const bundleId = process.env.RULEBORN_BUNDLE_ID ?? null;
+const apple = roots.length > 0 && bundleId;
+const gameCenter = apple ? new GameCenter({
+  roots, bundleId,
+  fetchCertificate: async (url) => Buffer.from(await (await fetch(url)).arrayBuffer()),
+}) : null;
 
 const service = new Service({
   db: open(join(data, "ruleborn.sqlite")),
   store: new Store(join(data, "bundles")),
   builds: Builds.load([join(root, "sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm")]),
   secret: process.env.RULEBORN_SECRET ?? randomBytes(32).toString("hex"),
-  verifyPlatform: (credential) => (typeof credential === "string" && credential ? credential : null),
-  // No store to ask: every purchase receipt is refused (D64).
-  verifyReceipt: () => null,
+  verifyPlatform: apple
+    ? (credential) => gameCenter.verify(credential)
+    : (credential) => (typeof credential === "string" && credential ? credential : null),
+  preparePlatform: apple ? (credential) => gameCenter.prepare(credential) : async () => {},
+  // Google Play's proofs need Google's API, and are not wired (D67).
+  verifyReceipt: apple
+    ? (store, receipt) => (store === "app-store"
+      ? appStoreTransaction(receipt, { roots, bundleId, now: Date.now() }) : null)
+    : () => null,
   // §18.1's seasons run back to back from the first. RULEBORN_SEASON_START is
   // that moment, in ISO form; without it a fixed Monday, so a local server's
   // seasons do not move between restarts.

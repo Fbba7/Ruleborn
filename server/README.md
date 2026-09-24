@@ -204,6 +204,31 @@ are named constants, register **G28**. What Starglass is meant to be is
 **F41**; what is not built is **D64**. A database made before Starglass has
 its ledger rebuilt around its rows when opened.
 
+## Apple's proofs
+
+`src/stores.mjs` checks what Apple signs, against a pinned root:
+
+- **Game Center sign-in.** §24.8: "Platform identity is exchanged for a
+  short-lived signed token." The device's identity-verification signature
+  covers the player, the app, a timestamp and a salt; the key is in a
+  certificate fetched only from apple.com (the one network call, made and
+  cached by `preparePlatform` before the synchronous sign-in) and checked to
+  the pinned root; the signature must be at most five minutes old. The token
+  it earns is HMAC-SHA256 (`tokens.mjs`).
+- **App Store purchases.** A StoreKit 2 transaction is a JWS carrying its own
+  chain; the chain is checked to the pinned root, the ES256 signature over
+  it, the app's bundle ID and that it was not revoked. The purchase intent's
+  id rides the purchase as its appAccountToken, so it is a UUID.
+
+`main.mjs` checks both once `RULEBORN_APPLE_ROOTS` (the pinned certificates)
+and `RULEBORN_BUNDLE_ID` are set; without them it takes any credential as the
+identity it names, refuses every receipt, and must not face a network.
+`RULEBORN_DATA` moves its database and bundles out of `server/.data/`, which
+is how `client/status.py` gives each test run a fresh one. The tests use a
+stand-in chain in `test/fixtures/apple/` (its `make.sh` regenerates it). The
+readings are **G32**; Google Play's side is **D67**; and building this found
+**F46**: every island is public by hash before any scout.
+
 ## Telemetry
 
 `src/telemetry.mjs` is §24's first-party analytics, under §20.5 and §24.3's
@@ -262,17 +287,13 @@ built — register **D63**.
 
 ## What is not built
 
-- **Platform sign-in.** §24.8: "Platform identity is exchanged for a
-  short-lived signed token." The token is here (HMAC-SHA256); checking a Game
-  Center or Play Games credential needs the stores' services, so `Service`
-  takes a `verifyPlatform` function and the tests give it a fake one.
-  `main.mjs` accepts any credential and must not face a network.
-  `RULEBORN_DATA` moves its database and bundles out of `server/.data/`, which
-  is how `client/status.py` gives each test run a fresh one.
+- **Google Play's proofs.** Play Games sign-in and Play purchases need
+  Google's API; `Service` takes `verifyPlatform` and `verifyReceipt`
+  functions, and nothing wires Google's yet (D67). Nor are App Store refunds
+  heard after a grant.
 - **Crossing realms.** The simulation plays the Heart alone, so every lease
   is §5.4's 150 seconds with no links.
-- **Receipt verification** with the App Store and Google Play, and family
-  approval for 13 to 15 (D64).
+- **Family approval** for 13 to 15 (D64).
 - §12.22's generated fallback targets (D66).
 - **Constellation chat, votes and anomalies** (D63).
 - **The landing.** The replay has no landing command yet; see `sim/README.md`.
@@ -296,6 +317,7 @@ built — register **D63**.
     src/accounts.mjs  deleting an account: the person goes, the records stay
     src/glicko.mjs    Glicko-2, pure arithmetic
     src/matchmaking.mjs  §12.22's ratings and offer, §12.3's echoes, shield and Trace
+    src/stores.mjs    Apple's proofs: Game Center identities, StoreKit 2 transactions
     src/workshop.mjs  §18.6's Workshop: publish, browse, play, rate, report, moderate, remix
     src/words.json    the word lists Workshop names come from
     src/http.mjs      the edge function: Request in, Response out
