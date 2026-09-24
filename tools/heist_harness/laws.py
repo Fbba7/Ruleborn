@@ -18,7 +18,9 @@ from .fixed import Rng
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 _DATA = json.loads((ROOT / "content" / "law_effects.json").read_text(encoding="utf-8"))
 LAWS = {law["id"]: law for law in _DATA["laws"]}
-SIMULATED = [law for law in _DATA["laws"] if law["simulated"]]
+#: The laws the harness weaves: its own reading of the sheet (law_effects'
+#: `harness`), not sim/'s, which applies more rows than this model does.
+SIMULATED = [law for law in _DATA["laws"] if law["harness"]]
 
 #: §5.5's capacity by realm level, from the economy model's own curve. A realm
 #: may weave laws up to its share of the universe's pool.

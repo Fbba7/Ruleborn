@@ -4,24 +4,36 @@
   "alarm_range",
   "ally_healing",
   "carry_weight",
+  "chain_share",
   "climb_levels",
   "clock_rate",
   "cone_angle",
   "crew_speed",
   "damage",
+  "effect_delay_seconds",
   "guard_speed",
   "hide_behind_walls",
+  "large_health",
+  "large_speed",
   "leap_obstacles",
+  "light_band_seconds",
   "loaded_speed",
   "noise_radius",
+  "rebound",
   "regrow_seconds",
+  "revival_return",
+  "revival_swap",
   "sight_range",
+  "slide",
+  "small_health",
+  "small_speed",
   "still_is_invisible",
   "structure_damage",
   "structure_regrowth",
   "suspicion_decay",
   "suspicion_fill",
   "touch_damage",
+  "touch_stun_seconds",
   "unlit_drain"
  ],
  "laws": [
@@ -38,11 +50,14 @@
    "kinds": [
     "event"
    ],
-   "params": {},
+   "params": {
+    "rebound": 0.5
+   },
    "authored": [],
    "note": "A rebound is a collision response, not a number: it needs the simulation to reflect a moving body off a surface.",
    "hardest": "event",
-   "simulated": false
+   "simulated": true,
+   "harness": false
   },
   {
    "id": "half_gravity",
@@ -62,7 +77,8 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "tilt",
@@ -85,7 +101,8 @@
    ],
    "note": "The +30/-30 is a parameter; which way the realm slopes is not.",
    "hardest": "authored",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "current",
@@ -108,7 +125,8 @@
    ],
    "note": "",
    "hardest": "authored",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "heavy_ground",
@@ -129,7 +147,8 @@
    "authored": [],
    "note": "“Flyers are grounded” reads an attribute no character carries (C26).",
    "hardest": "attribute",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "leapfrog",
@@ -151,13 +170,14 @@
    "authored": [],
    "note": "Every third step being a hop is a gait, but its effect is a suspicion multiplier, which the rule sheet has.",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "frictionless",
    "name": "Frictionless",
    "school": "Motion",
-   "rank": "Deep",
+   "rank": "Rare",
    "stability_cost": 20,
    "notes": [
     "Flow",
@@ -168,12 +188,14 @@
     "event"
    ],
    "params": {
-    "crew_speed": 1.2
+    "crew_speed": 1.2,
+    "slide": 1
    },
    "authored": [],
    "note": "The speed cap is a parameter; “keeps sliding until it hits something” is a physics rule.",
    "hardest": "event",
-   "simulated": false
+   "simulated": true,
+   "harness": false
   },
   {
    "id": "inward_pull",
@@ -197,7 +219,8 @@
    ],
    "note": "Inward is well defined for a realm with one Heart link and not for a realm with two.",
    "hardest": "authored",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "brittle_stone",
@@ -217,7 +240,8 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "crystal_growth",
@@ -227,7 +251,7 @@
    "stability_cost": 15,
    "notes": [
     "Bloom",
-    "Glow"
+    "Veil"
    ],
    "kinds": [
     "parameter"
@@ -238,7 +262,8 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "glass",
@@ -258,7 +283,8 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "density",
@@ -273,11 +299,17 @@
     "parameter",
     "attribute"
    ],
-   "params": {},
+   "params": {
+    "large_health": 1.3,
+    "large_speed": 0.8,
+    "small_health": 0.8,
+    "small_speed": 1.25
+   },
    "authored": [],
    "note": "Reads big and small, which §12.21 declares and no table carries.",
    "hardest": "attribute",
-   "simulated": false
+   "simulated": true,
+   "harness": false
   },
   {
    "id": "honeycomb",
@@ -286,7 +318,8 @@
    "rank": "Uncommon",
    "stability_cost": 17,
    "notes": [
-    "Weight"
+    "Weight",
+    "Hush"
    ],
    "kinds": [
     "parameter"
@@ -298,7 +331,8 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "lodestones",
@@ -322,13 +356,14 @@
    ],
    "note": "",
    "hardest": "entity",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "shifting_stones",
    "name": "Shifting stones",
    "school": "Matter",
-   "rank": "Deep",
+   "rank": "Rare",
    "stability_cost": 22,
    "notes": [
     "Veil",
@@ -344,7 +379,8 @@
    ],
    "note": "Moving walls change the walkable graph mid-run, which the pathfinder in §12.18 assumes is static.",
    "hardest": "entity",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "transmute",
@@ -362,7 +398,8 @@
    "authored": [],
    "note": "Converting carried loot every 20 s at a 5% loss is an economy rule inside a heist — the only law that touches §9.6.",
    "hardest": "event",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "day_and_night",
@@ -371,7 +408,8 @@
    "rank": "Common",
    "stability_cost": 17,
    "notes": [
-    "Echo"
+    "Echo",
+    "Hush"
    ],
    "kinds": [
     "event",
@@ -383,7 +421,8 @@
    "authored": [],
    "note": "The halving is a parameter; the 30-second switch is a clock.",
    "hardest": "event",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "slow_rivers",
@@ -406,7 +445,8 @@
    ],
    "note": "",
    "hardest": "authored",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "stillness",
@@ -426,7 +466,8 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "afterimage",
@@ -445,7 +486,8 @@
    "authored": [],
    "note": "A decoy that guards path toward: a new object with its own lifetime, and a new reason for a guard to investigate.",
    "hardest": "entity",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "delay",
@@ -454,16 +496,20 @@
    "rank": "Uncommon",
    "stability_cost": 14,
    "notes": [
-    "Veil"
+    "Veil",
+    "Hush"
    ],
    "kinds": [
     "parameter"
    ],
-   "params": {},
+   "params": {
+    "effect_delay_seconds": 3
+   },
    "authored": [],
-   "note": "A 3-second delay on ward triggering is a parameter the ward system does not currently have.",
+   "note": "A 3-second delay on ward triggering: the Time row's effect_delay_seconds (§7.3). The abilities it also delays do not exist in the simulation yet.",
    "hardest": "parameter",
-   "simulated": false
+   "simulated": true,
+   "harness": false
   },
   {
    "id": "haste",
@@ -486,13 +532,14 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "held_breath",
    "name": "Held breath",
    "school": "Time",
-   "rank": "Deep",
+   "rank": "Rare",
    "stability_cost": 25,
    "notes": [
     "Hush",
@@ -505,11 +552,12 @@
    "authored": [],
    "note": "Time advancing only while a crew member moves is not a parameter of the simulation; it is a different simulation.",
    "hardest": "event",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
-   "id": "rewind",
-   "name": "Rewind",
+   "id": "tidemark",
+   "name": "Tidemark",
    "school": "Time",
    "rank": "Deep",
    "stability_cost": 26,
@@ -521,9 +569,10 @@
    ],
    "params": {},
    "authored": [],
-   "note": "Restoring world state to 10 seconds earlier needs a snapshot history, which §24.10's input-log model does not keep.",
+   "note": "Every 20 seconds a mark; 10 seconds later, what broke since returns. Only structures, and only from one checkpoint.",
    "hardest": "event",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "glowing_dark",
@@ -543,7 +592,8 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "heat_bloom",
@@ -552,8 +602,7 @@
    "rank": "Common",
    "stability_cost": 17,
    "notes": [
-    "Spark",
-    "Glow"
+    "Spark"
    ],
    "kinds": [
     "entity",
@@ -567,7 +616,8 @@
    ],
    "note": "",
    "hardest": "entity",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "spark_trails",
@@ -585,7 +635,8 @@
    "authored": [],
    "note": "A trail is an object with a lifetime that guards can see.",
    "hardest": "entity",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "aurora",
@@ -594,18 +645,20 @@
    "rank": "Uncommon",
    "stability_cost": 18,
    "notes": [
-    "Glow",
-    "Flow"
+    "Glow"
    ],
    "kinds": [
     "event",
     "entity"
    ],
-   "params": {},
+   "params": {
+    "light_band_seconds": 10
+   },
    "authored": [],
    "note": "Sweeping bands are moving regions that change sight range inside them — a parameter that varies by position and time.",
    "hardest": "event",
-   "simulated": false
+   "simulated": true,
+   "harness": false
   },
   {
    "id": "chain_lightning",
@@ -620,12 +673,13 @@
     "event"
    ],
    "params": {
-    "damage": 0.5
+    "chain_share": 0.5
    },
    "authored": [],
-   "note": "",
+   "note": "The 50% is the jump's share, not every hit's: read as damage, it halved every blow in the realm.",
    "hardest": "event",
-   "simulated": false
+   "simulated": true,
+   "harness": false
   },
   {
    "id": "static",
@@ -639,17 +693,20 @@
    "kinds": [
     "event"
    ],
-   "params": {},
+   "params": {
+    "touch_stun_seconds": 0.5
+   },
    "authored": [],
    "note": "Charge accumulating with distance travelled is per-character state the rule sheet does not have.",
    "hardest": "event",
-   "simulated": false
+   "simulated": true,
+   "harness": false
   },
   {
    "id": "overcharge",
    "name": "Overcharge",
    "school": "Energy",
-   "rank": "Deep",
+   "rank": "Rare",
    "stability_cost": 21,
    "notes": [
     "Spark",
@@ -662,7 +719,8 @@
    "authored": [],
    "note": "“Every third ability, by anyone” is a realm-wide counter shared between both sides.",
    "hardest": "event",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "sunburst",
@@ -681,7 +739,8 @@
    "authored": [],
    "note": "A 25-second timer with a shade test.",
    "hardest": "event",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "bloom",
@@ -690,7 +749,8 @@
    "rank": "Common",
    "stability_cost": 11,
    "notes": [
-    "Bloom"
+    "Bloom",
+    "Hush"
    ],
    "kinds": [
     "parameter"
@@ -701,7 +761,8 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "kinship",
@@ -721,7 +782,8 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "wild_paths",
@@ -742,7 +804,8 @@
    "authored": [],
    "note": "Tiles changing after three crossings is per-tile state that accumulates during the run.",
    "hardest": "event",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "flock",
@@ -751,8 +814,7 @@
    "rank": "Uncommon",
    "stability_cost": 16,
    "notes": [
-    "Bloom",
-    "Glow"
+    "Bloom"
    ],
    "kinds": [
     "entity"
@@ -761,7 +823,8 @@
    "authored": [],
    "note": "Six wandering bodies that block and bleat.",
    "hardest": "entity",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "spores",
@@ -782,7 +845,8 @@
    "authored": [],
    "note": "Drifting clouds with position.",
    "hardest": "entity",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "thorns",
@@ -803,13 +867,14 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "regrowth",
    "name": "Regrowth",
    "school": "Life",
-   "rank": "Deep",
+   "rank": "Rare",
    "stability_cost": 16,
    "notes": [
     "Bloom",
@@ -824,7 +889,8 @@
    "authored": [],
    "note": "",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "swarm_birth",
@@ -843,7 +909,8 @@
    "authored": [],
    "note": "Splitting a guard into two creates characters mid-run. §12.21 fixes the attribute half and not this half.",
    "hardest": "event",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "haunting",
@@ -865,7 +932,8 @@
    "authored": [],
    "note": "",
    "hardest": "entity",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "soul_lanterns",
@@ -888,7 +956,8 @@
    ],
    "note": "",
    "hardest": "entity",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "whispers",
@@ -909,7 +978,8 @@
    "authored": [],
    "note": "A range parameter set to the whole universe — which is the cleanest law in the set, and the one that changes the most.",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "echoes",
@@ -923,11 +993,14 @@
    "kinds": [
     "event"
    ],
-   "params": {},
+   "params": {
+    "revival_return": 0.6
+   },
    "authored": [],
    "note": "Returning a knocked-out character at 60%.",
    "hardest": "event",
-   "simulated": false
+   "simulated": true,
+   "harness": false
   },
   {
    "id": "sleepwalk",
@@ -949,7 +1022,8 @@
    "authored": [],
    "note": "Sight off and hearing on is two parameters, both in the sheet.",
    "hardest": "parameter",
-   "simulated": true
+   "simulated": true,
+   "harness": true
   },
   {
    "id": "soul_swap",
@@ -958,23 +1032,25 @@
    "rank": "Rare",
    "stability_cost": 20,
    "notes": [
-    "Veil",
-    "Flow"
+    "Veil"
    ],
    "kinds": [
     "event"
    ],
-   "params": {},
+   "params": {
+    "revival_swap": 0.5
+   },
    "authored": [],
    "note": "A conditional teleport at the moment of a knockout.",
    "hardest": "event",
-   "simulated": false
+   "simulated": true,
+   "harness": false
   },
   {
    "id": "borrowed_face",
    "name": "Borrowed Face",
    "school": "Spirit",
-   "rank": "Deep",
+   "rank": "Rare",
    "stability_cost": 21,
    "notes": [
     "Veil",
@@ -987,7 +1063,8 @@
    "authored": [],
    "note": "Identity confusion for 10 seconds: a per-character flag with a timer and two cancel conditions.",
    "hardest": "event",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   },
   {
    "id": "mirror_images",
@@ -1005,7 +1082,8 @@
    "authored": [],
    "note": "Illusory guards that vanish on touch and still raise the alarm — a guard that is not a guard.",
    "hardest": "entity",
-   "simulated": false
+   "simulated": false,
+   "harness": false
   }
  ]
 }

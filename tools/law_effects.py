@@ -58,6 +58,36 @@ RULE_SHEET = {
     "ally_healing", "structure_regrowth", "touch_damage", "unlit_drain",
     "regrow_seconds", "hide_behind_walls", "still_is_invisible",
     "climb_levels", "leap_obstacles", "carry_weight",
+} | {
+    # v3.4's other rows (§7.3), each named for the rule it is rather than the
+    # law that sets it, so the simulation applies a row without asking which
+    # law set it. Contact: friction off, and what walls give back. Health and
+    # Speed read by size. Time: an effect lands late. Sight in bands. Damage:
+    # one target a hit, or a jump. Stun on touch. Revival's two launch shapes.
+    "slide", "rebound",
+    "large_health", "large_speed", "small_health", "small_speed",
+    "effect_delay_seconds", "light_band_seconds", "chain_share",
+    "touch_stun_seconds", "revival_return", "revival_swap",
+}
+
+#: The parameters the heist harness reads. The rows added for v3.4 are applied
+#: by sim/ and not by the harness, so a law that sets one stays out of the
+#: harness's generated realms rather than being woven and silently ignored.
+HARNESS_SHEET = {
+    "crew_speed", "guard_speed", "loaded_speed", "clock_rate",
+    "sight_range", "cone_angle", "suspicion_fill", "suspicion_decay",
+    "noise_radius", "alarm_range", "structure_damage", "damage",
+    "ally_healing", "structure_regrowth", "touch_damage", "unlit_drain",
+    "regrow_seconds", "hide_behind_walls", "still_is_invisible",
+    "climb_levels", "leap_obstacles", "carry_weight",
+}
+
+#: Laws whose event or attribute half sim/ applies through the rows above, so
+#: their whole effect is on the sheet even though F10 counts them by the engine
+#: work they need. Each is proved by a named test in sim/src/tests.rs.
+SIM_ROWS = {
+    "bounce", "frictionless", "density", "delay", "aurora",
+    "chain_lightning", "static", "echoes", "soul_swap",
 }
 
 #: id -> (kinds, parameters, what the owner must choose, a note where it earns one)
@@ -66,7 +96,7 @@ RULE_SHEET = {
 #: written from the *raider's* point of view where a law is asymmetric.
 EFFECTS = {
     # -- Motion ------------------------------------------------------------
-    "bounce": (["event"], {}, [],
+    "bounce": (["event"], {"rebound": 0.50}, [],
                "A rebound is a collision response, not a number: it needs the "
                "simulation to reflect a moving body off a surface."),
     "half_gravity": (["parameter"], {"leap_obstacles": 1}, [], ""),
@@ -79,7 +109,7 @@ EFFECTS = {
     "leapfrog": (["parameter"], {"noise_radius": 1.0, "suspicion_fill": 1.25}, [],
                  "Every third step being a hop is a gait, but its effect is a "
                  "suspicion multiplier, which the rule sheet has."),
-    "frictionless": (["parameter", "event"], {"crew_speed": 1.20}, [],
+    "frictionless": (["parameter", "event"], {"crew_speed": 1.20, "slide": 1}, [],
                      "The speed cap is a parameter; “keeps sliding until it "
                      "hits something” is a physics rule."),
     "inward_pull": (["parameter", "authored"], {"crew_speed": 1.25, "loaded_speed": 0.65},
@@ -91,7 +121,8 @@ EFFECTS = {
     "brittle_stone": (["parameter"], {"structure_damage": 2.0}, [], ""),
     "crystal_growth": (["parameter"], {"regrow_seconds": 8}, [], ""),
     "glass": (["parameter"], {"hide_behind_walls": 0}, [], ""),
-    "density": (["parameter", "attribute"], {}, [],
+    "density": (["parameter", "attribute"], {"large_health": 1.30, "large_speed": 0.80,
+                                              "small_health": 0.80, "small_speed": 1.25}, [],
                 "Reads big and small, which §12.21 declares and no table carries."),
     "honeycomb": (["parameter"], {"crew_speed": 0.80, "climb_levels": 1}, [], ""),
     "lodestones": (["entity", "authored"], {"loaded_speed": 0.70}, ["two placements"], ""),
@@ -111,9 +142,10 @@ EFFECTS = {
     "afterimage": (["entity"], {}, [],
                    "A decoy that guards path toward: a new object with its own "
                    "lifetime, and a new reason for a guard to investigate."),
-    "delay": (["parameter"], {}, [],
-              "A 3-second delay on ward triggering is a parameter the ward "
-              "system does not currently have."),
+    "delay": (["parameter"], {"effect_delay_seconds": 3}, [],
+              "A 3-second delay on ward triggering: the Time row's "
+              "effect_delay_seconds (§7.3). The abilities it also delays do "
+              "not exist in the simulation yet."),
     "haste": (["parameter"], {"crew_speed": 1.25, "guard_speed": 1.25,
                               "clock_rate": 1.25}, [], ""),
     "held_breath": (["event"], {}, [],
@@ -132,11 +164,13 @@ EFFECTS = {
     "heat_bloom": (["entity", "authored"], {"damage": 1.25}, ["brazier placements"], ""),
     "spark_trails": (["entity"], {}, [],
                      "A trail is an object with a lifetime that guards can see."),
-    "aurora": (["event", "entity"], {}, [],
+    "aurora": (["event", "entity"], {"light_band_seconds": 10}, [],
                "Sweeping bands are moving regions that change sight range inside "
                "them — a parameter that varies by position and time."),
-    "chain_lightning": (["event"], {"damage": 0.50}, [], ""),
-    "static": (["event"], {}, [],
+    "chain_lightning": (["event"], {"chain_share": 0.50}, [],
+                        "The 50% is the jump's share, not every hit's: read as "
+                        "damage, it halved every blow in the realm."),
+    "static": (["event"], {"touch_stun_seconds": 0.5}, [],
                "Charge accumulating with distance travelled is per-character "
                "state the rule sheet does not have."),
     "overcharge": (["event"], {}, [],
@@ -165,10 +199,11 @@ EFFECTS = {
     "whispers": (["parameter"], {"alarm_range": 999}, [],
                  "A range parameter set to the whole universe — which is the "
                  "cleanest law in the set, and the one that changes the most."),
-    "echoes": (["event"], {}, [], "Returning a knocked-out character at 60%."),
+    "echoes": (["event"], {"revival_return": 0.60}, [],
+               "Returning a knocked-out character at 60%."),
     "sleepwalk": (["parameter"], {"sight_range": 0.0, "noise_radius": 1.0}, [],
                   "Sight off and hearing on is two parameters, both in the sheet."),
-    "soul_swap": (["event"], {}, [],
+    "soul_swap": (["event"], {"revival_swap": 0.50}, [],
                   "A conditional teleport at the moment of a knockout."),
     "borrowed_face": (["event"], {}, [],
                       "Identity confusion for 10 seconds: a per-character flag "
@@ -309,8 +344,11 @@ def classify(laws: list) -> dict:
             stability_cost=law["stability_cost"], notes=law["notes"],
             kinds=kinds, params=params, authored=authored, note=note,
             hardest=max(kinds, key=lambda k: HARDEST[k]),
-            simulated=bool(params) and max(kinds, key=lambda k: HARDEST[k]) in
-            ("parameter", "authored"),
+            simulated=bool(params) and (
+                max(kinds, key=lambda k: HARDEST[k]) in ("parameter", "authored")
+                or law["id"] in SIM_ROWS),
+            harness=bool(params) and set(params) <= HARNESS_SHEET
+            and max(kinds, key=lambda k: HARDEST[k]) in ("parameter", "authored"),
         )
     return out
 
@@ -363,7 +401,7 @@ def report(effects: dict) -> str:
     lines.append("  generated realm tilt? Where do its streams run? Nothing says,")
     lines.append("  and a generator that picks badly makes the law help the raider.")
     lines.append("")
-    usable = [e for e in effects.values() if e["simulated"]]
+    usable = [e for e in effects.values() if e["harness"]]
     lines.append(f"What the harness can apply today: {len(usable)} laws, the ones whose")
     lines.append("effect is entirely parameters. Those are written to")
     lines.append("content/law_effects.json and woven into generated islands.")

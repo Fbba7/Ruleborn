@@ -228,6 +228,18 @@ pub const GLARE_BLIND_TICKS: u32 = TICKS_PER_SECOND * 2;
 /// modelled: the simulation has no traits yet.
 pub const DISARM_TICKS: u32 = TICKS_PER_SECOND * 15;
 
+/// Static (§7.4): "Moving builds charge; after 5 tiles, the next touch
+/// stuns".
+pub const STATIC_TILES: u32 = 5;
+
+/// Chain lightning (§7.4): "Every hit jumps to a second target within 3
+/// tiles", measured centre to centre.
+pub const CHAIN_TILES: i32 = 3;
+
+/// Aurora (§7.4): "Bands of light sweep the realm every 10 seconds". The
+/// width is not given; two rows is this simulation's reading (G23).
+pub const AURORA_BAND_ROWS: i64 = 2;
+
 /// A ward on the island.
 #[derive(Clone, Debug)]
 pub struct Ward {
@@ -241,6 +253,8 @@ pub struct Ward {
     pub broken: bool,
     /// Disarm progress, in ticks on the tile.
     pub disarm: u32,
+    /// When it was broken, for a law that regrows it (Bloom).
+    pub broken_at: Option<u32>,
 }
 
 impl Ward {
@@ -251,7 +265,7 @@ impl Ward {
             WARD_HEALTH_PER_LEVEL
         };
         Ward { kind, tile, level: 1, health, armed_at: 0, disarmed: false, broken: false,
-               disarm: 0 }
+               disarm: 0, broken_at: None }
     }
 
     /// Still doing anything at all.

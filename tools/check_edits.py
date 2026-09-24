@@ -185,6 +185,10 @@ NO_EDIT_BECAUSE = {
     "C42": "a decision for the owner: the stray rate",
     "G22": "decisions for the owner: the staffing order, the realm order and "
            "whether posts are staffed, which decide the sentences",
+    "G23": "decisions for the owner: each reading is a rule the designer may "
+           "keep or replace, and the sheet's sentence follows the choice",
+    "G24": "a decision for the owner: §7.3's sheet is closed and versioned, so "
+           "splitting a row makes rule sheet version 3",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

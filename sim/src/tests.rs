@@ -2498,3 +2498,302 @@ fn commands_given_live_record_the_same_heist_as_the_log_they_make() {
     assert_eq!(recorded, planned);
     assert_eq!(crate::truncate(last), *planned.checksums.last().unwrap());
 }
+
+// --------------------------------------------------------------------------
+// The launch laws that are rows, not multipliers (§7.3, v3.4; §7.10)
+// --------------------------------------------------------------------------
+
+use crate::laws_table::Param as P;
+
+/// A move order for crew member `actor` to tile (x, y), given this tick.
+fn order(world: &mut World, actor: u8, x: i16, y: i16) {
+    let tick = world.tick;
+    world.commands_for_test(vec![Command {
+        tick, actor, kind: Kind::MoveTo, x: x * 256 + 128, y: y * 256 + 128,
+    }]);
+}
+
+fn tile_of(world: &World, ri: usize) -> (u16, u16) {
+    let r = &world.raiders[ri];
+    world.grid.coords(world.grid.tile_at(r.at.x, r.at.y).unwrap())
+}
+
+fn run_for(world: &mut World, ticks: u32) {
+    for _ in 0..ticks {
+        world.step();
+    }
+}
+
+#[test]
+fn every_one_of_the_48_laws_weaves_and_runs() {
+    // The sheet once held twenty parameters and the table named twenty-two,
+    // so weaving Thorns ran off the end of it.
+    for law in crate::laws_table::LAWS.iter() {
+        let mut world = World::new(1, 5, Vec::new());
+        world.weave(&[(law.id, (0, 13))]);
+        run_for(&mut world, 2 * TICKS_PER_SECOND);
+    }
+}
+
+#[test]
+fn frictionless_slides_on_past_the_end_of_a_route_until_something_stops_it() {
+    let slide = |law: bool, body: bool| {
+        let mut world = vault_world(1);
+        if law {
+            world.weave(&[("frictionless", (0, 13))]);
+        }
+        world.grid.place(10, 3, Feature::RockPillar);
+        if body {
+            let g = post(&mut world, 0, 8, 3);
+            world.guards[g].knocked_out = true;   // a body lying there
+        }
+        put(&mut world, 0, 2, 3);
+        order(&mut world, 0, 4, 3);
+        run_for(&mut world, 6 * TICKS_PER_SECOND);
+        tile_of(&world, 0)
+    };
+    assert_eq!(slide(false, false), (4, 3), "friction on: it stops where it was sent");
+    assert_eq!(slide(true, false), (9, 3), "friction off: on to the pillar");
+    assert_eq!(slide(true, true), (7, 3), "or to whoever stands in the way");
+}
+
+#[test]
+fn bounce_sends_a_slide_back_once_and_a_warden_absorbs_it() {
+    let slide = |ri: usize| {
+        let mut world = vault_world(4);
+        world.weave(&[("frictionless", (0, 13)), ("bounce", (1, 13))]);
+        world.grid.place(10, 3, Feature::RockPillar);
+        world.grid.place(0, 3, Feature::RockPillar);
+        put(&mut world, ri, 2, 3);
+        order(&mut world, ri as u8, 4, 3);
+        run_for(&mut world, 10 * TICKS_PER_SECOND);
+        (tile_of(&world, ri), world.raiders[ri].rebounded)
+    };
+    assert_eq!(slide(0), ((1, 3), true), "back off the east pillar to the west one, and stops");
+    assert_eq!(slide(3), ((9, 3), false), "the Warden is heavy enough to absorb a rebound");
+}
+
+#[test]
+fn bounce_returns_half_of_a_blow_on_a_ward_to_whoever_struck_it() {
+    let struck = |ri: usize, law: bool| {
+        let mut world = ward_world(4, WardKind::CrystalWall, (3, 3));
+        if law {
+            world.weave(&[("bounce", (0, 13))]);
+        }
+        put(&mut world, ri, 3, 4);
+        world.raiders[ri].task = Task::Break;
+        world.raiders[ri].target = world.grid.index(3, 3).unwrap();
+        let before = world.raiders[ri].health;
+        run_for(&mut world, h::HIT_TICKS);
+        before - world.raiders[ri].health
+    };
+    let scout = Role::Scout.power();
+    assert_eq!(struck(0, false), 0);
+    assert_eq!(struck(0, true), scout / 2, "\"bounce back 50% of what hits them\"");
+    assert_eq!(struck(3, true), 0, "a Warden absorbs it");
+}
+
+#[test]
+fn density_makes_the_large_tougher_and_slower_until_its_pylon_falls() {
+    let mut world = vault_world(4);
+    world.weave(&[("density", (0, 13))]);
+    assert_eq!(Role::Warden.size(), crate::Size::Large);
+    assert_eq!(world.raiders[3].health, 420 * 13 / 10, "large: +30% health");
+    assert_eq!(world.raiders[0].health, 120, "a Scout reads as standard");
+    let plain = crate::Sheet::plain();
+    let w = &world.raiders[3];
+    assert_eq!(crate::step_for(&world.grid, &world.sheet, w, w.gait, None, false),
+               crate::step_for(&world.grid, &plain, w, w.gait, None, false)
+                   .mul(Fx::from_ratio(4, 5)),
+               "large: -20% speed");
+    world.laws[0].health = 0;
+    world.laws[0].broken_at = Some(0);
+    world.step();
+    assert_eq!(world.raiders[3].health, 420, "its law off, the extra health goes with it");
+}
+
+#[test]
+fn delay_lands_a_triggered_ward_three_seconds_after_it_fires() {
+    let mut world = ward_world(1, WardKind::TimeSnare, (3, 3));
+    world.weave(&[("delay", (0, 13))]);
+    put(&mut world, 0, 3, 3);
+    world.step();
+    assert_eq!(world.raiders[0].frozen_until, 0, "nothing yet");
+    assert_eq!(world.wards[0].armed_at, 12 * TICKS_PER_SECOND, "but it has fired");
+    run_for(&mut world, 3 * TICKS_PER_SECOND);
+    assert_eq!(world.raiders[0].frozen_until, 3 * TICKS_PER_SECOND + h::SNARE_FREEZE_TICKS,
+               "the snare lands at 3 s");
+}
+
+#[test]
+fn aurora_doubles_sight_inside_its_band_and_halves_it_between() {
+    // 5 m east of the Scout, on row 6: its far zone, 12 a tick, with no law.
+    assert_eq!(rate(&scout_and_raider(50, 0)), Some(12));
+    let mut world = scout_and_raider(50, 0);
+    world.weave(&[("aurora", (0, 13))]);
+    assert_eq!(rate(&world), None, "between bands: 6 m halves to 3 and 5 m is out");
+    // The band is two rows, crossing sixteen rows (fourteen and its own
+    // depth) in ten seconds: row 6 is lit from tick 132 to 168.
+    world.tick = 150;
+    assert_eq!(rate(&world), Some(33), "in the band: the 4 m mid zone doubles to 8");
+    world.tick = 170;
+    assert_eq!(rate(&world), None, "and the band moves on");
+}
+
+/// An Alerted guard of `row` at (3, 3) facing south at crew member 0 on
+/// (3, 4).
+fn swinging_guard(world: &mut World, row: usize) -> usize {
+    put(world, 0, 3, 4);
+    let gi = post(world, row, 3, 3);
+    world.guards[gi].facing = Ang::from_degrees(90);
+    world.enter(gi, State::Alerted);
+    world.guards[gi].route.clear();
+    world.guards[gi].interest = world.grid.index(3, 4);
+    gi
+}
+
+#[test]
+fn chain_lightning_jumps_a_hit_to_the_nearest_ally_within_three_tiles_at_half() {
+    let mut world = vault_world(3);
+    world.weave(&[("chain_lightning", (0, 13))]);
+    swinging_guard(&mut world, 2);                // the Breaker guard, Power 40
+    put(&mut world, 1, 3, 6);                     // two tiles on: in reach
+    put(&mut world, 2, 3, 8);                     // four: out of it
+    run_for(&mut world, h::HIT_TICKS);
+    assert_eq!(world.raiders[0].health, 120 - 40, "the hit, whole: no longer halved");
+    assert_eq!(world.raiders[1].health, 180 - 20, "the jump, at 50%");
+    assert_eq!(world.raiders[2].health, Role::Carrier.health(), "too far for it");
+}
+
+#[test]
+fn chain_lightning_jumps_from_a_guard_to_the_nearest_guard_as_a_hit() {
+    let mut world = vault_world(1);
+    world.weave(&[("chain_lightning", (0, 13))]);
+    let a = post(&mut world, 2, 3, 3);            // unaware, back to the crew
+    let b = post(&mut world, 0, 5, 3);
+    world.guards[a].facing = Ang::from_degrees(270);
+    world.guards[b].facing = Ang::from_degrees(270);
+    put(&mut world, 0, 3, 4);
+    world.raiders[0].task = Task::Attack;
+    world.raiders[0].target = a as u32;
+    let (full_a, full_b) = (world.guards[a].health, world.guards[b].health);
+    run_for(&mut world, h::TAKEDOWN_TICKS);
+    assert!(world.guards[a].knocked_out, "the takedown");
+    assert_eq!(world.guards[b].health, full_b - full_a / 2, "half of what the takedown dealt");
+    assert!(world.guards[b].suspicion >= crate::SUSPICIOUS_AT, "a hit: straight to 1000");
+}
+
+#[test]
+fn static_charges_over_five_tiles_and_stuns_the_next_one_it_touches() {
+    let stunned = |law: bool| {
+        let mut world = vault_world(2);
+        if law {
+            world.weave(&[("static", (0, 13))]);
+        }
+        put(&mut world, 0, 1, 3);
+        put(&mut world, 1, 7, 3);
+        order(&mut world, 0, 6, 3);
+        let mut first = None;
+        for _ in 0..(4 * TICKS_PER_SECOND) {
+            world.step();
+            if first.is_none() && world.raiders[1].frozen_until > 0 {
+                first = Some((world.tick - 1, world.raiders[1].frozen_until, world.raiders[0].charge));
+            }
+        }
+        first
+    };
+    assert_eq!(stunned(false), None);
+    let (at, until, charge) = stunned(true).expect("five tiles walked, then a touch");
+    assert_eq!(until, at + TICKS_PER_SECOND / 2, "half a second");
+    assert_eq!(charge, 0, "the charge is spent");
+}
+
+#[test]
+fn echoes_returns_the_knocked_out_once_at_sixty_per_cent() {
+    let mut world = vault_world(1);
+    world.weave(&[("echoes", (0, 13))]);
+    swinging_guard(&mut world, 2);
+    world.raiders[0].health = 30;
+    world.raiders[0].carried = 20;
+    run_for(&mut world, h::HIT_TICKS);
+    let r = &world.raiders[0];
+    assert!(r.active() && r.revived, "back on its feet");
+    assert_eq!(r.health, 120 * 6 / 10, "at 60% of full health");
+    assert_eq!((r.carried, world.dropped.len()), (0, 1), "its loot left where it fell");
+    world.raiders[0].health = 30;
+    run_for(&mut world, h::HIT_TICKS);
+    assert_eq!(world.raiders[0].standing, Standing::Down, "only once");
+}
+
+#[test]
+fn soul_swap_trades_places_with_the_nearest_ally_who_takes_half_the_blow() {
+    let mut world = vault_world(3);
+    world.weave(&[("soul_swap", (0, 13))]);
+    swinging_guard(&mut world, 2);                // Power 40
+    put(&mut world, 1, 8, 8);                     // the nearest ally
+    put(&mut world, 2, 12, 12);
+    world.raiders[0].health = 30;
+    let (was_0, was_1) = (world.raiders[0].at, world.raiders[1].at);
+    run_for(&mut world, h::HIT_TICKS);
+    assert_eq!((world.raiders[0].at, world.raiders[1].at), (was_1, was_0), "traded places");
+    assert_eq!(world.raiders[0].health, 30, "the one about to fall takes nothing");
+    assert_eq!(world.raiders[1].health, 180 - 20, "the ally takes half the blow");
+    assert!(world.raiders[0].active() && world.raiders[0].revived);
+}
+
+#[test]
+fn the_higher_revival_applies_when_two_laws_cover_a_knockout() {
+    let mut world = vault_world(1);
+    world.weave(&[("echoes", (0, 13)), ("soul_swap", (1, 13))]);
+    assert_eq!(world.revival(), Some(crate::Revival::Return(3, 5)), "60% over 50%");
+    assert!(world.sheet.is_set(P::RevivalSwap));
+}
+
+#[test]
+fn thorns_cost_whoever_touches_a_wall_or_a_hedge_five_per_cent_a_second() {
+    let mut world = ward_world(3, WardKind::ThornHedge, (10, 10));
+    world.weave(&[("thorns", (0, 13))]);
+    world.grid.place(2, 2, Feature::RockPillar);
+    put(&mut world, 0, 2, 3);                     // beside the pillar
+    put(&mut world, 1, 5, 6);                     // beside the Vault: a structure
+    put(&mut world, 2, 10, 11);                   // beside the hedge
+    let g = post(&mut world, 2, 3, 2);            // a guard hugging the pillar
+    let full = world.guards[g].health;
+    world.step();
+    assert_eq!(world.raiders[0].health, 120 - 6, "5% of 120");
+    assert_eq!(world.raiders[1].health, 180, "the Vault is not a wall");
+    let carrier = Role::Carrier.health();
+    assert_eq!(world.raiders[2].health, carrier - carrier / 20, "a hedge is");
+    assert_eq!(world.guards[g].health, full - full / 20, "guards cannot hug the walls either");
+}
+
+#[test]
+fn bloom_regrows_a_cut_hedge_after_ten_seconds() {
+    let cut = |law: bool| {
+        let mut world = ward_world(1, WardKind::ThornHedge, (3, 3));
+        if law {
+            world.weave(&[("bloom", (0, 13))]);
+        }
+        put(&mut world, 0, 12, 12);
+        world.wards[0].health = 0;
+        world.wards[0].broken = true;
+        world.wards[0].broken_at = Some(0);
+        run_for(&mut world, 10 * TICKS_PER_SECOND);
+        let before = world.wards[0].live();
+        world.step();
+        (before, world.wards[0].live(), world.wards[0].health)
+    };
+    assert_eq!(cut(false), (false, false, 0));
+    assert_eq!(cut(true), (false, true, h::WARD_HEALTH_PER_LEVEL), "whole again at 10 s");
+}
+
+#[test]
+fn regrowth_heals_wards_too() {
+    // "Buildings, wards and guards heal 2% of their health each second."
+    let mut world = ward_world(1, WardKind::ThornHedge, (3, 3));
+    world.weave(&[("regrowth", (0, 13))]);
+    put(&mut world, 0, 12, 12);
+    world.wards[0].health = 100;
+    world.step();
+    assert_eq!(world.wards[0].health, 100 + h::WARD_HEALTH_PER_LEVEL / 50);
+}

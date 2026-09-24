@@ -818,13 +818,19 @@ dict(
                     "rule sheet is built ahead of the lock.</strong> "
                     "<code>sim/</code> carries all 48 laws as exact ratios "
                     "generated from <code>content/law_effects.json</code>, and "
-                    "reads 15 of the sheet's 22 parameters each tick from the "
-                    "laws whose pylons stand. Breaking a pylon switches its law "
-                    "off from the next tick. The gate names the other seven "
-                    "— five a law sets that nothing applies yet, two no law "
-                    "sets — so the schema's gaps are listed rather than "
-                    "hidden. Building it split two health parameters that each "
-                    "meant two rules (F31).",
+                    "reads 31 of the sheet's 34 parameters each tick from the "
+                    "laws whose pylons stand, so all 24 launch laws apply "
+                    "(\u00a77.10), each proved by a test. v3.4's rows for "
+                    "contact, size, time, bands, jumps, stuns and revival are "
+                    "parameters here, named for the rule and not the law. "
+                    "Breaking a pylon switches its law off from the next tick. "
+                    "The gate names the other three \u2014 lantern light and two "
+                    "no law sets \u2014 so the schema's gaps are listed rather "
+                    "than hidden. Building it split two health parameters that "
+                    "each meant two rules (F31), and found nine sheets that "
+                    "stop short of a rule (G23) and a regrowth row holding "
+                    "three (G24).",
+             register=["F31", "G23", "G24"],
              blocked_by=["T1.4", "T1.9"]),
         dict(id="T5.4", owner="claude", status="blocked",
              title="Lock saves, bundles and versions (§24.11)",

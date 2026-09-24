@@ -55,6 +55,10 @@ def render() -> str:
     lines += [
         "}",
         "",
+        "/// How many parameters the sheet has: the size of every array indexed by",
+        "/// `Param`, so a parameter added to the content file cannot fall off the end.",
+        f"pub const PARAM_COUNT: usize = {len(params)};",
+        "",
         "/// One of §7's laws: what it sets, as exact ratios, and whether its whole",
         "/// effect is a parameter change (`tools/law_effects.py`'s classification).",
         "#[derive(Clone, Copy, Debug)]",

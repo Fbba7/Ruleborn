@@ -104,12 +104,18 @@ def targets():
 
 def launch_laws_simulated():
     """The law engine, measured on §7.10's 24 launch laws: how many sim/
-    applies (laws_table.rs `simulated`), with the pylon system built."""
+    applies (laws_table.rs `simulated`) and reads every parameter of, with the
+    pylon system built. The flag alone once counted Thorns and Bloom, whose
+    parameters nothing in the simulation read."""
     def proof():
         laws = json.loads((CONTENT / "laws.json").read_text(encoding="utf-8"))
         launch = {l["id"] for l in laws if l.get("launch")}
         table = (SIM / "src" / "laws_table.rs").read_text(encoding="utf-8")
-        simulated = set(re.findall(r'id: "(\w+)", name: "[^"]*", simulated: true', table))
+        lib = (SIM / "src" / "lib.rs").read_text(encoding="utf-8")
+        rows = re.findall(r'id: "(\w+)", name: "[^"]*", simulated: true, params: &\[([^\]]*)\]',
+                          table)
+        simulated = {law for law, params in rows
+                     if all(f"Param::{p}" in lib for p in re.findall(r"Param::(\w+)", params))}
         pylons, _, missing = systems("Laws and pylons")()
         n = len(launch & simulated) if pylons == 1 else 0
         return (n / len(launch) if launch else 0.0,

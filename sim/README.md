@@ -369,42 +369,61 @@ column.
 ## Laws and pylons
 
 §7.3: "laws change a realm's rule sheet rather than containing special
-cases". The sheet is §12.21's twenty parameters. `build_laws.py` turns all 48
-laws in `content/law_effects.json` into `src/laws_table.rs` as exact ratios,
-so 1.25 becomes 5/4 and 0.65 becomes 13/20. The simulation cannot read JSON
-and decides nothing in decimals. The table is committed, and the content gate
-regenerates it and fails on any difference. The Python harness multiplies
-floats. This does not.
+cases". `build_laws.py` turns all 48 laws in `content/law_effects.json` into
+`src/laws_table.rs` as exact ratios, so 1.25 becomes 5/4 and 0.65 becomes
+13/20. The simulation cannot read JSON and decides nothing in decimals. The
+table is committed, and the content gate regenerates it and fails on any
+difference. The Python harness multiplies floats. This does not. The table
+also carries `PARAM_COUNT`, which sizes the sheet: the sheet once held twenty
+slots while the table named twenty-two, and weaving Thorns ran off its end.
 
 Each tick the laws phase — §24.10 puts it second — builds the sheet from the
 laws whose pylons still stand. Everything downstream reads it:
-- crew, guard and loaded speed;
+- crew, guard and loaded speed, climbing and leaping;
 - sight range, suspicion fill and decay, and noise radius;
 - damage to structures and in fights;
 - the alarm's spread;
 - the heist clock ("Haste: the heist clock runs 25% faster");
 - Glass ("walls become see-through") and Stillness ("standing still for 1.5
-  seconds becomes invisible").
+  seconds becomes invisible");
+- healing once a second, each rule its own parameter (F31): `ally_healing`
+  (Kinship) for anyone beside an ally, `structure_regrowth` (Regrowth) for
+  guards, wards, pylons and the Vault.
 
-The sheet had one health parameter for two rules each: Kinship and Regrowth
-both set `health_regen`, Thorns and Soul lanterns both set `health_drain`.
-A simulation reading the sheet cannot apply either without asking which law
-set it, which is a law containing a special case (F31). They are now four
-parameters, each named for whom it changes. The simulation applies two of
-them, once a second:
-- `ally_healing` (Kinship): anyone standing beside an ally heals 1.5% of full
-  health, crew and guards alike;
-- `structure_regrowth` (Regrowth): guards, pylons and the Vault heal 2%.
-Nothing knocked out or broken comes back.
+v3.4 makes the rest of the launch 24 rows on the same sheet (§7.3), and each
+is a parameter here too, named for the rule rather than the law, so nothing
+asks which law set it:
+- `slide` and `rebound` (Frictionless, Bounce): a crew member at the end of
+  its route slides on until a wall or a body stops it; with a rebound, the
+  first wall sends it back once, and a blow on a ward returns half to the
+  striker. Wardens absorb rebounds.
+- `large_health`, `large_speed`, `small_health`, `small_speed` (Density):
+  health and speed read by size. The crew and guards are roles, so the Warden
+  reads as large and the rest as standard.
+- `effect_delay_seconds` (Delay): a triggered ward's effect lands three
+  seconds after it fires.
+- `light_band_seconds` (Aurora): a band two rows deep crosses the realm every
+  ten seconds; inside it sight doubles, outside it halves.
+- `chain_share` (Chain lightning): a hit jumps to the nearest of the struck
+  one's side within three tiles at half strength.
+- `touch_stun_seconds` (Static): five tiles walked charge a character, and the
+  next one it touches is stunned for half a second.
+- `revival_return` and `revival_swap` (Echoes, Soul swap): §7.3's Revival row.
+  A knockout returns once at 60%, or the one about to fall swaps with its
+  nearest ally, who takes half the blow; the higher N applies, once.
+- `touch_damage` (Thorns): standing on or beside a wall or a live hedge costs
+  5% of full health a second.
+- `regrow_seconds` (Bloom): a cut Thorn Hedge is whole again after ten
+  seconds.
 
-The simulation reads 15 of the sheet's 22 parameters. The other seven are
-named by the gate:
-- five that laws set: climbing, leaping, regrowth, Thorns' `touch_damage` —
-  the document never says what a touch is — and Soul lanterns'
-  `unlit_drain`, which needs lantern light;
-- two that no law sets: carry weight and cone angle.
-The gate fails on any sheet parameter the simulation neither reads nor names,
-and on a named one the sheet no longer has.
+Where a law's sentence stops short, the reading is named beside the code and
+listed in G23; `regrow_seconds` is one name for more than one rule (G24).
+
+The simulation reads 31 of the sheet's 34 parameters. The other three are
+named by the gate: Soul lanterns' `unlit_drain`, which needs lantern light,
+and carry weight and cone angle, which no law sets. The gate fails on any
+sheet parameter the simulation neither reads nor names, and on a named one
+the sheet no longer has.
 
 A Law Pylon has 600 health (§10.2, level 1). Whoever is told to break one hits
 it from beside it, and a Breaker hits for double. At zero, its law is off from

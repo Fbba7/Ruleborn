@@ -43,10 +43,7 @@ NOT_MODELLED = [
 # Rule-sheet parameters (§12.21) the simulation does not read yet. Every
 # other parameter must appear as `Param::Name` in the simulation's source.
 LAW_PARAMS_NOT_MODELLED = [
-    ("touch_damage", "Thorns: \"touching walls or hedges costs 5% health\" — "
-                     "and the document never says what a touch is"),
     ("unlit_drain", "Soul lanterns: needs lantern light, an object not built"),
-    ("regrow_seconds", "set by Crystal growth and Bloom; nothing regrows yet"),
     ("carry_weight", "no law sets it"),
     ("cone_angle", "no law sets it"),
 ]
@@ -81,6 +78,9 @@ READINGS = [
      "§12.17 gives one level (2 m) and three (4 m) and nothing between"),
     ("GLARE_BLIND_TICKS", "Lantern Glare's blind, read as the crew unable to act",
      "§10.3 says \"blinds them\" and not what a blinded crew cannot do"),
+    ("AURORA_BAND_ROWS", "Aurora's band, two rows deep, one crossing the realm a period",
+     "§7.4 says \"bands of light sweep the realm every 10 seconds\" and not how "
+     "wide a band is or how many there are (G23)"),
 ]
 
 

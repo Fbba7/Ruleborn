@@ -50,7 +50,7 @@ pub mod trig;
 use fixed::{Ang, Fx};
 use grid::{Feature, Grid};
 use heist::{Grade, Outcome, Skiff, Standing, Task, Vault, Ward, WardKind};
-use laws_table::{Param, LAWS};
+use laws_table::{Param, LAWS, PARAM_COUNT};
 
 /// The laws the fixture's realm is woven with: three, the most §5.2 allows at
 /// realm level 5, all three whole-parameter laws so every effect is one the
@@ -78,13 +78,13 @@ pub const FIXTURE_WARDS: [(WardKind, (u16, u16)); 6] = [
 /// sheet rather than containing special cases".
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Sheet {
-    factors: [(i64, i64); 20],
-    set: [bool; 20],
+    factors: [(i64, i64); PARAM_COUNT],
+    set: [bool; PARAM_COUNT],
 }
 
 impl Sheet {
     pub fn plain() -> Sheet {
-        Sheet { factors: [(1, 1); 20], set: [false; 20] }
+        Sheet { factors: [(1, 1); PARAM_COUNT], set: [false; PARAM_COUNT] }
     }
 
     /// A parameter as (numerator, denominator); (1, 1) if no law sets it.
@@ -95,6 +95,18 @@ impl Sheet {
     /// A flag's value if a law sets it. §7.3 flags are set, not multiplied.
     pub fn flag(&self, p: Param) -> Option<i64> {
         self.set[p as usize].then(|| self.factors[p as usize].0 / self.factors[p as usize].1)
+    }
+
+    /// Whether any unbroken law sets the parameter: for a row whose value is
+    /// a share or a time, where `flag`'s whole number would read 0.5 as 0.
+    pub fn is_set(&self, p: Param) -> bool {
+        self.set[p as usize]
+    }
+
+    /// A time the sheet gives in seconds, in ticks, or `None` if unset.
+    pub fn ticks(&self, p: Param) -> Option<u32> {
+        let (n, d) = self.factors[p as usize];
+        self.set[p as usize].then(|| (TICKS_PER_SECOND as i64 * n / d) as u32)
     }
 
     fn apply(&mut self, p: Param, n: i64, d: i64) {
@@ -184,7 +196,48 @@ pub enum Role {
     Mender = 4,
 }
 
+/// A character's Size band (§11.2, v3.4): small, standard or large, derived
+/// from its proportions. The simulation's crew and guards are roles, not
+/// ruleborn. Every large ruleborn is a Warden and every other role has small
+/// and standard members, so a role reads as large if it is the Warden and as
+/// standard otherwise: nobody is small until a crew carries its ruleborn.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Size {
+    Small,
+    Standard,
+    Large,
+}
+
+/// §7.3's Health and Speed rows, "read by size": Density's figures for the
+/// large and small bands, (1, 1) for standard or with no law set.
+fn by_size(sheet: &Sheet, role: Role, large: Param, small: Param) -> (i64, i64) {
+    match role.size() {
+        Size::Large => sheet.factor(large),
+        Size::Small => sheet.factor(small),
+        Size::Standard => (1, 1),
+    }
+}
+
+/// Full health for a role under a sheet: its §11.1 health, read by size.
+pub fn full_health(sheet: &Sheet, role: Role) -> i32 {
+    let (n, d) = by_size(sheet, role, Param::LargeHealth, Param::SmallHealth);
+    (role.health() as i64 * n / d) as i32
+}
+
+/// The two Revival shapes the launch laws use (§7.3): return once at N% of
+/// full health, or swap with the nearest ally, who takes N% of the blow.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Revival {
+    Return(i64, i64),
+    Swap(i64, i64),
+}
+
 impl Role {
+    /// See `Size`.
+    pub fn size(self) -> Size {
+        if self == Role::Warden { Size::Large } else { Size::Standard }
+    }
+
     fn from_row(row: usize) -> Role {
         [Role::Scout, Role::Warden, Role::Breaker, Role::Carrier, Role::Mender][row % 5]
     }
@@ -384,6 +437,12 @@ pub struct Guard {
     heard: Option<grid::TileIndex>,
     /// When it reached the spot it was investigating, for the ten seconds.
     arrived_at: Option<u32>,
+    /// Static's charge, in tiles walked, and the tile it was last on.
+    pub charge: u32,
+    last_tile: Option<grid::TileIndex>,
+    /// Whether a Revival source has already covered one of its knockouts:
+    /// "the highest N applies, and only once" (§7.3).
+    pub revived: bool,
 }
 
 impl Guard {
@@ -443,6 +502,9 @@ fn make_guard(id: u32, row: usize, post: grid::TileIndex, grid: &Grid) -> Guard 
         saw: false,
         heard: None,
         arrived_at: None,
+        charge: 0,
+        last_tile: Some(post),
+        revived: false,
     }
 }
 
@@ -487,6 +549,16 @@ pub struct Raider {
     /// When it went down, and how long an ally has been reviving it.
     pub down_since: u32,
     pub revive: u32,
+    /// The tile its route starts from, which is the way a Frictionless slide
+    /// is going on a one-tile route, and whether Bounce has sent this slide
+    /// back once already.
+    pub came_from: grid::TileIndex,
+    pub rebounded: bool,
+    /// Static's charge, in tiles walked, and the tile it was last on.
+    pub charge: u32,
+    last_tile: Option<grid::TileIndex>,
+    /// Whether a Revival source has already covered one of its knockouts.
+    pub revived: bool,
 }
 
 impl Raider {
@@ -554,6 +626,10 @@ pub struct World {
     /// §12.9's line between Clean and Loud. Not the realm alarm, which climbs
     /// every thirty seconds whatever the crew does.
     pub alarm_raised: bool,
+    /// Ward effects triggered and not yet landed, under Delay (§7.3's Time
+    /// row): (tick due, ward, the crew member who set it off), in the order
+    /// they were triggered.
+    pub delayed: Vec<(u32, usize, usize)>,
 }
 
 impl World {
@@ -613,6 +689,11 @@ impl World {
                 frozen_until: 0,
                 down_since: 0,
                 revive: 0,
+                came_from: grid.index(i as u16, 0).unwrap_or(0),
+                rebounded: false,
+                charge: 0,
+                last_tile: grid.index(i as u16, 0),
+                revived: false,
             });
         }
         World {
@@ -644,6 +725,7 @@ impl World {
             dropped: Vec::new(),
             clock: u32::MAX,
             alarm_raised: false,
+            delayed: Vec::new(),
         }
     }
 
@@ -658,6 +740,15 @@ impl World {
             self.laws.push(Law { def, pylon, health: heist::PYLON_HEALTH, broken_at: None });
         }
         self.refresh_sheet();
+        // Everyone starts the heist at full health as the sheet reads it,
+        // so Density's large start larger (§7.3's Health row).
+        let sheet = self.sheet;
+        for r in self.raiders.iter_mut() {
+            r.health = full_health(&sheet, r.role);
+        }
+        for g in self.guards.iter_mut() {
+            g.health = full_health(&sheet, g.role);
+        }
     }
 
     /// Place wards on the island. A Crystal Wall is a wall on its tile; the
@@ -765,6 +856,8 @@ impl World {
                         _ => Vec::new(),
                     };
                     raider.along = 0;
+                    raider.came_from = from.unwrap_or(raider.came_from);
+                    raider.rebounded = false;
                 }
                 // An unknown gait is dropped like an unknown crew member.
                 Kind::Gait => {
@@ -839,6 +932,15 @@ impl World {
     /// gate lists them.
     fn phase_laws(&mut self) {
         self.refresh_sheet();
+        // A law switched off by its pylon takes its extra health with it:
+        // nobody stands above the full health the sheet now reads.
+        let sheet = self.sheet;
+        for r in self.raiders.iter_mut() {
+            r.health = r.health.min(full_health(&sheet, r.role));
+        }
+        for g in self.guards.iter_mut() {
+            g.health = g.health.min(full_health(&sheet, g.role));
+        }
         self.grid.free_climb = self.sheet.flag(Param::ClimbLevels).is_some_and(|v| v >= 1)
             || self.sheet.flag(Param::LeapObstacles).is_some_and(|v| v >= 1);
         // "the heist clock runs 25% faster in this realm"
@@ -943,7 +1045,7 @@ impl World {
         if !self.line_clear(from, to) {
             return None;
         }
-        let sight = self.sheet.factor(Param::SightRange);
+        let sight = self.sight_at(to);
         // Beyond mid is the far zone, which height stretches or removes.
         let zone = if d <= scale(guard.near, sight) {
             FILL_NEAR
@@ -1048,13 +1150,12 @@ impl World {
         let d = guard.at.distance(at);
         // A law may shorten sight — Glowing dark halves it, Sleepwalk closes
         // the guards' eyes — so every range is read through the sheet.
-        let sight = self.sheet.factor(Param::SightRange);
-        if sight.0 == 0 {
+        if self.sheet.factor(Param::SightRange).0 == 0 {
             return None;
         }
         let from = self.grid.tile_at(guard.at.x, guard.at.y)?;
         let to = self.grid.tile_at(at.x, at.y)?;
-        let reach = scale(self.outer_zone(gi, from, to), sight);
+        let reach = scale(self.outer_zone(gi, from, to), self.sight_at(to));
         if d > reach {
             return None;
         }
@@ -1071,6 +1172,22 @@ impl World {
             return None;
         }
         Some((d, in_cone, from, to))
+    }
+
+    /// §7.3's Sight row for someone standing on `tile` this tick: the sheet's
+    /// range, and Aurora's bands. "Inside a band everyone can be seen from
+    /// twice as far; between bands, vision halves." A band is
+    /// `AURORA_BAND_ROWS` rows deep and crosses the realm north to south,
+    /// entering and leaving it whole, once every period — so every row is
+    /// lit once a sweep, and the period is the law's "every 10 seconds".
+    fn sight_at(&self, tile: grid::TileIndex) -> (i64, i64) {
+        let (n, d) = self.sheet.factor(Param::SightRange);
+        let Some(period) = self.sheet.ticks(Param::LightBandSeconds) else { return (n, d) };
+        let period = period.max(1) as i64;
+        let (rows, w) = (self.grid.height as i64, heist::AURORA_BAND_ROWS);
+        let top = (self.tick as i64 % period) * (rows + w) / period - w;
+        let y = self.grid.coords(tile).1 as i64;
+        if top <= y && y < top + w { (n * 2, d) } else { (n, d * 2) }
     }
 
     /// How far a guard's outermost zone reaches toward a tile. §12.17: "A guard
@@ -1095,6 +1212,9 @@ impl World {
         // answer does not depend on the order raiders are taken in.
         let drags: Vec<Option<usize>> = (0..self.raiders.len())
             .map(|ri| self.dragging(ri)).collect();
+        let slide = self.sheet.flag(Param::Slide) == Some(1);
+        let rebound = self.sheet.is_set(Param::Rebound);
+        let charging = self.sheet.is_set(Param::TouchStunSeconds);
         for (ri, raider) in self.raiders.iter_mut().enumerate() {
             raider.landed = 0;
             raider.still_for = if raider.still() && raider.active() {
@@ -1110,11 +1230,18 @@ impl World {
             let gait = if drags[ri].is_some() { Gait::Crouch } else { raider.gait };
             let step = step_for(&self.grid, &self.sheet, raider, gait, here,
                                 raider.carried > 0);
+            let was = raider.along;
             let (at, along) = walk_route(&self.grid, raider.at, &raider.route, raider.along, step);
             raider.at = at;
             raider.along = along;
             if let Some(gi) = drags[ri] {
                 self.guards[gi].at = at;           // the body comes along
+            }
+            // Frictionless: reaching the end of a route is not stopping.
+            if slide && was < raider.route.len() && along >= raider.route.len() {
+                if let Some(next) = slide_on(&self.grid, &self.guards, raider, rebound) {
+                    raider.route.push(next);
+                }
             }
             // Dropped a level or more this tick: §12.17's landing noise.
             let there = self.grid.tile_at(at.x, at.y);
@@ -1134,7 +1261,11 @@ impl World {
             if !guard.awake(now) {
                 continue;
             }
-            let walk = scale(guard.speed, guard_speed);         // §11.1's, by role
+            let mut walk = scale(guard.speed, guard_speed);     // §11.1's, by role
+            let size = by_size(&self.sheet, guard.role, Param::LargeSpeed, Param::SmallSpeed);
+            if size != (1, 1) {
+                walk = scale(walk, size);
+            }
             use guard::State::*;
             match guard.state {
                 // "Patrols or holds its post" — the fixture holds, facing the
@@ -1189,6 +1320,69 @@ impl World {
                         }
                     }
                 }
+            }
+        }
+        self.static_touches(charging);
+    }
+
+    /// Static (§7.3's Stun row): "moving builds charge; after 5 tiles, the
+    /// next touch stuns". Charge is counted a tile at a time while the law
+    /// holds. A charged character touches another on its own tile or the
+    /// next; the one it touches is stunned and the charge is spent. The crew
+    /// is taken in id order, then the guards, and each touches the nearest
+    /// it can, ties to the crew and the lower id, so the same stuns land in
+    /// the same order everywhere. Allies are touched too: "crews that bunch
+    /// up get stunned together".
+    fn static_touches(&mut self, charging: bool) {
+        let now = self.tick;
+        for r in self.raiders.iter_mut() {
+            let t = self.grid.tile_at(r.at.x, r.at.y);
+            if t != r.last_tile {
+                r.last_tile = t;
+                if charging && r.active() {
+                    r.charge += 1;
+                }
+            }
+        }
+        for g in self.guards.iter_mut() {
+            let t = self.grid.tile_at(g.at.x, g.at.y);
+            if t != g.last_tile {
+                g.last_tile = t;
+                if charging && !g.knocked_out {
+                    g.charge += 1;
+                }
+            }
+        }
+        let Some(stun) = self.sheet.ticks(Param::TouchStunSeconds) else { return };
+        // Everyone who can touch or be touched: (is a guard, index, position).
+        let bodies: Vec<(bool, usize, Point)> = self.raiders.iter().enumerate()
+            .filter(|(_, r)| r.active()).map(|(i, r)| (false, i, r.at))
+            .chain(self.guards.iter().enumerate()
+                .filter(|(_, g)| !g.knocked_out).map(|(i, g)| (true, i, g.at)))
+            .collect();
+        for &(guard, i, at) in &bodies {
+            let charge = if guard { self.guards[i].charge } else { self.raiders[i].charge };
+            if charge < heist::STATIC_TILES {
+                continue;
+            }
+            let here = self.grid.tile_at(at.x, at.y);
+            let touched = bodies.iter()
+                .filter(|&&(g2, j, p)| (g2, j) != (guard, i)
+                    && here.zip(self.grid.tile_at(p.x, p.y))
+                        .is_some_and(|(a, b)| self.grid.adjacent(a, b)))
+                .min_by_key(|&&(_, _, p)| at.distance(p).0);
+            let Some(&(g2, j, _)) = touched else { continue };
+            if g2 {
+                let g = &mut self.guards[j];
+                g.stunned_until = g.stunned_until.max(now + stun);
+            } else {
+                let r = &mut self.raiders[j];
+                r.frozen_until = r.frozen_until.max(now + stun);
+            }
+            if guard {
+                self.guards[i].charge = 0;
+            } else {
+                self.raiders[i].charge = 0;
             }
         }
     }
@@ -1397,7 +1591,7 @@ impl World {
                         g.swing = 0;
                         let (n, d) = self.sheet.factor(Param::Damage);
                         let power = g.power as i64 * n / d;
-                        self.raiders[ri].health -= power as i32;
+                        self.strike_raider(ri, power as i32, true);
                     }
                 }
             }
@@ -1440,32 +1634,27 @@ impl World {
             self.raiders[ri].swing = 0;
             let (dn, dd) = self.sheet.factor(Param::Damage);
             let power = (self.raiders[ri].role.power() as i64 * dn / dd) as i32;
-            let g = &mut self.guards[gi];
-            if unaware {
+            let blow = if unaware {
                 // "It deals exactly what the guard has left."
-                g.health = 0;
+                self.guards[gi].health
             } else {
-                g.health -= power;
-                g.suspicion = SUSPICION_MAX;
-            }
-            if g.health <= 0 {
-                g.health = 0;
-                g.knocked_out = true;
-                g.swing = 0;
-                g.route.clear();
-                g.along = 0;
-            }
+                self.guards[gi].suspicion = SUSPICION_MAX;
+                power
+            };
+            self.strike_guard(gi, blow, true);
         }
 
         self.wards_act();
+        if now % TICKS_PER_SECOND == 0 && self.sheet.is_set(Param::TouchDamage) {
+            self.thorns();
+        }
 
-        // "A crew member at zero health drops its loot on the tile."
+        // "A crew member at zero health drops its loot on the tile." Echoes
+        // returns it at once, loot already dropped, the first time only.
+        let revival = self.revival();
+        let sheet = self.sheet;
         for raider in self.raiders.iter_mut() {
             if raider.active() && raider.health <= 0 {
-                raider.health = 0;
-                raider.standing = Standing::Down;
-                raider.down_since = now;
-                raider.revive = 0;
                 raider.route.clear();
                 raider.along = 0;
                 if raider.carried > 0 {
@@ -1473,6 +1662,19 @@ impl World {
                         self.dropped.push((t, raider.carried));
                     }
                     raider.carried = 0;
+                }
+                match revival {
+                    Some(Revival::Return(n, d)) if !raider.revived => {
+                        raider.revived = true;
+                        raider.health =
+                            ((full_health(&sheet, raider.role) as i64 * n / d) as i32).max(1);
+                    }
+                    _ => {
+                        raider.health = 0;
+                        raider.standing = Standing::Down;
+                        raider.down_since = now;
+                        raider.revive = 0;
+                    }
                 }
             }
         }
@@ -1501,7 +1703,7 @@ impl World {
                     };
                     if r.revive >= need {
                         let (n, d) = heist::REVIVE_HEALTH;
-                        r.health = (r.role.health() * n / d).max(1);
+                        r.health = (full_health(&self.sheet, r.role) * n / d).max(1);
                         r.standing = Standing::Active;
                         r.revive = 0;
                         continue;
@@ -1664,10 +1866,17 @@ impl World {
                 if w.health <= 0 {
                     w.health = 0;
                     w.broken = true;
+                    w.broken_at = Some(now);
                     if w.kind == WardKind::CrystalWall {
                         let t = w.tile;
                         self.grid.clear(t);
                     }
+                }
+                // Bounce (§7.3's Contact row): "walls and wards bounce back
+                // 50% of what hits them". A Warden absorbs it.
+                if self.sheet.is_set(Param::Rebound) && role != Role::Warden {
+                    let (rn, rd) = self.sheet.factor(Param::Rebound);
+                    self.raiders[ri].health -= (hit as i64 * rn / rd) as i32;
                 }
             }
         }
@@ -1679,6 +1888,17 @@ impl World {
         // comes back: a law that revives is a different rule.
         if now % TICKS_PER_SECOND == 0 {
             self.heal();
+        }
+        // Bloom: "cut hedges regrow after 10 seconds", whole and live.
+        if let Some(after) = self.sheet.ticks(Param::RegrowSeconds) {
+            for w in self.wards.iter_mut() {
+                if w.kind == WardKind::ThornHedge && w.broken
+                    && w.broken_at.is_some_and(|t| now >= t + after)
+                {
+                    *w = heist::Ward { armed_at: w.armed_at, disarmed: w.disarmed,
+                                       ..heist::Ward::new(w.kind, w.tile) };
+                }
+            }
         }
 
         // §5.4: "The crew must hold the spot until it arrives." Anyone on the
@@ -1752,6 +1972,15 @@ impl World {
             }
         }
 
+        // Effects triggered under Delay land now, in the order they were set
+        // off, whether or not the ward has since been broken or disarmed.
+        let due: Vec<(u32, usize, usize)> =
+            self.delayed.iter().filter(|e| e.0 == now).copied().collect();
+        self.delayed.retain(|e| e.0 != now);
+        for (_, wi, first) in due {
+            self.fire_ward(wi, first);
+        }
+
         let tile_of = |p: Point, g: &Grid| g.tile_at(p.x, p.y);
         for wi in 0..self.wards.len() {
             let w = self.wards[wi].clone();
@@ -1766,7 +1995,7 @@ impl World {
                     let (n, d) = heist::COIL_DAMAGE;
                     for r in self.raiders.iter_mut() {
                         if r.active() && within(r.at, heist::COIL_RADIUS) {
-                            r.health -= r.role.health() * n / d;
+                            r.health -= full_health(&self.sheet, r.role) * n / d;
                         }
                     }
                 }
@@ -1774,7 +2003,7 @@ impl World {
                     let (n, d) = heist::HEDGE_DAMAGE;
                     for r in self.raiders.iter_mut() {
                         if r.active() && tile_of(r.at, &self.grid) == Some(w.tile) {
-                            r.health -= r.role.health() * n / d;
+                            r.health -= full_health(&self.sheet, r.role) * n / d;
                         }
                     }
                 }
@@ -1790,42 +2019,213 @@ impl World {
                     };
                     let Some(first) = self.raiders.iter().position(trips) else { continue };
                     self.wards[wi].armed_at = now + w.kind.reset_ticks();
-                    match w.kind {
-                        WardKind::TimeSnare => {
-                            self.raiders[first].frozen_until = now + heist::SNARE_FREEZE_TICKS;
-                        }
-                        WardKind::GravityWell => {
-                            // Everyone within the radius to the centre, held.
-                            // Where they were going stands: the route is
-                            // recomputed from the well to the same tile,
-                            // because the order was the tile, not the path.
-                            for ri in 0..self.raiders.len() {
-                                let r = &self.raiders[ri];
-                                if !(r.active() && within(r.at, heist::WELL_RADIUS)) {
-                                    continue;
-                                }
-                                let goal = r.route.last().copied();
-                                let route = goal.and_then(|g| path::find(&self.grid, w.tile, g))
-                                    .unwrap_or_default();
-                                let r = &mut self.raiders[ri];
-                                r.at = centre;
-                                r.route = route;
-                                r.along = 0;
-                                r.frozen_until = now + heist::WELL_HOLD_TICKS;
-                            }
-                        }
-                        _ => {
-                            // Lantern Glare: every guard is shown the crew,
-                            // and the crew is blinded.
-                            self.revealed_until = now + heist::GLARE_REVEAL_TICKS;
-                            self.reveal_spot = Some(w.tile);
-                            for r in self.raiders.iter_mut().filter(|r| r.active()) {
-                                r.frozen_until = r.frozen_until.max(now + heist::GLARE_BLIND_TICKS);
-                            }
-                        }
+                    // Delay (§7.3's Time row): "wards ... take effect 3 seconds
+                    // after they are triggered". The ward resets from the trip.
+                    match self.sheet.ticks(Param::EffectDelaySeconds) {
+                        Some(delay) => self.delayed.push((now + delay, wi, first)),
+                        None => self.fire_ward(wi, first),
                     }
                 }
                 _ => {}
+            }
+        }
+    }
+
+    /// What a triggered ward does when it lands, set off by crew member
+    /// `first`: at once, or under Delay when its time comes.
+    fn fire_ward(&mut self, wi: usize, first: usize) {
+        let now = self.tick;
+        let w = self.wards[wi].clone();
+        let (wx, wy) = self.grid.centre(w.tile);
+        let centre = Point { x: wx, y: wy };
+        let within = |p: Point, r: i32| p.distance(centre) <= Fx::from_int(r);
+        match w.kind {
+            WardKind::TimeSnare => {
+                self.raiders[first].frozen_until = now + heist::SNARE_FREEZE_TICKS;
+            }
+            WardKind::GravityWell => {
+                // Everyone within the radius to the centre, held. Where they
+                // were going stands: the route is recomputed from the well to
+                // the same tile, because the order was the tile, not the path.
+                for ri in 0..self.raiders.len() {
+                    let r = &self.raiders[ri];
+                    if !(r.active() && within(r.at, heist::WELL_RADIUS)) {
+                        continue;
+                    }
+                    let goal = r.route.last().copied();
+                    let route = goal.and_then(|g| path::find(&self.grid, w.tile, g))
+                        .unwrap_or_default();
+                    let r = &mut self.raiders[ri];
+                    r.at = centre;
+                    r.route = route;
+                    r.along = 0;
+                    r.came_from = w.tile;
+                    r.rebounded = false;
+                    r.frozen_until = now + heist::WELL_HOLD_TICKS;
+                }
+            }
+            _ => {
+                // Lantern Glare: every guard is shown the crew, and the crew
+                // is blinded.
+                self.revealed_until = now + heist::GLARE_REVEAL_TICKS;
+                self.reveal_spot = Some(w.tile);
+                for r in self.raiders.iter_mut().filter(|r| r.active()) {
+                    r.frozen_until = r.frozen_until.max(now + heist::GLARE_BLIND_TICKS);
+                }
+            }
+        }
+    }
+
+    /// §7.3's Revival row this tick. "When several Revival sources cover one
+    /// knockout, the highest N applies"; a tie goes to the return.
+    fn revival(&self) -> Option<Revival> {
+        let get = |p| self.sheet.is_set(p).then(|| self.sheet.factor(p));
+        match (get(Param::RevivalReturn), get(Param::RevivalSwap)) {
+            (Some((rn, rd)), Some((sn, sd))) if sn * rd > rn * sd => Some(Revival::Swap(sn, sd)),
+            (Some((n, d)), _) => Some(Revival::Return(n, d)),
+            (None, Some((n, d))) => Some(Revival::Swap(n, d)),
+            (None, None) => None,
+        }
+    }
+
+    /// A blow on crew member `ri`. Soul swap first: one "about to be knocked
+    /// out swaps places with its nearest ally, who takes half the blow" —
+    /// once, like every Revival source, and only if an ally is standing.
+    /// Then the blow, and Chain lightning's jump from whoever took it:
+    /// "every hit jumps to a second target within 3 tiles at 50% strength",
+    /// to the nearest of the same side, ties to the lower id. A jump does not
+    /// jump again. A knockout is settled after the combat phase, as always.
+    fn strike_raider(&mut self, ri: usize, blow: i32, chain: bool) {
+        let (mut hit, mut dealt) = (ri, blow);
+        if blow >= self.raiders[ri].health && !self.raiders[ri].revived {
+            if let Some(Revival::Swap(n, d)) = self.revival() {
+                let from = self.raiders[ri].at;
+                let ally = (0..self.raiders.len())
+                    .filter(|&j| j != ri && self.raiders[j].active())
+                    .min_by_key(|&j| (from.distance(self.raiders[j].at).0, j));
+                if let Some(ai) = ally {
+                    self.raiders[ri].at = self.raiders[ai].at;
+                    self.raiders[ai].at = from;
+                    for k in [ri, ai] {
+                        self.raiders[k].route.clear();
+                        self.raiders[k].along = 0;
+                    }
+                    self.raiders[ri].revived = true;
+                    (hit, dealt) = (ai, (blow as i64 * n / d) as i32);
+                }
+            }
+        }
+        self.raiders[hit].health -= dealt;
+        if !chain || !self.sheet.is_set(Param::ChainShare) {
+            return;
+        }
+        let (n, d) = self.sheet.factor(Param::ChainShare);
+        let at = self.raiders[hit].at;
+        let next = (0..self.raiders.len())
+            .filter(|&j| j != hit && j != ri && self.raiders[j].active()
+                && at.distance(self.raiders[j].at) <= Fx::from_int(heist::CHAIN_TILES))
+            .min_by_key(|&j| (at.distance(self.raiders[j].at).0, j));
+        if let Some(j) = next {
+            self.strike_raider(j, (dealt as i64 * n / d) as i32, false);
+        }
+    }
+
+    /// A blow on guard `gi`, by the same rules as `strike_raider`: Soul swap,
+    /// the blow, a knockout, and Chain lightning's jump to the nearest other
+    /// guard, which is a hit like any other and sends its suspicion straight
+    /// to 1000.
+    fn strike_guard(&mut self, gi: usize, blow: i32, chain: bool) {
+        let (mut hit, mut dealt) = (gi, blow);
+        if blow >= self.guards[gi].health && !self.guards[gi].revived {
+            if let Some(Revival::Swap(n, d)) = self.revival() {
+                let from = self.guards[gi].at;
+                let ally = (0..self.guards.len())
+                    .filter(|&j| j != gi && !self.guards[j].knocked_out)
+                    .min_by_key(|&j| (from.distance(self.guards[j].at).0, j));
+                if let Some(ai) = ally {
+                    self.guards[gi].at = self.guards[ai].at;
+                    self.guards[ai].at = from;
+                    for k in [gi, ai] {
+                        self.guards[k].route.clear();
+                        self.guards[k].along = 0;
+                    }
+                    self.guards[gi].revived = true;
+                    (hit, dealt) = (ai, (blow as i64 * n / d) as i32);
+                }
+            }
+        }
+        self.guards[hit].health -= dealt;
+        if self.guards[hit].health <= 0 {
+            self.knock_out_guard(hit);
+        }
+        if !chain || !self.sheet.is_set(Param::ChainShare) {
+            return;
+        }
+        let (n, d) = self.sheet.factor(Param::ChainShare);
+        let at = self.guards[hit].at;
+        let next = (0..self.guards.len())
+            .filter(|&j| j != hit && j != gi && !self.guards[j].knocked_out
+                && at.distance(self.guards[j].at) <= Fx::from_int(heist::CHAIN_TILES))
+            .min_by_key(|&j| (at.distance(self.guards[j].at).0, j));
+        if let Some(j) = next {
+            self.guards[j].suspicion = SUSPICION_MAX;
+            self.strike_guard(j, (dealt as i64 * n / d) as i32, false);
+        }
+    }
+
+    /// A guard at zero health is knocked out (§12.8) — unless Echoes returns
+    /// it, at 60% of its full health, the first time only.
+    fn knock_out_guard(&mut self, gi: usize) {
+        let revival = self.revival();
+        let full = full_health(&self.sheet, self.guards[gi].role);
+        let g = &mut self.guards[gi];
+        g.swing = 0;
+        g.route.clear();
+        g.along = 0;
+        if let Some(Revival::Return(n, d)) = revival {
+            if !g.revived {
+                g.revived = true;
+                g.health = ((full as i64 * n / d) as i32).max(1);
+                return;
+            }
+        }
+        g.health = 0;
+        g.knocked_out = true;
+    }
+
+    /// Thorns (§7.3's Touch damage row): "touching walls or hedges costs 5%
+    /// health". The document never says what a touch is (G23); here it is
+    /// standing on or beside — a side, not a corner — a wall or a live Thorn
+    /// Hedge, and it costs the share of full health once a second, crew and
+    /// guards alike: "your own guards cannot hug the hedges either". A wall
+    /// is anything that stops walking but the Vault and the pylons, which
+    /// are structures, not walls.
+    fn thorns(&mut self) {
+        let (n, d) = self.sheet.factor(Param::TouchDamage);
+        let hedges: Vec<grid::TileIndex> = self.wards.iter()
+            .filter(|w| w.kind == WardKind::ThornHedge && w.live()).map(|w| w.tile).collect();
+        let grid = &self.grid;
+        let thorny = |t: grid::TileIndex| hedges.contains(&t) || (!grid.at(t).passable()
+            && !matches!(grid.feature(t), Some(Feature::Vault) | Some(Feature::Pylon)));
+        let touching = |p: Point| grid.tile_at(p.x, p.y).is_some_and(|t| {
+            thorny(t) || grid.neighbours(t).iter().flatten().any(|&o| thorny(o))
+        });
+        let crew: Vec<bool> = self.raiders.iter().map(|r| r.active() && touching(r.at)).collect();
+        let posts: Vec<bool> = self.guards.iter()
+            .map(|g| !g.knocked_out && touching(g.at)).collect();
+        let sheet = self.sheet;
+        for (r, hurt) in self.raiders.iter_mut().zip(crew) {
+            if hurt {
+                r.health -= (full_health(&sheet, r.role) as i64 * n / d) as i32;
+            }
+        }
+        for (gi, hurt) in posts.into_iter().enumerate() {
+            if hurt {
+                let g = &mut self.guards[gi];
+                g.health -= (full_health(&sheet, g.role) as i64 * n / d) as i32;
+                if g.health <= 0 {
+                    self.knock_out_guard(gi);
+                }
             }
         }
     }
@@ -1853,13 +2253,13 @@ impl World {
             }).collect();
             for (r, heal) in self.raiders.iter_mut().zip(crew) {
                 if heal {
-                    let full = r.role.health();
+                    let full = full_health(&self.sheet, r.role);
                     r.health = (r.health + (full as i64 * n / d) as i32).min(full);
                 }
             }
             for (g, heal) in self.guards.iter_mut().zip(posts) {
                 if heal {
-                    let full = g.role.health();
+                    let full = full_health(&self.sheet, g.role);
                     g.health = (g.health + (full as i64 * n / d) as i32).min(full);
                 }
             }
@@ -1868,7 +2268,7 @@ impl World {
             let (n, d) = self.sheet.factor(Param::StructureRegrowth);
             let share = |full: i32| (full as i64 * n / d) as i32;
             for g in self.guards.iter_mut().filter(|g| !g.knocked_out) {
-                let full = g.role.health();
+                let full = full_health(&self.sheet, g.role);
                 g.health = (g.health + share(full)).min(full);
             }
             if self.vault.opened_at.is_none() {
@@ -1878,6 +2278,12 @@ impl World {
             for law in self.laws.iter_mut().filter(|l| l.broken_at.is_none()) {
                 let full = heist::PYLON_HEALTH;
                 law.health = (law.health + share(full)).min(full);
+            }
+            // "Buildings, wards and guards": the wards were left out until
+            // the law engine's launch set was finished.
+            for w in self.wards.iter_mut().filter(|w| !w.broken) {
+                let full = heist::Ward::new(w.kind, w.tile).health;
+                w.health = (w.health + share(full)).min(full);
             }
         }
     }
@@ -2114,6 +2520,10 @@ fn step_for(grid: &Grid, sheet: &Sheet, raider: &Raider, gait: Gait,
     let (num, den) = gait.pace();
     let mut step = scale(raider.speed.mul(pace).mul(Fx::from_ratio(num, den)),
                          sheet.factor(Param::CrewSpeed));
+    let size = by_size(sheet, raider.role, Param::LargeSpeed, Param::SmallSpeed);
+    if size != (1, 1) {
+        step = scale(step, size);
+    }
     if loaded {
         step = scale(step, sheet.factor(Param::LoadedSpeed));
         if raider.role == Role::Carrier {
@@ -2122,6 +2532,43 @@ fn step_for(grid: &Grid, sheet: &Sheet, raider: &Raider, gait: Gait,
         }
     }
     step
+}
+
+/// Contact with friction off (§7.3's Contact row; Frictionless): "anything
+/// moving keeps sliding until it hits something". A crew member that reaches
+/// the end of its route goes on the way it was going, a tile at a time, until
+/// the next tile is one it cannot step onto or a body lies or stands there.
+/// With a rebound on the sheet (Bounce: "walls ... bounce back ... including
+/// characters"), the first wall sends it back the way it came, once a slide;
+/// a Warden is "heavy enough to absorb a rebound". The grid's edge is not a
+/// wall: a slide stops there.
+fn slide_on(grid: &Grid, guards: &[Guard], raider: &mut Raider, rebound: bool)
+    -> Option<grid::TileIndex> {
+    let n = raider.route.len();
+    let last = *raider.route.last()?;
+    let prev = if n >= 2 { raider.route[n - 2] } else { raider.came_from };
+    let ((lx, ly), (px, py)) = (grid.coords(last), grid.coords(prev));
+    let (dx, dy) = (lx as i32 - px as i32, ly as i32 - py as i32);
+    if (dx, dy) == (0, 0) {
+        return None;
+    }
+    let body = |t: grid::TileIndex| guards.iter().any(|g| grid.tile_at(g.at.x, g.at.y) == Some(t));
+    let beyond = |sx: i32, sy: i32| {
+        let (x, y) = (lx as i32 + sx, ly as i32 + sy);
+        if x < 0 || y < 0 {
+            return None;
+        }
+        grid.index(x as u16, y as u16)
+    };
+    let ahead = beyond(dx, dy)?;
+    if grid.can_step(last, ahead) {
+        return (!body(ahead)).then_some(ahead);
+    }
+    if !rebound || raider.rebounded || raider.role == Role::Warden {
+        return None;
+    }
+    raider.rebounded = true;
+    beyond(-dx, -dy).filter(|t| grid.can_step(last, *t) && !body(*t))
 }
 
 /// Walk `step` tiles along a route from `at`, which is heading for

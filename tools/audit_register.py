@@ -57,7 +57,8 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and building the server's caps
                           "F36", "F37", "G19", "G20", "G21",
                           # and by the adversarial review of that re-run
-                          "F38", "F39", "C41", "C42", "G22", "D60"})
+                          "F38", "F39", "C41", "C42", "G22", "D60",
+                          "G23", "G24"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5443,6 +5444,70 @@ dict(id="D60", kind="deviation", severity="significant", status="open",
      rec="When the economy moves server-side, derive both from the player\u2019s "
          "own ledger and buildings, and refuse a bundle that disagrees. Until "
          "then it is a known limit of this build, not of the design."),
+
+dict(id="G23", kind="gap", severity="significant", status="open",
+     title="Nine launch laws leave the simulation a rule to choose, and the "
+           "choice is the rule every replay is checked by",
+     refs=["7.4", "7.3", "7.10", "11.2", "12.21", "24.7"],
+     body="v3.4 makes every launch law a row on §7.3\u2019s sheet, and "
+          "<code>sim/</code> now applies all 24. Building them needed a "
+          "reading wherever a sheet\u2019s sentence stops short, and because the "
+          "server re-simulates every heist, each reading is the rule. "
+          "<strong>Frictionless</strong>: <em>\u201canything moving keeps "
+          "sliding\u201d</em>, but its +20% is crew speed; the crew slides, "
+          "guards do not, a Halt still stops, and the realm\u2019s edge ends a "
+          "slide. <strong>Bounce</strong>: <em>\u201cincluding "
+          "characters\u201d</em>, yet nothing walks into a wall except a slide, "
+          "so a character rebounds only at a slide\u2019s end, once; a blow on a "
+          "ward returns half to the striker; Wardens absorb both. "
+          "<strong>Density</strong>: size is a ruleborn\u2019s (§11.2) and the "
+          "crew and guards are roles, so the Warden is large, the rest standard "
+          "and nobody small. <strong>Delay</strong>: <em>\u201cwards and "
+          "abilities\u201d</em> \u2014 no abilities exist yet, and "
+          "<em>\u201cyour own guards react late too\u201d</em> names no rule, so "
+          "guards react on time. <strong>Aurora</strong>: how deep a band is "
+          "and how many cross at once are not given; one band two rows deep "
+          "crosses north to south each period. <strong>Chain "
+          "lightning</strong>: <em>\u201ca second target\u201d</em> is read as "
+          "the nearest on the struck one\u2019s side; a jump does not jump "
+          "again, and a blow on a structure does not jump. "
+          "<strong>Static</strong>: a touch is sharing a tile or a side; one "
+          "charge stuns the nearest one touched, ally or not. "
+          "<strong>Echoes</strong>: the return is at once, where it fell, loot "
+          "already dropped. <strong>Soul swap</strong>: once per character, as "
+          "every Revival source is; the one who swaps takes none of the blow; "
+          "only a hit sets it off, not a ward. <strong>Thorns</strong>: a "
+          "touch is standing on or beside a wall or a live hedge, charged once "
+          "a second; the Vault and pylons are structures, not walls. Found "
+          "building the launch set; each is named in <code>sim/src/lib.rs</code> "
+          "beside the rule it chose and held by a test.",
+     rec="Write each reading, or its replacement, into the law\u2019s sheet in "
+         "§7.4 as the rule, in the sheet\u2019s own words. §24.7 re-simulates "
+         "heists on the server, so a sentence a player reads and a rule the "
+         "server applies cannot be allowed to differ; a sheet that stops short "
+         "is a rule the build writes instead of the designer."),
+
+dict(id="G24", kind="gap", severity="minor", status="open",
+     title="§7.3\u2019s Structure regrowth row holds three different rules, "
+           "and its combining rule has no case for a time",
+     refs=["7.3", "7.4"],
+     body="The row lists Regrowth, Bloom, Crystal growth and Tidemark. Regrowth "
+          "heals what is standing, 2% a second; Bloom regrows <em>\u201ccut "
+          "hedges\u201d</em> after 10 seconds; Crystal growth regrows "
+          "<em>\u201cbroken walls and hedges\u201d</em> after 8, as crystal "
+          "that does not block sight. That is F31\u2019s fault again \u2014 one "
+          "name, several rules \u2014 which v3.4 fixed for health and drain and "
+          "not here. And §7.3 combines by kind: <em>\u201cmultipliers multiply; "
+          "on/off rules take the last value applied\u201d</em>. A regrowth time "
+          "is neither, so Bloom and Crystal growth together have no stated "
+          "time. <code>sim/</code> keeps the heal as "
+          "<code>structure_regrowth</code> and the time as "
+          "<code>regrow_seconds</code>, applied to broken Thorn Hedges, which "
+          "is Bloom and half of Crystal growth.",
+     rec="Split the row as v3.4 split Health: a heal-while-standing row and a "
+         "regrow-after row, with what regrows named. Say that times take the "
+         "shortest value applied (or the last), so two laws that set one have "
+         "an answer."),
 
 ]
 
