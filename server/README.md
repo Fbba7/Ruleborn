@@ -230,6 +230,23 @@ stand-in chain in `test/fixtures/apple/` (its `make.sh` regenerates it). The
 readings are **G32**; Google Play's side is **D67**; and building this found
 **F46**: every island is public by hash before any scout.
 
+## Friends
+
+`src/friends.mjs` is §12.11's friendly heists and §17.6's sharing:
+
+- **Friends** are made by an invite one player shares and the other
+  accepts, and either can end it.
+- **A friendly heist** is a lease in its own mode, on a friend's island:
+  no entry fee, no Renown, stars or rating, and "the friend loses nothing";
+  the outcome records the page the friend earns "for every raider their
+  guards catch". A new player's protection does not stop a friend.
+- **The friends' feed** is derived from the heists already written, so it
+  costs no write: friends' heists, raiding or raided, from the last week.
+- **A challenge link** is a code for the player's island that anyone holding
+  it can play once, as a friendly heist is played.
+
+The readings are **G35**; what a game among friends pays is **F48**.
+
 ## Replays and notifications
 
 §13: "The defender is notified afterwards and can watch the replay."
@@ -353,6 +370,7 @@ built — register **D63**.
     src/matchmaking.mjs  §12.22's ratings and offer, §12.3's echoes, shield and Trace
     src/stores.mjs    Apple's proofs: Game Center identities, StoreKit 2 transactions
     src/notifications.mjs  the outbox: a heist against you, the daily reminder, §20.2's nights
+    src/friends.mjs   friends, friendly heists, the friends' feed, challenge links
     load.mjs          the load test; load.json its last measurement
     src/workshop.mjs  §18.6's Workshop: publish, browse, play, rate, report, moderate, remix
     src/words.json    the word lists Workshop names come from

@@ -25,6 +25,7 @@ import { readFileSync } from "node:fs";
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
 import { capHaul, defenceShare, entryFee, haul } from "./economy.mjs";
+import { Friends } from "./friends.mjs";
 import { Matchmaking } from "./matchmaking.mjs";
 import { Notifications } from "./notifications.mjs";
 import { Seasons } from "./seasons.mjs";
@@ -95,6 +96,7 @@ export class Service {
     this.telemetry = new Telemetry(this);
     this.matchmaking = new Matchmaking(this);
     this.notifications = new Notifications(this);
+    this.friends = new Friends(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), catalogue: cosmetics });
   }
 
@@ -247,10 +249,14 @@ export class Service {
    * §24.12's lease, and §24.13: "A second device asking for the same target
    * is handed the lease the first already holds, not a new one." §12.3's
    * protections hold here: a new player's island is refused, a past
-   * snapshot is leased as an echo, and `trace` answers a robbery.
+   * snapshot is leased as an echo, and `trace` answers a robbery. `mode`
+   * is §12.11's friendly heist on a friend's island, or a play of §17.6's
+   * challenge link named by `challenge`.
    */
-  lease(attacker, bundle, owner = null, { trace = false } = {}) {
+  lease(attacker, bundle, owner = null, { trace = false, mode = "raid", challenge = null } = {}) {
     const now = this.now();
+    if (!["raid", "friendly", "challenge"].includes(mode)) throw new Refused(400, "no_such_mode");
+    if (mode === "challenge") return this.challengeLease(attacker, bundle, challenge, now);
     const snapshot = this.db.prepare("SELECT owner, published_at FROM snapshots WHERE bundle = ?").get(bundle);
     if (!snapshot) throw new Refused(404, "no_such_snapshot");
     // Whose island this is: the one named, if they hold it, else the first
@@ -278,12 +284,34 @@ export class Service {
       defender = owner && holders.includes(owner) ? owner : holders[0];
     }
     let traceOf = null;
-    if (trace) {
+    if (mode === "friendly") {
+      // A friend's island, and only a current one: an echo is nobody's.
+      if (echo || trace) throw new Refused(410, "superseded");
+      if (!this.friends.areFriends(attacker, defender)) throw new Refused(403, "not_friends");
+    } else if (trace) {
       traceOf = this.matchmaking.traceable(attacker, defender, now);
       if (!traceOf) throw new Refused(403, "nothing_to_trace");
     } else if (this.matchmaking.shielded(defender, now)) {
       throw new Refused(403, "new_player_protected", { hours: facts.NEW_PLAYER_SHIELD_HOURS });
     }
+    return this.issue(attacker, bundle, defender, now, { echo, traceOf, mode });
+  }
+
+  /** §17.6's challenge link: anyone holding it may play its island once,
+   *  even after its owner has moved on. */
+  challengeLease(attacker, bundle, code, now) {
+    const c = this.friends.opened(code);
+    if (c.bundle !== bundle) throw new Refused(409, "not_this_challenge");
+    if (c.account === attacker) throw new Refused(409, "own_island");
+    const played = this.db.prepare(
+      "SELECT 1 FROM leases l JOIN heists h ON h.token = l.token WHERE l.attacker = ? AND l.challenge = ?")
+      .get(attacker, code);
+    if (played) throw new Refused(409, "challenge_already_played");
+    return this.issue(attacker, bundle, c.account, now, { mode: "challenge", challenge: code });
+  }
+
+  /** The lease itself, or the one this attacker already holds on the bundle. */
+  issue(attacker, bundle, defender, now, { echo = false, traceOf = null, mode = "raid", challenge = null }) {
     return transaction(this.db, () => {
       const held = this.db.prepare(
         "SELECT * FROM leases WHERE attacker = ? AND bundle = ? AND state = 'open'")
@@ -304,12 +332,14 @@ export class Service {
         expires_at: now + LEASE_MS,
         echo: echo ? 1 : 0,
         trace_of: traceOf,
+        mode,
+        challenge,
       };
       this.db.prepare(
         `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at,
-                             echo, trace_of)
+                             echo, trace_of, mode, challenge)
          VALUES (:token, :attacker, :bundle, :defender, :seed, :ticks, :rules, :issued_at, :expires_at,
-                 :echo, :trace_of)`)
+                 :echo, :trace_of, :mode, :challenge)`)
         .run(row);
       return this.leaseView(row);
     });
@@ -320,7 +350,7 @@ export class Service {
   leaseView(row) {
     return { token: row.token, bundle: row.bundle, seed: row.seed, ticks: row.ticks,
              rules: row.rules, expiresAt: row.expires_at, look: this.shop.equipped(row.defender),
-             echo: Boolean(row.echo), trace: Boolean(row.trace_of) };
+             echo: Boolean(row.echo), trace: Boolean(row.trace_of), mode: row.mode ?? "raid" };
   }
 
   // -- validate and grant ----------------------------------------------------
@@ -427,8 +457,10 @@ export class Service {
       if (amount !== 0) mint.run(account, currency, amount, reason, lease.token, now);
     };
 
-    // §12.3's Trace comes "with a free scout and no entry fee".
-    const fee = lease.trace_of ? 0 : entryFee(this.balance(attacker).starlight);
+    // §12.3's Trace comes "with a free scout and no entry fee"; a friendly
+    // heist or a challenge is for fun, and costs none either (F48).
+    const friendly = lease.mode === "friendly" || lease.mode === "challenge";
+    const fee = lease.trace_of || friendly ? 0 : entryFee(this.balance(attacker).starlight);
     book(attacker, "starlight", -fee, "entry fee (9.4)");
     // §24.12's Validate "checks the token, the expiry and the caps": §9.6's
     // three, against what this raider was paid today and this week.
@@ -458,7 +490,7 @@ export class Service {
     // §9.4: "a foiled heist gives the defender the entry fee plus 5% of what
     // the crew was carrying", the share §13.1's rule has set this season.
     let defence = null;
-    if (verdict.grade === "foiled" && !lease.echo) {
+    if (verdict.grade === "foiled" && !lease.echo && !friendly) {
       book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
       const percent = this.seasons.defenceShare(this.seasons.current(now).id);
       const share = defenceShare({
@@ -473,12 +505,19 @@ export class Service {
     // transaction as the haul. An echo is nobody's defence: it moves no
     // Renown, earns its owner nothing and rates no island (G30).
     const season = this.seasons.current(now).id;
-    const renown = lease.echo ? { raider: 0, defender: 0 } : this.seasons.settle(lease, verdict, now);
+    // §12.11: "The friend loses nothing", and a game among friends moves no
+    // Renown, stars or ratings (F48).
+    const none = { raider: 0, defender: 0 };
+    const renown = lease.echo || friendly ? none : this.seasons.settle(lease, verdict, now);
     // §13: "The defender is notified afterwards and can watch the replay."
     if (!lease.echo) this.notifications.raided(lease, verdict, now);
-    const stars = this.track.settle(lease, verdict, season, now, { echo: Boolean(lease.echo) });
-    const rating = lease.echo ? null : this.matchmaking.settle(lease, snapshot.realm, verdict, now);
-    return { verdict, fee, haul: pay, renown, stars, rating, defence };
+    const stars = friendly ? none : this.track.settle(lease, verdict, season, now, { echo: Boolean(lease.echo) });
+    const rating = lease.echo || friendly ? null : this.matchmaking.settle(lease, snapshot.realm, verdict, now);
+    // "the friend earns a page for every raider their guards catch": pages
+    // are the device's, so the outcome is their record (D64).
+    const friendPages = friendly ? verdict.caught : undefined;
+    return { verdict, fee, haul: pay, renown, stars, rating, defence, mode: lease.mode ?? "raid",
+             ...(friendly ? { friendPages } : {}) };
   }
 
   /**

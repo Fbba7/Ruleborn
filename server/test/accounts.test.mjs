@@ -35,6 +35,7 @@ test("deleting an account takes the person out of everything, and keeps the reco
   const c = social.found(gone, { adjective: 1, noun: 1 });
   social.join(other, c.id);
   social.startCrew(gone);
+  t.service.friends.accept(other, t.service.friends.invite(gone).invite);
   const ledger = t.service.db.prepare("SELECT COUNT(*) AS n FROM ledger").get().n;
 
   const out = deleteAccount(t.service, gone);
@@ -45,6 +46,7 @@ test("deleting an account takes the person out of everything, and keeps the reco
   refusal(() => t.service.lease(other, t.bundle), "superseded");
   assert.equal(w.view(w.row(item)).withdrawn, true, "withdrawn, not deleted: a remix still names it");
   assert.equal(social.constellation(c.id).members[0].account, other, "the constellation was handed on");
+  assert.deepEqual(t.service.friends.list(other), [], "and friendships end");
   const who = t.service.telemetry.pseudonym(gone);
   assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = ?").get(who).n, 0);
   assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM ledger").get().n, ledger,

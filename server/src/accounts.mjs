@@ -49,6 +49,10 @@ export function deleteAccount(service, account, reason = "requested") {
     const events = db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = ?").get(who).n;
     db.prepare("DELETE FROM event_batches WHERE who = ?").run(who);
     db.prepare("DELETE FROM first_seen WHERE who = ?").run(who);
+    // Friendships are between people: they end, with the invites and links.
+    db.prepare("DELETE FROM friends WHERE a = ? OR b = ?").run(account, account);
+    db.prepare("DELETE FROM friend_invites WHERE account = ?").run(account);
+    db.prepare("DELETE FROM challenges WHERE account = ?").run(account);
     return { islands: Number(islands), withdrawn: Number(withdrawn), events: Number(events) };
   });
   // Groups last, each in its own transaction: a founder hands the

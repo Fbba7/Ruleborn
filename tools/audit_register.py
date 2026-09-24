@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6082,6 +6082,40 @@ dict(id="D68", kind="deviation", severity="minor", status="open",
           "finished); and asking permission after the third session (§25.2), "
           "which is the client\u2019s. Found building notifications.",
      rec="Wire FCM with the operator\u2019s key before the beta."),
+
+dict(id="F48", kind="finding", severity="minor", status="open",
+     title="A friendly heist is \u201cfor fun\u201d, and §12.22 gives it a payout tier",
+     refs=["12.11", "12.22", "17.6", "9.6"],
+     body="§12.11: <em>\u201crob a friend's island for fun. The friend loses nothing, "
+          "both see the replay, and the friend earns a page for every raider "
+          "their guards catch.\u201d</em> §12.22\u2019s fifth step says the 0.25 payout "
+          "<em>\u201cexists for challenge links, friendly heists and Trace "
+          "targets\u201d</em> \u2014 so a friendly heist pays. Nothing says whether it "
+          "costs an entry fee, moves Renown, earns season stars, rates the "
+          "island or counts toward §9.6\u2019s daily caps. The server\u2019s reading: "
+          "it pays the raider a haul like any heist, within the caps, and costs "
+          "no fee; it moves no Renown, earns no stars and rates nothing, since "
+          "a game among friends is not a contest the leagues should count; and "
+          "a challenge link\u2019s play is the same, once a player. Found building "
+          "friends.",
+     rec="Say whether friendly heists and challenges pay, and what they cost "
+         "and count toward."),
+
+dict(id="G35", kind="gap", severity="minor", status="open",
+     title="Friends are used in four places and made in none",
+     refs=["12.11", "17.6", "20.2"],
+     body="Friendly heists, the friends\u2019 feed, challenge links and page gifts "
+          "all need friends, and nothing says how two players become friends. "
+          "The server\u2019s readings, in <code>friends.mjs</code>: one shares an "
+          "invite and the other accepts it, open seven days; either can end "
+          "it; the feed shows friends\u2019 heists from the last seven days and "
+          "names nobody \u2014 the device knows its friends by their platform "
+          "names; a challenge link is open seven days and plays once a player; "
+          "a new player\u2019s protection does not stop a friend. §20.2 keeps a "
+          "13-to-15\u2019s profile private, and the feed shows a friend\u2019s heists "
+          "to friends only. Found building friends.",
+     rec="Say how friends are made (platform friends, invites, or both), and "
+         "whether a 13-to-15\u2019s heists appear in friends\u2019 feeds."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

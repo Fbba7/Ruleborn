@@ -5,7 +5,7 @@
 //   POST /v1/session             {"credential": …}          → {account, token}
 //   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
-//   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?} → the lease
+//   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?} → the lease
 //   GET  /v1/offer?size=3                                    → §12.22's list for the caller
 //   GET  /v1/heists/:token/replay                            → the replay, to its raider or defender (§13)
 //   PUT  /v1/notifications       {"utcOffset", "reminder", "nightQuiet", "pushToken"} → the settings
@@ -69,6 +69,16 @@
 //   GET  /v1/metrics?from=&to=                               → the launch gates' figures (analysts)
 //   GET  /v1/metrics/absence                                 → §25.3's recency of absence (analysts)
 //
+// Friends (§12.11, §17.6; friends.mjs):
+//
+//   GET    /v1/friends                                       → the caller's friends
+//   POST   /v1/friends/invites                               → an invite to share
+//   POST   /v1/friends/accept   {"invite"}                   → friends
+//   DELETE /v1/friends/:account                              → no longer
+//   GET    /v1/friends/feed                                  → §17.6's friends' feed
+//   POST   /v1/challenges       {"realm"?}                   → a challenge link to the caller's island
+//   GET    /v1/challenges/:code                              → the link's island, to lease with mode "challenge"
+//
 // A target list is fetched like a bundle, by its hash (§24.8: "a file, not a
 // query"); the index naming the current ones is the only thing that changes.
 //
@@ -98,6 +108,12 @@ async function bytes(request) {
 async function body(request) {
   const raw = await bytes(request);
   return JSON.parse(new TextDecoder().decode(raw));
+}
+
+/** A JSON body that may be left out. */
+async function optional(request) {
+  const raw = await bytes(request);
+  return raw.length ? JSON.parse(new TextDecoder().decode(raw)) : {};
 }
 
 const base64 = (s) => new Uint8Array(Buffer.from(String(s ?? ""), "base64"));
@@ -220,6 +236,26 @@ export function handler(service) {
         const out = await socialRoute(service, social, request, parts, who);
         return out ?? json({ error: "no_such_route" }, 404);
       }
+      if (parts[1] === "friends" || parts[1] === "challenges") {
+        const me = who();
+        const f = service.friends;
+        const [, area, a] = parts;
+        const m = request.method;
+        if (area === "friends") {
+          if (m === "GET" && !a) return json(f.list(me));
+          if (m === "GET" && a === "feed") return json(f.feed(me));
+          if (m === "POST" && a === "invites") return json(f.invite(me), 201);
+          if (m === "POST" && a === "accept") return json(f.accept(me, (await body(request)).invite));
+          if (m === "DELETE" && a) return json(f.remove(me, a));
+        } else {
+          if (m === "POST" && !a) return json(f.challenge(me, (await optional(request)).realm ?? "heart"), 201);
+          if (m === "GET" && a) {
+            const c = f.opened(a);
+            return json({ challenge: c.code, bundle: c.bundle, from: c.account });
+          }
+        }
+        return json({ error: "no_such_route" }, 404);
+      }
       if (parts[1] === "events" && request.method === "POST") {
         return json(service.telemetry.batch(who(), await body(request)), 202);
       }
@@ -261,8 +297,8 @@ export function handler(service) {
         }
         case "POST /v1/leases": {
           const attacker = who();
-          const { bundle, owner = null, trace = false } = await request.json();
-          return json(service.lease(attacker, bundle, owner, { trace: trace === true }), 201);
+          const { bundle, owner = null, trace = false, mode = "raid", challenge = null } = await request.json();
+          return json(service.lease(attacker, bundle, owner, { trace: trace === true, mode, challenge }), 201);
         }
         case "GET /v1/heists": {
           if (parts[3] !== "replay") return json({ error: "no_such_route" }, 404);

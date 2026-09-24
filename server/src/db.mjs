@@ -104,7 +104,11 @@ CREATE TABLE IF NOT EXISTS leases (
   -- §12.3: an echo is a past snapshot, robbed from nobody; a Trace answers
   -- the heist named, with no entry fee (matchmaking.mjs).
   echo        INTEGER NOT NULL DEFAULT 0,
-  trace_of    TEXT
+  trace_of    TEXT,
+  -- §12.11 and §17.6: a raid, a friendly heist or a challenge link's play,
+  -- the last two taking nothing from the island's owner (friends.mjs).
+  mode        TEXT NOT NULL DEFAULT 'raid' CHECK (mode IN ('raid', 'friendly', 'challenge')),
+  challenge   TEXT
 );
 CREATE UNIQUE INDEX IF NOT EXISTS one_open_lease_per_target
   ON leases (attacker, bundle) WHERE state = 'open';
@@ -406,6 +410,30 @@ CREATE TRIGGER IF NOT EXISTS purchases_append_only_update BEFORE UPDATE ON purch
 CREATE TRIGGER IF NOT EXISTS purchases_append_only_delete BEFORE DELETE ON purchases
   BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
 
+-- Friends (§12.11, §17.6; friends.mjs): one row a pair, the smaller id
+-- first; an invite one player shares and another accepts; a challenge link
+-- to an island.
+CREATE TABLE IF NOT EXISTS friends (
+  a     TEXT NOT NULL REFERENCES accounts(id),
+  b     TEXT NOT NULL REFERENCES accounts(id),
+  since INTEGER NOT NULL,
+  PRIMARY KEY (a, b),
+  CHECK (a < b)
+);
+CREATE INDEX IF NOT EXISTS friends_by_b ON friends (b);
+CREATE TABLE IF NOT EXISTS friend_invites (
+  code       TEXT PRIMARY KEY,
+  account    TEXT NOT NULL REFERENCES accounts(id),
+  created_at INTEGER NOT NULL,
+  used_at    INTEGER
+);
+CREATE TABLE IF NOT EXISTS challenges (
+  code       TEXT PRIMARY KEY,
+  account    TEXT NOT NULL REFERENCES accounts(id),
+  bundle     TEXT NOT NULL REFERENCES snapshots(bundle),
+  created_at INTEGER NOT NULL
+);
+
 -- The notification outbox (§14.6, §20.2; notifications.mjs): what is owed a
 -- player, when it may be sent, and when it was.
 CREATE TABLE IF NOT EXISTS notifications (
@@ -507,6 +535,8 @@ const ADDED = [
   ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "echo", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "trace_of", "TEXT"],
+  ["leases", "mode", "TEXT NOT NULL DEFAULT 'raid'"],
+  ["leases", "challenge", "TEXT"],
 ];
 
 /** A ledger made before Starglass: its currency check predates it, and a

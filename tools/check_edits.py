@@ -227,6 +227,8 @@ NO_EDIT_BECAUSE = {
     "G33": "a figure for the owner: the share of monthly players active on a day",
     "G34": "decisions for the owner: gathering raids, and reminders at night",
     "D68": "limits of this build: push needs the operator's credentials",
+    "F48": "a decision for the owner: what a game among friends pays and counts",
+    "G35": "decisions for the owner: how friends are made, and what minors show them",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "
