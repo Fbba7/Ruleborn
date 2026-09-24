@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { openPlan, play, server } from "./setup.mjs";
+import { established, openPlan, play, server } from "./setup.mjs";
 
 test("sign in, publish, lease, play, submit and read the balance over HTTP", async () => {
   const t = server();
@@ -17,6 +17,7 @@ test("sign in, publish, lease, play, submit and read the balance over HTTP", asy
 
   const keeper = await (await call("POST", "/v1/session", { json: { credential: "gc:keeper" } })).json();
   const raider = await (await call("POST", "/v1/session", { json: { credential: "gc:raider" } })).json();
+  established(t, keeper.account);
 
   const island = t.build.exampleIsland(true);
   const published = await call("PUT", "/v1/islands/heart", { token: keeper.token, bytes: island });

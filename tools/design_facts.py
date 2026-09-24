@@ -209,6 +209,34 @@ CONSTELLATION_ELDERS = 4
 #: §17.7: a crew is "4 to 8", "the people you actually play with".
 CREW_SIZE = (4, 8)
 
+#: §12.22's band: "Renown within 150, Keeper level within 3". (Renown, levels)
+MATCH_WINDOW = (150, 3)
+
+#: §12.22's rating: "a wide deviation, 350 on Glicko-2's scale … (volatility
+#: 0.06, system constant 0.5)". (deviation, volatility, system constant)
+GLICKO = (350, 0.06, 0.5)
+
+#: §12.22's guarantee draws the middle target "from the raider-success band
+#: for the target's realm level — 60 to 75% at realm level 1, 55 to 70% from
+#: realm level 2 (13.2)". Per cent, by realm level ("2" is 2 and up). These
+#: are the generated islands' bands; an authored island's is HOLD_BAND's.
+RAIDER_SUCCESS = {"1": (60, 75), "2": (55, 70)}
+
+#: §12.22: "If fewer than three live candidates, echoes included … sit inside
+#: the band".
+THIN_BAND = 3
+
+#: §12.3: "New players can't be raided by other players for their first 72
+#: hours, or until they raid a player themselves."
+NEW_PLAYER_SHIELD_HOURS = 72
+
+#: §12.3: "Trace: within 24 hours of being robbed, a player can target the
+#: raider once, with a free scout and no entry fee."
+TRACE_HOURS = 24
+
+#: §12.3's echoes: "snapshots of real universes from the last 14 days".
+ECHO_DAYS = 14
+
 #: §18.2: "Fifty tiers, climbed with season points from heists, defences and
 #: discoveries."
 SEASON_TIERS = 50
@@ -279,6 +307,13 @@ HOME = {
     "CONSTELLATION_KEEPER_LEVEL": "17.1",
     "CONSTELLATION_ELDERS": "17.1",
     "CREW_SIZE": "17.7",
+    "MATCH_WINDOW": "12.22",
+    "GLICKO": "12.22",
+    "RAIDER_SUCCESS": "12.22",
+    "THIN_BAND": "12.22",
+    "NEW_PLAYER_SHIELD_HOURS": "12.3",
+    "TRACE_HOURS": "12.3",
+    "ECHO_DAYS": "12.3",
     "SEASON_TIERS": "18.2",
     "PREMIUM_TRACK_EUR": "22.1",
     "STARGLASS_PACKS_EUR": "22.1",
@@ -378,6 +413,19 @@ STATED = {
                                    lambda m: int(m[0])),
     "CONSTELLATION_ELDERS": (r"a founder, up to (\w+) elders", lambda m: {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8}.get(m[0])),
     "CREW_SIZE": (r"\| Crew\n\| (\d+) to (\d+)", lambda m: (int(m[0]), int(m[1]))),
+    "MATCH_WINDOW": (r"\| 1\. The band\n\| Renown within (\d+), Keeper level within (\d+)",
+                     lambda m: (int(m[0]), int(m[1]))),
+    "GLICKO": (r"a wide deviation, (\d+) on Glicko-2's scale, which narrows with every observed "
+               r"attack under Glicko-2's update \(volatility ([\d.]+), system constant ([\d.]+)\)",
+               lambda m: (int(m[0]), float(m[1]), float(m[2]))),
+    "RAIDER_SUCCESS": (r"(\d+) to (\d+)% at realm level 1, (\d+) to (\d+)% from realm level 2 \(13\.2\)",
+                       lambda m: {"1": (int(m[0]), int(m[1])), "2": (int(m[2]), int(m[3]))}),
+    "THIN_BAND": (r"If fewer than (\w+) live candidates, echoes included",
+                  lambda m: {"two": 2, "three": 3, "four": 4, "five": 5}.get(m[0])),
+    "NEW_PLAYER_SHIELD_HOURS": (r"New players can't be raided by other players for their first (\d+) hours",
+                                lambda m: int(m[0])),
+    "TRACE_HOURS": (r"Trace: within (\d+) hours of being robbed", lambda m: int(m[0])),
+    "ECHO_DAYS": (r"snapshots of real universes from the last (\d+) days", lambda m: int(m[0])),
     "SEASON_TIERS": (r"(\w+) tiers, climbed with season points",
                      lambda m: {"Forty": 40, "Fifty": 50, "Sixty": 60, "Seventy": 70, "Eighty": 80,
                                 "Ninety": 90, "A hundred": 100}.get(m[0])),

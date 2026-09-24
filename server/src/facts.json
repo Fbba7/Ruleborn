@@ -37,9 +37,15 @@
  ],
  "DISARM_SECONDS": 15,
  "DOWN_SECONDS": 10,
+ "ECHO_DAYS": 14,
  "ENTRY_FEE_MAX": 25000,
  "ENTRY_FEE_MIN": 100,
  "ENTRY_FEE_RATE": 0.02,
+ "GLICKO": [
+  350,
+  0.06,
+  0.5
+ ],
  "GRADE_VALUE": {
   "clean": 1.0,
   "foiled": 0.0,
@@ -89,7 +95,12 @@
   "Tide": 30
  },
  "LOAD_PER_SECOND": 30,
+ "MATCH_WINDOW": [
+  150,
+  3
+ ],
  "MENDER_REVIVE_SECONDS": 1.5,
+ "NEW_PLAYER_SHIELD_HOURS": 72,
  "NOTES": [
   "Flow",
   "Weight",
@@ -111,6 +122,16 @@
   "Weight": "Flow"
  },
  "PREMIUM_TRACK_EUR": 6,
+ "RAIDER_SUCCESS": {
+  "1": [
+   60,
+   75
+  ],
+  "2": [
+   55,
+   70
+  ]
+ },
  "RENOWN_CLEAN": [
   20,
   1000,
@@ -160,6 +181,8 @@
   50
  ],
  "TAKEDOWN_SECONDS": 2,
+ "THIN_BAND": 3,
+ "TRACE_HOURS": 24,
  "VAULT_HEALTH_PER_LEVEL": 1500,
  "WARD_HEALTH_PER_LEVEL": 550,
  "WARD_LIMITS": [

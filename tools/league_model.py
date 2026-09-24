@@ -37,7 +37,7 @@ import random
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from design_facts import (LEAGUE_DIVISIONS, LEAGUE_SHARES, LEAGUES, RENOWN_CLEAN,  # noqa: E402
+from design_facts import (LEAGUE_DIVISIONS, LEAGUE_SHARES, LEAGUES, MATCH_WINDOW, RENOWN_CLEAN,  # noqa: E402
                           RENOWN_FOILED, RENOWN_OUTCOME, SEASON_WEEKS)
 
 SEASON_DAYS = SEASON_WEEKS * 7
@@ -62,7 +62,7 @@ ASSUMED = {
     "seasons": 4,
     # §12.22 draws targets "within 150 Renown"; with none there, the
     # nearest. A target is any other player's island.
-    "renown_window": 150,
+    "renown_window": MATCH_WINDOW[0],
 }
 
 #: §14.7's arrival targets for an engaged player, as days: "In the first

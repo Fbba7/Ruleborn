@@ -7,7 +7,7 @@ import { test } from "node:test";
 import { LEASE_MS, Refused } from "../src/service.mjs";
 import { readHeader } from "../src/sim.mjs";
 import { sha256 } from "../src/store.mjs";
-import { openPlan, play, server, simulation, twoPlayers } from "./setup.mjs";
+import { established, openPlan, play, server, simulation, twoPlayers } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 
@@ -129,6 +129,7 @@ test("a haul is capped by what the raider was already paid today (§9.6, §24.12
 test("target lists are files, one a band, holding every island's current snapshot (§24.8)", () => {
   const t = twoPlayers(false);
   const other = t.service.session("gc:another");
+  established(t, other.account);
   t.service.publish(other.account, t.build.exampleIsland(true));
   const index = t.service.targetLists();
   assert.deepEqual(Object.keys(index), ["realm-level-3"]);
@@ -148,6 +149,7 @@ test("target lists are files, one a band, holding every island's current snapsho
 test("two players with the same island are two targets, and a foiled fee goes to the one raided", () => {
   const t = twoPlayers(false);
   const twin = t.service.session("gc:twin");
+  established(t, twin.account);
   t.service.publish(twin.account, t.build.exampleIsland(false));   // the defender's bytes
   const list = JSON.parse(new TextDecoder().decode(
     t.service.bundle(t.service.targetLists()["realm-level-3"])));
@@ -164,10 +166,14 @@ test("two players with the same island are two targets, and a foiled fee goes to
   assert.equal(t.service.balance(t.defender.account).starlight, 0);
 });
 
-test("a snapshot no island is on any more cannot be leased", () => {
+test("a snapshot no island is on any more is an echo for 14 days, and then cannot be leased (12.3)", () => {
   const t = twoPlayers(false);
   t.service.publish(t.defender.account, t.build.exampleIsland(true));   // moves on
-  refusal(() => t.service.lease(t.raider.account, t.bundle), "superseded");
+  assert.equal(t.service.lease(t.raider.account, t.bundle).echo, true);
+  const u = twoPlayers(false);
+  u.service.publish(u.defender.account, u.build.exampleIsland(true));
+  u.clock.now += 15 * 24 * 60 * 60 * 1000;
+  refusal(() => u.service.lease(u.raider.account, u.bundle), "superseded");
 });
 
 test("a band every island has left keeps no list", () => {
@@ -240,6 +246,7 @@ test("an expired lease is honoured once a day, and then pays nothing (§24.12, G
   const t = twoPlayers();
   // A second target, so the raider can hold two leases at once (§24.13).
   const other = t.service.session("gc:another-defender");
+  established(t, other.account);
   const { bundle: second } = t.service.publish(other.account, t.build.exampleIsland(false));
   const one = t.service.lease(t.raider.account, t.bundle);
   const two = t.service.lease(t.raider.account, second);

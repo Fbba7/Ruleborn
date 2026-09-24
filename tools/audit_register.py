@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5324,9 +5324,10 @@ dict(id="G21", kind="gap", severity="minor", status="open",
           "level\u201d</em>, but never says which of those a list is cut by; and "
           "how often a list is regenerated decides how long a republished island "
           "stays a target. The server (<code>Service.targetLists</code>) cuts a "
-          "list per realm level until ratings exist, and regenerates every "
-          "fifteen minutes; each list is content-addressed, so an unchanged band "
-          "keeps its edge cache.",
+          "list per realm level, the unit of §12.22\u2019s guarantee, with each "
+          "entry\u2019s rating on it so the device can filter by rating itself, "
+          "and regenerates every fifteen minutes; each list is "
+          "content-addressed, so an unchanged band keeps its edge cache.",
      rec="One sentence in §24.8: what a band is (the realm level, or a rating "
          "band inside it) and how often the lists are rebuilt. The review of the "
          "server found three faults in how this build does it, now fixed: a band "
@@ -5850,6 +5851,76 @@ dict(id="F43", kind="finding", severity="significant", status="open",
      rec="State what deletion removes and what it keeps as anonymous records, "
          "and whether a deleted player\u2019s Workshop islands stay playable. "
          "Say what \u201canything collected\u201d covers for an under-13 player."),
+
+dict(id="F44", kind="finding", severity="minor", status="open",
+     title="The 0.25 tier §12.22 calls unreachable is reached at exactly three "
+           "levels below",
+     refs=["9.6", "12.3", "12.22"],
+     body="C13 was closed by §12.22\u2019s fifth step: <em>\u201cThe 0.25 payout for "
+          "targets three or more levels below is unreachable through normal "
+          "matchmaking by design.\u201d</em> But the same section\u2019s band admits "
+          "<em>\u201cKeeper level within 3\u201d</em>, and §9.6 pays <em>\u201cthree or "
+          "more below 0.25\u201d</em>. A target exactly three levels below is inside "
+          "the window and in the 0.25 tier, so normal matchmaking reaches it. "
+          "The server filters by §12.22\u2019s window and pays by §9.6\u2019s table, so "
+          "it offers such targets. Found building matchmaking.",
+     rec="Make the window \u201cwithin 2\u201d, or the tier \u201cfour or more "
+         "below\u201d."),
+
+dict(id="F45", kind="finding", severity="minor", status="open",
+     title="§12.3 and §12.22 filter targets differently",
+     refs=["12.3", "12.22"],
+     body="§12.3 offers targets <em>\u201cwithin 150 Renown of yours, within 3 "
+          "Keeper levels, and within 20% of your universe's strength (stability "
+          "capacity plus the levels of your five best characters)\u201d</em>. "
+          "§12.22, which calls itself the home of the steps, filters by "
+          "<em>\u201cRenown within 150, Keeper level within 3, an island "
+          "difficulty rating within one band of the raider's recent success "
+          "rate\u201d</em> and depth, and says nothing of strength. The server "
+          "follows §12.22 and has no strength filter; stability and characters "
+          "are the device\u2019s. Found building matchmaking.",
+     rec="Drop the strength filter from §12.3 and point it at §12.22, or add "
+         "strength to §12.22\u2019s band."),
+
+dict(id="G30", kind="gap", severity="minor", status="open",
+     title="§12.22 names Glicko-2 and the bands, and not how wide a band is, "
+           "what \u201crecent\u201d is, or what a heist scores",
+     refs=["12.3", "12.22", "13.2"],
+     body="The server\u2019s readings, each a named constant in "
+          "<code>matchmaking.mjs</code>: a band is 15 points of success rate, "
+          "the width of §13.2\u2019s; a raider\u2019s recent success rate is their "
+          "last twenty validated heists, and a new raider\u2019s is the middle of "
+          "the authored band; a heist scores 1 for the raider unless foiled, and "
+          "is its own rating period; an island is rated by owner and realm, and "
+          "republishing keeps its mean and widens it back to 350; §12.22\u2019s "
+          "figures are the generated islands\u2019 band, so an authored island is "
+          "judged against what §13.2\u2019s authored hold band leaves the raider; "
+          "the middle of the list is the in-band candidate nearest the band\u2019s "
+          "middle, with one easier and one harder beside it; an echo moves no "
+          "Renown, earns its owner nothing and rates nothing; the new-player "
+          "protection covers echoes too. Found building matchmaking.",
+     rec="State a band\u2019s width, the window of \u201crecent\u201d, the score of a "
+         "partial heist, and whether echoes move Renown."),
+
+dict(id="D66", kind="deviation", severity="significant", status="open",
+     title="Matchmaking rates, filters and guarantees on the server, without "
+           "the simulator\u2019s prior, depth or generated fallbacks",
+     refs=["12.3", "12.10", "12.22", "13.3", "13.4"],
+     body="The server keeps §12.22\u2019s Glicko-2 ratings for raiders and islands, "
+          "updated by every validated heist; target lists carry each island\u2019s "
+          "rating, deviation, Renown and origin; <code>offer</code> filters, "
+          "sorts by predicted success, draws the middle from the band, counts "
+          "echoes when the band is thin and widens in §12.22\u2019s order; §12.3\u2019s "
+          "new-player protection and Trace hold at the lease. Not built: the "
+          "prior from the defence simulator \u2014 the reference crews are the "
+          "Python harness\u2019s, not the simulation\u2019s, so a new island starts at "
+          "its band\u2019s middle; depth, since crossing realms is not built; the "
+          "generated fallback targets, whose generator is also the harness\u2019s; "
+          "ruins (12.10); and the complexity budget on unfamiliar laws. So the "
+          "list can come back short, and says when it widened. Found building "
+          "matchmaking.",
+     rec="Port the reference crews and the generator into the simulation, so "
+         "the server can rate a new island and make fallbacks itself."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

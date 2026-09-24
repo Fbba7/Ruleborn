@@ -210,6 +210,12 @@ NO_EDIT_BECAUSE = {
     "G29": "decisions for the owner: what a session is, the retention and the survey",
     "D65": "limits of this build: the heatmaps need the simulation, and the reporter a choice",
     "F43": "a decision for the owner, with legal advice: what deletion keeps",
+    "F44": "a one-number decision for the owner: the window or the tier",
+    "F45": "a decision for the owner: whether strength filters targets",
+    "G30": "decisions for the owner: each figure is a design choice the "
+           "server's constants only stand in for",
+    "D66": "limits of this build: the reference crews and the generator live "
+           "in the harness",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

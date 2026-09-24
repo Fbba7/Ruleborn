@@ -42,7 +42,10 @@ CREATE TABLE IF NOT EXISTS accounts (
   -- §20.5's deletion: the identity is gone, the id kept for the records
   -- nobody edits (accounts.mjs).
   deleted_at        INTEGER,
-  deleted_reason    TEXT
+  deleted_reason    TEXT,
+  -- §13.1's seeded islands: the game's own, "stocked with designed islands
+  -- from the start", and no new player to protect (matchmaking.mjs).
+  seeded            INTEGER NOT NULL DEFAULT 0
 );
 
 -- §24.8: "Owner, the hash of the current bundle, when it changed." One row a
@@ -90,7 +93,11 @@ CREATE TABLE IF NOT EXISTS leases (
   rules       TEXT NOT NULL,
   issued_at   INTEGER NOT NULL,
   expires_at  INTEGER NOT NULL,
-  state       TEXT NOT NULL DEFAULT 'open' CHECK (state IN ('open', 'settled'))
+  state       TEXT NOT NULL DEFAULT 'open' CHECK (state IN ('open', 'settled')),
+  -- §12.3: an echo is a past snapshot, robbed from nobody; a Trace answers
+  -- the heist named, with no entry fee (matchmaking.mjs).
+  echo        INTEGER NOT NULL DEFAULT 0,
+  trace_of    TEXT
 );
 CREATE UNIQUE INDEX IF NOT EXISTS one_open_lease_per_target
   ON leases (attacker, bundle) WHERE state = 'open';
@@ -389,6 +396,19 @@ CREATE TRIGGER IF NOT EXISTS purchases_append_only_update BEFORE UPDATE ON purch
 CREATE TRIGGER IF NOT EXISTS purchases_append_only_delete BEFORE DELETE ON purchases
   BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
 
+-- §12.22's Glicko-2 ratings: a raider's skill by account, an island's
+-- difficulty by owner and realm (matchmaking.mjs).
+CREATE TABLE IF NOT EXISTS ratings (
+  kind       TEXT NOT NULL CHECK (kind IN ('raider', 'island')),
+  key        TEXT NOT NULL,
+  rating     REAL NOT NULL,
+  deviation  REAL NOT NULL,
+  volatility REAL NOT NULL,
+  games      INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER NOT NULL,
+  PRIMARY KEY (kind, key)
+);
+
 -- First-party telemetry (§24, §24.3; telemetry.mjs). Keyed by a pseudonym,
 -- never an account (§20.5), and discarded after 90 days: not append-only,
 -- because §24.3 says the raw events go.
@@ -441,6 +461,9 @@ const ADDED = [
   ["accounts", "analyst", "INTEGER NOT NULL DEFAULT 0"],
   ["accounts", "deleted_at", "INTEGER"],
   ["accounts", "deleted_reason", "TEXT"],
+  ["accounts", "seeded", "INTEGER NOT NULL DEFAULT 0"],
+  ["leases", "echo", "INTEGER NOT NULL DEFAULT 0"],
+  ["leases", "trace_of", "TEXT"],
 ];
 
 /** A ledger made before Starglass: its currency check predates it, and a

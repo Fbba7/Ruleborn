@@ -78,10 +78,18 @@ export function openPlan() {
   ];
 }
 
+/** A player past §12.3's first 72 hours, so their island can be raided:
+ *  the tests that are not about that protection start from here. */
+export function established(t, account) {
+  t.service.db.prepare("UPDATE accounts SET created_at = ? WHERE id = ?")
+    .run(t.clock.now - 72 * 60 * 60 * 1000, account);
+}
+
 /** Two players, a defender with a published island and a raider. */
 export function twoPlayers(open = true) {
   const t = server();
   const defender = t.service.session("gc:defender");
+  established(t, defender.account);
   const raider = t.service.session("gc:raider");
   const island = t.build.exampleIsland(open);
   const { bundle } = t.service.publish(defender.account, island);

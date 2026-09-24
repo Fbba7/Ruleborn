@@ -5,7 +5,8 @@
 //   POST /v1/session             {"credential": …}          → {account, token}
 //   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
-//   POST /v1/leases              {"bundle": hash, "owner"?}  → the lease
+//   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?} → the lease
+//   GET  /v1/offer?size=3                                    → §12.22's list for the caller
 //   POST /v1/heists/:token       replay bytes                → what was settled
 //   GET  /v1/balance                                         → {starlight, essence, starglass}
 //   GET  /v1/targets                                         → {band: list hash}
@@ -72,6 +73,7 @@
 // Everything but the session and a bundle needs `Authorization: Bearer …`.
 
 import { deleteAccount } from "./accounts.mjs";
+import { offer } from "./matchmaking.mjs";
 import { Refused } from "./service.mjs";
 import { Social } from "./social.mjs";
 import { WORDS, Workshop } from "./workshop.mjs";
@@ -256,12 +258,20 @@ export function handler(service) {
         }
         case "POST /v1/leases": {
           const attacker = who();
-          const { bundle, owner = null } = await request.json();
-          return json(service.lease(attacker, bundle, owner), 201);
+          const { bundle, owner = null, trace = false } = await request.json();
+          return json(service.lease(attacker, bundle, owner, { trace: trace === true }), 201);
         }
         case "POST /v1/heists": {
           const attacker = who();
           return json(service.submit(attacker, parts[2] ?? "", await bytes(request)));
+        }
+        case "GET /v1/offer": {
+          // The server's run of §12.22's steps; the device can run the same
+          // `offer` on a downloaded target list.
+          const me = who();
+          const size = Math.min(5, Math.max(1, Number(url.searchParams.get("size") ?? 3) || 3));
+          const mm = service.matchmaking;
+          return json(offer(mm.raider(me), mm.candidates(), { size }));
         }
         case "GET /v1/balance":
           return json(service.balance(who()));

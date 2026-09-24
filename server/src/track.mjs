@@ -86,9 +86,11 @@ export class Track {
       .get(season, account).n);
   }
 
-  /** A heist's stars, booked in the grant's transaction. */
-  settle(lease, verdict, season, now) {
+  /** A heist's stars, booked in the grant's transaction. An echo's owner
+   *  defended nothing, and earns nothing. */
+  settle(lease, verdict, season, now, { echo = false } = {}) {
     const s = heistStars(verdict.grade);
+    if (echo) s.defender = 0;
     const book = this.db.prepare(
       "INSERT INTO season_stars (season, account, amount, reason, heist, at) VALUES (?, ?, ?, ?, ?, ?)");
     if (s.raider) book.run(season, lease.attacker, s.raider, `heist, ${verdict.grade} (18.2)`, lease.token, now);

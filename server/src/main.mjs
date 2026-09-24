@@ -4,7 +4,9 @@
 //
 // RULEBORN_DATA names the data directory (server/.data/ by default).
 // --example publishes the simulation's example Heart, undefended, from an
-// account of its own, so a client has an island to lease on a fresh database.
+// account of its own — seeded, as §13.1's designed islands are, so no
+// new-player protection holds it back — and a client has an island to lease
+// on a fresh database.
 //
 // The edge function (`http.mjs`) behind a plain node:http listener, with the
 // database and the object store on disk under server/.data/ and the one
@@ -56,6 +58,7 @@ setInterval(() => service.seasons.rollover(), TARGET_LISTS_MS).unref();
 
 if (process.argv.includes("--example")) {
   const { account } = service.session("example:defender");
+  service.db.prepare("UPDATE accounts SET seeded = 1 WHERE id = ?").run(account);
   const { bundle } = service.publish(account, service.builds.current.exampleIsland(true));
   service.targetLists();
   console.log(`example island ${bundle.slice(0, 12)} published`);

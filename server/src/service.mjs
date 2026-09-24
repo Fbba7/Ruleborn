@@ -25,6 +25,7 @@ import { readFileSync } from "node:fs";
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
 import { capHaul, entryFee, haul } from "./economy.mjs";
+import { Matchmaking } from "./matchmaking.mjs";
 import { Seasons } from "./seasons.mjs";
 import { Shop } from "./shop.mjs";
 import { readHeader } from "./sim.mjs";
@@ -81,6 +82,7 @@ export class Service {
     this.seasons = new Seasons(this, seasonStart);
     this.track = new Track(this);
     this.telemetry = new Telemetry(this);
+    this.matchmaking = new Matchmaking(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), catalogue: cosmetics });
   }
 
@@ -144,6 +146,8 @@ export class Service {
          ON CONFLICT (owner, realm) DO UPDATE SET bundle = excluded.bundle,
            changed_at = excluded.changed_at`)
         .run(owner, realm, key, now);
+      // §12.22: a new island enters with the simulator's prior.
+      this.matchmaking.published(owner, realm, bundle[4], now);
     });
     return { bundle: key };
   }
@@ -181,10 +185,17 @@ export class Service {
         ORDER BY s.bundle, i.owner`).all();
     const bands = new Map();
     for (const r of rows) {
+      // §12.3: a new player's island is nobody's target yet.
+      if (this.matchmaking.shielded(r.owner, now)) continue;
       if (!bands.has(r.band)) bands.set(r.band, []);
+      // What §12.22's steps read, so the device can run `offer` on the list.
+      const rating = this.matchmaking.islandRating(r.owner, r.realm);
       bands.get(r.band).push({
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
         vaultLevel: r.vault_level, exposed: r.exposed, keeperLevel: r.keeper_level,
+        renown: this.seasons.league(r.owner, now).renown, origin: "authored",
+        rating: rating ? Math.round(rating.rating) : null,
+        deviation: rating ? Math.round(rating.deviation) : null,
       });
     }
     const index = {};
@@ -222,11 +233,13 @@ export class Service {
 
   /**
    * §24.12's lease, and §24.13: "A second device asking for the same target
-   * is handed the lease the first already holds, not a new one."
+   * is handed the lease the first already holds, not a new one." §12.3's
+   * protections hold here: a new player's island is refused, a past
+   * snapshot is leased as an echo, and `trace` answers a robbery.
    */
-  lease(attacker, bundle, owner = null) {
+  lease(attacker, bundle, owner = null, { trace = false } = {}) {
     const now = this.now();
-    const snapshot = this.db.prepare("SELECT owner FROM snapshots WHERE bundle = ?").get(bundle);
+    const snapshot = this.db.prepare("SELECT owner, published_at FROM snapshots WHERE bundle = ?").get(bundle);
     if (!snapshot) throw new Refused(404, "no_such_snapshot");
     // Whose island this is: the one named, if they hold it, else the first
     // player (by account) whose current island it is.
@@ -235,10 +248,30 @@ export class Service {
       `SELECT i.owner FROM islands i JOIN accounts a ON a.id = i.owner
         WHERE i.bundle = ? AND a.banned_at IS NULL ORDER BY i.owner`).all(bundle).map((r) => r.owner);
     if (holders.includes(attacker)) throw new Refused(409, "own_island");
-    // A snapshot no island is on any more is not a target: its owner has
-    // moved on, and a raider could otherwise pick an older, richer version.
-    if (holders.length === 0) throw new Refused(410, "superseded");
-    const defender = owner && holders.includes(owner) ? owner : holders[0];
+    let defender;
+    let echo = false;
+    if (holders.length === 0) {
+      // A snapshot no island is on any more is an echo for 14 days (§12.3:
+      // "Robbing an echo takes nothing from its owner"), and after that not
+      // a target at all.
+      const by = this.db.prepare("SELECT banned_at, deleted_at FROM accounts WHERE id = ?").get(snapshot.owner);
+      const days = facts.ECHO_DAYS * 24 * 60 * 60 * 1000;
+      if (trace || snapshot.owner === attacker || by.banned_at || by.deleted_at
+          || now - snapshot.published_at > days) {
+        throw new Refused(410, "superseded");
+      }
+      defender = snapshot.owner;
+      echo = true;
+    } else {
+      defender = owner && holders.includes(owner) ? owner : holders[0];
+    }
+    let traceOf = null;
+    if (trace) {
+      traceOf = this.matchmaking.traceable(attacker, defender, now);
+      if (!traceOf) throw new Refused(403, "nothing_to_trace");
+    } else if (this.matchmaking.shielded(defender, now)) {
+      throw new Refused(403, "new_player_protected", { hours: facts.NEW_PLAYER_SHIELD_HOURS });
+    }
     return transaction(this.db, () => {
       const held = this.db.prepare(
         "SELECT * FROM leases WHERE attacker = ? AND bundle = ? AND state = 'open'")
@@ -257,10 +290,14 @@ export class Service {
         rules: this.builds.current.rulesVersion,
         issued_at: now,
         expires_at: now + LEASE_MS,
+        echo: echo ? 1 : 0,
+        trace_of: traceOf,
       };
       this.db.prepare(
-        `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at)
-         VALUES (:token, :attacker, :bundle, :defender, :seed, :ticks, :rules, :issued_at, :expires_at)`)
+        `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at,
+                             echo, trace_of)
+         VALUES (:token, :attacker, :bundle, :defender, :seed, :ticks, :rules, :issued_at, :expires_at,
+                 :echo, :trace_of)`)
         .run(row);
       return this.leaseView(row);
     });
@@ -270,7 +307,8 @@ export class Service {
    *  island as they dressed it. */
   leaseView(row) {
     return { token: row.token, bundle: row.bundle, seed: row.seed, ticks: row.ticks,
-             rules: row.rules, expiresAt: row.expires_at, look: this.shop.equipped(row.defender) };
+             rules: row.rules, expiresAt: row.expires_at, look: this.shop.equipped(row.defender),
+             echo: Boolean(row.echo), trace: Boolean(row.trace_of) };
   }
 
   // -- validate and grant ----------------------------------------------------
@@ -375,7 +413,8 @@ export class Service {
       if (amount !== 0) mint.run(account, currency, amount, reason, lease.token, now);
     };
 
-    const fee = entryFee(this.balance(attacker).starlight);
+    // §12.3's Trace comes "with a free scout and no entry fee".
+    const fee = lease.trace_of ? 0 : entryFee(this.balance(attacker).starlight);
     book(attacker, "starlight", -fee, "entry fee (9.4)");
     // §24.12's Validate "checks the token, the expiry and the caps": §9.6's
     // three, against what this raider was paid today and this week.
@@ -401,15 +440,18 @@ export class Service {
     book(attacker, "essence", pay.essence, "haul (9.6)");
     if (verdict.grade === "clean") {
       book(attacker, "starlight", fee, "entry fee returned after a clean heist (9.4)");
-    } else if (verdict.grade === "foiled") {
+    } else if (verdict.grade === "foiled" && !lease.echo) {
       // §12.9: "A foiled heist gives the defender the raider's entry fee".
       book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
     }
-    // §12.9's Renown and §18.2's season stars, in the same transaction as
-    // the haul.
-    const renown = this.seasons.settle(lease, verdict, now);
-    const stars = this.track.settle(lease, verdict, this.seasons.current(now).id, now);
-    return { verdict, fee, haul: pay, renown, stars };
+    // §12.9's Renown, §18.2's season stars and §12.22's ratings, in the same
+    // transaction as the haul. An echo is nobody's defence: it moves no
+    // Renown, earns its owner nothing and rates no island (G30).
+    const season = this.seasons.current(now).id;
+    const renown = lease.echo ? { raider: 0, defender: 0 } : this.seasons.settle(lease, verdict, now);
+    const stars = this.track.settle(lease, verdict, season, now, { echo: Boolean(lease.echo) });
+    const rating = lease.echo ? null : this.matchmaking.settle(lease, snapshot.realm, verdict, now);
+    return { verdict, fee, haul: pay, renown, stars, rating };
   }
 
   /** The raider's own Vault level, from their Heart's current snapshot; a

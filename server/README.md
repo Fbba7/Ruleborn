@@ -73,8 +73,35 @@ Target lists are §24.8's "file, not a query": `Service.targetLists()` writes
 one content-addressed list a band, holding every island's current snapshot, and
 `GET /v1/targets` names the current file for each; the file itself is fetched
 by hash like a bundle, so an unchanged band keeps its edge cache. Two readings
-(register **G21**): until §12.22's ratings exist a band is a realm level, and
-"generated periodically" is every fifteen minutes (`main.mjs`).
+(register **G21**): a band is a realm level, the unit of §12.22's guarantee,
+and "generated periodically" is every fifteen minutes (`main.mjs`).
+
+## Choosing a target
+
+`src/matchmaking.mjs` and `src/glicko.mjs` are §12.22's steps and §12.3's
+protections:
+
+- **Ratings.** Raiders and islands are rated with Glicko-2 at §12.22's
+  constants (deviation 350, volatility 0.06, system constant 0.5); every
+  validated heist updates both. A new island enters at the middle of its
+  origin's raider-success band, 350 wide.
+- **The offer.** `offer` is a pure function of the raider and the
+  candidates, so the device can run it on a target list, which carries each
+  island's rating, deviation, Renown and origin; `GET /v1/offer` runs it on
+  the server. It filters by Renown within 150, Keeper level within 3 and
+  rating within a band of the raider's recent success; sorts by predicted
+  success; draws the middle from the band; counts echoes when fewer than
+  three sit in the band; and only then widens rating, Keeper level and
+  Renown, in that order, saying so.
+- **Echoes.** A snapshot no island is on any more can be leased for 14 days;
+  robbing it takes nothing from its owner and moves no Renown.
+- **Protections.** A new player's island is refused for 72 hours, or until
+  they raid; a robbed player may Trace the raider once within 24 hours, with
+  no entry fee.
+
+The readings are **G30**; the simulator's prior, depth and the generated
+fallbacks are **D66**. Two findings came out of it: **F44** (the 0.25 tier
+is reachable) and **F45** (§12.3 and §12.22 filter differently).
 
 ## The Island Workshop
 
@@ -240,8 +267,8 @@ built — register **D63**.
   is §5.4's 150 seconds with no links.
 - **Receipt verification** with the App Store and Google Play, and family
   approval for 13 to 15 (D64).
-- The defender's "5% of what the crew was carrying", and §12.22's ratings,
-  echoes and fallback targets.
+- The defender's "5% of what the crew was carrying", and §12.22's generated
+  fallback targets (D66).
 - **Constellation chat, votes and anomalies** (D63).
 - **The landing.** The replay has no landing command yet; see `sim/README.md`.
 
@@ -262,6 +289,8 @@ built — register **D63**.
     src/cosmetics.json  the cosmetics sold for Starglass (none authored yet)
     src/telemetry.mjs first-party events, pseudonymous, kept 90 days, and the report
     src/accounts.mjs  deleting an account: the person goes, the records stay
+    src/glicko.mjs    Glicko-2, pure arithmetic
+    src/matchmaking.mjs  §12.22's ratings and offer, §12.3's echoes, shield and Trace
     src/workshop.mjs  §18.6's Workshop: publish, browse, play, rate, report, moderate, remix
     src/words.json    the word lists Workshop names come from
     src/http.mjs      the edge function: Request in, Response out

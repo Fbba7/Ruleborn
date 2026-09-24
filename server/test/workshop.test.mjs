@@ -6,7 +6,7 @@ import { test } from "node:test";
 
 import { Refused, clockTicks } from "../src/service.mjs";
 import { BUILDER_SLOTS, SLOTS, SPIKE_MIN, Workshop } from "../src/workshop.mjs";
-import { openPlan, server, T0 } from "./setup.mjs";
+import { T0, established, openPlan, server } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 const HOUR = 60 * 60 * 1000;
@@ -124,6 +124,7 @@ test("islands are rated for fun, cleverness and fairness by those who played the
 test("reports wait for a person, a removal gives its reason, and a ban takes everything out (20.4, 20.12)", () => {
   const t = workshop();
   const me = t.service.session("gc:creator").account;
+  established(t, me);
   const { bundle: realm } = t.service.publish(me, t.build.exampleIsland(false));
   const a = t.w.publish(me, t.island, t.cleared, t.name);
   const b = t.w.publish(me, t.island, t.cleared, { adjective: 2, noun: 3 });
