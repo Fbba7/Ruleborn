@@ -228,7 +228,11 @@ later subsystem cannot reuse one.
 `the_seed_cannot_change_what_a_guard_does` holds this in place: the same
 commands on seed 1 and seed 2^64-1 must give the same checksum every tick for
 3,000 ticks. The seed still travels in the replay header, for the systems
-§24.7 does give dice to — loot and island generation — which are not built.
+§24.7 does give dice to — loot and island generation, not built — and for §8,
+the one place the document asks for chance inside a heist: a dissonance's
+gusts, flicker and déjà vu, Fair lights' illusions and Quicksand's pits draw
+from their own stream, `Stream::Laws`, seeded from the replay, and draw
+nothing in a realm where none of them sounds.
 
 ## Detection modifiers, roles and gaits
 
@@ -440,6 +444,42 @@ and it still ends Clean with every bag full and one page.
 The spike's old stand-in law, which slowed the crew by a tenth every two
 seconds, is gone.
 
+## Resonances and chords
+
+§8: what the laws in a realm do together. `combos.rs` works out, each tick
+from the laws whose pylons stand, which combinations sound — so breaking a
+pylon silences every combination its law was part of from the next tick, as
+it silences the law. `build_laws.py` generates each law's notes, the 44
+resonance pairs and the 12 chords' notes from content, and the rules version
+covers all three tables.
+
+- **Harmonies** (two laws sharing a note) strengthen the shared kind of
+  effect on both laws by a quarter: Flow and Weight their speeds, Spark damage
+  and stuns, Bloom healing and regrowth (a regrowth a quarter sooner), Echo
+  returns and rebounds. Glow deepens Aurora's band by two rows and Hush lets
+  the crew hide a tile closer. Veil has nothing to lengthen at launch.
+- **Dissonances** (opposite notes) add their effect: Gusts and lulls moves
+  everyone's speed ±20% every ten seconds, Flicker makes the realm bright or
+  dark for three seconds every fifteen, Wildfire burns grass and hedges a spark
+  lands on, and Déjà vu draws the guards to an illusion once a heist.
+- **Signature resonances**: all twelve that join two launch laws (§8.4), from
+  Pinball's ricochets to Northern lights' bands being the only light.
+- **Chords** (three notes from three distinct laws, §8.8): all twelve, from
+  Tempest's speed and lightning to Rebound's bounced stuns.
+
+The fixture realm's three laws make three combinations — a Spark harmony
+(Brittle stone's double becomes 2.25), Night runners (Haste and Glowing dark:
+everyone 30% faster in the dark) and the Wild hunt chord (running is silent).
+The planned heist breaks Haste's pylon on the way in, which silences all three,
+and still ends Clean with every bag full.
+
+A chord's cost in stability, and every combination's discount or surcharge,
+is the economy's, not the heist's; the simulation plays the laws a bundle
+carries, and a bundle carries no crown laws yet (D61). Where a row stops short
+of a rule the reading is G25's, named beside the code and held by a test —
+one per combination, which `sim/systems.json` maps and the completion report
+counts.
+
 ## Wards
 
 §10.3's six wards at level 1, built to `docs/design/spec/wards.md` (G3's
@@ -543,7 +583,9 @@ a test that does not exist, so the band cannot drift from the code.
     src/noise.rs      sound along the walkable path, and the way around
     src/guard.rs      §12.17's six states, their timings, the realm alarm
     src/heist.rs      the Vault, fights, knockouts, the skiff, the grades
-    src/laws_table.rs generated from content/law_effects.json: 48 laws as ratios
+    src/laws_table.rs generated from content/: 48 laws as ratios, their notes,
+                      the resonance pairs and the chords
+    src/combos.rs     §8: which harmonies, dissonances, resonances and chords sound
     src/replay.rs     the heist as bytes: header, command log, checksums
     src/island.rs     an island as a bundle; §5.2's and §6.1's publishing rules
     src/sha256.rs     FIPS 180-4, for §24.8's content addressing
@@ -568,7 +610,7 @@ a test that does not exist, so the band cannot drift from the code.
 A whole heist in one realm: §12.17's five guard roles on their posts, a crew
 of three to five in §11.1's roles, sight, sound, the six guard states and the
 realm alarm, the Vault, fights, capture, the skiff, three woven laws with
-their pylons, and §12.9's grade at the end. Every number in the fixture is
+their pylons and what they make together, and §12.9's grade at the end. Every number in the fixture is
 the document's except the ones listed as the simulation's reading, and
 `content_gate.py` checks that rather than this sentence asserting it.
 

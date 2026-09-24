@@ -93,14 +93,14 @@ export class Build {
     const status = this.x.rb_verify(replay.length, island.length);
     if (status < 0) return { status: "refused", reason: REFUSED[status] };
     if (status > 0) return { status: "diverged", second: status };
-    const v = this.buffer().slice(0, 16);
+    const v = this.buffer().slice(0, 20);
     const view = new DataView(v.buffer);
     return {
       status: "verified",
       verdict: {
         grade: GRADES[v[0]], out: v[1], caught: v[2], crew: v[3],
         banked: view.getInt32(4, true), capacity: view.getInt32(8, true),
-        pages: view.getUint32(12, true),
+        pages: view.getUint32(12, true), cracked: view.getUint32(16, true),
       },
     };
   }

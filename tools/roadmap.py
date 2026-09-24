@@ -829,8 +829,13 @@ dict(
                     "than hidden. Building it split two health parameters that "
                     "each meant two rules (F31), and found nine sheets that "
                     "stop short of a rule (G23) and a regrowth row holding "
-                    "three (G24).",
-             register=["F31", "G23", "G24"],
+                    "three (G24).<br><br>\u00a78 is built on it: every harmony, "
+                    "dissonance and chord and the twelve launch resonances, "
+                    "worked out each tick from the standing laws and each "
+                    "proved by a test. Most rows are one line and needed a "
+                    "reading (G25); a chord's draw and crown laws wait for the "
+                    "economy on the server (D61).",
+             register=["F31", "G23", "G24", "G25", "D61"],
              blocked_by=["T1.4", "T1.9"]),
         dict(id="T5.4", owner="claude", status="blocked",
              title="Lock saves, bundles and versions (§24.11)",

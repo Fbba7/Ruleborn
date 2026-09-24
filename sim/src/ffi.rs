@@ -111,12 +111,12 @@ pub extern "C" fn rb_island(len: u32) -> i32 {
 ///
 /// Returns 0 when every second agrees, the first second that does not when
 /// one does not, or a negative status (see the module docstring). On 0 the
-/// verdict is written to the buffer's first 16 bytes — the re-simulation's,
+/// verdict is written to the buffer's first 20 bytes — the re-simulation's,
 /// never the device's:
 ///
 /// ```text
 /// grade u8 (0 clean, 1 loud, 2 partial, 3 foiled), out u8, caught u8,
-/// crew u8, banked i32 LE, capacity i32 LE, pages u32 LE
+/// crew u8, banked i32 LE, capacity i32 LE, pages u32 LE, cracked u32 LE
 /// ```
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
@@ -146,6 +146,7 @@ pub extern "C" fn rb_verify(replay_len: u32, island_len: u32) -> i32 {
                 b[4..8].copy_from_slice(&outcome.banked.to_le_bytes());
                 b[8..12].copy_from_slice(&outcome.capacity.to_le_bytes());
                 b[12..16].copy_from_slice(&outcome.pages.to_le_bytes());
+                b[16..20].copy_from_slice(&outcome.cracked.to_le_bytes());
                 0
             }
             Err(refusal) => refusal_code(refusal),

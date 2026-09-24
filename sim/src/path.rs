@@ -64,6 +64,81 @@ pub fn find(grid: &Grid, from: TileIndex, to: TileIndex) -> Option<Route> {
     None
 }
 
+/// The shortest route that may float over one wall: Drifting echoes'
+/// "returning echoes float and can pass over one wall". A wall is a tile
+/// nobody can stand on, and passing over it goes from the tile before it to
+/// the tile beyond, in a straight line, with the wall itself on the route.
+/// The same breadth-first search in §12.18's order, over (tile, wall used),
+/// with a tile's plain steps tried before the float from it. Returns the
+/// route and whether it used the wall.
+pub fn find_over_wall(grid: &Grid, from: TileIndex, to: TileIndex) -> Option<(Route, bool)> {
+    if from == to {
+        return Some((Vec::new(), false));
+    }
+    if !grid.at(to).passable() || !grid.at(from).passable() {
+        return None;
+    }
+    let n = grid.len();
+    let state = |t: TileIndex, used: bool| t as usize * 2 + used as usize;
+    // For each state: the state it came from, and the wall floated over.
+    let mut came: Vec<Option<(usize, Option<TileIndex>)>> = vec![None; n * 2];
+    let mut seen = vec![false; n * 2];
+    let mut frontier = std::collections::VecDeque::new();
+    seen[state(from, false)] = true;
+    frontier.push_back((from, false));
+    while let Some((tile, used)) = frontier.pop_front() {
+        let here = state(tile, used);
+        let mut steps: Vec<(TileIndex, bool, Option<TileIndex>)> = Vec::new();
+        for next in grid.neighbours(tile).into_iter().flatten() {
+            if grid.can_step(tile, next) {
+                steps.push((next, used, None));
+            }
+        }
+        if !used {
+            let (tx, ty) = grid.coords(tile);
+            for wall in grid.neighbours(tile).into_iter().flatten() {
+                if grid.at(wall).passable() {
+                    continue;
+                }
+                let (wx, wy) = grid.coords(wall);
+                let (bx, by) = (2 * wx as i32 - tx as i32, 2 * wy as i32 - ty as i32);
+                if bx < 0 || by < 0 {
+                    continue;
+                }
+                if let Some(beyond) = grid.index(bx as u16, by as u16) {
+                    if grid.at(beyond).passable() {
+                        steps.push((beyond, true, Some(wall)));
+                    }
+                }
+            }
+        }
+        for (next, u, wall) in steps {
+            let s = state(next, u);
+            if seen[s] {
+                continue;
+            }
+            seen[s] = true;
+            came[s] = Some((here, wall));
+            if next == to {
+                let mut route = Vec::new();
+                let mut at = s;
+                while at != state(from, false) {
+                    route.push((at / 2) as TileIndex);
+                    let (prev, wall) = came[at].expect("every state reached has a parent");
+                    if let Some(w) = wall {
+                        route.push(w);
+                    }
+                    at = prev;
+                }
+                route.reverse();
+                return Some((route, u));
+            }
+            frontier.push_back((next, u));
+        }
+    }
+    None
+}
+
 /// How many steps each tile is from walking to `to`, up to `limit`; `None`
 /// beyond it or where no walk exists. §12.6 (v3.4): the crack calls "every
 /// guard within the crack's reach of the Vault, 5 m by the walking path".

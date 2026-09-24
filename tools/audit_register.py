@@ -58,7 +58,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           "F36", "F37", "G19", "G20", "G21",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
-                          "G23", "G24"})
+                          "G23", "G24", "G25", "D61"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5458,8 +5458,10 @@ dict(id="G23", kind="gap", severity="significant", status="open",
           "guards do not, a Halt still stops, and the realm\u2019s edge ends a "
           "slide. <strong>Bounce</strong>: <em>\u201cincluding "
           "characters\u201d</em>, yet nothing walks into a wall except a slide, "
-          "so a character rebounds only at a slide\u2019s end, once; a blow on a "
-          "ward returns half to the striker; Wardens absorb both. "
+          "and a slide needs Frictionless, which with Bounce is always Pinball "
+          "\u2014 so a character\u2019s rebound is Pinball\u2019s, off every wall, "
+          "and Bounce alone only returns half a blow on a ward to the striker; "
+          "Wardens absorb both. "
           "<strong>Density</strong>: size is a ruleborn\u2019s (§11.2) and the "
           "crew and guards are roles, so the Warden is large, the rest standard "
           "and nobody small. <strong>Delay</strong>: <em>\u201cwards and "
@@ -5486,6 +5488,71 @@ dict(id="G23", kind="gap", severity="significant", status="open",
          "heists on the server, so a sentence a player reads and a rule the "
          "server applies cannot be allowed to differ; a sheet that stops short "
          "is a rule the build writes instead of the designer."),
+
+dict(id="G25", kind="gap", severity="significant", status="open",
+     title="§8\u2019s thirty-six launch combinations are one line each, and "
+           "the simulation had to finish most of them",
+     refs=["8.2", "8.3", "8.4", "8.5", "8.7", "24.7"],
+     body="<code>sim/</code> now plays every harmony, dissonance and chord and "
+          "the twelve signature resonances that ship at launch, each worked out "
+          "each tick from the laws whose pylons stand. Almost every row needed "
+          "a reading, and each is the rule the server replays. "
+          "<strong>Harmonies</strong>: <em>\u201c25% stronger\u201d</em> is read "
+          "as the change made a quarter larger (Haste\u2019s 1.25 becomes "
+          "1.3125), on the parameters the two harmonising laws themselves set, "
+          "once a note; Glow\u2019s <em>\u201c2 tiles longer\u201d</em> can only "
+          "lengthen Aurora\u2019s band, the one light a launch law has; Hush\u2019s "
+          "<em>\u201c1 tile closer\u201d</em> treats whoever is looked at as a "
+          "tile further off; and Veil lengthens nothing, because neither launch "
+          "Veil law, Delay or Soul swap, is an illusion or a disguise. "
+          "<strong>Dissonances</strong>: <em>\u201c±20% at random\u201d</em> and "
+          "<em>\u201cbright or dark\u201d</em> are read as a coin each time; "
+          "Wildfire\u2019s <em>\u201cany spark effect\u201d</em> as a chain\u2019s "
+          "jump, a static stun or a Brittle-stone hit on a hedge, and its hurt, "
+          "unstated, as 5% a second; déjà vu\u2019s <em>\u201conce per "
+          "heist\u201d</em> as a random second in the minute after it first "
+          "sounds. <strong>Resonances</strong>: a bank is a tile beside water; "
+          "Night runners\u2019 darkness is the whole realm, since Glowing dark "
+          "makes it dark; Storm grid\u2019s three targets jump each from the last "
+          "at the jump\u2019s share of the hit; Briar maze grows the extra hedge "
+          "on the first bare side; Shattered glass\u2019s glass wall is the "
+          "Crystal Wall, the one wall that breaks; Honey trap sticks on stepping "
+          "beside a regrown hedge; Cracked gardens\u2019 Essence has no amount, so "
+          "only the count is kept. <strong>Chords</strong>: Deep sleep\u2019s "
+          "doze is a stun and its muffling a step less; Ghost tide\u2019s drift "
+          "ends on the landing tile at the revive health; Fair lights has no "
+          "cadence, so it takes its neighbours\u2019 twenty seconds; Mirage shows "
+          "a moving character on the tile it just left; Clockwork fires every "
+          "triggered ward whoever is near it; Hidden garden spreads to every "
+          "bare tile beside grass; Quicksand\u2019s <em>\u201ca few\u201d</em> is "
+          "three and a pit costs a landing\u2019s noise and a second; Rebound "
+          "bounces within a chain\u2019s three tiles; and Lantern festival\u2019s "
+          "lanterns do not exist without Soul lanterns, which is not a launch "
+          "law, so only its return plays. The figures that are readings are "
+          "listed by <code>sim/content_gate.py</code>; every rule is named "
+          "beside its code and held by a test.",
+     rec="Give each §8 row its rule in the row: what is strengthened and by "
+         "how much, what a random draw draws, what an unstated amount is, and "
+         "what an effect needs that the launch set lacks (lanterns, a Veil "
+         "illusion). §8.7 fixes the order effects apply in, which only helps "
+         "once each effect is a rule rather than a sentence."),
+
+dict(id="D61", kind="deviation", severity="minor", status="open",
+     title="The simulation sounds a chord without asking whether the universe "
+           "can pay its draw, and plays no crown laws",
+     refs=["8.5", "8.6", "5.1", "24.8"],
+     body="§8.6: a chord <em>\u201csounds whenever three distinct laws in one "
+          "realm carry its notes and the universe can pay its draw\u201d</em>. "
+          "The draw is the universe\u2019s stability, which the server does not "
+          "hold yet (D60), so an island bundle with three laws that make a chord "
+          "plays it. And <em>\u201ccrown laws count in every realm\u201d</em> "
+          "(§8.2), but a bundle carries only its realm\u2019s own laws, so a "
+          "harmony or a chord made with a crown law is not played. Found "
+          "building §8\u2019s combinations.",
+     rec="When the economy moves server-side, check a published realm\u2019s "
+         "chords against its universe\u2019s stability, and carry the crown laws "
+         "in the bundle (or beside it) so the realm plays what its owner wove. "
+         "Until then it is a limit of this build, not of the design."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

@@ -123,6 +123,33 @@ def launch_laws_simulated():
     return proof
 
 
+def launch_combos():
+    """§8 at launch: every harmony, every dissonance, every chord, and the
+    signature resonances whose two laws both ship (§7.10) — each counted when
+    the test sim/systems.json maps it to passed."""
+    def proof():
+        laws = json.loads((CONTENT / "laws.json").read_text(encoding="utf-8"))
+        launch = {l["id"] for l in laws if l.get("launch")}
+        notes = json.loads((CONTENT / "notes.json").read_text(encoding="utf-8"))
+        pairs = {"_".join(sorted((n["id"], n["opposite"].lower()),
+                                 key=lambda x: [m["id"] for m in notes].index(x))) for n in notes}
+        want = ([f"harmony:{n['id']}" for n in notes]
+                + [f"dissonance:{p}" for p in sorted(pairs)]
+                + [f"resonance:{r['id']}" for r in
+                   json.loads((CONTENT / "resonances.json").read_text(encoding="utf-8"))
+                   if set(r["laws"]) <= launch]
+                + [f"chord:{c['id']}" for c in
+                   json.loads((CONTENT / "chords.json").read_text(encoding="utf-8"))])
+        manifest, status = _sim_status()
+        mapped = manifest.get("Resonances and chords", {}).get("combos", {})
+        results = status.get("tests", {})
+        built = [c for c in want if results.get(mapped.get(c, "")) == "passed"]
+        missing = [c for c in want if c not in mapped]
+        return (len(built) / len(want), f"{len(built)} of {len(want)} launch combinations "
+                f"simulated", missing)
+    return proof
+
+
 def content_count(file: str, want: int, where=lambda rows: rows):
     """A content table extracted from the document, validated by
     validate_content.py in check_all.sh, holding the count §26.1 ships."""
@@ -156,8 +183,7 @@ DELIVERABLES = [
     ("1", "Stealth", BACKEND, systems(
         "Line of sight", "Noise", "Guard states", "Realm alarm", "Detection modifiers", "Wards")),
     ("1", "The law engine", BACKEND, launch_laws_simulated()),
-    ("1", "Resonances and chords", BACKEND, not_started(
-        "sim/ applies §8's resonances and chords, each proved by a test")),
+    ("1", "Resonances and chords", BACKEND, launch_combos()),
     ("1", "Golden harness", BACKEND, systems("Replay format", "Golden replays")),
 
     ("2", "Project structure", FRONTEND, not_started("a client project builds on both stores' targets")),

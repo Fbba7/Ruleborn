@@ -43,6 +43,10 @@ pub enum Stream {
     /// no later stream can reuse it and silently share a seed with old replays.
     Noise = 3,
     Loot = 4,
+    /// §8's effects that the document makes unpredictable: gusts, flicker,
+    /// déjà vu, fair lights and quicksand. Drawn only while one sounds, in a
+    /// fixed order within the tick, so a realm without them draws nothing.
+    Laws = 5,
 }
 
 /// xoshiro256++ 1.0. Pure integer operations.

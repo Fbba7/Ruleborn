@@ -158,6 +158,11 @@ pub struct Outcome {
     pub out: u32,
     /// Laws whose pylon the crew broke: a page of each (§12.6).
     pub pages: u32,
+    /// Structures broken while Cracked gardens sounds (§8.4): "broken
+    /// structures leave Essence that the owner collects after the heist".
+    /// How much each leaves is not stated (G25), so the count is reported
+    /// and nothing is paid for it yet.
+    pub cracked: u32,
 }
 
 // --------------------------------------------------------------------------
@@ -240,6 +245,65 @@ pub const CHAIN_TILES: i32 = 3;
 /// width is not given; two rows is this simulation's reading (G23).
 pub const AURORA_BAND_ROWS: i64 = 2;
 
+// §8's combinations. Where the document gives a figure it is quoted; where
+// it does not, the figure is this simulation's reading and G25 lists it.
+
+/// Glow harmony: "light and reveal ranges 2 tiles longer" — Aurora's band.
+pub const GLOW_HARMONY_ROWS: i64 = 2;
+/// Hush harmony: "hiding works 1 tile closer to guards", in tiles.
+pub const HUSH_HARMONY_TILES: i32 = 1;
+/// Gusts and lulls: "everyone's speed changes by ±20% at random every 10
+/// seconds".
+pub const GUST_TICKS: u32 = TICKS_PER_SECOND * 10;
+/// Flicker: "every 15 seconds the realm goes fully bright or fully dark for
+/// 3 seconds".
+pub const FLICKER_TICKS: u32 = TICKS_PER_SECOND * 15;
+pub const FLICKER_HOLD_TICKS: u32 = TICKS_PER_SECOND * 3;
+/// Wildfire: grass and hedges "burn for 5 seconds, hurting anyone inside";
+/// the hurt is a reading, the Thorn Hedge's 5% a second.
+pub const BURN_TICKS: u32 = TICKS_PER_SECOND * 5;
+pub const BURN_DAMAGE: (i32, i32) = (5, 100);
+/// Déjà vu: "once per heist"; when is a reading — a random second in the
+/// minute after the clash first sounds.
+pub const DEJA_VU_WINDOW_TICKS: u64 = TICKS_PER_SECOND as u64 * 60;
+/// Mangrove banks: "slow crews by a further 20%".
+pub const MANGROVE_PACE: (i64, i64) = (4, 5);
+/// Night runners: "anyone in darkness moves 30% faster".
+pub const NIGHT_RUNNERS_PACE: (i64, i64) = (13, 10);
+/// Storm grid: "chains jump to three targets".
+pub const STORM_GRID_TARGETS: usize = 3;
+/// Twin souls: "characters who swap places heal each other 20%".
+pub const TWIN_SOULS_HEAL: (i32, i32) = (20, 100);
+/// Shattered glass: shards "slow anyone by 30% for 5 seconds".
+pub const SHARD_PACE: (i64, i64) = (7, 10);
+pub const SHARD_TICKS: u32 = TICKS_PER_SECOND * 5;
+/// Honey trap: "anyone touching one sticks for a second".
+pub const HONEY_TICKS: u32 = TICKS_PER_SECOND;
+/// Tempest: "every 20 seconds lightning lights the whole realm for a second".
+pub const TEMPEST_TICKS: u32 = TICKS_PER_SECOND * 20;
+pub const TEMPEST_FLASH_TICKS: u32 = TICKS_PER_SECOND;
+/// Deep sleep: "every 20 seconds each guard dozes for 3 seconds".
+pub const DEEP_SLEEP_TICKS: u32 = TICKS_PER_SECOND * 20;
+pub const DOZE_TICKS: u32 = TICKS_PER_SECOND * 3;
+/// Deep sleep's "flowers muffle footsteps": a footstep carries a step less.
+pub const MUFFLED_STEPS: u16 = 1;
+/// Fair lights: how often an illusion forms is a reading — Tempest's and
+/// Deep sleep's twenty seconds.
+pub const FAIR_LIGHTS_TICKS: u32 = TICKS_PER_SECOND * 20;
+/// Iron bell: "guards hear 2 tiles further but see 2 tiles less".
+pub const IRON_BELL_TILES: i32 = 2;
+/// Clockwork: "every 15 seconds all wards in the realm trigger together".
+pub const CLOCKWORK_TICKS: u32 = TICKS_PER_SECOND * 15;
+/// Hidden garden: "tall grass spreads one tile a minute".
+pub const HIDDEN_GARDEN_TICKS: u32 = TICKS_PER_SECOND * 60;
+/// Lantern festival: "each character returns once at the revive health,
+/// 30% of its role's health".
+pub const LANTERN_RETURN: (i64, i64) = (3, 10);
+/// Quicksand: "a few tiles become hidden pits that drop anyone a level". A
+/// few is a reading: three. Climbing out holds whoever fell for a second.
+pub const QUICKSAND_PITS: usize = 3;
+pub const PIT_HOLD_TICKS: u32 = TICKS_PER_SECOND;
+
 /// A ward on the island.
 #[derive(Clone, Debug)]
 pub struct Ward {
@@ -255,6 +319,8 @@ pub struct Ward {
     pub disarm: u32,
     /// When it was broken, for a law that regrows it (Bloom).
     pub broken_at: Option<u32>,
+    /// Grown back by Bloom, which Honey trap makes sticky.
+    pub regrown: bool,
 }
 
 impl Ward {
@@ -265,7 +331,7 @@ impl Ward {
             WARD_HEALTH_PER_LEVEL
         };
         Ward { kind, tile, level: 1, health, armed_at: 0, disarmed: false, broken: false,
-               disarm: 0, broken_at: None }
+               disarm: 0, broken_at: None, regrown: false }
     }
 
     /// Still doing anything at all.

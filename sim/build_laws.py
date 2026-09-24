@@ -23,6 +23,9 @@ import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 CONTENT = HERE.parent / "content" / "law_effects.json"
+NOTES = HERE.parent / "content" / "notes.json"
+RESONANCES = HERE.parent / "content" / "resonances.json"
+CHORDS = HERE.parent / "content" / "chords.json"
 OUT = HERE / "src" / "laws_table.rs"
 
 
@@ -67,17 +70,53 @@ def render() -> str:
         "    pub name: &'static str,",
         "    pub simulated: bool,",
         "    pub params: &'static [(Param, i64, i64)],",
+        "    /// Its notes (§8.1), as bits of `note`.",
+        "    pub notes: u8,",
         "}",
         "",
         f"pub const LAWS: [LawDef; {len(data['laws'])}] = [",
     ]
+    notes = json.loads(NOTES.read_text(encoding="utf-8"))
+    bit = {n["name"]: 1 << i for i, n in enumerate(notes)}
+    mask = lambda names: " | ".join(f"note::{n.upper()}" for n in names) or "0"
     for law in data["laws"]:
         ps = ", ".join(f"(Param::{camel(k)}, {n}, {d})"
                        for k, v in law["params"].items() for n, d in [ratio(v)])
         lines.append(f"    LawDef {{ id: \"{law['id']}\", name: \"{law['name']}\", "
                      f"simulated: {'true' if law['simulated'] else 'false'}, "
-                     f"params: &[{ps}] }},")
+                     f"params: &[{ps}], notes: {mask(law['notes'])} }},")
     lines.append("];")
+    lines += ["", "/// §8.1's eight notes, one bit each, in the table's order.", "pub mod note {"]
+    lines += [f"    pub const {n['name'].upper()}: u8 = {bit[n['name']]};" for n in notes]
+    pairs = []
+    for n in notes:
+        pair = tuple(sorted((bit[n["name"]], bit[n["opposite"]])))
+        if pair not in pairs:
+            pairs.append(pair)
+    by_bit = {v: k for k, v in bit.items()}
+    lines += ["    /// The four opposites (§8.3), each pair once, in the table's order.",
+              f"    pub const OPPOSITES: [(u8, u8); {len(pairs)}] = ["]
+    lines += [f"        ({by_bit[a].upper()}, {by_bit[b].upper()})," for a, b in pairs]
+    lines += ["    ];", "}"]
+
+    resonances = json.loads(RESONANCES.read_text(encoding="utf-8"))
+    lines += ["", "/// §8.4's signature resonances, in the table's order.",
+              "#[derive(Clone, Copy, PartialEq, Eq, Debug)]", "pub enum Res {"]
+    lines += [f"    {camel(r['id'])}," for r in resonances]
+    lines += ["}", "", "/// Each resonance's two laws, by id, in `Res` order.",
+              f"pub const RESONANCES: [(Res, &str, &str); {len(resonances)}] = ["]
+    lines += [f"    (Res::{camel(r['id'])}, \"{r['laws'][0]}\", \"{r['laws'][1]}\"),"
+              for r in resonances]
+    lines += ["];"]
+
+    chords = json.loads(CHORDS.read_text(encoding="utf-8"))
+    lines += ["", "/// §8.5's chords, in the table's order.",
+              "#[derive(Clone, Copy, PartialEq, Eq, Debug)]", "pub enum Chord {"]
+    lines += [f"    {camel(c['id'])}," for c in chords]
+    lines += ["}", "", "/// Each chord's three notes, in `Chord` order.",
+              f"pub const CHORDS: [(Chord, u8); {len(chords)}] = ["]
+    lines += [f"    (Chord::{camel(c['id'])}, {mask(c['notes'])})," for c in chords]
+    lines += ["];"]
     return "\n".join(lines) + "\n"
 
 

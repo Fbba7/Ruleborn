@@ -81,6 +81,18 @@ READINGS = [
     ("AURORA_BAND_ROWS", "Aurora's band, two rows deep, one crossing the realm a period",
      "§7.4 says \"bands of light sweep the realm every 10 seconds\" and not how "
      "wide a band is or how many there are (G23)"),
+    ("DEJA_VU_WINDOW_TICKS", "Déjà vu comes in the minute after the clash first sounds",
+     "§8.3 says \"once per heist\" and not when (G25)"),
+    ("BURN_DAMAGE", "Wildfire hurts 5% of full health a second, the Thorn Hedge's rate",
+     "§8.3 says the flames are \"hurting anyone inside\" and not by how much (G25)"),
+    ("MUFFLED_STEPS", "Deep sleep's muffled footstep carries a step less",
+     "§8.5 says \"flowers muffle footsteps\" and not how much (G25)"),
+    ("FAIR_LIGHTS_TICKS", "Fair lights forms an illusion every 20 seconds",
+     "§8.5 gives no cadence; 20 s is its neighbours' (G25)"),
+    ("QUICKSAND_PITS", "Quicksand opens three pits",
+     "§8.5 says \"a few tiles\" (G25)"),
+    ("PIT_HOLD_TICKS", "a pit holds whoever falls in for a second",
+     "§8.5 says a pit drops anyone a level and not what that costs (G25)"),
 ]
 
 

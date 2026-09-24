@@ -1762,7 +1762,9 @@ fn every_law_is_in_the_table_and_the_sheet_multiplies_the_ones_that_stand() {
     assert_eq!(LAWS.len(), 48, "\u{a7}7's 48 laws");
     let mut world = vault_world(0);
     world.weave(&[("tilt", (0, 13)), ("current", (1, 13))]);
-    assert_eq!(world.sheet.factor(Param::CrewSpeed), (169, 100), "1.3 x 1.3, exactly");
+    // Both carry Flow, so they harmonise (§8.2): each 1.3 is a quarter
+    // stronger, 1.375, and the sheet multiplies them exactly.
+    assert_eq!(world.sheet.factor(Param::CrewSpeed), (121, 64), "1.375 x 1.375, exactly");
     world.laws[0].broken_at = Some(0);
     world.step();
     assert_eq!(world.sheet.factor(Param::CrewSpeed), (13, 10), "one pylon down");
@@ -2503,7 +2505,7 @@ fn commands_given_live_record_the_same_heist_as_the_log_they_make() {
 // The launch laws that are rows, not multipliers (§7.3, v3.4; §7.10)
 // --------------------------------------------------------------------------
 
-use crate::laws_table::Param as P;
+use crate::laws_table::{Param as P, Res};
 
 /// A move order for crew member `actor` to tile (x, y), given this tick.
 fn order(world: &mut World, actor: u8, x: i16, y: i16) {
@@ -2558,19 +2560,33 @@ fn frictionless_slides_on_past_the_end_of_a_route_until_something_stops_it() {
 }
 
 #[test]
-fn bounce_sends_a_slide_back_once_and_a_warden_absorbs_it() {
-    let slide = |ri: usize| {
+fn frictionless_and_bounce_are_pinball_and_a_warden_absorbs_the_ricochet() {
+    // A slide is the only way into a wall, and Frictionless with Bounce is
+    // Pinball: "sliding characters ricochet off walls" — every wall.
+    let slide = |ri: usize, secs: u32| {
         let mut world = vault_world(4);
         world.weave(&[("frictionless", (0, 13)), ("bounce", (1, 13))]);
+        assert!(world.combos.resonance(Res::Pinball));
         world.grid.place(10, 3, Feature::RockPillar);
         world.grid.place(0, 3, Feature::RockPillar);
         put(&mut world, ri, 2, 3);
         order(&mut world, ri as u8, 4, 3);
-        run_for(&mut world, 10 * TICKS_PER_SECOND);
-        (tile_of(&world, ri), world.raiders[ri].rebounded)
+        let mut seen = Vec::new();
+        for _ in 0..secs * TICKS_PER_SECOND {
+            world.step();
+            let t = tile_of(&world, ri);
+            if seen.last() != Some(&t) {
+                seen.push(t);
+            }
+        }
+        (seen, world.raiders[ri].still())
     };
-    assert_eq!(slide(0), ((1, 3), true), "back off the east pillar to the west one, and stops");
-    assert_eq!(slide(3), ((9, 3), false), "the Warden is heavy enough to absorb a rebound");
+    let (path, still) = slide(0, 12);
+    let turns = path.windows(3).filter(|w| w[0] == w[2]).count();
+    assert!(path.contains(&(9, 3)) && path.contains(&(1, 3)), "wall to wall: {path:?}");
+    assert!(turns >= 2 && !still, "and back again, still going");
+    let (path, still) = slide(3, 12);
+    assert_eq!((path.last(), still), (Some(&(9, 3)), true), "the Warden stops at the first wall");
 }
 
 #[test]
@@ -2796,4 +2812,557 @@ fn regrowth_heals_wards_too() {
     world.wards[0].health = 100;
     world.step();
     assert_eq!(world.wards[0].health, 100 + h::WARD_HEALTH_PER_LEVEL / 50);
+}
+
+
+// --------------------------------------------------------------------------
+// §8: harmonies, dissonances, signature resonances and chords
+// --------------------------------------------------------------------------
+
+use crate::combos::Combos;
+use crate::laws_table::{note, Chord};
+
+/// Weave `laws`, each with a pylon on row 13.
+fn weave(world: &mut World, laws: &[&str]) {
+    let at: Vec<(&str, (u16, u16))> = laws.iter().enumerate()
+        .map(|(i, id)| (*id, (i as u16, 13))).collect();
+    world.weave(&at);
+}
+
+fn rows(ids: &[&str]) -> Vec<usize> {
+    ids.iter().map(|id| LAWS.iter().position(|l| l.id == *id).unwrap()).collect()
+}
+
+/// A guard facing north at (2, 2), and crew member 0 at (2, `y`) walking a
+/// tile south with `gait`: whether the guard hears it, after one tick. Sight
+/// cannot reach it, so what wakes the guard is sound.
+fn heard(laws: &[&str], y: u16, gait: Gait) -> bool {
+    let mut world = vault_world(1);
+    weave(&mut world, laws);
+    let g = post(&mut world, 0, 2, 2);
+    world.guards[g].facing = Ang::from_degrees(270);
+    put(&mut world, 0, 2, y);
+    world.raiders[0].gait = gait;
+    world.raiders[0].route = vec![world.grid.index(2, y + 1).unwrap()];
+    world.step();
+    world.guards[g].heard.is_some()
+}
+
+#[test]
+fn which_combinations_sound_is_read_off_the_standing_laws() {
+    let c = Combos::of(&rows(&["haste", "brittle_stone", "glowing_dark"]));
+    assert!(c.harmony(note::SPARK) && !c.harmony(note::FLOW), "Spark is shared, Flow is not");
+    assert!(c.resonance(Res::NightRunners));
+    assert!(c.chord(Chord::WildHunt), "Flow, Spark and Hush from three laws");
+    // §8.8: two laws carrying three notes are not a chord.
+    let two = Combos::of(&rows(&["haste", "glass"]));
+    assert!(!two.chord(Chord::Tempest), "Flow and Spark from one law, Glow from another");
+    assert!(Combos::of(&rows(&["haste", "brittle_stone", "glass"])).chord(Chord::Tempest));
+    // Opposites clash only across two laws.
+    assert!(Combos::of(&rows(&["haste", "slow_rivers"])).dissonance(note::WEIGHT));
+    assert_eq!(Combos::of(&rows(&["haste"])).dissonances, 0);
+}
+
+#[test]
+fn a_broken_pylon_silences_everything_its_law_was_part_of() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["haste", "brittle_stone", "glowing_dark"]);
+    assert!(world.combos.chord(Chord::WildHunt) && world.combos.resonance(Res::NightRunners));
+    world.laws[0].broken_at = Some(0);
+    world.step();
+    assert_eq!(world.combos, Combos::default().tap(|c| c.harmonies = 0), "haste gone: nothing left");
+}
+
+trait Tap: Sized {
+    fn tap(mut self, f: impl FnOnce(&mut Self)) -> Self {
+        f(&mut self);
+        self
+    }
+}
+impl Tap for Combos {}
+
+// Harmonies (§8.2) --------------------------------------------------------
+
+#[test]
+fn a_flow_harmony_makes_movement_a_quarter_stronger() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["haste", "half_gravity"]);
+    assert!(world.combos.harmony(note::FLOW));
+    assert_eq!(world.sheet.factor(P::CrewSpeed), (21, 16), "Haste's +25% becomes +31.25%");
+    assert_eq!(world.sheet.factor(P::GuardSpeed), (21, 16));
+}
+
+#[test]
+fn a_weight_harmony_makes_slowing_a_quarter_stronger() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["slow_rivers", "density"]);
+    assert_eq!(world.sheet.factor(P::CrewSpeed), (3, 8), "half speed becomes 37.5%");
+    assert_eq!(world.sheet.factor(P::LargeSpeed), (3, 4), "-20% becomes -25%");
+}
+
+#[test]
+fn a_glow_harmony_makes_auroras_band_two_rows_deeper() {
+    let lit = |laws: &[&str]| {
+        let mut world = vault_world(0);
+        weave(&mut world, laws);
+        world.tick = 150;
+        (0..14u16).filter(|&y| world.in_band(world.grid.index(0, y).unwrap()) == Some(true)).count()
+    };
+    assert_eq!(lit(&["aurora"]), 2);
+    assert_eq!(lit(&["aurora", "glass"]), 4, "\"light and reveal ranges 2 tiles longer\"");
+}
+
+#[test]
+fn a_hush_harmony_lets_the_crew_hide_a_tile_closer() {
+    // Glowing dark halves the Scout's zones to 1, 2 and 3 m.
+    let at = |laws: &[&str]| {
+        let mut world = scout_and_raider(15, 0);
+        let pylons: Vec<(&str, (u16, u16))> =
+            laws.iter().enumerate().map(|(i, l)| (*l, (i as u16, 13))).collect();
+        world.weave(&pylons);
+        rate(&world)
+    };
+    assert_eq!(at(&["glowing_dark"]), Some(33), "1.5 m: the mid zone");
+    assert_eq!(at(&["glowing_dark", "stillness"]), Some(12), "seen as 2.5 m: the far zone");
+}
+
+#[test]
+fn a_bloom_harmony_makes_healing_and_regrowth_a_quarter_stronger() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["kinship", "regrowth"]);
+    assert_eq!(world.sheet.factor(P::AllyHealing), (3, 160), "1.5% becomes 1.875%");
+    assert_eq!(world.sheet.factor(P::StructureRegrowth), (1, 40), "2% becomes 2.5%");
+    let mut world = vault_world(1);
+    weave(&mut world, &["bloom", "kinship"]);
+    assert_eq!(world.sheet.ticks(P::RegrowSeconds), Some(8 * TICKS_PER_SECOND),
+               "ten seconds, a quarter sooner");
+}
+
+#[test]
+fn a_spark_harmony_makes_damage_and_stuns_a_quarter_stronger() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["brittle_stone", "chain_lightning"]);
+    assert_eq!(world.sheet.factor(P::StructureDamage), (9, 4), "double becomes 2.25");
+    assert_eq!(world.sheet.factor(P::ChainShare), (5, 8));
+    let mut world = vault_world(1);
+    weave(&mut world, &["static", "haste"]);
+    assert_eq!(world.sheet.factor(P::TouchStunSeconds), (5, 8), "half a second becomes 0.625");
+}
+
+#[test]
+fn an_echo_harmony_makes_returns_a_quarter_stronger() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["echoes", "whispers"]);
+    assert_eq!(world.revival(), Some(crate::Revival::Return(3, 4)), "60% becomes 75%");
+}
+
+#[test]
+fn a_veil_harmony_sounds_and_has_no_launch_illusion_to_lengthen() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["delay", "soul_swap"]);
+    assert!(world.combos.harmony(note::VEIL));
+    assert_eq!(world.sheet.ticks(P::EffectDelaySeconds), Some(3 * TICKS_PER_SECOND));
+    assert_eq!(world.sheet.factor(P::RevivalSwap), (1, 2));
+}
+
+// Dissonances (§8.3) ------------------------------------------------------
+
+#[test]
+fn gusts_and_lulls_move_everyones_speed_twenty_per_cent_every_ten_seconds() {
+    let mut seen = Vec::new();
+    for seed in 0..16 {
+        let mut world = vault_world(1);
+        world.rng = Rng::new(seed, Stream::Laws);
+        weave(&mut world, &["haste", "slow_rivers"]);
+        assert_eq!(world.gust, (1, 1));
+        run_for(&mut world, h::GUST_TICKS + 1);
+        let (gn, gd) = world.gust;
+        assert!(matches!(world.gust, (6, 5) | (4, 5)));
+        assert_eq!(world.sheet.factor(P::CrewSpeed), crate::Sheet::plain()
+            .tap(|s| { s.apply(P::CrewSpeed, 5, 8); s.apply(P::CrewSpeed, gn, gd); })
+            .factor(P::CrewSpeed), "Haste x Slow rivers x the gust");
+        seen.push(world.gust);
+    }
+    assert!(seen.contains(&(6, 5)) && seen.contains(&(4, 5)), "at random, both ways");
+}
+impl Tap for crate::Sheet {}
+
+#[test]
+fn flicker_makes_the_whole_realm_bright_or_dark_for_three_seconds_every_fifteen() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["glass", "stillness"]);
+    run_for(&mut world, h::FLICKER_TICKS + 1);
+    let (bright, until) = world.light.expect("a flicker at 15 s");
+    assert_eq!(until, h::FLICKER_TICKS + h::FLICKER_HOLD_TICKS);
+    let t = world.grid.index(9, 9).unwrap();
+    assert_eq!(world.unlit(t), !bright, "every tile alike");
+    run_for(&mut world, h::FLICKER_HOLD_TICKS);
+    assert_eq!(world.light, None, "for three seconds");
+}
+
+#[test]
+fn wildfire_burns_the_grass_a_spark_lands_on_and_hurts_whoever_stands_in_it() {
+    let mut world = vault_world(3);
+    weave(&mut world, &["kinship", "chain_lightning"]);
+    assert!(world.combos.dissonance(note::BLOOM));
+    swinging_guard(&mut world, 2);
+    world.grid.place(3, 6, Feature::TallGrass);
+    put(&mut world, 1, 3, 6);                     // the jump lands here, in grass
+    put(&mut world, 2, 12, 12);
+    run_for(&mut world, h::HIT_TICKS);
+    assert_eq!(world.raiders[1].health, 180 - 20, "the jump");
+    assert!(world.burning.iter().any(|&(t, _)| t == world.grid.index(3, 6).unwrap()), "alight");
+    world.guards[0].knocked_out = true;           // no second blow
+    run_for(&mut world, TICKS_PER_SECOND);
+    assert_eq!(world.raiders[1].health, 180 - 20 - 9, "5% of full health, a second in the fire");
+}
+
+#[test]
+fn deja_vu_once_a_heist_draws_the_guards_to_an_illusion() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["echoes", "soul_swap"]);
+    let g = post(&mut world, 0, 12, 2);
+    put(&mut world, 0, 0, 12);
+    let mut drawn = 0;
+    for _ in 0..(62 * TICKS_PER_SECOND) {
+        let before = world.guards[g].state;
+        world.step();
+        if before == State::Unaware && world.guards[g].state == State::Investigating {
+            drawn += 1;
+        }
+    }
+    assert!(world.deja_vu_spent);
+    assert_eq!(drawn, 1, "once, inside the minute");
+}
+
+// Signature resonances (§8.4) ---------------------------------------------
+
+#[test]
+fn drifting_echoes_lets_a_returned_echo_float_over_one_wall() {
+    let crossed = |laws: &[&str]| {
+        let mut world = vault_world(1);
+        weave(&mut world, laws);
+        for x in 0..14 {
+            world.grid.place(x, 5, Feature::RockPillar);   // no way round
+        }
+        put(&mut world, 0, 3, 4);
+        world.raiders[0].health = 0;
+        world.step();                                     // knocked out, and back
+        assert!(world.raiders[0].active());
+        order(&mut world, 0, 3, 6);
+        run_for(&mut world, 3 * TICKS_PER_SECOND);
+        (tile_of(&world, 0), world.raiders[0].wall_pass)
+    };
+    assert_eq!(crossed(&["echoes"]), ((3, 4), false), "no route: it stays");
+    assert_eq!(crossed(&["half_gravity", "echoes"]), ((3, 6), false), "over the wall, once");
+}
+
+#[test]
+fn mangrove_banks_slow_crews_on_a_bank_by_a_further_fifth() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["slow_rivers", "bloom"]);
+    world.grid.set_surface(5, 3, crate::grid::Surface::Water);
+    let bank = world.grid.index(4, 3);
+    let inland = world.grid.index(4, 9);
+    assert_eq!(world.pace_here(bank, true, 0), (4, 5));
+    assert_eq!(world.pace_here(bank, false, 0), (1, 1), "crews, not guards");
+    assert_eq!(world.pace_here(inland, true, 0), (1, 1));
+}
+
+#[test]
+fn night_runners_speeds_anyone_in_the_dark_by_thirty_per_cent() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["haste", "glowing_dark"]);
+    let t = world.grid.index(4, 4);
+    assert_eq!(world.pace_here(t, true, 0), (13, 10), "Glowing dark: the realm is dark");
+    assert_eq!(world.pace_here(t, false, 0), (13, 10), "anyone");
+    world.light = Some((true, 1_000));
+    assert_eq!(world.pace_here(t, true, 0), (1, 1), "not while a light is over it");
+}
+
+#[test]
+fn cracked_gardens_counts_every_structure_broken_for_the_owner() {
+    let mut world = ward_world(1, WardKind::ThornHedge, (3, 3));
+    weave(&mut world, &["brittle_stone", "bloom"]);
+    put(&mut world, 0, 3, 4);
+    world.wards[0].health = 1;
+    world.raiders[0].task = Task::Break;
+    world.raiders[0].target = world.grid.index(3, 3).unwrap();
+    run_for(&mut world, h::HIT_TICKS);
+    assert!(world.wards[0].broken);
+    assert_eq!(world.outcome().cracked, 1);
+}
+
+#[test]
+fn storm_grid_chains_on_to_three_targets() {
+    let mut world = vault_world(4);
+    weave(&mut world, &["chain_lightning", "static"]);
+    swinging_guard(&mut world, 2);                // Power 40, on crew member 0
+    put(&mut world, 1, 3, 6);
+    put(&mut world, 2, 3, 8);
+    put(&mut world, 3, 3, 10);
+    run_for(&mut world, h::HIT_TICKS);
+    // A Spark harmony too: the jump's 50% is 62.5%, 25 of the 40.
+    assert_eq!(world.raiders[1].health, 180 - 25);
+    assert_eq!(world.raiders[2].health, Role::Carrier.health() - 25);
+    assert_eq!(world.raiders[3].health, 420 - 25, "the third, each from the last");
+}
+
+#[test]
+fn briar_maze_regrows_a_cut_hedge_a_tile_wider() {
+    let mut world = ward_world(1, WardKind::ThornHedge, (3, 3));
+    weave(&mut world, &["thorns", "bloom"]);
+    put(&mut world, 0, 12, 12);
+    world.wards[0].health = 0;
+    world.wards[0].broken = true;
+    world.wards[0].broken_at = Some(0);
+    // Both carry Bloom: regrowth comes a quarter sooner, at eight seconds.
+    run_for(&mut world, 8 * TICKS_PER_SECOND + 1);
+    assert!(world.wards[0].live() && world.wards[0].regrown);
+    assert_eq!(world.wards.len(), 2);
+    assert_eq!(world.grid.coords(world.wards[1].tile), (3, 2), "the first bare side, north");
+}
+
+#[test]
+fn twin_souls_heal_the_two_who_swapped_by_a_fifth() {
+    let mut world = vault_world(3);
+    weave(&mut world, &["soul_swap", "kinship"]);
+    swinging_guard(&mut world, 2);
+    put(&mut world, 1, 8, 8);
+    put(&mut world, 2, 12, 12);
+    world.raiders[0].health = 30;
+    world.raiders[1].health = 100;
+    run_for(&mut world, h::HIT_TICKS);
+    assert_eq!(world.raiders[0].health, 30 + 24, "20% of 120");
+    assert_eq!(world.raiders[1].health, 100 - 20 + 36, "half the blow, then 20% of 180");
+}
+
+#[test]
+fn soul_tether_lets_a_returned_echo_swap_once() {
+    let mut world = vault_world(2);
+    weave(&mut world, &["soul_swap", "echoes"]);
+    swinging_guard(&mut world, 2);
+    put(&mut world, 1, 8, 8);
+    world.raiders[0].health = 30;
+    run_for(&mut world, h::HIT_TICKS);
+    assert!(world.raiders[0].revived && !world.raiders[0].tethered, "Echoes' 60% outranks the swap");
+    let ally = world.raiders[1].at;
+    let back = world.raiders[0].at;
+    world.raiders[0].health = 30;
+    world.guards[0].swing = 0;
+    run_for(&mut world, h::HIT_TICKS);
+    assert!(world.raiders[0].tethered && world.raiders[0].active());
+    assert_eq!((world.raiders[0].at, world.raiders[1].at), (ally, back), "then the swap");
+    assert_eq!(world.raiders[1].health, 180 - 20);
+}
+
+#[test]
+fn shattered_glass_breaks_a_crystal_wall_in_one_hit_and_its_shards_slow() {
+    let mut world = ward_world(1, WardKind::CrystalWall, (3, 3));
+    weave(&mut world, &["glass", "brittle_stone"]);
+    put(&mut world, 0, 3, 4);
+    world.raiders[0].task = Task::Break;
+    world.raiders[0].target = world.grid.index(3, 3).unwrap();
+    run_for(&mut world, h::HIT_TICKS);
+    assert!(world.wards[0].broken, "800 health, one hit");
+    assert_eq!(world.shards, vec![world.grid.index(3, 3).unwrap()]);
+    world.raiders[0].task = Task::None;
+    order(&mut world, 0, 3, 2);
+    run_for(&mut world, TICKS_PER_SECOND);
+    let r = &world.raiders[0];
+    assert!(r.slowed_until > world.tick, "crossing the shards");
+    assert_eq!(world.pace_here(world.grid.tile_at(r.at.x, r.at.y), true, r.slowed_until),
+               (7, 10), "30% slower");
+}
+
+#[test]
+fn honey_trap_sticks_whoever_comes_to_touch_a_regrown_hedge() {
+    let mut world = ward_world(1, WardKind::ThornHedge, (5, 3));
+    weave(&mut world, &["honeycomb", "bloom"]);
+    world.wards[0].regrown = true;
+    put(&mut world, 0, 2, 3);
+    order(&mut world, 0, 4, 3);
+    let mut stuck = None;
+    for _ in 0..(3 * TICKS_PER_SECOND) {
+        world.step();
+        if stuck.is_none() && world.raiders[0].frozen_until > 0 {
+            stuck = Some((world.tick - 1, world.raiders[0].frozen_until, tile_of(&world, 0)));
+        }
+    }
+    let (at, until, tile) = stuck.expect("it touches the hedge");
+    assert_eq!((until - at, tile), (h::HONEY_TICKS, (4, 3)), "a second, beside it");
+}
+
+#[test]
+fn northern_lights_makes_the_bands_the_only_light() {
+    let mut world = vault_world(0);
+    weave(&mut world, &["aurora", "glowing_dark"]);
+    world.tick = 150;                               // the band is on rows 6 and 7
+    assert!(!world.unlit(world.grid.index(3, 6).unwrap()), "inside the band: lit");
+    assert!(world.unlit(world.grid.index(3, 1).unwrap()), "outside it: dark");
+}
+
+// Chords (§8.5) -----------------------------------------------------------
+
+#[test]
+fn tempest_speeds_everyone_and_lights_the_realm_every_twenty_seconds() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["half_gravity", "brittle_stone", "glass"]);
+    assert!(world.combos.chord(Chord::Tempest));
+    assert_eq!(world.sheet.factor(P::CrewSpeed), (6, 5));
+    assert_eq!(world.sheet.factor(P::GuardSpeed), (6, 5));
+    run_for(&mut world, h::TEMPEST_TICKS + 1);
+    assert_eq!(world.light, Some((true, h::TEMPEST_TICKS + h::TEMPEST_FLASH_TICKS)));
+}
+
+#[test]
+fn deep_sleep_dozes_every_guard_and_muffles_footsteps() {
+    let sleep = ["slow_rivers", "stillness", "kinship"];
+    assert!(heard(&[], 4, Gait::Walk), "walking carries two steps");
+    assert!(!heard(&sleep, 4, Gait::Walk), "muffled to one");
+    let mut world = vault_world(1);
+    weave(&mut world, &sleep);
+    let g = post(&mut world, 0, 12, 2);
+    run_for(&mut world, h::DEEP_SLEEP_TICKS + 1);
+    assert_eq!(world.guards[g].stunned_until, h::DEEP_SLEEP_TICKS + h::DOZE_TICKS);
+}
+
+#[test]
+fn ghost_tide_sends_the_knocked_out_back_to_where_they_landed() {
+    let mut world = vault_world(2);
+    weave(&mut world, &["half_gravity", "echoes", "stillness"]);
+    put(&mut world, 1, 9, 9);
+    world.raiders[1].revived = true;                // Echoes already spent
+    world.raiders[1].health = 0;
+    run_for(&mut world, h::DOWN_TICKS + 2);
+    let r = &world.raiders[1];
+    assert!(r.active(), "not caught");
+    assert_eq!(tile_of(&world, 1), (1, 0), "its landing tile");
+    assert_eq!(r.health, 180 * 30 / 100, "at the revive health");
+}
+
+#[test]
+fn fair_lights_draws_the_nearest_guard_to_an_illusion() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["glass", "kinship", "soul_swap"]);
+    let near = post(&mut world, 0, 12, 2);
+    put(&mut world, 0, 0, 12);
+    run_for(&mut world, h::FAIR_LIGHTS_TICKS + 1);
+    let g = &world.guards[near];
+    assert_eq!(g.state, State::Investigating);
+    assert!(g.interest.is_some_and(|t| world.bare(t)), "drawn to open ground");
+}
+
+#[test]
+fn iron_bell_carries_sound_two_further_and_sight_two_shorter() {
+    let bell = ["slow_rivers", "echoes", "glass"];
+    assert!(!heard(&[], 6, Gait::Walk), "four steps: walking carries two");
+    assert!(heard(&bell, 6, Gait::Walk), "two more");
+    let mut world = scout_and_raider(15, 0);
+    world.weave(&[("slow_rivers", (0, 13)), ("echoes", (1, 13)), ("glass", (2, 13))]);
+    assert_eq!(rate(&world), Some(33), "1.5 m is seen as 3.5: the mid zone, not near");
+}
+
+#[test]
+fn mirage_shows_a_moving_crew_member_on_the_tile_it_just_left() {
+    let mut world = scout_and_raider(20, 0);          // (8, 6), east of the Scout
+    world.weave(&[("half_gravity", (0, 13)), ("soul_swap", (1, 13)), ("glass", (2, 13))]);
+    assert!(world.combos.chord(Chord::Mirage));
+    let from = world.grid.tile_at(world.raiders[0].at.x, world.raiders[0].at.y).unwrap();
+    world.raiders[0].route = vec![world.grid.index(9, 6).unwrap(), world.grid.index(10, 6).unwrap()];
+    while tile_of(&world, 0) != (9, 6) {
+        world.step();
+    }
+    assert!(!world.raiders[0].still());
+    assert_eq!(world.noticed(0, 0).map(|(_, t)| t), Some(from), "seen where it was");
+}
+
+#[test]
+fn clockwork_triggers_every_ward_together_every_fifteen_seconds() {
+    let mut world = ward_world(1, WardKind::LanternGlare, (12, 12));
+    weave(&mut world, &["slow_rivers", "brittle_stone", "echoes"]);
+    assert!(world.combos.chord(Chord::Clockwork));
+    put(&mut world, 0, 1, 1);                       // nowhere near it
+    run_for(&mut world, h::CLOCKWORK_TICKS + 1);
+    assert_eq!(world.revealed_until, h::CLOCKWORK_TICKS + h::GLARE_REVEAL_TICKS, "it fired");
+}
+
+#[test]
+fn wild_hunt_silences_running() {
+    let hunt = ["half_gravity", "brittle_stone", "stillness"];
+    assert!(heard(&[], 5, Gait::Run));
+    assert!(!heard(&hunt, 5, Gait::Run), "running makes no noise at all");
+    assert!(heard(&hunt, 4, Gait::Walk), "walking still does");
+}
+
+#[test]
+fn hidden_garden_spreads_tall_grass_a_tile_a_minute() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["kinship", "stillness", "soul_swap"]);
+    world.grid.place(9, 9, Feature::TallGrass);
+    put(&mut world, 0, 0, 1);
+    run_for(&mut world, h::HIDDEN_GARDEN_TICKS);
+    assert_eq!(world.grid.feature(world.grid.index(9, 8).unwrap()), None, "not yet");
+    world.step();
+    for (x, y) in [(9, 8), (10, 9), (9, 10), (8, 9)] {
+        assert_eq!(world.grid.feature(world.grid.index(x, y).unwrap()), Some(Feature::TallGrass));
+    }
+}
+
+#[test]
+fn lantern_festival_returns_each_character_once_at_the_revive_health() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["glass", "kinship", "regrowth"]);
+    assert_eq!(world.revival(), Some(crate::Revival::Return(3, 10)));
+    put(&mut world, 0, 3, 3);
+    world.raiders[0].health = 0;
+    world.step();
+    assert!(world.raiders[0].active());
+    assert_eq!(world.raiders[0].health, 120 * 3 / 10);
+}
+
+#[test]
+fn quicksand_opens_hidden_pits_that_drop_whoever_steps_in() {
+    let mut world = vault_world(1);
+    weave(&mut world, &["slow_rivers", "soul_swap", "stillness"]);
+    world.step();
+    assert_eq!(world.pits.len(), h::QUICKSAND_PITS);
+    let pit = world.pits[0];
+    let (px, py) = world.grid.coords(pit);
+    let beside = world.grid.neighbours(pit).into_iter().flatten()
+        .find(|&t| world.grid.at(t).passable() && !world.pits.contains(&t)).unwrap();
+    let (bx, by) = world.grid.coords(beside);
+    put(&mut world, 0, bx, by);
+    order(&mut world, 0, px as i16, py as i16);
+    let mut fell = None;
+    for _ in 0..(4 * TICKS_PER_SECOND) {
+        world.step();
+        if fell.is_none() && world.raiders[0].frozen_until > 0 {
+            fell = Some((world.tick - 1, world.raiders[0].frozen_until));
+        }
+    }
+    let (at, until) = fell.expect("it steps in");
+    assert_eq!(until - at, h::PIT_HOLD_TICKS, "a second to climb out");
+}
+
+#[test]
+fn rebound_bounces_every_stun_on_to_the_nearest_enemy() {
+    let mut world = vault_world(2);
+    weave(&mut world, &["half_gravity", "echoes", "static"]);
+    assert!(world.combos.chord(Chord::Rebound));
+    put(&mut world, 0, 1, 3);
+    put(&mut world, 1, 7, 3);
+    let g = post(&mut world, 0, 9, 3);
+    world.guards[g].knocked_out = false;
+    world.guards[g].facing = Ang::from_degrees(0);  // east: its back to the crew
+    order(&mut world, 0, 6, 3);
+    let mut both = None;
+    for _ in 0..(4 * TICKS_PER_SECOND) {
+        world.step();
+        if both.is_none() && world.raiders[1].frozen_until > 0 {
+            both = Some((world.raiders[1].frozen_until, world.guards[g].stunned_until));
+        }
+    }
+    let (ally, guard) = both.expect("a touch");
+    assert_eq!(ally, guard, "the same stun, bounced on");
 }
