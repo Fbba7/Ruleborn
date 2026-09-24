@@ -7,7 +7,9 @@ class_name Strings
 ## pseudo-locale in the tests wraps every catalogue string, so a word typed
 ## into a script shows up unwrapped and fails.
 
-const CATALOGUE := "res://i18n/strings.csv"
+## The client's own words, and the content's names (law, note, resonance,
+## chord, ward, ground), which tools/client_strings.py writes from content/.
+const CATALOGUES := ["res://i18n/strings.csv", "res://i18n/content.csv"]
 const LOCALES := ["en", "pt_BR"]
 
 static var _loaded := false
@@ -23,24 +25,28 @@ static func rows() -> Dictionary:
 
 static func _load() -> void:
 	_loaded = true
-	var file := FileAccess.open(CATALOGUE, FileAccess.READ)
-	if file == null:
-		push_error("no string catalogue at %s" % CATALOGUE)
-		return
-	var header := file.get_csv_line()
 	var translations := {}
-	for locale in header.slice(1):
-		var t := Translation.new()
-		t.locale = locale
-		translations[locale] = t
-	while not file.eof_reached():
-		var line := file.get_csv_line()
-		if line.size() < header.size() or line[0] == "":
+	for path in CATALOGUES:
+		var file := FileAccess.open(path, FileAccess.READ)
+		if file == null:
+			push_error("no string catalogue at %s" % path)
 			continue
-		_rows[line[0]] = {}
-		for i in range(1, header.size()):
-			_rows[line[0]][header[i]] = line[i]
-			translations[header[i]].add_message(line[0], line[i])
+		var header := file.get_csv_line()
+		for locale in header.slice(1):
+			if not translations.has(locale):
+				var t := Translation.new()
+				t.locale = locale
+				translations[locale] = t
+		while not file.eof_reached():
+			var line := file.get_csv_line()
+			if line.size() < header.size() or line[0] == "":
+				continue
+			if _rows.has(line[0]):
+				push_error("%s is in two catalogues" % line[0])
+			_rows[line[0]] = {}
+			for i in range(1, header.size()):
+				_rows[line[0]][header[i]] = line[i]
+				translations[header[i]].add_message(line[0], line[i])
 	for t in translations.values():
 		TranslationServer.add_translation(t)
 

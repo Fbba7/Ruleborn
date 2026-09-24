@@ -26,7 +26,10 @@ func _ready() -> void:
 	column.add_child(UI.grow())
 	var actions := UI.row()
 	actions.add_child(UI.button(Strings.t("RESULT_WATCH"), func(): get_tree().change_scene_to_file("res://scenes/replay_screen.tscn"), true))
-	actions.add_child(UI.button(Strings.t("RESULT_AGAIN"), func(): get_tree().change_scene_to_file("res://scenes/heist_screen.tscn")))
+	if Session.testing:
+		actions.add_child(UI.button(Strings.t("RESULT_BUILDER"), func(): get_tree().change_scene_to_file("res://scenes/builder.tscn")))
+	else:
+		actions.add_child(UI.button(Strings.t("RESULT_AGAIN"), func(): get_tree().change_scene_to_file("res://scenes/heist_screen.tscn")))
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func(): get_tree().change_scene_to_file("res://scenes/home.tscn")))
 	column.add_child(actions)
 	show_verdict(Session.verdict, Session.replay.size())

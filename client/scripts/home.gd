@@ -4,6 +4,7 @@ extends Control
 
 func _ready() -> void:
 	Settings.restore()
+	Session.testing = false
 	var column := UI.frame(self)
 	column.add_child(UI.grow())
 	column.add_child(UI.label(Strings.t("APP_NAME"), 48))
@@ -14,5 +15,6 @@ func _ready() -> void:
 	actions.add_child(UI.button(Strings.t("HOME_WATCH"), func(): get_tree().change_scene_to_file("res://scenes/replay_screen.tscn")))
 	column.add_child(actions)
 	var more := UI.row()
+	more.add_child(UI.button(Strings.t("HOME_BUILD"), func(): get_tree().change_scene_to_file("res://scenes/builder.tscn")))
 	more.add_child(UI.button(Strings.t("HOME_SETTINGS"), func(): get_tree().change_scene_to_file("res://scenes/settings.tscn")))
 	column.add_child(more)

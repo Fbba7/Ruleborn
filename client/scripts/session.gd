@@ -7,6 +7,9 @@ static var replay := PackedByteArray()
 static var verdict := {}
 ## The island the replay was played on; empty for the fixture realm.
 static var island := PackedByteArray()
+## Raiding the player's own island from the builder: the heist plays
+## `island` offline, and the result screen offers the way back.
+static var testing := false
 
 
 ## Where server/ is. Unset, the client plays offline on the fixture realm and

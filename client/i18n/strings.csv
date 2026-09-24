@@ -61,3 +61,32 @@ SETTINGS_REDUCED_MOTION_OFF,Motion: full,Movimento: normal
 SETTINGS_REDUCED_MOTION_ON,Motion: reduced,Movimento: reduzido
 SETTINGS_HAPTICS_ON,Haptics: on,Vibração: sim
 SETTINGS_HAPTICS_OFF,Haptics: off,Vibração: não
+HOME_BUILD,Build your island,Construir sua ilha
+BUILDER_TITLE,"Your island, realm level %d","Sua ilha, reino nível %d"
+BUILDER_HINT,Tap the realm to place what is chosen below,Toque no reino para pôr o que está escolhido abaixo
+BUILDER_TOOL_GROUND,Ground,Terreno
+BUILDER_TOOL_WARD,Ward,Proteção
+BUILDER_TOOL_GUARD,Guard,Guarda
+BUILDER_TOOL_LAW,Law,Lei
+BUILDER_TOOL_VAULT,Vault,Cofre
+BUILDER_TOOL_ERASE,Erase,Apagar
+BUILDER_BARE,Bare ground,Chão limpo
+BUILDER_LEVEL,Level %d,Nível %d
+BUILDER_SAVE,Save,Salvar
+BUILDER_SAVED,Saved on this phone,Salva neste celular
+BUILDER_RAID,Raid it,Invadir
+BUILDER_READY,"Ready to raid: %d of %d wards, %d of %d guards, %d of %d laws","Pronta para invadir: %d de %d proteções, %d de %d guardas, %d de %d leis"
+BUILDER_BLOCKED,Not ready: %s,Ainda não: %s
+BUILDER_TOGETHER,Together: %s,Juntas: %s
+BUILDER_ALONE,The laws make nothing together yet,As leis ainda não fazem nada juntas
+BUILDER_HARMONY,%s harmony,harmonia de %s
+BUILDER_CLASH,%s clash,choque de %s
+PROBLEM_TOOMANYWARDS,too many wards for the realm,proteções demais para o reino
+PROBLEM_TOOMANYGUARDS,too many guards for the realm,guardas demais para o reino
+PROBLEM_TOOMANYLAWS,too many laws for the realm,leis demais para o reino
+PROBLEM_UNKNOWNLAW,a law this version does not have,uma lei que esta versão não tem
+PROBLEM_CROWDED,two things on one tile,duas coisas numa casa
+PROBLEM_POSTBLOCKED,a guard where it cannot stand,um guarda onde não pode ficar
+PROBLEM_LANDINGBLOCKED,the landing is blocked,o desembarque está bloqueado
+PROBLEM_SEALED,no path reaches the Vault,nenhum caminho chega ao Cofre
+RESULT_BUILDER,Back to the builder,Voltar ao construtor

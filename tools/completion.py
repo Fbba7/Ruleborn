@@ -210,11 +210,13 @@ DELIVERABLES = [
         "the result screen shows the validator's verdict: the re-simulation's grade, or nothing paid when refused",
         "a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server")),
 
-    ("4", "Terrain editing", FRONTEND, not_started("the builder places §6.2's features on a grid")),
-    ("4", "Laws on the island", FRONTEND, not_started("the builder weaves laws and places pylons")),
+    ("4", "Terrain editing", FRONTEND, client_tests(
+        "the builder lays §6.2's ground on the realm's grid, and the island it writes reads back the same")),
+    ("4", "Laws on the island", FRONTEND, client_tests(
+        "the builder weaves laws and places their pylons, holds the realm to its law slots, and names what the laws make together (§8.6)")),
     ("4", "Bundle serialisation", BACKEND, systems("Island bundles", "Publishing rules")),
-    ("4", "Testing your own defence", FRONTEND, not_started(
-        "a player can raid their own island from the builder")),
+    ("4", "Testing your own defence", FRONTEND, client_tests(
+        "a player can raid their own island from the builder: the heist plays it, the server's check judges it, and the result leads back")),
 
     ("5", "24 laws as validated data", BACKEND, content_count(
         "laws.json", 24, lambda rows: [r for r in rows if r.get("launch")])),

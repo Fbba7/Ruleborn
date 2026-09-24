@@ -18,9 +18,26 @@ after building.
 
 ## What is here
 
-Five screens, opened from `scenes/home.tscn`:
+Six screens, opened from `scenes/home.tscn`:
 
-**Home.** Play a heist, watch replays, or change the settings.
+**Home.** Play a heist, watch replays, build your island, or change the
+settings.
+
+**The builder** (`scenes/builder.tscn`). An island, built (§13): lay ground on
+the realm's grid, post guards, place wards, weave laws with their pylons, move
+the Vault, and start a blank realm of any level. Every edit goes through
+`RulebornIsland` — the simulation's own island and its own editing methods —
+so the client never writes the bundle format, and whether the island may be
+raided is `Island::check`, the rules the server publishes by, shown as
+sentences until they are all met. What the woven laws make together (§8's
+harmonies, clashes, resonances and chords) is named as they are woven. The
+realm is drawn by the heist's own view, from a heist started on the island, so
+what the builder shows is what a raider meets. Raid it plays the island on the
+heist screen, offline, and the result leads back to the builder; the island is
+kept on the phone. The ground offered is the eight of §6.2's thirty-nine
+features the simulation models — rock pillar, ruin wall, fence, fog bank, tall
+grass, gravel path, stream and raised ground — and the laws are §7.10's
+launch twenty-four.
 
 **The heist screen** (`scenes/heist_screen.tscn`). A heist on the fixture
 realm, played: the world steps in real time and every tap becomes a simulation
@@ -64,7 +81,11 @@ contrast wait for the accessibility pass rather than being offered before they
 work.
 
 **Words.** No screen holds text of its own. Every word comes from
-`i18n/strings.csv` — one row a key, one column a language, English and
+`i18n/strings.csv`, or — for the content's own names, laws, notes,
+resonances, chords, wards and ground — from `i18n/content.csv`, which
+`tools/client_strings.py` writes from `content/` so each name keeps one home;
+its Portuguese column holds the English names until §26.9's read-aloud.
+Both reach the screens — one row a key, one column a language, English and
 Brazilian Portuguese (§20.6) — through `scripts/strings.gd`, so a language is a
 column and adding one touches no script. The Portuguese is a working draft for
 these test screens: §26.9 puts the coined vocabulary's native-speaker
@@ -113,7 +134,12 @@ and what the player does is what the server re-plays.
   script instead;
 - settings changed on the settings screen are saved as they change and
   restored on the next launch, the language and the audio buses with them
-  (against a file of the tests' own, never a player's).
+  (against a file of the tests' own, never a player's);
+- the builder lays ground on the grid and the island it writes reads back the
+  same; it weaves laws and places their pylons, holds the realm to its law
+  slots and names what the laws make together; and a player can raid their own
+  island from it — the heist plays that island, the server's check judges the
+  replay, and the result leads back to the builder.
 
 To look at it without a desktop, `tests/screenshot.gd` renders a still under a
 virtual display:
@@ -143,9 +169,9 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.5-stable_linux.x
 
     project.godot           portrait, 1080 × 2340, the compatibility renderer
     ruleborn.gdextension    loads bin/libruleborn_godot.so
-    ext/                    the extension: RulebornReplay, over sim/
+    ext/                    the extension: RulebornReplay and RulebornIsland, over sim/
     i18n/strings.csv        every word on screen, a column a language
-    scenes/                 home, heist, result, replay and settings screens
+    scenes/                 home, heist, result, replay, settings and builder screens
     scripts/                the screens, the realm view and heads-up display,
                             the shared UI pieces, the palette, the string catalogue,
                             the saved settings, the session hand-off,

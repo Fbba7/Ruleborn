@@ -7,6 +7,8 @@
 //! the replay carries, so a client that drifted from the server would say so
 //! on screen rather than show a different heist (§24.10).
 
+mod island;
+
 use godot::prelude::*;
 use ruleborn_sim as sim;
 use sim::fixed::{Ang, Fx, ANG_TURN, FX_ONE};
@@ -264,6 +266,14 @@ impl RulebornReplay {
         (0..w.grid.len())
             .map(|i| w.grid.feature(i as _).map_or(0, |f| f as u8 + 1))
             .collect()
+    }
+
+    /// Each tile's surface, row by row: 0 plain, 1 gravel, 2 water, 3 moss,
+    /// in `sim::grid::Surface`'s order.
+    #[func]
+    fn surfaces(&self) -> PackedByteArray {
+        let Some(w) = self.world.as_ref() else { return PackedByteArray::new() };
+        (0..w.grid.len()).map(|i| w.grid.surface(i as _) as u8).collect()
     }
 
     /// Each tile's height in levels, row by row.

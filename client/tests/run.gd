@@ -6,7 +6,7 @@ extends SceneTree
 ## A test that errors stops its coroutine, and a stopped coroutine never
 ## quits; so the run has a deadline, and missing it is a failure.
 const DEADLINE_SECONDS := 120.0
-const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings"]
+const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder"]
 
 var _n := 0
 var _failed := 0
@@ -56,6 +56,8 @@ func _run() -> void:
 	OS.unset_environment("RULEBORN_SERVER")
 	# The tests' own settings file, so a run never touches a player's.
 	Settings.path = "user://settings-test.cfg"
+	BuilderScreen.path = "user://island-test.rbi"
+	DirAccess.remove_absolute(BuilderScreen.path)
 	DirAccess.remove_absolute(Settings.path)
 	Settings.restore()
 	Settings.change(func(): Settings.locale = "en")
@@ -280,6 +282,70 @@ func _run() -> void:
 	Settings.read_file()
 	Settings.change(func(): Settings.locale = "en")
 	await process_frame
+
+	# The builder (§13): ground on the grid, laws and their pylons, and a raid
+	# on what was built — every edit through the simulation's own island.
+	var builder: BuilderScreen = await _mount("builder")
+	builder.tool = BuilderScreen.Tool.GROUND
+	var laid := {Vector2i(2, 4): "rock_pillar", Vector2i(3, 4): "gravel_path",
+		Vector2i(4, 4): "stream", Vector2i(5, 4): "raised_ground", Vector2i(6, 4): "tall_grass"}
+	for at in laid:
+		builder.kind = builder.kinds().find(laid[at])
+		builder.tap_tile(at)
+	var reread := RulebornIsland.new()
+	var same := reread.read(builder.island.bytes())
+	for at in laid:
+		same = same and reread.ground(at.x, at.y) == laid[at] and builder.island.ground(at.x, at.y) == laid[at]
+	var side := builder.island.side()
+	var drawn := builder.preview.features()[4 * side + 2] == RealmView.Tile.ROCK_PILLAR \
+		and builder.preview.surfaces()[4 * side + 4] == 2
+	check("the builder lays §6.2's ground on the realm's grid, and the island it writes reads back the same",
+		same and drawn and builder.island.problems().is_empty(), "%s" % builder.island.problems())
+
+	builder.tool = BuilderScreen.Tool.LAW
+	for step in [["haste", Vector2i(1, 10)], ["brittle_stone", Vector2i(11, 2)]]:
+		builder.kind = builder.kinds().find(step[0])
+		builder.tap_tile(step[1])
+	var pylons := builder.island.occupant(1, 10) == "pylon:haste" and builder.island.occupant(11, 2) == "pylon:brittle_stone"
+	var harmony := builder.together_label.text.contains(Strings.t("NOTE_SPARK"))
+	var ready := not builder.raid_button.disabled
+	builder.kind = builder.kinds().find("glowing_dark")
+	builder.tap_tile(Vector2i(8, 8))
+	var over := builder.island.problems().has("TooManyLaws") and builder.raid_button.disabled \
+		and builder.status_label.text.contains(Strings.t("PROBLEM_TOOMANYLAWS"))
+	var chord := "wild_hunt" in Array(builder.island.combos()["chords"])
+	check("the builder weaves laws and places their pylons, holds the realm to its law slots, and names what the laws make together (§8.6)",
+		pylons and harmony and ready and over and chord,
+		"%s / %s / %s" % [builder.status_label.text, builder.together_label.text, builder.island.combos()])
+
+	builder.tool = BuilderScreen.Tool.ERASE
+	builder.tap_tile(Vector2i(8, 8))
+	builder.tool = BuilderScreen.Tool.WARD
+	builder.kind = builder.kinds().find("time_snare")
+	builder.tap_tile(Vector2i(9, 3))
+	builder.tool = BuilderScreen.Tool.GUARD
+	builder.kind = 1
+	builder.tap_tile(Vector2i(8, 6))
+	builder.raid()
+	var built := builder.island.bytes()
+	var kept := FileAccess.get_file_as_bytes(BuilderScreen.path) == built
+	builder.queue_free()
+	await process_frame
+	var own: HeistScreen = await _mount("heist_screen")
+	own.set_process(false)
+	var on_own := own.island == built and Session.testing
+	own.advance(own.world.ticks())
+	var judged := Session.verdict
+	own.queue_free()
+	await process_frame
+	var after: ResultScreen = await _mount("result_screen")
+	var way_back := after.find_children("*", "Button", true, false).any(
+		func(b): return b.text == Strings.t("RESULT_BUILDER"))
+	after.queue_free()
+	Session.testing = false
+	await process_frame
+	check("a player can raid their own island from the builder: the heist plays it, the server's check judges it, and the result leads back",
+		kept and on_own and judged.get("ok", false) and way_back, "%s" % judged)
 
 	# No screen holds text of its own. In a pseudo-locale that wraps every
 	# catalogue string in ⟦ ⟧, any word on screen that is not wrapped was typed

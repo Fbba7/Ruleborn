@@ -198,6 +198,7 @@ tools/
   note_rebalance.py               the note rebalance §8.8 says is already done
   roadmap.py                      the roadmap, as data
   build_roadmap.py                renders it, computing progress from the register
+  client_strings.py               writes client/i18n/content.csv, the content's names, from content/
   completion.py                   how close the app is to built, backend and frontend, from §26.8's costs and passing proofs
   parse_gate_results.py           scores the gates from testers' result codes
   build_prototype.py              renders the throwaway browser build of the two pre-code gates

@@ -20,6 +20,12 @@ const PANEL := Color(0.9882, 0.9843, 1.0, 0.85)
 const ALARM := Color("#E2536B")
 const SUCCESS := Color("#3FBF7F")
 
+## Water and gravel under the features. §21.2 names no colour for either, so
+## these are the client's: water in Time's blue, lightened; gravel a darker
+## stone.
+const WATER := Color("#9ADFE8")
+const GRAVEL := Color("#B9AE9F")
+
 # §21.2's school colours: main, shadow.
 const MOTION := Color("#F2B43C")
 const MOTION_SHADOW := Color("#B8741E")

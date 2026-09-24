@@ -43,7 +43,9 @@ var island := PackedByteArray()
 func _ready() -> void:
 	world.start(SEED, TICKS, CREW, PackedByteArray())
 	_build()
-	if Session.server_url() == "":
+	if Session.testing:
+		begin(SEED, TICKS, CREW, Session.island)
+	elif Session.server_url() == "":
 		begin(SEED, TICKS, CREW)
 	else:
 		playing = false

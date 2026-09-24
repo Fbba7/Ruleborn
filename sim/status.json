@@ -3,6 +3,7 @@
  "ticks": 7200,
  "floats_absent": true,
  "tests": {
+  "a_blank_island_is_publishable_and_round_trips": "passed",
   "a_bloom_harmony_makes_healing_and_regrowth_a_quarter_stronger": "passed",
   "a_body_in_tall_grass_is_not_found": "passed",
   "a_breaker_cracks_at_double_damage_and_a_helper_adds_a_quarter": "passed",
@@ -70,6 +71,7 @@
   "an_alerted_guard_hits_once_every_eight_tenths_for_its_power": "passed",
   "an_ambush_knocks_out_every_role_of_guard_after_a_two_second_takedown": "passed",
   "an_echo_harmony_makes_returns_a_quarter_stronger": "passed",
+  "an_edited_island_is_one_the_format_can_write_and_check_can_judge": "passed",
   "an_island_is_one_encoding_and_one_hash": "passed",
   "an_island_keeps_to_5_2_and_6_1_or_is_not_published": "passed",
   "an_open_hit_sends_suspicion_straight_to_1000": "passed",

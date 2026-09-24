@@ -19,6 +19,7 @@ var selected_guard := -1
 var _size := Vector2i.ZERO
 var _features := PackedByteArray()
 var _heights := PackedByteArray()
+var _surfaces := PackedByteArray()
 
 
 func show_replay(r: RulebornReplay) -> void:
@@ -26,6 +27,7 @@ func show_replay(r: RulebornReplay) -> void:
 	_size = r.size()
 	_features = r.features()
 	_heights = r.heights()
+	_surfaces = r.surfaces()
 	queue_redraw()
 
 
@@ -61,6 +63,11 @@ func _draw() -> void:
 			var h := _heights[i] if i < _heights.size() else 0
 			if h > 0:
 				draw_rect(r, Palette.STONE.darkened(0.08 * h))
+			match _surfaces[i] if i < _surfaces.size() else 0:
+				1:
+					draw_rect(r.grow(-t * 0.04), Palette.GRAVEL)
+				2:
+					draw_rect(r, Palette.WATER)
 			_draw_feature(_features[i], r, t)
 	_draw_vault(t)
 	for ward in replay.wards():

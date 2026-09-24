@@ -407,9 +407,11 @@
       "name": "Publishing rules",
       "section": "5.2",
       "task": "T3.3",
-      "what": "5.2's ward limit, guard posts and law slots by realm level, one thing a tile, open landing tiles, and 6.1's route to the Vault with every Crystal Wall standing.",
+      "what": "5.2's ward limit, guard posts and law slots by realm level, one thing a tile, open landing tiles, and 6.1's route to the Vault with every Crystal Wall standing. A builder edits an island through `Island`'s own methods — ground features, posts, wards, woven laws and their pylons, the Vault — each keeping it an island the format can write, and `check` alone says whether it may be published.",
       "tests": [
-        "an_island_keeps_to_5_2_and_6_1_or_is_not_published"
+        "an_island_keeps_to_5_2_and_6_1_or_is_not_published",
+        "a_blank_island_is_publishable_and_round_trips",
+        "an_edited_island_is_one_the_format_can_write_and_check_can_judge"
       ]
     },
     {

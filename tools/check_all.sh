@@ -43,6 +43,7 @@ python3 server/status.py
 
 echo
 echo "== the client: the same simulation inside Godot, and its screen =="
+python3 tools/client_strings.py --check
 python3 client/status.py
 
 echo

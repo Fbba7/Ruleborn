@@ -3366,3 +3366,46 @@ fn rebound_bounces_every_stun_on_to_the_nearest_enemy() {
     let (ally, guard) = both.expect("a touch");
     assert_eq!(ally, guard, "the same stun, bounced on");
 }
+
+// --------------------------------------------------------------------------
+// Editing an island, as the builder does
+// --------------------------------------------------------------------------
+
+use crate::island::{Island, Occupant, Problem};
+
+#[test]
+fn a_blank_island_is_publishable_and_round_trips() {
+    for level in 1..=5 {
+        let island = Island::blank(level);
+        assert_eq!(island.check(), vec![], "realm level {level}");
+        assert_eq!(Island::decode(&island.encode()).unwrap(), island);
+    }
+}
+
+#[test]
+fn an_edited_island_is_one_the_format_can_write_and_check_can_judge() {
+    let mut island = Island::blank(3);
+    assert!(island.set_feature(2, 4, Some(Feature::RockPillar)));
+    assert!(!island.set_feature(2, 4, Some(Feature::Vault)), "the Vault comes from its own list");
+    assert!(island.weave("haste", 1, 10));
+    assert!(island.weave("haste", 2, 10), "a law is woven once: its pylon moves");
+    assert_eq!(island.laws, vec![("haste".to_string(), 2, 10)]);
+    assert!(!island.weave("no_such_law", 3, 3));
+    assert!(island.place_ward(WardKind::TimeSnare, 5, 5));
+    assert!(island.post_guard(1, 7, 7));
+    assert!(island.post_guard(2, 7, 7), "a post replaces what stood there");
+    assert_eq!(island.guards.len(), 1);
+    assert_eq!(island.occupant(5, 5), Occupant::Ward(0));
+    let (vx, vy) = island.vault;
+    assert!(!island.place_ward(WardKind::TimeSnare, vx, vy), "the Vault cannot be covered");
+    assert!(!island.clear(vx, vy), "or removed, only moved");
+    assert_eq!(Island::decode(&island.encode()).unwrap(), island);
+    assert_eq!(island.check(), vec![]);
+    // Walls round the Vault seal it (§6.1), and check says so.
+    for (x, y) in [(vx - 1, vy), (vx + 1, vy), (vx, vy - 1), (vx, vy + 1)] {
+        island.set_feature(x, y, Some(Feature::RockPillar));
+    }
+    assert_eq!(island.check(), vec![Problem::Sealed]);
+    assert!(island.clear(vx - 1, vy));
+    assert_eq!(island.check(), vec![]);
+}

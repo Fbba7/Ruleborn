@@ -127,6 +127,16 @@ pub enum Malformed {
     LawId,
 }
 
+/// What stands on a tile, by its place in the island's list.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Occupant {
+    None,
+    Vault,
+    Pylon(usize),
+    Ward(usize),
+    Guard(usize),
+}
+
 /// Why an island may not be published. Each is a rule of the document's,
 /// and `Problem::bit` is its place in the mask the WebAssembly build returns.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -458,6 +468,157 @@ impl Island {
         found
     }
 
+    // -- Editing: what a builder does to an island ------------------------
+    //
+    // Each edit keeps the island one `encode` can write, and nothing more:
+    // whether the result may be published is `check`'s to say, so a builder
+    // shows the problems rather than a second copy of the rules refusing taps.
+
+    /// A blank realm to build on: `empty`, with the Vault in the middle of
+    /// the far side from the landing and the entrance in the far corner.
+    pub fn blank(realm_level: u8) -> Island {
+        let mut island = Island::empty(realm_level);
+        let side = island.side() as u8;
+        island.vault = (side / 2, side - 3);
+        island.entrance = (side - 1, side - 1);
+        island.vault_level = 1;
+        island
+    }
+
+    fn on_grid(&self, x: u8, y: u8) -> bool {
+        (x as u16) < self.side() && (y as u16) < self.side()
+    }
+
+    /// What stands on a tile, beyond its ground: the Vault, a pylon, a ward
+    /// or a guard post.
+    pub fn occupant(&self, x: u8, y: u8) -> Occupant {
+        if self.vault == (x, y) {
+            return Occupant::Vault;
+        }
+        if let Some(i) = self.laws.iter().position(|(_, lx, ly)| (*lx, *ly) == (x, y)) {
+            return Occupant::Pylon(i);
+        }
+        if let Some(i) = self.wards.iter().position(|(_, wx, wy)| (*wx, *wy) == (x, y)) {
+            return Occupant::Ward(i);
+        }
+        if let Some(i) = self.guards.iter().position(|g| (g.x, g.y) == (x, y)) {
+            return Occupant::Guard(i);
+        }
+        Occupant::None
+    }
+
+    pub fn tile(&self, x: u8, y: u8) -> Option<Tile> {
+        self.on_grid(x, y).then(|| self.tiles[y as usize * self.side() as usize + x as usize])
+    }
+
+    /// §6.2's ground: a feature, or none. Only the ground features — the
+    /// Vault, pylons and Crystal Walls come from their own lists — and a
+    /// feature that stops feet drops the tile's pace, which would mean
+    /// nothing on it (a second encoding, which `decode` refuses).
+    pub fn set_feature(&mut self, x: u8, y: u8, feature: Option<Feature>) -> bool {
+        if !self.on_grid(x, y) || feature_code(feature).is_none() {
+            return false;
+        }
+        let t = self.tile_mut(x as u16, y as u16);
+        t.feature = feature;
+        if blocks_feet(feature) {
+            t.pace = 0;
+        }
+        true
+    }
+
+    pub fn set_surface(&mut self, x: u8, y: u8, surface: Surface) -> bool {
+        if !self.on_grid(x, y) {
+            return false;
+        }
+        self.tile_mut(x as u16, y as u16).surface = surface;
+        true
+    }
+
+    /// §6.2's raised ground, 0 to 3.
+    pub fn set_height(&mut self, x: u8, y: u8, height: u8) -> bool {
+        if !self.on_grid(x, y) || height > 3 {
+            return false;
+        }
+        self.tile_mut(x as u16, y as u16).height = height;
+        true
+    }
+
+    /// Take whatever stands on a tile away — a pylon and its law, a ward, a
+    /// post — or, with nothing standing there, its ground feature. The Vault
+    /// is moved, never removed. True if anything changed.
+    pub fn clear(&mut self, x: u8, y: u8) -> bool {
+        match self.occupant(x, y) {
+            Occupant::Vault => false,
+            Occupant::Pylon(i) => {
+                self.laws.remove(i);
+                true
+            }
+            Occupant::Ward(i) => {
+                self.wards.remove(i);
+                true
+            }
+            Occupant::Guard(i) => {
+                self.guards.remove(i);
+                true
+            }
+            Occupant::None => self.tile(x, y).is_some_and(|t| t.feature.is_some())
+                && self.set_feature(x, y, None),
+        }
+    }
+
+    /// Put something on a tile, replacing whatever stood there. The Vault
+    /// cannot be covered.
+    fn claim(&mut self, x: u8, y: u8) -> bool {
+        if !self.on_grid(x, y) || self.occupant(x, y) == Occupant::Vault {
+            return false;
+        }
+        self.clear(x, y);
+        true
+    }
+
+    pub fn place_ward(&mut self, kind: WardKind, x: u8, y: u8) -> bool {
+        self.claim(x, y) && {
+            self.wards.push((kind, x, y));
+            true
+        }
+    }
+
+    /// A guard post of §12.17's role `row`, 0 to 4.
+    pub fn post_guard(&mut self, row: u8, x: u8, y: u8) -> bool {
+        row < 5 && self.claim(x, y) && {
+            self.guards.push(Post { row, x, y });
+            true
+        }
+    }
+
+    /// Weave a law this rules version has, with its pylon on the tile. A law
+    /// already woven moves its pylon here, since a realm weaves a law once.
+    pub fn weave(&mut self, id: &str, x: u8, y: u8) -> bool {
+        if !LAWS.iter().any(|l| l.id == id) || !self.on_grid(x, y) {
+            return false;
+        }
+        if let Some(i) = self.laws.iter().position(|(l, _, _)| l == id) {
+            self.laws.remove(i);
+        }
+        self.claim(x, y) && {
+            self.laws.push((id.to_string(), x, y));
+            true
+        }
+    }
+
+    /// Move the Vault to a tile, taking what stood there away.
+    pub fn set_vault(&mut self, x: u8, y: u8) -> bool {
+        if !self.on_grid(x, y) {
+            return false;
+        }
+        if self.vault != (x, y) {
+            self.clear(x, y);
+        }
+        self.vault = (x, y);
+        true
+    }
+
     /// §6.1: a route from the landing to a tile beside the Vault, on feet.
     fn reaches_vault(&self, grid: &Grid) -> bool {
         let Some(start) = grid.index(0, 0) else { return false };
@@ -480,11 +641,6 @@ impl Island {
         false
     }
 
-    /// The simulation's fixture realm, as an island: the Heart every test and
-    /// golden replay has been played in. It is a test realm and not a legal
-    /// one — five guard posts where §5.2 allows three at realm level 5, so
-    /// that every row of §12.17's guard table stands somewhere — and `check`
-    /// says so. See `World::new` for why each feature is where it is.
     /// The simulation's fixture realm, as an island: the Heart every test and
     /// golden replay has been played in. It is a test realm and not a legal
     /// one — five guard posts where §5.2 allows three at realm level 5, so
