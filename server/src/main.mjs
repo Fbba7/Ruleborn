@@ -64,6 +64,8 @@ const service = new Service({
   // that moment, in ISO form; without it a fixed Monday, so a local server's
   // seasons do not move between restarts.
   seasonStart: Date.parse(process.env.RULEBORN_SEASON_START ?? "2026-01-05T00:00:00Z"),
+  // §24.3's replays, private: not in the store anyone may fetch by hash.
+  replays: new Store(join(data, "replays")),
 });
 const handle = handler(service);
 
@@ -108,3 +110,11 @@ createServer(async (req, res) => {
 const DAY_MS = 24 * 60 * 60 * 1000;
 service.telemetry.compact();
 setInterval(() => service.telemetry.compact(), DAY_MS).unref();
+service.expireReplays();
+setInterval(() => service.expireReplays(), DAY_MS).unref();
+
+// §14.6's notifications, sent once a minute. Push is Firebase Cloud
+// Messaging (§24.1), which needs the operator's credentials; without them a
+// due notification is written to the log instead (D68).
+const push = (token, message) => console.log(`push ${token.slice(0, 8)}… ${JSON.stringify(message)}`);
+setInterval(() => service.notifications.deliver(push), 60 * 1000).unref();

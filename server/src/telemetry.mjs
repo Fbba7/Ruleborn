@@ -14,14 +14,17 @@
 // events table alone names nobody.
 
 import { createHmac } from "node:crypto";
+import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
 
+const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** §24.3's "30 to 90 days": the longest, so analysis has the most (G29). */
-export const RAW_DAYS = 90;
+export const RAW_DAYS = facts.RAW_KEEP_DAYS[1];
 
 /** §25.4: surveys "never more than once a quarter per player". The monthly
  *  survey §24 names is read as a monthly sample, each player at most once a

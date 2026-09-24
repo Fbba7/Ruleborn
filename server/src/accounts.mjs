@@ -35,7 +35,8 @@ export function deleteAccount(service, account, reason = "requested") {
   const done = transaction(db, () => {
     db.prepare(
       `UPDATE accounts SET platform_identity = ?, deleted_at = COALESCE(deleted_at, ?),
-         deleted_reason = COALESCE(deleted_reason, ?), equipped = '{}' WHERE id = ?`)
+         deleted_reason = COALESCE(deleted_reason, ?), equipped = '{}', push_token = NULL,
+         reminder_at = NULL WHERE id = ?`)
       .run(`deleted:${account}`, now, reason, account);
     // Out of matchmaking and the target lists: an island row is what makes a
     // snapshot a target (service.lease).

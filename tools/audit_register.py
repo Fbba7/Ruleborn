@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6007,7 +6007,7 @@ dict(id="D67", kind="deviation", severity="minor", status="open",
 dict(id="F47", kind="finding", severity="significant", status="open",
      title="§24.1\u2019s budget of five writes a player a day cannot hold one "
            "heist, and a re-simulation is over the free plan\u2019s CPU limit",
-     refs=["9.4", "12.9", "12.22", "18.2", "24.1", "24.12", "28.3"],
+     refs=["9.4", "12.9", "12.22", "13", "18.2", "24.1", "24.12", "28.3"],
      body="§24.1: <em>\u201cBudget: about 100 to 200 kilobytes and five writes per "
           "active player per day. That is the design constraint\u201d</em>. Its cost "
           "table puts 1,000 and 10,000 monthly players at €0 on free plans, and "
@@ -6015,15 +6015,16 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "<em>\u201cseveral times what a million players generate\u201d</em>. The "
           "load test (<code>server/load.mjs</code>, recorded in "
           "<code>server/load.json</code>) plays §14.1\u2019s players through the "
-          "server as built: an engaged player writes at least 42 rows a day, "
-          "8.4 times the budget; a regular one 22 and a casual one 10. A clean "
-          "heist in steady state writes about 13 \u2014 the lease issued and "
+          "server as built: an engaged player writes at least 46 rows a day, "
+          "9.2 times the budget; a regular one 24 and a casual one 11. A clean "
+          "heist in steady state writes about 14 \u2014 the lease issued and "
           "settled, the heist, up to four ledger lines, Renown on both sides, "
-          "stars, two ratings, an event batch \u2014 each of which §24.12, §12.9, "
-          "§18.2 or §12.22 asks for. So five writes cannot carry one heist, let "
-          "alone four. A million engaged players write about 1.26 billion rows "
-          "a month, 25 times the 50 million included; at the paid price in "
-          "§28.3 that is about $1,200 a month, not $5 to $15 (every monthly "
+          "stars, two ratings, an event batch, the defender\u2019s notification "
+          "\u2014 each of which §24.12, §12.9, §18.2, §12.22 or §13 asks for. "
+          "So five writes cannot carry one heist, let "
+          "alone four. A million engaged players write about 1.38 billion rows "
+          "a month, 28 times the 50 million included; at the paid price in "
+          "§28.3 that is about $1,300 a month, not $5 to $15 (every monthly "
           "player active daily is the ceiling, G33). And a re-simulation takes "
           "about 15 ms of CPU (22 ms at the 95th percentile) where §28.3\u2019s free "
           "plan allows <em>\u201c10 milliseconds\u201d</em> a request, so the free plan "
@@ -6050,6 +6051,37 @@ dict(id="G33", kind="gap", severity="minor", status="open",
           "are not measured. Found by the load test.",
      rec="State the daily share of monthly players, and re-run the load test "
          "on the edge platform itself."),
+
+dict(id="G34", kind="gap", severity="minor", status="open",
+     title="Notifications have a night and a list, and no word on gathering, "
+           "a reminder set at night, or whose clock it is",
+     refs=["13", "14.6", "20.2"],
+     body="§14.6 names what may be sent and §20.2 the nights. The server\u2019s "
+          "readings, in <code>notifications.mjs</code>: the night is the "
+          "player\u2019s own clock, which the device reports as an offset from UTC; "
+          "raids that land before a notification is sent are gathered into it, "
+          "so a night of raids is one message in the morning; a reminder the "
+          "player sets inside their night comes when the night ends; the server "
+          "sends a kind and its data, and the device words it in the player\u2019s "
+          "language; an adult\u2019s night is quiet until they open it, and a "
+          "minor\u2019s cannot be opened. Found building notifications.",
+     rec="Say whether raids are gathered, and whether a reminder may be set "
+         "inside the night."),
+
+dict(id="D68", kind="deviation", severity="minor", status="open",
+     title="Notifications are queued and timed on the server, and not yet "
+           "pushed",
+     refs=["14.6", "20.2", "24.1"],
+     body="The server keeps replays for both sides to watch, queues the "
+          "defender\u2019s notification and the chosen daily reminder, holds them "
+          "through the night by age band, and sends what is due through an "
+          "injected push. Not built: Firebase Cloud Messaging itself (§24.1\u2019s "
+          "push row), which needs the operator\u2019s credentials, so "
+          "<code>main.mjs</code> logs a due notification instead; the device\u2019s "
+          "own timers (storage full, a character rested, an experiment "
+          "finished); and asking permission after the third session (§25.2), "
+          "which is the client\u2019s. Found building notifications.",
+     rec="Wire FCM with the operator\u2019s key before the beta."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

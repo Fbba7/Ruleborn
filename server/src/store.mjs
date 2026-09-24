@@ -11,7 +11,7 @@
 // an independent one on every island the server stores.
 
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync, existsSync, renameSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync, existsSync, renameSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 
 export const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -48,6 +48,18 @@ export class Store {
       this.memory.set(key, Uint8Array.from(bytes));
     }
     return key;
+  }
+
+  /** Remove an object. Content-addressed storage is never changed in place,
+   *  but some of it is kept only so long: §24.3's replays. */
+  delete(key) {
+    if (!KEY.test(key)) return;
+    if (this.dir) {
+      const path = this.path(key);
+      if (existsSync(path)) unlinkSync(path);
+    } else {
+      this.memory.delete(key);
+    }
   }
 
   get(key) {

@@ -230,6 +230,26 @@ stand-in chain in `test/fixtures/apple/` (its `make.sh` regenerates it). The
 readings are **G32**; Google Play's side is **D67**; and building this found
 **F46**: every island is public by hash before any scout.
 
+## Replays and notifications
+
+§13: "The defender is notified afterwards and can watch the replay."
+
+- **Replays** are kept in a store of their own (`replays`, apart from the
+  public one anyone may fetch by hash) and served to the heist's raider and
+  defender at `GET /v1/heists/:token/replay`. §24.3 keeps them "30 to 90
+  days": past 90, `expireReplays` (daily, in `main.mjs`) deletes the bytes
+  and keeps the heist row and its hashes.
+- **Notifications** (`src/notifications.mjs`) are §14.6's: "only for things
+  the player can act on". The server sends the two it knows of — a heist
+  against you, and the daily reminder a player chose — through an outbox:
+  nothing goes out in §20.2's night (21:00 to 08:00 at 13 to 15, 22:00 to
+  08:00 at 16 and 17 and, by default, for adults, who may open it), on the
+  player's own clock; raids before a notification is sent are gathered into
+  it. `main.mjs` delivers once a minute, and logs instead of pushing until
+  Firebase Cloud Messaging is configured.
+
+The readings are **G34**, what is not built **D68**.
+
 ## Under load
 
 `load.mjs` is phase 14's load test. It plays §14.1's engaged, regular and
@@ -239,7 +259,7 @@ budgets: rows written a player a day, by what wrote them, and the CPU a
 re-simulation takes. The writes are deterministic, so `server/load.json`
 keeps them and `bash tools/check_all.sh` fails if a change moves them
 (`--write` records a new baseline). What it measured — an engaged day
-writes at least 42 rows against §24.1's five, and a re-simulation takes
+writes at least 46 rows against §24.1's five, and a re-simulation takes
 about 15 ms against the free plan's 10 — is register **F47**; its
 readings are **G33**. Telemetry is written a batch to a row, as §24.1 asks.
 
@@ -332,6 +352,7 @@ built — register **D63**.
     src/glicko.mjs    Glicko-2, pure arithmetic
     src/matchmaking.mjs  §12.22's ratings and offer, §12.3's echoes, shield and Trace
     src/stores.mjs    Apple's proofs: Game Center identities, StoreKit 2 transactions
+    src/notifications.mjs  the outbox: a heist against you, the daily reminder, §20.2's nights
     load.mjs          the load test; load.json its last measurement
     src/workshop.mjs  §18.6's Workshop: publish, browse, play, rate, report, moderate, remix
     src/words.json    the word lists Workshop names come from

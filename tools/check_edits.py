@@ -225,6 +225,8 @@ NO_EDIT_BECAUSE = {
     "F47": "a decision for the owner: the budget and the cost table, re-derived "
            "from what a heist must write",
     "G33": "a figure for the owner: the share of monthly players active on a day",
+    "G34": "decisions for the owner: gathering raids, and reminders at night",
+    "D68": "limits of this build: push needs the operator's credentials",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

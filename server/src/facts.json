@@ -111,6 +111,20 @@
  ],
  "MENDER_REVIVE_SECONDS": 1.5,
  "NEW_PLAYER_SHIELD_HOURS": 72,
+ "NIGHT_HOURS": {
+  "13-15": [
+   21,
+   8
+  ],
+  "16-17": [
+   22,
+   8
+  ],
+  "18+": [
+   22,
+   8
+  ]
+ },
  "NOTES": [
   "Flow",
   "Weight",
@@ -143,6 +157,10 @@
    70
   ]
  },
+ "RAW_KEEP_DAYS": [
+  30,
+  90
+ ],
  "RENOWN_CLEAN": [
   20,
   1000,

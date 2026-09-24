@@ -266,6 +266,14 @@ FREE_WRITES_DAY = 100_000
 #: the paid plan … against 10 milliseconds on the free plan".
 FREE_CPU_MS = 10
 
+#: §20.2's "Notifications at night": "Never, 21:00 to 08:00" at 13 to 15,
+#: "Never, 22:00 to 08:00" at 16 and 17, "Off 22:00 to 08:00 by default" for
+#: adults. (from hour, to hour), local time.
+NIGHT_HOURS = {"13-15": (21, 8), "16-17": (22, 8), "18+": (22, 8)}
+
+#: §24.3: "Raw replays and logs are kept 30 to 90 days". (least, most)
+RAW_KEEP_DAYS = (30, 90)
+
 #: §18.2: "Fifty tiers, climbed with season points from heists, defences and
 #: discoveries."
 SEASON_TIERS = 50
@@ -350,6 +358,8 @@ HOME = {
     "WRITE_PRICE_PER_MILLION": "28.3",
     "FREE_WRITES_DAY": "28.3",
     "FREE_CPU_MS": "28.3",
+    "NIGHT_HOURS": "20.2",
+    "RAW_KEEP_DAYS": "24.3",
     "SEASON_TIERS": "18.2",
     "PREMIUM_TRACK_EUR": "22.1",
     "STARGLASS_PACKS_EUR": "22.1",
@@ -477,6 +487,11 @@ STATED = {
     "FREE_WRITES_DAY": (r"the free plan allows \d+ million row reads and ([\d,]+) row writes a day",
                         lambda m: int(m[0].replace(",", ""))),
     "FREE_CPU_MS": (r"against (\d+) milliseconds on the free plan", lambda m: int(m[0])),
+    "NIGHT_HOURS": (r"\| Notifications at night\n\| Never, (\d+):00 to (\d+):00\n\| Never, (\d+):00 to "
+                    r"(\d+):00\n\| Off (\d+):00 to (\d+):00 by default",
+                    lambda m: {"13-15": (int(m[0]), int(m[1])), "16-17": (int(m[2]), int(m[3])),
+                               "18+": (int(m[4]), int(m[5]))}),
+    "RAW_KEEP_DAYS": (r"Raw replays and logs are kept (\d+) to (\d+) days", lambda m: (int(m[0]), int(m[1]))),
     "SEASON_TIERS": (r"(\w+) tiers, climbed with season points",
                      lambda m: {"Forty": 40, "Fifty": 50, "Sixty": 60, "Seventy": 70, "Eighty": 80,
                                 "Ninety": 90, "A hundred": 100}.get(m[0])),

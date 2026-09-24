@@ -7,6 +7,8 @@
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
 //   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?} → the lease
 //   GET  /v1/offer?size=3                                    → §12.22's list for the caller
+//   GET  /v1/heists/:token/replay                            → the replay, to its raider or defender (§13)
+//   PUT  /v1/notifications       {"utcOffset", "reminder", "nightQuiet", "pushToken"} → the settings
 //   POST /v1/heists/:token       replay bytes                → what was settled
 //   GET  /v1/balance                                         → {starlight, essence, starglass}
 //   GET  /v1/targets                                         → {band: list hash}
@@ -262,6 +264,12 @@ export function handler(service) {
           const { bundle, owner = null, trace = false } = await request.json();
           return json(service.lease(attacker, bundle, owner, { trace: trace === true }), 201);
         }
+        case "GET /v1/heists": {
+          if (parts[3] !== "replay") return json({ error: "no_such_route" }, 404);
+          return octets(service.replay(who(), parts[2] ?? ""));
+        }
+        case "PUT /v1/notifications":
+          return json(service.notifications.set(who(), await body(request)));
         case "POST /v1/heists": {
           const attacker = who();
           return json(service.submit(attacker, parts[2] ?? "", await bytes(request)));

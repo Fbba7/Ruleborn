@@ -754,9 +754,12 @@ dict(
                     "against a pinned Apple root, without asking Apple (G32, "
                     "D67); reading \u00a712.4 for what the server must keep "
                     "back found F46. The load test plays \u00a714.1's players "
-                    "through it and finds an engaged day writes at least 42 "
+                    "through it and finds an engaged day writes at least 46 "
                     "rows against \u00a724.1's budget of five, and a "
-                    "re-simulation over the free plan's CPU limit (F47, G33)."
+                    "re-simulation over the free plan's CPU limit (F47, G33). "
+                    "Replays are kept 90 days for both sides to watch, and the "
+                    "defender's notification waits out \u00a720.2's night "
+                    "(G34, D68)."
                     "<br><br><strong>Not yet:</strong> Google Play's sign-in "
                     "and receipts (need Google's API), crossing realms, \u00a712.22's generated "
                     "fallback targets, and a landing command in the replay.",
@@ -765,7 +768,8 @@ dict(
              register=["G17", "D58", "G20", "G21", "G26", "D62", "C43",
                        "F40", "G27", "D63", "F41", "F42", "G28", "D64",
                        "G29", "D65", "F43", "F44", "F45", "G30", "D66",
-                       "G31", "F46", "G32", "D67", "F47", "G33"]),
+                       "G31", "F46", "G32", "D67", "F47", "G33",
+                       "G34", "D68"]),
         dict(id="T3.4", owner="claude", status="doing",
              title="The client's half: the simulation inside Godot, and a "
                    "replay on screen",

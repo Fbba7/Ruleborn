@@ -43,6 +43,13 @@ CREATE TABLE IF NOT EXISTS accounts (
   -- nobody edits (accounts.mjs).
   deleted_at        INTEGER,
   deleted_reason    TEXT,
+  -- §14.6 and §20.2's notifications: the player's clock, their daily
+  -- reminder (minutes after local midnight), an adult's choice of a quiet
+  -- night, and the device's push token (notifications.mjs).
+  utc_offset        INTEGER NOT NULL DEFAULT 0,
+  reminder_at       INTEGER,
+  night_quiet       INTEGER NOT NULL DEFAULT 1,
+  push_token        TEXT,
   -- §13.1's seeded islands: the game's own, "stocked with designed islands
   -- from the start", and no new player to protect (matchmaking.mjs).
   seeded            INTEGER NOT NULL DEFAULT 0
@@ -118,7 +125,10 @@ CREATE TABLE IF NOT EXISTS heists (
   review       INTEGER NOT NULL DEFAULT 0,
   grace        INTEGER NOT NULL DEFAULT 0,
   submitted_at INTEGER NOT NULL,
-  day          TEXT NOT NULL
+  day          TEXT NOT NULL,
+  -- §24.3: the replay itself is kept "30 to 90 days", then deleted; the row
+  -- and its hashes stay.
+  replay_gone  INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS heists_by_day ON heists (attacker, day, validated);
 
@@ -396,6 +406,18 @@ CREATE TRIGGER IF NOT EXISTS purchases_append_only_update BEFORE UPDATE ON purch
 CREATE TRIGGER IF NOT EXISTS purchases_append_only_delete BEFORE DELETE ON purchases
   BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
 
+-- The notification outbox (§14.6, §20.2; notifications.mjs): what is owed a
+-- player, when it may be sent, and when it was.
+CREATE TABLE IF NOT EXISTS notifications (
+  id      INTEGER PRIMARY KEY AUTOINCREMENT,
+  account TEXT NOT NULL REFERENCES accounts(id),
+  kind    TEXT NOT NULL,
+  data    TEXT NOT NULL,
+  due_at  INTEGER NOT NULL,
+  sent_at INTEGER
+);
+CREATE INDEX IF NOT EXISTS notifications_due ON notifications (sent_at, due_at);
+
 -- §13.1's rule, season by season: the defence reward's share of what a
 -- foiled crew carried, and the weekly measure that set it (seasons.mjs).
 CREATE TABLE IF NOT EXISTS defence_shares (
@@ -478,6 +500,11 @@ const ADDED = [
   ["accounts", "deleted_at", "INTEGER"],
   ["accounts", "deleted_reason", "TEXT"],
   ["accounts", "seeded", "INTEGER NOT NULL DEFAULT 0"],
+  ["accounts", "utc_offset", "INTEGER NOT NULL DEFAULT 0"],
+  ["accounts", "reminder_at", "INTEGER"],
+  ["accounts", "night_quiet", "INTEGER NOT NULL DEFAULT 1"],
+  ["accounts", "push_token", "TEXT"],
+  ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "echo", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "trace_of", "TEXT"],
 ];

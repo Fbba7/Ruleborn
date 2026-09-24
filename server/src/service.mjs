@@ -26,10 +26,11 @@ import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
 import { capHaul, defenceShare, entryFee, haul } from "./economy.mjs";
 import { Matchmaking } from "./matchmaking.mjs";
+import { Notifications } from "./notifications.mjs";
 import { Seasons } from "./seasons.mjs";
 import { Shop } from "./shop.mjs";
 import { readHeader } from "./sim.mjs";
-import { sha256 } from "./store.mjs";
+import { Store } from "./store.mjs";
 import { check, issue } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
 import { Track } from "./track.mjs";
@@ -70,6 +71,10 @@ export class Service {
    * the stores' own services (see tokens.mjs).
    */
   /**
+   * `replays` is the private store the submitted replays are kept in (§24.3)
+   * — apart from `store`, whose objects anyone may fetch by hash.
+   */
+  /**
    * `preparePlatform(credential)` is the asynchronous half of sign-in — Game
    * Center's certificate fetched and cached (stores.mjs) — run by the edge
    * before the synchronous `session`.
@@ -82,13 +87,14 @@ export class Service {
    */
   constructor({ db, store, builds, secret, verifyPlatform, now = () => Date.now(),
                 random = randomBytes, seasonStart = 0, verifyReceipt = () => null,
-                cosmetics = undefined, preparePlatform = async () => {} }) {
+                cosmetics = undefined, preparePlatform = async () => {}, replays = new Store() }) {
     Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random, verifyReceipt,
-                          preparePlatform });
+                          preparePlatform, replays });
     this.seasons = new Seasons(this, seasonStart);
     this.track = new Track(this);
     this.telemetry = new Telemetry(this);
     this.matchmaking = new Matchmaking(this);
+    this.notifications = new Notifications(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), catalogue: cosmetics });
   }
 
@@ -333,7 +339,9 @@ export class Service {
     const done = this.db.prepare("SELECT outcome FROM heists WHERE token = ?").get(token);
     if (done) return { ...JSON.parse(done.outcome), repeated: true };
 
-    const logHash = sha256(replay);
+    // §24.3: kept for validation and analysis, and for the two players to
+    // watch (§13), in the private store.
+    const logHash = this.replays.put(replay);
     const header = readHeader(replay);
     const refuse = (reason, extra = {}) => this.settle(lease, replay, logHash, now,
                                                        { validated: false, reason, ...extra });
@@ -466,9 +474,43 @@ export class Service {
     // Renown, earns its owner nothing and rates no island (G30).
     const season = this.seasons.current(now).id;
     const renown = lease.echo ? { raider: 0, defender: 0 } : this.seasons.settle(lease, verdict, now);
+    // §13: "The defender is notified afterwards and can watch the replay."
+    if (!lease.echo) this.notifications.raided(lease, verdict, now);
     const stars = this.track.settle(lease, verdict, season, now, { echo: Boolean(lease.echo) });
     const rating = lease.echo ? null : this.matchmaking.settle(lease, snapshot.realm, verdict, now);
     return { verdict, fee, haul: pay, renown, stars, rating, defence };
+  }
+
+  /**
+   * §13: the defender "can watch the replay", and so can the raider: the
+   * replay's bytes, to either of them, while §24.3 keeps them.
+   */
+  replay(account, token) {
+    const h = this.db.prepare(
+      `SELECT h.log_hash, h.replay_gone, l.attacker, l.defender FROM heists h JOIN leases l ON l.token = h.token
+        WHERE h.token = ?`).get(token);
+    if (!h || (h.attacker !== account && h.defender !== account)) throw new Refused(404, "no_such_heist");
+    const bytes = h.replay_gone ? null : this.replays.get(h.log_hash);
+    if (!bytes) throw new Refused(410, "replay_no_longer_kept", { days: facts.RAW_KEEP_DAYS[1] });
+    return bytes;
+  }
+
+  /** §24.3: "Raw replays and logs are kept 30 to 90 days". Past the
+   *  longest, a replay goes; its heist row and hashes stay. Idempotent. */
+  expireReplays(now = this.now()) {
+    const before = now - facts.RAW_KEEP_DAYS[1] * DAY_MS;
+    return transaction(this.db, () => {
+      const old = this.db.prepare(
+        "SELECT token, log_hash FROM heists WHERE replay_gone = 0 AND submitted_at < ?").all(before);
+      for (const h of old) {
+        // Two heists can carry the same bytes; the replay stays while any is kept.
+        const kept = this.db.prepare(
+          "SELECT 1 FROM heists WHERE log_hash = ? AND replay_gone = 0 AND submitted_at >= ?").get(h.log_hash, before);
+        if (!kept) this.replays.delete(h.log_hash);
+        this.db.prepare("UPDATE heists SET replay_gone = 1 WHERE token = ?").run(h.token);
+      }
+      return old.length;
+    });
   }
 
   /** The raider's own Vault level, from their Heart's current snapshot; a
