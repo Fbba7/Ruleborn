@@ -10,7 +10,7 @@ import { T0, openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 const DAY = 24 * 60 * 60 * 1000;
-const events = (t, kind) => t.service.db.prepare("SELECT * FROM events WHERE kind = ? ORDER BY id").all(kind);
+const events = (t, kind) => t.service.db.prepare("SELECT * FROM events WHERE kind = ? ORDER BY batch").all(kind);
 
 test("the server records sessions, heists and purchases under a pseudonym, never the account (24, 20.5)", () => {
   const t = twoPlayers(true);
@@ -143,4 +143,40 @@ test("telemetry over HTTP: a batch from the device, and the report for analysts 
   assert.deepEqual([report.players, report.worth], [1, 4]);
   const absence = await (await call("GET", "/v1/metrics/absence", { token: me.token })).json();
   assert.equal(absence["0-1"], 1);
+});
+
+test("a device's batch is one row written, however many events it holds (24.1)", () => {
+  const t = server();
+  const me = t.service.session("gc:frugal").account;
+  const rows = () => t.service.db.prepare("SELECT COUNT(*) AS n FROM event_batches").get().n;
+  const before = rows();
+  t.service.telemetry.batch(me, [{ kind: "worth", data: { rating: 5 } },
+                                 { kind: "weave", data: { law: "tilt", realm: "heart" } },
+                                 { kind: "session_end", data: { seconds: 60, crashed: false } }]);
+  assert.equal(rows() - before, 1);
+  assert.equal(events(t, "weave").length, 1, "and read back event by event");
+});
+
+test("telemetry written a row an event, before batching, is kept as batches of one (24.1)", async () => {
+  const { mkdtempSync, rmSync } = await import("node:fs");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const { DatabaseSync } = await import("node:sqlite");
+  const { open } = await import("../src/db.mjs");
+  const dir = mkdtempSync(join(tmpdir(), "ruleborn-"));
+  try {
+    const path = join(dir, "old.db");
+    const old = new DatabaseSync(path);
+    old.exec(`CREATE TABLE events (id INTEGER PRIMARY KEY AUTOINCREMENT, who TEXT NOT NULL, kind TEXT NOT NULL,
+                data TEXT NOT NULL, at INTEGER NOT NULL, day TEXT NOT NULL);
+              CREATE INDEX events_by_day ON events (kind, day);
+              INSERT INTO events (who, kind, data, at, day) VALUES ('w', 'worth', '{"rating":3}', ${T0}, '2026-09-23');`);
+    old.close();
+    const db = open(path);
+    const [row] = db.prepare("SELECT who, kind, data, at, day FROM events").all();
+    assert.deepEqual({ ...row }, { who: "w", kind: "worth", data: '{"rating":3}', at: T0, day: "2026-09-23" });
+    db.close();
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

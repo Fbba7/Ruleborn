@@ -222,6 +222,9 @@ NO_EDIT_BECAUSE = {
            "of the edge cache",
     "G32": "decisions for the owner: a proof's freshness and how refunds land",
     "D67": "limits of this build: Google's APIs and Apple's notifications need the network",
+    "F47": "a decision for the owner: the budget and the cost table, re-derived "
+           "from what a heist must write",
+    "G33": "a figure for the owner: the share of monthly players active on a day",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

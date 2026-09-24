@@ -246,6 +246,26 @@ DEFENCE_SHARE = 5
 #: to 20%". (threshold %, step, most rises, from %, to %)
 DEFENCE_SHARE_RISE = (15, 5, 3, 5, 20)
 
+#: §24.1: "Budget: about 100 to 200 kilobytes and five writes per active
+#: player per day. That is the design constraint".
+WRITE_BUDGET = 5
+
+#: §24.1: "The paid plan is $5 a month and includes 25 billion row reads and
+#: 50 million row writes". A month's writes.
+PAID_WRITES_MONTH = 50_000_000
+
+#: §28.3's D1 source: "then $0.001 per million reads and $1.00 per million
+#: writes". Dollars.
+WRITE_PRICE_PER_MILLION = 1.0
+
+#: §28.3's D1 source: "the free plan allows 5 million row reads and 100,000
+#: row writes a day".
+FREE_WRITES_DAY = 100_000
+
+#: §28.3's Workers source: "CPU time per request of 30 seconds by default on
+#: the paid plan … against 10 milliseconds on the free plan".
+FREE_CPU_MS = 10
+
 #: §18.2: "Fifty tiers, climbed with season points from heists, defences and
 #: discoveries."
 SEASON_TIERS = 50
@@ -325,6 +345,11 @@ HOME = {
     "ECHO_DAYS": "12.3",
     "DEFENCE_SHARE": "9.4",
     "DEFENCE_SHARE_RISE": "13.1",
+    "WRITE_BUDGET": "24.1",
+    "PAID_WRITES_MONTH": "24.1",
+    "WRITE_PRICE_PER_MILLION": "28.3",
+    "FREE_WRITES_DAY": "28.3",
+    "FREE_CPU_MS": "28.3",
     "SEASON_TIERS": "18.2",
     "PREMIUM_TRACK_EUR": "22.1",
     "STARGLASS_PACKS_EUR": "22.1",
@@ -443,6 +468,15 @@ STATED = {
                            r"\(9\.4\) rises by (\d+) points a season, at most (\w+) times, from (\d+)% to (\d+)%",
                            lambda m: (int(m[0]), int(m[1]), {"two": 2, "three": 3, "four": 4}.get(m[2]),
                                       int(m[3]), int(m[4]))),
+    "WRITE_BUDGET": (r"Budget: about \d+ to \d+ kilobytes and (\w+) writes per active player per day",
+                     lambda m: {"three": 3, "four": 4, "five": 5, "six": 6, "ten": 10}.get(m[0])),
+    "PAID_WRITES_MONTH": (r"The paid plan is \$\d+ a month and includes \d+ billion row reads and (\d+) "
+                          r"million row writes", lambda m: int(m[0]) * 1_000_000),
+    "WRITE_PRICE_PER_MILLION": (r"then \$[\d.]+ per million reads and \$([\d.]+) per million writes",
+                                lambda m: float(m[0])),
+    "FREE_WRITES_DAY": (r"the free plan allows \d+ million row reads and ([\d,]+) row writes a day",
+                        lambda m: int(m[0].replace(",", ""))),
+    "FREE_CPU_MS": (r"against (\d+) milliseconds on the free plan", lambda m: int(m[0])),
     "SEASON_TIERS": (r"(\w+) tiers, climbed with season points",
                      lambda m: {"Forty": 40, "Fifty": 50, "Sixty": 60, "Seventy": 70, "Eighty": 80,
                                 "Ninety": 90, "A hundred": 100}.get(m[0])),

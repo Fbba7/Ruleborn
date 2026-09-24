@@ -420,17 +420,24 @@ CREATE TABLE IF NOT EXISTS ratings (
 
 -- First-party telemetry (§24, §24.3; telemetry.mjs). Keyed by a pseudonym,
 -- never an account (§20.5), and discarded after 90 days: not append-only,
--- because §24.3 says the raw events go.
-CREATE TABLE IF NOT EXISTS events (
-  id   INTEGER PRIMARY KEY AUTOINCREMENT,
-  who  TEXT NOT NULL,
-  kind TEXT NOT NULL,
-  data TEXT NOT NULL,
-  at   INTEGER NOT NULL,
-  day  TEXT NOT NULL
+-- because §24.3 says the raw events go. §24.1: "Telemetry is batched rather
+-- than written per event", so a row is a batch — one write — and events
+-- is the view that reads it event by event. A batch's day is its earliest
+-- event's, which compaction goes by.
+CREATE TABLE IF NOT EXISTS event_batches (
+  id     INTEGER PRIMARY KEY AUTOINCREMENT,
+  who    TEXT NOT NULL,
+  at     INTEGER NOT NULL,
+  day    TEXT NOT NULL,
+  events TEXT NOT NULL
 );
-CREATE INDEX IF NOT EXISTS events_by_day ON events (kind, day);
-CREATE INDEX IF NOT EXISTS events_by_who ON events (who, kind, day);
+CREATE INDEX IF NOT EXISTS event_batches_by_day ON event_batches (day);
+CREATE INDEX IF NOT EXISTS event_batches_by_who ON event_batches (who);
+CREATE VIEW IF NOT EXISTS events AS
+  SELECT b.id AS batch, b.who, json_extract(e.value, '$.kind') AS kind,
+         json_extract(e.value, '$.data') AS data, json_extract(e.value, '$.at') AS at,
+         strftime('%Y-%m-%d', json_extract(e.value, '$.at') / 1000, 'unixepoch') AS day
+    FROM event_batches b, json_each(b.events) e;
 
 -- A player's first session day, kept for good, so a cohort is still a
 -- cohort after its events are gone.
@@ -500,7 +507,20 @@ export function open(path = ":memory:") {
     }
   }
   const rebuilt = starglassLedger(db);
+  // Telemetry written before batching, a row an event: moved aside, and
+  // poured into batches of one once the schema stands.
+  const unbatched = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'").get();
+  if (unbatched) {
+    db.exec(`DROP INDEX IF EXISTS events_by_day; DROP INDEX IF EXISTS events_by_who;
+             ALTER TABLE events RENAME TO events_before_batches;`);
+  }
   db.exec(SCHEMA);
+  if (unbatched) {
+    db.exec(`INSERT INTO event_batches (who, at, day, events)
+               SELECT who, at, day, json_array(json_object('kind', kind, 'data', json(data), 'at', at))
+                 FROM events_before_batches ORDER BY id;
+             DROP TABLE events_before_batches;`);
+  }
   if (rebuilt) {
     db.exec(`INSERT INTO ledger (id, account, currency, amount, reason, heist, at)
                SELECT id, account, currency, amount, reason, heist, at FROM ledger_before_starglass;

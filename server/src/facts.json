@@ -49,6 +49,8 @@
  "ENTRY_FEE_MAX": 25000,
  "ENTRY_FEE_MIN": 100,
  "ENTRY_FEE_RATE": 0.02,
+ "FREE_CPU_MS": 10,
+ "FREE_WRITES_DAY": 100000,
  "GLICKO": [
   350,
   0.06,
@@ -129,6 +131,7 @@
   "Veil": "Echo",
   "Weight": "Flow"
  },
+ "PAID_WRITES_MONTH": 50000000,
  "PREMIUM_TRACK_EUR": 6,
  "RAIDER_SUCCESS": {
   "1": [
@@ -200,5 +203,7 @@
   7,
   8
  ],
- "WIND_UP": 0.8
+ "WIND_UP": 0.8,
+ "WRITE_BUDGET": 5,
+ "WRITE_PRICE_PER_MILLION": 1.0
 }

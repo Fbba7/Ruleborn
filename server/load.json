@@ -1,0 +1,113 @@
+[
+ {
+  "archetype": "engaged",
+  "players": 60,
+  "days": 3,
+  "heistsPerDay": 4,
+  "sessionsPerDay": 5,
+  "writesPerPlayerDay": 42.01,
+  "periodicWritesADay": {
+   "target lists (x96)": 96,
+   "telemetry compaction": 0
+  },
+  "writesPerHeist": 8,
+  "byOperation": {
+   "session": 5,
+   "telemetry batch": 5,
+   "lease": 4,
+   "heist: validate and grant": 28.01
+  },
+  "validationMs": {
+   "p50": 14.7,
+   "p95": 22.3,
+   "max": 34.6
+  },
+  "against": {
+   "budget": 5,
+   "overBudget": 8.4,
+   "freeCpuMs": 10,
+   "validationFitsFreePlan": false,
+   "freePlanPlayersADay": 2380,
+   "paidDollarsAMonth": {
+    "1000": 5,
+    "10000": 5,
+    "100000": 81,
+    "1000000": 1215
+   }
+  }
+ },
+ {
+  "archetype": "regular",
+  "players": 60,
+  "days": 3,
+  "heistsPerDay": 2,
+  "sessionsPerDay": 3,
+  "writesPerPlayerDay": 21.58,
+  "periodicWritesADay": {
+   "target lists (x96)": 96,
+   "telemetry compaction": 0
+  },
+  "writesPerHeist": 7.79,
+  "byOperation": {
+   "session": 3,
+   "telemetry batch": 3,
+   "lease": 2,
+   "heist: validate and grant": 13.58
+  },
+  "validationMs": {
+   "p50": 14.7,
+   "p95": 22.6,
+   "max": 33.8
+  },
+  "against": {
+   "budget": 5,
+   "overBudget": 4.3,
+   "freeCpuMs": 10,
+   "validationFitsFreePlan": false,
+   "freePlanPlayersADay": 4633,
+   "paidDollarsAMonth": {
+    "1000": 5,
+    "10000": 5,
+    "100000": 20,
+    "1000000": 602
+   }
+  }
+ },
+ {
+  "archetype": "casual",
+  "players": 60,
+  "days": 3,
+  "heistsPerDay": 1,
+  "sessionsPerDay": 1,
+  "writesPerPlayerDay": 9.53,
+  "periodicWritesADay": {
+   "target lists (x96)": 96,
+   "telemetry compaction": 0
+  },
+  "writesPerHeist": 7.53,
+  "byOperation": {
+   "session": 1,
+   "telemetry batch": 1,
+   "lease": 1,
+   "heist: validate and grant": 6.53
+  },
+  "validationMs": {
+   "p50": 14.4,
+   "p95": 20.5,
+   "max": 30.3
+  },
+  "against": {
+   "budget": 5,
+   "overBudget": 1.9,
+   "freeCpuMs": 10,
+   "validationFitsFreePlan": false,
+   "freePlanPlayersADay": 10493,
+   "paidDollarsAMonth": {
+    "1000": 5,
+    "10000": 5,
+    "100000": 5,
+    "1000000": 241
+   }
+  }
+ }
+]

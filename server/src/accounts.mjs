@@ -45,7 +45,8 @@ export function deleteAccount(service, account, reason = "requested") {
     const withdrawn = db.prepare(
       "UPDATE workshop_items SET withdrawn_at = ? WHERE creator = ? AND withdrawn_at IS NULL")
       .run(now, account).changes;
-    const events = db.prepare("DELETE FROM events WHERE who = ?").run(who).changes;
+    const events = db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = ?").get(who).n;
+    db.prepare("DELETE FROM event_batches WHERE who = ?").run(who);
     db.prepare("DELETE FROM first_seen WHERE who = ?").run(who);
     return { islands: Number(islands), withdrawn: Number(withdrawn), events: Number(events) };
   });

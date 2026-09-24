@@ -91,6 +91,20 @@ def client_tests(*names: str):
     return proof
 
 
+def load_measured():
+    """Phase 14's load test: the server run under §14.1's three players and
+    measured against §24.1's budget (server/load.mjs). What the measurement
+    finds is the register's (F47); the deliverable is that it is taken."""
+    def proof():
+        path = SERVER / "load.json"
+        runs = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+        done = {r.get("archetype") for r in runs if "writesPerPlayerDay" in r and "validationMs" in r}
+        want = {"engaged", "regular", "casual"}
+        return (len(done & want) / len(want),
+                f"{len(done & want)} of 3 players measured against §24.1's budget", sorted(want - done))
+    return proof
+
+
 def targets():
     """§24.7's four targets: the same checksums, native and WebAssembly run
     here; a phone is a target only once it has run the same seeds."""
@@ -305,7 +319,7 @@ DELIVERABLES = [
         "retention by cohort, day 1, 7 and 30, outlives the raw events discarded after 90 days (24.3)",
         "telemetry over HTTP: a batch from the device, and the report for analysts only")),
 
-    ("14", "Load testing", BACKEND, not_started("the server holds its target load")),
+    ("14", "Load testing", BACKEND, load_measured()),
     ("14", "Real-device matrix", FRONTEND, not_started("the client runs on the device matrix")),
     ("14", "Balance pass", BACKEND, not_started("the launch balance pass is signed off")),
     ("14", "Fix buffer", FRONTEND, not_started("launch fixes are closed")),

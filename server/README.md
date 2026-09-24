@@ -6,6 +6,7 @@ one real job is §24.12's: re-simulate a heist the device played offline, and
 only then mint what it earned.
 
     node --no-warnings --test server/test/*.test.mjs   # the tests (build sim/ first)
+    node --no-warnings server/load.mjs                 # the load test, against §24.1's budget
     node server/src/main.mjs                           # run it locally, on 127.0.0.1:8787
     node server/src/main.mjs 8787 --example            # and publish the example island to raid
 
@@ -229,6 +230,19 @@ stand-in chain in `test/fixtures/apple/` (its `make.sh` regenerates it). The
 readings are **G32**; Google Play's side is **D67**; and building this found
 **F46**: every island is public by hash before any scout.
 
+## Under load
+
+`load.mjs` is phase 14's load test. It plays §14.1's engaged, regular and
+casual players through the service as built — every lease, validation,
+grant, Renown line, star, rating and event batch — and measures what §24.1
+budgets: rows written a player a day, by what wrote them, and the CPU a
+re-simulation takes. The writes are deterministic, so `server/load.json`
+keeps them and `bash tools/check_all.sh` fails if a change moves them
+(`--write` records a new baseline). What it measured — an engaged day
+writes at least 42 rows against §24.1's five, and a re-simulation takes
+about 15 ms against the free plan's 10 — is register **F47**; its
+readings are **G33**. Telemetry is written a batch to a row, as §24.1 asks.
+
 ## Telemetry
 
 `src/telemetry.mjs` is §24's first-party analytics, under §20.5 and §24.3's
@@ -318,6 +332,7 @@ built — register **D63**.
     src/glicko.mjs    Glicko-2, pure arithmetic
     src/matchmaking.mjs  §12.22's ratings and offer, §12.3's echoes, shield and Trace
     src/stores.mjs    Apple's proofs: Game Center identities, StoreKit 2 transactions
+    load.mjs          the load test; load.json its last measurement
     src/workshop.mjs  §18.6's Workshop: publish, browse, play, rate, report, moderate, remix
     src/words.json    the word lists Workshop names come from
     src/http.mjs      the edge function: Request in, Response out

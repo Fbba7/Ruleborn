@@ -6,7 +6,7 @@
 // "analytics are pseudonymous". §24.3: "The client never sends coordinates",
 // and "Raw replays and logs are kept 30 to 90 days, long enough for
 // validation and analysis, then aggregated and discarded". Telemetry "is
-// batched rather than written per event" (§24.1).
+// batched rather than written per event" (§24.1): a batch is one row.
 //
 // The server writes what it decides — a session, a heist's outcome, a
 // purchase — and the device sends the rest in batches. Every row is keyed by
@@ -95,11 +95,19 @@ export class Telemetry {
   /** One event, as the server decides it. A player's first session day is
    *  kept apart and for good, so retention outlives the raw events. */
   record(account, kind, data = {}, at = this.service.now()) {
+    this.write(account, [{ kind, data, at }]);
+  }
+
+  /** One batch, one row (§24.1). */
+  write(account, events) {
     const who = this.pseudonym(account);
-    this.db.prepare("INSERT INTO events (who, kind, data, at, day) VALUES (?, ?, ?, ?, ?)")
-      .run(who, kind, JSON.stringify(data), at, day(at));
-    if (kind === "session") {
-      this.db.prepare("INSERT OR IGNORE INTO first_seen (who, day) VALUES (?, ?)").run(who, day(at));
+    const first = Math.min(...events.map((e) => e.at));
+    this.db.prepare("INSERT INTO event_batches (who, at, day, events) VALUES (?, ?, ?, ?)")
+      .run(who, this.service.now(), day(first), JSON.stringify(events));
+    for (const e of events) {
+      if (e.kind === "session") {
+        this.db.prepare("INSERT OR IGNORE INTO first_seen (who, day) VALUES (?, ?)").run(who, day(e.at));
+      }
     }
   }
 
@@ -131,9 +139,7 @@ export class Telemetry {
       .get(this.pseudonym(account), now - SURVEY_GAP_MS))) {
       throw new Refused(429, "survey_once_a_quarter");
     }
-    transaction(this.db, () => {
-      for (const r of rows) this.record(account, r.kind, r.data, r.at);
-    });
+    this.write(account, rows);
     return { recorded: rows.length };
   }
 
@@ -155,13 +161,18 @@ export class Telemetry {
         this.db.prepare("INSERT INTO cohorts (day, players, day1, day7, day30) VALUES (?, ?, ?, ?, ?)")
           .run(d, r.players, r.day1, r.day7, r.day30);
       }
+      // Every event of every batch that goes, counted by its own day.
       this.db.prepare(
         `INSERT INTO event_days (day, kind, events, players)
-           SELECT day, kind, COUNT(*), COUNT(DISTINCT who) FROM events WHERE day < ?
-            GROUP BY day, kind
+           SELECT e.day, e.kind, COUNT(*), COUNT(DISTINCT e.who)
+             FROM events e JOIN event_batches b ON b.id = e.batch WHERE b.day < ?
+            GROUP BY e.day, e.kind
          ON CONFLICT (day, kind) DO UPDATE SET events = events + excluded.events,
            players = MAX(players, excluded.players)`).run(before);
-      const gone = this.db.prepare("DELETE FROM events WHERE day < ?").run(before).changes;
+      const gone = this.db.prepare(
+        `SELECT COUNT(*) AS n FROM events e JOIN event_batches b ON b.id = e.batch WHERE b.day < ?`)
+        .get(before).n;
+      this.db.prepare("DELETE FROM event_batches WHERE day < ?").run(before);
       return { cohorts: open.length, discarded: Number(gone), before };
     });
   }
