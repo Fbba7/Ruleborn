@@ -25,9 +25,9 @@ func _ready() -> void:
 	column.add_child(card)
 	column.add_child(UI.grow())
 	var actions := UI.row()
-	actions.add_child(UI.button("Watch it", func(): get_tree().change_scene_to_file("res://scenes/replay_screen.tscn"), true))
-	actions.add_child(UI.button("Again", func(): get_tree().change_scene_to_file("res://scenes/heist_screen.tscn")))
-	actions.add_child(UI.button("Home", func(): get_tree().change_scene_to_file("res://scenes/home.tscn")))
+	actions.add_child(UI.button(Strings.t("RESULT_WATCH"), func(): get_tree().change_scene_to_file("res://scenes/replay_screen.tscn"), true))
+	actions.add_child(UI.button(Strings.t("RESULT_AGAIN"), func(): get_tree().change_scene_to_file("res://scenes/heist_screen.tscn")))
+	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func(): get_tree().change_scene_to_file("res://scenes/home.tscn")))
 	column.add_child(actions)
 	show_verdict(Session.verdict, Session.replay.size())
 
@@ -35,18 +35,16 @@ func _ready() -> void:
 func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 	var by_server: bool = v.get("server", false)
 	if v.get("ok", false):
-		grade_label.text = str(v["grade"])
+		grade_label.text = Strings.term("GRADE", str(v["grade"]))
 		if by_server:
-			detail_label.text = "%d loot banked — the server minted %d (fee %d)" % [
-				int(v["banked"]), int(v["haul"]), int(v["fee"])]
-			check_label.text = "Re-simulated by the server: accepted\n%d-byte replay" % replay_bytes
+			detail_label.text = Strings.t("RESULT_BANKED_SERVER", [int(v["banked"]), int(v["haul"]), int(v["fee"])])
+			check_label.text = Strings.t("RESULT_ACCEPTED_SERVER", replay_bytes)
 		else:
-			detail_label.text = "%d loot banked" % int(v["banked"])
-			check_label.text = "Re-simulated as the server would: accepted\n%d-byte replay" % replay_bytes
+			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))
+			check_label.text = Strings.t("RESULT_ACCEPTED_LOCAL", replay_bytes)
 		check_label.add_theme_color_override("font_color", Palette.SUCCESS.darkened(0.3))
 	else:
-		grade_label.text = "Not accepted"
-		detail_label.text = str(v.get("refused", "no heist"))
-		check_label.text = ("The server paid nothing for this replay" if by_server
-			else "The server would pay nothing for this replay")
+		grade_label.text = Strings.t("RESULT_NOT_ACCEPTED")
+		detail_label.text = Strings.t("RESULT_REFUSED", str(v.get("refused", "")))
+		check_label.text = Strings.t("RESULT_PAID_NOTHING" if by_server else "RESULT_WOULD_PAY_NOTHING")
 		check_label.add_theme_color_override("font_color", Palette.ALARM)

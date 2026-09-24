@@ -47,10 +47,10 @@ func _ready() -> void:
 		begin(SEED, TICKS, CREW)
 	else:
 		playing = false
-		hint_label.text = "Asking the server for a target"
+		hint_label.text = Strings.t("HEIST_ASKING")
 		var problem := await begin_online(Session.server_url())
 		if problem != "":
-			hint_label.text = "No heist: %s" % problem
+			hint_label.text = Strings.t("HEIST_NONE", problem)
 
 
 ## Start a fresh heist on this seed and clock, on `realm` (a bundle; empty for
@@ -207,7 +207,7 @@ func finish() -> void:
 	Session.replay = world.record()
 	Session.island = island
 	if server != null and not lease.is_empty():
-		hint_label.text = "The server is checking the heist"
+		hint_label.text = Strings.t("HEIST_CHECKING")
 		Session.verdict = settled(await server.submit(lease["token"], Session.replay))
 	else:
 		Session.verdict = RulebornReplay.validate(Session.replay, island)
@@ -245,9 +245,9 @@ func _refresh() -> void:
 		return
 	hud.show_state(world)
 	var me: Dictionary = world.crew()[selected]
-	hint_label.text = "Tap an edge tile for the skiff" if calling_skiff else \
-		"%s — tap ground, a guard, the Vault, a pylon or a ward" % me["role"]
-	gait_button.text = str(me["gait"])
+	hint_label.text = Strings.t("HEIST_SKIFF_HINT") if calling_skiff else \
+		Strings.t("HEIST_HINT", Strings.term("ROLE", me["role"]))
+	gait_button.text = Strings.term("GAIT", me["gait"])
 	for i in crew_buttons.size():
 		var b := crew_buttons[i]
 		b.modulate = Color.WHITE if i == selected else Color(1, 1, 1, 0.6)
@@ -269,11 +269,11 @@ func _build() -> void:
 
 	var actions := UI.row()
 	column.add_child(actions)
-	gait_button = UI.button("Walk", next_gait)
+	gait_button = UI.button(Strings.term("GAIT", "Walk"), next_gait)
 	actions.add_child(gait_button)
-	actions.add_child(UI.button("Halt", halt))
-	actions.add_child(UI.button("Drop", drop_half))
-	actions.add_child(UI.button("Get out", get_out, true))
+	actions.add_child(UI.button(Strings.t("HEIST_HALT"), halt))
+	actions.add_child(UI.button(Strings.t("HEIST_DROP"), drop_half))
+	actions.add_child(UI.button(Strings.t("HEIST_GET_OUT"), get_out, true))
 	# The crew's portraits lowest, where the thumb rests (§21.8 puts them at
 	# the bottom); a narrow row, so it stays clear of the corners.
 	var crew_row := UI.row()
@@ -281,6 +281,6 @@ func _build() -> void:
 	var crew := world.crew()
 	for i in crew.size():
 		var role: String = crew[i]["role"]
-		var b := UI.button(role.substr(0, 2), select.bind(i), false, Palette.ROLE.get(role, Palette.PAPER))
+		var b := UI.button(Strings.term("ROLE", role).substr(0, 2), select.bind(i), false, Palette.ROLE.get(role, Palette.PAPER))
 		crew_buttons.append(b)
 		crew_row.add_child(b)

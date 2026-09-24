@@ -6,7 +6,7 @@ extends SceneTree
 ## A test that errors stops its coroutine, and a stopped coroutine never
 ## quits; so the run has a deadline, and missing it is a failure.
 const DEADLINE_SECONDS := 120.0
-const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen"]
+const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings"]
 
 var _n := 0
 var _failed := 0
@@ -54,7 +54,17 @@ func _run() -> void:
 	# The offline tests first, with no server; status.py names one for the end.
 	var server_url := OS.get_environment("RULEBORN_SERVER")
 	OS.unset_environment("RULEBORN_SERVER")
+	# The tests' own settings file, so a run never touches a player's.
+	Settings.path = "user://settings-test.cfg"
+	DirAccess.remove_absolute(Settings.path)
+	Settings.restore()
+	Settings.change(func(): Settings.locale = "en")
 	var goldens := ReplayScreen.find_goldens()
+
+	# §20.6's two launch languages: every key a script asks for is in the
+	# catalogue, in every language, with the same placeholders.
+	check("every string a screen asks for is in the catalogue, in English and Brazilian Portuguese, with the same placeholders",
+		_catalogue_problems().is_empty(), "; ".join(_catalogue_problems()))
 
 	# §24.7: one simulation, compiled for every target. The client's build must
 	# be the server's, rule for rule.
@@ -238,26 +248,88 @@ func _run() -> void:
 		OS.unset_environment("RULEBORN_SERVER")
 		await process_frame
 
+	# §20.6's settings survive a relaunch: each change on the settings screen
+	# is saved as it is made, and the next launch reads it back and applies it.
+	var settings: SettingsScreen = await _mount("settings")
+	var minus: Array = settings.find_children("*", "Button", true, false).filter(func(b): return b.text == "−")
+	for i in 7:
+		minus[0].pressed.emit()
+	minus[1].pressed.emit()
+	settings.motion_button.pressed.emit()
+	settings.language_button.pressed.emit()
+	await process_frame
+	var saved := [Settings.locale, Settings.volume.duplicate(), Settings.reduced_motion, Settings.haptics]
+	Settings.locale = ""
+	Settings.volume = Settings.DEFAULT_VOLUME.duplicate()
+	Settings.reduced_motion = false
+	Strings.set_locale("en")
+	Settings.read_file()
+	var music := AudioServer.get_bus_index("Music")
+	var effects := AudioServer.get_bus_index("Effects")
+	var alerts := AudioServer.get_bus_index("Alerts")
+	check("settings changed on the settings screen are saved as they change and restored on the next launch: language, three volumes, reduced motion, haptics (§20.6)",
+		saved == [Settings.locale, Settings.volume, Settings.reduced_motion, Settings.haptics]
+		and Settings.locale == "pt_BR" and TranslationServer.get_locale() == "pt_BR"
+		and Settings.volume == {"music": 0, "effects": 7, "alerts": 10} and Settings.reduced_motion
+		and AudioServer.is_bus_mute(music) and not AudioServer.is_bus_mute(alerts)
+		and is_equal_approx(AudioServer.get_bus_volume_db(effects), linear_to_db(0.7))
+		and is_equal_approx(AudioServer.get_bus_volume_db(alerts), 0.0),
+		"saved %s, restored %s" % [saved, [Settings.locale, Settings.volume, Settings.reduced_motion, Settings.haptics]])
+	settings.queue_free()
+	DirAccess.remove_absolute(Settings.path)
+	Settings.read_file()
+	Settings.change(func(): Settings.locale = "en")
+	await process_frame
+
+	# No screen holds text of its own. In a pseudo-locale that wraps every
+	# catalogue string in ⟦ ⟧, any word on screen that is not wrapped was typed
+	# into a script rather than taken from the catalogue.
+	var pseudo := Translation.new()
+	pseudo.locale = "xx"
+	for key in Strings.rows():
+		pseudo.add_message(key, "⟦" + Strings.rows()[key]["en"] + "⟧")
+	TranslationServer.add_translation(pseudo)
+	Strings.set_locale("xx")
+	Session.verdict = RulebornReplay.validate(_golden("planned-clean"), PackedByteArray())
+	var bare := []
+	for sname in SCREENS:
+		var screen: Control = await _mount(sname)
+		screen.set_process(false)
+		await process_frame
+		for c in screen.find_children("*", "", true, false):
+			if (c is Label or c is Button) and c.visible:
+				var text: String = c.text
+				if RegEx.create_from_string("[A-Za-zÀ-ÖØ-öø-ÿ]").search(text) and not text.begins_with("⟦"):
+					bare.append("%s: %s" % [sname, text.replace("\n", " ")])
+		screen.queue_free()
+	check("no screen shows a word that is not from the catalogue", bare.is_empty(), "; ".join(bare))
+	TranslationServer.remove_translation(pseudo)
+	await process_frame
+
 	# §21.1's control rules and §21.8's smallest text, on every screen, in a
 	# phone's portrait frame: §21.1's 9:19.5 and an older 9:16. A headless run
 	# has no screen, so the window is set to each.
+	# Both languages: Portuguese runs longer, and a label that fits in English
+	# can push a row into a corner in Portuguese.
 	var screens := {}
-	for s in SCREENS:
-		screens[s] = await _mount(s)
-		screens[s].set_process(false)
-		screens[s].visible = false
 	for aspect in [[9, 19.5], [9, 16]]:
 		root.size = Vector2i(540, int(540 * aspect[1] / aspect[0]))
 		var problems := []
-		for s in SCREENS:
-			for other in SCREENS:
-				screens[other].visible = other == s
-			await process_frame
-			await process_frame
-			for p in _control_problems(screens[s]):
-				problems.append("%s: %s" % [s, p])
+		for locale in Strings.LOCALES:
+			Strings.set_locale(locale)
+			for sname in SCREENS:
+				var screen: Control = await _mount(sname)
+				screen.set_process(false)
+				await process_frame
+				await process_frame
+				for p in _control_problems(screen):
+					problems.append("%s %s: %s" % [locale, sname, p])
+				screens[sname] = screen
+				if locale != Strings.LOCALES[-1] or aspect[1] != 16:
+					screen.queue_free()
 		check("every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at %s:%s" % aspect,
 			problems.is_empty(), "; ".join(problems))
+	Strings.set_locale("en")
 
 	var small := []
 	for s in SCREENS:
@@ -271,6 +343,30 @@ func _run() -> void:
 	quit(1 if _failed else 0)
 
 
+func _catalogue_problems() -> Array:
+	var problems := []
+	var rows: Dictionary = Strings.rows()
+	var placeholder := RegEx.create_from_string("%[0-9]*[sd]")
+	for key in rows:
+		for locale in Strings.LOCALES:
+			if rows[key].get(locale, "") == "":
+				problems.append("%s has no %s" % [key, locale])
+		var shape := placeholder.search_all(rows[key]["en"]).map(func(m): return m.get_string())
+		for locale in Strings.LOCALES:
+			var other := placeholder.search_all(rows[key].get(locale, "")).map(func(m): return m.get_string())
+			if other != shape:
+				problems.append("%s: %s has %s where en has %s" % [key, locale, other, shape])
+	var asked := RegEx.create_from_string("Strings\\.t\\(\"([A-Za-z_0-9]+)\"\\s*[,)]")
+	var dir := DirAccess.open("res://scripts")
+	for f in dir.get_files():
+		if not f.ends_with(".gd"):
+			continue
+		for m in asked.search_all(FileAccess.get_file_as_string("res://scripts/" + f)):
+			if not rows.has(m.get_string(1)):
+				problems.append("%s asks for %s, which the catalogue lacks" % [f, m.get_string(1)])
+	return problems
+
+
 func _control_problems(screen: Control) -> Array:
 	var frame := screen.get_viewport_rect().size
 	var point := UI.PX_PER_POINT
@@ -280,10 +376,15 @@ func _control_problems(screen: Control) -> Array:
 	# Nothing may ask for more width than the phone has: a label that will not
 	# wrap stretches the whole column and pushes every row off-centre.
 	var widest := 0.0
+	var culprit := ""
 	for c in screen.find_children("*", "Control", true, false):
-		widest = max(widest, c.get_combined_minimum_size().x)
+		var w: float = c.get_combined_minimum_size().x
+		widest = max(widest, w)
+		# Name the rows that are too wide for the column they sit in.
+		if c is HBoxContainer and w > frame.x - 2 * 16 * point:
+			culprit += " [%s]" % ", ".join(c.get_children().map(func(k): return "%s %d px" % [k.get_class() if k.get("text") == null else k.text.replace("\n", " "), k.get_combined_minimum_size().x]))
 	if widest > frame.x:
-		problems.append("something asks for %d px of a %d px frame" % [widest, frame.x])
+		problems.append("something asks for %d px of a %d px frame:%s" % [widest, frame.x, culprit])
 	var buttons := screen.find_children("*", "Button", true, false)
 	if buttons.is_empty():
 		problems.append("no controls")

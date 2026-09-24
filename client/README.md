@@ -18,9 +18,9 @@ after building.
 
 ## What is here
 
-Four screens, opened from `scenes/home.tscn`:
+Five screens, opened from `scenes/home.tscn`:
 
-**Home.** Play a heist, or watch replays.
+**Home.** Play a heist, watch replays, or change the settings.
 
 **The heist screen** (`scenes/heist_screen.tscn`). A heist on the fixture
 realm, played: the world steps in real time and every tap becomes a simulation
@@ -52,6 +52,23 @@ still matches — so a phone that drifted from the server would show it, not
 quietly play a different heist. Tap a guard to see what its cone reaches, drawn
 tile by tile with sharp edges (§21.12); the tiles come from the simulation's own
 sight rule, not from a second copy of it here.
+
+**Settings** (`scenes/settings.tscn`). §20.6's language, a volume each for
+music, effects and alerts, reduced motion and haptics. Each change is applied
+and saved to `user://settings.cfg` as it is made, and read back on the next
+launch; a first launch starts in the phone's language. The volumes are three
+audio buses, so an alarm is never silenced with the music. Reduced motion and
+haptics are kept but change nothing yet: the client has no swoops, particles
+or vibration for them to turn off. Text size, left-handed controls and high
+contrast wait for the accessibility pass rather than being offered before they
+work.
+
+**Words.** No screen holds text of its own. Every word comes from
+`i18n/strings.csv` — one row a key, one column a language, English and
+Brazilian Portuguese (§20.6) — through `scripts/strings.gd`, so a language is a
+column and adding one touches no script. The Portuguese is a working draft for
+these test screens: §26.9 puts the coined vocabulary's native-speaker
+read-aloud before anything is translated for launch.
 
 Every screen is built from `scripts/ui.gd`, so §21.1 and §21.8 are applied in
 one place: a 9:19.5 portrait frame, the clock and alarm at the top centre and
@@ -88,7 +105,15 @@ and what the player does is what the server re-plays.
 - every control on every screen meets §21.1's size, reach, corner and
   safe-area rules, in a 9:19.5 frame and a 9:16 one (a headless run has no
   screen, so the test sets the window to each), and no text is smaller than 13
-  points (§21.8); nothing asks for more width than the phone has.
+  points (§21.8); nothing asks for more width than the phone has — in both
+  languages, since Portuguese runs longer;
+- every string a script asks for is in the catalogue in both languages with
+  the same placeholders, and in a pseudo-locale that wraps every catalogue
+  string no screen shows a word that is not wrapped — a word typed into a
+  script instead;
+- settings changed on the settings screen are saved as they change and
+  restored on the next launch, the language and the audio buses with them
+  (against a file of the tests' own, never a player's).
 
 To look at it without a desktop, `tests/screenshot.gd` renders a still under a
 virtual display:
@@ -119,9 +144,11 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.5-stable_linux.x
     project.godot           portrait, 1080 × 2340, the compatibility renderer
     ruleborn.gdextension    loads bin/libruleborn_godot.so
     ext/                    the extension: RulebornReplay, over sim/
-    scenes/                 home, heist, result and replay screens
+    i18n/strings.csv        every word on screen, a column a language
+    scenes/                 home, heist, result, replay and settings screens
     scripts/                the screens, the realm view and heads-up display,
-                            the shared UI pieces, the palette, the session hand-off,
+                            the shared UI pieces, the palette, the string catalogue,
+                            the saved settings, the session hand-off,
                             and server_client.gd, server/'s edge functions over HTTP
     tests/run.gd            headless tests, TAP
     tests/screenshot.gd     a still, under a virtual display

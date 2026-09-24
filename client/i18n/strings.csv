@@ -1,0 +1,63 @@
+key,en,pt_BR
+APP_NAME,Ruleborn,Ruleborn
+HOME_TAGLINE,"A heist on the fixture realm, played and checked on this phone.","Um assalto no reino de teste, jogado e conferido neste celular."
+HOME_PLAY,Play a heist,Jogar um assalto
+HOME_WATCH,Watch replays,Ver replays
+HOME_SETTINGS,Settings,Ajustes
+COMMON_HOME,Home,Início
+HEIST_ASKING,Asking the server for a target,Pedindo um alvo ao servidor
+HEIST_NONE,No heist: %s,Sem assalto: %s
+HEIST_CHECKING,The server is checking the heist,O servidor está conferindo o assalto
+HEIST_SKIFF_HINT,Tap an edge tile for the skiff,Toque numa casa da borda para chamar o esquife
+HEIST_HINT,"%s — tap ground, a guard, the Vault, a pylon or a ward","%s — toque no chão, num guarda, no Cofre, num pilar ou numa proteção"
+HEIST_HALT,Halt,Parar
+HEIST_DROP,Drop,Largar
+HEIST_GET_OUT,Get out,Fugir
+GAIT_WALK,Walk,Andar
+GAIT_CROUCH,Crouch,Agachar
+GAIT_RUN,Run,Correr
+ROLE_SCOUT,Scout,Batedor
+ROLE_BREAKER,Breaker,Quebrador
+ROLE_CARRIER,Carrier,Carregador
+ROLE_WARDEN,Warden,Guardião
+ROLE_MENDER,Mender,Curandeiro
+HUD_ALARM,Alarm %s,Alarme %s
+HUD_LOOT,"Bags can take %d
+Vault %d left","Bolsas: cabem %d
+Cofre: restam %d"
+REPLAY_GOLDEN,Golden replay: %s,Replay de referência: %s
+REPLAY_YOURS,Your heist,Seu assalto
+REPLAY_DIVERGED,Diverged at %d:%02d,Divergiu em %d:%02d
+REPLAY_MATCHES,Matches the server: %d s,Confere com o servidor: %d s
+REPLAY_GRADE,%s — %d of %d banked,%s — %d de %d guardados
+REPLAY_PLAY,Play,Jogar
+REPLAY_PAUSE,Pause,Pausar
+RESULT_BANKED,%d loot banked,%d de saque guardado
+RESULT_BANKED_SERVER,%d loot banked — the server minted %d (fee %d),%d de saque guardado — o servidor gerou %d (taxa %d)
+RESULT_ACCEPTED_SERVER,"Re-simulated by the server: accepted
+%d-byte replay","Ressimulado pelo servidor: aceito
+replay de %d bytes"
+RESULT_ACCEPTED_LOCAL,"Re-simulated as the server would: accepted
+%d-byte replay","Ressimulado como o servidor faria: aceito
+replay de %d bytes"
+RESULT_NOT_ACCEPTED,Not accepted,Não aceito
+RESULT_REFUSED,Refused: %s,Recusado: %s
+RESULT_PAID_NOTHING,The server paid nothing for this replay,O servidor não pagou nada por este replay
+RESULT_WOULD_PAY_NOTHING,The server would pay nothing for this replay,O servidor não pagaria nada por este replay
+RESULT_WATCH,Watch it,Assistir
+RESULT_AGAIN,Again,De novo
+GRADE_CLEAN,Clean,Limpo
+GRADE_LOUD,Loud,Barulhento
+GRADE_PARTIAL,Partial,Parcial
+GRADE_FOILED,Foiled,Frustrado
+SETTINGS_TITLE,Settings,Ajustes
+SETTINGS_LANGUAGE,Language,Idioma
+LANGUAGE_en,English,English
+LANGUAGE_pt_BR,Português (Brasil),Português (Brasil)
+SETTINGS_MUSIC,Music %d,Música %d
+SETTINGS_EFFECTS,Effects %d,Efeitos %d
+SETTINGS_ALERTS,Alerts %d,Alertas %d
+SETTINGS_REDUCED_MOTION_OFF,Motion: full,Movimento: normal
+SETTINGS_REDUCED_MOTION_ON,Motion: reduced,Movimento: reduzido
+SETTINGS_HAPTICS_ON,Haptics: on,Vibração: sim
+SETTINGS_HAPTICS_OFF,Haptics: off,Vibração: não

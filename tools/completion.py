@@ -155,12 +155,15 @@ DELIVERABLES = [
     ("1", "Golden harness", BACKEND, systems("Replay format", "Golden replays")),
 
     ("2", "Project structure", FRONTEND, not_started("a client project builds on both stores' targets")),
-    ("2", "Localisation", FRONTEND, not_started("the client loads its strings from a catalogue")),
+    ("2", "Localisation", FRONTEND, client_tests(
+        "every string a screen asks for is in the catalogue, in English and Brazilian Portuguese, with the same placeholders",
+        "no screen shows a word that is not from the catalogue")),
     ("2", "Portrait interface", FRONTEND, client_tests(
         "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:19.5",
         "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:16",
         "no text on any screen is smaller than 13 points (§21.8)")),
-    ("2", "Save and settings", FRONTEND, not_started("the client saves and restores its settings")),
+    ("2", "Save and settings", FRONTEND, client_tests(
+        "settings changed on the settings screen are saved as they change and restored on the next launch: language, three volumes, reduced motion, haptics (§20.6)")),
 
     ("3", "Render a replay", FRONTEND, client_tests(
         "the client's simulation is the rules version every golden replay names",
@@ -224,7 +227,7 @@ DELIVERABLES = [
     ("9", "Social screens", FRONTEND, not_started("the league and crew screens exist in the client")),
 
     ("10 to 13", "Localisation: English and Brazilian Portuguese", FRONTEND, not_started(
-        "every string ships in both languages")),
+        "every launch screen and content name ships in both languages, the Portuguese read by a native speaker")),
     ("10 to 13", "Accessibility", FRONTEND, not_started("§21's accessibility set is in the client")),
     ("10 to 13", "Compliance: store declarations", BACKEND, not_started(
         "the age, privacy and store declarations are filed")),

@@ -31,9 +31,9 @@ var speed_button: Button
 
 func _ready() -> void:
 	if not Session.replay.is_empty():
-		entries.append(["your heist", Session.replay])
+		entries.append([Strings.t("REPLAY_YOURS"), Session.replay])
 	for g in find_goldens():
-		entries.append([g, FileAccess.get_file_as_bytes("res://goldens/%s.rbh" % g)])
+		entries.append([Strings.t("REPLAY_GOLDEN", g), FileAccess.get_file_as_bytes("res://goldens/%s.rbh" % g), g])
 	_build()
 	if entries.size() > 0:
 		open_entry(0)
@@ -54,7 +54,7 @@ static func find_goldens() -> PackedStringArray:
 ## Open a golden by name, or -1 if there is none.
 func open_golden(name: String) -> int:
 	for i in entries.size():
-		if entries[i][0] == name:
+		if entries[i].size() > 2 and entries[i][2] == name:
 			open_entry(i)
 			return i
 	return -1
@@ -92,15 +92,15 @@ func _process(delta: float) -> void:
 func _refresh() -> void:
 	hud.show_state(replay)
 	if replay.mismatch() > 0:
-		badge_label.text = "Diverged at %d:%02d" % [replay.mismatch() / 60, replay.mismatch() % 60]
+		badge_label.text = Strings.t("REPLAY_DIVERGED", [replay.mismatch() / 60, replay.mismatch() % 60])
 		badge_label.add_theme_color_override("font_color", Palette.ALARM)
 	else:
-		badge_label.text = "Matches the server: %d s" % replay.seconds_agreed()
+		badge_label.text = Strings.t("REPLAY_MATCHES", replay.seconds_agreed())
 		badge_label.add_theme_color_override("font_color", Palette.SUCCESS.darkened(0.3))
 	if replay.tick() >= replay.ticks() and replay.ticks() > 0:
 		var o := replay.outcome()
-		grade_label.text = "%s — %d of %d banked" % [o["grade"], o["banked"], o["capacity"]]
-	play_button.text = "Pause" if playing else "Play"
+		grade_label.text = Strings.t("REPLAY_GRADE", [Strings.term("GRADE", o["grade"]), o["banked"], o["capacity"]])
+	play_button.text = Strings.t("REPLAY_PAUSE") if playing else Strings.t("REPLAY_PLAY")
 	speed_button.text = "×%d" % SPEEDS[speed_index]
 	view.queue_redraw()
 
@@ -127,13 +127,13 @@ func _build() -> void:
 
 	var controls := UI.row()
 	controls.add_child(UI.button("‹", func(): open_entry(current - 1); playing = true))
-	play_button = UI.button("Pause", func(): playing = not playing; _refresh(), true)
+	play_button = UI.button(Strings.t("REPLAY_PAUSE"), func(): playing = not playing; _refresh(), true)
 	controls.add_child(play_button)
 	speed_button = UI.button("×2", func(): speed_index = (speed_index + 1) % SPEEDS.size(); _refresh())
 	controls.add_child(speed_button)
 	controls.add_child(UI.button("›", func(): open_entry(current + 1); playing = true))
 	var back := UI.row()
-	back.add_child(UI.button("Home", func(): get_tree().change_scene_to_file("res://scenes/home.tscn")))
+	back.add_child(UI.button(Strings.t("COMMON_HOME"), func(): get_tree().change_scene_to_file("res://scenes/home.tscn")))
 	column.add_child(back)
 	column.add_child(controls)
 

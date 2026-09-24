@@ -35,11 +35,11 @@ func show_state(r: RulebornReplay) -> void:
 	var total := r.ticks() / tps
 	clock_label.text = "%d:%02d / %d:%02d" % [now / 60, now % 60, total / 60, total % 60]
 	var alarm := r.alarm()
-	alarm_label.text = "Alarm %s%s" % ["●".repeat(alarm), "○".repeat(6 - alarm)]
+	alarm_label.text = Strings.t("HUD_ALARM", "●".repeat(alarm) + "○".repeat(6 - alarm))
 	alarm_label.add_theme_color_override("font_color", Palette.ALARM if alarm > 0 else Palette.INK)
 	var carried := 0
 	var carry := 0
 	for m in r.crew():
 		carried += int(m["carried"])
 		carry += int(m["carry"])
-	loot_label.text = "Bags can take %d\nVault %d left" % [carry - carried, int(r.vault().get("exposed", 0))]
+	loot_label.text = Strings.t("HUD_LOOT", [carry - carried, int(r.vault().get("exposed", 0))])
