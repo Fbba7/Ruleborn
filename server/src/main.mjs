@@ -33,6 +33,10 @@ const service = new Service({
   builds: Builds.load([join(root, "sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm")]),
   secret: process.env.RULEBORN_SECRET ?? randomBytes(32).toString("hex"),
   verifyPlatform: (credential) => (typeof credential === "string" && credential ? credential : null),
+  // §18.1's seasons run back to back from the first. RULEBORN_SEASON_START is
+  // that moment, in ISO form; without it a fixed Monday, so a local server's
+  // seasons do not move between restarts.
+  seasonStart: Date.parse(process.env.RULEBORN_SEASON_START ?? "2026-01-05T00:00:00Z"),
 });
 const handle = handler(service);
 
@@ -41,6 +45,12 @@ const handle = handler(service);
 const TARGET_LISTS_MS = 15 * 60 * 1000;
 service.targetLists();
 setInterval(() => service.targetLists(), TARGET_LISTS_MS).unref();
+
+// §18.1: a season that has ended is closed — results, rewards, the pull back
+// — and the next opened. Checked with the target lists; closing twice is a
+// no-op, so a missed check costs nothing but a little lateness.
+service.seasons.rollover();
+setInterval(() => service.seasons.rollover(), TARGET_LISTS_MS).unref();
 
 if (process.argv.includes("--example")) {
   const { account } = service.session("example:defender");

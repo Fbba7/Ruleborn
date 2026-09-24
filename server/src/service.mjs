@@ -23,7 +23,9 @@ import { randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
+import { Refused } from "./refused.mjs";
 import { capHaul, entryFee, haul } from "./economy.mjs";
+import { Seasons } from "./seasons.mjs";
 import { readHeader } from "./sim.mjs";
 import { sha256 } from "./store.mjs";
 import { check, issue } from "./tokens.mjs";
@@ -46,15 +48,10 @@ export function clockTicks(links = 0) {
   return Math.min(cap, base + perLink * links) * TICKS_PER_SECOND;
 }
 
-/** A refusal with an HTTP status, so the edge layer need not guess one. */
-export class Refused extends Error {
-  constructor(status, reason, detail = {}) {
-    super(reason);
-    this.status = status;
-    this.reason = reason;
-    this.detail = detail;
-  }
-}
+// A refusal with an HTTP status: its own module so the services that import
+// each other can all throw it, re-exported here where the edge and the tests
+// have always found it.
+export { Refused };
 
 const day = (ms) => new Date(ms).toISOString().slice(0, 10);
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -68,9 +65,14 @@ export class Service {
    * proves, or null. It is the seam to Game Center and Play Games, which need
    * the stores' own services (see tokens.mjs).
    */
+  /**
+   * `seasonStart` is when season 1 began (§18.1): seasons run back to back,
+   * eight weeks each, from it.
+   */
   constructor({ db, store, builds, secret, verifyPlatform, now = () => Date.now(),
-                random = randomBytes }) {
+                random = randomBytes, seasonStart = 0 }) {
     Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random });
+    this.seasons = new Seasons(this, seasonStart);
   }
 
   // -- identity ------------------------------------------------------------
@@ -380,7 +382,9 @@ export class Service {
       // §12.9: "A foiled heist gives the defender the raider's entry fee".
       book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
     }
-    return { verdict, fee, haul: pay };
+    // §12.9's Renown, in the same transaction as the haul.
+    const renown = this.seasons.settle(lease, verdict, now);
+    return { verdict, fee, haul: pay, renown };
   }
 
   /** The raider's own Vault level, from their Heart's current snapshot; a

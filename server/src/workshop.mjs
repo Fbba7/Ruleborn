@@ -249,10 +249,9 @@ export class Workshop {
 
   /**
    * A play, submitted and re-simulated. A clear by anyone but the creator is
-   * a completion, counted once a player (§18.7). Completions from the
-   * creator's own constellation count at a quarter; constellations are not
-   * built yet, so every completion counts whole (D62). Idempotent, like a
-   * heist: the token keys the answer.
+   * a completion, counted once a player (§18.7), and at a quarter from the
+   * creator's own constellation. Idempotent, like a heist: the token keys the
+   * answer.
    */
   submitPlay(player, token, replay) {
     const play = this.db.prepare("SELECT * FROM workshop_plays WHERE token = ?").get(token);
@@ -276,9 +275,16 @@ export class Workshop {
     const now = this.now();
     return transaction(this.db, () => {
       if (outcome.cleared && player !== item.creator) {
+        // §18.7: "completions from a creator's own constellation count at a
+        // quarter" — the constellation both are in when it is completed.
+        const kin = this.db.prepare(
+          `SELECT 1 FROM constellation_members a JOIN constellation_members b
+             ON a.constellation = b.constellation
+            WHERE a.account = ? AND b.account = ? AND a.left_at IS NULL AND b.left_at IS NULL`)
+          .get(player, item.creator);
         const fresh = this.db.prepare(
           `INSERT OR IGNORE INTO workshop_completions (item, player, weight, at)
-           VALUES (?, ?, 1, ?)`).run(item.id, player, now).changes;
+           VALUES (?, ?, ?, ?)`).run(item.id, player, kin ? 0.25 : 1, now).changes;
         outcome.counted = fresh === 1;
         if (fresh) this.spike(item.id, now);
       }

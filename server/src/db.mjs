@@ -213,6 +213,97 @@ CREATE TABLE IF NOT EXISTS workshop_reports (
   resolution  TEXT
 );
 
+-- §18.1: "A season lasts eight weeks." Back to back from the first; a
+-- season is closed once, when its results are written.
+CREATE TABLE IF NOT EXISTS seasons (
+  id        INTEGER PRIMARY KEY,
+  starts_at INTEGER NOT NULL,
+  ends_at   INTEGER NOT NULL,
+  closed_at INTEGER
+);
+
+-- A player's season: where their Renown started (§18.1's pull back from the
+-- last one), and whether they have reached Ember, below which they can no
+-- longer fall ("nobody can drop out of Dust or Ember").
+CREATE TABLE IF NOT EXISTS standings (
+  season   INTEGER NOT NULL REFERENCES seasons(id),
+  account  TEXT NOT NULL REFERENCES accounts(id),
+  start    INTEGER NOT NULL,
+  ember    INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (season, account)
+);
+
+-- §12.9's Renown, as events, like the ledger: what each heist moved, and to
+-- whom. A player's Renown is their season's start plus these.
+CREATE TABLE IF NOT EXISTS renown (
+  id      INTEGER PRIMARY KEY AUTOINCREMENT,
+  season  INTEGER NOT NULL REFERENCES seasons(id),
+  account TEXT NOT NULL REFERENCES accounts(id),
+  amount  INTEGER NOT NULL,
+  reason  TEXT NOT NULL,
+  heist   TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
+  at      INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS renown_by_account ON renown (season, account);
+CREATE TRIGGER IF NOT EXISTS renown_append_only_update BEFORE UPDATE ON renown
+  BEGIN SELECT RAISE(ABORT, 'Renown is a record of heists (12.9)'); END;
+CREATE TRIGGER IF NOT EXISTS renown_append_only_delete BEFORE DELETE ON renown
+  BEGIN SELECT RAISE(ABORT, 'Renown is a record of heists (12.9)'); END;
+
+-- A closed season's results: "rewards are given by league" (§18.1).
+CREATE TABLE IF NOT EXISTS season_results (
+  season   INTEGER NOT NULL REFERENCES seasons(id),
+  account  TEXT NOT NULL REFERENCES accounts(id),
+  renown   INTEGER NOT NULL,
+  league   TEXT NOT NULL,
+  division INTEGER,
+  reward   TEXT,
+  PRIMARY KEY (season, account)
+);
+
+-- §17.5: "Constellations compete as teams in a seasonal league ranked by
+-- members' combined Renown and anomaly scores."
+CREATE TABLE IF NOT EXISTS constellation_results (
+  season        INTEGER NOT NULL REFERENCES seasons(id),
+  constellation TEXT NOT NULL REFERENCES constellations(id),
+  renown        INTEGER NOT NULL,
+  place         INTEGER NOT NULL,
+  PRIMARY KEY (season, constellation)
+);
+
+-- §17.1: "up to 30 Keepers … a founder, up to four elders, and members."
+CREATE TABLE IF NOT EXISTS constellations (
+  id             TEXT PRIMARY KEY,
+  name_adjective INTEGER NOT NULL,
+  name_noun      INTEGER NOT NULL,
+  founded_at     INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS constellation_members (
+  constellation TEXT NOT NULL REFERENCES constellations(id),
+  account       TEXT NOT NULL REFERENCES accounts(id),
+  role          TEXT NOT NULL CHECK (role IN ('founder', 'elder', 'member')),
+  joined_at     INTEGER NOT NULL,
+  left_at       INTEGER
+);
+-- One constellation at a time.
+CREATE UNIQUE INDEX IF NOT EXISTS one_constellation
+  ON constellation_members (account) WHERE left_at IS NULL;
+
+-- §17.7: a crew is "4 to 8", "formed inside a constellation, or with friends
+-- across constellations"; "a crew survives its founder leaving".
+CREATE TABLE IF NOT EXISTS crews (
+  id         TEXT PRIMARY KEY,
+  invite     TEXT NOT NULL UNIQUE,
+  founded_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS crew_members (
+  crew      TEXT NOT NULL REFERENCES crews(id),
+  account   TEXT NOT NULL REFERENCES accounts(id),
+  joined_at INTEGER NOT NULL,
+  left_at   INTEGER
+);
+CREATE UNIQUE INDEX IF NOT EXISTS one_crew ON crew_members (account) WHERE left_at IS NULL;
+
 -- §25.1's 10% who remix: each take of an island into a builder.
 CREATE TABLE IF NOT EXISTS workshop_remixes (
   item   TEXT NOT NULL REFERENCES workshop_items(id),

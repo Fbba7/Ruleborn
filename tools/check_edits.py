@@ -196,6 +196,11 @@ NO_EDIT_BECAUSE = {
            "server's constants only stand in for",
     "D62": "limits of this build, not sentences in the document",
     "C43": "a decision for the owner: whether players 16 and over may type island names",
+    "F40": "a decision for the owner: which of §14.7's two targets the leagues keep, "
+           "and whether Renown is made as well as moved",
+    "G27": "decisions for the owner: the boundaries, the lower leagues' rewards "
+           "and the rounding",
+    "D63": "limits of this build, and version 1.1's scope",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

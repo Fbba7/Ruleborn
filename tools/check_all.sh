@@ -39,6 +39,7 @@ bash sim/run_spike.sh
 echo
 echo "== the server: lease, validate, grant, against the simulation build just made =="
 python3 tools/design_facts.py --check-json server/src/facts.json
+python3 tools/league_model.py --check server/src/leagues.json
 python3 server/status.py
 
 echo

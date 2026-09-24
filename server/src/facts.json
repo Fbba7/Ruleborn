@@ -6,11 +6,18 @@
  ],
  "BREAKER_VAULT_MULTIPLIER": 2,
  "CARRIER_LOADED_PACE": 0.85,
+ "CONSTELLATION_ELDERS": 4,
+ "CONSTELLATION_KEEPER_LEVEL": 6,
+ "CONSTELLATION_SIZE": 30,
  "CRACK_NOISE_SECONDS": 5,
  "CRACK_REACH_METRES": 5,
  "CREW_RANGE": [
   3,
   5
+ ],
+ "CREW_SIZE": [
+  4,
+  8
  ],
  "CROUCH_PACE": 0.5,
  "DECISION_BAND": [
@@ -65,6 +72,22 @@
   2,
   3
  ],
+ "LEAGUES": [
+  "Dust",
+  "Ember",
+  "Tide",
+  "Star",
+  "Nova",
+  "Paradox"
+ ],
+ "LEAGUE_DIVISIONS": 3,
+ "LEAGUE_SHARES": {
+  "Ember": 30,
+  "Nova": 10,
+  "Paradox": 1,
+  "Star": 25,
+  "Tide": 30
+ },
  "LOAD_PER_SECOND": 30,
  "MENDER_REVIVE_SECONDS": 1.5,
  "NOTES": [
@@ -86,6 +109,18 @@
   "Spark": "Bloom",
   "Veil": "Echo",
   "Weight": "Flow"
+ },
+ "RENOWN_CLEAN": [
+  20,
+  1000,
+  8,
+  40
+ ],
+ "RENOWN_FOILED": 8,
+ "RENOWN_OUTCOME": {
+  "clean": 1.0,
+  "loud": 0.8,
+  "partial": 0.5
  },
  "REVIVE_HEALTH": 0.3,
  "REVIVE_SECONDS": 3.0,
@@ -111,6 +146,7 @@
   "Life",
   "Spirit"
  ],
+ "SEASON_WEEKS": 8,
  "SKIFF_HEART_SECONDS": 20,
  "SKIFF_OUTER_SECONDS": 5,
  "TAKEDOWN_SECONDS": 2,

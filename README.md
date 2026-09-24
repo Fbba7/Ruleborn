@@ -33,8 +33,8 @@ patrol positions), and handed the realms' one to this repository: §32.9's full
 economy re-run. That run is done, so the realms now wait on the document taking
 its tables.
 
-Five versions have now answered the audit. **112 of 177 register items are fixed
-in the document itself**, the latest 15 by v3.4. 26 are still open.
+Five versions have now answered the audit. **112 of 180 register items are fixed
+in the document itself**, the latest 15 by v3.4. 29 are still open.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -199,6 +199,7 @@ tools/
   roadmap.py                      the roadmap, as data
   build_roadmap.py                renders it, computing progress from the register
   client_strings.py               writes client/i18n/content.csv, the content's names, from content/
+  league_model.py                 fits the league boundaries to §14.7's shares; writes server/src/leagues.json
   completion.py                   how close the app is to built, backend and frontend, from §26.8's costs and passing proofs
   parse_gate_results.py           scores the gates from testers' result codes
   build_prototype.py              renders the throwaway browser build of the two pre-code gates
@@ -300,7 +301,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 177 tracked items with section references and status:
+document, as 180 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,

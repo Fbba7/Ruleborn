@@ -46,6 +46,7 @@ export function server() {
     verifyPlatform: (c) => (typeof c === "string" && c.startsWith("gc:") ? c : null),
     now: () => clock.now,
     random,
+    seasonStart: T0,
   });
   return { service, clock, handle: handler(service), build: simulation() };
 }

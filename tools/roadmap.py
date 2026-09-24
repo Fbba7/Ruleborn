@@ -714,12 +714,25 @@ dict(
                     "ladder; ratings, reports a person resolves inside 24 hours, "
                     "bans that take a player's islands out everywhere, and "
                     "one-tap remixes. Building it found G26, D62 and C43."
+                    "<br><br>Renown, leagues and seasons (\u00a712.9, "
+                    "\u00a718.1) are booked with each grant: \u00a712.9's "
+                    "formula, the defender's mirror, Dust and Ember as floors, "
+                    "and an eight-week rollover that writes results, grants "
+                    "Star-and-up cosmetics and pulls Renown halfway back. The "
+                    "league boundaries are fitted to \u00a714.7's shares by a "
+                    "population model (G27), which shows those shares and "
+                    "\u00a714.7's arrival times cannot both hold under a "
+                    "zero-sum Renown (F40). Constellations (thirty Keepers "
+                    "from level 6, a founder and four elders, a league by "
+                    "combined Renown) and crews of four to eight are built; "
+                    "chat, votes and anomalies are not (D63)."
                     "<br><br><strong>Not yet:</strong> platform sign-in (needs "
                     "the stores), crossing realms, \u00a712.22's ratings and "
                     "fallback targets, and a landing command in the replay.",
              evidence="node --no-warnings --test server/test/*.test.mjs; "
                       "bash sim/run_spike.sh",
-             register=["G17", "D58", "G20", "G21", "G26", "D62", "C43"]),
+             register=["G17", "D58", "G20", "G21", "G26", "D62", "C43",
+                       "F40", "G27", "D63"]),
         dict(id="T3.4", owner="claude", status="doing",
              title="The client's half: the simulation inside Godot, and a "
                    "replay on screen",

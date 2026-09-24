@@ -177,6 +177,38 @@ ENTRY_FEE_RATE = 0.02
 ENTRY_FEE_MIN = 100
 ENTRY_FEE_MAX = 25_000
 
+#: §12.9: "Renown for a clean heist = 20 × (1 + (defender's Renown − raider's
+#: Renown) ÷ 1,000), kept between 8 and 40, then multiplied by the outcome
+#: above. The defender gains or loses the mirror amount." (base, scale, floor, cap)
+RENOWN_CLEAN = (20, 1000, 8, 40)
+
+#: §12.9's Renown column: ×1.0 clean, ×0.8 loud, ×0.5 partial.
+RENOWN_OUTCOME = {"clean": 1.0, "loud": 0.8, "partial": 0.5}
+
+#: §12.9: "A foiled heist costs the raider a flat 8".
+RENOWN_FOILED = 8
+
+#: §18.1: "A season lasts eight weeks."
+SEASON_WEEKS = 8
+
+#: §18.1: "six leagues: Dust, Ember, Tide, Star, Nova and Paradox, each with
+#: three divisions except Paradox".
+LEAGUES = ("Dust", "Ember", "Tide", "Star", "Nova", "Paradox")
+LEAGUE_DIVISIONS = 3
+
+#: §14.7's "Share of active players at season end", in per cent, for the five
+#: leagues it gives one; Dust has none ("—").
+LEAGUE_SHARES = {"Ember": 30, "Tide": 30, "Star": 25, "Nova": 10, "Paradox": 1}
+
+#: §17.1: "up to 30 Keepers, joined through the Beacon from Keeper level 6: a
+#: founder, up to four elders, and members."
+CONSTELLATION_SIZE = 30
+CONSTELLATION_KEEPER_LEVEL = 6
+CONSTELLATION_ELDERS = 4
+
+#: §17.7: a crew is "4 to 8", "the people you actually play with".
+CREW_SIZE = (4, 8)
+
 #: Where each declared fact is stated, so the report can cite it and a reader
 #: can check it. The derived ones cite the content file instead.
 HOME = {
@@ -222,6 +254,17 @@ HOME = {
     "ENTRY_FEE_RATE": "9.4",
     "ENTRY_FEE_MIN": "9.4",
     "ENTRY_FEE_MAX": "9.4",
+    "RENOWN_CLEAN": "12.9",
+    "RENOWN_OUTCOME": "12.9",
+    "RENOWN_FOILED": "12.9",
+    "SEASON_WEEKS": "18.1",
+    "LEAGUES": "18.1",
+    "LEAGUE_DIVISIONS": "18.1",
+    "LEAGUE_SHARES": "14.7",
+    "CONSTELLATION_SIZE": "17.1",
+    "CONSTELLATION_KEEPER_LEVEL": "17.1",
+    "CONSTELLATION_ELDERS": "17.1",
+    "CREW_SIZE": "17.7",
 }
 
 
@@ -296,6 +339,27 @@ STATED = {
                       lambda m: int(m[0].replace(",", ""))),
     "ENTRY_FEE_MAX": (r"Entry fee: \d+% of the raider's Starlight, from [\d,]+ to ([\d,]+)",
                       lambda m: int(m[0].replace(",", ""))),
+    "RENOWN_CLEAN": (r"Renown for a clean heist = (\d+) × \(1 \+ \(defender's Renown − raider's "
+                     r"Renown\) ÷ ([\d,]+)\), kept between (\d+) and (\d+)",
+                     lambda m: tuple(int(x.replace(",", "")) for x in m)),
+    "RENOWN_OUTCOME": (r"\| Clean\n[^\n]*\n\| ×[\d.]+\n\| ×([\d.]+)[\s\S]*?\| Loud\n[^\n]*\n"
+                       r"\| ×[\d.]+\n\| ×([\d.]+)[\s\S]*?\| Partial\n[^\n]*\n\| ×[\d.]+\n\| ×([\d.]+)",
+                       lambda m: {"clean": float(m[0]), "loud": float(m[1]), "partial": float(m[2])}),
+    "RENOWN_FOILED": (r"A foiled heist costs the raider a flat (\d+)", lambda m: int(m[0])),
+    "SEASON_WEEKS": (r"A season lasts (\w+) weeks", lambda m: {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8}.get(m[0])),
+    "LEAGUES": (r"six leagues: (\w+), (\w+), (\w+), (\w+), (\w+) and (\w+), each",
+                lambda m: tuple(m)),
+    "LEAGUE_DIVISIONS": (r"each with (\w+) divisions except Paradox",
+                         lambda m: {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8}.get(m[0])),
+    "LEAGUE_SHARES": (r"\| Ember\n[^\n]*\n\| About (\d+)%[\s\S]*?\| Tide\n[^\n]*\n\| About (\d+)%"
+                      r"[\s\S]*?\| Star\n[^\n]*\n\| About (\d+)%[\s\S]*?\| Nova\n[^\n]*\n\| About (\d+)%"
+                      r"[\s\S]*?\| Paradox\n[^\n]*\n\| About (\d+)%",
+                      lambda m: dict(zip(("Ember", "Tide", "Star", "Nova", "Paradox"), map(int, m)))),
+    "CONSTELLATION_SIZE": (r"up to (\d+) Keepers, joined through the Beacon", lambda m: int(m[0])),
+    "CONSTELLATION_KEEPER_LEVEL": (r"joined through the Beacon from Keeper level (\d+)",
+                                   lambda m: int(m[0])),
+    "CONSTELLATION_ELDERS": (r"a founder, up to (\w+) elders", lambda m: {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8}.get(m[0])),
+    "CREW_SIZE": (r"\| Crew\n\| (\d+) to (\d+)", lambda m: (int(m[0]), int(m[1]))),
 }
 
 #: Facts the document has moved past and this repository has not, each with

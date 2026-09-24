@@ -29,12 +29,29 @@
 //   POST /v1/moderation/reports/:id {"action", "reason"?}    → the item
 //   POST /v1/moderation/featured/:id                         → the item
 //
+// Leagues and seasons (§12.9, §18.1; seasons.mjs), constellations and crews
+// (§17; social.mjs):
+//
+//   GET  /v1/league                                          → {season, renown, league, division, …}
+//   GET  /v1/seasons/:id/result                              → the caller's closed-season result
+//   GET  /v1/seasons/:id/constellations                      → §17.5's constellation league
+//   POST /v1/constellations      {"adjective", "noun"}       → founded
+//   GET  /v1/constellations/:id                              → it, and its members
+//   POST /v1/constellations/:id/join                         → joined
+//   POST /v1/constellations/:id/roles {"account", "role"}    → an elder named, or unnamed
+//   POST /v1/constellations/leave                            → left
+//   POST /v1/crews                                           → a crew, and its invite
+//   POST /v1/crews/join          {"invite"}                  → joined
+//   POST /v1/crews/leave                                     → left
+//   GET  /v1/crews/:id                                       → it
+//
 // A target list is fetched like a bundle, by its hash (§24.8: "a file, not a
 // query"); the index naming the current ones is the only thing that changes.
 //
 // Everything but the session and a bundle needs `Authorization: Bearer …`.
 
 import { Refused } from "./service.mjs";
+import { Social } from "./social.mjs";
 import { WORDS, Workshop } from "./workshop.mjs";
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
@@ -60,6 +77,37 @@ async function body(request) {
 const base64 = (s) => new Uint8Array(Buffer.from(String(s ?? ""), "base64"));
 
 const octets = (b) => new Response(b, { headers: { "content-type": "application/octet-stream" } });
+
+/** Leagues, seasons, constellations and crews. */
+async function socialRoute(service, social, request, parts, who) {
+  const [, area, a, b] = parts;
+  const m = request.method;
+  const me = who();
+  if (area === "league" && m === "GET") return json(service.seasons.league(me));
+  if (area === "seasons" && m === "GET" && a && b === "result") {
+    return json(service.seasons.result(me, Number(a)));
+  }
+  if (area === "seasons" && m === "GET" && a && b === "constellations") {
+    return json(service.seasons.constellationTable(Number(a)));
+  }
+  if (area === "constellations") {
+    if (m === "POST" && !a) return json(social.found(me, await body(request)), 201);
+    if (m === "POST" && a === "leave") return json(social.leave(me));
+    if (m === "GET" && a) return json(social.constellation(a));
+    if (m === "POST" && a && b === "join") return json(social.join(me, a));
+    if (m === "POST" && a && b === "roles") {
+      const { account, role } = await body(request);
+      return json(social.appoint(me, account, role));
+    }
+  }
+  if (area === "crews") {
+    if (m === "POST" && !a) return json(social.startCrew(me), 201);
+    if (m === "POST" && a === "join") return json(social.joinCrew(me, (await body(request)).invite));
+    if (m === "POST" && a === "leave") return json(social.leaveCrew(me));
+    if (m === "GET" && a) return json(social.crew(a));
+  }
+  return null;
+}
 
 /** The Workshop's routes: /v1/workshop/…, /v1/creators/…, /v1/moderation/…. */
 async function workshopRoute(workshop, request, url, parts, who) {
@@ -105,6 +153,7 @@ async function workshopRoute(workshop, request, url, parts, who) {
 
 export function handler(service) {
   const workshop = new Workshop(service);
+  const social = new Social(service);
   return async function handle(request) {
     const url = new URL(request.url);
     const parts = url.pathname.split("/").filter(Boolean);
@@ -112,6 +161,10 @@ export function handler(service) {
     const who = () => service.account(
       (request.headers.get("authorization") ?? "").replace(/^Bearer /, ""));
     try {
+      if (["league", "seasons", "constellations", "crews"].includes(parts[1])) {
+        const out = await socialRoute(service, social, request, parts, who);
+        return out ?? json({ error: "no_such_route" }, 404);
+      }
       if (["workshop", "creators", "moderation"].includes(parts[1])) {
         const out = await workshopRoute(workshop, request, url, parts, who);
         return out ?? json({ error: "no_such_route" }, 404);

@@ -264,9 +264,19 @@ DELIVERABLES = [
     ("8", "The season track", BACKEND, not_started("the season track's tiers are granted")),
     ("8", "Shop, track and wallet screens", FRONTEND, not_started("those screens exist in the client")),
 
-    ("9", "Leagues", BACKEND, not_started("league placement and rewards run on the server")),
-    ("9", "Crews (clans)", BACKEND, not_started("crews are stored and joinable")),
-    ("9", "Season rollover", BACKEND, not_started("a season closes and the next opens")),
+    ("9", "Leagues", BACKEND, server_tests(
+        "a clean heist moves §12.9's Renown to the raider, and Dust's floor mints what it stops",
+        "above its floor, the defender loses the mirror amount (12.9)",
+        "a foiled heist costs the raider a flat 8, and the defender gains what the raider lost (12.9)",
+        "Ember, once reached, is a floor: nobody drops out of Dust or Ember (18.1)",
+        "a Renown's league and division: three divisions a league, none in Paradox (18.1)")),
+    ("9", "Crews (clans)", BACKEND, server_tests(
+        "a constellation: the Beacon from Keeper level 6, thirty Keepers, a founder and four elders (17.1)",
+        "a crew is four to eight, joined by its invite, and survives its founder leaving (17.7)",
+        "leagues, constellations and crews over HTTP")),
+    ("9", "Season rollover", BACKEND, server_tests(
+        "a season closes once: results and rewards by league, and the next opens pulled halfway back (18.1)",
+        "the constellation league ranks by members' combined Renown at the season's close (17.5)")),
     ("9", "Social screens", FRONTEND, not_started("the league and crew screens exist in the client")),
 
     ("10 to 13", "Localisation: English and Brazilian Portuguese", FRONTEND, not_started(

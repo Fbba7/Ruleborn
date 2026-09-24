@@ -58,7 +58,8 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           "F36", "F37", "G19", "G20", "G21",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
-                          "G23", "G24", "G25", "D61", "G26", "D62", "C43"})
+                          "G23", "G24", "G25", "D61", "G26", "D62", "C43",
+                          "F40", "G27", "D63"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5581,23 +5582,24 @@ dict(id="G26", kind="gap", severity="significant", status="open",
          "spike, and whether a remix earns its original anything."),
 
 dict(id="D62", kind="deviation", severity="significant", status="open",
-     title="The Workshop publishes without the authored hold-band check, counts "
-           "every completion whole, and pays no Island Fund",
+     title="The Workshop publishes without the authored hold-band check, and "
+           "pays no Island Fund",
      refs=["13.2", "18.6", "18.7", "18.9", "20.5"],
-     body="Three of the Workshop\u2019s rules wait on systems this build does not "
+     body="Two of the Workshop\u2019s rules wait on systems this build does not "
           "have. §18.7: <em>\u201cA published island is checked against the "
           "authored hold band before the Workshop lets it out\u201d</em> \u2014 a "
           "hold rate is measured over hundreds of raids (13.4), which only the "
           "harness can run, and not per publish; the server checks the rules "
-          "and the creator\u2019s clear. <em>\u201ccompletions from a creator's "
-          "own constellation count at a quarter\u201d</em> \u2014 constellations "
-          "are not built, so every completion counts whole. §18.9\u2019s Island "
-          "Fund needs revenue and the stores. And the age band a player browses "
-          "by is declared, not verified, as §20.5\u2019s neutral gate allows. "
-          "Found building the Workshop.",
+          "and the creator\u2019s clear. §18.9\u2019s Island Fund needs revenue "
+          "and the stores. And the age band a player browses by is declared, not "
+          "verified, as §20.5\u2019s neutral gate allows. Found building the "
+          "Workshop. <em>\u201ccompletions from a creator's own constellation "
+          "count at a quarter\u201d</em> was a third, until constellations were "
+          "built: a completion by a player in the creator\u2019s constellation "
+          "now counts at a quarter.",
      rec="Run the hold-band measurement when an island is submitted (a queue, "
-         "not the request), weigh completions once crews exist, and build the "
-         "fund with purchases. Until then these are limits of this build."),
+         "not the request), and build the fund with purchases. Until then these "
+         "are limits of this build."),
 
 dict(id="C43", kind="contradiction", severity="minor", status="open",
      title="§18.6 gives every island a word-list name; §20.7 gives one only to "
@@ -5613,6 +5615,79 @@ dict(id="C43", kind="contradiction", severity="minor", status="open",
      rec="One rule. If older players may type names, add island names to "
          "§20.4\u2019s filter and the 24-hour review; if not, §20.7\u2019s row "
          "says word lists for everyone."),
+
+dict(id="F40", kind="finding", severity="significant", status="open",
+     title="Renown only moves between players, so the leagues rest on what the "
+           "floors mint, and §14.7\u2019s arrival times and shares cannot both "
+           "hold",
+     refs=["12.9", "14.7", "18.1", "14.1", "14.5"],
+     body="§12.9: <em>\u201cThe defender gains or loses the mirror "
+          "amount\u201d</em>. A raid adds to the raider what it takes from the "
+          "defender, and a foiled one the reverse, so no raid makes Renown; the "
+          "only Renown in the game is what §18.1\u2019s floors mint, when a "
+          "defender at Dust\u2019s or Ember\u2019s floor cannot lose and the "
+          "raider gains anyway. <code>tools/league_model.py</code> plays the rules "
+          "forward over four seasons, with §14.1\u2019s three kinds of player and "
+          "§14.5\u2019s success arc. Fitted to §14.7\u2019s season-end shares, "
+          "the leagues start at Ember 128, Tide 184, Star 300, Nova 644 and "
+          "Paradox 1,160 (each within 15% under the three alternatives it tries), "
+          "and an engaged player then reaches Ember on day 2, Tide on day 4, "
+          "Star on day 8 and Nova on day 57 \u2014 against §14.7\u2019s first "
+          "week, week 3, month 2 and month 3. Set Ember late enough for the first "
+          "week instead, and at season end half the population is still in Dust "
+          "and Ember holds 2% against 30%. The two targets pull opposite ways: "
+          "§18.1\u2019s halfway pull-back packs the season-end population close "
+          "together, so boundaries that divide it by share are close together, "
+          "and an engaged player crosses several in days. And the shares alone "
+          "cannot place Ember at all: once reached it is a floor, so players "
+          "pile up on it whatever its value.",
+     rec="Choose which target §14.7 means: if the shares, accept faster "
+         "arrivals (or widen the spread with a smaller pull-back); if the "
+         "arrival times, accept a heavier Dust and Ember at season end. And "
+         "decide whether Renown should be made as well as moved \u2014 a small "
+         "grant per clean heist would decouple the leagues from the floors\u2019 "
+         "leak."),
+
+dict(id="G27", kind="gap", severity="significant", status="open",
+     title="§18.1 places players in six leagues and never says how much Renown "
+           "each starts at",
+     refs=["18.1", "14.7", "12.9", "18.5"],
+     body="The server needs a boundary for every league and division to place a "
+          "player, and the document gives none \u2014 §14.7 gives targets the "
+          "boundaries should meet, not the boundaries. <code>server/src/leagues.json</code> "
+          "holds the ones <code>tools/league_model.py</code> fits to §14.7\u2019s "
+          "shares (F40 for what that costs), divisions as thirds of each league, "
+          "and <code>check_all</code> refits them. Four more readings were needed. "
+          "Renown is whole points, each amount rounded to the nearest. "
+          "<em>\u201cRewards are given by league\u201d</em>, and the only reward "
+          "named is §18.5\u2019s <em>\u201cStar, Nova and Paradox leagues with "
+          "season-end cosmetics\u201d</em>, so those three earn a cosmetic of "
+          "their league and season and the other three nothing. The floor a "
+          "season pulls back toward is the lower boundary of the league the "
+          "player ended in. And seasons run back to back from a start the server "
+          "is given.",
+     rec="Give the boundaries in Renown, or say they are set each season from "
+         "the shares; say what Dust, Ember and Tide earn at season end; and say "
+         "whether Renown is kept in whole points."),
+
+dict(id="D63", kind="deviation", severity="minor", status="open",
+     title="Constellations and crews are stored and joinable, and none of what "
+           "they do together is built",
+     refs=["17.1", "17.2", "17.3", "17.4", "17.5", "17.7", "20.4"],
+     body="The server keeps §17.1\u2019s constellations \u2014 the Beacon\u2019s "
+          "Keeper-level gate, thirty Keepers, a founder and four elders \u2014 and "
+          "§17.7\u2019s crews of four to eight that survive their founder, and "
+          "ranks constellations each season by combined Renown. Not built: chat "
+          "and its preset form for 13 to 15, the Grand Law vote, anomalies (so "
+          "§17.5\u2019s league ranks by Renown alone), page requests and borrowed "
+          "crew. Readings taken where §17 is silent: a constellation is joined "
+          "without approval while there is room; its name is from the Workshop\u2019s "
+          "word lists, since §20.4\u2019s filter for constellation names implies "
+          "free text and no filter exists; a founder who leaves hands on to the "
+          "longest-standing elder, else member; a crew is joined by an invite and "
+          "counts as a crew from four. Found building them.",
+     rec="Build the Grand Law and anomalies with version 1.1 (§26.1), and state "
+         "how a constellation is joined and how a crew is found."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "
