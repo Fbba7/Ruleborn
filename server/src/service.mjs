@@ -26,9 +26,11 @@ import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
 import { capHaul, entryFee, haul } from "./economy.mjs";
 import { Seasons } from "./seasons.mjs";
+import { Shop } from "./shop.mjs";
 import { readHeader } from "./sim.mjs";
 import { sha256 } from "./store.mjs";
 import { check, issue } from "./tokens.mjs";
+import { Track } from "./track.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 
@@ -67,12 +69,17 @@ export class Service {
    */
   /**
    * `seasonStart` is when season 1 began (§18.1): seasons run back to back,
-   * eight weeks each, from it.
+   * eight weeks each, from it. `verifyReceipt(store, receipt)` is the same
+   * seam to the stores for purchases (shop.mjs); without one, every receipt
+   * is refused.
    */
   constructor({ db, store, builds, secret, verifyPlatform, now = () => Date.now(),
-                random = randomBytes, seasonStart = 0 }) {
-    Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random });
+                random = randomBytes, seasonStart = 0, verifyReceipt = () => null,
+                cosmetics = undefined }) {
+    Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random, verifyReceipt });
     this.seasons = new Seasons(this, seasonStart);
+    this.track = new Track(this);
+    this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), catalogue: cosmetics });
   }
 
   // -- identity ------------------------------------------------------------
@@ -250,9 +257,11 @@ export class Service {
     });
   }
 
+  /** The lease, and what the defender wears, so the raider sees their
+   *  island as they dressed it. */
   leaseView(row) {
     return { token: row.token, bundle: row.bundle, seed: row.seed, ticks: row.ticks,
-             rules: row.rules, expiresAt: row.expires_at };
+             rules: row.rules, expiresAt: row.expires_at, look: this.shop.equipped(row.defender) };
   }
 
   // -- validate and grant ----------------------------------------------------
@@ -382,9 +391,11 @@ export class Service {
       // §12.9: "A foiled heist gives the defender the raider's entry fee".
       book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
     }
-    // §12.9's Renown, in the same transaction as the haul.
+    // §12.9's Renown and §18.2's season stars, in the same transaction as
+    // the haul.
     const renown = this.seasons.settle(lease, verdict, now);
-    return { verdict, fee, haul: pay, renown };
+    const stars = this.track.settle(lease, verdict, this.seasons.current(now).id, now);
+    return { verdict, fee, haul: pay, renown, stars };
   }
 
   /** The raider's own Vault level, from their Heart's current snapshot; a
@@ -403,8 +414,24 @@ export class Service {
     const rows = this.db.prepare(
       "SELECT currency, SUM(amount) AS total FROM ledger WHERE account = ? GROUP BY currency")
       .all(account);
-    const out = { starlight: 0, essence: 0 };
+    const out = { starlight: 0, essence: 0, starglass: 0 };
     for (const r of rows) out[r.currency] = Number(r.total);
     return out;
+  }
+
+  /** One ledger row outside a heist: a track tier, a purchase, a price. */
+  book(account, currency, amount, reason, now = this.now()) {
+    if (amount === 0) return;
+    this.db.prepare(
+      "INSERT INTO ledger (account, currency, amount, reason, heist, at) VALUES (?, ?, ?, ?, NULL, ?)")
+      .run(account, currency, amount, reason, now);
+  }
+
+  /** Spend Starglass, never below none. Called inside the caller's
+   *  transaction, so the check and the debit are one. */
+  spendStarglass(account, amount, reason, now = this.now()) {
+    const have = this.balance(account).starglass;
+    if (have < amount) throw new Refused(409, "not_enough_starglass", { have, cost: amount });
+    this.book(account, "starglass", -amount, reason, now);
   }
 }

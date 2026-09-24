@@ -209,6 +209,20 @@ CONSTELLATION_ELDERS = 4
 #: §17.7: a crew is "4 to 8", "the people you actually play with".
 CREW_SIZE = (4, 8)
 
+#: §18.2: "Fifty tiers, climbed with season points from heists, defences and
+#: discoveries."
+SEASON_TIERS = 50
+
+#: §22.1 sells "The season pass premium track (cosmetic), about €6 a season".
+PREMIUM_TRACK_EUR = 6
+
+#: §22.1: "Starglass, in packs from about €1 to €50". (least, most)
+STARGLASS_PACKS_EUR = (1, 50)
+
+#: §20.2's purchases row: "€25 a month cap" at 13 to 15 and "€50 a month cap"
+#: at 16 and 17; adults get a "Monthly spending summary" and no cap.
+SPENDING_CAPS_EUR = {"13-15": 25, "16-17": 50}
+
 #: Where each declared fact is stated, so the report can cite it and a reader
 #: can check it. The derived ones cite the content file instead.
 HOME = {
@@ -265,6 +279,10 @@ HOME = {
     "CONSTELLATION_KEEPER_LEVEL": "17.1",
     "CONSTELLATION_ELDERS": "17.1",
     "CREW_SIZE": "17.7",
+    "SEASON_TIERS": "18.2",
+    "PREMIUM_TRACK_EUR": "22.1",
+    "STARGLASS_PACKS_EUR": "22.1",
+    "SPENDING_CAPS_EUR": "20.2",
 }
 
 
@@ -360,6 +378,15 @@ STATED = {
                                    lambda m: int(m[0])),
     "CONSTELLATION_ELDERS": (r"a founder, up to (\w+) elders", lambda m: {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8}.get(m[0])),
     "CREW_SIZE": (r"\| Crew\n\| (\d+) to (\d+)", lambda m: (int(m[0]), int(m[1]))),
+    "SEASON_TIERS": (r"(\w+) tiers, climbed with season points",
+                     lambda m: {"Forty": 40, "Fifty": 50, "Sixty": 60, "Seventy": 70, "Eighty": 80,
+                                "Ninety": 90, "A hundred": 100}.get(m[0])),
+    "PREMIUM_TRACK_EUR": (r"The season pass premium track \(cosmetic\), about €(\d+) a season",
+                          lambda m: int(m[0])),
+    "STARGLASS_PACKS_EUR": (r"Starglass, in packs from about €(\d+) to €(\d+)",
+                            lambda m: (int(m[0]), int(m[1]))),
+    "SPENDING_CAPS_EUR": (r"\| Purchases\n\| [^\n]*€(\d+) a month cap\n\| €(\d+) a month cap",
+                          lambda m: {"13-15": int(m[0]), "16-17": int(m[1])}),
 }
 
 #: Facts the document has moved past and this repository has not, each with

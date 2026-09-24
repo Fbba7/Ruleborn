@@ -17,6 +17,7 @@ import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
+import { Track } from "./track.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 export const BOUNDS = JSON.parse(readFileSync(new URL("./leagues.json", import.meta.url), "utf8"));
@@ -75,7 +76,8 @@ export class Seasons {
   }
 
   /** A player's standing in a season, opened at their pulled-back Renown
-   *  the first time they appear in it. */
+   *  the first time they appear in it — and with the season track's tier
+   *  price for them, scaled to the time the season has left (§18.8). */
   standing(account, season) {
     let row = this.db.prepare("SELECT * FROM standings WHERE season = ? AND account = ?")
       .get(season, account);
@@ -86,9 +88,12 @@ export class Seasons {
       // A player's first season starts at nothing, in Dust. A later one starts
       // where the last one's close pulled them back to.
       const start = last ? this.pulledBack(account, last) : { start: 0, ember: 0 };
-      this.db.prepare("INSERT INTO standings (season, account, start, ember) VALUES (?, ?, ?, ?)")
-        .run(season, account, start.start, start.ember);
-      row = { season, account, ...start };
+      const { ends_at: ends } = this.db.prepare("SELECT ends_at FROM seasons WHERE id = ?").get(season);
+      const tierStars = Track.scaled(ends - this.service.now(), SEASON_MS);
+      this.db.prepare(
+        "INSERT INTO standings (season, account, start, ember, tier_stars) VALUES (?, ?, ?, ?, ?)")
+        .run(season, account, start.start, start.ember, tierStars);
+      row = { season, account, ...start, tier_stars: tierStars };
     }
     return row;
   }

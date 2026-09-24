@@ -1,0 +1,4 @@
+{
+  "_what": "The cosmetics sold for Starglass (22.1): each an id, a kind (shop.mjs's KINDS), the set it belongs to, and a price in euro cents. No set is authored yet (D64); the season track's and the leagues' cosmetics are earned, not listed here.",
+  "items": []
+}

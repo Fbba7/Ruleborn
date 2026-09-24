@@ -110,6 +110,7 @@
   "Veil": "Echo",
   "Weight": "Flow"
  },
+ "PREMIUM_TRACK_EUR": 6,
  "RENOWN_CLEAN": [
   20,
   1000,
@@ -146,9 +147,18 @@
   "Life",
   "Spirit"
  ],
+ "SEASON_TIERS": 50,
  "SEASON_WEEKS": 8,
  "SKIFF_HEART_SECONDS": 20,
  "SKIFF_OUTER_SECONDS": 5,
+ "SPENDING_CAPS_EUR": {
+  "13-15": 25,
+  "16-17": 50
+ },
+ "STARGLASS_PACKS_EUR": [
+  1,
+  50
+ ],
  "TAKEDOWN_SECONDS": 2,
  "VAULT_HEALTH_PER_LEVEL": 1500,
  "WARD_HEALTH_PER_LEVEL": 550,

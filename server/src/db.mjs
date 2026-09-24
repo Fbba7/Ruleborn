@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   platform_identity TEXT NOT NULL UNIQUE,
   league            TEXT NOT NULL DEFAULT 'dust',
   cosmetics         TEXT NOT NULL DEFAULT '[]',
+  -- What a player wears, slot by slot: applied here so a raider sees it.
+  equipped          TEXT NOT NULL DEFAULT '{}',
   pass_expires_at   INTEGER,
   keeper_level      INTEGER NOT NULL DEFAULT 1,
   created_at        INTEGER NOT NULL,
@@ -122,7 +124,9 @@ CREATE TABLE IF NOT EXISTS target_lists (
 CREATE TABLE IF NOT EXISTS ledger (
   id       INTEGER PRIMARY KEY AUTOINCREMENT,
   account  TEXT NOT NULL REFERENCES accounts(id),
-  currency TEXT NOT NULL CHECK (currency IN ('starlight', 'essence')),
+  -- Starglass in hundredths: a Starglass is a euro (§19.12's 1:1), so a
+  -- price in cents is exact.
+  currency TEXT NOT NULL CHECK (currency IN ('starlight', 'essence', 'starglass')),
   amount   INTEGER NOT NULL,
   reason   TEXT NOT NULL,
   -- Deferred: the heist row and its ledger rows are written in one
@@ -230,6 +234,9 @@ CREATE TABLE IF NOT EXISTS standings (
   account  TEXT NOT NULL REFERENCES accounts(id),
   start    INTEGER NOT NULL,
   ember    INTEGER NOT NULL DEFAULT 0,
+  -- §18.8's catch-up: the season track's tier price, fixed when the player
+  -- first appears in the season, scaled to the time left (track.mjs).
+  tier_stars INTEGER,
   PRIMARY KEY (season, account)
 );
 
@@ -311,6 +318,70 @@ CREATE TABLE IF NOT EXISTS workshop_remixes (
   at     INTEGER NOT NULL,
   PRIMARY KEY (item, player)
 );
+-- §18.2's season stars ("reset each season", §9.1), as events: earned by
+-- heists and defences, spent on tiers.
+CREATE TABLE IF NOT EXISTS season_stars (
+  id      INTEGER PRIMARY KEY AUTOINCREMENT,
+  season  INTEGER NOT NULL REFERENCES seasons(id),
+  account TEXT NOT NULL REFERENCES accounts(id),
+  amount  INTEGER NOT NULL,
+  reason  TEXT NOT NULL,
+  heist   TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
+  at      INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS season_stars_by_account ON season_stars (season, account);
+CREATE TRIGGER IF NOT EXISTS season_stars_append_only_update BEFORE UPDATE ON season_stars
+  BEGIN SELECT RAISE(ABORT, 'season stars are a record (18.2)'); END;
+CREATE TRIGGER IF NOT EXISTS season_stars_append_only_delete BEFORE DELETE ON season_stars
+  BEGIN SELECT RAISE(ABORT, 'season stars are a record (18.2)'); END;
+
+-- Each tier of each season's track, claimed once a track (§18.2, §18.8).
+CREATE TABLE IF NOT EXISTS track_claims (
+  account TEXT NOT NULL REFERENCES accounts(id),
+  season  INTEGER NOT NULL REFERENCES seasons(id),
+  tier    INTEGER NOT NULL,
+  track   TEXT NOT NULL CHECK (track IN ('free', 'premium')),
+  reward  TEXT NOT NULL,
+  at      INTEGER NOT NULL,
+  PRIMARY KEY (account, season, tier, track)
+);
+
+-- A season's premium track, bought with Starglass (§18.2). It never lapses
+-- (§18.8's "nothing expires forever").
+CREATE TABLE IF NOT EXISTS premium_tracks (
+  account   TEXT NOT NULL REFERENCES accounts(id),
+  season    INTEGER NOT NULL REFERENCES seasons(id),
+  bought_at INTEGER NOT NULL,
+  PRIMARY KEY (account, season)
+);
+
+-- A purchase asked for, held under a minor's monthly cap (§20.2) until its
+-- receipt comes back or it lapses. Prices in euro cents.
+CREATE TABLE IF NOT EXISTS purchase_intents (
+  id          TEXT PRIMARY KEY,
+  account     TEXT NOT NULL REFERENCES accounts(id),
+  product     TEXT NOT NULL,
+  price       INTEGER NOT NULL,
+  created_at  INTEGER NOT NULL,
+  redeemed_at INTEGER
+);
+
+-- A store's receipt, granted once per store transaction.
+CREATE TABLE IF NOT EXISTS purchases (
+  store   TEXT NOT NULL,
+  txn     TEXT NOT NULL,
+  account TEXT NOT NULL REFERENCES accounts(id),
+  product TEXT NOT NULL,
+  price   INTEGER NOT NULL,
+  intent  TEXT REFERENCES purchase_intents(id),
+  at      INTEGER NOT NULL,
+  PRIMARY KEY (store, txn)
+);
+CREATE INDEX IF NOT EXISTS purchases_by_account ON purchases (account, at);
+CREATE TRIGGER IF NOT EXISTS purchases_append_only_update BEFORE UPDATE ON purchases
+  BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
+CREATE TRIGGER IF NOT EXISTS purchases_append_only_delete BEFORE DELETE ON purchases
+  BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
 `;
 
 /** Columns added to a table after a database was first made: `CREATE TABLE IF
@@ -320,7 +391,23 @@ const ADDED = [
   ["accounts", "moderator", "INTEGER NOT NULL DEFAULT 0"],
   ["accounts", "banned_at", "INTEGER"],
   ["accounts", "banned_reason", "TEXT"],
+  // The cosmetics a player wears, slot by slot (shop.mjs).
+  ["accounts", "equipped", "TEXT NOT NULL DEFAULT '{}'"],
+  ["standings", "tier_stars", "INTEGER"],
 ];
+
+/** A ledger made before Starglass: its currency check predates it, and a
+ *  check cannot be altered in SQLite, so the table is rebuilt around its
+ *  rows — the append-only triggers forbid changing a row, not moving them. */
+function starglassLedger(db) {
+  const old = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'ledger'").get();
+  if (!old || old.sql.includes("'starglass'")) return false;
+  db.exec(`DROP TRIGGER IF EXISTS ledger_append_only_update;
+           DROP TRIGGER IF EXISTS ledger_append_only_delete;
+           DROP INDEX IF EXISTS ledger_by_account;
+           ALTER TABLE ledger RENAME TO ledger_before_starglass;`);
+  return true;
+}
 
 export function open(path = ":memory:") {
   const db = new DatabaseSync(path);
@@ -333,7 +420,13 @@ export function open(path = ":memory:") {
       db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
     }
   }
+  const rebuilt = starglassLedger(db);
   db.exec(SCHEMA);
+  if (rebuilt) {
+    db.exec(`INSERT INTO ledger (id, account, currency, amount, reason, heist, at)
+               SELECT id, account, currency, amount, reason, heist, at FROM ledger_before_starglass;
+             DROP TABLE ledger_before_starglass;`);
+  }
   return db;
 }
 

@@ -726,13 +726,23 @@ dict(
                     "from level 6, a founder and four elders, a league by "
                     "combined Renown) and crews of four to eight are built; "
                     "chat, votes and anomalies are not (D63)."
-                    "<br><br><strong>Not yet:</strong> platform sign-in (needs "
+                    "<br><br>The season track (\u00a718.2) earns stars with "
+                    "each heist, claims fifty tiers in order with a free first "
+                    "tier and \u00a718.8's catch-up, and keeps past seasons' "
+                    "tiers on offer; Starglass packs go through an intent that "
+                    "holds \u00a720.2's monthly cap for minors, a receipt is "
+                    "granted once, and cosmetics are bought, owned and worn, the "
+                    "defender's set travelling with the lease. The figures are "
+                    "G28's readings; what Starglass is meant to be is F41 and "
+                    "F42 names the points; the stores and authored cosmetics "
+                    "are D64."
+                    "<br><br><strong>Not yet:</strong> platform sign-in and receipt checks (need "
                     "the stores), crossing realms, \u00a712.22's ratings and "
                     "fallback targets, and a landing command in the replay.",
              evidence="node --no-warnings --test server/test/*.test.mjs; "
                       "bash sim/run_spike.sh",
              register=["G17", "D58", "G20", "G21", "G26", "D62", "C43",
-                       "F40", "G27", "D63"]),
+                       "F40", "G27", "D63", "F41", "F42", "G28", "D64"]),
         dict(id="T3.4", owner="claude", status="doing",
              title="The client's half: the simulation inside Godot, and a "
                    "replay on screen",

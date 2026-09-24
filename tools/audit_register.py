@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5688,6 +5688,102 @@ dict(id="D63", kind="deviation", severity="minor", status="open",
           "counts as a crew from four. Found building them.",
      rec="Build the Grand Law and anomalies with version 1.1 (§26.1), and state "
          "how a constellation is joined and how a crew is found."),
+
+dict(id="F41", kind="finding", severity="significant", status="open",
+     title="Starglass is a wrapper for gifts and the pass, and also a currency "
+           "sold in packs, earned free, and 1:1 with no named money",
+     refs=["9.1", "9.5", "19.12", "22.1", "20.6"],
+     body="§19.12 refuses money illusion: <em>\u201cStarglass exists only as a "
+          "gift and season-pass wrapper, always at a visible 1:1 rate\u201d</em>. "
+          "Everywhere else it is a general currency. §9.1 earns it from "
+          "<em>\u201cPurchases; small amounts from the free season track\u201d</em> "
+          "and spends it on <em>\u201cCosmetics and the premium track only\u201d</em>; "
+          "§9.5 prices cosmetics in it (<em>\u201cStarglass only\u201d</em>); and "
+          "§22.1 sells <em>\u201cStarglass, in packs from about €1 to €50\u201d</em> "
+          "beside the cosmetics. So it is not only a wrapper. Two more gaps sit "
+          "under the 1:1: Starglass the free track gives has no money behind it, "
+          "so its 1:1 is to nothing; and the rate is 1:1 to euros in every price "
+          "the document writes, while the game launches in Brazilian Portuguese "
+          "(§20.6), where the stores charge reais at their own price tiers, so a "
+          "single Starglass cannot be 1:1 with both. The server holds Starglass "
+          "as euros in hundredths, sells §22.1\u2019s packs, and spends it on "
+          "cosmetics and the premium track. Found building purchases.",
+     rec="Choose one: Starglass as a real currency sold in packs (and drop "
+         "§19.12\u2019s \u201conly as a wrapper\u201d), or cosmetics and the "
+         "pass priced in money with Starglass only as a gift token. Then name "
+         "what 1:1 is to in each store country, and whether the free track "
+         "gives Starglass at all."),
+
+dict(id="F42", kind="finding", severity="minor", status="open",
+     title="The season track is climbed with \u201cseason points\u201d in "
+           "§18.2 and \u201cseason stars\u201d in §9.1, from different sources",
+     refs=["9.1", "18.2"],
+     body="§18.2: <em>\u201cFifty tiers, climbed with season points from "
+          "heists, defences and discoveries\u201d</em>. §9.1\u2019s currency table "
+          "calls the same thing Season stars, earned from <em>\u201cHeists, "
+          "defences, discoveries, goals\u201d</em>. One of them has goals and the "
+          "other does not, and a reader cannot tell whether points and stars "
+          "are one currency. The server calls them season stars and earns them "
+          "from heists and defences (D64). Found building the track.",
+     rec="Use one name, and give §18.2 the same list of sources as §9.1."),
+
+dict(id="G28", kind="gap", severity="significant", status="open",
+     title="The season track and the shop have no numbers: stars, tier price, "
+           "rewards, packs, or what catch-up scales",
+     refs=["9.1", "14.8", "18.2", "18.8", "20.2", "22.1", "24.8"],
+     body="§18.2 gives fifty tiers and what each track holds in kind; §18.8 "
+          "says <em>\u201cUnclaimed tiers stay claimable in a later season at "
+          "the same cost\u201d</em> and <em>\u201cThe track scales to the time "
+          "remaining\u201d</em>; §22.1 gives a premium track at about €6 and "
+          "packs from €1 to €50. Nothing says how many stars a heist or a "
+          "defence earns, what a tier costs, what each tier gives, which packs "
+          "exist between €1 and €50, or what a cosmetic costs. The server\u2019s "
+          "readings, each a named constant in <code>track.mjs</code> and "
+          "<code>shop.mjs</code>: a heist earns the raider ten stars times "
+          "§12.9\u2019s Renown outcome and the defender the rest of ten, so a "
+          "foiled heist is ten to the defence; a tier costs twenty, a §14.1 "
+          "regular player\u2019s day of clean raids, and tier 1 costs nothing "
+          "(§14.8: <em>\u201cthe season track's first tier is complete on day "
+          "one\u201d</em>); a player first seen in a season pays that price "
+          "scaled to the time left; stars are spent, not a threshold, so a past "
+          "season\u2019s unclaimed tiers are bought with this season\u2019s stars at "
+          "that season\u2019s price; the free track gives a stray at tier 50, a "
+          "quarter Starglass every tenth tier (one a season), five pages every "
+          "other fifth and 500 Essence otherwise; the premium track gives a "
+          "cosmetic every fifth tier through §18.2\u2019s six kinds, and a season\u2019s "
+          "premium track can be bought later at the same price. Packs are €1, "
+          "5, 10, 20 and 50. A league\u2019s season-end cosmetic is a realm skin. "
+          "An outfit is worn by a crew role and a law visual by a law. And "
+          "§24.8\u2019s accounts hold a season pass expiry, which §18.8\u2019s "
+          "<em>\u201cNothing expires forever\u201d</em> leaves nothing to put in: "
+          "the server records a premium track per season instead. The free "
+          "track\u2019s Essence and pages are not in the economy model. Found "
+          "building the track and the shop.",
+     rec="State the stars a heist, defence, discovery and goal earns, a "
+         "tier\u2019s price and how catch-up scales it, the free and premium "
+         "rewards tier by tier, the packs, and cosmetic prices; then run the "
+         "economy model with the free track\u2019s Essence and pages in it."),
+
+dict(id="D64", kind="deviation", severity="minor", status="open",
+     title="The track, Starglass and cosmetics are built on the server, without "
+           "the stores, discoveries, or an authored cosmetic",
+     refs=["9.1", "18.2", "20.2", "22.1", "24.8"],
+     body="The server earns season stars from heists and defences, claims tiers "
+          "in order, sells the premium track for Starglass, sells §22.1\u2019s "
+          "packs through a purchase intent that holds §20.2\u2019s monthly cap "
+          "for minors before the store is asked, grants a receipt once per "
+          "store transaction, gives adults the monthly spending summary, and "
+          "sells, owns and applies cosmetics, the defender\u2019s worn set "
+          "travelling with each lease. Not built: verifying a receipt with the "
+          "App Store and Google Play (a seam, as platform sign-in is); stars "
+          "from discoveries and goals, which happen on the device and which the "
+          "server cannot yet check; pages and strays, which the device holds, "
+          "so a claimed tier is their only record; family approval for 13 to "
+          "15; and any cosmetic to sell \u2014 the catalogue is empty until a set "
+          "is authored. Found building them.",
+     rec="Wire the stores\u2019 receipt services with platform sign-in; move "
+         "pages and the roster to the server before the track ships, so a tier "
+         "is granted rather than recorded; author the launch cosmetic sets."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

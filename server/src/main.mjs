@@ -33,6 +33,8 @@ const service = new Service({
   builds: Builds.load([join(root, "sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm")]),
   secret: process.env.RULEBORN_SECRET ?? randomBytes(32).toString("hex"),
   verifyPlatform: (credential) => (typeof credential === "string" && credential ? credential : null),
+  // No store to ask: every purchase receipt is refused (D64).
+  verifyReceipt: () => null,
   // §18.1's seasons run back to back from the first. RULEBORN_SEASON_START is
   // that moment, in ISO form; without it a fixed Monday, so a local server's
   // seasons do not move between restarts.

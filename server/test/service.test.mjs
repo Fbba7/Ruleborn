@@ -76,7 +76,7 @@ test("a planned clean heist is re-simulated, and its haul minted with the fee re
   assert.equal(out.verdict.banked, 508, "three bags full: 104 + 104 + 300");
   // Vault level 3: 5,400 × 1 × 1 × 1 × 1 × 508/508.
   assert.equal(out.haul.total, 5400);
-  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 2700, essence: 2700 });
+  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 2700, essence: 2700, starglass: 0 });
 });
 
 test("a retry is answered from the first decision and pays nothing twice (§24.12)", () => {
@@ -87,7 +87,7 @@ test("a retry is answered from the first decision and pays nothing twice (§24.1
   const again = t.service.submit(t.raider.account, lease.token, replay);
   assert.equal(again.repeated, true);
   assert.equal(again.haul.total, first.haul.total);
-  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 2700, essence: 2700 });
+  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 2700, essence: 2700, starglass: 0 });
   const rows = t.service.db.prepare("SELECT COUNT(*) AS n FROM ledger WHERE account = ?")
     .get(t.raider.account).n;
   assert.equal(rows, 2, "one haul, in two currencies");
@@ -105,7 +105,7 @@ test("the second raid of the day pays 0.85 of the first, and the fee is 2% (§9.
   assert.equal(out.fee, 100, "2% of 2,700 is 54, and the floor is 100");
   // Clean, so the fee came back: 2,700 + 2,295 each side of the split.
   assert.deepEqual(t.service.balance(t.raider.account),
-                   { starlight: 2700 + 2295, essence: 2700 + 2295 });
+                   { starlight: 2700 + 2295, essence: 2700 + 2295, starglass: 0 });
 });
 
 test("a haul is capped by what the raider was already paid today (§9.6, §24.12)", () => {
@@ -210,7 +210,7 @@ test("a replay that does not reproduce pays nothing, takes nothing, and is flagg
   assert.equal(out.validated, false);
   assert.equal(out.reason, "diverged");
   assert.ok(out.second > 0);
-  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 0, essence: 0 });
+  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 0, essence: 0, starglass: 0 });
   const row = t.service.db.prepare("SELECT review FROM heists WHERE token = ?").get(lease.token);
   assert.equal(row.review, 1, "a note for review — one mismatch is never a ban");
 });

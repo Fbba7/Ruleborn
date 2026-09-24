@@ -7,7 +7,7 @@
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
 //   POST /v1/leases              {"bundle": hash, "owner"?}  → the lease
 //   POST /v1/heists/:token       replay bytes                → what was settled
-//   GET  /v1/balance                                         → {starlight, essence}
+//   GET  /v1/balance                                         → {starlight, essence, starglass}
 //   GET  /v1/targets                                         → {band: list hash}
 //   PUT  /v1/age                 {"band": "13-15"|"16-17"|"18+"} → {ageBand}
 //
@@ -44,6 +44,19 @@
 //   POST /v1/crews/join          {"invite"}                  → joined
 //   POST /v1/crews/leave                                     → left
 //   GET  /v1/crews/:id                                       → it
+//
+// The season track (§18.2, §18.8; track.mjs), Starglass and cosmetics
+// (§20.2, §22.1; shop.mjs):
+//
+//   GET  /v1/track?season=N                                  → the track, this season's by default
+//   POST /v1/track/claim         {"season"}                  → the next tier, claimed
+//   POST /v1/track/premium       {"season"}                  → the premium track, bought with Starglass
+//   POST /v1/shop/intents        {"product"}                 → an intent, held under a minor's cap
+//   POST /v1/shop/receipts       {"store", "receipt"}        → the Starglass granted
+//   GET  /v1/shop/summary                                    → §20.2's monthly spending summary
+//   GET  /v1/cosmetics                                       → the catalogue, owned and worn
+//   POST /v1/cosmetics/:id/buy                               → bought with Starglass
+//   POST /v1/cosmetics/equip     {"kind", "item", "target"?} → what is worn
 //
 // A target list is fetched like a bundle, by its hash (§24.8: "a file, not a
 // query"); the index naming the current ones is the only thing that changes.
@@ -109,6 +122,35 @@ async function socialRoute(service, social, request, parts, who) {
   return null;
 }
 
+/** The season track, the shop and the wardrobe. */
+async function shopRoute(service, request, url, parts, who) {
+  const [, area, a, b] = parts;
+  const m = request.method;
+  const me = who();
+  if (area === "track") {
+    if (m === "GET" && !a) {
+      const season = url.searchParams.get("season");
+      return json(service.track.view(me, season === null ? undefined : Number(season)));
+    }
+    if (m === "POST" && a === "claim") return json(service.track.claim(me, (await body(request)).season));
+    if (m === "POST" && a === "premium") return json(service.track.buyPremium(me, (await body(request)).season));
+  }
+  if (area === "shop") {
+    if (m === "POST" && a === "intents") return json(service.shop.intent(me, (await body(request)).product), 201);
+    if (m === "POST" && a === "receipts") {
+      const { store, receipt } = await body(request);
+      return json(service.shop.redeem(me, store, receipt), 201);
+    }
+    if (m === "GET" && a === "summary") return json(service.shop.summary(me));
+  }
+  if (area === "cosmetics") {
+    if (m === "GET" && !a) return json(service.shop.catalogue(me));
+    if (m === "POST" && a === "equip") return json(service.shop.equip(me, await body(request)));
+    if (m === "POST" && a && b === "buy") return json(service.shop.buy(me, a));
+  }
+  return null;
+}
+
 /** The Workshop's routes: /v1/workshop/…, /v1/creators/…, /v1/moderation/…. */
 async function workshopRoute(workshop, request, url, parts, who) {
   const [, area, a, b] = parts;
@@ -163,6 +205,10 @@ export function handler(service) {
     try {
       if (["league", "seasons", "constellations", "crews"].includes(parts[1])) {
         const out = await socialRoute(service, social, request, parts, who);
+        return out ?? json({ error: "no_such_route" }, 404);
+      }
+      if (["track", "shop", "cosmetics"].includes(parts[1])) {
+        const out = await shopRoute(service, request, url, parts, who);
         return out ?? json({ error: "no_such_route" }, 404);
       }
       if (["workshop", "creators", "moderation"].includes(parts[1])) {

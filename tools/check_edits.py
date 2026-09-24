@@ -201,6 +201,12 @@ NO_EDIT_BECAUSE = {
     "G27": "decisions for the owner: the boundaries, the lower leagues' rewards "
            "and the rounding",
     "D63": "limits of this build, and version 1.1's scope",
+    "F41": "a decision for the owner: what Starglass is, and what its 1:1 is to",
+    "F42": "a one-word decision for the owner, and whether goals earn stars",
+    "G28": "decisions for the owner: every figure is a design choice the "
+           "server's constants only stand in for",
+    "D64": "limits of this build: the stores, the device's inventories, and "
+           "cosmetics not yet authored",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

@@ -259,9 +259,19 @@ DELIVERABLES = [
     ("8", "Currencies", BACKEND, server_tests(
         "a planned clean heist is re-simulated, and its haul minted with the fee returned",
         "the second raid of the day pays 0.85 of the first, and the fee is 2% (§9.4, §9.6)")),
-    ("8", "Cosmetics", BACKEND, not_started("cosmetic items are owned and applied server-side")),
-    ("8", "Purchases and receipts", BACKEND, not_started("store receipts are verified and granted")),
-    ("8", "The season track", BACKEND, not_started("the season track's tiers are granted")),
+    ("8", "Cosmetics", BACKEND, server_tests(
+        "a cosmetic is bought with Starglass at its euro price, owned once, and worn in its slot (22.1)",
+        "a defender's worn cosmetics travel with the lease, so the raider sees them")),
+    # The grant side is built (intents, §20.2's caps, one grant a store
+    # transaction); verifying a receipt with the stores is not (D64).
+    ("8", "Purchases and receipts", BACKEND, not_started("store receipts are verified with the stores and granted")),
+    ("8", "The season track", BACKEND, server_tests(
+        "a heist earns season stars: the raider by its grade, the defender by what it held (18.2)",
+        "the track's first tier is free on day one, and each after costs a tier's stars, in order (18.2)",
+        "a player joining late climbs a track scaled to the time remaining (18.8)",
+        "stars reset each season, and an unclaimed tier stays claimable later at the same cost (18.8)",
+        "the premium track is bought with Starglass and adds only cosmetics, for tiers already claimed too (18.2)",
+        "the track, the shop and the wardrobe over HTTP")),
     ("8", "Shop, track and wallet screens", FRONTEND, not_started("those screens exist in the client")),
 
     ("9", "Leagues", BACKEND, server_tests(

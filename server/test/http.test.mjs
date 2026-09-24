@@ -35,7 +35,7 @@ test("sign in, publish, lease, play, submit and read the balance over HTTP", asy
   assert.equal(settled.verdict.grade, "clean");
 
   const balance = await (await call("GET", "/v1/balance", { token: raider.token })).json();
-  assert.deepEqual(balance, { starlight: 2700, essence: 2700 });
+  assert.deepEqual(balance, { starlight: 2700, essence: 2700, starglass: 0 });
 });
 
 test("no session, no service; a bad route is a 404", async () => {
