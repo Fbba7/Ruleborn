@@ -196,6 +196,19 @@ rules:
 The readings are register **G29**; the heatmaps and the error reporter are
 **D65**.
 
+## Deleting an account
+
+`src/accounts.mjs` is §20.5's "Account and data deletion from inside the
+game", reached by `DELETE /v1/account` — and by declaring an age under 13,
+which §20.11 says is deleted at once. What identifies the person goes: the
+platform identity (signing in again starts a new account), the telemetry
+under their pseudonym, their islands from matchmaking and the target lists,
+their places in constellations and crews, and any token they hold. What the
+document keeps unchanged stays under an id that leads to nobody: the ledger,
+Renown, heists, snapshots, and their Workshop islands, withdrawn rather than
+deleted so a remix still names its original. That reading is register
+**F43**.
+
 ## Constellations and crews
 
 `src/social.mjs` is §17.1's constellations and §17.7's crews:
@@ -248,6 +261,7 @@ built — register **D63**.
     src/shop.mjs      Starglass packs, §20.2's caps, cosmetics owned and worn
     src/cosmetics.json  the cosmetics sold for Starglass (none authored yet)
     src/telemetry.mjs first-party events, pseudonymous, kept 90 days, and the report
+    src/accounts.mjs  deleting an account: the person goes, the records stay
     src/workshop.mjs  §18.6's Workshop: publish, browse, play, rate, report, moderate, remix
     src/words.json    the word lists Workshop names come from
     src/http.mjs      the edge function: Request in, Response out

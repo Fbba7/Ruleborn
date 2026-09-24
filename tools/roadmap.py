@@ -738,7 +738,10 @@ dict(
                     "are D64. Telemetry logs \u00a724's events under a "
                     "pseudonym, takes the device's in checked batches with no "
                     "positions, keeps them \u00a724.3's 90 days and reports "
-                    "the launch gates' figures and cohort retention (G29, D65)."
+                    "the launch gates' figures and cohort retention (G29, D65). "
+                    "An account can be deleted from inside the game, and one "
+                    "under 13 is at once: the person goes and the records the "
+                    "document never edits stay, keyed to nobody (F43)."
                     "<br><br><strong>Not yet:</strong> platform sign-in and receipt checks (need "
                     "the stores), crossing realms, \u00a712.22's ratings and "
                     "fallback targets, and a landing command in the replay.",
@@ -746,7 +749,7 @@ dict(
                       "bash sim/run_spike.sh",
              register=["G17", "D58", "G20", "G21", "G26", "D62", "C43",
                        "F40", "G27", "D63", "F41", "F42", "G28", "D64",
-                       "G29", "D65"]),
+                       "G29", "D65", "F43"]),
         dict(id="T3.4", owner="claude", status="doing",
              title="The client's half: the simulation inside Godot, and a "
                    "replay on screen",

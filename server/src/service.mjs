@@ -109,6 +109,11 @@ export class Service {
   account(token) {
     const id = check(this.secret, token, this.now());
     if (!id) throw new Refused(401, "session_refused");
+    // A token outlives nothing it was issued to: a deleted account's is
+    // refused at once (§20.5).
+    if (this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?").get(id)?.deleted_at) {
+      throw new Refused(401, "account_deleted");
+    }
     return id;
   }
 

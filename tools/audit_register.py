@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5824,6 +5824,32 @@ dict(id="D65", kind="deviation", severity="minor", status="open",
           "building telemetry.",
      rec="Add a per-tick position export to the simulation for sampled "
          "re-simulation, and choose the error reporter."),
+
+dict(id="F43", kind="finding", severity="significant", status="open",
+     title="Deletion is required, and the records that hold a player are "
+           "never deleted or edited, with no word on how the two meet",
+     refs=["19.11", "20.5", "20.11", "24.8", "24.12"],
+     body="§20.5 promises <em>\u201cAccount and data deletion from inside the "
+          "game.\u201d</em>, §20.11 lists the stores\u2019 <em>\u201caccount deletion "
+          "inside the app\u201d</em> and the law\u2019s <em>\u201cimmediate deletion of "
+          "anything collected from someone who turns out to be younger\u201d</em>. "
+          "The same document keeps a player in records built never to change: "
+          "the ledger is append-only (§24.12), a snapshot is never edited "
+          "(§24.8), and §19.11 says <em>\u201cplayer creations are never deleted "
+          "or overwritten (18.6)\u201d</em>. Nothing says what deletion does to "
+          "a ledger row, a Renown event, a heist a raider played against the "
+          "deleted player, or a Workshop island that others have remixed. The "
+          "server\u2019s reading: what identifies the person goes \u2014 the platform "
+          "identity, their telemetry, their islands from matchmaking, their "
+          "places in constellations and crews \u2014 and the records about "
+          "heists, money and islands stay under an id that leads to nobody; "
+          "Workshop islands are withdrawn, not deleted, so a remix still names "
+          "its original; a raid already leased on them still settles. A player "
+          "who declares an age under 13 is deleted the same way. Found building "
+          "deletion.",
+     rec="State what deletion removes and what it keeps as anonymous records, "
+         "and whether a deleted player\u2019s Workshop islands stay playable. "
+         "Say what \u201canything collected\u201d covers for an under-13 player."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

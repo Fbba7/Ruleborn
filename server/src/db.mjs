@@ -38,7 +38,11 @@ CREATE TABLE IF NOT EXISTS accounts (
   analyst           INTEGER NOT NULL DEFAULT 0,
   -- §20.12: "Their islands leave matchmaking and the Workshop immediately."
   banned_at         INTEGER,
-  banned_reason     TEXT
+  banned_reason     TEXT,
+  -- §20.5's deletion: the identity is gone, the id kept for the records
+  -- nobody edits (accounts.mjs).
+  deleted_at        INTEGER,
+  deleted_reason    TEXT
 );
 
 -- §24.8: "Owner, the hash of the current bundle, when it changed." One row a
@@ -435,6 +439,8 @@ const ADDED = [
   ["accounts", "equipped", "TEXT NOT NULL DEFAULT '{}'"],
   ["standings", "tier_stars", "INTEGER"],
   ["accounts", "analyst", "INTEGER NOT NULL DEFAULT 0"],
+  ["accounts", "deleted_at", "INTEGER"],
+  ["accounts", "deleted_reason", "TEXT"],
 ];
 
 /** A ledger made before Starglass: its currency check predates it, and a

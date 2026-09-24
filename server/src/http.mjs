@@ -10,6 +10,8 @@
 //   GET  /v1/balance                                         → {starlight, essence, starglass}
 //   GET  /v1/targets                                         → {band: list hash}
 //   PUT  /v1/age                 {"band": "13-15"|"16-17"|"18+"} → {ageBand}
+//                                {"band": "under-13"}         → the account deleted (§20.11)
+//   DELETE /v1/account                                       → the account deleted (§20.5)
 //
 // The Island Workshop (§18.6; workshop.mjs):
 //
@@ -69,6 +71,7 @@
 //
 // Everything but the session and a bundle needs `Authorization: Bearer …`.
 
+import { deleteAccount } from "./accounts.mjs";
 import { Refused } from "./service.mjs";
 import { Social } from "./social.mjs";
 import { WORDS, Workshop } from "./workshop.mjs";
@@ -265,8 +268,18 @@ export function handler(service) {
         case "GET /v1/targets":
           who();
           return json(service.targets());
-        case "PUT /v1/age":
-          return json(workshop.setAgeBand(who(), (await body(request)).band));
+        case "PUT /v1/age": {
+          const me = who();
+          const { band } = await body(request);
+          // §20.11: "no accounts below 13, and immediate deletion of
+          // anything collected from someone who turns out to be younger".
+          if (band === "under-13") {
+            return json({ deleted: true, reason: deleteAccount(service, me, "under-13").reason });
+          }
+          return json(workshop.setAgeBand(me, band));
+        }
+        case "DELETE /v1/account":
+          return json({ deleted: true, reason: deleteAccount(service, who(), "requested").reason });
         default:
           return json({ error: "no_such_route" }, 404);
       }
