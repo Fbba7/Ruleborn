@@ -274,6 +274,9 @@ NIGHT_HOURS = {"13-15": (21, 8), "16-17": (22, 8), "18+": (22, 8)}
 #: §24.3: "Raw replays and logs are kept 30 to 90 days". (least, most)
 RAW_KEEP_DAYS = (30, 90)
 
+#: §25.1's gate: "a third of monthly players play on a given day". A share.
+DAILY_SHARE = (1, 3)
+
 #: §18.2: "Fifty tiers, climbed with season points from heists, defences and
 #: discoveries."
 SEASON_TIERS = 50
@@ -360,6 +363,7 @@ HOME = {
     "FREE_CPU_MS": "28.3",
     "NIGHT_HOURS": "20.2",
     "RAW_KEEP_DAYS": "24.3",
+    "DAILY_SHARE": "25.1",
     "SEASON_TIERS": "18.2",
     "PREMIUM_TRACK_EUR": "22.1",
     "STARGLASS_PACKS_EUR": "22.1",
@@ -492,6 +496,8 @@ STATED = {
                     lambda m: {"13-15": (int(m[0]), int(m[1])), "16-17": (int(m[2]), int(m[3])),
                                "18+": (int(m[4]), int(m[5]))}),
     "RAW_KEEP_DAYS": (r"Raw replays and logs are kept (\d+) to (\d+) days", lambda m: (int(m[0]), int(m[1]))),
+    "DAILY_SHARE": (r"\| Players still playing after 1, 7 and 30 days: [^;\n]*; a (\w+) of monthly players "
+                    r"play on a given day", lambda m: {"half": (1, 2), "third": (1, 3), "quarter": (1, 4)}.get(m[0])),
     "SEASON_TIERS": (r"(\w+) tiers, climbed with season points",
                      lambda m: {"Forty": 40, "Fifty": 50, "Sixty": 60, "Seventy": 70, "Eighty": 80,
                                 "Ninety": 90, "A hundred": 100}.get(m[0])),

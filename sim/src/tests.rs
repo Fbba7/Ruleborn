@@ -3411,3 +3411,135 @@ fn an_edited_island_is_one_the_format_can_write_and_check_can_judge() {
     assert!(island.clear(vx - 1, vy));
     assert_eq!(island.check(), vec![]);
 }
+
+// --------------------------------------------------------------------------
+// §18.3: eras
+// --------------------------------------------------------------------------
+
+use crate::era::Era;
+use crate::{record_in, verify_on, Revival};
+
+/// The vault world in an era, with `laws` woven.
+fn in_era(era: Option<Era>, laws: &[&str]) -> World {
+    let mut world = vault_world(3);
+    world.era = era;
+    weave(&mut world, laws);
+    world
+}
+
+#[test]
+fn a_heist_with_no_era_is_written_as_before_and_one_with_an_era_names_it() {
+    let plain = fixture(3, 4_500, 3);
+    let bytes = plain.encode();
+    assert_eq!(&bytes[..4], b"RBH1", "no era: the format every replay so far is in");
+    let mut era = plain.clone();
+    era.era = Some(Era::GlassMoon);
+    let with = era.encode();
+    assert_eq!(&with[..4], b"RBH2");
+    assert_eq!(with.len(), bytes.len() + 1, "one byte, the era");
+    assert_eq!(Heist::decode(&with), Some(era));
+    assert_eq!(Heist::decode(&bytes), Some(plain));
+    let mut bad = with.clone();
+    bad[81] = 0;
+    assert_eq!(Heist::decode(&bad), None, "an RBH2 always names an era");
+    bad[81] = 9;
+    assert_eq!(Heist::decode(&bad), None, "and only one of the eight");
+}
+
+#[test]
+fn the_eras_are_the_contents_eight_with_the_figures_their_rules_state() {
+    let ids: Vec<&str> = crate::laws_table::ERAS.iter().map(|(id, _)| *id).collect();
+    assert_eq!(ids.len(), 8);
+    for (i, id) in ids.iter().enumerate() {
+        let era = Era::from_id(id).unwrap();
+        assert_eq!((era as usize, era.id()), (i + 1, *id));
+    }
+    assert_eq!(Era::TheLongNight.figure(), 30);
+    assert_eq!(Era::QuietWeek.figure(), 30);
+}
+
+#[test]
+fn the_long_night_is_first_on_the_sheet_and_every_law_follows_it() {
+    // "Vision is 30% shorter everywhere"; Glowing dark then halves it again.
+    assert_eq!(in_era(Some(Era::TheLongNight), &[]).sheet.factor(P::SightRange), (7, 10));
+    assert_eq!(in_era(Some(Era::TheLongNight), &["glowing_dark"]).sheet.factor(P::SightRange),
+               (7, 20));
+    assert_eq!(in_era(None, &[]).sheet.factor(P::SightRange), (1, 1));
+}
+
+#[test]
+fn glass_moon_makes_every_wall_see_through() {
+    assert_eq!(in_era(Some(Era::GlassMoon), &[]).sheet.flag(P::HideBehindWalls), Some(0));
+    assert_eq!(in_era(None, &[]).sheet.flag(P::HideBehindWalls), None);
+}
+
+#[test]
+fn heavy_stars_will_not_let_half_gravity_lower_gravity() {
+    assert!(in_era(None, &["half_gravity"]).sheet.is_set(P::LeapObstacles));
+    let heavy = in_era(Some(Era::HeavyStars), &["half_gravity"]);
+    assert!(!heavy.sheet.is_set(P::LeapObstacles), "no gravity to lower");
+    assert_eq!(heavy.laws.len(), 1, "still woven");
+}
+
+#[test]
+fn wildgrowth_makes_each_life_law_a_quarter_stronger_by_what_its_line_is() {
+    // Each woven alone: two Life laws together share a note, and their
+    // harmony (§8.3) would strengthen them on top of the era.
+    let wild = |law: &str, p| in_era(Some(Era::Wildgrowth), &[law]).sheet.factor(p);
+    assert_eq!(wild("bloom", P::RegrowSeconds), (8, 1), "Bloom's 10 s comes a quarter sooner");
+    assert_eq!(wild("kinship", P::AllyHealing), (3, 160), "Kinship's 1.5% a second, 1.875%");
+    assert_eq!(wild("thorns", P::TouchDamage), (1, 16), "Thorns' 5%, 6.25%");
+    assert_eq!(wild("regrowth", P::StructureRegrowth), (1, 40), "Regrowth's 2%, 2.5%");
+    assert_eq!(in_era(Some(Era::Wildgrowth), &["wild_paths"]).sheet.factor(P::CrewSpeed), (5, 4),
+               "a multiplier moves a quarter further from 1: +20% is +25%");
+    assert_eq!(in_era(Some(Era::Wildgrowth), &["spores"]).sheet.factor(P::CrewSpeed), (3, 8),
+               "and a slowing one slows more: half is three eighths");
+    assert_eq!(in_era(Some(Era::Wildgrowth), &["haste"]).sheet, in_era(None, &["haste"]).sheet,
+               "a law of another school is as it was");
+}
+
+#[test]
+fn echoing_skies_returns_everyone_once_at_forty_and_the_highest_revival_wins() {
+    assert!(matches!(in_era(Some(Era::EchoingSkies), &[]).revival(), Some(Revival::Return(40, 100))));
+    assert!(in_era(None, &[]).revival().is_none());
+    // Echoes' 60% covers the same knockout: the highest N applies (§7.3).
+    assert!(matches!(in_era(Some(Era::EchoingSkies), &["echoes"]).revival(), Some(Revival::Return(3, 5))));
+}
+
+#[test]
+fn static_storm_makes_the_static_coils_shock_half_again() {
+    let shock = |era: Option<Era>| {
+        let mut world = ward_world(1, WardKind::StaticCoil, (3, 3));
+        world.era = era;
+        put(&mut world, 0, 3, 4);
+        let full = world.raiders[0].health;
+        for _ in 0..=h::COIL_PERIOD_TICKS {
+            world.step();
+        }
+        (full, full - world.raiders[0].health)
+    };
+    let (full, plain) = shock(None);
+    assert_eq!(plain, full * 8 / 100);
+    assert_eq!(shock(Some(Era::StaticStorm)).1, full * 12 / 100, "8% of health becomes 12%");
+}
+
+#[test]
+fn quiet_week_heists_may_run_thirty_seconds_past_the_longest() {
+    let island = crate::island::Island::fixture();
+    let ticks = crate::MAX_TICKS + 30 * TICKS_PER_SECOND;
+    let long = |era| record_in(&island, 5, ticks, 3, era, crate::draw(&island, 5, ticks, 3));
+    assert!(verify_on(&island, &long(Some(Era::QuietWeek))).is_ok());
+    assert!(verify_on(&island, &long(None)).is_err(), "240 seconds is the longest otherwise");
+}
+
+#[test]
+fn a_heist_re_simulates_in_the_era_it_names_and_no_other() {
+    let island = crate::island::Island::fixture();
+    let played = record_in(&island, 11, 4_500, 3, Some(Era::TheLongNight), crate::draw(&island, 11, 4_500, 3));
+    assert!(verify_on(&island, &played).is_ok());
+    let plain = crate::record(&island, 11, 4_500, 3, crate::draw(&island, 11, 4_500, 3));
+    assert_ne!(played.checksums, plain.checksums, "the era changed what happened");
+    let mut claimed = played.clone();
+    claimed.era = None;
+    assert!(verify_on(&island, &claimed).is_err(), "a device cannot say it played in a kinder week");
+}

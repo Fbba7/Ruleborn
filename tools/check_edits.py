@@ -224,11 +224,14 @@ NO_EDIT_BECAUSE = {
     "D67": "limits of this build: Google's APIs and Apple's notifications need the network",
     "F47": "a decision for the owner: the budget and the cost table, re-derived "
            "from what a heist must write",
-    "G33": "a figure for the owner: the share of monthly players active on a day",
+    "G33": "decisions for the owner: a budget for rows read, and a run on the edge itself",
     "G34": "decisions for the owner: gathering raids, and reminders at night",
     "D68": "limits of this build: push needs the operator's credentials",
     "F48": "a decision for the owner: what a game among friends pays and counts",
     "G35": "decisions for the owner: how friends are made, and what minors show them",
+    "F49": "a decision for the owner: whether Quiet Week goes past the cap",
+    "G36": "decisions for the owner: the eras' order, reach and strengthening",
+    "D69": "limits of this build: the economy, the harness and the client",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

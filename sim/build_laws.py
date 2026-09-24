@@ -19,6 +19,7 @@ the content file did not.
 import json
 import math
 import pathlib
+import re
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -27,6 +28,7 @@ NOTES = HERE.parent / "content" / "notes.json"
 RESONANCES = HERE.parent / "content" / "resonances.json"
 CHORDS = HERE.parent / "content" / "chords.json"
 LAWS = HERE.parent / "content" / "laws.json"
+ERAS = HERE.parent / "content" / "eras.json"
 OUT = HERE / "src" / "laws_table.rs"
 
 
@@ -75,12 +77,16 @@ def render() -> str:
         "    pub notes: u8,",
         "    /// Among §7.10's 24 that ship at launch.",
         "    pub launch: bool,",
+        "    /// Its school (§7.4): what an era that strengthens a school reads.",
+        "    pub school: &'static str,",
         "}",
         "",
         f"pub const LAWS: [LawDef; {len(data['laws'])}] = [",
     ]
     notes = json.loads(NOTES.read_text(encoding="utf-8"))
-    launch = {l["id"] for l in json.loads(LAWS.read_text(encoding="utf-8")) if l.get("launch")}
+    catalogue = json.loads(LAWS.read_text(encoding="utf-8"))
+    launch = {l["id"] for l in catalogue if l.get("launch")}
+    school = {l["id"]: l["school"] for l in catalogue}
     bit = {n["name"]: 1 << i for i, n in enumerate(notes)}
     mask = lambda names: " | ".join(f"note::{n.upper()}" for n in names) or "0"
     for law in data["laws"]:
@@ -89,7 +95,8 @@ def render() -> str:
         lines.append(f"    LawDef {{ id: \"{law['id']}\", name: \"{law['name']}\", "
                      f"simulated: {'true' if law['simulated'] else 'false'}, "
                      f"params: &[{ps}], notes: {mask(law['notes'])}, "
-                     f"launch: {'true' if law['id'] in launch else 'false'} }},")
+                     f"launch: {'true' if law['id'] in launch else 'false'}, "
+                     f"school: \"{school[law['id']]}\" }},")
     lines.append("];")
     lines += ["", "/// §8.1's eight notes, one bit each, in the table's order.", "pub mod note {"]
     lines += [f"    pub const {n['name'].upper()}: u8 = {bit[n['name']]};" for n in notes]
@@ -131,6 +138,18 @@ def render() -> str:
     lines += ["];", "", "/// Each chord's content id, in `Chord` order.",
               f"pub const CHORD_IDS: [&str; {len(chords)}] = ["
               + ", ".join(f'"{c["id"]}"' for c in chords) + "];"]
+    # §18.3's eras, in the content file's order, each with the one figure its
+    # rule states — a share or a number of seconds — read from the rule's own
+    # words, so the number has one home: the document the content comes from.
+    # An era whose rule states none (Glass Moon, High Tide) carries 0.
+    eras = json.loads(ERAS.read_text(encoding="utf-8"))
+    lines += ["", "/// §18.3's eras, in the content file's order: each era's id, and the",
+              "/// figure its rule states (a per cent, or seconds for Quiet Week), 0 if none.",
+              f"pub const ERAS: [(&str, i64); {len(eras)}] = ["]
+    for e in eras:
+        found = re.findall(r"(\d+)(?:%| seconds)", e["rule"])
+        lines.append(f"    (\"{e['id']}\", {int(found[0]) if found else 0}),")
+    lines += ["];"]
     return "\n".join(lines) + "\n"
 
 

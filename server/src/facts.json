@@ -20,6 +20,10 @@
   8
  ],
  "CROUCH_PACE": 0.5,
+ "DAILY_SHARE": [
+  1,
+  3
+ ],
  "DECISION_BAND": [
   15,
   25

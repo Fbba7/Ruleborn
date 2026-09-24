@@ -12,8 +12,9 @@
 
 import { readFileSync } from "node:fs";
 
-/** The replay header's fixed fields (sim/src/replay.rs, `Heist::encode`). */
-export const HEADER = { magic: 0, seed: 4, island: 12, rules: 44, ticks: 76, crew: 80, bytes: 85 };
+/** The replay header's fixed fields (sim/src/replay.rs, `Heist::encode`).
+ *  An `RBH2` header carries §18.3's era in one more byte after the crew. */
+export const HEADER = { magic: 0, seed: 4, island: 12, rules: 44, ticks: 76, crew: 80, era: 81, bytes: 85 };
 
 /** `island::Problem`, in the order of its bits. */
 export const PROBLEMS = [
@@ -25,7 +26,7 @@ export const PROBLEMS = [
 export const REFUSED = {
   [-1]: "replay_malformed", [-2]: "island_malformed", [-3]: "wrong_island",
   [-4]: "wrong_rules", [-5]: "crew", [-6]: "length", [-7]: "log",
-  [-8]: "checksums", [-9]: "too_large",
+  [-8]: "checksums", [-9]: "too_large", [-10]: "era",
 };
 
 export const GRADES = ["clean", "loud", "partial", "foiled"];
@@ -38,11 +39,12 @@ export const KIND = {
 
 const hex = (bytes) => Buffer.from(bytes).toString("hex");
 
-/** A replay's header, or null if it is too short to have one. */
+/** A replay's header, or null if it is too short to have one. `era` is
+ *  the era's wire value, 0 for none (an `RBH1` replay). */
 export function readHeader(bytes) {
-  if (bytes.length < HEADER.bytes || Buffer.from(bytes.subarray(0, 4)).toString() !== "RBH1") {
-    return null;
-  }
+  const magic = bytes.length >= 4 ? Buffer.from(bytes.subarray(0, 4)).toString() : "";
+  const withEra = magic === "RBH2";
+  if (!(magic === "RBH1" || withEra) || bytes.length < HEADER.bytes + (withEra ? 1 : 0)) return null;
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   return {
     seed: view.getBigUint64(HEADER.seed, true),
@@ -50,6 +52,7 @@ export function readHeader(bytes) {
     rules: hex(bytes.subarray(HEADER.rules, HEADER.rules + 32)),
     ticks: view.getUint32(HEADER.ticks, true),
     crew: bytes[HEADER.crew],
+    era: withEra ? bytes[HEADER.era] : 0,
   };
 }
 
@@ -111,7 +114,7 @@ export class Build {
    * with `tick` in ticks — on an island and record the replay. The server
    * never calls this; its tests play the device with it.
    */
-  record(island, { seed, ticks, crew, commands }) {
+  record(island, { seed, ticks, crew, commands, era = 0 }) {
     const records = new Uint8Array(commands.length * 10);
     const view = new DataView(records.buffer);
     commands.forEach(({ tick, member, kind, x, y }, i) => {
@@ -125,17 +128,17 @@ export class Build {
     this.buffer().set(records, island.length);
     const s = BigInt.asUintN(64, BigInt(seed));
     const n = this.x.rb_record(Number(s >> 32n), Number(s & 0xffffffffn), ticks, crew,
-                               island.length, commands.length);
+                               island.length, commands.length, era);
     if (n < 0) throw new Error(`record refused: ${REFUSED[n]}`);
     return this.buffer().slice(0, n);
   }
 
   /** `sim/`'s seeded test player (`draw`), recorded. */
-  recordDrawn(island, { seed, ticks, crew }) {
+  recordDrawn(island, { seed, ticks, crew, era = 0 }) {
     this.buffer().set(island);
     const s = BigInt.asUintN(64, BigInt(seed));
     const n = this.x.rb_record_drawn(Number(s >> 32n), Number(s & 0xffffffffn), ticks, crew,
-                                     island.length);
+                                     island.length, era);
     if (n < 0) throw new Error(`record refused: ${REFUSED[n]}`);
     return this.buffer().slice(0, n);
   }

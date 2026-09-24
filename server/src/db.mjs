@@ -108,7 +108,10 @@ CREATE TABLE IF NOT EXISTS leases (
   -- §12.11 and §17.6: a raid, a friendly heist or a challenge link's play,
   -- the last two taking nothing from the island's owner (friends.mjs).
   mode        TEXT NOT NULL DEFAULT 'raid' CHECK (mode IN ('raid', 'friendly', 'challenge')),
-  challenge   TEXT
+  challenge   TEXT,
+  -- §18.3's era of the week it was leased in, as the replay's header must
+  -- name it: the wire value, 0 for none (eras.mjs).
+  era         INTEGER NOT NULL DEFAULT 0
 );
 CREATE UNIQUE INDEX IF NOT EXISTS one_open_lease_per_target
   ON leases (attacker, bundle) WHERE state = 'open';
@@ -537,6 +540,7 @@ const ADDED = [
   ["leases", "trace_of", "TEXT"],
   ["leases", "mode", "TEXT NOT NULL DEFAULT 'raid'"],
   ["leases", "challenge", "TEXT"],
+  ["leases", "era", "INTEGER NOT NULL DEFAULT 0"],
 ];
 
 /** A ledger made before Starglass: its currency check predates it, and a

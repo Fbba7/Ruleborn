@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6022,10 +6022,11 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "stars, two ratings, an event batch, the defender\u2019s notification "
           "\u2014 each of which §24.12, §12.9, §18.2, §12.22 or §13 asks for. "
           "So five writes cannot carry one heist, let "
-          "alone four. A million engaged players write about 1.38 billion rows "
-          "a month, 28 times the 50 million included; at the paid price in "
-          "§28.3 that is about $1,300 a month, not $5 to $15 (every monthly "
-          "player active daily is the ceiling, G33). And a re-simulation takes "
+          "alone four. A million monthly players, a third of them playing on a "
+          "day as §25.1\u2019s gate has it, write about 460 million rows a month "
+          "if engaged and 105 million if casual \u2014 9 and 2 times the 50 "
+          "million included; at the paid price in §28.3 that is about $415 and "
+          "$60 a month, not $5 to $15. And a re-simulation takes "
           "about 15 ms of CPU (22 ms at the 95th percentile) where §28.3\u2019s free "
           "plan allows <em>\u201c10 milliseconds\u201d</em> a request, so the free plan "
           "cannot validate a heist at all: the €0 columns need the $5 plan from "
@@ -6037,20 +6038,21 @@ dict(id="F47", kind="finding", severity="significant", status="open",
          "Renown and stars, at the price of querying them from JSON."),
 
 dict(id="G33", kind="gap", severity="minor", status="open",
-     title="§24.1 prices monthly players and budgets daily ones, without the "
-           "share of one in the other",
-     refs=["24.1", "14.1", "28.3"],
-     body="The cost table is by monthly players; the budget is per active "
-          "player per day; nothing says how many monthly players are active on "
-          "a day. The load test\u2019s readings: every monthly player active every "
-          "day is the ceiling it prices; rows written are SQLite\u2019s changes, "
-          "which do not count the index writes D1 also bills, so they are low; "
-          "its raiders hold no Starlight, so no fee is booked, and its drawn "
-          "raids are foiled, so no haul \u2014 a lower bound on a real day\u2019s "
-          "writes; CPU is this machine\u2019s Node, not an edge isolate. Rows read "
-          "are not measured. Found by the load test.",
-     rec="State the daily share of monthly players, and re-run the load test "
-         "on the edge platform itself."),
+     title="The load test measures a lower bound on one machine, and nothing "
+           "budgets rows read",
+     refs=["24.1", "25.1", "28.3"],
+     body="The load test prices monthly players by §25.1\u2019s gate \u2014 <em>\u201ca "
+          "third of monthly players play on a given day\u201d</em> \u2014 which §24.1\u2019s "
+          "cost table does not cite. Its readings: rows written are SQLite\u2019s "
+          "changes, which do not count the index writes D1 also bills, so they "
+          "are low; its raiders hold no Starlight, so no fee is booked, and its "
+          "drawn raids are foiled, so no haul \u2014 a lower bound on a real day\u2019s "
+          "writes; CPU is this machine\u2019s Node, not an edge isolate; and rows "
+          "read are not measured, though §28.3\u2019s plans bill them too. Found by "
+          "the load test; corrected when building eras, where an earlier reading "
+          "priced every monthly player as playing every day.",
+     rec="Budget rows read beside rows written, and re-run the load test on the "
+         "edge platform itself."),
 
 dict(id="G34", kind="gap", severity="minor", status="open",
      title="Notifications have a night and a list, and no word on gathering, "
@@ -6116,6 +6118,67 @@ dict(id="G35", kind="gap", severity="minor", status="open",
           "to friends only. Found building friends.",
      rec="Say how friends are made (platform friends, invites, or both), and "
          "whether a 13-to-15\u2019s heists appear in friends\u2019 feeds."),
+
+dict(id="F49", kind="finding", severity="minor", status="open",
+     title="Quiet Week\u2019s longer heists run past the longest heist §5.4 and "
+           "§24.10 allow",
+     refs=["5.4", "18.3", "24.10"],
+     body="§18.3\u2019s Quiet Week: <em>\u201cHeists are 30 seconds longer\u201d</em>. "
+          "§5.4 caps the clock at <em>\u201cup to 240 seconds\u201d</em>, and §24.10 "
+          "gives the heist\u2019s shape: <em>\u201cA heist is 4,500 to 7,200 "
+          "ticks\u201d</em>. A heist across six links is already 240 seconds, so "
+          "in Quiet Week it is 270, or 8,100 ticks, which neither allows; nor "
+          "does either say whether the 30 seconds come before the cap or after "
+          "it. The simulation\u2019s validator refused anything past 7,200 ticks. "
+          "Now it allows 900 more ticks in Quiet Week, the server adds 30 seconds "
+          "to the lease\u2019s clock after the cap, and a 270-second replay still "
+          "fits §24.10\u2019s 2 kilobytes (1,080 bytes of checksums). Found building "
+          "eras.",
+     rec="Say that Quiet Week\u2019s 30 seconds come after §5.4\u2019s cap, and widen "
+         "§24.10\u2019s range to 8,100 ticks, or cap Quiet Week at 240 seconds."),
+
+dict(id="G36", kind="gap", severity="minor", status="open",
+     title="Eras are eight rules and a week, and nothing says which week has "
+           "which, what \u201cstronger\u201d means, or which heists they cover",
+     refs=["7.3", "10.3", "18.3", "18.6"],
+     body="§18.3 lists the eight and §7.3 applies the era first on the sheet. The "
+          "readings, in <code>sim/src/era.rs</code> and "
+          "<code>server/src/eras.mjs</code>: the eight take turns in the content "
+          "file\u2019s order, a week each from the first season\u2019s first day, so "
+          "each comes once a season; the era is the one the week had when the "
+          "heist was leased, and every heist against a universe \u2014 raid, echo, "
+          "Trace, friendly heist, challenge \u2014 is in it, while the Workshop is "
+          "not, so an island cleared once stays solvable every week; "
+          "Wildgrowth\u2019s \u201c25% stronger\u201d reads by the line: a time comes a "
+          "quarter sooner, a rate or share is a quarter larger, a multiplier "
+          "moves a quarter further from 1, an on/off rule is unchanged, and the "
+          "era applies before a harmony does; The Long Night\u2019s vision is the "
+          "guards\u2019, the only sight the simulation has; Heavy Stars\u2019 "
+          "\u201cgravity can't be set lower\u201d holds Half gravity\u2019s line off, its "
+          "notes still sounding; the only Energy ward is the Static Coil, and "
+          "\u201cstronger\u201d is what its upgrade scales, the shock; Echoing Skies is "
+          "one Revival source, and §7.3\u2019s highest N decides. Found building "
+          "eras.",
+     rec="Give the eras\u2019 order, say which heists an era covers, and write "
+         "each strengthening as a line on the sheet."),
+
+dict(id="D69", kind="deviation", severity="minor", status="open",
+     title="Eras run in the simulation and the server, without their costs, "
+           "the harness, or a screen",
+     refs=["18.3", "5.5", "19.27"],
+     body="The week\u2019s era is on every lease, travels in the replay\u2019s header "
+          "(<code>RBH2</code>, one byte; a heist with none is <code>RBH1</code>, "
+          "byte for byte as before), is part of the rules version, and is "
+          "applied by the simulation first on the sheet; a replay that names "
+          "another era than its lease pays nothing. Not built: the two halves "
+          "that change what laws cost \u2014 Heavy Stars\u2019 Motion laws 30% cheaper "
+          "and High Tide\u2019s free Slow rivers \u2014 which are the device\u2019s "
+          "stability economy; the Python harness, whose hold rates and bands are "
+          "measured with no era, so no era\u2019s effect on §13.2\u2019s bands is "
+          "known; and the client\u2019s showing the week\u2019s era. Found building "
+          "eras.",
+     rec="Model eras in the harness and measure each against §13.2\u2019s bands "
+         "before launch; price the two cost eras in the economy model."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

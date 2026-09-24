@@ -25,6 +25,7 @@ import { readFileSync } from "node:fs";
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
 import { capHaul, defenceShare, entryFee, haul } from "./economy.mjs";
+import { byWire, eraAt } from "./eras.mjs";
 import { Friends } from "./friends.mjs";
 import { Matchmaking } from "./matchmaking.mjs";
 import { Notifications } from "./notifications.mjs";
@@ -310,8 +311,16 @@ export class Service {
     return this.issue(attacker, bundle, c.account, now, { mode: "challenge", challenge: code });
   }
 
-  /** The lease itself, or the one this attacker already holds on the bundle. */
+  /** The week's era (§18.3), from the first season's first day. */
+  era(now = this.now()) {
+    return eraAt(now, this.seasons.first);
+  }
+
+  /** The lease itself, or the one this attacker already holds on the bundle.
+   *  Every heist against a universe is in the week's era, and Quiet Week's
+   *  clock is its "30 seconds longer". */
   issue(attacker, bundle, defender, now, { echo = false, traceOf = null, mode = "raid", challenge = null }) {
+    const era = this.era(now);
     return transaction(this.db, () => {
       const held = this.db.prepare(
         "SELECT * FROM leases WHERE attacker = ? AND bundle = ? AND state = 'open'")
@@ -326,7 +335,7 @@ export class Service {
         token: this.random(16).toString("hex"),
         attacker, bundle, defender,
         seed: this.random(8).readBigUInt64LE(0).toString(),
-        ticks: clockTicks(0),
+        ticks: clockTicks(0) + era.seconds * TICKS_PER_SECOND,
         rules: this.builds.current.rulesVersion,
         issued_at: now,
         expires_at: now + LEASE_MS,
@@ -334,12 +343,13 @@ export class Service {
         trace_of: traceOf,
         mode,
         challenge,
+        era: era.wire,
       };
       this.db.prepare(
         `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at,
-                             echo, trace_of, mode, challenge)
+                             echo, trace_of, mode, challenge, era)
          VALUES (:token, :attacker, :bundle, :defender, :seed, :ticks, :rules, :issued_at, :expires_at,
-                 :echo, :trace_of, :mode, :challenge)`)
+                 :echo, :trace_of, :mode, :challenge, :era)`)
         .run(row);
       return this.leaseView(row);
     });
@@ -350,7 +360,8 @@ export class Service {
   leaseView(row) {
     return { token: row.token, bundle: row.bundle, seed: row.seed, ticks: row.ticks,
              rules: row.rules, expiresAt: row.expires_at, look: this.shop.equipped(row.defender),
-             echo: Boolean(row.echo), trace: Boolean(row.trace_of), mode: row.mode ?? "raid" };
+             echo: Boolean(row.echo), trace: Boolean(row.trace_of), mode: row.mode ?? "raid",
+             era: byWire(row.era)?.id ?? null };
   }
 
   // -- validate and grant ----------------------------------------------------
@@ -382,6 +393,8 @@ export class Service {
     if (header.island !== lease.bundle) return refuse("wrong_island");
     if (header.seed.toString() !== lease.seed) return refuse("wrong_seed");
     if (header.ticks !== lease.ticks) return refuse("wrong_clock");
+    // §18.3: played in the week's era the lease named, and no kinder one.
+    if (header.era !== (lease.era ?? 0)) return refuse("wrong_era");
 
     // §24.12: "The lease expired — No reward, with one grace submission
     // allowed." Read as one expired submission a day honoured (G17).

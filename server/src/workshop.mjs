@@ -113,6 +113,9 @@ export class Workshop {
     const header = readHeader(replay);
     if (!header || header.island !== read.digest) throw new Refused(422, "not_cleared", { why: "wrong_island" });
     if (header.ticks !== clockTicks(0)) throw new Refused(422, "not_cleared", { why: "wrong_clock" });
+    // The Workshop is out of the weeks' eras (G36): an island cleared in
+    // one week stays solvable in every other.
+    if (header.era !== 0) throw new Refused(422, "not_cleared", { why: "an_era" });
     const player = this.service.builds.get(header.rules);
     if (!player) throw new Refused(422, "not_cleared", { why: "rules_not_held" });
     const result = player.verify(replay, bundle);
@@ -264,6 +267,7 @@ export class Workshop {
     else if (header.island !== item.bundle) outcome = { validated: false, reason: "wrong_island" };
     else if (header.seed.toString() !== play.seed) outcome = { validated: false, reason: "wrong_seed" };
     else if (header.ticks !== play.ticks) outcome = { validated: false, reason: "wrong_clock" };
+    else if (header.era !== 0) outcome = { validated: false, reason: "wrong_era" };
     else {
       const build = this.service.builds.get(header.rules);
       const result = build ? build.verify(replay, this.service.store.get(item.bundle))

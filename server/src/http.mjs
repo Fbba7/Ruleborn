@@ -7,6 +7,7 @@
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
 //   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?} → the lease
 //   GET  /v1/offer?size=3                                    → §12.22's list for the caller
+//   GET  /v1/era                                             → §18.3's era of the week, and when it ends
 //   GET  /v1/heists/:token/replay                            → the replay, to its raider or defender (§13)
 //   PUT  /v1/notifications       {"utcOffset", "reminder", "nightQuiet", "pushToken"} → the settings
 //   POST /v1/heists/:token       replay bytes                → what was settled
@@ -309,6 +310,11 @@ export function handler(service) {
         case "POST /v1/heists": {
           const attacker = who();
           return json(service.submit(attacker, parts[2] ?? "", await bytes(request)));
+        }
+        case "GET /v1/era": {
+          who();
+          const { id, name, rule, week, endsAt } = service.era();
+          return json({ era: id, name, rule, week, endsAt });
         }
         case "GET /v1/offer": {
           // The server's run of §12.22's steps; the device can run the same

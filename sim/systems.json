@@ -425,6 +425,24 @@
         "a_replay_carries_the_laws_it_was_made_under",
         "golden_replays_still_verify"
       ]
+    },
+    {
+      "name": "Eras",
+      "section": "18.3",
+      "task": "T5.3",
+      "what": "The week's era, first on the rule sheet (§7.3): The Long Night's shorter sight, Glass Moon's see-through walls, Heavy Stars holding Half gravity down, Wildgrowth's stronger Life laws, Echoing Skies as a Revival source, Static Storm's stronger coil and Quiet Week's longer clock. The era travels in the replay (RBH2, one byte; RBH1 unchanged for none) and the table is in the rules version.",
+      "tests": [
+        "a_heist_with_no_era_is_written_as_before_and_one_with_an_era_names_it",
+        "the_eras_are_the_contents_eight_with_the_figures_their_rules_state",
+        "the_long_night_is_first_on_the_sheet_and_every_law_follows_it",
+        "glass_moon_makes_every_wall_see_through",
+        "heavy_stars_will_not_let_half_gravity_lower_gravity",
+        "wildgrowth_makes_each_life_law_a_quarter_stronger_by_what_its_line_is",
+        "echoing_skies_returns_everyone_once_at_forty_and_the_highest_revival_wins",
+        "static_storm_makes_the_static_coils_shock_half_again",
+        "quiet_week_heists_may_run_thirty_seconds_past_the_longest",
+        "a_heist_re_simulates_in_the_era_it_names_and_no_other"
+      ]
     }
   ],
   "targets": [

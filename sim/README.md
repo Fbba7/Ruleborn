@@ -125,6 +125,15 @@ island was a placeholder and every heist ran on the one fixture realm. Now:
   ticks, a crew of three to five, commands in order, one checksum a second —
   re-simulates it and compares every second. The outcome is the
   re-simulation's; a replay carries no outcome at all.
+- **The week's era travels with the heist** (`era.rs`, §18.3). A heist
+  played in an era is written `RBH2`, with one byte more after the crew;
+  one with none is `RBH1`, byte for byte as every replay before eras. The
+  era is first on the rule sheet, as §7.3 orders: The Long Night's shorter
+  sight, Glass Moon's see-through walls, Heavy Stars holding Half gravity's
+  line off, Wildgrowth's stronger Life laws, Echoing Skies as a Revival
+  source, Static Storm's stronger coil and Quiet Week's 30 seconds more. The
+  era table, read by `build_laws.py` from each era's own rule, is part of
+  the rules version (register G36, F49, D69).
 - **The WebAssembly surface** (`ffi.rs`): numbers in and out and one shared
   buffer, which the host writes between calls. Still no imports.
   `wasm_spike.mjs` and the native `spike` both print a validator line — the
@@ -586,6 +595,7 @@ a test that does not exist, so the band cannot drift from the code.
     src/laws_table.rs generated from content/: 48 laws as ratios, their notes,
                       the resonance pairs and the chords
     src/combos.rs     §8: which harmonies, dissonances, resonances and chords sound
+    src/era.rs        §18.3's eras: what each week's era does to the rule sheet
     src/replay.rs     the heist as bytes: header, command log, checksums
     src/island.rs     an island as a bundle; §5.2's and §6.1's publishing rules
     src/sha256.rs     FIPS 180-4, for §24.8's content addressing

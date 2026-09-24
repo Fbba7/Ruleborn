@@ -34,7 +34,8 @@ use std::sync::Mutex;
 use crate::heist::Grade;
 use crate::island::Island;
 use crate::replay::{Command, Heist, Kind, MAX_HEIST_BYTES};
-use crate::{digest, draw, fixture, record, rules_version, verify_on, Refusal};
+use crate::era::Era;
+use crate::{digest, draw, fixture, record_in, rules_version, verify_on, Refusal};
 
 /// Room for the largest island (14 x 14 tiles at three bytes, and its lists)
 /// and a replay beside it, many times over.
@@ -160,11 +161,13 @@ pub extern "C" fn rb_verify(replay_len: u32, island_len: u32) -> i32 {
 /// the buffer, played with `draw`'s seeded command log and recorded as the
 /// device would record it. The replay is written to the buffer and its length
 /// returned, or -2 for an island that does not decode. Nothing on the
-/// server's own path calls it.
+/// server's own path calls it. `era` is §18.3's era's wire value, 0 for none;
+/// -10 for one that is not an era.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
 pub extern "C" fn rb_record_drawn(seed_hi: u32, seed_lo: u32, ticks: u32, crew: u32,
-                                  island_len: u32) -> i32 {
+                                  island_len: u32, era: u32) -> i32 {
+    let Some(era) = Era::from_u8(era.min(255) as u8) else { return -10 };
     if !fits(0, island_len) {
         return -9;
     }
@@ -172,7 +175,7 @@ pub extern "C" fn rb_record_drawn(seed_hi: u32, seed_lo: u32, ticks: u32, crew: 
     with_buffer(|b| {
         let Ok(island) = Island::decode(&b[..island_len as usize]) else { return -2 };
         let crew = crew.min(u8::MAX as u32) as u8;
-        let bytes = record(&island, seed, ticks, crew, draw(&island, seed, ticks, crew)).encode();
+        let bytes = record_in(&island, seed, ticks, crew, era, draw(&island, seed, ticks, crew)).encode();
         if bytes.len() > BUFFER_BYTES {
             return -9;
         }
@@ -191,11 +194,12 @@ pub extern "C" fn rb_record_drawn(seed_hi: u32, seed_lo: u32, ticks: u32, crew: 
 ///
 /// — in tick order. The replay is written to the buffer and its length
 /// returned; -2 for an island that does not decode, -7 for a command that is
-/// not one, or out of order.
+/// not one, or out of order, -10 for an `era` that is not one (0 is none).
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
 pub extern "C" fn rb_record(seed_hi: u32, seed_lo: u32, ticks: u32, crew: u32,
-                            island_len: u32, count: u32) -> i32 {
+                            island_len: u32, count: u32, era: u32) -> i32 {
+    let Some(era) = Era::from_u8(era.min(255) as u8) else { return -10 };
     if !fits(island_len, count.saturating_mul(10)) {
         return -9;
     }
@@ -218,7 +222,7 @@ pub extern "C" fn rb_record(seed_hi: u32, seed_lo: u32, ticks: u32, crew: u32,
             return -7;
         }
         let crew = crew.min(u8::MAX as u32) as u8;
-        let bytes = record(&island, seed, ticks, crew, commands).encode();
+        let bytes = record_in(&island, seed, ticks, crew, era, commands).encode();
         if bytes.len() > BUFFER_BYTES {
             return -9;
         }

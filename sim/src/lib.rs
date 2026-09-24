@@ -30,6 +30,7 @@
 #![deny(unsafe_code)]
 
 pub mod combos;
+pub mod era;
 pub mod ffi;
 pub mod fixed;
 pub mod grid;
@@ -708,6 +709,8 @@ pub struct World {
     /// Cracked gardens: structures broken while it sounds, each leaving
     /// Essence for the owner.
     pub cracked: u32,
+    /// §18.3's era of the week, first on the sheet (§7.3); from the replay.
+    pub era: Option<era::Era>,
 }
 
 impl World {
@@ -817,6 +820,7 @@ impl World {
             shards: Vec::new(),
             pits: Vec::new(),
             cracked: 0,
+            era: None,
         }
     }
 
@@ -867,6 +871,7 @@ impl World {
     pub fn from_island(island: &island::Island, heist: &Heist) -> World {
         let mut world = World::on_ground(island, heist.crew, heist.commands.clone());
         world.rng = Rng::new(heist.seed, Stream::Laws);
+        world.era = heist.era;
         let laws: Vec<(&str, (u16, u16))> = island.laws.iter()
             .map(|(id, x, y)| (id.as_str(), (*x as u16, *y as u16)))
             .collect();
@@ -1178,9 +1183,18 @@ impl World {
             .filter(|l| l.broken_at.is_none()).map(|l| l.def).collect();
         self.combos = Combos::of(&standing);
         let mut sheet = Sheet::plain();
+        // §7.3: "Apply the Era, then the Grand Law, then crown laws, then the
+        // realm's laws".
+        for (p, n, d) in era::first_lines(self.era) {
+            sheet.apply(p, n, d);
+        }
         for &def in &standing {
+            if era::suspends(self.era, LAWS[def].id) {
+                continue;
+            }
             let shared = LAWS[def].notes & self.combos.harmonies;
             for &(p, n, d) in LAWS[def].params {
+                let (n, d) = era::line(self.era, LAWS[def].school, p, n, d);
                 let (n, d) = harmonised(p, n, d, shared);
                 sheet.apply(p, n, d);
             }
@@ -2510,9 +2524,11 @@ impl World {
             match w.kind {
                 WardKind::StaticCoil if now > 0 && now % heist::COIL_PERIOD_TICKS == 0 => {
                     let (n, d) = heist::COIL_DAMAGE;
+                    let (sn, sd) = era::ward_strength(self.era, WardKind::StaticCoil);
+                    let (n, d) = (n as i64 * sn, d as i64 * sd);
                     for r in self.raiders.iter_mut() {
                         if r.active() && within(r.at, heist::COIL_RADIUS) {
-                            r.health -= full_health(&self.sheet, r.role) * n / d;
+                            r.health -= (full_health(&self.sheet, r.role) as i64 * n / d) as i32;
                         }
                     }
                 }
@@ -2599,6 +2615,12 @@ impl World {
     fn revival(&self) -> Option<Revival> {
         let get = |p| self.sheet.is_set(p).then(|| self.sheet.factor(p));
         let mut ret = get(Param::RevivalReturn);
+        // Echoing Skies is a source like any other: the highest N applies.
+        if let Some((en, ed)) = era::revival_return(self.era) {
+            if ret.is_none_or(|(n, d)| en * d > n * ed) {
+                ret = Some((en, ed));
+            }
+        }
         if self.combos.chord(Chord::LanternFestival) {
             let (ln, ld) = heist::LANTERN_RETURN;
             if ret.is_none_or(|(n, d)| ln * d > n * ld) {
@@ -3312,11 +3334,17 @@ pub fn fixture(seed: u64, ticks: u32, crew: u8) -> Heist {
 /// §24.12: what it queues and the server re-simulates.
 pub fn record(island: &island::Island, seed: u64, ticks: u32, crew: u8,
               commands: Vec<Command>) -> Heist {
+    record_in(island, seed, ticks, crew, None, commands)
+}
+
+/// `record`, in a week's era (§18.3).
+pub fn record_in(island: &island::Island, seed: u64, ticks: u32, crew: u8, era: Option<era::Era>,
+                 commands: Vec<Command>) -> Heist {
     let mut heist = Heist {
         seed,
         island: island.digest(),
         rules: rules_version(),
-        ticks, crew, commands,
+        ticks, crew, era, commands,
         checksums: Vec::new(),
     };
     heist.checksums = run_on(island, &heist).iter().map(|s| truncate(*s)).collect();
@@ -3540,7 +3568,16 @@ pub fn rules_version() -> [u8; 32] {
                 bytes.extend_from_slice(&d.to_le_bytes());
             }
             bytes.push(law.notes);
+            // Its school: Wildgrowth reads it, so a law moved between
+            // schools moves the version.
+            bytes.extend_from_slice(law.school.as_bytes());
             bytes.push(0xFF);
+        }
+        // §18.3's eras and their figures: a re-figured era is a rules change.
+        for (id, figure) in laws_table::ERAS.iter() {
+            bytes.extend_from_slice(id.as_bytes());
+            bytes.push(0);
+            bytes.extend_from_slice(&figure.to_le_bytes());
         }
         // §8's tables: which two laws make each resonance and which notes
         // each chord needs. A re-noted law or a re-paired resonance moves
@@ -3558,7 +3595,7 @@ pub fn rules_version() -> [u8; 32] {
         }
         let fixture = island::Island::fixture();
         let bare = |seed: u64, ticks: u32, crew: u8, commands: Vec<Command>| Heist {
-            seed, island: [0; 32], rules: [0; 32], ticks, crew, commands,
+            seed, island: [0; 32], rules: [0; 32], ticks, crew, era: None, commands,
             checksums: Vec::new(),
         };
         let mut heists: Vec<Heist> = GOLDEN.iter()
@@ -3645,7 +3682,8 @@ pub fn verify_on(island: &island::Island, heist: &Heist) -> Result<heist::Outcom
     if !(3..=5).contains(&heist.crew) {
         return Err(Refusal::Crew);
     }
-    if !(MIN_TICKS..=MAX_TICKS).contains(&heist.ticks) {
+    // Quiet Week's heists are longer than §24.10's longest (F49).
+    if !(MIN_TICKS..=MAX_TICKS + era::extra_ticks(heist.era)).contains(&heist.ticks) {
         return Err(Refusal::Length);
     }
     if !heist.commands.windows(2).all(|w| w[0].tick <= w[1].tick)

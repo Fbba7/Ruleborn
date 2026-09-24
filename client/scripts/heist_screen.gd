@@ -56,9 +56,9 @@ func _ready() -> void:
 
 
 ## Start a fresh heist on this seed and clock, on `realm` (a bundle; empty for
-## the fixture realm).
-func begin(seed: String, ticks: int, crew: int, realm := PackedByteArray()) -> bool:
-	if not world.start(seed, ticks, crew, realm):
+## the fixture realm), in the week's `era` (§18.3) as the lease names it.
+func begin(seed: String, ticks: int, crew: int, realm := PackedByteArray(), era := "") -> bool:
+	if not world.set_era(era) or not world.start(seed, ticks, crew, realm):
 		return false
 	island = realm
 	selected = 0
@@ -85,7 +85,7 @@ func begin_online(url: String) -> String:
 	lease = await server.lease(target["bundle"], target["owner"])
 	if lease.has("error") or bundle.is_empty():
 		return str(lease.get("error", "no bundle"))
-	if not begin(str(lease["seed"]), int(lease["ticks"]), CREW, bundle):
+	if not begin(str(lease["seed"]), int(lease["ticks"]), CREW, bundle, str(lease.get("era", ""))):
 		return "the leased island does not load"
 	return ""
 

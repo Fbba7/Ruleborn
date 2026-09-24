@@ -23,6 +23,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
 import { open } from "./src/db.mjs";
+import { ERAS } from "./src/eras.mjs";
 import { Service } from "./src/service.mjs";
 import { Build, Builds } from "./src/sim.mjs";
 import { Store } from "./src/store.mjs";
@@ -95,10 +96,14 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
         const target = (i + 1 + s + d * heists) % players;
         const lease = count("lease", () => service.lease(accounts[i], bundles[target]));
         // The device's half — recording the replay — is not the server's.
+        const era = ERAS.find((e) => e.id === lease.era)?.wire ?? 0;
         const replay = build.recordDrawn(service.bundle(lease.bundle),
-                                         { seed: BigInt(lease.seed), ticks: lease.ticks, crew: 3 });
+                                         { seed: BigInt(lease.seed), ticks: lease.ticks, crew: 3, era });
         const t0 = process.hrtime.bigint();
-        count("heist: validate and grant", () => service.submit(accounts[i], lease.token, replay));
+        const out = count("heist: validate and grant", () => service.submit(accounts[i], lease.token, replay));
+        // A refused heist writes less and costs no re-simulation: the load
+        // test must not quietly measure refusals.
+        if (!out.validated) throw new Error(`a load-test heist was refused: ${out.reason}`);
         cpu.push(Number(process.hrtime.bigint() - t0) / 1e6);
       }
     }
@@ -131,13 +136,15 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
 export function against(result) {
   const [budget, included, price, freeWrites, freeCpu] = [facts.WRITE_BUDGET, facts.PAID_WRITES_MONTH,
     facts.WRITE_PRICE_PER_MILLION, facts.FREE_WRITES_DAY, facts.FREE_CPU_MS];
-  const monthly = (players) => players * result.writesPerPlayerDay * 30;
+  // §25.1's gate: "a third of monthly players play on a given day".
+  const [dn, dd] = facts.DAILY_SHARE;
+  const monthly = (players) => (players * dn / dd) * result.writesPerPlayerDay * 30;
   return {
     budget, overBudget: +(result.writesPerPlayerDay / budget).toFixed(1),
     freeCpuMs: freeCpu, validationFitsFreePlan: result.validationMs.p95 <= freeCpu,
     freePlanPlayersADay: Math.floor(freeWrites / result.writesPerPlayerDay),
-    // Every monthly player active every day: §24.1 gives no share of
-    // monthly players active on a day, so this is the ceiling (G33).
+    // Monthly players, a third of them playing on a day, each a day of this
+    // player's: an engaged population is the ceiling, a casual one the floor.
     paidDollarsAMonth: Object.fromEntries([1_000, 10_000, 100_000, 1_000_000].map((p) =>
       [p, +(5 + Math.max(0, monthly(p) - included) / 1e6 * price).toFixed(0)])),
   };
@@ -175,7 +182,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.log(`  a validation takes ${r.validationMs.p50} ms (p95 ${r.validationMs.p95}, max ` +
                   `${r.validationMs.max}); the free plan allows ${r.against.freeCpuMs} ms a request`);
       console.log(`  the free plan's daily writes carry ${r.against.freePlanPlayersADay} such players a day`);
-      console.log(`  paid plan, every monthly player active daily: ${JSON.stringify(r.against.paidDollarsAMonth)} dollars a month`);
+      console.log(`  paid plan, a third of monthly players playing a day (§25.1): ${JSON.stringify(r.against.paidDollarsAMonth)} dollars a month`);
     }
   }
 }

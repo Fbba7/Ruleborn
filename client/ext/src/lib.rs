@@ -33,6 +33,8 @@ pub struct RulebornReplay {
     mismatch: i64,
     /// Seconds whose checksums have been compared and agreed.
     agreed: i64,
+    /// §18.3's era the next `start` plays in, as the lease named it.
+    era: Option<sim::era::Era>,
 }
 
 fn tiles(f: Fx) -> f32 {
@@ -83,6 +85,24 @@ impl RulebornReplay {
         true
     }
 
+    /// The era the next heist is played in (§18.3), by its content id as a
+    /// lease names it; empty for none. False for an id that is not an era.
+    #[func]
+    fn set_era(&mut self, id: GString) -> bool {
+        let id = id.to_string();
+        if id.is_empty() {
+            self.era = None;
+            return true;
+        }
+        match sim::era::Era::from_id(&id) {
+            Some(era) => {
+                self.era = Some(era);
+                true
+            }
+            None => false,
+        }
+    }
+
     /// Start a heist to be played rather than watched: on `island` (a
     /// bundle, as a lease names it; empty for the fixture realm), with this
     /// seed, clock and crew, and no commands yet. Taps become commands
@@ -104,6 +124,7 @@ impl RulebornReplay {
             rules: sim::rules_version(),
             ticks: ticks as u32,
             crew: crew as u8,
+            era: self.era,
             commands: Vec::new(),
             checksums: Vec::new(),
         };
@@ -138,8 +159,8 @@ impl RulebornReplay {
         else {
             return PackedByteArray::new();
         };
-        let bytes = sim::record(realm, heist.seed, heist.ticks, heist.crew,
-                                world.commands().to_vec()).encode();
+        let bytes = sim::record_in(realm, heist.seed, heist.ticks, heist.crew, heist.era,
+                                   world.commands().to_vec()).encode();
         PackedByteArray::from(bytes.as_slice())
     }
 

@@ -230,6 +230,17 @@ stand-in chain in `test/fixtures/apple/` (its `make.sh` regenerates it). The
 readings are **G32**; Google Play's side is **D67**; and building this found
 **F46**: every island is public by hash before any scout.
 
+## Eras
+
+`src/eras.mjs` is §18.3's week: the eight eras take turns, a week each from
+the first season's first day. Every lease against a universe names the
+week's era, a Quiet Week lease's clock is 30 seconds longer, and a replay
+whose header names another era than its lease pays nothing — the rules are
+the simulation's (`sim/src/era.rs`). The Workshop is out of the eras, so an
+island cleared once is solvable every week. `GET /v1/era` says which it is
+and when it ends. The readings are **G36**, what is not built **D69**, and
+Quiet Week's clock past §5.4's cap is **F49**.
+
 ## Friends
 
 `src/friends.mjs` is §12.11's friendly heists and §17.6's sharing:
@@ -371,6 +382,7 @@ built — register **D63**.
     src/stores.mjs    Apple's proofs: Game Center identities, StoreKit 2 transactions
     src/notifications.mjs  the outbox: a heist against you, the daily reminder, §20.2's nights
     src/friends.mjs   friends, friendly heists, the friends' feed, challenge links
+    src/eras.mjs      §18.3's era of the week, on every lease
     load.mjs          the load test; load.json its last measurement
     src/workshop.mjs  §18.6's Workshop: publish, browse, play, rate, report, moderate, remix
     src/words.json    the word lists Workshop names come from

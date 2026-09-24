@@ -32,10 +32,15 @@
 //! `Heist::encode` measures itself against the limit and `size_fits` is the
 //! gate.
 
+use crate::era::Era;
 use crate::fixed::Fx;
 
 /// `RBH1` — the format, so a decoder can refuse a file it does not know.
 pub const MAGIC: [u8; 4] = *b"RBH1";
+/// `RBH2` — the same, with one more byte after the crew: the era the heist
+/// was played in (§18.3). A heist with no era is still written `RBH1`, byte
+/// for byte as before, so every replay recorded before eras still reads.
+pub const MAGIC_ERA: [u8; 4] = *b"RBH2";
 /// §24.10's limit, as a number the code can check itself against.
 pub const MAX_HEIST_BYTES: usize = 2048;
 /// The low bytes of each kept checksum. See the module docstring.
@@ -132,6 +137,9 @@ pub struct Heist {
     pub rules: [u8; 32],
     pub ticks: u32,
     pub crew: u8,
+    /// §18.3's era of the week it was played in, if any: part of the rules
+    /// it re-simulates under, so it travels with the heist.
+    pub era: Option<Era>,
     pub commands: Vec<Command>,
     /// One a second, truncated. See the module docstring.
     pub checksums: Vec<u32>,
@@ -142,12 +150,15 @@ impl Heist {
     /// command every few seconds would otherwise spend four bytes saying so.
     pub fn encode(&self) -> Vec<u8> {
         let mut out = Vec::with_capacity(MAX_HEIST_BYTES);
-        out.extend_from_slice(&MAGIC);
+        out.extend_from_slice(if self.era.is_some() { &MAGIC_ERA } else { &MAGIC });
         out.extend_from_slice(&self.seed.to_le_bytes());
         out.extend_from_slice(&self.island);
         out.extend_from_slice(&self.rules);
         out.extend_from_slice(&self.ticks.to_le_bytes());
         out.push(self.crew);
+        if let Some(era) = self.era {
+            out.push(era as u8);
+        }
         out.extend_from_slice(&(self.commands.len() as u16).to_le_bytes());
         out.extend_from_slice(&(self.checksums.len() as u16).to_le_bytes());
 
@@ -179,14 +190,21 @@ impl Heist {
             *at += n;
             Some(slice)
         };
-        if take(&mut at, 4)? != MAGIC {
+        let magic = take(&mut at, 4)?;
+        let with_era = if magic == MAGIC {
+            false
+        } else if magic == MAGIC_ERA {
+            true
+        } else {
             return None;
-        }
+        };
         let seed = u64::from_le_bytes(take(&mut at, 8)?.try_into().ok()?);
         let island: [u8; 32] = take(&mut at, 32)?.try_into().ok()?;
         let rules: [u8; 32] = take(&mut at, 32)?.try_into().ok()?;
         let ticks = u32::from_le_bytes(take(&mut at, 4)?.try_into().ok()?);
         let crew = take(&mut at, 1)?[0];
+        // An `RBH2` names its era, and never none: that is what `RBH1` is for.
+        let era = if with_era { Some(Era::from_u8(take(&mut at, 1)?[0])??) } else { None };
         let command_count = u16::from_le_bytes(take(&mut at, 2)?.try_into().ok()?);
         let checksum_count = u16::from_le_bytes(take(&mut at, 2)?.try_into().ok()?);
 
@@ -211,7 +229,7 @@ impl Heist {
         if at != bytes.len() {
             return None;                  // trailing bytes are a malformed file
         }
-        Some(Heist { seed, island, rules, ticks, crew, commands, checksums })
+        Some(Heist { seed, island, rules, ticks, crew, era, commands, checksums })
     }
 
     /// §24.10's gate, as a question the code can answer about itself.

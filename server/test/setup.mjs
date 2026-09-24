@@ -6,6 +6,7 @@ import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { open } from "../src/db.mjs";
+import { ERAS } from "../src/eras.mjs";
 import { handler } from "../src/http.mjs";
 import { Service } from "../src/service.mjs";
 import { Build, Builds } from "../src/sim.mjs";
@@ -97,10 +98,12 @@ export function twoPlayers(open = true) {
   return { ...t, defender, raider, island, bundle };
 }
 
-/** Play a lease as the device would, with `plan` or the drawn test player. */
+/** Play a lease as the device would, with `plan` or the drawn test player,
+ *  in the week's era the lease names (§18.3). */
 export function play(t, lease, { plan = null, crew = 3 } = {}) {
   const island = t.service.bundle(lease.bundle);
-  const spec = { seed: BigInt(lease.seed), ticks: lease.ticks, crew };
+  const era = ERAS.find((e) => e.id === lease.era)?.wire ?? 0;
+  const spec = { seed: BigInt(lease.seed), ticks: lease.ticks, crew, era };
   return plan ? t.build.record(island, { ...spec, commands: plan })
               : t.build.recordDrawn(island, spec);
 }
