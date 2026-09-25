@@ -205,10 +205,10 @@ are named constants, register **G28**. What Starglass is meant to be is
 **F41**; what is not built is **D64**. A database made before Starglass has
 its ledger rebuilt around its rows when opened.
 
-## Apple's proofs
+## The stores' proofs
 
-`src/stores.mjs` checks what Apple signs, each proof against its own pinned
-roots:
+`src/stores.mjs` checks what Apple and Google sign, without asking either
+about any one player. Apple's, each against its own pinned roots:
 
 - **Game Center sign-in.** §24.8: "Platform identity is exchanged for a
   short-lived signed token." The device's identity-verification signature
@@ -226,13 +226,43 @@ roots:
   is a Production purchase. The purchase intent's id rides the purchase as
   its appAccountToken, so it is a UUID.
 
+And Google's:
+
+- **Google sign-in.** The ID token "Sign in with Google" returns on Android:
+  a JWT Google signs RS256 with keys it publishes at a fixed URL, fetched
+  and cached by `preparePlatform` (again only when a token names a key not
+  held, or the keys are past the age Google gave them, and at most once a
+  minute), then its issuer, the server's own client id as audience, its
+  times and its subject. It proves a Google account (`gp:<sub>`), not a Play
+  Games player: Play Games Services gives a server only a code to exchange
+  with Google, which is a call per sign-in (**D67**).
+- **Play purchases.** The purchase's JSON as Play returned it, signed
+  RSA-SHA1 with the app's licence key; then the package, that it is
+  purchased (not pending or cancelled) and one pack. The purchase token is
+  the transaction, granted once; the intent rides as its
+  obfuscatedAccountId. Then Google is asked (`src/googleapi.mjs`, the Play
+  Developer API as a service account): the purchase must still be paid for
+  and not a licence tester's, unless the operator allows test purchases,
+  and the server consumes it before granting — a purchase nobody consumes
+  is refunded by Play after three days, whatever was granted.
+
+Each credential goes only to its own platform's check, and a receipt only
+to its own store's.
+
 `main.mjs` takes `RULEBORN_GAMECENTER_ROOTS` and `RULEBORN_STOREKIT_ROOTS`
 (the pinned certificates) and `RULEBORN_BUNDLE_ID`; `RULEBORN_APPLE_SANDBOX=1`
-lets Sandbox purchases pay, for a test deployment. It refuses to start with
-StoreKit's roots and not Game Center's — a server that takes money must not
-take any credential as an identity — unless `RULEBORN_STUB_SIGNIN=1` says it
-is a test. With neither, it takes any credential as the identity it names,
-refuses every receipt, and must not face a network.
+lets Sandbox purchases pay, for a test deployment. Google's are
+`RULEBORN_GOOGLE_CLIENT_IDS` (the server's OAuth client ids, comma-separated),
+`RULEBORN_PLAY_PACKAGE` and `RULEBORN_PLAY_LICENCE_KEY` (the Play Console's
+base64 key; one without the other refuses to start), and
+`RULEBORN_PLAY_SERVICE_ACCOUNT` (the path of the service account's JSON
+key, without which Play receipts refuse to start) and `RULEBORN_PLAY_TEST=1`
+for licence testers' purchases. It refuses to start
+with either store's receipts and neither platform's sign-in — a server that
+takes money must not take any credential as an identity — unless
+`RULEBORN_STUB_SIGNIN=1` says it is a test. With no platform at all, it
+takes any credential as the identity it names, refuses every receipt, and
+must not face a network.
 `RULEBORN_DATA` moves its database and bundles out of `server/.data/`, which
 is how `client/status.py` gives each test run a fresh one. `RULEBORN_SECRET`
 is the key session tokens are signed with and telemetry's pseudonyms made
@@ -412,10 +442,9 @@ built — register **D63**.
 
 ## What is not built
 
-- **Google Play's proofs.** Play Games sign-in and Play purchases need
-  Google's API; `Service` takes `verifyPlatform` and `verifyReceipt`
-  functions, and nothing wires Google's yet (D67). Nor are App Store refunds
-  heard after a grant.
+- **Refunds after a grant** (D67): App Store Server Notifications and Play's
+  voided purchases, which tell the server of a refund the player asked for
+  after the grant; and a Play Games player id.
 - **Crossing realms.** The simulation plays the Heart alone, so every lease
   is §5.4's 150 seconds with no links.
 - **Family approval** for 13 to 15 (D64).
@@ -445,7 +474,8 @@ built — register **D63**.
     declarations.md   the App Privacy and Data safety answers, written from privacy.json
     src/glicko.mjs    Glicko-2, pure arithmetic
     src/matchmaking.mjs  §12.22's ratings and offer, §12.3's echoes, shield and Trace
-    src/stores.mjs    Apple's proofs: Game Center identities, StoreKit 2 transactions
+    src/stores.mjs    the stores' proofs: Game Center, StoreKit 2, Google sign-in, Play purchases
+    src/googleapi.mjs Google's APIs as a service account: a Play purchase looked up and consumed
     src/notifications.mjs  the outbox: a heist against you, the daily reminder, §20.2's nights
     src/friends.mjs   friends, friendly heists, the friends' feed, challenge links
     src/eras.mjs      §18.3's era of the week, on every lease

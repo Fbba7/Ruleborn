@@ -58,9 +58,11 @@ const month = (ms) => new Date(ms).toISOString().slice(0, 7);
 export class Shop {
   /** `verifyReceipt(store, receipt)` returns `{transaction, product, intent?}`
    *  for a receipt the store vouches for, or null. */
-  constructor(service, { verifyReceipt = () => null, catalogue = CATALOGUE } = {}) {
+  constructor(service, { verifyReceipt = () => null, settleReceipt = async () => ({ ok: true }),
+                         catalogue = CATALOGUE } = {}) {
     this.service = service;
     this.verifyReceipt = verifyReceipt;
+    this.settleReceipt = settleReceipt;
     this.items = new Map(catalogue.items.map((i) => [i.id, i]));
   }
 
@@ -112,8 +114,8 @@ export class Shop {
    * is honoured even with no intent (a purchase restored on a new device, or
    * one approved later by a family): the money is already taken.
    */
-  redeem(account, store, receipt) {
-    const proof = this.verifyReceipt(store, receipt);
+  redeem(account, store, receipt, checked = null) {
+    const proof = checked ?? this.verifyReceipt(store, receipt);
     if (!proof) throw new Refused(402, "receipt_refused");
     const now = this.service.now();
     return transaction(this.db, () => {
@@ -139,6 +141,26 @@ export class Shop {
       this.service.telemetry.record(account, "purchase", { product: proof.product, cents: price }, now);
       return { product: proof.product, starglass: price };
     });
+  }
+
+  /**
+   * A receipt as the edge takes it: checked, then settled with its store
+   * where the store must be asked — a Play purchase is looked up and
+   * consumed before it is granted (googleapi.mjs) — then granted once.
+   * One already granted is answered from its grant without asking again.
+   */
+  async claim(account, store, receipt) {
+    const proof = this.verifyReceipt(store, receipt);
+    if (!proof) throw new Refused(402, "receipt_refused");
+    const done = this.db.prepare("SELECT 1 FROM purchases WHERE store = ? AND txn = ?").get(store, proof.transaction);
+    if (!done) {
+      const settled = await this.settleReceipt(store, proof);
+      if (!settled?.ok) {
+        const reason = settled?.reason ?? "receipt_refused";
+        throw new Refused(reason === "store_unavailable" ? 503 : 402, "receipt_refused", { why: reason });
+      }
+    }
+    return this.redeem(account, store, receipt, proof);
   }
 
   /** §20.2's "monthly spending summary": what was spent, month by month. */

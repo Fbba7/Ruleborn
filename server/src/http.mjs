@@ -183,7 +183,7 @@ async function shopRoute(service, request, url, parts, who) {
     if (m === "POST" && a === "intents") return json(service.shop.intent(me, (await body(request)).product), 201);
     if (m === "POST" && a === "receipts") {
       const { store, receipt } = await body(request);
-      return json(service.shop.redeem(me, store, receipt), 201);
+      return json(await service.shop.claim(me, store, receipt), 201);
     }
     if (m === "GET" && a === "summary") return json(service.shop.summary(me));
   }

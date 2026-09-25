@@ -32,7 +32,7 @@ Nothing these depend on is still open.
 | D63 | minor | open | Constellations and crews are stored and joinable, and none of what they do together is built |  |
 | D64 | minor | open | The track, Starglass and cosmetics are built on the server, without the stores, discoveries, or an authored cosmetic |  |
 | D65 | minor | open | Telemetry logs and reports on the server, without §24.3’s heatmaps or an error reporter |  |
-| D67 | minor | open | Apple’s proofs are checked on the server; Google Play’s, and refunds, are not |  |
+| D67 | minor | open | The stores’ proofs are checked on the server; refunds, and a Play Games player, are not |  |
 | D68 | minor | open | Notifications are queued and timed on the server, and not yet pushed |  |
 | D69 | minor | open | Eras run in the simulation and the server, without their costs, the harness, or a screen |  |
 | D70 | minor | open | The store declarations are drafted from the schema and checked, not filed, and the client has neither the age check nor deletion on a screen |  |

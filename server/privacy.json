@@ -170,7 +170,7 @@
     "platform_identity": {
      "type": "user-id",
      "deletion": "replaced",
-     "holds": "the Game Center (or Play Games) player id",
+     "holds": "the Game Center player id, or the Google account id",
      "purposes": [
       "account",
       "security"
@@ -1542,6 +1542,16 @@
    "to": "static.gc.apple.com, sandbox.gc.apple.com"
   },
   {
+   "what": "Google sign-in",
+   "carries": "nothing of the player's: the server fetches the keys Google signs ID tokens with, from one fixed URL",
+   "to": "www.googleapis.com"
+  },
+  {
+   "what": "a Play purchase settled",
+   "carries": "the purchase's product and token, which Google issued, to look it up and consume it",
+   "to": "Google's Play Developer API, as the app's own service account"
+  },
+  {
    "what": "push notifications",
    "carries": "the push token and a message: the heists raided, or the reminder's day",
    "to": "Firebase Cloud Messaging, as the operator's service provider (not built, D68)"
@@ -1557,7 +1567,7 @@
   "thirdPartyAdvertising": false,
   "shared": false,
   "encryptedInTransit": true,
-  "accountCreation": "Sign-in with the platform's own identity (Game Center, Play Games)",
+  "accountCreation": "Sign-in with the platform's own identity (Game Center, Sign in with Google)",
   "deletionInApp": true,
   "deletionUrl": null,
   "partialDeletion": false

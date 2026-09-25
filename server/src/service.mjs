@@ -97,10 +97,12 @@ export class Service {
    * `seasonStart` is when season 1 began (§18.1): seasons run back to back,
    * eight weeks each, from it. `verifyReceipt(store, receipt)` is the same
    * seam to the stores for purchases (shop.mjs); without one, every receipt
-   * is refused.
+   * is refused. `settleReceipt(store, proof)` is the asynchronous half: a
+   * store asked, before the grant, whether the purchase stands.
    */
   constructor({ db, store, builds, secret, verifyPlatform, now = () => Date.now(),
                 random = randomBytes, seasonStart = 0, verifyReceipt = () => null,
+                settleReceipt = async () => ({ ok: true }),
                 cosmetics = undefined, preparePlatform = async () => {}, replays = new Store(),
                 firstBand = "13-15", deletions = new Journal() }) {
     if (!["13-15", "16-17", "18+"].includes(firstBand)) throw new Error(`no age band ${firstBand}`);
@@ -112,7 +114,7 @@ export class Service {
     this.matchmaking = new Matchmaking(this);
     this.notifications = new Notifications(this);
     this.friends = new Friends(this);
-    this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), catalogue: cosmetics });
+    this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), settleReceipt, catalogue: cosmetics });
   }
 
   // -- identity ------------------------------------------------------------

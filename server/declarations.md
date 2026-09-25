@@ -23,7 +23,7 @@ Do you or your third-party partners collect data from this app? **Yes.** Used to
 
 - Does your app collect or share any of the required user data types? **Yes** (collected; shared: **No**).
 - Is all of the user data collected by your app encrypted in transit? **Yes**.
-- Account creation: **Sign-in with the platform's own identity (Game Center, Play Games)**.
+- Account creation: **Sign-in with the platform's own identity (Game Center, Sign in with Google)**.
 - Deletion: account deletion inside the app **Yes**; a web link to request deletion: **none yet (G39)**; deleting some data without the account: **No**.
 
 | Category | Data type | Collected | Shared | Processed ephemerally | Required or optional | Purposes |
@@ -105,5 +105,7 @@ Erased: gone. Severed: kept, under an account id that no longer leads to anyone 
 - `secret`: the server's own key for tokens and pseudonyms. Kept for good. On deletion: not about a person.
 - the device's requests: a session token naming the account; the bodies of each route; to the server, over HTTPS: the platform's edge terminates TLS and every answer carries Strict-Transport-Security.
 - Game Center sign-in: nothing of the player's: the server fetches Apple's public key by the URL the proof names; to static.gc.apple.com, sandbox.gc.apple.com.
+- Google sign-in: nothing of the player's: the server fetches the keys Google signs ID tokens with, from one fixed URL; to www.googleapis.com.
+- a Play purchase settled: the purchase's product and token, which Google issued, to look it up and consume it; to Google's Play Developer API, as the app's own service account.
 - push notifications: the push token and a message: the heists raided, or the reminder's day; to Firebase Cloud Messaging, as the operator's service provider (not built, D68).
 - the server's log: a route and an error; never a path's ids or a body; to the operator's platform.

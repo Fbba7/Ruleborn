@@ -16,10 +16,21 @@
 // operator pins Apple Root CA G3 for StoreKit and the CA that issues Game
 // Center's key for Game Center, and the tests pin a stand-in. Fetching
 // Game Center's certificate is the only network call, so it is injected and
-// cached, and done before the synchronous check. Google Play's proofs need
-// Google's API for both, and are seams only (D67).
+// cached, and done before the synchronous check.
+//
+// Google's two proofs can be checked the same way, without asking Google
+// about any one player:
+//
+//   - a Play Billing purchase: the purchase's JSON exactly as Play returned
+//     it, signed RSA-SHA1 with the app's licence key, which the Play Console
+//     gives the developer;
+//   - a Google sign-in: the ID token "Sign in with Google" returns on
+//     Android, a JWT Google signs RS256 with keys it publishes at a fixed
+//     URL, fetched and cached before the synchronous check as Game Center's
+//     are. It proves a Google account, not a Play Games player: Play Games
+//     Services hands a server only a code to exchange with Google (D67).
 
-import { X509Certificate, createVerify, verify as verifySignature } from "node:crypto";
+import { X509Certificate, createPublicKey, createVerify, verify as verifySignature } from "node:crypto";
 
 /** How old a Game Center signature may be (G32). */
 export const GAME_CENTER_FRESH_MS = 5 * 60 * 1000;
@@ -233,4 +244,201 @@ export class GameCenter {
     check.update(payload);
     return check.verify(cert.publicKey, Buffer.from(String(signature ?? ""), "base64")) ? `gc:${playerId}` : null;
   }
+}
+
+// -- Google -----------------------------------------------------------------
+
+/** The longest purchase JSON or ID token read: both are a few hundred bytes. */
+const GOOGLE_MOST = 8192;
+
+/**
+ * A Play Billing purchase, checked; null if the app's licence key did not
+ * sign it, or it is not a completed purchase of one item for this app. The
+ * purchase token is the transaction. The intent rides the purchase as its
+ * obfuscatedAccountId, as it rides Apple's as the appAccountToken. What a
+ * signature cannot say — still paid for, a licence tester's, consumed — the
+ * Play Developer API says before the grant (googleapi.mjs, D67).
+ */
+export function playPurchase(receipt, { licenceKey, packageName }) {
+  const { data, signature } = receipt ?? {};
+  if (typeof data !== "string" || typeof signature !== "string") return null;
+  if (data.length > GOOGLE_MOST || signature.length > GOOGLE_MOST) return null;
+  if (licenceKey?.asymmetricKeyType !== "rsa") return null;
+  let ok = false;
+  try {
+    ok = verifySignature("sha1", Buffer.from(data, "utf8"), licenceKey, Buffer.from(signature, "base64"));
+  } catch {
+    return null;
+  }
+  if (!ok) return null;
+  let p;
+  try {
+    p = JSON.parse(data);
+  } catch {
+    return null;
+  }
+  if (p?.packageName !== packageName) return null;
+  // 0 is purchased; 1 is cancelled and 4 pending, which Play has not charged.
+  if (p.purchaseState !== 0) return null;
+  if (typeof p.productId !== "string" || !p.productId) return null;
+  if (typeof p.purchaseToken !== "string" || !p.purchaseToken) return null;
+  if (p.quantity !== undefined && p.quantity !== 1) return null;
+  return {
+    transaction: p.purchaseToken,
+    product: p.productId,
+    intent: typeof p.obfuscatedAccountId === "string" && p.obfuscatedAccountId ? p.obfuscatedAccountId : null,
+  };
+}
+
+/** Where Google publishes the keys it signs ID tokens with, and who it is. */
+export const GOOGLE_KEYS_URL = "https://www.googleapis.com/oauth2/v3/certs";
+export const GOOGLE_ISSUERS = Object.freeze(["accounts.google.com", "https://accounts.google.com"]);
+
+/** How often the keys may be fetched again for a key id not held: anyone may
+ *  ask before any identity is proved (G32). While none are held at all —
+ *  a cold start, a first fetch that failed — sooner. */
+export const GOOGLE_KEYS_RETRY_MS = 60 * 1000;
+export const GOOGLE_KEYS_COLD_RETRY_MS = 5 * 1000;
+
+/** How far a token's times may sit from the server's clock. */
+export const GOOGLE_SKEW_MS = 5 * 60 * 1000;
+
+/**
+ * "Sign in with Google" on Android: the ID token, a JWT Google signs RS256.
+ * `fetchKeys()` is the one network call — it resolves `{keys, maxAgeMs}`
+ * from GOOGLE_KEYS_URL — and `prepare` makes it when a token names a key not
+ * held, or the keys are past the age Google gave them, and caches the
+ * answer, so `verify`, which the service calls synchronously, needs none.
+ * `clientIds` are the audiences accepted: the server's own OAuth client.
+ */
+export class GoogleSignIn {
+  constructor({ clientIds, fetchKeys, now = () => Date.now() }) {
+    if (!Array.isArray(clientIds) || clientIds.length === 0) throw new Error("GoogleSignIn needs its client ids");
+    Object.assign(this, { clientIds, fetchKeys, now });
+    this.keys = new Map();
+    this.expires = -Infinity;
+    this.lastFetch = -Infinity;
+    this.pending = null;
+  }
+
+  static header(token) {
+    if (typeof token !== "string" || token.length > GOOGLE_MOST) return null;
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+    try {
+      const h = JSON.parse(b64url(parts[0]).toString("utf8"));
+      return h && h.alg === "RS256" && typeof h.kid === "string" ? { ...h, parts } : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async prepare(credential) {
+    const h = GoogleSignIn.header(credential?.idToken);
+    if (!h) return;
+    const now = this.now();
+    if (this.keys.has(h.kid) && now < this.expires) return;
+    // A fetch under way is shared: a sign-in arriving meanwhile waits for it.
+    if (this.pending) {
+      await this.pending;
+      return;
+    }
+    // A key not held, or keys past their age: fetched at most once a
+    // GOOGLE_KEYS_RETRY_MS, whoever asks; with none held, once a
+    // GOOGLE_KEYS_COLD_RETRY_MS.
+    const wait = this.keys.size === 0 ? GOOGLE_KEYS_COLD_RETRY_MS : GOOGLE_KEYS_RETRY_MS;
+    if (now - this.lastFetch < wait) return;
+    this.lastFetch = now;
+    this.pending = this.refresh(now).finally(() => { this.pending = null; });
+    await this.pending;
+  }
+
+  async refresh(now) {
+    let answer;
+    try {
+      answer = await this.fetchKeys();
+    } catch {
+      return;                              // an unreachable key set proves nothing; verify refuses
+    }
+    const keys = new Map();
+    for (const jwk of answer?.keys ?? []) {
+      if (jwk?.kty !== "RSA" || typeof jwk.kid !== "string") continue;
+      if ((jwk.use ?? "sig") !== "sig" || (jwk.alg ?? "RS256") !== "RS256") continue;
+      try {
+        keys.set(jwk.kid, createPublicKey({ key: { kty: "RSA", n: jwk.n, e: jwk.e }, format: "jwk" }));
+      } catch {
+        // one unreadable key does not spoil the rest
+      }
+    }
+    if (keys.size === 0) return;
+    this.keys = keys;
+    const age = Number(answer.maxAgeMs);
+    this.expires = now + (Number.isFinite(age) && age > 0 ? Math.min(age, 24 * 60 * 60 * 1000) : 60 * 60 * 1000);
+  }
+
+  /** The platform identity a credential proves, or null. */
+  verify(credential) {
+    const h = GoogleSignIn.header(credential?.idToken);
+    if (!h) return null;
+    const key = this.keys.get(h.kid);
+    if (!key) return null;
+    const [head, body, sig] = h.parts;
+    let ok = false;
+    try {
+      ok = verifySignature("sha256", Buffer.from(`${head}.${body}`), key, b64url(sig));
+    } catch {
+      return null;
+    }
+    if (!ok) return null;
+    let p;
+    try {
+      p = JSON.parse(b64url(body).toString("utf8"));
+    } catch {
+      return null;
+    }
+    if (!GOOGLE_ISSUERS.includes(p?.iss)) return null;
+    const audiences = Array.isArray(p.aud) ? p.aud : [p.aud];
+    if (!audiences.some((a) => this.clientIds.includes(a))) return null;
+    const now = this.now();
+    if (!Number.isFinite(p.exp) || p.exp * 1000 + GOOGLE_SKEW_MS < now) return null;
+    if (!Number.isFinite(p.iat) || p.iat * 1000 - GOOGLE_SKEW_MS > now) return null;
+    if (typeof p.sub !== "string" || !/^[0-9]{1,64}$/.test(p.sub)) return null;
+    return `gp:${p.sub}`;
+  }
+}
+
+// -- which proof a credential or receipt is ------------------------------------
+
+/**
+ * Sign-in across the platforms configured: a Game Center credential names
+ * its key's URL, a Google one carries an ID token, and each goes only to its
+ * own verifier. With neither configured, sign-in is stubbed — a string is
+ * taken as the identity it names — which main.mjs allows only where no
+ * store pays out, or the operator says it is a test (D67).
+ */
+export function signIn({ gameCenter = null, google = null } = {}) {
+  const which = (c) => {
+    if (c && typeof c === "object" && typeof c.idToken === "string") return google;
+    if (c && typeof c === "object" && "publicKeyUrl" in c) return gameCenter;
+    return null;
+  };
+  const stubbed = !gameCenter && !google;
+  return {
+    stubbed,
+    prepare: async (c) => { await which(c)?.prepare(c); },
+    verify: (c) => {
+      if (stubbed) return typeof c === "string" && c ? c : null;
+      return which(c)?.verify(c) ?? null;
+    },
+  };
+}
+
+/** Receipts across the stores configured, each to its own check; a store
+ *  not configured refuses every receipt. */
+export function receipts({ appStore = null, play = null, now = () => Date.now() } = {}) {
+  return (store, receipt) => {
+    if (store === "app-store" && appStore) return appStoreTransaction(receipt, { ...appStore, now: now() });
+    if (store === "google-play" && play) return playPurchase(receipt, play);
+    return null;
+  };
 }

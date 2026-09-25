@@ -18,30 +18,39 @@
 // database and the object store on disk under server/.data/ and the one
 // simulation build this checkout compiles.
 //
+// Google's (stores.mjs): RULEBORN_GOOGLE_CLIENT_IDS, comma-separated, are the
+// server's OAuth client ids a "Sign in with Google" ID token must name;
+// RULEBORN_PLAY_PACKAGE and RULEBORN_PLAY_LICENCE_KEY (the Play Console's
+// base64 key) check Play Billing purchases, RULEBORN_PLAY_SERVICE_ACCOUNT
+// names the service account's JSON key the server looks each one up and
+// consumes it with, and RULEBORN_PLAY_TEST=1 lets a licence tester's free
+// purchases pay too, as a test deployment may.
+//
 // Apple's proofs (stores.mjs) are checked against pinned certificates (PEM or
 // DER files, comma-separated), each proof its own: RULEBORN_GAMECENTER_ROOTS
 // names the CA that issues Game Center's key, RULEBORN_STOREKIT_ROOTS Apple
 // Root CA G3, and RULEBORN_BUNDLE_ID the app. With the first a Game Center
 // identity signs in; with the second an App Store transaction pays — from
 // Production only, unless RULEBORN_APPLE_SANDBOX=1 lets Sandbox's free test
-// purchases pay too, as a test deployment may. Without Game Center's roots
-// sign-in is stubbed — a credential is taken as the identity it names — and
-// without StoreKit's every receipt is refused; do not expose that to a
-// network.
+// purchases pay too, as a test deployment may. With neither Game Center's
+// roots nor Google's client ids, sign-in is stubbed — a credential is taken
+// as the identity it names — and a store not configured refuses every
+// receipt; do not expose that to a network.
 
 import { createServer } from "node:http";
-import { X509Certificate, randomBytes } from "node:crypto";
+import { X509Certificate, createPublicKey, randomBytes } from "node:crypto";
 import { existsSync, linkSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { Journal, reapplyDeletions } from "./accounts.mjs";
+import { PlayPurchases, ServiceAccount } from "./googleapi.mjs";
 import { open } from "./db.mjs";
 import { handler, routeOf } from "./http.mjs";
 import { Service } from "./service.mjs";
 import { Builds } from "./sim.mjs";
 import { Store } from "./store.mjs";
-import { GameCenter, appStoreTransaction } from "./stores.mjs";
+import { GOOGLE_KEYS_URL, GameCenter, GoogleSignIn, receipts, signIn } from "./stores.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
@@ -68,12 +77,50 @@ const gameCenter = gameCenterRoots.length > 0 && bundleId ? new GameCenter({
   },
 }) : null;
 const storeKit = storeKitRoots.length > 0 && bundleId;
+
+// Google's: "Sign in with Google" ID tokens for the server's OAuth client
+// ids, checked against the keys Google publishes; Play Billing purchases for
+// the package, signed with its licence key (the Play Console's base64 key).
+const googleClients = (process.env.RULEBORN_GOOGLE_CLIENT_IDS ?? "").split(",").filter(Boolean);
+const google = googleClients.length > 0 ? new GoogleSignIn({
+  clientIds: googleClients,
+  fetchKeys: async () => {
+    const response = await fetch(GOOGLE_KEYS_URL, { redirect: "error", signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+    if (!response.ok) throw new Error(`${GOOGLE_KEYS_URL}: ${response.status}`);
+    const age = /max-age=(\d+)/.exec(response.headers.get("cache-control") ?? "");
+    return { keys: (await response.json()).keys, maxAgeMs: age ? Number(age[1]) * 1000 : undefined };
+  },
+}) : null;
+const playPackage = process.env.RULEBORN_PLAY_PACKAGE ?? null;
+const playKey = process.env.RULEBORN_PLAY_LICENCE_KEY;
+const play = playPackage && playKey ? {
+  packageName: playPackage,
+  licenceKey: createPublicKey({ key: Buffer.from(playKey, "base64"), format: "der", type: "spki" }),
+} : null;
+if (Boolean(playPackage) !== Boolean(playKey)) {
+  throw new Error("set RULEBORN_PLAY_PACKAGE and RULEBORN_PLAY_LICENCE_KEY together, or neither");
+}
+// A Play purchase nobody consumes is refunded after three days, and whether
+// it was a licence tester's is known only to Google: so the server asks, as
+// a service account, before granting one (googleapi.mjs). Without the
+// account, Play receipts are refused.
+const playAccount = play && process.env.RULEBORN_PLAY_SERVICE_ACCOUNT
+  ? new ServiceAccount({ serviceAccount: JSON.parse(readFileSync(process.env.RULEBORN_PLAY_SERVICE_ACCOUNT, "utf8")), fetch })
+  : null;
+if (play && !playAccount) {
+  throw new Error("RULEBORN_PLAY_PACKAGE needs RULEBORN_PLAY_SERVICE_ACCOUNT: a Play purchase is consumed by the server");
+}
+const playPurchases = playAccount
+  ? new PlayPurchases({ account: playAccount, packageName: playPackage, test: process.env.RULEBORN_PLAY_TEST === "1" })
+  : null;
+
 // A server that takes money must not take any credential as an identity:
 // paid accounts would be anyone's for the naming. Stubbed sign-in beside real
 // purchases only when the operator says so, for a test deployment.
-if (storeKit && !gameCenter && process.env.RULEBORN_STUB_SIGNIN !== "1") {
-  throw new Error("RULEBORN_STOREKIT_ROOTS without RULEBORN_GAMECENTER_ROOTS would pay out with sign-in stubbed; "
-                  + "set both, or RULEBORN_STUB_SIGNIN=1 for a test deployment");
+const platforms = signIn({ gameCenter, google });
+if ((storeKit || play) && platforms.stubbed && process.env.RULEBORN_STUB_SIGNIN !== "1") {
+  throw new Error("a store's receipts would pay out with sign-in stubbed: set RULEBORN_GAMECENTER_ROOTS "
+                  + "or RULEBORN_GOOGLE_CLIENT_IDS, or RULEBORN_STUB_SIGNIN=1 for a test deployment");
 }
 
 mkdirSync(data, { recursive: true });
@@ -109,15 +156,10 @@ const service = new Service({
   store: new Store(join(data, "bundles")),
   builds: Builds.load([join(root, "sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm")]),
   secret: secret(),
-  verifyPlatform: gameCenter
-    ? (credential) => gameCenter.verify(credential)
-    : (credential) => (typeof credential === "string" && credential ? credential : null),
-  preparePlatform: gameCenter ? (credential) => gameCenter.prepare(credential) : async () => {},
-  // Google Play's proofs need Google's API, and are not wired (D67).
-  verifyReceipt: storeKit
-    ? (store, receipt) => (store === "app-store"
-      ? appStoreTransaction(receipt, { roots: storeKitRoots, bundleId, now: Date.now(), sandbox }) : null)
-    : () => null,
+  verifyPlatform: platforms.verify,
+  preparePlatform: platforms.prepare,
+  verifyReceipt: receipts({ appStore: storeKit ? { roots: storeKitRoots, bundleId, sandbox } : null, play }),
+  settleReceipt: async (store, proof) => (store === "google-play" ? playPurchases.settle(proof) : { ok: true }),
   // §18.1's seasons run back to back from the first. RULEBORN_SEASON_START is
   // that moment, in ISO form; without it a fixed Monday, so a local server's
   // seasons do not move between restarts.

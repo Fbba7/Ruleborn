@@ -242,7 +242,9 @@ DELIVERABLES = [
         "a session is a signed token, and a forged one is refused")),
     ("6", "Identity: platform sign-in", BACKEND, server_tests(
         "a Game Center identity is Apple's: its key from apple.com, this app, a fresh timestamp, a true signature (24.8)",
-        "sign-in over HTTP with a Game Center credential")),
+        "sign-in over HTTP with a Game Center credential",
+        "a Google ID token proves its account only as Google signed it, for this app, in date (24.8)",
+        "signing in with Google over HTTP makes an account, and the same token finds it again (24.8)")),
     ("6", "Publishing", BACKEND, server_tests(
         "publishing is content-addressed and idempotent",
         "an island §5.2 or §6.1 forbids is refused, with the rule named")),
@@ -281,6 +283,9 @@ DELIVERABLES = [
     ("8", "Purchases and receipts", BACKEND, server_tests(
         "a StoreKit 2 transaction counts only with its chain and signature intact, for this app (22.1)",
         "a Starglass pack bought through the App Store is granted from its signed transaction, once (22.1)",
+        "a Play purchase counts only as the app's licence key signed it, for this app, bought and paid (22.1)",
+        "a Play purchase is granted once, to the account whose intent it carries (20.2, 22.1)",
+        "a Play purchase is looked up and consumed with Google before it is granted, and a test or unpaid one is not (22.1, D67)",
         "a Starglass purchase is granted once per store transaction, from a verified receipt (22.1)",
         "a minor's month is capped, €25 at 13 to 15 and €50 at 16 and 17, and an adult gets a summary (20.2)")),
     ("8", "The season track", BACKEND, server_tests(

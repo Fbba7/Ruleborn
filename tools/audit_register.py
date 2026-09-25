@@ -6012,19 +6012,26 @@ dict(id="G32", kind="gap", severity="minor", status="open",
          "can go below nothing."),
 
 dict(id="D67", kind="deviation", severity="minor", status="open",
-     title="Apple\u2019s proofs are checked on the server; Google Play\u2019s, and "
-           "refunds, are not",
+     title="The stores\u2019 proofs are checked on the server; refunds, and a "
+           "Play Games player, are not",
      refs=["20.2", "22.1", "24.8"],
      body="Game Center sign-in and App Store purchases are verified against a "
-          "pinned Apple root, and a purchase is granted once per transaction. "
-          "Not built: Google Play Games sign-in and Google Play purchases, both "
-          "of which need Google\u2019s API to verify (a server auth code exchanged, "
-          "a purchase token looked up); App Store Server Notifications, which "
-          "tell the server of a refund after the grant; and the real Apple root, "
-          "which is configuration the operator supplies. Found building the "
-          "Apple proofs.",
-     rec="Wire Google\u2019s two APIs and Apple\u2019s notifications before soft "
-         "launch in a Google Play market."),
+          "pinned Apple root; Google sign-in against the keys Google publishes, "
+          "and Play purchases against the app\u2019s licence key; a purchase is "
+          "granted once per transaction. The Android sign-in is \u201cSign in "
+          "with Google\u201d: its ID token proves a Google account, while "
+          "§24.8 names Play Games, whose server flow is a code exchanged with "
+          "Google on every sign-in. A Play purchase is also looked up and "
+          "consumed by the server with the Play Developer API before it is "
+          "granted: Play refunds a purchase nobody consumes after three days, "
+          "and only Google says whether it was a licence tester\u2019s (found by "
+          "the review of this work). Not built: refunds a player asks for after "
+          "a grant (App Store Server Notifications, Play\u2019s voided "
+          "purchases); and the real roots, keys and service account, which are "
+          "configuration the operator supplies. Found building the stores\u2019 "
+          "proofs.",
+     rec="Say whether the Android identity is the Google account or the Play "
+         "Games player; wire the refund notifications before soft launch."),
 
 dict(id="F47", kind="finding", severity="significant", status="open",
      title="§24.1\u2019s budget of five writes a player a day cannot hold one "
