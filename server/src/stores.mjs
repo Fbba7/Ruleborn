@@ -12,8 +12,9 @@
 //     signed ES256, naming the product, the transaction and the
 //     appAccountToken the purchase was made with.
 //
-// The root is configuration, not code: the operator pins Apple's root
-// certificate (Apple Root CA G3), and the tests pin a stand-in. Fetching
+// The roots are configuration, not code, and each proof has its own: the
+// operator pins Apple Root CA G3 for StoreKit and the CA that issues Game
+// Center's key for Game Center, and the tests pin a stand-in. Fetching
 // Game Center's certificate is the only network call, so it is injected and
 // cached, and done before the synchronous check. Google Play's proofs need
 // Google's API for both, and are seams only (D67).
@@ -50,25 +51,81 @@ export function verifyChain(chain, roots, now) {
   return anchored ? certs[0] : null;
 }
 
-/** A StoreKit 2 signed transaction, checked; null if it is not Apple's. */
-export function appStoreTransaction(jws, { roots, bundleId, now }) {
+/**
+ * The extensions Apple marks its StoreKit signing chain with: the leaf that
+ * signs transactions, and the intermediate that issues it. Configuration, as
+ * the root is, so the tests' stand-in chain can carry its own.
+ */
+export const STOREKIT_OIDS = Object.freeze({ leaf: "1.2.840.113635.100.6.11.1",
+                                             intermediate: "1.2.840.113635.100.6.2.1" });
+
+/** Whether a certificate carries the extension `oid` (RFC 5280 §4.1: tbsCertificate [3] extensions). */
+function hasExtension(cert, oid) {
+  const der = cert.raw;
+  const node = (at) => {
+    let length = der[at + 1];
+    let start = at + 2;
+    if (length & 0x80) {
+      const bytes = length & 0x7f;
+      length = 0;
+      for (let i = 0; i < bytes; i++) length = length * 256 + der[start + i];
+      start += bytes;
+    }
+    return { tag: der[at], start, end: start + length };
+  };
+  const children = ({ start, end }) => {
+    const out = [];
+    for (let at = start; at < end; at = out[out.length - 1].end) out.push(node(at));
+    return out;
+  };
+  const dotted = ({ start, end }) => {
+    const arcs = [];
+    for (let at = start, arc = 0; at < end; at++) {
+      arc = arc * 128 + (der[at] & 0x7f);
+      if (!(der[at] & 0x80)) { arcs.push(arc); arc = 0; }
+    }
+    const first = Math.min(Math.floor(arcs[0] / 40), 2);
+    return [first, arcs[0] - 40 * first, ...arcs.slice(1)].join(".");
+  };
+  try {
+    const extensions = children(children(node(0))[0]).find((n) => n.tag === 0xa3);
+    return !!extensions && children(children(extensions)[0]).some((ext) => dotted(children(ext)[0]) === oid);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * A StoreKit 2 signed transaction, checked; null if it is not Apple's. The
+ * chain is Apple's StoreKit leaf, its intermediate and at most the pinned
+ * root, each marked as Apple marks them, and the leaf's key is ES256's
+ * (P-256): a certificate that merely chains to the root signs nothing. A
+ * Sandbox purchase costs nothing, so it pays only where `sandbox` is set.
+ */
+export function appStoreTransaction(jws, { roots, bundleId, now, oids = STOREKIT_OIDS, sandbox = false }) {
   const parts = String(jws).split(".");
   if (parts.length !== 3) return null;
   let header;
   let payload;
+  let certs;
   try {
     header = JSON.parse(b64url(parts[0]).toString("utf8"));
     payload = JSON.parse(b64url(parts[1]).toString("utf8"));
+    if (header.alg !== "ES256" || !Array.isArray(header.x5c)) return null;
+    certs = header.x5c.map((c) => new X509Certificate(Buffer.from(c, "base64")));
   } catch {
     return null;
   }
-  if (header.alg !== "ES256" || !Array.isArray(header.x5c)) return null;
-  const leaf = verifyChain(header.x5c.map((c) => Buffer.from(c, "base64")), roots, now);
-  if (!leaf) return null;
+  if (certs.length < 2 || certs.length > 3) return null;
+  if (certs.length === 3 && !roots.some((root) => root.fingerprint256 === certs[2].fingerprint256)) return null;
+  const leaf = verifyChain(certs, roots, now);
+  if (!leaf || !hasExtension(leaf, oids.leaf) || !hasExtension(certs[1], oids.intermediate)) return null;
+  const key = leaf.publicKey;
+  if (key.asymmetricKeyType !== "ec" || key.asymmetricKeyDetails?.namedCurve !== "prime256v1") return null;
   const signed = Buffer.from(`${parts[0]}.${parts[1]}`);
-  const ok = verifySignature("sha256", signed, { key: leaf.publicKey, dsaEncoding: "ieee-p1363" },
-                             b64url(parts[2]));
+  const ok = verifySignature("sha256", signed, { key, dsaEncoding: "ieee-p1363" }, b64url(parts[2]));
   if (!ok || payload.bundleId !== bundleId || payload.revocationDate) return null;
+  if (payload.environment !== "Production" && !(sandbox && payload.environment === "Sandbox")) return null;
   return {
     transaction: String(payload.transactionId),
     product: payload.productId,
@@ -76,22 +133,48 @@ export function appStoreTransaction(jws, { roots, bundleId, now }) {
   };
 }
 
+/** How many of Game Center's certificates are kept: Apple publishes a few. */
+export const GAME_CENTER_CACHE = 8;
+
+/** How long a certificate that could not be fetched is not asked for again. */
+export const GAME_CENTER_RETRY_MS = 60 * 1000;
+
+/** How often a key URL never fetched before may be tried: anyone may ask
+ *  before any identity is proved, so an unseen name costs a fetch at most
+ *  this often, whoever asks (G32). */
+export const GAME_CENTER_NEW_MS = 1000;
+
+/** Game Center's key hosts and names: its production and sandbox keys,
+ *  gc-prod-N and gc-sb-N (G32). */
+const KEY_HOSTS = new Set(["static.gc.apple.com", "sandbox.gc.apple.com"]);
+const KEY_NAME = /^\/public-key\/gc-(prod|sb)-\d{1,4}\.cer$/;
+
 /**
  * Game Center's identity verification. `fetchCertificate(url)` is the one
  * network call; `prepare` makes it and caches the answer, so `verify` —
- * which the service calls synchronously — needs none.
+ * which the service calls synchronously — needs none. The cache is small and
+ * the URL plain, since anyone may ask before any identity is proved.
  */
 export class GameCenter {
-  constructor({ roots, bundleId, fetchCertificate, now = () => Date.now() }) {
-    Object.assign(this, { roots, bundleId, fetchCertificate, now });
+  constructor({ roots, bundleId, fetchCertificate, now = () => Date.now(), organization = "Apple Inc." }) {
+    Object.assign(this, { roots, bundleId, fetchCertificate, now, organization });
+    // Keys fetched and read, newest last; failures apart, so a stream of
+    // bad names never pushes a good key out.
     this.certificates = new Map();
+    this.failures = new Map();
+    this.lastNew = -Infinity;
   }
 
-  /** Only Apple's own servers publish the key (G32). */
+  /**
+   * Only Game Center's own servers publish the key (G32), at one of its key
+   * names, written plainly: no query, fragment, port or user, so one key is
+   * one URL.
+   */
   static trustedUrl(url) {
     try {
       const u = new URL(url);
-      return u.protocol === "https:" && (u.hostname === "apple.com" || u.hostname.endsWith(".apple.com"));
+      return url === `https://${u.hostname}${u.pathname}` && KEY_HOSTS.has(u.hostname)
+        && KEY_NAME.test(u.pathname);
     } catch {
       return false;
     }
@@ -99,11 +182,35 @@ export class GameCenter {
 
   async prepare(credential) {
     const url = credential?.publicKeyUrl;
-    if (!GameCenter.trustedUrl(url) || this.certificates.has(url)) return;
+    if (!GameCenter.trustedUrl(url)) return;
+    const now = this.now();
+    const known = this.certificates.get(url);
+    if (known) {
+      // Recently used: to the back of the queue.
+      this.certificates.delete(url);
+      this.certificates.set(url, known);
+      return;
+    }
+    const failed = this.failures.get(url);
+    if (failed !== undefined && now - failed < GAME_CENTER_RETRY_MS) return;
+    if (now - this.lastNew < GAME_CENTER_NEW_MS) return;
+    this.lastNew = now;
+    let cert = null;
     try {
-      this.certificates.set(url, new X509Certificate(await this.fetchCertificate(url)));
+      cert = new X509Certificate(await this.fetchCertificate(url));
     } catch {
       // An unreachable or unreadable certificate proves nothing; verify refuses.
+    }
+    const keep = (map, key, value, most) => {
+      map.delete(key);
+      map.set(key, value);
+      while (map.size > most) map.delete(map.keys().next().value);
+    };
+    if (cert) {
+      this.failures.delete(url);
+      keep(this.certificates, url, { cert, at: now }, GAME_CENTER_CACHE);
+    } else {
+      keep(this.failures, url, now, 4 * GAME_CENTER_CACHE);
     }
   }
 
@@ -114,8 +221,10 @@ export class GameCenter {
     if (!GameCenter.trustedUrl(publicKeyUrl) || !Number.isSafeInteger(timestamp)) return null;
     const now = this.now();
     if (Math.abs(now - timestamp) > GAME_CENTER_FRESH_MS) return null;
-    const cert = this.certificates.get(publicKeyUrl);
+    const cert = this.certificates.get(publicKeyUrl)?.cert;
     if (!cert || !verifyChain([cert], this.roots, now)) return null;
+    // The pinned CA sells certificates to anyone; the key must be Apple's.
+    if (!cert.subject.split("\n").includes(`O=${this.organization}`)) return null;
     const stamp = Buffer.alloc(8);
     stamp.writeBigUInt64BE(BigInt(timestamp));
     const payload = Buffer.concat([Buffer.from(playerId, "utf8"), Buffer.from(bundleId, "utf8"),

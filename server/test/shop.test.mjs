@@ -86,6 +86,18 @@ test("a player joining late climbs a track scaled to the time remaining (18.8)",
   assert.equal(track.view(late).tierStars, Math.round(TIER_STARS * 3 / 8));
 });
 
+test("an echo raid's stars fix the raider's tier price then, not at their first look late on (18.8)", () => {
+  const t = twoPlayers(true);
+  t.service.publish(t.defender.account, t.build.exampleIsland(false));   // t.bundle is an echo now
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  assert.equal(lease.echo, true);
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  assert.equal(out.stars.raider, 10);
+  t.clock.now = T0 + 54 * DAY;                          // two days left of season 1
+  assert.equal(t.service.track.view(t.raider.account).tierStars, TIER_STARS,
+               "seen in the season from the day of the raid, at the full price");
+});
+
 test("stars reset each season, and an unclaimed tier stays claimable later at the same cost (18.8)", () => {
   const t = twoPlayers(true);
   const track = new Track(t.service);
@@ -204,12 +216,29 @@ test("a database made before Starglass keeps its ledger when opened (24.12)", ()
                 reason TEXT NOT NULL, heist TEXT, at INTEGER NOT NULL);
               CREATE INDEX ledger_by_account ON ledger (account, currency);
               INSERT INTO accounts (id, platform_identity, created_at) VALUES ('a', 'gc:a', 0);
-              INSERT INTO ledger (account, currency, amount, reason, at) VALUES ('a', 'starlight', 500, 'old', 0);`);
+              INSERT INTO ledger (account, currency, amount, reason, at) VALUES ('a', 'starlight', 500, 'old', 0);
+              CREATE TABLE events (id INTEGER PRIMARY KEY AUTOINCREMENT, who TEXT NOT NULL, kind TEXT NOT NULL,
+                data TEXT NOT NULL, at INTEGER NOT NULL, day TEXT NOT NULL);
+              INSERT INTO events (who, kind, data, at, day) VALUES ('p', 'session', '{}', 0, '1970-01-01');
+              PRAGMA foreign_keys = OFF;
+              INSERT INTO ledger (account, currency, amount, reason, at) VALUES ('b', 'essence', 7, 'old', 0);`);
     old.close();
+    // An upgrade stopped part-way — here the copy throws, on a row whose
+    // account is missing — leaves the old shape whole, not an empty ledger.
+    assert.throws(() => open(path), /FOREIGN KEY/);
+    const kept = new DatabaseSync(path);
+    const tables = kept.prepare("SELECT name FROM sqlite_master WHERE type = 'table'").all().map((r) => r.name);
+    assert.deepEqual([tables.includes("ledger_before_starglass"), tables.includes("events_before_batches"),
+                      kept.prepare("SELECT COUNT(*) AS n FROM ledger").get().n,
+                      kept.prepare("SELECT COUNT(*) AS n FROM events").get().n], [false, false, 2, 1]);
+    kept.exec("INSERT INTO accounts (id, platform_identity, created_at) VALUES ('b', 'gc:b', 0)");
+    kept.close();
     const db = open(path);
     db.prepare("INSERT INTO ledger (account, currency, amount, reason, at) VALUES ('a', 'starglass', 100, 'new', 1)").run();
     assert.deepEqual(db.prepare("SELECT currency, amount FROM ledger ORDER BY id").all().map((r) => ({ ...r })),
-                     [{ currency: "starlight", amount: 500 }, { currency: "starglass", amount: 100 }]);
+                     [{ currency: "starlight", amount: 500 }, { currency: "essence", amount: 7 },
+                      { currency: "starglass", amount: 100 }]);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = 'p'").get().n, 1);
     assert.throws(() => db.prepare("DELETE FROM ledger").run(), /append-only/);
     db.close();
   } finally {

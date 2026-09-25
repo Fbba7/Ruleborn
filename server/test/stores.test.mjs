@@ -7,7 +7,7 @@ import { X509Certificate, createPrivateKey, createSign, sign } from "node:crypto
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-import { GameCenter, appStoreTransaction, verifyChain } from "../src/stores.mjs";
+import { GAME_CENTER_CACHE, GameCenter, appStoreTransaction, verifyChain } from "../src/stores.mjs";
 import { server } from "./setup.mjs";
 
 const fixture = (name) => readFileSync(new URL(`./fixtures/apple/${name}`, import.meta.url));
@@ -17,6 +17,8 @@ const INTERMEDIATE = cert("intermediate");
 const STOREKIT = cert("storekit");
 const GAMECENTER = cert("gamecenter");
 const STRANGER = cert("stranger");
+const STOREKIT_RSA = cert("storekit-rsa");
+const DEVELOPER = cert("developer");
 const BUNDLE = "com.example.ruleborn";
 /** A moment inside the stand-in chain's validity: its certificates start
  *  the day make.sh ran. */
@@ -33,7 +35,7 @@ function jws(payload, { chain = [STOREKIT, INTERMEDIATE, ROOT], key = "storekit.
 }
 
 const purchase = (extra = {}) => ({ transactionId: "2000000123", productId: "starglass-5", bundleId: BUNDLE,
-                                    appAccountToken: null, ...extra });
+                                    environment: "Production", appAccountToken: null, ...extra });
 
 test("a certificate chain is checked to a pinned root: in date, each signed by the next (24.8)", () => {
   assert.equal(verifyChain([STOREKIT, INTERMEDIATE, ROOT], [ROOT], NOW).subject, STOREKIT.subject);
@@ -56,6 +58,34 @@ test("a StoreKit 2 transaction counts only with its chain and signature intact, 
   assert.equal(appStoreTransaction(jws(purchase({ revocationDate: NOW })), pinned), null, "refunded");
   assert.equal(appStoreTransaction(jws(purchase(), { chain: [STRANGER], key: "stranger.key" }), pinned), null);
   assert.equal(appStoreTransaction("not a jws", pinned), null);
+});
+
+test("a StoreKit 2 transaction is signed by Apple's StoreKit leaf, not by anything the root vouches for (22.1)", () => {
+  const pinned = { roots: [ROOT], bundleId: BUNDLE, now: NOW };
+  const forge = (name, chain = [cert(name), INTERMEDIATE, ROOT]) =>
+    appStoreTransaction(jws(purchase({ transactionId: "999" }), { chain, key: `${name}.key` }), pinned);
+  assert.equal(forge("gamecenter"), null, "an RSA leaf's signature under an ES256 header");
+  assert.equal(forge("storekit-rsa"), null, "an RSA key, even with the StoreKit marker");
+  assert.equal(forge("developer"), null, "an EC leaf the intermediate issued without the StoreKit marker");
+  assert.equal(forge("storekit", [STOREKIT]), null, "the leaf alone");
+  assert.equal(forge("storekit", [STOREKIT, INTERMEDIATE, ROOT, ROOT]), null, "more than leaf, intermediate, root");
+  assert.equal(forge("storekit", [STOREKIT, INTERMEDIATE, INTERMEDIATE]), null, "a third that is not the root");
+  assert.equal(appStoreTransaction(jws(purchase()), { ...pinned, oids: { leaf: "1.2.840.113635.100.6.11.1",
+                                                                        intermediate: "1.2.3.4" } }),
+               null, "an intermediate without the marker asked for");
+  assert.equal(appStoreTransaction(`${b64url(JSON.stringify({ alg: "ES256", x5c: [1, 2] }))}.${b64url("{}")}.AA`,
+                                   pinned), null, "a chain that is not certificates");
+  assert.ok(forge("storekit"), "Apple's own chain still counts");
+  assert.ok(forge("storekit", [STOREKIT, INTERMEDIATE]), "with the root left out");
+});
+
+test("a Sandbox transaction pays only where the operator allows Sandbox (22.1)", () => {
+  const pinned = { roots: [ROOT], bundleId: BUNDLE, now: NOW };
+  const sandbox = jws(purchase({ environment: "Sandbox" }));
+  assert.equal(appStoreTransaction(sandbox, pinned), null, "a free test purchase is no purchase");
+  assert.equal(appStoreTransaction(jws(purchase({ environment: undefined })), pinned), null, "nor one naming none");
+  assert.equal(appStoreTransaction(jws(purchase({ environment: "Xcode" })), { ...pinned, sandbox: true }), null);
+  assert.equal(appStoreTransaction(sandbox, { ...pinned, sandbox: true }).product, "starglass-5");
 });
 
 test("a Starglass pack bought through the App Store is granted from its signed transaction, once (22.1)", () => {
@@ -114,6 +144,52 @@ test("a Game Center identity is Apple's: its key from apple.com, this app, a fre
                                     fetchCertificate: async () => GAMECENTER.raw });
   await unpinned.prepare(good);
   assert.equal(unpinned.verify(good), null, "a certificate no pinned root issued");
+});
+
+test("a Game Center key is Apple's by name, not any the pinned CA issued (24.8)", async () => {
+  const key = fixture("storekit-rsa.key");
+  const signer = createSign("RSA-SHA256");
+  const stamp = Buffer.alloc(8);
+  stamp.writeBigUInt64BE(BigInt(NOW));
+  signer.update(Buffer.concat([Buffer.from("T:_player1"), Buffer.from(BUNDLE), stamp]));
+  const credential = { playerId: "T:_player1", bundleId: BUNDLE, timestamp: NOW, publicKeyUrl: GC_URL, salt: "",
+                       signature: signer.sign(createPrivateKey(key)).toString("base64") };
+  const gc = new GameCenter({ roots: [INTERMEDIATE, ROOT], bundleId: BUNDLE, now: () => NOW,
+                              fetchCertificate: async () => STOREKIT_RSA.raw });
+  await gc.prepare(credential);
+  assert.equal(gc.verify(credential), null, "a certificate not issued to Apple Inc.");
+});
+
+test("Game Center's key is fetched only from a plain apple.com key URL, and few are kept (24.8)", async () => {
+  const { gc, fetched } = gameCenter();
+  for (const url of [`${GC_URL}?n=1`, `${GC_URL}#1`, "https://user@static.gc.apple.com/public-key/gc-prod-6.cer",
+                     "https://static.gc.apple.com:8443/public-key/gc-prod-6.cer",
+                     "https://STATIC.gc.apple.com/public-key/gc-prod-6.cer",
+                     "https://static.gc.apple.com/public-key/../gc-prod-6.cer",
+                     "https://static.gc.apple.com/elsewhere/gc-prod-6.cer",
+                     "http://static.gc.apple.com/public-key/gc-prod-6.cer",
+                     "https://www.apple.com/public-key/gc-prod-6.cer",
+                     "https://static.gc.apple.com/public-key/anything.cer"]) {
+    await gc.prepare({ publicKeyUrl: url });
+    assert.equal(gc.verify(identity({ url })), null, url);
+  }
+  assert.deepEqual(fetched, [], "none of them fetched");
+  await gc.prepare(identity());
+  assert.equal(gc.verify(identity()), "gc:T:_player1");
+  // A stream of unseen names, asked at once: one fetch a second at most, and
+  // a good key is never pushed out by names that fail.
+  for (let i = 0; i < 100; i++) await gc.prepare({ publicKeyUrl: `https://static.gc.apple.com/public-key/gc-prod-${100 + i}.cer` });
+  assert.equal(fetched.length, 1, "the first unseen name only, within the second");
+  assert.ok(gc.certificates.size <= GAME_CENTER_CACHE, "the cache is bounded");
+  assert.equal(gc.verify(identity()), "gc:T:_player1", "the key in use is kept");
+
+  let tries = 0;
+  const down = new GameCenter({ roots: [INTERMEDIATE, ROOT], bundleId: BUNDLE, now: () => NOW,
+                                fetchCertificate: async () => { tries++; throw new Error("unreachable"); } });
+  await down.prepare(identity());
+  await down.prepare(identity());
+  assert.equal(tries, 1, "a failure is remembered for a while");
+  assert.equal(down.verify(identity()), null);
 });
 
 test("sign-in over HTTP with a Game Center credential", async () => {

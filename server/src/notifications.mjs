@@ -108,11 +108,23 @@ export class Notifications {
   }
 
   /** The day's reminder for every player who chose a time and has none
-   *  queued for their local today. */
+   *  queued for their local today. One still held by the night becomes
+   *  today's, so the night's end brings one reminder, not two. */
   remind(now) {
     const rows = this.db.prepare(
       `SELECT id, utc_offset, reminder_at FROM accounts
         WHERE reminder_at IS NOT NULL AND deleted_at IS NULL AND banned_at IS NULL`).all();
+    // The outbox is read once, through notifications_due: a reminder for a
+    // local today was sent at or after its time, within three days of now
+    // whatever the offsets (±14 hours).
+    const had = new Set();
+    const waiting = new Map();
+    for (const r of this.db.prepare(
+      `SELECT id, account, json_extract(data, '$.day') AS day, sent_at FROM notifications
+        WHERE kind = 'reminder' AND (sent_at IS NULL OR sent_at >= ?)`).all(now - 3 * DAY)) {
+      had.add(`${r.account} ${r.day}`);
+      if (r.sent_at === null) waiting.set(r.account, r.id);
+    }
     let queued = 0;
     for (const a of rows) {
       const local = now + a.utc_offset * MINUTE;
@@ -120,12 +132,15 @@ export class Notifications {
       const at = midnight + a.reminder_at * MINUTE - a.utc_offset * MINUTE;
       if (now < at) continue;
       const day = new Date(midnight).toISOString().slice(0, 10);
-      const had = this.db.prepare(
-        "SELECT 1 FROM notifications WHERE account = ? AND kind = 'reminder' AND json_extract(data, '$.day') = ?")
-        .get(a.id, day);
-      if (had) continue;
+      if (had.has(`${a.id} ${day}`)) continue;
+      if (waiting.has(a.id)) {
+        this.db.prepare("UPDATE notifications SET data = ? WHERE id = ?")
+          .run(JSON.stringify({ day }), waiting.get(a.id));
+        continue;
+      }
+      // §20.2: a time already passed is sent now, and now may be night.
       this.db.prepare("INSERT INTO notifications (account, kind, data, due_at) VALUES (?, 'reminder', ?, ?)")
-        .run(a.id, JSON.stringify({ day }), this.due(a.id, at));
+        .run(a.id, JSON.stringify({ day }), this.due(a.id, Math.max(at, now)));
       queued++;
     }
     return queued;
@@ -143,6 +158,13 @@ export class Notifications {
         WHERE n.sent_at IS NULL AND n.due_at <= ? AND a.deleted_at IS NULL ORDER BY n.due_at, n.id`).all(now);
     const sent = [];
     for (const n of due) {
+      // §20.2 holds when it is sent: a notification due by day may be sent
+      // only after the night began (a late tick, downtime), and waits again.
+      const open = this.due(n.account, now);
+      if (open > now) {
+        this.db.prepare("UPDATE notifications SET due_at = ? WHERE id = ?").run(open, n.id);
+        continue;
+      }
       const message = { kind: n.kind, ...JSON.parse(n.data) };
       if (n.push_token) {
         push(n.push_token, message);

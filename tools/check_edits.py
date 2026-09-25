@@ -232,6 +232,7 @@ NO_EDIT_BECAUSE = {
     "F49": "a decision for the owner: whether Quiet Week goes past the cap",
     "G36": "decisions for the owner: the eras' order, reach and strengthening",
     "D69": "limits of this build: the economy, the harness and the client",
+    "G37": "a decision for the owner: the defender's cap, and a pair's once a day",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

@@ -136,6 +136,31 @@ test("a new player cannot be raided for 72 hours, or until they raid a player th
   assert.equal(t.service.lease(t.raider.account, own).bundle, own);
 });
 
+test("only a raid on a player's current island lifts the protection: not a friend, a challenge, an echo or a seeded island (12.3)", () => {
+  const t = twoPlayers(true);
+  const f = t.service.friends;
+  const fresh = t.service.session("gc:newcomer").account;
+  const { bundle } = t.service.publish(fresh, another(t, true, 2));
+  const heist = (lease, plan = openPlan()) => t.service.submit(fresh, lease.token, play(t, lease, { plan }));
+  // A challenge link and a friendly heist are for fun (12.11, F48).
+  const { challenge } = f.challenge(t.defender.account);
+  heist(t.service.lease(fresh, t.bundle, null, { mode: "challenge", challenge }));
+  f.accept(fresh, f.invite(t.defender.account).invite);
+  heist(t.service.lease(fresh, t.bundle, null, { mode: "friendly" }));
+  // An echo takes nothing from its owner.
+  const moved = t.service.session("gc:moved").account;
+  established(t, moved);
+  const old = t.service.publish(moved, another(t, true, 5)).bundle;
+  t.service.publish(moved, another(t, true, 6));
+  heist(t.service.lease(fresh, old));
+  // A seeded island is the game's own (13.1), foiled or not.
+  const seeded = t.service.session("gc:seeded").account;
+  t.service.db.prepare("UPDATE accounts SET seeded = 1 WHERE id = ?").run(seeded);
+  heist(t.service.lease(fresh, t.service.publish(seeded, another(t, true, 4)).bundle), []);
+  assert.equal(t.service.matchmaking.shielded(fresh), true);
+  refusal(() => t.service.lease(t.raider.account, bundle), "new_player_protected");
+});
+
 test("a robbed player may Trace the raider once within 24 hours, with no entry fee (12.3)", () => {
   const t = twoPlayers(true);
   established(t, t.raider.account);
@@ -156,6 +181,73 @@ test("a robbed player may Trace the raider once within 24 hours, with no entry f
   refusal(() => t.service.lease(t.defender.account, home, null, { trace: true }), "nothing_to_trace");
 });
 
+test("a challenge, a friendly heist or an echo robbed nobody, and opens no Trace (12.3, 12.11)", () => {
+  const t = twoPlayers(true);
+  const f = t.service.friends;
+  established(t, t.raider.account);
+  const home = t.service.publish(t.raider.account, another(t, true, 2)).bundle;
+  const heist = (lease) => t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  const traced = () => refusal(() => t.service.lease(t.defender.account, home, null, { trace: true }), "nothing_to_trace");
+  const { challenge } = f.challenge(t.defender.account);
+  assert.equal(heist(t.service.lease(t.raider.account, t.bundle, null, { mode: "challenge", challenge })).verdict.grade, "clean");
+  traced();
+  f.accept(t.raider.account, f.invite(t.defender.account).invite);
+  assert.equal(heist(t.service.lease(t.raider.account, t.bundle, null, { mode: "friendly" })).verdict.grade, "clean");
+  traced();
+  t.service.publish(t.defender.account, another(t, true, 5));             // t.bundle is an echo now
+  const echo = t.service.lease(t.raider.account, t.bundle);
+  assert.equal(echo.echo, true);
+  assert.equal(heist(echo).verdict.grade, "clean");
+  traced();
+});
+
+test("a shielded new player's echoes are offered to nobody (12.3, G30)", () => {
+  const t = twoPlayers(true);
+  const fresh = t.service.session("gc:newcomer").account;
+  const old = t.service.publish(fresh, another(t, true, 2)).bundle;
+  t.service.publish(fresh, another(t, true, 3));                          // `old` is an echo now
+  refusal(() => t.service.lease(t.raider.account, old), "new_player_protected");
+  assert.ok(!t.service.matchmaking.candidates().some((c) => c.owner === fresh));
+  t.clock.now += 72 * HOUR;
+  assert.ok(t.service.matchmaking.candidates().some((c) => c.bundle === old && c.echo));
+});
+
+test("an island with no rating yet is rated from its prior, and so is the raider (12.22)", () => {
+  const t = twoPlayers(true);
+  const mm = t.service.matchmaking;
+  t.service.db.prepare("DELETE FROM ratings").run();                   // an island published before ratings
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  assert.notEqual(out.rating, null);
+  assert.equal(mm.islandRating(t.defender.account, "heart").games, 1);
+  assert.equal(mm.raiderRating(t.raider.account).games, 1);
+});
+
+test("the list is guaranteed only when its middle entry sits in the band (12.22)", () => {
+  const [lo, hi] = successBand(1);
+  for (const ps of [[0.62, 0.45, 0.4], [0.9, 0.85, 0.6]]) {
+    const out = offer(RAIDER, ps.map((p, i) => candidate(`c${i}`, p)));
+    const mid = out.targets[Math.floor(out.targets.length / 2)].predicted;
+    assert.ok(mid < lo || mid > hi, "the middle entry is out of band");
+    assert.equal(out.guaranteed, false);
+  }
+  assert.equal(offer(RAIDER, [candidate("a", 0.62)]).guaranteed, true);
+});
+
+test("a bundle the raider holds is not offered to them, and equal entries sort one way (12.22)", () => {
+  const t = twoPlayers(true);
+  const mm = t.service.matchmaking;
+  established(t, t.raider.account);
+  assert.equal(t.service.publish(t.raider.account, t.build.exampleIsland(true)).bundle, t.bundle);
+  const out = offer(mm.raider(t.raider.account), mm.candidates());
+  assert.ok(!out.targets.some((c) => c.bundle === t.bundle), "lease() refuses it as own_island");
+  refusal(() => t.service.lease(t.raider.account, t.bundle, t.defender.account), "own_island");
+  const p = candidate("x", 0.62, { owner: "p" });
+  const q = candidate("x", 0.62, { owner: "q" });
+  const order = (pool) => offer(RAIDER, pool).targets.map((c) => c.owner);
+  assert.deepEqual(order([p, q]), order([q, p]));
+});
+
 test("the offer over HTTP: the caller's list, its middle in the band, and ratings on the target lists", async () => {
   const t = twoPlayers(false);
   const call = (method, path, token) => t.handle(new Request(`https://edge.example${path}`, {
@@ -168,4 +260,18 @@ test("the offer over HTTP: the caller's list, its middle in the band, and rating
   const list = JSON.parse(new TextDecoder().decode(t.service.bundle(Object.values(lists)[0])));
   assert.equal(list.candidates[0].deviation, 350);
   assert.equal(list.candidates[0].origin, "authored");
+});
+
+test("a Trace asked for twice is handed the Trace already held, however many robberies it could answer (24.13)", () => {
+  const t = twoPlayers(true);
+  established(t, t.raider.account);
+  const home = t.service.publish(t.raider.account, another(t, true, 2)).bundle;
+  for (let i = 0; i < 2; i++) {
+    const lease = t.service.lease(t.raider.account, t.bundle);
+    t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));   // robbed, twice
+    t.clock.now += 60 * 60 * 1000;
+  }
+  const first = t.service.lease(t.defender.account, home, null, { trace: true });
+  const again = t.service.lease(t.defender.account, home, null, { trace: true });
+  assert.equal(again.token, first.token, "§24.13: the same heist asked for twice");
 });

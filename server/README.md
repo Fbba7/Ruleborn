@@ -207,23 +207,32 @@ its ledger rebuilt around its rows when opened.
 
 ## Apple's proofs
 
-`src/stores.mjs` checks what Apple signs, against a pinned root:
+`src/stores.mjs` checks what Apple signs, each proof against its own pinned
+roots:
 
 - **Game Center sign-in.** §24.8: "Platform identity is exchanged for a
   short-lived signed token." The device's identity-verification signature
   covers the player, the app, a timestamp and a salt; the key is in a
-  certificate fetched only from apple.com (the one network call, made and
-  cached by `preparePlatform` before the synchronous sign-in) and checked to
-  the pinned root; the signature must be at most five minutes old. The token
-  it earns is HMAC-SHA256 (`tokens.mjs`).
+  certificate issued to Apple Inc., fetched only from Game Center's key hosts
+  and names (the one network call, made and cached by `preparePlatform`
+  before the synchronous sign-in; an unseen name at most once a second, a
+  failure remembered apart) and checked to Game Center's pinned roots; the
+  signature must be at most five minutes old. The token it earns is
+  HMAC-SHA256 (`tokens.mjs`).
 - **App Store purchases.** A StoreKit 2 transaction is a JWS carrying its own
-  chain; the chain is checked to the pinned root, the ES256 signature over
-  it, the app's bundle ID and that it was not revoked. The purchase intent's
-  id rides the purchase as its appAccountToken, so it is a UUID.
+  chain: a leaf with Apple's StoreKit marker OID and a P-256 key, under an
+  intermediate with its own marker, to StoreKit's pinned root; then the
+  ES256 signature, the app's bundle ID, that it was not revoked, and that it
+  is a Production purchase. The purchase intent's id rides the purchase as
+  its appAccountToken, so it is a UUID.
 
-`main.mjs` checks both once `RULEBORN_APPLE_ROOTS` (the pinned certificates)
-and `RULEBORN_BUNDLE_ID` are set; without them it takes any credential as the
-identity it names, refuses every receipt, and must not face a network.
+`main.mjs` takes `RULEBORN_GAMECENTER_ROOTS` and `RULEBORN_STOREKIT_ROOTS`
+(the pinned certificates) and `RULEBORN_BUNDLE_ID`; `RULEBORN_APPLE_SANDBOX=1`
+lets Sandbox purchases pay, for a test deployment. It refuses to start with
+StoreKit's roots and not Game Center's — a server that takes money must not
+take any credential as an identity — unless `RULEBORN_STUB_SIGNIN=1` says it
+is a test. With neither, it takes any credential as the identity it names,
+refuses every receipt, and must not face a network.
 `RULEBORN_DATA` moves its database and bundles out of `server/.data/`, which
 is how `client/status.py` gives each test run a fresh one. The tests use a
 stand-in chain in `test/fixtures/apple/` (its `make.sh` regenerates it). The

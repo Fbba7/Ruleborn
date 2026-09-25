@@ -4,6 +4,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
+import { dayCeiling } from "../src/economy.mjs";
 import { LEASE_MS, Refused } from "../src/service.mjs";
 import { readHeader } from "../src/sim.mjs";
 import { sha256 } from "../src/store.mjs";
@@ -259,6 +260,104 @@ test("an expired lease is honoured once a day, and then pays nothing (§24.12, G
   const later = t.service.submit(t.raider.account, two.token, replayTwo);
   assert.equal(later.validated, false);
   assert.equal(later.reason, "lease_expired");
+});
+
+/** The planned heist, stopped once the bags are full: the crew never calls
+ *  the skiff, and the clock catches it holding everything it loaded. */
+const greedy = () => openPlan().filter((c) => c.kind !== "Skiff" && c.tick < 62 * 30);
+const DAY = 24 * 60 * 60 * 1000;
+
+test("a pair's Renown and stars move on its first heist of the day, and later ones pay the haul only (G37)", () => {
+  const t = twoPlayers(true);
+  const heist = () => {
+    const lease = t.service.lease(t.raider.account, t.bundle);
+    return t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  };
+  const first = heist();
+  assert.deepEqual([first.renown.raider, first.stars.raider], [20, 10]);
+  t.clock.now += 60_000;
+  const again = heist();
+  assert.equal(again.validated, true);
+  assert.equal(again.haul.total, Math.floor(5400 * 0.85), "the haul is still paid, within the raider's caps");
+  assert.deepEqual([again.renown, again.stars], [{ raider: 0, defender: 0 }, { raider: 0, defender: 0 }]);
+  assert.equal(t.service.seasons.league(t.raider.account).renown, 20);
+  assert.equal(t.service.track.stars(t.raider.account), 10);
+  t.clock.now += DAY;                                   // a new UTC day
+  assert.equal(heist().stars.raider, 10);
+});
+
+test("a defence share counts to the defender's own day cap, and a pair's is paid once a day (9.4, 9.6, G37)", () => {
+  const t = twoPlayers(true);
+  const foil = () => {
+    const lease = t.service.lease(t.raider.account, t.bundle);
+    return t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: greedy() }));
+  };
+  // The defender's Heart is Vault level 3: 100 left of their own day's ceiling.
+  t.service.db.prepare(
+    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', ?, 'haul (9.6)', ?)")
+    .run(t.defender.account, Number(dayCeiling(3)) - 100, t.clock.now - 60_000);
+  const first = foil();
+  assert.equal(first.verdict.grade, "foiled");
+  assert.deepEqual([first.fee, first.defence.total, first.stars.defender], [0, 100, 10]);
+  t.clock.now += 60_000;
+  const again = foil();
+  assert.equal(again.verdict.grade, "foiled");
+  assert.deepEqual([again.defence.total, again.stars, again.renown],
+                   [0, { raider: 0, defender: 0 }, { raider: 0, defender: 0 }], "nothing minted a second time");
+  assert.equal(t.service.balance(t.defender.account).essence, 50);
+  t.clock.now += DAY;                                   // the defender's day, and the pair's, turn over
+  assert.ok(foil().defence.total > 100);
+});
+
+test("a lease held in one mode is not handed back as another: a Trace is never charged as a raid (12.3, 24.13)", () => {
+  const t = server();
+  const d = t.service.session("gc:d").account;
+  const r = t.service.session("gc:r").account;
+  established(t, d);
+  established(t, r);
+  const { bundle: home } = t.service.publish(d, t.build.exampleIsland(true));
+  const other = t.build.exampleIsland(true);
+  other[5] = 2;
+  const { bundle: theirs } = t.service.publish(r, other);
+  t.service.book(d, "starlight", 10_000, "test");
+  const raid = t.service.lease(d, theirs);                 // held, not yet played
+  const robbery = t.service.lease(r, home);
+  t.service.submit(r, robbery.token, play(t, robbery, { plan: openPlan() }));
+  assert.throws(() => t.service.lease(d, theirs, null, { trace: true }),
+                (e) => e.reason === "lease_held_in_another_mode" && e.status === 409 && e.detail.mode === "raid");
+  // Given up by a submission that is no heist: it settles, and costs nothing.
+  assert.equal(t.service.submit(d, raid.token, new Uint8Array(0)).reason, "replay_malformed");
+  const trace = t.service.lease(d, theirs, null, { trace: true });
+  assert.equal(trace.trace, true);
+  assert.equal(t.service.submit(d, trace.token, play(t, trace, { plan: [] })).fee, 0);
+});
+
+test("a 13-to-15's challenge link is played by their friends only (17.6, 20.7)", () => {
+  const t = twoPlayers(true);
+  const f = t.service.friends;
+  t.service.db.prepare("UPDATE accounts SET age_band = '13-15' WHERE id = ?").run(t.defender.account);
+  const { challenge, bundle } = f.challenge(t.defender.account);
+  const ask = () => t.service.lease(t.raider.account, bundle, null, { mode: "challenge", challenge });
+  refusal(ask, "no_such_challenge");
+  refusal(() => t.service.challenge(t.raider.account, challenge), "no_such_challenge");
+  f.accept(t.raider.account, f.invite(t.defender.account).invite);
+  assert.equal(t.service.challenge(t.raider.account, challenge).account, t.defender.account);
+  assert.equal(ask().mode, "challenge");
+});
+
+test("an island goes to the Heart or one of six outer realms, and nowhere else (5.2)", () => {
+  const t = twoPlayers(true);
+  refusal(() => t.service.publish(t.defender.account, t.island, "realm0"), "no_such_realm");
+  assert.equal(t.service.publish(t.defender.account, t.island, "outer-6").bundle, t.bundle);
+  refusal(() => t.service.publish(t.defender.account, t.island, "outer-7"), "no_such_realm");
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM islands").get().n, 2);
+});
+
+test("a banned player's session ends with the ban, not an hour later (20.12)", () => {
+  const t = server();
+  const s = t.service.session("gc:cheat");
+  t.service.db.prepare("UPDATE accounts SET banned_at = ? WHERE id = ?").run(t.clock.now, s.account);
+  refusal(() => t.service.account(s.token), "banned");
 });
 
 test("a session is a signed token, and a forged one is refused", () => {

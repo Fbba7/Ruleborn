@@ -101,6 +101,60 @@ test("a daily reminder at the time the player chose, or none (14.6)", () => {
   refusal(() => n.set(me, { reminder: 24 * 60 }), "bad_reminder_time");
 });
 
+test("the night holds when a notification is sent, not only when it is queued (20.2)", () => {
+  const t = twoPlayers(true);
+  const n = t.service.notifications;
+  const me = t.defender.account;
+  t.service.db.prepare("UPDATE accounts SET age_band = '13-15' WHERE id = ?").run(me);
+  const pushed = [];
+  const send = (_, m) => pushed.push(m);
+  // A 07:00 reminder chosen at 22:30 comes when the night ends, once.
+  t.clock.now = Date.UTC(2026, 8, 23, 22, 30);
+  n.set(me, { utcOffset: 0, reminder: 7 * 60, pushToken: "device-3" });
+  assert.deepEqual(n.deliver(send), []);
+  t.clock.now = Date.UTC(2026, 8, 24, 7, 59);
+  assert.deepEqual(n.deliver(send), []);
+  t.clock.now = Date.UTC(2026, 8, 24, 8, 0);
+  n.deliver(send);
+  t.clock.now = Date.UTC(2026, 8, 24, 8, 1);
+  n.deliver(send);
+  assert.deepEqual(pushed, [{ kind: "reminder", day: "2026-09-24" }]);
+  // A raid due in the evening, not sent before the night began, waits too.
+  n.set(me, { reminder: null });
+  t.clock.now = Date.UTC(2026, 8, 24, 20, 50);
+  n.raided({ defender: me, token: "h1" }, { grade: "clean" }, t.clock.now);
+  t.clock.now = Date.UTC(2026, 8, 24, 21, 30);
+  assert.deepEqual(n.deliver(() => assert.fail("sent at night")), []);
+  t.clock.now = Date.UTC(2026, 8, 25, 8, 0);
+  assert.deepEqual(n.deliver(send).map((m) => m.kind), ["raided"]);
+});
+
+test("the day's reminders read the outbox once a tick, however many players chose one (14.6)", () => {
+  const t = twoPlayers(true);
+  const n = t.service.notifications;
+  const players = [t.defender.account, t.raider.account];
+  for (let i = 0; i < 6; i++) players.push(t.service.session(`gc:reminded-${i}`).account);
+  for (const p of players) n.set(p, { reminder: 60 });
+  t.clock.now = Date.UTC(2026, 8, 24, 12, 0);
+  assert.equal(n.remind(t.clock.now), players.length);
+  const db = t.service.db;
+  const read = [];
+  const prepare = db.prepare;
+  db.prepare = (sql) => {
+    if (/FROM notifications/.test(sql)) read.push(sql);
+    return prepare.call(db, sql);
+  };
+  try {
+    t.clock.now += 60 * 1000;
+    assert.equal(n.remind(t.clock.now), 0, "one a day");
+  } finally {
+    db.prepare = prepare;
+  }
+  assert.equal(read.length, 1);
+  const plan = db.prepare(`EXPLAIN QUERY PLAN ${read[0]}`).all(0).map((r) => r.detail).join("; ");
+  assert.doesNotMatch(plan, /SCAN notifications/, plan);
+});
+
 test("replays and notification settings over HTTP", async () => {
   const t = twoPlayers(true);
   const { token, replay } = raid(t);

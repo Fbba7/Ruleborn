@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { Refused } from "../src/service.mjs";
+import { Workshop } from "../src/workshop.mjs";
 import { openPlan, play, twoPlayers } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
@@ -76,6 +77,14 @@ test("a challenge link plays the island once for anyone who holds it (17.6)", ()
   refusal(() => t.service.lease(t.raider.account, bundle, null, { mode: "challenge", challenge }),
           "challenge_already_played");
   refusal(() => t.service.lease(t.raider.account, bundle, null, { mode: "challenge", challenge: "nope" }),
+          "no_such_challenge");
+});
+
+test("a banned player's challenge links are void (20.12)", () => {
+  const t = twoPlayers(true);
+  const { challenge, bundle } = t.service.friends.challenge(t.defender.account);
+  new Workshop(t.service).ban(t.defender.account, "offensive");
+  refusal(() => t.service.lease(t.raider.account, bundle, null, { mode: "challenge", challenge }),
           "no_such_challenge");
 });
 

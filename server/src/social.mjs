@@ -14,7 +14,7 @@ import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
-import { Workshop } from "./workshop.mjs";
+import { WORDS, Workshop } from "./workshop.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 
@@ -57,10 +57,10 @@ export class Social {
    *  implies free text, and no filter exists here yet). */
   found(account, { adjective, noun } = {}) {
     this.gate(account);
-    if (!Number.isInteger(adjective) || !Number.isInteger(noun)) {
+    if (!Number.isInteger(adjective) || !Number.isInteger(noun)
+        || !WORDS.adjectives[adjective] || !WORDS.nouns[noun]) {
       throw new Refused(400, "name_not_from_the_word_lists");
     }
-    Workshop.name(adjective, noun);              // throws on an index outside the lists
     const id = this.service.random(8).toString("hex");
     const now = this.now();
     transaction(this.db, () => {
@@ -81,12 +81,15 @@ export class Social {
   }
 
   /** Join through the Beacon: open to any Keeper past the gate while there is
-   *  room. §17.1 says nothing of approval, so none is asked (D63). */
+   *  room. §17.1 says nothing of approval, so none is asked (D63). One its
+   *  last member left is closed: it would have no founder (§17.1). */
   join(account, id) {
     this.gate(account);
     this.constellation(id);
     return transaction(this.db, () => {
-      if (this.members(id).length >= facts.CONSTELLATION_SIZE) {
+      const members = this.members(id).length;
+      if (members === 0) throw new Refused(410, "constellation_closed");
+      if (members >= facts.CONSTELLATION_SIZE) {
         throw new Refused(409, "constellation_full", { size: facts.CONSTELLATION_SIZE });
       }
       this.db.prepare(
@@ -98,21 +101,25 @@ export class Social {
 
   /** Leave, at no cost. A founder who leaves hands the constellation on — to
    *  the longest-standing elder, else the longest-standing member — as §17.7
-   *  says a crew survives its founder; the last to leave leaves it empty. */
+   *  says a crew survives its founder; the last to leave leaves it empty,
+   *  and closed. */
   leave(account) {
     const m = this.membership(account);
     if (!m) throw new Refused(409, "not_in_a_constellation");
-    transaction(this.db, () => {
-      this.db.prepare(
-        "UPDATE constellation_members SET left_at = ? WHERE account = ? AND left_at IS NULL")
-        .run(this.now(), account);
-      if (m.role === "founder") {
-        const heir = this.members(m.constellation)
-          .sort((a, b) => (a.role === "elder" ? 0 : 1) - (b.role === "elder" ? 0 : 1))[0];
-        if (heir) this.setRole(m.constellation, heir.account, "founder");
-      }
-    });
+    transaction(this.db, () => this.depart(m));
     return { left: m.constellation };
+  }
+
+  /** `leave`'s writes, in the caller's transaction: a ban's (§20.12). */
+  depart(m) {
+    this.db.prepare(
+      "UPDATE constellation_members SET left_at = ? WHERE account = ? AND left_at IS NULL")
+      .run(this.now(), m.account);
+    if (m.role === "founder") {
+      const heir = this.members(m.constellation)
+        .sort((a, b) => (a.role === "elder" ? 0 : 1) - (b.role === "elder" ? 0 : 1))[0];
+      if (heir) this.setRole(m.constellation, heir.account, "founder");
+    }
   }
 
   setRole(constellation, account, role) {

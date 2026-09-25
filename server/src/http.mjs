@@ -3,7 +3,7 @@
 // translates; every decision is the service's.
 //
 //   POST /v1/session             {"credential": …}          → {account, token}
-//   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}
+//   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}; heart or outer-1 … outer-6
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
 //   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?} → the lease
 //   GET  /v1/offer?size=3                                    → §12.22's list for the caller
@@ -105,16 +105,30 @@ async function bytes(request) {
 }
 
 /** A JSON body, held to the same limit — base64 of an island and a replay
- *  is still a few kilobytes. */
+ *  is still a few kilobytes — and an object or a list, never a bare value
+ *  a route would read fields off. */
 async function body(request) {
-  const raw = await bytes(request);
-  return JSON.parse(new TextDecoder().decode(raw));
+  return parse(await bytes(request));
 }
 
 /** A JSON body that may be left out. */
 async function optional(request) {
   const raw = await bytes(request);
-  return raw.length ? JSON.parse(new TextDecoder().decode(raw)) : {};
+  return raw.length ? parse(raw) : {};
+}
+
+function parse(raw) {
+  const out = JSON.parse(new TextDecoder().decode(raw));
+  if (out === null || typeof out !== "object") throw new Refused(400, "malformed_body");
+  return out;
+}
+
+/** A body field a route passes on as a string: anything else a caller sends
+ *  is refused here, not bound into SQL. `null` if left out and optional. */
+function text(value, optional = false) {
+  if (optional && value == null) return null;
+  if (typeof value !== "string") throw new Refused(400, "malformed_body");
+  return value;
 }
 
 const base64 = (s) => new Uint8Array(Buffer.from(String(s ?? ""), "base64"));
@@ -145,7 +159,7 @@ async function socialRoute(service, social, request, parts, who) {
   }
   if (area === "crews") {
     if (m === "POST" && !a) return json(social.startCrew(me), 201);
-    if (m === "POST" && a === "join") return json(social.joinCrew(me, (await body(request)).invite));
+    if (m === "POST" && a === "join") return json(social.joinCrew(me, text((await body(request)).invite)));
     if (m === "POST" && a === "leave") return json(social.leaveCrew(me));
     if (m === "GET" && a) return json(social.crew(a));
   }
@@ -208,7 +222,7 @@ async function workshopRoute(workshop, request, url, parts, who) {
   }
   if (m === "GET" && !a) {
     return json(workshop.browse(me, url.searchParams.get("list") ?? "top",
-                                Number(url.searchParams.get("limit") ?? 20)));
+                                Number.parseInt(url.searchParams.get("limit"), 10) || 20));
   }
   if (m === "GET" && a === "mine") return json(workshop.mine(me));
   if (m === "GET" && a === "words") return json(WORDS);
@@ -246,12 +260,14 @@ export function handler(service) {
           if (m === "GET" && !a) return json(f.list(me));
           if (m === "GET" && a === "feed") return json(f.feed(me));
           if (m === "POST" && a === "invites") return json(f.invite(me), 201);
-          if (m === "POST" && a === "accept") return json(f.accept(me, (await body(request)).invite));
+          if (m === "POST" && a === "accept") return json(f.accept(me, text((await body(request)).invite)));
           if (m === "DELETE" && a) return json(f.remove(me, a));
         } else {
-          if (m === "POST" && !a) return json(f.challenge(me, (await optional(request)).realm ?? "heart"), 201);
+          if (m === "POST" && !a) {
+            return json(f.challenge(me, text((await optional(request)).realm, true) ?? "heart"), 201);
+          }
           if (m === "GET" && a) {
-            const c = f.opened(a);
+            const c = service.challenge(me, a);
             return json({ challenge: c.code, bundle: c.bundle, from: c.account });
           }
         }
@@ -278,7 +294,7 @@ export function handler(service) {
       }
       switch (route) {
         case "POST /v1/session": {
-          const { credential } = await request.json();
+          const { credential } = await body(request);
           await service.preparePlatform(credential);
           return json(service.session(credential));
         }
@@ -298,8 +314,9 @@ export function handler(service) {
         }
         case "POST /v1/leases": {
           const attacker = who();
-          const { bundle, owner = null, trace = false, mode = "raid", challenge = null } = await request.json();
-          return json(service.lease(attacker, bundle, owner, { trace: trace === true, mode, challenge }), 201);
+          const { bundle, owner, trace = false, mode = "raid", challenge } = await body(request);
+          return json(service.lease(attacker, text(bundle), text(owner, true),
+                                    { trace: trace === true, mode, challenge: text(challenge, true) }), 201);
         }
         case "GET /v1/heists": {
           if (parts[3] !== "replay") return json({ error: "no_such_route" }, 404);
@@ -347,7 +364,11 @@ export function handler(service) {
     } catch (err) {
       if (err instanceof Refused) return json({ error: err.reason, ...err.detail }, err.status);
       if (err instanceof SyntaxError) return json({ error: "malformed_json" }, 400);
-      throw err;
+      // Anything else is the server's own failure, answered and logged: a
+      // request never rejects, so no one request stops a process that is
+      // serving the rest.
+      console.error(`${route}:`, err);
+      return json({ error: "internal" }, 500);
     }
   };
 }

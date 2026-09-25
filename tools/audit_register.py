@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5686,7 +5686,12 @@ dict(id="D63", kind="deviation", severity="minor", status="open",
           "word lists, since §20.4\u2019s filter for constellation names implies "
           "free text and no filter exists; a founder who leaves hands on to the "
           "longest-standing elder, else member; a crew is joined by an invite and "
-          "counts as a crew from four. Found building them.",
+          "counts as a crew from four. Found building them. The backend review "
+          "added: an empty constellation is closed; a ban leaves constellation "
+          "and crew and voids challenge links; §18.7\u2019s quarter applies to any "
+          "membership the creator and the player shared during the item\u2019s "
+          "life \u2014 which a creator can still step around by leaving before "
+          "publishing and rejoining after, since joining costs nothing.",
      rec="Build the Grand Law and anomalies with version 1.1 (§26.1), and state "
          "how a constellation is joined and how a crew is found."),
 
@@ -5804,7 +5809,10 @@ dict(id="G29", kind="gap", severity="minor", status="open",
           "while §25.4 says surveys come <em>\u201cnever more than once a "
           "quarter per player\u201d</em>: read as a survey sent every month to a "
           "rotating sample, which the server holds to once a quarter a player. "
-          "Found building telemetry.",
+          "Found building telemetry. The backend review added: a rating for "
+          "each session, up to 24 a day like session ends, each player weighed "
+          "once in the report by their own average; a survey\u2019s quarter runs "
+          "from when the server received it.",
      rec="Define a session, choose the retention inside 30 to 90 days, give the "
          "survey\u2019s scale, and say whether the monthly survey is a monthly "
          "sample or a monthly ask."),
@@ -5985,7 +5993,14 @@ dict(id="G32", kind="gap", severity="minor", status="open",
           "its appAccountToken, so an intent\u2019s id is a UUID; the pinned roots "
           "and the app\u2019s bundle ID are the operator\u2019s configuration. Nothing "
           "says what a refund after a grant does to Starglass already spent. "
-          "Found building the Apple proofs.",
+          "Found building the Apple proofs. The backend review tightened them: "
+          "StoreKit and Game Center have their own pinned roots; a StoreKit leaf "
+          "carries Apple\u2019s marker OID and a P-256 key, under an intermediate "
+          "with its own; only Production transactions pay unless the operator "
+          "allows Sandbox; a Game Center key is issued to Apple Inc. and fetched "
+          "only from its key hosts and names, an unseen name at most once a "
+          "second; and a server that takes money refuses to start with sign-in "
+          "stubbed.",
      rec="Say how a refunded purchase is taken back, and whether Starglass "
          "can go below nothing."),
 
@@ -6118,6 +6133,28 @@ dict(id="G35", kind="gap", severity="minor", status="open",
           "to friends only. Found building friends.",
      rec="Say how friends are made (platform friends, invites, or both), and "
          "whether a 13-to-15\u2019s heists appear in friends\u2019 feeds."),
+
+dict(id="G37", kind="gap", severity="significant", status="open",
+     title="What a defender earns from foiled heists has no cap, and §20.3 "
+           "says every repeatable reward has one",
+     refs=["9.4", "9.6", "12.9", "13.1", "18.2", "20.3"],
+     body="§9.4 gives the defender of a foiled heist <em>\u201cthe entry fee plus "
+          "5% of what the crew was carrying\u201d</em>; §12.9 the mirror of the "
+          "raider\u2019s Renown; §18.2 season stars for defences. None is capped, "
+          "while §9.6 caps the raider\u2019s hauls by the day and the week and "
+          "§20.3 says repeatable rewards have daily and weekly caps. The backend "
+          "review showed what that allows: a second account with no Starlight "
+          "pays no fee (G17), is foiled on purpose again and again, and mints "
+          "its partner 270 a heist at Vault level 1 with no end, and ten stars "
+          "each time. The server\u2019s reading: the defence share counts toward "
+          "the defender\u2019s own §9.6 day and week caps, at their own Vault "
+          "level, sharing one total with their hauls; and a raider and a "
+          "defender move Renown, season stars and the defence share only on "
+          "their first raid of the UTC day \u2014 later raids that day still pay "
+          "the raider\u2019s haul within the raider\u2019s caps. Found by the backend "
+          "review.",
+     rec="Cap what a defender earns from defences, and say whether one pair of "
+         "players can move Renown and stars more than once a day."),
 
 dict(id="F49", kind="finding", severity="minor", status="open",
      title="Quiet Week\u2019s longer heists run past the longest heist §5.4 and "

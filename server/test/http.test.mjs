@@ -98,3 +98,62 @@ test("the Workshop over HTTP: publish a cleared island, browse, play, rate, remi
   assert.equal(curated.status, 403);
   assert.equal((await curated.json()).error, "curated_lists_only");
 });
+
+test("a malformed body is answered, never thrown: no one request can stop the server", async () => {
+  const t = server();
+  const send = (method, path, body, token) => t.handle(new Request(`https://edge.example${path}`, {
+    method, body, headers: token ? { authorization: `Bearer ${token}` } : {} }));
+  assert.equal((await send("POST", "/v1/session", "null")).status, 400, "no sign-in needed to send one");
+  const { token } = await (await send("POST", "/v1/session", JSON.stringify({ credential: "gc:fuzz" }))).json();
+  for (const [method, path, body] of [
+    ["POST", "/v1/leases", "{}"],
+    ["POST", "/v1/leases", "[1]"],
+    ["POST", "/v1/leases", JSON.stringify({ bundle: "x", mode: "challenge", challenge: { a: 1 } })],
+    ["POST", "/v1/friends/accept", "{}"],
+    ["POST", "/v1/friends/accept", JSON.stringify({ invite: { a: 1 } })],
+    ["POST", "/v1/crews/join", JSON.stringify({ invite: [1] })],
+    ["POST", "/v1/challenges", JSON.stringify({ realm: {} })],
+    ["PUT", "/v1/age", "null"],
+    ["PUT", "/v1/notifications", "7"],
+    ["PUT", "/v1/islands/realm0", "not an island"],
+  ]) {
+    const res = await send(method, path, body, token);
+    assert.ok(res.status >= 400 && res.status < 500, `${method} ${path} ${body}: ${res.status}`);
+  }
+  assert.equal((await send("GET", "/v1/workshop?limit=abc", undefined, token)).status, 200, "the default limit");
+  assert.equal((await send("POST", "/v1/track/claim", "{}", token)).status, 200, "this season's track");
+  // And whatever else goes wrong is the server's own 500, not a rejection.
+  const logged = console.error;
+  console.error = () => {};
+  try {
+    t.service.balance = () => { throw new TypeError("boom"); };
+    const res = await send("GET", "/v1/balance", undefined, token);
+    assert.deepEqual([res.status, (await res.json()).error], [500, "internal"]);
+  } finally {
+    console.error = logged;
+  }
+});
+
+test("every JSON body is held to the size limit, the session's and the lease's too", async () => {
+  const t = server();
+  const big = JSON.stringify({ credential: "gc:big", pad: "x".repeat(20_000) });
+  const refused = await t.handle(new Request("https://edge.example/v1/session", { method: "POST", body: big }));
+  assert.deepEqual([refused.status, (await refused.json()).error], [413, "too_large"]);
+  const { token } = t.service.session("gc:big");
+  const lease = await t.handle(new Request("https://edge.example/v1/leases", {
+    method: "POST", headers: { authorization: `Bearer ${token}` },
+    body: JSON.stringify({ bundle: "x", pad: "x".repeat(20_000) }) }));
+  assert.equal(lease.status, 413);
+});
+
+test("a 13-to-15's challenge link shows nothing to a stranger (20.7)", async () => {
+  const t = server();
+  const minor = t.service.session("gc:minor");
+  const stranger = t.service.session("gc:stranger");
+  t.service.publish(minor.account, t.build.exampleIsland(true));
+  t.service.db.prepare("UPDATE accounts SET age_band = '13-15' WHERE id = ?").run(minor.account);
+  const { challenge } = t.service.friends.challenge(minor.account);
+  const res = await t.handle(new Request(`https://edge.example/v1/challenges/${challenge}`, {
+    headers: { authorization: `Bearer ${stranger.token}` } }));
+  assert.deepEqual([res.status, (await res.json()).from], [404, undefined]);
+});

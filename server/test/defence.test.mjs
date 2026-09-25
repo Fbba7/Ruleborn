@@ -65,3 +65,20 @@ test("a week in which enough players change their defence holds the share where 
   assert.equal(t.service.seasons.defenceShare(), 5);
   assert.equal(t.service.db.prepare("SELECT measured FROM defence_shares WHERE season = 2").get().measured, 20);
 });
+
+test("going back to an island published before is a change of defence too (13.1)", () => {
+  const t = twoPlayers(true);
+  t.service.seasons.current();                         // season 1 is open
+  const island = t.build.exampleIsland(true);
+  island[5] = 2;
+  t.service.publish(t.defender.account, island);       // on to another, at the start
+  t.clock.now = T0 + SEASON_MS - DAY;
+  for (let i = 0; i < 4; i++) t.service.session(`gc:quiet-${i}`);
+  // The defender goes back to the first: no new snapshot, but a change.
+  t.service.session("gc:defender");
+  t.service.publish(t.defender.account, t.island);
+  t.clock.now = T0 + SEASON_MS + 1;
+  t.service.seasons.rollover();
+  assert.equal(t.service.db.prepare("SELECT measured FROM defence_shares WHERE season = 2").get().measured, 20);
+  assert.equal(t.service.seasons.defenceShare(), 5);
+});

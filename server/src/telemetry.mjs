@@ -36,6 +36,13 @@ export const SURVEY_GAP_MS = 90 * DAY_MS;          // within the raw window, so 
 export const BATCH = 100;
 export const LATE_MS = 7 * DAY_MS;
 
+/** What a player's day counts (§20.3's one tap, §25.3's gates): no more
+ *  session ends than one an hour, and a "worth your time" rating for each —
+ *  §20.3 asks it after every session. The report weighs each player once
+ *  (their own average), so no one device sets the launch gates' figures (G29). */
+export const SESSION_ENDS_A_DAY = 24;
+export const WORTH_A_DAY = SESSION_ENDS_A_DAY;
+
 /**
  * What the device may send, field by field: each field's type, and nothing
  * else. No field is a position (§24.3). `session_end` closes a session the
@@ -116,31 +123,54 @@ export class Telemetry {
 
   /**
    * A batch from the device, validated whole before any of it is written: a
-   * kind it may send, only that kind's fields, each of its type, dated no
-   * later than now and no earlier than a queued heist could be.
+   * kind it may send, as an object holding that kind's fields and only
+   * them, each of its type, dated no later than now and no earlier than a
+   * queued heist could be; and no more of a kind than a player's day counts.
    */
   batch(account, events) {
     if (!Array.isArray(events) || events.length === 0) throw new Refused(400, "no_events");
     if (events.length > BATCH) throw new Refused(413, "batch_too_large", { most: BATCH });
     const now = this.service.now();
     const rows = events.map((e, i) => {
-      const shape = DEVICE_EVENTS[e?.kind];
-      if (!shape) throw new Refused(400, "no_such_event", { index: i });
-      const data = e.data ?? {};
+      // A string, and one of the kinds: an array ["worth"] would pass hasOwn's
+      // own conversion to a key and slip past every cap.
+      if (typeof e?.kind !== "string" || !Object.hasOwn(DEVICE_EVENTS, e.kind)) {
+        throw new Refused(400, "no_such_event", { index: i });
+      }
+      const shape = DEVICE_EVENTS[e.kind];
+      const data = e.data;
+      if (data === null || typeof data !== "object" || Object.getPrototypeOf(data) !== Object.prototype) {
+        throw new Refused(400, "bad_data", { index: i });
+      }
       for (const key of Object.keys(data)) {
         if (FORBIDDEN.test(key)) throw new Refused(400, "positions_are_never_sent", { index: i });
-        if (!shape[key]) throw new Refused(400, "no_such_field", { index: i, field: key });
+        if (!Object.hasOwn(shape, key)) throw new Refused(400, "no_such_field", { index: i, field: key });
         if (!valid[shape[key]](data[key])) throw new Refused(400, "bad_field", { index: i, field: key });
+      }
+      for (const key of Object.keys(shape)) {
+        if (!Object.hasOwn(data, key)) throw new Refused(400, "missing_field", { index: i, field: key });
       }
       const at = Number.isInteger(e.at) ? e.at : now;
       if (at > now || at < now - LATE_MS) throw new Refused(400, "bad_time", { index: i });
-      return { kind: e.kind, data, at };
+      // §25.4's quarter runs from when the server received the survey, so a
+      // survey is kept as of then, and stays as long as the quarter does.
+      return { kind: e.kind, data, at: e.kind === "survey" ? now : at };
     });
+    const who = this.pseudonym(account);
     const surveys = rows.filter((r) => r.kind === "survey");
     if (surveys.length > 1 || (surveys.length && this.db.prepare(
-      "SELECT 1 FROM events WHERE who = ? AND kind = 'survey' AND at > ?")
-      .get(this.pseudonym(account), now - SURVEY_GAP_MS))) {
+      "SELECT 1 FROM events WHERE who = ? AND kind = 'survey' AND at > ?").get(who, now - SURVEY_GAP_MS))) {
       throw new Refused(429, "survey_once_a_quarter");
+    }
+    // Each event counts against its own day, as report() reads it.
+    const sent = this.db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = ? AND kind = ? AND day = ?");
+    for (const [kind, most, reason] of [["worth", WORTH_A_DAY, "worth_too_often"],
+                                        ["session_end", SESSION_ENDS_A_DAY, "too_many_session_ends"]]) {
+      const days = {};
+      for (const r of rows) if (r.kind === kind) days[day(r.at)] = (days[day(r.at)] ?? 0) + 1;
+      for (const [d, n] of Object.entries(days)) {
+        if (n + Number(sent.get(who, kind, d).n) > most) throw new Refused(429, reason, { most });
+      }
     }
     this.write(account, rows);
     return { recorded: rows.length };
@@ -164,17 +194,25 @@ export class Telemetry {
         this.db.prepare("INSERT INTO cohorts (day, players, day1, day7, day30) VALUES (?, ?, ?, ?, ?)")
           .run(d, r.players, r.day1, r.day7, r.day30);
       }
-      // Every event of every batch that goes, counted by its own day.
+      // Every event older than the window, counted by its own day, whichever
+      // batch holds it: a day goes whole, all at once, and no later batch can
+      // add to it (none is dated back past LATE_MS). Such an event's batch
+      // is dated before the window too, which is what the index finds.
+      const old = `FROM events e JOIN event_batches b ON b.id = e.batch WHERE b.day < ?1 AND e.day < ?1`;
       this.db.prepare(
         `INSERT INTO event_days (day, kind, events, players)
-           SELECT e.day, e.kind, COUNT(*), COUNT(DISTINCT e.who)
-             FROM events e JOIN event_batches b ON b.id = e.batch WHERE b.day < ?
+           SELECT e.day, e.kind, COUNT(*), COUNT(DISTINCT e.who) ${old}
             GROUP BY e.day, e.kind
          ON CONFLICT (day, kind) DO UPDATE SET events = events + excluded.events,
            players = MAX(players, excluded.players)`).run(before);
-      const gone = this.db.prepare(
-        `SELECT COUNT(*) AS n FROM events e JOIN event_batches b ON b.id = e.batch WHERE b.day < ?`)
-        .get(before).n;
+      const gone = this.db.prepare(`SELECT COUNT(*) AS n ${old}`).get(before).n;
+      // A batch that spans the edge keeps its later days' events, and is
+      // dated by the earliest of them.
+      const keep = this.db.prepare("UPDATE event_batches SET events = ?, day = ? WHERE id = ?");
+      for (const b of this.db.prepare("SELECT id, events FROM event_batches WHERE day < ?").all(before)) {
+        const rest = JSON.parse(b.events).filter((e) => day(e.at) >= before);
+        if (rest.length) keep.run(JSON.stringify(rest), day(Math.min(...rest.map((e) => e.at))), b.id);
+      }
       this.db.prepare("DELETE FROM event_batches WHERE day < ?").run(before);
       return { cohorts: open.length, discarded: Number(gone), before };
     });
@@ -210,8 +248,15 @@ export class Telemetry {
       const g = JSON.parse(r.data).grade ?? "refused";
       heists[g] = (heists[g] ?? 0) + 1;
     }
-    const ratings = q("SELECT data FROM events WHERE kind = 'worth' AND day BETWEEN ? AND ?", from, to)
-      .map((r) => JSON.parse(r.data).rating);
+    // Each player's own average first, then the average of those: a player
+    // who rates every session weighs no more than one who rates once.
+    const byPlayer = new Map();
+    for (const r of q("SELECT who, data FROM events WHERE kind = 'worth' AND day BETWEEN ? AND ?", from, to)) {
+      const list = byPlayer.get(r.who) ?? [];
+      list.push(JSON.parse(r.data).rating);
+      byPlayer.set(r.who, list);
+    }
+    const ratings = [...byPlayer.values()].map((l) => l.reduce((a, b) => a + b, 0) / l.length);
     const buyers = one(
       "SELECT COUNT(DISTINCT who) AS n FROM events WHERE kind = 'purchase' AND day BETWEEN ? AND ?", from, to).n;
     return {

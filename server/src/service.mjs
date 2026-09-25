@@ -60,7 +60,13 @@ export function clockTicks(links = 0) {
 // have always found it.
 export { Refused };
 
+/** §5.2: "a Heart and up to six outer realms" — the only places an island
+ *  may be published, so one player is one island a realm, seven at most. */
+export const REALMS = ["heart", ...Array.from({ length: 6 }, (_, i) => `outer-${i + 1}`)];
+
 const day = (ms) => new Date(ms).toISOString().slice(0, 10);
+/** A defence share's ledger reason, after its percent. */
+const SHARE_REASON = "% of what a foiled crew carried (9.4)";
 const DAY_MS = 24 * 60 * 60 * 1000;
 /** Midnight UTC at the start of `ms`'s day, and of its week (Monday, G20). */
 const dayStart = (ms) => ms - (ms % DAY_MS);
@@ -127,10 +133,11 @@ export class Service {
     const id = check(this.secret, token, this.now());
     if (!id) throw new Refused(401, "session_refused");
     // A token outlives nothing it was issued to: a deleted account's is
-    // refused at once (§20.5).
-    if (this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?").get(id)?.deleted_at) {
-      throw new Refused(401, "account_deleted");
-    }
+    // refused at once (§20.5), and so is a banned one's, which sign-in
+    // already refuses (§20.12).
+    const row = this.db.prepare("SELECT deleted_at, banned_at FROM accounts WHERE id = ?").get(id);
+    if (row?.deleted_at) throw new Refused(401, "account_deleted");
+    if (row?.banned_at) throw new Refused(403, "banned");
     return id;
   }
 
@@ -142,6 +149,7 @@ export class Service {
    * refused, with every rule it breaks named.
    */
   publish(owner, bundle, realm = "heart") {
+    if (!REALMS.includes(realm)) throw new Refused(404, "no_such_realm");
     const build = this.builds.current;
     const read = build.island(bundle);
     if (read.error) throw new Refused(400, read.error);
@@ -298,10 +306,22 @@ export class Service {
     return this.issue(attacker, bundle, defender, now, { echo, traceOf, mode });
   }
 
-  /** §17.6's challenge link: anyone holding it may play its island once,
-   *  even after its owner has moved on. */
-  challengeLease(attacker, bundle, code, now) {
+  /** §17.6's challenge link, to one who holds it. §20.7 sends a 13-to-15's
+   *  "To in-game friends only": to anyone else it is no link at all, so a
+   *  stranger learns neither the island nor whose it is. */
+  challenge(account, code) {
     const c = this.friends.opened(code);
+    const band = this.db.prepare("SELECT age_band FROM accounts WHERE id = ?").get(c.account)?.age_band;
+    if (band === "13-15" && c.account !== account && !this.friends.areFriends(account, c.account)) {
+      throw new Refused(404, "no_such_challenge");
+    }
+    return c;
+  }
+
+  /** §17.6's challenge link: anyone holding it may play its island once,
+   *  even after its owner has moved on — within §20.7's limits. */
+  challengeLease(attacker, bundle, code, now) {
+    const c = this.challenge(attacker, code);
     if (c.bundle !== bundle) throw new Refused(409, "not_this_challenge");
     if (c.account === attacker) throw new Refused(409, "own_island");
     const played = this.db.prepare(
@@ -325,7 +345,22 @@ export class Service {
       const held = this.db.prepare(
         "SELECT * FROM leases WHERE attacker = ? AND bundle = ? AND state = 'open'")
         .get(attacker, bundle);
-      if (held && held.expires_at > now) return this.leaseView(held);
+      if (held && held.expires_at > now) {
+        // §24.13's one lease a target is the same heist asked for twice. One
+        // held as another kind — a raid when a Trace is asked for, a friendly
+        // heist or another link — is not handed back as this one, which would
+        // charge a Trace a raid's fee: it is played (or given up by a
+        // submission) first.
+        // A held Trace answers a Trace asked for again, whichever robbery it
+        // names: traceable() skips robberies already traced, so the second
+        // ask finds an older one.
+        if ((held.mode ?? "raid") !== mode || Boolean(held.trace_of) !== Boolean(traceOf)
+            || (held.challenge ?? null) !== challenge) {
+          throw new Refused(409, "lease_held_in_another_mode", {
+            mode: held.mode ?? "raid", trace: Boolean(held.trace_of), expiresAt: held.expires_at });
+        }
+        return this.leaseView(held);
+      }
       if (held) {
         // Expired and never submitted: it reserved nothing (§24.13), so it
         // simply closes and a fresh one is issued.
@@ -476,10 +511,29 @@ export class Service {
     const fee = lease.trace_of || friendly ? 0 : entryFee(this.balance(attacker).starlight);
     book(attacker, "starlight", -fee, "entry fee (9.4)");
     // §24.12's Validate "checks the token, the expiry and the caps": §9.6's
-    // three, against what this raider was paid today and this week.
-    const paidSince = (from) => Number(this.db.prepare(
+    // three, against what this raider was paid today and this week — hauls,
+    // and the defence shares below, which count to the same caps (G37).
+    const paidSince = (account, from) => Number(this.db.prepare(
       `SELECT COALESCE(SUM(amount), 0) AS n FROM ledger
-        WHERE account = ? AND reason = 'haul (9.6)' AND at >= ?`).get(attacker, from).n);
+        WHERE account = ? AND (reason = 'haul (9.6)' OR reason LIKE ?) AND at >= ?`)
+      .get(account, `%${SHARE_REASON}`, from).n);
+    const caps = (account, vaultLevel) => ({
+      targetVaultLevel: vaultLevel,
+      raiderVaultLevel: this.vaultLevel(account),
+      paidToday: paidSince(account, dayStart(now)),
+      paidThisWeek: paidSince(account, weekStart(now)),
+    });
+    // G37: §20.3's "repeatable rewards have daily and weekly caps" hold for
+    // what one pair of players can make of each other too. Renown, season
+    // stars and a defence share move on a raider's first validated heist on
+    // a player in a UTC day; any later one that day pays the raider's haul,
+    // within their caps, and nothing else — so two players cannot mint
+    // Renown, stars or shares by robbing or foiling each other on a loop.
+    const pairEarlierToday = this.db.prepare(
+      `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
+        WHERE l.attacker = ? AND l.defender = ? AND l.mode = 'raid' AND h.validated = 1 AND h.day = ?`)
+      .get(attacker, lease.defender, day(now)).n;
+    const scores = !friendly && pairEarlierToday === 0;
     const pay = capHaul(haul({
       vaultLevel: snapshot.vault_level,
       gradeName: verdict.grade,
@@ -489,12 +543,7 @@ export class Service {
       raidsEarlierToday,
       banked: verdict.banked,
       capacity: verdict.capacity,
-    }), {
-      targetVaultLevel: snapshot.vault_level,
-      raiderVaultLevel: this.vaultLevel(attacker),
-      paidToday: paidSince(dayStart(now)),
-      paidThisWeek: paidSince(weekStart(now)),
-    });
+    }), caps(attacker, snapshot.vault_level));
     book(attacker, "starlight", pay.starlight, "haul (9.6)");
     book(attacker, "essence", pay.essence, "haul (9.6)");
     if (verdict.grade === "clean") {
@@ -502,29 +551,33 @@ export class Service {
     }
     // §9.4: "a foiled heist gives the defender the entry fee plus 5% of what
     // the crew was carrying", the share §13.1's rule has set this season.
+    // The fee is the raider's, passed on; the share is minted, so it is held
+    // to the defender's own §9.6 day and week caps, at their own Vault level,
+    // and paid once a day a pair (G37).
     let defence = null;
     if (verdict.grade === "foiled" && !lease.echo && !friendly) {
       book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
       const percent = this.seasons.defenceShare(this.seasons.current(now).id);
-      const share = defenceShare({
+      const share = scores ? capHaul(defenceShare({
         vaultLevel: snapshot.vault_level, raiderLevel: level(attacker), targetLevel: level(lease.defender),
         exposed: snapshot.exposed, left: verdict.left ?? 0, capacity: verdict.capacity, percent,
-      });
-      book(lease.defender, "starlight", share.starlight, `${percent}% of what a foiled crew carried (9.4)`);
-      book(lease.defender, "essence", share.essence, `${percent}% of what a foiled crew carried (9.4)`);
-      defence = { percent, ...share };
+      }), caps(lease.defender, snapshot.vault_level)) : { total: 0, essence: 0, starlight: 0 };
+      book(lease.defender, "starlight", share.starlight, `${percent}${SHARE_REASON}`);
+      book(lease.defender, "essence", share.essence, `${percent}${SHARE_REASON}`);
+      defence = { percent, total: share.total, essence: share.essence, starlight: share.starlight };
     }
     // §12.9's Renown, §18.2's season stars and §12.22's ratings, in the same
     // transaction as the haul. An echo is nobody's defence: it moves no
     // Renown, earns its owner nothing and rates no island (G30).
     const season = this.seasons.current(now).id;
     // §12.11: "The friend loses nothing", and a game among friends moves no
-    // Renown, stars or ratings (F48).
+    // Renown, stars or ratings (F48). A pair's later heists of the day move
+    // neither (G37).
     const none = { raider: 0, defender: 0 };
-    const renown = lease.echo || friendly ? none : this.seasons.settle(lease, verdict, now);
+    const renown = lease.echo || !scores ? none : this.seasons.settle(lease, verdict, now);
     // §13: "The defender is notified afterwards and can watch the replay."
     if (!lease.echo) this.notifications.raided(lease, verdict, now);
-    const stars = friendly ? none : this.track.settle(lease, verdict, season, now, { echo: Boolean(lease.echo) });
+    const stars = !scores ? none : this.track.settle(lease, verdict, season, now, { echo: Boolean(lease.echo) });
     const rating = lease.echo || friendly ? null : this.matchmaking.settle(lease, snapshot.realm, verdict, now);
     // "the friend earns a page for every raider their guards catch": pages
     // are the device's, so the outcome is their record (D64).

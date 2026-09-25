@@ -79,6 +79,14 @@ func _run() -> void:
 		goldens.size() > 0 and versions.keys() == [RulebornReplay.rules_version()],
 		"client %s, goldens %s" % [RulebornReplay.rules_version(), versions.keys()])
 
+	# §18.3: the heist is played in the era its lease names, and a lease in
+	# none sends null, which must reach the extension as no era, not "<null>".
+	var in_era := RulebornReplay.new()
+	check("a lease's era reaches the simulation as the lease names it, and none as none",
+		HeistScreen.lease_era({"era": null}) == "" and HeistScreen.lease_era({}) == ""
+			and HeistScreen.lease_era({"era": "glass_moon"}) == "glass_moon"
+			and in_era.set_era("glass_moon") and in_era.set_era("") and not in_era.set_era("<null>"))
+
 	# §24.10: the checksums a replay carries, one a second, are the server's.
 	var bad := []
 	var seconds := 0

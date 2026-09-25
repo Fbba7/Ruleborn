@@ -87,10 +87,15 @@ export class Track {
   }
 
   /** A heist's stars, booked in the grant's transaction. An echo's owner
-   *  defended nothing, and earns nothing. */
+   *  defended nothing, and earns nothing. The raider has appeared in the
+   *  season, so their tier price is fixed now if it is not yet: an echo raid
+   *  opens their standing like any heist, and a season of them cannot wait
+   *  out §18.8's catch-up to buy every tier at its floor. */
   settle(lease, verdict, season, now, { echo = false } = {}) {
     const s = heistStars(verdict.grade);
     if (echo) s.defender = 0;
+    this.seasons.standing(lease.attacker, season);
+    if (s.defender) this.seasons.standing(lease.defender, season);
     const book = this.db.prepare(
       "INSERT INTO season_stars (season, account, amount, reason, heist, at) VALUES (?, ?, ?, ?, ?, ?)");
     if (s.raider) book.run(season, lease.attacker, s.raider, `heist, ${verdict.grade} (18.2)`, lease.token, now);
@@ -132,7 +137,7 @@ export class Track {
    * (§18.8: "claimable in a later season at the same cost"), paid from this
    * season's stars. With the premium track, its reward comes with it.
    */
-  claim(account, season) {
+  claim(account, season = this.seasons.current().id) {
     const now = this.service.now();
     return transaction(this.db, () => {
       const v = this.view(account, season);
@@ -160,7 +165,7 @@ export class Track {
    * "nothing expires forever", an earlier one's, at the same price. The
    * premium rewards of tiers already claimed come with it.
    */
-  buyPremium(account, season) {
+  buyPremium(account, season = this.seasons.current().id) {
     const now = this.service.now();
     return transaction(this.db, () => {
       const v = this.view(account, season);

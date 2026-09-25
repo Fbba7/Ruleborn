@@ -85,9 +85,16 @@ func begin_online(url: String) -> String:
 	lease = await server.lease(target["bundle"], target["owner"])
 	if lease.has("error") or bundle.is_empty():
 		return str(lease.get("error", "no bundle"))
-	if not begin(str(lease["seed"]), int(lease["ticks"]), CREW, bundle, str(lease.get("era", ""))):
+	if not begin(str(lease["seed"]), int(lease["ticks"]), CREW, bundle, lease_era(lease)):
 		return "the leased island does not load"
 	return ""
+
+
+## The era a lease names (§18.3), as `begin` takes it: a lease in none sends
+## `null`, which is "" here — `str(null)` is "<null>", which no era is.
+static func lease_era(leased: Dictionary) -> String:
+	var era = leased.get("era")
+	return "" if era == null else str(era)
 
 
 # -- what a tap does ------------------------------------------------------

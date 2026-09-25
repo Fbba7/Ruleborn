@@ -558,35 +558,43 @@ function starglassLedger(db) {
 
 export function open(path = ":memory:") {
   const db = new DatabaseSync(path);
-  // The added columns first, so an old accounts table has them before the
-  // schema's indexes and triggers are checked against it.
-  const has = (table) => db.prepare(
-    "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?").get(table);
-  for (const [table, column, type] of ADDED) {
-    if (has(table) && !db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === column)) {
-      db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+  // Set here, as SCHEMA's own pragma does nothing inside a transaction.
+  db.exec("PRAGMA foreign_keys = ON");
+  // The one-time migrations and the schema in one transaction (SQLite's DDL
+  // is transactional): an upgrade stopped part-way — a crash, a lock, a copy
+  // that throws — leaves the old shape whole to be migrated on the next
+  // open, never a new empty ledger beside the old rows (§24.12).
+  transaction(db, () => {
+    // The added columns first, so an old accounts table has them before the
+    // schema's indexes and triggers are checked against it.
+    const has = (table) => db.prepare(
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?").get(table);
+    for (const [table, column, type] of ADDED) {
+      if (has(table) && !db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === column)) {
+        db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+      }
     }
-  }
-  const rebuilt = starglassLedger(db);
-  // Telemetry written before batching, a row an event: moved aside, and
-  // poured into batches of one once the schema stands.
-  const unbatched = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'").get();
-  if (unbatched) {
-    db.exec(`DROP INDEX IF EXISTS events_by_day; DROP INDEX IF EXISTS events_by_who;
-             ALTER TABLE events RENAME TO events_before_batches;`);
-  }
-  db.exec(SCHEMA);
-  if (unbatched) {
-    db.exec(`INSERT INTO event_batches (who, at, day, events)
-               SELECT who, at, day, json_array(json_object('kind', kind, 'data', json(data), 'at', at))
-                 FROM events_before_batches ORDER BY id;
-             DROP TABLE events_before_batches;`);
-  }
-  if (rebuilt) {
-    db.exec(`INSERT INTO ledger (id, account, currency, amount, reason, heist, at)
-               SELECT id, account, currency, amount, reason, heist, at FROM ledger_before_starglass;
-             DROP TABLE ledger_before_starglass;`);
-  }
+    const rebuilt = starglassLedger(db);
+    // Telemetry written before batching, a row an event: moved aside, and
+    // poured into batches of one once the schema stands.
+    const unbatched = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'").get();
+    if (unbatched) {
+      db.exec(`DROP INDEX IF EXISTS events_by_day; DROP INDEX IF EXISTS events_by_who;
+               ALTER TABLE events RENAME TO events_before_batches;`);
+    }
+    db.exec(SCHEMA);
+    if (unbatched) {
+      db.exec(`INSERT INTO event_batches (who, at, day, events)
+                 SELECT who, at, day, json_array(json_object('kind', kind, 'data', json(data), 'at', at))
+                   FROM events_before_batches ORDER BY id;
+               DROP TABLE events_before_batches;`);
+    }
+    if (rebuilt) {
+      db.exec(`INSERT INTO ledger (id, account, currency, amount, reason, heist, at)
+                 SELECT id, account, currency, amount, reason, heist, at FROM ledger_before_starglass;
+               DROP TABLE ledger_before_starglass;`);
+    }
+  });
   return db;
 }
 

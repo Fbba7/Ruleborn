@@ -5,11 +5,12 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { Refused } from "../src/service.mjs";
-import { lawsOf } from "../src/telemetry.mjs";
+import { SESSION_ENDS_A_DAY, WORTH_A_DAY, lawsOf } from "../src/telemetry.mjs";
 import { T0, openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 const DAY = 24 * 60 * 60 * 1000;
+const plusDays = (d, n) => new Date(Date.parse(d) + n * DAY).toISOString().slice(0, 10);
 const events = (t, kind) => t.service.db.prepare("SELECT * FROM events WHERE kind = ? ORDER BY batch").all(kind);
 
 test("the server records sessions, heists and purchases under a pseudonym, never the account (24, 20.5)", () => {
@@ -63,6 +64,101 @@ test("a device's batch is checked whole: known events, known fields, no position
   refusal(() => tel.batch(me, [{ kind: "worth", data: { rating: 4 } }, { kind: "worth", data: { rating: 0 } }]),
           "bad_field");
   assert.equal(events(t, "worth").length, 1);
+});
+
+test("an event's data is an object holding every field of its kind, and a kind is only its own (24.3)", () => {
+  const t = server();
+  const me = t.service.session("gc:strict").account;
+  const tel = t.service.telemetry;
+  for (const data of ["", 7, true, null, [], ["x"]]) {
+    refusal(() => tel.batch(me, [{ kind: "session_end", data }]), "bad_data");
+  }
+  refusal(() => tel.batch(me, [{ kind: "worth" }]), "bad_data");
+  refusal(() => tel.batch(me, [{ kind: "worth", data: {} }]), "missing_field");
+  refusal(() => tel.batch(me, [{ kind: "session_end", data: { seconds: 60 } }]), "missing_field");
+  for (const kind of ["constructor", "toString", "hasOwnProperty", "__proto__"]) {
+    refusal(() => tel.batch(me, [{ kind, data: {} }]), "no_such_event");
+  }
+  refusal(() => tel.batch(me, [{ kind: "worth", data: { rating: 4, toString: 1 } }]), "no_such_field");
+  refusal(() => tel.batch(me, JSON.parse('[{"kind":"worth","data":{"rating":4,"__proto__":1}}]')), "no_such_field");
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = ? AND kind != 'session'")
+    .get(tel.pseudonym(me)).n, 0, "none of it was written");
+  const day = new Date(T0).toISOString().slice(0, 10);
+  assert.doesNotThrow(() => tel.report({ from: day, to: day }));
+});
+
+test("a player rates every session, weighs once in the report, and a day's ratings and session ends are bounded (20.3, 25.3)", () => {
+  const t = server();
+  const tel = t.service.telemetry;
+  const honest = ["a", "b", "c"].map((n) => t.service.session(`gc:${n}`).account);
+  for (const p of honest) tel.batch(p, [{ kind: "worth", data: { rating: 2 } }]);
+  const me = t.service.session("gc:loud").account;
+  const worth = (rating, at) => ({ kind: "worth", data: { rating }, ...(at ? { at } : {}) });
+  refusal(() => tel.batch(me, Array(100).fill(worth(5))), "worth_too_often");
+  // An honest player's second session of the day rates again (§20.3).
+  tel.batch(me, [worth(5)]);
+  tel.batch(me, [worth(5)]);
+  tel.batch(me, Array(WORTH_A_DAY - 2).fill(worth(5)));
+  refusal(() => tel.batch(me, [worth(5)]), "worth_too_often");
+  // A queued rating for another day is that day's.
+  assert.deepEqual(tel.batch(me, [worth(5, T0 - DAY)]), { recorded: 1 });
+  const day = new Date(T0).toISOString().slice(0, 10);
+  assert.equal(tel.report({ from: day, to: day }).worth, (2 + 2 + 2 + 5) / 4);
+  t.clock.now += DAY;
+  assert.deepEqual(tel.batch(me, [worth(5)]), { recorded: 1 });
+
+  const end = { kind: "session_end", data: { seconds: 60, crashed: false } };
+  refusal(() => tel.batch(me, Array(SESSION_ENDS_A_DAY + 1).fill(end)), "too_many_session_ends");
+  assert.deepEqual(tel.batch(me, Array(SESSION_ENDS_A_DAY).fill(end)), { recorded: SESSION_ENDS_A_DAY });
+  refusal(() => tel.batch(me, [end]), "too_many_session_ends");
+  t.clock.now += DAY;
+  assert.deepEqual(tel.batch(me, [end]), { recorded: 1 });
+});
+
+test("the survey's quarter runs from when the server received it, however the device dates it (25.4)", () => {
+  const t = server();
+  const tel = t.service.telemetry;
+  const answers = Array(11).fill(4);
+  const survey = (at) => ({ kind: "survey", data: { answers }, at });
+  // Dated as far back as a queue may, or sent behind a week-old event.
+  const late = t.service.session("gc:late").account;
+  const queued = t.service.session("gc:queued").account;
+  tel.batch(late, [survey(T0 - 7 * DAY)]);
+  tel.batch(queued, [{ kind: "weave", data: { law: "tilt", realm: "heart" }, at: T0 - 7 * DAY + 1 }, survey(T0)]);
+  for (let d = 1; d < 90; d++) {
+    t.clock.now = T0 + d * DAY;
+    tel.compact();
+    for (const p of [late, queued]) {
+      refusal(() => tel.batch(p, [survey(t.clock.now - 7 * DAY)]), "survey_once_a_quarter");
+    }
+  }
+  t.clock.now = T0 + 90 * DAY + 1;
+  tel.compact();
+  for (const p of [late, queued]) assert.deepEqual(tel.batch(p, [survey(t.clock.now)]), { recorded: 1 });
+});
+
+test("compaction keeps a day whole, however a batch spans midnight (24.3)", () => {
+  const t = server();
+  const tel = t.service.telemetry;
+  const [a, b] = ["a", "b"].map((n) => t.service.session(`gc:${n}`).account);
+  const D = new Date(T0).toISOString().slice(0, 10);
+  const midnight = Date.parse(D);
+  t.clock.now = midnight + 2 * 60 * 60 * 1000;
+  tel.batch(a, [{ kind: "worth", data: { rating: 5 }, at: midnight - 60 * 60 * 1000 },
+                { kind: "worth", data: { rating: 1 }, at: midnight + 60 * 60 * 1000 }]);
+  tel.batch(b, [{ kind: "worth", data: { rating: 3 } }]);
+  assert.equal(tel.report({ from: D, to: D }).worth, 2);
+  // Day D - 1 is past the raw window, day D is not: D's raw events are all still there.
+  t.clock.now = midnight + 90 * DAY + 60 * 60 * 1000;
+  tel.compact();
+  assert.equal(tel.report({ from: D, to: D }).worth, 2);
+  const counted = (d) => t.service.db.prepare("SELECT events, players FROM event_days WHERE day = ? AND kind = 'worth'").get(d);
+  assert.deepEqual({ ...counted(plusDays(D, -1)) }, { events: 1, players: 1 });
+  assert.equal(counted(D), undefined);
+  t.clock.now += DAY;
+  tel.compact();
+  assert.deepEqual({ ...counted(D) }, { events: 2, players: 2 }, "both of D's raters, counted together");
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM events WHERE kind = 'worth'").get().n, 0);
 });
 
 test("a player answers the survey at most once a quarter (25.4)", () => {
@@ -179,4 +275,12 @@ test("telemetry written a row an event, before batching, is kept as batches of o
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test("an event kind is a string: an array naming one is refused, not counted past the caps", () => {
+  const t = server();
+  const me = t.service.session("gc:sly").account;
+  refusal(() => t.service.telemetry.batch(me, [{ kind: ["survey"], data: { answers: Array(11).fill(1) } }]),
+          "no_such_event");
+  refusal(() => t.service.telemetry.batch(me, [{ kind: ["worth"], data: { rating: 5 } }]), "no_such_event");
 });

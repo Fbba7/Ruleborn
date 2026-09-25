@@ -25,6 +25,13 @@ const DAY_MS = 24 * HOUR_MS;
 
 const [RENOWN_WINDOW, KEEPER_WINDOW] = facts.MATCH_WINDOW;
 
+/** A heist that raided a player (§12.3), as SQL on its lease `l`: a raid on
+ *  a current island, not an echo, which "takes nothing from its owner", nor
+ *  §12.11's friendly heist or §17.6's challenge ("the friend loses
+ *  nothing"), nor §13.1's seeded islands, "the game's own" (G30). */
+const RAIDED = `l.mode = 'raid' AND l.echo = 0
+  AND NOT EXISTS (SELECT 1 FROM accounts d WHERE d.id = l.defender AND d.seeded = 1)`;
+
 /**
  * The raider-success band a target is judged against, as fractions.
  * §12.22: "Every island carries its origin, authored or generated, and is
@@ -104,8 +111,9 @@ export class Matchmaking {
   /** One validated heist, its own rating period for both sides: the raider
    *  scores 1 unless foiled (G30). */
   settle(lease, realm, verdict, now) {
-    const island = this.islandRating(lease.defender, realm);
-    if (!island) return null;
+    // An island published before there were ratings enters at its prior.
+    const island = this.islandRating(lease.defender, realm) ?? { ...prior(this.db.prepare(
+      "SELECT realm_level FROM snapshots WHERE bundle = ?").get(lease.bundle).realm_level), games: 0 };
     const raider = this.raiderRating(lease.attacker);
     const score = verdict.grade === "foiled" ? 0 : 1;
     const r = update(raider, [{ opponent: island, score }]);
@@ -135,17 +143,18 @@ export class Matchmaking {
     const a = this.db.prepare("SELECT created_at, seeded FROM accounts WHERE id = ?").get(account);
     if (!a || a.seeded || now - a.created_at >= facts.NEW_PLAYER_SHIELD_HOURS * HOUR_MS) return false;
     const raided = this.db.prepare(
-      "SELECT 1 FROM heists WHERE attacker = ? AND validated = 1 LIMIT 1").get(account);
+      `SELECT 1 FROM heists h JOIN leases l ON l.token = h.token
+        WHERE h.attacker = ? AND h.validated = 1 AND ${RAIDED} LIMIT 1`).get(account);
     return !raided;
   }
 
   /** §12.3's Trace: "within 24 hours of being robbed, a player can target
-   *  the raider once, with a free scout and no entry fee". Robbed: a heist
-   *  that was not foiled. The heist it answers, or null. */
+   *  the raider once, with a free scout and no entry fee". Robbed: a raid
+   *  on their island that was not foiled. The heist it answers, or null. */
   traceable(account, raider, now = this.service.now()) {
     return this.db.prepare(
       `SELECT h.token FROM heists h JOIN leases l ON l.token = h.token
-        WHERE l.attacker = ? AND l.defender = ? AND h.validated = 1
+        WHERE h.attacker = ? AND l.defender = ? AND h.validated = 1 AND ${RAIDED}
           AND json_extract(h.outcome, '$.verdict.grade') != 'foiled'
           AND h.submitted_at > ?
           AND NOT EXISTS (SELECT 1 FROM leases t WHERE t.trace_of = h.token)
@@ -182,7 +191,8 @@ export class Matchmaking {
     };
     return [
       ...live.filter((r) => !this.shielded(r.owner, now)).map((r) => view(r, false)),
-      ...echoes.map((r) => view(r, true)),
+      // The protection covers a new player's echoes too (G30).
+      ...echoes.filter((r) => !this.shielded(r.owner, now)).map((r) => view(r, true)),
     ];
   }
 
@@ -194,6 +204,9 @@ export class Matchmaking {
       renown: this.service.seasons.league(account, now).renown,
       keeperLevel: this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(account).keeper_level,
       recent: this.recentSuccess(account),
+      // A bundle is one snapshot however many players publish it: one they
+      // hold is their own island.
+      bundles: this.db.prepare("SELECT bundle FROM islands WHERE owner = ?").all(account).map((r) => r.bundle),
     };
   }
 }
@@ -211,7 +224,8 @@ export class Matchmaking {
  * the list says when it widened.
  */
 export function offer(raider, candidates, { size = 3 } = {}) {
-  const others = candidates.filter((c) => c.owner !== raider.account);
+  const own = new Set(raider.bundles ?? []);
+  const others = candidates.filter((c) => c.owner !== raider.account && !own.has(c.bundle));
   const predicted = (c) => expected(raider, c);
   const inBand = (c) => {
     const [lo, hi] = successBand(c.realmLevel, c.origin);
@@ -241,7 +255,8 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   }
   // Step 3: by predicted success, easiest first; the middle from the band.
   const sorted = pool.map((c) => ({ ...c, predicted: predicted(c) }))
-    .sort((a, b) => b.predicted - a.predicted || (a.bundle < b.bundle ? -1 : 1));
+    .sort((a, b) => b.predicted - a.predicted || (a.bundle < b.bundle ? -1 : a.bundle > b.bundle ? 1 : 0)
+      || (a.owner < b.owner ? -1 : a.owner > b.owner ? 1 : 0));
   const banded = sorted.filter(inBand);
   const centre = (c) => {
     const [lo, hi] = successBand(c.realmLevel, c.origin);
@@ -258,5 +273,10 @@ export function offer(raider, candidates, { size = 3 } = {}) {
     list = [...easier, middle, ...harder];
     while (list.length < size && more.length) list.unshift(more.shift());
   }
-  return { targets: list.slice(0, size), guaranteed: Boolean(middle), echoes, widened };
+  const targets = list.slice(0, size);
+  // Guaranteed only when the list's middle entry sits in the band: when
+  // `middle` is the easiest or hardest there is, a neighbour takes the
+  // middle (§12.22 step 4: never "silently unfair").
+  const median = targets[Math.floor(targets.length / 2)];
+  return { targets, guaranteed: Boolean(median) && inBand(median), echoes, widened };
 }

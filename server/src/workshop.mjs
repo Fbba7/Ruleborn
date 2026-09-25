@@ -15,6 +15,7 @@ import { readFileSync } from "node:fs";
 import { transaction } from "./db.mjs";
 import { readHeader } from "./sim.mjs";
 import { Refused, clockTicks } from "./service.mjs";
+import { Social } from "./social.mjs";
 import { sha256 } from "./store.mjs";
 
 export const WORDS = JSON.parse(readFileSync(new URL("./words.json", import.meta.url), "utf8"));
@@ -253,8 +254,9 @@ export class Workshop {
   /**
    * A play, submitted and re-simulated. A clear by anyone but the creator is
    * a completion, counted once a player (§18.7), and at a quarter from the
-   * creator's own constellation. Idempotent, like a heist: the token keys the
-   * answer.
+   * creator's own constellation — one the two shared at any time since the
+   * item was published, so leaving to complete it and coming back does not
+   * escape the quarter. Idempotent, like a heist: the token keys the answer.
    */
   submitPlay(player, token, replay) {
     const play = this.db.prepare("SELECT * FROM workshop_plays WHERE token = ?").get(token);
@@ -280,12 +282,15 @@ export class Workshop {
     return transaction(this.db, () => {
       if (outcome.cleared && player !== item.creator) {
         // §18.7: "completions from a creator's own constellation count at a
-        // quarter" — the constellation both are in when it is completed.
+        // quarter" — any constellation both were in together in the item's
+        // life, the two memberships overlapping each other and it.
         const kin = this.db.prepare(
           `SELECT 1 FROM constellation_members a JOIN constellation_members b
              ON a.constellation = b.constellation
-            WHERE a.account = ? AND b.account = ? AND a.left_at IS NULL AND b.left_at IS NULL`)
-          .get(player, item.creator);
+            WHERE a.account = :player AND b.account = :creator
+              AND (a.left_at IS NULL OR a.left_at > MAX(b.joined_at, :published))
+              AND (b.left_at IS NULL OR b.left_at > MAX(a.joined_at, :published))`)
+          .get({ player, creator: item.creator, published: item.published_at });
         const fresh = this.db.prepare(
           `INSERT OR IGNORE INTO workshop_completions (item, player, weight, at)
            VALUES (?, ?, ?, ?)`).run(item.id, player, kin ? 0.25 : 1, now).changes;
@@ -437,11 +442,19 @@ export class Workshop {
 
   /** A ban: the account can no longer sign in, and its islands leave the
    *  Workshop and the target lists at once (§20.12). The minimum to enforce
-   *  it is kept: the account row and its platform identity. */
+   *  it is kept: the account row and its platform identity. As on a
+   *  deletion, its challenge links are void and it leaves its constellation
+   *  — a founder handing it on (§17.7) — and its crew; in the caller's
+   *  transaction. */
   ban(account, reason, now = this.now()) {
     this.db.prepare(
       "UPDATE accounts SET banned_at = ?, banned_reason = ? WHERE id = ? AND banned_at IS NULL")
       .run(now, reason, account);
+    this.db.prepare("DELETE FROM challenges WHERE account = ?").run(account);
+    const social = new Social(this.service);
+    const m = social.membership(account);
+    if (m) social.depart(m);
+    if (social.crewOf(account)) social.leaveCrew(account);
   }
 
   /** §18.6: "featured islands are reviewed by a person" — a moderator puts an

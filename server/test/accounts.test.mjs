@@ -54,6 +54,37 @@ test("deleting an account takes the person out of everything, and keeps the reco
   assert.deepEqual(deleteAccount(t.service, gone).islands, 0, "asking again finishes, and changes nothing");
 });
 
+test("a deletion is all or nothing: one stopped in its group places can be asked for again (20.5)", async () => {
+  const t = twoPlayers(true);
+  const gone = t.defender.account;
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6").run();
+  const social = new Social(t.service);
+  const c = social.found(gone, { adjective: 1, noun: 1 });
+  social.join(t.raider.account, c.id);
+  social.startCrew(gone);
+  // The last write fails, as a full disk would.
+  t.service.db.exec(`CREATE TRIGGER fail BEFORE UPDATE ON crew_members
+                       BEGIN SELECT RAISE(ABORT, 'disk full'); END`);
+  // The edge answers an unexpected failure 500 and keeps serving (C26).
+  assert.equal((await call(t, "DELETE", "/v1/account", { token: t.defender.token })).status, 500);
+  assert.equal(t.service.account(t.defender.token), gone, "nothing was done, so the token still works");
+  assert.equal(social.membership(gone).role, "founder");
+  t.service.db.exec("DROP TRIGGER fail");
+  assert.equal((await call(t, "DELETE", "/v1/account", { token: t.defender.token })).status, 200);
+  assert.deepEqual(social.constellation(c.id).members.map((m) => [m.account, m.role]),
+                   [[t.raider.account, "founder"]], "handed on, in the same transaction");
+  assert.equal(social.crewOf(gone), null);
+});
+
+test("a banned player's deletion keeps the ban on their identity (20.12)", () => {
+  const t = twoPlayers(true);
+  new Workshop(t.service).ban(t.raider.account, "cheating");
+  refusal(() => t.service.session("gc:raider"), "banned");
+  assert.equal(deleteAccount(t.service, t.raider.account).deleted, true);
+  refusal(() => t.service.session("gc:raider"), "banned");
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM accounts").get().n, 2, "no fresh account");
+});
+
 test("a player who turns out to be under 13 is deleted at once (20.11)", async () => {
   const t = twoPlayers(true);
   const res = await call(t, "PUT", "/v1/age", { token: t.defender.token, json: { band: "under-13" } });

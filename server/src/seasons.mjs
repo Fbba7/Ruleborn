@@ -214,8 +214,9 @@ export class Seasons {
    * §13.1's weekly measure, taken over a season's last seven days: the
    * "Share of active players who changed their defence in the last 7 days".
    * Active is a session in that week; changing a defence is publishing an
-   * island. Seeded accounts are the game's, and not counted (G31). Null
-   * when nobody was active.
+   * island — a new snapshot, or an island moved to one already stored, as a
+   * revert or a copy is. Seeded accounts are the game's, and not counted
+   * (G31). Null when nobody was active.
    */
   defenceMeasure(end) {
     const since = end - 7 * DAY_MS;
@@ -227,7 +228,8 @@ export class Seasons {
     }
     if (active.size === 0) return null;
     const changed = this.db.prepare(
-      "SELECT DISTINCT owner FROM snapshots WHERE published_at > ? AND published_at <= ?").all(since, end)
+      `SELECT owner FROM snapshots WHERE published_at > :since AND published_at <= :end
+       UNION SELECT owner FROM islands WHERE changed_at > :since AND changed_at <= :end`).all({ since, end })
       .map((r) => this.service.telemetry.pseudonym(r.owner)).filter((w) => active.has(w));
     return (100 * changed.length) / active.size;
   }
@@ -258,14 +260,16 @@ export class Seasons {
 
   /** §17.5's constellation league: "ranked by members' combined Renown and
    *  anomaly scores". Anomalies are not built, so it is Renown alone (D63),
-   *  over the members at the season's close. */
+   *  over the members at the season's close — its end, not the rollover's
+   *  run, so nobody moves their final Renown once it is known. */
   rankConstellations(season) {
+    const { ends_at: ends } = this.db.prepare("SELECT ends_at FROM seasons WHERE id = ?").get(season);
     const rows = this.db.prepare(
       `SELECT m.constellation, COALESCE(SUM(r.renown), 0) AS renown
          FROM constellation_members m
-         LEFT JOIN season_results r ON r.account = m.account AND r.season = ?
-        WHERE m.left_at IS NULL
-        GROUP BY m.constellation ORDER BY renown DESC, m.constellation`).all(season);
+         LEFT JOIN season_results r ON r.account = m.account AND r.season = :season
+        WHERE m.joined_at <= :ends AND (m.left_at IS NULL OR m.left_at > :ends)
+        GROUP BY m.constellation ORDER BY renown DESC, m.constellation`).all({ season, ends });
     rows.forEach((r, i) => this.db.prepare(
       "INSERT INTO constellation_results (season, constellation, renown, place) VALUES (?, ?, ?, ?)")
       .run(season, r.constellation, Number(r.renown), i + 1));

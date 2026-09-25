@@ -125,6 +125,9 @@ test("a constellation: the Beacon from Keeper level 6, thirty Keepers, a founder
   const [founder, ...rest] = t.players;
   const low = t.service.session("gc:new").account;
   refusal(() => t.social.found(low, { adjective: 0, noun: 0 }), "keeper_level_too_low");
+  for (const name of [{ adjective: -1, noun: 0 }, { adjective: 0, noun: 99999 }]) {
+    refusal(() => t.social.found(founder, name), "name_not_from_the_word_lists");
+  }
   const c = t.social.found(founder, { adjective: 7, noun: 2 });
   assert.equal(c.name.en, "Crooked Harbour");
   refusal(() => t.social.found(founder, { adjective: 0, noun: 0 }), "already_in_a_constellation");
@@ -157,6 +160,50 @@ test("the constellation league ranks by members' combined Renown at the season's
                    [[two.id, 400, 1], [one.id, 150, 2]]);
 });
 
+test("a constellation its last member leaves is closed: nobody takes it over without a founder (17.1)", () => {
+  const t = beacon(2);
+  const [founder, other] = t.players;
+  const c = t.social.found(founder, { adjective: 0, noun: 0 });
+  t.social.leave(founder);
+  refusal(() => t.social.join(other, c.id), "constellation_closed");
+  refusal(() => t.social.join(founder, c.id), "constellation_closed");
+  assert.deepEqual(t.social.constellation(c.id).members, []);
+});
+
+test("the constellation league counts members at the season's end, not at the rollover's run (17.5)", () => {
+  const t = beacon(3);
+  const [a, b, c] = t.players;
+  const one = t.social.found(a, { adjective: 0, noun: 0 });
+  t.social.join(b, one.id);
+  const two = t.social.found(c, { adjective: 1, noun: 1 });
+  startAt(t, a, 100);
+  startAt(t, b, 500);
+  startAt(t, c, 200);
+  // The season is over, its Renown final, and the rollover not yet run.
+  t.clock.now = T0 + SEASON_MS + 1;
+  t.social.leave(b);
+  t.social.join(b, two.id);
+  t.service.seasons.rollover();
+  assert.deepEqual(t.service.seasons.constellationTable(1).map((r) => [r.constellation, r.renown, r.place]),
+                   [[one.id, 600, 1], [two.id, 200, 2]]);
+});
+
+test("a ban takes the player out of their constellation, handing it on, and out of their crew (20.12)", () => {
+  const t = beacon(3);
+  const [founder, elder, member] = t.players;
+  const c = t.social.found(founder, { adjective: 0, noun: 0 });
+  t.social.join(elder, c.id);
+  t.social.join(member, c.id);
+  t.social.appoint(founder, elder, "elder");
+  const crew = t.social.startCrew(founder);
+  t.social.joinCrew(member, crew.invite);
+  new Workshop(t.service).ban(founder, "offensive");
+  assert.deepEqual(t.social.constellation(c.id).members.map((m) => [m.account, m.role]),
+                   [[elder, "founder"], [member, "member"]]);
+  t.social.appoint(elder, member, "elder");
+  assert.deepEqual(t.social.crew(crew.id).members.map((m) => m.account), [member]);
+});
+
 test("a crew is four to eight, joined by its invite, and survives its founder leaving (17.7)", () => {
   const t = beacon(10);
   const [first, ...rest] = t.players;
@@ -187,6 +234,37 @@ test("a Workshop completion from the creator's own constellation counts at a qua
       { seed: BigInt(run.seed), ticks: run.ticks, crew: 3, commands: openPlan() }));
   }
   assert.equal(w.view(w.row(id)).completions, 1.25, "the stranger's whole, the kin's a quarter");
+});
+
+test("leaving the constellation to complete an island, and coming back, still counts a quarter (18.7)", () => {
+  const t = beacon(4);
+  const [creator, kin, other, stranger] = t.players;
+  const c = t.social.found(creator, { adjective: 0, noun: 0 });
+  t.social.join(kin, c.id);
+  t.social.join(other, c.id);
+  const w = new Workshop(t.service);
+  const island = t.build.exampleIsland(true);
+  const cleared = t.build.record(island, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() });
+  const { id } = w.publish(creator, island, cleared, { adjective: 0, noun: 0 });
+  const complete = (p) => {
+    const run = w.play(p, id);
+    return w.submitPlay(p, run.token, t.build.record(t.service.bundle(run.bundle),
+      { seed: BigInt(run.seed), ticks: run.ticks, crew: 3, commands: openPlan() }));
+  };
+  t.clock.now += 60_000;
+  t.social.leave(kin);                                 // the kin steps out …
+  t.clock.now += 60_000;
+  assert.equal(complete(kin).counted, true);
+  t.social.join(kin, c.id);                            // … and back
+  // The creator steps out instead, and a mate completes it meanwhile.
+  t.clock.now += 60_000;
+  t.social.leave(creator);
+  t.clock.now += 60_000;
+  complete(other);
+  // A Keeper who joins only after the creator has gone never shared it.
+  t.social.join(stranger, c.id);
+  complete(stranger);
+  assert.equal(w.view(w.row(id)).completions, 1.5, "two quarters and the stranger's whole");
 });
 
 test("leagues, constellations and crews over HTTP", async () => {

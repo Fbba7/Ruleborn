@@ -764,7 +764,18 @@ dict(
                     "are built (F48, G35). \u00a718.3's eras run: the week's "
                     "era is on every lease, travels in the replay's header, is "
                     "first on the simulation's rule sheet and part of the rules "
-                    "version (F49, G36, D69)."
+                    "version (F49, G36, D69).<br><br>An adversarial review of "
+                    "everything built since the leagues \u2014 102 agents, each "
+                    "finding tried by two independent skeptics \u2014 confirmed 35 "
+                    "defects, and all are fixed with a test each: a StoreKit "
+                    "receipt accepted from any certificate under a pinned root; "
+                    "foiled heists minting a colluding defender currency and "
+                    "stars without end (G37); a malformed body crashing the "
+                    "server; a banned player escaping by deleting their "
+                    "account; a migration able to lose every balance; any realm "
+                    "name taking unlimited islands into matchmaking; reminders "
+                    "in a minor's night; and smaller ones in the shield, Trace, "
+                    "offers, telemetry, constellations and deletion."
                     "<br><br><strong>Not yet:</strong> Google Play's sign-in "
                     "and receipts (need Google's API), crossing realms, \u00a712.22's generated "
                     "fallback targets, and a landing command in the replay.",
@@ -774,7 +785,8 @@ dict(
                        "F40", "G27", "D63", "F41", "F42", "G28", "D64",
                        "G29", "D65", "F43", "F44", "F45", "G30", "D66",
                        "G31", "F46", "G32", "D67", "F47", "G33",
-                       "G34", "D68", "F48", "G35", "F49", "G36", "D69"]),
+                       "G34", "D68", "F48", "G35", "F49", "G36", "D69",
+                       "G37"]),
         dict(id="T3.4", owner="claude", status="doing",
              title="The client's half: the simulation inside Godot, and a "
                    "replay on screen",

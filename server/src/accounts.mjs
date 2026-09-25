@@ -13,17 +13,19 @@
 // group and matchmaking pool — and the records that are about heists,
 // money and islands stay, keyed by an account id that no longer leads to
 // anyone. Their Workshop islands are withdrawn, not deleted, so a remix
-// still names its original.
+// still names its original. A banned account keeps its platform identity:
+// §20.12's "The minimum identifiers needed to enforce the ban are kept", so
+// deleting it is no way back in.
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
-import { Social } from "./social.mjs";
 
 export const REASONS = ["requested", "under-13"];
 
 /**
- * Delete an account. Idempotent: a deletion interrupted part-way finishes
- * when asked again. Returns what was done.
+ * Delete an account, in one transaction: all of it or none of it, so a
+ * deletion that fails can be asked for again. Idempotent. Returns what was
+ * done.
  */
 export function deleteAccount(service, account, reason = "requested") {
   if (!REASONS.includes(reason)) throw new Refused(400, "no_such_reason");
@@ -34,7 +36,8 @@ export function deleteAccount(service, account, reason = "requested") {
   const who = service.telemetry.pseudonym(account);
   const done = transaction(db, () => {
     db.prepare(
-      `UPDATE accounts SET platform_identity = ?, deleted_at = COALESCE(deleted_at, ?),
+      `UPDATE accounts SET platform_identity = CASE WHEN banned_at IS NULL THEN ? ELSE platform_identity END,
+         deleted_at = COALESCE(deleted_at, ?),
          deleted_reason = COALESCE(deleted_reason, ?), equipped = '{}', push_token = NULL,
          reminder_at = NULL WHERE id = ?`)
       .run(`deleted:${account}`, now, reason, account);
@@ -53,13 +56,31 @@ export function deleteAccount(service, account, reason = "requested") {
     db.prepare("DELETE FROM friends WHERE a = ? OR b = ?").run(account, account);
     db.prepare("DELETE FROM friend_invites WHERE account = ?").run(account);
     db.prepare("DELETE FROM challenges WHERE account = ?").run(account);
-    return { islands: Number(islands), withdrawn: Number(withdrawn), events: Number(events) };
+    // Their groups, as Social.leave and leaveCrew do, but inside this
+    // transaction: a founder hands the constellation on — to the
+    // longest-standing elder, else the longest-standing member (§17.7).
+    const left = [];
+    const m = db.prepare(
+      "SELECT * FROM constellation_members WHERE account = ? AND left_at IS NULL").get(account);
+    if (m) {
+      db.prepare("UPDATE constellation_members SET left_at = ? WHERE account = ? AND left_at IS NULL")
+        .run(now, account);
+      if (m.role === "founder") {
+        db.prepare(
+          `UPDATE constellation_members SET role = 'founder' WHERE rowid = (
+             SELECT rowid FROM constellation_members WHERE constellation = ? AND left_at IS NULL
+              ORDER BY role = 'elder' DESC, joined_at, rowid LIMIT 1)`).run(m.constellation);
+      }
+      left.push(m.constellation);
+    }
+    const crew = db.prepare(
+      "SELECT crew FROM crew_members WHERE account = ? AND left_at IS NULL").get(account)?.crew;
+    if (crew) {
+      db.prepare("UPDATE crew_members SET left_at = ? WHERE account = ? AND left_at IS NULL")
+        .run(now, account);
+      left.push(crew);
+    }
+    return { islands: Number(islands), withdrawn: Number(withdrawn), events: Number(events), left };
   });
-  // Groups last, each in its own transaction: a founder hands the
-  // constellation on as on any leaving (§17.7).
-  const social = new Social(service);
-  const left = [];
-  if (social.membership(account)) left.push(social.leave(account).left);
-  if (social.crewOf(account)) left.push(social.leaveCrew(account).left);
-  return { deleted: true, reason: row.deleted_reason ?? reason, ...done, left };
+  return { deleted: true, reason: row.deleted_reason ?? reason, ...done };
 }
