@@ -193,7 +193,8 @@ DELIVERABLES = [
         "The tick and its checksum")),
     ("1", "Crews", BACKEND, systems(
         "Tile grid", "Pathfinding", "Crew control", "Roles and gaits", "The Vault and loading",
-        "Fights, knockouts and capture", "The skiff, the clock and the outcome", "Height")),
+        "Fights, knockouts and capture", "The skiff, the clock and the outcome", "Landing",
+        "Height")),
     ("1", "Stealth", BACKEND, systems(
         "Line of sight", "Noise", "Guard states", "Realm alarm", "Detection modifiers", "Wards")),
     ("1", "The law engine", BACKEND, launch_laws_simulated()),
@@ -219,7 +220,8 @@ DELIVERABLES = [
         "every tap on the heist screen makes the one command it names, stamped with the tick it was made",
         "a tap on a guard, the Vault, a pylon or a ward makes the command it calls for, and the gait button cycles walk, crouch, run",
         "a heist played live on the heist screen records the golden replay byte for byte, and the server's check grades it Clean",
-        "a replay whose last checksum was altered is refused, as the server would refuse it")),
+        "a replay whose last checksum was altered is refused, as the server would refuse it",
+        "the crew lands together on the open edge tile the player chose, recorded at tick 0 (5.4)")),
     ("3", "Show a result", FRONTEND, client_tests(
         "the result screen shows the validator's verdict: the re-simulation's grade, or nothing paid when refused",
         "a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server")),
@@ -251,7 +253,8 @@ DELIVERABLES = [
     ("6", "The validator", BACKEND, server_tests(
         "a planned clean heist is re-simulated, and its haul minted with the fee returned",
         "a replay that does not reproduce pays nothing, takes nothing, and is flagged (§24.12)",
-        "a replay must be the heist its lease allowed: the snapshot, the seed, the clock")),
+        "a replay must be the heist its lease allowed: the snapshot, the seed, the clock",
+        "a crew that never lands is refused and pays nothing (5.4)")),
     ("6", "Target lists", BACKEND, server_tests(
         "target lists are files, one a band, holding every island's current snapshot (§24.8)",
         "an unchanged band regenerates to the same file, so the edge keeps its cache")),

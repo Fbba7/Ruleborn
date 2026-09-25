@@ -166,15 +166,15 @@
   <header>
     <p class="eyebrow">Ruleborn &middot; the owner&rsquo;s decisions</p>
     <h1>Decisions waiting on you</h1>
-    <p class="lede">These 42 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39&#x27;s fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36&#x27;s base haul (2,400, 2,900 or 4,600) moves with each of them and F39&#x27;s fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. Four items keep the build&#x27;s reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.</p>
+    <p class="lede">These 43 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39&#x27;s fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36&#x27;s base haul (2,400, 2,900 or 4,600) moves with each of them and F39&#x27;s fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4&#x27;s open edge is a rule or a hope. Four items keep the build&#x27;s reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.</p>
     <div class="summary">
-      <div><span class="n">42</span><span class="k">decisions</span></div>
+      <div><span class="n">43</span><span class="k">decisions</span></div>
       <div><span class="n" id="n-answered">0</span><span class="k">answered</span></div>
       <div><span class="n">4</span><span class="k">safe to accept as recommended</span></div>
       <div><span class="n">21</span><span class="k">places two answers collide</span></div>
     </div>
     <div class="bar" aria-hidden="true"><span id="bar"></span></div>
-    <p class="notice" id="notice">3 design &middot; 18 significant &middot; 21 minor. Each card below is one register item, in the order to decide
+    <p class="notice" id="notice">3 design &middot; 19 significant &middot; 21 minor. Each card below is one register item, in the order to decide
       them. Pick an option and it is saved at once; add a note where the option needs a number or a
       condition. The register itself does not change until Claude reads your answers back.</p>
   </header>
@@ -3083,6 +3083,68 @@ The honest cost of B is that the document must say plainly that a non-raider pla
           <button type="button" class="btn save-note" data-id="G34" disabled>Save note</button>
           <button type="button" class="btn ghost clear" data-id="G34" disabled>Clear answer</button>
           <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#G34" target="_blank" rel="noopener">Register entry</a>
+        </div>
+      </div>
+    </article>
+    <article class="decision" id="F51" data-id="F51" data-tier="significant"
+             data-rec="B" data-quick="no" data-answered="no">
+      <header class="dh">
+        <span class="step" title="Decide in this order">43</span>
+        <span class="did">F51</span>
+        <span class="tier t-significant">Significant</span>
+        <span class="topic">§5 Your universe</span>
+        <span class="state" id="st-F51">Not answered</span>
+      </header>
+      <h3 class="q">What keeps a realm&#x27;s edge open to land on, so that a Keeper cannot funnel every crew through one tile?</h3>
+      <p class="why">§5.4 makes open landing a pillar (&#x27;Defenders can&#x27;t choose where raiders come from&#x27;), but the only edge rule in §6.1 protects the last route, not the edge. A realm ringed with blocking terrain and one gap publishes today, and its gap is the landing every crew must take, guarded by whatever stands beside it. That is the &#x27;one guarded gate&#x27; §5.4 says the game does not have, and it changes what the hold rates in §13.2 measure.</p>
+      <details class="today"><summary>What the build does today</summary><p>sim/src/island.rs check() requires one open edge tile (LandingBlocked) and a walkable route from some open edge tile to the Vault (Sealed). Island::landings() lists the open edge tiles; the simulation drops a landing anywhere else and verify_on refuses a heist that never lands. Nothing counts how many edge tiles are open.</p></details>
+      <fieldset class="opts" aria-label="Options for F51">
+        <label class="opt" for="o-F51-A">
+          <input type="radio" name="o-F51" id="o-F51-A" value="A" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">A</span>
+              <span class="ol">No blocking terrain on the edge</span></span>
+            <span class="om">No blocking feature and no Crystal Wall may stand on an edge tile, so every edge tile of a realm is a landing.</span>
+            <span class="oc">Landing is fully open, as §5.4 describes. A Keeper defends the edge only with what does not block: tall grass, fog, light, wards on open ground, guards and laws. &#x27;Cliffs … along every edge&#x27; in §5.4&#x27;s own reasoning has to go or become inland.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Every edge tile open: 36 at realm level 1 (10 by 10) up to 52 at level 5 (14 by 14), 4 × side − 4.</dd></div><div class="od"><dt>Document edit</dt><dd>§5.4 &#x27;Landing&#x27; row: add &#x27;No blocking terrain or Crystal Wall stands on an edge tile.&#x27; §6.1: the same rule beside the route rule.</dd></div><div class="od"><dt>Build change</dt><dd>island.rs check(): a new Problem, EdgeClosed, for any blocking feature or Crystal Wall on an edge tile; the builder shows it.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt is-rec" for="o-F51-B">
+          <input type="radio" name="o-F51" id="o-F51-B" value="B" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">B</span>
+              <span class="ol">At least half of each side open</span><span class="rec-tag">Recommended</span></span>
+            <span class="om">Each of a realm&#x27;s four sides keeps at least half of its tiles open to land on, counting Crystal Walls as closed.</span>
+            <span class="oc">Cliffs and walls along the edge stay a tool, as §5.4&#x27;s &#x27;cliffs, tall grass, lantern light and laws along every edge&#x27; wants, but no side can be sealed and no single tile can become the gate. A Keeper still shapes where landing is easy.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>At realm level 1 each side of 10 keeps 5 open, 20 landings at least; at level 5 each side of 14 keeps 7, 28 at least.</dd></div><div class="od"><dt>Document edit</dt><dd>§5.4 &#x27;Landing&#x27; row: add &#x27;Each side of a realm keeps at least half its edge tiles open to land on.&#x27; §6.1: cite it beside the route rule.</dd></div><div class="od"><dt>Build change</dt><dd>island.rs check(): a new Problem, EdgeClosed, when any side has fewer than half its tiles open, with every Crystal Wall standing.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-F51-C">
+          <input type="radio" name="o-F51" id="o-F51-C" value="C" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">C</span>
+              <span class="ol">Keep the build&#x27;s rule</span></span>
+            <span class="om">One open edge tile and a route from some open edge tile to the Vault, which is all §6.1 asks.</span>
+            <span class="oc">A Keeper may wall the whole edge but one tile and choose where every crew lands. §5.4&#x27;s &#x27;Why open landing&#x27; then describes something the rules do not guarantee.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>As few as 1 landing tile at any realm level.</dd></div><div class="od"><dt>Document edit</dt><dd>§5.4 &#x27;Why open landing&#x27;: say the edge is open unless the Keeper closes it, and that a realm may have one gate.</dd></div><div class="od"><dt>Build change</dt><dd>None.</dd></div></dl></details>
+          </span>
+        </label>
+      </fieldset>
+      <div class="recbox">
+        <p><span class="lab">Recommended: B, At least half of each side open</span>
+          <span class="conf c-medium">medium confidence</span></p>
+        <p class="rr">It is the smallest rule that makes §5.4&#x27;s promise true: no side sealed and no single gate, while cliffs along the edge, which §5.4 names as defence, stay possible. A removes a tool the document wants; C contradicts the section&#x27;s own reason for open landing.</p>
+        
+      </div>
+      <p class="also"><span class="lab">Also needed</span> Whether a climbable cliff counts as open for landing; the build treats only walkable tiles as landings.</p><p class="inter"><span class="lab">Weigh with</span> <a href="#G40">G40</a>, <a href="#D71">D71</a></p>
+      <details class="quotes"><summary>What the document says</summary><ul><li><span class="qs">&sect;5.4</span> <q>Defenders can&#x27;t choose where raiders come from; they can only make every edge a puzzle.</q></li><li><span class="qs">&sect;5.4</span> <q>cliffs, tall grass, lantern light and laws along every edge</q></li><li><span class="qs">&sect;5.4</span> <q>not one guarded gate</q></li><li><span class="qs">&sect;6.1</span> <q>terrain can lengthen routes but never close the last route from the edges to the Heart</q></li></ul></details>
+      <div class="notebox">
+        <label for="n-F51">Note for Claude (optional)</label>
+        <textarea id="n-F51" rows="2" placeholder="A number, a condition, or why" disabled></textarea>
+        <div class="nb">
+          <button type="button" class="btn save-note" data-id="F51" disabled>Save note</button>
+          <button type="button" class="btn ghost clear" data-id="F51" disabled>Clear answer</button>
+          <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#F51" target="_blank" rel="noopener">Register entry</a>
         </div>
       </div>
     </article>

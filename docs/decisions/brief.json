@@ -1,6 +1,6 @@
 {
  "_what": "The owner's decision brief: one entry per open register item waiting on the owner's decision, with its question, options, what the build does today, a recommendation and quotes from the design document; then the order to decide in, the groups that share one choice, the conflicts between answers and the ones safe to accept as recommended. Drafted, checked from two sides and merged by a multi-agent pass; tools/build_brief.py renders it and --check holds it to the register and the document.",
- "summary": "These 42 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39's fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36's base haul (2,400, 2,900 or 4,600) moves with each of them and F39's fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. Four items keep the build's reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.",
+ "summary": "These 43 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39's fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36's base haul (2,400, 2,900 or 4,600) moves with each of them and F39's fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4's open edge is a rule or a hope. Four items keep the build's reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.",
  "order": [
   "F33",
   "F35",
@@ -43,7 +43,8 @@
   "G29",
   "G38",
   "G35",
-  "G34"
+  "G34",
+  "F51"
  ],
  "order_notes": {
   "F33": "Design tier. It sets whether one Glare decides a realm, and F35's Vault-reach argument and G19's hold claim both rest on the hold numbers it changes.",
@@ -87,7 +88,8 @@
   "G29": "Telemetry definitions. The retention it picks must agree with F43 and G38.",
   "G38": "The retention rule for closed items. It extends F43's deletion model and uses G21's rebuild interval for how long target lists are cached.",
   "G35": "How friends are made and who shows in feeds. It follows F48's friendly-heist decision.",
-  "G34": "Notification gathering. The last of the social items, affected by G35 and F48."
+  "G34": "Notification gathering. The last of the social items, affected by G35 and F48.",
+  "F51": "Design tier, and independent: it only needs the publishing check, which is built. It should be settled before §13.2's hold rates are re-measured, because a funnelled edge raises them."
  },
  "groups": [
   {
@@ -3700,6 +3702,69 @@
     }
    ],
    "also_needed": "For B or C, the rows-read budget figure itself (1,500 per player-day fits the free plan at 10,000 monthly players, and 2,500 fits the paid plan's allowance at 1,000,000). For C or D, a Cloudflare account on the $5 Workers plan."
+  },
+  "F51": {
+   "id": "F51",
+   "question": "What keeps a realm's edge open to land on, so that a Keeper cannot funnel every crew through one tile?",
+   "why_it_matters": "§5.4 makes open landing a pillar ('Defenders can't choose where raiders come from'), but the only edge rule in §6.1 protects the last route, not the edge. A realm ringed with blocking terrain and one gap publishes today, and its gap is the landing every crew must take, guarded by whatever stands beside it. That is the 'one guarded gate' §5.4 says the game does not have, and it changes what the hold rates in §13.2 measure.",
+   "today": "sim/src/island.rs check() requires one open edge tile (LandingBlocked) and a walkable route from some open edge tile to the Vault (Sealed). Island::landings() lists the open edge tiles; the simulation drops a landing anywhere else and verify_on refuses a heist that never lands. Nothing counts how many edge tiles are open.",
+   "options": [
+    {
+     "key": "A",
+     "label": "No blocking terrain on the edge",
+     "means": "No blocking feature and no Crystal Wall may stand on an edge tile, so every edge tile of a realm is a landing.",
+     "consequences": "Landing is fully open, as §5.4 describes. A Keeper defends the edge only with what does not block: tall grass, fog, light, wards on open ground, guards and laws. 'Cliffs … along every edge' in §5.4's own reasoning has to go or become inland.",
+     "numbers": "Every edge tile open: 36 at realm level 1 (10 by 10) up to 52 at level 5 (14 by 14), 4 × side − 4.",
+     "doc_edit": "§5.4 'Landing' row: add 'No blocking terrain or Crystal Wall stands on an edge tile.' §6.1: the same rule beside the route rule.",
+     "build_change": "island.rs check(): a new Problem, EdgeClosed, for any blocking feature or Crystal Wall on an edge tile; the builder shows it."
+    },
+    {
+     "key": "B",
+     "label": "At least half of each side open",
+     "means": "Each of a realm's four sides keeps at least half of its tiles open to land on, counting Crystal Walls as closed.",
+     "consequences": "Cliffs and walls along the edge stay a tool, as §5.4's 'cliffs, tall grass, lantern light and laws along every edge' wants, but no side can be sealed and no single tile can become the gate. A Keeper still shapes where landing is easy.",
+     "numbers": "At realm level 1 each side of 10 keeps 5 open, 20 landings at least; at level 5 each side of 14 keeps 7, 28 at least.",
+     "doc_edit": "§5.4 'Landing' row: add 'Each side of a realm keeps at least half its edge tiles open to land on.' §6.1: cite it beside the route rule.",
+     "build_change": "island.rs check(): a new Problem, EdgeClosed, when any side has fewer than half its tiles open, with every Crystal Wall standing."
+    },
+    {
+     "key": "C",
+     "label": "Keep the build's rule",
+     "means": "One open edge tile and a route from some open edge tile to the Vault, which is all §6.1 asks.",
+     "consequences": "A Keeper may wall the whole edge but one tile and choose where every crew lands. §5.4's 'Why open landing' then describes something the rules do not guarantee.",
+     "numbers": "As few as 1 landing tile at any realm level.",
+     "doc_edit": "§5.4 'Why open landing': say the edge is open unless the Keeper closes it, and that a realm may have one gate.",
+     "build_change": "None."
+    }
+   ],
+   "recommendation": {
+    "option": "B",
+    "rationale": "It is the smallest rule that makes §5.4's promise true: no side sealed and no single gate, while cliffs along the edge, which §5.4 names as defence, stay possible. A removes a tool the document wants; C contradicts the section's own reason for open landing.",
+    "confidence": "medium"
+   },
+   "interacts_with": [
+    "G40",
+    "D71"
+   ],
+   "quotes": [
+    {
+     "section": "5.4",
+     "text": "Defenders can't choose where raiders come from; they can only make every edge a puzzle."
+    },
+    {
+     "section": "5.4",
+     "text": "cliffs, tall grass, lantern light and laws along every edge"
+    },
+    {
+     "section": "5.4",
+     "text": "not one guarded gate"
+    },
+    {
+     "section": "6.1",
+     "text": "terrain can lengthen routes but never close the last route from the edges to the Heart"
+    }
+   ],
+   "also_needed": "Whether a climbable cliff counts as open for landing; the build treats only walkable tiles as landings."
   }
  }
 }

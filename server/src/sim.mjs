@@ -26,7 +26,7 @@ export const PROBLEMS = [
 export const REFUSED = {
   [-1]: "replay_malformed", [-2]: "island_malformed", [-3]: "wrong_island",
   [-4]: "wrong_rules", [-5]: "crew", [-6]: "length", [-7]: "log",
-  [-8]: "checksums", [-9]: "too_large", [-10]: "era",
+  [-8]: "checksums", [-9]: "too_large", [-10]: "era", [-11]: "landing",
 };
 
 export const GRADES = ["clean", "loud", "partial", "foiled"];
@@ -34,7 +34,7 @@ export const GRADES = ["clean", "loud", "partial", "foiled"];
 /** `replay::Kind`, the command vocabulary on the wire. */
 export const KIND = {
   MoveTo: 0, Gait: 1, Halt: 2, Crack: 3, Load: 4, Skiff: 5,
-  Attack: 6, Break: 7, Drop: 8, Disarm: 9, Drag: 10,
+  Attack: 6, Break: 7, Drop: 8, Disarm: 9, Drag: 10, Land: 11,
 };
 
 const hex = (bytes) => Buffer.from(bytes).toString("hex");

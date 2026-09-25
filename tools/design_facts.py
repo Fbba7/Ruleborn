@@ -140,6 +140,12 @@ RUN_PACE = 2.0
 SKIFF_OUTER_SECONDS = 5
 SKIFF_HEART_SECONDS = 20
 
+#: §5.4: "A landing skiff can be heard: guards within 6 tiles of the landing
+#: spot start at 250 of 1,000 suspicion (12.17), unless the spot is in fog,
+#: darkness or tall grass."
+LANDING_HEARD_TILES = 6
+LANDING_SUSPICION = 250
+
 #: §12.9's grades, as the value each is worth when a run is scored.
 GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
 
@@ -324,6 +330,8 @@ HOME = {
     "RUN_PACE": "12.17",
     "SKIFF_OUTER_SECONDS": "5.4",
     "SKIFF_HEART_SECONDS": "5.4",
+    "LANDING_HEARD_TILES": "5.4",
+    "LANDING_SUSPICION": "5.4",
     "GRADE_VALUE": "12.9",
     "HAUL_BASE": "9.6",
     "HAUL_GROWTH": "9.6",
@@ -418,6 +426,10 @@ STATED = {
                             lambda m: int(m[0])),
     "SKIFF_HEART_SECONDS": (r"and (\d+) seconds to (?:fight the winds around|reach) the Heart",
                             lambda m: int(m[0])),
+    "LANDING_HEARD_TILES": (r"guards within (\d+) tiles of the landing spot",
+                            lambda m: int(m[0])),
+    "LANDING_SUSPICION": (r"of the landing spot start at ([\d,]+) of 1,000 suspicion",
+                          lambda m: int(m[0].replace(",", ""))),
     "GRADE_VALUE": (r"\| Clean\n[^\n]*\n\| ×([\d.]+)[\s\S]*?\| Loud\n[^\n]*\n\| ×([\d.]+)"
                     r"[\s\S]*?\| Partial\n[^\n]*\n\| ×([\d.]+)[\s\S]*?\| Foiled\n[^\n]*\n\| ×([\d.]+)",
                     lambda m: {"clean": float(m[0]), "loud": float(m[1]),

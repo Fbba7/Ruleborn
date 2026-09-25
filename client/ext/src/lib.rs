@@ -138,8 +138,9 @@ impl RulebornReplay {
 
     /// A command, now: `kind` is replay.rs's Kind (0 MoveTo, 1 Gait, 2 Halt,
     /// 3 Crack, 4 Load, 5 Skiff, 6 Attack, 7 Break, 8 Drop, 9 Disarm, 10
-    /// Drag), `x` and `y` a tile position at 1/256 of a tile or the kind's
-    /// own argument. False if there is no such kind or the clock has run out.
+    /// Drag, 11 Land), `x` and `y` a tile position at 1/256 of a tile or the
+    /// kind's own argument. False if there is no such kind or the clock has
+    /// run out. A landing counts only at tick 0 (§5.4).
     #[func]
     fn give(&mut self, actor: i64, kind: i64, x: i64, y: i64) -> bool {
         let (Some(world), Some(kind)) = (self.world.as_mut(), sim::replay::Kind::from_u8(kind as u8))
@@ -302,6 +303,18 @@ impl RulebornReplay {
     fn heights(&self) -> PackedByteArray {
         let Some(w) = self.world.as_ref() else { return PackedByteArray::new() };
         (0..w.grid.len()).map(|i| w.grid.height(i as _)).collect()
+    }
+
+    /// §5.4's landing spots on the heist's island: every open edge tile, in
+    /// row order. What a landing picker offers.
+    #[func]
+    fn landings(&self) -> Array<Vector2i> {
+        let mut out = Array::new();
+        let Some(realm) = self.island.as_ref() else { return out };
+        for (x, y) in realm.landings() {
+            out.push(Vector2i::new(x as i32, y as i32));
+        }
+        out
     }
 
     #[func]

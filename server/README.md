@@ -461,12 +461,12 @@ built — register **D63**.
 - **Refunds after a grant** (D67): App Store Server Notifications and Play's
   voided purchases, which tell the server of a refund the player asked for
   after the grant; and a Play Games player id.
-- **Crossing realms.** The simulation plays the Heart alone, so every lease
-  is §5.4's 150 seconds with no links.
+- **Crossing realms.** The simulation plays one island at a time, so every
+  lease is §5.4's 150 seconds with no links, and a crew lands on the island
+  it raids even when that is the Heart (D71).
 - **Family approval** for 13 to 15 (D64).
 - §12.22's generated fallback targets (D66).
 - **Constellation chat, votes and anomalies** (D63).
-- **The landing.** The replay has no landing command yet; see `sim/README.md`.
 
 ## Layout
 

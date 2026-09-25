@@ -12,7 +12,7 @@ extends Control
 ## the next tile tapped. §21.8 puts crew portraits at the bottom left and actions at the
 ## bottom right; both rows here sit above the corners, which §21.1 keeps clear.
 
-enum Kind { MOVE_TO, GAIT, HALT, CRACK, LOAD, SKIFF, ATTACK, BREAK, DROP, DISARM, DRAG }
+enum Kind { MOVE_TO, GAIT, HALT, CRACK, LOAD, SKIFF, ATTACK, BREAK, DROP, DISARM, DRAG, LAND }
 
 ## §5.4's clock at the Heart with no links: 150 seconds, 30 ticks each.
 const TICKS := 150 * 30
@@ -201,10 +201,25 @@ func get_out() -> void:
 ## Run `ticks` ticks; when the heist's clock runs out, finish it.
 func advance(ticks: int) -> void:
 	for i in ticks:
+		if world.tick() == 0 and not landed():
+			land(world.landings()[0] if world.landings().size() > 0 else Vector2i(0, 0))
 		if not world.step():
 			finish()
 			return
 	_refresh()
+
+
+## §5.4: the crew lands on the edge tile `t`, which the log records at tick
+## 0. Until there is a landing picker, a heist that has not landed by its
+## first step lands on the first open edge tile (`advance`).
+func land(t: Vector2i) -> bool:
+	if world.tick() != 0:
+		return false
+	return world.give(0, Kind.LAND, t.x * 256 + 128, t.y * 256 + 128)
+
+
+func landed() -> bool:
+	return world.commands().any(func(c): return int(c["kind"]) == Kind.LAND)
 
 
 ## Write the heist down and have it checked: by the server, which re-simulates

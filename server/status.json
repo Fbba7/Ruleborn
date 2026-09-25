@@ -42,6 +42,7 @@
   "a cosmetic is bought with Starglass at its euro price, owned once, and worn in its slot (22.1)": "passed",
   "a creator holds five islands, eight once a Builder, and a withdrawn one frees its slot (20.12, 18.7)": "passed",
   "a crew is four to eight, joined by its invite, and survives its founder leaving (17.7)": "passed",
+  "a crew that never lands is refused and pays nothing (5.4)": "passed",
   "a daily reminder at the time the player chose, or none (14.6)": "passed",
   "a database made before Starglass keeps its ledger when opened (24.12)": "passed",
   "a day's ceiling is half again above the whole fatigue curve; a week's is five days of it": "passed",

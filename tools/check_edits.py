@@ -237,6 +237,8 @@ NO_EDIT_BECAUSE = {
     "G38": "decisions for the owner: how long each closed thing is kept",
     "G39": "a decision for the owner: the web route to deletion, and its proof of ownership",
     "D70": "limits of this build: filing, the client's screens and the edge's cache",
+    "F51": "a decision for the owner: which floor keeps the edge open to land on",
+    "D71": "limits of this build: a heist is one island until universes are built",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

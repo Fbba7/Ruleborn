@@ -2365,8 +2365,19 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
     crowded.wards.push((WardKind::TimeSnare, 6, 9));      // on the Vault
     assert!(crowded.check().contains(&Problem::Crowded));
 
+    // A Crystal Wall in the ruin wall's gap cuts the north edge off from the
+    // Vault, but the crew lands on any edge tile (§5.4), and the south edge
+    // still walks in: not sealed.
+    let mut halved = Island::example();
+    halved.wards.push((WardKind::CrystalWall, 9, 5));     // in the wall's gap
+    assert_eq!(halved.check(), vec![]);
+    // Walled in on every side, the Vault is sealed from every edge.
     let mut sealed = Island::example();
-    sealed.wards.push((WardKind::CrystalWall, 9, 5));     // in the wall's gap
+    let side = sealed.side() as usize;
+    for (x, y) in [(6, 8), (5, 9), (6, 10)] {
+        sealed.tiles[y * side + x].feature = Some(crate::grid::Feature::RockPillar);
+    }
+    sealed.wards.push((WardKind::CrystalWall, 7, 9));
     assert_eq!(sealed.check(), vec![Problem::Sealed]);
 
     let mut many = Island::example();
@@ -2377,8 +2388,22 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
     unknown.laws[0].0 = "no_such_law".to_string();
     assert_eq!(unknown.check(), vec![Problem::UnknownLaw]);
 
+    // One edge tile closed leaves the rest to land on; every one closed
+    // leaves nowhere.
     let mut landing = Island::example();
     landing.tiles[2].feature = Some(crate::grid::Feature::RockPillar);   // (2, 0)
+    assert_eq!(landing.check(), vec![]);
+    assert!(!landing.landings().contains(&(2, 0)));
+    let side = landing.side() as usize;
+    for i in 0..side * side {
+        let (x, y) = (i % side, i / side);
+        let edge = x == 0 || y == 0 || x == side - 1 || y == side - 1;
+        // A pylon already closes its tile (the one at (11, 2)).
+        if edge && landing.occupant(x as u8, y as u8) == crate::island::Occupant::None {
+            landing.tiles[i].feature = Some(crate::grid::Feature::RockPillar);
+        }
+    }
+    assert!(landing.landings().is_empty());
     assert_eq!(landing.check(), vec![Problem::LandingBlocked]);
 }
 
@@ -3542,4 +3567,142 @@ fn a_heist_re_simulates_in_the_era_it_names_and_no_other() {
     let mut claimed = played.clone();
     claimed.era = None;
     assert!(verify_on(&island, &claimed).is_err(), "a device cannot say it played in a kinder week");
+}
+
+// -- §5.4's landing ---------------------------------------------------------
+
+/// A world on `island` whose log lands the crew on (x, y) at tick 0, after
+/// `rest` in the log's order, with the landing applied and nothing else run.
+fn landed(island: &crate::island::Island, (x, y): (i16, i16), rest: Vec<Command>) -> World {
+    let mut commands = rest;
+    commands.push(Command { tick: 0, actor: 2, kind: Kind::Land, x: x * 256 + 128, y: y * 256 + 128 });
+    commands.sort_by_key(|c| c.tick);
+    let heist = Heist {
+        seed: 1, island: island.digest(), rules: crate::rules_version(), ticks: 4_500, crew: 3,
+        era: None, commands, checksums: Vec::new(),
+    };
+    let mut world = World::from_island(island, &heist);
+    world.phase_inputs();
+    world
+}
+
+#[test]
+fn the_whole_crew_lands_on_the_spot_the_log_names() {
+    let island = crate::island::Island::fixture();
+    let world = landed(&island, (13, 2), Vec::new());
+    let spot = world.grid.index(13, 2).unwrap();
+    assert_eq!(world.landing, Some(spot));
+    let (x, y) = world.grid.centre(spot);
+    for r in &world.raiders {
+        assert_eq!((r.at.x, r.at.y), (x, y), "crew member {} is on the spot", r.id);
+        assert_eq!(r.last_tile, Some(spot));
+    }
+    // A move given at tick 0 is a move from the landing, wherever the log
+    // puts it among tick 0's commands: here, before the landing.
+    let first = Command { tick: 0, actor: 0, kind: Kind::MoveTo, x: 13 * 256 + 128, y: 6 * 256 + 128 };
+    let world = landed(&island, (13, 2), vec![first]);
+    let route = &world.raiders[0].route;
+    assert_eq!(route.first().map(|t| world.grid.coords(*t)), Some((13, 3)), "the route starts beside the spot");
+}
+
+#[test]
+fn a_landing_is_heard_within_six_tiles_unless_the_spot_is_hidden() {
+    use crate::grid::Feature;
+    use crate::heist::{LANDING_HEARD_TILES, LANDING_SUSPICION};
+    let island = crate::island::Island::fixture();
+    let world = landed(&island, (13, 2), Vec::new());
+    let spot = world.grid.index(13, 2).unwrap();
+    assert!(!world.grid.is_unlit(spot) && world.grid.feature(spot).is_none(), "an open, lit spot");
+    let (x, y) = world.grid.centre(spot);
+    let spot_at = crate::Point { x, y };
+    let (mut heard, mut unheard) = (0, 0);
+    for g in &world.guards {
+        if g.at.distance(spot_at) <= Fx::from_int(LANDING_HEARD_TILES) {
+            assert_eq!(g.suspicion, LANDING_SUSPICION, "guard {} is within six tiles", g.id);
+            heard += 1;
+        } else {
+            assert_eq!(g.suspicion, 0, "guard {} is beyond six tiles", g.id);
+            unheard += 1;
+        }
+    }
+    assert!(heard > 0 && unheard > 0, "the spot has guards on both sides of the line");
+
+    // Tall grass, fog or darkness on the spot: nobody hears it.
+    for hide in 0..3 {
+        let mut hidden = crate::island::Island::fixture();
+        let side = hidden.side() as usize;
+        let tile = &mut hidden.tiles[2 * side + 13];
+        match hide {
+            0 => tile.feature = Some(Feature::TallGrass),
+            1 => tile.feature = Some(Feature::FogBank),
+            _ => tile.unlit = true,
+        }
+        let world = landed(&hidden, (13, 2), Vec::new());
+        assert!(world.landing.is_some());
+        assert!(world.guards.iter().all(|g| g.suspicion == 0), "hidden landing {hide} is unheard");
+    }
+}
+
+#[test]
+fn a_landing_off_the_edge_late_or_twice_is_dropped() {
+    let island = crate::island::Island::fixture();
+    // Inland, off the grid, and on a closed edge tile.
+    assert_eq!(landed(&island, (6, 6), Vec::new()).landing, None);
+    assert_eq!(landed(&island, (40, 0), Vec::new()).landing, None);
+    let mut closed = crate::island::Island::fixture();
+    let side = closed.side() as usize;
+    closed.tiles[13 * side + 13].feature = Some(crate::grid::Feature::RockPillar);
+    assert_eq!(landed(&closed, (13, 13), Vec::new()).landing, None);
+    // A second landing at tick 0 is not a second skiff: the first stands.
+    let second = Command { tick: 0, actor: 1, kind: Kind::Land, x: 13 * 256 + 128, y: 2 * 256 + 128 };
+    let world = landed(&island, (0, 5), vec![second]);
+    assert_eq!(world.landing, world.grid.index(13, 2), "the first in the log's order lands");
+    // A landing after tick 0 moves nobody.
+    let mut world = landed(&island, (0, 5), Vec::new());
+    let before: Vec<_> = world.raiders.iter().map(|r| (r.at.x, r.at.y)).collect();
+    world.step();
+    world.commands_for_test(vec![Command { tick: 1, actor: 0, kind: Kind::Land, x: 13 * 256 + 128, y: 2 * 256 + 128 }]);
+    world.phase_inputs();
+    assert_eq!(world.landing, world.grid.index(0, 5));
+    let after: Vec<_> = world.raiders.iter().map(|r| (r.at.x, r.at.y)).collect();
+    assert_eq!(before, after, "nobody moved");
+}
+
+#[test]
+fn the_server_refuses_a_heist_that_never_lands() {
+    use crate::island::Island;
+    use crate::{draw, record, verify_on, Refusal};
+    let island = Island::example();
+    let drawn = draw(&island, 42, 4_500, 3);
+    assert_eq!(drawn.iter().filter(|c| c.kind == Kind::Land).count(), 1, "the seeded player lands");
+    assert!(verify_on(&island, &record(&island, 42, 4_500, 3, drawn.clone())).is_ok());
+    let unlanded: Vec<Command> = drawn.iter().copied().filter(|c| c.kind != Kind::Land).collect();
+    let heist = record(&island, 42, 4_500, 3, unlanded);
+    assert_eq!(verify_on(&island, &heist), Err(Refusal::Landing));
+    let mut inland = drawn.clone();
+    for c in inland.iter_mut().filter(|c| c.kind == Kind::Land) {
+        (c.x, c.y) = (6 * 256 + 128, 7 * 256 + 128);
+    }
+    assert_eq!(verify_on(&island, &record(&island, 42, 4_500, 3, inland)), Err(Refusal::Landing));
+}
+
+#[test]
+fn every_open_edge_tile_is_a_landing_and_nothing_else_is() {
+    use crate::island::Island;
+    let island = Island::example();
+    let landings = island.landings();
+    let world = World::on_ground(&island, 3, Vec::new());
+    let side = island.side() as u8;
+    for y in 0..side {
+        for x in 0..side {
+            let t = world.grid.index(x as u16, y as u16).unwrap();
+            let open = world.grid.is_edge(t) && world.grid.at(t).passable()
+                && !island.laws.iter().any(|(_, lx, ly)| (*lx, *ly) == (x, y));
+            assert_eq!(landings.contains(&(x, y)), open, "({x}, {y})");
+        }
+    }
+    // Every one lands a world.
+    for &(x, y) in &landings {
+        assert!(landed(&island, (x as i16, y as i16), Vec::new()).landing.is_some(), "({x}, {y})");
+    }
 }

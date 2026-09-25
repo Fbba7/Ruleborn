@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6059,7 +6059,11 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "about 15 ms of CPU (22 ms at the 95th percentile) where §28.3\u2019s free "
           "plan allows <em>\u201c10 milliseconds\u201d</em> a request, so the free plan "
           "cannot validate a heist at all: the €0 columns need the $5 plan from "
-          "the first heist. Found by the load test.",
+          "the first heist. Found by the load test. Re-measured when the "
+          "landing entered the replay (§5.4): the drawn test player now lands "
+          "on a drawn edge tile, so a few of its heists end differently, and "
+          "a heist\u2019s rows moved by 0.01 a player-day; none of the "
+          "figures above changed.",
      rec="Re-derive §24.1\u2019s budget and cost table from measured writes: state "
          "a share of monthly players active on a day, price the writes a heist "
          "must make, and drop the free-plan columns for validation. Or cut "
@@ -6314,6 +6318,60 @@ dict(id="D70", kind="deviation", severity="minor", status="open",
      rec="File both declarations from server/declarations.md; build the age "
          "check and the deletion button; purge the edge on an under-13 "
          "deletion."),
+
+dict(id="F51", kind="finding", severity="significant", status="open",
+     title="A Keeper can close every edge tile but one, and so choose where "
+           "the crew lands",
+     refs=["5.4", "6.1"],
+     body="§5.4: <em>\u201cDefenders can\u2019t choose where raiders come "
+          "from; they can only make every edge a puzzle\u201d</em>, and "
+          "<em>\u201cnot one guarded gate\u201d</em>. §6.1\u2019s only guard "
+          "on the edge is the route rule: <em>\u201cterrain can lengthen "
+          "routes but never close the last route from the edges to the "
+          "Heart\u201d</em>. Nothing keeps edge tiles open, so a realm ringed "
+          "in rock pillars, cliffs or Crystal Walls with one gap publishes, "
+          "and its one open tile is the landing every crew must take: a gate, "
+          "chosen by the defender, with the guards and wards beside it. The "
+          "simulation now takes the landing from the input log and "
+          "<code>check</code> requires one open edge tile and a route from "
+          "some open edge tile to the Vault, which is all the document asks. "
+          "Found building the landing.",
+     rec="Give §5.4 or §6.1 a floor on open edge: for example, no blocking "
+         "feature or Crystal Wall on an edge tile, or at least half of each "
+         "side open, checked when an island is published."),
+
+dict(id="G40", kind="gap", severity="minor", status="open",
+     title="§5.4 names one landing spot but not how a crew stands on it, "
+           "what darkness is, or how the noise meets suspicion already there",
+     refs=["5.4", "12.17"],
+     body="The simulation reads §5.4 as follows, where it is silent. The "
+          "whole crew lands on the one tile the raider picks, together, at "
+          "tick 0, before any other command of that tick (<em>\u201cthe "
+          "landing spot\u201d</em> is one spot). <em>\u201cDarkness\u201d</em> "
+          "is §12.17\u2019s unlit modifier on that tile, the same test "
+          "perception uses; a realm Glowing dark makes dark does not hide it. "
+          "Fog and tall grass are the fog bank and tall grass features on the "
+          "tile itself, not beside it. <em>\u201cStart at 250\u201d</em> "
+          "raises a guard to 250 and never lowers one already higher. The "
+          "distance is from the guard to the tile\u2019s centre, six tiles "
+          "or less. The crew\u2019s old convention \u2014 one member a tile "
+          "along the north edge, unheard \u2014 is gone: the server refuses "
+          "a heist that never lands (<code>Refusal::Landing</code>).",
+     rec="State the five readings in §5.4, or the ones that should differ."),
+
+dict(id="D71", kind="deviation", severity="minor", status="open",
+     title="The Heart is landed on, because a heist is still one island",
+     refs=["5.3", "5.4"],
+     body="§5.4: <em>\u201cThe Heart is ringed by strong winds, so skiffs "
+          "can\u2019t land there\u201d</em>, and the clock is <em>\u201c150 "
+          "seconds plus 15 seconds for each link on the shortest route from "
+          "the landing realm to the Heart\u201d</em>. A heist is played on "
+          "one island, and the fixture and the server\u2019s example are "
+          "Hearts, so the crew lands on the island it raids whatever it is, "
+          "and the clock is the lease\u2019s. Universes of several realms "
+          "joined by §5.3\u2019s links are the next stage of crossing realms; "
+          "the Heart rule and the clock by links come with them.",
+     rec="None for the document; build universes (T5.5)."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "
@@ -7893,6 +7951,18 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+"G40": [
+    dict(section="5.4", action="insert",
+         find="unless the spot is in fog, darkness or tall grass.",
+         replace="The whole crew lands together on the one spot, before anything "
+                 "else it does. The distance is from the guard to the spot, six "
+                 "tiles or less; a guard already above 250 keeps what it has. Fog, "
+                 "darkness and tall grass are on the spot itself, and darkness is "
+                 "the unlit ground 12.17 sees by.",
+         why="Each of the five is a reading the simulation had to make; stated, "
+             "the landing picker can show exactly what a guard would hear."),
+],
+
 
 "C40": [
     dict(section="31.3", action="replace",

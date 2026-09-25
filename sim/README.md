@@ -140,10 +140,18 @@ island was a placeholder and every heist ran on the one fixture realm. Now:
   rules version, the example island's hash, a replay recorded on it and the
   verdict — and `status.py` requires them to agree.
 
-One convention stands in for a missing command. §5.4 lets the crew land
-anywhere along an edge, and the replay has no landing yet, so a crew lands on
-the first tiles of the north edge, one a tile, and `check` requires those
-tiles to be open. A landing command in the input log removes it.
+- **The landing is in the input log** (`Kind::Land`, §5.4). The raider
+  picks an edge tile and the whole crew lands on it together, at tick 0,
+  before any other command of that tick. Guards within 6 tiles start at 250
+  of 1,000 suspicion unless the spot is in fog, darkness or tall grass
+  (`LANDING_HEARD_TILES`, `LANDING_SUSPICION`, gated against the document
+  by `content_gate.py`). A late, second or inland landing is dropped, and
+  `verify_on` refuses a heist that never lands (`Refusal::Landing`, -11
+  over WebAssembly). `Island::landings` lists every open edge tile; `check`
+  wants one of them, and a route from some open edge tile to the Vault. The
+  readings §5.4 leaves open are register G40; a Keeper who walls every edge
+  tile but one is F51; the Heart's no-landing rule waits for universes
+  (D71).
 
 ## Pathfinding and crew control
 

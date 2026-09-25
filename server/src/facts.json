@@ -85,6 +85,8 @@
   30.0,
   45.0
  ],
+ "LANDING_HEARD_TILES": 6,
+ "LANDING_SUSPICION": 250,
  "LAW_SLOTS": [
   1,
   1,

@@ -26,10 +26,14 @@ test("an island §5.2 or §6.1 forbids is refused, with the rule named", () => {
   const t = server();
   const me = t.service.session("gc:keeper");
   const island = t.build.exampleIsland(false);
-  // A rock pillar on the third landing tile: the crew could not land there.
-  island[14 + 2 * 3] = (island[14 + 2 * 3] & 0xf0) | 1;
+  // Rock pillars on the four tiles beside the Vault at (6, 9): no edge the
+  // crew could land on walks to it.
+  for (const [x, y] of [[6, 8], [5, 9], [7, 9], [6, 10]]) {
+    const i = 14 + 3 * (y * 12 + x);
+    island[i] = (island[i] & 0xf0) | 1;
+  }
   assert.throws(() => t.service.publish(me.account, island),
-    (e) => e.status === 422 && e.detail.problems.includes("landing_blocked"));
+    (e) => e.status === 422 && e.detail.problems.includes("sealed"));
 });
 
 test("publishing is content-addressed and idempotent", () => {
@@ -220,6 +224,18 @@ test("a replay that does not reproduce pays nothing, takes nothing, and is flagg
   assert.deepEqual(t.service.balance(t.raider.account), { starlight: 0, essence: 0, starglass: 0 });
   const row = t.service.db.prepare("SELECT review FROM heists WHERE token = ?").get(lease.token);
   assert.equal(row.review, 1, "a note for review — one mismatch is never a ban");
+});
+
+test("a crew that never lands is refused and pays nothing (5.4)", () => {
+  const t = twoPlayers();
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  // Its one landing is inland, which is no landing at all.
+  const inland = openPlan().map((c) => c.kind === "Land" ? { ...c, x: 6 * 256 + 128, y: 7 * 256 + 128 } : c);
+  const unlanded = play(t, lease, { plan: inland });
+  const out = t.service.submit(t.raider.account, lease.token, unlanded);
+  assert.equal(out.validated, false);
+  assert.equal(out.reason, "landing");
+  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 0, essence: 0, starglass: 0 });
 });
 
 test("a replay must be the heist its lease allowed: the snapshot, the seed, the clock", () => {

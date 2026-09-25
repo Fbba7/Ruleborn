@@ -133,7 +133,9 @@ func _run() -> void:
 	heist.load_up(70)
 	heist.get_out()
 	heist.tap_tile(Vector2i(13, 7))
-	var log := heist.world.commands().map(func(c): return [c["tick"], c["actor"], c["kind"], c["x"], c["y"]])
+	# The landing the screen gives before its first step is not a tap.
+	var log := heist.world.commands().filter(func(c): return int(c["kind"]) != HeistScreen.Kind.LAND) \
+		.map(func(c): return [c["tick"], c["actor"], c["kind"], c["x"], c["y"]])
 	var want := [[now, 1, HeistScreen.Kind.MOVE_TO, 4 * 256 + 128, 5 * 256 + 128],
 		[now, 1, HeistScreen.Kind.CRACK, 0, 0], [now, 1, HeistScreen.Kind.LOAD, 70, 0],
 		[now, 1, HeistScreen.Kind.SKIFF, 13 * 256 + 128, 7 * 256 + 128]]
@@ -166,7 +168,8 @@ func _run() -> void:
 	heist.next_gait()
 	heist.halt()
 	heist.drop_half()
-	var kinds := heist.world.commands().map(func(c): return [c["kind"], c["x"]])
+	var kinds := heist.world.commands().filter(func(c): return int(c["kind"]) != HeistScreen.Kind.LAND) \
+		.map(func(c): return [c["kind"], c["x"]])
 	var K := HeistScreen.Kind
 	var expected := [[K.ATTACK, 1], [K.CRACK, 0], [K.BREAK, (pylon % width) * 256 + 128]]
 	if not ward.is_empty():
@@ -174,6 +177,19 @@ func _run() -> void:
 	expected += [[K.GAIT, 1], [K.GAIT, 2], [K.GAIT, 0], [K.HALT, 0], [K.DROP, 50]]
 	check("a tap on a guard, the Vault, a pylon or a ward makes the command it calls for, and the gait button cycles walk, crouch, run",
 		kinds == expected and pylon >= 0 and not ward.is_empty(), "got %s, wanted %s" % [kinds, expected])
+
+	# §5.4: the crew lands together on the edge tile the player chose, and the
+	# log says so at tick 0; once the heist has begun, it has landed.
+	heist.begin(HeistScreen.SEED, HeistScreen.TICKS, HeistScreen.CREW)
+	var spots := heist.world.landings()
+	var spot: Vector2i = spots[spots.size() - 1] if spots.size() > 0 else Vector2i(-1, -1)
+	var chose := heist.land(spot)
+	heist.advance(1)
+	var together := heist.world.crew().all(func(r): return Vector2i(r["at"]) == spot)
+	var logged := heist.world.commands().filter(func(c): return int(c["kind"]) == HeistScreen.Kind.LAND)
+	check("the crew lands together on the open edge tile the player chose, recorded at tick 0 (5.4)",
+		chose and together and logged.size() == 1 and int(logged[0]["tick"]) == 0 and not heist.land(spots[0]),
+		"spot %s, crew %s, log %s" % [spot, heist.world.crew().map(func(r): return r["at"]), logged])
 
 	# And the heist it plays is the heist it records. The planned golden's
 	# commands, given live at their ticks on the heist screen, must record the

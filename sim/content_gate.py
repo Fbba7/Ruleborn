@@ -321,6 +321,8 @@ def facts_compare(text: str) -> dict:
          k.get("MENDER_REVIVE_TICKS")),
         ("SKIFF_OUTER_SECONDS", f.SKIFF_OUTER_SECONDS * tps, k.get("SKIFF_OUTER_TICKS")),
         ("SKIFF_HEART_SECONDS", f.SKIFF_HEART_SECONDS * tps, k.get("SKIFF_HEART_TICKS")),
+        ("LANDING_HEARD_TILES", f.LANDING_HEARD_TILES, k.get("LANDING_HEARD_TILES")),
+        ("LANDING_SUSPICION", f.LANDING_SUSPICION, k.get("LANDING_SUSPICION")),
         ("CROUCH_PACE", ratio(f.CROUCH_PACE), ratio(k.get("CROUCH_PACE"))),
         ("RUN_PACE", ratio(f.RUN_PACE), ratio(k.get("RUN_PACE"))),
         ("REVIVE_HEALTH", ratio(f.REVIVE_HEALTH), ratio(k.get("REVIVE_HEALTH"))),

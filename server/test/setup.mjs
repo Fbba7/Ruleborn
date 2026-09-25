@@ -67,6 +67,7 @@ export const at = (tile) => tile * 256 + 128;
 export function openPlan() {
   const s = (seconds) => seconds * 30;
   return [
+    { tick: s(0), member: 0, kind: "Land", x: at(0), y: at(0) },
     { tick: s(0), member: 0, kind: "MoveTo", x: at(6), y: at(8) },
     { tick: s(0), member: 1, kind: "MoveTo", x: at(7), y: at(9) },
     { tick: s(0), member: 2, kind: "MoveTo", x: at(5), y: at(9) },
@@ -102,11 +103,18 @@ export function twoPlayers(open = true) {
 }
 
 /** Play a lease as the device would, with `plan` or the drawn test player,
- *  in the week's era the lease names (§18.3). */
+ *  in the week's era the lease names (§18.3). A plan that does not say where
+ *  it lands lands on the corner tile, (0, 0) (§5.4). */
 export function play(t, lease, { plan = null, crew = 3 } = {}) {
   const island = t.service.bundle(lease.bundle);
   const era = ERAS.find((e) => e.id === lease.era)?.wire ?? 0;
   const spec = { seed: BigInt(lease.seed), ticks: lease.ticks, crew, era };
-  return plan ? t.build.record(island, { ...spec, commands: plan })
+  return plan ? t.build.record(island, { ...spec, commands: landed(plan) })
               : t.build.recordDrawn(island, spec);
+}
+
+/** `plan`, with a landing on (0, 0) first unless it has its own. */
+export function landed(plan) {
+  return plan.some((c) => c.kind === "Land") ? plan
+    : [{ tick: 0, member: 0, kind: "Land", x: at(0), y: at(0) }, ...plan];
 }

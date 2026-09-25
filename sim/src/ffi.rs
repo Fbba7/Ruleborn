@@ -59,6 +59,7 @@ fn refusal_code(r: Refusal) -> i32 {
         Refusal::Length => -6,
         Refusal::Log => -7,
         Refusal::Checksums => -8,
+        Refusal::Landing => -11,
         Refusal::Diverged(second) => second as i32,
     }
 }

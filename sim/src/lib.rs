@@ -711,6 +711,10 @@ pub struct World {
     pub cracked: u32,
     /// §18.3's era of the week, first on the sheet (§7.3); from the replay.
     pub era: Option<era::Era>,
+    /// §5.4's landing spot, once the input log has landed the crew. Until
+    /// then the crew stands where `on_ground` put it, which a replay the
+    /// server accepts never simulates past tick 0 (`verify_on`).
+    pub landing: Option<grid::TileIndex>,
 }
 
 impl World {
@@ -821,6 +825,7 @@ impl World {
             pits: Vec::new(),
             cracked: 0,
             era: None,
+            landing: None,
         }
     }
 
@@ -925,11 +930,28 @@ impl World {
     /// command for this tick is applied before anything reads the world, so
     /// no part of the tick sees a half-applied input.
     fn phase_inputs(&mut self) {
+        // The landing comes before every other input of tick 0, wherever
+        // the log's order puts it: a move given at tick 0 is a move from the
+        // landing spot.
+        if self.tick == 0 {
+            let landings: Vec<Command> = self.commands.iter()
+                .take_while(|c| c.tick == 0)
+                .filter(|c| c.kind == Kind::Land)
+                .copied()
+                .collect();
+            for command in landings {
+                self.land(command);
+            }
+        }
         while self.next_command < self.commands.len()
             && self.commands[self.next_command].tick == self.tick
         {
             let command = self.commands[self.next_command];
             self.next_command += 1;
+            // The landing is the whole crew's, and was applied above.
+            if command.kind == Kind::Land {
+                continue;
+            }
             let Some(raider) = self.raiders.get_mut(command.actor as usize) else {
                 continue;                 // a command for a crew member who is
                                           // not here is dropped, not fatal: the
@@ -1013,6 +1035,7 @@ impl World {
                 }
                 // One skiff, called once; an inland tile, or a wall, is not a
                 // place a skiff can come, and the call is dropped.
+                Kind::Land => {}
                 Kind::Skiff => {
                     let (x, y) = command.target();
                     if let Some(tile) = self.grid.tile_at(x, y) {
@@ -1026,6 +1049,47 @@ impl World {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /// §5.4's landing: "The crew lands on any edge tile of any outer realm
+    /// the raider chooses" — the whole crew on the one spot, at tick 0,
+    /// before anything reads the world. "A landing skiff can be heard:
+    /// guards within 6 tiles of the landing spot start at 250 of 1,000
+    /// suspicion (12.17), unless the spot is in fog, darkness or tall grass."
+    /// Darkness is the unlit modifier perception uses, so a spot that hides
+    /// a crew member from a guard's eyes also hides the skiff from its ears.
+    /// A second landing, a late one, or one on a tile that is not an open
+    /// edge tile is dropped like any command that cannot be carried out.
+    fn land(&mut self, command: Command) {
+        if self.tick != 0 || self.landing.is_some() {
+            return;
+        }
+        let (x, y) = command.target();
+        let Some(tile) = self.grid.tile_at(x, y) else { return };
+        if !self.grid.is_edge(tile) || !self.grid.at(tile).passable() {
+            return;
+        }
+        self.landing = Some(tile);
+        let (cx, cy) = self.grid.centre(tile);
+        let spot = Point { x: cx, y: cy };
+        for r in self.raiders.iter_mut() {
+            r.at = spot;
+            r.came_from = tile;
+            r.last_tile = Some(tile);
+            r.route.clear();
+            r.along = 0;
+        }
+        let hidden = matches!(self.grid.feature(tile), Some(Feature::FogBank | Feature::TallGrass))
+            || self.unlit(tile);
+        if hidden {
+            return;
+        }
+        let heard = Fx::from_int(heist::LANDING_HEARD_TILES);
+        for g in self.guards.iter_mut() {
+            if g.at.distance(spot) <= heard {
+                g.suspicion = g.suspicion.max(heist::LANDING_SUSPICION);
             }
         }
     }
@@ -3422,6 +3486,14 @@ pub fn draw(island: &island::Island, seed: u64, ticks: u32, crew: u8) -> Vec<Com
             }
         }
     }
+    // §5.4's landing: any open edge tile. Drawn last, so every other
+    // command is the one the same seed drew before landings were recorded.
+    let landings = island.landings();
+    if !landings.is_empty() {
+        let (lx, ly) = landings[rng.below(landings.len() as u64) as usize];
+        let (x, y) = aim(lx as u64, ly as u64);
+        commands.push(Command { tick: 0, actor: 0, kind: Kind::Land, x, y });
+    }
     commands.sort_by_key(|c| (c.tick, c.actor, c.kind as u8));
     commands
 }
@@ -3442,7 +3514,7 @@ pub fn planned() -> Heist {
         commands.push(Command { tick, actor, kind, x, y });
     };
     PLAN.iter().for_each(|&(s, actor, kind, x, y)| {
-        let target = if matches!(kind, Kind::MoveTo | Kind::Skiff | Kind::Break) {
+        let target = if matches!(kind, Kind::MoveTo | Kind::Skiff | Kind::Break | Kind::Land) {
             at(x, y)
         } else {
             (x, y)
@@ -3489,6 +3561,7 @@ const PLANNED_SEED: u64 = 0x5EED_0F_A_7EA1;
 ///         leave at 46 s; the Carrier, on the Vault's far side from the
 ///         Warden, fills its 300 and leaves at 53 s
 const PLAN: &[(u32, u8, Kind, i16, i16)] = &[
+    (0, 0, Kind::Land, 1, 0),
     (0, 0, Kind::Gait, 1, 0),
     (0, 1, Kind::Gait, 1, 0),
     (0, 2, Kind::Gait, 1, 0),
@@ -3603,7 +3676,7 @@ pub fn rules_version() -> [u8; 32] {
                                                draw(&fixture, *seed, *ticks, *crew)))
             .collect();
         let mut plan: Vec<Command> = PLAN.iter().map(|&(s, actor, kind, x, y)| {
-            let (x, y) = if matches!(kind, Kind::MoveTo | Kind::Skiff | Kind::Break) {
+            let (x, y) = if matches!(kind, Kind::MoveTo | Kind::Skiff | Kind::Break | Kind::Land) {
                 (x * 256 + 128, y * 256 + 128)
             } else {
                 (x, y)
@@ -3663,6 +3736,9 @@ pub enum Refusal {
     /// Not one checksum a second. A replay with none would otherwise verify
     /// against anything.
     Checksums,
+    /// §5.4: the crew never landed — no landing at tick 0 on an open edge
+    /// tile. Without one it would start where `on_ground` puts it, unheard.
+    Landing,
     /// The re-simulation and the replay part company at this second.
     Diverged(usize),
 }
@@ -3698,6 +3774,9 @@ pub fn verify_on(island: &island::Island, heist: &Heist) -> Result<heist::Outcom
     let mut second = 0usize;
     for _ in 0..heist.ticks {
         let sum = world.step();
+        if world.tick == 1 && world.landing.is_none() {
+            return Err(Refusal::Landing);
+        }
         if world.tick % TICKS_PER_SECOND == 0 {
             if truncate(sum) != heist.checksums[second] {
                 return Err(Refusal::Diverged(second + 1));

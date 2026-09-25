@@ -42,11 +42,14 @@
 //!
 //! Where the crew lands
 //! --------------------
-//! §5.4: a crew picks its landing along a whole edge, and "the defender cannot
-//! choose where you arrive". The replay format has no landing yet, so every
-//! heist lands on the first tiles of the north edge, one crew member a tile, as
-//! the fixture always has; `check` requires those tiles to be open. Putting
-//! the landing in the input log is the change that removes the convention.
+//! §5.4: "The crew lands on any edge tile of any outer realm the raider
+//! chooses", and "the defender cannot choose where you arrive". The landing
+//! is in the input log (`replay::Kind::Land`), so an island promises only
+//! that there is somewhere to land: `check` requires one open edge tile
+//! (`LandingBlocked`) and a walkable route from some open edge tile to the
+//! Vault (`Sealed`, §5.3's "At least one walkable route must reach the Heart
+//! from every outer realm's edge"). `landings` lists the tiles a crew may
+//! choose.
 
 use crate::grid::{Feature, Grid, Surface};
 use crate::heist::WardKind;
@@ -63,8 +66,6 @@ pub const WARD_LIMITS: [u8; 5] = [8, 8, 6, 7, 8];
 pub const GUARD_POSTS: [u8; 5] = [1, 1, 2, 3, 3];
 pub const LAW_SLOTS: [u8; 5] = [1, 1, 2, 2, 3];
 
-/// §12.5: "A crew of 3 to 5". The landing needs one open tile for each.
-pub const MAX_CREW: u16 = 5;
 
 /// One tile of the ground layer.
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
@@ -154,10 +155,12 @@ pub enum Problem {
     Crowded,
     /// A guard posted where it cannot stand.
     PostBlocked,
-    /// The crew's landing tiles are not all open (see the module docstring).
+    /// No edge tile is open, so a crew has nowhere to land (see the module
+    /// docstring).
     LandingBlocked,
     /// §6.1: "never seal the last path to the Heart". With every Crystal
-    /// Wall standing, no route reaches a tile beside the Vault.
+    /// Wall standing, no route from any open edge tile reaches a tile beside
+    /// the Vault.
     Sealed,
 }
 
@@ -446,7 +449,23 @@ impl Island {
             found.push(Problem::Crowded);
         }
 
-        // Everything that blocks feet, with every Crystal Wall standing.
+        let grid = self.standing();
+        let open = |x: u16, y: u16| grid.index(x, y).is_some_and(|i| grid.at(i).passable());
+        if self.guards.iter().any(|g| !open(g.x as u16, g.y as u16)) {
+            found.push(Problem::PostBlocked);
+        }
+        let landings = Self::open_edge(&grid);
+        if landings.is_empty() {
+            found.push(Problem::LandingBlocked);
+        } else if !self.reaches_vault(&grid, &landings) {
+            found.push(Problem::Sealed);
+        }
+        found
+    }
+
+    /// Everything that blocks feet at the start of a heist: the ground, a
+    /// pylon under every law and every Crystal Wall standing.
+    fn standing(&self) -> Grid {
         let mut grid = self.ground();
         for (_, x, y) in &self.laws {
             grid.place(*x as u16, *y as u16, Feature::Pylon);
@@ -456,16 +475,26 @@ impl Island {
                 grid.place(*x as u16, *y as u16, Feature::CrystalWall);
             }
         }
-        let open = |x: u16, y: u16| grid.index(x, y).is_some_and(|i| grid.at(i).passable());
-        if self.guards.iter().any(|g| !open(g.x as u16, g.y as u16)) {
-            found.push(Problem::PostBlocked);
-        }
-        if (0..MAX_CREW.min(side)).any(|x| !open(x, 0)) {
-            found.push(Problem::LandingBlocked);
-        } else if !self.reaches_vault(&grid) {
-            found.push(Problem::Sealed);
-        }
-        found
+        grid
+    }
+
+    fn open_edge(grid: &Grid) -> Vec<crate::grid::TileIndex> {
+        (0..grid.len() as crate::grid::TileIndex)
+            .filter(|&i| grid.is_edge(i) && grid.at(i).passable())
+            .collect()
+    }
+
+    /// Where a crew may land (§5.4): every open edge tile, as (x, y), in
+    /// row-major order. A landing anywhere else is dropped by the simulation
+    /// and refused by `verify_on`.
+    pub fn landings(&self) -> Vec<(u8, u8)> {
+        let grid = self.standing();
+        Self::open_edge(&grid).into_iter()
+            .map(|i| {
+                let (x, y) = grid.coords(i);
+                (x as u8, y as u8)
+            })
+            .collect()
     }
 
     // -- Editing: what a builder does to an island ------------------------
@@ -620,12 +649,13 @@ impl Island {
     }
 
     /// §6.1: a route from the landing to a tile beside the Vault, on feet.
-    fn reaches_vault(&self, grid: &Grid) -> bool {
-        let Some(start) = grid.index(0, 0) else { return false };
+    fn reaches_vault(&self, grid: &Grid, from: &[crate::grid::TileIndex]) -> bool {
         let (vx, vy) = (self.vault.0 as i32, self.vault.1 as i32);
         let mut seen = vec![false; grid.len()];
-        let mut frontier = vec![start];
-        seen[start as usize] = true;
+        let mut frontier = from.to_vec();
+        for &start in from {
+            seen[start as usize] = true;
+        }
         while let Some(at) = frontier.pop() {
             let (x, y) = grid.coords(at);
             if (x as i32 - vx).abs() + (y as i32 - vy).abs() == 1 {

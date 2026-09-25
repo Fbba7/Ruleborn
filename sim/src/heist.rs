@@ -55,6 +55,12 @@ pub const MENDER_REVIVE_TICKS: u32 = TICKS_PER_SECOND * 3 / 2;
 pub const SKIFF_OUTER_TICKS: u32 = TICKS_PER_SECOND * 5;
 pub const SKIFF_HEART_TICKS: u32 = TICKS_PER_SECOND * 20;
 
+/// §5.4: "A landing skiff can be heard: guards within 6 tiles of the landing
+/// spot start at 250 of 1,000 suspicion (12.17), unless the spot is in fog,
+/// darkness or tall grass."
+pub const LANDING_HEARD_TILES: i32 = 6;
+pub const LANDING_SUSPICION: i32 = 250;
+
 /// §12.20 (v3.3, G14): a revived crew member "returns at 30% of its full
 /// health: enough to reach the skiff, not enough to stand in a fight".
 pub const REVIVE_HEALTH: (i32, i32) = (30, 100);

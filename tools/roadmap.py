@@ -815,7 +815,7 @@ dict(
                     "player\u2019s night begins (D68)."
                     "<br><br><strong>Not yet:</strong> Google Play's sign-in "
                     "and receipts (need Google's API), crossing realms, \u00a712.22's generated "
-                    "fallback targets, and a landing command in the replay.",
+                    "fallback targets, and universes of several realms.",
              evidence="node --no-warnings --test server/test/*.test.mjs; "
                       "bash sim/run_spike.sh",
              register=["G17", "D58", "G20", "G21", "G26", "D62", "C43",
@@ -981,7 +981,15 @@ dict(
                     "knockouts, capture, the skiff and \u00a712.9's grades are in "
                     "<code>sim/</code>, and a heist planned the way a player would "
                     "play it ends Clean with every bag full. It is committed as "
-                    "a golden replay. Building it found that \u00a712.6's crack "
+                    "a golden replay. The crew lands where the raider "
+                    "chooses: the landing is a command in the replay, the "
+                    "whole crew on one open edge tile at tick 0, heard by "
+                    "guards within six tiles unless the spot is in fog, "
+                    "darkness or tall grass (\u00a75.4), and the server "
+                    "refuses a heist that never lands. Building it found "
+                    "that a Keeper can wall every edge tile but one, and so "
+                    "choose the landing \u00a75.4 says a defender cannot "
+                    "(F51). Building the heist found that \u00a712.6's crack "
                     "noise is erased by \u00a712.17's decay before it can matter, "
                     "and that on plain ground \u00a712.8's ambush cannot be "
                     "reached: the last crouched step behind a guard is heard. "
@@ -989,6 +997,7 @@ dict(
                     "whether it <em>feels</em> like agency, which is "
                     "\u00a730.8's 70% gate and needs people.",
              gate="\u2265 70% felt control (\u00a730.8)",
+             register=["F51", "G40", "D71"],
              blocked_by=["T1.4"]),
     ],
 ),

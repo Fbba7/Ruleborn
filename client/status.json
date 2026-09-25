@@ -19,6 +19,7 @@
   "the builder weaves laws and places their pylons, holds the realm to its law slots, and names what the laws make together (§8.6)": "passed",
   "the client speaks to a server over HTTPS only, plain HTTP to this machine's own for tests": "passed",
   "the client's simulation is the rules version every golden replay names": "passed",
+  "the crew lands together on the open edge tile the player chose, recorded at tick 0 (5.4)": "passed",
   "the heist just played replays on this phone with every second agreeing": "passed",
   "the planned heist plays out Clean with every bag banked (§12.9)": "passed",
   "the replay screen plays a golden to its end and shows its grade": "passed",

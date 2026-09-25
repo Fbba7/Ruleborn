@@ -63,6 +63,8 @@ def problems(brief: dict) -> list[str]:
         keys = [o["key"] for o in e["options"]]
         if len(set(keys)) != len(keys):
             out.append(f"{eid}: two options share a key")
+        if e["recommendation"].get("confidence") not in ("high", "medium", "low"):
+            out.append(f"{eid}: a recommendation needs a confidence: high, medium or low")
         if e["recommendation"]["option"] not in keys:
             out.append(f"{eid}: recommends {e['recommendation']['option']!r}, not one of {keys}")
         for q in e.get("quotes", []):

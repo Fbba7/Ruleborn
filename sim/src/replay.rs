@@ -83,6 +83,13 @@ pub enum Kind {
     /// Drag knocked-out guard number `x`. §12.8: "A crew member can drag a
     /// body at crouching speed and hide it."
     Drag = 10,
+    /// Land the whole crew on the edge tile at (`x`, `y`), at tick 0. §5.4:
+    /// "The crew lands on any edge tile of any outer realm the raider
+    /// chooses", and the landing spot is one spot, so the crew stands on it
+    /// together; which member gives it does not matter. Only the first
+    /// landing at tick 0 on an open edge tile counts; `verify_on` refuses a
+    /// heist that never lands.
+    Land = 11,
 }
 
 impl Kind {
@@ -99,6 +106,7 @@ impl Kind {
             8 => Some(Kind::Drop),
             9 => Some(Kind::Disarm),
             10 => Some(Kind::Drag),
+            11 => Some(Kind::Land),
             _ => None,
         }
     }
@@ -168,7 +176,7 @@ impl Heist {
             write_varint(&mut out, (command.tick - previous) as u64);
             previous = command.tick;
             // Actor in the high nibble, kind in the low one. A crew is at most
-            // five (§12.5) and there are ten kinds, so one byte is plenty
+            // five (§12.5) and there are twelve kinds, so one byte is plenty
             // and the packing is stated rather than assumed.
             out.push((command.actor << 4) | (command.kind as u8));
             out.extend_from_slice(&command.x.to_le_bytes());
