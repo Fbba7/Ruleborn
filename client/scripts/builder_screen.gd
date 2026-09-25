@@ -8,7 +8,8 @@ extends Control
 ## the server publishes by, and the Raid button waits until it is empty.
 ##
 ## The realm is drawn by the heist's own `RealmView`, from a heist started on
-## the island at tick 0, so what the builder shows is what a raider meets.
+## the island at tick 0, so what the builder shows is what a raider meets
+## before it lands: no crew, which lands wherever the raider chooses (§5.4).
 
 enum Tool { GROUND, WARD, GUARD, LAW, VAULT, ERASE }
 

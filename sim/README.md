@@ -111,8 +111,9 @@ island was a placeholder and every heist ran on the one fixture realm. Now:
   command and checksum bytes did not move when that changed, only their
   headers, which now carry the real hashes.
 - **Publishing rules** (`Island::check`): §5.2's ward limit, guard posts and
-  law slots for the realm level, one thing a tile, open landing tiles, and
-  §6.1's route to the Vault with every Crystal Wall standing. The fixture
+  law slots for the realm level, one thing a tile, an open edge tile to land
+  on, and §6.1's route to the Vault from some open edge tile with every
+  Crystal Wall standing. The fixture
   fails one of them on purpose — five posts where realm level 5 has three —
   and `Island::example()` is a legal realm-3 Heart for the server's tests.
 - **The rules version** (`rules_version`) is SHA-256 of the law table and of
@@ -143,12 +144,16 @@ island was a placeholder and every heist ran on the one fixture realm. Now:
 - **The landing is in the input log** (`Kind::Land`, §5.4). The raider
   picks an edge tile and the whole crew lands on it together, at tick 0,
   before any other command of that tick. Guards within 6 tiles start at 250
-  of 1,000 suspicion unless the spot is in fog, darkness or tall grass
+  of 1,000 suspicion unless the spot is in fog, darkness or tall grass —
+  six steps walked, as every sound travels (§12.17), not through walls
   (`LANDING_HEARD_TILES`, `LANDING_SUSPICION`, gated against the document
   by `content_gate.py`). A late, second or inland landing is dropped, and
   `verify_on` refuses a heist that never lands (`Refusal::Landing`, -11
   over WebAssembly). `Island::landings` lists every open edge tile; `check`
-  wants one of them, and a route from some open edge tile to the Vault. The
+  wants one of them, and a route from some open edge tile to the Vault;
+  `Island::reaching` lists those the Vault can be walked to from, which is
+  what the client's default landing picks among. Ghost tide returns a
+  knocked-out crew member to the landing spot. The
   readings §5.4 leaves open are register G40; a Keeper who walls every edge
   tile but one is F51; the Heart's no-landing rule waits for universes
   (D71).

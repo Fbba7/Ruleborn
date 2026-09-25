@@ -251,6 +251,7 @@ func _run() -> void:
 		var played := {}
 		if not online.lease.is_empty():
 			var go := func(seconds: int): online.advance(seconds * 30 - online.world.tick())
+			online.land(Vector2i(0, 0))                   # where server/test lands it
 			for step in [[0, Vector2i(6, 8)], [1, Vector2i(7, 9)], [2, Vector2i(5, 9)]]:
 				online.select(step[0])
 				online.tap_tile(step[1])

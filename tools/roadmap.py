@@ -38,6 +38,14 @@ register    register item ids whose progress this task tracks
 gate        the threshold that decides it is finished, where one exists
 """
 
+import json as _json
+from pathlib import Path as _Path
+
+#: How many decisions the owner's brief holds, read from it so the roadmap
+#: cannot go stale when an entry is added.
+_BRIEF = len(_json.loads((_Path(__file__).resolve().parent.parent / "docs" / "decisions"
+                          / "brief.json").read_text(encoding="utf-8"))["entries"])
+
 STAGES = [
 
 # ===========================================================================
@@ -806,7 +814,7 @@ dict(
                     "before the grant \u2014 the review of this work found that "
                     "Play refunds a purchase nobody consumes after three days, and "
                     "that only Google can say which purchases were a tester\u2019s "
-                    "(D67). The 42 decisions only the owner can make are a brief, "
+                    f"(D67). The {_BRIEF} decisions only the owner can make are a brief, "
                     "each with options, numbers and a recommendation, answered on "
                     "its own page. Push goes out through Firebase Cloud Messaging "
                     "as the project\u2019s service account; its review found that "
@@ -867,8 +875,10 @@ dict(
                     "spike \u2014 the extension building and loading on a real "
                     "iPhone and Android, whose failure \u00a724.7 says moves the "
                     "simulation to C# \u2014 platform sign-in and \u00a712.22's "
-                    "target choice. Every one of \u00a724.10's eleven command "
-                    "kinds has a control: a tap is read by what is on the tile.",
+                    "target choice, and \u00a721's landing picker: the crew lands "
+                    "on a spot chosen by the heist's seed. Every other of the "
+                    "twelve command kinds has a control: a tap is read by what "
+                    "is on the tile.",
              evidence="python3 client/status.py"),
     ],
 ),
@@ -989,7 +999,15 @@ dict(
                     "refuses a heist that never lands. Building it found "
                     "that a Keeper can wall every edge tile but one, and so "
                     "choose the landing \u00a75.4 says a defender cannot "
-                    "(F51). Building the heist found that \u00a712.6's crack "
+                    "(F51). Its review (60 agents, each finding tried by two "
+                    "skeptics) confirmed and fixed: Ghost tide still sent the "
+                    "knocked-out to the old north-edge tiles, the landing was "
+                    "heard through walls where \u00a712.17 has every sound "
+                    "walk, pits and illusions still spared row 0 but not the "
+                    "real landing, and the client\u2019s default landing, "
+                    "first in row order, was one a Keeper could aim at a "
+                    "closed pocket \u2014 it now picks by seed among the "
+                    "landings that reach the Vault. Building the heist found that \u00a712.6's crack "
                     "noise is erased by \u00a712.17's decay before it can matter, "
                     "and that on plain ground \u00a712.8's ambush cannot be "
                     "reached: the last crouched step behind a guard is heard. "

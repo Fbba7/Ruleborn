@@ -38,6 +38,7 @@ var crew_buttons: Array[Button] = []
 var server: ServerClient
 var lease := {}
 var island := PackedByteArray()
+var seed_text := ""
 
 
 func _ready() -> void:
@@ -61,6 +62,7 @@ func begin(seed: String, ticks: int, crew: int, realm := PackedByteArray(), era 
 	if not world.set_era(era) or not world.start(seed, ticks, crew, realm):
 		return false
 	island = realm
+	seed_text = seed
 	selected = 0
 	calling_skiff = false
 	playing = true
@@ -202,7 +204,7 @@ func get_out() -> void:
 func advance(ticks: int) -> void:
 	for i in ticks:
 		if world.tick() == 0 and not landed():
-			land(world.landings()[0] if world.landings().size() > 0 else Vector2i(0, 0))
+			land(default_landing())
 		if not world.step():
 			finish()
 			return
@@ -211,11 +213,23 @@ func advance(ticks: int) -> void:
 
 ## §5.4: the crew lands on the edge tile `t`, which the log records at tick
 ## 0. Until there is a landing picker, a heist that has not landed by its
-## first step lands on the first open edge tile (`advance`).
+## first step lands on `default_landing()` (`advance`).
 func land(t: Vector2i) -> bool:
 	if world.tick() != 0:
 		return false
 	return world.give(0, Kind.LAND, t.x * 256 + 128, t.y * 256 + 128)
+
+
+## A landing the crew can walk to the Vault from, chosen by the heist's seed
+## rather than taken first in row order, so a Keeper cannot aim the default
+## at a closed pocket of the edge. Until there is a landing picker.
+func default_landing() -> Vector2i:
+	var spots := world.reaching()
+	if spots.is_empty():
+		spots = world.landings()
+	if spots.is_empty():
+		return Vector2i(0, 0)
+	return spots[absi(seed_text.hash()) % spots.size()]
 
 
 func landed() -> bool:

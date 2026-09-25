@@ -1060,6 +1060,10 @@ impl World {
     /// suspicion (12.17), unless the spot is in fog, darkness or tall grass."
     /// Darkness is the unlit modifier perception uses, so a spot that hides
     /// a crew member from a guard's eyes also hides the skiff from its ears.
+    /// "Within 6 tiles" is walked, as §12.17 says every sound travels: "Sound
+    /// follows the walkable path rather than passing through walls", and a
+    /// realm law's noise radius stretches it as it stretches every sound. A
+    /// guard asleep at the start does not hear it.
     /// A second landing, a late one, or one on a tile that is not an open
     /// edge tile is dropped like any command that cannot be carried out.
     fn land(&mut self, command: Command) {
@@ -1086,9 +1090,14 @@ impl World {
         if hidden {
             return;
         }
-        let heard = Fx::from_int(heist::LANDING_HEARD_TILES);
+        let (ln, ld) = self.sheet.factor(Param::NoiseRadius);
+        let reach = (heist::LANDING_HEARD_TILES as i64 * ln / ld).clamp(0, u16::MAX as i64 - 1) as u16;
+        let field = noise::field(&self.grid, tile, reach);
+        let (grid, now) = (&self.grid, self.tick);
         for g in self.guards.iter_mut() {
-            if g.at.distance(spot) <= heard {
+            let heard = grid.tile_at(g.at.x, g.at.y)
+                .is_some_and(|at| field[at as usize] != noise::UNHEARD);
+            if heard && g.awake(now) {
                 g.suspicion = g.suspicion.max(heist::LANDING_SUSPICION);
             }
         }
@@ -1209,11 +1218,12 @@ impl World {
         }
     }
 
-    /// Open ground with nothing on it: no feature, no ward, not the crew's
-    /// landing row. Where grass may spread and an illusion or a pit may form.
+    /// Open ground with nothing on it: no feature, no ward, no pit, and not
+    /// the crew's landing spot (§5.4). Where grass may spread and an
+    /// illusion or a pit may form.
     fn bare(&self, t: grid::TileIndex) -> bool {
         self.grid.at(t).passable() && self.grid.feature(t).is_none()
-            && self.grid.coords(t).1 != 0
+            && self.landing != Some(t)
             && !self.wards.iter().any(|w| w.tile == t)
             && !self.pits.contains(&t)
     }
@@ -2231,11 +2241,18 @@ impl World {
                 if ghost_tide {
                     // Ghost tide (Flow Echo Hush): "knocked-out characters
                     // drift back to where they entered the realm instead of
-                    // being caught" — to its landing tile, on its feet at
-                    // the revive health.
+                    // being caught" — to the landing spot (§5.4), on its
+                    // feet at the revive health. A world built by hand,
+                    // which never landed, sends it where `on_ground` put it.
                     let (n, d) = heist::REVIVE_HEALTH;
-                    let (x, y) = self.grid.centre(self.grid.index(r.id as u16, 0).unwrap_or(0));
+                    let tile = self.landing
+                        .unwrap_or_else(|| self.grid.index(r.id as u16, 0).unwrap_or(0));
+                    let (x, y) = self.grid.centre(tile);
                     r.at = Point { x, y };
+                    r.came_from = tile;
+                    r.last_tile = Some(tile);
+                    r.route.clear();
+                    r.along = 0;
                     r.health = (full_health(&self.sheet, r.role) * n / d).max(1);
                     r.standing = Standing::Active;
                     r.revive = 0;

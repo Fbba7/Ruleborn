@@ -28,6 +28,8 @@
 //! | -7 | commands out of order, or past the end |
 //! | -8 | not one checksum a second |
 //! | -9 | the input does not fit the buffer, or a replay over 2 KB (§24.10) |
+//! | -10 | an era that is not one (`rb_record`, `rb_record_drawn`) |
+//! | -11 | the crew never landed: no landing at tick 0 on an open edge tile (§5.4) |
 
 use std::sync::Mutex;
 

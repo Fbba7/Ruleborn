@@ -2371,6 +2371,12 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
     let mut halved = Island::example();
     halved.wards.push((WardKind::CrystalWall, 9, 5));     // in the wall's gap
     assert_eq!(halved.check(), vec![]);
+    // The north edge is still a landing, but not one the Vault can be
+    // walked to from, so a default landing never picks it.
+    assert!(halved.landings().contains(&(0, 0)));
+    assert!(!halved.reaching().contains(&(0, 0)));
+    assert!(halved.reaching().contains(&(0, 11)));
+    assert!(halved.reaching().iter().all(|t| halved.landings().contains(t)));
     // Walled in on every side, the Vault is sealed from every edge.
     let mut sealed = Island::example();
     let side = sealed.side() as usize;
@@ -2379,6 +2385,7 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
     }
     sealed.wards.push((WardKind::CrystalWall, 7, 9));
     assert_eq!(sealed.check(), vec![Problem::Sealed]);
+    assert!(sealed.reaching().is_empty() && !sealed.landings().is_empty());
 
     let mut many = Island::example();
     many.laws.push(("glass".to_string(), 11, 4));
@@ -3258,13 +3265,14 @@ fn deep_sleep_dozes_every_guard_and_muffles_footsteps() {
 fn ghost_tide_sends_the_knocked_out_back_to_where_they_landed() {
     let mut world = vault_world(2);
     weave(&mut world, &["half_gravity", "echoes", "stillness"]);
+    world.landing = world.grid.index(13, 5);        // landed on the east edge
     put(&mut world, 1, 9, 9);
     world.raiders[1].revived = true;                // Echoes already spent
     world.raiders[1].health = 0;
     run_for(&mut world, h::DOWN_TICKS + 2);
     let r = &world.raiders[1];
     assert!(r.active(), "not caught");
-    assert_eq!(tile_of(&world, 1), (1, 0), "its landing tile");
+    assert_eq!(tile_of(&world, 1), (13, 5), "the landing spot (5.4)");
     assert_eq!(r.health, 180 * 30 / 100, "at the revive health");
 }
 
@@ -3613,19 +3621,34 @@ fn a_landing_is_heard_within_six_tiles_unless_the_spot_is_hidden() {
     let world = landed(&island, (13, 2), Vec::new());
     let spot = world.grid.index(13, 2).unwrap();
     assert!(!world.grid.is_unlit(spot) && world.grid.feature(spot).is_none(), "an open, lit spot");
-    let (x, y) = world.grid.centre(spot);
-    let spot_at = crate::Point { x, y };
+    // Six steps walked, as every sound travels (§12.17): the Mender at
+    // (12, 2) and the Breaker at (9, 4) are, the others are not.
+    let walked = crate::noise::field(&world.grid, spot, LANDING_HEARD_TILES as u16);
     let (mut heard, mut unheard) = (0, 0);
     for g in &world.guards {
-        if g.at.distance(spot_at) <= Fx::from_int(LANDING_HEARD_TILES) {
-            assert_eq!(g.suspicion, LANDING_SUSPICION, "guard {} is within six tiles", g.id);
+        let at = world.grid.tile_at(g.at.x, g.at.y).unwrap();
+        if walked[at as usize] != crate::noise::UNHEARD {
+            assert_eq!(g.suspicion, LANDING_SUSPICION, "guard {} is within six steps", g.id);
             heard += 1;
         } else {
-            assert_eq!(g.suspicion, 0, "guard {} is beyond six tiles", g.id);
+            assert_eq!(g.suspicion, 0, "guard {} is beyond six steps", g.id);
             unheard += 1;
         }
     }
-    assert!(heard > 0 && unheard > 0, "the spot has guards on both sides of the line");
+    assert_eq!((heard, unheard), (2, 3), "the spot has guards on both sides of the line");
+
+    // A wall between: the Breaker, 4.5 tiles away in a straight line, is
+    // more than six steps round the pillars, and does not hear it.
+    let mut walled = crate::island::Island::fixture();
+    let side = walled.side() as usize;
+    for y in 0..8 {
+        walled.tiles[y * side + 11].feature = Some(Feature::RockPillar);
+    }
+    let world = landed(&walled, (13, 2), Vec::new());
+    let breaker = world.guards.iter().find(|g| g.id == 2).unwrap();
+    assert_eq!(breaker.suspicion, 0, "not heard through the wall");
+    let mender = world.guards.iter().find(|g| g.id == 4).unwrap();
+    assert_eq!(mender.suspicion, LANDING_SUSPICION, "heard on its own side");
 
     // Tall grass, fog or darkness on the spot: nobody hears it.
     for hide in 0..3 {
@@ -3657,13 +3680,17 @@ fn a_landing_off_the_edge_late_or_twice_is_dropped() {
     let second = Command { tick: 0, actor: 1, kind: Kind::Land, x: 13 * 256 + 128, y: 2 * 256 + 128 };
     let world = landed(&island, (0, 5), vec![second]);
     assert_eq!(world.landing, world.grid.index(13, 2), "the first in the log's order lands");
-    // A landing after tick 0 moves nobody.
-    let mut world = landed(&island, (0, 5), Vec::new());
+    // A landing after tick 0, in a world that has not landed, moves nobody.
+    let late = Command { tick: 1, actor: 0, kind: Kind::Land, x: 13 * 256 + 128, y: 2 * 256 + 128 };
+    let heist = Heist {
+        seed: 1, island: island.digest(), rules: crate::rules_version(), ticks: 4_500, crew: 3,
+        era: None, commands: vec![late], checksums: Vec::new(),
+    };
+    let mut world = World::from_island(&island, &heist);
     let before: Vec<_> = world.raiders.iter().map(|r| (r.at.x, r.at.y)).collect();
     world.step();
-    world.commands_for_test(vec![Command { tick: 1, actor: 0, kind: Kind::Land, x: 13 * 256 + 128, y: 2 * 256 + 128 }]);
-    world.phase_inputs();
-    assert_eq!(world.landing, world.grid.index(0, 5));
+    world.step();
+    assert_eq!(world.landing, None, "a late landing is no landing");
     let after: Vec<_> = world.raiders.iter().map(|r| (r.at.x, r.at.y)).collect();
     assert_eq!(before, after, "nobody moved");
 }

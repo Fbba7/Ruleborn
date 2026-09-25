@@ -82,8 +82,10 @@ func _draw() -> void:
 				break
 	for gi in guards.size():
 		_draw_guard(guards[gi], gi == shown, gi, t)
-	for member in replay.crew():
-		_draw_member(member, t)
+	# Before it lands the crew is nowhere a raider would meet it (§5.4).
+	if replay.has_landed():
+		for member in replay.crew():
+			_draw_member(member, t)
 
 
 func _draw_feature(code: int, r: Rect2, t: float) -> void:

@@ -484,6 +484,21 @@ impl Island {
             .collect()
     }
 
+    /// The landings from which a crew can walk to the Vault, with every
+    /// Crystal Wall standing: what a default landing chooses from, since
+    /// `check` promises only that one exists and a Keeper may leave closed
+    /// pockets along the edge.
+    pub fn reaching(&self) -> Vec<(u8, u8)> {
+        let grid = self.standing();
+        Self::open_edge(&grid).into_iter()
+            .filter(|&t| self.reaches_vault(&grid, &[t]))
+            .map(|i| {
+                let (x, y) = grid.coords(i);
+                (x as u8, y as u8)
+            })
+            .collect()
+    }
+
     /// Where a crew may land (§5.4): every open edge tile, as (x, y), in
     /// row-major order. A landing anywhere else is dropped by the simulation
     /// and refused by `verify_on`.
@@ -503,8 +518,9 @@ impl Island {
     // whether the result may be published is `check`'s to say, so a builder
     // shows the problems rather than a second copy of the rules refusing taps.
 
-    /// A blank realm to build on: `empty`, with the Vault in the middle of
-    /// the far side from the landing and the entrance in the far corner.
+    /// A blank realm to build on: `empty`, with the Vault near the middle of
+    /// the south side and the entrance in the south-east corner. A crew may
+    /// land on any edge tile (§5.4), so neither is placed against a landing.
     pub fn blank(realm_level: u8) -> Island {
         let mut island = Island::empty(realm_level);
         let side = island.side() as u8;
@@ -751,8 +767,9 @@ impl Island {
         island.vault = (crate::VAULT_AT.0 as u8, crate::VAULT_AT.1 as u8);
         island.vault_level = 1;
         island.exposed = crate::heist::FIXTURE_EXPOSED as u32;
-        // Where §12.17's reinforcing Warden arrives: the far corner from the
-        // crew's start, on the guards' side.
+        // Where §12.17's reinforcing Warden arrives: the south-east corner,
+        // on the guards' side of the wall, and far from the planned heist's
+        // landing at (1, 0).
         island.entrance = ((side - 1) as u8, (side - 1) as u8);
         // Guards on tile centres, on both sides of the wall, so that the wall,
         // the fence and the fog each stand between some guard and some route.
@@ -772,9 +789,9 @@ impl Island {
     }
 
     /// A legal Heart at realm level 3, for the server's tests: §5.2's two
-    /// posts and two law slots, four of its six wards, a wall whose one gap
-    /// every route has to take, and the Vault at the far side from the
-    /// landing. Built by hand rather than generated, so what it is does not
+    /// posts and two law slots, four of its six wards, a wall across the
+    /// north half whose one gap every route from the north edge has to take
+    /// (where the server's tests land), and the Vault in the south half. Built by hand rather than generated, so what it is does not
     /// move when the generator does.
     pub fn example() -> Island {
         use crate::grid::Feature::*;

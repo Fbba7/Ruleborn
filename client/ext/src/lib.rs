@@ -317,6 +317,26 @@ impl RulebornReplay {
         out
     }
 
+    /// The landings from which the crew can walk to the Vault: what a
+    /// default landing chooses from (`Island::reaching`).
+    #[func]
+    fn reaching(&self) -> Array<Vector2i> {
+        let mut out = Array::new();
+        let Some(realm) = self.island.as_ref() else { return out };
+        for (x, y) in realm.reaching() {
+            out.push(Vector2i::new(x as i32, y as i32));
+        }
+        out
+    }
+
+    /// Whether the crew is on the island yet: it has landed, or the heist
+    /// is past its first tick. Before that the crew stands nowhere a raider
+    /// would meet it, so nothing should draw it.
+    #[func]
+    fn has_landed(&self) -> bool {
+        self.world.as_ref().is_some_and(|w| w.landing.is_some() || w.tick > 0)
+    }
+
     #[func]
     fn crew(&self) -> Array<VarDictionary> {
         let mut out = Array::new();

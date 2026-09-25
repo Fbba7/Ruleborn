@@ -6349,15 +6349,22 @@ dict(id="G40", kind="gap", severity="minor", status="open",
           "tick 0, before any other command of that tick (<em>\u201cthe "
           "landing spot\u201d</em> is one spot). <em>\u201cDarkness\u201d</em> "
           "is §12.17\u2019s unlit modifier on that tile, the same test "
-          "perception uses; a realm Glowing dark makes dark does not hide it. "
+          "perception uses; a realm Glowing dark makes dark does not hide it, "
+          "though Night runners reads the same word as that whole realm "
+          "(<code>in_darkness</code>), so the one word is read two ways. "
           "Fog and tall grass are the fog bank and tall grass features on the "
           "tile itself, not beside it. <em>\u201cStart at 250\u201d</em> "
-          "raises a guard to 250 and never lowers one already higher. The "
-          "distance is from the guard to the tile\u2019s centre, six tiles "
-          "or less. The crew\u2019s old convention \u2014 one member a tile "
+          "raises a guard to 250 and never lowers one already higher, and a "
+          "guard asleep at the start does not hear it. The six tiles are "
+          "walked, as §12.17 says every sound travels (<em>\u201cSound "
+          "follows the walkable path rather than passing through "
+          "walls\u201d</em>), and a law\u2019s noise radius stretches them. "
+          "A knocked-out crew member Ghost tide sends back to "
+          "<em>\u201cwhere they entered the realm\u201d</em> goes to the "
+          "landing spot. The crew\u2019s old convention \u2014 one member a tile "
           "along the north edge, unheard \u2014 is gone: the server refuses "
           "a heist that never lands (<code>Refusal::Landing</code>).",
-     rec="State the five readings in §5.4, or the ones that should differ."),
+     rec="State these readings in §5.4, or the ones that should differ."),
 
 dict(id="D71", kind="deviation", severity="minor", status="open",
      title="The Heart is landed on, because a heist is still one island",
@@ -6371,7 +6378,8 @@ dict(id="D71", kind="deviation", severity="minor", status="open",
           "and the clock is the lease\u2019s. Universes of several realms "
           "joined by §5.3\u2019s links are the next stage of crossing realms; "
           "the Heart rule and the clock by links come with them.",
-     rec="None for the document; build universes (T5.5)."),
+     rec="None for the document; build universes of several realms, the "
+         "crossing realms T3.3 lists as not yet built."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "
@@ -7955,11 +7963,11 @@ EDITS = {
     dict(section="5.4", action="insert",
          find="unless the spot is in fog, darkness or tall grass.",
          replace="The whole crew lands together on the one spot, before anything "
-                 "else it does. The distance is from the guard to the spot, six "
-                 "tiles or less; a guard already above 250 keeps what it has. Fog, "
+                 "else it does. The six tiles are walked, as every sound travels "
+                 "(12.17); a guard already above 250 keeps what it has. Fog, "
                  "darkness and tall grass are on the spot itself, and darkness is "
                  "the unlit ground 12.17 sees by.",
-         why="Each of the five is a reading the simulation had to make; stated, "
+         why="Each is a reading the simulation had to make; stated, "
              "the landing picker can show exactly what a guard would hear."),
 ],
 

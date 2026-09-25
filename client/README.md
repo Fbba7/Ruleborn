@@ -48,7 +48,9 @@ a guard is attacked, or dragged if it is down; the Vault is cracked, or loaded
 to full once open; a pylon is broken; a live ward is disarmed; anything else is
 walked to. The buttons cycle the selected member's gait (walk, crouch, run),
 halt it, drop half its loot, and — Get out — call the skiff (§5.4) to the next
-tile tapped. Every one of §24.10's eleven command kinds has a control. When the clock runs
+tile tapped. Of the twelve command kinds, every one but the landing has a control;
+the crew lands (§5.4) before the first step on an edge tile it can walk to the
+Vault from, chosen by the heist's seed, until there is a landing picker. When the clock runs
 out the command log is written down as the replay a device queues (§24.12) and
 checked. With a server (`RULEBORN_SERVER`, or the project setting
 `ruleborn/server_url`) the screen signs in, takes the first island in §24.8's
@@ -159,6 +161,10 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.5-stable_linux.x
   build has no Game Center or Play Games, so it sends a stand-in the local
   server accepts. §12.22's target choice is not built either: the client takes
   the first island in the lists that is not its own.
+- **The landing picker.** §21's Landing screen — every outer realm's edge,
+  what guards would hear, and the clock for each choice — is not built; the
+  heist screen lands the crew itself (see above), and nothing draws the crew
+  until it has landed.
 - **Fonts.** §21.8 names Baloo 2 and Marcellus; the client uses Godot's default
   font until they are added.
 - **The law banner.** §21.8 puts the realm's laws at the top left of the heist

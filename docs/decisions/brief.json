@@ -3723,7 +3723,7 @@
      "label": "At least half of each side open",
      "means": "Each of a realm's four sides keeps at least half of its tiles open to land on, counting Crystal Walls as closed.",
      "consequences": "Cliffs and walls along the edge stay a tool, as §5.4's 'cliffs, tall grass, lantern light and laws along every edge' wants, but no side can be sealed and no single tile can become the gate. A Keeper still shapes where landing is easy.",
-     "numbers": "At realm level 1 each side of 10 keeps 5 open, 20 landings at least; at level 5 each side of 14 keeps 7, 28 at least.",
+     "numbers": "At realm level 1 each side of 10 keeps 5 open, so at least 16 landings (a corner counts on both its sides); at level 5 each side of 14 keeps 7, at least 24.",
      "doc_edit": "§5.4 'Landing' row: add 'Each side of a realm keeps at least half its edge tiles open to land on.' §6.1: cite it beside the route rule.",
      "build_change": "island.rs check(): a new Problem, EdgeClosed, when any side has fewer than half its tiles open, with every Crystal Wall standing."
     },

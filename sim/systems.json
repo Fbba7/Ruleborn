@@ -246,7 +246,7 @@
       "name": "Landing",
       "section": "5.4",
       "task": "T5.5",
-      "what": "The crew lands where the raider chooses: a landing in the input log, at tick 0, puts the whole crew on one open edge tile before any other input of that tick. Guards within 6 tiles of the spot start at 250 of 1,000 suspicion unless it is in fog, darkness or tall grass. A late, second or inland landing is dropped, and the server refuses a heist that never lands. An island needs one open edge tile, and a walkable route from some open edge tile to the Vault; `Island::landings` lists the tiles a crew may choose. The Heart's no-landing rule waits for universes of several realms.",
+      "what": "The crew lands where the raider chooses: a landing in the input log, at tick 0, puts the whole crew on one open edge tile before any other input of that tick. Guards within 6 tiles of the spot, walked as every sound travels (§12.17), start at 250 of 1,000 suspicion unless it is in fog, darkness or tall grass. Ghost tide returns a knocked-out crew member to the landing spot. A late, second or inland landing is dropped, and the server refuses a heist that never lands. An island needs one open edge tile, and a walkable route from some open edge tile to the Vault; `Island::landings` lists the tiles a crew may choose. The Heart's no-landing rule waits for universes of several realms.",
       "tests": [
         "the_whole_crew_lands_on_the_spot_the_log_names",
         "a_landing_is_heard_within_six_tiles_unless_the_spot_is_hidden",
