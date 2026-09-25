@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5641,7 +5641,13 @@ dict(id="F40", kind="finding", severity="significant", status="open",
           "together, so boundaries that divide it by share are close together, "
           "and an engaged player crosses several in days. And the shares alone "
           "cannot place Ember at all: once reached it is a floor, so players "
-          "pile up on it whatever its value.",
+          "pile up on it whatever its value. The figures above are the fit "
+          "before the owner\u2019s answer (B: the first ten heists a week move "
+          "Renown, and a foiled raider gives only what it loses above its "
+          "floor). Refitted to that, the leagues start at Ember 128, Tide 176, "
+          "Star 254, Nova 458 and Paradox 806, and an engaged player reaches "
+          "Ember on day 3, Tide on day 8 and Star on day 23, inside §14.7\u2019s "
+          "first three targets; Nova is not reached within the model\u2019s run.",
      rec="Choose which target §14.7 means: if the shares, accept faster "
          "arrivals (or widen the spread with a smaller pull-back); if the "
          "arrival times, accept a heavier Dust and Ember at season end. And "
@@ -5912,7 +5918,9 @@ dict(id="G30", kind="gap", severity="minor", status="open",
           "judged against what §13.2\u2019s authored hold band leaves the raider; "
           "the middle of the list is the in-band candidate nearest the band\u2019s "
           "middle, with one easier and one harder beside it; an echo moves no "
-          "Renown, earns its owner nothing and rates nothing; the new-player "
+          "Renown, earns its owner nothing and rates nothing (since the "
+          "owner\u2019s answer D, it rates the raider against the island, and "
+          "\u201crecent\u201d is the last twenty validated raids); the new-player "
           "protection covers echoes too, and not §13.1\u2019s seeded islands, "
           "which are the game\u2019s own. Found building matchmaking.",
      rec="State a band\u2019s width, the window of \u201crecent\u201d, the score of a "
@@ -6045,7 +6053,7 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "load test (<code>server/load.mjs</code>, recorded in "
           "<code>server/load.json</code>) plays §14.1\u2019s players through the "
           "server as built: an engaged player writes at least 46 rows a day, "
-          "9.3 times the budget; a regular one 24 and a casual one 10.5. A clean "
+          "9.2 times the budget; a regular one 24 and a casual one 10.5. A clean "
           "heist in steady state writes about 14 \u2014 the lease issued and "
           "settled, the heist, up to four ledger lines, Renown on both sides, "
           "stars, two ratings, an event batch, the defender\u2019s notification "
@@ -6054,7 +6062,7 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "alone four. A million monthly players, a third of them playing on a "
           "day as §25.1\u2019s gate has it, write about 460 million rows a month "
           "if engaged and 105 million if casual \u2014 9 and 2 times the 50 "
-          "million included; at the paid price in §28.3 that is about $415 and "
+          "million included; at the paid price in §28.3 that is about $416 and "
           "$60 a month, not $5 to $15. And a re-simulation takes "
           "about 15 ms of CPU (22 ms at the 95th percentile) where §28.3\u2019s free "
           "plan allows <em>\u201c10 milliseconds\u201d</em> a request, so the free plan "
@@ -6065,7 +6073,10 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "a heist\u2019s rows moved by 0.01 a player-day; none of the "
           "figures above changed. Re-measured again for the owner\u2019s "
           "answers: a loud or partial heist now books its fee\u2019s return "
-          "(C41), so an engaged player writes 46.46 rows a day, not 46.02.",
+          "(C41), a raid past the week\u2019s 20 books nothing (G20) and "
+          "target lists are rebuilt hourly (G21): an engaged player writes "
+          "46.13 rows a day, and a million monthly players cost about $416 "
+          "a month on the paid plan.",
      rec="Re-derive §24.1\u2019s budget and cost table from measured writes: state "
          "a share of monthly players active on a day, price the writes a heist "
          "must make, and drop the free-plan columns for validation. Or cut "
@@ -6320,6 +6331,33 @@ dict(id="D70", kind="deviation", severity="minor", status="open",
      rec="File both declarations from server/declarations.md; build the age "
          "check and the deletion button; purge the edge on an under-13 "
          "deletion."),
+
+dict(id="F52", kind="finding", severity="significant", status="open",
+     title="F33\u2019s decided Glare reach is realm-wide wherever Whispers is "
+           "woven, and the brief\u2019s figures for it were measured without "
+           "that",
+     refs=["10.3", "12.17", "7.7", "5.2"],
+     body="The owner chose F33\u2019s option D: a Lantern Glare shows the crew "
+          "to the guards within the alarm\u2019s spread reach, 4 m, and its "
+          "build change says the reach is the alarm\u2019s \u2014 "
+          "<code>SPREAD_METRES</code> scaled by the sheet\u2019s AlarmRange "
+          "factor \u2014 which is what <code>sim/</code> and the harness now "
+          "do. Whispers sets AlarmRange to the whole universe (999), and the "
+          "defensive weave picks it often, because a wider alarm helps the "
+          "defender. So on the harness\u2019s realm 3 with two posts (n=200) "
+          "two Glares hold 91.5% against six Snares and Wells\u2019 37.0% "
+          "\u2014 the switch F33 found, back. The brief quoted 68.2% and "
+          "75.2% for one and two Glares; those were measured with a fixed 4 m "
+          "(this harness without the factor gives 65.5% and 72.5%). Option "
+          "D\u2019s own consequences note the Whispers case as \u201ca "
+          "readable law effect\u201d, but its numbers did not include it. "
+          "Found building the answer.",
+     measured="tools/heist_harness/test_harness.py "
+              "test_the_decided_glare_still_outweighs_a_realm_where_whispers_stretches_it",
+     rec="Either keep the Glare\u2019s reach at a fixed 4 m, not the "
+         "alarm\u2019s, so Whispers does not stretch it, or accept that a "
+         "Whispers realm\u2019s Glare is realm-wide and re-measure §5.2\u2019s "
+         "budget over kits with it in."),
 
 dict(id="F51", kind="finding", severity="significant", status="open",
      title="A Keeper can close every edge tile but one, and so choose where "

@@ -51,6 +51,13 @@ test("the Heart is realm level 3, and an island of another level is published on
   assert.throws(() => t.service.publish(me, bytes),
     (e) => e.status === 422 && e.detail.problems.includes("heart_level"));
   assert.ok(t.service.publish(me, bytes, "outer-1").bundle);
+  // Above 3 as well as below: a level-4 Heart, 13 by 13.
+  const big = new Uint8Array(14 + 13 * 13 * 3 + 3);
+  big.set(bytes.subarray(0, 14));
+  big[4] = 4;
+  assert.deepEqual(t.build.island(big).problems, []);
+  assert.throws(() => t.service.publish(me, big),
+    (e) => e.status === 422 && e.detail.problems.includes("heart_level"));
 });
 
 test("publishing is content-addressed and idempotent", () => {
@@ -249,7 +256,7 @@ function pastHeists(t, attacker, n, { mode = "raid", outcome = {} } = {}) {
   // Against someone else, so G37's once-a-day pair rule is not what is tested.
   const other = t.service.session("gc:someone-else").account;
   for (let i = 0; i < n; i++) {
-    const token = `past-${mode}-${i}-${JSON.stringify(outcome).length}`;
+    const token = `past-${attacker}-${mode}-${i}-${JSON.stringify(outcome).length}`;
     t.service.db.prepare(
       `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at,
                            echo, trace_of, mode, challenge, era, state)
@@ -301,6 +308,65 @@ test("past 20 paid raids a week, a raid costs nothing and pays nothing, and the 
   // Monday 00:00 UTC starts a new week.
   t.clock.now += 7 * 24 * 60 * 60 * 1000;
   assert.deepEqual(t.service.lease(t.raider.account, t.bundle).capped, []);
+});
+
+test("the week turns at Monday 00:00 UTC, not seven days after a raid (G20)", () => {
+  const t = twoPlayers();
+  const d = new Date(t.clock.now);
+  t.clock.now = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + (7 - d.getUTCDay()) % 7, 23, 59);
+  pastHeists(t, t.raider.account, 20);                 // on Sunday evening
+  assert.deepEqual(t.service.lease(t.raider.account, t.bundle).capped, ["week_raids"]);
+  t.clock.now += 60 * 1000;                            // Monday, 00:00 UTC
+  assert.deepEqual(t.service.lease(t.raider.account, t.bundle).capped, [], "a minute later, a new week");
+});
+
+test("a Trace counts to the week, and past the 20th pays nothing and opens nothing (G20)", () => {
+  const t = twoPlayers(true);
+  established(t, t.raider.account);
+  const island = t.build.exampleIsland(true);
+  island[5] = 2;
+  const home = t.service.publish(t.raider.account, island).bundle;
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));   // robbed
+  pastHeists(t, t.defender.account, 20);
+  const trace = t.service.lease(t.defender.account, home, null, { trace: true });
+  const out = t.service.submit(t.defender.account, trace.token, play(t, trace, { plan: openPlan() }));
+  assert.equal(out.validated, true);
+  assert.deepEqual([out.fee, out.haul.total, out.haul.cappedBy], [0, 0, "week"]);
+  // The defender, past the week, raids the raider back: nothing paid, and
+  // no Trace opened for the raider by a raid that took nothing.
+  pastHeists(t, t.raider.account, 20);
+  const back = t.service.lease(t.defender.account, home);
+  t.service.submit(t.defender.account, back.token, play(t, back, { plan: openPlan() }));
+  refusal(() => t.service.lease(t.raider.account, t.bundle, null, { trace: true }), "nothing_to_trace");
+});
+
+test("the fee comes back in full after a loud heist and half after a partial one (9.4, C41)", () => {
+  for (const [grade, back] of [["loud", 108], ["partial", 54]]) {
+    const t = twoPlayers();
+    t.service.db.prepare(
+      "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
+      .run(t.raider.account);
+    const lease = t.service.lease(t.raider.account, t.bundle);
+    const row = t.service.db.prepare("SELECT * FROM leases WHERE token = ?").get(lease.token);
+    const verdict = { grade, out: 3, caught: 0, crew: 3, banked: 400, capacity: 800, pages: 0, cracked: 1, left: 0 };
+    // Settled as a submission is, in the grant's own transaction.
+    const out = t.service.settle(row, new Uint8Array(8), "c41", t.clock.now, { validated: true, verdict });
+    assert.deepEqual([out.fee, out.feeReturned], [108, back], grade);
+    assert.equal(t.service.balance(t.raider.account).starlight, 50_000 - 108 + back + out.haul.starlight, grade);
+  }
+});
+
+test("a game among friends is not a raid for fatigue (9.6, F48)", () => {
+  const t = twoPlayers();
+  const { invite } = t.service.friends.invite(t.defender.account);
+  t.service.friends.accept(t.raider.account, invite);
+  const fun = t.service.lease(t.raider.account, t.bundle, null, { mode: "friendly" });
+  t.service.submit(t.raider.account, fun.token, play(t, fun, { plan: openPlan() }));
+  t.clock.now += 60 * 60 * 1000;
+  const raid = t.service.lease(t.raider.account, t.bundle);
+  const out = t.service.submit(t.raider.account, raid.token, play(t, raid, { plan: openPlan() }));
+  assert.equal(out.haul.total, 5400, "the day's first raid, at full pay");
 });
 
 test("a raider's first ten heists of the week move Renown, and later ones pay only the haul (12.9, F40)", () => {

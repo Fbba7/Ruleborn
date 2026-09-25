@@ -34,17 +34,17 @@
   "a_heist_re_simulates_in_the_era_it_names_and_no_other": "passed",
   "a_heist_round_trips_through_bytes": "passed",
   "a_heist_with_no_era_is_written_as_before_and_one_with_an_era_names_it": "passed",
-  "a_hit_on_the_vault_is_heard_five_steps_away": "passed",
   "a_hush_harmony_lets_the_crew_hide_a_tile_closer": "passed",
   "a_knocked_out_guard_found_by_another_raises_the_realm_alarm": "passed",
   "a_landing_is_heard_within_six_tiles_unless_the_spot_is_hidden": "passed",
   "a_landing_off_the_edge_late_or_twice_is_dropped": "passed",
   "a_lantern_glare_fires_when_a_crew_member_comes_within_two_tiles": "passed",
-  "a_lantern_glare_shows_the_crew_to_every_guard_and_blinds_it": "passed",
+  "a_lantern_glare_shows_the_crew_to_the_guards_within_the_alarms_reach_and_blinds_it": "passed",
   "a_line_is_the_same_from_either_end": "passed",
   "a_position_lands_in_the_tile_whose_centre_it_is": "passed",
   "a_posted_guard_holds_its_facing": "passed",
   "a_raider_held_in_the_near_zone_raises_a_guard_to_alerted": "passed",
+  "a_regrow_time_takes_the_shortest_applied_not_the_product": "passed",
   "a_replay_carries_the_laws_it_was_made_under": "passed",
   "a_replay_verifies_on_its_island_and_nowhere_else": "passed",
   "a_rock_pillar_hides_what_is_behind_it": "passed",
@@ -109,7 +109,6 @@
   "dropping_loot_costs_exactly_the_fraction_dropped": "passed",
   "echoes_returns_the_knocked_out_once_at_sixty_per_cent": "passed",
   "echoing_skies_returns_everyone_once_at_forty_and_the_highest_revival_wins": "passed",
-  "every_five_seconds_of_cracking_calls_the_guards_within_its_reach": "passed",
   "every_fixture_guard_stands_inside_the_realm": "passed",
   "every_law_is_in_the_table_and_the_sheet_multiplies_the_ones_that_stand": "passed",
   "every_one_of_the_48_laws_weaves_and_runs": "passed",
@@ -147,6 +146,7 @@
   "mirage_shows_a_moving_crew_member_on_the_tile_it_just_left": "passed",
   "multiplication_is_commutative_and_has_an_identity": "passed",
   "night_runners_speeds_anyone_in_the_dark_by_thirty_per_cent": "passed",
+  "no_guard_hears_the_vault_but_one_beside_it_still_sees": "passed",
   "northern_lights_makes_the_bands_the_only_light": "passed",
   "quicksand_opens_hidden_pits_that_drop_whoever_steps_in": "passed",
   "quiet_week_heists_may_run_thirty_seconds_past_the_longest": "passed",
@@ -177,7 +177,6 @@
   "the_carrier_walks_fifteen_percent_slower_loaded": "passed",
   "the_checksum_notices_a_single_unit_of_difference": "passed",
   "the_corner_of_the_eye_notices_at_half_the_rate": "passed",
-  "the_cracks_reach_is_counted_along_the_walk_not_across_a_wall": "passed",
   "the_crew_and_the_guards_move_at_their_roles_speeds": "passed",
   "the_eras_are_the_contents_eight_with_the_figures_their_rules_state": "passed",
   "the_four_grades_follow_12_9": "passed",
@@ -196,6 +195,7 @@
   "the_whole_crew_lands_on_the_spot_the_log_names": "passed",
   "thorns_cost_whoever_touches_a_wall_or_a_hedge_five_per_cent_a_second": "passed",
   "twin_souls_heal_the_two_who_swapped_by_a_fifth": "passed",
+  "under_delay_a_guard_rises_three_seconds_after_it_is_triggered": "passed",
   "verification_names_the_second_that_diverges": "passed",
   "walls_change_what_the_guards_notice": "passed",
   "which_combinations_sound_is_read_off_the_standing_laws": "passed",
@@ -234,8 +234,8 @@
  "cross_target": [
   {
    "seed": "1",
-   "native": "abda4f233b59b98c",
-   "wasm": "abda4f233b59b98c",
+   "native": "a7147f9ca7c617ac",
+   "wasm": "a7147f9ca7c617ac",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -249,8 +249,8 @@
   },
   {
    "seed": "6840123409045651457",
-   "native": "6a37fd87126a3ea7",
-   "wasm": "6a37fd87126a3ea7",
+   "native": "124803656f2c0127",
+   "wasm": "124803656f2c0127",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -264,8 +264,8 @@
   },
   {
    "seed": "18446744073709551615",
-   "native": "fd30d91ac854d406",
-   "wasm": "fd30d91ac854d406",
+   "native": "0bcd510e9c957301",
+   "wasm": "0bcd510e9c957301",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -279,8 +279,8 @@
   },
   {
    "seed": "42",
-   "native": "6313c38751547b33",
-   "wasm": "6313c38751547b33",
+   "native": "5b44227b377c0ee0",
+   "wasm": "5b44227b377c0ee0",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -294,8 +294,8 @@
   },
   {
    "seed": "999983",
-   "native": "ecb09cf326d1b5a7",
-   "wasm": "ecb09cf326d1b5a7",
+   "native": "cadc285186e41214",
+   "wasm": "cadc285186e41214",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -309,7 +309,7 @@
   }
  ],
  "content": {
-  "agree": 159,
+  "agree": 157,
   "disagree": [],
   "not_modelled": [
    "noise.off_screen_multiplier \u2014 the simulation has no screen",

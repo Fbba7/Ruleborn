@@ -4,12 +4,12 @@
   "F33": {
    "option": "D",
    "how": "picked",
-   "build": "to do"
+   "build": "done"
   },
   "F35": {
    "option": "D",
    "how": "picked",
-   "build": "to do"
+   "build": "done"
   },
   "F37": {
    "option": "B",
@@ -89,7 +89,7 @@
   "G23": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done"
   },
   "G25": {
    "option": "A",
@@ -99,7 +99,7 @@
   "G24": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done"
   },
   "G36": {
    "option": "A",
@@ -149,7 +149,7 @@
   "G33": {
    "option": "C",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "outside"
   },
   "G21": {
    "option": "B",
@@ -214,7 +214,7 @@
   "F51": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done"
   }
  }
 }

@@ -1289,74 +1289,37 @@ fn cracking_takes_what_12_19_says_with_and_without_a_breaker() {
 }
 
 #[test]
-fn a_hit_on_the_vault_is_heard_five_steps_away() {
-    // §12.17's "Breaking something — 5 m". A guard five steps from the
-    // cracker, facing away, investigates when the hit lands.
+fn no_guard_hears_the_vault_but_one_beside_it_still_sees() {
+    // F35, decided: "A hit on the Vault is heard by no guard. A guard beside
+    // it still sees the crew." v3.4 had every hit heard within 5 m and every
+    // five seconds of cracking call the guards within 5 m of the walk.
+    //
+    // A guard on the Vault's far side, beside it and facing away, through
+    // twenty seconds of cracking: it hears nothing and stays Unaware.
     let mut world = vault_world(2);
     put(&mut world, 1, 5, 6);                     // the Breaker, west of the Vault
     world.raiders[1].task = Task::Crack;
     put(&mut world, 0, 13, 13);
-    let mut g = make_guard(0, 0, world.grid.index(0, 6).unwrap(), &world.grid);
-    g.facing = Ang::from_degrees(180);            // west, away
+    let mut g = make_guard(0, 0, world.grid.index(7, 6).unwrap(), &world.grid);
+    g.facing = Ang::from_degrees(0);              // east, away from the Vault
     world.guards.push(g);
-    for _ in 0..h::HIT_TICKS {
-        world.step();
-    }
-    assert_eq!(world.guards[0].state, State::Investigating);
-}
-
-#[test]
-fn every_five_seconds_of_cracking_calls_the_guards_within_its_reach() {
-    // §12.6 (v3.4): "every 5 seconds of cracking every guard within the
-    // crack's reach of the Vault, 5 m by the walking path, hears it and
-    // starts Investigating it" — a heard event, which replaced v3.2's 100
-    // suspicion that §12.17's drain emptied in five ticks. v3.3 called every
-    // guard in the Heart (F32); brief 37 gave the call a reach.
-    //
-    // The Breaker cracks from the Vault's west side. Two guards stand east
-    // of it, five and six steps from the Vault — and seven and eight round
-    // it from the Breaker, beyond the hit's own five, so neither hears a hit.
+    let health = world.vault.health;
+    run_for(&mut world, 20 * TICKS_PER_SECOND);
+    assert!(world.vault.health < health, "the Vault was hit");
+    assert_eq!(world.guards[0].state, State::Unaware, "and nobody heard it");
+    assert_eq!(world.guards[0].suspicion, 0);
+    // A guard with a clear line to the Breaker, two tiles north of it, sees
+    // it. (Beside the Vault on another side, the Vault's corner is in the
+    // way of the diagonal.)
     let mut world = vault_world(2);
     put(&mut world, 1, 5, 6);
     world.raiders[1].task = Task::Crack;
     put(&mut world, 0, 13, 13);
-    for (id, x) in [(0, 11), (1, 12)] {
-        let mut g = make_guard(id, 1, world.grid.index(x, 6).unwrap(), &world.grid);
-        g.facing = Ang::from_degrees(0);          // east, away
-        world.guards.push(g);
-    }
-    while world.vault.first_hit.is_none() {
-        world.step();
-    }
-    let first = world.vault.first_hit.unwrap();
-    while world.tick <= first + h::CRACK_NOISE_TICKS - 1 {
-        world.step();
-    }
-    assert_eq!(world.guards[0].state, State::Unaware, "the hit alone is not heard");
-    world.step();
-    assert_eq!(world.guards[0].state, State::Investigating,
-               "five steps from the Vault, five seconds in, it is called");
-    assert_eq!(world.guards[1].state, State::Unaware, "six steps is beyond the reach");
-    let spot = world.guards[0].interest.expect("an interest");
-    assert!(world.grid.adjacent(spot, world.vault.tile), "a tile beside the Vault");
-    assert!(world.grid.at(spot).passable(), "one it can stand on");
-}
-
-#[test]
-fn the_cracks_reach_is_counted_along_the_walk_not_across_a_wall() {
-    // "5 m by the walking path": a guard two metres from the Vault across a
-    // wall, with the only way round seven steps long, is not called.
-    let mut world = vault_world(1);
-    for y in 0..13 {
-        world.grid.place(8, y, Feature::RockPillar);
-    }
-    let steps = crate::path::steps_to(&world.grid, world.vault.tile, h::CRACK_REACH_METRES);
-    let across = world.grid.index(9, 6).unwrap();
-    let beside = world.grid.index(7, 6).unwrap();
-    assert_eq!(steps[beside as usize], Some(1));
-    assert_eq!(steps[across as usize], None, "three tiles away, but not within five steps");
-    assert_eq!(steps[world.grid.index(6, 1).unwrap() as usize], Some(5));
-    assert_eq!(steps[world.grid.index(6, 0).unwrap() as usize], None);
+    let mut g = make_guard(0, 0, world.grid.index(5, 4).unwrap(), &world.grid);
+    g.facing = g.at.bearing_to(world.raiders[1].at);   // toward the Breaker
+    world.guards.push(g);
+    run_for(&mut world, 2 * TICKS_PER_SECOND);
+    assert!(world.guards[0].suspicion > 0, "a guard that can see the crew still sees it");
 }
 
 #[test]
@@ -2072,9 +2035,16 @@ fn a_thorn_hedge_hurts_whoever_pushes_through_five_percent_a_second() {
 }
 
 #[test]
-fn a_lantern_glare_shows_the_crew_to_every_guard_and_blinds_it() {
+fn a_lantern_glare_shows_the_crew_to_the_guards_within_the_alarms_reach_and_blinds_it() {
+    // F33, decided: a Glare shows the crew "to every guard within 4 m of it"
+    // — the alarm's own spread — where §10.3 still reads "every guard in the
+    // realm". Both guards face away; only the near one is shown the crew.
     let mut world = ward_world(1, WardKind::LanternGlare, (3, 3));
-    let far = post(&mut world, 1, 12, 12);        // nowhere near, facing away
+    let near = post(&mut world, 1, 3, 7);         // four tiles south
+    let far = post(&mut world, 1, 12, 12);        // across the realm
+    for gi in [near, far] {
+        world.guards[gi].facing = Ang::from_degrees(90);   // south, away
+    }
     put(&mut world, 0, 3, 3);
     world.step();
     assert_eq!(world.revealed_until, h::GLARE_REVEAL_TICKS);
@@ -2082,8 +2052,10 @@ fn a_lantern_glare_shows_the_crew_to_every_guard_and_blinds_it() {
     for _ in 0..20 {
         world.step();
     }
-    assert!(world.guards[far].state.rank() >= State::Investigating.rank(),
-            "shown the crew from across the realm");
+    assert!(world.guards[near].state.rank() >= State::Investigating.rank(),
+            "within 4 m, shown the crew");
+    assert_eq!(world.guards[far].state, State::Unaware, "across the realm, not");
+    assert_eq!(world.guards[far].suspicion, 0);
 }
 
 #[test]
@@ -2411,7 +2383,17 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
         }
     }
     assert!(landing.landings().is_empty());
-    assert_eq!(landing.check(), vec![Problem::LandingBlocked]);
+    assert_eq!(landing.check(), vec![Problem::LandingBlocked, Problem::EdgeClosed]);
+
+    // F51: each side keeps half its tiles open. The north side is twelve
+    // tiles; six closed is still half open, seven is not.
+    for (closed, problems) in [(6, vec![]), (7, vec![Problem::EdgeClosed])] {
+        let mut edge = Island::example();
+        for x in 0..closed {
+            edge.tiles[x].feature = Some(crate::grid::Feature::RockPillar);
+        }
+        assert_eq!(edge.check(), problems, "{closed} of the north side closed");
+    }
 }
 
 #[test]
@@ -2673,6 +2655,46 @@ fn delay_lands_a_triggered_ward_three_seconds_after_it_fires() {
     run_for(&mut world, 3 * TICKS_PER_SECOND);
     assert_eq!(world.raiders[0].frozen_until, 3 * TICKS_PER_SECOND + h::SNARE_FREEZE_TICKS,
                "the snare lands at 3 s");
+}
+
+#[test]
+fn a_regrow_time_takes_the_shortest_applied_not_the_product() {
+    // G24, decided: "When several laws set a regrow time, the shortest one
+    // applies". Bloom's 10 s and Crystal growth's 8 s, each a fifth shorter
+    // for the Bloom harmony both carry: 8 s and 6.4 s, so 6.4 s — where the
+    // product was 51.2 s.
+    let mut world = vault_world(1);
+    world.weave(&[("bloom", (0, 13)), ("crystal_growth", (1, 13))]);
+    assert_eq!(world.sheet.ticks(crate::laws_table::Param::RegrowSeconds),
+               Some(32 * TICKS_PER_SECOND / 5));
+    let mut alone = vault_world(1);
+    alone.weave(&[("bloom", (0, 13))]);
+    assert_eq!(alone.sheet.ticks(crate::laws_table::Param::RegrowSeconds), Some(10 * TICKS_PER_SECOND));
+}
+
+#[test]
+fn under_delay_a_guard_rises_three_seconds_after_it_is_triggered() {
+    // G23, decided: under Delay "guards change state 3 seconds after they
+    // are triggered", as wards take effect. Falling is not delayed.
+    let rise = |delay: bool| {
+        let mut world = vault_world(1);
+        if delay {
+            world.weave(&[("delay", (0, 13))]);
+        }
+        put(&mut world, 0, 13, 13);
+        let gi = post(&mut world, 1, 2, 2);
+        world.guards[gi].suspicion = crate::INVESTIGATING_AT + 200;
+        let mut risen = None;
+        for _ in 0..5 * TICKS_PER_SECOND {
+            world.step();
+            if risen.is_none() && world.guards[gi].state.rank() >= State::Investigating.rank() {
+                risen = Some(world.tick);
+            }
+        }
+        risen
+    };
+    assert_eq!(rise(false), Some(1), "at once without Delay");
+    assert_eq!(rise(true), Some(1 + 3 * TICKS_PER_SECOND), "three seconds later with it");
 }
 
 #[test]
@@ -2965,7 +2987,7 @@ fn a_bloom_harmony_makes_healing_and_regrowth_a_quarter_stronger() {
     let mut world = vault_world(1);
     weave(&mut world, &["kinship", "regrowth"]);
     assert_eq!(world.sheet.factor(P::AllyHealing), (3, 160), "1.5% becomes 1.875%");
-    assert_eq!(world.sheet.factor(P::StructureRegrowth), (1, 40), "2% becomes 2.5%");
+    assert_eq!(world.sheet.factor(P::StructureHealing), (1, 40), "2% becomes 2.5%");
     let mut world = vault_world(1);
     weave(&mut world, &["bloom", "kinship"]);
     assert_eq!(world.sheet.ticks(P::RegrowSeconds), Some(8 * TICKS_PER_SECOND),
@@ -3522,7 +3544,7 @@ fn wildgrowth_makes_each_life_law_a_quarter_stronger_by_what_its_line_is() {
     assert_eq!(wild("bloom", P::RegrowSeconds), (8, 1), "Bloom's 10 s comes a quarter sooner");
     assert_eq!(wild("kinship", P::AllyHealing), (3, 160), "Kinship's 1.5% a second, 1.875%");
     assert_eq!(wild("thorns", P::TouchDamage), (1, 16), "Thorns' 5%, 6.25%");
-    assert_eq!(wild("regrowth", P::StructureRegrowth), (1, 40), "Regrowth's 2%, 2.5%");
+    assert_eq!(wild("regrowth", P::StructureHealing), (1, 40), "Regrowth's 2%, 2.5%");
     assert_eq!(in_era(Some(Era::Wildgrowth), &["wild_paths"]).sheet.factor(P::CrewSpeed), (5, 4),
                "a multiplier moves a quarter further from 1: +20% is +25%");
     assert_eq!(in_era(Some(Era::Wildgrowth), &["spores"]).sheet.factor(P::CrewSpeed), (3, 8),

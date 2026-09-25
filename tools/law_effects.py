@@ -55,7 +55,7 @@ RULE_SHEET = {
     # Health, by whom it changes (F31): one name for two rules is a special case
     # the simulation would have to resolve per law. v3.4's rule sheet version 2
     # made the same split and named the four as these are named (§7.3).
-    "ally_healing", "structure_regrowth", "touch_damage", "unlit_drain",
+    "ally_healing", "structure_healing", "touch_damage", "unlit_drain",
     "regrow_seconds", "hide_behind_walls", "still_is_invisible",
     "climb_levels", "leap_obstacles", "carry_weight",
 } | {
@@ -77,7 +77,7 @@ HARNESS_SHEET = {
     "crew_speed", "guard_speed", "loaded_speed", "clock_rate",
     "sight_range", "cone_angle", "suspicion_fill", "suspicion_decay",
     "noise_radius", "alarm_range", "structure_damage", "damage",
-    "ally_healing", "structure_regrowth", "touch_damage", "unlit_drain",
+    "ally_healing", "structure_healing", "touch_damage", "unlit_drain",
     "regrow_seconds", "hide_behind_walls", "still_is_invisible",
     "climb_levels", "leap_obstacles", "carry_weight",
 }
@@ -187,7 +187,7 @@ EFFECTS = {
     "flock": (["entity"], {}, [], "Six wandering bodies that block and bleat."),
     "spores": (["entity"], {"crew_speed": 0.50}, [], "Drifting clouds with position."),
     "thorns": (["parameter"], {"touch_damage": 0.05}, [], ""),
-    "regrowth": (["parameter"], {"structure_regrowth": 0.02}, [], ""),
+    "regrowth": (["parameter"], {"structure_healing": 0.02}, [], ""),
     "swarm_birth": (["event", "attribute"], {}, [],
                     "Splitting a guard into two creates characters mid-run. "
                     "§12.21 fixes the attribute half and not this half."),

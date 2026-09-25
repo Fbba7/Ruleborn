@@ -108,9 +108,9 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
       }
     }
     clock.now = T0 + d * DAY + 23 * 60 * 60 * 1000;
-    // The periodic jobs, amortised over the day's players: 96 target-list
-    // runs a day (every fifteen minutes), one telemetry compaction.
-    count("target lists (x96)", () => { for (let k = 0; k < 96; k++) service.targetLists(); });
+    // The periodic jobs, amortised over the day's players: 24 target-list
+    // runs a day (hourly, as the owner decided, G21), one telemetry compaction.
+    count("target lists (x24)", () => { for (let k = 0; k < 24; k++) service.targetLists(); });
     count("telemetry compaction", () => service.telemetry.compact());
   }
   cpu.sort((a, b) => a - b);
@@ -118,7 +118,7 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   const playerDays = players * days;
   // The periodic jobs write per band and per day, not per player: counted
   // apart, as a day's total, so a small population does not inflate them.
-  const PERIODIC = ["target lists (x96)", "telemetry compaction"];
+  const PERIODIC = ["target lists (x24)", "telemetry compaction"];
   const perPlayer = Object.entries(writes).filter(([k]) => !PERIODIC.includes(k));
   const perDay = Object.fromEntries(perPlayer.map(([k, v]) => [k, +(v / playerDays).toFixed(2)]));
   const total = perPlayer.reduce((a, [, v]) => a + v, 0);

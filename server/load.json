@@ -5,34 +5,34 @@
   "days": 3,
   "heistsPerDay": 4,
   "sessionsPerDay": 5,
-  "writesPerPlayerDay": 46.46,
+  "writesPerPlayerDay": 46.13,
   "periodicWritesADay": {
-   "target lists (x96)": 96,
+   "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 9.11,
+  "writesPerHeist": 9.03,
   "byOperation": {
    "session": 5,
    "telemetry batch": 5,
    "lease": 4,
-   "heist: validate and grant": 32.46
+   "heist: validate and grant": 32.13
   },
   "validationMs": {
-   "p50": 14.6,
-   "p95": 23.5,
-   "max": 39.1
+   "p50": 15.4,
+   "p95": 23.8,
+   "max": 37.6
   },
   "against": {
    "budget": 5,
-   "overBudget": 9.3,
+   "overBudget": 9.2,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 2152,
+   "freePlanPlayersADay": 2167,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
     "100000": 5,
-    "1000000": 420
+    "1000000": 416
    }
   }
  },
@@ -42,34 +42,34 @@
   "days": 3,
   "heistsPerDay": 2,
   "sessionsPerDay": 3,
-  "writesPerPlayerDay": 23.88,
+  "writesPerPlayerDay": 23.56,
   "periodicWritesADay": {
-   "target lists (x96)": 96,
+   "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 8.94,
+  "writesPerHeist": 8.78,
   "byOperation": {
    "session": 3,
    "telemetry batch": 3,
    "lease": 2,
-   "heist: validate and grant": 15.88
+   "heist: validate and grant": 15.56
   },
   "validationMs": {
-   "p50": 14.7,
-   "p95": 23.2,
-   "max": 35.4
+   "p50": 15.1,
+   "p95": 24,
+   "max": 40.6
   },
   "against": {
    "budget": 5,
-   "overBudget": 4.8,
+   "overBudget": 4.7,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 4187,
+   "freePlanPlayersADay": 4244,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
     "100000": 5,
-    "1000000": 194
+    "1000000": 191
    }
   }
  },
@@ -81,7 +81,7 @@
   "sessionsPerDay": 1,
   "writesPerPlayerDay": 10.5,
   "periodicWritesADay": {
-   "target lists (x96)": 96,
+   "target lists (x24)": 24,
    "telemetry compaction": 0
   },
   "writesPerHeist": 8.5,
@@ -92,9 +92,9 @@
    "heist: validate and grant": 7.5
   },
   "validationMs": {
-   "p50": 14.2,
-   "p95": 23.8,
-   "max": 34.2
+   "p50": 14.7,
+   "p95": 22.2,
+   "max": 39.3
   },
   "against": {
    "budget": 5,

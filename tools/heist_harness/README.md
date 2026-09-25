@@ -7,7 +7,7 @@ simulation. This is that simulation.
 python3 -m tools.heist_harness                  # every report
 python3 -m tools.heist_harness depth            # one report
 python3 -m tools.heist_harness depth 500        # more runs a cell
-python3 -m tools.heist_harness depth --sweep crack_reach   # brief 37 (§32.9, F35)
+python3 -m tools.heist_harness depth --sweep crack_reach   # F35's evidence: the call the owner removed
 python3 -m tools.heist_harness.test_harness     # tests
 ```
 

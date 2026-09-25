@@ -19,7 +19,7 @@ export const HEADER = { magic: 0, seed: 4, island: 12, rules: 44, ticks: 76, cre
 /** `island::Problem`, in the order of its bits. */
 export const PROBLEMS = [
   "too_many_wards", "too_many_guards", "too_many_laws", "unknown_law",
-  "crowded", "post_blocked", "landing_blocked", "sealed",
+  "crowded", "post_blocked", "landing_blocked", "sealed", "edge_closed",
 ];
 
 /** `ffi.rs`'s negative statuses. */

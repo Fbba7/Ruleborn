@@ -35,8 +35,11 @@ def answers() -> dict[str, dict]:
     brief = json.loads((DECISIONS / "brief.json").read_text(encoding="utf-8"))["entries"]
     out = {}
     for item_id, a in got.items():
-        option = next(o for o in brief[item_id]["options"] if o["key"] == a["option"])
-        out[item_id] = dict(a, label=option["label"], doc_edit=option.get("doc_edit", ""))
+        # An answer the brief does not have is build_brief --check's to report.
+        option = next((o for o in brief.get(item_id, {}).get("options", [])
+                       if o["key"] == a.get("option")), None)
+        if option is not None:
+            out[item_id] = dict(a, label=option["label"], doc_edit=option.get("doc_edit", ""))
     return out
 
 

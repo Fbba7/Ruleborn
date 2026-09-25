@@ -48,7 +48,7 @@ def hold_rate(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
               policy: str = "competent", law_mode: str = "defensive",
               response_model: str = "published",
               clock_pct: int = 100, exposed_pct: int = 100,
-              island_fn=generate, crack_noise: bool = True,
+              island_fn=generate, crack_noise: bool | None = None,
               rules: str = "v3.4") -> float:
     """The share of raids this combination of layers turns back."""
     cls = POLICIES[policy]
@@ -81,7 +81,7 @@ def haul_denied(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
                 baseline: float | None = None,
                 clock_pct: int = 100, exposed_pct: int = 100,
                 island_fn=generate, rules: str = "v3.4",
-                crack_noise: bool = True) -> float:
+                crack_noise: bool | None = None) -> float:
     """The share of the raider's potential haul this combination of layers denies.
 
     §13.4 specifies the ablation against the **hold rate**, and that metric cannot

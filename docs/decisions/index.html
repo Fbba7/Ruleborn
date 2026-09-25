@@ -166,15 +166,15 @@
   <header>
     <p class="eyebrow">Ruleborn &middot; the owner&rsquo;s decisions</p>
     <h1>Decisions waiting on you</h1>
-    <p class="lede">These 43 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39&#x27;s fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36&#x27;s base haul (2,400, 2,900 or 4,600) moves with each of them and F39&#x27;s fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4&#x27;s open edge is a rule or a hope. Four items keep the build&#x27;s reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.</p>
+    <p class="lede">These 44 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39&#x27;s fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36&#x27;s base haul (2,400, 2,900 or 4,600) moves with each of them and F39&#x27;s fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4&#x27;s open edge is a rule or a hope. Four items keep the build&#x27;s reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.</p>
     <div class="summary">
-      <div><span class="n">43</span><span class="k">decisions</span></div>
+      <div><span class="n">44</span><span class="k">decisions</span></div>
       <div><span class="n" id="n-answered">0</span><span class="k">answered</span></div>
       <div><span class="n">4</span><span class="k">safe to accept as recommended</span></div>
       <div><span class="n">21</span><span class="k">places two answers collide</span></div>
     </div>
     <div class="bar" aria-hidden="true"><span id="bar"></span></div>
-    <p class="notice" id="notice">3 design &middot; 19 significant &middot; 21 minor. Each card below is one register item, in the order to decide
+    <p class="notice" id="notice">3 design &middot; 20 significant &middot; 21 minor. Each card below is one register item, in the order to decide
       them. Pick an option and it is saved at once; add a note where the option needs a number or a
       condition. The register itself does not change until Claude reads your answers back.</p>
   </header>
@@ -3145,6 +3145,58 @@ The honest cost of B is that the document must say plainly that a non-raider pla
           <button type="button" class="btn save-note" data-id="F51" disabled>Save note</button>
           <button type="button" class="btn ghost clear" data-id="F51" disabled>Clear answer</button>
           <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#F51" target="_blank" rel="noopener">Register entry</a>
+        </div>
+      </div>
+    </article>
+    <article class="decision" id="F52" data-id="F52" data-tier="significant"
+             data-rec="A" data-quick="no" data-answered="no">
+      <header class="dh">
+        <span class="step" title="Decide in this order">44</span>
+        <span class="did">F52</span>
+        <span class="tier t-significant">Significant</span>
+        <span class="topic">§10 Buildings</span>
+        <span class="state" id="st-F52">Not answered</span>
+      </header>
+      <h3 class="q">Does a Lantern Glare&#x27;s reach stretch with the alarm&#x27;s, so Whispers makes it realm-wide again, or is it a fixed 4 m?</h3>
+      <p class="why">F33&#x27;s answer made the Glare a local alarm, 4 m, and its build change took the alarm&#x27;s reach, which Whispers sets to the whole universe. The defensive weave picks Whispers often, so on the harness two Glares still hold realm 3 at 91.5%, the switch F33 set out to remove. The brief&#x27;s figures for F33&#x27;s answer (68.2% and 75.2%) were measured with a fixed 4 m.</p>
+      <details class="today"><summary>What the build does today</summary><p>sim/src/lib.rs spread_reach() is SPREAD_METRES (4) scaled by the sheet&#x27;s AlarmRange; the Glare&#x27;s reveal and the alarm spread both use it. tools/heist_harness/sim.py does the same (SPREAD_METRES * sheet.factor(&#x27;alarm_range&#x27;)). test_the_decided_glare_still_outweighs_a_realm_where_whispers_stretches_it pins 91.5% against 37.0%.</p></details>
+      <fieldset class="opts" aria-label="Options for F52">
+        <label class="opt is-rec" for="o-F52-A">
+          <input type="radio" name="o-F52" id="o-F52-A" value="A" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">A</span>
+              <span class="ol">A fixed 4 m</span><span class="rec-tag">Recommended</span></span>
+            <span class="om">The Glare shows the crew to the guards within 4 m of it, whatever the realm&#x27;s alarm range. Whispers still carries a raised alarm to every guard in the universe, as its sheet says, but does not stretch the Glare.</span>
+            <span class="oc">F33&#x27;s answer does what its figures said: one Glare is one strong pick among the kinds, not a switch. Whispers stays exactly what its Tier I cell says it is, an alarm law.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Harness, realm 3, two posts, defensive laws, competent crew, n=200: no wards 39.0%, one Glare 65.5%, two 72.5% (the brief measured 68.2% and 75.2% at n=400); six Snares and Wells 37.0%.</dd></div><div class="od"><dt>Document edit</dt><dd>§10.3 Glare: &#x27;Shows the crew to every guard within 4 m of it for 5 seconds (8 m from alarm level 4, 12.17) and blinds the crew for 2&#x27;, adding &#x27;a fixed reach, which laws that widen the alarm do not change&#x27;.</dd></div><div class="od"><dt>Build change</dt><dd>sim/src/lib.rs: the Glare&#x27;s reveal uses SPREAD_METRES unscaled (keep spread_reach() for the alarm). tools/heist_harness/sim.py likewise; re-pin F52&#x27;s test to the fixed reach.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-F52-B">
+          <input type="radio" name="o-F52" id="o-F52-B" value="B" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">B</span>
+              <span class="ol">Stretch with the alarm (the build)</span></span>
+            <span class="om">The Glare reaches as far as the realm&#x27;s alarm: 4 m, or the whole universe under Whispers.</span>
+            <span class="oc">A Whispers realm&#x27;s Glare is realm-wide again, so two Glares and Whispers hold realm 3 near 90%. §5.2&#x27;s budget has to be re-measured over kits with that case in, and Whispers becomes a much stronger defensive pick than its sheet reads.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Harness as A: two Glares 91.5% against six Snares and Wells&#x27; 37.0%.</dd></div><div class="od"><dt>Document edit</dt><dd>§10.3 Glare: &#x27;within the alarm&#x27;s reach of it (4 m; the whole universe under Whispers)&#x27;.</dd></div><div class="od"><dt>Build change</dt><dd>None: this is what the build does.</dd></div></dl></details>
+          </span>
+        </label>
+      </fieldset>
+      <div class="recbox">
+        <p><span class="lab">Recommended: A, A fixed 4 m</span>
+          <span class="conf c-high">high confidence</span></p>
+        <p class="rr">F33 was answered to stop one ward kind from deciding a realm; B brings that back through a law whose own sheet only talks about the alarm. A is what the brief&#x27;s figures described.</p>
+        
+      </div>
+      <p class="also"><span class="lab">Also needed</span> Whether the 8 m reach from alarm level 4 applies to the Glare, which the simulation does not build for the alarm either.</p><p class="inter"><span class="lab">Weigh with</span> <a href="#F33">F33</a>, <a href="#F34">F34</a></p>
+      <details class="quotes"><summary>What the document says</summary><ul><li><span class="qs">&sect;10.3</span> <q>Shows the crew to every guard in the realm for 5 seconds and blinds them for 2</q></li><li><span class="qs">&sect;12.17</span> <q>Alarm spreads by distance, not everywhere at once: guards within four metres start investigating half a second later</q></li><li><span class="qs">&sect;7.7</span> <q>When one guard raises the alarm, every guard in the universe hears it.</q></li></ul></details>
+      <div class="notebox">
+        <label for="n-F52">Note for Claude (optional)</label>
+        <textarea id="n-F52" rows="2" placeholder="A number, a condition, or why" disabled></textarea>
+        <div class="nb">
+          <button type="button" class="btn save-note" data-id="F52" disabled>Save note</button>
+          <button type="button" class="btn ghost clear" data-id="F52" disabled>Clear answer</button>
+          <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#F52" target="_blank" rel="noopener">Register entry</a>
         </div>
       </div>
     </article>

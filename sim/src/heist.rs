@@ -18,17 +18,9 @@ pub const BREAKER_VAULT_DAMAGE: (i32, i32) = (2, 1);
 /// wind-up is the cadence: a hit lands 24 ticks after the swing starts.
 pub const HIT_TICKS: u32 = TICKS_PER_SECOND * 8 / 10;
 
-/// §12.6 (v3.4): "every hit is heard within 5 m, and every 5 seconds of
-/// cracking every guard within the crack's reach of the Vault, 5 m by the
-/// walking path, hears it and starts Investigating it". §12.17 gives the
-/// reason: "a heard event, not a suspicion increment, because suspicion added
-/// below 600 drains". The hit itself is `Sound::Breaking`. (v3.3 called every
-/// guard in the Heart; brief 37 gave the call a reach, F32.)
-pub const CRACK_NOISE_TICKS: u32 = TICKS_PER_SECOND * 5;
-
-/// §12.6 (v3.4): the crack's reach, in steps of the walking path to the
-/// Vault. One tile is one metre (§21.1).
-pub const CRACK_REACH_METRES: u16 = 5;
+// §12.6 (v3.4) had every hit on the Vault heard within 5 m and every 5
+// seconds of cracking call the guards within 5 m of the walk. The owner
+// decided no guard hears the Vault (F35): neither is simulated.
 
 /// §11.1 (v3.3): "While two or more characters work the same object, every
 /// hit on it deals 25% more: the assist bonus. It does not stack."
@@ -141,8 +133,6 @@ pub struct Vault {
     /// What is left to load. §12.6: loading stops when "the exposed share is
     /// gone".
     pub exposed: i32,
-    /// The tick of the first hit, for the crack noise.
-    pub first_hit: Option<u32>,
     pub opened_at: Option<u32>,
 }
 

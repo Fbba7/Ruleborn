@@ -143,7 +143,7 @@ fn kind(p: Param) -> Kind {
     use Param::*;
     match p {
         EffectDelaySeconds | LightBandSeconds | RegrowSeconds | TouchStunSeconds => Kind::Time,
-        AllyHealing | ChainShare | RevivalReturn | RevivalSwap | StructureRegrowth | TouchDamage
+        AllyHealing | ChainShare | RevivalReturn | RevivalSwap | StructureHealing | TouchDamage
         | UnlitDrain => Kind::Rate,
         AlarmRange | CarryWeight | ClockRate | ConeAngle | CrewSpeed | Damage | GuardSpeed
         | LargeHealth | LargeSpeed | LoadedSpeed | NoiseRadius | Rebound | SightRange

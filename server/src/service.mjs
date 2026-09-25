@@ -215,7 +215,8 @@ export class Service {
    * unchanged band regenerates to the same file and the edge keeps its cache.
    * Until §12.22's ratings exist, a band is a realm level: §12.22 draws "the
    * middle of the list … from the raider-success band for the target's realm
-   * level". The raider's own filters (Keeper level within 3, Renown within
+   * level". The raider's own filters (Keeper level two below to three above,
+   * F44; Renown within
    * 150, not their own island) run on the device against the list.
    */
   targetLists({ keepPrevious = true } = {}) {
@@ -484,10 +485,10 @@ export class Service {
     const mode = row.mode ?? "raid";
     const raids = this.raidsThisWeek(row.attacker, now);
     const renown = this.renownHeistsThisWeek(row.attacker, now);
-    const paid = mode === "raid" && !row.trace_of;
-    const overWeek = paid && raids >= RAIDS_A_WEEK;
+    const overWeek = mode === "raid" && raids >= RAIDS_A_WEEK;
     const level = this.db.prepare("SELECT vault_level FROM snapshots WHERE bundle = ?").get(row.bundle).vault_level;
-    const fee = paid && !overWeek ? entryFee(this.balance(row.attacker).starlight, level) : 0;
+    const fee = mode === "raid" && !row.trace_of && !overWeek
+      ? entryFee(this.balance(row.attacker).starlight, level) : 0;
     const capped = [...(overWeek ? ["week_raids"] : []),
                     ...(mode === "raid" && renown >= RENOWN_HEISTS_A_WEEK ? ["week_renown"] : [])];
     return { fee, week: { raids, raidsOf: RAIDS_A_WEEK, renown, renownOf: RENOWN_HEISTS_A_WEEK }, capped };
@@ -607,9 +608,10 @@ export class Service {
     // §12.3's Trace comes "with a free scout and no entry fee"; a friendly
     // heist or a challenge is for fun, and costs none either (F48). Past the
     // week's 20 paid raids, a raid costs nothing and pays nothing (G20).
+    // A Trace is a raid for the week's count, and past the 20th pays nothing
+    // either; it never had a fee.
     const friendly = lease.mode === "friendly" || lease.mode === "challenge";
-    const overWeek = !friendly && !lease.trace_of
-      && this.raidsThisWeek(attacker, now) >= RAIDS_A_WEEK;
+    const overWeek = !friendly && this.raidsThisWeek(attacker, now) >= RAIDS_A_WEEK;
     const fee = lease.trace_of || friendly || overWeek
       ? 0 : entryFee(this.balance(attacker).starlight, snapshot.vault_level);
     book(attacker, "starlight", -fee, "entry fee (9.4)");
@@ -670,7 +672,12 @@ export class Service {
     if (verdict.grade === "foiled" && !nobody && !friendly) {
       // The fee passes on only with the pair's first foil of the day; a later
       // one's stays with the game (G37).
-      if (scores) book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
+      const foiledEarlierToday = this.db.prepare(
+        `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
+          WHERE l.attacker = ? AND l.defender = ? AND l.mode = 'raid' AND h.validated = 1
+            AND h.day = ? AND json_extract(h.outcome, '$.verdict.grade') = 'foiled'`)
+        .get(attacker, lease.defender, day(now)).n;
+      if (foiledEarlierToday === 0) book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
       const percent = this.seasons.defenceShare(this.seasons.current(now).id);
       const share = scores ? capHaul(defenceShare({
         vaultLevel: snapshot.vault_level, raiderLevel: level(attacker), targetLevel: level(lease.defender),
@@ -698,9 +705,9 @@ export class Service {
     if (!nobody) this.notifications.raided(lease, verdict, now);
     const stars = !scores ? none : this.track.settle(lease, verdict, season, now, { echo: nobody });
     // An echo rates the raider against its island and leaves the island's
-    // rating alone (G30).
-    const rating = friendly ? null
-      : this.matchmaking.settle(lease, snapshot.realm, verdict, now, { raiderOnly: nobody });
+    // rating alone (G30); an island whose owner is gone rates nobody.
+    const rating = friendly || gone ? null
+      : this.matchmaking.settle(lease, snapshot.realm, verdict, now, { raiderOnly: Boolean(lease.echo) });
     // "the friend earns a page for every raider their guards catch": pages
     // are the device's, so the outcome is their record (D64).
     const friendPages = friendly ? verdict.caught : undefined;
@@ -709,13 +716,13 @@ export class Service {
              ...(friendly ? { friendPages } : {}) };
   }
 
-  /** The raider's validated raids since Monday 00:00 UTC (G20): matchmade
-   *  and echo raids, not Traces or games among friends. */
+  /** The raider's validated raids since Monday 00:00 UTC (G20): matchmade,
+   *  echo and Trace raids, not games among friends. */
   raidsThisWeek(attacker, now) {
     return this.db.prepare(
       `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
         WHERE h.attacker = ? AND h.validated = 1 AND h.submitted_at >= ?
-          AND l.mode = 'raid' AND l.trace_of IS NULL`).get(attacker, weekStart(now)).n;
+          AND l.mode = 'raid'`).get(attacker, weekStart(now)).n;
   }
 
   /** The raider's heists since Monday 00:00 UTC that moved Renown (F40). */

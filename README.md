@@ -33,8 +33,8 @@ patrol positions), and handed the realms' one to this repository: §32.9's full
 economy re-run. That run is done, so the realms now wait on the document taking
 its tables.
 
-Five versions have now answered the audit. **112 of 212 register items are fixed
-in the document itself**, the latest 15 by v3.4. 61 are still open.
+Five versions have now answered the audit. **112 of 213 register items are fixed
+in the document itself**, the latest 15 by v3.4. 62 are still open.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -302,7 +302,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 212 tracked items with section references and status:
+document, as 213 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
@@ -322,8 +322,9 @@ Every register item that only the owner could settle, as a question with its
 options, their numbers, what the build does today and a recommendation, in
 the order to decide them: **https://claude.ai/artifact/YZcD1uH5xtpFznqncRpt8g**
 
-**All 43 are answered** (25 September 2026): five picked on the page, the
-rest accepted as recommended. The answers are on the page and in
+**43 are answered** (25 September 2026): five picked on the page, the rest
+accepted as recommended. One more, **F52**, was found building those answers
+and waits on the page. The answers are on the page and in
 `docs/decisions/answers.json`, with where each one's build change stands; the
 audit shows a decided item as waiting on that build change, then on the
 document. A new decision is picked on the page, where it is saved, and Claude

@@ -112,7 +112,7 @@ def _helps_defender(law: dict) -> bool:
             score -= 1
         elif key == "hide_behind_walls":
             score += 1                      # Glass: nobody hides behind a wall
-        elif key == "structure_regrowth":
+        elif key == "structure_healing":
             score += 1                      # Regrowth: buildings, wards, guards
         # ally_healing (Kinship) heals whoever stands beside an ally, crew and
         # guards alike, so it cuts both ways and scores nothing. It used to

@@ -89,4 +89,5 @@ PROBLEM_CROWDED,two things on one tile,duas coisas numa casa
 PROBLEM_POSTBLOCKED,a guard where it cannot stand,um guarda onde não pode ficar
 PROBLEM_LANDINGBLOCKED,the landing is blocked,o desembarque está bloqueado
 PROBLEM_SEALED,no path reaches the Vault,nenhum caminho chega ao Cofre
+PROBLEM_EDGECLOSED,a side has fewer than half its edge open to land on,um lado tem menos da metade da borda aberta para desembarque
 RESULT_BUILDER,Back to the builder,Voltar ao construtor

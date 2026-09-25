@@ -1,6 +1,6 @@
 {
  "_what": "The owner's decision brief: one entry per open register item waiting on the owner's decision, with its question, options, what the build does today, a recommendation and quotes from the design document; then the order to decide in, the groups that share one choice, the conflicts between answers and the ones safe to accept as recommended. Drafted, checked from two sides and merged by a multi-agent pass; tools/build_brief.py renders it and --check holds it to the register and the document.",
- "summary": "These 43 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39's fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36's base haul (2,400, 2,900 or 4,600) moves with each of them and F39's fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4's open edge is a rule or a hope. Four items keep the build's reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.",
+ "summary": "These 44 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39's fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36's base haul (2,400, 2,900 or 4,600) moves with each of them and F39's fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4's open edge is a rule or a hope. Four items keep the build's reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.",
  "order": [
   "F33",
   "F35",
@@ -44,7 +44,8 @@
   "G38",
   "G35",
   "G34",
-  "F51"
+  "F51",
+  "F52"
  ],
  "order_notes": {
   "F33": "Design tier. It sets whether one Glare decides a realm, and F35's Vault-reach argument and G19's hold claim both rest on the hold numbers it changes.",
@@ -89,7 +90,8 @@
   "G38": "The retention rule for closed items. It extends F43's deletion model and uses G21's rebuild interval for how long target lists are cached.",
   "G35": "How friends are made and who shows in feeds. It follows F48's friendly-heist decision.",
   "G34": "Notification gathering. The last of the social items, affected by G35 and F48.",
-  "F51": "Design tier, and independent: it only needs the publishing check, which is built. It should be settled before §13.2's hold rates are re-measured, because a funnelled edge raises them."
+  "F51": "Design tier, and independent: it only needs the publishing check, which is built. It should be settled before §13.2's hold rates are re-measured, because a funnelled edge raises them.",
+  "F52": "Found building F33's answer; decide it with F33 in mind, before §5.2's ward budget is re-measured over kits."
  },
  "groups": [
   {
@@ -3765,6 +3767,56 @@
     }
    ],
    "also_needed": "Whether a climbable cliff counts as open for landing; the build treats only walkable tiles as landings."
+  },
+  "F52": {
+   "id": "F52",
+   "question": "Does a Lantern Glare's reach stretch with the alarm's, so Whispers makes it realm-wide again, or is it a fixed 4 m?",
+   "why_it_matters": "F33's answer made the Glare a local alarm, 4 m, and its build change took the alarm's reach, which Whispers sets to the whole universe. The defensive weave picks Whispers often, so on the harness two Glares still hold realm 3 at 91.5%, the switch F33 set out to remove. The brief's figures for F33's answer (68.2% and 75.2%) were measured with a fixed 4 m.",
+   "today": "sim/src/lib.rs spread_reach() is SPREAD_METRES (4) scaled by the sheet's AlarmRange; the Glare's reveal and the alarm spread both use it. tools/heist_harness/sim.py does the same (SPREAD_METRES * sheet.factor('alarm_range')). test_the_decided_glare_still_outweighs_a_realm_where_whispers_stretches_it pins 91.5% against 37.0%.",
+   "options": [
+    {
+     "key": "A",
+     "label": "A fixed 4 m",
+     "means": "The Glare shows the crew to the guards within 4 m of it, whatever the realm's alarm range. Whispers still carries a raised alarm to every guard in the universe, as its sheet says, but does not stretch the Glare.",
+     "consequences": "F33's answer does what its figures said: one Glare is one strong pick among the kinds, not a switch. Whispers stays exactly what its Tier I cell says it is, an alarm law.",
+     "numbers": "Harness, realm 3, two posts, defensive laws, competent crew, n=200: no wards 39.0%, one Glare 65.5%, two 72.5% (the brief measured 68.2% and 75.2% at n=400); six Snares and Wells 37.0%.",
+     "doc_edit": "§10.3 Glare: 'Shows the crew to every guard within 4 m of it for 5 seconds (8 m from alarm level 4, 12.17) and blinds the crew for 2', adding 'a fixed reach, which laws that widen the alarm do not change'.",
+     "build_change": "sim/src/lib.rs: the Glare's reveal uses SPREAD_METRES unscaled (keep spread_reach() for the alarm). tools/heist_harness/sim.py likewise; re-pin F52's test to the fixed reach."
+    },
+    {
+     "key": "B",
+     "label": "Stretch with the alarm (the build)",
+     "means": "The Glare reaches as far as the realm's alarm: 4 m, or the whole universe under Whispers.",
+     "consequences": "A Whispers realm's Glare is realm-wide again, so two Glares and Whispers hold realm 3 near 90%. §5.2's budget has to be re-measured over kits with that case in, and Whispers becomes a much stronger defensive pick than its sheet reads.",
+     "numbers": "Harness as A: two Glares 91.5% against six Snares and Wells' 37.0%.",
+     "doc_edit": "§10.3 Glare: 'within the alarm's reach of it (4 m; the whole universe under Whispers)'.",
+     "build_change": "None: this is what the build does."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "rationale": "F33 was answered to stop one ward kind from deciding a realm; B brings that back through a law whose own sheet only talks about the alarm. A is what the brief's figures described.",
+    "confidence": "high"
+   },
+   "interacts_with": [
+    "F33",
+    "F34"
+   ],
+   "quotes": [
+    {
+     "section": "10.3",
+     "text": "Shows the crew to every guard in the realm for 5 seconds and blinds them for 2"
+    },
+    {
+     "section": "12.17",
+     "text": "Alarm spreads by distance, not everywhere at once: guards within four metres start investigating half a second later"
+    },
+    {
+     "section": "7.7",
+     "text": "When one guard raises the alarm, every guard in the universe hears it."
+    }
+   ],
+   "also_needed": "Whether the 8 m reach from alarm level 4 applies to the Glare, which the simulation does not build for the alarm either."
   }
  }
 }

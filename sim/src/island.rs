@@ -162,13 +162,17 @@ pub enum Problem {
     /// Wall standing, no route from any open edge tile reaches a tile beside
     /// the Vault.
     Sealed,
+    /// A side with fewer than half its tiles open to land on, with every
+    /// Crystal Wall standing (F51, decided): a Keeper may make the edge a
+    /// puzzle, and may not close it to one gate.
+    EdgeClosed,
 }
 
 impl Problem {
-    pub const ALL: [Problem; 8] = [
+    pub const ALL: [Problem; 9] = [
         Problem::TooManyWards, Problem::TooManyGuards, Problem::TooManyLaws,
         Problem::UnknownLaw, Problem::Crowded, Problem::PostBlocked,
-        Problem::LandingBlocked, Problem::Sealed,
+        Problem::LandingBlocked, Problem::Sealed, Problem::EdgeClosed,
     ];
 
     pub fn bit(self) -> u32 {
@@ -459,6 +463,16 @@ impl Island {
             found.push(Problem::LandingBlocked);
         } else if !self.reaches_vault(&grid, &landings) {
             found.push(Problem::Sealed);
+        }
+        // Each side keeps at least half its tiles open, a corner counting on
+        // both of its sides (F51).
+        let n = side;
+        let sides: [Box<dyn Fn(u16) -> (u16, u16)>; 4] = [
+            Box::new(|i| (i, 0)), Box::new(move |i| (n - 1, i)),
+            Box::new(move |i| (i, n - 1)), Box::new(|i| (0, i)),
+        ];
+        if sides.iter().any(|at| 2 * (0..n).filter(|&i| { let (x, y) = at(i); open(x, y) }).count() < n as usize) {
+            found.push(Problem::EdgeClosed);
         }
         found
     }

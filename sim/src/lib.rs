@@ -114,6 +114,19 @@ impl Sheet {
 
     fn apply(&mut self, p: Param, n: i64, d: i64) {
         let i = p as usize;
+        // A regrow time takes the shortest applied, not the product (G24,
+        // decided): Bloom's 10 s and Crystal growth's 8 s make 8 s, not 80.
+        // The sim builds one regrowth, Bloom's cut hedge; Crystal growth's
+        // walls regrowing as clear crystal are not built (it is not a launch
+        // law, §26.1).
+        if p == Param::RegrowSeconds && self.set[i] {
+            let (a, b) = self.factors[i];
+            if n * b < a * d {
+                let g = gcd(n.abs(), d).max(1);
+                self.factors[i] = (n / g, d / g);
+            }
+            return;
+        }
         let (a, b) = self.factors[i];
         let (a, b) = (a * n, b * d);
         let g = gcd(a.abs(), b).max(1);
@@ -138,7 +151,7 @@ const HARMONY_KINDS: [(u8, &[Param]); 5] = [
     (note::SPARK, &[Param::Damage, Param::StructureDamage, Param::ChainShare,
                     Param::TouchStunSeconds]),
     // "Regrowth and healing 25% stronger."
-    (note::BLOOM, &[Param::AllyHealing, Param::StructureRegrowth, Param::RegrowSeconds]),
+    (note::BLOOM, &[Param::AllyHealing, Param::StructureHealing, Param::RegrowSeconds]),
     // "Returns and repeats 25% sooner or stronger."
     (note::ECHO, &[Param::RevivalReturn, Param::Rebound]),
 ];
@@ -478,6 +491,10 @@ pub struct Guard {
     pub saw: bool,
     /// Where it heard something this tick, if it did.
     heard: Option<grid::TileIndex>,
+    /// Delay's rises still to land, as (tick, state): under Delay a guard's
+    /// step up to Suspicious, Investigating or Alerted lands its delay after
+    /// the step was earned (G23, decided).
+    pub rising: Vec<(u32, guard::State)>,
     /// When it reached the spot it was investigating, for the ten seconds.
     arrived_at: Option<u32>,
     /// Static's charge, in tiles walked, and the tile it was last on.
@@ -550,6 +567,7 @@ fn make_guard(id: u32, row: usize, post: grid::TileIndex, grid: &Grid) -> Guard 
         interest: None,
         saw: false,
         heard: None,
+        rising: Vec::new(),
         arrived_at: None,
         charge: 0,
         last_tile: Some(post),
@@ -806,7 +824,6 @@ impl World {
                 tile: vault_tile,
                 health: heist::VAULT_HEALTH_PER_LEVEL * island.vault_level as i32,
                 exposed: island.exposed as i32,
-                first_hit: None,
                 opened_at: None,
             },
             skiff: None,
@@ -1320,10 +1337,15 @@ impl World {
             // first version added a random -1 to +1 a tick here, to put the
             // generator on the hot path, and in doing so broke the one
             // promise this section makes about itself.
-            // Lantern Glare: "shows the crew to every guard in the realm" —
-            // as if in its near zone, looking at the tile that set it off.
+            // Lantern Glare: it shows the crew, as if in the near zone,
+            // looking at the tile that set it off — to every guard within
+            // the alarm's spread reach of that tile (F33, decided), where
+            // §10.3 still reads "every guard in the realm".
             if now < self.revealed_until && self.raiders.iter().any(|r| r.active()) {
-                if let Some(spot) = self.reveal_spot {
+                if let Some(spot) = self.reveal_spot.filter(|&s| {
+                    let (x, y) = self.grid.centre(s);
+                    self.guards[gi].at.distance(Point { x, y }) <= self.spread_reach()
+                }) {
                     gain = gain.max(FILL_NEAR);
                     if most.is_none() {
                         most = Some((FILL_NEAR, spot));
@@ -1462,17 +1484,6 @@ impl World {
         (body == here || self.grid.adjacent(body, here)).then_some(gi)
     }
 
-    /// The open tile beside `tile` nearest to `from`, ties to the lower index:
-    /// where a guard stands to investigate something it cannot stand on.
-    fn beside(&self, tile: grid::TileIndex, from: Point) -> Option<grid::TileIndex> {
-        self.grid.neighbours(tile).into_iter().flatten()
-            .filter(|&t| self.grid.at(t).passable())
-            .min_by_key(|&t| {
-                let (x, y) = self.grid.centre(t);
-                (from.distance(Point { x, y }).0, t)
-            })
-    }
-
     /// Whether sight passes between two tiles. Glass: "Walls become
     /// see-through: nobody can hide behind them".
     fn line_clear(&self, from: grid::TileIndex, to: grid::TileIndex) -> bool {
@@ -1542,6 +1553,14 @@ impl World {
         let top = (self.tick as i64 % period) * (rows + w) / period - w;
         let y = self.grid.coords(tile).1 as i64;
         Some(top <= y && y < top + w)
+    }
+
+    /// How far the alarm spreads: §12.17's "guards within four metres",
+    /// stretched by the sheet — Whispers sets the range to the whole
+    /// universe (999). A Lantern Glare reaches as far (F33).
+    fn spread_reach(&self) -> Fx {
+        let (an, ad) = self.sheet.factor(Param::AlarmRange);
+        Fx::from_int((guard::SPREAD_METRES as i64 * an / ad).min(1 << 20) as i32)
     }
 
     /// Whether a tile is dark this tick (§12.17's unlit modifier): its ground,
@@ -1919,8 +1938,9 @@ impl World {
             let beside = |tile: grid::TileIndex| self.grid.tile_at(raider.at.x, raider.at.y)
                 .is_some_and(|t| self.grid.neighbours(tile).contains(&Some(t)));
             let landing = raider.active() && raider.swing + 1 >= heist::HIT_TICKS;
+            // A hit on the Vault is heard by no guard (F35); a pylon or a ward
+            // broken still is.
             let breaking = landing && match raider.task {
-                heist::Task::Crack => self.vault.opened_at.is_none() && beside(self.vault.tile),
                 heist::Task::Break => beside(raider.target) && (self.laws.iter()
                     .any(|l| l.pylon == raider.target && l.broken_at.is_none())
                     || self.wards.iter().any(|w| w.tile == raider.target && w.live())),
@@ -2029,9 +2049,29 @@ impl World {
                     self.guards[gi].interest = Some(spot);
                 }
             }
-            // Rising on suspicion is immediate.
+            // Rising on suspicion is immediate — except under Delay, where
+            // "guards change state 3 seconds after they are triggered" (G23,
+            // decided): a rise is queued, and lands at its tick unless the
+            // guard has already risen as far. Falling is never delayed.
             if by_suspicion.rank() > next.rank() {
                 next = by_suspicion;
+            }
+            if let Some(delay) = self.sheet.ticks(Param::EffectDelaySeconds) {
+                let g = &mut self.guards[gi];
+                if next.rank() > current.rank()
+                    && !g.rising.iter().any(|&(_, s)| s.rank() >= next.rank())
+                {
+                    g.rising.push((now + delay, next));
+                }
+                let landed = g.rising.iter().filter(|&&(t, _)| t <= now)
+                    .map(|&(_, s)| s).max_by_key(|s| s.rank());
+                g.rising.retain(|&(t, _)| t > now);
+                next = match landed {
+                    Some(s) if s.rank() > current.rank() => s,
+                    _ if next.rank() > current.rank() => current,
+                    _ => next,
+                };
+                g.rising.retain(|&(_, s)| s.rank() > next.rank());
             }
             // Falling waits half a second, then follows the table.
             if next == current && held >= guard::HOLD_TICKS {
@@ -2297,38 +2337,12 @@ impl World {
                     let (sn, sd) = self.sheet.factor(Param::StructureDamage);
                     self.vault.health -= (raider.role.power() as i64 * n as i64 * sn * an
                         / (d as i64 * sd * ad)) as i32;
-                    self.vault.first_hit.get_or_insert(now);
                 }
             }
-            // "Every 5 seconds of cracking every guard within the crack's
-            // reach of the Vault, 5 m by the walking path, hears it and
-            // starts Investigating it" (v3.4) — a heard event, so it steps a
-            // guard up to Investigating and never down, exactly as any other
-            // sound does, and re-aims one already investigating.
-            if let Some(t) = self.vault.first_hit {
-                if now > t && (now - t) % heist::CRACK_NOISE_TICKS == 0 {
-                    let reach = path::steps_to(&self.grid, self.vault.tile,
-                                               heist::CRACK_REACH_METRES);
-                    for gi in 0..self.guards.len() {
-                        let g = &self.guards[gi];
-                        if !g.awake(now) || g.state.rank() > guard::State::Investigating.rank() {
-                            continue;
-                        }
-                        let within = self.grid.tile_at(g.at.x, g.at.y)
-                            .is_some_and(|tile| reach[tile as usize].is_some());
-                        if !within {
-                            continue;
-                        }
-                        let spot = self.beside(self.vault.tile, g.at);
-                        self.guards[gi].interest = spot;
-                        if self.guards[gi].state == guard::State::Investigating {
-                            self.aim(gi, spot);
-                        } else {
-                            self.enter(gi, guard::State::Investigating);
-                        }
-                    }
-                }
-            }
+            // No guard hears the Vault (F35, decided): v3.4's call "every 5
+            // seconds of cracking" to every guard within 5 m of the walk is
+            // gone, and so is the hit's own noise. A guard beside it still
+            // sees the crew.
             if self.vault.health <= 0 {
                 self.vault.health = 0;
                 self.vault.opened_at = Some(now);
@@ -2999,8 +3013,8 @@ impl World {
                 }
             }
         }
-        if self.sheet.flag(Param::StructureRegrowth).is_some() {
-            let (n, d) = self.sheet.factor(Param::StructureRegrowth);
+        if self.sheet.flag(Param::StructureHealing).is_some() {
+            let (n, d) = self.sheet.factor(Param::StructureHealing);
             let share = |full: i32| (full as i64 * n / d) as i32;
             for g in self.guards.iter_mut().filter(|g| !g.knocked_out) {
                 let full = full_health(&self.sheet, g.role);
@@ -3133,9 +3147,7 @@ impl World {
             self.alarm_raised = true;
             let here = self.guards[gi].at;
             let spot = self.grid.tile_at(here.x, here.y);
-            // Whispers sets the range to the whole universe (999).
-            let (an, ad) = self.sheet.factor(Param::AlarmRange);
-            let reach = Fx::from_int((guard::SPREAD_METRES as i64 * an / ad).min(1 << 20) as i32);
+            let reach = self.spread_reach();
             for other in 0..self.guards.len() {
                 if other == gi || self.guards[other].knocked_out
                     || self.guards[other].at.distance(here) > reach {
@@ -3209,6 +3221,10 @@ impl World {
             mix(guard.facing.0 as i64);
             mix(guard.suspicion as i64);
             mix(guard.state as i64);
+            for &(t, s) in &guard.rising {
+                mix(t as i64);
+                mix(s as i64);
+            }
             mix(guard.state_since as i64);
             mix(guard.route.len() as i64);
             mix(guard.along as i64);
@@ -3554,7 +3570,8 @@ const PLANNED_SEED: u64 = 0x5EED_0F_A_7EA1;
 /// v3.3 made this a different heist. The ambush is a two-second takedown and
 /// a knockout (§12.8), and five seconds of cracking send every guard in the
 /// Heart to the Vault (§12.6) — so the crew puts down every guard it can reach
-/// unheard, and cracks fast enough that the noise never sounds:
+/// unheard, and cracks fast enough that the noise never sounds. (The owner
+/// has since decided no guard hears the Vault, F35; the plan still holds.)
 ///
 ///   0 s   everyone crouches. The Breaker breaks Haste's pylon beside the
 ///         landing. The Scout goes down the west edge, outside the Scout

@@ -1,6 +1,7 @@
 // How a target is chosen (§12.3, §12.22).
 //
-// §12.22's steps: the band (Renown within 150, Keeper level within 3, an
+// §12.22's steps: the band (Renown within 150, Keeper level two below to three
+// above as the owner decided (F44), an
 // island difficulty rating within one band of the raider's recent success
 // rate, and depth); the rating (Glicko-2, glicko.mjs, with the simulator's
 // prior for a new island); the guarantee ("the middle of the list is drawn
@@ -109,8 +110,8 @@ export class Matchmaking {
   }
 
   /** One validated heist, its own rating period for both sides: the raider
-   *  scores 1 unless foiled (G30). An echo, or an island whose owner is gone,
-   *  rates the raider only, against the island's rating as it stands. */
+   *  scores 1 unless foiled (G30). An echo rates the raider only, against
+   *  the island's rating as it stands. */
   settle(lease, realm, verdict, now, { raiderOnly = false } = {}) {
     // An island published before there were ratings enters at its prior.
     const island = this.islandRating(lease.defender, realm) ?? { ...prior(this.db.prepare(
@@ -161,6 +162,7 @@ export class Matchmaking {
       `SELECT h.token FROM heists h JOIN leases l ON l.token = h.token
         WHERE h.attacker = ? AND l.defender = ? AND h.validated = 1 AND ${RAIDED}
           AND json_extract(h.outcome, '$.verdict.grade') != 'foiled'
+          AND COALESCE(json_extract(h.outcome, '$.haul.cappedBy'), '') != 'week'
           AND h.submitted_at > ?
           AND NOT EXISTS (SELECT 1 FROM leases t WHERE t.trace_of = h.token)
         ORDER BY h.submitted_at DESC LIMIT 1`)

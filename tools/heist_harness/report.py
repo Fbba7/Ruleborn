@@ -26,10 +26,10 @@ DEPTH_SEPARATION = 35            # percentage points, optimal over careless
 def run_batch(n: int, links: int, realm_level: int, policy_name: str,
               seed0: int = 0, laws: str = "none", shaped: bool = False,
               posts: int | None = None, post_level: int = 1,
-              wards: int | None = None, crack_noise: bool = True,
+              wards: int | None = None, crack_noise: bool | None = None,
               rules: str = "v3.4", ward_kinds: tuple | None = None,
               crack_reach: int | None = None, crack_seconds: int | None = None,
-              disarm_approach: bool = False) -> list:
+              disarm_approach: bool = False, glare_realm: bool | None = None) -> list:
     """`laws` is "none", "any" (woven at random) or "defensive" (sign-aware).
 
     `shaped` selects the generator F16 argued for; see `island.generate`.
@@ -53,7 +53,7 @@ def run_batch(n: int, links: int, realm_level: int, policy_name: str,
                        realm_level=realm_level, crossing=crossing, sheet=sheet,
                        crack_noise=crack_noise, crack_reach=crack_reach,
                        crack_seconds=crack_seconds,
-                       disarm_approach=disarm_approach).run()
+                       disarm_approach=disarm_approach, glare_realm=glare_realm).run()
         result.sheet = sheet
         result.crew_decisions = policy.crew_decisions
         result.member_decisions = policy.member_decisions

@@ -124,7 +124,7 @@ protections:
   Renown, in that order, saying so.
 - **Echoes.** A snapshot no island is on any more can be leased for 14 days;
   robbing it takes nothing from its owner and moves no Renown; it rates the
-  raider, and not the island (G30).
+  raider, and not the island (G30). A raid past the week's 20 opens no Trace.
 - **Protections.** A new player's island is refused for 72 hours, or until
   they raid; a robbed player may Trace the raider once within 24 hours, with
   no entry fee.
@@ -188,7 +188,8 @@ transaction as the grant:
   simulated population of players raiding each other — register **G27**.
   `bash tools/check_all.sh` fails if the copy drifts from the model.
 - **Defending pays.** A foiled heist gives the defender the raider's entry
-  fee and §9.4's "5% of what the crew was carrying": the simulation reports
+  fee (on the pair's first foil of the day, G37) and §9.4's "5% of what the
+  crew was carrying": the simulation reports
   what the crew took and did not bank, valued as the clean haul it would
   have been. §13.1's rule raises the share five points a season, to 20% at
   most, while fewer than 15% of the season's last-week players changed their
@@ -431,8 +432,8 @@ kept that another player's island, Workshop island, challenge link or lease
 still is. The files go after the deletion's commit, each written first to
 `erasures` in its transaction, so a deletion stopped between the two is
 finished when the server next starts. A raid leased on anyone before their
-deletion settles for the raider and, like an echo, pays, rates and records
-nothing of the one who is gone; it rates the raider alone. A ban keeps only the platform identity, and
+deletion settles for the raider and pays, rates and records nothing of the
+one who is gone. A ban keeps only the platform identity, and
 the day, in `bans`, apart from the account (§20.12's "minimum
 identifiers"): it ends the player's friendships and invites, and a banned
 player's deletion severs the rest like anyone's and clears the ban's time

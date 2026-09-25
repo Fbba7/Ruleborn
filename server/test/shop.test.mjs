@@ -103,8 +103,8 @@ test("stars reset each season, and an unclaimed tier stays claimable later at th
   const track = new Track(t.service);
   const me = t.raider.account;
   track.claim(me, 1);
-  giveStars(t, me, 35);
-  track.claim(me, 1);                                  // tier 2, 20 stars
+  giveStars(t, me, TIER_STARS + 15);
+  track.claim(me, 1);                                  // tier 2, a tier's stars
   t.clock.now = T0 + SEASON_MS + 1;
   t.service.seasons.rollover();
   assert.equal(track.stars(me), 0, "last season's 15 stars are gone");

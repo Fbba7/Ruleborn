@@ -29,7 +29,7 @@
   "small_speed",
   "still_is_invisible",
   "structure_damage",
-  "structure_regrowth",
+  "structure_healing",
   "suspicion_decay",
   "suspicion_fill",
   "touch_damage",
@@ -884,7 +884,7 @@
     "parameter"
    ],
    "params": {
-    "structure_regrowth": 0.02
+    "structure_healing": 0.02
    },
    "authored": [],
    "note": "",

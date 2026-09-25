@@ -103,18 +103,10 @@ VAULT_HEALTH_PER_LEVEL = 1_500
 #: §12.6: "Breakers deal double damage to it."
 BREAKER_VAULT_MULTIPLIER = 2
 
-#: §12.6 (v3.3): "every 5 seconds of cracking every guard in the Heart hears
-#: the Vault and starts Investigating it" — a heard event, not suspicion.
-CRACK_NOISE_SECONDS = 5
-
 #: §10.3 (v3.3; one value since v3.4, C34): "Every ward has 550 health a
 #: level", the smallest multiple of 50 at which smashing a level-2 ward loses
 #: to a Tinker's disarm.
 WARD_HEALTH_PER_LEVEL = 550
-
-#: §12.6 (v3.4, brief 37): "every guard within the crack's reach of the Vault,
-#: 5 m by the walking path, hears it". One tile is one metre (§21.1).
-CRACK_REACH_METRES = 5
 
 #: §12.19: "Every role can load, at 30 units a second."
 LOAD_PER_SECOND = 30
@@ -319,8 +311,6 @@ HOME = {
     "DISARM_SECONDS": "10.3",
     "VAULT_HEALTH_PER_LEVEL": "12.6",
     "BREAKER_VAULT_MULTIPLIER": "12.6",
-    "CRACK_NOISE_SECONDS": "12.6",
-    "CRACK_REACH_METRES": "12.6",
     "WARD_HEALTH_PER_LEVEL": "10.3",
     "LOAD_PER_SECOND": "12.19",
     "CARRIER_LOADED_PACE": "11.1",
@@ -410,9 +400,6 @@ STATED = {
     "VAULT_HEALTH_PER_LEVEL": (r"([\d,]+) health per Vault level", lambda m: int(_n(m[0]))),
     "BREAKER_VAULT_MULTIPLIER": (r"Breakers deal (double) damage to it",
                                  lambda m: int(_n(m[0]))),
-    "CRACK_NOISE_SECONDS": (r"every (\d+) seconds of cracking", lambda m: int(m[0])),
-    "CRACK_REACH_METRES": (r"crack’s reach of the Vault, (\d+) m by the walking path",
-                           lambda m: int(m[0])),
     "WARD_HEALTH_PER_LEVEL": (r"Every ward has (\d+) health a level", lambda m: int(m[0])),
     "LOAD_PER_SECOND": (r"Every role can load, at (\d+) units a second",
                         lambda m: int(m[0])),
@@ -477,8 +464,11 @@ STATED = {
                                    lambda m: int(m[0])),
     "CONSTELLATION_ELDERS": (r"a founder, up to (\w+) elders", lambda m: {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8}.get(m[0])),
     "CREW_SIZE": (r"\| Crew\n\| (\d+) to (\d+)", lambda m: (int(m[0]), int(m[1]))),
-    "MATCH_WINDOW": (r"\| 1\. The band\n\| Renown within (\d+), Keeper level within (\d+)",
-                     lambda m: (int(m[0]), int(m[1]))),
+    # The document's wording ("Keeper level within 3") or the decided one
+    # (F44: "from 2 below to 3 above"), so the check tells when it catches up.
+    "MATCH_WINDOW": (r"\| 1\. The band\n\| Renown within (\d+), Keeper level "
+                     r"(?:within (\d+)|from (\d+) below to (\d+) above)",
+                     lambda m: (int(m[0]), int(m[1])) if m[1] else (int(m[0]), (int(m[2]), int(m[3])))),
     "GLICKO": (r"a wide deviation, (\d+) on Glicko-2's scale, which narrows with every observed "
                r"attack under Glicko-2's update \(volatility ([\d.]+), system constant ([\d.]+)\)",
                lambda m: (int(m[0]), float(m[1]), float(m[2]))),

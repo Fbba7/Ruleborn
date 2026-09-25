@@ -112,8 +112,8 @@ island was a placeholder and every heist ran on the one fixture realm. Now:
   headers, which now carry the real hashes.
 - **Publishing rules** (`Island::check`): §5.2's ward limit, guard posts and
   law slots for the realm level, one thing a tile, an open edge tile to land
-  on, and §6.1's route to the Vault from some open edge tile with every
-  Crystal Wall standing. The fixture
+  on and at least half of each side open (F51, decided), and §6.1's route to
+  the Vault from some open edge tile with every Crystal Wall standing. The fixture
   fails one of them on purpose — five posts where realm level 5 has three —
   and `Island::example()` is a legal realm-3 Heart for the server's tests.
 - **The rules version** (`rules_version`) is SHA-256 of the law table and of
@@ -300,12 +300,10 @@ the skiff → the clock.
 - **The Vault.** It has 1,500 health per Vault level. It is cracked from a
   tile beside it, one hit every 0.8 s for Power, and Breakers deal double.
   While two or more crack it, every hit deals a quarter more: v3.3's assist
-  bonus (§11.1), which also applies to pylons and wards. Each hit is §12.17's
-  "Breaking something", heard 5 m away along the walkable path, and every
-  five seconds of cracking send every guard within the crack's reach — 5 m
-  from the Vault by the walking path, `path::steps_to` — to investigate it,
-  from the open tile beside it nearest each guard (§12.6, v3.4; v3.3 called
-  every guard in the Heart). Once open, anyone told to load does so at 30 a second, until
+  bonus (§11.1), which also applies to pylons and wards. No guard hears it,
+  as the owner decided (F35): v3.4's hit heard 5 m away and its call every
+  five seconds of cracking to the guards within 5 m of the walk are gone;
+  a guard that can see the crew still sees it. Once open, anyone told to load does so at 30 a second, until
   it reaches the player's target fill, fills its bag, or empties the exposed
   share. A loaded Carrier walks 15% slower.
 - **Fights.** An Alerted guard beside a crew member hits it every 0.8 s for
@@ -413,7 +411,7 @@ laws whose pylons still stand. Everything downstream reads it:
 - Glass ("walls become see-through") and Stillness ("standing still for 1.5
   seconds becomes invisible");
 - healing once a second, each rule its own parameter (F31): `ally_healing`
-  (Kinship) for anyone beside an ally, `structure_regrowth` (Regrowth) for
+  (Kinship) for anyone beside an ally, `structure_healing` (Regrowth) for
   guards, wards, pylons and the Vault.
 
 v3.4 makes the rest of the launch 24 rows on the same sheet (§7.3), and each
@@ -514,8 +512,12 @@ drafted resolution), which gives each ward one of three kinds:
   - A Gravity Well pulls everyone within 3 tiles to its centre and holds them
     2 seconds. Their route is recomputed from there to the tile they were sent
     to: the order was the tile, not the path.
-  - A Lantern Glare shows the crew to every guard in the realm for 5 seconds
-    and blinds the crew for 2.
+  - A Lantern Glare shows the crew for 5 seconds to every guard within the
+    alarm's spread reach of it, 4 m (F33, decided; §10.3 says "every guard
+    in the realm"), and blinds the crew for 2.
+  - Under Delay, a guard's rise to Suspicious, Investigating or Alerted
+    lands its delay after it was earned, as a ward's effect does (G23); a
+    regrow time takes the shortest applied (G24).
 
 A ward can be disarmed from beside it: 3 s + 1 s a level, silent, cancelled
 by moving, and never reset. Or it can be smashed, loudly, with Breakers

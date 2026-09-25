@@ -17,9 +17,9 @@
 //   * §9.6 does not say what a haul is minted in. §32.9's ledger derives the
 //     birth curve from "raid Essence at base 2,400 (half of each haul)", so a
 //     haul is minted half Essence, the rest Starlight.
-//   * The entry fee's floor is 100 Starlight, and nothing says what a raider
-//     holding less pays. Read as whatever they hold: the ledger never goes
-//     below zero.
+//   * A raider holding less than the fee pays whatever they hold: the ledger
+//     never goes below zero. (The fee itself is the owner's decision, F39:
+//     2% of B(V) at the target, with no floor.)
 //
 // And three for §9.6's caps (register G20):
 //
@@ -34,6 +34,9 @@
 //     two days costs two sevenths. §9.6's own "A full day, four raids" column
 //     would make it hold, but in that unit the day's ceiling would cap a single
 //     clean raid, so §9.6 has to say which unit each cap is in (G20).
+//     The owner decided the week counts raids (G20): 20 paid raids, after
+//     which a raid pays nothing (service.mjs); `weekCeiling` stays as the
+//     currency backstop that hauls and defence shares count toward.
 //   * A week starts on Monday, UTC, like the day.
 
 import { readFileSync } from "node:fs";

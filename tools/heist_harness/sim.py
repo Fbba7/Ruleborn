@@ -43,17 +43,22 @@ BASE_TICKS = HEIST_CLOCK[0] * TPS
 LINK_TICKS = HEIST_CLOCK[1] * TPS
 MAX_TICKS = HEIST_CLOCK[2] * TPS
 from ..design_facts import (VAULT_HEALTH_PER_LEVEL, LOAD_PER_SECOND,  # D37
-                            CRACK_NOISE_SECONDS, DOWN_SECONDS, REVIVE_SECONDS,
+                            DOWN_SECONDS, REVIVE_SECONDS,
                             TAKEDOWN_SECONDS, ASSIST_BONUS,
                             MENDER_REVIVE_SECONDS, SKIFF_OUTER_SECONDS)
 WIND_UP_TICKS = int(0.8 * TPS)           #: §12.8, one hit per 0.8 s
 SKIFF_TICKS = SKIFF_OUTER_SECONDS * TPS  #: §5.4, an outer realm
-#: §12.6 (v3.3): "every 5 seconds of cracking every guard in the Heart hears
-#: the Vault and starts Investigating it". Before v3.3 this module imported
-#: §12.6's "100 suspicion" and never applied it, so the harness had no crack
-#: noise at all (D56).
+#: §12.6 (v3.4) called "every 5 seconds of cracking" the guards within "the
+#: crack's reach of the Vault, 5 m by the walking path". The owner decided no
+#: guard hears the Vault (F35), so the call is off by default (`crack_noise`)
+#: and its two figures are sweep settings here, kept so the runs that
+#: measured F32 and brief 37 can still be made.
+CRACK_NOISE_SECONDS = 5
+#: §12.17: "guards within four metres start investigating half a second
+#: later" — the alarm's spread, which a Lantern Glare reaches (F33).
+SPREAD_METRES = 4
 CRACK_NOISE_TICKS = CRACK_NOISE_SECONDS * TPS
-from ..design_facts import CRACK_REACH_METRES            # 12.6, v3.4 (brief 37)
+CRACK_REACH_METRES = 5
 #: v3.3's call reached "every guard in the Heart": a reach no island exceeds.
 WHOLE_HEART = 10 ** 6
 #: §12.8 (v3.3): a takedown takes two seconds and ends in a knockout if the
@@ -276,8 +281,9 @@ class Heist:
                  realm_level: int = 3, crossing=(), sheet=None, response: bool = True,
                  response_model: str = "published",
                  clock_pct: int = 100, exposed_pct: int = 100,
-                 crack_noise: bool = True, crack_reach: int | None = None,
-                 crack_seconds: int | None = None, disarm_approach: bool = False):
+                 crack_noise: bool | None = None, crack_reach: int | None = None,
+                 crack_seconds: int | None = None, disarm_approach: bool = False,
+                 glare_realm: bool | None = None):
         """`crossing` is the outer realms the crew walks through on the way in.
 
         §12.6 splits a heist into Entry, Crossing, Vault and Escape, and gives the
@@ -307,6 +313,11 @@ class Heist:
         #: every raid these crews play, so a question about any other layer is
         #: asked with it off and says so.
         self.crack_noise = crack_noise
+        #: A Lantern Glare's reach: the whole realm, as §10.3 states and the
+        #: v3.2 and v3.3 heists were measured, or the alarm's 4 m the owner
+        #: decided (F33) under the current rules. None is the island's rules'
+        #: own, as with the crack's reach; F33's evidence asks for the realm.
+        self.glare_realm = glare_realm
         #: Which document's wards the Heart was built to (island.RULES). The
         #: v3.3 rules the harness also plays by — the assist bonus — follow
         #: it, so a v3.2 island is the v3.2 heist it was measured on.
@@ -318,6 +329,13 @@ class Heist:
                             else WHOLE_HEART if self.rules in ("v3.2", "v3.3")
                             else CRACK_REACH_METRES)
         self._heard_from_vault = None
+        if self.glare_realm is None:
+            self.glare_realm = self.rules in ("v3.2", "v3.3")
+        # The crack's call likewise: the document's at v3.2 and v3.3, which
+        # those heists were measured with, and off under the current rules,
+        # where the owner decided no guard hears the Vault (F35).
+        if self.crack_noise is None:
+            self.crack_noise = self.rules in ("v3.2", "v3.3")
         #: How often the call sounds: §12.6's five seconds, or brief 37's
         #: fallback of ten with the whole Heart.
         self.crack_every = (crack_seconds * TPS if crack_seconds
@@ -603,9 +621,13 @@ class Heist:
                         m.x, m.y, m.path = cx, cy, []
                     m.frozen_ticks = 2 * TPS * scale // 100
                 elif w.kind == "Lantern Glare":
-                    # Shows the crew to every guard in the realm for 5 s (§10.3).
+                    # Shows the crew for 5 s to every guard within the alarm's
+                    # spread reach of it, 4 m by the sheet's alarm range (F33,
+                    # decided; §10.3 says "every guard in the realm").
+                    reach = SPREAD_METRES * self.sheet.factor("alarm_range") * U
                     for g in self.guards:
-                        g.suspicion = ALERTED
+                        if self.glare_realm or dist2(g.x, g.y, cx, cy) <= reach * reach:
+                            g.suspicion = ALERTED
                 w.spent = True
                 w.reset_at = self.tick + w.reset_ticks
                 self.wards_triggered += 1

@@ -78,8 +78,10 @@ def test_the_harness_gives_the_same_answers_as_when_it_was_last_read():
     # v3.4, now the default rules: the crack calls only guards within 5 m of
     # the Vault by the walking path (F32, F35), a ward ignores its disarmer on
     # its tile (G16), and the optimal crew goes round what takes fifteen
-    # seconds to disarm (D59).
-    assert digest == "4838533026da80b5f722f2ad5b102d0ae774d283cd956acc1aecc41b04f4541c", (
+    # seconds to disarm (D59); and by the owner's answers: no guard hears the
+    # Vault, so the crack call is off by default (F35), and a Lantern Glare
+    # reaches the guards within the alarm's spread, not the realm (F33).
+    assert digest == "951d6c0cf132815d560975b42c60caf8f98fa922342e1a8a0695a86741a606ff", (
         f"the harness now gives different results: {digest}")
 
 
@@ -375,8 +377,8 @@ def test_a_crew_that_clears_the_heart_first_survives_the_crack_noise():
 
     def success(name: str, n: int = 40) -> float:
         wins = sum(Heist(generate(i, 3, wards=0, rules="v3.3"), POLICIES[name](),
-                         realm_level=3,
-                         crossing=[], sheet=Sheet()).run().success for i in range(n))
+                         realm_level=3, crossing=[], sheet=Sheet(),
+                         crack_noise=True).run().success for i in range(n))
         return 100 * wins / n
 
     clearing, optimal = success("clearing"), success("optimal")
@@ -395,7 +397,7 @@ def test_the_crack_noise_decides_nearly_every_raid():
     it, 65%. The same noise lifts §19.27's skill gap below its 35-point floor
     (7.5 against 65), which is the gate the document exits phases 2 and 3 on.
     """
-    loud = run_batch(40, 1, 3, "optimal", rules=LAYER)
+    loud = run_batch(40, 1, 3, "optimal", crack_noise=True, rules=LAYER)
     quiet = run_batch(40, 1, 3, "optimal", crack_noise=False, rules=LAYER)
     with_noise = 100 * sum(r.success for r in loud) / len(loud)
     without = 100 * sum(r.success for r in quiet) / len(quiet)
@@ -838,13 +840,37 @@ def test_one_lantern_glare_outweighs_a_realm_of_other_wards():
     """
     def held(kinds, wards: int, n: int = 60) -> float:
         rs = run_batch(n, 2, 3, "competent", laws="defensive", shaped=1, posts=2,
-                       wards=wards, crack_noise=False, ward_kinds=kinds)
+                       wards=wards, crack_noise=False, ward_kinds=kinds, glare_realm=True)
         return 100 * sum(not r.success for r in rs) / n
 
     two_glares = held(("Lantern Glare",), 2)
     six_others = held(("Time Snare", "Gravity Well"), 6)
     assert two_glares >= 85, two_glares
     assert two_glares - six_others >= 25, (two_glares, six_others)
+
+
+def test_the_decided_glare_still_outweighs_a_realm_where_whispers_stretches_it():
+    """F52. F33's decided Glare reaches the guards within the alarm's spread,
+    4 m scaled by the sheet's alarm range, as its build change says. The
+    defensive weave picks Whispers, whose alarm range is the whole universe,
+    so the Glare is realm-wide again on most of these realms: at realm 3 on
+    two posts (n=200) two Glares hold 91.5% against six Snares and Wells'
+    37.0%. The brief's 75.2% for two Glares was measured without the scaling;
+    this harness without it gives 72.5%.
+    """
+    two_glares, six_others = glare_holds()
+    assert two_glares >= 80, two_glares
+    assert two_glares - six_others >= 30, (two_glares, six_others)
+
+
+def glare_holds(n: int = 60) -> tuple:
+    """Two Glares against six other wards, at realm 3 on two posts, with the
+    Glare as the owner decided it (F33): within the alarm's 4 m."""
+    def held(kinds, wards: int) -> float:
+        rs = run_batch(n, 2, 3, "competent", laws="defensive", shaped=1, posts=2,
+                       wards=wards, ward_kinds=kinds)
+        return 100 * sum(not r.success for r in rs) / n
+    return held(("Lantern Glare",), 2), held(("Time Snare", "Gravity Well"), 6)
 
 
 def test_13_2s_hold_table_was_measured_at_one_guard_post():
@@ -962,7 +988,7 @@ def test_every_metre_of_the_cracks_reach_costs_the_optimal_crew_depth():
         worst = run_batch(60, 0, 3, "careless", **kw)
         return 100 * (sum(r.success for r in best) - sum(r.success for r in worst)) / 60
 
-    quiet, five = gap(crack_noise=False), gap(crack_reach=5)
+    quiet, five = gap(crack_noise=False), gap(crack_reach=5, crack_noise=True)
     assert quiet >= 30, quiet
     assert quiet - five >= 25, (quiet, five)
 

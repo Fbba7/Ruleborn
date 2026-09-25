@@ -199,25 +199,29 @@ dict(
              title="Measure F33's Glare options, then re-run \u00a713.2's "
                    "table at \u00a75.2's posts",
              gate="\u00a713.2's table re-measured at the posts \u00a75.2 "
-                  "gives, with v3.3's wards and the crack noise on, against "
-                  "both the optimal and the clearing crew",
+                  "gives, with the owner's answers \u2014 no crack call "
+                  "(F35), the Glare's reach (F33, F52) \u2014 against both "
+                  "the optimal and the clearing crew",
              detail="On v3.3's rules one Lantern Glare takes realm 3 from "
                     "42.5% held to 71.2%, and two to 97.5%, while \u00a75.2's "
                     "six wards there without one hold 46.2% (F33). And "
                     "\u00a713.2's table was measured at one guard post in "
                     "every realm: at \u00a75.2's posts realms 3 to 5 hold "
-                    "91 to 99.5% (F34). Each Glare option F33 names is one "
-                    "constant or flag here, so each is measured before the "
-                    "owner picks; then the table is re-run as it states "
-                    "itself.<br><br>v3.4 answered neither (both were "
+                    "91 to 99.5% (F34). The owner has answered F33 (a Glare "
+                    "reaches the alarm's 4 m) and F35 (no guard hears the "
+                    "Vault), and both are built. Building F33 found that the "
+                    "alarm's reach is realm-wide under Whispers, so two Glares "
+                    "still hold 91.5% there (F52); the table is re-run once "
+                    "F52 is answered.<br><br>v3.4 answered neither (both were "
                     "registered after its snapshot), and its brief 37 sweep "
                     "needs them: every realm level holds above its band with "
                     "no crack call at all, so the reach cannot be sized "
                     "against the bands until this is done (F35).",
              evidence="python3 -m tools.heist_harness.test_harness "
                       "(test_one_lantern_glare_outweighs_a_realm_of_other_wards, "
+                      "test_the_decided_glare_still_outweighs_a_realm_where_whispers_stretches_it, "
                       "test_13_2s_hold_table_was_measured_at_one_guard_post)",
-             register=["F33", "F34"]),
+             register=["F33", "F34", "F35", "F52"]),
         dict(id="T0.13", owner="claude", status="done",
              title="Port v3.4's two heist rules, and run brief 37's sweep",
              gate="the crack's reach and the disarmer rule in sim/ and the "
