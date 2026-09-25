@@ -40,8 +40,10 @@ class Level:
     crew: int
     per_worker_hour: float  # all three currencies, on the binding day
     stay_home: float        # the crew's output over the heist and its rest
-    attempt: float          # B(V) x the band's lower edge x average fatigue
+    attempt: float          # B(V) x the band's lower edge x average fatigue, less
+                            # the fee kept, on the binding day
     stay_home_first: float  # the same on the day the level is reached
+    attempt_first: float    # and the attempt that day
 
     @property
     def ratio(self) -> float:
@@ -50,7 +52,7 @@ class Level:
     @property
     def ratio_first(self) -> float:
         """The document's reading: §10.2's build days, the day a level arrives."""
-        return self.attempt / self.stay_home_first if self.stay_home_first else float("inf")
+        return self.attempt_first / self.stay_home_first if self.stay_home_first else float("inf")
 
 
 def attempt_value(base: float, vault: int, edge: float, success: float = 0.0,
@@ -65,7 +67,9 @@ def attempt_value(base: float, vault: int, edge: float, success: float = 0.0,
 
 
 def levels(cfg: Config, days: int) -> list[Level]:
-    """One row per Vault level the run reaches, at the day it binds."""
+    """One row per Vault level the run reaches, at the day it binds: the day
+    on which an attempt, priced with that day's fee (its success rate sets
+    what comes back, C41), is worth least against staying home."""
     edge = data.ATTEMPT_BAND[0]
     model = EconomyModel(replace(cfg, archetype="engaged"))
     rows: dict[int, Level] = {}
@@ -78,18 +82,17 @@ def levels(cfg: Config, days: int) -> list[Level]:
         per_worker = hourly / staffed if staffed > 0 else 0.0
         crew = model.crew_size()
         stay = crew * per_worker * HOURS_AWAY
+        success = data.heist_success_rate(model.s.day)
+        attempt = attempt_value(cfg.haul_base, vault, edge, success, cfg.entry_fee)
         row = rows.get(vault)
         if row is None:
-            success = data.heist_success_rate(model.s.day)
             rows[vault] = Level(vault, model.s.day, model.s.day, model.s.day, crew,
-                                per_worker, stay,
-                                attempt_value(cfg.haul_base, vault, edge, success, cfg.entry_fee),
-                                stay)
+                                per_worker, stay, attempt, stay, attempt)
             continue
         row.last_day = model.s.day
-        if stay > row.stay_home:
+        if attempt * row.stay_home < row.attempt * stay:     # a worse day for raiding
             row.binding_day, row.crew = model.s.day, crew
-            row.per_worker_hour, row.stay_home = per_worker, stay
+            row.per_worker_hour, row.stay_home, row.attempt = per_worker, stay, attempt
     return [rows[v] for v in sorted(rows)]
 
 

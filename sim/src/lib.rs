@@ -678,11 +678,11 @@ pub struct World {
     /// Held rather than consumed, so the same log can be replayed again.
     commands: Vec<Command>,
     next_command: usize,
-    /// The island's wards (§10.3), and a Lantern Glare's reveal: every guard
-    /// shown the crew until `revealed_until`, looking at `reveal_spot`.
+    /// The island's wards (§10.3), and each Lantern Glare's reveal: the tile
+    /// that set it off and the tick it ends, so two Glares in one heist each
+    /// show the crew around their own tile.
     pub wards: Vec<Ward>,
-    pub revealed_until: u32,
-    pub reveal_spot: Option<grid::TileIndex>,
+    pub glares: Vec<(grid::TileIndex, u32)>,
     /// The realm's laws and their pylons, and this tick's sheet from them.
     pub laws: Vec<Law>,
     pub sheet: Sheet,
@@ -815,8 +815,7 @@ impl World {
             commands,
             next_command: 0,
             wards: Vec::new(),
-            revealed_until: 0,
-            reveal_spot: None,
+            glares: Vec::new(),
             laws: Vec::new(),
             sheet: Sheet::plain(),
             clock_run: 0,
@@ -1265,7 +1264,23 @@ impl World {
         if self.guards[gi].state == guard::State::Investigating {
             self.aim(gi, Some(tile));
         } else {
-            self.enter(gi, guard::State::Investigating);
+            self.rise(gi, guard::State::Investigating);
+        }
+    }
+
+    /// A guard triggered into `state` by something other than its own
+    /// suspicion — a lure, the alarm's spread: at once, or under Delay queued
+    /// to land "3 seconds after" (G23), as a rise on suspicion is.
+    fn rise(&mut self, gi: usize, state: guard::State) {
+        match self.sheet.ticks(Param::EffectDelaySeconds) {
+            Some(delay) => {
+                let at = self.tick + delay;
+                let g = &mut self.guards[gi];
+                if !g.rising.iter().any(|&(_, s)| s.rank() >= state.rank()) {
+                    g.rising.push((at, state));
+                }
+            }
+            None => self.enter(gi, state),
         }
     }
 
@@ -1341,11 +1356,16 @@ impl World {
             // looking at the tile that set it off — to every guard within
             // the alarm's spread reach of that tile (F33, decided), where
             // §10.3 still reads "every guard in the realm".
-            if now < self.revealed_until && self.raiders.iter().any(|r| r.active()) {
-                if let Some(spot) = self.reveal_spot.filter(|&s| {
-                    let (x, y) = self.grid.centre(s);
-                    self.guards[gi].at.distance(Point { x, y }) <= self.spread_reach()
-                }) {
+            if self.raiders.iter().any(|r| r.active()) {
+                let reach = self.spread_reach();
+                if let Some(spot) = self.glares.iter()
+                    .filter(|&&(_, until)| now < until)
+                    .map(|&(s, _)| s)
+                    .find(|&s| {
+                        let (x, y) = self.grid.centre(s);
+                        self.guards[gi].at.distance(Point { x, y }) <= reach
+                    })
+                {
                     gain = gain.max(FILL_NEAR);
                     if most.is_none() {
                         most = Some((FILL_NEAR, spot));
@@ -1553,6 +1573,11 @@ impl World {
         let top = (self.tick as i64 % period) * (rows + w) / period - w;
         let y = self.grid.coords(tile).1 as i64;
         Some(top <= y && y < top + w)
+    }
+
+    /// The last tick any Lantern Glare still shows the crew, or 0.
+    pub fn revealed_until(&self) -> u32 {
+        self.glares.iter().map(|&(_, until)| until).max().unwrap_or(0)
     }
 
     /// How far the alarm spreads: §12.17's "guards within four metres",
@@ -2028,7 +2053,7 @@ impl World {
         for (_, gi, spot) in due {
             if self.guards[gi].awake(now) && self.guards[gi].state.rank() < Investigating.rank() {
                 self.guards[gi].interest = Some(spot);
-                self.enter(gi, Investigating);
+                self.rise(gi, Investigating);
             }
         }
 
@@ -2052,24 +2077,31 @@ impl World {
             // Rising on suspicion is immediate — except under Delay, where
             // "guards change state 3 seconds after they are triggered" (G23,
             // decided): a rise is queued, and lands at its tick unless the
-            // guard has already risen as far. Falling is never delayed.
+            // guard has already risen as far. A rise queued before Delay's
+            // pylon broke still lands at its tick. Falling is never delayed.
             if by_suspicion.rank() > next.rank() {
                 next = by_suspicion;
             }
-            if let Some(delay) = self.sheet.ticks(Param::EffectDelaySeconds) {
+            let delay = self.sheet.ticks(Param::EffectDelaySeconds);
+            if delay.is_some() || !self.guards[gi].rising.is_empty() {
                 let g = &mut self.guards[gi];
-                if next.rank() > current.rank()
-                    && !g.rising.iter().any(|&(_, s)| s.rank() >= next.rank())
-                {
-                    g.rising.push((now + delay, next));
+                match delay {
+                    Some(delay) if next.rank() > current.rank()
+                        && !g.rising.iter().any(|&(_, s)| s.rank() >= next.rank()) =>
+                    {
+                        g.rising.push((now + delay, next));
+                    }
+                    _ => {}
                 }
                 let landed = g.rising.iter().filter(|&&(t, _)| t <= now)
                     .map(|&(_, s)| s).max_by_key(|s| s.rank());
                 g.rising.retain(|&(t, _)| t > now);
+                // Under Delay a fresh rise waits; without it (the pylon
+                // broken) it is immediate, and a queued one can only add.
+                let now_at = if delay.is_some() { current } else { next };
                 next = match landed {
-                    Some(s) if s.rank() > current.rank() => s,
-                    _ if next.rank() > current.rank() => current,
-                    _ => next,
+                    Some(s) if s.rank() > now_at.rank() => s,
+                    _ => now_at,
                 };
                 g.rising.retain(|&(_, s)| s.rank() > next.rank());
             }
@@ -2692,10 +2724,10 @@ impl World {
                 }
             }
             _ => {
-                // Lantern Glare: every guard is shown the crew, and the crew
-                // is blinded.
-                self.revealed_until = now + heist::GLARE_REVEAL_TICKS;
-                self.reveal_spot = Some(w.tile);
+                // Lantern Glare: the guards within reach are shown the crew,
+                // and the crew is blinded. A spent Glare's reveal is dropped.
+                self.glares.retain(|&(_, until)| now < until);
+                self.glares.push((w.tile, now + heist::GLARE_REVEAL_TICKS));
                 for r in self.raiders.iter_mut().filter(|r| r.active()) {
                     r.frozen_until = r.frozen_until.max(now + heist::GLARE_BLIND_TICKS);
                 }
@@ -3195,7 +3227,10 @@ impl World {
         mix(self.reinforced as i64);
         mix(self.spreads.len() as i64);
         mix(self.clock_run as i64);
-        mix(self.revealed_until as i64);
+        for &(spot, until) in &self.glares {
+            mix(spot as i64);
+            mix(until as i64);
+        }
         for w in self.wards.iter() {
             mix(w.kind as i64);
             mix(w.health as i64);

@@ -8,11 +8,11 @@ import { base, capHaul, dayCeiling, difficulty, entryFee, fatigue, feeReturned, 
 
 const value = ([n, d]) => Number(n) / Number(d);
 
-test("B(V) is §9.6's 1.5^(V−1) at the owner's base: 4,900 at Vault level 1, 7,350 at 2, 188,372 at 10 (F36)", () => {
-  assert.equal(value(base(1)), 4900);
-  assert.equal(value(base(2)), 7350);
-  assert.equal(value(base(6)), 4900 * 1.5 ** 5);
-  assert.equal(Math.floor(value(base(10))), 188_372);
+test("B(V) is §9.6's 1.5^(V−1) at the owner's base: 5,000 at Vault level 1, 7,500 at 2, 192,216 at 10 (F36)", () => {
+  assert.equal(value(base(1)), 5000);
+  assert.equal(value(base(2)), 7500);
+  assert.equal(value(base(6)), 5000 * 1.5 ** 5);
+  assert.equal(Math.floor(value(base(10))), 192_216);
 });
 
 test("six raids in a day pay about 4.15 times one (§9.6)", () => {
@@ -69,8 +69,8 @@ test("fill is against the smaller of the crew's bags and what is exposed", () =>
 
 test("the entry fee is 2% of B(V) at the target, never more than is held (9.4, F39)", () => {
   const rich = 10_000_000;
-  // 2% of 4,900, 7,350, 4,900 × 1.5⁷ and 4,900 × 1.5⁹.
-  assert.deepEqual([1, 2, 8, 10].map((v) => entryFee(rich, v)), [98, 147, 1_674, 3_767]);
+  // 2% of 5,000, 7,500, 5,000 × 1.5⁷ and 5,000 × 1.5⁹.
+  assert.deepEqual([1, 2, 8, 10].map((v) => entryFee(rich, v)), [100, 150, 1_708, 3_844]);
   assert.equal(entryFee(40, 3), 40, "G17: a raider holding less than the fee pays what it holds");
   assert.equal(entryFee(0, 5), 0);
   // What comes back (C41): all after clean or loud, half after partial.
@@ -82,21 +82,21 @@ test("the per-raid cap is 1.98 times the base, derived from richness and difficu
 });
 
 test("a day's ceiling is half again above the whole fatigue curve; a week's is five days of it", () => {
-  // 4,900 × (1 + 0.85 + 0.85² + …) = 4,900 ÷ 0.15 ≈ 32,667 a day at the curve.
-  assert.equal(dayCeiling(1), 49_000n);
-  assert.equal(weekCeiling(1), 163_333n);
-  assert.equal(weekCeiling(2), 245_000n);
+  // 5,000 × (1 + 0.85 + 0.85² + …) = 5,000 ÷ 0.15 ≈ 33,333 a day at the curve.
+  assert.equal(dayCeiling(1), 50_000n);
+  assert.equal(weekCeiling(1), 166_666n);
+  assert.equal(weekCeiling(2), 250_000n);
 });
 
 test("a haul is cut by the first cap it meets, and re-split half Essence", () => {
   const pay = { total: 4000, essence: 2000, starlight: 2000 };
   const ctx = { targetVaultLevel: 1, raiderVaultLevel: 1, paidToday: 0, paidThisWeek: 0 };
   assert.equal(capHaul(pay, ctx).cappedBy, null);
-  assert.equal(capHaul({ total: 12_000, essence: 6000, starlight: 6000 }, ctx).total, 9702,
-               "4,900 × 1.98");
-  const day = capHaul(pay, { ...ctx, paidToday: 46_001 });
+  assert.equal(capHaul({ total: 12_000, essence: 6000, starlight: 6000 }, ctx).total, 9900,
+               "5,000 × 1.98");
+  const day = capHaul(pay, { ...ctx, paidToday: 47_001 });
   assert.deepEqual([day.total, day.essence, day.starlight, day.cappedBy], [2999, 1499, 1500, "day"]);
-  const week = capHaul(pay, { ...ctx, paidThisWeek: 162_333 });
+  const week = capHaul(pay, { ...ctx, paidThisWeek: 165_666 });
   assert.deepEqual([week.total, week.cappedBy], [1000, "week"]);
   assert.equal(capHaul(pay, { ...ctx, paidThisWeek: 200_000 }).total, 0, "never negative");
 });
@@ -118,8 +118,8 @@ test("the week's cap binds a grinder, and at §14.1's four raids a day never bin
     return paidThisWeek;
   };
   // Twenty a day: the week's ceiling binds, and the sixth and seventh days add nothing.
-  assert.equal(week(7, 20), 163_333);
-  assert.equal(week(6, 20), 163_333);
+  assert.equal(week(7, 20), 166_666);
+  assert.equal(week(6, 20), 166_666);
   // Four a day, the engaged player's: no cap binds, so two days missed cost
   // two sevenths — §9.6's "missing two days a week costs nothing" does not
   // hold under this reading.

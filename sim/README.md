@@ -333,13 +333,14 @@ the skiff → the clock.
   or Foiled.
 
 `planned()` is a heist played as a player would play it. v3.3 made it a
-different heist: the crack noise would bring every guard to the Vault, so the
+different heist: the crack noise then brought every guard to the Vault, so the
 crew first takes down every guard it can reach unheard — the Scout, Breaker,
 Mender and Carrier guards, from the moss behind each, the last one reached by
 letting a Gravity Well pull the Breaker in and stepping round during its
 reset. The Warden's rise has one ramp, in front of it, so the Warden is left.
 All three then crack at once, Brittle stone doubling and the assist bonus
-adding a quarter, and the Vault opens in 4.2 s, before the noise can sound.
+adding a quarter, and the Vault opens in 4.2 s, before that noise could
+sound. The owner has since removed the noise (F35); the plan is kept.
 The Scout and Breaker fill and leave; the Carrier fills its 300 on the
 Vault's far side and leaves at 53 s. The outcome is **Clean**, 508 of 508. It is committed as `golden/planned-clean.rbh`, because the seeded
 heists almost never open the Vault: 199 of 200 end Foiled.
@@ -356,8 +357,9 @@ Four things about the document, each pinned by a test rather than argued:
    has not cleared the Heart is found at the Vault. In the Python harness,
    whose crews do not, an optimal crew's success falls from 65% to 7.5% (F32).
    v3.4 gave the call a reach, 5 m by the walking path — the distance a hit
-   is already heard at, so here it adds little to what every hit does (F35).
-   (`every_five_seconds_of_cracking_calls_the_guards_within_its_reach`)
+   was already heard at, so it added little to what every hit did (F35).
+   The owner then decided no guard hears the Vault at all, and both are
+   gone. (`no_guard_hears_the_vault_but_one_beside_it_still_sees`)
 2. **§12.8's ambush has no way in on plain ground.** A crouched walk carries
    1 m and the tile behind a guard is 1 m away, so the last step of any
    approach is heard. The guard has then noticed, and "a guard that has not
@@ -425,7 +427,8 @@ asks which law set it:
   health and speed read by size. The crew and guards are roles, so the Warden
   reads as large and the rest as standard.
 - `effect_delay_seconds` (Delay): a triggered ward's effect lands three
-  seconds after it fires.
+  seconds after it fires, and a guard changes state three seconds after it
+  is triggered (G23).
 - `light_band_seconds` (Aurora): a band two rows deep crosses the realm every
   ten seconds; inside it sight doubles, outside it halves.
 - `chain_share` (Chain lightning): a hit jumps to the nearest of the struck
@@ -514,10 +517,13 @@ drafted resolution), which gives each ward one of three kinds:
     to: the order was the tile, not the path.
   - A Lantern Glare shows the crew for 5 seconds to every guard within the
     alarm's spread reach of it, 4 m (F33, decided; §10.3 says "every guard
-    in the realm"), and blinds the crew for 2.
-  - Under Delay, a guard's rise to Suspicious, Investigating or Alerted
-    lands its delay after it was earned, as a ward's effect does (G23); a
-    regrow time takes the shortest applied (G24).
+    in the realm"), and blinds the crew for 2. Each Glare holds its own
+    reveal, so a second one firing does not take the first's away.
+  - Under Delay, a guard's rise to Suspicious, Investigating or Alerted —
+    on its own suspicion, a lure, or the alarm's spread — lands its delay
+    after it was triggered, as a ward's effect does (G23). A rise queued
+    before Delay's pylon breaks still lands at its tick. A regrow time takes
+    the shortest applied (G24).
 
 A ward can be disarmed from beside it: 3 s + 1 s a level, silent, cancelled
 by moving, and never reset. Or it can be smashed, loudly, with Breakers
@@ -536,7 +542,7 @@ steps off. v3.4 answered G16: a ward's sensor ignores the crew member standing
 on its tile to disarm it, and fires on anyone else. It says nothing of the walk
 there, so a Lantern Glare, which fires within 2 tiles, still shows the crew to
 every guard as its disarmer arrives; that reading is G18, and a test pins it.
-The ambush and the crack noise are under the Vault and fights below.
+The ambush and the Vault's silence (F35) are under the Vault and fights below.
 
 Reset times come from §10.3 — Time Snare 12 s, Lantern Glare 20 s — although
 §10.2's Ward row gives every ward 10 s at level 1. Building this found that

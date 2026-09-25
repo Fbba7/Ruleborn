@@ -435,6 +435,8 @@ def blocker(item: dict, by_id: dict) -> tuple[str, str]:
         decided = f"decided, {a['option']}: {a['label']}"
         if a["build"] == "to do":
             return "mine", f"{decided}; the build change is still to make"
+        if a.get("left"):
+            return "mine", f"{decided}; built but for {a['left']}"
         if a["build"] == "outside":
             return "build", f"{decided}; the build change needs what this repository cannot reach"
         return "document", f"{decided}; the document takes it next"
@@ -917,6 +919,8 @@ def decided_html(item_id: str) -> str:
     build = {"none": "the build already does this", "to do": "the build change is still to make",
              "done": "built", "outside": "the build change needs what this repository cannot reach"}
     edit = f' Document: {esc(a["doc_edit"])}' if a.get("doc_edit") else ""
+    if a.get("left"):
+        edit = f' Still to build: {esc(a["left"])}.' + edit
     if a.get("client"):
         edit = f' Client: {esc(a["client"])}.' + edit
     return (f'<p class="rec decided"><span class="arrow">&#10003;</span> <strong>Decided '

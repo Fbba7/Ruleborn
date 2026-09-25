@@ -74,7 +74,7 @@ Nothing these depend on is still open.
 | F50 | significant | open | A deletion is undone by the only backup the plan has, and nothing says how “backups included” is met |  |
 | F51 | significant | open | A Keeper can close every edge tile but one, and so choose where the crew lands |  |
 | F52 | significant | open | F33’s decided Glare reach is realm-wide wherever Whispers is woven, and the brief’s figures for it were measured without that |  |
-| F53 | significant | open | F36’s every-day rule and F39’s fee in the attempt give 4,900, not the 4,600 F36’s answer names |  |
+| F53 | significant | open | F36’s every-day rule and F39’s fee in the attempt give 5,000, not the 4,600 F36’s answer names |  |
 | G20 | significant | open | §9.6’s day and week caps do not say whose base they are in, or what “five days’ worth” is five days of |  |
 | G22 | significant | open | §14.1 names neither a staffing order nor a realm order, and each moves the regenerated tables by months |  |
 | G23 | significant | open | Nine launch laws leave the simulation a rule to choose, and the choice is the rule every replay is checked by |  |

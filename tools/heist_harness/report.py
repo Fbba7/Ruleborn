@@ -157,10 +157,13 @@ def crack_reach_sweep(n: int = 40, workers: int = 4) -> str:
     """
     import multiprocessing as mp
     width = generate(0, 3).width
-    jobs = ([("no call", n, dict(crack_noise=False))]
-            + [(f"{r} m", n, dict(crack_reach=r)) for r in range(1, width + 1)]
-            + [("Heart, 10 s", n, dict(crack_reach=10 ** 6, crack_seconds=10)),
-               ("Heart, 5 s (v3.3)", n, dict(crack_reach=10 ** 6))])
+    # v3.4 as written: the call on and the Glare realm-wide, which the
+    # owner's answers (F35, F33) have since turned off by default.
+    v34 = dict(crack_noise=True, glare_realm=True)
+    jobs = ([("no call", n, dict(v34, crack_noise=False))]
+            + [(f"{r} m", n, dict(v34, crack_reach=r)) for r in range(1, width + 1)]
+            + [("Heart, 10 s", n, dict(v34, crack_reach=10 ** 6, crack_seconds=10)),
+               ("Heart, 5 s (v3.3)", n, dict(v34, crack_reach=10 ** 6))])
     with mp.Pool(workers) as pool:
         cells = pool.map(_reach_cell, jobs)
     lines = ["Brief 37: how far the crack's call reaches (§12.6, §32.9)", "",

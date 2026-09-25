@@ -18,7 +18,7 @@ Reports: `production`, `positions`, `raiding`, `faucet`, `sinks`, `scaling`,
 `Config.document("low" | "high")` is the model as §14.1 and §14.2 say the
 document's tables are generated: §5.8's three rules, §9.6's haul from
 `design_facts` (the 0.1222–0.1698 band, keyed to the target's Vault level, and
-the owner's base: 4,900 where the document ships 2,400, F36 and F53), §10.2 read from `content/buildings.json`, births bought in Essence at
+the owner's base: 5,000 where the document ships 2,400, F36 and F53), §10.2 read from `content/buildings.json`, births bought in Essence at
 §9.5's rate after the roster's keep, and §7.6's pages and Codex chapters.
 The owner's other answers are in it too: the fee as 2% of B(V), returned after
 a clean or loud heist and half after a partial one, and counted in the

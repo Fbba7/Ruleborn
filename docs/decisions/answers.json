@@ -1,10 +1,11 @@
 {
- "_what": "The owner's answers to the decision brief (docs/decisions/brief.json), as recorded on its page (answers/<id> in the page's database) on 2026-09-25: five picked there, the rest accepted as recommended in one instruction. `build` is where the answer's backend change stands: none (the build already does it), to do, done, or outside (it needs something this repository cannot reach). tools/build_audit.py reads it: a decided item is no longer the owner's, and waits on the build, then on the document. `client`, where present, names what the client still has to do.",
+ "_what": "The owner's answers to the decision brief (docs/decisions/brief.json), as recorded on its page (answers/<id> in the page's database) on 2026-09-25: five picked there, the rest accepted as recommended in one instruction. `build` is where the answer's backend change stands: none (the build already does it), to do, done, or outside (it needs something this repository cannot reach). tools/build_audit.py reads it: a decided item is no longer the owner's, and waits on the build, then on the document. `left`, where present, names the part of a built answer still to build; `client`, what the client still has to do.",
  "answers": {
   "F33": {
    "option": "D",
    "how": "picked",
-   "build": "done"
+   "build": "done",
+   "left": "the re-measure of §5.2's ward budget with the Glare at the alarm's reach, which waits on F52: under Whispers that reach is the whole realm"
   },
   "F35": {
    "option": "D",
@@ -101,7 +102,8 @@
   "G24": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "done"
+   "build": "done",
+   "left": "the kind a wall or hedge regrows as: Crystal growth's clear crystal (walks blocked, sight not), and which kind wins when Bloom and Crystal growth both stand, which the answer does not say; the sim regrows hedges only, as hedges"
   },
   "G36": {
    "option": "A",

@@ -497,6 +497,10 @@ CLEAN_SHARE_OF_SUCCESSES = 0.35
 #: loud heist and half after a partial one — of the successes split 35% clean,
 #: 40% loud and 25% partial (§9.6's split, above), 0.35 + 0.40 + 0.25 / 2.
 FEE_RETURNED_SHARE_OF_SUCCESSES = 0.35 + 0.40 + 0.25 / 2
+#: §9.4 as the document still reads it, for F39's finding only (the build
+#: follows the owner's answer): "2% of the raider's Starlight, from 100 to
+#: 25,000, returned in full after a clean heist".
+DOCUMENT_FEE_RANGE = (100, 25_000)
 
 #: Free characters. §11.5: "About one heist in eight finds a stray in the
 #: target universe; carrying it out adds it to the roster" — so one in eight
@@ -518,14 +522,32 @@ PAGES_DAILY_GOALS = 2         # §14.4: "About 2"
 #: successful heist's experience, and pay no haul.
 TUTORIAL_RUINS = 2
 
-#: The season track's free rewards (G28, answered): 40 tiers of 500 Essence
-#: and 5 of 5 pages over 49 tiers bought after a free first, at 10 stars a
-#: tier; an attempt earns 4.97 stars at §9.6's 62.5% success and 35/40/25 split.
-FREE_TRACK_ESSENCE = 40 * 500
-FREE_TRACK_PAGES = 5 * 5
-TRACK_TIERS = 49
+#: The season track's free rewards (G28, answered), as server/src/track.mjs
+#: gives them: 50 tiers, the first free to everyone and each after it 10
+#: stars; a stray offer at the top, 25 Starglass every tenth tier, 5 pages
+#: every fifth, and 500 Essence on the rest (40 tiers of Essence, 5 of pages).
+#: An attempt earns 4.97 stars at §9.6's 62.5% success and 35/40/25 split.
+TRACK_TIERS = 50
 TIER_STARS = 10
 STARS_PER_ATTEMPT = 4.97
+TRACK_TIER_ESSENCE = 500
+TRACK_TIER_PAGES = 5
+
+
+def free_track(tiers: int) -> tuple[int, int]:
+    """The free track's Essence and pages over its first `tiers` tiers."""
+    essence = pages = 0
+    for t in range(1, min(tiers, TRACK_TIERS) + 1):
+        if t == TRACK_TIERS or t % 10 == 0:
+            continue
+        if t % 5 == 0:
+            pages += TRACK_TIER_PAGES
+        else:
+            essence += TRACK_TIER_ESSENCE
+    return essence, pages
+
+
+FREE_TRACK_ESSENCE, FREE_TRACK_PAGES = free_track(TRACK_TIERS)
 
 #: §7.6's chapters: the Keeper level at which the Codex holds each count of
 #: laws. The launch Codex is the first two; the full 48 all five.

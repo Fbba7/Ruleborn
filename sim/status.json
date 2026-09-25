@@ -47,6 +47,7 @@
   "a_regrow_time_takes_the_shortest_applied_not_the_product": "passed",
   "a_replay_carries_the_laws_it_was_made_under": "passed",
   "a_replay_verifies_on_its_island_and_nowhere_else": "passed",
+  "a_rise_queued_under_delay_still_lands_after_its_pylon_breaks": "passed",
   "a_rock_pillar_hides_what_is_behind_it": "passed",
   "a_rock_pillar_takes_the_tiles_behind_it_out_of_the_drawn_cone": "passed",
   "a_route_bends_around_a_wall_and_takes_the_gap": "passed",
@@ -195,7 +196,9 @@
   "the_whole_crew_lands_on_the_spot_the_log_names": "passed",
   "thorns_cost_whoever_touches_a_wall_or_a_hedge_five_per_cent_a_second": "passed",
   "twin_souls_heal_the_two_who_swapped_by_a_fifth": "passed",
+  "two_lantern_glares_each_show_the_crew_around_their_own_tile": "passed",
   "under_delay_a_guard_rises_three_seconds_after_it_is_triggered": "passed",
+  "under_delay_the_alarms_spread_lands_three_seconds_after_it_arrives": "passed",
   "verification_names_the_second_that_diverges": "passed",
   "walls_change_what_the_guards_notice": "passed",
   "which_combinations_sound_is_read_off_the_standing_laws": "passed",
@@ -234,8 +237,8 @@
  "cross_target": [
   {
    "seed": "1",
-   "native": "a7147f9ca7c617ac",
-   "wasm": "a7147f9ca7c617ac",
+   "native": "c3827e6ccd8c376e",
+   "wasm": "c3827e6ccd8c376e",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -249,8 +252,8 @@
   },
   {
    "seed": "6840123409045651457",
-   "native": "124803656f2c0127",
-   "wasm": "124803656f2c0127",
+   "native": "75d6281b22477ddd",
+   "wasm": "75d6281b22477ddd",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -264,8 +267,8 @@
   },
   {
    "seed": "18446744073709551615",
-   "native": "0bcd510e9c957301",
-   "wasm": "0bcd510e9c957301",
+   "native": "4adb9ec28c88e687",
+   "wasm": "4adb9ec28c88e687",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -279,8 +282,8 @@
   },
   {
    "seed": "42",
-   "native": "5b44227b377c0ee0",
-   "wasm": "5b44227b377c0ee0",
+   "native": "b00062db5783f885",
+   "wasm": "b00062db5783f885",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -294,8 +297,8 @@
   },
   {
    "seed": "999983",
-   "native": "cadc285186e41214",
-   "wasm": "cadc285186e41214",
+   "native": "e54e06d27d540680",
+   "wasm": "e54e06d27d540680",
    "validator_agree": true,
    "validator": [
     "Foiled",

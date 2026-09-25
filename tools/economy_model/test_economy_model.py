@@ -289,9 +289,9 @@ def test_the_flat_upkeep_means_two_different_things():
 def test_the_document_preset_mints_from_the_documents_base_and_band():
     """D58: the model minted from v3.2's 100. `Config.document()` reads §9.6's
     base and band from design_facts: the band as the text states it, the base
-    as the owner answered F36 (4,900; the text says 2,400)."""
+    as the owner answered F36 (5,000; the text says 2,400)."""
     low, high = Config.document("low"), Config.document("high")
-    assert low.haul_base == data.HAUL_BASE == 4900
+    assert low.haul_base == data.HAUL_BASE == 5000
     assert (low.attempt_value, high.attempt_value) == data.ATTEMPT_BAND
     assert low.faucet == "minted" and low.haul_level_source == "target"
     # §5.8's three rules, which §14.2 says generate the tables.
@@ -341,12 +341,12 @@ def test_finding_on_this_models_roster_the_raid_worth_check_fails_2400():
 
 def test_the_owners_base_is_the_smallest_hundred_passing_every_day():
     """F36, answered: the check holds on every day at every Vault level. With
-    the fee an attempt keeps in it (F39) that is 4,900, and 4,800 fails (F53:
-    4,600 is the value with the fee left out)."""
+    the fee an attempt keeps in it (F39), priced on each day with that day's fee kept, that is 5,000, and
+    4,900 fails (F53: 4,600 is the value with the fee left out)."""
     from . import raidworth as rw
-    assert data.HAUL_BASE == 4900
+    assert data.HAUL_BASE == 5000
     assert rw.passes(Config.document(), 1200)
-    assert not rw.passes(replace(Config.document(), haul_base=4800), 1200)
+    assert not rw.passes(replace(Config.document(), haul_base=4900), 1200)
     assert rw.passes(replace(Config.document(), haul_base=4600, entry_fee=False), 1200)
 
 
@@ -412,18 +412,30 @@ def test_priced_strays_give_the_birth_rule_its_rate_1_3455():
     assert rerun.tune_birth_rate("low") == rerun.tune_birth_rate("high") == 1.3455
 
 
-def test_finding_the_entry_fee_outweighs_what_raids_pay_while_saving():
-    """F39. §9.4's fee was 2% of what the raider holds, kept unless the heist
-    was clean, and on day 301 an engaged player saving for the next Spire
-    level paid more in kept fees than raids brought in Starlight. The owner's
-    answer (2% of B(V), returned after clean or loud and half after partial,
-    C41) keeps a fifth of it: fees kept are under a quarter of raid Starlight."""
-    model = EconomyModel(Config.document())
+def _fees_and_raid_starlight(cfg: Config) -> tuple[float, float]:
+    """Day 301, engaged: the fees a day's raids keep, and the Starlight they bring."""
+    model = EconomyModel(cfg)
     for _ in range(300):
         model.step()
     fees = model.entry_fees(data.heist_success_rate(301))
     model.step()
-    raid_starlight = model.s.log[-1]["heist_income"] * (1 - data.HAUL_ESSENCE_SHARE)
+    return fees, model.s.log[-1]["heist_income"] * (1 - data.HAUL_ESSENCE_SHARE)
+
+
+def test_finding_the_entry_fee_outweighs_what_raids_pay_while_saving():
+    """F39. §9.4's fee is 2% of what the raider holds, kept unless the heist is
+    clean; §14.1's player saves for the next Spire level first, so on day 301
+    an engaged player holding several hundred thousand pays more in kept fees
+    than raids bring in Starlight."""
+    fees, raid_starlight = _fees_and_raid_starlight(replace(Config.document(), document_fee=True))
+    assert fees > 3 * raid_starlight, (fees, raid_starlight)
+
+
+def test_the_owners_fee_is_a_small_share_of_what_raids_pay():
+    """F39 and C41, answered: 2% of B(V), returned after a clean or loud heist
+    and half after a partial one. Fees kept are under a quarter of raid
+    Starlight on the same day."""
+    fees, raid_starlight = _fees_and_raid_starlight(Config.document())
     assert 0 < fees < 0.25 * raid_starlight, (fees, raid_starlight)
 
 

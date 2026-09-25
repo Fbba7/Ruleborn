@@ -173,33 +173,41 @@ CHOICES = (
      dict(realm_open_first=False)),
     ("Heist strays (11.5, 14.6)", "one in eight successful heists", "one in sixteen (14.6's \"stray or a bonus page\")",
      dict(heist_stray_chance=1 / 16)),
+    ("A stray's price (11.5, F38)", "the next birth's, as the owner answered", "free, as §11.5 reads",
+     dict(priced_strays=False)),
     ("Strays at all", "§11.5's and §18.2's", "none", dict(heist_stray_chance=0.0, season_strays=False)),
     ("Storage (9.1)", "Vault and Storehouses", "unlimited", dict(storage_caps=False)),
-    ("The entry fee (9.4)", "2%, kept unless clean", "none", dict(entry_fee=False)),
+    ("The entry fee (9.4, F39, C41)", "2% of B(V), back after a clean or loud heist and half after a partial one",
+     "none", dict(entry_fee=False)),
     ("§9.3's school bonuses", "the realm's own resource only", "every producer in an outer realm (the first re-run)",
      dict(school_bonuses=False)),
-    ("B(V)'s base (9.6, F36)", "2,400", "3,200", dict(haul_base=3200)),
+    ("B(V)'s base (9.6, F36)", "the every-day value, as the owner answered", "2,400, as §9.6 reads",
+     dict(haul_base=2400)),
 )
 
 
-def choice_rows(edge: str = "low") -> list[tuple]:
+def choice_rows(edge: str = "low", settled: dict | None = None) -> list[tuple]:
     """What each alternative moves, engaged, at one edge: (what, reading,
-    alternative, (K40, built, 38th) as run, (K40, built, 38th) with it)."""
+    alternative, (K40, built, 38th) as run, (K40, built, 38th) with it).
+    `settled` is what the run set first (the base, the birth rate), so both
+    sides are the run the page prints."""
+    settled = settled or {}
     def key(r):
         return (r.keeper_day(40), r.day(MILESTONES[-1]), r.day("38 ruleborn"))
-    base = key(run("engaged", edge))
-    return [(what, ours, other, base, key(run("engaged", edge, **over)))
+    base = key(run("engaged", edge, **settled))
+    return [(what, ours, other, base, key(run("engaged", edge, **(settled | over))))
             for what, ours, other, over in CHOICES]
 
 
-def realm_order_spread(edge: str = "low") -> dict:
+def realm_order_spread(edge: str = "low", settled: dict | None = None) -> dict:
     """§5.2: "the player picks each one's type". Every order of the six outer
     realms' boosted resources (90), engaged, at one edge."""
     import itertools
+    settled = settled or {}
     orders = sorted(set(itertools.permutations(data.RESOURCES * 2)))
     got = []
     for order in orders:
-        r = run("engaged", edge, realm_order=order)
+        r = run("engaged", edge, realm_order=order, **settled)
         got.append((r.keeper_day(40), r.day(MILESTONES[-1]), order))
     k40 = sorted(g[0] for g in got)
     built = sorted(g[1] for g in got)
@@ -386,9 +394,9 @@ def render() -> str:
 
     def trio(t):
         return " / ".join(str(v) if v is not None else "never" for v in t)
-    for what, ours, other, base, alt in choice_rows("low"):
+    for what, ours, other, base, alt in choice_rows("low", over):
         lines.append(f"| {what} | {ours} | {other} | {trio(base)} | {trio(alt)} |")
-    spread = realm_order_spread("low")
+    spread = realm_order_spread("low", over)
     lines += [
         f"| Which realm types open first (5.2) | the median of all {spread['orders']} orders | "
         f"every order | Keeper 40 day {spread['k40'][1]}, built {spread['built'][1]} | "

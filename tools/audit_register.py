@@ -5277,10 +5277,11 @@ dict(id="G19", kind="gap", severity="minor", status="open",
           "realm level\u201d</em> and the Guardian Post <em>\u201cEvery realm; "
           "1, 1, 2, 3 and 3 by realm level\u201d</em>. §5.2 gives the Heart two "
           "law slots, its own terrain budget and four link sockets, and no "
-          "realm level, so neither count covers it. The economy model gives "
-          "the Heart level 1\u2019s counts, eight wards and one post, as it did "
-          "before v3.4; level 5\u2019s moves no re-run milestone by more than "
-          "two days. What the Heart can hold matters more to its defence than "
+          "realm level, so neither count covers it. The economy model gave "
+          "the Heart level 1\u2019s counts, eight wards and one post, as it had "
+          "before v3.4; level 5\u2019s moved no re-run milestone by more than "
+          "two days. Since the owner\u2019s answer it counts the Heart as realm "
+          "level 3. What the Heart can hold matters more to its defence than "
           "to its economy.",
      rec="One clause in each row: the Heart\u2019s own count, or the realm "
          "level it counts as."),
@@ -5394,9 +5395,10 @@ dict(id="C41", kind="contradiction", severity="minor", status="open",
      refs=["9.4", "12.9"],
      body="§9.4: <em>\u201creturned in full after a clean heist\u201d</em>. "
           "§12.9\u2019s outcome table returns it after a loud heist as well and "
-          "half of it after a partial. The server and the economy model take "
+          "half of it after a partial. The server and the economy model took "
           "§9.4; under §12.9 an engaged player keeps about half as much of it "
-          "(F39\u2019s losses roughly halve).",
+          "(F39\u2019s losses roughly halve). Since the owner\u2019s answer both "
+          "take §12.9\u2019s return.",
      rec="One home for the fee\u2019s return, and the other section cites it."),
 
 dict(id="C42", kind="contradiction", severity="minor", status="open",
@@ -6361,7 +6363,7 @@ dict(id="F52", kind="finding", severity="significant", status="open",
 
 dict(id="F53", kind="finding", severity="significant", status="open",
      title="F36\u2019s every-day rule and F39\u2019s fee in the attempt give "
-           "4,900, not the 4,600 F36\u2019s answer names",
+           "5,000, not the 4,600 F36\u2019s answer names",
      refs=["9.6", "9.4", "32.9"],
      body="The owner answered F36 with option C: the raid-worth check holds "
           "on every day at every Vault level, which the brief measured as "
@@ -6370,16 +6372,17 @@ dict(id="F53", kind="finding", severity="significant", status="open",
           "and half after a partial one (C41). Run together, on the model "
           "with every answer built (strays priced, the free track, the "
           "Heart at realm level 3), the smallest hundred that passes every "
-          "day is <strong>4,900</strong>; with the fee left out of the "
+          "day, each day\u2019s attempt priced with that day\u2019s fee, is "
+          "<strong>5,000</strong>; with the fee left out of the "
           "check it is 4,600, and on the day each level arrives 3,100. The "
-          "build ships 4,900, following the rule the owner chose rather "
+          "build ships 5,000, following the rule the owner chose rather "
           "than the figure it produced before the fee was in it: B(3), the "
-          "example island\u2019s, is 11,025, and the fee there 220. §9.5\u2019s "
+          "example island\u2019s, is 11,250, and the fee there 225. §9.5\u2019s "
           "birth rule then tunes to 1.3455 at both edges, as F38\u2019s "
           "answer said. Found building the answers.",
      measured="tools/economy_model/test_economy_model.py "
               "test_the_owners_base_is_the_smallest_hundred_passing_every_day",
-     rec="Confirm 4,900, the every-day rule with the fee counted, or keep "
+     rec="Confirm 5,000, the every-day rule with the fee counted, or keep "
          "4,600 and leave the fee out of the check."),
 
 dict(id="F54", kind="finding", severity="minor", status="open",
@@ -7078,8 +7081,9 @@ V34 = {
     "to set), F39 (the entry fee outweighs raids for a player saving for "
     "the Spire), C41 and C42, and reframed F36 and F37. §14.2\u2019s rule is "
     "that the pacing sentences move, never the table; what is left is the "
-    "document\u2019s: decide G22 and F38, take the tables, and move the "
-    "sentences."),
+    "document\u2019s: take the tables and move the sentences, now that "
+    "the owner has decided G22 and F38 (and F53\u2019s base is theirs "
+    "to confirm)."),
 
 "C32": dict(status="fixed", note=
     "Closed as recommended. §10.2’s Ward row reads <em>“effect "

@@ -970,7 +970,8 @@ def test_the_optimal_crew_goes_round_what_takes_fifteen_seconds_to_disarm():
 
     def success(cls, n: int = 40) -> float:
         wins = sum(Heist(generate(i, 3), cls(), realm_level=3, crossing=[],
-                         crack_noise=False).run().success for i in range(n))
+                         crack_noise=False, glare_realm=True).run().success
+                   for i in range(n))
         return 100 * wins / n
 
     around, disarms = success(POLICIES["optimal"]), success(Disarms)
@@ -988,7 +989,9 @@ def test_every_metre_of_the_cracks_reach_costs_the_optimal_crew_depth():
         worst = run_batch(60, 0, 3, "careless", **kw)
         return 100 * (sum(r.success for r in best) - sum(r.success for r in worst)) / 60
 
-    quiet, five = gap(crack_noise=False), gap(crack_reach=5, crack_noise=True)
+    # v3.4's Glare, realm-wide, as the sweep was run (F33 has since narrowed it).
+    quiet = gap(crack_noise=False, glare_realm=True)
+    five = gap(crack_reach=5, crack_noise=True, glare_realm=True)
     assert quiet >= 30, quiet
     assert quiet - five >= 25, (quiet, five)
 

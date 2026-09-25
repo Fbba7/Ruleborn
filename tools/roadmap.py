@@ -472,9 +472,12 @@ dict(
              detail="<strong>Answered on 25 September 2026:</strong> five "
                     "picked on the brief's page, and the other 38 accepted as "
                     "recommended in one instruction. Every answer is on the "
-                    "page and in <code>docs/decisions/answers.json</code>; no "
-                    "register item waits on the owner now. Twelve answers keep "
-                    "what the build already does; the rest are T1.14.",
+                    "page and in <code>docs/decisions/answers.json</code>. Twelve "
+                    "answers keep what the build already does; the rest are "
+                    "T1.14. Building them found three new questions for the "
+                    "owner \u2014 F52 (the Glare\u2019s reach under Whispers), "
+                    "F53 (the base, 5,000) and F54 (a non-raider\u2019s last "
+                    "level) \u2014 now in the brief.",
              evidence="docs/decisions/answers.json",
              register=["F33", "F35", "F37", "F39", "C41", "G17", "G20", "F38", "C42", "F36", "G37", "F40", "G27", "F41", "F42", "G28", "G22", "G23", "G25", "G24", "G36", "F49", "G26", "C43", "F43", "F50", "G39", "F46", "F47", "G33", "G21", "F48", "G30", "F44", "F45", "G31", "G19", "G32", "G29", "G38", "G35", "G34", "F51"]),
         dict(id="T1.14", owner="claude", status="doing",
@@ -670,14 +673,15 @@ dict(
                     "each open choice moves. An engaged player reaches Keeper 40 "
                     "on day 349\u2013357 and has everything built on day "
                     "699\u2013719. Since the owner\u2019s answers (F36, F37, F38, "
-                    "F39, C41, F46, G19, G28) the run ships a base of 4,900 "
+                    "F39, C41, F46, G19, G28) the run ships a base of 5,000 "
                     "(F53) and a birth rate of 1.3455: Keeper 40 on day "
-                    "306\u2013320, everything built on day 587\u2013618, and the "
+                    "307\u2013321, everything built on day 586\u2013618, and the "
                     "38th character with it. It found G22 (three choices \u00a714.1 does not "
                     "state, each worth months), F38 (strays leave the birth rule "
                     "nothing to set), F39 (the fee outweighs raids while saving), "
-                    "C41 and C42, and reframed F36 and F37. The tables are the "
-                    "document's to take once G22 and F38 are decided (C19).",
+                    "C41 and C42, and reframed F36 and F37. G22 and F38 are "
+                    "decided, so the tables are the document's to take, with "
+                    "F53's base (C19).",
              evidence="docs/design/generated/pacing.md; python3 -m tools.economy_model rerun",
              register=["D58", "C19", "C35", "F36", "F37", "G19", "F38", "F39", "G22"]),
     ],

@@ -274,9 +274,9 @@ func _run() -> void:
 			if Session.verdict.is_empty() or not Session.verdict.get("server", false):
 				await online.finished
 			played = Session.verdict
-		# Vault level 3: 11,025 × 1 × 1 × 1 × 1 × fill 1 (server/test's figure; B(V) at the owner's 4,900, F36).
+		# Vault level 3: 11,250 × 1 × 1 × 1 × 1 × fill 1 (server/test's figure; B(V) at the owner's 5,000, F36).
 		check("a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server",
-			played.get("ok", false) and played.get("grade") == "Clean" and int(played.get("haul", 0)) == 11025,
+			played.get("ok", false) and played.get("grade") == "Clean" and int(played.get("haul", 0)) == 11250,
 			"%s; %s" % [played, online.hint_label.text])
 		online.queue_free()
 		OS.unset_environment("RULEBORN_SERVER")

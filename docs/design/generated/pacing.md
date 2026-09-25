@@ -10,7 +10,7 @@ It was reviewed adversarially before publication, claim by claim, and rebuilt on
 
 | Value | Ships | The run | How |
 | --- | --- | --- | --- |
-| B(V) base (9.6) | 4,900 | 4,900 | the raid-worth check, run on this model's roster with the fee an attempt keeps, needs 3,100 on the day each Vault level arrives and 4,900 on every day at a level; the owner chose every day (F36), where the document ships 2,400 (F53) |
+| B(V) base (9.6) | 5,000 | 5,000 | the raid-worth check, run on this model's roster with the fee an attempt keeps, needs 3,100 on the day each Vault level arrives and 5,000 on every day at a level; the owner chose every day (F36), where the document ships 2,400 (F53) |
 | Roster's keep (9.5) | 25% | 25% | ships at a quarter; the sink search that sets it (T2.5) is not run here |
 | Birth rate (9.5) | 1.3265 | 1.3455 | the rate at which an engaged player's 38th character arrives on the day every building tops out |
 
@@ -20,10 +20,10 @@ It was reviewed adversarially before publication, claim by claim, and rebuilt on
 | --- | --- | --- | --- | --- | --- |
 | 2 | 2,400 | 1,500 | 1,000 | 1,900–2,700 | 2,100 |
 | 8 | 3,700 | 2,200 | 1,500 | 1,900–2,700 | 6,200 |
-| 31 | 17,700 | 8,200 | 4,900 | 4,300–6,000 | 14,600 |
-| 91 | 44,600 | 19,200 | 13,500 | 9,700–13,400 | 46,800 |
-| 181 | 61,500–69,200 | 16,600 | 22,600–24,700 | 14,500–30,200 | 62,600 |
-| 301 | 96,900–112,100 | 19,700 | 30,500–33,300 | 32,600–45,300 | 122,500 |
+| 31 | 17,700 | 8,200 | 4,900 | 4,400–6,100 | 14,600 |
+| 91 | 44,600 | 19,200 | 13,500 | 9,900–13,700 | 46,800 |
+| 181 | 56,800–69,200 | 16,600 | 20,400–24,700 | 22,200–30,800 | 62,600 |
+| 301 | 96,900–112,100 | 19,700 | 27,600–33,300 | 33,300–46,200 | 122,500 |
 
 Raids pay in the fifth column, half of it Essence (G17), before the entry fee; it is an output, never a target (9.4).
 
@@ -44,34 +44,34 @@ Raids pay in the fifth column, half of it Essence (G17), before the entry fee; i
 | 12 | Day 18 | Day 26 | Day 46 |
 | 13 | Day 19–20 | Day 32 | Day 57–59 |
 | 14 | Day 24–25 | Day 37 | Day 63–65 |
-| 15 | Day 27–28 | Day 42 | Day 70–72 |
+| 15 | Day 27–28 | Day 42 | Day 70–71 |
 | 16 | Day 31–32 | Day 45–46 | Day 82 |
 | 17 | Day 32–33 | Day 49 | Day 97–98 |
 | 18 | Day 40–41 | Day 58–59 | Day 112–113 |
 | 19 | Day 45–46 | Day 64 | Day 123 |
 | 20 | Day 51–52 | Day 71–72 | Day 137–138 |
-| 21 | Day 58–60 | Day 86 | Day 175 |
-| 22 | Day 66–69 | Day 90–91 | Day 182 |
-| 23 | Day 75–78 | Day 100–101 | Day 201–202 |
+| 21 | Day 57–60 | Day 86 | Day 175–176 |
+| 22 | Day 66–69 | Day 90–91 | Day 182–183 |
+| 23 | Day 75–78 | Day 100–101 | Day 201–203 |
 | 24 | Day 84–88 | Day 117–118 | Day 237–238 |
 | 25 | Day 98–99 | Day 187 | Day 376 |
 | 26 | Day 104–108 | Day 192 | Day 384 |
 | 27 | Day 115–120 | Day 205–206 | Day 412–414 |
 | 28 | Day 127–132 | Day 220–221 | Day 441–444 |
 | 29 | Day 141–146 | Day 238 | Day 475–478 |
-| 30 | Day 157–162 | Day 258–259 | Day 514–519 |
-| 31 | Day 171–177 | Day 273–277 | Day 546–552 |
-| 32 | Day 184–191 | Day 289–292 | Day 577–581 |
-| 33 | Day 198–206 | Day 305–309 | Day 608–617 |
-| 34 | Day 212–220 | Day 321–325 | Day 641–650 |
-| 35 | Day 227–236 | Day 339–344 | Day 675–686 |
-| 36 | Day 243–252 | Day 358–363 | Day 713–725 |
-| 37 | Day 260–271 | Day 378–385 | Day 753–767 |
-| 38 | Day 276–288 | Day 394–401 | Day 785–800 |
-| 39 | Day 292–305 | Day 411–418 | Day 819–835 |
-| 40 | Day 306–320 | Day 427–435 | Day 850–867 |
+| 30 | Day 157–163 | Day 257–259 | Day 514–519 |
+| 31 | Day 172–179 | Day 273–276 | Day 546–552 |
+| 32 | Day 185–192 | Day 289–291 | Day 576–581 |
+| 33 | Day 199–207 | Day 305–308 | Day 608–617 |
+| 34 | Day 212–221 | Day 321–325 | Day 640–649 |
+| 35 | Day 227–237 | Day 339–343 | Day 674–685 |
+| 36 | Day 244–254 | Day 358–362 | Day 712–724 |
+| 37 | Day 260–271 | Day 378–384 | Day 752–766 |
+| 38 | Day 276–289 | Day 394–400 | Day 784–799 |
+| 39 | Day 293–306 | Day 411–417 | Day 818–834 |
+| 40 | Day 307–321 | Day 427–434 | Day 849–867 |
 
-§14.2's target curve, day ≈ 0.13 × level^1.96, puts level 8, 16, 28 and 40 on days 8, 30, 89, 179; the run puts an engaged player there on 8, 31–32, 127–132, 306–320. The partial re-run §14.2 quotes had 28 on day 108 and 40 on day 275.
+§14.2's target curve, day ≈ 0.13 × level^1.96, puts level 8, 16, 28 and 40 on days 8, 30, 89, 179; the run puts an engaged player there on 8, 31–32, 127–132, 307–321. The partial re-run §14.2 quotes had 28 on day 108 and 40 on day 275.
 
 ## When everything else arrives (§14.3)
 
@@ -80,29 +80,29 @@ Raids pay in the fifth column, half of it Essence (G17), before the entry fee; i
 | Outer realm 1 opens | Day 2 | Day 3 | Day 4–7 |
 | Outer realm 2 opens | Day 6 | Day 7 | Day 13–14 |
 | Outer realm 3 opens | Day 13–14 | Day 19 | Day 32 |
-| Outer realm 4 opens | Day 28–29 | Day 43 | Day 71–73 |
-| Outer realm 5 opens | Day 60–62 | Day 87 | Day 176 |
+| Outer realm 4 opens | Day 28–29 | Day 43 | Day 71–72 |
+| Outer realm 5 opens | Day 59–62 | Day 87 | Day 176–177 |
 | Outer realm 6 opens | Day 128–133 | Day 221–222 | Day 442–445 |
 | Spire level 3 | Day 10–11 | Day 16 | Day 26–27 |
 | Spire level 5 | Day 34–35 | Day 50 | Day 98–99 |
 | Spire level 7 | Day 99–100 | Day 188 | Day 377 |
-| Spire level 10 | Day 272–284 | Day 389–396 | Day 775–790 |
+| Spire level 10 | Day 273–284 | Day 389–395 | Day 774–789 |
 | 12 laws owned | Day 8–9 | Day 12–13 | Day 16–21 |
 | 24 laws owned | Day 29 | Day 40–41 | Day 54–57 |
 | 36 laws owned | Day 38 | Day 51 | Day 69–72 |
 | 48 laws owned | Day 84–88 | Day 117–118 | Day 237–238 |
 | 10 ruleborn | Day 8–9 | Day 9–10 | Day 18–21 |
 | 20 ruleborn | Day 46–48 | Day 60 | Day 113 |
-| 30 ruleborn | Day 159–172 | Day 255–258 | Day 505–513 |
-| 38 ruleborn | Day 588–619 | Day 710–732 | Day 1410–1447 |
+| 30 ruleborn | Day 158–172 | Day 254–258 | Day 504–513 |
+| 38 ruleborn | Day 587–619 | Day 709–729 | Day 1407–1445 |
 | Main crew at level 4 | Day 16–17 | Day 18 | Day 31–36 |
 | Main crew at level 6 | Day 46–48 | Day 59–60 | Day 112–113 |
 | Main crew at level 8 | Day 113–119 | Day 200 | Day 392 |
-| Main crew at level 10 | Day 219–228 | Day 328–332 | Day 653–663 |
+| Main crew at level 10 | Day 220–230 | Day 328–332 | Day 652–663 |
 | Every Star Well at level 5 | Day 128–133 | Day 221–222 | Day 443–445 |
-| Every Star Well at level 8 | Day 187–194 | Day 282–285 | Day 564–570 |
-| Every Star Well at level 10 | Day 406–427 | Day 518–529 | Day 1030–1054 |
-| Everything built and at its highest level | Day 587–618 | Day 709–727 | Day 1409–1446 |
+| Every Star Well at level 8 | Day 187–196 | Day 282–284 | Day 563–570 |
+| Every Star Well at level 10 | Day 406–428 | Day 518–528 | Day 1029–1053 |
+| Everything built and at its highest level | Day 586–618 | Day 708–725 | Day 1406–1444 |
 
 ## Realm levels (§5.2) and stability (§5.5), engaged
 
@@ -113,16 +113,16 @@ Raids pay in the fifth column, half of it Essence (G17), before the entry fee; i
 | 2 | Day 17 | Day 19–33 |
 | 3 | Day 46 | Day 73–77 |
 | 4 | Day 104 | Day 119–125 |
-| 5 | Day 155 | Day 230–239 |
+| 5 | Day 155 | Day 230–241 |
 
 | Day | §5.5 capacity | The run |
 | --- | --- | --- |
 | 2 | 51 | 38 |
 | 8 | 100 | 85 |
 | 31 | 202 | 172–177 |
-| 41 | — | 185 |
-| 61 | 276 | 230–256 |
-| 91 | 347 | 276–306 |
+| 41 | — | 185–190 |
+| 61 | 276 | 235–261 |
+| 91 | 347 | 276–301 |
 | 181 | 446 | 395 |
 | 366 | 516 | 461–481 |
 
@@ -143,22 +143,22 @@ The day the first building of a kind reaches each level, and its cost over that 
 
 | Building | L1 | L2 | L3 | L4 | L5 | L6 | L7 | L8 | L9 | L10 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Keeper's Spire |  | 4 (20.8 h) | 11 (11.4 h) | 21 (15.0 h) | 35 (38.6 h) | 62 (49.6 h) | 100 (61.0 h) | 151 (128.1 h) | 212 (175.1 h) | 284 (348.8 h) |
-| Vault |  | 17 (2.4 h) | 20 (5.2 h) | 52 (7.7 h) | 76 (10.6 h) | 97 (19.8 h) | 182 (28.0 h) | 290 (49.1 h) | 378 (78.2 h) | 618 (124.6 h) |
-| Anchor Stone | 8 (3.9 h) | 10 (3.3 h) | 19 (4.1 h) | 49 (6.2 h) | 58 (13.6 h) | 93 (16.6 h) | 173 (26.6 h) | 265 (43.3 h) | 360 (70.5 h) | 435 (114.9 h) |
-| Star Well |  | 4 (7.8 h) | 11 (5.0 h) | 21 (6.5 h) | 36 (16.3 h) | 65 (22.2 h) | 100 (27.9 h) | 155 (60.0 h) | 293 (75.9 h) | 383 (126.5 h) |
+| Keeper's Spire |  | 4 (20.8 h) | 11 (11.4 h) | 21 (15.0 h) | 35 (38.6 h) | 62 (49.6 h) | 100 (61.0 h) | 151 (128.1 h) | 214 (175.1 h) | 284 (348.8 h) |
+| Vault |  | 17 (2.4 h) | 20 (5.2 h) | 52 (7.7 h) | 76 (10.6 h) | 97 (19.8 h) | 177 (33.4 h) | 291 (49.1 h) | 379 (78.2 h) | 618 (124.6 h) |
+| Anchor Stone | 8 (3.9 h) | 10 (3.3 h) | 19 (4.1 h) | 49 (6.2 h) | 58 (13.6 h) | 93 (16.6 h) | 167 (34.9 h) | 266 (43.3 h) | 361 (70.5 h) | 436 (114.9 h) |
+| Star Well |  | 4 (7.8 h) | 11 (5.0 h) | 21 (6.5 h) | 36 (16.3 h) | 66 (22.2 h) | 100 (27.9 h) | 170 (60.0 h) | 294 (75.9 h) | 384 (126.5 h) |
 | Aether Spring |  | 5 (5.8 h) | 11 (4.4 h) | 21 (5.9 h) | 37 (14.2 h) |  |  |  |  |  |
-| Garden |  | 5 (5.8 h) | 11 (4.4 h) | 22 (7.5 h) | 38 (14.2 h) | 66 (19.8 h) | 101 (25.6 h) | 166 (53.6 h) | 295 (69.6 h) | 387 (116.1 h) |
-| Storehouse | 3 (4.7 h) | 10 (2.8 h) | 18 (3.6 h) | 26 (12.0 h) | 54 (12.3 h) | 82 (15.5 h) | 146 (33.3 h) | 201 (46.6 h) | 328 (70.3 h) | 475 (117.2 h) |
-| Law Pylon | 1 (5.0 h) | 10 (2.8 h) | 17 (3.6 h) | 25 (12.0 h) | 53 (12.3 h) | 80 (15.5 h) | 132 (33.3 h) | 198 (50.7 h) | 325 (70.3 h) | 464 (117.2 h) |
-| Hearth |  | 17 (2.6 h) | 48 (5.5 h) | 119 (6.3 h) | 228 (10.2 h) |  |  |  |  |  |
-| Nursery | 10 (2.5 h) | 18 (3.8 h) | 51 (7.0 h) | 120 (10.1 h) | 231 (16.9 h) |  |  |  |  |  |
-| Guardian Post | 8 (3.9 h) | 16 (2.2 h) | 47 (4.8 h) | 116 (5.4 h) | 221 (8.7 h) |  |  |  |  |  |
-| Ward | 1 (3.5 h) | 12 (1.6 h) | 35 (3.5 h) | 100 (2.7 h) | 212 (4.4 h) |  |  |  |  |  |
-| Library | 9 (6.3 h) | 17 (2.5 h) | 20 (5.0 h) | 50 (6.8 h) | 58 (13.5 h) | 80 (12.1 h) | 124 (18.6 h) | 152 (29.8 h) | 238 (29.8 h) | 321 (32.1 h) |
-| Resonance Lab | 16 (2.1 h) | 20 (5.9 h) | 53 (11.3 h) | 123 (16.9 h) | 237 (29.4 h) |  |  |  |  |  |
-| Observatory | 10 (3.0 h) | 20 (4.7 h) | 52 (9.1 h) | 123 (13.5 h) | 236 (23.6 h) |  |  |  |  |  |
-| Beacon | 9 (7.1 h) | 19 (4.0 h) | 52 (7.5 h) | 122 (11.3 h) | 235 (19.6 h) |  |  |  |  |  |
+| Garden |  | 5 (5.8 h) | 11 (4.4 h) | 22 (7.5 h) | 37 (14.2 h) | 67 (19.8 h) | 101 (25.6 h) | 179 (49.4 h) | 297 (69.6 h) | 388 (116.1 h) |
+| Storehouse | 3 (4.7 h) | 10 (2.8 h) | 18 (3.6 h) | 26 (12.0 h) | 54 (12.3 h) | 82 (15.5 h) | 146 (33.3 h) | 203 (46.6 h) | 329 (70.3 h) | 476 (117.2 h) |
+| Law Pylon | 1 (5.0 h) | 10 (2.8 h) | 17 (3.6 h) | 25 (12.0 h) | 53 (12.3 h) | 80 (15.5 h) | 132 (33.3 h) | 200 (46.6 h) | 327 (70.3 h) | 465 (117.2 h) |
+| Hearth |  | 17 (2.6 h) | 48 (5.5 h) | 119 (6.3 h) | 230 (10.2 h) |  |  |  |  |  |
+| Nursery | 10 (2.5 h) | 18 (3.8 h) | 50 (7.0 h) | 120 (10.1 h) | 232 (16.9 h) |  |  |  |  |  |
+| Guardian Post | 8 (3.9 h) | 16 (2.2 h) | 47 (4.8 h) | 116 (5.4 h) | 223 (8.7 h) |  |  |  |  |  |
+| Ward | 1 (3.5 h) | 12 (1.6 h) | 35 (3.5 h) | 100 (2.7 h) | 214 (4.4 h) |  |  |  |  |  |
+| Library | 9 (6.3 h) | 17 (2.5 h) | 20 (5.0 h) | 50 (6.8 h) | 58 (13.5 h) | 80 (12.1 h) | 124 (18.6 h) | 152 (29.8 h) | 239 (29.8 h) | 322 (32.1 h) |
+| Resonance Lab | 16 (2.1 h) | 20 (5.9 h) | 53 (11.3 h) | 123 (16.9 h) | 238 (29.4 h) |  |  |  |  |  |
+| Observatory | 10 (3.0 h) | 20 (4.7 h) | 52 (9.1 h) | 123 (13.5 h) | 237 (23.6 h) |  |  |  |  |  |
+| Beacon | 9 (7.1 h) | 19 (4.0 h) | 52 (7.5 h) | 122 (11.3 h) | 236 (19.6 h) |  |  |  |  |  |
 | Visitor's Dock | 21 (2.4 h) | 100 (2.4 h) | 285 (4.4 h) |  |  |  |  |  |  |  |
 
 The Heart's starting Well, Spring, Garden, Vault and Hearth have no level-1 build day.
@@ -169,17 +169,18 @@ Engaged player, the band's lower edge. The run's reading first, then the alterna
 
 | Choice | The run | The alternative | As run | With the alternative |
 | --- | --- | --- | --- | --- |
-| Which producer a new worker staffs (9.2) | the Heart first, then each realm; Well, Spring, Garden | one worker to each producer in turn | 316 / 603 / 452 | 351 / 684 / 493 |
-| Guardian Posts (13.2) | left empty | one ruleborn at every post built | 316 / 603 / 452 | 546 / 1212 / 859 |
-| "Save for the next Spire level first" (14.1) | the Spire's cost set aside once its Keeper gate opens | bought when a day's stock covers it | 316 / 603 / 452 | 321 / 625 / 481 |
-| Opening a realm (16) | bought with the producers, first | bought by cost with everything else | 316 / 603 / 452 | 317 / 604 / 453 |
-| Heist strays (11.5, 14.6) | one in eight successful heists | one in sixteen (14.6's "stray or a bonus page") | 316 / 603 / 452 | 316 / 603 / 452 |
-| Strays at all | §11.5's and §18.2's | none | 316 / 603 / 452 | 316 / 603 / 452 |
-| Storage (9.1) | Vault and Storehouses | unlimited | 316 / 603 / 452 | 315 / 601 / 443 |
-| The entry fee (9.4) | 2%, kept unless clean | none | 316 / 603 / 452 | 309 / 589 / 446 |
-| §9.3's school bonuses | the realm's own resource only | every producer in an outer realm (the first re-run) | 316 / 603 / 452 | 309 / 571 / 421 |
-| B(V)'s base (9.6, F36) | 2,400 | 3,200 | 316 / 603 / 452 | 326 / 627 / 488 |
-| Which realm types open first (5.2) | the median of all 90 orders | every order | Keeper 40 day 316, built 603 | Keeper 40 day 302–332, built 567–644 |
+| Which producer a new worker staffs (9.2) | the Heart first, then each realm; Well, Spring, Garden | one worker to each producer in turn | 321 / 618 / 619 | 354 / 693 / 694 |
+| Guardian Posts (13.2) | left empty | one ruleborn at every post built | 321 / 618 / 619 | 557 / 1283 / 1284 |
+| "Save for the next Spire level first" (14.1) | the Spire's cost set aside once its Keeper gate opens | bought when a day's stock covers it | 321 / 618 / 619 | 325 / 638 / 639 |
+| Opening a realm (16) | bought with the producers, first | bought by cost with everything else | 321 / 618 / 619 | 322 / 619 / 620 |
+| Heist strays (11.5, 14.6) | one in eight successful heists | one in sixteen (14.6's "stray or a bonus page") | 321 / 618 / 619 | 321 / 618 / 619 |
+| A stray's price (11.5, F38) | the next birth's, as the owner answered | free, as §11.5 reads | 321 / 618 / 619 | 307 / 585 / 223 |
+| Strays at all | §11.5's and §18.2's | none | 321 / 618 / 619 | 321 / 618 / 619 |
+| Storage (9.1) | Vault and Storehouses | unlimited | 321 / 618 / 619 | 318 / 614 / 578 |
+| The entry fee (9.4, F39, C41) | 2% of B(V), back after a clean or loud heist and half after a partial one | none | 321 / 618 / 619 | 316 / 604 / 605 |
+| §9.3's school bonuses | the realm's own resource only | every producer in an outer realm (the first re-run) | 321 / 618 / 619 | 312 / 586 / 587 |
+| B(V)'s base (9.6, F36) | the every-day value, as the owner answered | 2,400, as §9.6 reads | 321 / 618 / 619 | 338 / 659 / 678 |
+| Which realm types open first (5.2) | the median of all 90 orders | every order | Keeper 40 day 321, built 618 | Keeper 40 day 305–335, built 577–660 |
 
 The fastest order opens both Starlight realms first; the slowest leaves them last. No choice here is the document's to guess: each is one sentence in §14.1 when it decides.
 

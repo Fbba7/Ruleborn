@@ -900,6 +900,32 @@ fn an_alert_reaches_guards_within_four_metres_half_a_second_later() {
     assert_ne!(world.guards[2].state, State::Investigating, "not nine metres away");
 }
 
+#[test]
+fn under_delay_the_alarms_spread_lands_three_seconds_after_it_arrives() {
+    // G23: a guard the alarm reaches is triggered, so under Delay it changes
+    // state 3 seconds later, like a rise on its own suspicion.
+    let mut world = quiet_world();
+    world.weave(&[("delay", (0, 13))]);
+    let place = |world: &mut World, g: usize, x: u16, y: u16| {
+        let t = world.grid.index(x, y).unwrap();
+        let (cx, cy) = world.grid.centre(t);
+        world.guards[g].at = Point { x: cx, y: cy };
+        world.guards[g].home = t;
+    };
+    place(&mut world, 0, 2, 2);
+    place(&mut world, 1, 2, 5);
+    world.enter(0, State::Alerted);
+    let reached = world.tick + guard::SPREAD_DELAY_TICKS;
+    let mut risen = None;
+    for _ in 0..5 * TICKS_PER_SECOND {
+        world.step();
+        if risen.is_none() && world.guards[1].state == State::Investigating {
+            risen = Some(world.tick);
+        }
+    }
+    assert_eq!(risen, Some(reached + 1 + 3 * TICKS_PER_SECOND), "the tick after it lands");
+}
+
 // --------------------------------------------------------------------------
 // The realm alarm (§12.17, §12.6)
 // --------------------------------------------------------------------------
@@ -2047,7 +2073,7 @@ fn a_lantern_glare_shows_the_crew_to_the_guards_within_the_alarms_reach_and_blin
     }
     put(&mut world, 0, 3, 3);
     world.step();
-    assert_eq!(world.revealed_until, h::GLARE_REVEAL_TICKS);
+    assert_eq!(world.revealed_until(), h::GLARE_REVEAL_TICKS);
     assert_eq!(world.raiders[0].frozen_until, h::GLARE_BLIND_TICKS, "blinded for 2 s");
     for _ in 0..20 {
         world.step();
@@ -2143,13 +2169,40 @@ fn a_glare_still_fires_on_a_disarmer_walking_to_it() {
 }
 
 #[test]
+fn two_lantern_glares_each_show_the_crew_around_their_own_tile() {
+    // The second Glare to fire does not take the first's reveal away: a
+    // guard beside the first is still shown the crew after the second fires.
+    let mut world = vault_world(1);
+    world.place_wards(&[(WardKind::LanternGlare, (3, 3)), (WardKind::LanternGlare, (12, 12))]);
+    let first = post(&mut world, 1, 3, 7);        // four tiles from the first
+    let far = post(&mut world, 1, 7, 12);         // five from the second
+    for gi in [first, far] {
+        world.guards[gi].facing = Ang::from_degrees(180);  // west, away from (12, 12)
+    }
+    put(&mut world, 0, 3, 3);
+    world.step();
+    assert_eq!(world.glares.len(), 1);
+    put(&mut world, 0, 12, 12);
+    world.raiders[0].frozen_until = 0;
+    world.step();
+    assert_eq!(world.glares.len(), 2, "both reveals held");
+    world.guards[first].suspicion = 0;
+    world.guards[first].state = State::Unaware;
+    for _ in 0..20 {
+        world.step();
+    }
+    assert!(world.guards[first].suspicion > 0, "the first Glare's guard is still shown the crew");
+    assert_eq!(world.guards[far].suspicion, 0, "beyond both reaches, not");
+}
+
+#[test]
 fn a_lantern_glare_fires_when_a_crew_member_comes_within_two_tiles() {
     // §10.3 (v3.3): "Triggered: a crew member comes within 2 tiles".
     let at = |x: u16, y: u16| {
         let mut world = ward_world(1, WardKind::LanternGlare, (3, 3));
         put(&mut world, 0, x, y);
         world.step();
-        world.revealed_until
+        world.revealed_until()
     };
     assert_eq!(at(3, 5), h::GLARE_REVEAL_TICKS, "two tiles away: it fires");
     assert_eq!(at(3, 6), 0, "three tiles away: it does not");
@@ -2695,6 +2748,30 @@ fn under_delay_a_guard_rises_three_seconds_after_it_is_triggered() {
     };
     assert_eq!(rise(false), Some(1), "at once without Delay");
     assert_eq!(rise(true), Some(1 + 3 * TICKS_PER_SECOND), "three seconds later with it");
+}
+
+#[test]
+fn a_rise_queued_under_delay_still_lands_after_its_pylon_breaks() {
+    // G23: the rise was triggered while Delay stood, so it lands at its tick
+    // even though the pylon is broken before then — it is not lost.
+    let mut world = vault_world(1);
+    world.weave(&[("delay", (0, 13))]);
+    put(&mut world, 0, 13, 13);
+    let gi = post(&mut world, 1, 2, 2);
+    world.guards[gi].suspicion = crate::INVESTIGATING_AT + 200;
+    world.step();
+    assert_eq!(world.guards[gi].rising.len(), 1, "queued");
+    world.guards[gi].suspicion = 0;
+    world.laws[0].broken_at = Some(world.tick);
+    let mut risen = None;
+    for _ in 0..5 * TICKS_PER_SECOND {
+        world.step();
+        if risen.is_none() && world.guards[gi].state.rank() >= State::Investigating.rank() {
+            risen = Some(world.tick);
+        }
+    }
+    assert_eq!(risen, Some(1 + 3 * TICKS_PER_SECOND));
+    assert!(world.guards[gi].rising.is_empty());
 }
 
 #[test]
@@ -3341,7 +3418,7 @@ fn clockwork_triggers_every_ward_together_every_fifteen_seconds() {
     assert!(world.combos.chord(Chord::Clockwork));
     put(&mut world, 0, 1, 1);                       // nowhere near it
     run_for(&mut world, h::CLOCKWORK_TICKS + 1);
-    assert_eq!(world.revealed_until, h::CLOCKWORK_TICKS + h::GLARE_REVEAL_TICKS, "it fired");
+    assert_eq!(world.revealed_until(), h::CLOCKWORK_TICKS + h::GLARE_REVEAL_TICKS, "it fired");
 }
 
 #[test]

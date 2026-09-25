@@ -3209,18 +3209,18 @@ The honest cost of B is that the document must say plainly that a non-raider pla
         <span class="topic">§9 Resources and economy</span>
         <span class="state" id="st-F53">Not answered</span>
       </header>
-      <h3 class="q">B(V)&#x27;s base: 4,900, the every-day check with the fee an attempt keeps counted, or 4,600, the figure F36&#x27;s answer named, with the fee left out of the check?</h3>
-      <p class="why">The base is the one dial on the raid faucet. F36&#x27;s answer chose the rule (every day) and quoted its value before F39&#x27;s fee was in the attempt; with the fee in, the rule gives 4,900. Every haul, fee and cap moves with it: B(3) is 11,025 at 4,900 and 10,350 at 4,600.</p>
-      <details class="today"><summary>What the build does today</summary><p>tools/design_facts.py HAUL_BASE = 4900, listed behind the document under F36; server/src/facts.json carries it. tools/economy_model/raidworth.py attempt_value() takes the fee off an attempt when Config.entry_fee is on; rerun.settle() ships smallest_passing_base(first_day_only=False).</p></details>
+      <h3 class="q">B(V)&#x27;s base: 5,000, the every-day check with the fee an attempt keeps counted, or 4,600, the figure F36&#x27;s answer named, with the fee left out of the check?</h3>
+      <p class="why">The base is the one dial on the raid faucet. F36&#x27;s answer chose the rule (every day) and quoted its value before F39&#x27;s fee was in the attempt; with the fee in, each day priced with that day&#x27;s fee, the rule gives 5,000. Every haul, fee and cap moves with it: B(3) is 11,250 at 5,000 and 10,350 at 4,600.</p>
+      <details class="today"><summary>What the build does today</summary><p>tools/design_facts.py HAUL_BASE = 5000, listed behind the document under F36; server/src/facts.json carries it. tools/economy_model/raidworth.py levels() prices each day&#x27;s attempt with that day&#x27;s fee (attempt_value() takes the fee off when Config.entry_fee is on) and binds each Vault level on its worst day; rerun.settle() ships smallest_passing_base(first_day_only=False).</p></details>
       <fieldset class="opts" aria-label="Options for F53">
         <label class="opt is-rec" for="o-F53-A">
           <input type="radio" name="o-F53" id="o-F53-A" value="A" disabled>
           <span class="ob">
             <span class="oh"><span class="ok">A</span>
-              <span class="ol">4,900: the rule, with the fee counted (the build)</span><span class="rec-tag">Recommended</span></span>
+              <span class="ol">5,000: the rule, with the fee counted (the build)</span><span class="rec-tag">Recommended</span></span>
             <span class="om">The base is the smallest hundred at which an average attempt, less the fee it keeps, pays at least what the crew would have produced at home, on every day at every Vault level.</span>
-            <span class="oc">Hauls are 6.5% larger than at 4,600; the check and the fee agree, so no Vault level has a day on which raiding is the worse choice.</span>
-            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Every day with the fee: 4,900 (4,800 fails). Without the fee: 4,600. On the day each level arrives: 3,100. Birth rule: 1.3455 at both edges either way.</dd></div><div class="od"><dt>Document edit</dt><dd>§9.6: &#x27;B(V), the base — 4,900 × 1.5^(V−1)&#x27;, and in &#x27;What a raid must be worth&#x27;: &#x27;an average attempt, less the entry fee it keeps, pays at least …, on every day at a level&#x27;.</dd></div><div class="od"><dt>Build change</dt><dd>None: this is what the build does.</dd></div></dl></details>
+            <span class="oc">Hauls are 8.7% larger than at 4,600; the check and the fee agree, so no Vault level has a day on which raiding is the worse choice.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Every day with the fee: 5,000 (4,900 fails). Without the fee: 4,600. On the day each level arrives: 3,100. Birth rule: 1.3455 at both edges either way.</dd></div><div class="od"><dt>Document edit</dt><dd>§9.6: &#x27;B(V), the base — 5,000 × 1.5^(V−1)&#x27;, and in &#x27;What a raid must be worth&#x27;: &#x27;an average attempt, less the entry fee it keeps, pays at least …, on every day at a level&#x27;.</dd></div><div class="od"><dt>Build change</dt><dd>None: this is what the build does.</dd></div></dl></details>
           </span>
         </label>
         <label class="opt" for="o-F53-B">
@@ -3235,7 +3235,7 @@ The honest cost of B is that the document must say plainly that a non-raider pla
         </label>
       </fieldset>
       <div class="recbox">
-        <p><span class="lab">Recommended: A, 4,900: the rule, with the fee counted (the build)</span>
+        <p><span class="lab">Recommended: A, 5,000: the rule, with the fee counted (the build)</span>
           <span class="conf c-high">high confidence</span></p>
         <p class="rr">The owner chose the rule, and the rule is about whether a raid is worth making; a fee the raid costs belongs in that sum.</p>
         

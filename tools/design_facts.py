@@ -149,9 +149,9 @@ GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
 #: below 0.5, three or more below 0.25". The server and the economy model both
 #: mint from these. The base is the owner's (F36): the smallest hundred at
 #: which §9.6's raid-worth check holds on every day at every Vault level, with
-#: the fee an attempt keeps inside it (F39) — 4,900, where the document ships
+#: the fee an attempt keeps inside it (F39) — 5,000, where the document ships
 #: 2,400 (BEHIND; F53 for why not F36's 4,600).
-HAUL_BASE = 4900
+HAUL_BASE = 5000
 HAUL_GROWTH = 1.5
 HAUL_FATIGUE = 0.85
 RICHNESS_CLAMP = (0.6, 1.8, 1.5)
@@ -518,7 +518,7 @@ BEHIND: dict[str, tuple[str, str]] = {
     # value above is the decision, and the check holds it to that until the
     # document takes the edit and the item closes.
     "MATCH_WINDOW": ("F44", "Keeper level from two below to three above"),
-    "HAUL_BASE": ("F36", "4,900: the raid-worth check on every day, with the fee in the attempt (F53)"),
+    "HAUL_BASE": ("F36", "5,000: the raid-worth check on every day, with the fee in the attempt (F53)"),
 }
 
 

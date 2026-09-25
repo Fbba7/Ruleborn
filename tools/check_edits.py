@@ -239,7 +239,7 @@ NO_EDIT_BECAUSE = {
     "D70": "limits of this build: filing, the client's screens and the edge's cache",
     "F51": "a decision for the owner: which floor keeps the edge open to land on",
     "F52": "a decision for the owner: whether the Glare's reach stretches with Whispers",
-    "F53": "a decision for the owner: 4,900 with the fee counted, or 4,600 without",
+    "F53": "a decision for the owner: 5,000 with the fee counted, or 4,600 without",
     "F54": "a decision for the owner: how a non-raider's last level is shown or reached",
     "D71": "limits of this build: a heist is one island until universes are built",
     "D60": "no document sentence: the fix is the server",

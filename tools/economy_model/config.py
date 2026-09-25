@@ -88,6 +88,10 @@ class Config:
     #: §9.4: "Entry fee: 2% of the raider's Starlight, from 100 to 25,000,
     #: returned in full after a clean heist."
     entry_fee: bool = False
+    #: True prices the fee as §9.4 reads (2% of what is held, 100 to 25,000,
+    #: back only after a clean heist) instead of the owner's answer to F39
+    #: and C41; F39's finding test is the one reader.
+    document_fee: bool = False
     #: §11.5's heist strays (one heist in eight) and §18.2's season stray.
     heist_stray_chance: float = 0.0
     season_strays: bool = False
