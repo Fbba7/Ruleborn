@@ -14,7 +14,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from design_doc import VERSION as DOC_VERSION                     # noqa: E402
+from design_doc import TEXT as DOC_TEXT, VERSION as DOC_VERSION   # noqa: E402
 from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,
                             status as reg_status,
                             GATE_OWNER,  # noqa: E402
@@ -341,6 +341,192 @@ def handoff_html() -> str:
     <div class="hos">{''.join(cards)}</div>
   </section>"""
 
+
+
+# --------------------------------------------------------------------------
+# What is blocked, and why — derived from the register, never typed
+# --------------------------------------------------------------------------
+
+#: The order the summary reads in: the most critical first. A deviation sits
+#: in its own severity's tier here, since what it costs is what that says.
+CRITICALITY = [
+    ("blocking", "Blocking",
+     "Specified twice and incompatibly: nothing downstream of it can be locked."),
+    ("design", "Design findings",
+     "Change how the game plays; each is arithmetic from the document's own tables."),
+    ("significant", "Significant",
+     "Each produces a wrong number, a wrong asset or a missing rule if it reaches "
+     "the build."),
+    ("minor", "Minor",
+     "Copy, consistency and small readings; tidy before the specification is frozen."),
+    ("choice", "Decisions", "What the game is; yours to make."),
+]
+
+#: Why an open item is still open, in the order one reason wins over another:
+#: an item held by another is held whatever else it waits on, and evidence
+#: nobody here can produce outranks a decision that would follow from it.
+BLOCKERS = {
+    "held":     ("Held by another item",
+                 "Cannot move until what it waits on is settled."),
+    "outside":  ("Needs outside evidence",
+                 "A number from the world outside this repository."),
+    "yours":    ("Your decision",
+                 "The analysis is done; the answer changes what the game is."),
+    "build":    ("Outside this repository",
+                 "Devices, credentials, filing or the client's screens."),
+    "document": ("Waiting for the document",
+                 "Edits are drafted; the next version of the document closes it."),
+    "mine":     ("Still being worked",
+                 "A measurement or a fix still to make here."),
+}
+
+
+#: The grid's column heads, short enough for a phone; the legend spells them out.
+SHORT = {"held": "Held", "outside": "Evidence", "yours": "Yours", "build": "Outside",
+         "document": "Document", "mine": "Working"}
+
+
+def chapters() -> dict[str, str]:
+    """The document's chapters by number, read from the document itself."""
+    import re
+    out: dict[str, str] = {}
+    for m in re.finditer(r"^(\d{1,2})([A-Z][^\n]{2,80})$",
+                         DOC_TEXT.read_text(encoding="utf-8"), re.M):
+        out.setdefault(m.group(1), m.group(2).strip())
+    return out
+
+
+def blocker(item: dict, by_id: dict) -> tuple[str, str]:
+    """(why, what) for an open item: the one reason it is still open, and the
+    register's own words for it.
+
+    Read from what the register already records — what an item waits on
+    (DEPENDS), the questions only the outside world answers (RESEARCH), the
+    reason an item has no edit (check_edits.NO_EDIT_BECAUSE) and the edits
+    drafted for it (EDITS) — so it cannot drift from the entries below. An
+    item none of them explains fails the build rather than reading as
+    blocked for no reason.
+    """
+    from check_edits import NO_EDIT_BECAUSE
+    held = [d for d in DEPENDS.get(item["id"], []) if _open(by_id, d)]
+    if held:
+        return "held", "waits on " + ", ".join(held)
+    if item["id"] in RESEARCH:
+        return "outside", plain(RESEARCH[item["id"]])
+    reason = NO_EDIT_BECAUSE.get(item["id"])
+    if reason:
+        head, _, tail = reason.partition(":")
+        what = (tail or head).strip()
+        if "decision" in head:
+            return "yours", what
+        if "limit" in head:
+            return "build", what
+        if "re-measurement" in head or "no document sentence" in head:
+            return "mine", reason
+        raise SystemExit(f"{item['id']}: no reading of why it is open: {reason!r}")
+    if item["kind"] == "decision":
+        return "yours", plain(item.get("rec", ""))
+    edits = EDITS.get(item["id"], [])
+    if edits:
+        where = ", ".join(dict.fromkeys(f"\u00a7{e['section']}" for e in edits))
+        return "document", (f"{len(edits)} edit{'s' if len(edits) != 1 else ''} drafted "
+                            f"for {where}; it closes when the document takes them")
+    raise SystemExit(f"{item['id']}: open, and nothing in the register says why")
+
+
+def blocked() -> list[dict]:
+    """Every open item with its criticality, topic and blocker."""
+    by_id = {i["id"]: i for i in REGISTER}
+    names = chapters()
+    out = []
+    for item in REGISTER:
+        if not _open(by_id, item["id"]):
+            continue
+        top = item["refs"][0].split(".")[0] if item.get("refs") else ""
+        why, what = blocker(item, by_id)
+        out.append(dict(item=item, tier=item["severity"], why=why, what=what,
+                        chapter=top, topic=names.get(top, "Across the document")))
+    return out
+
+
+def blocked_html() -> str:
+    """The page's first answer: what is blocked, how badly, and why.
+
+    Criticality first, then the design chapter each item sits in — the
+    topic — then the one reason it is still open. A grid on top counts the
+    same rows both ways, so "how much of the significant work is waiting on
+    me" is one glance, not a filter.
+    """
+    rows = blocked()
+    tiers = [t for t in CRITICALITY if any(r["tier"] == t[0] for r in rows)]
+    whys = [w for w in BLOCKERS if any(r["why"] == w for r in rows)]
+    count = lambda **k: sum(1 for r in rows if all(r[a] == b for a, b in k.items()))
+
+    head = "".join(f'<th scope="col"><span class="bk {w}" title="{BLOCKERS[w][0]}">{SHORT[w]}</span></th>'
+                   for w in whys)
+    grid = "".join(
+        f'<tr><th scope="row"><a href="#blk-{t}">{label}</a></th>'
+        + "".join(f'<td>{count(tier=t, why=w) or ""}</td>' for w in whys)
+        + f'<td class="tot">{count(tier=t)}</td></tr>'
+        for t, label, _ in tiers)
+    foot = ("<tr><th scope=\"row\">All</th>"
+            + "".join(f'<td class="tot">{count(why=w)}</td>' for w in whys)
+            + f'<td class="tot">{len(rows)}</td></tr>')
+
+    legend = "".join(
+        f'<li><span class="bk {w}">{SHORT[w]}</span> <strong>{BLOCKERS[w][0]}.</strong> '
+        f'{BLOCKERS[w][1]}</li>'
+        for w in whys)
+
+    tiers_html = []
+    for t, label, gloss in tiers:
+        mine = [r for r in rows if r["tier"] == t]
+        topics: dict[str, list[dict]] = {}
+        for r in mine:
+            topics.setdefault(r["chapter"], []).append(r)
+        order = sorted(topics, key=lambda c: (-len(topics[c]), int(c) if c.isdigit() else 99))
+        blocks = []
+        for c in order:
+            rs = topics[c]
+            why_n = {}
+            for r in rs:
+                why_n[r["why"]] = why_n.get(r["why"], 0) + 1
+            tally = " &middot; ".join(f"{n} {BLOCKERS[w][0].lower()}"
+                                      for w, n in sorted(why_n.items(), key=lambda kv: -kv[1]))
+            items = "".join(
+                f'<li><a href="#{r["item"]["id"]}">{r["item"]["id"]}</a> '
+                f'<span class="bt">{esc(plain(r["item"]["title"]))}</span>'
+                f'<span class="bw"><span class="bk {r["why"]}">{BLOCKERS[r["why"]][0]}</span> '
+                f'{esc(r["what"])}</span></li>'
+                for r in rs)
+            section = f"&sect;{c} " if c.isdigit() else ""
+            blocks.append(
+                f'<details class="topic"{" open" if t in ("blocking", "design") else ""}>'
+                f'<summary><span class="tn">{section}{esc(rs[0]["topic"])}</span>'
+                f'<span class="tc">{len(rs)}</span><span class="tw">{tally}</span></summary>'
+                f'<ul class="bl">{items}</ul></details>')
+        tiers_html.append(
+            f'<div class="tier {t}" id="blk-{t}"><h3>{label}'
+            f'<span class="tier-n">{len(mine)}</span></h3>'
+            f'<p class="tier-gloss">{esc(gloss)}</p>{"".join(blocks)}</div>')
+
+    yours = count(why="yours")
+    return f"""
+  <section class="blocked" aria-labelledby="blocked-h">
+    <h2 id="blocked-h">What is blocked, and why</h2>
+    <p class="blurb"><strong>{len(rows)} items are open.</strong> Each is counted
+      once, by how critical it is and by the one thing holding it &mdash;
+      <strong>{yours} wait on a decision of yours</strong>. Read from the
+      register itself (what each item waits on, the reason it has no edit, the
+      edits drafted for it), so this cannot say something is moving that is
+      not. The topic is the design chapter the item is filed under.</p>
+    <div class="bgrid-wrap"><table class="bgrid">
+      <thead><tr><th scope="col">Criticality</th>{head}<th scope="col">Open</th></tr></thead>
+      <tbody>{grid}</tbody><tfoot>{foot}</tfoot>
+    </table></div>
+    <ul class="blegend">{legend}</ul>
+    {"".join(tiers_html)}
+  </section>"""
 
 
 # --------------------------------------------------------------------------
@@ -985,6 +1171,66 @@ def build() -> str:
   }}
   .waiting.none {{ color: var(--cho); font-size: 13.5px; margin: 0; }}
 
+  /* --- what is blocked, and why -------------------------------------- */
+  .blocked {{
+    margin: 28px 0 8px; padding: 18px 20px;
+    border: 1px solid var(--rule-strong); border-radius: 10px;
+    background: var(--raised);
+  }}
+  .blocked h2 {{ font-size: 21px; margin: 0 0 6px; }}
+  .blocked .blurb {{ color: var(--muted); font-size: 14px; max-width: 62ch; margin: 0 0 14px; }}
+  .bgrid-wrap {{ overflow-x: auto; margin: 0 -4px; }}
+  .bgrid {{ border-collapse: collapse; width: 100%; font-size: 13px; }}
+  .bgrid th, .bgrid td {{ padding: 6px 8px; border-bottom: 1px solid var(--rule); text-align: right; }}
+  .bgrid thead th {{ vertical-align: bottom; font-weight: 500; }}
+  .bgrid th[scope="row"], .bgrid thead th:first-child {{ text-align: left; font-weight: 600; }}
+  .bgrid th[scope="row"] a {{ color: var(--ink); text-decoration: none; }}
+  .bgrid td {{ font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }}
+  .bgrid .tot {{ font-weight: 600; }}
+  @media (max-width: 480px) {{
+    .bgrid {{ font-size: 12px; }}
+    .bgrid th, .bgrid td {{ padding: 5px 3px; }}
+    .bgrid .bk {{ padding: 1px 3px; letter-spacing: 0; font-size: 9.5px; }}
+    .blocked {{ padding: 16px 14px; }}
+  }}
+  .bgrid tfoot th, .bgrid tfoot td {{ border-bottom: 0; border-top: 1px solid var(--rule-strong); }}
+  .bk {{
+    display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap;
+    padding: 1px 6px; border-radius: 4px; border: 1px solid currentColor;
+  }}
+  .bk.held {{ color: var(--blk); }}
+  .bk.outside {{ color: var(--chg); }}
+  .bk.yours {{ color: var(--sig); }}
+  .bk.build {{ color: var(--muted); }}
+  .bk.document {{ color: var(--cho); }}
+  .bk.mine {{ color: var(--dsg); }}
+  .blegend {{ list-style: none; padding: 0; margin: 12px 0 4px; font-size: 12.5px;
+             color: var(--muted); display: grid; gap: 4px; }}
+  .tier {{ margin-top: 18px; border-left: 4px solid var(--rule-strong); padding-left: 12px; }}
+  .tier.blocking {{ border-left-color: var(--blk); }}
+  .tier.design {{ border-left-color: var(--dsg); }}
+  .tier.significant {{ border-left-color: var(--sig); }}
+  .tier.minor {{ border-left-color: var(--min); }}
+  .tier.choice {{ border-left-color: var(--cho); }}
+  .tier h3 {{ font-size: 16px; display: flex; align-items: baseline; gap: 8px; }}
+  .tier-n {{ font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--muted); }}
+  .tier-gloss {{ color: var(--muted); font-size: 13px; margin: 2px 0 6px; }}
+  .topic {{ border-top: 1px solid var(--rule); }}
+  .topic summary {{
+    cursor: pointer; padding: 7px 0; display: flex; flex-wrap: wrap;
+    align-items: baseline; gap: 4px 10px; font-size: 14px;
+  }}
+  .topic .tn {{ font-weight: 600; }}
+  .topic .tc {{ font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--muted); }}
+  .topic .tw {{ flex-basis: 100%; font-size: 12px; color: var(--muted); }}
+  .bl {{ list-style: none; margin: 0 0 8px; padding: 0; }}
+  .bl li {{ font-size: 13.5px; padding: 6px 0; border-top: 1px dashed var(--rule); }}
+  .bl li:first-child {{ border-top: 0; }}
+  .bl .bt {{ margin-left: 4px; }}
+  .bl .bw {{ display: block; color: var(--muted); font-size: 12.5px; margin-top: 3px; line-height: 1.45; }}
+  .bl .bw .bk {{ margin-right: 6px; }}
+
   /* --- what is built --------------------------------------------------- */
   .built {{
     margin: 28px 0 8px; padding: 18px 20px;
@@ -1372,6 +1618,7 @@ def build() -> str:
     </div>
 {tabs_html()}
   </header>
+{blocked_html()}
 {handoff_html()}
 {built_html()}
 {start_here_html()}

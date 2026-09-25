@@ -200,6 +200,20 @@ def check(html: str) -> list[str]:
         if filt != "all" and not any(key in i for i in rows):
             bad.append(f'chip "{filt}" filters on data-{key}, which no item has')
 
+    # The blocked summary: every open item once, and the grid's totals the
+    # same items counted the other way.
+    top = html[html.index('<section class="blocked"'):html.index("</section>", html.index('<section class="blocked"'))]
+    listed = re.findall(r'<ul class="bl">(.*?)</ul>', top, re.S)
+    ids = [m for chunk in listed for m in re.findall(r'<li><a href="#([A-Z]+\d+)">', chunk)]
+    opens = sorted(i["id"] for i in build_audit.REGISTER
+                   if build_audit._open({x["id"]: x for x in build_audit.REGISTER}, i["id"]))
+    if sorted(ids) != opens:
+        bad.append(f"the blocked summary lists {len(ids)} items, {len(set(ids))} distinct; "
+                   f"{len(opens)} are open")
+    total = re.search(r'<tfoot>.*<td class="tot">(\d+)</td></tr>', top, re.S)
+    if not total or int(total.group(1)) != len(opens):
+        bad.append("the blocked grid's total is not the number of open items")
+
     # The handoff band is the one thing on the page that answers a yes/no, so
     # it is the one place a wrong answer costs most: "Ready" on an area with an
     # open gate would send someone to draw a thing nobody has decided. Read it
