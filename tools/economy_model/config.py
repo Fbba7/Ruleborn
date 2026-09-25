@@ -91,6 +91,12 @@ class Config:
     #: §11.5's heist strays (one heist in eight) and §18.2's season stray.
     heist_stray_chance: float = 0.0
     season_strays: bool = False
+    #: The owner's answer to F38: a found stray waits and joins only at the
+    #: next birth's price, so it is a birth like any other.
+    priced_strays: bool = False
+    #: The owner's answers to F37 and G28: a non-raider's daily goals, the
+    #: tutorial's two ruins on day 1, and the season track's free rewards.
+    decided_income: bool = False
     #: §14.1: "Players save for the next Spire level first". True reserves the
     #: next Spire level's cost once its Keeper gate is open; False buys it only
     #: when a day's stock covers it, which the first re-run did.
@@ -214,6 +220,7 @@ class Config:
                    haul_level_source="target", haul_base=data.HAUL_BASE,
                    v34_economy=True, storage_caps=True, entry_fee=True,
                    heist_stray_chance=data.HEIST_STRAY_CHANCE, season_strays=True,
+                   priced_strays=True, decided_income=True,
                    spire_reserve=True, realm_open_first=True, school_bonuses=True,
                    attempt_value=data.ATTEMPT_BAND[{"low": 0, "high": 1}[edge]])
         return replace(base, **overrides)

@@ -74,7 +74,8 @@ test("the track's first tier is free on day one, and each after costs a tier's s
   for (let tier = 2; tier <= 10; tier++) assert.equal(track.claim(me, 1).tier, tier);
   assert.equal(track.stars(me), 0);
   assert.equal(t.service.balance(me).starglass, 25, "tier 10's Starglass");
-  assert.deepEqual(track.view(me).tiers[49].free, { stray: 1 }, "the stray at the top");
+  assert.deepEqual(track.view(me).tiers[49].free, { strayOffer: 1 },
+                   "a stray offered for adoption at the top (F38)");
 });
 
 test("a player joining late climbs a track scaled to the time remaining (18.8)", () => {

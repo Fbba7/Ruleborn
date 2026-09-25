@@ -155,8 +155,6 @@ def price_growth() -> list:
                  data.UPKEEP_AETHER_PER_POINT_HOUR * 516 * 24, 516 / 51))
     rows.append(("Aether", "a Lab experiment, Lab 1 to 10",
                  data.LAB_AETHER_PER_LEVEL, data.LAB_AETHER_PER_LEVEL * 10, 10.0))
-    rows.append(("Aether", "scouting a realm",
-                 data.SCOUT_AETHER_PER_REALM, data.SCOUT_AETHER_PER_REALM, 1.0))
 
     # Essence.
     rows.append(("Essence", "the next birth, 5th to 38th",

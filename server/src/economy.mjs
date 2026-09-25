@@ -155,7 +155,8 @@ export function defenceShare({ vaultLevel, raiderLevel, targetLevel, exposed, le
 
 /**
  * The entry fee, as the owner decided it (F39): 2% of B(V) at the target's
- * Vault level, with no floor or cap — 48 at level 1, 1,845 at 10 — where
+ * Vault level, with no floor or cap — 98 at level 1, 3,767 at 10 at the
+ * owner's base (F36) — where
  * §9.4 still reads "2% of the raider's Starlight, from 100 to 25,000".
  * Never more than the raider holds (G17).
  */

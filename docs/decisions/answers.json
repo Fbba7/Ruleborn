@@ -1,5 +1,5 @@
 {
- "_what": "The owner's answers to the decision brief (docs/decisions/brief.json), as recorded on its page (answers/<id> in the page's database) on 2026-09-25: five picked there, the rest accepted as recommended in one instruction. `build` is where the answer's build change stands: none (the build already does it), to do, done, or outside (it needs something this repository cannot reach). tools/build_audit.py reads it: a decided item is no longer the owner's, and waits on the build, then on the document.",
+ "_what": "The owner's answers to the decision brief (docs/decisions/brief.json), as recorded on its page (answers/<id> in the page's database) on 2026-09-25: five picked there, the rest accepted as recommended in one instruction. `build` is where the answer's backend change stands: none (the build already does it), to do, done, or outside (it needs something this repository cannot reach). tools/build_audit.py reads it: a decided item is no longer the owner's, and waits on the build, then on the document. `client`, where present, names what the client still has to do.",
  "answers": {
   "F33": {
    "option": "D",
@@ -14,17 +14,18 @@
   "F37": {
    "option": "B",
    "how": "picked",
-   "build": "to do"
+   "build": "done",
+   "client": "daily goals and ruins, when they are built: one goal a day needs no heist, its pages to the law the player marked"
   },
   "F39": {
    "option": "B",
    "how": "picked",
-   "build": "to do"
+   "build": "done"
   },
   "C41": {
    "option": "B",
    "how": "picked",
-   "build": "to do"
+   "build": "done"
   },
   "G17": {
    "option": "A",
@@ -39,7 +40,8 @@
   "F38": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "client": "an adopt prompt for a found stray, at the next birth's price"
   },
   "C42": {
    "option": "A",
@@ -49,7 +51,7 @@
   "F36": {
    "option": "C",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done"
   },
   "G37": {
    "option": "B",
@@ -79,7 +81,7 @@
   "G28": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done"
   },
   "G22": {
    "option": "A",
@@ -139,7 +141,8 @@
   "F46": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "client": "the target card shows laws, guards and ward counts"
   },
   "F47": {
    "option": "A",
@@ -184,7 +187,8 @@
   "G19": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "client": "the builder locks the Heart at realm level 3"
   },
   "G32": {
    "option": "B",

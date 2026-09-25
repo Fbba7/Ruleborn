@@ -171,13 +171,13 @@ def raid_worth(days: int = 1000) -> str:
     lines += ["",
               f"  Smallest hundred that passes on the day each Vault level arrives: {first:,}",
               f"  Smallest hundred that passes on every day at every level:        {every:,}",
-              f"  The document ships {data.HAUL_BASE:,}, from its own arithmetic: at Vault level 2 a "
+              f"  The document ships 2,400, from its own arithmetic: at Vault level 2 a "
               "crew of four",
               "  and \"about 109 an hour a worker\" — the three level-3 producers' mean.",
               "",
               "  Both results are this model's: they move with who staffs which producer,",
-              "  when the Vault is upgraded and whether posts are staffed (F36), so they",
-              "  are a range to decide against, not a value §32.9's rule can set.",
+              "  when the Vault is upgraded and whether posts are staffed. The owner chose",
+              f"  every day (F36), so {data.HAUL_BASE:,} ships (F53).",
               "",
               "  The target is at the raider's own Vault level, difficulty 1.0: the",
               "  \"clean same-level haul\" §9.6's table and check are indexed by. §12.22",
@@ -227,8 +227,6 @@ def sink_audit() -> str:
         ("Aether", "weaving a full 516-point sheet, once", weave, aether),
         ("Aether", "upkeep on that sheet, a day", upkeep_day, aether),
         ("Aether", "a Lab experiment at level 3", data.LAB_AETHER_PER_LEVEL * 3, aether),
-        ("Aether", "scouting all seven realms of a target", 7 * data.SCOUT_AETHER_PER_REALM,
-         aether),
     ]
     lines.append(f"  {'':<8} {'sink':<40} {'cost':>10} {'= days of day-301 income':>26}")
     for currency, label, cost, income in rows:

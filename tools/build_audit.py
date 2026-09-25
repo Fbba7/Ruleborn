@@ -917,6 +917,8 @@ def decided_html(item_id: str) -> str:
     build = {"none": "the build already does this", "to do": "the build change is still to make",
              "done": "built", "outside": "the build change needs what this repository cannot reach"}
     edit = f' Document: {esc(a["doc_edit"])}' if a.get("doc_edit") else ""
+    if a.get("client"):
+        edit = f' Client: {esc(a["client"])}.' + edit
     return (f'<p class="rec decided"><span class="arrow">&#10003;</span> <strong>Decided '
             f'{esc(a["option"])}:</strong> {esc(a["label"])} ({build[a["build"]]}).{edit}</p>')
 

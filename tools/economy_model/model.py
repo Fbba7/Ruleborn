@@ -441,10 +441,10 @@ class EconomyModel:
 
     def _allowed_count(self, spec: data.Building, realm: Realm) -> int:
         if self.v34 and spec.name in ("Ward", "Guardian Post"):
-            # §5.2: by realm level. The Heart has none, and no count of its
-            # own (G19); the model gives it level 1's, as it did before v3.4.
+            # §5.2: by realm level. The Heart counts as realm level 3, as the
+            # owner decided (G19).
             table = data.WARDS_BY_REALM_LEVEL if spec.name == "Ward" else data.GUARD_POSTS
-            return table[realm.level - 1] if realm.kind == "outer" else table[0]
+            return table[realm.level - 1] if realm.kind == "outer" else table[2]
         if not spec.resource:
             if spec.name == "Law Pylon":
                 return (
@@ -587,12 +587,23 @@ class EconomyModel:
         """
         library = sum(data.LIBRARY_PAGES[lvl] for lvl in self.s.realms[0].levels("Library"))
         n = self.arch.heists_per_day
+        track = data.FREE_TRACK_PAGES * self._track_share() / data.SEASON_DAYS
         if not n:
-            return float(library)
+            # A non-raider's daily goals, one a day needing no heist (F37).
+            goals = data.PAGES_DAILY_GOALS if self.cfg.decided_income else 0
+            return float(library + goals + track)
         rate = data.heist_success_rate(self.s.day)
         study = data.PAGES_STUDY + data.PAGES_STUDY_CLEAN_BONUS * data.CLEAN_SHARE_OF_SUCCESSES
         return (n * rate * (study + data.PAGES_PYLON) + n * (1 - rate) * data.PAGES_FOILED
-                + data.PAGES_DAILY_GOALS + library)
+                + data.PAGES_DAILY_GOALS + library + track)
+
+    def _track_share(self) -> float:
+        """The share of the season track's free tiers this player buys in a
+        season (G28): its stars over a season, at 10 a tier, of 49."""
+        if not self.cfg.decided_income:
+            return 0.0
+        stars = self.arch.heists_per_day * data.STARS_PER_ATTEMPT * data.SEASON_DAYS
+        return min(data.TRACK_TIERS, stars // data.TIER_STARS) / data.TRACK_TIERS
 
     def codex_open(self) -> int:
         """§7.6's chapters: how many laws the Codex holds at this Keeper level."""
@@ -665,6 +676,8 @@ class EconomyModel:
         self.s.strays += successes * self.cfg.heist_stray_chance
         if self.cfg.season_strays and self.s.day % data.SEASON_DAYS == 0:
             self.s.strays += 1
+        if self.cfg.priced_strays:
+            return          # it joins at the next birth's price: a birth (F38)
         while self.s.strays >= 1 and self.s.owned < self.housing():
             self.s.strays -= 1
             self._join()
@@ -681,14 +694,15 @@ class EconomyModel:
             self.s.mark("Everything built and at its highest level")
 
     def entry_fees(self, rate: float) -> float:
-        """§9.4: "2% of the raider's Starlight, from 100 to 25,000, returned in
-        full after a clean heist" — what a day's raids cost in fees kept, in
-        expectation. §12.9 returns more (C41); the server takes §9.4."""
+        """What a day's raids cost in fees kept, in expectation, as the owner
+        answered F39 and C41: 2% of B(V) at the target, never more than is
+        held, returned after a clean or loud heist and half after a partial
+        one. (§9.4 still reads "2% of the raider's Starlight, from 100 to
+        25,000, returned in full after a clean heist".)"""
         if not self.cfg.entry_fee or not self.arch.heists_per_day:
             return 0.0
-        held = max(0.0, self.s.starlight)
-        fee = min(held, max(data.ENTRY_FEE_MIN, min(data.ENTRY_FEE_MAX, data.ENTRY_FEE_RATE * held)))
-        kept = 1 - rate * data.CLEAN_SHARE_OF_SUCCESSES
+        fee = min(max(0.0, self.s.starlight), data.ENTRY_FEE_RATE * self.haul_base())
+        kept = 1 - rate * data.FEE_RETURNED_SHARE_OF_SUCCESSES
         return self.arch.heists_per_day * fee * kept
 
     def _mark_realm_levels(self) -> None:
@@ -712,6 +726,8 @@ class EconomyModel:
             # half of each haul is Essence (G17).
             self.s.essence += produced["essence"] * (1 - data.ROSTER_KEEP_SHARE)
             self.s.essence += haul * data.HAUL_ESSENCE_SHARE
+            # The season track's free Essence, over the season (G28).
+            self.s.essence += data.FREE_TRACK_ESSENCE * self._track_share() / data.SEASON_DAYS
             self.s.starlight += haul * (1 - data.HAUL_ESSENCE_SHARE)
             self.s.starlight -= self.entry_fees(rate)
             room = self.capacity()
@@ -734,6 +750,10 @@ class EconomyModel:
         else:
             successes = round(n * rate)
         failures = n - successes
+        if self.cfg.decided_income and self.s.day == 1:
+            # §16's two tutorial ruins, a successful heist's experience each
+            # and no haul (F37).
+            successes += data.TUTORIAL_RUINS
         self.award_xp(successes, failures, spent_today)
         self.restore_laws()
 

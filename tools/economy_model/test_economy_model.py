@@ -12,6 +12,8 @@ Run with:  python3 -m pytest tools/economy_model/ -q
        or: python3 tools/economy_model/test_economy_model.py
 """
 
+from dataclasses import replace
+
 from . import data
 from .config import Config
 from .model import EconomyModel
@@ -286,9 +288,10 @@ def test_the_flat_upkeep_means_two_different_things():
 
 def test_the_document_preset_mints_from_the_documents_base_and_band():
     """D58: the model minted from v3.2's 100. `Config.document()` reads §9.6's
-    2,400 and band from design_facts, which reads them back from the text."""
+    base and band from design_facts: the band as the text states it, the base
+    as the owner answered F36 (4,900; the text says 2,400)."""
     low, high = Config.document("low"), Config.document("high")
-    assert low.haul_base == data.HAUL_BASE == 2400
+    assert low.haul_base == data.HAUL_BASE == 4900
     assert (low.attempt_value, high.attempt_value) == data.ATTEMPT_BAND
     assert low.faucet == "minted" and low.haul_level_source == "target"
     # §5.8's three rules, which §14.2 says generate the tables.
@@ -330,9 +333,21 @@ def test_finding_on_this_models_roster_the_raid_worth_check_fails_2400():
     the base that passes depends on the model's choices, so it is a range,
     not a value §32.9's rule can set."""
     from . import raidworth as rw
-    rows = {r.vault: r for r in rw.levels(Config.document(), 400)}
+    shipped = replace(Config.document(), haul_base=2400)       # §9.6 as the document ships it
+    rows = {r.vault: r for r in rw.levels(shipped, 400)}
     assert rows[2].ratio < 1.0 and rows[2].ratio_first < 1.0, rows[2]
-    assert rw.smallest_passing_base(Config.document(), 400, first_day_only=True) > data.HAUL_BASE
+    assert rw.smallest_passing_base(shipped, 400, first_day_only=True) > 2400
+
+
+def test_the_owners_base_is_the_smallest_hundred_passing_every_day():
+    """F36, answered: the check holds on every day at every Vault level. With
+    the fee an attempt keeps in it (F39) that is 4,900, and 4,800 fails (F53:
+    4,600 is the value with the fee left out)."""
+    from . import raidworth as rw
+    assert data.HAUL_BASE == 4900
+    assert rw.passes(Config.document(), 1200)
+    assert not rw.passes(replace(Config.document(), haul_base=4800), 1200)
+    assert rw.passes(replace(Config.document(), haul_base=4600, entry_fee=False), 1200)
 
 
 # -- the full re-run (T2.6, C19) ---------------------------------------------
@@ -380,36 +395,52 @@ def test_finding_strays_fill_the_roster_whatever_a_birth_costs():
     the rate that puts the 38th on the day every building tops out — has no
     rate to find. Without strays it finds one."""
     from . import rerun
-    assert rerun.tune_birth_rate() is None
-    cheap, dear = (rerun.run("engaged", "low", birth_growth=g).day("38 ruleborn") for g in (1.3265, 5.0))
-    assert abs(cheap - dear) <= 2, (cheap, dear)
-    assert rerun.tune_birth_rate(heist_stray_chance=0.0, season_strays=False) is not None
+    free = dict(priced_strays=False)                # §11.5 as the document writes it
+    assert rerun.tune_birth_rate(**free) is None
+    cheap, dear = (rerun.run("engaged", "low", birth_growth=g, **free).day("38 ruleborn")
+                   for g in (1.3265, 5.0))
+    # A birth nearly four times dearer moves the 38th by days, not the months a
+    # price should (3 days at the owner's base, 2 at the document's).
+    assert abs(cheap - dear) <= 5, (cheap, dear)
+    assert rerun.tune_birth_rate(heist_stray_chance=0.0, season_strays=False, **free) is not None
+
+
+def test_priced_strays_give_the_birth_rule_its_rate_1_3455():
+    """F38, answered: a stray joins at the next birth's price, so §9.5's rule
+    has a rate again, the same at both edges of §9.6's band."""
+    from . import rerun
+    assert rerun.tune_birth_rate("low") == rerun.tune_birth_rate("high") == 1.3455
 
 
 def test_finding_the_entry_fee_outweighs_what_raids_pay_while_saving():
-    """F39. §9.4's fee is 2% of what the raider holds, kept unless the heist is
-    clean; §14.1's player saves for the next Spire level first, so on day 301
-    an engaged player holding several hundred thousand pays more in kept fees
-    than raids bring in Starlight."""
+    """F39. §9.4's fee was 2% of what the raider holds, kept unless the heist
+    was clean, and on day 301 an engaged player saving for the next Spire
+    level paid more in kept fees than raids brought in Starlight. The owner's
+    answer (2% of B(V), returned after clean or loud and half after partial,
+    C41) keeps a fifth of it: fees kept are under a quarter of raid Starlight."""
     model = EconomyModel(Config.document())
     for _ in range(300):
         model.step()
     fees = model.entry_fees(data.heist_success_rate(301))
     model.step()
     raid_starlight = model.s.log[-1]["heist_income"] * (1 - data.HAUL_ESSENCE_SHARE)
-    assert fees > 3 * raid_starlight, (fees, raid_starlight)
+    assert 0 < fees < 0.25 * raid_starlight, (fees, raid_starlight)
 
 
 def test_finding_a_player_who_never_raids_stops_levelling():
     """F37. Experience from spending is capped by the Spire, the Spire by the
     Keeper level, and pages by a Library that opens at Keeper 4."""
     model = EconomyModel(Config.document(archetype="never_raids"))
-    state = model.run(400)
-    # Where it stalls depends on what the model gives a non-raider; that it
-    # stalls below chapter 3's Keeper 12, so the full Codex is out of reach,
-    # does not.
+    state = model.run(600)
+    # The owner's answer (daily goals, two tutorial ruins): the launch 24 by
+    # about day 80, and a plateau below chapter 3's Keeper 12.
+    assert state.milestones["24 laws owned"] <= 80, state.milestones
     assert state.keeper_level < 12, state.keeper_level
     assert "Codex restored" not in state.milestones
+    # F54: the plateau is Keeper 10 with the bar 6.5 short of 11 — the near
+    # miss the answer meant to keep out, held here until it is answered.
+    need = data.KEEPER_XP_TO_NEXT[state.keeper_level - 1]
+    assert state.keeper_level == 10 and need - state.keeper_xp < 10, (state.keeper_level, state.keeper_xp)
 
 
 if __name__ == "__main__":

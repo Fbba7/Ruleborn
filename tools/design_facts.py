@@ -147,8 +147,11 @@ GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
 #: richness "clamped between 0.6 and 1.8, with a reduction above 1.5" (the
 #: excess halved); difficulty "Level or above 1.0 to 1.2, one below 0.8, two
 #: below 0.5, three or more below 0.25". The server and the economy model both
-#: mint from these.
-HAUL_BASE = 2400
+#: mint from these. The base is the owner's (F36): the smallest hundred at
+#: which §9.6's raid-worth check holds on every day at every Vault level, with
+#: the fee an attempt keeps inside it (F39) — 4,900, where the document ships
+#: 2,400 (BEHIND; F53 for why not F36's 4,600).
+HAUL_BASE = 4900
 HAUL_GROWTH = 1.5
 HAUL_FATIGUE = 0.85
 RICHNESS_CLAMP = (0.6, 1.8, 1.5)
@@ -170,10 +173,9 @@ ROSTER_KEEP_SHARE = 0.25
 HEIST_CLOCK = (150, 15, 240)
 
 #: §9.4: "Entry fee: 2% of the raider's Starlight, from 100 to 25,000,
-#: returned in full after a clean heist."
+#: returned in full after a clean heist." The owner decided 2% of B(V) at the
+#: target with no floor or cap (F39), so only the rate is kept: the same 2%.
 ENTRY_FEE_RATE = 0.02
-ENTRY_FEE_MIN = 100
-ENTRY_FEE_MAX = 25_000
 
 #: §12.9: "Renown for a clean heist = 20 × (1 + (defender's Renown − raider's
 #: Renown) ÷ 1,000), kept between 8 and 40, then multiplied by the outcome
@@ -334,8 +336,6 @@ HOME = {
     "ROSTER_KEEP_SHARE": "9.5",
     "HEIST_CLOCK": "5.4",
     "ENTRY_FEE_RATE": "9.4",
-    "ENTRY_FEE_MIN": "9.4",
-    "ENTRY_FEE_MAX": "9.4",
     "RENOWN_CLEAN": "12.9",
     "RENOWN_OUTCOME": "12.9",
     "RENOWN_FOILED": "12.9",
@@ -439,10 +439,6 @@ STATED = {
                     r"from the landing realm to the Heart, up to (\d+) seconds",
                     lambda m: tuple(int(x) for x in m)),
     "ENTRY_FEE_RATE": (r"Entry fee: (\d+)% of the raider's Starlight", lambda m: int(m[0]) / 100),
-    "ENTRY_FEE_MIN": (r"Entry fee: \d+% of the raider's Starlight, from ([\d,]+) to",
-                      lambda m: int(m[0].replace(",", ""))),
-    "ENTRY_FEE_MAX": (r"Entry fee: \d+% of the raider's Starlight, from [\d,]+ to ([\d,]+)",
-                      lambda m: int(m[0].replace(",", ""))),
     "RENOWN_CLEAN": (r"Renown for a clean heist = (\d+) × \(1 \+ \(defender's Renown − raider's "
                      r"Renown\) ÷ ([\d,]+)\), kept between (\d+) and (\d+)",
                      lambda m: tuple(int(x.replace(",", "")) for x in m)),
@@ -522,6 +518,7 @@ BEHIND: dict[str, tuple[str, str]] = {
     # value above is the decision, and the check holds it to that until the
     # document takes the edit and the item closes.
     "MATCH_WINDOW": ("F44", "Keeper level from two below to three above"),
+    "HAUL_BASE": ("F36", "4,900: the raid-worth check on every day, with the fee in the attempt (F53)"),
 }
 
 

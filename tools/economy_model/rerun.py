@@ -139,7 +139,7 @@ class Settled:
     """What the re-run sets before it prints a table. §9.5's order is the raid
     base, then the sinks, then the birth rate; the sink search (T2.5) is not
     run here, so the keep stays at the quarter it ships at."""
-    base: int                  # the shipped base; the check below does not move it
+    base: int                  # the shipped base: the every-day value (F36)
     base_first_day: int        # smallest hundred passing on the day each level arrives
     base_every_day: int        # smallest hundred passing on every day (F36)
     birth_rate: float | None   # §9.5's rule, or None when no rate satisfies it (F38)
@@ -157,7 +157,8 @@ def settle() -> Settled:
     rate = tune_birth_rate("low")
     no_strays = tune_birth_rate("low", heist_stray_chance=0.0, season_strays=False)
     roster = run("engaged", "low").day("38 ruleborn")
-    return Settled(data.HAUL_BASE, first, every, rate, no_strays, roster, data.ROSTER_KEEP_SHARE)
+    # The owner's rule (F36): the base is the every-day value, and ships.
+    return Settled(every, first, every, rate, no_strays, roster, data.ROSTER_KEEP_SHARE)
 
 
 #: The choices the document leaves open, and the rules the first re-run read
@@ -249,9 +250,9 @@ def render() -> str:
         "| Value | Ships | The run | How |",
         "| --- | --- | --- | --- |",
         f"| B(V) base (9.6) | {data.HAUL_BASE:,} | {got.base:,} | the raid-worth check, run on "
-        f"this model's roster, needs {got.base_first_day:,} on the day each Vault level "
-        f"arrives and {got.base_every_day:,} on every day at a level; both depend on the "
-        "choices below, so the base is left where it ships (F36) |",
+        f"this model's roster with the fee an attempt keeps, needs {got.base_first_day:,} on "
+        f"the day each Vault level arrives and {got.base_every_day:,} on every day at a level; "
+        "the owner chose every day (F36), where the document ships 2,400 (F53) |",
         f"| Roster's keep (9.5) | {data.ROSTER_KEEP_SHARE:.0%} | {got.keep:.0%} | "
         "ships at a quarter; the sink search that sets it (T2.5) is not run here |",
         f"| Birth rate (9.5) | {data.BIRTH_GROWTH_V34} | {rate_cell} | the rate at which an "

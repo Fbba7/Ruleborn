@@ -104,8 +104,8 @@ test("a planned clean heist is re-simulated, and its haul minted with the fee re
   assert.equal(out.verdict.grade, "clean");
   assert.equal(out.verdict.banked, 508, "three bags full: 104 + 104 + 300");
   // Vault level 3: 5,400 × 1 × 1 × 1 × 1 × 508/508.
-  assert.equal(out.haul.total, 5400);
-  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 2700, essence: 2700, starglass: 0 });
+  assert.equal(out.haul.total, 11_025);
+  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 5513, essence: 5512, starglass: 0 });
 });
 
 test("a retry is answered from the first decision and pays nothing twice (§24.12)", () => {
@@ -116,7 +116,7 @@ test("a retry is answered from the first decision and pays nothing twice (§24.1
   const again = t.service.submit(t.raider.account, lease.token, replay);
   assert.equal(again.repeated, true);
   assert.equal(again.haul.total, first.haul.total);
-  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 2700, essence: 2700, starglass: 0 });
+  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 5513, essence: 5512, starglass: 0 });
   const rows = t.service.db.prepare("SELECT COUNT(*) AS n FROM ledger WHERE account = ?")
     .get(t.raider.account).n;
   assert.equal(rows, 2, "one haul, in two currencies");
@@ -130,28 +130,28 @@ test("the second raid of the day pays 0.85 of the first, and the fee is 2% (§9.
   const second = t.service.lease(t.raider.account, t.bundle);
   assert.notEqual(second.token, first.token, "the first lease was used");
   const out = t.service.submit(t.raider.account, second.token, play(t, second, { plan: openPlan() }));
-  assert.equal(out.haul.total, Math.floor(5400 * 0.85));
-  assert.equal(out.fee, 108, "2% of B(3), 5,400 (F39)");
+  assert.equal(out.haul.total, Math.floor(11_025 * 0.85));
+  assert.equal(out.fee, 220, "2% of B(3), 11,025 (F39)");
   // Clean, so the fee came back: 2,700 + 2,295 each side of the split.
   assert.deepEqual(t.service.balance(t.raider.account),
-                   { starlight: 2700 + 2295, essence: 2700 + 2295, starglass: 0 });
+                   { starlight: 5513 + 4686, essence: 5512 + 4685, starglass: 0 });
 });
 
 test("a haul is capped by what the raider was already paid today (§9.6, §24.12)", () => {
   const t = twoPlayers();
-  // 20,000 of the day's 24,000 already paid (the raider stands at Vault level 1).
+  // 45,000 of the day's 49,000 already paid (the raider stands at Vault level 1).
   t.service.db.prepare(
-    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 20000, 'haul (9.6)', ?)")
+    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 45000, 'haul (9.6)', ?)")
     .run(t.raider.account, t.clock.now - 60_000);
   const lease = t.service.lease(t.raider.account, t.bundle);
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
-  assert.equal(out.haul.total, 4000, "5,400 cut to the 4,000 left of 24,000");
+  assert.equal(out.haul.total, 4000, "11,025 cut to the 4,000 left of 49,000");
   assert.equal(out.haul.cappedBy, "day");
   // The day turns over at midnight UTC, and yesterday's pay counts only to the week.
   t.clock.now += 24 * 60 * 60 * 1000;
   const next = t.service.lease(t.raider.account, t.bundle);
   const fresh = t.service.submit(t.raider.account, next.token, play(t, next, { plan: openPlan() }));
-  assert.equal(fresh.haul.total, 5400);
+  assert.equal(fresh.haul.total, 11_025);
   assert.equal(fresh.haul.cappedBy, null);
 });
 
@@ -191,7 +191,7 @@ test("two players with the same island are two targets, and a foiled fee goes to
   const lease = t.service.lease(t.raider.account, t.bundle, twin.account);
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
   assert.equal(out.verdict.grade, "foiled");
-  assert.equal(t.service.balance(twin.account).starlight, 108, "the twin was raided");
+  assert.equal(t.service.balance(twin.account).starlight, 220, "the twin was raided");
   assert.equal(t.service.balance(t.defender.account).starlight, 0);
 });
 
@@ -230,10 +230,10 @@ test("a foiled raider pays the fee to the defender (§12.9)", () => {
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
   assert.equal(out.validated, true);
   assert.equal(out.verdict.grade, "foiled");
-  assert.equal(out.fee, 108, "2% of B(3), 5,400 (F39)");
+  assert.equal(out.fee, 220, "2% of B(3), 11,025 (F39)");
   assert.equal(out.haul.total, 0);
-  assert.equal(t.service.balance(t.raider.account).starlight, 50_000 - 108);
-  assert.equal(t.service.balance(t.defender.account).starlight, 108);
+  assert.equal(t.service.balance(t.raider.account).starlight, 50_000 - 220);
+  assert.equal(t.service.balance(t.defender.account).starlight, 220);
 });
 
 test("a replay that does not reproduce pays nothing, takes nothing, and is flagged (§24.12)", () => {
@@ -280,10 +280,10 @@ test("a pair's second foil of the day keeps the fee with the game (9.4, G37)", (
     t.clock.now += hour * 60 * 60 * 1000;
     const lease = t.service.lease(t.raider.account, t.bundle);
     const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
-    assert.deepEqual([out.verdict.grade, out.fee, out.feeReturned], ["foiled", 108, 0]);
+    assert.deepEqual([out.verdict.grade, out.fee, out.feeReturned], ["foiled", 220, 0]);
   }
-  assert.equal(t.service.balance(t.raider.account).starlight, 50_000 - 2 * 108);
-  assert.equal(t.service.balance(t.defender.account).starlight, 108, "the first fee only");
+  assert.equal(t.service.balance(t.raider.account).starlight, 50_000 - 2 * 220);
+  assert.equal(t.service.balance(t.defender.account).starlight, 220, "the first fee only");
 });
 
 test("past 20 paid raids a week, a raid costs nothing and pays nothing, and the lease says so (9.6, G20)", () => {
@@ -295,7 +295,7 @@ test("past 20 paid raids a week, a raid costs nothing and pays nothing, and the 
   pastHeists(t, t.raider.account, 5, { mode: "friendly" });
   pastHeists(t, t.raider.account, 19);
   const twentieth = t.service.lease(t.raider.account, t.bundle);
-  assert.deepEqual([twentieth.fee, twentieth.capped, twentieth.week.raids], [108, [], 19]);
+  assert.deepEqual([twentieth.fee, twentieth.capped, twentieth.week.raids], [220, [], 19]);
   const paid = t.service.submit(t.raider.account, twentieth.token, play(t, twentieth, { plan: openPlan() }));
   assert.ok(paid.haul.total > 0);
   const after = t.service.balance(t.raider.account);
@@ -342,7 +342,7 @@ test("a Trace counts to the week, and past the 20th pays nothing and opens nothi
 });
 
 test("the fee comes back in full after a loud heist and half after a partial one (9.4, C41)", () => {
-  for (const [grade, back] of [["loud", 108], ["partial", 54]]) {
+  for (const [grade, back] of [["loud", 220], ["partial", 110]]) {
     const t = twoPlayers();
     t.service.db.prepare(
       "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
@@ -352,8 +352,8 @@ test("the fee comes back in full after a loud heist and half after a partial one
     const verdict = { grade, out: 3, caught: 0, crew: 3, banked: 400, capacity: 800, pages: 0, cracked: 1, left: 0 };
     // Settled as a submission is, in the grant's own transaction.
     const out = t.service.settle(row, new Uint8Array(8), "c41", t.clock.now, { validated: true, verdict });
-    assert.deepEqual([out.fee, out.feeReturned], [108, back], grade);
-    assert.equal(t.service.balance(t.raider.account).starlight, 50_000 - 108 + back + out.haul.starlight, grade);
+    assert.deepEqual([out.fee, out.feeReturned], [220, back], grade);
+    assert.equal(t.service.balance(t.raider.account).starlight, 50_000 - 220 + back + out.haul.starlight, grade);
   }
 });
 
@@ -366,7 +366,7 @@ test("a game among friends is not a raid for fatigue (9.6, F48)", () => {
   t.clock.now += 60 * 60 * 1000;
   const raid = t.service.lease(t.raider.account, t.bundle);
   const out = t.service.submit(t.raider.account, raid.token, play(t, raid, { plan: openPlan() }));
-  assert.equal(out.haul.total, 5400, "the day's first raid, at full pay");
+  assert.equal(out.haul.total, 11_025, "the day's first raid, at full pay");
 });
 
 test("a raider's first ten heists of the week move Renown, and later ones pay only the haul (12.9, F40)", () => {
@@ -455,7 +455,7 @@ test("a pair's Renown and stars move on its first heist of the day, and later on
   t.clock.now += 60_000;
   const again = heist();
   assert.equal(again.validated, true);
-  assert.equal(again.haul.total, Math.floor(5400 * 0.85), "the haul is still paid, within the raider's caps");
+  assert.equal(again.haul.total, Math.floor(11_025 * 0.85), "the haul is still paid, within the raider's caps");
   assert.deepEqual([again.renown, again.stars], [{ raider: 0, defender: 0 }, { raider: 0, defender: 0 }]);
   assert.equal(t.service.seasons.league(t.raider.account).renown, 20);
   assert.equal(t.service.track.stars(t.raider.account), 10);

@@ -1,6 +1,6 @@
 {
  "_what": "The owner's decision brief: one entry per open register item waiting on the owner's decision, with its question, options, what the build does today, a recommendation and quotes from the design document; then the order to decide in, the groups that share one choice, the conflicts between answers and the ones safe to accept as recommended. Drafted, checked from two sides and merged by a multi-agent pass; tools/build_brief.py renders it and --check holds it to the register and the document.",
- "summary": "These 44 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39's fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36's base haul (2,400, 2,900 or 4,600) moves with each of them and F39's fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4's open edge is a rule or a hope. Four items keep the build's reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.",
+ "summary": "These 46 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39's fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36's base haul (2,400, 2,900 or 4,600) moves with each of them and F39's fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4's open edge is a rule or a hope. Four items keep the build's reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.",
  "order": [
   "F33",
   "F35",
@@ -45,7 +45,9 @@
   "G35",
   "G34",
   "F51",
-  "F52"
+  "F52",
+  "F53",
+  "F54"
  ],
  "order_notes": {
   "F33": "Design tier. It sets whether one Glare decides a realm, and F35's Vault-reach argument and G19's hold claim both rest on the hold numbers it changes.",
@@ -91,7 +93,9 @@
   "G35": "How friends are made and who shows in feeds. It follows F48's friendly-heist decision.",
   "G34": "Notification gathering. The last of the social items, affected by G35 and F48.",
   "F51": "Design tier, and independent: it only needs the publishing check, which is built. It should be settled before §13.2's hold rates are re-measured, because a funnelled edge raises them.",
-  "F52": "Found building F33's answer; decide it with F33 in mind, before §5.2's ward budget is re-measured over kits."
+  "F52": "Found building F33's answer; decide it with F33 in mind, before §5.2's ward budget is re-measured over kits.",
+  "F53": "Found building F36 and F39 together; settle it before the document takes §9.6's edit.",
+  "F54": "Found building F37; a display question unless the owner wants the ceiling moved."
  },
  "groups": [
   {
@@ -3817,6 +3821,103 @@
     }
    ],
    "also_needed": "Whether the 8 m reach from alarm level 4 applies to the Glare, which the simulation does not build for the alarm either."
+  },
+  "F53": {
+   "id": "F53",
+   "question": "B(V)'s base: 4,900, the every-day check with the fee an attempt keeps counted, or 4,600, the figure F36's answer named, with the fee left out of the check?",
+   "why_it_matters": "The base is the one dial on the raid faucet. F36's answer chose the rule (every day) and quoted its value before F39's fee was in the attempt; with the fee in, the rule gives 4,900. Every haul, fee and cap moves with it: B(3) is 11,025 at 4,900 and 10,350 at 4,600.",
+   "today": "tools/design_facts.py HAUL_BASE = 4900, listed behind the document under F36; server/src/facts.json carries it. tools/economy_model/raidworth.py attempt_value() takes the fee off an attempt when Config.entry_fee is on; rerun.settle() ships smallest_passing_base(first_day_only=False).",
+   "options": [
+    {
+     "key": "A",
+     "label": "4,900: the rule, with the fee counted (the build)",
+     "means": "The base is the smallest hundred at which an average attempt, less the fee it keeps, pays at least what the crew would have produced at home, on every day at every Vault level.",
+     "consequences": "Hauls are 6.5% larger than at 4,600; the check and the fee agree, so no Vault level has a day on which raiding is the worse choice.",
+     "numbers": "Every day with the fee: 4,900 (4,800 fails). Without the fee: 4,600. On the day each level arrives: 3,100. Birth rule: 1.3455 at both edges either way.",
+     "doc_edit": "§9.6: 'B(V), the base — 4,900 × 1.5^(V−1)', and in 'What a raid must be worth': 'an average attempt, less the entry fee it keeps, pays at least …, on every day at a level'.",
+     "build_change": "None: this is what the build does."
+    },
+    {
+     "key": "B",
+     "label": "4,600: the figure named, fee outside the check",
+     "means": "The base is 4,600, and the check prices an attempt without its fee.",
+     "consequences": "On some days an attempt, after its fee, pays a little less than staying home, the case §9.6's sentence says players skip.",
+     "numbers": "At 4,600 with the fee counted the check fails; without it it passes on every day.",
+     "doc_edit": "§9.6: 'B(V), the base — 4,600 × 1.5^(V−1)'.",
+     "build_change": "tools/design_facts.py HAUL_BASE = 4600 and facts.json regenerated; raidworth.attempt_value() leaves the fee out; the server tests re-pinned (B(3) 10,350, fee 207)."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "rationale": "The owner chose the rule, and the rule is about whether a raid is worth making; a fee the raid costs belongs in that sum.",
+    "confidence": "high"
+   },
+   "interacts_with": [
+    "F36",
+    "F39",
+    "C41"
+   ],
+   "quotes": [
+    {
+     "section": "9.6",
+     "text": "at every Vault level, an average attempt pays at least what the same characters would have produced working over the heist and its rest"
+    },
+    {
+     "section": "9.6",
+     "text": "A crew on a heist does not work (5.8), and a raid that pays less than staying home is a raid players skip."
+    }
+   ],
+   "also_needed": "None."
+  },
+  "F54": {
+   "id": "F54",
+   "question": "A non-raider stops at Keeper 10, 6.5 experience short of 11, for good: show it as a gate, give exactly one more level, or open the ceiling?",
+   "why_it_matters": "F37's answer made the launch 24 the non-raider's ceiling and Keeper 12 the first level that needs heists. Built, the plateau lands a hair below the next level, which reads as a bug, not a design.",
+   "today": "tools/economy_model: a never-raids player reaches Keeper 10 on day 82 and holds 2,223.5 of 2,230; test_finding_a_player_who_never_raids_stops_levelling pins it.",
+   "options": [
+    {
+     "key": "A",
+     "label": "Show it as a gate",
+     "means": "Nothing changes in the rules; the client shows the bar as waiting on the Spire (a gate), not as nearly full.",
+     "consequences": "The ceiling F37 chose holds exactly; the near miss is a display question.",
+     "numbers": "Keeper 10 from day 82; launch 24 by day 76.",
+     "doc_edit": "§14.4: 'a player who never raids reaches Keeper 10 and the launch 24; its bar then waits on the Spire, which needs heists'.",
+     "build_change": "Client: the Keeper bar shows a gate when the only experience left is spending the Spire holds back."
+    },
+    {
+     "key": "B",
+     "label": "Exactly one more level",
+     "means": "The tutorial's ruins pay enough more experience to cross into Keeper 11, and nothing else changes.",
+     "consequences": "The plateau becomes Keeper 11, still below 12; the next level's bar starts empty rather than full.",
+     "numbers": "6.5 experience is the whole gap today; any change to spending or the ruins moves it, so the margin should be set with room (say 50).",
+     "doc_edit": "§16: the two tutorial ruins pay a successful heist's experience and 50 more.",
+     "build_change": "economy_model: the ruins' extra experience; re-pin the test at Keeper 11."
+    },
+    {
+     "key": "C",
+     "label": "Open the ceiling",
+     "means": "Daily goals pay 10 experience a day, or a ruin a week pays a heist's.",
+     "consequences": "A non-raider goes past Keeper 12 without heists, which F37's answer ruled out.",
+     "numbers": "Goals: Keeper 16 by day 568. A weekly ruin: Keeper 20 by day 499.",
+     "doc_edit": "§14.2: daily goals or ruins as an experience source.",
+     "build_change": "economy_model and the server's goals, when built."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "rationale": "It keeps the ceiling the owner chose and fixes what reads badly, which is only how the bar is drawn.",
+    "confidence": "medium"
+   },
+   "interacts_with": [
+    "F37"
+   ],
+   "quotes": [
+    {
+     "section": "14.2",
+     "text": "Keeper experience comes from successful heists (30 + 6 × Keeper level), foiled heists (10 + 2 × level), spending (1 for every 40 Starlight) and restoring laws (60 + 10 × level)."
+    }
+   ],
+   "also_needed": "None."
   }
  }
 }

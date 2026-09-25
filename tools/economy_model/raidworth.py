@@ -53,9 +53,15 @@ class Level:
         return self.attempt / self.stay_home_first if self.stay_home_first else float("inf")
 
 
-def attempt_value(base: float, vault: int, edge: float) -> float:
+def attempt_value(base: float, vault: int, edge: float, success: float = 0.0,
+                  fee: bool = False) -> float:
+    """B(V) x the band's lower edge x average fatigue, less the fee an attempt
+    keeps in expectation when the fee is on (F39: 2% of B(V); C41: returned
+    after a clean or loud heist and half after a partial one)."""
     fatigue = EconomyModel.fatigue_sum(HEISTS) / HEISTS
-    return base * data.HAUL_GROWTH ** (vault - 1) * edge * fatigue
+    b = base * data.HAUL_GROWTH ** (vault - 1)
+    kept = data.ENTRY_FEE_RATE * b * (1 - success * data.FEE_RETURNED_SHARE_OF_SUCCESSES)
+    return b * edge * fatigue - (kept if fee else 0.0)
 
 
 def levels(cfg: Config, days: int) -> list[Level]:
@@ -74,9 +80,11 @@ def levels(cfg: Config, days: int) -> list[Level]:
         stay = crew * per_worker * HOURS_AWAY
         row = rows.get(vault)
         if row is None:
+            success = data.heist_success_rate(model.s.day)
             rows[vault] = Level(vault, model.s.day, model.s.day, model.s.day, crew,
                                 per_worker, stay,
-                                attempt_value(cfg.haul_base, vault, edge), stay)
+                                attempt_value(cfg.haul_base, vault, edge, success, cfg.entry_fee),
+                                stay)
             continue
         row.last_day = model.s.day
         if stay > row.stay_home:

@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6358,6 +6358,52 @@ dict(id="F52", kind="finding", severity="significant", status="open",
          "alarm\u2019s, so Whispers does not stretch it, or accept that a "
          "Whispers realm\u2019s Glare is realm-wide and re-measure §5.2\u2019s "
          "budget over kits with it in."),
+
+dict(id="F53", kind="finding", severity="significant", status="open",
+     title="F36\u2019s every-day rule and F39\u2019s fee in the attempt give "
+           "4,900, not the 4,600 F36\u2019s answer names",
+     refs=["9.6", "9.4", "32.9"],
+     body="The owner answered F36 with option C: the raid-worth check holds "
+          "on every day at every Vault level, which the brief measured as "
+          "4,600. F39\u2019s answer puts the fee in the attempt: an attempt "
+          "keeps 2% of B(V) unless it returns, after a clean or loud heist "
+          "and half after a partial one (C41). Run together, on the model "
+          "with every answer built (strays priced, the free track, the "
+          "Heart at realm level 3), the smallest hundred that passes every "
+          "day is <strong>4,900</strong>; with the fee left out of the "
+          "check it is 4,600, and on the day each level arrives 3,100. The "
+          "build ships 4,900, following the rule the owner chose rather "
+          "than the figure it produced before the fee was in it: B(3), the "
+          "example island\u2019s, is 11,025, and the fee there 220. §9.5\u2019s "
+          "birth rule then tunes to 1.3455 at both edges, as F38\u2019s "
+          "answer said. Found building the answers.",
+     measured="tools/economy_model/test_economy_model.py "
+              "test_the_owners_base_is_the_smallest_hundred_passing_every_day",
+     rec="Confirm 4,900, the every-day rule with the fee counted, or keep "
+         "4,600 and leave the fee out of the check."),
+
+dict(id="F54", kind="finding", severity="minor", status="open",
+     title="With every answer built, a player who never raids stops 6.5 "
+           "experience short of Keeper 11",
+     refs=["14.2", "14.4", "10.4"],
+     body="F37\u2019s answer gives a non-raider daily goals and the "
+          "tutorial\u2019s two ruins, and keeps the launch 24 as the "
+          "ceiling: Keeper 12 and up need heists. On the model with every "
+          "answer built, a non-raider restores the launch 24 by day 76 and "
+          "reaches Keeper 10 on day 82, then stays there for good with "
+          "2,223.5 of the 2,230 experience Keeper 11 needs \u2014 the near "
+          "miss the answer\u2019s own test was to keep out. It stops there "
+          "because spending is its only experience once the Spire\u2019s "
+          "Keeper gate holds its buildings. Either lever the brief named "
+          "removes the ceiling rather than the near miss: goals paying 10 "
+          "experience a day take it to Keeper 16 by day 568, and a ruin a "
+          "week paying a heist\u2019s experience to Keeper 20 by day 499. "
+          "Found building the answers.",
+     measured="tools/economy_model/test_economy_model.py "
+              "test_finding_a_player_who_never_raids_stops_levelling",
+     rec="Show the plateau as a gate rather than a bar nearly full, or give "
+         "the non-raider exactly one more level and no more, or accept a "
+         "ceiling above Keeper 12 by paying goals or ruins experience."),
 
 dict(id="F51", kind="finding", severity="significant", status="open",
      title="A Keeper can close every edge tile but one, and so choose where "

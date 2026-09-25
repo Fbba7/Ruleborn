@@ -41,7 +41,9 @@ export const PREMIUM_KINDS = ["realm_skin", "sky_theme", "bridge_style", "outfit
 export const PREMIUM_PRICE = facts.PREMIUM_TRACK_EUR * 100;
 
 /**
- * Tier `tier`'s rewards in a season. The free track: a stray at the top,
+ * Tier `tier`'s rewards in a season. The free track: at the top, a stray
+ * offered for adoption at the next birth's price (F38, decided: a found stray
+ * joins only when that price is paid),
  * a little Starglass every tenth tier (§9.1's "small amounts from the free
  * season track" — one Starglass a season, a sixth of the premium track),
  * five pages every other fifth, and Essence on the rest. The premium track: a
@@ -49,7 +51,7 @@ export const PREMIUM_PRICE = facts.PREMIUM_TRACK_EUR * 100;
  */
 export function tierRewards(season, tier) {
   let free;
-  if (tier === facts.SEASON_TIERS) free = { stray: 1 };
+  if (tier === facts.SEASON_TIERS) free = { strayOffer: 1 };
   else if (tier % 10 === 0) free = { starglass: 25 };
   else if (tier % 5 === 0) free = { pages: 5 };
   else free = { essence: 500 };

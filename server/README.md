@@ -75,8 +75,11 @@ The owner answered the decision brief (`docs/decisions/answers.json`), and
 where an answer changes a rule the document still states, the server follows
 the answer and the register item waits for the document:
 
+- **The base** (F36) is 4,900, where §9.6 ships 2,400: the smallest hundred
+  at which §9.6's raid-worth check holds on every day, with the fee an
+  attempt keeps inside it (F53). B(3), the example island's, is 11,025.
 - **The fee** (F39, C41, G37) is 2% of B(V) at the target's Vault level —
-  48 at level 1, 1,845 at 10 — with no floor or cap, shown on the lease
+  98 at level 1, 3,767 at 10 — with no floor or cap, shown on the lease
   (`fee`) before the heist. It comes back in full after a clean or loud
   heist and half after a partial one; after a foiled one it passes to the
   defender on the pair's first foil of the day, and otherwise stays with

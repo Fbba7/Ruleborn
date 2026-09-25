@@ -124,7 +124,7 @@ and what the player does is what the server re-plays.
 - the whole loop against a real server — `status.py` starts `server/` on a free
   port and a fresh database with the example island published: sign in, take
   a target, lease it, play it through the heist screen's own controls, submit,
-  and the server re-simulates it and pays 5,400;
+  and the server re-simulates it and pays 11,025;
 - every control on every screen meets §21.1's size, reach, corner and
   safe-area rules, in a 9:19.5 frame and a 9:16 one (a headless run has no
   screen, so the test sets the window to each), and no text is smaller than 13

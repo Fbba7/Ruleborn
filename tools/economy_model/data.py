@@ -260,9 +260,9 @@ def heist_success_rate(day: int) -> float:
 
 
 try:
-    from ..design_facts import ENTRY_FEE_MAX, ENTRY_FEE_MIN, ENTRY_FEE_RATE
+    from ..design_facts import ENTRY_FEE_RATE
 except ImportError:
-    from design_facts import ENTRY_FEE_MAX, ENTRY_FEE_MIN, ENTRY_FEE_RATE  # 9.4 (D37)
+    from design_facts import ENTRY_FEE_RATE  # 9.4 (D37), of B(V) as the owner decided (F39)
 
 # --------------------------------------------------------------------------
 # Player archetypes (§14.1)
@@ -373,8 +373,8 @@ MAX_CHARACTER_LEVEL = 10
 WEAVE_AETHER_PER_POINT = 40
 UPKEEP_AETHER_PER_POINT_HOUR = 0.5
 
-#: §9.5: scouting is 20 Aether a realm, and §12.3 says a scout lasts 15 minutes.
-SCOUT_AETHER_PER_REALM = 20
+# §9.5's scouting price, 20 Aether a realm, is gone: the owner made scouting
+# free (F46), so it is not a sink.
 #: §9.5: a Lab experiment is 400 Aether x Lab level.
 LAB_AETHER_PER_LEVEL = 400
 
@@ -467,7 +467,7 @@ def _constant(name: str) -> str:
 
 
 #: §5.2 and §10.2: wards and guard posts by realm level. The Heart has no
-#: realm level and no count of its own (G19); the model gives it level 1's.
+#: realm level of its own; the owner decided it counts as level 3 (G19).
 WARDS_BY_REALM_LEVEL = (8, 8, 6, 7, 8)
 try:
     from ..design_facts import GUARD_POSTS, ROSTER_KEEP_SHARE
@@ -493,6 +493,10 @@ PAGES_STUDY = 2               # "receives 2 of its pages, 3 if the heist was cle
 PAGES_STUDY_CLEAN_BONUS = 1
 #: §9.6's split of a successful heist: 35% clean, 40% loud, 25% partial.
 CLEAN_SHARE_OF_SUCCESSES = 0.35
+#: The owner's answer to C41: the fee comes back in full after a clean or a
+#: loud heist and half after a partial one — of the successes split 35% clean,
+#: 40% loud and 25% partial (§9.6's split, above), 0.35 + 0.40 + 0.25 / 2.
+FEE_RETURNED_SHARE_OF_SUCCESSES = 0.35 + 0.40 + 0.25 / 2
 
 #: Free characters. §11.5: "About one heist in eight finds a stray in the
 #: target universe; carrying it out adds it to the roster" — so one in eight
@@ -509,6 +513,19 @@ RESOURCES = ("starlight", "aether", "essence")
 PAGES_PYLON = 1               # "Breaking a pylon gives a page"; the model breaks one a success
 PAGES_FOILED = 1              # "a foiled heist gives one"
 PAGES_DAILY_GOALS = 2         # §14.4: "About 2"
+
+#: The owner's answer to F37: §16's tutorial ruins, two on day 1, pay a
+#: successful heist's experience, and pay no haul.
+TUTORIAL_RUINS = 2
+
+#: The season track's free rewards (G28, answered): 40 tiers of 500 Essence
+#: and 5 of 5 pages over 49 tiers bought after a free first, at 10 stars a
+#: tier; an attempt earns 4.97 stars at §9.6's 62.5% success and 35/40/25 split.
+FREE_TRACK_ESSENCE = 40 * 500
+FREE_TRACK_PAGES = 5 * 5
+TRACK_TIERS = 49
+TIER_STARS = 10
+STARS_PER_ATTEMPT = 4.97
 
 #: §7.6's chapters: the Keeper level at which the Codex holds each count of
 #: laws. The launch Codex is the first two; the full 48 all five.
