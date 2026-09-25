@@ -673,6 +673,8 @@ def check_artifact_urls(files: list[pathlib.Path]) -> None:
             before = text[start:match.start()].lower()
             if "prototype" in before:
                 context = "prototype"
+            elif "decide them" in before or "decisions waiting" in before:
+                context = "decisions"
             elif "roadmap" in before or "progress" in before:
                 context = "roadmap"
             else:

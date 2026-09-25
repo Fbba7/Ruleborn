@@ -806,7 +806,9 @@ dict(
                     "before the grant \u2014 the review of this work found that "
                     "Play refunds a purchase nobody consumes after three days, and "
                     "that only Google can say which purchases were a tester\u2019s "
-                    "(D67)."
+                    "(D67). The 42 decisions only the owner can make are a brief, "
+                    "each with options, numbers and a recommendation, answered on "
+                    "its own page."
                     "<br><br><strong>Not yet:</strong> Google Play's sign-in "
                     "and receipts (need Google's API), crossing realms, \u00a712.22's generated "
                     "fallback targets, and a landing command in the replay.",

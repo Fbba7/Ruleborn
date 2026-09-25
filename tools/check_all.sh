@@ -43,6 +43,7 @@ python3 tools/league_model.py --check server/src/leagues.json
 python3 server/status.py
 node --no-warnings server/load.mjs --check
 node --no-warnings server/src/privacy.mjs --check
+python3 tools/build_brief.py --check
 
 echo
 echo "== the client: the same simulation inside Godot, and its screen =="
