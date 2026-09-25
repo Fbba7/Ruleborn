@@ -11,7 +11,7 @@
 // an independent one on every island the server stores.
 
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync, existsSync, renameSync, unlinkSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, writeFileSync, existsSync, renameSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 
 export const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -60,6 +60,13 @@ export class Store {
     } else {
       this.memory.delete(key);
     }
+  }
+
+  /** Every key held. */
+  keys() {
+    if (!this.dir) return [...this.memory.keys()];
+    return readdirSync(this.dir).filter((d) => /^[0-9a-f]{2}$/.test(d))
+      .flatMap((d) => readdirSync(join(this.dir, d)).filter((k) => KEY.test(k)));
   }
 
   get(key) {

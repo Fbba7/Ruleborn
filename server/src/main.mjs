@@ -31,13 +31,13 @@
 
 import { createServer } from "node:http";
 import { X509Certificate, randomBytes } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, linkSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { Journal, reapplyDeletions } from "./accounts.mjs";
 import { open } from "./db.mjs";
-import { handler } from "./http.mjs";
+import { handler, routeOf } from "./http.mjs";
 import { Service } from "./service.mjs";
 import { Builds } from "./sim.mjs";
 import { Store } from "./store.mjs";
@@ -77,11 +77,31 @@ if (storeKit && !gameCenter && process.env.RULEBORN_STUB_SIGNIN !== "1") {
 }
 
 mkdirSync(data, { recursive: true });
+// A key shorter than this signs nothing: an empty one, from a file a crash
+// left before it was written, would let anyone make any session token.
+const SECRET_MIN = 32;
 function secret() {
-  if (process.env.RULEBORN_SECRET) return process.env.RULEBORN_SECRET;
-  const path = join(data, "secret");
-  if (!existsSync(path)) writeFileSync(path, randomBytes(32).toString("hex"), { mode: 0o600, flag: "wx" });
-  return readFileSync(path, "utf8").trim();
+  let key = process.env.RULEBORN_SECRET;
+  if (!key) {
+    const path = join(data, "secret");
+    if (!existsSync(path)) {
+      // Written whole beside, then linked into place: a crash leaves no
+      // half-written key, and a second process starting at once keeps the
+      // first one's.
+      const part = `${path}.${process.pid}.part`;
+      writeFileSync(part, randomBytes(32).toString("hex"), { mode: 0o600 });
+      try {
+        linkSync(part, path);
+      } catch (err) {
+        if (err.code !== "EEXIST") throw err;
+      } finally {
+        unlinkSync(part);
+      }
+    }
+    key = readFileSync(path, "utf8").trim();
+  }
+  if (key.length < SECRET_MIN) throw new Error(`the server's secret is shorter than ${SECRET_MIN} characters`);
+  return key;
 }
 
 const service = new Service({
@@ -112,6 +132,8 @@ const handle = handler(service);
 // has it made again before anyone can sign in.
 const remade = reapplyDeletions(service);
 if (remade) console.log(`${remade} deletion(s) made again from the journal`);
+// Target lists no band names any more, which name players (§20.5).
+service.sweepLists();
 
 // §24.8's lists are "generated periodically"; how often is not said. Every
 // fifteen minutes here, and once at start.
@@ -163,8 +185,7 @@ createServer(async (req, res) => {
   } catch (err) {
     // The route alone, as the edge logs it: a path can carry an account id
     // or a token, and a log is not where those are kept (§20.5).
-    const route = (req.url ?? "").split("?")[0].split("/").filter(Boolean).slice(0, 2).join("/");
-    console.error(`${req.method} /${route}:`, err);
+    console.error(`${req.method} /${routeOf(req.url)}:`, err);
     if (!res.headersSent) res.writeHead(500, { "content-type": "application/json" });
     res.end(JSON.stringify({ error: "internal" }));
   }
@@ -191,5 +212,7 @@ setInterval(tidy, DAY_MS).unref();
 // §14.6's notifications, sent once a minute. Push is Firebase Cloud
 // Messaging (§24.1), which needs the operator's credentials; without them a
 // due notification is written to the log instead (D68).
-const push = (token, message) => console.log(`push ${token.slice(0, 8)}… ${JSON.stringify(message)}`);
+// The log names the kind and a count, never the token or a heist (§20.5).
+const push = (token, message) => console.log(
+  `push ${message.kind}${message.heists ? ` ×${message.heists.length}` : ""}`);
 setInterval(() => service.notifications.deliver(push), 60 * 1000).unref();

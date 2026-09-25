@@ -57,20 +57,20 @@ Erased: gone. Severed: kept, under an account id that no longer leads to anyone 
 
 | Table | Deleted at the player's request | Deleted because the player is under 13 | Kept for |
 |---|---|---|---|
-| `accounts` | severed | severed | as long as the account |
+| `accounts` | severed | severed | good: a record (F43) |
 | `islands` | erased | erased | as long as the account |
 | `snapshots` | severed | severed — the row stays, as nobody's; an under-13 player's islands' bytes are deleted from the store | good: a record (F43) |
 | `target_lists` | severed | erased — lists are made again at once without the player, and the one before is deleted | while current |
 | `leases` | severed | severed — an under-13 player's open leases are deleted | good: a record (F43) |
 | `heists` | severed | severed — an under-13 player's replays are deleted at once | good: a record (F43) |
 | `ledger` | severed | severed | good: a record (F43) |
-| `ratings` | severed | erased — severed on a deletion; deleted for an under-13 player | as long as the account |
+| `ratings` | severed | erased — severed on a deletion; deleted for an under-13 player | good: a record (F43) |
 | `defence_shares` | kept | kept | good: not about a person |
 | `workshop_items` | severed | severed — withdrawn; an under-13 player's islands' bytes are deleted | good: a record (F43) |
 | `workshop_plays` | severed | erased — severed on a deletion; deleted for an under-13 player | good: a record (F43) |
-| `workshop_completions` | severed | erased — severed on a deletion; deleted for an under-13 player | as long as the account |
-| `workshop_ratings` | severed | erased — severed on a deletion; deleted for an under-13 player | as long as the account |
-| `workshop_remixes` | severed | erased — severed on a deletion; deleted for an under-13 player | as long as the account |
+| `workshop_completions` | severed | erased — severed on a deletion; deleted for an under-13 player | good: a record (F43) |
+| `workshop_ratings` | severed | erased — severed on a deletion; deleted for an under-13 player | good: a record (F43) |
+| `workshop_remixes` | severed | erased — severed on a deletion; deleted for an under-13 player | good: a record (F43) |
 | `workshop_reports` | severed | severed — an under-13 player's reports stand as nobody's | good: a record (F43) |
 | `seasons` | kept | kept | good: not about a person |
 | `standings` | severed | severed | good: a record (F43) |
@@ -91,6 +91,7 @@ Erased: gone. Severed: kept, under an account id that no longer leads to anyone 
 | `purchases` | severed | severed | good: a record (F43) |
 | `notifications` | erased | erased | 7 days after sent (`notifications.expire`) |
 | `bans` | kept | kept — kept: the ban outlives the account | as long as the ban |
+| `erasures` | kept | kept | while current |
 | `event_batches` | erased | erased | 90 days (`telemetry.compact`) |
 | `first_seen` | erased | erased | as long as the account |
 | `cohorts` | kept | kept | good: not about a person |

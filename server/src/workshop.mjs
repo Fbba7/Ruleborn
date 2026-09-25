@@ -12,6 +12,7 @@
 
 import { readFileSync } from "node:fs";
 
+import { banIdentity } from "./accounts.mjs";
 import { transaction } from "./db.mjs";
 import { readHeader } from "./sim.mjs";
 import { Refused, clockTicks } from "./service.mjs";
@@ -452,10 +453,8 @@ export class Workshop {
     this.db.prepare(
       "UPDATE accounts SET banned_at = ?, banned_reason = ? WHERE id = ? AND banned_at IS NULL")
       .run(now, reason, account);
-    this.db.prepare(
-      `INSERT OR IGNORE INTO bans (identity, banned_at, reason)
-         SELECT platform_identity, banned_at, banned_reason FROM accounts
-          WHERE id = ? AND platform_identity NOT LIKE 'deleted:%'`).run(account);
+    const a = this.db.prepare("SELECT platform_identity, banned_at, banned_reason FROM accounts WHERE id = ?").get(account);
+    if (!a.platform_identity.startsWith("deleted:")) banIdentity(this.db, a.platform_identity, a.banned_at, a.banned_reason);
     this.db.prepare("DELETE FROM challenges WHERE account = ?").run(account);
     this.db.prepare("DELETE FROM friends WHERE a = ? OR b = ?").run(account, account);
     this.db.prepare("DELETE FROM friend_invites WHERE account = ?").run(account);

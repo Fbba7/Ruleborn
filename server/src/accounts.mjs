@@ -32,7 +32,7 @@
 // again when the server starts (`reapplyDeletions`). The journal holds the
 // account id, the reason and the time, and nothing that names a person.
 
-import { closeSync, existsSync, fsyncSync, openSync, readFileSync, writeSync } from "node:fs";
+import { closeSync, existsSync, fstatSync, fsyncSync, openSync, readFileSync, readSync, writeSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
@@ -52,9 +52,16 @@ export class Journal {
       this.memory.push({ ...entry });
       return;
     }
-    const fd = openSync(this.path, "a", 0o600);
+    const fd = openSync(this.path, "a+", 0o600);
     try {
-      writeSync(fd, `${JSON.stringify(entry)}\n`);
+      // A line a crash cut short is ended first, so this entry is a line of
+      // its own and not the tail of an unreadable one.
+      const size = fstatSync(fd).size;
+      const last = Buffer.alloc(1);
+      const torn = size > 0 && readSync(fd, last, 0, 1, size - 1) === 1 && last[0] !== 0x0a;
+      const line = Buffer.from(`${torn ? "\n" : ""}${JSON.stringify(entry)}\n`);
+      let at = 0;
+      while (at < line.length) at += writeSync(fd, line, at);
       fsyncSync(fd);
     } finally {
       closeSync(fd);
@@ -91,18 +98,19 @@ export function deleteAccount(service, account, reason = "requested", { journal 
   // restore is still in the journal, and is made again.
   if (journal && !row.deleted_at) service.deletions.append({ account, reason, at: now });
   const who = service.telemetry.pseudonym(account);
-  const files = { replays: [], bundles: [] };
   const done = transaction(db, () => {
-    // A ban outlives the account on its identity alone.
+    // A ban outlives the account on its identity alone, and the account row
+    // keeps nothing of it that could be matched back to the identity: the
+    // ban's own time is in no other row (§20.12).
     if (row.banned_at && !row.platform_identity.startsWith("deleted:")) {
-      db.prepare("INSERT OR IGNORE INTO bans (identity, banned_at, reason) VALUES (?, ?, ?)")
-        .run(row.platform_identity, row.banned_at, row.banned_reason);
+      banIdentity(db, row.platform_identity, row.banned_at, row.banned_reason);
     }
     db.prepare(
       `UPDATE accounts SET platform_identity = ?,
          deleted_at = COALESCE(deleted_at, ?),
          deleted_reason = COALESCE(deleted_reason, ?), equipped = '{}', push_token = NULL,
-         reminder_at = NULL, utc_offset = 0, night_quiet = 1 WHERE id = ?`)
+         reminder_at = NULL, utc_offset = 0, night_quiet = 1,
+         banned_at = NULL, banned_reason = NULL WHERE id = ?`)
       .run(`deleted:${account}`, now, reason, account);
     // Out of matchmaking and the target lists: an island row is what makes a
     // snapshot a target (service.lease).
@@ -145,23 +153,48 @@ export function deleteAccount(service, account, reason = "requested", { journal 
         .run(now, account);
       left.push(crew);
     }
-    const erased = reason === "under-13" ? erase(db, account, files) : undefined;
+    const erased = reason === "under-13" ? erase(db, account) : undefined;
     return { islands: Number(islands), withdrawn: Number(withdrawn), events: Number(events), left,
              ...(erased ? { erased } : {}) };
   });
-  // The files once the rows that name them are gone: a file deleted before a
-  // transaction that then failed could not be put back.
-  for (const hash of files.replays) service.replays.delete(hash);
-  for (const hash of files.bundles) service.store.delete(hash);
+  finishErasures(service);
+  return { deleted: true, reason: row.deleted_reason ?? reason, ...done };
+}
+
+/** A ban kept on the identity, to the day: enough to refuse its sign-in,
+ *  and no exact time to match against a row the account left (§20.12). */
+export function banIdentity(db, identity, at, reason) {
+  db.prepare("INSERT OR IGNORE INTO bans (identity, banned_at, reason) VALUES (?, ?, ?)")
+    .run(identity, at - (at % DAY_MS), reason);
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * The files an under-13 deletion erases, and the target lists it remakes,
+ * done once the rows that name them are gone — a file deleted before a
+ * transaction that then failed could not be put back. Each waits in
+ * `erasures`, written in the deletion's transaction, until it is done, so a
+ * crash between the commit and the files is finished at the next start.
+ */
+export function finishErasures(service) {
+  const db = service.db;
+  const pending = db.prepare("SELECT store, hash FROM erasures ORDER BY store, hash").all();
+  for (const e of pending) {
+    if (e.store === "replays") service.replays.delete(e.hash);
+    else if (e.store === "bundles") service.store.delete(e.hash);
+  }
   // Off every target list now, not at the next regeneration, and off the
   // list before it too.
-  if (reason === "under-13") service.targetLists({ keepPrevious: false });
-  return { deleted: true, reason: row.deleted_reason ?? reason, ...done };
+  if (pending.some((e) => e.store === "lists")) service.targetLists({ keepPrevious: false });
+  db.prepare("DELETE FROM erasures").run();
+  return pending.length;
 }
 
 /** §20.11's under-13 deletion, beyond what every deletion does: inside
  *  deleteAccount's transaction, with the files to delete after it. */
-function erase(db, account, files) {
+function erase(db, account) {
+  const pending = db.prepare("INSERT OR IGNORE INTO erasures (store, hash) VALUES (?, ?)");
   // The replays they played. Two heists can carry the same bytes; the file
   // goes when no heist still keeps it.
   const played = db.prepare(
@@ -169,11 +202,12 @@ function erase(db, account, files) {
   for (const h of played) db.prepare("UPDATE heists SET replay_gone = 1 WHERE token = ?").run(h.token);
   for (const hash of new Set(played.map((h) => h.log_hash))) {
     if (!db.prepare("SELECT 1 FROM heists WHERE log_hash = ? AND replay_gone = 0").get(hash)) {
-      files.replays.push(hash);
+      pending.run("replays", hash);
     }
   }
   // Their islands' bytes, unless another player's island, Workshop island or
-  // challenge link is the same bytes.
+  // challenge link is the same bytes, or another player's island was, raided
+  // or leased as theirs: that raid still settles, and its replay still plays.
   const bundles = db.prepare(
     `SELECT bundle FROM snapshots WHERE owner = :a
       UNION SELECT bundle FROM workshop_items WHERE creator = :a`).all({ a: account }).map((r) => r.bundle);
@@ -181,10 +215,12 @@ function erase(db, account, files) {
     const shared = db.prepare(
       `SELECT 1 FROM islands WHERE bundle = :b AND owner != :a
         UNION ALL SELECT 1 FROM workshop_items WHERE bundle = :b AND creator != :a
-        UNION ALL SELECT 1 FROM challenges WHERE bundle = :b AND account != :a LIMIT 1`)
+        UNION ALL SELECT 1 FROM challenges WHERE bundle = :b AND account != :a
+        UNION ALL SELECT 1 FROM leases WHERE bundle = :b AND defender != :a LIMIT 1`)
       .get({ a: account, b: bundle });
-    if (!shared) files.bundles.push(bundle);
+    if (!shared) pending.run("bundles", bundle);
   }
+  pending.run("lists", "");
   const ratings = db.prepare(
     "DELETE FROM ratings WHERE (kind = 'raider' AND key = ?) OR (kind = 'island' AND substr(key, 1, ?) = ?)")
     .run(account, account.length + 1, `${account}/`).changes;
@@ -196,13 +232,15 @@ function erase(db, account, files) {
     .reduce((n, table) => n + Number(db.prepare(`DELETE FROM ${table} WHERE player = ?`).run(account).changes), 0);
   // A report they made still stands for a moderator to act on, as nobody's.
   db.prepare("UPDATE workshop_reports SET reporter = NULL WHERE reporter = ?").run(account);
-  return { replays: played.length, bundles: files.bundles.length, ratings: Number(ratings),
+  const bytes = db.prepare("SELECT COUNT(*) AS n FROM erasures WHERE store = 'bundles'").get().n;
+  return { replays: played.length, bundles: Number(bytes), ratings: Number(ratings),
            leases: Number(leases), workshop };
 }
 
 /** Every journalled deletion the database does not hold — as after a
  *  restore from before it — made again. Run when the server starts. */
 export function reapplyDeletions(service) {
+  finishErasures(service);
   let made = 0;
   for (const e of service.deletions.entries()) {
     const row = service.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?").get(e.account);

@@ -70,6 +70,10 @@ export function problems(doc = load(), tables = schema()) {
     if (!DELETIONS.includes(d.deletion)) out.push(`${table}: deletion ${d.deletion}?`);
     keep(table, d.keep);
     if (!d.keep) out.push(`${table}: no keep`);
+    // "As long as the account" is false of a row its deletion leaves behind.
+    if (d.keep?.for === "account" && d.deletion !== "erased") {
+      out.push(`${table}: kept as long as the account, and ${d.deletion} when it is deleted`);
+    }
     for (const p of d.purposes ?? []) if (!doc.purposes[p]) out.push(`${table}: purpose ${p}?`);
     if (!d.purposes?.length) out.push(`${table}: no purpose`);
     for (const [c, col] of Object.entries(d.columns)) {

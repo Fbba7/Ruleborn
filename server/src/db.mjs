@@ -485,6 +485,15 @@ CREATE TABLE IF NOT EXISTS bans (
   reason    TEXT
 );
 
+-- What an under-13 deletion still has to delete outside the database — a
+-- replay, an island's bytes — or remake (the target lists, store 'lists'),
+-- written in the deletion's transaction and cleared once done (accounts.mjs).
+CREATE TABLE IF NOT EXISTS erasures (
+  store TEXT NOT NULL CHECK (store IN ('replays', 'bundles', 'lists')),
+  hash  TEXT NOT NULL,
+  PRIMARY KEY (store, hash)
+);
+
 -- First-party telemetry (§24, §24.3; telemetry.mjs). Keyed by a pseudonym,
 -- never an account (§20.5), and discarded after 90 days: not append-only,
 -- because §24.3 says the raw events go. §24.1: "Telemetry is batched rather
@@ -604,10 +613,19 @@ export function open(path = ":memory:") {
                    FROM events_before_batches ORDER BY id;
                DROP TABLE events_before_batches;`);
     }
-    // A ban made before the bans table was held on the account's identity.
+    // A ban made before the bans table was held on the account's identity,
+    // and kept it even once the account was deleted: the ban moves to the
+    // identity, to the day; a deleted account's row is severed like anyone's
+    // and keeps no ban time to match it back by; and a banned player's
+    // friendships and invites end, as a ban now ends them (accounts.mjs).
     db.exec(`INSERT OR IGNORE INTO bans (identity, banned_at, reason)
-               SELECT platform_identity, banned_at, banned_reason FROM accounts
-                WHERE banned_at IS NOT NULL AND platform_identity NOT LIKE 'deleted:%'`);
+               SELECT platform_identity, banned_at - banned_at % 86400000, banned_reason FROM accounts
+                WHERE banned_at IS NOT NULL AND platform_identity NOT LIKE 'deleted:%';
+             UPDATE accounts SET platform_identity = 'deleted:' || id, banned_at = NULL, banned_reason = NULL
+              WHERE deleted_at IS NOT NULL AND (platform_identity NOT LIKE 'deleted:%' OR banned_at IS NOT NULL);
+             DELETE FROM friends WHERE a IN (SELECT id FROM accounts WHERE banned_at IS NOT NULL)
+                                    OR b IN (SELECT id FROM accounts WHERE banned_at IS NOT NULL);
+             DELETE FROM friend_invites WHERE account IN (SELECT id FROM accounts WHERE banned_at IS NOT NULL);`);
     if (rebuilt) {
       db.exec(`INSERT INTO ledger (id, account, currency, amount, reason, heist, at)
                  SELECT id, account, currency, amount, reason, heist, at FROM ledger_before_starglass;

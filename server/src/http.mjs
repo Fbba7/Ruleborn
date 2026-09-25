@@ -237,6 +237,12 @@ async function workshopRoute(workshop, request, url, parts, who) {
   return null;
 }
 
+/** A request's route for a log line: the first two segments of its path,
+ *  never an id or a token that follows them, nor its query (§20.5). */
+export function routeOf(url) {
+  return String(url ?? "").split("?")[0].split("/").filter(Boolean).slice(0, 2).join("/");
+}
+
 export function handler(service) {
   const workshop = new Workshop(service);
   const social = new Social(service);
@@ -251,7 +257,7 @@ export function handler(service) {
   async function answer(request) {
     const url = new URL(request.url);
     const parts = url.pathname.split("/").filter(Boolean);
-    const route = `${request.method} /${parts.slice(0, 2).join("/")}`;
+    const route = `${request.method} /${routeOf(url.pathname)}`;
     const who = () => service.account(
       (request.headers.get("authorization") ?? "").replace(/^Bearer /, ""));
     try {

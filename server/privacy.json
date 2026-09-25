@@ -153,7 +153,8 @@
     "functionality"
    ],
    "keep": {
-    "for": "account"
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
    },
    "deletion": "severed",
    "columns": {
@@ -218,13 +219,15 @@
     },
     "banned_at": {
      "type": "other-usage",
-     "holds": "when a moderator banned the account",
+     "deletion": "cleared",
+     "holds": "when a moderator banned the account; the ban itself is kept in bans",
      "purposes": [
       "security"
      ]
     },
     "banned_reason": {
      "type": "other-usage",
+     "deletion": "cleared",
      "holds": "the removal reason the ban was made for",
      "purposes": [
       "security",
@@ -541,7 +544,8 @@
     "functionality"
    ],
    "keep": {
-    "for": "account"
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
    },
    "deletion": "erased-under-13",
    "deletion_note": "severed on a deletion; deleted for an under-13 player",
@@ -713,7 +717,8 @@
     "functionality"
    ],
    "keep": {
-    "for": "account"
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
    },
    "deletion": "erased-under-13",
    "deletion_note": "severed on a deletion; deleted for an under-13 player",
@@ -739,7 +744,8 @@
     "functionality"
    ],
    "keep": {
-    "for": "account"
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
    },
    "deletion": "erased-under-13",
    "deletion_note": "severed on a deletion; deleted for an under-13 player",
@@ -771,7 +777,8 @@
     "functionality"
    ],
    "keep": {
-    "for": "account"
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
    },
    "deletion": "erased-under-13",
    "deletion_note": "severed on a deletion; deleted for an under-13 player",
@@ -1362,10 +1369,29 @@
      "holds": "the banned platform identity"
     },
     "banned_at": {
-     "type": "other-usage"
+     "type": "other-usage",
+     "holds": "the day of the ban, no finer"
     },
     "reason": {
      "type": "other-usage"
+    }
+   }
+  },
+  "erasures": {
+   "about": "Files an under-13 deletion still has to delete, and the target lists it remakes, until done: hashes, no player.",
+   "purposes": [
+    "compliance"
+   ],
+   "keep": {
+    "for": "current"
+   },
+   "deletion": "kept",
+   "columns": {
+    "store": {
+     "type": "none"
+    },
+    "hash": {
+     "type": "none"
     }
    }
   },

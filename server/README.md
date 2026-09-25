@@ -238,7 +238,8 @@ is how `client/status.py` gives each test run a fresh one. `RULEBORN_SECRET`
 is the key session tokens are signed with and telemetry's pseudonyms made
 under; unset, one is made on the first start and kept in the data directory
 as `secret`, so a restart neither signs everyone out nor leaves a player's
-earlier telemetry where their deletion cannot find it. `RULEBORN_DELETIONS`
+earlier telemetry where their deletion cannot find it; a key shorter than
+32 characters is refused. `RULEBORN_DELETIONS`
 names the deletion journal (below). The tests use a
 stand-in chain in `test/fixtures/apple/` (its `make.sh` regenerates it). The
 readings are **G32**; Google Play's side is **D67**; and building this found
@@ -349,10 +350,17 @@ replays they played, their islands' bytes (unless another player's island,
 Workshop island or link is the same bytes), their ratings, their Workshop
 plays, ratings, completions and remixes, and their open leases go at once,
 and the target lists are remade without them, the list before too; a raid
-already leased on their island is refused as `island_withdrawn`. A ban keeps
-only the platform identity, in `bans`, apart from the account (§20.12's
-"minimum identifiers"): it ends the player's friendships and invites, and a
-banned player's deletion severs the rest like anyone's.
+already leased on their island is refused as `island_withdrawn`. Bytes are
+kept that another player's island, Workshop island, challenge link or lease
+still is. The files go after the deletion's commit, each written first to
+`erasures` in its transaction, so a deletion stopped between the two is
+finished when the server next starts. A raid leased on anyone before their
+deletion settles for the raider and, like an echo, pays, rates and records
+nothing of the one who is gone. A ban keeps only the platform identity, and
+the day, in `bans`, apart from the account (§20.12's "minimum
+identifiers"): it ends the player's friendships and invites, and a banned
+player's deletion severs the rest like anyone's and clears the ban's time
+from the account, so nothing matches it back.
 
 §20.12's "backups included": each deletion is appended to a journal outside
 the database — an account id, a reason, a time — before it is made, and
@@ -362,7 +370,7 @@ journal must live where a restore of the database does not reach.
 
 ## What the server stores, and the stores' declarations
 
-`privacy.json` declares every column of every table — 234 in 38 — with the
+`privacy.json` declares every column of every table — 236 in 39 — with the
 store data type it is, why it is kept, how long, and what an account's
 deletion does to it; `src/privacy.mjs` checks it against the schema the
 server actually opens and writes `declarations.md` from it: the answers to
@@ -374,7 +382,8 @@ table — at their request and as under 13 — and checks every table against
 it, and runs each time limit it names. Those limits are **G38**'s readings:
 a sent notification is kept a week, an invite goes once used or after its
 seven days and a challenge link after its seven, and a band keeps its
-current target list and the one before. Every answer carries
+current target list and the one before; at start the server sweeps any list
+no band names, which a crash, a restore or an older server left. Every answer carries
 `Strict-Transport-Security`, the listener's log names a route and never a
 path's ids, and a new account holds the most protective age band, 13 to 15,
 until the device's age check answers (`PUT /v1/age`). Not answered: the web

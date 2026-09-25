@@ -11,6 +11,7 @@ import { test } from "node:test";
 import { Journal, deleteAccount, reapplyDeletions } from "../src/accounts.mjs";
 import { open } from "../src/db.mjs";
 import { SENT_KEEP_DAYS } from "../src/notifications.mjs";
+import { routeOf } from "../src/http.mjs";
 import { DECLARATIONS, load, problems, render, schema } from "../src/privacy.mjs";
 import { Refused, clockTicks } from "../src/service.mjs";
 import { Social } from "../src/social.mjs";
@@ -79,12 +80,15 @@ function busy() {
   t.service.friends.challenge(x.account);
 
   const n = t.service.notifications;
-  n.set(x.account, { pushToken: "device-x", reminder: 12 * 60 });
+  // Settings no player starts with, so clearing them is seen.
+  n.set(x.account, { pushToken: "device-x", reminder: 12 * 60, utcOffset: 0, nightQuiet: false });
+  t.service.db.prepare(`UPDATE accounts SET equipped = '{"banner":"x"}' WHERE id = ?`).run(x.account);
   t.clock.now = Date.UTC(2026, 8, 25, 12, 5);
   n.deliver(() => {});
   t.clock.now += 60 * 1000;
   raid(y.account, xBundle, openPlan());                // waiting: the night is not the issue, the tick is
   t.service.telemetry.record(x.account, "worth", { rating: 4 }, t.clock.now);
+  n.set(x.account, { utcOffset: 120 });
   return { t, x: x.account, y: y.account, xBundle, yBundle, held, mine, theirs, w };
 }
 
@@ -129,6 +133,23 @@ for (const reason of ["requested", "under-13"]) {
     const row = db.prepare("SELECT * FROM accounts WHERE id = ?").get(x);
     const defaults = Object.fromEntries(db.prepare("PRAGMA table_info(accounts)").all()
       .map((c) => [c.name, c.dflt_value === null ? null : JSON.parse(c.dflt_value.replace(/^'(.*)'$/, '"$1"'))]));
+    // Every setting a deletion clears was set, so its clearing is seen (a
+    // ban's are the ban test's).
+    for (const [c, col] of Object.entries(doc.tables.accounts.columns)) {
+      if (col.deletion === "cleared" && !c.startsWith("banned_")) assert.notDeepEqual(row[c], defaults[c], `accounts.${c} was set`);
+    }
+    // Two lists a band, the current and the one before, both naming X: an
+    // under-13 deletion leaves neither.
+    t.service.targetLists();
+    t.clock.now += 1000;
+    const moved = t.build.exampleIsland(false);
+    moved[5] = 9;
+    t.service.publish(s.y, moved);
+    t.service.targetLists();
+    const lists = db.prepare("SELECT list, previous FROM target_lists").all().flatMap((r) => [r.list, r.previous]);
+    const naming_x = lists.filter((h) => JSON.parse(new TextDecoder().decode(t.service.bundle(h)))
+      .candidates.some((c) => c.owner === x));
+    assert.equal(naming_x.length, 2, "the current list and the one before both name X");
 
     deleteAccount(t.service, x, reason);
 
@@ -157,6 +178,8 @@ for (const reason of ["requested", "under-13"]) {
     assert.equal(t.service.bundle(s.xBundle) === null, young, "their own island's bytes");
     assert.notEqual(t.service.bundle(s.mine.bundle), null, "bytes another player's Workshop island also is");
     if (young) {
+      for (const h of naming_x) assert.equal(t.service.bundle(h), null, "a list that named them is deleted");
+      assert.deepEqual(db.prepare("SELECT * FROM erasures").all(), [], "and nothing is left to erase");
       for (const r of db.prepare("SELECT list, previous FROM target_lists").all()) {
         assert.equal(r.previous, null);
         const list = JSON.parse(new TextDecoder().decode(t.service.bundle(r.list)));
@@ -212,12 +235,79 @@ test("a sent notification is kept a week, and one waiting is not dropped (14.6, 
 });
 
 test("a deleted or banned player is owed no notification of a raid leased before (13, 20.12)", () => {
+  for (const end of ["deleted", "banned"]) {
+    const { t, x, y, xBundle } = busy();
+    const lease = t.service.lease(y, xBundle);
+    const replay = play(t, lease, { plan: openPlan() });
+    const raided = () => t.service.db.prepare("SELECT id, data FROM notifications WHERE account = ? AND kind = 'raided'")
+      .all(x).map((r) => ({ ...r }));
+    if (end === "deleted") deleteAccount(t.service, x);
+    else new Workshop(t.service).ban(x, "offensive");
+    const was = raided();
+    t.service.submit(y, lease.token, replay);
+    assert.deepEqual(raided(), was, `${end}: nothing added`);
+  }
+});
+
+test("a raid leased on a player before their deletion settles for the raider and records nothing of them (20.12)", () => {
+  // X's island is bytes Y's is too, so an under-13 deletion keeps them.
   const { t, x, y, xBundle } = busy();
-  const lease = t.service.lease(y, xBundle);
+  const z = t.service.session("gc:z").account;
+  t.service.publish(y, t.service.bundle(xBundle));
+  const lease = t.service.lease(z, xBundle, x);
   const replay = play(t, lease, { plan: openPlan() });
-  deleteAccount(t.service, x);
-  t.service.submit(y, lease.token, replay);
-  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM notifications WHERE account = ?").get(x).n, 0);
+  deleteAccount(t.service, x, "under-13");
+  assert.notEqual(t.service.bundle(xBundle), null, "another player's island is these bytes");
+  const out = t.service.submit(z, lease.token, replay);
+  assert.equal(out.validated, true, "the raider played it honestly");
+  assert.deepEqual([out.rating, out.renown.defender, out.stars.defender], [null, 0, 0]);
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM ratings WHERE key = ? OR key LIKE ?")
+    .get(x, `${x}/%`).n, 0, "no rating of them comes back");
+});
+
+test("an under-13 deletion keeps bytes another player's island, link or raid still needs (20.11)", () => {
+  // X published first, so X owns the snapshot; C holds the same bytes, R
+  // leased them as C's, and C moved on before X was deleted.
+  const { t, x, xBundle } = busy();
+  const c = t.service.session("gc:c").account;
+  const r = t.service.session("gc:r").account;
+  established(t, c);
+  t.service.publish(c, t.service.bundle(xBundle));
+  const lease = t.service.lease(r, xBundle, c);
+  const replay = play(t, lease, { plan: openPlan() });
+  const away = t.build.exampleIsland(false);
+  away[5] = 8;
+  t.service.publish(c, away);
+  deleteAccount(t.service, x, "under-13");
+  assert.notEqual(t.service.bundle(xBundle), null);
+  assert.equal(t.service.submit(r, lease.token, replay).validated, true);
+});
+
+test("an under-13 deletion keeps bytes another player's challenge link still offers (17.6, 20.11)", () => {
+  const { t, x, xBundle } = busy();
+  const d = t.service.session("gc:d").account;
+  t.service.publish(d, t.service.bundle(xBundle));
+  const link = t.service.friends.challenge(d);
+  const away = t.build.exampleIsland(false);
+  away[5] = 8;
+  t.service.publish(d, away);
+  deleteAccount(t.service, x, "under-13");
+  assert.equal(link.bundle, xBundle);
+  assert.notEqual(t.service.bundle(xBundle), null);
+});
+
+test("an under-13 deletion stopped between its commit and its files is finished at the next start (20.11, 20.12)", () => {
+  const { t, x, xBundle } = busy();
+  const replays = t.service.db.prepare("SELECT log_hash FROM heists WHERE attacker = ?").all(x).map((h) => h.log_hash);
+  const remove = t.service.store.delete;
+  t.service.store.delete = () => { throw new Error("the process stops"); };
+  assert.throws(() => deleteAccount(t.service, x, "under-13"), /the process stops/);
+  t.service.store.delete = remove;
+  assert.ok(t.service.db.prepare("SELECT COUNT(*) AS n FROM erasures").get().n > 0, "what is left is written down");
+  assert.equal(reapplyDeletions(t.service), 0, "the account itself is deleted");
+  assert.equal(t.service.bundle(xBundle), null);
+  for (const h of replays) assert.equal(t.service.replays.get(h), null);
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM erasures").get().n, 0);
 });
 
 test("used and lapsed invites and challenge links are deleted; a link played before still counts as played (17.6, 20.5)", () => {
@@ -232,33 +322,51 @@ test("used and lapsed invites and challenge links are deleted; a link played bef
   assert.deepEqual(f.list(y).map((r) => r.account), [x], "the friendship itself stays");
 });
 
-test("a target list is kept while current and one list after, then deleted (20.5)", () => {
-  const { t, y } = busy();
-  const bands = () => t.service.db.prepare("SELECT band, list, previous FROM target_lists ORDER BY band").all();
-  t.service.targetLists();
-  const first = bands();
-  assert.ok(first.length > 0);
-  // Each republish changes the band's list: the one before stays, the one before that goes.
-  const republish = (i) => {
+test("a target list is kept while current and one list after, then deleted; one gone back to stays (20.5)", () => {
+  const { t, x, y } = busy();
+  const band = () => t.service.db.prepare("SELECT list, previous FROM target_lists").all()
+    .find((r) => JSON.parse(new TextDecoder().decode(t.service.bundle(r.list))).candidates.some((c) => c.owner === y));
+  const publish = (level) => {
     t.clock.now += 1000;
     const island = t.build.exampleIsland(false);
-    island[5] = 5 + i;
+    island[5] = level;
     t.service.publish(y, island);
-    return t.service.targetLists();
+    t.service.targetLists();
+    return band();
   };
-  republish(0);
-  const second = bands();
-  republish(1);
-  const third = bands();
-  for (const was of first) {
-    const now = third.find((b) => b.band === was.band);
-    if (!now || now.list === was.list) continue;
-    const mid = second.find((b) => b.band === was.band);
-    if (mid.list === was.list) continue;
-    assert.equal(now.previous, mid.list);
-    assert.equal(t.service.bundle(was.list), null, "two lists back is deleted");
-    assert.notEqual(t.service.bundle(mid.list), null, "the one before is still served");
+  const a = publish(5);
+  const b = publish(6);
+  assert.equal(b.previous, a.list);
+  const c = publish(4);
+  assert.equal(c.previous, b.list);
+  assert.equal(t.service.bundle(a.list), null, "two lists back is deleted");
+  assert.notEqual(t.service.bundle(b.list), null, "the one before is still served");
+  // Back to the bytes of two lists ago: that list is current again, not deleted.
+  const again = publish(6);
+  assert.equal(again.list, b.list);
+  assert.notEqual(t.service.bundle(again.list), null);
+  assert.notEqual(t.service.bundle(again.previous), null);
+  // A band every island leaves keeps no list, and neither of its files.
+  const bands = t.service.db.prepare("SELECT band, list, previous FROM target_lists").all();
+  t.service.db.prepare("DELETE FROM islands").run();
+  assert.deepEqual(t.service.targetLists(), {});
+  for (const r of bands) {
+    assert.equal(t.service.bundle(r.list), null);
+    if (r.previous) assert.equal(t.service.bundle(r.previous), null);
   }
+  assert.ok(x);
+});
+
+test("a list no band names — left by a crash, a failed run, a restore or an older server — is swept at start (20.5)", () => {
+  const { t } = busy();
+  t.service.targetLists();
+  const stray = t.service.store.put(new TextEncoder().encode(JSON.stringify({ band: "realm-level-1", candidates: [] })));
+  const named = t.service.targets();
+  assert.equal(t.service.sweepLists(), 1);
+  assert.equal(t.service.bundle(stray), null);
+  for (const list of Object.values(named)) assert.notEqual(t.service.bundle(list), null, "a named list stays");
+  const islands = t.service.db.prepare("SELECT bundle FROM snapshots").all();
+  for (const i of islands) assert.notEqual(t.service.bundle(i.bundle), null, "an island's bytes are never a list");
 });
 
 test("a ban keeps the identity alone: a banned player's deletion severs the rest, and the ban holds (20.12)", () => {
@@ -266,38 +374,80 @@ test("a ban keeps the identity alone: a banned player's deletion severs the rest
   const invite = t.service.friends.invite(x).invite;
   new Workshop(t.service).ban(x, "offensive");
   assert.deepEqual(t.service.friends.list(y), [], "a ban ends friendships");
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM friend_invites WHERE account = ?").get(x).n, 0,
+               "and its invites");
   refusal(() => t.service.friends.accept(t.service.session("gc:z").account, invite), "no_such_invite");
+  // An invite a banned inviter somehow still has is refused too.
+  const w = t.service.session("gc:w").account;
+  const open_ = t.service.friends.invite(w).invite;
+  t.service.db.prepare("UPDATE accounts SET banned_at = 1 WHERE id = ?").run(w);
+  refusal(() => t.service.friends.accept(y, open_), "no_such_invite");
   deleteAccount(t.service, x);
-  const row = t.service.db.prepare("SELECT platform_identity FROM accounts WHERE id = ?").get(x);
-  assert.equal(row.platform_identity, `deleted:${x}`, "the account's records lead to no one");
-  assert.deepEqual(t.service.db.prepare("SELECT identity, reason FROM bans").all().map((r) => ({ ...r })),
-                   [{ identity: "gc:x", reason: "offensive" }]);
+  const row = t.service.db.prepare("SELECT platform_identity, banned_at, banned_reason FROM accounts WHERE id = ?").get(x);
+  assert.deepEqual({ ...row }, { platform_identity: `deleted:${x}`, banned_at: null, banned_reason: null },
+                   "the account's records lead to no one, and keep no ban time to match back by");
+  const ban = t.service.db.prepare("SELECT identity, banned_at, reason FROM bans").get();
+  assert.deepEqual([ban.identity, ban.reason, ban.banned_at % DAY], ["gc:x", "offensive", 0], "to the day");
   refusal(() => t.service.session("gc:x"), "banned");
 });
 
-test("a deletion is journalled outside the database, and made again on a database restored from before it (20.12)", () => {
-  const dir = mkdtempSync(join(tmpdir(), "ruleborn-"));
-  const path = join(dir, "deletions.jsonl");
+test("a ban made before the bans table holds, and its deleted account is severed, on deletion and on upgrade (20.12)", () => {
+  // A ban as the server wrote it before: on the account alone.
   const { t, x } = busy();
-  const journal = new Journal(path);
-  t.service.deletions = journal;
-  const backup = join(dir, "backup.sqlite");
-  t.service.db.exec(`VACUUM INTO '${backup}'`);
+  t.service.db.prepare("UPDATE accounts SET banned_at = ?, banned_reason = 'offensive' WHERE id = ?").run(t.clock.now, x);
   deleteAccount(t.service, x);
-  deleteAccount(t.service, x);
-  assert.deepEqual(journal.entries().map((e) => [e.account, e.reason]), [[x, "requested"]], "once");
-  appendFileSync(path, '{"account": "cut sho');                  // a crash mid-line
-  // The restore: yesterday's database, today's journal.
-  const restored = server({ db: open(backup), deletions: new Journal(path) });
-  assert.equal(restored.service.db.prepare("SELECT platform_identity FROM accounts WHERE id = ?").get(x).platform_identity, "gc:x");
-  assert.equal(reapplyDeletions(restored.service), 1);
-  assert.equal(reapplyDeletions(restored.service), 0, "once");
-  const row = restored.service.db.prepare("SELECT platform_identity, deleted_reason FROM accounts WHERE id = ?").get(x);
-  assert.deepEqual({ ...row }, { platform_identity: `deleted:${x}`, deleted_reason: "requested" });
-  assert.equal(restored.service.db.prepare("SELECT COUNT(*) AS n FROM notifications WHERE account = ?").get(x).n, 0);
-  writeFileSync(path, "");
-  assert.deepEqual(new Journal(path).entries(), []);
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM bans WHERE identity = 'gc:x'").get().n, 1);
+  refusal(() => t.service.session("gc:x"), "banned");
+  // A database whose banned account was deleted the old way, opened by this server.
+  const dir = mkdtempSync(join(tmpdir(), "ruleborn-"));
+  const file = join(dir, "old.sqlite");
+  const old = busy();
+  old.t.service.db.prepare("UPDATE accounts SET banned_at = ?, banned_reason = 'offensive', deleted_at = ? WHERE id = ?")
+    .run(old.t.clock.now, old.t.clock.now, old.x);
+  old.t.service.db.exec(`VACUUM INTO '${file}'`);
+  const db = open(file);
+  const a = db.prepare("SELECT platform_identity, banned_at FROM accounts WHERE id = ?").get(old.x);
+  assert.deepEqual({ ...a }, { platform_identity: `deleted:${old.x}`, banned_at: null });
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM bans WHERE identity = 'gc:x'").get().n, 1);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM friends WHERE a = ? OR b = ?").get(old.x, old.x).n, 1,
+               "a deleted account's friends went at its deletion, not here: only a live ban's go");
 });
+
+for (const reason of ["requested", "under-13"]) {
+  test(`a deletion ${reason === "under-13" ? "for being under 13 " : ""}is journalled outside the database, and made again on a database restored from before it (20.12)`, () => {
+    const dir = mkdtempSync(join(tmpdir(), "ruleborn-"));
+    const path = join(dir, "deletions.jsonl");
+    const { t, x, y } = busy();
+    const journal = new Journal(path);
+    t.service.deletions = journal;
+    const backup = join(dir, "backup.sqlite");
+    t.service.db.exec(`VACUUM INTO '${backup}'`);
+    deleteAccount(t.service, x, reason);
+    deleteAccount(t.service, x, reason);
+    assert.deepEqual(journal.entries().map((e) => [e.account, e.reason]), [[x, reason]], "once");
+    // A crash mid-line, then another deletion: the torn line costs only itself.
+    appendFileSync(path, '{"account": "cut sho');
+    journal.append({ account: y, reason: "requested", at: t.clock.now });
+    assert.deepEqual(journal.entries().map((e) => e.account), [x, y]);
+    const written = readFileSync(path, "utf8");
+    // The restore: yesterday's database, today's journal.
+    const restored = server({ db: open(backup), deletions: new Journal(path) });
+    const db = restored.service.db;
+    assert.equal(db.prepare("SELECT platform_identity FROM accounts WHERE id = ?").get(x).platform_identity, "gc:x");
+    assert.equal(reapplyDeletions(restored.service), 2);
+    assert.equal(reapplyDeletions(restored.service), 0, "once");
+    assert.equal(readFileSync(path, "utf8"), written, "making a deletion again journals nothing");
+    const row = db.prepare("SELECT platform_identity, deleted_reason FROM accounts WHERE id = ?").get(x);
+    assert.deepEqual({ ...row }, { platform_identity: `deleted:${x}`, deleted_reason: reason });
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM notifications WHERE account = ?").get(x).n, 0);
+    const erased = ["ratings", "workshop_plays"].map((table) => db.prepare(
+      `SELECT COUNT(*) AS n FROM ${table} WHERE ${table === "ratings" ? "key" : "player"} = ?`).get(x).n);
+    if (reason === "under-13") assert.deepEqual(erased, [0, 0], "and made again as far as the first time");
+    else assert.ok(erased[1] > 0);
+    writeFileSync(path, "");
+    assert.deepEqual(new Journal(path).entries(), []);
+  });
+}
 
 test("an account is held to the most protective age band until the device's age check answers (20.1, 20.2)", async () => {
   const t = server({ firstBand: undefined });
@@ -312,7 +462,33 @@ test("an account is held to the most protective age band until the device's age 
   assert.equal(res.headers.get("strict-transport-security"), "max-age=31536000", "and every answer asks for HTTPS");
 });
 
-test("the server's own log names a route, never an id in its path (20.5)", () => {
+test("the server's own log names a route, never an id in its path, a token or a heist (20.5)", () => {
+  assert.equal(routeOf("/v1/heists/abc123/replay?token=xyz"), "v1/heists");
+  assert.equal(routeOf("/v1/age"), "v1/age");
+  assert.equal(routeOf(undefined), "");
   const main = readFileSync(new URL("../src/main.mjs", import.meta.url), "utf8");
-  assert.doesNotMatch(main, /console\.(log|error)\([^)]*req\.url/);
+  // Each log call, whole: none carries a raw path, a token or a message's heists.
+  const calls = [...main.matchAll(/console\.(log|error)\(/g)].map((m) => {
+    let depth = 0;
+    for (let i = m.index + m[0].length - 1; i < main.length; i++) {
+      depth += main[i] === "(" ? 1 : main[i] === ")" ? -1 : 0;
+      if (depth === 0) return main.slice(m.index, i + 1);
+    }
+    return main.slice(m.index);
+  });
+  assert.ok(calls.length >= 4);
+  for (const call of calls) {
+    assert.doesNotMatch(call.replace("routeOf(req.url)", ""), /req\.url|token|JSON\.stringify\(message/, call);
+  }
+  assert.match(main, /console\.error\(`\$\{req\.method\} \/\$\{routeOf\(req\.url\)\}:`/);
+});
+
+test("the server starts by making journalled deletions again and sweeping stray lists, before it listens, with a kept secret (20.12)", () => {
+  const main = readFileSync(new URL("../src/main.mjs", import.meta.url), "utf8");
+  const at = (s) => main.indexOf(s);
+  assert.ok(at("reapplyDeletions(service)") > 0 && at("reapplyDeletions(service)") < at(".listen("));
+  assert.ok(at("service.sweepLists()") > at("reapplyDeletions(service)") && at("service.sweepLists()") < at(".listen("));
+  assert.match(main, /secret: secret\(\)/);
+  assert.match(main, /join\(data, "secret"\)/, "a secret made once is kept in the data directory");
+  assert.match(main, /key\.length < SECRET_MIN/, "and a short one refused");
 });

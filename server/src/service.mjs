@@ -277,6 +277,37 @@ export class Service {
     return index;
   }
 
+  /**
+   * Every target list in the store that no band names as its current or
+   * previous one, deleted: those a crash left between a regeneration's
+   * commit and its deletions, a regeneration that failed after writing its
+   * files, a database restored from before later lists, and those written
+   * before lists were deleted at all. Run when the server starts. A list is
+   * the one JSON object in the store with a band and its candidates; an
+   * island's bytes never begin with "{".
+   */
+  sweepLists() {
+    const kept = new Set(this.db.prepare("SELECT list, previous FROM target_lists").all()
+      .flatMap((r) => [r.list, r.previous]).filter(Boolean));
+    let swept = 0;
+    for (const key of this.store.keys()) {
+      if (kept.has(key)) continue;
+      const bytes = this.store.get(key);
+      if (!bytes || bytes[0] !== 0x7b) continue;
+      let list;
+      try {
+        list = JSON.parse(new TextDecoder().decode(bytes));
+      } catch {
+        continue;
+      }
+      if (typeof list?.band === "string" && Array.isArray(list.candidates)) {
+        this.store.delete(key);
+        swept++;
+      }
+    }
+    return swept;
+  }
+
   /** The current list for each band: a small index, then one cached file each. */
   targets() {
     const out = {};
@@ -590,8 +621,13 @@ export class Service {
     // The fee is the raider's, passed on; the share is minted, so it is held
     // to the defender's own §9.6 day and week caps, at their own Vault level,
     // and paid once a day a pair (G37).
+    // A raid leased before its defender's account was deleted still settles
+    // for the raider, and like an echo is nobody's defence: nothing is paid
+    // to, rated for or recorded about someone who is gone (§20.12).
+    const gone = Boolean(this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?").get(lease.defender).deleted_at);
+    const nobody = Boolean(lease.echo) || gone;
     let defence = null;
-    if (verdict.grade === "foiled" && !lease.echo && !friendly) {
+    if (verdict.grade === "foiled" && !nobody && !friendly) {
       book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
       const percent = this.seasons.defenceShare(this.seasons.current(now).id);
       const share = scores ? capHaul(defenceShare({
@@ -610,11 +646,11 @@ export class Service {
     // Renown, stars or ratings (F48). A pair's later heists of the day move
     // neither (G37).
     const none = { raider: 0, defender: 0 };
-    const renown = lease.echo || !scores ? none : this.seasons.settle(lease, verdict, now);
+    const renown = nobody || !scores ? none : this.seasons.settle(lease, verdict, now);
     // §13: "The defender is notified afterwards and can watch the replay."
-    if (!lease.echo) this.notifications.raided(lease, verdict, now);
-    const stars = !scores ? none : this.track.settle(lease, verdict, season, now, { echo: Boolean(lease.echo) });
-    const rating = lease.echo || friendly ? null : this.matchmaking.settle(lease, snapshot.realm, verdict, now);
+    if (!nobody) this.notifications.raided(lease, verdict, now);
+    const stars = !scores ? none : this.track.settle(lease, verdict, season, now, { echo: nobody });
+    const rating = nobody || friendly ? null : this.matchmaking.settle(lease, snapshot.realm, verdict, now);
     // "the friend earns a page for every raider their guards catch": pages
     // are the device's, so the outcome is their record (D64).
     const friendPages = friendly ? verdict.caught : undefined;

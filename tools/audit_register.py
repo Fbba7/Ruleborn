@@ -6289,7 +6289,7 @@ dict(id="D70", kind="deviation", severity="minor", status="open",
            "on a screen",
      refs=["20.1", "20.5", "20.10", "20.11"],
      body="<code>server/privacy.json</code> declares every column the server "
-          "stores \u2014 234 in 38 tables \u2014 with the store data type it is, "
+          "stores \u2014 236 in 39 tables \u2014 with the store data type it is, "
           "why it is kept, how long, and what a deletion does to it. A test "
           "fails when a column is added undeclared, and does each deletion and "
           "time limit it states; <code>server/declarations.md</code>, the App "
