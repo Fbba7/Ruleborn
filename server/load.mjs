@@ -53,7 +53,7 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   const build = Build.load(new URL(WASM).pathname);
   const service = new Service({
     db: open(), store: new Store(), builds: new Builds([build]), secret: "load",
-    verifyPlatform: (c) => c, now: () => clock.now, random, seasonStart: T0,
+    verifyPlatform: (c) => c, now: () => clock.now, random, seasonStart: T0, firstBand: "18+",
   });
   const db = service.db;
   const changes = () => Number(db.prepare("SELECT total_changes() AS n").get().n);

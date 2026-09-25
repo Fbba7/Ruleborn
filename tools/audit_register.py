@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5854,8 +5854,15 @@ dict(id="F43", kind="finding", severity="significant", status="open",
           "heists, money and islands stay under an id that leads to nobody; "
           "Workshop islands are withdrawn, not deleted, so a remix still names "
           "its original; a raid already leased on them still settles. A player "
-          "who declares an age under 13 is deleted the same way. Found building "
-          "deletion.",
+          "who declares an age under 13 is deleted further: the replays they "
+          "played, their islands\u2019 bytes unless another player\u2019s are "
+          "the same, their ratings, their Workshop plays, ratings, completions "
+          "and remixes, and their open leases go at once, and the target lists "
+          "are remade without them; the ledger, Renown, season stars and "
+          "purchases, which are append-only, are severed. A ban keeps only the "
+          "platform identity, in a table of its own, so a banned player\u2019s "
+          "deletion severs the rest like anyone\u2019s. Found building "
+          "deletion; the under-13 reading and the ban by the privacy inventory.",
      rec="State what deletion removes and what it keeps as anonymous records, "
          "and whether a deleted player\u2019s Workshop islands stay playable. "
          "Say what \u201canything collected\u201d covers for an under-13 player."),
@@ -6216,6 +6223,87 @@ dict(id="D69", kind="deviation", severity="minor", status="open",
           "eras.",
      rec="Model eras in the harness and measure each against §13.2\u2019s bands "
          "before launch; price the two cost eras in the economy model."),
+
+dict(id="F50", kind="finding", severity="significant", status="open",
+     title="A deletion is undone by the only backup the plan has, and nothing "
+           "says how \u201cbackups included\u201d is met",
+     refs=["20.12", "24.1"],
+     body="§20.12: <em>\u201cErasure completes within thirty days, backups "
+          "included, with a log kept\u201d</em>. §24.1\u2019s one backup is the "
+          "database\u2019s own point-in-time restore to any minute of the last "
+          "30 days. Restoring to a minute before a deletion brings the account "
+          "back \u2014 identity, push token, telemetry, friends \u2014 and takes the "
+          "log of the deletion with it, since the log is a column of the row it "
+          "deleted. Nothing in the document says a restore re-applies what it "
+          "undid. The server\u2019s reading: every deletion is written first to "
+          "a journal outside the database (an account id, a reason, a time; "
+          "nothing that names a person), and every deletion in it is made again "
+          "when the server starts, before anyone can sign in. The journal must "
+          "live where a restore of the database does not reach. Found by the "
+          "privacy inventory.",
+     rec="Say in §20.12 or §24.1 that a restore re-applies every deletion made "
+         "since the moment restored to, and where the deletion log lives."),
+
+dict(id="G38", kind="gap", severity="minor", status="open",
+     title="No time limit for what names a player and is not a raw log",
+     refs=["20.5", "24.3"],
+     body="§24.3 limits <em>\u201cRaw replays and logs\u201d</em> to 30 to 90 "
+          "days and §20.5 says <em>\u201cCollect only what\u2019s "
+          "needed\u201d</em>; nothing gives a limit for the rest a player "
+          "leaves behind: notifications already sent, friend invites used or "
+          "lapsed, challenge links past their week, and target lists, which "
+          "are public objects naming every candidate\u2019s account and are "
+          "remade every fifteen minutes. Kept as written, each grows for good. "
+          "The server\u2019s reading: a sent notification is kept a week (the "
+          "reminder check reads three days back), an invite goes once used or "
+          "after its seven days and a link after its seven, and a band keeps "
+          "its current list and the one before, the older deleted; each by a "
+          "daily job, stated in <code>server/privacy.json</code> and tested. "
+          "Found by the privacy inventory.",
+     rec="Give each a limit, or one rule: what serves no purpose once closed "
+         "is deleted within a stated time."),
+
+dict(id="G39", kind="gap", severity="significant", status="open",
+     title="Google Play asks for a web link to request deletion, and the "
+           "document offers deletion only inside the game",
+     refs=["20.5", "20.11"],
+     body="§20.5: <em>\u201cAccount and data deletion from inside the "
+          "game\u201d</em>; §20.11 lists Apple\u2019s <em>\u201caccount "
+          "deletion inside the app\u201d</em>. Google Play\u2019s Data safety "
+          "form also asks for a link where a player can ask for their account "
+          "and data to be deleted without the app \u2014 someone who has "
+          "uninstalled it, or lost the device \u2014 and an app that makes "
+          "accounts must give one. No such route exists, and a request "
+          "arriving by a web form has to be tied to an account without the "
+          "platform sign-in that proves it in the game. "
+          "<code>server/declarations.md</code> answers every other question "
+          "the two forms ask from what the server stores; this one it answers "
+          "\u201cnone yet\u201d. Found by the privacy inventory.",
+     rec="Add the web route to §20.5 and §20.11: a page that takes a request, "
+         "how the requester is shown to own the account, and the thirty days "
+         "§20.12 gives."),
+
+dict(id="D70", kind="deviation", severity="minor", status="open",
+     title="The store declarations are drafted from the schema and checked, "
+           "not filed, and the client has neither the age check nor deletion "
+           "on a screen",
+     refs=["20.1", "20.5", "20.10", "20.11"],
+     body="<code>server/privacy.json</code> declares every column the server "
+          "stores \u2014 234 in 38 tables \u2014 with the store data type it is, "
+          "why it is kept, how long, and what a deletion does to it. A test "
+          "fails when a column is added undeclared, and does each deletion and "
+          "time limit it states; <code>server/declarations.md</code>, the App "
+          "Privacy and Data safety answers, is written from it. Filing is the "
+          "owner\u2019s, in each store\u2019s console. Until the device\u2019s "
+          "age check answers, an account holds the most protective band, "
+          "13 to 15, not an adult\u2019s; the check itself and the deletion "
+          "button are the client\u2019s, and not built (the screens are being "
+          "designed apart). A deleted island\u2019s bytes leave the server at "
+          "once, but the edge caches a bundle for a year by its hash, and "
+          "purging it is the operator\u2019s. Found by the privacy inventory.",
+     rec="File both declarations from server/declarations.md; build the age "
+         "check and the deletion button; purge the edge on an under-13 "
+         "deletion."),
 
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "

@@ -4,7 +4,7 @@
 
 Emitted from `tools/audit_register.py`, so it cannot drift from the register the audit page shows.
 
-v3.0 answered the audit directly, in §30.18. Of 205 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 38 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
+v3.0 answered the audit directly, in §30.18. Of 209 items, **26 are fixed in the design document itself**, 23 moved without being resolved, and 38 are new. Six came from reading v3.0 the way v2.3 was read. The rest came from building the harnesses §19.27 now depends on, and from writing all 48 laws out against the rule sheet §7.3 claims they change.
 
 ## Fixed in v3.0
 

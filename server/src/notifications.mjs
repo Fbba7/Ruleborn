@@ -24,6 +24,9 @@ import { Refused } from "./refused.mjs";
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 const MINUTE = 60 * 1000;
 const DAY = 24 * 60 * MINUTE;
+/** How long a sent notification is kept: past the three days the reminder
+ *  check reads back, and no longer (§20.5, G38). */
+export const SENT_KEEP_DAYS = 7;
 
 export class Notifications {
   constructor(service) {
@@ -92,6 +95,10 @@ export class Notifications {
   /** §13: a heist against a player, in the grant's transaction. Several
    *  raids before one is sent are one notification. */
   raided(lease, verdict, now) {
+    // A raid leased before its defender's account was deleted or banned
+    // still settles, and owes nobody a notification.
+    const defender = this.db.prepare("SELECT deleted_at, banned_at FROM accounts WHERE id = ?").get(lease.defender);
+    if (defender.deleted_at || defender.banned_at) return null;
     const waiting = this.db.prepare(
       "SELECT * FROM notifications WHERE account = ? AND kind = 'raided' AND sent_at IS NULL")
       .get(lease.defender);
@@ -173,5 +180,11 @@ export class Notifications {
       this.db.prepare("UPDATE notifications SET sent_at = ? WHERE id = ?").run(now, n.id);
     }
     return sent;
+  }
+
+  /** Sent notifications past SENT_KEEP_DAYS, deleted. Idempotent. */
+  expire(now = this.service.now()) {
+    return Number(this.db.prepare("DELETE FROM notifications WHERE sent_at IS NOT NULL AND sent_at < ?")
+      .run(now - SENT_KEEP_DAYS * DAY).changes);
   }
 }

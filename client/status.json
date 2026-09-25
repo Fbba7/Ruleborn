@@ -17,6 +17,7 @@
   "settings changed on the settings screen are saved as they change and restored on the next launch: language, three volumes, reduced motion, haptics (§20.6)": "passed",
   "the builder lays §6.2's ground on the realm's grid, and the island it writes reads back the same": "passed",
   "the builder weaves laws and places their pylons, holds the realm to its law slots, and names what the laws make together (§8.6)": "passed",
+  "the client speaks to a server over HTTPS only, plain HTTP to this machine's own for tests": "passed",
   "the client's simulation is the rules version every golden replay names": "passed",
   "the heist just played replays on this phone with every second agreeing": "passed",
   "the planned heist plays out Clean with every bag banked (§12.9)": "passed",

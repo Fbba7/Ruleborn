@@ -147,7 +147,11 @@ CREATE TABLE IF NOT EXISTS target_lists (
   band         TEXT PRIMARY KEY,
   list         TEXT NOT NULL,
   candidates   INTEGER NOT NULL,
-  generated_at INTEGER NOT NULL
+  generated_at INTEGER NOT NULL,
+  -- The list before this one, still served to a device that fetched the
+  -- index just before it changed; the one before that is deleted, as a list
+  -- names players (service.targetLists).
+  previous     TEXT
 );
 
 -- §24.12: "Grant — only then is the haul minted, into an append-only ledger."
@@ -471,6 +475,16 @@ CREATE TABLE IF NOT EXISTS ratings (
   PRIMARY KEY (kind, key)
 );
 
+-- §20.12: "The minimum identifiers needed to enforce the ban are kept". A
+-- banned platform identity, apart from the account: the account's records
+-- are severed from it on deletion like anyone's, and sign-in still refuses
+-- it (accounts.mjs).
+CREATE TABLE IF NOT EXISTS bans (
+  identity  TEXT PRIMARY KEY,
+  banned_at INTEGER NOT NULL,
+  reason    TEXT
+);
+
 -- First-party telemetry (§24, §24.3; telemetry.mjs). Keyed by a pseudonym,
 -- never an account (§20.5), and discarded after 90 days: not append-only,
 -- because §24.3 says the raw events go. §24.1: "Telemetry is batched rather
@@ -541,6 +555,7 @@ const ADDED = [
   ["leases", "mode", "TEXT NOT NULL DEFAULT 'raid'"],
   ["leases", "challenge", "TEXT"],
   ["leases", "era", "INTEGER NOT NULL DEFAULT 0"],
+  ["target_lists", "previous", "TEXT"],
 ];
 
 /** A ledger made before Starglass: its currency check predates it, and a
@@ -589,6 +604,10 @@ export function open(path = ":memory:") {
                    FROM events_before_batches ORDER BY id;
                DROP TABLE events_before_batches;`);
     }
+    // A ban made before the bans table was held on the account's identity.
+    db.exec(`INSERT OR IGNORE INTO bans (identity, banned_at, reason)
+               SELECT platform_identity, banned_at, banned_reason FROM accounts
+                WHERE banned_at IS NOT NULL AND platform_identity NOT LIKE 'deleted:%'`);
     if (rebuilt) {
       db.exec(`INSERT INTO ledger (id, account, currency, amount, reason, heist, at)
                  SELECT id, account, currency, amount, reason, heist, at FROM ledger_before_starglass;

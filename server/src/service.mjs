@@ -32,6 +32,7 @@ import { Notifications } from "./notifications.mjs";
 import { Seasons } from "./seasons.mjs";
 import { Shop } from "./shop.mjs";
 import { readHeader } from "./sim.mjs";
+import { Journal } from "./accounts.mjs";
 import { Store } from "./store.mjs";
 import { check, issue } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
@@ -88,6 +89,11 @@ export class Service {
    * before the synchronous `session`.
    */
   /**
+   * `firstBand` is the age band an account holds until the device's age
+   * check answers (PUT /v1/age). `deletions` is the journal of deleted
+   * accounts kept outside the database (accounts.mjs).
+   */
+  /**
    * `seasonStart` is when season 1 began (§18.1): seasons run back to back,
    * eight weeks each, from it. `verifyReceipt(store, receipt)` is the same
    * seam to the stores for purchases (shop.mjs); without one, every receipt
@@ -95,9 +101,11 @@ export class Service {
    */
   constructor({ db, store, builds, secret, verifyPlatform, now = () => Date.now(),
                 random = randomBytes, seasonStart = 0, verifyReceipt = () => null,
-                cosmetics = undefined, preparePlatform = async () => {}, replays = new Store() }) {
+                cosmetics = undefined, preparePlatform = async () => {}, replays = new Store(),
+                firstBand = "13-15", deletions = new Journal() }) {
+    if (!["13-15", "16-17", "18+"].includes(firstBand)) throw new Error(`no age band ${firstBand}`);
     Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random, verifyReceipt,
-                          preparePlatform, replays });
+                          preparePlatform, replays, firstBand, deletions });
     this.seasons = new Seasons(this, seasonStart);
     this.track = new Track(this);
     this.telemetry = new Telemetry(this);
@@ -113,15 +121,22 @@ export class Service {
     const identity = this.verifyPlatform(credential);
     if (!identity) throw new Refused(401, "platform_identity_refused");
     const now = this.now();
+    // §20.4: "Repeat offenders are muted, then banned." The identity is kept
+    // so the ban holds (§20.12), even once the account is deleted.
+    if (this.db.prepare("SELECT 1 FROM bans WHERE identity = ?").get(identity)) {
+      throw new Refused(403, "banned");
+    }
     let row = this.db.prepare("SELECT id, banned_at FROM accounts WHERE platform_identity = ?")
       .get(identity);
-    // §20.4: "Repeat offenders are muted, then banned." The identity is kept
-    // so the ban holds (§20.12).
     if (row?.banned_at) throw new Refused(403, "banned");
     if (!row) {
+      // §20.1's age check comes first on the device; until it has answered,
+      // the account is held to the most protective band (§20.2), not trusted
+      // as an adult.
       const id = this.random(12).toString("hex");
-      this.db.prepare("INSERT INTO accounts (id, platform_identity, created_at) VALUES (?, ?, ?)")
-        .run(id, identity, now);
+      this.db.prepare(
+        "INSERT INTO accounts (id, platform_identity, created_at, age_band) VALUES (?, ?, ?, ?)")
+        .run(id, identity, now, this.firstBand);
       row = { id };
     }
     // §24's analytics: a sign-in is a session.
@@ -194,7 +209,7 @@ export class Service {
    * level". The raider's own filters (Keeper level within 3, Renown within
    * 150, not their own island) run on the device against the list.
    */
-  targetLists() {
+  targetLists({ keepPrevious = true } = {}) {
     const now = this.now();
     // The owner is the island's, not the snapshot's: two players who publish
     // the same bytes share a snapshot, and each is a target of their own.
@@ -222,24 +237,43 @@ export class Service {
       });
     }
     const index = {};
+    // A list names players, so it is not kept once it is no use: a band keeps
+    // its current list and the one before, which a device that read the index
+    // just before it changed may still fetch; older ones are deleted (§20.5).
+    // `previous: false` keeps none before the current, for a deletion that
+    // must take a player off every list now (accounts.mjs).
+    const gone = [];
     transaction(this.db, () => {
       for (const [band, candidates] of [...bands].sort(([a], [b]) => (a < b ? -1 : 1))) {
         const bytes = new TextEncoder().encode(JSON.stringify({ band, candidates }));
         const list = this.store.put(bytes);
+        const was = this.db.prepare("SELECT list, previous FROM target_lists WHERE band = ?").get(band);
+        let previous = was?.previous ?? null;
+        if (was && was.list !== list) {
+          if (previous && previous !== list) gone.push(previous);
+          previous = was.list;
+        }
+        if (!keepPrevious && previous) {
+          gone.push(previous);
+          previous = null;
+        }
         this.db.prepare(
-          `INSERT INTO target_lists (band, list, candidates, generated_at) VALUES (?, ?, ?, ?)
-           ON CONFLICT (band) DO UPDATE SET list = excluded.list,
-             candidates = excluded.candidates, generated_at = excluded.generated_at`)
-          .run(band, list, candidates.length, now);
+          `INSERT INTO target_lists (band, list, candidates, generated_at, previous) VALUES (?, ?, ?, ?, ?)
+           ON CONFLICT (band) DO UPDATE SET list = excluded.list, candidates = excluded.candidates,
+             generated_at = excluded.generated_at, previous = excluded.previous`)
+          .run(band, list, candidates.length, now, previous);
         index[band] = list;
       }
       // A band every island has left keeps no list: its last one would name
       // only superseded snapshots.
       const current = Object.keys(index);
-      this.db.prepare(
-        `DELETE FROM target_lists WHERE band NOT IN (${current.map(() => "?").join(", ") || "''"})`)
-        .run(...current);
+      const others = `band NOT IN (${current.map(() => "?").join(", ") || "''"})`;
+      for (const r of this.db.prepare(`SELECT list, previous FROM target_lists WHERE ${others}`).all(...current)) {
+        gone.push(r.list, ...(r.previous ? [r.previous] : []));
+      }
+      this.db.prepare(`DELETE FROM target_lists WHERE ${others}`).run(...current);
     });
+    for (const list of gone) this.store.delete(list);
     return index;
   }
 
@@ -446,6 +480,8 @@ export class Service {
     const build = this.builds.get(header.rules);
     if (!build) return refuse("rules_not_held");
     const island = this.store.get(lease.bundle);
+    // An island erased with its under-13 owner's account (accounts.mjs).
+    if (!island) return refuse("island_withdrawn");
     const result = build.verify(replay, island);
     if (result.status === "refused") return refuse(result.reason);
     if (result.status === "diverged") {

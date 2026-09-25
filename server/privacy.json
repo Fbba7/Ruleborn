@@ -1,0 +1,1539 @@
+{
+ "_what": "What the server stores and why (§20.5, §20.11, §20.12): every column of every table, the store data type it is, how long it is kept and what an account's deletion does to it. server/src/privacy.mjs checks it against the live schema and writes the store declarations from it; server/test/privacy.test.mjs checks the deletions and retention it states.",
+ "types": {
+  "user-id": {
+   "apple": [
+    "Identifiers",
+    "User ID"
+   ],
+   "google": [
+    "Personal info",
+    "User IDs"
+   ],
+   "about": "the account id, the platform identity, the telemetry pseudonym"
+  },
+  "device-id": {
+   "apple": [
+    "Identifiers",
+    "Device ID"
+   ],
+   "google": [
+    "Device or other IDs",
+    "Device or other IDs"
+   ],
+   "about": "the push token",
+   "optional": true
+  },
+  "purchase-history": {
+   "apple": [
+    "Purchases",
+    "Purchase History"
+   ],
+   "google": [
+    "Financial info",
+    "Purchase history"
+   ],
+   "about": "Starglass bought, the ledger, owned cosmetics"
+  },
+  "gameplay": {
+   "apple": [
+    "User Content",
+    "Gameplay Content"
+   ],
+   "google": [
+    "App activity",
+    "Other user-generated content"
+   ],
+   "about": "islands, heists and their replays, ratings, seasons"
+  },
+  "support": {
+   "apple": [
+    "User Content",
+    "Other User Content"
+   ],
+   "google": [
+    "App activity",
+    "Other actions"
+   ],
+   "about": "reports of Workshop islands"
+  },
+  "social": {
+   "apple": [
+    "Usage Data",
+    "Other Usage Data"
+   ],
+   "google": [
+    "App activity",
+    "Other actions"
+   ],
+   "about": "friends, constellations, crews"
+  },
+  "interaction": {
+   "apple": [
+    "Usage Data",
+    "Product Interaction"
+   ],
+   "google": [
+    "App activity",
+    "App interactions"
+   ],
+   "about": "sessions and what was done in them"
+  },
+  "other-usage": {
+   "apple": [
+    "Usage Data",
+    "Other Usage Data"
+   ],
+   "google": [
+    "App activity",
+    "Other actions"
+   ],
+   "about": "notification settings, moderation"
+  },
+  "crash": {
+   "apple": [
+    "Diagnostics",
+    "Crash Data"
+   ],
+   "google": [
+    "App info and performance",
+    "Crash logs"
+   ],
+   "about": "whether a session ended in a crash"
+  },
+  "age": {
+   "apple": [
+    "Other Data",
+    "Other Data Types"
+   ],
+   "google": [
+    "Personal info",
+    "Other info"
+   ],
+   "about": "the age band"
+  },
+  "other": {
+   "apple": [
+    "Other Data",
+    "Other Data Types"
+   ],
+   "google": [
+    "Personal info",
+    "Other info"
+   ],
+   "about": "the device's offset from UTC"
+  }
+ },
+ "purposes": {
+  "functionality": {
+   "apple": "App Functionality",
+   "google": "App functionality"
+  },
+  "account": {
+   "apple": "App Functionality",
+   "google": "Account management"
+  },
+  "security": {
+   "apple": "App Functionality",
+   "google": "Fraud prevention, security, and compliance"
+  },
+  "compliance": {
+   "apple": "Other Purposes",
+   "google": "Fraud prevention, security, and compliance"
+  },
+  "analytics": {
+   "apple": "Analytics",
+   "google": "Analytics"
+  }
+ },
+ "tables": {
+  "accounts": {
+   "about": "One row a player: who they are to the platform, their settings, and the markers of a ban or a deletion.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "severed",
+   "columns": {
+    "id": {
+     "type": "user-id",
+     "names": "account",
+     "holds": "a random id the server gives the account",
+     "purposes": [
+      "account",
+      "functionality"
+     ]
+    },
+    "platform_identity": {
+     "type": "user-id",
+     "deletion": "replaced",
+     "holds": "the Game Center (or Play Games) player id",
+     "purposes": [
+      "account",
+      "security"
+     ]
+    },
+    "league": {
+     "type": "none",
+     "holds": "nothing: an unused column, always its default"
+    },
+    "cosmetics": {
+     "type": "purchase-history",
+     "holds": "the cosmetics the player owns"
+    },
+    "equipped": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "the cosmetics the player wears, shown to raiders"
+    },
+    "pass_expires_at": {
+     "type": "none",
+     "holds": "nothing: an unused column, always empty"
+    },
+    "keeper_level": {
+     "type": "gameplay",
+     "holds": "the Keeper level matchmaking compares"
+    },
+    "created_at": {
+     "type": "interaction",
+     "holds": "when the account was made, for the new player's shield"
+    },
+    "age_band": {
+     "type": "age",
+     "holds": "the age band the device's age check answered (13-15 until it has)",
+     "purposes": [
+      "functionality",
+      "compliance"
+     ]
+    },
+    "moderator": {
+     "type": "none",
+     "holds": "a staff role, set by the operator"
+    },
+    "analyst": {
+     "type": "none",
+     "holds": "a staff role, set by the operator"
+    },
+    "banned_at": {
+     "type": "other-usage",
+     "holds": "when a moderator banned the account",
+     "purposes": [
+      "security"
+     ]
+    },
+    "banned_reason": {
+     "type": "other-usage",
+     "holds": "the removal reason the ban was made for",
+     "purposes": [
+      "security",
+      "compliance"
+     ]
+    },
+    "deleted_at": {
+     "type": "none",
+     "holds": "when the account was deleted: the deletion log §20.12 keeps",
+     "purposes": [
+      "compliance"
+     ]
+    },
+    "deleted_reason": {
+     "type": "none",
+     "holds": "why: asked for, or under 13",
+     "purposes": [
+      "compliance"
+     ]
+    },
+    "utc_offset": {
+     "type": "other",
+     "deletion": "cleared",
+     "holds": "the device's offset from UTC, for reminder times and the night"
+    },
+    "reminder_at": {
+     "type": "other-usage",
+     "deletion": "cleared",
+     "holds": "the daily reminder time the player chose"
+    },
+    "night_quiet": {
+     "type": "other-usage",
+     "deletion": "cleared",
+     "holds": "an adult's choice to open the night to notifications"
+    },
+    "push_token": {
+     "type": "device-id",
+     "deletion": "cleared",
+     "holds": "the device's push token"
+    },
+    "seeded": {
+     "type": "none",
+     "holds": "marks the game's own seeded islands' account"
+    }
+   }
+  },
+  "islands": {
+   "about": "Each player's current island in each realm.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased",
+   "columns": {
+    "owner": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "realm": {
+     "type": "gameplay"
+    },
+    "bundle": {
+     "type": "gameplay",
+     "holds": "the island's snapshot, by hash"
+    },
+    "changed_at": {
+     "type": "gameplay"
+    }
+   }
+  },
+  "snapshots": {
+   "about": "Every island ever published, by the hash of its bytes; never edited (§24.8). The bytes are in the public store, fetched by hash.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "deletion_note": "the row stays, as nobody's; an under-13 player's islands' bytes are deleted from the store",
+   "columns": {
+    "bundle": {
+     "type": "gameplay"
+    },
+    "owner": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "realm": {
+     "type": "gameplay"
+    },
+    "realm_level": {
+     "type": "gameplay"
+    },
+    "vault_level": {
+     "type": "gameplay"
+    },
+    "exposed": {
+     "type": "gameplay"
+    },
+    "band": {
+     "type": "none",
+     "holds": "nothing yet: always empty"
+    },
+    "rules": {
+     "type": "none",
+     "holds": "the rules version it was checked under"
+    },
+    "published_at": {
+     "type": "gameplay"
+    }
+   }
+  },
+  "target_lists": {
+   "about": "The current target list of each difficulty band. The lists themselves are public objects naming each candidate island's owner; a band keeps its current list and the one before, and older ones are deleted.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "current"
+   },
+   "deletion": "erased-under-13",
+   "deletion_note": "lists are made again at once without the player, and the one before is deleted",
+   "columns": {
+    "band": {
+     "type": "none"
+    },
+    "list": {
+     "type": "user-id",
+     "holds": "the list object's hash; the list names players' account ids"
+    },
+    "candidates": {
+     "type": "none"
+    },
+    "generated_at": {
+     "type": "none"
+    },
+    "previous": {
+     "type": "user-id",
+     "holds": "the list before, still served for a moment"
+    }
+   }
+  },
+  "leases": {
+   "about": "Each heist a raider was allowed: target, seed, clock (§24.12).",
+   "purposes": [
+    "functionality",
+    "security"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "deletion_note": "an under-13 player's open leases are deleted",
+   "columns": {
+    "token": {
+     "type": "gameplay"
+    },
+    "attacker": {
+     "type": "user-id",
+     "names": "account",
+     "deletion_under_13": "unplayed"
+    },
+    "bundle": {
+     "type": "gameplay"
+    },
+    "defender": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "seed": {
+     "type": "gameplay"
+    },
+    "ticks": {
+     "type": "gameplay"
+    },
+    "rules": {
+     "type": "none"
+    },
+    "issued_at": {
+     "type": "gameplay"
+    },
+    "expires_at": {
+     "type": "gameplay"
+    },
+    "state": {
+     "type": "gameplay"
+    },
+    "echo": {
+     "type": "gameplay"
+    },
+    "trace_of": {
+     "type": "gameplay"
+    },
+    "mode": {
+     "type": "gameplay"
+    },
+    "challenge": {
+     "type": "gameplay"
+    },
+    "era": {
+     "type": "gameplay"
+    }
+   }
+  },
+  "heists": {
+   "about": "Each submitted heist: the replay's hash, the verdict, what it paid (§24.8). The replay's bytes are kept 90 days in the private store.",
+   "purposes": [
+    "functionality",
+    "security"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "deletion_note": "an under-13 player's replays are deleted at once",
+   "columns": {
+    "token": {
+     "type": "gameplay"
+    },
+    "attacker": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "bundle": {
+     "type": "gameplay"
+    },
+    "seed": {
+     "type": "gameplay"
+    },
+    "log_hash": {
+     "type": "gameplay",
+     "holds": "the replay, by hash"
+    },
+    "state_hash": {
+     "type": "gameplay"
+    },
+    "validated": {
+     "type": "gameplay"
+    },
+    "outcome": {
+     "type": "gameplay"
+    },
+    "review": {
+     "type": "gameplay",
+     "holds": "a replay that did not re-simulate, for review",
+     "purposes": [
+      "security"
+     ]
+    },
+    "grace": {
+     "type": "gameplay"
+    },
+    "submitted_at": {
+     "type": "gameplay"
+    },
+    "day": {
+     "type": "gameplay"
+    },
+    "replay_gone": {
+     "type": "none",
+     "holds": "marks the replay's bytes deleted",
+     "keep": {
+      "days": 90,
+      "by": "expireReplays"
+     }
+    }
+   }
+  },
+  "ledger": {
+   "about": "Every currency movement, append-only (§24.12).",
+   "purposes": [
+    "functionality",
+    "security"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "currency": {
+     "type": "purchase-history"
+    },
+    "amount": {
+     "type": "purchase-history"
+    },
+    "reason": {
+     "type": "purchase-history"
+    },
+    "heist": {
+     "type": "gameplay"
+    },
+    "at": {
+     "type": "purchase-history"
+    }
+   }
+  },
+  "ratings": {
+   "about": "§12.22's Glicko-2 ratings: a raider's skill, an island's difficulty.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased-under-13",
+   "deletion_note": "severed on a deletion; deleted for an under-13 player",
+   "columns": {
+    "kind": {
+     "type": "none"
+    },
+    "key": {
+     "type": "user-id",
+     "names": "account-realm",
+     "holds": "the account, or the account and realm"
+    },
+    "rating": {
+     "type": "gameplay"
+    },
+    "deviation": {
+     "type": "gameplay"
+    },
+    "volatility": {
+     "type": "gameplay"
+    },
+    "games": {
+     "type": "gameplay"
+    },
+    "updated_at": {
+     "type": "gameplay"
+    }
+   }
+  },
+  "defence_shares": {
+   "about": "Each season's defence reward share and the measure that set it: one figure for everyone.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "ever",
+    "why": "not about a person"
+   },
+   "deletion": "kept",
+   "columns": {
+    "season": {
+     "type": "none"
+    },
+    "percent": {
+     "type": "none"
+    },
+    "measured": {
+     "type": "none"
+    },
+    "set_at": {
+     "type": "none"
+    }
+   }
+  },
+  "workshop_items": {
+   "about": "Published Workshop islands, never edited or deleted (§18.6); withdrawn on deletion.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "deletion_note": "withdrawn; an under-13 player's islands' bytes are deleted",
+   "columns": {
+    "id": {
+     "type": "gameplay"
+    },
+    "creator": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "bundle": {
+     "type": "gameplay"
+    },
+    "realm_level": {
+     "type": "gameplay"
+    },
+    "name_adjective": {
+     "type": "gameplay",
+     "holds": "a word from the game's list, not free text"
+    },
+    "name_noun": {
+     "type": "gameplay",
+     "holds": "a word from the game's list, not free text"
+    },
+    "remix_of": {
+     "type": "gameplay"
+    },
+    "cleared_by": {
+     "type": "gameplay"
+    },
+    "bytes": {
+     "type": "gameplay"
+    },
+    "published_at": {
+     "type": "gameplay"
+    },
+    "withdrawn_at": {
+     "type": "gameplay"
+    },
+    "removed_at": {
+     "type": "other-usage",
+     "purposes": [
+      "security"
+     ]
+    },
+    "removed_reason": {
+     "type": "other-usage",
+     "purposes": [
+      "security",
+      "compliance"
+     ]
+    },
+    "featured_at": {
+     "type": "gameplay"
+    },
+    "review": {
+     "type": "gameplay",
+     "purposes": [
+      "security"
+     ]
+    }
+   }
+  },
+  "workshop_plays": {
+   "about": "Each play of a Workshop island.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "erased-under-13",
+   "deletion_note": "severed on a deletion; deleted for an under-13 player",
+   "columns": {
+    "token": {
+     "type": "gameplay"
+    },
+    "item": {
+     "type": "gameplay"
+    },
+    "seed": {
+     "type": "gameplay"
+    },
+    "ticks": {
+     "type": "gameplay"
+    },
+    "issued_at": {
+     "type": "gameplay"
+    },
+    "submitted_at": {
+     "type": "gameplay"
+    },
+    "outcome": {
+     "type": "gameplay"
+    },
+    "player": {
+     "type": "user-id",
+     "names": "account"
+    }
+   }
+  },
+  "workshop_completions": {
+   "about": "Each player's first clear of a Workshop island (§18.7).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased-under-13",
+   "deletion_note": "severed on a deletion; deleted for an under-13 player",
+   "columns": {
+    "item": {
+     "type": "gameplay"
+    },
+    "weight": {
+     "type": "gameplay"
+    },
+    "at": {
+     "type": "gameplay"
+    },
+    "player": {
+     "type": "user-id",
+     "names": "account"
+    }
+   }
+  },
+  "workshop_ratings": {
+   "about": "Each player's rating of a Workshop island (§18.6).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased-under-13",
+   "deletion_note": "severed on a deletion; deleted for an under-13 player",
+   "columns": {
+    "item": {
+     "type": "gameplay"
+    },
+    "fun": {
+     "type": "gameplay"
+    },
+    "cleverness": {
+     "type": "gameplay"
+    },
+    "fairness": {
+     "type": "gameplay"
+    },
+    "at": {
+     "type": "gameplay"
+    },
+    "player": {
+     "type": "user-id",
+     "names": "account"
+    }
+   }
+  },
+  "workshop_remixes": {
+   "about": "Each take of a Workshop island into a builder.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased-under-13",
+   "deletion_note": "severed on a deletion; deleted for an under-13 player",
+   "columns": {
+    "item": {
+     "type": "gameplay"
+    },
+    "at": {
+     "type": "gameplay"
+    },
+    "player": {
+     "type": "user-id",
+     "names": "account"
+    }
+   }
+  },
+  "workshop_reports": {
+   "about": "Reports of Workshop islands, for a moderator (§20.4).",
+   "purposes": [
+    "security",
+    "compliance"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "deletion_note": "an under-13 player's reports stand as nobody's",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "item": {
+     "type": "support"
+    },
+    "reporter": {
+     "type": "user-id",
+     "names": "account",
+     "deletion_under_13": "cleared"
+    },
+    "reason": {
+     "type": "support",
+     "holds": "a reason from the game's list, not free text"
+    },
+    "at": {
+     "type": "support"
+    },
+    "resolved_at": {
+     "type": "support"
+    },
+    "resolution": {
+     "type": "support"
+    }
+   }
+  },
+  "seasons": {
+   "about": "Each season's dates.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "ever",
+    "why": "not about a person"
+   },
+   "deletion": "kept",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "starts_at": {
+     "type": "none"
+    },
+    "ends_at": {
+     "type": "none"
+    },
+    "closed_at": {
+     "type": "none"
+    }
+   }
+  },
+  "standings": {
+   "about": "A player's season: their starting Renown and track price.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "columns": {
+    "season": {
+     "type": "gameplay"
+    },
+    "start": {
+     "type": "gameplay"
+    },
+    "ember": {
+     "type": "gameplay"
+    },
+    "tier_stars": {
+     "type": "gameplay"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    }
+   }
+  },
+  "season_results": {
+   "about": "A closed season's result for each player (§18.1).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "columns": {
+    "season": {
+     "type": "gameplay"
+    },
+    "renown": {
+     "type": "gameplay"
+    },
+    "league": {
+     "type": "gameplay"
+    },
+    "division": {
+     "type": "gameplay"
+    },
+    "reward": {
+     "type": "gameplay"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    }
+   }
+  },
+  "renown": {
+   "about": "§12.9's Renown, as events, append-only.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "season": {
+     "type": "gameplay"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "amount": {
+     "type": "gameplay"
+    },
+    "reason": {
+     "type": "gameplay"
+    },
+    "heist": {
+     "type": "gameplay"
+    },
+    "at": {
+     "type": "gameplay"
+    }
+   }
+  },
+  "season_stars": {
+   "about": "§18.2's season stars, as events, append-only.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "season": {
+     "type": "gameplay"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "amount": {
+     "type": "gameplay"
+    },
+    "reason": {
+     "type": "gameplay"
+    },
+    "heist": {
+     "type": "gameplay"
+    },
+    "at": {
+     "type": "gameplay"
+    }
+   }
+  },
+  "constellation_results": {
+   "about": "A closed season's constellation league: groups, not people.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "ever",
+    "why": "not about a person"
+   },
+   "deletion": "kept",
+   "columns": {
+    "season": {
+     "type": "none"
+    },
+    "constellation": {
+     "type": "none"
+    },
+    "renown": {
+     "type": "none"
+    },
+    "place": {
+     "type": "none"
+    }
+   }
+  },
+  "track_claims": {
+   "about": "Each season-track tier a player claimed.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "columns": {
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "season": {
+     "type": "gameplay"
+    },
+    "tier": {
+     "type": "gameplay"
+    },
+    "track": {
+     "type": "gameplay"
+    },
+    "reward": {
+     "type": "gameplay"
+    },
+    "at": {
+     "type": "gameplay"
+    }
+   }
+  },
+  "premium_tracks": {
+   "about": "Each season's premium track a player bought with Starglass.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "columns": {
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "season": {
+     "type": "purchase-history"
+    },
+    "bought_at": {
+     "type": "purchase-history"
+    }
+   }
+  },
+  "constellations": {
+   "about": "Constellations: an id and a name from the game's word lists.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "ever",
+    "why": "not about a person"
+   },
+   "deletion": "kept",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "name_adjective": {
+     "type": "none"
+    },
+    "name_noun": {
+     "type": "none"
+    },
+    "founded_at": {
+     "type": "none"
+    }
+   }
+  },
+  "constellation_members": {
+   "about": "Who is, and was, in which constellation (§17.1).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "deletion_note": "the player leaves; the row stays with left_at set",
+   "columns": {
+    "constellation": {
+     "type": "social"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "role": {
+     "type": "social"
+    },
+    "joined_at": {
+     "type": "social"
+    },
+    "left_at": {
+     "type": "social"
+    }
+   }
+  },
+  "crews": {
+   "about": "Crews: an id and a join code.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "ever",
+    "why": "not about a person"
+   },
+   "deletion": "kept",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "invite": {
+     "type": "none"
+    },
+    "founded_at": {
+     "type": "none"
+    }
+   }
+  },
+  "crew_members": {
+   "about": "Who is, and was, in which crew (§17.7).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "deletion_note": "the player leaves; the row stays with left_at set",
+   "columns": {
+    "crew": {
+     "type": "social"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "joined_at": {
+     "type": "social"
+    },
+    "left_at": {
+     "type": "social"
+    }
+   }
+  },
+  "friends": {
+   "about": "Friendships, one row a pair.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased",
+   "columns": {
+    "a": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "b": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "since": {
+     "type": "social"
+    }
+   }
+  },
+  "friend_invites": {
+   "about": "Friend invites a player shared.",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "days": 7,
+    "by": "friends.expire"
+   },
+   "deletion": "erased",
+   "columns": {
+    "code": {
+     "type": "social"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "created_at": {
+     "type": "social"
+    },
+    "used_at": {
+     "type": "social"
+    }
+   }
+  },
+  "challenges": {
+   "about": "Challenge links to a player's island (§17.6).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "days": 7,
+    "by": "friends.expire"
+   },
+   "deletion": "erased",
+   "columns": {
+    "code": {
+     "type": "gameplay"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "bundle": {
+     "type": "gameplay"
+    },
+    "created_at": {
+     "type": "gameplay"
+    }
+   }
+  },
+  "purchase_intents": {
+   "about": "Purchases asked for, held under a minor's monthly cap until the receipt comes (§20.2).",
+   "purposes": [
+    "functionality",
+    "compliance"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "columns": {
+    "id": {
+     "type": "purchase-history"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "product": {
+     "type": "purchase-history"
+    },
+    "price": {
+     "type": "purchase-history"
+    },
+    "created_at": {
+     "type": "purchase-history"
+    },
+    "redeemed_at": {
+     "type": "purchase-history"
+    }
+   }
+  },
+  "purchases": {
+   "about": "Store receipts granted, append-only: a record of money taken, which tax law keeps.",
+   "purposes": [
+    "functionality",
+    "compliance"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+   },
+   "deletion": "severed",
+   "columns": {
+    "store": {
+     "type": "purchase-history"
+    },
+    "txn": {
+     "type": "purchase-history",
+     "holds": "the store's transaction id"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "product": {
+     "type": "purchase-history"
+    },
+    "price": {
+     "type": "purchase-history"
+    },
+    "intent": {
+     "type": "purchase-history"
+    },
+    "at": {
+     "type": "purchase-history"
+    }
+   }
+  },
+  "notifications": {
+   "about": "The notification outbox (§14.6).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "days": 7,
+    "by": "notifications.expire",
+    "after": "sent"
+   },
+   "deletion": "erased",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "kind": {
+     "type": "other-usage"
+    },
+    "data": {
+     "type": "gameplay",
+     "holds": "the heists raided, or the reminder's day"
+    },
+    "due_at": {
+     "type": "other-usage"
+    },
+    "sent_at": {
+     "type": "other-usage"
+    }
+   }
+  },
+  "bans": {
+   "about": "Banned platform identities, apart from any account: §20.12's minimum kept to enforce a ban.",
+   "purposes": [
+    "security"
+   ],
+   "keep": {
+    "for": "ban"
+   },
+   "deletion": "kept",
+   "deletion_note": "kept: the ban outlives the account",
+   "columns": {
+    "identity": {
+     "type": "user-id",
+     "holds": "the banned platform identity"
+    },
+    "banned_at": {
+     "type": "other-usage"
+    },
+    "reason": {
+     "type": "other-usage"
+    }
+   }
+  },
+  "event_batches": {
+   "about": "First-party telemetry (§24.3), batched, under a pseudonym: an HMAC of the account under the server's key.",
+   "purposes": [
+    "analytics"
+   ],
+   "keep": {
+    "days": 90,
+    "by": "telemetry.compact"
+   },
+   "deletion": "erased",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "who": {
+     "type": "user-id",
+     "names": "pseudonym",
+     "holds": "the pseudonym"
+    },
+    "at": {
+     "type": "interaction"
+    },
+    "day": {
+     "type": "interaction"
+    },
+    "events": {
+     "type": "interaction",
+     "also": [
+      "crash",
+      "other-usage",
+      "purchase-history"
+     ],
+     "holds": "sessions and their length, a crash flag, heists, laws woven, forms made, the worth rating, the survey, purchases"
+    }
+   }
+  },
+  "first_seen": {
+   "about": "Each pseudonym's first day, so a cohort outlives its raw events.",
+   "purposes": [
+    "analytics"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased",
+   "columns": {
+    "who": {
+     "type": "user-id",
+     "names": "pseudonym"
+    },
+    "day": {
+     "type": "interaction"
+    }
+   }
+  },
+  "cohorts": {
+   "about": "Counts of each day's new players returning on day 1, 7 and 30: no player in them.",
+   "purposes": [
+    "analytics"
+   ],
+   "keep": {
+    "for": "ever",
+    "why": "not about a person"
+   },
+   "deletion": "kept",
+   "columns": {
+    "day": {
+     "type": "none"
+    },
+    "players": {
+     "type": "none"
+    },
+    "day1": {
+     "type": "none"
+    },
+    "day7": {
+     "type": "none"
+    },
+    "day30": {
+     "type": "none"
+    }
+   }
+  },
+  "event_days": {
+   "about": "Counts of each day's events by kind: no player in them.",
+   "purposes": [
+    "analytics"
+   ],
+   "keep": {
+    "for": "ever",
+    "why": "not about a person"
+   },
+   "deletion": "kept",
+   "columns": {
+    "day": {
+     "type": "none"
+    },
+    "kind": {
+     "type": "none"
+    },
+    "events": {
+     "type": "none"
+    },
+    "players": {
+     "type": "none"
+    }
+   }
+  }
+ },
+ "files": {
+  "bundles": {
+   "about": "the public object store: island bundles and target lists, fetched by hash",
+   "type": "gameplay",
+   "keep": "islands for good (snapshots); target lists the current and previous a band",
+   "deletion": "an under-13 player's island bytes are deleted, and the lists made again without them"
+  },
+  "replays": {
+   "about": "the private replay store, fetched only by a heist's two players",
+   "type": "gameplay",
+   "keep": "90 days (expireReplays)",
+   "deletion": "an under-13 player's replays are deleted at once"
+  },
+  "deletions.jsonl": {
+   "about": "the deletion journal: an account id, a reason and a time a line, outside the database so a restore cannot undo a deletion",
+   "type": "none",
+   "keep": "for good: it is §20.12's log",
+   "deletion": "a deletion is added, never removed"
+  },
+  "secret": {
+   "about": "the server's own key for tokens and pseudonyms",
+   "type": "none",
+   "keep": "for good",
+   "deletion": "not about a person"
+  }
+ },
+ "flows": [
+  {
+   "what": "the device's requests",
+   "carries": "a session token naming the account; the bodies of each route",
+   "to": "the server, over HTTPS: the platform's edge terminates TLS and every answer carries Strict-Transport-Security"
+  },
+  {
+   "what": "Game Center sign-in",
+   "carries": "nothing of the player's: the server fetches Apple's public key by the URL the proof names",
+   "to": "static.gc.apple.com, sandbox.gc.apple.com"
+  },
+  {
+   "what": "push notifications",
+   "carries": "the push token and a message: the heists raided, or the reminder's day",
+   "to": "Firebase Cloud Messaging, as the operator's service provider (not built, D68)"
+  },
+  {
+   "what": "the server's log",
+   "carries": "a route and an error; never a path's ids or a body",
+   "to": "the operator's platform"
+  }
+ ],
+ "answers": {
+  "tracking": false,
+  "thirdPartyAdvertising": false,
+  "shared": false,
+  "encryptedInTransit": true,
+  "accountCreation": "Sign-in with the platform's own identity (Game Center, Play Games)",
+  "deletionInApp": true,
+  "deletionUrl": null,
+  "partialDeletion": false
+ }
+}

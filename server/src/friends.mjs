@@ -53,7 +53,8 @@ export class Friends {
   accept(account, code) {
     return transaction(this.db, () => {
       const i = this.db.prepare("SELECT * FROM friend_invites WHERE code = ?").get(code);
-      if (!i || i.used_at || this.now() - i.created_at > INVITE_DAYS * DAY) {
+      const from = i && this.db.prepare("SELECT deleted_at, banned_at FROM accounts WHERE id = ?").get(i.account);
+      if (!i || i.used_at || this.now() - i.created_at > INVITE_DAYS * DAY || from.deleted_at || from.banned_at) {
         throw new Refused(404, "no_such_invite");
       }
       if (i.account === account) throw new Refused(409, "own_invite");
@@ -109,5 +110,16 @@ export class Friends {
     const c = this.db.prepare("SELECT * FROM challenges WHERE code = ?").get(code);
     if (!c || this.now() - c.created_at > CHALLENGE_DAYS * DAY) throw new Refused(404, "no_such_challenge");
     return c;
+  }
+
+  /** Invites used or past INVITE_DAYS, and links past CHALLENGE_DAYS,
+   *  deleted: each names a player and is no use once closed (§20.5). A link
+   *  already played is still known as played by its lease. Idempotent. */
+  expire(now = this.now()) {
+    const invites = this.db.prepare("DELETE FROM friend_invites WHERE used_at IS NOT NULL OR created_at < ?")
+      .run(now - INVITE_DAYS * DAY).changes;
+    const links = this.db.prepare("DELETE FROM challenges WHERE created_at < ?")
+      .run(now - CHALLENGE_DAYS * DAY).changes;
+    return { invites: Number(invites), challenges: Number(links) };
   }
 }

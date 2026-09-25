@@ -15,11 +15,27 @@ static var testing := false
 ## Where server/ is. Unset, the client plays offline on the fixture realm and
 ## checks its own replay; set, it leases, plays the leased island and submits.
 ## The environment wins, so a test can point a run at a server it started.
+## A server named over plain HTTP anywhere but this machine is refused, and the
+## client plays offline: the stores are told everything is encrypted in transit
+## (server/declarations.md), and a session token is not sent in the clear.
 static func server_url() -> String:
-	var from_env := OS.get_environment("RULEBORN_SERVER")
-	if from_env != "":
-		return from_env
-	return str(ProjectSettings.get_setting("ruleborn/server_url", ""))
+	var url := OS.get_environment("RULEBORN_SERVER")
+	if url == "":
+		url = str(ProjectSettings.get_setting("ruleborn/server_url", ""))
+	if not secure(url):
+		push_error("refusing a server reached in the clear: %s" % url)
+		return ""
+	return url
+
+
+## HTTPS, or HTTP to this machine's own loopback for the tests.
+static func secure(url: String) -> bool:
+	if url == "" or url.begins_with("https://"):
+		return true
+	if not url.begins_with("http://"):
+		return false
+	var host := url.trim_prefix("http://").get_slice("/", 0).get_slice(":", 0)
+	return host == "127.0.0.1" or host == "localhost"
 
 
 ## The platform credential. §24.8's sign-in needs Game Center or Play Games,

@@ -48,6 +48,9 @@ export function server(options = {}) {
     now: () => clock.now,
     random,
     seasonStart: T0,
+    // The tests that are not about the age check play as adults who have
+    // answered it (accounts.test.mjs has the band before it is answered).
+    firstBand: "18+",
     ...options,
   });
   return { service, clock, handle: handler(service), build: simulation() };

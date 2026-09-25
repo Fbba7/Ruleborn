@@ -240,7 +240,15 @@ async function workshopRoute(workshop, request, url, parts, who) {
 export function handler(service) {
   const workshop = new Workshop(service);
   const social = new Social(service);
+  // Every answer tells the device to reach this host over HTTPS only: the
+  // platform's edge terminates TLS (§24.1), and the Data safety form asks
+  // whether all of it is encrypted in transit (privacy.json).
   return async function handle(request) {
+    const response = await answer(request);
+    response.headers.set("strict-transport-security", "max-age=31536000");
+    return response;
+  };
+  async function answer(request) {
     const url = new URL(request.url);
     const parts = url.pathname.split("/").filter(Boolean);
     const route = `${request.method} /${parts.slice(0, 2).join("/")}`;
@@ -370,5 +378,5 @@ export function handler(service) {
       console.error(`${route}:`, err);
       return json({ error: "internal" }, 500);
     }
-  };
+  }
 }

@@ -87,6 +87,13 @@ func _run() -> void:
 			and HeistScreen.lease_era({"era": "glass_moon"}) == "glass_moon"
 			and in_era.set_era("glass_moon") and in_era.set_era("") and not in_era.set_era("<null>"))
 
+	# The Data safety form's "encrypted in transit": no server but this
+	# machine's own is spoken to over plain HTTP.
+	check("the client speaks to a server over HTTPS only, plain HTTP to this machine's own for tests",
+		Session.secure("https://edge.example/") and Session.secure("http://127.0.0.1:8787")
+			and Session.secure("http://localhost/v1") and not Session.secure("http://edge.example")
+			and not Session.secure("http://127.0.0.1.edge.example/") and not Session.secure("ftp://x"))
+
 	# §24.10: the checksums a replay carries, one a second, are the server's.
 	var bad := []
 	var seconds := 0

@@ -311,7 +311,8 @@ DELIVERABLES = [
         "every launch screen and content name ships in both languages, the Portuguese read by a native speaker")),
     ("10 to 13", "Accessibility", FRONTEND, not_started("§21's accessibility set is in the client")),
     ("10 to 13", "Compliance: store declarations", BACKEND, not_started(
-        "the age, privacy and store declarations are filed")),
+        "the age, privacy and store declarations are filed; drafted from the schema in "
+        "server/declarations.md, checked by server/test/privacy.test.mjs")),
     ("10 to 13", "Telemetry", BACKEND, server_tests(
         "the server records sessions, heists and purchases under a pseudonym, never the account (24, 20.5)",
         "a device's batch is checked whole: known events, known fields, no positions, sensible times (24.3)",

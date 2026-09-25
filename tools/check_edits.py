@@ -233,6 +233,10 @@ NO_EDIT_BECAUSE = {
     "G36": "decisions for the owner: the eras' order, reach and strengthening",
     "D69": "limits of this build: the economy, the harness and the client",
     "G37": "a decision for the owner: the defender's cap, and a pair's once a day",
+    "F50": "a decision for the owner: how a restore keeps a deletion made",
+    "G38": "decisions for the owner: how long each closed thing is kept",
+    "G39": "a decision for the owner: the web route to deletion, and its proof of ownership",
+    "D70": "limits of this build: filing, the client's screens and the edge's cache",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "

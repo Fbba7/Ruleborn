@@ -3,6 +3,12 @@
 //     node server/src/main.mjs [port] [--example]
 //
 // RULEBORN_DATA names the data directory (server/.data/ by default).
+// RULEBORN_SECRET is the key session tokens are signed with and telemetry's
+// pseudonyms are made under; unset, one is made on the first start and kept
+// in the data directory, so a restart neither signs everyone out nor orphans
+// a player's telemetry from their deletion. RULEBORN_DELETIONS names the
+// deletion journal (accounts.mjs), which must live where a restore of the
+// database does not reach: every deletion in it is made again at start.
 // --example publishes the simulation's example Heart, undefended, from an
 // account of its own — seeded, as §13.1's designed islands are, so no
 // new-player protection holds it back — and a client has an island to lease
@@ -25,10 +31,11 @@
 
 import { createServer } from "node:http";
 import { X509Certificate, randomBytes } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
+import { Journal, reapplyDeletions } from "./accounts.mjs";
 import { open } from "./db.mjs";
 import { handler } from "./http.mjs";
 import { Service } from "./service.mjs";
@@ -69,11 +76,19 @@ if (storeKit && !gameCenter && process.env.RULEBORN_STUB_SIGNIN !== "1") {
                   + "set both, or RULEBORN_STUB_SIGNIN=1 for a test deployment");
 }
 
+mkdirSync(data, { recursive: true });
+function secret() {
+  if (process.env.RULEBORN_SECRET) return process.env.RULEBORN_SECRET;
+  const path = join(data, "secret");
+  if (!existsSync(path)) writeFileSync(path, randomBytes(32).toString("hex"), { mode: 0o600, flag: "wx" });
+  return readFileSync(path, "utf8").trim();
+}
+
 const service = new Service({
   db: open(join(data, "ruleborn.sqlite")),
   store: new Store(join(data, "bundles")),
   builds: Builds.load([join(root, "sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm")]),
-  secret: process.env.RULEBORN_SECRET ?? randomBytes(32).toString("hex"),
+  secret: secret(),
   verifyPlatform: gameCenter
     ? (credential) => gameCenter.verify(credential)
     : (credential) => (typeof credential === "string" && credential ? credential : null),
@@ -89,8 +104,14 @@ const service = new Service({
   seasonStart: Date.parse(process.env.RULEBORN_SEASON_START ?? "2026-01-05T00:00:00Z"),
   // §24.3's replays, private: not in the store anyone may fetch by hash.
   replays: new Store(join(data, "replays")),
+  deletions: new Journal(process.env.RULEBORN_DELETIONS ?? join(data, "deletions.jsonl")),
 });
 const handle = handler(service);
+
+// §20.12's "backups included": a database restored from before a deletion
+// has it made again before anyone can sign in.
+const remade = reapplyDeletions(service);
+if (remade) console.log(`${remade} deletion(s) made again from the journal`);
 
 // §24.8's lists are "generated periodically"; how often is not said. Every
 // fifteen minutes here, and once at start.
@@ -140,7 +161,10 @@ createServer(async (req, res) => {
     res.writeHead(response.status, Object.fromEntries(response.headers));
     res.end(Buffer.from(await response.arrayBuffer()));
   } catch (err) {
-    console.error(`${req.method} ${req.url}:`, err);
+    // The route alone, as the edge logs it: a path can carry an account id
+    // or a token, and a log is not where those are kept (§20.5).
+    const route = (req.url ?? "").split("?")[0].split("/").filter(Boolean).slice(0, 2).join("/");
+    console.error(`${req.method} /${route}:`, err);
     if (!res.headersSent) res.writeHead(500, { "content-type": "application/json" });
     res.end(JSON.stringify({ error: "internal" }));
   }
@@ -155,6 +179,14 @@ service.telemetry.compact();
 setInterval(() => service.telemetry.compact(), DAY_MS).unref();
 service.expireReplays();
 setInterval(() => service.expireReplays(), DAY_MS).unref();
+// What names a player and is no use once closed: sent notifications, and
+// used or lapsed invites and challenge links (§20.5).
+const tidy = () => {
+  service.notifications.expire();
+  service.friends.expire();
+};
+tidy();
+setInterval(tidy, DAY_MS).unref();
 
 // §14.6's notifications, sent once a minute. Push is Firebase Cloud
 // Messaging (§24.1), which needs the operator's credentials; without them a

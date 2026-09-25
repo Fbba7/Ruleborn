@@ -776,6 +776,21 @@ dict(
                     "name taking unlimited islands into matchmaking; reminders "
                     "in a minor's night; and smaller ones in the shield, Trace, "
                     "offers, telemetry, constellations and deletion."
+                    "<br><br>What the server stores is declared, column by "
+                    "column \u2014 234 in 38 tables, each with its store data "
+                    "type, purpose, time kept and what a deletion does \u2014 "
+                    "and the App Privacy and Data safety answers are written "
+                    "from it; a test fails on a column added undeclared and "
+                    "does every deletion and time limit it states. The "
+                    "inventory behind it (59 agents, each gap tried by a "
+                    "skeptic) found and fixed: a key made afresh on every "
+                    "restart, which left a deleted player\u2019s telemetry "
+                    "behind; a ban that kept the whole account tied to the "
+                    "identity; the outbox and closed invites and links kept "
+                    "for good; old target lists naming players for good; an "
+                    "under-13 deletion that only severed; a new account "
+                    "trusted as an adult before its age check; and a deletion "
+                    "a database restore would undo (F50, G38, G39, D70)."
                     "<br><br><strong>Not yet:</strong> Google Play's sign-in "
                     "and receipts (need Google's API), crossing realms, \u00a712.22's generated "
                     "fallback targets, and a landing command in the replay.",
@@ -786,7 +801,7 @@ dict(
                        "G29", "D65", "F43", "F44", "F45", "G30", "D66",
                        "G31", "F46", "G32", "D67", "F47", "G33",
                        "G34", "D68", "F48", "G35", "F49", "G36", "D69",
-                       "G37"]),
+                       "G37", "F50", "G38", "G39", "D70"]),
         dict(id="T3.4", owner="claude", status="doing",
              title="The client's half: the simulation inside Godot, and a "
                    "replay on screen",

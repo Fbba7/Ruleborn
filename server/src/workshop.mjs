@@ -272,8 +272,10 @@ export class Workshop {
     else if (header.era !== 0) outcome = { validated: false, reason: "wrong_era" };
     else {
       const build = this.service.builds.get(header.rules);
-      const result = build ? build.verify(replay, this.service.store.get(item.bundle))
-                           : { status: "refused", reason: "rules_not_held" };
+      const island = this.service.store.get(item.bundle);
+      const result = !build ? { status: "refused", reason: "rules_not_held" }
+        : !island ? { status: "refused", reason: "island_withdrawn" }
+        : build.verify(replay, island);
       outcome = result.status === "verified"
         ? { validated: true, verdict: result.verdict, cleared: clears(result.verdict) }
         : { validated: false, reason: result.reason ?? result.status };
@@ -442,15 +444,21 @@ export class Workshop {
 
   /** A ban: the account can no longer sign in, and its islands leave the
    *  Workshop and the target lists at once (§20.12). The minimum to enforce
-   *  it is kept: the account row and its platform identity. As on a
-   *  deletion, its challenge links are void and it leaves its constellation
-   *  — a founder handing it on (§17.7) — and its crew; in the caller's
-   *  transaction. */
+   *  it is kept: its platform identity, in the bans table, apart from the
+   *  account. As on a deletion, its friendships, invites and challenge links
+   *  end and it leaves its constellation — a founder handing it on (§17.7) —
+   *  and its crew; in the caller's transaction. */
   ban(account, reason, now = this.now()) {
     this.db.prepare(
       "UPDATE accounts SET banned_at = ?, banned_reason = ? WHERE id = ? AND banned_at IS NULL")
       .run(now, reason, account);
+    this.db.prepare(
+      `INSERT OR IGNORE INTO bans (identity, banned_at, reason)
+         SELECT platform_identity, banned_at, banned_reason FROM accounts
+          WHERE id = ? AND platform_identity NOT LIKE 'deleted:%'`).run(account);
     this.db.prepare("DELETE FROM challenges WHERE account = ?").run(account);
+    this.db.prepare("DELETE FROM friends WHERE a = ? OR b = ?").run(account, account);
+    this.db.prepare("DELETE FROM friend_invites WHERE account = ?").run(account);
     const social = new Social(this.service);
     const m = social.membership(account);
     if (m) social.depart(m);

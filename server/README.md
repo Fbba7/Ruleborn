@@ -234,7 +234,12 @@ take any credential as an identity — unless `RULEBORN_STUB_SIGNIN=1` says it
 is a test. With neither, it takes any credential as the identity it names,
 refuses every receipt, and must not face a network.
 `RULEBORN_DATA` moves its database and bundles out of `server/.data/`, which
-is how `client/status.py` gives each test run a fresh one. The tests use a
+is how `client/status.py` gives each test run a fresh one. `RULEBORN_SECRET`
+is the key session tokens are signed with and telemetry's pseudonyms made
+under; unset, one is made on the first start and kept in the data directory
+as `secret`, so a restart neither signs everyone out nor leaves a player's
+earlier telemetry where their deletion cannot find it. `RULEBORN_DELETIONS`
+names the deletion journal (below). The tests use a
 stand-in chain in `test/fixtures/apple/` (its `make.sh` regenerates it). The
 readings are **G32**; Google Play's side is **D67**; and building this found
 **F46**: every island is public by hash before any scout.
@@ -336,7 +341,47 @@ their places in constellations and crews, and any token they hold. What the
 document keeps unchanged stays under an id that leads to nobody: the ledger,
 Renown, heists, snapshots, and their Workshop islands, withdrawn rather than
 deleted so a remix still names its original. That reading is register
-**F43**.
+**F43**. Their notifications, sent or waiting, go too, and a raid leased
+before the deletion settles without owing them one.
+
+A player under 13 is deleted further, as "anything collected" (§20.11): the
+replays they played, their islands' bytes (unless another player's island,
+Workshop island or link is the same bytes), their ratings, their Workshop
+plays, ratings, completions and remixes, and their open leases go at once,
+and the target lists are remade without them, the list before too; a raid
+already leased on their island is refused as `island_withdrawn`. A ban keeps
+only the platform identity, in `bans`, apart from the account (§20.12's
+"minimum identifiers"): it ends the player's friendships and invites, and a
+banned player's deletion severs the rest like anyone's.
+
+§20.12's "backups included": each deletion is appended to a journal outside
+the database — an account id, a reason, a time — before it is made, and
+`main.mjs` makes every journalled deletion again at start, so a database
+restored from before one does not bring the player back (**F50**). The
+journal must live where a restore of the database does not reach.
+
+## What the server stores, and the stores' declarations
+
+`privacy.json` declares every column of every table — 234 in 38 — with the
+store data type it is, why it is kept, how long, and what an account's
+deletion does to it; `src/privacy.mjs` checks it against the schema the
+server actually opens and writes `declarations.md` from it: the answers to
+App Store Connect's App Privacy and Google Play's Data safety, in their own
+words, with where each data type is stored and what each table keeps after a
+deletion. `test/privacy.test.mjs` fails on a column added undeclared, and
+does what the declaration states: it deletes a player who has touched every
+table — at their request and as under 13 — and checks every table against
+it, and runs each time limit it names. Those limits are **G38**'s readings:
+a sent notification is kept a week, an invite goes once used or after its
+seven days and a challenge link after its seven, and a band keeps its
+current target list and the one before. Every answer carries
+`Strict-Transport-Security`, the listener's log names a route and never a
+path's ids, and a new account holds the most protective age band, 13 to 15,
+until the device's age check answers (`PUT /v1/age`). Not answered: the web
+link Google asks for to request deletion without the app (**G39**); filing
+both forms, and the client's age check and deletion button (**D70**).
+
+    node server/src/privacy.mjs --write    # after changing privacy.json
 
 ## Constellations and crews
 
@@ -385,7 +430,10 @@ built — register **D63**.
     src/shop.mjs      Starglass packs, §20.2's caps, cosmetics owned and worn
     src/cosmetics.json  the cosmetics sold for Starglass (none authored yet)
     src/telemetry.mjs first-party events, pseudonymous, kept 90 days, and the report
-    src/accounts.mjs  deleting an account: the person goes, the records stay
+    src/accounts.mjs  deleting an account: the person goes, the records stay; the journal
+    src/privacy.mjs   privacy.json checked against the schema; declarations.md written
+    privacy.json      every stored column: its store data type, purpose, time kept, deletion
+    declarations.md   the App Privacy and Data safety answers, written from privacy.json
     src/glicko.mjs    Glicko-2, pure arithmetic
     src/matchmaking.mjs  §12.22's ratings and offer, §12.3's echoes, shield and Trace
     src/stores.mjs    Apple's proofs: Game Center identities, StoreKit 2 transactions
