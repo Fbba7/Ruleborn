@@ -1,0 +1,220 @@
+{
+ "_what": "The owner's answers to the decision brief (docs/decisions/brief.json), as recorded on its page (answers/<id> in the page's database) on 2026-09-25: five picked there, the rest accepted as recommended in one instruction. `build` is where the answer's build change stands: none (the build already does it), to do, done, or outside (it needs something this repository cannot reach). tools/build_audit.py reads it: a decided item is no longer the owner's, and waits on the build, then on the document.",
+ "answers": {
+  "F33": {
+   "option": "D",
+   "how": "picked",
+   "build": "to do"
+  },
+  "F35": {
+   "option": "D",
+   "how": "picked",
+   "build": "to do"
+  },
+  "F37": {
+   "option": "B",
+   "how": "picked",
+   "build": "to do"
+  },
+  "F39": {
+   "option": "B",
+   "how": "picked",
+   "build": "to do"
+  },
+  "C41": {
+   "option": "B",
+   "how": "picked",
+   "build": "to do"
+  },
+  "G17": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "G20": {
+   "option": "C",
+   "how": "accepted as recommended",
+   "build": "done"
+  },
+  "F38": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "C42": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "F36": {
+   "option": "C",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G37": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "done"
+  },
+  "F40": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "done"
+  },
+  "G27": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "F41": {
+   "option": "C",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "F42": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "G28": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G22": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "G23": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G25": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "G24": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G36": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "F49": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "G26": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "done"
+  },
+  "C43": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "F43": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "F50": {
+   "option": "D",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G39": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "F46": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "F47": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "G33": {
+   "option": "C",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G21": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "done"
+  },
+  "F48": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "done"
+  },
+  "G30": {
+   "option": "D",
+   "how": "accepted as recommended",
+   "build": "done"
+  },
+  "F44": {
+   "option": "D",
+   "how": "accepted as recommended",
+   "build": "done"
+  },
+  "F45": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "G31": {
+   "option": "A",
+   "how": "accepted as recommended",
+   "build": "none"
+  },
+  "G19": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G32": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G29": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G38": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G35": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "G34": {
+   "option": "C",
+   "how": "accepted as recommended",
+   "build": "to do"
+  },
+  "F51": {
+   "option": "B",
+   "how": "accepted as recommended",
+   "build": "to do"
+  }
+ }
+}

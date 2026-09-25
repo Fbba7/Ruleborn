@@ -31,9 +31,10 @@ export const SLOTS = 5;
 export const BUILDER_SLOTS = 3;
 
 /** §20.12: "a storage quota per account … enforced at the point of upload".
- *  The size is not given (G26); an island is under a kilobyte, and items are
- *  never deleted, so the quota counts everything ever published. */
-export const QUOTA_BYTES = 64 * 1024;
+ *  The size is not given; the owner decided 1 MiB (G26), a figure that does
+ *  not bite — an island is under a kilobyte. Items are never deleted, so the
+ *  quota counts everything ever published. */
+export const QUOTA_BYTES = 1024 * 1024;
 
 /** §18.7's ladder, by weighted completions across a creator's islands and
  *  islands featured. Builder is "publishing an island anyone completes". */

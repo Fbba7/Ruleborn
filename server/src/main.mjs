@@ -178,17 +178,18 @@ if (remade) console.log(`${remade} deletion(s) made again from the journal`);
 // Target lists no band names any more, which name players (§20.5).
 service.sweepLists();
 
-// §24.8's lists are "generated periodically"; how often is not said. Every
-// fifteen minutes here, and once at start.
-const TARGET_LISTS_MS = 15 * 60 * 1000;
+// §24.8's lists are "generated periodically"; how often is not said. The
+// owner decided once an hour (G21), and once at start.
+const TARGET_LISTS_MS = 60 * 60 * 1000;
 service.targetLists();
 setInterval(() => service.targetLists(), TARGET_LISTS_MS).unref();
 
 // §18.1: a season that has ended is closed — results, rewards, the pull back
-// — and the next opened. Checked with the target lists; closing twice is a
+// — and the next opened, checked every fifteen minutes; closing twice is a
 // no-op, so a missed check costs nothing but a little lateness.
+const ROLLOVER_MS = 15 * 60 * 1000;
 service.seasons.rollover();
-setInterval(() => service.seasons.rollover(), TARGET_LISTS_MS).unref();
+setInterval(() => service.seasons.rollover(), ROLLOVER_MS).unref();
 
 if (process.argv.includes("--example")) {
   const { account } = service.session("example:defender");

@@ -24,7 +24,7 @@ import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
-import { capHaul, defenceShare, entryFee, haul } from "./economy.mjs";
+import { capHaul, defenceShare, entryFee, feeReturned, haul, RAIDS_A_WEEK, RENOWN_HEISTS_A_WEEK } from "./economy.mjs";
 import { byWire, eraAt } from "./eras.mjs";
 import { Friends } from "./friends.mjs";
 import { Matchmaking } from "./matchmaking.mjs";
@@ -64,6 +64,9 @@ export { Refused };
 /** §5.2: "a Heart and up to six outer realms" — the only places an island
  *  may be published, so one player is one island a realm, seven at most. */
 export const REALMS = ["heart", ...Array.from({ length: 6 }, (_, i) => `outer-${i + 1}`)];
+
+/** The Heart's realm level, as the owner decided it (G19). */
+export const HEART_LEVEL = 3;
 
 const day = (ms) => new Date(ms).toISOString().slice(0, 10);
 /** A defence share's ledger reason, after its percent. */
@@ -170,7 +173,11 @@ export class Service {
     const build = this.builds.current;
     const read = build.island(bundle);
     if (read.error) throw new Refused(400, read.error);
-    if (read.problems.length) throw new Refused(422, "island_not_publishable", { problems: read.problems });
+    // The Heart counts as realm level 3 (G19, decided): §5.2's row for it —
+    // 6 wards, 2 posts, 12 by 12, 2 law slots — is the one §5.1's Heart
+    // slots already match.
+    const problems = [...read.problems, ...(realm === "heart" && bundle[4] !== HEART_LEVEL ? ["heart_level"] : [])];
+    if (problems.length) throw new Refused(422, "island_not_publishable", { problems });
     const key = this.store.put(bundle, read.digest);      // the two SHA-256s must agree
     const now = this.now();
     const view = new DataView(bundle.buffer, bundle.byteOffset, bundle.byteLength);
@@ -463,7 +470,27 @@ export class Service {
     return { token: row.token, bundle: row.bundle, seed: row.seed, ticks: row.ticks,
              rules: row.rules, expiresAt: row.expires_at, look: this.shop.equipped(row.defender),
              echo: Boolean(row.echo), trace: Boolean(row.trace_of), mode: row.mode ?? "raid",
-             era: byWire(row.era)?.id ?? null };
+             era: byWire(row.era)?.id ?? null, ...this.stakes(row) };
+  }
+
+  /**
+   * What the raider stakes and where their week stands, before they play:
+   * the fee as it would be charged now, which "the raider sees when choosing
+   * the target" (F39), and §24.12's "A cap was reached" before the lease is
+   * played — the week's 20 paid raids (G20) and ten Renown heists (F40).
+   */
+  stakes(row) {
+    const now = this.now();
+    const mode = row.mode ?? "raid";
+    const raids = this.raidsThisWeek(row.attacker, now);
+    const renown = this.renownHeistsThisWeek(row.attacker, now);
+    const paid = mode === "raid" && !row.trace_of;
+    const overWeek = paid && raids >= RAIDS_A_WEEK;
+    const level = this.db.prepare("SELECT vault_level FROM snapshots WHERE bundle = ?").get(row.bundle).vault_level;
+    const fee = paid && !overWeek ? entryFee(this.balance(row.attacker).starlight, level) : 0;
+    const capped = [...(overWeek ? ["week_raids"] : []),
+                    ...(mode === "raid" && renown >= RENOWN_HEISTS_A_WEEK ? ["week_renown"] : [])];
+    return { fee, week: { raids, raidsOf: RAIDS_A_WEEK, renown, renownOf: RENOWN_HEISTS_A_WEEK }, capped };
   }
 
   // -- validate and grant ----------------------------------------------------
@@ -565,8 +592,11 @@ export class Service {
     const attacker = lease.attacker;
     const snapshot = this.db.prepare("SELECT * FROM snapshots WHERE bundle = ?").get(lease.bundle);
     const level = (id) => this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(id).keeper_level;
+    // §9.6's fatigue counts the day's raids; a game among friends is not one
+    // (F48).
     const raidsEarlierToday = this.db.prepare(
-      "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND day = ? AND validated = 1")
+      `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
+        WHERE h.attacker = ? AND h.day = ? AND h.validated = 1 AND l.mode = 'raid'`)
       .get(attacker, day(now)).n;
     const mint = this.db.prepare(
       "INSERT INTO ledger (account, currency, amount, reason, heist, at) VALUES (?, ?, ?, ?, ?, ?)");
@@ -575,9 +605,13 @@ export class Service {
     };
 
     // §12.3's Trace comes "with a free scout and no entry fee"; a friendly
-    // heist or a challenge is for fun, and costs none either (F48).
+    // heist or a challenge is for fun, and costs none either (F48). Past the
+    // week's 20 paid raids, a raid costs nothing and pays nothing (G20).
     const friendly = lease.mode === "friendly" || lease.mode === "challenge";
-    const fee = lease.trace_of || friendly ? 0 : entryFee(this.balance(attacker).starlight);
+    const overWeek = !friendly && !lease.trace_of
+      && this.raidsThisWeek(attacker, now) >= RAIDS_A_WEEK;
+    const fee = lease.trace_of || friendly || overWeek
+      ? 0 : entryFee(this.balance(attacker).starlight, snapshot.vault_level);
     book(attacker, "starlight", -fee, "entry fee (9.4)");
     // §24.12's Validate "checks the token, the expiry and the caps": §9.6's
     // three, against what this raider was paid today and this week — hauls,
@@ -603,7 +637,7 @@ export class Service {
         WHERE l.attacker = ? AND l.defender = ? AND l.mode = 'raid' AND h.validated = 1 AND h.day = ?`)
       .get(attacker, lease.defender, day(now)).n;
     const scores = !friendly && pairEarlierToday === 0;
-    const pay = capHaul(haul({
+    const reckoned = haul({
       vaultLevel: snapshot.vault_level,
       gradeName: verdict.grade,
       raiderLevel: level(attacker),
@@ -612,12 +646,16 @@ export class Service {
       raidsEarlierToday,
       banked: verdict.banked,
       capacity: verdict.capacity,
-    }), caps(attacker, snapshot.vault_level));
+    });
+    // A game among friends pays no haul (F48); a raid past the week's 20
+    // pays none either, and says which cap stopped it (G20).
+    const pay = friendly ? { ...reckoned, total: 0, essence: 0, starlight: 0, cappedBy: null }
+      : overWeek ? { ...reckoned, total: 0, essence: 0, starlight: 0, cappedBy: "week" }
+      : capHaul(reckoned, caps(attacker, snapshot.vault_level));
     book(attacker, "starlight", pay.starlight, "haul (9.6)");
     book(attacker, "essence", pay.essence, "haul (9.6)");
-    if (verdict.grade === "clean") {
-      book(attacker, "starlight", fee, "entry fee returned after a clean heist (9.4)");
-    }
+    const returned = feeReturned(fee, verdict.grade);
+    book(attacker, "starlight", returned, `entry fee returned after a ${verdict.grade} heist (9.4)`);
     // §9.4: "a foiled heist gives the defender the entry fee plus 5% of what
     // the crew was carrying", the share §13.1's rule has set this season.
     // The fee is the raider's, passed on; the share is minted, so it is held
@@ -630,7 +668,9 @@ export class Service {
     const nobody = Boolean(lease.echo) || gone;
     let defence = null;
     if (verdict.grade === "foiled" && !nobody && !friendly) {
-      book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
+      // The fee passes on only with the pair's first foil of the day; a later
+      // one's stays with the game (G37).
+      if (scores) book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
       const percent = this.seasons.defenceShare(this.seasons.current(now).id);
       const share = scores ? capHaul(defenceShare({
         vaultLevel: snapshot.vault_level, raiderLevel: level(attacker), targetLevel: level(lease.defender),
@@ -647,17 +687,43 @@ export class Service {
     // §12.11: "The friend loses nothing", and a game among friends moves no
     // Renown, stars or ratings (F48). A pair's later heists of the day move
     // neither (G37).
+    // Only the raider's first ten matchmade heists of the week move Renown
+    // (F40); whether this one counted is kept on its outcome, since a foiled
+    // raider at its floor books no Renown line to count by.
     const none = { raider: 0, defender: 0 };
-    const renown = nobody || !scores ? none : this.seasons.settle(lease, verdict, now);
+    const renownCounted = !nobody && scores
+      && this.renownHeistsThisWeek(attacker, now) < RENOWN_HEISTS_A_WEEK;
+    const renown = renownCounted ? this.seasons.settle(lease, verdict, now) : none;
     // §13: "The defender is notified afterwards and can watch the replay."
     if (!nobody) this.notifications.raided(lease, verdict, now);
     const stars = !scores ? none : this.track.settle(lease, verdict, season, now, { echo: nobody });
-    const rating = nobody || friendly ? null : this.matchmaking.settle(lease, snapshot.realm, verdict, now);
+    // An echo rates the raider against its island and leaves the island's
+    // rating alone (G30).
+    const rating = friendly ? null
+      : this.matchmaking.settle(lease, snapshot.realm, verdict, now, { raiderOnly: nobody });
     // "the friend earns a page for every raider their guards catch": pages
     // are the device's, so the outcome is their record (D64).
     const friendPages = friendly ? verdict.caught : undefined;
-    return { verdict, fee, haul: pay, renown, stars, rating, defence, mode: lease.mode ?? "raid",
+    return { verdict, fee, feeReturned: returned, haul: pay, renown, renownCounted, stars, rating,
+             defence, mode: lease.mode ?? "raid",
              ...(friendly ? { friendPages } : {}) };
+  }
+
+  /** The raider's validated raids since Monday 00:00 UTC (G20): matchmade
+   *  and echo raids, not Traces or games among friends. */
+  raidsThisWeek(attacker, now) {
+    return this.db.prepare(
+      `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
+        WHERE h.attacker = ? AND h.validated = 1 AND h.submitted_at >= ?
+          AND l.mode = 'raid' AND l.trace_of IS NULL`).get(attacker, weekStart(now)).n;
+  }
+
+  /** The raider's heists since Monday 00:00 UTC that moved Renown (F40). */
+  renownHeistsThisWeek(attacker, now) {
+    return this.db.prepare(
+      `SELECT COUNT(*) AS n FROM heists
+        WHERE attacker = ? AND validated = 1 AND submitted_at >= ?
+          AND json_extract(outcome, '$.renownCounted') = 1`).get(attacker, weekStart(now)).n;
   }
 
   /**

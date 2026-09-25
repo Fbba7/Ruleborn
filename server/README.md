@@ -21,7 +21,7 @@ It needs Node 22.5 or later and nothing else — no packages. The simulation is
 | **Lease** — "a target snapshot, a seed, a single-use token and an expiry a day away. Nothing is created yet." | `Service.lease`. §24.13's "one lease per target per player at a time" is a partial unique index, so the database holds it rather than the code. The clock is §5.4's, from `facts.json`. |
 | **Play**, **Queue** | On the device: `sim/`'s same library records the replay (`rb_record`). |
 | **Validate** — "re-simulates, compares, and checks the token, the expiry and the caps" | `Service.submit`: the token is bound to the attacker; the replay's header must name the leased snapshot, seed and clock; it is re-simulated by the build its rules version names; every second's checksum is compared. |
-| **Grant** — "only then is the haul minted, into an append-only ledger" | `Service.grant`, in one transaction with the heist row: the entry fee (§9.4), the haul (§9.6), the fee returned after a clean heist, and the fee paid to the defender after a foiled one (§12.9). |
+| **Grant** — "only then is the haul minted, into an append-only ledger" | `Service.grant`, in one transaction with the heist row: the entry fee (§9.4), the haul (§9.6), the fee returned after a clean, loud or partial heist (C41), and the fee paid to the defender after a foiled one (§12.9, G37). |
 
 And the failure rows: a retry is answered from the first decision and pays
 nothing twice; a replay that does not reproduce pays nothing, takes nothing
@@ -57,8 +57,7 @@ Four things the document leaves open are read in `src/economy.mjs` and
   range a target falls: read as 0.1 a Keeper level above, capped at 1.2.
 - §9.6 does not say what a haul is minted in. §32.9 derives the birth curve
   from "raid Essence at base 2,400 (half of each haul)": minted half Essence.
-- §9.4's fee has a floor of 100 and nothing says what a raider holding less
-  pays: whatever it holds.
+- A raider holding less than the fee pays whatever it holds.
 - §24.12's expired lease gets "No reward, with one grace submission allowed":
   read as one expired submission honoured a day.
 
@@ -70,12 +69,40 @@ of it. Three readings are taken there (register **G20**): the curve is in the
 raider's own Vault level's base, "five days' worth" is five days of the curve
 rather than of the ceiling, and the week starts on Monday, UTC.
 
+## What the owner decided
+
+The owner answered the decision brief (`docs/decisions/answers.json`), and
+where an answer changes a rule the document still states, the server follows
+the answer and the register item waits for the document:
+
+- **The fee** (F39, C41, G37) is 2% of B(V) at the target's Vault level —
+  48 at level 1, 1,845 at 10 — with no floor or cap, shown on the lease
+  (`fee`) before the heist. It comes back in full after a clean or loud
+  heist and half after a partial one; after a foiled one it passes to the
+  defender on the pair's first foil of the day, and otherwise stays with
+  the game.
+- **The week** (G20, F40): 20 paid raids a week from Monday 00:00 UTC, and
+  after that a raid costs nothing and pays nothing (`cappedBy: "week"`); the
+  first ten matchmade heists of the week move Renown, and later ones pay
+  their haul and move none. The lease carries the week's counts and names
+  the cap it has reached (`capped`). The league boundaries are refitted to
+  that limit (`tools/league_model.py`).
+- **Games among friends** (F48) pay no haul, cost no fee and write no ledger
+  line, and are not raids for fatigue or the week's count.
+- **Echoes** (G30) rate the raider against the echo's island, which does not
+  move, and "recent" counts only raids.
+- **The Keeper window** (F44) runs from two levels below the raider to three
+  above; **the Heart** (G19) is published only at realm level 3; target
+  lists are rebuilt **hourly** (G21); a track tier costs **10 stars** (G28);
+  the Workshop quota is **1 MiB** and the name lists **64 × 64** (G26).
+
 Target lists are §24.8's "file, not a query": `Service.targetLists()` writes
 one content-addressed list a band, holding every island's current snapshot, and
 `GET /v1/targets` names the current file for each; the file itself is fetched
 by hash like a bundle, so an unchanged band keeps its edge cache. Two readings
 (register **G21**): a band is a realm level, the unit of §12.22's guarantee,
-and "generated periodically" is every fifteen minutes (`main.mjs`).
+and "generated periodically" is once an hour, as the owner decided
+(`main.mjs`).
 
 ## Choosing a target
 
@@ -89,13 +116,15 @@ protections:
 - **The offer.** `offer` is a pure function of the raider and the
   candidates, so the device can run it on a target list, which carries each
   island's rating, deviation, Renown and origin; `GET /v1/offer` runs it on
-  the server. It filters by Renown within 150, Keeper level within 3 and
+  the server. It filters by Renown within 150, Keeper level from two below
+  to three above (F44) and
   rating within a band of the raider's recent success; sorts by predicted
   success; draws the middle from the band; counts echoes when fewer than
   three sit in the band; and only then widens rating, Keeper level and
   Renown, in that order, saying so.
 - **Echoes.** A snapshot no island is on any more can be leased for 14 days;
-  robbing it takes nothing from its owner and moves no Renown.
+  robbing it takes nothing from its owner and moves no Renown; it rates the
+  raider, and not the island (G30).
 - **Protections.** A new player's island is refused for 72 hours, or until
   they raid; a robbed player may Trace the raider once within 24 hours, with
   no entry fee.
@@ -293,7 +322,8 @@ Quiet Week's clock past §5.4's cap is **F49**.
 - **Friends** are made by an invite one player shares and the other
   accepts, and either can end it.
 - **A friendly heist** is a lease in its own mode, on a friend's island:
-  no entry fee, no Renown, stars or rating, and "the friend loses nothing";
+  no entry fee, no haul, no Renown, stars or rating, and "the friend loses
+  nothing";
   the outcome records the page the friend earns "for every raider their
   guards catch". A new player's protection does not stop a friend.
 - **The friends' feed** is derived from the heists already written, so it
@@ -402,7 +432,7 @@ still is. The files go after the deletion's commit, each written first to
 `erasures` in its transaction, so a deletion stopped between the two is
 finished when the server next starts. A raid leased on anyone before their
 deletion settles for the raider and, like an echo, pays, rates and records
-nothing of the one who is gone. A ban keeps only the platform identity, and
+nothing of the one who is gone; it rates the raider alone. A ban keeps only the platform identity, and
 the day, in `bans`, apart from the account (§20.12's "minimum
 identifiers"): it ends the player's friendships and invites, and a banned
 player's deletion severs the rest like anyone's and clears the ban's time

@@ -64,7 +64,9 @@ test("the Workshop over HTTP: publish a cleared island, browse, play, rate, remi
   const cleared = play(t, { bundle: t.service.store.put(island), seed: "7", ticks: 150 * 30 },
                        { plan: openPlan() });
   const words = await (await call("GET", "/v1/workshop/words", { token: player.token })).json();
-  assert.equal(words.adjectives.length, 16);
+  // 64 of each, 4,096 names (G26), the first sixteen where they always were.
+  assert.deepEqual([words.adjectives.length, words.nouns.length], [64, 64]);
+  assert.deepEqual([words.adjectives[0].en, words.nouns[15].en], ["Amber", "Well"]);
   const made = await call("POST", "/v1/workshop", { token: creator.token,
     json: { bundle: b64(island), replay: b64(cleared), adjective: 0, noun: 1 } });
   assert.equal(made.status, 201);

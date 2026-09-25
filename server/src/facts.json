@@ -113,7 +113,10 @@
  "LOAD_PER_SECOND": 30,
  "MATCH_WINDOW": [
   150,
-  3
+  [
+   2,
+   3
+  ]
  ],
  "MENDER_REVIVE_SECONDS": 1.5,
  "NEW_PLAYER_SHIELD_HOURS": 72,

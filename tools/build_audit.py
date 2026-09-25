@@ -24,6 +24,23 @@ from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,
 from build_stamp import stamped  # noqa: E402
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "docs" / "audit" / "index.html"
+DECISIONS = pathlib.Path(__file__).resolve().parent.parent / "docs" / "decisions"
+
+
+def answers() -> dict[str, dict]:
+    """The owner's answers (docs/decisions/answers.json), each with the chosen
+    option's label and document edit from the brief, keyed by item id."""
+    import json
+    got = json.loads((DECISIONS / "answers.json").read_text(encoding="utf-8"))["answers"]
+    brief = json.loads((DECISIONS / "brief.json").read_text(encoding="utf-8"))["entries"]
+    out = {}
+    for item_id, a in got.items():
+        option = next(o for o in brief[item_id]["options"] if o["key"] == a["option"])
+        out[item_id] = dict(a, label=option["label"], doc_edit=option.get("doc_edit", ""))
+    return out
+
+
+ANSWERS = answers()
 
 SEVERITY = {
     "change":      ("Approach change", "chg"),
@@ -408,6 +425,16 @@ def blocker(item: dict, by_id: dict) -> tuple[str, str]:
     blocked for no reason.
     """
     from check_edits import NO_EDIT_BECAUSE
+    # Decided by the owner: no longer theirs, whatever it waited on. It waits
+    # on the build change the answer needs, then on the document.
+    a = ANSWERS.get(item["id"])
+    if a:
+        decided = f"decided, {a['option']}: {a['label']}"
+        if a["build"] == "to do":
+            return "mine", f"{decided}; the build change is still to make"
+        if a["build"] == "outside":
+            return "build", f"{decided}; the build change needs what this repository cannot reach"
+        return "document", f"{decided}; the document takes it next"
     held = [d for d in DEPENDS.get(item["id"], []) if _open(by_id, d)]
     if held:
         return "held", "waits on " + ", ".join(held)
@@ -879,6 +906,18 @@ SIDE_LABEL = {
 }
 
 
+def decided_html(item_id: str) -> str:
+    """The owner's answer to a decision, and the document edit it asks for."""
+    a = ANSWERS.get(item_id)
+    if not a:
+        return ""
+    build = {"none": "the build already does this", "to do": "the build change is still to make",
+             "done": "built", "outside": "the build change needs what this repository cannot reach"}
+    edit = f' Document: {esc(a["doc_edit"])}' if a.get("doc_edit") else ""
+    return (f'<p class="rec decided"><span class="arrow">&#10003;</span> <strong>Decided '
+            f'{esc(a["option"])}:</strong> {esc(a["label"])} ({build[a["build"]]}).{edit}</p>')
+
+
 def item_html(item: dict) -> str:
     label, cls = SEVERITY[item["severity"]]
     v3 = V3.get(item["id"], {})
@@ -921,6 +960,7 @@ def item_html(item: dict) -> str:
         {deps_html(item)}
         <p class="body">{item['body']}</p>
         {f'<p class="rec"><span class="arrow">&rarr;</span> {rec}</p>' if rec else ''}
+        {decided_html(item['id'])}
         {v3_html}
         {v31_html}
         {edits_html(item['id'])}

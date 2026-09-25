@@ -1,5 +1,5 @@
 {
- "_what": "§18.6: \"island names come from word lists\". The document gives no lists, so these are this server's (G26). A name is an adjective and a noun, stored as two indices, so every client shows it in its own language: English puts the adjective first; Brazilian Portuguese puts the noun first and the adjective in the noun's gender. Indices are never reused or reordered: a published name is two numbers.",
+ "_what": "§18.6: \"island names come from word lists\". The document gives no lists, so these are this server's (G26); the owner decided 64 of each, 4,096 names. A name is an adjective and a noun, stored as two indices, so every client shows it in its own language: English puts the adjective first; Brazilian Portuguese puts the noun first and the adjective in the noun's gender. Indices are never reused or reordered: a published name is two numbers.",
  "adjectives": [
   {
    "en": "Amber",
@@ -112,6 +112,342 @@
     "m": "Estrelado",
     "f": "Estrelada"
    }
+  },
+  {
+   "en": "Ancient",
+   "pt_BR": {
+    "m": "Antigo",
+    "f": "Antiga"
+   }
+  },
+  {
+   "en": "Azure",
+   "pt_BR": {
+    "m": "Anil",
+    "f": "Anil"
+   }
+  },
+  {
+   "en": "Blooming",
+   "pt_BR": {
+    "m": "Florido",
+    "f": "Florida"
+   }
+  },
+  {
+   "en": "Breezy",
+   "pt_BR": {
+    "m": "Arejado",
+    "f": "Arejada"
+   }
+  },
+  {
+   "en": "Calm",
+   "pt_BR": {
+    "m": "Calmo",
+    "f": "Calma"
+   }
+  },
+  {
+   "en": "Clever",
+   "pt_BR": {
+    "m": "Astuto",
+    "f": "Astuta"
+   }
+  },
+  {
+   "en": "Cloudy",
+   "pt_BR": {
+    "m": "Nublado",
+    "f": "Nublada"
+   }
+  },
+  {
+   "en": "Copper",
+   "pt_BR": {
+    "m": "Acobreado",
+    "f": "Acobreada"
+   }
+  },
+  {
+   "en": "Crystal",
+   "pt_BR": {
+    "m": "Cristalino",
+    "f": "Cristalina"
+   }
+  },
+  {
+   "en": "Dancing",
+   "pt_BR": {
+    "m": "Dançante",
+    "f": "Dançante"
+   }
+  },
+  {
+   "en": "Distant",
+   "pt_BR": {
+    "m": "Distante",
+    "f": "Distante"
+   }
+  },
+  {
+   "en": "Dreaming",
+   "pt_BR": {
+    "m": "Sonhador",
+    "f": "Sonhadora"
+   }
+  },
+  {
+   "en": "Echoing",
+   "pt_BR": {
+    "m": "Ecoante",
+    "f": "Ecoante"
+   }
+  },
+  {
+   "en": "Emerald",
+   "pt_BR": {
+    "m": "Esmeralda",
+    "f": "Esmeralda"
+   }
+  },
+  {
+   "en": "Endless",
+   "pt_BR": {
+    "m": "Infinito",
+    "f": "Infinita"
+   }
+  },
+  {
+   "en": "Faded",
+   "pt_BR": {
+    "m": "Desbotado",
+    "f": "Desbotada"
+   }
+  },
+  {
+   "en": "Floating",
+   "pt_BR": {
+    "m": "Flutuante",
+    "f": "Flutuante"
+   }
+  },
+  {
+   "en": "Frosty",
+   "pt_BR": {
+    "m": "Gelado",
+    "f": "Gelada"
+   }
+  },
+  {
+   "en": "Gentle",
+   "pt_BR": {
+    "m": "Gentil",
+    "f": "Gentil"
+   }
+  },
+  {
+   "en": "Hushed",
+   "pt_BR": {
+    "m": "Calado",
+    "f": "Calada"
+   }
+  },
+  {
+   "en": "Glowing",
+   "pt_BR": {
+    "m": "Luminoso",
+    "f": "Luminosa"
+   }
+  },
+  {
+   "en": "Green",
+   "pt_BR": {
+    "m": "Verde",
+    "f": "Verde"
+   }
+  },
+  {
+   "en": "Salty",
+   "pt_BR": {
+    "m": "Salgado",
+    "f": "Salgada"
+   }
+  },
+  {
+   "en": "Lonely",
+   "pt_BR": {
+    "m": "Solitário",
+    "f": "Solitária"
+   }
+  },
+  {
+   "en": "Lost",
+   "pt_BR": {
+    "m": "Perdido",
+    "f": "Perdida"
+   }
+  },
+  {
+   "en": "Lucky",
+   "pt_BR": {
+    "m": "Sortudo",
+    "f": "Sortuda"
+   }
+  },
+  {
+   "en": "Merry",
+   "pt_BR": {
+    "m": "Alegre",
+    "f": "Alegre"
+   }
+  },
+  {
+   "en": "Moonlit",
+   "pt_BR": {
+    "m": "Enluarado",
+    "f": "Enluarada"
+   }
+  },
+  {
+   "en": "Northern",
+   "pt_BR": {
+    "m": "do Norte",
+    "f": "do Norte"
+   }
+  },
+  {
+   "en": "Painted",
+   "pt_BR": {
+    "m": "Pintado",
+    "f": "Pintada"
+   }
+  },
+  {
+   "en": "Patient",
+   "pt_BR": {
+    "m": "Paciente",
+    "f": "Paciente"
+   }
+  },
+  {
+   "en": "Proud",
+   "pt_BR": {
+    "m": "Orgulhoso",
+    "f": "Orgulhosa"
+   }
+  },
+  {
+   "en": "Rainy",
+   "pt_BR": {
+    "m": "Chuvoso",
+    "f": "Chuvosa"
+   }
+  },
+  {
+   "en": "Restless",
+   "pt_BR": {
+    "m": "Inquieto",
+    "f": "Inquieta"
+   }
+  },
+  {
+   "en": "Rosy",
+   "pt_BR": {
+    "m": "Rosado",
+    "f": "Rosada"
+   }
+  },
+  {
+   "en": "Secret",
+   "pt_BR": {
+    "m": "Secreto",
+    "f": "Secreta"
+   }
+  },
+  {
+   "en": "Shady",
+   "pt_BR": {
+    "m": "Sombreado",
+    "f": "Sombreada"
+   }
+  },
+  {
+   "en": "Shining",
+   "pt_BR": {
+    "m": "Reluzente",
+    "f": "Reluzente"
+   }
+  },
+  {
+   "en": "Singing",
+   "pt_BR": {
+    "m": "Cantante",
+    "f": "Cantante"
+   }
+  },
+  {
+   "en": "Southern",
+   "pt_BR": {
+    "m": "do Sul",
+    "f": "do Sul"
+   }
+  },
+  {
+   "en": "Stormy",
+   "pt_BR": {
+    "m": "Tempestuoso",
+    "f": "Tempestuosa"
+   }
+  },
+  {
+   "en": "Sunny",
+   "pt_BR": {
+    "m": "Ensolarado",
+    "f": "Ensolarada"
+   }
+  },
+  {
+   "en": "Tangled",
+   "pt_BR": {
+    "m": "Emaranhado",
+    "f": "Emaranhada"
+   }
+  },
+  {
+   "en": "Tiny",
+   "pt_BR": {
+    "m": "Minúsculo",
+    "f": "Minúscula"
+   }
+  },
+  {
+   "en": "Velvet",
+   "pt_BR": {
+    "m": "Aveludado",
+    "f": "Aveludada"
+   }
+  },
+  {
+   "en": "Wandering",
+   "pt_BR": {
+    "m": "Andarilho",
+    "f": "Andarilha"
+   }
+  },
+  {
+   "en": "Whispering",
+   "pt_BR": {
+    "m": "Sussurrante",
+    "f": "Sussurrante"
+   }
+  },
+  {
+   "en": "Wild",
+   "pt_BR": {
+    "m": "Selvagem",
+    "f": "Selvagem"
+   }
   }
  ],
  "nouns": [
@@ -194,6 +530,246 @@
    "en": "Well",
    "pt_BR": "Poço",
    "gender": "m"
+  },
+  {
+   "en": "Arch",
+   "pt_BR": "Arco",
+   "gender": "m"
+  },
+  {
+   "en": "Bay",
+   "pt_BR": "Baía",
+   "gender": "f"
+  },
+  {
+   "en": "Beacon",
+   "pt_BR": "Farol",
+   "gender": "m"
+  },
+  {
+   "en": "Brook",
+   "pt_BR": "Riacho",
+   "gender": "m"
+  },
+  {
+   "en": "Canyon",
+   "pt_BR": "Cânion",
+   "gender": "m"
+  },
+  {
+   "en": "Castle",
+   "pt_BR": "Castelo",
+   "gender": "m"
+  },
+  {
+   "en": "Cave",
+   "pt_BR": "Caverna",
+   "gender": "f"
+  },
+  {
+   "en": "Citadel",
+   "pt_BR": "Cidadela",
+   "gender": "f"
+  },
+  {
+   "en": "Crossing",
+   "pt_BR": "Travessia",
+   "gender": "f"
+  },
+  {
+   "en": "Dell",
+   "pt_BR": "Recanto",
+   "gender": "m"
+  },
+  {
+   "en": "Dune",
+   "pt_BR": "Duna",
+   "gender": "f"
+  },
+  {
+   "en": "Falls",
+   "pt_BR": "Cascata",
+   "gender": "f"
+  },
+  {
+   "en": "Fen",
+   "pt_BR": "Charco",
+   "gender": "m"
+  },
+  {
+   "en": "Field",
+   "pt_BR": "Campo",
+   "gender": "m"
+  },
+  {
+   "en": "Forest",
+   "pt_BR": "Floresta",
+   "gender": "f"
+  },
+  {
+   "en": "Fountain",
+   "pt_BR": "Fonte",
+   "gender": "f"
+  },
+  {
+   "en": "Gate",
+   "pt_BR": "Portão",
+   "gender": "m"
+  },
+  {
+   "en": "Glade",
+   "pt_BR": "Clareira",
+   "gender": "f"
+  },
+  {
+   "en": "Hall",
+   "pt_BR": "Salão",
+   "gender": "m"
+  },
+  {
+   "en": "Haven",
+   "pt_BR": "Refúgio",
+   "gender": "m"
+  },
+  {
+   "en": "Hill",
+   "pt_BR": "Colina",
+   "gender": "f"
+  },
+  {
+   "en": "Hollow",
+   "pt_BR": "Grota",
+   "gender": "f"
+  },
+  {
+   "en": "Lake",
+   "pt_BR": "Lago",
+   "gender": "m"
+  },
+  {
+   "en": "Lantern",
+   "pt_BR": "Lanterna",
+   "gender": "f"
+  },
+  {
+   "en": "Library",
+   "pt_BR": "Biblioteca",
+   "gender": "f"
+  },
+  {
+   "en": "Marsh",
+   "pt_BR": "Pântano",
+   "gender": "m"
+  },
+  {
+   "en": "Mill",
+   "pt_BR": "Moinho",
+   "gender": "m"
+  },
+  {
+   "en": "Mountain",
+   "pt_BR": "Montanha",
+   "gender": "f"
+  },
+  {
+   "en": "Nest",
+   "pt_BR": "Ninho",
+   "gender": "m"
+  },
+  {
+   "en": "Oasis",
+   "pt_BR": "Oásis",
+   "gender": "m"
+  },
+  {
+   "en": "Palace",
+   "pt_BR": "Palácio",
+   "gender": "m"
+  },
+  {
+   "en": "Peak",
+   "pt_BR": "Pico",
+   "gender": "m"
+  },
+  {
+   "en": "Pond",
+   "pt_BR": "Açude",
+   "gender": "m"
+  },
+  {
+   "en": "Reef",
+   "pt_BR": "Recife",
+   "gender": "m"
+  },
+  {
+   "en": "Ridge",
+   "pt_BR": "Serra",
+   "gender": "f"
+  },
+  {
+   "en": "River",
+   "pt_BR": "Rio",
+   "gender": "m"
+  },
+  {
+   "en": "Rock",
+   "pt_BR": "Rocha",
+   "gender": "f"
+  },
+  {
+   "en": "Sanctuary",
+   "pt_BR": "Santuário",
+   "gender": "m"
+  },
+  {
+   "en": "Shore",
+   "pt_BR": "Praia",
+   "gender": "f"
+  },
+  {
+   "en": "Spire",
+   "pt_BR": "Agulha",
+   "gender": "f"
+  },
+  {
+   "en": "Spring",
+   "pt_BR": "Nascente",
+   "gender": "f"
+  },
+  {
+   "en": "Summit",
+   "pt_BR": "Cume",
+   "gender": "m"
+  },
+  {
+   "en": "Temple",
+   "pt_BR": "Templo",
+   "gender": "m"
+  },
+  {
+   "en": "Terrace",
+   "pt_BR": "Terraço",
+   "gender": "m"
+  },
+  {
+   "en": "Thicket",
+   "pt_BR": "Matagal",
+   "gender": "m"
+  },
+  {
+   "en": "Valley",
+   "pt_BR": "Várzea",
+   "gender": "f"
+  },
+  {
+   "en": "Village",
+   "pt_BR": "Aldeia",
+   "gender": "f"
+  },
+  {
+   "en": "Waterfall",
+   "pt_BR": "Catarata",
+   "gender": "f"
   }
  ]
 }

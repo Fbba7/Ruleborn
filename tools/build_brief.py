@@ -70,6 +70,15 @@ def problems(brief: dict) -> list[str]:
         for q in e.get("quotes", []):
             if not any(q["text"] in line for line in lines):
                 out.append(f"{eid}: quote not in the document: {q['text'][:70]!r}")
+    got = json.loads((ROOT / "docs" / "decisions" / "answers.json")
+                     .read_text(encoding="utf-8"))["answers"]
+    for eid, a in got.items():
+        if eid not in entries:
+            out.append(f"answers.json: {eid} is not in the brief")
+        elif a.get("option") not in [o["key"] for o in entries[eid]["options"]]:
+            out.append(f"answers.json: {eid} answers {a.get('option')!r}, not one of its options")
+        if a.get("build") not in ("none", "to do", "done", "outside"):
+            out.append(f"answers.json: {eid} has build {a.get('build')!r}")
     wanted = {r["item"]["id"] for r in build_audit.blocked() if r["why"] == "yours"}
     for eid in sorted(wanted - set(entries)):
         out.append(f"{eid}: waits on the owner's decision and has no entry in the brief")

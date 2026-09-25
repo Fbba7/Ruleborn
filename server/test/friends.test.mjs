@@ -72,7 +72,9 @@ test("a challenge link plays the island once for anyone who holds it (17.6)", ()
   const lease = t.service.lease(t.raider.account, bundle, null, { mode: "challenge", challenge });
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
   assert.deepEqual([out.mode, out.fee, out.renown.raider], ["challenge", 0, 0]);
-  assert.ok(out.haul.total > 0, "the haul is the game's to mint, as §12.22's 0.25 tier implies (F48)");
+  assert.equal(out.haul.total, 0, "for fun only: no haul (F48)");
+  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 0, essence: 0, starglass: 0 },
+                   "and no ledger line");
   t.clock.now += DAY + 1;
   refusal(() => t.service.lease(t.raider.account, bundle, null, { mode: "challenge", challenge }),
           "challenge_already_played");

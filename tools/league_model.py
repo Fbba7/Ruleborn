@@ -65,6 +65,11 @@ ASSUMED = {
     "renown_window": MATCH_WINDOW[0],
 }
 
+#: F40, decided: "A player's first ten validated matchmade heists of the
+#: week, from Monday 00:00 UTC, move Renown"; later ones that week move none.
+#: Each season's first day is read as a Monday.
+RENOWN_HEISTS_A_WEEK = 10
+
 #: §14.7's arrival targets for an engaged player, as days: "In the first
 #: week", "By week 3", "Around month 2", "Month 3 onward" (for strong players).
 ARRIVAL = {"Ember": 7, "Tide": 21, "Star": 60, "Nova": 90}
@@ -76,11 +81,12 @@ def clean_renown(raider: float, defender: float) -> float:
 
 
 class Player:
-    __slots__ = ("kind", "joined", "renown", "ember", "arrived")
+    __slots__ = ("kind", "joined", "renown", "ember", "arrived", "week", "counted")
 
     def __init__(self, kind: str, joined: int):
         self.kind, self.joined = kind, joined
         self.renown = 0.0
+        self.week, self.counted = -1, 0     # F40: Renown heists this week
         self.ember = False          # reached Ember: may not drop back to Dust
         self.arrived: dict[str, int] = {}
 
@@ -126,14 +132,24 @@ def season(players: list[Player], bounds: list[float], start: int, rng: random.R
                 target = order[rng.randrange(a, b)]
             age = day - raider.joined
             p_win = hi - (hi - lo) * min(age, span) / span
-            if rng.random() < p_win:
-                grade = rng.choices(grades, weights)[0]
+            won = rng.random() < p_win
+            grade = rng.choices(grades, weights)[0] if won else None
+            # F40: past the week's ten, a heist moves no Renown either way.
+            if raider.week != day // 7:
+                raider.week, raider.counted = day // 7, 0
+            if raider.counted >= RENOWN_HEISTS_A_WEEK:
+                continue
+            raider.counted += 1
+            if won:
                 amount = clean_renown(raider.renown, target.renown) * RENOWN_OUTCOME[grade]
                 raider.renown += amount
                 target.renown = max(floor(target, bounds), target.renown - amount)
             else:
-                raider.renown = max(floor(raider, bounds), raider.renown - RENOWN_FOILED)
-                target.renown += RENOWN_FOILED
+                # The mirror amount: what the raider lost above its floor, as
+                # the server's seasons.settle() books it.
+                lost = raider.renown - max(floor(raider, bounds), raider.renown - RENOWN_FOILED)
+                raider.renown -= lost
+                target.renown += lost
             for p in (raider, target):
                 if p.renown >= bounds[1]:
                     p.ember = True

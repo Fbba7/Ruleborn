@@ -109,8 +109,9 @@ export class Matchmaking {
   }
 
   /** One validated heist, its own rating period for both sides: the raider
-   *  scores 1 unless foiled (G30). */
-  settle(lease, realm, verdict, now) {
+   *  scores 1 unless foiled (G30). An echo, or an island whose owner is gone,
+   *  rates the raider only, against the island's rating as it stands. */
+  settle(lease, realm, verdict, now, { raiderOnly = false } = {}) {
     // An island published before there were ratings enters at its prior.
     const island = this.islandRating(lease.defender, realm) ?? { ...prior(this.db.prepare(
       "SELECT realm_level FROM snapshots WHERE bundle = ?").get(lease.bundle).realm_level), games: 0 };
@@ -119,15 +120,19 @@ export class Matchmaking {
     const r = update(raider, [{ opponent: island, score }]);
     const i = update(island, [{ opponent: raider, score: 1 - score }]);
     this.store("raider", lease.attacker, { ...r, games: raider.games + 1 }, now);
+    if (raiderOnly) return { raider: Math.round(r.rating), island: Math.round(island.rating) };
     this.store("island", this.islandKey(lease.defender, realm), { ...i, games: island.games + 1 }, now);
     return { raider: Math.round(r.rating), island: Math.round(i.rating) };
   }
 
-  /** The raider's recent success rate. */
+  /** The raider's recent success rate, over the heists that rate them: raids,
+   *  not games among friends, so the rating and "recent" learn from the same
+   *  heists (G30). */
   recentSuccess(account) {
     const rows = this.db.prepare(
-      `SELECT outcome FROM heists WHERE attacker = ? AND validated = 1
-        ORDER BY submitted_at DESC, rowid DESC LIMIT ?`).all(account, RECENT);
+      `SELECT h.outcome FROM heists h JOIN leases l ON l.token = h.token
+        WHERE h.attacker = ? AND h.validated = 1 AND l.mode = 'raid'
+        ORDER BY h.submitted_at DESC, h.rowid DESC LIMIT ?`).all(account, RECENT);
     if (rows.length === 0) {
       const [lo, hi] = successBand(1, "authored");
       return (lo + hi) / 2;
@@ -234,7 +239,8 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   };
   const filters = {
     rating: (c) => Math.abs(predicted(c) - raider.recent) <= BAND_WIDTH,
-    keeper: (c) => Math.abs(c.keeperLevel - raider.keeperLevel) <= KEEPER_WINDOW,
+    keeper: (c) => c.keeperLevel - raider.keeperLevel >= -KEEPER_WINDOW[0]
+      && c.keeperLevel - raider.keeperLevel <= KEEPER_WINDOW[1],
     renown: (c) => Math.abs(c.renown - raider.renown) <= RENOWN_WINDOW,
   };
   const widened = [];

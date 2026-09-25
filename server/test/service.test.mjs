@@ -36,6 +36,23 @@ test("an island §5.2 or §6.1 forbids is refused, with the rule named", () => {
     (e) => e.status === 422 && e.detail.problems.includes("sealed"));
 });
 
+test("the Heart is realm level 3, and an island of another level is published only as an outer realm (5.2, G19)", () => {
+  const t = server();
+  const me = t.service.session("gc:keeper").account;
+  // A bare realm-level-1 island: 10 by 10, the Vault at (5, 7), nothing on it.
+  const side = 10;
+  const bytes = new Uint8Array(14 + side * side * 3 + 3);
+  bytes.set(new TextEncoder().encode("RBI1"));
+  bytes[4] = 1;                                        // realm level
+  bytes[5] = 1;                                        // Vault level
+  new DataView(bytes.buffer).setUint32(6, 750, true);  // exposed
+  bytes.set([5, 7, 9, 9], 10);                         // the Vault, the entrance
+  assert.deepEqual(t.build.island(bytes).problems, []);
+  assert.throws(() => t.service.publish(me, bytes),
+    (e) => e.status === 422 && e.detail.problems.includes("heart_level"));
+  assert.ok(t.service.publish(me, bytes, "outer-1").bundle);
+});
+
 test("publishing is content-addressed and idempotent", () => {
   const t = twoPlayers(false);
   assert.equal(t.bundle, sha256(t.island));
@@ -107,7 +124,7 @@ test("the second raid of the day pays 0.85 of the first, and the fee is 2% (§9.
   assert.notEqual(second.token, first.token, "the first lease was used");
   const out = t.service.submit(t.raider.account, second.token, play(t, second, { plan: openPlan() }));
   assert.equal(out.haul.total, Math.floor(5400 * 0.85));
-  assert.equal(out.fee, 100, "2% of 2,700 is 54, and the floor is 100");
+  assert.equal(out.fee, 108, "2% of B(3), 5,400 (F39)");
   // Clean, so the fee came back: 2,700 + 2,295 each side of the split.
   assert.deepEqual(t.service.balance(t.raider.account),
                    { starlight: 2700 + 2295, essence: 2700 + 2295, starglass: 0 });
@@ -167,7 +184,7 @@ test("two players with the same island are two targets, and a foiled fee goes to
   const lease = t.service.lease(t.raider.account, t.bundle, twin.account);
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
   assert.equal(out.verdict.grade, "foiled");
-  assert.equal(t.service.balance(twin.account).starlight, 1_000, "the twin was raided");
+  assert.equal(t.service.balance(twin.account).starlight, 108, "the twin was raided");
   assert.equal(t.service.balance(t.defender.account).starlight, 0);
 });
 
@@ -206,10 +223,10 @@ test("a foiled raider pays the fee to the defender (§12.9)", () => {
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
   assert.equal(out.validated, true);
   assert.equal(out.verdict.grade, "foiled");
-  assert.equal(out.fee, 1000);
+  assert.equal(out.fee, 108, "2% of B(3), 5,400 (F39)");
   assert.equal(out.haul.total, 0);
-  assert.equal(t.service.balance(t.raider.account).starlight, 49_000);
-  assert.equal(t.service.balance(t.defender.account).starlight, 1_000);
+  assert.equal(t.service.balance(t.raider.account).starlight, 50_000 - 108);
+  assert.equal(t.service.balance(t.defender.account).starlight, 108);
 });
 
 test("a replay that does not reproduce pays nothing, takes nothing, and is flagged (§24.12)", () => {
@@ -224,6 +241,84 @@ test("a replay that does not reproduce pays nothing, takes nothing, and is flagg
   assert.deepEqual(t.service.balance(t.raider.account), { starlight: 0, essence: 0, starglass: 0 });
   const row = t.service.db.prepare("SELECT review FROM heists WHERE token = ?").get(lease.token);
   assert.equal(row.review, 1, "a note for review — one mismatch is never a ban");
+});
+
+/** `n` validated heists by `attacker` this week, written straight to the
+ *  tables, each with the given mode and outcome. */
+function pastHeists(t, attacker, n, { mode = "raid", outcome = {} } = {}) {
+  // Against someone else, so G37's once-a-day pair rule is not what is tested.
+  const other = t.service.session("gc:someone-else").account;
+  for (let i = 0; i < n; i++) {
+    const token = `past-${mode}-${i}-${JSON.stringify(outcome).length}`;
+    t.service.db.prepare(
+      `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at,
+                           echo, trace_of, mode, challenge, era, state)
+       VALUES (?, ?, ?, ?, '1', 4500, 'r', ?, ?, 0, NULL, ?, NULL, 0, 'settled')`)
+      .run(token, attacker, t.bundle, other, t.clock.now - 1000, t.clock.now, mode);
+    t.service.db.prepare(
+      `INSERT INTO heists (token, attacker, bundle, seed, log_hash, state_hash, validated, outcome,
+                           review, grace, submitted_at, day)
+       VALUES (?, ?, ?, '1', 'h', 's', 1, ?, 0, 0, ?, ?)`)
+      .run(token, attacker, t.bundle, JSON.stringify(outcome), t.clock.now - 1000,
+           new Date(t.clock.now).toISOString().slice(0, 10));
+  }
+}
+
+test("a pair's second foil of the day keeps the fee with the game (9.4, G37)", () => {
+  const t = twoPlayers(false);
+  t.service.db.prepare(
+    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
+    .run(t.raider.account);
+  for (const hour of [0, 1]) {
+    t.clock.now += hour * 60 * 60 * 1000;
+    const lease = t.service.lease(t.raider.account, t.bundle);
+    const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
+    assert.deepEqual([out.verdict.grade, out.fee, out.feeReturned], ["foiled", 108, 0]);
+  }
+  assert.equal(t.service.balance(t.raider.account).starlight, 50_000 - 2 * 108);
+  assert.equal(t.service.balance(t.defender.account).starlight, 108, "the first fee only");
+});
+
+test("past 20 paid raids a week, a raid costs nothing and pays nothing, and the lease says so (9.6, G20)", () => {
+  const t = twoPlayers();
+  t.service.db.prepare(
+    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
+    .run(t.raider.account);
+  // Games among friends are not raids, and do not count.
+  pastHeists(t, t.raider.account, 5, { mode: "friendly" });
+  pastHeists(t, t.raider.account, 19);
+  const twentieth = t.service.lease(t.raider.account, t.bundle);
+  assert.deepEqual([twentieth.fee, twentieth.capped, twentieth.week.raids], [108, [], 19]);
+  const paid = t.service.submit(t.raider.account, twentieth.token, play(t, twentieth, { plan: openPlan() }));
+  assert.ok(paid.haul.total > 0);
+  const after = t.service.balance(t.raider.account);
+  t.clock.now += 60 * 60 * 1000;
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  assert.deepEqual([lease.fee, lease.capped], [0, ["week_raids"]]);
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  assert.deepEqual([out.fee, out.haul.total, out.haul.cappedBy], [0, 0, "week"]);
+  assert.deepEqual(t.service.balance(t.raider.account), after, "no ledger line moved");
+  // Monday 00:00 UTC starts a new week.
+  t.clock.now += 7 * 24 * 60 * 60 * 1000;
+  assert.deepEqual(t.service.lease(t.raider.account, t.bundle).capped, []);
+});
+
+test("a raider's first ten heists of the week move Renown, and later ones pay only the haul (12.9, F40)", () => {
+  const t = twoPlayers();
+  pastHeists(t, t.raider.account, 9, { outcome: { renownCounted: true } });
+  pastHeists(t, t.raider.account, 3, { outcome: { renownCounted: false } });
+  const tenth = t.service.lease(t.raider.account, t.bundle);
+  assert.deepEqual(tenth.capped, []);
+  const moved = t.service.submit(t.raider.account, tenth.token, play(t, tenth, { plan: openPlan() }));
+  assert.equal(moved.renownCounted, true);
+  assert.ok(moved.renown.raider > 0);
+  const u = twoPlayers();
+  pastHeists(u, u.raider.account, 10, { outcome: { renownCounted: true } });
+  const lease = u.service.lease(u.raider.account, u.bundle);
+  assert.deepEqual(lease.capped, ["week_renown"]);
+  const out = u.service.submit(u.raider.account, lease.token, play(u, lease, { plan: openPlan() }));
+  assert.deepEqual([out.renownCounted, out.renown], [false, { raider: 0, defender: 0 }]);
+  assert.ok(out.haul.total > 0, "the haul is still paid");
 });
 
 test("a crew that never lands is refused and pays nothing (5.4)", () => {

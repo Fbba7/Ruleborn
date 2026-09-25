@@ -463,6 +463,27 @@ dict(
                     "back unprompted</em> is the one question \u00a719.27 "
                     "concedes simulation cannot answer.",
              register=["C29"]),
+        dict(id="T1.13", owner="you", status="done",
+             title="Answer the decision brief",
+             detail="<strong>Answered on 25 September 2026:</strong> five "
+                    "picked on the brief's page, and the other 38 accepted as "
+                    "recommended in one instruction. Every answer is on the "
+                    "page and in <code>docs/decisions/answers.json</code>; no "
+                    "register item waits on the owner now. Twelve answers keep "
+                    "what the build already does; the rest are T1.14.",
+             evidence="docs/decisions/answers.json",
+             register=["F33", "F35", "F37", "F39", "C41", "G17", "G20", "F38", "C42", "F36", "G37", "F40", "G27", "F41", "F42", "G28", "G22", "G23", "G25", "G24", "G36", "F49", "G26", "C43", "F43", "F50", "G39", "F46", "F47", "G33", "G21", "F48", "G30", "F44", "F45", "G31", "G19", "G32", "G29", "G38", "G35", "G34", "F51"]),
+        dict(id="T1.14", owner="claude", status="doing",
+             title="Build what the answers decided",
+             detail="Each answer names a build change — the server's "
+                    "fee, weekly counts and friendly heists, the simulation's "
+                    "alarm reach, Vault call, Delay and regrowth, the economy "
+                    "model's base and pages, the shop without a currency, "
+                    "refunds, deletion from the web — and a document edit. "
+                    "Each is built, checked and reviewed in batches; an item "
+                    "then waits only on the document taking its edit.",
+             evidence="docs/decisions/answers.json",
+             register=["F33", "F35", "F37", "F39", "C41", "G20", "F38", "F36", "G37", "F40", "F41", "G28", "G23", "G24", "G26", "F43", "F50", "G39", "F46", "G33", "G21", "F48", "G30", "F44", "G19", "G32", "G29", "G38", "G35", "G34", "F51"]),
         dict(id="T1.11", owner="claude", status="done",
              title="Merge the two checkers into one",
              detail="v3.1 ships its own build checker, and it is good: it pins "

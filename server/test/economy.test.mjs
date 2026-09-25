@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { base, capHaul, dayCeiling, difficulty, entryFee, fatigue, FULL_CREW_CARRY, haul, perRaidCap,
+import { base, capHaul, dayCeiling, difficulty, entryFee, fatigue, feeReturned, FULL_CREW_CARRY, haul, perRaidCap,
          richness, weekCeiling } from "../src/economy.mjs";
 
 const value = ([n, d]) => Number(n) / Number(d);
@@ -67,12 +67,13 @@ test("fill is against the smaller of the crew's bags and what is exposed", () =>
   assert.equal(poor.terms.richness, 0.6, "and poverty is priced once, by richness");
 });
 
-test("the entry fee is 2% of Starlight, from 100 to 25,000 (§9.4), never more than is held", () => {
-  assert.equal(entryFee(1_000), 100);
-  assert.equal(entryFee(50_000), 1_000);
-  assert.equal(entryFee(10_000_000), 25_000);
-  assert.equal(entryFee(40), 40, "G17: a raider holding less than 100 pays what it holds");
-  assert.equal(entryFee(0), 0);
+test("the entry fee is 2% of B(V) at the target, never more than is held (9.4, F39)", () => {
+  const rich = 10_000_000;
+  assert.deepEqual([1, 2, 8, 10].map((v) => entryFee(rich, v)), [48, 72, 820, 1_845]);
+  assert.equal(entryFee(40, 3), 40, "G17: a raider holding less than the fee pays what it holds");
+  assert.equal(entryFee(0, 5), 0);
+  // What comes back (C41): all after clean or loud, half after partial.
+  assert.deepEqual(["clean", "loud", "partial", "foiled"].map((g) => feeReturned(109, g)), [109, 109, 54, 0]);
 });
 
 test("the per-raid cap is 1.98 times the base, derived from richness and difficulty (§9.6)", () => {

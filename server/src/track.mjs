@@ -27,10 +27,11 @@ export function heistStars(grade) {
   return { raider, defender: HEIST_STARS - raider };
 }
 
-/** A tier's price: a §14.1 regular player's day of clean raids, two heists
- *  (G28). Tier 1 costs nothing: "the season track's first tier is complete
- *  on day one" (§14's start-partly-filled rule). */
-export const TIER_STARS = 2 * HEIST_STARS;
+/** A tier's price, as the owner decided it (G28): 10 stars, a §14.1 regular
+ *  player's average day of raids at §9.6's success split, 490 for the track.
+ *  Tier 1 costs nothing: "the season track's first tier is complete on day
+ *  one" (§14's start-partly-filled rule). */
+export const TIER_STARS = HEIST_STARS;
 
 /** The six premium kinds §18.2 names, a cosmetic every fifth tier (G28). */
 export const PREMIUM_KINDS = ["realm_skin", "sky_theme", "bridge_style", "outfit", "sage_robe", "law_visual"];

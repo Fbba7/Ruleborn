@@ -92,6 +92,15 @@ test("Renown within 150 and Keeper level within 3 filter first; a thin band wide
   assert.ok(!kept.targets.some((c) => c.bundle === "far"), "outside the Renown window, and not needed");
 });
 
+test("the Keeper window runs from two levels below the raider to three above (12.22, F44)", () => {
+  const levels = [2, 3, 4, 5, 8, 9];
+  const pool = levels.map((k) => candidate(`k${k}`, 0.62 + k / 1000, { keeperLevel: k }));
+  const out = offer(RAIDER, pool, { size: 6 });
+  assert.deepEqual(out.widened, [], "enough in the band: nothing widened");
+  assert.deepEqual(out.targets.map((c) => c.keeperLevel).sort((a, b) => a - b), [3, 4, 5, 8],
+                   "three below and four above are out; two below and three above are in");
+});
+
 test("echoes count only when fewer than three live candidates sit in the band (12.3, 12.22)", () => {
   const live = [candidate("a", 0.62), candidate("b", 0.63)];
   const echo = candidate("old", 0.64, { echo: true });
@@ -111,7 +120,12 @@ test("robbing an echo takes nothing from its owner: no fee, no Renown, no stars 
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: [] }));
   assert.equal(out.verdict.grade, "foiled");
   assert.equal(t.service.balance(t.defender.account).starlight, 0, "the foiled fee went to nobody");
-  assert.deepEqual([out.renown, out.stars.defender, out.rating], [{ raider: 0, defender: 0 }, 0, null]);
+  assert.deepEqual([out.renown, out.stars.defender], [{ raider: 0, defender: 0 }, 0]);
+  // The raider is rated against the echo's island, which does not move (G30).
+  const island = t.service.matchmaking.islandRating(t.defender.account, "heart");
+  assert.ok(out.rating.raider > 0);
+  assert.equal(out.rating.island, Math.round(island.rating), "the island's rating is as it was");
+  assert.equal(island.games, 0, "and counts no game");
 });
 
 test("a new player cannot be raided for 72 hours, or until they raid a player themselves (12.3)", () => {

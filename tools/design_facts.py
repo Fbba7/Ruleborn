@@ -215,8 +215,10 @@ CONSTELLATION_ELDERS = 4
 #: §17.7: a crew is "4 to 8", "the people you actually play with".
 CREW_SIZE = (4, 8)
 
-#: §12.22's band: "Renown within 150, Keeper level within 3". (Renown, levels)
-MATCH_WINDOW = (150, 3)
+#: §12.22's band: "Renown within 150, Keeper level within 3". The owner
+#: decided the Keeper window runs from two levels below to three above (F44),
+#: which the document does not say yet (BEHIND). (Renown, (below, above))
+MATCH_WINDOW = (150, (2, 3))
 
 #: §12.22's rating: "a wide deviation, 350 on Glicko-2's scale … (volatility
 #: 0.06, system constant 0.5)". (deviation, volatility, system constant)
@@ -526,8 +528,10 @@ STATED = {
 #: the simulation still reads these values, so they stay declared until the
 #: port lands, and then they go.
 BEHIND: dict[str, tuple[str, str]] = {
-    # Empty since D56: the ambush, the crack noise and disarming were ported
-    # to sim/ and the harness, and their v3.2 facts deleted rather than kept.
+    # A fact the owner has decided and the document does not state yet: the
+    # value above is the decision, and the check holds it to that until the
+    # document takes the edit and the item closes.
+    "MATCH_WINDOW": ("F44", "Keeper level from two below to three above"),
 }
 
 

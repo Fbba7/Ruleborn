@@ -260,7 +260,8 @@ test("a raid leased on a player before their deletion settles for the raider and
   assert.notEqual(t.service.bundle(xBundle), null, "another player's island is these bytes");
   const out = t.service.submit(z, lease.token, replay);
   assert.equal(out.validated, true, "the raider played it honestly");
-  assert.deepEqual([out.rating, out.renown.defender, out.stars.defender], [null, 0, 0]);
+  assert.deepEqual([out.renown.defender, out.stars.defender], [0, 0]);
+  assert.ok(out.rating.raider > 0, "the raider is rated, against the island as it stood (G30)");
   assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM ratings WHERE key = ? OR key LIKE ?")
     .get(x, `${x}/%`).n, 0, "no rating of them comes back");
 });

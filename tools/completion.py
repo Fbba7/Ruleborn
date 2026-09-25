@@ -261,7 +261,8 @@ DELIVERABLES = [
     ("6", "Rate limits", BACKEND, server_tests(
         "the per-raid cap is 1.98 times the base, derived from richness and difficulty (§9.6)",
         "a day's ceiling is half again above the whole fatigue curve; a week's is five days of it",
-        "a haul is capped by what the raider was already paid today (§9.6, §24.12)")),
+        "a haul is capped by what the raider was already paid today (§9.6, §24.12)",
+        "past 20 paid raids a week, a raid costs nothing and pays nothing, and the lease says so (9.6, G20)")),
 
     ("7", "Workshop services: publish, browse, moderate, remix", BACKEND, server_tests(
         "an island reaches the Workshop only once its creator has cleared it (18.6)",
@@ -278,7 +279,8 @@ DELIVERABLES = [
 
     ("8", "Currencies", BACKEND, server_tests(
         "a planned clean heist is re-simulated, and its haul minted with the fee returned",
-        "the second raid of the day pays 0.85 of the first, and the fee is 2% (§9.4, §9.6)")),
+        "the second raid of the day pays 0.85 of the first, and the fee is 2% (§9.4, §9.6)",
+        "a pair's second foil of the day keeps the fee with the game (9.4, G37)")),
     ("8", "Cosmetics", BACKEND, server_tests(
         "a cosmetic is bought with Starglass at its euro price, owned once, and worn in its slot (22.1)",
         "a defender's worn cosmetics travel with the lease, so the raider sees them")),
@@ -305,7 +307,8 @@ DELIVERABLES = [
         "above its floor, the defender loses the mirror amount (12.9)",
         "a foiled heist costs the raider a flat 8, and the defender gains what the raider lost (12.9)",
         "Ember, once reached, is a floor: nobody drops out of Dust or Ember (18.1)",
-        "a Renown's league and division: three divisions a league, none in Paradox (18.1)")),
+        "a Renown's league and division: three divisions a league, none in Paradox (18.1)",
+        "a raider's first ten heists of the week move Renown, and later ones pay only the haul (12.9, F40)")),
     ("9", "Crews (clans)", BACKEND, server_tests(
         "a constellation: the Beacon from Keeper level 6, thirty Keepers, a founder and four elders (17.1)",
         "a crew is four to eight, joined by its invite, and survives its founder leaving (17.7)",

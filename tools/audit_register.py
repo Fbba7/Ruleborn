@@ -6045,7 +6045,7 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "load test (<code>server/load.mjs</code>, recorded in "
           "<code>server/load.json</code>) plays §14.1\u2019s players through the "
           "server as built: an engaged player writes at least 46 rows a day, "
-          "9.2 times the budget; a regular one 24 and a casual one 11. A clean "
+          "9.3 times the budget; a regular one 24 and a casual one 10.5. A clean "
           "heist in steady state writes about 14 \u2014 the lease issued and "
           "settled, the heist, up to four ledger lines, Renown on both sides, "
           "stars, two ratings, an event batch, the defender\u2019s notification "
@@ -6063,7 +6063,9 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "landing entered the replay (§5.4): the drawn test player now lands "
           "on a drawn edge tile, so a few of its heists end differently, and "
           "a heist\u2019s rows moved by 0.01 a player-day; none of the "
-          "figures above changed.",
+          "figures above changed. Re-measured again for the owner\u2019s "
+          "answers: a loud or partial heist now books its fee\u2019s return "
+          "(C41), so an engaged player writes 46.46 rows a day, not 46.02.",
      rec="Re-derive §24.1\u2019s budget and cost table from measured writes: state "
          "a share of monthly players active on a day, price the writes a heist "
          "must make, and drop the free-plan columns for validation. Or cut "

@@ -151,16 +151,42 @@ export function defenceShare({ vaultLevel, raiderLevel, targetLevel, exposed, le
 }
 
 /**
- * §9.4: "Entry fee: 2% of the raider's Starlight, from 100 to 25,000,
- * returned in full after a clean heist." Never more than the raider holds
- * (G17).
+ * The entry fee, as the owner decided it (F39): 2% of B(V) at the target's
+ * Vault level, with no floor or cap — 48 at level 1, 1,845 at 10 — where
+ * §9.4 still reads "2% of the raider's Starlight, from 100 to 25,000".
+ * Never more than the raider holds (G17).
  */
-export function entryFee(starlight) {
-  const [n, d] = ratio(facts.ENTRY_FEE_RATE);
-  const fee = Number((BigInt(Math.max(0, starlight)) * n) / d);
-  const clamped = Math.min(facts.ENTRY_FEE_MAX, Math.max(facts.ENTRY_FEE_MIN, fee));
-  return Math.min(clamped, Math.max(0, starlight));
+export function entryFee(starlight, vaultLevel) {
+  const fee = Number(floor(mul(base(vaultLevel), ratio(facts.ENTRY_FEE_RATE))));
+  return Math.min(fee, Math.max(0, starlight));
 }
+
+/**
+ * What of the fee comes back, as the owner decided it (C41), §12.9's column
+ * written into §9.4: all of it after a clean or loud heist, half after a
+ * partial one, none after a foiled one — which passes to the defender, or
+ * stays with the game (G37).
+ */
+export function feeReturned(fee, gradeName) {
+  if (gradeName === "clean" || gradeName === "loud") return fee;
+  if (gradeName === "partial") return Math.floor(fee / 2);
+  return 0;
+}
+
+/**
+ * The week's raids, as the owner decided it (G20): at most 20 paid raids a
+ * week — five of §14.1's engaged days of four, as §9.6's week cap is "five
+ * days' worth, not seven" — from Monday 00:00 UTC. A later raid that week
+ * charges no fee and pays no haul.
+ */
+export const RAIDS_A_WEEK = 5 * 4;
+
+/**
+ * The week's Renown, as the owner decided it (F40): a player's first ten
+ * validated matchmade heists of the week move Renown — five days of two, as
+ * the week cap is five days' worth. Later ones pay their haul and move none.
+ */
+export const RENOWN_HEISTS_A_WEEK = 5 * 2;
 
 // -- the caps (§9.6) ---------------------------------------------------------
 
