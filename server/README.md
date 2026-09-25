@@ -318,8 +318,24 @@ The readings are **G35**; what a game among friends pays is **F48**.
   nothing goes out in §20.2's night (21:00 to 08:00 at 13 to 15, 22:00 to
   08:00 at 16 and 17 and, by default, for adults, who may open it), on the
   player's own clock; raids before a notification is sent are gathered into
-  it. `main.mjs` delivers once a minute, and logs instead of pushing until
-  Firebase Cloud Messaging is configured.
+  it. `main.mjs` delivers once a minute.
+- **Push** (`src/push.mjs`) is Firebase Cloud Messaging's HTTP v1 API, sent
+  as the project's service account (`RULEBORN_FCM_SERVICE_ACCOUNT`, its JSON
+  key; `RULEBORN_FCM_PROJECT` if the project is not the key's own). A
+  message names localisation keys — `ruleborn_raided_title` and `_body`,
+  `ruleborn_reminder_title` and `_body` — which the app's native string
+  tables hold, so each device shows it in its own language, and carries the
+  notification as data: for raids, how many and the latest, never the
+  night's whole list. It expires when the player's night begins (a reminder
+  also at its day's end), so FCM and Apple drop it rather than wake a phone
+  that was off or asleep inside §20.2's night; each kind collapses only
+  with its own. Each is claimed before it is sent, so a raid landing
+  meanwhile starts its own, and each send reads the clock and the token as
+  they are then. A token FCM no longer knows, or names as malformed, is
+  cleared; one FCM cannot take now is tried again after five minutes a try,
+  six tries at most; one refused for good is not sent twice; and every tick
+  logs its retries, give-ups and refusals by reason, never with a token.
+  Without the key a due notification is logged, by kind and count only.
 
 The readings are **G34**, what is not built **D68**.
 
@@ -476,6 +492,7 @@ built — register **D63**.
     src/matchmaking.mjs  §12.22's ratings and offer, §12.3's echoes, shield and Trace
     src/stores.mjs    the stores' proofs: Game Center, StoreKit 2, Google sign-in, Play purchases
     src/googleapi.mjs Google's APIs as a service account: a Play purchase looked up and consumed
+    src/push.mjs      push through Firebase Cloud Messaging: the message, and what FCM's answer means
     src/notifications.mjs  the outbox: a heist against you, the daily reminder, §20.2's nights
     src/friends.mjs   friends, friendly heists, the friends' feed, challenge links
     src/eras.mjs      §18.3's era of the week, on every lease

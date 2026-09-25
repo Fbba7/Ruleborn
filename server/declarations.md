@@ -107,5 +107,5 @@ Erased: gone. Severed: kept, under an account id that no longer leads to anyone 
 - Game Center sign-in: nothing of the player's: the server fetches Apple's public key by the URL the proof names; to static.gc.apple.com, sandbox.gc.apple.com.
 - Google sign-in: nothing of the player's: the server fetches the keys Google signs ID tokens with, from one fixed URL; to www.googleapis.com.
 - a Play purchase settled: the purchase's product and token, which Google issued, to look it up and consume it; to Google's Play Developer API, as the app's own service account.
-- push notifications: the push token and a message: the heists raided, or the reminder's day; to Firebase Cloud Messaging, as the operator's service provider (not built, D68).
+- push notifications: the push token and a message: localisation keys to show, how many raids and the latest one's id, or the reminder's day; it expires when the player's night begins; to Firebase Cloud Messaging, as the operator's service provider, which passes iPhone messages on to Apple's push service.
 - the server's log: a route and an error; never a path's ids or a body; to the operator's platform.

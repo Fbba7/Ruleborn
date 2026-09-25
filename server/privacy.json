@@ -1350,6 +1350,10 @@
     },
     "sent_at": {
      "type": "other-usage"
+    },
+    "attempts": {
+     "type": "none",
+     "holds": "how often the push service could not take it"
     }
    }
   },
@@ -1553,8 +1557,8 @@
   },
   {
    "what": "push notifications",
-   "carries": "the push token and a message: the heists raided, or the reminder's day",
-   "to": "Firebase Cloud Messaging, as the operator's service provider (not built, D68)"
+   "carries": "the push token and a message: localisation keys to show, how many raids and the latest one's id, or the reminder's day; it expires when the player's night begins",
+   "to": "Firebase Cloud Messaging, as the operator's service provider, which passes iPhone messages on to Apple's push service"
   },
   {
    "what": "the server's log",

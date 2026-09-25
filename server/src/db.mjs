@@ -449,7 +449,9 @@ CREATE TABLE IF NOT EXISTS notifications (
   kind    TEXT NOT NULL,
   data    TEXT NOT NULL,
   due_at  INTEGER NOT NULL,
-  sent_at INTEGER
+  sent_at INTEGER,
+  -- How often the push service could not take it (notifications.mjs).
+  attempts INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS notifications_due ON notifications (sent_at, due_at);
 
@@ -565,6 +567,7 @@ const ADDED = [
   ["leases", "challenge", "TEXT"],
   ["leases", "era", "INTEGER NOT NULL DEFAULT 0"],
   ["target_lists", "previous", "TEXT"],
+  ["notifications", "attempts", "INTEGER NOT NULL DEFAULT 0"],
 ];
 
 /** A ledger made before Starglass: its currency check predates it, and a

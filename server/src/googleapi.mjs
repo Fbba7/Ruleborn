@@ -71,12 +71,15 @@ export class ServiceAccount {
     return answer.access_token;
   }
 
-  /** A call to a Google API with this account's token. */
-  async call(url, { method = "GET", scope }) {
+  /** A call to a Google API with this account's token; `json` is its body. */
+  async call(url, { method = "GET", scope, json }) {
     const token = await this.token(scope);
+    const body = json === undefined ? undefined : JSON.stringify(json);
     return this.fetch(url, {
       method,
-      headers: { authorization: `Bearer ${token}`, ...(method === "POST" ? { "content-length": "0" } : {}) },
+      headers: { authorization: `Bearer ${token}`,
+                 ...(body ? { "content-type": "application/json" } : method === "POST" ? { "content-length": "0" } : {}) },
+      body,
       redirect: "error",
       signal: AbortSignal.timeout(GOOGLE_TIMEOUT_MS),
     });

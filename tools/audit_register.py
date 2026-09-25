@@ -6100,19 +6100,22 @@ dict(id="G34", kind="gap", severity="minor", status="open",
          "inside the night."),
 
 dict(id="D68", kind="deviation", severity="minor", status="open",
-     title="Notifications are queued and timed on the server, and not yet "
-           "pushed",
+     title="Notifications are queued, timed and pushed by the server; the "
+           "device\u2019s own are not built",
      refs=["14.6", "20.2", "24.1"],
      body="The server keeps replays for both sides to watch, queues the "
           "defender\u2019s notification and the chosen daily reminder, holds them "
-          "through the night by age band, and sends what is due through an "
-          "injected push. Not built: Firebase Cloud Messaging itself (§24.1\u2019s "
-          "push row), which needs the operator\u2019s credentials, so "
-          "<code>main.mjs</code> logs a due notification instead; the device\u2019s "
-          "own timers (storage full, a character rested, an experiment "
-          "finished); and asking permission after the third session (§25.2), "
-          "which is the client\u2019s. Found building notifications.",
-     rec="Wire FCM with the operator\u2019s key before the beta."),
+          "through the night by age band, and pushes what is due through "
+          "Firebase Cloud Messaging (§24.1\u2019s push row) as the project\u2019s "
+          "service account: localisation keys the device shows in its own "
+          "language, a token FCM no longer knows cleared, a busy FCM tried "
+          "again. Not built: the four keys in the app\u2019s native string "
+          "tables; the device\u2019s own timers (storage full, a character "
+          "rested, an experiment finished); and asking permission after the "
+          "third session (§25.2), which are the client\u2019s; and the "
+          "operator\u2019s key. Found building notifications.",
+     rec="Add the four notification strings to the app in both launch "
+         "languages, and supply the FCM key before the beta."),
 
 dict(id="F48", kind="finding", severity="minor", status="open",
      title="A friendly heist is \u201cfor fun\u201d, and §12.22 gives it a payout tier",

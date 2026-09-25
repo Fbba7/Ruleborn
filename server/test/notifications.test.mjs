@@ -42,7 +42,7 @@ test("a replay is kept 90 days, then goes, and its heist stays (24.3)", () => {
   assert.ok(t.service.db.prepare("SELECT 1 FROM heists WHERE token = ?").get(token), "the record stays");
 });
 
-test("a heist against you is sent when it lands, and raids while you wait are one notification (13, 14.6)", () => {
+test("a heist against you is sent when it lands, and raids while you wait are one notification (13, 14.6)", async () => {
   const t = twoPlayers(true);
   t.service.notifications.set(t.defender.account, { pushToken: "device-1" });
   t.clock.now = T0 + 3 * HOUR;                            // 12:00 UTC
@@ -50,11 +50,11 @@ test("a heist against you is sent when it lands, and raids while you wait are on
   t.clock.now += DAY + HOUR;
   const second = raid(t, false);
   const pushed = [];
-  const sent = t.service.notifications.deliver((token, m) => pushed.push([token, m]));
+  const sent = await t.service.notifications.deliver((token, m) => pushed.push([token, m]));
   assert.equal(sent.length, 1);
   assert.deepEqual(pushed, [["device-1", { kind: "raided", heists: [
     { heist: first.token, grade: "clean" }, { heist: second.token, grade: "foiled" }] }]]);
-  assert.deepEqual(t.service.notifications.deliver(() => assert.fail("sent twice")), []);
+  assert.deepEqual(await t.service.notifications.deliver(() => assert.fail("sent twice")), []);
 });
 
 test("nothing is sent at night: 21:00 to 08:00 at 13 to 15, 22:00 at 16 and 17, adults by choice (20.2)", () => {
@@ -82,26 +82,26 @@ test("nothing is sent at night: 21:00 to 08:00 at 13 to 15, 22:00 at 16 and 17, 
   assert.equal(n.due(d, at(21)), at(21));
 });
 
-test("a daily reminder at the time the player chose, or none (14.6)", () => {
+test("a daily reminder at the time the player chose, or none (14.6)", async () => {
   const t = twoPlayers(true);
   const n = t.service.notifications;
   const me = t.defender.account;
   n.set(me, { pushToken: "device-2", reminder: 18 * 60 });
   const pushed = [];
   t.clock.now = Date.UTC(2026, 8, 24, 17, 59);
-  assert.deepEqual(n.deliver((_, m) => pushed.push(m)), []);
+  assert.deepEqual(await n.deliver((_, m) => pushed.push(m)), []);
   t.clock.now = Date.UTC(2026, 8, 24, 18, 1);
-  n.deliver((_, m) => pushed.push(m));
+  await n.deliver((_, m) => pushed.push(m));
   t.clock.now = Date.UTC(2026, 8, 24, 20, 0);
-  n.deliver((_, m) => pushed.push(m));
+  await n.deliver((_, m) => pushed.push(m));
   assert.deepEqual(pushed, [{ kind: "reminder", day: "2026-09-24" }], "once a day");
   n.set(me, { reminder: null });
   t.clock.now = Date.UTC(2026, 8, 25, 18, 1);
-  assert.deepEqual(n.deliver(() => assert.fail("no reminder chosen")), []);
+  assert.deepEqual(await n.deliver(() => assert.fail("no reminder chosen")), []);
   refusal(() => n.set(me, { reminder: 24 * 60 }), "bad_reminder_time");
 });
 
-test("the night holds when a notification is sent, not only when it is queued (20.2)", () => {
+test("the night holds when a notification is sent, not only when it is queued (20.2)", async () => {
   const t = twoPlayers(true);
   const n = t.service.notifications;
   const me = t.defender.account;
@@ -111,22 +111,22 @@ test("the night holds when a notification is sent, not only when it is queued (2
   // A 07:00 reminder chosen at 22:30 comes when the night ends, once.
   t.clock.now = Date.UTC(2026, 8, 23, 22, 30);
   n.set(me, { utcOffset: 0, reminder: 7 * 60, pushToken: "device-3" });
-  assert.deepEqual(n.deliver(send), []);
+  assert.deepEqual(await n.deliver(send), []);
   t.clock.now = Date.UTC(2026, 8, 24, 7, 59);
-  assert.deepEqual(n.deliver(send), []);
+  assert.deepEqual(await n.deliver(send), []);
   t.clock.now = Date.UTC(2026, 8, 24, 8, 0);
-  n.deliver(send);
+  await n.deliver(send);
   t.clock.now = Date.UTC(2026, 8, 24, 8, 1);
-  n.deliver(send);
+  await n.deliver(send);
   assert.deepEqual(pushed, [{ kind: "reminder", day: "2026-09-24" }]);
   // A raid due in the evening, not sent before the night began, waits too.
   n.set(me, { reminder: null });
   t.clock.now = Date.UTC(2026, 8, 24, 20, 50);
   n.raided({ defender: me, token: "h1" }, { grade: "clean" }, t.clock.now);
   t.clock.now = Date.UTC(2026, 8, 24, 21, 30);
-  assert.deepEqual(n.deliver(() => assert.fail("sent at night")), []);
+  assert.deepEqual(await n.deliver(() => assert.fail("sent at night")), []);
   t.clock.now = Date.UTC(2026, 8, 25, 8, 0);
-  assert.deepEqual(n.deliver(send).map((m) => m.kind), ["raided"]);
+  assert.deepEqual((await n.deliver(send)).map((m) => m.kind), ["raided"]);
 });
 
 test("the day's reminders read the outbox once a tick, however many players chose one (14.6)", () => {

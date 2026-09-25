@@ -22,7 +22,7 @@ const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused &&
 const DAY = 24 * 60 * 60 * 1000;
 const doc = load();
 
-test("every column the server stores is declared, with the stores' words for it, and nothing else is (20.5)", () => {
+test("every column the server stores is declared, with the stores' words for it, and nothing else is (20.5)", async () => {
   assert.deepEqual(problems(doc, schema(open())), []);
   // The check finds what it is for: a column nobody declared.
   const db = open();
@@ -40,7 +40,7 @@ test("every column the server stores is declared, with the stores' words for it,
  * open invite and a challenge link, notifications sent and waiting, and
  * telemetry.
  */
-function busy() {
+async function busy() {
   const t = server();
   const x = t.service.session("gc:x");
   const y = t.service.session("gc:y");
@@ -84,7 +84,7 @@ function busy() {
   n.set(x.account, { pushToken: "device-x", reminder: 12 * 60, utcOffset: 0, nightQuiet: false });
   t.service.db.prepare(`UPDATE accounts SET equipped = '{"banner":"x"}' WHERE id = ?`).run(x.account);
   t.clock.now = Date.UTC(2026, 8, 25, 12, 5);
-  n.deliver(() => {});
+  await n.deliver(() => {});
   t.clock.now += 60 * 1000;
   raid(y.account, xBundle, openPlan());                // waiting: the night is not the issue, the tick is
   t.service.telemetry.record(x.account, "worth", { rating: 4 }, t.clock.now);
@@ -104,8 +104,8 @@ function naming(db, table, column, names, account, pseudonym) {
 }
 
 for (const reason of ["requested", "under-13"]) {
-  test(`deleting an account ${reason === "under-13" ? "because its player is under 13" : "at the player's request"} does what privacy.json says, table by table (20.12, 20.11)`, () => {
-    const s = busy();
+  test(`deleting an account ${reason === "under-13" ? "because its player is under 13" : "at the player's request"} does what privacy.json says, table by table (20.12, 20.11)`, async () => {
+    const s = await busy();
     const { t, x } = s;
     const db = t.service.db;
     const who = t.service.telemetry.pseudonym(x);
@@ -194,8 +194,8 @@ for (const reason of ["requested", "under-13"]) {
   });
 }
 
-test("an open raid on an under-13 player's erased island is refused as withdrawn, not crashed (20.11)", () => {
-  const s = busy();
+test("an open raid on an under-13 player's erased island is refused as withdrawn, not crashed (20.11)", async () => {
+  const s = await busy();
   const { t } = s;
   const lease = t.service.lease(s.y, s.xBundle);
   const replay = play(t, lease, { plan: openPlan() });
@@ -204,9 +204,9 @@ test("an open raid on an under-13 player's erased island is refused as withdrawn
   assert.deepEqual([out.validated, out.reason], [false, "island_withdrawn"]);
 });
 
-test("what privacy.json keeps for a number of days is deleted by a job the server runs daily (20.5)", () => {
+test("what privacy.json keeps for a number of days is deleted by a job the server runs daily (20.5)", async () => {
   const main = readFileSync(new URL("../src/main.mjs", import.meta.url), "utf8");
-  const s = busy();
+  const s = await busy();
   const jobs = new Set();
   for (const [table, d] of Object.entries(doc.tables)) {
     for (const k of [d.keep, ...Object.values(d.columns).map((c) => c.keep)]) {
@@ -221,8 +221,8 @@ test("what privacy.json keeps for a number of days is deleted by a job the serve
   assert.deepEqual([...jobs].sort(), ["expireReplays", "friends.expire", "notifications.expire", "telemetry.compact"]);
 });
 
-test("a sent notification is kept a week, and one waiting is not dropped (14.6, 20.5)", () => {
-  const { t, x } = busy();
+test("a sent notification is kept a week, and one waiting is not dropped (14.6, 20.5)", async () => {
+  const { t, x } = await busy();
   const n = t.service.notifications;
   const count = (sent) => t.service.db.prepare(
     `SELECT COUNT(*) AS n FROM notifications WHERE account = ? AND sent_at IS ${sent ? "NOT" : ""} NULL`).get(x).n;
@@ -234,9 +234,9 @@ test("a sent notification is kept a week, and one waiting is not dropped (14.6, 
   assert.deepEqual([count(true), count(false)], [0, 1]);
 });
 
-test("a deleted or banned player is owed no notification of a raid leased before (13, 20.12)", () => {
+test("a deleted or banned player is owed no notification of a raid leased before (13, 20.12)", async () => {
   for (const end of ["deleted", "banned"]) {
-    const { t, x, y, xBundle } = busy();
+    const { t, x, y, xBundle } = await busy();
     const lease = t.service.lease(y, xBundle);
     const replay = play(t, lease, { plan: openPlan() });
     const raided = () => t.service.db.prepare("SELECT id, data FROM notifications WHERE account = ? AND kind = 'raided'")
@@ -249,9 +249,9 @@ test("a deleted or banned player is owed no notification of a raid leased before
   }
 });
 
-test("a raid leased on a player before their deletion settles for the raider and records nothing of them (20.12)", () => {
+test("a raid leased on a player before their deletion settles for the raider and records nothing of them (20.12)", async () => {
   // X's island is bytes Y's is too, so an under-13 deletion keeps them.
-  const { t, x, y, xBundle } = busy();
+  const { t, x, y, xBundle } = await busy();
   const z = t.service.session("gc:z").account;
   t.service.publish(y, t.service.bundle(xBundle));
   const lease = t.service.lease(z, xBundle, x);
@@ -265,10 +265,10 @@ test("a raid leased on a player before their deletion settles for the raider and
     .get(x, `${x}/%`).n, 0, "no rating of them comes back");
 });
 
-test("an under-13 deletion keeps bytes another player's island, link or raid still needs (20.11)", () => {
+test("an under-13 deletion keeps bytes another player's island, link or raid still needs (20.11)", async () => {
   // X published first, so X owns the snapshot; C holds the same bytes, R
   // leased them as C's, and C moved on before X was deleted.
-  const { t, x, xBundle } = busy();
+  const { t, x, xBundle } = await busy();
   const c = t.service.session("gc:c").account;
   const r = t.service.session("gc:r").account;
   established(t, c);
@@ -283,8 +283,8 @@ test("an under-13 deletion keeps bytes another player's island, link or raid sti
   assert.equal(t.service.submit(r, lease.token, replay).validated, true);
 });
 
-test("an under-13 deletion keeps bytes another player's challenge link still offers (17.6, 20.11)", () => {
-  const { t, x, xBundle } = busy();
+test("an under-13 deletion keeps bytes another player's challenge link still offers (17.6, 20.11)", async () => {
+  const { t, x, xBundle } = await busy();
   const d = t.service.session("gc:d").account;
   t.service.publish(d, t.service.bundle(xBundle));
   const link = t.service.friends.challenge(d);
@@ -296,8 +296,8 @@ test("an under-13 deletion keeps bytes another player's challenge link still off
   assert.notEqual(t.service.bundle(xBundle), null);
 });
 
-test("an under-13 deletion stopped between its commit and its files is finished at the next start (20.11, 20.12)", () => {
-  const { t, x, xBundle } = busy();
+test("an under-13 deletion stopped between its commit and its files is finished at the next start (20.11, 20.12)", async () => {
+  const { t, x, xBundle } = await busy();
   const replays = t.service.db.prepare("SELECT log_hash FROM heists WHERE attacker = ?").all(x).map((h) => h.log_hash);
   const remove = t.service.store.delete;
   t.service.store.delete = () => { throw new Error("the process stops"); };
@@ -310,8 +310,8 @@ test("an under-13 deletion stopped between its commit and its files is finished 
   assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM erasures").get().n, 0);
 });
 
-test("used and lapsed invites and challenge links are deleted; a link played before still counts as played (17.6, 20.5)", () => {
-  const { t, x, y } = busy();
+test("used and lapsed invites and challenge links are deleted; a link played before still counts as played (17.6, 20.5)", async () => {
+  const { t, x, y } = await busy();
   const f = t.service.friends;
   const count = (table) => t.service.db.prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE account = ?`).get(x).n;
   assert.deepEqual([count("friend_invites"), count("challenges")], [2, 1]);
@@ -322,8 +322,8 @@ test("used and lapsed invites and challenge links are deleted; a link played bef
   assert.deepEqual(f.list(y).map((r) => r.account), [x], "the friendship itself stays");
 });
 
-test("a target list is kept while current and one list after, then deleted; one gone back to stays (20.5)", () => {
-  const { t, x, y } = busy();
+test("a target list is kept while current and one list after, then deleted; one gone back to stays (20.5)", async () => {
+  const { t, x, y } = await busy();
   const band = () => t.service.db.prepare("SELECT list, previous FROM target_lists").all()
     .find((r) => JSON.parse(new TextDecoder().decode(t.service.bundle(r.list))).candidates.some((c) => c.owner === y));
   const publish = (level) => {
@@ -357,8 +357,8 @@ test("a target list is kept while current and one list after, then deleted; one 
   assert.ok(x);
 });
 
-test("a list no band names — left by a crash, a failed run, a restore or an older server — is swept at start (20.5)", () => {
-  const { t } = busy();
+test("a list no band names — left by a crash, a failed run, a restore or an older server — is swept at start (20.5)", async () => {
+  const { t } = await busy();
   t.service.targetLists();
   const stray = t.service.store.put(new TextEncoder().encode(JSON.stringify({ band: "realm-level-1", candidates: [] })));
   const named = t.service.targets();
@@ -369,8 +369,8 @@ test("a list no band names — left by a crash, a failed run, a restore or an ol
   for (const i of islands) assert.notEqual(t.service.bundle(i.bundle), null, "an island's bytes are never a list");
 });
 
-test("a ban keeps the identity alone: a banned player's deletion severs the rest, and the ban holds (20.12)", () => {
-  const { t, x, y } = busy();
+test("a ban keeps the identity alone: a banned player's deletion severs the rest, and the ban holds (20.12)", async () => {
+  const { t, x, y } = await busy();
   const invite = t.service.friends.invite(x).invite;
   new Workshop(t.service).ban(x, "offensive");
   assert.deepEqual(t.service.friends.list(y), [], "a ban ends friendships");
@@ -391,9 +391,9 @@ test("a ban keeps the identity alone: a banned player's deletion severs the rest
   refusal(() => t.service.session("gc:x"), "banned");
 });
 
-test("a ban made before the bans table holds, and its deleted account is severed, on deletion and on upgrade (20.12)", () => {
+test("a ban made before the bans table holds, and its deleted account is severed, on deletion and on upgrade (20.12)", async () => {
   // A ban as the server wrote it before: on the account alone.
-  const { t, x } = busy();
+  const { t, x } = await busy();
   t.service.db.prepare("UPDATE accounts SET banned_at = ?, banned_reason = 'offensive' WHERE id = ?").run(t.clock.now, x);
   deleteAccount(t.service, x);
   assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM bans WHERE identity = 'gc:x'").get().n, 1);
@@ -401,7 +401,7 @@ test("a ban made before the bans table holds, and its deleted account is severed
   // A database whose banned account was deleted the old way, opened by this server.
   const dir = mkdtempSync(join(tmpdir(), "ruleborn-"));
   const file = join(dir, "old.sqlite");
-  const old = busy();
+  const old = await busy();
   old.t.service.db.prepare("UPDATE accounts SET banned_at = ?, banned_reason = 'offensive', deleted_at = ? WHERE id = ?")
     .run(old.t.clock.now, old.t.clock.now, old.x);
   old.t.service.db.exec(`VACUUM INTO '${file}'`);
@@ -414,10 +414,10 @@ test("a ban made before the bans table holds, and its deleted account is severed
 });
 
 for (const reason of ["requested", "under-13"]) {
-  test(`a deletion ${reason === "under-13" ? "for being under 13 " : ""}is journalled outside the database, and made again on a database restored from before it (20.12)`, () => {
+  test(`a deletion ${reason === "under-13" ? "for being under 13 " : ""}is journalled outside the database, and made again on a database restored from before it (20.12)`, async () => {
     const dir = mkdtempSync(join(tmpdir(), "ruleborn-"));
     const path = join(dir, "deletions.jsonl");
-    const { t, x, y } = busy();
+    const { t, x, y } = await busy();
     const journal = new Journal(path);
     t.service.deletions = journal;
     const backup = join(dir, "backup.sqlite");

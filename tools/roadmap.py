@@ -808,7 +808,11 @@ dict(
                     "that only Google can say which purchases were a tester\u2019s "
                     "(D67). The 42 decisions only the owner can make are a brief, "
                     "each with options, numbers and a recommendation, answered on "
-                    "its own page."
+                    "its own page. Push goes out through Firebase Cloud Messaging "
+                    "as the project\u2019s service account; its review found that "
+                    "FCM would hold a message for a phone that was off and show it "
+                    "inside a minor\u2019s night, so each now expires when the "
+                    "player\u2019s night begins (D68)."
                     "<br><br><strong>Not yet:</strong> Google Play's sign-in "
                     "and receipts (need Google's API), crossing realms, \u00a712.22's generated "
                     "fallback targets, and a landing command in the replay.",

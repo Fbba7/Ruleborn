@@ -45,6 +45,7 @@ import { dirname, join } from "node:path";
 
 import { Journal, reapplyDeletions } from "./accounts.mjs";
 import { PlayPurchases, ServiceAccount } from "./googleapi.mjs";
+import { Fcm } from "./push.mjs";
 import { open } from "./db.mjs";
 import { handler, routeOf } from "./http.mjs";
 import { Service } from "./service.mjs";
@@ -251,10 +252,31 @@ const tidy = () => {
 tidy();
 setInterval(tidy, DAY_MS).unref();
 
-// §14.6's notifications, sent once a minute. Push is Firebase Cloud
-// Messaging (§24.1), which needs the operator's credentials; without them a
-// due notification is written to the log instead (D68).
-// The log names the kind and a count, never the token or a heist (§20.5).
-const push = (token, message) => console.log(
-  `push ${message.kind}${message.heists ? ` ×${message.heists.length}` : ""}`);
-setInterval(() => service.notifications.deliver(push), 60 * 1000).unref();
+// §14.6's notifications, sent once a minute through Firebase Cloud Messaging
+// (§24.1, push.mjs) as the project's service account: RULEBORN_FCM_SERVICE_ACCOUNT
+// names its JSON key, whose project_id is the FCM project unless
+// RULEBORN_FCM_PROJECT says otherwise. Without it a due notification is
+// written to the log instead. The log names the kind and a count, never the
+// token or a heist (§20.5).
+const fcmKey = process.env.RULEBORN_FCM_SERVICE_ACCOUNT;
+const fcm = fcmKey ? (() => {
+  const serviceAccount = JSON.parse(readFileSync(fcmKey, "utf8"));
+  return new Fcm({ account: new ServiceAccount({ serviceAccount, fetch }),
+                   projectId: process.env.RULEBORN_FCM_PROJECT ?? serviceAccount.project_id });
+})() : null;
+const said = (message) => `${message.kind}${message.heists ? ` ×${message.heists.length}` : ""}`;
+const push = fcm
+  ? (token, message, options) => fcm.send(token, message, options)
+  : (token, message) => console.log(`push ${said(message)}`);
+// A tick's retries, give-ups and refusals, by reason: a key without the
+// right to send, or the wrong project, shows here rather than as silence.
+const tally = (map) => Object.entries(map).map(([why, n]) => `${n} ${why}`).join(", ");
+setInterval(() => {
+  service.notifications.deliver(push).then(() => {
+    const t = service.notifications.tick;
+    if (!t) return;
+    for (const [label, map] of [["to retry", t.retried], ["given up", t.gaveUp], ["refused", t.dropped]]) {
+      if (Object.keys(map).length) console.error(`push ${label}: ${tally(map)}`);
+    }
+  }).catch((err) => console.error("notifications:", err));
+}, 60 * 1000).unref();
