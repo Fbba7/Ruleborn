@@ -45,9 +45,9 @@ static func frame(screen: Control) -> VBoxContainer:
 	return column
 
 
-## `wrap` only for a label with the width of its row to itself: a wrapping
+## `wraps` only for a label with the width of its row to itself: a wrapping
 ## label inside a row asks for no width and so for one word a line.
-static func label(text := "", points := -1.0, wrap := false) -> Label:
+static func label(text := "", points := -1.0, wraps := false) -> Label:
 	if points < 0:
 		points = TEXT_POINTS
 	var l := Label.new()
@@ -55,7 +55,7 @@ static func label(text := "", points := -1.0, wrap := false) -> Label:
 	l.add_theme_font_size_override("font_size", px(points))
 	l.add_theme_color_override("font_color", Palette.INK)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	if wrap:
+	if wraps:
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return l
 
@@ -78,7 +78,7 @@ static func button(text: String, pressed: Callable, main := false, fill := Color
 	b.custom_minimum_size = Vector2.ONE * CONTROL_POINTS * PX_PER_POINT
 	b.add_theme_font_size_override("font_size", px(TEXT_POINTS))
 	var base := fill if fill != Color() else (Palette.MOTION if main else Palette.PANEL)
-	for state in ["normal", "hover", "pressed", "focus", "disabled"]:
+	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 		var box := StyleBoxFlat.new()
 		box.bg_color = base
 		if state == "pressed":
@@ -90,7 +90,7 @@ static func button(text: String, pressed: Callable, main := false, fill := Color
 		box.set_border_width_all(px(1))
 		box.set_content_margin_all(px(4))
 		b.add_theme_stylebox_override(state, box)
-	for colour in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
+	for colour: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
 			"font_disabled_color"]:
 		b.add_theme_color_override(colour, Palette.INK)
 	b.pressed.connect(pressed)

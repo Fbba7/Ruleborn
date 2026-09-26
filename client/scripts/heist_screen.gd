@@ -48,8 +48,8 @@ func _ready() -> void:
 
 
 ## Start a fresh heist; see `HeistController.begin`.
-func begin(seed: String, ticks: int, crew: int, realm := PackedByteArray(), era := "") -> bool:
-	if not controller.begin(seed, ticks, crew, realm, era):
+func begin(seed_text: String, ticks: int, crew: int, realm := PackedByteArray(), era := "") -> bool:
+	if not controller.begin(seed_text, ticks, crew, realm, era):
 		return false
 	playing = true
 	view.show_replay(controller.world)
@@ -138,7 +138,7 @@ func _build() -> void:
 	column.add_child(hud)
 	view = RealmView.new()
 	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	view.gui_input.connect(func(event):
+	view.gui_input.connect(func(event: InputEvent) -> void:
 		if event is InputEventMouseButton and event.pressed:
 			controller.tap_tile(view.tile_at(event.position)))
 	column.add_child(view)

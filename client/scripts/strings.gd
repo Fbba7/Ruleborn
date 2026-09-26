@@ -26,7 +26,7 @@ static func rows() -> Dictionary:
 static func _load() -> void:
 	_loaded = true
 	var translations := {}
-	for path in CATALOGUES:
+	for path: String in CATALOGUES:
 		var file := FileAccess.open(path, FileAccess.READ)
 		if file == null:
 			push_error("no string catalogue at %s" % path)
@@ -34,9 +34,9 @@ static func _load() -> void:
 		var header := file.get_csv_line()
 		for locale in header.slice(1):
 			if not translations.has(locale):
-				var t := Translation.new()
-				t.locale = locale
-				translations[locale] = t
+				var translation := Translation.new()
+				translation.locale = locale
+				translations[locale] = translation
 		while not file.eof_reached():
 			var line := file.get_csv_line()
 			if line.size() < header.size() or line[0] == "":
@@ -47,8 +47,8 @@ static func _load() -> void:
 			for i in range(1, header.size()):
 				_rows[line[0]][header[i]] = line[i]
 				translations[header[i]].add_message(line[0], line[i])
-	for t in translations.values():
-		TranslationServer.add_translation(t)
+	for translation: Translation in translations.values():
+		TranslationServer.add_translation(translation)
 
 
 ## The text for `key` in the current locale, formatted with `args`.

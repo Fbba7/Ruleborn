@@ -26,15 +26,15 @@ func _ready() -> void:
 	column.add_child(card)
 	column.add_child(UI.grow())
 	var actions := UI.row()
-	actions.add_child(UI.button(Strings.t("RESULT_WATCH"), func(): App.services.router.go(&"replay"), true))
+	actions.add_child(UI.button(Strings.t("RESULT_WATCH"), func() -> void: App.services.router.go(&"replay"), true))
 	var heist: Dictionary = App.services.store.get_slice(AppState.HEIST)
 	if heist["testing"]:
-		actions.add_child(UI.button(Strings.t("RESULT_BUILDER"), func(): App.services.router.go(&"builder")))
+		actions.add_child(UI.button(Strings.t("RESULT_BUILDER"), func() -> void: App.services.router.go(&"builder")))
 	else:
-		actions.add_child(UI.button(Strings.t("RESULT_AGAIN"), func():
+		actions.add_child(UI.button(Strings.t("RESULT_AGAIN"), func() -> void:
 			App.services.store.dispatch(&"heist_started", {})
 			App.services.router.go(&"heist")))
-	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func(): App.services.router.go(&"home")))
+	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
 	column.add_child(actions)
 	show_verdict(heist["verdict"], (heist["replay"] as PackedByteArray).size())
 

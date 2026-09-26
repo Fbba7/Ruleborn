@@ -20,7 +20,7 @@ func _shoot() -> void:
 	root.add_child(screen)
 	await process_frame
 	screen.playing = false
-	screen.open_golden(ReplayScreen.find_goldens().find(golden))
+	screen.open_golden(golden)
 	screen.advance(second * RulebornReplay.ticks_per_second())
 	screen.playing = false
 	screen._refresh()

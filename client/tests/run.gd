@@ -13,7 +13,7 @@ var _failed := 0
 
 
 func _initialize() -> void:
-	create_timer(DEADLINE_SECONDS).timeout.connect(func():
+	create_timer(DEADLINE_SECONDS).timeout.connect(func() -> void:
 		print("not ok %d - the tests finished inside %d seconds" % [_n + 1, DEADLINE_SECONDS])
 		quit(1))
 	_run()
@@ -74,7 +74,7 @@ func _run() -> void:
 	DirAccess.remove_absolute(BuilderScreen.path)
 	DirAccess.remove_absolute(Settings.path)
 	Settings.restore()
-	Settings.change(func(): Settings.locale = "en")
+	Settings.change(func() -> void: Settings.locale = "en")
 	DirAccess.remove_absolute("user://outbox-test.json")
 	_services()
 	var goldens := ReplayScreen.find_goldens()
@@ -153,13 +153,13 @@ func _run() -> void:
 	heist.controller.get_out()
 	heist.controller.tap_tile(Vector2i(13, 7))
 	# The landing the screen gives before its first step is not a tap.
-	var log := heist.controller.world.commands().filter(func(c): return int(c["kind"]) != HeistController.Kind.LAND) \
-		.map(func(c): return [c["tick"], c["actor"], c["kind"], c["x"], c["y"]])
+	var actions := heist.controller.world.commands().filter(func(c: Dictionary) -> bool: return int(c["kind"]) != HeistController.Kind.LAND) \
+		.map(func(c: Dictionary) -> Array: return [c["tick"], c["actor"], c["kind"], c["x"], c["y"]])
 	var want := [[now, 1, HeistController.Kind.MOVE_TO, 4 * 256 + 128, 5 * 256 + 128],
 		[now, 1, HeistController.Kind.CRACK, 0, 0], [now, 1, HeistController.Kind.LOAD, 70, 0],
 		[now, 1, HeistController.Kind.SKIFF, 13 * 256 + 128, 7 * 256 + 128]]
 	check("every tap on the heist screen makes the one command it names, stamped with the tick it was made",
-		log == want, "got %s" % [log])
+		actions == want, "got %s" % [actions])
 
 	# A tap is read by what is on the tile, and each is the one command the
 	# player chose (§12.18): a guard is attacked, the Vault cracked, a pylon
@@ -187,8 +187,8 @@ func _run() -> void:
 	heist.controller.next_gait()
 	heist.controller.halt()
 	heist.controller.drop_half()
-	var kinds := heist.controller.world.commands().filter(func(c): return int(c["kind"]) != HeistController.Kind.LAND) \
-		.map(func(c): return [c["kind"], c["x"]])
+	var kinds := heist.controller.world.commands().filter(func(c: Dictionary) -> bool: return int(c["kind"]) != HeistController.Kind.LAND) \
+		.map(func(c: Dictionary) -> Array: return [c["kind"], c["x"]])
 	var K := HeistController.Kind
 	var expected := [[K.ATTACK, 1], [K.CRACK, 0], [K.BREAK, (pylon % width) * 256 + 128]]
 	if not ward.is_empty():
@@ -204,11 +204,11 @@ func _run() -> void:
 	var spot: Vector2i = spots[spots.size() - 1] if spots.size() > 0 else Vector2i(-1, -1)
 	var chose := heist.controller.land(spot)
 	heist.advance(1)
-	var together := heist.controller.world.crew().all(func(r): return Vector2i(r["at"]) == spot)
-	var logged := heist.controller.world.commands().filter(func(c): return int(c["kind"]) == HeistController.Kind.LAND)
+	var together := heist.controller.world.crew().all(func(r: Dictionary) -> bool: return Vector2i(r["at"]) == spot)
+	var logged := heist.controller.world.commands().filter(func(c: Dictionary) -> bool: return int(c["kind"]) == HeistController.Kind.LAND)
 	check("the crew lands together on the open edge tile the player chose, recorded at tick 0 (5.4)",
 		chose and together and logged.size() == 1 and int(logged[0]["tick"]) == 0 and not heist.controller.land(spots[0]),
-		"spot %s, crew %s, log %s" % [spot, heist.controller.world.crew().map(func(r): return r["at"]), logged])
+		"spot %s, crew %s, log %s" % [spot, heist.controller.world.crew().map(func(r: Dictionary) -> Variant: return r["at"]), logged])
 
 	# And the heist it plays is the heist it records. The planned golden's
 	# commands, given live at their ticks on the heist screen, must record the
@@ -232,7 +232,7 @@ func _run() -> void:
 	check("the heist just played replays on this phone with every second agreeing",
 		again != null and again.mismatch() == 0
 			and again.seconds_agreed() * RulebornReplay.ticks_per_second() == again.ticks(),
-		"mismatch %s" % (again.mismatch() if again else "unloadable"))
+		"mismatch %s" % (str(again.mismatch()) if again else "unloadable"))
 	var refused := RulebornReplay.validate((_heist()["replay"] as PackedByteArray).slice(0, (_heist()["replay"] as PackedByteArray).size() - 4) + PackedByteArray([0, 0, 0, 0]), PackedByteArray())
 	check("a replay whose last checksum was altered is refused, as the server would refuse it",
 		not refused.get("ok", true), str(refused))
@@ -269,9 +269,9 @@ func _run() -> void:
 			await process_frame
 		var played := {}
 		if not online.lease.is_empty():
-			var go := func(seconds: int): online.advance(seconds * 30 - online.controller.world.tick())
+			var go := func(seconds: int) -> void: online.advance(seconds * 30 - online.controller.world.tick())
 			online.controller.land(Vector2i(0, 0))                   # where server/test lands it
-			for step in [[0, Vector2i(6, 8)], [1, Vector2i(7, 9)], [2, Vector2i(5, 9)]]:
+			for step: Array in [[0, Vector2i(6, 8)], [1, Vector2i(7, 9)], [2, Vector2i(5, 9)]]:
 				online.controller.select(step[0])
 				online.controller.tap_tile(step[1])
 			go.call(15)
@@ -304,7 +304,7 @@ func _run() -> void:
 	# §20.6's settings survive a relaunch: each change on the settings screen
 	# is saved as it is made, and the next launch reads it back and applies it.
 	var settings: SettingsScreen = await _mount("settings")
-	var minus: Array = settings.find_children("*", "Button", true, false).filter(func(b): return b.text == "−")
+	var minus: Array = settings.find_children("*", "Button", true, false).filter(func(b: Button) -> bool: return b.text == "−")
 	for i in 7:
 		minus[0].pressed.emit()
 	minus[1].pressed.emit()
@@ -331,7 +331,7 @@ func _run() -> void:
 	settings.queue_free()
 	DirAccess.remove_absolute(Settings.path)
 	Settings.read_file()
-	Settings.change(func(): Settings.locale = "en")
+	Settings.change(func() -> void: Settings.locale = "en")
 	await process_frame
 
 	# The builder (§13): ground on the grid, laws and their pylons, and a raid
@@ -340,12 +340,12 @@ func _run() -> void:
 	builder.tool = BuilderScreen.Tool.GROUND
 	var laid := {Vector2i(2, 4): "rock_pillar", Vector2i(3, 4): "gravel_path",
 		Vector2i(4, 4): "stream", Vector2i(5, 4): "raised_ground", Vector2i(6, 4): "tall_grass"}
-	for at in laid:
+	for at: Vector2i in laid:
 		builder.kind = builder.kinds().find(laid[at])
 		builder.tap_tile(at)
 	var reread := RulebornIsland.new()
 	var same := reread.read(builder.island.bytes())
-	for at in laid:
+	for at: Vector2i in laid:
 		same = same and reread.ground(at.x, at.y) == laid[at] and builder.island.ground(at.x, at.y) == laid[at]
 	var side := builder.island.side()
 	var drawn := builder.preview.features()[4 * side + 2] == RealmView.Tile.ROCK_PILLAR \
@@ -354,7 +354,7 @@ func _run() -> void:
 		same and drawn and builder.island.problems().is_empty(), "%s" % builder.island.problems())
 
 	builder.tool = BuilderScreen.Tool.LAW
-	for step in [["haste", Vector2i(1, 10)], ["brittle_stone", Vector2i(11, 2)]]:
+	for step: Array in [["haste", Vector2i(1, 10)], ["brittle_stone", Vector2i(11, 2)]]:
 		builder.kind = builder.kinds().find(step[0])
 		builder.tap_tile(step[1])
 	var pylons := builder.island.occupant(1, 10) == "pylon:haste" and builder.island.occupant(11, 2) == "pylon:brittle_stone"
@@ -392,7 +392,7 @@ func _run() -> void:
 	await process_frame
 	var after: ResultScreen = await _mount("result_screen")
 	var way_back := after.find_children("*", "Button", true, false).any(
-		func(b): return b.text == Strings.t("RESULT_BUILDER"))
+		func(b: Button) -> bool: return b.text == Strings.t("RESULT_BUILDER"))
 	after.queue_free()
 	App.services.store.dispatch(&"heist_started", {})
 	await process_frame
@@ -404,13 +404,13 @@ func _run() -> void:
 	# into a script rather than taken from the catalogue.
 	var pseudo := Translation.new()
 	pseudo.locale = "xx"
-	for key in Strings.rows():
+	for key: String in Strings.rows():
 		pseudo.add_message(key, "⟦" + Strings.rows()[key]["en"] + "⟧")
 	TranslationServer.add_translation(pseudo)
 	Strings.set_locale("xx")
 	App.services.store.dispatch(&"heist_finished", {"replay": _golden("planned-clean"), "verdict": RulebornReplay.validate(_golden("planned-clean"), PackedByteArray())})
 	var bare := []
-	for sname in SCREENS:
+	for sname: String in SCREENS:
 		var screen: Control = await _mount(sname)
 		screen.set_process(false)
 		await process_frame
@@ -430,17 +430,17 @@ func _run() -> void:
 	# Both languages: Portuguese runs longer, and a label that fits in English
 	# can push a row into a corner in Portuguese.
 	var screens := {}
-	for aspect in [[9, 19.5], [9, 16]]:
+	for aspect: Array in [[9, 19.5], [9, 16]]:
 		root.size = Vector2i(540, int(540 * aspect[1] / aspect[0]))
 		var problems := []
-		for locale in Strings.LOCALES:
+		for locale: String in Strings.LOCALES:
 			Strings.set_locale(locale)
-			for sname in SCREENS:
+			for sname: String in SCREENS:
 				var screen: Control = await _mount(sname)
 				screen.set_process(false)
 				await process_frame
 				await process_frame
-				for p in _control_problems(screen):
+				for p: Variant in _control_problems(screen):
 					problems.append("%s %s: %s" % [locale, sname, p])
 				screens[sname] = screen
 				if locale != Strings.LOCALES[-1] or aspect[1] != 16:
@@ -450,8 +450,8 @@ func _run() -> void:
 	Strings.set_locale("en")
 
 	var small := []
-	for s in SCREENS:
-		for l in screens[s].find_children("*", "Label", true, false):
+	for s: String in SCREENS:
+		for l: Label in screens[s].find_children("*", "Label", true, false):
 			var size_px: int = l.get_theme_font_size("font_size")
 			if size_px < 13 * UI.PX_PER_POINT:
 				small.append("%s %s at %d px" % [s, l.name, size_px])
@@ -467,13 +467,13 @@ func _catalogue_problems() -> Array:
 	var problems := []
 	var rows: Dictionary = Strings.rows()
 	var placeholder := RegEx.create_from_string("%[0-9]*[sd]")
-	for key in rows:
-		for locale in Strings.LOCALES:
+	for key: String in rows:
+		for locale: String in Strings.LOCALES:
 			if rows[key].get(locale, "") == "":
 				problems.append("%s has no %s" % [key, locale])
-		var shape := placeholder.search_all(rows[key]["en"]).map(func(m): return m.get_string())
-		for locale in Strings.LOCALES:
-			var other := placeholder.search_all(rows[key].get(locale, "")).map(func(m): return m.get_string())
+		var shape := placeholder.search_all(rows[key]["en"]).map(func(m: RegExMatch) -> String: return m.get_string())
+		for locale: String in Strings.LOCALES:
+			var other := placeholder.search_all(rows[key].get(locale, "")).map(func(m: RegExMatch) -> String: return m.get_string())
 			if other != shape:
 				problems.append("%s: %s has %s where en has %s" % [key, locale, other, shape])
 	var asked := RegEx.create_from_string("Strings\\.t\\(\"([A-Za-z_0-9]+)\"\\s*[,)]")
@@ -502,7 +502,7 @@ func _control_problems(screen: Control) -> Array:
 		widest = max(widest, w)
 		# Name the rows that are too wide for the column they sit in.
 		if c is HBoxContainer and w > frame.x - 2 * 16 * point:
-			culprit += " [%s]" % ", ".join(c.get_children().map(func(k): return "%s %d px" % [k.get_class() if k.get("text") == null else k.text.replace("\n", " "), k.get_combined_minimum_size().x]))
+			culprit += " [%s]" % ", ".join(c.get_children().map(func(k: Variant) -> String: return "%s %d px" % [k.get_class() if k.get("text") == null else k.text.replace("\n", " "), k.get_combined_minimum_size().x]))
 	if widest > frame.x:
 		problems.append("something asks for %d px of a %d px frame:%s" % [widest, frame.x, culprit])
 	var buttons := screen.find_children("*", "Button", true, false)

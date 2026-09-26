@@ -51,7 +51,7 @@ func _build() -> void:
 	column.add_child(title_label)
 	view = RealmView.new()
 	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	view.gui_input.connect(func(event):
+	view.gui_input.connect(func(event: InputEvent) -> void:
 		if event is InputEventMouseButton and event.pressed:
 			tap_tile(view.tile_at(event.position)))
 	column.add_child(view)
@@ -74,7 +74,7 @@ func _build() -> void:
 	actions.add_child(raid_button)
 	column.add_child(actions)
 	var back := UI.row()
-	back.add_child(UI.button(Strings.t("COMMON_HOME"), func(): App.services.router.go(&"home")))
+	back.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
 	column.add_child(back)
 
 
@@ -93,7 +93,7 @@ func kinds() -> Array:
 	return []
 
 
-func kind_name(k) -> String:
+func kind_name(k: Variant) -> String:
 	match tool:
 		Tool.GROUND:
 			return Strings.t("BUILDER_BARE") if k == "" else Strings.t("GROUND_" + str(k).to_upper())
@@ -130,7 +130,7 @@ func tap_tile(tile: Vector2i) -> void:
 	if tile.x < 0 or tile.y < 0 or tile.x >= island.side() or tile.y >= island.side():
 		return
 	var ks := kinds()
-	var k = ks[kind] if kind < ks.size() else null
+	var k: Variant = ks[kind] if kind < ks.size() else null
 	match tool:
 		Tool.GROUND:
 			island.set_ground(tile.x, tile.y, k)
@@ -178,7 +178,7 @@ func _refresh() -> void:
 		status_label.text = Strings.t("BUILDER_READY", [b["wards"][0], b["wards"][1],
 			b["guards"][0], b["guards"][1], b["laws"][0], b["laws"][1]])
 	else:
-		var why := Array(problems).map(func(p): return Strings.t("PROBLEM_" + str(p).to_upper()))
+		var why := Array(problems).map(func(p: Variant) -> String: return Strings.t("PROBLEM_" + str(p).to_upper()))
 		status_label.text = Strings.t("BUILDER_BLOCKED", ", ".join(why))
 	together_label.text = together(island.combos())
 	tool_button.text = Strings.t("BUILDER_TOOL_" + TOOLS[tool])
@@ -194,13 +194,13 @@ func _refresh() -> void:
 ## owner's own island, the resonances and chords too.
 static func together(c: Dictionary) -> String:
 	var parts := []
-	for n in c["harmonies"]:
+	for n: Variant in c["harmonies"]:
 		parts.append(Strings.t("BUILDER_HARMONY", Strings.t("NOTE_" + str(n).to_upper())))
-	for n in c["dissonances"]:
+	for n: Variant in c["dissonances"]:
 		parts.append(Strings.t("BUILDER_CLASH", Strings.t("NOTE_" + str(n).to_upper())))
-	for r in c["resonances"]:
+	for r: Variant in c["resonances"]:
 		parts.append(Strings.t("RES_" + str(r).to_upper()))
-	for ch in c["chords"]:
+	for ch: Variant in c["chords"]:
 		parts.append(Strings.t("CHORD_" + str(ch).to_upper()))
 	if parts.is_empty():
 		return Strings.t("BUILDER_ALONE")

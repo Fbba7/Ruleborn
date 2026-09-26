@@ -9,13 +9,13 @@ extends RefCounted
 var transport: Transport
 var base := ""
 var token := ""
-var log: ActionLog
+var action_log: ActionLog
 
 
 func _init(t: Transport, url: String, l: ActionLog) -> void:
 	transport = t
 	base = url.trim_suffix("/")
-	log = l
+	action_log = l
 
 
 func online() -> bool:
@@ -76,5 +76,5 @@ func post_json(path: String, body: Variant = {}) -> Result:
 
 func _failed(path: String, code: String, detail: Dictionary) -> Result:
 	# The route alone, as the server logs it: a path can carry a token.
-	log.add("failure", code, {"route": "/".join(path.split("/", false).slice(0, 2))})
+	action_log.add("failure", code, {"route": "/".join(path.split("/", false).slice(0, 2))})
 	return Result.failure(code, detail)

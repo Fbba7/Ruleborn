@@ -32,7 +32,7 @@ func _store() -> void:
 	store.dispatch(&"heist_finished", {"replay": PackedByteArray([9]), "verdict": {"ok": true, "grade": "Clean"}})
 	store.dispatch(&"heist_verdict", {"server": true, "haul": 5})
 	var heist: Dictionary = store.get_slice(AppState.HEIST)
-	var logged := store.log.entries().map(func(e: Dictionary) -> String: return e["what"])
+	var logged := store.action_log.entries().map(func(e: Dictionary) -> String: return e["what"])
 	check.call("the store changes a slice only through an action its reducer owns, tells who listens, and logs every action",
 		store.get_slice(AppState.SESSION)["account"] == "a1" and heist["testing"] and heist["island"] == PackedByteArray([1, 2])
 			and heist["verdict"] == {"ok": true, "grade": "Clean", "server": true, "haul": 5}
@@ -46,20 +46,20 @@ func _store() -> void:
 	check.call("a heist started clears the last heist's replay and verdict, and is not the builder's test unless it says so",
 		heist["replay"].is_empty() and heist["verdict"].is_empty() and not heist["testing"], str(heist))
 	# The log keeps kinds and short values, never bytes or long strings.
-	var log := ActionLog.new()
-	log.add("action", "x", {"token": "t".repeat(200), "n": 3, "bytes": PackedByteArray([1])})
-	var kept: Dictionary = log.entries()[0]["fields"]
+	var action_log := ActionLog.new()
+	action_log.add("action", "x", {"token": "t".repeat(200), "n": 3, "bytes": PackedByteArray([1])})
+	var kept: Dictionary = action_log.entries()[0]["fields"]
 	for i in ActionLog.CAPACITY + 5:
-		log.add("action", "y%d" % i)
+		action_log.add("action", "y%d" % i)
 	check.call("the action log keeps the last actions only, and no long string or bytes that could name a player",
-		kept == {"n": 3} and log.entries().size() == ActionLog.CAPACITY, str(kept))
+		kept == {"n": 3} and action_log.entries().size() == ActionLog.CAPACITY, str(kept))
 
 
 func _api() -> void:
 	var fake := FakeTransport.new()
 	tree.root.add_child(fake)
-	var log := ActionLog.new()
-	var api := Api.new(fake, "https://edge.example/", log)
+	var action_log := ActionLog.new()
+	var api := Api.new(fake, "https://edge.example/", action_log)
 	fake.on("POST /v1/session", {"account": "a1", "token": "tok"})
 	fake.on("POST /v1/leases", {"error": "no_such_snapshot"}, 404)
 	fake.on("GET /v1/balance", PackedByteArray([0x7b]))
@@ -76,8 +76,8 @@ func _api() -> void:
 			and garbled.code == "malformed_response" and missing.code == "no_such_route" and down.code == "unreachable",
 		"%s %s %s %s %s" % [signed, leased, garbled, missing, down])
 	check.call("a failure is logged by its code and route, never the path's token",
-		log.entries().any(func(e: Dictionary) -> bool: return e["what"] == "no_such_snapshot" and e["fields"]["route"] == "v1/leases"),
-		log.dump())
+		action_log.entries().any(func(e: Dictionary) -> bool: return e["what"] == "no_such_snapshot" and e["fields"]["route"] == "v1/leases"),
+		action_log.dump())
 	check.call("only HTTPS leaves the phone; plain HTTP only to this machine, for tests",
 		Api.secure("https://edge.example/") and Api.secure("http://127.0.0.1:8787") and not Api.secure("http://edge.example")
 			and not Api.secure("http://127.0.0.1.edge.example/"))

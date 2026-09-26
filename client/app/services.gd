@@ -23,7 +23,7 @@ static func build(parent: Node, server: String, transport: Transport = null,
 	var t := transport if transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
-	s.api = Api.new(t, server, s.store.log)
+	s.api = Api.new(t, server, s.store.action_log)
 	s.outbox = Outbox.new(outbox_path)
 	s.account = AccountRepository.new(s.api)
 	s.heists = HeistRepository.new(s.api, s.outbox)

@@ -19,8 +19,8 @@ func target_index() -> Result:
 
 
 ## A bundle or a target list, by the hash it is stored under.
-func fetch(hash: String) -> Result:
-	return await api.raw(HTTPClient.METHOD_GET, "/v1/bundles/" + hash)
+func fetch(key: String) -> Result:
+	return await api.raw(HTTPClient.METHOD_GET, "/v1/bundles/" + key)
 
 
 ## The first island in the target lists that is not the player's own: the
@@ -54,9 +54,9 @@ func lease(bundle: String, owner := "") -> Result:
 ## §24.12's queue, validate and grant: the replay is kept in the outbox under
 ## its lease token, then sent. The answer is the server's decision; if the
 ## network is not there, `pending` is true and the outbox sends it later.
-func submit(lease_token: String, replay: PackedByteArray) -> Result:
+func submit(lease_token: String, replay_bytes: PackedByteArray) -> Result:
 	var route := "/v1/heists/" + lease_token
-	outbox.put(lease_token, route, replay)
+	outbox.put(lease_token, route, replay_bytes)
 	var answered := {"result": null}
 	var on_settled := func(key: String, r: Result) -> void:
 		if key == lease_token:

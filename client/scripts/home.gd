@@ -12,11 +12,11 @@ func _ready() -> void:
 	column.add_child(UI.grow())
 	var actions := UI.row()
 	actions.add_child(UI.button(Strings.t("HOME_PLAY"), _play, true))
-	actions.add_child(UI.button(Strings.t("HOME_WATCH"), func(): App.services.router.go(&"replay")))
+	actions.add_child(UI.button(Strings.t("HOME_WATCH"), func() -> void: App.services.router.go(&"replay")))
 	column.add_child(actions)
 	var more := UI.row()
-	more.add_child(UI.button(Strings.t("HOME_BUILD"), func(): App.services.router.go(&"builder")))
-	more.add_child(UI.button(Strings.t("HOME_SETTINGS"), func(): App.services.router.go(&"settings")))
+	more.add_child(UI.button(Strings.t("HOME_BUILD"), func() -> void: App.services.router.go(&"builder")))
+	more.add_child(UI.button(Strings.t("HOME_SETTINGS"), func() -> void: App.services.router.go(&"settings")))
 	column.add_child(more)
 
 

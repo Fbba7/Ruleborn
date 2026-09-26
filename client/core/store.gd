@@ -10,7 +10,7 @@ extends RefCounted
 
 signal changed(slice: StringName)
 
-var log := ActionLog.new()
+var action_log := ActionLog.new()
 var _state: Dictionary = {}
 ## kind -> [slice, reducer]
 var _reducers: Dictionary = {}
@@ -34,7 +34,7 @@ func get_slice(slice: StringName) -> Variant:
 ## Apply one action. An action no reducer owns is a defect, and fails loudly
 ## in a debug build rather than doing nothing.
 func dispatch(kind: StringName, payload := {}) -> void:
-	log.add("action", kind, payload)
+	action_log.add("action", kind, payload)
 	if not _reducers.has(kind):
 		push_error("no reducer for action %s" % kind)
 		assert(false, "no reducer for action %s" % kind)
