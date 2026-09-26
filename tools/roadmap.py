@@ -211,15 +211,16 @@ dict(
                     "reaches the alarm's 4 m) and F35 (no guard hears the "
                     "Vault), and both are built. Building F33 found that the "
                     "alarm's reach is realm-wide under Whispers, so two Glares "
-                    "still hold 91.5% there (F52); the table is re-run once "
-                    "F52 is answered.<br><br>v3.4 answered neither (both were "
+                    "still held 91.5% there (F52); the owner answered F52 (a "
+                    "fixed 4 m), built: two Glares now hold 72.5% against six "
+                    "other wards' 37.0% (n=200), as the brief measured.<br><br>v3.4 answered neither (both were "
                     "registered after its snapshot), and its brief 37 sweep "
                     "needs them: every realm level holds above its band with "
                     "no crack call at all, so the reach cannot be sized "
                     "against the bands until this is done (F35).",
              evidence="python3 -m tools.heist_harness.test_harness "
                       "(test_one_lantern_glare_outweighs_a_realm_of_other_wards, "
-                      "test_the_decided_glare_still_outweighs_a_realm_where_whispers_stretches_it, "
+                      "test_the_decided_glare_is_one_strong_pick_not_a_switch, "
                       "test_13_2s_hold_table_was_measured_at_one_guard_post)",
              register=["F33", "F34", "F35", "F52"]),
         dict(id="T0.13", owner="claude", status="done",

@@ -6385,7 +6385,7 @@ dict(id="F52", kind="finding", severity="significant", status="open",
           "readable law effect\u201d, but its numbers did not include it. "
           "Found building the answer.",
      measured="tools/heist_harness/test_harness.py "
-              "test_the_decided_glare_still_outweighs_a_realm_where_whispers_stretches_it",
+              "test_the_decided_glare_is_one_strong_pick_not_a_switch",
      rec="Either keep the Glare\u2019s reach at a fixed 4 m, not the "
          "alarm\u2019s, so Whispers does not stretch it, or accept that a "
          "Whispers realm\u2019s Glare is realm-wide and re-measure §5.2\u2019s "

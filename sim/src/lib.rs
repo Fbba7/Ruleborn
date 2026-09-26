@@ -1354,10 +1354,11 @@ impl World {
             // promise this section makes about itself.
             // Lantern Glare: it shows the crew, as if in the near zone,
             // looking at the tile that set it off — to every guard within
-            // the alarm's spread reach of that tile (F33, decided), where
-            // §10.3 still reads "every guard in the realm".
+            // 4 m of that tile (F33, decided), a reach Whispers and the other
+            // laws that widen the alarm leave alone (F52, decided); §10.3
+            // still reads "every guard in the realm".
             if self.raiders.iter().any(|r| r.active()) {
-                let reach = self.spread_reach();
+                let reach = Fx::from_int(guard::GLARE_METRES);
                 if let Some(spot) = self.glares.iter()
                     .filter(|&&(_, until)| now < until)
                     .map(|&(s, _)| s)
@@ -1582,7 +1583,8 @@ impl World {
 
     /// How far the alarm spreads: §12.17's "guards within four metres",
     /// stretched by the sheet — Whispers sets the range to the whole
-    /// universe (999). A Lantern Glare reaches as far (F33).
+    /// universe (999). A Lantern Glare does not follow it: its reach is a
+    /// fixed `guard::GLARE_METRES` (F52).
     fn spread_reach(&self) -> Fx {
         let (an, ad) = self.sheet.factor(Param::AlarmRange);
         Fx::from_int((guard::SPREAD_METRES as i64 * an / ad).min(1 << 20) as i32)
@@ -3715,6 +3717,9 @@ pub fn rules_version() -> [u8; 32] {
             bytes.extend_from_slice(law.school.as_bytes());
             bytes.push(0xFF);
         }
+        // Reaches no golden sees, since the fixture has no ward: a Lantern
+        // Glare's (F52), so a Glare that reached further is a rules change.
+        bytes.extend_from_slice(&guard::GLARE_METRES.to_le_bytes());
         // §18.3's eras and their figures: a re-figured era is a rules change.
         for (id, figure) in laws_table::ERAS.iter() {
             bytes.extend_from_slice(id.as_bytes());

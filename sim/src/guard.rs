@@ -66,6 +66,10 @@ pub const SEARCH_SPOT_TICKS: u32 = TICKS_PER_SECOND * 10;
 pub const SEARCHING_TICKS: u32 = TICKS_PER_SECOND * 20;
 /// "Guards within four metres start investigating half a second later."
 pub const SPREAD_METRES: i32 = 4;
+/// A Lantern Glare shows the crew to the guards within this of it (F33,
+/// decided): a fixed reach, which laws that widen the alarm do not change
+/// (F52, decided), where §10.3 still reads "every guard in the realm".
+pub const GLARE_METRES: i32 = 4;
 pub const SPREAD_DELAY_TICKS: u32 = TICKS_PER_SECOND / 2;
 /// The realm alarm "climbs from 0 to 6 — once every thirty seconds and once
 /// per knocked-out guard discovered — and at 5 another Warden arrives".

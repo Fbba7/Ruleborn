@@ -2061,10 +2061,10 @@ fn a_thorn_hedge_hurts_whoever_pushes_through_five_percent_a_second() {
 }
 
 #[test]
-fn a_lantern_glare_shows_the_crew_to_the_guards_within_the_alarms_reach_and_blinds_it() {
-    // F33, decided: a Glare shows the crew "to every guard within 4 m of it"
-    // — the alarm's own spread — where §10.3 still reads "every guard in the
-    // realm". Both guards face away; only the near one is shown the crew.
+fn a_lantern_glare_shows_the_crew_to_the_guards_within_4_m_and_blinds_it() {
+    // F33, decided: a Glare shows the crew "to every guard within 4 m of it",
+    // where §10.3 still reads "every guard in the realm". Both guards face
+    // away; only the near one is shown the crew.
     let mut world = ward_world(1, WardKind::LanternGlare, (3, 3));
     let near = post(&mut world, 1, 3, 7);         // four tiles south
     let far = post(&mut world, 1, 12, 12);        // across the realm
@@ -2082,6 +2082,27 @@ fn a_lantern_glare_shows_the_crew_to_the_guards_within_the_alarms_reach_and_blin
             "within 4 m, shown the crew");
     assert_eq!(world.guards[far].state, State::Unaware, "across the realm, not");
     assert_eq!(world.guards[far].suspicion, 0);
+}
+
+#[test]
+fn a_lantern_glares_reach_is_4_m_whatever_the_alarms_reach() {
+    // F52, decided: a fixed 4 m, which Whispers — the whole universe for the
+    // alarm — does not stretch. In the first ticks after the Glare fires, the
+    // guard across the realm is shown nothing while the near one is.
+    let mut world = ward_world(1, WardKind::LanternGlare, (3, 3));
+    world.weave(&[("whispers", (0, 13))]);
+    let near = post(&mut world, 1, 3, 7);
+    let far = post(&mut world, 1, 12, 12);
+    for gi in [near, far] {
+        world.guards[gi].facing = Ang::from_degrees(90);
+    }
+    put(&mut world, 0, 3, 3);
+    for _ in 0..3 {
+        world.step();
+    }
+    assert!(world.revealed_until() > 0, "the Glare fired");
+    assert!(world.guards[near].suspicion > 0, "within 4 m, shown the crew");
+    assert_eq!(world.guards[far].suspicion, 0, "Whispers does not carry the Glare across the realm");
 }
 
 #[test]

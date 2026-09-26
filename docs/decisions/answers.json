@@ -1,11 +1,11 @@
 {
- "_what": "The owner's answers to the decision brief (docs/decisions/brief.json), as recorded on its page (answers/<id> in the page's database) on 2026-09-25: five picked there, the rest accepted as recommended in one instruction. `build` is where the answer's backend change stands: none (the build already does it), to do, done, or outside (it needs something this repository cannot reach). tools/build_audit.py reads it: a decided item is no longer the owner's, and waits on the build, then on the document. `left`, where present, names the part of a built answer still to build here; `outside`, the part that needs what this repository cannot reach (a store console, the deployment); `client`, what the client still has to do.",
+ "_what": "The owner's answers to the decision brief (docs/decisions/brief.json), as recorded on its page (answers/<id> in the page's database) on 2026-09-25: five picked there, the rest accepted as recommended in one instruction; F52, F53 and F54, registered after that, picked there on 2026-09-26. `build` is where the answer's backend change stands: none (the build already does it), to do, done, or outside (it needs something this repository cannot reach). tools/build_audit.py reads it: a decided item is no longer the owner's, and waits on the build, then on the document. `left`, where present, names the part of a built answer still to build here; `outside`, the part that needs what this repository cannot reach (a store console, the deployment); `client`, what the client still has to do.",
  "answers": {
   "F33": {
    "option": "D",
    "how": "picked",
    "build": "done",
-   "left": "the re-measure of §5.2's ward budget with the Glare at the alarm's reach, which waits on F52: under Whispers that reach is the whole realm"
+   "left": "the re-measure of §5.2's ward budget and §13.2's table with the Glare at its decided fixed 4 m (F52), roadmap T0.12"
   },
   "F35": {
    "option": "D",
@@ -237,6 +237,22 @@
    "option": "C",
    "how": "the owner's words: the rule online and recommended heavily to the player, the exception offline",
    "build": "done"
+  },
+  "F52": {
+   "option": "A",
+   "how": "picked",
+   "build": "done"
+  },
+  "F53": {
+   "option": "A",
+   "how": "picked",
+   "build": "none"
+  },
+  "F54": {
+   "option": "A",
+   "how": "picked",
+   "build": "none",
+   "client": "the Keeper bar shows a gate when the only experience left is spending the Spire holds back; it is drawn with the Keeper bar, which waits on §14.2's Keeper experience — the server keeps the Keeper level, not the experience"
   }
  }
 }

@@ -55,8 +55,11 @@ SKIFF_TICKS = SKIFF_OUTER_SECONDS * TPS  #: §5.4, an outer realm
 #: measured F32 and brief 37 can still be made.
 CRACK_NOISE_SECONDS = 5
 #: §12.17: "guards within four metres start investigating half a second
-#: later" — the alarm's spread, which a Lantern Glare reaches (F33).
+#: later" — the alarm's spread.
 SPREAD_METRES = 4
+#: A Lantern Glare shows the crew to the guards within 4 m of it (F33): a
+#: fixed reach, which laws that widen the alarm do not stretch (F52, decided).
+GLARE_METRES = 4
 CRACK_NOISE_TICKS = CRACK_NOISE_SECONDS * TPS
 CRACK_REACH_METRES = 5
 #: v3.3's call reached "every guard in the Heart": a reach no island exceeds.
@@ -314,8 +317,8 @@ class Heist:
         #: asked with it off and says so.
         self.crack_noise = crack_noise
         #: A Lantern Glare's reach: the whole realm, as §10.3 states and the
-        #: v3.2 and v3.3 heists were measured, or the alarm's 4 m the owner
-        #: decided (F33) under the current rules. None is the island's rules'
+        #: v3.2 and v3.3 heists were measured, or the fixed 4 m the owner
+        #: decided (F33, F52) under the current rules. None is the island's rules'
         #: own, as with the crack's reach; F33's evidence asks for the realm.
         self.glare_realm = glare_realm
         #: Which document's wards the Heart was built to (island.RULES). The
@@ -621,10 +624,10 @@ class Heist:
                         m.x, m.y, m.path = cx, cy, []
                     m.frozen_ticks = 2 * TPS * scale // 100
                 elif w.kind == "Lantern Glare":
-                    # Shows the crew for 5 s to every guard within the alarm's
-                    # spread reach of it, 4 m by the sheet's alarm range (F33,
-                    # decided; §10.3 says "every guard in the realm").
-                    reach = SPREAD_METRES * self.sheet.factor("alarm_range") * U
+                    # Shows the crew for 5 s to every guard within 4 m of it
+                    # (F33), whatever the alarm's reach (F52, decided; §10.3
+                    # says "every guard in the realm").
+                    reach = GLARE_METRES * U
                     for g in self.guards:
                         if self.glare_realm or dist2(g.x, g.y, cx, cy) <= reach * reach:
                             g.suspicion = ALERTED

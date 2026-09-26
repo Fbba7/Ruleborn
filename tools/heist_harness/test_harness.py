@@ -849,23 +849,23 @@ def test_one_lantern_glare_outweighs_a_realm_of_other_wards():
     assert two_glares - six_others >= 25, (two_glares, six_others)
 
 
-def test_the_decided_glare_still_outweighs_a_realm_where_whispers_stretches_it():
-    """F52. F33's decided Glare reaches the guards within the alarm's spread,
-    4 m scaled by the sheet's alarm range, as its build change says. The
-    defensive weave picks Whispers, whose alarm range is the whole universe,
-    so the Glare is realm-wide again on most of these realms: at realm 3 on
-    two posts (n=200) two Glares hold 91.5% against six Snares and Wells'
-    37.0%. The brief's 75.2% for two Glares was measured without the scaling;
-    this harness without it gives 72.5%.
+def test_the_decided_glare_is_one_strong_pick_not_a_switch():
+    """F52, decided: a Glare reaches a fixed 4 m, which Whispers does not
+    stretch. Before that answer the Glare took the alarm's reach, the
+    defensive weave picked Whispers, and two Glares held realm 3 at 91.5%
+    against six Snares and Wells' 37.0% (n=200): F33's switch, back. At the
+    fixed 4 m the brief's figures hold — two Glares 72.5% here (n=200; the
+    brief measured 75.2% at n=400) — well short of the realm-wide Glare's
+    97.5%, but still the strongest kind on the harness's realm 3.
     """
     two_glares, six_others = glare_holds()
-    assert two_glares >= 80, two_glares
-    assert two_glares - six_others >= 30, (two_glares, six_others)
+    assert 55 <= two_glares <= 85, two_glares
+    assert two_glares > six_others, (two_glares, six_others)
 
 
 def glare_holds(n: int = 60) -> tuple:
     """Two Glares against six other wards, at realm 3 on two posts, with the
-    Glare as the owner decided it (F33): within the alarm's 4 m."""
+    Glare as the owner decided it (F33, F52): within a fixed 4 m."""
     def held(kinds, wards: int) -> float:
         rs = run_batch(n, 2, 3, "competent", laws="defensive", shaped=1, posts=2,
                        wards=wards, ward_kinds=kinds)
