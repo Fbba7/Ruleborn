@@ -213,7 +213,7 @@ export class Seasons {
   /**
    * §13.1's weekly measure, taken over a season's last seven days: the
    * "Share of active players who changed their defence in the last 7 days".
-   * Active is a session in that week; changing a defence is publishing an
+   * Active is a session in that week (the device's, G29); changing a defence is publishing an
    * island — a new snapshot, or an island moved to one already stored, as a
    * revert or a copy is. Seeded accounts are the game's, and not counted
    * (G31). Null when nobody was active.
@@ -221,7 +221,7 @@ export class Seasons {
   defenceMeasure(end) {
     const since = end - 7 * DAY_MS;
     const active = new Set(this.db.prepare(
-      "SELECT DISTINCT who FROM events WHERE kind = 'session' AND at > ? AND at <= ?").all(since, end)
+      "SELECT DISTINCT who FROM events WHERE kind = 'session_start' AND at > ? AND at <= ?").all(since, end)
       .map((r) => r.who));
     for (const r of this.db.prepare("SELECT id FROM accounts WHERE seeded = 1").all()) {
       active.delete(this.service.telemetry.pseudonym(r.id));

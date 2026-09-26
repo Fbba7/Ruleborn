@@ -114,6 +114,19 @@ function hasExtension(cert, oid) {
  * Sandbox purchase costs nothing, so it pays only where `sandbox` is set.
  */
 export function appStoreTransaction(jws, { roots, bundleId, now, oids = STOREKIT_OIDS, sandbox = false }) {
+  const payload = appleSigned(jws, { roots, now, oids });
+  if (!payload || payload.bundleId !== bundleId || payload.revocationDate) return null;
+  if (payload.environment !== "Production" && !(sandbox && payload.environment === "Sandbox")) return null;
+  return {
+    transaction: String(payload.transactionId),
+    product: payload.productId,
+    intent: payload.appAccountToken ?? null,
+  };
+}
+
+/** The payload of a JWS Apple's App Store signed, as `appStoreTransaction`
+ *  checks one, or null. */
+function appleSigned(jws, { roots, now, oids = STOREKIT_OIDS }) {
   const parts = String(jws).split(".");
   if (parts.length !== 3) return null;
   let header;
@@ -135,13 +148,29 @@ export function appStoreTransaction(jws, { roots, bundleId, now, oids = STOREKIT
   if (key.asymmetricKeyType !== "ec" || key.asymmetricKeyDetails?.namedCurve !== "prime256v1") return null;
   const signed = Buffer.from(`${parts[0]}.${parts[1]}`);
   const ok = verifySignature("sha256", signed, { key, dsaEncoding: "ieee-p1363" }, b64url(parts[2]));
-  if (!ok || payload.bundleId !== bundleId || payload.revocationDate) return null;
-  if (payload.environment !== "Production" && !(sandbox && payload.environment === "Sandbox")) return null;
-  return {
-    transaction: String(payload.transactionId),
-    product: payload.productId,
-    intent: payload.appAccountToken ?? null,
-  };
+  return ok && payload && typeof payload === "object" ? payload : null;
+}
+
+/** The App Store Server Notifications (v2) that take a purchase back, or
+ *  give one back when its refund is reversed (G32). */
+export const APPLE_REFUNDS = Object.freeze(["REFUND", "REVOKE", "REFUND_REVERSED"]);
+
+/**
+ * An App Store Server Notification (v2), checked as a transaction is: its
+ * signedPayload signed under the pinned root, for this app and environment,
+ * and the transaction inside it signed too. Returns `{type, transaction,
+ * product}` — `transaction` null for a type that takes nothing back — or
+ * null for one that does not check.
+ */
+export function appStoreNotification(signedPayload, { roots, bundleId, now, oids = STOREKIT_OIDS, sandbox = false }) {
+  const n = appleSigned(signedPayload, { roots, now, oids });
+  const data = n?.data;
+  if (!n || typeof n.notificationType !== "string" || !data || data.bundleId !== bundleId) return null;
+  if (data.environment !== "Production" && !(sandbox && data.environment === "Sandbox")) return null;
+  if (!APPLE_REFUNDS.includes(n.notificationType)) return { type: n.notificationType, transaction: null };
+  const t = appleSigned(data.signedTransactionInfo, { roots, now, oids });
+  if (!t || t.bundleId !== bundleId) return null;
+  return { type: n.notificationType, transaction: String(t.transactionId), product: t.productId };
 }
 
 /** How many of Game Center's certificates are kept: Apple publishes a few. */

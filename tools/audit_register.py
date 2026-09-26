@@ -5721,7 +5721,9 @@ dict(id="F41", kind="finding", severity="significant", status="open",
           "(§20.6), where the stores charge reais at their own price tiers, so a "
           "single Starglass cannot be 1:1 with both. The server holds Starglass "
           "as euros in hundredths, sells §22.1\u2019s packs, and spends it on "
-          "cosmetics and the premium track. Found building purchases.",
+          "cosmetics and the premium track. Found building purchases. Since the "
+          "owner\u2019s answer there is no currency: every item is priced in "
+          "money, and a gift is the same item bought for a friend.",
      rec="Choose one: Starglass as a real currency sold in packs (and drop "
          "§19.12\u2019s \u201conly as a wrapper\u201d), or cosmetics and the "
          "pass priced in money with Starglass only as a gift token. Then name "
@@ -5772,7 +5774,11 @@ dict(id="G28", kind="gap", severity="significant", status="open",
           "<em>\u201cNothing expires forever\u201d</em> leaves nothing to put in: "
           "the server records a premium track per season instead. The free "
           "track\u2019s Essence and pages are not in the economy model. Found "
-          "building the track and the shop.",
+          "building the track and the shop. Since the owner\u2019s answer to "
+          "F41 there is no currency: the free track\u2019s tenth tiers give "
+          "Essence where they gave Starglass, there are no packs, and the "
+          "premium track and each cosmetic are store products at the "
+          "store\u2019s price, bought for oneself or as a gift.",
      rec="State the stars a heist, defence, discovery and goal earns, a "
          "tier\u2019s price and how catch-up scales it, the free and premium "
          "rewards tier by tier, the packs, and cosmetic prices; then run the "
@@ -5794,7 +5800,13 @@ dict(id="D64", kind="deviation", severity="minor", status="open",
           "server cannot yet check; pages and strays, which the device holds, "
           "so a claimed tier is their only record; family approval for 13 to "
           "15; and any cosmetic to sell \u2014 the catalogue is empty until a set "
-          "is authored. Found building them.",
+          "is authored. Found building them. Since the owner\u2019s answer to "
+          "F41 nothing is sold for Starglass and there are no packs: the "
+          "premium track and each cosmetic are store products, a gift is the "
+          "same product bought for a friend, and the stores\u2019 receipts are "
+          "verified (D67). \u00a722.4\u2019s monthly gift limit and parental "
+          "approval rules for minors are not built: the document gives no "
+          "number, and a gift a minor buys is held by their \u00a720.2 cap.",
      rec="Wire the stores\u2019 receipt services with platform sign-in; move "
          "pages and the roster to the server before the track ships, so a tier "
          "is granted rather than recorded; author the launch cosmetic sets."),
@@ -5820,7 +5832,9 @@ dict(id="G29", kind="gap", severity="minor", status="open",
           "Found building telemetry. The backend review added: a rating for "
           "each session, up to 24 a day like session ends, each player weighed "
           "once in the report by their own average; a survey\u2019s quarter runs "
-          "from when the server received it.",
+          "from when the server received it. Since the owner\u2019s answer a "
+          "session is the device\u2019s, the survey asks whether the game feels "
+          "like a chore, and cohorts keep day-60 returns.",
      rec="Define a session, choose the retention inside 30 to 90 days, give the "
          "survey\u2019s scale, and say whether the monthly survey is a monthly "
          "sample or a monthly ask."),
@@ -5870,7 +5884,9 @@ dict(id="F43", kind="finding", severity="significant", status="open",
           "purchases, which are append-only, are severed. A ban keeps only the "
           "platform identity, in a table of its own, so a banned player\u2019s "
           "deletion severs the rest like anyone\u2019s. Found building "
-          "deletion; the under-13 reading and the ban by the privacy inventory.",
+          "deletion; the under-13 reading and the ban by the privacy inventory. "
+          "Since the owner\u2019s answer a deleted player\u2019s Workshop islands "
+          "stay listed with no creator shown, unless they ask to withdraw them.",
      rec="State what deletion removes and what it keeps as anonymous records, "
          "and whether a deleted player\u2019s Workshop islands stay playable. "
          "Say what \u201canything collected\u201d covers for an under-13 player."),
@@ -6017,13 +6033,14 @@ dict(id="G32", kind="gap", severity="minor", status="open",
           "allows Sandbox; a Game Center key is issued to Apple Inc. and fetched "
           "only from its key hosts and names, an unseen name at most once a "
           "second; and a server that takes money refuses to start with sign-in "
-          "stubbed.",
+          "stubbed. Since the owner\u2019s answers (and F41\u2019s) a refund "
+          "the store reports takes the product back.",
      rec="Say how a refunded purchase is taken back, and whether Starglass "
          "can go below nothing."),
 
 dict(id="D67", kind="deviation", severity="minor", status="open",
-     title="The stores\u2019 proofs are checked on the server; refunds, and a "
-           "Play Games player, are not",
+     title="The stores\u2019 proofs and refunds are checked on the server; a "
+           "Play Games player is not",
      refs=["20.2", "22.1", "24.8"],
      body="Game Center sign-in and App Store purchases are verified against a "
           "pinned Apple root; Google sign-in against the keys Google publishes, "
@@ -6031,17 +6048,19 @@ dict(id="D67", kind="deviation", severity="minor", status="open",
           "granted once per transaction. The Android sign-in is \u201cSign in "
           "with Google\u201d: its ID token proves a Google account, while "
           "§24.8 names Play Games, whose server flow is a code exchanged with "
-          "Google on every sign-in. A Play purchase is also looked up and "
-          "consumed by the server with the Play Developer API before it is "
-          "granted: Play refunds a purchase nobody consumes after three days, "
-          "and only Google says whether it was a licence tester\u2019s (found by "
-          "the review of this work). Not built: refunds a player asks for after "
-          "a grant (App Store Server Notifications, Play\u2019s voided "
-          "purchases); and the real roots, keys and service account, which are "
-          "configuration the operator supplies. Found building the stores\u2019 "
-          "proofs.",
+          "Google on every sign-in. A Play purchase is also looked up by the "
+          "server with the Play Developer API before it is granted, and "
+          "acknowledged, or consumed if it is a gift: Play refunds a purchase "
+          "nobody acknowledges after three days, and only Google says whether "
+          "it was a licence tester\u2019s (found by the review of this work). "
+          "Since the owner\u2019s answer to G32 refunds are taken back: Apple\u2019s "
+          "App Store Server Notifications (and a refund Apple reverses, given "
+          "back) and Play\u2019s voided purchases, checked daily. Not built: "
+          "the real roots, keys and service account, which are configuration "
+          "the operator supplies. Found building the stores\u2019 proofs.",
      rec="Say whether the Android identity is the Google account or the Play "
-         "Games player; wire the refund notifications before soft launch."),
+         "Games player; point App Store Server Notifications at the server "
+         "before soft launch."),
 
 dict(id="F47", kind="finding", severity="significant", status="open",
      title="§24.1\u2019s budget of five writes a player a day cannot hold one "
@@ -6078,7 +6097,8 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "(C41), a raid past the week\u2019s 20 books nothing (G20) and "
           "target lists are rebuilt hourly (G21): an engaged player writes "
           "46.13 rows a day, and a million monthly players cost about $416 "
-          "a month on the paid plan.",
+          "a month on the paid plan. G29\u2019s answer, which dates a "
+          "session by the device, leaves those figures as they were.",
      rec="Re-derive §24.1\u2019s budget and cost table from measured writes: state "
          "a share of monthly players active on a day, price the writes a heist "
          "must make, and drop the free-plan columns for validation. Or cut "
@@ -6114,7 +6134,11 @@ dict(id="G34", kind="gap", severity="minor", status="open",
           "player sets inside their night comes when the night ends; the server "
           "sends a kind and its data, and the device words it in the player\u2019s "
           "language; an adult\u2019s night is quiet until they open it, and a "
-          "minor\u2019s cannot be opened. Found building notifications.",
+          "minor\u2019s cannot be opened. Found building notifications. Since "
+          "the owner\u2019s answer the clock is the device\u2019s IANA time zone, "
+          "with no push before one is reported; a day\u2019s raids are one "
+          "message, with the reminder or at the night\u2019s end; and a reminder "
+          "inside the night is refused.",
      rec="Say whether raids are gathered, and whether a reminder may be set "
          "inside the night."),
 
@@ -6166,7 +6190,8 @@ dict(id="G35", kind="gap", severity="minor", status="open",
           "names; a challenge link is open seven days and plays once a player; "
           "a new player\u2019s protection does not stop a friend. §20.2 keeps a "
           "13-to-15\u2019s profile private, and the feed shows a friend\u2019s heists "
-          "to friends only. Found building friends.",
+          "to friends only. Found building friends. Since the owner\u2019s "
+          "answer a heist in which either side is 13 to 15 appears in no feed.",
      rec="Say how friends are made (platform friends, invites, or both), and "
          "whether a 13-to-15\u2019s heists appear in friends\u2019 feeds."),
 
@@ -6269,7 +6294,8 @@ dict(id="F50", kind="finding", severity="significant", status="open",
           "nothing that names a person), and every deletion in it is made again "
           "when the server starts, before anyone can sign in. The journal must "
           "live where a restore of the database does not reach. Found by the "
-          "privacy inventory.",
+          "privacy inventory. Since the owner\u2019s answer the journal is in "
+          "object storage, and a start makes again only its last 31 days.",
      rec="Say in §20.12 or §24.1 that a restore re-applies every deletion made "
          "since the moment restored to, and where the deletion log lives."),
 
@@ -6288,7 +6314,9 @@ dict(id="G38", kind="gap", severity="minor", status="open",
           "after its seven days and a link after its seven, and a band keeps "
           "its current list and the one before, the older deleted; each by a "
           "daily job, stated in <code>server/privacy.json</code> and tested. "
-          "Found by the privacy inventory.",
+          "Found by the privacy inventory. Since the owner\u2019s answer a "
+          "superseded target list goes an hour after, lists are cached no longer, "
+          "and lapsed purchase intents and unplayed leases go a week after.",
      rec="Give each a limit, or one rule: what serves no purpose once closed "
          "is deleted within a stated time."),
 
@@ -6307,7 +6335,9 @@ dict(id="G39", kind="gap", severity="significant", status="open",
           "platform sign-in that proves it in the game. "
           "<code>server/declarations.md</code> answers every other question "
           "the two forms ask from what the server stores; this one it answers "
-          "\u201cnone yet\u201d. Found by the privacy inventory.",
+          "\u201cnone yet\u201d. Found by the privacy inventory. Since the "
+          "owner\u2019s answer a web page signs in with Google and runs the same "
+          "deletion.",
      rec="Add the web route to §20.5 and §20.11: a page that takes a request, "
          "how the requester is shown to own the account, and the thirty days "
          "§20.12 gives."),

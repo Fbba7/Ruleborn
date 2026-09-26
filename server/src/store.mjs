@@ -11,12 +11,23 @@
 // an independent one on every island the server stores.
 
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, readdirSync, writeFileSync, existsSync, renameSync, unlinkSync } from "node:fs";
+import { closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, unlinkSync,
+  writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 export const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 
 const KEY = /^[0-9a-f]{64}$/;
+
+/** A directory's entries onto the disk, so a file renamed into it stays. */
+function syncDirectory(dir) {
+  const fd = openSync(dir, "r");
+  try {
+    fsyncSync(fd);
+  } finally {
+    closeSync(fd);
+  }
+}
 
 export class Store {
   /** In memory without a directory; on disk with one. */
@@ -30,8 +41,11 @@ export class Store {
     return join(this.dir, key.slice(0, 2), key);
   }
 
-  /** Store bytes under their hash and return it. Idempotent. */
-  put(bytes, expected = null) {
+  /** Store bytes under their hash and return it. Idempotent. `durable`
+   *  waits until the object, and its name in its directory, are on the disk
+   *  itself, not only in the system's cache: a write that must survive a
+   *  crash before what follows it is made (the deletion journal, F50). */
+  put(bytes, expected = null, { durable = false } = {}) {
     const key = sha256(bytes);
     if (expected !== null && expected !== key) {
       throw new Error(`hash disagreement: storage ${key}, simulation ${expected}`);
@@ -41,8 +55,22 @@ export class Store {
       if (!existsSync(path)) {
         mkdirSync(join(this.dir, key.slice(0, 2)), { recursive: true });
         // Written beside and renamed, so a reader never sees half an object.
-        writeFileSync(`${path}.part`, bytes);
+        if (durable) {
+          const fd = openSync(`${path}.part`, "w");
+          try {
+            writeFileSync(fd, bytes);
+            fsyncSync(fd);
+          } finally {
+            closeSync(fd);
+          }
+        } else {
+          writeFileSync(`${path}.part`, bytes);
+        }
         renameSync(`${path}.part`, path);
+        if (durable) {
+          syncDirectory(join(this.dir, key.slice(0, 2)));
+          syncDirectory(this.dir);
+        }
       }
     } else if (!this.memory.has(key)) {
       this.memory.set(key, Uint8Array.from(bytes));

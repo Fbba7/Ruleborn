@@ -282,23 +282,27 @@ DELIVERABLES = [
         "the second raid of the day pays 0.85 of the first, and the fee is 2% (§9.4, §9.6)",
         "a pair's second foil of the day keeps the fee with the game (9.4, G37)")),
     ("8", "Cosmetics", BACKEND, server_tests(
-        "a cosmetic is bought with Starglass at its euro price, owned once, and worn in its slot (22.1)",
+        "a cosmetic is bought at its money price, owned once, and worn in its slot (22.1, F41)",
         "a defender's worn cosmetics travel with the lease, so the raider sees them")),
     # Apple's side; Google Play's needs Google's API (D67).
     ("8", "Purchases and receipts", BACKEND, server_tests(
         "a StoreKit 2 transaction counts only with its chain and signature intact, for this app (22.1)",
-        "a Starglass pack bought through the App Store is granted from its signed transaction, once (22.1)",
+        "a premium track bought through the App Store is granted from its signed transaction, once (22.1, F41)",
         "a Play purchase counts only as the app's licence key signed it, for this app, bought and paid (22.1)",
         "a Play purchase is granted once, to the account whose intent it carries (20.2, 22.1)",
-        "a Play purchase is looked up and consumed with Google before it is granted, and a test or unpaid one is not (22.1, D67)",
-        "a Starglass purchase is granted once per store transaction, from a verified receipt (22.1)",
-        "a minor's month is capped, €25 at 13 to 15 and €50 at 16 and 17, and an adult gets a summary (20.2)")),
+        "a Play purchase is looked up and acknowledged with Google — a gift consumed — before it is granted, and a test or unpaid one is not (22.1, D67, F41)",
+        "a purchase is granted once per store transaction, from a verified receipt (22.1, F41)",
+        "a minor's month is capped, €25 at 13 to 15 and €50 at 16 and 17, and an adult gets a summary (20.2)",
+        "a gift is the same item bought for a friend, and goes to them (F41)",
+        "a refund takes the item back from whoever received it, off wherever it was worn, once (G32)",
+        "Apple's refund, posted to the server, takes the purchase back once, and a later receipt for it is refused (G32)",
+        "what Google voided is taken back once a day, across its pages, and never twice (G32)")),
     ("8", "The season track", BACKEND, server_tests(
         "a heist earns season stars: the raider by its grade, the defender by what it held (18.2)",
         "the track's first tier is free on day one, and each after costs a tier's stars, in order (18.2)",
         "a player joining late climbs a track scaled to the time remaining (18.8)",
         "stars reset each season, and an unclaimed tier stays claimable later at the same cost (18.8)",
-        "the premium track is bought with Starglass and adds only cosmetics, for tiers already claimed too (18.2)",
+        "the premium track is a store product and adds only cosmetics, for tiers already claimed too (18.2, F41)",
         "the track, the shop and the wardrobe over HTTP")),
     ("8", "Shop, track and wallet screens", FRONTEND, not_started("those screens exist in the client")),
 
@@ -325,10 +329,10 @@ DELIVERABLES = [
         "the age, privacy and store declarations are filed; drafted from the schema in "
         "server/declarations.md, checked by server/test/privacy.test.mjs")),
     ("10 to 13", "Telemetry", BACKEND, server_tests(
-        "the server records sessions, heists and purchases under a pseudonym, never the account (24, 20.5)",
+        "the server records sign-ins, heists and purchases under a pseudonym, never the account (24, 20.5)",
         "a device's batch is checked whole: known events, known fields, no positions, sensible times (24.3)",
         "the launch gates' figures: players, crash-free sessions, heists, worth-your-time, buyers (22.2, 25.3)",
-        "retention by cohort, day 1, 7 and 30, outlives the raw events discarded after 90 days (24.3)",
+        "retention by cohort, day 1, 7, 30 and 60, outlives the raw events discarded after 90 days (24.3, G29)",
         "telemetry over HTTP: a batch from the device, and the report for analysts only")),
 
     ("14", "Load testing", BACKEND, load_measured()),

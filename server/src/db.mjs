@@ -43,10 +43,11 @@ CREATE TABLE IF NOT EXISTS accounts (
   -- nobody edits (accounts.mjs).
   deleted_at        INTEGER,
   deleted_reason    TEXT,
-  -- §14.6 and §20.2's notifications: the player's clock, their daily
-  -- reminder (minutes after local midnight), an adult's choice of a quiet
-  -- night, and the device's push token (notifications.mjs).
-  utc_offset        INTEGER NOT NULL DEFAULT 0,
+  -- §14.6 and §20.2's notifications: the device's IANA time zone (none
+  -- reported, no push: G34), their daily reminder (minutes after local
+  -- midnight), an adult's choice of a quiet night, and the device's push
+  -- token (notifications.mjs).
+  time_zone         TEXT,
   reminder_at       INTEGER,
   night_quiet       INTEGER NOT NULL DEFAULT 1,
   push_token        TEXT,
@@ -151,16 +152,19 @@ CREATE TABLE IF NOT EXISTS target_lists (
   -- The list before this one, still served to a device that fetched the
   -- index just before it changed; the one before that is deleted, as a list
   -- names players (service.targetLists).
-  previous     TEXT
+  previous     TEXT,
+  -- When the previous list stopped being current: it is kept one rebuild after
+  -- that, then deleted (G38).
+  superseded_at INTEGER
 );
 
 -- §24.12: "Grant — only then is the haul minted, into an append-only ledger."
 CREATE TABLE IF NOT EXISTS ledger (
   id       INTEGER PRIMARY KEY AUTOINCREMENT,
   account  TEXT NOT NULL REFERENCES accounts(id),
-  -- Starglass in hundredths: a Starglass is a euro (§19.12's 1:1), so a
-  -- price in cents is exact.
-  currency TEXT NOT NULL CHECK (currency IN ('starlight', 'essence', 'starglass')),
+  -- No Starglass: the owner answered F41 with no currency, every item
+  -- priced in money (shop.mjs).
+  currency TEXT NOT NULL CHECK (currency IN ('starlight', 'essence')),
   amount   INTEGER NOT NULL,
   reason   TEXT NOT NULL,
   -- Deferred: the heist row and its ledger rows are written in one
@@ -380,8 +384,10 @@ CREATE TABLE IF NOT EXISTS track_claims (
   PRIMARY KEY (account, season, tier, track)
 );
 
--- A season's premium track, bought with Starglass (§18.2). It never lapses
--- (§18.8's "nothing expires forever").
+-- A season's premium track, bought as a store product (§18.2, F41). It
+-- never lapses (§18.8's "nothing expires forever"); a refund takes it back
+-- (G32).
+
 CREATE TABLE IF NOT EXISTS premium_tracks (
   account   TEXT NOT NULL REFERENCES accounts(id),
   season    INTEGER NOT NULL REFERENCES seasons(id),
@@ -397,7 +403,9 @@ CREATE TABLE IF NOT EXISTS purchase_intents (
   product     TEXT NOT NULL,
   price       INTEGER NOT NULL,
   created_at  INTEGER NOT NULL,
-  redeemed_at INTEGER
+  redeemed_at INTEGER,
+  -- A gift's friend (F41); null for the buyer's own.
+  recipient   TEXT REFERENCES accounts(id)
 );
 
 -- A store's receipt, granted once per store transaction.
@@ -409,6 +417,8 @@ CREATE TABLE IF NOT EXISTS purchases (
   price   INTEGER NOT NULL,
   intent  TEXT REFERENCES purchase_intents(id),
   at      INTEGER NOT NULL,
+  -- Who received it, if not the buyer: a gift (F41).
+  recipient TEXT REFERENCES accounts(id),
   PRIMARY KEY (store, txn)
 );
 CREATE INDEX IF NOT EXISTS purchases_by_account ON purchases (account, at);
@@ -416,6 +426,22 @@ CREATE TRIGGER IF NOT EXISTS purchases_append_only_update BEFORE UPDATE ON purch
   BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
 CREATE TRIGGER IF NOT EXISTS purchases_append_only_delete BEFORE DELETE ON purchases
   BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
+
+-- A refund or revocation a store reported, and a refund it reversed (G32):
+-- one row an event, in the order they came. A transaction is refunded while
+-- its latest is a refund.
+CREATE TABLE IF NOT EXISTS refunds (
+  id    INTEGER PRIMARY KEY,
+  store TEXT NOT NULL,
+  txn   TEXT NOT NULL,
+  kind  TEXT NOT NULL CHECK (kind IN ('refund', 'reversal')),
+  at    INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS refunds_by_txn ON refunds (store, txn, id);
+CREATE TRIGGER IF NOT EXISTS refunds_append_only_update BEFORE UPDATE ON refunds
+  BEGIN SELECT RAISE(ABORT, 'a refund is a record (22.1)'); END;
+CREATE TRIGGER IF NOT EXISTS refunds_append_only_delete BEFORE DELETE ON refunds
+  BEGIN SELECT RAISE(ABORT, 'a refund is a record (22.1)'); END;
 
 -- Friends (§12.11, §17.6; friends.mjs): one row a pair, the smaller id
 -- first; an invite one player shares and another accepts; a challenge link
@@ -531,7 +557,9 @@ CREATE TABLE IF NOT EXISTS cohorts (
   players INTEGER NOT NULL,
   day1    INTEGER NOT NULL,
   day7    INTEGER NOT NULL,
-  day30   INTEGER NOT NULL
+  day30   INTEGER NOT NULL,
+  -- G29: day-60 returns; null for a cohort written before they were kept.
+  day60   INTEGER
 );
 CREATE TABLE IF NOT EXISTS event_days (
   day     TEXT NOT NULL,
@@ -541,6 +569,12 @@ CREATE TABLE IF NOT EXISTS event_days (
   PRIMARY KEY (day, kind)
 );
 `;
+
+/** Columns a table no longer has: the fixed UTC offset the time zone
+ *  replaced (G34), which a daylight-saving change made wrong. */
+const DROPPED = [
+  ["accounts", "utc_offset"],
+];
 
 /** Columns added to a table after a database was first made: `CREATE TABLE IF
  *  NOT EXISTS` leaves an old table as it was, so each is added if missing. */
@@ -556,7 +590,7 @@ const ADDED = [
   ["accounts", "deleted_at", "INTEGER"],
   ["accounts", "deleted_reason", "TEXT"],
   ["accounts", "seeded", "INTEGER NOT NULL DEFAULT 0"],
-  ["accounts", "utc_offset", "INTEGER NOT NULL DEFAULT 0"],
+  ["accounts", "time_zone", "TEXT"],
   ["accounts", "reminder_at", "INTEGER"],
   ["accounts", "night_quiet", "INTEGER NOT NULL DEFAULT 1"],
   ["accounts", "push_token", "TEXT"],
@@ -567,19 +601,25 @@ const ADDED = [
   ["leases", "challenge", "TEXT"],
   ["leases", "era", "INTEGER NOT NULL DEFAULT 0"],
   ["target_lists", "previous", "TEXT"],
+  ["target_lists", "superseded_at", "INTEGER"],
   ["notifications", "attempts", "INTEGER NOT NULL DEFAULT 0"],
+  ["cohorts", "day60", "INTEGER"],
+  ["purchase_intents", "recipient", "TEXT REFERENCES accounts(id)"],
+  ["purchases", "recipient", "TEXT REFERENCES accounts(id)"],
 ];
 
-/** A ledger made before Starglass: its currency check predates it, and a
- *  check cannot be altered in SQLite, so the table is rebuilt around its
- *  rows — the append-only triggers forbid changing a row, not moving them. */
-function starglassLedger(db) {
+/** A ledger made while there was Starglass: its currency check allows it,
+ *  and a check cannot be altered in SQLite, so the table is rebuilt around
+ *  its rows — the append-only triggers forbid changing a row, not moving
+ *  them. Its Starglass rows are not moved: the owner answered F41 with no
+ *  currency, and what was paid is in `purchases`, the record of money. */
+function ledgerWithoutStarglass(db) {
   const old = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'ledger'").get();
-  if (!old || old.sql.includes("'starglass'")) return false;
+  if (!old || !old.sql.includes("'starglass'")) return false;
   db.exec(`DROP TRIGGER IF EXISTS ledger_append_only_update;
            DROP TRIGGER IF EXISTS ledger_append_only_delete;
            DROP INDEX IF EXISTS ledger_by_account;
-           ALTER TABLE ledger RENAME TO ledger_before_starglass;`);
+           ALTER TABLE ledger RENAME TO ledger_with_starglass;`);
   return true;
 }
 
@@ -601,7 +641,12 @@ export function open(path = ":memory:") {
         db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
       }
     }
-    const rebuilt = starglassLedger(db);
+    for (const [table, column] of DROPPED) {
+      if (has(table) && db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === column)) {
+        db.exec(`ALTER TABLE ${table} DROP COLUMN ${column}`);
+      }
+    }
+    const rebuilt = ledgerWithoutStarglass(db);
     // Telemetry written before batching, a row an event: moved aside, and
     // poured into batches of one once the schema stands.
     const unbatched = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'").get();
@@ -631,8 +676,9 @@ export function open(path = ":memory:") {
              DELETE FROM friend_invites WHERE account IN (SELECT id FROM accounts WHERE banned_at IS NOT NULL);`);
     if (rebuilt) {
       db.exec(`INSERT INTO ledger (id, account, currency, amount, reason, heist, at)
-                 SELECT id, account, currency, amount, reason, heist, at FROM ledger_before_starglass;
-               DROP TABLE ledger_before_starglass;`);
+                 SELECT id, account, currency, amount, reason, heist, at FROM ledger_with_starglass
+                  WHERE currency != 'starglass';
+               DROP TABLE ledger_with_starglass;`);
     }
   });
   return db;

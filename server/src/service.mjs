@@ -30,7 +30,7 @@ import { Friends } from "./friends.mjs";
 import { Matchmaking } from "./matchmaking.mjs";
 import { Notifications } from "./notifications.mjs";
 import { Seasons } from "./seasons.mjs";
-import { Shop } from "./shop.mjs";
+import { GIFT_KEEP_DAYS, INTENT_MS, Shop } from "./shop.mjs";
 import { readHeader } from "./sim.mjs";
 import { Journal } from "./accounts.mjs";
 import { Store } from "./store.mjs";
@@ -42,6 +42,13 @@ const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), 
 
 /** §24.12: "an expiry a day away". */
 export const LEASE_MS = 24 * 60 * 60 * 1000;
+/** How often the target lists are made again: once an hour, as the owner
+ *  decided (G21). A superseded list is kept one such interval, and every
+ *  list is served with a cache life no longer (G38). */
+export const TARGET_LISTS_MS = 60 * 60 * 1000;
+/** G38's one rule: something that names a player and serves no purpose
+ *  once closed is deleted within seven days of closing. */
+export const CLOSED_KEEP_DAYS = 7;
 
 /** §24.10: "Tick rate — 30 a second, fixed." */
 export const TICKS_PER_SECOND = 30;
@@ -144,8 +151,9 @@ export class Service {
         .run(id, identity, now, this.firstBand);
       row = { id };
     }
-    // §24's analytics: a sign-in is a session.
-    this.telemetry.record(row.id, "session", {}, now);
+    // §24's analytics: a sign-in, which is not a session — the device's
+    // foreground is (G29).
+    this.telemetry.record(row.id, "sign_in", {}, now);
     return { account: row.id, token: issue(this.secret, row.id, now) };
   }
 
@@ -257,21 +265,30 @@ export class Service {
       for (const [band, candidates] of [...bands].sort(([a], [b]) => (a < b ? -1 : 1))) {
         const bytes = new TextEncoder().encode(JSON.stringify({ band, candidates }));
         const list = this.store.put(bytes);
-        const was = this.db.prepare("SELECT list, previous FROM target_lists WHERE band = ?").get(band);
+        const was = this.db.prepare(
+          "SELECT list, previous, superseded_at FROM target_lists WHERE band = ?").get(band);
         let previous = was?.previous ?? null;
+        let superseded = was?.superseded_at ?? null;
         if (was && was.list !== list) {
           if (previous && previous !== list) gone.push(previous);
           previous = was.list;
+          superseded = now;
         }
-        if (!keepPrevious && previous) {
+        // G38: kept one interval after it was superseded, for a device that
+        // read the index just before, then deleted even if the band has not
+        // changed since.
+        if (previous && (!keepPrevious || now - (superseded ?? 0) >= TARGET_LISTS_MS)) {
           gone.push(previous);
           previous = null;
         }
+        if (!previous) superseded = null;
         this.db.prepare(
-          `INSERT INTO target_lists (band, list, candidates, generated_at, previous) VALUES (?, ?, ?, ?, ?)
+          `INSERT INTO target_lists (band, list, candidates, generated_at, previous, superseded_at)
+             VALUES (?, ?, ?, ?, ?, ?)
            ON CONFLICT (band) DO UPDATE SET list = excluded.list, candidates = excluded.candidates,
-             generated_at = excluded.generated_at, previous = excluded.previous`)
-          .run(band, list, candidates.length, now, previous);
+             generated_at = excluded.generated_at, previous = excluded.previous,
+             superseded_at = excluded.superseded_at`)
+          .run(band, list, candidates.length, now, previous, superseded);
         index[band] = list;
       }
       // A band every island has left keeps no list: its last one would name
@@ -747,6 +764,33 @@ export class Service {
     return bytes;
   }
 
+  /** Whether a key in the store is a target list, current or kept: those
+   *  are served with a cache life of one rebuild, not a year (G38). */
+  isList(key) {
+    return Boolean(this.db.prepare("SELECT 1 FROM target_lists WHERE list = ?1 OR previous = ?1").get(key));
+  }
+
+  /**
+   * G38's rule for what closes without becoming a record: a purchase intent
+   * that lapsed unredeemed, and a lease that expired unplayed, each deleted
+   * CLOSED_KEEP_DAYS after it closed. A redeemed intent and a played lease
+   * are records (F43). Run daily; idempotent. Returns what went.
+   */
+  expireLapsed(now = this.now()) {
+    const before = now - CLOSED_KEEP_DAYS * DAY_MS;
+    return transaction(this.db, () => ({
+      // A gift's is kept longer: only it names the friend (shop.intentOf).
+      intents: Number(this.db.prepare(
+        `DELETE FROM purchase_intents WHERE redeemed_at IS NULL AND created_at + ? < ?
+            AND (recipient IS NULL OR created_at + ? < ?)`)
+        .run(INTENT_MS, before, INTENT_MS, now - GIFT_KEEP_DAYS * DAY_MS).changes),
+      leases: Number(this.db.prepare(
+        // Unplayed is no heist, whatever its state: a lease that lapsed and
+        // was closed when its target was leased again was never played.
+        `DELETE FROM leases WHERE expires_at < ? AND token NOT IN (SELECT token FROM heists)`).run(before).changes),
+    }));
+  }
+
   /** §24.3: "Raw replays and logs are kept 30 to 90 days". Past the
    *  longest, a replay goes; its heist row and hashes stay. Idempotent. */
   expireReplays(now = this.now()) {
@@ -781,24 +825,16 @@ export class Service {
     const rows = this.db.prepare(
       "SELECT currency, SUM(amount) AS total FROM ledger WHERE account = ? GROUP BY currency")
       .all(account);
-    const out = { starlight: 0, essence: 0, starglass: 0 };
+    const out = { starlight: 0, essence: 0 };
     for (const r of rows) out[r.currency] = Number(r.total);
     return out;
   }
 
-  /** One ledger row outside a heist: a track tier, a purchase, a price. */
+  /** One ledger row outside a heist: a track tier, a defence share. */
   book(account, currency, amount, reason, now = this.now()) {
     if (amount === 0) return;
     this.db.prepare(
       "INSERT INTO ledger (account, currency, amount, reason, heist, at) VALUES (?, ?, ?, ?, NULL, ?)")
       .run(account, currency, amount, reason, now);
-  }
-
-  /** Spend Starglass, never below none. Called inside the caller's
-   *  transaction, so the check and the debit are one. */
-  spendStarglass(account, amount, reason, now = this.now()) {
-    const have = this.balance(account).starglass;
-    if (have < amount) throw new Refused(409, "not_enough_starglass", { have, cost: amount });
-    this.book(account, "starglass", -amount, reason, now);
   }
 }

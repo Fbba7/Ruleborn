@@ -7,8 +7,9 @@
 // pseudonyms are made under; unset, one is made on the first start and kept
 // in the data directory, so a restart neither signs everyone out nor orphans
 // a player's telemetry from their deletion. RULEBORN_DELETIONS names the
-// deletion journal (accounts.mjs), which must live where a restore of the
-// database does not reach: every deletion in it is made again at start.
+// deletion journal's object store (accounts.mjs; a bucket where the edge
+// runs), which must live where a restore of the database does not reach:
+// every deletion of the last 31 days in it is made again at start (F50).
 // --example publishes the simulation's example Heart, undefended, from an
 // account of its own — seeded, as §13.1's designed islands are, so no
 // new-player protection holds it back — and a client has an island to lease
@@ -23,7 +24,7 @@
 // RULEBORN_PLAY_PACKAGE and RULEBORN_PLAY_LICENCE_KEY (the Play Console's
 // base64 key) check Play Billing purchases, RULEBORN_PLAY_SERVICE_ACCOUNT
 // names the service account's JSON key the server looks each one up and
-// consumes it with, and RULEBORN_PLAY_TEST=1 lets a licence tester's free
+// settles it with, and RULEBORN_PLAY_TEST=1 lets a licence tester's free
 // purchases pay too, as a test deployment may.
 //
 // Apple's proofs (stores.mjs) are checked against pinned certificates (PEM or
@@ -48,10 +49,10 @@ import { PlayPurchases, ServiceAccount } from "./googleapi.mjs";
 import { Fcm } from "./push.mjs";
 import { open } from "./db.mjs";
 import { handler, routeOf } from "./http.mjs";
-import { Service } from "./service.mjs";
+import { Service, TARGET_LISTS_MS } from "./service.mjs";
 import { Builds } from "./sim.mjs";
 import { Store } from "./store.mjs";
-import { GOOGLE_KEYS_URL, GameCenter, GoogleSignIn, receipts, signIn } from "./stores.mjs";
+import { GOOGLE_KEYS_URL, GameCenter, GoogleSignIn, appStoreNotification, receipts, signIn } from "./stores.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
@@ -101,7 +102,7 @@ const play = playPackage && playKey ? {
 if (Boolean(playPackage) !== Boolean(playKey)) {
   throw new Error("set RULEBORN_PLAY_PACKAGE and RULEBORN_PLAY_LICENCE_KEY together, or neither");
 }
-// A Play purchase nobody consumes is refunded after three days, and whether
+// A Play purchase nobody acknowledges is refunded after three days, and whether
 // it was a licence tester's is known only to Google: so the server asks, as
 // a service account, before granting one (googleapi.mjs). Without the
 // account, Play receipts are refused.
@@ -109,7 +110,7 @@ const playAccount = play && process.env.RULEBORN_PLAY_SERVICE_ACCOUNT
   ? new ServiceAccount({ serviceAccount: JSON.parse(readFileSync(process.env.RULEBORN_PLAY_SERVICE_ACCOUNT, "utf8")), fetch })
   : null;
 if (play && !playAccount) {
-  throw new Error("RULEBORN_PLAY_PACKAGE needs RULEBORN_PLAY_SERVICE_ACCOUNT: a Play purchase is consumed by the server");
+  throw new Error("RULEBORN_PLAY_PACKAGE needs RULEBORN_PLAY_SERVICE_ACCOUNT: a Play purchase is acknowledged by the server");
 }
 const playPurchases = playAccount
   ? new PlayPurchases({ account: playAccount, packageName: playPackage, test: process.env.RULEBORN_PLAY_TEST === "1" })
@@ -167,9 +168,22 @@ const service = new Service({
   seasonStart: Date.parse(process.env.RULEBORN_SEASON_START ?? "2026-01-05T00:00:00Z"),
   // §24.3's replays, private: not in the store anyone may fetch by hash.
   replays: new Store(join(data, "replays")),
-  deletions: new Journal(process.env.RULEBORN_DELETIONS ?? join(data, "deletions.jsonl")),
+  deletions: new Journal(new Store(process.env.RULEBORN_DELETIONS ?? join(data, "deletions"))),
 });
-const handle = handler(service);
+// G39's web page for deletion without the app signs in with Google under
+// RULEBORN_GOOGLE_WEB_CLIENT_ID, a web OAuth client id that must also be one
+// of RULEBORN_GOOGLE_CLIENT_IDS; unset, the page is not served.
+const webClientId = process.env.RULEBORN_GOOGLE_WEB_CLIENT_ID ?? null;
+if (webClientId && !googleClients.includes(webClientId)) {
+  throw new Error("RULEBORN_GOOGLE_WEB_CLIENT_ID must be one of RULEBORN_GOOGLE_CLIENT_IDS");
+}
+// G32: Apple's App Store Server Notifications (v2) come to
+// /v1/stores/apple/notifications, the URL the operator sets in App Store
+// Connect, and are checked against the same pinned root as a transaction.
+const appleNotifications = storeKit
+  ? (signedPayload) => appStoreNotification(signedPayload, { roots: storeKitRoots, bundleId, sandbox, now: Date.now() })
+  : null;
+const handle = handler(service, { webClientId, appleNotifications });
 
 // §20.12's "backups included": a database restored from before a deletion
 // has it made again before anyone can sign in.
@@ -180,7 +194,6 @@ service.sweepLists();
 
 // §24.8's lists are "generated periodically"; how often is not said. The
 // owner decided once an hour (G21), and once at start.
-const TARGET_LISTS_MS = 60 * 60 * 1000;
 service.targetLists();
 setInterval(() => service.targetLists(), TARGET_LISTS_MS).unref();
 
@@ -244,11 +257,15 @@ service.telemetry.compact();
 setInterval(() => service.telemetry.compact(), DAY_MS).unref();
 service.expireReplays();
 setInterval(() => service.expireReplays(), DAY_MS).unref();
-// What names a player and is no use once closed: sent notifications, and
-// used or lapsed invites and challenge links (§20.5).
+// What names a player and is no use once closed: sent notifications, used
+// or lapsed invites and challenge links, and lapsed purchase intents and
+// unplayed leases (§20.5, G38).
 const tidy = () => {
   service.notifications.expire();
   service.friends.expire();
+  service.expireLapsed();
+  // G32: what Google refunded or revoked, taken back, once a day.
+  if (playPurchases) service.shop.voided(playPurchases).catch((err) => console.error("voided purchases:", err));
 };
 tidy();
 setInterval(tidy, DAY_MS).unref();

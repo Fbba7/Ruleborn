@@ -1,5 +1,5 @@
 {
- "_what": "The owner's answers to the decision brief (docs/decisions/brief.json), as recorded on its page (answers/<id> in the page's database) on 2026-09-25: five picked there, the rest accepted as recommended in one instruction. `build` is where the answer's backend change stands: none (the build already does it), to do, done, or outside (it needs something this repository cannot reach). tools/build_audit.py reads it: a decided item is no longer the owner's, and waits on the build, then on the document. `left`, where present, names the part of a built answer still to build; `client`, what the client still has to do.",
+ "_what": "The owner's answers to the decision brief (docs/decisions/brief.json), as recorded on its page (answers/<id> in the page's database) on 2026-09-25: five picked there, the rest accepted as recommended in one instruction. `build` is where the answer's backend change stands: none (the build already does it), to do, done, or outside (it needs something this repository cannot reach). tools/build_audit.py reads it: a decided item is no longer the owner's, and waits on the build, then on the document. `left`, where present, names the part of a built answer still to build here; `outside`, the part that needs what this repository cannot reach (a store console, the deployment); `client`, what the client still has to do.",
  "answers": {
   "F33": {
    "option": "D",
@@ -72,7 +72,10 @@
   "F41": {
    "option": "C",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "left": "§22.4's monthly gift limit and parental approval rules for minors, for which the document gives no number: a gift a minor buys is held by their §20.2 cap, and one a minor receives is not limited",
+   "client": "the shop screen: each item's money price, and the gift flow",
+   "outside": "each item as a product in App Store Connect and the Play Console, gifts as consumables"
   },
   "F42": {
    "option": "A",
@@ -128,17 +131,20 @@
   "F43": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "client": "the deletion screen's “withdraw my islands too” (D70)"
   },
   "F50": {
    "option": "D",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "outside": "the bucket the journal lives in, and who may write to it; an export job with a 30-day expiry, if exports are built"
   },
   "G39": {
    "option": "A",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "outside": "the web OAuth client id and the link from the store listing"
   },
   "F46": {
    "option": "B",
@@ -194,28 +200,33 @@
   },
   "G32": {
    "option": "B",
-   "how": "accepted as recommended",
-   "build": "to do"
+   "how": "accepted as recommended, and built as the brief's conflict with F41 C resolves it: with no balance to go negative, a refund revokes the product's entitlement",
+   "build": "done",
+   "outside": "the notification URL set in App Store Connect"
   },
   "G29": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "client": "send session_start and session_end, and ask the survey when GET /v1/survey says it is the player's"
   },
   "G38": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "outside": "purging the edge cache of an under-13 player's erased bundles and lists: a shorter cache life does not recall copies already cached"
   },
   "G35": {
    "option": "B",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "client": "the friends' feed screen, which names a friend as the device knows them"
   },
   "G34": {
    "option": "C",
    "how": "accepted as recommended",
-   "build": "to do"
+   "build": "done",
+   "client": "report the device's IANA time zone with the push token and on every launch; the reminder picker offers no time inside the night"
   },
   "F51": {
    "option": "B",

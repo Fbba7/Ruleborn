@@ -12,8 +12,10 @@
 // identity, the telemetry under their pseudonym, their place in every list,
 // group and matchmaking pool — and the records that are about heists,
 // money and islands stay, keyed by an account id that no longer leads to
-// anyone. Their Workshop islands are withdrawn, not deleted, so a remix
-// still names its original. A banned identity stays in the bans table, apart
+// anyone. Their Workshop islands stay listed and playable with no creator
+// shown, unless the player asks for them to be withdrawn too (F43, decided:
+// "withdraw my islands too"); withdrawn, not deleted, so a remix still names
+// its original. An under-13 player's are always withdrawn. A banned identity stays in the bans table, apart
 // from the account: §20.12's "The minimum identifiers needed to enforce the
 // ban are kept", so deleting it is no way back in, and its records are
 // severed like anyone's.
@@ -30,73 +32,75 @@
 // log kept": each deletion is written to a journal outside the database
 // before it is made, so a database restored from before it has it made
 // again when the server starts (`reapplyDeletions`). The journal holds the
-// account id, the reason and the time, and nothing that names a person.
-
-import { closeSync, existsSync, fstatSync, fsyncSync, openSync, readFileSync, readSync, writeSync } from "node:fs";
+// account id, the reason, the time and whether the player withdrew their
+// Workshop islands, and nothing that names a person.
+//
+// The owner's answer to F50: the journal is in object storage, one object an
+// entry, written before the deletion; at every start — the node server's and
+// the edge handler's — the entries of the last REAPPLY_DAYS are made again,
+// the restore window and a day, since a restore cannot bring back anything
+// older. It is kept for good as §20.12's log.
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
+import { Store } from "./store.mjs";
 
 export const REASONS = ["requested", "under-13"];
 
-/** The deletion journal: one line a deletion, appended and synced before the
- *  deletion is made. In memory without a path. */
+/** How far back a start makes deletions again: a restore reaches back 30
+ *  days (§20.12's "within thirty days"), and one more covers the day it was
+ *  taken (F50). */
+export const RESTORE_DAYS = 30;
+export const REAPPLY_DAYS = RESTORE_DAYS + 1;
+
+/** The deletion journal: an object a deletion, in an object store (store.mjs,
+ *  content-addressed, so an entry written twice is one object), put before
+ *  the deletion is made. In memory without a store. */
 export class Journal {
-  constructor(path = null) {
-    this.path = path;
-    this.memory = [];
+  constructor(store = new Store()) {
+    this.store = store;
   }
 
+  /** Put on the disk itself before it returns: the deletion it announces
+   *  is made only after (F50). */
   append(entry) {
-    if (!this.path) {
-      this.memory.push({ ...entry });
-      return;
-    }
-    const fd = openSync(this.path, "a+", 0o600);
-    try {
-      // A line a crash cut short is ended first, so this entry is a line of
-      // its own and not the tail of an unreadable one.
-      const size = fstatSync(fd).size;
-      const last = Buffer.alloc(1);
-      const torn = size > 0 && readSync(fd, last, 0, 1, size - 1) === 1 && last[0] !== 0x0a;
-      const line = Buffer.from(`${torn ? "\n" : ""}${JSON.stringify(entry)}\n`);
-      let at = 0;
-      while (at < line.length) at += writeSync(fd, line, at);
-      fsyncSync(fd);
-    } finally {
-      closeSync(fd);
-    }
+    this.store.put(new TextEncoder().encode(JSON.stringify(entry)), null, { durable: true });
   }
 
-  /** Every entry, oldest first; a line cut short by a crash is skipped. */
+  /** Every entry, oldest first; an object that is not one is skipped. */
   entries() {
-    if (!this.path) return this.memory.map((e) => ({ ...e }));
-    if (!existsSync(this.path)) return [];
-    return readFileSync(this.path, "utf8").split("\n").flatMap((line) => {
+    return this.store.keys().flatMap((key) => {
       try {
-        const e = JSON.parse(line);
-        return typeof e?.account === "string" && REASONS.includes(e.reason) ? [e] : [];
+        const e = JSON.parse(new TextDecoder().decode(this.store.get(key)));
+        return typeof e?.account === "string" && REASONS.includes(e.reason) && Number.isInteger(e.at) ? [e] : [];
       } catch {
         return [];
       }
-    });
+    }).sort((a, b) => a.at - b.at || (a.account < b.account ? -1 : 1));
   }
 }
 
 /**
  * Delete an account, in one transaction: all of it or none of it, so a
  * deletion that fails can be asked for again. Idempotent. Returns what was
- * done. `journal: false` is a deletion made again from the journal.
+ * done. `withdraw` takes the player's Workshop islands out of the Workshop
+ * too (F43); an under-13 deletion always does. `journal: false` is a
+ * deletion made again from the journal.
  */
-export function deleteAccount(service, account, reason = "requested", { journal = true } = {}) {
+export function deleteAccount(service, account, reason = "requested", { journal = true, withdraw = false } = {}) {
   if (!REASONS.includes(reason)) throw new Refused(400, "no_such_reason");
+  if (typeof withdraw !== "boolean") throw new Refused(400, "bad_withdraw");
+  // F43: an under-13 player's islands always go; so do a banned player's,
+  // whose islands the ban took out of play and no deletion puts back.
+  withdraw ||= reason === "under-13";
   const db = service.db;
   const now = service.now();
   const row = db.prepare("SELECT * FROM accounts WHERE id = ?").get(account);
   if (!row) throw new Refused(404, "no_such_account");
+  withdraw ||= Boolean(row.banned_at);
   // Written ahead: a deletion the database then loses to a crash or a
   // restore is still in the journal, and is made again.
-  if (journal && !row.deleted_at) service.deletions.append({ account, reason, at: now });
+  if (journal && !row.deleted_at) service.deletions.append({ account, reason, withdraw, at: now });
   const who = service.telemetry.pseudonym(account);
   const done = transaction(db, () => {
     // A ban outlives the account on its identity alone, and the account row
@@ -109,7 +113,7 @@ export function deleteAccount(service, account, reason = "requested", { journal 
       `UPDATE accounts SET platform_identity = ?,
          deleted_at = COALESCE(deleted_at, ?),
          deleted_reason = COALESCE(deleted_reason, ?), equipped = '{}', push_token = NULL,
-         reminder_at = NULL, utc_offset = 0, night_quiet = 1,
+         reminder_at = NULL, time_zone = NULL, night_quiet = 1,
          banned_at = NULL, banned_reason = NULL WHERE id = ?`)
       .run(`deleted:${account}`, now, reason, account);
     // Out of matchmaking and the target lists: an island row is what makes a
@@ -117,9 +121,9 @@ export function deleteAccount(service, account, reason = "requested", { journal 
     const islands = db.prepare("DELETE FROM islands WHERE owner = ?").run(account).changes;
     // A raid already leased on one of them still settles: the raider played
     // it honestly, and what it books is keyed by the opaque id.
-    const withdrawn = db.prepare(
+    const withdrawn = withdraw ? db.prepare(
       "UPDATE workshop_items SET withdrawn_at = ? WHERE creator = ? AND withdrawn_at IS NULL")
-      .run(now, account).changes;
+      .run(now, account).changes : 0;
     const events = db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = ?").get(who).n;
     db.prepare("DELETE FROM event_batches WHERE who = ?").run(who);
     db.prepare("DELETE FROM first_seen WHERE who = ?").run(who);
@@ -226,8 +230,7 @@ function erase(db, account) {
     .run(account, account.length + 1, `${account}/`).changes;
   // A lease they held and never played reserved nothing (§24.13).
   const leases = db.prepare(
-    `DELETE FROM leases WHERE attacker = ? AND state = 'open'
-        AND token NOT IN (SELECT token FROM heists)`).run(account).changes;
+    "DELETE FROM leases WHERE attacker = ? AND token NOT IN (SELECT token FROM heists)").run(account).changes;
   const workshop = ["workshop_plays", "workshop_ratings", "workshop_completions", "workshop_remixes"]
     .reduce((n, table) => n + Number(db.prepare(`DELETE FROM ${table} WHERE player = ?`).run(account).changes), 0);
   // A report they made still stands for a moderator to act on, as nobody's.
@@ -237,15 +240,17 @@ function erase(db, account) {
            leases: Number(leases), workshop };
 }
 
-/** Every journalled deletion the database does not hold — as after a
- *  restore from before it — made again. Run when the server starts. */
-export function reapplyDeletions(service) {
+/** Every journalled deletion of the last REAPPLY_DAYS the database does not
+ *  hold — as after a restore from before it — made again, as it was asked
+ *  for. Run when the server starts. */
+export function reapplyDeletions(service, now = service.now()) {
   finishErasures(service);
   let made = 0;
   for (const e of service.deletions.entries()) {
+    if (e.at < now - REAPPLY_DAYS * DAY_MS) continue;
     const row = service.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?").get(e.account);
     if (row && !row.deleted_at) {
-      deleteAccount(service, e.account, e.reason, { journal: false });
+      deleteAccount(service, e.account, e.reason, { journal: false, withdraw: e.withdraw === true });
       made++;
     }
   }

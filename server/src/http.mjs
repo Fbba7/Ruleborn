@@ -9,13 +9,16 @@
 //   GET  /v1/offer?size=3                                    → §12.22's list for the caller
 //   GET  /v1/era                                             → §18.3's era of the week, and when it ends
 //   GET  /v1/heists/:token/replay                            → the replay, to its raider or defender (§13)
-//   PUT  /v1/notifications       {"utcOffset", "reminder", "nightQuiet", "pushToken"} → the settings
+//   PUT  /v1/notifications       {"timeZone", "reminder", "nightQuiet", "pushToken"} → the settings,
+//                                                              and "reminderCleared" if the night took it
 //   POST /v1/heists/:token       replay bytes                → what was settled
-//   GET  /v1/balance                                         → {starlight, essence, starglass}
+//   GET  /v1/balance                                         → {starlight, essence}
 //   GET  /v1/targets                                         → {band: list hash}
 //   PUT  /v1/age                 {"band": "13-15"|"16-17"|"18+"} → {ageBand}
 //                                {"band": "under-13"}         → the account deleted (§20.11)
-//   DELETE /v1/account                                       → the account deleted (§20.5)
+//   DELETE /v1/account           {"withdrawIslands"?}        → the account deleted (§20.5, F43)
+//   GET  /account/delete                                     → G39's deletion page, without the app
+//   POST /v1/account/delete      {"idToken", "withdrawIslands"?} → the account deleted, proven with Google
 //
 // The Island Workshop (§18.6; workshop.mjs):
 //
@@ -51,22 +54,24 @@
 //   POST /v1/crews/leave                                     → left
 //   GET  /v1/crews/:id                                       → it
 //
-// The season track (§18.2, §18.8; track.mjs), Starglass and cosmetics
-// (§20.2, §22.1; shop.mjs):
+// The season track (§18.2, §18.8; track.mjs), purchases and cosmetics
+// (§20.2, §22.1, F41, G32; shop.mjs):
 //
 //   GET  /v1/track?season=N                                  → the track, this season's by default
 //   POST /v1/track/claim         {"season"}                  → the next tier, claimed
-//   POST /v1/track/premium       {"season"}                  → the premium track, bought with Starglass
-//   POST /v1/shop/intents        {"product"}                 → an intent, held under a minor's cap
-//   POST /v1/shop/receipts       {"store", "receipt"}        → the Starglass granted
+//   POST /v1/shop/intents        {"product", "for"?}         → an intent, held under a minor's cap;
+//                                                              "for" a friend, a gift ("gift.<product>")
+//   POST /v1/shop/receipts       {"store", "receipt"}        → what was granted, and to whom
 //   GET  /v1/shop/summary                                    → §20.2's monthly spending summary
+//   POST /v1/stores/apple/notifications {"signedPayload"}    → Apple's refunds taken back, and reversed ones
+//                                                              given back (no session)
 //   GET  /v1/cosmetics                                       → the catalogue, owned and worn
-//   POST /v1/cosmetics/:id/buy                               → bought with Starglass
 //   POST /v1/cosmetics/equip     {"kind", "item", "target"?} → what is worn
 //
 // Telemetry (§24, §24.3; telemetry.mjs):
 //
 //   POST /v1/events              [{"kind", "data", "at"?}, …] → {recorded}, a batch from the device
+//   GET  /v1/survey                                          → {due}, whether this month's survey is the player's (G29)
 //   GET  /v1/metrics?from=&to=                               → the launch gates' figures (analysts)
 //   GET  /v1/metrics/absence                                 → §25.3's recency of absence (analysts)
 //
@@ -85,9 +90,11 @@
 //
 // Everything but the session and a bundle needs `Authorization: Bearer …`.
 
-import { deleteAccount } from "./accounts.mjs";
+import { readFileSync } from "node:fs";
+
+import { deleteAccount, reapplyDeletions } from "./accounts.mjs";
 import { offer } from "./matchmaking.mjs";
-import { Refused } from "./service.mjs";
+import { Refused, TARGET_LISTS_MS } from "./service.mjs";
 import { Social } from "./social.mjs";
 import { WORDS, Workshop } from "./workshop.mjs";
 
@@ -177,10 +184,12 @@ async function shopRoute(service, request, url, parts, who) {
       return json(service.track.view(me, season === null ? undefined : Number(season)));
     }
     if (m === "POST" && a === "claim") return json(service.track.claim(me, (await body(request)).season));
-    if (m === "POST" && a === "premium") return json(service.track.buyPremium(me, (await body(request)).season));
   }
   if (area === "shop") {
-    if (m === "POST" && a === "intents") return json(service.shop.intent(me, (await body(request)).product), 201);
+    if (m === "POST" && a === "intents") {
+      const q = await body(request);
+      return json(service.shop.intent(me, q.product, { for: text(q.for, true) }), 201);
+    }
     if (m === "POST" && a === "receipts") {
       const { store, receipt } = await body(request);
       return json(await service.shop.claim(me, store, receipt), 201);
@@ -190,7 +199,6 @@ async function shopRoute(service, request, url, parts, who) {
   if (area === "cosmetics") {
     if (m === "GET" && !a) return json(service.shop.catalogue(me));
     if (m === "POST" && a === "equip") return json(service.shop.equip(me, await body(request)));
-    if (m === "POST" && a && b === "buy") return json(service.shop.buy(me, a));
   }
   return null;
 }
@@ -243,13 +251,40 @@ export function routeOf(url) {
   return String(url ?? "").split("?")[0].split("/").filter(Boolean).slice(0, 2).join("/");
 }
 
-export function handler(service) {
+/** G39's page, with the web OAuth client id put in (see server/web/). */
+const DELETE_PAGE = readFileSync(new URL("../web/delete.html", import.meta.url), "utf8");
+
+/**
+ * The edge function. `webClientId` is the OAuth client id G39's web page
+ * signs in with (it must be among the ids Google sign-in accepts); without
+ * it the page is not served. `appleNotifications(signedPayload)` checks an
+ * App Store Server Notification (stores.mjs appStoreNotification); without
+ * it Apple's refunds are not taken (G32).
+ */
+export function handler(service, { webClientId = null, appleNotifications = null } = {}) {
   const workshop = new Workshop(service);
   const social = new Social(service);
   // Every answer tells the device to reach this host over HTTPS only: the
   // platform's edge terminates TLS (§24.1), and the Data safety form asks
   // whether all of it is encrypted in transit (privacy.json).
+  // F50: an edge isolate's start makes the journal's recent deletions again,
+  // as the node server's does, before it answers anything. Until that has
+  // succeeded nothing is answered, and each request tries it again: a
+  // restored database never serves an account its player deleted.
+  let started = false;
   return async function handle(request) {
+    if (!started) {
+      try {
+        reapplyDeletions(service);
+        started = true;
+      } catch (err) {
+        console.error("reapplying deletions:", err);
+        const refused = json({ error: "starting" }, 503);
+        refused.headers.set("strict-transport-security", "max-age=31536000");
+        refused.headers.set("retry-after", "1");
+        return refused;
+      }
+    }
     const response = await answer(request);
     response.headers.set("strict-transport-security", "max-age=31536000");
     return response;
@@ -287,6 +322,10 @@ export function handler(service) {
         }
         return json({ error: "no_such_route" }, 404);
       }
+      if (parts[1] === "survey" && request.method === "GET") {
+        // G29's rotating sample: whether this month's survey is this player's.
+        return json({ due: service.telemetry.surveyDue(who()) });
+      }
       if (parts[1] === "events" && request.method === "POST") {
         return json(service.telemetry.batch(who(), await body(request)), 202);
       }
@@ -297,6 +336,19 @@ export function handler(service) {
         }
         if (parts[2] === "absence") return json(service.telemetry.absence());
         return json(service.telemetry.report({ from: url.searchParams.get("from"), to: url.searchParams.get("to") }));
+      }
+      if (parts[1] === "stores" && parts[2] === "apple" && parts[3] === "notifications"
+          && request.method === "POST") {
+        // G32: Apple tells the server of a refund, or of one it reversed; the
+        // call carries no session, and is believed only as far as Apple
+        // signed it.
+        if (!appleNotifications) return json({ error: "not_configured" }, 503);
+        const n = appleNotifications(text((await body(request)).signedPayload));
+        if (!n) return json({ error: "notification_refused" }, 400);
+        if (!n.transaction) return json({ type: n.type });
+        return json({ type: n.type, ...(n.type === "REFUND_REVERSED"
+          ? service.shop.reverseRefund("app-store", n.transaction)
+          : service.shop.refund("app-store", n.transaction)) });
       }
       if (["track", "shop", "cosmetics"].includes(parts[1])) {
         const out = await shopRoute(service, request, url, parts, who);
@@ -320,10 +372,14 @@ export function handler(service) {
           const body = service.bundle(parts[2] ?? "");
           if (!body) return json({ error: "not_found" }, 404);
           // §24.1: "cached at the edge for a year" — safe because a bundle is
-          // addressed by its own hash and never changes.
+          // addressed by its own hash and never changes. A target list names
+          // players and is deleted an hour after it is superseded, so it is
+          // cached no longer than that (G38).
+          const list = service.isList(parts[2] ?? "");
           return new Response(body, { headers: {
             "content-type": "application/octet-stream",
-            "cache-control": "public, max-age=31536000, immutable",
+            "cache-control": list ? `public, max-age=${TARGET_LISTS_MS / 1000}`
+                                  : "public, max-age=31536000, immutable",
           } });
         }
         case "POST /v1/leases": {
@@ -370,8 +426,39 @@ export function handler(service) {
           }
           return json(workshop.setAgeBand(me, band));
         }
-        case "DELETE /v1/account":
-          return json({ deleted: true, reason: deleteAccount(service, who(), "requested").reason });
+        case "GET /account/delete": {
+          // G39: deletion without the app, proven with Sign in with Google.
+          if (!webClientId) return json({ error: "not_configured" }, 503);
+          return new Response(DELETE_PAGE.replace("{{WEB_CLIENT_ID}}", webClientId), { headers: {
+            "content-type": "text/html; charset=utf-8",
+            "cache-control": "no-store",
+            "x-frame-options": "DENY",
+          } });
+        }
+        case "POST /v1/account": {
+          if (parts[2] !== "delete") return json({ error: "no_such_route" }, 404);
+          // The page's Google ID token names the account as gp:<sub>, the
+          // Android game's own identity; nothing else is taken here.
+          const { idToken, withdrawIslands = false } = await body(request);
+          const credential = { idToken: text(idToken) };
+          await service.preparePlatform(credential);
+          const identity = service.verifyPlatform(credential);
+          if (typeof identity !== "string" || !identity.startsWith("gp:")) {
+            throw new Refused(401, "google_identity_refused");
+          }
+          const row = service.db.prepare(
+            "SELECT id FROM accounts WHERE platform_identity = ?").get(identity);
+          if (!row) throw new Refused(404, "no_such_account");
+          return json({ deleted: true, reason: deleteAccount(service, row.id, "requested",
+                                                             { withdraw: withdrawIslands }).reason });
+        }
+        case "DELETE /v1/account": {
+          // F43: the deletion screen's "withdraw my islands too".
+          const me = who();
+          const { withdrawIslands = false } = await optional(request);
+          return json({ deleted: true, reason: deleteAccount(service, me, "requested",
+                                                             { withdraw: withdrawIslands }).reason });
+        }
         default:
           return json({ error: "no_such_route" }, 404);
       }

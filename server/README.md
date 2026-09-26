@@ -105,7 +105,10 @@ one content-addressed list a band, holding every island's current snapshot, and
 by hash like a bundle, so an unchanged band keeps its edge cache. Two readings
 (register **G21**): a band is a realm level, the unit of §12.22's guarantee,
 and "generated periodically" is once an hour, as the owner decided
-(`main.mjs`).
+(`main.mjs`). A list names players, so it is served with a cache life of one
+rebuild, an hour, where an island's bytes are cached a year, and the list
+before a band's current one is kept one rebuild after it is superseded and
+then deleted, even if the band has not changed since (**G38**).
 
 ## Choosing a target
 
@@ -204,7 +207,7 @@ transaction as the grant:
   season opens "pulled halfway back toward the floor" of their league.
   `main.mjs` runs it at start and every fifteen minutes; it is idempotent.
 
-## The season track, Starglass and cosmetics
+## The season track, purchases and cosmetics
 
 `src/track.mjs` is §18.2's season track and §18.8's rules for it:
 
@@ -215,28 +218,50 @@ transaction as the grant:
 - **Tiers.** Fifty, claimed in order. Tier 1 is free on day one (§14.8); each
   after costs a tier's stars, scaled to the time left for a player first seen
   late in a season (§18.8's catch-up). A past season's unclaimed tiers stay
-  on offer, bought with this season's stars at that season's price.
-- **Premium.** Bought with Starglass, for this season or an earlier one at the
-  same price; its cosmetics come with every tier claimed, before or after.
+  on offer, bought with this season's stars at that season's price. The free
+  track gives Essence, five pages every other fifth tier, and a stray offered
+  at the next birth's price at the top (F38).
+- **Premium.** A store product of its own for each season, "premium.N", this
+  season's or an earlier one's at the same €6; its cosmetics come with every
+  tier claimed, before or after.
 
-`src/shop.mjs` is §22.1's shop and §20.2's caps:
+`src/shop.mjs` is §22.1's shop and §20.2's caps, as the owner answered F41:
+there is no currency.
 
-- **Starglass** is held in the ledger as euros in hundredths (§19.12's 1:1).
-  A pack is bought in two steps: an intent, refused if it would take a minor
-  past the month's cap (€25 at 13 to 15, €50 at 16 and 17) and held for a
-  quarter of an hour; then the store's receipt, granted once per store
-  transaction. Adults get §20.2's monthly spending summary. `Service` takes a
-  `verifyReceipt(store, receipt)` function, as it takes `verifyPlatform`;
-  `main.mjs` gives none, so it refuses every receipt.
-- **Cosmetics** are bought with Starglass from `src/cosmetics.json`, owned in
-  §24.8's `accounts.cosmetics`, and worn slot by slot: one of each kind, an
-  outfit a crew role and a visual a law. A lease carries the defender's worn
-  set, so a raider sees the island as it was dressed.
+- **Everything is priced in money.** Each cosmetic in `src/cosmetics.json` and
+  each season's premium track is its own store product at its euro price;
+  there is no balance and there are no packs, and the ledger holds Starlight
+  and Essence only. A purchase is two steps: an intent, refused if it would
+  take a minor past the month's cap (€25 at 13 to 15, €50 at 16 and 17) and
+  held for a quarter of an hour; then the store's receipt, granted once per
+  store transaction. Adults get §20.2's monthly spending summary, refunds
+  shown. `Service` takes a `verifyReceipt(store, receipt)` function, as it
+  takes `verifyPlatform`.
+- **Gifts** are the same item bought for a friend, as its own product,
+  "gift." before the item's — a store sells an item its buyer owns only once
+  — and granted to the friend the intent names. A gift's intent is kept 30
+  days, since only it names the friend; a gift receipt after that is refused
+  before the store settles it. Starglass survives only as
+  the wrapper a gift arrives in, which is the device's (§19.12).
+- **Refunds** (G32, answered through F41's): the store's report takes the
+  product back from whoever received it — the cosmetic, off wherever it was
+  worn, or the season's premium track and the cosmetics its tiers gave —
+  once per refund, unless another purchase not refunded still gives them the
+  same (a gift of what they also bought); a refund the store reverses gives
+  it back (Apple's `REFUND_REVERSED`); and a receipt for a refunded
+  transaction is refused.
+  Apple's App Store Server Notifications (v2) come to
+  `POST /v1/stores/apple/notifications`, checked against the same pinned root
+  as a transaction; Play's voided purchases are asked for once a day.
+- **Cosmetics** are owned in §24.8's `accounts.cosmetics`, and worn slot by
+  slot: one of each kind, an outfit a crew role and a visual a law. A lease
+  carries the defender's worn set, so a raider sees the island as it was
+  dressed.
 
-The figures the document does not give — stars, tier price, rewards, packs —
-are named constants, register **G28**. What Starglass is meant to be is
-**F41**; what is not built is **D64**. A database made before Starglass has
-its ledger rebuilt around its rows when opened.
+The figures the document does not give — stars, tier price, rewards — are
+named constants, register **G28**; what is not built is **D64**. A database
+made while there was Starglass has its ledger rebuilt around its other rows
+when opened: what was paid stays in `purchases`, the record of money.
 
 ## The stores' proofs
 
@@ -271,13 +296,16 @@ And Google's:
   with Google, which is a call per sign-in (**D67**).
 - **Play purchases.** The purchase's JSON as Play returned it, signed
   RSA-SHA1 with the app's licence key; then the package, that it is
-  purchased (not pending or cancelled) and one pack. The purchase token is
+  purchased (not pending or cancelled) and one item. The purchase token is
   the transaction, granted once; the intent rides as its
   obfuscatedAccountId. Then Google is asked (`src/googleapi.mjs`, the Play
   Developer API as a service account): the purchase must still be paid for
   and not a licence tester's, unless the operator allows test purchases,
-  and the server consumes it before granting — a purchase nobody consumes
-  is refunded by Play after three days, whatever was granted.
+  and the server acknowledges it before granting — or consumes it, if it
+  is a gift, which can be bought again — since a purchase nobody
+  acknowledges is refunded by Play after three days, whatever was granted.
+  Once a day the server asks Play for the purchases it has voided since, and
+  takes them back (`voided`).
 
 Each credential goes only to its own platform's check, and a receipt only
 to its own store's.
@@ -331,11 +359,13 @@ Quiet Week's clock past §5.4's cap is **F49**.
   the outcome records the page the friend earns "for every raider their
   guards catch". A new player's protection does not stop a friend.
 - **The friends' feed** is derived from the heists already written, so it
-  costs no write: friends' heists, raiding or raided, from the last week.
+  costs no write: friends' heists, raiding or raided, from the last week. A
+  heist in which either side is 13 to 15 appears in no feed (**G35**).
 - **A challenge link** is a code for the player's island that anyone holding
   it can play once, as a friendly heist is played.
 
-The readings are **G35**; what a game among friends pays is **F48**.
+How friends are made and whom the feed shows is the owner's answer to
+**G35**; what a game among friends pays is **F48**.
 
 ## Replays and notifications
 
@@ -350,14 +380,22 @@ The readings are **G35**; what a game among friends pays is **F48**.
   the player can act on". The server sends the two it knows of — a heist
   against you, and the daily reminder a player chose — through an outbox:
   nothing goes out in §20.2's night (21:00 to 08:00 at 13 to 15, 22:00 to
-  08:00 at 16 and 17 and, by default, for adults, who may open it), on the
-  player's own clock; raids before a notification is sent are gathered into
-  it. `main.mjs` delivers once a minute.
+  08:00 at 16 and 17 and, by default, for adults, who may open it), worked
+  out in the IANA time zone the device reports, so daylight saving moves
+  nothing; a device that has reported none is sent nothing. As the owner
+  answered **G34**, a local day's raids are one message, sent with the day's
+  reminder or, with none chosen, when the night ends, and a reminder time
+  inside the night is refused; one already stored that the night comes to
+  cover (an adult quietening it again) is cleared, and the answer says
+  `reminderCleared`. A changed reminder, zone or night moves the waiting
+  raids with it. `main.mjs` delivers once a minute.
 - **Push** (`src/push.mjs`) is Firebase Cloud Messaging's HTTP v1 API, sent
   as the project's service account (`RULEBORN_FCM_SERVICE_ACCOUNT`, its JSON
   key; `RULEBORN_FCM_PROJECT` if the project is not the key's own). A
   message names localisation keys — `ruleborn_raided_title` and `_body`,
-  `ruleborn_reminder_title` and `_body` — which the app's native string
+  `ruleborn_reminder_title` and `_body`, and for a reminder carrying the
+  day's raids `ruleborn_reminder_raided_title` and `_body` with their count
+  — which the app's native string
   tables hold, so each device shows it in its own language, and carries the
   notification as data: for raids, how many and the latest, never the
   night's whole list. It expires when the player's night begins (a reminder
@@ -371,7 +409,7 @@ The readings are **G35**; what a game among friends pays is **F48**.
   logs its retries, give-ups and refusals by reason, never with a token.
   Without the key a due notification is logged, by kind and count only.
 
-The readings are **G34**, what is not built **D68**.
+What is not built is **D68**.
 
 ## Under load
 
@@ -391,25 +429,34 @@ readings are **G33**. Telemetry is written a batch to a row, as §24.1 asks.
 `src/telemetry.mjs` is §24's first-party analytics, under §20.5 and §24.3's
 rules:
 
-- **What is logged.** The server records what it decides: a session (a
-  sign-in), a heist's "outcome, laws crossed, crew", and a purchase. The
-  device sends the rest to `POST /v1/events` in batches — weaving, births,
-  session ends, the one-tap "Was this worth your time?" and the survey — and a
-  batch is checked whole: known events, known fields of known types, times no
-  later than now, and no field that is a position ("The client never sends
-  coordinates"). A player is surveyed at most once a quarter (§25.4).
+- **What is logged.** The server records what it decides: a sign-in, a
+  heist's "outcome, laws crossed, crew", and a purchase. The device sends the
+  rest to `POST /v1/events` in batches — its sessions, the app in the
+  foreground from `session_start` to `session_end` (**G29**: a sign-in only
+  proves who the player is), weaving, births, the one-tap "Was this worth
+  your time?" and the survey — and a batch is checked whole: known events,
+  known fields of known types, times no later than now, and no field that is
+  a position ("The client never sends coordinates"). The survey is a monthly
+  rotating sample, the eleven items and "does the game feel like a chore?";
+  `GET /v1/survey` says whether it is the player's, and a yes is the asking:
+  it is recorded, so a player who declines is not asked again that quarter
+  (§25.4).
 - **Pseudonymous.** Every row is keyed by an HMAC of the account under the
   server's secret, so the events alone name nobody.
 - **Kept 90 days.** `Telemetry.compact`, run daily by `main.mjs`, writes each
-  finished cohort's day-1, day-7 and day-30 returns and each day's counts, and
-  discards the raw events past 90 days.
+  finished cohort's day-1, day-7, day-30 and day-60 returns — a week after
+  its day 60, the longest a device may send a session late — and each day's
+  counts, and discards the raw events past 90 days. A player's first day is
+  their earliest session, in whatever order the device sends them.
 - **Queryable.** `GET /v1/metrics` gives analysts the figures the launch
-  gates read — players, sessions and the crash-free share, heists by
-  outcome, the average "worth your time", the share who bought, and cohort
-  retention — and `/v1/metrics/absence` §25.3's churn early warning.
+  gates read — players, sessions and the crash-free share, the median
+  session's length and sessions a day, heists by outcome, the average "worth
+  your time", the share for whom it feels like a chore, the share who bought,
+  and cohort retention — and `/v1/metrics/absence` §25.3's churn early
+  warning.
 
-The readings are register **G29**; the heatmaps and the error reporter are
-**D65**.
+These are the owner's answers to **G29**; the heatmaps and the error
+reporter are **D65**.
 
 ## Deleting an account
 
@@ -420,9 +467,11 @@ platform identity (signing in again starts a new account), the telemetry
 under their pseudonym, their islands from matchmaking and the target lists,
 their places in constellations and crews, and any token they hold. What the
 document keeps unchanged stays under an id that leads to nobody: the ledger,
-Renown, heists, snapshots, and their Workshop islands, withdrawn rather than
-deleted so a remix still names its original. That reading is register
-**F43**. Their notifications, sent or waiting, go too, and a raid leased
+Renown, heists, snapshots, and their Workshop islands, which stay listed and
+playable with no creator shown unless the player asks for them to be
+withdrawn too — withdrawn, not deleted, so a remix still names its original.
+That is the owner's answer to **F43**; `DELETE /v1/account` takes
+`{"withdrawIslands": true}`. Their notifications, sent or waiting, go too, and a raid leased
 before the deletion settles without owing them one.
 
 A player under 13 is deleted further, as "anything collected" (§20.11): the
@@ -442,15 +491,26 @@ identifiers"): it ends the player's friendships and invites, and a banned
 player's deletion severs the rest like anyone's and clears the ban's time
 from the account, so nothing matches it back.
 
-§20.12's "backups included": each deletion is appended to a journal outside
-the database — an account id, a reason, a time — before it is made, and
-`main.mjs` makes every journalled deletion again at start, so a database
-restored from before one does not bring the player back (**F50**). The
-journal must live where a restore of the database does not reach.
+§20.12's "backups included": each deletion is written to a journal outside
+the database, in object storage, an object an entry — an account id, a
+reason, a time and the withdraw choice — before it is made, and every start
+(`main.mjs`'s, and the edge handler's before its first answer) makes again
+the journal's deletions of the last 31 days, the restore window and a day,
+so a database restored from before one does not bring the player back
+(**F50**). The journal must live where a restore of the database does not
+reach; it is kept for good as §20.12's log.
+
+A player can also delete without the app (**G39**): `GET /account/delete`
+serves a page that explains what goes and what stays and signs in with
+Google — the Android game's own identity — and `POST /v1/account/delete`
+takes that ID token and runs the same deletion at once, withdraw choice
+included. `RULEBORN_GOOGLE_WEB_CLIENT_ID` is the page's OAuth client id, one
+of `RULEBORN_GOOGLE_CLIENT_IDS`. An iPhone player deletes from the game on
+any Apple device.
 
 ## What the server stores, and the stores' declarations
 
-`privacy.json` declares every column of every table — 236 in 39 — with the
+`privacy.json` declares every column of every table — 244 in 40 — with the
 store data type it is, why it is kept, how long, and what an account's
 deletion does to it; `src/privacy.mjs` checks it against the schema the
 server actually opens and writes `declarations.md` from it: the answers to
@@ -461,14 +521,15 @@ does what the declaration states: it deletes a player who has touched every
 table — at their request and as under 13 — and checks every table against
 it, and runs each time limit it names. Those limits are **G38**'s readings:
 a sent notification is kept a week, an invite goes once used or after its
-seven days and a challenge link after its seven, and a band keeps its
-current target list and the one before; at start the server sweeps any list
-no band names, which a crash, a restore or an older server left. Every answer carries
+seven days and a challenge link after its seven, a purchase intent that
+lapsed unredeemed and a lease that expired unplayed go seven days after
+(`expireLapsed`), and a band keeps its current target list and, for an hour,
+the one before; at start the server sweeps any list no band names, which a
+crash, a restore or an older server left. Every answer carries
 `Strict-Transport-Security`, the listener's log names a route and never a
 path's ids, and a new account holds the most protective age band, 13 to 15,
-until the device's age check answers (`PUT /v1/age`). Not answered: the web
-link Google asks for to request deletion without the app (**G39**); filing
-both forms, and the client's age check and deletion button (**D70**).
+until the device's age check answers (`PUT /v1/age`). Not done: filing both
+forms, and the client's age check and deletion button (**D70**).
 
     node server/src/privacy.mjs --write    # after changing privacy.json
 
@@ -492,9 +553,8 @@ built — register **D63**.
 
 ## What is not built
 
-- **Refunds after a grant** (D67): App Store Server Notifications and Play's
-  voided purchases, which tell the server of a refund the player asked for
-  after the grant; and a Play Games player id.
+- **A Play Games player id** (D67), and the operator's side of refunds:
+  setting the notification URL in App Store Connect.
 - **Crossing realms.** The simulation plays one island at a time, so every
   lease is §5.4's 150 seconds with no links, and a crew lands on the island
   it raids even when that is the Heart (D71).
@@ -515,17 +575,18 @@ built — register **D63**.
     src/leagues.json  the league boundaries, generated by tools/league_model.py
     src/social.mjs    §17's constellations and crews
     src/track.mjs     §18.2's season track: stars, tiers, the premium track
-    src/shop.mjs      Starglass packs, §20.2's caps, cosmetics owned and worn
-    src/cosmetics.json  the cosmetics sold for Starglass (none authored yet)
+    src/shop.mjs      products priced in money, gifts, refunds, §20.2's caps, cosmetics owned and worn
+    src/cosmetics.json  the cosmetics sold (none authored yet)
     src/telemetry.mjs first-party events, pseudonymous, kept 90 days, and the report
     src/accounts.mjs  deleting an account: the person goes, the records stay; the journal
+    web/delete.html   deletion without the app, signed in with Google (G39)
     src/privacy.mjs   privacy.json checked against the schema; declarations.md written
     privacy.json      every stored column: its store data type, purpose, time kept, deletion
     declarations.md   the App Privacy and Data safety answers, written from privacy.json
     src/glicko.mjs    Glicko-2, pure arithmetic
     src/matchmaking.mjs  §12.22's ratings and offer, §12.3's echoes, shield and Trace
     src/stores.mjs    the stores' proofs: Game Center, StoreKit 2, Google sign-in, Play purchases
-    src/googleapi.mjs Google's APIs as a service account: a Play purchase looked up and consumed
+    src/googleapi.mjs Google's APIs as a service account: a Play purchase looked up and settled, voided ones listed
     src/push.mjs      push through Firebase Cloud Messaging: the message, and what FCM's answer means
     src/notifications.mjs  the outbox: a heist against you, the daily reminder, §20.2's nights
     src/friends.mjs   friends, friendly heists, the friends' feed, challenge links

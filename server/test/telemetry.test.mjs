@@ -11,19 +11,26 @@ import { T0, openPlan, play, server, twoPlayers } from "./setup.mjs";
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 const DAY = 24 * 60 * 60 * 1000;
 const plusDays = (d, n) => new Date(Date.parse(d) + n * DAY).toISOString().slice(0, 10);
+/** A player signed in with the app in the foreground: the device's session (G29). */
+const open = (t, credential) => {
+  const { account } = t.service.session(credential);
+  t.service.telemetry.batch(account, [{ kind: "session_start", data: {} }]);
+  return account;
+};
 const events = (t, kind) => t.service.db.prepare("SELECT * FROM events WHERE kind = ? ORDER BY batch").all(kind);
 
-test("the server records sessions, heists and purchases under a pseudonym, never the account (24, 20.5)", () => {
+test("the server records sign-ins, heists and purchases under a pseudonym, never the account (24, 20.5)", () => {
   const t = twoPlayers(true);
   const lease = t.service.lease(t.raider.account, t.bundle);
   t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
-  t.service.verifyReceipt = (store, receipt) => ({ transaction: receipt, product: "starglass-1" });
+  t.service.verifyReceipt = (store, receipt) => ({ transaction: receipt, product: "premium.1" });
   t.service.shop.redeem(t.raider.account, "app-store", "r1");
-  assert.equal(events(t, "session").length, 2);
+  assert.equal(events(t, "sign_in").length, 2);
+  assert.equal(events(t, "session_start").length, 0, "a sign-in is not a session (G29)");
   const [heist] = events(t, "heist");
   assert.deepEqual(JSON.parse(heist.data),
                    { validated: true, grade: "clean", crew: 3, laws: lawsOf(t.island) });
-  assert.deepEqual(JSON.parse(events(t, "purchase")[0].data), { product: "starglass-1", cents: 100 });
+  assert.deepEqual(JSON.parse(events(t, "purchase")[0].data), { product: "premium.1", cents: 600 });
   const rows = JSON.stringify(t.service.db.prepare("SELECT * FROM events").all());
   for (const account of [t.raider.account, t.defender.account]) {
     assert.ok(!rows.includes(account), "no event names an account");
@@ -81,7 +88,7 @@ test("an event's data is an object holding every field of its kind, and a kind i
   }
   refusal(() => tel.batch(me, [{ kind: "worth", data: { rating: 4, toString: 1 } }]), "no_such_field");
   refusal(() => tel.batch(me, JSON.parse('[{"kind":"worth","data":{"rating":4,"__proto__":1}}]')), "no_such_field");
-  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = ? AND kind != 'session'")
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = ? AND kind != 'sign_in'")
     .get(tel.pseudonym(me)).n, 0, "none of it was written");
   const day = new Date(T0).toISOString().slice(0, 10);
   assert.doesNotThrow(() => tel.report({ from: day, to: day }));
@@ -113,13 +120,46 @@ test("a player rates every session, weighs once in the report, and a day's ratin
   refusal(() => tel.batch(me, [end]), "too_many_session_ends");
   t.clock.now += DAY;
   assert.deepEqual(tel.batch(me, [end]), { recorded: 1 });
+
+  // Starts are held to the same count, each against its own day.
+  const start = (at) => ({ kind: "session_start", data: {}, ...(at ? { at } : {}) });
+  refusal(() => tel.batch(me, Array(SESSION_ENDS_A_DAY + 1).fill(start())), "too_many_session_starts");
+  assert.deepEqual(tel.batch(me, Array(SESSION_ENDS_A_DAY).fill(start())), { recorded: SESSION_ENDS_A_DAY });
+  refusal(() => tel.batch(me, [start()]), "too_many_session_starts");
+  assert.deepEqual(tel.batch(me, [start(t.clock.now - DAY)]), { recorded: 1 }, "yesterday's is yesterday's");
+});
+
+test("a player's first day is their earliest session, whatever order the device sends them in (G29)", () => {
+  const t = server();
+  const tel = t.service.telemetry;
+  const me = t.service.session("gc:late").account;
+  t.clock.now = T0 + 5 * DAY;
+  tel.batch(me, [{ kind: "session_start", data: {} }]);
+  tel.batch(me, [{ kind: "session_start", data: {}, at: T0 + 2 * DAY }, { kind: "session_start", data: {}, at: T0 + 3 * DAY }]);
+  const first = () => t.service.db.prepare("SELECT day FROM first_seen WHERE who = ?").get(tel.pseudonym(me)).day;
+  assert.equal(first(), new Date(T0 + 2 * DAY).toISOString().slice(0, 10));
+  tel.batch(me, [{ kind: "session_start", data: {}, at: T0 + 4 * DAY }]);
+  assert.equal(first(), new Date(T0 + 2 * DAY).toISOString().slice(0, 10), "a later one moves nothing");
+});
+
+test("the month's survey is offered once a quarter, answered or declined (25.4, G29)", () => {
+  const t = server();
+  const tel = t.service.telemetry;
+  const me = t.service.session("gc:asked").account;
+  assert.equal(tel.surveyDue(me), true);
+  assert.equal(tel.surveyDue(me), false, "declined: not asked again this quarter");
+  // An offer is no answer: the survey can still be answered.
+  assert.deepEqual(tel.batch(me, [{ kind: "survey", data: { answers: Array(11).fill(4), chore: false } }]),
+                   { recorded: 1 });
+  t.clock.now += 91 * DAY;
+  assert.equal(tel.surveyDue(me), true);
 });
 
 test("the survey's quarter runs from when the server received it, however the device dates it (25.4)", () => {
   const t = server();
   const tel = t.service.telemetry;
   const answers = Array(11).fill(4);
-  const survey = (at) => ({ kind: "survey", data: { answers }, at });
+  const survey = (at) => ({ kind: "survey", data: { answers, chore: false }, at });
   // Dated as far back as a queue may, or sent behind a week-old event.
   const late = t.service.session("gc:late").account;
   const queued = t.service.session("gc:queued").account;
@@ -165,12 +205,14 @@ test("a player answers the survey at most once a quarter (25.4)", () => {
   const t = server();
   const me = t.service.session("gc:asked").account;
   const answers = Array(11).fill(4);
-  t.service.telemetry.batch(me, [{ kind: "survey", data: { answers } }]);
+  t.service.telemetry.batch(me, [{ kind: "survey", data: { answers, chore: false } }]);
   t.clock.now += 60 * DAY;
-  refusal(() => t.service.telemetry.batch(me, [{ kind: "survey", data: { answers } }]), "survey_once_a_quarter");
+  refusal(() => t.service.telemetry.batch(me, [{ kind: "survey", data: { answers, chore: false } }]), "survey_once_a_quarter");
   t.clock.now += 31 * DAY;
-  assert.deepEqual(t.service.telemetry.batch(me, [{ kind: "survey", data: { answers } }]), { recorded: 1 });
-  refusal(() => t.service.telemetry.batch(me, [{ kind: "survey", data: { answers: [4] } }]), "bad_field");
+  assert.deepEqual(t.service.telemetry.batch(me, [{ kind: "survey", data: { answers, chore: false } }]), { recorded: 1 });
+  refusal(() => t.service.telemetry.batch(me, [{ kind: "survey", data: { answers: [4], chore: false } }]), "bad_field");
+  t.clock.now += 91 * DAY;
+  refusal(() => t.service.telemetry.batch(me, [{ kind: "survey", data: { answers } }]), "missing_field");
 });
 
 test("the launch gates' figures: players, crash-free sessions, heists, worth-your-time, buyers (22.2, 25.3)", () => {
@@ -178,45 +220,56 @@ test("the launch gates' figures: players, crash-free sessions, heists, worth-you
   const tel = t.service.telemetry;
   const lease = t.service.lease(t.raider.account, t.bundle);
   t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: [] }));
-  tel.batch(t.raider.account, [{ kind: "worth", data: { rating: 5 } },
-                               { kind: "session_end", data: { seconds: 200, crashed: false } }]);
-  tel.batch(t.defender.account, [{ kind: "worth", data: { rating: 3 } },
-                                 { kind: "session_end", data: { seconds: 100, crashed: true } }]);
-  t.service.verifyReceipt = (store, receipt) => ({ transaction: receipt, product: "starglass-5" });
+  tel.batch(t.raider.account, [{ kind: "session_start", data: {} }, { kind: "worth", data: { rating: 5 } },
+                               { kind: "session_end", data: { seconds: 200, crashed: false } },
+                               { kind: "session_start", data: {} },
+                               { kind: "session_end", data: { seconds: 50, crashed: false } },
+                               { kind: "survey", data: { answers: Array(11).fill(4), chore: true } }]);
+  tel.batch(t.defender.account, [{ kind: "session_start", data: {} }, { kind: "worth", data: { rating: 3 } },
+                                 { kind: "session_end", data: { seconds: 100, crashed: true } },
+                                 { kind: "survey", data: { answers: Array(11).fill(6), chore: false } }]);
+  t.service.verifyReceipt = (store, receipt) => ({ transaction: receipt, product: "premium.1" });
   t.service.shop.redeem(t.defender.account, "app-store", "r1");
   const day = new Date(T0).toISOString().slice(0, 10);
   const r = tel.report({ from: day, to: day });
   assert.deepEqual({ players: r.players, sessions: r.sessions, crashFree: r.crashFree, heists: r.heists,
                      worth: r.worth, buyers: r.buyers },
-                   { players: 2, sessions: 2, crashFree: 0.5, heists: { foiled: 1 }, worth: 4, buyers: 0.5 });
+                   { players: 2, sessions: 3, crashFree: 2 / 3, heists: { foiled: 1 }, worth: 4, buyers: 0.5 });
+  // G29: the device's sessions, their median length, and the chore question.
+  assert.deepEqual([r.medianSessionSeconds, r.sessionsPerPlayerDay, r.chore], [100, 1.5, 0.5]);
 });
 
-test("retention by cohort, day 1, 7 and 30, outlives the raw events discarded after 90 days (24.3)", () => {
+test("retention by cohort, day 1, 7, 30 and 60, outlives the raw events discarded after 90 days (24.3, G29)", () => {
   const t = server();
   const tel = t.service.telemetry;
-  const players = ["a", "b", "c", "d"].map((n) => t.service.session(`gc:${n}`).account);
+  const players = ["a", "b", "c", "d"].map((n) => open(t, `gc:${n}`));
   const at = (d) => { t.clock.now = T0 + d * DAY; };
   assert.equal(players.length, 4);
-  at(1); for (const n of ["a", "b", "c"]) t.service.session(`gc:${n}`);
-  at(7); t.service.session("gc:a"); t.service.session("gc:b");
-  at(30); t.service.session("gc:a");
-  at(40);
+  at(1); for (const n of ["a", "b", "c"]) open(t, `gc:${n}`);
+  at(7); open(t, "gc:a"); open(t, "gc:b");
+  at(30); open(t, "gc:a"); open(t, "gc:b");
+  at(60); open(t, "gc:a");
+  // A sign-in alone is no return.
+  t.service.session("gc:c");
+  at(62);
   const day = new Date(T0).toISOString().slice(0, 10);
   const live = tel.retention(day, day);
-  assert.deepEqual(live, { players: 4, day1: 0.75, day7: 0.5, day30: 0.25 });
-  at(40); assert.equal(tel.compact().cohorts, 1);
+  assert.deepEqual(live, { players: 4, day1: 0.75, day7: 0.5, day30: 0.5, day60: 0.25 });
+  // Not before its day 60 has passed, and the week a device may send late.
+  at(62); assert.equal(tel.compact().cohorts, 0, "a day 60 session may still be on its way");
+  at(68); assert.equal(tel.compact().cohorts, 1);
   at(200); assert.ok(tel.compact().discarded > 0);
   assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM events WHERE day = ?").get(day).n, 0);
   assert.deepEqual(tel.retention(day, day), live, "the cohort was written down before its events went");
-  const kept = t.service.db.prepare("SELECT * FROM event_days WHERE day = ? AND kind = 'session'").get(day);
+  const kept = t.service.db.prepare("SELECT * FROM event_days WHERE day = ? AND kind = 'session_start'").get(day);
   assert.deepEqual([kept.events, kept.players], [4, 4], "and the day's counts stay");
 });
 
 test("recency of absence, the churn early warning, in bands (25.3)", () => {
   const t = server();
-  t.service.session("gc:here");
+  open(t, "gc:here");
   t.clock.now = T0 + 10 * DAY;
-  t.service.session("gc:back");
+  open(t, "gc:back");
   t.clock.now = T0 + 12 * DAY;
   assert.deepEqual(t.service.telemetry.absence(), { "0-1": 0, "2-3": 1, "4-7": 0, "8-14": 1, "15+": 0 });
 });
@@ -230,13 +283,21 @@ test("telemetry over HTTP: a batch from the device, and the report for analysts 
     body: json ? JSON.stringify(json) : undefined,
   }));
   const me = await (await call("POST", "/v1/session", { json: { credential: "gc:phone" } })).json();
-  const sent = await call("POST", "/v1/events", { token: me.token, json: [{ kind: "worth", data: { rating: 4 } }] });
+  const sent = await call("POST", "/v1/events", { token: me.token,
+                                                  json: [{ kind: "session_start", data: {} },
+                                                         { kind: "worth", data: { rating: 4 } }] });
   assert.equal(sent.status, 202);
   const day = new Date(T0).toISOString().slice(0, 10);
   assert.equal((await call("GET", `/v1/metrics?from=${day}&to=${day}`, { token: me.token })).status, 403);
   t.service.db.prepare("UPDATE accounts SET analyst = 1 WHERE id = ?").run(me.account);
   const report = await (await call("GET", `/v1/metrics?from=${day}&to=${day}`, { token: me.token })).json();
   assert.deepEqual([report.players, report.worth], [1, 4]);
+  // G29's rotating sample: this player is asked once, then not for a
+  // quarter, answered or not.
+  assert.deepEqual(await (await call("GET", "/v1/survey", { token: me.token })).json(), { due: true });
+  await call("POST", "/v1/events", { token: me.token,
+                                     json: [{ kind: "survey", data: { answers: Array(11).fill(5), chore: false } }] });
+  assert.deepEqual(await (await call("GET", "/v1/survey", { token: me.token })).json(), { due: false });
   const absence = await (await call("GET", "/v1/metrics/absence", { token: me.token })).json();
   assert.equal(absence["0-1"], 1);
 });

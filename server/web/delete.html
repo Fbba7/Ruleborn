@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- G39, decided: deletion without the app. Served by the server at
+     GET /account/delete (http.mjs), with the web OAuth client id put in
+     where the placeholder stands. Signing in with Google proves the same
+     Google account the Android game uses; the server then runs the in-game
+     deletion (accounts.mjs deleteAccount) at once. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delete your Ruleborn account</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; color: #1b1b1f; background: #fff; }
+  h1 { font-size: 1.5rem; }
+  .done, .failed { padding: .75rem 1rem; border-radius: .5rem; }
+  .done { background: #e6f4ea; }
+  .failed { background: #fce8e6; }
+  [hidden] { display: none; }
+</style>
+</head>
+<body>
+<h1>Delete your Ruleborn account</h1>
+<p>Deleting your account takes you out of the game at once: your sign-in,
+your islands in matchmaking and the target lists, your friends, invites and
+challenge links, your places in constellations and crews, your notifications
+and settings, and the game statistics kept under your pseudonym.</p>
+<p>What stays, under an id that leads to no one: the records of heists,
+Renown, purchases and the ledger, which are never edited. Your Workshop
+islands stay listed and playable with no creator shown, unless you choose to
+withdraw them below.</p>
+<p><strong>On Android</strong>, sign in with the Google account you play
+with. <strong>On iPhone or iPad</strong>, delete from inside the game, on any
+Apple device signed in to your Game Center account. If you cannot, write to
+the contact address on the game's store listing.</p>
+<p><label><input type="checkbox" id="withdraw"> Withdraw my Workshop islands too</label></p>
+<div id="g_id_onload" data-client_id="{{WEB_CLIENT_ID}}" data-callback="signedIn" data-auto_prompt="false"></div>
+<div class="g_id_signin" data-type="standard" data-text="continue_with"></div>
+<p class="done" id="done" hidden>Your account is deleted.</p>
+<p class="failed" id="failed" hidden></p>
+<script>
+  async function signedIn(response) {
+    const failed = document.getElementById("failed");
+    failed.hidden = true;
+    const res = await fetch("/v1/account/delete", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ idToken: response.credential,
+                             withdrawIslands: document.getElementById("withdraw").checked }),
+    });
+    if (res.ok) {
+      document.getElementById("done").hidden = false;
+    } else {
+      const { error } = await res.json().catch(() => ({ error: "internal" }));
+      failed.textContent = error === "no_such_account"
+        ? "No Ruleborn account is signed in with that Google account."
+        : "That did not work. Please try again.";
+      failed.hidden = false;
+    }
+  }
+</script>
+<script src="https://accounts.google.com/gsi/client" async></script>
+</body>
+</html>

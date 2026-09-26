@@ -33,7 +33,7 @@
     "Financial info",
     "Purchase history"
    ],
-   "about": "Starglass bought, the ledger, owned cosmetics"
+   "about": "store purchases and gifts (products, prices, refunds), owned cosmetics and premium tracks"
   },
   "gameplay": {
    "apple": [
@@ -121,7 +121,7 @@
     "Personal info",
     "Other info"
    ],
-   "about": "the device's offset from UTC"
+   "about": "the device's time zone"
   }
  },
  "purposes": {
@@ -248,10 +248,10 @@
       "compliance"
      ]
     },
-    "utc_offset": {
+    "time_zone": {
      "type": "other",
      "deletion": "cleared",
-     "holds": "the device's offset from UTC, for reminder times and the night"
+     "holds": "the device's IANA time zone, for reminder times and the night (G34)"
     },
     "reminder_at": {
      "type": "other-usage",
@@ -345,7 +345,7 @@
    }
   },
   "target_lists": {
-   "about": "The current target list of each difficulty band. The lists themselves are public objects naming each candidate island's owner; a band keeps its current list and the one before, and older ones are deleted.",
+   "about": "The current target list of each difficulty band. The lists themselves are public objects naming each candidate island's owner, served with a cache life of one rebuild (an hour); a band keeps its current list and, for one rebuild after it is superseded, the one before, and then deletes it (G38).",
    "purposes": [
     "functionality"
    ],
@@ -371,6 +371,9 @@
     "previous": {
      "type": "user-id",
      "holds": "the list before, still served for a moment"
+    },
+    "superseded_at": {
+     "type": "none"
     }
    }
   },
@@ -381,8 +384,9 @@
     "security"
    ],
    "keep": {
-    "for": "record",
-    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+    "days": 7,
+    "after": "expiring unplayed; a played lease is a record kept for good (F43)",
+    "by": "expireLapsed"
    },
    "deletion": "severed",
    "deletion_note": "an under-13 player's open leases are deleted",
@@ -503,7 +507,7 @@
    }
   },
   "ledger": {
-   "about": "Every currency movement, append-only (§24.12).",
+   "about": "Every movement of Starlight and Essence, the game's earned resources, append-only (§24.12); nothing in it is bought (F41).",
    "purposes": [
     "functionality",
     "security"
@@ -522,19 +526,19 @@
      "names": "account"
     },
     "currency": {
-     "type": "purchase-history"
+     "type": "gameplay"
     },
     "amount": {
-     "type": "purchase-history"
+     "type": "gameplay"
     },
     "reason": {
-     "type": "purchase-history"
+     "type": "gameplay"
     },
     "heist": {
      "type": "gameplay"
     },
     "at": {
-     "type": "purchase-history"
+     "type": "gameplay"
     }
    }
   },
@@ -601,7 +605,7 @@
    }
   },
   "workshop_items": {
-   "about": "Published Workshop islands, never edited or deleted (§18.6); withdrawn on deletion.",
+   "about": "Published Workshop islands, never edited or deleted (§18.6); on deletion they stay listed with no creator shown, or are withdrawn if the player asks (F43).",
    "purposes": [
     "functionality"
    ],
@@ -610,7 +614,7 @@
     "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
    },
    "deletion": "severed",
-   "deletion_note": "withdrawn; an under-13 player's islands' bytes are deleted",
+   "deletion_note": "listed with no creator shown, or withdrawn if the player asked; an under-13 player's islands are withdrawn and their bytes deleted",
    "columns": {
     "id": {
      "type": "gameplay"
@@ -1048,7 +1052,7 @@
    }
   },
   "premium_tracks": {
-   "about": "Each season's premium track a player bought with Starglass.",
+   "about": "Each season's premium track a player bought, as a store product or a friend's gift (F41); a refund takes it back (G32).",
    "purposes": [
     "functionality"
    ],
@@ -1256,8 +1260,9 @@
     "compliance"
    ],
    "keep": {
-    "for": "record",
-    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+    "days": 7,
+    "after": "lapsing unredeemed; a redeemed one is a record kept for good (F43)",
+    "by": "expireLapsed"
    },
    "deletion": "severed",
    "columns": {
@@ -1279,6 +1284,11 @@
     },
     "redeemed_at": {
      "type": "purchase-history"
+    },
+    "recipient": {
+     "type": "user-id",
+     "names": "account",
+     "holds": "a gift's friend (F41); null for the buyer's own"
     }
    }
   },
@@ -1313,6 +1323,42 @@
     },
     "intent": {
      "type": "purchase-history"
+    },
+    "at": {
+     "type": "purchase-history"
+    },
+    "recipient": {
+     "type": "user-id",
+     "names": "account",
+     "holds": "a gift's friend (F41); null for the buyer's own"
+    }
+   }
+  },
+  "refunds": {
+   "about": "Refunds and revocations the stores reported, and refunds they reversed, one row an event (G32): the store and its transaction id, which, and when.",
+   "purposes": [
+    "functionality",
+    "compliance"
+   ],
+   "keep": {
+    "for": "record",
+    "why": "a refund is a record of money, as a purchase is (22.1)"
+   },
+   "deletion": "kept",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "store": {
+     "type": "purchase-history"
+    },
+    "txn": {
+     "type": "purchase-history",
+     "holds": "the store's transaction id"
+    },
+    "kind": {
+     "type": "purchase-history",
+     "holds": "a refund, or a refund reversed"
     },
     "at": {
      "type": "purchase-history"
@@ -1431,7 +1477,7 @@
       "other-usage",
       "purchase-history"
      ],
-     "holds": "sessions and their length, a crash flag, heists, laws woven, forms made, the worth rating, the survey, purchases"
+     "holds": "sign-ins, sessions (start and end) and their length, a crash flag, heists, laws woven, forms made, the worth rating, the survey and its chore answer, purchases"
     }
    }
   },
@@ -1455,7 +1501,7 @@
    }
   },
   "cohorts": {
-   "about": "Counts of each day's new players returning on day 1, 7 and 30: no player in them.",
+   "about": "Counts of each day's new players returning on day 1, 7, 30 and 60 (G29): no player in them.",
    "purposes": [
     "analytics"
    ],
@@ -1478,6 +1524,9 @@
      "type": "none"
     },
     "day30": {
+     "type": "none"
+    },
+    "day60": {
      "type": "none"
     }
    }
@@ -1512,7 +1561,7 @@
   "bundles": {
    "about": "the public object store: island bundles and target lists, fetched by hash",
    "type": "gameplay",
-   "keep": "islands for good (snapshots); target lists the current and previous a band",
+   "keep": "islands for good (snapshots); target lists the current one a band, and the one before for an hour after it is superseded (G38)",
    "deletion": "an under-13 player's island bytes are deleted, and the lists made again without them"
   },
   "replays": {
@@ -1521,8 +1570,8 @@
    "keep": "90 days (expireReplays)",
    "deletion": "an under-13 player's replays are deleted at once"
   },
-  "deletions.jsonl": {
-   "about": "the deletion journal: an account id, a reason and a time a line, outside the database so a restore cannot undo a deletion",
+  "deletions": {
+   "about": "the deletion journal, in object storage: an account id, a reason, a time and the player's withdraw choice an object, outside the database so a restore cannot undo a deletion; a start makes again the last 31 days of it (F50)",
    "type": "none",
    "keep": "for good: it is §20.12's log",
    "deletion": "a deletion is added, never removed"
@@ -1552,7 +1601,12 @@
   },
   {
    "what": "a Play purchase settled",
-   "carries": "the purchase's product and token, which Google issued, to look it up and consume it",
+   "carries": "the purchase's product and token, which Google issued, to look it up and acknowledge it, or consume it if it is a gift",
+   "to": "Google's Play Developer API, as the app's own service account"
+  },
+  {
+   "what": "Play's voided purchases, checked daily",
+   "carries": "nothing of the player's: the app's package and a time window; Google answers with the purchase tokens it voided",
    "to": "Google's Play Developer API, as the app's own service account"
   },
   {
@@ -1573,7 +1627,7 @@
   "encryptedInTransit": true,
   "accountCreation": "Sign-in with the platform's own identity (Game Center, Sign in with Google)",
   "deletionInApp": true,
-  "deletionUrl": null,
+  "deletionUrl": "/account/delete on the game's server, signed in with Google (G39)",
   "partialDeletion": false
  }
 }

@@ -1,11 +1,13 @@
 // Google's APIs, called as a service account (§22.1, §24.1).
 //
 // Two things only Google can say about a Play purchase, and a signed
-// receipt cannot: whether it is still paid for and unconsumed, and whether
-// it was a licence tester's free purchase. And one thing only Google can
-// do: consume it, without which Play refunds it after three days whatever
-// the server granted (D67). So a Play purchase is looked up and consumed
-// with the Play Developer API before it is granted.
+// receipt cannot: whether it is still paid for, and whether it was a
+// licence tester's free purchase. And one thing only Google can do:
+// acknowledge it — or, for a gift, which can be bought again, consume it —
+// without which Play refunds it after three days whatever the server
+// granted (D67). So a Play purchase is looked up and settled with the Play
+// Developer API before it is granted, and the purchases Google has voided
+// since are asked for once a day (G32).
 //
 // A service account signs a JWT (RS256) that Google exchanges for an access
 // token, kept until shortly before it expires. `fetch` is injected, so the
@@ -89,10 +91,14 @@ export class ServiceAccount {
 /**
  * The Play Developer API's side of a purchase. `settle(proof)` resolves
  * `{ok: true}` once Google says the purchase is paid for, not a licence
- * tester's (unless `test`), and consumed — consuming it now if it is not —
- * or `{ok: false, reason}`. A purchase already consumed is still paid for,
- * and settles: the grant that follows is once per purchase token whoever
- * consumed it, so a grant stopped after the consume is made on a retry.
+ * tester's (unless `test`), and acknowledged — acknowledging it now if it is
+ * not — or `{ok: false, reason}`. Under F41 an item is bought once and kept,
+ * so it is acknowledged, not consumed; a gift ("gift." before the item) can
+ * be bought again, so it is consumed. A purchase already acknowledged or
+ * consumed is still paid for, and settles: the grant that follows is once
+ * per purchase token, so a grant stopped after the store step is made on a
+ * retry. `voided(since)` lists the purchases Google has refunded or
+ * revoked since then, for G32's daily check.
  */
 export class PlayPurchases {
   constructor({ account, packageName, test = false }) {
@@ -118,14 +124,41 @@ export class PlayPurchases {
     if (p?.purchaseState !== 0) return { ok: false, reason: "not_paid" };
     // purchaseType is absent on a real purchase; 0 is a licence tester's.
     if (p.purchaseType === 0 && !this.test) return { ok: false, reason: "test_purchase" };
-    if (p.consumptionState !== 1) {
+    const gift = String(proof.product).startsWith("gift.");
+    const settled = gift ? p.consumptionState === 1 : p.acknowledgementState === 1;
+    if (!settled) {
       try {
-        const done = await this.account.call(this.url(proof, ":consume"), { method: "POST", scope: ANDROID_PUBLISHER });
+        const done = await this.account.call(this.url(proof, gift ? ":consume" : ":acknowledge"),
+                                             { method: "POST", scope: ANDROID_PUBLISHER });
         if (!done.ok) return { ok: false, reason: "store_unavailable" };
       } catch {
         return { ok: false, reason: "store_unavailable" };
       }
     }
     return { ok: true };
+  }
+
+  /**
+   * The purchase tokens Google has voided — refunded, charged back or
+   * revoked — since `since` (ms), across its pages: Play's Voided Purchases
+   * API, which keeps 30 days. Rejects if Google cannot be asked, so the
+   * caller tries again on its next run rather than skipping a day.
+   */
+  async voided(since) {
+    const e = encodeURIComponent;
+    const tokens = [];
+    let page = null;
+    do {
+      const url = `${PUBLISHER}/${e(this.packageName)}/purchases/voidedpurchases?startTime=${Math.floor(since)}` +
+                  `&maxResults=1000${page ? `&token=${e(page)}` : ""}`;
+      const response = await this.account.call(url, { scope: ANDROID_PUBLISHER });
+      if (!response.ok) throw new Error(`voided purchases: ${response.status}`);
+      const answer = await response.json();
+      for (const v of answer.voidedPurchases ?? []) {
+        if (typeof v.purchaseToken === "string") tokens.push(v.purchaseToken);
+      }
+      page = answer.tokenPagination?.nextPageToken ?? null;
+    } while (page);
+    return tokens;
   }
 }

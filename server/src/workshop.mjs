@@ -182,13 +182,15 @@ export class Workshop {
               AVG(fairness) AS fairness FROM workshop_ratings WHERE item = ?`).get(item.id);
     const remixes = this.db.prepare(
       "SELECT COUNT(*) AS n FROM workshop_remixes WHERE item = ?").get(item.id).n;
-    const creator = this.ladder(item.creator).level;
+    // A deleted creator's island stays listed with no creator shown (F43).
+    const gone = Boolean(this.account(item.creator)?.deleted_at);
+    const creator = gone ? null : this.ladder(item.creator).level;
     return {
       id: item.id, bundle: item.bundle, realmLevel: item.realm_level,
       name: Workshop.name(item.name_adjective, item.name_noun),
       // §18.7: a Builder's "name shown on the island". Accounts have no
       // display name yet, so the creator is shown by account and level.
-      creator: item.creator, creatorLevel: creator,
+      creator: gone ? null : item.creator, creatorLevel: creator,
       remixOf: item.remix_of, completions, remixes,
       ratings: { count: r.n, fun: r.fun, cleverness: r.cleverness, fairness: r.fairness },
       featured: item.featured_at !== null, publishedAt: item.published_at,

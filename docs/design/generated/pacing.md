@@ -148,7 +148,7 @@ The day the first building of a kind reaches each level, and its cost over that 
 | Anchor Stone | 8 (3.9 h) | 10 (3.3 h) | 19 (4.1 h) | 49 (6.2 h) | 58 (13.6 h) | 93 (16.6 h) | 167 (34.9 h) | 266 (43.3 h) | 361 (70.5 h) | 436 (114.9 h) |
 | Star Well |  | 4 (7.8 h) | 11 (5.0 h) | 21 (6.5 h) | 36 (16.3 h) | 66 (22.2 h) | 100 (27.9 h) | 170 (60.0 h) | 294 (75.9 h) | 384 (126.5 h) |
 | Aether Spring |  | 5 (5.8 h) | 11 (4.4 h) | 21 (5.9 h) | 37 (14.2 h) |  |  |  |  |  |
-| Garden |  | 5 (5.8 h) | 11 (4.4 h) | 22 (7.5 h) | 37 (14.2 h) | 67 (19.8 h) | 101 (25.6 h) | 179 (49.4 h) | 297 (69.6 h) | 388 (116.1 h) |
+| Garden |  | 5 (5.8 h) | 11 (4.4 h) | 22 (7.5 h) | 37 (14.2 h) | 67 (19.8 h) | 101 (25.6 h) | 179 (49.4 h) | 296 (69.6 h) | 388 (116.1 h) |
 | Storehouse | 3 (4.7 h) | 10 (2.8 h) | 18 (3.6 h) | 26 (12.0 h) | 54 (12.3 h) | 82 (15.5 h) | 146 (33.3 h) | 203 (46.6 h) | 329 (70.3 h) | 476 (117.2 h) |
 | Law Pylon | 1 (5.0 h) | 10 (2.8 h) | 17 (3.6 h) | 25 (12.0 h) | 53 (12.3 h) | 80 (15.5 h) | 132 (33.3 h) | 200 (46.6 h) | 327 (70.3 h) | 465 (117.2 h) |
 | Hearth |  | 17 (2.6 h) | 48 (5.5 h) | 119 (6.3 h) | 230 (10.2 h) |  |  |  |  |  |
@@ -159,7 +159,7 @@ The day the first building of a kind reaches each level, and its cost over that 
 | Resonance Lab | 16 (2.1 h) | 20 (5.9 h) | 53 (11.3 h) | 123 (16.9 h) | 238 (29.4 h) |  |  |  |  |  |
 | Observatory | 10 (3.0 h) | 20 (4.7 h) | 52 (9.1 h) | 123 (13.5 h) | 237 (23.6 h) |  |  |  |  |  |
 | Beacon | 9 (7.1 h) | 19 (4.0 h) | 52 (7.5 h) | 122 (11.3 h) | 236 (19.6 h) |  |  |  |  |  |
-| Visitor's Dock | 21 (2.4 h) | 100 (2.4 h) | 285 (4.4 h) |  |  |  |  |  |  |  |
+| Visitor's Dock | 21 (2.4 h) | 100 (2.4 h) | 284 (4.4 h) |  |  |  |  |  |  |  |
 
 The Heart's starting Well, Spring, Garden, Vault and Hearth have no level-1 build day.
 
@@ -176,10 +176,10 @@ Engaged player, the band's lower edge. The run's reading first, then the alterna
 | Heist strays (11.5, 14.6) | one in eight successful heists | one in sixteen (14.6's "stray or a bonus page") | 321 / 618 / 619 | 321 / 618 / 619 |
 | A stray's price (11.5, F38) | the next birth's, as the owner answered | free, as §11.5 reads | 321 / 618 / 619 | 307 / 585 / 223 |
 | Strays at all | §11.5's and §18.2's | none | 321 / 618 / 619 | 321 / 618 / 619 |
-| Storage (9.1) | Vault and Storehouses | unlimited | 321 / 618 / 619 | 318 / 614 / 578 |
+| Storage (9.1) | Vault and Storehouses | unlimited | 321 / 618 / 619 | 319 / 615 / 579 |
 | The entry fee (9.4, F39, C41) | 2% of B(V), back after a clean or loud heist and half after a partial one | none | 321 / 618 / 619 | 316 / 604 / 605 |
-| §9.3's school bonuses | the realm's own resource only | every producer in an outer realm (the first re-run) | 321 / 618 / 619 | 312 / 586 / 587 |
-| B(V)'s base (9.6, F36) | the every-day value, as the owner answered | 2,400, as §9.6 reads | 321 / 618 / 619 | 338 / 659 / 678 |
+| §9.3's school bonuses | the realm's own resource only | every producer in an outer realm (the first re-run) | 321 / 618 / 619 | 313 / 586 / 587 |
+| B(V)'s base (9.6, F36) | the every-day value, as the owner answered | 2,400, as §9.6 reads | 321 / 618 / 619 | 338 / 659 / 677 |
 | Which realm types open first (5.2) | the median of all 90 orders | every order | Keeper 40 day 321, built 618 | Keeper 40 day 305–335, built 577–660 |
 
 The fastest order opens both Starlight realms first; the slowest leaves them last. No choice here is the document's to guess: each is one sentence in §14.1 when it decides.

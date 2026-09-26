@@ -2,7 +2,9 @@
 //
 // §18.2: "Fifty tiers, climbed with season points from heists, defences and
 // discoveries. The free track gives pages, Essence and a stray. The premium
-// track, bought with Starglass, adds cosmetics only." §18.8: "Unclaimed tiers
+// track, bought with Starglass, adds cosmetics only." The owner's answer to
+// F41 prices it in money instead: each season's premium track is a store
+// product (shop.mjs), and the free track gives no Starglass. §18.8: "Unclaimed tiers
 // stay claimable in a later season at the same cost. A missed season costs
 // time, never access", and "Joining in week 6 does not mean losing 5 weeks.
 // The track scales to the time remaining." §9.1 calls the points season
@@ -36,24 +38,18 @@ export const TIER_STARS = HEIST_STARS;
 /** The six premium kinds §18.2 names, a cosmetic every fifth tier (G28). */
 export const PREMIUM_KINDS = ["realm_skin", "sky_theme", "bridge_style", "outfit", "sage_robe", "law_visual"];
 
-/** A Starglass is a euro (§19.12's "visible 1:1 rate"), held in hundredths
- *  so a price in cents is exact (G28, F41). */
-export const PREMIUM_PRICE = facts.PREMIUM_TRACK_EUR * 100;
-
 /**
  * Tier `tier`'s rewards in a season. The free track: at the top, a stray
  * offered for adoption at the next birth's price (F38, decided: a found stray
- * joins only when that price is paid),
- * a little Starglass every tenth tier (§9.1's "small amounts from the free
- * season track" — one Starglass a season, a sixth of the premium track),
- * five pages every other fifth, and Essence on the rest. The premium track: a
- * cosmetic every fifth tier, through the six kinds in turn (G28).
+ * joins only when that price is paid), five pages every other fifth tier,
+ * and Essence on the rest — the tenth tiers included, which gave Starglass
+ * before there was none (F41). The premium track: a cosmetic every fifth
+ * tier, through the six kinds in turn (G28).
  */
 export function tierRewards(season, tier) {
   let free;
   if (tier === facts.SEASON_TIERS) free = { strayOffer: 1 };
-  else if (tier % 10 === 0) free = { starglass: 25 };
-  else if (tier % 5 === 0) free = { pages: 5 };
+  else if (tier % 5 === 0 && tier % 10 !== 0) free = { pages: 5 };
   else free = { essence: 500 };
   const premium = tier % 5 === 0
     ? { cosmetic: `track-${season}-${tier}`, kind: PREMIUM_KINDS[(tier / 5 - 1) % PREMIUM_KINDS.length] }
@@ -164,29 +160,44 @@ export class Track {
   }
 
   /**
-   * Buy a season's premium track with Starglass — this season's or, since
-   * "nothing expires forever", an earlier one's, at the same price. The
-   * premium rewards of tiers already claimed come with it.
+   * A season's premium track, bought (shop.mjs): this season's or, since
+   * "nothing expires forever", an earlier one's. The premium rewards of
+   * tiers already claimed come with it. Called inside the purchase's
+   * transaction; a track already held gives nothing more.
    */
-  buyPremium(account, season = this.seasons.current().id) {
-    const now = this.service.now();
-    return transaction(this.db, () => {
-      const v = this.view(account, season);
-      if (v.premium) throw new Refused(409, "premium_already_owned");
-      this.service.spendStarglass(account, PREMIUM_PRICE, `the premium track, season ${season} (18.2)`, now);
-      this.db.prepare("INSERT INTO premium_tracks (account, season, bought_at) VALUES (?, ?, ?)")
-        .run(account, season, now);
-      const granted = [];
-      for (let tier = 1; tier <= v.claimed; tier++) {
-        const r = tierRewards(season, tier).premium;
-        if (r) granted.push({ tier, ...this.grant(account, season, tier, "premium", r, now) });
-      }
-      return { season, premium: true, granted };
-    });
+  grantPremium(account, season, now) {
+    if (this.premium(account, season)) return { season, premium: true, granted: [] };
+    this.db.prepare("INSERT INTO premium_tracks (account, season, bought_at) VALUES (?, ?, ?)")
+      .run(account, season, now);
+    const granted = [];
+    const claimed = this.claimed(account, season).filter((c) => c.track === "free").length;
+    for (let tier = 1; tier <= claimed; tier++) {
+      const r = tierRewards(season, tier).premium;
+      if (r) granted.push({ tier, ...this.grant(account, season, tier, "premium", r, now) });
+    }
+    return { season, premium: true, granted };
   }
 
-  /** One reward, booked where the server holds it: Essence and Starglass in
-   *  the ledger, a cosmetic in what the account owns. Pages and strays live
+  /**
+   * A refunded premium track taken back (G32): the track, and the cosmetics
+   * its tiers gave, off wherever they were worn. Its claim rows go with it,
+   * so buying it again grants them again. Called inside the refund's
+   * transaction.
+   */
+  revokePremium(account, season) {
+    if (!this.premium(account, season)) return { season, premium: false, revoked: [] };
+    const claims = this.db.prepare(
+      "SELECT reward FROM track_claims WHERE account = ? AND season = ? AND track = 'premium'").all(account, season)
+      .map((c) => JSON.parse(c.reward).cosmetic).filter(Boolean);
+    for (const cosmetic of claims) this.service.shop.revokeCosmetic(account, cosmetic);
+    this.db.prepare("DELETE FROM track_claims WHERE account = ? AND season = ? AND track = 'premium'")
+      .run(account, season);
+    this.db.prepare("DELETE FROM premium_tracks WHERE account = ? AND season = ?").run(account, season);
+    return { season, premium: false, revoked: claims };
+  }
+
+  /** One reward, booked where the server holds it: Essence in the ledger,
+   *  a cosmetic in what the account owns. Pages and strays live
    *  on the device, so the claim row is their record (D64). */
   grant(account, season, tier, track, reward, now) {
     this.db.prepare(
@@ -194,7 +205,6 @@ export class Track {
       .run(account, season, tier, track, JSON.stringify(reward), now);
     const reason = `season ${season}, tier ${tier}, ${track} track (18.2)`;
     if (reward.essence) this.service.book(account, "essence", reward.essence, reason, now);
-    if (reward.starglass) this.service.book(account, "starglass", reward.starglass, reason, now);
     if (reward.cosmetic) this.seasons.grantCosmetic(account, reward.cosmetic);
     return reward;
   }

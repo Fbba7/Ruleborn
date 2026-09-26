@@ -286,9 +286,6 @@ SEASON_TIERS = 50
 #: §22.1 sells "The season pass premium track (cosmetic), about €6 a season".
 PREMIUM_TRACK_EUR = 6
 
-#: §22.1: "Starglass, in packs from about €1 to €50". (least, most)
-STARGLASS_PACKS_EUR = (1, 50)
-
 #: §20.2's purchases row: "€25 a month cap" at 13 to 15 and "€50 a month cap"
 #: at 16 and 17; adults get a "Monthly spending summary" and no cap.
 SPENDING_CAPS_EUR = {"13-15": 25, "16-17": 50}
@@ -366,7 +363,6 @@ HOME = {
     "DAILY_SHARE": "25.1",
     "SEASON_TIERS": "18.2",
     "PREMIUM_TRACK_EUR": "22.1",
-    "STARGLASS_PACKS_EUR": "22.1",
     "SPENDING_CAPS_EUR": "20.2",
 }
 
@@ -503,8 +499,6 @@ STATED = {
                                 "Ninety": 90, "A hundred": 100}.get(m[0])),
     "PREMIUM_TRACK_EUR": (r"The season pass premium track \(cosmetic\), about €(\d+) a season",
                           lambda m: int(m[0])),
-    "STARGLASS_PACKS_EUR": (r"Starglass, in packs from about €(\d+) to €(\d+)",
-                            lambda m: (int(m[0]), int(m[1]))),
     "SPENDING_CAPS_EUR": (r"\| Purchases\n\| [^\n]*€(\d+) a month cap\n\| €(\d+) a month cap",
                           lambda m: {"13-15": int(m[0]), "16-17": int(m[1])}),
 }

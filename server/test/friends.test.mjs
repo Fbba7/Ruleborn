@@ -46,7 +46,7 @@ test("a friendly heist is for fun: no fee, no Renown, the friend loses nothing a
                    { raider: 0, defender: 0 }, null, null]);
   assert.equal(out.friendPages, out.verdict.caught, "a page for every raider their guards catch");
   assert.ok(out.friendPages > 0);
-  assert.deepEqual(t.service.balance(t.defender.account), { starlight: 0, essence: 0, starglass: 0 });
+  assert.deepEqual(t.service.balance(t.defender.account), { starlight: 0, essence: 0 });
   assert.deepEqual(t.service.replay(t.defender.account, lease.token).length > 0, true, "both see the replay");
 });
 
@@ -65,6 +65,23 @@ test("the friends' feed shows what friends did this week, and nothing of strange
   assert.deepEqual(t.service.friends.feed(watcher), [], "a week on, gone from the feed");
 });
 
+test("a 13-to-15's heists are in no feed, as the friend or as the other party (G35)", () => {
+  const minor = (account) => t.service.db.prepare("UPDATE accounts SET age_band = '13-15' WHERE id = ?").run(account);
+  const t = twoPlayers(true);
+  const watcher = t.service.session("gc:watcher").account;
+  t.service.friends.accept(t.raider.account, t.service.friends.invite(watcher).invite);
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  assert.equal(t.service.friends.feed(watcher).length, 1);
+  // The raided player is 13 to 15 and nobody's friend here: still hidden.
+  minor(t.defender.account);
+  assert.deepEqual(t.service.friends.feed(watcher), [], "the other party is a minor");
+  t.service.db.prepare("UPDATE accounts SET age_band = '18+' WHERE id = ?").run(t.defender.account);
+  // The watcher's friend is the minor: hidden from the watcher's feed.
+  minor(t.raider.account);
+  assert.deepEqual(t.service.friends.feed(watcher), [], "the friend is a minor");
+});
+
 test("a challenge link plays the island once for anyone who holds it (17.6)", () => {
   const t = twoPlayers(true);
   const { challenge, bundle } = t.service.friends.challenge(t.defender.account);
@@ -73,7 +90,7 @@ test("a challenge link plays the island once for anyone who holds it (17.6)", ()
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
   assert.deepEqual([out.mode, out.fee, out.renown.raider], ["challenge", 0, 0]);
   assert.equal(out.haul.total, 0, "for fun only: no haul (F48)");
-  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 0, essence: 0, starglass: 0 },
+  assert.deepEqual(t.service.balance(t.raider.account), { starlight: 0, essence: 0 },
                    "and no ledger line");
   t.clock.now += DAY + 1;
   refusal(() => t.service.lease(t.raider.account, bundle, null, { mode: "challenge", challenge }),

@@ -524,8 +524,9 @@ TUTORIAL_RUINS = 2
 
 #: The season track's free rewards (G28, answered), as server/src/track.mjs
 #: gives them: 50 tiers, the first free to everyone and each after it 10
-#: stars; a stray offer at the top, 25 Starglass every tenth tier, 5 pages
-#: every fifth, and 500 Essence on the rest (40 tiers of Essence, 5 of pages).
+#: stars; a stray offer at the top, 5 pages every other fifth tier, and 500
+#: Essence on the rest — the tenth tiers too, since F41's answer left no
+#: Starglass (44 tiers of Essence, 5 of pages).
 #: An attempt earns 4.97 stars at §9.6's 62.5% success and 35/40/25 split.
 TRACK_TIERS = 50
 TIER_STARS = 10
@@ -538,9 +539,9 @@ def free_track(tiers: int) -> tuple[int, int]:
     """The free track's Essence and pages over its first `tiers` tiers."""
     essence = pages = 0
     for t in range(1, min(tiers, TRACK_TIERS) + 1):
-        if t == TRACK_TIERS or t % 10 == 0:
+        if t == TRACK_TIERS:
             continue
-        if t % 5 == 0:
+        if t % 5 == 0 and t % 10:
             pages += TRACK_TIER_PAGES
         else:
             essence += TRACK_TIER_ESSENCE

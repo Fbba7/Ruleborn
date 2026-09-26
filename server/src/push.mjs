@@ -16,7 +16,12 @@ export const FCM_SCOPE = "https://www.googleapis.com/auth/firebase.messaging";
 export const KEYS = {
   raided: (m) => ({ title: "ruleborn_raided_title", body: "ruleborn_raided_body",
                     args: [String(m.heists?.length ?? 1)] }),
-  reminder: () => ({ title: "ruleborn_reminder_title", body: "ruleborn_reminder_body", args: [] }),
+  // A day's raids gathered into the reminder (G34) are named in it, so a
+  // player with a reminder still reads that they were raided.
+  reminder: (m) => (m.heists?.length
+    ? { title: "ruleborn_reminder_raided_title", body: "ruleborn_reminder_raided_body",
+        args: [String(m.heists.length)] }
+    : { title: "ruleborn_reminder_title", body: "ruleborn_reminder_body", args: [] }),
 };
 
 export class Fcm {

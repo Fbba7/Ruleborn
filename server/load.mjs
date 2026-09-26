@@ -75,6 +75,9 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
     island[5] = 1 + (Math.floor(i / 2) % 10);              // Vault level: a distinct island each
     island[6] = i & 255;                                   // and a distinct exposure
     bundles.push(service.publish(account, island).bundle);
+    // Established: their first session is long behind them, so the one
+    // first_seen row each player ever writes is not counted as a day's.
+    service.telemetry.batch(account, [{ kind: "session_start", data: {} }]);
     accounts.push(account);
   }
   service.targetLists();
@@ -89,6 +92,7 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
       for (let i = 0; i < players; i++) {
         count("session", () => service.session(`gc:load-${i}`));
         count("telemetry batch", () => service.telemetry.batch(accounts[i], [
+          { kind: "session_start", data: {} },
           { kind: "session_end", data: { seconds: 300, crashed: false } },
           { kind: "worth", data: { rating: 4 } },
         ]));

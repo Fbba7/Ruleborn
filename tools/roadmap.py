@@ -480,15 +480,21 @@ dict(
                     "level) \u2014 now in the brief.",
              evidence="docs/decisions/answers.json",
              register=["F33", "F35", "F37", "F39", "C41", "G17", "G20", "F38", "C42", "F36", "G37", "F40", "G27", "F41", "F42", "G28", "G22", "G23", "G25", "G24", "G36", "F49", "G26", "C43", "F43", "F50", "G39", "F46", "F47", "G33", "G21", "F48", "G30", "F44", "F45", "G31", "G19", "G32", "G29", "G38", "G35", "G34", "F51"]),
-        dict(id="T1.14", owner="claude", status="doing",
+        dict(id="T1.14", owner="claude", status="done",
              title="Build what the answers decided",
              detail="Each answer names a build change — the server's "
                     "fee, weekly counts and friendly heists, the simulation's "
                     "alarm reach, Vault call, Delay and regrowth, the economy "
                     "model's base and pages, the shop without a currency, "
                     "refunds, deletion from the web — and a document edit. "
-                    "Each is built, checked and reviewed in batches; an item "
-                    "then waits only on the document taking its edit.",
+                    "Each was built, checked and reviewed in five batches; an "
+                    "item now waits only on the document taking its edit. "
+                    "What an answer still needs from outside the repository "
+                    "(a store console, the deployment's bucket, a web client "
+                    "id) or from the client is on its line in "
+                    "<code>docs/decisions/answers.json</code>; G24's regrown "
+                    "kind and F33's kit re-measure (waiting on F52) are the two "
+                    "left to build here.",
              evidence="docs/decisions/answers.json",
              register=["F33", "F35", "F37", "F39", "C41", "G20", "F38", "F36", "G37", "F40", "F41", "G28", "G23", "G24", "G26", "F43", "F50", "G39", "F46", "G33", "G21", "F48", "G30", "F44", "G19", "G32", "G29", "G38", "G35", "G34", "F51"]),
         dict(id="T1.11", owner="claude", status="done",
@@ -770,11 +776,13 @@ dict(
                     "<br><br>The season track (\u00a718.2) earns stars with "
                     "each heist, claims fifty tiers in order with a free first "
                     "tier and \u00a718.8's catch-up, and keeps past seasons' "
-                    "tiers on offer; Starglass packs go through an intent that "
-                    "holds \u00a720.2's monthly cap for minors, a receipt is "
-                    "granted once, and cosmetics are bought, owned and worn, the "
-                    "defender's set travelling with the lease. The figures are "
-                    "G28's readings; what Starglass is meant to be is F41 and "
+                    "tiers on offer; every item is priced in money (F41: no "
+                    "currency), bought through an intent that holds "
+                    "\u00a720.2's monthly cap for minors, a receipt granted "
+                    "once, a gift bought for a friend and a refund taken back "
+                    "(G32); cosmetics are owned and worn, the defender's set "
+                    "travelling with the lease. The figures are G28's "
+                    "readings; "
                     "F42 names the points; the stores and authored cosmetics "
                     "are D64. Telemetry logs \u00a724's events under a "
                     "pseudonym, takes the device's in checked batches with no "
@@ -913,6 +921,129 @@ dict(
                     "twelve command kinds has a control: a tap is read by what "
                     "is on the tile.",
              evidence="python3 client/status.py"),
+    ],
+),
+
+# ===========================================================================
+dict(
+    id="SC",
+    title="The client, built to be checked",
+    subtitle="The frontend plan: architecture first, then what the percentage counts",
+    blurb="\u00a724.7 puts the simulation in Rust and the shell in Godot 4.5 GDScript; "
+          "\u00a724.12 makes offline the normal path; \u00a724.9 asks for tests that "
+          "assert behaviour; \u00a721 is written as the guide Claude Design works "
+          "from; \u00a726.8 calls interface screens, localisation and the Workshop "
+          "safe to hand over and anything needing a real device not. The plan: "
+          "put the architecture in first, so the design lands in one place and a "
+          "defect names its layer, then build what moves the frontend figure, "
+          "each task saying what it will move.",
+    tasks=[
+        dict(id="TC.1", owner="claude", status="ready",
+             title="Architecture: one-way data, typed layers, a design that lands in one place",
+             detail="The market-standard shape for a mobile game client, in "
+                    "Godot's own terms. <strong>Views</strong> (scenes) only draw "
+                    "and send intents. <strong>Presenters</strong> are plain "
+                    "GDScript classes that turn state into what a view shows, "
+                    "with no nodes, so they are tested headless. "
+                    "<strong>One store</strong> holds the app's state and changes "
+                    "only through actions a reducer applies (unidirectional "
+                    "data, as Redux and The Composable Architecture do it), and "
+                    "keeps the last actions in a ring buffer, so a defect report "
+                    "carries the steps that caused it. <strong>Repositories</strong> "
+                    "are the only code that calls the server, one per area "
+                    "(account, islands, heists, track, shop, Workshop, social), "
+                    "returning typed results whose errors are the server's own "
+                    "reason codes; <strong>\u00a724.12's queue</strong> keeps "
+                    "a heist's submission and a purchase's receipt until the "
+                    "server has them. <strong>Services</strong> (settings, "
+                    "languages, audio, haptics, telemetry, push, store "
+                    "purchases, platform sign-in) sit behind interfaces with a "
+                    "fake for each, built in one container at start, so tests "
+                    "run with fakes and nothing reaches a global. A "
+                    "<strong>router</strong> owns the screen stack. The look lives "
+                    "in <strong>design tokens</strong> (colours, type, spacing, "
+                    "motion) read from one file into a Godot Theme, and "
+                    "<strong>components</strong> built from them: what Claude "
+                    "Design hands over replaces the tokens and the components, "
+                    "and no screen. The screens built so far move onto it.",
+             gate="no frontend figure moves (the screens are counted already); "
+                  "every later task is cheaper and its defects easier to place",
+             evidence="python3 client/status.py; bash tools/check_all.sh"),
+        dict(id="TC.2", owner="claude", status="blocked",
+             title="Defects kept out, and findable when they get in",
+             detail="Checks in <code>tools/check_all.sh</code> from the first "
+                    "commit: every GDScript variable and function typed, with "
+                    "Godot's untyped and unsafe-access warnings made errors; "
+                    "gdtoolkit's lint and format; a test for every reducer and "
+                    "presenter; a flow test for every route; a contract check "
+                    "that every route the client calls exists in "
+                    "<code>server/src/http.mjs</code> and every reason the server "
+                    "refuses with has a localised message, so a server change "
+                    "cannot leave the client silent; the existing pseudo-locale, "
+                    "layout and \u00a721.1 size checks on every new screen; and "
+                    "\u00a726.8's dead-code and duplication audit every 20 to 30 "
+                    "runs. In the running app: one error code a failure, shown to "
+                    "the player in words and logged with the action trail, and a "
+                    "debug overlay in development builds that shows the state and "
+                    "the last actions. Each slice gets an adversarial review "
+                    "before it is committed.",
+             gate="no frontend figure moves; it is what keeps later figures honest",
+             blocked_by=["TC.1"]),
+        dict(id="TC.3", owner="claude", status="blocked",
+             title="Project structure on both stores' targets",
+             detail="Export presets for iPhone and Android, the Rust extension "
+                    "built for arm64 on each, and the build scripts. An Android "
+                    "build can be made and checked here; an iPhone build needs "
+                    "Xcode on a Mac, so here it stops at the exported Xcode "
+                    "project. Counted when a client project builds on both "
+                    "stores' targets.",
+             gate="+4.86 frontend points when both build; the iPhone half needs a Mac",
+             blocked_by=["TC.1"]),
+        dict(id="TC.4", owner="claude", status="blocked",
+             title="Accessibility: \u00a720.8 and \u00a721.8 in full",
+             detail="Text size, contrast checked against \u00a721.8's 4.5:1 "
+                    "and a perceptual model, nothing carried by colour alone, "
+                    "colour-blind-safe states, reduced motion, haptics and "
+                    "separate volumes, screen-reader labels, and \u00a721.10's "
+                    "grayscale test run on every screen. Applied through the "
+                    "tokens and components, so the design inherits it.",
+             gate="+8.80 frontend points when \u00a721's set is in the client",
+             blocked_by=["TC.1"]),
+        dict(id="TC.5", owner="claude", status="blocked",
+             title="Localisation: every launch screen and name in both languages",
+             detail="The catalogue already carries English and a working "
+                    "Portuguese. Every new screen's words go into it as they are "
+                    "made, plurals and numbers formatted per language. It counts "
+                    "only once a native speaker has read the Portuguese "
+                    "(\u00a726.9), which is yours to arrange.",
+             gate="+8.80 frontend points after the native read",
+             blocked_by=["TC.1"]),
+        dict(id="TC.6", owner="claude", status="blocked",
+             title="Screens on the backend that exists: shop and track, Workshop, social",
+             detail="The data side of each screen \u2014 repositories, "
+                    "presenters, flows, error states, offline behaviour \u2014 "
+                    "built and tested against the real server, drawn with the "
+                    "placeholder components until the design lands. The shop "
+                    "prices every item in money with gifts and refunds (F41, "
+                    "G32); the Workshop browses, plays, rates, remixes and "
+                    "reports; the social screens show the league, constellations, "
+                    "crews, friends and the feed.",
+             gate="+4.37 (shop, track, wallet), +8.50 (Workshop), +4.86 (social) "
+                  "frontend points; only their look changes when the design lands",
+             blocked_by=["TC.1", "TC.2"]),
+        dict(id="TC.7", owner="you", status="blocked",
+             title="The design from Claude Design",
+             detail="Tokens and components, and the screens' layouts. They "
+                    "land in TC.1's token file and component library; screens "
+                    "change only where the design moves what they show.",
+             blocked_by=["TC.1"]),
+        dict(id="TC.8", owner="you", status="blocked",
+             title="Real devices, and the fix buffer",
+             detail="\u00a726.8: anything needing a real device is not safe to "
+                    "hand over. The device matrix (+5.46) and the iPhone and "
+                    "Android checksums (T3.1) need phones; the fix buffer "
+                    "(+5.46) is closed after them.",
+             blocked_by=["TC.3"]),
     ],
 ),
 

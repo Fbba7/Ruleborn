@@ -3,17 +3,19 @@
 // done — against the real simulation build.
 
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, writeFileSync, appendFileSync } from "node:fs";
+import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { Journal, deleteAccount, reapplyDeletions } from "../src/accounts.mjs";
+import { Journal, REAPPLY_DAYS, deleteAccount, reapplyDeletions } from "../src/accounts.mjs";
+import { Store } from "../src/store.mjs";
 import { open } from "../src/db.mjs";
 import { SENT_KEEP_DAYS } from "../src/notifications.mjs";
 import { routeOf } from "../src/http.mjs";
 import { DECLARATIONS, load, problems, render, schema } from "../src/privacy.mjs";
-import { Refused, clockTicks } from "../src/service.mjs";
+import { CLOSED_KEEP_DAYS, LEASE_MS, Refused, TARGET_LISTS_MS, clockTicks } from "../src/service.mjs";
+import { INTENT_MS } from "../src/shop.mjs";
 import { Social } from "../src/social.mjs";
 import { Workshop } from "../src/workshop.mjs";
 import { established, openPlan, play, server } from "./setup.mjs";
@@ -81,14 +83,16 @@ async function busy() {
 
   const n = t.service.notifications;
   // Settings no player starts with, so clearing them is seen.
-  n.set(x.account, { pushToken: "device-x", reminder: 12 * 60, utcOffset: 0, nightQuiet: false });
+  n.set(x.account, { pushToken: "device-x", reminder: 12 * 60, timeZone: "UTC", nightQuiet: false });
   t.service.db.prepare(`UPDATE accounts SET equipped = '{"banner":"x"}' WHERE id = ?`).run(x.account);
   t.clock.now = Date.UTC(2026, 8, 25, 12, 5);
   await n.deliver(() => {});
   t.clock.now += 60 * 1000;
   raid(y.account, xBundle, openPlan());                // waiting: the night is not the issue, the tick is
   t.service.telemetry.record(x.account, "worth", { rating: 4 }, t.clock.now);
-  n.set(x.account, { utcOffset: 120 });
+  // The device's sessions (G29), which first_seen is kept from.
+  for (const p of [x.account, y.account]) t.service.telemetry.batch(p, [{ kind: "session_start", data: {} }]);
+  n.set(x.account, { timeZone: "Europe/Berlin" });
   return { t, x: x.account, y: y.account, xBundle, yBundle, held, mine, theirs, w };
 }
 
@@ -218,7 +222,7 @@ test("what privacy.json keeps for a number of days is deleted by a job the serve
       jobs.add(k.by);
     }
   }
-  assert.deepEqual([...jobs].sort(), ["expireReplays", "friends.expire", "notifications.expire", "telemetry.compact"]);
+  assert.deepEqual([...jobs].sort(), ["expireLapsed", "expireReplays", "friends.expire", "notifications.expire", "telemetry.compact"]);
 });
 
 test("a sent notification is kept a week, and one waiting is not dropped (14.6, 20.5)", async () => {
@@ -226,7 +230,7 @@ test("a sent notification is kept a week, and one waiting is not dropped (14.6, 
   const n = t.service.notifications;
   const count = (sent) => t.service.db.prepare(
     `SELECT COUNT(*) AS n FROM notifications WHERE account = ? AND sent_at IS ${sent ? "NOT" : ""} NULL`).get(x).n;
-  assert.deepEqual([count(true), count(false)], [2, 1], "a reminder and a raid sent, a raid waiting");
+  assert.deepEqual([count(true), count(false)], [1, 1], "a reminder sent with the day's raid in it (G34), a raid waiting");
   const sentAt = t.service.db.prepare("SELECT MAX(sent_at) AS at FROM notifications WHERE account = ?").get(x).at;
   assert.equal(n.expire(sentAt + SENT_KEEP_DAYS * DAY), 0);
   const sent = t.service.db.prepare("SELECT COUNT(*) AS n FROM notifications WHERE sent_at <= ?").get(sentAt).n;
@@ -357,6 +361,73 @@ test("a target list is kept while current and one list after, then deleted; one 
   assert.ok(x);
 });
 
+test("a superseded list is deleted one rebuild later though its band has not changed, and lists are cached no longer (G38)", async () => {
+  const { t, y } = await busy();
+  const band = () => t.service.db.prepare("SELECT list, previous FROM target_lists").all()
+    .find((r) => JSON.parse(new TextDecoder().decode(t.service.bundle(r.list))).candidates.some((c) => c.owner === y));
+  t.service.targetLists();
+  const island = t.build.exampleIsland(false);
+  island[5] = 6;
+  t.service.publish(y, island);
+  t.service.targetLists();
+  const was = band();
+  assert.notEqual(was.previous, null);
+  const res = await t.handle(new Request(`https://edge.example/v1/bundles/${was.list}`));
+  assert.equal(res.headers.get("cache-control"), `public, max-age=${TARGET_LISTS_MS / 1000}`);
+  t.clock.now += TARGET_LISTS_MS - 1;
+  t.service.targetLists();
+  assert.notEqual(t.service.bundle(was.previous), null, "within the hour, still served");
+  t.clock.now += 1;
+  t.service.targetLists();
+  assert.deepEqual([band().list, band().previous], [was.list, null], "the band is unchanged");
+  assert.equal(t.service.bundle(was.previous), null, "an hour on, deleted");
+  const islandRes = await t.handle(new Request(`https://edge.example/v1/bundles/${t.service.db.prepare(
+    "SELECT bundle FROM islands WHERE owner = ?").get(y).bundle}`));
+  assert.equal(islandRes.headers.get("cache-control"), "public, max-age=31536000, immutable", "an island, a year");
+});
+
+test("an intent that lapsed unredeemed and a lease that expired unplayed go a week after they close (G38)", async () => {
+  const { t, x, y, xBundle } = await busy();
+  const db = t.service.db;
+  t.service.verifyReceipt = (store, receipt) => ({ transaction: receipt, product: "premium.1", intent: receipt });
+  const lapsed = t.service.shop.intent(x, "premium.1").intent;
+  const redeemed = t.service.shop.intent(x, "premium.1").intent;
+  t.service.shop.redeem(x, "app-store", redeemed);
+  const open = t.service.lease(y, xBundle).token;
+  const played = db.prepare("SELECT COUNT(*) AS n FROM leases WHERE token IN (SELECT token FROM heists)").get().n;
+  const start = t.clock.now;
+  t.clock.now = start + LEASE_MS + CLOSED_KEEP_DAYS * DAY - 1;
+  // busy()'s held lease, issued a day sooner, has gone a week past its end.
+  assert.deepEqual(t.service.expireLapsed(), { intents: 1, leases: 1 }, "the intent lapsed sooner");
+  assert.equal(db.prepare("SELECT 1 FROM purchase_intents WHERE id = ?").get(lapsed), undefined);
+  assert.ok(db.prepare("SELECT 1 FROM purchase_intents WHERE id = ?").get(redeemed), "a redeemed one is a record");
+  assert.ok(db.prepare("SELECT 1 FROM leases WHERE token = ?").get(open), "a week less a moment after it expired");
+  t.clock.now += 2;
+  assert.deepEqual(t.service.expireLapsed(), { intents: 0, leases: 1 });
+  assert.equal(db.prepare("SELECT 1 FROM leases WHERE token = ?").get(open), undefined);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM leases WHERE token IN (SELECT token FROM heists)").get().n, played,
+               "a played lease is a record");
+  assert.deepEqual(t.service.expireLapsed(), { intents: 0, leases: 0 }, "once");
+  // A receipt that comes after its intent went is honoured as one with none.
+  const out = t.service.shop.redeem(x, "app-store", lapsed);
+  assert.equal(out.product, "premium.1");
+  assert.equal(db.prepare("SELECT intent FROM purchases WHERE txn = ?").get(lapsed).intent, null);
+  assert.ok(INTENT_MS < DAY);
+});
+
+test("a lease closed unplayed when its target was leased again goes too (G38)", async () => {
+  const { t, y, xBundle } = await busy();
+  const db = t.service.db;
+  const first = t.service.lease(y, xBundle).token;
+  t.clock.now += LEASE_MS + 1;
+  const second = t.service.lease(y, xBundle).token;
+  assert.notEqual(first, second);
+  assert.equal(db.prepare("SELECT state FROM leases WHERE token = ?").get(first).state, "settled", "closed, never played");
+  t.clock.now += CLOSED_KEEP_DAYS * DAY;
+  t.service.expireLapsed();
+  assert.equal(db.prepare("SELECT 1 FROM leases WHERE token = ?").get(first), undefined);
+});
+
 test("a list no band names — left by a crash, a failed run, a restore or an older server — is swept at start (20.5)", async () => {
   const { t } = await busy();
   t.service.targetLists();
@@ -414,29 +485,30 @@ test("a ban made before the bans table holds, and its deleted account is severed
 });
 
 for (const reason of ["requested", "under-13"]) {
-  test(`a deletion ${reason === "under-13" ? "for being under 13 " : ""}is journalled outside the database, and made again on a database restored from before it (20.12)`, async () => {
+  test(`a deletion ${reason === "under-13" ? "for being under 13 " : ""}is journalled outside the database, and made again on a database restored from before it (20.12, F50)`, async () => {
     const dir = mkdtempSync(join(tmpdir(), "ruleborn-"));
-    const path = join(dir, "deletions.jsonl");
+    const bucket = join(dir, "deletions");
     const { t, x, y } = await busy();
-    const journal = new Journal(path);
+    const journal = new Journal(new Store(bucket));
     t.service.deletions = journal;
     const backup = join(dir, "backup.sqlite");
     t.service.db.exec(`VACUUM INTO '${backup}'`);
     deleteAccount(t.service, x, reason);
     deleteAccount(t.service, x, reason);
     assert.deepEqual(journal.entries().map((e) => [e.account, e.reason]), [[x, reason]], "once");
-    // A crash mid-line, then another deletion: the torn line costs only itself.
-    appendFileSync(path, '{"account": "cut sho');
-    journal.append({ account: y, reason: "requested", at: t.clock.now });
+    // An object that is not an entry costs only itself.
+    new Store(bucket).put(new TextEncoder().encode('{"account": "cut sho'));
+    journal.append({ account: y, reason: "requested", withdraw: false, at: t.clock.now });
     assert.deepEqual(journal.entries().map((e) => e.account), [x, y]);
-    const written = readFileSync(path, "utf8");
+    const written = new Store(bucket).keys().sort();
     // The restore: yesterday's database, today's journal.
-    const restored = server({ db: open(backup), deletions: new Journal(path) });
+    const restored = server({ db: open(backup), deletions: new Journal(new Store(bucket)) });
+    restored.clock.now = t.clock.now;
     const db = restored.service.db;
     assert.equal(db.prepare("SELECT platform_identity FROM accounts WHERE id = ?").get(x).platform_identity, "gc:x");
     assert.equal(reapplyDeletions(restored.service), 2);
     assert.equal(reapplyDeletions(restored.service), 0, "once");
-    assert.equal(readFileSync(path, "utf8"), written, "making a deletion again journals nothing");
+    assert.deepEqual(new Store(bucket).keys().sort(), written, "making a deletion again journals nothing");
     const row = db.prepare("SELECT platform_identity, deleted_reason FROM accounts WHERE id = ?").get(x);
     assert.deepEqual({ ...row }, { platform_identity: `deleted:${x}`, deleted_reason: reason });
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM notifications WHERE account = ?").get(x).n, 0);
@@ -444,10 +516,29 @@ for (const reason of ["requested", "under-13"]) {
       `SELECT COUNT(*) AS n FROM ${table} WHERE ${table === "ratings" ? "key" : "player"} = ?`).get(x).n);
     if (reason === "under-13") assert.deepEqual(erased, [0, 0], "and made again as far as the first time");
     else assert.ok(erased[1] > 0);
-    writeFileSync(path, "");
-    assert.deepEqual(new Journal(path).entries(), []);
+    assert.deepEqual(new Journal(new Store(join(dir, "empty"))).entries(), []);
   });
 }
+
+test("a start makes again only the journal's last 31 days: a restore reaches no further back (F50)", async () => {
+  const { t, x, y } = await busy();
+  const dir = mkdtempSync(join(tmpdir(), "ruleborn-"));
+  const backup = join(dir, "backup.sqlite");
+  t.service.db.exec(`VACUUM INTO '${backup}'`);
+  const journal = new Journal();
+  journal.append({ account: x, reason: "requested", withdraw: true, at: t.clock.now - REAPPLY_DAYS * DAY - 1 });
+  journal.append({ account: y, reason: "requested", withdraw: true, at: t.clock.now - REAPPLY_DAYS * DAY });
+  const restored = server({ db: open(backup), deletions: journal });
+  restored.clock.now = t.clock.now;
+  assert.equal(REAPPLY_DAYS, 31);
+  // The edge handler's first request makes them again, as main.mjs does.
+  await restored.handle(new Request("https://edge.example/v1/era"));
+  const gone = (a) => Boolean(restored.service.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?").get(a).deleted_at);
+  assert.deepEqual([gone(x), gone(y)], [false, true]);
+  const withdrawn = restored.service.db.prepare(
+    "SELECT COUNT(*) AS n FROM workshop_items WHERE creator = ? AND withdrawn_at IS NOT NULL").get(y).n;
+  assert.ok(withdrawn > 0, "made again as it was asked for: islands withdrawn");
+});
 
 test("an account is held to the most protective age band until the device's age check answers (20.1, 20.2)", async () => {
   const t = server({ firstBand: undefined });

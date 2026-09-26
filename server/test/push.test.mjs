@@ -77,9 +77,11 @@ test("each of FCM's answers is sent, gone, tried again or refused for good (D68)
 function waiting() {
   const t = twoPlayers(true);
   const n = t.service.notifications;
-  n.set(t.defender.account, { pushToken: "device-1" });
+  n.set(t.defender.account, { pushToken: "device-1", timeZone: "UTC" });
   t.clock.now = Date.UTC(2026, 8, 24, 12, 0);
   n.raided({ defender: t.defender.account, token: "h1" }, { grade: "clean" }, t.clock.now);
+  // The day's raids are told when the night ends (G34).
+  t.clock.now = Date.UTC(2026, 8, 25, 8, 0);
   const row = () => ({ ...t.service.db.prepare("SELECT * FROM notifications WHERE account = ? ORDER BY id").get(t.defender.account) });
   const token = () => t.service.db.prepare("SELECT push_token FROM accounts WHERE id = ?").get(t.defender.account).push_token;
   return { t, n, row, token };
@@ -142,10 +144,10 @@ test("a notification expires when the player's night begins, so an asleep phone 
   const at = Date.UTC(2026, 8, 24, 20, 50);
   assert.equal(n.expires(me, "reminder", at), Date.UTC(2026, 8, 24, 21, 0), "a minor's night at 21:00");
   assert.equal(n.expires(me, "raided", Date.UTC(2026, 8, 24, 9, 0)), Date.UTC(2026, 8, 24, 21, 0));
-  n.set(me, { utcOffset: -180 });
+  n.set(me, { timeZone: "America/Sao_Paulo" });
   assert.equal(n.expires(me, "raided", at), Date.UTC(2026, 8, 25, 0, 0), "21:00 in Brasília is midnight UTC");
   t.service.db.prepare("UPDATE accounts SET age_band = '18+', night_quiet = 0 WHERE id = ?").run(me);
-  n.set(me, { utcOffset: 0 });
+  n.set(me, { timeZone: "UTC" });
   assert.equal(n.expires(me, "reminder", at), Date.UTC(2026, 8, 25, 0, 0), "an adult's open night: the day's end");
   assert.equal(n.expires(me, "raided", at), at + 24 * 60 * 60 * 1000, "a day at most");
   // On the wire: FCM's ttl and Apple's expiration.
@@ -170,12 +172,11 @@ test("each send reads the clock and the token as they are then, not as the tick 
   const a = t.defender.account;
   const b = t.raider.account;
   for (const p of [a, b]) {
-    t.service.db.prepare("UPDATE accounts SET age_band = '13-15', utc_offset = 0 WHERE id = ?").run(p);
-    n.set(p, { pushToken: `device-${p}` });
+    t.service.db.prepare("UPDATE accounts SET age_band = '13-15' WHERE id = ?").run(p);
+    n.set(p, { pushToken: `device-${p}`, timeZone: "UTC", reminder: 20 * 60 + 59 });
   }
+  // Both reminders fall due a minute before a minor's night.
   t.clock.now = Date.UTC(2026, 8, 24, 20, 59);
-  n.raided({ defender: a, token: "h1" }, { grade: "clean" }, t.clock.now);
-  n.raided({ defender: b, token: "h2" }, { grade: "clean" }, t.clock.now);
   const to = [];
   // FCM answers slowly: the first push takes two minutes, into the night.
   await n.deliver(async (token) => { to.push(token); t.clock.now += 2 * 60 * 1000; });
@@ -183,14 +184,41 @@ test("each send reads the clock and the token as they are then, not as the tick 
   const held = t.service.db.prepare("SELECT due_at FROM notifications WHERE account = ?").get(b).due_at;
   assert.equal(held, Date.UTC(2026, 8, 25, 8, 0));
   // A token turned off while an earlier push is on its way is not used.
+  // Two are due in the tick: b's held reminder, and a notification for a.
   t.clock.now = Date.UTC(2026, 8, 25, 8, 0);
-  n.raided({ defender: a, token: "h3" }, { grade: "clean" }, t.clock.now);
+  const dueForA = () => t.service.db.prepare(
+    "INSERT INTO notifications (account, kind, data, due_at) VALUES (?, 'raided', ?, ?)")
+    .run(a, JSON.stringify({ heists: [{ heist: "h3", grade: "clean" }] }), t.clock.now);
+  dueForA();
   const used = [];
   await n.deliver(async (token) => {
     used.push(token);
     if (used.length === 1) n.set(token === `device-${a}` ? b : a, { pushToken: null });
   });
-  assert.equal(used.length, 1);
+  assert.equal(used.length, 1, "the second's token was turned off meanwhile");
+  // And with nothing turned off, both go in the one tick.
+  n.set(a, { pushToken: `device-${a}` });
+  n.set(b, { pushToken: `device-${b}` });
+  t.clock.now = Date.UTC(2026, 8, 25, 9, 0);
+  dueForA();
+  t.service.db.prepare("INSERT INTO notifications (account, kind, data, due_at) VALUES (?, 'raided', ?, ?)")
+    .run(b, JSON.stringify({ heists: [{ heist: "h4", grade: "clean" }] }), t.clock.now);
+  const both = [];
+  await n.deliver(async (token) => { both.push(token); });
+  assert.deepEqual(both.sort(), [`device-${a}`, `device-${b}`].sort());
+});
+
+test("a reminder carrying the day's raids says so, and a plain one does not (G34, D68)", () => {
+  const fcm = new Fcm({ account: null, projectId: "ruleborn-live" });
+  const merged = fcm.message("d", { kind: "reminder", day: "2026-09-24",
+                                    heists: [{ heist: "h1", grade: "clean" }, { heist: "h2", grade: "foiled" }] });
+  assert.deepEqual([merged.message.android.notification.title_loc_key, merged.message.android.notification.body_loc_key,
+                    merged.message.android.notification.body_loc_args],
+                   ["ruleborn_reminder_raided_title", "ruleborn_reminder_raided_body", ["2"]]);
+  assert.deepEqual(merged.message.data, { kind: "reminder", count: "2", latest: "h2", day: "2026-09-24" });
+  const plain = fcm.message("d", { kind: "reminder", day: "2026-09-24" });
+  assert.deepEqual([plain.message.android.notification.body_loc_key, plain.message.apns.payload.aps.alert["loc-args"]],
+                   ["ruleborn_reminder_body", []]);
 });
 
 test("a tick says why pushes were tried again or given up, never naming a token (D68)", async () => {

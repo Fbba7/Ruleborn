@@ -25,13 +25,20 @@ test("a foiled heist pays the defender the fee and 5% of what the crew was carry
   assert.ok(expected.total > 0);
   assert.deepEqual(out.defence, { percent: 5, ...expected });
   assert.deepEqual(t.service.balance(t.defender.account),
-                   { starlight: out.fee + expected.starlight, essence: expected.essence, starglass: 0 });
+                   { starlight: out.fee + expected.starlight, essence: expected.essence });
   // A crew that loaded nothing leaves nothing: the fee alone.
   t.clock.now += DAY + 1;
   const empty = t.service.lease(t.raider.account, t.bundle);
   const none = t.service.submit(t.raider.account, empty.token, play(t, empty, { plan: [] }));
   assert.deepEqual([none.verdict.left, none.defence.total], [0, 0]);
 });
+
+/** A player signed in with the app in the foreground: a session is the
+ *  device's (G29). */
+function active(t, credential) {
+  const { account } = t.service.session(credential);
+  t.service.telemetry.batch(account, [{ kind: "session_start", data: {} }]);
+}
 
 test("while fewer than 15% change their defence, the share rises 5 points a season, to 20% at most (13.1)", () => {
   const t = twoPlayers(true);
@@ -40,7 +47,7 @@ test("while fewer than 15% change their defence, the share rises 5 points a seas
   const close = (n) => {
     t.clock.now = T0 + n * SEASON_MS - DAY;
     // Nine players active in the season's last week, and nobody republishing.
-    for (let i = 0; i < 9; i++) t.service.session(`gc:active-${i}`);
+    for (let i = 0; i < 9; i++) active(t, `gc:active-${i}`);
     t.clock.now = T0 + n * SEASON_MS + 1;
     seasons.rollover();
     return seasons.defenceShare();
@@ -54,9 +61,9 @@ test("a week in which enough players change their defence holds the share where 
   const t = twoPlayers(true);
   t.service.seasons.current();                         // season 1 is open
   t.clock.now = T0 + SEASON_MS - DAY;
-  for (let i = 0; i < 4; i++) t.service.session(`gc:quiet-${i}`);
+  for (let i = 0; i < 4; i++) active(t, `gc:quiet-${i}`);
   // The defender republishes: one of the five active this week, 20%.
-  t.service.session("gc:defender");
+  active(t, "gc:defender");
   const island = t.build.exampleIsland(true);
   island[5] = 2;
   t.service.publish(t.defender.account, island);
@@ -73,9 +80,9 @@ test("going back to an island published before is a change of defence too (13.1)
   island[5] = 2;
   t.service.publish(t.defender.account, island);       // on to another, at the start
   t.clock.now = T0 + SEASON_MS - DAY;
-  for (let i = 0; i < 4; i++) t.service.session(`gc:quiet-${i}`);
+  for (let i = 0; i < 4; i++) active(t, `gc:quiet-${i}`);
   // The defender goes back to the first: no new snapshot, but a change.
-  t.service.session("gc:defender");
+  active(t, "gc:defender");
   t.service.publish(t.defender.account, t.island);
   t.clock.now = T0 + SEASON_MS + 1;
   t.service.seasons.rollover();

@@ -6,8 +6,8 @@
 // "what friends just did … Visible to friends in the game", and challenge
 // links "Send your island to a friend as a playable challenge".
 //
-// How two players become friends is not said (G35): here, one shares an
-// invite and the other accepts it, and either can end it. A friendly heist
+// How two players become friends is the owner's answer to G35: one shares
+// an invite and the other accepts it, and either can end it. A friendly heist
 // and a challenge are leases of their own mode (service.lease), settled
 // with nothing taken from the friend and no Renown moved (F48).
 
@@ -78,6 +78,12 @@ export class Friends {
    * heists, raiding or raided, newest first. Derived from the heists
    * already written, so it costs no write. Names are the device's: it knows
    * its player's friends by their platform names.
+   *
+   * A 13-to-15's heists appear in no feed (G35, decided): not their
+   * friends', and not the feed of anyone whose friend raided them or was
+   * raided by them, whether or not they are the viewer's friend. The band
+   * is read as it is now, so a heist from before a player's age check
+   * answered is hidden too once it says 13 to 15.
    */
   feed(account, limit = 20) {
     const friends = this.list(account).map((f) => f.account);
@@ -86,8 +92,11 @@ export class Friends {
     return this.db.prepare(
       `SELECT l.attacker, l.defender, l.mode, json_extract(h.outcome, '$.verdict.grade') AS grade, h.submitted_at AS at
          FROM heists h JOIN leases l ON l.token = h.token
+         JOIN accounts r ON r.id = l.attacker
+         JOIN accounts d ON d.id = l.defender
         WHERE h.validated = 1 AND h.submitted_at > ?
           AND (l.attacker IN (${marks}) OR l.defender IN (${marks}))
+          AND r.age_band != '13-15' AND d.age_band != '13-15'
         ORDER BY h.submitted_at DESC LIMIT ?`)
       .all(this.now() - FEED_DAYS * DAY, ...friends, ...friends, Math.min(100, Math.max(1, limit)))
       .map((r) => ({ raider: r.attacker, defender: r.defender, mode: r.mode, grade: r.grade, at: r.at }));

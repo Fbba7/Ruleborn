@@ -7,7 +7,8 @@ import { X509Certificate, createPrivateKey, createSign, sign } from "node:crypto
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-import { GAME_CENTER_CACHE, GameCenter, appStoreTransaction, verifyChain } from "../src/stores.mjs";
+import { GAME_CENTER_CACHE, GameCenter, appStoreNotification, appStoreTransaction, verifyChain } from "../src/stores.mjs";
+import { handler } from "../src/http.mjs";
 import { server } from "./setup.mjs";
 
 const fixture = (name) => readFileSync(new URL(`./fixtures/apple/${name}`, import.meta.url));
@@ -34,7 +35,7 @@ function jws(payload, { chain = [STOREKIT, INTERMEDIATE, ROOT], key = "storekit.
   return `${body}.${b64url(signature)}`;
 }
 
-const purchase = (extra = {}) => ({ transactionId: "2000000123", productId: "starglass-5", bundleId: BUNDLE,
+const purchase = (extra = {}) => ({ transactionId: "2000000123", productId: "premium.1", bundleId: BUNDLE,
                                     environment: "Production", appAccountToken: null, ...extra });
 
 test("a certificate chain is checked to a pinned root: in date, each signed by the next (24.8)", () => {
@@ -50,9 +51,9 @@ test("a certificate chain is checked to a pinned root: in date, each signed by t
 test("a StoreKit 2 transaction counts only with its chain and signature intact, for this app (22.1)", () => {
   const pinned = { roots: [ROOT], bundleId: BUNDLE, now: NOW };
   assert.deepEqual(appStoreTransaction(jws(purchase({ appAccountToken: "abc" })), pinned),
-                   { transaction: "2000000123", product: "starglass-5", intent: "abc" });
+                   { transaction: "2000000123", product: "premium.1", intent: "abc" });
   const [h, , s] = jws(purchase()).split(".");
-  const forged = `${h}.${b64url(JSON.stringify(purchase({ productId: "starglass-50" })))}.${s}`;
+  const forged = `${h}.${b64url(JSON.stringify(purchase({ productId: "premium.2" })))}.${s}`;
   assert.equal(appStoreTransaction(forged, pinned), null, "a changed product breaks the signature");
   assert.equal(appStoreTransaction(jws(purchase({ bundleId: "com.other" })), pinned), null, "another app's");
   assert.equal(appStoreTransaction(jws(purchase({ revocationDate: NOW })), pinned), null, "refunded");
@@ -85,21 +86,74 @@ test("a Sandbox transaction pays only where the operator allows Sandbox (22.1)",
   assert.equal(appStoreTransaction(sandbox, pinned), null, "a free test purchase is no purchase");
   assert.equal(appStoreTransaction(jws(purchase({ environment: undefined })), pinned), null, "nor one naming none");
   assert.equal(appStoreTransaction(jws(purchase({ environment: "Xcode" })), { ...pinned, sandbox: true }), null);
-  assert.equal(appStoreTransaction(sandbox, { ...pinned, sandbox: true }).product, "starglass-5");
+  assert.equal(appStoreTransaction(sandbox, { ...pinned, sandbox: true }).product, "premium.1");
 });
 
-test("a Starglass pack bought through the App Store is granted from its signed transaction, once (22.1)", () => {
+test("a premium track bought through the App Store is granted from its signed transaction, once (22.1, F41)", () => {
   const t = server({
     verifyReceipt: (store, receipt) => (store === "app-store"
       ? appStoreTransaction(receipt, { roots: [ROOT], bundleId: BUNDLE, now: NOW }) : null),
   });
   const me = t.service.session("gc:buyer").account;
-  const { intent } = t.service.shop.intent(me, "starglass-5");
+  const { intent } = t.service.shop.intent(me, "premium.1");
   assert.match(intent, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/, "a UUID");
   const receipt = jws(purchase({ appAccountToken: intent }));
-  assert.equal(t.service.shop.redeem(me, "app-store", receipt).starglass, 500);
+  assert.equal(t.service.shop.redeem(me, "app-store", receipt).to, me);
   assert.equal(t.service.shop.redeem(me, "app-store", receipt).repeated, true);
-  assert.equal(t.service.balance(me).starglass, 500);
+  assert.equal(t.service.track.premium(me, 1), true);
+});
+
+/** An App Store Server Notification (v2), signed as Apple signs one, with
+ *  the transaction it is about signed inside it. */
+const notification = (type, { tx = purchase(), data = {}, ...extra } = {}) => jws({
+  notificationType: type, notificationUUID: "n-1", ...extra,
+  data: { bundleId: BUNDLE, environment: "Production", signedTransactionInfo: jws(tx), ...data } });
+
+test("an App Store Server Notification counts only as Apple signed it, for this app, and names what it takes back (G32)", () => {
+  const pinned = { roots: [ROOT], bundleId: BUNDLE, now: NOW };
+  assert.deepEqual(appStoreNotification(notification("REFUND"), pinned),
+                   { type: "REFUND", transaction: "2000000123", product: "premium.1" });
+  assert.deepEqual(appStoreNotification(notification("REVOKE"), pinned).transaction, "2000000123");
+  assert.deepEqual(appStoreNotification(notification("DID_RENEW"), pinned), { type: "DID_RENEW", transaction: null });
+  assert.equal(appStoreNotification(notification("REFUND", { data: { bundleId: "com.other" } }), pinned), null);
+  assert.equal(appStoreNotification(notification("REFUND", { data: { environment: "Sandbox" } }), pinned), null);
+  assert.ok(appStoreNotification(notification("REFUND", { data: { environment: "Sandbox" } }), { ...pinned, sandbox: true }));
+  assert.equal(appStoreNotification(notification("REFUND", { data: { signedTransactionInfo: "x.y.z" } }), pinned), null,
+               "the transaction inside must be Apple's too");
+  const [h, , sig] = notification("REFUND").split(".");
+  const forged = `${h}.${b64url(JSON.stringify({ notificationType: "REFUND", data: { bundleId: BUNDLE } }))}.${sig}`;
+  assert.equal(appStoreNotification(forged, pinned), null);
+});
+
+test("Apple's refund, posted to the server, takes the purchase back once, and a later receipt for it is refused (G32)", async () => {
+  const pinned = { roots: [ROOT], bundleId: BUNDLE, now: NOW };
+  const t = server({ verifyReceipt: (store, receipt) => (store === "app-store"
+    ? appStoreTransaction(receipt, pinned) : null) });
+  const me = t.service.session("gc:buyer").account;
+  t.service.shop.redeem(me, "app-store", jws(purchase()));
+  const handle = handler(t.service, { appleNotifications: (sp) => appStoreNotification(sp, pinned) });
+  const post = (signedPayload) => handle(new Request("https://edge.example/v1/stores/apple/notifications", {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ signedPayload }) }));
+  const res = await post(notification("REFUND"));
+  assert.equal(res.status, 200);
+  assert.deepEqual(await res.json(), { type: "REFUND", revoked: { season: 1, premium: false, revoked: [] }, from: me });
+  assert.equal(t.service.track.premium(me, 1), false);
+  assert.deepEqual(await (await post(notification("REFUND"))).json(), { type: "REFUND", repeated: true });
+  // Apple reverses the refund: the track is given back, once.
+  const reversed = await (await post(notification("REFUND_REVERSED"))).json();
+  assert.deepEqual([reversed.type, reversed.to, reversed.granted.premium], ["REFUND_REVERSED", me, true]);
+  assert.equal(t.service.track.premium(me, 1), true);
+  assert.deepEqual(await (await post(notification("REFUND_REVERSED"))).json(), { type: "REFUND_REVERSED", repeated: true });
+  assert.equal((await post("not a jws")).status, 400);
+  assert.equal((await t.handle(new Request("https://edge.example/v1/stores/apple/notifications", {
+    method: "POST", headers: { "content-type": "application/json" }, body: "{\"signedPayload\":\"x\"}" }))).status, 503,
+    "not configured, not believed");
+  // Refunded before its receipt came: the receipt is refused.
+  await post(notification("REFUND", { tx: purchase({ transactionId: "2000000999" }) }));
+  const other = t.service.session("gc:other").account;
+  assert.throws(() => t.service.shop.redeem(other, "app-store", jws(purchase({ transactionId: "2000000999" }))),
+                (e) => e.reason === "receipt_refunded");
+  assert.deepEqual(t.service.shop.summary(me).months.map((m) => [m.cents, m.refunded]), [[600, 0]], "reversed");
 });
 
 /** A Game Center identity-verification signature, as the device gets one. */
