@@ -275,7 +275,16 @@ DELIVERABLES = [
         "a Workshop island is never edited or deleted (18.6)",
         "a sudden spike in completions is flagged for a person to review (18.7)",
         "the Workshop over HTTP: publish a cleared island, browse, play, rate, remix and report")),
-    ("7", "Workshop screens", FRONTEND, not_started("the Workshop's screens exist in the client")),
+    ("7", "Workshop screens", FRONTEND, client_tests(
+        "the Workshop reducers keep the list on show when a call fails and name the failure, keep the island played for rating, and a new call clears what the last one said",
+        "a Workshop card reads the island's name in the player's language, its realm level, completions (a quarter from the creator's constellation), remixes and ratings, and who made it; a deleted creator is no one (F43), a withdrawn or removed island says so and offers nothing; a 13-to-15 sees only the featured list and their own; the creator's level shows on their own list (§18.6, §18.7, §20.7)",
+        "a rehearsal may be published only once it clears the island — loot banked and out, as the server judges — and only once; a raid is never offered; the name is made from the word lists (§18.6)",
+        "a Workshop play's answer reads as cleared and counted, or already counted, by the server; one still waiting shows the phone's own check as confirming; a play the server did not accept names why (§18.7, §24.12)",
+        "a player aged 13 to 15, refused the top list, is shown the featured list and offered only it and their own islands, with no failure shown (§20.7)",
+        "a remixed island becomes the builder's draft, the player's own island kept to swap back, never overwritten; publishing it names the original once; after, the draft is its own island, the rehearsal is not offered again, and the player's own list shows (§18.6)",
+        "a remix whose original was removed since is published as the player's own island, not refused for ever (§18.6)",
+        "only the list asked for last is shown: tapping one list and then another ends on the second",
+        "against the server: a creator rehearses an island on the heist screen, clears it and publishes it named from the word lists; another player finds it among the new islands, plays it on the heist screen, clears it, sees the clear counted and rates it; the creator withdraws it and it leaves the lists (§18.6, §18.7)")),
 
     ("8", "Currencies", BACKEND, server_tests(
         "a planned clean heist is re-simulated, and its haul minted with the fee returned",

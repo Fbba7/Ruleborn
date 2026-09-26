@@ -34,6 +34,22 @@ func put(key: String, route: String, body: PackedByteArray, as_json := false) ->
 	_write()
 
 
+## Keep a request and send it now with anything else waiting: the server's
+## answer to it, or `{"pending": true}` when it waits for the network.
+func send(api: Api, key: String, route: String, body: PackedByteArray) -> Result:
+	put(key, route, body)
+	var answered := {"result": null}
+	var on_settled := func(k: String, r: Result) -> void:
+		if k == key:
+			answered["result"] = r
+	settled.connect(on_settled)
+	await flush(api)
+	settled.disconnect(on_settled)
+	if answered["result"] == null:
+		return Result.success({"pending": true})
+	return answered["result"]
+
+
 func pending() -> int:
 	return _items.size()
 

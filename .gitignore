@@ -6,3 +6,6 @@ client/bin/
 client/goldens/
 client/.godot/
 client/ext/target/
+# client/export.sh's store builds and its checks.
+build/
+client/export_presets.cfg.kept

@@ -88,6 +88,7 @@ HOME_TRACK,Season track,Trilha da temporada
 HOME_SHOP,Shop,Loja
 HOME_SOCIAL,League and crews,Liga e equipes
 HOME_FRIENDS,Friends,Amigos
+HOME_WORKSHOP,Workshop,Oficina
 BUILDER_TITLE,"Your island, realm level %d","Sua ilha, reino nível %d"
 BUILDER_HINT,Tap the realm to place what is chosen below,Toque no reino para pôr o que está escolhido abaixo
 BUILDER_TOOL_GROUND,Ground,Terreno
@@ -107,6 +108,8 @@ BUILDER_TOGETHER,Together: %s,Juntas: %s
 BUILDER_ALONE,The laws make nothing together yet,As leis ainda não fazem nada juntas
 BUILDER_HARMONY,%s harmony,harmonia de %s
 BUILDER_CLASH,%s clash,choque de %s
+BUILDER_RESTORE,Swap back,Trocar de volta
+BUILDER_RESTORE_NAMED,Swap back to the island the remix replaced; the remix is kept,Trocar de volta para a ilha que o remix substituiu; o remix fica guardado
 PROBLEM_TOOMANYWARDS,too many wards for the realm,proteções demais para o reino
 PROBLEM_TOOMANYGUARDS,too many guards for the realm,guardas demais para o reino
 PROBLEM_TOOMANYLAWS,too many laws for the realm,leis demais para o reino
@@ -118,6 +121,11 @@ PROBLEM_SEALED,no path reaches the Vault,nenhum caminho chega ao Cofre
 PROBLEM_EDGECLOSED,a side has fewer than half its edge open to land on,um lado tem menos da metade da borda aberta para desembarque
 RESULT_BUILDER,Back to the builder,Voltar ao construtor
 RESULT_CONFIRMING,"Checked on this phone (%d bytes); the server confirms it when you are back online.","Conferido neste celular (%d bytes); o servidor confirma quando você voltar a ficar online."
+RESULT_PUBLISH,Publish it,Publicar
+RESULT_RATE,Rate this island,Avaliar esta ilha
+RESULT_COUNTED,It counts as a completion for its creator,Conta como uma conclusão para quem a criou
+RESULT_NOT_COUNTED,Already counted: a player's clear counts once,Já contada: a vitória de cada jogador conta uma vez
+RESULT_PLAY_NOT_COUNTED,This play does not count as a clear of the island,Esta partida não conta como vitória na ilha
 ERR_UNKNOWN,something went wrong (%s),algo deu errado (%s)
 ERR_OFFLINE,no server is set,nenhum servidor configurado
 ERR_UNREACHABLE,the server could not be reached,não foi possível falar com o servidor
@@ -238,6 +246,8 @@ ERR_STARTING,the server is starting; try again in a moment,o servidor está inic
 ERR_STORE_NOT_CONNECTED,this build cannot reach the store,esta versão não consegue acessar a loja
 ERR_PURCHASE_CANCELLED,the purchase was cancelled,a compra foi cancelada
 ERR_PURCHASE_PENDING,the purchase waits for a family member to approve it,a compra aguarda a aprovação de alguém da família
+ERR_DRAFT_NOT_KEPT,the island could not be kept on this phone,não foi possível guardar a ilha neste celular
+ERR_AGE_CHECK_FIRST,the age check has not been answered on this phone,a verificação de idade ainda não foi respondida neste celular
 SCHOOL_MOTION,Motion,Movimento
 SCHOOL_MATTER,Matter,Matéria
 SCHOOL_TIME,Time,Tempo
@@ -358,3 +368,88 @@ OFFLINE_TRY_AGAIN,Try online again,Tentar online de novo
 OFFLINE_PLAY_ANYWAY,Play offline anyway,Jogar offline mesmo assim
 OFFLINE_SENT,"%d results played offline were sent, and the server has them","%d resultados jogados offline foram enviados, e o servidor os recebeu"
 WALLET_FAILED,The wallet could not be shown: %s,Não foi possível mostrar a carteira: %s
+WORKSHOP_TITLE,Island Workshop,Oficina de Ilhas
+WORKSHOP_FAILED,The Workshop could not do that: %s,A Oficina não conseguiu fazer isso: %s
+WORKSHOP_BUILD,Build,Construir
+WORKSHOP_TAB_TOP,Top,Mais concluídas
+WORKSHOP_TAB_NEW,New,Novas
+WORKSHOP_TAB_FEATURED,Featured,Em destaque
+WORKSHOP_TAB_MINE,My islands,Minhas ilhas
+WORKSHOP_LIST_TOP,The islands most finished,As ilhas mais concluídas
+WORKSHOP_LIST_NEW,The newest islands,As ilhas mais novas
+WORKSHOP_LIST_FEATURED,This week's featured islands,As ilhas em destaque da semana
+WORKSHOP_LIST_MINE,Your islands,Suas ilhas
+WORKSHOP_EMPTY_TOP,No islands yet: publish the first,Ainda não há ilhas: publique a primeira
+WORKSHOP_EMPTY_NEW,No islands yet: publish the first,Ainda não há ilhas: publique a primeira
+WORKSHOP_EMPTY_FEATURED,No island is featured this week,Nenhuma ilha em destaque nesta semana
+WORKSHOP_EMPTY_MINE,You have not published an island. Clear one of yours in the builder to publish it.,Você ainda não publicou uma ilha. Vença uma das suas no construtor para publicá-la.
+WORKSHOP_ITEM,%s — realm level %d,%s — nível de reino %d
+WORKSHOP_STATS,Completions: %s · remixes: %s,Conclusões: %s · remixes: %s
+WORKSHOP_RATINGS,Fun %s · cleverness %s · fairness %s · ratings: %s,Diversão %s · engenhosidade %s · justiça %s · avaliações: %s
+WORKSHOP_UNRATED,Not rated yet,Ainda sem avaliações
+WORKSHOP_BY_YOU,Made by you,Feita por você
+WORKSHOP_BY_NOBODY,Its maker's account is gone,A conta de quem a fez não existe mais
+WORKSHOP_A_REMIX,A remix of another island,Um remix de outra ilha
+WORKSHOP_FEATURED,Featured,Em destaque
+WORKSHOP_WITHDRAWN,Withdrawn: no longer listed,Retirada: não aparece mais nas listas
+WORKSHOP_REMOVED,Removed by a moderator: %s,Removida por um moderador: %s
+WORKSHOP_PLAY,Play,Jogar
+WORKSHOP_PLAY_NAMED,Play %s,Jogar %s
+WORKSHOP_REMIX,Remix,Remixar
+WORKSHOP_REMIX_NAMED,Remix %s in the builder,Remixar %s no construtor
+WORKSHOP_WITHDRAW,Withdraw,Retirar
+WORKSHOP_WITHDRAW_NAMED,Withdraw %s from the lists,Retirar %s das listas
+WORKSHOP_REASON,Reason: %s,Motivo: %s
+WORKSHOP_REASON_NAMED,Report reason for %s: %s; choose another,Motivo da denúncia de %s: %s; escolher outro
+WORKSHOP_REPORT,Report,Denunciar
+WORKSHOP_REPORT_NAMED,Report %s — reason: %s,Denunciar %s — motivo: %s
+WORKSHOP_PUBLISH_TITLE,Publish the island you just cleared,Publique a ilha que você acabou de vencer
+WORKSHOP_PUBLISH_REMIX,It is a remix: the original is named with it,É um remix: a original aparece junto
+WORKSHOP_NAME,Its name: %s,O nome: %s
+WORKSHOP_PUBLISH,Publish,Publicar
+WORKSHOP_PUBLISH_NAMED,Publish as %s,Publicar como %s
+WORKSHOP_RATE_TITLE,Rate %s,Avaliar %s
+WORKSHOP_SCORE_FUN,Fun: %d of 5,Diversão: %d de 5
+WORKSHOP_SCORE_CLEVERNESS,Cleverness: %d of 5,Engenhosidade: %d de 5
+WORKSHOP_SCORE_FAIRNESS,Fairness: %d of 5,Justiça: %d de 5
+WORKSHOP_LOWER,Lower — %s,Diminuir — %s
+WORKSHOP_HIGHER,Raise — %s,Aumentar — %s
+WORKSHOP_SEND_RATING,Send the rating,Enviar a avaliação
+WORKSHOP_SEND_RATING_NAMED,Send the rating for %s,Enviar a avaliação de %s
+WORKSHOP_CLEARED,Cleared: you got out with loot,Vencida: você saiu com o saque
+WORKSHOP_NOT_CLEARED,Not cleared this time,Não vencida desta vez
+WORKSHOP_DONE_PUBLISHED,Published as %s,Publicada como %s
+WORKSHOP_DONE_RATED,Your rating is in,Sua avaliação foi registrada
+WORKSHOP_DONE_REPORTED,Reported: a person will look at it,Denunciada: uma pessoa vai analisar
+WORKSHOP_DONE_REMIXED,"In the builder, yours to change","No construtor, pronta para você mudar"
+WORKSHOP_DONE_WITHDRAWN,Withdrawn: it is no longer listed,Retirada: não aparece mais nas listas
+WORKSHOP_LADDER,%s · completions of your islands: %s · featured: %s,%s · conclusões das suas ilhas: %s · em destaque: %s
+WORKSHOP_LEVEL,Creator level: %s,Nível de criador: %s
+WORKSHOP_NO_LEVEL,No creator level yet: it starts when someone finishes one of your islands,Ainda sem nível de criador: começa quando alguém concluir uma das suas ilhas
+WORKSHOP_TAB_SHOW,Show %s,Mostrar %s
+WORKSHOP_TAB_SHOWN,"%s, shown","%s, em exibição"
+WORKSHOP_REMIX_CONFIRM,Into your builder? Yours is kept,Para o seu construtor? A sua fica guardada
+WORKSHOP_REMIX_CONFIRM_NAMED,"Put %s in your builder; your own island is kept, to swap back","Colocar %s no seu construtor; a sua ilha fica guardada, para trocar de volta"
+WORKSHOP_WORDS_AGAIN,Get the name words again,Buscar as palavras do nome de novo
+WORKSHOP_OTHER_ADJECTIVE,Another first word for %s,Outra palavra de qualidade para %s
+WORKSHOP_OTHER_NOUN,Another second word for %s,Outro substantivo para %s
+CREATOR_BUILDER,Builder,Construtor
+CREATOR_WRIGHT,Wright,Artífice
+CREATOR_ARCHITECT,Architect,Arquiteto
+CREATOR_LOREMAKER,Loremaker,Mestre das Lendas
+REPORT_UNFAIR,unfair,injusta
+REPORT_UNPLAYABLE,unplayable,injogável
+REPORT_COPIED,copied,copiada
+REPORT_OFFENSIVE,offensive,ofensiva
+REPORT_OTHER,other,outro
+REMOVAL_UNFAIR,unfair,injusta
+REMOVAL_UNPLAYABLE,unplayable,injogável
+REMOVAL_COPIED,copied,copiada
+REMOVAL_OFFENSIVE,offensive,ofensiva
+REMOVAL_BAN,its maker was banned,quem a fez foi banido
+AGE_QUESTION,How old are you?,Quantos anos você tem?
+AGE_UNDER_13,Under 13,Menos de 13
+AGE_13_15,13 to 15,13 a 15
+AGE_16_17,16 or 17,16 ou 17
+AGE_18_UP,18 or older,18 ou mais
+AGE_TOO_YOUNG,"Ruleborn is for players aged 13 and up. No account has been made, and nothing about you has been sent.","Ruleborn é para jogadores a partir de 13 anos. Nenhuma conta foi criada, e nada sobre você foi enviado."

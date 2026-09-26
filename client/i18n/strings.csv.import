@@ -1,17 +1,3 @@
 [remap]
 
-importer="csv_translation"
-type="Translation"
-uid="uid://dmi5gvgbo8qtk"
-
-[deps]
-
-files=["res://i18n/strings.en.translation", "res://i18n/strings.pt_BR.translation"]
-
-source_file="res://i18n/strings.csv"
-dest_files=["res://i18n/strings.en.translation", "res://i18n/strings.pt_BR.translation"]
-
-[params]
-
-compress=true
-delimiter=0
+importer="keep"

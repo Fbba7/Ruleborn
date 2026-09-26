@@ -4,7 +4,8 @@ extends Control
 ## commands; this screen draws it, forwards taps and buttons, runs the clock
 ## in real time, and when the clock runs out hands the replay to the heist
 ## repository, which checks it with the server (§24.12) — or, offline, the
-## same check runs on the phone.
+## same check runs on the phone. A Workshop island is played on the seed and
+## clock its play was given, and its replay goes to the Workshop (§18.6).
 ##
 ## §21.8 puts crew portraits at the bottom left and actions at the bottom
 ## right; both rows here sit above the corners, which §21.1 keeps clear, and
@@ -53,8 +54,15 @@ func _ready() -> void:
 	_build()
 	controller.changed.connect(_refresh)
 	controller.clock_out.connect(finish)
+	var play: Dictionary = heist["workshop"]
 	if heist["testing"]:
 		begin(HeistController.SEED, HeistController.TICKS, HeistController.CREW, heist["island"])
+	elif not play.is_empty():
+		# A Workshop island, on the seed and clock its play was given; one this
+		# build cannot load is said, never swapped for the fixture realm.
+		if not begin(str(play["seed"]), int(play["ticks"]), HeistController.CREW, heist["island"]):
+			playing = false
+			hint_label.text = Errors.message("HEIST_NONE", "island_does_not_load")
 	elif not services.api.online():
 		begin(HeistController.SEED, HeistController.TICKS, HeistController.CREW)
 	else:
@@ -125,10 +133,9 @@ func begin(seed_text: String, ticks: int, crew: int, realm := PackedByteArray(),
 ## bundle and lease it — "a target snapshot, a seed, a single-use token and an
 ## expiry a day away". Returns "" or the code of what went wrong.
 func begin_online(services: Services) -> String:
-	var me := await services.account.sign_in(Services.credential())
+	var me := await services.session()
 	if not me.ok:
 		return me.code
-	services.store.dispatch(&"signed_in", {"account": me.value["account"]})
 	var target := await services.heists.first_target(str(me.value["account"]))
 	if not target.ok:
 		return target.code
@@ -164,7 +171,12 @@ func finish() -> void:
 	services.store.dispatch(&"heist_finished", {"replay": replay, "verdict": local})
 	if local.get("ok", false) and str(local.get("grade", "")) != "Foiled":
 		Haptics.play("success")
-	if not lease.is_empty():
+	var play: Dictionary = services.store.get_slice(AppState.HEIST)["workshop"]
+	if not play.is_empty():
+		hint_label.text = Strings.t("HEIST_CHECKING")
+		var played := await services.workshop_flow.submit(str(play["token"]), replay)
+		services.store.dispatch(&"heist_verdict", WorkshopController.settled(played, local))
+	elif not lease.is_empty():
 		hint_label.text = Strings.t("HEIST_CHECKING")
 		var answer := await services.heists.submit(str(lease["token"]), replay)
 		services.store.dispatch(&"heist_verdict", HeistController.settled(answer, local))

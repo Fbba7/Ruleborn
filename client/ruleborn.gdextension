@@ -1,5 +1,5 @@
 ; The simulation, as a GDExtension (§24.7). client/build.sh builds it into
-; bin/; iOS and Android entries join when the store builds do (T4).
+; bin/, and client/export.sh builds each phone's into bin/android/ and bin/ios/.
 [configuration]
 entry_symbol = "gdext_rust_init"
 compatibility_minimum = 4.5
@@ -7,3 +7,5 @@ reloadable = false
 
 [libraries]
 linux.x86_64 = "res://bin/libruleborn_godot.so"
+android.arm64 = "res://bin/android/libruleborn_godot.so"
+ios.arm64 = "res://bin/ios/libruleborn_godot.dylib"

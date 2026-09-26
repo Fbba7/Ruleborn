@@ -15,14 +15,18 @@ var track: TrackRepository
 var shop: ShopRepository
 var social: SocialRepository
 var friends: FriendsRepository
+var workshop: WorkshopRepository
 ## The platform's store (StoreKit, Play Billing); a test's fake in tests.
 var purchases: StorePurchases
+## §20.1's answer, kept on the phone: no account is made until it allows one.
+var age: AgeCheck
 ## The network, as this build reaches it; `close` releases it.
 var transport: Transport
 ## The flows that outlive a screen: a purchase or a join in flight goes on
 ## when the player leaves the screen that started it.
 var shop_flow: ShopController
 var social_flow: SocialController
+var workshop_flow: WorkshopController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -34,6 +38,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	AppState.register(s.store)
 	ShopState.register(s.store)
 	SocialState.register(s.store)
+	WorkshopState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -46,14 +51,17 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	var stock_path := LeaseStock.FILE if outbox_path == Outbox.FILE \
 		else outbox_path.get_basename() + "-leases.json"
 	s.heists = HeistRepository.new(s.api, s.outbox, LeaseStock.new(stock_path))
+	s.age = AgeCheck.new(AgeCheck.FILE if outbox_path == Outbox.FILE else outbox_path.get_basename() + "-age.json")
 	s.track = TrackRepository.new(s.api)
 	s.shop = ShopRepository.new(s.api, s.outbox)
 	s.social = SocialRepository.new(s.api)
 	s.friends = FriendsRepository.new(s.api)
+	s.workshop = WorkshopRepository.new(s.api, s.outbox)
 	s.purchases = StorePurchases.new()
 	s.api.reauth = s.sign_in
 	s.shop_flow = ShopController.new(s)
 	s.social_flow = SocialController.new(s)
+	s.workshop_flow = WorkshopController.new(s)
 	s.router = Router.new(s.store)
 	return s
 
@@ -61,10 +69,24 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 ## Sign in with the platform's credential, and say who is signed in. Every
 ## call without a session, or with an expired one, comes here (Api.reauth).
 func sign_in() -> bool:
+	return (await session()).ok
+
+
+## The session, as a Result: refused on the phone until §20.1's age check
+## allows an account; once signed in, the check's answer goes to the server
+## if it has not yet.
+func session() -> Result:
+	if not age.allows_account():
+		return Result.failure("age_check_first")
 	var r := await account.sign_in(Services.credential())
-	if r.ok:
-		store.dispatch(&"signed_in", {"account": r.value["account"]})
-	return r.ok
+	if not r.ok:
+		return r
+	store.dispatch(&"signed_in", {"account": r.value["account"]})
+	if not age.sent():
+		var told := await account.set_age_band(age.band())
+		if told.ok:
+			age.mark_sent()
+	return r
 
 
 ## Everything released: the transport node taken out of the tree and freed,
@@ -72,6 +94,7 @@ func sign_in() -> bool:
 func close() -> void:
 	shop_flow = null
 	social_flow = null
+	workshop_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):

@@ -31,7 +31,8 @@ func run() -> void:
 
 func _fake() -> Array:
 	var transport := FakeTransport.new()
-	var s := Services.build(tree.root, "https://edge.example", transport, "user://outbox-shop-test.json")
+	var s := Fixtures.answered(Services.build(tree.root, "https://edge.example", transport,
+		"user://outbox-shop-test.json"))
 	s.router.change = func(_path: String) -> void: pass
 	var store := FakeStorePurchases.new()
 	s.purchases = store
@@ -133,7 +134,8 @@ func _owned() -> void:
 
 func _session() -> void:
 	var transport := FakeTransport.new()
-	var s := Services.build(tree.root, "https://edge.example", transport, "user://outbox-session-test.json")
+	var s := Fixtures.answered(Services.build(tree.root, "https://edge.example", transport,
+		"user://outbox-session-test.json"))
 	transport.on("POST /v1/session", {"account": "me", "token": "k"})
 	transport.then("GET /v1/balance", [[{"error": "session_refused"}, 401]])
 	transport.on("GET /v1/balance", {"starlight": 1, "essence": 2})
@@ -240,7 +242,7 @@ func _against_server() -> void:
 	if server_url == "":
 		check.call(name, false, "no server: run through client/status.py, which starts one")
 		return
-	var s := Services.build(tree.root, server_url, null, "user://outbox-shop-online.json")
+	var s := Fixtures.answered(Services.build(tree.root, server_url, null, "user://outbox-shop-online.json"))
 	s.router.change = func(_path: String) -> void: pass
 	DirAccess.remove_absolute("user://outbox-shop-online.json")
 	s.outbox = Outbox.new("user://outbox-shop-online.json")

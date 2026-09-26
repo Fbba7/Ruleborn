@@ -8,8 +8,10 @@ extends RefCounted
 const SESSION := &"session"
 ## The heist just played, so the result screen can show it and the replay
 ## screen can play it: its replay, the check's verdict, the island it was
-## played on (empty for the fixture realm), and whether it was the player's
-## own island raided from the builder.
+## played on (empty for the fixture realm), whether it was the player's
+## own island raided from the builder (and, once cleared, published), and —
+## for a Workshop island — the play it was started on: `{id, token, seed,
+## ticks}`.
 const HEIST := &"heist"
 ## The screen on show and what it was opened with.
 const ROUTE := &"route"
@@ -21,10 +23,11 @@ static func register(store: Store) -> void:
 		&"signed_out": signed_out,
 	})
 	store.register(HEIST, {"replay": PackedByteArray(), "verdict": {}, "island": PackedByteArray(),
-			"testing": false}, {
+			"testing": false, "published": false, "workshop": {}}, {
 		&"heist_started": heist_started,
 		&"heist_finished": heist_finished,
 		&"heist_verdict": heist_verdict,
+		&"heist_published": heist_published,
 	})
 	store.register(ROUTE, {"name": &"", "params": {}}, {
 		&"navigated": navigated,
@@ -40,11 +43,14 @@ static func signed_out(_s: Dictionary, _p: Dictionary) -> Dictionary:
 
 
 ## A heist begins on `island` (empty: the fixture realm); `testing` when it is
-## the player's own island from the builder.
+## the player's own island from the builder; `workshop` when it is a play of
+## a Workshop island.
 static func heist_started(s: Dictionary, p: Dictionary) -> Dictionary:
 	var next := s.duplicate()
 	next["island"] = p.get("island", PackedByteArray())
 	next["testing"] = bool(p.get("testing", false))
+	next["workshop"] = p.get("workshop", {})
+	next["published"] = false
 	next["replay"] = PackedByteArray()
 	next["verdict"] = {}
 	return next
@@ -64,6 +70,13 @@ static func heist_verdict(s: Dictionary, p: Dictionary) -> Dictionary:
 	var merged: Dictionary = (s["verdict"] as Dictionary).duplicate()
 	merged.merge(p, true)
 	next["verdict"] = merged
+	return next
+
+
+## The rehearsal's island is in the Workshop: it is not offered again.
+static func heist_published(s: Dictionary, _p: Dictionary) -> Dictionary:
+	var next := s.duplicate()
+	next["published"] = true
 	return next
 
 

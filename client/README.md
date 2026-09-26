@@ -29,7 +29,7 @@ repositories in front of the network), in Godot's own terms:
 | Controllers and presenters | `features/<feature>/` | Turn taps into commands and state into what a view shows, with no nodes | headless, by calling them (`HeistController`) |
 | The store | `core/store.gd`, `app/app_state.gd` | Hold the app's state in slices, changed only by an action a reducer owns; log every action | headless (`tests/core_tests.gd`) |
 | Repositories | `data/repositories/` | The only code that calls server/, one per area, each call a `Result` | against a `FakeTransport`, and end to end against the real server |
-| The outbox | `data/outbox.gd` | §24.12's queue: a heist's replay kept until the server has answered | headless: offline, a restart, a refusal, a 5xx |
+| The outbox | `data/outbox.gd` | §24.12's queue: a heist's or a Workshop play's replay, and a store receipt, kept until the server has answered | headless: offline, a restart, a refusal, a 5xx |
 | The API and transport | `data/api.gd`, `data/*_transport.gd` | HTTPS only, a bearer token, the server's refusal reason as the failure code | headless |
 | Services | `app/services.gd`, `app/app.gd` | Build everything once (the composition root); a test builds its own with fakes | by every test |
 | The look | `ui/tokens.json`, `ui/tokens.gd`, `scripts/ui.gd`, `scripts/palette.gd` | Every colour, size and timing, cited; the components built from them | the token check |
@@ -99,7 +99,17 @@ order, the vibrator's patterns — is the device matrix's (§26.8).
 
 ## What is here
 
-Ten screens, opened from `scenes/home.tscn`:
+Twelve screens, opened from `scenes/home.tscn`:
+
+**The age check** (`scenes/age.tscn`, §20.1). At first launch, before
+anything else: the platform is asked for the player's age band, and — its
+age-range services not being in this build — the player is asked, neutrally,
+once: under 13, 13 to 15, 16 or 17, 18 or older. Under 13, the game says it
+is for 13 and up and no account is ever made; the question is not asked
+again. The answer is kept on the phone (`data/age_check.gd`), no sign-in
+happens before it, and it reaches the server with the first sign-in
+(`PUT /v1/age`), which until then holds the account to the most protective
+band.
 
 **Home.** Play a heist, fixed at the bottom where the thumb rests, and every
 other screen in a list that scrolls at large text.
@@ -130,6 +140,18 @@ and joining one.
 of their heists, an invite to share and a code to accept, and a challenge
 link to the player's island. Players are named "Keeper" and the first
 letters of their account until the platforms' friend lists give their names.
+
+**The Island Workshop** (`scenes/workshop.tscn`, §18.6, §18.7, §20.7). The
+top, new and featured lists and the player's own, each island named in the
+player's language from the word lists, with its realm level, completions,
+remixes, ratings and maker; Play, Report with a reason, and Remix, and
+Withdraw on the player's own, whose list shows their creator level. A player
+aged 13 to 15 is shown the featured list only. A Workshop island is played
+on the heist screen on the seed and clock its play was given, and its replay
+goes through the outbox; the result says whether it cleared and counted, and
+offers to rate it. A rehearsal that clears the player's own island offers to
+publish it, named from the word lists. Remix makes the island the builder's
+draft (`data/draft.gd`), and its publication names the original.
 
 **The builder** (`scenes/builder.tscn`). An island, built (§13): lay ground on
 the realm's grid, post guards, place wards, weave laws with their pylons, move
@@ -261,10 +283,17 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.5-stable_linux.x
 
 ## Not yet
 
-- **The store builds.** Only a Linux build of the extension is made here. iOS
-  and Android need their export templates and toolchains, and §24.7's spike —
-  the extension building and loading on a real iPhone and Android — is the
-  gate for them.
+- **The store builds.** `export_presets.cfg` holds the Android and iPhone
+  presets and `bash client/export.sh android|ios` builds each where its tools
+  are: Android with the SDK and NDK (`ANDROID_HOME`, `ANDROID_NDK_HOME`), the
+  iPhone on a Mac with Xcode (`RULEBORN_APPLE_TEAM_ID`; the team is never
+  written into the preset). `bash client/export.sh check` runs anywhere: the
+  simulation and extension compile for both phones' arm64, and the project
+  exports with the Android preset, `pack_check.py` confirming the pack holds
+  every file the game reads by path and no tests. The bundle identifier
+  `app.ruleborn.client` is a stand-in until the stores' accounts exist.
+  §24.7's spike — the extension loading on a real iPhone and Android — is the
+  gate after that.
 - **Sign-in.** The server's sign-in takes a platform credential; a desktop
   build has no Game Center or Play Games, so it sends a stand-in the local
   server accepts. §12.22's target choice is not built either: the client takes
@@ -283,15 +312,19 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.5-stable_linux.x
 
     project.godot           portrait, 1080 × 2340, the compatibility renderer;
                             GDScript warnings are errors (every declaration typed)
-    ruleborn.gdextension    loads bin/libruleborn_godot.so
+    ruleborn.gdextension    loads bin/libruleborn_godot.so, and each phone's arm64 build
+    export_presets.cfg      the Android and iPhone exports; export.sh builds them,
+                            pack_check.py checks what the pack carries
     ext/                    the extension: RulebornReplay and RulebornIsland, over sim/
     app/                    the composition root, the store's slices, the router
     core/                   Result, the store, the action log, failure words
     data/                   the API, transports, repositories, the outbox
-    features/heist/         the heist's controller
+    features/<feature>/     each area's state, controller and presenter: heist,
+                            shop, social, workshop
     ui/tokens.json          the design tokens, each cited
     i18n/strings.csv        every word on screen, a column a language
-    scenes/                 home, heist, result, replay, settings and builder screens
+    scenes/                 the screens: home, heist, result, replay, settings,
+                            builder, track, shop, social, friends, workshop, age
     scripts/                the screens, the realm view and heads-up display,
                             the shared UI pieces, the palette, the string catalogue,
                             the saved settings

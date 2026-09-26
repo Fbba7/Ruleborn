@@ -989,15 +989,28 @@ dict(
                     "before it is committed.",
              gate="no frontend figure moves; it is what keeps later figures honest",
              evidence="python3 tools/client_contract.py; gdlint; python3 client/status.py"),
-        dict(id="TC.3", owner="claude", status="ready",
+        dict(id="TC.3", owner="claude", status="doing",
              title="Project structure on both stores' targets",
-             detail="Export presets for iPhone and Android, the Rust extension "
-                    "built for arm64 on each, and the build scripts. An Android "
-                    "build can be made and checked here; an iPhone build needs "
-                    "Xcode on a Mac, so here it stops at the exported Xcode "
-                    "project. Counted when a client project builds on both "
+             detail="Done here: export presets for Android and iPhone "
+                    "(client/export_presets.cfg), the extension's arm64 "
+                    "libraries for both phones in ruleborn.gdextension, and "
+                    "client/export.sh, which builds each store's app where its "
+                    "tools are. <code>export.sh check</code> runs here: the "
+                    "simulation and extension compile for iPhone and Android "
+                    "arm64, and the project exports with the Android preset, "
+                    "its pack holding every file the game reads by path \u2014 "
+                    "which found that the word catalogues had been imported as "
+                    "translations and would not have shipped, so every screen "
+                    "would have shown keys (fixed: they ship as they are). "
+                    "Left: the Android build needs the SDK and NDK, which come "
+                    "only from dl.google.com, a host this environment's network "
+                    "policy refuses; the iPhone build needs a Mac with Xcode and "
+                    "the App Store team. Counted when a client builds on both "
                     "stores' targets.",
-             gate="+4.86 frontend points when both build; the iPhone half needs a Mac"),
+             gate="+4.86 frontend points when both build: Android once "
+                  "dl.google.com is allowed (or on a machine with the SDK), "
+                  "the iPhone on a Mac",
+             evidence="bash client/export.sh check; client/pack_check.py"),
         dict(id="TC.4", owner="claude", status="done",
              title="Accessibility: \u00a720.8 and \u00a721.8 in full",
              detail="Text size, contrast checked against \u00a721.8's 4.5:1 "
@@ -1016,7 +1029,7 @@ dict(
                     "only once a native speaker has read the Portuguese "
                     "(\u00a726.9), which is yours to arrange.",
              gate="+8.80 frontend points after the native read"),
-        dict(id="TC.6", owner="claude", status="doing",
+        dict(id="TC.6", owner="claude", status="done",
              title="Screens on the backend that exists: shop and track, Workshop, social",
              detail="The data side of each screen \u2014 repositories, "
                     "presenters, flows, error states, offline behaviour \u2014 "
@@ -1027,7 +1040,22 @@ dict(
                     "reports; the social screens show the league, constellations, "
                     "crews, friends and the feed.",
              gate="+4.37 (shop, track, wallet), +8.50 (Workshop), +4.86 (social) "
-                  "frontend points; only their look changes when the design lands"),
+                  "frontend points; only their look changes when the design lands",
+             evidence="client/tests/shop_tests.gd, social_tests.gd, workshop_tests.gd, "
+                      "through python3 client/status.py"),
+        dict(id="TC.10", owner="claude", status="done",
+             title="The age check on first launch (\u00a720.1)",
+             detail="\u00a720.1's age check comes first on the device; until it "
+                    "answered, the server held every new account to the most "
+                    "protective band (\u00a720.2): the Workshop's featured list "
+                    "only, off the feeds, a minor's spending cap. At first "
+                    "launch the platform is asked, and when it cannot say the "
+                    "player is asked, neutrally, once; the answer reaches the "
+                    "server with the first sign-in (PUT /v1/age). Under 13 no "
+                    "account is ever made and the question is not asked again.",
+             gate="no frontend figure moves; without it the Workshop, feeds and "
+                  "shop treat every player as 13 to 15",
+             evidence="client/tests/age_tests.gd, through python3 client/status.py"),
         dict(id="TC.9", owner="claude", status="done",
              title="Offline as the exception, as the owner answered G41",
              detail="Online is the rule and is recommended heavily; offline is "

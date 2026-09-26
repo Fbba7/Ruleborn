@@ -51,6 +51,9 @@ python3 tools/client_strings.py --check
 python3 tools/client_contract.py
 (cd client && gdlint $(find . -name '*.gd' -not -path './.godot/*'))
 python3 client/status.py
+# The store builds as far as this machine goes: both phones' arm64 compiled,
+# and the exported pack holding what the game reads (TC.3).
+bash client/export.sh check
 
 echo
 echo "== what changed since the previous version =="

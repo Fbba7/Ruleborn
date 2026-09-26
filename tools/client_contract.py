@@ -14,7 +14,7 @@ this fails the build on either (TC.2):
 * A refusal the player cannot read. Every reason the server refuses with
   (`new Refused(status, "reason")`, `json({ error: "reason" })`, a settled
   heist's `refuse("reason")`) and every failure code the client makes
-  (`Result.failure("code")`) must have an ERR_ key in the client's catalogue
+  (`Result.failure("code")`, a controller's `_fail("code")`) must have an ERR_ key in the client's catalogue
   (client/i18n/strings.csv) in every language, so `Errors.message` shows
   words, not a code.
 """
@@ -34,13 +34,14 @@ DOC_ROUTE = re.compile(r"^//\s+(GET|POST|PUT|DELETE|PATCH)\s+(/\S+)", re.M)
 REFUSED = [re.compile(r'new Refused\(\d+,\s*"([a-z0-9_]+)"'),
            re.compile(r'json\(\{\s*error:\s*"([a-z0-9_]+)"'),
            re.compile(r'\brefuse\("([a-z0-9_]+)"\)')]
-CLIENT_FAILURE = re.compile(r'Result\.failure\("([a-z0-9_]+)"')
+CLIENT_FAILURE = re.compile(r'(?:Result\.failure|_fail)\("([a-z0-9_]+)"')
 TRANSPORT_ERROR = re.compile(r'\{"error":\s*"([a-z0-9_]+)"\}')
 CALLS = [
     (re.compile(r'api\.get_json\("(/v1/[^"]*)"\s*(?:\+\s*\w+)?'), "GET"),
     (re.compile(r'api\.post_json\("(/v1/[^"]*)"\s*(?:\+\s*\w+)?'), "POST"),
     (re.compile(r'api\.(?:json|raw)\(HTTPClient\.METHOD_(\w+),\s*"(/v1/[^"]*)"\s*(\+\s*\w+)?'), None),
     (re.compile(r'route := "(/v1/[^"]*)"\s*(\+\s*\w+)?'), "POST"),
+    (re.compile(r'outbox\.send\(api,\s*\w+,\s*"(/v1/[^"]*)"\s*(\+\s*\w+)?'), "POST"),
 ]
 
 
@@ -62,6 +63,9 @@ def client_calls() -> list[tuple[str, str, str]]:
                     tail = m.group(m.lastindex) if m.lastindex and m.lastindex > 1 else None
                     tail = tail if tail and tail.strip().startswith("+") else None
                 route = route.replace("%s", ":x").replace("%d", ":x")
+                # A query string is not part of the route.
+                if "?" in route:
+                    route, tail = route.split("?")[0], None
                 if tail or route.endswith("/"):
                     route = route.rstrip("/") + "/:x"
                 out.append((verb, route, str(path.relative_to(ROOT))))
@@ -70,7 +74,9 @@ def client_calls() -> list[tuple[str, str, str]]:
 
 def matches(route: str, pattern: list[str]) -> bool:
     parts = route.strip("/").split("/")
-    return len(parts) == len(pattern) and all(p == q or q.startswith(":") or p == ":x"
+    # The client's :x (a value it fills in) stands only where the server takes
+    # a :param; against a literal it would pass a typo.
+    return len(parts) == len(pattern) and all(p == q or q.startswith(":")
                                               for p, q in zip(parts, pattern))
 
 

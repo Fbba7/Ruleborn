@@ -7,6 +7,7 @@ extends RefCounted
 
 const ROUTES := {
 	&"home": "res://scenes/home.tscn",
+	&"age": "res://scenes/age.tscn",
 	&"heist": "res://scenes/heist_screen.tscn",
 	&"result": "res://scenes/result_screen.tscn",
 	&"replay": "res://scenes/replay_screen.tscn",
@@ -16,6 +17,7 @@ const ROUTES := {
 	&"shop": "res://scenes/shop.tscn",
 	&"social": "res://scenes/social.tscn",
 	&"friends": "res://scenes/friends.tscn",
+	&"workshop": "res://scenes/workshop.tscn",
 }
 
 var store: Store

@@ -7,7 +7,7 @@ extends SceneTree
 ## quits; so the run has a deadline, and missing it is a failure.
 const DEADLINE_SECONDS := 480.0
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
-	"social", "friends"]
+	"social", "friends", "workshop", "age"]
 
 var _n := 0
 var _failed := 0
@@ -50,7 +50,7 @@ func _heist() -> Dictionary:
 func _services(server := "") -> Services:
 	if App.services != null:
 		App.services.close()
-	var s := Services.build(root, server, null, "user://outbox-test.json")
+	var s := Fixtures.answered(Services.build(root, server, null, "user://outbox-test.json"))
 	s.router.change = func(_path: String) -> void: pass
 	App.services = s
 	return s
@@ -73,8 +73,10 @@ func _run() -> void:
 	OS.unset_environment("RULEBORN_SERVER")
 	# The tests' own settings file, so a run never touches a player's.
 	Settings.path = "user://settings-test.cfg"
-	BuilderScreen.path = "user://island-test.rbi"
-	DirAccess.remove_absolute(BuilderScreen.path)
+	Draft.path = "user://island-test.rbi"
+	DirAccess.remove_absolute(Draft.path)
+	Draft.forget_origin()
+	DirAccess.remove_absolute(Draft.path.get_basename() + "-kept.rbi")
 	DirAccess.remove_absolute(Settings.path)
 	Settings.restore()
 	Settings.change(func() -> void: Settings.locale = "en")
@@ -296,27 +298,7 @@ func _run() -> void:
 			await process_frame
 		var played := {}
 		if not online.lease.is_empty():
-			var go := func(seconds: int) -> void: online.advance(seconds * 30 - online.controller.world.tick())
-			online.controller.land(Vector2i(0, 0))                   # where server/test lands it
-			for step: Array in [[0, Vector2i(6, 8)], [1, Vector2i(7, 9)], [2, Vector2i(5, 9)]]:
-				online.controller.select(step[0])
-				online.controller.tap_tile(step[1])
-			go.call(15)
-			for m in 3:
-				online.controller.select(m)
-				online.controller.crack()
-			go.call(50)
-			for m in 3:
-				online.controller.select(m)
-				online.controller.load_up(100)
-			online.controller.select(0)
-			online.controller.get_out()
-			online.controller.tap_tile(Vector2i(6, 11))
-			go.call(62)
-			for m in 3:
-				online.controller.select(m)
-				online.controller.tap_tile(Vector2i(6, 11))
-			online.advance(int(online.lease["ticks"]))
+			Plans.open_heart(online, int(online.lease["ticks"]))
 			if _heist()["verdict"].is_empty() or not _heist()["verdict"].get("server", false):
 				await online.finished
 			played = _heist()["verdict"]
@@ -334,6 +316,8 @@ func _run() -> void:
 	# against the server when one is named.
 	await ShopTests.new(self, check, server_url).run()
 	await SocialTests.new(self, check, server_url).run()
+	await WorkshopTests.new(self, check, server_url).run()
+	await AgeTests.new(self, check, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 
@@ -423,7 +407,7 @@ func _run() -> void:
 	builder.tap_tile(Vector2i(8, 6))
 	builder.raid()
 	var built := builder.island.bytes()
-	var kept := FileAccess.get_file_as_bytes(BuilderScreen.path) == built
+	var kept := FileAccess.get_file_as_bytes(Draft.path) == built
 	builder.queue_free()
 	await process_frame
 	var own: HeistScreen = await _mount("heist_screen")

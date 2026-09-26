@@ -17,9 +17,6 @@ const TOOLS := ["GROUND", "WARD", "GUARD", "LAW", "VAULT", "ERASE"]
 ## §12.17's role rows, in order: a guard post is its row.
 const GUARD_ROLES := ["Scout", "Warden", "Breaker", "Carrier", "Mender"]
 
-## Where the island is kept between runs; a test points this elsewhere.
-static var path := "user://island.rbi"
-
 var island := RulebornIsland.new()
 var preview := RulebornReplay.new()
 var palette: Dictionary = RulebornIsland.palette()
@@ -35,12 +32,14 @@ var tool_button: Button
 var kind_button: Button
 var level_button: Button
 var raid_button: Button
+var restore_button: Button
 
 
 func _ready() -> void:
 	App.ready(self)
-	if FileAccess.file_exists(path):
-		island.read(FileAccess.get_file_as_bytes(path))
+	var kept := Draft.island()
+	if not kept.is_empty():
+		island.read(kept)
 	_build()
 	_refresh()
 
@@ -67,6 +66,10 @@ func _build() -> void:
 	kind_button = UI.button("", next_kind)
 	tools.add_child(tool_button)
 	tools.add_child(kind_button)
+	# §18.6: the island a remix replaced, back — shown only while one is kept.
+	restore_button = UI.button(Strings.t("BUILDER_RESTORE"), restore)
+	restore_button.accessibility_name = Strings.t("BUILDER_RESTORE_NAMED")
+	tools.add_child(restore_button)
 	column.add_child(tools)
 	var actions := UI.row()
 	level_button = UI.button("", next_level)
@@ -124,6 +127,8 @@ func next_kind() -> void:
 ## A new, blank realm of the next level, 1 to 5 (§5.2's 10 by 10 to 14 by 14).
 func next_level() -> void:
 	island.reset(island.realm_level() % 5 + 1)
+	# A blank realm is the player's own island, not a remix of one (§18.6).
+	Draft.forget_origin()
 	_refresh()
 
 
@@ -150,11 +155,17 @@ func tap_tile(tile: Vector2i) -> void:
 
 
 func save() -> void:
-	var file := FileAccess.open(path, FileAccess.WRITE)
-	if file != null:
-		file.store_buffer(island.bytes())
-		file.close()
+	if Draft.keep(island.bytes()):
 		status_label.text = Strings.t("BUILDER_SAVED")
+
+
+## The island a remix replaced, back in the builder; the remix is kept in
+## its place, so the player can go back and forth.
+func restore() -> void:
+	if not Draft.restore():
+		return
+	island.read(Draft.island())
+	_refresh()
 
 
 ## Raid your own island (§13's "test your own defence"): the heist screen
@@ -189,6 +200,7 @@ func _refresh() -> void:
 	kind_button.disabled = ks.is_empty()
 	UI.relabel(level_button, Strings.t("BUILDER_LEVEL", island.realm_level()))
 	raid_button.disabled = not problems.is_empty()
+	restore_button.visible = Draft.has_kept()
 
 
 ## §8.6: harmonies and dissonances are "shown automatically when weaving", so

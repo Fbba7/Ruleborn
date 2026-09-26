@@ -79,18 +79,7 @@ func lease(bundle: String, owner := "") -> Result:
 ## its lease token, then sent. The answer is the server's decision; if the
 ## network is not there, `pending` is true and the outbox sends it later.
 func submit(lease_token: String, replay_bytes: PackedByteArray) -> Result:
-	var route := "/v1/heists/" + lease_token
-	outbox.put(lease_token, route, replay_bytes)
-	var answered := {"result": null}
-	var on_settled := func(key: String, r: Result) -> void:
-		if key == lease_token:
-			answered["result"] = r
-	outbox.settled.connect(on_settled)
-	await outbox.flush(api)
-	outbox.settled.disconnect(on_settled)
-	if answered["result"] == null:
-		return Result.success({"pending": true})
-	return answered["result"]
+	return await outbox.send(api, lease_token, "/v1/heists/" + lease_token, replay_bytes)
 
 
 func replay(heist_token: String) -> Result:

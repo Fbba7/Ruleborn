@@ -27,7 +27,7 @@ func _services(name: String) -> Array:
 	var outbox := "user://outbox-%s.json" % name
 	DirAccess.remove_absolute(outbox)
 	DirAccess.remove_absolute(outbox.get_basename() + "-leases.json")
-	var s := Services.build(tree.root, "https://edge.example", transport, outbox)
+	var s := Fixtures.answered(Services.build(tree.root, "https://edge.example", transport, outbox))
 	s.router.change = func(_path: String) -> void: pass
 	return [s, transport]
 

@@ -84,7 +84,8 @@ func _names() -> void:
 
 func _refusals() -> void:
 	var transport := FakeTransport.new()
-	var s := Services.build(tree.root, "https://edge.example", transport, "user://outbox-social-test.json")
+	var s := Fixtures.answered(Services.build(tree.root, "https://edge.example", transport,
+		"user://outbox-social-test.json"))
 	transport.on("POST /v1/constellations", {"error": "keeper_level_too_low", "needs": 6}, 403)
 	transport.on("POST /v1/friends/accept", {"error": "no_such_invite"}, 404)
 	var c := SocialController.new(s)
@@ -102,7 +103,8 @@ func _refusals() -> void:
 
 
 func _player(credential: String) -> Array:
-	var s := Services.build(tree.root, server_url, null, "user://outbox-%s.json" % credential.replace(":", "-"))
+	var s := Fixtures.answered(Services.build(tree.root, server_url, null,
+		"user://outbox-%s.json" % credential.replace(":", "-")))
 	s.router.change = func(_path: String) -> void: pass
 	var me := await s.account.sign_in(credential)
 	if me.ok:

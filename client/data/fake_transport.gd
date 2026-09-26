@@ -1,8 +1,8 @@
 class_name FakeTransport
 extends Transport
 ## A server for tests: each route ("POST /v1/leases") answers what the test
-## put there, and every call is kept, so a test asserts what was asked as
-## well as what was shown. A route nobody set answers 404 no_such_route, as
+## put there, and every call is kept — its route, and its full path with the
+## query — so a test asserts what was asked as well as what was shown. A route nobody set answers 404 no_such_route, as
 ## server/src/http.mjs does; `offline` answers nothing at all.
 
 var routes: Dictionary = {}
@@ -24,10 +24,10 @@ func then(route: String, answers: Array) -> void:
 
 func send(method: HTTPClient.Method, url: String, headers: PackedStringArray,
 		body: PackedByteArray) -> Dictionary:
-	var path := "/" + url.split("/", false, 2)[2] if url.contains("://") else url
-	path = path.get_slice("?", 0)
+	var full := "/" + url.split("/", false, 2)[2] if url.contains("://") else url
+	var path := full.get_slice("?", 0)
 	var verb: String = ["GET", "HEAD", "POST", "PUT", "DELETE"][method] if method <= 4 else "?"
-	calls.append({"route": "%s %s" % [verb, path], "headers": headers, "body": body})
+	calls.append({"route": "%s %s" % [verb, path], "url": full, "headers": headers, "body": body})
 	await (Engine.get_main_loop() as SceneTree).process_frame
 	if offline:
 		return {"error": "unreachable"}
