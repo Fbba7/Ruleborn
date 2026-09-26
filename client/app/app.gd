@@ -15,3 +15,7 @@ static func ready(node: Node) -> void:
 		var root := node.get_tree().root
 		services = Services.build(root, Services.server_url())
 		root.add_child.call_deferred(AppLifetime.new())
+		# Development builds only: the state and the last actions, on F12 or a
+		# three-finger tap (ui/debug_overlay.gd).
+		if OS.is_debug_build():
+			root.add_child.call_deferred(DebugOverlay.new(services))

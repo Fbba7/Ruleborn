@@ -29,6 +29,7 @@
   "the client speaks to a server over HTTPS only, plain HTTP to this machine's own for tests": "passed",
   "the client's simulation is the rules version every golden replay names": "passed",
   "the crew lands together on the open edge tile the player chose, recorded at tick 0 (5.4)": "passed",
+  "the debug overlay shows the route, the account, what waits in the outbox, and the last actions": "passed",
   "the heist just played replays on this phone with every second agreeing": "passed",
   "the planned heist plays out Clean with every bag banked (§12.9)": "passed",
   "the replay screen plays a golden to its end and shows its grade": "passed",

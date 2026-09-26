@@ -20,6 +20,7 @@ func run() -> void:
 	await _outbox()
 	_router()
 	_tokens()
+	_overlay()
 
 
 func _store() -> void:
@@ -163,3 +164,21 @@ func _tokens() -> void:
 			and UI.CONTROL_POINTS == Tokens.number("size", "control_points")
 			and Tokens.number("size", "smallest_points") == 13.0,
 		"; ".join(problems))
+
+
+func _overlay() -> void:
+	var fake := FakeTransport.new()
+	tree.root.add_child(fake)
+	var services := Services.build(tree.root, "https://edge.example", fake, "user://outbox-core.json")
+	var overlay := DebugOverlay.new(services)
+	services.store.dispatch(&"signed_in", {"account": "a1"})
+	services.store.dispatch(&"navigated", {"name": &"heist"})
+	services.outbox.put("lease-9", "/v1/heists/lease-9", PackedByteArray([1]))
+	var shown := overlay.text()
+	check.call("the debug overlay shows the route, the account, what waits in the outbox, and the last actions",
+		shown.contains("route heist") and shown.contains("account a1") and shown.contains("outbox 1")
+			and shown.contains("signed_in") and shown.contains("navigated"),
+		shown)
+	overlay.free()
+	fake.queue_free()
+	DirAccess.remove_absolute("user://outbox-core.json")
