@@ -232,6 +232,11 @@
    "option": "B",
    "how": "accepted as recommended",
    "build": "done"
+  },
+  "G41": {
+   "option": "C",
+   "how": "the owner's words: the rule online and recommended heavily to the player, the exception offline",
+   "build": "done"
   }
  }
 }

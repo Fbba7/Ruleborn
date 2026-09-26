@@ -34,6 +34,9 @@ var paused := false
 
 ## The lease this heist is played under, when a server gave one.
 var lease := {}
+## The offer to play offline, while it is on screen (G41).
+var offline_prompt: Control
+var column_node: VBoxContainer
 
 var _owed := 0.0
 var _alarm := 0
@@ -55,11 +58,53 @@ func _ready() -> void:
 	elif not services.api.online():
 		begin(HeistController.SEED, HeistController.TICKS, HeistController.CREW)
 	else:
-		playing = false
-		hint_label.text = Strings.t("HEIST_ASKING")
-		var problem := await begin_online(services)
-		if problem != "":
-			hint_label.text = Errors.message("HEIST_NONE", problem)
+		await start_online(services)
+
+
+## Online, as the owner answered G41: the rule. With no network, the
+## exception: a prompt that recommends going online first, and a heist from
+## the lease stock only if the player chooses it.
+func start_online(services: Services) -> void:
+	playing = false
+	offline_prompt = null
+	hint_label.text = Strings.t("HEIST_ASKING")
+	var problem := await begin_online(services)
+	if problem == "":
+		# Online: send what waited, and keep the stock for next time.
+		var sent := await services.outbox.flush(services.api)
+		if sent > 0:
+			column_node.add_child(UI.banner("success", Strings.t("OFFLINE_SENT", sent)))
+		await services.heists.fill_stock(str(services.store.get_slice(AppState.SESSION)["account"]))
+		return
+	if not Outbox.transient(Result.failure(problem)):
+		hint_label.text = Errors.message("HEIST_NONE", problem)
+		return
+	_offer_offline(services)
+
+
+## §24.12's exception, recommended against: the stocked lease is played on the
+## phone, its haul shown as confirming until the server confirms it.
+func _offer_offline(services: Services) -> void:
+	var stocked := services.heists.stock.count() > 0
+	hint_label.text = Strings.t("OFFLINE_RECOMMEND" if stocked else "OFFLINE_NONE")
+	offline_prompt = UI.row(-1.0, true)
+	offline_prompt.add_child(UI.button(Strings.t("OFFLINE_TRY_AGAIN"), func() -> void: start_online(services), true))
+	if stocked:
+		offline_prompt.add_child(UI.button(Strings.t("OFFLINE_PLAY_ANYWAY"), func() -> void: play_stocked(services)))
+	column_node.add_child(offline_prompt)
+
+
+## A heist on the newest stocked lease, with no network.
+func play_stocked(services: Services) -> bool:
+	var item := services.heists.stock.take()
+	if item.is_empty():
+		return false
+	if offline_prompt != null:
+		offline_prompt.queue_free()
+		offline_prompt = null
+	lease = item["lease"]
+	return begin(str(lease["seed"]), int(lease["ticks"]), HeistController.CREW, item["island"],
+		HeistController.lease_era(lease))
 
 
 ## Start a fresh heist; see `HeistController.begin`.
@@ -210,6 +255,7 @@ static func cues(alarm_before: int, alarm: int, live_before: int, live: int, pyl
 
 func _build() -> void:
 	var column := UI.frame(self)
+	column_node = column
 	hud = HeistHud.new()
 	column.add_child(hud)
 	view = RealmView.new()

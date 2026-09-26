@@ -1,6 +1,6 @@
 {
  "_what": "The owner's decision brief: one entry per open register item waiting on the owner's decision, with its question, options, what the build does today, a recommendation and quotes from the design document; then the order to decide in, the groups that share one choice, the conflicts between answers and the ones safe to accept as recommended. Drafted, checked from two sides and merged by a multi-agent pass; tools/build_brief.py renders it and --check holds it to the register and the document.",
- "summary": "These 46 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39's fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36's base haul (2,400, 2,900 or 4,600) moves with each of them and F39's fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4's open edge is a rule or a hope. Four items keep the build's reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.",
+ "summary": "These 47 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39's fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36's base haul (2,400, 2,900 or 4,600) moves with each of them and F39's fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4's open edge is a rule or a hope. Four items keep the build's reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.",
  "order": [
   "F33",
   "F35",
@@ -47,7 +47,8 @@
   "F51",
   "F52",
   "F53",
-  "F54"
+  "F54",
+  "G41"
  ],
  "order_notes": {
   "F33": "Design tier. It sets whether one Glare decides a realm, and F35's Vault-reach argument and G19's hold claim both rest on the hold numbers it changes.",
@@ -3915,6 +3916,56 @@
     {
      "section": "14.2",
      "text": "Keeper experience comes from successful heists (30 + 6 × Keeper level), foiled heists (10 + 2 × level), spending (1 for every 40 Starlight) and restoring laws (60 + 10 × level)."
+    }
+   ],
+   "also_needed": "None."
+  },
+  "G41": {
+   "id": "G41",
+   "question": "How much of the game should a player with no network be steered into: is offline the normal path, as §24.12 says, or the exception?",
+   "why_it_matters": "§24.12 builds the game for offline play first. That is what makes a heist on a train possible, but every heist played offline is shown as confirming and can come to nothing if its lease expired or its result does not reproduce. Most games of this kind stay online. How strongly the phone steers players online decides what the client asks for, what it shows while offline, and what §24.12 should say.",
+   "today": "The machinery is built: a lease from the server, play on the phone, the outbox (client/data/outbox.gd) keeping a replay until the server has it, validation and a grant (server/src/service.mjs), and a result shown as confirming until then (client/scripts/result_screen.gd). A heist started offline plays the fixture realm. Nothing keeps leases in stock, nothing recommends going online, and the outbox sends only when the next heist is submitted.",
+   "options": [
+    {
+     "key": "A",
+     "label": "Online only",
+     "means": "A heist needs a connection to start and to submit. With no network the Heist button says so and waits.",
+     "consequences": "The simplest to build and to explain, and nothing is ever shown as confirming. A player underground cannot play.",
+     "numbers": "None.",
+     "doc_edit": "§24.12: replace its opening with online only, and drop the Play and Queue stages' offline cases.",
+     "build_change": "The heist screen refuses to start offline; the outbox stays for a dropped submission."
+    },
+    {
+     "key": "B",
+     "label": "Offline as the normal path (§24.12 as written)",
+     "means": "The phone keeps leases and plays as if offline were ordinary; results confirm whenever the network returns.",
+     "consequences": "The widest play, and the most results that wait or come to nothing, shown to players as a normal state.",
+     "numbers": "A lease lasts a day (LEASE_MS, service.mjs:44), with one grace submission.",
+     "doc_edit": "None.",
+     "build_change": "A lease stock, the outbox sending on reconnect."
+    },
+    {
+     "key": "C",
+     "label": "Online first, offline the exception",
+     "means": "Online is the rule and is recommended heavily. While online the phone keeps a small stock of leases. Starting a heist offline shows a prompt recommending going online first, and the player may carry on. Hauls stay confirming until the server confirms them, and the outbox sends by itself on reconnecting, with a banner saying so.",
+     "consequences": "Players are steered to the path where nothing waits, and a heist on a train still works. A little more to build than A.",
+     "numbers": "A stock of three leases, refreshed while online; each lasts a day.",
+     "doc_edit": "§24.12: its opening says online is the normal path and offline the exception, and names the stock, the prompt and the confirming states.",
+     "build_change": "A lease stock in the heist repository, the offline prompt on the heist screen, the outbox flushed on reconnect with a banner."
+    }
+   ],
+   "recommendation": {
+    "option": "C",
+    "rationale": "It keeps §24.12's safety for the train and the lift while steering players to the path where nothing is left confirming, as games of this kind do.",
+    "confidence": "medium"
+   },
+   "interacts_with": [
+    "G34"
+   ],
+   "quotes": [
+    {
+     "section": "24.12",
+     "text": "Offline is the normal path, not an edge case, and the rules below are architecture rather than polish."
     }
    ],
    "also_needed": "None."

@@ -166,15 +166,15 @@
   <header>
     <p class="eyebrow">Ruleborn &middot; the owner&rsquo;s decisions</p>
     <h1>Decisions waiting on you</h1>
-    <p class="lede">These 46 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39&#x27;s fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36&#x27;s base haul (2,400, 2,900 or 4,600) moves with each of them and F39&#x27;s fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4&#x27;s open edge is a rule or a hope. Four items keep the build&#x27;s reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.</p>
+    <p class="lede">These 47 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39&#x27;s fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36&#x27;s base haul (2,400, 2,900 or 4,600) moves with each of them and F39&#x27;s fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4&#x27;s open edge is a rule or a hope. Four items keep the build&#x27;s reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.</p>
     <div class="summary">
-      <div><span class="n">46</span><span class="k">decisions</span></div>
+      <div><span class="n">47</span><span class="k">decisions</span></div>
       <div><span class="n" id="n-answered">0</span><span class="k">answered</span></div>
       <div><span class="n">4</span><span class="k">safe to accept as recommended</span></div>
       <div><span class="n">21</span><span class="k">places two answers collide</span></div>
     </div>
     <div class="bar" aria-hidden="true"><span id="bar"></span></div>
-    <p class="notice" id="notice">3 design &middot; 21 significant &middot; 22 minor. Each card below is one register item, in the order to decide
+    <p class="notice" id="notice">3 design &middot; 22 significant &middot; 22 minor. Each card below is one register item, in the order to decide
       them. Pick an option and it is saved at once; add a note where the option needs a number or a
       condition. The register itself does not change until Claude reads your answers back.</p>
   </header>
@@ -3311,6 +3311,68 @@ The honest cost of B is that the document must say plainly that a non-raider pla
           <button type="button" class="btn save-note" data-id="F54" disabled>Save note</button>
           <button type="button" class="btn ghost clear" data-id="F54" disabled>Clear answer</button>
           <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#F54" target="_blank" rel="noopener">Register entry</a>
+        </div>
+      </div>
+    </article>
+    <article class="decision" id="G41" data-id="G41" data-tier="significant"
+             data-rec="C" data-quick="no" data-answered="no">
+      <header class="dh">
+        <span class="step" title="Decide in this order">47</span>
+        <span class="did">G41</span>
+        <span class="tier t-significant">Significant</span>
+        <span class="topic">§24 Technical logic</span>
+        <span class="state" id="st-G41">Not answered</span>
+      </header>
+      <h3 class="q">How much of the game should a player with no network be steered into: is offline the normal path, as §24.12 says, or the exception?</h3>
+      <p class="why">§24.12 builds the game for offline play first. That is what makes a heist on a train possible, but every heist played offline is shown as confirming and can come to nothing if its lease expired or its result does not reproduce. Most games of this kind stay online. How strongly the phone steers players online decides what the client asks for, what it shows while offline, and what §24.12 should say.</p>
+      <details class="today"><summary>What the build does today</summary><p>The machinery is built: a lease from the server, play on the phone, the outbox (client/data/outbox.gd) keeping a replay until the server has it, validation and a grant (server/src/service.mjs), and a result shown as confirming until then (client/scripts/result_screen.gd). A heist started offline plays the fixture realm. Nothing keeps leases in stock, nothing recommends going online, and the outbox sends only when the next heist is submitted.</p></details>
+      <fieldset class="opts" aria-label="Options for G41">
+        <label class="opt" for="o-G41-A">
+          <input type="radio" name="o-G41" id="o-G41-A" value="A" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">A</span>
+              <span class="ol">Online only</span></span>
+            <span class="om">A heist needs a connection to start and to submit. With no network the Heist button says so and waits.</span>
+            <span class="oc">The simplest to build and to explain, and nothing is ever shown as confirming. A player underground cannot play.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>None.</dd></div><div class="od"><dt>Document edit</dt><dd>§24.12: replace its opening with online only, and drop the Play and Queue stages&#x27; offline cases.</dd></div><div class="od"><dt>Build change</dt><dd>The heist screen refuses to start offline; the outbox stays for a dropped submission.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-G41-B">
+          <input type="radio" name="o-G41" id="o-G41-B" value="B" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">B</span>
+              <span class="ol">Offline as the normal path (§24.12 as written)</span></span>
+            <span class="om">The phone keeps leases and plays as if offline were ordinary; results confirm whenever the network returns.</span>
+            <span class="oc">The widest play, and the most results that wait or come to nothing, shown to players as a normal state.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>A lease lasts a day (LEASE_MS, service.mjs:44), with one grace submission.</dd></div><div class="od"><dt>Document edit</dt><dd>None.</dd></div><div class="od"><dt>Build change</dt><dd>A lease stock, the outbox sending on reconnect.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt is-rec" for="o-G41-C">
+          <input type="radio" name="o-G41" id="o-G41-C" value="C" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">C</span>
+              <span class="ol">Online first, offline the exception</span><span class="rec-tag">Recommended</span></span>
+            <span class="om">Online is the rule and is recommended heavily. While online the phone keeps a small stock of leases. Starting a heist offline shows a prompt recommending going online first, and the player may carry on. Hauls stay confirming until the server confirms them, and the outbox sends by itself on reconnecting, with a banner saying so.</span>
+            <span class="oc">Players are steered to the path where nothing waits, and a heist on a train still works. A little more to build than A.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>A stock of three leases, refreshed while online; each lasts a day.</dd></div><div class="od"><dt>Document edit</dt><dd>§24.12: its opening says online is the normal path and offline the exception, and names the stock, the prompt and the confirming states.</dd></div><div class="od"><dt>Build change</dt><dd>A lease stock in the heist repository, the offline prompt on the heist screen, the outbox flushed on reconnect with a banner.</dd></div></dl></details>
+          </span>
+        </label>
+      </fieldset>
+      <div class="recbox">
+        <p><span class="lab">Recommended: C, Online first, offline the exception</span>
+          <span class="conf c-medium">medium confidence</span></p>
+        <p class="rr">It keeps §24.12&#x27;s safety for the train and the lift while steering players to the path where nothing is left confirming, as games of this kind do.</p>
+        
+      </div>
+      <p class="also"><span class="lab">Also needed</span> None.</p><p class="inter"><span class="lab">Weigh with</span> <a href="#G34">G34</a></p>
+      <details class="quotes"><summary>What the document says</summary><ul><li><span class="qs">&sect;24.12</span> <q>Offline is the normal path, not an edge case, and the rules below are architecture rather than polish.</q></li></ul></details>
+      <div class="notebox">
+        <label for="n-G41">Note for Claude (optional)</label>
+        <textarea id="n-G41" rows="2" placeholder="A number, a condition, or why" disabled></textarea>
+        <div class="nb">
+          <button type="button" class="btn save-note" data-id="G41" disabled>Save note</button>
+          <button type="button" class="btn ghost clear" data-id="G41" disabled>Clear answer</button>
+          <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#G41" target="_blank" rel="noopener">Register entry</a>
         </div>
       </div>
     </article>

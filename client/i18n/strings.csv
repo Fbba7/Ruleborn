@@ -6,6 +6,7 @@ HOME_WATCH,Watch replays,Ver replays
 HOME_SETTINGS,Settings,Ajustes
 COMMON_HOME,Home,Início
 COMMON_DISMISS,Dismiss,Dispensar
+COMMON_LOADING,Loading…,Carregando…
 HEIST_ASKING,Asking the server for a target,Pedindo um alvo ao servidor
 HEIST_NONE,No heist: %s,Sem assalto: %s
 HEIST_CHECKING,The server is checking the heist,O servidor está conferindo o assalto
@@ -83,6 +84,10 @@ SETTINGS_SLOW_REHEARSALS_OFF,Rehearsals at 75%: off,Ensaios a 75%: não
 SETTINGS_BANNERS_STAY_ON,Banners stay until dismissed,Avisos ficam até serem dispensados
 SETTINGS_BANNERS_STAY_OFF,Banners go by themselves,Avisos somem sozinhos
 HOME_BUILD,Build your island,Construir sua ilha
+HOME_TRACK,Season track,Trilha da temporada
+HOME_SHOP,Shop,Loja
+HOME_SOCIAL,League and crews,Liga e equipes
+HOME_FRIENDS,Friends,Amigos
 BUILDER_TITLE,"Your island, realm level %d","Sua ilha, reino nível %d"
 BUILDER_HINT,Tap the realm to place what is chosen below,Toque no reino para pôr o que está escolhido abaixo
 BUILDER_TOOL_GROUND,Ground,Terreno
@@ -230,6 +235,9 @@ ERR_WRONG_SEED,the heist was played on the wrong seed,o assalto foi jogado com a
 ERR_WRONG_SLOT,that does not go in that slot,isso não vai nesse espaço
 ERR_GIFT_INTENT_GONE,this gift is too old to deliver; the store will refund it,este presente é antigo demais para ser entregue; a loja vai reembolsá-lo
 ERR_STARTING,the server is starting; try again in a moment,o servidor está iniciando; tente de novo em instantes
+ERR_STORE_NOT_CONNECTED,this build cannot reach the store,esta versão não consegue acessar a loja
+ERR_PURCHASE_CANCELLED,the purchase was cancelled,a compra foi cancelada
+ERR_PURCHASE_PENDING,the purchase waits for a family member to approve it,a compra aguarda a aprovação de alguém da família
 SCHOOL_MOTION,Motion,Movimento
 SCHOOL_MATTER,Matter,Matéria
 SCHOOL_TIME,Time,Tempo
@@ -239,3 +247,114 @@ SCHOOL_SPIRIT,Spirit,Espírito
 REALM_DESCRIBED,"The realm, %d by %d tiles: the Vault %s, %d guards on their feet, %d wards standing","O reino, %d por %d casas: o Cofre %s, %d guardas de pé, %d proteções ativas"
 REALM_VAULT_OPEN,open,aberto
 REALM_VAULT_SHUT,shut,fechado
+MONEY_EUR,€%s,€ %s
+NUMBER_DECIMAL,.,","
+NUMBER_GROUP,",",.
+WALLET,%s Starlight · %s Essence,%s Luz Estelar · %s Essência
+TRACK_TITLE,Season %d track,Trilha da temporada %d
+TRACK_TITLE_LOADING,Season track,Trilha da temporada
+TRACK_STARS,%s stars to spend,%s estrelas para gastar
+TRACK_NEXT,Next: tier %d for %d stars,Próximo: nível %d por %d estrelas
+TRACK_COMPLETE,Every tier claimed,Todos os níveis resgatados
+TRACK_CLAIM,Claim the next tier,Resgatar o próximo nível
+TRACK_CLAIMED,Tier %d: %s,Nível %d: %s
+TRACK_TIER,Tier %d: %s%s,Nível %d: %s%s
+TRACK_AND_PREMIUM,", and with the premium track %s",", e com a trilha premium %s"
+TRACK_ESSENCE,%s Essence,%s de Essência
+TRACK_PAGES,%d pages,%d páginas
+TRACK_STRAY,a stray to adopt,um errante para adotar
+TRACK_COSMETIC,a %s,um item: %s
+TRACK_PREMIUM,Premium track,Trilha premium
+TRACK_PREMIUM_PRICE,"Premium track, %s","Trilha premium, %s"
+TRACK_FAILED,The track could not be shown: %s,Não foi possível mostrar a trilha: %s
+TRACK_PREMIUM_FAILED,The premium track could not be bought: %s,Não foi possível comprar a trilha premium: %s
+SHOP_TITLE,Shop,Loja
+SHOP_TRACK,Season track,Trilha da temporada
+SHOP_EMPTY,No cosmetics are on sale yet.,Ainda não há itens cosméticos à venda.
+SHOP_ITEM,%s — %s,%s — %s
+SHOP_BUY,Buy,Comprar
+SHOP_BUY_NAMED,Buy %s for %s,Comprar %s por %s
+SHOP_GIVE,Give,Presentear
+SHOP_WEAR,Wear,Usar
+SHOP_TAKE_OFF,Take off,Tirar
+SHOP_BUYING,Buying…,Comprando…
+SHOP_BOUGHT,"Bought, and yours","Comprado, e já é seu"
+SHOP_PENDING,Paid; the server confirms it when you are back online,Pago; o servidor confirma quando você voltar a ficar online
+SHOP_MONTH,"%s: %s spent, %s refunded","%s: %s gastos, %s reembolsados"
+SHOP_LEFT,%s left to spend this month,%s restantes para gastar este mês
+SHOP_FAILED,The shop could not do that: %s,A loja não conseguiu fazer isso: %s
+SHOP_GIVE_NAMED,Give %s to %s,Presentear %s a %s
+SHOP_GIFT_TO,Gifts go to %s,Presentes vão para %s
+SHOP_OTHER_FRIEND,Another friend,Outro amigo
+SHOP_OWNED,Yours: %s,Seu: %s
+SHOP_OWNED_WORN,"Yours, worn: %s","Seu, em uso: %s"
+SHOP_OWNED_NAME,%s (%s),%s (%s)
+SHOP_WORN_BY,Worn by: %s,Usado por: %s
+SHOP_WORN_BY_NEXT,Worn by %s: choose another,Usado por %s: escolher outro
+SHOP_WEAR_NAMED,Wear %s,Usar %s
+SHOP_TAKE_OFF_NAMED,Take off %s,Tirar %s
+KIND_REALM_SKIN,realm skin,visual de reino
+KIND_SKY_THEME,sky theme,tema de céu
+KIND_BRIDGE_STYLE,bridge style,estilo de ponte
+KIND_OUTFIT,outfit,traje
+KIND_SAGE_ROBE,sage robe,manto de sábio
+KIND_LAW_VISUAL,law visual,visual de lei
+KIND_EMOTE,emote,emote
+LEAGUE_DUST,Dust,Poeira
+LEAGUE_EMBER,Ember,Brasa
+LEAGUE_TIDE,Tide,Maré
+LEAGUE_STAR,Star,Estrela
+LEAGUE_NOVA,Nova,Nova
+LEAGUE_PARADOX,Paradox,Paradoxo
+LEAGUE_PLACE,%s %s,%s %s
+LEAGUE_PLACE_TOP,%s,%s
+LEAGUE_RENOWN,%s Renown in season %d,%s de Renome na temporada %d
+LEAGUE_TO_NEXT,%s Renown to the next league,%s de Renome até a próxima liga
+LEAGUE_TOP,The top league,A liga mais alta
+RANK_FOUNDER,founder,fundador
+RANK_ELDER,elder,ancião
+RANK_MEMBER,member,membro
+SOCIAL_TITLE,League and crews,Liga e equipes
+SOCIAL_YOU,you,você
+SOCIAL_KEEPER,Keeper %s,Guardião %s
+SOCIAL_MEMBER,"%s, %s","%s, %s"
+SOCIAL_CONSTELLATION,"Constellation %s, %d members","Constelação %s, %d membros"
+SOCIAL_NO_CONSTELLATION,You are in no constellation,Você não está em nenhuma constelação
+SOCIAL_FOUND,Found a constellation,Fundar uma constelação
+SOCIAL_LEAVE_CONSTELLATION,Leave the constellation,Sair da constelação
+SOCIAL_CREW_FORMED,Your crew: %d members,Sua equipe: %d membros
+SOCIAL_CREW_FORMING,Your crew is forming: %d of the 4 it needs,Sua equipe está se formando: %d dos 4 necessários
+SOCIAL_NO_CREW,You are in no crew,Você não está em nenhuma equipe
+SOCIAL_CREW_INVITE,Its invite: %s,O convite dela: %s
+SOCIAL_CREW_CODE,A crew's invite,O convite de uma equipe
+SOCIAL_START_CREW,Start a crew,Criar uma equipe
+SOCIAL_JOIN_CREW,Join the crew,Entrar na equipe
+SOCIAL_LEAVE_CREW,Leave the crew,Sair da equipe
+SOCIAL_FRIENDS,Friends,Amigos
+SOCIAL_FAILED,That could not be done: %s,Não foi possível fazer isso: %s
+SOCIAL_FOUND_NAMED,Found the constellation %s,Fundar a constelação %s
+SOCIAL_NAME,Its name: %s,Nome: %s
+SOCIAL_OTHER_ADJECTIVE,Another first word,Outra palavra de qualidade
+SOCIAL_OTHER_NOUN,Another second word,Outro substantivo
+FRIENDS_TITLE,Friends,Amigos
+FRIENDS_NONE,"No friends yet: share an invite, or accept one.",Ainda sem amigos: compartilhe um convite ou aceite um.
+FRIENDS_CODE,A friend's invite,O convite de um amigo
+FRIENDS_ACCEPT,Accept,Aceitar
+FRIENDS_ACCEPTED,You and %s are friends,Você e %s agora são amigos
+FRIENDS_INVITE,Invite a friend,Convidar um amigo
+FRIENDS_INVITE_CODE,Your invite to share: %s,Seu convite para compartilhar: %s
+FRIENDS_CHALLENGE,Challenge link,Link de desafio
+FRIENDS_CHALLENGE_CODE,Your island's challenge link: %s,O link de desafio da sua ilha: %s
+FRIENDS_REMOVE,Remove,Remover
+FRIENDS_REMOVE_NAMED,Remove %s from your friends,Remover %s dos seus amigos
+FRIENDS_FEED,This week,Esta semana
+FRIENDS_FAILED,That could not be done: %s,Não foi possível fazer isso: %s
+FEED_RAID,%s raided %s: %s,%s assaltou %s: %s
+FEED_FRIENDLY,%s played a friendly heist on %s: %s,%s jogou um assalto amistoso em %s: %s
+FEED_CHALLENGE,%s took %s's challenge: %s,%s aceitou o desafio de %s: %s
+OFFLINE_RECOMMEND,You are offline. Going online first is recommended: a heist played now counts only once the server confirms it.,Você está offline. É recomendado ficar online primeiro: um assalto jogado agora só conta quando o servidor o confirmar.
+OFFLINE_NONE,"You are offline, and no island is ready to play offline. Go online to play.",Você está offline e nenhuma ilha está pronta para jogar offline. Fique online para jogar.
+OFFLINE_TRY_AGAIN,Try online again,Tentar online de novo
+OFFLINE_PLAY_ANYWAY,Play offline anyway,Jogar offline mesmo assim
+OFFLINE_SENT,"%d results played offline were sent, and the server has them","%d resultados jogados offline foram enviados, e o servidor os recebeu"
+WALLET_FAILED,The wallet could not be shown: %s,Não foi possível mostrar a carteira: %s

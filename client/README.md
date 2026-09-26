@@ -46,10 +46,18 @@ actions and failures, so a report carries the steps that led to it.
 `tools/client_contract.py` fails the build if the client calls a route the
 server does not serve, or if a code the server can refuse with has no words.
 
-**Offline.** A heist's replay goes into the outbox before it is sent. With no
-network, the result shows the phone's own check, marked as confirming
-(§24.12), and the outbox sends it when the server can be reached; the server
-answers a repeat from its first decision, so nothing is paid twice.
+**Online first, offline the exception** (G41, as the owner answered). Every
+call signs in by itself when there is no session, and signs in again once
+when the server refuses an expired one (`Api.reauth`). While online the
+phone keeps three leases in stock with their islands (`data/lease_stock.gd`).
+A heist started with no network says going online is recommended — a heist
+played now counts only once the server confirms it — and plays a stocked
+lease only if the player chooses to. Its replay goes into the outbox before
+it is sent, and the result shows the phone's own check, marked as confirming
+(§24.12). What waited is sent by itself when the network is back, from home
+or the next heist, with a banner saying so; one result the server cannot
+decide now waits without holding up the rest, and the server answers a
+repeat from its first decision, so nothing is paid twice.
 
 **Accessibility (§20.8, §21.8, §21.10).** Built into the components, so
 every screen and Claude Design's components inherit it, and checked on every
@@ -91,10 +99,37 @@ order, the vibrator's patterns — is the device matrix's (§26.8).
 
 ## What is here
 
-Six screens, opened from `scenes/home.tscn`:
+Ten screens, opened from `scenes/home.tscn`:
 
-**Home.** Play a heist, watch replays, build your island, or change the
-settings.
+**Home.** Play a heist, fixed at the bottom where the thumb rests, and every
+other screen in a list that scrolls at large text.
+
+**The season track** (`scenes/track.tscn`, §18.2, §18.8). Stars in hand, the
+next tier and its price, a claim, and all fifty tiers with what the free and
+premium tracks give; the season's premium track offered at its price.
+
+**The shop** (`scenes/shop.tscn`, §19.12, §20.2, §22.1, F41). The wallet's
+Starlight and Essence, each cosmetic at its money price — the store's own
+price when the store gives one, the server's euros otherwise, written the
+player's way — with Buy, Give and Wear, the month's spending and a minor's
+cap; everything owned, bought or earned, to wear — an outfit by a crew
+role, a law's visual by a law — and gifts to a chosen friend. The flows live
+on Services, so leaving the screen mid-purchase loses nothing. A purchase is
+the server's intent first (the cap holds before the store
+takes money), then the platform store (`app/store_purchases.gd`; the
+platforms' billing plugins are not in this build, which refuses and says so),
+then the receipt through the outbox, kept until the server has decided it —
+a 5xx, the store unreachable from the server, keeps it too (D67).
+
+**The league and crews** (`scenes/social.tscn`, §17.1, §17.7, §18.1). The
+league, division and Renown; the constellation, its members and roles, or
+founding one named from the word lists; the crew, its invite, or starting
+and joining one.
+
+**Friends** (`scenes/friends.tscn`, §12.11, §17.6). Friends, the week's feed
+of their heists, an invite to share and a code to accept, and a challenge
+link to the player's island. Players are named "Keeper" and the first
+letters of their account until the platforms' friend lists give their names.
 
 **The builder** (`scenes/builder.tscn`). An island, built (§13): lay ground on
 the realm's grid, post guards, place wards, weave laws with their pylons, move

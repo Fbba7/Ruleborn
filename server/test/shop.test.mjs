@@ -127,6 +127,8 @@ test("the premium track is a store product and adds only cosmetics, for tiers al
   giveStars(t, me, TIER_STARS * 9);
   for (let i = 0; i < 9; i++) track.claim(me, 1);
   assert.equal(shop.intent(me, "premium.1").price, PREMIUM_PRICE);
+  // The track names its premium product and price, for the shop to offer.
+  assert.deepEqual([track.view(me, 1).premiumProduct, track.view(me, 1).premiumPrice], ["premium.1", PREMIUM_PRICE]);
   refusal(() => shop.intent(me, "premium.2"), "no_such_product", "not a season yet");
   const bought = buy(t, shop, me, "premium.1").granted;
   assert.deepEqual(bought.granted.map((g) => g.cosmetic), ["track-1-5", "track-1-10"]);

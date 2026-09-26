@@ -304,7 +304,19 @@ DELIVERABLES = [
         "stars reset each season, and an unclaimed tier stays claimable later at the same cost (18.8)",
         "the premium track is a store product and adds only cosmetics, for tiers already claimed too (18.2, F41)",
         "the track, the shop and the wardrobe over HTTP")),
-    ("8", "Shop, track and wallet screens", FRONTEND, not_started("those screens exist in the client")),
+    # The screens' data side, headless and against the real server
+    # (client/tests/shop_tests.gd); the screens are also in every layout,
+    # catalogue and accessibility check. Drawn with placeholder components
+    # until the design lands (TC.7).
+    ("8", "Shop, track and wallet screens", FRONTEND, client_tests(
+        "the shop lists what is for sale, and everything owned, bought or earned, to wear where it is worn: an earned outfit by a crew role, an emote used rather than worn; gifts go to a friend (§22.1, F41, G28)",
+        "a purchase asks the server first, then the store with the server's intent, then sends the store's receipt through the outbox; a gift names its friend (F41, §20.2, §24.12)",
+        "a purchase over a minor's monthly cap never reaches the store, and the player is told why (§20.2)",
+        "a receipt the network cannot carry, or that the server cannot check with the store yet, waits in the outbox and is sent later, never lost (§24.12, D67)",
+        "against the server: the track shows this season, its first tier is claimed free and pays its Essence into the wallet, and the premium track is offered at its price; the store's receipt is checked by the server (§18.2, §22.1)",
+        "money and numbers are written the player's way: €6.00 and 11,250 in English, €6,00 and 11.250 in Portuguese, and the store's own price before the server's (§19.12)",
+        "the track shows the season, the stars in hand, the next tier and its price, and each tier's rewards from both tracks, claimed or not, in both languages (§18.2)",
+        "the track, shop and wallet reducers change only their own slice, keep what they had when a call fails, and name the failure")),
 
     ("9", "Leagues", BACKEND, server_tests(
         "a clean heist moves §12.9's Renown to the raider, and Dust's floor mints what it stops",
@@ -320,7 +332,13 @@ DELIVERABLES = [
     ("9", "Season rollover", BACKEND, server_tests(
         "a season closes once: results and rewards by league, and the next opens pulled halfway back (18.1)",
         "the constellation league ranks by members' combined Renown at the season's close (17.5)")),
-    ("9", "Social screens", FRONTEND, not_started("the league and crew screens exist in the client")),
+    # client/tests/social_tests.gd, and every screen check, as the shop's.
+    ("9", "Social screens", FRONTEND, client_tests(
+        "a name from the word lists reads in the player's language, as the server makes it: \"Quiet Harbour\", and in Portuguese the noun first with the adjective agreeing, \"Porto Silencioso\", \"Horta Silenciosa\" (D63)",
+        "a refusal is shown in the player's words: founding below Keeper 6, an invite that does not exist; an invite code is sent without its spaces (§17.1, §17.6)",
+        "against the server, two players: one invites and the other accepts, and each lists the other; one starts a crew and the other joins it by its invite; the league shows this season (§12.11, §17.6, §17.7, §18.1)",
+        "the league shows the place, the division in numerals, Renown and the way to the next league; groups name their members and roles, the player as \"you\"; the feed says who raided whom (§17, §18.1)",
+        "the league, groups and friends reducers keep what they had when a call fails, name the failure, read a null group as none, and the friends screen shows the latest outcome, not an older one")),
 
     ("10 to 13", "Localisation: English and Brazilian Portuguese", FRONTEND, not_started(
         "every launch screen and content name ships in both languages, the Portuguese read by a native speaker")),

@@ -12,6 +12,10 @@ const ROUTES := {
 	&"replay": "res://scenes/replay_screen.tscn",
 	&"settings": "res://scenes/settings.tscn",
 	&"builder": "res://scenes/builder.tscn",
+	&"track": "res://scenes/track.tscn",
+	&"shop": "res://scenes/shop.tscn",
+	&"social": "res://scenes/social.tscn",
+	&"friends": "res://scenes/friends.tscn",
 }
 
 var store: Store

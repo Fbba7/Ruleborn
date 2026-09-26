@@ -45,6 +45,7 @@
 //   GET  /v1/seasons/:id/result                              → the caller's closed-season result
 //   GET  /v1/seasons/:id/constellations                      → §17.5's constellation league
 //   POST /v1/constellations      {"adjective", "noun"}       → founded
+//   GET  /v1/constellations/mine                             → {constellation}, the caller's, or null
 //   GET  /v1/constellations/:id                              → it, and its members
 //   POST /v1/constellations/:id/join                         → joined
 //   POST /v1/constellations/:id/roles {"account", "role"}    → an elder named, or unnamed
@@ -52,6 +53,7 @@
 //   POST /v1/crews                                           → a crew, and its invite
 //   POST /v1/crews/join          {"invite"}                  → joined
 //   POST /v1/crews/leave                                     → left
+//   GET  /v1/crews/mine                                      → {crew}, the caller's, or null
 //   GET  /v1/crews/:id                                       → it
 //
 // The season track (§18.2, §18.8; track.mjs), purchases and cosmetics
@@ -157,6 +159,11 @@ async function socialRoute(service, social, request, parts, who) {
   if (area === "constellations") {
     if (m === "POST" && !a) return json(social.found(me, await body(request)), 201);
     if (m === "POST" && a === "leave") return json(social.leave(me));
+    // The player's own, so a device that knows nothing yet can find it.
+    if (m === "GET" && a === "mine") {
+      const own = social.membership(me);
+      return json({ constellation: own ? social.constellation(own.constellation) : null });
+    }
     if (m === "GET" && a) return json(social.constellation(a));
     if (m === "POST" && a && b === "join") return json(social.join(me, a));
     if (m === "POST" && a && b === "roles") {
@@ -168,6 +175,10 @@ async function socialRoute(service, social, request, parts, who) {
     if (m === "POST" && !a) return json(social.startCrew(me), 201);
     if (m === "POST" && a === "join") return json(social.joinCrew(me, text((await body(request)).invite)));
     if (m === "POST" && a === "leave") return json(social.leaveCrew(me));
+    if (m === "GET" && a === "mine") {
+      const own = social.crewOf(me);
+      return json({ crew: own ? social.crew(own) : null });
+    }
     if (m === "GET" && a) return json(social.crew(a));
   }
   return null;

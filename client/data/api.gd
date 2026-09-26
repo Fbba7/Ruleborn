@@ -10,6 +10,11 @@ var transport: Transport
 var base := ""
 var token := ""
 var action_log: ActionLog
+## How a session is had again: Services sets it to sign in with the
+## platform's credential. A call made with no session, or refused for an
+## expired one (the server's sessions last an hour), signs in and is made
+## again, once, so no screen has to remember to sign in.
+var reauth: Callable
 
 
 func _init(t: Transport, url: String, l: ActionLog) -> void:
@@ -38,6 +43,18 @@ static func secure(url: String) -> bool:
 func raw(method: HTTPClient.Method, path: String, body := PackedByteArray()) -> Result:
 	if not online():
 		return Result.failure("offline")
+	var signing := path == "/v1/session"
+	if token == "" and not signing and reauth.is_valid():
+		await reauth.call()
+	var first := await _raw(method, path, body)
+	if first.ok or first.code != "session_refused" or signing or not reauth.is_valid():
+		return first
+	if not await reauth.call():
+		return first
+	return await _raw(method, path, body)
+
+
+func _raw(method: HTTPClient.Method, path: String, body: PackedByteArray) -> Result:
 	var headers: PackedStringArray = []
 	if token != "":
 		headers.append("Authorization: Bearer " + token)
@@ -50,7 +67,11 @@ func raw(method: HTTPClient.Method, path: String, body := PackedByteArray()) -> 
 	if status >= 400:
 		var said: Variant = JSON.parse_string((r["body"] as PackedByteArray).get_string_from_utf8())
 		var reason: String = str(said.get("error", "status_%d" % status)) if said is Dictionary else "status_%d" % status
-		return _failed(path, reason, said if said is Dictionary else {"status": status})
+		# The status rides with the server's own detail: a 5xx the server
+		# answered with a reason is still one it never decided (Outbox).
+		var detail: Dictionary = (said as Dictionary).duplicate() if said is Dictionary else {}
+		detail["status"] = status
+		return _failed(path, reason, detail)
 	return Result.success(r["body"])
 
 

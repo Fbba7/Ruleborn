@@ -5,8 +5,9 @@ extends SceneTree
 
 ## A test that errors stops its coroutine, and a stopped coroutine never
 ## quits; so the run has a deadline, and missing it is a failure.
-const DEADLINE_SECONDS := 120.0
-const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder"]
+const DEADLINE_SECONDS := 480.0
+const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
+	"social", "friends"]
 
 var _n := 0
 var _failed := 0
@@ -47,6 +48,8 @@ func _heist() -> Dictionary:
 ## Services for a test run: no network unless `server` names one, the tests'
 ## own outbox file, and a router that records rather than changes scenes.
 func _services(server := "") -> Services:
+	if App.services != null:
+		App.services.close()
 	var s := Services.build(root, server, null, "user://outbox-test.json")
 	s.router.change = func(_path: String) -> void: pass
 	App.services = s
@@ -78,6 +81,15 @@ func _run() -> void:
 	DirAccess.remove_absolute("user://outbox-test.json")
 	_services()
 	var goldens := ReplayScreen.find_goldens()
+
+	# Every script compiles: one that does not otherwise shows up as a method
+	# "missing" somewhere else, far from the line at fault.
+	var broken: Array[String] = []
+	for f: String in _scripts("res://") + _test_scripts():
+		var script: GDScript = ResourceLoader.load(f, "GDScript", ResourceLoader.CACHE_MODE_IGNORE)
+		if script == null or not script.can_instantiate():
+			broken.append(f)
+	check("every script compiles, with GDScript's warnings as errors", broken.is_empty(), ", ".join(broken))
 
 	# The architecture's layers, headless (client/README.md).
 	await CoreTests.new(self, check).run()
@@ -317,6 +329,14 @@ func _run() -> void:
 		_services()
 		await process_frame
 
+	# The season track, the shop and the wallet (tests/shop_tests.gd), and the
+	# league, groups and friends (tests/social_tests.gd): headless, and
+	# against the server when one is named.
+	await ShopTests.new(self, check, server_url).run()
+	await SocialTests.new(self, check, server_url).run()
+	# Online first, offline the exception (G41; tests/offline_tests.gd).
+	await OfflineTests.new(self, check, _mount).run()
+
 	# §20.6's settings survive a relaunch: each change on the settings screen
 	# is saved as it is made, and the next launch reads it back and applies it.
 	var settings: SettingsScreen = await _mount("settings")
@@ -487,6 +507,8 @@ func _run() -> void:
 
 	print("1..%d" % _n)
 	# Statics are released before the engine is, or their objects outlive it.
+	if App.services != null:
+		App.services.close()
 	App.services = null
 	quit(1 if _failed else 0)
 
@@ -506,14 +528,34 @@ func _catalogue_problems() -> Array:
 			if other != shape:
 				problems.append("%s: %s has %s where en has %s" % [key, locale, other, shape])
 	var asked := RegEx.create_from_string("Strings\\.t\\(\"([A-Za-z_0-9]+)\"\\s*[,)]")
-	var dir := DirAccess.open("res://scripts")
-	for f in dir.get_files():
-		if not f.ends_with(".gd"):
-			continue
-		for m in asked.search_all(FileAccess.get_file_as_string("res://scripts/" + f)):
+	# Every script the app is built from, not the tests.
+	for f: String in _scripts("res://"):
+		for m in asked.search_all(FileAccess.get_file_as_string(f)):
 			if not rows.has(m.get_string(1)):
 				problems.append("%s asks for %s, which the catalogue lacks" % [f, m.get_string(1)])
 	return problems
+
+
+func _test_scripts() -> Array[String]:
+	var out: Array[String] = []
+	for f in DirAccess.get_files_at("res://tests"):
+		if f.ends_with(".gd") and f != "run.gd":
+			out.append("res://tests/" + f)
+	return out
+
+
+func _scripts(dir: String) -> Array[String]:
+	var out: Array[String] = []
+	var d := DirAccess.open(dir)
+	if d == null:
+		return out
+	for f in d.get_files():
+		if f.ends_with(".gd"):
+			out.append(dir.path_join(f))
+	for sub in d.get_directories():
+		if not sub.begins_with(".") and sub not in ["tests", "ext", "bin", "goldens"]:
+			out.append_array(_scripts(dir.path_join(sub)))
+	return out
 
 
 func _control_problems(screen: Control) -> Array:
@@ -541,6 +583,9 @@ func _control_problems(screen: Control) -> Array:
 	if buttons.is_empty():
 		problems.append("no controls")
 	for b in buttons:
+		# A hidden control is not one the player can reach.
+		if not (b as Control).is_visible_in_tree():
+			continue
 		var r: Rect2 = b.get_global_rect()
 		if min(r.size.x, r.size.y) < 48 * point - 0.5:
 			problems.append("%s is %s across" % [b.text, r.size])

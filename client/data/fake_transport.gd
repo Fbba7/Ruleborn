@@ -8,11 +8,18 @@ extends Transport
 var routes: Dictionary = {}
 var calls: Array[Dictionary] = []
 var offline := false
+## Answers given once each, in turn, before the route's own: [answer, status]
+## pairs, for a server that changes its mind (a session that expires).
+var _next: Dictionary = {}
 
 
 ## `answer` is a Dictionary (sent as JSON) or PackedByteArray, with `status`.
 func on(route: String, answer: Variant, status := 200) -> void:
 	routes[route] = {"status": status, "answer": answer}
+
+
+func then(route: String, answers: Array) -> void:
+	_next[route] = answers.duplicate()
 
 
 func send(method: HTTPClient.Method, url: String, headers: PackedStringArray,
@@ -24,7 +31,13 @@ func send(method: HTTPClient.Method, url: String, headers: PackedStringArray,
 	await (Engine.get_main_loop() as SceneTree).process_frame
 	if offline:
 		return {"error": "unreachable"}
-	var r: Variant = routes.get("%s %s" % [verb, path])
+	var key := "%s %s" % [verb, path]
+	if (_next.get(key, []) as Array).size() > 0:
+		var once: Array = (_next[key] as Array).pop_front()
+		var body_once: Variant = once[0]
+		return {"status": once[1], "body": body_once if body_once is PackedByteArray
+			else JSON.stringify(body_once).to_utf8_buffer()}
+	var r: Variant = routes.get(key)
 	if r == null:
 		return {"status": 404, "body": JSON.stringify({"error": "no_such_route"}).to_utf8_buffer()}
 	var answer: Variant = r["answer"]

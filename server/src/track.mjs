@@ -114,7 +114,9 @@ export class Track {
   }
 
   /** A season's track as a player sees it: stars in hand, the tier price,
-   *  how far they have claimed, and every tier's rewards. */
+   *  how far they have claimed, every tier's rewards, and the season's
+   *  premium track as the store product it is and its price in euro cents
+   *  (F41), so the shop can offer it. */
   view(account, season = this.seasons.current().id) {
     const current = this.seasons.current().id;
     if (!Number.isInteger(season) || season < 1 || season > current) {
@@ -126,6 +128,7 @@ export class Track {
     return {
       season, current, stars: this.stars(account, current), tierStars: price,
       claimed: free, premium: this.premium(account, season),
+      premiumProduct: `premium.${season}`, premiumPrice: facts.PREMIUM_TRACK_EUR * 100,
       next: free < facts.SEASON_TIERS ? { tier: free + 1, cost: free === 0 ? 0 : price } : null,
       tiers: Array.from({ length: facts.SEASON_TIERS }, (_, i) => ({ tier: i + 1, ...tierRewards(season, i + 1) })),
     };

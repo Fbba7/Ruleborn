@@ -6,4 +6,6 @@ extends Node
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE or what == NOTIFICATION_WM_CLOSE_REQUEST:
+		if App.services != null:
+			App.services.close()
 		App.services = null

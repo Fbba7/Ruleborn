@@ -1028,6 +1028,19 @@ dict(
                     "crews, friends and the feed.",
              gate="+4.37 (shop, track, wallet), +8.50 (Workshop), +4.86 (social) "
                   "frontend points; only their look changes when the design lands"),
+        dict(id="TC.9", owner="claude", status="done",
+             title="Offline as the exception, as the owner answered G41",
+             detail="Online is the rule and is recommended heavily; offline is "
+                    "the exception (G41, level C). While online the heist "
+                    "repository keeps a stock of three leases; starting a heist "
+                    "offline shows a prompt that recommends going online first, "
+                    "and lets the player carry on; every haul played offline "
+                    "stays confirming until the server confirms it; and the "
+                    "outbox sends by itself on reconnecting, with a banner that "
+                    "says so. The §24.12 edit is drafted under G41.",
+             gate="no frontend figure moves; it is §24.12 as the owner answered",
+             evidence="client/tests/offline_tests.gd, through python3 client/status.py",
+             register=["G41"]),
         dict(id="TC.7", owner="you", status="ready",
              title="The design from Claude Design",
              detail="Tokens and components, and the screens' layouts. They "

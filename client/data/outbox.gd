@@ -42,7 +42,10 @@ func has(key: String) -> bool:
 	return _items.any(func(i: Dictionary) -> bool: return i["key"] == key)
 
 
-## Send everything waiting, oldest first. Returns how many were settled.
+## Send everything waiting, oldest first. Returns how many were settled. One
+## the server could not decide now stays, and the rest are still tried: a
+## receipt is never held up behind a heist, nor a heist behind a receipt. With
+## no network at all, the first failure ends the round.
 func flush(api: Api) -> int:
 	var done := 0
 	for item: Dictionary in _items.duplicate():
@@ -53,7 +56,9 @@ func flush(api: Api) -> int:
 		else:
 			r = await _post_raw(api, item["route"], body)
 		if not r.ok and transient(r):
-			break
+			if r.code in ["offline", "unreachable", "timeout", "request_failed"]:
+				break
+			continue
 		_items.erase(item)
 		_write()
 		done += 1
@@ -70,10 +75,15 @@ func _post_raw(api: Api, route: String, body: PackedByteArray) -> Result:
 
 
 ## A failure the server never decided: try again later.
+## A 5xx is one, whatever reason came with it: the server, or the store it
+## asked, could not decide it now (D67's store_unavailable is a 503).
 static func transient(r: Result) -> bool:
-	if r.code in ["offline", "unreachable", "timeout", "request_failed", "internal", "store_unavailable"]:
+	# A session the server refused, or a limit on how fast it is asked,
+	# decided nothing about the item itself.
+	if r.code in ["offline", "unreachable", "timeout", "request_failed", "internal", "store_unavailable",
+			"session_refused", "too_many_requests"]:
 		return true
-	return r.code.begins_with("status_5")
+	return r.code.begins_with("status_5") or int(r.detail.get("status", 0)) >= 500
 
 
 func _read() -> void:

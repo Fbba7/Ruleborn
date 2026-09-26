@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72", "G41"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6500,6 +6500,27 @@ dict(id="D71", kind="deviation", severity="minor", status="open",
      rec="None for the document; build universes of several realms, the "
          "crossing realms T3.3 lists as not yet built."),
 
+dict(id="G41", kind="gap", severity="significant", status="open",
+     title="§24.12 makes offline play the normal path; the owner has made "
+           "online the rule and offline the exception",
+     refs=["24.12", "24.13", "20.8"],
+     body="§24.12: <em>\u201cThis game will be played underground, on trains, in "
+          "lifts. Offline is the normal path, not an edge case\u201d</em>. Its "
+          "machinery is built: a lease, play on the phone, a queue, validation "
+          "and a grant, a haul shown as confirming until then "
+          "(client/data/outbox.gd, server/src/service.mjs). What it leaves open "
+          "is how much of the game a player without a network should be steered "
+          "into, and what the phone says. Asked, the owner answered: online is "
+          "the rule and is recommended heavily, and offline is the exception "
+          "(level C). The phone keeps a small stock of leases while online; "
+          "starting a heist offline shows a prompt that recommends going online "
+          "first; hauls stay marked confirming until the server confirms them; "
+          "and the outbox sends by itself on reconnecting, with a banner that "
+          "says so. Found building the client.",
+     rec="Take §24.12's opening as the owner answered: online the normal path "
+         "and offline the exception, with the stock of leases, the prompt and "
+         "the confirming states named."),
+
 dict(id="D72", kind="deviation", severity="minor", status="open",
      title="§21.8\u2019s alarm red and success green cannot carry words at its "
            "own 4.5:1, and most of the island\u2019s route features vanish in "
@@ -8112,6 +8133,20 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+"G41": [
+    dict(section="24.12", action="replace",
+         find="This game will be played underground, on trains, in lifts. Offline is the normal path, "
+              "not an edge case, and the rules below are architecture rather than polish.",
+         replace="This game will be played underground, on trains, in lifts. Online is the normal path, "
+                 "and the game recommends it; offline is the exception, and the rules below make it safe "
+                 "rather than easy. While online the phone keeps a small stock of leases, so a heist "
+                 "can start without a network; starting one offline first recommends going online; "
+                 "every haul played offline is shown as confirming until the server confirms it; and "
+                 "the queue sends itself on reconnecting, saying so.",
+         why="The owner's answer to G41: online is the rule and is recommended heavily, offline the "
+             "exception (level C)."),
+],
+
 "D72": [
     dict(section="21.8", action="replace",
          find="Ink #221C3A on paper panels at 85% opacity over the world; gold for main "

@@ -229,7 +229,8 @@ transaction as the grant:
 there is no currency.
 
 - **Everything is priced in money.** Each cosmetic in `src/cosmetics.json` and
-  each season's premium track is its own store product at its euro price;
+  each season's premium track is its own store product at its euro price,
+  which the track's view names (`premiumProduct`, `premiumPrice`) for the shop;
   there is no balance and there are no packs, and the ledger holds Starlight
   and Essence only. A purchase is two steps: an intent, refused if it would
   take a minor past the month's cap (€25 at 13 to 15, €50 at 16 and 17) and
@@ -547,6 +548,9 @@ forms, and the client's age check and deletion button (**D70**).
 - **Crews** are four to eight, joined by an invite code — the only way
   friends "across constellations" find each other here — and carry on
   whoever leaves.
+- **The player's own** constellation and crew are asked for by
+  `GET /v1/constellations/mine` and `GET /v1/crews/mine`, so a device that
+  knows nothing yet — a new phone, a reinstall — finds them.
 
 Chat, the Grand Law vote, anomalies, page requests and borrowed crew are not
 built — register **D63**.

@@ -288,4 +288,13 @@ test("leagues, constellations and crews over HTTP", async () => {
   const inCrew = await (await call("POST", "/v1/crews/join", { token: b.token, json: { invite: crew.invite } })).json();
   assert.equal(inCrew.members.length, 2);
   assert.equal((await call("GET", "/v1/seasons/1/result", { token: a.token })).status, 409);
+  // A device that knows nothing finds the player's own constellation and crew.
+  const mine = await (await call("GET", "/v1/constellations/mine", { token: b.token })).json();
+  assert.deepEqual([mine.constellation.id, mine.constellation.members.length], [c.id, 2]);
+  assert.equal((await (await call("GET", "/v1/crews/mine", { token: b.token })).json()).crew.id, crew.id);
+  await call("POST", "/v1/crews/leave", { token: b.token });
+  await call("POST", "/v1/constellations/leave", { token: b.token });
+  assert.deepEqual(await (await call("GET", "/v1/crews/mine", { token: b.token })).json(), { crew: null });
+  assert.deepEqual(await (await call("GET", "/v1/constellations/mine", { token: b.token })).json(),
+                   { constellation: null });
 });

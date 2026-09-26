@@ -6,11 +6,14 @@ extends RefCounted
 
 var api: Api
 var outbox: Outbox
+## Leases kept for a heist with no network (G41).
+var stock: LeaseStock
 
 
-func _init(a: Api, o: Outbox) -> void:
+func _init(a: Api, o: Outbox, s: LeaseStock = null) -> void:
 	api = a
 	outbox = o
+	stock = s if s != null else LeaseStock.new()
 
 
 ## §24.8: the current target list for each band, by hash.
@@ -26,7 +29,7 @@ func fetch(key: String) -> Result:
 ## The first island in the target lists that is not the player's own: the
 ## list file is fetched by hash, as §24.8 intends. §12.22's ordering runs on
 ## the server (GET /v1/offer); this is the fallback on a list alone.
-func first_target(account: String) -> Result:
+func first_target(account: String, skip: Array[String] = []) -> Result:
 	var index := await target_index()
 	if not index.ok:
 		return index
@@ -37,9 +40,30 @@ func first_target(account: String) -> Result:
 		var list: Variant = JSON.parse_string((file.value as PackedByteArray).get_string_from_utf8())
 		if list is Dictionary:
 			for candidate: Dictionary in list.get("candidates", []):
-				if candidate.get("owner") != account:
+				if candidate.get("owner") != account and str(candidate.get("bundle")) not in skip:
 					return Result.success(candidate)
 	return Result.failure("no_target")
+
+
+## G41: while online, keep LeaseStock.SIZE leases with their islands, each on
+## an island not already held, so a heist can start with no network. Returns
+## how many were added; stops at the first failure, which the next refill
+## tries again.
+func fill_stock(account: String) -> int:
+	var added := 0
+	while stock.count() < LeaseStock.SIZE:
+		var target := await first_target(account, stock.bundles())
+		if not target.ok:
+			break
+		var bundle := await fetch(str(target.value["bundle"]))
+		if not bundle.ok:
+			break
+		var leased := await lease(str(target.value["bundle"]), str(target.value.get("owner", "")))
+		if not leased.ok:
+			break
+		stock.add(str(target.value["bundle"]), leased.value, bundle.value)
+		added += 1
+	return added
 
 
 ## §24.12: "a target snapshot, a seed, a single-use token and an expiry".

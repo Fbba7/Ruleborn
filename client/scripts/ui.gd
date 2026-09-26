@@ -76,7 +76,8 @@ static func frame(screen: Control) -> VBoxContainer:
 ## A scrolling body for a screen that is a list, filling the frame's column
 ## above whatever is added after it — the fixed controls, which stay in the
 ## thumb's reach while the list moves (§21.1).
-static func scroll(column: VBoxContainer) -> VBoxContainer:
+## `plated` puts the list on paper: its words are body text (§21.8).
+static func scroll(column: VBoxContainer, plated := false) -> VBoxContainer:
 	var s := ScrollContainer.new()
 	s.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	s.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -84,8 +85,36 @@ static func scroll(column: VBoxContainer) -> VBoxContainer:
 	var body := VBoxContainer.new()
 	body.add_theme_constant_override("separation", px(Tokens.number("size", "gap_points")))
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	s.add_child(body)
+	if plated:
+		var p := panel()
+		p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		p.add_child(body)
+		s.add_child(p)
+	else:
+		s.add_child(body)
 	return body
+
+
+## A line of text the player types — a code, a name — with what it is for
+## said to a screen reader and shown until something is typed.
+static func field(spoken: String) -> LineEdit:
+	var f := LineEdit.new()
+	f.placeholder_text = spoken
+	f.accessibility_name = spoken
+	f.custom_minimum_size = Vector2(px(160), CONTROL_POINTS * PX_PER_POINT)
+	f.add_theme_font_size_override("font_size", text_px(TEXT_POINTS))
+	f.add_theme_color_override("font_color", Palette.INK)
+	f.add_theme_color_override("font_placeholder_color", Palette.INK)
+	var box := StyleBoxFlat.new()
+	box.bg_color = Palette.PAPER
+	box.border_color = Palette.INK
+	box.set_border_width_all(px(1))
+	box.set_corner_radius_all(px(Tokens.number("size", "corner_points")))
+	box.set_content_margin_all(px(6))
+	for state: String in ["normal", "focus", "read_only"]:
+		f.add_theme_stylebox_override(state, box)
+	f.set_meta("points", TEXT_POINTS)
+	return f
 
 
 ## `wraps` only for a label with the width of its row to itself: a wrapping
