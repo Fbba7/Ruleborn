@@ -195,7 +195,7 @@ dict(
              evidence="python3 -m tools.heist_harness.test_harness "
                       "(test_a_crew_that_clears_the_heart_first_survives_the_crack_noise)",
              register=["F32"]),
-        dict(id="T0.12", owner="claude", status="ready",
+        dict(id="T0.12", owner="claude", status="done",
              title="Measure F33's Glare options, then re-run \u00a713.2's "
                    "table at \u00a75.2's posts",
              gate="\u00a713.2's table re-measured at the posts \u00a75.2 "
@@ -213,16 +213,24 @@ dict(
                     "alarm's reach is realm-wide under Whispers, so two Glares "
                     "still held 91.5% there (F52); the owner answered F52 (a "
                     "fixed 4 m), built: two Glares now hold 72.5% against six "
-                    "other wards' 37.0% (n=200), as the brief measured.<br><br>v3.4 answered neither (both were "
+                    "other wards' 37.0% (n=200), as the brief measured.<br><br>"
+                    "<strong>Re-run.</strong> At §5.2's wards and posts with "
+                    "every answer built (n=800), the competent crew is held "
+                    "47.6, 60.8, 59.9, 90.6 and 95.5% at realm levels 1 to 5 "
+                    "— every level above 30 to 45%, and from realm 4 the "
+                    "guards alone. The optimal and clearing crews are held "
+                    "more. What to do about it is the owner's: F55.<br><br>v3.4 answered neither (both were "
                     "registered after its snapshot), and its brief 37 sweep "
                     "needs them: every realm level holds above its band with "
                     "no crack call at all, so the reach cannot be sized "
                     "against the bands until this is done (F35).",
-             evidence="python3 -m tools.heist_harness.test_harness "
-                      "(test_one_lantern_glare_outweighs_a_realm_of_other_wards, "
+             evidence="python3 -m tools.heist_harness holds 800; "
+                      "python3 -m tools.heist_harness.test_harness "
+                      "(test_finding_5_2s_budget_holds_every_realm_level_above_13_2s_band, "
+                      "test_one_lantern_glare_outweighs_a_realm_of_other_wards, "
                       "test_the_decided_glare_is_one_strong_pick_not_a_switch, "
                       "test_13_2s_hold_table_was_measured_at_one_guard_post)",
-             register=["F33", "F34", "F35", "F52"]),
+             register=["F33", "F34", "F35", "F52", "F55"]),
         dict(id="T0.13", owner="claude", status="done",
              title="Port v3.4's two heist rules, and run brief 37's sweep",
              gate="the crack's reach and the disarmer rule in sim/ and the "

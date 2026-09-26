@@ -873,6 +873,25 @@ def glare_holds(n: int = 60) -> tuple:
     return held(("Lantern Glare",), 2), held(("Time Snare", "Gravity Well"), 6)
 
 
+def test_finding_5_2s_budget_holds_every_realm_level_above_13_2s_band():
+    """F55 (T0.12). §13.2's table re-measured with every answer built — no
+    guard hears the Vault (F35), a Glare reaches a fixed 4 m (F33, F52) — at
+    §5.2's wards and posts: the competent crew is held 47.6, 60.8, 59.9, 90.6
+    and 95.5% at realm levels 1 to 5 (n=800), all above 30 to 45%. At §5.2's
+    three posts the guards alone hold realm 5 at 58.4%, so no ward count
+    reaches the band there; with fewer posts and wards every level can (realm
+    3 on two posts and one ward, 36.8%).
+    """
+    def held(level: int, wards=None, posts=None, n: int = 60) -> float:
+        rs = run_batch(n, 2, level, "competent", laws="defensive", shaped=1,
+                       wards=wards, posts=posts)
+        return 100 * sum(not r.success for r in rs) / n
+
+    assert held(3) >= 45                                   # §5.2's 6 wards, 2 posts
+    assert held(5, wards=0) >= 45                          # §5.2's 3 posts, no wards
+    assert held(3, wards=1, posts=2) <= 50                 # a setting inside reach
+
+
 def test_13_2s_hold_table_was_measured_at_one_guard_post():
     """F34. §13.2 (v3.3) lists realm 3's hold, 34.4%, at six wards and §5.2's
     two guard posts. F26's sweep, which that table quotes, ran one post in

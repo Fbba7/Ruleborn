@@ -4,6 +4,7 @@
     python3 -m tools.heist_harness depth           # one report
     python3 -m tools.heist_harness depth 500       # more runs a cell
     python3 -m tools.heist_harness depth --sweep crack_reach [n]   # brief 37
+    python3 -m tools.heist_harness holds [n]       # §13.2's table (T0.12)
 
 §19.27 asks for "thousands of heists". The defaults are smaller so the reports
 are quick to re-run while a number is being changed; pass a count to widen them.
@@ -23,6 +24,7 @@ REPORTS = {
     "haul": lambda n=60: ablation.report(n, metric="haul"),
     "control": report.attribution,
     "breakeven": report.break_even,
+    "holds": report.hold_table,
 }
 
 

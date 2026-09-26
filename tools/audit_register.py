@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72", "G41"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72", "G41", "F55"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -4949,7 +4949,7 @@ dict(id="F33", kind="finding", severity="design", status="open",
          "and can be measured before it is chosen.",
      measured="harness 30af740ce1811dbd; test_one_lantern_glare_outweighs_a_realm_of_other_wards"),
 
-dict(id="F34", kind="finding", severity="significant", status="open",
+dict(id="F34", kind="finding", severity="significant", status="done",
      title="§13.2\u2019s hold table was measured at one guard post, and at "
            "§5.2\u2019s posts no realm from 3 up is near its band",
      refs=["13.2", "5.2", "10.2", "31.5"],
@@ -4977,7 +4977,11 @@ dict(id="F34", kind="finding", severity="significant", status="open",
           "No realm is inside its band, and from realm 3 up the defence "
           "holds nearly every raid. On v3.2\u2019s wards the same cells read "
           "56.0, 65.0, 94.5, 100 and 100%. With the crack noise on (F32) "
-          "every number rises.",
+          "every number rises.<br><br><strong>Re-run (T0.12).</strong> "
+          "At §5.2\u2019s wards and posts with every answer built (no crack "
+          "call, F35; a fixed 4 m Glare, F33 and F52), n=800: 47.6, 60.8, "
+          "59.9, 90.6 and 95.5% held at realm levels 1 to 5. The re-measure "
+          "this item asked for is done; what it leaves is F55.",
      rec="Re-run §13.2\u2019s table at the posts §5.2 gives, which the "
          "aligned re-run §13.2 already schedules (32) can do in one pass, "
          "and state the depth each row was measured at. On this "
@@ -6437,6 +6441,45 @@ dict(id="F54", kind="finding", severity="minor", status="open",
      rec="Show the plateau as a gate rather than a bar nearly full, or give "
          "the non-raider exactly one more level and no more, or accept a "
          "ceiling above Keeper 12 by paying goals or ruins experience."),
+
+dict(id="F55", kind="finding", severity="significant", status="open",
+     title="With every answer built, §5.2\u2019s budget holds every realm "
+           "level above §13.2\u2019s band, and from realm 4 the guards alone do",
+     refs=["13.2", "5.2", "12.17", "32"],
+     body="§5.2: <em>\u201cEach realm level now gets the smaller of the wards "
+          "it needs to reach its hold band (13.2) and eight\u201d</em>, with "
+          "one, one, two, three and three guard posts. §13.2\u2019s table, "
+          "re-measured as it states it (the competent crew, three realms, one "
+          "geometry band, the sign-aware laws) with the owner\u2019s answers "
+          "built \u2014 no guard hears the Vault (F35), a Glare reaches a fixed "
+          "4 m (F33, F52) \u2014 at n=800:<br><br>"
+          "<code>realm &nbsp;wards &nbsp;posts &nbsp;&nbsp;held<br>"
+          "&nbsp;&nbsp;1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 &nbsp;&nbsp;47.6% \u00b1 1.8<br>"
+          "&nbsp;&nbsp;2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 &nbsp;&nbsp;60.8% \u00b1 1.7<br>"
+          "&nbsp;&nbsp;3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 &nbsp;&nbsp;59.9% \u00b1 1.7<br>"
+          "&nbsp;&nbsp;4 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3 &nbsp;&nbsp;90.6% \u00b1 1.0<br>"
+          "&nbsp;&nbsp;5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3 &nbsp;&nbsp;95.5% \u00b1 0.7</code><br><br>"
+          "Every level is above 30 to 45%, and §13.2\u2019s rule only moves a "
+          "band down. §5.2\u2019s own rule, applied again, gives 7, 3 and 0 "
+          "wards at realm levels 1 to 3 (34.9%, 33.1%, 35.5%) and none at 4 "
+          "and 5: three posts with no wards hold realm 5 at 58.4%. Every level "
+          "has some setting inside the band, but only with one post from realm "
+          "4 up \u2014 realm 4 on one post and two wards 38.0%, realm 5 on one "
+          "post and one ward 34.6% \u2014 which leaves the highest realms "
+          "almost nothing to build. The ward count is not a smooth dial "
+          "either: realm 5 on one post holds 34.6% with one ward and 89.6% "
+          "with two (a Snare and a Well), and the first Glare, at three "
+          "wards, still adds about 30 points at realm 3. The optimal and "
+          "clearing crews are held more often than the competent one here "
+          "(their waits cost clock across three realms), so the competent "
+          "crew is the strongest reference the harness has. Found re-running "
+          "§13.2\u2019s table (T0.12).",
+     measured="python3 -m tools.heist_harness holds 800; tools/heist_harness/"
+              "test_harness.py test_finding_5_2s_budget_holds_every_realm_level_above_13_2s_band",
+     rec="Either cut §5.2\u2019s budget to what reaches the band (one post "
+         "from realm 1 to 5, few wards high up), or keep the budget and "
+         "re-tune the raid side against it in the balance pass, or accept "
+         "higher holds at higher realm levels and move §13.2\u2019s bands."),
 
 dict(id="F51", kind="finding", severity="significant", status="open",
      title="A Keeper can close every edge tile but one, and so choose where "

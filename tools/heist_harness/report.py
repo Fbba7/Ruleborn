@@ -198,6 +198,59 @@ def crack_reach_sweep(n: int = 40, workers: int = 4) -> str:
     return "\n".join(lines)
 
 
+def _hold_cell(job) -> tuple:
+    """One cell of §13.2's table: a realm level and a crew, `n` raids."""
+    level, crew, n = job
+    held = [not r.success for r in run_batch(n, 2, level, crew, laws="defensive", shaped=1)]
+    p = sum(held) / n
+    return level, crew, 100 * p, 100 * (p * (1 - p) / n) ** 0.5
+
+
+def _generated_band(hold: float, se: float) -> tuple:
+    """§13.2's rule for a generated island's band: 30 to 45%, and "otherwise
+    the band keeps its 15-point width and its lower edge moves down 5 points
+    at a time until the measured hold sits inside with at least one standard
+    error to spare". It only moves down; a hold above the band stays above."""
+    from ..design_facts import HOLD_BAND
+    lo, hi = HOLD_BAND
+    while hold - se < lo and lo > 0:
+        lo, hi = lo - 5, hi - 5
+    return lo, hi
+
+
+def hold_table(n: int = 200, workers: int = 4) -> str:
+    """§13.2's generated-island table, re-measured as roadmap T0.12 asks: at
+    §5.2's wards and guard posts for every realm level, with the owner's
+    answers built — no guard hears the Vault (F35), a Lantern Glare reaches a
+    fixed 4 m (F33, F52) — for §13.2's competent crew and, beside it, the
+    optimal and the clearing crews. As §13.2 measures: three realms, one
+    geometry band, the sign-aware generator's laws. Each band is the one
+    §13.2's rule gives from the competent crew's hold.
+    """
+    import multiprocessing as mp
+    crews = ("competent", "optimal", "clearing")
+    jobs = [(level, crew, n) for level in (1, 2, 3, 4, 5) for crew in crews]
+    with mp.Pool(workers) as pool:
+        cells = {(lv, c): (h, se) for lv, c, h, se in pool.map(_hold_cell, jobs)}
+    lines = ["§13.2's table at §5.2's wards and posts, with the owner's answers (T0.12)", "",
+             f"n = {n} a cell; hold ± one standard error. The band is §13.2's rule on "
+             "the competent crew's hold.", "",
+             f"{'realm':<6} {'wards':>5} {'posts':>5}   {'competent':>12} {'optimal':>12} "
+             f"{'clearing':>12}   {'band':>9}  competent"]
+    from .island import POSTS, WARDS
+    for level in (1, 2, 3, 4, 5):
+        h, se = cells[(level, "competent")]
+        lo, hi = _generated_band(h, se)
+        where = ("inside" if lo <= h <= hi else "above" if h > hi else "below")
+        lines.append(
+            f"{level:<6} {WARDS(level, 'v3.4'):>5} {POSTS(level, 'v3.4'):>5}   "
+            + " ".join(f"{cells[(level, c)][0]:>6.1f} ± {cells[(level, c)][1]:>3.1f}" for c in crews)
+            + f"   {lo:>2.0f} to {hi:>2.0f}%  {where}")
+    lines += ["", "§13.2's published holds (v3.4, one post, before the answers): "
+              "27.6, 37.6, 34.4, 40.4 and realm level 5's row."]
+    return "\n".join(lines)
+
+
 def defence_balance(n: int = 40, realm_level: int = 3) -> str:
     """§13.2's hold rate, and §13.4's rule that no layer decides on its own."""
     lines = ["Is the defence fair? (§13.2, §13.4)", ""]

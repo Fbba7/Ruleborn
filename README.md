@@ -33,7 +33,7 @@ patrol positions), and handed the realms' one to this repository: §32.9's full
 economy re-run. That run is done, so the realms now wait on the document taking
 its tables.
 
-Five versions have now answered the audit. **112 of 217 register items are fixed
+Five versions have now answered the audit. **112 of 218 register items are fixed
 in the document itself**, the latest 15 by v3.4. 64 are still open.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
@@ -303,7 +303,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 217 tracked items with section references and status:
+document, as 218 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
