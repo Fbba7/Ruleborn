@@ -91,3 +91,121 @@ PROBLEM_LANDINGBLOCKED,the landing is blocked,o desembarque está bloqueado
 PROBLEM_SEALED,no path reaches the Vault,nenhum caminho chega ao Cofre
 PROBLEM_EDGECLOSED,a side has fewer than half its edge open to land on,um lado tem menos da metade da borda aberta para desembarque
 RESULT_BUILDER,Back to the builder,Voltar ao construtor
+RESULT_CONFIRMING,"Checked on this phone (%d bytes); the server confirms it when you are back online.","Conferido neste celular (%d bytes); o servidor confirma quando você voltar a ficar online."
+ERR_UNKNOWN,something went wrong (%s),algo deu errado (%s)
+ERR_OFFLINE,no server is set,nenhum servidor configurado
+ERR_UNREACHABLE,the server could not be reached,não foi possível falar com o servidor
+ERR_TIMEOUT,the server took too long to answer,o servidor demorou demais para responder
+ERR_REQUEST_FAILED,the request could not be sent,não foi possível enviar o pedido
+ERR_MALFORMED_RESPONSE,the server's answer could not be read,não foi possível ler a resposta do servidor
+ERR_NO_TARGET,there is no island to raid yet,ainda não há ilha para assaltar
+ERR_ISLAND_DOES_NOT_LOAD,the island did not load,a ilha não carregou
+ERR_A_REASON_IS_OWED,a reason is needed,é preciso um motivo
+ERR_ACCOUNT_DELETED,this account has been deleted,esta conta foi excluída
+ERR_ALREADY_FRIENDS,you are already friends,vocês já são amigos
+ERR_ALREADY_IN_A_CONSTELLATION,you are already in a constellation,você já está em uma constelação
+ERR_ALREADY_IN_A_CREW,you are already in a crew,você já está em uma tripulação
+ERR_ALREADY_OWNED,that is already owned,isso já é seu
+ERR_ANALYSTS_ONLY,only analysts can see this,só analistas podem ver isto
+ERR_BAD_DATA,the game sent something it should not have,o jogo enviou algo que não devia
+ERR_BAD_FIELD,the game sent something it should not have,o jogo enviou algo que não devia
+ERR_BAD_PUSH_TOKEN,notifications could not be set up on this device,não foi possível ativar as notificações neste aparelho
+ERR_BAD_REMINDER_TIME,that reminder time is not a time of day,esse horário de lembrete não é um horário do dia
+ERR_BAD_TIME,this device's clock looks wrong,o relógio deste aparelho parece errado
+ERR_BAD_TIME_ZONE,this device's time zone was not recognised,o fuso horário deste aparelho não foi reconhecido
+ERR_BAD_WITHDRAW,the game sent something it should not have,o jogo enviou algo que não devia
+ERR_BANNED,this account has been banned,esta conta foi banida
+ERR_BATCH_TOO_LARGE,too much was sent at once,muita coisa foi enviada de uma vez
+ERR_CHALLENGE_ALREADY_PLAYED,you have already played this challenge,você já jogou este desafio
+ERR_CONSTELLATION_CLOSED,that constellation is closed,essa constelação está fechada
+ERR_CONSTELLATION_FULL,that constellation is full,essa constelação está cheia
+ERR_CREW_FULL,that crew is full,essa tripulação está cheia
+ERR_CURATED_LISTS_ONLY,only the featured list is open to you,só a lista em destaque está aberta para você
+ERR_ELDERS_FULL,the constellation has all its elders,a constelação já tem todos os seus anciãos
+ERR_FOUNDER_ONLY,only the founder can do that,só o fundador pode fazer isso
+ERR_GIFTS_GO_TO_FRIENDS,gifts can only go to friends,presentes só podem ir para amigos
+ERR_GOOGLE_IDENTITY_REFUSED,that Google account could not be confirmed,não foi possível confirmar essa conta Google
+ERR_INTENT_MISMATCH,the purchase did not match what was asked for,a compra não corresponde ao que foi pedido
+ERR_INTERNAL,the server had a problem; try again,o servidor teve um problema; tente de novo
+ERR_ISLAND_NOT_PUBLISHABLE,the island breaks a building rule,a ilha quebra uma regra de construção
+ERR_ISLAND_WITHDRAWN,that island was withdrawn,essa ilha foi retirada
+ERR_KEEPER_LEVEL_TOO_LOW,your Keeper level is too low,seu nível de Guardião é baixo demais
+ERR_LEASE_EXPIRED,the heist's time ran out before it was sent,o tempo do assalto acabou antes do envio
+ERR_LEASE_HELD_IN_ANOTHER_MODE,that island is already held for another kind of heist,essa ilha já está reservada para outro tipo de assalto
+ERR_LEASE_REFUSED,that heist is not yours to send,esse assalto não é seu para enviar
+ERR_MALFORMED_BODY,the game sent something it should not have,o jogo enviou algo que não devia
+ERR_MALFORMED_JSON,the game sent something it should not have,o jogo enviou algo que não devia
+ERR_MISSING_FIELD,the game sent something it should not have,o jogo enviou algo que não devia
+ERR_MONTHLY_CAP,this month's spending limit is reached,o limite de gastos deste mês foi atingido
+ERR_NAME_NOT_FROM_THE_WORD_LISTS,the name must come from the word lists,o nome deve vir das listas de palavras
+ERR_NEW_PLAYER_PROTECTED,that player is new and still protected,esse jogador é novo e ainda está protegido
+ERR_NO_EVENTS,there was nothing to send,não havia nada para enviar
+ERR_NO_FREE_SLOT,all your Workshop slots are in use,todos os seus espaços na Oficina estão em uso
+ERR_NO_ISLAND_TO_SHARE,you have no island to share yet,você ainda não tem ilha para compartilhar
+ERR_NO_SUCH_ACCOUNT,no account was found,nenhuma conta foi encontrada
+ERR_NO_SUCH_ACTION,that action does not exist,essa ação não existe
+ERR_NO_SUCH_AGE_BAND,that age is not one the game knows,essa idade não é uma que o jogo conhece
+ERR_NO_SUCH_CHALLENGE,that challenge no longer exists,esse desafio não existe mais
+ERR_NO_SUCH_CONSTELLATION,that constellation no longer exists,essa constelação não existe mais
+ERR_NO_SUCH_CREW,that crew no longer exists,essa tripulação não existe mais
+ERR_NO_SUCH_EVENT,the game sent something it should not have,o jogo enviou algo que não devia
+ERR_NO_SUCH_FIELD,the game sent something it should not have,o jogo enviou algo que não devia
+ERR_NO_SUCH_HEIST,that heist was not found,esse assalto não foi encontrado
+ERR_NO_SUCH_INVITE,that invite has expired or was already used,esse convite expirou ou já foi usado
+ERR_NO_SUCH_ISLAND,that island was not found,essa ilha não foi encontrada
+ERR_NO_SUCH_LIST,that list does not exist,essa lista não existe
+ERR_NO_SUCH_MODE,that kind of heist does not exist,esse tipo de assalto não existe
+ERR_NO_SUCH_PRODUCT,that item is not for sale,esse item não está à venda
+ERR_NO_SUCH_REALM,that realm does not exist,esse reino não existe
+ERR_NO_SUCH_REASON,that reason is not one the game knows,esse motivo não é um que o jogo conhece
+ERR_NO_SUCH_REPORT,that report was not found,essa denúncia não foi encontrada
+ERR_NO_SUCH_ROLE,that role does not exist,esse papel não existe
+ERR_NO_SUCH_ROUTE,the game asked for something the server does not know,o jogo pediu algo que o servidor não conhece
+ERR_NO_SUCH_SEASON,that season does not exist,essa temporada não existe
+ERR_NO_SUCH_SLOT,that slot does not exist,esse espaço não existe
+ERR_NO_SUCH_SNAPSHOT,that island has changed since the list was made,essa ilha mudou desde que a lista foi feita
+ERR_NO_SUCH_TARGET,that target is not in the list,esse alvo não está na lista
+ERR_NO_TRANSPORT,the game could not reach the network,o jogo não conseguiu acessar a rede
+ERR_NOT_A_MEMBER,you are not a member,você não é membro
+ERR_NOT_A_MODERATOR,only moderators can do that,só moderadores podem fazer isso
+ERR_NOT_CLEARED,clear the island yourself before publishing it,vença a ilha você mesmo antes de publicá-la
+ERR_NOT_CONFIGURED,this is not available here yet,isto ainda não está disponível aqui
+ERR_NOT_ENOUGH_STARS,you need more season stars,você precisa de mais estrelas da temporada
+ERR_NOT_FOUND,it was not found,não foi encontrado
+ERR_NOT_FRIENDS,you are not friends,vocês não são amigos
+ERR_NOT_IN_A_CONSTELLATION,you are not in a constellation,você não está em uma constelação
+ERR_NOT_IN_A_CREW,you are not in a crew,você não está em uma tripulação
+ERR_NOT_OWNED,you do not own that,isso não é seu
+ERR_NOT_PLAYED,play the island before rating it,jogue a ilha antes de avaliá-la
+ERR_NOT_THIS_CHALLENGE,that island is not this challenge's,essa ilha não é a deste desafio
+ERR_NOTHING_TO_TRACE,there is no raid to trace back,não há assalto para rastrear
+ERR_NOTIFICATION_REFUSED,the store's message was not accepted,a mensagem da loja não foi aceita
+ERR_OWN_GIFT,"a gift is for a friend, not yourself","um presente é para um amigo, não para você"
+ERR_OWN_INVITE,that is your own invite,esse é o seu próprio convite
+ERR_OWN_ISLAND,that is your own island,essa é a sua própria ilha
+ERR_PLATFORM_IDENTITY_REFUSED,your sign-in could not be confirmed,não foi possível confirmar seu login
+ERR_PLAY_REFUSED,that play is not yours to send,essa partida não é sua para enviar
+ERR_POSITIONS_ARE_NEVER_SENT,the game sent something it should not have,o jogo enviou algo que não devia
+ERR_QUOTA_FULL,your Workshop storage is full,seu espaço na Oficina está cheio
+ERR_RATINGS_ARE_ONE_TO_FIVE,ratings go from one to five,as avaliações vão de um a cinco
+ERR_RECEIPT_BELONGS_TO_ANOTHER_ACCOUNT,that purchase belongs to another account,essa compra pertence a outra conta
+ERR_RECEIPT_REFUNDED,that purchase was refunded,essa compra foi reembolsada
+ERR_RECEIPT_REFUSED,the store did not confirm the purchase,a loja não confirmou a compra
+ERR_REMINDER_AT_NIGHT,reminders cannot be set during your quiet hours,lembretes não podem ser marcados no seu horário de silêncio
+ERR_REPLAY_MALFORMED,the heist could not be read,não foi possível ler o assalto
+ERR_REPLAY_NO_LONGER_KEPT,that replay is no longer kept,esse replay não é mais guardado
+ERR_RULES_NOT_HELD,this version of the game is out of date,esta versão do jogo está desatualizada
+ERR_SEASON_STILL_OPEN,the season has not ended yet,a temporada ainda não terminou
+ERR_SESSION_REFUSED,please sign in again,"entre de novo, por favor"
+ERR_SUPERSEDED,that island has been changed since,essa ilha foi alterada desde então
+ERR_SURVEY_ONCE_A_QUARTER,the survey has already been answered,a pesquisa já foi respondida
+ERR_THE_NIGHT_IS_ALWAYS_QUIET_UNDER_18,quiet hours stay on under 18,o horário de silêncio fica ligado para menores de 18
+ERR_TOO_LARGE,too much was sent at once,muita coisa foi enviada de uma vez
+ERR_TRACK_COMPLETE,the whole track is claimed,a trilha inteira já foi resgatada
+ERR_WRONG_CLOCK,the heist ran on the wrong clock,o assalto rodou com o relógio errado
+ERR_WRONG_ERA,the heist was played in the wrong era,o assalto foi jogado na era errada
+ERR_WRONG_ISLAND,the heist was played on the wrong island,o assalto foi jogado na ilha errada
+ERR_WRONG_SEED,the heist was played on the wrong seed,o assalto foi jogado com a semente errada
+ERR_WRONG_SLOT,that does not go in that slot,isso não vai nesse espaço
+ERR_GIFT_INTENT_GONE,this gift is too old to deliver; the store will refund it,este presente é antigo demais para ser entregue; a loja vai reembolsá-lo
+ERR_STARTING,the server is starting; try again in a moment,o servidor está iniciando; tente de novo em instantes

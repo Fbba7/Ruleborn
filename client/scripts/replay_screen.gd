@@ -18,7 +18,6 @@ var entries: Array = []
 var current := 0
 var playing := true
 var speed_index := 1
-var _owed := 0.0
 
 var view: RealmView
 var hud: HeistHud
@@ -28,10 +27,14 @@ var grade_label: Label
 var play_button: Button
 var speed_button: Button
 
+var _owed := 0.0
+
 
 func _ready() -> void:
-	if not Session.replay.is_empty():
-		entries.append([Strings.t("REPLAY_YOURS"), Session.replay])
+	App.ready(self)
+	var yours: PackedByteArray = App.services.store.get_slice(AppState.HEIST)["replay"]
+	if not yours.is_empty():
+		entries.append([Strings.t("REPLAY_YOURS"), yours])
 	for g in find_goldens():
 		entries.append([Strings.t("REPLAY_GOLDEN", g), FileAccess.get_file_as_bytes("res://goldens/%s.rbh" % g), g])
 	_build()
@@ -126,14 +129,14 @@ func _build() -> void:
 	column.add_child(status)
 
 	var controls := UI.row()
-	controls.add_child(UI.button("‹", func(): open_entry(current - 1); playing = true))
-	play_button = UI.button(Strings.t("REPLAY_PAUSE"), func(): playing = not playing; _refresh(), true)
+	controls.add_child(UI.button("‹", func() -> void: open_entry(current - 1); playing = true))
+	play_button = UI.button(Strings.t("REPLAY_PAUSE"), func() -> void: playing = not playing; _refresh(), true)
 	controls.add_child(play_button)
-	speed_button = UI.button("×2", func(): speed_index = (speed_index + 1) % SPEEDS.size(); _refresh())
+	speed_button = UI.button("×2", func() -> void: speed_index = (speed_index + 1) % SPEEDS.size(); _refresh())
 	controls.add_child(speed_button)
-	controls.add_child(UI.button("›", func(): open_entry(current + 1); playing = true))
+	controls.add_child(UI.button("›", func() -> void: open_entry(current + 1); playing = true))
 	var back := UI.row()
-	back.add_child(UI.button(Strings.t("COMMON_HOME"), func(): get_tree().change_scene_to_file("res://scenes/home.tscn")))
+	back.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
 	column.add_child(back)
 	column.add_child(controls)
 

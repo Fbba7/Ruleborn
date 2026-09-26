@@ -16,6 +16,41 @@ python3 client/status.py    # build, run the tests headless, write client/status
 `$RULEBORN_GODOT`). To look at it on a desktop, open `client/` in Godot 4.5
 after building.
 
+## How it is built
+
+One direction for data, one job a layer, so a defect is found by asking
+which layer's job it was. The shape is the one mobile clients converge on
+(unidirectional data as Redux and The Composable Architecture do it, with
+repositories in front of the network), in Godot's own terms:
+
+| Layer | Where | Its one job | Tested |
+|---|---|---|---|
+| Views | `scenes/`, `scripts/*_screen.gd` | Draw what they are given and send taps and buttons on; hold no state that outlives them and call no network | the layout, size and catalogue checks on every screen |
+| Controllers and presenters | `features/<feature>/` | Turn taps into commands and state into what a view shows, with no nodes | headless, by calling them (`HeistController`) |
+| The store | `core/store.gd`, `app/app_state.gd` | Hold the app's state in slices, changed only by an action a reducer owns; log every action | headless (`tests/core_tests.gd`) |
+| Repositories | `data/repositories/` | The only code that calls server/, one per area, each call a `Result` | against a `FakeTransport`, and end to end against the real server |
+| The outbox | `data/outbox.gd` | §24.12's queue: a heist's replay kept until the server has answered | headless: offline, a restart, a refusal, a 5xx |
+| The API and transport | `data/api.gd`, `data/*_transport.gd` | HTTPS only, a bearer token, the server's refusal reason as the failure code | headless |
+| Services | `app/services.gd`, `app/app.gd` | Build everything once (the composition root); a test builds its own with fakes | by every test |
+| The look | `ui/tokens.json`, `ui/tokens.gd`, `scripts/ui.gd`, `scripts/palette.gd` | Every colour, size and timing, cited; the components built from them | the token check |
+
+**Where the design lands.** Claude Design's tokens replace `ui/tokens.json`
+and its components replace `scripts/ui.gd`'s; no screen names a colour or a
+size of its own.
+
+**Finding a defect.** Every failure is one code — the server's own refusal
+reason, or the client's (`unreachable`, `timeout`, `malformed_response`) —
+shown to the player in words (`core/errors.gd`) and written to the action
+log with the route it came from, never a token. The log holds the last 64
+actions and failures, so a report carries the steps that led to it.
+`tools/client_contract.py` fails the build if the client calls a route the
+server does not serve, or if a code the server can refuse with has no words.
+
+**Offline.** A heist's replay goes into the outbox before it is sent. With no
+network, the result shows the phone's own check, marked as confirming
+(§24.12), and the outbox sends it when the server can be reached; the server
+answers a repeat from its first decision, so nothing is paid twice.
+
 ## What is here
 
 Six screens, opened from `scenes/home.tscn`:
@@ -173,15 +208,20 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.5-stable_linux.x
 
 ## Layout
 
-    project.godot           portrait, 1080 × 2340, the compatibility renderer
+    project.godot           portrait, 1080 × 2340, the compatibility renderer;
+                            GDScript warnings are errors (every declaration typed)
     ruleborn.gdextension    loads bin/libruleborn_godot.so
     ext/                    the extension: RulebornReplay and RulebornIsland, over sim/
+    app/                    the composition root, the store's slices, the router
+    core/                   Result, the store, the action log, failure words
+    data/                   the API, transports, repositories, the outbox
+    features/heist/         the heist's controller
+    ui/tokens.json          the design tokens, each cited
     i18n/strings.csv        every word on screen, a column a language
     scenes/                 home, heist, result, replay, settings and builder screens
     scripts/                the screens, the realm view and heads-up display,
                             the shared UI pieces, the palette, the string catalogue,
-                            the saved settings, the session hand-off,
-                            and server_client.gd, server/'s edge functions over HTTP
-    tests/run.gd            headless tests, TAP
+                            the saved settings
+    tests/run.gd            headless tests, TAP; tests/core_tests.gd, the layers'
     tests/screenshot.gd     a still, under a virtual display
     build.sh, status.py     build, test, write status.json

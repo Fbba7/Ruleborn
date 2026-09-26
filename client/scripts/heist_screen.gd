@@ -1,31 +1,20 @@
 class_name HeistScreen
 extends Control
-## A heist, played: each tap becomes a simulation command at the tick it is
-## made (§24.10: "a move or an ability with its tick, crew member and target"),
-## the world steps in real time, and when the clock runs out the command log is
-## written down as the replay a device queues (§24.12) and checked the way the
-## server checks it.
+## A heist, on screen: `HeistController` holds the heist and turns taps into
+## commands; this screen draws it, forwards taps and buttons, runs the clock
+## in real time, and when the clock runs out hands the replay to the heist
+## repository, which checks it with the server (§24.12) — or, offline, the
+## same check runs on the phone.
 ##
-## One crew member is selected at a time, and a tap on the realm gives it the
-## command the tapped thing calls for (see `tap_tile`). The buttons cycle its
-## gait, halt it, drop half its loot, and — Get out — call the skiff (§5.4) to
-## the next tile tapped. §21.8 puts crew portraits at the bottom left and actions at the
-## bottom right; both rows here sit above the corners, which §21.1 keeps clear.
+## §21.8 puts crew portraits at the bottom left and actions at the bottom
+## right; both rows here sit above the corners, which §21.1 keeps clear.
 
-enum Kind { MOVE_TO, GAIT, HALT, CRACK, LOAD, SKIFF, ATTACK, BREAK, DROP, DISARM, DRAG, LAND }
+signal finished
 
-## §5.4's clock at the Heart with no links: 150 seconds, 30 ticks each.
-const TICKS := 150 * 30
-## The seed a lease would bring (§24.12). There is no server connection yet,
-## so every heist here is played on the same one.
-const SEED := "1"
-const CREW := 3
+const Kind := HeistController.Kind
 
-var world := RulebornReplay.new()
-var selected := 0
-var calling_skiff := false
+var controller := HeistController.new()
 var playing := true
-var _owed := 0.0
 
 var view: RealmView
 var hud: HeistHud
@@ -33,238 +22,90 @@ var hint_label: Label
 var gait_button: Button
 var crew_buttons: Array[Button] = []
 
-
-## The server, when there is one, and the lease this heist is played under.
-var server: ServerClient
+## The lease this heist is played under, when a server gave one.
 var lease := {}
-var island := PackedByteArray()
-var seed_text := ""
+
+var _owed := 0.0
 
 
 func _ready() -> void:
-	world.start(SEED, TICKS, CREW, PackedByteArray())
+	App.ready(self)
+	var services: Services = App.services
+	var heist: Dictionary = services.store.get_slice(AppState.HEIST)
+	controller.world.start(HeistController.SEED, HeistController.TICKS, HeistController.CREW, PackedByteArray())
 	_build()
-	if Session.testing:
-		begin(SEED, TICKS, CREW, Session.island)
-	elif Session.server_url() == "":
-		begin(SEED, TICKS, CREW)
+	controller.changed.connect(_refresh)
+	controller.clock_out.connect(finish)
+	if heist["testing"]:
+		begin(HeistController.SEED, HeistController.TICKS, HeistController.CREW, heist["island"])
+	elif not services.api.online():
+		begin(HeistController.SEED, HeistController.TICKS, HeistController.CREW)
 	else:
 		playing = false
 		hint_label.text = Strings.t("HEIST_ASKING")
-		var problem := await begin_online(Session.server_url())
+		var problem := await begin_online(services)
 		if problem != "":
-			hint_label.text = Strings.t("HEIST_NONE", problem)
+			hint_label.text = Errors.message("HEIST_NONE", problem)
 
 
-## Start a fresh heist on this seed and clock, on `realm` (a bundle; empty for
-## the fixture realm), in the week's `era` (§18.3) as the lease names it.
-func begin(seed: String, ticks: int, crew: int, realm := PackedByteArray(), era := "") -> bool:
-	if not world.set_era(era) or not world.start(seed, ticks, crew, realm):
+## Start a fresh heist; see `HeistController.begin`.
+func begin(seed_text: String, ticks: int, crew: int, realm := PackedByteArray(), era := "") -> bool:
+	if not controller.begin(seed_text, ticks, crew, realm, era):
 		return false
-	island = realm
-	seed_text = seed
-	selected = 0
-	calling_skiff = false
 	playing = true
-	view.show_replay(world)
+	view.show_replay(controller.world)
 	_refresh()
 	return true
 
 
 ## §24.12's Lease: sign in, take the first target from the lists, fetch its
 ## bundle and lease it — "a target snapshot, a seed, a single-use token and an
-## expiry a day away". Returns "" or what went wrong.
-func begin_online(url: String) -> String:
-	server = ServerClient.new(url)
-	add_child(server)
-	var me := await server.sign_in(Session.credential())
-	if me.has("error"):
-		return str(me["error"])
-	var target := await server.first_target(me["account"])
-	if target.has("error"):
-		return str(target["error"])
-	var bundle := await server.fetch(target["bundle"])
-	lease = await server.lease(target["bundle"], target["owner"])
-	if lease.has("error") or bundle.is_empty():
-		return str(lease.get("error", "no bundle"))
-	if not begin(str(lease["seed"]), int(lease["ticks"]), CREW, bundle, lease_era(lease)):
-		return "the leased island does not load"
+## expiry a day away". Returns "" or the code of what went wrong.
+func begin_online(services: Services) -> String:
+	var me := await services.account.sign_in(Services.credential())
+	if not me.ok:
+		return me.code
+	services.store.dispatch(&"signed_in", {"account": me.value["account"]})
+	var target := await services.heists.first_target(str(me.value["account"]))
+	if not target.ok:
+		return target.code
+	var bundle := await services.heists.fetch(str(target.value["bundle"]))
+	if not bundle.ok:
+		return bundle.code
+	var leased := await services.heists.lease(str(target.value["bundle"]), str(target.value["owner"]))
+	if not leased.ok:
+		return leased.code
+	lease = leased.value
+	if not begin(str(lease["seed"]), int(lease["ticks"]), HeistController.CREW, bundle.value,
+			HeistController.lease_era(lease)):
+		return "island_does_not_load"
 	return ""
 
 
-## The era a lease names (§18.3), as `begin` takes it: a lease in none sends
-## `null`, which is "" here — `str(null)` is "<null>", which no era is.
-static func lease_era(leased: Dictionary) -> String:
-	var era = leased.get("era")
-	return "" if era == null else str(era)
-
-
-# -- what a tap does ------------------------------------------------------
-
-func select(member: int) -> void:
-	selected = clampi(member, 0, CREW - 1)
-	calling_skiff = false
-	_refresh()
-
-
-## A tap on the realm's tile `t`, read by what is on it. Each tap is one
-## command the player chose, never one the crew chose for them (§12.18):
-##
-##   after Get out      call the skiff here (§5.4)
-##   a crew member      select it
-##   a guard            attack it (§12.20), or drag it if it is down (§12.8)
-##   the Vault          crack it (§12.6), or load to full once it is open
-##   a law pylon        break it (§12.6)
-##   a live ward        disarm it, standing on its tile (§10.3)
-##   anything else      walk there (§12.18)
-func tap_tile(t: Vector2i) -> void:
-	if t.x < 0:
-		return
-	var at := Vector2i(t.x * 256 + 128, t.y * 256 + 128)
-	if calling_skiff:
-		world.give(selected, Kind.SKIFF, at.x, at.y)
-		calling_skiff = false
-		_refresh()
-		return
-	var crew := world.crew()
-	for i in crew.size():
-		if Vector2i(crew[i]["at"]) == t and i != selected and crew[i]["standing"] == "Active":
-			select(i)
-			return
-	var guards := world.guards()
-	for g in guards.size():
-		if Vector2i(guards[g]["at"]) == t:
-			world.give(selected, Kind.DRAG if guards[g]["down"] else Kind.ATTACK, g, 0)
-			_refresh()
-			return
-	var vault := world.vault()
-	if Vector2i(vault["at"]) == t:
-		if vault["open"]:
-			load_up(100)
-		else:
-			crack()
-		_refresh()
-		return
-	var features := world.features()
-	var size := world.size()
-	if features[t.y * size.x + t.x] == RealmView.Tile.PYLON:
-		world.give(selected, Kind.BREAK, at.x, at.y)
-		_refresh()
-		return
-	for w in world.wards():
-		if Vector2i(w["at"]) == t and w["live"]:
-			world.give(selected, Kind.DISARM, at.x, at.y)
-			_refresh()
-			return
-	world.give(selected, Kind.MOVE_TO, at.x, at.y)
-	_refresh()
-
-
-const GAITS := ["Walk", "Crouch", "Run"]
-
-
-## The selected member's next gait: walk, crouch, run, and round again
-## (§12.17 prices all three for eyes and ears).
-func next_gait() -> void:
-	var now: String = world.crew()[selected]["gait"]
-	var next := (GAITS.find(now) + 1) % GAITS.size()
-	world.give(selected, Kind.GAIT, next, 0)
-	_refresh()
-
-
-func halt() -> void:
-	world.give(selected, Kind.HALT, 0, 0)
-	_refresh()
-
-
-## §12.19: dropping loot "costs exactly the fraction dropped"; half, from the
-## button.
-func drop_half() -> void:
-	world.give(selected, Kind.DROP, 50, 0)
-	_refresh()
-
-
-func crack() -> void:
-	world.give(selected, Kind.CRACK, 0, 0)
-
-
-## Load until the bags are full: §12.19's fill, asked for as a percentage.
-func load_up(percent := 100) -> void:
-	world.give(selected, Kind.LOAD, percent, 0)
-
-
-func get_out() -> void:
-	calling_skiff = true
-	_refresh()
-
-
-# -- the clock ------------------------------------------------------------
-
-## Run `ticks` ticks; when the heist's clock runs out, finish it.
+## Run `ticks` ticks of the clock; see `HeistController.advance`.
 func advance(ticks: int) -> void:
-	for i in ticks:
-		if world.tick() == 0 and not landed():
-			land(default_landing())
-		if not world.step():
-			finish()
-			return
-	_refresh()
-
-
-## §5.4: the crew lands on the edge tile `t`, which the log records at tick
-## 0. Until there is a landing picker, a heist that has not landed by its
-## first step lands on `default_landing()` (`advance`).
-func land(t: Vector2i) -> bool:
-	if world.tick() != 0:
-		return false
-	return world.give(0, Kind.LAND, t.x * 256 + 128, t.y * 256 + 128)
-
-
-## A landing the crew can walk to the Vault from, chosen by the heist's seed
-## rather than taken first in row order, so a Keeper cannot aim the default
-## at a closed pocket of the edge. Until there is a landing picker.
-func default_landing() -> Vector2i:
-	var spots := world.reaching()
-	if spots.is_empty():
-		spots = world.landings()
-	if spots.is_empty():
-		return Vector2i(0, 0)
-	return spots[absi(seed_text.hash()) % spots.size()]
-
-
-func landed() -> bool:
-	return world.commands().any(func(c): return int(c["kind"]) == Kind.LAND)
+	controller.advance(ticks)
 
 
 ## Write the heist down and have it checked: by the server, which re-simulates
 ## and settles it (§24.12), or — offline — by the same function on the phone.
+## A submission the network cannot carry now waits in the outbox, and the
+## result shows the phone's own check, marked confirming.
 func finish() -> void:
 	if not playing:
 		return
 	playing = false
-	Session.replay = world.record()
-	Session.island = island
-	if server != null and not lease.is_empty():
+	var services: Services = App.services
+	var replay := controller.record()
+	var local := RulebornReplay.validate(replay, controller.island)
+	services.store.dispatch(&"heist_finished", {"replay": replay, "verdict": local})
+	if not lease.is_empty():
 		hint_label.text = Strings.t("HEIST_CHECKING")
-		Session.verdict = settled(await server.submit(lease["token"], Session.replay))
-	else:
-		Session.verdict = RulebornReplay.validate(Session.replay, island)
+		var answer := await services.heists.submit(str(lease["token"]), replay)
+		services.store.dispatch(&"heist_verdict", HeistController.settled(answer, local))
 	finished.emit()
 	if is_inside_tree():
-		get_tree().change_scene_to_file.call_deferred("res://scenes/result_screen.tscn")
-
-
-signal finished
-
-
-## The server's answer in the result screen's terms. The grade is the server's
-## re-simulation's; the haul and fee are what it minted (§9.4, §9.6).
-static func settled(out: Dictionary) -> Dictionary:
-	if out.has("error") or not out.get("validated", false):
-		return {"ok": false, "refused": out.get("reason", out.get("error", "refused")), "server": true}
-	var verdict: Dictionary = out["verdict"]
-	return {"ok": true, "grade": str(verdict["grade"]).capitalize(), "banked": verdict["banked"],
-		"haul": out["haul"]["total"], "fee": out["fee"], "server": true}
+		services.router.go.call_deferred(&"result")
 
 
 func _process(delta: float) -> void:
@@ -273,7 +114,7 @@ func _process(delta: float) -> void:
 	_owed += delta * RulebornReplay.ticks_per_second()
 	var whole := int(_owed)
 	_owed -= whole
-	advance(whole)
+	controller.advance(whole)
 
 
 # -- layout ---------------------------------------------------------------
@@ -281,14 +122,14 @@ func _process(delta: float) -> void:
 func _refresh() -> void:
 	if hud == null:
 		return
-	hud.show_state(world)
-	var me: Dictionary = world.crew()[selected]
-	hint_label.text = Strings.t("HEIST_SKIFF_HINT") if calling_skiff else \
+	hud.show_state(controller.world)
+	var me: Dictionary = controller.world.crew()[controller.selected]
+	hint_label.text = Strings.t("HEIST_SKIFF_HINT") if controller.calling_skiff else \
 		Strings.t("HEIST_HINT", Strings.term("ROLE", me["role"]))
 	gait_button.text = Strings.term("GAIT", me["gait"])
 	for i in crew_buttons.size():
 		var b := crew_buttons[i]
-		b.modulate = Color.WHITE if i == selected else Color(1, 1, 1, 0.6)
+		b.modulate = Color.WHITE if i == controller.selected else Color(1, 1, 1, 0.6)
 	view.queue_redraw()
 
 
@@ -298,27 +139,28 @@ func _build() -> void:
 	column.add_child(hud)
 	view = RealmView.new()
 	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	view.gui_input.connect(func(event):
+	view.gui_input.connect(func(event: InputEvent) -> void:
 		if event is InputEventMouseButton and event.pressed:
-			tap_tile(view.tile_at(event.position)))
+			controller.tap_tile(view.tile_at(event.position)))
 	column.add_child(view)
 	hint_label = UI.label("", UI.TEXT_POINTS, true)
 	column.add_child(hint_label)
 
 	var actions := UI.row()
 	column.add_child(actions)
-	gait_button = UI.button(Strings.term("GAIT", "Walk"), next_gait)
+	gait_button = UI.button(Strings.term("GAIT", "Walk"), controller.next_gait)
 	actions.add_child(gait_button)
-	actions.add_child(UI.button(Strings.t("HEIST_HALT"), halt))
-	actions.add_child(UI.button(Strings.t("HEIST_DROP"), drop_half))
-	actions.add_child(UI.button(Strings.t("HEIST_GET_OUT"), get_out, true))
+	actions.add_child(UI.button(Strings.t("HEIST_HALT"), controller.halt))
+	actions.add_child(UI.button(Strings.t("HEIST_DROP"), controller.drop_half))
+	actions.add_child(UI.button(Strings.t("HEIST_GET_OUT"), controller.get_out, true))
 	# The crew's portraits lowest, where the thumb rests (§21.8 puts them at
 	# the bottom); a narrow row, so it stays clear of the corners.
 	var crew_row := UI.row()
 	column.add_child(crew_row)
-	var crew := world.crew()
+	var crew := controller.world.crew()
 	for i in crew.size():
 		var role: String = crew[i]["role"]
-		var b := UI.button(Strings.term("ROLE", role).substr(0, 2), select.bind(i), false, Palette.ROLE.get(role, Palette.PAPER))
+		var b := UI.button(Strings.term("ROLE", role).substr(0, 2), controller.select.bind(i), false,
+				Palette.ROLE.get(role, Palette.PAPER))
 		crew_buttons.append(b)
 		crew_row.add_child(b)

@@ -39,7 +39,7 @@ static func read_file() -> void:
 	locale = str(cfg.get_value("general", "locale", Strings.default_locale()))
 	if locale not in Strings.LOCALES:
 		locale = Strings.default_locale()
-	for bus in VOLUMES:
+	for bus: String in VOLUMES:
 		volume[bus] = clampi(int(cfg.get_value("volume", bus, DEFAULT_VOLUME[bus])), 0, VOLUME_STEPS)
 	reduced_motion = bool(cfg.get_value("motion", "reduced", false))
 	haptics = bool(cfg.get_value("motion", "haptics", true))
@@ -51,7 +51,7 @@ static func read_file() -> void:
 static func save() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("general", "locale", locale)
-	for bus in VOLUMES:
+	for bus: String in VOLUMES:
 		cfg.set_value("volume", bus, volume[bus])
 	cfg.set_value("motion", "reduced", reduced_motion)
 	cfg.set_value("motion", "haptics", haptics)
@@ -63,7 +63,7 @@ static func save() -> void:
 ## music can be silenced without silencing an alarm.
 static func apply() -> void:
 	Strings.set_locale(locale)
-	for bus in VOLUMES:
+	for bus: String in VOLUMES:
 		var index := bus_index(bus)
 		AudioServer.set_bus_volume_db(index, linear_to_db(volume[bus] / float(VOLUME_STEPS)))
 		AudioServer.set_bus_mute(index, volume[bus] == 0)

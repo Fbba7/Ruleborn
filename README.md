@@ -200,6 +200,7 @@ tools/
   roadmap.py                      the roadmap, as data
   build_roadmap.py                renders it, computing progress from the register
   client_strings.py               writes client/i18n/content.csv, the content's names, from content/
+  client_contract.py              the client's server routes and failure words, checked against server/src/http.mjs
   league_model.py                 fits the league boundaries to §14.7's shares; writes server/src/leagues.json
   completion.py                   how close the app is to built, backend and frontend, from §26.8's costs and passing proofs
   parse_gate_results.py           scores the gates from testers' result codes

@@ -10,6 +10,7 @@ var check_label: Label
 
 
 func _ready() -> void:
+	App.ready(self)
 	var column := UI.frame(self)
 	column.add_child(UI.grow())
 	var card := UI.panel()
@@ -25,21 +26,27 @@ func _ready() -> void:
 	column.add_child(card)
 	column.add_child(UI.grow())
 	var actions := UI.row()
-	actions.add_child(UI.button(Strings.t("RESULT_WATCH"), func(): get_tree().change_scene_to_file("res://scenes/replay_screen.tscn"), true))
-	if Session.testing:
-		actions.add_child(UI.button(Strings.t("RESULT_BUILDER"), func(): get_tree().change_scene_to_file("res://scenes/builder.tscn")))
+	actions.add_child(UI.button(Strings.t("RESULT_WATCH"), func() -> void: App.services.router.go(&"replay"), true))
+	var heist: Dictionary = App.services.store.get_slice(AppState.HEIST)
+	if heist["testing"]:
+		actions.add_child(UI.button(Strings.t("RESULT_BUILDER"), func() -> void: App.services.router.go(&"builder")))
 	else:
-		actions.add_child(UI.button(Strings.t("RESULT_AGAIN"), func(): get_tree().change_scene_to_file("res://scenes/heist_screen.tscn")))
-	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func(): get_tree().change_scene_to_file("res://scenes/home.tscn")))
+		actions.add_child(UI.button(Strings.t("RESULT_AGAIN"), func() -> void:
+			App.services.store.dispatch(&"heist_started", {})
+			App.services.router.go(&"heist")))
+	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
 	column.add_child(actions)
-	show_verdict(Session.verdict, Session.replay.size())
+	show_verdict(heist["verdict"], (heist["replay"] as PackedByteArray).size())
 
 
 func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 	var by_server: bool = v.get("server", false)
 	if v.get("ok", false):
 		grade_label.text = Strings.term("GRADE", str(v["grade"]))
-		if by_server:
+		if v.get("confirming", false):
+			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))
+			check_label.text = Strings.t("RESULT_CONFIRMING", replay_bytes)
+		elif by_server:
 			detail_label.text = Strings.t("RESULT_BANKED_SERVER", [int(v["banked"]), int(v["haul"]), int(v["fee"])])
 			check_label.text = Strings.t("RESULT_ACCEPTED_SERVER", replay_bytes)
 		else:
@@ -48,6 +55,6 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 		check_label.add_theme_color_override("font_color", Palette.SUCCESS.darkened(0.3))
 	else:
 		grade_label.text = Strings.t("RESULT_NOT_ACCEPTED")
-		detail_label.text = Strings.t("RESULT_REFUSED", str(v.get("refused", "")))
+		detail_label.text = Errors.message("RESULT_REFUSED", str(v.get("refused", "")))
 		check_label.text = Strings.t("RESULT_PAID_NOTHING" if by_server else "RESULT_WOULD_PAY_NOTHING")
 		check_label.add_theme_color_override("font_color", Palette.ALARM)
