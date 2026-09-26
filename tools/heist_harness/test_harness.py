@@ -892,6 +892,19 @@ def test_finding_5_2s_budget_holds_every_realm_level_above_13_2s_band():
     assert held(3, wards=1, posts=2) <= 50                 # a setting inside reach
 
 
+def test_a_lever_scales_the_rule_sheet_on_top_of_the_laws():
+    """F55's sweep (python3 -m tools.heist_harness levers): a lever multiplies
+    the woven sheet, so guards that see seven-tenths as far hold realm 3 less
+    often, and the same seeds with no lever reproduce the run exactly."""
+    def held(lever=None, n: int = 40) -> float:
+        rs = run_batch(n, 2, 3, "competent", laws="defensive", shaped=1, lever=lever)
+        return 100 * sum(not r.success for r in rs) / n
+
+    base = held()
+    assert held() == base
+    assert held({"sight_range": 0.7}) < base, base
+
+
 def test_13_2s_hold_table_was_measured_at_one_guard_post():
     """F34. §13.2 (v3.3) lists realm 3's hold, 34.4%, at six wards and §5.2's
     two guard posts. F26's sweep, which that table quotes, ran one post in

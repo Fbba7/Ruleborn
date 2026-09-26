@@ -421,7 +421,7 @@ budgets: rows written a player a day, by what wrote them, and the CPU a
 re-simulation takes. The writes are deterministic, so `server/load.json`
 keeps them and `bash tools/check_all.sh` fails if a change moves them
 (`--write` records a new baseline). What it measured — an engaged day
-writes at least 46 rows against §24.1's five, and a re-simulation takes
+writes about 50 rows against §24.1's five, and a re-simulation takes
 about 15 ms against the free plan's 10 — is register **F47**; its
 readings are **G33**. Telemetry is written a batch to a row, as §24.1 asks.
 
@@ -529,10 +529,24 @@ the one before; at start the server sweeps any list no band names, which a
 crash, a restore or an older server left. Every answer carries
 `Strict-Transport-Security`, the listener's log names a route and never a
 path's ids, and a new account holds the most protective age band, 13 to 15,
-until the device's age check answers (`PUT /v1/age`). Not done: filing both
-forms, and the client's age check and deletion button (**D70**).
+until the device's age check answers (`PUT /v1/age`), which the client
+sends with its first sign-in. Not done: filing both forms, and the client's
+deletion button (**D70**).
 
     node server/src/privacy.mjs --write    # after changing privacy.json
+
+## Keeper levels
+
+`src/keeper.mjs` is §14.2's Keeper experience and levels. A raid earns its
+raider §14.2's experience at the level they raided at — 30 + 6 × level for a
+success, 10 + 2 × level foiled — in the transaction that settles the haul, so
+a retry pays it once, and climbs §14.2's table (`design_facts.KEEPER_XP_TO_NEXT`,
+level 40 the top). It is earned wherever a haul is: not by a game among
+friends (F48) or a raid past the week's 20 (G20). `GET /v1/keeper` is the
+level and the bar to the next. The level is what the Keeper gates read — the
+Beacon's Keeper 6, matchmaking's window — which until this nothing raised.
+Spending and restoring laws, §14.2's other sources, come with the home
+economy, which the server does not hold yet (**G42**).
 
 ## Constellations and crews
 

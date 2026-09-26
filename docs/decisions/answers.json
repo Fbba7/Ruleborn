@@ -252,7 +252,7 @@
    "option": "A",
    "how": "picked",
    "build": "none",
-   "client": "the Keeper bar shows a gate when the only experience left is spending the Spire holds back; it is drawn with the Keeper bar, which waits on §14.2's Keeper experience — the server keeps the Keeper level, not the experience"
+   "client": "the Keeper bar is built (Home, roadmap TC.11); its gate — shown when the only experience left is spending the Spire holds back — waits on spending, which comes with the home economy on the server (TC.12, G42)"
   }
  }
 }

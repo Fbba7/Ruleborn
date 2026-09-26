@@ -25,7 +25,7 @@ GAIT_RUN,Run,Correr
 ROLE_SCOUT,Scout,Batedor
 ROLE_BREAKER,Breaker,Quebrador
 ROLE_CARRIER,Carrier,Carregador
-ROLE_WARDEN,Warden,Guardião
+ROLE_WARDEN,Warden,Sentinela
 ROLE_MENDER,Mender,Curandeiro
 HUD_ALARM,Alarm %s,Alarme %s
 HUD_LOOT,"Bags can take %d
@@ -126,6 +126,8 @@ RESULT_RATE,Rate this island,Avaliar esta ilha
 RESULT_COUNTED,It counts as a completion for its creator,Conta como uma conclusão para quem a criou
 RESULT_NOT_COUNTED,Already counted: a player's clear counts once,Já contada: a vitória de cada jogador conta uma vez
 RESULT_PLAY_NOT_COUNTED,This play does not count as a clear of the island,Esta partida não conta como vitória na ilha
+RESULT_KEEPER,+%s Keeper experience,+%s de experiência de Guardião
+RESULT_KEEPER_UP,Keeper %d reached,Guardião %d alcançado
 ERR_UNKNOWN,something went wrong (%s),algo deu errado (%s)
 ERR_OFFLINE,no server is set,nenhum servidor configurado
 ERR_UNREACHABLE,the server could not be reached,não foi possível falar com o servidor
@@ -453,3 +455,7 @@ AGE_13_15,13 to 15,13 a 15
 AGE_16_17,16 or 17,16 ou 17
 AGE_18_UP,18 or older,18 ou mais
 AGE_TOO_YOUNG,"Ruleborn is for players aged 13 and up. No account has been made, and nothing about you has been sent.","Ruleborn é para jogadores a partir de 13 anos. Nenhuma conta foi criada, e nada sobre você foi enviado."
+KEEPER_TITLE,Keeper %d,Guardião %d
+KEEPER_PROGRESS,%s of %s experience to Keeper %d,%s de %s de experiência até Guardião %d
+KEEPER_TOP,"Keeper %d, the highest level","Guardião %d, o nível mais alto"
+KEEPER_SPOKEN,Keeper %d: %s,Guardião %d: %s

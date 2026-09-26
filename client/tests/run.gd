@@ -307,6 +307,15 @@ func _run() -> void:
 				+ "is re-simulated and paid by the server",
 			played.get("ok", false) and played.get("grade") == "Clean" and int(played.get("haul", 0)) == 11250,
 			"%s; %s" % [played, online.hint_label.text])
+		# §14.2: the raid earned its raider 30 + 6 × Keeper 1, and the bar moved.
+		var bar: Dictionary = App.services.store.get_slice(KeeperState.KEEPER)["view"]
+		var asked := await App.services.account.keeper()
+		check("a raid settled by the server earns its raider Keeper experience, and the Keeper bar moves with "
+				+ "the answer, as the server keeps it (14.2)",
+			played.get("keeper") is Dictionary and int(played["keeper"].get("gained", 0)) == 36
+				and int(bar.get("xp", -1)) == int(played["keeper"]["xp"]) and asked.ok
+				and int(asked.value["xp"]) == int(bar["xp"]) and int(asked.value["level"]) == int(bar["level"]),
+			"%s | %s | %s" % [played.get("keeper"), bar, asked.value if asked.ok else asked.code])
 		online.queue_free()
 		_services()
 		await process_frame
@@ -318,6 +327,7 @@ func _run() -> void:
 	await SocialTests.new(self, check, server_url).run()
 	await WorkshopTests.new(self, check, server_url).run()
 	await AgeTests.new(self, check, server_url).run()
+	await KeeperTests.new(self, check, _mount).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

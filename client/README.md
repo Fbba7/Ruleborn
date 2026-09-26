@@ -111,7 +111,9 @@ happens before it, and it reaches the server with the first sign-in
 (`PUT /v1/age`), which until then holds the account to the most protective
 band.
 
-**Home.** Play a heist, fixed at the bottom where the thumb rests, and every
+**Home.** The Keeper bar (§14.2): the level, ten pips filled by the share
+of the way to the next and the numbers, as the server keeps them, moved by
+each raid's answer — the result screen says what the raid earned. Play a heist, fixed at the bottom where the thumb rests, and every
 other screen in a list that scrolls at large text.
 
 **The season track** (`scenes/track.tscn`, §18.2, §18.8). Stars in hand, the

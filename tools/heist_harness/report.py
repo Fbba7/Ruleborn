@@ -29,8 +29,13 @@ def run_batch(n: int, links: int, realm_level: int, policy_name: str,
               wards: int | None = None, crack_noise: bool | None = None,
               rules: str = "v3.4", ward_kinds: tuple | None = None,
               crack_reach: int | None = None, crack_seconds: int | None = None,
-              disarm_approach: bool = False, glare_realm: bool | None = None) -> list:
+              disarm_approach: bool = False, glare_realm: bool | None = None,
+              lever: dict | None = None) -> list:
     """`laws` is "none", "any" (woven at random) or "defensive" (sign-aware).
+
+    `lever` scales rule-sheet multipliers on top of the woven laws — a raid-
+    side lever for the balance pass (F55): {"sight_range": 0.8} is every
+    guard seeing four-fifths as far.
 
     `shaped` selects the generator F16 argued for; see `island.generate`.
     `rules` is which document's wards and budgets; see `island.RULES`.
@@ -45,6 +50,8 @@ def run_batch(n: int, links: int, realm_level: int, policy_name: str,
                     for k in range(links)]
         sheet = (Sheet() if laws == "none"
                  else weave(seed, realm_level, favour_defender=laws == "defensive"))
+        for key, by in (lever or {}).items():
+            sheet.values[key] = sheet.factor(key) * by
         policy = cls()
         result = Heist(generate(seed, realm_level, shaped=shaped, posts=posts,
                                 post_level=post_level, wards=wards, rules=rules,
@@ -248,6 +255,46 @@ def hold_table(n: int = 200, workers: int = 4) -> str:
             + f"   {lo:>2.0f} to {hi:>2.0f}%  {where}")
     lines += ["", "§13.2's published holds (v3.4, one post, before the answers): "
               "27.6, 37.6, 34.4, 40.4 and realm level 5's row."]
+    return "\n".join(lines)
+
+
+#: F55's raid-side levers, each at a few strengths: how far guards see, how
+#: fast suspicion fills, how fast guards and the crew move, how long the
+#: clock runs (a rate below 1 is a longer heist).
+LEVERS = [("sight_range", 0.9), ("sight_range", 0.8), ("sight_range", 0.7),
+          ("suspicion_fill", 0.8), ("suspicion_fill", 0.6), ("guard_speed", 0.8),
+          ("crew_speed", 1.15), ("crew_speed", 1.3), ("clock_rate", 0.8)]
+
+
+def _lever_cell(job) -> tuple:
+    """One cell of the lever sweep: a lever at a strength, at one realm level,
+    at §5.2's wards and posts, for §13.2's competent crew."""
+    key, by, level, n = job
+    lever = {key: by} if key else None
+    held = [not r.success for r in run_batch(n, 2, level, "competent", laws="defensive", shaped=1,
+                                             lever=lever)]
+    return key, by, level, 100 * sum(held) / n
+
+
+def lever_sweep(n: int = 200, workers: int = 4) -> str:
+    """F55's option B, measured: each raid-side lever at a few strengths, and
+    the hold it leaves at every realm level at §5.2's full budget, against
+    §13.2's 30 to 45%. Nothing here changes a rule; it prices each lever."""
+    import multiprocessing as mp
+    from ..design_facts import HOLD_BAND
+    settings = [(None, 1.0)] + LEVERS
+    jobs = [(k, by, level, n) for k, by in settings for level in (1, 2, 3, 4, 5)]
+    with mp.Pool(workers) as pool:
+        cells = {(k, by, lv): h for k, by, lv, h in pool.map(_lever_cell, jobs)}
+    lo, hi = HOLD_BAND
+    lines = ["F55: raid-side levers at §5.2's full budget (the competent crew)", "",
+             f"n = {n} a cell; held %, realm levels 1 to 5; * inside {lo:.0f} to {hi:.0f}%.", "",
+             f"{'lever':<22} " + " ".join(f"{lv:>7}" for lv in (1, 2, 3, 4, 5)) + "   inside"]
+    for k, by in settings:
+        row = [cells[(k, by, lv)] for lv in (1, 2, 3, 4, 5)]
+        name = "as built" if k is None else f"{k} x{by}"
+        lines.append(f"{name:<22} " + " ".join(f"{h:>6.1f}{'*' if lo <= h <= hi else ' '}" for h in row)
+                     + f"   {sum(lo <= h <= hi for h in row)} of 5")
     return "\n".join(lines)
 
 

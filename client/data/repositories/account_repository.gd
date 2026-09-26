@@ -31,3 +31,8 @@ func delete_account(withdraw_islands: bool) -> Result:
 ## server holds the account to the most protective band (§20.2).
 func set_age_band(band: String) -> Result:
 	return await api.json(HTTPClient.METHOD_PUT, "/v1/age", {"band": band})
+
+
+## §14.2's Keeper level and the bar to the next: `{level, xp, toNext, cap}`.
+func keeper() -> Result:
+	return await api.get_json("/v1/keeper")

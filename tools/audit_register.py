@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72", "G41", "F55"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72", "G41", "F55", "G42"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6102,7 +6102,11 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "target lists are rebuilt hourly (G21): an engaged player writes "
           "46.13 rows a day, and a million monthly players cost about $416 "
           "a month on the paid plan. G29\u2019s answer, which dates a "
-          "session by the device, leaves those figures as they were.",
+          "session by the device, leaves those figures as they were. "
+          "Re-measured for Keeper levels (G42): each raid now also writes its "
+          "raider\u2019s level and experience, one row more, so an engaged "
+          "player writes 50.13 rows a day, ten times the budget, and a "
+          "million monthly players cost about $456 a month on the paid plan.",
      rec="Re-derive §24.1\u2019s budget and cost table from measured writes: state "
          "a share of monthly players active on a day, price the writes a heist "
          "must make, and drop the free-plan columns for validation. Or cut "
@@ -6473,7 +6477,12 @@ dict(id="F55", kind="finding", severity="significant", status="open",
           "clearing crews are held more often than the competent one here "
           "(their waits cost clock across three realms), so the competent "
           "crew is the strongest reference the harness has. Found re-running "
-          "§13.2\u2019s table (T0.12).",
+          "§13.2\u2019s table (T0.12).<br><br>Priced (the harness\u2019s "
+          "<code>levers</code> sweep, n=200): no one raid-side lever lands "
+          "every level. Guards seeing 0.7 as far hold 27.5, 34.0, 37.5, 74.0 "
+          "and 77.5%; with suspicion filling 0.6 as fast too, 11.0, 23.0, "
+          "27.5, 63.5 and 66.5% \u2014 the low realms fall below the band "
+          "before the high ones reach it.",
      measured="python3 -m tools.heist_harness holds 800; tools/heist_harness/"
               "test_harness.py test_finding_5_2s_budget_holds_every_realm_level_above_13_2s_band",
      rec="Either cut §5.2\u2019s budget to what reaches the band (one post "
@@ -6563,6 +6572,33 @@ dict(id="G41", kind="gap", severity="significant", status="open",
      rec="Take §24.12's opening as the owner answered: online the normal path "
          "and offline the exception, with the stock of leases, the prompt and "
          "the confirming states named."),
+
+dict(id="G42", kind="gap", severity="significant", status="open",
+     title="§26.8\u2019s build plan has no phase for the home economy, which "
+           "§24 makes the server authoritative for, and so nothing raised a "
+           "Keeper level",
+     refs=["26.8", "24", "14.2", "9.3", "5.8"],
+     body="§24\u2019s table: the server is <em>\u201cAuthoritative for every "
+          "resource change, heists, matchmaking, constellations and "
+          "purchases\u201d</em>. §26.8\u2019s phases build the heist, the "
+          "builder, the backend, the Workshop, <em>\u201cProgression and "
+          "economy\u201d</em> as currencies, cosmetics, purchases and the season "
+          "track, and the social layer \u2014 and no phase builds the home "
+          "economy: buildings, workers and production (§9.3, §5.8), spending, "
+          "the Spire, the Codex and the laws a player restores, or §14.2\u2019s "
+          "Keeper experience. Built to the plan, the server settled heists and "
+          "never raised a Keeper level, so every account stayed at Keeper 1 and "
+          "every Keeper gate stayed shut: the Beacon at Keeper 6 (§17.1), the "
+          "outer realms, the Spire\u2019s levels. The first slice is built: a "
+          "raid now earns §14.2\u2019s experience for its raider, levels climb "
+          "§14.2\u2019s table, and <code>GET /v1/keeper</code> shows the bar "
+          "(server/src/keeper.mjs, the client\u2019s Keeper bar). Spending and "
+          "restoring laws, §14.2\u2019s other two sources, need the home "
+          "economy on the server first. Found building the Keeper bar.",
+     rec="Give §26.8 a phase for the home economy on the server \u2014 "
+         "buildings and production, spending, the Spire, the Codex\u2019s "
+         "restorations and §14.2\u2019s experience from each \u2014 costed "
+         "like the others, and say which of it the device may run offline."),
 
 dict(id="D72", kind="deviation", severity="minor", status="open",
      title="§21.8\u2019s alarm red and success green cannot carry words at its "

@@ -88,6 +88,9 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 			check_label.text = Strings.t("RESULT_CONFIRMING", replay_bytes)
 		elif by_server:
 			detail_label.text = Strings.t("RESULT_BANKED_SERVER", [int(v["banked"]), int(v["haul"]), int(v["fee"])])
+			var keeper := KeeperPresenter.earned(v.get("keeper"))
+			if keeper != "":
+				detail_label.text += "\n" + keeper
 			check_label.text = Strings.t("RESULT_ACCEPTED_SERVER", replay_bytes)
 		else:
 			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))

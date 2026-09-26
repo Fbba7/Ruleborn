@@ -1,6 +1,7 @@
 class_name Home
 extends Control
-## Where the app opens, once §20.1's age check has answered: every screen, in a list that scrolls when §20.8's
+## Where the app opens, once §20.1's age check has answered: the Keeper bar
+## (§14.2), every screen, in a list that scrolls when §20.8's
 ## large text makes it long, and the heist — §21.8's large Heist button —
 ## fixed at the bottom where the thumb rests.
 
@@ -9,6 +10,9 @@ const PLACES := [&"builder", &"workshop", &"replay", &"track", &"shop", &"social
 const WORDS := {&"builder": "HOME_BUILD", &"workshop": "HOME_WORKSHOP", &"replay": "HOME_WATCH",
 	&"track": "HOME_TRACK", &"shop": "HOME_SHOP", &"social": "HOME_SOCIAL", &"friends": "HOME_FRIENDS",
 	&"settings": "HOME_SETTINGS"}
+
+var keeper_label: Label
+var keeper_plate: PanelContainer
 
 
 func _ready() -> void:
@@ -21,6 +25,13 @@ func _ready() -> void:
 	var column := UI.frame(self)
 	column.add_child(UI.label(Strings.t("APP_NAME"), 48))
 	column.add_child(UI.plate(UI.label(Strings.t("HOME_TAGLINE"), UI.TEXT_POINTS, true)))
+	# §14.2's Keeper bar, once the server has said where the player stands.
+	keeper_label = UI.label("", UI.TEXT_POINTS, true)
+	keeper_plate = UI.plate(keeper_label)
+	keeper_plate.visible = false
+	column.add_child(keeper_plate)
+	App.services.store.changed.connect(_on_changed)
+	show_keeper()
 	var list := UI.scroll(column)
 	var places := UI.row()
 	for route: StringName in PLACES:
@@ -30,6 +41,22 @@ func _ready() -> void:
 	play.add_child(UI.button(Strings.t("HOME_PLAY"), _play, true))
 	column.add_child(UI.narrow(play))
 	await send_waiting(column)
+	if App.services.api.online() and is_inside_tree():
+		await App.services.keeper_flow.load_keeper()
+
+
+func _on_changed(slice: StringName) -> void:
+	if slice == KeeperState.KEEPER and is_inside_tree():
+		show_keeper()
+
+
+## The Keeper level, its pips and the way to the next, in words.
+func show_keeper() -> void:
+	var b := KeeperPresenter.bar(App.services.store.get_slice(KeeperState.KEEPER))
+	keeper_plate.visible = b["ready"]
+	if b["ready"]:
+		keeper_label.text = "%s  %s\n%s" % [b["title"], b["pips"], b["progress"]]
+		keeper_label.accessibility_name = b["spoken"]
 
 
 ## G41: what was played offline goes by itself once the network is back, and

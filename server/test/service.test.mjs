@@ -305,6 +305,8 @@ test("past 20 paid raids a week, a raid costs nothing and pays nothing, and the 
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
   assert.deepEqual([out.fee, out.haul.total, out.haul.cappedBy], [0, 0, "week"]);
   assert.deepEqual(t.service.balance(t.raider.account), after, "no ledger line moved");
+  assert.ok(paid.keeper.gained > 0);
+  assert.equal(out.keeper, null, "and no Keeper experience (14.2)");
   // Monday 00:00 UTC starts a new week.
   t.clock.now += 7 * 24 * 60 * 60 * 1000;
   assert.deepEqual(t.service.lease(t.raider.account, t.bundle).capped, []);

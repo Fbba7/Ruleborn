@@ -189,19 +189,16 @@ CROWN_LAW_BONUS = 0.05            # per crown law of a matching school (§5.1)
 # Keeper levels (§14.2)
 # --------------------------------------------------------------------------
 
-#: Experience required to advance from level n to n+1, index 0 == level 1.
-KEEPER_XP_TO_NEXT = (
-    140, 90, 270, 370, 460, 620, 1_050, 1_020, 1_870, 2_230,
-    2_450, 1_550, 3_920, 2_330, 3_580, 1_610, 8_700, 5_850, 6_790, 8_100,
-    10_520, 13_450, 15_980, 19_480, 19_010, 21_280, 22_980, 26_960, 31_930, 31_830,
-    32_990, 39_760, 40_660, 42_860, 49_230, 53_670, 51_850, 56_740, 57_880,
-)
-KEEPER_LEVEL_CAP = 40
-
-XP_PER_SUCCESSFUL_HEIST = (30, 6)   # 30 + 6 x Keeper level
-XP_PER_FOILED_HEIST = (10, 2)       # 10 + 2 x Keeper level
-XP_PER_LAW_RESTORED = (60, 10)      # 60 + 10 x Keeper level
-STARLIGHT_PER_XP = 40               # 1 XP for every 40 Starlight spent
+try:                                        # §14.2's table and sources, from
+    from ..design_facts import (KEEPER_XP_TO_NEXT, STARLIGHT_PER_XP,  # their one home
+                                XP_PER_FOILED_HEIST, XP_PER_LAW_RESTORED,
+                                XP_PER_SUCCESSFUL_HEIST)
+except ImportError:
+    from design_facts import (KEEPER_XP_TO_NEXT, STARLIGHT_PER_XP,
+                              XP_PER_FOILED_HEIST, XP_PER_LAW_RESTORED,
+                              XP_PER_SUCCESSFUL_HEIST)
+#: Level 40 is the top: the table gives the experience to each level after 1.
+KEEPER_LEVEL_CAP = len(KEEPER_XP_TO_NEXT) + 1
 
 # --------------------------------------------------------------------------
 # Raiding (§9.6 and §9.4)

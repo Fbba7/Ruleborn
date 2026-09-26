@@ -13,6 +13,7 @@
 //                                                              and "reminderCleared" if the night took it
 //   POST /v1/heists/:token       replay bytes                → what was settled
 //   GET  /v1/balance                                         → {starlight, essence}
+//   GET  /v1/keeper                                          → {level, xp, toNext, cap} (§14.2)
 //   GET  /v1/targets                                         → {band: list hash}
 //   PUT  /v1/age                 {"band": "13-15"|"16-17"|"18+"} → {ageBand}
 //                                {"band": "under-13"}         → the account deleted (§20.11)
@@ -424,6 +425,8 @@ export function handler(service, { webClientId = null, appleNotifications = null
         }
         case "GET /v1/balance":
           return json(service.balance(who()));
+        case "GET /v1/keeper":
+          return json(service.keeper.view(who()));
         case "GET /v1/targets":
           who();
           return json(service.targets());

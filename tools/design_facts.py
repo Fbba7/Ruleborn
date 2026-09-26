@@ -290,6 +290,23 @@ PREMIUM_TRACK_EUR = 6
 #: at 16 and 17; adults get a "Monthly spending summary" and no cap.
 SPENDING_CAPS_EUR = {"13-15": 25, "16-17": 50}
 
+#: §14.2: "Keeper experience comes from successful heists (30 + 6 × Keeper
+#: level), foiled heists (10 + 2 × level), spending (1 for every 40
+#: Starlight) and restoring laws (60 + 10 × level)." (base, per level)
+XP_PER_SUCCESSFUL_HEIST = (30, 6)
+XP_PER_FOILED_HEIST = (10, 2)
+XP_PER_LAW_RESTORED = (60, 10)
+STARLIGHT_PER_XP = 40
+
+#: §14.2's table, "XP to next" from level 1 to level 39: the experience to
+#: advance from level n to n + 1, index 0 being level 1. Level 40 is the top.
+KEEPER_XP_TO_NEXT = (
+    140, 90, 270, 370, 460, 620, 1_050, 1_020, 1_870, 2_230,
+    2_450, 1_550, 3_920, 2_330, 3_580, 1_610, 8_700, 5_850, 6_790, 8_100,
+    10_520, 13_450, 15_980, 19_480, 19_010, 21_280, 22_980, 26_960, 31_930, 31_830,
+    32_990, 39_760, 40_660, 42_860, 49_230, 53_670, 51_850, 56_740, 57_880,
+)
+
 #: Where each declared fact is stated, so the report can cite it and a reader
 #: can check it. The derived ones cite the content file instead.
 HOME = {
@@ -298,6 +315,11 @@ HOME = {
     "ROLE_NAMES": "content/roles.json (11.1)",
     "SCHOOLS": "content/laws.json (7)",
     "HOLD_BAND": "13.2",
+    "XP_PER_SUCCESSFUL_HEIST": "14.2",
+    "XP_PER_FOILED_HEIST": "14.2",
+    "XP_PER_LAW_RESTORED": "14.2",
+    "STARLIGHT_PER_XP": "14.2",
+    "KEEPER_XP_TO_NEXT": "14.2",
     "DECISION_BAND": "12.6",
     "DECISION_SECONDS": "12.6",
     "CREW_RANGE": "12.5",
@@ -372,9 +394,31 @@ HOME = {
 #: the rule above stops a second copy in the tools, and nothing stopped the one
 #: copy going stale when the document moved. The pattern captures the value;
 #: the function turns the capture into this module's unit.
+def _xp_table(text: str):
+    """§14.2's "XP to next" column, read whole: rows numbered 1 to N in order,
+    every one a number but the last, the top level's "—". Anything else —
+    a row added past the top, one dropped or renumbered — reads as None, so
+    it disagrees with the declared table rather than passing unread."""
+    rows = re.findall(r"\| (\d+)\n\| ([\d,]+|—)\n\| [\d,]+\n", text)
+    levels = [int(n) for n, _ in rows]
+    if not rows or levels != list(range(1, len(rows) + 1)) or rows[-1][1] != "—" \
+            or any(v == "—" for _, v in rows[:-1]):
+        return None
+    return tuple(int(v.replace(",", "")) for _, v in rows[:-1])
+
+
 _words = {"half": 0.5, "double": 2.0, "ten": 10, "two": 2, "three": 3}
 _n = lambda x: _words.get(x, None) if x in _words else float(x.replace(",", ""))
 STATED = {
+    "XP_PER_SUCCESSFUL_HEIST": (r"successful heists \((\d+) \+ (\d+) × Keeper level\)",
+                                lambda m: (int(m[0]), int(m[1]))),
+    "XP_PER_FOILED_HEIST": (r"foiled heists \((\d+) \+ (\d+) × level\)",
+                            lambda m: (int(m[0]), int(m[1]))),
+    "XP_PER_LAW_RESTORED": (r"restoring laws \((\d+) \+ (\d+) × level\)",
+                            lambda m: (int(m[0]), int(m[1]))),
+    "STARLIGHT_PER_XP": (r"spending \(1 for every (\d+) Starlight\)", lambda m: int(m[0])),
+    "KEEPER_XP_TO_NEXT": (r"(Keeper levels: experience needed[\s\S]*?\| \d+\n\| —\n\| [\d,]+\n)",
+                          lambda m: _xp_table(m[0])),
     "HOLD_BAND": (r"Authored islands are held to (\d+) to (\d+)%",
                   lambda m: (float(m[0]), float(m[1]))),
     "DECISION_BAND": (r"or (\d+) to (\d+) in a run", lambda m: (int(m[0]), int(m[1]))),

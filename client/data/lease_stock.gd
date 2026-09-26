@@ -39,6 +39,15 @@ func add(key: String, lease: Dictionary, bundle: PackedByteArray) -> void:
 	_write()
 
 
+## A lease settled some other way — played online on the same token — leaves
+## the stock, so it is never played again from it.
+func drop(token: String) -> void:
+	var before := _items.size()
+	_items.assign(_items.filter(func(i: Dictionary) -> bool: return str(i["lease"].get("token", "")) != token))
+	if _items.size() != before:
+		_write()
+
+
 ## The newest lease and its island, taken out of the stock, or {} for none.
 func take() -> Dictionary:
 	if _items.is_empty():

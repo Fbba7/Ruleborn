@@ -1065,6 +1065,35 @@ dict(
              gate="no frontend figure moves; without it the Workshop, feeds and "
                   "shop treat every player as 13 to 15",
              evidence="client/tests/age_tests.gd, through python3 client/status.py"),
+        dict(id="TC.11", owner="claude", status="done",
+             title="Keeper levels on the server, and the Keeper bar",
+             detail="Nothing raised a Keeper level: the server settled heists "
+                    "and every account stayed Keeper 1, so every Keeper gate "
+                    "\u2014 the Beacon at Keeper 6, matchmaking's window \u2014 "
+                    "read 1 (G42). A raid now earns its raider \u00a714.2's "
+                    "experience in the transaction that settles its haul, levels "
+                    "climb \u00a714.2's table (one home, "
+                    "<code>design_facts.KEEPER_XP_TO_NEXT</code>, which the "
+                    "economy model reads too), <code>GET /v1/keeper</code> gives "
+                    "the bar, and the client shows it on Home with ten pips and "
+                    "the numbers, and each raid's result says what it earned. "
+                    "In Portuguese the Warden becomes Sentinela, since Keeper and "
+                    "Warden had both been Guardi\u00e3o.",
+             gate="no figure moves: \u00a726.8's plan has no row for it (G42)",
+             evidence="server/test/keeper.test.mjs; client/tests/keeper_tests.gd",
+             register=["G42", "F54"]),
+        dict(id="TC.12", owner="claude", status="ready",
+             title="The home economy on the server (G42)",
+             detail="\u00a724 makes the server authoritative for every resource "
+                    "change, and \u00a726.8 has no phase that builds the home "
+                    "economy: buildings, workers and production (\u00a79.3, "
+                    "\u00a75.8), spending, the Spire, the Codex's restorations, "
+                    "and \u00a714.2's experience from spending and from restoring "
+                    "laws. The economy model already runs all of it; the server "
+                    "side is the work, slice by slice, with F54's gate on the "
+                    "Keeper bar once spending is the only experience left.",
+             gate="no figure moves until \u00a726.8's plan carries it",
+             register=["G42"]),
         dict(id="TC.9", owner="claude", status="done",
              title="Offline as the exception, as the owner answered G41",
              detail="Online is the rule and is recommended heavily; offline is "

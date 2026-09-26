@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   equipped          TEXT NOT NULL DEFAULT '{}',
   pass_expires_at   INTEGER,
   keeper_level      INTEGER NOT NULL DEFAULT 1,
+  -- §14.2: the experience toward the next level (keeper.mjs).
+  keeper_xp         INTEGER NOT NULL DEFAULT 0,
   created_at        INTEGER NOT NULL,
   -- §20.5: "Age bands instead of birthdates"; §20.7 sets what each may do.
   age_band          TEXT NOT NULL DEFAULT '18+' CHECK (age_band IN ('13-15', '16-17', '18+')),
@@ -594,6 +596,8 @@ const ADDED = [
   ["accounts", "reminder_at", "INTEGER"],
   ["accounts", "night_quiet", "INTEGER NOT NULL DEFAULT 1"],
   ["accounts", "push_token", "TEXT"],
+  // §14.2's experience toward the next Keeper level (keeper.mjs).
+  ["accounts", "keeper_xp", "INTEGER NOT NULL DEFAULT 0"],
   ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "echo", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "trace_of", "TEXT"],

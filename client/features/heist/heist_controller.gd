@@ -192,7 +192,9 @@ func record() -> PackedByteArray:
 
 
 ## The server's answer in the result screen's terms. The grade is the server's
-## re-simulation's; the haul and fee are what it minted (§9.4, §9.6). An
+## re-simulation's; the haul and fee are what it minted (§9.4, §9.6). A
+## repeated answer — one the server settled before — earned its Keeper
+## experience then, so it carries none now. An
 ## answer still in the outbox is the device's own check, marked confirming
 ## (§24.12: "shown immediately, marked as confirming").
 static func settled(r: Result, local: Dictionary) -> Dictionary:
@@ -207,4 +209,5 @@ static func settled(r: Result, local: Dictionary) -> Dictionary:
 		return {"ok": false, "refused": str(out.get("reason", "refused")), "server": true}
 	var verdict: Dictionary = out["verdict"]
 	return {"ok": true, "grade": str(verdict["grade"]).capitalize(), "banked": verdict["banked"],
-		"haul": out["haul"]["total"], "fee": out["fee"], "server": true}
+		"haul": out["haul"]["total"], "fee": out["fee"], "server": true,
+		"keeper": null if out.get("repeated", false) else out.get("keeper")}

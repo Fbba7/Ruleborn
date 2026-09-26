@@ -81,6 +81,47 @@
   30.0,
   45.0
  ],
+ "KEEPER_XP_TO_NEXT": [
+  140,
+  90,
+  270,
+  370,
+  460,
+  620,
+  1050,
+  1020,
+  1870,
+  2230,
+  2450,
+  1550,
+  3920,
+  2330,
+  3580,
+  1610,
+  8700,
+  5850,
+  6790,
+  8100,
+  10520,
+  13450,
+  15980,
+  19480,
+  19010,
+  21280,
+  22980,
+  26960,
+  31930,
+  31830,
+  32990,
+  39760,
+  40660,
+  42860,
+  49230,
+  53670,
+  51850,
+  56740,
+  57880
+ ],
  "LANDING_HEARD_TILES": 6,
  "LANDING_SUSPICION": 250,
  "LAW_SLOTS": [
@@ -210,6 +251,7 @@
   "13-15": 25,
   "16-17": 50
  },
+ "STARLIGHT_PER_XP": 40,
  "TAKEDOWN_SECONDS": 2,
  "THIN_BAND": 3,
  "TRACE_HOURS": 24,
@@ -224,5 +266,17 @@
  ],
  "WIND_UP": 0.8,
  "WRITE_BUDGET": 5,
- "WRITE_PRICE_PER_MILLION": 1.0
+ "WRITE_PRICE_PER_MILLION": 1.0,
+ "XP_PER_FOILED_HEIST": [
+  10,
+  2
+ ],
+ "XP_PER_LAW_RESTORED": [
+  60,
+  10
+ ],
+ "XP_PER_SUCCESSFUL_HEIST": [
+  30,
+  6
+ ]
 }

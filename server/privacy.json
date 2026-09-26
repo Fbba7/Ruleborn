@@ -195,7 +195,11 @@
     },
     "keeper_level": {
      "type": "gameplay",
-     "holds": "the Keeper level matchmaking compares"
+     "holds": "the Keeper level (§14.2), which matchmaking compares and the Keeper gates read"
+    },
+    "keeper_xp": {
+     "type": "gameplay",
+     "holds": "the experience toward the next Keeper level (§14.2)"
     },
     "created_at": {
      "type": "interaction",

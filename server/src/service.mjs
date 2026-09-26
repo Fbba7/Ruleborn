@@ -33,6 +33,7 @@ import { Seasons } from "./seasons.mjs";
 import { GIFT_KEEP_DAYS, INTENT_MS, Shop } from "./shop.mjs";
 import { readHeader } from "./sim.mjs";
 import { Journal } from "./accounts.mjs";
+import { Keeper, heistExperience } from "./keeper.mjs";
 import { Store } from "./store.mjs";
 import { check, issue } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
@@ -124,6 +125,7 @@ export class Service {
     this.matchmaking = new Matchmaking(this);
     this.notifications = new Notifications(this);
     this.friends = new Friends(this);
+    this.keeper = new Keeper(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), settleReceipt, catalogue: cosmetics });
   }
 
@@ -656,11 +658,16 @@ export class Service {
         WHERE l.attacker = ? AND l.defender = ? AND l.mode = 'raid' AND h.validated = 1 AND h.day = ?`)
       .get(attacker, lease.defender, day(now)).n;
     const scores = !friendly && pairEarlierToday === 0;
+    // The two Keeper levels the raid was played at, read once: the raider's
+    // experience below may level them up, and nothing after it — the
+    // defender's share — may be priced at the new level.
+    const raiderLevel = level(attacker);
+    const targetLevel = level(lease.defender);
     const reckoned = haul({
       vaultLevel: snapshot.vault_level,
       gradeName: verdict.grade,
-      raiderLevel: level(attacker),
-      targetLevel: level(lease.defender),
+      raiderLevel,
+      targetLevel,
       exposed: snapshot.exposed,
       raidsEarlierToday,
       banked: verdict.banked,
@@ -673,6 +680,11 @@ export class Service {
       : capHaul(reckoned, caps(attacker, snapshot.vault_level));
     book(attacker, "starlight", pay.starlight, "haul (9.6)");
     book(attacker, "essence", pay.essence, "haul (9.6)");
+    // §14.2's Keeper experience, for the raider, at the level they raided at:
+    // earned wherever the haul is — not by a game among friends (F48), nor
+    // by a raid past the week's 20, which pays nothing (G20).
+    const keeper = friendly || overWeek ? null
+      : this.keeper.award(attacker, heistExperience(raiderLevel, verdict.grade === "foiled"));
     const returned = feeReturned(fee, verdict.grade);
     book(attacker, "starlight", returned, `entry fee returned after a ${verdict.grade} heist (9.4)`);
     // §9.4: "a foiled heist gives the defender the entry fee plus 5% of what
@@ -697,7 +709,7 @@ export class Service {
       if (foiledEarlierToday === 0) book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
       const percent = this.seasons.defenceShare(this.seasons.current(now).id);
       const share = scores ? capHaul(defenceShare({
-        vaultLevel: snapshot.vault_level, raiderLevel: level(attacker), targetLevel: level(lease.defender),
+        vaultLevel: snapshot.vault_level, raiderLevel, targetLevel,
         exposed: snapshot.exposed, left: verdict.left ?? 0, capacity: verdict.capacity, percent,
       }), caps(lease.defender, snapshot.vault_level)) : { total: 0, essence: 0, starlight: 0 };
       book(lease.defender, "starlight", share.starlight, `${percent}${SHARE_REASON}`);
@@ -729,7 +741,7 @@ export class Service {
     // are the device's, so the outcome is their record (D64).
     const friendPages = friendly ? verdict.caught : undefined;
     return { verdict, fee, feeReturned: returned, haul: pay, renown, renownCounted, stars, rating,
-             defence, mode: lease.mode ?? "raid",
+             defence, keeper, mode: lease.mode ?? "raid",
              ...(friendly ? { friendPages } : {}) };
   }
 

@@ -179,7 +179,14 @@ func finish() -> void:
 	elif not lease.is_empty():
 		hint_label.text = Strings.t("HEIST_CHECKING")
 		var answer := await services.heists.submit(str(lease["token"]), replay)
-		services.store.dispatch(&"heist_verdict", HeistController.settled(answer, local))
+		var settled := HeistController.settled(answer, local)
+		services.store.dispatch(&"heist_verdict", settled)
+		# §14.2: the experience it earned moves the Keeper bar; an answer the
+		# server gave before is not news, so the bar is asked for afresh.
+		if settled.get("keeper") is Dictionary:
+			services.store.dispatch(&"keeper_earned", {"keeper": settled["keeper"]})
+		elif answer.ok and answer.value is Dictionary and answer.value.get("repeated", false):
+			await services.keeper_flow.load_keeper()
 	finished.emit()
 	if is_inside_tree():
 		services.router.go.call_deferred(&"result")

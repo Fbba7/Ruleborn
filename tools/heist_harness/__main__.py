@@ -5,6 +5,7 @@
     python3 -m tools.heist_harness depth 500       # more runs a cell
     python3 -m tools.heist_harness depth --sweep crack_reach [n]   # brief 37
     python3 -m tools.heist_harness holds [n]       # §13.2's table (T0.12)
+    python3 -m tools.heist_harness levers [n]      # F55's raid-side levers
 
 §19.27 asks for "thousands of heists". The defaults are smaller so the reports
 are quick to re-run while a number is being changed; pass a count to widen them.
@@ -25,6 +26,7 @@ REPORTS = {
     "control": report.attribution,
     "breakeven": report.break_even,
     "holds": report.hold_table,
+    "levers": report.lever_sweep,
 }
 
 

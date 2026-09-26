@@ -3989,12 +3989,12 @@
     },
     {
      "key": "B",
-     "label": "Keep the budget, re-tune the raid side (the balance pass)",
-     "means": "§5.2's wards and posts stay; the balance pass moves raid-side levers — how far and wide guards see, the clock, what the crew can do — until the full budget lands in the band, measured on the harness as §13.2's aligned re-run.",
-     "consequences": "Building stays deep at every realm; the answer waits on a sweep of levers and the owner's sign-off of the one chosen, and it touches the simulation's rules.",
-     "numbers": "The gap to close: 2.6 points at realm 1, about 15 at realms 2 and 3, about 45 at 4 and 5; guards alone at three posts are 13.4 points above the band's top.",
+     "label": "Keep the budget, re-tune the raid side realm by realm (the balance pass)",
+     "means": "§5.2's wards and posts stay; the balance pass sets raid-side levers — how far guards see, how fast suspicion fills, the clock — by realm level, not once for all, until each level's full budget lands in the band, measured on the harness as §13.2's aligned re-run.",
+     "consequences": "Building stays deep at every realm, but no single lever does it: the sweep shows one lever strong enough for realms 4 and 5 pushes realms 1 to 3 below the band. The rules gain realm-level figures, and the answer waits on the owner's sign-off of each.",
+     "numbers": "Harness sweep, §5.2's full budget, n=200, held at realm levels 1 to 5: as built 52.0, 60.0, 61.0, 90.5, 95.0. Guards seeing 0.7 as far: 27.5, 34.0, 37.5, 74.0, 77.5 (2 and 3 inside). Suspicion filling 0.6 as fast: 37.5, 52.0, 38.5, 78.5, 86.5. Both together: 11.0, 23.0, 27.5, 63.5, 66.5. Sight 0.7 with two posts at realms 4 and 5: 27.5, 34.0, 37.5, 47.5, 59.5. Slower guards (0.8) raise holds; a faster crew or a longer clock moves realm 1 only.",
      "doc_edit": "None until the lever is chosen; then the section that owns it, and §13.2's table re-set.",
-     "build_change": "A lever sweep on the harness (next), then the chosen lever in sim/ and the harness."
+     "build_change": "Realm-level figures for the chosen levers in sim/ and the harness (python3 -m tools.heist_harness levers measures any), then §13.2's table re-run."
     },
     {
      "key": "C",
@@ -4008,8 +4008,8 @@
    ],
    "recommendation": {
     "option": "B",
-    "rationale": "A reaches the band by emptying the realms where building should matter most, and C gives up §13.2's reason for the band; B keeps both and is what the balance pass is for, with the sweep telling the owner what each lever costs.",
-    "confidence": "medium"
+    "rationale": "A empties the realms where building should matter most and C gives up §13.2's reason for the band. B keeps both, but the sweep shows it must be realm by realm: realms 4 and 5 sit 30 to 50 points above the band where realms 1 to 3 sit 7 to 16 above, so any one lever that fixes the top breaks the bottom.",
+    "confidence": "low"
    },
    "interacts_with": [
     "F34",

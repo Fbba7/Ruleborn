@@ -27,6 +27,7 @@ var transport: Transport
 var shop_flow: ShopController
 var social_flow: SocialController
 var workshop_flow: WorkshopController
+var keeper_flow: KeeperController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -39,6 +40,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	ShopState.register(s.store)
 	SocialState.register(s.store)
 	WorkshopState.register(s.store)
+	KeeperState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -62,6 +64,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.shop_flow = ShopController.new(s)
 	s.social_flow = SocialController.new(s)
 	s.workshop_flow = WorkshopController.new(s)
+	s.keeper_flow = KeeperController.new(s)
 	s.router = Router.new(s.store)
 	return s
 
@@ -95,6 +98,7 @@ func close() -> void:
 	shop_flow = null
 	social_flow = null
 	workshop_flow = null
+	keeper_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):
