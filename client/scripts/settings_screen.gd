@@ -11,6 +11,7 @@ var haptics_button: Button
 
 
 func _ready() -> void:
+	App.ready(self)
 	Settings.restore()
 	_build()
 
@@ -48,7 +49,7 @@ func _build() -> void:
 	column.add_child(toggles)
 
 	var back := UI.row()
-	back.add_child(UI.button(Strings.t("COMMON_HOME"), func(): get_tree().change_scene_to_file("res://scenes/home.tscn"), true))
+	back.add_child(UI.button(Strings.t("COMMON_HOME"), func(): App.services.router.go(&"home"), true))
 	column.add_child(back)
 	_refresh()
 

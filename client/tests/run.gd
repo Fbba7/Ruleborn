@@ -39,6 +39,20 @@ func _play(bytes: PackedByteArray) -> RulebornReplay:
 	return r
 
 
+## The heist slice of the store: what the result and replay screens read.
+func _heist() -> Dictionary:
+	return App.services.store.get_slice(AppState.HEIST)
+
+
+## Services for a test run: no network unless `server` names one, the tests'
+## own outbox file, and a router that records rather than changes scenes.
+func _services(server := "") -> Services:
+	var s := Services.build(root, server, null, "user://outbox-test.json")
+	s.router.change = func(_path: String) -> void: pass
+	App.services = s
+	return s
+
+
 func _golden(name: String) -> PackedByteArray:
 	return FileAccess.get_file_as_bytes("res://goldens/%s.rbh" % name)
 
@@ -61,7 +75,12 @@ func _run() -> void:
 	DirAccess.remove_absolute(Settings.path)
 	Settings.restore()
 	Settings.change(func(): Settings.locale = "en")
+	DirAccess.remove_absolute("user://outbox-test.json")
+	_services()
 	var goldens := ReplayScreen.find_goldens()
+
+	# The architecture's layers, headless (client/README.md).
+	await CoreTests.new(self, check).run()
 
 	# §20.6's two launch languages: every key a script asks for is in the
 	# catalogue, in every language, with the same placeholders.
@@ -83,16 +102,16 @@ func _run() -> void:
 	# none sends null, which must reach the extension as no era, not "<null>".
 	var in_era := RulebornReplay.new()
 	check("a lease's era reaches the simulation as the lease names it, and none as none",
-		HeistScreen.lease_era({"era": null}) == "" and HeistScreen.lease_era({}) == ""
-			and HeistScreen.lease_era({"era": "glass_moon"}) == "glass_moon"
+		HeistController.lease_era({"era": null}) == "" and HeistController.lease_era({}) == ""
+			and HeistController.lease_era({"era": "glass_moon"}) == "glass_moon"
 			and in_era.set_era("glass_moon") and in_era.set_era("") and not in_era.set_era("<null>"))
 
 	# The Data safety form's "encrypted in transit": no server but this
 	# machine's own is spoken to over plain HTTP.
 	check("the client speaks to a server over HTTPS only, plain HTTP to this machine's own for tests",
-		Session.secure("https://edge.example/") and Session.secure("http://127.0.0.1:8787")
-			and Session.secure("http://localhost/v1") and not Session.secure("http://edge.example")
-			and not Session.secure("http://127.0.0.1.edge.example/") and not Session.secure("ftp://x"))
+		Api.secure("https://edge.example/") and Api.secure("http://127.0.0.1:8787")
+			and Api.secure("http://localhost/v1") and not Api.secure("http://edge.example")
+			and not Api.secure("http://127.0.0.1.edge.example/") and not Api.secure("ftp://x"))
 
 	# §24.10: the checksums a replay carries, one a second, are the server's.
 	var bad := []
@@ -126,51 +145,51 @@ func _run() -> void:
 	var heist: HeistScreen = await _mount("heist_screen")
 	heist.set_process(false)
 	heist.advance(90)
-	var now := heist.world.tick()
-	heist.select(1)
-	heist.tap_tile(Vector2i(4, 5))
-	heist.crack()
-	heist.load_up(70)
-	heist.get_out()
-	heist.tap_tile(Vector2i(13, 7))
+	var now := heist.controller.world.tick()
+	heist.controller.select(1)
+	heist.controller.tap_tile(Vector2i(4, 5))
+	heist.controller.crack()
+	heist.controller.load_up(70)
+	heist.controller.get_out()
+	heist.controller.tap_tile(Vector2i(13, 7))
 	# The landing the screen gives before its first step is not a tap.
-	var log := heist.world.commands().filter(func(c): return int(c["kind"]) != HeistScreen.Kind.LAND) \
+	var log := heist.controller.world.commands().filter(func(c): return int(c["kind"]) != HeistController.Kind.LAND) \
 		.map(func(c): return [c["tick"], c["actor"], c["kind"], c["x"], c["y"]])
-	var want := [[now, 1, HeistScreen.Kind.MOVE_TO, 4 * 256 + 128, 5 * 256 + 128],
-		[now, 1, HeistScreen.Kind.CRACK, 0, 0], [now, 1, HeistScreen.Kind.LOAD, 70, 0],
-		[now, 1, HeistScreen.Kind.SKIFF, 13 * 256 + 128, 7 * 256 + 128]]
+	var want := [[now, 1, HeistController.Kind.MOVE_TO, 4 * 256 + 128, 5 * 256 + 128],
+		[now, 1, HeistController.Kind.CRACK, 0, 0], [now, 1, HeistController.Kind.LOAD, 70, 0],
+		[now, 1, HeistController.Kind.SKIFF, 13 * 256 + 128, 7 * 256 + 128]]
 	check("every tap on the heist screen makes the one command it names, stamped with the tick it was made",
 		log == want, "got %s" % [log])
 
 	# A tap is read by what is on the tile, and each is the one command the
 	# player chose (§12.18): a guard is attacked, the Vault cracked, a pylon
 	# broken, a ward disarmed. The gait button walks, crouches and runs.
-	heist.begin(HeistScreen.SEED, HeistScreen.TICKS, HeistScreen.CREW)
-	heist.select(1)
-	var first: Dictionary = heist.world.guards()[1]
+	heist.begin(HeistController.SEED, HeistController.TICKS, HeistController.CREW)
+	heist.controller.select(1)
+	var first: Dictionary = heist.controller.world.guards()[1]
 	var pylon := -1
-	var features := heist.world.features()
+	var features := heist.controller.world.features()
 	for i in features.size():
 		if features[i] == RealmView.Tile.PYLON:
 			pylon = i
 			break
-	var width := heist.world.size().x
-	var ward: Dictionary = heist.world.wards()[0] if heist.world.wards().size() > 0 else {}
-	heist.tap_tile(Vector2i(first["at"]))
-	heist.tap_tile(Vector2i(heist.world.vault()["at"]))
-	heist.tap_tile(Vector2i(pylon % width, pylon / width))
+	var width := heist.controller.world.size().x
+	var ward: Dictionary = heist.controller.world.wards()[0] if heist.controller.world.wards().size() > 0 else {}
+	heist.controller.tap_tile(Vector2i(first["at"]))
+	heist.controller.tap_tile(Vector2i(heist.controller.world.vault()["at"]))
+	heist.controller.tap_tile(Vector2i(pylon % width, pylon / width))
 	if not ward.is_empty():
-		heist.tap_tile(Vector2i(ward["at"]))
-	heist.next_gait()
+		heist.controller.tap_tile(Vector2i(ward["at"]))
+	heist.controller.next_gait()
 	heist.advance(1)
-	heist.next_gait()
+	heist.controller.next_gait()
 	heist.advance(1)
-	heist.next_gait()
-	heist.halt()
-	heist.drop_half()
-	var kinds := heist.world.commands().filter(func(c): return int(c["kind"]) != HeistScreen.Kind.LAND) \
+	heist.controller.next_gait()
+	heist.controller.halt()
+	heist.controller.drop_half()
+	var kinds := heist.controller.world.commands().filter(func(c): return int(c["kind"]) != HeistController.Kind.LAND) \
 		.map(func(c): return [c["kind"], c["x"]])
-	var K := HeistScreen.Kind
+	var K := HeistController.Kind
 	var expected := [[K.ATTACK, 1], [K.CRACK, 0], [K.BREAK, (pylon % width) * 256 + 128]]
 	if not ward.is_empty():
 		expected.append([K.DISARM, int(Vector2i(ward["at"]).x) * 256 + 128])
@@ -180,16 +199,16 @@ func _run() -> void:
 
 	# §5.4: the crew lands together on the edge tile the player chose, and the
 	# log says so at tick 0; once the heist has begun, it has landed.
-	heist.begin(HeistScreen.SEED, HeistScreen.TICKS, HeistScreen.CREW)
-	var spots := heist.world.landings()
+	heist.begin(HeistController.SEED, HeistController.TICKS, HeistController.CREW)
+	var spots := heist.controller.world.landings()
 	var spot: Vector2i = spots[spots.size() - 1] if spots.size() > 0 else Vector2i(-1, -1)
-	var chose := heist.land(spot)
+	var chose := heist.controller.land(spot)
 	heist.advance(1)
-	var together := heist.world.crew().all(func(r): return Vector2i(r["at"]) == spot)
-	var logged := heist.world.commands().filter(func(c): return int(c["kind"]) == HeistScreen.Kind.LAND)
+	var together := heist.controller.world.crew().all(func(r): return Vector2i(r["at"]) == spot)
+	var logged := heist.controller.world.commands().filter(func(c): return int(c["kind"]) == HeistController.Kind.LAND)
 	check("the crew lands together on the open edge tile the player chose, recorded at tick 0 (5.4)",
-		chose and together and logged.size() == 1 and int(logged[0]["tick"]) == 0 and not heist.land(spots[0]),
-		"spot %s, crew %s, log %s" % [spot, heist.world.crew().map(func(r): return r["at"]), logged])
+		chose and together and logged.size() == 1 and int(logged[0]["tick"]) == 0 and not heist.controller.land(spots[0]),
+		"spot %s, crew %s, log %s" % [spot, heist.controller.world.crew().map(func(r): return r["at"]), logged])
 
 	# And the heist it plays is the heist it records. The planned golden's
 	# commands, given live at their ticks on the heist screen, must record the
@@ -200,21 +219,21 @@ func _run() -> void:
 	var pending := golden.commands()
 	var k := 0
 	while heist.playing:
-		while k < pending.size() and int(pending[k]["tick"]) == heist.world.tick():
+		while k < pending.size() and int(pending[k]["tick"]) == heist.controller.world.tick():
 			var c: Dictionary = pending[k]
-			heist.world.give(c["actor"], c["kind"], c["x"], c["y"])
+			heist.controller.world.give(c["actor"], c["kind"], c["x"], c["y"])
 			k += 1
 		heist.advance(1)
-	var v := Session.verdict
+	var v: Dictionary = _heist()["verdict"]
 	check("a heist played live on the heist screen records the golden replay byte for byte, and the server's check grades it Clean",
-		Session.replay == _golden("planned-clean") and v.get("ok", false) and v.get("grade") == "Clean",
-		"%d bytes against %d; %s" % [Session.replay.size(), _golden("planned-clean").size(), v])
-	var again := _play(Session.replay)
+		(_heist()["replay"] as PackedByteArray) == _golden("planned-clean") and v.get("ok", false) and v.get("grade") == "Clean",
+		"%d bytes against %d; %s" % [(_heist()["replay"] as PackedByteArray).size(), _golden("planned-clean").size(), v])
+	var again := _play((_heist()["replay"] as PackedByteArray))
 	check("the heist just played replays on this phone with every second agreeing",
 		again != null and again.mismatch() == 0
 			and again.seconds_agreed() * RulebornReplay.ticks_per_second() == again.ticks(),
 		"mismatch %s" % (again.mismatch() if again else "unloadable"))
-	var refused := RulebornReplay.validate(Session.replay.slice(0, Session.replay.size() - 4) + PackedByteArray([0, 0, 0, 0]), PackedByteArray())
+	var refused := RulebornReplay.validate((_heist()["replay"] as PackedByteArray).slice(0, (_heist()["replay"] as PackedByteArray).size() - 4) + PackedByteArray([0, 0, 0, 0]), PackedByteArray())
 	check("a replay whose last checksum was altered is refused, as the server would refuse it",
 		not refused.get("ok", true), str(refused))
 	heist.queue_free()
@@ -240,7 +259,7 @@ func _run() -> void:
 		check("a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server",
 			false, "no server: run through client/status.py, which starts one")
 	else:
-		OS.set_environment("RULEBORN_SERVER", server_url)
+		_services(server_url)
 		var online: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
 		root.add_child(online)
 		online.set_process(false)
@@ -250,36 +269,36 @@ func _run() -> void:
 			await process_frame
 		var played := {}
 		if not online.lease.is_empty():
-			var go := func(seconds: int): online.advance(seconds * 30 - online.world.tick())
-			online.land(Vector2i(0, 0))                   # where server/test lands it
+			var go := func(seconds: int): online.advance(seconds * 30 - online.controller.world.tick())
+			online.controller.land(Vector2i(0, 0))                   # where server/test lands it
 			for step in [[0, Vector2i(6, 8)], [1, Vector2i(7, 9)], [2, Vector2i(5, 9)]]:
-				online.select(step[0])
-				online.tap_tile(step[1])
+				online.controller.select(step[0])
+				online.controller.tap_tile(step[1])
 			go.call(15)
 			for m in 3:
-				online.select(m)
-				online.crack()
+				online.controller.select(m)
+				online.controller.crack()
 			go.call(50)
 			for m in 3:
-				online.select(m)
-				online.load_up(100)
-			online.select(0)
-			online.get_out()
-			online.tap_tile(Vector2i(6, 11))
+				online.controller.select(m)
+				online.controller.load_up(100)
+			online.controller.select(0)
+			online.controller.get_out()
+			online.controller.tap_tile(Vector2i(6, 11))
 			go.call(62)
 			for m in 3:
-				online.select(m)
-				online.tap_tile(Vector2i(6, 11))
+				online.controller.select(m)
+				online.controller.tap_tile(Vector2i(6, 11))
 			online.advance(int(online.lease["ticks"]))
-			if Session.verdict.is_empty() or not Session.verdict.get("server", false):
+			if _heist()["verdict"].is_empty() or not _heist()["verdict"].get("server", false):
 				await online.finished
-			played = Session.verdict
+			played = _heist()["verdict"]
 		# Vault level 3: 11,250 × 1 × 1 × 1 × 1 × fill 1 (server/test's figure; B(V) at the owner's 5,000, F36).
 		check("a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server",
 			played.get("ok", false) and played.get("grade") == "Clean" and int(played.get("haul", 0)) == 11250,
 			"%s; %s" % [played, online.hint_label.text])
 		online.queue_free()
-		OS.unset_environment("RULEBORN_SERVER")
+		_services()
 		await process_frame
 
 	# §20.6's settings survive a relaunch: each change on the settings screen
@@ -365,16 +384,17 @@ func _run() -> void:
 	await process_frame
 	var own: HeistScreen = await _mount("heist_screen")
 	own.set_process(false)
-	var on_own := own.island == built and Session.testing
-	own.advance(own.world.ticks())
-	var judged := Session.verdict
+	var on_own: bool = own.controller.island == built and _heist()["testing"]
+	# To the end: the step after the clock's last tick is the one that ends it.
+	own.advance(own.controller.world.ticks() + 1)
+	var judged: Dictionary = _heist()["verdict"]
 	own.queue_free()
 	await process_frame
 	var after: ResultScreen = await _mount("result_screen")
 	var way_back := after.find_children("*", "Button", true, false).any(
 		func(b): return b.text == Strings.t("RESULT_BUILDER"))
 	after.queue_free()
-	Session.testing = false
+	App.services.store.dispatch(&"heist_started", {})
 	await process_frame
 	check("a player can raid their own island from the builder: the heist plays it, the server's check judges it, and the result leads back",
 		kept and on_own and judged.get("ok", false) and way_back, "%s" % judged)
@@ -388,7 +408,7 @@ func _run() -> void:
 		pseudo.add_message(key, "⟦" + Strings.rows()[key]["en"] + "⟧")
 	TranslationServer.add_translation(pseudo)
 	Strings.set_locale("xx")
-	Session.verdict = RulebornReplay.validate(_golden("planned-clean"), PackedByteArray())
+	App.services.store.dispatch(&"heist_finished", {"replay": _golden("planned-clean"), "verdict": RulebornReplay.validate(_golden("planned-clean"), PackedByteArray())})
 	var bare := []
 	for sname in SCREENS:
 		var screen: Control = await _mount(sname)
@@ -438,6 +458,8 @@ func _run() -> void:
 	check("no text on any screen is smaller than 13 points (§21.8)", small.is_empty(), ", ".join(small))
 
 	print("1..%d" % _n)
+	# Statics are released before the engine is, or their objects outlive it.
+	App.services = null
 	quit(1 if _failed else 0)
 
 

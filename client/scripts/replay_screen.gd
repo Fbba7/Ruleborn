@@ -30,8 +30,10 @@ var speed_button: Button
 
 
 func _ready() -> void:
-	if not Session.replay.is_empty():
-		entries.append([Strings.t("REPLAY_YOURS"), Session.replay])
+	App.ready(self)
+	var yours: PackedByteArray = App.services.store.get_slice(AppState.HEIST)["replay"]
+	if not yours.is_empty():
+		entries.append([Strings.t("REPLAY_YOURS"), yours])
 	for g in find_goldens():
 		entries.append([Strings.t("REPLAY_GOLDEN", g), FileAccess.get_file_as_bytes("res://goldens/%s.rbh" % g), g])
 	_build()
@@ -133,7 +135,7 @@ func _build() -> void:
 	controls.add_child(speed_button)
 	controls.add_child(UI.button("›", func(): open_entry(current + 1); playing = true))
 	var back := UI.row()
-	back.add_child(UI.button(Strings.t("COMMON_HOME"), func(): get_tree().change_scene_to_file("res://scenes/home.tscn")))
+	back.add_child(UI.button(Strings.t("COMMON_HOME"), func(): App.services.router.go(&"home")))
 	column.add_child(back)
 	column.add_child(controls)
 

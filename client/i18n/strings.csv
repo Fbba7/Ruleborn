@@ -91,3 +91,12 @@ PROBLEM_LANDINGBLOCKED,the landing is blocked,o desembarque está bloqueado
 PROBLEM_SEALED,no path reaches the Vault,nenhum caminho chega ao Cofre
 PROBLEM_EDGECLOSED,a side has fewer than half its edge open to land on,um lado tem menos da metade da borda aberta para desembarque
 RESULT_BUILDER,Back to the builder,Voltar ao construtor
+RESULT_CONFIRMING,"Checked on this phone (%d bytes); the server confirms it when you are back online.","Conferido neste celular (%d bytes); o servidor confirma quando você voltar a ficar online."
+ERR_UNKNOWN,something went wrong (%s),algo deu errado (%s)
+ERR_OFFLINE,no server is set,nenhum servidor configurado
+ERR_UNREACHABLE,the server could not be reached,não foi possível falar com o servidor
+ERR_TIMEOUT,the server took too long to answer,o servidor demorou demais para responder
+ERR_REQUEST_FAILED,the request could not be sent,não foi possível enviar o pedido
+ERR_MALFORMED_RESPONSE,the server's answer could not be read,não foi possível ler a resposta do servidor
+ERR_NO_TARGET,there is no island to raid yet,ainda não há ilha para assaltar
+ERR_ISLAND_DOES_NOT_LOAD,the island did not load,a ilha não carregou

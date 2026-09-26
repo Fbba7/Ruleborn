@@ -38,6 +38,7 @@ var raid_button: Button
 
 
 func _ready() -> void:
+	App.ready(self)
 	if FileAccess.file_exists(path):
 		island.read(FileAccess.get_file_as_bytes(path))
 	_build()
@@ -73,7 +74,7 @@ func _build() -> void:
 	actions.add_child(raid_button)
 	column.add_child(actions)
 	var back := UI.row()
-	back.add_child(UI.button(Strings.t("COMMON_HOME"), func(): get_tree().change_scene_to_file("res://scenes/home.tscn")))
+	back.add_child(UI.button(Strings.t("COMMON_HOME"), func(): App.services.router.go(&"home")))
 	column.add_child(back)
 
 
@@ -160,12 +161,11 @@ func raid() -> void:
 	if not island.problems().is_empty():
 		return
 	save()
-	Session.island = island.bytes()
-	Session.testing = true
+	App.services.store.dispatch(&"heist_started", {"island": island.bytes(), "testing": true})
 	# Only as the app's own screen: a test that mounts the builder drives the
 	# heist screen itself.
 	if get_tree().current_scene == self:
-		get_tree().change_scene_to_file("res://scenes/heist_screen.tscn")
+		App.services.router.go(&"heist")
 
 
 func _refresh() -> void:
