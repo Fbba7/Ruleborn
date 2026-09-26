@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6500,6 +6500,39 @@ dict(id="D71", kind="deviation", severity="minor", status="open",
      rec="None for the document; build universes of several realms, the "
          "crossing realms T3.3 lists as not yet built."),
 
+dict(id="D72", kind="deviation", severity="minor", status="open",
+     title="§21.8\u2019s alarm red and success green cannot carry words at its "
+           "own 4.5:1, and most of the island\u2019s route features vanish in "
+           "grayscale",
+     refs=["20.8", "21.2", "21.8", "21.10"],
+     body="§21.8: <em>\u201cContrast meets 4.5:1, checked against a perceptual "
+          "model as well\u201d</em>, and <em>\u201cred #E2536B for alarms, green "
+          "#3FBF7F for success\u201d</em>. Measured (the client\u2019s "
+          "<code>ui/colour_check.gd</code>, WCAG 2\u2019s ratio and APCA\u2019s "
+          "Lc): ink on the red is 4.39:1 and paper on it 3.59:1, so no text "
+          "colour reads on the alarm red; the red and the green as words on a "
+          "paper panel fall short too; ink on the gold of a main action is "
+          "8.8:1 but Lc 66, short of APCA\u2019s Lc 75 for body text, so "
+          "controls\u2019 words are bold (Lc 60); and as fills for words the "
+          "school colours fail APCA: ink on Energy, Life, Matter and Spirit "
+          "reaches Lc 48, 58, 36 and 41, and Matter only 4.26:1. §21.10\u2019s grayscale test "
+          "fails on the island in §21.2\u2019s own colours: against the stone, "
+          "water is 1.03:1, tall grass 1.17:1, a crystal wall and fog 1.33:1, "
+          "gravel 1.42:1, the Vault\u2019s gold 1.2:1. The client\u2019s "
+          "reading, all in <code>client/ui/tokens.json</code>: words that are "
+          "an alarm or a success use deeper shades (#B3203A, #1D6B45), and "
+          "text on an alarm sits on #B3203A in paper (6.4:1); crew portraits "
+          "are their school colours lightened, and letters drawn on the realm "
+          "sit on a paper halo; every feature that changes a "
+          "route is edged in ink and water carries ink ripples, so each is 3:1 "
+          "from the ground by value; the design\u2019s red and green stay for "
+          "rings and marks. The six school colours do stay apart for the three "
+          "common forms of colour blindness (ΔE 11.3 at the closest). Found "
+          "building §20.8\u2019s accessibility set.",
+     rec="Deepen the alarm red and the success green where they carry words, "
+         "or say words never sit in them; and give §21.10\u2019s hero features "
+         "a value apart from the stone in the art pass."),
+
 dict(id="G24", kind="gap", severity="minor", status="open",
      title="§7.3\u2019s Structure regrowth row holds three different rules, "
            "and its combining rule has no case for a time",
@@ -8079,6 +8112,24 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+"D72": [
+    dict(section="21.8", action="replace",
+         find="Ink #221C3A on paper panels at 85% opacity over the world; gold for main "
+              "actions, red #E2536B for alarms, green #3FBF7F for success.",
+         replace="Ink #221C3A on paper panels at 85% opacity over the world; gold for main "
+                 "actions, red #E2536B for alarms, green #3FBF7F for success. The red and the "
+                 "green are too light to carry words at 4.5:1: an alarm or a success in words "
+                 "is #B3203A or #1D6B45, and text on an alarm is paper on #B3203A.",
+         why="Measured by both models 21.8 names: ink on the red is 4.39:1 and paper on it "
+             "3.59:1. D72."),
+    dict(section="21.10", action="insert",
+         find="so most of the board must not need telling apart.",
+         replace="The handful that are told apart are edged in ink, at 3:1 or more against "
+                 "the ground by value: in 21.2's colours water, tall grass, crystal and fog "
+                 "sit within 1.4:1 of the stone and vanish in grayscale.",
+         why="21.10's own grayscale test, run on 21.2's palette. D72."),
+],
+
 "G40": [
     dict(section="5.4", action="insert",
          find="unless the spot is in fog, darkness or tall grass.",

@@ -82,6 +82,9 @@ func _run() -> void:
 	# The architecture's layers, headless (client/README.md).
 	await CoreTests.new(self, check).run()
 
+	# §20.8's accessibility set, on every screen, offline (tests/a11y_tests.gd).
+	await A11yTests.new(self, check, _mount, _control_problems, SCREENS).run()
+
 	# §20.6's two launch languages: every key a script asks for is in the
 	# catalogue, in every language, with the same placeholders.
 	check("every string a screen asks for is in the catalogue, in English and Brazilian Portuguese, "
@@ -137,7 +140,7 @@ func _run() -> void:
 	replay_screen.open_golden("planned-clean")
 	replay_screen.advance(100000)
 	check("the replay screen plays a golden to its end and shows its grade",
-		replay_screen.grade_label.text.begins_with("Clean") and replay_screen.badge_label.text.begins_with("Matches"),
+		replay_screen.grade_label.text.begins_with("Clean") and replay_screen.badge_label.text.contains("Matches"),
 		"%s / %s" % [replay_screen.grade_label.text, replay_screen.badge_label.text])
 	replay_screen.queue_free()
 
@@ -317,13 +320,17 @@ func _run() -> void:
 	# §20.6's settings survive a relaunch: each change on the settings screen
 	# is saved as it is made, and the next launch reads it back and applies it.
 	var settings: SettingsScreen = await _mount("settings")
-	var minus: Array = settings.find_children("*", "Button", true, false) \
-		.filter(func(b: Button) -> bool: return b.text == "−")
+	# The screen is built again after each change, so each tap finds its
+	# button afresh.
+	var tap := func(text: String, nth := 0) -> void:
+		var found: Array = settings.find_children("*", "Button", true, false) \
+			.filter(func(b: Button) -> bool: return b.text == text and b.is_inside_tree())
+		found[nth].pressed.emit()
 	for i in 7:
-		minus[0].pressed.emit()
-	minus[1].pressed.emit()
-	settings.motion_button.pressed.emit()
-	settings.language_button.pressed.emit()
+		tap.call("−", 0)
+	tap.call("−", 1)
+	tap.call(Strings.t("SETTINGS_MOTION_OFF"))
+	tap.call(Strings.t("LANGUAGE_en"))
 	await process_frame
 	var saved := [Settings.locale, Settings.volume.duplicate(), Settings.reduced_motion, Settings.haptics]
 	Settings.locale = ""
@@ -435,7 +442,8 @@ func _run() -> void:
 		await process_frame
 		for c in screen.find_children("*", "", true, false):
 			if (c is Label or c is Button) and c.visible:
-				var text: String = c.text
+				# A status glyph or a chosen mark may lead the words (UI.status).
+				var text: String = RegEx.create_from_string("^[^A-Za-zÀ-ÖØ-öø-ÿ⟦]+").sub(c.text, "")
 				if RegEx.create_from_string("[A-Za-zÀ-ÖØ-öø-ÿ]").search(text) and not text.begins_with("⟦"):
 					bare.append("%s: %s" % [sname, text.replace("\n", " ")])
 		screen.queue_free()
@@ -536,13 +544,26 @@ func _control_problems(screen: Control) -> Array:
 		var r: Rect2 = b.get_global_rect()
 		if min(r.size.x, r.size.y) < 48 * point - 0.5:
 			problems.append("%s is %s across" % [b.text, r.size])
+		if r.position.x < 0 or r.end.x > frame.x:
+			problems.append("%s is off the screen" % b.text)
+		# A control in a scrolling list is wherever the player scrolls it; the
+		# place rules hold for what does not move.
+		if _scrolls(b):
+			continue
 		if r.position.y < frame.y / 3.0:
 			problems.append("%s is above the thumb zone" % b.text)
 		if r.end.y > frame.y - 44 * point or r.position.y < 44 * point:
 			problems.append("%s is inside a safe area" % b.text)
 		var corner := Vector2(frame.x * 0.15, frame.y * 0.08)
 		if (r.position.x < corner.x or r.end.x > frame.x - corner.x) and r.end.y > frame.y - corner.y:
-			problems.append("%s is in a corner" % b.text)
-		if r.position.x < 0 or r.end.x > frame.x:
-			problems.append("%s is off the screen" % b.text)
+			problems.append("%s is in a corner at %s of %s" % [b.text, r, frame])
 	return problems
+
+
+func _scrolls(c: Node) -> bool:
+	var p := c.get_parent()
+	while p != null:
+		if p is ScrollContainer:
+			return true
+		p = p.get_parent()
+	return false

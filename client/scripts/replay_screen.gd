@@ -95,16 +95,17 @@ func _process(delta: float) -> void:
 func _refresh() -> void:
 	hud.show_state(replay)
 	if replay.mismatch() > 0:
-		badge_label.text = Strings.t("REPLAY_DIVERGED", [replay.mismatch() / 60, replay.mismatch() % 60])
-		badge_label.add_theme_color_override("font_color", Palette.ALARM)
+		UI.set_status(badge_label, "alarm",
+			Strings.t("REPLAY_DIVERGED", [replay.mismatch() / 60, replay.mismatch() % 60]))
 	else:
-		badge_label.text = Strings.t("REPLAY_MATCHES", replay.seconds_agreed())
-		badge_label.add_theme_color_override("font_color", Palette.SUCCESS.darkened(0.3))
+		UI.set_status(badge_label, "success", Strings.t("REPLAY_MATCHES", replay.seconds_agreed()))
 	if replay.tick() >= replay.ticks() and replay.ticks() > 0:
 		var o := replay.outcome()
 		grade_label.text = Strings.t("REPLAY_GRADE", [Strings.term("GRADE", o["grade"]), o["banked"], o["capacity"]])
-	play_button.text = Strings.t("REPLAY_PAUSE") if playing else Strings.t("REPLAY_PLAY")
-	speed_button.text = "×%d" % SPEEDS[speed_index]
+	UI.relabel(play_button, Strings.t("REPLAY_PAUSE") if playing else Strings.t("REPLAY_PLAY"))
+	UI.relabel(speed_button, "×%d" % SPEEDS[speed_index])
+	speed_button.accessibility_name = Strings.t("REPLAY_SPEED", SPEEDS[speed_index])
+	view.describe()
 	view.queue_redraw()
 
 
@@ -120,25 +121,28 @@ func _build() -> void:
 	var status := UI.panel()
 	var status_box := VBoxContainer.new()
 	status.add_child(status_box)
-	name_label = UI.label()
-	badge_label = UI.label()
-	grade_label = UI.label()
+	name_label = UI.label("", UI.TEXT_POINTS, true)
+	badge_label = UI.label("", UI.TEXT_POINTS, true)
+	grade_label = UI.label("", UI.TEXT_POINTS, true)
 	status_box.add_child(name_label)
 	status_box.add_child(badge_label)
 	status_box.add_child(grade_label)
 	column.add_child(status)
 
-	var controls := UI.row()
-	controls.add_child(UI.button("‹", func() -> void: open_entry(current - 1); playing = true))
+	var controls := UI.row(-1.0, true)
+	controls.add_child(UI.button("‹", func() -> void: open_entry(current - 1); playing = true, false, Color(),
+			Strings.t("REPLAY_PREVIOUS")))
 	play_button = UI.button(Strings.t("REPLAY_PAUSE"), func() -> void: playing = not playing; _refresh(), true)
 	controls.add_child(play_button)
-	speed_button = UI.button("×2", func() -> void: speed_index = (speed_index + 1) % SPEEDS.size(); _refresh())
+	speed_button = UI.button("×2", func() -> void: speed_index = (speed_index + 1) % SPEEDS.size(); _refresh(),
+			false, Color(), Strings.t("REPLAY_SPEED", SPEEDS[speed_index]))
 	controls.add_child(speed_button)
-	controls.add_child(UI.button("›", func() -> void: open_entry(current + 1); playing = true))
-	var back := UI.row()
-	back.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
-	column.add_child(back)
-	column.add_child(controls)
+	controls.add_child(UI.button("›", func() -> void: open_entry(current + 1); playing = true, false, Color(),
+			Strings.t("REPLAY_NEXT")))
+	# Home rides with the playback controls: one row fewer, so the realm
+	# keeps its room when §20.8's large text makes the words take more.
+	controls.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
+	column.add_child(UI.narrow(controls))
 
 
 ## Tap a guard to see what it sees (§21.12: one shape at a time).

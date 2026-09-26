@@ -324,7 +324,22 @@ DELIVERABLES = [
 
     ("10 to 13", "Localisation: English and Brazilian Portuguese", FRONTEND, not_started(
         "every launch screen and content name ships in both languages, the Portuguese read by a native speaker")),
-    ("10 to 13", "Accessibility", FRONTEND, not_started("§21's accessibility set is in the client")),
+    # §20.8's table, area by area, and §21.8's and §21.10's checks, on every
+    # screen (client/tests/a11y_tests.gd). VoiceOver and TalkBack on a phone
+    # are the device matrix's.
+    ("10 to 13", "Accessibility", FRONTEND, client_tests(
+        "a banner leads with its glyph, is announced, goes by itself, or stays until dismissed when the player asks (§20.8)",
+        "a rehearsal can be paused at any time and run at 75%; a raid cannot be paused (§20.8)",
+        "every colour the client puts words in reads at 4.5:1 and at APCA's level for its size and weight, the realm's marks on their halo included, in both contrast modes (§21.8, §20.8)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach (§20.8, §21.1)",
+        "haptics: a light tap on a button, a warning as the alarm rises, a pulse as a ward or a pylon goes down, nothing when switched off (§21.8, §20.8)",
+        "high contrast and reduced motion start as the phone says; text size, contrast, left-handed controls, rehearsal pace, banners and motion are saved and restored, and take effect (§20.8)",
+        "left-handed play mirrors the heist's controls: Get out moves to the other hand (§20.8)",
+        "nothing is carried by colour alone: wards by their school's shape, guards by a mark, crew by their role's letters, a status by its glyph (§20.8)",
+        "on every screen, every word reads against what is behind it, in every state a control is drawn in and faded as it is, in both contrast modes (§21.8, §21.10)",
+        "the island keeps its figures by value: every feature that changes a route, each guard and the outlines of wards, the Vault and the crew stand 3:1 from every ground, and water's ripples from water, in both contrast modes (§21.10)",
+        "the six schools stay apart for the three common forms of colour blindness, and each has a shape of its own (§20.8, §21.2)")),
     ("10 to 13", "Compliance: store declarations", BACKEND, not_started(
         "the age, privacy and store declarations are filed; drafted from the schema in "
         "server/declarations.md, checked by server/test/privacy.test.mjs")),

@@ -388,6 +388,22 @@ impl RulebornReplay {
         out
     }
 
+    /// Each woven law's pylon: where it stands and whether it is still up
+    /// (§7.1: breaking the pylon ends the law).
+    #[func]
+    fn pylons(&self) -> Array<VarDictionary> {
+        let mut out = Array::new();
+        let Some(w) = self.world.as_ref() else { return out };
+        for law in &w.laws {
+            let mut d = VarDictionary::new();
+            let (x, y) = w.grid.centre(law.pylon);
+            d.set("at", Vector2::new(tiles(x), tiles(y)));
+            d.set("standing", law.broken_at.is_none());
+            out.push(&d);
+        }
+        out
+    }
+
     /// The Vault's tile, its health and what is left to load.
     #[func]
     fn vault(&self) -> VarDictionary {

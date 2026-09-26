@@ -35,7 +35,7 @@ func _ready() -> void:
 			App.services.store.dispatch(&"heist_started", {})
 			App.services.router.go(&"heist")))
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
-	column.add_child(actions)
+	column.add_child(UI.narrow(actions))
 	show_verdict(heist["verdict"], (heist["replay"] as PackedByteArray).size())
 
 
@@ -52,9 +52,9 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 		else:
 			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))
 			check_label.text = Strings.t("RESULT_ACCEPTED_LOCAL", replay_bytes)
-		check_label.add_theme_color_override("font_color", Palette.SUCCESS.darkened(0.3))
+		UI.set_status(check_label, "confirming" if v.get("confirming", false) else "success", check_label.text)
 	else:
 		grade_label.text = Strings.t("RESULT_NOT_ACCEPTED")
 		detail_label.text = Errors.message("RESULT_REFUSED", str(v.get("refused", "")))
-		check_label.text = Strings.t("RESULT_PAID_NOTHING" if by_server else "RESULT_WOULD_PAY_NOTHING")
-		check_label.add_theme_color_override("font_color", Palette.ALARM)
+		UI.set_status(check_label, "alarm",
+			Strings.t("RESULT_PAID_NOTHING" if by_server else "RESULT_WOULD_PAY_NOTHING"))

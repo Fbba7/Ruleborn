@@ -51,6 +51,44 @@ network, the result shows the phone's own check, marked as confirming
 (§24.12), and the outbox sends it when the server can be reached; the server
 answers a repeat from its first decision, so nothing is paid twice.
 
+**Accessibility (§20.8, §21.8, §21.10).** Built into the components, so
+every screen and Claude Design's components inherit it, and checked on every
+screen by `tests/a11y_tests.gd`:
+
+- *Seeing.* Text size to 200% (Settings), body text scaling in full and
+  titles only until body text reaches them; buttons wrap their words past a
+  width and rows wrap onto more lines, and every screen is laid out again at
+  150% and 200% in both languages against §21.1's rules. A high-contrast mode
+  (`color_high_contrast` in the tokens), on at first launch if the phone's
+  own setting is. Every word on every screen is checked against what is
+  behind it by WCAG's 4.5:1 and by APCA's perceptual model, in both modes
+  (`ui/colour_check.gd`). The six school colours are simulated for the three
+  common forms of colour blindness and must stay apart, and each school has a
+  shape. Nothing is carried by colour alone: a ward is drawn as its school's
+  shape, a guard's state has a mark (? ?? ??? !), a crew member has its
+  role's letters, a status leads with a glyph (✓ ! ⓘ …), the chosen crew
+  member is said in words. §21.8's alarm red and success green are too light
+  to carry words at 4.5:1, so words in them use deeper shades (D72).
+- *Hearing.* Nothing is carried by sound: the client has no sounds yet, and
+  every cue it has is visual, with a haptic form (§21.8's four patterns, in
+  `app/haptics.gd`). Three volumes, music apart from alerts.
+- *Moving.* One finger, taps only; nothing is held, so there is no hold time
+  to adjust. The hand's controls mirror for left-handed play. A rehearsal —
+  the player's own island, raided from the builder — pauses at any time and
+  runs at 75% on request.
+- *Understanding.* Banners lead with their glyph and stay until dismissed if
+  the player chooses.
+- *Comfort.* Reduced motion, on at first launch if the phone's setting is;
+  nothing flashes or shakes.
+- *Screen readers.* Godot 4.5's AccessKit support: every control has a name
+  in words (a symbol button says what it does), banners announce themselves,
+  and the realm is described in words.
+- *Grayscale (§21.10).* Every feature that changes a route, and water, is
+  edged in ink, 3:1 against the ground by value.
+
+What only a phone can check — VoiceOver and TalkBack reading the screens in
+order, the vibrator's patterns — is the device matrix's (§26.8).
+
 ## What is here
 
 Six screens, opened from `scenes/home.tscn`:

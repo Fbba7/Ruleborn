@@ -938,7 +938,7 @@ dict(
           "defect names its layer, then build what moves the frontend figure, "
           "each task saying what it will move.",
     tasks=[
-        dict(id="TC.1", owner="claude", status="ready",
+        dict(id="TC.1", owner="claude", status="done",
              title="Architecture: one-way data, typed layers, a design that lands in one place",
              detail="The market-standard shape for a mobile game client, in "
                     "Godot's own terms. <strong>Views</strong> (scenes) only draw "
@@ -969,7 +969,7 @@ dict(
              gate="no frontend figure moves (the screens are counted already); "
                   "every later task is cheaper and its defects easier to place",
              evidence="python3 client/status.py; bash tools/check_all.sh"),
-        dict(id="TC.2", owner="claude", status="blocked",
+        dict(id="TC.2", owner="claude", status="done",
              title="Defects kept out, and findable when they get in",
              detail="Checks in <code>tools/check_all.sh</code> from the first "
                     "commit: every GDScript variable and function typed, with "
@@ -988,8 +988,8 @@ dict(
                     "the last actions. Each slice gets an adversarial review "
                     "before it is committed.",
              gate="no frontend figure moves; it is what keeps later figures honest",
-             blocked_by=["TC.1"]),
-        dict(id="TC.3", owner="claude", status="blocked",
+             evidence="python3 tools/client_contract.py; gdlint; python3 client/status.py"),
+        dict(id="TC.3", owner="claude", status="ready",
              title="Project structure on both stores' targets",
              detail="Export presets for iPhone and Android, the Rust extension "
                     "built for arm64 on each, and the build scripts. An Android "
@@ -997,9 +997,8 @@ dict(
                     "Xcode on a Mac, so here it stops at the exported Xcode "
                     "project. Counted when a client project builds on both "
                     "stores' targets.",
-             gate="+4.86 frontend points when both build; the iPhone half needs a Mac",
-             blocked_by=["TC.1"]),
-        dict(id="TC.4", owner="claude", status="blocked",
+             gate="+4.86 frontend points when both build; the iPhone half needs a Mac"),
+        dict(id="TC.4", owner="claude", status="done",
              title="Accessibility: \u00a720.8 and \u00a721.8 in full",
              detail="Text size, contrast checked against \u00a721.8's 4.5:1 "
                     "and a perceptual model, nothing carried by colour alone, "
@@ -1008,17 +1007,16 @@ dict(
                     "grayscale test run on every screen. Applied through the "
                     "tokens and components, so the design inherits it.",
              gate="+8.80 frontend points when \u00a721's set is in the client",
-             blocked_by=["TC.1"]),
-        dict(id="TC.5", owner="claude", status="blocked",
+             evidence="client/tests/a11y_tests.gd, through python3 client/status.py; D72"),
+        dict(id="TC.5", owner="claude", status="ready",
              title="Localisation: every launch screen and name in both languages",
              detail="The catalogue already carries English and a working "
                     "Portuguese. Every new screen's words go into it as they are "
                     "made, plurals and numbers formatted per language. It counts "
                     "only once a native speaker has read the Portuguese "
                     "(\u00a726.9), which is yours to arrange.",
-             gate="+8.80 frontend points after the native read",
-             blocked_by=["TC.1"]),
-        dict(id="TC.6", owner="claude", status="blocked",
+             gate="+8.80 frontend points after the native read"),
+        dict(id="TC.6", owner="claude", status="doing",
              title="Screens on the backend that exists: shop and track, Workshop, social",
              detail="The data side of each screen \u2014 repositories, "
                     "presenters, flows, error states, offline behaviour \u2014 "
@@ -1029,14 +1027,12 @@ dict(
                     "reports; the social screens show the league, constellations, "
                     "crews, friends and the feed.",
              gate="+4.37 (shop, track, wallet), +8.50 (Workshop), +4.86 (social) "
-                  "frontend points; only their look changes when the design lands",
-             blocked_by=["TC.1", "TC.2"]),
-        dict(id="TC.7", owner="you", status="blocked",
+                  "frontend points; only their look changes when the design lands"),
+        dict(id="TC.7", owner="you", status="ready",
              title="The design from Claude Design",
              detail="Tokens and components, and the screens' layouts. They "
                     "land in TC.1's token file and component library; screens "
-                    "change only where the design moves what they show.",
-             blocked_by=["TC.1"]),
+                    "change only where the design moves what they show."),
         dict(id="TC.8", owner="you", status="blocked",
              title="Real devices, and the fix buffer",
              detail="\u00a726.8: anything needing a real device is not safe to "

@@ -8,7 +8,7 @@ func _ready() -> void:
 	var column := UI.frame(self)
 	column.add_child(UI.grow())
 	column.add_child(UI.label(Strings.t("APP_NAME"), 48))
-	column.add_child(UI.label(Strings.t("HOME_TAGLINE"), UI.TEXT_POINTS, true))
+	column.add_child(UI.plate(UI.label(Strings.t("HOME_TAGLINE"), UI.TEXT_POINTS, true)))
 	column.add_child(UI.grow())
 	var actions := UI.row()
 	actions.add_child(UI.button(Strings.t("HOME_PLAY"), _play, true))
@@ -17,7 +17,7 @@ func _ready() -> void:
 	var more := UI.row()
 	more.add_child(UI.button(Strings.t("HOME_BUILD"), func() -> void: App.services.router.go(&"builder")))
 	more.add_child(UI.button(Strings.t("HOME_SETTINGS"), func() -> void: App.services.router.go(&"settings")))
-	column.add_child(more)
+	column.add_child(UI.narrow(more))
 
 
 ## A heist on the fixture realm or a leased island: not the builder's test.

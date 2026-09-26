@@ -7,7 +7,11 @@ extends Control
 ## same check runs on the phone.
 ##
 ## §21.8 puts crew portraits at the bottom left and actions at the bottom
-## right; both rows here sit above the corners, which §21.1 keeps clear.
+## right; both rows here sit above the corners, which §21.1 keeps clear, and
+## the actions mirror for a left-handed player (§20.8). A rehearsal — the
+## player's own island, raided from the builder — can be paused at any time
+## and, if the player asks, runs at 75% (§20.8). The alarm rising, a pylon
+## breaking and the escape each have a haptic form as well as a visual one.
 
 signal finished
 
@@ -20,18 +24,28 @@ var view: RealmView
 var hud: HeistHud
 var hint_label: Label
 var gait_button: Button
+var pause_button: Button
 var crew_buttons: Array[Button] = []
+## A rehearsal: the player's own island, from the builder.
+var rehearsal := false
+## Paused by the player, in a rehearsal only.
+var paused := false
+
 
 ## The lease this heist is played under, when a server gave one.
 var lease := {}
 
 var _owed := 0.0
+var _alarm := 0
+var _live_wards := -1
+var _pylons := -1
 
 
 func _ready() -> void:
 	App.ready(self)
 	var services: Services = App.services
 	var heist: Dictionary = services.store.get_slice(AppState.HEIST)
+	rehearsal = heist["testing"]
 	controller.world.start(HeistController.SEED, HeistController.TICKS, HeistController.CREW, PackedByteArray())
 	_build()
 	controller.changed.connect(_refresh)
@@ -50,6 +64,10 @@ func _ready() -> void:
 
 ## Start a fresh heist; see `HeistController.begin`.
 func begin(seed_text: String, ticks: int, crew: int, realm := PackedByteArray(), era := "") -> bool:
+	# A new world: the next refresh only takes the haptic cues' baseline.
+	_alarm = 0
+	_live_wards = -1
+	_pylons = -1
 	if not controller.begin(seed_text, ticks, crew, realm, era):
 		return false
 	playing = true
@@ -99,6 +117,8 @@ func finish() -> void:
 	var replay := controller.record()
 	var local := RulebornReplay.validate(replay, controller.island)
 	services.store.dispatch(&"heist_finished", {"replay": replay, "verdict": local})
+	if local.get("ok", false) and str(local.get("grade", "")) != "Foiled":
+		Haptics.play("success")
 	if not lease.is_empty():
 		hint_label.text = Strings.t("HEIST_CHECKING")
 		var answer := await services.heists.submit(str(lease["token"]), replay)
@@ -108,10 +128,22 @@ func finish() -> void:
 		services.router.go.call_deferred(&"result")
 
 
-func _process(delta: float) -> void:
-	if not playing:
+## How fast the clock runs: a rehearsal at §20.8's 75% when the player asks.
+func pace() -> float:
+	return Tokens.number("motion", "rehearsal_pace") if rehearsal and Settings.slow_rehearsals else 1.0
+
+
+func toggle_pause() -> void:
+	if not rehearsal:
 		return
-	_owed += delta * RulebornReplay.ticks_per_second()
+	paused = not paused
+	_refresh()
+
+
+func _process(delta: float) -> void:
+	if not playing or paused:
+		return
+	_owed += delta * RulebornReplay.ticks_per_second() * pace()
 	var whole := int(_owed)
 	_owed -= whole
 	controller.advance(whole)
@@ -123,14 +155,57 @@ func _refresh() -> void:
 	if hud == null:
 		return
 	hud.show_state(controller.world)
+	_feel(controller.world)
 	var me: Dictionary = controller.world.crew()[controller.selected]
 	hint_label.text = Strings.t("HEIST_SKIFF_HINT") if controller.calling_skiff else \
 		Strings.t("HEIST_HINT", Strings.term("ROLE", me["role"]))
-	gait_button.text = Strings.term("GAIT", me["gait"])
+	UI.relabel(gait_button, Strings.term("GAIT", me["gait"]), true)
+	var crew := controller.world.crew()
 	for i in crew_buttons.size():
 		var b := crew_buttons[i]
-		b.modulate = Color.WHITE if i == controller.selected else Color(1, 1, 1, 0.6)
+		var role := Strings.term("ROLE", crew[i]["role"])
+		# Chosen is said in the button's words and its border, never by
+		# fading the others, which would take their words below 4.5:1.
+		var chosen := i == controller.selected
+		UI.relabel(b, ("▸" if chosen else "") + role.substr(0, 2), true)
+		UI.set_outline(b, 3 if chosen else 1)
+		b.accessibility_name = Strings.t("HEIST_CREW_CHOSEN" if chosen else "HEIST_CREW", role)
+	if pause_button != null:
+		UI.relabel(pause_button, Strings.t("HEIST_RESUME" if paused else "HEIST_PAUSE"))
+		pause_button.accessibility_name = pause_button.text
+	view.describe()
 	view.queue_redraw()
+
+
+## The haptic form of what the screen shows: a warning as the alarm rises, a
+## pulse as a ward goes down (§21.8).
+func _feel(r: RulebornReplay) -> void:
+	var live := 0
+	for w in r.wards():
+		if w["live"]:
+			live += 1
+	var standing := 0
+	for p in r.pylons():
+		if p["standing"]:
+			standing += 1
+	for kind in cues(_alarm, r.alarm(), _live_wards, live, _pylons, standing):
+		Haptics.play(kind)
+	_alarm = r.alarm()
+	_live_wards = live
+	_pylons = standing
+
+
+## The haptic cues between two moments: the alarm's level, the wards standing
+## and the pylons standing, before and now (-1 before: nothing seen yet). A
+## ward or a pylon going down is one pulse (§21.8).
+static func cues(alarm_before: int, alarm: int, live_before: int, live: int, pylons_before := -1,
+		pylons := -1) -> Array[String]:
+	var out: Array[String] = []
+	if alarm > alarm_before:
+		out.append("warning")
+	if (live_before >= 0 and live < live_before) or (pylons_before >= 0 and pylons < pylons_before):
+		out.append("pulse")
+	return out
 
 
 func _build() -> void:
@@ -144,23 +219,29 @@ func _build() -> void:
 			controller.tap_tile(view.tile_at(event.position)))
 	column.add_child(view)
 	hint_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(hint_label)
+	column.add_child(UI.plate(hint_label))
 
-	var actions := UI.row()
+	var actions := UI.row(-1.0, true)
 	column.add_child(actions)
+	if rehearsal:
+		pause_button = UI.button(Strings.t("HEIST_PAUSE"), toggle_pause)
+		actions.add_child(pause_button)
 	gait_button = UI.button(Strings.term("GAIT", "Walk"), controller.next_gait)
+	# As wide as its widest word, so a change of gait never moves the row.
+	UI.fit_to(gait_button, HeistController.GAITS.map(func(g: String) -> String: return Strings.term("GAIT", g)))
 	actions.add_child(gait_button)
 	actions.add_child(UI.button(Strings.t("HEIST_HALT"), controller.halt))
 	actions.add_child(UI.button(Strings.t("HEIST_DROP"), controller.drop_half))
 	actions.add_child(UI.button(Strings.t("HEIST_GET_OUT"), controller.get_out, true))
 	# The crew's portraits lowest, where the thumb rests (§21.8 puts them at
 	# the bottom); a narrow row, so it stays clear of the corners.
-	var crew_row := UI.row()
-	column.add_child(crew_row)
+	var crew_row := UI.row(-1.0, true)
+	column.add_child(UI.narrow(crew_row))
 	var crew := controller.world.crew()
 	for i in crew.size():
 		var role: String = crew[i]["role"]
 		var b := UI.button(Strings.term("ROLE", role).substr(0, 2), controller.select.bind(i), false,
-				Palette.ROLE.get(role, Palette.PAPER))
+				(Palette.ROLE.get(role, Palette.PAPER) as Color).lightened(0.45))
+		UI.fit_to(b, ["▸" + Strings.term("ROLE", role).substr(0, 2)])
 		crew_buttons.append(b)
 		crew_row.add_child(b)

@@ -47,8 +47,8 @@ func _ready() -> void:
 
 func _build() -> void:
 	var column := UI.frame(self)
-	title_label = UI.label("", UI.TEXT_POINTS)
-	column.add_child(title_label)
+	title_label = UI.label("", UI.TEXT_POINTS, true)
+	column.add_child(UI.plate(title_label))
 	view = RealmView.new()
 	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	view.gui_input.connect(func(event: InputEvent) -> void:
@@ -57,8 +57,10 @@ func _build() -> void:
 	column.add_child(view)
 	status_label = UI.label("", UI.TEXT_POINTS, true)
 	together_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(status_label)
-	column.add_child(together_label)
+	var words := VBoxContainer.new()
+	words.add_child(status_label)
+	words.add_child(together_label)
+	column.add_child(UI.plate(words))
 
 	var tools := UI.row()
 	tool_button = UI.button("", next_tool)
@@ -72,10 +74,10 @@ func _build() -> void:
 	actions.add_child(UI.button(Strings.t("BUILDER_SAVE"), save))
 	raid_button = UI.button(Strings.t("BUILDER_RAID"), raid, true)
 	actions.add_child(raid_button)
-	column.add_child(actions)
-	var back := UI.row()
-	back.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
-	column.add_child(back)
+	# Home rides with the actions: one row fewer, so the realm keeps its room
+	# at §20.8's large text.
+	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
+	column.add_child(UI.narrow(actions))
 
 
 ## The kinds the chosen tool offers, as ids: ground and wards by content id,
@@ -181,11 +183,11 @@ func _refresh() -> void:
 		var why := Array(problems).map(func(p: Variant) -> String: return Strings.t("PROBLEM_" + str(p).to_upper()))
 		status_label.text = Strings.t("BUILDER_BLOCKED", ", ".join(why))
 	together_label.text = together(island.combos())
-	tool_button.text = Strings.t("BUILDER_TOOL_" + TOOLS[tool])
+	UI.relabel(tool_button, Strings.t("BUILDER_TOOL_" + TOOLS[tool]))
 	var ks := kinds()
-	kind_button.text = kind_name(ks[kind]) if kind < ks.size() else "—"
+	UI.relabel(kind_button, kind_name(ks[kind]) if kind < ks.size() else "—")
 	kind_button.disabled = ks.is_empty()
-	level_button.text = Strings.t("BUILDER_LEVEL", island.realm_level())
+	UI.relabel(level_button, Strings.t("BUILDER_LEVEL", island.realm_level()))
 	raid_button.disabled = not problems.is_empty()
 
 

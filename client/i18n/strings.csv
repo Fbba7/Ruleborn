@@ -5,6 +5,7 @@ HOME_PLAY,Play a heist,Jogar um assalto
 HOME_WATCH,Watch replays,Ver replays
 HOME_SETTINGS,Settings,Ajustes
 COMMON_HOME,Home,Início
+COMMON_DISMISS,Dismiss,Dispensar
 HEIST_ASKING,Asking the server for a target,Pedindo um alvo ao servidor
 HEIST_NONE,No heist: %s,Sem assalto: %s
 HEIST_CHECKING,The server is checking the heist,O servidor está conferindo o assalto
@@ -13,6 +14,10 @@ HEIST_HINT,"%s — tap ground, a guard, the Vault, a pylon or a ward","%s — to
 HEIST_HALT,Halt,Parar
 HEIST_DROP,Drop,Largar
 HEIST_GET_OUT,Get out,Fugir
+HEIST_PAUSE,Pause,Pausar
+HEIST_RESUME,Resume,Continuar
+HEIST_CREW,%s,%s
+HEIST_CREW_CHOSEN,"%s, chosen","%s, escolhido"
 GAIT_WALK,Walk,Andar
 GAIT_CROUCH,Crouch,Agachar
 GAIT_RUN,Run,Correr
@@ -32,6 +37,9 @@ REPLAY_MATCHES,Matches the server: %d s,Confere com o servidor: %d s
 REPLAY_GRADE,%s — %d of %d banked,%s — %d de %d guardados
 REPLAY_PLAY,Play,Jogar
 REPLAY_PAUSE,Pause,Pausar
+REPLAY_PREVIOUS,Previous replay,Replay anterior
+REPLAY_NEXT,Next replay,Próximo replay
+REPLAY_SPEED,Playback speed ×%d,Velocidade de reprodução ×%d
 RESULT_BANKED,%d loot banked,%d de saque guardado
 RESULT_BANKED_SERVER,%d loot banked — the server minted %d (fee %d),%d de saque guardado — o servidor gerou %d (taxa %d)
 RESULT_ACCEPTED_SERVER,"Re-simulated by the server: accepted
@@ -57,10 +65,23 @@ LANGUAGE_pt_BR,Português (Brasil),Português (Brasil)
 SETTINGS_MUSIC,Music %d,Música %d
 SETTINGS_EFFECTS,Effects %d,Efeitos %d
 SETTINGS_ALERTS,Alerts %d,Alertas %d
-SETTINGS_REDUCED_MOTION_OFF,Motion: full,Movimento: normal
-SETTINGS_REDUCED_MOTION_ON,Motion: reduced,Movimento: reduzido
+SETTINGS_MOTION_OFF,Motion: full,Movimento: normal
+SETTINGS_MOTION_ON,Motion: reduced,Movimento: reduzido
 SETTINGS_HAPTICS_ON,Haptics: on,Vibração: sim
 SETTINGS_HAPTICS_OFF,Haptics: off,Vibração: não
+SETTINGS_QUIETER,%s: quieter,%s: mais baixo
+SETTINGS_LOUDER,%s: louder,%s: mais alto
+SETTINGS_TEXT_SIZE,Text %d%%,Texto %d%%
+SETTINGS_SMALLER,%s: smaller,%s: menor
+SETTINGS_LARGER,%s: larger,%s: maior
+SETTINGS_CONTRAST_ON,High contrast: on,Alto contraste: sim
+SETTINGS_CONTRAST_OFF,High contrast: off,Alto contraste: não
+SETTINGS_LEFT_HANDED_ON,Left-handed: on,Canhoto: sim
+SETTINGS_LEFT_HANDED_OFF,Left-handed: off,Canhoto: não
+SETTINGS_SLOW_REHEARSALS_ON,Rehearsals at 75%: on,Ensaios a 75%: sim
+SETTINGS_SLOW_REHEARSALS_OFF,Rehearsals at 75%: off,Ensaios a 75%: não
+SETTINGS_BANNERS_STAY_ON,Banners stay until dismissed,Avisos ficam até serem dispensados
+SETTINGS_BANNERS_STAY_OFF,Banners go by themselves,Avisos somem sozinhos
 HOME_BUILD,Build your island,Construir sua ilha
 BUILDER_TITLE,"Your island, realm level %d","Sua ilha, reino nível %d"
 BUILDER_HINT,Tap the realm to place what is chosen below,Toque no reino para pôr o que está escolhido abaixo
@@ -209,3 +230,12 @@ ERR_WRONG_SEED,the heist was played on the wrong seed,o assalto foi jogado com a
 ERR_WRONG_SLOT,that does not go in that slot,isso não vai nesse espaço
 ERR_GIFT_INTENT_GONE,this gift is too old to deliver; the store will refund it,este presente é antigo demais para ser entregue; a loja vai reembolsá-lo
 ERR_STARTING,the server is starting; try again in a moment,o servidor está iniciando; tente de novo em instantes
+SCHOOL_MOTION,Motion,Movimento
+SCHOOL_MATTER,Matter,Matéria
+SCHOOL_TIME,Time,Tempo
+SCHOOL_ENERGY,Energy,Energia
+SCHOOL_LIFE,Life,Vida
+SCHOOL_SPIRIT,Spirit,Espírito
+REALM_DESCRIBED,"The realm, %d by %d tiles: the Vault %s, %d guards on their feet, %d wards standing","O reino, %d por %d casas: o Cofre %s, %d guardas de pé, %d proteções ativas"
+REALM_VAULT_OPEN,open,aberto
+REALM_VAULT_SHUT,shut,fechado
