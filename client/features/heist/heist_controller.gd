@@ -9,6 +9,11 @@ extends RefCounted
 ## One crew member is selected at a time, and a tap on the realm gives it the
 ## command the tapped thing calls for (see `tap_tile`).
 
+## Something a view shows has changed.
+signal changed
+## The clock ran out: the heist is over and `record()` is its replay.
+signal clock_out
+
 enum Kind { MOVE_TO, GAIT, HALT, CRACK, LOAD, SKIFF, ATTACK, BREAK, DROP, DISARM, DRAG, LAND }
 
 ## §5.4's clock at the Heart with no links: 150 seconds, 30 ticks each.
@@ -17,11 +22,6 @@ const TICKS := 150 * 30
 const SEED := "1"
 const CREW := 3
 const GAITS := ["Walk", "Crouch", "Run"]
-
-## Something a view shows has changed.
-signal changed
-## The clock ran out: the heist is over and `record()` is its replay.
-signal clock_out
 
 var world := RulebornReplay.new()
 var selected := 0

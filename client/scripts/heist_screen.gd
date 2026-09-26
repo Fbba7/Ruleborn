@@ -9,11 +9,12 @@ extends Control
 ## §21.8 puts crew portraits at the bottom left and actions at the bottom
 ## right; both rows here sit above the corners, which §21.1 keeps clear.
 
+signal finished
+
 const Kind := HeistController.Kind
 
 var controller := HeistController.new()
 var playing := true
-var _owed := 0.0
 
 var view: RealmView
 var hud: HeistHud
@@ -24,7 +25,7 @@ var crew_buttons: Array[Button] = []
 ## The lease this heist is played under, when a server gave one.
 var lease := {}
 
-signal finished
+var _owed := 0.0
 
 
 func _ready() -> void:
@@ -159,6 +160,7 @@ func _build() -> void:
 	var crew := controller.world.crew()
 	for i in crew.size():
 		var role: String = crew[i]["role"]
-		var b := UI.button(Strings.term("ROLE", role).substr(0, 2), controller.select.bind(i), false, Palette.ROLE.get(role, Palette.PAPER))
+		var b := UI.button(Strings.term("ROLE", role).substr(0, 2), controller.select.bind(i), false,
+				Palette.ROLE.get(role, Palette.PAPER))
 		crew_buttons.append(b)
 		crew_row.add_child(b)

@@ -11,9 +11,9 @@ extends RefCounted
 ## reproduce) is an answer, and ends the item; one it never saw (no network,
 ## a timeout, a 5xx) keeps it for the next flush.
 
-const FILE := "user://outbox.json"
-
 signal settled(key: String, result: Result)
+
+const FILE := "user://outbox.json"
 
 var path := FILE
 var _items: Array[Dictionary] = []

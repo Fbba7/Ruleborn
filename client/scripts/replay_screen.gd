@@ -18,7 +18,6 @@ var entries: Array = []
 var current := 0
 var playing := true
 var speed_index := 1
-var _owed := 0.0
 
 var view: RealmView
 var hud: HeistHud
@@ -27,6 +26,8 @@ var badge_label: Label
 var grade_label: Label
 var play_button: Button
 var speed_button: Button
+
+var _owed := 0.0
 
 
 func _ready() -> void:

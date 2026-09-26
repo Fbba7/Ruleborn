@@ -33,8 +33,10 @@ func _store() -> void:
 	store.dispatch(&"heist_verdict", {"server": true, "haul": 5})
 	var heist: Dictionary = store.get_slice(AppState.HEIST)
 	var logged := store.action_log.entries().map(func(e: Dictionary) -> String: return e["what"])
-	check.call("the store changes a slice only through an action its reducer owns, tells who listens, and logs every action",
-		store.get_slice(AppState.SESSION)["account"] == "a1" and heist["testing"] and heist["island"] == PackedByteArray([1, 2])
+	check.call("the store changes a slice only through an action its reducer owns, tells who listens, "
+			+ "and logs every action",
+		store.get_slice(AppState.SESSION)["account"] == "a1" and heist["testing"]
+			and heist["island"] == PackedByteArray([1, 2])
 			and heist["verdict"] == {"ok": true, "grade": "Clean", "server": true, "haul": 5}
 			and seen == [AppState.SESSION, AppState.HEIST, AppState.HEIST, AppState.HEIST]
 			and logged == ["signed_in", "heist_started", "heist_finished", "heist_verdict"],
@@ -43,7 +45,8 @@ func _store() -> void:
 	# never shows a verdict from a heist before.
 	store.dispatch(&"heist_started", {})
 	heist = store.get_slice(AppState.HEIST)
-	check.call("a heist started clears the last heist's replay and verdict, and is not the builder's test unless it says so",
+	check.call("a heist started clears the last heist's replay and verdict, "
+			+ "and is not the builder's test unless it says so",
 		heist["replay"].is_empty() and heist["verdict"].is_empty() and not heist["testing"], str(heist))
 	# The log keeps kinds and short values, never bytes or long strings.
 	var action_log := ActionLog.new()
@@ -71,12 +74,14 @@ func _api() -> void:
 	fake.offline = true
 	var down := await account.balance()
 	var bearer: bool = (fake.calls[1]["headers"] as PackedStringArray).has("Authorization: Bearer tok")
-	check.call("every call answers a Result: the server's refusal reason as its code, the client's own for no answer or a garbled one",
+	check.call("every call answers a Result: the server's refusal reason as its code, "
+			+ "the client's own for no answer or a garbled one",
 		signed.ok and api.token == "tok" and bearer and not leased.ok and leased.code == "no_such_snapshot"
 			and garbled.code == "malformed_response" and missing.code == "no_such_route" and down.code == "unreachable",
 		"%s %s %s %s %s" % [signed, leased, garbled, missing, down])
 	check.call("a failure is logged by its code and route, never the path's token",
-		action_log.entries().any(func(e: Dictionary) -> bool: return e["what"] == "no_such_snapshot" and e["fields"]["route"] == "v1/leases"),
+		action_log.entries().any(func(e: Dictionary) -> bool:
+			return e["what"] == "no_such_snapshot" and e["fields"]["route"] == "v1/leases"),
 		action_log.dump())
 	check.call("only HTTPS leaves the phone; plain HTTP only to this machine, for tests",
 		Api.secure("https://edge.example/") and Api.secure("http://127.0.0.1:8787") and not Api.secure("http://edge.example")
@@ -100,12 +105,14 @@ func _outbox() -> void:
 	var reopened := Outbox.new(file)
 	# Back online: the server answers, and the item is done.
 	fake.offline = false
-	fake.on("POST /v1/heists/lease-1", {"validated": true, "verdict": {"grade": "clean", "banked": 10}, "haul": {"total": 5}, "fee": 1})
+	fake.on("POST /v1/heists/lease-1", {"validated": true, "verdict": {"grade": "clean", "banked": 10},
+			"haul": {"total": 5}, "fee": 1})
 	var answered := {}
 	reopened.settled.connect(func(key: String, r: Result) -> void: answered[key] = r)
 	var sent := await reopened.flush(api)
 	var body: PackedByteArray = fake.calls[-1]["body"]
-	check.call("offline, a heist's replay waits in the outbox, survives a restart, and is sent once the server can be reached (24.12)",
+	check.call("offline, a heist's replay waits in the outbox, survives a restart, "
+			+ "and is sent once the server can be reached (24.12)",
 		queued.ok and queued.value.get("pending", false) and waiting == 1 and reopened.pending() == 0 and sent == 1
 			and answered.has("lease-1") and answered["lease-1"].ok and body == PackedByteArray([1, 2, 3]),
 		"%s %d %d" % [queued, waiting, sent])
@@ -117,7 +124,8 @@ func _outbox() -> void:
 	fake.on("POST /v1/heists/a", {"error": "lease_expired"}, 410)
 	fake.on("POST /v1/heists/b", {"error": "internal"}, 500)
 	await box.flush(api)
-	check.call("an item is put once by its key; one the server refused is done, one the server failed on waits for the next try",
+	check.call("an item is put once by its key; one the server refused is done, "
+			+ "one the server failed on waits for the next try",
 		box.pending() == 1 and box.has("b") and not box.has("a"), "pending %d" % box.pending())
 	var shown := HeistController.settled(queued, {"ok": true, "grade": "Clean", "banked": 10})
 	check.call("a heist still in the outbox shows the phone's own check, marked confirming, never a haul (24.12)",
@@ -149,7 +157,9 @@ func _tokens() -> void:
 			var t: Dictionary = data[group][name]
 			if not t.has("value") or str(t.get("from", "")) == "":
 				problems.append("%s.%s" % [group, name])
-	check.call("every design token has a value and says where it comes from, and the screens' colours and sizes are the tokens'",
-		problems.is_empty() and Palette.INK == Tokens.color("ink") and UI.CONTROL_POINTS == Tokens.number("size", "control_points")
+	check.call("every design token has a value and says where it comes from, "
+			+ "and the screens' colours and sizes are the tokens'",
+		problems.is_empty() and Palette.INK == Tokens.color("ink")
+			and UI.CONTROL_POINTS == Tokens.number("size", "control_points")
 			and Tokens.number("size", "smallest_points") == 13.0,
 		"; ".join(problems))

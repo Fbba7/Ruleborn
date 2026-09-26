@@ -84,7 +84,8 @@ func _run() -> void:
 
 	# §20.6's two launch languages: every key a script asks for is in the
 	# catalogue, in every language, with the same placeholders.
-	check("every string a screen asks for is in the catalogue, in English and Brazilian Portuguese, with the same placeholders",
+	check("every string a screen asks for is in the catalogue, in English and Brazilian Portuguese, "
+			+ "with the same placeholders",
 		_catalogue_problems().is_empty(), "; ".join(_catalogue_problems()))
 
 	# §24.7: one simulation, compiled for every target. The client's build must
@@ -153,7 +154,8 @@ func _run() -> void:
 	heist.controller.get_out()
 	heist.controller.tap_tile(Vector2i(13, 7))
 	# The landing the screen gives before its first step is not a tap.
-	var actions := heist.controller.world.commands().filter(func(c: Dictionary) -> bool: return int(c["kind"]) != HeistController.Kind.LAND) \
+	var actions := heist.controller.world.commands() \
+		.filter(func(c: Dictionary) -> bool: return int(c["kind"]) != HeistController.Kind.LAND) \
 		.map(func(c: Dictionary) -> Array: return [c["tick"], c["actor"], c["kind"], c["x"], c["y"]])
 	var want := [[now, 1, HeistController.Kind.MOVE_TO, 4 * 256 + 128, 5 * 256 + 128],
 		[now, 1, HeistController.Kind.CRACK, 0, 0], [now, 1, HeistController.Kind.LOAD, 70, 0],
@@ -187,14 +189,17 @@ func _run() -> void:
 	heist.controller.next_gait()
 	heist.controller.halt()
 	heist.controller.drop_half()
-	var kinds := heist.controller.world.commands().filter(func(c: Dictionary) -> bool: return int(c["kind"]) != HeistController.Kind.LAND) \
+	var kinds := heist.controller.world.commands() \
+		.filter(func(c: Dictionary) -> bool: return int(c["kind"]) != HeistController.Kind.LAND) \
 		.map(func(c: Dictionary) -> Array: return [c["kind"], c["x"]])
-	var K := HeistController.Kind
-	var expected := [[K.ATTACK, 1], [K.CRACK, 0], [K.BREAK, (pylon % width) * 256 + 128]]
+	var kinds_enum := HeistController.Kind
+	var expected := [[kinds_enum.ATTACK, 1], [kinds_enum.CRACK, 0], [kinds_enum.BREAK, (pylon % width) * 256 + 128]]
 	if not ward.is_empty():
-		expected.append([K.DISARM, int(Vector2i(ward["at"]).x) * 256 + 128])
-	expected += [[K.GAIT, 1], [K.GAIT, 2], [K.GAIT, 0], [K.HALT, 0], [K.DROP, 50]]
-	check("a tap on a guard, the Vault, a pylon or a ward makes the command it calls for, and the gait button cycles walk, crouch, run",
+		expected.append([kinds_enum.DISARM, int(Vector2i(ward["at"]).x) * 256 + 128])
+	expected += [[kinds_enum.GAIT, 1], [kinds_enum.GAIT, 2], [kinds_enum.GAIT, 0], [kinds_enum.HALT, 0],
+			[kinds_enum.DROP, 50]]
+	check("a tap on a guard, the Vault, a pylon or a ward makes the command it calls for, "
+			+ "and the gait button cycles walk, crouch, run",
 		kinds == expected and pylon >= 0 and not ward.is_empty(), "got %s, wanted %s" % [kinds, expected])
 
 	# §5.4: the crew lands together on the edge tile the player chose, and the
@@ -205,10 +210,12 @@ func _run() -> void:
 	var chose := heist.controller.land(spot)
 	heist.advance(1)
 	var together := heist.controller.world.crew().all(func(r: Dictionary) -> bool: return Vector2i(r["at"]) == spot)
-	var logged := heist.controller.world.commands().filter(func(c: Dictionary) -> bool: return int(c["kind"]) == HeistController.Kind.LAND)
+	var logged := heist.controller.world.commands() \
+		.filter(func(c: Dictionary) -> bool: return int(c["kind"]) == HeistController.Kind.LAND)
 	check("the crew lands together on the open edge tile the player chose, recorded at tick 0 (5.4)",
 		chose and together and logged.size() == 1 and int(logged[0]["tick"]) == 0 and not heist.controller.land(spots[0]),
-		"spot %s, crew %s, log %s" % [spot, heist.controller.world.crew().map(func(r: Dictionary) -> Variant: return r["at"]), logged])
+		"spot %s, crew %s, log %s"
+			% [spot, heist.controller.world.crew().map(func(r: Dictionary) -> Variant: return r["at"]), logged])
 
 	# And the heist it plays is the heist it records. The planned golden's
 	# commands, given live at their ticks on the heist screen, must record the
@@ -225,15 +232,19 @@ func _run() -> void:
 			k += 1
 		heist.advance(1)
 	var v: Dictionary = _heist()["verdict"]
-	check("a heist played live on the heist screen records the golden replay byte for byte, and the server's check grades it Clean",
-		(_heist()["replay"] as PackedByteArray) == _golden("planned-clean") and v.get("ok", false) and v.get("grade") == "Clean",
+	check("a heist played live on the heist screen records the golden replay byte for byte, "
+			+ "and the server's check grades it Clean",
+		(_heist()["replay"] as PackedByteArray) == _golden("planned-clean") and v.get("ok", false)
+			and v.get("grade") == "Clean",
 		"%d bytes against %d; %s" % [(_heist()["replay"] as PackedByteArray).size(), _golden("planned-clean").size(), v])
 	var again := _play((_heist()["replay"] as PackedByteArray))
 	check("the heist just played replays on this phone with every second agreeing",
 		again != null and again.mismatch() == 0
 			and again.seconds_agreed() * RulebornReplay.ticks_per_second() == again.ticks(),
 		"mismatch %s" % (str(again.mismatch()) if again else "unloadable"))
-	var refused := RulebornReplay.validate((_heist()["replay"] as PackedByteArray).slice(0, (_heist()["replay"] as PackedByteArray).size() - 4) + PackedByteArray([0, 0, 0, 0]), PackedByteArray())
+	var played_replay := _heist()["replay"] as PackedByteArray
+	var altered := played_replay.slice(0, played_replay.size() - 4) + PackedByteArray([0, 0, 0, 0])
+	var refused := RulebornReplay.validate(altered, PackedByteArray())
 	check("a replay whose last checksum was altered is refused, as the server would refuse it",
 		not refused.get("ok", true), str(refused))
 	heist.queue_free()
@@ -256,7 +267,8 @@ func _run() -> void:
 	# submit, and read what the server re-simulated and paid. The plan is the
 	# open example Heart's clean heist, the one server/test plays.
 	if server_url == "":
-		check("a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server",
+		check("a heist leased from the server, played on the heist screen and submitted "
+				+ "is re-simulated and paid by the server",
 			false, "no server: run through client/status.py, which starts one")
 	else:
 		_services(server_url)
@@ -294,7 +306,8 @@ func _run() -> void:
 				await online.finished
 			played = _heist()["verdict"]
 		# Vault level 3: 11,250 × 1 × 1 × 1 × 1 × fill 1 (server/test's figure; B(V) at the owner's 5,000, F36).
-		check("a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server",
+		check("a heist leased from the server, played on the heist screen and submitted "
+				+ "is re-simulated and paid by the server",
 			played.get("ok", false) and played.get("grade") == "Clean" and int(played.get("haul", 0)) == 11250,
 			"%s; %s" % [played, online.hint_label.text])
 		online.queue_free()
@@ -304,7 +317,8 @@ func _run() -> void:
 	# §20.6's settings survive a relaunch: each change on the settings screen
 	# is saved as it is made, and the next launch reads it back and applies it.
 	var settings: SettingsScreen = await _mount("settings")
-	var minus: Array = settings.find_children("*", "Button", true, false).filter(func(b: Button) -> bool: return b.text == "−")
+	var minus: Array = settings.find_children("*", "Button", true, false) \
+		.filter(func(b: Button) -> bool: return b.text == "−")
 	for i in 7:
 		minus[0].pressed.emit()
 	minus[1].pressed.emit()
@@ -320,7 +334,8 @@ func _run() -> void:
 	var music := AudioServer.get_bus_index("Music")
 	var effects := AudioServer.get_bus_index("Effects")
 	var alerts := AudioServer.get_bus_index("Alerts")
-	check("settings changed on the settings screen are saved as they change and restored on the next launch: language, three volumes, reduced motion, haptics (§20.6)",
+	check("settings changed on the settings screen are saved as they change and restored on the next launch: "
+			+ "language, three volumes, reduced motion, haptics (§20.6)",
 		saved == [Settings.locale, Settings.volume, Settings.reduced_motion, Settings.haptics]
 		and Settings.locale == "pt_BR" and TranslationServer.get_locale() == "pt_BR"
 		and Settings.volume == {"music": 0, "effects": 7, "alerts": 10} and Settings.reduced_motion
@@ -357,7 +372,8 @@ func _run() -> void:
 	for step: Array in [["haste", Vector2i(1, 10)], ["brittle_stone", Vector2i(11, 2)]]:
 		builder.kind = builder.kinds().find(step[0])
 		builder.tap_tile(step[1])
-	var pylons := builder.island.occupant(1, 10) == "pylon:haste" and builder.island.occupant(11, 2) == "pylon:brittle_stone"
+	var pylons := builder.island.occupant(1, 10) == "pylon:haste" \
+		and builder.island.occupant(11, 2) == "pylon:brittle_stone"
 	var harmony := builder.together_label.text.contains(Strings.t("NOTE_SPARK"))
 	var ready := not builder.raid_button.disabled
 	builder.kind = builder.kinds().find("glowing_dark")
@@ -365,7 +381,8 @@ func _run() -> void:
 	var over := builder.island.problems().has("TooManyLaws") and builder.raid_button.disabled \
 		and builder.status_label.text.contains(Strings.t("PROBLEM_TOOMANYLAWS"))
 	var chord := "wild_hunt" in Array(builder.island.combos()["chords"])
-	check("the builder weaves laws and places their pylons, holds the realm to its law slots, and names what the laws make together (§8.6)",
+	check("the builder weaves laws and places their pylons, holds the realm to its law slots, "
+			+ "and names what the laws make together (§8.6)",
 		pylons and harmony and ready and over and chord,
 		"%s / %s / %s" % [builder.status_label.text, builder.together_label.text, builder.island.combos()])
 
@@ -396,7 +413,8 @@ func _run() -> void:
 	after.queue_free()
 	App.services.store.dispatch(&"heist_started", {})
 	await process_frame
-	check("a player can raid their own island from the builder: the heist plays it, the server's check judges it, and the result leads back",
+	check("a player can raid their own island from the builder: the heist plays it, the server's check judges it, "
+			+ "and the result leads back",
 		kept and on_own and judged.get("ok", false) and way_back, "%s" % judged)
 
 	# No screen holds text of its own. In a pseudo-locale that wraps every
@@ -408,7 +426,8 @@ func _run() -> void:
 		pseudo.add_message(key, "⟦" + Strings.rows()[key]["en"] + "⟧")
 	TranslationServer.add_translation(pseudo)
 	Strings.set_locale("xx")
-	App.services.store.dispatch(&"heist_finished", {"replay": _golden("planned-clean"), "verdict": RulebornReplay.validate(_golden("planned-clean"), PackedByteArray())})
+	App.services.store.dispatch(&"heist_finished", {"replay": _golden("planned-clean"),
+			"verdict": RulebornReplay.validate(_golden("planned-clean"), PackedByteArray())})
 	var bare := []
 	for sname: String in SCREENS:
 		var screen: Control = await _mount(sname)
@@ -445,7 +464,8 @@ func _run() -> void:
 				screens[sname] = screen
 				if locale != Strings.LOCALES[-1] or aspect[1] != 16:
 					screen.queue_free()
-		check("every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at %s:%s" % aspect,
+		check(("every control on every screen is 48 points or more, in the lower two-thirds, "
+				+ "clear of corners and safe areas (§21.1), at %s:%s") % aspect,
 			problems.is_empty(), "; ".join(problems))
 	Strings.set_locale("en")
 
@@ -473,7 +493,8 @@ func _catalogue_problems() -> Array:
 				problems.append("%s has no %s" % [key, locale])
 		var shape := placeholder.search_all(rows[key]["en"]).map(func(m: RegExMatch) -> String: return m.get_string())
 		for locale: String in Strings.LOCALES:
-			var other := placeholder.search_all(rows[key].get(locale, "")).map(func(m: RegExMatch) -> String: return m.get_string())
+			var other := placeholder.search_all(rows[key].get(locale, "")) \
+				.map(func(m: RegExMatch) -> String: return m.get_string())
 			if other != shape:
 				problems.append("%s: %s has %s where en has %s" % [key, locale, other, shape])
 	var asked := RegEx.create_from_string("Strings\\.t\\(\"([A-Za-z_0-9]+)\"\\s*[,)]")
@@ -502,7 +523,10 @@ func _control_problems(screen: Control) -> Array:
 		widest = max(widest, w)
 		# Name the rows that are too wide for the column they sit in.
 		if c is HBoxContainer and w > frame.x - 2 * 16 * point:
-			culprit += " [%s]" % ", ".join(c.get_children().map(func(k: Variant) -> String: return "%s %d px" % [k.get_class() if k.get("text") == null else k.text.replace("\n", " "), k.get_combined_minimum_size().x]))
+			var describe := func(k: Variant) -> String:
+				var label: String = k.get_class() if k.get("text") == null else k.text.replace("\n", " ")
+				return "%s %d px" % [label, k.get_combined_minimum_size().x]
+			culprit += " [%s]" % ", ".join(c.get_children().map(describe))
 	if widest > frame.x:
 		problems.append("something asks for %d px of a %d px frame:%s" % [widest, frame.x, culprit])
 	var buttons := screen.find_children("*", "Button", true, false)

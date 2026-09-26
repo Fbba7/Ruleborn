@@ -42,8 +42,12 @@ func _build() -> void:
 		column.add_child(r)
 
 	var toggles := UI.row()
-	motion_button = UI.button("", func() -> void: Settings.change(func() -> void: Settings.reduced_motion = not Settings.reduced_motion); _refresh())
-	haptics_button = UI.button("", func() -> void: Settings.change(func() -> void: Settings.haptics = not Settings.haptics); _refresh())
+	motion_button = UI.button("", func() -> void:
+		Settings.change(func() -> void: Settings.reduced_motion = not Settings.reduced_motion)
+		_refresh())
+	haptics_button = UI.button("", func() -> void:
+		Settings.change(func() -> void: Settings.haptics = not Settings.haptics)
+		_refresh())
 	toggles.add_child(motion_button)
 	toggles.add_child(haptics_button)
 	column.add_child(toggles)
@@ -57,7 +61,8 @@ func _build() -> void:
 func _refresh() -> void:
 	for bus: String in Settings.VOLUMES:
 		volume_labels[bus].text = Strings.t("SETTINGS_" + bus.to_upper(), Settings.volume[bus])
-	motion_button.text = Strings.t("SETTINGS_REDUCED_MOTION_ON" if Settings.reduced_motion else "SETTINGS_REDUCED_MOTION_OFF")
+	var motion_key := "SETTINGS_REDUCED_MOTION_ON" if Settings.reduced_motion else "SETTINGS_REDUCED_MOTION_OFF"
+	motion_button.text = Strings.t(motion_key)
 	haptics_button.text = Strings.t("SETTINGS_HAPTICS_ON" if Settings.haptics else "SETTINGS_HAPTICS_OFF")
 
 
