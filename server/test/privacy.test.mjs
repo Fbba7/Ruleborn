@@ -80,6 +80,9 @@ async function busy() {
   t.service.friends.accept(y.account, t.service.friends.invite(x.account).invite);
   t.service.friends.invite(x.account);
   t.service.friends.challenge(x.account);
+  // A realm of their own, opened and paid for (universe.mjs).
+  t.service.book(x.account, "starlight", 5_000, "a test's grant");
+  t.service.universe.open(x.account, "Verdant");
 
   const n = t.service.notifications;
   // Settings no player starts with, so clearing them is seen.

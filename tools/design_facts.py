@@ -80,6 +80,26 @@ WARD_LIMITS = (8, 8, 6, 7, 8)
 GUARD_POSTS = (1, 1, 2, 3, 3)
 #: §5.2's law slots by realm level, from its "Outer realm levels" table.
 LAW_SLOTS = (1, 1, 2, 2, 3)
+#: §5.2: "Outer realms open at Keeper levels 3, 6, 10, 15, 21 and 28", the
+#: nth realm at the nth level.
+REALM_KEEPER_LEVELS = (3, 6, 10, 15, 21, 28)
+#: §5.2's six outer realm types, in its table's order; "the player picks each
+#: one's type from those not yet owned".
+REALM_TYPES = ("Skyfield", "Crystalline", "Tidehold", "Emberreach", "Verdant", "Lantern Vale")
+#: §5.2's "Needs" column: the Spire level a realm needs to open (level 1) and
+#: to rise to each level after it.
+REALM_LEVEL_SPIRE = (1, 3, 5, 7, 9)
+#: §9.5's price list: "Opening an outer realm | 2,000 Starlight"; "Realm
+#: levels 2 to 5 | 6,000, 20,000, 55,000 and 140,000 Starlight".
+REALM_OPEN_COST = 2_000
+REALM_LEVEL_COSTS = (6_000, 20_000, 55_000, 140_000)
+#: What a new universe's Heart holds, by §10.2's building ids, each at level
+#: 1: the economy model's start, which §9.3's production and §14's curves are
+#: run from. No section says it whole (F56): §10.2's day column, from an
+#: earlier run, builds the Star Well on day 2, and §11.5's "a free Hearth
+#: waits for them" and §14.2's level-1 row ("The Heart … the Lab") each name
+#: a part.
+STARTING_HEART = ("keeper_s_spire", "vault", "star_well", "aether_spring", "garden", "hearth")
 
 #: §12.8 and §12.20. One hit every 0.8 seconds for damage equal to Power, on
 #: both sides. The 0.8 is the only cadence the document states.
@@ -326,6 +346,12 @@ HOME = {
     "WARD_LIMITS": "5.2",
     "GUARD_POSTS": "10.2",
     "LAW_SLOTS": "5.2",
+    "REALM_KEEPER_LEVELS": "5.2",
+    "REALM_TYPES": "5.2",
+    "REALM_LEVEL_SPIRE": "5.2",
+    "REALM_OPEN_COST": "9.5",
+    "REALM_LEVEL_COSTS": "9.5",
+    "STARTING_HEART": "14.2",
     "WIND_UP": "12.8",
     "TAKEDOWN_SECONDS": "29.1",
     "ASSIST_BONUS": "11.1",
@@ -432,6 +458,24 @@ STATED = {
     "LAW_SLOTS": (r"\| 10 by 10\n\| (\d+)\n[\s\S]*?\| 11 by 11\n\| (\d+)\n[\s\S]*?"
                   r"\| 12 by 12\n\| (\d+)\n[\s\S]*?\| 13 by 13\n\| (\d+)\n[\s\S]*?"
                   r"\| 14 by 14\n\| (\d+)\n", lambda m: tuple(int(x) for x in m)),
+    "REALM_KEEPER_LEVELS": (r"Outer realms open at Keeper levels (\d+), (\d+), (\d+), (\d+), (\d+) and (\d+)",
+                            lambda m: tuple(int(x) for x in m)),
+    "REALM_TYPES": (r"\| ([^\n]+)\n\| Motion\n[\s\S]*?\| ([^\n]+)\n\| Matter\n[\s\S]*?"
+                    r"\| ([^\n]+)\n\| Time\n[\s\S]*?\| ([^\n]+)\n\| Energy\n[\s\S]*?"
+                    r"\| ([^\n]+)\n\| Life\n[\s\S]*?\| ([^\n]+)\n\| Spirit\n", lambda m: tuple(m)),
+    "REALM_LEVEL_SPIRE": (r"\| 10 by 10\n(?:\| [^\n]*\n){6}\| Spire (\d+)\n[\s\S]*?"
+                          r"\| 11 by 11\n(?:\| [^\n]*\n){6}\| Spire (\d+)\n[\s\S]*?"
+                          r"\| 12 by 12\n(?:\| [^\n]*\n){6}\| Spire (\d+)\n[\s\S]*?"
+                          r"\| 13 by 13\n(?:\| [^\n]*\n){6}\| Spire (\d+)\n[\s\S]*?"
+                          r"\| 14 by 14\n(?:\| [^\n]*\n){6}\| Spire (\d+)\n",
+                          lambda m: tuple(int(x) for x in m)),
+    "REALM_OPEN_COST": (r"\| Opening an outer realm\n\| ([\d,]+) Starlight",
+                        lambda m: int(m[0].replace(",", ""))),
+    "REALM_LEVEL_COSTS": (r"\| Realm levels 2 to 5\n\| ([\d,]+), ([\d,]+), ([\d,]+) and ([\d,]+) Starlight",
+                          lambda m: tuple(int(x.replace(",", "")) for x in m)),
+    # §14.2's first row names the Heart and the Lab; F56 decides the rest.
+    "STARTING_HEART": (r"\| 1\n\| 140\n\| 0\n\| Day 1\n\| Day 1\n\| Day 1\n\| (The Heart)[^\n]*\n",
+                       lambda m: m[0]),
     "WIND_UP": (r"shows a ([\d.]+)-second wind-up", lambda m: float(m[0])),
     "TAKEDOWN_SECONDS": (r"after a (\d+) s takedown", lambda m: int(m[0])),
     "ASSIST_BONUS": (r"every hit on it deals (\d+)% more: the assist bonus",
@@ -556,6 +600,7 @@ BEHIND: dict[str, tuple[str, str]] = {
     # value above is the decision, and the check holds it to that until the
     # document takes the edit and the item closes.
     "MATCH_WINDOW": ("F44", "Keeper level from two below to three above"),
+    "STARTING_HEART": ("F56", "the Heart with a Spire, Vault, Star Well, Aether Spring, Garden and Hearth"),
     "HAUL_BASE": ("F36", "5,000: the raid-worth check on every day, with the fee in the attempt (F53)"),
 }
 

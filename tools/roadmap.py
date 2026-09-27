@@ -1082,7 +1082,7 @@ dict(
              gate="no figure moves: \u00a726.8's plan has no row for it (G42)",
              evidence="server/test/keeper.test.mjs; client/tests/keeper_tests.gd",
              register=["G42", "F54"]),
-        dict(id="TC.12", owner="claude", status="ready",
+        dict(id="TC.12", owner="claude", status="doing",
              title="The home economy on the server (G42)",
              detail="\u00a724 makes the server authoritative for every resource "
                     "change, and \u00a726.8 has no phase that builds the home "
@@ -1091,9 +1091,21 @@ dict(
                     "and \u00a714.2's experience from spending and from restoring "
                     "laws. The economy model already runs all of it; the server "
                     "side is the work, slice by slice, with F54's gate on the "
-                    "Keeper bar once spending is the only experience left.",
+                    "Keeper bar once spending is the only experience left. "
+                    "Built: realms and buildings (server/src/universe.mjs) "
+                    "\u2014 outer realms opened and raised, buildings built and "
+                    "raised at \u00a710.2's costs and needs, paid from the "
+                    "ledger with \u00a714.2's experience for spending, islands "
+                    "held to what is built \u2014 and the client's universe "
+                    "screen. Next: the builder publishing to the player's own "
+                    "realms, with the wards, posts and pylons an island places "
+                    "held to those built (today only its realm, realm level "
+                    "and Vault are), then workers and production (\u00a79.3, \u00a75.8), "
+                    "the roster (\u00a711.5), and the Codex's restorations.",
              gate="no figure moves until \u00a726.8's plan carries it",
-             register=["G42"]),
+             evidence="server/test/universe.test.mjs; client/tests/universe_tests.gd, "
+                      "through python3 client/status.py",
+             register=["G42", "F56", "G43"]),
         dict(id="TC.9", owner="claude", status="done",
              title="Offline as the exception, as the owner answered G41",
              detail="Online is the rule and is recommended heavily; offline is "

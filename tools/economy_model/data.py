@@ -134,13 +134,15 @@ STORAGE_HOURS = 12
 # Realms (§5.2)
 # --------------------------------------------------------------------------
 
-#: Starlight to open an outer realm, then to raise it to levels 2-5.
-REALM_OPEN_COST = 2_000
-REALM_LEVEL_COSTS = (6_000, 20_000, 55_000, 140_000)
-REALM_LEVEL_SPIRE = (3, 5, 7, 9)
+try:                                        # §5.2's and §9.5's realm facts,
+    from ..design_facts import (REALM_KEEPER_LEVELS, REALM_LEVEL_COSTS,  # from their
+                                REALM_LEVEL_SPIRE, REALM_OPEN_COST)  # one home
+except ImportError:
+    from design_facts import (REALM_KEEPER_LEVELS, REALM_LEVEL_COSTS,
+                              REALM_LEVEL_SPIRE, REALM_OPEN_COST)
 
 #: Keeper level at which each of the six outer realms becomes available.
-REALM_UNLOCK_KEEPER_LEVEL = (3, 6, 10, 15, 21, 28)
+REALM_UNLOCK_KEEPER_LEVEL = REALM_KEEPER_LEVELS
 
 #: Star Wells / Aether Springs / Gardens permitted per outer realm, by realm level.
 PRODUCERS_PER_REALM = (1, 1, 2, 2, 2)
@@ -462,6 +464,17 @@ def _constant(name: str) -> str:
                        .read_text(encoding="utf-8"))
     return table[name]["value"]
 
+
+try:
+    from ..design_facts import STARTING_HEART
+except ImportError:
+    from design_facts import STARTING_HEART
+#: The Heart's starting buildings by §10.2's names, the Spire aside: the model
+#: holds the Spire's level apart from the realms' buildings.
+STARTING_NAMES = tuple(
+    b["name"] for i in STARTING_HEART if i != "keeper_s_spire"
+    for b in json.loads((_ROOT / "content" / "buildings.json").read_text(encoding="utf-8"))
+    if b["id"] == i)
 
 #: §5.2 and §10.2: wards and guard posts by realm level. The Heart has no
 #: realm level of its own; the owner decided it counts as level 3 (G19).

@@ -304,6 +304,65 @@
     }
    }
   },
+  "realms": {
+   "about": "Each player's outer realms: their type and level (§5.2).",
+   "columns": {
+    "owner": {
+     "names": "account",
+     "type": "user-id"
+    },
+    "realm": {
+     "type": "gameplay"
+    },
+    "type": {
+     "type": "gameplay"
+    },
+    "level": {
+     "type": "gameplay"
+    },
+    "opened_at": {
+     "type": "gameplay"
+    }
+   },
+   "deletion": "erased",
+   "keep": {
+    "for": "account"
+   },
+   "purposes": [
+    "functionality"
+   ]
+  },
+  "buildings": {
+   "about": "Each player's buildings: kind, realm and level (§10.2).",
+   "columns": {
+    "owner": {
+     "names": "account",
+     "type": "user-id"
+    },
+    "realm": {
+     "type": "gameplay"
+    },
+    "kind": {
+     "type": "gameplay"
+    },
+    "n": {
+     "type": "gameplay"
+    },
+    "level": {
+     "type": "gameplay"
+    },
+    "changed_at": {
+     "type": "gameplay"
+    }
+   },
+   "deletion": "erased",
+   "keep": {
+    "for": "account"
+   },
+   "purposes": [
+    "functionality"
+   ]
+  },
   "snapshots": {
    "about": "Every island ever published, by the hash of its bytes; never edited (§24.8). The bytes are in the public store, fetched by hash.",
    "purposes": [

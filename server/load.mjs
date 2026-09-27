@@ -27,6 +27,7 @@ import { ERAS } from "./src/eras.mjs";
 import { Service } from "./src/service.mjs";
 import { Build, Builds } from "./src/sim.mjs";
 import { Store } from "./src/store.mjs";
+import { raiseTo } from "./src/universe.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./src/facts.json", import.meta.url), "utf8"));
 const WASM = new URL("../sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm", import.meta.url);
@@ -74,6 +75,7 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
     const island = build.exampleIsland(i % 2 === 0);
     island[5] = 1 + (Math.floor(i / 2) % 10);              // Vault level: a distinct island each
     island[6] = i & 255;                                   // and a distinct exposure
+    raiseTo(db, account, "heart", island[4], island[5]);  // a universe built that far
     bundles.push(service.publish(account, island).bundle);
     // Established: their first session is long behind them, so the one
     // first_seen row each player ever writes is not counted as a day's.

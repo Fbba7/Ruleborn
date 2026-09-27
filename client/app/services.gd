@@ -16,6 +16,7 @@ var shop: ShopRepository
 var social: SocialRepository
 var friends: FriendsRepository
 var workshop: WorkshopRepository
+var universe: UniverseRepository
 ## The platform's store (StoreKit, Play Billing); a test's fake in tests.
 var purchases: StorePurchases
 ## §20.1's answer, kept on the phone: no account is made until it allows one.
@@ -28,6 +29,7 @@ var shop_flow: ShopController
 var social_flow: SocialController
 var workshop_flow: WorkshopController
 var keeper_flow: KeeperController
+var universe_flow: UniverseController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -41,6 +43,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	SocialState.register(s.store)
 	WorkshopState.register(s.store)
 	KeeperState.register(s.store)
+	UniverseState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -59,12 +62,14 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.social = SocialRepository.new(s.api)
 	s.friends = FriendsRepository.new(s.api)
 	s.workshop = WorkshopRepository.new(s.api, s.outbox)
+	s.universe = UniverseRepository.new(s.api)
 	s.purchases = StorePurchases.new()
 	s.api.reauth = s.sign_in
 	s.shop_flow = ShopController.new(s)
 	s.social_flow = SocialController.new(s)
 	s.workshop_flow = WorkshopController.new(s)
 	s.keeper_flow = KeeperController.new(s)
+	s.universe_flow = UniverseController.new(s)
 	s.router = Router.new(s.store)
 	return s
 
@@ -99,6 +104,7 @@ func close() -> void:
 	social_flow = null
 	workshop_flow = null
 	keeper_flow = null
+	universe_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):

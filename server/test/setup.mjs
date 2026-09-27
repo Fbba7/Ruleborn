@@ -8,9 +8,10 @@ import { fileURLToPath } from "node:url";
 import { open } from "../src/db.mjs";
 import { ERAS } from "../src/eras.mjs";
 import { handler } from "../src/http.mjs";
-import { Service } from "../src/service.mjs";
+import { REALMS, Service } from "../src/service.mjs";
 import { Build, Builds } from "../src/sim.mjs";
 import { Store } from "../src/store.mjs";
+import { raiseTo } from "../src/universe.mjs";
 
 export const WASM = fileURLToPath(new URL(
   "../../sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm", import.meta.url));
@@ -28,7 +29,13 @@ export function simulation() {
 
 export const T0 = Date.UTC(2026, 8, 23, 9, 0, 0);
 
-export function server(options = {}) {
+/**
+ * `strictUniverse`: publishing holds an island to what its owner's universe
+ * has built (universe.mjs). The tests that are not about the universe publish
+ * whatever island they need, so by default each publish first raises the
+ * owner's universe, unpaid, to what the island claims.
+ */
+export function server({ strictUniverse = false, ...options } = {}) {
   const clock = { now: T0 };
   let counter = 0;
   const random = (n) => {
@@ -53,6 +60,13 @@ export function server(options = {}) {
     firstBand: "18+",
     ...options,
   });
+  if (!strictUniverse) {
+    const publish = service.publish.bind(service);
+    service.publish = (owner, bundle, realm = "heart") => {
+      if (REALMS.includes(realm) && bundle?.length > 5) raiseTo(service.db, owner, realm, bundle[4], bundle[5]);
+      return publish(owner, bundle, realm);
+    };
+  }
   return { service, clock, handle: handler(service), build: simulation() };
 }
 

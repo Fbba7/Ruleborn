@@ -5,8 +5,8 @@ client's string catalogue.
     python3 tools/client_strings.py            # write it
     python3 tools/client_strings.py --check    # fail if the committed file differs
 
-A law's name, a note's, a resonance's, a chord's, a ward's and a terrain
-feature's each have one home: the content file they are extracted into. The
+A law's name, a note's, a resonance's, a chord's, a ward's, a terrain
+feature's, a building's and a realm type's each have one home: the content file they are extracted into. The
 client shows them, and every word the client shows comes from its catalogue
 (client/scripts/strings.gd), so this writes them there rather than anyone
 typing them twice.
@@ -23,6 +23,8 @@ import io
 import json
 import pathlib
 import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
@@ -44,6 +46,10 @@ def rows() -> list[tuple[str, str]]:
     out += [(f"WARD_{w['id'].upper()}", w["name"]) for w in load("wards.json")]
     terrain = {t["id"]: t["name"] for t in load("terrain.json")}
     out += [(f"GROUND_{g.upper()}", terrain[g]) for g in GROUND]
+    out += [(f"BUILDING_{b['id'].upper()}", b["name"]) for b in load("buildings.json")]
+    # §5.2's realm types, from their one home (the server sends the name).
+    from design_facts import REALM_TYPES
+    out += [(f"REALM_{t.upper().replace(' ', '_')}", t) for t in REALM_TYPES]
     return out
 
 

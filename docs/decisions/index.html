@@ -168,13 +168,13 @@
     <h1>Decisions waiting on you</h1>
     <p class="lede">These 48 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39&#x27;s fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36&#x27;s base haul (2,400, 2,900 or 4,600) moves with each of them and F39&#x27;s fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4&#x27;s open edge is a rule or a hope. Four items keep the build&#x27;s reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.</p>
     <div class="summary">
-      <div><span class="n">48</span><span class="k">decisions</span></div>
+      <div><span class="n">50</span><span class="k">decisions</span></div>
       <div><span class="n" id="n-answered">0</span><span class="k">answered</span></div>
       <div><span class="n">4</span><span class="k">safe to accept as recommended</span></div>
       <div><span class="n">21</span><span class="k">places two answers collide</span></div>
     </div>
     <div class="bar" aria-hidden="true"><span id="bar"></span></div>
-    <p class="notice" id="notice">3 design &middot; 23 significant &middot; 22 minor. Each card below is one register item, in the order to decide
+    <p class="notice" id="notice">3 design &middot; 23 significant &middot; 24 minor. Each card below is one register item, in the order to decide
       them. Pick an option and it is saved at once; add a note where the option needs a number or a
       condition. The register itself does not change until Claude reads your answers back.</p>
   </header>
@@ -3435,6 +3435,130 @@ The honest cost of B is that the document must say plainly that a non-raider pla
           <button type="button" class="btn save-note" data-id="G41" disabled>Save note</button>
           <button type="button" class="btn ghost clear" data-id="G41" disabled>Clear answer</button>
           <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#G41" target="_blank" rel="noopener">Register entry</a>
+        </div>
+      </div>
+    </article>
+    <article class="decision" id="F56" data-id="F56" data-tier="minor"
+             data-rec="A" data-quick="no" data-answered="no">
+      <header class="dh">
+        <span class="step" title="Decide in this order">49</span>
+        <span class="did">F56</span>
+        <span class="tier t-minor">Minor</span>
+        <span class="topic">§10 Buildings</span>
+        <span class="state" id="st-F56">Not answered</span>
+      </header>
+      <h3 class="q">What does a new universe start with: the economy model&#x27;s Heart (Spire, Vault, Star Well, Aether Spring, Garden and Hearth at level 1), or §10.2&#x27;s day column (only the Spire and the Vault)?</h3>
+      <p class="why">The server now builds every player&#x27;s universe, and the first one decides a new player&#x27;s first hour: with no producer, Starlight comes only from raids, and §16&#x27;s tutorial ruins pay no haul (F37). §9.3&#x27;s production and §14&#x27;s curves come from the model&#x27;s start, so a different start moves them.</p>
+      <details class="today"><summary>What the build does today</summary><p>tools/design_facts.py STARTING_HEART, read by the economy model and server/src/universe.mjs: the Spire, Vault, Star Well, Aether Spring, Garden and Hearth at level 1. §10.2&#x27;s day column (from the earlier run) builds the Star Well on day 2 and the Hearth on day 8; §11.5 has a free Hearth; §14.2&#x27;s first row names the Lab.</p></details>
+      <fieldset class="opts" aria-label="Options for F56">
+        <label class="opt is-rec" for="o-F56-A">
+          <input type="radio" name="o-F56" id="o-F56-A" value="A" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">A</span>
+              <span class="ol">The model&#x27;s start</span><span class="rec-tag">Recommended</span></span>
+            <span class="om">The Heart begins with the Spire, Vault, Star Well, Aether Spring, Garden and Hearth, each at level 1, as the economy model runs it.</span>
+            <span class="oc">The published curves stay as run. A new player earns from minute one and has a Hearth for §11.5&#x27;s strays.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>80 Starlight, 60 Aether and 40 Essence an hour from the three producers at level 1 (§10.2), once staffed.</dd></div><div class="od"><dt>Document edit</dt><dd>§10.2 or §11.5: one sentence naming the start; the full re-run regenerates §10.2&#x27;s day column, whose level-1 dashes then cover all six.</dd></div><div class="od"><dt>Build change</dt><dd>None: built.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-F56-B">
+          <input type="radio" name="o-F56" id="o-F56-B" value="B" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">B</span>
+              <span class="ol">§10.2&#x27;s day column: the Spire and the Vault only</span></span>
+            <span class="om">Every producer and the Hearth are bought, the Star Well first.</span>
+            <span class="oc">A new player&#x27;s first Starlight comes from raids alone, and the model, §9.3 and §14&#x27;s curves must be re-run from the smaller start.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Not measured: the model has not been run from this start.</dd></div><div class="od"><dt>Document edit</dt><dd>§11.5&#x27;s free Hearth and §14.2&#x27;s first row made to agree with it.</dd></div><div class="od"><dt>Build change</dt><dd>STARTING_HEART in tools/design_facts.py, then the model&#x27;s re-run.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-F56-C">
+          <input type="radio" name="o-F56" id="o-F56-C" value="C" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">C</span>
+              <span class="ol">The model&#x27;s start and the Lab</span></span>
+            <span class="om">A, with §14.2&#x27;s first row taken at its word: the Resonance Lab stands at level 1 too.</span>
+            <span class="oc">The Lab&#x27;s 1,500 Starlight is saved; the curves move by about that much on day 1.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>1,500 Starlight, about 38 Keeper experience (§14.2), not spent.</dd></div><div class="od"><dt>Document edit</dt><dd>As A, naming the Lab.</dd></div><div class="od"><dt>Build change</dt><dd>STARTING_HEART gains resonance_lab; the model&#x27;s re-run.</dd></div></dl></details>
+          </span>
+        </label>
+      </fieldset>
+      <div class="recbox">
+        <p><span class="lab">Recommended: A, The model&#x27;s start</span>
+          <span class="conf c-medium">medium confidence</span></p>
+        <p class="rr">It is what every generated table in §9.3 and §14 already assumes, so it moves no figure, and §11.5&#x27;s free Hearth agrees with it. §10.2&#x27;s day column is the earlier run&#x27;s and is to be regenerated whole.</p>
+        
+      </div>
+      <p class="also"><span class="lab">Also needed</span> Whether the Lab in §14.2&#x27;s first row means a building at level 1 or the Lab screen, which §8 opens with the first resonance.</p><p class="inter"><span class="lab">Weigh with</span> <a href="#F37">F37</a>, <a href="#G42">G42</a></p>
+      <details class="quotes"><summary>What the document says</summary><ul><li><span class="qs">&sect;11.5</span> <q>two strays follow the crew home after the first heist, where a free Hearth waits for them</q></li><li><span class="qs">&sect;14.2</span> <q>The Heart; 3 laws; 5 ruleborn; the Archivist; the Lab; 1 cast; Drifting ruins; Codex chapter 1 (12 laws)</q></li></ul></details>
+      <div class="notebox">
+        <label for="n-F56">Note for Claude (optional)</label>
+        <textarea id="n-F56" rows="2" placeholder="A number, a condition, or why" disabled></textarea>
+        <div class="nb">
+          <button type="button" class="btn save-note" data-id="F56" disabled>Save note</button>
+          <button type="button" class="btn ghost clear" data-id="F56" disabled>Clear answer</button>
+          <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#F56" target="_blank" rel="noopener">Register entry</a>
+        </div>
+      </div>
+    </article>
+    <article class="decision" id="G43" data-id="G43" data-tier="minor"
+             data-rec="A" data-quick="no" data-answered="no">
+      <header class="dh">
+        <span class="step" title="Decide in this order">50</span>
+        <span class="did">G43</span>
+        <span class="tier t-minor">Minor</span>
+        <span class="topic">§5 Your universe</span>
+        <span class="state" id="st-G43">Not answered</span>
+      </header>
+      <h3 class="q">When a realm rises from level 2 to 3 and §5.2&#x27;s ward limit falls from 8 to 6, what becomes of the two wards built above it?</h3>
+      <p class="why">Wards cost Starlight (§10.2), so a Keeper who follows §5.2&#x27;s budget at realm level 2 and then raises the realm loses the use of two, silently, unless the rule says otherwise. It is the one place the limits fall.</p>
+      <details class="today"><summary>What the build does today</summary><p>server/src/universe.mjs keeps them built and upgradable, builds no more while the realm is at its limit, and Island::check still places no more than the limit, so two stand idle until realm level 4&#x27;s seven. No Starlight is returned.</p></details>
+      <fieldset class="opts" aria-label="Options for G43">
+        <label class="opt is-rec" for="o-G43-A">
+          <input type="radio" name="o-G43" id="o-G43-A" value="A" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">A</span>
+              <span class="ol">Kept, idle above the limit</span><span class="rec-tag">Recommended</span></span>
+            <span class="om">As built: the wards stay the player&#x27;s, and the island places as many as the realm allows.</span>
+            <span class="oc">Nothing is lost for good; realm level 4 uses one again and level 5 both. The screen must say which wards stand idle.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>At most two idle wards, at realm level 3 only; one at level 4 for a player who built eight.</dd></div><div class="od"><dt>Document edit</dt><dd>§5.2: &#x27;Wards above a realm&#x27;s limit stay built and stand idle until a higher level allows them.&#x27;</dd></div><div class="od"><dt>Build change</dt><dd>None: built. The universe screen can mark the idle ones.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-G43-B">
+          <input type="radio" name="o-G43" id="o-G43-B" value="B" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">B</span>
+              <span class="ol">Refunded</span></span>
+            <span class="om">Raising the realm returns what the wards above the limit cost, and removes them.</span>
+            <span class="oc">Clean, but the refund is Starlight the economy model never paid out.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Up to 2 × the wards&#x27; cost: 700 Starlight at ward level 1, 27,400 at level 5.</dd></div><div class="od"><dt>Document edit</dt><dd>§5.2 and §9.5 name the refund.</dd></div><div class="od"><dt>Build change</dt><dd>A refund row in the ledger when a realm rises.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-G43-C">
+          <input type="radio" name="o-G43" id="o-G43-C" value="C" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">C</span>
+              <span class="ol">Make the limits never fall</span></span>
+            <span class="om">§5.2&#x27;s limits become 8, 8, 8, 8, 8 in what may be built, and §13.2&#x27;s hold budget is kept by what may be placed.</span>
+            <span class="oc">Separates what is built from what stands; F55&#x27;s re-tune decides the placed budget anyway.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>—</dd></div><div class="od"><dt>Document edit</dt><dd>§5.2 splits the ward limit into built and placed.</dd></div><div class="od"><dt>Build change</dt><dd>allowed() in universe.mjs reads the built limit.</dd></div></dl></details>
+          </span>
+        </label>
+      </fieldset>
+      <div class="recbox">
+        <p><span class="lab">Recommended: A, Kept, idle above the limit</span>
+          <span class="conf c-medium">medium confidence</span></p>
+        <p class="rr">It loses nothing, needs no refund the model never priced, and is what is built; F55 may move §5.2&#x27;s budget anyway, so the smallest rule wins until it settles.</p>
+        
+      </div>
+      <p class="also"><span class="lab">Also needed</span> Nothing: F55&#x27;s answer may change the limits themselves, and this rule applies to whatever they become.</p><p class="inter"><span class="lab">Weigh with</span> <a href="#F55">F55</a></p>
+      <details class="quotes"><summary>What the document says</summary><ul><li><span class="qs">&sect;5.2</span> <q>Each realm level now gets the smaller of the wards it needs to reach its hold band (13.2) and eight, the legibility cap 13.2 sets: 8, 8, 6, 7 and 8.</q></li></ul></details>
+      <div class="notebox">
+        <label for="n-G43">Note for Claude (optional)</label>
+        <textarea id="n-G43" rows="2" placeholder="A number, a condition, or why" disabled></textarea>
+        <div class="nb">
+          <button type="button" class="btn save-note" data-id="G43" disabled>Save note</button>
+          <button type="button" class="btn ghost clear" data-id="G43" disabled>Clear answer</button>
+          <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#G43" target="_blank" rel="noopener">Register entry</a>
         </div>
       </div>
     </article>

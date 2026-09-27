@@ -18,6 +18,7 @@ const ROUTES := {
 	&"social": "res://scenes/social.tscn",
 	&"friends": "res://scenes/friends.tscn",
 	&"workshop": "res://scenes/workshop.tscn",
+	&"universe": "res://scenes/universe.tscn",
 }
 
 var store: Store

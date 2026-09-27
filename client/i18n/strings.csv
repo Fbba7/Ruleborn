@@ -459,3 +459,39 @@ KEEPER_TITLE,Keeper %d,Guardião %d
 KEEPER_PROGRESS,%s of %s experience to Keeper %d,%s de %s de experiência até Guardião %d
 KEEPER_TOP,"Keeper %d, the highest level","Guardião %d, o nível mais alto"
 KEEPER_SPOKEN,Keeper %d: %s,Guardião %d: %s
+HOME_UNIVERSE,Your universe,Seu universo
+UNIVERSE_TITLE,Your universe,Seu universo
+UNIVERSE_HEADER,%s Starlight · Spire %d · Keeper %d,%s de Luz Estelar · Torre %d · Guardião %d
+UNIVERSE_FAILED,Not bought: %s,Não comprado: %s
+UNIVERSE_HEART,The Heart,O Coração
+UNIVERSE_HEART_TITLE,"The Heart, which counts as realm level %d","O Coração, que conta como reino nível %d"
+UNIVERSE_REALM_TITLE,"%s, realm level %d","%s, reino nível %d"
+UNIVERSE_LEVEL,"%s, level %d of %d","%s, nível %d de %d"
+UNIVERSE_AT_TOP,"%s: the highest level","%s: o nível mais alto"
+UNIVERSE_NUMBERED,%s %d,%s %d
+UNIVERSE_RAISE,Raise to level %d,Subir ao nível %d
+UNIVERSE_RAISE_REALM,Raise the realm to level %d,Subir o reino ao nível %d
+UNIVERSE_BUILD,Build: %s,Construir: %s
+UNIVERSE_PRICE,"%s, %s Starlight","%s, %s de Luz Estelar"
+UNIVERSE_BLOCKED,%s. %s,%s. %s
+UNIVERSE_SPOKEN,%s. %s,%s. %s
+UNIVERSE_NEEDS_KEEPER,Needs Keeper %d,Precisa de Guardião %d
+UNIVERSE_NEEDS_SPIRE,Needs the Spire at level %d,Precisa da Torre no nível %d
+UNIVERSE_NEEDS_STARLIGHT,Needs %s Starlight,Precisa de %s de Luz Estelar
+UNIVERSE_CONFIRM,"Tap again to spend %s Starlight","Toque de novo para gastar %s de Luz Estelar"
+UNIVERSE_CONFIRM_SPOKEN,"%s: tap again to spend %s Starlight","%s: toque de novo para gastar %s de Luz Estelar"
+UNIVERSE_ROOM,Room to build here,Espaço para construir aqui
+UNIVERSE_OPEN_TITLE,Open a new outer realm,Abrir um novo reino exterior
+UNIVERSE_OPEN,Open %s,Abrir %s
+UNIVERSE_OPENED,%s is open,%s está aberto
+UNIVERSE_RAISED,The realm is at level %d,O reino está no nível %d
+UNIVERSE_BUILT,"%s, level %d","%s, nível %d"
+ERR_NOT_ENOUGH_STARLIGHT,you need more Starlight,você precisa de mais Luz Estelar
+ERR_NEEDS_KEEPER_LEVEL,that needs a higher Keeper level,isso precisa de um nível de Guardião mais alto
+ERR_NEEDS_SPIRE_LEVEL,that needs the Spire higher,isso precisa da Torre mais alta
+ERR_NOT_THE_NEXT_LEVEL,that is not the next level,esse não é o próximo nível
+ERR_NO_ROOM,there is no room for another here,não há espaço para outro aqui
+ERR_NOT_IN_THIS_REALM,that cannot stand in this realm,isso não pode ficar neste reino
+ERR_NO_SUCH_BUILDING,that building does not exist,essa construção não existe
+ERR_NO_SUCH_REALM_TYPE,that kind of realm does not exist,esse tipo de reino não existe
+ERR_EVERY_REALM_OPEN,every realm is already open,todos os reinos já estão abertos

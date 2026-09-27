@@ -62,8 +62,9 @@ class State:
 
 
 class EconomyModel:
-    #: What a new universe's Heart holds at level 1 (§11.5, §10.2).
-    STARTING = ("Star Well", "Aether Spring", "Garden", "Vault", "Hearth")
+    #: What a new universe's Heart holds at level 1 besides the Spire (F56),
+    #: by name, from its one home.
+    STARTING = data.STARTING_NAMES
 
     def __init__(self, config: Config | None = None):
         self.cfg = config or Config()
@@ -74,11 +75,8 @@ class EconomyModel:
         self.codex = data.codex(self.cfg.codex == "launch") if self.v34 else []
         self.s = State()
         heart = Realm("heart")
-        heart.levels("Star Well").append(1)
-        heart.levels("Aether Spring").append(1)
-        heart.levels("Garden").append(1)
-        heart.levels("Vault").append(1)
-        heart.levels("Hearth").append(1)
+        for name in self.STARTING:
+            heart.levels(name).append(1)
         self.s.realms.append(heart)
         self.s.keeper_level_days[1] = 0
 
@@ -402,7 +400,8 @@ class EconomyModel:
             # Raising an outer realm's level.
             if realm.kind == "outer" and realm.level < 5:
                 idx = realm.level - 1
-                if self.s.spire_level >= data.REALM_LEVEL_SPIRE[idx]:
+                # §5.2's Spire for the level after `idx + 1` (index 0 is the opening's).
+                if self.s.spire_level >= data.REALM_LEVEL_SPIRE[idx + 1]:
                     options.append(
                         (data.REALM_LEVEL_COSTS[idx], "realm-level", realm, "", realm.level + 1)
                     )

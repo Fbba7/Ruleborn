@@ -38,6 +38,7 @@ import { Store } from "./store.mjs";
 import { check, issue } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
 import { Track } from "./track.mjs";
+import { Universe } from "./universe.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 
@@ -126,6 +127,7 @@ export class Service {
     this.notifications = new Notifications(this);
     this.friends = new Friends(this);
     this.keeper = new Keeper(this);
+    this.universe = new Universe(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), settleReceipt, catalogue: cosmetics });
   }
 
@@ -186,7 +188,10 @@ export class Service {
     // The Heart counts as realm level 3 (G19, decided): §5.2's row for it —
     // 6 wards, 2 posts, 12 by 12, 2 law slots — is the one §5.1's Heart
     // slots already match.
-    const problems = [...read.problems, ...(realm === "heart" && bundle[4] !== HEART_LEVEL ? ["heart_level"] : [])];
+    // And what the owner's universe has built: the realm open, its level,
+    // the Vault (universe.mjs).
+    const problems = [...read.problems, ...(realm === "heart" && bundle[4] !== HEART_LEVEL ? ["heart_level"] : []),
+                      ...this.universe.problems(owner, realm, bundle[4], bundle[5])];
     if (problems.length) throw new Refused(422, "island_not_publishable", { problems });
     const key = this.store.put(bundle, read.digest);      // the two SHA-256s must agree
     const now = this.now();

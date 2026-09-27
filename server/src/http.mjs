@@ -14,6 +14,10 @@
 //   POST /v1/heists/:token       replay bytes                → what was settled
 //   GET  /v1/balance                                         → {starlight, essence}
 //   GET  /v1/keeper                                          → {level, xp, toNext, cap} (§14.2)
+//   GET  /v1/universe                                        → realms, buildings, and what each can buy
+//   POST /v1/universe/realms     {"type"}                    → the next outer realm opened (§5.2)
+//   POST /v1/universe/realms/:realm/level {"to"}             → an outer realm raised a level
+//   POST /v1/universe/buildings  {"realm", "kind", "n", "to"} → a building built (to 1) or raised (§10.2)
 //   GET  /v1/targets                                         → {band: list hash}
 //   PUT  /v1/age                 {"band": "13-15"|"16-17"|"18+"} → {ageBand}
 //                                {"band": "under-13"}         → the account deleted (§20.11)
@@ -332,6 +336,19 @@ export function handler(service, { webClientId = null, appleNotifications = null
             return json({ challenge: c.code, bundle: c.bundle, from: c.account });
           }
         }
+        return json({ error: "no_such_route" }, 404);
+      }
+      if (parts[1] === "universe") {
+        // §5.2 and §10.2 (universe.mjs): each purchase names the level it
+        // leads to, so a retry is answered, never charged again.
+        const me = who();
+        const u = service.universe;
+        const [, , a, b, c] = parts;
+        const m = request.method;
+        if (m === "GET" && !a) return json(u.view(me));
+        if (m === "POST" && a === "realms" && !b) return json(u.open(me, text((await body(request)).type)));
+        if (m === "POST" && a === "realms" && b && c === "level") return json(u.raise(me, b, (await body(request)).to));
+        if (m === "POST" && a === "buildings" && !b) return json(u.build(me, await body(request)));
         return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "survey" && request.method === "GET") {

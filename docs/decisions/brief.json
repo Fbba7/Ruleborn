@@ -49,7 +49,9 @@
   "F53",
   "F54",
   "F55",
-  "G41"
+  "G41",
+  "F56",
+  "G43"
  ],
  "order_notes": {
   "F33": "Design tier. It sets whether one Glare decides a realm, and F35's Vault-reach argument and G19's hold claim both rest on the hold numbers it changes.",
@@ -98,7 +100,9 @@
   "F52": "Found building F33's answer; decide it with F33 in mind, before §5.2's ward budget is re-measured over kits.",
   "F53": "Found building F36 and F39 together; settle it before the document takes §9.6's edit.",
   "F54": "Found building F37; a display question unless the owner wants the ceiling moved.",
-  "F55": "Design tier, found re-running §13.2's table with every answer built. It decides whether the balance pass or §5.2's budget closes the gap, and so what the next harness work is."
+  "F55": "Design tier, found re-running §13.2's table with every answer built. It decides whether the balance pass or §5.2's budget closes the gap, and so what the next harness work is.",
+  "F56": "Found building the home economy; independent, and it moves no figure under A.",
+  "G43": "Found building the home economy; decide with F55, which may change the limits it is about."
  },
  "groups": [
   {
@@ -4032,6 +4036,111 @@
     }
    ],
    "also_needed": "Which raid-side levers are on the table for B (guard sight, the clock, crew abilities), and whether the harness's competent crew is the right reference: the optimal and clearing crews are held more often here, because their waits cost clock across three realms."
+  },
+  "F56": {
+   "id": "F56",
+   "question": "What does a new universe start with: the economy model's Heart (Spire, Vault, Star Well, Aether Spring, Garden and Hearth at level 1), or §10.2's day column (only the Spire and the Vault)?",
+   "why_it_matters": "The server now builds every player's universe, and the first one decides a new player's first hour: with no producer, Starlight comes only from raids, and §16's tutorial ruins pay no haul (F37). §9.3's production and §14's curves come from the model's start, so a different start moves them.",
+   "today": "tools/design_facts.py STARTING_HEART, read by the economy model and server/src/universe.mjs: the Spire, Vault, Star Well, Aether Spring, Garden and Hearth at level 1. §10.2's day column (from the earlier run) builds the Star Well on day 2 and the Hearth on day 8; §11.5 has a free Hearth; §14.2's first row names the Lab.",
+   "options": [
+    {
+     "key": "A",
+     "label": "The model's start",
+     "means": "The Heart begins with the Spire, Vault, Star Well, Aether Spring, Garden and Hearth, each at level 1, as the economy model runs it.",
+     "consequences": "The published curves stay as run. A new player earns from minute one and has a Hearth for §11.5's strays.",
+     "numbers": "80 Starlight, 60 Aether and 40 Essence an hour from the three producers at level 1 (§10.2), once staffed.",
+     "doc_edit": "§10.2 or §11.5: one sentence naming the start; the full re-run regenerates §10.2's day column, whose level-1 dashes then cover all six.",
+     "build_change": "None: built."
+    },
+    {
+     "key": "B",
+     "label": "§10.2's day column: the Spire and the Vault only",
+     "means": "Every producer and the Hearth are bought, the Star Well first.",
+     "consequences": "A new player's first Starlight comes from raids alone, and the model, §9.3 and §14's curves must be re-run from the smaller start.",
+     "numbers": "Not measured: the model has not been run from this start.",
+     "doc_edit": "§11.5's free Hearth and §14.2's first row made to agree with it.",
+     "build_change": "STARTING_HEART in tools/design_facts.py, then the model's re-run."
+    },
+    {
+     "key": "C",
+     "label": "The model's start and the Lab",
+     "means": "A, with §14.2's first row taken at its word: the Resonance Lab stands at level 1 too.",
+     "consequences": "The Lab's 1,500 Starlight is saved; the curves move by about that much on day 1.",
+     "numbers": "1,500 Starlight, about 38 Keeper experience (§14.2), not spent.",
+     "doc_edit": "As A, naming the Lab.",
+     "build_change": "STARTING_HEART gains resonance_lab; the model's re-run."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "rationale": "It is what every generated table in §9.3 and §14 already assumes, so it moves no figure, and §11.5's free Hearth agrees with it. §10.2's day column is the earlier run's and is to be regenerated whole.",
+    "confidence": "medium"
+   },
+   "interacts_with": [
+    "F37",
+    "G42"
+   ],
+   "quotes": [
+    {
+     "section": "11.5",
+     "text": "two strays follow the crew home after the first heist, where a free Hearth waits for them"
+    },
+    {
+     "section": "14.2",
+     "text": "The Heart; 3 laws; 5 ruleborn; the Archivist; the Lab; 1 cast; Drifting ruins; Codex chapter 1 (12 laws)"
+    }
+   ],
+   "also_needed": "Whether the Lab in §14.2's first row means a building at level 1 or the Lab screen, which §8 opens with the first resonance."
+  },
+  "G43": {
+   "id": "G43",
+   "question": "When a realm rises from level 2 to 3 and §5.2's ward limit falls from 8 to 6, what becomes of the two wards built above it?",
+   "why_it_matters": "Wards cost Starlight (§10.2), so a Keeper who follows §5.2's budget at realm level 2 and then raises the realm loses the use of two, silently, unless the rule says otherwise. It is the one place the limits fall.",
+   "today": "server/src/universe.mjs keeps them built and upgradable, builds no more while the realm is at its limit, and Island::check still places no more than the limit, so two stand idle until realm level 4's seven. No Starlight is returned.",
+   "options": [
+    {
+     "key": "A",
+     "label": "Kept, idle above the limit",
+     "means": "As built: the wards stay the player's, and the island places as many as the realm allows.",
+     "consequences": "Nothing is lost for good; realm level 4 uses one again and level 5 both. The screen must say which wards stand idle.",
+     "numbers": "At most two idle wards, at realm level 3 only; one at level 4 for a player who built eight.",
+     "doc_edit": "§5.2: 'Wards above a realm's limit stay built and stand idle until a higher level allows them.'",
+     "build_change": "None: built. The universe screen can mark the idle ones."
+    },
+    {
+     "key": "B",
+     "label": "Refunded",
+     "means": "Raising the realm returns what the wards above the limit cost, and removes them.",
+     "consequences": "Clean, but the refund is Starlight the economy model never paid out.",
+     "numbers": "Up to 2 × the wards' cost: 700 Starlight at ward level 1, 27,400 at level 5.",
+     "doc_edit": "§5.2 and §9.5 name the refund.",
+     "build_change": "A refund row in the ledger when a realm rises."
+    },
+    {
+     "key": "C",
+     "label": "Make the limits never fall",
+     "means": "§5.2's limits become 8, 8, 8, 8, 8 in what may be built, and §13.2's hold budget is kept by what may be placed.",
+     "consequences": "Separates what is built from what stands; F55's re-tune decides the placed budget anyway.",
+     "numbers": "—",
+     "doc_edit": "§5.2 splits the ward limit into built and placed.",
+     "build_change": "allowed() in universe.mjs reads the built limit."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "rationale": "It loses nothing, needs no refund the model never priced, and is what is built; F55 may move §5.2's budget anyway, so the smallest rule wins until it settles.",
+    "confidence": "medium"
+   },
+   "interacts_with": [
+    "F55"
+   ],
+   "quotes": [
+    {
+     "section": "5.2",
+     "text": "Each realm level now gets the smaller of the wards it needs to reach its hold band (13.2) and eight, the legibility cap 13.2 sets: 8, 8, 6, 7 and 8."
+    }
+   ],
+   "also_needed": "Nothing: F55's answer may change the limits themselves, and this rule applies to whatever they become."
   }
  }
 }

@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72", "G41", "F55", "G42"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72", "G41", "F55", "G42", "F56", "G43"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6592,13 +6592,66 @@ dict(id="G42", kind="gap", severity="significant", status="open",
           "outer realms, the Spire\u2019s levels. The first slice is built: a "
           "raid now earns §14.2\u2019s experience for its raider, levels climb "
           "§14.2\u2019s table, and <code>GET /v1/keeper</code> shows the bar "
-          "(server/src/keeper.mjs, the client\u2019s Keeper bar). Spending and "
-          "restoring laws, §14.2\u2019s other two sources, need the home "
-          "economy on the server first. Found building the Keeper bar.",
+          "(server/src/keeper.mjs, the client\u2019s Keeper bar). The second "
+          "slice is built too: realms and buildings on the server "
+          "(server/src/universe.mjs) \u2014 §5.2\u2019s outer realms opened at "
+          "their Keeper levels and raised at their Spire levels, §10.2\u2019s "
+          "buildings built and raised at their costs and needs, paid in "
+          "Starlight from the ledger, §14.2\u2019s 1 experience for every 40 "
+          "spent, and an island refused unless its realm, realm level and "
+          "Vault are built \u2014 with the client\u2019s universe screen. "
+          "Workers, production, the roster and restoring laws are the slices "
+          "left. Found building the Keeper bar.",
      rec="Give §26.8 a phase for the home economy on the server \u2014 "
          "buildings and production, spending, the Spire, the Codex\u2019s "
          "restorations and §14.2\u2019s experience from each \u2014 costed "
          "like the others, and say which of it the device may run offline."),
+
+dict(id="F56", kind="finding", severity="minor", status="open",
+     title="No section says what a new universe starts with, and the three "
+           "that touch it disagree with the model the tables come from",
+     refs=["10.2", "11.5", "14.2", "9.3"],
+     body="The server now holds each player\u2019s realms and buildings, so "
+          "it needs a first universe, and the document never states one. "
+          "§10.2\u2019s <em>\u201cEngaged player builds it\u201d</em> column "
+          "has a dash at level 1 only for the Keeper\u2019s Spire and the "
+          "Vault, and builds the Star Well on day 2, the Aether Spring and "
+          "Garden on day 3 and the Hearth on day 8. §11.5 says two strays "
+          "arrive after the first heist <em>\u201cwhere a free Hearth waits "
+          "for them\u201d</em>. §14.2\u2019s level-1 row unlocks <em>\u201cThe "
+          "Heart; 3 laws; 5 ruleborn; the Archivist; the Lab\u201d</em>. The "
+          "economy model, whose run §9.3\u2019s production and §14\u2019s "
+          "curves come from, starts the Heart with a Star Well, Aether "
+          "Spring, Garden, Vault and Hearth at level 1 beside the Spire. "
+          "§10.2\u2019s day column is from the earlier run (§14.2), so the "
+          "model is the newer reading. The build takes it: "
+          "<code>STARTING_HEART</code> in tools/design_facts.py, which the "
+          "model and server/src/universe.mjs both read, is the Spire, Vault, "
+          "Star Well, Aether Spring, Garden and Hearth at level 1. Found "
+          "building the home economy on the server.",
+     rec="State the starting universe in one place (§10.2 or §11.5) as the "
+         "model runs it, and let the full re-run regenerate §10.2\u2019s "
+         "day column from it."),
+
+dict(id="G43", kind="gap", severity="minor", status="open",
+     title="§5.2\u2019s ward limit falls from 8 to 6 at realm level 3, and "
+           "nothing says what becomes of the wards built above it",
+     refs=["5.2", "10.2"],
+     body="§5.2\u2019s ward limits by realm level are <em>\u201c8, 8, 6, 7 "
+          "and 8\u201d</em>, and §10.2 prices each ward (350 Starlight at "
+          "level 1, up to 13,700 at level 5). A Keeper who builds eight wards "
+          "at realm level 2 and raises the realm to 3 owns two wards the realm "
+          "may no longer hold, and no section says whether they are kept, "
+          "refunded or lost, or whether the realm may rise at all. The build "
+          "keeps them: they stay built and upgradable, no more can be built "
+          "while the realm is at its limit, and the island builder and "
+          "<code>Island::check</code> still place no more than the realm\u2019s "
+          "limit, so two stand idle until realm level 4 allows seven. No "
+          "Starlight comes back. Found building the home economy on the "
+          "server.",
+     rec="Say in §5.2 what happens to wards above a lower limit: kept and "
+         "idle as built, refunded, or the rise refused until they are "
+         "removed \u2014 or make the limits never fall."),
 
 dict(id="D72", kind="deviation", severity="minor", status="open",
      title="§21.8\u2019s alarm red and success green cannot carry words at its "

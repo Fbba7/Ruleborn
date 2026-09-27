@@ -68,6 +68,32 @@ CREATE TABLE IF NOT EXISTS islands (
   PRIMARY KEY (owner, realm)
 );
 
+-- §5.2: a universe's outer realms, each of a type not yet owned, opened in
+-- order at the Keeper levels §5.2 gives. The Heart has no row: every
+-- universe has one, and it counts as realm level 3 (G19). universe.mjs.
+CREATE TABLE IF NOT EXISTS realms (
+  owner     TEXT NOT NULL REFERENCES accounts(id),
+  realm     TEXT NOT NULL,
+  type      TEXT NOT NULL,
+  level     INTEGER NOT NULL CHECK (level BETWEEN 1 AND 5),
+  opened_at INTEGER NOT NULL,
+  PRIMARY KEY (owner, realm),
+  UNIQUE (owner, type)
+);
+
+-- §10.2: every building a universe holds, by realm, kind (§10.2's id) and
+-- its number among that kind there. A universe with no rows holds the start
+-- (F56), written the first time it changes. universe.mjs.
+CREATE TABLE IF NOT EXISTS buildings (
+  owner      TEXT NOT NULL REFERENCES accounts(id),
+  realm      TEXT NOT NULL,
+  kind       TEXT NOT NULL,
+  n          INTEGER NOT NULL,
+  level      INTEGER NOT NULL CHECK (level >= 1),
+  changed_at INTEGER NOT NULL,
+  PRIMARY KEY (owner, realm, kind, n)
+);
+
 -- §24.8: "Bundle hash as the key, realm type, difficulty band, when
 -- published. Never edited." The owner is kept so a raider cannot lease their
 -- own island and a foiled heist's fee has somewhere to go.
