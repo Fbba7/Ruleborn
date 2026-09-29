@@ -38,6 +38,7 @@ import { Store } from "./store.mjs";
 import { check, issue } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
 import { Track } from "./track.mjs";
+import { Safety } from "./safety.mjs";
 import { Universe } from "./universe.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
@@ -128,6 +129,7 @@ export class Service {
     this.friends = new Friends(this);
     this.keeper = new Keeper(this);
     this.universe = new Universe(this);
+    this.safety = new Safety(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), settleReceipt, catalogue: cosmetics });
   }
 
@@ -410,6 +412,8 @@ export class Service {
    *  stranger learns neither the island nor whose it is. */
   challenge(account, code) {
     const c = this.friends.opened(code);
+    // A block either way closes the link (safety.mjs).
+    if (c.account !== account && this.safety.between(account, c.account)) throw new Refused(404, "no_such_challenge");
     const band = this.db.prepare("SELECT age_band FROM accounts WHERE id = ?").get(c.account)?.age_band;
     if (band === "13-15" && c.account !== account && !this.friends.areFriends(account, c.account)) {
       throw new Refused(404, "no_such_challenge");

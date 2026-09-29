@@ -1106,6 +1106,35 @@ dict(
              evidence="server/test/universe.test.mjs; client/tests/universe_tests.gd, "
                       "through python3 client/status.py",
              register=["G42", "F56", "G43"]),
+        dict(id="TC.13", owner="claude", status="done",
+             title="What the stores require of player-made content, and the declarations ready to file",
+             detail="\u00a720.11 lists what the stores ask of a game where players "
+                    "see each other's work; none of it was built. Now: blocking as "
+                    "\u00a717.8 says it works (each hidden from the other, targets "
+                    "untouched), a terms-of-use gate before publishing, playing, "
+                    "rating or remixing Workshop islands (never before a report), "
+                    "and /terms, /privacy and /support served by the game's own "
+                    "server, the policy written from server/privacy.json. The age "
+                    "ratings are answered in server/ratings.json, each answer "
+                    "quoting the sentence it rests on, and the iPhone build's "
+                    "privacy manifest and export-compliance key are written from "
+                    "the same files (tools/privacy_manifest.py). "
+                    "server/declarations.md is the whole packet.",
+             gate="the compliance row moves only when TC.14 is done",
+             evidence="server/test/safety.test.mjs; client/tests/workshop_tests.gd; "
+                      "node server/src/privacy.mjs --check; python3 tools/privacy_manifest.py --check"),
+        dict(id="TC.14", owner="you", status="ready",
+             title="File the store declarations and the age ratings",
+             detail="Set RULEBORN_CONTACT=\"Name &lt;address&gt;\" on the server so "
+                    "/support is served; read server/web/terms.md and give it a "
+                    "final version on its Version line; then fill App Store "
+                    "Connect's App Privacy and age rating, and Play's Data safety "
+                    "and IARC questionnaire, from server/declarations.md, linking "
+                    "/privacy and /support. Check each question's name against the "
+                    "live form. On the first Mac build, read Xcode's privacy report "
+                    "for the engine's required-reason APIs, which the manifest does "
+                    "not yet declare.",
+             blocked_by=["TC.13"]),
         dict(id="TC.9", owner="claude", status="done",
              title="Offline as the exception, as the owner answered G41",
              detail="Online is the rule and is recommended heavily; offline is "

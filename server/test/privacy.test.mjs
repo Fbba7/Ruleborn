@@ -80,6 +80,11 @@ async function busy() {
   t.service.friends.accept(y.account, t.service.friends.invite(x.account).invite);
   t.service.friends.invite(x.account);
   t.service.friends.challenge(x.account);
+  // The terms accepted, and a block each way with a third player (safety.mjs).
+  t.service.safety.accept(x.account, t.service.safety.terms(x.account).version);
+  const z = t.service.session("gc:z").account;
+  t.service.safety.block(x.account, z);
+  t.service.safety.block(z, x.account);
   // A realm of their own, opened and paid for (universe.mjs).
   t.service.book(x.account, "starlight", 5_000, "a test's grant");
   t.service.universe.open(x.account, "Verdant");

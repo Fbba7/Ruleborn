@@ -31,6 +31,8 @@ static func item(i: Dictionary, me: String) -> Dictionary:
 		"withdrawn": Strings.t("WORKSHOP_WITHDRAWN") if i.get("withdrawn", false) else "",
 		"removed": _removed(i.get("removed")),
 		"listed": not i.get("withdrawn", false) and i.get("removed") == null,
+		# §17.8: another player's island offers to block its creator.
+		"creator": str(creator) if creator != null and not mine else "",
 	}
 
 
@@ -72,7 +74,20 @@ static func said(w: Dictionary) -> String:
 			return Strings.t("WORKSHOP_DONE_REMIXED")
 		"withdrawn":
 			return Strings.t("WORKSHOP_DONE_WITHDRAWN")
+		"blocked":
+			return Strings.t("WORKSHOP_DONE_BLOCKED")
+		"terms":
+			return Strings.t("WORKSHOP_DONE_TERMS")
 	return ""
+
+
+## §20.11's terms-of-use gate: shown until the player has accepted the
+## current terms, once the server has said which they are.
+static func terms(w: Dictionary) -> Dictionary:
+	var t: Dictionary = w.get("terms", {})
+	var show := not t.is_empty() and not bool(t.get("accepted", false))
+	return {"show": show, "text": Strings.t("WORKSHOP_TERMS", str(t.get("version", ""))) if show else "",
+		"url": str(t.get("url", "/terms"))}
 
 
 ## §18.6: the island just rehearsed may be published once it is cleared, on

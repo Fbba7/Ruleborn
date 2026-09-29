@@ -25,6 +25,8 @@ func run() -> void:
 	await _remix_named()
 	await _origin_gone()
 	await _latest_list()
+	await _terms_gate()
+	await _blocking()
 	await _two_players()
 
 
@@ -141,6 +143,58 @@ func _fake() -> Array:
 	return [s, transport]
 
 
+## §20.11: the terms of use come first. The screen shows the gate until the
+## player accepts the current version; a refusal for the terms asks for them
+## again, so the gate shows even if it had not been fetched.
+func _terms_gate() -> void:
+	var f := _fake()
+	var s: Services = f[0]
+	var transport: FakeTransport = f[1]
+	transport.on("POST /v1/workshop/i1/play", {"error": "terms_first", "version": "v2"}, 403)
+	transport.on("GET /v1/terms", {"version": "v2", "accepted": false, "url": "/terms"})
+	var played := await s.workshop_flow.play("i1")
+	for i in 3:
+		await tree.process_frame
+	var gated := WorkshopPresenter.terms(s.store.get_slice(WorkshopState.WORKSHOP))
+	transport.on("PUT /v1/terms", {"version": "v2", "accepted": true, "url": "/terms"})
+	var accepted := await s.workshop_flow.accept_terms()
+	var sent: Dictionary = JSON.parse_string((transport.calls[-1]["body"] as PackedByteArray).get_string_from_utf8())
+	var slice: Dictionary = s.store.get_slice(WorkshopState.WORKSHOP)
+	var after := WorkshopPresenter.terms(slice)
+	check.call("a play refused for the terms of use shows the terms to read and accept; accepting sends the "
+			+ "version shown, and the gate closes once the server has it (§20.11)",
+		played.is_empty() and gated["show"] and gated["text"].contains("v2") and accepted
+			and transport.calls[-1]["route"] == "PUT /v1/terms" and sent == {"version": "v2"}
+			and not after["show"] and WorkshopPresenter.said(slice) == Strings.t("WORKSHOP_DONE_TERMS"),
+		"%s | %s | %s" % [gated, sent, after])
+	s.close()
+
+
+## §17.8: another player's island offers to block its creator; blocking asks
+## the server and shows the list again, without them.
+func _blocking() -> void:
+	var f := _fake()
+	var s: Services = f[0]
+	var transport: FakeTransport = f[1]
+	transport.on("GET /v1/workshop", [_item()])
+	await s.workshop_flow.show_list("new")
+	var card := WorkshopPresenter.item(_item(), "me")
+	var own := WorkshopPresenter.item(_item({"creator": "me"}), "me")
+	transport.on("POST /v1/blocks", {"blocked": "ffee0011", "unfriended": false}, 201)
+	transport.on("GET /v1/workshop", [])
+	await s.workshop_flow.block(str(card["creator"]))
+	var sent: Dictionary = JSON.parse_string((transport.calls.filter(func(c: Dictionary) -> bool:
+		return c["route"] == "POST /v1/blocks")[0]["body"] as PackedByteArray).get_string_from_utf8())
+	var slice: Dictionary = s.store.get_slice(WorkshopState.WORKSHOP)
+	check.call("another player's island offers to block its creator and one's own does not; blocking tells the "
+			+ "server, says what it does, and shows the list again without them (§17.8)",
+		card["creator"] == "ffee0011" and own["creator"] == "" and sent == {"account": "ffee0011"}
+			and slice["items"].is_empty() and slice["list"] == "new"
+			and WorkshopPresenter.said(slice) == Strings.t("WORKSHOP_DONE_BLOCKED"),
+		"%s | %s" % [sent, slice])
+	s.close()
+
+
 ## §20.7: the server refuses a 13-to-15 every list but the featured one; the
 ## screen shows the featured list and offers only it and their own.
 func _curated() -> void:
@@ -250,6 +304,8 @@ func _player(credential: String) -> Array:
 	var me := await s.account.sign_in(credential)
 	if me.ok:
 		s.store.dispatch(&"signed_in", {"account": me.value["account"]})
+		# §20.11: the terms of use accepted, as the Workshop asks first.
+		await s.workshop_flow.accept_terms()
 	return [s, me]
 
 

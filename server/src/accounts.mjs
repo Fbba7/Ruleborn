@@ -113,7 +113,7 @@ export function deleteAccount(service, account, reason = "requested", { journal 
       `UPDATE accounts SET platform_identity = ?,
          deleted_at = COALESCE(deleted_at, ?),
          deleted_reason = COALESCE(deleted_reason, ?), equipped = '{}', push_token = NULL,
-         reminder_at = NULL, time_zone = NULL, night_quiet = 1,
+         reminder_at = NULL, time_zone = NULL, night_quiet = 1, terms_version = NULL,
          banned_at = NULL, banned_reason = NULL WHERE id = ?`)
       .run(`deleted:${account}`, now, reason, account);
     // Out of matchmaking and the target lists: an island row is what makes a
@@ -133,6 +133,8 @@ export function deleteAccount(service, account, reason = "requested", { journal 
     db.prepare("DELETE FROM friends WHERE a = ? OR b = ?").run(account, account);
     db.prepare("DELETE FROM friend_invites WHERE account = ?").run(account);
     db.prepare("DELETE FROM challenges WHERE account = ?").run(account);
+    // Their blocks, and others' blocks of them: nobody left to keep apart.
+    db.prepare("DELETE FROM blocks WHERE blocker = ? OR blocked = ?").run(account, account);
     // The universe they built: nobody's home now.
     db.prepare("DELETE FROM realms WHERE owner = ?").run(account);
     db.prepare("DELETE FROM buildings WHERE owner = ?").run(account);

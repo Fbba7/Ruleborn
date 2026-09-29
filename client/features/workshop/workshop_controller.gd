@@ -22,6 +22,45 @@ func show_list(list: String) -> void:
 	await _list(list)
 
 
+## §20.11: the terms of use, as the server holds them for the player.
+func load_terms() -> void:
+	var r := await services.account.terms()
+	if r.ok:
+		_store().dispatch(&"workshop_terms", {"terms": r.value})
+
+
+## The current terms accepted, which opens publishing, playing, rating and
+## remixing (reporting never waits for them). True once the server has it.
+func accept_terms() -> bool:
+	var terms: Dictionary = _store().get_slice(WorkshopState.WORKSHOP)["terms"]
+	if terms.is_empty():
+		await load_terms()
+		terms = _store().get_slice(WorkshopState.WORKSHOP)["terms"]
+		if terms.is_empty():
+			return false
+	_store().dispatch(&"workshop_asked")
+	var r := await services.account.accept_terms(str(terms["version"]))
+	if not r.ok:
+		_fail(r.code)
+		# Refused as old: the server has newer terms, to be read first.
+		await load_terms()
+		return false
+	_store().dispatch(&"workshop_terms", {"terms": r.value})
+	_store().dispatch(&"workshop_done", {"what": "terms", "answer": r.value})
+	return true
+
+
+## §17.8: a creator blocked, and the list on show asked again without them.
+func block(account: String) -> void:
+	_store().dispatch(&"workshop_asked")
+	var r := await services.account.block(account)
+	if not r.ok:
+		_fail(r.code)
+		return
+	_store().dispatch(&"workshop_done", {"what": "blocked", "answer": r.value})
+	await _list(str(_store().get_slice(WorkshopState.WORKSHOP)["list"]), true)
+
+
 func load_words() -> void:
 	var r := await services.social.words()
 	if r.ok:
@@ -207,5 +246,9 @@ func _repo() -> WorkshopRepository:
 	return services.workshop
 
 
+## A failure, shown. Refused for the terms: they are asked for again, so the
+## screen offers them.
 func _fail(code: String) -> void:
 	_store().dispatch(&"workshop_failed", {"code": code})
+	if code == "terms_first" or code == "not_the_current_terms":
+		await load_terms()

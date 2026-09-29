@@ -59,6 +59,8 @@ export class Friends {
       }
       if (i.account === account) throw new Refused(409, "own_invite");
       if (this.areFriends(account, i.account)) throw new Refused(409, "already_friends");
+      // A block either way: the invite is as good as gone (safety.mjs).
+      if (this.service.safety.between(account, i.account)) throw new Refused(404, "no_such_invite");
       const [a, b] = pair(account, i.account);
       this.db.prepare("INSERT INTO friends (a, b, since) VALUES (?, ?, ?)").run(a, b, this.now());
       this.db.prepare("UPDATE friend_invites SET used_at = ? WHERE code = ?").run(this.now(), code);
@@ -97,8 +99,10 @@ export class Friends {
         WHERE h.validated = 1 AND h.submitted_at > ?
           AND (l.attacker IN (${marks}) OR l.defender IN (${marks}))
           AND r.age_band != '13-15' AND d.age_band != '13-15'
+          AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.blocker = ? AND b.blocked IN (l.attacker, l.defender))
+                                                    OR (b.blocked = ? AND b.blocker IN (l.attacker, l.defender)))
         ORDER BY h.submitted_at DESC LIMIT ?`)
-      .all(this.now() - FEED_DAYS * DAY, ...friends, ...friends, Math.min(100, Math.max(1, limit)))
+      .all(this.now() - FEED_DAYS * DAY, ...friends, ...friends, account, account, Math.min(100, Math.max(1, limit)))
       .map((r) => ({ raider: r.attacker, defender: r.defender, mode: r.mode, grade: r.grade, at: r.at }));
   }
 

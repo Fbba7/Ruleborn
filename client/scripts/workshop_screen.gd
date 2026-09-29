@@ -37,6 +37,8 @@ func _ready() -> void:
 	_build()
 	App.services.store.changed.connect(_on_changed)
 	_refresh()
+	# §20.11: the terms first, so the gate shows before the first refusal.
+	await controller.load_terms()
 	if publish_open:
 		await controller.load_words()
 	await controller.show_list("mine" if publish_open else "top")
@@ -79,6 +81,9 @@ func _refresh() -> void:
 	# The lists head the scrolled body, so at large text they never crowd the
 	# fixed rows into the corners (§20.8, §21.1).
 	body.add_child(_tabs(w["tabs"], w["list"]))
+	var terms := WorkshopPresenter.terms(slice)
+	if terms["show"]:
+		body.add_child(_terms_panel(terms, w["busy"]))
 	if publish_open:
 		_publish_panel(slice, w["busy"])
 	if rate_open and str(slice["played"].get("id", "")) != "":
@@ -136,6 +141,9 @@ func _card(item: Dictionary, busy: bool) -> Control:
 			Strings.t("WORKSHOP_REASON_NAMED", [name, why])))
 		r.add_child(_act("report:" + id, Strings.t("WORKSHOP_REPORT"), controller.report.bind(id, reason), busy,
 			Strings.t("WORKSHOP_REPORT_NAMED", [name, why])))
+	if item["listed"] and item["creator"] != "":
+		r.add_child(_act("block:" + id, Strings.t("WORKSHOP_BLOCK"), controller.block.bind(item["creator"]), busy,
+			Strings.t("WORKSHOP_BLOCK_NAMED", [item["by"], name])))
 	if item["listed"]:
 		var confirming := confirm_remix == id
 		r.add_child(_act("remix:" + id, Strings.t("WORKSHOP_REMIX_CONFIRM" if confirming else "WORKSHOP_REMIX"),
@@ -144,6 +152,24 @@ func _card(item: Dictionary, busy: bool) -> Control:
 	if r.get_child_count() > 0:
 		box.add_child(r)
 	return UI.plate(box)
+
+
+## §20.11's gate: the terms to read, on the game's own server, and to accept
+## before publishing, playing, rating or remixing.
+func _terms_panel(terms: Dictionary, busy: bool) -> Control:
+	var box := VBoxContainer.new()
+	box.add_child(UI.label(terms["text"], UI.TEXT_POINTS, true))
+	var r := UI.row()
+	r.add_child(_act("terms:read", Strings.t("WORKSHOP_TERMS_READ"), _read_terms.bind(str(terms["url"])), false,
+		Strings.t("WORKSHOP_TERMS_READ")))
+	r.add_child(_act("terms:accept", Strings.t("WORKSHOP_TERMS_ACCEPT"), controller.accept_terms, busy,
+		Strings.t("WORKSHOP_TERMS_ACCEPT"), true))
+	box.add_child(r)
+	return UI.plate(box)
+
+
+func _read_terms(path: String) -> void:
+	OS.shell_open(App.services.api.base + path)
 
 
 ## A control, named by `key` so focus comes back to it after a refresh.

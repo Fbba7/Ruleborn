@@ -66,7 +66,7 @@
     "App activity",
     "Other actions"
    ],
-   "about": "friends, constellations, crews"
+   "about": "friends, constellations, crews, blocks"
   },
   "interaction": {
    "apple": [
@@ -200,6 +200,14 @@
     "keeper_xp": {
      "type": "gameplay",
      "holds": "the experience toward the next Keeper level (§14.2)"
+    },
+    "terms_version": {
+     "type": "other-usage",
+     "deletion": "cleared",
+     "purposes": [
+      "compliance"
+     ],
+     "holds": "the version of the terms of use the player accepted (§20.11)"
     },
     "created_at": {
      "type": "interaction",
@@ -1286,6 +1294,30 @@
      "type": "social"
     },
     "used_at": {
+     "type": "social"
+    }
+   }
+  },
+  "blocks": {
+   "about": "Players a player blocked (§17.8, §20.11): each hidden from the other in the Workshop's lists and the friends' feed, and kept from being friends.",
+   "purposes": [
+    "functionality",
+    "security"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased",
+   "columns": {
+    "blocker": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "blocked": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "at": {
      "type": "social"
     }
    }

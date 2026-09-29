@@ -183,7 +183,14 @@ if (webClientId && !googleClients.includes(webClientId)) {
 const appleNotifications = storeKit
   ? (signedPayload) => appStoreNotification(signedPayload, { roots: storeKitRoots, bundleId, sandbox, now: Date.now() })
   : null;
-const handle = handler(service, { webClientId, appleNotifications });
+// §20.11's "published contact details": the operator's name and address on
+// /support, as RULEBORN_CONTACT="Name <address>"; unset, the page is not
+// served, and the stores' support link has nowhere to go.
+const contactSetting = process.env.RULEBORN_CONTACT ?? "";
+const contactMatch = /^\s*(.+?)\s*<([^<>\s]+@[^<>\s]+)>\s*$/.exec(contactSetting);
+if (contactSetting && !contactMatch) throw new Error('RULEBORN_CONTACT must read "Name <address>"');
+const contact = contactMatch ? { name: contactMatch[1], email: contactMatch[2] } : null;
+const handle = handler(service, { webClientId, appleNotifications, contact });
 
 // §20.12's "backups included": a database restored from before a deletion
 // has it made again before anyone can sign in.

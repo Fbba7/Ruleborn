@@ -17,13 +17,34 @@
 // (data types, purposes, linked, tracking) and Google Play's Data safety
 // (data types, collected or shared, required or optional, purposes).
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { open } from "./db.mjs";
 
 export const PRIVACY = new URL("../privacy.json", import.meta.url);
 export const DECLARATIONS = new URL("../declarations.md", import.meta.url);
+export const RATINGS = new URL("../ratings.json", import.meta.url);
+const DESIGN = new URL("../../docs/design/", import.meta.url);
+
+/** The age-rating answers (ratings.json). */
+export function ratings() {
+  return JSON.parse(readFileSync(RATINGS, "utf8"));
+}
+
+/** The design document's text, the newest version's. */
+function designText() {
+  const v = (f) => f.match(/v(\d+)\.(\d+)\.txt$/).slice(1).map(Number);
+  const files = readdirSync(DESIGN).filter((f) => /^ruleborn-game-design-v\d+\.\d+\.txt$/.test(f))
+    .sort((a, b) => v(a)[0] - v(b)[0] || v(a)[1] - v(b)[1]);
+  return readFileSync(new URL(files.at(-1), DESIGN), "utf8");
+}
+
+/** Every rating answer whose quote the design document no longer holds. */
+export function unquoted(r = ratings(), text = designText()) {
+  return [r.chosen, ...r.apple, ...r.iarc, r.export].filter((q) => !text.includes(q.quote))
+    .map((q) => `${q.question ?? "rating"}: "${q.quote}" is not in the design document`);
+}
 
 const DELETIONS = ["erased", "severed", "erased-under-13", "kept"];
 const COLUMN_DELETIONS = ["cleared", "replaced"];
@@ -176,6 +197,27 @@ export function render(doc = load()) {
     L.push(`| ${r.category} | ${r.name} | Yes | No | No | ${r.optional ? "Optional" : "Required"} | ${uniq(r.purposes).sort().join(", ")} |`);
   }
   L.push("");
+  const r = ratings();
+  L.push("## Age ratings");
+  L.push("");
+  L.push(`Chosen rating: **${r.chosen.rating}** (§${r.chosen.section}: "${r.chosen.quote}"). Question names are the 2025 forms'; check them against the live form when filing.`);
+  L.push("");
+  L.push("App Store Connect's age rating questionnaire:");
+  L.push("");
+  L.push("| Group | Question | Answer | Because |");
+  L.push("|---|---|---|---|");
+  for (const q of r.apple) {
+    L.push(`| ${q.group} | ${q.question} | **${q.answer}** | §${q.section}: "${q.quote}"${q.why ? ` ${q.why}` : ""} |`);
+  }
+  L.push("");
+  L.push("Google Play's IARC questionnaire:");
+  L.push("");
+  L.push("| Question | Answer | Because |");
+  L.push("|---|---|---|");
+  for (const q of r.iarc) L.push(`| ${q.question} | **${q.answer}** | §${q.section}: "${q.quote}"${q.why ? ` ${q.why}` : ""} |`);
+  L.push("");
+  L.push(`Export compliance — ${r.export.question}: **${r.export.answer}** (§${r.export.section}: "${r.export.quote}").`);
+  L.push("");
   L.push("## Where each data type is stored");
   L.push("");
   for (const t of types) {
@@ -209,7 +251,7 @@ export function render(doc = load()) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const found = problems();
+  const found = [...problems(), ...unquoted()];
   if (found.length) {
     for (const p of found) console.error(`  ${p}`);
     console.error(`server/privacy.json: ${found.length} problem(s)`);

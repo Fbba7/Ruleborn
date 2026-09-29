@@ -495,3 +495,15 @@ ERR_NOT_IN_THIS_REALM,that cannot stand in this realm,isso não pode ficar neste
 ERR_NO_SUCH_BUILDING,that building does not exist,essa construção não existe
 ERR_NO_SUCH_REALM_TYPE,that kind of realm does not exist,esse tipo de reino não existe
 ERR_EVERY_REALM_OPEN,every realm is already open,todos os reinos já estão abertos
+WORKSHOP_TERMS,"Before you publish, play, rate or remix Workshop islands, read the terms of use (version %s) and accept them. Reporting an island never waits for them.","Antes de publicar, jogar, avaliar ou remixar ilhas da Oficina, leia os termos de uso (versão %s) e aceite-os. Denunciar uma ilha nunca espera por eles."
+WORKSHOP_TERMS_READ,Read the terms,Ler os termos
+WORKSHOP_TERMS_ACCEPT,Accept the terms,Aceitar os termos
+WORKSHOP_DONE_TERMS,Terms accepted,Termos aceitos
+WORKSHOP_BLOCK,Block creator,Bloquear criador
+WORKSHOP_BLOCK_NAMED,"Block %s, who made %s","Bloquear %s, que fez %s"
+WORKSHOP_DONE_BLOCKED,"Blocked: you will not see each other's islands or names","Bloqueado: vocês não verão as ilhas nem os nomes um do outro"
+ERR_TERMS_FIRST,accept the terms of use first,aceite os termos de uso primeiro
+ERR_NOT_THE_CURRENT_TERMS,the terms have changed; read the new ones,os termos mudaram; leia os novos
+ERR_OWN_ACCOUNT,that is your own account,essa é a sua própria conta
+ERR_NOT_BLOCKED,that player is not blocked,esse jogador não está bloqueado
+ERR_TOO_MANY_BLOCKS,you have blocked as many players as you can,você já bloqueou o máximo de jogadores

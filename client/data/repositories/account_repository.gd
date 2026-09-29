@@ -33,6 +33,32 @@ func set_age_band(band: String) -> Result:
 	return await api.json(HTTPClient.METHOD_PUT, "/v1/age", {"band": band})
 
 
+## §20.11's terms of use: `{version, accepted, url}`.
+func terms() -> Result:
+	return await api.get_json("/v1/terms")
+
+
+## The current terms accepted; an older `version` is refused, so terms the
+## player has not seen are never accepted for them.
+func accept_terms(version: String) -> Result:
+	return await api.json(HTTPClient.METHOD_PUT, "/v1/terms", {"version": version})
+
+
+## §17.8: another player blocked — each hidden from the other in the
+## Workshop's lists and the friends' feed, and a friendship between them
+## ended. Their islands stay targets.
+func block(account: String) -> Result:
+	return await api.post_json("/v1/blocks", {"account": account})
+
+
+func unblock(account: String) -> Result:
+	return await api.json(HTTPClient.METHOD_DELETE, "/v1/blocks/" + account.uri_encode())
+
+
+func blocks() -> Result:
+	return await api.get_json("/v1/blocks")
+
+
 ## §14.2's Keeper level and the bar to the next: `{level, xp, toNext, cap}`.
 func keeper() -> Result:
 	return await api.get_json("/v1/keeper")

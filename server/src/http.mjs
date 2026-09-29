@@ -14,6 +14,12 @@
 //   POST /v1/heists/:token       replay bytes                → what was settled
 //   GET  /v1/balance                                         → {starlight, essence}
 //   GET  /v1/keeper                                          → {level, xp, toNext, cap} (§14.2)
+//   GET  /v1/terms                                           → {version, accepted, url} (§20.11)
+//   PUT  /v1/terms               {"version"}                 → the current terms accepted
+//   GET  /v1/blocks                                          → the caller's blocks (§17.8)
+//   POST /v1/blocks              {"account"}                 → blocked; a friendship between them ends
+//   DELETE /v1/blocks/:account                               → unblocked
+//   GET  /terms, /privacy, /support                          → the pages the stores link to (pages.mjs)
 //   GET  /v1/universe                                        → realms, buildings, and what each can buy
 //   POST /v1/universe/realms     {"type"}                    → the next outer realm opened (§5.2)
 //   POST /v1/universe/realms/:realm/level {"to"}             → an outer realm raised a level
@@ -101,6 +107,7 @@ import { readFileSync } from "node:fs";
 
 import { deleteAccount, reapplyDeletions } from "./accounts.mjs";
 import { offer } from "./matchmaking.mjs";
+import { privacyPage, supportPage, termsPage } from "./pages.mjs";
 import { Refused, TARGET_LISTS_MS } from "./service.mjs";
 import { Social } from "./social.mjs";
 import { WORDS, Workshop } from "./workshop.mjs";
@@ -275,9 +282,11 @@ const DELETE_PAGE = readFileSync(new URL("../web/delete.html", import.meta.url),
  * signs in with (it must be among the ids Google sign-in accepts); without
  * it the page is not served. `appleNotifications(signedPayload)` checks an
  * App Store Server Notification (stores.mjs appStoreNotification); without
- * it Apple's refunds are not taken (G32).
+ * it Apple's refunds are not taken (G32). `contact` is the operator's
+ * {name, email} for the support page (§20.11); without it that page is not
+ * served.
  */
-export function handler(service, { webClientId = null, appleNotifications = null } = {}) {
+export function handler(service, { webClientId = null, appleNotifications = null, contact = null } = {}) {
   const workshop = new Workshop(service);
   const social = new Social(service);
   // Every answer tells the device to reach this host over HTTPS only: the
@@ -336,6 +345,25 @@ export function handler(service, { webClientId = null, appleNotifications = null
             return json({ challenge: c.code, bundle: c.bundle, from: c.account });
           }
         }
+        return json({ error: "no_such_route" }, 404);
+      }
+      if (["terms", "privacy", "support"].includes(parts[0]) && parts.length === 1 && request.method === "GET") {
+        const html = parts[0] === "terms" ? termsPage() : parts[0] === "privacy" ? privacyPage() : supportPage(contact);
+        if (!html) return json({ error: "not_configured" }, 503);
+        return new Response(html, { headers: { "content-type": "text/html; charset=utf-8",
+                                               "cache-control": "public, max-age=3600" } });
+      }
+      if (parts[1] === "terms" && parts.length === 2) {
+        const me = who();
+        if (request.method === "GET") return json(service.safety.terms(me));
+        if (request.method === "PUT") return json(service.safety.accept(me, text((await body(request)).version)));
+      }
+      if (parts[1] === "blocks") {
+        const me = who();
+        const m = request.method;
+        if (m === "GET" && !parts[2]) return json(service.safety.list(me));
+        if (m === "POST" && !parts[2]) return json(service.safety.block(me, text((await body(request)).account)), 201);
+        if (m === "DELETE" && parts[2]) return json(service.safety.unblock(me, parts[2]));
         return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "universe") {

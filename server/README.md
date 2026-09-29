@@ -511,7 +511,7 @@ any Apple device.
 
 ## What the server stores, and the stores' declarations
 
-`privacy.json` declares every column of every table — 244 in 40 — with the
+`privacy.json` declares every column of every table — 262 in 43 — with the
 store data type it is, why it is kept, how long, and what an account's
 deletion does to it; `src/privacy.mjs` checks it against the schema the
 server actually opens and writes `declarations.md` from it: the answers to
@@ -530,10 +530,36 @@ crash, a restore or an older server left. Every answer carries
 `Strict-Transport-Security`, the listener's log names a route and never a
 path's ids, and a new account holds the most protective age band, 13 to 15,
 until the device's age check answers (`PUT /v1/age`), which the client
-sends with its first sign-in. Not done: filing both forms, and the client's
-deletion button (**D70**).
+sends with its first sign-in. `declarations.md` also carries the two age
+rating questionnaires, answered in `ratings.json` with the sentence of the
+design each answer rests on (the check fails if a quote leaves the
+document), and `tools/privacy_manifest.py` writes the iPhone build's privacy
+manifest and export-compliance key from the same two files. Not done:
+filing both forms (roadmap TC.14), and the client's deletion button (**D70**).
 
-    node server/src/privacy.mjs --write    # after changing privacy.json
+    node server/src/privacy.mjs --write    # after changing privacy.json or ratings.json
+    python3 tools/privacy_manifest.py       # and the iOS preset's manifest
+
+## Blocking, the terms of use, and the pages the stores link to
+
+§20.11's duties for a game where players see each other's work, in
+`src/safety.mjs` and `src/pages.mjs`:
+
+- **Blocking**, as §17.8 says it works: each player hidden from the other in
+  the Workshop's lists and the friends' feed, a friendship between them
+  ended, invites and challenge links between them closed — and their islands
+  still each other's targets, since "a raid takes nothing" and a block that
+  removed targets would let a player dodge strong defenders.
+  `POST /v1/blocks`, `DELETE /v1/blocks/:account`, `GET /v1/blocks`.
+- **The terms-of-use gate.** `web/terms.md` is the terms; its `Version:` line
+  names the version. Publishing, playing, rating and remixing a Workshop
+  island are refused (`terms_first`) until the player accepts the current one
+  (`PUT /v1/terms`); reporting never waits for it. The terms ship as a draft
+  version until the owner approves them.
+- **The pages**: `GET /terms`, `GET /privacy` — written from `privacy.json`,
+  so the policy says exactly what the server keeps, without the design's
+  references — and `GET /support`, the operator's contact, from
+  `RULEBORN_CONTACT="Name <address>"`; unset, `/support` is not served.
 
 ## Keeper levels
 
@@ -545,8 +571,24 @@ level 40 the top). It is earned wherever a haul is: not by a game among
 friends (F48) or a raid past the week's 20 (G20). `GET /v1/keeper` is the
 level and the bar to the next. The level is what the Keeper gates read — the
 Beacon's Keeper 6, matchmaking's window — which until this nothing raised.
-Spending and restoring laws, §14.2's other sources, come with the home
-economy, which the server does not hold yet (**G42**).
+Spending earns it too, 1 for every 40 Starlight (below); restoring laws, the
+last source, comes with the Codex (**G42**).
+
+## The universe
+
+`src/universe.mjs` is the home economy's first part (§5.2, §9.5, §10.2): a
+universe's realms and buildings. Outer realms open at §5.2's Keeper levels,
+each of a type not yet owned, for 2,000 Starlight, and rise at its Spire
+levels for §9.5's prices; buildings are built and raised at §10.2's costs and
+needs, where §10.2 places them and as many as §5.2 and §5.8 allow. Every
+purchase is paid from the ledger, earns §14.2's experience for spending with
+no fraction lost between purchases, and names the level it leads to, so a
+retry is answered and never charged twice. A new universe is the Heart with
+the economy model's start (**F56**). What a universe has built is what its
+islands may claim: `PUT /v1/islands` refuses a realm not opened, a realm
+level above the realm's, or a Vault above the one built. `GET /v1/universe`
+answers what each thing costs and needs and whether it can be bought now,
+so the device never works a rule out itself.
 
 ## Constellations and crews
 

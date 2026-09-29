@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   keeper_level      INTEGER NOT NULL DEFAULT 1,
   -- §14.2: the experience toward the next level (keeper.mjs).
   keeper_xp         INTEGER NOT NULL DEFAULT 0,
+  -- §20.11's terms-of-use gate: the version of the terms accepted (safety.mjs).
+  terms_version     TEXT,
   created_at        INTEGER NOT NULL,
   -- §20.5: "Age bands instead of birthdates"; §20.7 sets what each may do.
   age_band          TEXT NOT NULL DEFAULT '18+' CHECK (age_band IN ('13-15', '16-17', '18+')),
@@ -67,6 +69,15 @@ CREATE TABLE IF NOT EXISTS islands (
   changed_at INTEGER NOT NULL,
   PRIMARY KEY (owner, realm)
 );
+
+-- §20.11: "a way to block another player". The blocker's list (safety.mjs).
+CREATE TABLE IF NOT EXISTS blocks (
+  blocker TEXT NOT NULL REFERENCES accounts(id),
+  blocked TEXT NOT NULL REFERENCES accounts(id),
+  at      INTEGER NOT NULL,
+  PRIMARY KEY (blocker, blocked)
+);
+CREATE INDEX IF NOT EXISTS blocks_by_blocked ON blocks (blocked);
 
 -- §5.2: a universe's outer realms, each of a type not yet owned, opened in
 -- order at the Keeper levels §5.2 gives. The Heart has no row: every
@@ -624,6 +635,8 @@ const ADDED = [
   ["accounts", "push_token", "TEXT"],
   // §14.2's experience toward the next Keeper level (keeper.mjs).
   ["accounts", "keeper_xp", "INTEGER NOT NULL DEFAULT 0"],
+  // The terms of use accepted (safety.mjs).
+  ["accounts", "terms_version", "TEXT"],
   ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "echo", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "trace_of", "TEXT"],

@@ -104,6 +104,7 @@ export class Workshop {
   publish(creator, bundle, replay, { adjective, noun, remixOf = null } = {}) {
     const me = this.account(creator);
     if (me.banned_at) throw new Refused(403, "banned");
+    this.service.safety.requireTerms(creator);
     if (!Number.isInteger(adjective) || !Number.isInteger(noun)
         || !WORDS.adjectives[adjective] || !WORDS.nouns[noun]) {
       throw new Refused(400, "name_not_from_the_word_lists");
@@ -223,8 +224,10 @@ export class Workshop {
                 AS completions
          FROM workshop_items i JOIN accounts a ON a.id = i.creator
         WHERE i.withdrawn_at IS NULL AND i.removed_at IS NULL AND a.banned_at IS NULL
+          AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.blocker = :viewer AND b.blocked = i.creator)
+                                                    OR (b.blocker = i.creator AND b.blocked = :viewer))
           ${list === "featured" ? "AND i.featured_at IS NOT NULL" : ""}
-        ORDER BY ${order} LIMIT ?`).all(Math.max(1, Math.min(100, limit)));
+        ORDER BY ${order} LIMIT :limit`).all({ viewer, limit: Math.max(1, Math.min(100, limit)) });
     return rows.map((r) => this.view(r));
   }
 
@@ -242,6 +245,7 @@ export class Workshop {
     const item = this.row(id);
     if (!this.listed(item)) throw new Refused(404, "no_such_island");
     if (this.account(player).banned_at) throw new Refused(403, "banned");
+    this.service.safety.requireTerms(player);
     const row = {
       token: this.service.random(16).toString("hex"),
       player, item: id,
@@ -335,6 +339,7 @@ export class Workshop {
     const item = this.row(id);
     if (!this.listed(item)) throw new Refused(404, "no_such_island");
     if (item.creator === player) throw new Refused(409, "own_island");
+    this.service.safety.requireTerms(player);
     const played = this.db.prepare(
       `SELECT 1 FROM workshop_plays WHERE player = ? AND item = ?
          AND json_extract(outcome, '$.validated') = 1`).get(player, id);
@@ -376,6 +381,7 @@ export class Workshop {
   remix(player, id) {
     const item = this.row(id);
     if (!this.listed(item)) throw new Refused(404, "no_such_island");
+    this.service.safety.requireTerms(player);
     this.db.prepare(
       "INSERT OR IGNORE INTO workshop_remixes (item, player, at) VALUES (?, ?, ?)")
       .run(id, player, this.now());

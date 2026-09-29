@@ -35,7 +35,11 @@ export const T0 = Date.UTC(2026, 8, 23, 9, 0, 0);
  * whatever island they need, so by default each publish first raises the
  * owner's universe, unpaid, to what the island claims.
  */
-export function server({ strictUniverse = false, ...options } = {}) {
+/**
+ * `strictTerms`: the Workshop asks for the current terms first (safety.mjs).
+ * The tests that are not about the terms play as players who accepted them.
+ */
+export function server({ strictUniverse = false, strictTerms = false, ...options } = {}) {
   const clock = { now: T0 };
   let counter = 0;
   const random = (n) => {
@@ -60,6 +64,7 @@ export function server({ strictUniverse = false, ...options } = {}) {
     firstBand: "18+",
     ...options,
   });
+  if (!strictTerms) service.safety.requireTerms = () => {};
   if (!strictUniverse) {
     const publish = service.publish.bind(service);
     service.publish = (owner, bundle, realm = "heart") => {

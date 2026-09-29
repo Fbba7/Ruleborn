@@ -14,7 +14,7 @@ const REPORT_REASONS := ["unfair", "unplayable", "copied", "offensive", "other"]
 
 static func register(store: Store) -> void:
 	store.register(WORKSHOP, {"list": "top", "items": [], "loaded": false, "curated": false, "words": {},
-			"ladder": {}, "played": {}, "busy": false, "error": "", "done": "", "last": {}}, {
+			"ladder": {}, "played": {}, "busy": false, "error": "", "done": "", "last": {}, "terms": {}}, {
 		&"workshop_asked": asked,
 		&"workshop_listed": listed,
 		&"workshop_curated": curated,
@@ -23,6 +23,7 @@ static func register(store: Store) -> void:
 		&"workshop_playing": playing,
 		&"workshop_done": done,
 		&"workshop_failed": failed,
+		&"workshop_terms": terms,
 	})
 
 
@@ -78,6 +79,14 @@ static func ladder(s: Dictionary, p: Dictionary) -> Dictionary:
 	return next
 
 
+## §20.11's terms of use as the server holds them for the player: the
+## current version, and whether they have accepted it.
+static func terms(s: Dictionary, p: Dictionary) -> Dictionary:
+	var next := s.duplicate()
+	next["terms"] = p["terms"]
+	return next
+
+
 ## The island a play was started on, so the result can offer to rate it.
 static func playing(s: Dictionary, p: Dictionary) -> Dictionary:
 	var next := s.duplicate()
@@ -87,7 +96,7 @@ static func playing(s: Dictionary, p: Dictionary) -> Dictionary:
 
 
 ## An action the server took: "published", "played", "rated", "reported",
-## "remixed" or "withdrawn"; `last` is what it answered.
+## "remixed", "withdrawn", "blocked" or "terms"; `last` is what it answered.
 static func done(s: Dictionary, p: Dictionary) -> Dictionary:
 	var next := s.duplicate()
 	next["done"] = str(p["what"])
