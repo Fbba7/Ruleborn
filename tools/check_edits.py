@@ -245,6 +245,7 @@ NO_EDIT_BECAUSE = {
     "F55": "a decision for the owner: how \u00a75.2's budget meets \u00a713.2's band now the guards are this strong",
     "F56": "a decision for the owner: what a new universe starts with, which the build takes from the economy model",
     "G43": "a decision for the owner: what becomes of wards above \u00a75.2's limit when a realm rises to a lower one",
+    "G44": "a decision for the owner: how fast a player may ask, which the build sets",
     "D71": "limits of this build: a heist is one island until universes are built",
     "D60": "no document sentence: the fix is the server",
     "F35": "a design decision for the owner: how the reach is sized, and "

@@ -881,7 +881,7 @@ dict(
                        "G29", "D65", "F43", "F44", "F45", "G30", "D66",
                        "G31", "F46", "G32", "D67", "F47", "G33",
                        "G34", "D68", "F48", "G35", "F49", "G36", "D69",
-                       "G37", "F50", "G38", "G39", "D70"]),
+                       "G37", "F50", "G38", "G39", "D70", "G44"]),
         dict(id="T3.4", owner="claude", status="doing",
              title="The client's half: the simulation inside Godot, and a "
                    "replay on screen",

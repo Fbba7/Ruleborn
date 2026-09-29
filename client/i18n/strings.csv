@@ -507,6 +507,7 @@ ERR_NOT_THE_CURRENT_TERMS,the terms have changed; read the new ones,os termos mu
 ERR_OWN_ACCOUNT,that is your own account,essa é a sua própria conta
 ERR_NOT_BLOCKED,that player is not blocked,esse jogador não está bloqueado
 ERR_TOO_MANY_BLOCKS,you have blocked as many players as you can,você já bloqueou o máximo de jogadores
+ERR_TOO_MANY_REQUESTS,the game asked too often; try again in a moment,o jogo pediu vezes demais; tente de novo em instantes
 WORKSHOP_BLOCK_CONFIRM,Tap again to block,Toque de novo para bloquear
 WORKSHOP_BLOCK_CONFIRM_NAMED,"Tap again to block %s, who made %s; a friendship between you ends","Toque de novo para bloquear %s, que fez %s; uma amizade entre vocês termina"
 FRIENDS_BLOCKED,Players you blocked,Jogadores que você bloqueou

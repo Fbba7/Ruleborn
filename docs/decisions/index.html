@@ -168,13 +168,13 @@
     <h1>Decisions waiting on you</h1>
     <p class="lede">These 48 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39&#x27;s fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36&#x27;s base haul (2,400, 2,900 or 4,600) moves with each of them and F39&#x27;s fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4&#x27;s open edge is a rule or a hope. Four items keep the build&#x27;s reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.</p>
     <div class="summary">
-      <div><span class="n">50</span><span class="k">decisions</span></div>
+      <div><span class="n">51</span><span class="k">decisions</span></div>
       <div><span class="n" id="n-answered">0</span><span class="k">answered</span></div>
       <div><span class="n">4</span><span class="k">safe to accept as recommended</span></div>
       <div><span class="n">21</span><span class="k">places two answers collide</span></div>
     </div>
     <div class="bar" aria-hidden="true"><span id="bar"></span></div>
-    <p class="notice" id="notice">3 design &middot; 23 significant &middot; 24 minor. Each card below is one register item, in the order to decide
+    <p class="notice" id="notice">3 design &middot; 23 significant &middot; 25 minor. Each card below is one register item, in the order to decide
       them. Pick an option and it is saved at once; add a note where the option needs a number or a
       condition. The register itself does not change until Claude reads your answers back.</p>
   </header>
@@ -3569,6 +3569,68 @@ The honest cost of B is that the document must say plainly that a non-raider pla
           <button type="button" class="btn save-note" data-id="G43" disabled>Save note</button>
           <button type="button" class="btn ghost clear" data-id="G43" disabled>Clear answer</button>
           <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#G43" target="_blank" rel="noopener">Register entry</a>
+        </div>
+      </div>
+    </article>
+    <article class="decision" id="G44" data-id="G44" data-tier="minor"
+             data-rec="A" data-quick="no" data-answered="no">
+      <header class="dh">
+        <span class="step" title="Decide in this order">51</span>
+        <span class="did">G44</span>
+        <span class="tier t-minor">Minor</span>
+        <span class="topic">§24 Technical logic</span>
+        <span class="state" id="st-G44">Not answered</span>
+      </header>
+      <h3 class="q">§24.1 names rate limits and gives no figure: accept the build&#x27;s limits on how fast a player may ask, or set others?</h3>
+      <p class="why">The platform absorbs a flood, but not one signed-in account asking the server, within the platform&#x27;s limits, to re-simulate replays (about 15 ms of CPU each) or read its tables all day. Every request is a billed read, and a replay is the most expensive thing the server does.</p>
+      <details class="today"><summary>What the build does today</summary><p>server/src/limits.mjs keeps four token buckets in memory, never in the database, each kind capped on its own. By account: 60 calls at once, then two a second; six simulations at once (a replay, an island or a Workshop entry checked), then one every 20 seconds. By the account a credential proves: ten sign-ins at once, then one every 10 seconds. By address, where RULEBORN_PEER_HEADER names the header the proxy sets: twenty failed sign-ins at once, then one every 3 seconds, an IPv6 address counted by its /64. Past a bucket the answer is 429 with Retry-After; the app says it is held back and its outbox retries later. Each edge isolate keeps its own buckets.</p></details>
+      <fieldset class="opts" aria-label="Options for G44">
+        <label class="opt is-rec" for="o-G44-A">
+          <input type="radio" name="o-G44" id="o-G44-A" value="A" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">A</span>
+              <span class="ol">Accept the build&#x27;s figures</span><span class="rec-tag">Recommended</span></span>
+            <span class="om">As built, and the same keys given to the platform&#x27;s own rate limiting when the edge is deployed, so a caller spread across isolates is held too.</span>
+            <span class="oc">No player at play reaches them: a heist takes minutes, the lease stock holds three, and the app keeps its session for its hour. Only failed sign-ins count to an address, so players sharing one — a school&#x27;s, a carrier&#x27;s — are never held by each other. A script is held to 120 calls and 3 simulations a minute an account.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Simulations: at most 3 a minute an account, about 45 ms of CPU. Calls: 120 a minute. Sign-ins: 6 a minute an account. Failed sign-ins: 20 a minute an address or IPv6 /64.</dd></div><div class="od"><dt>Document edit</dt><dd>§24.1&#x27;s moderation row: &#x27;rate limits — 120 requests and 3 re-simulations a minute an account, 6 sign-ins a minute an account, 20 failed sign-ins a minute an address&#x27;.</dd></div><div class="od"><dt>Build change</dt><dd>None: built. The edge&#x27;s rate-limiting binding at deployment.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-G44-B">
+          <input type="radio" name="o-G44" id="o-G44-B" value="B" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">B</span>
+              <span class="ol">Tighter: half the rates</span></span>
+            <span class="om">One call a second and one simulation every 40 seconds.</span>
+            <span class="oc">Cheaper for a script, and a phone back online with a full outbox waits longer before its heists count.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>60 calls and 1.5 simulations a minute.</dd></div><div class="od"><dt>Document edit</dt><dd>§24.1 as A, with these figures.</dd></div><div class="od"><dt>Build change</dt><dd>KINDS in server/src/limits.mjs.</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-G44-C">
+          <input type="radio" name="o-G44" id="o-G44-C" value="C" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">C</span>
+              <span class="ol">Leave it to the platform</span></span>
+            <span class="om">No limits in the server; the edge&#x27;s rate limiting alone, by address.</span>
+            <span class="oc">One account behind many addresses is not held, and a node deployment has no limit at all.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>—</dd></div><div class="od"><dt>Document edit</dt><dd>§24.6&#x27;s denial-of-service row names the platform&#x27;s rule.</dd></div><div class="od"><dt>Build change</dt><dd>limits.mjs removed.</dd></div></dl></details>
+          </span>
+        </label>
+      </fieldset>
+      <div class="recbox">
+        <p><span class="lab">Recommended: A, Accept the build&#x27;s figures</span>
+          <span class="conf c-medium">medium confidence</span></p>
+        <p class="rr">It holds what costs money — re-simulation and reads — by account, where an address cannot, and costs no database row. The figures sit well above play and can move without touching anything else.</p>
+        
+      </div>
+      <p class="also"><span class="lab">Also needed</span> Nothing.</p><p class="inter"><span class="lab">Weigh with</span> <a href="#F47">F47</a></p>
+      <details class="quotes"><summary>What the document says</summary><ul><li><span class="qs">&sect;24.1</span> <q>Deterministic word lists, rate limits, reports and mutes — no machine learning anywhere</q></li><li><span class="qs">&sect;24.6</span> <q>Absorbed at the edge as part of the platform</q></li></ul></details>
+      <div class="notebox">
+        <label for="n-G44">Note for Claude (optional)</label>
+        <textarea id="n-G44" rows="2" placeholder="A number, a condition, or why" disabled></textarea>
+        <div class="nb">
+          <button type="button" class="btn save-note" data-id="G44" disabled>Save note</button>
+          <button type="button" class="btn ghost clear" data-id="G44" disabled>Clear answer</button>
+          <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#G44" target="_blank" rel="noopener">Register entry</a>
         </div>
       </div>
     </article>

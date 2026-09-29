@@ -74,6 +74,8 @@ func _ready() -> void:
 ## the lease stock only if the player chooses it.
 func start_online(services: Services) -> void:
 	playing = false
+	if offline_prompt != null:
+		offline_prompt.queue_free()
 	offline_prompt = null
 	hint_label.text = Strings.t("HEIST_ASKING")
 	var problem := await begin_online(services)
@@ -83,6 +85,14 @@ func start_online(services: Services) -> void:
 		if sent > 0:
 			column_node.add_child(UI.banner("success", Strings.t("OFFLINE_SENT", sent)))
 		await services.heists.fill_stock(str(services.store.get_slice(AppState.SESSION)["account"]))
+		return
+	# Held back by the server (G44) is not offline: the server was reached,
+	# and asked to wait; the player tries again, online.
+	if problem == "too_many_requests":
+		hint_label.text = Errors.message("HEIST_NONE", problem)
+		offline_prompt = UI.row(-1.0, true)
+		offline_prompt.add_child(UI.button(Strings.t("OFFLINE_TRY_AGAIN"), func() -> void: start_online(services), true))
+		column_node.add_child(offline_prompt)
 		return
 	if not Outbox.transient(Result.failure(problem)):
 		hint_label.text = Errors.message("HEIST_NONE", problem)

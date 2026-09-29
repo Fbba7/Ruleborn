@@ -11,9 +11,11 @@ var base := ""
 var token := ""
 var action_log: ActionLog
 ## How a session is had again: Services sets it to sign in with the
-## platform's credential. A call made with no session, or refused for an
-## expired one (the server's sessions last an hour), signs in and is made
-## again, once, so no screen has to remember to sign in.
+## platform's credential, answering the sign-in's `Result`. A call made with
+## no session, or refused for an expired one (the server's sessions last an
+## hour), signs in and is made again, once, so no screen has to remember to
+## sign in. A sign-in the server holds back (too_many_requests, G44) is the
+## call's answer, with its wait, not a session refused.
 var reauth: Callable
 
 
@@ -45,12 +47,15 @@ func raw(method: HTTPClient.Method, path: String, body := PackedByteArray()) -> 
 		return Result.failure("offline")
 	var signing := path == "/v1/session"
 	if token == "" and not signing and reauth.is_valid():
-		await reauth.call()
+		var signed: Result = await reauth.call()
+		if signed.code == "too_many_requests":
+			return signed
 	var first := await _raw(method, path, body)
 	if first.ok or first.code != "session_refused" or signing or not reauth.is_valid():
 		return first
-	if not await reauth.call():
-		return first
+	var again: Result = await reauth.call()
+	if not again.ok:
+		return again if again.code == "too_many_requests" else first
 	return await _raw(method, path, body)
 
 

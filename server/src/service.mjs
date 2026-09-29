@@ -133,9 +133,12 @@ export class Service {
 
   // -- identity ------------------------------------------------------------
 
-  session(credential) {
+  /** `admit(identity)` is asked once the credential is proven and before
+   *  anything is read: the edge's limit on sign-ins an account (G44). */
+  session(credential, { admit = null } = {}) {
     const identity = this.verifyPlatform(credential);
     if (!identity) throw new Refused(401, "platform_identity_refused");
+    admit?.(identity);
     const now = this.now();
     // §20.4: "Repeat offenders are muted, then banned." The identity is kept
     // so the ban holds (§20.12), even once the account is deleted.
@@ -163,9 +166,16 @@ export class Service {
     return { account: row.id, token: issue(this.secret, row.id, now) };
   }
 
-  account(token) {
+  /** The account a token was issued to, from its signature alone: what the
+   *  edge limits a caller by before it reads anything (G44). */
+  holder(token) {
     const id = check(this.secret, token, this.now());
     if (!id) throw new Refused(401, "session_refused");
+    return id;
+  }
+
+  account(token) {
+    const id = this.holder(token);
     // A token outlives nothing it was issued to: a deleted account's is
     // refused at once (§20.5), and so is a banned one's, which sign-in
     // already refuses (§20.12).

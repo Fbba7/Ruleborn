@@ -20,6 +20,7 @@ func run() -> void:
 	await _stock()
 	await _prompt()
 	await _reconnect()
+	await _held_back()
 
 
 func _services(name: String) -> Array:
@@ -112,6 +113,52 @@ func _reconnect() -> void:
 		s.outbox.pending() == 0 and said.contains(Strings.t("OFFLINE_SENT", 1)), "pending %d, said %s" % [
 			s.outbox.pending(), said])
 	home.queue_free()
+	App.services = was
+	s.close()
+	await tree.process_frame
+
+
+## The server's limit on how fast it is asked (G44): the session is kept, not
+## asked for again each heist, and a sign-in held back is said as held back —
+## not as a session refused, and not as offline.
+func _held_back() -> void:
+	var f := _services("held")
+	var s: Services = f[0]
+	var transport: FakeTransport = f[1]
+	transport.on("POST /v1/session", {"account": "me", "token": "k"})
+	var first := await s.session()
+	var second := await s.session()
+	var signed := transport.calls.filter(func(c: Dictionary) -> bool: return c["route"] == "POST /v1/session").size()
+	check.call("the session is kept for its hour: a heist does not sign in again (G44)",
+		first.ok and second.ok and str(second.value["account"]) == "me" and signed == 1, "signed in %d times" % signed)
+	s.close()
+
+	f = _services("held-sign-in")
+	s = f[0]
+	transport = f[1]
+	transport.on("POST /v1/session", {"error": "too_many_requests", "retryAfter": 10}, 429)
+	var balance := await s.api.get_json("/v1/balance")
+	var asked := transport.calls.map(func(c: Dictionary) -> String: return c["route"])
+	check.call("a sign-in the server holds back is the call's answer, with its wait, and the call is not sent "
+			+ "without a session (G44)",
+		balance.code == "too_many_requests" and int(balance.detail.get("retryAfter", 0)) == 10
+			and asked == ["POST /v1/session"], "code %s, asked %s" % [balance.code, asked])
+	var was: Services = App.services
+	App.services = s
+	s.heists.stock.add("b9", {"token": "t9", "seed": "7", "ticks": 4500, "expiresAt": 1}, PackedByteArray())
+	s.store.dispatch(&"heist_started", {})
+	var screen: HeistScreen = await mount.call("heist_screen")
+	screen.set_process(false)
+	for i in 10:
+		await tree.process_frame
+	var buttons: Array = screen.find_children("*", "Button", true, false).map(func(b: Button) -> String:
+		return b.text)
+	check.call("a heist the server holds back says so and offers to try again online, not to play offline (G44)",
+		screen.hint_label.text == Errors.message("HEIST_NONE", "too_many_requests")
+			and Strings.t("OFFLINE_TRY_AGAIN") in buttons and not Strings.t("OFFLINE_PLAY_ANYWAY") in buttons
+			and not screen.playing,
+		"words %s, buttons %s" % [screen.hint_label.text, buttons])
+	screen.queue_free()
 	App.services = was
 	s.close()
 	await tree.process_frame

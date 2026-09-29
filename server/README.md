@@ -578,6 +578,38 @@ filing both forms (roadmap TC.14), and the client's deletion button (**D70**).
   references — and `GET /support`, the operator's contact, from
   `RULEBORN_CONTACT="Name <address>"`; unset, `/support` is not served.
 
+## How fast a caller may ask
+
+`src/limits.mjs` holds each caller to token buckets in the process's memory,
+never the database, since a limit that wrote a row a request would bill more
+than it protects (F47). Each kind of bucket is capped at 50,000 callers, and
+a kind drops only its own longest-idle caller, so sign-ins from addresses
+anyone can vary never push out a player's buckets. Past a bucket the answer
+is 429 `{"error": "too_many_requests", "retryAfter": seconds}` with
+`Retry-After`. The app shows it as held back, not as offline, and its outbox
+tries again later (G44).
+
+- **Calls**, by account: 60 at once, then two a second. They are counted
+  from the token's signature before the account is read, so a refused
+  request reads nothing.
+- **Simulations**, by account: a replay re-simulated, or an island or
+  Workshop entry checked. Six at once, then one every 20 seconds.
+- **Sign-ins**, by the account the credential proves, before anything is
+  read: `POST /v1/session` and G39's deletion without the app. Ten at once,
+  then one every 10 seconds. The app keeps its session for the hour it lasts
+  rather than signing in for every heist.
+- **Failed sign-ins**, by address: twenty at once, then one every 3 seconds.
+  An IPv6 address counts by its /64. Only failures are counted, so players
+  who share an address are never held by each other's sign-ins. The address
+  comes from the header named by `RULEBORN_PEER_HEADER`, which the proxy in
+  front of the listener sets to the caller's one address (`cf-connecting-ip`
+  or `x-real-ip`, never `x-forwarded-for`). When it is unset, failures are
+  not limited by address, and the log says so at start.
+
+Each process, or edge isolate, keeps its own buckets. A caller spread across
+isolates gets more; the platform's own rate limiting, keyed the same way, is
+what holds that.
+
 ## Keeper levels
 
 `src/keeper.mjs` is §14.2's Keeper experience and levels. A raid earns its

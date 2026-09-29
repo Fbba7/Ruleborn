@@ -59,7 +59,7 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           # and by the adversarial review of that re-run
                           "F38", "F39", "C41", "C42", "G22", "D60",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
-                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72", "G41", "F55", "G42", "F56", "G43"})
+                          "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72", "G41", "F55", "G42", "F56", "G43", "G44"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6685,6 +6685,47 @@ dict(id="G43", kind="gap", severity="minor", status="open",
      rec="Say in §5.2 what happens to wards above a lower limit: kept and "
          "idle as built, refunded, or the rise refused until they are "
          "removed \u2014 or make the limits never fall."),
+
+dict(id="G44", kind="gap", severity="minor", status="open",
+     title="§24.1 and §26.8 name rate limits, and nothing says how fast a "
+           "player may ask",
+     refs=["24.1", "24.6", "26.8", "24.2"],
+     body="§24.1\u2019s moderation is <em>\u201cDeterministic word lists, rate "
+          "limits, reports and mutes\u201d</em>, and §26.8 lists <em>\u201crate "
+          "limits\u201d</em> among the backend\u2019s pieces. §24.6 answers "
+          "denial of service with <em>\u201cAbsorbed at the edge as part of the "
+          "platform\u201d</em>. The platform absorbs a flood of traffic, but not "
+          "one signed-in account asking the server, within the platform\u2019s "
+          "limits, to re-simulate replays (§24.2, about 15 ms of CPU each, F47) "
+          "or read its tables all day. Every one of those requests is a database "
+          "read, and some are a simulation. No section gives a figure. The "
+          "build holds each caller to four token buckets, kept in memory and "
+          "never in the database, each kind capped on its own: 60 calls at "
+          "once then two a second by account; six simulations at once then "
+          "one every 20 seconds by account (an island checked, a replay or a "
+          "Workshop entry re-simulated); ten sign-ins at once then one every "
+          "10 seconds by the account the credential proves; and twenty failed "
+          "sign-ins at once then one every 3 seconds by address (an IPv6 "
+          "address by its /64), where the deployment names the header that "
+          "carries it. Only failures count to an address, so players behind "
+          "one address are never held by each other. Past a bucket the answer "
+          "is 429 with Retry-After; the app says it is held back, not offline, "
+          "keeps its session for its hour rather than signing in each heist, "
+          "and its outbox tries again later. A refused call is counted from the "
+          "token\u2019s signature and reads nothing from the database. Each "
+          "edge isolate keeps its own buckets, so a caller spread across "
+          "isolates gets more; the platform\u2019s own rate limiting, keyed the "
+          "same way, holds that. The review of the first version found an "
+          "IPv6 caller taking a fresh bucket for each address, sign-ins from "
+          "varied addresses evicting every player\u2019s buckets, sign-ins "
+          "unlimited without the address header, and players sharing an "
+          "address refused; all are fixed. Found in the security "
+          "briefing.",
+     measured="server/test/limits.test.mjs; client/tests/offline_tests.gd _held_back",
+     rec="State in §24.1 how fast a player may ask and what is limited by "
+         "address, or accept the build\u2019s figures; and bind the "
+         "platform\u2019s rate limiting to the same keys when the edge is "
+         "deployed."),
 
 dict(id="D72", kind="deviation", severity="minor", status="open",
      title="§21.8\u2019s alarm red and success green cannot carry words at its "

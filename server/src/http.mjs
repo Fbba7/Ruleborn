@@ -102,12 +102,16 @@
 // query"); the index naming the current ones is the only thing that changes.
 //
 // Everything but the session and a bundle needs `Authorization: Bearer …`.
+//
+// How fast each caller may ask is limits.mjs's (G44): past it, 429
+// {"error": "too_many_requests", "retryAfter": seconds}, with Retry-After.
 
 import { readFileSync } from "node:fs";
 
 import { deleteAccount, reapplyDeletions } from "./accounts.mjs";
 import { offer } from "./matchmaking.mjs";
 import { privacyPage, supportPage, termsPage } from "./pages.mjs";
+import { Limiter, peerKey } from "./limits.mjs";
 import { Refused, TARGET_LISTS_MS } from "./service.mjs";
 import { Social } from "./social.mjs";
 import { WORDS, Workshop } from "./workshop.mjs";
@@ -284,9 +288,13 @@ const DELETE_PAGE = readFileSync(new URL("../web/delete.html", import.meta.url),
  * App Store Server Notification (stores.mjs appStoreNotification); without
  * it Apple's refunds are not taken (G32). `contact` is the operator's
  * {name, email} for the support page (§20.11); without it that page is not
- * served.
+ * served. `limiter` holds each caller to limits.mjs's buckets (G44). Failed
+ * sign-ins are held by address only where `peerOf(request)` says what the
+ * caller's address is — a header the deployment's own proxy sets, never one
+ * a caller could choose.
  */
-export function handler(service, { webClientId = null, appleNotifications = null, contact = null } = {}) {
+export function handler(service, { webClientId = null, appleNotifications = null, contact = null,
+                                   limiter = new Limiter(), peerOf = null } = {}) {
   const workshop = new Workshop(service);
   const social = new Social(service);
   // Every answer tells the device to reach this host over HTTPS only: the
@@ -318,8 +326,45 @@ export function handler(service, { webClientId = null, appleNotifications = null
     const url = new URL(request.url);
     const parts = url.pathname.split("/").filter(Boolean);
     const route = `${request.method} /${routeOf(url.pathname)}`;
-    const who = () => service.account(
-      (request.headers.get("authorization") ?? "").replace(/^Bearer /, ""));
+    // What runs the simulation: a replay re-simulated, an island checked, a
+    // Workshop entry and its clearing replay (G44's second bucket).
+    const simulates = (request.method === "PUT" && parts[1] === "islands")
+      || (request.method === "POST" && parts[1] === "heists")
+      || (request.method === "POST" && parts[1] === "workshop" && (parts.length === 2 || parts[2] === "plays"));
+    const limit = (kind, key) => {
+      const wait = limiter.take(kind, key, service.now());
+      if (wait) throw new Refused(429, "too_many_requests", { retryAfter: Math.ceil(wait / 1000) });
+    };
+    // The caller, once a request: limited by the token's signature before
+    // the account is read, so a refused request reads nothing (G44).
+    let caller = null;
+    const who = () => {
+      if (caller) return caller;
+      const token = (request.headers.get("authorization") ?? "").replace(/^Bearer /, "");
+      const id = service.holder(token);
+      limit("calls", id);
+      if (simulates) limit("simulations", id);
+      caller = service.account(token);
+      return caller;
+    };
+    // A sign-in: refused while its address has failed too often, where the
+    // deployment can tell the address; held to the account it proves once
+    // proven, before anything is read; and a failure counted to its address.
+    const signIn = async (proceed) => {
+      const peer = peerOf ? peerKey(peerOf(request)) : null;
+      if (peer) {
+        const wait = limiter.peek("failedSignIns", peer, service.now());
+        if (wait) throw new Refused(429, "too_many_requests", { retryAfter: Math.ceil(wait / 1000) });
+      }
+      try {
+        return await proceed((identity) => limit("signIns", identity));
+      } catch (err) {
+        const failed = err instanceof SyntaxError || (err instanceof Refused && err.status >= 400
+          && err.status < 500 && err.status !== 429 && err.status !== 403);
+        if (peer && failed) limiter.take("failedSignIns", peer, service.now());
+        throw err;
+      }
+    };
     try {
       if (["league", "seasons", "constellations", "crews"].includes(parts[1])) {
         const out = await socialRoute(service, social, request, parts, who);
@@ -420,11 +465,12 @@ export function handler(service, { webClientId = null, appleNotifications = null
         return out ?? json({ error: "no_such_route" }, 404);
       }
       switch (route) {
-        case "POST /v1/session": {
-          const { credential } = await body(request);
-          await service.preparePlatform(credential);
-          return json(service.session(credential));
-        }
+        case "POST /v1/session":
+          return await signIn(async (admit) => {
+            const { credential } = await body(request);
+            await service.preparePlatform(credential);
+            return json(service.session(credential, { admit }));
+          });
         case "PUT /v1/islands": {
           const owner = who();
           return json(service.publish(owner, await bytes(request), parts[2] ?? "heart"), 201);
@@ -500,20 +546,23 @@ export function handler(service, { webClientId = null, appleNotifications = null
         }
         case "POST /v1/account": {
           if (parts[2] !== "delete") return json({ error: "no_such_route" }, 404);
-          // The page's Google ID token names the account as gp:<sub>, the
-          // Android game's own identity; nothing else is taken here.
-          const { idToken, withdrawIslands = false } = await body(request);
-          const credential = { idToken: text(idToken) };
-          await service.preparePlatform(credential);
-          const identity = service.verifyPlatform(credential);
-          if (typeof identity !== "string" || !identity.startsWith("gp:")) {
-            throw new Refused(401, "google_identity_refused");
-          }
-          const row = service.db.prepare(
-            "SELECT id FROM accounts WHERE platform_identity = ?").get(identity);
-          if (!row) throw new Refused(404, "no_such_account");
-          return json({ deleted: true, reason: deleteAccount(service, row.id, "requested",
-                                                             { withdraw: withdrawIslands }).reason });
+          return await signIn(async (admit) => {
+            // The page's Google ID token names the account as gp:<sub>, the
+            // Android game's own identity; nothing else is taken here.
+            const { idToken, withdrawIslands = false } = await body(request);
+            const credential = { idToken: text(idToken) };
+            await service.preparePlatform(credential);
+            const identity = service.verifyPlatform(credential);
+            if (typeof identity !== "string" || !identity.startsWith("gp:")) {
+              throw new Refused(401, "google_identity_refused");
+            }
+            admit(identity);
+            const row = service.db.prepare(
+              "SELECT id FROM accounts WHERE platform_identity = ?").get(identity);
+            if (!row) throw new Refused(404, "no_such_account");
+            return json({ deleted: true, reason: deleteAccount(service, row.id, "requested",
+                                                               { withdraw: withdrawIslands }).reason });
+          });
         }
         case "DELETE /v1/account": {
           // F43: the deletion screen's "withdraw my islands too".
@@ -526,7 +575,13 @@ export function handler(service, { webClientId = null, appleNotifications = null
           return json({ error: "no_such_route" }, 404);
       }
     } catch (err) {
-      if (err instanceof Refused) return json({ error: err.reason, ...err.detail }, err.status);
+      if (err instanceof Refused) {
+        const out = json({ error: err.reason, ...err.detail }, err.status);
+        if (err.status === 429 && err.detail?.retryAfter != null) {
+          out.headers.set("retry-after", String(err.detail.retryAfter));
+        }
+        return out;
+      }
       if (err instanceof SyntaxError) return json({ error: "malformed_json" }, 400);
       // Anything else is the server's own failure, answered and logged: a
       // request never rejects, so no one request stops a process that is

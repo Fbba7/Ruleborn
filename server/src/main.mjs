@@ -190,7 +190,16 @@ const contactSetting = process.env.RULEBORN_CONTACT ?? "";
 const contactMatch = /^\s*(.+?)\s*<([^<>\s]+@[^<>\s]+)>\s*$/.exec(contactSetting);
 if (contactSetting && !contactMatch) throw new Error('RULEBORN_CONTACT must read "Name <address>"');
 const contact = contactMatch ? { name: contactMatch[1], email: contactMatch[2] } : null;
-const handle = handler(service, { webClientId, appleNotifications, contact });
+// G44: a sign-in is always limited by the account it proves. Failed sign-ins
+// are limited by address only where the proxy in front of this listener (it
+// binds 127.0.0.1) names the caller's one address in a header it sets
+// itself, RULEBORN_PEER_HEADER (Cloudflare's cf-connecting-ip, or x-real-ip;
+// never x-forwarded-for, whose first address the caller writes). Unset,
+// failures are not limited at all, and the log says so.
+const peerHeader = (process.env.RULEBORN_PEER_HEADER ?? "").trim().toLowerCase();
+if (!peerHeader) console.warn("RULEBORN_PEER_HEADER unset: failed sign-ins are not limited by address (G44)");
+const peerOf = peerHeader ? (request) => request.headers.get(peerHeader) : null;
+const handle = handler(service, { webClientId, appleNotifications, contact, peerOf });
 
 // §20.12's "backups included": a database restored from before a deletion
 // has it made again before anyone can sign in.

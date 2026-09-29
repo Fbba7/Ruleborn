@@ -64,7 +64,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.workshop = WorkshopRepository.new(s.api, s.outbox)
 	s.universe = UniverseRepository.new(s.api)
 	s.purchases = StorePurchases.new()
-	s.api.reauth = s.sign_in
+	s.api.reauth = s.session.bind(true)
 	s.shop_flow = ShopController.new(s)
 	s.social_flow = SocialController.new(s)
 	s.workshop_flow = WorkshopController.new(s)
@@ -77,16 +77,22 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 ## Sign in with the platform's credential, and say who is signed in. Every
 ## call without a session, or with an expired one, comes here (Api.reauth).
 func sign_in() -> bool:
-	return (await session()).ok
+	return (await session(true)).ok
 
 
 ## The session, as a Result: refused on the phone until §20.1's age check
 ## allows an account; once signed in, the check's answer goes to the server
-## if it has not yet.
-func session() -> Result:
+## if it has not yet. The session held is kept for the hour it lasts unless
+## `fresh` asks for a new one — a call refused for an expired one gets one
+## (Api.reauth) — so the phone does not sign in again for every heist, which
+## the server limits (G44).
+func session(fresh := false) -> Result:
 	if not age.allows_account():
 		return Result.failure("age_check_first")
-	var r := await account.sign_in(Services.credential())
+	var held := str(store.get_slice(AppState.SESSION).get("account", ""))
+	var r := Result.success({"account": held})
+	if fresh or held == "" or api.token == "":
+		r = await account.sign_in(Services.credential())
 	if not r.ok:
 		return r
 	store.dispatch(&"signed_in", {"account": r.value["account"]})

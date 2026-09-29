@@ -51,7 +51,8 @@
   "F55",
   "G41",
   "F56",
-  "G43"
+  "G43",
+  "G44"
  ],
  "order_notes": {
   "F33": "Design tier. It sets whether one Glare decides a realm, and F35's Vault-reach argument and G19's hold claim both rest on the hold numbers it changes.",
@@ -102,7 +103,8 @@
   "F54": "Found building F37; a display question unless the owner wants the ceiling moved.",
   "F55": "Design tier, found re-running §13.2's table with every answer built. It decides whether the balance pass or §5.2's budget closes the gap, and so what the next harness work is.",
   "F56": "Found building the home economy; independent, and it moves no figure under A.",
-  "G43": "Found building the home economy; decide with F55, which may change the limits it is about."
+  "G43": "Found building the home economy; decide with F55, which may change the limits it is about.",
+  "G44": "Found in the security briefing. Independent of the rest; the figures can move whenever play shows them wrong."
  },
  "groups": [
   {
@@ -4150,6 +4152,60 @@
     }
    ],
    "also_needed": "Nothing: F55's answer may change the limits themselves, and this rule applies to whatever they become."
+  },
+  "G44": {
+   "id": "G44",
+   "question": "§24.1 names rate limits and gives no figure: accept the build's limits on how fast a player may ask, or set others?",
+   "why_it_matters": "The platform absorbs a flood, but not one signed-in account asking the server, within the platform's limits, to re-simulate replays (about 15 ms of CPU each) or read its tables all day. Every request is a billed read, and a replay is the most expensive thing the server does.",
+   "today": "server/src/limits.mjs keeps four token buckets in memory, never in the database, each kind capped on its own. By account: 60 calls at once, then two a second; six simulations at once (a replay, an island or a Workshop entry checked), then one every 20 seconds. By the account a credential proves: ten sign-ins at once, then one every 10 seconds. By address, where RULEBORN_PEER_HEADER names the header the proxy sets: twenty failed sign-ins at once, then one every 3 seconds, an IPv6 address counted by its /64. Past a bucket the answer is 429 with Retry-After; the app says it is held back and its outbox retries later. Each edge isolate keeps its own buckets.",
+   "options": [
+    {
+     "key": "A",
+     "label": "Accept the build's figures",
+     "means": "As built, and the same keys given to the platform's own rate limiting when the edge is deployed, so a caller spread across isolates is held too.",
+     "consequences": "No player at play reaches them: a heist takes minutes, the lease stock holds three, and the app keeps its session for its hour. Only failed sign-ins count to an address, so players sharing one — a school's, a carrier's — are never held by each other. A script is held to 120 calls and 3 simulations a minute an account.",
+     "numbers": "Simulations: at most 3 a minute an account, about 45 ms of CPU. Calls: 120 a minute. Sign-ins: 6 a minute an account. Failed sign-ins: 20 a minute an address or IPv6 /64.",
+     "doc_edit": "§24.1's moderation row: 'rate limits — 120 requests and 3 re-simulations a minute an account, 6 sign-ins a minute an account, 20 failed sign-ins a minute an address'.",
+     "build_change": "None: built. The edge's rate-limiting binding at deployment."
+    },
+    {
+     "key": "B",
+     "label": "Tighter: half the rates",
+     "means": "One call a second and one simulation every 40 seconds.",
+     "consequences": "Cheaper for a script, and a phone back online with a full outbox waits longer before its heists count.",
+     "numbers": "60 calls and 1.5 simulations a minute.",
+     "doc_edit": "§24.1 as A, with these figures.",
+     "build_change": "KINDS in server/src/limits.mjs."
+    },
+    {
+     "key": "C",
+     "label": "Leave it to the platform",
+     "means": "No limits in the server; the edge's rate limiting alone, by address.",
+     "consequences": "One account behind many addresses is not held, and a node deployment has no limit at all.",
+     "numbers": "—",
+     "doc_edit": "§24.6's denial-of-service row names the platform's rule.",
+     "build_change": "limits.mjs removed."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "rationale": "It holds what costs money — re-simulation and reads — by account, where an address cannot, and costs no database row. The figures sit well above play and can move without touching anything else.",
+    "confidence": "medium"
+   },
+   "interacts_with": [
+    "F47"
+   ],
+   "quotes": [
+    {
+     "section": "24.1",
+     "text": "Deterministic word lists, rate limits, reports and mutes — no machine learning anywhere"
+    },
+    {
+     "section": "24.6",
+     "text": "Absorbed at the edge as part of the platform"
+    }
+   ],
+   "also_needed": "Nothing."
   }
  }
 }
