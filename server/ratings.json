@@ -1,49 +1,251 @@
 {
- "_what": "The two stores' age-rating questionnaires, answered from the design document. Each answer quotes the sentence it rests on; server/src/privacy.mjs --check fails if a quote is no longer in the document. Question names are the questionnaires' as of the 2025 forms; check them against the live form when filing. §20.1 rates the game 13+ on purpose, above what its content alone would get.",
+ "_what": "The two stores' age-rating questionnaires, answered from the design document. Each answer quotes the sentence it rests on, or, where no sentence of the design decides it, says why from the build; server/src/privacy.mjs --check fails if a quote is no longer in the document or an unquoted answer gives no reason. Question names are the questionnaires' as of the 2025 forms; check them against the live form when filing. §20.1 rates the game 13+ on purpose, above what its content alone would get.",
  "chosen": {
   "rating": "13+",
   "section": "20.1",
   "quote": "Rating: 13+ on the App Store, chosen on purpose even though the content alone would likely rate 9+"
  },
  "apple": [
-  {"group": "Features", "question": "Parental controls", "answer": "No", "section": "20.2", "quote": "Protections by age band", "why": "The age bands set the protections; there is no parental control in the app."},
-  {"group": "Features", "question": "Age assurance", "answer": "Yes", "section": "20.1", "quote": "at first launch the game asks the platform for the player's age band"},
-  {"group": "Features", "question": "Unrestricted web access", "answer": "No", "section": "20.10", "quote": "No advertising SDKs and no cross-app tracking", "why": "The game opens no web view; its links go to its own pages."},
-  {"group": "Features", "question": "User-generated content", "answer": "Yes", "section": "20.10", "quote": "Workshop islands are structured data — laws, terrain, guards, layout — not files"},
-  {"group": "Features", "question": "Messaging and chat", "answer": "No", "section": "17.1", "quote": "From version 1.1: up to 30 Keepers, joined through the Beacon from Keeper level 6: a founder, up to four elders, and members. Chat, shared replays and shared heist plans.", "why": "Chat arrives with constellations in version 1.1; the launch build has none. Answer again when it ships."},
-  {"group": "Features", "question": "Advertising", "answer": "No", "section": "20.5", "quote": "no advertising identifiers"},
-  {"group": "Mature themes", "question": "Profanity or crude humor", "answer": "None", "section": "20.10", "quote": "No player-uploaded images, ever.", "why": "Every name a player gives comes from the game's word lists; there is no free text."},
-  {"group": "Mature themes", "question": "Horror or fear themes", "answer": "None", "section": "3", "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."},
-  {"group": "Mature themes", "question": "Alcohol, tobacco or drug use or references", "answer": "None", "section": "3", "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."},
-  {"group": "Medical or wellness", "question": "Medical or treatment information", "answer": "None", "section": "3", "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."},
-  {"group": "Medical or wellness", "question": "Health or wellness topics", "answer": "None", "section": "3", "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."},
-  {"group": "Sexuality or nudity", "question": "Mature or suggestive themes", "answer": "None", "section": "3", "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."},
-  {"group": "Sexuality or nudity", "question": "Sexual content or nudity", "answer": "None", "section": "3", "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."},
-  {"group": "Violence", "question": "Cartoon or fantasy violence", "answer": "Infrequent or mild", "section": "3", "quote": "Nothing is killed; knocked-out characters wake up at home.", "why": "Crews and guards knock each other out in a heist, in picture-book art; §20.1 puts the content alone at 9+."},
-  {"group": "Violence", "question": "Realistic violence", "answer": "None", "section": "3", "quote": "Nothing is killed; knocked-out characters wake up at home."},
-  {"group": "Violence", "question": "Prolonged graphic or sadistic realistic violence", "answer": "None", "section": "3", "quote": "Nothing is killed; knocked-out characters wake up at home."},
-  {"group": "Violence", "question": "Guns or other weapons", "answer": "None", "section": "3", "quote": "Nothing is killed; knocked-out characters wake up at home."},
-  {"group": "Chance-based activities", "question": "Simulated gambling", "answer": "None", "section": "20.3", "quote": "No paid randomness of any kind, and odds shown for every random reward."},
-  {"group": "Chance-based activities", "question": "Contests", "answer": "None", "section": "20.3", "quote": "No paid randomness of any kind, and odds shown for every random reward.", "why": "Leagues rank play; nothing is entered or won for money."},
-  {"group": "Chance-based activities", "question": "Loot boxes", "answer": "No", "section": "20.3", "quote": "No paid randomness of any kind, and odds shown for every random reward."}
+  {
+   "group": "Features",
+   "question": "Parental controls",
+   "answer": "No",
+   "section": "20.2",
+   "quote": "Protections by age band",
+   "why": "The age bands set the protections; there is no parental control in the app."
+  },
+  {
+   "group": "Features",
+   "question": "Age assurance",
+   "answer": "Yes",
+   "section": "20.1",
+   "quote": "at first launch the game asks the platform for the player's age band"
+  },
+  {
+   "group": "Features",
+   "question": "Unrestricted web access",
+   "answer": "No",
+   "section": null,
+   "quote": null,
+   "why": "The app has no web view; its one link, the terms of use, opens in the device's own browser (client/scripts/workshop_screen.gd)."
+  },
+  {
+   "group": "Features",
+   "question": "User-generated content",
+   "answer": "Yes",
+   "section": "20.10",
+   "quote": "Workshop islands are structured data — laws, terrain, guards, layout — not files"
+  },
+  {
+   "group": "Features",
+   "question": "Messaging and chat",
+   "answer": "No",
+   "section": "17.1",
+   "quote": "From version 1.1: up to 30 Keepers, joined through the Beacon from Keeper level 6: a founder, up to four elders, and members. Chat, shared replays and shared heist plans.",
+   "why": "Chat arrives with constellations in version 1.1; the launch build has none. Answer again when it ships."
+  },
+  {
+   "group": "Features",
+   "question": "Advertising",
+   "answer": "No",
+   "section": "20.5",
+   "quote": "no advertising identifiers"
+  },
+  {
+   "group": "Mature themes",
+   "question": "Profanity or crude humor",
+   "answer": "None",
+   "section": "18.6",
+   "quote": "Safety: island names come from word lists, every island can be reported, featured islands are reviewed by a person, and players aged 13 to 15 browse curated lists only (20.7).",
+   "why": "No free text anywhere: every name a player gives comes from the game's word lists."
+  },
+  {
+   "group": "Mature themes",
+   "question": "Horror or fear themes",
+   "answer": "None",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "group": "Mature themes",
+   "question": "Alcohol, tobacco or drug use or references",
+   "answer": "None",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "group": "Medical or wellness",
+   "question": "Medical or treatment information",
+   "answer": "None",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "group": "Medical or wellness",
+   "question": "Health or wellness topics",
+   "answer": "None",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "group": "Sexuality or nudity",
+   "question": "Mature or suggestive themes",
+   "answer": "None",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "group": "Sexuality or nudity",
+   "question": "Sexual content or nudity",
+   "answer": "None",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "group": "Sexuality or nudity",
+   "question": "Graphic sexual content and nudity",
+   "answer": "None",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "group": "Violence",
+   "question": "Cartoon or fantasy violence",
+   "answer": "Infrequent or mild",
+   "section": "3",
+   "quote": "Nothing is killed; knocked-out characters wake up at home.",
+   "why": "Crews and guards knock each other out in a heist, in picture-book art; §20.1 puts the content alone at 9+."
+  },
+  {
+   "group": "Violence",
+   "question": "Realistic violence",
+   "answer": "None",
+   "section": "3",
+   "quote": "Nothing is killed; knocked-out characters wake up at home."
+  },
+  {
+   "group": "Violence",
+   "question": "Prolonged graphic or sadistic realistic violence",
+   "answer": "None",
+   "section": "3",
+   "quote": "Nothing is killed; knocked-out characters wake up at home."
+  },
+  {
+   "group": "Violence",
+   "question": "Guns or other weapons",
+   "answer": "None",
+   "section": "3",
+   "quote": "Nothing is killed; knocked-out characters wake up at home."
+  },
+  {
+   "group": "Chance-based activities",
+   "question": "Simulated gambling",
+   "answer": "None",
+   "section": "20.3",
+   "quote": "No paid randomness of any kind, and odds shown for every random reward."
+  },
+  {
+   "group": "Chance-based activities",
+   "question": "Contests",
+   "answer": "None",
+   "section": "20.3",
+   "quote": "No paid randomness of any kind, and odds shown for every random reward.",
+   "why": "Leagues rank play; nothing is entered or won for money."
+  },
+  {
+   "group": "Chance-based activities",
+   "question": "Gambling",
+   "answer": "No",
+   "section": "20.3",
+   "quote": "No paid randomness of any kind, and odds shown for every random reward."
+  },
+  {
+   "group": "Chance-based activities",
+   "question": "Loot boxes",
+   "answer": "No",
+   "section": "20.3",
+   "quote": "No paid randomness of any kind, and odds shown for every random reward."
+  }
  ],
  "iarc": [
-  {"question": "Violence", "answer": "Yes: cartoon or fantasy characters knocked out, no blood, no deaths", "section": "3", "quote": "Nothing is killed; knocked-out characters wake up at home."},
-  {"question": "Fear", "answer": "No", "section": "3", "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."},
-  {"question": "Sexuality", "answer": "No", "section": "3", "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."},
-  {"question": "Gambling", "answer": "No", "section": "20.3", "quote": "No paid randomness of any kind, and odds shown for every random reward."},
-  {"question": "Language", "answer": "No", "section": "20.10", "quote": "No player-uploaded images, ever.", "why": "No free text anywhere: names come from the word lists."},
-  {"question": "Controlled substances", "answer": "No", "section": "3", "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."},
-  {"question": "Crude humour", "answer": "No", "section": "3", "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."},
-  {"question": "Users can interact or exchange content", "answer": "Yes: players raid each other's islands and play each other's Workshop islands; no chat, no free text", "section": "20.10", "quote": "Workshop islands are structured data — laws, terrain, guards, layout — not files"},
-  {"question": "Shares the user's location", "answer": "No", "section": "20.5", "quote": "Collect only what's needed to run the game"},
-  {"question": "Digital purchases", "answer": "Yes: cosmetics and the season track's premium track", "section": "20.3", "quote": "No power, speed or skipped waiting for money."},
-  {"question": "Unrestricted internet", "answer": "No", "section": "20.10", "quote": "No advertising SDKs and no cross-app tracking"}
+  {
+   "question": "Violence",
+   "answer": "Yes: cartoon or fantasy characters knocked out, no blood, no deaths",
+   "section": "3",
+   "quote": "Nothing is killed; knocked-out characters wake up at home."
+  },
+  {
+   "question": "Fear",
+   "answer": "No",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "question": "Sexuality",
+   "answer": "No",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "question": "Gambling",
+   "answer": "No",
+   "section": "20.3",
+   "quote": "No paid randomness of any kind, and odds shown for every random reward."
+  },
+  {
+   "question": "Language",
+   "answer": "No",
+   "section": "18.6",
+   "quote": "Safety: island names come from word lists, every island can be reported, featured islands are reviewed by a person, and players aged 13 to 15 browse curated lists only (20.7).",
+   "why": "No free text anywhere: names come from the word lists."
+  },
+  {
+   "question": "Controlled substances",
+   "answer": "No",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "question": "Crude humour",
+   "answer": "No",
+   "section": "3",
+   "quote": "Tone: wonder, cleverness and warmth; a heist caper in a picture-book sky."
+  },
+  {
+   "question": "Users can interact or exchange content",
+   "answer": "Yes: players raid each other's islands and play each other's Workshop islands; no chat, no free text",
+   "section": "20.10",
+   "quote": "Workshop islands are structured data — laws, terrain, guards, layout — not files"
+  },
+  {
+   "question": "Shares the user's location",
+   "answer": "No",
+   "section": "20.5",
+   "quote": "Collect only what's needed to run the game"
+  },
+  {
+   "question": "Digital purchases",
+   "answer": "Yes: cosmetics and the season track's premium track",
+   "section": "20.3",
+   "quote": "No power, speed or skipped waiting for money."
+  },
+  {
+   "question": "Purchases of random items (loot boxes)",
+   "answer": "No",
+   "section": "20.3",
+   "quote": "No paid randomness of any kind, and odds shown for every random reward."
+  },
+  {
+   "question": "Unrestricted internet",
+   "answer": "No",
+   "section": "20.10",
+   "quote": "No advertising SDKs and no cross-app tracking"
+  }
  ],
  "export": {
   "question": "Uses non-exempt encryption (ITSAppUsesNonExemptEncryption)",
-  "answer": "No: the only encryption is the platform's own HTTPS",
-  "section": "24.1",
-  "quote": "Edge functions against a managed serverless SQL database"
+  "answer": "No: only standard TLS, for the game's own traffic, which is exempt",
+  "section": "24.6",
+  "quote": "Issued and renewed by the platform; every connection encrypted by default"
  }
 }

@@ -74,10 +74,31 @@ export class Social {
     return this.constellation(id);
   }
 
-  constellation(id) {
+  /** A constellation as `viewer` sees it: §17.8's block hides a member the
+   *  viewer blocked, or who blocked them, from its list. To a viewer outside
+   *  it and across a block from one of its members it does not exist, as
+   *  join() answers them, so neither route tells the block. */
+  constellation(id, viewer = null) {
     const c = this.db.prepare("SELECT * FROM constellations WHERE id = ?").get(id);
     if (!c) throw new Refused(404, "no_such_constellation");
-    return { id: c.id, name: Workshop.name(c.name_adjective, c.name_noun), members: this.members(id) };
+    const members = this.members(id);
+    if (this.hiddenFrom(viewer, members)) throw new Refused(404, "no_such_constellation");
+    return { id: c.id, name: Workshop.name(c.name_adjective, c.name_noun),
+             members: members.filter((m) => this.shown(viewer, m.account)) };
+  }
+
+  /** Whether `viewer` is shown `account`: not across a block either way (§17.8). */
+  shown(viewer, account) {
+    return !viewer || viewer === account || !this.service.safety.between(viewer, account);
+  }
+
+  /** Whether a group of these members is hidden from `viewer`: they are not
+   *  in it, and one of its members is across a block from them. It is one
+   *  they cannot join, answered as one that does not exist, so the block is
+   *  not told (§17.8's "invitations"). */
+  hiddenFrom(viewer, members) {
+    return Boolean(viewer) && !members.some((m) => m.account === viewer)
+      && members.some((m) => this.service.safety.between(viewer, m.account));
   }
 
   /** Join through the Beacon: open to any Keeper past the gate while there is
@@ -85,7 +106,7 @@ export class Social {
    *  last member left is closed: it would have no founder (§17.1). */
   join(account, id) {
     this.gate(account);
-    this.constellation(id);
+    this.constellation(id, account);
     return transaction(this.db, () => {
       const members = this.members(id).length;
       if (members === 0) throw new Refused(410, "constellation_closed");
@@ -95,7 +116,7 @@ export class Social {
       this.db.prepare(
         `INSERT INTO constellation_members (constellation, account, role, joined_at)
          VALUES (?, ?, 'member', ?)`).run(id, account, this.now());
-      return this.constellation(id);
+      return this.constellation(id, account);
     });
   }
 
@@ -143,7 +164,7 @@ export class Social {
       throw new Refused(409, "elders_full", { elders: facts.CONSTELLATION_ELDERS });
     }
     this.setRole(f.constellation, account, role);
-    return this.constellation(f.constellation);
+    return this.constellation(f.constellation, founder);
   }
 
   /** Whether two players share a constellation now: §18.7's "completions
@@ -161,7 +182,11 @@ export class Social {
       "SELECT crew FROM crew_members WHERE account = ? AND left_at IS NULL").get(account)?.crew ?? null;
   }
 
-  crew(id) {
+  /** A crew as `viewer` sees it: members across a block from them are left
+   *  out of the list (§17.8), and to one outside it across a block from a
+   *  member it does not exist (hiddenFrom); whether it has formed counts
+   *  everyone. */
+  crew(id, viewer = null) {
     const c = this.db.prepare("SELECT * FROM crews WHERE id = ?").get(id);
     if (!c) throw new Refused(404, "no_such_crew");
     const members = this.db.prepare(
@@ -170,7 +195,9 @@ export class Social {
     const [least] = facts.CREW_SIZE;
     // §17.7's "4 to 8": a crew forms from its first member and counts as one
     // — for co-op and shared goals — from four (D63).
-    return { id, invite: c.invite, members, formed: members.length >= least };
+    if (this.hiddenFrom(viewer, members)) throw new Refused(404, "no_such_crew");
+    return { id, invite: c.invite, members: members.filter((m) => this.shown(viewer, m.account)),
+             formed: members.length >= least };
   }
 
   /** Start a crew. It is joined by its invite — §17.7's friends "across
@@ -192,12 +219,13 @@ export class Social {
     if (this.crewOf(account)) throw new Refused(409, "already_in_a_crew");
     const c = this.db.prepare("SELECT id FROM crews WHERE invite = ?").get(invite);
     if (!c) throw new Refused(404, "no_such_crew");
+    this.crew(c.id, account);
     return transaction(this.db, () => {
       const [, most] = facts.CREW_SIZE;
       if (this.crew(c.id).members.length >= most) throw new Refused(409, "crew_full", { size: most });
       this.db.prepare("INSERT INTO crew_members (crew, account, joined_at) VALUES (?, ?, ?)")
         .run(c.id, account, this.now());
-      return this.crew(c.id);
+      return this.crew(c.id, account);
     });
   }
 

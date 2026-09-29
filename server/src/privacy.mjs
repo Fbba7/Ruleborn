@@ -42,8 +42,9 @@ function designText() {
 
 /** Every rating answer whose quote the design document no longer holds. */
 export function unquoted(r = ratings(), text = designText()) {
-  return [r.chosen, ...r.apple, ...r.iarc, r.export].filter((q) => !text.includes(q.quote))
-    .map((q) => `${q.question ?? "rating"}: "${q.quote}" is not in the design document`);
+  return [r.chosen, ...r.apple, ...r.iarc, r.export].flatMap((q) => (q.quote == null
+    ? (q.why ? [] : [`${q.question}: no quote and no reason`])
+    : text.includes(q.quote) ? [] : [`${q.question ?? "rating"}: "${q.quote}" is not in the design document`]));
 }
 
 const DELETIONS = ["erased", "severed", "erased-under-13", "kept"];
@@ -207,7 +208,8 @@ export function render(doc = load()) {
   L.push("| Group | Question | Answer | Because |");
   L.push("|---|---|---|---|");
   for (const q of r.apple) {
-    L.push(`| ${q.group} | ${q.question} | **${q.answer}** | §${q.section}: "${q.quote}"${q.why ? ` ${q.why}` : ""} |`);
+    const because = q.quote == null ? q.why : `§${q.section}: "${q.quote}"${q.why ? ` ${q.why}` : ""}`;
+    L.push(`| ${q.group} | ${q.question} | **${q.answer}** | ${because} |`);
   }
   L.push("");
   L.push("Google Play's IARC questionnaire:");

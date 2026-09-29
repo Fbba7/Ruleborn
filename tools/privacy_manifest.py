@@ -92,11 +92,28 @@ def written(text: str) -> str:
     return head + sep + "\n".join(kept + lines()) + "\n" + (nxt + tail if nxt else "")
 
 
+def owned_values(text: str) -> dict[str, str]:
+    """The iOS preset's owned options as written, by key: what the check
+    compares, whatever order the editor saved them in. A data type Godot
+    lists as not collected is the same as one not listed."""
+    body = text.partition("[preset.1.options]\n")[2].partition("\n[preset.")[0]
+    out = {}
+    for line in body.split("\n"):
+        if OWNED.match(line):
+            key, _, value = line.partition("=")
+            out[key] = value
+    for key in [k for k, v in out.items() if k.endswith("/collected") and v == "false"]:
+        prefix = key.rsplit("/", 1)[0]
+        for k in [k for k in out if k.startswith(prefix + "/")]:
+            del out[k]
+    return out
+
+
 def main() -> int:
     text = PRESETS.read_text(encoding="utf-8")
     new = written(text)
     if "--check" in sys.argv:
-        if new != text:
+        if owned_values(new) != owned_values(text):
             print("client/export_presets.cfg's privacy manifest has drifted from server/privacy.json: "
                   "python3 tools/privacy_manifest.py")
             return 1

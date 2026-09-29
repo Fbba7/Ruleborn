@@ -161,6 +161,10 @@ func _terms_gate() -> void:
 	var sent: Dictionary = JSON.parse_string((transport.calls[-1]["body"] as PackedByteArray).get_string_from_utf8())
 	var slice: Dictionary = s.store.get_slice(WorkshopState.WORKSHOP)
 	var after := WorkshopPresenter.terms(slice)
+	# A slower answer from before the acceptance never reopens the gate.
+	s.store.dispatch(&"workshop_terms", {"terms": {"version": "v2", "accepted": false, "url": "/terms"}})
+	var stale := WorkshopPresenter.terms(s.store.get_slice(WorkshopState.WORKSHOP))
+	after["show"] = after["show"] or stale["show"]
 	check.call("a play refused for the terms of use shows the terms to read and accept; accepting sends the "
 			+ "version shown, and the gate closes once the server has it (§20.11)",
 		played.is_empty() and gated["show"] and gated["text"].contains("v2") and accepted

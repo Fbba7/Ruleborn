@@ -26,6 +26,9 @@ var reasons := {}
 ## The island whose Remix was tapped once: a second tap replaces the player's
 ## own island in the builder with it.
 var confirm_remix := ""
+## The creator whose Block was tapped once, by island: a second tap blocks,
+## since a block also ends a friendship (§17.8).
+var confirm_block := ""
 
 
 func _ready() -> void:
@@ -37,8 +40,9 @@ func _ready() -> void:
 	_build()
 	App.services.store.changed.connect(_on_changed)
 	_refresh()
-	# §20.11: the terms first, so the gate shows before the first refusal.
-	await controller.load_terms()
+	# §20.11: the terms asked for beside the list, not before it; a refusal
+	# for them asks again, so the gate shows either way.
+	controller.load_terms()
 	if publish_open:
 		await controller.load_words()
 	await controller.show_list("mine" if publish_open else "top")
@@ -142,8 +146,10 @@ func _card(item: Dictionary, busy: bool) -> Control:
 		r.add_child(_act("report:" + id, Strings.t("WORKSHOP_REPORT"), controller.report.bind(id, reason), busy,
 			Strings.t("WORKSHOP_REPORT_NAMED", [name, why])))
 	if item["listed"] and item["creator"] != "":
-		r.add_child(_act("block:" + id, Strings.t("WORKSHOP_BLOCK"), controller.block.bind(item["creator"]), busy,
-			Strings.t("WORKSHOP_BLOCK_NAMED", [item["by"], name])))
+		var blocking := confirm_block == id
+		r.add_child(_act("block:" + id, Strings.t("WORKSHOP_BLOCK_CONFIRM" if blocking else "WORKSHOP_BLOCK"),
+			_block.bind(id, item["creator"]), busy,
+			Strings.t("WORKSHOP_BLOCK_CONFIRM_NAMED" if blocking else "WORKSHOP_BLOCK_NAMED", [item["by"], name])))
 	if item["listed"]:
 		var confirming := confirm_remix == id
 		r.add_child(_act("remix:" + id, Strings.t("WORKSHOP_REMIX_CONFIRM" if confirming else "WORKSHOP_REMIX"),
@@ -152,6 +158,16 @@ func _card(item: Dictionary, busy: bool) -> Control:
 	if r.get_child_count() > 0:
 		box.add_child(r)
 	return UI.plate(box)
+
+
+## §17.8: the first tap asks, the second blocks.
+func _block(id: String, creator: String) -> void:
+	if confirm_block != id:
+		confirm_block = id
+		_refresh()
+		return
+	confirm_block = ""
+	await controller.block(creator)
 
 
 ## §20.11's gate: the terms to read, on the game's own server, and to accept

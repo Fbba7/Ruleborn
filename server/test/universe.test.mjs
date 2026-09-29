@@ -81,9 +81,9 @@ test("a building is bought with Starlight from the ledger, once, however often t
   assert.equal(again.repeated, true);
   assert.equal(again.keeper, null);
   assert.equal(t.service.balance(me).starlight, 400, "a retry is never charged");
-  const rows = t.service.db.prepare("SELECT amount, reason FROM ledger WHERE account = ? AND amount < 0").all(me)
+  const rows = t.service.db.prepare("SELECT starlight, reason FROM ledger WHERE account = ? AND starlight < 0").all(me)
     .map((r) => ({ ...r }));
-  assert.deepEqual(rows, [{ amount: -600, reason: "spent on Anchor Stone 1 in heart to level 1 (10.2)" }]);
+  assert.deepEqual(rows, [{ starlight: -600, reason: "spent on Anchor Stone 1 in heart to level 1 (10.2)" }]);
 });
 
 test("spending earns §14.2's experience, 1 for every 40 Starlight, with nothing lost between purchases", () => {

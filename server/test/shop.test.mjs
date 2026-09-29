@@ -329,10 +329,10 @@ test("a database made while there was Starglass opens without it: its Starglass 
               INSERT INTO ledger (account, currency, amount, reason, at) VALUES ('a', 'essence', 7, 'old', 0);`);
     old.close();
     const db = open(path);
-    assert.deepEqual(db.prepare("SELECT id, currency, amount FROM ledger ORDER BY id").all().map((r) => ({ ...r })),
-                     [{ id: 1, currency: "starlight", amount: 500 }, { id: 3, currency: "essence", amount: 7 }]);
+    assert.deepEqual(db.prepare("SELECT id, starlight, essence FROM ledger ORDER BY id").all().map((r) => ({ ...r })),
+                     [{ id: 1, starlight: 500, essence: 0 }, { id: 3, starlight: 0, essence: 7 }]);
     assert.throws(() => db.prepare(
-      "INSERT INTO ledger (account, currency, amount, reason, at) VALUES ('a', 'starglass', 1, 'new', 1)").run(), /CHECK/);
+      "INSERT INTO ledger (account, starglass, reason, at) VALUES ('a', 1, 'new', 1)").run(), /no column/);
     assert.throws(() => db.prepare("DELETE FROM ledger").run(), /append-only/);
     db.close();
   } finally {
@@ -365,14 +365,14 @@ test("an upgrade stopped part-way leaves the old ledger and events whole, and th
     assert.throws(() => open(path), /FOREIGN KEY/);
     const kept = new DatabaseSync(path);
     const tables = kept.prepare("SELECT name FROM sqlite_master WHERE type = 'table'").all().map((r) => r.name);
-    assert.deepEqual([tables.includes("ledger_with_starglass"), tables.includes("events_before_batches"),
+    assert.deepEqual([tables.includes("ledger_by_currency"), tables.includes("events_before_batches"),
                       kept.prepare("SELECT COUNT(*) AS n FROM ledger").get().n,
                       kept.prepare("SELECT COUNT(*) AS n FROM events").get().n], [false, false, 2, 1]);
     kept.exec("INSERT INTO accounts (id, platform_identity, created_at) VALUES ('b', 'gc:b', 0)");
     kept.close();
     const db = open(path);
-    assert.deepEqual(db.prepare("SELECT currency, amount FROM ledger ORDER BY id").all().map((r) => ({ ...r })),
-                     [{ currency: "starlight", amount: 500 }, { currency: "essence", amount: 7 }]);
+    assert.deepEqual(db.prepare("SELECT starlight, essence FROM ledger ORDER BY id").all().map((r) => ({ ...r })),
+                     [{ starlight: 500, essence: 0 }, { starlight: 0, essence: 7 }]);
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = 'p'").get().n, 1);
     assert.throws(() => db.prepare("DELETE FROM ledger").run(), /append-only/);
     db.close();

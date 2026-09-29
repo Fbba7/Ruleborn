@@ -6,11 +6,11 @@ These terms are between you and the operator of Ruleborn named on the support pa
 
 ## Who may play
 
-Ruleborn is for players aged 13 and over. When the game first starts it asks your age band, not your birthdate. If you are under 13 no account is made, and anything collected from a player who turns out to be under 13 is deleted at once. Players aged 13 to 17 get extra protections, which the game applies by age band: what lists of islands they see, when notifications arrive, and how much can be spent in a month.
+Ruleborn is for players aged 13 and over. When the game first starts it asks your age band, not your birthdate. If you are under 13 no account is made, and an account that turns out to belong to someone under 13 is deleted at once, as the privacy policy describes. Players aged 13 to 17 get extra protections, which the game applies by age band: what lists of islands they see, when notifications arrive, and how much can be spent in a month.
 
 ## Your account
 
-Your account is made from your platform's own sign-in: Game Center on iPhone, Google on Android. Keep that sign-in to yourself. You can delete your account at any time from inside the game, or on the web at /account/delete. The privacy policy says what deleting it removes and what it keeps.
+Your account is made from your platform's own sign-in: Game Center on iPhone, Google on Android. Keep that sign-in to yourself. You can delete your account at any time from inside the game; if you play with a Google sign-in, you can also delete it on the web at /account/delete. The privacy policy says what deleting it removes and what it keeps.
 
 ## What you make
 

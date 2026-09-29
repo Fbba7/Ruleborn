@@ -20,6 +20,7 @@ func run() -> void:
 	_words()
 	_names()
 	await _refusals()
+	await _blocked()
 	await _two_players()
 
 
@@ -80,6 +81,31 @@ func _names() -> void:
 			+ "\"Horta Silenciosa\" (D63)",
 		got["en"] == ["Quiet Harbour", "Quiet Garden", "Quiet Harbour"]
 			and got["pt_BR"] == ["Porto Silencioso", "Horta Silenciosa", "Porto Silencioso"], str(got))
+
+
+## §17.8: the friends screen lists the players blocked, each to unblock;
+## unblocking asks the server and shows the list again.
+func _blocked() -> void:
+	var transport := FakeTransport.new()
+	var s := Fixtures.answered(Services.build(tree.root, "https://edge.example", transport,
+		"user://outbox-social-blocked-test.json"))
+	s.api.token = "t"
+	transport.on("GET /v1/friends", [])
+	transport.on("GET /v1/friends/feed", [])
+	transport.on("GET /v1/blocks", [{"account": "ffee0011", "at": 1}])
+	await s.social_flow.load_friends()
+	var f := SocialPresenter.friends(s.store.get_slice(SocialState.FRIENDS), "me")
+	transport.on("DELETE /v1/blocks/ffee0011", {"unblocked": "ffee0011"})
+	transport.on("GET /v1/blocks", [])
+	await s.social_flow.unblock("ffee0011")
+	var after := SocialPresenter.friends(s.store.get_slice(SocialState.FRIENDS), "me")
+	var asked := transport.calls.map(func(c: Dictionary) -> String: return c["route"])
+	check.call("the friends screen lists the players blocked, and unblocking one tells the server and lists them "
+			+ "again (17.8)",
+		f["blocked"].size() == 1 and f["blocked"][0]["name"] == Strings.t("SOCIAL_KEEPER", "FFEE")
+			and asked.has("DELETE /v1/blocks/ffee0011") and after["blocked"].is_empty(),
+		"%s | %s | %s" % [f["blocked"], asked, after["blocked"]])
+	s.close()
 
 
 func _refusals() -> void:

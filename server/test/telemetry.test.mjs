@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { Refused } from "../src/service.mjs";
-import { SESSION_ENDS_A_DAY, WORTH_A_DAY, lawsOf } from "../src/telemetry.mjs";
+import { ROW_EVENTS, SESSION_ENDS_A_DAY, WORTH_A_DAY, lawsOf } from "../src/telemetry.mjs";
 import { T0, openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
@@ -302,16 +302,55 @@ test("telemetry over HTTP: a batch from the device, and the report for analysts 
   assert.equal(absence["0-1"], 1);
 });
 
-test("a device's batch is one row written, however many events it holds (24.1)", () => {
+test("a player's day of events is one row: the first write makes it, every later one appends to it in one written row (24.1, F47)", () => {
   const t = server();
-  const me = t.service.session("gc:frugal").account;
-  const rows = () => t.service.db.prepare("SELECT COUNT(*) AS n FROM event_batches").get().n;
-  const before = rows();
+  const db = t.service.db;
+  const me = t.service.session("gc:frugal").account;            // the day's sign-in makes the row
+  const rows = () => db.prepare("SELECT COUNT(*) AS n FROM event_batches").get().n;
+  const changes = () => Number(db.prepare("SELECT total_changes() AS n").get().n);
+  const before = [rows(), changes()];
   t.service.telemetry.batch(me, [{ kind: "worth", data: { rating: 5 } },
                                  { kind: "weave", data: { law: "tilt", realm: "heart" } },
                                  { kind: "session_end", data: { seconds: 60, crashed: false } }]);
-  assert.equal(rows() - before, 1);
+  assert.deepEqual([rows() - before[0], changes() - before[1]], [0, 1], "a batch appended: no new row, one row written");
   assert.equal(events(t, "weave").length, 1, "and read back event by event");
+  assert.equal(events(t, "sign_in").length, 1, "beside the sign-in it joined");
+  // Another player's events never join this one's row.
+  t.service.session("gc:other");
+  assert.equal(rows() - before[0], 1);
+  // The next day starts a row of its own.
+  t.clock.now += 24 * 60 * 60 * 1000;
+  t.service.telemetry.batch(me, [{ kind: "worth", data: { rating: 4 } }]);
+  assert.equal(rows() - before[0], 2);
+  // An event queued from the day before, appended today, moves the row's day
+  // back to it, so compaction still finds every event by its row's day.
+  t.service.telemetry.batch(me, [{ kind: "weave", data: { law: "tilt", realm: "heart" }, at: t.clock.now - 20 * 60 * 60 * 1000 }]);
+  const days = db.prepare("SELECT day FROM event_batches WHERE who = ? ORDER BY id").all(t.service.telemetry.pseudonym(me))
+    .map((r) => r.day);
+  assert.equal(days[1], days[0], "the second row's day is its earliest event's");
+  // A full row is not added to: the next write starts another.
+  const full = Array.from({ length: ROW_EVENTS }, () => ({ kind: "weave", data: { law: "tilt", realm: "heart" } }));
+  db.prepare("UPDATE event_batches SET events = ? WHERE id = (SELECT MAX(id) FROM event_batches)").run(
+    JSON.stringify(full.map((e) => ({ ...e, at: t.clock.now }))));
+  t.service.telemetry.batch(me, [{ kind: "weave", data: { law: "tilt", realm: "heart" } }]);
+  assert.equal(rows() - before[0], 3);
+});
+
+test("compaction counts and discards an appended row's old events and keeps its newer ones (24.3)", () => {
+  const t = server();
+  const db = t.service.db;
+  const me = t.service.session("gc:long").account;
+
+  // A day's row, and an event from six days before it appended to it.
+  t.clock.now += 100 * DAY;
+  t.service.telemetry.batch(me, [{ kind: "worth", data: { rating: 5 }, at: t.clock.now - 6 * DAY }]);
+  t.service.telemetry.batch(me, [{ kind: "worth", data: { rating: 4 } }]);
+  // Ninety days and three later, the old event is past the window and the new one is not.
+  t.clock.now += 87 * DAY;
+  const out = t.service.telemetry.compact();
+  assert.ok(out.discarded >= 1);
+  const left = events(t, "worth").map((e) => JSON.parse(e.data).rating);
+  assert.deepEqual(left, [4], "the newer event stays, in its row");
 });
 
 test("telemetry written a row an event, before batching, is kept as batches of one (24.1)", async () => {

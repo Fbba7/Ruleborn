@@ -83,7 +83,14 @@ static func ladder(s: Dictionary, p: Dictionary) -> Dictionary:
 ## current version, and whether they have accepted it.
 static func terms(s: Dictionary, p: Dictionary) -> Dictionary:
 	var next := s.duplicate()
-	next["terms"] = p["terms"]
+	var had: Dictionary = s["terms"]
+	var got: Dictionary = p["terms"]
+	# A slower answer from before the player accepted never reopens the gate
+	# on the same version.
+	if bool(had.get("accepted", false)) and not bool(got.get("accepted", false)) \
+			and str(had.get("version", "")) == str(got.get("version", "")):
+		return next
+	next["terms"] = got
 	return next
 
 

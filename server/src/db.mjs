@@ -140,7 +140,6 @@ CREATE TABLE IF NOT EXISTS leases (
   rules       TEXT NOT NULL,
   issued_at   INTEGER NOT NULL,
   expires_at  INTEGER NOT NULL,
-  state       TEXT NOT NULL DEFAULT 'open' CHECK (state IN ('open', 'settled')),
   -- §12.3: an echo is a past snapshot, robbed from nobody; a Trace answers
   -- the heist named, with no entry fee (matchmaking.mjs).
   echo        INTEGER NOT NULL DEFAULT 0,
@@ -153,8 +152,10 @@ CREATE TABLE IF NOT EXISTS leases (
   -- name it: the wire value, 0 for none (eras.mjs).
   era         INTEGER NOT NULL DEFAULT 0
 );
-CREATE UNIQUE INDEX IF NOT EXISTS one_open_lease_per_target
-  ON leases (attacker, bundle) WHERE state = 'open';
+-- §24.13's one lease a target is kept by the issuing transaction, which
+-- hands back the newest lease the attacker holds on it with no heist; a
+-- lease is settled by its heist row, so settling one writes nothing more.
+CREATE INDEX IF NOT EXISTS leases_by_target ON leases (attacker, bundle, issued_at);
 
 -- §24.8: "Attacker, target bundle hash, seed, hash of the input log,
 -- resulting state hash, whether validated." One row a submitted lease: the
@@ -177,7 +178,10 @@ CREATE TABLE IF NOT EXISTS heists (
   -- and its hashes stay.
   replay_gone  INTEGER NOT NULL DEFAULT 0
 );
-CREATE INDEX IF NOT EXISTS heists_by_day ON heists (attacker, day, validated);
+-- A player's heists by day: every count of the day's and week's heists
+-- reads through it. Whether a heist was validated is not in it, so marking
+-- one validated as it settles (service.settle) touches no index entry.
+CREATE INDEX IF NOT EXISTS heists_by_attacker ON heists (attacker, day);
 
 -- §24.8: "Target selection is a file, not a query. Candidate lists per
 -- difficulty band are generated periodically as static objects". The lists
@@ -198,20 +202,27 @@ CREATE TABLE IF NOT EXISTS target_lists (
 );
 
 -- §24.12: "Grant — only then is the haul minted, into an append-only ledger."
+-- One row a player an event: what it moved in each currency (no Starglass:
+-- the owner answered F41 with no currency, every item priced in money), and
+-- how much of it counts to §9.6's day and week caps — a haul, or a defence
+-- share (G37). A heist books one row for its raider and, when it pays them,
+-- one for its defender; the heist's outcome keeps the lines — fee, haul,
+-- fee returned, share — that the row sums, so a heist costs one written row
+-- a player, not one a line (§24.1's writes; F47).
 CREATE TABLE IF NOT EXISTS ledger (
-  id       INTEGER PRIMARY KEY AUTOINCREMENT,
-  account  TEXT NOT NULL REFERENCES accounts(id),
-  -- No Starglass: the owner answered F41 with no currency, every item
-  -- priced in money (shop.mjs).
-  currency TEXT NOT NULL CHECK (currency IN ('starlight', 'essence')),
-  amount   INTEGER NOT NULL,
-  reason   TEXT NOT NULL,
+  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  account   TEXT NOT NULL REFERENCES accounts(id),
+  starlight INTEGER NOT NULL DEFAULT 0,
+  essence   INTEGER NOT NULL DEFAULT 0,
+  paid      INTEGER NOT NULL DEFAULT 0,
+  reason    TEXT NOT NULL,
   -- Deferred: the heist row and its ledger rows are written in one
   -- transaction, and the heist's outcome includes what the ledger booked.
-  heist    TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
-  at       INTEGER NOT NULL
+  heist     TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
+  at        INTEGER NOT NULL,
+  CHECK (starlight != 0 OR essence != 0 OR paid != 0)
 );
-CREATE INDEX IF NOT EXISTS ledger_by_account ON ledger (account, currency);
+CREATE INDEX IF NOT EXISTS ledger_by_account ON ledger (account, at);
 CREATE TRIGGER IF NOT EXISTS ledger_append_only_update BEFORE UPDATE ON ledger
   BEGIN SELECT RAISE(ABORT, 'the ledger is append-only (24.12)'); END;
 CREATE TRIGGER IF NOT EXISTS ledger_append_only_delete BEFORE DELETE ON ledger
@@ -461,6 +472,10 @@ CREATE TABLE IF NOT EXISTS purchases (
   PRIMARY KEY (store, txn)
 );
 CREATE INDEX IF NOT EXISTS purchases_by_account ON purchases (account, at);
+-- The daily job deletes lapsed intents (service.expireLapsed), and a
+-- purchase names its intent: without this, each intent deleted would read
+-- every purchase ever made to check none names it.
+CREATE INDEX IF NOT EXISTS purchases_by_intent ON purchases (intent);
 CREATE TRIGGER IF NOT EXISTS purchases_append_only_update BEFORE UPDATE ON purchases
   BEGIN SELECT RAISE(ABORT, 'a purchase is a record (22.1)'); END;
 CREATE TRIGGER IF NOT EXISTS purchases_append_only_delete BEFORE DELETE ON purchases
@@ -564,9 +579,10 @@ CREATE TABLE IF NOT EXISTS erasures (
 -- First-party telemetry (§24, §24.3; telemetry.mjs). Keyed by a pseudonym,
 -- never an account (§20.5), and discarded after 90 days: not append-only,
 -- because §24.3 says the raw events go. §24.1: "Telemetry is batched rather
--- than written per event", so a row is a batch — one write — and events
--- is the view that reads it event by event. A batch's day is its earliest
--- event's, which compaction goes by.
+-- than written per event", so a row is a batch — a player's events of a
+-- day, appended to (telemetry.write) — and events is the view that reads it
+-- event by event. Its at is when the row was started; a batch's day is its
+-- earliest event's, which compaction goes by.
 CREATE TABLE IF NOT EXISTS event_batches (
   id     INTEGER PRIMARY KEY AUTOINCREMENT,
   who    TEXT NOT NULL,
@@ -613,6 +629,8 @@ CREATE TABLE IF NOT EXISTS event_days (
  *  replaced (G34), which a daylight-saving change made wrong. */
 const DROPPED = [
   ["accounts", "utc_offset"],
+  // Settled is the heist row's to say (service.issue).
+  ["leases", "state"],
 ];
 
 /** Columns added to a table after a database was first made: `CREATE TABLE IF
@@ -651,18 +669,20 @@ const ADDED = [
   ["purchases", "recipient", "TEXT REFERENCES accounts(id)"],
 ];
 
-/** A ledger made while there was Starglass: its currency check allows it,
- *  and a check cannot be altered in SQLite, so the table is rebuilt around
- *  its rows — the append-only triggers forbid changing a row, not moving
- *  them. Its Starglass rows are not moved: the owner answered F41 with no
- *  currency, and what was paid is in `purchases`, the record of money. */
-function ledgerWithoutStarglass(db) {
+/** A ledger of a row a currency — and one made while there was Starglass —
+ *  is rebuilt around its rows as a row a player an event with both
+ *  currencies: the append-only triggers forbid changing a row, not moving
+ *  them. Each old row moves as it was, one currency set, and its haul or
+ *  defence share counted to the caps as before. Starglass rows are not
+ *  moved: the owner answered F41 with no currency, and what was paid is in
+ *  `purchases`, the record of money. */
+function ledgerByCurrency(db) {
   const old = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'ledger'").get();
-  if (!old || !old.sql.includes("'starglass'")) return false;
+  if (!old || !/\bcurrency\b/.test(old.sql)) return false;
   db.exec(`DROP TRIGGER IF EXISTS ledger_append_only_update;
            DROP TRIGGER IF EXISTS ledger_append_only_delete;
            DROP INDEX IF EXISTS ledger_by_account;
-           ALTER TABLE ledger RENAME TO ledger_with_starglass;`);
+           ALTER TABLE ledger RENAME TO ledger_by_currency;`);
   return true;
 }
 
@@ -684,12 +704,17 @@ export function open(path = ":memory:") {
         db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
       }
     }
+    // A lease's state was written when its heist settled; now its heist row
+    // says so, and the index that read the state goes before the column.
+    // The heists' index that held whether each was validated is remade
+    // without it.
+    db.exec("DROP INDEX IF EXISTS one_open_lease_per_target; DROP INDEX IF EXISTS heists_by_day");
     for (const [table, column] of DROPPED) {
       if (has(table) && db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === column)) {
         db.exec(`ALTER TABLE ${table} DROP COLUMN ${column}`);
       }
     }
-    const rebuilt = ledgerWithoutStarglass(db);
+    const rebuilt = ledgerByCurrency(db);
     // Telemetry written before batching, a row an event: moved aside, and
     // poured into batches of one once the schema stands.
     const unbatched = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'").get();
@@ -718,10 +743,15 @@ export function open(path = ":memory:") {
                                     OR b IN (SELECT id FROM accounts WHERE banned_at IS NOT NULL);
              DELETE FROM friend_invites WHERE account IN (SELECT id FROM accounts WHERE banned_at IS NOT NULL);`);
     if (rebuilt) {
-      db.exec(`INSERT INTO ledger (id, account, currency, amount, reason, heist, at)
-                 SELECT id, account, currency, amount, reason, heist, at FROM ledger_with_starglass
-                  WHERE currency != 'starglass';
-               DROP TABLE ledger_with_starglass;`);
+      db.exec(`INSERT INTO ledger (id, account, starlight, essence, paid, reason, heist, at)
+                 SELECT id, account,
+                        CASE currency WHEN 'starlight' THEN amount ELSE 0 END,
+                        CASE currency WHEN 'essence' THEN amount ELSE 0 END,
+                        CASE WHEN reason = 'haul (9.6)' OR reason LIKE '%of what a foiled crew carried (9.4)'
+                             THEN amount ELSE 0 END,
+                        reason, heist, at FROM ledger_by_currency
+                  WHERE currency IN ('starlight', 'essence') AND amount != 0;
+               DROP TABLE ledger_by_currency;`);
     }
   });
   return db;

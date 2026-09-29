@@ -42,6 +42,9 @@ export const SURVEY_GAP_MS = 90 * DAY_MS;          // within the raw window, so 
 /** A batch's largest size, and how far back a queued event may be dated —
  *  a heist queues offline, but not for longer than its lease (G29). */
 export const BATCH = 100;
+/** The most events one row of a player's day holds: a heavy day — every
+ *  session, rating and heist a day allows — fits in one or two. */
+export const ROW_EVENTS = 200;
 export const LATE_MS = 7 * DAY_MS;
 
 /** What a player's day counts (§20.3's one tap, §25.3's gates): no more
@@ -119,12 +122,41 @@ export class Telemetry {
     this.write(account, [{ kind, data, at }]);
   }
 
-  /** One batch, one row (§24.1). */
+  /** An event the server records once a player a day, if not yet today. */
+  once(account, kind, at = this.service.now()) {
+    const seen = this.db.prepare("SELECT 1 FROM events WHERE who = ? AND kind = ? AND day = ? LIMIT 1")
+      .get(this.pseudonym(account), kind, day(at));
+    if (!seen) this.record(account, kind, {}, at);
+  }
+
+  /**
+   * A player's events of a day go in one row (§24.1: "batched rather than
+   * written per event"): the day's first write makes the row, and each later
+   * one — a device batch, a sign-in, a heist — appends to it in one UPDATE
+   * that changes no indexed column but the day, so it costs one written row
+   * where a new row costs three, with its two index entries (F47). The
+   * append is one statement, so two at once cannot lose either. A row holds
+   * ROW_EVENTS at most; past that the next write starts another. A row's day
+   * stays its earliest event's, which compaction goes by.
+   */
   write(account, events) {
     const who = this.pseudonym(account);
-    const first = Math.min(...events.map((e) => e.at));
-    this.db.prepare("INSERT INTO event_batches (who, at, day, events) VALUES (?, ?, ?, ?)")
-      .run(who, this.service.now(), day(first), JSON.stringify(events));
+    const now = this.service.now();
+    const first = day(Math.min(...events.map((e) => e.at)));
+    const json = JSON.stringify(events);
+    // The day is set only when an event older than the row's arrives, so
+    // an ordinary append leaves the day's index entry alone.
+    const append = (setDay) => this.db.prepare(
+      `UPDATE event_batches
+          SET events = substr(events, 1, length(events) - 1) || ',' || substr(?1, 2)${setDay ? ", day = ?2" : ""}
+        WHERE id = (SELECT id FROM event_batches WHERE who = ?3 AND at >= ?4 ORDER BY id DESC LIMIT 1)
+          AND day ${setDay ? ">" : "<="} ?2 AND json_array_length(events) + ?5 <= ?6`)
+      .run(json, first, who, now - (now % DAY_MS), events.length, ROW_EVENTS).changes;
+    const appended = append(false) || append(true);
+    if (!appended) {
+      this.db.prepare("INSERT INTO event_batches (who, at, day, events) VALUES (?, ?, ?, ?)")
+        .run(who, now, first, json);
+    }
     // The first day is the earliest session, whenever it arrives: a device
     // sends its queue late, and in any order, up to LATE_MS back. A day
     // whose cohort is written is not moved out of or into.

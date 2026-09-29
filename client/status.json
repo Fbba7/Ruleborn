@@ -78,6 +78,7 @@
   "the client's simulation is the rules version every golden replay names": "passed",
   "the crew lands together on the open edge tile the player chose, recorded at tick 0 (5.4)": "passed",
   "the debug overlay shows the route, the account, what waits in the outbox, and the last actions": "passed",
+  "the friends screen lists the players blocked, and unblocking one tells the server and lists them again (17.8)": "passed",
   "the heist just played replays on this phone with every second agreeing": "passed",
   "the island keeps its figures by value: every feature that changes a route, each guard and the outlines of wards, the Vault and the crew stand 3:1 from every ground, and water's ripples from water, in both contrast modes (§21.10)": "passed",
   "the league shows the place, the division in numerals, Renown and the way to the next league; groups name their members and roles, the player as \"you\"; the feed says who raided whom (§17, §18.1)": "passed",

@@ -420,17 +420,34 @@ grant, Renown line, star, rating and event batch — and measures what §24.1
 budgets: rows written a player a day, by what wrote them, and the CPU a
 re-simulation takes. The writes are deterministic, so `server/load.json`
 keeps them and `bash tools/check_all.sh` fails if a change moves them
-(`--write` records a new baseline). What it measured — an engaged day
-writes about 50 rows against §24.1's five, and a re-simulation takes
-about 15 ms against the free plan's 10 — is register **F47**; its
-readings are **G33**. Telemetry is written a batch to a row, as §24.1 asks.
+(`--write` records a new baseline). It counts rows twice: as SQLite changes
+them, and as D1 bills them, each index entry a write touches being a row
+written too (`billed`), and prices the plans from the billed count. What it
+measured — an engaged day bills about 72 rows against §24.1's five, and a
+re-simulation takes about 15 ms against the free plan's 10 — is register
+**F47**; its readings are **G33**. What was cut to get there, each held by
+`test/cost.test.mjs`:
+
+- **One ledger row a player an event.** A heist books its raider's fee,
+  haul and fee returned as one row, and its defender's fee and share as
+  one; `paid` is the part §9.6's caps count. The lines are in the heist's
+  outcome.
+- **A player's day of telemetry is one row**, made by the day's first event
+  and appended to by every later one in one UPDATE that touches no index.
+  The server's own sign-in event is recorded once a day.
+- **A lease is settled by its heist row**, never written again, and §24.13's
+  one lease a target is kept by the issuing transaction.
+- **A heist's row is written before the rows that name it.** Written after,
+  it made SQLite search the ledger, Renown and stars whole for the rows it
+  settled, on every heist.
 
 ## Telemetry
 
 `src/telemetry.mjs` is §24's first-party analytics, under §20.5 and §24.3's
 rules:
 
-- **What is logged.** The server records what it decides: a sign-in, a
+- **What is logged.** The server records what it decides: a sign-in (once a
+  player a day), a
   heist's "outcome, laws crossed, crew", and a purchase. The device sends the
   rest to `POST /v1/events` in batches — its sessions, the app in the
   foreground from `session_start` to `session_end` (**G29**: a sign-in only

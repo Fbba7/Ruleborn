@@ -501,9 +501,14 @@ WORKSHOP_TERMS_ACCEPT,Accept the terms,Aceitar os termos
 WORKSHOP_DONE_TERMS,Terms accepted,Termos aceitos
 WORKSHOP_BLOCK,Block creator,Bloquear criador
 WORKSHOP_BLOCK_NAMED,"Block %s, who made %s","Bloquear %s, que fez %s"
-WORKSHOP_DONE_BLOCKED,"Blocked: you will not see each other's islands or names","Bloqueado: vocês não verão as ilhas nem os nomes um do outro"
+WORKSHOP_DONE_BLOCKED,"Blocked: you will not see each other's Workshop islands, and you are no longer friends","Bloqueado: vocês não verão as ilhas da Oficina um do outro, e não são mais amigos"
 ERR_TERMS_FIRST,accept the terms of use first,aceite os termos de uso primeiro
 ERR_NOT_THE_CURRENT_TERMS,the terms have changed; read the new ones,os termos mudaram; leia os novos
 ERR_OWN_ACCOUNT,that is your own account,essa é a sua própria conta
 ERR_NOT_BLOCKED,that player is not blocked,esse jogador não está bloqueado
 ERR_TOO_MANY_BLOCKS,you have blocked as many players as you can,você já bloqueou o máximo de jogadores
+WORKSHOP_BLOCK_CONFIRM,Tap again to block,Toque de novo para bloquear
+WORKSHOP_BLOCK_CONFIRM_NAMED,"Tap again to block %s, who made %s; a friendship between you ends","Toque de novo para bloquear %s, que fez %s; uma amizade entre vocês termina"
+FRIENDS_BLOCKED,Players you blocked,Jogadores que você bloqueou
+FRIENDS_UNBLOCK,Unblock,Desbloquear
+FRIENDS_UNBLOCK_NAMED,Unblock %s,Desbloquear %s

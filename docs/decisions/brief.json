@@ -4008,12 +4008,21 @@
      "numbers": "Realm 4 and 5 would hold about 90 to 95%: one raid in ten or twenty pays.",
      "doc_edit": "§13.2: the bands by realm level re-stated at the measured holds.",
      "build_change": "The server's bands (facts) and the matchmaker's targets."
+    },
+    {
+     "key": "D",
+     "label": "B for realms 1 to 3, A for realms 4 and 5",
+     "means": "Realms 1 to 3 keep §5.2's wards and posts and take realm-level raid-side figures (the balance pass); realms 4 and 5 take option A's cut to one post, where no raid-side figure the grid tried reaches the band.",
+     "consequences": "The lower realms stay deep to build; the top two get one guard and few wards, as in A, but only where the measurement leaves no other way. The rules gain three realm-level figures, and two realm levels lose most of their budget.",
+     "numbers": "Balance-pass grid, §5.2's full budget, n=200 (guard sight ×1.0 to 0.5 by 0.05, suspicion fill ×1.0, 0.8, 0.6): realm 1 with fill ×0.6, 37.5%; realm 2 with sight ×0.75, 39.0%; realm 3 with sight ×0.7, 37.5%; realm 4 inside only at sight ×0.5 with fill ×0.6, 41.5%; realm 5 never inside, 49.0% at best. Realms 4 and 5 on one post (A, n=800): 38.0% with two wards, 36.9% with none.",
+     "doc_edit": "§5.2: one post and the wards 2 and 0 at realm levels 4 and 5; the realm-level figures for realms 1 to 3 in the section that owns guard sight and suspicion; §13.2's table re-set to the measured holds.",
+     "build_change": "Realm-level sight and fill for realms 1 to 3 in sim/ and the harness; §5.2's budget for realms 4 and 5 in the harness, the server's facts and Island::check; then §13.2's table re-run."
     }
    ],
    "recommendation": {
-    "option": "B",
-    "rationale": "A empties the realms where building should matter most and C gives up §13.2's reason for the band. B keeps both, but the sweep shows it must be realm by realm: realms 4 and 5 sit 30 to 50 points above the band where realms 1 to 3 sit 7 to 16 above, so any one lever that fixes the top breaks the bottom.",
-    "confidence": "low"
+    "option": "D",
+    "rationale": "The balance pass's grid settles what B left open: raid-side figures land realms 1 to 3 in the band at the full budget, and no figure it tried lands realm 5 (49.0% at best) or realm 4 short of halving guard sight. D keeps building deep where the numbers allow it and cuts only where they do not; A cuts everywhere, B cannot reach the top, C gives up §13.2's reason for the band.",
+    "confidence": "medium"
    },
    "interacts_with": [
     "F34",

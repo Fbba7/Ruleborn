@@ -6106,7 +6106,26 @@ dict(id="F47", kind="finding", severity="significant", status="open",
           "Re-measured for Keeper levels (G42): each raid now also writes its "
           "raider\u2019s level and experience, one row more, so an engaged "
           "player writes 50.13 rows a day, ten times the budget, and a "
-          "million monthly players cost about $456 a month on the paid plan.",
+          "million monthly players cost about $456 a month on the paid plan. "
+          "Counted as D1 bills \u2014 every index entry a write touches is a row "
+          "written too, and the load test now counts them \u2014 that day was 103 "
+          "rows, about $984 a month for a million. Cut without changing a rule: "
+          "a heist books one ledger row a player, its lines kept in its outcome; "
+          "a player\u2019s events of a day are one row appended to, an append "
+          "touching no index; a sign-in is recorded once a day; a lease is "
+          "settled by its heist row, not written again; and the heists\u2019 index "
+          "no longer holds whether each was validated. An engaged player now "
+          "costs 71.8 billed rows a day, 14 times the budget, and a million "
+          "monthly players about $673 a month engaged, $322 regular and $142 "
+          "casual. And a cost no figure showed is gone: the heist row was "
+          "written after the ledger, Renown and star rows that name it, so "
+          "SQLite searched each of those tables whole on every heist \u2014 a "
+          "read that grew with every heist ever played (22 ms a heist at "
+          "300,000 ledger rows, against 11 ms now at any size). A lease request "
+          "finds the lease a player holds on a target from their newest lease "
+          "there alone, one row however many they have played (the review of "
+          "these cuts caught a first version that read every played one). "
+          "server/test/cost.test.mjs holds each cut.",
      rec="Re-derive §24.1\u2019s budget and cost table from measured writes: state "
          "a share of monthly players active on a day, price the writes a heist "
          "must make, and drop the free-plan columns for validation. Or cut "
@@ -6126,7 +6145,12 @@ dict(id="G33", kind="gap", severity="minor", status="open",
           "writes; CPU is this machine\u2019s Node, not an edge isolate; and rows "
           "read are not measured, though §28.3\u2019s plans bill them too. Found by "
           "the load test; corrected when building eras, where an earlier reading "
-          "priced every monthly player as playing every day.",
+          "priced every monthly player as playing every day. Index writes are "
+          "now counted as D1 bills them (<code>billed</code> in load.mjs), and "
+          "rows read are guarded where they grew without limit: a heist no "
+          "longer reads the ledger, Renown and stars whole, and deleting a "
+          "lapsed purchase intent no longer reads every purchase. Rows read are "
+          "still not budgeted.",
      rec="Budget rows read beside rows written, and re-run the load test on the "
          "edge platform itself."),
 
@@ -6482,7 +6506,16 @@ dict(id="F55", kind="finding", severity="significant", status="open",
           "every level. Guards seeing 0.7 as far hold 27.5, 34.0, 37.5, 74.0 "
           "and 77.5%; with suspicion filling 0.6 as fast too, 11.0, 23.0, "
           "27.5, 63.5 and 66.5% \u2014 the low realms fall below the band "
-          "before the high ones reach it.",
+          "before the high ones reach it.<br><br>Priced realm by realm (the "
+          "balance pass\u2019s grid, n=200: guard sight \u00d71.0 to 0.5 in "
+          "steps of 0.05, suspicion fill \u00d71.0, 0.8 and 0.6, at \u00a75.2\u2019s "
+          "full budget): realm 1 reaches the band with fill \u00d70.6 alone "
+          "(37.5%), realm 2 with sight \u00d70.75 (39.0%), realm 3 with sight "
+          "\u00d70.7 (37.5%). Realm 4 is inside only at the grid\u2019s corner, "
+          "sight \u00d70.5 and fill \u00d70.6 (41.5%), and realm 5 never is: "
+          "49.0% at best. So option B holds for realms 1 to 3, and realms 4 "
+          "and 5 need their budget cut as well (option A\u2019s one post, "
+          "38.0% and 36.9%): a mix the brief now lists as option D.",
      measured="python3 -m tools.heist_harness holds 800; tools/heist_harness/"
               "test_harness.py test_finding_5_2s_budget_holds_every_realm_level_above_13_2s_band",
      rec="Either cut §5.2\u2019s budget to what reaches the band (one post "

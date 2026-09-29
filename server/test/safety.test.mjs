@@ -8,6 +8,7 @@ import { test } from "node:test";
 import { privacyPage, supportPage, termsPage } from "../src/pages.mjs";
 import { TERMS_VERSION } from "../src/safety.mjs";
 import { Refused, clockTicks } from "../src/service.mjs";
+import { Social } from "../src/social.mjs";
 import { Workshop } from "../src/workshop.mjs";
 import { established, openPlan, play, server } from "./setup.mjs";
 
@@ -125,4 +126,51 @@ test("terms and blocks over HTTP (20.11)", async () => {
   assert.deepEqual((await call("GET", "/v1/blocks", a.token)).body.map((x) => x.account), [b.account]);
   assert.equal((await call("DELETE", `/v1/blocks/${b.account}`, a.token)).status, 200);
   assert.equal((await call("POST", "/v1/blocks", a.token, { account: 7 })).status, 400);
+});
+
+test("a block keeps two players out of each other's crew and constellation, and out of each other's lists of one (17.8)", () => {
+  const t = three();
+  const social = new Social(t.service);
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6").run();
+  const c = social.found(t.creator, { adjective: 1, noun: 2 });
+  social.join(t.other, c.id);
+  const crew = social.startCrew(t.creator);
+  t.service.safety.block(t.creator, t.viewer);
+  // Joining where a member is across a block is answered as no such group,
+  // so the block is not told.
+  refusal(() => social.join(t.viewer, c.id), "no_such_constellation");
+  refusal(() => social.joinCrew(t.viewer, crew.invite), "no_such_crew");
+  // And asked for by id, the group answers the same, so the two routes
+  // cannot be set against each other to tell the block.
+  refusal(() => social.constellation(c.id, t.viewer), "no_such_constellation");
+  refusal(() => social.crew(crew.id, t.viewer), "no_such_crew");
+  // Two who shared a group before the block keep it, and do not see each other.
+  t.service.safety.unblock(t.creator, t.viewer);
+  social.join(t.viewer, c.id);
+  social.joinCrew(t.viewer, crew.invite);
+  t.service.safety.block(t.viewer, t.creator);
+  const names = (x) => x.members.map((m) => m.account).sort();
+  assert.deepEqual(names(social.constellation(c.id, t.viewer)), [t.other, t.viewer].sort());
+  assert.deepEqual(names(social.constellation(c.id, t.creator)), [t.creator, t.other].sort());
+  assert.equal(social.constellation(c.id).members.length, 3, "and the constellation still counts all three");
+  assert.deepEqual(names(social.crew(crew.id, t.creator)), [t.creator]);
+  assert.equal(social.crew(crew.id).members.length, 2);
+  // Members of it, they still see it, and a founder's appointment answers
+  // with the list as the founder sees it.
+  assert.equal(social.constellation(c.id, t.viewer).id, c.id);
+  assert.deepEqual(names(social.appoint(t.creator, t.other, "elder")), [t.creator, t.other].sort());
+});
+
+test("the pages answer HEAD, and are never kept by a cache, so new terms are never shown old (20.11)", async () => {
+  const t = server();
+  for (const path of ["/terms", "/privacy"]) {
+    const head = await t.handle(new Request(`https://edge.example${path}`, { method: "HEAD" }));
+    assert.equal(head.status, 200, path);
+    assert.equal(await head.text(), "");
+    assert.equal(head.headers.get("cache-control"), "no-cache");
+  }
+  const { handler } = await import("../src/http.mjs");
+  const policy = async (h) => (await (await h(new Request("https://edge.example/privacy"))).text());
+  assert.ok(!(await policy(t.handle)).includes("/account/delete"), "no web deletion offered where none is served");
+  assert.ok((await policy(handler(t.service, { webClientId: "web-client" }))).includes("/account/delete"));
 });

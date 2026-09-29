@@ -97,7 +97,10 @@ func load_friends() -> void:
 	if not feed.ok:
 		_store().dispatch(&"friends_failed", {"code": feed.code})
 		return
-	_store().dispatch(&"friends_loaded", {"friends": f.value, "feed": feed.value})
+	# §17.8: the players blocked, each to unblock from here.
+	var blocked := await services.account.blocks()
+	_store().dispatch(&"friends_loaded", {"friends": f.value, "feed": feed.value,
+		"blocked": blocked.value if blocked.ok else []})
 
 
 func make_invite() -> void:
@@ -113,6 +116,17 @@ func accept(code: String) -> void:
 		_store().dispatch(&"friends_failed", {"code": r.code})
 		return
 	_store().dispatch(&"friend_accepted", {"friend": r.value["friend"]})
+	await load_friends()
+
+
+## §17.8: a block undone. Nothing it ended comes back of itself: a
+## friendship is made again by an invite.
+func unblock(account: String) -> void:
+	_store().dispatch(&"friends_asked")
+	var r := await services.account.unblock(account)
+	if not r.ok:
+		_store().dispatch(&"friends_failed", {"code": r.code})
+		return
 	await load_friends()
 
 

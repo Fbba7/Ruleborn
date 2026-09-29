@@ -3315,7 +3315,7 @@ The honest cost of B is that the document must say plainly that a non-raider pla
       </div>
     </article>
     <article class="decision" id="F55" data-id="F55" data-tier="significant"
-             data-rec="B" data-quick="no" data-answered="no">
+             data-rec="D" data-quick="no" data-answered="no">
       <header class="dh">
         <span class="step" title="Decide in this order">47</span>
         <span class="did">F55</span>
@@ -3337,11 +3337,11 @@ The honest cost of B is that the document must say plainly that a non-raider pla
             <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>On one post at every level: realm 1, 7 wards (34.9%); 2, 3 wards (33.1%); 3, 6 wards (38.9%); 4, 2 wards (38.0%); 5, no wards (36.9%; one ward 34.6%). n=800.</dd></div><div class="od"><dt>Document edit</dt><dd>§5.2: the wards 7, 3, 6, 2 and 0 and one post at every realm level; §13.2&#x27;s table re-set to these measured holds.</dd></div><div class="od"><dt>Build change</dt><dd>tools/heist_harness island.WARDS and POSTS, the server&#x27;s facts for §5.2&#x27;s budget, and Island::check&#x27;s limits in sim/.</dd></div></dl></details>
           </span>
         </label>
-        <label class="opt is-rec" for="o-F55-B">
+        <label class="opt" for="o-F55-B">
           <input type="radio" name="o-F55" id="o-F55-B" value="B" disabled>
           <span class="ob">
             <span class="oh"><span class="ok">B</span>
-              <span class="ol">Keep the budget, re-tune the raid side realm by realm (the balance pass)</span><span class="rec-tag">Recommended</span></span>
+              <span class="ol">Keep the budget, re-tune the raid side realm by realm (the balance pass)</span></span>
             <span class="om">§5.2&#x27;s wards and posts stay; the balance pass sets raid-side levers — how far guards see, how fast suspicion fills, the clock — by realm level, not once for all, until each level&#x27;s full budget lands in the band, measured on the harness as §13.2&#x27;s aligned re-run.</span>
             <span class="oc">Building stays deep at every realm, but no single lever does it: the sweep shows one lever strong enough for realms 4 and 5 pushes realms 1 to 3 below the band. The rules gain realm-level figures, and the answer waits on the owner&#x27;s sign-off of each.</span>
             <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Harness sweep, §5.2&#x27;s full budget, n=200, held at realm levels 1 to 5: as built 52.0, 60.0, 61.0, 90.5, 95.0. Guards seeing 0.7 as far: 27.5, 34.0, 37.5, 74.0, 77.5 (2 and 3 inside). Suspicion filling 0.6 as fast: 37.5, 52.0, 38.5, 78.5, 86.5. Both together: 11.0, 23.0, 27.5, 63.5, 66.5. Sight 0.7 with two posts at realms 4 and 5: 27.5, 34.0, 37.5, 47.5, 59.5. Slower guards (0.8) raise holds; a faster crew or a longer clock moves realm 1 only.</dd></div><div class="od"><dt>Document edit</dt><dd>None until the lever is chosen; then the section that owns it, and §13.2&#x27;s table re-set.</dd></div><div class="od"><dt>Build change</dt><dd>Realm-level figures for the chosen levers in sim/ and the harness (python3 -m tools.heist_harness levers measures any), then §13.2&#x27;s table re-run.</dd></div></dl></details>
@@ -3357,11 +3357,21 @@ The honest cost of B is that the document must say plainly that a non-raider pla
             <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Realm 4 and 5 would hold about 90 to 95%: one raid in ten or twenty pays.</dd></div><div class="od"><dt>Document edit</dt><dd>§13.2: the bands by realm level re-stated at the measured holds.</dd></div><div class="od"><dt>Build change</dt><dd>The server&#x27;s bands (facts) and the matchmaker&#x27;s targets.</dd></div></dl></details>
           </span>
         </label>
+        <label class="opt is-rec" for="o-F55-D">
+          <input type="radio" name="o-F55" id="o-F55-D" value="D" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">D</span>
+              <span class="ol">B for realms 1 to 3, A for realms 4 and 5</span><span class="rec-tag">Recommended</span></span>
+            <span class="om">Realms 1 to 3 keep §5.2&#x27;s wards and posts and take realm-level raid-side figures (the balance pass); realms 4 and 5 take option A&#x27;s cut to one post, where no raid-side figure the grid tried reaches the band.</span>
+            <span class="oc">The lower realms stay deep to build; the top two get one guard and few wards, as in A, but only where the measurement leaves no other way. The rules gain three realm-level figures, and two realm levels lose most of their budget.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Balance-pass grid, §5.2&#x27;s full budget, n=200 (guard sight ×1.0 to 0.5 by 0.05, suspicion fill ×1.0, 0.8, 0.6): realm 1 with fill ×0.6, 37.5%; realm 2 with sight ×0.75, 39.0%; realm 3 with sight ×0.7, 37.5%; realm 4 inside only at sight ×0.5 with fill ×0.6, 41.5%; realm 5 never inside, 49.0% at best. Realms 4 and 5 on one post (A, n=800): 38.0% with two wards, 36.9% with none.</dd></div><div class="od"><dt>Document edit</dt><dd>§5.2: one post and the wards 2 and 0 at realm levels 4 and 5; the realm-level figures for realms 1 to 3 in the section that owns guard sight and suspicion; §13.2&#x27;s table re-set to the measured holds.</dd></div><div class="od"><dt>Build change</dt><dd>Realm-level sight and fill for realms 1 to 3 in sim/ and the harness; §5.2&#x27;s budget for realms 4 and 5 in the harness, the server&#x27;s facts and Island::check; then §13.2&#x27;s table re-run.</dd></div></dl></details>
+          </span>
+        </label>
       </fieldset>
       <div class="recbox">
-        <p><span class="lab">Recommended: B, Keep the budget, re-tune the raid side realm by realm (the balance pass)</span>
-          <span class="conf c-low">low confidence</span></p>
-        <p class="rr">A empties the realms where building should matter most and C gives up §13.2&#x27;s reason for the band. B keeps both, but the sweep shows it must be realm by realm: realms 4 and 5 sit 30 to 50 points above the band where realms 1 to 3 sit 7 to 16 above, so any one lever that fixes the top breaks the bottom.</p>
+        <p><span class="lab">Recommended: D, B for realms 1 to 3, A for realms 4 and 5</span>
+          <span class="conf c-medium">medium confidence</span></p>
+        <p class="rr">The balance pass&#x27;s grid settles what B left open: raid-side figures land realms 1 to 3 in the band at the full budget, and no figure it tried lands realm 5 (49.0% at best) or realm 4 short of halving guard sight. D keeps building deep where the numbers allow it and cuts only where they do not; A cuts everywhere, B cannot reach the top, C gives up §13.2&#x27;s reason for the band.</p>
         
       </div>
       <p class="also"><span class="lab">Also needed</span> Which raid-side levers are on the table for B (guard sight, the clock, crew abilities), and whether the harness&#x27;s competent crew is the right reference: the optimal and clearing crews are held more often here, because their waits cost clock across three realms.</p><p class="inter"><span class="lab">Weigh with</span> <a href="#F34">F34</a>, <a href="#F33">F33</a>, <a href="#F35">F35</a>, <a href="#F52">F52</a></p>

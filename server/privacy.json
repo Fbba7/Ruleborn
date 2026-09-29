@@ -492,9 +492,6 @@
     "expires_at": {
      "type": "gameplay"
     },
-    "state": {
-     "type": "gameplay"
-    },
     "echo": {
      "type": "gameplay"
     },
@@ -578,7 +575,7 @@
    }
   },
   "ledger": {
-   "about": "Every movement of Starlight and Essence, the game's earned resources, append-only (§24.12); nothing in it is bought (F41).",
+   "about": "Every movement of Starlight and Essence, the game's earned resources, append-only (§24.12), one row a player an event; nothing in it is bought (F41).",
    "purposes": [
     "functionality",
     "security"
@@ -596,11 +593,15 @@
      "type": "user-id",
      "names": "account"
     },
-    "currency": {
+    "starlight": {
      "type": "gameplay"
     },
-    "amount": {
+    "essence": {
      "type": "gameplay"
+    },
+    "paid": {
+     "type": "gameplay",
+     "holds": "how much of the row counts to the day and week caps on what raids pay (§9.6)"
     },
     "reason": {
      "type": "gameplay"

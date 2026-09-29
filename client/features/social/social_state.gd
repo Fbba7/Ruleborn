@@ -28,8 +28,8 @@ static func register(store: Store) -> void:
 		&"words_loaded": words_loaded,
 		&"groups_failed": failed,
 	})
-	store.register(FRIENDS, {"friends": [], "feed": [], "invite": {}, "challenge": {}, "error": "", "busy": false,
-			"accepted": "", "last": ""}, {
+	store.register(FRIENDS, {"friends": [], "feed": [], "blocked": [], "invite": {}, "challenge": {}, "error": "",
+			"busy": false, "accepted": "", "last": ""}, {
 		&"friends_asked": asked,
 		&"friends_loaded": friends_loaded,
 		&"invite_made": invite_made,
@@ -99,6 +99,7 @@ static func friends_loaded(s: Dictionary, p: Dictionary) -> Dictionary:
 	var next := s.duplicate()
 	next["friends"] = p["friends"]
 	next["feed"] = p["feed"]
+	next["blocked"] = p.get("blocked", [])
 	next["busy"] = false
 	next["error"] = ""
 	return next

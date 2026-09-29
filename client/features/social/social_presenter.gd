@@ -100,11 +100,14 @@ static func friends(f: Dictionary, me: String) -> Dictionary:
 				"FEED_" + str(e.get("mode", "raid")).to_upper()) else "FEED_RAID",
 			[who(str(e["raider"]), me), who(str(e["defender"]), me),
 				Strings.term("GRADE", str(grade)) if grade != null else "—"]))
+	var blocked: Array[Dictionary] = []
+	for x: Dictionary in f.get("blocked", []):
+		blocked.append({"account": str(x["account"]), "name": who(str(x["account"]), me)})
 	var invite: Dictionary = f.get("invite", {})
 	var challenge: Dictionary = f.get("challenge", {})
 	return {
 		"error": str(f.get("error", "")), "busy": bool(f.get("busy", false)),
-		"friends": list, "none": list.is_empty(),
+		"friends": list, "none": list.is_empty(), "blocked": blocked,
 		"feed": feed,
 		"invite": Strings.t("FRIENDS_INVITE_CODE", str(invite["invite"])) if invite.has("invite") else "",
 		"challenge": Strings.t("FRIENDS_CHALLENGE_CODE", str(challenge["challenge"]))

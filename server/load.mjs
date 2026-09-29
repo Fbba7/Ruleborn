@@ -14,6 +14,11 @@
 // budget is about: rows written per player per day, by what wrote them, and
 // the CPU a re-simulation takes, against the free plan's 10 ms a request.
 // Rows read are not measured: SQLite does not count them as D1 bills them.
+// Rows written are measured twice: as SQLite changes them, and as D1 bills
+// them — "Indexes will add an additional written row when writes include the
+// indexed column" — each changed row and every index entry its write
+// touches (billed(), below). The budget and the cost are read from the
+// billed count, which is what the bill is.
 //
 // Writes are deterministic (the clock and the random source are the tests');
 // CPU time is this machine's. --write records both in server/load.json, and
@@ -39,6 +44,57 @@ const arg = (name, fallback) => {
   return i < 0 ? fallback : Number(process.argv[i + 1]);
 };
 
+/**
+ * Wraps `db` so each write statement adds what D1 would bill for it: every
+ * row it changed, and for each, an entry in every index an insert or delete
+ * writes, or in each index an update's SET columns belong to (a table's text
+ * primary key is an index too). An upsert is an insert when it made a row
+ * (the connection's last insert rowid moved) and otherwise an update of the
+ * columns its DO UPDATE sets. Returns the running count.
+ */
+export function billed(db) {
+  const prepare = db.prepare.bind(db);
+  const indexes = new Map();
+  const of = (table) => {
+    if (!indexes.has(table)) {
+      indexes.set(table, prepare(`PRAGMA index_list(${table})`).all().map((i) =>
+        prepare(`PRAGMA index_info(${i.name})`).all().map((c) => c.name)));
+    }
+    return indexes.get(table);
+  };
+  const count = { rows: 0 };
+  db.prepare = (sql) => {
+    const st = prepare(sql);
+    const s = sql.replace(/\s+/g, " ").trim();
+    let m, per = null;
+    const updating = (table, setList) => {
+      const set = setList.split(",").map((x) => x.trim().split(/\s*=/)[0]);
+      return 1 + of(table).filter((cols) => cols.some((c) => set.includes(c))).length;
+    };
+    const upsert = /ON CONFLICT .*? DO UPDATE SET (.*?)(?: WHERE .*)?$/i.exec(s);
+    if ((m = /^INSERT (?:OR \w+ )?INTO (\w+)/i.exec(s)) || (m = /^DELETE FROM (\w+)/i.exec(s))) {
+      const table = m[1];
+      per = (inserted) => (upsert && !inserted ? updating(table, upsert[1]) : 1 + of(table).length);
+    } else if ((m = /^UPDATE (\w+) SET (.*?) WHERE/i.exec(s))) {
+      const table = m[1];
+      const set = m[2];
+      per = () => updating(table, set);
+    }
+    if (per) {
+      const run = st.run.bind(st);
+      const rowid = () => prepare("SELECT last_insert_rowid() AS r").get().r;
+      st.run = (...a) => {
+        const before = upsert ? rowid() : null;
+        const r = run(...a);
+        count.rows += Number(r.changes) * per(upsert ? rowid() !== before : true);
+        return r;
+      };
+    }
+    return st;
+  };
+  return count;
+}
+
 /** §14.1's archetypes: sessions and heists a day. */
 export const ARCHETYPES = { engaged: [5, 4], regular: [3, 2], casual: [1, 1] };
 
@@ -57,12 +113,15 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
     verifyPlatform: (c) => c, now: () => clock.now, random, seasonStart: T0, firstBand: "18+",
   });
   const db = service.db;
+  const bill = billed(db);
   const changes = () => Number(db.prepare("SELECT total_changes() AS n").get().n);
   const writes = {};
+  const bills = {};
   const count = (what, fn) => {
-    const before = changes();
+    const before = [changes(), bill.rows];
     const out = fn();
-    writes[what] = (writes[what] ?? 0) + changes() - before;
+    writes[what] = (writes[what] ?? 0) + changes() - before[0];
+    bills[what] = (bills[what] ?? 0) + bill.rows - before[1];
     return out;
   };
 
@@ -84,6 +143,7 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   }
   service.targetLists();
   for (const k of Object.keys(writes)) delete writes[k];
+  for (const k of Object.keys(bills)) delete bills[k];
 
   const [sessions, heists] = ARCHETYPES[archetype];
   const cpu = [];
@@ -128,12 +188,17 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   const perPlayer = Object.entries(writes).filter(([k]) => !PERIODIC.includes(k));
   const perDay = Object.fromEntries(perPlayer.map(([k, v]) => [k, +(v / playerDays).toFixed(2)]));
   const total = perPlayer.reduce((a, [, v]) => a + v, 0);
+  const billedPerPlayer = Object.entries(bills).filter(([k]) => !PERIODIC.includes(k));
+  const billedTotal = billedPerPlayer.reduce((a, [, v]) => a + v, 0);
   return {
     archetype, players, days, heistsPerDay: heists, sessionsPerDay: sessions,
     writesPerPlayerDay: +(total / playerDays).toFixed(2),
     periodicWritesADay: Object.fromEntries(PERIODIC.map((k) => [k, (writes[k] ?? 0) / days])),
     writesPerHeist: +((writes["heist: validate and grant"] + writes.lease) / (playerDays * heists)).toFixed(2),
     byOperation: perDay,
+    billedRowsPerPlayerDay: +(billedTotal / playerDays).toFixed(2),
+    billedPerHeist: +((bills["heist: validate and grant"] + bills.lease) / (playerDays * heists)).toFixed(2),
+    billedByOperation: Object.fromEntries(billedPerPlayer.map(([k, v]) => [k, +(v / playerDays).toFixed(2)])),
     validationMs: { p50: +pct(0.5).toFixed(1), p95: +pct(0.95).toFixed(1), max: +cpu[cpu.length - 1].toFixed(1) },
   };
 }
@@ -144,11 +209,12 @@ export function against(result) {
     facts.WRITE_PRICE_PER_MILLION, facts.FREE_WRITES_DAY, facts.FREE_CPU_MS];
   // §25.1's gate: "a third of monthly players play on a given day".
   const [dn, dd] = facts.DAILY_SHARE;
-  const monthly = (players) => (players * dn / dd) * result.writesPerPlayerDay * 30;
+  // D1 bills the billed count: rows and their index entries.
+  const monthly = (players) => (players * dn / dd) * result.billedRowsPerPlayerDay * 30;
   return {
-    budget, overBudget: +(result.writesPerPlayerDay / budget).toFixed(1),
+    budget, overBudget: +(result.billedRowsPerPlayerDay / budget).toFixed(1),
     freeCpuMs: freeCpu, validationFitsFreePlan: result.validationMs.p95 <= freeCpu,
-    freePlanPlayersADay: Math.floor(freeWrites / result.writesPerPlayerDay),
+    freePlanPlayersADay: Math.floor(freeWrites / result.billedRowsPerPlayerDay),
     // Monthly players, a third of them playing on a day, each a day of this
     // player's: an engaged population is the ceiling, a casual one the floor.
     paidDollarsAMonth: Object.fromEntries([1_000, 10_000, 100_000, 1_000_000].map((p) =>
@@ -162,14 +228,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const report = results.map((r) => ({ ...r, against: against(r) }));
   if (process.argv.includes("--check")) {
     const kept = JSON.parse(readFileSync(new URL("./load.json", import.meta.url), "utf8"));
-    const writesOf = (rs) => JSON.stringify(rs.map((r) => [r.archetype, r.byOperation, r.periodicWritesADay]));
+    const writesOf = (rs) => JSON.stringify(rs.map((r) => [r.archetype, r.byOperation, r.billedByOperation,
+                                                           r.periodicWritesADay]));
     if (writesOf(kept) !== writesOf(report)) {
       console.error("server/load.json is stale: the rows a heist writes have moved. " +
                     "Run node server/load.mjs --write, and say why in the register.");
       process.exit(1);
     }
-    console.log(`server/load.json matches: ${report.map((r) => `${r.archetype} ${r.writesPerPlayerDay}`).join(", ")} ` +
-                `rows a player a day, against §24.1's ${facts.WRITE_BUDGET}`);
+    console.log(`server/load.json matches: ${report.map((r) => `${r.archetype} ${r.billedRowsPerPlayerDay}`).join(", ")} ` +
+                `billed rows a player a day, against §24.1's ${facts.WRITE_BUDGET}`);
     process.exit(0);
   }
   if (process.argv.includes("--write")) {
@@ -181,8 +248,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     for (const r of report) {
       console.log(`${r.archetype}: ${r.players} players x ${r.days} days, ${r.sessionsPerDay} sessions and ` +
                   `${r.heistsPerDay} heists a day`);
-      console.log(`  ${r.writesPerPlayerDay} rows written a player a day, against §24.1's budget of ` +
-                  `${r.against.budget}: ${r.against.overBudget}x`);
+      console.log(`  ${r.writesPerPlayerDay} rows written a player a day, ${r.billedRowsPerPlayerDay} as D1 bills ` +
+                  `them with their index entries, against §24.1's budget of ${r.against.budget}: ${r.against.overBudget}x`);
       for (const [k, v] of Object.entries(r.byOperation)) console.log(`    ${String(v).padStart(7)}  ${k}`);
       for (const [k, v] of Object.entries(r.periodicWritesADay)) console.log(`    ${String(v).padStart(7)}  ${k}, a day in all`);
       console.log(`  a validation takes ${r.validationMs.p50} ms (p95 ${r.validationMs.p95}, max ` +

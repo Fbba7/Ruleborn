@@ -65,6 +65,14 @@ func _refresh() -> void:
 		r.add_child(UI.button(Strings.t("FRIENDS_REMOVE"), controller.remove.bind(x["account"]), false, Color(),
 			Strings.t("FRIENDS_REMOVE_NAMED", x["name"])))
 		body.add_child(r)
+	if not f["blocked"].is_empty():
+		body.add_child(UI.label(Strings.t("FRIENDS_BLOCKED"), UI.TEXT_POINTS, true))
+	for x: Dictionary in f["blocked"]:
+		var b := UI.row()
+		b.add_child(UI.label(x["name"]))
+		b.add_child(UI.button(Strings.t("FRIENDS_UNBLOCK"), controller.unblock.bind(x["account"]), false, Color(),
+			Strings.t("FRIENDS_UNBLOCK_NAMED", x["name"])))
+		body.add_child(b)
 	if not f["feed"].is_empty():
 		body.add_child(UI.label(Strings.t("FRIENDS_FEED"), UI.TEXT_POINTS, true))
 	for line: String in f["feed"]:

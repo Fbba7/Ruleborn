@@ -174,9 +174,9 @@ async function socialRoute(service, social, request, parts, who) {
     // The player's own, so a device that knows nothing yet can find it.
     if (m === "GET" && a === "mine") {
       const own = social.membership(me);
-      return json({ constellation: own ? social.constellation(own.constellation) : null });
+      return json({ constellation: own ? social.constellation(own.constellation, me) : null });
     }
-    if (m === "GET" && a) return json(social.constellation(a));
+    if (m === "GET" && a) return json(social.constellation(a, me));
     if (m === "POST" && a && b === "join") return json(social.join(me, a));
     if (m === "POST" && a && b === "roles") {
       const { account, role } = await body(request);
@@ -189,9 +189,9 @@ async function socialRoute(service, social, request, parts, who) {
     if (m === "POST" && a === "leave") return json(social.leaveCrew(me));
     if (m === "GET" && a === "mine") {
       const own = social.crewOf(me);
-      return json({ crew: own ? social.crew(own) : null });
+      return json({ crew: own ? social.crew(own, me) : null });
     }
-    if (m === "GET" && a) return json(social.crew(a));
+    if (m === "GET" && a) return json(social.crew(a, me));
   }
   return null;
 }
@@ -347,11 +347,15 @@ export function handler(service, { webClientId = null, appleNotifications = null
         }
         return json({ error: "no_such_route" }, 404);
       }
-      if (["terms", "privacy", "support"].includes(parts[0]) && parts.length === 1 && request.method === "GET") {
-        const html = parts[0] === "terms" ? termsPage() : parts[0] === "privacy" ? privacyPage() : supportPage(contact);
+      if (["terms", "privacy", "support"].includes(parts[0]) && parts.length === 1
+          && (request.method === "GET" || request.method === "HEAD")) {
+        const html = parts[0] === "terms" ? termsPage()
+          : parts[0] === "privacy" ? privacyPage(undefined, { webDeletion: Boolean(webClientId) }) : supportPage(contact);
         if (!html) return json({ error: "not_configured" }, 503);
-        return new Response(html, { headers: { "content-type": "text/html; charset=utf-8",
-                                               "cache-control": "public, max-age=3600" } });
+        // Asked for afresh each time: a player asked to accept new terms
+        // must never be shown a cached copy of the old ones.
+        return new Response(request.method === "HEAD" ? null : html, {
+          headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache" } });
       }
       if (parts[1] === "terms" && parts.length === 2) {
         const me = who();

@@ -79,8 +79,6 @@ export const REALMS = ["heart", ...Array.from({ length: 6 }, (_, i) => `outer-${
 export const HEART_LEVEL = 3;
 
 const day = (ms) => new Date(ms).toISOString().slice(0, 10);
-/** A defence share's ledger reason, after its percent. */
-const SHARE_REASON = "% of what a foiled crew carried (9.4)";
 const DAY_MS = 24 * 60 * 60 * 1000;
 /** Midnight UTC at the start of `ms`'s day, and of its week (Monday, G20). */
 const dayStart = (ms) => ms - (ms % DAY_MS);
@@ -158,8 +156,10 @@ export class Service {
       row = { id };
     }
     // §24's analytics: a sign-in, which is not a session — the device's
-    // foreground is (G29).
-    this.telemetry.record(row.id, "sign_in", {}, now);
+    // foreground is (G29) — once a player a day, which is what it counts:
+    // the day's later sign-ins would each be a written row saying nothing
+    // new (F47).
+    this.telemetry.once(row.id, "sign_in", now);
     return { account: row.id, token: issue(this.secret, row.id, now) };
   }
 
@@ -445,10 +445,17 @@ export class Service {
   issue(attacker, bundle, defender, now, { echo = false, traceOf = null, mode = "raid", challenge = null }) {
     const era = this.era(now);
     return transaction(this.db, () => {
-      const held = this.db.prepare(
-        "SELECT * FROM leases WHERE attacker = ? AND bundle = ? AND state = 'open'")
+      // The newest lease on the bundle, held while no heist has settled it.
+      // Only the newest can be: a lease is issued only once the one before
+      // lapsed or was played, so every older unplayed one has expired too —
+      // still submittable, with the day's grace (G17), but not handed back.
+      // One row read, and one heist key, however long the history (F47).
+      const newest = this.db.prepare(
+        "SELECT * FROM leases WHERE attacker = ? AND bundle = ? ORDER BY issued_at DESC, rowid DESC LIMIT 1")
         .get(attacker, bundle);
-      if (held && held.expires_at > now) {
+      const held = newest && newest.expires_at > now
+        && !this.db.prepare("SELECT 1 FROM heists WHERE token = ?").get(newest.token) ? newest : null;
+      if (held) {
         // §24.13's one lease a target is the same heist asked for twice. One
         // held as another kind — a raid when a Trace is asked for, a friendly
         // heist or another link — is not handed back as this one, which would
@@ -464,11 +471,8 @@ export class Service {
         }
         return this.leaseView(held);
       }
-      if (held) {
-        // Expired and never submitted: it reserved nothing (§24.13), so it
-        // simply closes and a fresh one is issued.
-        this.db.prepare("UPDATE leases SET state = 'settled' WHERE token = ?").run(held.token);
-      }
+      // Expired and never submitted, it reserved nothing (§24.13): a fresh
+      // one is issued beside it.
       const row = {
         token: this.random(16).toString("hex"),
         attacker, bundle, defender,
@@ -593,20 +597,28 @@ export class Service {
       if (!decision.validated) {
         Object.assign(outcome, { reason: decision.reason },
                       decision.second ? { second: decision.second } : {});
-      } else {
-        Object.assign(outcome, this.grant(lease, decision.verdict, now), { grace: decision.grace });
       }
       const n = replay.length;
       const stateHash = decision.validated
         ? Buffer.from(replay.subarray(n - 4, n)).toString("hex") : null;
+      // The heist row goes in before what it pays: the ledger's, Renown's and
+      // the season stars' rows name it by a deferred foreign key, and a
+      // parent written after its children makes SQLite search each child
+      // table whole for the rows it settles — every heist ever played, read
+      // on every heist. Written first, as not yet validated, it is counted
+      // by none of the day's and week's queries grant makes (all read
+      // validated heists), and it is never seen outside this transaction.
       this.db.prepare(
         `INSERT INTO heists (token, attacker, bundle, seed, log_hash, state_hash, validated,
                              outcome, review, grace, submitted_at, day)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+         VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)`)
         .run(lease.token, lease.attacker, lease.bundle, lease.seed, logHash, stateHash,
-             decision.validated ? 1 : 0, JSON.stringify(outcome), decision.review ? 1 : 0,
-             decision.grace ? 1 : 0, now, day(now));
-      this.db.prepare("UPDATE leases SET state = 'settled' WHERE token = ?").run(lease.token);
+             JSON.stringify(outcome), decision.review ? 1 : 0, decision.grace ? 1 : 0, now, day(now));
+      if (decision.validated) {
+        Object.assign(outcome, this.grant(lease, decision.verdict, now), { grace: decision.grace });
+        this.db.prepare("UPDATE heists SET validated = 1, outcome = ? WHERE token = ?")
+          .run(JSON.stringify(outcome), lease.token);
+      }
       // §24's analytics: a heist's "outcome, laws crossed, crew".
       this.telemetry.record(lease.attacker, "heist", decision.validated
         ? { validated: true, grade: decision.verdict.grade, crew: decision.verdict.crew,
@@ -627,10 +639,14 @@ export class Service {
       `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
         WHERE h.attacker = ? AND h.day = ? AND h.validated = 1 AND l.mode = 'raid'`)
       .get(attacker, day(now)).n;
-    const mint = this.db.prepare(
-      "INSERT INTO ledger (account, currency, amount, reason, heist, at) VALUES (?, ?, ?, ?, ?, ?)");
-    const book = (account, currency, amount, reason) => {
-      if (amount !== 0) mint.run(account, currency, amount, reason, lease.token, now);
+    // What the heist moves for each of its two players, summed into one
+    // ledger row each at the end (§24.1's writes; F47): `paid` is the part
+    // §9.6's caps count, a haul or a defence share (G37). The heist's
+    // outcome keeps every line the rows sum.
+    const moved = { raider: { starlight: 0, essence: 0, paid: 0 }, defender: { starlight: 0, essence: 0, paid: 0 } };
+    const book = (who, currency, amount, counted = false) => {
+      moved[who][currency] += amount;
+      if (counted) moved[who].paid += amount;
     };
 
     // §12.3's Trace comes "with a free scout and no entry fee"; a friendly
@@ -642,14 +658,12 @@ export class Service {
     const overWeek = !friendly && this.raidsThisWeek(attacker, now) >= RAIDS_A_WEEK;
     const fee = lease.trace_of || friendly || overWeek
       ? 0 : entryFee(this.balance(attacker).starlight, snapshot.vault_level);
-    book(attacker, "starlight", -fee, "entry fee (9.4)");
+    book("raider", "starlight", -fee);
     // §24.12's Validate "checks the token, the expiry and the caps": §9.6's
     // three, against what this raider was paid today and this week — hauls,
     // and the defence shares below, which count to the same caps (G37).
     const paidSince = (account, from) => Number(this.db.prepare(
-      `SELECT COALESCE(SUM(amount), 0) AS n FROM ledger
-        WHERE account = ? AND (reason = 'haul (9.6)' OR reason LIKE ?) AND at >= ?`)
-      .get(account, `%${SHARE_REASON}`, from).n);
+      "SELECT COALESCE(SUM(paid), 0) AS n FROM ledger WHERE account = ? AND at >= ?").get(account, from).n);
     const caps = (account, vaultLevel) => ({
       targetVaultLevel: vaultLevel,
       raiderVaultLevel: this.vaultLevel(account),
@@ -687,15 +701,15 @@ export class Service {
     const pay = friendly ? { ...reckoned, total: 0, essence: 0, starlight: 0, cappedBy: null }
       : overWeek ? { ...reckoned, total: 0, essence: 0, starlight: 0, cappedBy: "week" }
       : capHaul(reckoned, caps(attacker, snapshot.vault_level));
-    book(attacker, "starlight", pay.starlight, "haul (9.6)");
-    book(attacker, "essence", pay.essence, "haul (9.6)");
+    book("raider", "starlight", pay.starlight, true);
+    book("raider", "essence", pay.essence, true);
     // §14.2's Keeper experience, for the raider, at the level they raided at:
     // earned wherever the haul is — not by a game among friends (F48), nor
     // by a raid past the week's 20, which pays nothing (G20).
     const keeper = friendly || overWeek ? null
       : this.keeper.award(attacker, heistExperience(raiderLevel, verdict.grade === "foiled"));
     const returned = feeReturned(fee, verdict.grade);
-    book(attacker, "starlight", returned, `entry fee returned after a ${verdict.grade} heist (9.4)`);
+    book("raider", "starlight", returned);
     // §9.4: "a foiled heist gives the defender the entry fee plus 5% of what
     // the crew was carrying", the share §13.1's rule has set this season.
     // The fee is the raider's, passed on; the share is minted, so it is held
@@ -715,15 +729,23 @@ export class Service {
           WHERE l.attacker = ? AND l.defender = ? AND l.mode = 'raid' AND h.validated = 1
             AND h.day = ? AND json_extract(h.outcome, '$.verdict.grade') = 'foiled'`)
         .get(attacker, lease.defender, day(now)).n;
-      if (foiledEarlierToday === 0) book(lease.defender, "starlight", fee, "a foiled raider's entry fee (12.9)");
+      if (foiledEarlierToday === 0) book("defender", "starlight", fee);
       const percent = this.seasons.defenceShare(this.seasons.current(now).id);
       const share = scores ? capHaul(defenceShare({
         vaultLevel: snapshot.vault_level, raiderLevel, targetLevel,
         exposed: snapshot.exposed, left: verdict.left ?? 0, capacity: verdict.capacity, percent,
       }), caps(lease.defender, snapshot.vault_level)) : { total: 0, essence: 0, starlight: 0 };
-      book(lease.defender, "starlight", share.starlight, `${percent}${SHARE_REASON}`);
-      book(lease.defender, "essence", share.essence, `${percent}${SHARE_REASON}`);
+      book("defender", "starlight", share.starlight, true);
+      book("defender", "essence", share.essence, true);
       defence = { percent, total: share.total, essence: share.essence, starlight: share.starlight };
+    }
+    const mint = this.db.prepare(
+      `INSERT INTO ledger (account, starlight, essence, paid, reason, heist, at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`);
+    for (const [who, account, reason] of [["raider", attacker, "a heist: fee, haul and fee returned (9.4, 9.6)"],
+                                          ["defender", lease.defender, "a foiled raid: fee and defence share (9.4, 12.9)"]]) {
+      const m = moved[who];
+      if (m.starlight || m.essence || m.paid) mint.run(account, m.starlight, m.essence, m.paid, reason, lease.token, now);
     }
     // §12.9's Renown, §18.2's season stars and §12.22's ratings, in the same
     // transaction as the haul. An echo is nobody's defence: it moves no
@@ -843,19 +865,18 @@ export class Service {
 
   /** §24.12: currency is "a ledger of minting events", summed. */
   balance(account) {
-    const rows = this.db.prepare(
-      "SELECT currency, SUM(amount) AS total FROM ledger WHERE account = ? GROUP BY currency")
-      .all(account);
-    const out = { starlight: 0, essence: 0 };
-    for (const r of rows) out[r.currency] = Number(r.total);
-    return out;
+    const r = this.db.prepare(
+      "SELECT COALESCE(SUM(starlight), 0) AS s, COALESCE(SUM(essence), 0) AS e FROM ledger WHERE account = ?")
+      .get(account);
+    return { starlight: Number(r.s), essence: Number(r.e) };
   }
 
   /** One ledger row outside a heist: a track tier, a defence share. */
   book(account, currency, amount, reason, now = this.now()) {
     if (amount === 0) return;
+    if (currency !== "starlight" && currency !== "essence") throw new Error(`no currency ${currency}`);
     this.db.prepare(
-      "INSERT INTO ledger (account, currency, amount, reason, heist, at) VALUES (?, ?, ?, ?, NULL, ?)")
-      .run(account, currency, amount, reason, now);
+      `INSERT INTO ledger (account, ${currency}, reason, heist, at) VALUES (?, ?, ?, NULL, ?)`)
+      .run(account, amount, reason, now);
   }
 }

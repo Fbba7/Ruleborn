@@ -53,7 +53,7 @@ test("a raid's experience is the raider's, settled with its haul, once, and it l
 test("a foiled raid earns a foiled heist's experience; a game among friends earns none (14.2, F48)", () => {
   const t = twoPlayers(false);
   t.service.db.prepare(
-    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
+    "INSERT INTO ledger (account, starlight, reason, at) VALUES (?, 50000, \'grant\', 0)")
     .run(t.raider.account);
   const lease = t.service.lease(t.raider.account, t.bundle);
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));

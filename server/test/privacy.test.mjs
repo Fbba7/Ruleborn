@@ -140,7 +140,7 @@ for (const reason of ["requested", "under-13"]) {
     assert.deepEqual(empty, [before["friends.a"] ? "friends.b" : "friends.a"], "the scenario touches every table erased");
     // An under-13 player's leases never played go (§24.13: they reserved nothing).
     const unplayed = db.prepare(
-      "SELECT COUNT(*) AS n FROM leases WHERE attacker = ? AND state = 'open' AND token NOT IN (SELECT token FROM heists)").get(x).n;
+      "SELECT COUNT(*) AS n FROM leases WHERE attacker = ? AND token NOT IN (SELECT token FROM heists)").get(x).n;
     assert.equal(unplayed, 1);
     const row = db.prepare("SELECT * FROM accounts WHERE id = ?").get(x);
     const defaults = Object.fromEntries(db.prepare("PRAGMA table_info(accounts)").all()
@@ -198,7 +198,7 @@ for (const reason of ["requested", "under-13"]) {
         assert.ok(list.candidates.every((c) => c.owner !== x));
       }
       // A raid leased on their island before it went is refused, not crashed.
-      const lease = db.prepare("SELECT * FROM leases WHERE attacker = ? AND bundle = ? AND state = 'settled' LIMIT 1")
+      const lease = db.prepare("SELECT * FROM leases WHERE attacker = ? AND bundle = ? AND token IN (SELECT token FROM heists) LIMIT 1")
         .get(s.y, s.xBundle);
       assert.ok(lease);
     }
@@ -430,7 +430,8 @@ test("a lease closed unplayed when its target was leased again goes too (G38)", 
   t.clock.now += LEASE_MS + 1;
   const second = t.service.lease(y, xBundle).token;
   assert.notEqual(first, second);
-  assert.equal(db.prepare("SELECT state FROM leases WHERE token = ?").get(first).state, "settled", "closed, never played");
+  assert.equal(db.prepare("SELECT 1 FROM heists WHERE token = ?").get(first), undefined, "closed, never played");
+  assert.equal(t.service.lease(y, xBundle).token, second, "and the new one is the one held");
   t.clock.now += CLOSED_KEEP_DAYS * DAY;
   t.service.expireLapsed();
   assert.equal(db.prepare("SELECT 1 FROM leases WHERE token = ?").get(first), undefined);

@@ -54,7 +54,8 @@ export function termsPage() {
   return page("Ruleborn: terms of use", markdown(TERMS));
 }
 
-export function privacyPage(doc = load()) {
+/** `webDeletion`: whether /account/delete is served (a web client id is set). */
+export function privacyPage(doc = load(), { webDeletion = false } = {}) {
   const types = collected(doc);
   const purposes = (t) => [...new Set([...t.purposes].map((p) => doc.purposes[p].google))].sort().join("; ");
   const kept = (k) => (k.days !== undefined ? `${k.days} days${k.after ? ` after ${plain(k.after)}` : ""}` : {
@@ -64,6 +65,9 @@ export function privacyPage(doc = load()) {
     erased: "deleted", severed: "kept, under an id that no longer leads to you",
     "erased-under-13": "kept under an id that no longer leads to you; deleted at once for a player under 13",
     kept: "kept; it is not about a person" }[d]);
+  // A table kept on deletion that still names a person — a ban's identity —
+  // is shown too: it is about someone, and outlives their account.
+  const personal = (d) => Object.values(d.columns).some((c) => c.type === "user-id");
   const a = doc.answers;
   const body = [];
   body.push("<h1>Ruleborn: privacy policy</h1>");
@@ -82,21 +86,28 @@ Analytics are pseudonymous: events are kept under an id made for them, not your 
   body.push("<h2>How long it is kept, and what deleting your account does</h2>");
   body.push("<table><tr><th>What</th><th>Kept</th><th>When you delete your account</th></tr>");
   for (const d of Object.values(doc.tables)) {
-    if (d.deletion === "kept") continue;
-    body.push(`<tr><td>${esc(cap(plain(d.about)))}</td><td>${esc(kept(d.keep))}</td><td>${esc(deletion(d.deletion))}</td></tr>`);
+    if (d.deletion === "kept" && !personal(d)) continue;
+    const gone = d.deletion === "kept" ? plain(d.deletion_note ?? deletion(d.deletion)) : deletion(d.deletion);
+    body.push(`<tr><td>${esc(cap(plain(d.about)))}</td><td>${esc(kept(d.keep))}</td><td>${esc(gone)}</td></tr>`);
   }
   for (const f of Object.values(doc.files)) {
     body.push(`<tr><td>${esc(cap(plain(f.about)))}</td><td>${esc(plain(f.keep))}</td><td>${esc(plain(f.deletion))}</td></tr>`);
   }
   body.push("</table>");
-  body.push(`<h2>Your choices</h2><p>You can delete your account from inside the game${a.deletionUrl ? `, or on the
-web at <a href="/account/delete">/account/delete</a>, signed in with Google` : ""}. Some records, such as heists already
-played against other players and purchases, are kept for good under an id that no longer leads to you, because other
-players' results and the stores' records rest on them; everything else about you is deleted. To ask what the game holds
-about you, write to the address on the <a href="/support">support page</a>.</p>`);
+  // Pointing at the table above, which is written from the declaration, so
+  // the words cannot say more is deleted than the tables are.
+  const bans = Object.values(doc.tables).some((d) => d.deletion === "kept" && personal(d));
+  body.push(`<h2>Your choices</h2><p>You can delete your account from inside the game${a.deletionUrl && webDeletion
+    ? `; if you play with a Google sign-in, you can also delete it on the web at <a href="/account/delete">/account/delete</a>`
+    : ""}. What goes and what stays is in the table above: the records other players' results and the stores'
+accounts rest on are kept, under an id that no longer leads to you; ${bans ? "a ban is kept on the platform identity it was made against, for as long as it lasts; " : ""}everything else about you is deleted. To ask what the game holds about you, write to the address on the
+<a href="/support">support page</a>.</p>`);
   body.push(`<h2>Children</h2><p>Ruleborn is for players aged 13 and over. The game asks your age band, not your
-birthdate, when it first starts; no account is made for anyone under 13, and anything collected from a player who
-turns out to be under 13 is deleted at once. Players aged 13 to 17 get extra protections, set by age band.</p>`);
+birthdate, when it first starts, and makes no account for anyone under 13. An account that turns out to belong to
+someone under 13 is deleted at once, and more goes than on an ordinary deletion: the rows the table above marks as
+deleted at once for a player under 13, with their replays and their islands' files. The records other players'
+results rest on are kept under an id that leads to no one. Players aged 13 to 17 get extra protections, set by age
+band.</p>`);
   return page("Ruleborn: privacy policy", body.join("\n"));
 }
 

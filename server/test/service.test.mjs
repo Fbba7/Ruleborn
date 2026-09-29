@@ -72,9 +72,9 @@ test("snapshots and the ledger cannot be edited", () => {
   const t = twoPlayers();
   assert.throws(() => t.service.db.prepare("UPDATE snapshots SET exposed = 0").run(), /never edited/);
   t.service.db.prepare(
-    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 5, 'test', 0)")
+    "INSERT INTO ledger (account, starlight, reason, at) VALUES (?, 5, 'test', 0)")
     .run(t.raider.account);
-  assert.throws(() => t.service.db.prepare("UPDATE ledger SET amount = 500").run(), /append-only/);
+  assert.throws(() => t.service.db.prepare("UPDATE ledger SET starlight = 500").run(), /append-only/);
   assert.throws(() => t.service.db.prepare("DELETE FROM ledger").run(), /append-only/);
 });
 
@@ -119,7 +119,7 @@ test("a retry is answered from the first decision and pays nothing twice (§24.1
   assert.deepEqual(t.service.balance(t.raider.account), { starlight: 5625, essence: 5625 });
   const rows = t.service.db.prepare("SELECT COUNT(*) AS n FROM ledger WHERE account = ?")
     .get(t.raider.account).n;
-  assert.equal(rows, 2, "one haul, in two currencies");
+  assert.equal(rows, 1, "one row for the heist, both currencies in it");
 });
 
 test("the second raid of the day pays 0.85 of the first, and the fee is 2% (§9.4, §9.6)", () => {
@@ -141,7 +141,7 @@ test("a haul is capped by what the raider was already paid today (§9.6, §24.12
   const t = twoPlayers();
   // 46,000 of the day's 50,000 already paid (the raider stands at Vault level 1).
   t.service.db.prepare(
-    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 46000, 'haul (9.6)', ?)")
+    "INSERT INTO ledger (account, starlight, paid, reason, at) VALUES (?, 46000, 46000, 'haul (9.6)', ?)")
     .run(t.raider.account, t.clock.now - 60_000);
   const lease = t.service.lease(t.raider.account, t.bundle);
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
@@ -186,7 +186,7 @@ test("two players with the same island are two targets, and a foiled fee goes to
                    [t.defender.account, twin.account].sort());
   refusal(() => t.service.lease(twin.account, t.bundle), "own_island");
   t.service.db.prepare(
-    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
+    "INSERT INTO ledger (account, starlight, reason, at) VALUES (?, 50000, \'grant\', 0)")
     .run(t.raider.account);
   const lease = t.service.lease(t.raider.account, t.bundle, twin.account);
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
@@ -224,7 +224,7 @@ test("a foiled raider pays the fee to the defender (§12.9)", () => {
   const t = twoPlayers(false);                 // the defended example
   // A raider with Starlight, so there is a fee to pay.
   t.service.db.prepare(
-    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
+    "INSERT INTO ledger (account, starlight, reason, at) VALUES (?, 50000, \'grant\', 0)")
     .run(t.raider.account);
   const lease = t.service.lease(t.raider.account, t.bundle);
   const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
@@ -259,8 +259,8 @@ function pastHeists(t, attacker, n, { mode = "raid", outcome = {} } = {}) {
     const token = `past-${attacker}-${mode}-${i}-${JSON.stringify(outcome).length}`;
     t.service.db.prepare(
       `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at,
-                           echo, trace_of, mode, challenge, era, state)
-       VALUES (?, ?, ?, ?, '1', 4500, 'r', ?, ?, 0, NULL, ?, NULL, 0, 'settled')`)
+                           echo, trace_of, mode, challenge, era)
+       VALUES (?, ?, ?, ?, '1', 4500, 'r', ?, ?, 0, NULL, ?, NULL, 0)`)
       .run(token, attacker, t.bundle, other, t.clock.now - 1000, t.clock.now, mode);
     t.service.db.prepare(
       `INSERT INTO heists (token, attacker, bundle, seed, log_hash, state_hash, validated, outcome,
@@ -274,7 +274,7 @@ function pastHeists(t, attacker, n, { mode = "raid", outcome = {} } = {}) {
 test("a pair's second foil of the day keeps the fee with the game (9.4, G37)", () => {
   const t = twoPlayers(false);
   t.service.db.prepare(
-    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
+    "INSERT INTO ledger (account, starlight, reason, at) VALUES (?, 50000, \'grant\', 0)")
     .run(t.raider.account);
   for (const hour of [0, 1]) {
     t.clock.now += hour * 60 * 60 * 1000;
@@ -289,7 +289,7 @@ test("a pair's second foil of the day keeps the fee with the game (9.4, G37)", (
 test("past 20 paid raids a week, a raid costs nothing and pays nothing, and the lease says so (9.6, G20)", () => {
   const t = twoPlayers();
   t.service.db.prepare(
-    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
+    "INSERT INTO ledger (account, starlight, reason, at) VALUES (?, 50000, \'grant\', 0)")
     .run(t.raider.account);
   // Games among friends are not raids, and do not count.
   pastHeists(t, t.raider.account, 5, { mode: "friendly" });
@@ -347,7 +347,7 @@ test("the fee comes back in full after a loud heist and half after a partial one
   for (const [grade, back] of [["loud", 225], ["partial", 112]]) {
     const t = twoPlayers();
     t.service.db.prepare(
-      "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', 50000, 'grant', 0)")
+      "INSERT INTO ledger (account, starlight, reason, at) VALUES (?, 50000, \'grant\', 0)")
       .run(t.raider.account);
     const lease = t.service.lease(t.raider.account, t.bundle);
     const row = t.service.db.prepare("SELECT * FROM leases WHERE token = ?").get(lease.token);
@@ -473,7 +473,7 @@ test("a defence share counts to the defender's own day cap, and a pair's is paid
   };
   // The defender's Heart is Vault level 3: 100 left of their own day's ceiling.
   t.service.db.prepare(
-    "INSERT INTO ledger (account, currency, amount, reason, at) VALUES (?, 'starlight', ?, 'haul (9.6)', ?)")
+    "INSERT INTO ledger (account, starlight, paid, reason, at) VALUES (?1, ?2, ?2, 'haul (9.6)', ?3)")
     .run(t.defender.account, Number(dayCeiling(3)) - 100, t.clock.now - 60_000);
   const first = foil();
   assert.equal(first.verdict.grade, "foiled");

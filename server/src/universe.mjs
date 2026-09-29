@@ -134,8 +134,8 @@ export class Universe {
   /** Starlight spent on the universe so far, for §14.2's experience. */
   spent(account) {
     return -Number(this.db.prepare(
-      `SELECT COALESCE(SUM(amount), 0) AS n FROM ledger
-        WHERE account = ? AND currency = 'starlight' AND reason LIKE '${SPENT}%'`).get(account).n);
+      `SELECT COALESCE(SUM(starlight), 0) AS n FROM ledger
+        WHERE account = ? AND reason LIKE '${SPENT}%'`).get(account).n);
   }
 
   /** Why a price cannot be paid now, or null: the first of the Keeper level
