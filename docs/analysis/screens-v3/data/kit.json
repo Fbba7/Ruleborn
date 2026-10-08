@@ -1,0 +1,324 @@
+{
+ "hearth@1 (full)": {
+  "meshes": 8,
+  "tris": 1960,
+  "outlines": 1,
+  "sprites": 1,
+  "mats": 6
+ },
+ "starwell@1 (full)": {
+  "meshes": 17,
+  "tris": 1960,
+  "outlines": 3,
+  "sprites": 1,
+  "mats": 9
+ },
+ "loom@1 (full)": {
+  "meshes": 23,
+  "tris": 2556,
+  "outlines": 2,
+  "sprites": 0,
+  "mats": 12
+ },
+ "garden@1 (full)": {
+  "meshes": 9,
+  "tris": 1412,
+  "outlines": 1,
+  "sprites": 0,
+  "mats": 6
+ },
+ "guard@1 (full)": {
+  "meshes": 8,
+  "tris": 1956,
+  "outlines": 1,
+  "sprites": 2,
+  "mats": 6
+ },
+ "vault@1 (full)": {
+  "meshes": 9,
+  "tris": 1172,
+  "outlines": 1,
+  "sprites": 0,
+  "mats": 7
+ },
+ "hearth@1 (lite)": {
+  "meshes": 58,
+  "tris": 990,
+  "outlines": 9,
+  "sprites": 5,
+  "mats": 17
+ },
+ "starwell@1 (lite)": {
+  "meshes": 28,
+  "tris": 840,
+  "outlines": 9,
+  "sprites": 3,
+  "mats": 13
+ },
+ "loom@1 (lite)": {
+  "meshes": 29,
+  "tris": 1296,
+  "outlines": 10,
+  "sprites": 1,
+  "mats": 9
+ },
+ "garden@1 (lite)": {
+  "meshes": 59,
+  "tris": 1464,
+  "outlines": 3,
+  "sprites": 1,
+  "mats": 12
+ },
+ "guard@1 (lite)": {
+  "meshes": 44,
+  "tris": 828,
+  "outlines": 5,
+  "sprites": 1,
+  "mats": 16
+ },
+ "vault@1 (lite)": {
+  "meshes": 58,
+  "tris": 2216,
+  "outlines": 20,
+  "sprites": 2,
+  "mats": 14
+ },
+ "ward@1 (lite)": {
+  "meshes": 26,
+  "tris": 976,
+  "outlines": 4,
+  "sprites": 1,
+  "mats": 6
+ },
+ "spire@1 (lite)": {
+  "meshes": 48,
+  "tris": 2600,
+  "outlines": 14,
+  "sprites": 1,
+  "mats": 12
+ },
+ "hearth@5 (full)": {
+  "meshes": 8,
+  "tris": 1960,
+  "outlines": 1,
+  "sprites": 1,
+  "mats": 6
+ },
+ "starwell@5 (full)": {
+  "meshes": 17,
+  "tris": 1960,
+  "outlines": 3,
+  "sprites": 1,
+  "mats": 9
+ },
+ "loom@5 (full)": {
+  "meshes": 23,
+  "tris": 2556,
+  "outlines": 2,
+  "sprites": 0,
+  "mats": 12
+ },
+ "garden@5 (full)": {
+  "meshes": 9,
+  "tris": 1412,
+  "outlines": 1,
+  "sprites": 0,
+  "mats": 6
+ },
+ "guard@5 (full)": {
+  "meshes": 8,
+  "tris": 1956,
+  "outlines": 1,
+  "sprites": 2,
+  "mats": 6
+ },
+ "vault@5 (full)": {
+  "meshes": 9,
+  "tris": 1172,
+  "outlines": 1,
+  "sprites": 0,
+  "mats": 7
+ },
+ "hearth@5 (lite)": {
+  "meshes": 73,
+  "tris": 1170,
+  "outlines": 11,
+  "sprites": 5,
+  "mats": 17
+ },
+ "starwell@5 (lite)": {
+  "meshes": 28,
+  "tris": 840,
+  "outlines": 9,
+  "sprites": 3,
+  "mats": 13
+ },
+ "loom@5 (lite)": {
+  "meshes": 29,
+  "tris": 1296,
+  "outlines": 10,
+  "sprites": 1,
+  "mats": 9
+ },
+ "garden@5 (lite)": {
+  "meshes": 59,
+  "tris": 1464,
+  "outlines": 3,
+  "sprites": 1,
+  "mats": 12
+ },
+ "guard@5 (lite)": {
+  "meshes": 44,
+  "tris": 828,
+  "outlines": 5,
+  "sprites": 1,
+  "mats": 16
+ },
+ "vault@5 (lite)": {
+  "meshes": 58,
+  "tris": 2216,
+  "outlines": 20,
+  "sprites": 2,
+  "mats": 14
+ },
+ "ward@5 (lite)": {
+  "meshes": 26,
+  "tris": 976,
+  "outlines": 4,
+  "sprites": 1,
+  "mats": 6
+ },
+ "spire@5 (lite)": {
+  "meshes": 48,
+  "tris": 2600,
+  "outlines": 14,
+  "sprites": 1,
+  "mats": 12
+ },
+ "hearth@9 (full)": {
+  "meshes": 8,
+  "tris": 1960,
+  "outlines": 1,
+  "sprites": 1,
+  "mats": 6
+ },
+ "starwell@9 (full)": {
+  "meshes": 17,
+  "tris": 1960,
+  "outlines": 3,
+  "sprites": 1,
+  "mats": 9
+ },
+ "loom@9 (full)": {
+  "meshes": 23,
+  "tris": 2556,
+  "outlines": 2,
+  "sprites": 0,
+  "mats": 12
+ },
+ "garden@9 (full)": {
+  "meshes": 9,
+  "tris": 1412,
+  "outlines": 1,
+  "sprites": 0,
+  "mats": 6
+ },
+ "guard@9 (full)": {
+  "meshes": 8,
+  "tris": 1956,
+  "outlines": 1,
+  "sprites": 2,
+  "mats": 6
+ },
+ "vault@9 (full)": {
+  "meshes": 9,
+  "tris": 1172,
+  "outlines": 1,
+  "sprites": 0,
+  "mats": 7
+ },
+ "hearth@9 (lite)": {
+  "meshes": 73,
+  "tris": 1170,
+  "outlines": 11,
+  "sprites": 5,
+  "mats": 17
+ },
+ "starwell@9 (lite)": {
+  "meshes": 28,
+  "tris": 840,
+  "outlines": 9,
+  "sprites": 4,
+  "mats": 13
+ },
+ "loom@9 (lite)": {
+  "meshes": 29,
+  "tris": 1296,
+  "outlines": 10,
+  "sprites": 1,
+  "mats": 9
+ },
+ "garden@9 (lite)": {
+  "meshes": 59,
+  "tris": 1464,
+  "outlines": 3,
+  "sprites": 1,
+  "mats": 12
+ },
+ "guard@9 (lite)": {
+  "meshes": 44,
+  "tris": 828,
+  "outlines": 5,
+  "sprites": 1,
+  "mats": 16
+ },
+ "vault@9 (lite)": {
+  "meshes": 58,
+  "tris": 2216,
+  "outlines": 20,
+  "sprites": 2,
+  "mats": 14
+ },
+ "ward@9 (lite)": {
+  "meshes": 26,
+  "tris": 976,
+  "outlines": 4,
+  "sprites": 1,
+  "mats": 6
+ },
+ "spire@9 (lite)": {
+  "meshes": 48,
+  "tris": 2600,
+  "outlines": 14,
+  "sprites": 1,
+  "mats": 12
+ },
+ "castle": {
+  "meshes": 208,
+  "tris": 3956,
+  "outlines": 31,
+  "sprites": 3,
+  "mats": 11
+ },
+ "tree": {
+  "meshes": 9,
+  "tris": 448,
+  "outlines": 0,
+  "sprites": 0,
+  "mats": 5
+ },
+ "makeChar(sky)": {
+  "meshes": 24,
+  "tris": 2226,
+  "outlines": 6,
+  "sprites": 0,
+  "mats": 9
+ },
+ "skiff": {
+  "meshes": 24,
+  "tris": 1738,
+  "outlines": 5,
+  "sprites": 12,
+  "mats": 16
+ }
+}

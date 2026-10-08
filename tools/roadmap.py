@@ -938,10 +938,11 @@ dict(
     id="SC",
     title="The client, built to be checked",
     subtitle="The frontend plan: architecture first, then what the percentage counts",
-    blurb="\u00a724.7 puts the simulation in Rust and the shell in Godot 4.5 GDScript; "
-          "\u00a724.12 makes offline the normal path; \u00a724.9 asks for tests that "
-          "assert behaviour; \u00a721 is written as the guide Claude Design works "
-          "from; \u00a726.8 calls interface screens, localisation and the Workshop "
+    blurb="\u00a724.7 puts the simulation in Rust and the shell in Godot GDScript "
+          "(4.5 here until TD.1 moves it to v3.5's 4.7.2); online is the rule and "
+          "offline the exception (G41's answer); \u00a724.9 asks for tests that "
+          "assert behaviour; Screens v3, recorded in \u00a723.5, is the visual "
+          "reference and stage SD builds it; \u00a726.8 calls interface screens, localisation and the Workshop "
           "safe to hand over and anything needing a real device not. The plan: "
           "put the architecture in first, so the design lands in one place and a "
           "defect names its layer, then build what moves the frontend figure, "
@@ -1015,11 +1016,18 @@ dict(
                     "only from dl.google.com, a host this environment's network "
                     "policy refuses; the iPhone build needs a Mac with Xcode and "
                     "the App Store team. Counted when a client builds on both "
-                    "stores' targets.",
-             gate="+4.86 frontend points when both build: Android once "
-                  "dl.google.com is allowed (or on a machine with the SDK), "
-                  "the iPhone on a Mac",
-             evidence="bash client/export.sh check; client/pack_check.py"),
+                    "stores' targets.<br><br><strong>v3.6 raises the bar</strong> "
+                    "(\u00a724, \u00a726.6): the store builds are on Godot 4.7.2 "
+                    "(TD.1), Android at API level 36 and the iPhone in Xcode 26 "
+                    "with the iOS 26 SDK, uploaded to the Play internal track and "
+                    "TestFlight, and \u00a726.8 now counts them in the "
+                    "determinism spike. The export check here ran on 4.5's "
+                    "templates and is re-run on 4.7.2's.",
+             gate="+4.86 frontend points when both build on 4.7.2 at the stores' "
+                  "current levels: Android once dl.google.com is allowed (or on a "
+                  "machine with the SDK), the iPhone on a Mac with Xcode 26",
+             evidence="bash client/export.sh check; client/pack_check.py",
+             blocked_by=["TD.1"]),
         dict(id="TC.4", owner="claude", status="done",
              title="Accessibility: \u00a720.8 and \u00a721.8 in full",
              detail="Text size, contrast checked against \u00a721.8's 4.5:1 "
@@ -1036,7 +1044,9 @@ dict(
                     "Portuguese. Every new screen's words go into it as they are "
                     "made, plurals and numbers formatted per language. It counts "
                     "only once a native speaker has read the Portuguese "
-                    "(\u00a726.9), which is yours to arrange.",
+                    "(\u00a726.9), which is yours to arrange, and once every "
+                    "launch screen exists: ten of \u00a723.2's 28 do today, and "
+                    "stage SD builds the rest.",
              gate="+8.80 frontend points after the native read"),
         dict(id="TC.6", owner="claude", status="done",
              title="Screens on the backend that exists: shop and track, Workshop, social",
@@ -1101,7 +1111,14 @@ dict(
                     "realms, with the wards, posts and pylons an island places "
                     "held to those built (today only its realm, realm level "
                     "and Vault are), then workers and production (\u00a79.3, \u00a75.8), "
-                    "the roster (\u00a711.5), and the Codex's restorations.",
+                    "the roster (\u00a711.5), and the Codex's restorations."
+                    "<br><br><strong>Screens v3 makes this the critical path</strong> "
+                    "for six of stage SD's screen groups, in this order: the "
+                    "builder publishing to the player's own realms (closes D60); "
+                    "workers and production with an Aether ledger and storage caps; "
+                    "the roster (characters, homes, rest, assign and recall, levels, "
+                    "the starting five); pages and the Codex with restoration and "
+                    "study; weaving state per slot; and Insight.",
              gate="no figure moves until \u00a726.8's plan carries it",
              evidence="server/test/universe.test.mjs; client/tests/universe_tests.gd, "
                       "through python3 client/status.py",
@@ -1149,18 +1166,407 @@ dict(
              gate="no frontend figure moves; it is §24.12 as the owner answered",
              evidence="client/tests/offline_tests.gd, through python3 client/status.py",
              register=["G41"]),
-        dict(id="TC.7", owner="you", status="ready",
+        dict(id="TC.7", owner="you", status="done",
              title="The design from Claude Design",
-             detail="Tokens and components, and the screens' layouts. They "
-                    "land in TC.1's token file and component library; screens "
-                    "change only where the design moves what they show."),
+             detail="<strong>Delivered:</strong> Screens v3, 28 designed screens, "
+                    "43 character and creature sheets with 3D models and 393 "
+                    "icons, recorded in v3.6 \u00a723.5 as the visual reference, "
+                    "with the document winning on every rule, number and piece of "
+                    "text. It lands through stage SD, first in TC.1's token file "
+                    "and component library (TD.2, TD.3), so screens change in one "
+                    "place.",
+             evidence="v3.6 \u00a723.5; docs/analysis/screens-v3/"),
         dict(id="TC.8", owner="you", status="blocked",
              title="Real devices, and the fix buffer",
              detail="\u00a726.8: anything needing a real device is not safe to "
                     "hand over. The device matrix (+5.46) and the iPhone and "
                     "Android checksums (T3.1) need phones; the fix buffer "
-                    "(+5.46) is closed after them.",
+                    "(+5.46) is closed after them. Screens v3 adds what only a "
+                    "phone can measure: \u00a721.3's frame budgets and \u00a724's 60 "
+                    "frames a second and 25 ms drag on the reference device, "
+                    "VoiceOver and TalkBack over the new screens, local "
+                    "notifications and asking permission after the third session "
+                    "(D68), and the platforms' age signals.",
              blocked_by=["TC.3"]),
+    ],
+),
+
+# ===========================================================================
+dict(
+    id="SD",
+    title="Screens v3, built on the document's rules",
+    subtitle="The owner's designs (§23.5) as the base: four tracks, one order",
+    blurb="Screens v3, made in Claude Design, holds 28 designed screens, 43 "
+          "character and creature sheets with 3D models, and 393 icons, and v3.6 "
+          "§23.5 records it: the designs carry the look, and the document wins "
+          "wherever it states a rule, a number or a piece of text. Read screen by "
+          "screen against v3.6 and the build (docs/analysis/screens-v3/), it is a "
+          "very good base and a long way from a build: 18 of its 28 screens have "
+          "no screen in the client yet, its 3D is three.js code rather than "
+          "models, and in about 190 places it departs from a rule or the build "
+          "(each checked by an adversarial reader, in the register as the v3.6 "
+          "layer). The plan takes the look and refuses the mechanics: the engine "
+          "first, then the design system so every screen lands once, the 3D "
+          "world as its own track because it is the largest risk, the simulation "
+          "and server pieces the screens stand on, and the screens in the order "
+          "§26.2's vertical slice needs them. <strong>None of it moves the "
+          "frontend figure</strong>: completion counts §26.8's list, which "
+          "costs none of the twenty screens outside the heist, builder, Workshop, "
+          "shop, social and settings, no design port and no 3D world. Every task "
+          "below keeps the client's tests passing, so the figure cannot fall either.",
+    tasks=[
+        # -- Track A: the foundation ------------------------------------------
+        dict(id="TD.1", owner="claude", status="ready",
+             title="Move the client to Godot 4.7.2 and godot-rust's 4.7 API",
+             detail="v3.5 pinned Godot 4.7.2-stable with godot-rust v0.5.5 built "
+                    "for the 4.7 API (§24, brief 39). <strong>Measured in a "
+                    "copy:</strong> the extension builds offline with "
+                    "<code>api-4-7</code> (the crate is already 0.5.5), and on "
+                    "4.7.2 the client passes 100 of 100 tests after one change: 4.7 "
+                    "moved the screen-reader live-region constants to a new "
+                    "<code>AccessibilityServer</code>, so <code>ui.gd:138</code> and "
+                    "<code>:321</code> name it instead of <code>DisplayServer</code>. "
+                    "The rest is pins: <code>project.godot</code>'s feature, "
+                    "<code>build.sh</code>, <code>compatibility_minimum</code>, the "
+                    "export templates (1.28 GB) and Android's "
+                    "<code>target_sdk=36</code> set in the preset rather than left "
+                    "to the engine's default. v3.6's opening says no client code "
+                    "existed; it did, and the move cost one change.",
+             gate="100 of 100 client tests on 4.7.2, the five goldens agreeing at "
+                  "every second, <code>export.sh check</code> on the 4.7.2 templates, "
+                  "gdlint clean",
+             evidence="python3 client/status.py; bash client/export.sh check"),
+        dict(id="TD.2", owner="claude", status="blocked",
+             title="The design's tokens, three typefaces and the licence ledger",
+             detail="Screens v3 keeps its look in inline styles (852 colours, 402 "
+                    "shadows), but underneath it is ten materials, one outline, "
+                    "one hard drop shadow and a press that sinks 2 to 3 points. "
+                    "<code>client/ui/tokens.json</code> takes them, each with its "
+                    "source; where the document states a value (§21.2's "
+                    "colours, which the design matches exactly; §21.8's 13 pt "
+                    "floor, contrast and motion) the document's is the value and "
+                    "the design's sits beside it, so an owner's answer flips one "
+                    "value without blocking anything. Manrope, Lilita One and "
+                    "Marcellus are SIL OFL; §21.8 names Baloo 2 (an owner "
+                    "decision), and §21.11's licence ledger does not exist yet. "
+                    "The frame stays at 360 points: a 390-point base would draw 13-pt "
+                    "text at 12 real points on 360-dp phones.",
+             gate="every client test passes unchanged; the tokens validator "
+                  "refuses a value with no source",
+             blocked_by=["TD.1"]),
+        dict(id="TD.3", owner="claude", status="blocked",
+             title="Materials and components, and checks that read what words sit on",
+             detail="Gold, leather, red, green and round buttons, sheets, chips, "
+                    "portrait tiles, banners and cards, drawn by one rounded-box "
+                    "shader (gradients, rims and hard drops are beyond "
+                    "StyleBoxFlat) under the names <code>scripts/ui.gd</code> "
+                    "already gives, so screens change in one place. 28% of the "
+                    "design's 1,049 text runs fail §21.8's 4.5:1 or the "
+                    "perceptual check, mostly white numbers on light badges and "
+                    "violet secondary text; the components keep the look and fix "
+                    "the words. The accessibility checks learn the colour each "
+                    "word actually sits on and how outlined text counts.",
+             gate="§21.1's sizes and §21.8's contrast at 100% and 200% "
+                  "text, in both languages, on the dark and the parchment surfaces",
+             blocked_by=["TD.2"], register=["D72"]),
+        dict(id="TD.4", owner="claude", status="blocked",
+             title="Motion, with reduced motion that reaches everything",
+             detail="The design has 86 keyframe animations, eight of them named "
+                    "twice, running 300 to 550 ms with overshoot against "
+                    "§21.8's 150 to 250 ms; its reduced-motion switch is read "
+                    "by nothing. One helper plays every movement, "
+                    "<code>UI.motion_ms</code>'s rule applies to all of it, toasts "
+                    "become banners that stay when the player asks (§20.8), "
+                    "and a lint rule refuses a tween made anywhere else.",
+             blocked_by=["TD.2"]),
+        dict(id="TD.5", owner="claude", status="blocked",
+             title="The icons: 393 designed, exported once, imported on 4.7.2",
+             detail="Four sources: <code>icons_rbi.js</code> (360 in 31 groups), "
+                    "the school and law icons, the diorama's marks, and inline "
+                    "ones. Exported as 444 SVGs (done once already, in the "
+                    "analysis); they use masks, filters and system-font text "
+                    "Godot's importer may not handle, so they are rasterised in "
+                    "Chromium at the sizes used, with a manifest, "
+                    "<code>UI.icon()</code> and a test that every name a screen "
+                    "uses exists. The school marks keep Matter's cube edges.",
+             blocked_by=["TD.1"]),
+        dict(id="TD.6", owner="claude", status="blocked",
+             title="The shell: one persistent scene, the tab bar, the HUD and the world",
+             detail="Today the router swaps whole scenes, so no chrome and no 3D "
+                    "world can persist between screens. The shell keeps the World, "
+                    "the content, the chrome (top HUD, side alerts, tab bar, back "
+                    "header) and the overlay, configured per route; headless "
+                    "presenters give the HUD's bars from the server's caps, the "
+                    "badges from real state and the nearest goal (§14.8). The "
+                    "design's chrome sits in the top band and the corners, where "
+                    "§21.1's reach rule and the layout check fail it; the check "
+                    "splits frequent controls from rare ones, as §21.1 does.",
+             gate="a flow test per tab; the layout check in both orientations and "
+                  "languages",
+             blocked_by=["TD.3"]),
+        # -- Track B: the 3D world ---------------------------------------------
+        dict(id="TD.7", owner="claude", status="blocked",
+             title="An export harness for the designs' 3D, held to the budgets",
+             detail="The 43 creatures are signed-distance sculpts meshed in "
+                    "three.js, auto-skinned, with 15 procedural animations each; "
+                    "no .glb exists. <strong>Proved in the analysis:</strong> "
+                    "Featherkin exported with its 15 clips baked (1.73 MB) and "
+                    "imported into Godot with 24 bones and all 435 tracks "
+                    "resolving. The harness runs the prototype's own modules, "
+                    "unedited, in headless Chromium with three r184 from npm, "
+                    "seeds their randomness, caps segments and picks each kind's "
+                    "sculpt step to its budget (Featherkin 47,600 to 12,600 "
+                    "triangles with no edit), bakes the clips with springs off, "
+                    "and writes a manifest that lists §21.9 row by row. Today "
+                    "every model is several times over §21.3's budgets (realm "
+                    "views 163,000 to 219,000 triangles in over 1,100 draw calls; "
+                    "characters 10,000 to 182,000), and a whole island needs "
+                    "<code>EXT_mesh_gpu_instancing</code>, which 4.5 refused.",
+             gate="every asset inside §21.3's budget and within 5% of "
+                  "§21.6's height, re-exported byte for byte",
+             blocked_by=["TD.1"]),
+        dict(id="TD.8", owner="claude", status="blocked",
+             title="One toon look for everything",
+             detail="The diorama is a four-step toon with world-space hulls; the "
+                    "characters are physically based with clearcoat, sheen and "
+                    "transmission under ACES, and the portraits are renders of "
+                    "that. §21.3 asks for one toon look with 1.5-pixel lines. "
+                    "One shader kit: the three-step ramp with violet shadows, rim, "
+                    "a clip-space outline, water and lava, sky by local time "
+                    "(§21.2), glows, the ghost, and the Hush, Spark and Echo "
+                    "variants, assigned to every imported model on import.",
+             blocked_by=["TD.7"]),
+        dict(id="TD.9", owner="claude", status="ready",
+             title="Who the actors are, carried beside the replay",
+             detail="The 3D draws a kind, a form and an outfit; the replay gives "
+                    "a role. Neither the simulation's crew and guards nor the "
+                    "bundle's posts name a kind, so a replay cannot be drawn with "
+                    "the right creatures, on the phone or in §24's clips. An "
+                    "appearance block, about four bytes an actor, stored with the "
+                    "heist and the island beside §24.11's four inputs and "
+                    "never inside them, and returned with the replay.",
+),
+        dict(id="TD.10", owner="claude", status="blocked",
+             title="The world drawn from the simulation",
+             detail="The island base built around the simulation's square grid "
+                    "(§5.2's 10 to 14 tiles, 1 tile = 1 m; the design's realm "
+                    "is a 42-tile disc), its features and heights, the buildings "
+                    "where §10.1 puts them, actors interpolated between ticks "
+                    "with deterministic animation choice, §21.12's overlays, "
+                    "the orthographic camera in 90-degree steps, tile picking. The "
+                    "flat <code>RealmView</code> stays for screen readers and as "
+                    "the fallback.",
+             gate="every actor's world position equals its tile; a still of each "
+                  "mode against a golden on a GPU runner",
+             blocked_by=["TD.8", "TD.9"]),
+        dict(id="TD.11", owner="claude", status="blocked",
+             title="Characters in full: forms, guards, role accessories",
+             detail="No model has the guard form the sheets label (its sash and "
+                    "lantern are a caption), and a form changes colour and glow "
+                    "only, which §21.6 calls a failed form. Each note gets an "
+                    "accessory and a pattern per size band; guards get the sash "
+                    "and lantern and §21.6's role accessories so a guard's role "
+                    "reads at a glance (§12.8); springs; portraits re-rendered "
+                    "in the toon look. With the character artist (§26.3).",
+             blocked_by=["TD.7"]),
+        # -- Track C: what the screens stand on ----------------------------
+        dict(id="TD.12", owner="claude", status="ready",
+             title="Abilities, Sage powers and casts in the simulation",
+             detail="The simulation has twelve command kinds and none is an "
+                    "ability, a Sage power or a cast, and its crew are five roles "
+                    "with no characters; completion's Crews row reads done all the "
+                    "same. A crew manifest in the replay (character, kind, level, "
+                    "traits; the Sage and its uses; the casts), the eighteen "
+                    "abilities as named-parameter changes with two uses and the "
+                    "ten-second lockout, the four Sages' powers, casts as "
+                    "four-tile circles, §12.6's four-ready rule; the server "
+                    "validates the manifest against the roster. Paradox-born need "
+                    "a crew member with no role, and the Twinned a shared pool. The "
+                    "goldens are regenerated and the harness's decision band "
+                    "re-measured.",
+             gate="the decision band re-measured inside §12.6's 8 to 12 "
+                  "seconds; T5.1 waits for this"),
+        dict(id="TD.13", owner="claude", status="ready",
+             title="The simulation's event log",
+             detail="Outside the checksum: guard state changes with their cause, "
+                    "knockouts and revivals, captures and boarding, alarm levels "
+                    "and their cause, wards, pylons, the Vault opening, law blinks. "
+                    "The result's decisive moment and its one thing to try "
+                    "(§12.13), the heist's haptics and words, Profile's facts, "
+                    "the share clip and D65's heatmaps all read it.",
+             register=["D65"]),
+        dict(id="TD.14", owner="claude", status="ready",
+             title="Stability and weaving prices, priced once for client and server",
+             detail="Weaving and the Harmony view show strain, harmonies and "
+                    "clashes as the player decides; the server must charge the "
+                    "same. One function in the simulation (§5.5, §8) "
+                    "exported to the client and the server's WebAssembly, with "
+                    "crown laws carried in the bundle (D61).",
+             register=["D61"]),
+        dict(id="TD.15", owner="claude", status="ready",
+             title="Terrain in the simulation: the 34 missing features, moss, heights",
+             detail="The simulation has 5 of §6.2's 39 features (rock pillar, "
+                    "ruin wall, fence, fog bank, tall grass); the terrain editor, "
+                    "the realm view and the curation screens need the rest, with "
+                    "moss and clearing it, heights 0 to 3, directions and tunnels, "
+                    "and terrain points. Completion's Terrain editing row reads "
+                    "done on one test. The height of a level is unstated; the "
+                    "design's ratio is half a tile."),
+        dict(id="TD.16", owner="claude", status="ready",
+             title="The generator and the crews: ruins, rehearsals, fallbacks",
+             detail="D66: drifting ruins at three labelled difficulties "
+                    "(§12.12), the rehearsal crews and the reference crews, a "
+                    "recorder for the defence log's report, generated fallback "
+                    "targets (§12.22), and a server queue that measures an "
+                    "island before it is offered, which also gives D62's hold-band "
+                    "check. The Observatory's ruins, Slower ruins, the defence log "
+                    "and the first session's tutorial ruin all wait for it.",
+             register=["D66", "D62"]),
+        # -- Track D: the screens -----------------------------------------------
+        dict(id="TD.17", owner="claude", status="blocked",
+             title="Heist and result on the design",
+             detail="The heist's HUD and controls first on the flat view (the "
+                    "design's portraits with pips and lockout, Get out and the "
+                    "skiff, the alarm with its newest effect in words, the Vault "
+                    "and load target, the Sage dial), then in 3D; the result to "
+                    "§23.2's rewritten row: outcome and multipliers, the "
+                    "decisive moment with a three-second replay and one thing to "
+                    "try, loot kept, the fee by target kind (none on a Trace), the "
+                    "law to study, Renown, rest per crew member, and “worth "
+                    "your time?” once a session. The design's heist adds "
+                    "mechanics (a Sage wheel's extra powers, heist-wide casts) "
+                    "that are refused.",
+             gate="the heist and result tests kept by name and passing (completion "
+                  "reads them); the moment picker tested on the goldens",
+             blocked_by=["TD.3", "TD.12", "TD.13"]),
+        dict(id="TD.18", owner="claude", status="blocked",
+             title="Observatory, scout report, landing picker and planner",
+             detail="The landing picker on one island can start once the "
+                    "components exist; the rest wait for universes of several "
+                    "realms (T3.3), the roster and ruins. The offer stops sending "
+                    "the internal rating to the device and starts sending why each "
+                    "target was offered and its depth (§12.15, §12.22); the "
+                    "scout draws no positions (brief 38) and follows the owner's "
+                    "free-scout answer (F46); the fee and the window follow F39, "
+                    "C41 and F44 as the server does.",
+             blocked_by=["TD.3", "T3.3", "TD.16"], register=["F46", "F51"]),
+        dict(id="TD.19", owner="claude", status="blocked",
+             title="Home and the realm view on the world",
+             detail="The Universe map and the realm view are the diorama with "
+                    "the shell's chrome: realms with their realm and crown laws, "
+                    "links, the universe's one strain band, faults, ready amounts "
+                    "and the heist button. The server's universe gains laws, links, "
+                    "strain, faults, production and caps (TC.12's slices). The "
+                    "design's builders cap, upgrade timers, typed guard posts, "
+                    "second Hearths and Storehouse in the Heart, and its shield "
+                    "timer on home are mechanics §10 and §18.8 do not have, "
+                    "and are refused.",
+             blocked_by=["TD.6", "TD.10", "TC.12"]),
+        dict(id="TD.20", owner="claude", status="blocked",
+             title="Weaving, the law card, the Codex and the Harmony view",
+             detail="Weaving shows the big card with its looping preview, cost, "
+                    "strain and ready time, and the two or three recommended laws "
+                    "§23.2 asks for, which the design omits; the law card "
+                    "carries the school's shape and a looping preview, never a "
+                    "pause sign; the Codex's chapters are unlock steps by Keeper "
+                    "level and its schools are albums (§7.6); Harmony shows "
+                    "harmonies, clashes and chords as the simulation prices them "
+                    "(TD.14). Effect words come from content (G23, G25). The Codex, "
+                    "Aether and weaving state live on the server first (TC.12).",
+             blocked_by=["TD.3", "TD.14", "TC.12"], register=["G23", "G25"]),
+        dict(id="TD.21", owner="claude", status="blocked",
+             title="Roster, Character, Sage hall and Forms album",
+             detail="The roster on the server comes first (TC.12). Content gains "
+                    "the three paradox-born rows v3.6 adds to §11.8 and the "
+                    "Stray rule (one of the eighteen kinds, never a nineteenth). "
+                    "The character screen shows §11.11's card word for word and "
+                    "§11.1's role numbers, not the sheets' own; the design's "
+                    "stealth and grit stats, its role-keyed abilities and its "
+                    "work bonuses are refused.",
+             blocked_by=["TD.3", "TD.12", "TC.12"]),
+        dict(id="TD.22", owner="claude", status="blocked",
+             title="Lab, defence curation, rehearsal and defence log, terrain editor, Workshop",
+             detail="The Lab at §10.2's times (5 h at level 3, not the design's "
+                    "5 h 30), curation over the generator's alternatives, the "
+                    "defence log with each raid's report — the haul denied, how "
+                    "long the defence held, where the crew was seen, what fired "
+                    "(§23.2) — whose haul G31 must price, the terrain "
+                    "editor on the simulation's 39 features and §6.1's budgets "
+                    "(not the design's 80 points, or its Hill and Grove), and the "
+                    "Workshop on the design, keeping remix and withdraw.",
+             blocked_by=["TD.3", "TD.15", "TD.16"], register=["G31"]),
+        dict(id="TD.23", owner="claude", status="blocked",
+             title="Season, Shop, Share sheet and Friends on the design",
+             detail="Already built on the backend that exists (TC.6); only their "
+                    "look changes, and the mechanics the design adds are refused: "
+                    "a Starpass that adds 20% stars (§18.8), quests and star "
+                    "chests, league rewards for everyone, live “raiding” "
+                    "status (§17.8), prices in Starglass (F41).",
+             blocked_by=["TD.3"], register=["G28", "F41"]),
+        dict(id="TD.24", owner="claude", status="blocked",
+             title="Profile and stats, with its server route",
+             detail="v3.6's new §23.2 row: Renown and league over time, never "
+                    "the rating; heists by outcome; defences held and leaked; "
+                    "records; the battle log with replays while they are kept; "
+                    "collection and badges; private for 13 to 15. The server writes "
+                    "each heist's facts at settlement and answers "
+                    "<code>GET /v1/profile</code>. “Leaked”, records and "
+                    "badges are undefined (TD.29).",
+             blocked_by=["TD.3", "TD.13"]),
+        dict(id="TD.25", owner="claude", status="blocked",
+             title="Settings and wellbeing in four tabs",
+             detail="Protections the band fixes shown locked (§23.2, §20.2), "
+                    "deletion with “withdraw my islands too” (D70, F43), the "
+                    "reminder picker offering no time inside the night (G34), "
+                    "play-time reminders (§20.2's 60 and 90 minutes), and the "
+                    "notification settings the server already takes. The design's "
+                    "age-band preview changes the player's band and is refused.",
+             blocked_by=["TD.3"], register=["D70", "F43", "G34"]),
+        dict(id="TD.26", owner="claude", status="blocked",
+             title="First launch in §23.5's order",
+             detail="Title, the age step (the built check, restyled, with no way "
+                    "back from under 13), a summary of the protections the band "
+                    "sets, the Keeper's name and face, then §16's beats. The "
+                    "name needs a rule (word lists, as C43's answer gives islands, "
+                    "and who sees it); the beats need the heist, the result, "
+                    "weaving and a tutorial ruin, so this lands last.",
+             blocked_by=["TD.25", "TD.17", "TD.20", "TD.16"], register=["F56"]),
+        dict(id="TD.27", owner="claude", status="blocked",
+             title="Slower ruins, not slower rehearsals",
+             detail="§23.5 adopts the design's 75% speed for drifting ruins "
+                    "only, never a heist against a player and never Renown. The "
+                    "client applies it to the builder's rehearsal and completion's "
+                    "accessibility row names that test; the setting, the test and "
+                    "the proof are renamed in one change, and the effect waits for "
+                    "ruins.",
+             blocked_by=["TD.16"]),
+        dict(id="TD.28", owner="claude", status="blocked",
+             title="Landscape for every screen",
+             detail="§23.3 asks for portrait and landscape; Screens v3 designs "
+                    "portrait only (§23.5). The tab bar becomes a left rail and "
+                    "the HUD a right column.",
+             blocked_by=["TD.30"]),
+        # -- The owner's ------------------------------------------------------
+        dict(id="TD.29", owner="you", status="yours",
+             title="Settle what the designs leave open, and take your answers into the document",
+             detail="v3.6 took none of the 47 answers you recorded on 25–26 "
+                    "September, and §23.5 makes the document win over the "
+                    "designs, so a screen can have three sources that disagree. "
+                    "The build follows a recorded answer first, then the document, "
+                    "then the design. Open decisions the designs raise are in the "
+                    "brief: the visual language (surfaces, typefaces, icon finish, "
+                    "motion), how outlined text counts for contrast, the Twinned's "
+                    "gift, and the rest listed there.",
+             evidence="docs/decisions/index.html"),
+        dict(id="TD.30", owner="you", status="blocked",
+             title="§26.2's pre-production exit: screens approved, the art style read on devices",
+             detail="Phase 1 ends when the screens are approved and the art-style "
+                    "test shows eight wards and six or seven kinds of defensive "
+                    "marker reading on target devices, checked under "
+                    "colour-blindness simulation; if eight do not read the ward cap "
+                    "drops one at a time (§26.2). No task held it.",
+             gate="§26.2 phase 1's exit test",
+             blocked_by=["TD.10", "TC.8"]),
     ],
 ),
 
@@ -1208,7 +1614,11 @@ dict(
     tasks=[
         dict(id="T5.1", owner="claude", status="blocked",
              title="Lock the simulation contract (§24.10)",
-             blocked_by=["T3.1"]),
+             detail="Not before abilities, Sage powers and casts are in the "
+                    "replay (TD.12) and the actors' appearance rides beside it "
+                    "(TD.9): both change what a heist records, and a lock before "
+                    "them locks an incomplete contract.",
+             blocked_by=["T3.1", "TD.12", "TD.9"]),
         dict(id="T5.2", owner="claude", status="blocked",
              title="Lock the detection numbers (§12.17)",
              detail="Unblocked by C1, and the numbers are already data in "
@@ -1247,7 +1657,7 @@ dict(
              blocked_by=["T1.4", "T1.9"]),
         dict(id="T5.4", owner="claude", status="blocked",
              title="Lock saves, bundles and versions (§24.11)",
-             blocked_by=["T5.1"]),
+             blocked_by=["T5.1", "TD.9"]),
         dict(id="T5.5", owner="claude", status="doing",
              title="Specify pathfinding and crew control before building it",
              detail="The largest gap and the system most likely to fail "
@@ -1312,13 +1722,23 @@ dict(
     tasks=[
         dict(id="T6.1", owner="claude", status="blocked",
              title="Build the slice",
-             gate="≥ 7 of 10 outside playtesters ask for a second session; "
-                  "≥ 15 decisions per heist (§26.2)",
-             blocked_by=["T5.1", "T5.2", "T5.3", "T5.4", "T5.5"]),
+             detail="Its content needs more than the locks: universes of several "
+                    "realms (T3.3), the roster on the server (TC.12), abilities and "
+                    "Sages (TD.12), ruins and rehearsals (TD.16), and "
+                    "\u00a726.2's pre-production exit (TD.30).",
+             gate="\u00a719.27's harness gates: 15 to 25 meaningful decisions a "
+                  "run, a near-capture in about a third of runs, the optimal crew "
+                  "at least 35 points ahead of the careless one, hold rates and "
+                  "pacing in band, commands explaining most of the outcome "
+                  "variance. No outside player is involved (\u00a726.2)",
+             blocked_by=["T5.1", "T5.2", "T5.3", "T5.4", "T5.5", "T3.3",
+                         "TC.12", "TD.12", "TD.16", "TD.30"]),
         dict(id="T6.2", owner="you", status="blocked",
-             title="Run §19.5's fun gate",
-             detail="The exit test, and the first honest answer to whether any of "
-                    "this works.",
+             title="Play the slice yourself, against the harness's gates",
+             detail="Since v3.3 \u00a726.2 needs no player but the developer before "
+                    "soft launch: \u00a719.5's fun gate moved to soft launch (T7.3), "
+                    "where there are players. The slice is still the first build "
+                    "you can play end to end.",
              blocked_by=["T6.1"]),
     ],
 ),
@@ -1334,8 +1754,8 @@ dict(
     tasks=[
         dict(id="T7.1", owner="claude", status="blocked",
              title="Alpha — 18 laws, player heists, the server, balance bots",
-             gate="no dominant law in bot runs; ≥ 20% of testers still "
-                  "playing after a week (§26.2)",
+             gate="no dominant law in bot runs, and the same harness gates as "
+                  "the slice, on the full alpha content (\u00a726.2)",
              blocked_by=["T6.2"]),
         dict(id="T7.2", owner="claude", status="blocked",
              title="Beta on TestFlight — all launch content, age protections, moderation",
@@ -1343,7 +1763,9 @@ dict(
              blocked_by=["T7.1"]),
         dict(id="T7.3", owner="you", status="blocked",
              title="Soft launch in a few English- and Portuguese-speaking countries",
-             gate="the launch gates in §22.2",
+             gate="the launch gates in \u00a722.2, and the gates that need "
+                  "players: \u00a725.1, the fun gate in \u00a719.5 and "
+                  "comprehension in \u00a725.3 (\u00a726.2)",
              blocked_by=["T7.2"]),
         dict(id="T7.4", owner="you", status="blocked",
              title="Global launch",
@@ -1367,18 +1789,16 @@ NOT_YET = [
                      "settled the other eight \u2014 the ward budget, the post "
                      "ladder, the hold band, what the generator weaves, the "
                      "authored laws, ward levels and pylons."),
-    ("Character art", "Nothing in the register blocks it since v3.3 \u2014 one "
-                      "card per ruleborn and 54 forms \u2014 but \u00a726.2 "
-                      "puts the art-style test on target devices first, so the "
-                      "style is settled before the quantity is drawn."),
-    ("Detailed screen design", "Nothing in the register blocks it since v3.4, "
-                               "which settled the last question: the scout "
-                               "report shows no patrol positions (brief 38). "
-                               "v3.3 settled the roster the character screens "
-                               "read, the ranks the Codex shows and the "
-                               "Library's place on the build screen. "
-                               "\u00a726.2's art-style test still comes first, "
-                               "as it does for the characters."),
+    ("Character art", "Screens v3 has 43 sheets with 3D models, as code: they "
+                      "are exported and held to \u00a721.3's budgets first (TD.7), "
+                      "and \u00a726.2's art-style test on target devices (TD.30) "
+                      "settles the style before the quantity is made."),
+    ("Building past the design", "Screens v3 is the design (\u00a723.5). A "
+                                 "screen is built from it with the document's "
+                                 "rules, and nothing the design adds that changes "
+                                 "what a player can do is built until the "
+                                 "document says so; the places the designs depart "
+                                 "are in the register's v3.6 layer."),
     ("Localisation", "Two launch languages with a named owner since v3.3, but "
                      "the coined vocabulary gets its native-speaker read-aloud "
                      "(\u00a726.9) before anything is translated."),

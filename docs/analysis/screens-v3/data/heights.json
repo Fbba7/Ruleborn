@@ -1,0 +1,182 @@
+[
+ {
+  "kind": "featherkin",
+  "gameScale": 0.62,
+  "visH": 0.966,
+  "visTop": 0.966,
+  "bodyTop": 0.966,
+  "visTopGame": 0.599,
+  "bodyTopGame": 0.599
+ },
+ {
+  "kind": "rambler",
+  "gameScale": 1.1,
+  "visH": 0.837,
+  "visTop": 0.837,
+  "bodyTop": 0.837,
+  "visTopGame": 0.921,
+  "bodyTopGame": 0.921
+ },
+ {
+  "kind": "glassgolem",
+  "gameScale": 1.15,
+  "visH": 1.319,
+  "visTop": 1.333,
+  "bodyTop": 1.211,
+  "visTopGame": 1.533,
+  "bodyTopGame": 1.393
+ },
+ {
+  "kind": "quarryback",
+  "gameScale": 1.1,
+  "visH": 0.845,
+  "visTop": 0.845,
+  "bodyTop": 0.845,
+  "visTopGame": 0.929,
+  "bodyTopGame": 0.929
+ },
+ {
+  "kind": "prismmite",
+  "gameScale": 1.35,
+  "visH": 0.557,
+  "visTop": 0.561,
+  "bodyTop": 0.561,
+  "visTopGame": 0.757,
+  "bodyTopGame": 0.757
+ },
+ {
+  "kind": "tidewalker",
+  "gameScale": 1.12,
+  "visH": 0.722,
+  "visTop": 0.722,
+  "bodyTop": 0.722,
+  "visTopGame": 0.809,
+  "bodyTopGame": 0.809
+ },
+ {
+  "kind": "hourkeeper",
+  "gameScale": 1.1,
+  "visH": 0.832,
+  "visTop": 0.837,
+  "bodyTop": 0.837,
+  "visTopGame": 0.921,
+  "bodyTopGame": 0.921
+ },
+ {
+  "kind": "stillwatch",
+  "gameScale": 1.1,
+  "visH": 1.063,
+  "visTop": 1.072,
+  "bodyTop": 1.072,
+  "visTopGame": 1.179,
+  "bodyTopGame": 1.179
+ },
+ {
+  "kind": "emberling",
+  "gameScale": 1.3,
+  "visH": 0.77,
+  "visTop": 0.774,
+  "bodyTop": 0.531,
+  "visTopGame": 1.006,
+  "bodyTopGame": 0.69
+ },
+ {
+  "kind": "stormhound",
+  "gameScale": 1.05,
+  "visH": 0.932,
+  "visTop": 0.932,
+  "bodyTop": 0.91,
+  "visTopGame": 0.979,
+  "bodyTopGame": 0.955
+ },
+ {
+  "kind": "sparkwright",
+  "gameScale": 1.12,
+  "visH": 0.771,
+  "visTop": 0.771,
+  "bodyTop": 0.707,
+  "visTopGame": 0.864,
+  "bodyTopGame": 0.792
+ },
+ {
+  "kind": "mossbear",
+  "gameScale": 1.2,
+  "visH": 1.154,
+  "visTop": 1.154,
+  "bodyTop": 1.126,
+  "visTopGame": 1.385,
+  "bodyTopGame": 1.351
+ },
+ {
+  "kind": "bloomling",
+  "gameScale": 1.3,
+  "visH": 0.568,
+  "visTop": 0.572,
+  "bodyTop": 0.453,
+  "visTopGame": 0.744,
+  "bodyTopGame": 0.589
+ },
+ {
+  "kind": "rootrunner",
+  "gameScale": 1.15,
+  "visH": 0.885,
+  "visTop": 0.885,
+  "bodyTop": 0.737,
+  "visTopGame": 1.018,
+  "bodyTopGame": 0.847
+ },
+ {
+  "kind": "echoplate",
+  "gameScale": 1,
+  "visH": 1.359,
+  "visTop": 1.359,
+  "bodyTop": 1.228,
+  "visTopGame": 1.359,
+  "bodyTopGame": 1.228
+ },
+ {
+  "kind": "lanternwisp",
+  "gameScale": 1.3,
+  "visH": 0.578,
+  "visTop": 0.802,
+  "bodyTop": 0.724,
+  "visTopGame": 1.043,
+  "bodyTopGame": 0.942
+ },
+ {
+  "kind": "soulmender",
+  "gameScale": 1.15,
+  "visH": 0.813,
+  "visTop": 0.815,
+  "bodyTop": 0.815,
+  "visTopGame": 0.937,
+  "bodyTopGame": 0.937
+ },
+ {
+  "kind": "tinkerer",
+  "gameScale": 1,
+  "visH": 0.97,
+  "visTop": 0.97,
+  "bodyTop": 0.97,
+  "visTopGame": 0.97,
+  "bodyTopGame": 0.97
+ },
+ {
+  "kind": "gardener",
+  "gameScale": 1,
+  "visH": 1.322,
+  "visTop": 1.322,
+  "bodyTop": 1.292,
+  "visTopGame": 1.322,
+  "bodyTopGame": 1.292
+ },
+ {
+  "kind": "wanderer",
+  "gameScale": 1,
+  "visH": 1.27,
+  "visTop": 1.27,
+  "bodyTop": 1.27,
+  "visTopGame": 1.27,
+  "bodyTopGame": 1.27
+ }
+]

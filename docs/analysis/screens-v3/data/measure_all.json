@@ -1,0 +1,1274 @@
+[
+ {
+  "kind": "featherkin",
+  "res": 0.019,
+  "ms": 516,
+  "meshes": 101,
+  "skinned": 0,
+  "tris": 22596,
+  "bodyTris": 12720,
+  "accTris": 9876,
+  "accMeshes": 100,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 22,
+  "matTypes": {
+   "MeshPhysicalMaterial": 97,
+   "MeshBasicMaterial": 4
+  },
+  "textures": 3,
+  "onBeforeCompile": 101,
+  "transparent": 0,
+  "bones": 0,
+  "vcolors": 60,
+  "geos": 47,
+  "sharedGeoMeshes": 54,
+  "names": [
+   [
+    "cape_feather",
+    59
+   ],
+   [
+    "(unnamed)",
+    35
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "motion_chevron",
+    1
+   ],
+   [
+    "cape_cord",
+    1
+   ]
+  ],
+  "rigBones": 24,
+  "height": 0.972,
+  "gameScale": 0.62,
+  "heightGame": 0.603,
+  "clips": {
+   "idle": 4,
+   "idle2": 5,
+   "walk": 0.72,
+   "run": 0.42,
+   "carry": 1.16,
+   "climb": 1.47,
+   "leap": 1.6,
+   "slide": 1.6,
+   "wade": 2.31,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.8,
+   "nap": 4,
+   "work": 1.6,
+   "ability": 2.2
+  },
+  "wall_s": 0.7
+ },
+ {
+  "kind": "featherkin",
+  "res": 0.03,
+  "ms": 203,
+  "meshes": 101,
+  "skinned": 0,
+  "tris": 14828,
+  "bodyTris": 4952,
+  "accTris": 9876,
+  "accMeshes": 100,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 22,
+  "matTypes": {
+   "MeshPhysicalMaterial": 97,
+   "MeshBasicMaterial": 4
+  },
+  "textures": 3,
+  "onBeforeCompile": 101,
+  "transparent": 0,
+  "bones": 0,
+  "vcolors": 60,
+  "geos": 47,
+  "sharedGeoMeshes": 54,
+  "names": [
+   [
+    "cape_feather",
+    59
+   ],
+   [
+    "(unnamed)",
+    35
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "motion_chevron",
+    1
+   ],
+   [
+    "cape_cord",
+    1
+   ]
+  ],
+  "rigBones": 24,
+  "height": 0.966,
+  "gameScale": 0.62,
+  "heightGame": 0.599,
+  "clips": {
+   "idle": 4,
+   "idle2": 5,
+   "walk": 0.72,
+   "run": 0.42,
+   "carry": 1.16,
+   "climb": 1.47,
+   "leap": 1.6,
+   "slide": 1.6,
+   "wade": 2.31,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.8,
+   "nap": 4,
+   "work": 1.6,
+   "ability": 2.2
+  },
+  "wall_s": 0.3
+ },
+ {
+  "kind": "featherkin",
+  "res": 0.04,
+  "ms": 88,
+  "meshes": 101,
+  "skinned": 0,
+  "tris": 12576,
+  "bodyTris": 2700,
+  "accTris": 9876,
+  "accMeshes": 100,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 22,
+  "matTypes": {
+   "MeshPhysicalMaterial": 97,
+   "MeshBasicMaterial": 4
+  },
+  "textures": 3,
+  "onBeforeCompile": 101,
+  "transparent": 0,
+  "bones": 0,
+  "vcolors": 60,
+  "geos": 47,
+  "sharedGeoMeshes": 54,
+  "names": [
+   [
+    "cape_feather",
+    59
+   ],
+   [
+    "(unnamed)",
+    35
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "motion_chevron",
+    1
+   ],
+   [
+    "cape_cord",
+    1
+   ]
+  ],
+  "rigBones": 24,
+  "height": 0.941,
+  "gameScale": 0.62,
+  "heightGame": 0.583,
+  "clips": {
+   "idle": 4,
+   "idle2": 5,
+   "walk": 0.72,
+   "run": 0.42,
+   "carry": 1.16,
+   "climb": 1.47,
+   "leap": 1.6,
+   "slide": 1.6,
+   "wade": 2.31,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.8,
+   "nap": 4,
+   "work": 1.6,
+   "ability": 2.2
+  },
+  "wall_s": 0.1
+ },
+ {
+  "kind": "mossbear",
+  "res": 0.019,
+  "ms": 1369,
+  "meshes": 233,
+  "skinned": 0,
+  "tris": 57846,
+  "bodyTris": 26862,
+  "accTris": 30984,
+  "accMeshes": 232,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 117,
+  "matTypes": {
+   "MeshPhysicalMaterial": 229,
+   "MeshBasicMaterial": 4
+  },
+  "textures": 2,
+  "onBeforeCompile": 233,
+  "transparent": 0,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 134,
+  "sharedGeoMeshes": 99,
+  "names": [
+   [
+    "(unnamed)",
+    229
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "life_leaf",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 1.168,
+  "gameScale": 1.2,
+  "heightGame": 1.402,
+  "clips": {
+   "idle": 5,
+   "idle2": 5,
+   "walk": 1.33,
+   "run": 0.72,
+   "carry": 1.59,
+   "climb": 2.03,
+   "leap": 2.32,
+   "slide": 1.6,
+   "wade": 3.19,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 2.2,
+   "nap": 5,
+   "work": 2.4,
+   "ability": 3.2
+  },
+  "wall_s": 1.6
+ },
+ {
+  "kind": "mossbear",
+  "res": 0.03,
+  "ms": 489,
+  "meshes": 233,
+  "skinned": 0,
+  "tris": 41300,
+  "bodyTris": 10316,
+  "accTris": 30984,
+  "accMeshes": 232,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 117,
+  "matTypes": {
+   "MeshPhysicalMaterial": 229,
+   "MeshBasicMaterial": 4
+  },
+  "textures": 2,
+  "onBeforeCompile": 233,
+  "transparent": 0,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 134,
+  "sharedGeoMeshes": 99,
+  "names": [
+   [
+    "(unnamed)",
+    229
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "life_leaf",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 1.168,
+  "gameScale": 1.2,
+  "heightGame": 1.402,
+  "clips": {
+   "idle": 5,
+   "idle2": 5,
+   "walk": 1.33,
+   "run": 0.72,
+   "carry": 1.59,
+   "climb": 2.03,
+   "leap": 2.32,
+   "slide": 1.6,
+   "wade": 3.19,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 2.2,
+   "nap": 5,
+   "work": 2.4,
+   "ability": 3.2
+  },
+  "wall_s": 0.6
+ },
+ {
+  "kind": "mossbear",
+  "res": 0.04,
+  "ms": 268,
+  "meshes": 233,
+  "skinned": 0,
+  "tris": 36592,
+  "bodyTris": 5608,
+  "accTris": 30984,
+  "accMeshes": 232,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 117,
+  "matTypes": {
+   "MeshPhysicalMaterial": 229,
+   "MeshBasicMaterial": 4
+  },
+  "textures": 2,
+  "onBeforeCompile": 233,
+  "transparent": 0,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 134,
+  "sharedGeoMeshes": 99,
+  "names": [
+   [
+    "(unnamed)",
+    229
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "life_leaf",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 1.165,
+  "gameScale": 1.2,
+  "heightGame": 1.398,
+  "clips": {
+   "idle": 5,
+   "idle2": 5,
+   "walk": 1.33,
+   "run": 0.72,
+   "carry": 1.59,
+   "climb": 2.03,
+   "leap": 2.32,
+   "slide": 1.6,
+   "wade": 3.19,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 2.2,
+   "nap": 5,
+   "work": 2.4,
+   "ability": 3.2
+  },
+  "wall_s": 0.3
+ },
+ {
+  "kind": "gardener",
+  "res": 0.019,
+  "ms": 579,
+  "meshes": 212,
+  "skinned": 0,
+  "tris": 38804,
+  "bodyTris": 14986,
+  "accTris": 23818,
+  "accMeshes": 211,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 1,
+  "mats": 66,
+  "matTypes": {
+   "MeshPhysicalMaterial": 175,
+   "MeshBasicMaterial": 37
+  },
+  "textures": 2,
+  "onBeforeCompile": 212,
+  "transparent": 34,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 212,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    205
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "lidLo",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "browL",
+    1
+   ],
+   [
+    "browR",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 1.329,
+  "gameScale": 1,
+  "heightGame": 1.329,
+  "clips": {
+   "idle": 5,
+   "idle2": 6,
+   "walk": 0.97,
+   "run": 0.53,
+   "carry": 1.16,
+   "climb": 1.47,
+   "leap": 1.68,
+   "slide": 1.6,
+   "wade": 2.31,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.8,
+   "nap": 6,
+   "work": 4,
+   "p1": 3.4,
+   "p2": 3.4,
+   "p3": 3.4,
+   "guard": 5
+  },
+  "wall_s": 0.7
+ },
+ {
+  "kind": "gardener",
+  "res": 0.03,
+  "ms": 261,
+  "meshes": 212,
+  "skinned": 0,
+  "tris": 29668,
+  "bodyTris": 5850,
+  "accTris": 23818,
+  "accMeshes": 211,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 1,
+  "mats": 66,
+  "matTypes": {
+   "MeshPhysicalMaterial": 175,
+   "MeshBasicMaterial": 37
+  },
+  "textures": 2,
+  "onBeforeCompile": 212,
+  "transparent": 34,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 212,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    205
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "lidLo",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "browL",
+    1
+   ],
+   [
+    "browR",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 1.329,
+  "gameScale": 1,
+  "heightGame": 1.329,
+  "clips": {
+   "idle": 5,
+   "idle2": 6,
+   "walk": 0.97,
+   "run": 0.53,
+   "carry": 1.16,
+   "climb": 1.47,
+   "leap": 1.68,
+   "slide": 1.6,
+   "wade": 2.31,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.8,
+   "nap": 6,
+   "work": 4,
+   "p1": 3.4,
+   "p2": 3.4,
+   "p3": 3.4,
+   "guard": 5
+  },
+  "wall_s": 0.3
+ },
+ {
+  "kind": "gardener",
+  "res": 0.04,
+  "ms": 126,
+  "meshes": 212,
+  "skinned": 0,
+  "tris": 27082,
+  "bodyTris": 3264,
+  "accTris": 23818,
+  "accMeshes": 211,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 1,
+  "mats": 66,
+  "matTypes": {
+   "MeshPhysicalMaterial": 175,
+   "MeshBasicMaterial": 37
+  },
+  "textures": 2,
+  "onBeforeCompile": 212,
+  "transparent": 34,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 212,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    205
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "lidLo",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "browL",
+    1
+   ],
+   [
+    "browR",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 1.329,
+  "gameScale": 1,
+  "heightGame": 1.329,
+  "clips": {
+   "idle": 5,
+   "idle2": 6,
+   "walk": 0.97,
+   "run": 0.53,
+   "carry": 1.16,
+   "climb": 1.47,
+   "leap": 1.68,
+   "slide": 1.6,
+   "wade": 2.31,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.8,
+   "nap": 6,
+   "work": 4,
+   "p1": 3.4,
+   "p2": 3.4,
+   "p3": 3.4,
+   "guard": 5
+  },
+  "wall_s": 0.2
+ },
+ {
+  "kind": "tidewalker",
+  "res": 0.019,
+  "ms": 260,
+  "meshes": 61,
+  "skinned": 0,
+  "tris": 15002,
+  "bodyTris": 6906,
+  "accTris": 8096,
+  "accMeshes": 60,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 49,
+  "matTypes": {
+   "MeshPhysicalMaterial": 54,
+   "MeshBasicMaterial": 7
+  },
+  "textures": 2,
+  "onBeforeCompile": 61,
+  "transparent": 4,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 61,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    58
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 0.723,
+  "gameScale": 1.12,
+  "heightGame": 0.81,
+  "clips": {
+   "idle": 5,
+   "idle2": 5,
+   "walk": 1.08,
+   "run": 0.59,
+   "carry": 1.29,
+   "climb": 1.65,
+   "leap": 1.88,
+   "slide": 1.6,
+   "wade": 2.4,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.8,
+   "nap": 5,
+   "work": 2.4,
+   "ability": 1.8
+  },
+  "wall_s": 0.5
+ },
+ {
+  "kind": "tidewalker",
+  "res": 0.03,
+  "ms": 77,
+  "meshes": 61,
+  "skinned": 0,
+  "tris": 10776,
+  "bodyTris": 2680,
+  "accTris": 8096,
+  "accMeshes": 60,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 49,
+  "matTypes": {
+   "MeshPhysicalMaterial": 54,
+   "MeshBasicMaterial": 7
+  },
+  "textures": 2,
+  "onBeforeCompile": 61,
+  "transparent": 4,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 61,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    58
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 0.717,
+  "gameScale": 1.12,
+  "heightGame": 0.803,
+  "clips": {
+   "idle": 5,
+   "idle2": 5,
+   "walk": 1.08,
+   "run": 0.59,
+   "carry": 1.29,
+   "climb": 1.65,
+   "leap": 1.88,
+   "slide": 1.6,
+   "wade": 2.4,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.8,
+   "nap": 5,
+   "work": 2.4,
+   "ability": 1.8
+  },
+  "wall_s": 0.1
+ },
+ {
+  "kind": "tidewalker",
+  "res": 0.04,
+  "ms": 30,
+  "meshes": 61,
+  "skinned": 0,
+  "tris": 9504,
+  "bodyTris": 1408,
+  "accTris": 8096,
+  "accMeshes": 60,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 49,
+  "matTypes": {
+   "MeshPhysicalMaterial": 54,
+   "MeshBasicMaterial": 7
+  },
+  "textures": 2,
+  "onBeforeCompile": 61,
+  "transparent": 4,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 61,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    58
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 0.711,
+  "gameScale": 1.12,
+  "heightGame": 0.796,
+  "clips": {
+   "idle": 5,
+   "idle2": 5,
+   "walk": 1.08,
+   "run": 0.59,
+   "carry": 1.29,
+   "climb": 1.65,
+   "leap": 1.88,
+   "slide": 1.6,
+   "wade": 2.4,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.8,
+   "nap": 5,
+   "work": 2.4,
+   "ability": 1.8
+  },
+  "wall_s": 0.1
+ },
+ {
+  "kind": "glassgolem",
+  "res": 0.019,
+  "ms": 536,
+  "meshes": 61,
+  "skinned": 0,
+  "tris": 10408,
+  "bodyTris": 8344,
+  "accTris": 2064,
+  "accMeshes": 60,
+  "sprites": 4,
+  "points": 0,
+  "lines": 0,
+  "lights": 1,
+  "mats": 33,
+  "matTypes": {
+   "MeshPhysicalMaterial": 61
+  },
+  "textures": 0,
+  "onBeforeCompile": 61,
+  "transparent": 0,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 61,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    57
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "core",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 1.337,
+  "gameScale": 1.15,
+  "heightGame": 1.538,
+  "clips": {
+   "idle": 6,
+   "idle2": 5,
+   "walk": 1.36,
+   "run": 0.74,
+   "carry": 1.62,
+   "climb": 2.06,
+   "leap": 2.36,
+   "slide": 1.6,
+   "wade": 3.25,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 2.6,
+   "nap": 6,
+   "work": 6,
+   "ability": 3.2
+  },
+  "wall_s": 0.8
+ },
+ {
+  "kind": "glassgolem",
+  "res": 0.03,
+  "ms": 279,
+  "meshes": 61,
+  "skinned": 0,
+  "tris": 10408,
+  "bodyTris": 8344,
+  "accTris": 2064,
+  "accMeshes": 60,
+  "sprites": 4,
+  "points": 0,
+  "lines": 0,
+  "lights": 1,
+  "mats": 33,
+  "matTypes": {
+   "MeshPhysicalMaterial": 61
+  },
+  "textures": 0,
+  "onBeforeCompile": 61,
+  "transparent": 0,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 61,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    57
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "core",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 1.337,
+  "gameScale": 1.15,
+  "heightGame": 1.538,
+  "clips": {
+   "idle": 6,
+   "idle2": 5,
+   "walk": 1.36,
+   "run": 0.74,
+   "carry": 1.62,
+   "climb": 2.06,
+   "leap": 2.36,
+   "slide": 1.6,
+   "wade": 3.25,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 2.6,
+   "nap": 6,
+   "work": 6,
+   "ability": 3.2
+  },
+  "wall_s": 0.5
+ },
+ {
+  "kind": "glassgolem",
+  "res": 0.04,
+  "ms": 209,
+  "meshes": 61,
+  "skinned": 0,
+  "tris": 10408,
+  "bodyTris": 8344,
+  "accTris": 2064,
+  "accMeshes": 60,
+  "sprites": 4,
+  "points": 0,
+  "lines": 0,
+  "lights": 1,
+  "mats": 33,
+  "matTypes": {
+   "MeshPhysicalMaterial": 61
+  },
+  "textures": 0,
+  "onBeforeCompile": 61,
+  "transparent": 0,
+  "bones": 0,
+  "vcolors": 1,
+  "geos": 61,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    57
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "core",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 1.337,
+  "gameScale": 1.15,
+  "heightGame": 1.538,
+  "clips": {
+   "idle": 6,
+   "idle2": 5,
+   "walk": 1.36,
+   "run": 0.74,
+   "carry": 1.62,
+   "climb": 2.06,
+   "leap": 2.36,
+   "slide": 1.6,
+   "wade": 3.25,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 2.6,
+   "nap": 6,
+   "work": 6,
+   "ability": 3.2
+  },
+  "wall_s": 0.5
+ },
+ {
+  "kind": "rambler",
+  "res": 0.019,
+  "ms": 867,
+  "meshes": 32,
+  "skinned": 0,
+  "tris": 20584,
+  "bodyTris": 15180,
+  "accTris": 5404,
+  "accMeshes": 31,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 14,
+  "matTypes": {
+   "MeshPhysicalMaterial": 28,
+   "MeshBasicMaterial": 4
+  },
+  "textures": 2,
+  "onBeforeCompile": 32,
+  "transparent": 9,
+  "bones": 0,
+  "vcolors": 5,
+  "geos": 32,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    25
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "lidLo",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "horn_L",
+    1
+   ],
+   [
+    "horn_R",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 0.839,
+  "gameScale": 1.1,
+  "heightGame": 0.923,
+  "clips": {
+   "idle": 3.6,
+   "idle2": 5,
+   "walk": 1.17,
+   "run": 0.64,
+   "carry": 1.4,
+   "climb": 1.78,
+   "leap": 2.04,
+   "slide": 1.6,
+   "wade": 2.81,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.6,
+   "nap": 4,
+   "work": 2.6,
+   "ability": 2.4
+  },
+  "wall_s": 0.9
+ },
+ {
+  "kind": "rambler",
+  "res": 0.03,
+  "ms": 299,
+  "meshes": 32,
+  "skinned": 0,
+  "tris": 11220,
+  "bodyTris": 5816,
+  "accTris": 5404,
+  "accMeshes": 31,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 14,
+  "matTypes": {
+   "MeshPhysicalMaterial": 28,
+   "MeshBasicMaterial": 4
+  },
+  "textures": 2,
+  "onBeforeCompile": 32,
+  "transparent": 9,
+  "bones": 0,
+  "vcolors": 5,
+  "geos": 32,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    25
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "lidLo",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "horn_L",
+    1
+   ],
+   [
+    "horn_R",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 0.835,
+  "gameScale": 1.1,
+  "heightGame": 0.918,
+  "clips": {
+   "idle": 3.6,
+   "idle2": 5,
+   "walk": 1.17,
+   "run": 0.64,
+   "carry": 1.4,
+   "climb": 1.78,
+   "leap": 2.04,
+   "slide": 1.6,
+   "wade": 2.81,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.6,
+   "nap": 4,
+   "work": 2.6,
+   "ability": 2.4
+  },
+  "wall_s": 0.4
+ },
+ {
+  "kind": "rambler",
+  "res": 0.04,
+  "ms": 195,
+  "meshes": 32,
+  "skinned": 0,
+  "tris": 8646,
+  "bodyTris": 3242,
+  "accTris": 5404,
+  "accMeshes": 31,
+  "sprites": 0,
+  "points": 0,
+  "lines": 0,
+  "lights": 0,
+  "mats": 14,
+  "matTypes": {
+   "MeshPhysicalMaterial": 28,
+   "MeshBasicMaterial": 4
+  },
+  "textures": 2,
+  "onBeforeCompile": 32,
+  "transparent": 9,
+  "bones": 0,
+  "vcolors": 5,
+  "geos": 32,
+  "sharedGeoMeshes": 0,
+  "names": [
+   [
+    "(unnamed)",
+    25
+   ],
+   [
+    "lid",
+    2
+   ],
+   [
+    "lidLo",
+    2
+   ],
+   [
+    "body",
+    1
+   ],
+   [
+    "horn_L",
+    1
+   ],
+   [
+    "horn_R",
+    1
+   ]
+  ],
+  "rigBones": 19,
+  "height": 0.831,
+  "gameScale": 1.1,
+  "heightGame": 0.914,
+  "clips": {
+   "idle": 3.6,
+   "idle2": 5,
+   "walk": 1.17,
+   "run": 0.64,
+   "carry": 1.4,
+   "climb": 1.78,
+   "leap": 2.04,
+   "slide": 1.6,
+   "wade": 2.81,
+   "hit": 1.2,
+   "ko": 2.6,
+   "celebrate": 1.6,
+   "nap": 4,
+   "work": 2.6,
+   "ability": 2.4
+  },
+  "wall_s": 0.3
+ }
+]

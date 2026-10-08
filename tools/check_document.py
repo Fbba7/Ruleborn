@@ -1467,8 +1467,9 @@ def check_screen_counts(doc: Doc, led: Ledger) -> None:
     cells = [ln.strip().lstrip("| ").strip()
              for ln in body.splitlines() if ln.strip().startswith("|")]
     rows = [cells[i:i + 3] for i in range(0, len(cells) // 3 * 3, 3)]
-    led.check("23.2 lists 27 screens with a job and a must-show for each",
-              len(rows) - 1 == 27, f"got {len(rows) - 1}")
+    # v3.6 added Profile and stats (23.5 adopts it from the screen designs).
+    led.check("23.2 lists 28 screens with a job and a must-show for each",
+              len(rows) - 1 == 28, f"got {len(rows) - 1}")
 
     nouns = dict(counts)
     nouns["terrain features"] = (counts["terrain features"][0],
@@ -2613,15 +2614,15 @@ def _self_test_section_index() -> bool:
     # whose body opens by naming another section is truncated there, and the
     # section it names is replaced. v3.1 had two such pairs; v3.2 has three,
     # and a frozen list would have had to be edited to say so.
+    # v3.6's 23.5 is the first to name another section at the start of a
+    # later line ("23.2 is the must-show list"), which the split mistakes for
+    # a heading just the same, so every line is read, not only the first.
     expect = set()
     for num, body in good.items():
         for line in body.splitlines()[1:]:
-            if not line.strip():
-                continue
-            m = re.match(r"(\d+\.\d+) ", line.strip())
-            if m and m.group(1) in good:
+            m = re.match(r"(\d+\.\d+) ", line)
+            if m and m.group(1) in good and m.group(1) != num:
                 expect |= {num, m.group(1)}
-            break
     print(f"  section index: splitting on what looks like a heading gets "
           f"{len(wrong)} section(s) wrong: {wrong}")
     print(f"  section index: the sections that open by naming another, and the "

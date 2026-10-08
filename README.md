@@ -6,12 +6,12 @@ A strategy game about floating islands that each follow a magic rule. You collec
 these rules, build your islands around them, and send a small crew of odd little
 creatures to rob other players' islands by outsmarting theirs.
 
-Native mobile (iPhone and Android), Godot 4.5, rated 13+, cosmetic-only
-monetisation.
+Native mobile (iPhone and Android), Godot (4.5 in the client today; v3.5 pins
+4.7.2, roadmap TD.1), rated 13+, cosmetic-only monetisation.
 
 ## Status
 
-**Pre-production — design document at v3.4; the simulation core and the server have started.**
+**Pre-production — design document at v3.6, the screens and characters designed (Screens v3); the simulation core, the server and the client have started.**
 
 ### Can the drawing start?
 
@@ -33,8 +33,20 @@ patrol positions), and handed the realms' one to this repository: §32.9's full
 economy re-run. That run is done, so the realms now wait on the document taking
 its tables.
 
-Five versions have now answered the audit. **112 of 222 register items are fixed
-in the document itself**, the latest 15 by v3.4. 67 are still open.
+**v3.6 records the owner's designs.** Screens v3, made in Claude Design, holds
+28 designed screens, 43 character and creature sheets with 3D models and 393
+icons, and §23.5 makes it the visual reference with the document winning on every
+rule. v3.5 moved the engine pin to Godot 4.7.2 (measured here: the client passes
+all its tests on 4.7.2 after one change). Read screen by screen against v3.6 and
+the build by twelve readers, each finding tried by an adversarial verifier, the
+designs depart from a rule or the build in about 190 places §23.5 does not list
+(the register's v3.6 layer, and
+[`docs/analysis/screens-v3/`](docs/analysis/screens-v3/README.md)); the plan to
+build them is the roadmap's stage SD. v3.6 itself answers none of the 70 items
+open against v3.4, narrows G28 and F37, and reopens C11.
+
+Five versions have now answered the audit. **111 of 222 register items are fixed
+in the document itself**, the latest 15 by v3.4. 68 are still open.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -164,7 +176,7 @@ is done. In short:
 
 ```
 docs/
-  design/     the design document at v3.4, with every earlier version beside it, plus greppable extracts
+  design/     the design document at v3.6, with every earlier version beside it, plus greppable extracts
   analysis/   the deep analysis of that document — start here
 content/       the twelve content tables as data, plus the reconciled detection spec
 docs/design/spec/   the reconciled specification, one file per system
@@ -253,7 +265,7 @@ million monthly players.
 rewards, no engagement-tuned matchmaking — with the refusals written down so they
 cannot creep back in.
 
-Full detail: [`docs/design/ruleborn-game-design-v3.4.html`](docs/design/ruleborn-game-design-v3.4.html).
+Full detail: [`docs/design/ruleborn-game-design-v3.6.html`](docs/design/ruleborn-game-design-v3.6.html).
 
 ## Checks
 
@@ -270,8 +282,8 @@ that list shrinks as the document is reconciled.
 ```bash
 # regenerate the greppable text extract from the HTML design document
 python3 tools/extract_design_doc.py \
-    docs/design/ruleborn-game-design-v3.4.html \
-    docs/design/ruleborn-game-design-v3.4.txt
+    docs/design/ruleborn-game-design-v3.6.html \
+    docs/design/ruleborn-game-design-v3.6.txt
 
 # machine-check the design document: v3.1's own checks and this repository's,
 # in one verdict. Failures tracked by an open register item do not break the build.
@@ -308,8 +320,8 @@ document, as 222 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 111 are drafted across 66
-items, and every quoted sentence is checked against v3.4 by
+the sentence as it stands today, and what to put there. 112 are drafted across 67
+items, and every quoted sentence is checked against v3.6 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no
 edit at all.

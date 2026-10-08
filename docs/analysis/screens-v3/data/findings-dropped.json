@@ -1,0 +1,190 @@
+[
+ {
+  "reader": "3d-pipeline",
+  "n": "3d-pipeline#6",
+  "kind": "contradiction",
+  "title": "The design document counts the animation set two ways",
+  "refs": [
+   "21.6",
+   "23.5"
+  ],
+  "evidence": "\u00a721.6 (doc:10656): two idles, walk, run, carry, climb, leap, slide, wade, ability, hit, knocked out, celebrate, nap 'and one work loop per building'; \u00a723.5 (doc:11570): 'the fifteen animations of 21.6'. The sheets and kit have one work clip per kind (Featherkin_dc.html:160 CL; creature_kit.js:147). Overlaps the characters report's finding 6 (which proposes options) \u2014 listed here only as the v3.6 self-contradiction.",
+  "rec": "\u00a721.6 to say one work loop per kind, with each building's own animation (crank, watering) carrying the difference; keep knocked-out stars and petals as effects.",
+  "severity": "minor",
+  "verdict_why": "The text is right: \u00a721.6 (doc:10656) ends its list with 'one work loop per building', and \u00a723.5 (doc:11570) says 'the fifteen animations of 21.6'. But this adds nothing. The characters report's finding 2 already makes the same point: \u00a721.6 asks for a work loop per building (three, since only three buildings take workers), the sheets have one work clip, and \u00a723.5's 'fifteen animations' overstates. It also proposes the options. The finding says itself that it overlaps that one.",
+  "corrected": "Merge into the characters report's finding 2 (work loops per building against \u00a723.5's 'fifteen').",
+  "existing": "",
+  "why": "The text is right: \u00a721.6 (doc:10656) ends its list with 'one work loop per building', and \u00a723.5 (doc:11570) says 'the fifteen animations of 21.6'. But this adds nothing. The characters report's finding 2 already makes the same point: \u00a721.6 asks for a work loop per building (three, since only three buildings take workers), the sheets have one work clip, and \u00a723.5's 'fifteen animations' overstates. It also proposes the options. The finding says itself that it overlaps that one.",
+  "in23_5": false
+ },
+ {
+  "reader": "characters",
+  "n": "characters#6",
+  "kind": "deviation",
+  "title": "Spirit's mark is a spiral on every Spirit sheet; \u00a723.5's 'six specs with no marking' is wrong",
+  "refs": [
+   "5.2",
+   "21.6",
+   "23.5"
+  ],
+  "evidence": "Only Lantern Wisp's spec lists no school marking (Lantern_Wisp_dc.html:182), and lanternwisp.js has no marking geometry. Every other kind's spec lists one. Soulmender's mark is 'Glowing Spirit spiral pendant' (Soulmender_dc.html:182, :57), and \u00a723.5 names only Echoplate. All three Spirit sheets use the same spiral SVG as their header school badge. The Matter badge is a hexagon with three full diagonals, not a cube. The icon library already has an eye and a cube (icons_rbi.js:45 G.eye, :123 G.cube).",
+  "rec": "Correct the \u00a723.5 row: Lantern Wisp has no mark; Echoplate and Soulmender use a spiral; the Spirit and Matter badges are wrong. The build draws \u00a75.2's eye and cube from icons_rbi.js.",
+  "severity": "minor",
+  "verdict_why": "Reading 'school-shape marking' as a marking in \u00a75.2's school shape, \u00a723.5's count of six is exact. Three Matter specs list a hexagon, not \u00a75.2's cube (Glass Golem, Quarryback, Prism Mite). Two Spirit specs list a spiral, not an eye (Echoplate, Soulmender). Lantern Wisp lists none. That is six. The finding counts any marking at all. \u00a723.5 already sets what the build follows: 'Each kind carries its school's shape; Spirit's is an eye' and 'Matter's shape | Called a hexagon | A cube'. That covers Soulmender and the header badges (spiral on all three Spirit sheets; hexagon with three full diagonals on Matter, Glass_Golem_dc.html:20). The icons exist (icons_rbi.js:45 eye, :123 cube). The finding adds nothing to what the build follows.",
+  "corrected": "At most a wording note: \u00a723.5 could name Soulmender's spiral pendant beside Echoplate's etched spiral. The build rows already cover it.",
+  "existing": "",
+  "why": "Reading 'school-shape marking' as a marking in \u00a75.2's school shape, \u00a723.5's count of six is exact. Three Matter specs list a hexagon, not \u00a75.2's cube (Glass Golem, Quarryback, Prism Mite). Two Spirit specs list a spiral, not an eye (Echoplate, Soulmender). Lantern Wisp lists none. That is six. The finding counts any marking at all. \u00a723.5 already sets what the build follows: 'Each kind carries its school's shape; Spirit's is an eye' and 'Matter's shape | Called a hexagon | A cube'. That covers Soulmender and the header badges (spiral on all three Spirit sheets; hexagon with three full diagonals on Matter, Glass_Golem_dc.html:20). The icons exist (icons_rbi.js:45 eye, :123 cube). The finding adds nothing to what the build follows.",
+  "in23_5": true
+ },
+ {
+  "reader": "characters",
+  "n": "characters#12",
+  "kind": "gap",
+  "title": "Verdant has no bees-and-butterflies asset; \u00a721.9 budgets no wildlife or law creatures",
+  "refs": [
+   "5.7",
+   "21.9",
+   "23.5"
+  ],
+  "evidence": "v3.6 \u00a75.7 makes Verdant's wildlife bees and butterflies. The only Verdant sheet, Puffballs_and_Bees, is the Flock puffball sculpt with orbiting bees ('Moves as the Flock puffball does'). A search of creatures/, screens_*.js and realm_diorama.js found no butterfly. \u00a721.9's character row (doc:11018-11028) reads '18, 4, 3, 3; 3 later' and omits the 7 wildlife sets, the 3 after-launch law creatures and the 2 after-launch Sages that Screens v3 designs. The Fireflies_and_Moths sheet also has Lantern Vale moths that 'flash their eye-spots when disturbed', a giveaway cue the \u00a723.5 wildlife row does not list.",
+  "rec": "Make a bees-and-butterflies asset. Give wildlife and law creatures a \u00a721.9 row. Add the eye-spot flash to the \u00a723.5 wildlife row as scenery that changes nothing.",
+  "severity": "minor",
+  "verdict_why": "The Verdant point is already a \u00a723.5 difference: the Wildlife row's build column reads 'Scenery that changes nothing; Verdant's wildlife is bees and butterflies', so a missing bees-and-butterflies asset follows directly from it. There is indeed no butterfly anywhere in creatures/, screens_*.js or realm_diorama.js. \u00a721.9 lists 'Realm kits 7' without defining it, so whether the seven wildlife sets are budgeted cannot be confirmed either way. The law creatures (Flock, Swarm birth, Mirror images) and the two later Sages are after launch, so a launch asset list rightly omits them. The moths' eye-spot flash 'when disturbed' (Fireflies_and_Moths_dc.html) is already covered by \u00a75.7 (doc:1136, wildlife changes nothing anyone can see) and by \u00a723.5's 'Scenery that changes nothing'.",
+  "corrected": "At most a to-do: Screens v3 has no Verdant bees-and-butterflies asset, as \u00a723.5's wildlife row already implies, and \u00a721.9 does not say whether 'Realm kits 7' includes each realm's wildlife.",
+  "existing": "",
+  "why": "The Verdant point is already a \u00a723.5 difference: the Wildlife row's build column reads 'Scenery that changes nothing; Verdant's wildlife is bees and butterflies', so a missing bees-and-butterflies asset follows directly from it. There is indeed no butterfly anywhere in creatures/, screens_*.js or realm_diorama.js. \u00a721.9 lists 'Realm kits 7' without defining it, so whether the seven wildlife sets are budgeted cannot be confirmed either way. The law creatures (Flock, Swarm birth, Mirror images) and the two later Sages are after launch, so a launch asset list rightly omits them. The moths' eye-spot flash 'when disturbed' (Fireflies_and_Moths_dc.html) is already covered by \u00a75.7 (doc:1136, wildlife changes nothing anyone can see) and by \u00a723.5's 'Scenery that changes nothing'.",
+  "in23_5": true
+ },
+ {
+  "reader": "lab-curation-rehearsal-terrain-workshop",
+  "n": "lab-curation-rehearsal-terrain-workshop#20",
+  "kind": "deviation",
+  "title": "The defence log and rehearsal use their own outcome words and call a Partial 'held'",
+  "refs": [
+   "12.9",
+   "13.4",
+   "23.5"
+  ],
+  "evidence": "Design: 'Escaped quietly / Caught at the gate / Escaped loud' (screens_meta.js:590); HELD / GOT OUT / FRIENDLY, with 'Three of four crew caught at the gate \u2026 Denied 3,300' tagged HELD (592). \u00a712.9 has Clean, Loud, Partial and Foiled. \u00a713.4: 'The hold rate is its special case, where grade \u00d7 fill is zero', so only a Foiled raid counts as held. \u00a723.5 (11418) says the defence log 'already follow[s] this document'.",
+  "rec": "Correct \u00a723.5's sentence and add the row. The build labels raids by \u00a712.9's outcomes and counts only Foiled as held.",
+  "severity": "minor",
+  "verdict_why": "Not demonstrated. The 'HELD' entry reads 'Three of four crew caught at the gate \u2026 Denied 3,300' (screens_meta.js:592), which fits Foiled (no loot out), so it does not show a Partial labelled held. The document itself uses 'held' and 'leaked' for defences (\u00a723.2 Profile row; hold rate), so HELD and GOT OUT are not foreign words. The rehearsal labels ('Escaped quietly / Caught at the gate / Escaped loud') are a naming choice. \u00a723.2's rehearsal and defence-log must-show does not require \u00a712.9's outcome names, and the design's log does show the four report measures. This is taste, not a rule difference.",
+  "corrected": "",
+  "existing": "",
+  "why": "Not demonstrated. The 'HELD' entry reads 'Three of four crew caught at the gate \u2026 Denied 3,300' (screens_meta.js:592), which fits Foiled (no loot out), so it does not show a Partial labelled held. The document itself uses 'held' and 'leaked' for defences (\u00a723.2 Profile row; hold rate), so HELD and GOT OUT are not foreign words. The rehearsal labels ('Escaped quietly / Caught at the gate / Escaped loud') are a naming choice. \u00a723.2's rehearsal and defence-log must-show does not require \u00a712.9's outcome names, and the design's log does show the four report measures. This is taste, not a rule difference.",
+  "in23_5": false
+ },
+ {
+  "reader": "observatory-scout-landing-planner",
+  "n": "observatory-scout-landing-planner#11",
+  "kind": "gap",
+  "title": "The scout's 15 minutes, and a plan made without a scout",
+  "refs": [
+   "12.4",
+   "13",
+   "23.2"
+  ],
+  "evidence": "\u00a712.4 'A scout stays valid for 15 minutes'; \u00a713 line 7486 'laws are always visible before you commit'; design offers 'Plan without scouting' and shows no expiry; the planner still flags 'New to you' laws it could not know unscouted.",
+  "rec": "If the paid scout stays (N1), say what the planner shows unscouted and what happens when a scout lapses mid-plan; moot under F46 B.",
+  "severity": "minor",
+  "verdict_why": "The facts are right: \u00a712.4 says 'A scout stays valid for 15 minutes', the design shows no expiry, it offers 'Plan without scouting', and the planner flags 'New to you: Sleepwalk'. The finding adds nothing on its own. The tension between \u00a712.4's paid scout and \u00a713's 'laws are always visible before you commit' (line 7486) is F46's subject, and its brief names that sentence. The owner answered F46 B (free scouting), the server follows it, and the finding itself says it is moot under F46 B. It belongs inside finding 0, and only matters if F46 is reversed.",
+  "corrected": "",
+  "existing": "F46",
+  "why": "The facts are right: \u00a712.4 says 'A scout stays valid for 15 minutes', the design shows no expiry, it offers 'Plan without scouting', and the planner flags 'New to you: Sleepwalk'. The finding adds nothing on its own. The tension between \u00a712.4's paid scout and \u00a713's 'laws are always visible before you commit' (line 7486) is F46's subject, and its brief names that sentence. The owner answered F46 B (free scouting), the server follows it, and the finding itself says it is moot under F46 B. It belongs inside finding 0, and only matters if F46 is reversed.",
+  "in23_5": false
+ },
+ {
+  "reader": "observatory-scout-landing-planner",
+  "n": "observatory-scout-landing-planner#12",
+  "kind": "finding",
+  "title": "\u00a723.5's text-size row is not accurate for the planner",
+  "refs": [
+   "23.5",
+   "21.8"
+  ],
+  "evidence": "\u00a723.5 line 11515 'only the heist, planner and result meet the floor'; the planner's Crew tab draws role 9 px, ability 10.5 px, warning 12 px, Sage label 9 px, cast pill 11 px (screens_main.markup.html:761-763).",
+  "rec": "Correct the row to 'the planner's Plan tab'.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. The \u00a723.5 row (line 11516) says 'only the heist, planner and result meet the floor'. The planner's Crew tab sets the role at 9 px, the ability at 10.5 px, the warning at 12 px, 'SAGE' at 9 px and the cast pill at 11 px (screens_main.markup.html:761-763). The suggested fix ('the planner's Plan tab') is wrong too. The Start heist sub-line, 'Land at Lantern Vale \u00b7 165 s on the clock', is 11 px (screens_main.markup.html:766), sits outside both tabs and shows on the Plan tab (Gameplay_06_Heist_planner.png). It only corrects the wording of a \u00a723.5 row, since the build follows \u00a721.8's 13 pt everywhere.",
+  "corrected": "\u00a723.5's text-size row overstates the planner. Both of its tabs set text below 13: the Crew tab at 9 to 12 px (markup 761-763) and the shared Start heist sub-line at 11 px (markup 766). The row should not name the planner as meeting the floor.",
+  "existing": "None.",
+  "why": "Confirmed. The \u00a723.5 row (line 11516) says 'only the heist, planner and result meet the floor'. The planner's Crew tab sets the role at 9 px, the ability at 10.5 px, the warning at 12 px, 'SAGE' at 9 px and the cast pill at 11 px (screens_main.markup.html:761-763). The suggested fix ('the planner's Plan tab') is wrong too. The Start heist sub-line, 'Land at Lantern Vale \u00b7 165 s on the clock', is 11 px (screens_main.markup.html:766), sits outside both tabs and shows on the Plan tab (Gameplay_06_Heist_planner.png). It only corrects the wording of a \u00a723.5 row, since the build follows \u00a721.8's 13 pt everywhere.",
+  "in23_5": true
+ },
+ {
+  "reader": "roster-character-sages-forms",
+  "n": "roster-character-sages-forms#19",
+  "kind": "deviation",
+  "title": "Forms album hatch hints name laws that cannot hatch that form at launch",
+  "refs": [
+   "11.10",
+   "7.10",
+   "7.7"
+  ],
+  "evidence": "screens_meta.js:1181 NEX: Spark 'Frictionless, Static or Thorns', Echo 'Whispers, Echoes or Day and night'. content/laws.json: Thorns carries Bloom and Weight; Day and night is not a launch law. Launch Spark: Frictionless, Brittle stone, Haste, Chain lightning, Static; launch Echo: Bounce, Regrowth, Whispers, Echoes, Sleepwalk.",
+  "rec": "Generate hints from content and the player's Nurseries; never typed.",
+  "severity": "minor",
+  "verdict_why": "Refuted as a player-visible problem. NEX (js:1181) does list Thorns under Spark and Day and night under Echo. content/laws.json confirms that Thorns carries Bloom and Weight and that Day and night is not a launch law. But NEX is used in only one place, js:1205, as NEX[fn].split(',')[0]. The hint the player sees therefore names only the first law: Stillness (Hush), Frictionless (Spark) or Whispers (Echo), each a launch law that carries that note. Thorns and Day and night are never displayed. The build generates hints from content anyway, so the finding adds nothing.",
+  "corrected": "The wrong laws sit in an unused part of a data string. The hint the player sees (js:1205) names a correct launch law for each note.",
+  "existing": "",
+  "why": "Refuted as a player-visible problem. NEX (js:1181) does list Thorns under Spark and Day and night under Echo. content/laws.json confirms that Thorns carries Bloom and Weight and that Day and night is not a launch law. But NEX is used in only one place, js:1205, as NEX[fn].split(',')[0]. The hint the player sees therefore names only the first law: Stillness (Hush), Frictionless (Spark) or Whispers (Echo), each a launch law that carries that note. Thorns and Day and night are never displayed. The build generates hints from content anyway, so the finding adds nothing.",
+  "in23_5": false
+ },
+ {
+  "reader": "season-shop-share-friends-stats",
+  "n": "season-shop-share-friends-stats#14",
+  "kind": "gap",
+  "title": "The Share sheet has two bands: 16\u201317's confirmation and adults' challenge link outside the game have no design",
+  "refs": [
+   "20.7",
+   "17.6",
+   "23.5"
+  ],
+  "evidence": "Design: 'OUTSIDE THE GAME \u00b7 Opens at 16' locked for everyone (markup 598; screens_meta.js:1231); Challenge only to in-game friends for everyone (markup 599); Tweaks offer only 18+ and 13\u201315. Doc \u00a720.7: clips outside the game for 16\u201317 'After a confirmation'; challenge links 'Yes' for 16+; \u00a717.6: a challenge link 'opens instantly in a lightweight version of the game; otherwise it installs straight into that island'. \u00a723.5 lists only the 13\u201315 message shown to adults.",
+  "rec": "Build all three bands from \u00a720.7: a confirmation sheet for 16\u201317, Copy link / OS share for 16+ challenges, with deep links.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. The share sheet is 13-15-only for everyone: 'Sharing outside the game opens at 16' and in-game-only challenges (screens_meta.js:1231-1238). \u00a723.5 already has the row 'Share sheet | Shows the 13\u201315 message to an adult | Follows the player's age band | 20.7', which covers this. The only new detail is that no 16-17 confirmation or adult outside-share state is drawn, which follows from that row.",
+  "corrected": "",
+  "existing": "",
+  "why": "Confirmed. The share sheet is 13-15-only for everyone: 'Sharing outside the game opens at 16' and in-game-only challenges (screens_meta.js:1231-1238). \u00a723.5 already has the row 'Share sheet | Shows the 13\u201315 message to an adult | Follows the player's age band | 20.7', which covers this. The only new detail is that no 16-17 confirmation or adult outside-share state is drawn, which follows from that row.",
+  "in23_5": true
+ },
+ {
+  "reader": "season-shop-share-friends-stats",
+  "n": "season-shop-share-friends-stats#18",
+  "kind": "deviation",
+  "title": "Island difficulty is shown on the friend sheet and the challenge card",
+  "refs": [
+   "12.15",
+   "12.4",
+   "13.2"
+  ],
+  "evidence": "Design: '44% DEFENCE HOLDS' (screens_meta.js:1277) and 'HOLDS 62%' with '3 LAWS \u00b7 5 GUARDS' (screens_meta.js:1223; share_challenge.png). Doc \u00a712.15: island difficulty is rated internally and 'the raw numbers are never shown, because visible ratings invite target-shopping'; \u00a712.4: free facts are name, Keeper level, realms, Renown, rough loot; law and guard counts come from a paid scout; \u00a713.2 holds 30\u201345% (62% is also a demo number).",
+  "rec": "Show \u00a712.4's free facts only for other players' islands; keep a player's own hold rate on their own Profile.",
+  "severity": "minor",
+  "verdict_why": "Not established. \u00a712.15 says the internal Bayesian rating's 'raw numbers are never shown', but a recorded hold rate is not that rating. The 44% sits on a friend's sheet for friendly heists, which take nothing, so target-shopping does not apply. The challenge card shows the sender's own island ('my Heart'), shared by its owner. \u00a712.4 governs scouting of raid targets, not what an owner chooses to share. The 62% demo figure falls under \u00a723.5's 'Demo numbers' row (hold rates inside 30 to 45%). What remains is a matter of taste.",
+  "corrected": "",
+  "existing": "",
+  "why": "Not established. \u00a712.15 says the internal Bayesian rating's 'raw numbers are never shown', but a recorded hold rate is not that rating. The 44% sits on a friend's sheet for friendly heists, which take nothing, so target-shopping does not apply. The challenge card shows the sender's own island ('my Heart'), shared by its owner. \u00a712.4 governs scouting of raid targets, not what an owner chooses to share. The 62% demo figure falls under \u00a723.5's 'Demo numbers' row (hold rates inside 30 to 45%). What remains is a matter of taste.",
+  "in23_5": false
+ },
+ {
+  "reader": "settings-first",
+  "n": "settings-first#21",
+  "kind": "deviation",
+  "title": "The first-launch session guide skips \u00a713.1's guided build before the first raid",
+  "refs": [
+   "13.1",
+   "16",
+   "25.2"
+  ],
+  "evidence": "guide meta.js 1017: session 2 outer realm and Nursery, session 3 'Raid another Keeper'. \u00a713.1 'Before the first heist against a player, a 60-second guided build \u2026 it is not optional.' Related to G9 (proposed).",
+  "rec": "Show the guided build as the step before the first raid.",
+  "severity": "minor",
+  "verdict_why": "The done screen's guide (meta.js 1017) is a three-line teaser: Session 2 is the outer realm and Nursery, Session 3 is 'Raid another Keeper for the first time'. \u00a713.1 puts the 60-second guided build 'before the first heist against a player'. The build can open Session 3 with it, or end Session 2 with it, and the card still reads true, so the design contradicts no rule. G9 already covers specifying and placing the guided build.",
+  "corrected": "",
+  "existing": "G9",
+  "why": "The done screen's guide (meta.js 1017) is a three-line teaser: Session 2 is the outer realm and Nursery, Session 3 is 'Raid another Keeper for the first time'. \u00a713.1 puts the 60-second guided build 'before the first heist against a player'. The build can open Session 3 with it, or end Session 2 with it, and the card still reads true, so the design contradicts no rule. G9 already covers specifying and placing the guided build.",
+  "in23_5": false
+ }
+]

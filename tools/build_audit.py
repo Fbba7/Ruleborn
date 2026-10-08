@@ -19,7 +19,8 @@ from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,
                             status as reg_status,
                             GATE_OWNER,  # noqa: E402
                             REGISTER, RESEARCH, SETTLED, V3, V31, V32, V33, V34,
-                            FOUND_IN_V33, FOUND_IN_V34, side_of, status_before_v34)
+                            FOUND_IN_V33, FOUND_IN_V34, FOUND_IN_V36, V36, side_of,
+                            status_before_v34, status_before_v36)
 
 from build_stamp import stamped  # noqa: E402
 
@@ -955,6 +956,10 @@ def item_html(item: dict) -> str:
     v34 = V34.get(item["id"], {})
     v31_html += (f'<p class="v3 v34"><span class="vlabel">v3.4</span> {v34["note"]}</p>'
                  if v34.get("note") else "")
+    # and v3.6 a sixth (v3.5 moved only the engine pin and has no layer).
+    v36 = V36.get(item["id"], {})
+    v31_html += (f'<p class="v3 v36"><span class="vlabel">v3.6</span> {v36["note"]}</p>'
+                 if v36.get("note") else "")
     return f"""
       <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
                data-kind="{item['kind']}" data-status="{state}"
@@ -1524,6 +1529,11 @@ def build() -> str:
     border-left-color: var(--blk);
   }}
   .v3.v34 .vlabel {{ color: var(--blk); }}
+  .v3.v36 {{
+    background: color-mix(in srgb, var(--chg) 10%, transparent);
+    border-left-color: var(--chg);
+  }}
+  .v3.v36 .vlabel {{ color: var(--chg); }}
   .vlabel {{
     font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
     text-transform: uppercase; letter-spacing: 0.08em; color: var(--chg);

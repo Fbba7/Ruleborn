@@ -1,0 +1,422 @@
+[
+ {
+  "mode": "universe",
+  "realm": "heart",
+  "shadows": {
+   "info": {
+    "calls": 1207,
+    "triangles": 676192,
+    "points": 1875,
+    "lines": 0,
+    "geometries": 868,
+    "textures": 22,
+    "programs": 24
+   },
+   "census": {
+    "meshes": 853,
+    "instanced": 42,
+    "instances": 3418,
+    "sprites": 365,
+    "pointsObj": 24,
+    "lights": 3,
+    "pointLights": 0,
+    "castShadow": 245,
+    "meshTris": 593684,
+    "instTris": 80768,
+    "mats": 310,
+    "matTypes": {
+     "MeshBasicMaterial": 175,
+     "MeshToonMaterial": 720
+    },
+    "outlines": 6,
+    "transparent": 106,
+    "canvasTextures": 30
+   },
+   "ik": 1,
+   "tiles": null,
+   "camFov": 28,
+   "camEl": 0.8052110946911174,
+   "camD": 90.26930954411341
+  },
+  "no_shadows": {
+   "calls": 1207,
+   "triangles": 676192,
+   "points": 1875,
+   "lines": 0,
+   "geometries": 868,
+   "textures": 22,
+   "programs": 33
+  },
+  "errors": [
+   "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ]
+ },
+ {
+  "mode": "realm",
+  "realm": "heart",
+  "shadows": {
+   "info": {
+    "calls": 1256,
+    "triangles": 219184,
+    "points": 125,
+    "lines": 0,
+    "geometries": 1032,
+    "textures": 16,
+    "programs": 21
+   },
+   "census": {
+    "meshes": 1174,
+    "instanced": 6,
+    "instances": 2210,
+    "sprites": 55,
+    "pointsObj": 2,
+    "lights": 3,
+    "pointLights": 0,
+    "castShadow": 363,
+    "meshTris": 179848,
+    "instTris": 39160,
+    "mats": 157,
+    "matTypes": {
+     "MeshToonMaterial": 856,
+     "MeshBasicMaterial": 320,
+     "undefined": 4
+    },
+    "outlines": 160,
+    "transparent": 145,
+    "canvasTextures": 11
+   },
+   "ik": 2.05,
+   "tiles": null,
+   "camFov": 20,
+   "camEl": 0.8200000000000001,
+   "camD": 355.5228521821153
+  },
+  "no_shadows": {
+   "calls": 1256,
+   "triangles": 219184,
+   "points": 125,
+   "lines": 0,
+   "geometries": 1032,
+   "textures": 16,
+   "programs": 29
+  },
+  "export": {
+   "bytes": 12434176,
+   "drop": {
+    "sprites": 55,
+    "points": 2,
+    "instanced": 6
+   }
+  },
+  "errors": [
+   "GLTFExporter: Use MeshStandardMaterial or MeshBasicMaterial for best results.",
+   "GLTFExporter: Use MeshStandardMaterial or MeshBasicMaterial for best results.",
+   "GLTFExporter: Use MeshStandardMaterial or MeshBasicMaterial for best results.",
+   "GLTFExporter: Use MeshStandardMaterial or MeshBasicMaterial for best results.",
+   "GLTFExporter: Use MeshStandardMaterial or MeshBasicMaterial for best results."
+  ]
+ },
+ {
+  "mode": "realm",
+  "realm": "skyfield",
+  "shadows": {
+   "info": {
+    "calls": 1264,
+    "triangles": 215904,
+    "points": 0,
+    "lines": 0,
+    "geometries": 1042,
+    "textures": 17,
+    "programs": 20
+   },
+   "census": {
+    "meshes": 1170,
+    "instanced": 6,
+    "instances": 2210,
+    "sprites": 55,
+    "pointsObj": 0,
+    "lights": 3,
+    "pointLights": 0,
+    "castShadow": 402,
+    "meshTris": 177184,
+    "instTris": 39160,
+    "mats": 154,
+    "matTypes": {
+     "MeshToonMaterial": 832,
+     "MeshBasicMaterial": 340,
+     "undefined": 4
+    },
+    "outlines": 154,
+    "transparent": 174,
+    "canvasTextures": 11
+   },
+   "ik": 2.05,
+   "tiles": null,
+   "camFov": 20,
+   "camEl": 0.8200000000000001,
+   "camD": 355.0243109992428
+  },
+  "no_shadows": {
+   "calls": 1264,
+   "triangles": 215904,
+   "points": 0,
+   "lines": 0,
+   "geometries": 1042,
+   "textures": 17,
+   "programs": 26
+  },
+  "errors": []
+ },
+ {
+  "mode": "realm",
+  "realm": "emberreach",
+  "shadows": {
+   "info": {
+    "calls": 1214,
+    "triangles": 163324,
+    "points": 130,
+    "lines": 0,
+    "geometries": 971,
+    "textures": 15,
+    "programs": 22
+   },
+   "census": {
+    "meshes": 1089,
+    "instanced": 6,
+    "instances": 820,
+    "sprites": 97,
+    "pointsObj": 1,
+    "lights": 3,
+    "pointLights": 0,
+    "castShadow": 438,
+    "meshTris": 140170,
+    "instTris": 22840,
+    "mats": 136,
+    "matTypes": {
+     "MeshToonMaterial": 791,
+     "MeshBasicMaterial": 300,
+     "undefined": 4
+    },
+    "outlines": 143,
+    "transparent": 142,
+    "canvasTextures": 11
+   },
+   "ik": 2.05,
+   "tiles": null,
+   "camFov": 20,
+   "camEl": 0.8200000000000001,
+   "camD": 354.3366929193242
+  },
+  "no_shadows": {
+   "calls": 1214,
+   "triangles": 163324,
+   "points": 130,
+   "lines": 0,
+   "geometries": 971,
+   "textures": 15,
+   "programs": 26
+  },
+  "errors": []
+ },
+ {
+  "mode": "realm",
+  "realm": "lanternvale",
+  "shadows": {
+   "info": {
+    "calls": 1149,
+    "triangles": 190176,
+    "points": 85,
+    "lines": 0,
+    "geometries": 905,
+    "textures": 14,
+    "programs": 21
+   },
+   "census": {
+    "meshes": 1019,
+    "instanced": 6,
+    "instances": 2210,
+    "sprites": 102,
+    "pointsObj": 1,
+    "lights": 7,
+    "pointLights": 4,
+    "castShadow": 360,
+    "meshTris": 150652,
+    "instTris": 39160,
+    "mats": 127,
+    "matTypes": {
+     "MeshToonMaterial": 732,
+     "MeshBasicMaterial": 289,
+     "undefined": 4
+    },
+    "outlines": 141,
+    "transparent": 136,
+    "canvasTextures": 8
+   },
+   "ik": 2.05,
+   "tiles": null,
+   "camFov": 20,
+   "camEl": 0.8200000000000001,
+   "camD": 349.203631135484
+  },
+  "no_shadows": {
+   "calls": 1149,
+   "triangles": 190176,
+   "points": 85,
+   "lines": 0,
+   "geometries": 905,
+   "textures": 14,
+   "programs": 25
+  },
+  "errors": []
+ },
+ {
+  "mode": "heist",
+  "realm": "heart",
+  "shadows": {
+   "info": {
+    "calls": 940,
+    "triangles": 225558,
+    "points": 125,
+    "lines": 2,
+    "geometries": 785,
+    "textures": 13,
+    "programs": 20
+   },
+   "census": {
+    "meshes": 1002,
+    "instanced": 13,
+    "instances": 2634,
+    "sprites": 29,
+    "pointsObj": 2,
+    "lights": 3,
+    "pointLights": 0,
+    "castShadow": 116,
+    "meshTris": 190702,
+    "instTris": 40974,
+    "mats": 120,
+    "matTypes": {
+     "MeshToonMaterial": 756,
+     "MeshBasicMaterial": 259
+    },
+    "outlines": 165,
+    "transparent": 95,
+    "canvasTextures": 11
+   },
+   "ik": 1.4,
+   "tiles": null,
+   "camFov": 20,
+   "camEl": 1.059,
+   "camD": 162.00670896409483
+  },
+  "no_shadows": {
+   "calls": 940,
+   "triangles": 225558,
+   "points": 125,
+   "lines": 2,
+   "geometries": 785,
+   "textures": 13,
+   "programs": 24
+  },
+  "errors": []
+ },
+ {
+  "mode": "scout",
+  "realm": "heart",
+  "shadows": {
+   "info": {
+    "calls": 769,
+    "triangles": 206854,
+    "points": 125,
+    "lines": 0,
+    "geometries": 640,
+    "textures": 13,
+    "programs": 18
+   },
+   "census": {
+    "meshes": 804,
+    "instanced": 6,
+    "instances": 2145,
+    "sprites": 48,
+    "pointsObj": 2,
+    "lights": 3,
+    "pointLights": 0,
+    "castShadow": 233,
+    "meshTris": 174730,
+    "instTris": 36560,
+    "mats": 101,
+    "matTypes": {
+     "MeshToonMaterial": 615,
+     "MeshBasicMaterial": 195
+    },
+    "outlines": 127,
+    "transparent": 69,
+    "canvasTextures": 8
+   },
+   "ik": 2.05,
+   "tiles": null,
+   "camFov": 20,
+   "camEl": 0.9,
+   "camD": 210.60872165332327
+  },
+  "no_shadows": {
+   "calls": 769,
+   "triangles": 206854,
+   "points": 125,
+   "lines": 0,
+   "geometries": 640,
+   "textures": 13,
+   "programs": 24
+  },
+  "errors": []
+ },
+ {
+  "mode": "plan",
+  "realm": "heart",
+  "shadows": {
+   "info": {
+    "calls": 1416,
+    "triangles": 689930,
+    "points": 1875,
+    "lines": 150,
+    "geometries": 946,
+    "textures": 22,
+    "programs": 24
+   },
+   "census": {
+    "meshes": 924,
+    "instanced": 42,
+    "instances": 3418,
+    "sprites": 379,
+    "pointsObj": 24,
+    "lights": 3,
+    "pointLights": 0,
+    "castShadow": 203,
+    "meshTris": 604120,
+    "instTris": 80768,
+    "mats": 283,
+    "matTypes": {
+     "MeshBasicMaterial": 214,
+     "MeshToonMaterial": 752
+    },
+    "outlines": 52,
+    "transparent": 135,
+    "canvasTextures": 30
+   },
+   "ik": 1,
+   "tiles": null,
+   "camFov": 28,
+   "camEl": 1.02,
+   "camD": 182.27456734869054
+  },
+  "no_shadows": {
+   "calls": 1416,
+   "triangles": 689930,
+   "points": 1875,
+   "lines": 150,
+   "geometries": 946,
+   "textures": 22,
+   "programs": 33
+  },
+  "errors": []
+ }
+]

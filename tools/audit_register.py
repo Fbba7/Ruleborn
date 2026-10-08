@@ -61,6 +61,10 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
                           "G23", "G24", "G25", "D61", "G26", "D62", "C43",
                           "F40", "G27", "D63", "F41", "F42", "G28", "D64", "G29", "D65", "F43", "F44", "F45", "G30", "D66", "G31", "F46", "G32", "D67", "F47", "G33", "G34", "D68", "F48", "G35", "F49", "G36", "D69", "G37", "F50", "G38", "G39", "D70", "F51", "G40", "D71", "F52", "F53", "F54", "D72", "G41", "F55", "G42", "F56", "G43", "G44"})
 
+#: Found by reading v3.6 and Screens v3, the owner's screen and character
+#: designs it records (23.5), against themselves and against the build.
+FOUND_IN_V36 = frozenset({})
+
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
     "D19", "D20", "D21", "D22", "D23",
@@ -7330,6 +7334,148 @@ V33 = {
 # re-run). The four items registered after v3.4's snapshot (F33, F34, G17,
 # D58) are not in its list and get no note here.
 
+#: What v3.6 did about each item it touched. v3.5 changed only the engine pin
+#: (24, 32.8 brief 39), so it has no layer of its own.
+V36 = {
+"G28": dict(status="open", note=
+    "<strong>Narrowed, still open.</strong> §18.8 now reads <em>“Cosmetic only "
+    "on the premium track | The premium track sells looks and nothing else "
+    "(22.1). The free track’s pages, Essence and stray (18.2) are small and stay "
+    "claimable in a later season”</em> — the rewording the owner’s answer B "
+    "asked for, and what <code>server/src/track.mjs</code> already does. §14.4 "
+    "adds <em>“The season track’s free lane (18.2) | A few a season, not in the "
+    "day counts below”</em>. Still not in the document: stars per heist and "
+    "defence, the tier price (10 under answer B; this item’s body quotes the "
+    "earlier build’s twenty), the catch-up formula and the rewards tier by tier; "
+    "§9.1’s sources and §24.8’s “season pass expiry” were not edited. The build "
+    "gives 25 pages a season (five at tiers 5, 15, 25, 35 and 45), not “a few”, "
+    "and the published economy run counts them in the Codex days "
+    "(<code>tools/economy_model/model.py:589-595</code>), which §14.4 now says "
+    "the counts leave out."),
+
+"F42": dict(status="open", note=
+    "Untouched: §18.2 still climbs the track with <em>“season points from "
+    "heists, defences and discoveries”</em> and §9.1 still adds goals. The "
+    "owner’s answer A (stars, from heists and defences) is not in v3.6."),
+
+"F37": dict(status="open", note=
+    "<strong>Narrowed slightly.</strong> §14.4’s new free-lane row is "
+    "<em>“not in the day counts below”</em>, so the free track is now left out "
+    "on purpose, which answers half of this item’s second paragraph. <em>“A "
+    "player who never raids earns the Library alone”</em> still stands, and "
+    "answer B (the Library and a goal a day, the launch 24 as the ceiling) is "
+    "not in v3.6."),
+
+"F54": dict(status="open", note=
+    "Untouched. In the model a non-raider claims the free track’s first tier "
+    "only (500 Essence, no pages), so v3.6’s free lane does not move the "
+    "plateau; answer A’s gate on the Keeper bar is the client’s (stage SD’s "
+    "home, TD.19)."),
+
+"C35": dict(status="open", note=
+    "Untouched: §14.4’s about 69 days and §14.3’s day 235 both stand. §14.4’s "
+    "new row says the free lane is not in its counts; the generated run "
+    "(<code>docs/design/generated/pacing.md</code>) includes it."),
+
+"C11": dict(status="open", note=
+    "<strong>Reopened.</strong> v3.6 adds Profile and stats to §23.2, adopted "
+    "from Screens v3 (§23.5), so the launch list has 28 screens, while §21.9 "
+    "still budgets <em>“About 220 and 27”</em> icons and screens and §23.5 "
+    "counts 393 icons. <code>tools/check_document.py</code> now checks 28 in "
+    "§23.2; nothing reads §21.9. Fix: §21.9 reads 28, and says whether the icon "
+    "budget follows the designs."),
+
+"D70": dict(status="open", note=
+    "Narrowed by the build and widened by v3.6. The age check is on a screen "
+    "(TC.10), so half of the title is stale; the deletion button is still on "
+    "none. §23.5 adopts a first-launch order with <em>“a summary of the "
+    "protections that band sets”</em> after the age step, which is new work "
+    "(TD.26), and Settings now shows <em>“any protection the age band fixes … "
+    "locked”</em> (§23.2; TD.25)."),
+
+"F38": dict(status="open", note=
+    "§11.8 now says the Stray <em>“is a ruleborn of one of the eighteen kinds, "
+    "its kind drawn as a birth’s is (11.5) … there is no nineteenth kind”</em>, "
+    "which overrules the designs’ kitten. The rate is untouched, and answer B "
+    "(a found stray joins at the next birth’s price) is in the model, not in "
+    "§11.5 or §11.8."),
+
+"F41": dict(status="open", note=
+    "Untouched where it matters: §18.2 <em>“The premium track, bought with "
+    "Starglass”</em>, §9.1 <em>“Purchases; small amounts from the free season "
+    "track”</em> and §22.1’s packs stand; §18.8’s <em>“sells looks and nothing "
+    "else”</em> fits either reading. Screens v3 prices the Shop and the "
+    "Starpass in Starglass; the port prices in money, as the build does under "
+    "answer C."),
+
+"F35": dict(status="open", note=
+    "v3.6’s §32.8 now records brief 37: <em>“Cracking calls only the guards "
+    "within the crack’s reach, drawn as a ring around the Vault … shipping at "
+    "5 m”</em>. The owner’s answer D (no guard hears the Vault) is built and is "
+    "not in v3.6, so the document and the build disagree on purpose until the "
+    "answers are taken in (TD.29)."),
+
+"F46": dict(status="open", note=
+    "§32.8 records brief 38: <em>“A scout shows no positions.”</em> Answer B "
+    "(the scout is free; the card shows laws, guards and ward counts) is not in "
+    "v3.6. Screens v3’s scout report draws guard posts, wards and patrol "
+    "routes; the port draws no positions (TD.18)."),
+
+"F55": dict(status="open", note=
+    "§23.5 makes every screen show holds inside the band: <em>“Holds inside 30 "
+    "to 45%”</em> (its demo-numbers row) and <em>“30 to 45% held at every "
+    "level”</em> (its Workshop row). F55 measured 47.6–95.5% at §5.2’s budget, "
+    "so the figure §23.5 asks the screens to show cannot be reached as §5.2 "
+    "stands; any hold a screen shows comes from measurement."),
+
+"D62": dict(status="open", note=
+    "§23.5’s Workshop row now names the check from the screen’s side: "
+    "<em>“30 to 45% held at every level”</em>. Still not built; stage SD’s "
+    "measurement queue (TD.16) is where it lands."),
+
+"G31": dict(status="open", note=
+    "§23.2’s rehearsal and defence log row now asks for each raid’s report: "
+    "<em>“the haul denied, how long the defence held, where the crew was seen, "
+    "what fired; 13.2”</em>. “The haul denied” is the price this item asks "
+    "for, and none of the four measures is defined for one raid or recorded "
+    "by the simulation."),
+
+"F56": dict(status="open", note=
+    "v3.6 adds a fourth account. §23.5’s first-session row: <em>“the session "
+    "starts from a bare Heart”</em>, against §16’s strays that <em>“follow the "
+    "crew home to a free Hearth”</em> at 5:00, §11.5’s free Hearth and the "
+    "build’s starting Heart (<code>design_facts.STARTING_HEART</code>: Spire, "
+    "Vault, Star Well, Aether Spring, Garden and Hearth). “Bare” is not "
+    "defined."),
+
+"G42": dict(status="open", note=
+    "§26.8 changed only phase 0’s note (the store builds on 4.7.2). Screens v3 "
+    "adds six screen groups that stand on the home economy — the realm view’s "
+    "production, the roster, the Codex, weaving, the Lab and Aether — so "
+    "TC.12’s slices are now the critical path for them (stage SD)."),
+
+"G30": dict(status="open", note=
+    "§23.5 corrects Screens v3’s Profile header: <em>“Renown; the rating stays "
+    "internal”</em> (12.15). The offer still sends each target’s internal "
+    "rating and deviation to the device (<code>server/src/matchmaking.mjs</code>), "
+    "which no screen shows; TD.18 stops it."),
+
+"D72": dict(status="open", note=
+    "v3.6 does not touch §21.8. Screens v3 makes it wider: its surfaces are "
+    "dark cards, glass and parchment rather than paper, success green on them "
+    "reads at 7.6:1, and alarm red is no better (white on #E2536B 3.69:1, the "
+    "red count badges 2.7–2.8:1 on screen); its deeper red fill #C42040 carries "
+    "white at 5.79:1, the client’s answer. The drafted edit assumes paper "
+    "panels, and the register and the client name different word shades "
+    "(#B3203A here, <code>alarm_text</code> #9A1B32 in the client)."),
+
+"G35": dict(status="open", note=
+    "Untouched by v3.6. Screens v3’s Share sheet lets a 13–15 post a clip to the "
+    "Beacon feed, against answer B, and Friends shows presence and a live "
+    "“raiding” status that §17.8 rules out; the port keeps the server’s rule "
+    "(TD.23)."),
+}
+
 V34 = {
 
 "C19": dict(status="open", note=
@@ -8007,6 +8153,18 @@ BOTH = {
     "F16": "designed geometry beats generated eleven to one, which is a "
            "statement about level design as much as about the generator",
     "F12": "eight laws need an act of authorship from whoever lays out a realm",
+    # The owner's answers name a client half for these ten (answers.json's
+    # `client`), so a screen in stage SD owes part of each.
+    "F37": "daily goals and ruins on the server; the goal and the ruins on screen",
+    "F38": "the stray's price; the adopt prompt for a found stray",
+    "F41": "no currency on the server; the shop's money prices and the gift flow",
+    "F43": "what deletion keeps; the deletion screen's \u201cwithdraw my islands too\u201d",
+    "F46": "a free scout on the server; the target card's laws, guards and ward counts",
+    "F54": "the non-raider's plateau; the Keeper bar's gate",
+    "G19": "the Heart's realm level; the builder locking it at level 3",
+    "G29": "sessions and the survey on the server; the client sending them",
+    "G34": "the night on the server; the time zone sent and a picker with no night",
+    "G35": "invites and feeds on the server; the friends' feed screen",
 }
 
 
@@ -8096,12 +8254,16 @@ DESIGN_GATES = {
             "G5":  "a pylon shows its law before the detour (v3.3)",
         }),
     "screens": dict(
-        what="The 27 screens in \u00a723, their contents and their counts",
+        what="The 28 screens in \u00a723, designed in Screens v3 (\u00a723.5), "
+             "their contents and their counts",
         gates={},
+        partly={
+            "C11": "how many screens there are: \u00a723.2's 28, which the designs "
+                   "match; \u00a721.9 still says 27 (v3.6)",
+        },
         closed={
             "C37": "what the scout report shows: no patrol positions; "
                    "patrols are learned in the heist (v3.4, brief 38)",
-            "C11": "how many screens there are: 27, not 23",
             "C9":  "how many laws the Codex screen shows: 48, not 36",
             "C10": "how many traits a character screen lists: 31",
             "C24": "how many building types the build screen offers: 17",
@@ -8303,7 +8465,8 @@ def status(item) -> str:
     """The effective status of a register item, by id or by the item itself."""
     item_id = item if isinstance(item, str) else item["id"]
     own = {} if isinstance(item, str) else item
-    return (V34.get(item_id, {}).get("status")
+    return (V36.get(item_id, {}).get("status")
+            or V34.get(item_id, {}).get("status")
             or V33.get(item_id, {}).get("status")
             or V32.get(item_id, {}).get("status")
             or V31.get(item_id, {}).get("status")
@@ -8332,6 +8495,17 @@ def status_before_v34(item_id: str) -> str:
             or own.get("status", "open"))
 
 
+def status_before_v36(item_id: str) -> str:
+    """What an item's status was before v3.6's layer, for counting what it did."""
+    own = next((i for i in REGISTER if i["id"] == item_id), {})
+    return (V34.get(item_id, {}).get("status")
+            or V33.get(item_id, {}).get("status")
+            or V32.get(item_id, {}).get("status")
+            or V31.get(item_id, {}).get("status")
+            or V3.get(item_id, {}).get("status")
+            or own.get("status", "open"))
+
+
 def is_open(item) -> bool:
     """Whether there is still work in it — drafted but unsigned counts as open."""
     return status(item) not in SETTLED
@@ -8339,6 +8513,14 @@ def is_open(item) -> bool:
 
 
 EDITS = {
+"C11": [
+    dict(section="21.9", action="replace",
+         find="About 220 and 27; two more with version 1.1 (23.2)",
+         replace="About 390, as Screens v3 draws them (23.5), and 28; two more with "
+                 "version 1.1 (23.2)",
+         why="v3.6 added Profile and stats to 23.2's launch list, and 23.5 counts "
+             "393 icons in the designs"),
+],
 "G41": [
     dict(section="24.12", action="replace",
          find="This game will be played underground, on trains, in lifts. Offline is the normal path, "

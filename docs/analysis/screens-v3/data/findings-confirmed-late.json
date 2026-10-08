@@ -1,0 +1,514 @@
+[
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#0",
+  "kind": "contradiction",
+  "title": "v3.6 empties the Twinned's gift: it doubles abilities it does not have",
+  "refs": [
+   "11.8",
+   "11.11",
+   "11.1",
+   "11.2",
+   "23.5"
+  ],
+  "evidence": "\u00a711.8 (v36.txt:6251): \"Acts twice: every ability it fires, fires two times. Its crew's abilities fire once.\" \u00a711.8 (v36.txt:6257): \"Paradox-born have no role in 11.1\". \u00a711.11 has no card for any paradox-born: the only mentions are v36.txt:6245-6285, 10778 and 11602. The Reverser's gift is itself an ability (\"two uses a heist, with the 10-second lockout, 11.11\"). The Twinned's gift is a modifier with nothing to act on. The characters reader found the same independently.",
+  "rec": "The owner writes what \"acts twice\" doubles, as a rule-sheet change (\u00a77.3). Either its own hits and loading, against the shared 120 health and 80 carry, or one two-use ability of its own with the 10-second lockout. Until then the Twinned cannot be built or balanced.",
+  "severity": "significant",
+  "verdict_why": "Confirmed. \u00a711.8 (v36.txt:6251) now reads \"Acts twice: every ability it fires, fires two times. Its crew's abilities fire once.\" v3.4 said only \"every ability fires two times\" (diffs.txt:31-32). Paradox-born have no role (v36.txt:6257) and \u00a711.11 (6335-6960) has no card for any of them. The Reverser's gift is itself a two-use ability and the Unmade's is passive, so the Twinned has nothing of its own to double. \u00a723.5 records the change (\"Doubles only its own\", v36.txt:11602) but not that it leaves the gift empty. Small error: 'the only mentions' also misses v36.txt:9043, 11023, 11409 and 12275. None of those is a \u00a711.11 card, so the substance holds.",
+  "corrected": "v3.6 limits the Twinned's gift to abilities it fires itself (\u00a711.8). Paradox-born have no role and no \u00a711.11 card, so the Twinned has no ability, and its gift doubles nothing. \u00a723.5's Twinned row records the change without noticing this.",
+  "existing": "none"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#1",
+  "kind": "contradiction",
+  "title": "\u00a711.7's new rule for every Sage (named-parameter powers, 'the one 20-second cooldown') is broken by the launch Sages and by Sage levelling",
+  "refs": [
+   "11.7",
+   "7.3",
+   "12.21"
+  ],
+  "evidence": "v3.6 adds (v36.txt:6217): \"under the rules every Sage follows: three powers, each a change to a named parameter (7.3), the one 20-second cooldown\". \u00a77.3 has \"exactly twenty-two parameters\", and none of them is Suspend (switch a law off), Reveal (show every ward), Jam (disable a ward), Copy (carry an enemy law), Rift (open a rift between realms), Plank or Vine bridge (lay a shortcut), or Decoy (plant a sapling). The same paragraph says \"Every fifth level improves one power (an extra use, a longer effect or a shorter cooldown)\".",
+  "rec": "Either restate the rule as binding only after-launch Sages, or map each launch power to a \u00a77.3 parameter (adding parameters where needed). Say the 20-second cooldown is the level-1 value.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. v3.6's new sentence (v36.txt:6217) binds 'every Sage' to three powers, 'each a change to a named parameter (7.3)', with 'the one 20-second cooldown'. \u00a77.3's 22 parameters cover none of Suspend, Invert, Copy, Jam, Plank, Vine bridge, Decoy or Rift. \u00a77.3 itself says 'Apply Sage powers, which can suspend or flip any law', so launch Sage powers are by design not parameter changes. Reveal is a view-layer reveal, and \u00a77.3 names Glass and Lighthouse as that reveal's only users. The 20 s is also not fixed: levels can give 'a shorter cooldown' and Sparkwright cuts it. No register item covers this.",
+  "corrected": "\u00a711.7's 'rules every Sage follows' (one named parameter per power, one 20-second cooldown) is broken by the launch Sages. \u00a77.3 itself lets Sage powers suspend or flip whole laws (Suspend, Invert, Copy), and Reveal is a view-layer reveal that \u00a77.3 reserves for Glass and Lighthouse. The 20 s is a level-1 value that levels and Sparkwright shorten.",
+  "existing": "none"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#2",
+  "kind": "deviation",
+  "title": "\u00a714.4's free lane is 'a few a season, not in the day counts'; the build gives 25 pages a season and counts them in the Codex days",
+  "refs": [
+   "14.4",
+   "18.2",
+   "18.8",
+   "14.3"
+  ],
+  "evidence": "\u00a714.4 (v36.txt:8272-8273): \"The season track's free lane (18.2) | A few a season, not in the day counts below\". server/src/track.mjs:52 gives 5 pages at tiers 5, 15, 25, 35 and 45: 25 a season for engaged and regular players (all 50 tiers at 4.97 stars an attempt) and 15 for casual (28 tiers). Computed with tools/economy_model/data.py free_track. The published model run adds them to every raider's daily pages: model.py:589-595, `track = self._track()[1] / data.SEASON_DAYS`, under decided_income=True (config.py:226-227). So docs/design/generated/pacing.md's Codex days (launch 24 on day 29; all 48 on days 84\u201388) include free-lane pages.",
+  "rec": "State the free lane's pages in \u00a718.2 (25, or a smaller number the server then adopts). Either drop track pages from the pages that set the Codex days in the model, or reword \u00a714.4 to say they are in.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. \u00a714.4 (v36.txt:8272-8273) says the free lane gives 'A few a season, not in the day counts below'. server/src/track.mjs:52 gives 5 pages at tiers 5, 15, 25, 35 and 45, which is 25 a season: data.FREE_TRACK_PAGES = 25, as in the owner's G28 answer B. model.py:589 adds `track = self._track()[1] / data.SEASON_DAYS` to daily pages under decided_income=True, the setting the published run uses (config.py:226). \u00a714.4 says the re-run replaces its day counts, so the published Codex days (pacing.md:90-93) include the free lane. Effect is small: about 0.45 pages a day against about 16, so a day or so. G28 asked for the track's pages to be put into the model; v3.6's wording then excludes them.",
+  "corrected": "\u00a714.4's own arithmetic excludes the free lane, but the model re-run that \u00a714.4 says replaces it includes 25 pages a season (G28 B, track.mjs). Either \u00a714.4 states 25 and that the re-run counts them, or the model drops them. The effect on the Codex days is about one day.",
+  "existing": "G28 (related; it asked for the track's pages in the model and does not record v3.6's 'not in the day counts')"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#3",
+  "kind": "contradiction",
+  "title": "\u00a718.8 keeps 'nothing in a season changes a heist' beside a free track that grants a stray, Essence and pages",
+  "refs": [
+   "18.8",
+   "18.2",
+   "18.3",
+   "11.5"
+  ],
+  "evidence": "\u00a718.8 (v36.txt:9125): \"The free track's pages, Essence and stray (18.2) are small and stay claimable in a later season, so skipping a season costs time, never access, and nothing in a season changes a heist.\" A stray is a crew member (\u00a711.5), Essence buys character levels (\u00a711.4), and pages raise law tiers (\u00a714.4). \u00a718.3's launch eras change a heist's rules every week. The owner's chosen G28 option B proposed \"Nothing bought in a season affects a heist\" (docs/decisions/brief.json); v3.6 dropped \"bought\".",
+  "rec": "Reword to \"nothing bought in a season changes a heist\".",
+  "severity": "minor",
+  "verdict_why": "Confirmed. v36.txt:9125 says 'nothing in a season changes a heist', in the same row that grants a stray, Essence and pages. A stray joins the crew (\u00a711.5), Essence buys levels and pages raise law tiers. \u00a718.3's eras change a heist's rule every week. G28 option A's doc_edit, which B reuses and the owner chose, read 'Nothing bought in a season affects a heist' (docs/decisions/brief.json; answers.json G28=B). v3.6 dropped 'bought'.",
+  "corrected": "\u00a718.8's 'nothing in a season changes a heist' is literally false: the free track's stray, Essence and pages, and \u00a718.3's weekly eras, all change heists. The owner's G28 wording was 'nothing bought in a season'.",
+  "existing": "G28 (its doc_edit carries the 'bought' wording)"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#4",
+  "kind": "contradiction",
+  "title": "\u00a79.1 still gives the free track Starglass and omits it from the sources of Pages and Essence, after \u00a718.8 names \u00a718.2 the home",
+  "refs": [
+   "9.1",
+   "18.2",
+   "18.8",
+   "22.1"
+  ],
+  "evidence": "\u00a718.8 (v36.txt:9125): \"18.2 is the home of what each track holds\". \u00a718.2: \"The free track gives pages, Essence and a stray\". \u00a79.1 still says Starglass is earned from \"Purchases; small amounts from the free season track\" (v36.txt:4415). It lists Essence from \"Gardens, heists\" (v36.txt:4380) and Pages from \"Heists, the Lab, the Collector, gifts, daily goals\" (v36.txt:4387). The owner's G28 answer B included the edit \"\u00a79.1: add 'the season track' to the 'Earned from' cells for Essence and Pages\", and the owner's F41 answer removed the currency. Neither is applied.",
+  "rec": "Apply B's \u00a79.1 edits (the season track as a source of Essence and Pages) and remove the free track from Starglass's sources, as F41 decided. Also apply B's \u00a718.2 figures table, the catch-up formula in \u00a718.8, and \u00a724.8's 'season pass expiry' change.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. \u00a79.1 still lists Starglass as earned from 'Purchases; small amounts from the free season track' (v36.txt:4415), Essence from 'Gardens, heists' (4380) and Pages without the season track (4387). \u00a718.2 lists no Starglass on the free track, and \u00a718.8 now calls \u00a718.2 'the home of what each track holds' (9125). The owner chose F41 C (no currency; free track gives no Starglass) and G28 B, which includes A's \u00a79.1 Essence/Pages edits. Neither is applied. \u00a724.8 still says 'season pass expiry' (v36.txt:11928), and \u00a718.2 still says 'bought with Starglass'.",
+  "corrected": "",
+  "existing": "F41, G28"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#5",
+  "kind": "contradiction",
+  "title": "C11 reopens: \u00a721.9 budgets 27 screens, \u00a723.2 now lists 28",
+  "refs": [
+   "21.9",
+   "23.2",
+   "23.5"
+  ],
+  "evidence": "\u00a721.9 (v36.txt:11044-11045): \"Interface icons and screens | About 220 and 27; two more with version 1.1 (23.2)\". v3.6 adds a 28th launch row, Profile and stats (v36.txt:11315). \u00a723.5 also records 393 designed icons. The working-tree tools/check_document.py now asserts 28 in \u00a723.2, but nothing reads \u00a721.9's count, although \u00a721.9 says its rows are \"derived from the same inventory 26.1 is checked against\".",
+  "rec": "\u00a721.9: 28 screens. Bring \u00a721.9's screen count under the same check as \u00a723.2's.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. \u00a721.9 (v36.txt:11044-11045) says 'About 220 and 27'. \u00a723.2's launch table now has 28 rows, Profile and stats being the 28th (11315-11317). tools/check_document.py:1471 asserts 28 for \u00a723.2, but check_asset_budget (lines 973-1006) checks only building looks, law signatures and ruleborn, not \u00a721.9's screen count. C11 was this same screen-count conflict.",
+  "corrected": "",
+  "existing": "C11"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#6",
+  "kind": "deviation",
+  "title": "Slower ruins is built as slower rehearsals, and there are no ruins to apply it to",
+  "refs": [
+   "23.5",
+   "20.8",
+   "12.10"
+  ],
+  "evidence": "\u00a723.5 (v36.txt:11407): \"An accessibility option that runs drifting ruins at 75% speed. Ruins only: never a heist against a player, never Renown\". \u00a720.8: \"a slower mode for ruins\". The build applies the setting only when `rehearsal` is true (client/scripts/heist_screen.gd:205-207) and labels it \"Rehearsals at 75%\" (client/i18n/strings.csv:82-83; client/scripts/settings.gd:32-33). Drifting ruins exist in neither client nor server: a search for ruin finds only a terrain tile.",
+  "rec": "Rename the setting to slower ruins and apply it only to drifting ruins when they are built. Rehearsals keep \u00a720.8's pause.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. \u00a720.8 asks for 'a slower mode for ruins that runs the simulation at 75% speed' (v36.txt:10303), and \u00a723.5 says 'Ruins only' (11407). The client applies it only when `rehearsal` is true (heist_screen.gd:205-207) and labels it 'Rehearsals at 75%' (strings.csv:82-83; settings.gd:32-33). Searching client/, server/src and sim/src for 'ruin' finds only the Ruin wall terrain feature, so drifting ruins are not built. Low harm: a rehearsal moves no Renown.",
+  "corrected": "",
+  "existing": "none"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#7",
+  "kind": "gap",
+  "title": "Settings lacks the reminder, notifications, a play-time reminder and locked protections, and the play-time reminder exists nowhere",
+  "refs": [
+   "23.2",
+   "20.2",
+   "14.6",
+   "20.8"
+  ],
+  "evidence": "\u00a723.2 (v36.txt:11281): \"Reminder time, play-time reminders, notifications, accessibility, languages; any protection the age band fixes is shown locked (20.2)\". \u00a720.2 requires a play-time reminder \"Every 60 minutes\" for 13 to 15 and every 90 minutes by default for 16 and 17. client/scripts/settings_screen.gd has language, volumes, text size and six toggles only. The server accepts reminder and night settings at `PUT /v1/notifications` (server/src/http.mjs:502), but no screen sets them. A search for play-time, playtime or reminder in client and server finds no play-time reminder.",
+  "rec": "Build the play-time reminder on the device by band. Add the reminder time and notifications to Settings, and draw each protection the band fixes as locked.",
+  "severity": "significant",
+  "verdict_why": "Confirmed. \u00a723.2's Settings row (v36.txt:11281) and \u00a720.2's play-time reminder ('Every 60 minutes' for 13-15, 90 by default for 16-17) are set out as quoted. settings_screen.gd builds language, three volumes, text size and six toggles only (lines 47-82). Nothing in client/ calls PUT /v1/notifications (http.mjs:502), although the server accepts reminder, nightQuiet and timeZone (notifications.mjs:124). A grep for play-time, playtime or play_time in client/, server/src, tools/roadmap.py and tools/audit_register.py finds nothing, so it is built nowhere and planned nowhere. \u00a723.5's 'Locked protections' row covers only the designs, and D68 covers device notification timers, not Settings.",
+  "corrected": "",
+  "existing": "none (D68 is related: device-side notifications not built)"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#8",
+  "kind": "deviation",
+  "title": "The result screen is far from \u00a723.2's rewritten row, though the server already returns Renown and the fee",
+  "refs": [
+   "23.2",
+   "12.9",
+   "12.13",
+   "23.5"
+  ],
+  "evidence": "\u00a723.2 (v36.txt:11233) requires: the outcome with its multipliers, the decisive moment with a three-second replay and one thing to try, loot kept, the entry fee, the law to study, Renown, rest for every crew member, and \"worth your time?\". client/scripts/result_screen.gd shows the grade, banked/haul/fee, Keeper experience and a button to the whole replay. Its header still quotes v3.4's row, \"Grade, loot kept, \u2026 replay\" (result_screen.gd:3). The server's grant already returns `renown`, `fee` and `feeReturned` (server/src/service.mjs:784). \u00a723.5 (v36.txt:11418) says the result \"already follow[s] this document\". That is true of the design, not the build.",
+  "rec": "Rebuild the result to the row: Renown, the fee and its return, and rest from the verdict. The decisive moment and one thing to try wait on the sim keeping events (heist-result reader).",
+  "severity": "minor",
+  "verdict_why": "Confirmed. result_screen.gd shows the grade, banked/haul/fee, Keeper experience and a Watch button. It shows no Renown, fee return, rest, law to study, decisive moment, one thing to try or 'worth your time?'. The server's grant returns renown, fee and feeReturned (service.mjs:784). The header (result_screen.gd:3) paraphrases v3.4's row ('Grade, loot kept, law to study, Renown, rest times, replay, \"worth your time?\"'), which the build did not meet either. \u00a723.5's 'already follow' (11418) is about the designs. Downgraded: this is unfinished client work on data the server already sends, not a design defect.",
+  "corrected": "The client's result screen meets neither v3.4's nor v3.6's \u00a723.2 row. It shows grade, banked/haul/fee and Keeper XP, though the server already returns Renown, fee and fee return.",
+  "existing": "none"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#9",
+  "kind": "gap",
+  "title": "Profile and stats: 'defences held and leaked', 'records' and 'badges' are undefined, and the server has no read of a player's history",
+  "refs": [
+   "23.2",
+   "12.9",
+   "13.2",
+   "20.2"
+  ],
+  "evidence": "\u00a723.2 (v36.txt:11317): \"heists by outcome (12.9); defences held and leaked; records; the battle log with replays; collection and badges\". \"Leaked\" appears nowhere else in the document. \u00a713.2's \"Defences that hold\" mirrors \"Raids that succeed\" without saying where a Partial falls. The server's routes (http.mjs:168-228, 468-570) have no profile or history read, although the heists, leases, renown and season_results tables hold the data (db.mjs:164-184, 333-361). The client router has no profile route (client/app/router.gd:9-21).",
+  "rec": "Define held and leaked against \u00a712.9's four outcomes (and whether a Partial is held), and define what a record and a badge are. Then add one server read for the profile and a client route.",
+  "severity": "minor",
+  "verdict_why": "Mostly confirmed. 'leaked' appears only at v36.txt:11317. Nothing defines a 'held' defence against \u00a712.9's four outcomes. \u00a713.2's 'Defences that hold' mirrors 'Raids that succeed' (the two bands sum to 100), which suggests a Partial counts as a success, but this is never stated. 'Records' is undefined. The server has league and season-result reads (http.mjs:168-170) but no heist-history or profile read. The client router has no profile route (router.gd:8-22). One overstatement: badges are not wholly undefined, since \u00a718.7's Builder rank gives 'a creator badge on your profile' (v36.txt:9084).",
+  "corrected": "\u00a723.2's Profile row leaves 'defences held and leaked' (where a Partial falls) and 'records' undefined. Only the creator badge (\u00a718.7) is defined among 'badges'. The server has no heist-history or profile read (only league and season results), and the client has no profile route.",
+  "existing": "none"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#10",
+  "kind": "gap",
+  "title": "The adopted first-launch order adds a Keeper's name with no rule for how it is chosen, filtered or shown, and the build has no step after the age check",
+  "refs": [
+   "23.5",
+   "20.1",
+   "20.2",
+   "20.4",
+   "20.7",
+   "16"
+  ],
+  "evidence": "\u00a723.5 (v36.txt:11404): \"Title, the age-band check, a summary of the protections that band sets, the Keeper's name and face, then the first-session beats\". \u00a720.4 filters \"player names\"; \u00a720.7 gives word-list names only for 13\u201315 islands; \u00a720.2 keeps a 13\u201315 profile private. None says whether the Keeper's name is typed or picked, or who sees it. client/scripts/age_screen.gd:38-43 goes from the age check straight to home. The server has no name column (server/src/db.mjs:23-64) and no player-name filter (server/src/words.json is for island names).",
+  "rec": "State the Keeper name's source (word lists for 13 to 15, filtered free text above) and who sees it. Then build the protections summary and the name and face steps.",
+  "severity": "minor",
+  "verdict_why": "Mostly confirmed, with one overstatement. \u00a720.4 does filter 'player names' (v36.txt:10225), which implies typed names, so 'filtered' has a rule. Nothing says whether 13-15 players type or pick from word lists (\u00a720.7's word lists are for island names) or who sees the Keeper's name. age_screen.gd:38-43 goes straight to home after the check. The accounts table (db.mjs:23-64) has no name column, and the server has no player-name filter (words.json holds island names).",
+  "corrected": "\u00a720.4 filters player names, but no rule says whether a 13-15 player's Keeper name is typed or drawn from word lists, nor who sees it. The build has no protections-summary, name or face step after the age check, no name column and no player-name filter.",
+  "existing": "C43 (related: word-list names for islands only)"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#11",
+  "kind": "gap",
+  "title": "The Stray visitor's kind is 'drawn as a birth's is', but a visitor has no Nursery to draw from",
+  "refs": [
+   "11.8",
+   "11.5",
+   "11.9",
+   "21.6",
+   "21.9"
+  ],
+  "evidence": "\u00a711.8 (v36.txt:6235): \"It is a ruleborn of one of the eighteen kinds, its kind drawn as a birth's is (11.5)\". A birth's kind is \"drawn from the schools around the Nursery\" (\u00a711.5), weighted by that Nursery's realm (\u00a711.9). Visitors arrive at the Visitor's Dock, which stands in the Heart (\u00a710.2 \"Heart; 1.\"), a Neutral realm with no Nursery. \u00a721.6 still says \"the Stray is a scruffy little creature with a bundle on a stick\" (v36.txt:10775), and \u00a721.9 still counts 3 visitors as characters.",
+  "rec": "Name the draw. For example: the schools of the realm where the favour is completed, or the universe's woven laws. Reword \u00a721.6's Stray as a travelling prop on any kind.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. \u00a711.8 (v36.txt:6235) draws the Stray's kind 'as a birth's is (11.5)'. A birth draws from the schools around a Nursery, weighted by that Nursery's realm (\u00a711.5, \u00a711.9). Nurseries stand in outer realms only ('Outer realms; 1 per realm', v36.txt:5411), and the Visitor's Dock is in the Heart (5804-5806), so no Nursery's weights apply. \u00a721.6 still calls the Stray 'a scruffy little creature' (10775), and \u00a721.9 still budgets 3 visitor characters (11024).",
+  "corrected": "",
+  "existing": "none"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#13",
+  "kind": "gap",
+  "title": "Paradox-born numbers have no home in content/ and cannot be carried by the role-keyed sim",
+  "refs": [
+   "11.8",
+   "23.5",
+   "12.21",
+   "7.3"
+  ],
+  "evidence": "v3.6 \u00a711.8 (v36.txt:6257-6285) sets the Reverser at 120/3.8/8/70, the Twinned at 120 shared/3.6/7/80 shared (Small), and the Unmade at 100/3.4/8/85. tools/check_document.py:1105 records \"Visitors, paradox-born, anomalies: no content table enumerates them\". The sim's crew stats are a `Role` enum, matched per role (sim/src/lib.rs:247-330). Size is derived from role, and \"nobody is small until a crew carries its ruleborn\" (lib.rs:256-260). There is no shared health or carry pool across two bodies.",
+  "rec": "Extract a paradox_born table from \u00a711.8 into content/ and validate it. Give the sim per-character level-1 stats not keyed by role, the Small band, and one body with a shared pool for the Twinned.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. content/ has no paradox-born table, and check_document.py:1105 records that none enumerates them. The sim's crew stats are role-keyed (lib.rs:247-330), and size comes from role ('nobody is small until a crew carries its ruleborn', 256-260). Nothing models a shared health or carry pool. The gap is not unique to paradox-born: no ruleborn has its own size in the sim yet. Paradox-born are the first characters whose numbers are not their role's.",
+  "corrected": "Content has no table for \u00a711.8's paradox-born numbers. The sim keys every crew member's stats and size to one of five roles, so it cannot carry role-less characters, a Small band or the Twinned's shared pool.",
+  "existing": "none"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#14",
+  "kind": "contradiction",
+  "title": "\u00a723.5's text-size row restates \u00a721.8's '16 pixels' body as '16 pt'",
+  "refs": [
+   "23.5",
+   "21.8"
+  ],
+  "evidence": "\u00a723.5 (v36.txt:11517): \"13 pt at the smallest, 16 pt body\", citing \u00a721.8. \u00a721.8 (v36.txt:10992): \"Body text is at least 16 pixels \u2026 Nothing smaller than 13 points.\" The client took 16 as points (client/ui/tokens.json size.body_points, from \"16 pixels\").",
+  "rec": "One unit in \u00a721.8. Points, which \u00a721.1 and the client use, so the body is 16 pt.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. \u00a721.8 (v36.txt:10992) says 'Body text is at least 16 pixels \u2026 Nothing smaller than 13 points', mixing two units. \u00a723.5 (11517) restates it as '13 pt at the smallest, 16 pt body'. client/ui/tokens.json reads body_points 16 'from 21.8 body text at least 16 pixels'. On a 3x phone, 16 physical pixels would be about 5 pt, so the unit matters.",
+  "corrected": "",
+  "existing": "none"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#15",
+  "kind": "deviation",
+  "title": "The offer sends each target's internal rating to the device, and no reason or depth",
+  "refs": [
+   "12.15",
+   "23.2",
+   "12.22"
+  ],
+  "evidence": "\u00a712.15: \"Ratings are internal \u2026 the raw numbers are never shown\", and \"the reason each was offered is printed on the card\". \u00a723.2's rewritten Observatory row (v36.txt:11237) asks for \"the depth and the reason each was offered\". `GET /v1/offer` (server/src/http.mjs:513-520) returns the candidates built at server/src/matchmaking.mjs:196, each with `rating` and `deviation` and neither a reason nor a depth.",
+  "rec": "Send a reason and the depth per target, and keep the rating server-side (or coarsen it), so no client can show it.",
+  "severity": "minor",
+  "verdict_why": "Confirmed. GET /v1/offer (http.mjs:513-520) returns offer() targets built from candidates() (matchmaking.mjs:192-197). Each carries rating, deviation, predicted, owner and renown, and none has a reason or depth. \u00a712.15 (v36.txt:7179-7181) requires the reason printed on the card and the ratings internal, and \u00a723.2 (11237) adds depth. Sending ratings is exposure rather than display, but a modified client can show them. GET /v1/targets also ships them so the device can run offer offline. D66 already records that depth is not built.",
+  "corrected": "",
+  "existing": "D66 (depth only)"
+ },
+ {
+  "reader": "v36-rules",
+  "n": "v36-rules#16",
+  "kind": "contradiction",
+  "title": "The changelog still says 'No client code exists yet'",
+  "refs": [
+   "32.8",
+   "24"
+  ],
+  "evidence": "v3.6 keeps v3.5's line (v36.txt:91): \"No client code exists yet, so the move costs nothing.\" The repository has a Godot 4.5 GDScript client (client/project.godot, client/scripts/*.gd) with a Rust extension at compatibility_minimum 4.5 (client/ruleborn.gdextension). The engine move itself is measured separately; only the sentence is flagged.",
+  "rec": "Correct the sentence to say a 4.5 client exists, and point to the measured cost of the move.",
+  "severity": "minor",
+  "verdict_why": "Confirmed but mis-referenced. The sentence 'No client code exists yet, so the move costs nothing' is in the front matter's 'What changed in version 3.5' (v36.txt:91), not \u00a732.8. \u00a732.8's brief 39 row does not repeat it. The Godot 4.5 client was first committed on 2026-09-23 (ce5aaab, client/project.godot), with compatibility_minimum = 4.5 in client/ruleborn.gdextension. This is a historical changelog line, so its weight is small.",
+  "corrected": "The v3.5 change note carried into v3.6's front matter (v36.txt:91), not \u00a732.8, says no client code exists. A Godot 4.5 client has existed since 2026-09-23, so 'the move costs nothing' is unsupported.",
+  "existing": "none"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#0",
+  "kind": "contradiction",
+  "title": "v3.6 takes none of the owner's 47 recorded answers, and \u00a723.5 makes the document win over the designs, so screens have three conflicting sources",
+  "refs": [
+   "23.5",
+   "9.1",
+   "9.4",
+   "12.3",
+   "12.4",
+   "5.4",
+   "22.1",
+   "32.8",
+   "F41",
+   "F39",
+   "C41",
+   "F44",
+   "F46",
+   "F51",
+   "F35"
+  ],
+  "evidence": "The precedence: \u00a723.5 (v3.6 line 11387) says \"This document wins wherever it states a rule, a number or a piece of text.\" The answers: docs/decisions/answers.json holds 47, recorded on 25\u201326 Sep 2026 (git log of the file), most of them built; v3.6 changed none of their sections (v36/diffs.txt). F41 C (no currency) conflicts with three sources: \u00a722.1 (line 11104) \"Starglass, in packs from about \u20ac1 to \u20ac50\", \u00a79.1 (lines 4413-4416), and Screens v3's Shop and Starpass priced in Starglass (season reader SS10). F39 B, C41 B, F44 D, F46 B and F51 B conflict with \u00a79.4, \u00a712.3, \u00a712.4 and \u00a75.4, which are unchanged; the designs draw the replaced rules (observatory reader N1). F35 D (no Vault call) conflicts with v3.6's new \u00a732.8 row 37, which records \"a ring around the Vault \u2026 shipping at 5 m\".",
+  "rec": "State the build's precedence: a recorded answer whose register item is open with an edit drafted, then the document, then the design. Have the screen port follow the build wherever an answer exists. Take the answers into the next version (T1.6).",
+  "severity": "significant",
+  "verdict_why": "Every cited source checks out. \u00a723.5 (v3.6:11387) says \"This document wins wherever it states a rule, a number or a piece of text.\" docs/decisions/answers.json holds 47 answers: 32 built, 14 already true of the build, 1 outside. They were recorded on 25\u201326 Sep 2026. v3.6 still carries the old rules those answers replace: \u00a79.4 (line 4560) keeps the fee at 2% of holdings, returned only after a clean heist (against F39 B and C41 B). \u00a712.3 (line 6922) keeps \"within 3 Keeper levels\" (against F44 D). \u00a712.4 and \u00a79.5 keep the paid scout at 20 Aether a realm (against F46 B). \u00a722.1 (line 11104) still sells Starglass in packs (against F41 C). Screens v3 draws those same superseded rules: the Observatory text shows \"Keepers 21\u201327\", a paid scout costing 60\u2013100 Aether, and the same 2,840 Starlight fee on every target, and the Shop prices items in Starglass (\"480 = \u20ac4.80\", \"600 Starglass \u2248 \u20ac5.99\" for the premium track). \u00a732.8 row 37, new in v3.6, records \"a ring around the Vault \u2026 shipping at 5 m\", which F35 D deletes. \u00a723.5 lists none of these conflicts. No register item covers the precedence problem. Roadmap T1.6 (apply decisions to the document) and each decided item's drafted edits cover only the missing document edits.",
+  "corrected": "There are three conflicting sources only for F41: the build has no currency, while \u00a722.1 and \u00a79.1 and the Screens v3 Shop both sell Starglass. For F39 B, C41 B, F44 D, F46 B and F51 B, the document and the design agree with each other and the build alone follows the answer. That is still a two-way conflict, and under \u00a723.5 the screen port would follow the document against the built answer. \u00a732.8 row 37 records brief 37's decision. It is history that F35 D overrides, not a live rule. v3.6 did edit \u00a718.8 and \u00a732.8, next to F41 and F35, without taking either answer.",
+  "existing": "none (roadmap T1.6 and the decided items F41, F46, F44, F39, C41, F51 and F35 carry the document edits, not the precedence conflict)"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#1",
+  "kind": "gap",
+  "title": "Completion and \u00a726.8 count none of the work Screens v3 sets, so the 75.41% frontend figure cannot move with it and overstates readiness",
+  "refs": [
+   "26.8",
+   "23.2",
+   "G42"
+  ],
+  "evidence": "tools/completion.py:188-384 counts only the heist, the builder, the Workshop, shop and track, social, settings and accessibility. 20 of \u00a723.2's 28 screens have no deliverable, and 18 have no screen in the build (client/app/router.gd:8-21 has 13 routes). Neither the design-system port nor the 3D world has a row. \u00a726.8 (lines 12503-12594) costs none of these. The figure counts 62.10 of 82.35 frontend runs as done; adding R frontend runs gives 62.10/(82.35+R), which is 60.4% if R is only the art's 16\u201325 runs (midpoint 20.5).",
+  "rec": "As G42 asks for the home economy, give \u00a726.8 a costed phase, or rows in phases 2 and 3, for the interface screens and the art. Until then, the roadmap should say that the frontend figure measures \u00a726.8's list, not Screens v3.",
+  "severity": "significant",
+  "verdict_why": "tools/completion.py's DELIVERABLES (lines 188\u2013384) have no row for the Screens v3 port, the design-system port or the 3D world. completion.py prints 75.41% of 82.3 frontend runs, which is 62.10 of 82.35. client/app/router.gd has 13 routes against the 28 launch rows in \u00a723.2. \u00a726.8's phase table (v3.6:12503\u201312594) costs no interface screens and no art. They appear only under \"Safe to hand over\". 62.10/(82.35+20.5) = 60.4%, as stated. The art estimate of 16\u201325 runs comes from the 3D-pipeline reader's section 8.",
+  "corrected": "The roadmap does have TC.7, \"The design from Claude Design\" (owner: you, ready), but it has no cost and no completion row. The finding's counts of 20 of 28 screens with no deliverable and 18 with no build screen are approximate.",
+  "existing": "G42 (partial: the same shape, for the home economy only)"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#2",
+  "kind": "gap",
+  "title": "Two completion rows read done while holding a fraction of what they name: Crews has no abilities, Sage powers or casts, and Terrain editing has 5 of 39 features",
+  "refs": [
+   "12.6",
+   "12.7",
+   "6.2",
+   "26.8"
+  ],
+  "evidence": "Crews: phase 1, backend, read 100%. completion.py:194-197 proves it by nine sim systems. sim/src/replay.rs:53-92 has twelve command kinds, and none is an ability, a Sage power or a cast, although \u00a712.7's controls include the Sage and casts. The register mentions this only in G23's body (\"no abilities exist yet\"), and no register item or roadmap task builds them. Terrain editing: phase 4, frontend, 5.77 points, read 100% on a single test. sim/src/grid.rs:116-137 has five features (rock pillar, ruin wall, fence, fog bank, tall grass) against the 39 rows in content/terrain.json.",
+  "rec": "Add the missing system to each proof; Crews would then read 9 of 10, 0.41 backend points lower. Add tasks for crew abilities, Sage powers and casts, and for terrain in the simulation. Lock T5.1 and T5.4 only after the replay format carries the crew manifest.",
+  "severity": "significant",
+  "verdict_why": "completion.py:194\u2013197 proves Crews by nine sim systems. sim/src/replay.rs Kind has twelve commands (MoveTo through Land). None is an ability, a Sage power or a cast, although \u00a712.7 (v3.6) gives crew-portrait abilities, the Sage wheel and the Cast wheel. No register item and no roadmap task builds them: G23's body says \"no abilities exist yet\", and D32 and C6 are about the design of the ability tables. The weights are as stated: 38/6/10 runs gives 0.41 backend points for Crews, and 19/4 runs gives 5.77 frontend points for Terrain editing. Terrain editing reads 100% on one test (client/tests/run.gd:390).",
+  "corrected": "The \"5 of 39\" terrain count is too low. The sim's Feature enum (sim/src/grid.rs:116\u2013137) holds five \u00a76.2 features: rock pillar, ruin wall, fence, fog bank and tall grass. The grid also models raised ground (heights 0\u20133), climb tiles (ramp, stairs, vines) and gravel and water as noise surfaces. That is roughly 9\u201310 of content/terrain.json's 39 in some form, still a minority. The Crews finding stands as written.",
+  "existing": "none"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#3",
+  "kind": "deviation",
+  "title": "The build is pinned to Godot 4.5 and api-4-5 with no Android target SDK set, and v3.6's opening says no client code exists",
+  "refs": [
+   "24",
+   "26.6",
+   "26.8",
+   "32.8"
+  ],
+  "evidence": "\u00a724's engine row (v3.6 line 11643) pins Godot 4.7.2 with godot-rust api-4-7, with Android API 36 \"set in the export preset and confirmed at the first export\". The build is on 4.5: client/project.godot:12 features \"4.5\"; client/ext/Cargo.toml:11 api-4-5; client/ruleborn.gdextension:5 compatibility_minimum = 4.5; client/build.sh:13 and client/export.sh:21,26 use 4.5. client/export_presets.cfg:28 has gradle_build/target_sdk=\"\". TC.3's \"done here\" export check ran on 4.5 templates. v3.6's opening (line 91) says \"No client code exists yet, so the move costs nothing\"; the client has 100 passing tests, and the lead measured the move as three constants at ui.gd:138,321, four pins and 1.28 GB of export templates.",
+  "rec": "Move the engine first (proposed TC.15). Set target_sdk=36. Re-run export.sh check on 4.7.2. Correct the sentence in v3.6's opening.",
+  "severity": "minor",
+  "verdict_why": "All the pins check out. client/project.godot:12 has features \"4.5\". client/ext/Cargo.toml:11 has api-4-5. client/ruleborn.gdextension:5 has compatibility_minimum = 4.5. client/build.sh:13 is 4.5-stable, and client/export.sh:21,26 use the 4.5 templates. client/export_presets.cfg:28 has target_sdk=\"\". \u00a724's engine row (v3.6:11643) pins 4.7.2 with api-4-7 and requires API 36 set in the export preset. v3.6 line 91 says \"No client code exists yet, so the move costs nothing\", which is false. The lead's engine.md measured the move: three constants at ui.gd:138 and :321, then 100 of 100 client tests passed on 4.7.2. No register item covers the pin.",
+  "corrected": "",
+  "existing": "none"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#4",
+  "kind": "gap",
+  "title": "v3.6 puts the store builds in phase 0, while completion counts them in phase 2 with a proof that reads nothing",
+  "refs": [
+   "26.6",
+   "26.8"
+  ],
+  "evidence": "\u00a726.6 (line 12439): the spike must \"export an empty Godot 4.7.2 project \u2026 built in Xcode 26 and at Android API level 36, and upload both to TestFlight and the Play internal track\". \u00a726.8's phase 0 note now names \"the store builds on Godot 4.7.2 and godot-rust v0.5.5\". completion.py:189 counts phase 0 by checksums only, on the backend. completion.py:204 has phase 2 \"Project structure\" (frontend, 4.86 points) as a hard-coded not_started that no build can satisfy.",
+  "rec": "Write one proof that reads a recorded build (engine version, SDK levels, uploads), count it in one place, and state that choice in completion.py.",
+  "severity": "minor",
+  "verdict_why": "\u00a726.6 (v3.6:12439) and \u00a726.8's phase 0 note now carry the store builds on 4.7.2. completion.py:189 counts phase 0 by targets() only, which is capped at 2 of 4. completion.py:204 counts \"Project structure\" in phase 2 as not_started, which always returns 0 until the code is edited. The finding is accurate but is bookkeeping. \u00a726.8's own phase 2 note still lists \"Project structure\", so completion is following \u00a726.8's table, and the iPhone and Android checksums in phase 0 already require device builds.",
+  "corrected": "\u00a726.8 itself now names the store builds in phase 0 and project structure in phase 2. completion.py follows that table. Both completion rows (phase 0's 2-of-4 cap and phase 2's not_started) are hard-coded until a phone build exists. The fix is to say once where a recorded store build counts.",
+  "existing": "none"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#5",
+  "kind": "contradiction",
+  "title": "Screen and icon counts disagree: \u00a721.9 says 27 screens and about 220 icons, \u00a723.2 lists 28 and \u00a723.5 says 393, and the register still says 27",
+  "refs": [
+   "21.9",
+   "23.2",
+   "23.5",
+   "C11"
+  ],
+  "evidence": "v3.6 \u00a721.9 (lines 11044-11045): \"Interface icons and screens | About 220 and 27\". \u00a723.2 now has 28 launch rows (Profile and stats added; line 11315). \u00a723.5 (line 11385) says Screens v3 has 393 icons. In the register, DESIGN_GATES says \"The 27 screens in \u00a723\" (tools/audit_register.py:8108) and closes C11 as \"27, not 23\" (:8113). tools/check_document.py:1471 already expects 28.",
+  "rec": "\u00a721.9 should read 28 screens; the owner decides whether the icon budget follows Screens v3. Update the two register lines.",
+  "severity": "minor",
+  "verdict_why": "\u00a721.9 (v3.6:11044\u201311045) reads \"Interface icons and screens | About 220 and 27\". \u00a723.2 now has 28 launch rows, with Profile and stats added. \u00a723.5 (line 11385) says Screens v3 holds 393 icons. tools/audit_register.py:8108 says \"The 27 screens in \u00a723\", and :8113 closes C11 as \"27, not 23\". tools/check_document.py:1471, edited in the working tree, expects 28.",
+  "corrected": "",
+  "existing": "C11 (closed at 27, now stale)"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#6",
+  "kind": "contradiction",
+  "title": "D72's drafted edit and the client name different word colours, and the edit assumes paper panels that Screens v3 replaces",
+  "refs": [
+   "21.8",
+   "20.8",
+   "D72"
+  ],
+  "evidence": "In the register (D72's body, tools/audit_register.py:6754; its \u00a721.8 edit, :8384), words are \"#B3203A or #1D6B45\". In client/ui/tokens.json, alarm_text is #9A1B32 (:88-90), success_text is #155A38 (:92-94), and #B3203A is alarm_fill (:80-82). Screens v3's surfaces are dark cards and parchment (design-system reader DS-1). On them the design's red words fail (#E2536B on night, 4.19:1, Lc 35), its red badges measure 2.7\u20132.8:1, and its green words pass (7.6:1). The design's deep red #C42040 (5.79:1) agrees with the client's #B3203A.",
+  "rec": "Define one set of word shades per surface (dark, parchment) once in tokens.json, and check the edit's text against it.",
+  "severity": "minor",
+  "verdict_why": "The register's D72 body (audit_register.py:6754) and its drafted \u00a721.8 edit (:8384) name #B3203A and #1D6B45 for words. client/ui/tokens.json has alarm_text #9A1B32 (:88\u201390), success_text #155A38 (:92\u201394), and #B3203A only as alarm_fill (:80\u201382). #1D6B45 appears nowhere in the client. White on #C42040 is 5.79:1 (recomputed). The design-system reader's DS-1 and its D72 update record the dark and parchment surfaces and the 4.19:1, Lc 35 red words on night.",
+  "corrected": "",
+  "existing": "D72"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#7",
+  "kind": "deviation",
+  "title": "Slower ruins: the client applies \u00a720.8's 75% pace to the builder's self-raid, and completion's accessibility proof counts that test",
+  "refs": [
+   "20.8",
+   "23.5",
+   "12.10"
+  ],
+  "evidence": "\u00a720.8 (v3.6 line 10303): \"a slower mode for ruins that runs the simulation at 75% speed\". \u00a723.5 (lines 11406-11407): \"Ruins only: never a heist against a player, never Renown\". client/scripts/heist_screen.gd:30 calls the player's own island raided from the builder \"a rehearsal\", and :207 applies the 75% pace there. client/tests/a11y_tests.gd:348 tests \"a rehearsal can be \u2026 run at 75%\", and tools/completion.py:359 counts that test. Drifting ruins are not built (D66).",
+  "rec": "Rename the setting to slower ruins and apply it to ruin heists only, keeping pause in ruins and rehearsals. Rename the test and the completion proof in the same change.",
+  "severity": "minor",
+  "verdict_why": "\u00a720.8 (v3.6:10303) gives \"a slower mode for ruins that runs the simulation at 75% speed\", and line 10300 allows pausing \"in ruins and rehearsals\". \u00a723.5 (11406\u201311407) says \"Ruins only\". client/scripts/heist_screen.gd:30 marks the builder's self-raid as a rehearsal, and pace() at :207 applies rehearsal_pace only when rehearsal is set. a11y_tests.gd:348 checks \"a rehearsal can be paused at any time and run at 75%\", and completion.py:359 counts it. Ruins are not built (D66). \u00a723.5 states the ruins-only rule but does not list this client deviation.",
+  "corrected": "Also worth noting: the document's rehearsal (\u00a712.10) is a simulated crew sent against your universe, while the client's rehearsal is a player-played raid on their own island. Pausing it fits \u00a720.8; slowing it does not.",
+  "existing": "none"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#8",
+  "kind": "contradiction",
+  "title": "v3.6 adds a fourth account of the starting universe (\"a bare Heart\") that disagrees with \u00a716 and the build",
+  "refs": [
+   "23.5",
+   "16",
+   "11.5",
+   "10.2",
+   "F56"
+  ],
+  "evidence": "\u00a723.5's first-session row (v3.6 line 11537): \"the session starts from a bare Heart\". \u00a716 at 5:00 (line 8860): \"two strays follow the crew home to a free Hearth. The player puts them to work at the Star Well and the Garden\", with no building step. \u00a711.5 (line 6163) also has \"a free Hearth\". tools/design_facts.py:102 STARTING_HEART is the Spire, Vault, Star Well, Aether Spring, Garden and Hearth. \"Bare\" is not defined anywhere.",
+  "rec": "Settle F56 in one place, stating exactly what is built at 0:00, and make \u00a723.5's row cite it.",
+  "severity": "minor",
+  "verdict_why": "\u00a723.5's First session row (v3.6:11535\u201311538) resolves the design's \"Heart already built at 0:00\" to \"the session starts from a bare Heart\". \u00a716 has no building step between 0:00 and 5:00, yet at 5:00 the strays go to \"a free Hearth\" and work \"at the Star Well and the Garden\", and the Lab runs an experiment at 6:30. \u00a711.5 (6163) also gives \"a free Hearth\". tools/design_facts.py STARTING_HEART is the Spire, Vault, Star Well, Aether Spring, Garden and Hearth. \"Bare\" is not defined anywhere. This is new v3.6 text that adds a fourth reading to F56's three.",
+  "corrected": "",
+  "existing": "F56"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#9",
+  "kind": "deviation",
+  "title": "Roadmap S6 and S7 gates name outside playtesters that \u00a726.2 removed, and the slice's blockers miss most of its content",
+  "refs": [
+   "26.2",
+   "19.27",
+   "19.5",
+   "C29"
+  ],
+  "evidence": "tools/roadmap.py:1315 (T6.1): \"\u2265 7 of 10 outside playtesters ask for a second session\". :1319 (T6.2): \"Run \u00a719.5's fun gate\". :1337 (T7.1): \"\u2265 20% of testers still playing after a week\". v3.6 \u00a726.2 (line 12334) exits phase 2 on \u00a719.27's harness gates, \"No outside player is involved\", and phase 3 on \"No dominant law in bot runs, and the same harness gates\". T1.10 (roadmap.py:454-478) records this decided in v3.3. T6.1 waits only on T5.1 to T5.5, but the slice (a Heart and two realms, 6 ruleborn, 2 Sages, ruins, rehearsals) needs crossing realms (T3.3 \"Not yet\", D71), the roster on the server, Sage powers in the simulation, and the generator and crews (D66). \u00a726.2 phase 1's exit (line 12329: \"Screens approved; the art-style test \u2026 on target devices\") has no task.",
+  "rec": "Rewrite T6.1 and T7.1's gates to \u00a726.2's, and move the fun gate to soft launch (T7.3). Add the slice's content tasks to T6.1's blockers. Add a pre-production exit task owned by the owner.",
+  "severity": "significant",
+  "verdict_why": "tools/roadmap.py:1315 (T6.1) gates on \"\u2265 7 of 10 outside playtesters\". T6.2 (:1319) runs \u00a719.5's fun gate. T7.1 (:1337) gates on \"\u2265 20% of testers still playing after a week\" and is blocked by T6.2. v3.6 \u00a726.2 exits phase 2 on \u00a719.27's harness gates (\"No outside player is involved\"), phase 3 on no dominant law plus the same harness gates, and puts \u00a719.5's fun gate at soft launch (phase 5). T1.10 (roadmap.py:454\u2013478) already records this as decided in v3.3. So alpha (T7.1) waits on a gate that cannot pass before soft launch, which is a dependency deadlock. Phase 1's exit (line 12329, \"Screens approved; the art-style test\u2026\") appears only in the NOT_YET prose and has no task.",
+  "corrected": "\"Blockers miss most of its content\" is the weaker part: T6.1 \"Build the slice\" is a catch-all task. The firm defects are the stale gate text and T7.1 depending on T6.2's fun gate, which \u00a726.2 places at soft launch.",
+  "existing": "C29 (the document side, resolved in v3.3; the roadmap's stale gates are not covered)"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#10",
+  "kind": "gap",
+  "title": "Ten open items carry client work in the owner's answers, yet all 70 open items are filed as backend",
+  "refs": [
+   "F37",
+   "F38",
+   "F41",
+   "F43",
+   "F46",
+   "F54",
+   "G19",
+   "G29",
+   "G34",
+   "G35"
+  ],
+  "evidence": "docs/decisions/answers.json gives a \"client\" field for F37, F38, F41, F43, F46, F54, G19, G29, G34 and G35. side_of (tools/audit_register.py:8022-8027) returns \"backend\" for anything outside FRONTEND and BOTH, and both sets hold only settled items. So the audit page shows no open frontend work while the screens owe these halves.",
+  "rec": "Move the ten items to BOTH, naming the client half of each.",
+  "severity": "minor",
+  "verdict_why": "answers.json has a \"client\" field for exactly F37, F38, F41, F43, F46, F54, G19, G29, G34 and G35. Computed with tools/audit_register.py: 70 items are open (is_open, which counts proposed as open), and every one gets side_of() == \"backend\". All FRONTEND and BOTH ids are settled under the effective status. side_of (lines 8022\u20138027) defaults to backend.",
+  "corrected": "",
+  "existing": "none"
+ },
+ {
+  "reader": "register-roadmap",
+  "n": "register-roadmap#11",
+  "kind": "contradiction",
+  "title": "D70's title is half stale: the client already has the age check",
+  "refs": [
+   "20.1",
+   "20.5",
+   "D70"
+  ],
+  "evidence": "D70's title says \"the client has neither the age check nor deletion on a screen\". TC.10 is done (tools/roadmap.py:1055-1067), and client/scripts/age_screen.gd and client/data/age_check.gd implement the check. The deletion button is still missing: AccountRepository.delete_account exists, but no screen calls it (settings reader).",
+  "rec": "Retitle D70 to the deletion button and the filing. The button would land with the Settings task.",
+  "severity": "minor",
+  "verdict_why": "D70's title (audit_register.py:6381) says the client has \"neither the age check nor deletion on a screen\". TC.10 is done (roadmap.py:1055\u20131067), and client/scripts/age_screen.gd and client/data/age_check.gd exist. AccountRepository.delete_account (client/data/repositories/account_repository.gd:26) is defined, and nothing in client/ calls it. The V36 layer is empty, so D70 has not been updated.",
+  "corrected": "",
+  "existing": "D70"
+ }
+]

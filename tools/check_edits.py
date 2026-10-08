@@ -832,12 +832,12 @@ def main() -> int:
     # v3.3 was read item by item (its layer in audit_register), so an item
     # with a note in any layer, or found in v3.3 itself, has been read.
     from audit_register import (V31 as _v31, V32 as _v32, V33 as _v33, V34 as _v34,
-                                FOUND_IN_V33, FOUND_IN_V34)
+                                V36 as _v36, FOUND_IN_V33, FOUND_IN_V34, FOUND_IN_V36)
     unread = [i["id"] for i in REGISTER
               if i["kind"] != "deviation"
               and status(i) not in ("done", "adopted")
-              and not any(i["id"] in layer for layer in (V3, _v31, _v32, _v33, _v34))
-              and i["id"] not in FOUND_IN_V3 | FOUND_IN_V33 | FOUND_IN_V34]
+              and not any(i["id"] in layer for layer in (V3, _v31, _v32, _v33, _v34, _v36))
+              and i["id"] not in FOUND_IN_V3 | FOUND_IN_V33 | FOUND_IN_V34 | FOUND_IN_V36]
 
     print(f"\nChecked {total} edits across {len(EDITS)} register items against "
           f"{DOC.name}.\n")
@@ -857,9 +857,10 @@ def main() -> int:
     # document was fixed and the edit retired with it. v3.1 retired twelve at
     # once. An edit that now matches *twice*, or an item whose sentence never
     # existed, is a different thing and still a failure.
-    from audit_register import V31, V32, V33, V34
+    from audit_register import V31, V32, V33, V34, V36
     closed = (set(V31) | set(V32) | {k for k, v in V33.items() if v["status"] != "open"}
-              | {k for k, v in V34.items() if v["status"] != "open"})
+              | {k for k, v in V34.items() if v["status"] != "open"}
+              | {k for k, v in V36.items() if v["status"] != "open"})
     retired = [p for p in problems
                if "does not contain" in p and p.split()[0] in closed]
     real = [p for p in problems if p not in retired]
