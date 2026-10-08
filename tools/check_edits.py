@@ -133,10 +133,13 @@ def dangling_sections(doc: str) -> list:
     why a renumbering is never only clerical.
     """
     sections = set(re.findall(r"^(\d+\.\d+) ", doc, re.M))
+    # A chapter's own text, before its first subsection, is a place an edit can
+    # go: §13's layer table sits there.
+    places = sections | set(re.findall(r"^(\d+)[A-Z]", doc, re.M))
     out = []
     for item_id, edits in EDITS.items():
         for n, edit in enumerate(edits, 1):
-            if edit["section"] not in sections:
+            if edit["section"] not in places:
                 out.append(f"{item_id} edit {n}: names §{edit['section']}, which is "
                            f"not a section of the document")
     for item in REGISTER:
@@ -164,11 +167,11 @@ NO_EDIT_BECAUSE = {
     "G47": "a decision for the owner: the heist's missing orders, their commands and the load target",
     "C47": "a decision for the owner: the worth question's scale, what 'alarm' means, and whether the Vault's contents show",
     "G49": "a decision for the owner: chapter 1's laws, meeting a law, mastery and Codex notes",
-    "C48": "a decision for the owner: the realm budget weaving's upkeep is priced against, and six weaving rules",
+    "C48": "a decision for the owner: the realm budget weaving's upkeep is priced against, and five weaving rules",
     "G50": "a decision for the owner: births on a screen, naming, a stray's form and a look changed later",
     "G51": "a decision for the owner: what a server-checked heist knows of a crew's levels, homes and rest",
     "G52": "a decision for the owner: what Insight each source pays and what the Sage improvements are",
-    "C49": "a decision for the owner: nine one-line edits, two of them small choices",
+    "C49": "a decision for the owner: whether a Sage level shortens the 20-second cooldown, and whether the first experiment is charged; its other eight lines are drafted edits or recorded answers",
     "G53": "a decision for the owner: the Lab's hints, chord naming, and what an experiment takes and pays",
     "G54": "a decision for the owner: whether a curation swap is a weave",
     "G55": "a decision for the owner: what hold figure curation and the Workshop show, and from what",
@@ -178,7 +181,7 @@ NO_EDIT_BECAUSE = {
     "D86": "a decision for the owner: whether friends see presence, last seen and what others are doing",
     "C50": "a decision for the owner: the Open Vault league, against §17.8's 'a raid takes nothing'",
     "C51": "a decision for the owner: one time for the first heist, and what may come before it",
-    "G58": "a decision for the owner: four protections for minors, and how the server trusts an age band",
+    "G58": "a decision for the owner: four protections for minors, and every Keeper's name, and how the server trusts an age band",
     "D89": "a decision for the owner: the surfaces, §21.8's paper panels or the design's dark cards and parchment",
     "D90": "a decision for the owner: the typefaces, §21.8's Baloo 2 or the design's Manrope and Lilita One",
     "G59": "a decision for the owner: how outlined text counts for contrast",
@@ -191,12 +194,12 @@ NO_EDIT_BECAUSE = {
     "G46": "a decision for the owner: which realms a fault joins, how many open, and whether a raider sees them",
     "C54": "a decision for the owner: the Sparkwright's goggles or its card, and one count of the animations",
     "D73": "no document sentence: the build refuses the mechanics until the document has them (stage SD, TD.19)",
-    "D74": "no document sentence: the build draws §21.5's pylon per woven slot (TD.10, TD.19)",
+    "D74": "no document sentence: the build draws §21.5's pylon per woven slot (TD.10, TD.19), from the owner's design (TD.31)",
     "D75": "no document sentence: the build follows the document (TD.19); §23.5 takes the rows when next edited",
-    "G45": "no document sentence: the fix is the build, the island format with §10.1's buildings and their tiles (TC.12, TD.10)",
+    "G45": "no document sentence: the fix is the build, the island format with §10.1's buildings and their tiles (TD.36, TC.12, TD.10)",
     "D76": "no document sentence: the fix is the build, the engine move (TD.1)",
     "D78": "no document sentence: the build follows the document (TD.18); §23.5 takes the rows when next edited",
-    "G48": "no document sentence: the fix is the build, the event log and a moment picker (TD.13, TD.17)",
+    "G48": "a decision for the owner: how the result's decisive moment and its one thing to try are chosen",
     "D79": "no document sentence: the build refuses the mechanics until the document has them (TD.17, TD.20)",
     "D80": "no document sentence: the build follows the document (TD.17); §23.5 takes the rows when next edited",
     "D81": "no document sentence: the build follows the document (TD.20); §23.5 takes the rows when next edited",
@@ -207,17 +210,17 @@ NO_EDIT_BECAUSE = {
     "D87": "no document sentence: the build follows the document (TD.25, TD.26); §23.5 takes the rows when next edited",
     "D88": "no document sentence: the build sends §14.6's notifications and no others (TD.25)",
     "F58": "no document sentence: D72's edit is redrafted with the word shades TD.3 settles for each surface",
-    "D91": "no document sentence: the build follows the document (TD.2 to TD.5); §23.5 takes the rows when next edited",
-    "D92": "no document sentence: the fix is the build, one toon look (TD.8)",
-    "G60": "no document sentence: the fix is the build, the actors' appearance beside the replay (TD.9)",
+    "D91": "a decision for the owner: the icons' finish and interface motion, §21.8's or the design's; toasts, reduced motion, palettes and the sky follow the document",
+    "D92": "a decision for the owner: the shading, §21.3's one three-step toon or the design's diorama ramp and physically based characters",
+    "G60": "no document sentence: the fix is the build, the guards' kind and form (TD.9) and level (TD.34) in the island bundle and outfits beside the replay",
     "G61": "no document sentence: the fix is the build, the export harness (TD.7), with a row for it in §26.8's plan",
     "D94": "no document sentence: the build follows the document (TD.11, TD.21); §23.5 takes the rows when next edited",
-    "G63": "no document sentence: the fix is the build, content tables and the simulation's crew (TD.12, TD.21)",
-    "D95": "no document sentence: the build refuses the variants until the document has them",
+    "G63": "no document sentence: the fix is the build, content tables and the simulation's crew (TD.33, TD.12, TD.21)",
+    "D95": "no document sentence: the build refuses the variants until the document has them (TD.11, TD.21)",
     "G65": "no document sentence: the build adopts them under §23.5's rule; §23.5 lists them when next edited",
-    "G66": "no document sentence: the fix is a costed phase in §26.8, as G42 asks for the home economy",
-    "G67": "no document sentence: the fix is completion's proofs and the build (TD.12, TD.15)",
-    "G68": "no document sentence: the fix is one proof of the store builds in completion",
+    "G66": "no document sentence: the fix is the build, completion counting the screens (TD.47), with a phase for the interface in §26.8's plan (T1.6), as G42 has for the home economy",
+    "G67": "no document sentence: the fix is completion's proofs and the build (TD.47, TD.12, TD.15)",
+    "G68": "no document sentence: the fix is one proof of the store builds in completion (TD.47)",
     "D96": "no document sentence: the fix is the build (TD.27)",
     "F31": "a decision for the owner first: \u00a77.3 now closes the rule "
            "sheet at twenty parameters, so splitting two means a twenty-second",
@@ -444,6 +447,13 @@ def dangling_edit_citations(doc: str) -> list:
     return out
 
 
+#: Items whose lines with one sensible reading are drafted edits, while the rest
+#: is the owner's to decide. They carry both an edit and a NO_EDIT_BECAUSE
+#: reason, and the reason names what is still the owner's. C49's ten lines:
+#: seven drafted, one already in recorded answers, two the owner's.
+PART_DRAFTED = frozenset({"C49"})
+
+
 def unexplained_missing_edits() -> list:
     """Every open item either carries an edit or says why it does not.
 
@@ -468,8 +478,12 @@ def unexplained_missing_edits() -> list:
             if other not in EDITS:
                 out.append(f"{item['id']}: says it is covered by {other}, which "
                            f"carries no edit either")
+    for item_id in PART_DRAFTED:
+        if item_id not in EDITS or not NO_EDIT_BECAUSE.get(item_id, "").startswith("a decision"):
+            out.append(f"{item_id}: is in PART_DRAFTED, so it needs drafted edits "
+                       f"and a decision for the owner in NO_EDIT_BECAUSE")
     for item_id in NO_EDIT_BECAUSE:
-        if item_id in EDITS:
+        if item_id in EDITS and item_id not in PART_DRAFTED:
             out.append(f"{item_id}: has a drafted edit and an entry in "
                        f"NO_EDIT_BECAUSE saying why it has none")
     return out

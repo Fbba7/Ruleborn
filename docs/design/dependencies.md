@@ -29,7 +29,7 @@ Nothing these depend on is still open.
 | C42 | minor | open | §11.5 finds a stray on one heist in eight; §14.6 gives one heist in eight a stray or a bonus page |  |
 | C43 | minor | open | §18.6 gives every island a word-list name; §20.7 gives one only to players aged 13 to 15 |  |
 | C46 | minor | open | §11.7’s Wanderer makes a sixth Observatory target where §12.3 and §23.2 stop at five, and the list leaves three more things unstated |  |
-| C49 | minor | open | Nine sentences in v3.6 contradict another section, and each needs one line |  |
+| C49 | minor | open | Ten sentences in v3.6 contradict another section, and each needs one line |  |
 | C54 | minor | open | §21.6 disagrees with §11.11 on a Mender’s goggles and with §23.5 on how many animations a kind has |  |
 | D61 | minor | open | The simulation sounds a chord without asking whether the universe can pay its draw, and plays no crown laws |  |
 | D63 | minor | open | Constellations and crews are stored and joinable, and none of what they do together is built |  |
@@ -75,9 +75,9 @@ Nothing these depend on is still open.
 | C11 | significant | open | Screen count: 23 or 27? |  |
 | C35 | significant | open | An engaged player completes the Codex on about day 69 (§14.4) and about day 234 (§14.3) |  |
 | C44 | significant | open | §21.8 and §23.1 describe two different home screens, §23.5 lets the design carry the layout, and the design’s chrome breaks §21.1’s corner and safe-area rules |  |
-| C45 | significant | open | v3.6 takes none of the owner’s 47 recorded answers, so a screen can have three sources that disagree: the document, the design and the server |  |
+| C45 | significant | open | v3.6 takes part of one of the owner’s 47 recorded answers and none of the rest, so a screen can have three sources that disagree: the document, the design and the server |  |
 | C47 | significant | open | v3.6 states three heist and result rules two ways: the worth question’s scale and frequency, what ‘alarm’ means, and whether the Vault’s contents show before it opens |  |
-| C48 | significant | open | Weaving’s upkeep is priced against a realm budget §5.5 never gives, and six more weaving rules are open |  |
+| C48 | significant | open | Weaving’s upkeep is priced against a realm budget §5.5 never gives, and five more weaving rules are open |  |
 | C50 | significant | open | §17.8’s ‘a raid takes nothing’ is false in §9.4’s Open Vault league, which has no screen, no build and no register item |  |
 | C51 | significant | open | v3.6’s first session disagrees with itself: three times for the first heist, minute one guided and unguided, two things before it §25.2 forbids, and weaves with no time |  |
 | C52 | significant | open | §21.3 and §24 give different frame-rate floors on different phones, and §24’s 25 ms drag budget cannot be measured or met as written |  |

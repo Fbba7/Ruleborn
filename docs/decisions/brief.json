@@ -1,6 +1,6 @@
 {
  "_what": "The owner's decision brief: one entry per open register item waiting on the owner's decision, with its question, options, what the build does today, a recommendation and quotes from the design document; then the order to decide in, the groups that share one choice, the conflicts between answers and the ones safe to accept as recommended. Drafted, checked from two sides and merged by a multi-agent pass; tools/build_brief.py renders it and --check holds it to the register and the document.",
- "summary": "These 48 decisions settle the rules the build had to fill in where v3.4 was silent or contradicted itself. Most can be answered by adopting what sim/ and server/ already do, but a few depend on each other. The ones that matter most are the three design items and one chain in the economy. F33 (Lantern Glare reach) decides the hold numbers that F35 (Vault crack reach) and G19 (Heart size) rest on. F37 decides whether a non-raider can progress at all. In the economy, F39's fee formula comes first, then C41, G17, G20 and F38, and only then F36, because F36's base haul (2,400, 2,900 or 4,600) moves with each of them and F39's fee figures scale with that base. After the economy, two decisions reshape later answers: F41 (Starglass as a currency or as prices in real money) changes what G28 and G32 even ask, and F43 (what deletion removes) sets up F50, G39 and G38. F51, found building the landing, decides whether §5.4's open edge is a rule or a hope. Four items keep the build's reading with high confidence and can be accepted in one pass: F47, F45, C43, C42.",
+ "summary": "Of these 87 decisions, you answered 47 on 25–26 September; the build follows them, and the next version of the document takes their edits. 40 are open. 36 come from reading v3.6 and Screens v3 against each other and the build in October; the other 4 were found since: F56 and G43 building the home economy, F55 re-running §13.2's table, and G44 in the security briefing. Answer C45 first: it confirms that your recorded answers stand over the v3.6 text that still contradicts them, and the screens are being built on that. Then the look, as one choice: D89 (surfaces) and D90 (typefaces), with D91 (icons and motion) and D92 (shading), which TD.2's tokens and every screen follow. Then the heist group, G47 and G51 with G48 and C47, before the simulation contract locks (T5.1). F55 decides what the next harness work is. The rest can be answered in any order within their groups.",
  "order": [
   "F33",
   "F35",
@@ -48,44 +48,47 @@
   "F52",
   "F53",
   "F54",
-  "F55",
   "G41",
+  "C45",
+  "F57",
+  "D89",
+  "D90",
+  "D91",
+  "D92",
+  "G59",
+  "C44",
+  "D93",
+  "C52",
+  "G47",
+  "G51",
+  "G48",
+  "C47",
+  "C53",
+  "G62",
+  "F55",
   "F56",
   "G43",
   "G44",
-  "C44",
-  "G46",
-  "C45",
   "D77",
   "C46",
-  "G47",
-  "C47",
+  "G46",
+  "G58",
   "G49",
   "C48",
-  "G50",
-  "G51",
   "G52",
-  "C49",
   "G53",
+  "C49",
   "G54",
   "G55",
   "G56",
   "G57",
-  "F57",
+  "G69",
   "D86",
   "C50",
   "C51",
-  "G58",
-  "D89",
-  "D90",
-  "G59",
-  "D93",
-  "C52",
-  "C53",
-  "G62",
+  "G50",
   "G64",
-  "C54",
-  "G69"
+  "C54"
  ],
  "order_notes": {
   "F33": "Design tier. It sets whether one Glare decides a realm, and F35's Vault-reach argument and G19's hold claim both rest on the hold numbers it changes.",
@@ -144,6 +147,7 @@
   "D77": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "C46": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "G47": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
+  "G48": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "C47": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "G49": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "C48": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
@@ -163,6 +167,8 @@
   "G58": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "D89": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "D90": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
+  "D91": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
+  "D92": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "G59": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "D93": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "C52": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
@@ -304,44 +310,48 @@
    "note": "Both change the social surface for 13-to-15 players and the night rule. Invite codes with minors hidden from feeds, and one raid message a day, are independent edits to server/src/notifications.mjs and the feed query."
   },
   {
-   "title": "Screens v3's look against §21",
-   "ids": [
-    "D89",
-    "D90",
-    "G59",
-    "C44",
-    "D93",
-    "C52"
-   ],
-   "note": "One choice about the visual language: §21.8 describes paper panels, Baloo 2 and a home layout the designs do not use. Decide the surfaces and typefaces first; contrast (G59) is measured on whichever surfaces win, and the budgets (D93, C52) decide how much of the designs' 3D survives on a phone."
-  },
-  {
    "title": "Your recorded answers against v3.6",
    "ids": [
     "C45",
     "F57"
    ],
-   "note": "v3.6 took none of the 47 answers recorded in September, so a screen can have three sources. C45 asks that the answers stand; F57 is the Shop's case of it."
+   "note": "v3.6 took part of one of the 47 answers recorded in September (G28's wording for §18.8) and none of the rest, so a screen can have three sources. C45 asks that the answers stand; F57 is the Shop's case of it."
   },
   {
-   "title": "What a target shows before the heist",
+   "title": "Screens v3's look against §21",
    "ids": [
-    "D77",
-    "C46",
-    "G46"
+    "D89",
+    "D90",
+    "D91",
+    "D92",
+    "G59",
+    "C44",
+    "D93",
+    "C52"
    ],
-   "note": "All three set what the Observatory, the scout and the planner may show. F46's answer already made scouting free; these say what that free view holds."
+   "note": "One choice about the visual language: §21.8 and §21.3 describe paper panels, Baloo 2, flat icons, motion at 150 to 250 ms, one three-step toon and a home layout the designs do not use. Decide the surfaces and typefaces first, then the icons, motion and shading by the same rule (a look goes to the designs, a measured rule stays); contrast (G59) is measured on whichever surfaces win, and the budgets (D93, C52) decide how much of the designs' 3D survives on a phone."
   },
   {
    "title": "The heist, its crew and its result",
    "ids": [
     "G47",
     "G51",
+    "G48",
     "C47",
     "C53",
     "G62"
    ],
-   "note": "The orders a crew can be given, what the server knows of the crew, and how the result reads. They change the replay format, so they are answered before the simulation contract locks (T5.1)."
+   "note": "The orders a crew can be given, what the server knows of the crew, and how the result reads and explains itself. They change the replay format, so they are answered before the simulation contract locks (T5.1)."
+  },
+  {
+   "title": "What a target shows before the heist",
+   "ids": [
+    "D77",
+    "C46",
+    "G46",
+    "G58"
+   ],
+   "note": "All four set what the Observatory, the scout and the planner may show. F46's answer already made scouting free; these say what that free view holds, and G58 the name it shows for a Keeper, one word-list rule at every age."
   },
   {
    "title": "Codex, weaving, the Lab and Sages",
@@ -557,6 +567,22 @@
    ],
    "problem": "F37 B's addition said '§14.1's heist counts include ruins'. G20 C takes its 20-raid week from five of §14.1's engaged days of four. Drifting ruins pay pages and Essence (§12.10) and can fill a thin target list (12.22), so it was undefined whether a ruin uses up one of the 20 paid raids.",
    "resolution": "Ruins are counted apart from §14.1's heists a day. G20 C's 20 counts only matchmade raids that take an entry fee: player islands, echoes and 12.22's fallback targets. A ruin, including one that fills a thin target list, charges no fee and uses none of the 20. Its Essence counts only toward G20 C's 33.3 × B currency backstop. F37 B's two tutorial ruins then add experience on top of every player's raids, which moves the generated tables by about a day."
+  },
+  {
+   "ids": [
+    "G52",
+    "G53"
+   ],
+   "problem": "G53 C had a Lab discovery pay an Insight amount 'set with G52's figures', while G52's recommended B removes Insight altogether, Lab discoveries' Insight with it.",
+   "resolution": "G53 C pays Insight only if G52 keeps it (G52 A); under G52 B or C a discovery's reward is the resonance itself, and an empty experiment still gives its 3 pages. Answer G52 first."
+  },
+  {
+   "ids": [
+    "C46",
+    "G58"
+   ],
+   "problem": "C46 A showed a 13-to-15 Keeper to raiders as 'Keeper' and the island's name, while G58 B gave 13-to-15s a word-list Keeper name raiders see and let players from 16 type theirs, the free text §24.6 rules out.",
+   "resolution": "One rule, in G58: every Keeper's name comes from word lists at every age, as C43's answer does for islands, and raiders see it as §12.4's free 'name'. C46 no longer asks the name question, and G50's ruleborn names use the same lists."
   }
  ],
  "quick": [
@@ -4497,15 +4523,15 @@
    "id": "C45",
    "question": "Do your 47 recorded answers still stand over v3.6, which kept the old text for almost all of them, so that the build takes a recorded answer first, then the document, then the design?",
    "why_it_matters": "§23.5 makes the document win over the designs, but v3.6 kept the text your answers replaced: the fee as 2% of holdings (§9.4), a window of 3 Keeper levels (§12.3), a paid scout (§12.4), Starglass packs (§22.1) and the Vault heard at 5 m (§32.8, brief 37). Screens v3 draws the same old rules, so the Observatory, scout, planner, result and shop each have a server saying one thing and a document and design saying another. Without one stated order the client cannot be built against any of them.",
-   "today": "docs/decisions/answers.json holds 47 answers from 25–26 September, and the server follows them: the fee is 2% of B(V) at the target's Vault level, 100 at Vault 1 and 3,844 at Vault 10 (server/src/economy.mjs:156-166); the Keeper window runs two below to three above (tools/design_facts.py:232-235, server/src/matchmaking.mjs:244-245); scouting is free (F46); there is no Starglass balance (F41); no guard hears the Vault (F35). v3.6 took one piece of one answer, §18.8's season row as G28's edit worded it, and left §9.4, §12.3, §12.4, §12.22 and §22.1 as they were, while its rewritten §23.2 Observatory row asks for 'only the free scouting facts', which assumes F46's free scout. Screens v3 draws the old rules from its data module: the fee as 2% of holdings (data_v35.js:15), 'Keepers 21–27' (screens_main.js:524), and a locked report with 'Scout · 100 Aether' (screens_main.markup.html:649-652). Roadmap TD.29 already states the order answer, document, design.",
+   "today": "docs/decisions/answers.json holds 47 answers from 25–26 September, and the server follows them: the fee is 2% of B(V) at the target's Vault level, 100 at Vault 1 and 3,844 at Vault 10 (server/src/economy.mjs:156-166); the Keeper window runs two below to three above (tools/design_facts.py:232-235, server/src/matchmaking.mjs:244-245); scouting is free (F46); there is no Starglass balance (F41); no guard hears the Vault (F35). v3.6 took one piece of one answer, §18.8's season row as G28's edit worded it, left §9.4, §12.3, §12.4, §12.22 and §22.1 as they were, and wrote none of the other answers, even in the sections it changed (§14.4, which F37 and F54 edit; §11.8, where F46 rewords the Cartographer). Its rewritten §23.2 Observatory row, 'only the free scouting facts (12.4)', quotes §12.4 as v3.6 has it and stays true under F46, which only makes more facts free. Screens v3 draws the old rules from its data module: the fee as 2% of holdings (data_v35.js:15), 'Keepers 21–27' (screens_main.js:524), and a locked report with 'Scout · 100 Aether' (screens_main.markup.html:649-652). Roadmap TD.29 already states the order answer, document, design.",
    "options": [
     {
      "key": "A",
      "label": "Answers stand; answer, then document, then design",
      "means": "Every recorded answer stands until you reverse it. The build takes a recorded answer first, then the document, then the design, and the next version writes the answers' drafted edits in, so the document is again the one source.",
      "consequences": "Nothing built is undone. Until the next version, the screens that show the fee, the window, scouting and prices follow the server, not v3.6 or Screens v3. Once the edits land, §23.5 needs rows for the design's old fee, window, scout lock and Starglass prices.",
-     "numbers": "47 answers; v3.6 took one sentence of them (§18.8, from G28). Fee: 100 at Vault 1, 506 at 5, 3,844 at 10 (server), against 100 to 25,000 (§9.4).",
-     "doc_edit": "Next version (T1.6): §32.8 gains the 25–26 September round, one row per answer with the sections it changes, and those sections take the drafted edits in docs/decisions/brief.json: §9.4's fee line, §12.3 and §12.22's window, §12.4's free scout, §22.1's prices without packs, §32.8's brief 37 reach. §23.2's Observatory row stays, now true. §23.5's 'Where the screens differ' gains the fee, the window, the scout lock and Starglass prices.",
+     "numbers": "47 answers; v3.6 took part of one (G28's wording for §18.8, without ‘bought’). Fee: 100 at Vault 1, 506 at 5, 3,844 at 10 (server), against 100 to 25,000 (§9.4).",
+     "doc_edit": "Next version (T1.6): §32.8 gains the 25–26 September round, one row per answer with the sections it changes, and those sections take the drafted edits in docs/decisions/brief.json: §9.4's fee line, §12.3 and §12.22's window, §12.4's free scout, §22.1's prices without packs, §32.8's brief 37 reach. §23.2's Observatory row stays as written. §23.5's 'Where the screens differ' gains the fee, the window, the scout lock and Starglass prices.",
      "build_change": "None on the server. The Observatory, scout and planner take each target's fee and the window from the server and show no scout lock (TD.18); the shop prices in money (TD.23)."
     },
     {
@@ -4529,7 +4555,7 @@
    ],
    "recommendation": {
     "option": "A",
-    "rationale": "The answers were recorded and built, and nothing in v3.6 says it reverses any; where v3.6 did touch an answered section (§18.8) it took the answer's wording, so the rest reads as not yet written in, not as reversed. Screens v3 draws the old figures because its data module carries the document's numbers (data_v35.js:15 is §9.4's formula). B undoes built work and brings back the problems the answers solved; C spends five re-decisions on what A already allows, since any answer can still be reversed by naming it.",
+    "rationale": "The answers were recorded and built, and nothing in v3.6 says it reverses any; where v3.6 took an answer's words (§18.8, from G28) it took them as given, and where it changed an answered section without them (§14.4, §11.8) it changed other sentences, so the rest reads as not yet written in, not as reversed. Screens v3 draws the old figures because its data module carries the document's numbers (data_v35.js:15 is §9.4's formula). B undoes built work and brings back the problems the answers solved; C spends five re-decisions on what A already allows, since any answer can still be reversed by naming it.",
     "confidence": "high"
    },
    "interacts_with": [
@@ -4561,7 +4587,7 @@
      "text": "Three to five universes showing only the free scouting facts (12.4)"
     }
    ],
-   "also_needed": "If v3.6 meant to reverse any answer, name it: that one alone is reverted and recorded. Each answer's drafted edit is its option's doc_edit in docs/decisions/brief.json."
+   "also_needed": "If v3.6 meant to reverse any answer, name it: that one alone is reverted and recorded. Each answer's drafted edit is its option's doc_edit in docs/decisions/brief.json. Built to the answers, and changed only by B or C: the fee, the Keeper window and the free scout on the Observatory, scout and planner (TD.18), the shop's prices in money (TD.23), and the Vault call left out of sim/ (F35). Until you answer, those parts are built so one token switches each back to the document, as TD.2 does for the look."
   },
   "D77": {
    "id": "D77",
@@ -4632,18 +4658,18 @@
   },
   "C46": {
    "id": "C46",
-   "question": "How many targets may the Observatory show with the Wanderer at home, does a Trace take one of those places, what does a card's depth count, and does a 13-to-15 Keeper's name reach a raider?",
-   "why_it_matters": "§12.3 and §23.2 stop at five targets, but §11.7's Wanderer adds one, so at Observatory level 5 the list is six; either the cap or the Sage's gift must give. Where the Trace sits decides what §12.22's median guarantee is measured on. Depth is printed on every card before the landing is chosen, and the fewest links from any outer realm to the Heart is one in every universe (the Heart must link to some outer realm), so 'the route from the landing realm' gives the card no useful figure. And §12.4's free name meets §20.2's private 13-to-15 profile.",
-   "today": "The server offers three targets unless asked for more (server/src/matchmaking.mjs:221-233) and has no Observatory level, Wanderer or depth yet; it serves a Trace as its own lease, outside the offer (:157-170). The client names other players 'Keeper' and the first letters of their account (client/README.md:143), and islands from the word lists (C43). Screens v3 shows the Trace as the first of three cards (screens_main.js:78-81), prints '1 realm to the Heart' for a one-link route, and shows first names (Marta, Kofi, Ines).",
+   "question": "How many targets may the Observatory show with the Wanderer at home, does a Trace take one of those places, and what does a card's depth count?",
+   "why_it_matters": "§12.3 and §23.2 stop at five targets, but §11.7's Wanderer adds one, so at Observatory level 5 the list is six; either the cap or the Sage's gift must give. Where the Trace sits decides what §12.22's median guarantee is measured on. Depth is printed on every card before the landing is chosen, and the fewest links from any outer realm to the Heart is one in every universe (the Heart must link to some outer realm), so 'the route from the landing realm' gives the card no useful figure.",
+   "today": "The server offers three targets unless asked for more (server/src/matchmaking.mjs:221-233) and has no Observatory level, Wanderer or depth yet; it serves a Trace as its own lease, outside the offer (:157-170). Screens v3 shows the Trace as the first of three cards (screens_main.js:78-81), and prints '1 realm to the Heart' for a one-link route.",
    "options": [
     {
      "key": "A",
      "label": "Three to six; the Trace on top; depth in links",
-     "means": "The Wanderer's gift stands, so the list runs three to six. A Trace is shown in addition, pinned first, and §12.22's guarantee is measured on the matchmaker's own list. A card's depth is the most links any outer realm's shortest route to the Heart takes, printed 'up to N realms to the Heart'; the landing picker shows each realm's own figure, as §5.4's clock counts them. A 13-to-15 Keeper is shown to raiders as 'Keeper' and the island's word-list name.",
-     "consequences": "No Sage's home gift goes dead at the top level. With a Trace the carousel holds up to seven cards. The card, the picker and the clock use one count. A minor's chosen name never leaves their own screens.",
+     "means": "The Wanderer's gift stands, so the list runs three to six. A Trace is shown in addition, pinned first, and §12.22's guarantee is measured on the matchmaker's own list. A card's depth is the most links any outer realm's shortest route to the Heart takes, printed 'up to N realms to the Heart'; the landing picker shows each realm's own figure, as §5.4's clock counts them.",
+     "consequences": "No Sage's home gift goes dead at the top level. With a Trace the carousel holds up to seven cards. The card, the picker and the clock use one count.",
      "numbers": "Targets at Observatory levels 1 to 5: 3, 3, 4, 4, 5 (§10.2); with the Wanderer 4, 4, 5, 5, 6; a Trace adds one. Depth on the card: 1 to 6 links (six outer realms at most, §5.2).",
-     "doc_edit": "§12.3: '3 universes (5 at level 5)' becomes '3 to 5 by Observatory level (10.2), one more with the Wanderer at home (11.7)'. §23.2: 'Three to six universes'. §12.22: 'A Trace is shown in addition to the list, first; the guarantee is on the list', and 'a card shows the deepest landing's depth in links, as 5.4's clock counts them; the landing picker shows each realm's'. §12.4: 'a 13-to-15 Keeper is shown to others as Keeper and the island's name (20.2)'.",
-     "build_change": "offer() sized by the Observatory level and the Wanderer; each offered target carries its depth; the Trace lease stays separate; 13-to-15 names never sent to other players."
+     "doc_edit": "§12.3: '3 universes (5 at level 5)' becomes '3 to 5 by Observatory level (10.2), one more with the Wanderer at home (11.7)'. §23.2: 'Three to six universes'. §12.22: 'A Trace is shown in addition to the list, first; the guarantee is on the list', and 'a card shows the deepest landing's depth in links, as 5.4's clock counts them; the landing picker shows each realm's'.",
+     "build_change": "offer() sized by the Observatory level and the Wanderer; each offered target carries its depth; the Trace lease stays separate."
     },
     {
      "key": "B",
@@ -4651,22 +4677,22 @@
      "means": "As A, but the Wanderer's gift counts only while the Observatory shows fewer than five, so the list never passes five.",
      "consequences": "§12.3 and §23.2 stand as written. The Wanderer's home gift does nothing at Observatory level 5, the level an engaged player keeps longest.",
      "numbers": "With the Wanderer: 4, 4, 5, 5, 5.",
-     "doc_edit": "§11.7's Wanderer: 'The Observatory offers one more target, up to five.' The Trace, depth and name edits as in A.",
+     "doc_edit": "§11.7's Wanderer: 'The Observatory offers one more target, up to five.' The Trace and depth edits as in A.",
      "build_change": "As A, with the offer capped at five."
     },
     {
      "key": "C",
      "label": "Adopt the design's list",
-     "means": "The Trace takes the first of the offered places, depth is a fixed figure per target as Screens v3 prints it, and first names show for every age band. The Wanderer as in A.",
-     "consequences": "The guarantee is measured on a list one of whose places the matchmaker did not choose, so a Trace can pull the median out of band. Showing a 13-to-15's name breaks §20.2's private profile, which §23.5 does not let a design do.",
+     "means": "The Trace takes the first of the offered places, and depth is a fixed figure per target as Screens v3 prints it. The Wanderer as in A.",
+     "consequences": "The guarantee is measured on a list one of whose places the matchmaker did not choose, so a Trace can pull the median out of band. A fixed figure gives no landing its own depth.",
      "numbers": "At Observatory level 1 with a Trace: two matchmade targets and the Trace.",
-     "doc_edit": "§12.22: 'A Trace takes one of the offered places.' §12.4 unchanged.",
-     "build_change": "The server folds the Trace lease into the offer and its guarantee; names sent for every band."
+     "doc_edit": "§12.22: 'A Trace takes one of the offered places.'",
+     "build_change": "The server folds the Trace lease into the offer and its guarantee."
     }
    ],
    "recommendation": {
     "option": "A",
-    "rationale": "A keeps the Sage's gift worth having at every level for one number in two sections. Keeping the Trace outside the list holds the guarantee to what the matchmaker chose, which is how the server already works. Depth in links is the clock's own count, and the deepest landing is the only figure a card can show honestly, since the shallowest is always one. The name rule follows §20.2 and C43's word lists. B leaves a Sage's gift dead at the top level; C breaks §20.2.",
+    "rationale": "A keeps the Sage's gift worth having at every level for one number in two sections. Keeping the Trace outside the list holds the guarantee to what the matchmaker chose, which is how the server already works. Depth in links is the clock's own count, and the deepest landing is the only figure a card can show honestly, since the shallowest is always one. B leaves a Sage's gift dead at the top level; C lets a Trace pull the guarantee's median out of band.",
     "confidence": "medium"
    },
    "interacts_with": [
@@ -4690,13 +4716,9 @@
     {
      "section": "12.22",
      "text": "Every offered target shows its depth, so a longer run is a choice the player sees coming."
-    },
-    {
-     "section": "12.4",
-     "text": "Free information: name, Keeper level, number of realms, Renown and a rough loot estimate."
     }
    ],
-   "also_needed": "G58 asks the same name question from the protections side: answer them together. §12.22's 'centred on three realms' must use the same depth count."
+   "also_needed": "The name a card shows is G58's question: G58 recommends a word-list name for every Keeper, which raiders see as §12.4's free 'name'. §12.22's 'centred on three realms' must use the same depth count."
   },
   "G47": {
    "id": "G47",
@@ -4707,7 +4729,7 @@
     {
      "key": "A",
      "label": "Simulation orders, held-tap controls",
-     "means": "sim/ gains a crew manifest in the replay (characters, kinds, levels, traits, Sage, casts) and Ability, Sage and Cast commands in the free values; the server checks the manifest against the roster. The load target is set in the planner, 50 to 100% in tens, the last one used by default, and changed by a held tap on the Vault. A held tap on a crew member offers Stop, Drop half and Drop all. Wheels and held-tap menus are modal. A held tap on a law chip opens its card. In ruins and rehearsals a tap on the clock pauses. A cast is paid at validation, only if used. The simulation pauses with the app and resumes after a three-second count; a heist left past its lease is submitted as played so far.",
+     "means": "sim/ takes G51's crew manifest into the replay and gains Ability, Sage and Cast commands in the free values. The load target is set in the planner, 50 to 100% in tens, the last one used by default, and changed by a held tap on the Vault. A held tap on a crew member offers Stop, Drop half and Drop all. Wheels and held-tap menus are modal. A held tap on a law chip opens its card. In ruins and rehearsals a tap on the clock pauses. A cast is paid at validation, only if used. The simulation pauses with the app and resumes after a three-second count; a heist left past its lease is submitted as played so far.",
      "consequences": "§12.7's eight controls hold at a crew of five, every decision §12.6 counts is one the server re-simulates, and the build's three extra buttons go. It is the largest simulation task left: the eighteen abilities as named parameter changes, the four-ready rule and the Archivist's powers, then §12.6's decision band re-measured and the goldens regenerated.",
      "numbers": "Commands: 12 of 16 values used. Controls at a crew of five: 5 portraits + Sage + Cast + Get out = 8. Load target: six settings, 50 to 100.",
      "doc_edit": "§12.5: a Load row, '50 to 100% in tens, the last one used by default'. §12.18: the held taps on the Vault, a crew member and a law chip, and 'wheels and menus are modal'. §20.8: 'paused from the clock'. §24.13: 'a cast is paid at validation, only if used'. §24.12: the pause with the app, the three-second count, and 'a heist left past its lease is submitted as played so far'.",
@@ -4762,7 +4784,7 @@
      "text": "the heist can be paused at any time in ruins and rehearsals"
     }
    ],
-   "also_needed": "G51's growth, home and rest rules fill the same manifest: answer them together. The Archivist's three powers as parameter changes, which C49 also asks."
+   "also_needed": "G51 holds the crew manifest (each member's kind, form, level and traits, the Sage and the casts) and its growth, home and rest rules: answer them together. The Archivist's three powers as parameter changes for sim/; C49's drafted edit keeps §11.7's parameter rule to the after-launch Sages."
   },
   "C47": {
    "id": "C47",
@@ -4828,7 +4850,7 @@
      "text": "the Vault's contents are only revealed when it opens"
     }
    ],
-   "also_needed": "Whether the question goes on the first or the last result of a session; G29's answer already fixes what a session is."
+   "also_needed": "Whether the question goes on the first or the last result of a session; G29's answer already fixes what a session is. Waiting on this answer: the result's worth question and how often it is asked (TD.17), and the heist HUD's 'Left' before the Vault opens (client/scripts/heist_hud.gd:51). The server's 1-to-5 rating stands under A and C."
   },
   "G49": {
    "id": "G49",
@@ -4839,9 +4861,9 @@
     {
      "key": "A",
      "label": "Write the drafted set",
-     "means": "Chapter 1 is two laws of each school: the ten launch commons plus Aurora and Echoes, with the three starting laws among them. A law is met when a heist or ruin route the player runs enters a realm running it; a scout report shows its name and rank but gives no page. A school's mastery track has three steps per law (woven, crossed in a successful heist, raised to tier III), so 24 steps, with a title at 8 and 24 and the school's new visual style at 16. The screen says 'Tier III', not 'Mastered'. A Codex note records, per law, the heists that crossed it, the pylons broken and the wins with it. An undiscovered resonance or chord in the player's own realm still sounds and is priced, and shows as an unnamed line with its discount until the Lab names it. A crossing hint names the partner law's school, as the design does. A resonance joining two schools counts in each school's 'remaining' and once in the total.",
+     "means": "Chapter 1 is two laws of each school: the ten launch commons plus Aurora and Echoes, with the three starting laws among them. A law is met when a heist or ruin route the player runs enters a realm running it; a scout report shows its name and rank but gives no page. A school's mastery track has three steps for each of its laws in play (woven, crossed in a successful heist, raised to tier III), with a title at a third of the steps and at all of them, and the school's new visual style at two thirds: 12 steps on its four launch laws (titles at 4 and 12, the style at 8), 24 once all eight are out (8, 16 and 24). The screen says 'Tier III', not 'Mastered'. A Codex note records, per law, the heists that crossed it, the pylons broken and the wins with it. An undiscovered resonance or chord in the player's own realm still sounds and is priced, and shows as an unnamed line with its discount until the Lab names it. A crossing hint names the partner law's school, as the design does. A resonance joining two schools counts in each school's 'remaining' and once in the total.",
      "consequences": "Every Codex item on §23.2 has a rule. Matchmaking can filter by chapter, and strain is explained without giving the Lab's discoveries away. The builder stops naming combinations the player has not found. Mastery counts facts a heist and a weave already produce, so it adds no currency.",
-     "numbers": "Chapter 1: 10 commons × 10 pages + 2 uncommons × 20 = 140 pages, 110 after the starting three. Chapter 2 opens at Keeper 6: day 5 engaged, 8 regular, 16 casual (§14.2). Mastery: 8 laws × 3 steps = 24 a school, 144 across the six launch schools.",
+     "numbers": "Chapter 1: 10 commons × 10 pages + 2 uncommons × 20 = 140 pages, 110 after the starting three. Chapter 2 opens at Keeper 6: day 5 engaged, 8 regular, 16 casual (§14.2). Mastery at launch: 4 laws × 3 steps = 12 a school, 72 across the six schools (content/laws.json marks 4 launch laws in each); 24 a school, 144 in all, once each school has its 8.",
      "doc_edit": "§7.6: name chapter 1's twelve and define meeting, saying a scout shows the name only. §18.5: the track's steps and milestones. §15.3: what a note records. §8.6: what an undiscovered combination shows, a crossing hint's wording, and how a two-school resonance counts.",
      "build_change": "A chapter for each law in content/laws.json; the server's offer keeps a raider to laws from their open chapters; the economy model reads chapter 1 in place of the cheapest laws; the client's Codex, Harmony view and builder follow §8.6's new rule."
     },
@@ -4866,7 +4888,7 @@
    ],
    "recommendation": {
     "option": "A",
-    "rationale": "A gives each of the five a rule built from facts the build already has: the realms a route enters, a heist's crossings and pylons, and a weave. It keeps the Lab as the one way to discover, as §8.4 says, and explains strain without spoiling the discovery. B adopts the design where §8.4 and §8.6 already state a rule, which §23.5 does not allow. C leaves matchmaking's chapter filter and §23.2's mastery with nothing to build. A's numbers (two laws per school, 24 steps) can change without changing its shape.",
+    "rationale": "A gives each of the five a rule built from facts the build already has: the realms a route enters, a heist's crossings and pylons, and a weave. It keeps the Lab as the one way to discover, as §8.4 says, and explains strain without spoiling the discovery. B adopts the design where §8.4 and §8.6 already state a rule, which §23.5 does not allow. C leaves matchmaking's chapter filter and §23.2's mastery with nothing to build. A's numbers (two laws per school in chapter 1, three steps a law, milestones at a third, two thirds and all) can change without changing its shape, and the milestones grow with each season's laws.",
     "confidence": "medium"
    },
    "interacts_with": [
@@ -4898,23 +4920,23 @@
   },
   "C48": {
    "id": "C48",
-   "question": "Weaving's upkeep is priced against a realm's 'stability budget' that §5.5 never gives, and six more weaving rules are open: charge upkeep on the universe's share of stability, on each realm's own share, or follow Screens v3's Weaving screen?",
-   "why_it_matters": "Upkeep is the one recurring Aether sink (§5.6, §9.5), and it cannot be built or modelled until 'the realm's stability budget' means something. How a crown law and a harmony are counted changes every law's price, so a realm's strain differs between the client, the server and the model unless one rule is written. The first session weaves twice in ten minutes against a 10-minute weave time, and nothing says whether a weave may push strain into Breaking or how a tier rises.",
+   "question": "Weaving's upkeep is priced against a realm's 'stability budget' that §5.5 never gives, and five more weaving rules are open: charge upkeep on the universe's share of stability, on each realm's own share, or follow Screens v3's Weaving screen?",
+   "why_it_matters": "Upkeep is the one recurring Aether sink (§5.6, §9.5), and it cannot be built or modelled until 'the realm's stability budget' means something. How a crown law and a harmony are counted changes every law's price, so a realm's strain differs between the client, the server and the model unless one rule is written. Nothing says whether a weave may push strain into Breaking or how a tier rises.",
    "today": "The build has no stability, strain, upkeep or weave time. The client's builder weaves a law into a slot at once and free (client/scripts/builder_screen.gd:149), and the server keeps no strain. The economy model leaves upkeep out of its re-run (tools/economy_model/rerun.py:41). sim/src/combos.rs works out which combinations sound and leaves their cost to the economy. Screens v3's Weaving screen counts a harmony once per partner per shared note (screens_main.js:355-356), refuses a weave into Breaking ('Too much strain', :406), and orders its deck: harmony first, clash last, then cheapest (:361). Its Harmony view counts a harmony once per note, and gives the crown law Kinship a different change in each realm: +25% in Emberreach, ±0% in Skyfield, −10% in Tidehold (screens_meta.js:1066-1086).",
    "options": [
     {
      "key": "A",
      "label": "Upkeep on the universe's share, and the drafted rules",
-     "means": "Every realm pays the upkeep share × (woven laws' cost ÷ capacity) of its own hourly Aether, chord draws not charged, so a universe weaving nothing pays nothing. A crown law is priced once, by the Heart's laws, as §8.5's worked example does; the realm laws it harmonises or clashes with elsewhere take their own 15% or 25%. A harmony counts once per shared note, for every law carrying that note. The first session's weaves are instant. A weave that would take strain to 125% or over is refused. A tier rise happens in place: the law keeps working at its old tier for the new tier's weave time and pays 40 Aether for each point the tier adds. Weaving ranks a law that harmonises first, one that clashes last, then the cheapest, and its comparison shows each candidate's points, the band after weaving, and the harmonies and clashes it would make.",
+     "means": "Every realm pays the upkeep share × (woven laws' cost ÷ capacity) of its own hourly Aether, chord draws not charged, so a universe weaving nothing pays nothing. A crown law is priced once, by the Heart's laws, as §8.5's worked example does; the realm laws it harmonises or clashes with elsewhere take their own 15% or 25%. A harmony counts once per shared note, for every law carrying that note. A weave that would take strain to 125% or over is refused. A tier rise happens in place: the law keeps working at its old tier for the new tier's weave time and pays 40 Aether for each point the tier adds. Weaving ranks a law that harmonises first, one that clashes last, then the cheapest, and its comparison shows each candidate's points, the band after weaving, and the harmonies and clashes it would make.",
      "consequences": "One number, strain, prices upkeep, and §23.5 already says strain belongs to the universe. 'One running none pays nothing' becomes true of the universe, not the realm. The harmony rule matches the simulation's one effect per note (G25) and the Harmony view. The ranking is the design's own deck order.",
      "numbers": "At §5.5's day-61 row (228 of 276, 83%), upkeep is 20.7% of Aether production at the 25% share. Three laws on one note: each pays ×0.85. Haste and Frictionless (Flow and Spark): each ×0.85² = 0.72.",
-     "doc_edit": "§5.6: 'the realm's stability budget' becomes 'the universe's capacity', and 'a realm running laws worth half its stability' becomes 'a universe whose woven laws cost half its capacity'; §29.1 to match. §5.5 and §8.2: the crown and harmony rules. §16: the tutorial's weaves are instant. §5.5's Breaking band: 'no weave may take strain into it'. §5.6: the tier rise. §19.6 and §23.2: the ranking and the comparison. §23.5 adopts weaving one law as a realm law in several realms.",
+     "doc_edit": "§5.6: 'the realm's stability budget' becomes 'the universe's capacity', and 'a realm running laws worth half its stability' becomes 'a universe whose woven laws cost half its capacity'; §29.1 to match. §5.5 and §8.2: the crown and harmony rules. §5.5's Breaking band: 'no weave may take strain into it'. §5.6: the tier rise. §19.6 and §23.2: the ranking and the comparison. §23.5 adopts weaving one law as a realm law in several realms.",
      "build_change": "Strain and upkeep on the server, from the woven laws it already reads in each bundle; the builder prices weaves and refuses them past 125%; the economy model adds upkeep so §9.5's sink rule can set the share."
     },
     {
      "key": "B",
      "label": "Upkeep on each realm's own share, and the drafted rules",
-     "means": "A realm pays the upkeep share × (its own woven laws' cost ÷ the universe's capacity) of its own Aether, with crown laws charged to the Heart. The other six rules are as in A.",
+     "means": "A realm pays the upkeep share × (its own woven laws' cost ÷ the universe's capacity) of its own Aether, with crown laws charged to the Heart. The other five rules are as in A.",
      "consequences": "§5.6's 'one running none pays nothing' holds realm by realm. But a realm's laws are a fraction of the universe's, so upkeep falls to about a sixth of A's, and §9.5's sink rule, capped at one half (F17), may not absorb enough Aether without cutting the Aether Spring ladder.",
      "numbers": "Day 61 with the cost spread evenly over six realms: each realm about 13.8% of capacity, so upkeep is about 3.5% of Aether production at the 25% share, against A's 20.7%.",
      "doc_edit": "§5.6 and §29.1: 'its woven laws' cost over the universe's capacity, crown laws charged to the Heart'; the rest as in A.",
@@ -4932,7 +4954,7 @@
    ],
    "recommendation": {
     "option": "A",
-    "rationale": "A prices upkeep on the one stability figure the document has, which §23.5 already places on the universe and which the server can work out from the bundles it holds. It keeps upkeep near what §5.6's 25% describes, and the harmony rule is the one the simulation and the Harmony view already use. B keeps §5.6's realm wording but cuts the only recurring Aether sink to about a sixth, against F17's criterion. C undoes the crown's double cost once a crown law harmonises in four realms. The other six rules are the same in every option, and each is one sentence.",
+    "rationale": "A prices upkeep on the one stability figure the document has, which §23.5 already places on the universe and which the server can work out from the bundles it holds. It keeps upkeep near what §5.6's 25% describes, and the harmony rule is the one the simulation and the Harmony view already use. B keeps §5.6's realm wording but cuts the only recurring Aether sink to about a sixth, against F17's criterion. C undoes the crown's double cost once a crown law harmonises in four realms. The other five rules are the same in every option, and each is one sentence.",
     "confidence": "medium"
    },
    "interacts_with": [
@@ -4960,7 +4982,7 @@
      "text": "While a slot is being woven it is empty."
     }
    ],
-   "also_needed": "The upkeep share itself, which §9.5's sink rule sets only once the economy model models upkeep (it leaves it out today). C51 asks the same question about the first session's weaves, and one answer serves both."
+   "also_needed": "The upkeep share itself, which §9.5's sink rule sets only once the economy model models upkeep (it leaves it out today). The first session's weaves against §5.6's times are C51's question."
   },
   "G50": {
    "id": "G50",
@@ -4990,7 +5012,7 @@
      "key": "C",
      "label": "Typed names, kept on the phone",
      "means": "As A, except the player types a name, which is stored on the device and never sent to the server, so no one else sees it.",
-     "consequences": "Players get the free naming §19.20's customisation evidence points to, and §24's 'no free text' still holds on the server. But 13–15 players would type names where §20.7 gives them word lists, a name is lost with the phone unless it is backed up, and the owner's answer to C43 chose word lists at every age for islands.",
+     "consequences": "Players get the free naming §19.20's customisation evidence points to, and §24's 'no free text' still holds on the server. But it adds a typed field beside the word lists every other name uses (C43's answer for islands, G58's recommendation for Keepers), and a name is lost with the phone unless it is backed up.",
      "numbers": "—",
      "doc_edit": "§19.20: 'names are typed by the player and kept on the device'; §20.7: a row for ruleborn names.",
      "build_change": "A name field on the device; the lease and replay carry no names."
@@ -4998,7 +5020,7 @@
    ],
    "recommendation": {
     "option": "A",
-    "rationale": "A follows the owner's answer to C43 (word lists for every island name at every age), so names need no filter and no moderation, which suits one developer and §24. It puts the hatch on a screen, gives the stray a form the server can check from the laws it crossed, and keeps raiders reading true quirks. B is safe and keeps the album's action, so pick it if the album needs one, at the cost of a second look to explain. C breaks §20.7's word lists for 13–15 players.",
+    "rationale": "A follows the owner's answer to C43 (word lists for every island name at every age), so names need no filter and no moderation, which suits one developer and §24. It puts the hatch on a screen, gives the stray a form the server can check from the laws it crossed, and keeps raiders reading true quirks. B is safe and keeps the album's action, so pick it if the album needs one, at the cost of a second look to explain. C keeps names off the server, so §24.6's 'no free text' holds, but it adds a second naming rule beside the word lists and loses names with the phone.",
     "confidence": "medium"
    },
    "interacts_with": [
@@ -5037,7 +5059,7 @@
     {
      "key": "A",
      "label": "Model the crew, and write the four rules",
-     "means": "The lease and the replay carry a crew manifest (kind, level, traits, form) and the Sage, the server checks it against the roster it holds, and sim/ models them. §11.4 to §11.6 state four rules. Growth compounds. A two-number ability's duration grows 20% at levels 4, 7 and 10, or its reach where it has no duration. The Spire's three places count as a home at the Spire's level, for the ceiling and the rest cut, and a character moves between free places at no cost. Rest modifiers multiply, and Loyal counts for a member who got out of a Partial, not one caught. One-tap reassign sends a character to the first unstaffed producer in G22's staffing order.",
+     "means": "The lease and the replay carry one crew manifest (each member's kind, form, level and traits, the Sage, and the casts carried), which G47's commands and G60's actors also use; the server checks it against the roster it holds, and sim/ models them. §11.4 to §11.6 state four rules. Growth compounds. A two-number ability's duration grows 20% at levels 4, 7 and 10, or its reach where it has no duration. The Spire's three places count as a home at the Spire's level, for the ceiling and the rest cut, and a character moves between free places at no cost. Rest modifiers multiply, and Loyal counts for a member who got out of a Partial, not one caught. One-tap reassign sends a character to the first unstaffed producer in G22's staffing order.",
      "consequences": "Every number the Roster and Character show is the heist's. The server holds the roster and each member's rest, so it can refuse a resting crew (§12.5). It is the largest piece of work: G47's ability, Sage and cast commands, the eighteen abilities as parameter changes, and new goldens.",
      "numbers": "Level 10: ×2.00 health and power compounding, against ×1.72 added; carry ×1.55 against ×1.45. A Loyal, Sleepy member after a clean heist, Hearth 5: 45 × 0.75 × 0.75 × 1.5 = 38 min multiplied, 45 min if added.",
      "doc_edit": "§11.4: 'compounding', and which number grows for each two-number ability (Lantern Wisp, Featherkin, Echoplate, Prism Mite). §11.5 and §11.4: the Spire's places as a home at the Spire's level, and how a character is housed. §11.6: the modifiers multiply. §11.3: Loyal for those who got out. §23.2: reassign follows §14.1's staffing order.",
@@ -5114,7 +5136,7 @@
      "label": "A Sage's level follows the Keeper's",
      "means": "Insight goes. Every Sage a player has stands at the player's Keeper level, up to 40, and improves at every fifth level as in A.",
      "consequences": "It is one fact the server already holds (GET /v1/keeper), with nothing new to balance or record. Lab discoveries, Echo trials and constellation targets lose their Insight and keep their other rewards. Every Sage levels together, so a late Sage arrives strong and there is no 'main' Sage to invest in.",
-     "numbers": "Keeper 10 is day 12 engaged (§14.2's table) against §14.3's Sage 10 on day 8. Keeper 40 is about day 275 in the partial re-run (§14.2) against Sage 40 on day 277.",
+     "numbers": "Under B a Sage reaches each level the day the Keeper does. Against §14.3's Sage rows, from the same earlier run as §14.2's table: Keeper 10 on day 12 against Sage 10 on day 8, and Keeper 40 on day 181 against Sage 40 on day 277. The partial re-run put Keeper 40 at day 275 (§14.2's text), and the current model run at days 307 to 321 (docs/design/generated/pacing.md), so the top Sage level comes about three months earlier than §14.3's day 277 on the table's run (181), about the same day on the partial re-run (275), and one to one and a half months later on the current run (307 to 321).",
      "doc_edit": "§9.1 and §9.5: the Insight rows go. §11.7: 'Sages level with the Keeper'. §12.1, §12.10 and §17.3: Insight leaves their rewards. §14.3: the Sage rows go.",
      "build_change": "The client and the lease read a Sage's level from the Keeper level; no ledger change."
     },
@@ -5130,7 +5152,7 @@
    ],
    "recommendation": {
     "option": "B",
-    "rationale": "B keeps Sage levels and §23.2's Sage hall as written. It stores the level as a fact the server already holds and checks, and needs no new faucet or model work: Keeper 40 lands on about the same day as §14.3's Sage 40. A is right if the owner values choosing which Sage to raise and Insight as a reward for the Lab and Echo trials, but it adds a currency to balance before any of its sources is built. C cuts a goal the document keeps. A and B both still need each launch Sage's eight improvements.",
+    "rationale": "B keeps Sage levels and §23.2's Sage hall as written. It stores the level as a fact the server already holds and checks, and needs no new faucet or model work. §14.3's Sage rows go with Insight, and the top Sage level then comes with Keeper 40, about three months before §14.3's day 277 on the table's run, about then on the partial re-run, and one to one and a half months after it on the current run. A is right if the owner values choosing which Sage to raise and Insight as a reward for the Lab and Echo trials, but it adds a currency to balance before any of its sources is built. C cuts a goal the document keeps. A and B both still need each launch Sage's eight improvements.",
     "confidence": "low"
    },
    "interacts_with": [
@@ -5161,51 +5183,49 @@
   },
   "C49": {
    "id": "C49",
-   "question": "Nine sentences in v3.6 each contradict another section: make the nine one-line edits as drafted (a Sage's cooldown stays 20 seconds and the first experiment is free), or the same with a Sage level shortening the cooldown, or with the first experiment charged?",
-   "why_it_matters": "Each pair answers one question two ways, so whichever side the build picks, the document says otherwise somewhere. Seven of the nine have one sensible reading; two carry a small choice. Left as they are, the Forms album must show trades that ship in 1.1, and the Lab both costs nothing to fail and charges every experiment.",
-   "today": "The build already takes a side on two. The server sends nothing at night by §20.2's age rows, so an adult may change it (server/src/notifications.mjs:9-11). The free track gives pages, Essence and a stray offer and no Starglass (server/src/track.mjs:42-57, F41 and G28). The Lab, Sages, the Forms album and terrain points are not built, so the other seven change nothing yet. Screens v3's Forms album draws no trades.",
+   "question": "Two of C49's ten lines carry a choice: may a Sage's level shorten its 20-second cooldown, and is the first Lab experiment, §16's 5 minutes, charged?",
+   "why_it_matters": "C49 lists ten v3.6 sentences that each contradict another section. Eight have one sensible reading: seven are drafted edits in the register, checked against the document, and §9.1's free-track line is already in your answers to F41 and G28. These two are small choices. §11.7 says every fifth level may bring 'a shorter cooldown' and, in the same paragraph, that every Sage follows 'the one 20-second cooldown'. §16 runs the first experiment in 5 minutes, where §10.2's Lab level 1 takes 8 h, and nothing says whether it costs Aether.",
+   "today": "The Lab and Sages are not built: the server holds no Sage, cooldown or experiment, and the simulation has no Sage power (G47, G52). sim/ has no Sage cooldown to shorten. No section or open item states the first session's starting Aether. F56 decides which buildings a new universe starts with, and only its option C has a Lab standing at 6:30, which the first experiment needs.",
    "options": [
     {
      "key": "A",
-     "label": "The nine edits as drafted",
-     "means": "Forms album: 'trades (from 1.1)'. Sage cooldown: strike 'or a shorter cooldown'. Lab failures: 'the Lab costs no more to fail than to succeed, and a failure gives 3 pages'. First experiment: §10.2 states §16's 5 minutes as an exception, free of Aether. Geometry: 'costs nothing to change and is limited only by terrain points (6.1)'. Night: 'nothing is sent at night unless an adult chooses otherwise (20.2)'. Sage powers: 'the rules after-launch Sages follow'. Season: 'nothing in a season is needed to win a heist'. §9.1 follows §18.2: the free track leaves Starglass's sources and joins Pages' and Essence's. Body text: one unit, as §21.8 states it.",
-     "consequences": "Each pair then says one thing, and every edit matches what the build does or will do. A Sage's cooldown stays the one timer only Sparkwright and Held breath change (§11.7). The first session does not depend on starting Aether, which no section yet states (F56).",
-     "numbers": "First experiment: 5 minutes and no Aether, against 8 h and 400 Aether at Lab level 1. Sage cooldown: 20 s at every level.",
-     "doc_edit": "§23.2 Forms album row; §11.7 (two sentences); §15.1; §10.2; §13's layer table and §13.4; §14.6; §18.8; §9.1; §23.5's text-size row.",
-     "build_change": "None now. When built, the Lab charges 400 Aether × level whatever it finds and gives the first experiment free in 5 minutes, and a Sage's cooldown never falls below 20 s."
+     "label": "The cooldown stays 20 s; the first experiment is free",
+     "means": "§11.7 strikes 'or a shorter cooldown', so a Sage's cooldown is 20 seconds at every level. §10.2 states §16's first experiment as an exception: 5 minutes and free of Aether.",
+     "consequences": "A Sage's cooldown stays the one timer only Sparkwright and Held breath change (§11.7), and the first session does not depend on a starting Aether stock no section states.",
+     "numbers": "Sage cooldown: 20 s at every level. First experiment: 5 minutes and no Aether, against 8 h and 400 Aether at Lab level 1.",
+     "doc_edit": "§11.7: strike 'or a shorter cooldown'. §10.2, Lab level 1: 'the first experiment (16) takes 5 minutes and costs nothing'.",
+     "build_change": "None now. When built, a Sage's cooldown never falls below 20 s less what Sparkwright and Held breath change, and the Lab gives the first experiment free in 5 minutes."
     },
     {
      "key": "B",
-     "label": "As A, but levels may shorten the Sage cooldown",
-     "means": "§11.7 keeps 'or a shorter cooldown', and the rule sentence reads 'a 20-second cooldown at level 1'.",
-     "consequences": "Sage improvements gain a third kind. The cooldown then has three modifiers (levels, Sparkwright, Held breath), and §11.7's 'the one 20-second cooldown' stops being true.",
+     "label": "Levels may shorten the cooldown; the first experiment is free",
+     "means": "§11.7 keeps 'or a shorter cooldown', and its first sentence says a Sage cools down for 20 seconds at level 1. The first experiment as in A.",
+     "consequences": "Sage improvements keep a third kind. The cooldown then has three modifiers (levels, Sparkwright, Held breath), and 'the one 20-second cooldown' must say 'at level 1'.",
      "numbers": "—",
-     "doc_edit": "As A, except §11.7's cooldown edit: 'the rules every Sage follows' says 'a 20-second cooldown at level 1'.",
+     "doc_edit": "§11.7: 'cools down for 20 seconds' becomes 'cools down for 20 seconds at level 1', and 'the one 20-second cooldown' becomes 'the one cooldown'. §10.2 as in A.",
      "build_change": "As A, plus a per-Sage cooldown in sim/."
     },
     {
      "key": "C",
-     "label": "As A, but the first experiment is charged",
-     "means": "The first experiment takes 5 minutes and costs Lab level 1's 400 Aether like any other.",
-     "consequences": "There is no tutorial exception in price. But the first session then needs 400 Aether in hand at 6:30, which depends on F56's starting stock.",
+     "label": "The cooldown stays 20 s; the first experiment is charged",
+     "means": "§11.7 as in A. The first experiment takes 5 minutes and costs Lab level 1's 400 Aether like any other.",
+     "consequences": "There is no tutorial exception in price. But the first session then needs 400 Aether in hand at 6:30, a stock no section states, and a Lab standing then, which only F56's C gives.",
      "numbers": "400 Aether at 6:30 of the first session.",
-     "doc_edit": "As A, with §10.2's exception covering time only.",
+     "doc_edit": "§11.7 as in A. §10.2, Lab level 1: 'the first experiment (16) takes 5 minutes'.",
      "build_change": "As A, with the first experiment charged."
     }
    ],
    "recommendation": {
     "option": "A",
-    "rationale": "Every edit in A matches the newer of the two sentences or what the build already does, and none changes a mechanic. A fixed 20 s keeps §11.7's 'one cooldown' true. A free first experiment keeps the first session from depending on a starting stock no section yet states. B and C are each one-line changes if the owner prefers them.",
-    "confidence": "high"
+    "confidence": "high",
+    "rationale": "A fixed 20 s keeps §11.7's 'one cooldown' true and keeps a Sage's timer as the one the crew's tools change. A free first experiment keeps the first session from depending on a starting stock no section yet states. B and C are each one line if you prefer them."
    },
    "interacts_with": [
-    "F41",
-    "G28",
-    "G34",
-    "G53",
     "G52",
+    "G53",
+    "F56",
     "C51",
-    "F56"
+    "G47"
    ],
    "quotes": [
     {
@@ -5213,19 +5233,15 @@
      "text": "Every fifth level improves one power (an extra use, a longer effect or a shorter cooldown)."
     },
     {
-     "section": "15.1",
-     "text": "Ruins, rehearsals and the Lab cost nothing to fail"
-    },
-    {
      "section": "16",
      "text": "The first experiment takes 5 minutes."
     },
     {
-     "section": "18.8",
-     "text": "nothing in a season changes a heist"
+     "section": "10.2",
+     "text": "1 slot(s); 8 h per experiment"
     }
    ],
-   "also_needed": "Nothing."
+   "also_needed": "Nothing. The other eight lines are the register's drafted edits for C49 and your answers to F41 and G28."
   },
   "G53": {
    "id": "G53",
@@ -5254,11 +5270,11 @@
     {
      "key": "C",
      "label": "Write a short Lab rule set",
-     "means": "§8.6: after three empty experiments that included the same law, the Lab hints one undiscovered resonance of that law, and its card shows the law in the same 'hinted' state a crossing gives. §8.5: from Lab level 3 the third sphere names, once a day and free, the first chord in §8.5's table the player has woven or crossed and not yet named. §9.1: a discovery pays an Insight amount set with G52's figures. §7.6: the 3 pages go to the law the player marked as working on (F37) if it is in either school, otherwise to the first law placed. Only restored laws may be placed. While a universe holds a paradox, an unstable pair runs as an ordinary one and the warning says so.",
+     "means": "§8.6: after three empty experiments that included the same law, the Lab hints one undiscovered resonance of that law, and its card shows the law in the same 'hinted' state a crossing gives. §8.5: from Lab level 3 the third sphere names, once a day and free, the first chord in §8.5's table the player has woven or crossed and not yet named. A discovery pays Insight only if G52 keeps it (G52 A), at an amount set with G52's figures; under G52 B or C a discovery's reward is the resonance itself. §7.6: the 3 pages go to the law the player marked as working on (F37) if it is in either school, otherwise to the first law placed. Only restored laws may be placed. While a universe holds a paradox, an unstable pair runs as an ordinary one and the warning says so.",
      "consequences": "Keeps §15.1's repeated-failure rule, §10.2's one time per level and §8.4's hidden shelf, and gives the Codex one 'hinted' state for both kinds of hint (G49). Every rule is a count or a table the server can check. Chord naming is free and takes no slot, so it never competes with experiments. The design's stir and per-resonance times are refused in §23.5.",
      "numbers": "A hint needs three empty experiments with one law: a day at §14.1's three a day. Lab level 3 opens at Spire 5, about day 42 (§8.6), and from then names one of the 12 chords a day at most.",
-     "doc_edit": "§8.6: the Lab hint and its shared 'hinted' state. §8.5: the chord-naming sentence. §9.1: Insight per discovery. §7.6: which law takes the 3 pages, and that only restored laws are placed. §7.5: what an unstable pair does while a paradox is held. §23.5: a row refusing the stir and the per-resonance time.",
-     "build_change": "The Lab service as in A, plus a per-law count of empty experiments, the hint written to the Codex's discovery table, a daily chord naming from level 3, and Insight and pages paid at collection once those ledgers are on the server (TC.12, D64)."
+     "doc_edit": "§8.6: the Lab hint and its shared 'hinted' state. §8.5: the chord-naming sentence. §9.1: Insight per discovery, only under G52 A. §7.6: which law takes the 3 pages, and that only restored laws are placed. §7.5: what an unstable pair does while a paradox is held. §23.5: a row refusing the stir and the per-resonance time.",
+     "build_change": "The Lab service as in A, plus a per-law count of empty experiments, the hint written to the Codex's discovery table, a daily chord naming from level 3, and pages (with Insight, under G52 A) paid at collection once those ledgers are on the server (TC.12, D64)."
     }
    ],
    "recommendation": {
@@ -5292,7 +5308,7 @@
      "text": "Lab experiments that find nothing give 3 pages of a law from those schools"
     }
    ],
-   "also_needed": "The Insight a discovery pays, from the economy model alongside G52's other Insight figures; whether the first experiment (§16's 5 minutes) is charged (C49); and whether an empty pair can be run again for its pages, which F37 raised."
+   "also_needed": "Under G52 A only, the Insight a discovery pays, from the economy model alongside G52's other Insight figures; whether the first experiment (§16's 5 minutes) is charged (C49); and whether an empty pair can be run again for its pages, which F37 raised."
   },
   "G54": {
    "id": "G54",
@@ -5846,15 +5862,15 @@
   },
   "G58": {
    "id": "G58",
-   "question": "Which rules cover how an age band changes, the play-time reminder, a 13-to-15's Keeper name and where consent and the terms are taken: the build's and the design's readings, a protective set, or the protective band rule with the design's other choices?",
+   "question": "Which rules cover how an age band changes, the play-time reminder, every Keeper's name (a word-list name at every age, or typed) and where consent and the terms are taken: the build's and the design's readings, a protective set, or the protective band rule with the design's other choices?",
    "why_it_matters": "PUT /v1/age stores any band at any time, so a modified client can lift a 13-to-15's chat, spending, night and Workshop protections with one call. Screens v3 lets a 16-to-17 switch the play-time reminder off, draws it as a daily limit, and shows a 13-to-15's typed name to every raider while telling them their profile stays private. §20.5's consent by country and §20.11's terms gate have no place in the first launch, and the server asks for the terms only before Workshop actions.",
-   "today": "PUT /v1/age (server/src/http.mjs:528-537) deletes an under-13 account and stores any other band at once, looser or not (server/src/workshop.mjs:89-93). A new account is held at 13 to 15 until the device sends its band (server/src/service.mjs:151-158). The client asks once and keeps the answer (client/data/age_check.gd); the platforms' age services are not wired. No play-time reminder is built (accounts.reminder_at is §14.6's daily reminder), and accounts have no Keeper name. The terms are accepted before Workshop actions only (server/src/safety.mjs:19-22); there is no consent step, and server/declarations.md declares no parental controls. Screens v3: 'You can change it later with a parent' (markup 439); a reminder of Off, 45, 60 or 90 minutes, fixed at 60 for 13 to 15 and open, Off included, for 16 to 17, counted against the day's total ('38' minutes today, 'Pause card in 22 min', screens_meta.js:897-919); 'HOW RAIDERS SEE YOU' with a typed, filtered name at every band (markup 448).",
+   "today": "PUT /v1/age (server/src/http.mjs:528-537) deletes an under-13 account and stores any other band at once, looser or not (server/src/workshop.mjs:89-93). A new account is held at 13 to 15 until the device sends its band (server/src/service.mjs:151-158). The client asks once and keeps the answer (client/data/age_check.gd); the platforms' age services are not wired. No play-time reminder is built (accounts.reminder_at is §14.6's daily reminder), and accounts have no Keeper name; the client names other players 'Keeper' and the first letters of their account (client/README.md:143). The terms are accepted before Workshop actions only (server/src/safety.mjs:19-22); there is no consent step, and server/declarations.md declares no parental controls. Screens v3: 'You can change it later with a parent' (markup 439); a reminder of Off, 45, 60 or 90 minutes, fixed at 60 for 13 to 15 and open, Off included, for 16 to 17, counted against the day's total ('38' minutes today, 'Pause card in 22 min', screens_meta.js:897-919); 'HOW RAIDERS SEE YOU' with a typed, filtered name at every band (markup 448).",
    "options": [
     {
      "key": "A",
      "label": "The build's and the design's readings",
      "means": "The device may set any band at any time. A 16-to-17 may switch the reminder off, and it counts the day's play. Every player types a filtered name, and raiders see it at every band. The terms are accepted before Workshop actions; there is no consent step.",
-     "consequences": "Nothing to change on the server, and Screens v3 is drawn as it is. A modified client, or a 13-to-15 who answers again, lifts every §20.2 protection. A 13-to-15's real name can reach raiders, since a filter catches words, not names. The reminder reads as a daily limit the document does not have, and friends, the feed and purchases run with no terms accepted.",
+     "consequences": "Nothing to change on the server, and Screens v3 is drawn as it is. A modified client, or a 13-to-15 who answers again, lifts every §20.2 protection. A 13-to-15's real name can reach raiders, since a filter catches words, not names, and a typed name is the free text §24.6 rules out. The reminder reads as a daily limit the document does not have, and friends, the feed and purchases run with no terms accepted.",
      "numbers": "—",
      "doc_edit": "§20.1: 'The band can be changed in Settings.' §20.2's reminder row, 16 and 17: 'Every 90 minutes by default; can be turned off', with a note that it counts the day's play. §20.11: 'the terms are accepted before a player first publishes or plays a Workshop island'.",
      "build_change": "None on the server for the band and the terms. A Keeper name field with a word filter in English and Brazilian Portuguese (§20.4); the reminder and the name step as designed (TD.25, TD.26)."
@@ -5862,11 +5878,11 @@
     {
      "key": "B",
      "label": "A protective set",
-     "means": "Band: the first answer sets any band; after it the device may only tighten it, and a looser band comes only from the platform's age service. Reminder: 13 to 15 every 60 minutes, fixed; 16 and 17 every 60 or 90, 90 by default, never off; adults off by default; it counts continuous play in one session (G29's, the app in the foreground) and shows when a heist ends. Name: a 13-to-15 picks a Keeper name from word lists, which raiders see as §12.4 lists; from 16 a typed, filtered name (§20.4). Terms: accepted once, when the account is made after the first heist (C51), before friends, the Workshop or a purchase.",
-     "consequences": "A modified client cannot lift a minor's protections on a live account. A player who answers 13 to 15 by mistake, or turns 16, stays at the tighter band until the platform reports a looser one; until those services are wired, only a new account changes it. A word-list name identifies nobody and still gives raiders §12.4's free information. The reminder is a break suggestion, never a limit.",
+     "means": "Band: the first answer sets any band; after it the device may only tighten it, and a looser band comes only from the platform's age service. Reminder: 13 to 15 every 60 minutes, fixed; 16 and 17 every 60 or 90, 90 by default, never off; adults off by default; it counts continuous play in one session (G29's, the app in the foreground) and shows when a heist ends. Name: every Keeper picks a name from word lists, at every age, as C43's answer does for islands, and raiders see it as §12.4's free 'name'. Terms: accepted once, when the account is made after the first heist (C51), before friends, the Workshop or a purchase.",
+     "consequences": "A modified client cannot lift a minor's protections on a live account. A player who answers 13 to 15 by mistake, or turns 16, stays at the tighter band until the platform reports a looser one; until those services are wired, only a new account changes it. A word-list name identifies nobody, needs no filter or moderation and keeps §24.6's 'no free text', and still gives raiders §12.4's free information. The reminder is a break suggestion, never a limit.",
      "numbers": "Intervals: 60 minutes (13 to 15); 60 or 90 (16 and 17); off, 45, 60 or 90 for adults (the design's choices).",
-     "doc_edit": "§20.1: 'After the first answer a band changes only toward more protection on the device; a looser band comes only from the platform's age service.' §20.2's reminder row, 16 and 17: 'Every 60 or 90 minutes (90 by default)', and under the table: 'The reminder counts continuous play in one session and shows when a heist ends.' §20.2's Profile row or §12.4: 'A 13-to-15 Keeper's name comes from word lists; raiders see it.' §20.11: 'The terms are accepted when the account is made, after the first heist.'",
-     "build_change": "server/src/workshop.mjs setAgeBand(): accounts record when the band was first answered, and after that a looser band is refused ('band_only_tightens'), with under-13 still deleting; tests. Accounts gain a Keeper name: a word-list pair for 13 to 15, filtered text from 16. The terms check in safety.mjs also guards friends and purchases. Client: the reminder picker and pause card (TD.25), the name step and the terms at account creation (TD.26)."
+     "doc_edit": "§20.1: 'After the first answer a band changes only toward more protection on the device; a looser band comes only from the platform's age service.' §20.2's reminder row, 16 and 17: 'Every 60 or 90 minutes (90 by default)', and under the table: 'The reminder counts continuous play in one session and shows when a heist ends.' §12.4: 'A Keeper's name comes from word lists at every age, as an island's does; raiders see it.' §20.11: 'The terms are accepted when the account is made, after the first heist.'",
+     "build_change": "server/src/workshop.mjs setAgeBand(): accounts record when the band was first answered, and after that a looser band is refused ('band_only_tightens'), with under-13 still deleting; tests. Accounts gain a Keeper name, a word-list pair at every age, from the lists the server already serves (GET /v1/workshop/words). The terms check in safety.mjs also guards friends and purchases. Client: the reminder picker and pause card (TD.25), the name step and the terms at account creation (TD.26)."
     },
     {
      "key": "C",
@@ -5881,14 +5897,16 @@
    "recommendation": {
     "option": "B",
     "confidence": "medium",
-    "rationale": "The band sets every protection in §20.2, so a band the device cannot loosen is the one change that holds all the others, and the server can check it in one place. Word-list names for 13-to-15s keep §12.4's free information without a child's real name reaching strangers, as C43's answer does for islands. 'By default' in §20.2 lets a 16-to-17 change the interval, not switch it off, and continuous play matches 'every 60 minutes' and reuses G29's session. Terms at account creation fit C51's no account before the first heist. C fixes the band only; A leaves all four open."
+    "rationale": "The band sets every protection in §20.2, so a band the device cannot loosen is the one change that holds all the others, and the server can check it in one place. Word-list names at every age keep §12.4's free information without a real name reaching strangers, need no filter and keep §24.6's 'no free text': one naming rule with C43's answer for islands and G50's recommendation for ruleborn. 'By default' in §20.2 lets a 16-to-17 change the interval, not switch it off, and continuous play matches 'every 60 minutes' and reuses G29's session. Terms at account creation fit C51's no account before the first heist. C fixes the band only; A leaves all four open."
    },
    "interacts_with": [
     "C51",
     "C43",
     "D62",
     "G29",
-    "D87"
+    "D87",
+    "C46",
+    "G50"
    ],
    "quotes": [
     {
@@ -5906,9 +5924,13 @@
     {
      "section": "20.5",
      "text": "so consent follows the player's country"
+    },
+    {
+     "section": "24.6",
+     "text": "no uploaded files and no free text"
     }
    ],
-   "also_needed": "Whether anything the game keeps rests on consent rather than on running the service (analytics, the push token); if it does, §20.5 needs a parent's consent below the player's country's age (13 to 16 in the EU) and a source for the country, such as the store's. When the platforms' age services are wired, since B's looser bands wait on them. Whether players 16 and over type names or also pick from lists, as C43's answer does for islands."
+   "also_needed": "Whether anything the game keeps rests on consent rather than on running the service (analytics, the push token); if it does, §20.5 needs a parent's consent below the player's country's age (13 to 16 in the EU) and a source for the country, such as the store's. When the platforms' age services are wired, since B's looser bands wait on them."
   },
   "D89": {
    "id": "D89",
@@ -6251,7 +6273,7 @@
      "consequences": "The simplest to build and check: two multipliers on one crew member, with no uses, no lockout and no portrait pips. The gift is always on, so the player never times it. A crew with the Twinned has one ability fewer to use, as a crew with the Unmade already does. §11.8's 'none is better than any role in every number' still holds.",
      "numbers": "Level 1: it hits for 14 (Scout 12, Warden 20, Breaker 40, 80 on wards) and fills its shared 80 carry in about 1.3 s instead of 2.7 s. Against the Mender (130, 3.4, 6, 104) it wins on speed and power and loses on health and carry.",
      "doc_edit": "§11.8: the Twinned's gift as above, with its rule-sheet line.",
-     "build_change": "The paradox-born table in content/ carries the two multipliers, and the simulation applies them to the Twinned's one body (TD.12, with G62's shared pools)."
+     "build_change": "The paradox-born table in content/ carries the two multipliers, and the simulation applies them to the Twinned's one body (TD.35, with G62's shared pools)."
     },
     {
      "key": "B",
@@ -6260,7 +6282,7 @@
      "consequences": "The player chooses when to use it. It counts in §12.6's decision budget like the eighteen abilities and shows §21.8's pips and lockout ring. It needs the ability command that TD.12 builds anyway for the eighteen kinds and the Reverser. The total effect is smaller than A's.",
      "numbers": "Two uses × 5 s = 10 s a heist of Damage ×2 and load rate ×2. The 5 s is a proposal, the same window as Skyskipper's ability (§11.11).",
      "doc_edit": "§11.8: the Twinned's gift written as an ability, with its uses, lockout and rule-sheet line.",
-     "build_change": "One ability in content/ and in the simulation's ability command (TD.12)."
+     "build_change": "One ability in content/ and in TD.12's ability command, in TD.35."
     },
     {
      "key": "C",
@@ -6269,7 +6291,7 @@
      "consequences": "By far the strongest gift. In a crew of five, each of the other four's eight uses acts twice: two heals, two roots, two revivals. Every ability then has a doubled case for the harness to measure, and a doubled Echoplate revival collides with Revival's 'the highest applies, once'. It undoes the change the owner made in v3.6.",
      "numbers": "A crew of five with the Twinned: 8 ability uses, 16 effects.",
      "doc_edit": "§11.8: the gift as the sheet has it; §23.5's Twinned row removed.",
-     "build_change": "A crew-wide ×2 in the simulation's ability resolution (TD.12), and harness runs of crews with and without it."
+     "build_change": "A crew-wide ×2 in the simulation's ability resolution (TD.35), and harness runs of crews with and without it."
     },
     {
      "key": "D",
@@ -6456,7 +6478,7 @@
      "consequences": "Both sections keep their words, §21.5's 'a worker cranks' and 'a worker waters' stay true, and the guard reads as a Mender by its satchel. The three work loops are three shared clips in the kit, scaled by each kind's body weight, not 54 made by hand.",
      "numbers": "Per kind: 14 shared clips + 3 work loops = 17, plus §11.11's home habit. Shared work clips: 3 (1 today).",
      "doc_edit": "§23.5: 'the fifteen animations of 21.6' becomes 'the seventeen animations of 21.6 (a work loop for each of the three buildings that take workers)'.",
-     "build_change": "TD.11: a satchel node on the Sparkwright and three work loops in the export's shared clip set; the clip check counts 17."
+     "build_change": "TD.62: a satchel node on the Sparkwright and three work loops in the export's shared clip set; the clip check counts 17."
     },
     {
      "key": "B",
@@ -6465,7 +6487,7 @@
      "consequences": "The fewest clips, matching the sheets' one work clip. A ruleborn cranking the Well and one watering the Garden move the same way, so in §21.5 the cranking and the watering become the buildings' props moving.",
      "numbers": "Per kind: 15, plus the home habit. Shared work clips: 1.",
      "doc_edit": "§21.6: 'one work loop per building' becomes 'one work loop, used at every building'; §21.5's Star Well and Garden rows say what moves.",
-     "build_change": "TD.11: the satchel node and one shared work loop; the clip check counts 15."
+     "build_change": "TD.62: the satchel node and one shared work loop; the clip check counts 15."
     },
     {
      "key": "C",
@@ -6474,7 +6496,7 @@
      "consequences": "The surest read at a glance, but the design loses the tinker's goggles. The Tinkerer Sage stays the goggled inventor.",
      "numbers": "As A.",
      "doc_edit": "§11.11's Sparkwright card: a new proportions line without goggles; §23.5 as in A.",
-     "build_change": "TD.11: the export drops the goggles and adds the satchel; clips as in A."
+     "build_change": "TD.62: the export drops the goggles and adds the satchel; clips as in A."
     },
     {
      "key": "D",
@@ -6483,7 +6505,7 @@
      "consequences": "A Sparkwright guard wears the Scout's accessory and no Mender's, which is exactly what §23.5's role-accessory row exists to prevent. The build already follows §21.6 for the eleven kinds whose sheets carry their own item.",
      "numbers": "As B.",
      "doc_edit": "§21.6: Menders carry 'a satchel of leaves, or the Sparkwright's tool belt', adopted in §23.5; the work loop as in B.",
-     "build_change": "TD.11 exports the sheet as drawn; the clip check counts 15."
+     "build_change": "TD.62 exports the sheet as drawn; the clip check counts 15."
     }
    ],
    "recommendation": {
@@ -6580,6 +6602,195 @@
     }
    ],
    "also_needed": "G57's per-raid facts, which most records read; and the badges' thresholds, if the design's are not kept."
+  },
+  "G48": {
+   "id": "G48",
+   "question": "No rule chooses a heist result's decisive moment or its one thing to try: write the drafted rule with the tip as the result's own 'Try this' row, keep the design's Archivist heading for the tip, or ship the design's fixed moment and tip for each outcome?",
+   "why_it_matters": "§12.13 makes every result name the moment that decided the heist, with a three-second replay, and one thing to try tied to it, and §23.2 makes both must-shows; but no section says how the moment is chosen, and §15.3 says only 'Based on what went wrong, never a lecture'. Which moment counts decides what a player learns from a loss, and §23.5 does not let a design add the rule. The simulation keeps no events to find it in.",
+   "today": "The simulation exposes its state and an outcome (sim/src/lib.rs:3131) and keeps no log of events; TD.13 plans one outside the checksum and TD.17 the result. Screens v3 hard-codes one moment and one tip per outcome (screens_main.js:637-638), and its replay button only plays a sound (:626). Every tip is headed 'The Archivist · try this' (screens_main.markup.html:843), which makes it one of §15.3's Archivist's tips rather than the result's own row, and the Clean tip, 'Kofi's universe is two realms deep. Same crew, a bigger haul.', suggests another target instead of following from its moment.",
+   "options": [
+    {
+     "key": "A",
+     "label": "The drafted rule; the tip is the result's own row",
+     "means": "The device finds the moment in the simulation's event log, by outcome. Foiled or Partial: the first capture, traced back to the tick its captor became Alerted to that crew member. Loud: the first guard Alerted, and why. Clean: the closest call, the tick a guard came nearest to Alerted. A fault or a law's blink at that tick is named. The three-second replay is the three seconds ending on that tick. The tip comes from a content table keyed by the moment's cause, never a purchase, in a row labelled 'Try this', which is §15.3's 'One thing to try', not one of the Archivist's tips.",
+     "consequences": "The same replay names the same moment on any phone, and a Clean heist still teaches, from its nearest miss. Every result has its tip, and the Archivist's one tip a session stays free for teaching. The tip table needs a line per cause in both languages, tested before release as §15.1's hints are.",
+     "numbers": "Four outcomes, one rule each; a three-second replay.",
+     "doc_edit": "§12.13: the moment rule by outcome, the replay's three seconds, and 'One thing to try' drawn from a table keyed by the moment's cause, in a row labelled 'Try this'.",
+     "build_change": "An event log in sim/ outside the checksum (TD.13); a moment picker on the device that reads it, tested on the goldens; a tip table in content/, in both languages; the result's row (TD.17)."
+    },
+    {
+     "key": "B",
+     "label": "As A, under the Archivist's heading",
+     "means": "The moment and the tip as in A, but the tip keeps the design's heading, 'The Archivist · try this', and §15.3 exempts it from the Archivist's one-a-session limit and from turning tips off.",
+     "consequences": "The result keeps the design's words, and the Archivist becomes the voice of every result. §15.3's limit gains an exception, and a player who turns the Archivist's tips off still sees him on each result.",
+     "numbers": "—",
+     "doc_edit": "As A, and §15.3's Archivist's tips row: 'the heist result's tip is not counted'.",
+     "build_change": "As A."
+    },
+    {
+     "key": "C",
+     "label": "The design's fixed moment and tip",
+     "means": "One moment and one tip per outcome, written in content, as Screens v3 draws them.",
+     "consequences": "Nothing to compute, and the result needs no event log. But the moment shown is not the one that decided the run, which §12.13 asks for; every Foiled run gets the same advice, which reads as the lecture §15.3 rules out, and the Clean tip suggests another target.",
+     "numbers": "Eight lines of content: a moment and a tip for each of four outcomes.",
+     "doc_edit": "§12.13: 'the moment that decided it' becomes 'the moment typical of its outcome'.",
+     "build_change": "The eight lines in content/; the event log still comes for the heist's words and haptics (TD.13)."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "confidence": "medium",
+    "rationale": "A answers §12.13 as written, from facts the event log records anyway, so the same replay always names the same moment. Keeping the tip as the result's own row matches §15.3, which lists 'One thing to try' apart from the Archivist's tips, and keeps a tip on every result. B keeps the design's heading at the cost of an exception to §15.3; C ships text that does not name the moment that decided the run. The Clean rule (the nearest miss) is the one judgement call, and it can change without changing the choice."
+   },
+   "interacts_with": [
+    "C47",
+    "G57",
+    "G47",
+    "G69",
+    "C51"
+   ],
+   "quotes": [
+    {
+     "section": "12.13",
+     "text": "every heist result names the moment that decided it and what could have been done instead"
+    },
+    {
+     "section": "12.13",
+     "text": "One thing to try: a single suggestion tied to that moment, never a list."
+    },
+    {
+     "section": "15.3",
+     "text": "A single suggestion on the heist result"
+    },
+    {
+     "section": "15.3",
+     "text": "At most one per session; never blocks play; can be turned off"
+    }
+   ],
+   "also_needed": "The tip table's lines, one per cause, in your words. In co-op, §12.13 singles out no player, so a co-op moment names the crew's mistake, not a person's."
+  },
+  "D91": {
+   "id": "D91",
+   "question": "Do the icons and the interface's motion follow §21.8 as written (flat colour; 150 to 250 milliseconds, easing out), take Screens v3's finish and timings, or take the design's icon finish while keeping §21.8's timings?",
+   "why_it_matters": "§23.5 says 'The designs carry the look: layout, art, motion, the models and the icons', but §21.8 states both as rules: icons in 'flat colour' and motion at '150 to 250 milliseconds, easing out'. Screens v3 shades all 360 of its icons and runs tab switches, sheets and entrances at 300 to 650 milliseconds, many overshooting, so the document or the designs must give. D91's other four places, toasts, reduced motion, colour-blind palettes and the sky, are accessibility and world rules §20.8 and §21.2 state, and the build follows them under every option.",
+   "today": "The client has none of the design's icons yet; TD.5 exports them, which the analysis has done once (444 SVGs). UI.motion_ms() gives every movement 0 ms under reduced motion (client/scripts/ui.gd:42), and banners stay until dismissed when the player asks (UI.banner, ui.gd:313). Screens v3 re-fills every icon's flat fills with a three-stop gradient and adds a gloss mask, a specular spot and a drop shadow (icons_rbi.js:20-25), on the 24-point grid and 2-point outline §21.8 asks for. Its tab switches run 300 to 320 ms on an overshooting curve (screens_main.js:660-664), sheets 300 to 320 ms and entrances 350 to 650 ms; its screen changes (160 to 240 ms) and its 180 ms press are inside §21.8.",
+   "options": [
+    {
+     "key": "A",
+     "label": "§21.8 as written",
+     "means": "Icons keep the design's shapes, grid and outline in flat colour: the export skips the gradient, gloss and shadow. Every interface movement runs 150 to 250 milliseconds, easing out; tab switches, sheets and entrances are shortened to fit, and their overshoot goes.",
+     "consequences": "No document change. Every icon and many transitions differ from what you drew, and the flat icons are a finish no screen has been seen in.",
+     "numbers": "360 icons flattened. Tabs and sheets from 300 to 320 ms down to 250 at most; entrances from 350 to 650 ms down to 250.",
+     "doc_edit": "§23.5: rows saying the designs' icon finish and longer motion are not used.",
+     "build_change": "TD.5 exports flat icons (the export skips the gradient wrapper); TD.4's motion helper holds every interface movement to 250 ms."
+    },
+    {
+     "key": "B",
+     "label": "The design's finish and timings",
+     "means": "§21.8's Icons row takes the design's finish: gradient volume, a gloss and a soft drop shadow on the 24-point grid and 2-point outline. Its Motion row takes the design's timings: tab switches and sheets about 320 ms, entrances up to 650 ms, with a slight overshoot.",
+     "consequences": "Every screen looks and moves as drawn. A tab switch or a sheet then takes about a third longer than §21.8 allows, on the controls a player touches most, and an entrance up to two and a half times as long. Reduced motion still removes them (§20.8).",
+     "numbers": "Tabs and sheets 300 to 320 ms; entrances 350 to 650 ms; screen changes 160 to 240 ms and the press 180 ms, as now.",
+     "doc_edit": "§21.8 Icons: 'Rounded shapes with a 2-point outline, shaded with a gradient, a gloss and a soft drop shadow, and the school shape where relevant; drawn on a 24-point grid.' §21.8 Motion: '150 to 250 milliseconds, easing out, for screen changes and presses; tab switches and sheets about 320, and entrances up to 650, which may overshoot slightly'.",
+     "build_change": "TD.5 exports the icons as drawn; TD.4's motion helper takes the design's timings as tokens."
+    },
+    {
+     "key": "C",
+     "label": "The design's icon finish, §21.8's timings",
+     "means": "§21.8's Icons row takes the design's finish, as in B. Its Motion row stays: the design's movements are kept, timed to 150 to 250 milliseconds and easing out.",
+     "consequences": "The icons look as drawn, and every tap answers within §21.8's quarter second. Tabs, sheets and entrances keep their movements and run faster.",
+     "numbers": "360 icons as drawn. Tabs and sheets from 300 to 320 ms down to 250 at most; entrances from 350 to 650 ms down to 250.",
+     "doc_edit": "§21.8 Icons as in B. §23.5: a row saying the design's motion runs at §21.8's times.",
+     "build_change": "TD.5 exports the icons as drawn; TD.4's motion helper holds interface movements to 250 ms."
+    }
+   ],
+   "recommendation": {
+    "option": "C",
+    "confidence": "medium",
+    "rationale": "The icons' finish is a look, which §23.5 gives to the designs, as D89's surfaces and D90's typefaces are, and you shaded all 360. Motion's timing is a number §21.8 states, and it sets how quickly every tap answers, like the 4.5:1 and the 13-point floor D89 keeps; the design's own screen changes and press already sit inside it, so only tabs, sheets and entrances get faster. A discards a finish drawn on every screen; B slows the controls used most."
+   },
+   "interacts_with": [
+    "D89",
+    "D90",
+    "D92",
+    "G59"
+   ],
+   "quotes": [
+    {
+     "section": "21.8",
+     "text": "Rounded shapes with a 2-point outline, flat colour and the school shape where relevant; drawn on a 24-point grid."
+    },
+    {
+     "section": "21.8",
+     "text": "150 to 250 milliseconds, easing out; buttons squash slightly when pressed; rewards fly into their counter."
+    },
+    {
+     "section": "23.5",
+     "text": "The designs carry the look: layout, art, motion, the models and the icons."
+    }
+   ],
+   "also_needed": "Which particles reduced motion keeps (§20.8); the build's reading is that a reward still lands in its counter."
+  },
+  "D92": {
+   "id": "D92",
+   "question": "Which shading does every model use: §21.3's one three-step toon with 1.5-pixel ink outlines, Screens v3's two looks (physically based characters and a four-step toon diorama), or one toon look on the design's diorama ramp with §21.3's outlines?",
+   "why_it_matters": "§21.3 asks for one toon look and says its shaders 'already exist from the mock-ups', but Screens v3 has two looks and neither is that one: characters physically based with sheen, clearcoat and transmission under film tone mapping and no outline, and a diorama toon of four steps with outlines sized in world units, so a far line is thinner than a near one. The portraits and the Observatory, scout and landing pictures are renders of the characters' look. Every model the game draws follows this choice, and its cost on a phone meets D93's budgets and C52's frame floor.",
+   "today": "The client draws no 3D models yet; the export harness (TD.7) and one toon shader kit (TD.8) are planned. Screens v3's characters use a physical material with sheen and a rim patch (creatures/creature_kit.js:62, :71), clearcoat, metal and transmission on their accessories (creature_parts.js:4, :21, :36) and iridescence in eight modules, under film tone mapping and an image-based environment, with no outline (Featherkin_Hero.html). The diorama's ramp has four steps (realm_diorama.js:485), every colour is made 10% more saturated (:519), and its outlines are back-face shells in #140A18 sized in world units (:486, :520). The portraits are renders (images/world_*.png).",
+   "options": [
+    {
+     "key": "A",
+     "label": "§21.3 as written",
+     "means": "One toon shader for everything: three steps, shadows tinted toward violet, a soft rim and a 1.5-pixel ink outline drawn in screen space, assigned to every model on import; the portraits re-rendered from the imported models.",
+     "consequences": "One look the document already describes, with the same line width on every phone. The characters and the diorama both change from what you drew.",
+     "numbers": "—",
+     "doc_edit": "§21.3: 'The toon, outline, water, waterfall and sky shaders already exist from the mock-ups.' is struck. §23.5: a row saying the designs' shading is not used.",
+     "build_change": "TD.8's shader kit as planned; the portraits re-rendered."
+    },
+    {
+     "key": "B",
+     "label": "The design's two looks",
+     "means": "§21.3 takes both: physically based characters with sheen, clearcoat and transmission under film tone mapping and no outline, and a four-step toon diorama with outlines in world units.",
+     "consequences": "Every model looks as drawn. But the characters and the world they stand on read as two styles, the characters lose their ink line, far outlines thin with distance, and clearcoat, transmission and an image-based environment cost more per pixel than a toon ramp on the phones C52 names.",
+     "numbers": "—",
+     "doc_edit": "§21.3 Shading: 'Characters: physically based, with sheen and clearcoat, under film tone mapping. The world: a four-step toon ramp, outlined in ink shells.'",
+     "build_change": "Two shader sets, the characters' materials measured against C52's floor on the reference device (TC.8)."
+    },
+    {
+     "key": "C",
+     "label": "One toon look on the design's ramp",
+     "means": "One toon look for everything, on the design's diorama ramp (four steps, its colours 10% more saturated), with §21.3's violet shadows, rim and 1.5-pixel ink outline drawn in screen space. The characters are drawn in it too, and the portraits re-rendered from the imported models.",
+     "consequences": "The world keeps the look you drew for it, and the characters join it with the same ink line, so a creature on the island matches its portrait. The characters' sheen and gloss go.",
+     "numbers": "—",
+     "doc_edit": "§21.3 Shading: 'a four-step toon ramp, its colours 10% more saturated, with coloured shadows tinted toward violet, a soft rim light, and 1.5-pixel ink outlines drawn in screen space', and 'already exist from the mock-ups' struck. §23.5: a row for the characters' shading.",
+     "build_change": "TD.8's shader kit with the step count and the saturation as tokens; the portraits re-rendered."
+    }
+   ],
+   "recommendation": {
+    "option": "C",
+    "confidence": "medium",
+    "rationale": "The diorama's ramp is a look, which §23.5 gives to the designs, as D89's surfaces and D90's typefaces are, and it is the look you drew for the whole world. The 1.5-pixel line is a measure §21.3 states, and drawing it in screen space keeps it on every phone, where world-unit shells thin with distance. One look for characters and world keeps a creature and its portrait the same, and a toon ramp costs less per pixel than clearcoat and transmission, which D93's budgets and C52's floor must hold. A redraws a world you designed; B keeps two styles and the costliest materials."
+   },
+   "interacts_with": [
+    "D89",
+    "D91",
+    "D93",
+    "C52",
+    "D94"
+   ],
+   "quotes": [
+    {
+     "section": "21.3",
+     "text": "Shading: a three-step toon ramp with coloured shadows tinted toward violet, a soft rim light, and 1.5-pixel ink outlines."
+    },
+    {
+     "section": "21.3",
+     "text": "The toon, outline, water, waterfall and sky shaders already exist from the mock-ups."
+    },
+    {
+     "section": "23.5",
+     "text": "The designs carry the look: layout, art, motion, the models and the icons."
+    }
+   ],
+   "also_needed": "The ink the outlines use, which D89's surfaces decision settles: #221C3A in §21.2, #1A0C14 in the designs."
   }
  }
 }

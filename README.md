@@ -46,7 +46,9 @@ build them is the roadmap's stage SD. v3.6 itself answers none of the 70 items
 open against v3.4, narrows G28 and F37, and reopens C11.
 
 Five versions have now answered the audit. **111 of 284 register items are fixed
-in the document itself**, the latest 15 by v3.4. 130 are still open, 62 of them found reading Screens v3.
+in the document itself**, the latest 15 by v3.4. 133 are still open, 62 of them
+found reading v3.6 and Screens v3: 58 from Screens v3, and four from v3.6
+against the build.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -320,7 +322,7 @@ document, as 284 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 112 are drafted across 67
+the sentence as it stands today, and what to put there. 120 are drafted across 68
 items, and every quoted sentence is checked against v3.6 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no
@@ -336,9 +338,11 @@ Every register item that only the owner could settle, as a question with its
 options, their numbers, what the build does today and a recommendation, in
 the order to decide them: **https://claude.ai/artifact/YZcD1uH5xtpFznqncRpt8g**
 
-**43 are answered** (25 September 2026): five picked on the page, the rest
-accepted as recommended. Three more, **F52**, **F53** and **F54**, were found
-building those answers and wait on the page. The answers are on the page and in
+**47 are answered** (25–26 September 2026): eight picked on the page, one in
+the owner's own words, the rest accepted as recommended. **40 are open**: 36
+found reading v3.6 and Screens v3 against each other and the build, and four
+found since: **F56** and **G43** building the home economy, **F55** re-running
+§13.2's table, and **G44** in the security briefing. The answers are on the page and in
 `docs/decisions/answers.json`, with where each one's build change stands; the
 audit shows a decided item as waiting on that build change, then on the
 document. A new decision is picked on the page, where it is saved, and Claude

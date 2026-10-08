@@ -415,7 +415,9 @@ dict(
                     "right place to draft but the wrong place to stop — a "
                     "second copy of the truth is how this started. Each applied "
                     "decision gets a dated record naming the sections it "
-                    "supersedes.",
+                    "supersedes. It includes §26.8's missing rows: a costed phase "
+                    "for the home economy (G42) and for the interface and its art "
+                    "(G66), which completion then reads (TD.47).",
              blocked_by=["T1.4", "T1.5"]),
         dict(id="T1.7", owner="claude", status="done",
              title="Split the content out of the prose",
@@ -729,11 +731,11 @@ dict(
                     "different compiler backends, which is what makes it "
                     "evidence rather than a tautology.<br><br>The two that "
                     "remain are a real iPhone and a real Android, and they need "
-                    "devices. Until then the fallback in \u00a724.7 is not "
+                    "the phones TD.48 brings. Until then the fallback in \u00a724.7 is not "
                     "triggered and not ruled out.",
              gate="identical checksums on all four, or take the C# fallback "
                   "without renegotiating (\u00a724.7)",
-             blocked_by=["T0.2"]),
+             blocked_by=["T0.2", "TD.48"]),
         dict(id="T3.2", owner="claude", status="doing",
              title="Fixed-point module and golden replays, portable from day one",
              detail="Written so that switching to the fallback costs the spike and nothing else. The tick rate has to be settled first (C7), because the replays encode it \u2014 and C7 is closed.<br><br><strong>Built.</strong> <code>sim/replay.rs</code> is \u00a724.10's \u201ccommands, never state\u201d: a header pinning \u00a724.11's four things, a varint-delta command log, and one checksum a second. <code>sim/golden/*.rbh</code> are four heists encoded by a build that is now history; a test decodes each, re-simulates it and names the second any divergence starts at. Checked against a real regression rather than assumed: changing suspicion decay by one a tick fails at second 4 of 150.<br><br>Building it settled a number \u00a724.10 leaves open. Its own budget \u2014 120 bytes of header, 300 to 700 of commands, a checksum a second, under 2 KB \u2014 does not close at eight bytes a checksum: a 240-second heist would be 2,740. The stored sum is therefore the low four bytes and a full-length heist measures 1,215.",
@@ -888,7 +890,8 @@ dict(
              detail="\u00a724.7: the simulation is <em>\u201cwritten once and "
                     "compiled for every target it runs on\u201d</em>, as a Rust "
                     "GDExtension. <strong>Built for the desktop.</strong> "
-                    "<code>client/</code> is a Godot 4.5 project in \u00a721.1's "
+                    "<code>client/</code> is a Godot project (4.5 until TD.1 moves it "
+                    "to 4.7.2) in \u00a721.1's "
                     "9:19.5 portrait frame with <code>sim/</code> linked in: the "
                     "replay screen re-simulates a golden replay one tick at a "
                     "time and draws it, and every second compares its own "
@@ -925,7 +928,8 @@ dict(
                     "spike \u2014 the extension building and loading on a real "
                     "iPhone and Android, whose failure \u00a724.7 says moves the "
                     "simulation to C# \u2014 platform sign-in and \u00a712.22's "
-                    "target choice, and \u00a721's landing picker: the crew lands "
+                    "target choice, and \u00a721's landing picker (TD.41 builds it, "
+                    "and TD.18 the rest of the raid's screens): the crew lands "
                     "on a spot chosen by the heist's seed. Every other of the "
                     "twelve command kinds has a control: a tap is read by what "
                     "is on the tile.",
@@ -1118,11 +1122,25 @@ dict(
                     "workers and production with an Aether ledger and storage caps; "
                     "the roster (characters, homes, rest, assign and recall, levels, "
                     "the starting five); pages and the Codex with restoration and "
-                    "study; weaving state per slot; and Insight.",
-             gate="no figure moves until \u00a726.8's plan carries it",
+                    "study; weaving state per slot; and Insight. The screens need "
+                    "these slices as well: links at \u00a75.3's prices and limits; "
+                    "births at a Nursery, paid in Essence (\u00a711.5), which the "
+                    "Forms album reads; the Sage routes (the Sages, their roles, "
+                    "levels paid in Insight); the Lab's service (start, collect, "
+                    "an outcome drawn from a stored seed, a <code>lab</code> "
+                    "notification); and the defence log's routes (raids on the "
+                    "player since a time, one raid, marking them seen), which the "
+                    "shell's raid badge reads. Faults come with TD.37 and each "
+                    "building's tile with TD.36.",
+             gate="each slice named above on the server with its server tests: "
+                  "the builder publishing to the player's realms, workers and "
+                  "production with the Aether ledger and caps, the roster, pages "
+                  "and the Codex, weaving state, Insight, links, births, the Sage "
+                  "routes, the Lab's service and the defence log's routes; no "
+                  "figure moves until \u00a726.8's plan carries it",
              evidence="server/test/universe.test.mjs; client/tests/universe_tests.gd, "
                       "through python3 client/status.py",
-             register=["G42", "F56", "G43"]),
+             register=["G42", "F56", "G43", "D60", "G45"]),
         dict(id="TC.13", owner="claude", status="done",
              title="What the stores require of player-made content, and the declarations ready to file",
              detail="\u00a720.11 lists what the stores ask of a game where players "
@@ -1151,7 +1169,9 @@ dict(
                     "/privacy and /support. Check each question's name against the "
                     "live form. On the first Mac build, read Xcode's privacy report "
                     "for the engine's required-reason APIs, which the manifest does "
-                    "not yet declare.",
+                    "not yet declare. If it is filed before Profile, Settings and "
+                    "first launch add stored data (TD.24 to TD.26), TD.49 "
+                    "re-checks it.",
              blocked_by=["TC.13"]),
         dict(id="TC.9", owner="claude", status="done",
              title="Offline as the exception, as the owner answered G41",
@@ -1179,15 +1199,22 @@ dict(
         dict(id="TC.8", owner="you", status="blocked",
              title="Real devices, and the fix buffer",
              detail="\u00a726.8: anything needing a real device is not safe to "
-                    "hand over. The device matrix (+5.46) and the iPhone and "
-                    "Android checksums (T3.1) need phones; the fix buffer "
-                    "(+5.46) is closed after them. Screens v3 adds what only a "
+                    "hand over. The phones themselves arrive in TD.48, early, "
+                    "because \u00a726.2's art-style test (TD.30) reads on them; "
+                    "this task is what is measured on them once the screens "
+                    "exist; the iPhone and Android checksums are T3.1's, on "
+                    "TD.48's phones, and wait for no screen. The device matrix "
+                    "(+5.46) needs phones; the fix buffer (+5.46) is closed "
+                    "after it. Screens v3 adds what only a "
                     "phone can measure: \u00a721.3's frame budgets and \u00a724's 60 "
                     "frames a second and 25 ms drag on the reference device, "
-                    "VoiceOver and TalkBack over the new screens, local "
+                    "measured as the owner's answer to C52 says, VoiceOver and "
+                    "TalkBack over the new screens, local "
                     "notifications and asking permission after the third session "
-                    "(D68), and the platforms' age signals.",
-             blocked_by=["TC.3"]),
+                    "(D68), the share clip's video encoder (TD.46), and the "
+                    "platforms' age signals.",
+             blocked_by=["TC.3", "TD.48", "TD.28"],
+             register=["C52"]),
     ],
 ),
 
@@ -1209,11 +1236,23 @@ dict(
           "first, then the design system so every screen lands once, the 3D "
           "world as its own track because it is the largest risk, the simulation "
           "and server pieces the screens stand on, and the screens in the order "
-          "§26.2's vertical slice needs them. <strong>None of it moves the "
+          "§26.2's vertical slice needs them (T6.1 waits on each of them), then "
+          "the rest. A part that waits on an owner's answer waits on that "
+          "decision's own task (TD.50 to TD.61), in a task of its own when the "
+          "rest need not wait, or is built with the document's value and the "
+          "other one token away.<br><br>"
+          "<strong>The screen gate</strong>, which every screen task below names: "
+          "each §23.2 must-show for its rows present in every variant, with a test "
+          "by name in <code>python3 client/status.py</code>; §21.1's sizes, "
+          "§21.8's contrast and the layout check at 100%, 150% and 200% text, in "
+          "both languages (<code>a11y_tests.gd</code>); every control named for a "
+          "screen reader; and <code>tools/client_contract.py</code> clean.<br><br>"
+          "<strong>None of it moves the "
           "frontend figure</strong>: completion counts §26.8's list, which "
           "costs none of the twenty screens outside the heist, builder, Workshop, "
-          "shop, social and settings, no design port and no 3D world. Every task "
-          "below keeps the client's tests passing, so the figure cannot fall either.",
+          "shop, social and settings, no design port and no 3D world (G66, TD.47). "
+          "Every task below keeps the client's tests passing, so the figure cannot "
+          "fall either.",
     tasks=[
         # -- Track A: the foundation ------------------------------------------
         dict(id="TD.1", owner="claude", status="ready",
@@ -1230,30 +1269,42 @@ dict(
                     "<code>build.sh</code>, <code>compatibility_minimum</code>, the "
                     "export templates (1.28 GB) and Android's "
                     "<code>target_sdk=36</code> set in the preset rather than left "
-                    "to the engine's default. v3.6's opening says no client code "
-                    "existed; it did, and the move cost one change.",
+                    "to the engine's default. Two more steps: "
+                    "<code>settings.gd:40</code> and <code>:42</code> still ask "
+                    "<code>DisplayServer</code> for contrast and reduced animation, "
+                    "and are checked against 4.7's class reference and moved with "
+                    "the constants if 4.7 deprecates them; and the documentation "
+                    "that names 4.5 as the engine (<code>README.md</code>, "
+                    "<code>client/README.md</code>, T3.4 and stage SC here, "
+                    "<code>tools/privacy_manifest.py</code>'s docstring) says 4.7.2. "
+                    "v3.6's opening says no client code existed; it did, and the "
+                    "move cost one change.",
              gate="100 of 100 client tests on 4.7.2, the five goldens agreeing at "
                   "every second, <code>export.sh check</code> on the 4.7.2 templates, "
-                  "gdlint clean",
+                  "gdlint clean, and none of the files above still naming 4.5 as "
+                  "the engine",
              evidence="python3 client/status.py; bash client/export.sh check",
              register=["D76"]),
         dict(id="TD.2", owner="claude", status="blocked",
-             title="The design's tokens, three typefaces and the licence ledger",
+             title="The tokens, §21.8's typefaces with the design's beside them, "
+                   "and the licence ledger",
              detail="Screens v3 keeps its look in inline styles (852 colours, 402 "
                     "shadows), but underneath it is ten materials, one outline, "
                     "one hard drop shadow and a press that sinks 2 to 3 points. "
                     "<code>client/ui/tokens.json</code> takes them, each with its "
-                    "source; where the document states a value (§21.2's "
-                    "colours, which the design matches exactly; §21.8's 13 pt "
-                    "floor, contrast and motion) the document's is the value and "
-                    "the design's sits beside it, so an owner's answer flips one "
-                    "value without blocking anything. Manrope, Lilita One and "
-                    "Marcellus are SIL OFL; §21.8 names Baloo 2 (an owner "
-                    "decision), and §21.11's licence ledger does not exist yet. "
-                    "The frame stays at 360 points: a 390-point base would draw 13-pt "
-                    "text at 12 real points on 360-dp phones.",
+                    "source. Where the document states a value, the document's is "
+                    "the token's value and the design's sits beside it, so an "
+                    "owner's answer flips one token without blocking anything: "
+                    "§21.2's colours (which the design matches exactly), §21.8's "
+                    "13 pt floor, contrast and motion, and §21.8's typefaces, "
+                    "Baloo 2 and Marcellus, with the design's Manrope and Lilita "
+                    "One beside them until the owner answers D90. All four are SIL "
+                    "OFL; §21.11's licence ledger does not exist yet and is "
+                    "written here. The frame stays at 360 points: a 390-point base "
+                    "would draw 13-pt text at 12 real points on 360-dp phones.",
              gate="every client test passes unchanged; the tokens validator "
-                  "refuses a value with no source",
+                  "refuses a value with no source; with the typeface token set "
+                  "to the design's faces the layout checks still pass",
              blocked_by=["TD.1"],
              register=["D90", "D91"]),
         dict(id="TD.3", owner="claude", status="blocked",
@@ -1262,51 +1313,82 @@ dict(
                     "portrait tiles, banners and cards, drawn by one rounded-box "
                     "shader (gradients, rims and hard drops are beyond "
                     "StyleBoxFlat) under the names <code>scripts/ui.gd</code> "
-                    "already gives, so screens change in one place. 28% of the "
-                    "design's 1,049 text runs fail §21.8's 4.5:1 or the "
-                    "perceptual check, mostly white numbers on light badges and "
-                    "violet secondary text; the components keep the look and fix "
-                    "the words. The accessibility checks learn the colour each "
-                    "word actually sits on and how outlined text counts.",
-             gate="§21.1's sizes and §21.8's contrast at 100% and 200% "
-                  "text, in both languages, on the dark and the parchment surfaces",
-             blocked_by=["TD.2"], register=["D72", "G59", "F58", "D89"]),
+                    "already gives, so screens change in one place. They move "
+                    "with TD.4's helper and draw TD.5's icons, so both come first "
+                    "and every screen inherits them. The surface is §21.8's until "
+                    "the owner answers D89: ink #221C3A on paper panels at 85% "
+                    "opacity, with the design's dark cards, glass, leather and "
+                    "parchment one token away. 28% of the design's 1,049 text runs "
+                    "fail §21.8's 4.5:1 or the perceptual check, mostly white "
+                    "numbers on light badges and violet secondary text; the "
+                    "components keep the look and fix the words. The accessibility "
+                    "checks learn the colour each word actually sits on; until the "
+                    "owner answers G59 an outline does not count as a word's "
+                    "background, the strictest reading, and the rule is one switch.",
+             gate="§21.1's sizes and §21.8's 4.5:1 and perceptual checks at 100%, "
+                  "150% and 200% text, in both languages, on the document's "
+                  "surface and on the design's (<code>a11y_tests.gd</code>)",
+             blocked_by=["TD.2", "TD.4", "TD.5"],
+             register=["D72", "G59", "F58", "D89", "D91"]),
         dict(id="TD.4", owner="claude", status="blocked",
              title="Motion, with reduced motion that reaches everything",
              detail="The design has 86 keyframe animations, eight of them named "
                     "twice, running 300 to 550 ms with overshoot against "
-                    "§21.8's 150 to 250 ms; its reduced-motion switch is read "
-                    "by nothing. One helper plays every movement, "
+                    "§21.8's 150 to 250 ms, easing out; its reduced-motion switch "
+                    "is read by nothing. One helper plays every movement at the "
+                    "document's timings, with the design's kept beside them as "
+                    "one token until the owner answers D91; "
                     "<code>UI.motion_ms</code>'s rule applies to all of it, toasts "
                     "become banners that stay when the player asks (§20.8), "
                     "and a lint rule refuses a tween made anywhere else.",
+             gate="the lint rule finds no tween outside the helper; with reduced "
+                  "motion on, nothing moves that §20.8 does not keep (a test); "
+                  "every interface movement inside §21.8's 150 to 250 ms while "
+                  "the document's token holds",
              blocked_by=["TD.2"],
              register=["D91"]),
         dict(id="TD.5", owner="claude", status="blocked",
              title="The icons: 393 designed, exported once, imported on 4.7.2",
              detail="Four sources: <code>icons_rbi.js</code> (360 in 31 groups), "
                     "the school and law icons, the diorama's marks, and inline "
-                    "ones. Exported as 444 SVGs (done once already, in the "
-                    "analysis); they use masks, filters and system-font text "
-                    "Godot's importer may not handle, so they are rasterised in "
-                    "Chromium at the sizes used, with a manifest, "
+                    "ones, exported as 444 SVGs (done once already, in the "
+                    "analysis). §21.8 asks for rounded shapes with a 2-point "
+                    "outline and flat colour; the design glosses every fill with a "
+                    "gradient, a mask and a specular spot, and skipping the gloss "
+                    "exports them flat (DS-3). The flat set is the value and the "
+                    "glossed set is kept beside it, one token apart, until the "
+                    "owner answers D91. Both use masks, filters and system-font "
+                    "text Godot's importer may not handle, so they are rasterised "
+                    "in Chromium at the sizes used, with a manifest, "
                     "<code>UI.icon()</code> and a test that every name a screen "
                     "uses exists. The school marks keep Matter's cube edges.",
-             blocked_by=["TD.1"]),
+             gate="every icon name a screen uses exists in both sets (the test); "
+                  "every flat icon is single colours with the 2-point outline, "
+                  "read from the exported SVGs",
+             blocked_by=["TD.1"],
+             register=["D91"]),
         dict(id="TD.6", owner="claude", status="blocked",
-             title="The shell: one persistent scene, the tab bar, the HUD and the world",
+             title="The shell: one persistent scene, its chrome, the HUD and the world",
              detail="Today the router swaps whole scenes, so no chrome and no 3D "
                     "world can persist between screens. The shell keeps the World, "
                     "the content, the chrome (top HUD, side alerts, tab bar, back "
                     "header) and the overlay, configured per route; headless "
-                    "presenters give the HUD's bars from the server's caps, the "
-                    "badges from real state and the nearest goal (§14.8). The "
-                    "design's chrome sits in the top band and the corners, where "
-                    "§21.1's reach rule and the layout check fail it; the check "
-                    "splits frequent controls from rare ones, as §21.1 does.",
-             gate="a flow test per tab; the layout check in both orientations and "
-                  "languages",
-             blocked_by=["TD.3"]),
+                    "presenters give the HUD's bars from the server's caps "
+                    "(TC.12), the badges from real state (the raid badge from "
+                    "TC.12's defence-log route) and the nearest goal (§14.8). The "
+                    "chrome is switchable until the owner answers C44: §21.8's "
+                    "home arrangement, with no tab bar, is the value, and the "
+                    "design's tab bar is one token away. The design's chrome sits "
+                    "in the top band and the corners, where §21.1's reach rule and "
+                    "the layout check fail it; the check splits frequent controls "
+                    "from rare ones, as §21.1 does, and holds under both "
+                    "arrangements. Portrait only: landscape is TD.28's.",
+             gate="a flow test per route under each arrangement; the layout check "
+                  "in portrait under each, in both languages, at 100%, 150% and "
+                  "200% text; each badge read from a store slice, with a "
+                  "presenter test",
+             blocked_by=["TD.3", "TC.12"],
+             register=["C44"]),
         # -- Track B: the 3D world ---------------------------------------------
         dict(id="TD.7", owner="claude", status="blocked",
              title="An export harness for the designs' 3D, held to the budgets",
@@ -1320,50 +1402,71 @@ dict(
                     "seeds their randomness, caps segments and picks each kind's "
                     "sculpt step to its budget (Featherkin 47,600 to 12,600 "
                     "triangles with no edit), bakes the clips with springs off, "
-                    "and writes a manifest that lists §21.9 row by row. Today "
+                    "and writes a manifest that lists §21.9 row by row with each "
+                    "row's source (exported, to make, contractor), so what TD.31 "
+                    "and TD.32 make is a counted gap. Today "
                     "every model is several times over §21.3's budgets (realm "
                     "views 163,000 to 219,000 triangles in over 1,100 draw calls; "
                     "characters 10,000 to 182,000), and a whole island needs "
                     "<code>EXT_mesh_gpu_instancing</code>, which 4.5 refused.",
-             gate="every asset inside §21.3's budget and within 5% of "
-                  "§21.6's height, re-exported byte for byte",
-             blocked_by=["TD.1"],
+             gate="every asset inside §21.3's budget (as written, until the owner "
+                  "answers D93), and every asset with a stated height (§21.6's "
+                  "eighteen kinds from TD.33's tables, §21.1's Sages at about "
+                  "1.5) within 5% of it, the rest listed in the manifest as "
+                  "unbudgeted; re-exported byte for byte",
+             blocked_by=["TD.1", "TD.33"],
              register=["G61", "D93"]),
         dict(id="TD.8", owner="claude", status="blocked",
              title="One toon look for everything",
              detail="The diorama is a four-step toon with world-space hulls; the "
                     "characters are physically based with clearcoat, sheen and "
                     "transmission under ACES, and the portraits are renders of "
-                    "that. §21.3 asks for one toon look with 1.5-pixel lines. "
-                    "One shader kit: the three-step ramp with violet shadows, rim, "
-                    "a clip-space outline, water and lava, sky by local time "
-                    "(§21.2), glows, the ghost, and the Hush, Spark and Echo "
-                    "variants, assigned to every imported model on import.",
+                    "that. §21.3 asks for one toon look: three steps, shadows "
+                    "tinted toward violet, a rim and 1.5-pixel ink lines. One "
+                    "shader kit on that rule, with the design's four-step ramp and "
+                    "world-space shells kept as a variant one token away until the "
+                    "owner answers D92: a clip-space outline, water and lava, sky "
+                    "by local time (§21.2), glows, the ghost, and the Hush, Spark "
+                    "and Echo variants, assigned to every imported model on import.",
+             gate="every imported model carries the kit's material, checked on "
+                  "import; a still of each variant in both looks against a golden "
+                  "on a GPU runner",
              blocked_by=["TD.7"],
-             register=["D92", "C52"]),
-        dict(id="TD.9", owner="claude", status="ready",
-             title="Who the actors are, carried beside the replay",
+             register=["D92", "D91"]),
+        dict(id="TD.9", owner="claude", status="blocked",
+             title="Who the actors are: guards in the bundle, outfits beside the replay",
              detail="The 3D draws a kind, a form and an outfit; the replay gives "
                     "a role. Neither the simulation's crew and guards nor the "
                     "bundle's posts name a kind, so a replay cannot be drawn with "
-                    "the right creatures, on the phone or in §24's clips. An "
-                    "appearance block, about four bytes an actor, stored with the "
-                    "heist and the island beside §24.11's four inputs and "
-                    "never inside them, and returned with the replay.",
+                    "the right creatures, on the phone or in §24's clips. Kind and "
+                    "form change what happens (§11.2's abilities and resistances, "
+                    "§11.10's quirks), so they go inside §24.11's four inputs: the "
+                    "crew's in TD.12's manifest, and each posted guard's kind and "
+                    "form in the island bundle, here. Only the outfit is a look: "
+                    "it is stored with the heist and the island beside the four "
+                    "inputs and never inside them. The replay is returned with all "
+                    "three for every actor; the server checks the guards against "
+                    "the roster with the crew (TD.34).",
+             gate="the five goldens re-recorded and agreeing; a replay the server "
+                  "returns names each actor's kind, form and outfit (a server test "
+                  "and a client test); changing an outfit changes no checksum",
+             blocked_by=["TD.12"],
              register=["G60"]),
         dict(id="TD.10", owner="claude", status="blocked",
              title="The world drawn from the simulation",
              detail="The island base built around the simulation's square grid "
                     "(§5.2's 10 to 14 tiles, 1 tile = 1 m; the design's realm "
-                    "is a 42-tile disc), its features and heights, the buildings "
-                    "where §10.1 puts them, actors interpolated between ticks "
-                    "with deterministic animation choice, §21.12's overlays, "
-                    "the orthographic camera in 90-degree steps, tile picking. The "
-                    "flat <code>RealmView</code> stays for screen readers and as "
-                    "the fallback.",
+                    "is a 42-tile disc), its features and heights (a level is half "
+                    "a tile, the design's ratio, which §23.5's rule adopts: G65), "
+                    "the buildings on the footprints the island gives them (TD.36), "
+                    "a pylon in every woven slot (§21.5, TD.31's design), actors interpolated "
+                    "between ticks with deterministic animation choice, §21.12's "
+                    "overlays, the orthographic camera in 90-degree steps, tile "
+                    "picking. The flat <code>RealmView</code> stays for screen "
+                    "readers and as the fallback.",
              gate="every actor's world position equals its tile; a still of each "
                   "mode against a golden on a GPU runner",
-             blocked_by=["TD.8", "TD.9"],
+             blocked_by=["TD.8", "TD.9", "TD.31", "TD.36"],
              register=["G45", "D74"]),
         dict(id="TD.11", owner="claude", status="blocked",
              title="Characters in full: forms, guards, role accessories",
@@ -1373,177 +1476,638 @@ dict(
                     "accessory and a pattern per size band; guards get the sash "
                     "and lantern and §21.6's role accessories so a guard's role "
                     "reads at a glance (§12.8); springs; portraits re-rendered "
-                    "in the toon look. With the character artist (§26.3).",
-             blocked_by=["TD.7"],
-             register=["D94", "C54"]),
+                    "in the toon look. The sheets' variants for visitors, "
+                    "anomalies and law creatures change what a player earns or a "
+                    "crew faces, so they carry no effect until the document gives "
+                    "one (D95). The Sparkwright's goggles and the count of "
+                    "animations wait on the owner's answer to C54, and are "
+                    "TD.62's. With the character artist (§26.3).",
+             gate="every form and guard in TD.7's manifest carries its accessory "
+                  "and pattern, read by a test; each guard role tells apart under "
+                  "§21.10's grayscale test; every portrait rendered from an "
+                  "imported model",
+             blocked_by=["TD.7", "TD.8"],
+             register=["D94", "D95"]),
+        dict(id="TD.31", owner="you", status="yours",
+             title="Design a pylon per school, and any defensive marker the "
+                   "art-style test needs",
+             detail="Screens v3 draws no law pylon, in the realm view or the "
+                    "heist (D74), though §10.2 puts one in every law slot, §21.5 "
+                    "draws it as an obelisk topped with the school's shape, and "
+                    "§12.6 makes breaking one a decision. TD.30's art-style test "
+                    "reads six or seven kinds of defensive marker on target "
+                    "devices, so the pylons, and any other marker the designs "
+                    "lack, are made before it: in Claude Design, with the "
+                    "character artist (§26.3), and brought in through TD.7.",
+             gate="a pylon for each of the six schools, §21.5's obelisk with the "
+                  "school's shape and colour and room for the law's glyph, "
+                  "exported by TD.7 inside §21.3's budget",
+             register=["D74"]),
+        dict(id="TD.32", owner="you", status="blocked",
+             title="Make the rest of the art Screens v3 lacks",
+             detail="§21.9 lists 68 building looks, 24 law signatures and §8's "
+                    "24 harmony, dissonance and chord effects. The design models 8 "
+                    "building types at one look each: no Anchor Stone, "
+                    "Storehouse, Nursery, Library (C24), Resonance Lab, "
+                    "Observatory, Beacon or Visitor's Dock, no level 7 to 9 "
+                    "crystal-and-gold or level-10 crown looks (§21.5), and 3D "
+                    "effects for 9 of the 24 laws. Its characters have one work "
+                    "loop where §21.6 asks for one per building, and no knock-out "
+                    "petals; Verdant has no bees or butterflies (§5.7). The "
+                    "Chronicler's and the Lamplighter's looks and the wildlife's "
+                    "counts and ranges are the sheets', adopted under §23.5's "
+                    "rule (G65). With the character artist (§26.3), once TD.30 "
+                    "has settled the style, as §26.2 orders it.",
+             gate="TD.7's manifest lists no §21.9 row as still to make",
+             blocked_by=["TD.30"],
+             register=["C24", "G65"]),
+        dict(id="TD.62", owner="claude", status="blocked",
+             title="The Sparkwright's goggles and the work loops, as C54 is answered",
+             detail="§11.11, §21.6 and §23.5 disagree on the Sparkwright's "
+                    "goggles and on how many animations each kind has (C54). Once "
+                    "the owner answers, TD.7's export and TD.11's characters take "
+                    "the answer: the Sparkwright's accessory node and the shared "
+                    "clip set, with the clip check counting what the answer sets.",
+             gate="the clip check counts the clips C54's answer sets for every "
+                  "kind; the Sparkwright exported as the answer draws it, inside "
+                  "§21.3's budget",
+             blocked_by=["TD.11", "TD.58"],
+             register=["C54"]),
         # -- Track C: what the screens stand on ----------------------------
+        dict(id="TD.33", owner="claude", status="ready",
+             title="Content the screens and the 3D read: paradox-born, visitors, "
+                   "§11.11's rule sheet and §21.6's heights",
+             detail="content/ has no paradox-born, no visitors and no §11.11 "
+                    "rule-sheet line, and §21.6's heights, colours and signatures "
+                    "are not extracted (G63). New "
+                    "<code>content/paradox_born.json</code> from §11.8's two "
+                    "tables, the Twinned's 120 health and 80 carry shared by its "
+                    "two bodies; <code>content/visitors.json</code>, the Stray one "
+                    "of the eighteen kinds and never a nineteenth; and "
+                    "<code>ruleborn.json</code> gains the rule sheet and §21.6's "
+                    "height, colours and signature, so §23.5's “every card "
+                    "carries all of 11.11, word for word” is generated. The rows "
+                    "§23.5's rule adopts from the sheets (the paradox-born's "
+                    "personality, home habit, best at and signature, and the "
+                    "visitors' and anomalies' sizes) are carried with their "
+                    "source (G65). <code>content/README.md</code>'s stale "
+                    "<code>conflict_severity</code> line goes.",
+             gate="<code>python3 tools/validate_content.py</code> passes with the "
+                  "new tables (no nineteenth kind, forms still 54); re-extraction "
+                  "reproduces them byte for byte; "
+                  "<code>tools/check_document.py</code> no longer reports "
+                  "paradox-born and visitors as unenumerated",
+             register=["G63", "G65"]),
         dict(id="TD.12", owner="claude", status="ready",
              title="Abilities, Sage powers and casts in the simulation",
              detail="The simulation has twelve command kinds and none is an "
                     "ability, a Sage power or a cast, and its crew are five roles "
                     "with no characters; completion's Crews row reads done all the "
-                    "same. A crew manifest in the replay (character, kind, level, "
-                    "traits; the Sage and its uses; the casts), the eighteen "
+                    "same (G67). Every answer the owner can give G47 adds these "
+                    "commands, so they start now; one open answer would hold the "
+                    "manifest back, G51's B, which keeps validated heists to the "
+                    "five fixed roles for a stage. The work: Ability, Sage and Cast commands "
+                    "in the free values; a crew stat not keyed by role (G63); a "
+                    "crew manifest in the replay (each member's character, kind "
+                    "and form; the Sage and its uses; the casts); the eighteen "
                     "abilities as named-parameter changes with two uses and the "
-                    "ten-second lockout, the four Sages' powers, casts as "
-                    "four-tile circles, §12.6's four-ready rule; the server "
-                    "validates the manifest against the roster. Paradox-born need "
-                    "a crew member with no role, and the Twinned a shared pool. The "
-                    "goldens are regenerated and the harness's decision band "
+                    "ten-second lockout; the four Sages' powers; casts as "
+                    "four-tile circles; and §12.6's four-ready rule. Levels, "
+                    "traits and the server's roster check are TD.34's, and the "
+                    "paradox-born TD.35's, because both wait on owners' answers. "
+                    "The goldens are regenerated and the harness's decision count "
                     "re-measured.",
-             gate="the decision band re-measured inside §12.6's 8 to 12 "
-                  "seconds; T5.1 waits for this",
-             register=["G47", "G51", "G67"]),
+             gate="the harness's median run at the matched depth carries 15 to 25 "
+                  "decisions, abilities, Sage powers and casts counted (§12.6, "
+                  "§19.27); if it does not, §12.6's fallback is applied and "
+                  "recorded (each ability to one use, then the matchmaker's depth "
+                  "centre down one realm at a time); the goldens regenerated and "
+                  "agreeing",
+             register=["G47", "G63", "G67"]),
+        dict(id="TD.34", owner="claude", status="blocked",
+             title="The crew's levels, traits and rest, checked against the roster",
+             detail="The manifest's levels and traits, each member's rest after a "
+                    "heist (§12.9), and the server checking the manifest and the "
+                    "posted guards (TD.9) against the roster it holds, each "
+                    "posted guard's level carried in the island bundle beside "
+                    "its kind and form. It needs "
+                    "TC.12's roster, and it waits on the owner's answer to G51: "
+                    "whether a server-checked heist models levels and traits at "
+                    "all, and §11.4 to §11.6's rules for growth, a home and rest. "
+                    "The Roster's and Character's numbers are shown as the "
+                    "heist's only once this lands.",
+             gate="a lease refused for a crew member the roster does not hold or "
+                  "one still resting (server tests); one simulation test per rule "
+                  "the answer writes; the goldens agreeing",
+             blocked_by=["TD.12", "TC.12", "TD.50"],
+             register=["G51"]),
+        dict(id="TD.35", owner="claude", status="blocked",
+             title="Paradox-born in the simulation",
+             detail="A paradox-born has no role (§11.8), and the simulation keys "
+                    "every crew stat to one. On TD.12's stat type and TD.33's "
+                    "table, the Reverser's and the Unmade's gifts join a crew and "
+                    "the Twinned is one body with its pools shared. It waits on "
+                    "the owner's answers to C53 (what the Twinned's gift doubles, "
+                    "or whether it ships at launch) and G62 (whether paradox-born "
+                    "guard, and whether they take forms).",
+             gate="a simulation test for each paradox-born gift as the answers "
+                  "write it; the goldens agreeing",
+             blocked_by=["TD.12", "TD.33", "TD.51"],
+             register=["C53", "G62"]),
         dict(id="TD.13", owner="claude", status="ready",
              title="The simulation's event log",
              detail="Outside the checksum: guard state changes with their cause, "
                     "knockouts and revivals, captures and boarding, alarm levels "
                     "and their cause, wards, pylons, the Vault opening, law blinks. "
                     "The result's decisive moment and its one thing to try "
-                    "(§12.13), the heist's haptics and words, Profile's facts, "
-                    "the share clip and D65's heatmaps all read it.",
+                    "(§12.13), the heist's haptics and words, the defence report's "
+                    "facts, Profile's facts, the share clip and D65's heatmaps all "
+                    "read it.",
+             gate="a named simulation test for each event kind; the five goldens' "
+                  "checksums unchanged with the log on",
              register=["D65", "G48"]),
+        dict(id="TD.36", owner="claude", status="ready",
+             title="Buildings on the grid, in the simulation, the island and the server",
+             detail="§10.1: buildings sit on the realm grid and block movement and "
+                    "sight, most 2 by 2 and the Spire and Vault 3 by 3. The "
+                    "simulation's island has a one-tile Vault and no other "
+                    "building, so a crew walks through every Star Well, Hearth and "
+                    "Spire, and the server keeps no position (G45). The island "
+                    "format and the simulation gain §10.1's buildings on their "
+                    "footprints, blocking movement and sight; the extension reads "
+                    "them; the server stores each building's tile, moves it free "
+                    "and at once (§10.1), and refuses a published island whose "
+                    "buildings disagree with those built. A rules-version change "
+                    "(§24.11).",
+             gate="a simulation test that no crew walks or sees through a "
+                  "footprint; server tests for the stored tile, the move and the "
+                  "refused island; the goldens regenerated and agreeing",
+             register=["G45"]),
         dict(id="TD.14", owner="claude", status="ready",
              title="Stability and weaving prices, priced once for client and server",
              detail="Weaving and the Harmony view show strain, harmonies and "
                     "clashes as the player decides; the server must charge the "
-                    "same. One function in the simulation (§5.5, §8) "
-                    "exported to the client and the server's WebAssembly, with "
-                    "crown laws carried in the bundle (D61).",
+                    "same. One function in the simulation (§5.5, §8), exported to "
+                    "the client and the server's WebAssembly, with crown laws "
+                    "carried in the bundle (D61): each law's cost, the universe's "
+                    "capacity and strain, and harmonies and clashes within a realm. "
+                    "Whether a harmony counts once a pair or once a note is open "
+                    "(C48), so both readings are built and one switch picks. "
+                    "Upkeep and the other rules C48 leaves open are TD.37's.",
+             gate="the client's and the server's prices equal the simulation's for "
+                  "every launch law alone and in every pair in one realm, under "
+                  "both readings (a test on each side)",
              register=["D61", "C48"]),
+        dict(id="TD.37", owner="claude", status="blocked",
+             title="Stability's open rules: upkeep, crown laws, Breaking and faults",
+             detail="§5.6 prices weaving's upkeep against a realm's stability "
+                    "budget that §5.5 never gives, and C48 leaves more open: how a "
+                    "crown law's harmonies and clashes count across realms, "
+                    "whether a weave may take strain into Breaking, what a tier "
+                    "rise does to a woven law, and how the recommended laws are "
+                    "ranked. §5.5's faults have no pair and no count at Cracking, "
+                    "and nothing says whether a raider sees them (G46). Each is "
+                    "built in TD.14's function and on the server once the owner "
+                    "answers C48 and G46, and home's fault marker is drawn on "
+                    "TD.19's view.",
+             gate="a test for each rule as the answers state it, the same on the "
+                  "client and the server; the faults a universe opens worked out "
+                  "from the universe alone",
+             blocked_by=["TD.14", "TD.52"],
+             register=["C48", "G46"]),
         dict(id="TD.15", owner="claude", status="ready",
-             title="Terrain in the simulation: the 34 missing features, moss, heights",
+             title="Terrain in the simulation: the missing features, moss, heights",
              detail="The simulation has 5 of §6.2's 39 features (rock pillar, "
                     "ruin wall, fence, fog bank, tall grass); the terrain editor, "
-                    "the realm view and the curation screens need the rest, with "
-                    "moss and clearing it, heights 0 to 3, directions and tunnels, "
-                    "and terrain points. Completion's Terrain editing row reads "
-                    "done on one test. The height of a level is unstated; the "
-                    "design's ratio is half a tile.",
-             register=["G56", "G67"]),
+                    "the realm view and the curation screens need the rest. "
+                    "Completion's Terrain editing row reads done on one test (G67). "
+                    "Ready now, because every answer to G56 builds them: each "
+                    "feature with no direction, moss as the default ground and "
+                    "clearing it at a terrain point a tile, heights 0 to 3 with a "
+                    "level at half a tile (the design's ratio, adopted under "
+                    "§23.5's rule: G65), and §6.1's terrain points counted in the "
+                    "simulation, the extension and the server. The six that need "
+                    "a direction or two ends are TD.38's. Each is a rules-version "
+                    "change (§24.11).",
+             gate="a named simulation test for each feature built; a realm over "
+                  "§6.1's terrain points refused alike by the simulation, the "
+                  "extension and the server",
+             register=["G56", "G67", "G65"]),
+        dict(id="TD.38", owner="claude", status="blocked",
+             title="Directional features and tunnels",
+             detail="Ramps, stairs and vines need an up side, a waterfall a ledge "
+                    "side, rapids a downstream and a tunnel two ends, and §6.2 "
+                    "says who sets none of them; a held guard's facing is the "
+                    "same question (G56). They wait on the owner's answer to G56: "
+                    "who sets each, and what the generator picks. The bundle then "
+                    "carries them, a rules-version change (§24.11), and the "
+                    "terrain editor (TD.22) places them.",
+             gate="a named simulation test for each of the six; all 39 of §6.2's "
+                  "features in the simulation",
+             blocked_by=["TD.15", "TD.53"],
+             register=["G56"]),
         dict(id="TD.16", owner="claude", status="ready",
-             title="The generator and the crews: ruins, rehearsals, fallbacks",
+             title="The generator: ruins, reference crews, fallbacks",
              detail="D66: drifting ruins at three labelled difficulties "
-                    "(§12.12), the rehearsal crews and the reference crews, a "
-                    "recorder for the defence log's report, generated fallback "
-                    "targets (§12.22), and a server queue that measures an "
-                    "island before it is offered, which also gives D62's hold-band "
-                    "check. The Observatory's ruins, Slower ruins, the defence log "
-                    "and the first session's tutorial ruin all wait for it.",
-             register=["D66", "D62", "G55", "G57"]),
-        # -- Track D: the screens -----------------------------------------------
+                    "(§12.12), the reference crews the measurements use, "
+                    "generated fallback targets (§12.22), and a server queue that "
+                    "measures an island before it is offered, which also gives "
+                    "D62's hold-band check. The Observatory's ruins, Slower ruins, "
+                    "curation's hold figure and the first session's tutorial ruin "
+                    "wait for it. The rehearsal crews and the defence report's "
+                    "recorder wait on an owner's answer, and are TD.39's.",
+             gate="ruins at the three labelled difficulties ordered by the "
+                  "reference crew's success over the harness's runs; a fallback "
+                  "target offered when the list is thin (a server test); the "
+                  "queue's hold for an island equal to the harness's",
+             register=["D66", "D62", "G55"]),
+        dict(id="TD.39", owner="claude", status="blocked",
+             title="Rehearsal crews and the defence report's facts",
+             detail="§13's three rehearsal crews (cautious, greedy, fast) have "
+                    "names and no rule, and §13.2's report (the haul denied, how "
+                    "long the defence held, where the crew was seen, what fired) "
+                    "has no measure for one raid; the simulation records none of "
+                    "it (G57). It waits on the owner's answer to G57; then each "
+                    "crew's rule joins the generator's crews, the facts are "
+                    "recorded from TD.13's event log, and the server writes them "
+                    "when it settles a raid, so the defence log (TD.66) and "
+                    "Profile's records (TD.24) read one record.",
+             gate="a test for each crew's rule and each fact as the answer defines "
+                  "it; a settled raid's facts, re-simulated from its replay, equal "
+                  "what was written",
+             blocked_by=["TD.13", "TD.16", "TD.54"],
+             register=["G57"]),
+        dict(id="TD.40", owner="claude", status="blocked",
+             title="Daily goals and the weekly streak (§14.6)",
+             detail="§14.6: the player picks 3 of 6 offered goals with one free "
+                    "swap, and playing on 4 days out of 7 keeps a weekly streak, "
+                    "with one automatic saver a week, repair by playing two days "
+                    "in a row, and cosmetic rewards. The streak is a Season "
+                    "must-show (§23.2), and three goals appear at 10:00 in §16. "
+                    "Nothing in the client or the server has either. Server: goals "
+                    "offered, picked, swapped and claimed, counted from what the "
+                    "server sees and paying pages (§9.1) and no stars (F42's "
+                    "answer), under §20.3's caps; the streak with its saver, "
+                    "repair and cosmetic. Client: the repository, state and "
+                    "presenters that TD.23's Season screen and TD.26's first "
+                    "session draw. The design's quests and star chests are not "
+                    "these, and stay refused.",
+             gate="server tests for three picked of six, one swap, each claim "
+                  "once, and the streak's saver and repair; presenter tests for "
+                  "both in both languages",
+             blocked_by=["TC.12"],
+             register=["F42"]),
+        # -- Track D: the screens, the slice's first -------------------------
         dict(id="TD.17", owner="claude", status="blocked",
-             title="Heist and result on the design",
-             detail="The heist's HUD and controls first on the flat view (the "
-                    "design's portraits with pips and lockout, Get out and the "
-                    "skiff, the alarm with its newest effect in words, the Vault "
-                    "and load target, the Sage dial), then in 3D; the result to "
-                    "§23.2's rewritten row: outcome and multipliers, the "
-                    "decisive moment with a three-second replay and one thing to "
-                    "try, loot kept, the fee by target kind (none on a Trace), the "
-                    "law to study, Renown, rest per crew member, and “worth "
-                    "your time?” once a session. The design's heist adds "
-                    "mechanics (a Sage wheel's extra powers, heist-wide casts) "
-                    "that are refused.",
-             gate="the heist and result tests kept by name and passing (completion "
-                  "reads them); the moment picker tested on the goldens",
-             blocked_by=["TD.3", "TD.12", "TD.13"],
-             register=["C47", "D79", "D80"]),
+             title="Heist and result on the design, on the flat view",
+             detail="The heist's HUD and controls on the flat view (the design's "
+                    "portraits with pips and lockout, Get out and the skiff, the "
+                    "alarm with its newest effect in words, the Vault and load "
+                    "target, the Sage dial); the 3D view is TD.42. The result to "
+                    "§23.2's rewritten row: outcome and multipliers, the decisive "
+                    "moment with a three-second replay and one thing to try, loot "
+                    "kept, the fee by target kind (none on a Trace), the law to "
+                    "study, Renown, rest per crew member, and “worth your time?”. "
+                    "The settle answer gains what the result shows, from TC.12's "
+                    "pages and roster (crossed, studyPages, pylonPages, firstMet, "
+                    "floorPage, rest, strays, insight, targetKind), and "
+                    "<code>POST /v1/heists/:token/study</code> takes the study. "
+                    "Two parts wait on owners' answers and are built switchable, "
+                    "one token apart: the worth question on every result as "
+                    "§23.2's row asks, or once a session as §20.3 and the server "
+                    "read it (C47); and the moment picker's rule and its “Try "
+                    "this” label, read from one table holding G48's drafted rule "
+                    "(G48). The design's heist adds mechanics (a Sage wheel's "
+                    "extra powers, heist-wide casts, a grace at the start, slow "
+                    "motion at each alert) that are refused (D79).",
+             gate="the screen gate for §23.2's Heist and Heist result rows, the "
+                  "result in each kind of target's variant; no more than §12.7's "
+                  "eight controls live at once (a test); the heist and result "
+                  "tests kept by name (completion reads them); the moment picker "
+                  "tested on the five goldens",
+             blocked_by=["TD.3", "TD.12", "TD.13", "TC.12"],
+             register=["C47", "D79", "D80", "G48"]),
+        dict(id="TD.41", owner="claude", status="blocked",
+             title="The landing picker on one island",
+             detail="Stage A of the landing picker, on the one-island heist that "
+                    "exists: <code>landing_heard</code> and "
+                    "<code>landing_reach</code> in the simulation and the "
+                    "extension, the leased island's edge with what guards would "
+                    "hear (§5.4), and the chosen tile as the replay's first "
+                    "command; the seed's <code>default_landing()</code> stays for "
+                    "offline only. It closes T3.4's “Not yet: §21's landing "
+                    "picker”. Every outer realm's edge comes with universes of "
+                    "several realms (TD.18).",
+             gate="the screen gate for the Landing picker row on one island; the "
+                  "chosen tile is the replay's first command (a test)",
+             blocked_by=["TD.3"]),
         dict(id="TD.18", owner="claude", status="blocked",
-             title="Observatory, scout report, landing picker and planner",
-             detail="The landing picker on one island can start once the "
-                    "components exist; the rest wait for universes of several "
-                    "realms (T3.3), the roster and ruins. The offer stops sending "
-                    "the internal rating to the device and starts sending why each "
-                    "target was offered and its depth (§12.15, §12.22); the "
-                    "scout draws no positions (brief 38) and follows the owner's "
-                    "free-scout answer (F46); the fee and the window follow F39, "
-                    "C41 and F44 as the server does.",
-             blocked_by=["TD.3", "T3.3", "TD.16"], register=["F46", "F51", "D77", "C46", "D78"]),
+             title="Observatory, scout report and planner",
+             detail="They draw universes of several realms (T3.3), and each piece "
+                    "stands on work below it: the Observatory's refresh, a paid "
+                    "scout and casts cost Aether, and the planner's crew needs the "
+                    "roster and rest (TC.12); its Sage and casts rows bind to the "
+                    "simulation's (TD.12); law chips open the law card (TD.20); "
+                    "ruins come from the generator (TD.16); the planner starts from "
+                    "the landing picker (TD.41). The offer stops sending the "
+                    "internal rating to the device and starts sending why each "
+                    "target was offered and its depth (§12.15, §12.22); the scout "
+                    "draws no positions (brief 38). Where an owner's answer is "
+                    "pending the screen draws the server's value and holds no rule "
+                    "of its own: the fee and the window as the server charges them "
+                    "(F39, C41, F44) and the free scout (F46), which stand while "
+                    "the owner's answer to C45 keeps them; and how many targets "
+                    "show and what a card says, from C46 and D77, the same way.",
+             gate="the screen gate for the Observatory, Scout report and Heist "
+                  "planner rows, and for the Landing picker row on universes of "
+                  "several realms; an offer test that no rating reaches the device; "
+                  "every fee shown equal to the lease's",
+             blocked_by=["TD.3", "T3.3", "TD.12", "TD.16", "TD.20", "TD.41", "TC.12"],
+             register=["F46", "F51", "D77", "C46", "D78"]),
         dict(id="TD.19", owner="claude", status="blocked",
              title="Home and the realm view on the world",
              detail="The Universe map and the realm view are the diorama with "
                     "the shell's chrome: realms with their realm and crown laws, "
-                    "links, the universe's one strain band, faults, ready amounts "
-                    "and the heist button. The server's universe gains laws, links, "
-                    "strain, faults, production and caps (TC.12's slices). The "
-                    "design's builders cap, upgrade timers, typed guard posts, "
+                    "links, TD.10's pylon in every woven slot with its zone and "
+                    "the law's chip over it (D74), the universe's one strain band "
+                    "from TD.14, the faults TD.37 builds, ready amounts and the "
+                    "heist button. "
+                    "The server's universe gains laws, links, strain, production "
+                    "and caps (TC.12's slices), and each building its tile "
+                    "(TD.36). The buildings and looks the design lacks are TD.32's, "
+                    "made after the style is settled; until each lands its "
+                    "footprint is drawn plain, with its icon, so home and the "
+                    "slice (T6.1) do not wait on all of §21.9's art, which "
+                    "§26.2 puts in the beta. "
+                    "The design's builders cap, upgrade timers, typed guard posts, "
                     "second Hearths and Storehouse in the Heart, and its shield "
                     "timer on home are mechanics §10 and §18.8 do not have, "
-                    "and are refused.",
-             blocked_by=["TD.6", "TD.10", "TC.12"],
-             register=["D73", "D75", "C44", "G46"]),
+                    "and are refused. Home's layout is the shell's (TD.6, C44).",
+             gate="the screen gate for the Universe map and Realm view rows; every "
+                  "building drawn on its stored tile (a test against TD.36's "
+                  "island)",
+             blocked_by=["TD.6", "TD.10", "TD.14", "TD.36", "TD.37", "TC.12"],
+             register=["D73", "D75", "G46", "D74"]),
+        dict(id="TD.42", owner="claude", status="blocked",
+             title="The heist in 3D",
+             detail="TD.17's heist on TD.10's world: actors interpolated between "
+                    "ticks, §21.12's cones and overlays, §12.6's camera, and "
+                    "TD.11's characters. The flat view stays for screen readers "
+                    "and as the fallback.",
+             gate="every actor drawn at its tile at every tick of the five goldens "
+                  "(TD.10's check); the heist tests passing with either view",
+             blocked_by=["TD.17", "TD.10", "TD.11"]),
         dict(id="TD.20", owner="claude", status="blocked",
-             title="Weaving, the law card, the Codex and the Harmony view",
+             title="Weaving and the law card",
              detail="Weaving shows the big card with its looping preview, cost, "
                     "strain and ready time, and the two or three recommended laws "
-                    "§23.2 asks for, which the design omits; the law card "
-                    "carries the school's shape and a looping preview, never a "
-                    "pause sign; the Codex's chapters are unlock steps by Keeper "
-                    "level and its schools are albums (§7.6); Harmony shows "
-                    "harmonies, clashes and chords as the simulation prices them "
-                    "(TD.14). Effect words come from content (G23, G25). The Codex, "
-                    "Aether and weaving state live on the server first (TC.12).",
-             blocked_by=["TD.3", "TD.14", "TC.12"], register=["G23", "G25", "G49", "D81"]),
+                    "§23.2 asks for, which the design omits; every price is read "
+                    "from TD.14's function, so an owner's answer changes numbers "
+                    "and not the screen. The law card carries the school's shape "
+                    "and a looping preview, never a pause sign, and §7.7's one "
+                    "weakness rather than the design's counters (D79). Effect words "
+                    "come from content (G23, G25). Aether and weaving state live on "
+                    "the server first (TC.12). The Codex and the Harmony view are "
+                    "TD.44.",
+             gate="the screen gate for the Weaving and Law card rows; every price "
+                  "shown equal to the server's for the same weave (a test)",
+             blocked_by=["TD.3", "TD.14", "TC.12"],
+             register=["G23", "G25", "D81", "D79"]),
         dict(id="TD.21", owner="claude", status="blocked",
-             title="Roster, Character, Sage hall and Forms album",
-             detail="The roster on the server comes first (TC.12). Content gains "
-                    "the three paradox-born rows v3.6 adds to §11.8 and the "
-                    "Stray rule (one of the eighteen kinds, never a nineteenth). "
-                    "The character screen shows §11.11's card word for word and "
-                    "§11.1's role numbers, not the sheets' own; the design's "
-                    "stealth and grit stats, its role-keyed abilities and its "
-                    "work bonuses are refused.",
-             blocked_by=["TD.3", "TD.12", "TC.12"],
-             register=["D82", "G50", "G52", "C53", "G62", "G63", "G64"]),
+             title="Roster, Character and Sage hall",
+             detail="The roster on the server comes first (TC.12), and the cards "
+                    "read TD.33's tables. The character screen shows §11.11's card "
+                    "word for word and §11.1's role numbers, not the sheets' own; "
+                    "the design's stealth and grit stats, its role-keyed abilities "
+                    "and its work bonuses are refused, and so are the sheets' "
+                    "variants for visitors and anomalies (D95). The Sage hall "
+                    "lists the four launch Sages with their powers and levels from "
+                    "TC.12's Sage routes, and draws Insight as the server pays it, "
+                    "so the owner's answer to G52 changes the server and not the "
+                    "screen. Hatching and naming (G50) and a visiting Stray (G64) "
+                    "wait on the owner's answers and are TD.63's; the server "
+                    "grants none until then. Paradox-born join the roster with TD.35; the "
+                    "Forms album is TD.45.",
+             gate="the screen gate for the Roster, Character and Sage hall rows; "
+                  "every card's words generated from TD.33's content (a test)",
+             blocked_by=["TD.3", "TD.12", "TD.33", "TC.12"],
+             register=["D82", "G52", "C53", "G62", "G63", "D94", "D95", "G65"]),
+        dict(id="TD.43", owner="claude", status="blocked",
+             title="Rehearsal",
+             detail="A rehearsal sends one of TD.39's three crews against the "
+                    "universe as it stands and replays its route; pause stays in "
+                    "rehearsals (§20.8), and the slower speed is for ruins only "
+                    "(TD.27). §26.2's slice has rehearsals and no heists against "
+                    "players, so the defence log, the other half of §23.2's row, "
+                    "is TD.66's, outside the slice.",
+             gate="the screen gate for the Rehearsal and defence log row's "
+                  "rehearsal half: the simulated crew's choice and the route "
+                  "replay",
+             blocked_by=["TD.3", "TD.39"]),
+        # -- Track D, outside the slice ------------------------------------------
+        dict(id="TD.44", owner="claude", status="blocked",
+             title="The Codex and the Harmony view",
+             detail="The Codex's chapters are unlock steps by Keeper level and its "
+                    "schools are albums (§7.6), with restoration and study from "
+                    "TC.12; Harmony shows harmonies, clashes and chords as TD.14 "
+                    "prices them. Chapter 1's laws, meeting a law, mastery and the "
+                    "Codex's notes wait on the owner's answer to G49. With the "
+                    "chapters, matchmaking offers only universes running laws "
+                    "from open chapters (§7.6), a change to "
+                    "<code>matchmaking.mjs</code>.",
+             gate="the screen gate for the Law Codex and Harmony view rows; an "
+                  "offer test that no target runs a law from a closed chapter",
+             blocked_by=["TD.20", "TC.12", "TD.56"],
+             register=["G49"]),
+        dict(id="TD.45", owner="claude", status="blocked",
+             title="The Forms album",
+             detail="The 54 forms by kind, each drawn with its accessory and "
+                    "pattern (TD.11), filled by births at a Nursery from TC.12's "
+                    "hatch route. Paradox-born forms, if the owner's answer to G62 "
+                    "gives them any, sit outside the album's 54.",
+             gate="the screen gate for the Forms album row; every form in it "
+                  "drawn from TD.7's manifest",
+             blocked_by=["TD.21", "TD.11", "TC.12"]),
+        dict(id="TD.66", owner="claude", status="blocked",
+             title="The defence log",
+             detail="The raids on the player from TC.12's defence routes, each "
+                    "with its report (§23.2: the haul denied, how long the defence "
+                    "held, where the crew was seen, what fired) from TD.39's "
+                    "record, whose haul G31 must price, and Trace from each. "
+                    "§26.2 brings heists against players in phase 3, so the slice "
+                    "(T6.1) does not wait on it.",
+             gate="the screen gate for the Rehearsal and defence log row's other "
+                  "half: raids on you, each with its report, and Trace; the raid "
+                  "badge clears once the log is seen (a flow test)",
+             blocked_by=["TD.3", "TD.6", "TD.39", "TC.12"],
+             register=["G31"]),
+        dict(id="TD.63", owner="claude", status="blocked",
+             title="Hatching, naming and the visiting Stray",
+             detail="Births have no screen and naming has no rule (G50), and no "
+                    "realm decides a visiting Stray's kind and form (G64). Once "
+                    "the owner answers both, the server grants births and the "
+                    "Stray as the answers write them, and the client gains what "
+                    "they draw on TD.21's roster: a hatch sheet, names, and the "
+                    "Stray at the Dock.",
+             gate="server tests for each rule the answers write (a birth's kind "
+                  "and form, its name, the Stray's draw); the screen gate for "
+                  "what the answers add to the Roster and Character rows",
+             blocked_by=["TD.21", "TD.59"],
+             register=["G50", "G64"]),
+        dict(id="TD.64", owner="claude", status="blocked",
+             title="Presence and pings among friends, and the Open Vault league",
+             detail="Which of the design's friend features ship (D86: none, "
+                    "pings, or presence and activity for 16 and over) and whether "
+                    "§9.4's Open Vault league ships at launch (C50) each change "
+                    "the server and TD.23's Friends and League screens. Built as "
+                    "the owner's answers write them; an answer that ships neither "
+                    "closes this task with nothing built.",
+             gate="server tests for what the answers ship (a ping refused across "
+                  "a block and past the cap; presence by band; the league's pool "
+                  "and debit); the screen gate for what they add to the Friends "
+                  "and Season rows",
+             blocked_by=["TD.23", "TD.60"],
+             register=["D86", "C50"]),
+        dict(id="TD.65", owner="claude", status="blocked",
+             title="The Lab's hints, curation's swaps and the hold figure",
+             detail="The Lab's hints, chord naming and payouts (G53), whether a "
+                    "curation swap is a weave at §5.6's price (G54), and where the "
+                    "hold figure curation and the Workshop show comes from (G55), "
+                    "built on TD.22's screens as the owner's answers write them.",
+             gate="the Resonance Lab row's hints, as G53's answer writes them; a "
+                  "curation swap charged as G54's answer says (a server test); "
+                  "the hold figure shown equal to its source under G55's answer",
+             blocked_by=["TD.22", "TD.61"],
+             register=["G53", "G54", "G55"]),
         dict(id="TD.22", owner="claude", status="blocked",
-             title="Lab, defence curation, rehearsal and defence log, terrain editor, Workshop",
+             title="Lab, defence curation, terrain editor and Workshop",
              detail="The Lab at §10.2's times (5 h at level 3, not the design's "
-                    "5 h 30), curation over the generator's alternatives, the "
-                    "defence log with each raid's report — the haul denied, how "
-                    "long the defence held, where the crew was seen, what fired "
-                    "(§23.2) — whose haul G31 must price, the terrain "
-                    "editor on the simulation's 39 features and §6.1's budgets "
-                    "(not the design's 80 points, or its Hill and Grove), and the "
-                    "Workshop on the design, keeping remix and withdraw.",
-             blocked_by=["TD.3", "TD.15", "TD.16"], register=["G31", "D83", "G53", "G54"]),
+                    "5 h 30) on TC.12's Lab service; curation over the generator's "
+                    "alternatives, changing laws at TD.14's weaving prices; the "
+                    "terrain editor on the simulation's features and §6.1's "
+                    "budgets (not the design's 80 points, or its Hill and Grove), "
+                    "placing the six directional features once TD.38 has them; and "
+                    "the Workshop on the design, keeping remix and withdraw. The "
+                    "Lab's hints, chord naming and payouts (G53), whether a "
+                    "curation swap is a weave (G54) and the hold figure curation "
+                    "and the Workshop show (G55) wait on the owner's answers and "
+                    "are TD.65's; the rest of the task does not wait.",
+             gate="the screen gate for the Resonance Lab row but its hints "
+                  "(TD.65's), the Defence curation row, the Terrain editor row "
+                  "with every feature the simulation has (TD.38's six join it "
+                  "there) and the Island Workshop row; the Workshop's tests kept "
+                  "by name (completion reads them)",
+             blocked_by=["TD.3", "TD.14", "TD.15", "TD.16", "TC.12"],
+             register=["D83"]),
         dict(id="TD.23", owner="claude", status="blocked",
              title="Season, Shop, Share sheet and Friends on the design",
-             detail="Already built on the backend that exists (TC.6); only their "
-                    "look changes, and the mechanics the design adds are refused: "
-                    "a Starpass that adds 20% stars (§18.8), quests and star "
-                    "chests, league rewards for everyone, live “raiding” "
-                    "status (§17.8), prices in Starglass (F41).",
-             blocked_by=["TD.3"], register=["G28", "F41", "D84", "D85", "F57", "D86", "C50"]),
+             detail="TC.6 built them on the backend that existed; the design asks "
+                    "for more than a new look, and each screen's server work is "
+                    "named. Season: the league road with every league's bounds "
+                    "and season-end reward, the season's end time, the week's era "
+                    "from <code>GET /v1/era</code>, claiming through a tier in one "
+                    "call, and TD.40's goals and streak. Shop: an authored "
+                    "catalogue (D64), and the band's cap and approval words before "
+                    "every purchase; its previews on your universe are TD.46's. "
+                    "Share sheet: the challenge to chosen friends, the invite gift "
+                    "on a friend's first heist, and deep links for both; the clip "
+                    "is TD.46's. Friends: each friend's free facts and the "
+                    "friendly-heist score, and <code>POST /v1/reports</code> for "
+                    "players (§20.4: report and block from any name). Prices are "
+                    "money as the server sells them, F41's answer, which stands "
+                    "while the owner's answer to C45 keeps it; the screen draws "
+                    "the server's price, so an answer changes the server and not "
+                    "the screen. The mechanics the design adds are refused: a "
+                    "Starpass that adds 20% stars (§18.8), quests and star chests, "
+                    "league rewards for everyone, live “raiding” status (§17.8). "
+                    "Presence and last seen (D86) and the Open Vault league (C50) "
+                    "wait on the owner's answers and are TD.64's.",
+             gate="the screen gate for the Season and Friends rows, the Shop row "
+                  "but its previews and the Share sheet row but its clip (both "
+                  "TD.46's); claiming through a tier is one call (a flow test); the "
+                  "shop, track and social tests kept by name (completion reads "
+                  "them)",
+             blocked_by=["TD.3", "TD.40"],
+             register=["G28", "F41", "D84", "D85", "F57"]),
+        dict(id="TD.46", owner="claude", status="blocked",
+             title="The share clip and the Shop's previews, on the 3D world",
+             detail="Both draw the shared world off the main flow. The clip: the "
+                    "moment TD.17's picker chooses from TD.13's event log, "
+                    "re-rendered from the replay's window in the world in replay "
+                    "mode, posted to friends as the window and never as a video "
+                    "(<code>POST /v1/clips</code>), within the replay's retention "
+                    "(§24.3); outside the game, for 16 and over as §20.7 allows, "
+                    "through a platform encoder plugin measured on phones in TC.8. "
+                    "The Shop's previews show a realm skin, sky or bridge on the "
+                    "player's own universe and an outfit on their own ruleborn, "
+                    "never saved.",
+             gate="the screen gate for the Share sheet's clip and the Shop's "
+                  "previews; a clip re-rendered from its window matches the "
+                  "replay's checksums; a preview leaves the universe unchanged "
+                  "(a test)",
+             blocked_by=["TD.6", "TD.10", "TD.11", "TD.13", "TD.17", "TD.23"]),
         dict(id="TD.24", owner="claude", status="blocked",
              title="Profile and stats, with its server route",
              detail="v3.6's new §23.2 row: Renown and league over time, never "
                     "the rating; heists by outcome; defences held and leaked; "
                     "records; the battle log with replays while they are kept; "
-                    "collection and badges; private for 13 to 15. The server writes "
-                    "each heist's facts at settlement and answers "
-                    "<code>GET /v1/profile</code>. “Leaked”, records and "
-                    "badges are undefined (TD.29).",
-             blocked_by=["TD.3", "TD.13"],
-             register=["G69"]),
+                    "collection and badges; private for 13 to 15 and private by "
+                    "default for 16 and 17 (§20.2), with the visibility switch in "
+                    "Settings (TD.25). The server writes each heist's facts at "
+                    "settlement from TD.39's record and answers "
+                    "<code>GET /v1/profile</code>. “Leaked”, records and badges "
+                    "wait on the owner's answer to G69.",
+             gate="the screen gate for the Profile and stats row; a 13-to-15 "
+                  "profile never served to another account, and a 16-to-17 one "
+                  "only once its switch is on (server tests)",
+             blocked_by=["TD.3", "TD.13", "TD.25", "TD.39", "TD.55"],
+             register=["G69", "D85"]),
         dict(id="TD.25", owner="claude", status="blocked",
              title="Settings and wellbeing in four tabs",
              detail="Protections the band fixes shown locked (§23.2, §20.2), "
-                    "deletion with “withdraw my islands too” (D70, F43), the "
-                    "reminder picker offering no time inside the night (G34), "
-                    "play-time reminders (§20.2's 60 and 90 minutes), and the "
-                    "notification settings the server already takes. The design's "
-                    "age-band preview changes the player's band and is refused.",
-             blocked_by=["TD.3"], register=["D70", "F43", "G34", "D87", "D88", "G58"]),
+                    "read from <code>content/protections.json</code>, generated "
+                    "from the design facts the server's night hours and caps come "
+                    "from; deletion with “withdraw my islands too” (D70, F43); the "
+                    "reminder picker offering no time inside the night (G34); "
+                    "play-time reminders (§20.2's 60 and 90 minutes); hold time "
+                    "and moving controls (§20.8); help and support (§20.10). The "
+                    "server gains what the screen reads: "
+                    "<code>GET /v1/notifications</code> and a raided opt-out, and "
+                    "profile visibility stored and enforced wherever a profile is "
+                    "read (§20.2: private for 13 to 15, private by default for 16 "
+                    "and 17, the player's choice from 18). The design's age-band "
+                    "preview changes the player's band and is refused. How a band "
+                    "may change and whether 16 and 17 may switch the reminder off "
+                    "wait on the owner's answer to G58; until then the stricter "
+                    "reading holds, one switch away.",
+             gate="the screen gate for the Settings and wellbeing row; every "
+                  "protection §20.2 fixes shown locked for each of the three "
+                  "bands (a presenter test)",
+             blocked_by=["TD.3"],
+             register=["D70", "F43", "G34", "D87", "D88", "G58"]),
         dict(id="TD.26", owner="claude", status="blocked",
              title="First launch in §23.5's order",
              detail="Title, the age step (the built check, restyled, with no way "
                     "back from under 13), a summary of the protections the band "
-                    "sets, the Keeper's name and face, then §16's beats. The "
-                    "name needs a rule (word lists, as C43's answer gives islands, "
-                    "and who sees it); the beats need the heist, the result, "
-                    "weaving and a tutorial ruin, so this lands last.",
-             blocked_by=["TD.25", "TD.17", "TD.20", "TD.16"], register=["F56", "C51"]),
+                    "sets, the Keeper's name and face, then §16's beats, each on "
+                    "its own screen and finished by a real event: three ruleborn "
+                    "wake, the first heist on a tutorial ruin and its result, two "
+                    "strays put to work at the Star Well and the Garden, a law "
+                    "woven, the first five-minute experiment, two more ruins to "
+                    "choose from, and three daily goals. So it lands last, on the "
+                    "screens and on the server's pieces: a ruin lease mode and the "
+                    "tutorial set, the first session's grants, the Keeper's name "
+                    "and face, and a first-session-complete flag. The name's rule "
+                    "and who sees it wait on the owner's answer to G58 (its "
+                    "recommendation: word lists at every age, as C43's answer gives "
+                    "islands, seen by raiders as §12.4's free name), and the first "
+                    "heist's time and what comes before it on C51.",
+             gate="§16's moments each finished by a real event in a flow test from "
+                  "title to done; a killed app resumes at the same beat; the "
+                  "screen gate for the First launch row",
+             blocked_by=["TD.16", "TD.17", "TD.18", "TD.19", "TD.20", "TD.21",
+                         "TD.22", "TD.25", "TD.40", "TC.12", "TD.57"],
+             register=["F56", "C51", "D87"]),
         dict(id="TD.27", owner="claude", status="blocked",
              title="Slower ruins, not slower rehearsals",
              detail="§23.5 adopts the design's 75% speed for drifting ruins "
@@ -1552,36 +2116,199 @@ dict(
                     "accessibility row names that test; the setting, the test and "
                     "the proof are renamed in one change, and the effect waits for "
                     "ruins.",
+             gate="the setting slows drifting ruins and nothing else (a test), and "
+                  "completion's accessibility row reads the renamed test",
              blocked_by=["TD.16"],
              register=["D96"]),
         dict(id="TD.28", owner="claude", status="blocked",
              title="Landscape for every screen",
              detail="§23.3 asks for portrait and landscape; Screens v3 designs "
-                    "portrait only (§23.5). The tab bar becomes a left rail and "
-                    "the HUD a right column.",
-             blocked_by=["TD.30"]),
+                    "portrait only (§23.5). The shell first, under both of TD.6's "
+                    "arrangements (the design's tab bar a left rail) and its HUD a "
+                    "right column (TD.6 is portrait only), then "
+                    "each screen once its portrait version is accepted.",
+             gate="the layout check in landscape for every screen, in both "
+                  "languages, at 100%, 150% and 200% text",
+             blocked_by=["TD.30", "TD.17", "TD.18", "TD.19", "TD.20", "TD.21",
+                         "TD.22", "TD.23", "TD.24", "TD.25", "TD.26", "TD.41",
+                         "TD.42", "TD.43", "TD.44", "TD.45", "TD.46", "TD.62",
+                         "TD.63", "TD.64", "TD.65", "TD.66"]),
+        # -- Measuring it -----------------------------------------------------
+        dict(id="TD.47", owner="claude", status="ready",
+             title="Completion's proofs: the store builds, crews, terrain and stage SD",
+             detail="Three places where completion reads something other than "
+                    "what is built. §26.6 puts the store builds in the determinism "
+                    "spike, and completion counts them in phase 2 with a proof "
+                    "that reads nothing: one proof reads a recorded build (engine "
+                    "version, SDK levels, the upload), counted in one place, with "
+                    "the choice of phase stated (G68). Crews reads done without "
+                    "abilities, Sage powers or casts, and Terrain editing with five "
+                    "of 39 features: each proof gains the missing system, so the "
+                    "figure reads what is built (G67). And §26.8 costs none of "
+                    "stage SD's screens, design port or 3D world, so nothing here "
+                    "moves the figure (G66): §26.8 has no row for the interface, "
+                    "as it has none for the home economy (G42), and once the "
+                    "document carries one (T1.6), completion reads it.",
+             gate="Crews and Terrain editing read their missing systems as not "
+                  "built until TD.12, and TD.15 and TD.38, land; the store builds count only "
+                  "from a recorded build; <code>tools/completion.py</code> states "
+                  "which phase holds them",
+             register=["G66", "G67", "G68"]),
         # -- The owner's ------------------------------------------------------
         dict(id="TD.29", owner="you", status="yours",
              title="Settle what the designs leave open, and take your answers into the document",
-             detail="v3.6 took none of the 47 answers you recorded on 25–26 "
-                    "September, and §23.5 makes the document win over the "
-                    "designs, so a screen can have three sources that disagree. "
+             detail="v3.6 took part of one of the 47 answers you recorded on "
+                    "25–26 September, G28's wording for §18.8 without ‘bought’, "
+                    "with §14.4's free-lane row, and left the rest unwritten; §23.5 makes the document win over "
+                    "the designs, so a screen can have three sources that disagree. "
                     "The build follows a recorded answer first, then the document, "
-                    "then the design. Open decisions the designs raise are in the "
-                    "brief: the visual language (surfaces, typefaces, icon finish, "
-                    "motion), how outlined text counts for contrast, the Twinned's "
-                    "gift, and the rest listed there.",
+                    "then the design: that order is C45's recommendation, and it "
+                    "holds only until you answer C45. The decisions listed here "
+                    "hold no task up: the tasks above build each one's pending "
+                    "value switchable by one token. A decision a task waits on has "
+                    "a task of its own below (TD.50 to TD.61), so that task waits on "
+                    "its decision and no other. All of them are in the brief, in "
+                    "the order to decide them: the visual language (surfaces, "
+                    "typefaces, icon finish, motion, shading), how outlined text "
+                    "counts for contrast, the decisive moment, and the rest listed "
+                    "there.",
+             gate="every decision listed here has an answer in "
+                  "<code>docs/decisions/answers.json</code>",
              evidence="docs/decisions/index.html",
-             register=["C45", "C49", "G65"]),
+             register=["C44", "C45", "D77", "C46", "G47", "G48", "C47", "G52",
+                       "C49", "F57", "D89", "D90", "D91", "D92", "G59", "D93",
+                       "C52"]),
+        dict(id="TD.50", owner="you", status="yours",
+             title="Answer G51: what a server-checked heist knows of the crew",
+             detail="TD.34 waits on it: whether the heist models levels and traits, and"
+                    " §11.4 to §11.6's rules for growth, a home and rest.",
+             gate="G51 has an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["G51"]),
+        dict(id="TD.51", owner="you", status="yours",
+             title="Answer C53 and G62: the paradox-born",
+             detail="TD.35 waits on both: what the Twinned's gift doubles, or whether "
+                    "it ships, and whether paradox-born guard and take forms.",
+             gate="C53 and G62 each have an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["C53", "G62"]),
+        dict(id="TD.52", owner="you", status="yours",
+             title="Answer C48 and G46: stability's open rules and faults",
+             detail="TD.37 waits on both: upkeep, crown laws across realms, Breaking "
+                    "and the recommended laws, and how §5.5's faults open and who sees "
+                    "them.",
+             gate="C48 and G46 each have an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["C48", "G46"]),
+        dict(id="TD.53", owner="you", status="yours",
+             title="Answer G56: who sets a feature's direction",
+             detail="TD.38 waits on it: who sets the up side, the ledge side, "
+                    "downstream and a tunnel's two ends, and what the generator picks.",
+             gate="G56 has an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["G56"]),
+        dict(id="TD.54", owner="you", status="yours",
+             title="Answer G57: the rehearsal crews and a raid's report",
+             detail="TD.39 waits on it: each rehearsal crew's rule and how one raid's "
+                    "report is measured.",
+             gate="G57 has an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["G57"]),
+        dict(id="TD.55", owner="you", status="yours",
+             title="Answer G69: held and leaked, records and badges",
+             detail="TD.24 waits on it: what a defence held or leaked means on the "
+                    "Profile, its records, and whether badges ship.",
+             gate="G69 has an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["G69"]),
+        dict(id="TD.56", owner="you", status="yours",
+             title="Answer G49: the Codex's first chapter, meeting a law and mastery",
+             detail="TD.44 waits on it: chapter 1's laws, meeting a law, mastery and "
+                    "the Codex's notes.",
+             gate="G49 has an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["G49"]),
+        dict(id="TD.57", owner="you", status="yours",
+             title="Answer G58 and C51: minors' protections, every Keeper's name, and "
+                   "the first session",
+             detail="TD.26 waits on both: how a band changes, the play-time reminder, "
+                    "every Keeper's name and where the terms are taken (G58), and the "
+                    "first heist's time and what comes before it (C51).",
+             gate="G58 and C51 each have an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["G58", "C51"]),
+        dict(id="TD.58", owner="you", status="yours",
+             title="Answer C54: the Sparkwright's goggles and each kind's animations",
+             detail="TD.62 waits on it; TD.11's other characters do not.",
+             gate="C54 has an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["C54"]),
+        dict(id="TD.59", owner="you", status="yours",
+             title="Answer G50 and G64: hatching and naming, and the visiting Stray",
+             detail="TD.63 waits on both; TD.21's roster does not.",
+             gate="G50 and G64 each have an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["G50", "G64"]),
+        dict(id="TD.60", owner="you", status="yours",
+             title="Answer D86 and C50: friends' presence and the Open Vault league",
+             detail="TD.64 waits on both; TD.23's screens do not.",
+             gate="D86 and C50 each have an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["D86", "C50"]),
+        dict(id="TD.61", owner="you", status="yours",
+             title="Answer G53, G54 and G55: the Lab's rules, curation's swaps and the"
+                   " hold figure",
+             detail="TD.65 waits on all three; TD.22's screens do not.",
+             gate="G53, G54 and G55 each have an answer in "
+                  "<code>docs/decisions/answers.json</code>",
+             evidence="docs/decisions/index.html",
+             register=["G53", "G54", "G55"]),
+        dict(id="TD.48", owner="you", status="blocked",
+             title="Target phones in hand, running TC.3's builds",
+             detail="§26.2's art-style test reads on target devices, and TC.8 "
+                    "measures on them: §24's reference device (a mid-range 4 GB "
+                    "Android at 60 Hz) and the phones §21.3 names (C52 decides how "
+                    "the two rules meet). This is having them and installing TC.3's "
+                    "builds; the measurements are TD.30's, T3.1's (the iPhone "
+                    "and Android checksums, before any screen) and TC.8's.",
+             gate="TC.3's build installs and launches on each phone",
+             blocked_by=["TC.3"]),
         dict(id="TD.30", owner="you", status="blocked",
              title="§26.2's pre-production exit: screens approved, the art style read on devices",
              detail="Phase 1 ends when the screens are approved and the art-style "
                     "test shows eight wards and six or seven kinds of defensive "
                     "marker reading on target devices, checked under "
                     "colour-blindness simulation; if eight do not read the ward cap "
-                    "drops one at a time (§26.2). No task held it.",
+                    "drops one at a time (§26.2). The markers include guards with "
+                    "TD.11's role accessories and TD.31's pylons, and the "
+                    "harness's 15 to 25 decisions a run are measured after TD.12, "
+                    "which changes them. No task held it before stage SD.",
              gate="§26.2 phase 1's exit test",
-             blocked_by=["TD.10", "TC.8"]),
+             blocked_by=["TD.10", "TD.11", "TD.12", "TD.31", "TD.48"]),
+        dict(id="TD.49", owner="you", status="blocked",
+             title="Re-check the store declarations when Profile, Settings and "
+                   "first launch add data",
+             detail="Profile writes each heist's facts at settlement (TD.24), "
+                    "Settings stores profile visibility (TD.25), and first launch "
+                    "the Keeper's name and face (TD.26). The column test in "
+                    "<code>server/privacy.json</code> catches each new column; if "
+                    "TC.14 filed App Privacy and Data safety before they landed, "
+                    "both are answered again from server/declarations.md.",
+             gate="<code>node server/src/privacy.mjs --check</code> passes with "
+                  "the new columns, and the filed answers match "
+                  "server/declarations.md",
+             blocked_by=["TC.14", "TD.24", "TD.25", "TD.26"]),
     ],
 ),
 
@@ -1630,10 +2357,15 @@ dict(
         dict(id="T5.1", owner="claude", status="blocked",
              title="Lock the simulation contract (§24.10)",
              detail="Not before abilities, Sage powers and casts are in the "
-                    "replay (TD.12) and the actors' appearance rides beside it "
-                    "(TD.9): both change what a heist records, and a lock before "
-                    "them locks an incomplete contract.",
-             blocked_by=["T3.1", "TD.12", "TD.9"]),
+                    "replay (TD.12), with the crew's levels and traits (TD.34) "
+                    "and the paradox-born (TD.35), and the actors' appearance "
+                    "rides beside it (TD.9); nor before the island holds its "
+                    "buildings (TD.36), its terrain (TD.15, TD.38) and the "
+                    "stability price (TD.14). Each changes what a heist or an "
+                    "island records and is a rules-version change (\u00a724.11), "
+                    "and a lock before them locks an incomplete contract.",
+             blocked_by=["T3.1", "TD.12", "TD.9", "TD.14", "TD.15", "TD.34",
+                         "TD.35", "TD.36", "TD.38"]),
         dict(id="T5.2", owner="claude", status="blocked",
              title="Lock the detection numbers (§12.17)",
              detail="Unblocked by C1, and the numbers are already data in "
@@ -1672,7 +2404,10 @@ dict(
              blocked_by=["T1.4", "T1.9"]),
         dict(id="T5.4", owner="claude", status="blocked",
              title="Lock saves, bundles and versions (§24.11)",
-             blocked_by=["T5.1", "TD.9"]),
+             detail="After the simulation contract (T5.1), and after the "
+                    "bundle carries crown laws (TD.14) and the stability rules "
+                    "the owner settles (TD.37).",
+             blocked_by=["T5.1", "TD.9", "TD.14", "TD.37"]),
         dict(id="T5.5", owner="claude", status="doing",
              title="Specify pathfinding and crew control before building it",
              detail="The largest gap and the system most likely to fail "
@@ -1739,15 +2474,21 @@ dict(
              title="Build the slice",
              detail="Its content needs more than the locks: universes of several "
                     "realms (T3.3), the roster on the server (TC.12), abilities and "
-                    "Sages (TD.12), ruins and rehearsals (TD.16), and "
-                    "\u00a726.2's pre-production exit (TD.30).",
+                    "Sages (TD.12), ruins (TD.16), \u00a726.2's pre-production exit "
+                    "(TD.30), and the slice's screens: the heist and result "
+                    "(TD.17, TD.42), the landing picker, Observatory and planner "
+                    "(TD.41, TD.18), home and the realm view (TD.19), weaving "
+                    "(TD.20), the roster and the Sage hall (TD.21), and "
+                    "rehearsal (TD.43). The defence log (TD.66) is not the "
+                    "slice's: §26.2 brings heists against players in phase 3.",
              gate="\u00a719.27's harness gates: 15 to 25 meaningful decisions a "
                   "run, a near-capture in about a third of runs, the optimal crew "
                   "at least 35 points ahead of the careless one, hold rates and "
                   "pacing in band, commands explaining most of the outcome "
                   "variance. No outside player is involved (\u00a726.2)",
              blocked_by=["T5.1", "T5.2", "T5.3", "T5.4", "T5.5", "T3.3",
-                         "TC.12", "TD.12", "TD.16", "TD.30"]),
+                         "TC.12", "TD.12", "TD.16", "TD.30", "TD.17", "TD.42",
+                         "TD.41", "TD.18", "TD.19", "TD.20", "TD.21", "TD.43"]),
         dict(id="T6.2", owner="you", status="blocked",
              title="Play the slice yourself, against the harness's gates",
              detail="Since v3.3 \u00a726.2 needs no player but the developer before "
