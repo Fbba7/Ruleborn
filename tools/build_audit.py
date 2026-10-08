@@ -1005,6 +1005,9 @@ def build() -> str:
     answered = [k for k in V34 if status_before_v34(k) not in SETTLED]
     v34_closed = sum(1 for k in answered if V34[k]["status"] != "open")
     v34_open = ", ".join(sorted(k for k in answered if V34[k]["status"] == "open"))
+    v36_touched = len(V36)
+    from check_edits import NO_EDIT_BECAUSE as _why
+    v36_yours = sum(1 for k in FOUND_IN_V36 if _why.get(k, "").startswith("a decision"))
     new_in_v3 = sum(1 for i in REGISTER if i["id"] in FOUND_IN_V3)
     today = datetime.date.today().strftime("%d %B %Y")
 
@@ -1642,6 +1645,18 @@ def build() -> str:
       versions have now answered this register, and each item carries what each
       one did, as a note per version beneath it. {fixed_count} items are fixed
       in the document itself &mdash; including where a fix stopped short.</p>
+    <p class="lede"><strong>v3.6 records the owner's designs, and closes nothing.</strong>
+      Screens v3 &mdash; 28 screens, 43 character and creature sheets with 3D
+      models, 393 icons &mdash; is the visual reference, and &sect;23.5 lets the
+      document win on every rule. Of the {v36_touched} items v3.6 touches, none
+      closes: G28 and F37 narrow, and C11 reopens. Reading the designs against
+      v3.6 and the build &mdash; twelve readers, each finding tried by an
+      adversarial verifier &mdash; found {len(FOUND_IN_V36)} more, {v36_yours} of
+      them decisions for you, now in the brief; the rest are what stage SD of the
+      roadmap builds. The designs add mechanics the document lacks (build timers,
+      a shield on home, presence, quests), leave out things it requires (law
+      pylons, the guard form), and set a visual language &sect;21.8 does not
+      have, which is the first of your new decisions.</p>
     <p class="lede"><strong>v3.4 closes {v34_closed} of the {len(answered)} items it
       answers.</strong> Each was read against the built document by section and
       line rather than taken from &sect;31.9's own list, every check that tracked

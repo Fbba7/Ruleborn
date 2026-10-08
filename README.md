@@ -45,8 +45,8 @@ designs depart from a rule or the build in about 190 places §23.5 does not list
 build them is the roadmap's stage SD. v3.6 itself answers none of the 70 items
 open against v3.4, narrows G28 and F37, and reopens C11.
 
-Five versions have now answered the audit. **111 of 222 register items are fixed
-in the document itself**, the latest 15 by v3.4. 68 are still open.
+Five versions have now answered the audit. **111 of 284 register items are fixed
+in the document itself**, the latest 15 by v3.4. 130 are still open, 62 of them found reading Screens v3.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -316,7 +316,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 222 tracked items with section references and status:
+document, as 284 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,

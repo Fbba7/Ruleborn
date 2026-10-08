@@ -1235,7 +1235,8 @@ dict(
              gate="100 of 100 client tests on 4.7.2, the five goldens agreeing at "
                   "every second, <code>export.sh check</code> on the 4.7.2 templates, "
                   "gdlint clean",
-             evidence="python3 client/status.py; bash client/export.sh check"),
+             evidence="python3 client/status.py; bash client/export.sh check",
+             register=["D76"]),
         dict(id="TD.2", owner="claude", status="blocked",
              title="The design's tokens, three typefaces and the licence ledger",
              detail="Screens v3 keeps its look in inline styles (852 colours, 402 "
@@ -1253,7 +1254,8 @@ dict(
                     "text at 12 real points on 360-dp phones.",
              gate="every client test passes unchanged; the tokens validator "
                   "refuses a value with no source",
-             blocked_by=["TD.1"]),
+             blocked_by=["TD.1"],
+             register=["D90", "D91"]),
         dict(id="TD.3", owner="claude", status="blocked",
              title="Materials and components, and checks that read what words sit on",
              detail="Gold, leather, red, green and round buttons, sheets, chips, "
@@ -1268,7 +1270,7 @@ dict(
                     "word actually sits on and how outlined text counts.",
              gate="§21.1's sizes and §21.8's contrast at 100% and 200% "
                   "text, in both languages, on the dark and the parchment surfaces",
-             blocked_by=["TD.2"], register=["D72"]),
+             blocked_by=["TD.2"], register=["D72", "G59", "F58", "D89"]),
         dict(id="TD.4", owner="claude", status="blocked",
              title="Motion, with reduced motion that reaches everything",
              detail="The design has 86 keyframe animations, eight of them named "
@@ -1278,7 +1280,8 @@ dict(
                     "<code>UI.motion_ms</code>'s rule applies to all of it, toasts "
                     "become banners that stay when the player asks (§20.8), "
                     "and a lint rule refuses a tween made anywhere else.",
-             blocked_by=["TD.2"]),
+             blocked_by=["TD.2"],
+             register=["D91"]),
         dict(id="TD.5", owner="claude", status="blocked",
              title="The icons: 393 designed, exported once, imported on 4.7.2",
              detail="Four sources: <code>icons_rbi.js</code> (360 in 31 groups), "
@@ -1324,7 +1327,8 @@ dict(
                     "<code>EXT_mesh_gpu_instancing</code>, which 4.5 refused.",
              gate="every asset inside §21.3's budget and within 5% of "
                   "§21.6's height, re-exported byte for byte",
-             blocked_by=["TD.1"]),
+             blocked_by=["TD.1"],
+             register=["G61", "D93"]),
         dict(id="TD.8", owner="claude", status="blocked",
              title="One toon look for everything",
              detail="The diorama is a four-step toon with world-space hulls; the "
@@ -1335,7 +1339,8 @@ dict(
                     "a clip-space outline, water and lava, sky by local time "
                     "(§21.2), glows, the ghost, and the Hush, Spark and Echo "
                     "variants, assigned to every imported model on import.",
-             blocked_by=["TD.7"]),
+             blocked_by=["TD.7"],
+             register=["D92", "C52"]),
         dict(id="TD.9", owner="claude", status="ready",
              title="Who the actors are, carried beside the replay",
              detail="The 3D draws a kind, a form and an outfit; the replay gives "
@@ -1345,7 +1350,7 @@ dict(
                     "appearance block, about four bytes an actor, stored with the "
                     "heist and the island beside §24.11's four inputs and "
                     "never inside them, and returned with the replay.",
-),
+             register=["G60"]),
         dict(id="TD.10", owner="claude", status="blocked",
              title="The world drawn from the simulation",
              detail="The island base built around the simulation's square grid "
@@ -1358,7 +1363,8 @@ dict(
                     "the fallback.",
              gate="every actor's world position equals its tile; a still of each "
                   "mode against a golden on a GPU runner",
-             blocked_by=["TD.8", "TD.9"]),
+             blocked_by=["TD.8", "TD.9"],
+             register=["G45", "D74"]),
         dict(id="TD.11", owner="claude", status="blocked",
              title="Characters in full: forms, guards, role accessories",
              detail="No model has the guard form the sheets label (its sash and "
@@ -1368,7 +1374,8 @@ dict(
                     "and lantern and §21.6's role accessories so a guard's role "
                     "reads at a glance (§12.8); springs; portraits re-rendered "
                     "in the toon look. With the character artist (§26.3).",
-             blocked_by=["TD.7"]),
+             blocked_by=["TD.7"],
+             register=["D94", "C54"]),
         # -- Track C: what the screens stand on ----------------------------
         dict(id="TD.12", owner="claude", status="ready",
              title="Abilities, Sage powers and casts in the simulation",
@@ -1385,7 +1392,8 @@ dict(
                     "goldens are regenerated and the harness's decision band "
                     "re-measured.",
              gate="the decision band re-measured inside §12.6's 8 to 12 "
-                  "seconds; T5.1 waits for this"),
+                  "seconds; T5.1 waits for this",
+             register=["G47", "G51", "G67"]),
         dict(id="TD.13", owner="claude", status="ready",
              title="The simulation's event log",
              detail="Outside the checksum: guard state changes with their cause, "
@@ -1394,7 +1402,7 @@ dict(
                     "The result's decisive moment and its one thing to try "
                     "(§12.13), the heist's haptics and words, Profile's facts, "
                     "the share clip and D65's heatmaps all read it.",
-             register=["D65"]),
+             register=["D65", "G48"]),
         dict(id="TD.14", owner="claude", status="ready",
              title="Stability and weaving prices, priced once for client and server",
              detail="Weaving and the Harmony view show strain, harmonies and "
@@ -1402,7 +1410,7 @@ dict(
                     "same. One function in the simulation (§5.5, §8) "
                     "exported to the client and the server's WebAssembly, with "
                     "crown laws carried in the bundle (D61).",
-             register=["D61"]),
+             register=["D61", "C48"]),
         dict(id="TD.15", owner="claude", status="ready",
              title="Terrain in the simulation: the 34 missing features, moss, heights",
              detail="The simulation has 5 of §6.2's 39 features (rock pillar, "
@@ -1411,7 +1419,8 @@ dict(
                     "moss and clearing it, heights 0 to 3, directions and tunnels, "
                     "and terrain points. Completion's Terrain editing row reads "
                     "done on one test. The height of a level is unstated; the "
-                    "design's ratio is half a tile."),
+                    "design's ratio is half a tile.",
+             register=["G56", "G67"]),
         dict(id="TD.16", owner="claude", status="ready",
              title="The generator and the crews: ruins, rehearsals, fallbacks",
              detail="D66: drifting ruins at three labelled difficulties "
@@ -1421,7 +1430,7 @@ dict(
                     "island before it is offered, which also gives D62's hold-band "
                     "check. The Observatory's ruins, Slower ruins, the defence log "
                     "and the first session's tutorial ruin all wait for it.",
-             register=["D66", "D62"]),
+             register=["D66", "D62", "G55", "G57"]),
         # -- Track D: the screens -----------------------------------------------
         dict(id="TD.17", owner="claude", status="blocked",
              title="Heist and result on the design",
@@ -1438,7 +1447,8 @@ dict(
                     "that are refused.",
              gate="the heist and result tests kept by name and passing (completion "
                   "reads them); the moment picker tested on the goldens",
-             blocked_by=["TD.3", "TD.12", "TD.13"]),
+             blocked_by=["TD.3", "TD.12", "TD.13"],
+             register=["C47", "D79", "D80"]),
         dict(id="TD.18", owner="claude", status="blocked",
              title="Observatory, scout report, landing picker and planner",
              detail="The landing picker on one island can start once the "
@@ -1449,7 +1459,7 @@ dict(
                     "scout draws no positions (brief 38) and follows the owner's "
                     "free-scout answer (F46); the fee and the window follow F39, "
                     "C41 and F44 as the server does.",
-             blocked_by=["TD.3", "T3.3", "TD.16"], register=["F46", "F51"]),
+             blocked_by=["TD.3", "T3.3", "TD.16"], register=["F46", "F51", "D77", "C46", "D78"]),
         dict(id="TD.19", owner="claude", status="blocked",
              title="Home and the realm view on the world",
              detail="The Universe map and the realm view are the diorama with "
@@ -1461,7 +1471,8 @@ dict(
                     "second Hearths and Storehouse in the Heart, and its shield "
                     "timer on home are mechanics §10 and §18.8 do not have, "
                     "and are refused.",
-             blocked_by=["TD.6", "TD.10", "TC.12"]),
+             blocked_by=["TD.6", "TD.10", "TC.12"],
+             register=["D73", "D75", "C44", "G46"]),
         dict(id="TD.20", owner="claude", status="blocked",
              title="Weaving, the law card, the Codex and the Harmony view",
              detail="Weaving shows the big card with its looping preview, cost, "
@@ -1473,7 +1484,7 @@ dict(
                     "harmonies, clashes and chords as the simulation prices them "
                     "(TD.14). Effect words come from content (G23, G25). The Codex, "
                     "Aether and weaving state live on the server first (TC.12).",
-             blocked_by=["TD.3", "TD.14", "TC.12"], register=["G23", "G25"]),
+             blocked_by=["TD.3", "TD.14", "TC.12"], register=["G23", "G25", "G49", "D81"]),
         dict(id="TD.21", owner="claude", status="blocked",
              title="Roster, Character, Sage hall and Forms album",
              detail="The roster on the server comes first (TC.12). Content gains "
@@ -1483,7 +1494,8 @@ dict(
                     "§11.1's role numbers, not the sheets' own; the design's "
                     "stealth and grit stats, its role-keyed abilities and its "
                     "work bonuses are refused.",
-             blocked_by=["TD.3", "TD.12", "TC.12"]),
+             blocked_by=["TD.3", "TD.12", "TC.12"],
+             register=["D82", "G50", "G52", "C53", "G62", "G63", "G64"]),
         dict(id="TD.22", owner="claude", status="blocked",
              title="Lab, defence curation, rehearsal and defence log, terrain editor, Workshop",
              detail="The Lab at §10.2's times (5 h at level 3, not the design's "
@@ -1494,7 +1506,7 @@ dict(
                     "editor on the simulation's 39 features and §6.1's budgets "
                     "(not the design's 80 points, or its Hill and Grove), and the "
                     "Workshop on the design, keeping remix and withdraw.",
-             blocked_by=["TD.3", "TD.15", "TD.16"], register=["G31"]),
+             blocked_by=["TD.3", "TD.15", "TD.16"], register=["G31", "D83", "G53", "G54"]),
         dict(id="TD.23", owner="claude", status="blocked",
              title="Season, Shop, Share sheet and Friends on the design",
              detail="Already built on the backend that exists (TC.6); only their "
@@ -1502,7 +1514,7 @@ dict(
                     "a Starpass that adds 20% stars (§18.8), quests and star "
                     "chests, league rewards for everyone, live “raiding” "
                     "status (§17.8), prices in Starglass (F41).",
-             blocked_by=["TD.3"], register=["G28", "F41"]),
+             blocked_by=["TD.3"], register=["G28", "F41", "D84", "D85", "F57", "D86", "C50"]),
         dict(id="TD.24", owner="claude", status="blocked",
              title="Profile and stats, with its server route",
              detail="v3.6's new §23.2 row: Renown and league over time, never "
@@ -1512,7 +1524,8 @@ dict(
                     "each heist's facts at settlement and answers "
                     "<code>GET /v1/profile</code>. “Leaked”, records and "
                     "badges are undefined (TD.29).",
-             blocked_by=["TD.3", "TD.13"]),
+             blocked_by=["TD.3", "TD.13"],
+             register=["G69"]),
         dict(id="TD.25", owner="claude", status="blocked",
              title="Settings and wellbeing in four tabs",
              detail="Protections the band fixes shown locked (§23.2, §20.2), "
@@ -1521,7 +1534,7 @@ dict(
                     "play-time reminders (§20.2's 60 and 90 minutes), and the "
                     "notification settings the server already takes. The design's "
                     "age-band preview changes the player's band and is refused.",
-             blocked_by=["TD.3"], register=["D70", "F43", "G34"]),
+             blocked_by=["TD.3"], register=["D70", "F43", "G34", "D87", "D88", "G58"]),
         dict(id="TD.26", owner="claude", status="blocked",
              title="First launch in §23.5's order",
              detail="Title, the age step (the built check, restyled, with no way "
@@ -1530,7 +1543,7 @@ dict(
                     "name needs a rule (word lists, as C43's answer gives islands, "
                     "and who sees it); the beats need the heist, the result, "
                     "weaving and a tutorial ruin, so this lands last.",
-             blocked_by=["TD.25", "TD.17", "TD.20", "TD.16"], register=["F56"]),
+             blocked_by=["TD.25", "TD.17", "TD.20", "TD.16"], register=["F56", "C51"]),
         dict(id="TD.27", owner="claude", status="blocked",
              title="Slower ruins, not slower rehearsals",
              detail="§23.5 adopts the design's 75% speed for drifting ruins "
@@ -1539,7 +1552,8 @@ dict(
                     "accessibility row names that test; the setting, the test and "
                     "the proof are renamed in one change, and the effect waits for "
                     "ruins.",
-             blocked_by=["TD.16"]),
+             blocked_by=["TD.16"],
+             register=["D96"]),
         dict(id="TD.28", owner="claude", status="blocked",
              title="Landscape for every screen",
              detail="§23.3 asks for portrait and landscape; Screens v3 designs "
@@ -1557,7 +1571,8 @@ dict(
                     "brief: the visual language (surfaces, typefaces, icon finish, "
                     "motion), how outlined text counts for contrast, the Twinned's "
                     "gift, and the rest listed there.",
-             evidence="docs/decisions/index.html"),
+             evidence="docs/decisions/index.html",
+             register=["C45", "C49", "G65"]),
         dict(id="TD.30", owner="you", status="blocked",
              title="§26.2's pre-production exit: screens approved, the art style read on devices",
              detail="Phase 1 ends when the screens are approved and the art-style "

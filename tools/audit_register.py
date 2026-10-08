@@ -63,7 +63,13 @@ FOUND_IN_V34 = frozenset({"C40", "G18", "D59", "F35",
 
 #: Found by reading v3.6 and Screens v3, the owner's screen and character
 #: designs it records (23.5), against themselves and against the build.
-FOUND_IN_V36 = frozenset({})
+FOUND_IN_V36 = frozenset({
+    "D73", "D74", "D75", "C44", "G45", "G46", "D76", "C45", "D77", "D78", "C46",
+    "G47", "G48", "C47", "D79", "D80", "D81", "G49", "C48", "D82", "G50", "G51",
+    "G52", "C49", "D83", "G53", "G54", "G55", "G56", "G57", "D84", "D85", "F57",
+    "D86", "C50", "D87", "C51", "D88", "G58", "D89", "D90", "G59", "F58", "D91",
+    "D92", "D93", "C52", "G60", "G61", "D94", "C53", "G62", "G63", "G64", "D95",
+    "C54", "G65", "G66", "G67", "G68", "D96", "G69"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6731,6 +6737,2246 @@ dict(id="G44", kind="gap", severity="minor", status="open",
          "platform\u2019s rate limiting to the same keys when the edge is "
          "deployed."),
 
+dict(id="D73", kind="deviation", severity="significant", status="open",
+     title="The realm view and home add mechanics §6, §10 and §18.8 do not have, "
+           "from build timers and two builders to a shield on home",
+     refs=["10", "10.1", "10.2", "10.3", "5.8", "9.4", "6.1", "6.2", "18.8", "12.3", "22.1", "23.5"],
+     body="§10: <em>“There are no build timers: building and upgrading are instant,"
+          " and the pace comes from resources and from the Spire’s level”</em>. "
+          "§23.5: <em>“A design never adds a mechanic.”</em> Screens v3’s realm "
+          "view and home add these, and §23.5 lists none of them.<br><br>Upgrades "
+          "take 10 seconds plus 1.5 a level, and no more than two run at once "
+          "(realm_diorama.js:1291 <code>startUpgrade</code>; the builders chip, "
+          "screens_main.js:184; the countdown, "
+          "screens_main.markup.html:541).<br><br>The build tray "
+          "(screens_main.js:156) offers a Storehouse that “Protects loot from "
+          "raids” in every realm, the Heart included, where §10.2 puts it in "
+          "<em>“Outer realms; 1 per realm”</em> and §9.4 calls Storehouses "
+          "<em>“fully exposed”</em>; a Ward, “Rune circle that raises the alarm”; "
+          "and a Pylon that “Links wards; guards hear alarms”. The defence tray "
+          "(screens_main.js:158) offers a Rune circle, a Grate that “Traps a crew "
+          "member for 3 s” and a Lantern that “Lights up hiding spots”, where §10.3"
+          " has six wards, from the Gravity Well to the Lantern Glare, and the only"
+          " universe-wide alarm is the law Whispers. It offers three kinds of post "
+          "at 1,500, 1,800 and 2,100 — a Scout post that “sees far”, a Warden post "
+          "that “holds chokepoints”, a Breaker post that “breaks crew shields” — "
+          "where §10.2’s Guardian Post is one kind: <em>“One ruleborn stands at "
+          "each”</em>.<br><br>The diorama puts two Star Wells and three Hearths in "
+          "the Heart, and up to three Wells, three Gardens, two Looms and four "
+          "Hearths in an outer realm (realm_diorama.js:88-89), and the tray reads "
+          "Hearth “5 / 8”. §5.8: <em>“A realm holds one Star Well, one Aether "
+          "Spring and one Garden, however high its level rises”</em>, and §10.2’s "
+          "Hearth is <em>“Every realm; 1 per realm”</em>. Every producer has two "
+          "worker slots at any level (realm_diorama.js:1275), where §10.1 gives "
+          "one, two and three by level.<br><br>The terrain tray "
+          "(screens_main.js:157) sells a Hill that “Blocks sight lines” and a Grove"
+          " that “hides wards”, which §6.2 does not have. It prices a Pond at 4 "
+          "points and a Stream at 6, where §6.2 has 2 and 1 a tile, and a Cliff at "
+          "8, where §6.2’s cliff edge is <em>“Free (made by height)”</em>. Its Pond"
+          " “Swimmers ignore; slows raiders” is §6.2’s <em>“Deep: only swimmers "
+          "cross; everyone else goes round”</em>. Its budget is a fixed “54 / 80 "
+          "points”, where §6.1 gives <em>“30 terrain points plus 15 per realm level"
+          " (45 to 105)”</em> and the Heart 40 plus 10 a Spire level.<br><br>Home’s"
+          " Defence button carries a shield counting down “5h 12m” "
+          "(screens_main.markup.html:386) for a Keeper 24 with 128 heists. §18.8: "
+          "<em>“no timers on the home screen”</em>. §12.3’s protection lasts "
+          "<em>“for their first 72 hours, or until they raid a player "
+          "themselves”</em>, §22.1 lists <em>“Shields or heist retries”</em> among "
+          "what is never sold, and no section has a shield.<br><br>The server "
+          "already builds and raises buildings instantly at §10.2’s prices "
+          "(server/src/universe.mjs). Found reading Screens v3 against v3.6.",
+     rec="None of it is built until it is written. The build’s trays list §10.2’s "
+         "buildings, §10.3’s six wards and §6.2’s features, with their counts and "
+         "prices, from content/ and the server; upgrades stay instant; home shows "
+         "no timer, and §12.3’s protection is said in words on the defence screen "
+         "while it lasts. Add the rows to §23.5 so the design file is corrected, "
+         "or the owner writes any of these into §6 or §10 first."),
+
+dict(id="D74", kind="deviation", severity="significant", status="open",
+     title="Screens v3 draws no law pylon, in the realm view or the heist, and §23.5"
+           " says only that pylons look alike",
+     refs=["10.2", "21.5", "23.1", "23.2", "12.6", "15.3", "23.5"],
+     body="§10.2’s Law Pylon is <em>“One per law slot”</em>, and §21.5 draws it as "
+          "<em>“An obelisk topped with the school’s shape”</em>. §23.1’s realm "
+          "screen has <em>“law pylons with their zones. Law chips float over the "
+          "pylons they belong to”</em>, and §23.2 lists pylons among the realm "
+          "view’s must-shows. In the heist, breaking a pylon is a decision, and "
+          "<em>“A pylon shows its law’s school colour and that law’s own glyph … "
+          "and a tag names its law the first time the crew sees it (15.3)”</em> "
+          "(§12.6).<br><br>Screens v3’s realm_diorama.js, which draws both the "
+          "realm view and the heist, has no pylon or obelisk at all. Laws show only"
+          " as the realm’s law strip (screens_main.js:338-341) and as ambient "
+          "effects. The tray’s “Pylon” (screens_main.js:156) builds the diorama’s "
+          "Spire type, so a placed one looks like a second Spire, and it is a "
+          "ward-linking defence building, not a law pylon. §23.5’s Realm view row, "
+          "<em>“Workers, pylons, wards and guard posts look alike”</em>, assumes "
+          "pylons are drawn. They are not, so the build has no pylon to follow. The"
+          " simulation already has pylons and the Break order (sim/src/grid.rs "
+          "<code>Feature::Pylon</code>; sim/src/replay.rs "
+          "<code>Kind::Break</code>). Found reading Screens v3 against v3.6.",
+     rec="Design one pylon per school, §21.5’s obelisk with the school’s shape and"
+         " colour and the law’s glyph. Draw one per woven slot in the realm view, "
+         "with its zone ring and the law chip floating over it, and in the heist "
+         "with §15.3’s first-sight tag. Correct §23.5’s Realm view row to say "
+         "pylons are missing, not alike."),
+
+dict(id="D75", kind="deviation", severity="significant", status="open",
+     title="Screens v3’s home and realm view depart from v3.6 in 12 places §23.5 "
+           "does not list",
+     refs=["5.1", "5.2", "5.5", "10.1", "10.2", "9.3", "14.8", "20.8", "21.1", "23.1", "23.2", "23.5"],
+     body="§23.5: <em>“This document wins wherever it states a rule, a number or a "
+          "piece of text.”</em> Its Realm view row lists only that workers, pylons,"
+          " wards and guard posts look alike, and its Realm view strain, Aether "
+          "storage and Crown slots rows cover three numbers. These differ "
+          "too:<br><br>Realm grid — a disc about 42 tiles across, the same in every"
+          " realm at every level, drawn only while placing (realm_diorama.js:92, "
+          ":1053, :1062) — 10 by 10 at realm level 1 up to 14 by 14 at level 5; "
+          "<em>“A realm is 10 to 14 tiles across”</em> — §5.2, §21.1<br>The Heart’s"
+          " school — Spirit, so Weaving prices Spirit laws 20% cheaper there "
+          "(screens_main.js:35, :356; realm_diorama.js:61) — Neutral, the circle, "
+          "no realm-school discount — §5.2, §5.5<br>The Heart’s level and slots — "
+          "“Spirit · Level 6 · 1 of 2 law slots”, and a third slot marked Locked in"
+          " the realm view (screens_main.js:340) — the Heart goes by the Spire’s "
+          "level; <em>“The Heart has 2 realm slots”</em> — §5.1, §5.2<br>Crown laws"
+          " — Kinship is in the data (screens_main.js:35) and shows nowhere on home"
+          " or in the realm view — <em>“A crown law works in every realm of its "
+          "universe, including the Heart”</em>; realms are shown with their laws — "
+          "§5.1, §23.2<br>Rotate and zoom — two fingers only "
+          "(realm_diorama.js:1252-1260); rotate and zoom handlers exist "
+          "(screens_main.js:185) and nothing on screen calls them — <em>“No action "
+          "needs more than one finger”</em> — §20.8<br>Nearest goal — none on home "
+          "(screens_main.markup.html:365-468) — <em>“The home screen surfaces "
+          "whichever goal is closest to done, whatever kind it is”</em>, said as "
+          "<em>“2 pages to go”</em> — §14.8, §23.1<br>Camera — perspective, 28° "
+          "wide on the map and 20° in a realm, pitched about 46° "
+          "(realm_diorama.js:484, :512-514) — <em>“An orthographic diorama view at "
+          "a 35° pitch”</em>, rotatable in 90° steps — §21.1<br>Building names — "
+          "Aether Loom, Essence Garden (realm_diorama.js:79-81) — Aether Spring, "
+          "Garden — §10.2<br>Storage — 200,000 Starlight and 80,000 Essence "
+          "(screens_main.js:168) — the Vault and the Storehouses hold Starlight and"
+          " Essence alike — §10.2<br>Realm levels — outer realms at 4 and 5 with "
+          "the Heart at Spire 6 (screens_main.js:35) — realm level 4 needs Spire 7,"
+          " and level 5 Spire 9 — §5.2<br>Building levels — the diorama’s Spire and"
+          " a Star Well at 7 while home says Spire 6 (realm_diorama.js:88) — <em>“a"
+          " building’s level can’t exceed the Spire’s”</em> — §10.1<br>A level-7 "
+          "Star Well — holds 320, and the next level costs 5,600, 800 a level "
+          "(screens_main.js:148) — holds 12 hours at 484 an hour, 5,808; level 8 "
+          "costs 116,800 — §9.3, §10.2<br><br>The client already reads names and "
+          "numbers from the server (GET /v1/universe). The round rock can stay as "
+          "art around §5.2’s square grid. Found reading Screens v3 against v3.6.",
+     rec="Add the rows to §23.5; the build follows the document."),
+
+dict(id="C44", kind="contradiction", severity="significant", status="open",
+     title="§21.8 and §23.1 describe two different home screens, §23.5 lets the "
+           "design carry the layout, and the design’s chrome breaks §21.1’s corner "
+           "and safe-area rules",
+     refs=["21.8", "23.1", "23.5", "21.1", "14.8"],
+     body="§21.8’s Home layout row: <em>“Resources with storage bars at the top "
+          "left; Keeper level and Renown at the top right; the stability band in "
+          "the top centre; build, weave and terrain tools at the bottom left; a "
+          "large skiff-shaped Heist button at the bottom right; alerts down the "
+          "left edge.”</em> §23.1 describes another home: <em>“Resources and strain"
+          " at the top, the closest goal and the two main actions in the thumb "
+          "zone, five tabs at the foot.”</em> §23.5 says <em>“The designs carry the"
+          " look: layout, art, motion, the models and the icons”</em> and also "
+          "<em>“This document wins wherever it states a rule, a number or a piece "
+          "of text.”</em> Screens v3’s home follows neither: Keeper and Renown at "
+          "the top left, strain at the top right, resources in a full-width row, "
+          "side buttons down both edges, five tabs with Heist in the centre, no "
+          "build, weave or terrain tools and no goal "
+          "(screens_main.markup.html:370-440). §23.5 has no home-layout row, so "
+          "whether §21.8’s row is a rule or a look the design replaces is not "
+          "decided.<br><br>Whichever wins, §21.1’s measured rules hold: <em>“every "
+          "frequently used control inside comfortable thumb reach in the lower "
+          "two-thirds”</em>, primary controls <em>“at least 9 mm across — about 48 "
+          "points”</em>, <em>“Nothing interactive sits in a screen corner”</em> and"
+          " <em>“nothing important within 44 points of the notch or home bar”</em>."
+          " The design’s chrome breaks them. The tab bar runs edge to edge and ends"
+          " 18 px above the bottom, so its outer tabs sit in the bottom corners "
+          "inside the home-bar inset (markup:431-433). The back button is 44 px at "
+          "the top left of every sub-screen (screens_meta.markup.html:248). Hub "
+          "tabs are 36 px (screens_meta.js:1288), side buttons 44 px (markup:386), "
+          "and the realm view’s MAP sits in the bottom-left corner "
+          "(markup:511).<br><br>The client’s own check is stricter than §21.1: "
+          "client/tests/run.gd:577-600 fails every fixed button in the top third, "
+          "under 48 points, within 44 points of the top or bottom, or in a bottom "
+          "corner, where §21.1 holds the thumb zone to frequently used controls and"
+          " the 48 points to primary ones. Found reading Screens v3 against v3.6.",
+     rec="Owner decides which home layout is the rule. Recommended: rewrite "
+         "§21.8’s Home layout row to the design’s arrangement, keep §14.8’s "
+         "nearest goal, and keep §21.1’s measured rules on every screen: 48-point "
+         "hit areas, the five tabs inside the safe area and clear of the corners "
+         "(five 54-point tabs fit in 390 points), the back control in the lower "
+         "band. Split the client’s check into frequent and other controls, as "
+         "§21.1 does, and record the outcome in §23.5."),
+
+dict(id="G45", kind="gap", severity="significant", status="open",
+     title="Buildings stand on no grid: the simulation’s island has a one-tile Vault"
+           " and no other building, and the server keeps no positions",
+     refs=["10.1", "10.2", "5.2", "13"],
+     body="§10.1: <em>“Buildings sit on the realm grid and block movement and "
+          "sight. Most are 2 by 2 tiles; the Spire and Vault are 3 by 3.”</em> The "
+          "simulation’s island (sim/src/island.rs:94-110) holds a realm level, a "
+          "Vault level, the exposed share, a Vault on one tile, an entrance, tiles,"
+          " guards, wards and laws, and its features (sim/src/grid.rs:116-137) have"
+          " a Vault, a Pylon and a Crystal Wall and no other building. The server’s"
+          " buildings (server/src/db.mjs:98-104) are rows of owner, realm, kind, "
+          "number and level, with no tile. So a crew walks through every Star Well,"
+          " Hearth and Spire, and the realm view has nowhere to keep where a player"
+          " put them. Screens v3 places buildings anywhere on its disc "
+          "(realm_diorama.js:1015). G42 builds the home economy slice by slice, but"
+          " not footprints or positions. Found reading Screens v3 against v3.6.",
+     rec="Give the island format and the simulation §10.1’s buildings with their "
+         "footprints, blocking movement and sight; store each building’s tile on "
+         "the server; and hold a published island to the buildings built, as "
+         "server/src/universe.mjs already does for the realm, its level and the "
+         "Vault."),
+
+dict(id="G46", kind="gap", severity="minor", status="open",
+     title="Faults have no pair and no count at Cracking, and nothing says whether a"
+           " raider sees them before the heist",
+     refs=["5.4", "5.5", "12.5", "12.4", "23.2"],
+     body="§5.4: <em>“When a universe is overloaded (5.5), faults open between "
+          "realms: cracks a crew can jump through once per heist, ignoring the "
+          "links.”</em> §5.5’s effects: Strained, <em>“one fault opens between two "
+          "realms”</em>; Cracking, <em>“Two or three faults”</em>; Breaking, "
+          "<em>“four faults”</em>. But its Look column for Strained is <em>“A "
+          "glowing crack runs across one island”</em>. §12.5 lets a crew enter by "
+          "<em>“a fault if the target is overloaded”</em>. Nothing says which two "
+          "realms a fault joins, how Cracking’s two or three is chosen, or whether "
+          "a raider sees a target’s strain and faults before the heist: §12.4 lists"
+          " neither among the free or the scouted facts.<br><br>Screens v3 marks a "
+          "fault per island on home (realm_diorama.js:1229-1236; the focus card’s "
+          "fault chip, screens_main.markup.html:416), which follows §5.5’s Look "
+          "column, and its planner and landing picker have no fault at all. The "
+          "simulation and the server have no faults and no links: a heist is one "
+          "island (D71). Found reading Screens v3 against v3.6.",
+     rec="State in §5.5 how a fault’s two realms are chosen and how many open at "
+         "Cracking, deterministically from the universe, so the server, the "
+         "simulation and home agree; make §5.5’s Look column draw the crack "
+         "between those two realms; and say in §12.4 whether strain and faults are"
+         " free facts, so the landing picker can offer a fault."),
+
+dict(id="D76", kind="deviation", severity="significant", status="open",
+     title="The client is still on Godot 4.5 and api-4-5, where v3.5 and v3.6 pin "
+           "4.7.2 and api-4-7",
+     refs=["24", "24.7", "26.6", "26.8", "32.8"],
+     body="§24’s engine row: <em>“Godot 4.7, pinned at 4.7.2-stable, for the client"
+          " shell, interface and rendering, in GDScript”</em>, because <em>“4.5 "
+          "already receives security and platform fixes only”</em>, and <em>“The "
+          "Rust simulation is linked through godot-rust (gdext) v0.5.5, built with "
+          "its api-4-7 feature”</em>. The build is on 4.5: client/project.godot:12 "
+          "(features “4.5”), client/ext/Cargo.toml:11 (godot =0.5.5 with api-4-5) "
+          "and client/ruleborn.gdextension (compatibility_minimum = 4.5); "
+          "tools/roadmap.py:941 still says Godot 4.5. v3.5’s change note gives as "
+          "its reason <em>“No client code exists yet, so the move costs "
+          "nothing”</em>, which no longer holds: the client exists.<br><br>Measured"
+          " in a copy of the repository: Godot 4.7.2-stable runs headless, and "
+          "api-4-7 builds from the local cargo registry. The one break is three "
+          "screen-reader constants 4.7 moved from DisplayServer to "
+          "AccessibilityServer (client/scripts/ui.gd:138 and :321); with them "
+          "moved, 100 of 100 client tests pass. The 4.7.2 export templates are 1.28"
+          " GB, and the Android preset should set target_sdk 36 so Play’s rule is a"
+          " checked fact. Found reading v3.6’s engine row against the build.",
+     measured="Godot 4.7.2-stable headless; client/ext built with api-4-7; python3 "
+              "client/status.py: 100 of 100 after the three AccessibilityServer "
+              "constants",
+     rec="Move to 4.7.2 and api-4-7 before the shell and the diorama are written: "
+         "the four pins, the three constants, the export templates, target_sdk 36,"
+         " and the documents that still say 4.5 (README.md, client/README.md, "
+         "tools/roadmap.py, tools/privacy_manifest.py)."),
+
+dict(id="C45", kind="contradiction", severity="significant", status="open",
+     title="v3.6 takes none of the owner’s 47 recorded answers, so a screen can have"
+           " three sources that disagree: the document, the design and the server",
+     refs=["23.5", "9.4", "12.3", "12.4", "12.22", "22.1", "32.8", "23.2"],
+     body="The owner answered 47 register items on 25–26 September "
+          "(<code>docs/decisions/answers.json</code>), and the build follows them. "
+          "v3.6 changed none of the sections those answers edit, and §23.5 makes "
+          "the document win over the designs: <em>“This document wins wherever it "
+          "states a rule, a number or a piece of text.”</em> So a screen can now "
+          "have three sources that disagree — the document, the design, and the "
+          "owner’s answer the server already follows. F41’s answer (no currency) "
+          "stands against §22.1’s <em>“Starglass, in packs from about €1 to "
+          "€50”</em> and Screens v3’s Starglass prices; F35’s answer D (no guard "
+          "hears the Vault) against v3.6’s new §32.8 row for brief 37, "
+          "<em>“shipping at 5 m”</em>.<br><br>The owner answered F39 (the fee is 2%"
+          " of §9.6’s B(V) at the target’s Vault level), F44 (the Keeper window "
+          "runs from two levels below to three above) and F46 (scouting is free), "
+          "and the server builds all three (docs/decisions/answers.json; "
+          "server/src/economy.mjs:156-178; tools/design_facts.py:232-235). v3.6 "
+          "changed none of §9.4, §12.3, §12.4 or §12.22. It still says <em>“Entry "
+          "fee: 2% of the raider’s Starlight, from 100 to 25,000”</em> (§9.4), "
+          "<em>“within 3 Keeper levels”</em> (§12.3) and sells a scout at <em>“20 "
+          "Aether per realm”</em> (§12.4). Its rewritten §23.2 Observatory row asks"
+          " for <em>“Three to five universes showing only the free scouting facts "
+          "(12.4)”</em>, which assumes the paid scout F46 removed.<br><br>Screens "
+          "v3 draws the old rules: the fee as 2% of holdings on every card "
+          "(data_v35.js:15), “Keepers 21–27” (screens_main.js:524), and a locked "
+          "“Laws, guards and wards show after a scout” with “Scout · 100 Aether” "
+          "(screens_main.markup.html:649-652). So the client must choose between "
+          "the server, which follows the answers, and both the document and the "
+          "design. C41’s answer is already in the design’s fee-return table "
+          "(data_v35.js:14 is §12.9’s column), and F51 bears on none of these "
+          "screens. Found reading Screens v3 against v3.6.",
+     rec="The build’s precedence, stated once: a recorded answer first, then the "
+         "document, then the design (stage SD, TD.29). The owner confirms the "
+         "answers stand, and the next version takes their drafted edits (T1.6), "
+         "including §23.2’s Observatory row reworded to the facts F46 makes free. "
+         "If v3.6 meant to reverse any, the reversal is recorded and the server "
+         "reverted. Meanwhile the Observatory, scout and planner draw each "
+         "target’s fee from the server and show no scout lock. "),
+
+dict(id="D77", kind="deviation", severity="significant", status="open",
+     title="The scout report shows positions, patrols and loot by realm that §12.4 "
+           "does not give, and no section says what of a target’s layout a raider "
+           "sees",
+     refs=["12.4", "12.12", "5.4", "9.4", "10.3", "11.8", "23.2", "23.5"],
+     body="§12.4’s scout shows each realm’s laws, the number and roles of its "
+          "guards, and <em>“how many wards of each type it has, but not where they "
+          "are”</em>. §12.12: <em>“A scout shows no positions (12.4); patrols are "
+          "learned in the heist”</em> (C37, settled by brief 38). Screens v3’s "
+          "scout report draws a red reach disc and a count pin on every guard post "
+          "and a ring and pin on every ward (realm_diorama.js:267-276), carries "
+          "patrol notes (“The Breaker guards the vault; Wardens loop the Spire”, "
+          "screens_main.js:532, 537-540), and shows each realm’s loot (Heart "
+          "~3,300, Lantern ~420, Skyfield ~260, Crystal ~310) with “~3,300 VAULT · "
+          "77% of total”, where §12.4 gives one free <em>“rough loot estimate”</em>"
+          " and no loot by realm. Each changes what a player can see, which §23.5 "
+          "builds only once written; §23.5 lists only this screen’s Land here "
+          "flag.<br><br>Behind it is a gap: no section says what of a target’s "
+          "layout is drawn before the heist — its ground and terrain, its "
+          "buildings, its Vault. The document needs some of it. §5.4 makes a "
+          "landing heard <em>“unless the spot is in fog, darkness or tall "
+          "grass”</em>, so the raider must see the edge’s terrain, and §23.2’s "
+          "Landing picker row asks for <em>“Every outer realm’s edge, what guards "
+          "would hear”</em>, which itself tells where guards stand. §10.3 marks the"
+          " Crystal Wall and the Thorn Hedge as always seen, and §11.8’s "
+          "Cartographer sells <em>“a full scouting map of one target, with ward "
+          "positions”</em>. The design shows the whole realm in 3D with the Vault’s"
+          " beam and a route to it (realm_diorama.js:255-266). F46 records that "
+          "every island’s layout is public before any scout, so whatever is hidden "
+          "is hidden by the client. Found reading Screens v3 against v3.6.",
+     rec="The build draws the scout report from counts only: no post, ward or "
+         "patrol positions, and loot by realm only if the owner adds it to §12.4’s"
+         " list (§9.4’s <em>“so scouting changes the decision”</em> is a fair "
+         "reason to). Add one sentence to §12.4 on what is drawn before the heist "
+         "— proposed: each realm’s ground and terrain, the Vault and the "
+         "always-seen wards, and no guard posts, hidden wards or pylons unless the"
+         " Cartographer’s map is held — and say whether the landing picker may "
+         "mark spots heard or unheard. Add the scout row to §23.5."),
+
+dict(id="D78", kind="deviation", severity="significant", status="open",
+     title="Screens v3’s Observatory, landing picker and planner depart from v3.6 in"
+           " 5 places §23.5 does not list",
+     refs=["12.22", "12.12", "5.4", "12.5", "11.1", "23.2", "23.5"],
+     body="§23.5 says the planner and the Observatory <em>“already follow this "
+          "document”</em>, and for them lists only the Trace’s fee, the planner’s "
+          "resting creatures, the landing noise as a percentage and the Heart’s "
+          "Land here flag. These differ too:<br><br>Generated targets — no state "
+          "for one; the ribbon shows only for a Trace or an echo "
+          "(screens_main.js:524) — <em>“Each is labelled as a generated target at "
+          "the point of attack”</em>, and with its band when the band was empty — "
+          "§12.22<br>Drifting ruins — three ruins at one difficulty each, no "
+          "rewards shown, no recommendation, each straight to the planner "
+          "(screens_main.js:525-526) — <em>“Every ruin offers three openly labelled"
+          " difficulties with their rewards shown, and a recommendation the player "
+          "can ignore”</em> — §12.12, §23.2<br>Landing — three named spots, one per"
+          " outer realm, and the cards are the only choice (screens_main.js:82-85, "
+          "265-284) — <em>“The crew lands on any edge tile of any outer realm the "
+          "raider chooses”</em> — §5.4, §12.5, §23.2<br>Carrier — the planner will "
+          "not start without one: “No Carrier: nobody can carry loot out” "
+          "(screens_main.js:584, :605) — every role carries, <em>“so no one bag "
+          "decides the haul”</em>, and no role is required — §11.1, §12.5<br>Crew "
+          "size — starts with one or two, and the toggle stops at four "
+          "(screens_main.js:600, :605) — <em>“A crew of 3 to 5: 3 characters, 4 "
+          "from Keeper level 8, 5 from level 16”</em>; the simulation refuses fewer"
+          " than three (sim/src/lib.rs:3833) — §12.5<br><br>Found reading Screens "
+          "v3 against v3.6.",
+     rec="Add the rows to §23.5; the build follows the document."),
+
+dict(id="C46", kind="contradiction", severity="minor", status="open",
+     title="§11.7’s Wanderer makes a sixth Observatory target where §12.3 and §23.2 "
+           "stop at five, and the list leaves three more things unstated",
+     refs=["12.3", "10.2", "11.7", "23.2", "12.22", "5.4", "12.4", "20.2"],
+     body="§12.3: <em>“The Observatory offers 3 universes (5 at level 5)”</em>; "
+          "§10.2’s Observatory column gives 3, 3, 4, 4 and 5; §23.2 asks for "
+          "<em>“Three to five universes”</em>. §11.7’s Wanderer at home: <em>“The "
+          "Observatory offers one more target”</em>, so the list reaches six. The "
+          "same list leaves three things open, and Screens v3 and the build have "
+          "each chosen.<br><br>Whether a Trace takes one of the offered places. "
+          "§12.22’s guarantee is on the median of the list the matchmaker builds. "
+          "The design shows the Trace as the first of three cards "
+          "(screens_main.js:78-81); the server serves a Trace as its own lease, "
+          "outside the offer (server/src/matchmaking.mjs:157-170).<br><br>What a "
+          "card’s depth counts. §12.22 defines depth as <em>“the number of realms "
+          "the route from the landing realm to the Heart crosses”</em> and says "
+          "<em>“Every offered target shows its depth”</em>, but the card comes "
+          "before the landing realm is chosen, and ‘crosses’ does not say whether "
+          "the landing realm and the Heart count. §5.4’s clock counts links. The "
+          "design prints “1 realm to the Heart” for a one-link "
+          "route.<br><br>Whether a 13–15 player’s name reaches a raider’s card. "
+          "§12.4’s free information begins with <em>“name”</em>, and §20.2 keeps a "
+          "13–15 profile private. The design shows first names (Marta, Kofi, Ines);"
+          " the client names other players “Keeper” and the first letters of their "
+          "account (client/README.md:143). Found reading Screens v3 against v3.6.",
+     rec="Say “three to six” in §12.3 and §23.2, or cap the Wanderer’s bonus at "
+         "five. State in §12.22 that a Trace is shown in addition to the offered "
+         "list, pinned first, so the guarantee is measured on the matchmaker’s own"
+         " list, and that a card’s depth is the shortest route from any outer "
+         "realm, counted in links as the clock counts them. Owner decides whether "
+         "a 13–15 Keeper’s name reaches a raider; proposed: “Keeper” and the "
+         "realm’s word-list name."),
+
+dict(id="G47", kind="gap", severity="significant", status="open",
+     title="The heist’s orders are not settled: the abilities, Sage powers and casts"
+           " §12.7 draws have no command, and the load target, stopping, dropping "
+           "loot and pausing have no control",
+     refs=["12.5", "12.6", "12.7", "12.18", "12.19", "11.2", "11.7", "15.3", "20.8", "24.12", "24.13"],
+     body="§12.7 puts the crew portraits, the Sage and a cast on the bottom row, "
+          "and Screens v3 draws them (screens_main.markup.html:809-820). The "
+          "simulation has nothing for them to command. Its replay has twelve kinds "
+          "of command, MoveTo to Land (sim/src/replay.rs:53-110), none for an "
+          "ability, a Sage power or a cast; the header carries a crew count only, "
+          "and roles come from a fixed list of five (sim/src/lib.rs:353). Four "
+          "command values are free. No section says when a cast is paid: §12.5 "
+          "prices it at <em>“30 Aether per point of the law’s base cost”</em>, and "
+          "§24.13 says only that <em>“The entry fee is debited at validation, not "
+          "at lease.”</em><br><br>And three decisions the heist names have no "
+          "control in §12.7 or §12.18. §12.6: <em>“The player sets how full they "
+          "want the crew before it leaves”</em>, but §12.5’s planning table does "
+          "not list it; the design fixes it at 80% (“Load to 80%”, "
+          "screens_main.js:98, not tappable), and the build always loads to 100 "
+          "(client/features/heist/heist_controller.gd:94), though the simulation’s "
+          "Load takes a percentage. §12.6 names <em>“whether to drop loot to run "
+          "faster”</em>, §12.19 prices it, and standing still matters in tall grass"
+          " and under Stillness. The simulation has Halt and Drop, and the build "
+          "shows Halt and Drop-half buttons beside a gait button "
+          "(client/scripts/heist_screen.gd:305-309), outside §12.7’s set and "
+          "against §12.18’s <em>“There is no crawl and no gait button, so the "
+          "eight-control cap holds”</em>; the design has neither.<br><br>§12.7: "
+          "<em>“Never more than eight things to tap at once”</em>. Its own Sage and"
+          " Cast rows open wheels, and the design’s Sage wheel leaves the portraits"
+          " live, so eleven things are tappable at once (screens_main.js:462, "
+          ":467). §15.3 opens the law card on request and §20.8 lets the heist be "
+          "<em>“paused at any time in ruins and rehearsals”</em>, and neither names"
+          " a control. Nothing says what a heist does when the phone leaves the "
+          "app: the build simply stops stepping "
+          "(client/scripts/heist_screen.gd:216-222) and handles no background "
+          "notice, so a resume may catch up many ticks at once. Found reading "
+          "Screens v3 against v3.6.",
+     rec="A simulation task: a crew manifest in the replay (characters, kinds, "
+         "levels, traits, Sage, casts), Ability, Sage and Cast commands in the "
+         "free values, the eighteen abilities as named parameter changes, the "
+         "four-ready rule and the Archivist’s powers; the server checks the "
+         "manifest against the roster; the harness re-measures §12.6’s decision "
+         "band; the goldens are regenerated. Then write into §12.5 and §12.18: the"
+         " load target set in the planner (50 to 100% in tens, the last one used "
+         "by default) and changed by a held tap on the Vault; a held tap on a crew"
+         " member offering Stop, Drop half and Drop all, in place of the build’s "
+         "buttons; wheels and held-tap menus modal, so the cap holds; the law card"
+         " from a held tap on a law chip; pause in ruins and rehearsals from the "
+         "clock; a cast paid at validation, only when used. And in §24.12: the "
+         "simulation pauses with the app and resumes after a three-second count, "
+         "and a heist left past its lease is submitted as played so far."),
+
+dict(id="G48", kind="gap", severity="significant", status="open",
+     title="No rule chooses the result’s decisive moment or its one thing to try, "
+           "and the simulation keeps no events to find them in",
+     refs=["12.13", "15.3", "23.2", "24.10"],
+     body="§12.13: <em>“every heist result names the moment that decided it and "
+          "what could have been done instead”</em>, with <em>“a three-second replay"
+          " of it”</em>, and <em>“One thing to try: a single suggestion tied to "
+          "that moment, never a list.”</em> §23.2 makes both must-shows. No section"
+          " says how the moment is chosen; §15.3 says only <em>“Based on what went "
+          "wrong, never a lecture”</em>. The simulation exposes its state and an "
+          "outcome (sim/src/lib.rs:3131) and keeps no log of events. Screens v3 "
+          "hard-codes one moment and one tip per outcome (screens_main.js:637-638),"
+          " and its replay button only plays a sound (:626).<br><br>Two of its "
+          "texts miss §12.13. Every tip is headed “The Archivist · try this” "
+          "(screens_main.markup.html:843), which makes it one of §15.3’s "
+          "Archivist’s tips — <em>“At most one per session; never blocks play; can "
+          "be turned off”</em> — rather than the result’s own row. And the Clean "
+          "tip, “Kofi’s universe is two realms deep. Same crew, a bigger haul.”, "
+          "suggests another target instead of following from its moment (“Your crew"
+          " crossed the open ledge while the Scout faced away”). D65 records the "
+          "same lack of a per-tick record, for heatmaps. Found reading Screens v3 "
+          "against v3.6.",
+     rec="Write the rule into §12.13: a Foiled or Partial heist’s moment is the "
+         "first capture, traced to the tick its captor became Alerted to that crew"
+         " member; a Loud heist’s, the first guard Alerted and why; a Clean "
+         "heist’s, the closest call; a fault or a law’s blink at that tick is "
+         "named. Add an event log to sim/ outside the checksum, choose the moment "
+         "on the device from it, and draw tips from a content table keyed by "
+         "cause, never a purchase. Label the row “Try this” and tie every tip to "
+         "its moment."),
+
+dict(id="C47", kind="contradiction", severity="significant", status="open",
+     title="v3.6 states three heist and result rules two ways: the worth question’s "
+           "scale and frequency, what ‘alarm’ means, and whether the Vault’s "
+           "contents show before it opens",
+     refs=["19.5", "20.3", "23.2", "22.2", "25", "12.15", "12.9", "12.17", "12.6", "12.12", "19.16", "12.19", "21.8"],
+     body="The worth question. §19.5 asks <em>“‘Was this worth your time?’, one "
+          "tap”</em>, <em>“Every session, live”</em>, and reads the fun gate as "
+          "<em>“‘Worth your time’ at 4.3 out of 5 or higher”</em>; the launch gate "
+          "in §22.2 and §25 wants at least 4 out of 5. §20.3: <em>“Every session "
+          "can end with a short summary and a one-tap ‘Was this worth your time?’ "
+          "rating”</em>, but §23.2 puts it on every heist result. Screens v3 asks "
+          "“Yes” or “Not really” (screens_main.markup.html:860), which cannot make "
+          "a five-point average; the server takes 1 to 5 once a session "
+          "(server/src/telemetry.mjs:49-53, :84). Its reply, “Thanks. It helps us "
+          "tune the targets you see.” (markup:861), claims what §12.15 rules out: "
+          "<em>“Nothing is hidden. Targets are drawn by Renown band and the "
+          "player’s own choice”</em>.<br><br>The word ‘alarm’. §12.9’s Clean is "
+          "<em>“No alarm; everyone out with loot”</em> and Loud <em>“Alarm raised; "
+          "everyone out”</em>, and §12.17’s Alerted guard raises the alarm. But the"
+          " realm’s alarm, the six-level ladder, climbs with time, bodies and bell "
+          "posts whatever the crew does (§12.6, §12.17), so ‘no alarm’ cannot mean "
+          "it. The simulation reads §12.9 as a flag set when a guard becomes "
+          "Alerted, not the ladder (sim/src/lib.rs:701-704, 3177-3181). Screens v3 "
+          "reads it as the ladder: each alert adds a level (realm_diorama.js:218; "
+          "screens_main.js:113) under the banner “Alarm +1 · they are looking”, "
+          "which §12.17 does not have; and its Clean result shows “2:14 · 0 / 6 "
+          "alarm” (screens_main.js:645), impossible when its own clock adds a level"
+          " every 30 seconds.<br><br>The Vault’s contents. §12.12: <em>“the Vault’s"
+          " contents are only revealed when it opens”</em>; §19.16: <em>“A Vault "
+          "shows its size before its contents”</em>. But §12.6, §12.19 and §21.8 "
+          "keep <em>“what is left to load”</em> always on screen. The design shows "
+          "“Left 2,600” from the first second (markup:799), and so does the build "
+          "(client/scripts/heist_hud.gd:51). Found reading Screens v3 against v3.6.",
+     rec="Ask the worth question as one row of five one-tap points, once a session"
+         " on the first or last result, never required, and make §20.3 and §23.2 "
+         "agree on when; the reply is “Thanks.” Name §12.9’s condition “no guard "
+         "alerted” and keep “alarm” for the six-level ladder; the heist says "
+         "“Seen: this heist is Loud now”, and the result shows the true peak alarm"
+         " or none. Before the Vault opens, “Left” shows the free rough estimate "
+         "(§12.4) or “?”, the exact figure once open; amend §12.6’s always-on list"
+         " to say so."),
+
+dict(id="D79", kind="deviation", severity="significant", status="open",
+     title="The heist, the result, the Law card and the Codex add mechanics: a "
+           "start-up grace, slow motion, an easier copy of a player’s universe, "
+           "counters between laws and leads to unknown laws",
+     refs=["12.17", "12.12", "12.14", "19.12", "7.7", "7.6", "19.6", "23.5"],
+     body="§23.5: <em>“A design never adds a mechanic. Anything that changes what a"
+          " crew, a guard or a player can do, see, hear or earn is built only once "
+          "it is written here.”</em> Screens v3 adds these, and §23.5 lists "
+          "none.<br><br>A grace at the start of every heist: for 4.2 seconds, 1.6 "
+          "past the 2.6-second intro, guards gain no suspicion by sight, though "
+          "they still hear running and cracking (realm_diorama.js:198, :212-214). "
+          "§12.17 has none.<br><br>Slow motion at each alert: the world runs at a "
+          "quarter speed for 1.3 seconds (realm_diorama.js:195, :218) while the "
+          "prototype’s clock keeps its own timer (screens_main.js:188). §12.17 has "
+          "none, and a replay could not reproduce it.<br><br>An easier copy of a "
+          "player’s universe. The Foiled result offers “Two misses on Marta. Try "
+          "“Marta’s outer ring”, the same laws with one guard fewer.” "
+          "(screens_main.js:656). §12.12 keeps easier versions for content of "
+          "chosen difficulty: <em>“Heists against players are never adjusted for "
+          "engagement at all (19.12)”</em>. For a player target, §12.14’s "
+          "three-strike rule leaves <em>“a new route revealed, or a different "
+          "target suggested”</em>.<br><br>Counters between laws. The Law card’s "
+          "back lists other laws it is weak against, with reasons "
+          "(screens_main.js:197): Static against Slow rivers (“Water grounds the "
+          "charge”) and Glass, Stillness against Haste, Glowing dark against Day "
+          "and night. §7.7 gives each law one weakness, and these are not it "
+          "(content/laws.json: Static’s is “Crews that bunch up get stunned "
+          "together.”, Stillness’s “Any Glow law breaks the hiding.”). No section "
+          "states them and the simulation does not play them, so the card would "
+          "teach rules that do not exist.<br><br>Leads to unknown laws. The Codex "
+          "gives unknown laws hints — “Seen in Mira’s Hive”, “Win a storm heist”, "
+          "“Energy realms at night”, “Spirit realms, level 8+” (realm levels stop "
+          "at five), “Rumoured near Verdant” (screens_meta.js:396) — and a NEXT "
+          "LEAD card with a Scout button (:399-400). §19.6 shows unknown laws "
+          "<em>“as ‘?’”</em>, and §7.6 adds a law when the player first meets it. "
+          "Found reading Screens v3 against v3.6.",
+     rec="None of these is built until it is written. The heist has no grace and "
+         "no slow motion, and tick 0 starts after the entry card; the Foiled "
+         "result offers §12.14’s new route or another target, and an easier "
+         "version, by name, only for ruins; the Law card’s back shows §7.7’s one "
+         "weakness; unknown laws show “?” with no lead. Add the rows to §23.5, or "
+         "the owner writes any of them first; slow motion, if written, slows the "
+         "simulation and its clock together and shows in replays."),
+
+dict(id="D80", kind="deviation", severity="significant", status="open",
+     title="Screens v3’s heist and result depart from v3.6 in 11 places §23.5 does "
+           "not list",
+     refs=["12.6", "12.9", "12.18", "12.19", "11.2", "14.8", "17.6", "20.7", "21.8", "23.2", "12.3", "12.10", "12.11", "12.22", "24.12", "23.5"],
+     body="§23.5: <em>“The heist screen, the planner, the result, the Observatory, "
+          "Weaving, the defence log and the first launch already follow this "
+          "document; these are the differences that remain”</em>. For the heist and"
+          " the result it lists role health, the Trace’s fee, text size and "
+          "landscape. These differ too:<br><br>The Vault — only the Carrier loads, "
+          "by standing within 2.3 of it, at 140 a second; there is no crack order "
+          "and no Vault health (realm_diorama.js:208) — 1,500 health a Vault level,"
+          " Breakers deal double, the assist bonus; once open every role loads at "
+          "30 a second; the crew never acts unordered — §12.6, §12.18, "
+          "§12.19<br>The Vault’s progress — the loot bar is bag fill, and the crack"
+          " banner’s bar is the five-second hearing cycle (screens_main.js:453, "
+          ":482) — <em>“the Vault’s progress”</em> always on screen — §12.6, §21.8,"
+          " §23.2<br>Abilities ready — all five at once (screens_main.js:191) — "
+          "<em>“At most four abilities are ready at once”</em> — §12.6<br>Uses left"
+          " — pips with no number (screens_main.markup.html:809-820) — <em>“two "
+          "pips with the number beside them”</em> — §21.8<br>Emberling’s Burst — "
+          "stuns guards within 1.6 (realm_diorama.js:171) — triple its Power "
+          "<em>“to every ward and pylon within 1 tile”</em> — §11.2<br>Tidewalker —"
+          " 1.25 times as fast (realm_diorama.js:168, :204) — <em>“For 6 s nothing "
+          "slows it”</em> — §11.2<br>Foiled — “Renown −8 · nothing else is lost” "
+          "(screens_main.js:650) — the entry fee is <em>“Paid to defender”</em> — "
+          "§12.9<br>After the heist — “Idle crew of 5 ready” when all five went "
+          "(screens_main.js:658) — the crew rests 45 to 180 minutes by outcome — "
+          "§12.9, §23.2<br>Study chips — “+2” only (markup:850) — <em>“Every album,"
+          " law, level and track shows ‘2 pages to go’”</em> — §14.8<br>Highlight "
+          "clip — no share on the result (markup:824-869) — <em>“After each heist "
+          "the game cuts a 15-second vertical clip of its best moment, with the "
+          "laws labelled, ready to share in one tap”</em>, by the player’s age band"
+          " — §17.6, §20.7<br>Result variants — one: a matchmade player in four "
+          "outcomes — echoes, generated targets labelled as such, drifting ruins "
+          "and echo trials without Renown, friendly heists, challenge links, and "
+          "§24.12’s confirming, refused, expired and capped states, each paid as "
+          "the document says — §12.3, §12.10, §12.11, §12.22, §24.12<br><br>The "
+          "build already orders cracking and loading by tap "
+          "(heist_controller.gd:88-93) and shows confirming and refused "
+          "(client/scripts/result_screen.gd:59-102). Found reading Screens v3 "
+          "against v3.6.",
+     rec="Add the rows to §23.5; the build follows the document."),
+
+dict(id="D81", kind="deviation", severity="significant", status="open",
+     title="Screens v3’s Weaving, Law card and Harmony view depart from v3.6 in 5 "
+           "places §23.5 does not list",
+     refs=["23.2", "15.3", "8.6", "5.5", "8.2", "20.8", "21.7", "23.5"],
+     body="§23.5 says Weaving <em>“already follow[s] this document”</em> and lists "
+          "only its missing recommended laws; its Law card row covers the pause "
+          "sign and the missing preview. These differ too:<br><br>Weaving’s preview"
+          " — “+3% = 85% → HUMMING” and a ♪ or ✕ on each card; the seven-band bar, "
+          "the named harmonies and clashes and what each does are computed "
+          "(screens_main.js:382-388) and never drawn "
+          "(screens_main.markup.html:577-623) — <em>“stability bar with its seven "
+          "bands, and the harmonies and clashes a law would cause before it’s "
+          "woven”</em>; <em>“Shows harmonies, clashes and the stability band before"
+          " committing”</em>; dissonances <em>“While weaving, with a warning”</em> "
+          "— §23.2, §15.3, §8.6<br>Weaving’s price — the new law alone, from its "
+          "tier, the realm’s school, ×0.85 a harmony and ×1.25 a clash, over a "
+          "fixed capacity of 356 (screens_main.js:356-362); the partner is not "
+          "re-priced, and crown, resonance, chord and draw are left out — §5.5’s "
+          "formula and every sounding chord’s draw; a harmony <em>“lowers the "
+          "stability cost of both laws by 15%”</em> — §5.5, §8.2<br>Weave button — "
+          "a one-second hold or a 110-pixel drag upward, with no tap path "
+          "(screens_main.js:422-424; markup:621) — no drag <em>“that can’t also be "
+          "done as two taps”</em>; <em>“hold times adjustable”</em> — §20.8<br>Law "
+          "card — notes as words on the back (“COMMON · TIME · HUSH”), pages only "
+          "as “Restoring · 31%” (markup:874-883) — <em>“a one-line rule, notes as "
+          "symbols, rank and tier pips”</em>; pages — §21.7, §23.2<br>Harmonies on "
+          "the island — none in the realm view; the Harmony view draws beams "
+          "between floating cards, a straight striped bar for a clash and a dashed "
+          "triangle with marching dashes for a chord (screens_meta.js:1093-1100) — "
+          "<em>“a thread in the note’s colour links the two pylons; a dissonance is"
+          " a jagged, flickering line; a chord forms a slowly turning triangle of "
+          "light between three pylons”</em> — §21.7<br><br>Weaving and stability "
+          "are not built yet on the server or in the simulation; when they are, one"
+          " shared function prices every weave, so the preview is the server’s "
+          "charge, and the prototype’s arithmetic is not a source. The Harmony view"
+          " may keep its own layout. Found reading Screens v3 against v3.6.",
+     rec="Add the rows to §23.5; the build follows the document."),
+
+dict(id="G49", kind="gap", severity="significant", status="open",
+     title="The Codex rests on five things v3.6 never defines: chapter 1’s twelve "
+           "laws, meeting a law, mastery, Codex notes, and what a player sees of a "
+           "combination before the Lab names it",
+     refs=["7.6", "14.4", "7.8", "18.5", "14.9", "15.3", "8.4", "8.5", "8.6", "5.5", "23.2"],
+     body="Chapter 1. §7.6: <em>“at launch it holds the launch 24 (7), 12 findable "
+          "from the start and all 24 from Keeper level 6”</em>, and "
+          "<em>“Matchmaking only shows universes running laws from open "
+          "chapters.”</em> No section names the twelve. content/laws.json has no "
+          "chapter, the economy model says so and takes the cheapest laws "
+          "(tools/economy_model/model.py:615-619), and the server has no "
+          "chapters.<br><br>Meeting a law. §7.6: <em>“The first time a player meets"
+          " a law it joins the Codex with 1 page.”</em> §14.4 pays it and §7.8 "
+          "counts <em>“Laws on the route the player has never met”</em>. Meeting is"
+          " not defined: crossing its realm, being on the route, a scout report, a "
+          "ruin, or the Archivist. Screens v3 treats a law seen in a scout as still"
+          " unknown (“Seen in Mira’s Hive”).<br><br>Mastery. §18.5: <em>“One per "
+          "school, filled by crossing and weaving its laws. Milestones unlock "
+          "titles and new visual styles for that school’s laws.”</em> Nothing says "
+          "what fills a track, by how much, or what each milestone gives; §14.9’s "
+          "goal is a different thing, <em>“Weave and cross every law of one school,"
+          " at tier III, and win with each”</em>. Screens v3 calls a law at tier "
+          "III “Mastered” and counts “3 mastered” (screens_meta.js:391, :406), a "
+          "per-law reading §18.5 does not make. §23.2’s Codex row asks for "
+          "mastery.<br><br>Codex notes. §15.3: <em>“What the player has seen each "
+          "law do”</em>, filled in automatically. Nothing defines them, and no "
+          "design has them.<br><br>Combinations before discovery. Resonances are "
+          "<em>“hidden until discovered in the Lab, or hinted at after crossing "
+          "them in someone else’s universe”</em> (§8.4); the Lab names chords "
+          "(§8.5); §8.6 shows them <em>“Once discovered”</em>. But §5.5 applies a "
+          "resonance’s ×0.8 and a chord’s ×0.9 and draw whether or not the player "
+          "knows, so a realm’s strain moves by amounts its owner cannot explain. "
+          "Screens v3’s Harmony view names them and celebrates “RESONANCE FOUND” or"
+          " “CHORD FORMED” on first view (screens_meta.js:1080-1081), a way to "
+          "discover them the document does not have; the client already names them "
+          "on the owner’s island (client/scripts/builder_screen.gd:204-218). What a"
+          " crossing hint says is unwritten; the design’s is “You crossed this in "
+          "Kofi’s universe. Its partner is a Spirit law.” And §8.6’s <em>“the Codex"
+          " shows how many remain in each school”</em> has no rule for a resonance "
+          "joining two schools (Mangrove banks is Time and Life); the design shows "
+          "one total, 2 of 12 (screens_meta.js:406). Found reading Screens v3 "
+          "against v3.6.",
+     rec="List chapter 1’s twelve in §7.6, the three starting laws among them, and"
+         " each later chapter’s as seasons add laws. Define meeting in §7.6 "
+         "(proposed: a heist or ruin route enters a realm running the law) and say"
+         " whether a scout shows the name without the page. Define §18.5’s track: "
+         "what is counted, how many, the milestones and what each gives; the "
+         "design says “Tier III”, not “Mastered”. Say what a Codex note records "
+         "(proposed: times crossed, what the law did to the crew, pylons broken). "
+         "State in §8.6 what an owner sees of an undiscovered resonance or chord "
+         "in their own realm — weaving all its laws discovers it, written as a new"
+         " path, or it shows as an unnamed sound until the Lab names it — what a "
+         "crossing hint says (the design’s form is a fair default), and how a "
+         "two-school resonance counts toward each school."),
+
+dict(id="C48", kind="contradiction", severity="significant", status="open",
+     title="Weaving’s upkeep is priced against a realm budget §5.5 never gives, and "
+           "six more weaving rules are open",
+     refs=["5.6", "5.5", "29.1", "8.2", "8.5", "5.1", "16", "7.6", "23.2", "19.6"],
+     body="Upkeep. §5.6: <em>“25% when the realm’s stability budget is fully spent,"
+          " scaling in proportion to the share actually used”</em>, so <em>“a realm"
+          " running laws worth half its stability pays 12.5% of what it "
+          "earns”</em>; §29.1 repeats it. But §5.5: <em>“Stability is how much law "
+          "a universe can hold”</em>, and capacity and strain belong to the "
+          "universe. No realm has a stability budget, and a crown law has no realm "
+          "to charge. F17 covers upkeep’s form, not this term.<br><br>A crown law’s"
+          " cost. §8.2: <em>“Crown laws count in every realm, so a crown law can "
+          "harmonise with every realm’s laws. A harmony lowers the stability cost "
+          "of both laws by 15%”</em>. §5.5 prices each law once, and §8.5’s worked "
+          "example prices its crown law at the Heart only. Whether a crown law’s "
+          "discounts and penalties compound across realms, count once, or count "
+          "realm by realm is not said. Screens v3’s Harmony view gives Kinship a "
+          "different change in each realm: +25% in Emberreach, ±0% in Skyfield, "
+          "−10% in Tidehold (screens_meta.js:1066-1086).<br><br>How harmonies "
+          "count. §8.2: <em>“When two laws in the same realm share a note, they "
+          "harmonise.”</em> Three laws on one note may make one harmony or three "
+          "pairs, and two laws sharing two notes (Haste and Frictionless share Flow"
+          " and Spark) one or two; §8.5’s example fits either. Screens v3’s two "
+          "screens disagree: Weaving counts each partner once per shared note "
+          "(screens_main.js:355-356), the Harmony view once per note for every law "
+          "carrying it (screens_meta.js, evalSet). G25 records the simulation "
+          "reading a harmony’s effect once a note; this is its cost.<br><br>The "
+          "first session’s weaves. §16 has the player weave at 0:30 (<em>“The "
+          "player places it in their Heart. Stones lift”</em>) and again at 6:30, "
+          "in a ten-minute session; §5.6: <em>“10 minutes at tier I”</em> and "
+          "<em>“While a slot is being woven it is empty.”</em> No exemption is "
+          "written.<br><br>Breaking and tier rises. §5.5’s Breaking band says "
+          "<em>“No new weaving”</em>, not whether a weave may push strain from "
+          "Cracking into Breaking; Screens v3 refuses it (“Too much strain”, "
+          "screens_main.js:406). §7.6 prices tiers II and III and §5.6 gives their "
+          "weave times, but nothing says whether a woven law rises in place or is "
+          "woven again. Weaving one law as a realm law in several realms, which the"
+          " design allows, breaks no rule and is adopted under "
+          "§23.5.<br><br>Recommended laws. §23.2 asks Weaving for <em>“Two or three"
+          " recommended laws”</em>, §19.6 <em>“with a comparison”</em>; nothing "
+          "says how they are chosen or what the comparison shows. Screens v3’s deck"
+          " order — a harmony first, a clash last, then the cheapest "
+          "(screens_main.js:361) — is one candidate. Found reading Screens v3 "
+          "against v3.6.",
+     rec="Define a realm’s share of stability for upkeep (proposed: its woven "
+         "laws’ cost over the universe’s capacity, crown laws charged to the "
+         "Heart), or price upkeep on the universe’s strain. Say in §5.5 how a "
+         "crown law’s harmonies and clashes count across realms, and in §8.2, "
+         "mirrored in §5.5’s formula, whether a harmony is a pair or a note. State"
+         " that the first session’s weaves are instant, that a weave may not take "
+         "strain into Breaking, what a tier rise does to a woven law, and how the "
+         "recommended laws are ranked and what the comparison shows."),
+
+dict(id="D82", kind="deviation", severity="significant", status="open",
+     title="Screens v3’s Roster, Character, Sage hall and Forms album depart from "
+           "v3.6 in 13 places §23.5 does not list",
+     refs=["11.1", "11.2", "11.3", "11.4", "11.7", "11.10", "11.11", "9.2", "10.2", "12.5", "17.7", "20.8", "23.2", "23.5"],
+     body="§23.5 lists, for these screens, Mo’s and Hollow’s roles and the "
+          "Character screen’s XP bar, <em>“once a heist”</em>, no-jump zones and "
+          "power score. Screens v3 differs from the document in these places as "
+          "well (where — the design shows — the document says — "
+          "§):<br><br>Character, ability — five abilities keyed by role "
+          "(screens_meta.js:240), so Mo the Tidewalker shows Keen eyes, Bramble the"
+          " Mossbear Hold the line and Hollow the Echoplate Patch up — each kind "
+          "has its own ability on its card, <em>“the one home for every "
+          "ability”</em> — §11.11, §11.2<br>Character, resists — one resistance per"
+          " school (js:260): a Mossbear resists Spores, an Echoplate Lantern glare,"
+          " an Hourkeeper Slow rivers and Stillness — <em>“the one law family each "
+          "ruleborn resists”</em>: a Mossbear is immune to Thorns, an Echoplate "
+          "returns under Echoes, an Hourkeeper is unaffected by Delay; the school "
+          "table is right only for Bloomling, Quarryback and Stormhound — "
+          "§11.2<br>Character, Stats tab — SPEED, STEALTH, CARRY and GRIT from 1 to"
+          " 10: a role base, plus a point every three levels, plus one by the "
+          "length of the name (js:211) — Health, Speed, Power and Carry, set by "
+          "role; there is no Stealth or Grit — §11.1<br>Character, next level — a "
+          "perk by role: ‘+5% carry and a shorter rest’, ‘+1 tile of sight and "
+          "quieter steps’, ‘+10% damage to doors and pylons’, ‘+1 s on Hold the "
+          "line’, ‘+10% healing’ (js:241) — every role grows alike: <em>“Each "
+          "level: +8% health and power, +5% carry. Abilities improve at levels 4, 7"
+          " and 10”</em> — §11.4<br>Character, ‘AT HOME’ card — a work bonus by "
+          "role: ‘Star Well · +12%’, ‘Quarry · +12%’, ‘Lantern post · +10% sight’, "
+          "‘Guard post · +1 hearing’, ‘Garden · +10%’ (js:240) — +15% for ruleborn "
+          "of a building’s schools and +25% for the Well-digger, Spring-finder and "
+          "Green thumb traits; there is no Quarry building, a lantern post is "
+          "terrain, and no work gives sight or hearing; ‘At home’ is a kind’s "
+          "habit, and the must-show ‘best work’ is the card’s ‘Best at’, which the "
+          "screen leaves out — §9.2, §11.11, §23.2<br>Roster, roles — Tock the "
+          "Hourkeeper a Warden with ♥ 420 and Hold the line (js:191); the table of "
+          "all eighteen, not drawn because locked tiles show ‘???’, makes a "
+          "Tidewalker a Scout and a Sparkwright a Breaker (js:205) — an Hourkeeper "
+          "is a Mender, a Tidewalker a Carrier, a Sparkwright a Mender — "
+          "§11.2<br>Roster, traits — eight characters with one trait (Mo, Hollow, "
+          "Facet, Wick, Pebble, Fern, Volt, Shard) and Tock with none (js:191) — "
+          "<em>“Every ruleborn is born with two traits”</em> — §11.3<br>Roster, "
+          "workplaces — Pebble ‘Working · Storehouse’ (js:191) — the Storehouse has"
+          " no worker slots; the Library has none either, though §21.5 draws a "
+          "worker there — §10.2<br>Roster, state dot — idle, working and guarding "
+          "told apart by the dot’s colour alone (js:234) — <em>“no information "
+          "carried by colour alone”</em> — §20.8<br>Tab bar — the tab that opens "
+          "the Roster is labelled ‘CREW’ — a crew is the 3 to 5 ruleborn on a "
+          "heist, and also <em>“The people you actually play with”</em>, the group "
+          "of 4 to 8 that the server’s <code>/v1/crews</code> holds "
+          "(server/src/db.mjs:389-400); this screen is the Roster — §12.5, §17.7, "
+          "§23.2<br>Sage hall, levels — ‘Level 4 / 40 · levels with Insight’ with "
+          "no Insight, price or level-up, a bar that fills 10% a level on a "
+          "40-level scale (js:364), and an unassigned Sage tagged ‘RESTING’ "
+          "(js:359) — Sages level 1 to 40 at 15 × 1.13^(level − 1) Insight, and "
+          "‘levels’ is a must-show; rest is a character’s state after a heist, and "
+          "no section rests a Sage — §11.7, §9.5, §11.6, §23.2<br>Forms album, "
+          "rewards and quirks — no skiff sail and no form’s quirk anywhere "
+          "(js:1179-1217) — <em>“completing one note across every kind unlocks a "
+          "skiff sail”</em>, and each form carries one quirk (Hush noticed 10% "
+          "later, Spark +5% power, Echo returns once after a knockout at 20%) — "
+          "§11.10<br>Forms album, note pips — coloured dots with no note symbol "
+          "(js:1214) — <em>“every note a symbol”</em> — §20.8<br><br>The document "
+          "states each of these, so none needs a decision. Found reading Screens v3"
+          " against v3.6.",
+     rec="Add the rows to §23.5; the build follows the document. It reads each "
+         "kind’s ability, rule-sheet line and resistance, the role numbers and "
+         "§9.2’s bonuses from content/ruleborn.json and the server, and a client "
+         "test holds all eighteen cards to content."),
+
+dict(id="G50", kind="gap", severity="significant", status="open",
+     title="Births have no screen, and naming, a stray’s form and a look changed "
+           "after hatching have no rule",
+     refs=["11.5", "11.9", "11.10", "10.2", "9.5", "11.3", "19.20", "20.7", "24", "23.2", "23.5"],
+     body="Births are a core verb with no screen. §10.2’s Nursery makes <em>“one "
+          "birth every 6 h; holds 3”</em>; §9.5 prices the nth birth at 100 × "
+          "1.3265^(n − 1) Essence; §11.9 weighs the kind, <em>“3 for each law woven"
+          " in its realm, 2 for the realm's own school and 1 for each crown "
+          "law”</em>; §11.10 sets the form and, on a tie, <em>“the odds are shown "
+          "before hatching”</em>; §11.3 rolls two traits; and §19.20: <em>“Naming a"
+          " ruleborn is offered the first time one hatches, and a free outfit comes"
+          " with it.”</em> No §23.2 row covers hatching, and the Realm view’s "
+          "must-show has no births. Screens v3 draws none: FIND A NURSERY ends in a"
+          " toast, ‘Hatch it in a realm with …’ (screens_meta.js:1205), and so do "
+          "the roster’s locked tiles.<br><br>Naming has no rule: typed or from a "
+          "word list, whether a name can change, and who sees it. §20.7 keeps "
+          "13-to-15 island names to word lists, and §24’s security row says the "
+          "game has <em>“no free text”</em>, which a typed name would break. C43 is"
+          " the island-name half of this.<br><br>A stray’s form has no rule. §11.9:"
+          " <em>“the surprise strays from heists (14.6) are born under one of the "
+          "laws the crew crossed”</em>, while §11.10’s form follows the Nursery’s "
+          "realm; nothing says what form a stray takes, least of all under a law "
+          "that carries none of Hush, Spark and Echo.<br><br>And Screens v3 lets a "
+          "player change a form after hatching: the album’s USE THIS LOOK says "
+          "‘&lt;note&gt; &lt;kind&gt; is now its look’ (js:1204-1205). §11.10 sets "
+          "the form at hatching and is silent after it. A form’s look shows its "
+          "quirk, so if the chosen look reaches heists or a guard post, raiders "
+          "read a quirk the creature does not have. That changes what a raider "
+          "sees, which §23.5 does not let a design add. Found reading Screens v3 "
+          "against v3.6.",
+     rec="Add a Hatch row to §23.2: ready births and the Nursery’s three, the "
+         "Essence price, the kind’s odds by §11.9’s weights, the form and its odds"
+         " on a tie, the two traits rolled, and naming. State beside §20.7 where "
+         "names come from (a word list, or what else), whether they change and who"
+         " sees them; and state the form a stray takes. USE THIS LOOK is not built"
+         " until §11.10 says where a chosen look shows; the build offers the "
+         "album’s ‘Show mine’, and a choice that changes only the portrait would "
+         "break no rule."),
+
+dict(id="G51", kind="gap", severity="significant", status="open",
+     title="The heist the server re-simulates has five fixed roles at level 1, and "
+           "the rules for growth, a home and rest it would need are not all written",
+     refs=["11.4", "11.5", "11.6", "11.3", "12.5", "12.9", "9.6", "23.2", "14.1"],
+     body="The Roster and Character screens show each ruleborn’s kind, level, "
+          "traits and form, and the planner picks a crew and a Sage. None of it "
+          "reaches the heist the server checks. The simulation’s crew is "
+          "<code>const CREW: [Role; 5] = [Role::Scout, Role::Breaker, "
+          "Role::Carrier, Role::Warden, Role::Mender]</code> (sim/src/lib.rs:353), "
+          "chosen by a count (<code>World::new(_seed, crew: u8, …)</code>, :747); "
+          "sim/src/heist.rs:233-234 says <em>“the simulation has no traits "
+          "yet”</em>; the replay’s commands (sim/src/replay.rs:53-90) have no "
+          "ability, Sage or cast; and <code>POST /v1/leases</code> takes a bundle, "
+          "an owner, a trace flag, a mode and a challenge, and no crew "
+          "(server/src/http.mjs:492-496). So the server also cannot set each "
+          "member’s rest (§12.9), which the Roster’s must-show ‘rest timers’ "
+          "needs.<br><br>Modelling the crew needs four rules v3.6 leaves "
+          "open:<br>Growth — §11.4: <em>“Each level: +8% health and power, +5% "
+          "carry. Abilities improve at levels 4, 7 and 10”</em>, 20% stronger each "
+          "time. It does not say the 8% compounds, though the repository reads it "
+          "so (tools/decision_support.py:298, <code>LEVEL_GROWTH = 1.08</code>), "
+          "nor which number grows for an ability with two: the Lantern Wisp’s 6 "
+          "tiles and 6 s, the Featherkin’s 3 tiles and one height, the Echoplate’s "
+          "8 s and 40%, the Prism Mite’s 8 s and its halves.<br>A home — §11.4: "
+          "<em>“Highest level = 2 × the level of the Hearth the character lives "
+          "in”</em>; §11.6: <em>“Hearths shorten rest 5% per level”</em>; §11.5: "
+          "<em>“The roster holds 3 characters for the Spire plus the places in "
+          "every Hearth”</em>. The Spire’s three have no Hearth, so no ceiling and "
+          "no rest cut, and nothing says how a character is housed in a Hearth or "
+          "moved between them. F56 covers the starting universe only.<br>Rest — "
+          "§12.9’s 45, 60 and 180 minutes, the Hearth’s 5% a level, Loyal’s "
+          "<em>“rests 25% less after a success”</em> and Sleepy’s <em>“rests 50% "
+          "longer”</em> combine by no stated rule, and nothing says whether Loyal "
+          "counts for a member caught in a Partial (a success is any outcome but "
+          "Foiled, §9.6).<br>Reassign — §23.2’s Roster must-show <em>“one-tap "
+          "reassign”</em> names no destination; Screens v3 sends everyone to a Star"
+          " Well, in two taps (screens_meta.js:197). G22 asks §14.1 to state the "
+          "staffing order the pacing assumes, and the one tap should follow "
+          "it.<br><br>Found reading Screens v3 and the build against v3.6.",
+     rec="Carry the chosen crew (kind, level, traits, form) and the Sage in the "
+         "lease and the replay, and model them in sim/, before the Roster’s and "
+         "Character’s numbers are shown as the heist’s. State in §11.4 to §11.6 "
+         "that growth compounds, which number of each two-number ability grows, "
+         "the ceiling and rest of the Spire’s three places and how a character is "
+         "housed, the order the rest modifiers apply in, and whether Loyal counts "
+         "a Partial; and let one-tap reassign follow G22’s staffing order."),
+
+dict(id="G52", kind="gap", severity="significant", status="open",
+     title="A heist earns Insight and Sages level with it, and no section says how "
+           "much any source pays, what the improvements are, or whether a lone Sage "
+           "may guard",
+     refs=["11.7", "9.1", "9.5", "12.5", "12.10", "14.1", "14.3", "17.3"],
+     body="§9.5 prices Sage levels at 15 × 1.13^(level − 1) Insight, up to level "
+          "40. §9.1 names Insight’s sources, <em>“Successful heists, Lab "
+          "discoveries, anomalies”</em>, with no amounts; Echo trials (§12.10) and "
+          "constellation targets (§17.3) pay it with none either; and §14.1’s "
+          "<em>“Pages and Insight arrive as described in 7.6 and 11.7”</em> points "
+          "to two sections that give none. §11.7: <em>“Every fifth level improves "
+          "one power (an extra use, a longer effect or a shorter cooldown)”</em>, "
+          "and no Sage’s eight improvements are named. The economy model leaves "
+          "Sage levels out (tools/economy_model/rerun.py:39 lists <em>“the main "
+          "Sage's levels (Insight, 11.7)”</em> as not modelled), yet §14.3 prints "
+          "the day the main Sage reaches levels 10, 20, 30 and 40. Screens v3’s "
+          "Sage hall shows ‘Level 4 / 40 · levels with Insight’ and nothing to "
+          "level with.<br><br>§11.7: <em>“A player brings one Sage on each heist, "
+          "and can station another at the Heart as its guardian.”</em> The "
+          "Archivist is the only Sage until Keeper 7, and heist Sages start at "
+          "Keeper 2 (§12.5: <em>“One, from Keeper level 2.”</em>), so nothing says "
+          "whether the lone Sage may guard instead of going. §11.7’s ‘At home’ "
+          "column puts a standing effect (Lab experiments 20% faster, buildings 10%"
+          " cheaper, Gardens 15% more, one more Observatory target) beside each "
+          "Sage’s ‘On guard’ power, and nothing says whether the effect needs the "
+          "Sage at home, on guard, or neither. Screens v3 files it under the guard "
+          "card (screens_meta.js:349). <br><br>So the result has no Insight line: "
+          "the server’s settle answer pays none (server/src/service.mjs:784), and "
+          "Screens v3’s result shows none. Found reading Screens v3 against v3.6.",
+     rec="Give an Insight amount per heist outcome and per source in §9.1, from "
+         "the economy model, and each launch Sage’s eight improvements; then the "
+         "server pays it at settlement and the result shows it. Or drop Sage "
+         "levels and §14.3’s Sage rows. Say whether a lone Sage may guard rather "
+         "than go, and when a Sage’s at-home effect applies."),
+
+dict(id="C49", kind="contradiction", severity="minor", status="open",
+     title="Nine sentences in v3.6 contradict another section, and each needs one "
+           "line",
+     refs=["6.1", "7.3", "9.1", "9.5", "10.2", "11.7", "11.10", "13", "13.4", "14.6", "15.1", "16", "18.2", "18.8", "20.2", "21.8", "23.2", "23.5"],
+     body="Each pair below answers one question two ways (where — one says — the "
+          "other says — the fix):<br><br>Forms album — §23.2’s launch row must show"
+          " <em>“54 forms by kind and note, how to hatch each, trades”</em> — "
+          "§11.10: <em>“Trading: from version 1.1”</em>, and §23.2’s own note: "
+          "<em>“Version 1.1 adds two screens … Neither belongs to the launch list "
+          "above.”</em> — write ‘trades (from 1.1)’, as D48 did for the Friends "
+          "row<br>Sage cooldown — §11.7: <em>“Every fifth level improves one power "
+          "(an extra use, a longer effect or a shorter cooldown)”</em> — the same "
+          "paragraph: every Sage follows <em>“the one 20-second cooldown”</em> — "
+          "strike ‘or a shorter cooldown’, unless a level is meant to shorten the "
+          "20 s<br>The Lab’s failures — §15.1: <em>“Ruins, rehearsals and the Lab "
+          "cost nothing to fail”</em> — §9.5 charges every experiment <em>“400 "
+          "Aether × Lab level”</em>, whatever it finds — ‘the Lab costs no more to "
+          "fail than to succeed, and a failure gives 3 pages’<br>The first "
+          "experiment — §16: <em>“The first experiment takes 5 minutes”</em> — "
+          "§10.2: Lab level 1 is <em>“1 slot(s); 8 h per experiment”</em>, with no "
+          "exception — state the 5 minutes as an exception in §10.2, and whether it"
+          " is charged<br>Geometry — §13’s layer table: <em>“Free, unlimited”</em>;"
+          " §13.4: <em>“Geometry costs nothing and is unlimited”</em> — §6.1: "
+          "<em>“Reshaping is free and instant; it's the budget that limits "
+          "it”</em>, and §9.5: <em>“Free; limited by terrain points (6.1)”</em> — "
+          "‘Geometry costs nothing to change and is limited only by terrain points "
+          "(6.1)’<br>Night — §14.6: <em>“nothing is sent at night (see 20.2)”</em> "
+          "— §20.2’s adult row: <em>“Off 22:00 to 08:00 by default”</em>, which an "
+          "adult may open; the server follows §20.2 "
+          "(server/src/notifications.mjs:9-11) — ‘nothing is sent at night unless "
+          "an adult chooses otherwise (20.2)’<br>Sage powers — §11.7’s new "
+          "sentence: every Sage’s <em>“three powers, each a change to a named "
+          "parameter (7.3)”</em> — §7.3 has <em>“exactly twenty-two "
+          "parameters”</em>, and the launch Sages’ Suspend, Reveal, Jam, Copy, "
+          "Rift, the bridges and Decoy change none of them — ‘after-launch Sages "
+          "follow these rules’, or map each power to a parameter<br>The free track "
+          "and a heist — §18.8’s new row: <em>“nothing in a season changes a "
+          "heist”</em> — its free track grants a stray, Essence and pages (§18.2), "
+          "which a heist spends — ‘nothing in a season is needed to win a "
+          "heist’<br>The free track’s Starglass — §9.1: Starglass from "
+          "<em>“Purchases; small amounts from the free season track”</em>, and the "
+          "free track missing from Pages’ and Essence’s sources — §18.8 now names "
+          "§18.2 as the home of what each track holds: pages, Essence and a stray —"
+          " §9.1 follows §18.2<br>Body text — §23.5’s text-size row: <em>“16 pt "
+          "body”</em> — §21.8: <em>“16 pixels”</em> — one unit, as §21.8 states "
+          "it<br><br>Found reading Screens v3 and v3.6’s new sentences against the "
+          "rest of v3.6.",
+     rec="Make the nine one-line edits above. Two carry a small choice: the draft "
+         "takes a Sage level never to shorten the 20-second cooldown, and leaves "
+         "to the owner whether the 5-minute first experiment is charged."),
+
+dict(id="D83", kind="deviation", severity="significant", status="open",
+     title="Screens v3’s Resonance Lab, curation, terrain editor, defence log and "
+           "Workshop depart from v3.6 in 13 places §23.5 does not list",
+     refs=["8.4", "7.10", "10.2", "9.5", "11.7", "21.12", "6.1", "6.2", "7.7", "13", "13.2", "18.6", "18.7", "24", "25.1", "27.5", "23.5"],
+     body="§23.5 lists, for these screens, only the Lab’s 5 h 30 min and the "
+          "Workshop checklist’s ‘62% · Lv 6 band’. Screens v3 differs from the "
+          "document in these places as well (where — the design shows — the "
+          "document says — §):<br><br>Lab, resonances — twelve, of which ten are "
+          "not the document’s: Held vigil, Glass tide, Static bloom, Frozen fall, "
+          "Whisper chain, Slipstream, Ember dark, Rooted kin, Hollow stone and Soul"
+          " tide, each with an effect of its own (screens_meta.js:9), and icons for"
+          " exactly these twelve (icons_schools.js:39-50) — the launch 24 <em>“hold"
+          " 12 of the 44 signature resonances (8.4)”</em>: Drifting echoes, "
+          "Mangrove banks, Night runners, Cracked gardens, Pinball, Storm grid, "
+          "Briar maze, Twin souls, Shattered glass, Soul tether, Honey trap and "
+          "Northern lights (content/resonances.json) — §8.4, §7.10<br>Lab, Mangrove"
+          " banks — root walls that ‘slow anyone crossing’ (js:9) — <em>“River "
+          "banks grow root walls that slow crews by a further 20%.”</em> — "
+          "§8.4<br>Lab, chambers and price — one test chamber and a RUN THE TEST "
+          "button with no price (markup 184-199) — Lab level 3 has <em>“2 slot(s); "
+          "5 h per experiment”</em> and level 5 three; an experiment costs <em>“400"
+          " Aether × Lab level”</em>; the Archivist at home makes <em>“Lab "
+          "experiments 20% faster”</em> — §10.2, §9.5, §11.7<br>Curation and "
+          "terrain editor, guard sight — every post’s cone at once, the others at "
+          "14% opacity, with gradient fans and soft tile edges (js:520, 1031; "
+          "realm_diorama.js:384-409) — <em>“One shape at a time. The selected "
+          "guard's vision is drawn; the others show only their facing.”</em> and "
+          "<em>“Sharp edges, no gradients.”</em>; RealmView already draws it so "
+          "(client/scripts/realm_view.gd:7) — §21.12<br>Terrain editor, Bell post —"
+          " ‘Rings when passed / Guards within 4 tiles hear it / Held breath "
+          "silences it’ — <em>“Rings if bumped”</em>, <em>“Raises the realm's alarm"
+          " one level (12.17)”</em>, <em>“Delay makes the ring come late”</em> — "
+          "§6.2<br>Terrain editor, the other features — about fifteen of the 39 "
+          "rows differ in substance from content/terrain.json (js:27-66): Stairs "
+          "adds ‘Noisy underfoot’ where the document has none; Ruin wall’s law line"
+          " reads ‘Echoes bounce off it’ for <em>“Shifting stones moves ruin walls "
+          "too”</em>; Raised ground drops ‘or a leap’; Stream drops its Spores "
+          "clause and Pond its Frictionless clause; Thicket’s ‘linger longer’ "
+          "becomes ‘linger’; Hot spring drops ‘while standing in it’ — "
+          "§6.2<br>Curation, law cards — the Sleepwalk and Glowing dark lines "
+          "differ from their sheets (js:26) — §7.7’s text — §7.7<br>Terrain editor,"
+          " moss — no moss ground and no tool to clear it (js:27-104) — <em>“every "
+          "realm is raised with moss on each tile that carries no feature, and a "
+          "Keeper clears it for 1 terrain point a tile”</em> — §6.1<br>Defence log,"
+          " a raid under way — ‘A crew is in Tidehold now · The raider’s name shows"
+          " when the raid ends’ (markup 232) — <em>“The defender is notified "
+          "afterwards and can watch the replay”</em>, and watching live is version "
+          "1.1 — §13<br>Workshop, review — ‘A person reviews it within an hour. "
+          "Then anyone can raid it’ (markup 542) and a draft tagged ‘IN REVIEW · 1 "
+          "H’ (js:1161) — published islands are <em>“scanned automatically”</em>, "
+          "and <em>“featured islands are reviewed by a person”</em>; the server "
+          "publishes an island once it passes its checks "
+          "(server/src/workshop.mjs:104-150) — §24, §18.6<br>Workshop, ‘unfair’ — "
+          "‘If the escape rate falls under 20%, players start rating it unfair’ "
+          "(js:1153) — no such figure; an authored island is held to 30 to 45% — "
+          "§13.2, §18.7<br>Workshop, Remix — island sheets offer Report and Play, "
+          "or Edit and Share (js:1153-1154), and no Remix — <em>“a one-tap \"remix "
+          "this island\"”</em>, and §25.1’s gate <em>“10% have remixed one”</em>; "
+          "the build has it (client/features/workshop/workshop_controller.gd:153) —"
+          " §27.5, §25.1<br>Workshop, Loremaker ladder — the top rewards leave out "
+          "<em>“a say in one season's theme”</em> (js:1146) — §18.7’s rewards — "
+          "§18.7<br><br>The live raid banner and the hour of review each change "
+          "what a player sees or waits for; the document speaks to both, so it "
+          "wins. Found reading Screens v3 against v3.6.",
+     rec="Add the rows to §23.5; the build follows the document. It reads "
+         "resonance, feature, law and ladder texts from content; shows one chamber"
+         " per Lab slot, with the price on the button and the time after the "
+         "Archivist; draws one guard’s sight with hard edges; lays moss by default"
+         " with a Clear moss tool; shows a raid only once it has ended; publishes "
+         "an island when it passes the checks; and keeps Remix."),
+
+dict(id="G53", kind="gap", severity="significant", status="open",
+     title="The Lab’s hints, its chord naming and what an experiment takes and pays "
+           "are unwritten, and Screens v3 invents the hint",
+     refs=["8.4", "8.5", "8.6", "15.1", "15.2", "23.2", "9.1", "7.5", "7.6", "16", "21.5", "10.2"],
+     body="Hints. §23.2’s Lab must show <em>“hints”</em>, and §15.2 lists <em>“Lab "
+          "hints and \"unstable\" warnings”</em>, but §8.4 and §8.6 define only the"
+          " hint a player gets from crossing a resonance in a heist, and §15.1 says"
+          " <em>“Hints appear only after repeated failure, and every hint is tested"
+          " before release”</em>. Screens v3 makes its own rule: one failed pair "
+          "that shares a law with an undiscovered resonance shows that law on the "
+          "resonance’s card, ‘… now shows one of its two laws’ "
+          "(screens_meta.js:15-16, 464). That is a hint after one failure, and it "
+          "changes what a player learns. The design also gives each resonance a "
+          "settle time its note calls ‘the clue’ (all twelve are 5.5 h today), "
+          "where §10.2 sets one time per Lab level.<br><br>Chords. §8.5: <em>“The "
+          "Lab names chords — from level 3 it identifies one the player has woven "
+          "or crossed”</em>, and §21.5 draws <em>“A third sphere for chords”</em>. "
+          "Nothing says what starts it, whether it takes a slot, time or Aether, or"
+          " which chord it names when several qualify. Screens v3 has no chord in "
+          "the Lab.<br><br>What an experiment takes and pays. Insight from <em>“Lab"
+          " discoveries”</em> (§9.1) and §16’s <em>“with insight pages”</em> have "
+          "no amount. §7.6’s <em>“Lab experiments that find nothing give 3 pages of"
+          " a law from those schools”</em> does not say which law. §7.5: <em>“A "
+          "universe can hold one paradox at a time”</em>, with no rule for finding "
+          "a second. Nothing says whether a law not yet restored may go on a "
+          "pedestal; Screens v3 allows any law met (js:388-389). F37 already asks "
+          "whether an empty pairing can be re-run for pages.<br><br>Found reading "
+          "Screens v3 against v3.6.",
+     rec="Write into §8.6 what a Lab hint shows, after how many failed pairs, and "
+         "whether it shares the Codex’s ‘hinted’ state with a crossing hint; how "
+         "the Lab names a chord from level 3 (for example, once a day and free, "
+         "the cheapest chord woven or crossed and not yet named); the Insight a "
+         "discovery pays; which law the 3 pages go to; which laws may go on a "
+         "pedestal; and what a second paradox does. Until then the build gives no "
+         "Lab hint beyond the crossing hint, and no time per resonance."),
+
+dict(id="G54", kind="gap", severity="significant", status="open",
+     title="Curation swaps a law at once and free, and §13.3 never says whether a "
+           "swap is a weave",
+     refs=["13.3", "5.6", "7.10"],
+     body="§13.3 makes <em>“Swap a law”</em> curation’s first verb, and generates "
+          "the defence <em>“weaving only those of their laws that help the "
+          "defender”</em>. §5.6: laws are woven in <em>“10 minutes at tier I, 40 "
+          "minutes at tier II and 2 hours at tier III”</em> at <em>“40 Aether per "
+          "point of the law's stability cost”</em>, and after a removal <em>“the "
+          "slot then rests for an hour before it can be woven again”</em>. Screens "
+          "v3’s Swap and the river’s Across/Along choice apply at once, with no "
+          "price or timer, priced only in hold (screens_meta.js:540-546, 581). "
+          "Nothing says whether a curation swap is a weave, and so pays §5.6’s "
+          "Aether and waits its time, or is exempt; nor whether generating a "
+          "defence may unweave a law the player wove for production. The player "
+          "sees both on the screen. F12 covers the eight laws’ placement choices, "
+          "not this. Found reading Screens v3 against v3.6.",
+     rec="Say in §13.3 either that a curation swap is a weave at §5.6’s price and "
+         "time, which the screen then shows, or that it is exempt; and whether a "
+         "generated defence may unweave a law the player wove for production."),
+
+dict(id="G55", kind="gap", severity="significant", status="open",
+     title="Curation and the Workshop show a hold figure nothing measures, and "
+           "curation refuses to save outside a band no section gives a curated "
+           "defence",
+     refs=["13.2", "13.3", "13.4", "18.7", "23.2"],
+     body="Hold is a rate measured over many raids: §13.4 needs <em>“About 1,600 "
+          "raids per version to detect a five-point shift in hold rate with "
+          "confidence”</em>. Screens v3 shows a hold percentage that changes at "
+          "once with every layout, swap, river choice, post move and BEST heat-map "
+          "tile, worked out as a base, plus two points for each tile seen on a "
+          "landing path up to three, plus a bonus per law (cuEval, "
+          "screens_meta.js:105-125, 513-516); the Workshop shows ‘38% held · fair’ "
+          "(markup 517). §23.2 asks the curation preview to re-generate <em>“fast "
+          "enough not to break the flow”</em> and names no fast source for hold, so"
+          " the figure is an estimate shown as a measurement. §13.3 has an exact, "
+          "instant measure of its own: <em>“A layout is validated by counting its "
+          "feasible stealth paths: fewer is harder.”</em><br><br>Curation’s SAVE "
+          "refuses outside 30–45%: ‘Bring the hold inside 30–45% to save’ (js:558)."
+          " §13.2 holds an authored island to 30 to 45% and a generated one to "
+          "<em>“the band its realm level can reach within 5.2's budget”</em>, and "
+          "tags every island with its origin. Nothing says which origin a generated"
+          " defence has once the player edits it, or whether a defence outside its "
+          "band may be saved. A refused save is a rule the player meets.<br><br>D62"
+          " records that the Workshop cannot measure hold per publish. New here: "
+          "the curation side, and the figure both screens show. Found reading "
+          "Screens v3 against v3.6.",
+     rec="Choose the source: the stealth-path count, live, beside a hold measured "
+         "by a server queue and cached by the island’s digest, shown as "
+         "‘measuring…’ until it lands; or a small batch on the phone with its "
+         "error printed. Say in §13.3 that a preview never shows an estimate as a "
+         "measurement. Define a curated defence’s origin (for example, generated "
+         "while only §13.3’s verbs were used, authored once terrain is edited) and"
+         " whether one outside its band can be saved, with a warning or not at "
+         "all."),
+
+dict(id="G56", kind="gap", severity="significant", status="open",
+     title="Moss and terrain points are in no check, and nothing says who sets a "
+           "guard’s facing, a feature’s direction or a Workshop island’s realms",
+     refs=["6.1", "6.2", "12.17", "13.3", "18.6", "24.11", "23.5"],
+     body="Moss. §6.1: <em>“every realm is raised with moss on each tile that "
+          "carries no feature, and a Keeper clears it for 1 terrain point a tile, "
+          "from the same budget”</em>; F29 was closed on this rule as the "
+          "defender’s answer to ambushes. The simulation’s empty realm is "
+          "<em>“open, plain, lit ground”</em> (sim/src/island.rs:249-263), only the"
+          " fixtures place moss (:750-762), and the extension writes bare ground as"
+          " plain (client/ext/src/island.rs:141-145).<br><br>Terrain points. §6.1: "
+          "<em>“an outer realm has 30 terrain points plus 15 per realm level (45 to"
+          " 105). The Heart has 40 plus 10 per Spire level.”</em> Nothing counts "
+          "them: not <code>Island::check</code>’s problems "
+          "(sim/src/island.rs:143-169), not the extension’s <code>budget()</code> "
+          "(client/ext/src/island.rs:207-219), not the server "
+          "(server/src/universe.mjs:280-290). The Heart’s budget needs the Spire "
+          "level, which no bundle carries; G19 is the same gap for the Heart’s "
+          "wards and posts. §18.6 lifts the stability limit in the Workshop sandbox"
+          " and says nothing of terrain points.<br><br>A guard’s facing. Screens "
+          "v3’s curation turns each post with a four-way dial, ‘Post 1 now faces "
+          "north’ (screens_meta.js:552), and every cone follows it. §12.17 gives a "
+          "guard <em>“Patrols or holds its post”</em>, and §13.3 lists only ‘move a"
+          " post’. The simulation posts every guard facing 270° "
+          "(sim/src/lib.rs:547) and the bundle has no facing. A facing changes what"
+          " a guard sees, so §23.5 keeps the dial out until it is written.<br><br>A"
+          " feature’s direction. Ramps and stairs need an up side, rapids "
+          "<em>“Pushes anyone 1 tile a second downstream”</em>, a waterfall needs a"
+          " ledge side, and a tunnel is <em>“A hidden path joining two points up to"
+          " 6 tiles apart”</em>. Screens v3 places each with one tap (js:98). §6.2 "
+          "says <em>“The owner sets the direction”</em> for the chute, and for no "
+          "other.<br><br>Realms. Screens v3 shows a Workshop draft of ‘2 realms’ "
+          "and ‘Glass Maze · 1 realm’ (js:1163, 1172). §18.6: <em>“an island is a "
+          "set of laws, terrain, guards and a layout”</em>; the server stores one "
+          "bundle with one realm level (server/src/workshop.mjs:146-149). D71 keeps"
+          " a heist to one island.<br><br>Found reading Screens v3 and the build "
+          "against v3.6.",
+     rec="Build moss as the default ground, at a point a tile to clear, and a "
+         "TooMuchTerrain problem with the server passing the budget (the Spire "
+         "level for the Heart). State whether the sandbox keeps §6.1’s budget; "
+         "whether the owner sets each post’s facing or a patrol, each directional "
+         "feature’s direction and a tunnel’s two ends, and what the generator "
+         "picks for each; and whether a Workshop island is one realm. The bundle "
+         "then carries them, a rules-version change (§24.11). Until written, the "
+         "facing dial is not built."),
+
+dict(id="G57", kind="gap", severity="significant", status="open",
+     title="The defender’s report, the rehearsal crews and the Profile’s records "
+           "need per-raid facts and crew rules that nothing defines or records",
+     refs=["13", "13.2", "13.4", "23.2", "24", "24.3", "20.5"],
+     body="The report. §13.2 and §23.2 give each raid on a player a report: "
+          "<em>“the haul denied, how long the defence held, where the crew was "
+          "seen, what fired”</em>. §13.4 defines haul denied as an expectation over"
+          " many raids against no defence, not for one raid, and ‘how long the "
+          "defence held’ has no measure at all. The simulation’s Outcome "
+          "(sim/src/heist.rs:147-167) keeps grade, banked, capacity, caught, out, "
+          "pages, cracked and left: no time held, no sighting, nothing that fired. "
+          "And §24: <em>“Validation is sampled, not universal”</em>, so most raids "
+          "are never re-simulated on the server.<br><br>The rehearsal crews. §13: "
+          "<em>“A rehearsal sends one of three simulated crews (cautious, greedy or"
+          " fast) against the universe as it stands”</em>, and gives none a rule. "
+          "The harness’s crews are Careless, Competent, Optimal and Clearing "
+          "(tools/heist_harness/policy.py:460-555), and nothing in sim/, server/ or"
+          " client/ is cautious, greedy or fast. Screens v3 gives each one line: "
+          "‘Waits for gaps, never runs’, ‘Loads until the bag is full’, ‘Runs the "
+          "shortest route’ (screens_meta.js:590). D66 asks for the reference crews "
+          "in the simulation.<br><br>The Profile. Screens v3’s records and charts "
+          "use escape time, alarms per heist, guards slept past, crew knocked out, "
+          "most realms in one raid, the entry edge (‘Raiders come in over the west "
+          "bridge’), favourite law and minutes played a day (js:844-880). The "
+          "server’s verdict holds grade, out, caught, crew, banked, capacity, "
+          "pages, cracked and left (server/src/sim.mjs:103-107), where left is "
+          "unbanked loot, not time; the laws are only in the lease’s bundle. The "
+          "log promises ‘Your last 25 raids are kept here’ (markup 362), while "
+          "§24.3 keeps raw replays 30 to 90 days.<br><br>Found reading Screens v3 "
+          "and the build against v3.6.",
+     rec="Define each report measure for one raid (for example: denied, what the "
+         "crew could carry from the exposed Vault less what it banked; held, "
+         "seconds from landing to escape or capture; seen, tiles where a guard "
+         "reached Alerted, named by the nearest building; fired, wards set off, "
+         "bells rung and the guardian Sage’s power), and give each rehearsal crew "
+         "its rule in one sentence in §13. The simulation records the facts as an "
+         "event log; the server writes what the report and the Profile need when "
+         "it settles a raid, re-simulating when a defender opens a report it did "
+         "not sample; and the battle log keeps its rows longer than replays and "
+         "says when a replay is gone."),
+
+dict(id="D84", kind="deviation", severity="significant", status="open",
+     title="The Season screen pays what v3.6 does not: a Starpass boost and quest, "
+           "season and event quests, star chests, a streak in stars, and Starglass "
+           "for every league",
+     refs=["18.1", "18.2", "18.5", "18.8", "14.6", "14.8", "20.3", "9.1", "23.5"],
+     body="The Starpass. ‘+20% ★’ on the tier strip with the pass (markup 264; "
+          "boostOn, screens_meta.js:670), quest rewards shown ×1.2 with it "
+          "(js:684), and a daily quest, ‘Starpass: win a heist unseen’, locked to "
+          "pass holders (js:4). §18.8: <em>“The premium track sells looks and "
+          "nothing else (22.1)”</em>; §20.3: <em>“No power, speed or skipped "
+          "waiting for money.”</em>; §14.8: <em>“no purchase ever fills one”</em>. "
+          "More stars climb free tiers that pay Essence and pages. The prototype’s "
+          "own claim still adds the base reward (seQClaim, js:160), so the error is"
+          " in what the screen promises.<br><br>Quests. §14.6: <em>“Daily goals: "
+          "the player picks 3 of 6 offered goals … with one free swap. Rewards are "
+          "small”</em>. Screens v3 has four fixed daily quests with a swap, four "
+          "season quests (+120 to +200 stars) and two four-day event quests, ‘Event"
+          " · The Still Hour’, at +300 and +400 (js:2-5, 635). §9.1 counts goals as"
+          " a star source, and only §14.6’s daily goals are defined.<br><br>Star "
+          "chests. ‘AFTER TIER 30 · STAR CHESTS · One every 500 ★ · up to 10 a "
+          "season’ (markup 268). §18.2 has <em>“Fifty tiers”</em> and nothing after"
+          " them, and no chest’s contents are written anywhere.<br><br>The streak. "
+          "The seventh day pays ‘+100’ (js:683), and a bar reads ‘Today · 6 of 10 "
+          "min’ (markup 276). §14.6: <em>“playing on 4 days out of 7 keeps it "
+          "going. One automatic saver a week covers a missed week, and a broken "
+          "streak is repaired by playing two days in a row. Streak rewards are "
+          "cosmetic.”</em> The saver and the repair are not drawn.<br><br>League "
+          "rewards. Starglass 120, 80, 40 and 20 with pages to Paradox, Nova, Star "
+          "and Tide, pages and Insight to Ember, pages to Dust (js:688), ‘for the "
+          "highest league you reached’ (markup 287). §18.1: <em>“At the end of a "
+          "season, rewards are given by league”</em>; §18.5: <em>“Star, Nova and "
+          "Paradox leagues with season-end cosmetics”</em>; §9.1 earns Starglass "
+          "from <em>“Purchases; small amounts from the free season track”</em>. The"
+          " server grants a cosmetic to those three by the league a player ends in "
+          "(server/src/seasons.mjs:46-53), and G27 asks what Dust, Ember and Tide "
+          "get.<br><br>Each changes what a player earns, which §23.5 does not let a"
+          " design add. Found reading Screens v3 against v3.6.",
+     rec="Build §14.6 and §18 as written: the same rewards with or without the "
+         "pass and no quest reserved to it; §14.6’s pick 3 of 6 with one free "
+         "swap; a streak of any play on 4 days in 7, with its saver, its repair "
+         "and a cosmetic reward; league rewards as the server grants them. Season "
+         "and event quests and star chests are not built until §14.6 or §18.2 "
+         "gives them rewards and caps."),
+
+dict(id="D85", kind="deviation", severity="significant", status="open",
+     title="Screens v3’s Season, Shop and Profile depart from v3.6 in 7 places §23.5"
+           " does not list",
+     refs=["18.2", "18.3", "11.7", "12.9", "20.2", "23.2", "18.5", "18.7", "14.9", "23.5"],
+     body="§23.5 lists, for these screens, the 30-tier track and the Profile’s "
+          "‘Rating’. Screens v3 differs from the document in these places as well "
+          "(where — the design shows — the document says — §):<br><br>Season, era —"
+          " ‘ERA II · THE STILL HOUR’ and ‘ERA III’ drawn as gates before tiers 11 "
+          "and 21 (screens_meta.js:626; markup 267), and no week’s era anywhere — "
+          "<em>“Each week one rule changes for every universe”</em>, and ‘era’ is a"
+          " Season must-show; the server serves <code>GET /v1/era</code>, and D69 "
+          "records that no screen shows it — §18.3, §23.2<br>Season, free track — "
+          "‘Free at tier 30: The Chronicler’ (markup 262; the free list ends on its"
+          " portrait, js:153), and a ‘Chronicler robe’ among the Starpass perks "
+          "(js:681) — <em>“The free track gives pages, Essence and a stray”</em>; "
+          "the Chronicler follows after launch, its powers <em>“written when they "
+          "ship”</em>, <em>“earned and never sold”</em> — §18.2, §11.7<br>Season, "
+          "League tab — ‘Earn renown: +30 Heist won, +20 Defence held, −10 Vault "
+          "raided’ (js:693), and a battle log of ‘FOILED −18’ and ‘HELD +14’ "
+          "(js:829) — <em>“Renown for a clean heist = 20 × (1 + (defender's Renown "
+          "− raider's Renown) ÷ 1,000), kept between 8 and 40, then multiplied by "
+          "the outcome above. The defender gains or loses the mirror amount. A "
+          "foiled heist costs the raider a flat 8”</em>; the server does this "
+          "(server/src/seasons.mjs:1-35) — §12.9<br>Shop, payments — the Payments "
+          "panel and every buy sheet, the Starpass sheet included, show ‘ASK TO BUY"
+          " · With Family Sharing, a parent approves each purchase’ to every age "
+          "band, and the 13–15 cap is worked out (js:718) and never drawn (capBar, "
+          "js:817, is unused) — 13 to 15: <em>“Family approval where set up; €25 a "
+          "month cap”</em>; 16 and 17: <em>“€50 a month cap”</em>; adults: "
+          "<em>“Monthly spending summary”</em>; the Shop must show the "
+          "<em>“spending cap for minors”</em> — §20.2, §23.2<br>Shop, preview — "
+          "PREVIEW ON MY UNIVERSE opens an unchanged Home with a toast (js:779), "
+          "and single realm skins, skies and bridges have no preview — "
+          "<em>“previews on your universe”</em> — §23.2<br>Profile, outcomes — the "
+          "donut’s slices are Clean 41, Loud 87, Partial 38 and Foiled 14 but are "
+          "labelled CLEAN, PARTIAL, CAUGHT and FOILED (js:851, 855), so Loud reads "
+          "‘87 PARTIAL’; ‘128 won / 52 lost’ counts a Partial as lost (js:850) — "
+          "four outcomes, none called Caught, and a Partial still pays ×0.4 — "
+          "§12.9<br>Profile, badges and titles — nine graded badges (First heist, "
+          "Ghost, Vault breaker, Iron wall, Law hunter, Resonant, Hoarder, "
+          "Friendly, Paradox; js:830) and ‘Title · Quiet Thief’ (markup 333) — "
+          "badges are a must-show and only §18.7’s creator badge is defined; titles"
+          " come from school mastery, <em>“A title, and that school's laws get a "
+          "visual style nobody else has”</em> — §23.2, §18.7, §14.9<br><br>Found "
+          "reading Screens v3 against v3.6.",
+     rec="Add the rows to §23.5; the build follows the document: the week’s era on"
+         " the Season header with its rule and its end, and no era gates; no Sage "
+         "on the track; §12.9’s Renown in words and the server’s numbers in the "
+         "log; the band’s cap and approval words before every purchase; previews "
+         "on the player’s own universe and ruleborn, unsaved; each outcome by its "
+         "name. List the launch badges, paying nothing, in §18.5 or §23.5’s "
+         "adopted table, and keep titles to mastery."),
+
+dict(id="F57", kind="finding", severity="significant", status="open",
+     title="Screens v3 prices the Shop, the Starpass and gifts in Starglass, which "
+           "the owner’s answer to F41 removed",
+     refs=["9.1", "9.5", "18.2", "19.12", "22.1", "22.4", "20.2"],
+     body="The Shop is drawn in Starglass: a pill reading ‘480 = €4.80 +’, tiles at"
+          " ‘120 ≈€1.20’, packs of 100 to 5,000 ✦ at €1 to €50, ‘Starglass never "
+          "expires’, and buy sheets that pay in ✦ (markup 297, 306-307, 324). The "
+          "Starpass bar shows ‘600 ✦’ and its sheet ‘Buy for 600 Starglass’, with "
+          "no money figure (markup 272, 290), while the Shop’s card says ‘≈ €5.99’ "
+          "beside ‘100 ✦ is always €1’. §22.1: <em>“Every price is shown in real "
+          "money before purchase”</em>; §19.12: <em>“Every cosmetic shows its "
+          "real-money price.”</em><br><br>A gift reads ‘GIFT · 3 left this month’ "
+          "and, on a tap, ‘Gift sent to Ines · a parent approves first’, to every "
+          "band, with no friend chosen and nothing paid (screens_meta.js:718, 819)."
+          " §22.4 gives <em>“a monthly limit and parental approval rules for "
+          "minors”</em> and no number, which D64 records; the design proposes "
+          "three.<br><br>v3.6 still has Starglass in §9.1, §9.5, §18.2, §19.12 and "
+          "§22.1; the build follows the owner’s answer, <em>“there is no "
+          "currency”</em> (server/src/shop.mjs:1-13; "
+          "client/scripts/shop_screen.gd:1-6). New here: Screens v3 depends on the "
+          "currency, so the Shop and Season cannot be drawn from it until F41 is "
+          "closed. Found reading Screens v3 against v3.6.",
+     rec="Confirm F41’s answer and amend §9.1, §9.5, §18.2 and §22.1 before the "
+         "Shop and Season are drawn: every ✦ line becomes the store’s local price,"
+         " a gift picks a friend and pays like a purchase with approval words for "
+         "minors only, and §22.4 takes a number (the design’s 3 a month, or "
+         "another)."),
+
+dict(id="D86", kind="deviation", severity="significant", status="open",
+     title="Friends see who is online, when others were last seen, what they are "
+           "doing and whom they raid, which v3.6 does not have",
+     refs=["17.6", "17.8", "20.2", "20.5", "20.7", "14.6", "24", "23.5"],
+     body="Screens v3’s Friends shows ‘3 online’, ONLINE and OFFLINE sections, "
+          "‘Seen 3 h ago’, RAIDING, WORKSHOP and HOME pills, and SEND A PING with "
+          "‘Good heist!’, ‘Rematch?’, ‘Raid me!’ and ‘Nice defence!’ "
+          "(screens_meta.js:1241-1285; markup 607-623), the same for 13 to 15. "
+          "Kofi’s status reads ‘Raiding Ines’ on his row, his pill and his sheet "
+          "(js:1241); §17.8: <em>“raids are anonymous while they happen”</em>, and "
+          "the design’s own feed footer says ‘Raids show no names while they "
+          "happen.’<br><br>No section has presence, last seen or live status. §20.2"
+          " keeps a 13-to-15 profile <em>“Private”</em> and a 16-to-17 one "
+          "<em>“Private by default”</em>, and §20.5 collects only what is needed. "
+          "Preset phrases exist (§20.2’s chat row), and preset pings appear only "
+          "for 1.1’s co-op heists (§20.7: <em>“Friends only, preset pings”</em>), "
+          "not between friends.<br><br>The Share sheet lets a 13-to-15 player ‘Post"
+          " to the Beacon · Friends see it in their Beacon feed’, and grades "
+          "moments EPIC, RARE and LEGENDARY by no rule (js:1221-1229). The owner’s "
+          "answer to G35 keeps every 13-to-15 heist out of every feed "
+          "(server/src/friends.mjs:84-100). §24’s clips row allows a posted clip to"
+          " be stored: <em>“no video is stored on the server unless "
+          "shared”</em>.<br><br>Each changes what a player can see or do, which "
+          "§23.5 does not let a design add. Found reading Screens v3 against v3.6.",
+     rec="Never name a raid’s target while it runs. Decide whether presence, last "
+         "seen, activity and pings ship at launch; if they do, write them into "
+         "§17.6 with what 13 to 15 and 16 to 17 show to friends, a ping’s daily "
+         "cap and whether a ping notifies. Until then the build shows none. Keep "
+         "13-to-15 players from posting to the Beacon, as G35’s answer does, and "
+         "give a moment’s grade a rule or drop it."),
+
+dict(id="C50", kind="contradiction", severity="significant", status="open",
+     title="§17.8’s ‘a raid takes nothing’ is false in §9.4’s Open Vault league, "
+           "which has no screen, no build and no register item",
+     refs=["17.8", "9.4", "27.5", "23.2"],
+     body="§17.8 explains why blocking leaves a player’s island in the target pool:"
+          " <em>“This looks odd until you remember that a raid takes nothing: there"
+          " is no harm to be protected from, and raids are anonymous while they "
+          "happen.”</em> §9.4: <em>“Players who want real stakes opt into the Open "
+          "Vault league, where the rules below apply in full and rewards are 40% "
+          "higher on both sides.”</em> In that league a raid takes from the "
+          "defender, so §17.8’s reason fails there, and §27.5 has soft launch "
+          "report both leagues. Screens v3’s block sheet repeats the reason: ‘Your "
+          "islands can still meet as raid targets, because a raid takes nothing’ "
+          "(screens_meta.js:1284). Its League tab has no Open Vault, and neither "
+          "has server/, sim/ or client/; no register item or roadmap task names it."
+          " Found reading Screens v3 against v3.6.",
+     rec="Say in §17.8 what a block does between Open Vault players (for example, "
+         "it removes each from the other’s Open Vault targets). Give the opt-in a "
+         "home in §23.2 (the League tab) and the roadmap a task, or move the "
+         "league after launch."),
+
+dict(id="D87", kind="deviation", severity="significant", status="open",
+     title="Screens v3’s Settings and first launch depart from v3.6 in 13 places "
+           "§23.5 does not list",
+     refs=["20.1", "20.2", "20.8", "20.9", "20.10", "20.11", "20.12", "7.7", "5.2", "16", "14.2", "25.2", "11.2", "11.3", "12.9", "5.5", "23.2", "23.5"],
+     body="§23.5 lists, for these screens, the protections drawn as open choices, "
+          "the Account tab’s highlight, the Life gem and three first-session "
+          "numbers, and says the first launch otherwise follows the document. "
+          "Screens v3 differs from it in these places as well (where — the design "
+          "shows — the document says — §):<br><br>Settings, age band — ‘Set from "
+          "your device’s age check. Preview other bands here.’ (markup 419), but a "
+          "preview writes the band every lock reads (screens_meta.js:946, 889, "
+          "897-898): a 13-to-15 player who previews 18+ sees ‘AGE 18+’, the "
+          "play-time reminder Off and quiet hours unlocked — the band comes from "
+          "the platform, and <em>“any protection the age band fixes is shown "
+          "locked”</em> — §20.1, §20.2, §23.2<br>Settings and first launch, "
+          "purchases — 13 to 15 ‘Ask to Buy · a parent approves’, 16 to 17 and "
+          "adults ‘Through the App Store’ (js:906, 954), with no cap and no "
+          "summary; the €25 cap is worked out (js:901, 926) and never drawn; the "
+          "Family approval card says a parent ‘gets a monthly summary’ (markup 420)"
+          " — 13 to 15: <em>“Family approval where set up; €25 a month cap”</em>; "
+          "16 and 17: <em>“€50 a month cap”</em>; adults: <em>“Monthly spending "
+          "summary”</em>; no summary goes to a parent — §20.2<br>Settings, controls"
+          " — no hold time and no way to move controls (js:944-945) — <em>“controls"
+          " can be mirrored for left-handed play and moved; hold times "
+          "adjustable”</em> — §20.8<br>Settings, help — no help, support or contact"
+          " anywhere in Screens v3 — <em>“an in-game help section and a ticket "
+          "form”</em> and <em>“published contact details”</em>; the server serves "
+          "<code>/support</code> (server/src/http.mjs:22) — §20.10, "
+          "§20.11<br>Settings, profile — no profile visibility — 16 and 17: "
+          "<em>“Private by default”</em>; adults: <em>“Player's choice”</em> — "
+          "§20.2<br>Settings, deletion — ‘You will be asked twice. Your islands "
+          "stay as unnamed ruins.’ (js:951) — an island <em>“may remain as an "
+          "unnamed derelict in the ruins, or be withdrawn entirely at the player's "
+          "request”</em>; the server takes <code>withdrawIslands</code> "
+          "(server/src/http.mjs:567-572, F43) — §20.12<br>Settings, accessibility —"
+          " Stillness ‘invisible to guards.’ (markup 406) and Spirit drawn as a "
+          "plain oval (js:902) — <em>“invisible to guards and wards.”</em>; "
+          "Spirit’s shape is an eye — §7.7, §5.2<br>First launch, age check — ‘13 "
+          "to 15’ chosen before the player answers (js:7, 963), and the under-13 "
+          "stop offers CHANGE AGE RANGE back to the question (markup 452) — <em>“A "
+          "neutral age gate, no accounts below 13 … the gate is not "
+          "decorative”</em>; the client’s own check suggests no answer and never "
+          "asks again after under 13 (client/scripts/age_screen.gd:3-5; "
+          "client/data/age_check.gd:43-50) — §20.1, §20.11<br>First launch, "
+          "protections — 13 to 15: ‘A parent can change these in Settings.’; 16 to "
+          "17: ‘You can loosen chat yourself; the rest stays on.’ (js:978) — "
+          "nothing lets a parent loosen the 13-to-15 row, and <em>“13 to 15 "
+          "cannot”</em> move to free chat; at 16 and 17 the profile is <em>“Private"
+          " by default”</em> and the reminder <em>“Every 90 minutes by "
+          "default”</em>, so more than chat can change — §20.2, §20.9<br>First "
+          "launch, the beats — no note at 0:30; abilities named, not shown, at "
+          "1:15; the strays sent to the Star Well alone at 5:00; the 7:00 ruin "
+          "chosen and never run; no insight pages and no tired crew at 10:00 "
+          "(js:955-964) — <em>“The page shows the law's one note, Flow.”</em>, "
+          "<em>“Each shows its ability once.”</em>, <em>“The player puts them to "
+          "work at the Star Well and the Garden.”</em>, <em>“The player chooses one"
+          " and runs it alone.”</em>, and the session ends <em>“with the characters"
+          " tired”</em>; the First launch must show <em>“the moments in section "
+          "16”</em> — §16, §23.2<br>First launch, the end — ‘Keeper level 3 · Level"
+          " 4 opens your first outer realm’ (js:998; markup 462) — <em>“Outer "
+          "realms open at Keeper levels 3, 6, 10”</em>, and §16 ends with <em>“the "
+          "next realm two levels away”</em>, at Keeper 1 — §5.2, §14.2, "
+          "§16<br>First launch, SKIP — jumps to the done screen with 3 laws, 5 "
+          "ruleborn and 1 resonance (js:1014, 1018) — <em>“Every first session ends"
+          " with the player having robbed a vault and woven a law into their own "
+          "island”</em>; the resonance and the Keeper levels come from play — "
+          "§25.2, §16<br>First launch, labels — the crew ‘Scout · Breaker · "
+          "Swimmer’ (js:964); stars on HEIST WON (markup 457); ‘Keep it green’ "
+          "(js:960); ‘Name it’ at 10:00 — a Tidewalker is a Carrier and Swimmer is "
+          "a trait; a heist ends Clean, Loud, Partial or Foiled; stability bands "
+          "pay more up to Brimming; the experiment names Mangrove banks — §11.2, "
+          "§11.3, §12.9, §5.5, §16<br><br>Found reading Screens v3 against v3.6.",
+     rec="Add the rows to §23.5; the build follows the document. The band comes "
+         "only from the age check and the server, and the comparison is a "
+         "read-only sheet; the band’s cap, this month’s spending and the adult "
+         "summary show in Settings and the first launch; Settings gains hold time,"
+         " moving controls, help and support, and a profile row by band; deletion "
+         "offers ‘withdraw my islands too’; the age check pre-selects nothing and "
+         "never goes back from under 13; each §16 moment runs on its own screen, "
+         "with no skip except for an account that finished the session elsewhere."),
+
+dict(id="C51", kind="contradiction", severity="significant", status="open",
+     title="v3.6’s first session disagrees with itself: three times for the first "
+           "heist, minute one guided and unguided, two things before it §25.2 "
+           "forbids, and weaves with no time",
+     refs=["15.2", "16", "25.2", "20.1", "5.6", "23.5"],
+     body="When the first heist comes: §15.2 puts <em>“A guided first heist in a "
+          "ruin”</em> at minute 1; §16 puts it at 2:00, <em>“First heist, into a "
+          "Drifting ruin that runs Slow rivers”</em>; §25.2’s target is <em>“Median"
+          " time to the first heist | Under 45 seconds”</em>. Whether minute one is"
+          " guided: §15.2 guides it, and §25.2 says <em>“The first minute is "
+          "unguided play”</em>.<br><br>What may come before it: §25.2, <em>“No "
+          "account creation, no permission prompts, no settings and no logos that "
+          "can't be skipped before the first heist.”</em> §20.1 asks the platform "
+          "for the age band at first launch, which Screens v3 draws as a system "
+          "sheet, ‘Share your age range?’ (markup 439), and §23.5’s adopted order "
+          "puts the title, the age check, the protections summary and the Keeper’s "
+          "name and face before §16’s 0:00.<br><br>How long its weaves take: §5.6 "
+          "weaves a tier I law in 10 minutes, and <em>“While a slot is being woven "
+          "it is empty”</em>; §16 weaves Half gravity at 0:30 with stones lifting "
+          "at once and Bloom at 6:30 with the bar shown at once, and never says the"
+          " tutorial is exempt. Screens v3 weaves at once.<br><br>Found reading "
+          "Screens v3 against v3.6.",
+     rec="Choose one time and one rule: move the heist into minute one, or restate"
+         " §25.2’s median from the end of the age check with a figure the adopted "
+         "order can reach; and say whether minute one is guided. State that the "
+         "age check is the one prompt before play and that the Keeper’s name stays"
+         " on the phone until the account is made after the first heist. Say in "
+         "§16 that the tutorial’s weaves are instant."),
+
+dict(id="D88", kind="deviation", severity="significant", status="open",
+     title="Screens v3 adds notifications §14.6 does not list, leaves out one it "
+           "does, and sets a daily reminder nobody chose",
+     refs=["14.6", "18.8", "14.10", "23.5"],
+     body="§14.6: <em>“Notifications: only for things the player can act on "
+          "(storage full, a character rested, an experiment finished, a heist "
+          "against you). Players choose a daily reminder time, or none”</em>. "
+          "§18.8: <em>“no notification when a season is ending”</em>. Settings "
+          "lists You were raided, Buildings ready, Crew rested, Weaving done and "
+          "Season rewards (screens_meta.js:937): no ‘an experiment finished’, "
+          "storage full worded as ‘Buildings ready’, and two kinds added. The "
+          "Shop’s wishlist says ‘On your wishlist. We tell you when it is back’ "
+          "(js:741). The reminder time starts at 18:30 (js:923). The server sends "
+          "only §14.6’s kinds (server/src/notifications.mjs:10-12) and keeps no "
+          "reminder until the player sets one (server/src/db.mjs:55). A "
+          "notification changes what a player hears, which §23.5 does not let a "
+          "design add. Found reading Screens v3 against v3.6.",
+     rec="Settings lists §14.6’s four kinds (storage full, crew rested, experiment"
+         " finished, you were raided), and the reminder starts at Off. Season "
+         "rewards, Weaving done and the wishlist alert are not built until §14.6 "
+         "lists them, and Season rewards sits against §18.8."),
+
+dict(id="G58", kind="gap", severity="significant", status="open",
+     title="Four protections for minors are unwritten, and the server takes any age "
+           "band the phone sends",
+     refs=["20.1", "20.2", "20.5", "20.11", "12.4", "24"],
+     body="How a band changes. §20.1: <em>“at first launch the game asks the "
+          "platform for the player's age band”</em>, and nothing covers a birthday,"
+          " a platform update or a wrong answer. Screens v3 says ‘You can change it"
+          " later with a parent’ (markup 439). <code>PUT /v1/age</code> "
+          "(server/src/http.mjs:528-537) stores any band but under 13, at any time "
+          "(server/src/workshop.mjs:89-93), so a modified client can loosen a "
+          "minor’s protections. D62 notes only that the band is declared, not "
+          "verified.<br><br>The play-time reminder. §20.2: 13 to 15 <em>“Every 60 "
+          "minutes”</em>, 16 and 17 <em>“Every 90 minutes by default”</em>, adults "
+          "<em>“Optional”</em>. Screens v3 lets 16 to 17 choose Off (js:897), "
+          "counts the day’s total (‘38’ minutes today, then ‘Pause card in 22 min’,"
+          " js:911-919) and draws the interval as a line across daily bars, which "
+          "reads as a daily limit the document does not have. Nothing says whether "
+          "16 to 17 may switch it off, or whether the interval counts continuous "
+          "play or the day.<br><br>The Keeper’s name. §12.4: <em>“Free information:"
+          " name, Keeper level, number of realms, Renown and a rough loot "
+          "estimate.”</em> §20.2 makes a 13-to-15 profile <em>“Private”</em>. "
+          "Screens v3 shows ‘HOW RAIDERS SEE YOU’ with the name for every band "
+          "(markup 448). Nothing says whether the name is part of the private "
+          "profile, or whether a 13-to-15 name comes from a word list (C43 is the "
+          "island-name side).<br><br>Consent and terms. §20.5: <em>“consent follows"
+          " the player's country”</em>; §20.11: <em>“a terms-of-use gate”</em>. The"
+          " first launch has neither (title, age, protections, name, play), and the"
+          " server asks for the terms only before Workshop actions "
+          "(server/src/safety.mjs:19-22). Nothing says what a player below their "
+          "country’s consent age needs, or where the terms are "
+          "accepted.<br><br>Found reading Screens v3 and the build against v3.6.",
+     rec="State in §20.1 and §20.2 that a band changes only by a new platform "
+         "signal, or by the device only toward more protection, and have <code>PUT"
+         " /v1/age</code> refuse a loosening; whether 16 to 17 may switch the "
+         "play-time reminder off, and that it counts continuous play; whether "
+         "raiders see a 13-to-15 Keeper’s name, and where 13-to-15 names come "
+         "from; and where a below-consent-age player’s parent consents and where "
+         "the terms are accepted."),
+
+dict(id="D89", kind="deviation", severity="significant", status="open",
+     title="§21.8 puts ink on paper panels over the world, and every Screens v3 "
+           "surface is a dark card, glass, leather or parchment on a night sky",
+     refs=["21.8", "21.2", "21.1", "23.5"],
+     body="§21.8: <em>“Ink #221C3A on paper panels at 85% opacity over the "
+          "world”</em>. Screens v3 has no such panel. Its surfaces are a dark "
+          "violet card (a gradient from #261A4C to #1A1134, 26 uses and 28 more in "
+          "variants), dark glass for the HUD pills (rgba(20,10,22,.78), "
+          "screens_main.markup.html:393) and leather (a radial from #6A3E52 to "
+          "#1E1018, screens_main.js:145), all three with light text (#F3EEFF, "
+          "#FFF3CC, #F6E6C8), and parchment (#FFFBF0 to #F1E3C4) with brown text "
+          "#2A1A10. #221C3A and the paper #FCFBFF appear once each; the outline "
+          "everywhere is #1A0C14.<br><br>And the menus stand on one night backdrop,"
+          " not over the world: the phone is #171046 to #2C3AA8 "
+          "(screens_main.markup.html:363), and 16 sub-screens a radial from #2E1F5E"
+          " to #0A0620. §21.2’s sky <em>“follows the player’s local time”</em>, day"
+          " #9FB9F0 to #F6D9C8, then dusk and night. The design’s text was drawn "
+          "against night only: over its glass, primary text holds 9.8 to 16.8:1 on "
+          "all six of §21.2’s sky stops, but tertiary #8A7AA8 falls to 2.9 to 3.4:1"
+          " over day and dusk.<br><br>The client is built on the document: "
+          "<code>panel</code> #FCFBFFD9 in client/ui/tokens.json:32 cites §21.8, "
+          "UI.panel() draws it (client/scripts/ui.gd:172), UI.frame puts "
+          "<em>“§21.2’s day sky behind everything”</em> (ui.gd:46), the "
+          "high-contrast set is black on white, and the accessibility check tests "
+          "words over the day sky’s two ends only (client/tests/a11y_tests.gd:75). "
+          "§23.5 says the designs carry the look and that the document wins where "
+          "it states a rule; none of its rows names surfaces. Building §21.8 as "
+          "written throws away the design’s whole set of surfaces. Found reading "
+          "Screens v3 against v3.6.",
+     measured="docs/analysis/screens-v3/data/tokens.proposed.json; "
+              "docs/analysis/screens-v3/design-system.md §2.2",
+     rec="The owner decides. Recommended: amend §21.8 and §21.2’s neutrals to the "
+         "design’s two families, dark (card, glass, leather) with light text and "
+         "parchment with brown ink; name the #1A0C14 outline and a high-contrast "
+         "variant; keep §21.8’s measurable rules; and say that menus stand on a "
+         "night backdrop while the world’s sky follows local time, so the HUD over"
+         " the world is checked over all three skies. Until the answer, the tokens"
+         " keep the document’s values with the design’s beside them (TD.2)."),
+
+dict(id="D90", kind="deviation", severity="minor", status="open",
+     title="§21.8 and §21.11 name Baloo 2, and Screens v3 sets every screen in "
+           "Manrope and Lilita One, which has no tabular figures",
+     refs=["21.8", "21.11", "23.5"],
+     body="§21.8: <em>“A rounded, friendly sans (Baloo 2) for labels and numbers, "
+          "with tabular numerals; Marcellus for titles and law names.”</em> §21.11:"
+          " <em>“The ledger’s first entries are the two typefaces — Baloo 2 for "
+          "interface text and Marcellus for titles”</em>. Screens v3 never uses "
+          "Baloo 2. It loads Manrope 400 to 800, Lilita One and Marcellus "
+          "(screens_main.markup.html:3–307) and sets labels, body text and most "
+          "numbers in Manrope (about 920 declarations), big numbers, counters and "
+          "some titles in Lilita One (about 150 to 180), and screen titles and "
+          "names in Marcellus (about 80). Measured with the design’s own font "
+          "files: Manrope’s tabular figures work, and Lilita One has none (“1111” "
+          "is 65 px wide against 102 px for “0000”), with or without the tabular "
+          "setting the design gives it for the landing picker’s clock "
+          "(screens_main.markup.html:778). About 340 declarations ask for Manrope "
+          "900, which does not exist and draws at 800. All three faces are under "
+          "the SIL open font licence. The client has no fonts yet, and the licence "
+          "ledger does not exist. §23.5 does not list typefaces. Three readers "
+          "found it, on every screen. Found reading Screens v3 against v3.6.",
+     measured="docs/analysis/screens-v3/design-system.md §3.1 (the design’s own font "
+              "files, in Chromium)",
+     rec="The owner picks: Baloo 2 and Marcellus as written, or amend §21.8 and "
+         "§21.11’s ledger to Manrope, Lilita One and Marcellus, with numbers that "
+         "change set in Manrope’s tabular figures. Either way weight 900 maps to "
+         "800, and each licence text ships in the legal page (TD.2)."),
+
+dict(id="G59", kind="gap", severity="significant", status="open",
+     title="28% of Screens v3’s text fails §21.8’s contrast, and v3.6 does not say "
+           "how outlined text is measured",
+     refs=["21.8", "20.8", "23.5"],
+     body="§21.8: <em>“Contrast meets 4.5:1, checked against a perceptual model as "
+          "well, because the standard formula overstates contrast on dark "
+          "backgrounds.”</em> Measured over the 1,049 text runs on Screens v3’s 28 "
+          "screens, each against the pixels under it with the glyphs made "
+          "transparent, by the formulas in client/ui/colour_check.gd: 201 (19%) are"
+          " under 4.5:1 against the median background, 234 (22%) against the worst "
+          "tenth, 250 (24%) under the perceptual level for their size and weight, "
+          "and 292 (28%) fail one or the other.<br><br>The causes: white marks on "
+          "light fills (113 runs, median 2.77:1), 85 of them tab and section badges"
+          " on red, green or violet at 1.8 to 2.8:1 (screens_main.js:664–665); the "
+          "law card’s title <em>“Stillness”</em> in white on cyan #81DEEA at "
+          "1.55:1; tertiary #8A7AA8, about 4.5:1 but Lc 34; secondary #B8A8D8, 7 to"
+          " 9:1 but Lc 57 to 59; on parchment #7A5A34 at 3.04:1, #2F7A45 at 3.99:1 "
+          "and #8A6A4A at 4.22:1; and the heist’s crew names in school colours over"
+          " the 3D ground at 1.4 to 3.1:1.<br><br>The design leans on 3 to 4.5 px "
+          "ink strokes and hard ink shadows under its words, and v3.6 does not say "
+          "whether an outline counts as the background. Counting them would pass 31"
+          " of the 201: one run whose outline reads at 4.5:1 against its fill, and "
+          "30 whose hard shadow does (the crew names’ shadows read at 5.8 to "
+          "10.3:1). The client’s check reads only a StyleBoxFlat’s fill "
+          "(client/tests/a11y_tests.gd:58–81) and knows neither gradients nor "
+          "outlines. §23.5 lists text size, not contrast, and D72 covers only the "
+          "alarm red and the success green. Found reading Screens v3 against v3.6.",
+     measured="docs/analysis/screens-v3/data/contrast.md; "
+              "docs/analysis/screens-v3/data/pairs.md",
+     rec="Say in §21.8 how outlined text is measured; the proposal is that an ink "
+         "outline of at least 1.5 points, or 12% of the text size, counts as the "
+         "background. The build fixes the rest in the tokens and keeps the look: "
+         "tertiary text lifted to #B8A8D8 and bold, secondary to #D8CCF2, badges "
+         "with ink words or on the deep end of their fill, no opacity on words, "
+         "law titles on a plate; and the check learns the colour each word sits on"
+         " (TD.3)."),
+
+dict(id="F58", kind="finding", severity="minor", status="open",
+     title="D72’s edit names #1D6B45 for success words, which the client does not "
+           "use, and its fix stops short of the design’s night and parchment",
+     refs=["21.8"],
+     body="D72’s body says the client writes alarm and success words in #B3203A and"
+          " #1D6B45, and its §21.8 edit writes <em>“an alarm or a success in words "
+          "is #B3203A or #1D6B45”</em>. The client’s words are "
+          "<code>alarm_text</code> #9A1B32 and <code>success_text</code> #155A38 "
+          "(client/ui/tokens.json:88, :92); #B3203A is its fill under paper. D72’s "
+          "v3.6 note records the red; the green differs too, so applying the edit "
+          "would write into §21.8 a value the build does not use.<br><br>On Screens"
+          " v3’s surfaces, measured: red words #E2536B are 4.84 to 5.05:1 on the "
+          "flat night colours and 4.19:1 where measured on screen, at Lc 35 to 37, "
+          "which fails the perceptual check §21.8 asks for; on parchment they are "
+          "2.91:1. A light red #FF9AAA reaches 8.9:1 and Lc 63 on the dark card. "
+          "The client’s deep shades pass 4.5:1 on parchment’s lower stop #F1E3C4 "
+          "(#9A1B32 6.41:1, #155A38 6.48:1) but reach only Lc 71 and 72 there, "
+          "against 84 to 86 on its top stop. Success green does better on the "
+          "design’s dark cards: #3FBF7F words read at 7.64:1. Found reading Screens"
+          " v3 against v3.6.",
+     measured="docs/analysis/screens-v3/data/pairs.md",
+     rec="Make D72’s body and edit name the client’s word shades (#9A1B32 and "
+         "#155A38, with #B3203A as the fill under paper), or move the tokens to "
+         "the edit’s; and extend the fix to the design’s surfaces: red words on "
+         "night in #FF9AAA bold, alarm and success words on parchment bold."),
+
+dict(id="D91", kind="deviation", severity="minor", status="open",
+     title="Screens v3’s visual system departs from v3.6 in 6 places §23.5 does not "
+           "list",
+     refs=["21.8", "21.2", "20.6", "20.8", "23.5"],
+     body="§23.5: <em>“The designs carry the look: layout, art, motion, the models "
+          "and the icons”</em>, and <em>“This document wins wherever it states a "
+          "rule, a number or a piece of text.”</em> §21.2, §21.8 and §20.8 state "
+          "these as rules, and §23.5 lists none of them:<br><br>Icons — every fill "
+          "of the 360 icons swapped for a three-stop gradient (icons_rbi.js:20), "
+          "with a gloss mask, a specular spot and a drop shadow (:25); the school, "
+          "law, resource and building icons are shaded too (icons_schools.js; "
+          "realm_diorama.js:4–29); the 24-point grid and the outline match — "
+          "<em>“Rounded shapes with a 2-point outline, flat colour and the school "
+          "shape where relevant”</em> — §21.8<br>Interface motion — tab switches at"
+          " 300 to 320 ms on an overshooting curve (screens_main.js:660–664), "
+          "sheets at 300 to 320 ms, the toast at 300 ms, entrances at 350 to 650 "
+          "ms, many overshooting; screen changes (160 to 240 ms, :102, :187) and "
+          "the 180 ms press comply — <em>“150 to 250 milliseconds, easing out”</em>"
+          " — §21.8<br>Toasts — cleared after 2.2 s (screens_meta.js:166) or 1.6 to"
+          " 1.8 s (:259) while they carry information such as <em>“Not enough "
+          "Essence to level …”</em>; the design’s own <em>“Banners stay”</em> "
+          "switch (:945) is read by nothing — <em>“no reading speed requirements on"
+          " banners, which stay until dismissed if the player chooses”</em> — "
+          "§20.8<br>Reduced motion — a switch, <em>“No swoops, fewer "
+          "particles”</em> (screens_meta.js:944), read by nothing; none of the 86 "
+          "keyframe animations has a reduced form — <em>“Reduced motion removes "
+          "swoops and most particles”</em> — §20.8, §21.8<br>Colour-blind palettes "
+          "— Off, Deutan, Protan and Tritan palettes for the six schools "
+          "(screens_meta.js:903), drawn only on that panel’s swatches (:943); the "
+          "Protan and Tritan palettes are worse for their own form than the default"
+          " (smallest ΔE between schools 9.1 and 9.0 against 16.1 and 11.3, under "
+          "the client’s 10, client/ui/colour_check.gd:17), and only the Deutan one "
+          "is better (19.5 against 12.2) — one set of school colours, each with its"
+          " shape, <em>“checked by simulation for the three common forms of colour "
+          "blindness”</em>; no palette switch — §20.8, §21.2<br>The world’s sky — "
+          "one fixed gradient per realm (realm_diorama.js:60–67) and a fixed galaxy"
+          " on the map (:1073–1074), with no clock read anywhere — <em>“The sky "
+          "follows the player’s local time, and Day and night overrides it inside "
+          "its realm”</em> — §21.2<br><br>The client already keeps banners until "
+          "dismissed when the player asks (UI.banner, client/scripts/ui.gd:313) and"
+          " gives every movement 0 ms under reduced motion (UI.motion_ms, :42). "
+          "§20.8 does not say which particles reduced motion keeps; the build’s "
+          "reading is that a reward still lands in its counter. §23.5’s "
+          "colour-blind row covers only the panel’s Life gem. Found reading Screens"
+          " v3 against v3.6.",
+     measured="docs/analysis/screens-v3/design-system.md §2.5, §5",
+     rec="Add the rows to §23.5; the build follows the document: flat icons, "
+         "interface motion at 150 to 250 ms easing out with the longer timings "
+         "kept for celebrations, toasts as banners, reduced motion reaching every "
+         "animation, one palette and no switch, and the sky by local time (TD.4, "
+         "TD.5, TD.8). Say in §20.8 which particles reduced motion keeps. If the "
+         "owner prefers the design’s icon finish or its entrances, amend §21.8’s "
+         "rows instead."),
+
+dict(id="D92", kind="deviation", severity="significant", status="open",
+     title="Screens v3’s characters are physically based and its diorama is a "
+           "four-step toon outlined in world units, where §21.3 asks for one "
+           "three-step toon with 1.5-pixel ink lines",
+     refs=["21.3", "21.2", "23.5"],
+     body="§21.3: <em>“Shading: a three-step toon ramp with coloured shadows tinted"
+          " toward violet, a soft rim light, and 1.5-pixel ink outlines. … The "
+          "toon, outline, water, waterfall and sky shaders already exist from the "
+          "mock-ups.”</em> §21.2’s ink is #221C3A. Screens v3 has two looks, and "
+          "neither is that one.<br><br>The characters use a physical material with "
+          "sheen and a rim patch (creatures/creature_kit.js:62, :71), their "
+          "accessories clearcoat, metal and transmission (creature_parts.js:4, :21,"
+          " :36) and iridescence in eight modules, under film tone mapping and an "
+          "image-based environment, with no outline (Featherkin_Hero.html); the "
+          "portraits and the Observatory, scout and landing pictures are renders of"
+          " that look (images/world_*.png). The diorama’s ramp has four steps "
+          "(realm_diorama.js:485), every colour is made 10% more saturated (:519), "
+          "and its outlines are back-face shells in #140A18 sized in world units "
+          "(:486, :520), so a far line is thinner than a near one.<br><br>§21.3’s "
+          "<em>“already exist”</em> is true only of these, which differ from its "
+          "own words. §23.5 has no row for it. Found reading Screens v3 against "
+          "v3.6 and running its 3D headless.",
+     rec="Add the row to §23.5; the build follows §21.3: one toon shader for "
+         "everything (three steps, violet shadows, a rim, a 1.5-pixel outline "
+         "drawn in screen space, in the ink the surfaces decision settles), "
+         "assigned to every model on import, and the portraits re-rendered from "
+         "the imported models (TD.8). Strike “already exist from the mock-ups” "
+         "from §21.3."),
+
+dict(id="D93", kind="deviation", severity="significant", status="open",
+     title="Every Screens v3 view and character is several times over §21.3’s "
+           "budgets, and at its own floors §21.3’s realm budget cannot hold a heist",
+     refs=["21.3", "5.2", "10.2", "23.5"],
+     body="§21.3: <em>“Budgets: characters 3,000 to 6,000 triangles, buildings "
+          "2,000 to 8,000, a whole realm 25,000 to 40,000, under 150 draw calls on "
+          "screen.”</em> Run headless with the prototype’s own code at phone size, "
+          "Screens v3 draws 163,324 to 219,184 triangles in 1,149 to 1,264 draw "
+          "calls in the realm view, 225,558 in 940 in the heist, 206,854 in 769 in "
+          "the scout report and 676,192 in 1,207 on the universe map. Its 43 "
+          "sculpted characters are 10,408 to 181,534 triangles at their sheets’ "
+          "step and 2,880 to 76,096 at the diorama’s game step, in 15 to 233 "
+          "meshes, some with up to seven fur shells on top. Its buildings (1,172 to"
+          " 2,556 triangles) and its stand-in chibis (2,226) are inside. An export "
+          "that caps segments and coarsens the sculpt brought Featherkin from "
+          "47,644 to 12,576 without editing the prototype; reaching 6,000 needs its"
+          " cape redrawn as a few cards.<br><br>The budget does not add up by "
+          "itself either. An outer realm in a heist at §21.3’s own floors — nine "
+          "buildings (three producers, a Hearth, a Storehouse, three posts and a "
+          "pylon) at 2,000 and eleven characters (a crew of five, a guard on each "
+          "post, a worker at each producer) at 3,000 — is 51,000 triangles before "
+          "terrain, wards and effects, against 40,000 for the realm. No section "
+          "mentions levels of detail. §23.5 has no row for any of it. Found reading"
+          " Screens v3 against v3.6 and running its 3D headless.",
+     measured="docs/analysis/screens-v3/data/diorama_probe.json; "
+              "docs/analysis/screens-v3/data/census_table.md; "
+              "docs/analysis/screens-v3/data/kit.json",
+     rec="Hold every asset to §21.3 in the export, with capped segments, a sculpt "
+         "step per kind and accessories merged into the skin (TD.7). The owner "
+         "decides two things: whether the Character screen’s single close-up may "
+         "use a model above 6,000 triangles, and the realm’s budget in a heist, "
+         "stated at the camera’s distance with levels of detail or raised to about"
+         " 60,000. Add the row to §23.5."),
+
+dict(id="C52", kind="contradiction", severity="significant", status="open",
+     title="§21.3 and §24 give different frame-rate floors on different phones, and "
+           "§24’s 25 ms drag budget cannot be measured or met as written",
+     refs=["21.3", "24", "21.1"],
+     body="§21.3: <em>“Frame rate: 60 frames a second on iPhone 12 and newer, never"
+          " below 30 on the oldest supported phone.”</em> §24: <em>“60 frames a "
+          "second is a floor, because 30 measurably harms performance”</em>, on a "
+          "reference device that is <em>“A mid-range 4 GB Android at 60 Hz, not a "
+          "flagship”</em>. One section lets old phones fall to 30; the other makes "
+          "60 the floor on a mid-range Android.<br><br>§24 also asks for <em>“Under"
+          " 25 ms from touch to picture for dragging”</em>. One frame at 60 Hz is "
+          "16.7 ms; the engine draws after it reads the touch, and Android’s "
+          "compositor shows the frame at the next refresh, so a drag normally "
+          "appears two frames or more after the finger moves. Without prediction 25"
+          " ms is out of reach. No section says how it is measured, whether "
+          "prediction counts or what a miss triggers; no client test measures it, "
+          "and the roadmap’s TC.8 names the figure without a method. Found reading "
+          "Screens v3 against v3.6.",
+     rec="Make §24’s reference device and its 60-frame floor the one performance "
+         "rule and drop §21.3’s line, or say which phones each covers. Define the "
+         "drag budget as measured on the reference device with a high-speed "
+         "camera, allowing one or two frames of drag prediction; the build reads "
+         "touches unbatched and late, keeps the 3D frame under about 8 ms, and "
+         "TC.8 takes the measurement."),
+
+dict(id="G60", kind="gap", severity="significant", status="open",
+     title="A replay names its crew and guards by role only, so neither the phone "
+           "nor §24’s clip can draw which ruleborn raided or guarded",
+     refs=["24", "24.11", "13", "11.2", "11.10", "21.6", "22.1"],
+     body="Nothing the simulation keeps says which ruleborn took part. The heist "
+          "record holds a crew count (sim/src/replay.rs:147), the simulation hands "
+          "out roles in a fixed order (sim/src/lib.rs:770), and its own comment "
+          "says <em>“The simulation’s crew and guards are roles, not ruleborn”</em>"
+          " (:255–259). A guard post is a role row and a tile "
+          "(sim/src/island.rs:87–91). RulebornReplay’s crew() and guards() return "
+          "role, position, gait and state (client/ext/src/lib.rs:341–373). §24 "
+          "renders the replay into a 15-second clip on the phone and §13 lets the "
+          "defender watch it, and both have to show each creature’s kind, form "
+          "(§21.6) and outfit (§22).<br><br>Kind and form are not only looks: "
+          "§11.2’s abilities and resistances and §11.10’s quirks change what "
+          "happens. §24.11 makes every heist <em>“Reproducible forever from four "
+          "things: the seed, the input log, the island and the rules version”</em>,"
+          " so the crew’s ruleborn belong in the heist record and the guards’ in "
+          "the island, inside those four. Only the outfit can travel beside them. "
+          "The roadmap’s TD.9 puts the whole block beside the inputs, which is "
+          "right only for the outfit. The crew’s half shares its cause with the "
+          "simulation’s five fixed roles at level 1, which the Roster’s draft "
+          "records. Found reading Screens v3 against v3.6.",
+     rec="Carry each crew member’s ruleborn (kind, form, level) in the heist "
+         "record and each posted guard’s in the island bundle, checked by the "
+         "server against the roster; carry outfits beside them as view data; "
+         "return all three with the replay (TD.9, TD.12)."),
+
+dict(id="G61", kind="gap", severity="significant", status="open",
+     title="No Screens v3 model can be imported, they cover part of §21.9’s art, and"
+           " §26.8 budgets no work to bring them into Godot",
+     refs=["21.9", "21.5", "21.6", "21.11", "26.3", "26.8", "23.5"],
+     body="Every 3D thing in Screens v3 is three.js code run in the page: <em>“SDF "
+          "clay volume -> surface nets -> painted + baked AO -> fur shells -> "
+          "skinned rig”</em> (creatures/creature_kit.js:2), with clips as functions"
+          " of time (:132). No model file exists. The sheets’ <em>“Download GLB for"
+          " Godot”</em> (Skyskipper_dc.html:57) is plain text, and the exporters in"
+          " the pages’ import maps are never called. §21.6’s laws as modifiers "
+          "(<em>“gravity, speed, lean, squash and stretch, time scale, "
+          "trails”</em>) are in the sheets’ text only; the kit has lean. The "
+          "analysis exported Featherkin with its 15 clips to a 1.73 MB .glb that "
+          "Godot imports with 24 bones and every track resolving, so the route "
+          "works.<br><br>What is modelled is part of §21.9. The diorama has 8 of "
+          "the 17 building types (Hearth, Star Well, the Aether Spring as "
+          "<em>“Aether Loom”</em>, Garden, Guardian Post, Vault, Ward, Spire) and "
+          "no Anchor Stone, Storehouse, Law Pylon, Nursery, Library, Resonance Lab,"
+          " Observatory, Beacon or Visitor’s Dock. Its buildings gain a flag from "
+          "level 3 and banners from level 6 (realm_diorama.js:981–987), not §21.5’s"
+          " four looks, and it has effects for 9 of §21.9’s 24 law signatures "
+          "(:1312–1332). The terrain kit and the four links are "
+          "complete.<br><br>§26.8’s phases have no row for any of it: its one "
+          "rendering line is phase 3’s <em>“render a replay”</em>. §26.3 gives "
+          "character art to a contractor, but the sheets are now code, so bringing "
+          "them in is engineering. The roadmap now carries the work as TD.7 to "
+          "TD.11; §26.8 and completion count none of it. C8 is the nearest item, "
+          "and it counts building looks, not what the designs supply. Found reading"
+          " Screens v3 against v3.6 and running its 3D headless.",
+     measured="docs/analysis/screens-v3/data/kit.json; "
+              "docs/analysis/screens-v3/3d-pipeline.md §4.1",
+     rec="Add a §26.8 row for the art pass. Export with TD.7’s harness, whose "
+         "manifest lists §21.9 row by row as exported, to make or the "
+         "contractor’s, so the nine missing buildings, the level looks and the "
+         "fifteen missing law signatures are a tracked number."),
+
+dict(id="D94", kind="deviation", severity="significant", status="open",
+     title="Screens v3’s character sheets depart from v3.6 in 9 places §23.5 does "
+           "not list",
+     refs=["11.1", "11.2", "21.1", "21.6", "7.7", "12.21", "10.1", "23.5"],
+     body="§23.5: <em>“The eighteen kinds match 11.2 and 21.6 in name, school, "
+          "role, size, height, colours, look, proportions, … ; each has the fifteen"
+          " animations of 21.6, a guard form with sash and lantern, its three forms"
+          " and a squint test.”</em> In these places the sheets and their 3D do "
+          "not, and §23.5 lists none of them:<br><br>Level-1 role panel — "
+          "Emberling, Stormhound, Sparkwright and Bloomling read <em>“CARRIER · "
+          "LEVEL 1 · 11.1”</em> (creatures/Emberling_dc.html:69, the same line in "
+          "the others); seven sheets give the Carrier’s job as <em>“Carries loot; "
+          "moves fast with a load”</em>; the four also carry the Prism Mite’s law "
+          "note (:129) — a Breaker, a Scout and two Menders; the Carrier <em>“Hauls"
+          " loot; 15% slower when loaded”</em>, as the simulation has it "
+          "(sim/src/heist.rs:33) — §11.1, §11.2<br>Main colour — Tidewalker’s fur "
+          "is brown, Stillwatch slate, Emberling charcoal, Rootrunner bark and "
+          "Echoplate silver, with the school colour on trim (each sheet’s palette, "
+          "line 166) — <em>“Each ruleborn’s school colour is its main colour”</em> "
+          "— §21.6<br>Silhouette — Glass Golem’s crystal spires, Stillwatch’s "
+          "dagger beak, Stormhound’s mane of lightning bolts (line 182) — <em>“a "
+          "rounded silhouette with no sharp points”</em> — §21.6<br>Height — at "
+          "each model’s own game scale, Prism Mite stands 0.76 m, Glass Golem 1.39 "
+          "to 1.53 m, Stormhound 0.98 m and Sparkwright 0.86 m; the Wanderer 1.27 m"
+          " and the Gardener 1.32 m — 0.5, 1.2, 0.9 and 0.8 m; Sages <em>“about "
+          "1.5”</em> — §21.6, §21.1<br>Guard form — the <em>“As a guard”</em> chip "
+          "relabels the view and draws the base form (Featherkin_dc.html:169; no "
+          "*_Rig.html has a guard branch); the diorama’s guards are one chibi with "
+          "a cone helmet and a lantern glow for every role (realm_diorama.js:143) —"
+          " <em>“As guards, ruleborn add a sash and a small lantern”</em> — "
+          "§21.6<br>Forms — Hush only recolours (Featherkin_Rig.html:91), Spark "
+          "adds a glow and embers (:92), Echo a trailing copy (:86); none adds an "
+          "accessory or a pattern, and the squint test runs the base form only "
+          "(Featherkin_dc.html:134) — each form <em>“changes a ruleborn’s pattern, "
+          "glow and one accessory in its note’s colour”</em>; <em>“A form that only"
+          " differs by colour has failed”</em> — §21.6<br>Work loop — on 15 of the "
+          "18 sheets the one <em>“work”</em> clip is the home habit (Glass Golem "
+          "<em>“Watch the sky”</em>, Prism Mite <em>“Plays with itself”</em>, line "
+          "160), and the knocked-out clip is a topple with no stars or petals "
+          "(creature_kit.js) — a work loop at each of the Star Well, Aether Spring "
+          "and Garden; <em>“knocked out (dizzy stars, then a puff of petals as it "
+          "goes home)”</em> — §21.6, §10.1<br>Illusory guards — <em>“Walked "
+          "through”</em>: <em>“Scatters and reforms”</em> "
+          "(Illusory_Guards_dc.html:158) — <em>“illusions vanish when "
+          "touched”</em>; <em>“one hit tells the truth”</em> — §7.7<br>Swarmlings —"
+          " one beetle-guard with a pin spear and a lantern, whatever guard it came"
+          " from (Swarmlings_dc.html:173, :182) — they <em>“inherit the role of the"
+          " guard they came from”</em>, and a role reads by its accessory — §12.21,"
+          " §21.6<br><br>The heights, the guard form and the forms were found by "
+          "running the models; the sheets’ header chips and labels say otherwise. "
+          "Found reading Screens v3 against v3.6.",
+     measured="docs/analysis/screens-v3/data/heights.json",
+     rec="Add the rows to §23.5 and strike the claims in its opening sentence that"
+         " these match; the build follows the document: the character screen from "
+         "content/roles.json, heights and colours set in the export (TD.7), and "
+         "the guard form, the forms’ accessories and patterns and the role "
+         "accessories as shared pieces per size band (TD.11). The owner may adopt "
+         "the colours and the points instead."),
+
+dict(id="C53", kind="contradiction", severity="significant", status="open",
+     title="v3.6 narrows the Twinned’s gift to the abilities it fires, and the "
+           "Twinned fires none",
+     refs=["11.8", "11.11", "11.1", "7.3", "23.5"],
+     body="§11.8, changed in v3.6: <em>“Acts twice: every ability it fires, fires "
+          "two times. Its crew’s abilities fire once.”</em> v3.4 read <em>“every "
+          "ability fires two times”</em>. Paradox-born <em>“have no role in "
+          "11.1”</em>, and §11.11 makes its cards <em>“the one home for every "
+          "ability”</em>, with cards for the eighteen kinds only. The Reverser’s "
+          "gift is an ability of its own (<em>“two uses a heist, with the 10-second"
+          " lockout, 11.11”</em>); the Twinned has nothing to fire, so the narrowed"
+          " gift does nothing. The sheet’s version had an effect: <em>“Every "
+          "ability it or its crew fires, fires two times”</em> "
+          "(creatures/Twinned_dc.html:173). §23.5’s Twinned row narrows it to "
+          "<em>“Doubles only its own”</em> without noting that there is no own. "
+          "Paradox-born ship at launch (§21.9). Found reading Screens v3 against "
+          "v3.6.",
+     rec="The owner writes what “acts twice” doubles, as a rule sheet (§7.3): its "
+         "own hits and loading against its shared 120 health and 80 carry, or one "
+         "two-use ability of its own with the 10-second lockout, as the Reverser "
+         "has. The Twinned is not built or balanced until it is written."),
+
+dict(id="G62", kind="gap", severity="significant", status="open",
+     title="Paradox-born have no role, so v3.6 gives them no guard behaviour, no "
+           "rule sheet, no sound and no answer on forms",
+     refs=["11.8", "12.8", "11.10", "11.11", "21.6", "7.5", "23.5"],
+     body="§11.8: paradox-born <em>“have no role in 11.1”</em>. §12.8: guards are "
+          "<em>“the defender’s own ruleborn … and their role decides how they "
+          "behave”</em>, and its behaviour table has the five roles; yet every "
+          "paradox-born sheet offers an <em>“As a guard”</em> form "
+          "(Twinned_dc.html:151, the same line on the Reverser’s and the Unmade’s)."
+          " The sheets give them Hush, Spark and Echo forms with quirks (:153–156),"
+          " and §11.10 both counts 54 forms as eighteen kinds by three and opens "
+          "<em>“Every ruleborn hatches in a form shaped by the laws around its "
+          "Nursery”</em>, which paradox-born, born at a Nursery, are. Their gifts "
+          "have no §11.11 rule-sheet line and no <em>“Sounds like”</em> line "
+          "(Twinned_dc.html:173). The Twinned’s sheet shows <em>“2 × 60”</em> "
+          "health and <em>“2 × 40”</em> carry (:174), where §11.8 gives <em>“120, "
+          "shared by its two bodies”</em> and <em>“80, "
+          "shared”</em>.<br><br>Paradoxes have no school (§7.5), so the sheets’ "
+          "<em>“no school badge; its paradox is its mark”</em> "
+          "(Reverser_dc.html:182) fills a silence rather than breaking §21.6; §23.5"
+          " adopts only their numbers, sizes and proportions. The simulation keys "
+          "every crew stat to a role (sim/src/lib.rs:244–253). Found reading "
+          "Screens v3 against v3.6.",
+     rec="The owner answers in §11.8: whether paradox-born guard and how, whether "
+         "they take forms (and §11.10’s count follows), a rule-sheet line and a "
+         "sound for each gift, and the paradox mark in place of a school mark as "
+         "an adopted §23.5 row. The Twinned is one body in the simulation with "
+         "shared pools, its second silhouette drawn only, and screens show 120 and"
+         " 80."),
+
+dict(id="G63", kind="gap", severity="significant", status="open",
+     title="content/ has no paradox-born, no visitors and no §11.11 rule-sheet line,"
+           " and the simulation’s crew are only the five roles",
+     refs=["11.8", "11.11", "21.6", "23.5", "26.1"],
+     body="v3.6’s §11.8 gives the paradox-born’s level-1 numbers and bodies, which "
+          "§23.5 adopts, and the Stray’s rule, and no content table carries either:"
+          " tools/check_document.py:1105 still reads <em>“Visitors, paradox-born, "
+          "anomalies: no content table enumerates them”</em>. CREATURE_FIELDS in "
+          "tools/extract_content.py:162–166 does not extract <em>“Rule sheet”</em>,"
+          " so content/ruleborn.json has no rule sheet, and §23.5’s <em>“Every card"
+          " carries all of 11.11, word for word”</em> cannot be generated from "
+          "content; §21.6’s height, colours and signature are not extracted either."
+          " content/README.md:28 says every ruleborn carries a "
+          "<code>conflict_severity</code>, and ruleborn.json has none. "
+          "sim/src/lib.rs:244–253 has only the five Role values, and a paradox-born"
+          " has none of them. Found reading Screens v3 against v3.6.",
+     rec="Add content/paradox_born.json from §11.8’s two tables, with the "
+         "Twinned’s pools shared, and content/visitors.json, with the Stray having"
+         " no kind of its own; validate them (size band from heads by §12.21, no "
+         "nineteenth kind, forms stay 54). Add the rule sheet and §21.6’s height, "
+         "colours and signature to ruleborn.json; give the simulation a crew stat "
+         "not keyed by role (TD.12, TD.21); and correct the README."),
+
+dict(id="G64", kind="gap", severity="significant", status="open",
+     title="The Stray’s kind is “drawn as a birth’s is”, and a visitor has no "
+           "Nursery or realm to draw from",
+     refs=["11.8", "11.5", "11.9", "11.10", "21.6", "5.2"],
+     body="§11.8, changed in v3.6: the Stray <em>“is a ruleborn of one of the "
+          "eighteen kinds, its kind drawn as a birth’s is (11.5), shown travelling "
+          "with a bundle on a stick (21.6)”</em>. §11.9 weighs a birth by its "
+          "Nursery’s realm: <em>“3 for each law woven in its realm, 2 for the "
+          "realm’s own school and 1 for each crown law”</em>, and §11.10 sets the "
+          "form from that realm’s notes. The Visitor’s Dock is in the Heart, whose "
+          "school is Neutral (§5.2), and Nurseries stand in outer realms only, so "
+          "neither the weights nor the form can be worked out for a visiting Stray."
+          " §21.6’s Visitors row still says <em>“the Stray is a scruffy little "
+          "creature with a bundle on a stick”</em>, though a Stray may now be a 1.4"
+          " m Mossbear, and every kind needs somewhere to hold the bundle (the "
+          "Lantern Wisp has no legs). F38 and C42 are about strays found in heists,"
+          " not this one. Found reading Screens v3 against v3.6.",
+     rec="The owner names the realm whose weights and notes apply — the Heart with"
+         " even weights, or the realm where the favour was done — and §21.6’s row "
+         "drops “little”. Every kind gets a bundle socket (TD.11). The server "
+         "grants no visiting Stray until this is written."),
+
+dict(id="D95", kind="deviation", severity="significant", status="open",
+     title="The sheets give visitors, anomalies and law creatures variants with "
+           "effects no section has",
+     refs=["11.8", "17.3", "7.7", "11.10", "23.5"],
+     body="Lines 151–156 of nine sheets. The visitors (Cartographer, Collector, "
+          "Stray): Night <em>“Offer lasts 2 h longer”</em>, Festival <em>“Brings "
+          "one bonus offer”</em>, Echo <em>“Returns once more”</em>. The anomalies "
+          "(Devourer, Hourglass Storm, Wildfire Bloom): Faint <em>“Weaker, early in"
+          " the 48 h”</em>, Enraged <em>“Arena clock runs 20 s shorter”</em>, Echo "
+          "<em>“Leaves once, returns once”</em>. The law creatures (Puffball Flock,"
+          " Swarmlings, Illusory Guards): Hush <em>“Noticed 10% later”</em>, Spark "
+          "<em>“A little faster”</em>, Echo <em>“Lingers once after it fades”</em>."
+          " None is in §11.8, where visitors <em>“stay 12 hours”</em>, in §17.3 or "
+          "in §7.7, and §11.10’s forms are for the eighteen kinds. Each changes "
+          "what a player earns or a crew faces. §23.5 says <em>“The Sages, visitors"
+          " and anomalies match 11.7, 11.8 and 17.3”</em> and lists no variants. "
+          "Found reading Screens v3 against v3.6.",
+     rec="Not built until written. §23.5’s rule already keeps them out; add a row "
+         "so a screen built from these sheets does not carry them, and keep the "
+         "variants, if at all, as tints that change nothing."),
+
+dict(id="C54", kind="contradiction", severity="minor", status="open",
+     title="§21.6 disagrees with §11.11 on a Mender’s goggles and with §23.5 on how "
+           "many animations a kind has",
+     refs=["21.6", "11.11", "23.5", "12.8", "10.1"],
+     body="§11.11 gives the Sparkwright, a Mender, <em>“2.0 heads, goggled eyes, "
+          "round head”</em> and <em>“a coil backpack”</em>. §21.6: <em>“Scouts wear"
+          " goggles, … Carriers a big pack, Menders a satchel of leaves”</em>, and "
+          "§23.5 keeps the role accessories <em>“so a guard’s role reads at a "
+          "glance (12.8)”</em>. The sheet draws thick copper goggles and a tool "
+          "belt (Sparkwright_dc.html:182), so a Sparkwright on guard reads as a "
+          "Scout.<br><br>§21.6’s animation set ends <em>“celebrate, nap, and one "
+          "work loop per building”</em>, and only the Star Well, Aether Spring and "
+          "Garden take workers (§10.1), so a kind needs fourteen shared clips and "
+          "three work loops. §23.5 says each sheet has <em>“the fifteen animations "
+          "of 21.6”</em>, which counts one. Found reading Screens v3 against v3.6.",
+     rec="Give the Sparkwright the Mender’s satchel and make its goggles plainly "
+         "not a Scout’s, or change §11.11’s card. Make §23.5 count seventeen "
+         "animations, or rule in §21.6 that one work loop serves every building."),
+
+dict(id="G65", kind="gap", severity="minor", status="open",
+     title="Screens v3 settles five things v3.6 leaves unsaid, and §23.5 lists none "
+           "of them as adopted",
+     refs=["23.5", "6.1", "21.1", "11.8", "11.11", "17.3", "5.7", "21.6"],
+     body="§23.5: <em>“Where this document is silent and a design breaks no rule "
+          "here, the design is adopted and listed below, so this document stays the"
+          " single source.”</em> Its adopted list has the paradox-born’s numbers, "
+          "sizes and proportions and the wildlife cues. Not listed:<br><br>The "
+          "height of a terrain level — §6.1 has <em>“four heights (0 to 3)”</em> "
+          "and §21.1 a one-metre tile, and no section a height per level; the "
+          "design draws 2.1 units a level on 3.9-unit cells, about half a tile "
+          "(realm_diorama.js:280, :308–311), and the 3D world needs it for raised "
+          "tiles, ramps, climbs and leaps<br>The paradox-born’s personality, home "
+          "habit, best at and signature (for example Reverser_dc.html:173), and "
+          "<em>“its paradox is its mark”</em> in place of a school badge (:182), "
+          "since paradoxes have no school (§7.5)<br>The visitors’ and anomalies’ "
+          "sizes<br>The wildlife’s counts and ranges (Lantern Moths <em>“PER "
+          "LAMP”</em> 3 to 5, Lantern_Moths_dc.html:174)<br>The Chronicler’s and "
+          "the Lamplighter’s looks, where §21.6 describes four Sages<br><br>One "
+          "more line is open. §11.11’s cards carry section references such as "
+          "<em>“(12.19)”</em>; §23.5’s <em>“Every card carries all of 11.11, word "
+          "for word”</em> keeps them, while the sheets keep some "
+          "(Skyskipper_dc.html:179, Glass_Golem_dc.html:173) and drop others "
+          "(Sparkwright, Prism Mite). Found reading Screens v3 against v3.6.",
+     rec="Add the rows to §23.5’s adopted table, with a terrain level at half a "
+         "metre as the design draws it, and say whether player-facing cards keep "
+         "§11.11’s section references, as “word for word” reads, or drop them."),
+
+dict(id="G66", kind="gap", severity="significant", status="open",
+     title="Completion and §26.8 count none of the work Screens v3 sets, so the "
+           "frontend figure cannot follow the screens",
+     refs=["26.8", "23.2", "23.5"],
+     body="<code>tools/completion.py</code> weighs §26.8’s phases and counts "
+          "§26.8’s own deliverables: the heist prototype, the builder, the "
+          "Workshop, the shop and track screens, the social screens, settings and "
+          "accessibility. §26.8 costs none of the twenty §23.2 screens outside "
+          "those — the Universe map, the law card, the realm view, Weaving, the "
+          "planner, the Observatory, the scout report, the roster, the character "
+          "screen, the Sage hall, the Codex, the Lab, curation, the defence log, "
+          "first launch, the landing picker, the Harmony view, the Forms album, the"
+          " share sheet, Profile and stats — no design port and no 3D world. "
+          "Eighteen of §23.2’s 28 screens have no screen in the client "
+          "(<code>client/app/router.gd</code>), and none of the work to build them "
+          "can move the frontend figure, which reads 75.41% while most of the "
+          "interface is unbuilt. It is G42’s shape, for the interface: G42 found no"
+          " phase for the home economy. Found mapping Screens v3 onto the roadmap "
+          "and completion.",
+     rec="Give §26.8 a costed phase, or rows in phases 2 and 3, for the interface "
+         "screens and the art, and let completion read them. Until then the "
+         "roadmap says plainly that the figure measures §26.8’s list, not the "
+         "screens (stage SD)."),
+
+dict(id="G67", kind="gap", severity="significant", status="open",
+     title="Two completion rows read done while holding a fraction of what they "
+           "name: crews without abilities, terrain editing with five features",
+     refs=["12.6", "12.7", "6.2", "26.8"],
+     body="Crews (phase 1, backend) reads 100% from nine simulation systems "
+          "(<code>tools/completion.py:194-197</code>), and the simulation has "
+          "twelve command kinds, none of them an ability, a Sage power or a cast "
+          "(<code>sim/src/replay.rs</code>); §12.7’s controls include the Sage and "
+          "the casts, and §12.6 the eighteen abilities. No register item or task "
+          "built them before stage SD’s TD.12. Terrain editing (phase 4, frontend) "
+          "reads 100% on one test, and the simulation has five of §6.2’s 39 "
+          "features (rock pillar, ruin wall, fence, fog bank and tall grass; "
+          "<code>sim/src/grid.rs</code>). Found mapping Screens v3 onto completion.",
+     rec="Add the missing system to each row’s proof, so the figure reads what is "
+         "built (Crews would read 9 of 10, 0.41 backend points lower), and build "
+         "them as TD.12 and TD.15."),
+
+dict(id="G68", kind="gap", severity="minor", status="open",
+     title="v3.6 puts the store builds in the determinism spike, and completion "
+           "counts them in phase 2 with a proof that reads nothing",
+     refs=["26.6", "26.8", "24"],
+     body="§26.6’s spike now has to <em>“export an empty Godot 4.7.2 project with "
+          "the Rust library linked, built in Xcode 26 and at Android API level "
+          "36”</em> and upload both, and §26.8’s phase 0 names the store builds. "
+          "Completion counts phase 0 by checksums alone, on the backend, and the "
+          "store builds as phase 2’s “Project structure”, frontend, whose proof is "
+          "a hard <code>not_started</code> (<code>tools/completion.py:204</code>). "
+          "Found mapping v3.6 onto completion.",
+     rec="One proof that reads a recorded build — engine version, SDK levels, the "
+         "upload — counted in one place, with the choice of phase stated in "
+         "completion.py."),
+
+dict(id="D96", kind="deviation", severity="minor", status="open",
+     title="Slower ruins is built as slower rehearsals, and there are no ruins to "
+           "apply it to",
+     refs=["20.8", "23.5", "12.10"],
+     body="§20.8: <em>“a slower mode for ruins that runs the simulation at 75% "
+          "speed”</em>, and §23.5 adopts it as <em>“Ruins only: never a heist "
+          "against a player, never Renown”</em>. The client applies the 75% to the "
+          "builder’s rehearsal of the player’s own island "
+          "(<code>client/scripts/heist_screen.gd</code>, the setting “Rehearsals at"
+          " 75%”), its accessibility test checks that, and completion’s "
+          "Accessibility row names the test. Drifting ruins are not built (D66). "
+          "Found reading v3.6’s adopted items against the build.",
+     rec="Rename the setting, the test and the proof in one change, and apply the "
+         "pace to drifting ruins when they exist (TD.27); rehearsals keep §20.8’s "
+         "pause."),
+
+dict(id="G69", kind="gap", severity="significant", status="open",
+     title="Profile and stats asks for defences “held and leaked”, records and "
+           "badges, which nothing defines, and the server has no read of a player’s "
+           "history",
+     refs=["23.2", "23.5", "12.9", "13.2", "12.15", "20.2"],
+     body="v3.6’s new §23.2 row: <em>“Renown and league over time, never the "
+          "internal rating (12.15); heists by outcome (12.9); defences held and "
+          "leaked; records; the battle log with replays; collection and badges. "
+          "Private, with no sharing, for 13 to 15 (20.2)”</em>. No section says "
+          "whether a Partial counts as held or leaked, what a record is, or what a "
+          "badge is or how one is earned. The server keeps the facts — heists by "
+          "attacker, leases with the defender, Renown rows per heist, season "
+          "results — and has no route that reads a player’s own history "
+          "(<code>server/src/http.mjs</code>). Found reading v3.6’s new row against"
+          " the build.",
+     rec="Define a defence held (no loot taken, or the defender’s haul denied "
+         "above a share), what a record is (the stats it keeps), and badges "
+         "(which, and how earned, or none at launch); then the server writes each "
+         "heist’s facts at settlement and answers a profile read (TD.24)."),
+
 dict(id="D72", kind="deviation", severity="minor", status="open",
      title="§21.8\u2019s alarm red and success green cannot carry words at its "
            "own 4.5:1, and most of the island\u2019s route features vanish in "
@@ -8131,6 +10377,36 @@ V3 = {
 FRONTEND = {
     "C9":  "the Codex screen's own text — fixed by editing a screen spec",
     "C11": "how many screens there are to draw",
+    # Found reading Screens v3 (v3.6 \u00a723.5): what the client builds.
+    "D73": "a screen, its art or its look in stage SD",
+    "D74": "a screen, its art or its look in stage SD",
+    "D75": "a screen, its art or its look in stage SD",
+    "C44": "a screen, its art or its look in stage SD",
+    "D76": "a screen, its art or its look in stage SD",
+    "D77": "a screen, its art or its look in stage SD",
+    "D78": "a screen, its art or its look in stage SD",
+    "C47": "a screen, its art or its look in stage SD",
+    "D79": "a screen, its art or its look in stage SD",
+    "D80": "a screen, its art or its look in stage SD",
+    "D81": "a screen, its art or its look in stage SD",
+    "D82": "a screen, its art or its look in stage SD",
+    "D83": "a screen, its art or its look in stage SD",
+    "D84": "a screen, its art or its look in stage SD",
+    "D85": "a screen, its art or its look in stage SD",
+    "D87": "a screen, its art or its look in stage SD",
+    "D88": "a screen, its art or its look in stage SD",
+    "D89": "a screen, its art or its look in stage SD",
+    "D90": "a screen, its art or its look in stage SD",
+    "G59": "a screen, its art or its look in stage SD",
+    "F58": "a screen, its art or its look in stage SD",
+    "D91": "a screen, its art or its look in stage SD",
+    "D92": "a screen, its art or its look in stage SD",
+    "D93": "a screen, its art or its look in stage SD",
+    "C52": "a screen, its art or its look in stage SD",
+    "G61": "a screen, its art or its look in stage SD",
+    "D94": "a screen, its art or its look in stage SD",
+    "D95": "a screen, its art or its look in stage SD",
+    "D96": "a screen, its art or its look in stage SD",
     "C20": "author 48 law sounds, or correct the claim to six school sounds",
     "C17": "the game's public name and its fallback",
     "G9":  "the 60-second guided build: an onboarding flow and its screens",
@@ -8165,6 +10441,30 @@ BOTH = {
     "G29": "sessions and the survey on the server; the client sending them",
     "G34": "the night on the server; the time zone sent and a picker with no night",
     "G35": "invites and feeds on the server; the friends' feed screen",
+    # Found reading Screens v3 against v3.6 and the build.
+    "G45": "the server or simulation, and a screen in stage SD",
+    "G46": "the server or simulation, and a screen in stage SD",
+    "C46": "the server or simulation, and a screen in stage SD",
+    "G47": "the server or simulation, and a screen in stage SD",
+    "G48": "the server or simulation, and a screen in stage SD",
+    "G49": "the server or simulation, and a screen in stage SD",
+    "C48": "the server or simulation, and a screen in stage SD",
+    "G51": "the server or simulation, and a screen in stage SD",
+    "G55": "the server or simulation, and a screen in stage SD",
+    "G56": "the server or simulation, and a screen in stage SD",
+    "G57": "the server or simulation, and a screen in stage SD",
+    "D86": "the server or simulation, and a screen in stage SD",
+    "C50": "the server or simulation, and a screen in stage SD",
+    "G58": "the server or simulation, and a screen in stage SD",
+    "G60": "the server or simulation, and a screen in stage SD",
+    "C53": "the server or simulation, and a screen in stage SD",
+    "G62": "the server or simulation, and a screen in stage SD",
+    "G63": "the server or simulation, and a screen in stage SD",
+    "G64": "the server or simulation, and a screen in stage SD",
+    "G66": "the server or simulation, and a screen in stage SD",
+    "G67": "the server or simulation, and a screen in stage SD",
+    "G68": "the server or simulation, and a screen in stage SD",
+    "G69": "the server or simulation, and a screen in stage SD",
 }
 
 
