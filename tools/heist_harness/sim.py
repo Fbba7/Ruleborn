@@ -28,7 +28,7 @@ from . import detect
 from .laws import Sheet
 from .detect import (ALERTED, DECAY, INVESTIGATING, STATE_FLOOR_TICKS, SUS_MAX,
                      SUSPICIOUS, VISION, fill_rate, line_of_sight, zone)
-from .fixed import TPS, U, Rng, angle_to, dist2, tiles, turn_toward
+from .fixed import TPS, TURN, U, Rng, angle_to, dist2, tiles, turn_toward
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 ROLES = {r["name"]: r for r in
@@ -83,7 +83,21 @@ CROUCH_RATIO = Fraction(_CROUCH).limit_denominator(100).as_integer_ratio()
 SEARCH_TICKS = 10 * TPS
 #: §12.17's states by how alarmed, so a heard event can step a guard up and
 #: never down.
-RANK = {"unaware": 0, "suspicious": 1, "investigating": 2, "alerted": 3}
+RANK = {"unaware": 0, "suspicious": 1, "investigating": 2, "searching": 2, "alerted": 3}
+
+#: §12.17's alarm ladder (v3.7 rules): the realm alarm climbs a level every
+#: thirty seconds and one per body found, to six, and each level keeps the
+#: ones below it. The harness has no footstep noise and no alert spread, so
+#: level 2 (noise a metre further) and level 4's spread are not modelled here;
+#: the simulation builds both (TD.69).
+ALARM_STEP_TICKS = 30 * TPS
+ALARM_MAX = 6
+#: Level 3: "An Investigating guard searches for 20 seconds instead of 10".
+SEARCH_LONG_TICKS = 20 * TPS
+#: Level 6: "Every guard in the realm enters Searching" — "twenty seconds of
+#: wider, faster searching", which the simulation reads as standing and
+#: sweeping at the ordinary turn rate.
+SEARCHING_TICKS = 20 * TPS
 
 # -- the proposed response layer (docs/design/spec/response.md) -------------
 #
@@ -190,6 +204,8 @@ class Guard:
     #: searched there. The harness has no hearing but this: the Vault's crack.
     heard: tuple | None = None
     search_ticks: int = 0
+    #: Ticks of alarm level 6's Searching left.
+    searching_left: int = 0
     #: Knocked out by a takedown (§12.8); whether another guard has found the
     #: body; and whether a takedown is holding it this tick.
     down: bool = False
@@ -394,9 +410,38 @@ class Heist:
         self.knockouts = 0
         self.bodies_found = 0
 
+    def _alarm_steps(self) -> None:
+        """The ladder's two events: at 5 "Another Warden arrives at an
+        entrance", and at 6 "Every guard in the realm enters Searching", each
+        once a realm, as the level is reached."""
+        level = self.realm_alarm
+        if level >= 5 and not self.reinforced:
+            self.reinforced = True
+            ex, ey = self.island.entry
+            self.guards.append(Guard("Warden", ex * U + U // 2, ey * U + U // 2, 0, [(ex, ey)]))
+        if level >= 6 and not self.all_searching:
+            self.all_searching = True
+            for g in self.guards:
+                if not g.down and g.state != "alerted":
+                    g.state, g.state_ticks = "searching", 0
+                    g.searching_left, g.heard = SEARCHING_TICKS, None
+
+    @property
+    def realm_alarm(self) -> int:
+        """§12.17's realm alarm in the realm the crew is in, 0 to 6, under the
+        v3.7 rules; 0 under the earlier ones, which had no ladder here."""
+        if self.rules != "v3.7":
+            return 0
+        climbed = (self.tick - self.leg_tick) // ALARM_STEP_TICKS
+        return min(ALARM_MAX, climbed + self.bodies_found - self.leg_bodies)
+
     def _enter(self, island) -> None:
         """Place the guards of the realm the crew has just entered."""
         self.island = island
+        # Each realm keeps its own alarm, from when the crew arrives.
+        self.leg_tick = getattr(self, "tick", 0)
+        self.leg_bodies = getattr(self, "bodies_found", 0)
+        self.reinforced = self.all_searching = False
         # §12.17's guards are somewhere on their loop when a raid starts, and
         # `Patrol.phase` is what says where. It was computed by the generator and
         # never read here (D26), so every guard began every raid at waypoint
@@ -446,6 +491,9 @@ class Heist:
     def _guard_move(self, g: Guard) -> None:
         if g.held:
             return                        # being taken down: it does not walk on
+        if g.state == "searching":
+            g.facing = (g.facing + VISION[g.role]["turn"]) % TURN
+            return                        # stands and sweeps (alarm level 6)
         if g.state == "alerted" and self.response:
             target = self._nearest_visible_crew(g)
             goal = (target.x, target.y) if target else (g.x, g.y)
@@ -533,7 +581,8 @@ class Heist:
                     and g.suspicion + gained * TPS >= ALERTED:
                 self.near_captures += 1
         else:
-            g.suspicion = max(0, g.suspicion - DECAY)
+            # From alarm level 1 "Suspicion empties at half its rate".
+            g.suspicion = max(0, g.suspicion - (DECAY // 2 if self.realm_alarm >= 1 else DECAY))
         self.peak_suspicion = max(self.peak_suspicion, g.suspicion)
 
         want = g.state
@@ -549,10 +598,16 @@ class Heist:
         if g.heard is not None:
             if dist2(g.x, g.y, *g.heard) <= (U // 2) ** 2:
                 g.search_ticks += 1
-            if g.search_ticks >= SEARCH_TICKS:
+            if g.search_ticks >= (SEARCH_LONG_TICKS if self.realm_alarm >= 3 else SEARCH_TICKS):
                 g.heard, g.search_ticks = None, 0
             elif RANK[want] < RANK["investigating"]:
                 want = "investigating"
+        # Searching (alarm level 6) holds for its twenty seconds unless the
+        # guard is drawn higher by what it sees.
+        if g.state == "searching" and g.searching_left > 0:
+            g.searching_left -= 1
+            if RANK[want] < RANK["investigating"]:
+                want = "searching"
         g.state_ticks += 1
         if want != g.state and g.state_ticks >= STATE_FLOOR_TICKS:
             g.state, g.state_ticks = want, 0
@@ -631,7 +686,8 @@ class Heist:
                     # Shows the crew for 5 s to every guard within 4 m of it
                     # (F33), whatever the alarm's reach (F52, decided; §10.3
                     # says "every guard in the realm").
-                    reach = GLARE_METRES * U
+                    # From alarm level 4, 8 m (§10.3).
+                    reach = GLARE_METRES * (2 if self.realm_alarm >= 4 else 1) * U
                     for g in self.guards:
                         if self.glare_realm or dist2(g.x, g.y, cx, cy) <= reach * reach:
                             g.suspicion = ALERTED
@@ -832,6 +888,7 @@ class Heist:
                     continue
                 self._guard_move(g)
                 self._perceive(g)
+            self._alarm_steps()
             self._wards()
             if self._cross():
                 self.tick += TPS            # §12.6's one-second swoop

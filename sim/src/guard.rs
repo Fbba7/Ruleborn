@@ -76,3 +76,19 @@ pub const SPREAD_DELAY_TICKS: u32 = TICKS_PER_SECOND / 2;
 pub const ALARM_STEP_TICKS: u32 = TICKS_PER_SECOND * 30;
 pub const ALARM_MAX: i32 = 6;
 pub const REINFORCE_AT: i32 = 5;
+/// §12.17's alarm ladder: "Each level adds one new effect through a parameter
+/// this section already has, and keeps the ones below it." The level from
+/// which each holds. 1: "Suspicion empties at half its rate".
+pub const DECAY_HALVED_AT: i32 = 1;
+/// 2: "Every noise in the table below carries 1 m further, except a crouched
+/// step on moss" — one metre is two of `noise`'s half metres.
+pub const NOISE_FURTHER_AT: i32 = 2;
+pub const NOISE_FURTHER_HALF_METRES: u16 = 2;
+/// 3: "An Investigating guard searches for 20 seconds instead of 10".
+pub const SEARCH_LONGER_AT: i32 = 3;
+pub const SEARCH_SPOT_LONG_TICKS: u32 = TICKS_PER_SECOND * 20;
+/// 4: "The alarm spreads twice as far: guards within 8 m, not 4, start
+/// investigating", and a Lantern Glare reaches 8 m with it (§10.3).
+pub const SPREAD_DOUBLED_AT: i32 = 4;
+/// 6: "Every guard in the realm enters Searching".
+pub const ALL_SEARCH_AT: i32 = 6;

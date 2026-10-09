@@ -69,9 +69,19 @@ impl Sound {
 
     /// The same, with a realm law's `noise_radius` on top, still in one
     /// division at the end.
-    pub fn steps_scaled(self, surface: crate::grid::Surface, (ln, ld): (i64, i64)) -> u16 {
+    pub fn steps_scaled(self, surface: crate::grid::Surface, law: (i64, i64)) -> u16 {
+        self.steps_further(surface, law, 0)
+    }
+
+    /// The same, carrying `extra` half metres further first — §12.17's
+    /// alarm level 2, "Every noise in the table below carries 1 m further".
+    /// A silent sound stays silent: crawling is not a noise in the table.
+    pub fn steps_further(self, surface: crate::grid::Surface, (ln, ld): (i64, i64),
+                         extra: u16) -> u16 {
+        let base = self.half_metres();
+        let base = if base == 0 { 0 } else { base + extra };
         let (num, den) = surface.carry();
-        let reach = self.half_metres() as i64 * num as i64 * ln / (den as i64 * 2 * ld);
+        let reach = base as i64 * num as i64 * ln / (den as i64 * 2 * ld);
         reach.clamp(0, u16::MAX as i64 - 1) as u16
     }
 }

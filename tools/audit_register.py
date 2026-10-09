@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61"})
+    "G75", "C72", "C73", "G76", "F61", "F62"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9838,6 +9838,25 @@ dict(id="F61", kind="finding", severity="minor", status="open",
      rec="Set Hoarder’s mark from the economy model so its gold lands about "
          "when the other badges’ do."),
 
+dict(id="F62", kind="finding", severity="significant", status="open",
+     title="With §12.17’s alarm ladder built, realm level 2 holds 46.4% at its "
+           "watch of 0.75, above §13.2’s band",
+     refs=["5.2", "12.17", "13.2"],
+     body="§5.2: <em>“at level 2 a guard sees 0.75 as far (39.0%)”</em>, and "
+          "§13.2 asks every realm level to hold 30 to 45%. TD.69 built the ladder "
+          "the earlier holds were measured without (F59). On the harness, the "
+          "competent crew at 800 raids a level is held 33.5, 46.4, 37.0, 38.5 and "
+          "37.8% at realm levels 1 to 5 with the ladder, and 32.6, 44.2, 36.6, 38.0 "
+          "and 36.9% without it: the ladder adds under a point at four levels and "
+          "2.2 at level 2, which was already the nearest the ceiling. At level 2, "
+          "with the ladder, 0.7 as far holds 38.8%, 0.65 holds 35.6% and 0.6 holds "
+          "30.0%. The build ships the document’s 0.75 until the document moves it "
+          "(§5.2: <em>“the counts above are the ones that ship until it moves "
+          "them”</em>). Found building TD.69.",
+     rec="Take realm level 2’s watch to 0.7 as far, the same as level 3’s, which "
+         "holds 38.8% with the ladder against a band centred on 37.5%; the edits "
+         "are drafted."),
+
 ]
 
 # ===========================================================================
@@ -11121,15 +11140,34 @@ V37 = {
     "<em>“Note colours | … | 8.1’s wheel, from the tokens”</em>. Left: Weaving "
     "and the Harmony view read the wheel’s colours from TD.2’s tokens."),
 
+"F59": dict(status="done", note=
+    "<strong>Built (TD.69).</strong> <code>sim/</code> applies every level: "
+    "suspicion empties at half rate from 1, every noise carries a metre further "
+    "from 2 except a crouched step on moss, an Investigating guard searches 20 s "
+    "from 3, the alarm and a Lantern Glare reach 8 m from 4, a Warden arrives at "
+    "5, and every guard not chasing enters Searching at 6, with a test for each; "
+    "the golden replays first move at seconds 35, 46 and 49, after level 1 "
+    "arrives at 30, and are re-recorded. The harness keeps a realm alarm per "
+    "realm and carries levels 1, 3, 4, 5 and 6; it has no footstep noise and no "
+    "alert spread, so level 2 and level 4’s spread are the simulation’s alone. "
+    "A bell post’s ring waits for the bell post (TD.15). Re-measured, the hold "
+    "table stays in band at four levels and leaves it at level 2 (F62). The "
+    "load test’s heists end a little differently under it: an engaged player "
+    "writes 46.88 rows a day where it wrote 46.93, the others unchanged "
+    "(<code>server/load.json</code>)."),
+
+"F62": dict(status="open", left="document", note=
+    "Found building TD.69, after v3.7: a balance figure for the document, with "
+    "its edits drafted (TD.75)."),
+
 "F33": dict(status="open", left="build", note=
     "<strong>The owner’s answer D is written in; the build is not "
     "done.</strong> §10.3: <em>“within 4 m of it for 5 seconds (8 m from alarm "
     "level 4, 12.17)”</em>, and §13.2’s check <em>“runs over every kit of ward "
     "kinds a Keeper can build within the budget”</em>. Left: that kit-wide "
     "check in the harness and the checks (T0.12 measured the generator’s kit "
-    "only), and the 8 m from alarm level 4, which sim/ does not have "
-    "(<code>GLARE_METRES</code> is 4 at every level; F59). How the check reads "
-    "is F60."),
+    "only). The 8 m from alarm level 4 is built in <code>sim/</code> and the "
+    "harness with the ladder (TD.69). How the check reads is F60."),
 
 "F37": dict(status="open", left="build", note=
     "<strong>The owner’s answer B is written in; the build is not "
@@ -14490,6 +14528,23 @@ EDITS = {
                  "for one task in three); iteration 415 (301 to 531), a floor at 1x "
                  "the build; plan about 830 (602 to 1,062)",
          why="§26.8 and §27.2, with phases 4a to 4c. C72."),
+],
+"F62": [
+    dict(section="5.2",
+         action="replace",
+         find="at level 2 a guard sees 0.75 as far (39.0%)",
+         replace="at level 2 a guard sees 0.7 as far (38.8% with the alarm ladder, 12.17)",
+         why="With §12.17’s ladder built, 0.75 holds 46.4% at n = 800. F62."),
+    dict(section="12.17",
+         action="replace",
+         find="at level 2 every zone reaches 0.75 as far, and at level 3 0.7 as far",
+         replace="at levels 2 and 3 every zone reaches 0.7 as far",
+         why="Level 2 takes level 3’s watch. F62."),
+    dict(section="13.2",
+         action="replace",
+         find="| Sight 0.75 as far\n| 39.0%",
+         replace="| Sight 0.7 as far\n| 38.8%",
+         why="The table’s level 2 row, re-measured with the ladder. F62."),
 ],
 "C73": [
     dict(section="7.10",

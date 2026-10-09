@@ -161,11 +161,16 @@
       "name": "Realm alarm",
       "section": "12.17",
       "task": "T5.2",
-      "what": "An alert reaches guards within four metres half a second later; the realm alarm climbs once every thirty seconds to six; at five one more Warden arrives at the entrance.",
+      "what": "An alert reaches guards within four metres half a second later; the realm alarm climbs once every thirty seconds to six, and each level keeps the ones below it: from one suspicion empties at half its rate, from two every noise carries a metre further except a crouched step on moss, from three an Investigating guard searches 20 seconds, from four the alarm and a Lantern Glare reach 8 m, at five one more Warden arrives at the entrance, and at six every guard enters Searching (TD.69). A bell post's ring waits for the bell post (TD.15).",
       "tests": [
         "an_alert_reaches_guards_within_four_metres_half_a_second_later",
         "the_realm_alarm_climbs_once_every_thirty_seconds_to_six",
-        "at_alarm_five_one_more_warden_arrives_at_the_entrance"
+        "at_alarm_five_one_more_warden_arrives_at_the_entrance",
+        "from_alarm_level_1_suspicion_empties_at_half_its_rate",
+        "from_alarm_level_2_every_noise_carries_a_metre_further_except_crouching_on_moss",
+        "from_alarm_level_3_an_investigating_guard_searches_for_20_seconds",
+        "from_alarm_level_4_the_alarm_and_a_glare_reach_8_m",
+        "at_alarm_level_6_every_guard_in_the_realm_enters_searching"
       ]
     },
     {

@@ -2107,46 +2107,36 @@ dict(
                   "both in both languages",
              blocked_by=["TC.12"],
              register=["F42", "F37"]),
-        dict(id="TD.69", owner="claude", status="ready",
+        dict(id="TD.69", owner="claude", status="done",
              title="§12.17's alarm ladder, levels 1 to 4 and 6, with the Glare's "
                    "reach following it",
-             detail="§12.17's realm alarm climbs from 0 to 6, once every 30 "
-                    "seconds, once per knocked-out guard discovered and once each "
-                    "time a bell post rings, and each level adds one effect and "
-                    "keeps those below it: from 1 suspicion empties at half its "
-                    "rate; from 2 every noise carries 1 m further, except a "
-                    "crouched step on moss; from 3 an Investigating guard searches "
-                    "20 seconds, not 10; from 4 the alarm spreads 8 m, not 4; at 5 "
-                    "another Warden arrives at an entrance; at 6 every guard in "
-                    "the realm enters Searching. <code>sim/</code> climbs the "
-                    "ladder and builds only level 5's Warden "
-                    "(<code>guard::REINFORCE_AT</code>); the harness has no realm "
-                    "alarm at all and counts a discovered body instead "
-                    "(<code>tools/heist_harness/sim.py</code>). And §10.3 gives the "
-                    "Lantern Glare 4 m, 8 m from alarm level 4, where "
-                    "<code>guard::GLARE_METRES</code> is 4 at every level and its "
-                    "comments still read §10.3 as every guard in the realm (F33). "
-                    "This builds levels 1 to 4 and 6 in both, the Glare's reach "
-                    "following the ladder, and the harness's climb with level 5's "
-                    "Warden; a rules-version change (§24.11). §12.17 fixes the "
-                    "ladder and lets the bands absorb it, measured in the same "
-                    "batch (§32.9), so the harness then re-measures §13.2's table "
-                    "with it on: every realm level at n = 800 on §5.2's v3.7 "
-                    "budget with the realm's watch, which the build now follows "
-                    "(F55's recommended option), where §13.2 still quotes the tuned "
-                    "holds at n = 200; and the Heart's hold beside them, which F55 "
-                    "left unmeasured (the Heart's own watch is unstated: the "
-                    "register's). A bell post's ring, which climbs the alarm too, "
-                    "comes with TD.15's features.",
-             gate="one <code>sim/</code> test per level (1, 2, 3, 4 and 6), and "
-                  "one that a Glare reaches 4 m below alarm level 4 and 8 m from "
-                  "it; the harness climbing the same ladder with level 5's "
-                  "Warden, a harness test per level; the goldens re-recorded and "
-                  "agreeing; §13.2's table and §12.6's decision band re-measured "
-                  "with the ladder on, every realm level at n = 800 and the "
-                  "Heart's hold beside them, and any level outside 30 to 45% "
-                  "recorded as a finding for §13.2's band rule",
-             evidence="cargo test in sim/; python3 -m tools.heist_harness holds 800",
+             detail="<strong>Done.</strong> §12.17's realm alarm climbs from 0 to 6, "
+                    "once every 30 seconds and once per body found, and each level "
+                    "keeps those below it. <code>sim/</code> builds every level: "
+                    "suspicion empties at half rate from 1; every noise carries a "
+                    "metre further from 2, except a crouched step on moss; an "
+                    "Investigating guard searches 20 s from 3; the alarm and a "
+                    "Lantern Glare reach 8 m from 4 (§10.3); a Warden arrives at 5; "
+                    "and every guard not chasing enters Searching at 6, with a test "
+                    "for each. The golden replays first move at seconds 35, 46 and "
+                    "49, after level 1 arrives at 30, and are re-recorded under the "
+                    "new rules version, which now also fingerprints the realm's "
+                    "watch the goldens cannot see. The harness keeps a realm alarm "
+                    "per realm and carries levels 1, 3, 4, 5 and 6; it has no "
+                    "footstep noise and no alert spread, so level 2 and level 4's "
+                    "spread are the simulation's alone. A bell post's ring waits for "
+                    "the bell post (TD.15). Re-measured at n = 800 on §5.2's v3.7 "
+                    "budget with the watch: 33.5, 46.4, 37.0, 38.5 and 37.8% held at "
+                    "realm levels 1 to 5 (32.6, 44.2, 36.6, 38.0 and 36.9% with the "
+                    "ladder off), so realm level 2 leaves §13.2's band; 0.7 as far "
+                    "brings it to 38.8% (F62, drafted for TD.75). The Heart's own "
+                    "hold waits for its watch to be stated (G71).",
+             gate="a sim test per level, the goldens re-recorded and verifying on "
+                  "native and WebAssembly, the harness's ladder test, and §13.2's "
+                  "table re-measured at n = 800",
+             evidence="cargo test (sim/tests.rs from_alarm_level_*); "
+                      "python3 -m tools.heist_harness.test_harness",
+             blocked_by=[],
              register=["F33", "F55", "F59"]),
         dict(id="TD.70", owner="claude", status="ready",
              title="A ward ignores its disarmer from the moment it sets out",
@@ -2258,7 +2248,7 @@ dict(
                   "edits applied, and check_document passes on it",
              evidence="tools/audit_register.py EDITS; tools/check_edits.py",
              blocked_by=[],
-             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57"]),
+             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62"]),
         dict(id="TD.74", owner="claude", status="blocked",
              title="Notifications and session telemetry on the device",
              detail="The server sends §14.6's notifications, keeps the night "

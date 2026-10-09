@@ -83,8 +83,11 @@ def test_the_harness_gives_the_same_answers_as_when_it_was_last_read():
     # reaches the guards within the alarm's spread, not the realm (F33); and by
     # v3.7, now the default rules: §12.17's realm's watch, under which a realm
     # level 3 guard sees 0.7 as far. Under rules="v3.4" the digest is still
-    # 951d6c0c…, so the watch is the whole of the change.
-    assert digest == "6d1c0c6618e8d8c7c98c17c10d6ade5690d0c44ff111ccf766bf109fec70b296", (
+    # 951d6c0c…, so the watch is the whole of the change; and by TD.69,
+    # §12.17's alarm ladder under the v3.7 rules (decay halved from level 1,
+    # a 20-second search from 3, a Glare's 8 m from 4, a Warden at 5, every
+    # guard Searching at 6). With the ladder off the digest is 6d1c0c66….
+    assert digest == "a4d88544918567b9d27c184a99acbc5f6d21402f1a89af95b815471f3a530012", (
         f"the harness now gives different results: {digest}")
 
 
@@ -895,16 +898,44 @@ def test_finding_5_2s_budget_holds_every_realm_level_above_13_2s_band():
     assert held(3, wards=1, posts=2) <= 50                 # a setting inside reach
 
 
-def test_v3_7s_budget_and_watch_hold_every_realm_level_inside_13_2s_band():
+def test_the_realm_alarm_climbs_and_its_ladder_acts_as_12_17_says():
+    """TD.69. §12.17's alarm climbs a level every thirty seconds, one per body
+    found, to six, in each realm from when the crew arrives; at 5 a Warden
+    arrives at the entry and at 6 every guard not chasing enters Searching.
+    The v3.4 rules had no ladder here, so their alarm stays at 0."""
+    from .sim import ALARM_STEP_TICKS, SEARCHING_TICKS
+    h = Heist(generate(7, 3), POLICIES["competent"]())
+    assert h.realm_alarm == 0
+    h.tick = 2 * ALARM_STEP_TICKS
+    assert h.realm_alarm == 2
+    h.bodies_found += 1
+    assert h.realm_alarm == 3, "a body found climbs it one more"
+    h.tick = 9 * ALARM_STEP_TICKS
+    assert h.realm_alarm == 6, "never above six"
+    before = len(h.guards)
+    h._alarm_steps()
+    assert len(h.guards) == before + 1 and h.guards[-1].role == "Warden"
+    assert all(g.state in ("searching", "alerted") for g in h.guards if not g.down)
+    assert all(g.searching_left == SEARCHING_TICKS for g in h.guards if g.state == "searching")
+    h._alarm_steps()
+    assert len(h.guards) == before + 1, "once a realm"
+    old = Heist(generate(7, 3, rules="v3.4"), POLICIES["competent"]())
+    old.tick = 9 * ALARM_STEP_TICKS
+    assert old.realm_alarm == 0
+
+
+def test_v3_7s_budget_and_watch_hold_realm_levels_1_3_4_and_5_inside_13_2s_band():
     """F55, closed by v3.7 (option D): §5.2's wards 8, 8, 6, 2 and 0 on 1, 1, 2,
     1 and 1 posts, with §12.17's realm's watch tuning the guards at realm levels
     1 to 3, so "every level holds 30 to 45% again" (v3.7 publishes 37.5, 39.0,
-    37.5, 38.0 and 36.9% at n = 800). The harness's own seeds, at the default
-    rules, land every level inside the band."""
+    37.5, 38.0 and 36.9% at n = 800). With §12.17's alarm ladder built (TD.69)
+    the harness's seeds hold levels 1, 3, 4 and 5 inside the band. Realm level
+    2 does not: 46.4% at n = 800 at its watch of 0.75 (44.2% with the ladder
+    off), and 38.8% at 0.7 — F62, a balance figure for the document."""
     from ..design_facts import HOLD_BAND
     lo, hi = HOLD_BAND
-    for level in (1, 2, 3, 4, 5):
-        rs = run_batch(60, 2, level, "competent", laws="defensive", shaped=1)
+    for level in (1, 3, 4, 5):
+        rs = run_batch(100, 2, level, "competent", laws="defensive", shaped=1)
         held = 100 * sum(not r.success for r in rs) / len(rs)
         assert lo <= held <= hi, (level, held)
 

@@ -1064,6 +1064,86 @@ fn rate(world: &World) -> Option<i32> {
     world.noticed(0, 0).map(|(per_tick, _)| per_tick)
 }
 
+/// A world at realm alarm `level`, reached as the alarm climbs: thirty
+/// seconds a level, so the states phase keeps it there.
+fn at_alarm(mut world: World, level: i32) -> World {
+    world.tick = level as u32 * crate::guard::ALARM_STEP_TICKS;
+    world.alarm = level;
+    world
+}
+
+#[test]
+fn from_alarm_level_1_suspicion_empties_at_half_its_rate() {
+    // §12.17: "Suspicion empties at half its rate, about 3.4 seconds instead
+    // of 1.7". The raider stands behind the Scout, unseen.
+    let drained = |level: i32| {
+        let mut world = at_alarm(scout_and_raider(15, 180), level);
+        world.guards[0].suspicion = 400;
+        world.step();
+        400 - world.guards[0].suspicion
+    };
+    assert_eq!(drained(0), crate::DECAY_PER_TICK, "at level 0, the full rate");
+    assert_eq!(drained(1), crate::DECAY_PER_TICK / 2, "from level 1, half");
+    assert_eq!(drained(6), crate::DECAY_PER_TICK / 2, "and it keeps at higher levels");
+}
+
+#[test]
+fn from_alarm_level_2_every_noise_carries_a_metre_further_except_crouching_on_moss() {
+    use crate::grid::Surface;
+    use crate::noise::Sound;
+    let extra = |level, sound, surface| crate::alarm_noise_extra(level, sound, surface);
+    assert_eq!(extra(1, Sound::Walking, Surface::Plain), 0, "not before level 2");
+    assert_eq!(extra(2, Sound::Walking, Surface::Plain), 2, "a metre, in half metres");
+    assert_eq!(extra(2, Sound::CrouchedWalk, Surface::Moss), 0, "a crouched step on moss");
+    assert_eq!(extra(2, Sound::CrouchedWalk, Surface::Plain), 2, "a crouched step elsewhere");
+    assert_eq!(extra(2, Sound::Walking, Surface::Moss), 2, "walking on moss");
+    // Walking's 2.5 m reaches two steps, and 3.5 m three; crawling stays silent.
+    let law = (1, 1);
+    assert_eq!(Sound::Walking.steps_further(Surface::Plain, law, 0), 2);
+    assert_eq!(Sound::Walking.steps_further(Surface::Plain, law, 2), 3);
+    assert_eq!(Sound::Crawling.steps_further(Surface::Plain, law, 2), 0);
+}
+
+#[test]
+fn from_alarm_level_3_an_investigating_guard_searches_for_20_seconds() {
+    use crate::guard::{SEARCH_SPOT_LONG_TICKS, SEARCH_SPOT_TICKS};
+    let world = |level| at_alarm(scout_and_raider(15, 180), level);
+    assert_eq!(world(2).search_spot_ticks(), SEARCH_SPOT_TICKS);
+    assert_eq!(SEARCH_SPOT_TICKS, TICKS_PER_SECOND * 10);
+    assert_eq!(world(3).search_spot_ticks(), SEARCH_SPOT_LONG_TICKS);
+    assert_eq!(SEARCH_SPOT_LONG_TICKS, TICKS_PER_SECOND * 20);
+}
+
+#[test]
+fn from_alarm_level_4_the_alarm_and_a_glare_reach_8_m() {
+    // §12.17: "The alarm spreads twice as far: guards within 8 m, not 4";
+    // §10.3: a Glare's 4 m is "8 m from alarm level 4".
+    let world = |level| at_alarm(scout_and_raider(15, 180), level);
+    assert_eq!(world(3).spread_reach(), Fx::from_int(4));
+    assert_eq!(world(4).spread_reach(), Fx::from_int(8));
+    assert_eq!(world(3).glare_reach(), Fx::from_int(4));
+    assert_eq!(world(4).glare_reach(), Fx::from_int(8));
+}
+
+#[test]
+fn at_alarm_level_6_every_guard_in_the_realm_enters_searching() {
+    use crate::guard::State;
+    // One step before level 6 is reached: every guard is still at its post.
+    let heist = fixture(3, 60, 1);
+    let mut world = World::new(heist.seed, 1, Vec::new());
+    world.tick = 6 * crate::guard::ALARM_STEP_TICKS - 1;
+    world.alarm = 5;
+    world.reinforced = true;
+    world.step();
+    assert!(world.guards.iter().all(|g| g.state != State::Searching), "not yet");
+    world.step();
+    assert_eq!(world.alarm, 6);
+    for (gi, g) in world.guards.iter().enumerate() {
+        assert!(matches!(g.state, State::Searching | State::Alerted) || !g.awake(world.tick),
+                "guard {gi} is {:?}", g.state);
+    }
+}
+
 #[test]
 fn a_realms_watch_tunes_its_guards_by_realm_level() {
     // §12.17 (v3.7): "at realm level 1 suspicion fills at 0.6 of the rates

@@ -85,6 +85,7 @@
   "angles_wrap_rather_than_accumulate": "passed",
   "anyone_inside_when_the_clock_ends_is_caught": "passed",
   "at_alarm_five_one_more_warden_arrives_at_the_entrance": "passed",
+  "at_alarm_level_6_every_guard_in_the_realm_enters_searching": "passed",
   "aurora_doubles_sight_inside_its_band_and_halves_it_between": "passed",
   "below_stays_in_range_and_covers_it": "passed",
   "bloom_regrows_a_cut_hedge_after_ten_seconds": "passed",
@@ -122,6 +123,10 @@
   "flicker_makes_the_whole_realm_bright_or_dark_for_three_seconds_every_fifteen": "passed",
   "frictionless_and_bounce_are_pinball_and_a_warden_absorbs_the_ricochet": "passed",
   "frictionless_slides_on_past_the_end_of_a_route_until_something_stops_it": "passed",
+  "from_alarm_level_1_suspicion_empties_at_half_its_rate": "passed",
+  "from_alarm_level_2_every_noise_carries_a_metre_further_except_crouching_on_moss": "passed",
+  "from_alarm_level_3_an_investigating_guard_searches_for_20_seconds": "passed",
+  "from_alarm_level_4_the_alarm_and_a_glare_reach_8_m": "passed",
   "gait_and_light_multiply_the_rate_once": "passed",
   "ghost_tide_sends_the_knocked_out_back_to_where_they_landed": "passed",
   "glass_lets_a_guard_see_through_a_wall": "passed",
@@ -239,8 +244,8 @@
  "cross_target": [
   {
    "seed": "1",
-   "native": "c3827e6ccd8c376e",
-   "wasm": "c3827e6ccd8c376e",
+   "native": "1186fa6f99a68aad",
+   "wasm": "1186fa6f99a68aad",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -254,8 +259,8 @@
   },
   {
    "seed": "6840123409045651457",
-   "native": "75d6281b22477ddd",
-   "wasm": "75d6281b22477ddd",
+   "native": "779f995b8ec4b0e7",
+   "wasm": "779f995b8ec4b0e7",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -269,8 +274,8 @@
   },
   {
    "seed": "18446744073709551615",
-   "native": "4adb9ec28c88e687",
-   "wasm": "4adb9ec28c88e687",
+   "native": "ca9c9bd395f3c0e6",
+   "wasm": "ca9c9bd395f3c0e6",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -284,8 +289,8 @@
   },
   {
    "seed": "42",
-   "native": "b00062db5783f885",
-   "wasm": "b00062db5783f885",
+   "native": "5f0ef05f55581780",
+   "wasm": "5f0ef05f55581780",
    "validator_agree": true,
    "validator": [
     "Foiled",
@@ -299,8 +304,8 @@
   },
   {
    "seed": "999983",
-   "native": "e54e06d27d540680",
-   "wasm": "e54e06d27d540680",
+   "native": "0dd5bfb42f992fca",
+   "wasm": "0dd5bfb42f992fca",
    "validator_agree": true,
    "validator": [
     "Foiled",

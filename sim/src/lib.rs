@@ -682,6 +682,8 @@ pub struct World {
     /// Where a reinforcing Warden arrives, and whether one has.
     pub entrance: grid::TileIndex,
     pub reinforced: bool,
+    /// Whether alarm level 6 has sent every guard Searching yet.
+    pub all_searching: bool,
     /// "Alarm spreads by distance": (tick due, guard index, the spot), kept in
     /// that order so the same spreads land in the same order everywhere.
     spreads: Vec<(u32, usize, grid::TileIndex)>,
@@ -826,6 +828,7 @@ impl World {
             knockouts_discovered: 0,
             entrance,
             reinforced: false,
+            all_searching: false,
             spreads: Vec::new(),
             grid,
             commands,
@@ -1375,7 +1378,7 @@ impl World {
             // laws that widen the alarm leave alone (F52, decided); §10.3
             // still reads "every guard in the realm".
             if self.raiders.iter().any(|r| r.active()) {
-                let reach = Fx::from_int(guard::GLARE_METRES);
+                let reach = self.glare_reach();
                 if let Some(spot) = self.glares.iter()
                     .filter(|&&(_, until)| now < until)
                     .map(|&(s, _)| s)
@@ -1399,7 +1402,10 @@ impl World {
                 guard.suspicion = (guard.suspicion + gain).min(SUSPICION_MAX);
             } else {
                 let (n, d) = self.sheet.factor(Param::SuspicionDecay);
-                guard.suspicion = (guard.suspicion - DECAY_PER_TICK * n as i32 / d as i32).max(0);
+                // From alarm level 1, "Suspicion empties at half its rate".
+                let halve = if self.alarm >= guard::DECAY_HALVED_AT { 2 } else { 1 };
+                guard.suspicion = (guard.suspicion
+                    - DECAY_PER_TICK * n as i32 / (d as i32 * halve)).max(0);
             }
         }
     }
@@ -1606,7 +1612,34 @@ impl World {
     /// fixed `guard::GLARE_METRES` (F52).
     fn spread_reach(&self) -> Fx {
         let (an, ad) = self.sheet.factor(Param::AlarmRange);
-        Fx::from_int((guard::SPREAD_METRES as i64 * an / ad).min(1 << 20) as i32)
+        // From alarm level 4 "The alarm spreads twice as far".
+        let base = if self.alarm >= guard::SPREAD_DOUBLED_AT {
+            guard::SPREAD_METRES * 2
+        } else {
+            guard::SPREAD_METRES
+        };
+        Fx::from_int((base as i64 * an / ad).min(1 << 20) as i32)
+    }
+
+    /// How far a Lantern Glare shows the crew: "within 4 m of it ... (8 m from
+    /// alarm level 4, 12.17)" (§10.3), a reach the laws that widen the alarm
+    /// leave alone (F52).
+    fn glare_reach(&self) -> Fx {
+        Fx::from_int(if self.alarm >= guard::SPREAD_DOUBLED_AT {
+            guard::GLARE_METRES * 2
+        } else {
+            guard::GLARE_METRES
+        })
+    }
+
+    /// How long an Investigating guard searches the spot: "ten seconds", and
+    /// from alarm level 3 "20 seconds instead of 10".
+    fn search_spot_ticks(&self) -> u32 {
+        if self.alarm >= guard::SEARCH_LONGER_AT {
+            guard::SEARCH_SPOT_LONG_TICKS
+        } else {
+            guard::SEARCH_SPOT_TICKS
+        }
     }
 
     /// Whether a tile is dark this tick (§12.17's unlit modifier): its ground,
@@ -2024,8 +2057,11 @@ impl World {
             } else {
                 landing.unwrap_or(gait.sound())
             };
-            let mut reach = sound.steps_scaled(self.grid.surface(source),
-                                               self.sheet.factor(Param::NoiseRadius));
+            // From alarm level 2 "every noise ... carries 1 m further, except
+            // a crouched step on moss".
+            let surface = self.grid.surface(source);
+            let mut reach = sound.steps_further(surface, self.sheet.factor(Param::NoiseRadius),
+                                                alarm_noise_extra(self.alarm, sound, surface));
             // Deep sleep's flowers muffle footsteps; Iron bell's every step
             // echoes, "guards hear 2 tiles further".
             if footstep && self.combos.chord(Chord::DeepSleep) {
@@ -2132,7 +2168,7 @@ impl World {
                 next = match current {
                     Suspicious if by_suspicion == Unaware => Unaware,
                     Investigating => match g.arrived_at {
-                        Some(t) if now - t >= guard::SEARCH_SPOT_TICKS
+                        Some(t) if now - t >= self.search_spot_ticks()
                             && by_suspicion.rank() < Suspicious.rank() => Returning,
                         _ => Investigating,
                     },
@@ -2166,6 +2202,17 @@ impl World {
             let mut warden = make_guard(id, WARDEN, self.entrance, &self.grid);
             warden.state_since = now;
             self.guards.push(warden);
+        }
+        // At 6 "Every guard in the realm enters Searching", once, as the
+        // level is reached: a guard already Alerted keeps chasing.
+        if self.alarm >= guard::ALL_SEARCH_AT && !self.all_searching {
+            self.all_searching = true;
+            for gi in 0..self.guards.len() {
+                let g = &self.guards[gi];
+                if g.awake(now) && !matches!(g.state, Alerted | Searching) {
+                    self.enter(gi, Searching);
+                }
+            }
         }
 
         self.settle();
@@ -3700,6 +3747,14 @@ pub const GOLDEN: &[(&str, u64, u32, u8)] = &[
     ("edge-seed-max", u64::MAX, 4_500, 3),
 ];
 
+/// How much further, in half metres, a sound carries at a realm alarm level:
+/// from level 2 "Every noise in the table below carries 1 m further, except a
+/// crouched step on moss" (§12.17).
+pub fn alarm_noise_extra(alarm: i32, sound: noise::Sound, surface: grid::Surface) -> u16 {
+    let quiet = sound == noise::Sound::CrouchedWalk && surface == grid::Surface::Moss;
+    if alarm >= guard::NOISE_FURTHER_AT && !quiet { guard::NOISE_FURTHER_HALF_METRES } else { 0 }
+}
+
 /// §24.11's rules version: what a replay's `rules` header names, and what
 /// the server keeps a build of for as long as any replay needs it — "old
 /// replays stay valid forever against the rules they were played under".
@@ -3739,6 +3794,15 @@ pub fn rules_version() -> [u8; 32] {
         // Reaches no golden sees, since the fixture has no ward: a Lantern
         // Glare's (F52), so a Glare that reached further is a rules change.
         bytes.extend_from_slice(&guard::GLARE_METRES.to_le_bytes());
+        // §12.17's realm's watch (v3.7): the goldens play realm level 5, at
+        // full strength, so a re-tuned watch at levels 1 to 3 is a rules
+        // change they cannot see.
+        for ((fn_, fd), (sn, sd)) in REALM_WATCH.iter() {
+            bytes.extend_from_slice(&fn_.to_le_bytes());
+            bytes.extend_from_slice(&fd.to_le_bytes());
+            bytes.extend_from_slice(&sn.to_le_bytes());
+            bytes.extend_from_slice(&sd.to_le_bytes());
+        }
         // §18.3's eras and their figures: a re-figured era is a rules change.
         for (id, figure) in laws_table::ERAS.iter() {
             bytes.extend_from_slice(id.as_bytes());
