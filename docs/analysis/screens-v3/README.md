@@ -13,6 +13,38 @@ the register's **v3.6 layer** (`tools/audit_register.py`). This folder keeps the
 reading itself, so a task in stage SD can start from what was found rather than
 read the designs again.
 
+## The owner's handoff
+
+After this reading the owner handed over the design itself, `design_handoff_ruleborn`:
+the prototype the artifact was bundled from, four documents of the owner's own (the
+build instructions in `README.md`, the screen list in `SCREENS.md`, the character
+notes in `CHARACTERS.md`, and `docs/ruleborn-screen-review.md`, the fix brief the
+screens were redone from), six baked meshes and six world images. Six readers read
+it against the repository, and a verifier tried every finding. The results are in
+[`handoff/README.md`](handoff/README.md), with the readers' reports beside it and
+the owner's four documents, unchanged, in `handoff/source/`.
+
+What it added:
+
+- **Proof that the screens read here are the handoff's screens**, apart from one
+  notes row beside the phone frame (`handoff/diff.md`). Every finding below still
+  holds for the handoff.
+- **The owner's statements of intent**, recorded as context on open entries in the
+  decision brief. None is an answer; §23.5 still decides where the document wins.
+- **What the first reading could not see**: four new decisions (landscape at
+  launch, the 390-point frame, D75's camera and gestures, and which raids open a
+  Trace), new register items in the v3.6 layer, and amendments to stage SD,
+  including a task for sound and haptics, which had none. Folding them in found
+  two more decisions, each v3.6 against itself: C56, where §14.9 and §18.4 put
+  the second epoch's extra slot in different places, and C57, where §12.6 draws
+  every visible guard's cone and §21.12 one at a time.
+- **Corrections to this folder**: the crack ring is no longer adoptable while
+  F35's answer stands (`screens-heist-result.md` §1.5, `register-roadmap.md`'s F35
+  row); the Friends note (`screens-season-shop-share-friends-stats.md` §4.3); the
+  scout report's landing and matchups (`screens-observatory-scout-landing-planner.md`
+  §3.3 and §3.5); the baked meshes (`3d-pipeline.md` and `data/census_table.md`);
+  and the line map below.
+
 ## How it was read
 
 - **The designs**, unpacked from the artifact the owner shared (a bundled
@@ -40,6 +72,40 @@ read the designs again.
 Paths in the reports that began with a scratch directory now read `scratch/`
 (work files not kept) or `data/` (the few kept here).
 
+## Sources and line map
+
+The designs were read from the artifact the owner published, unpacked under the
+artifact's own file names. The handoff's `prototype/` is the source the build works
+from, and it is proven the same (`handoff/diff.md`). Every file the screens load is
+byte-identical. The two screen files hold the same content, except one row of the
+index's side-panel notes, the Friends entry (`Ruleborn Screens v3.dc.html:908`),
+which is not drawn in the phone. The data module is one file in both,
+`ruleborn-data.js` in the handoff, sha256
+`a184ffa231821559b3f5c73151a592a8601dd15d18aa40e4a16d018a7b6bb70d`.
+
+The reports here, the register and the brief cite the artifact's names; several
+hundred citations do. To find a cited line in the handoff's `prototype/`:
+
+| Cited as | In the handoff's `prototype/` |
+| --- | --- |
+| `screens_main.js:N` | `Ruleborn Screens v3.dc.html:N+840` |
+| `screens_main.markup.html:N`, for N ≥ 311 | `Ruleborn Screens v3.dc.html:N−75`. The same content, not byte-equal: the bundler wrote `sc-camel-*` attributes, `</stop>` and `</path>` closing tags, comment anchors and UUID asset URLs. Lines 1–310 are the artifact's inlined fonts and have no counterpart |
+| `screens_meta.js:N` | `RulebornMeta.dc.html:N+648` |
+| `screens_meta.markup.html:N`, or "markup N" in the meta reports | `RulebornMeta.dc.html:N+8` |
+| `realm_diorama.js` | `realm-diorama.js` |
+| `data_v35.js` | `ruleborn-data.js` |
+| `icons_rbi.js` | `ruleborn-icons.js` |
+| `icons_schools.js` | `law-glyphs.js` |
+| `art_loader.js` | `rb-art.js` |
+| `creatures/<Name>_Rig.html`, `_Hero.html`, `_dc.html` | `<Name> Rig.html`, `<Name> Hero.html`, `<Name>.dc.html` |
+| `creatures/creature_kit.js` and the other snake_case modules | the same names in kebab-case (`creature-kit.js`), at the top of `prototype/`; `react_production_min.js` becomes `react.production.min.js` |
+| `images/world_<dir>_<name>.png` | `world/<dir>/<name>.png` |
+
+The owner's four documents are cited by line, in `handoff/source/`. SCREENS.md's
+must-show lists are compared with §23.2 row by row in `handoff/intent.md` (its
+section "SCREENS.md 'Must show' against v3.6 §23.2"), each difference mapped to the
+item that holds it.
+
 ## The reports
 
 | File | Part |
@@ -58,6 +124,7 @@ Paths in the reports that began with a scratch directory now read `scratch/`
 | `v36-rules.md` | v3.6's rule changes against the build and the register, and v3.6 against itself |
 | `register-roadmap.md` | The register, the roadmap and completion against all of the above |
 | `engine.md` | The engine move, measured |
+| [`handoff/README.md`](handoff/README.md) | The owner's handoff against the plan, with its six reports, its sources and its data |
 
 ## The data
 

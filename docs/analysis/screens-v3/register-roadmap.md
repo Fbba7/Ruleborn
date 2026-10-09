@@ -279,7 +279,7 @@ Key to the "v3.6" column: "—" means v3.6 does not touch the item's sections. S
 | G17: four terms of a settled raid | — | The result draws a fee line. | Draw the server's fee and haul. |
 | C40, G21, F45, G32, D67, F47, G33, G37, F49, F50, G43, G24 | — | none reported | None |
 | G18: a ward ignores its disarmer only on its tile | — | Not reported. The design's heist has no disarm walk. | None |
-| F35: the crack's reach | §32.8 adds brief 37's row, "a ring around the Vault … shipping at 5 m". The owner's answer (D: no guard hears the Vault) is built and is not in v3.6. | The design shows no cracking progress and no ring. | Build follows the answer; part of finding 1. |
+| F35: the crack's reach | §32.8 adds brief 37's row, "a ring around the Vault … shipping at 5 m". The owner's answer (D: no guard hears the Vault) is built and is not in v3.6. | The design draws a 5 m ring and a "Cracking · heard within 5 m" banner whose bar times the 5-second hearing cycle, against the answer (`realm_diorama.js:208`; `screens_main.markup.html:804`). It shows no Vault health. Neither the ring nor the banner is built. | Build follows the answer; part of finding 1. |
 | F36: the raid-worth base | — | none | None |
 | F37: a non-raider's levels and pages | §14.4 names the free lane but leaves it out of the counts. "The Library alone" stays. The owner's answer (B: goals and ruins) is not taken. | Draws quests, not §14.6's goals, and draws drifting ruins in the Observatory. | Client half of the answer: goals (server and Season, TC.36) and ruins (TC.30 and TC.32). |
 | G19: the Heart's realm level | — | "The Heart 6" (the Spire's level) | Home and realm view label it from the server (realm level 3). The client half of answer B is that the builder locks it. |

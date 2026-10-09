@@ -42,13 +42,18 @@ the build by twelve readers, each finding tried by an adversarial verifier, the
 designs depart from a rule or the build in about 190 places §23.5 does not list
 (the register's v3.6 layer, and
 [`docs/analysis/screens-v3/`](docs/analysis/screens-v3/README.md)); the plan to
-build them is the roadmap's stage SD. v3.6 itself answers none of the 70 items
-open against v3.4, narrows G28 and F37, and reopens C11.
+build them is the roadmap's stage SD. The owner then handed over the design
+itself, and reading it against the repository added four register items, four
+decisions and two tasks in stage SD; folding it in found two more items, v3.6
+against itself, each a decision
+([`docs/analysis/screens-v3/handoff/`](docs/analysis/screens-v3/handoff/README.md)).
+v3.6 itself answers none of the 70 items open against v3.4, narrows G28 and F37,
+and reopens C11.
 
-Five versions have now answered the audit. **111 of 284 register items are fixed
-in the document itself**, the latest 15 by v3.4. 133 are still open, 62 of them
-found reading v3.6 and Screens v3: 58 from Screens v3, and four from v3.6
-against the build.
+Five versions have now answered the audit. **111 of 290 register items are fixed
+in the document itself**, the latest 15 by v3.4. 139 are still open, 68 of them
+in the v3.6 layer: 58 from Screens v3, four from v3.6 against the build, four
+from reading the owner's design handoff, and two found folding it in.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -318,7 +323,7 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 284 tracked items with section references and status:
+document, as 290 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
@@ -339,10 +344,12 @@ options, their numbers, what the build does today and a recommendation, in
 the order to decide them: **https://claude.ai/artifact/YZcD1uH5xtpFznqncRpt8g**
 
 **47 are answered** (25–26 September 2026): eight picked on the page, one in
-the owner's own words, the rest accepted as recommended. **40 are open**: 36
-found reading v3.6 and Screens v3 against each other and the build, and four
+the owner's own words, the rest accepted as recommended. **46 are open**: 36
+found reading v3.6 and Screens v3 against each other and the build, and ten
 found since: **F56** and **G43** building the home economy, **F55** re-running
-§13.2's table, and **G44** in the security briefing. The answers are on the page and in
+§13.2's table, **G44** in the security briefing, **C55**, **D98**, **G70** and
+**D75**'s camera and controls reading the owner's design handoff, and **C56**
+and **C57** found folding it in. The answers are on the page and in
 `docs/decisions/answers.json`, with where each one's build change stands; the
 audit shows a decided item as waiting on that build change, then on the
 document. A new decision is picked on the page, where it is saved, and Claude

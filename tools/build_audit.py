@@ -19,7 +19,8 @@ from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,
                             status as reg_status,
                             GATE_OWNER,  # noqa: E402
                             REGISTER, RESEARCH, SETTLED, V3, V31, V32, V33, V34,
-                            FOUND_IN_V33, FOUND_IN_V34, FOUND_IN_V36, V36, side_of,
+                            FOUND_IN_V33, FOUND_IN_V34, FOUND_IN_V36, FOUND_IN_HANDOFF,
+                            FOUND_FOLDING_HANDOFF, V36, side_of,
                             status_before_v34, status_before_v36)
 
 from build_stamp import stamped  # noqa: E402
@@ -1005,9 +1006,12 @@ def build() -> str:
     answered = [k for k in V34 if status_before_v34(k) not in SETTLED]
     v34_closed = sum(1 for k in answered if V34[k]["status"] != "open")
     v34_open = ", ".join(sorted(k for k in answered if V34[k]["status"] == "open"))
-    v36_touched = len(V36)
+    # The handoff's items sit in V36 to carry their note, but v3.6 did not
+    # touch them, so they are not counted as what v3.6 did.
+    v36_touched = len(set(V36) - FOUND_IN_HANDOFF)
     from check_edits import NO_EDIT_BECAUSE as _why
     v36_yours = sum(1 for k in FOUND_IN_V36 if _why.get(k, "").startswith("a decision"))
+    v36_screens = len(FOUND_IN_V36 - FOUND_IN_HANDOFF)
     new_in_v3 = sum(1 for i in REGISTER if i["id"] in FOUND_IN_V3)
     today = datetime.date.today().strftime("%d %B %Y")
 
@@ -1651,9 +1655,12 @@ def build() -> str:
       document win on every rule. Of the {v36_touched} items v3.6 touches, none
       closes: G28 and F37 narrow, and C11 reopens. Reading the designs against
       v3.6 and the build &mdash; twelve readers, each finding tried by an
-      adversarial verifier &mdash; found {len(FOUND_IN_V36)} more, {v36_yours} of
-      them decisions for you, now in the brief; the rest are what stage SD of the
-      roadmap builds. The designs add mechanics the document lacks (build timers,
+      adversarial verifier &mdash; found {v36_screens} more; reading your
+      design handoff's own notes and fix brief found
+      {len(FOUND_IN_HANDOFF - FOUND_FOLDING_HANDOFF)}, and folding it in found
+      {len(FOUND_FOLDING_HANDOFF)}, v3.6 against itself;
+      {v36_yours} of the {len(FOUND_IN_V36)} are decisions for you, now in the
+      brief, and the rest are what stage SD of the roadmap builds. The designs add mechanics the document lacks (build timers,
       a shield on home, presence, quests), leave out things it requires (law
       pylons, the guard form), and set a visual language &sect;21.8 does not
       have, which is the first of your new decisions.</p>

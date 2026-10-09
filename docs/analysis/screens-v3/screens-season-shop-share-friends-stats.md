@@ -330,7 +330,7 @@ Effort: **XL** (L without video export).
 | Invitations | Invite tab, code, add by code, status | Met |
 | Gifts | Gift a look (→ Shop), the invite gift | Met |
 
-The design's own note adds "Who's online", "page gifts" and "preset pings"; those are not §23.2 must-shows (§23.5's last row). Page gifts are not drawn (the TRY note's "send a page" has no control), which is right: page requests belong to constellations in 1.1 (§17.4).
+The design's own note adds "Who's online" and "preset pings" (D86), and "add-by-code"; those are not §23.2 must-shows (§23.5's last row). In the handoff the note says "cosmetic gifts" (§22.4), where the artifact said "page gifts" (`Ruleborn Screens v3.dc.html:908`; see the README's line map). Page gifts are not drawn, which is right: they belong to constellation members from 1.1 (§17.4) and to crews (§17.7). The note credits report to §17.8; it is §20.4.
 
 ### 4.4 Where the design and v3.6 differ
 

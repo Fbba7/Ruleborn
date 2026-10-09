@@ -1,0 +1,28 @@
+01 Universe map | text 34/45 smallest 8.5 | taps<44 11/21
+02 Heist | text 1/23 smallest 11 | taps<44 0/8
+03 Law card | text 8/38 smallest 9 | taps<44 1/15
+04 Realm view | text 12/14 smallest 9 | taps<44 4/8
+05 Weaving | text 32/40 smallest 8 | taps<44 1/8
+06 Heist planner | text 1/21 smallest 11 | taps<44 2/9
+07 Heist result | text 0/29 smallest 13 | taps<44 0/6
+08 Observatory | text 13/43 smallest 10 | taps<44 3/13
+09 Scout report | text 49/57 smallest 8 | taps<44 3/9
+10 Roster | text 53/59 smallest 9 | taps<44 10/27
+11 Character | text 25/32 smallest 8 | taps<44 5/8
+12 Sage hall | text 35/39 smallest 9 | taps<44 9/22
+13 Law collection | text 56/64 smallest 7.5 | taps<44 17/31
+14 Resonance Lab | text 52/57 smallest 8 | taps<44 4/30
+15 Defence curation | text 19/31 smallest 7.5 | taps<44 4/10
+16 Rehearsal and defence log | text 22/27 smallest 8.5 | taps<44 2/7
+17 Season | text 24/45 smallest 8 | taps<44 7/19
+18 Shop | text 30/39 smallest 8.5 | taps<44 5/14
+19 Settings and wellbeing | text 35/43 smallest 8.5 | taps<44 11/16
+20 Profile and stats | text 35/45 smallest 8 | taps<44 37/38
+21 First launch | text 2/8 smallest 10 | taps<44 0/1
+22 Terrain editor | text 37/55 smallest 7.5 | taps<44 0/16
+23 Landing picker | text 30/47 smallest 7.5 | taps<44 3/8
+24 Harmony view | text 32/37 smallest 7.5 | taps<44 3/17
+25 Island Workshop | text 34/48 smallest 8.5 | taps<44 2/12
+26 Forms album | text 40/43 smallest 8 | taps<44 11/27
+27 Share sheet | text 21/25 smallest 8.5 | taps<44 3/12
+28 Friends | text 34/52 smallest 7.5 | taps<44 4/19

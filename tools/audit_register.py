@@ -69,7 +69,20 @@ FOUND_IN_V36 = frozenset({
     "G52", "C49", "D83", "G53", "G54", "G55", "G56", "G57", "D84", "D85", "F57",
     "D86", "C50", "D87", "C51", "D88", "G58", "D89", "D90", "G59", "F58", "D91",
     "D92", "D93", "C52", "G60", "G61", "D94", "C53", "G62", "G63", "G64", "D95",
-    "C54", "G65", "G66", "G67", "G68", "D96", "G69"})
+    "C54", "G65", "G66", "G67", "G68", "D96", "G69",
+    # and by reading the owner's design handoff (its README, SCREENS and
+    # CHARACTERS notes and the fix brief to the designer) against v3.6, and
+    # folding it into stage SD
+    "C55", "D97", "D98", "G70", "C56", "C57"})
+
+#: The part of the v3.6 layer found reading the owner's design handoff and
+#: folding it in, which the screens' first reading could not see. Each carries
+#: a V36 note saying so.
+FOUND_IN_HANDOFF = frozenset({"C55", "D97", "D98", "G70", "C56", "C57"})
+
+#: Of those, the ones found folding the handoff into stage SD rather than
+#: reading it: v3.6 against itself, which the handoff's plan brought to light.
+FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -6222,8 +6235,8 @@ dict(id="F48", kind="finding", severity="minor", status="open",
 
 dict(id="G35", kind="gap", severity="minor", status="open",
      title="Friends are used in four places and made in none",
-     refs=["12.11", "17.6", "20.2"],
-     body="Friendly heists, the friends\u2019 feed, challenge links and page gifts "
+     refs=["12.11", "17.6", "20.2", "22.4"],
+     body="Friendly heists, the friends\u2019 feed, challenge links and cosmetic gifts (§22.4) "
           "all need friends, and nothing says how two players become friends. "
           "The server\u2019s readings, in <code>friends.mjs</code>: one shares an "
           "invite and the other accepts it, open seven days; either can end "
@@ -6843,14 +6856,19 @@ dict(id="D75", kind="deviation", severity="significant", status="open",
           "universe, including the Heart”</em>; realms are shown with their laws — "
           "§5.1, §23.2<br>Rotate and zoom — two fingers only "
           "(realm_diorama.js:1252-1260); rotate and zoom handlers exist "
-          "(screens_main.js:185) and nothing on screen calls them — <em>“No action "
+          "(screens_main.js:185) and nothing on screen calls them; the owner’s "
+          "handoff asks for exactly that: <em>“Players pinch to zoom and twist to "
+          "rotate; there are no zoom buttons.”</em> (README.md:178) — <em>“No action "
           "needs more than one finger”</em> — §20.8<br>Nearest goal — none on home "
           "(screens_main.markup.html:365-468) — <em>“The home screen surfaces "
           "whichever goal is closest to done, whatever kind it is”</em>, said as "
           "<em>“2 pages to go”</em> — §14.8, §23.1<br>Camera — perspective, 28° "
           "wide on the map and 20° in a realm, pitched about 46° "
-          "(realm_diorama.js:484, :512-514) — <em>“An orthographic diorama view at "
-          "a 35° pitch”</em>, rotatable in 90° steps — §21.1<br>Building names — "
+          "(realm_diorama.js:484, :512-514), which the owner’s handoff calls "
+          "final: <em>“The 3D scenes are also high fidelity for composition, "
+          "camera, palette, scale and motion.”</em> (README.md:22) — <em>“An "
+          "orthographic diorama view at a 35° pitch”</em>, rotatable in 90° steps "
+          "— §21.1<br>Building names — "
           "Aether Loom, Essence Garden (realm_diorama.js:79-81) — Aether Spring, "
           "Garden — §10.2<br>Storage — 200,000 Starlight and 80,000 Essence "
           "(screens_main.js:168) — the Vault and the Storehouses hold Starlight and"
@@ -6863,8 +6881,19 @@ dict(id="D75", kind="deviation", severity="significant", status="open",
           "(screens_main.js:148) — holds 12 hours at 484 an hour, 5,808; level 8 "
           "costs 116,800 — §9.3, §10.2<br><br>The client already reads names and "
           "numbers from the server (GET /v1/universe). The round rock can stay as "
-          "art around §5.2’s square grid. Found reading Screens v3 against v3.6.",
-     rec="Add the rows to §23.5; the build follows the document."),
+          "art around §5.2’s square grid. Found reading Screens v3 against v3.6."
+          "<br><br>The owner’s two statements on the camera and its controls are "
+          "intent, not answers. They leave two questions: whether §21.1’s "
+          "camera is a rule or a look §23.5 gives the design, and what one-finger "
+          "form rotate and zoom take, which §20.8 asks for under either answer.",
+     rec="The owner decides the Camera and the Rotate and zoom rows (the "
+         "decision brief). Recommended: §21.1’s camera, orthographic at 35° in "
+         "90° steps, with the design’s pinch and twist and no buttons on screen; "
+         "the three zoom levels are also reached by taps, and a Settings switch "
+         "shows rotate and zoom buttons, so no action needs two fingers (TD.10, "
+         "TD.19). The alternatives are the same camera with the buttons always "
+         "shown, or the design’s camera written into §21.1. The other ten rows: "
+         "add them to §23.5; the build follows the document."),
 
 dict(id="C44", kind="contradiction", severity="significant", status="open",
      title="§21.8 and §23.1 describe two different home screens, §23.5 lets the "
@@ -6897,7 +6926,13 @@ dict(id="C44", kind="contradiction", severity="significant", status="open",
           "the top left of every sub-screen (screens_meta.markup.html:248). Hub "
           "tabs are 36 px (screens_meta.js:1288), side buttons 44 px (markup:386), "
           "and the realm view’s MAP sits in the bottom-left corner "
-          "(markup:511).<br><br>The client’s own check is stricter than §21.1: "
+          "(markup:511). The owner’s handoff specifies a 40 × 40 round back "
+          "button in the header (README.md:69), smaller than the prototype’s 44 "
+          "and §21.1’s 48, and a floor of 44 points for taps, 48 only for the "
+          "heist’s controls: <em>“All tap targets at least 44 pt (48 pt per GDD "
+          "12.7)”</em> (README.md:239; docs/ruleborn-screen-review.md:366). §21.1 "
+          "sets 48 for primary controls on every screen, not only the "
+          "heist’s.<br><br>The client’s own check is stricter than §21.1: "
           "client/tests/run.gd:577-600 fails every fixed button in the top third, "
           "under 48 points, within 44 points of the top or bottom, or in a bottom "
           "corner, where §21.1 holds the thumb zone to frequently used controls and"
@@ -7087,9 +7122,9 @@ dict(id="D77", kind="deviation", severity="significant", status="open",
          "as well."),
 
 dict(id="D78", kind="deviation", severity="significant", status="open",
-     title="Screens v3’s Observatory, landing picker and planner depart from v3.6 in"
-           " 5 places §23.5 does not list",
-     refs=["12.22", "12.12", "5.4", "12.5", "11.1", "23.2", "23.5"],
+     title="Screens v3’s Observatory, scout report, landing picker and planner "
+           "depart from v3.6 in 6 places §23.5 does not list",
+     refs=["12.22", "12.12", "5.4", "12.5", "11.1", "11.2", "7.10", "23.2", "23.5"],
      body="§23.5 says the planner and the Observatory <em>“already follow this "
           "document”</em>, and for them lists only the Trace’s fee, the planner’s "
           "resting creatures, the landing noise as a percentage and the Heart’s "
@@ -7111,9 +7146,20 @@ dict(id="D78", kind="deviation", severity="significant", status="open",
           "size — starts with one or two, and the toggle stops at four "
           "(screens_main.js:600, :605) — <em>“A crew of 3 to 5: 3 characters, 4 "
           "from Keeper level 8, 5 from level 16”</em>; the simulation refuses fewer"
-          " than three (sim/src/lib.rs:3833) — §12.5<br><br>Found reading Screens "
-          "v3 against v3.6.",
-     rec="Add the rows to §23.5; the build follows the document."),
+          " than three (sim/src/lib.rs:3833) — §12.5<br>Scout report, Crew tab and "
+          "realm notes — matchups that give the crew abilities it does not have: "
+          "Bramble’s Shield, Hollow’s Rewind, Pip’s Leap, a Glass Golem wall that "
+          "blocks sight, and Skyfield’s Current (screens_main.js:532-540) — "
+          "§11.2’s Mossbear <em>“Roots in place for 6 s”</em>, its Echoplate "
+          "<em>“Stands over the crew for 8 s”</em>, its Skyskipper <em>“Stuffs its "
+          "satchel”</em>, and the Glass Golem’s wall <em>“does not block "
+          "sight”</em>; Current is not one of §7.10’s launch 24 — §11.2, §7.10"
+          "<br><br>Found reading Screens v3 against v3.6.",
+     rec="Add the rows to §23.5; the build follows the document. The scout "
+         "report’s matchups are worked out from §11.2’s abilities and the "
+         "target’s laws, not written by hand (docs/analysis/screens-v3/"
+         "screens-observatory-scout-landing-planner.md:241, and that plan’s "
+         "TC.15f)."),
 
 dict(id="C46", kind="contradiction", severity="minor", status="open",
      title="§11.7’s Wanderer makes a sixth Observatory target where §12.3 and §23.2 "
@@ -7305,7 +7351,11 @@ dict(id="D79", kind="deviation", severity="significant", status="open",
           "chosen difficulty: <em>“Heists against players are never adjusted for "
           "engagement at all (19.12)”</em>. For a player target, §12.14’s "
           "three-strike rule leaves <em>“a new route revealed, or a different "
-          "target suggested”</em>.<br><br>Counters between laws. The Law card’s "
+          "target suggested”</em>. The owner’s fix brief asks for an easier "
+          "version after two failures <em>“against the same target”</em> "
+          "(docs/ruleborn-screen-review.md:401) without saying whether a player "
+          "counts; this item’s reading, ruins only, with §12.14’s new route or "
+          "another target for a player, meets it.<br><br>Counters between laws. The Law card’s "
           "back lists other laws it is weak against, with reasons "
           "(screens_main.js:197): Static against Slow rivers (“Water grounds the "
           "charge”) and Glass, Stillness against Haste, Glowing dark against Day "
@@ -7329,9 +7379,9 @@ dict(id="D79", kind="deviation", severity="significant", status="open",
          "simulation and its clock together and shows in replays."),
 
 dict(id="D80", kind="deviation", severity="significant", status="open",
-     title="Screens v3’s heist and result depart from v3.6 in 11 places §23.5 does "
+     title="Screens v3’s heist and result depart from v3.6 in 13 places §23.5 does "
            "not list",
-     refs=["12.6", "12.9", "12.18", "12.19", "11.2", "14.8", "17.6", "20.7", "21.8", "23.2", "12.3", "12.10", "12.11", "12.22", "24.12", "23.5"],
+     refs=["12.6", "12.7", "12.9", "12.18", "12.19", "11.2", "14.8", "17.6", "20.7", "21.8", "23.2", "12.3", "12.10", "12.11", "12.22", "24.12", "23.5"],
      body="§23.5: <em>“The heist screen, the planner, the result, the Observatory, "
           "Weaving, the defence log and the first launch already follow this "
           "document; these are the differences that remain”</em>. For the heist and"
@@ -7364,7 +7414,16 @@ dict(id="D80", kind="deviation", severity="significant", status="open",
           "outcomes — echoes, generated targets labelled as such, drifting ruins "
           "and echo trials without Renown, friendly heists, challenge links, and "
           "§24.12’s confirming, refused, expired and capped states, each paid as "
-          "the document says — §12.3, §12.10, §12.11, §12.22, §24.12<br><br>The "
+          "the document says — §12.3, §12.10, §12.11, §12.22, §24.12<br>Aiming — "
+          "Sage powers and casts fire on tap at the first of the crew "
+          "(realm_diorama.js:179-180), so Suspend cannot choose a law and a cast "
+          "cannot be placed — <em>“Drag a power onto the world to aim it”</em> and "
+          "<em>“Drag to place the circle”</em> — §12.7<br>Get out — tap only, to the"
+          " edge nearest the crew — <em>“Hold to choose where the skiff comes”</em>"
+          " — §12.7<br><br>The last two are the analysis’s H8 and H9 "
+          "(docs/analysis/screens-v3/screens-heist-result.md:78-79); the owner’s "
+          "fix brief names dragging to aim for the portraits only "
+          "(docs/ruleborn-screen-review.md:382). The "
           "build already orders cracking and loading by tap "
           "(heist_controller.gd:88-93) and shows confirming and refused "
           "(client/scripts/result_screen.gd:59-102). Found reading Screens v3 "
@@ -7737,7 +7796,9 @@ dict(id="C49", kind="contradiction", severity="minor", status="open",
           "trades”</em> — §11.10: <em>“Trading: from version 1.1”</em>, and "
           "§23.2’s own note: <em>“Version 1.1 adds two screens … Neither "
           "belongs to the launch list above.”</em> — write ‘trades (from 1.1)’, "
-          "as D48 did for the Friends row<br>Sage cooldown — §11.7: <em>“Every "
+          "as D48 did for the Friends row; the owner’s fix brief asks the same: "
+          "<em>“Mark trades as arriving in version 1.1.”</em> "
+          "(docs/ruleborn-screen-review.md:331)<br>Sage cooldown — §11.7: <em>“Every "
           "fifth level improves one power (an extra use, a longer effect or a "
           "shorter cooldown)”</em> — the same paragraph: every Sage follows "
           "<em>“the one 20-second cooldown”</em> — strike ‘or a shorter "
@@ -7834,7 +7895,13 @@ dict(id="D83", kind="deviation", severity="significant", status="open",
           " a raid under way — ‘A crew is in Tidehold now · The raider’s name shows"
           " when the raid ends’ (markup 232) — <em>“The defender is notified "
           "afterwards and can watch the replay”</em>, and watching live is version "
-          "1.1 — §13<br>Workshop, review — ‘A person reviews it within an hour. "
+          "1.1 — §13; the owner’s fix brief expects a raid under way to show "
+          "without the raider’s name: <em>“Raider names stay hidden while a raid "
+          "is happening.”</em> (docs/ruleborn-screen-review.md:437), and §17.8 "
+          "speaks of raids <em>“anonymous while they happen”</em>, but the server "
+          "knows a raid under way only as an open lease (§24.12), and a heist "
+          "played offline may never be submitted, so a live banner could show "
+          "only leases<br>Workshop, review — ‘A person reviews it within an hour. "
           "Then anyone can raid it’ (markup 542) and a draft tagged ‘IN REVIEW · 1 "
           "H’ (js:1161) — published islands are <em>“scanned automatically”</em>, "
           "and <em>“featured islands are reviewed by a person”</em>; the server "
@@ -7855,7 +7922,9 @@ dict(id="D83", kind="deviation", severity="significant", status="open",
          "resonance, feature, law and ladder texts from content; shows one chamber"
          " per Lab slot, with the price on the button and the time after the "
          "Archivist; draws one guard’s sight with hard edges; lays moss by default"
-         " with a Clear moss tool; shows a raid only once it has ended; publishes "
+         " with a Clear moss tool; shows a raid only once it has ended, unless the "
+         "owner writes a §13 sentence that shows an open lease without a name; "
+         "publishes "
          "an island when it passes the checks; and keeps Remix."),
 
 dict(id="G53", kind="gap", severity="significant", status="open",
@@ -8249,7 +8318,7 @@ dict(id="C50", kind="contradiction", severity="significant", status="open",
          "changes nothing in either league."),
 
 dict(id="D87", kind="deviation", severity="significant", status="open",
-     title="Screens v3’s Settings and first launch depart from v3.6 in 13 places "
+     title="Screens v3’s Settings and first launch depart from v3.6 in 14 places "
            "§23.5 does not list",
      refs=["20.1", "20.2", "20.8", "20.9", "20.10", "20.11", "20.12", "7.7", "5.2", "16", "14.2", "25.2", "11.2", "11.3", "12.9", "5.5", "23.2", "23.5"],
      body="§23.5 lists, for these screens, the protections drawn as open choices, "
@@ -8297,7 +8366,11 @@ dict(id="D87", kind="deviation", severity="significant", status="open",
           "nothing lets a parent loosen the 13-to-15 row, and <em>“13 to 15 "
           "cannot”</em> move to free chat; at 16 and 17 the profile is <em>“Private"
           " by default”</em> and the reminder <em>“Every 90 minutes by "
-          "default”</em>, so more than chat can change — §20.2, §20.9<br>First "
+          "default”</em>, so more than chat can change — §20.2, §20.9<br>First launch, "
+          "0:00 — the player catches the page: ‘A page is falling out of the "
+          "dark. Catch it before it’s gone.’ and a ‘Catch the page’ button "
+          "(screens_meta.js:955) — <em>“The Archivist catches a falling glowing "
+          "page: Half gravity.”</em> — §16<br>First "
           "launch, the beats — no note at 0:30; abilities named, not shown, at "
           "1:15; the strays sent to the Star Well alone at 5:00; the 7:00 ruin "
           "chosen and never run; no insight pages and no tired crew at 10:00 "
@@ -8326,7 +8399,8 @@ dict(id="D87", kind="deviation", severity="significant", status="open",
          "summary show in Settings and the first launch; Settings gains hold time,"
          " moving controls, help and support, and a profile row by band; deletion "
          "offers ‘withdraw my islands too’; the age check pre-selects nothing and "
-         "never goes back from under 13; each §16 moment runs on its own screen, "
+         "never goes back from under 13; the Archivist, not the player, catches "
+         "the first page; each §16 moment runs on its own screen, "
          "with no skip except for an account that finished the session elsewhere."),
 
 dict(id="C51", kind="contradiction", severity="significant", status="open",
@@ -8569,9 +8643,9 @@ dict(id="F58", kind="finding", severity="minor", status="open",
          "night in #FF9AAA bold, alarm and success words on parchment bold."),
 
 dict(id="D91", kind="deviation", severity="minor", status="open",
-     title="Screens v3’s visual system departs from v3.6 in 6 places §23.5 does not "
+     title="Screens v3’s visual system departs from v3.6 in 7 places §23.5 does not "
            "list",
-     refs=["21.8", "21.2", "20.6", "20.8", "23.5"],
+     refs=["21.8", "21.2", "5.2", "20.6", "20.8", "23.5"],
      body="§23.5: <em>“The designs carry the look: layout, art, motion, the models "
           "and the icons”</em>, and <em>“This document wins wherever it states a "
           "rule, a number or a piece of text.”</em> §21.2, §21.8 and §20.8 state "
@@ -8581,11 +8655,20 @@ dict(id="D91", kind="deviation", severity="minor", status="open",
           "law, resource and building icons are shaded too (icons_schools.js; "
           "realm_diorama.js:4–29); the 24-point grid and the outline match — "
           "<em>“Rounded shapes with a 2-point outline, flat colour and the school "
-          "shape where relevant”</em> — §21.8<br>Interface motion — tab switches at"
+          "shape where relevant”</em> — §21.8<br>Law icons — 21 of the 48 sit in a "
+          "frame of one shape per school that is not the school’s: Matter a "
+          "hexagon, Time a ticked disc, Energy a burst, Life a scalloped badge, "
+          "Spirit a teardrop, Motion a plain disc (icons_rbi.js:183-188); the other"
+          " 27 come from icons_schools.js in another style "
+          "(docs/analysis/screens-v3/design-system.md:242) — §5.2’s shapes: "
+          "Motion a chevron, Matter a cube, Time an hourglass, Energy a bolt, Life"
+          " a leaf, Spirit an eye — §5.2, §21.8<br>Interface motion — tab switches at"
           " 300 to 320 ms on an overshooting curve (screens_main.js:660–664), "
           "sheets at 300 to 320 ms, the toast at 300 ms, entrances at 350 to 650 "
           "ms, many overshooting; screen changes (160 to 240 ms, :102, :187) and "
-          "the 180 ms press comply — <em>“150 to 250 milliseconds, easing out”</em>"
+          "the 180 ms press comply, though the owner’s handoff asks for screen "
+          "changes of <em>“about 0.3 s”</em> (README.md:148; SCREENS.md:177) — "
+          "<em>“150 to 250 milliseconds, easing out”</em>"
           " — §21.8<br>Toasts — cleared after 2.2 s (screens_meta.js:166) or 1.6 to"
           " 1.8 s (:259) while they carry information such as <em>“Not enough "
           "Essence to level …”</em>; the design’s own <em>“Banners stay”</em> "
@@ -8655,7 +8738,13 @@ dict(id="D92", kind="deviation", severity="significant", status="open",
          "the portraits re-rendered from the imported models (TD.8). The "
          "alternatives are §21.3 as written, or the design’s two looks written "
          "in. Under §21.3 or the recommendation, §21.3’s “already exist from "
-         "the mock-ups” goes, and §23.5 gains the row."),
+         "the mock-ups” goes, and §23.5 gains the row. A fourth is the look the "
+         "owner’s handoff asks for (CHARACTERS.md:99): <em>“match the toon "
+         "look. Use soft lambert shading with a rim light, no black "
+         "outline”</em>, read as the recommended toon ramp on the characters "
+         "with a rim light and no ink line on them, the world as recommended. "
+         "If ‘soft lambert’ means smooth shading rather than the toon ramp, "
+         "that is a fifth reading, for the owner to name."),
 
 dict(id="D93", kind="deviation", severity="significant", status="open",
      title="Every Screens v3 view and character is several times over §21.3’s "
@@ -8759,7 +8848,11 @@ dict(id="G61", kind="gap", severity="significant", status="open",
      body="Every 3D thing in Screens v3 is three.js code run in the page: <em>“SDF "
           "clay volume -> surface nets -> painted + baked AO -> fur shells -> "
           "skinned rig”</em> (creatures/creature_kit.js:2), with clips as functions"
-          " of time (:132). No model file exists. The sheets’ <em>“Download GLB for"
+          " of time (:132). No importable model exists. The owner’s handoff adds "
+          "six baked body meshes (21.1 MB) for Featherkin, Mossbear, Skyskipper "
+          "and the Archivist, in the kit’s own binary layout (body, vertex paint, "
+          "fur mask, and skin weights in two), with no accessories, rig or clips; "
+          "38 of the 40 such files the modules name are still absent. The sheets’ <em>“Download GLB for"
           " Godot”</em> (Skyskipper_dc.html:57) is plain text, and the exporters in"
           " the pages’ import maps are never called. §21.6’s laws as modifiers "
           "(<em>“gravity, speed, lean, squash and stretch, time scale, "
@@ -8816,9 +8909,17 @@ dict(id="D94", kind="deviation", severity="significant", status="open",
           "tension is inside §21.6 too; the build reads both, with facets, beak "
           "and mane drawn with rounded tips — §21.6<br>Height — at each model’s "
           "own game scale, Prism Mite stands 0.76 m, Glass Golem 1.39 to 1.53 "
-          "m, Stormhound 0.98 m and Sparkwright 0.86 m; the Wanderer 1.27 m and "
-          "the Gardener 1.32 m — 0.5, 1.2, 0.9 and 0.8 m; Sages <em>“about "
-          "1.5”</em> — §21.6, §21.1<br>Guard form — the <em>“As a guard”</em> "
+          "m, Stormhound 0.98 m, Sparkwright 0.86 m and Skyskipper 0.92 m (its "
+          "body, at its Rig page’s 0.8, Skyskipper Rig.html:85, the long ears "
+          "included); the Sages run from the Tinkerer’s 0.97 m "
+          "(docs/analysis/screens-v3/data/census_table.md:22) through the "
+          "Wanderer’s 1.27 m and the Gardener’s 1.32 m to the Archivist’s 1.73 m "
+          "(its body, at 1.25, Archivist Rig.html:85) — 0.5, 1.2, 0.9, 0.8 and 0.8"
+          " m; Sages <em>“about 1.5”</em> — §21.6, §21.1. The handoff’s <em>“about "
+          "1.2 grid tiles tall”</em> for every ruleborn (CHARACTERS.md:100) "
+          "describes the prototype diorama’s one figure for every kind "
+          "(docs/analysis/screens-v3/3d-pipeline.md:69), not an answer to this "
+          "row<br>Guard form — the <em>“As a guard”</em> "
           "chip relabels the view and draws the base form "
           "(Featherkin_dc.html:169; no *_Rig.html has a guard branch); the "
           "diorama’s guards are one chibi with a cone helmet and a lantern glow "
@@ -9131,6 +9232,150 @@ dict(id="G69", kind="gap", severity="significant", status="open",
          "facts at settlement and answers a profile read (TD.24). The "
          "alternatives are the design’s reading of held, or no badges at "
          "launch."),
+
+dict(id="C55", kind="contradiction", severity="significant", status="open",
+     title="v3.6 puts landscape on every screen (§23.3, §27.2) and in heists only "
+           "(§24, §27.5), and the owner’s handoff says it is not supported",
+     refs=["23.3", "27.2", "21.1", "24", "27.5", "23.5"],
+     body="§23.3: <em>“Portrait is the default on phones; landscape is available "
+          "everywhere and remembered per device.”</em> §27.2 repeats "
+          "<em>“landscape available everywhere and remembered per device”</em>, and "
+          "§23.5’s Landscape row gives the design as <em>“Not designed”</em> and "
+          "the document as <em>“Portrait and landscape”</em>. §19.17 "
+          "(<em>“landscape ships beside it (23.3)”</em>), §19.21 and §30.8 speak "
+          "of it with no limit. §21.1 names only heists: <em>“Heists can be "
+          "rotated to landscape for a wider view.”</em> §24’s engine row: "
+          "<em>“Portrait-first, landscape optional in heists.”</em> §27.5: "
+          "<em>“heists playable in portrait with landscape optional "
+          "(21.1)”</em>.<br><br>The owner’s handoff says neither: <em>“scale it to "
+          "the device; landscape is not supported.”</em> (README.md:20). Its fix "
+          "brief to the designer still lists a <em>“Landscape layout (23.3)”</em> "
+          "as missing (docs/ruleborn-screen-review.md:116). The client is portrait "
+          "only (<code>client/project.godot:22</code>), and TD.28 plans landscape "
+          "for every screen, which §23.3 costs at <em>“about 15 to 20% more "
+          "interface work, concentrated in the heist HUD”</em>.",
+     rec="The owner decides (the decision brief). Recommended: heists only at "
+         "launch, as §24 and §27.5 read; §23.3, §27.2 and §23.5’s "
+         "Landscape row say so in one line each, and TD.28 builds the heist and "
+         "its result in landscape. The alternatives are every screen, as §23.3 "
+         "and TD.28 read, or none at launch, as the handoff reads."),
+
+dict(id="D97", kind="deviation", severity="minor", status="open",
+     title="Screens v3 draws note colours from two palettes that disagree on "
+           "Weight, Hush and Veil, and neither is §8.1’s wheel, which §21.2 names",
+     refs=["21.2", "8.1", "23.5"],
+     body="§21.2: <em>“Notes use the colours of the wheel in 8.1, each with its "
+          "symbol”</em>. The wheel’s fills (§8.1’s figure) are Flow #B3820A, Spark "
+          "#D98A1A, Glow #C4541D, Echo #11809A, Weight #6A4FC9, Bloom #2C8541, Hush "
+          "#3A3350 and Veil #AD3A8D. The owner’s handoff lists the Harmony view’s "
+          "eight (README.md:117; screens_meta.js:431): Flow #3CC6D8, Weight "
+          "#8C6CF0, Glow #F2B43C, Hush #5A4A9A, Bloom #5CC46A, Spark #F07A3C, Echo "
+          "#E05CB4 and Veil #8A7A6A. Weaving draws another set "
+          "(screens_main.js:367), with Weight #5A6A9A, Hush #8C6CF0 and Veil "
+          "#B08AC0. Both sets also move notes between school colours: the wheel "
+          "gives Flow Motion’s gold and Echo Time’s teal, the design gives Flow "
+          "Time’s cyan and Echo Spirit’s pink. §23.5 lists none of it.",
+     rec="One note palette, the wheel’s, since §21.2 states it and §23.5 lets "
+         "the document win on what it states: Weaving and the Harmony view both "
+         "read it from TD.2’s tokens. If the owner prefers the Harmony view’s "
+         "set, §21.2 and §8.1’s figure change first."),
+
+dict(id="D98", kind="deviation", severity="minor", status="open",
+     title="The owner’s handoff asks for the 390-point design scaled to the "
+           "device; the build reflows it on a 360-point frame",
+     refs=["21.1", "23.5", "21.8", "12.7"],
+     body="README.md:20: <em>“Recreate the UI pixel-accurately at 390 × 844 "
+          "logical points and scale it to the device”</em>. Scaled to a "
+          "360-point phone, every size shrinks by 360/390: §23.5’s Text size row, "
+          "<em>“13 pt at the smallest, 16 pt body”</em>, draws at 12 and 14.8 "
+          "points, and §21.1’s <em>“about 48 points”</em> at 44. TD.2 keeps the "
+          "client’s 360-point frame (<code>client/project.godot:16-21</code>) and "
+          "reflows the design into it for that reason "
+          "(docs/analysis/screens-v3/design-system.md:456, DS-10); C44’s brief "
+          "entry gives its figures in both frames. Nothing recorded that the owner"
+          " asked for the other.",
+     rec="The owner decides (the decision brief). Recommended: reflow on 360 "
+         "points (TD.2), so §23.5’s 13 points and §21.1’s 48 hold on every "
+         "phone. The alternatives scale the 390 layout as the handoff asks, with "
+         "every size first raised by 390/360, about 8%, or scale it as drawn and "
+         "relax both floors."),
+
+dict(id="G70", kind="gap", severity="minor", status="open",
+     title="§12.3’s Trace follows being “robbed”, which one-way theft leaves "
+           "undefined, so which raids open a Trace is unwritten",
+     refs=["12.3", "13.2", "12.9", "9.6", "23.2"],
+     body="§12.3: <em>“Trace: within 24 hours of being robbed, a player can "
+          "target the raider once, with a free scout and no entry fee.”</em> "
+          "§13.2: <em>“theft is one-way and a defender loses nothing”</em>, so no "
+          "raid takes anything from the defender, and no section says which "
+          "raids count. The server reads ‘robbed’ as a validated raid that was "
+          "not foiled and was not past the raider’s twenty paid raids that week "
+          "(<code>server/src/matchmaking.mjs:157-169</code>). The week-cap "
+          "condition carries out the owner’s answer to G20 (C: raids past the "
+          "twentieth <em>“pay no haul”</em>), so a raid that took nothing opens "
+          "nothing; <code>server/test/service.test.mjs:325</code> pins it and "
+          "<code>server/README.md:133</code> states it.<br><br>Screens v3’s "
+          "defence log agrees on ‘not foiled’ (screens_meta.js:592). It offers a "
+          "Trace after Kofi’s raid, which got out, and after Marta’s, where one "
+          "of four crew got out, a Partial the design tags ‘HELD’ (G69). The "
+          "raids where no loot got out, Ines’s and Aiko’s, offer none. The "
+          "owner’s fix brief reads it more widely: <em>“The answer to a raid is "
+          "<strong>Trace</strong>”</em> (docs/ruleborn-screen-review.md:365), "
+          "and every raid report has <em>“a <strong>Trace</strong> button, live "
+          "for 24 hours”</em> (:435). That is context for the decision, not an "
+          "answer. TD.66 offers Trace for each raid "
+          "<code>traceable()</code> returns.",
+     rec="The owner decides (the decision brief). Recommended: as built, a "
+         "raid on the player’s island that was not foiled and was not past the "
+         "raider’s twenty paid raids that week, since under G20’s answer that "
+         "raid pays nothing, as a foiled one does; §12.3 says so in one clause. The "
+         "alternatives are every raid that was not foiled, which drops the "
+         "week-cap condition and changes the G20 test, or every raid, as the "
+         "owner’s fix brief reads."),
+
+dict(id="C56", kind="contradiction", severity="minor", status="open",
+     title="v3.6 gives the second epoch\u2019s extra slot to the Spire (§14.9) and to "
+           "the Heart (§18.4)",
+     refs=["18.4", "14.9", "5.1"],
+     body="§18.4: <em>“Each new epoch raises stability capacity by 8%, and the "
+          "second epoch adds a third law slot in the Heart.”</em> §14.9’s table, "
+          "for taking an epoch: <em>“+8% stability capacity, and a third crown "
+          "slot at the second epoch”</em>. The two are different slots. A crown "
+          "law <em>“works in every realm of its universe, including the Heart, "
+          "and costs double stability”</em>, and <em>“The Spire opens 1 crown "
+          "slot at Spire level 2 and a second at Spire level 5.”</em> (§5.1); a "
+          "slot in the Heart holds a realm law for the Heart alone. Epochs come "
+          "after launch, and neither the server nor the client has one.",
+     rec="The owner decides (the decision brief). Recommended: a third law "
+         "slot in the Heart, as §18.4 says, since epochs are §18.4’s to state "
+         "and §14.9’s table sums them up; §14.9’s row then says the same. The "
+         "alternative is a third crown slot, written into §18.4. Neither is "
+         "built before launch (TD.20)."),
+
+dict(id="C57", kind="contradiction", severity="minor", status="open",
+     title="v3.6 puts the cones of every guard the crew can see on screen "
+           "(§12.6, §21.6) and draws one guard’s cone at a time (§21.12)",
+     refs=["12.6", "21.12", "21.6", "23.2"],
+     body="§12.6: <em>“Always on screen: the clock, the realm's alarm meter, "
+          "the vision cones and awareness of guards the crew can see”</em>. "
+          "§21.6: <em>“Guards on screen: a soft fan of light shows each guard's "
+          "vision cone”</em>. §21.12: <em>“One shape at a time. The selected "
+          "guard's vision is drawn; the others show only their facing. Five "
+          "overlapping cones on a phone is noise.”</em>, and <em>“Sharp edges, "
+          "no gradients.”</em> The heist cannot do both.<br><br>Screens v3’s "
+          "heist draws the focused guard’s cone and the others’ facing "
+          "(screens-heist-result.md §1.2), and the client’s flat view draws one "
+          "guard’s cone (<code>client/scripts/realm_view.gd:33</code>), as "
+          "§21.12 says. The owner’s fix brief asks for the other reading: "
+          "<em>“Every visible guard shows its vision cone and an awareness "
+          "meter.”</em> (docs/ruleborn-screen-review.md:387, and :125). That is "
+          "context for the decision, not an answer.",
+     rec="The owner decides (the decision brief). Recommended: one cone at a "
+         "time, as §21.12 says for a stated reason; every guard the crew can "
+         "see keeps its awareness meter and its facing, so §12.6’s list and "
+         "§21.6’s line say the selected guard’s cone. The alternative is every "
+         "visible guard’s cone, with §21.12’s first rule struck. TD.17 and "
+         "TD.42 build §21.12’s reading with the other one token away."),
 
 dict(id="D72", kind="deviation", severity="minor", status="open",
      title="§21.8\u2019s alarm red and success green cannot carry words at its "
@@ -9735,6 +9980,13 @@ V33 = {
 # re-run). The four items registered after v3.4's snapshot (F33, F34, G17,
 # D58) are not in its list and get no note here.
 
+#: The note on each item found reading the owner's design handoff. v3.6 did
+#: not touch these; they sit in V36 only to carry it (FOUND_IN_HANDOFF).
+_HANDOFF_NOTE = (
+    "Found reading the owner\u2019s design handoff (its README, SCREENS and"
+    " CHARACTERS notes and the fix brief to the designer) against v3.6, in "
+    "October 2026; the screens\u2019 first reading could not see those files.")
+
 #: What v3.6 did about each item it touched. v3.5 changed only the engine pin
 #: (24, 32.8 brief 39), so it has no layer of its own.
 V36 = {
@@ -9876,6 +10128,20 @@ V36 = {
     "Beacon feed, against answer B, and Friends shows presence and a live "
     "“raiding” status that §17.8 rules out; the port keeps the server’s rule "
     "(TD.23)."),
+
+# Found reading the owner's design handoff against v3.6 (FOUND_IN_HANDOFF).
+"C55": dict(status="open", note=_HANDOFF_NOTE),
+"D97": dict(status="open", note=_HANDOFF_NOTE),
+"D98": dict(status="open", note=_HANDOFF_NOTE),
+"G70": dict(status="open", note=_HANDOFF_NOTE),
+"C56": dict(status="open", note=
+    "Found folding the owner\u2019s design handoff into stage SD, in October "
+    "2026: the handoff\u2019s plan for TD.20 cited §14.9 and §18.4 as one rule, "
+    "and they disagree."),
+"C57": dict(status="open", note=
+    "Found folding the owner\u2019s design handoff into stage SD, in October "
+    "2026: the handoff\u2019s fix brief asks for every visible guard\u2019s cone, "
+    "and §12.6 and §21.12 disagree on it."),
 }
 
 V34 = {
@@ -10563,6 +10829,11 @@ FRONTEND = {
     "D94": "a screen, its art or its look in stage SD",
     "D95": "a screen, its art or its look in stage SD",
     "D96": "a screen, its art or its look in stage SD",
+    # Found reading the owner's design handoff against v3.6.
+    "C55": "a screen, its art or its look in stage SD",
+    "C57": "a screen, its art or its look in stage SD",
+    "D97": "a screen, its art or its look in stage SD",
+    "D98": "a screen, its art or its look in stage SD",
     "C20": "author 48 law sounds, or correct the claim to six school sounds",
     "C17": "the game's public name and its fallback",
     "G9":  "the 60-second guided build: an onboarding flow and its screens",
@@ -10621,6 +10892,8 @@ BOTH = {
     "G67": "the server or simulation, and a screen in stage SD",
     "G68": "the server or simulation, and a screen in stage SD",
     "G69": "the server or simulation, and a screen in stage SD",
+    "G70": "the server or simulation, and a screen in stage SD",
+    "C56": "the server or simulation, and a screen in stage SD",
 }
 
 

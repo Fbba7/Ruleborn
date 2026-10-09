@@ -238,7 +238,7 @@ Deviations not in §23.5:
 - **Law cards**: the panel shows law chips, each opening the law card; §23.2 says "law cards", §15.5 says a met law shows "its icon and movement first, with a one-tap 'what does this do?'". The chip shows the name, not the movement. The law card itself lacks its looping preview (§23.5 line 11495, the Law card row).
 - **No scout validity**: §12.4's 15 minutes appear nowhere (N10).
 
-Must-show missing: ward counts by type (§12.4); law cards showing the movement first (the chips are a fair summary, but the card behind them must carry the preview). Matchups exist, but as authored prose (see the plan).
+Must-show missing: ward counts by type (§12.4); law cards showing the movement first (the chips are a fair summary, but the card behind them must carry the preview). Matchups exist, but as authored prose (see the plan), and the prose names abilities §11.2 does not give: Bramble's Shield, Hollow's Rewind, Pip's Leap, and a Glass Golem wall that blocks sight. It also names the Current, which is not a launch law (§7.10). D78 holds these.
 
 Adds a mechanic: showing guard and ward positions and patrol routes (what a player can see before the heist); the per-realm loot split, until the document says a scout shows it.
 
@@ -266,7 +266,7 @@ Nothing on the client. Server: nothing for a scout (no route in `http.mjs:5-99`;
   - Land: for the Heart, "No skiff can land: strong winds ring the Heart" (§5.4's words); for an outer realm, the landing the player picked, or "Choose a landing" linking to the picker; the guards and wards chips; LAST TIME.
   - Threats: role chips with role icons and counts; ward chips by §10.3 type with the type's school shape and count; law cards (a compact `LawCard` component from the Weaving/Codex plan, with its looping preview: for a met law, icon and movement first and "What does this do?"; for a new law, the card with its rule line); the Grand Law row when constellations arrive (v1.1).
   - Crew: the matchups for the player's available crew (rested, not on guard), best three and one to leave.
-- "Plan the heist" → planner, landing realm preset when the page is an outer realm.
+- "Plan the heist" → planner, with no landing set: the landing is chosen only in the landing picker, from the planner's Entry row (TD.18).
 - Scout validity (if paid): a countdown chip "Scout valid 14 min"; when it lapses, the facts grey out with "Scout again".
 
 Effort: **L** (the facts are cheap; the matchups module, the planning-mode realm view without positions, and the law cards are the work; the 3D view waits on the art pass).

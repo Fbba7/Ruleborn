@@ -195,7 +195,7 @@ NO_EDIT_BECAUSE = {
     "C54": "a decision for the owner: the Sparkwright's goggles or its card, and one count of the animations",
     "D73": "no document sentence: the build refuses the mechanics until the document has them (stage SD, TD.19)",
     "D74": "no document sentence: the build draws §21.5's pylon per woven slot (TD.10, TD.19), from the owner's design (TD.31)",
-    "D75": "no document sentence: the build follows the document (TD.19); §23.5 takes the rows when next edited",
+    "D75": "a decision for the owner: whether §21.1's camera is a rule or a look, and the one-finger form of rotate and zoom; the build follows the document on the other ten rows (TD.19), and §23.5 takes them when next edited",
     "G45": "no document sentence: the fix is the build, the island format with §10.1's buildings and their tiles (TD.36, TC.12, TD.10)",
     "D76": "no document sentence: the fix is the build, the engine move (TD.1)",
     "D78": "no document sentence: the build follows the document (TD.18); §23.5 takes the rows when next edited",
@@ -218,10 +218,17 @@ NO_EDIT_BECAUSE = {
     "G63": "no document sentence: the fix is the build, content tables and the simulation's crew (TD.33, TD.12, TD.21)",
     "D95": "no document sentence: the build refuses the variants until the document has them (TD.11, TD.21)",
     "G65": "no document sentence: the build adopts them under §23.5's rule; §23.5 lists them when next edited",
-    "G66": "no document sentence: the fix is the build, completion counting the screens (TD.47), with a phase for the interface in §26.8's plan (T1.6), as G42 has for the home economy",
+    "G66": "no document sentence: the fix is the build, completion counting the screens (TD.47), with a phase for the interface in §26.8's plan, as G42 has for the home economy",
     "G67": "no document sentence: the fix is completion's proofs and the build (TD.47, TD.12, TD.15)",
     "G68": "no document sentence: the fix is one proof of the store builds in completion (TD.47)",
     "D96": "no document sentence: the fix is the build (TD.27)",
+    # Found reading the owner's design handoff against v3.6, and folding it in.
+    "C55": "a decision for the owner: where landscape ships at launch, on every screen, in heists only or nowhere (TD.28, TD.68)",
+    "D97": "no document sentence: the build reads §21.2's note colours, the wheel's, from TD.2's tokens; §23.5 takes the row when next edited",
+    "D98": "a decision for the owner: whether the 390-point design is reflowed on 360 points or scaled to the device (TD.2)",
+    "C56": "a decision for the owner, after launch: whether the second epoch's extra slot is a crown slot or a slot in the Heart; no launch task waits on it (TD.20)",
+    "G70": "a decision for the owner: which raids open a Trace, those not foiled and not past the raider's week cap as built (G20), every one not foiled, or every raid; no task waits on it (TD.66)",
+    "C57": "a decision for the owner: whether the heist draws one guard's cone at a time (§21.12) or every visible guard's (§12.6); no task waits on it (TD.17, TD.42)",
     "F31": "a decision for the owner first: \u00a77.3 now closes the rule "
            "sheet at twenty parameters, so splitting two means a twenty-second",
     "C36": "a pacing decision for the owner: which daily heist count the "

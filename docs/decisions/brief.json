@@ -1,6 +1,6 @@
 {
  "_what": "The owner's decision brief: one entry per open register item waiting on the owner's decision, with its question, options, what the build does today, a recommendation and quotes from the design document; then the order to decide in, the groups that share one choice, the conflicts between answers and the ones safe to accept as recommended. Drafted, checked from two sides and merged by a multi-agent pass; tools/build_brief.py renders it and --check holds it to the register and the document.",
- "summary": "Of these 87 decisions, you answered 47 on 25–26 September; the build follows them, and the next version of the document takes their edits. 40 are open. 36 come from reading v3.6 and Screens v3 against each other and the build in October; the other 4 were found since: F56 and G43 building the home economy, F55 re-running §13.2's table, and G44 in the security briefing. Answer C45 first: it confirms that your recorded answers stand over the v3.6 text that still contradicts them, and the screens are being built on that. Then the look, as one choice: D89 (surfaces) and D90 (typefaces), with D91 (icons and motion) and D92 (shading), which TD.2's tokens and every screen follow. Then the heist group, G47 and G51 with G48 and C47, before the simulation contract locks (T5.1). F55 decides what the next harness work is. The rest can be answered in any order within their groups.",
+ "summary": "Of these 93 decisions, you answered 47 on 25–26 September; the build follows them, and the next version of the document takes their edits. 46 are open. 36 come from reading v3.6 and Screens v3 against each other and the build in October; the other 10 were found since: F56 and G43 building the home economy, F55 re-running §13.2's table, G44 in the security briefing, four reading your design handoff, C55 (landscape), D98 (the 390-point frame), D75's camera and one-finger controls and G70 (which raids open a Trace), and two folding it in, C56 (the second epoch's slot, after launch) and C57 (one guard's cone or every one). Answer C45 first: it confirms that your recorded answers stand over the v3.6 text that still contradicts them, and the screens are being built on that. Then the look, as one choice: D89 (surfaces) and D90 (typefaces), with D91 (icons and motion) and D92 (shading), which TD.2's tokens and every screen follow, and with them the handoff's frame: D98, C55 and D75. Then the heist group, G47 and G51 with G48 and C47, before the simulation contract locks (T5.1). F55 decides what the next harness work is. The rest can be answered in any order within their groups.",
  "order": [
   "F33",
   "F35",
@@ -57,12 +57,16 @@
   "D92",
   "G59",
   "C44",
+  "D98",
+  "C55",
+  "D75",
   "D93",
   "C52",
   "G47",
   "G51",
   "G48",
   "C47",
+  "C57",
   "C53",
   "G62",
   "F55",
@@ -83,12 +87,14 @@
   "G56",
   "G57",
   "G69",
+  "G70",
   "D86",
   "C50",
   "C51",
   "G50",
   "G64",
-  "C54"
+  "C54",
+  "C56"
  ],
  "order_notes": {
   "F33": "Design tier. It sets whether one Glare decides a realm, and F35's Vault-reach argument and G19's hold claim both rest on the hold numbers it changes.",
@@ -176,7 +182,13 @@
   "G62": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "G64": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
   "C54": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
-  "G69": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below."
+  "G69": "Found reading Screens v3 against v3.6 (October 2026); answered with its group below.",
+  "D98": "Found reading your design handoff against v3.6 (October 2026); answered with its group below.",
+  "C55": "Found reading your design handoff against v3.6 (October 2026); answered with its group below.",
+  "D75": "Found reading Screens v3 against v3.6 (October 2026), and a decision since your design handoff called the camera final; answered with its group below.",
+  "C56": "Found folding your design handoff into the roadmap (October 2026). It comes after launch, so it can wait for the next version of the document.",
+  "G70": "Found reading your design handoff against v3.6 (October 2026); answered with its group below.",
+  "C57": "Found folding your design handoff into the roadmap (October 2026). No task waits on it: the heist is built to §21.12 with the other reading one token away."
  },
  "groups": [
   {
@@ -371,9 +383,10 @@
     "G55",
     "G56",
     "G57",
-    "G69"
+    "G69",
+    "G70"
    ],
-   "note": "What the defender sees of a raid and how a defence is curated and measured; G57 and G69 share the per-raid facts the server must record."
+   "note": "What the defender sees of a raid and how a defence is curated and measured; G57 and G69 share the per-raid facts the server must record, and G70 says which of those raids open a Trace."
   },
   {
    "title": "People, minors and the first session",
@@ -393,6 +406,16 @@
     "C54"
    ],
    "note": "Births, the visiting Stray and the sheets' details, with the Twinned and the paradox-born under the heist group."
+  },
+  {
+   "title": "Your handoff's frame: scale, orientation and camera",
+   "ids": [
+    "D98",
+    "C55",
+    "D75",
+    "C44"
+   ],
+   "note": "Your handoff fixes the phone frame three ways the build does not: the 390-point layout scaled to the device, portrait only, and the design's camera with pinch and twist. Each meets a measured rule: §21.1's 48 points and §23.5's 13, the orientation §23.3 and §24 disagree on, and §20.8's one finger. C44's home is drawn inside whichever frame wins. Answer them with the look, since TD.2's tokens and TD.10's camera follow them."
   }
  ],
  "conflicts": [
@@ -4383,7 +4406,7 @@
   "C44": {
    "id": "C44",
    "question": "Which home screen is the rule: §21.8's layout as written, Screens v3's held to §21.1's measured rules, or Screens v3's exactly as drawn with §21.1 relaxed for its chrome?",
-   "why_it_matters": "The home screen opens every session, and v3.6 describes two of them (§21.8's and §23.1's) while Screens v3 draws a third, so the shell (TD.6) has no single target. The design's tab bar, back button and realm-view buttons sit in the corners and the home-bar inset, where §21.1 says taps fail most, and the client's layout check fails every one of them.",
+   "why_it_matters": "The home screen opens every session, and v3.6 describes two of them (§21.8's and §23.1's) while Screens v3 draws a third, so the shell (TD.6) has no single target. The design's tab bar, back button and realm-view buttons sit in the corners and the home-bar inset, where §21.1 says taps fail most, and the client's layout check fails every one of them. Your handoff asks for the 390 × 844 layout scaled to the device, which on a 360-point phone draws 48-point controls at 44 (D98). Its header has a 40 × 40 back button (README.md:69), and its open items ask for taps of at least 44 points, 48 only on the heist (README.md:239; screen-review.md:366). Intent, not an answer; §21.1 sets 48 points for primary controls on every screen.",
    "today": "client/scripts/home.gd draws a title, the Keeper bar, a scrolling list of buttons to each screen and one large Heist button fixed at the bottom: no resources, strain, tabs or nearest goal. client/app/router.gd swaps whole scenes, so nothing persists between screens. client/tests/run.gd:577-600 fails any fixed button under 48 points, in the top third, within 44 points of the top or bottom, or in a bottom corner (15% of the width by 8% of the height). Screens v3's home (screens_main.markup.html:365-440): Keeper and Renown top left, strain top right, three resource bars in a full-width row, 44 px side buttons down both edges (Defence, Lab; Season, Shop), and five tabs edge to edge with Heist in the centre, their buttons ending 18 px above the bottom. Build, weave and terrain live in the realm view, whose MAP and BUILD sit in the bottom corners. There is no nearest goal. Sub-screens have a 44 px back button at the top left and 36 px hub tabs.",
    "options": [
     {
@@ -4522,7 +4545,7 @@
   "C45": {
    "id": "C45",
    "question": "Do your 47 recorded answers still stand over v3.6, which kept the old text for almost all of them, so that the build takes a recorded answer first, then the document, then the design?",
-   "why_it_matters": "§23.5 makes the document win over the designs, but v3.6 kept the text your answers replaced: the fee as 2% of holdings (§9.4), a window of 3 Keeper levels (§12.3), a paid scout (§12.4), Starglass packs (§22.1) and the Vault heard at 5 m (§32.8, brief 37). Screens v3 draws the same old rules, so the Observatory, scout, planner, result and shop each have a server saying one thing and a document and design saying another. Without one stated order the client cannot be built against any of them.",
+   "why_it_matters": "§23.5 makes the document win over the designs, but v3.6 kept the text your answers replaced: the fee as 2% of holdings (§9.4), a window of 3 Keeper levels (§12.3), a paid scout (§12.4), Starglass packs (§22.1) and the Vault heard at 5 m (§32.8, brief 37). Screens v3 draws the same old rules, so the Observatory, scout, planner, result and shop each have a server saying one thing and a document and design saying another. Without one stated order the client cannot be built against any of them. Your handoff says 'the GDD wins' (README.md:17, :227) but names v3.4, the version before your recorded answers, and names the prototype's data module as 'the single data source', which §23.5 rules out. It neither keeps nor reverses the answers, so it is not option B. Its fix brief to the designer (screen-review.md:30, :42, :113, :388, :417) restates v3.5's paid scout, 3-level window, fee of 2% of Starlight, Starglass and §12.6's 5 m crack ring, against F46, F44, F39, F41 and F35; it is undated against the 25–26 September answers and reverses none of them. Under B, §12.6's crack reach returns drawn by the walking path, not as the prototype's 5 m circle (realm_diorama.js:208).",
    "today": "docs/decisions/answers.json holds 47 answers from 25–26 September, and the server follows them: the fee is 2% of B(V) at the target's Vault level, 100 at Vault 1 and 3,844 at Vault 10 (server/src/economy.mjs:156-166); the Keeper window runs two below to three above (tools/design_facts.py:232-235, server/src/matchmaking.mjs:244-245); scouting is free (F46); there is no Starglass balance (F41); no guard hears the Vault (F35). v3.6 took one piece of one answer, §18.8's season row as G28's edit worded it, left §9.4, §12.3, §12.4, §12.22 and §22.1 as they were, and wrote none of the other answers, even in the sections it changed (§14.4, which F37 and F54 edit; §11.8, where F46 rewords the Cartographer). Its rewritten §23.2 Observatory row, 'only the free scouting facts (12.4)', quotes §12.4 as v3.6 has it and stays true under F46, which only makes more facts free. Screens v3 draws the old rules from its data module: the fee as 2% of holdings (data_v35.js:15), 'Keepers 21–27' (screens_main.js:524), and a locked report with 'Scout · 100 Aether' (screens_main.markup.html:649-652). Roadmap TD.29 already states the order answer, document, design.",
    "options": [
     {
@@ -4789,7 +4812,7 @@
   "C47": {
    "id": "C47",
    "question": "Which reading ships for the worth question (its scale and how often it is asked), the word 'alarm' in §12.9's outcomes, and what 'Left' shows before the Vault opens?",
-   "why_it_matters": "§19.5's fun gate reads the worth question as an average out of 5, and Screens v3 asks Yes or Not really, which cannot make one; §20.3 asks once a session and §23.2 on every result. §12.9's Clean says 'No alarm' while the realm alarm climbs every 30 seconds whatever the crew does, so on that reading no heist longer than 30 seconds is Clean. And 'what is left to load', shown from the start, tells the raider what §12.12 says only the opened Vault reveals.",
+   "why_it_matters": "§19.5's fun gate reads the worth question as an average out of 5, and Screens v3 asks Yes or Not really, which cannot make one; §20.3 asks once a session and §23.2 on every result. §12.9's Clean says 'No alarm' while the realm alarm climbs every 30 seconds whatever the crew does, so on that reading no heist longer than 30 seconds is Clean. And 'what is left to load', shown from the start, tells the raider what §12.12 says only the opened Vault reveals. Your fix brief reads Loud off the six-level ladder: 'A getaway at 2 of 6 alarm is Loud.' (screen-review.md:394), as Screens v3 does (Clean at 0 of 6, Loud 2, Partial 4, Foiled 6), which favours B's outcome rule. It puts a one-tap 'Was this worth your time?' at the end of the result and cites §20.3 for it (screen-review.md:400), which asks once a session. Intent, not an answer.",
    "today": "The server takes a worth rating of 1 to 5, at most 24 a day, each player weighed once (server/src/telemetry.mjs:49-53, :84); the client sends none yet. The simulation reads §12.9's alarm as a flag set when any guard becomes Alerted, not the ladder (sim/src/lib.rs:701-704, 3177-3181). The heist HUD shows the exposed share left to load from the first second (client/scripts/heist_hud.gd:51). Screens v3 asks 'Yes' or 'Not really' on every result and answers 'Thanks. It helps us tune the targets you see.' (screens_main.markup.html:860-861), against §12.15's 'Nothing is hidden'; it adds an alarm level at each alert under 'Alarm +1 · they are looking' (screens_main.js:113; realm_diorama.js:218), shows a Clean result at '2:14 · 0 / 6 alarm' (screens_main.js:645), and shows 'Left 2,600' from the start (markup:799).",
    "options": [
     {
@@ -5592,7 +5615,7 @@
   "F57": {
    "id": "F57",
    "question": "Should Screens v3's Shop, Starpass and gifts be drawn in money as F41's answer says, and what monthly gift limit should §22.4 state?",
-   "why_it_matters": "Every ✦ line in the design breaks §22.1's and §19.12's rule that every price shows in real money, and the build has sold no Starglass since F41 was answered, so the Shop and Season cannot be drawn from the design as they stand. §22.4 promises a monthly gift limit and gives no number, so the build has none: an adult can send any number of gifts and a minor can receive any number. The design's gift sheet also tells every band 'a parent approves first' and sends a gift with no friend chosen and nothing paid.",
+   "why_it_matters": "Every ✦ line in the design breaks §22.1's and §19.12's rule that every price shows in real money, and the build has sold no Starglass since F41 was answered, so the Shop and Season cannot be drawn from the design as they stand. §22.4 promises a monthly gift limit and gives no number, so the build has none: an adult can send any number of gifts and a minor can receive any number. The design's gift sheet also tells every band 'a parent approves first' and sends a gift with no friend chosen and nothing paid. Your fix brief to the designer asks for cosmetics 'priced in Starglass only (9.5)' (screen-review.md:30), and your handoff lists Starglass among the player's resources (README.md:162); both restate v3.5 and record no reversal of F41's answer C. Intent, not an answer.",
    "today": "server/src/shop.mjs sells each cosmetic and each season's premium track as its own store product at the store's price (PREMIUM_PRICE 600 cents, §22.1's about €6); there is no balance and no pack (F41 C, built). A gift is the same product bought for a friend and is refused unless the two are friends ('gifts_go_to_friends'). A minor's gift counts against §20.2's €25 or €50 cap, and a gift's intent is kept 30 days so a family approval that arrives late still reaches the friend (GIFT_KEEP_DAYS). Nothing counts gifts sent or received. client/scripts/shop_screen.gd and track_screen.gd show money prices, with Buy, Give and a friend picker. Screens v3 prices everything in ✦: a pill '480 = €4.80 +', tiles '120 ≈€1.20', packs of 100 to 5,000 ✦ at €1 to €50, 'Starglass never expires', a Starpass 'Buy for 600 Starglass' with no money figure, and 'GIFT · 3 left this month', which on a tap says 'Gift sent to Ines · a parent approves first' to every band (screens_meta.js:718, 819). v3.6 still sells Starglass in §9.1, §9.5, §18.2 and §22.1.",
    "options": [
     {
@@ -5667,7 +5690,7 @@
   "D86": {
    "id": "D86",
    "question": "Which of Screens v3's friend features ship at launch: none, preset pings between friends only, or pings with presence, live activity and Beacon posts for players 16 and over?",
-   "why_it_matters": "Each changes what a player can see or do, which §23.5 says a design cannot add, and none has a rule for 13-to-15s, a cap or a notification. Presence and last seen are new personal facts that §20.5 asks the game not to collect, and 'Raiding Ines' names a target while the raid runs, which §17.8 forbids. Until this is decided, Friends and the Share sheet cannot be drawn from the design.",
+   "why_it_matters": "Each changes what a player can see or do, which §23.5 says a design cannot add, and none has a rule for 13-to-15s, a cap or a notification. Presence and last seen are new personal facts that §20.5 asks the game not to collect, and 'Raiding Ines' names a target while the raid runs, which §17.8 forbids. Until this is decided, Friends and the Share sheet cannot be drawn from the design. Your handoff lists 'friends' presence and feed' among the server data the prototype fakes (README.md:168), and puts 'Who's online', 'preset pings' and add-by-code on Friends (SCREENS.md:171) and 'post the clip to the Beacon' on Share (SCREENS.md:166). It is your clearest statement for option C. Intent, not an answer: §23.5 builds none of it until the document says what each shows.",
    "today": "server/src/friends.mjs has 7-day single-use invites, the friend list, removal, friendly heists, challenge links and the feed: settled heists from the last 7 days, none with a 13-to-15 on either side (G35 B) and none involving a block. Nothing records presence, last seen or activity, there are no pings, and GET /v1/heists/:token/replay serves only the raider and the defender (server/src/http.mjs:11). client/scripts/friends_screen.gd draws the list and the feed. Screens v3's Friends shows '3 online', ONLINE and OFFLINE sections, 'Seen 3 h ago', RAIDING, WORKSHOP and HOME pills, Kofi 'Raiding Ines', and SEND A PING with 'Good heist!', 'Rematch?', 'Raid me!' and 'Nice defence!', the same for 13 to 15 (screens_meta.js:1241-1285). Its Share sheet offers 'Post to the Beacon' to every band and grades moments EPIC, RARE and LEGENDARY (js:1221-1229).",
    "options": [
     {
@@ -5935,7 +5958,7 @@
   "D89": {
    "id": "D89",
    "question": "Which surfaces does the interface stand on: §21.8's ink on paper panels, Screens v3's dark cards, glass, leather and parchment written into §21.8, or paper over the world with the design's surfaces in menus?",
-   "why_it_matters": "Every panel, button and text colour follows from this one choice. Built as written, the design's whole set of surfaces is redrawn as paper, a surface the owner drew nowhere. Adopted without a rule, the design's text was only ever drawn against night, and its tertiary text falls to 2.9 to 3.4:1 over §21.2's day and dusk skies.",
+   "why_it_matters": "Every panel, button and text colour follows from this one choice. Built as written, the design's whole set of surfaces is redrawn as paper, a surface the owner drew nowhere. Adopted without a rule, the design's text was only ever drawn against night, and its tertiary text falls to 2.9 to 3.4:1 over §21.2's day and dusk skies. Your handoff says: 'Colours, type, spacing, copy, numbers and interactions are final. Recreate the UI pixel-accurately at 390 × 844 logical points' (README.md:20). That is intent, not an answer. On the look it agrees with §23.5; on copy and numbers, §21.1's sizes and §21.8's contrast and timings, §23.5 still lets the document win.",
    "today": "client/ui/tokens.json:32 sets panel #FCFBFFD9, citing §21.8; UI.panel() draws it (client/scripts/ui.gd:172); UI.frame() puts §21.2's day sky behind every screen (ui.gd:48); the high-contrast set is black on white; client/tests/a11y_tests.gd:75 checks words over the day sky's two ends only. Screens v3 has no paper panel: a dark violet card #261A4C to #1A1134 (54 uses with its variants), glass HUD pills rgba(20,10,22,.78), leather buttons #6A3E52 to #1E1018 (37), all with light text, and parchment #FFFBF0 to #F1E3C4 (40) with brown text #2A1A10. Every outline is #1A0C14. Menus stand on one night backdrop: #171046 to #2C3AA8 on the phone (screens_main.markup.html:363), a radial #2E1F5E to #0A0620 on the sub-screens.",
    "options": [
     {
@@ -6002,7 +6025,7 @@
   "D90": {
    "id": "D90",
    "question": "Which typefaces does the game use: Baloo 2 and Marcellus as §21.8 and §21.11 name them, Screens v3's Manrope, Lilita One and Marcellus, or Manrope and Marcellus only?",
-   "why_it_matters": "Every word on every screen is set in these faces, and §21.11's licence ledger, which ships in the settings' legal page, names them. Screens v3 never uses Baloo 2, and its Lilita One has no tabular figures, so a changing number set in it shifts in width as it ticks, against §21.8's 'with tabular numerals'.",
+   "why_it_matters": "Every word on every screen is set in these faces, and §21.11's licence ledger, which ships in the settings' legal page, names them. Screens v3 never uses Baloo 2, and its Lilita One has no tabular figures, so a changing number set in it shifts in width as it ticks, against §21.8's 'with tabular numerals'. Your handoff calls the type final, as D89 notes, and gives the faces' roles (README.md:121-122): Lilita One for 'numbers, buttons, names, card titles', Marcellus for 'serif screen titles on some screens'. The prototype sets law, realm and Keeper names and the Shop, Profile, Settings and First launch titles in Marcellus, and the Workshop, Share and Friends titles in Lilita One, so the options still describe what is drawn. Option B's move of every changing number to Manrope departs from the handoff's 'numbers' role, for §21.8's tabular figures. Intent, not an answer.",
    "today": "The client has no font files: UI.bold_font() emboldens the engine's fallback font (client/scripts/ui.gd:220-223), and no licence ledger exists. Screens v3 loads Manrope 400 to 800, Lilita One and Marcellus (screens_main.markup.html:3-307): Manrope for labels, body text and most numbers (about 920 declarations), Lilita One for big numbers, counters and some titles (about 150 to 180), Marcellus for screen titles and names (about 80). About 340 declarations ask for Manrope 900, which does not exist and draws at 800. All three faces are under the SIL open font licence. TD.2 plans the fonts and the ledger.",
    "options": [
     {
@@ -6606,7 +6629,7 @@
   "G48": {
    "id": "G48",
    "question": "No rule chooses a heist result's decisive moment or its one thing to try: write the drafted rule with the tip as the result's own 'Try this' row, keep the design's Archivist heading for the tip, or ship the design's fixed moment and tip for each outcome?",
-   "why_it_matters": "§12.13 makes every result name the moment that decided the heist, with a three-second replay, and one thing to try tied to it, and §23.2 makes both must-shows; but no section says how the moment is chosen, and §15.3 says only 'Based on what went wrong, never a lecture'. Which moment counts decides what a player learns from a loss, and §23.5 does not let a design add the rule. The simulation keeps no events to find it in.",
+   "why_it_matters": "§12.13 makes every result name the moment that decided the heist, with a three-second replay, and one thing to try tied to it, and §23.2 makes both must-shows; but no section says how the moment is chosen, and §15.3 says only 'Based on what went wrong, never a lecture'. Which moment counts decides what a player learns from a loss, and §23.5 does not let a design add the rule. The simulation keeps no events to find it in. Your fix brief to the designer says 'plus one thing to try. Keep the Archivist card.' (screen-review.md:398), and Screens v3 heads the tip 'The Archivist · try this'. That supports option B. Intent, not an answer.",
    "today": "The simulation exposes its state and an outcome (sim/src/lib.rs:3131) and keeps no log of events; TD.13 plans one outside the checksum and TD.17 the result. Screens v3 hard-codes one moment and one tip per outcome (screens_main.js:637-638), and its replay button only plays a sound (:626). Every tip is headed 'The Archivist · try this' (screens_main.markup.html:843), which makes it one of §15.3's Archivist's tips rather than the result's own row, and the Clean tip, 'Kofi's universe is two realms deep. Same crew, a bigger haul.', suggests another target instead of following from its moment.",
    "options": [
     {
@@ -6672,7 +6695,7 @@
   "D91": {
    "id": "D91",
    "question": "Do the icons and the interface's motion follow §21.8 as written (flat colour; 150 to 250 milliseconds, easing out), take Screens v3's finish and timings, or take the design's icon finish while keeping §21.8's timings?",
-   "why_it_matters": "§23.5 says 'The designs carry the look: layout, art, motion, the models and the icons', but §21.8 states both as rules: icons in 'flat colour' and motion at '150 to 250 milliseconds, easing out'. Screens v3 shades all 360 of its icons and runs tab switches, sheets and entrances at 300 to 650 milliseconds, many overshooting, so the document or the designs must give. D91's other four places, toasts, reduced motion, colour-blind palettes and the sky, are accessibility and world rules §20.8 and §21.2 state, and the build follows them under every option.",
+   "why_it_matters": "§23.5 says 'The designs carry the look: layout, art, motion, the models and the icons', but §21.8 states both as rules: icons in 'flat colour' and motion at '150 to 250 milliseconds, easing out'. Screens v3 shades all 360 of its icons and runs tab switches, sheets and entrances at 300 to 650 milliseconds, many overshooting, so the document or the designs must give. D91's other four places, toasts, reduced motion, colour-blind palettes and the sky, are accessibility and world rules §20.8 and §21.2 state, and the build follows them under every option. Your handoff asks for screen changes of 'about 0.3 s', the old screen fading and scaling slightly down (README.md:148; SCREENS.md:177): slower than §21.8's 150 to 250 ms and than the prototype's own 160 to 240 ms. Under A or C they run at 250 ms at most, under B at about 300 ms. It also asks for a camera dive into a realm of about 1.2 s, easing out, and a sideways slide between realms (README.md:149); the prototype dives in 950 ms, easing in and out. Intent, not an answer.",
    "today": "The client has none of the design's icons yet; TD.5 exports them, which the analysis has done once (444 SVGs). UI.motion_ms() gives every movement 0 ms under reduced motion (client/scripts/ui.gd:42), and banners stay until dismissed when the player asks (UI.banner, ui.gd:313). Screens v3 re-fills every icon's flat fills with a three-stop gradient and adds a gloss mask, a specular spot and a drop shadow (icons_rbi.js:20-25), on the 24-point grid and 2-point outline §21.8 asks for. Its tab switches run 300 to 320 ms on an overshooting curve (screens_main.js:660-664), sheets 300 to 320 ms and entrances 350 to 650 ms; its screen changes (160 to 240 ms) and its 180 ms press are inside §21.8.",
    "options": [
     {
@@ -6728,12 +6751,12 @@
      "text": "The designs carry the look: layout, art, motion, the models and the icons."
     }
    ],
-   "also_needed": "Which particles reduced motion keeps (§20.8); the build's reading is that a reward still lands in its counter."
+   "also_needed": "Which particles reduced motion keeps (§20.8); the build's reading is that a reward still lands in its counter. And whether §21.8's timing covers camera moves such as the dive; the build's reading is that it does not, and reduced motion (§20.8) makes each a cut."
   },
   "D92": {
    "id": "D92",
    "question": "Which shading does every model use: §21.3's one three-step toon with 1.5-pixel ink outlines, Screens v3's two looks (physically based characters and a four-step toon diorama), or one toon look on the design's diorama ramp with §21.3's outlines?",
-   "why_it_matters": "§21.3 asks for one toon look and says its shaders 'already exist from the mock-ups', but Screens v3 has two looks and neither is that one: characters physically based with sheen, clearcoat and transmission under film tone mapping and no outline, and a diorama toon of four steps with outlines sized in world units, so a far line is thinner than a near one. The portraits and the Observatory, scout and landing pictures are renders of the characters' look. Every model the game draws follows this choice, and its cost on a phone meets D93's budgets and C52's frame floor.",
+   "why_it_matters": "§21.3 asks for one toon look and says its shaders 'already exist from the mock-ups', but Screens v3 has two looks and neither is that one: characters physically based with sheen, clearcoat and transmission under film tone mapping and no outline, and a diorama toon of four steps with outlines sized in world units, so a far line is thinner than a near one. The portraits and the Observatory, scout and landing pictures are renders of the characters' look. Every model the game draws follows this choice, and its cost on a phone meets D93's budgets and C52's frame floor. Your handoff asks the characters to 'match the toon look. Use soft lambert shading with a rim light, no black outline (it was removed at the user's request)' (CHARACTERS.md:99). The sentence asks for the toon look and names lambert shading, which the design uses nowhere (its characters are physically based, its world toon). Read as the toon look with a rim and no line on the characters, it is option D below; if you meant smooth shading rather than the toon ramp, say so. Intent, not an answer.",
    "today": "The client draws no 3D models yet; the export harness (TD.7) and one toon shader kit (TD.8) are planned. Screens v3's characters use a physical material with sheen and a rim patch (creatures/creature_kit.js:62, :71), clearcoat, metal and transmission on their accessories (creature_parts.js:4, :21, :36) and iridescence in eight modules, under film tone mapping and an image-based environment, with no outline (Featherkin_Hero.html). The diorama's ramp has four steps (realm_diorama.js:485), every colour is made 10% more saturated (:519), and its outlines are back-face shells in #140A18 sized in world units (:486, :520). The portraits are renders (images/world_*.png).",
    "options": [
     {
@@ -6762,12 +6785,21 @@
      "numbers": "—",
      "doc_edit": "§21.3 Shading: 'a four-step toon ramp, its colours 10% more saturated, with coloured shadows tinted toward violet, a soft rim light, and 1.5-pixel ink outlines drawn in screen space', and 'already exist from the mock-ups' struck. §23.5: a row for the characters' shading.",
      "build_change": "TD.8's shader kit with the step count and the saturation as tokens; the portraits re-rendered."
+    },
+    {
+     "key": "D",
+     "label": "Your handoff's look: the toon ramp, no outline on the characters",
+     "means": "One toon look for everything, on the design's ramp as in C, with the characters matching it: the same four-step ramp, violet shadows and a soft rim light, in the school colours, and no ink outline on them, as your handoff asks (CHARACTERS.md:99). The world keeps §21.3's 1.5-pixel ink outline drawn in screen space. The portraits re-rendered from the imported models.",
+     "consequences": "The characters match the world's shading and their portraits, as in C, and cost no more per pixel. Only the line differs: the world is drawn in ink and the characters are not. With no line, each character must read by shape and value alone: §21.1's dark shape at 32 points and §21.10's grayscale test, run without an outline.",
+     "numbers": "—",
+     "doc_edit": "§21.3 Shading: 'a four-step toon ramp, its colours 10% more saturated, with coloured shadows tinted toward violet and a soft rim light; 1.5-pixel ink outlines drawn in screen space on the world, and none on the characters'. 'already exist from the mock-ups' struck. §23.5: a row for the characters' outline.",
+     "build_change": "TD.8's shader kit as in C, with the characters' outline off; TD.7's export gate runs the silhouette and grayscale tests on each character without its line; the portraits re-rendered."
     }
    ],
    "recommendation": {
     "option": "C",
     "confidence": "medium",
-    "rationale": "The diorama's ramp is a look, which §23.5 gives to the designs, as D89's surfaces and D90's typefaces are, and it is the look you drew for the whole world. The 1.5-pixel line is a measure §21.3 states, and drawing it in screen space keeps it on every phone, where world-unit shells thin with distance. One look for characters and world keeps a creature and its portrait the same, and a toon ramp costs less per pixel than clearcoat and transmission, which D93's budgets and C52's floor must hold. A redraws a world you designed; B keeps two styles and the costliest materials."
+    "rationale": "The diorama's ramp is a look, which §23.5 gives to the designs, as D89's surfaces and D90's typefaces are, and it is the look you drew for the whole world. The 1.5-pixel line is a measure §21.3 states, and drawing it in screen space keeps it on every phone, where world-unit shells thin with distance. One look for characters and world keeps a creature and its portrait the same, and a toon ramp costs less per pixel than clearcoat and transmission, which D93's budgets and C52's floor must hold. A redraws a world you designed; B keeps two styles and the costliest materials. D is your handoff's look for the characters: C's ramp on everything, without §21.3's line on the characters, so each must pass §21.1's 32-point silhouette and §21.10's grayscale test on shape and value alone, and they stand apart from a world drawn in ink. Choose D if the characters' look in your handoff is the one you want."
    },
    "interacts_with": [
     "D89",
@@ -6790,7 +6822,352 @@
      "text": "The designs carry the look: layout, art, motion, the models and the icons."
     }
    ],
-   "also_needed": "The ink the outlines use, which D89's surfaces decision settles: #221C3A in §21.2, #1A0C14 in the designs."
+   "also_needed": "The ink the outlines use, which D89's surfaces decision settles: #221C3A in §21.2, #1A0C14 in the designs. Under D the ink is the world's only. If 'soft lambert shading' meant smooth shading rather than the toon ramp, that is a fifth reading: say so, and the characters take a lambert-and-rim material instead."
+  },
+  "C55": {
+   "id": "C55",
+   "question": "Where does landscape ship at launch: on every screen, in heists only, or nowhere?",
+   "why_it_matters": "v3.6 says it both ways. §23.3, §27.2 and §23.5's Landscape row put landscape on every screen, and §19.17, §19.21 and §30.8 speak of it with no limit; §24 and §27.5 put it in heists only, and §21.1 names only heists. Your handoff says 'landscape is not supported' (README.md:20), and its fix brief to the designer still lists a landscape layout as missing (screen-review.md:116). TD.28 builds landscape for every screen, which §23.3 costs at about 15 to 20% more interface work, so its scope waits on this. Your statements are intent, not an answer.",
+   "today": "The client is portrait only: client/project.godot:22 sets the window to portrait, and no setting changes it. Screens v3 draws portrait only, and §23.5's Landscape row records it as 'Not designed'. TD.28 plans the shell in landscape and then every screen once its portrait version is accepted, after 22 screen tasks.",
+   "options": [
+    {
+     "key": "A",
+     "label": "Heists only (§24, §27.5)",
+     "means": "The heist and its result can be turned to landscape for a wider view; home, menus and the Workshop stay portrait. §23.3's other rules hold: the same information in both, never rotating mid-heist, the choice remembered per device.",
+     "consequences": "Landscape lands where §23.3 says it is better: seeing a route at once and playing with two thumbs. 26 of the 28 screens need no landscape layout. §23.3 puts most of the cost in the heist HUD, which A keeps, so the saving is in screens more than in that cost. Tablets show menus in portrait.",
+     "numbers": "Screens in landscape: 2 of 28, the heist and its result.",
+     "doc_edit": "§23.3: 'Portrait is the default on phones; a heist can be turned to landscape, and the choice is remembered per device.' §27.2's Screen orientation row the same. §23.5's Landscape row: 'Portrait, with the heist and its result in landscape'. §19.17's, §19.21's and §30.8's lines still hold: landscape ships, in heists.",
+     "build_change": "TD.28 narrows to the heist HUD and the result."
+    },
+    {
+     "key": "B",
+     "label": "Every screen (§23.3, §27.2)",
+     "means": "Every screen has a landscape layout, remembered per device, as §23.3 sets out; tablets default to landscape.",
+     "consequences": "The fullest reading and the costliest: TD.28 lays out all 28 screens a second time, the shell's tab bar as a side rail. No screen in Screens v3 is drawn in landscape, so every layout is the build's to draw.",
+     "numbers": "Screens in landscape: 28 of 28. §23.3's estimate: about 15 to 20% more interface work.",
+     "doc_edit": "§24's engine row and §27.5: landscape everywhere, as §23.3 says.",
+     "build_change": "TD.28 as planned."
+    },
+    {
+     "key": "C",
+     "label": "Not at launch (your handoff)",
+     "means": "Portrait only at launch, on phones and tablets, as your handoff says.",
+     "consequences": "No landscape work at all, and the design is built as drawn. It gives up the view §23.3 calls 'genuinely better for seeing a route at once', and tablets run in portrait.",
+     "numbers": "Screens in landscape: none.",
+     "doc_edit": "§23.3 rewritten to portrait only at launch; §21.1's 'Heists can be rotated to landscape for a wider view.', §24's engine row, §27.2's and §27.5's rows and §23.5's Landscape row follow, and so do §19.17's 'landscape ships beside it', §19.21's 'landscape ships alongside it' and §30.8's 'when both are one tap away'.",
+     "build_change": "TD.28 closes with nothing built."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "confidence": "medium",
+    "rationale": "v3.6 leans to every screen: §23.3, §27.2 and §23.5's row say so, and §19.17, §19.21 and §30.8 assume it, while only §24 and §27.5 say heists. But §23.3's reasons are mostly the heist's, the whole route in view and two-thumb play, and A keeps them while dropping landscape layouts for 26 screens that no design draws and your handoff does not want. B is the document's fullest reading and lays every screen out twice; its other reason, that landscape is native on tablets, is the one A gives up. C is the cheapest and matches your handoff, but gives up the view the document wants most."
+   },
+   "interacts_with": [
+    "C44",
+    "D98"
+   ],
+   "quotes": [
+    {
+     "section": "23.3",
+     "text": "Portrait is the default on phones; landscape is available everywhere and remembered per device."
+    },
+    {
+     "section": "21.1",
+     "text": "Heists can be rotated to landscape for a wider view."
+    },
+    {
+     "section": "24",
+     "text": "Portrait-first, landscape optional in heists."
+    },
+    {
+     "section": "27.5",
+     "text": "heists playable in portrait with landscape optional (21.1)"
+    },
+    {
+     "section": "23.3",
+     "text": "Cost: about 15 to 20% more interface work, concentrated in the heist HUD."
+    }
+   ],
+   "also_needed": "Under A, whether a tablet's menus stay portrait or turn with the device; §23.3 has tablets default to landscape."
+  },
+  "D98": {
+   "id": "D98",
+   "question": "Is the 390 × 844 design laid out again on the build's 360-point frame, or scaled to the device as your handoff asks?",
+   "why_it_matters": "Your handoff asks for the interface 'pixel-accurately at 390 × 844 logical points' and scaled to the device (README.md:20). Scaled down to a 360-point phone, every size shrinks by 360/390: §23.5's 13-point floor draws at 12 and §21.1's 48-point controls at 44, below the document's floors. TD.2 lays the design out again on 360 points instead (DS-10), and every screen's layout follows this choice. Your statement is intent, not an answer.",
+   "today": "client/project.godot:16-21 sets a 1080 × 2340 base for a 360-point phone, with canvas_items stretch and expand aspect, so a client point is never smaller than a real point on any phone at least 360 points wide. TD.2 keeps that frame and lays the design's 390 points out into 360 with containers and anchors (docs/analysis/screens-v3/design-system.md:456, DS-10). Screens v3 is drawn at 390 × 844 (screens_main.markup.html:363).",
+   "options": [
+    {
+     "key": "A",
+     "label": "Lay out again on 360 points (TD.2)",
+     "means": "The design's layout, sizes and spacing as drawn, laid out on a 360-point frame: the drawing's extra 30 points become margins and flexible rows, and a wider phone gets more room, not larger type.",
+     "consequences": "Every size in the design holds on every phone, so §23.5's 13 points and §21.1's 48 hold too. A 360-point phone shows a little less of a long list than the drawing does.",
+     "numbers": "On 360 points: 13 pt stays 13, 16 stays 16, 48 stays 48.",
+     "doc_edit": "None",
+     "build_change": "None: TD.2 as planned."
+    },
+    {
+     "key": "B",
+     "label": "Scale, every size raised first",
+     "means": "The 390-point layout scaled to the device, as your handoff asks, with every size first raised by 390/360, about 8%, so the floors still hold once scaled down to 360.",
+     "consequences": "Every phone shows the same composition. On a 390-point phone everything is about 8% larger than drawn, so rows that are full in the drawing must be fitted again.",
+     "numbers": "Raised: 13 to 14.1 pt, 16 to 17.3, 48 to 52; scaled to 360 they draw at 13, 16 and 48.",
+     "doc_edit": "None",
+     "build_change": "TD.2 scales a 390-point-wide canvas; every size token rises about 8%, and the layout check measures on the scaled frame."
+    },
+    {
+     "key": "C",
+     "label": "Scale as drawn",
+     "means": "Your handoff literally: the 390-point layout scaled to the device, sizes as drawn.",
+     "consequences": "Closest to the drawing on every phone, but below the document's floors on 360-point phones: 13-point text at 12 and 48-point controls at 44. §23.5 lets the document win on these numbers, so they must change first.",
+     "numbers": "On 360 points: 13 to 12.0 pt, 16 to 14.8, 48 to 44.3.",
+     "doc_edit": "§21.1's 'about 48 points' and §23.5's Text size row are measured on a 390-point frame, so smaller phones fall below them.",
+     "build_change": "TD.2 scales a 390-point-wide canvas; the layout check measures before scaling."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "confidence": "high",
+    "rationale": "A keeps both the design and the document's floors, changes no task, and is what the build already has. B keeps one composition at the cost of every size in the drawing; C breaks two floors the document states, which §23.5 says the document wins on."
+   },
+   "interacts_with": [
+    "C44",
+    "C55",
+    "D90"
+   ],
+   "quotes": [
+    {
+     "section": "21.1",
+     "text": "Primary controls are at least 9 mm across — about 48 points"
+    },
+    {
+     "section": "23.5",
+     "text": "13 pt at the smallest, 16 pt body"
+    }
+   ],
+   "also_needed": "Nothing."
+  },
+  "D75": {
+   "id": "D75",
+   "question": "Is §21.1's camera, orthographic at a 35° pitch and turned in 90° steps, a rule the build keeps or a look the design replaces, and what one-finger form do rotate and zoom take?",
+   "why_it_matters": "Your handoff calls the 3D camera final and wants pinch to zoom and twist to rotate, with no zoom buttons (README.md:22, :178). §21.1 sets a different camera, and §20.8 says no action needs more than one finger, so pinch and twist alone fail it whatever the camera. TD.10 builds the world's camera and TD.19 the realm view's controls, and both follow this. The other ten places D75 lists follow the document under every option. Your statements are intent, not an answer.",
+   "today": "The client draws no 3D world yet: client/scripts/realm_view.gd draws a realm flat, with no camera to turn or zoom. TD.10 plans §21.1's orthographic camera in 90-degree steps. Screens v3's diorama uses a perspective camera, 28° wide on the map and 20° in a realm, pitched about 46° (realm_diorama.js:484, :512-514); a realm zooms by pinch and turns by a two-finger twist (:1252-1260), and the rotate and zoom handlers on screen are called by nothing (screens_main.js:185).",
+   "options": [
+    {
+     "key": "A",
+     "label": "§21.1's camera, with buttons",
+     "means": "Orthographic at 35°, turned in 90° steps, with three zoom levels (§21.1). Small rotate and zoom buttons stay on the realm view; pinch and twist work as well.",
+     "consequences": "Meets §21.1 and §20.8 with nothing new written, but puts buttons on a screen your handoff says has none, in the lower band §21.1 keeps for frequent controls.",
+     "numbers": "—",
+     "doc_edit": "None",
+     "build_change": "TD.10's camera as planned; TD.19 adds the buttons."
+    },
+    {
+     "key": "B",
+     "label": "§21.1's camera, one-finger forms off screen",
+     "means": "A's camera, with the design's pinch and twist and no buttons on screen. The three zoom levels are also reached by taps: an island to enter it, a building for its close-up, the map control to leave. A Settings switch shows rotate and zoom buttons, so no action needs two fingers.",
+     "consequences": "The realm view stays as clear as you drew it, and §20.8 holds. Turning the view needs two fingers until the switch is on, which is one tap away in Settings. The camera is §21.1's, not the design's perspective, so the diorama's composition is redrawn for an orthographic view.",
+     "numbers": "—",
+     "doc_edit": "§23.5: a row 'Rotate and zoom | Two fingers only | Pinch and twist, with taps for the zoom levels and a Settings switch for buttons | 20.8'.",
+     "build_change": "TD.10's camera as planned; TD.19 adds the taps and the switch."
+    },
+    {
+     "key": "C",
+     "label": "The design's camera",
+     "means": "Perspective, pitched about 46°, turned freely by the twist, as drawn; §21.1's camera sentence follows the design. The one-finger forms are as in B, since §20.8 asks for them under any camera.",
+     "consequences": "The world looks as you drew it. §21.1's camera is rewritten, and TD.10's camera and its tile picking change from orthographic to perspective.",
+     "numbers": "Drawn: 28° wide on the map and 20° in a realm, pitched about 46°.",
+     "doc_edit": "§21.1: 'A perspective diorama view pitched about 46° in a tall frame, turned freely, with three zoom levels' in place of the orthographic sentence. §23.5: the same row as B.",
+     "build_change": "TD.10's camera changes to perspective; TD.19 as B."
+    }
+   ],
+   "recommendation": {
+    "option": "B",
+    "confidence": "medium",
+    "rationale": "§21.1 states the camera as numbers, a pitch and a step, which §23.5 lets the document win on. B keeps that camera, keeps the realm view free of buttons as your handoff asks, and meets §20.8 with taps and a switch. A clutters the screen you drew without buttons; C rewrites §21.1 and TD.10's camera for the design's composition, which you can still choose."
+   },
+   "interacts_with": [
+    "D74",
+    "C44",
+    "D91",
+    "D92",
+    "D98"
+   ],
+   "quotes": [
+    {
+     "section": "21.1",
+     "text": "An orthographic diorama view at a 35° pitch in a tall frame, rotatable in 90° steps, with three zoom levels"
+    },
+    {
+     "section": "20.8",
+     "text": "No action needs more than one finger; nothing needs a fast tap, a double tap or a drag that can't also be done as two taps"
+    },
+    {
+     "section": "23.5",
+     "text": "The designs carry the look: layout, art, motion, the models and the icons."
+    }
+   ],
+   "also_needed": "Whether §21.8's 150 to 250 ms covers camera moves such as the dive into a realm (D91)."
+  },
+  "C56": {
+   "id": "C56",
+   "question": "At the second epoch, is the extra slot a third law slot in the Heart, as §18.4 says, or a third crown slot, as §14.9's table says?",
+   "why_it_matters": "v3.6 states it both ways, and the two are different slots: a crown law works in every realm at double stability, and a slot in the Heart holds a law for the Heart alone. Epochs come after launch, so no launch work waits on it; it is here so the next version of the document says one thing.",
+   "today": "Nothing: neither the server nor the client has epochs. TD.20 draws the Heart's two realm slots and the Spire's crown slots from the server, so either answer changes the server and not the screen. Screens v3 draws a third slot marked Locked in the Heart (D75's Heart row, screens_main.js:340); under A, that is the slot the second epoch opens after launch.",
+   "options": [
+    {
+     "key": "A",
+     "label": "A third law slot in the Heart (§18.4)",
+     "means": "From the second epoch the Heart holds three realm laws; the Spire keeps its two crown slots.",
+     "consequences": "One more law in one realm, at a realm law's cost. With three laws of its own the Heart can carry a chord without a crown law.",
+     "numbers": "Heart slots 2 to 3; crown slots stay 2.",
+     "doc_edit": "§14.9's Take an epoch row: '+8% stability capacity, and a third law slot in the Heart at the second epoch'.",
+     "build_change": "None before launch."
+    },
+    {
+     "key": "B",
+     "label": "A third crown slot (§14.9)",
+     "means": "From the second epoch the Spire opens a third crown slot; the Heart keeps two.",
+     "consequences": "One more law in every realm at once, at double stability, out of a capacity that grew by 8%.",
+     "numbers": "Crown slots 2 to 3; Heart slots stay 2.",
+     "doc_edit": "§18.4: 'the second epoch adds a third crown slot'.",
+     "build_change": "None before launch."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "confidence": "medium",
+    "rationale": "Epochs are §18.4's to state, and §14.9's table sums them up, so the table follows the section. A grows one realm; B grows every realm at once, the larger reward, which you can still choose."
+   },
+   "interacts_with": [
+    "D75"
+   ],
+   "quotes": [
+    {
+     "section": "18.4",
+     "text": "Each new epoch raises stability capacity by 8%, and the second epoch adds a third law slot in the Heart."
+    },
+    {
+     "section": "14.9",
+     "text": "+8% stability capacity, and a third crown slot at the second epoch"
+    },
+    {
+     "section": "5.1",
+     "text": "A crown law works in every realm of its universe, including the Heart, and costs double stability. The Spire opens 1 crown slot at Spire level 2 and a second at Spire level 5."
+    }
+   ],
+   "also_needed": "Nothing."
+  },
+  "G70": {
+   "id": "G70",
+   "question": "Which raids open a Trace: each raid that was not foiled and not past the raider's twenty paid raids that week, as built; each raid that was not foiled; or every raid, as your fix brief reads?",
+   "why_it_matters": "§12.3 gives a Trace to a player 'robbed' in the last 24 hours, and §13.2 makes theft one-way, so no raid robs anyone and no section says which raids count. The answer decides who gets a free scout and no entry fee against their raider, and what the defence report offers. Your fix brief says 'The answer to a raid is Trace' (screen-review.md:365) and gives every raid report 'a Trace button, live for 24 hours' (:435). That is intent, not an answer.",
+   "today": "server/src/matchmaking.mjs traceable() (lines 157-169) opens a Trace for a validated raid that was not foiled and was not cut by the raider's week cap. The week-cap condition (line 165) carries out your answer to G20 (C: raids past the twentieth pay no haul); server/test/service.test.mjs:325 pins it ('no Trace opened for the raider by a raid that took nothing') and server/README.md:133 states it. Screens v3's defence log agrees on 'not foiled' (screens_meta.js:592): Kofi's raid, which got out, and Marta's, a Partial the design tags 'HELD' (G69), offer a Trace; Ines's and Aiko's, where no loot got out, offer none. TD.66 offers Trace for each raid traceable() returns.",
+   "options": [
+    {
+     "key": "A",
+     "label": "Not foiled, and within the raider's paid raids (build)",
+     "means": "A raid on your island opens a Trace when it was not foiled and was not past the raider's twenty paid raids that week. Under G20's answer that raid pays nothing, as a foiled one does, so a raid that took nothing opens nothing.",
+     "consequences": "One rule with G20: Trace answers a raid that paid its raider. The defender cannot see the raider's week count, so the report says whether a Trace is open rather than leaving them to work it out. Nothing in the build changes.",
+     "numbers": "A raider meets the cap only past 20 paid raids in a week (G20 C); a regular player (14 a week) and a casual one (7) never do.",
+     "doc_edit": "§12.3: 'Trace: within 24 hours of a raid on their island that was not foiled and was within the raider's twenty paid raids that week (9.6), a player can target the raider once, with a free scout and no entry fee.'",
+     "build_change": "none: this is what the build does"
+    },
+    {
+     "key": "B",
+     "label": "Every raid that was not foiled",
+     "means": "A raid on your island opens a Trace when it was not foiled, whatever the raider's week count.",
+     "consequences": "The rule a defender can read off the report's outcome, and the one the design's defence log draws. A raid past the raider's twentieth, which paid them nothing, still opens a Trace against them.",
+     "numbers": "—",
+     "doc_edit": "§12.3: 'Trace: within 24 hours of a raid on their island that was not foiled, a player can target the raider once, with a free scout and no entry fee.'",
+     "build_change": "server/src/matchmaking.mjs traceable(): drop the week-cap condition (line 165); server/test/service.test.mjs:325's last assertion and server/README.md:133 change with it."
+    },
+    {
+     "key": "C",
+     "label": "Every raid (your fix brief)",
+     "means": "Any validated raid on your island opens a Trace, foiled ones included.",
+     "consequences": "The widest reading, and the one your fix brief states. A defender whose defence held still gets a free scout and no fee against the raider, so a foiled raid rewards the defender twice: §9.4's defence reward and a free raid back.",
+     "numbers": "—",
+     "doc_edit": "§12.3: 'Trace: within 24 hours of any raid on their island, a player can target the raider once, with a free scout and no entry fee.'",
+     "build_change": "server/src/matchmaking.mjs traceable(): drop the foiled and week-cap conditions; the G20 test and server/README.md:133 change; TD.66's gate drops 'a foiled raid offers no Trace'."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "confidence": "medium",
+    "rationale": "It is what the build does and what your answer to G20 implies: a raid past the twentieth pays nothing, as a foiled one does, and neither opens a Trace. §12.3 only needs the clause written. B is the rule a defender can check from the outcome alone, at the cost of a Trace against a raid that paid nothing. C follows your fix brief, but gives a held defence a free raid back on top of its reward."
+   },
+   "interacts_with": [
+    "G20",
+    "G69",
+    "G57"
+   ],
+   "quotes": [
+    {
+     "section": "12.3",
+     "text": "Trace: within 24 hours of being robbed, a player can target the raider once, with a free scout and no entry fee."
+    },
+    {
+     "section": "13.2",
+     "text": "theft is one-way and a defender loses nothing"
+    },
+    {
+     "section": "12.9",
+     "text": "Some caught; some loot out"
+    }
+   ],
+   "also_needed": "Nothing."
+  },
+  "C57": {
+   "id": "C57",
+   "question": "Does the heist draw one guard's vision cone at a time, as §21.12 says, or the cone of every guard the crew can see, as §12.6 and §21.6 say?",
+   "why_it_matters": "v3.6 says both. §12.6 keeps 'the vision cones and awareness of guards the crew can see' always on screen, and §21.6 has 'a soft fan of light' show each guard's cone. §21.12 draws the selected guard's cone and only the facing of the others, because 'Five overlapping cones on a phone is noise', with sharp edges and no gradients. Your fix brief asks that 'Every visible guard shows its vision cone and an awareness meter' (screen-review.md:387, and :125). That is intent, not an answer.",
+   "today": "The client's flat heist view draws one guard's cone, the first guard on its feet unless another is selected (client/scripts/realm_view.gd:33). Screens v3's heist draws the focused guard's full cone and the others' facing (docs/analysis/screens-v3/screens-heist-result.md §1.2). TD.17 and TD.42 build §21.12's reading, with the other one token away.",
+   "options": [
+    {
+     "key": "A",
+     "label": "One cone at a time (§21.12)",
+     "means": "The selected guard's cone is drawn, in sharp tiers; every other guard the crew can see shows its facing and its awareness.",
+     "consequences": "The screen stays readable with several guards in view, which is §21.12's stated reason, and the build and the design already draw it. A player sees one guard's reach at a time and selects a guard to see another's.",
+     "numbers": "One cone drawn at a time.",
+     "doc_edit": "§12.6's always-on list: 'the selected guard's vision cone, and the facing and awareness of the other guards the crew can see (21.12)'. §21.6: 'a fan of light shows the selected guard's vision cone (21.12)'.",
+     "build_change": "none: this is what the build does"
+    },
+    {
+     "key": "B",
+     "label": "Every visible guard's cone (§12.6, your fix brief)",
+     "means": "Every guard the crew can see has its cone drawn, with its awareness, in sharp tiers.",
+     "consequences": "Every guard's reach is in view at once, as your fix brief asks. With several guards in view the cones overlap, which §21.12 calls noise on a phone.",
+     "numbers": "As many cones as guards in view.",
+     "doc_edit": "§21.12: 'One shape at a time. The selected guard's vision is drawn; the others show only their facing. Five overlapping cones on a phone is noise.' struck. §21.6's 'soft fan' becomes sharp-edged, as §21.12's second rule says.",
+     "build_change": "client/scripts/realm_view.gd draws every visible guard's cone; TD.17's and TD.42's gates change with it."
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "confidence": "medium",
+    "rationale": "§21.12 is the section written for this question, with its reason and its source, and the build and the design both draw it. Every visible guard still shows its awareness, so the half of §12.6 that warns the player holds. B is what your fix brief asks for; choose it if seeing every reach at once matters more than a clear screen."
+   },
+   "interacts_with": [],
+   "quotes": [
+    {
+     "section": "12.6",
+     "text": "Always on screen: the clock, the realm's alarm meter, the vision cones and awareness of guards the crew can see"
+    },
+    {
+     "section": "21.6",
+     "text": "Guards on screen: a soft fan of light shows each guard's vision cone"
+    },
+    {
+     "section": "21.12",
+     "text": "One shape at a time. The selected guard's vision is drawn; the others show only their facing. Five overlapping cones on a phone is noise."
+    },
+    {
+     "section": "21.12",
+     "text": "Sharp edges, no gradients."
+    }
+   ],
+   "also_needed": "Nothing."
   }
  }
 }
