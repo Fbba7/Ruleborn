@@ -9,12 +9,12 @@
       "Flow",
       "Echo"
     ],
-    "tier_1": "Walls and wards bounce back 50% of what hits them, including characters.",
+    "tier_1": "Walls and wards bounce back 50% of what hits them, including characters. Nothing walks into a wall except a slide, and a slide needs Frictionless, which with Bounce is always Pinball (8.4): a character’s rebound is Pinball’s, off every wall. Bounce alone returns half of a blow on a ward to the one who struck it. Wardens absorb both.",
     "tiers_2_3": "65%, 80%",
     "movement": "Squash-and-stretch rebounds off walls with a springy boing.",
     "world": "Walls wobble like jelly when touched.",
-    "raider_use": "Ricochet past a guard you cannot out-fight.",
-    "defender_use": "Line wards along walls so a bounce lands the crew in them.",
+    "raider_use": "With Frictionless, ricochet past a guard you cannot out-fight (Pinball); alone, strike wards with care, since half the blow comes back.",
+    "defender_use": "With Frictionless, line wards along walls so a Pinball rebound lands the crew in them; alone, it makes every ward hit back.",
     "weakness": "Wardens are heavy enough to absorb a rebound.",
     "sound": "a rising whistle and a soft thump on landing",
     "engine_rung": "Parameter",
@@ -131,7 +131,7 @@
       "Flow",
       "Spark"
     ],
-    "tier_1": "Anything moving keeps sliding until it hits something; top speed +20%.",
+    "tier_1": "Anything moving keeps sliding until it hits something; top speed +20%. The crew slides; guards do not, and the speed bonus is the crew’s. A slide ends at a wall, a feature that blocks walking, a Halt order or the realm’s edge.",
     "tiers_2_3": "Top speed +30%, +40%",
     "movement": "Skating glides with arms out for balance; spin-stops against walls.",
     "world": "Glossy ground with reflections.",
@@ -418,7 +418,7 @@
       "Veil",
       "Hush"
     ],
-    "tier_1": "Wards and abilities take effect 3 seconds after they are triggered.",
+    "tier_1": "Wards and abilities take effect, and guards change state, 3 seconds after they are triggered.",
     "tiers_2_3": "3.5 s, 4 s",
     "movement": "Characters flinch a beat late; effects land after a pause.",
     "world": "Ripples linger around anything triggered.",
@@ -560,7 +560,7 @@
     "notes": [
       "Glow"
     ],
-    "tier_1": "Bands of light sweep the realm every 10 seconds. Inside a band everyone can be seen from twice as far; between bands, vision halves.",
+    "tier_1": "Bands of light sweep the realm every 10 seconds. Inside a band everyone can be seen from twice as far; between bands, vision halves. One band two rows deep crosses the realm from north to south each period; at tiers II and III it is three and four rows deep.",
     "tiers_2_3": "Wider bands; every 8 s",
     "movement": "Characters wait at the edge of a light band, then dash.",
     "world": "Ribbons of light sweep across the ground.",
@@ -580,7 +580,7 @@
     "notes": [
       "Spark"
     ],
-    "tier_1": "Every hit jumps to a second target within 3 tiles at 50% strength.",
+    "tier_1": "Every hit jumps to a second target within 3 tiles at 50% strength. The second target is the nearest character on the struck one’s side within 3 tiles; a jump does not jump again, and a blow on a structure does not jump.",
     "tiers_2_3": "60%, 70%",
     "movement": "Hair stands on end; arcs jump between neighbours when hit.",
     "world": "Small arcs between metal props.",
@@ -600,7 +600,7 @@
     "notes": [
       "Spark"
     ],
-    "tier_1": "Moving builds charge; after 5 tiles, the next touch stuns for half a second.",
+    "tier_1": "Moving builds charge; after 5 tiles, the next touch stuns for half a second. A touch is sharing a tile or a side with another character; one charge stuns the nearest one touched, ally or not, and is spent.",
     "tiers_2_3": "0.75 s, 1 s",
     "movement": "Fur and hair frizz with every step; a zap pose on contact.",
     "world": "Crackling motes over the ground.",
@@ -766,7 +766,7 @@
       "Bloom",
       "Weight"
     ],
-    "tier_1": "Touching walls or hedges costs 5% health.",
+    "tier_1": "Touching walls or hedges costs 5% health. A touch is standing on or beside a wall or a live hedge, charged once a second; the Vault and pylons are structures, not walls.",
     "tiers_2_3": "7%, 9%",
     "movement": "Characters flinch away from walls and hop around hedges.",
     "world": "Thorny vines cover walls and hedges.",
@@ -869,7 +869,7 @@
       "Glow",
       "Echo"
     ],
-    "tier_1": "When one guard raises the alarm, every guard in the universe hears it.",
+    "tier_1": "When one guard is alerted, every guard in the universe hears it.",
     "tiers_2_3": "Guards also move 10%, 20% faster when alerted",
     "movement": "Guards cup their ears; an alarm travels as a visible wave.",
     "world": "Whispering wind lines drift between guards.",
@@ -889,7 +889,7 @@
     "notes": [
       "Echo"
     ],
-    "tier_1": "Revival (7.3): knocked-out characters and guards return once, at N = 60%.",
+    "tier_1": "Revival (7.3): knocked-out characters and guards return once, at N = 60%. The return is at once, where it fell, and what it carried is already dropped.",
     "tiers_2_3": "70%, 80%",
     "movement": "Knocked-out characters rise as translucent echoes that float a little.",
     "world": "Soft chimes; faint silhouettes.",
@@ -930,7 +930,7 @@
     "notes": [
       "Veil"
     ],
-    "tier_1": "A character about to be knocked out swaps places with its nearest ally, who takes half the blow.",
+    "tier_1": "A character about to be knocked out swaps places with its nearest ally, who takes half the blow. Once per character, as every Revival source is (7.3); the one who swaps takes none of the blow, and only a hit sets it off, never a ward.",
     "tiers_2_3": "Ally takes 40%, 30%",
     "movement": "A magenta swirl as two characters trade places.",
     "world": "Wisps orbit every character.",

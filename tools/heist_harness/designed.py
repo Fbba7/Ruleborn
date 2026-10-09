@@ -104,7 +104,7 @@ WARD_KINDS = ("Time Snare", "Gravity Well", "Lantern Glare")
 
 
 def designed(seed: int = 0, realm_level: int = 3, layers=frozenset(),
-             rules: str = "v3.4") -> Island:
+             rules: str = "v3.7") -> Island:
     """The hand-built island, ablated the same way `generate` is.
 
     The layout does not vary with the seed — there is one designed island, and

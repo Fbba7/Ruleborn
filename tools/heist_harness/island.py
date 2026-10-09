@@ -88,7 +88,11 @@ WARD_KINDS = ("Time Snare", "Gravity Well", "Lantern Glare")
 #: reach (§12.6), and a ward's sensor ignores the crew member disarming it
 #: (§10.3) — and is now the default; "v3.3" keeps the whole-Heart call and
 #: the literal G16 reading, so D57's, F33's and F34's numbers reproduce.
-RULES = ("v3.2", "v3.3", "v3.4")
+#: "v3.7" is v3.4 with §12.17's realm's watch, guards at realm levels 1 to 3
+#: tuned so §5.2's budget lands in §13.2's band, and is now the default; "v3.4"
+#: keeps full-strength guards at every level, so F55's numbers reproduce. The
+#: budget itself is design_facts' at every version but v3.2's.
+RULES = ("v3.2", "v3.3", "v3.4", "v3.7")
 
 
 @dataclass
@@ -107,7 +111,7 @@ class Ward:
     spent: bool = False
     disarmed: bool = False
     reset_at: int = 0
-    rules: str = "v3.4"
+    rules: str = "v3.7"
     #: G18's generous reading of brief 37: the sensor also ignores a crew
     #: member on its way to disarm it, not only while it stands disarming.
     #: The heist sets it (`Heist(disarm_approach=...)`); off is the literal
@@ -158,7 +162,7 @@ class Island:
     ward_budget: int | None = None
     seed: int = 0
     realm_level: int = 3
-    rules: str = "v3.4"
+    rules: str = "v3.7"
 
     def at(self, x: int, y: int) -> str:
         if not (0 <= x < self.width and 0 <= y < self.height):
@@ -222,16 +226,16 @@ class Island:
                         f"island {self.seed}: a {p.role} patrols through {self.at(wx, wy)}")
 
 
-#: §5.2's guard posts by realm level: one at levels 1 and 2, rising to three.
-def POSTS(realm_level: int, rules: str = "v3.4") -> int:
-    """§5.2's guard posts by realm level (v3.3: 1, 1, 2, 3 and 3)."""
+#: §5.2's guard posts by realm level: one, except two at level 3 (v3.7).
+def POSTS(realm_level: int, rules: str = "v3.7") -> int:
+    """§5.2's guard posts by realm level (v3.7: 1, 1, 2, 1 and 1)."""
     if rules == "v3.2":
         return 1 + (realm_level - 1) // 2
     return GUARD_POSTS[realm_level - 1]
 
 
-def WARDS(realm_level: int, rules: str = "v3.4") -> int:
-    """§5.2's ward limit by realm level (v3.3: 8, 8, 6, 7 and 8; v3.2: three
+def WARDS(realm_level: int, rules: str = "v3.7") -> int:
+    """§5.2's ward limit by realm level (v3.7: 8, 8, 6, 2 and 0; v3.2: three
     plus the realm level)."""
     if rules == "v3.2":
         return 3 + realm_level
@@ -247,7 +251,7 @@ ALL_LAYERS = frozenset(LAYERS)
 def generate(seed: int, realm_level: int = 3, layers=ALL_LAYERS,
              shaped: bool | int = False, posts: int | None = None,
              post_level: int = 1, wards: int | None = None,
-             rules: str = "v3.4", ward_kinds: tuple | None = None) -> Island:
+             rules: str = "v3.7", ward_kinds: tuple | None = None) -> Island:
     """A small realm, laid out so a route exists and a guard can see it.
 
     §5.2 gives realm grids by level; level 3 is 12x12. The default layout is

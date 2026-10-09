@@ -58,12 +58,11 @@ use crate::sha256::sha256;
 
 pub const MAGIC: [u8; 4] = *b"RBI1";
 
-/// §5.2's budgets by realm level 1 to 5: "the smaller of the wards it needs to
-/// reach its hold band and eight … 8, 8, 6, 7 and 8"; guard posts "Levels 3
-/// to 5 keep 2, 3 and 3", with one at levels 1 and 2; and the law slots in
-/// its table. `content_gate.py` checks all three against `design_facts`.
-pub const WARD_LIMITS: [u8; 5] = [8, 8, 6, 7, 8];
-pub const GUARD_POSTS: [u8; 5] = [1, 1, 2, 3, 3];
+/// §5.2's budgets by realm level 1 to 5 (v3.7): "the smaller of the wards it
+/// needs to reach its hold band and eight … 8, 8, 6, 2 and 0", on "1, 1, 2, 1
+/// and 1" guard posts (10.2); and the law slots in its table. `content_gate.py` checks all three against `design_facts`.
+pub const WARD_LIMITS: [u8; 5] = [8, 8, 6, 2, 0];
+pub const GUARD_POSTS: [u8; 5] = [1, 1, 2, 1, 1];
 pub const LAW_SLOTS: [u8; 5] = [1, 1, 2, 2, 3];
 
 

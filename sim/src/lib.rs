@@ -231,6 +231,19 @@ pub const RUNNING: (i32, i32) = (7, 4);
 pub const UNLIT: (i32, i32) = (1, 2);
 pub const PERIPHERAL: (i32, i32) = (1, 2);
 
+/// §12.17 (v3.7), "A realm’s watch": "at realm level 1 suspicion fills at 0.6
+/// of the rates above; at level 2 every zone reaches 0.75 as far, and at level
+/// 3 0.7 as far; from level 4 guards see and notice at full strength." By realm
+/// level 1 to 5: (suspicion fill, sight), each a ratio. `content_gate.py`
+/// checks it against `design_facts.REALM_WATCH`.
+pub const REALM_WATCH: [((i32, i32), (i64, i64)); 5] = [
+    ((3, 5), (1, 1)),
+    ((1, 1), (3, 4)),
+    ((1, 1), (7, 10)),
+    ((1, 1), (1, 1)),
+    ((1, 1), (1, 1)),
+];
+
 /// How fast a crouched or running crew member moves against §11.1's speed.
 ///
 /// §12.17 (v3.3, G13): "crouched, a crew member moves at half its role's
@@ -733,6 +746,9 @@ pub struct World {
     /// then the crew stands where `on_ground` put it, which a replay the
     /// server accepts never simulates past tick 0 (`verify_on`).
     pub landing: Option<grid::TileIndex>,
+    /// §12.17's realm's watch for this realm's level: (suspicion fill, sight).
+    /// "The watch belongs to the realm, not the guard."
+    pub watch: ((i32, i32), (i64, i64)),
 }
 
 impl World {
@@ -842,6 +858,7 @@ impl World {
             cracked: 0,
             era: None,
             landing: None,
+            watch: REALM_WATCH[(island.realm_level.clamp(1, 5) - 1) as usize],
         }
     }
 
@@ -1436,8 +1453,8 @@ impl World {
         };
         let (mut num, mut den) = raider.gait.noticed();
         let (fn_, fd) = self.sheet.factor(Param::SuspicionFill);
-        num *= fn_ as i32;
-        den *= fd as i32;
+        num *= fn_ as i32 * self.watch.0 .0;
+        den *= fd as i32 * self.watch.0 .1;
         if self.unlit(to) {
             num *= UNLIT.0;
             den *= UNLIT.1;
@@ -1556,6 +1573,8 @@ impl World {
     /// lit once a sweep, and the period is the law's "every 10 seconds".
     fn sight_at(&self, tile: grid::TileIndex) -> (i64, i64) {
         let (n, d) = self.sheet.factor(Param::SightRange);
+        // The realm's watch scales every zone, as a law that shortens sight does.
+        let (n, d) = (n * self.watch.1 .0, d * self.watch.1 .1);
         match self.in_band(tile) {
             None => (n, d),
             Some(true) => (n * 2, d),

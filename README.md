@@ -11,7 +11,7 @@ Native mobile (iPhone and Android), Godot (4.5 in the client today; v3.5 pins
 
 ## Status
 
-**Pre-production — design document at v3.6, the screens and characters designed (Screens v3); the simulation core, the server and the client have started.**
+**Pre-production — design document at v3.7, every recorded decision written in, the screens and characters designed (Screens v3); the simulation core, the server and the client have started.**
 
 ### Can the drawing start?
 
@@ -33,6 +33,20 @@ patrol positions), and handed the realms' one to this repository: §32.9's full
 economy re-run. That run is done, so the realms now wait on the document taking
 its tables.
 
+**v3.7 writes every decision in.** The owner's 47 recorded answers are now in
+the document (§32.8 lists them), and each of the 46 decisions still open takes
+the option its brief recommended — settled by the document's own rule, not
+answered by the owner, and the brief shows the two apart. Its balance pass
+changes the game: wards 8, 8, 6, 2 and 0 by realm level on 1, 1, 2, 1 and 1
+posts, with guards at realm levels 1 to 3 tuned by §12.17's realm's watch, now
+built in the simulation and the harness (every level holds 30 to 45% in the
+harness); one raider-success band of 55 to 70%; raw replays kept 90 days; and a
+write budget per kind of player. Read item by item by six readers, v3.7 closes
+87 of the 139 items open against v3.6, settles the document under 42 more whose
+build remains, and partly settles ten; reading it against itself and the build
+found 25 new items, almost all with their edit drafted (roadmap TD.75), and one,
+C58, that the re-run figures it quotes match no single run (TD.72).
+
 **v3.6 records the owner's designs.** Screens v3, made in Claude Design, holds
 28 designed screens, 43 character and creature sheets with 3D models and 393
 icons, and §23.5 makes it the visual reference with the document winning on every
@@ -50,10 +64,10 @@ against itself, each a decision
 v3.6 itself answers none of the 70 items open against v3.4, narrows G28 and F37,
 and reopens C11.
 
-Five versions have now answered the audit. **111 of 290 register items are fixed
-in the document itself**, the latest 15 by v3.4. 139 are still open, 68 of them
-in the v3.6 layer: 58 from Screens v3, four from v3.6 against the build, four
-from reading the owner's design handoff, and two found folding it in.
+Seven versions have now answered the audit. **198 of 315 register items are fixed
+in the document itself**, the latest 87 by v3.7. 77 are still open: 52 of the
+139 open against v3.6 (42 waiting on the build, ten partly done with their edits
+drafted) and 25 found reading v3.7.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -183,7 +197,7 @@ is done. In short:
 
 ```
 docs/
-  design/     the design document at v3.6, with every earlier version beside it, plus greppable extracts
+  design/     the design document at v3.7, with every earlier version beside it, plus greppable extracts
   analysis/   the deep analysis of that document — start here
 content/       the twelve content tables as data, plus the reconciled detection spec
 docs/design/spec/   the reconciled specification, one file per system
@@ -272,7 +286,7 @@ million monthly players.
 rewards, no engagement-tuned matchmaking — with the refusals written down so they
 cannot creep back in.
 
-Full detail: [`docs/design/ruleborn-game-design-v3.6.html`](docs/design/ruleborn-game-design-v3.6.html).
+Full detail: [`docs/design/ruleborn-game-design-v3.7.html`](docs/design/ruleborn-game-design-v3.7.html).
 
 ## Checks
 
@@ -289,8 +303,8 @@ that list shrinks as the document is reconciled.
 ```bash
 # regenerate the greppable text extract from the HTML design document
 python3 tools/extract_design_doc.py \
-    docs/design/ruleborn-game-design-v3.6.html \
-    docs/design/ruleborn-game-design-v3.6.txt
+    docs/design/ruleborn-game-design-v3.7.html \
+    docs/design/ruleborn-game-design-v3.7.txt
 
 # machine-check the design document: v3.1's own checks and this repository's,
 # in one verdict. Failures tracked by an open register item do not break the build.
@@ -323,12 +337,12 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 290 tracked items with section references and status:
+document, as 315 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 120 are drafted across 68
-items, and every quoted sentence is checked against v3.6 by
+the sentence as it stands today, and what to put there. 198 are drafted across 97
+items, and every quoted sentence is checked against v3.7 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no
 edit at all.
@@ -344,12 +358,10 @@ options, their numbers, what the build does today and a recommendation, in
 the order to decide them: **https://claude.ai/artifact/YZcD1uH5xtpFznqncRpt8g**
 
 **47 are answered** (25–26 September 2026): eight picked on the page, one in
-the owner's own words, the rest accepted as recommended. **46 are open**: 36
-found reading v3.6 and Screens v3 against each other and the build, and ten
-found since: **F56** and **G43** building the home economy, **F55** re-running
-§13.2's table, **G44** in the security briefing, **C55**, **D98**, **G70** and
-**D75**'s camera and controls reading the owner's design handoff, and **C56**
-and **C57** found folding it in. The answers are on the page and in
+the owner's own words, the rest accepted as recommended; v3.7 writes all of them
+in. **46 are settled by v3.7**, which takes the option each brief recommended:
+the page shows them apart from the owner's answers, with where v3.7 wrote each,
+and each can still be overruled there. **None is open.** The answers are on the page and in
 `docs/decisions/answers.json`, with where each one's build change stands; the
 audit shows a decided item as waiting on that build change, then on the
 document. A new decision is picked on the page, where it is saved, and Claude

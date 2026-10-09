@@ -49,7 +49,7 @@ def hold_rate(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
               response_model: str = "published",
               clock_pct: int = 100, exposed_pct: int = 100,
               island_fn=generate, crack_noise: bool | None = None,
-              rules: str = "v3.4") -> float:
+              rules: str = "v3.7") -> float:
     """The share of raids this combination of layers turns back."""
     cls = POLICIES[policy]
     held = 0
@@ -80,7 +80,7 @@ def haul_denied(subset: frozenset, n: int, realm_level: int, seed0: int = 0,
                 response_model: str = "published",
                 baseline: float | None = None,
                 clock_pct: int = 100, exposed_pct: int = 100,
-                island_fn=generate, rules: str = "v3.4",
+                island_fn=generate, rules: str = "v3.7",
                 crack_noise: bool | None = None) -> float:
     """The share of the raider's potential haul this combination of layers denies.
 

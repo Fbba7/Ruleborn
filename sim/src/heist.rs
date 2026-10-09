@@ -186,8 +186,8 @@ pub enum WardKind {
     GravityWell = 3,
     /// Triggered: "Freezes the first character to step on it for 2.5 seconds."
     TimeSnare = 4,
-    /// Triggered: "Shows the crew to every guard in the realm for 5 seconds
-    /// and blinds them for 2."
+    /// Triggered (v3.7): "Shows the crew to every guard within 4 m of it for 5
+    /// seconds (8 m from alarm level 4, 12.17) and blinds the crew for 2."
     LanternGlare = 5,
 }
 
@@ -225,8 +225,8 @@ pub const SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 5 / 2;
 pub const GLARE_REVEAL_TICKS: u32 = TICKS_PER_SECOND * 5;
 /// §10.3 (v3.3), Lantern Glare's sensor: "a crew member comes within 2 tiles".
 pub const GLARE_RADIUS: i32 = 2;
-/// "blinds them for 2": the crew, read as unable to act — the only sense the
-/// simulation has in which a crew member sees.
+/// "blinds the crew for 2" (v3.7; v3.6's "them" was read the same way): unable
+/// to act — the only sense the simulation has in which a crew member sees.
 pub const GLARE_BLIND_TICKS: u32 = TICKS_PER_SECOND * 2;
 /// §10.3 (v3.3): "The disarmer stands on the ward's tile for 15 seconds at
 /// every ward level ... and cannot move, hide or use an ability until it

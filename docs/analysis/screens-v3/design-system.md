@@ -1,6 +1,6 @@
 # Screens v3: the design system, against v3.6 and the client
 
-What this covers: the colour, type, shape, motion, component and icon system of Screens v3 (the owner's Claude Design artifact), compared item by item with the client's `client/ui/tokens.json`, `client/ui/tokens.gd`, `client/scripts/ui.gd` and `client/scripts/palette.gd`, checked against v3.6 §21 and §20.8, with measured contrast, and a plan to port it to Godot.
+What this covers: the colour, type, shape, motion, component and icon system of Screens v3 (the owner's Claude Design artifact), compared item by item with the client's `client/ui/tokens.json`, `client/ui/tokens.gd`, `client/scripts/ui.gd` and `client/scripts/palette.gd`, compared with §21 and §20.8 of v3.6, the document when this was written, with measured contrast, and a plan to port it to Godot.
 
 Rule applied throughout (v3.6 §23.5): the document wins wherever it states a rule, a number or a piece of text; where it is silent and a design breaks no rule, the design is adopted; a design never adds a mechanic. §23.5's own list of differences is not repeated as a finding here; where this report touches one of its rows (text size, the colour-blind panel's Life gem) it says so.
 

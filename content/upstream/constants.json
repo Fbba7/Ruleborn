@@ -68,7 +68,7 @@
  "rank_split": {
   "value": "18 / 12 / 12 / 6",
   "unit": "laws by rank in the full table: common, uncommon, rare, deep",
-  "home": "10.4 The Library",
+  "home": "7.9 Rank is a strength ladder, paid for in pages",
   "pattern": "(\\d+) common, (\\d+) uncommon, (\\d+) rare and (\\d+) deep"
  },
  "page_costs": {
@@ -84,7 +84,7 @@
   "pattern": "(?:loads?|loaded) (?:at )?(\\d+) (?:units )?a second(?! instead)"
  },
  "birth_rate": {
-  "value": "1.3265",
+  "value": "1.3455",
   "unit": "birth price growth: 100 × rate^owned Essence",
   "home": "9.5 Price list",
   "pattern": "100 × (1\\.\\d+)"

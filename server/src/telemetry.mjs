@@ -32,7 +32,7 @@ const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** §24.3's "30 to 90 days": the longest, so analysis has the most (G29). */
-export const RAW_DAYS = facts.RAW_KEEP_DAYS[1];
+export const RAW_DAYS = facts.RAW_KEEP_DAYS;
 
 /** §25.4: surveys "never more than once a quarter per player". The monthly
  *  survey §24 names is a monthly rotating sample, each player at most once a

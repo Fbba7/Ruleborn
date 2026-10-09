@@ -119,7 +119,7 @@ class Policy:
         out = False
         if not island.hides(*tile):
             tx, ty = tile[0] * U + U // 2, tile[1] * U + U // 2
-            reach = heist.sheet.factor("sight_range")
+            reach = heist.sheet.factor("sight_range") * heist.watch[1]
             out = any(zone(g.role, g.x, g.y, g.facing, tx, ty, reach=reach)
                       and (not heist.sheet.flag("hide_behind_walls", 1)
                            or line_of_sight(island, g.x, g.y, tx, ty))
@@ -183,7 +183,7 @@ class Policy:
             a = self.ward_answer_v32
         elif ward.approach and self.ward_answer_approach is not None:
             a = self.ward_answer_approach
-        elif ward.rules == "v3.4" and self.ward_answer_v34 is not None:
+        elif ward.rules in ("v3.4", "v3.7") and self.ward_answer_v34 is not None:
             a = self.ward_answer_v34
         return a.get(ward.kind, "around") if isinstance(a, dict) else a
 
@@ -597,7 +597,7 @@ class Clearing(Optimal):
         g = heist.guards[gi]
         beside = (g.x - taker.x) ** 2 + (g.y - taker.y) ** 2 <= (U * 3 // 2) ** 2
         seen = zone(g.role, g.x, g.y, g.facing, taker.x, taker.y,
-                    reach=heist.sheet.factor("sight_range"))
+                    reach=heist.sheet.factor("sight_range") * heist.watch[1])
         if beside and not seen:
             taker.takedown, taker.path = gi, []
             return self._decide(heist, (heist.crew.index(taker), "clear"),

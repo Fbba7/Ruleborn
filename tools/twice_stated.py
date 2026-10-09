@@ -85,9 +85,8 @@ RESTATING = {
 COVERED = {
     ("7.4", "7.7"): "D39 compares all 240 facts field by field",
     ("21.7", "7.7"): "D39; one of the 48 movement signatures it compares",
-    ("29.1", "5.4"): "D43 checks every appendix row against the section it "
-                     "cites",
-    ("29.1", "9.5"): "D43, the same row-by-row comparison",
+    # v3.7 rewrote 29.1's rows for 5.4 and 9.5 so they no longer restate a
+    # sentence there; D43 still compares every row, and the two exemptions went.
     # The §19 evidence tables summarise a rule in an "In Ruleborn" column
     # and cite its home in the same cell. That is the best shape a restatement
     # can have and it is still not safety — C21 cited its home too. It

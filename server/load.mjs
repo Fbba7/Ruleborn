@@ -205,14 +205,16 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
 
 /** What the measurements do to §24.1's budget and cost table. */
 export function against(result) {
-  const [budget, included, price, freeWrites, freeCpu] = [facts.WRITE_BUDGET, facts.PAID_WRITES_MONTH,
-    facts.WRITE_PRICE_PER_MILLION, facts.FREE_WRITES_DAY, facts.FREE_CPU_MS];
+  // §24.1 (v3.7): "at least 46, 24 and 11 rows a day for engaged, regular and
+  // casual players": the rows written, by this run's archetype.
+  const [budget, included, price, freeWrites, freeCpu] = [facts.WRITE_BUDGET[result.archetype],
+    facts.PAID_WRITES_MONTH, facts.WRITE_PRICE_PER_MILLION, facts.FREE_WRITES_DAY, facts.FREE_CPU_MS];
   // §25.1's gate: "a third of monthly players play on a given day".
   const [dn, dd] = facts.DAILY_SHARE;
   // D1 bills the billed count: rows and their index entries.
   const monthly = (players) => (players * dn / dd) * result.billedRowsPerPlayerDay * 30;
   return {
-    budget, overBudget: +(result.billedRowsPerPlayerDay / budget).toFixed(1),
+    budget, overBudget: +(result.writesPerPlayerDay / budget).toFixed(1),
     freeCpuMs: freeCpu, validationFitsFreePlan: result.validationMs.p95 <= freeCpu,
     freePlanPlayersADay: Math.floor(freeWrites / result.billedRowsPerPlayerDay),
     // Monthly players, a third of them playing on a day, each a day of this
@@ -236,7 +238,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       process.exit(1);
     }
     console.log(`server/load.json matches: ${report.map((r) => `${r.archetype} ${r.billedRowsPerPlayerDay}`).join(", ")} ` +
-                `billed rows a player a day, against §24.1's ${facts.WRITE_BUDGET}`);
+                `billed rows a player a day; written ${report.map((r) => `${r.archetype} ${r.writesPerPlayerDay}`).join(", ")}, ` +
+                `against §24.1's ${report.map((r) => facts.WRITE_BUDGET[r.archetype]).join(", ")}`);
     process.exit(0);
   }
   if (process.argv.includes("--write")) {

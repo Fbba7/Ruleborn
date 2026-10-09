@@ -813,7 +813,7 @@ export class Service {
         WHERE h.token = ?`).get(token);
     if (!h || (h.attacker !== account && h.defender !== account)) throw new Refused(404, "no_such_heist");
     const bytes = h.replay_gone ? null : this.replays.get(h.log_hash);
-    if (!bytes) throw new Refused(410, "replay_no_longer_kept", { days: facts.RAW_KEEP_DAYS[1] });
+    if (!bytes) throw new Refused(410, "replay_no_longer_kept", { days: facts.RAW_KEEP_DAYS });
     return bytes;
   }
 
@@ -847,7 +847,7 @@ export class Service {
   /** §24.3: "Raw replays and logs are kept 30 to 90 days". Past the
    *  longest, a replay goes; its heist row and hashes stay. Idempotent. */
   expireReplays(now = this.now()) {
-    const before = now - facts.RAW_KEEP_DAYS[1] * DAY_MS;
+    const before = now - facts.RAW_KEEP_DAYS * DAY_MS;
     return transaction(this.db, () => {
       const old = this.db.prepare(
         "SELECT token, log_hash FROM heists WHERE replay_gone = 0 AND submitted_at < ?").all(before);

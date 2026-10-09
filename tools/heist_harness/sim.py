@@ -39,6 +39,7 @@ ROLES = {r["name"]: r for r in
 #: function of how far in the Vault is, which is why the harness crosses realms
 #: rather than modelling one.
 from ..design_facts import HEIST_CLOCK                   # 5.4 (D37)
+from ..design_facts import REALM_WATCH                   # 12.17 (v3.7)
 BASE_TICKS = HEIST_CLOCK[0] * TPS
 LINK_TICKS = HEIST_CLOCK[1] * TPS
 MAX_TICKS = HEIST_CLOCK[2] * TPS
@@ -324,7 +325,10 @@ class Heist:
         #: Which document's wards the Heart was built to (island.RULES). The
         #: v3.3 rules the harness also plays by — the assist bonus — follow
         #: it, so a v3.2 island is the v3.2 heist it was measured on.
-        self.rules = getattr(island, "rules", "v3.4")
+        self.rules = getattr(island, "rules", "v3.7")
+        #: §12.17's realm's watch (v3.7): (suspicion fill, sight) for the realm
+        #: level, full strength under the earlier rule sets.
+        self.watch = (REALM_WATCH[realm_level - 1] if self.rules == "v3.7" else (1.0, 1.0))
         #: §12.6 (v3.4): the crack calls the guards within this many metres of
         #: the Vault by the walking path. None is the rules' own — 5 m under
         #: v3.4, the whole Heart before it — and brief 37's sweep sets it.
@@ -478,7 +482,7 @@ class Heist:
         # §12.8 (v3.3): a body is seen as a still crew member lying on its tile
         # would be, so cover hides it; the first guard to see it raises the
         # realm alarm by one. The harness has no realm alarm, so it counts.
-        reach_body = self.sheet.factor("sight_range") * post_sight(g.level)
+        reach_body = self.sheet.factor("sight_range") * self.watch[1] * post_sight(g.level)
         for other in self.guards:
             if not other.down or other.found:
                 continue
@@ -493,10 +497,10 @@ class Heist:
         # this loop runs once per guard per tick for the whole run.
         # §10.2 sells Guardian Post levels as "+10% health and sight". The
         # harness has no guard health, so only the sight half lands here.
-        reach = self.sheet.factor("sight_range") * post_sight(g.level)
+        reach = self.sheet.factor("sight_range") * self.watch[1] * post_sight(g.level)
         walls_hide = self.sheet.flag("hide_behind_walls", 1)
         still_hides = self.sheet.flag("still_is_invisible")
-        fill_factor = self.sheet.factor("suspicion_fill")
+        fill_factor = self.sheet.factor("suspicion_fill") * self.watch[0]
         for m in self.crew:
             if m.out or m.caught:
                 continue

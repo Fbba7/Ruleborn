@@ -381,11 +381,13 @@ def test_an_engaged_player_earns_14_4s_pages():
     assert 20 <= sum(early[90:]) / 30 <= 26, sum(early[90:]) / 30
 
 
-def test_a_birth_costs_1_3265_to_the_number_owned():
-    """§9.5's worked prices: about 1,270 for the 10th and 21,500 for the 20th."""
+def test_a_birth_costs_1_3455_to_the_number_owned():
+    """§9.5's worked prices (v3.7): "about 1,450 for the 10th, 28,100 for the
+    20th, 547,000 for the 30th"."""
     price = lambda n: data.BIRTH_BASE * data.BIRTH_GROWTH_V34 ** (n - 1)
-    assert round(price(10), -1) == 1270
-    assert round(price(20), -2) == 21500
+    assert round(price(10), -1) == 1450
+    assert round(price(20), -2) == 28100
+    assert round(price(30), -3) == 547000
 
 
 def test_finding_strays_fill_the_roster_whatever_a_birth_costs():

@@ -53,7 +53,7 @@
     "name": "Lantern Glare",
     "school": "Spirit",
     "sensor": "Triggered: a crew member comes within 2 tiles",
-    "effect_level_1": "Shows the crew to every guard in the realm for 5 seconds and blinds them for 2. No damage.",
+    "effect_level_1": "Shows the crew to every guard within 4 m of it for 5 seconds (8 m from alarm level 4, 12.17) and blinds the crew for 2. No damage. A fixed reach, which laws that widen the alarm do not change.",
     "scales": "The reveal",
     "resets_after": "20 s",
     "seen": "Hidden until revealed or fired",

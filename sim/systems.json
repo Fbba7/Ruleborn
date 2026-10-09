@@ -172,9 +172,10 @@
       "name": "Detection modifiers",
       "section": "12.17",
       "task": "T5.2",
-      "what": "The corner of the eye at half the rate; crouched halves, running adds three quarters, an unlit tile halves again, multiplied once; still in tall grass is invisible until a guard walks into the tile; gravel and water carry sound further, moss less.",
+      "what": "The corner of the eye at half the rate; crouched halves, running adds three quarters, an unlit tile halves again, multiplied once; still in tall grass is invisible until a guard walks into the tile; gravel and water carry sound further, moss less; and the realm's watch (v3.7): suspicion fills at 0.6 at realm level 1, and every zone reaches 0.75 and 0.7 as far at levels 2 and 3.",
       "tests": [
         "the_corner_of_the_eye_notices_at_half_the_rate",
+        "a_realms_watch_tunes_its_guards_by_realm_level",
         "gait_and_light_multiply_the_rate_once",
         "standing_still_in_tall_grass_hides_until_a_guard_walks_in",
         "gravel_and_water_carry_further_and_moss_less",

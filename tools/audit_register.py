@@ -84,6 +84,14 @@ FOUND_IN_HANDOFF = frozenset({"C55", "D97", "D98", "G70", "C56", "C57"})
 #: reading it: v3.6 against itself, which the handoff's plan brought to light.
 FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 
+#: Found reading v3.7 against itself, against the generated pacing run and the
+#: build, by the six readers who checked every open item against it, and in
+#: installing it. Each was verified against v3.7's text before it went in.
+FOUND_IN_V37 = frozenset({
+    "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
+    "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
+    "G75", "C72", "C73", "G76", "F61"})
+
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
     "D19", "D20", "D21", "D22", "D23",
@@ -9432,6 +9440,404 @@ dict(id="G24", kind="gap", severity="minor", status="open",
          "shortest value applied (or the last), so two laws that set one have "
          "an answer."),
 
+# ===========================================================================
+# Found reading v3.7 (FOUND_IN_V37)
+# ===========================================================================
+#
+# Found by the six readers who checked every open item against v3.7, and in
+# installing it, each verified against v3.7's text before it went in. Where the
+# fix has one obvious reading the edit is drafted (EDITS); v3.7's own rule is
+# to take the recommended option, so none of these waits on the owner.
+
+dict(id="C58", kind="contradiction", severity="significant", status="open",
+     title="v3.7’s re-run figures match no single run, and not the generated "
+           "run it cites",
+     refs=["14.2", "14.3", "14.4", "14.1", "9.5", "27.2", "32.9"],
+     body="§14.2: <em>“The full re-run is done, with every recorded answer built "
+          "— the raid base of 5,000 (9.6), strays at the birth price and the rate "
+          "of 1.3455 (9.5), the Heart at realm level 3 (5.2), the free season lane "
+          "(18.2), the Spire saved for first and 14.1’s stated choices — … an "
+          "engaged player reaches Keeper 24 on day 92, Keeper 28 on day 140 to 144 "
+          "and Keeper 40 on day 349 to 357, and has every building at its highest "
+          "level on day 754 to 782”</em>. §14.3, §14.4, §9.5, §27.2, §32.9 and the "
+          "change note repeat them. <code>docs/design/generated/pacing.md</code>, "
+          "which §14.1 and §14.2 cite and which runs exactly those answers, gives "
+          "Keeper 24 on day 84–88, Keeper 28 on 127–132 and Keeper 40 on 307–321, "
+          "everything built on 586–618 and the 38th character on 587–619; the "
+          "launch 24 on day 29, all 48 on 84–88, and the launch 24 on day 76 for a "
+          "player who never raids (v3.7: 31, 92 and 78). v3.7’s pair never came "
+          "from one run: 349–357 is the re-run before any answer (C19’s earlier "
+          "edit), and 754–782 is F38 B’s run alone, in which Keeper 40 fell on "
+          "day 373–384.<br><br>§14.1’s consequence figures are the pre-answer "
+          "run’s too: <em>“filling the Heart first puts Keeper 40 on day 357, one "
+          "worker to each producer in turn on day 424”</em>, <em>“between day 337 "
+          "and 385 and everything built between day 667 and 788”</em>, and posts "
+          "staffed <em>“past day 1,100”</em>, where the pacing.md it says "
+          "<em>“prints every alternative above”</em> gives 321 against 354, "
+          "305–335 and 577–660, and 557. The birth rate still holds: in "
+          "pacing.md the 38th arrives the day after everything is built. Found "
+          "reading v3.7 against pacing.md, and installing v3.7.",
+     rec="Quote pacing.md in every sentence that stands in for the tables (edits "
+         "drafted); the change note at the top, which is history, says the same "
+         "and goes with them. Printing the tables themselves is C19."),
+
+dict(id="F59", kind="finding", severity="significant", status="open",
+     title="§12.17’s alarm ladder is built for one level of six, so every hold "
+           "v3.7 quotes was measured without it",
+     refs=["12.17", "10.3", "13.2", "5.2", "32.9"],
+     body="§12.17: <em>“The realm alarm itself climbs from 0 to 6 — once every "
+          "30 seconds, once per knocked-out guard discovered … and once each time "
+          "a bell post rings (6.2). Each level adds one new effect”</em>: from 1 "
+          "suspicion empties at half rate, 2 every noise carries 1 m further, 3 "
+          "an Investigating guard searches 20 s, 4 the alarm spreads 8 m, 5 "
+          "another Warden arrives, 6 every guard in the realm searches. "
+          "<code>sim/</code> climbs the level by time and by bodies "
+          "(<code>lib.rs</code>, <code>guard::ALARM_STEP_TICKS</code>), not by "
+          "bells, and applies only level 5’s Warden; the harness "
+          "(<code>tools/heist_harness/sim.py</code>) keeps no realm alarm at all "
+          "(<em>“The harness has no realm alarm, so it counts”</em>). v3.7 now "
+          "ties the Lantern Glare to the ladder: §10.3 <em>“within 4 m of it for 5 "
+          "seconds (8 m from alarm level 4, 12.17)”</em>, the owner’s F33 D wording, "
+          "and <code>guard::GLARE_METRES</code> is 4 at every level.<br><br>So "
+          "§5.2’s and §13.2’s holds, quoted as <em>“the Lantern Glare reaches a "
+          "fixed 4 m”</em>, and every depth figure were measured with no ladder, "
+          "though §32.9’s row says the ladder is <em>“Measured in the same batch "
+          "as the perception alignment; the ladder is fixed and the bands absorb "
+          "it”</em>. Every rung but the Warden makes the guards stronger as the "
+          "clock runs, so the holds are likely low. Found installing v3.7.",
+     rec="Build the ladder whole in sim/ and the harness — the five missing "
+         "effects, a bell’s step, and the Glare’s 8 m from level 4 — then "
+         "re-measure §13.2’s table with it, as §32.9’s row says it was."),
+
+dict(id="G71", kind="gap", severity="minor", status="open",
+     title="The Heart’s watch is not stated, and §5.2 waits to measure its hold "
+           "on rules the paragraph before says are built",
+     refs=["5.2", "12.17", "13.2", "32.9"],
+     body="§5.2: <em>“The Heart counts as realm level 3 for its ward limit, its "
+          "guard posts and its law slots”</em> — not for its guards. §12.17: "
+          "<em>“A realm’s watch. Guards in the three lowest realm levels are tuned "
+          "… at level 3 0.7 as far … The watch belongs to the realm”</em>. So "
+          "whether a Heart guard sees 0.7 as far or at full strength is not said; "
+          "the build gives it level 3’s, because the Heart’s island carries realm "
+          "level 3. The same paragraph: <em>“the Heart’s own hold is measured by "
+          "13.2’s check once the Glare’s fixed reach (10.3) and the silent Vault "
+          "(12.17) are built”</em>, while the paragraph before reports a re-measure "
+          "<em>“with every recorded answer built”</em>, both of them, and "
+          "answers.json marks F33, F35 and F52 built; §32.9’s crack-call row says "
+          "<em>“Re-checked once the Glare’s fixed 4 m reach (10.3) is built”</em>. "
+          "Found installing v3.7.",
+     rec="Say the Heart keeps realm level 3’s watch, as the build does, and that "
+         "its hold waits on the balance pass, not on rules already built (edits "
+         "drafted)."),
+
+dict(id="F60", kind="finding", severity="significant", status="open",
+     title="§13.2’s kit check reads as an existence test, and says nothing of a "
+           "buildable kit that misses the band",
+     refs=["13.2", "31.5", "10.3", "5.2"],
+     body="§13.2: <em>“A build-blocking check (31.5) asserts at every realm level "
+          "that one setting inside the ward budget meets both. It runs over every "
+          "kit of ward kinds a Keeper can build within the budget, not only the "
+          "counts, so a budget a Keeper could spend on one kind — two Lantern "
+          "Glares, say — cannot be certified by the kits that miss the band.”</em> "
+          "§31.5’s row is unchanged: <em>“At every realm level one setting inside "
+          "the ward budget meets both”</em>. A check that passes when one kit "
+          "lands in band certifies a budget whatever a two-Glare kit holds, and "
+          "F52 measured two Glares at a fixed 4 m holding 72.5% at realm level 3, "
+          "before v3.7 tuned its watch. The owner’s F33 D "
+          "asked for the check to cover the kits a Keeper can build; the sentence "
+          "can be read either way, and neither says what happens when a kit "
+          "misses: the band moves, the budget falls, or a ward kind is limited. "
+          "The harness has no kit-wide check yet (F33). Found reading v3.7.",
+     rec="Build the kit-wide check first (F33). If every kit within the budget "
+         "lands in band, write that the check fails on any buildable kit "
+         "outside it; if some kit misses, the measurement says which of the "
+         "three the sentence takes."),
+
+dict(id="C59", kind="contradiction", severity="minor", status="open",
+     title="§21.9 counts the Hatch screen outside §23.2’s list, where it is the "
+           "29th row",
+     refs=["21.9", "23.2"],
+     body="§21.9: <em>“and 29: 23.2’s 28 and the Hatch screen”</em>. §23.2’s launch "
+          "table lists 29 screens, ending <em>“Hatch | Births at a Nursery.”</em> "
+          "The total agrees; the description does not. Found reading v3.7.",
+     rec="§21.9: <em>“29, 23.2’s launch list”</em> (edit drafted)."),
+
+dict(id="G72", kind="gap", severity="minor", status="open",
+     title="Whether the ten Renown heists a week also bound season stars is not "
+           "said, and §18.2’s days assume they do not",
+     refs=["12.9", "18.2"],
+     body="§12.9: <em>“Only a player’s first ten heists of the week … move "
+          "Renown … Season stars follow the same split: a heist earns the raider "
+          "10 stars times its Renown multiplier above”</em>. “The same split” can "
+          "be the raider and defender’s, or the ten. §18.2: <em>“490 stars buy the "
+          "whole track (49 × 10), about day 49 for a regular player’s raids (2 × "
+          "4.97 a day) and day 25 for an engaged one’s”</em>, which counts every "
+          "heist; stopped at ten a week, both finish near day 69. Found reading "
+          "v3.7.",
+     rec="Say stars follow the split on every heist, not only the ten, which "
+         "is what §18.2’s arithmetic assumes (edit drafted)."),
+
+dict(id="C60", kind="contradiction", severity="significant", status="open",
+     title="§24.4 keeps progress in iCloud and Play Games saves beside a "
+           "server-authoritative account, and nothing joins two platforms’ "
+           "sign-ins into one account",
+     refs=["24.4", "24", "24.8"],
+     body="§24.4: <em>“The platform holds the save | Progress syncs through iCloud "
+          "and Google Play Games saved games, which are free to us and use the "
+          "player's own storage.”</em> §24: <em>“Server | Authoritative for every "
+          "resource change”</em> and <em>“Cross-progression | One account across "
+          "iPhone, iPad, Android and later PC, with platform sign-in.”</em> §24.8, "
+          "new in v3.7: <em>“Platform identity — Game Center on iPhone, the "
+          "player’s Google account on Android”</em>. Play Games saved games need a "
+          "Play Games sign-in, which §24.8 no longer uses, and a save in iCloud or "
+          "Play Games cannot carry progress between iPhone and Android. Nothing "
+          "says how a Game Center identity and a Google account become one "
+          "account, and the server has no way to link them. Found reading v3.7.",
+     rec="Progress lives on the server; a player adds the other platform’s "
+         "sign-in from Settings and the server keeps both identities on one "
+         "account (edits drafted)."),
+
+dict(id="C61", kind="contradiction", severity="minor", status="open",
+     title="§9.6 says matchmaking never offers a target three or more below; "
+           "§12.22 says a Trace or a widened list does",
+     refs=["9.6", "12.22"],
+     body="§9.6’s difficulty row: <em>“matchmaking offers nothing three or more "
+          "below (12.22)”</em>. §12.22 step 5: <em>“unreachable through normal "
+          "matchmaking by design. It exists for Trace targets and for a list whose "
+          "Keeper filter has widened (step 4)”</em>. Found reading v3.7.",
+     rec="§9.6: normal matchmaking offers nothing three or more below; a Trace "
+         "or a widened list can (edit drafted)."),
+
+dict(id="C62", kind="contradiction", severity="minor", status="open",
+     title="“Nothing published is deleted” stands beside §20.11’s erasure of an "
+           "under-13 player’s islands",
+     refs=["19.11", "18.6", "20.12", "20.11"],
+     body="§19.11: <em>“player creations are never deleted or overwritten "
+          "(18.6)”</em>; §18.6 and §20.12: <em>“since nothing published is "
+          "deleted”</em>. §20.11, for a player found to be under 13: <em>“their "
+          "islands’ bytes … go at once”</em>, and §20.12: <em>“an under-13 player’s "
+          "are always withdrawn (20.11)”</em>. The legal exception is in one place "
+          "and the absolute rule in three. Found reading v3.7.",
+     rec="Name the exception where the rule is stated (edits drafted)."),
+
+dict(id="C63", kind="contradiction", severity="minor", status="open",
+     title="§13.1’s row is headed “measured weekly” and is read once a season",
+     refs=["13.1"],
+     body="§13.1: <em>“It is measured weekly | The share of players with a session "
+          "in a season’s last seven days who published a changed defence in them, "
+          "read at each season’s close”</em>, and the share rises <em>“by 5 points "
+          "a season”</em>. The window is a week; the reading is a season’s. Found "
+          "reading v3.7.",
+     rec="Head the row <em>“It is measured each season”</em> (edit drafted)."),
+
+dict(id="G73", kind="gap", severity="minor", status="open",
+     title="“Darkness” is read two ways: unlit ground for a landing, the whole "
+           "realm under Glowing dark",
+     refs=["5.4", "8.4", "7.7", "12.17"],
+     body="§5.4: <em>“unless the spot is in fog, darkness or tall grass … "
+          "darkness is the unlit ground 12.17 sees by”</em>. §8.4’s Night runners, "
+          "new in v3.7: <em>“Anyone in darkness moves 30% faster. Glowing dark "
+          "makes the whole realm dark, so the whole realm counts.”</em> §7.7: "
+          "<em>“The realm is dark”</em>. Nothing says whether a landing in a "
+          "Glowing dark realm is hidden, or whether every tile there is §12.17’s "
+          "<em>“unlit tile”</em> that halves noticing. The build reads unlit ground "
+          "only (G40), and every hold was measured that way. Found reading "
+          "v3.7.",
+     rec="Keep §5.4’s darkness the unlit ground, which Glowing dark does not "
+         "change, and its whole realm dark for Night runners only, as built "
+         "and measured (edit drafted)."),
+
+dict(id="C64", kind="contradiction", severity="minor", status="open",
+     title="The heist’s eight-control cap counts neither the clock a ruin pauses "
+           "from nor a one-finger way to zoom out",
+     refs=["12.7", "20.8", "12.6", "21.1", "12.5"],
+     body="§12.7: <em>“Never more than eight things to tap at once”</em>, over "
+          "crew portraits (3 to 5), the Sage, Cast and Get out — eight with a "
+          "crew of five, which §12.5 gives from Keeper level 16 — and <em>“In "
+          "drifting ruins and rehearsals a tap on the clock pauses the heist "
+          "(20.8)”</em>, a ninth. §20.8: <em>“No action needs more than one "
+          "finger: the camera’s pinch and twist also have one-finger forms”</em>, "
+          "listing the home camera’s taps; §12.6: <em>“Pinching zooms out to the "
+          "whole realm”</em> and §21.1 <em>“pinch to see a whole realm (12.6)”</em> "
+          "in the heist, with no tap or button for it. Found reading v3.7.",
+     rec="Say the cap leaves out the ruin’s clock and the zoom button Settings "
+         "can show, and give the heist that button (edits drafted). Counting "
+         "both inside eight would cap a ruin’s crew at four."),
+
+dict(id="C65", kind="contradiction", severity="minor", status="open",
+     title="§32.8 files G35’s minors rule under §20.7, where it is not",
+     refs=["32.8", "17.6", "20.2", "20.7"],
+     body="§32.8: <em>“G35 B | Friends by personal invite; a 13-to-15’s heists "
+          "appear in no feed | 17.6, 20.7”</em>. The rule is in §17.6 (<em>“A "
+          "heist in which either side is 13 to 15 appears in no feed (20.2)”</em>) "
+          "and §20.2’s Profile row; §20.7 has no feed. Found reading v3.7.",
+     rec="§32.8’s row: 17.6, 20.2 (edit drafted)."),
+
+dict(id="C66", kind="contradiction", severity="minor", status="open",
+     title="A stray’s form on a tie is decided two ways",
+     refs=["11.9", "11.10", "11.5", "11.8"],
+     body="§11.10, for a birth: <em>“When they tie, including when the realm "
+          "carries none of the three, the odds are shown before hatching.”</em> "
+          "§11.5: a heist stray’s <em>“school and note set its kind and form as a "
+          "birth’s are set (11.9, 11.10)”</em>, and §11.8 sets the visiting Stray’s "
+          "form <em>“by 11.10’s tie rule”</em>. §11.9: a heist stray’s note sets the "
+          "form, <em>“Echo first on a tie (11.10’s order)”</em> — but 11.10’s order "
+          "puts Hush first (six carriers) and Echo only ahead of Spark and Weight. "
+          "Sleepwalk, a launch law, carries Hush and Echo "
+          "(<code>content/laws.json</code>): its stray is Echo by §11.9, Hush by "
+          "11.10’s order, and shown odds by §11.5 and §11.8. Found reading v3.7.",
+     rec="One rule: a law carrying two of the three, or none, gives even odds "
+         "between them, shown when the stray is offered, as §11.10’s tie rule "
+         "does (edit drafted)."),
+
+dict(id="C67", kind="contradiction", severity="minor", status="open",
+     title="§21.8 checks the home tabs’ fit on the 390-point drawing, not the "
+           "360-point frame the rules hold on",
+     refs=["21.8", "21.1"],
+     body="§21.8: <em>“the five tabs inside the safe area and clear of the "
+          "corners (five 54-point tabs fit in 390 points)”</em>. §21.1: <em>“The "
+          "designs are drawn at 390 by 844 points and are reflowed onto a "
+          "360-point frame, never scaled down”</em>. Five 54-point tabs take 270 "
+          "of 360 points and leave 45 a side, so nothing breaks; the figure is "
+          "checked on the wrong frame. The document never sizes a corner; the "
+          "client’s check takes 15% of the width. Found reading v3.7.",
+     rec="Check the fit on the 360-point frame (edit drafted)."),
+
+dict(id="C68", kind="contradiction", severity="minor", status="open",
+     title="§21.5 draws a worker in the Library, which §10.1 and §23.5 give none",
+     refs=["21.5", "10.1", "23.5"],
+     body="§21.5’s Library: <em>“Loose pages drift down onto the shelves, and a "
+          "worker re-shelves them”</em>. §10.1: <em>“Producing buildings need "
+          "workers”</em>, and §23.5: <em>“workers only at the three "
+          "producers”</em>. D82’s body noted it against v3.6; v3.7’s row makes it "
+          "a direct conflict. Found reading v3.7.",
+     rec="Draw the pages settling on their own (edit drafted)."),
+
+dict(id="C69", kind="contradiction", severity="minor", status="open",
+     title="§18.5 counts every badge from the heist rows, but resonances and "
+           "paradoxes are found in the Lab",
+     refs=["18.5", "8.6", "13.2"],
+     body="§18.5: <em>“Resonant (resonances found) … and Paradox (paradoxes "
+          "found). Each is counted from the heist rows and the report’s facts "
+          "(13.2)”</em>. §8.6: a resonance is found <em>“The Lab, or crossing it in "
+          "a heist (gives a hint)”</em>, and a paradox in <em>“The Lab, from two "
+          "tier III laws with opposite notes”</em>. Found reading v3.7.",
+     rec="Count those two from the Lab’s discoveries (edit drafted)."),
+
+dict(id="G74", kind="gap", severity="significant", status="open",
+     title="§13.3’s hold measurement on the server is in no cost or compute "
+           "budget",
+     refs=["13.3", "18.6", "24.1", "24"],
+     body="§13.3, new in v3.7: the hold <em>“is measured on the server — 800 raids "
+          "of the competent reference crew, queued and cached by the island’s "
+          "digest”</em>, for curation, whose every swap, post move or turn makes a "
+          "new digest, and for the Workshop (§18.6). §24.1: <em>“A re-simulation "
+          "takes about 15 ms of CPU”</em>, so one measurement is about 12 seconds of "
+          "CPU. §24.1’s monthly cost counts writes and reads only, its rate limit "
+          "allows <em>“3 re-simulations a minute an account”</em>, and §24 samples "
+          "validation because <em>“Re-simulating all of them would exceed the "
+          "per-request compute budget and the cost floor”</em>. Found reading "
+          "v3.7.",
+     rec="Price the queue in the edge load test (G33) and state it in §24.1: "
+         "measurements a day, CPU each, and whether every edit or only a save is "
+         "measured."),
+
+dict(id="C70", kind="contradiction", severity="minor", status="open",
+     title="§21.8 puts alarm text in “paper”, a colour v3.7 no longer defines, "
+           "and gives the alarm fill two values",
+     refs=["21.8", "21.2"],
+     body="§21.8: <em>“red #E2536B for alarms and green #3FBF7F for success as "
+          "fills, rings and marks … text on an alarm fill is paper on "
+          "#B3203A.”</em> v3.7’s §21.2 drops paper (v3.6 had <em>“paper "
+          "#FCFBFF”</em>); its neutrals are the dark surfaces with light text "
+          "#F3EEFF and parchment. So <em>“paper”</em> has no value, and an alarm "
+          "fill is #E2536B in one clause and #B3203A in the next. The client "
+          "writes #FCFBFF on #B3203A, 6.4:1; #F3EEFF on it is 5.8:1. Found reading "
+          "v3.7.",
+     rec="An alarm fill that carries words deepens to #B3203A, with the light "
+         "text colour on it (edit drafted)."),
+
+dict(id="C71", kind="contradiction", severity="minor", status="open",
+     title="§16’s first experiment runs past the 10:00 it finishes at, and "
+           "§25.2’s funnel puts the first weave after the first heist",
+     refs=["16", "10.2", "25.2"],
+     body="§16 at 6:30: <em>“The Archivist suggests putting Slow rivers and Bloom "
+          "together in the Lab. The first experiment takes 5 minutes.”</em>, and at "
+          "10:00: <em>“The experiment finishes and names Mangrove banks”</em>: 6:30 "
+          "and five minutes is 11:30. v3.7 makes the clock binding (each moment on "
+          "its own screen; §25.2 times the first heist from it). §25.2’s funnel "
+          "runs <em>“Finished the first heist | 90%”</em> before <em>“Wove their "
+          "first law | 85%”</em>, while §16 places Half gravity at 0:30, before the "
+          "heist, and weaves Bloom at 6:30. Found reading v3.7.",
+     rec="The first experiment takes 3 minutes 30 seconds, and the funnel’s step "
+         "is Bloom, the first law the player chooses (edits drafted)."),
+
+dict(id="G75", kind="gap", severity="minor", status="open",
+     title="No §26.8 phase builds friends or the Friends screen",
+     refs=["26.8", "23.2", "17.6"],
+     body="§26.8’s phase 4b builds <em>“The 23.2 screens no other phase "
+          "builds”</em> and lists no Friends; phase 9 is <em>“Leagues, crews, "
+          "season rollover”</em>; no phase names friends, invites, the feed or "
+          "friendly heists. §23.2 has a Friends screen (<em>“The friends list, "
+          "invitations, the feed (17.6), friendly heists, gifts”</em>) and §17.6 a "
+          "Friends row. The server has the invites and the feed (G35). Found "
+          "reading v3.7.",
+     rec="Put them in phase 9 (edit drafted), and re-cost the phase when it is "
+         "next estimated."),
+
+dict(id="C72", kind="contradiction", severity="minor", status="open",
+     title="§32.9’s ledger keeps v3.6’s run estimate after §26.8 added phases 4a "
+           "to 4c",
+     refs=["32.9", "26.8", "27.2"],
+     body="§32.9: <em>“Build 320 runs (229 to 405 …); iteration 320 (229 to 405), "
+          "a floor at 1x the build; plan about 640 (458 to 810)”</em>. §26.8: "
+          "<em>“Build total | 301 to 531 | Point estimate about 415”</em> and "
+          "<em>“Plan total | 602 to 1,062 | Plan against about 830”</em> (the phase "
+          "rows sum to 226 to 398 and the fix-ups to 75 to 133); §27.2: <em>“About "
+          "415 to build and a floor of about 415 to iterate, so the plan is about "
+          "830”</em>. Found reading v3.7.",
+     rec="§32.9’s row takes §26.8’s figures (edit drafted)."),
+
+dict(id="C73", kind="contradiction", severity="minor", status="open",
+     title="§7.10 still calls a new parameter the twenty-third, after §7.3 went "
+           "to twenty-three",
+     refs=["7.10", "7.3"],
+     body="§7.10: <em>“a law that needs the top rung again is a design decision, "
+          "like a twenty-third parameter (7.3)”</em>. §7.3, version 3: <em>“The "
+          "sheet has exactly twenty-three parameters”</em> and <em>“A law that "
+          "needs a twenty-fourth parameter is a design decision that makes version "
+          "4”</em>. Found reading v3.7.",
+     rec="Twenty-fourth (edit drafted)."),
+
+dict(id="G76", kind="gap", severity="minor", status="open",
+     title="The Unmade’s rule-sheet line removes the sheet’s defaults, not only "
+           "laws",
+     refs=["11.8", "7.3"],
+     body="§11.8: <em>“Ignores every law, helpful or harmful. On the rule sheet: "
+          "no row of 7.3 applies to it.”</em> §7.3’s rows carry the defaults every "
+          "character needs — Knockout’s ten seconds, Loot’s rate, Health read by "
+          "size — and the sheet also applies the era, the Grand Law and Sage "
+          "powers. “Ignores every law” and “no row applies” are two rules, and "
+          "which of eras, Sage powers and the defaults the Unmade escapes is not "
+          "said. Found reading v3.7.",
+     rec="No law changes a row for it; it plays every row at its default (edit "
+         "drafted). Eras and Sage powers then reach it as they reach anyone."),
+
+dict(id="F61", kind="finding", severity="minor", status="open",
+     title="Hoarder’s 5,000-Starlight gold mark falls in two raids under "
+           "B(V)’s 5,000 base",
+     refs=["18.5", "9.6"],
+     body="§18.5: badges are <em>“graded at the designs’ marks: gold at the mark, "
+          "silver at half of it and bronze at a tenth … Hoarder 5,000”</em>, "
+          "<em>“Hoarder (Starlight banked)”</em>, counted from the heist rows. "
+          "§9.6: <em>“5,000 × 1.5(V−1)”</em>, <em>“A haul is minted half in Essence "
+          "and half in Starlight”</em>, and a clean raid at Vault level 2 is 7,500, "
+          "3,750 of it Starlight: silver in one raid, gold in two, where Ghost 50, "
+          "Iron wall 100 and Vault breaker 250 take months. The designs’ mark "
+          "predates F53’s base. Found reading v3.7.",
+     rec="Set Hoarder’s mark from the economy model so its gold lands about "
+         "when the other badges’ do."),
+
 ]
 
 # ===========================================================================
@@ -9966,6 +10372,946 @@ V33 = {
     "Not claimed by v3.3. The three §6.2 cells are unchanged, and the "
     "stairs row has no §12.17 counterpart at all."),
 
+}
+
+
+# ===========================================================================
+# What version 3.7 did
+# ===========================================================================
+#
+# A seventh layer. v3.7 does two different things, and the notes keep them
+# apart. It writes in every one of the owner's 47 recorded answers, one row
+# each in §32.8's table; and it closes every decision still waiting by rule,
+# not by asking: "Each item that waited on a choice takes the option its brief
+# recommended". So a closed item here is one the document settled, and the
+# note says which way: by the owner's answer, or by the recommendation, which
+# is not an answer and is not recorded as one (docs/decisions/answers.json
+# stays the owner's; the brief marks the others settled by v3.7).
+#
+# Six readers checked all 139 items open against v3.6, quoting v3.7 by
+# section. `fixed` means the document now states it, whatever the build has
+# left; `open` carries `left`: "build" where the document is done and only the
+# build remains, "document" where a sentence is still wrong or missing (its
+# edits are drafted in EDITS).
+
+V37 = {
+# -- closed by the owner's recorded answers, written in --------------------
+
+"C41": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §9.4 owns the return: "
+    "<em>“returned in full after a clean or loud heist, half after a partial "
+    "one, and paid to the defender after a foiled one (12.9 shows it by "
+    "outcome)”</em>; §12.9’s column and §29.1 say the same."),
+
+"C42": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §11.5 <em>“About one "
+    "successful heist in eight finds a stray”</em> and §14.6 <em>“about a "
+    "one-in-eight chance of an offered stray (11.5)”</em>; the bonus-page "
+    "clause is gone."),
+
+"C43": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §20.7’s publishing row reads "
+    "<em>“Yes, names from word lists”</em> at every age, and §18.6 and §20.4 "
+    "agree."),
+
+"F35": dict(status="fixed", note=
+    "Closed: the owner’s answer D, written in. §12.17: <em>“A hit on the Vault "
+    "is heard by no guard; a guard beside it still sees the crew. Breaking "
+    "anything else is heard within 5 m”</em>, and the reach is <em>“0 m, set by "
+    "the owner against the depth gate (32.9)”</em>. The ring and the 5-second "
+    "call are gone; §32.8 records brief 37 as overruled by the owner."),
+
+"F36": dict(status="fixed", note=
+    "Closed: the owner’s answer C, written in with F53’s fee-counted value. "
+    "§9.6 reads the check <em>“on every day at every Vault level on which the "
+    "player still has paid raids left”</em>, on 14.1’s stated roster, and sets "
+    "the base at 5,000; §29.1 and §32.9 agree."),
+
+"F39": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §9.4: <em>“2% of B(V) at the "
+    "target’s Vault level (9.6), never more than the raider holds … keyed to "
+    "the target, not to what the raider holds”</em>; §9.5 and §29.1 agree."),
+
+"F40": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §12.9: <em>“Only a player’s first "
+    "ten heists of the week … move Renown”</em>; §14.7 makes its shares the "
+    "target the boundaries are fitted to, and §18.1 says Renown <em>“is made "
+    "only where a floor stops a loss”</em>, with the refitted table."),
+
+"F41": dict(status="fixed", note=
+    "Closed: the owner’s answer C, written in. §22.1: <em>“There is no currency: "
+    "each item is a product in each store at that store’s local price”</em>; "
+    "Starglass is <em>“The wrapper a gift arrives in”</em> (§9.1, §19.12). "
+    "v3.7 also gives the gift limit the answer left open, three a month "
+    "(§22.4), by rule (F57). Left for the build: the shop screen, the store "
+    "products, and the monthly gift count (D64)."),
+
+"F42": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §18.2: <em>“climbed with season "
+    "stars from heists and defences”</em>, and §9.1’s sources are "
+    "<em>“Heists, defences”</em>."),
+
+"F43": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §20.12 erases the identity and "
+    "severs the ledger, Renown, heists and purchases <em>“under an id that "
+    "leads to nobody”</em>; Workshop islands <em>“stay playable without a name "
+    "unless the player withdraws them”</em>. §19.11’s <em>“never deleted”</em> "
+    "still ignores the under-13 erasure (C62)."),
+
+"F44": dict(status="fixed", note=
+    "Closed: the owner’s answer D, written in. §12.3 and §12.22: <em>“Keeper "
+    "level from 2 levels below yours to 3 above”</em>, and step 5 says the 0.25 "
+    "tier exists for a Trace and a widened list. §9.6 still says matchmaking "
+    "offers nothing three below (C61)."),
+
+"F45": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §12.3 takes the band from "
+    "§12.22, with no strength clause."),
+
+"F46": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §12.4: <em>“Scouting is free, and "
+    "it is the target card … Nothing placed is shown”</em>; §9.5’s scouting row "
+    "and the Observatory’s discount are gone."),
+
+"F48": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §12.11: <em>“A friendly heist "
+    "pays no haul and costs no fee … uses none of 9.6’s paid raids”</em>, and "
+    "§17.6 says the same of a challenge."),
+
+"F49": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §5.4: <em>“Quiet Week’s 30 "
+    "seconds (18.3) come after the cap, so a heist runs up to 270 seconds that "
+    "week”</em>; §18.3, §24.10 and §12 agree."),
+
+"F50": dict(status="fixed", note=
+    "Closed: the owner’s answer D, written in. §20.12 and §24.6: every deletion "
+    "is written to a journal in object storage and re-made at every start over "
+    "the last 31 days, so a restore never brings an account back. The bucket is "
+    "outside this repository."),
+
+"F51": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §5.4: <em>“Each side of a realm "
+    "keeps at least half its edge tiles open to land on … checked when an "
+    "island is published”</em>; §6.1 repeats it."),
+
+"F52": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §10.3: <em>“A fixed reach, which "
+    "laws that widen the alarm do not change”</em>. The 8 m from alarm level 4 "
+    "in the same cell is the answer’s own wording, and it is built nowhere "
+    "(F59)."),
+
+"F53": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §9.6 and §29.1: <em>“5,000 × "
+    "1.5(V−1)”</em>, the smallest hundred that passes with the fee an attempt "
+    "keeps counted; <em>“With the fee left out it would be 4,600”</em>."),
+
+"F54": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §14.4: <em>“the Keeper bar shows "
+    "a gate that says heists open it, never a bar nearly full (14.8)”</em>. "
+    "The gate waits on spending on the server (G42)."),
+
+"G17": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in all four places: the difficulty "
+    "steps (§9.6), a haul <em>“minted half in Essence and half in "
+    "Starlight”</em>, no fee above what the raider holds (§9.4), and one grace "
+    "submission a day (§24.12)."),
+
+"G20": dict(status="fixed", note=
+    "Closed: the owner’s answer C, written in. §9.6: <em>“twenty paid raids … "
+    "counted from Monday 00:00 UTC”</em>, every cap <em>“counted in the base at "
+    "the raider’s own Vault level (a defender’s share at the defender’s "
+    "own)”</em>."),
+
+"G21": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §24.8: <em>“A candidate list per "
+    "realm level … is rebuilt every hour”</em>, the hour set by the reads "
+    "budget."),
+
+"G22": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §14.1 states the staffing order, "
+    "the realm order and unstaffed posts as design positions. The figures it "
+    "quotes beside them are the pre-answer run’s, not pacing.md’s (C58)."),
+
+"G24": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §7.3 is rule sheet version 3 "
+    "with <em>“exactly twenty-three parameters”</em>, Structure healing beside "
+    "Structure regrowth, and <em>“a regrow time takes the shortest value "
+    "applied, and the piece regrows as the kind its law names”</em>, which also "
+    "settles the answer’s open point. §7.10 still counts a twenty-third (C73)."),
+
+"G25": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written into every §8 row: Haste with "
+    "Frictionless at <em>“1.64 times its speed”</em>, the coin from the seed, "
+    "the doze as a stun, and the halves the launch set lacks marked as after "
+    "launch."),
+
+"G27": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §18.1’s boundaries are "
+    "<em>“generated, not authored”</em> by <code>tools/league_model.py</code>, "
+    "Renown is kept in whole points, and <em>“Only Star, Nova and Paradox earn "
+    "a season-end reward”</em>."),
+
+"G28": dict(status="fixed", note=
+    "Closed: the owner’s answer B, read under F41 C, written in. §18.2 is a "
+    "table: stars by outcome once a day a pair, ten stars a tier and 490 for "
+    "the track, catch-up <em>“10 × (days left ÷ 56)”</em> fixed at first "
+    "appearance, the free track’s pages, Essence and stray, and no "
+    "Starglass."),
+
+"G29": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §24: <em>“A session runs from the "
+    "app coming to the foreground to its session end”</em>; §24.3 keeps raw "
+    "events 90 days; §25.4’s survey is a monthly sample with the chore "
+    "question."),
+
+"G30": dict(status="fixed", note=
+    "Closed: the owner’s answer D, written in. §12.22: a band is 15 points, "
+    "recent is <em>“the raider’s last 20 validated raids, echoes "
+    "included”</em>, and <em>“An echo rates the raider only”</em>."),
+
+"G31": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §9.4 prices a carried bag as "
+    "<em>“the clean haul the crew’s unbanked load would have made on this "
+    "island”</em>, and §13.1 reads its share at each season’s close. The page "
+    "for a law cast in a foiled heist waits on casting in the simulation."),
+
+"G32": dict(status="fixed", note=
+    "Closed: the owner’s answer B, read under F41 C, written in. §22.1: <em>“A "
+    "refunded product’s entitlement is revoked”</em>; §24.8 gives each proof its "
+    "freshness."),
+
+"G34": dict(status="fixed", note=
+    "Closed: the owner’s answer C, written in. §14.6: <em>“Heists against you "
+    "arrive as one message a day”</em>, and the reminder <em>“is chosen outside "
+    "the night”</em>, read in the device’s own time zone."),
+
+"G35": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §17.6: <em>“Two players become "
+    "friends by invite”</em>, and <em>“A heist in which either side is 13 to 15 "
+    "appears in no feed (20.2)”</em>. §32.8’s row files it under §20.7 "
+    "(C65)."),
+
+"G36": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §18.3: the eras <em>“take turns "
+    "in the order above, a week each”</em>, a heist is under the era of its "
+    "lease, every heist against a universe and never the Workshop, with each "
+    "era’s sheet line."),
+
+"G37": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §9.4: <em>“The fee, the share, "
+    "Renown and season stars pass once a day per pair of players”</em>, and "
+    "the share counts toward the defender’s own caps."),
+
+"G38": dict(status="fixed", note=
+    "Closed: the owner’s answer B, written in. §20.5: <em>“anything that names "
+    "a player and serves no purpose once it is closed is deleted within seven "
+    "days of closing”</em>, and a superseded target list after one rebuild."),
+
+"G39": dict(status="fixed", note=
+    "Closed: the owner’s answer A, written in. §20.5 and §20.11: deletion "
+    "<em>“from a web page, by signing in with the same Google account”</em>. "
+    "The OAuth client and the store link are outside this repository."),
+
+"G41": dict(status="fixed", note=
+    "Closed: the owner’s answer C, and the drafted edit with it. §24.12: "
+    "<em>“Online is the normal path, and the game recommends it”</em>, with "
+    "<em>“a stock of three leases, each lasting a day”</em> for the "
+    "exception."),
+
+"C45": dict(status="fixed", note=
+    "Closed: every recorded answer is now written where it belongs, and "
+    "§32.8 says how they rank: <em>“The build takes a recorded answer first, "
+    "then this document, then the designs (23.5). Version 3.7 writes each "
+    "answer into the sections listed, so the document is again the one "
+    "source”</em>. This was the brief’s first question; the document settled "
+    "it by taking the answers, not by an answer to it."),
+
+"C35": dict(status="fixed", note=
+    "Closed as drafted, in F37’s form. §14.4 gives the 48 laws <em>“no earlier "
+    "than the day that level arrives”</em> and §14.3’s row reads <em>“Day 92 at "
+    "the earliest (re-run; 14.4)”</em>, so the two homes agree. The day "
+    "itself is not pacing.md’s (84 to 88): C58."),
+
+"G40": dict(status="fixed", note=
+    "Closed as drafted, and extended: §5.4 lands the whole crew on one spot at "
+    "the first tick, walks the six tiles, spares a sleeping guard and says "
+    "<em>“darkness is the unlit ground 12.17 sees by”</em>. Whether Glowing "
+    "dark’s realm counts as darkness is read two ways (G73)."),
+
+"C11": dict(status="fixed", note=
+    "Closed as drafted, for the Hatch screen v3.7 adds. §21.9: <em>“About 390, "
+    "as Screens v3 draws them (23.5), and 29”</em>, and §23.2’s launch list "
+    "has 29 rows, so the count agrees. Its wording files Hatch outside "
+    "§23.2’s list (C59)."),
+
+"C40": dict(status="fixed", note=
+    "Closed as drafted. §31.3 names <em>“partial staffing, the birth curve and "
+    "the notes each law carries”</em> as guarded by recomputation, and the rank "
+    "split’s row homes it at §7.9, as <code>content/upstream/constants.json</code> "
+    "now does."),
+
+"D72": dict(status="fixed", note=
+    "Closed, both edits in substance. §21.8: <em>“on parchment an alarm or a "
+    "success in words is #9A1B32 or #155A38, bold; on a dark surface red words "
+    "are #FF9AAA, bold, and success words keep #3FBF7F”</em>, and §21.10 edges "
+    "every route feature in ink at 3:1. The same row’s <em>“paper on "
+    "#B3203A”</em> names a colour v3.7 no longer has (C70)."),
+
+"F58": dict(status="fixed", note=
+    "Closed: §21.8 writes the client’s word shades for parchment and new ones "
+    "for the dark surfaces, and D72’s #1D6B45 appears nowhere. The tokens add "
+    "#FF9AAA and dark-surface success words (TD.3)."),
+
+"C49": dict(status="fixed", note=
+    "Closed, all ten lines. The drafted edits are in (§15.1, §13, §13.4, §14.6, "
+    "§11.7, §23.5; §23.2 and §18.8 in other words), and the two decisions take "
+    "the brief’s recommendation by rule: <em>“a level never shortens the "
+    "20-second cooldown”</em> (§11.7) and the first experiment <em>“takes 5 "
+    "minutes and is free”</em> (§10.2). That experiment’s minutes do not fit "
+    "§16’s clock (C71)."),
+
+# -- settled by rule: the brief's recommendation, not an answer ------------
+
+"C44": dict(status="fixed", note=
+    "<strong>Settled by rule, not by you:</strong> v3.7 takes the brief’s "
+    "option B. §21.8’s home layout is <em>“The designs’ arrangement”</em>, held "
+    "to <em>“21.1’s measured rules … 48-point hit areas, the five tabs inside "
+    "the safe area and clear of the corners”</em>, and §21.1 puts a "
+    "sub-screen’s back control in the lower band. Left for the build: the "
+    "shell to that arrangement (TD.6)."),
+
+"C46": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s recommendation. §12.3 offers "
+    "<em>“three to six”</em> with the Wanderer home, a Trace <em>“in addition "
+    "to the offered list, pinned first”</em>, cards print <em>“up to N realms "
+    "to the Heart”</em>, and Keeper names come from word lists."),
+
+"C47": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s recommendation. §20.3’s "
+    "worth question is five one-tap points once a session; §12.9 defines "
+    "<em>“Alarm”</em> as the six-level ladder and turns a heist Loud at the "
+    "first Alerted guard; §12.6 shows the rough estimate or <em>“?”</em> until "
+    "the Vault opens."),
+
+"C48": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s recommendation. §5.6 prices "
+    "upkeep on the universe’s share of its capacity, §5.5 counts a harmony "
+    "<em>“once per shared note”</em> and a crown law once, Breaking refuses a "
+    "weave to 125%, and a tier rise happens in place. Weaving is built on "
+    "neither side yet (TD.14, TD.20)."),
+
+"C50": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A. §9.4: the Open "
+    "Vault league <em>“comes after launch (26.1) … and until then a raid takes "
+    "nothing from anyone”</em>, so §17.8 is true at launch."),
+
+"C51": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A. One time, "
+    "<em>“2:00 | First heist”</em> (§16, §15.2), unguided; before it only the "
+    "title, the age check, the protections summary and the Keeper’s name and "
+    "face (§16, §25.2). §16’s clock still has the experiment wrong (C71)."),
+
+"C52": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option C. §24: <em>“Frame "
+    "rate, the one rule: 60 frames a second on the reference device … never "
+    "below 30 on the oldest supported phone”</em>, and drag is measured touch "
+    "to picture with a high-speed camera (TC.8)."),
+
+"C53": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A. §11.8: <em>“every "
+    "hit it lands and every load it takes counts two times. Its crew’s "
+    "abilities fire once”</em>, one body in the simulation with shared 120 "
+    "health and 80 carry."),
+
+"C54": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A. §11.11 gives the "
+    "Sparkwright <em>“round copper tinker’s lenses, never a Scout’s strapped "
+    "goggles”</em>, and §21.6 counts <em>“fourteen shared clips and three work "
+    "loops, seventeen in all”</em>."),
+
+"C56": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A. §14.9: <em>“a third "
+    "law slot in the Heart at the second epoch (18.4)”</em>, as §18.4 says. "
+    "Nothing to build before launch."),
+
+"C57": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A, which the flat view "
+    "already draws. §12.6: <em>“the selected guard’s vision cone and the "
+    "awareness and facing of every guard the crew can see (21.12)”</em>; §21.6 "
+    "and §23.2 agree."),
+
+"D75": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option B. §21.1: <em>“This "
+    "camera is a rule, not a look the designs replace”</em>, with taps for the "
+    "three zoom levels and a Settings switch for buttons <em>“so no action needs "
+    "two fingers (20.8)”</em>; §23.5 lists the other ten rows. The heist’s own "
+    "pinch has no such form (C64)."),
+
+"D77": dict(status="fixed", note=
+    "<strong>Settled by rule</strong>, with F46 B written in. §12.4 draws "
+    "<em>“no guard post, patrol or hidden ward”</em>, marks each landing spot "
+    "covered or open from terrain alone, and gives positions only from a "
+    "Wisp, Reveal or the Cartographer; §23.5’s row lists what the designs "
+    "drop (TD.18)."),
+
+"D86": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A. §17.6: <em>“no "
+    "presence, last-seen time, activity status or pings”</em> at launch, and "
+    "<em>“no posting to the Beacon and no grading of moments”</em>."),
+
+"D89": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option B. §21.8: <em>“Two "
+    "families of surface”</em>, a dark violet card with light text and "
+    "parchment with brown ink, outlined in #1A0C14; the paper panel is gone "
+    "(TD.2, TD.3)."),
+
+"D90": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option B. §21.8: "
+    "<em>“Manrope for labels, body text and numbers … Lilita One … for large "
+    "numbers that do not change and some titles; Marcellus for titles”</em>, "
+    "and §21.11’s ledger lists the three."),
+
+"D91": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option C. §21.8 keeps the "
+    "designs’ icon finish on a 24-point grid and times every movement to "
+    "<em>“150 to 250 milliseconds, easing out … without overshoot”</em>; "
+    "toasts, reduced motion, palettes and the sky follow the document."),
+
+"D92": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option C. §21.3: <em>“one "
+    "toon look for everything, characters included: the designs’ diorama ramp "
+    "of four steps”</em>, and <em>“Characters are not drawn in a physically "
+    "based material”</em> (TD.8)."),
+
+"D93": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option B. §21.3 keeps the "
+    "budgets, a realm <em>“up to about 60,000 in a heist”</em>, and holds every "
+    "asset to them <em>“in the export”</em>; the designs’ sculpts are not "
+    "shipped as drawn (TD.7)."),
+
+"D98": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A, as the build does. "
+    "§21.1: the designs <em>“are reflowed onto a 360-point frame, never scaled "
+    "down”</em>. §21.8 still checks the tabs’ fit in 390 points (C67)."),
+
+"F57": dict(status="fixed", note=
+    "Closed with F41 C written in (§22.1, §9.1, §19.12, §18.2), and the gift "
+    "limit F41’s answer left open <strong>settled by rule</strong>: §22.4 "
+    "<em>“up to three a month … approval words show to minors only”</em>."),
+
+"G43": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A, as built. §5.2: "
+    "wards above a lower limit <em>“stay built, upgradable and owned … an "
+    "island publishes only as many as its limit, the Keeper choosing which”</em>, "
+    "which now also covers the falls at realm levels 4 and 5."),
+
+"G44": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A, the build’s "
+    "figures. §24.1: four limits kept in memory, by account, simulation, "
+    "credential and failed sign-in, and the moderation row’s per-minute "
+    "figures agree with them."),
+
+"G46": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s recommendation. §5.4: a "
+    "fault joins an outer realm to the Heart, deepest first, one, two, three "
+    "and four by band, and a target’s strain and faults are free facts. Faults "
+    "wait on universes of linked realms (D71)."),
+
+"G47": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s recommendation. §12.5’s load "
+    "target, casts paid only if used, and the crew manifest; §12.7’s held taps "
+    "and modal wheels; §24.12’s pause with the app. The clock tap makes a "
+    "ninth target in a ruin (C64). Left for the build: the commands in sim/ "
+    "and the client’s held-tap menus (TD.12, TD.17)."),
+
+"G48": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s recommendation. §12.13 "
+    "chooses the moment <em>“by rule from the simulation’s event log”</em>, by "
+    "outcome, and the tip from a content table in the result’s own "
+    "<em>“Try this”</em> row (TD.13, TD.17)."),
+
+"G49": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s recommendation. §7.6 names "
+    "chapter 1’s twelve and what meeting a law is; §18.5’s mastery tracks; "
+    "§15.3’s Codex notes from the heist rows; §8.6’s unnamed lines."),
+
+"G50": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s recommendation. §23.2 adds "
+    "the Hatch screen, names come from word lists (§20.2), and a stray’s kind "
+    "and form follow one crossed law (§11.5). Its form on a tie is read two "
+    "ways (C66)."),
+
+"G52": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option. §11.7: <em>“A Sage’s "
+    "level is the Keeper’s, from 1 to 40; there is no Insight to collect”</em>, "
+    "with what each launch Sage gains at every fifth level."),
+
+"G53": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s recommendation. §8.6 hints "
+    "after three empty experiments with one law; §8.5’s third sphere names a "
+    "chord once a day from Lab level 3; §7.6 pays 3 pages to the marked law; "
+    "<em>“A discovery pays pages and nothing else”</em>."),
+
+"G54": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s recommendation. §13.3: "
+    "<em>“A swap previews at once and free; applying it weaves the new law at "
+    "5.6’s price and time”</em>, and the generator only weaves into empty "
+    "slots."),
+
+"G55": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option B. §13.3: the hold "
+    "<em>“is measured on the server — 800 raids of the competent reference "
+    "crew, queued and cached by the island’s digest — and shown as "
+    "“measuring…” until it lands”</em>. Nothing budgets that queue’s compute "
+    "(G74)."),
+
+"G56": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option B. §6.1 checks terrain "
+    "points at publish; §13.3 and §12.17 give a held post an owner-set facing; "
+    "§6.2 has the owner set every feature’s direction; §18.6 makes a Workshop "
+    "island one realm."),
+
+"G58": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option B. §20.1: the band "
+    "<em>“can only tighten from the device”</em>; §20.2’s play-time reminder by "
+    "band; Keeper names from word lists; §20.5’s terms accepted once, after the "
+    "first heist."),
+
+"G59": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option B. §21.8: outlined "
+    "words <em>“are measured against the outline; a drop shadow does not "
+    "count”</em>, secondary text on dark no darker than #B8A8D8 and tertiary "
+    "bold. G59 measured #B8A8D8 at Lc 57 to 59, so small secondary text may "
+    "still need lifting (TD.3)."),
+
+"G62": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A. §11.8: "
+    "<em>“Paradox-born never stand on a Guardian Post and hatch without a "
+    "form”</em>, and each gift has a rule-sheet line and a sound. The "
+    "Unmade’s line removes more than laws (G76)."),
+
+"G64": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A. §11.8: the Stray’s "
+    "kind is drawn <em>“with the Heart standing for the Nursery’s realm”</em>, "
+    "and there is no nineteenth kind. Its form <em>“by 11.10’s tie rule”</em> "
+    "is read two ways (C66)."),
+
+"G65": dict(status="fixed", note=
+    "Closed: §23.5’s adopted table lists all five (terrain height, the "
+    "paradox-born’s character, visitors’ sizes, wildlife counts, the "
+    "after-launch Sages’ looks) and the card-reference rule."),
+
+"G69": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option B. §23.2 defines "
+    "defences held and leaked by outcome and lists ten records; §18.5’s nine "
+    "badges pay nothing. Two records have no fact, one no rule (G57); two "
+    "badges are found in the Lab, not the heist rows (C69); Hoarder’s mark is "
+    "two raids (F61)."),
+
+"G70": dict(status="fixed", note=
+    "<strong>Settled by rule:</strong> the brief’s option A, as built. §12.3: "
+    "<em>“a raid on their island that was not foiled and was not past the "
+    "raider’s twenty paid raids that week”</em>; <em>“A raid that took nothing "
+    "opens nothing”</em>."),
+
+# -- the document is done; the build is not -------------------------------
+
+"D60": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §24.8: a "
+    "published island’s Vault level and exposed loot <em>“come from the "
+    "owner’s own ledger and buildings on the server, never from the bundle’s "
+    "word, and a bundle that disagrees is refused”</em>. Left: "
+    "<code>server/src/service.mjs</code> still reads both from the bundle and "
+    "refuses only a Vault above the one built (TC.12)."),
+
+"D61": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §24.8: "
+    "<em>“The universe’s crown laws ride in each realm’s bundle … and a chord "
+    "is published only if the universe’s stability can pay its draw (8.6)”</em>. "
+    "Left: bundles carry only the realm’s own laws, and nothing checks a "
+    "chord’s draw, which needs the stability the server does not hold yet "
+    "(TD.14, D60)."),
+
+"D62": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §18.6 and §13.3 "
+    "replace the per-publish check with the server’s queue: 800 raids, "
+    "<em>“measuring…”</em> until it lands, and featuring only inside the band. "
+    "Left: the queue in <code>server/src/workshop.mjs</code>, and the Island "
+    "Fund paid from purchase records (§18.9, §26.8; TD.16)."),
+
+"D63": dict(status="open", left="build", note=
+    "<strong>The document is done; what is left is version 1.1’s.</strong> "
+    "§17.1 joins a constellation <em>“without approval while it has room”</em>, "
+    "§17.7 a crew <em>“by invite”</em>, and §26.8: <em>“Constellations are "
+    "built for version 1.1 and costed with it”</em>. Left: chat, the Grand Law "
+    "vote, anomalies, page requests and borrowed crew."),
+
+"D64": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> v3.7 removes "
+    "what this deviation rested on (no Starglass, stars from heists and "
+    "defences only) and gives §22.4’s gift limit a number: <em>“up to three a "
+    "month … approval words show to minors only”</em>. Left: pages and the "
+    "roster on the server, the three-a-month count "
+    "(<code>server/src/shop.mjs</code> has none), and the launch cosmetic sets "
+    "(§26.8; TD.23)."),
+
+"D65": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §24.1 picks the "
+    "stores’ own crash reports, and §24.3 reads the heatmaps <em>“for sampled "
+    "re-simulations”</em> from the simulation’s event log. Left: positions in "
+    "that log, once a second, so the heatmaps can be read (TD.13)."),
+
+"D66": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §26.8 now plans "
+    "<em>“the reference crews and the generator inside the simulation, so the "
+    "server rates a new island and makes fallback targets itself”</em>. Left: "
+    "that port, then depth, ruins and the complexity budget on unfamiliar laws "
+    "(TD.16)."),
+
+"D67": dict(status="open", left="build", note=
+    "<strong>The document is done; what is left is outside this "
+    "repository.</strong> §24.8 makes the Android identity <em>“the player’s "
+    "Google account”</em> and states the purchase and refund flow; §26.8 points "
+    "the stores’ notifications at the server before soft launch. Left: the "
+    "pinned roots, the keys, the Google service account and the App Store "
+    "Connect URL."),
+
+"D68": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §14.6 names the "
+    "four kinds, sent as a kind and its data and worded on the device; §26.8 "
+    "plans the strings in both languages and the push ask after the third "
+    "session. Left: those strings and the device’s own timers (TD.25), and the "
+    "operator’s push key."),
+
+"D69": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §18.3: "
+    "<em>“Before launch, each era is measured in the harness against 13.2’s "
+    "bands, and Heavy Stars’ and High Tide’s cost changes are priced in the "
+    "economy model.”</em> Left: eras in the harness, their costs in the model, "
+    "and the week’s era on the Season header (TD.23)."),
+
+"D70": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §26.8 plans the "
+    "declarations filed from the privacy inventory and the edge purged of an "
+    "under-13 player’s bundles; §20.1 and §20.5 state the age check and "
+    "in-game deletion. Left: the age check and the deletion button on screens "
+    "(TD.25, TD.26); the filing and the purge are outside this repository."),
+
+"D71": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §5.4’s winds and "
+    "clock stand, and §26.8 now plans <em>“universes of several realms joined "
+    "by links, so the Heart’s winds and the clock by links (5.4) hold on the "
+    "server”</em>. Left: that; until then a heist is one island."),
+
+"D73": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5 lists every "
+    "mechanic the designs add with the rule the build follows: instant "
+    "upgrades, §10.2’s buildings and counts, one Star Well, Spring, Garden and "
+    "Hearth a realm, 6.2’s 39 features, no shield on home. Left: the client’s "
+    "trays and home to those rows (TD.19)."),
+
+"D74": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5’s realm "
+    "view row: <em>“One pylon per woven slot, 21.5’s obelisk with its school’s "
+    "shape and colour and its law’s glyph”</em>, in the realm view and the "
+    "heist. Left: the pylon designed (TD.31, yours) and drawn (TD.10, TD.19)."),
+
+"D76": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §26.8’s phase 0: "
+    "<em>“The client is on Godot 4.7.2 and godot-rust’s api-4-7 before the "
+    "shell and the diorama are written, with the Android target SDK at "
+    "36”</em>. Left: the move itself; <code>client/project.godot</code> and "
+    "<code>client/ext/Cargo.toml</code> are still on 4.5 (TD.1)."),
+
+"D78": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5 lists all "
+    "six (generated targets labelled, three ruin difficulties, landing on any "
+    "edge tile or fault, no required Carrier, crews of 3 to 5 by Keeper level, "
+    "matchups worked out from 11.2). Left: the Observatory, scout report and "
+    "planner to those rows (TD.18)."),
+
+"D79": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5 lists all "
+    "five, and §12.12 adds <em>“never offers an easier copy of a player’s "
+    "universe”</em>. Left: no start-up grace or slow motion, the Foiled "
+    "result’s new route or another target, the Law card’s one weakness, "
+    "<em>“?”</em> with no lead (TD.17, TD.20)."),
+
+"D80": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5 lists all "
+    "13 heist and result rows. Left: Vault health and loading at 30 a second "
+    "by every role, the Vault’s progress on screen, the four-ready rule and "
+    "numbered pips, §11.2’s Burst and Tidewalker, the fee and rest on Foiled, "
+    "every result kind, drag to aim and hold Get out (TD.17)."),
+
+"D81": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5 lists all "
+    "five; §23.2’s Weaving is <em>“priced by the server’s one function”</em>. "
+    "Left: weaving and stability on the server and in sim/ with that one "
+    "function, the seven-band preview, a tap path for Weave, notes as symbols, "
+    "threads and lines between pylons (TD.14, TD.20)."),
+
+"D82": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5 lists all "
+    "13 roster, character, Sage hall and Forms album rows. Left: each kind’s "
+    "ability, resistance and numbers read from content and the server, two "
+    "traits each, workers only at producers, state as symbol and word, the "
+    "Sage hall on the Keeper’s level, the Forms album’s sail, quirks and "
+    "<em>“Show mine”</em> (TD.21). §21.5’s Library worker is C68."),
+
+"D83": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5 lists all "
+    "13 Lab, curation, editor, log and Workshop rows, and §13 shows a raid "
+    "<em>“once it has ended”</em>. Left: texts read from content, one Lab "
+    "chamber per slot, one guard’s sight hard-edged, moss with a Clear moss "
+    "tool, publish on passing the checks, Remix kept (TD.22, TD.66)."),
+
+"D84": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5: <em>“The "
+    "same rewards with or without the premium track”</em>; §14.6’s pick three "
+    "of six and its streak; §18.1’s skin for Star, Nova and Paradox only. Left: "
+    "the Season screen without the Starpass boost, the pass-only quest, star "
+    "chests or season quests (TD.23)."),
+
+"D85": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5 lists all "
+    "seven, and §23.2 says what the Season, Shop and Profile show. Left: the "
+    "week’s era on the header, §12.9’s Renown formula, the band’s cap and "
+    "approval words before every purchase, previews on the player’s own "
+    "universe, outcomes by name, nine badges paying nothing (TD.23, TD.24)."),
+
+"D87": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5 lists all "
+    "fourteen settings and first-launch rows; §20.1 pre-selects no age and "
+    "§16 has no skip. Left: the band from the age check and the server only, "
+    "the cap and adult summary in Settings, hold time and moving controls, "
+    "deletion with <em>“withdraw my islands too”</em>, each §16 moment on its "
+    "own screen (TD.25, TD.26)."),
+
+"D88": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §14.6: "
+    "<em>“A notification a screen adds is not sent until this list names "
+    "it”</em>, and §23.5 lists the designs’ extras. Left: Settings with §14.6’s "
+    "four kinds only and the reminder starting at Off (TD.25)."),
+
+"D94": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5 lists all "
+    "nine character-sheet differences, and §21.6 counts <em>“fourteen shared "
+    "clips and three work loops, seventeen in all”</em>. Left: heights and main "
+    "colours set in the export (TD.7), the guard form, forms, accessories and "
+    "work loops (TD.11), the character screen from content (TD.21)."),
+
+"D95": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5: "
+    "<em>“Variants | … | None that changes anything; kept, if at all, as a "
+    "tint”</em>. Left: screens and content without the sheets’ variants for "
+    "visitors, anomalies and law creatures (TD.11, TD.21)."),
+
+"D96": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §20.8: <em>“a "
+    "slower mode for drifting ruins … applied only to them (rehearsals keep "
+    "their pause)”</em>. Left: rename the client’s setting, its test and "
+    "completion’s proof to ruins, and apply it when ruins exist (TD.27)."),
+
+"D97": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §23.5: "
+    "<em>“Note colours | … | 8.1’s wheel, from the tokens”</em>. Left: Weaving "
+    "and the Harmony view read the wheel’s colours from TD.2’s tokens."),
+
+"F33": dict(status="open", left="build", note=
+    "<strong>The owner’s answer D is written in; the build is not "
+    "done.</strong> §10.3: <em>“within 4 m of it for 5 seconds (8 m from alarm "
+    "level 4, 12.17)”</em>, and §13.2’s check <em>“runs over every kit of ward "
+    "kinds a Keeper can build within the budget”</em>. Left: that kit-wide "
+    "check in the harness and the checks (T0.12 measured the generator’s kit "
+    "only), and the 8 m from alarm level 4, which sim/ does not have "
+    "(<code>GLARE_METRES</code> is 4 at every level; F59). How the check reads "
+    "is F60."),
+
+"F37": dict(status="open", left="build", note=
+    "<strong>The owner’s answer B is written in; the build is not "
+    "done.</strong> §14.4: <em>“A player who never raids earns the Library and "
+    "daily goals”</em>, the launch 24 the ceiling; §14.6: <em>“At least one "
+    "offered goal a day needs no heist”</em>; §12.10’s tutorial ruins pay "
+    "experience; the 195-day line is gone. Left: daily goals on the server and "
+    "on screen, their pages to the marked law, and ruins outside the twenty "
+    "paid raids (the answer’s client half)."),
+
+"G18": dict(status="open", left="build", note=
+    "<strong>The drafted edit is in; the build is not.</strong> §10.3: "
+    "<em>“From the moment a crew member sets out to disarm a known ward until "
+    "it finishes or turns aside, the ward’s sensor ignores it”</em>. Left: "
+    "sim/’s <code>wards_act()</code> ignores only a disarmer on the tile, and "
+    "the harness defaults <code>disarm_approach=False</code>; both widen, and "
+    "the test that pins a Glare firing on the walk is inverted."),
+
+"G19": dict(status="open", left="build", note=
+    "<strong>The owner’s answer B is written in; the build is not "
+    "done.</strong> §5.2: <em>“The Heart counts as realm level 3 for its ward "
+    "limit, its guard posts and its law slots, so it holds 6 wards on 2 "
+    "posts”</em>; §10.2 and §5.1 agree. Left: the client’s builder locks the "
+    "Heart at level 3 (the server already refuses any other). Its watch is "
+    "unstated (G71)."),
+
+"G33": dict(status="open", left="build", note=
+    "<strong>The owner’s answer C is written in; what is left is outside "
+    "this repository.</strong> §24.1 budgets <em>“2,500 row reads per active "
+    "player per day”</em> and runs the load test <em>“on the edge platform "
+    "before soft launch”</em>, recomputing the cost table from it. Left: that "
+    "run, on Workers with D1."),
+
+"G42": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §26.8 adds "
+    "<em>“4a. Home economy on the server | 16 to 28”</em>, and the totals sum "
+    "with it. Left: workers and production, the roster and births, the "
+    "Codex’s restorations and §14.2’s experience from each on the server, and "
+    "offline building confirmed on reconnection (TC.12)."),
+
+"G45": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §10.1 is "
+    "unchanged, and §26.8’s phase 4 now builds <em>“buildings on the grid with "
+    "their footprints (10.1)”</em>. Left: §10.1’s buildings with 2 by 2 and 3 "
+    "by 3 footprints in the island format and sim/, each building’s tile on "
+    "the server (TD.36)."),
+
+"G60": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §12.5: <em>“The "
+    "lease and the replay carry the crew: each member’s kind, form, level and "
+    "traits”</em>; §24.8 puts each posted guard’s kind, form and level in the "
+    "bundle. Left: the manifest and the guards checked against the roster, "
+    "and the simulation playing each by its kind (TD.9, TD.34)."),
+
+"G61": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §26.8 adds "
+    "<em>“4c. Art pass | 14 to 26”</em>, by a harness whose manifest lists "
+    "§21.9 row by row. Left: that harness and manifest, the nine missing "
+    "buildings, every building’s four looks, the law signatures, guard form, "
+    "forms and work loops (TD.7)."),
+
+"G63": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §26.8’s phase 5 "
+    "now names <em>“the paradox-born from 11.8’s tables … the visitors (the "
+    "Stray with no kind of its own), and every card’s rule sheet, height, "
+    "colours and signature”</em>. Left: those content tables and a crew stat "
+    "not keyed by role in sim/ (TD.33, TD.12, TD.21)."),
+
+"G66": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §26.8 adds "
+    "phases 4a to 4c, costed, and the sums check. Left: "
+    "<code>tools/completion.py</code> weighs and proves them, so the frontend "
+    "figure follows the screens (TD.47). §32.9 keeps v3.6’s run estimate "
+    "(C72)."),
+
+"G67": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §26.8’s phase 1 "
+    "names <em>“crews as ruleborn from the manifest with the eighteen "
+    "abilities, Sage powers and casts as commands”</em>, phase 4 <em>“all 39 of "
+    "6.2’s features and moss”</em>. Left: completion’s Crews and Terrain "
+    "proofs counting them (TD.47), and the work itself (TD.12, TD.15)."),
+
+"G68": dict(status="open", left="build", note=
+    "<strong>The document is done; the build is not.</strong> §26.8’s phase 0: "
+    "a recorded build for each store, <em>“counted here and nowhere "
+    "else”</em>. Left: one proof of it in completion, and phase 2’s Project "
+    "structure proof no longer counting the store builds (TD.47)."),
+
+# -- partly: a sentence is still wrong; its edit is drafted ----------------
+
+"C19": dict(status="open", left="document", note=
+    "<strong>Partly.</strong> v3.7 decides every rule the tables turn on "
+    "(§14.1’s choices, the priced strays, the 5,000 base, the Heart) and "
+    "captions each table as <em>“the earlier run, which the full re-run "
+    "replaces whole”</em>, but prints none. Left: §9.3’s production table, "
+    "§10.2’s day and income columns, §14.2’s Keeper table and chart, §14.3’s "
+    "rows, §5.2’s Engaged column and §5.5’s capacities from "
+    "<code>docs/design/generated/pacing.md</code>, each a band (the edit is "
+    "redrafted). The sentences that stand in for them quote the wrong run "
+    "(C58)."),
+
+"C55": dict(status="open", left="document", note=
+    "<strong>Partly. Settled by rule</strong>: v3.7 takes the brief’s option A, "
+    "landscape for the heist and its result only, in §23.3, §21.1, §12.7, "
+    "§24, §27.2, §27.5, §19.17 and §23.5. Left: §23.3 still says <em>“tablets "
+    "and the later PC version default to landscape”</em> and that the rest "
+    "<em>“gains landscape with tablets”</em>, while §24 makes iPad a launch "
+    "device; the option said tablets show menus in portrait (edits drafted). "
+    "The build narrows TD.28 to the heist."),
+
+"F38": dict(status="open", left="document", note=
+    "<strong>Partly.</strong> The owner’s answer B is written in: §11.5 offers "
+    "a found stray <em>“for the next birth’s Essence price”</em>, the season "
+    "track’s too, and the rate is 1.3455. Left: §11.8’s Stray visitor still "
+    "<em>“joins the roster with three traits when it’s done”</em>, free, "
+    "against §11.5’s <em>“the only strays that do”</em> (edit drafted). §9.5’s "
+    "day for the 38th is not pacing.md’s (C58); the rate holds there."),
+
+"F47": dict(status="open", left="document", note=
+    "<strong>Partly.</strong> The owner’s answer A is written into §24.1, "
+    "§24.5, §22.5 and §27.2: the $5 plan from the first heist and about $60 to "
+    "$615 a month at a million. Left: §24.4 still says a million players fit "
+    "<em>“inside the $5 plan’s included allowances”</em>, <em>“with a quarter "
+    "of them active daily”</em>, as does §24.1’s million-player egress; and "
+    "§24.1’s own 11 rows give 110 million writes and $65, not <em>“about 105 "
+    "million, $60”</em> (edits drafted). Billed rows, index writes included, "
+    "wait on G33’s edge run."),
+
+"F55": dict(status="open", left="document", note=
+    "<strong>Partly. Settled by rule</strong>: v3.7 takes the brief’s option D. "
+    "§5.2 keeps 8, 8 and 6 wards on 1, 1 and 2 posts at realm levels 1 to 3 "
+    "with each level’s guards tuned, and gives 4 and 5 one post and 2 and 0 "
+    "wards; every level holds inside 30 to 45% (§13.2). Left: §32.9’s ledger "
+    "still ships <em>“8, 8, 6, 7, 8”</em>, the old bands and holds, and a "
+    "reachability measured on the old budget; §5.2’s first paragraph keeps "
+    "37.6% and 62.4%; §13.2 says n = 200 where §5.2 says 800; §13 says "
+    "<em>“One to eight per realm”</em> (edits drafted). For the build: the "
+    "watch is in sim/ and the harness, and is not yet on the target card "
+    "(§12.4); every row re-measured at n ≥ 800; and "
+    "<code>tools/post_ladder</code> re-set against the new bands (§10.2 says "
+    "its ladders predate them). The Heart’s watch is G71."),
+
+"F56": dict(status="open", left="document", note=
+    "<strong>Partly. Settled by rule</strong>: v3.7 takes the brief’s option A. "
+    "§10: <em>“A new universe starts with the Heart and, at level 1 in it, the "
+    "Keeper’s Spire, the Vault, a Star Well, an Aether Spring, a Garden and a "
+    "Hearth”</em>, its one home. Left: §16 sends the first experiment to a Lab "
+    "at 6:30 that the start lacks and nothing builds, while §10.2’s Lab row "
+    "carries the starting dash (edits drafted: the first session raises it, "
+    "free). The economy model then starts the Lab on day 1."),
+
+"G23": dict(status="open", left="document", note=
+    "<strong>Partly.</strong> The owner’s answer B is written into the Tier I "
+    "cells of the nine laws (§7.7), Delay’s guards included. Left: Density "
+    "still reads <em>“Your Breakers become slow targets.”</em>, which the brief "
+    "recorded under every option as false by §11.2’s roster (edit drafted). "
+    "For the build: sim/ sizes characters by role, so Density’s small band "
+    "never plays (TD.12, TD.34)."),
+
+"G26": dict(status="open", left="document", note=
+    "<strong>Partly.</strong> The owner’s answer B is written in: §18.6 and "
+    "§20.12 give five islands, eight for a Builder, a 1 MiB lifetime quota, "
+    "64 by 64 word lists, the five report reasons and the spike rule. Left: "
+    "where the word lists live, which the answer’s edit asked for (edit "
+    "drafted: <code>server/src/words.json</code>)."),
+
+"G51": dict(status="open", left="document", note=
+    "<strong>Partly. Settled by rule</strong>: the brief’s option A is written "
+    "into §12.5’s crew manifest, §11.4’s compounding growth, §11.6’s "
+    "multiplying rest and §14.1’s staffing order. Left: §11.4’s <em>“the "
+    "Spire’s three places count as a home at the Spire’s level”</em> gives a "
+    "ceiling of 20 against §9.5’s <em>“up to level 10”</em>, §11.6’s rest reads "
+    "<em>“Hearth level”</em>, and the order has none inside a realm (edits "
+    "drafted). For the build: the manifest on the lease and replay, the "
+    "crew played by kind, level and traits (TD.12, TD.34)."),
+
+"G57": dict(status="open", left="document", note=
+    "<strong>Partly. Settled by rule</strong>: the brief’s option B. §13.2 "
+    "defines denied, held, seen and fired for one raid, written at settlement; "
+    "§13 gives the three rehearsal crews; §24.3 keeps the rows for the season. "
+    "Left: two of §23.2’s ten records have no fact (<em>“most guards slept "
+    "past”</em>, <em>“minutes played a day”</em>) and the favourite law no rule, "
+    "and nothing says where an unsampled raid’s facts come from (edits "
+    "drafted). For the build: the event log, the facts at settlement and the "
+    "three crews in sim/ (TD.13, TD.39)."),
 }
 
 
@@ -10834,6 +12180,12 @@ FRONTEND = {
     "C57": "a screen, its art or its look in stage SD",
     "D97": "a screen, its art or its look in stage SD",
     "D98": "a screen, its art or its look in stage SD",
+    # Found reading v3.7.
+    "C59": "how many screens there are to draw",
+    "C64": "a screen, its art or its look in stage SD",
+    "C67": "a screen, its art or its look in stage SD",
+    "C68": "a building's look",
+    "C70": "a screen, its art or its look in stage SD",
     "C20": "author 48 law sounds, or correct the claim to six school sounds",
     "C17": "the game's public name and its fallback",
     "G9":  "the 60-second guided build: an onboarding flow and its screens",
@@ -10894,6 +12246,10 @@ BOTH = {
     "G69": "the server or simulation, and a screen in stage SD",
     "G70": "the server or simulation, and a screen in stage SD",
     "C56": "the server or simulation, and a screen in stage SD",
+    # Found reading v3.7.
+    "C60": "the account on the server, and linking a second sign-in in Settings",
+    "C71": "the first session's timings, and its screens in stage SD",
+    "G75": "friends on the server, and the Friends screen",
 }
 
 
@@ -10967,8 +12323,8 @@ DESIGN_GATES = {
                    "unit a layout is drawn in",
             "G1":  "how a crew moves through a realm, which decides what a "
                    "route has to look like",
-            "F26": "how many wards a realm holds: 8, 8, 6, 7 and 8, set by "
-                   "the hold band (v3.3)",
+            "F26": "how many wards a realm holds, set by the hold band (v3.3): "
+                   "8, 8, 6, 2 and 0 since v3.7's re-measure",
             "F27": "where each realm's defence starts: one post slope, a start "
                    "per realm level (v3.3)",
             "F22": "one guard post at realms 1 and 2, with eight wards (v3.3)",
@@ -10983,14 +12339,12 @@ DESIGN_GATES = {
             "G5":  "a pylon shows its law before the detour (v3.3)",
         }),
     "screens": dict(
-        what="The 28 screens in \u00a723, designed in Screens v3 (\u00a723.5), "
+        what="The 29 screens in \u00a723, designed in Screens v3 (\u00a723.5), "
              "their contents and their counts",
         gates={},
-        partly={
-            "C11": "how many screens there are: \u00a723.2's 28, which the designs "
-                   "match; \u00a721.9 still says 27 (v3.6)",
-        },
         closed={
+            "C11": "how many screens there are: 29, \u00a723.2's launch list with "
+                   "Hatch, and \u00a721.9 agrees (v3.7)",
             "C37": "what the scout report shows: no patrol positions; "
                    "patrols are learned in the heist (v3.4, brief 38)",
             "C9":  "how many laws the Codex screen shows: 48, not 36",
@@ -11194,7 +12548,8 @@ def status(item) -> str:
     """The effective status of a register item, by id or by the item itself."""
     item_id = item if isinstance(item, str) else item["id"]
     own = {} if isinstance(item, str) else item
-    return (V36.get(item_id, {}).get("status")
+    return (V37.get(item_id, {}).get("status")
+            or V36.get(item_id, {}).get("status")
             or V34.get(item_id, {}).get("status")
             or V33.get(item_id, {}).get("status")
             or V32.get(item_id, {}).get("status")
@@ -11228,6 +12583,18 @@ def status_before_v36(item_id: str) -> str:
     """What an item's status was before v3.6's layer, for counting what it did."""
     own = next((i for i in REGISTER if i["id"] == item_id), {})
     return (V34.get(item_id, {}).get("status")
+            or V33.get(item_id, {}).get("status")
+            or V32.get(item_id, {}).get("status")
+            or V31.get(item_id, {}).get("status")
+            or V3.get(item_id, {}).get("status")
+            or own.get("status", "open"))
+
+
+def status_before_v37(item_id: str) -> str:
+    """What an item's status was before v3.7's layer, for counting what it did."""
+    own = next((i for i in REGISTER if i["id"] == item_id), {})
+    return (V36.get(item_id, {}).get("status")
+            or V34.get(item_id, {}).get("status")
             or V33.get(item_id, {}).get("status")
             or V32.get(item_id, {}).get("status")
             or V31.get(item_id, {}).get("status")
@@ -11361,17 +12728,6 @@ EDITS = {
                  "\u201c7.9 Rank is a strength ladder, paid for in pages\u201d "
                  "and regenerate the table: \u00a710.4 cites \u00a77.9 for the split.",
          why="A declared home should not defer to another section. C40."),
-],
-
-"G18": [
-    dict(section="10.3", action="replace",
-         find="While it disarms, the ward\u2019s sensor ignores that crew member, "
-              "so every known ward can be disarmed",
-         replace="From the moment a crew member sets out to disarm a known ward "
-                 "until it finishes or turns aside, the ward\u2019s sensor "
-                 "ignores it, so every known ward can be disarmed",
-         why="A disarmer stands on the tile; a Well senses 3 tiles out and a "
-             "Glare 2, so the walk there crosses the sensor. G18."),
 ],
 
 "C34": [
@@ -12025,19 +13381,18 @@ EDITS = {
 ],
 
 "C19": [
-    dict(section="9.3", action="regenerate", from_="pacing.md",
-         replace="Replace \u00a79.3\u2019s production table, \u00a710.2\u2019s "
-                 "\u201cEngaged player builds it\u201d and \u201cIncome hours to "
-                 "afford\u201d columns, \u00a714.2\u2019s Keeper days and "
-                 "\u00a714.3\u2019s milestone rows with the full re-run, each "
-                 "cell a band across \u00a79.6\u2019s two edges, and \u00a75.2\u2019s "
-                 "realm-level column and \u00a75.5\u2019s capacities with the same "
-                 "run. Then move every pacing sentence the tables break: Keeper 40 "
-                 "is day 349\u2013357, not 275; everything is built on day "
-                 "699\u2013719, not 378. First decide G22\u2019s three choices, "
-                 "since the tables are their consequence, and F38, since "
-                 "\u00a79.5\u2019s birth rule has no rate to set until it is.",
-         why="This item\u2019s own recommendation was to regenerate rather than "
+    dict(section="9.3",
+         action="regenerate",
+         from_="pacing.md",
+         replace="Replace §9.3’s production table, §10.2’s “Engaged player builds it” "
+                 "and “Income hours to afford” columns, §14.2’s Keeper days and chart "
+                 "and §14.3’s milestone rows with the full re-run, each cell a band "
+                 "across §9.6’s two edges, and §5.2’s realm-level column and §5.5’s "
+                 "capacities with the same run. Every choice the tables rest on is "
+                 "now decided (14.1’s three, the birth rate, the base, the Heart), so "
+                 "nothing waits but the printing; C58 moves the sentences that quote "
+                 "the run.",
+         why="This item’s own recommendation was to regenerate rather than "
              "hand-edit, because hand-editing is what produced it."),
 ],
 
@@ -12506,4 +13861,647 @@ EDITS = {
              "document knows depth varies; the matchmaker does not control it."),
 ],
 
+
+# Drafted against v3.7: the remainders of items v3.7 only partly closed,
+# and the items found reading it (FOUND_IN_V37).
+"C55": [
+    dict(section="23.3",
+         action="replace",
+         find="the choice is remembered per device, and the rest of the interface "
+              "gains landscape with tablets.",
+         replace="the choice is remembered per device. Tablets show the rest in "
+                 "portrait at launch, and every screen gains landscape after launch.",
+         why="§24 puts iPad in launch, so “with tablets” leaves a launch tablet "
+             "two rules; the brief’s option A, which v3.7 took, said tablets show "
+             "menus in portrait. C55."),
+    dict(section="23.3",
+         action="replace",
+         find="Phones default to portrait; tablets and the later PC version "
+              "default to landscape. The choice is remembered per device.",
+         replace="Phones and tablets default to portrait at launch, and the later PC "
+                 "version to landscape. The choice is remembered per device.",
+         why="The same rule, in the section’s own list of rules. C55."),
+],
+"F38": [
+    dict(section="11.8",
+         action="replace",
+         find="and joins the roster with three traits when it's done",
+         replace="and, when it's done, offers to join the roster with three traits "
+                 "for the next birth’s Essence price (11.5)",
+         why="§11.5: the two first-session strays “join free, the only strays "
+             "that do”, and “Every character is therefore priced as a birth”. F38."),
+],
+"F47": [
+    dict(section="24.4",
+         action="replace",
+         find="A managed serverless SQL database handles this at a million monthly "
+              "players inside the $5 plan's included allowances",
+         replace="A managed serverless SQL database handles this on the $5 plan from "
+                 "the first heist, about $65 to $615 a month at a million monthly "
+                 "players (24.1)",
+         why="§24.1 measured it: the free plan cannot validate a heist, and a "
+             "million players writes past the plan’s allowance. F47."),
+    dict(section="24.4",
+         action="replace",
+         find="with a quarter of them active daily, that is about a terabyte a "
+              "month",
+         replace="with a third of them active daily (25.1), that is about one and a "
+                 "half terabytes a month",
+         why="§25.1 and §24.1 count a third a day; 150 KB × 333,333 × 30 is 1.5 "
+             "TB. F47."),
+    dict(section="24.1",
+         action="replace",
+         find="~150 GB | 0.75 to 1.5 TB",
+         replace="~150 GB | 1 to 2 TB",
+         why="The other columns count a third of monthly players a day; this one "
+             "a quarter. 100 to 200 KB × 333,333 × 30. F47."),
+    dict(section="24.1",
+         action="replace",
+         find="$5 to about $21 | about $60 to $615",
+         replace="$5 to about $21 | about $65 to $615",
+         why="11 rows a day × 333,333 × 30 is 110 million writes, $65. F47."),
+    dict(section="24.1",
+         action="replace",
+         find="at about $60 to $615 a month at a million, casual to engaged",
+         replace="at about $65 to $615 a month at a million, casual to engaged",
+         why="As above. F47."),
+    dict(section="24.1",
+         action="replace",
+         find="the casual floor is about 105 million, $60",
+         replace="the casual floor is about 110 million, $65",
+         why="§24.1’s own formula on its own 11 rows: 1,000,000 × ⅓ × 11 × 30. "
+             "F47."),
+    dict(section="24.5",
+         action="replace",
+         find="about $60 to $615 at a million monthly players (24.1)",
+         replace="about $65 to $615 at a million monthly players (24.1)",
+         why="As above. F47."),
+    dict(section="27.2",
+         action="replace",
+         find="a managed database — about $60 to $615 a month at a million",
+         replace="a managed database — about $65 to $615 a month at a million",
+         why="As above. F47."),
+    dict(section="32.8",
+         action="replace",
+         find="the $5 plan from the first heist; about $60 to $615 a month at a "
+              "million players",
+         replace="the $5 plan from the first heist; about $65 to $615 a month at a "
+                 "million players",
+         why="As above; the change note at the top says $60 too. F47."),
+],
+"F55": [
+    dict(section="5.2",
+         action="replace",
+         find="On the harness as it stands that is one post, holding 37.6% at "
+              "eight wards against a band centred on 37.5%",
+         replace="That is one post, holding 39.0% at eight wards with its guards "
+                 "seeing 0.75 as far (below), against a band centred on 37.5%",
+         why="The next paragraph and §13.2 give realm level 2 at 39.0% tuned and "
+             "60.8% untuned; 37.6% is the pre-alignment harness. F55."),
+    dict(section="5.2",
+         action="replace",
+         find="the weakest two-post setting there holds 62.4% of raids",
+         replace="the weakest two-post setting there held 62.4% of raids before "
+                 "version 3.7’s re-measure",
+         why="Measured before the answers were built; v3.7’s re-measure did not "
+             "run it. F55."),
+    dict(section="13.2",
+         action="replace",
+         find="at n = 200 a level; the old budget’s column is at n = 800",
+         replace="at n = 200 a level at realm levels 1 to 3 and n = 800 at 4 and 5; "
+                 "the old budget’s column is at n = 800",
+         why="§5.2 gives realm levels 4 and 5 at n = 800, which the owner’s brief "
+             "measured; 1 to 3 are the balance-pass grid’s n = 200. F55."),
+    dict(section="13",
+         action="replace",
+         find="One to eight per realm, by 5.2's measured budget",
+         replace="Up to eight per realm, by 5.2's measured budget, and none at realm "
+                 "level 5",
+         why="§5.2, §10.2, §13.2 and §13.4 give 8, 8, 6, 2 and 0. F55."),
+    dict(section="32.9",
+         action="replace",
+         find="5.2, 10.2 Ward, 13, 13.4 | 8, 8, 6, 7, 8",
+         replace="5.2, 10.2 Ward, 13, 13.4 | 8, 8, 6, 2, 0 (version 3.7’s re-measure, "
+                 "with each level’s watch, 12.17)",
+         why="§5.2: “8, 8, 6, 2 and 0 … the counts above are the ones that ship”. "
+             "F55."),
+    dict(section="32.9",
+         action="replace",
+         find="25–40% at realm level 1; 30–45% at levels 2–5 "
+              "(27.6/37.6/34.4/40.4/39.8% measured, pre-alignment)",
+         replace="30–45% at every realm level (37.5/39.0/37.5/38.0/36.9% measured in "
+                 "version 3.7, 13.2)",
+         why="§13.2: “30 to 45%, authored or generated, at every realm level”. "
+             "F55."),
+    dict(section="32.9",
+         action="replace",
+         find="60–75% at realm level 1; 55–70% from realm level 2",
+         replace="55–70% at every realm level",
+         why="The mirror of the band above; §13.2’s table and §12.22 say 55 to "
+             "70% at every level. F55."),
+    dict(section="32.9",
+         action="replace",
+         find="27.6 ± 1.6, 37.6 ± 2.2, 34.4 ± 2.1, 40.4 ± 2.2, 39.8 ± 2.2 "
+              "(pre-alignment)",
+         replace="37.5, 39.0, 37.5, 38.0 and 36.9% (version 3.7: n = 200 at realm "
+                 "levels 1 to 3, n = 800 at 4 and 5)",
+         why="§13.2’s Measured hold column. F55."),
+    dict(section="32.9",
+         action="replace",
+         find="Reachable at every realm level on current numbers (22 decisions at "
+              "realm level 1 with eight wards; 17 to 23 at levels 2–5)",
+         replace="Not yet measured on version 3.7’s budget and watch; on the budget "
+                 "before it, 22 decisions at realm level 1 with eight wards and 17 to "
+                 "23 at levels 2–5",
+         why="Realm level 5 now has no wards, and the decision counts were "
+             "measured on the old budget. F55."),
+],
+"F56": [
+    dict(section="16",
+         action="replace",
+         find="The Archivist suggests putting Slow rivers and Bloom together in "
+              "the Lab.",
+         replace="The Archivist raises a Resonance Lab in the Heart, free in the "
+                 "first session, and suggests putting Slow rivers and Bloom together "
+                 "in it.",
+         why="§10’s starting universe has no Lab, and nothing in §16 builds one; "
+             "the first session’s weaves are instant and its first experiment "
+             "free, so its Lab is free too. F56."),
+    dict(section="10",
+         action="replace",
+         find="and the level-1 rows of these six carry a dash where a day would be",
+         replace="and the level-1 rows of these six, and of the Resonance Lab the "
+                 "first session raises (16), carry a dash where a day would be",
+         why="§10.2’s Lab row already carries the dash. The Observatory’s, "
+             "Beacon’s and Dock’s dashes are the earlier run’s, which C19’s "
+             "regeneration replaces. F56."),
+],
+"G23": [
+    dict(section="7.7",
+         action="replace",
+         find="Your Breakers become slow targets.",
+         replace="Your Wardens become slow targets.",
+         why="§12.21: “every large one is a Warden”; no Breaker is large (§11.2), "
+             "and the Emberling, a Breaker, is small. The brief recorded it under "
+             "every option. G23."),
+],
+"G26": [
+    dict(section="18.6",
+         action="replace",
+         find="island names come from word lists, 64 adjectives and 64 nouns in "
+              "each launch language, at every age (20.7)",
+         replace="island names come from word lists, 64 adjectives and 64 nouns in "
+                 "each launch language (server/src/words.json), at every age (20.7)",
+         why="The answer’s edit: name the word lists or cite where they live. G26."),
+],
+"G51": [
+    dict(section="11.4",
+         action="replace",
+         find="the Spire’s three places count as a home at the Spire’s level, and "
+              "a character moves between free places at no cost",
+         replace="the Spire’s three places count as a home at the Spire’s level, up "
+                 "to a level-5 Hearth’s (characters up to level 10, rest cut 25%), "
+                 "and a character moves between free places at no cost",
+         why="The Spire reaches level 10, which made a ceiling of 20 against "
+             "§9.5’s “up to level 10”. G51."),
+    dict(section="11.6",
+         action="replace",
+         find="the outcome’s rest × (1 − 0.05 × Hearth level)",
+         replace="the outcome’s rest × (1 − 0.05 × the level of its home, 11.4)",
+         why="A character in the Spire has no Hearth level; §11.4 gives its home "
+             "one. G51."),
+    dict(section="14.1",
+         action="replace",
+         find="Each new worker staffs the Heart’s producers first, then each outer "
+              "realm’s in the order the realms opened.",
+         replace="Each new worker staffs the Heart’s producers first, then each outer "
+                 "realm’s in the order the realms opened, and within a realm the Star "
+                 "Well, then the Aether Spring, then the Garden.",
+         why="The Roster’s one-tap reassign follows this order (23.2), which had "
+             "none inside a realm; the economy model runs Well, Spring, Garden. "
+             "G51."),
+],
+"G57": [
+    dict(section="23.2",
+         action="replace",
+         find="most guards slept past, fewest crew knocked out, most realms in one "
+              "raid, biggest haul, longest defence held, the edge raiders most "
+              "often enter by, the favourite law, and minutes played a day",
+         replace="most guards slept past (each guard asleep when a crew member "
+                 "crossed its sight, 24.10), fewest crew knocked out, most realms in "
+                 "one raid, biggest haul, longest defence held, the edge raiders most "
+                 "often enter by, the favourite law (the one most often crossed in "
+                 "heists), and, from the session events (24), minutes played a day",
+         why="Two of the ten had no fact behind them and one no rule; minutes "
+             "played is a session figure. G57."),
+    dict(section="24.10",
+         action="replace",
+         find="sightings, alerts, wards fired, bells, captures and escapes, each "
+              "with its tick",
+         replace="sightings, alerts, wards fired, bells, captures, escapes and guards "
+                 "slept past, each with its tick",
+         why="The fact the Profile’s record reads (23.2). G57."),
+    dict(section="13.2",
+         action="replace",
+         find="with the facts the Profile’s records read (23.2), whether or not "
+              "that raid was re-simulated.",
+         replace="with the facts the Profile’s records read (23.2), whether or not "
+                 "that raid was re-simulated: a raid that was not is written from the "
+                 "event log its device sent, trusted as its haul is (24), and one "
+                 "that was, from the server’s own run.",
+         why="Validation is sampled (24), and the log is outside the checksum "
+             "(24.10), so the source of an unsampled raid’s facts was unstated. "
+             "G57."),
+],
+"C58": [
+    dict(section="9.5",
+         action="replace",
+         find="day 754 to 782 in the full re-run (14.3)",
+         replace="day 587 to 619 in the full re-run, a day after it does (14.3)",
+         why="docs/design/generated/pacing.md: the 38th on day 587 to 619, "
+             "everything built on 586 to 618. C58."),
+    dict(section="9.5",
+         action="replace",
+         find="arrives on day 754 to 782, the days every building reaches its top "
+              "level at the two edges of 9.6’s band",
+         replace="arrives on day 587 to 619, the day after every building reaches its "
+                 "top level at the two edges of 9.6’s band",
+         why="As above; the rate holds. C58."),
+    dict(section="14.1",
+         action="replace",
+         find="filling the Heart first puts Keeper 40 on day 357, one worker to "
+              "each producer in turn on day 424",
+         replace="filling the Heart first puts Keeper 40 on day 321, one worker to "
+                 "each producer in turn on day 354",
+         why="pacing.md’s “Choices the document leaves open” table, which this "
+             "paragraph cites. C58."),
+    dict(section="14.1",
+         action="replace",
+         find="Keeper 40 falls between day 337 and 385 and everything built "
+              "between day 667 and 788",
+         replace="Keeper 40 falls between day 305 and 335 and everything built "
+                 "between day 577 and 660",
+         why="As above. C58."),
+    dict(section="14.1",
+         action="replace",
+         find="One ruleborn at every post built pushes Keeper 40 past day 1,100",
+         replace="One ruleborn at every post built pushes Keeper 40 to day 557 and "
+                 "everything built to day 1,283",
+         why="As above. C58."),
+    dict(section="14.2",
+         action="replace",
+         find="an engaged player reaches Keeper 24 on day 92, Keeper 28 on day 140 "
+              "to 144 and Keeper 40 on day 349 to 357, and has every building at "
+              "its highest level on day 754 to 782",
+         replace="an engaged player reaches Keeper 24 on day 84 to 88, Keeper 28 on "
+                 "day 127 to 132 and Keeper 40 on day 307 to 321, and has every "
+                 "building at its highest level on day 586 to 618",
+         why="pacing.md runs exactly the answers this sentence lists. C58."),
+    dict(section="14.3",
+         action="replace",
+         find="Engaged players reach Keeper level 24 on day 92, 28 on day 140 to "
+              "144 and 40 on day 349 to 357 (the full re-run, 14.2), and have "
+              "every building at its highest level on day 754 to 782, about two "
+              "years in.",
+         replace="Engaged players reach Keeper level 24 on day 84 to 88, 28 on day "
+                 "127 to 132 and 40 on day 307 to 321 (the full re-run, 14.2), and "
+                 "have every building at its highest level on day 586 to 618, about "
+                 "twenty months in.",
+         why="As above. C58."),
+    dict(section="14.3",
+         action="replace",
+         find="Day 31 (re-run)",
+         replace="Day 29 (re-run)",
+         why="pacing.md’s Codex table: the launch 24 on day 29. C58."),
+    dict(section="14.3",
+         action="replace",
+         find="Day 92 at the earliest (re-run; 14.4)",
+         replace="Day 84 to 88 at the earliest (re-run; 14.4)",
+         why="All 48 lands with Keeper 24, day 84 to 88. C58."),
+    dict(section="14.3",
+         action="replace",
+         find="Day 754 to 782 (re-run)",
+         replace="Day 586 to 618 (re-run)",
+         why="As above. C58."),
+    dict(section="14.3",
+         action="replace",
+         find="the launch 24 on day 31 for an engaged player, and all 48 — for one "
+              "who starts once every season’s laws have shipped (26.1) — no "
+              "earlier than Keeper level 24, day 92,",
+         replace="the launch 24 on day 29 for an engaged player, and all 48 — for one "
+                 "who starts once every season’s laws have shipped (26.1) — no "
+                 "earlier than Keeper level 24, day 84 to 88,",
+         why="As above. C58."),
+    dict(section="14.3",
+         action="replace",
+         find="A player who never raids restores the launch 24 in about 78 days "
+              "from the Library and daily goals",
+         replace="A player who never raids restores the launch 24 in about 76 days "
+                 "from the Library and daily goals",
+         why="pacing.md: day 76 for a player who never raids. C58."),
+    dict(section="14.4",
+         action="replace",
+         find="no earlier than the day that level arrives, day 92 in the re-run "
+              "(14.2)",
+         replace="no earlier than the day that level arrives, day 84 to 88 in the "
+                 "re-run (14.2)",
+         why="As above. C58."),
+    dict(section="14.4",
+         action="replace",
+         find="Never raids: the Library and daily goals — the launch 24 in about "
+              "78 days",
+         replace="Never raids: the Library and daily goals — the launch 24 in about "
+                 "76 days",
+         why="As above. C58."),
+    dict(section="14.4",
+         action="replace",
+         find="about 30 days engaged (31 in the re-run) and 78 for a player who "
+              "never raids",
+         replace="about 30 days engaged (29 in the re-run) and 76 for a player who "
+                 "never raids",
+         why="As above. C58."),
+    dict(section="27.2",
+         action="replace",
+         find="the full re-run reaches it on day 349 to 357 and finishes "
+              "everything on day 754 to 782",
+         replace="the full re-run reaches it on day 307 to 321 and finishes "
+                 "everything on day 586 to 618",
+         why="As above. C58."),
+    dict(section="32.9",
+         action="replace",
+         find="all 48 no earlier than Keeper level 24, day 92; a player who never "
+              "raids stops at the launch 24, in about 78 days",
+         replace="all 48 no earlier than Keeper level 24, day 84 to 88; a player who "
+                 "never raids stops at the launch 24, in about 76 days",
+         why="As above. C58."),
+    dict(section="32.9",
+         action="replace",
+         find="the 38th character arrives on day 754 to 782, the days every "
+              "building reaches its top level at both edges of 9.6’s band",
+         replace="the 38th character arrives on day 587 to 619, the day after every "
+                 "building reaches its top level at both edges of 9.6’s band",
+         why="As above. C58."),
+    dict(section="32.9",
+         action="replace",
+         find="Keeper 24 day 92, Keeper 28 day 140 to 144, Keeper 40 day 349 to "
+              "357 and everything built on day 754 to 782",
+         replace="Keeper 24 day 84 to 88, Keeper 28 day 127 to 132, Keeper 40 day 307 "
+                 "to 321 and everything built on day 586 to 618",
+         why="As above. C58."),
+    dict(section="32.9",
+         action="replace",
+         find="the launch 24 on day 31 for an engaged raider and in about 78 days "
+              "for a player who never raids, whose ceiling is the launch 24; all "
+              "48 no earlier than Keeper level 24, day 92,",
+         replace="the launch 24 on day 29 for an engaged raider and in about 76 days "
+                 "for a player who never raids, whose ceiling is the launch 24; all "
+                 "48 no earlier than Keeper level 24, day 84 to 88,",
+         why="As above. C58."),
+],
+"G71": [
+    dict(section="5.2",
+         action="replace",
+         find="It is level 3 because that level’s two law slots are the Heart’s "
+              "(5.1), not for any measured hold: the Heart’s own hold is measured "
+              "by 13.2’s check once the Glare’s fixed reach (10.3) and the silent "
+              "Vault (12.17) are built.",
+         replace="It is level 3 because that level’s two law slots are the Heart’s "
+                 "(5.1), not for any measured hold, and its guards keep realm level "
+                 "3’s watch (12.17); the Heart’s own hold is measured by 13.2’s check "
+                 "in the balance pass, which has not yet run on it.",
+         why="The paragraph before reports a re-measure with the Glare’s fixed "
+             "reach and the silent Vault built; the watch is the build’s reading. "
+             "G71."),
+    dict(section="12.17",
+         action="replace",
+         find="The watch belongs to the realm, not the guard, and the target card "
+              "shows it (12.4).",
+         replace="The watch belongs to the realm, not the guard, and the Heart keeps "
+                 "realm level 3’s (5.2); the target card shows it (12.4).",
+         why="§5.2 counts the Heart as realm level 3 for wards, posts and slots "
+             "and never for its watch. G71."),
+    dict(section="32.9",
+         action="replace",
+         find="Re-checked once the Glare’s fixed 4 m reach (10.3) is built.",
+         replace="Re-checked by the balance pass, now that the Glare’s fixed 4 m "
+                 "reach (10.3) is built.",
+         why="§5.2 and §13.2 report it built and measured. G71."),
+],
+"C59": [
+    dict(section="21.9",
+         action="replace",
+         find="and 29: 23.2’s 28 and the Hatch screen;",
+         replace="and 29, 23.2’s launch list;",
+         why="Hatch is §23.2’s 29th row. C59."),
+],
+"G72": [
+    dict(section="12.9",
+         action="replace",
+         find="Season stars follow the same split: a heist earns the raider 10 "
+              "stars times its Renown multiplier above",
+         replace="Season stars follow the same split on every heist, not only the ten "
+                 "that move Renown: a heist earns the raider 10 stars times its "
+                 "Renown multiplier above",
+         why="§18.2’s days (about day 49 regular, 25 engaged) count every heist. "
+             "G72."),
+],
+"C60": [
+    dict(section="24.4",
+         action="replace",
+         find="Progress syncs through iCloud and Google Play Games saved games, "
+              "which are free to us and use the player's own storage.",
+         replace="Progress lives in the player’s account on the server, which is "
+                 "authoritative for every resource change (24), so it follows the "
+                 "player to any device; nothing is kept in iCloud or Play Games saved "
+                 "games.",
+         why="§24’s server and cross-progression rows, and §24.8’s sign-in, which "
+             "no longer uses Play Games. C60."),
+    dict(section="24",
+         action="replace",
+         find="One account across iPhone, iPad, Android and later PC, with "
+              "platform sign-in.",
+         replace="One account across iPhone, iPad, Android and later PC, with "
+                 "platform sign-in: a player signed in on one platform adds the "
+                 "other’s sign-in from Settings, and the server keeps both identities "
+                 "on the one account (24.8).",
+         why="Nothing said how a Game Center identity and a Google account become "
+             "one account. C60."),
+],
+"C61": [
+    dict(section="9.6",
+         action="replace",
+         find="and matchmaking offers nothing three or more below (12.22)",
+         replace="and normal matchmaking offers nothing three or more below; a Trace "
+                 "or a widened list can (12.22)",
+         why="§12.22 step 5. C61."),
+],
+"C62": [
+    dict(section="19.11",
+         action="replace",
+         find="player creations are never deleted or overwritten (18.6)",
+         replace="player creations are never deleted or overwritten (18.6), except an "
+                 "under-13 player’s, which go at once (20.11)",
+         why="§20.11 erases an under-13 player’s islands’ bytes at once. C62."),
+    dict(section="18.6",
+         action="replace",
+         find="within 1 MiB of published islands over its life, since nothing "
+              "published is deleted",
+         replace="within 1 MiB of published islands over its life, since nothing "
+                 "published is deleted but an under-13 player’s (20.11)",
+         why="As above. C62."),
+    dict(section="20.12",
+         action="replace",
+         find="within 1 MiB of published islands over the account’s life, since "
+              "nothing published is deleted",
+         replace="within 1 MiB of published islands over the account’s life, since "
+                 "nothing published is deleted but an under-13 player’s (20.11)",
+         why="As above. C62."),
+],
+"C63": [
+    dict(section="13.1",
+         action="replace",
+         find="| It is measured weekly",
+         replace="| It is measured each season",
+         why="The row reads the season’s last seven days at the season’s close. "
+             "C63."),
+],
+"G73": [
+    dict(section="5.4",
+         action="replace",
+         find="and darkness is the unlit ground 12.17 sees by.",
+         replace="and darkness is the unlit ground 12.17 sees by, which Glowing dark "
+                 "does not change: its whole realm is dark only for Night runners "
+                 "(8.4).",
+         why="§8.4 counts Glowing dark’s whole realm as darkness; the build and "
+             "the measured holds read only unlit ground. G73."),
+],
+"C64": [
+    dict(section="12.7",
+         action="replace",
+         find="Never more than eight things to tap at once, each at least 9 mm "
+              "across",
+         replace="Never more than eight things to tap at once, besides the clock in "
+                 "drifting ruins and rehearsals and the zoom button Settings can show "
+                 "(20.8), each at least 9 mm across",
+         why="A ruin with a crew of five has nine targets with the clock, and the "
+             "heist’s pinch had no one-finger form. C64."),
+    dict(section="20.8",
+         action="replace",
+         find="and a Settings switch shows rotate and zoom buttons (21.1); nothing "
+              "needs",
+         replace="and a Settings switch shows rotate and zoom buttons (21.1), in a "
+                 "heist a zoom button for the whole realm (12.6); nothing needs",
+         why="§12.6 and §21.1: the heist pinches to see a whole realm. C64."),
+],
+"C65": [
+    dict(section="32.8",
+         action="replace",
+         find="a 13-to-15’s heists appear in no feed | 17.6, 20.7",
+         replace="a 13-to-15’s heists appear in no feed | 17.6, 20.2",
+         why="The rule is in §17.6 and §20.2’s Profile row; §20.7 has no feed. "
+             "C65."),
+],
+"C66": [
+    dict(section="11.9",
+         action="replace",
+         find="and its note among Hush, Spark and Echo the form, Echo first on a "
+              "tie (11.10’s order); a law carrying none of the three gives even "
+              "odds, shown when the stray is offered.",
+         replace="and its note among Hush, Spark and Echo the form; a law carrying "
+                 "two of them, or none, gives even odds between those it carries, or "
+                 "all three, shown when the stray is offered (11.10’s tie rule).",
+         why="§11.10’s tie rule shows the odds, and §11.5 and §11.8 set a stray’s "
+             "form by it; 11.10’s order puts Hush first, not Echo. C66."),
+],
+"C67": [
+    dict(section="21.8",
+         action="replace",
+         find="(five 54-point tabs fit in 390 points)",
+         replace="(five 54-point tabs fit in the 360-point frame, 21.1)",
+         why="§21.1: the rules hold on the 360-point frame the designs are "
+             "reflowed onto. C67."),
+],
+"C68": [
+    dict(section="21.5",
+         action="replace",
+         find="Loose pages drift down onto the shelves, and a worker re-shelves "
+              "them",
+         replace="Loose pages drift down onto the shelves and settle into place",
+         why="§10.1 and §23.5: workers stand only at the three producers. C68."),
+],
+"C69": [
+    dict(section="18.5",
+         action="replace",
+         find="Each is counted from the heist rows and the report’s facts (13.2) "
+              "and shown on the Profile (23.2)",
+         replace="Each is counted from the heist rows and the report’s facts (13.2), "
+                 "Resonant and Paradox from the Lab’s discoveries (8.6), and shown on "
+                 "the Profile (23.2)",
+         why="§8.6: resonances and paradoxes are found in the Lab. C69."),
+],
+"C70": [
+    dict(section="21.8",
+         action="replace",
+         find="text on an alarm fill is paper on #B3203A.",
+         replace="an alarm fill that carries words deepens to #B3203A, with light "
+                 "text #F3EEFF on it.",
+         why="v3.7 names no paper colour, and the clause gave the alarm fill a "
+             "second value without saying when. C70."),
+],
+"C71": [
+    dict(section="16",
+         action="replace",
+         find="The first experiment takes 5 minutes.",
+         replace="The first experiment takes 3 minutes 30 seconds.",
+         why="It is suggested at 6:30 and finishes at 10:00. C71."),
+    dict(section="10.2",
+         action="replace",
+         find="(the first, in the first session, takes 5 minutes and is free, 16)",
+         replace="(the first, in the first session, takes 3 minutes 30 seconds and is "
+                 "free, 16)",
+         why="As above. C71."),
+    dict(section="25.2",
+         action="replace",
+         find="| Wove their first law",
+         replace="| Wove Bloom, their first chosen law (16)",
+         why="§16 places Half gravity at 0:30, before the heist; Bloom is woven "
+             "at 6:30. C71."),
+],
+"G75": [
+    dict(section="26.8",
+         action="replace",
+         find="Leagues, crews, season rollover. Constellations are built for "
+              "version 1.1 and costed with it",
+         replace="Leagues, crews, season rollover, and friends: invites, the feed, "
+                 "friendly heists and the Friends screen (17.6, 23.2). Constellations "
+                 "are built for version 1.1 and costed with it",
+         why="No phase built them. G75."),
+],
+"C72": [
+    dict(section="32.9",
+         action="replace",
+         find="Build 320 runs (229 to 405, the phase rows plus a fix-up session "
+              "for one task in three); iteration 320 (229 to 405), a floor at 1x "
+              "the build; plan about 640 (458 to 810)",
+         replace="Build 415 runs (301 to 531, the phase rows plus a fix-up session "
+                 "for one task in three); iteration 415 (301 to 531), a floor at 1x "
+                 "the build; plan about 830 (602 to 1,062)",
+         why="§26.8 and §27.2, with phases 4a to 4c. C72."),
+],
+"C73": [
+    dict(section="7.10",
+         action="replace",
+         find="like a twenty-third parameter (7.3)",
+         replace="like a twenty-fourth parameter (7.3)",
+         why="§7.3 has twenty-three. C73."),
+],
+"G76": [
+    dict(section="11.8",
+         action="replace",
+         find="On the rule sheet: no row of 7.3 applies to it.",
+         replace="On the rule sheet: no law changes a row of 7.3 for it, so it plays "
+                 "every row at its default.",
+         why="“Ignores every law” is not “no row applies”: the rows carry the "
+             "defaults every character needs. G76."),
+],
 }

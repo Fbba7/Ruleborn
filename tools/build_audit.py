@@ -20,8 +20,8 @@ from audit_register import (DEPENDS, DESIGN_GATES, EDITS, FOUND_IN_V3,
                             GATE_OWNER,  # noqa: E402
                             REGISTER, RESEARCH, SETTLED, V3, V31, V32, V33, V34,
                             FOUND_IN_V33, FOUND_IN_V34, FOUND_IN_V36, FOUND_IN_HANDOFF,
-                            FOUND_FOLDING_HANDOFF, V36, side_of,
-                            status_before_v34, status_before_v36)
+                            FOUND_FOLDING_HANDOFF, FOUND_IN_V37, V36, V37, side_of,
+                            status_before_v34, status_before_v36, status_before_v37)
 
 from build_stamp import stamped  # noqa: E402
 
@@ -46,6 +46,25 @@ def answers() -> dict[str, dict]:
 
 
 ANSWERS = answers()
+
+
+def settled_by_document() -> dict[str, dict]:
+    """The brief's entries a version of the document settled by rule rather
+    than the owner by an answer, each with its option's label, keyed by item
+    id. v3.7 took the recommended option for every decision still waiting;
+    that is not an answer, and answers.json does not record it."""
+    import json
+    brief = json.loads((DECISIONS / "brief.json").read_text(encoding="utf-8"))["entries"]
+    out = {}
+    for item_id, e in brief.items():
+        s = e.get("settled")
+        option = next((o for o in e["options"] if s and o["key"] == s.get("option")), None)
+        if option is not None:
+            out[item_id] = dict(s, label=option["label"])
+    return out
+
+
+SETTLED_BY_DOC = settled_by_document()
 
 SEVERITY = {
     "change":      ("Approach change", "chg"),
@@ -433,7 +452,10 @@ def blocker(item: dict, by_id: dict) -> tuple[str, str]:
     # Decided by the owner: no longer theirs, whatever it waited on. It waits
     # on the build change the answer needs, then on the document.
     a = ANSWERS.get(item["id"])
-    if a:
+    # v3.7 wrote every recorded answer in, so an answered item it left open is
+    # held by its own remainder, read below from the register's v3.7 reading,
+    # which is newer than the answer's build note.
+    if a and item["id"] not in V37:
         decided = f"decided, {a['option']}: {a['label']}"
         if a["build"] == "to do":
             return "mine", f"{decided}; the build change is still to make"
@@ -933,6 +955,23 @@ def decided_html(item_id: str) -> str:
             f'{esc(a["option"])}:</strong> {esc(a["label"])} ({build[a["build"]]}).{edit}</p>')
 
 
+def settled_html(item_id: str) -> str:
+    """A decision the document settled by rule: the option it wrote and where.
+
+    Kept apart from `decided_html` on purpose. v3.7 took the recommended
+    option for every decision still waiting, which closes the item and is not
+    the owner's answer; the page says which of the two it was.
+    """
+    s = SETTLED_BY_DOC.get(item_id)
+    if not s or item_id in ANSWERS:
+        return ""
+    where = ", ".join(f"&sect;{esc(w)}" for w in s.get("where", []))
+    return (f'<p class="rec decided settled"><span class="arrow">&#10003;</span> '
+            f'<strong>Settled by {esc(s["by"])}, by rule, not by you:</strong> '
+            f'{esc(s["option"])}, {esc(s["label"])}, the option the brief '
+            f'recommended{f", written at {where}" if where else ""}.</p>')
+
+
 def item_html(item: dict) -> str:
     label, cls = SEVERITY[item["severity"]]
     v3 = V3.get(item["id"], {})
@@ -961,6 +1000,10 @@ def item_html(item: dict) -> str:
     v36 = V36.get(item["id"], {})
     v31_html += (f'<p class="v3 v36"><span class="vlabel">v3.6</span> {v36["note"]}</p>'
                  if v36.get("note") else "")
+    # and v3.7 a seventh.
+    v37 = V37.get(item["id"], {})
+    v31_html += (f'<p class="v3 v37"><span class="vlabel">v3.7</span> {v37["note"]}</p>'
+                 if v37.get("note") else "")
     return f"""
       <article class="item {cls}" id="{item['id']}" data-group="{item['_group']}"
                data-kind="{item['kind']}" data-status="{state}"
@@ -980,6 +1023,7 @@ def item_html(item: dict) -> str:
         <p class="body">{item['body']}</p>
         {f'<p class="rec"><span class="arrow">&rarr;</span> {rec}</p>' if rec else ''}
         {decided_html(item['id'])}
+        {settled_html(item['id'])}
         {v3_html}
         {v31_html}
         {edits_html(item['id'])}
@@ -1010,8 +1054,26 @@ def build() -> str:
     # touch them, so they are not counted as what v3.6 did.
     v36_touched = len(set(V36) - FOUND_IN_HANDOFF)
     from check_edits import NO_EDIT_BECAUSE as _why
-    v36_yours = sum(1 for k in FOUND_IN_V36 if _why.get(k, "").startswith("a decision"))
+    # What v3.6's reading put to the owner is its brief entries, which stay
+    # when a later version settles them; reasons move on with the register.
+    import json as _json
+    _brief = _json.loads((DECISIONS / "brief.json").read_text(encoding="utf-8"))["entries"]
+    v36_yours = sum(1 for k in FOUND_IN_V36 if k in _brief)
     v36_screens = len(FOUND_IN_V36 - FOUND_IN_HANDOFF)
+    # v3.7: every item open against v3.6, read against it.
+    v37_read = [k for k in V37 if status_before_v37(k) not in SETTLED]
+    v37_closed = sum(1 for k in v37_read if V37[k]["status"] != "open")
+    v37_open = [k for k in v37_read if V37[k]["status"] == "open"]
+    v37_build = sum(1 for k in v37_open if V37[k].get("left") == "build")
+    v37_doc = sum(1 for k in v37_open if V37[k].get("left") == "document")
+    v37_answers = sum(1 for k in ANSWERS if k in V37)
+    v37_answers_closed = sum(1 for k in ANSWERS if V37.get(k, {}).get("status") == "fixed")
+    v37_settled = sum(1 for s in SETTLED_BY_DOC.values() if s.get("by") == "v3.7")
+    v37_new_drafted = sum(1 for k in FOUND_IN_V37 if k in EDITS)
+    v37_new_yours = sum(1 for k in FOUND_IN_V37 if _why.get(k, "").startswith("a decision"))
+    layers = (V3, V31, V32, V33, V34, V36, V37)
+    versions = ["no", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+                "Nine", "Ten"][len(layers)]
     new_in_v3 = sum(1 for i in REGISTER if i["id"] in FOUND_IN_V3)
     today = datetime.date.today().strftime("%d %B %Y")
 
@@ -1541,6 +1603,11 @@ def build() -> str:
     border-left-color: var(--chg);
   }}
   .v3.v36 .vlabel {{ color: var(--chg); }}
+  .v3.v37 {{
+    background: color-mix(in srgb, var(--cho) 12%, transparent);
+    border-left-color: var(--cho);
+  }}
+  .v3.v37 .vlabel {{ color: var(--cho); }}
   .vlabel {{
     font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
     text-transform: uppercase; letter-spacing: 0.08em; color: var(--chg);
@@ -1645,10 +1712,28 @@ def build() -> str:
       still needs fixing in the document. Section marks point into the design
       document; the repository is the source of truth and this page is generated
       from it.</p>
-    <p class="lede">Read against <strong>version {DOC_VERSION}</strong>. Five
+    <p class="lede">Read against <strong>version {DOC_VERSION}</strong>. {versions}
       versions have now answered this register, and each item carries what each
       one did, as a note per version beneath it. {fixed_count} items are fixed
       in the document itself &mdash; including where a fix stopped short.</p>
+    <p class="lede"><strong>v3.7 closes {v37_closed} of the {len(v37_read)} items
+      open against v3.6.</strong> It writes in all {v37_answers} of your recorded
+      answers, one row each in &sect;32.8, and {v37_answers_closed} of those items
+      close with it. Every decision still waiting it closes by rule rather than by
+      asking, taking the option its brief recommended: those {v37_settled} are
+      settled by the document, not answered by you, so the brief marks each with
+      where v3.7 wrote it and <code>answers.json</code> still holds only yours.
+      Six readers checked every item against v3.7, quoting it by section. Of the
+      {len(v37_open)} still open, {v37_build} are done in the document and wait
+      on the build, and {v37_doc} are partly done, what is left drafted as
+      edits.<br><br>Reading v3.7 against itself, the generated pacing run and the
+      build found {len(FOUND_IN_V37)} more, {v37_new_drafted} with drafted
+      edits{f" and {v37_new_yours} of them decisions for you" if v37_new_yours else ", none of them waiting on you"}.
+      <strong>C58</strong>: the re-run figures v3.7 quotes are no single run's,
+      and not the generated run it cites. <strong>F59</strong>: &sect;12.17's
+      alarm ladder is built for one rung of six, so every hold it quotes was
+      measured without it. <strong>G71</strong>: the Heart's watch is not
+      stated.</p>
     <p class="lede"><strong>v3.6 records the owner's designs, and closes nothing.</strong>
       Screens v3 &mdash; 28 screens, 43 character and creature sheets with 3D
       models, 393 icons &mdash; is the visual reference, and &sect;23.5 lets the

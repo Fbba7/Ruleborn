@@ -25,7 +25,7 @@
       "Bloom"
     ],
     "shared_notes": [],
-    "effect": "River banks grow root walls that slow crews by a further 20%."
+    "effect": "River banks grow root walls that slow crews by a further 20%. A bank is a tile beside water."
   },
   {
     "id": "night_runners",
@@ -39,7 +39,7 @@
       "Glowing dark"
     ],
     "shared_notes": [],
-    "effect": "Anyone in darkness moves 30% faster."
+    "effect": "Anyone in darkness moves 30% faster. Glowing dark makes the whole realm dark, so the whole realm counts."
   },
   {
     "id": "cracked_gardens",
@@ -53,7 +53,7 @@
       "Bloom"
     ],
     "shared_notes": [],
-    "effect": "Broken structures leave Essence that the owner collects after the heist."
+    "effect": "Broken structures leave Essence that the owner collects after the heist. At launch only the count of broken structures is kept; the Essence, with its amount, arrives after launch."
   },
   {
     "id": "lantern_choir",
@@ -143,7 +143,7 @@
     "shared_notes": [
       "Spark"
     ],
-    "effect": "Chains jump to three targets."
+    "effect": "Chains jump to three targets. Each jumps from the last, at the jump’s share of the hit."
   },
   {
     "id": "midsummer",
@@ -294,7 +294,7 @@
     "shared_notes": [
       "Bloom"
     ],
-    "effect": "Cut hedges regrow thorny and one tile wider."
+    "effect": "Cut hedges regrow thorny and one tile wider. The extra hedge grows on the first bare side."
   },
   {
     "id": "sleeping_streams",
@@ -442,7 +442,7 @@
       "Brittle stone"
     ],
     "shared_notes": [],
-    "effect": "Glass walls break in one hit, leaving shards that slow anyone by 30% for 5 seconds."
+    "effect": "Glass walls break in one hit, leaving shards that slow anyone by 30% for 5 seconds. The glass wall is the Crystal Wall, the one wall that breaks."
   },
   {
     "id": "echoing_hours",
@@ -516,7 +516,7 @@
     "shared_notes": [
       "Hush"
     ],
-    "effect": "Regrown hedges drip honey: anyone touching one sticks for a second."
+    "effect": "Regrown hedges drip honey: anyone touching one sticks for a second. Touching is stepping beside a regrown hedge."
   },
   {
     "id": "night_maze",

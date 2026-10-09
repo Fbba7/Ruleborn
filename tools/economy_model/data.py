@@ -487,8 +487,9 @@ except ImportError:
 #: §10.2's Hearth: "characters up to level 2" at level 1, rising two a level.
 HEARTH_CHARACTER_CAP = (2, 4, 6, 8, 10)
 
-#: §9.5: "A new ruleborn: 100 × 1.3265^owned Essence, owned = n − 1 for the nth
-#: birth" — the rate v3.3 retuned so the 38th arrives with the last building.
+#: §9.5: "100 × 1.3455^ruleborn owned Essence, where owned is n − 1 for the nth
+#: birth" (v3.7, F38 B: strays join at the birth price, which sets the rate),
+#: read from §31.3's constants. The name keeps the version it was first read in.
 BIRTH_GROWTH_V34 = float(_constant("birth_rate"))
 #: §11.5: a new universe starts with five, and houses at most 38.
 STARTING_ROSTER = 5

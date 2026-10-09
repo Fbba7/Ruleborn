@@ -11,13 +11,13 @@ Shape: chevron. Boosts Starlight.
 
 | Law | Rank, cost | Notes | Effect at tier I | Tiers II and III | How characters move |
 | --- | --- | --- | --- | --- | --- |
-| Bounce | Common, 14 | Flow Echo | Walls and wards bounce back 50% of what hits them, including characters. | 65%, 80% | Squash-and-stretch rebounds off walls with a springy boing. |
+| Bounce | Common, 14 | Flow Echo | Walls and wards bounce back 50% of what hits them, including characters. Nothing walks into a wall except a slide, and a slide needs Frictionless, which with Bounce is always Pinball (8.4): a character’s rebound is Pinball’s, off every wall. Bounce alone returns half of a blow on a ward to the one who struck it. Wardens absorb both. | 65%, 80% | Squash-and-stretch rebounds off walls with a springy boing. |
 | Half gravity | Common, 12 | Flow | Everyone jumps twice as high and can leap one obstacle; thrown attacks fly 30% farther. | Leap 2 obstacles; range +40%, +50% | Floaty strides and long, slow hops; cloaks and loot sacks drift upward. |
 | Tilt | Common, 11 | Flow | The realm slopes toward a side the owner picks: +30% speed downhill, -30% uphill, and dropped loot rolls downhill. | ±40%, ±50% | Arms windmill running downhill; bodies lean hard going uphill. |
 | Current | Uncommon, 15 | Flow | A wind blows one way, chosen by the owner: +30% speed with it, -30% against it. | ±40%, ±50% | Bodies lean into the wind; hair and cloaks stream; steps lengthen downwind. |
 | Heavy ground | Uncommon, 16 | Weight | Flyers are grounded; carried loot weighs double, slowing carriers by 30%. | Carriers slowed 40%, 50% | Stomping steps with bent knees; carriers hunch under loot; flyers walk. |
 | Leapfrog | Rare, 15 | Flow Glow | Every third step is a hop that clears one tile. Landings are noisy: guards within 4 tiles notice 25% faster. | Hop every second step; noise only within 3 tiles | A step-step-hop rhythm; each landing puffs dust. |
-| Frictionless | Rare, 20 | Flow Spark | Anything moving keeps sliding until it hits something; top speed +20%. | Top speed +30%, +40% | Skating glides with arms out for balance; spin-stops against walls. |
+| Frictionless | Rare, 20 | Flow Spark | Anything moving keeps sliding until it hits something; top speed +20%. The crew slides; guards do not, and the speed bonus is the crew’s. A slide ends at a wall, a feature that blocks walking, a Halt order or the realm’s edge. | Top speed +30%, +40% | Skating glides with arms out for balance; spin-stops against walls. |
 | Inward pull | Deep, 22 | Weight | Everything drifts toward the Heart: +25% speed going in, -25% going out, -35% for loaded carriers going out. | Outward penalty -30%/-40%, -35%/-45% | A slight drift toward the Heart; feet drag when heading outward. |
 
 ## Matter
@@ -45,7 +45,7 @@ Shape: hourglass. Boosts Aether.
 | Slow rivers | Common, 10 | Weight | Anyone in water moves at half speed. The owner can draw streams on the realm's grid. | 40% speed, 30% speed | Slow-motion wading with big, lazy splashes. |
 | Stillness | Common, 15 | Hush | Anyone standing still for 1.5 seconds becomes invisible to guards and wards. | 1.2 s, 1.0 s | Frozen statue poses with a shimmering outline. |
 | Afterimage | Uncommon, 16 | Veil Glow | Everyone leaves an afterimage that lingers for 3 seconds, and guards investigate afterimages. | 4 s, 5 s | Translucent copies trail every character. |
-| Delay | Uncommon, 14 | Veil Hush | Wards and abilities take effect 3 seconds after they are triggered. | 3.5 s, 4 s | Characters flinch a beat late; effects land after a pause. |
+| Delay | Uncommon, 14 | Veil Hush | Wards and abilities take effect, and guards change state, 3 seconds after they are triggered. | 3.5 s, 4 s | Characters flinch a beat late; effects land after a pause. |
 | Haste | Rare, 18 | Flow Spark | Everyone moves 25% faster, and the heist clock runs 25% faster in this realm. | +30%, +35% | Sped-up strides with motion lines and little skips. |
 | Held breath | Rare, 25 | Hush Weight | Guards, wards, the crew's ability lockouts and the Sage's cooldown only move while a crew member moves. The heist clock never stops. | The heist clock runs 20%, then 40% faster here | When the crew stops, everything freezes mid-motion; the crew breathes in deeply. |
 | Tidemark | Deep, 26 | Echo | Every 20 seconds the tide leaves a mark on the realm; 10 seconds later, everything broken since returns to how it stood at the mark. | Every 16 s, 12 s | Characters glance at the tide line as debris flies back to it. |
@@ -59,9 +59,9 @@ Shape: bolt. Boosts Aether.
 | Glowing dark | Common, 13 | Hush | The realm is dark; beyond 3 tiles only glowing things can be seen. | Beyond 2.5 tiles, 2 tiles | Glowing characters tiptoe; everyone else is a silhouette. |
 | Heat bloom | Common, 17 | Spark | Anyone within 2 tiles of a fire deals 25% more damage. The owner places braziers. | +30%, +35% | Characters near fire puff up and swing faster, steam rising. |
 | Spark trails | Common, 12 | Glow | Anyone moving faster than a walk leaves sparks for 5 seconds that guards can see from anywhere in their sight. | 7 s, 9 s | Runners leave crackling sparks; walkers tiptoe to stay dark. |
-| Aurora | Uncommon, 18 | Glow | Bands of light sweep the realm every 10 seconds. Inside a band everyone can be seen from twice as far; between bands, vision halves. | Wider bands; every 8 s | Characters wait at the edge of a light band, then dash. |
-| Chain lightning | Uncommon, 19 | Spark | Every hit jumps to a second target within 3 tiles at 50% strength. | 60%, 70% | Hair stands on end; arcs jump between neighbours when hit. |
-| Static | Rare, 16 | Spark | Moving builds charge; after 5 tiles, the next touch stuns for half a second. | 0.75 s, 1 s | Fur and hair frizz with every step; a zap pose on contact. |
+| Aurora | Uncommon, 18 | Glow | Bands of light sweep the realm every 10 seconds. Inside a band everyone can be seen from twice as far; between bands, vision halves. One band two rows deep crosses the realm from north to south each period; at tiers II and III it is three and four rows deep. | Wider bands; every 8 s | Characters wait at the edge of a light band, then dash. |
+| Chain lightning | Uncommon, 19 | Spark | Every hit jumps to a second target within 3 tiles at 50% strength. The second target is the nearest character on the struck one’s side within 3 tiles; a jump does not jump again, and a blow on a structure does not jump. | 60%, 70% | Hair stands on end; arcs jump between neighbours when hit. |
+| Static | Rare, 16 | Spark | Moving builds charge; after 5 tiles, the next touch stuns for half a second. A touch is sharing a tile or a side with another character; one charge stuns the nearest one touched, ally or not, and is spent. | 0.75 s, 1 s | Fur and hair frizz with every step; a zap pose on contact. |
 | Overcharge | Rare, 21 | Spark Echo | Every third ability used in the realm, by anyone, fires twice. | Second firing at +20%, +40% | Every third ability animation doubles with an afterflash. |
 | Sunburst | Deep, 23 | Glow Spark | Every 25 seconds a flash stuns anyone not in shade for 1.5 seconds. | 2 s, 2.5 s | Characters duck into shade at the warning glint. |
 
@@ -76,7 +76,7 @@ Shape: leaf. Boosts Essence.
 | Wild paths | Common, 12 | Bloom Flow | Tiles walked three times grow flowers that make anyone on them 20% faster, so guards' patrols become fast lanes. | 25%, 30% | Characters skip along flower paths. |
 | Flock | Uncommon, 16 | Bloom | A flock of six puffballs wanders the realm and blocks narrow paths. Bumping one makes it bleat: guards within 5 tiles become 30% more aware. | 9 puffs, 12 puffs | Characters weave and shush their way through bleating puffballs. |
 | Spores | Uncommon, 18 | Hush Weight | Drifting pollen clouds make anyone inside for 2 seconds drowsy: -50% speed for 3 seconds. | 4 s, 5 s drowsy | Drowsy yawns, slow blinks and stumbles. |
-| Thorns | Rare, 15 | Bloom Weight | Touching walls or hedges costs 5% health. | 7%, 9% | Characters flinch away from walls and hop around hedges. |
+| Thorns | Rare, 15 | Bloom Weight | Touching walls or hedges costs 5% health. A touch is standing on or beside a wall or a live hedge, charged once a second; the Vault and pylons are structures, not walls. | 7%, 9% | Characters flinch away from walls and hop around hedges. |
 | Regrowth | Rare, 16 | Bloom Echo | Buildings, wards and guards heal 2% of their health each second. | 2.5%, 3% | Guards' wounds glow green and close as they walk. |
 | Swarm birth | Deep, 24 | Bloom | Each knocked-out guard splits into two small guards with 30% of its strength. | 40%, 50% | Knocked-out guards pop into two tiny guards that toddle after the crew. |
 
@@ -88,10 +88,10 @@ Shape: eye. Boosts Essence.
 | --- | --- | --- | --- | --- | --- |
 | Haunting | Common, 19 | Glow Echo | Carried loot leaves a glowing trail; guards following it move 50% faster. | 60%, 70% | Carriers glance nervously at the glowing trail behind them. |
 | Soul lanterns | Common, 15 | Glow | Lantern light marks safe ground; outside it, everyone loses 1% health a second. | 1.5%, 2% | Characters hurry between pools of lantern light and flicker when outside them. |
-| Whispers | Common, 16 | Glow Echo | When one guard raises the alarm, every guard in the universe hears it. | Guards also move 10%, 20% faster when alerted | Guards cup their ears; an alarm travels as a visible wave. |
-| Echoes | Uncommon, 18 | Echo | Revival (7.3): knocked-out characters and guards return once, at N = 60%. | 70%, 80% | Knocked-out characters rise as translucent echoes that float a little. |
+| Whispers | Common, 16 | Glow Echo | When one guard is alerted, every guard in the universe hears it. | Guards also move 10%, 20% faster when alerted | Guards cup their ears; an alarm travels as a visible wave. |
+| Echoes | Uncommon, 18 | Echo | Revival (7.3): knocked-out characters and guards return once, at N = 60%. The return is at once, where it fell, and what it carried is already dropped. | 70%, 80% | Knocked-out characters rise as translucent echoes that float a little. |
 | Sleepwalk | Uncommon, 17 | Hush Echo | Guards patrol with their eyes closed: they can't see, but hear anyone moving faster than a walk within 4 tiles. | Hearing 5 tiles, 6 tiles | Guards shuffle with arms outstretched and eyes closed; the crew tiptoes theatrically. |
-| Soul swap | Rare, 20 | Veil | A character about to be knocked out swaps places with its nearest ally, who takes half the blow. | Ally takes 40%, 30% | A magenta swirl as two characters trade places. |
+| Soul swap | Rare, 20 | Veil | A character about to be knocked out swaps places with its nearest ally, who takes half the blow. Once per character, as every Revival source is (7.3); the one who swaps takes none of the blow, and only a hit sets it off, never a ward. | Ally takes 40%, 30% | A magenta swirl as two characters trade places. |
 | Borrowed Face | Rare, 21 | Veil Hush | For the first 10 seconds in the realm, guards can't tell crew from guards unless the crew runs or uses an ability. | 14 s, 18 s | Everyone wears a mask; the crew copies the guards' marching step. |
 | Mirror images | Deep, 21 | Veil | One guard in three is an illusion; illusions vanish when touched but still raise the alarm if they see a crew. | One in 2.5, one in 2 | Guards shimmer; illusions pop into sparkles when touched. |
 

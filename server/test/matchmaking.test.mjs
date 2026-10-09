@@ -26,7 +26,7 @@ test("Glicko-2 reproduces Glickman's worked example, with §12.22's constants (1
 });
 
 test("an island enters at the middle of its origin's band, 350 wide, and narrows with every raid (12.22)", () => {
-  assert.deepEqual(successBand(1, "generated"), [0.6, 0.75]);
+  assert.deepEqual(successBand(1, "generated"), [0.55, 0.7], "v3.7: one band at every realm level");
   assert.deepEqual(successBand(3, "generated"), [0.55, 0.7]);
   assert.deepEqual(successBand(1, "authored"), [0.55, 0.7], "authored islands keep §13.2's authored band");
   near(expected({ rating: 1500, deviation: 0 }, { ...prior(1), deviation: 0 }), 0.625, 1e-9,

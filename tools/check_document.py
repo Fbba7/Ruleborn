@@ -1333,10 +1333,15 @@ def check_v33_findings(doc: Doc, led: Ledger) -> None:
     # and left the milestone row, so the row is what 14.3 still says. Either
     # form is read, and finding neither is a failure, not a skip: a check whose
     # anchor was reworded away has stopped checking without saying so.
-    s143 = idx.get("14.3", "")
+    # v3.7 gates the full Codex at Keeper level 24 (7.6): 14.4's engaged line
+    # gives its pages' days and then "no earlier than … day N", which is the
+    # figure 14.3's row now carries ("Day 92 at the earliest"). A range ("Day
+    # 84 to 88") is read by its first day.
+    s143, s144 = idx.get("14.3", ""), idx.get("14.4", "")
     owns = (re.search(r"\| 48 laws owned\n\| Day (\d+)", s143)
             or re.search(r"all 48 by about day (\d+)", s143))
-    pages = re.search(r"Engaged: [^\n]*?about (\d+) days", idx.get("14.4", ""))
+    pages = (re.search(r"Engaged: [^\n]*?no earlier than [^\n]*?day (\d+)", s144)
+             or re.search(r"Engaged: [^\n]*?about (\d+) days", s144))
     a, b = (int(owns.group(1)) if owns else None), (int(pages.group(1)) if pages else None)
     led.check("14.3 and 14.4 give an engaged player's full Codex the same day",
               a is not None and b is not None and abs(a - b) <= 0.1 * max(a, b),
@@ -1467,9 +1472,10 @@ def check_screen_counts(doc: Doc, led: Ledger) -> None:
     cells = [ln.strip().lstrip("| ").strip()
              for ln in body.splitlines() if ln.strip().startswith("|")]
     rows = [cells[i:i + 3] for i in range(0, len(cells) // 3 * 3, 3)]
-    # v3.6 added Profile and stats (23.5 adopts it from the screen designs).
-    led.check("23.2 lists 28 screens with a job and a must-show for each",
-              len(rows) - 1 == 28, f"got {len(rows) - 1}")
+    # v3.6 added Profile and stats (23.5 adopts it from the screen designs); v3.7
+    # added Hatch, births at a Nursery (G50).
+    led.check("23.2 lists 29 screens with a job and a must-show for each",
+              len(rows) - 1 == 29, f"got {len(rows) - 1}")
 
     nouns = dict(counts)
     nouns["terrain features"] = (counts["terrain features"][0],

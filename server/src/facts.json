@@ -66,8 +66,8 @@
   1,
   1,
   2,
-  3,
-  3
+  1,
+  1
  ],
  "HAUL_BASE": 5000,
  "HAUL_FATIGUE": 0.85,
@@ -193,20 +193,11 @@
  },
  "PAID_WRITES_MONTH": 50000000,
  "PREMIUM_TRACK_EUR": 6,
- "RAIDER_SUCCESS": {
-  "1": [
-   60,
-   75
-  ],
-  "2": [
-   55,
-   70
-  ]
- },
- "RAW_KEEP_DAYS": [
-  30,
-  90
+ "RAIDER_SUCCESS": [
+  55,
+  70
  ],
+ "RAW_KEEP_DAYS": 90,
  "REALM_KEEPER_LEVELS": [
   3,
   6,
@@ -236,6 +227,28 @@
   "Emberreach",
   "Verdant",
   "Lantern Vale"
+ ],
+ "REALM_WATCH": [
+  [
+   0.6,
+   1.0
+  ],
+  [
+   1.0,
+   0.75
+  ],
+  [
+   1.0,
+   0.7
+  ],
+  [
+   1.0,
+   1.0
+  ],
+  [
+   1.0,
+   1.0
+  ]
  ],
  "RENOWN_CLEAN": [
   20,
@@ -299,11 +312,15 @@
   8,
   8,
   6,
-  7,
-  8
+  2,
+  0
  ],
  "WIND_UP": 0.8,
- "WRITE_BUDGET": 5,
+ "WRITE_BUDGET": {
+  "casual": 11,
+  "engaged": 46,
+  "regular": 24
+ },
  "WRITE_PRICE_PER_MILLION": 1.0,
  "XP_PER_FOILED_HEIST": [
   10,

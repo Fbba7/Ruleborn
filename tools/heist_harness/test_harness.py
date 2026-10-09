@@ -80,8 +80,11 @@ def test_the_harness_gives_the_same_answers_as_when_it_was_last_read():
     # its tile (G16), and the optimal crew goes round what takes fifteen
     # seconds to disarm (D59); and by the owner's answers: no guard hears the
     # Vault, so the crack call is off by default (F35), and a Lantern Glare
-    # reaches the guards within the alarm's spread, not the realm (F33).
-    assert digest == "951d6c0cf132815d560975b42c60caf8f98fa922342e1a8a0695a86741a606ff", (
+    # reaches the guards within the alarm's spread, not the realm (F33); and by
+    # v3.7, now the default rules: §12.17's realm's watch, under which a realm
+    # level 3 guard sees 0.7 as far. Under rules="v3.4" the digest is still
+    # 951d6c0c…, so the watch is the whole of the change.
+    assert digest == "6d1c0c6618e8d8c7c98c17c10d6ade5690d0c44ff111ccf766bf109fec70b296", (
         f"the harness now gives different results: {digest}")
 
 
@@ -876,20 +879,34 @@ def glare_holds(n: int = 60) -> tuple:
 def test_finding_5_2s_budget_holds_every_realm_level_above_13_2s_band():
     """F55 (T0.12). §13.2's table re-measured with every answer built — no
     guard hears the Vault (F35), a Glare reaches a fixed 4 m (F33, F52) — at
-    §5.2's wards and posts: the competent crew is held 47.6, 60.8, 59.9, 90.6
-    and 95.5% at realm levels 1 to 5 (n=800), all above 30 to 45%. At §5.2's
-    three posts the guards alone hold realm 5 at 58.4%, so no ward count
-    reaches the band there; with fewer posts and wards every level can (realm
-    3 on two posts and one ward, 36.8%).
+    v3.6's §5.2 wards and posts (8, 8, 6, 7, 8 on 1, 1, 2, 3, 3): the competent
+    crew is held 47.6, 60.8, 59.9, 90.6 and 95.5% at realm levels 1 to 5
+    (n=800), all above 30 to 45%. At three posts the guards alone hold realm 5
+    at 58.4%, so no ward count reaches the band there. Measured under the
+    rules it was found on (full-strength guards, rules="v3.4").
     """
     def held(level: int, wards=None, posts=None, n: int = 60) -> float:
         rs = run_batch(n, 2, level, "competent", laws="defensive", shaped=1,
-                       wards=wards, posts=posts)
+                       wards=wards, posts=posts, rules="v3.4")
         return 100 * sum(not r.success for r in rs) / n
 
-    assert held(3) >= 45                                   # §5.2's 6 wards, 2 posts
-    assert held(5, wards=0) >= 45                          # §5.2's 3 posts, no wards
+    assert held(3) >= 45                                   # 6 wards, 2 posts
+    assert held(5, wards=0, posts=3) >= 45                 # v3.6's 3 posts, no wards
     assert held(3, wards=1, posts=2) <= 50                 # a setting inside reach
+
+
+def test_v3_7s_budget_and_watch_hold_every_realm_level_inside_13_2s_band():
+    """F55, closed by v3.7 (option D): §5.2's wards 8, 8, 6, 2 and 0 on 1, 1, 2,
+    1 and 1 posts, with §12.17's realm's watch tuning the guards at realm levels
+    1 to 3, so "every level holds 30 to 45% again" (v3.7 publishes 37.5, 39.0,
+    37.5, 38.0 and 36.9% at n = 800). The harness's own seeds, at the default
+    rules, land every level inside the band."""
+    from ..design_facts import HOLD_BAND
+    lo, hi = HOLD_BAND
+    for level in (1, 2, 3, 4, 5):
+        rs = run_batch(60, 2, level, "competent", laws="defensive", shaped=1)
+        held = 100 * sum(not r.success for r in rs) / len(rs)
+        assert lo <= held <= hi, (level, held)
 
 
 def test_a_lever_scales_the_rule_sheet_on_top_of_the_laws():

@@ -17,7 +17,7 @@
       "Hush",
       "Bloom"
     ],
-    "effect": "Every 20 seconds each guard dozes for 3 seconds; flowers muffle footsteps."
+    "effect": "Every 20 seconds each guard dozes for 3 seconds; flowers muffle footsteps. The doze is a stun, and the muffling makes a step one gait quieter."
   },
   {
     "id": "ghost_tide",
@@ -27,7 +27,7 @@
       "Echo",
       "Hush"
     ],
-    "effect": "Knocked-out characters drift back to where they entered the realm instead of being caught (Knockout, 7.3)."
+    "effect": "Knocked-out characters drift back to where they entered the realm instead of being caught (Knockout, 7.3). The drift ends on the landing tile, at the revive health."
   },
   {
     "id": "fair_lights",
@@ -37,7 +37,7 @@
       "Bloom",
       "Veil"
     ],
-    "effect": "Floating lights form illusions of crew members that draw guards away."
+    "effect": "Floating lights form illusions of crew members that draw guards away. It takes its neighbours’ twenty seconds: one illusion every 20 seconds."
   },
   {
     "id": "iron_bell",
@@ -57,7 +57,7 @@
       "Veil",
       "Glow"
     ],
-    "effect": "Anything moving appears one tile from where it really is."
+    "effect": "Anything moving appears one tile from where it really is. A moving character is shown on the tile it just left."
   },
   {
     "id": "clockwork",
@@ -67,7 +67,7 @@
       "Spark",
       "Echo"
     ],
-    "effect": "Every 15 seconds all wards in the realm trigger together."
+    "effect": "Every 15 seconds all wards in the realm trigger together. Every triggered ward fires, whoever is near it."
   },
   {
     "id": "wild_hunt",
@@ -87,7 +87,7 @@
       "Hush",
       "Veil"
     ],
-    "effect": "Tall grass spreads one tile a minute across the realm."
+    "effect": "Tall grass spreads one tile a minute across the realm. Each minute it spreads to every bare tile beside grass."
   },
   {
     "id": "lantern_festival",
@@ -97,7 +97,7 @@
       "Bloom",
       "Echo"
     ],
-    "effect": "Lanterns heal anyone in their light, and each character returns once at the revive health, 30% of its role's health (Revival, 7.3; 12.20)."
+    "effect": "Lanterns heal anyone in their light, and each character returns once at the revive health, 30% of its role's health (Revival, 7.3; 12.20). The lanterns need Soul lanterns, which ship after launch, so at launch only the return plays."
   },
   {
     "id": "quicksand",
@@ -107,7 +107,7 @@
       "Veil",
       "Hush"
     ],
-    "effect": "A few tiles become hidden pits that drop anyone a level."
+    "effect": "A few tiles become hidden pits that drop anyone a level. A few is three, and a pit costs a landing’s noise and a second."
   },
   {
     "id": "rebound",
@@ -117,6 +117,6 @@
       "Echo",
       "Spark"
     ],
-    "effect": "Every stun bounces on to the nearest enemy."
+    "effect": "Every stun bounces on to the nearest enemy. It bounces within a chain’s three tiles."
   }
 ]

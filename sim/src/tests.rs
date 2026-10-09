@@ -1065,6 +1065,34 @@ fn rate(world: &World) -> Option<i32> {
 }
 
 #[test]
+fn a_realms_watch_tunes_its_guards_by_realm_level() {
+    // §12.17 (v3.7): "at realm level 1 suspicion fills at 0.6 of the rates
+    // above; at level 2 every zone reaches 0.75 as far, and at level 3 0.7 as
+    // far; from level 4 guards see and notice at full strength." The fixture is
+    // realm level 5, at full strength. The Scout's zones reach 2, 4 and 6 m.
+    use crate::REALM_WATCH;
+    let watched = |level: usize, metres_tenths: i64| {
+        let mut world = scout_and_raider(metres_tenths, 0);
+        world.watch = REALM_WATCH[level - 1];
+        rate(&world)
+    };
+    let full = rate(&scout_and_raider(15, 0)).expect("1.5 m ahead is seen");
+    assert_eq!(watched(5, 15), Some(full), "realm level 5 is full strength");
+    assert_eq!(watched(4, 15), Some(full), "and so is realm level 4");
+    let slow = watched(1, 15).expect("realm level 1 still sees 1.5 m ahead");
+    assert!((slow - full * 3 / 5).abs() <= 1, "realm level 1 fills at 0.6: {slow} of {full}");
+    // 5.5 m is inside the Scout's 6 m far zone, and outside 0.75 of it (4.5 m)
+    // and 0.7 of it (4.2 m).
+    assert!(watched(5, 55).is_some(), "seen at 5.5 m at full strength");
+    assert!(watched(1, 55).is_some(), "realm level 1 sees as far");
+    assert_eq!(watched(2, 55), None, "realm level 2 reaches 0.75 as far");
+    assert_eq!(watched(3, 55), None, "realm level 3 reaches 0.7 as far");
+    // 4.4 m: inside 0.75 of 6 m, outside 0.7 of it.
+    assert!(watched(2, 44).is_some(), "4.4 m is inside realm level 2's reach");
+    assert_eq!(watched(3, 44), None, "and outside realm level 3's");
+}
+
+#[test]
 fn the_corner_of_the_eye_notices_at_half_the_rate() {
     // The Scout's cone is 45 degrees, so 22.5 either side; its corner of the
     // eye is 110, so 55 either side. 1.5 m is inside its near zone.
@@ -2404,8 +2432,9 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
     use crate::island::{Island, Problem};
     assert_eq!(Island::example().check(), vec![]);
     // The fixture is a test realm: every row of §12.17's guards, five posts
-    // where §5.2 gives realm level 5 three.
-    assert_eq!(Island::fixture().check(), vec![Problem::TooManyGuards]);
+    // where §5.2 gives realm level 5 one (v3.7), and its wards where it gives
+    // none.
+    assert_eq!(Island::fixture().check(), vec![Problem::TooManyWards, Problem::TooManyGuards]);
 
     let mut crowded = Island::example();
     crowded.wards.push((WardKind::TimeSnare, 6, 9));      // on the Vault

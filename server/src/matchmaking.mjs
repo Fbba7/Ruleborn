@@ -36,17 +36,17 @@ const RAIDED = `l.mode = 'raid' AND l.echo = 0
 /**
  * The raider-success band a target is judged against, as fractions.
  * §12.22: "Every island carries its origin, authored or generated, and is
- * judged against that origin's band". Its figures are the generated
- * islands' — 60 to 75% at realm level 1, 55 to 70% from 2 — and an authored
- * island's is what §13.2's authored hold band leaves the raider.
+ * judged against that origin's band". A generated island's is "55 to 70% at
+ * every realm level" (v3.7), and an authored island's is what §13.2's authored
+ * hold band leaves the raider.
  */
 export function successBand(realmLevel, origin = "authored") {
   if (origin === "authored") {
     const [lo, hi] = facts.HOLD_BAND;
     return [(100 - hi) / 100, (100 - lo) / 100];
   }
-  const b = facts.RAIDER_SUCCESS[realmLevel <= 1 ? "1" : "2"];
-  return [b[0] / 100, b[1] / 100];
+  const [lo, hi] = facts.RAIDER_SUCCESS;
+  return [lo / 100, hi / 100];
 }
 
 /** A band's width: how far "one band" reaches from the raider's recent

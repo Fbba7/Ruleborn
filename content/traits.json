@@ -57,7 +57,7 @@
     "id": "loyal",
     "name": "Loyal",
     "family": "Heist",
-    "effect": "rests 25% less after a success"
+    "effect": "rests 25% less after a success, which counts a member who got out of a Partial, not one caught"
   },
   {
     "id": "shadow",

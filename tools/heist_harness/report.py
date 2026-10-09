@@ -27,7 +27,7 @@ def run_batch(n: int, links: int, realm_level: int, policy_name: str,
               seed0: int = 0, laws: str = "none", shaped: bool = False,
               posts: int | None = None, post_level: int = 1,
               wards: int | None = None, crack_noise: bool | None = None,
-              rules: str = "v3.4", ward_kinds: tuple | None = None,
+              rules: str = "v3.7", ward_kinds: tuple | None = None,
               crack_reach: int | None = None, crack_seconds: int | None = None,
               disarm_approach: bool = False, glare_realm: bool | None = None,
               lever: dict | None = None) -> list:

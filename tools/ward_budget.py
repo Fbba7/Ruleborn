@@ -69,13 +69,14 @@ RECORDED = {1: 10, 2: 8, 3: 6, 4: 7, 5: 8}
 #: subject.
 MEASURED = {1: 11, 2: 8, 3: 6, 4: 7, 5: 8}
 
-#: The ward counts to sweep. \u00a75.2 gives 4 to 8 across the five realms and
-#: F26 records a need of 6 to 10, so the range runs past both ends \u2014 the
+#: The ward counts to sweep. \u00a75.2 gives 0 to 8 across the five realms (v3.7:
+#: 8, 8, 6, 2 and 0) and F26 records a need of 6 to 10, so the range runs past
+#: both ends \u2014 the
 #: question is what a realm *needs*, not what \u00a75.2 permits. An island
 #: built past \u00a75.2 records its own budget so it can never be mistaken for
 #: a legal one (see `Island.ward_budget`), which is what makes the
 #: counterfactual columns safe to measure.
-WARDS = range(3, 13)
+WARDS = range(0, 13)
 
 #: The geometry bands to sweep. \u00a713.4 permits nought to two.
 #:

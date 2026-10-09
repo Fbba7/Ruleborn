@@ -17,10 +17,21 @@ no script. The answers are not: the published page keeps them in its own
 database (`answers/<id>`: the option, a note, when), which Claude reads back
 to turn each answer into register and document edits.
 
-The check fails when a quote is not in the design document word for word,
-when a recommendation names an option the entry does not have, when an entry
-names an item the register does not have, or when an open decision has no
-entry — so the brief cannot fall behind the register in silence.
+An entry closes one of two ways, and the page keeps them apart. The owner
+answers it (`docs/decisions/answers.json`, theirs alone), or a version of the
+document settles it by rule: v3.7 took the option each brief recommended for
+every decision still waiting, and marks nothing as the owner's answer. Such an
+entry carries `settled` (the version, the option it wrote, where, and any
+sentence still left) and renders as settled, not as an open question; the
+owner can still overrule it by answering.
+
+The check fails when a quote is not word for word in the version of the
+design document its question was put to (`asked_of`; an entry still open
+quotes the current one), when a recommendation or a settlement names an
+option the entry does not have, when a settlement points at a section that
+version does not have, when an entry names an item the register does not
+have, or when an open decision has no entry — so the brief cannot fall behind
+the register in silence.
 """
 
 import html
@@ -31,7 +42,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import build_audit                                                  # noqa: E402
-from design_doc import TEXT as DOC_TEXT                              # noqa: E402
+from design_doc import TEXT as DOC_TEXT, VERSION as DOC_VERSION, text_of  # noqa: E402
 
 BRIEF = ROOT / "docs" / "decisions" / "brief.json"
 OUT = ROOT / "docs" / "decisions" / "index.html"
@@ -49,13 +60,43 @@ def load() -> dict:
     return json.loads(BRIEF.read_text(encoding="utf-8"))
 
 
+def answered() -> dict:
+    """The owner's recorded answers, by item id."""
+    return json.loads((ROOT / "docs" / "decisions" / "answers.json")
+                      .read_text(encoding="utf-8"))["answers"]
+
+
+_LINES: dict[str, set] = {}
+
+
+def lines_of(version: str) -> set:
+    """The lines of one version of the design document, read once."""
+    if version not in _LINES:
+        path = DOC_TEXT if version == DOC_VERSION else text_of(version)
+        _LINES[version] = set(path.read_text(encoding="utf-8").split("\n"))
+    return _LINES[version]
+
+
+def asked_of(brief: dict, eid: str, got: dict) -> str:
+    """The version an entry's quotes are checked against.
+
+    The one its question was put to, while it is closed: answered, or settled
+    by the document. An entry still open quotes the current document, so a
+    question cannot stay open on sentences a newer version has rewritten.
+    """
+    e = brief["entries"][eid]
+    if eid in got or e.get("settled"):
+        return e.get("asked_of") or brief.get("asked_of") or DOC_VERSION
+    return DOC_VERSION
+
+
 def problems(brief: dict) -> list[str]:
     """What is wrong with the brief against the register and the document."""
+    import re
     out = []
-    doc = DOC_TEXT.read_text(encoding="utf-8")
-    lines = set(doc.split("\n"))
     by_id = {i["id"]: i for i in build_audit.REGISTER}
     entries = brief["entries"]
+    got = answered()
     for eid, e in entries.items():
         if eid not in by_id:
             out.append(f"{eid}: no such register item")
@@ -67,11 +108,30 @@ def problems(brief: dict) -> list[str]:
             out.append(f"{eid}: a recommendation needs a confidence: high, medium or low")
         if e["recommendation"]["option"] not in keys:
             out.append(f"{eid}: recommends {e['recommendation']['option']!r}, not one of {keys}")
+        version = asked_of(brief, eid, got)
+        if not text_of(version).exists() and version != DOC_VERSION:
+            out.append(f"{eid}: asked of v{version}, which is not on disk")
+            continue
+        lines = lines_of(version)
         for q in e.get("quotes", []):
             if not any(q["text"] in line for line in lines):
-                out.append(f"{eid}: quote not in the document: {q['text'][:70]!r}")
-    got = json.loads((ROOT / "docs" / "decisions" / "answers.json")
-                     .read_text(encoding="utf-8"))["answers"]
+                out.append(f"{eid}: quote not in v{version}: {q['text'][:70]!r}")
+        s = e.get("settled")
+        if s:
+            by = str(s.get("by", "")).lstrip("v")
+            if not text_of(by).exists():
+                out.append(f"{eid}: settled by v{by}, which is not on disk")
+                continue
+            if s.get("option") not in keys:
+                out.append(f"{eid}: settled as {s.get('option')!r}, not one of {keys}")
+            text = text_of(by).read_text(encoding="utf-8")
+            places = (set(re.findall(r"^(\d+\.\d+) ", text, re.M))
+                      | set(re.findall(r"^(\d+)[A-Z]", text, re.M)))
+            for where in s.get("where", []):
+                if where not in places:
+                    out.append(f"{eid}: settled at §{where}, which v{by} does not have")
+            if not s.get("where"):
+                out.append(f"{eid}: settled with no section saying where")
     for eid, a in got.items():
         if eid not in entries:
             out.append(f"answers.json: {eid} is not in the brief")
@@ -82,6 +142,12 @@ def problems(brief: dict) -> list[str]:
     wanted = {r["item"]["id"] for r in build_audit.blocked() if r["why"] == "yours"}
     for eid in sorted(wanted - set(entries)):
         out.append(f"{eid}: waits on the owner's decision and has no entry in the brief")
+    # A settled entry the register still holds for the owner is two opinions
+    # about one item; so is a settlement on an entry that is still open.
+    for eid in sorted(wanted & set(entries)):
+        if entries[eid].get("settled") and eid not in got:
+            out.append(f"{eid}: settled by the document in the brief, and waiting on the "
+                       f"owner in the register")
     order = brief["order"]
     if sorted(order) != sorted(entries):
         out.append("the order does not list every entry exactly once")
@@ -119,8 +185,26 @@ def option_html(eid: str, o: dict, rec: str) -> str:
         </label>"""
 
 
-def entry_html(n: int, eid: str, e: dict, item: dict, topic: str, quick: bool) -> str:
+def settled_html(e: dict) -> str:
+    """What a version of the document wrote for an entry it settled by rule."""
+    s = e["settled"]
+    label = next((o["label"] for o in e["options"] if o["key"] == s["option"]), "")
+    where = ", ".join(f"&sect;{esc(w)}" for w in s.get("where", []))
+    left = (f'<p class="sl"><span class="lab">Still to fix in the document</span> '
+            f'{esc(s["left"])}</p>' if s.get("left") else "")
+    return f"""
+      <div class="settledbox">
+        <p><span class="lab">Settled by {esc(s["by"])}, by rule</span>
+          <strong>{esc(s["option"])}, {esc(label)}</strong>: the option this brief recommended,
+          written at {where}. Not your answer: {esc(s["by"])} takes the recommended option for
+          every decision still waiting. Answer below to overrule it.</p>{left}
+      </div>"""
+
+
+def entry_html(n: int, eid: str, e: dict, item: dict, topic: str, quick: bool,
+               version: str = DOC_VERSION) -> str:
     rec = e["recommendation"]
+    settled = e.get("settled")
     opts = "".join(option_html(eid, o, rec["option"]) for o in e["options"])
     quotes = "".join(
         f'<li><span class="qs">&sect;{esc(q["section"])}</span> '
@@ -140,18 +224,9 @@ def entry_html(n: int, eid: str, e: dict, item: dict, topic: str, quick: bool) -
                   + ", ".join(f'<a href="#{esc(i)}">{esc(i)}</a>' for i in inter) + "</p>"
                   if inter else "")
     rec_label = next((o["label"] for o in e["options"] if o["key"] == rec["option"]), "")
-    return f"""
-    <article class="decision" id="{esc(eid)}" data-id="{esc(eid)}" data-tier="{esc(item['severity'])}"
-             data-rec="{esc(rec['option'])}" data-quick="{'yes' if quick else 'no'}" data-answered="no">
-      <header class="dh">
-        <span class="step" title="Decide in this order">{n}</span>
-        <span class="did">{esc(eid)}</span>
-        <span class="tier t-{esc(item['severity'])}">{TIERS.get(item['severity'], item['severity'])}</span>
-        <span class="topic">{esc(topic)}</span>
-        <span class="state" id="st-{esc(eid)}">Not answered</span>
-      </header>
-      <h3 class="q">{esc(e['question'])}</h3>
-      <p class="why">{esc(e['why_it_matters'])}</p>
+    said = ("What the document says" if version == DOC_VERSION
+            else f"What the document said when this was asked (v{esc(version)})")
+    body = f"""
       <details class="today"><summary>What the build does today</summary><p>{esc(e['today'])}</p></details>
       <fieldset class="opts" aria-label="Options for {esc(eid)}">{opts}
       </fieldset>
@@ -162,7 +237,7 @@ def entry_html(n: int, eid: str, e: dict, item: dict, topic: str, quick: bool) -
         {panel}
       </div>
       {also_html}{inter_html}
-      {f'<details class="quotes"><summary>What the document says</summary><ul>{quotes}</ul></details>' if quotes else ''}
+      {f'<details class="quotes"><summary>{said}</summary><ul>{quotes}</ul></details>' if quotes else ''}
       <div class="notebox">
         <label for="n-{esc(eid)}">Note for Claude (optional)</label>
         <textarea id="n-{esc(eid)}" rows="2" placeholder="A number, a condition, or why" disabled></textarea>
@@ -171,7 +246,28 @@ def entry_html(n: int, eid: str, e: dict, item: dict, topic: str, quick: bool) -
           <button type="button" class="btn ghost clear" data-id="{esc(eid)}" disabled>Clear answer</button>
           <a class="reg" href="{AUDIT_URL}#{esc(eid)}" target="_blank" rel="noopener">Register entry</a>
         </div>
-      </div>
+      </div>"""
+    if settled:
+        # Settled by rule, not an open question: what was written leads, and
+        # the options stay folded beneath it for the owner to overrule.
+        body = (settled_html(e) + f"""
+      <details class="overrule"><summary>The options, and overruling it</summary>{body}
+      </details>""")
+    state = (f"Settled by {esc(settled['by'])}, {esc(settled['option'])}" if settled
+             else "Not answered")
+    return f"""
+    <article class="decision{' is-settled' if settled else ''}" id="{esc(eid)}" data-id="{esc(eid)}" data-tier="{esc(item['severity'])}"
+             data-rec="{esc(rec['option'])}" data-quick="{'yes' if quick and not settled else 'no'}" data-answered="no"
+             data-settled="{esc(settled['by']) if settled else ''}" data-settled-as="{esc(settled['option']) if settled else ''}">
+      <header class="dh">
+        <span class="step" title="Decide in this order">{n}</span>
+        <span class="did">{esc(eid)}</span>
+        <span class="tier t-{esc(item['severity'])}">{TIERS.get(item['severity'], item['severity'])}</span>
+        <span class="topic">{esc(topic)}</span>
+        <span class="state" id="st-{esc(eid)}">{state}</span>
+      </header>
+      <h3 class="q">{esc(e['question'])}</h3>
+      <p class="why">{esc(e['why_it_matters'])}</p>{body}
     </article>"""
 
 
@@ -181,13 +277,19 @@ def build(brief: dict) -> str:
     chapters = build_audit.chapters()
     entries = brief["entries"]
     quick = set(brief.get("quick", []))
+    got = answered()
     cards = []
     for n, eid in enumerate(brief["order"], 1):
         item = by_id[eid]
         top = item["refs"][0].split(".")[0] if item.get("refs") else ""
         topic = topics.get(eid) or chapters.get(top, "Across the document")
         cards.append(entry_html(n, eid, entries[eid], item, f"§{top} {topic}" if top else topic,
-                                eid in quick))
+                                eid in quick, asked_of(brief, eid, got)))
+    # As recorded in this repository: the page's own store may hold newer
+    # answers, which its script counts when it loads.
+    settled = sum(1 for e in entries.values() if e.get("settled"))
+    still_open = sum(1 for eid, e in entries.items() if eid not in got and not e.get("settled"))
+    heading = "Decisions waiting on you" if still_open else "Your decisions, and what the document settled"
     tiers = {}
     for eid in entries:
         t = by_id[eid]["severity"]
@@ -209,8 +311,8 @@ def build(brief: dict) -> str:
     chips = "".join(
         f'<button type="button" class="chip" data-filter="{k}" aria-pressed="{"true" if k == "all" else "false"}">'
         f'{label}<span class="n" id="cn-{k}"></span></button>'
-        for k, label in (("all", "All"), ("open", "Unanswered"), ("design", "Design"),
-                         ("significant", "Significant"), ("minor", "Minor")))
+        for k, label in (("all", "All"), ("open", "Open"), ("settled", "Settled by the document"),
+                         ("design", "Design"), ("significant", "Significant"), ("minor", "Minor")))
 
     return f"""<title>Ruleborn Decisions</title>
 <meta name="description" content="The owner's decisions on the Ruleborn design, each with its options, numbers and a recommendation.">
@@ -323,6 +425,14 @@ def build(brief: dict) -> str:
   .why {{ color: var(--muted); font-size: 14.5px; max-width: 66ch; }}
   details > summary {{ cursor: pointer; font-size: 13.5px; color: var(--accent); }}
   .today p, .quotes ul {{ margin-top: 6px; font-size: 14px; color: var(--muted); }}
+  .decision.is-settled {{ border-left-color: var(--chg); }}
+  .decision.is-settled[data-answered="yes"] {{ border-left-color: var(--cho); }}
+  .settledbox {{ border: 1px solid var(--rule-strong); border-radius: 9px; padding: 10px 12px;
+    background: color-mix(in srgb, var(--chg) 8%, transparent); font-size: 14.5px; display: grid; gap: 6px; }}
+  .settledbox .lab {{ color: var(--chg); margin-right: 6px; }}
+  .settledbox .sl {{ font-size: 13.5px; color: var(--muted); }}
+  .overrule > summary {{ margin-bottom: 4px; }}
+  .overrule[open] {{ display: grid; gap: 10px; }}
 
   .opts {{ border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }}
   .opt {{ display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start;
@@ -379,17 +489,18 @@ def build(brief: dict) -> str:
 <div class="wrap">
   <header>
     <p class="eyebrow">Ruleborn &middot; the owner&rsquo;s decisions</p>
-    <h1>Decisions waiting on you</h1>
+    <h1>{heading}</h1>
     <p class="lede">{esc(brief['summary'])}</p>
     <div class="summary">
       <div><span class="n">{len(entries)}</span><span class="k">decisions</span></div>
-      <div><span class="n" id="n-answered">0</span><span class="k">answered</span></div>
-      <div><span class="n">{len(quick)}</span><span class="k">safe to accept as recommended</span></div>
-      <div><span class="n">{len(brief.get('conflicts', []))}</span><span class="k">places two answers collide</span></div>
+      <div><span class="n" id="n-answered">{len(set(got) & set(entries))}</span><span class="k">answered by you</span></div>
+      <div><span class="n" id="n-settled">{settled}</span><span class="k">settled by the document, not by you</span></div>
+      <div><span class="n" id="n-open">{still_open}</span><span class="k">open</span></div>
     </div>
     <div class="bar" aria-hidden="true"><span id="bar"></span></div>
     <p class="notice" id="notice">{tier_line}. Each card below is one register item, in the order to decide
-      them. Pick an option and it is saved at once; add a note where the option needs a number or a
+      them. A card the document settled says what it wrote and where; its options are folded beneath, to
+      overrule it. Pick an option and it is saved at once; add a note where the option needs a number or a
       condition. The register itself does not change until Claude reads your answers back.</p>
   </header>
 
@@ -457,11 +568,12 @@ def build(brief: dict) -> str:
     catch (e) {{ return ""; }}
   }}
   function paint() {{
-    var done = 0;
+    var done = 0, settled = 0;
     cards.forEach(function (card) {{
       var id = card.dataset.id, a = answers[id];
       card.dataset.answered = a && a.option ? "yes" : "no";
       if (a && a.option) done++;
+      else if (card.dataset.settled) settled++;
       card.querySelectorAll('input[type="radio"]').forEach(function (r) {{
         r.checked = !!(a && a.option === r.value);
       }});
@@ -469,16 +581,24 @@ def build(brief: dict) -> str:
       if (note && document.activeElement !== note && !note.dataset.dirty) note.value = (a && a.note) || "";
       var st = document.getElementById("st-" + id);
       if (st && !st.dataset.busy) st.textContent = a && a.option
-        ? "Answered " + a.option + (a.at ? " · " + when(a.at) : "") : "Not answered";
+        ? "Answered " + a.option + (a.at ? " · " + when(a.at) : "")
+        : card.dataset.settled
+          ? "Settled by " + card.dataset.settled + ", " + card.dataset.settledAs
+          : "Not answered";
     }});
+    var open = cards.length - done - settled;
     document.getElementById("n-answered").textContent = done;
-    document.getElementById("bar").style.width = (100 * done / cards.length) + "%";
-    document.getElementById("answered-line").textContent = done + " of " + cards.length + " answered";
+    document.getElementById("n-settled").textContent = settled;
+    document.getElementById("n-open").textContent = open;
+    document.getElementById("bar").style.width = (100 * (done + settled) / cards.length) + "%";
+    document.getElementById("answered-line").textContent =
+      done + " answered by you · " + settled + " settled by the document · " + open + " open";
     apply();
   }}
   function matches(card, f) {{
     if (f === "all") return true;
-    if (f === "open") return card.dataset.answered !== "yes";
+    if (f === "open") return card.dataset.answered !== "yes" && !card.dataset.settled;
+    if (f === "settled") return card.dataset.answered !== "yes" && !!card.dataset.settled;
     return card.dataset.tier === f;
   }}
   function apply() {{
@@ -562,7 +682,9 @@ def build(brief: dict) -> str:
   var armed = false;
   accept.addEventListener("click", function () {{
     if (!db || readOnly) return;
-    var todo = cards.filter(function (c) {{ return c.dataset.quick === "yes" && !(answers[c.dataset.id] || {{}}).option; }});
+    var todo = cards.filter(function (c) {{
+      return c.dataset.quick === "yes" && !c.dataset.settled && !(answers[c.dataset.id] || {{}}).option;
+    }});
     if (!todo.length) {{ document.getElementById("accept-state").textContent = "All already answered"; return; }}
     if (!armed) {{
       armed = true;
@@ -622,8 +744,13 @@ def main() -> int:
             print(f"docs/decisions/brief.json: {len(found)} problem(s)")
             return 1
         n = sum(len(e.get("quotes", [])) for e in brief["entries"].values())
-        print(f"  decision brief: {len(brief['entries'])} entries, every open decision covered, "
-              f"{n} quotes all in the document")
+        got = answered()
+        settled = sum(1 for e in brief["entries"].values() if e.get("settled"))
+        still_open = sum(1 for k, e in brief["entries"].items()
+                         if k not in got and not e.get("settled"))
+        print(f"  decision brief: {len(brief['entries'])} entries ({len(got)} answered by the "
+              f"owner, {settled} settled by the document, {still_open} open), every open "
+              f"decision covered, {n} quotes each in the version it was asked of")
         return 0
     if found:
         for p in found:

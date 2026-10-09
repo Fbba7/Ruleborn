@@ -5,42 +5,42 @@
   "days": 3,
   "heistsPerDay": 4,
   "sessionsPerDay": 5,
-  "writesPerPlayerDay": 45.75,
+  "writesPerPlayerDay": 46.93,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 10.02,
+  "writesPerHeist": 10.32,
   "byOperation": {
    "session": 0.67,
    "telemetry batch": 5,
    "lease": 4,
-   "heist: validate and grant": 36.08
+   "heist: validate and grant": 37.27
   },
-  "billedRowsPerPlayerDay": 71.83,
-  "billedPerHeist": 16.21,
+  "billedRowsPerPlayerDay": 74.2,
+  "billedPerHeist": 16.8,
   "billedByOperation": {
    "session": 2,
    "telemetry batch": 5,
    "lease": 12,
-   "heist: validate and grant": 52.83
+   "heist: validate and grant": 55.2
   },
   "validationMs": {
-   "p50": 15.5,
-   "p95": 26.8,
-   "max": 40.1
+   "p50": 15.8,
+   "p95": 23.4,
+   "max": 47.7
   },
   "against": {
-   "budget": 5,
-   "overBudget": 14.4,
+   "budget": 46,
+   "overBudget": 1,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 1392,
+   "freePlanPlayersADay": 1347,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
-    "100000": 27,
-    "1000000": 673
+    "100000": 29,
+    "1000000": 697
    }
   }
  },
@@ -50,42 +50,42 @@
   "days": 3,
   "heistsPerDay": 2,
   "sessionsPerDay": 3,
-  "writesPerPlayerDay": 23.2,
+  "writesPerPlayerDay": 24.11,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 9.77,
+  "writesPerHeist": 10.22,
   "byOperation": {
    "session": 0.67,
    "telemetry batch": 3,
    "lease": 2,
-   "heist: validate and grant": 17.53
+   "heist: validate and grant": 18.44
   },
-  "billedRowsPerPlayerDay": 36.73,
-  "billedPerHeist": 15.87,
+  "billedRowsPerPlayerDay": 38.54,
+  "billedPerHeist": 16.77,
   "billedByOperation": {
    "session": 2,
    "telemetry batch": 3,
    "lease": 6,
-   "heist: validate and grant": 25.73
+   "heist: validate and grant": 27.54
   },
   "validationMs": {
-   "p50": 16.1,
-   "p95": 29.7,
-   "max": 38.8
+   "p50": 15.7,
+   "p95": 23.2,
+   "max": 43.1
   },
   "against": {
-   "budget": 5,
-   "overBudget": 7.3,
+   "budget": 24,
+   "overBudget": 1,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 2722,
+   "freePlanPlayersADay": 2594,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
     "100000": 5,
-    "1000000": 322
+    "1000000": 340
    }
   }
  },
@@ -95,42 +95,42 @@
   "days": 3,
   "heistsPerDay": 1,
   "sessionsPerDay": 1,
-  "writesPerPlayerDay": 11.16,
+  "writesPerPlayerDay": 11.7,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 9.49,
+  "writesPerHeist": 10.03,
   "byOperation": {
    "session": 0.67,
    "telemetry batch": 1,
    "lease": 1,
-   "heist: validate and grant": 8.49
+   "heist: validate and grant": 9.03
   },
-  "billedRowsPerPlayerDay": 18.66,
-  "billedPerHeist": 15.66,
+  "billedRowsPerPlayerDay": 19.73,
+  "billedPerHeist": 16.73,
   "billedByOperation": {
    "session": 2,
    "telemetry batch": 1,
    "lease": 3,
-   "heist: validate and grant": 12.66
+   "heist: validate and grant": 13.73
   },
   "validationMs": {
-   "p50": 15.2,
-   "p95": 25.8,
-   "max": 37.9
+   "p50": 16.7,
+   "p95": 29.4,
+   "max": 37.1
   },
   "against": {
-   "budget": 5,
-   "overBudget": 3.7,
+   "budget": 11,
+   "overBudget": 1.1,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 5359,
+   "freePlanPlayersADay": 5068,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
     "100000": 5,
-    "1000000": 142
+    "1000000": 152
    }
   }
  }

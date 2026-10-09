@@ -74,10 +74,17 @@ DECISION_SECONDS = (8, 12)
 #: §12.5. Three characters, four from Keeper level 8, five from level 16.
 CREW_RANGE = (3, 5)
 
-#: §5.2 (v3.3): wards and guard posts by realm level 1 to 5, "a measured
-#: budget, not a formula". v3.2's were 3 + realm level and 1 + (level - 1) // 2.
-WARD_LIMITS = (8, 8, 6, 7, 8)
-GUARD_POSTS = (1, 1, 2, 3, 3)
+#: §5.2 (v3.7): wards and guard posts by realm level 1 to 5, "a measured
+#: budget, not a formula", re-measured with every recorded answer built: "8, 8,
+#: 6, 2 and 0" wards on 1, 1, 2, 1 and 1 posts. v3.3 to v3.6 shipped 8, 8, 6, 7,
+#: 8 on 1, 1, 2, 3, 3; v3.2's were 3 + realm level and 1 + (level - 1) // 2.
+WARD_LIMITS = (8, 8, 6, 2, 0)
+GUARD_POSTS = (1, 1, 2, 1, 1)
+#: §12.17 (v3.7), "A realm’s watch": "at realm level 1 suspicion fills at 0.6
+#: of the rates above; at level 2 every zone reaches 0.75 as far, and at level 3
+#: 0.7 as far; from level 4 guards see and notice at full strength". (suspicion
+#: fill, sight) by realm level 1 to 5; §5.2 tunes the budget with it.
+REALM_WATCH = ((0.6, 1.0), (1.0, 0.75), (1.0, 0.7), (1.0, 1.0), (1.0, 1.0))
 #: §5.2's law slots by realm level, from its "Outer realm levels" table.
 LAW_SLOTS = (1, 1, 2, 2, 3)
 #: §5.2: "Outer realms open at Keeper levels 3, 6, 10, 15, 21 and 28", the
@@ -95,10 +102,9 @@ REALM_OPEN_COST = 2_000
 REALM_LEVEL_COSTS = (6_000, 20_000, 55_000, 140_000)
 #: What a new universe's Heart holds, by §10.2's building ids, each at level
 #: 1: the economy model's start, which §9.3's production and §14's curves are
-#: run from. No section says it whole (F56): §10.2's day column, from an
-#: earlier run, builds the Star Well on day 2, and §11.5's "a free Hearth
-#: waits for them" and §14.2's level-1 row ("The Heart … the Lab") each name
-#: a part.
+#: run from. §9.6 (v3.7, F56): "A new universe starts with the Heart and, at
+#: level 1 in it, the Keeper’s Spire, the Vault, a Star Well, an Aether Spring,
+#: a Garden and a Hearth … This is the one place that states it".
 STARTING_HEART = ("keeper_s_spire", "vault", "star_well", "aether_spring", "garden", "hearth")
 
 #: §12.8 and §12.20. One hit every 0.8 seconds for damage equal to Power, on
@@ -169,12 +175,16 @@ GRADE_VALUE = {"clean": 1.0, "loud": 0.7, "partial": 0.4, "foiled": 0.0}
 #: below 0.5, three or more below 0.25". The server and the economy model both
 #: mint from these. The base is the owner's (F36): the smallest hundred at
 #: which §9.6's raid-worth check holds on every day at every Vault level, with
-#: the fee an attempt keeps inside it (F39) — 5,000, where the document ships
-#: 2,400 (BEHIND; F53 for why not F36's 4,600).
+#: the fee an attempt keeps inside it (F39) — 5,000, which v3.7 states (F53
+#: for why not F36's 4,600).
 HAUL_BASE = 5000
 HAUL_GROWTH = 1.5
 HAUL_FATIGUE = 0.85
 RICHNESS_CLAMP = (0.6, 1.8, 1.5)
+#: §9.6 (v3.7, G17 A): "same level 1.0, one above 1.1, two or more above 1.2;
+#: one below 0.8, two below 0.5, three or more below 0.25". Kept as (same level,
+#: cap above, one below, two below, three or more below): the server steps 0.1 a
+#: Keeper level up to the cap, which is the 1.1 the document states one above.
 DIFFICULTY = (1.0, 1.2, 0.8, 0.5, 0.25)
 #: §9.6's band: "an attempt is worth 12% to 17% of a clean same-level haul —
 #: 0.1222 for a crew that stops at a fixed 70% fill and 0.1698 for one that
@@ -192,9 +202,8 @@ ROSTER_KEEP_SHARE = 0.25
 #: the shortest route from the landing realm to the Heart, up to 240 seconds".
 HEIST_CLOCK = (150, 15, 240)
 
-#: §9.4: "Entry fee: 2% of the raider's Starlight, from 100 to 25,000,
-#: returned in full after a clean heist." The owner decided 2% of B(V) at the
-#: target with no floor or cap (F39), so only the rate is kept: the same 2%.
+#: §9.4 (v3.7, F39 B): "Entry fee: 2% of B(V) at the target’s Vault level
+#: (9.6), never more than the raider holds".
 ENTRY_FEE_RATE = 0.02
 
 #: §12.9: "Renown for a clean heist = 20 × (1 + (defender's Renown − raider's
@@ -229,9 +238,8 @@ CONSTELLATION_ELDERS = 4
 #: §17.7: a crew is "4 to 8", "the people you actually play with".
 CREW_SIZE = (4, 8)
 
-#: §12.22's band: "Renown within 150, Keeper level within 3". The owner
-#: decided the Keeper window runs from two levels below to three above (F44),
-#: which the document does not say yet (BEHIND). (Renown, (below, above))
+#: §12.22's band (v3.7, F44 D): "Renown within 150, Keeper level from 2 below
+#: the raider’s to 3 above". (Renown, (below, above))
 MATCH_WINDOW = (150, (2, 3))
 
 #: §12.22's rating: "a wide deviation, 350 on Glicko-2's scale … (volatility
@@ -239,10 +247,10 @@ MATCH_WINDOW = (150, (2, 3))
 GLICKO = (350, 0.06, 0.5)
 
 #: §12.22's guarantee draws the middle target "from the raider-success band
-#: for the target's realm level — 60 to 75% at realm level 1, 55 to 70% from
-#: realm level 2 (13.2)". Per cent, by realm level ("2" is 2 and up). These
-#: are the generated islands' bands; an authored island's is HOLD_BAND's.
-RAIDER_SUCCESS = {"1": (60, 75), "2": (55, 70)}
+#: for the target's realm level — 55 to 70% at every realm level (13.2)" (v3.7;
+#: v3.6 gave realm level 1 its own 60 to 75%). Per cent. These are the
+#: generated islands' bands; an authored island's is HOLD_BAND's.
+RAIDER_SUCCESS = (55, 70)
 
 #: §12.22: "If fewer than three live candidates, echoes included … sit inside
 #: the band".
@@ -252,15 +260,17 @@ THIN_BAND = 3
 #: hours, or until they raid a player themselves."
 NEW_PLAYER_SHIELD_HOURS = 72
 
-#: §12.3: "Trace: within 24 hours of being robbed, a player can target the
-#: raider once, with a free scout and no entry fee."
+#: §12.3 (v3.7): "Trace: within 24 hours of a raid on their island that was not
+#: foiled and was not past the raider’s twenty paid raids that week (9.6), a
+#: player can target the raider once, with no entry fee."
 TRACE_HOURS = 24
 
 #: §12.3's echoes: "snapshots of real universes from the last 14 days".
 ECHO_DAYS = 14
 
-#: §9.4: "a foiled heist gives the defender the entry fee plus 5% of what the
-#: crew was carrying, a share that rises by 13.1's rule". Per cent.
+#: §9.4 (v3.7, G31 A): "a foiled heist gives the defender the entry fee plus 5%
+#: of the clean haul the crew’s unbanked load would have made on this island".
+#: Per cent.
 DEFENCE_SHARE = 5
 
 #: §13.1's rule: "Below 15%, the defence reward's share of what a foiled crew
@@ -268,9 +278,10 @@ DEFENCE_SHARE = 5
 #: to 20%". (threshold %, step, most rises, from %, to %)
 DEFENCE_SHARE_RISE = (15, 5, 3, 5, 20)
 
-#: §24.1: "Budget: about 100 to 200 kilobytes and five writes per active
-#: player per day. That is the design constraint".
-WRITE_BUDGET = 5
+#: §24.1 (v3.7, F47 A): "Budget, measured: about 14 rows a clean heist, and at
+#: least 46, 24 and 11 rows a day for engaged, regular and casual players".
+#: Rows written a player-day, by §14.1's archetype; server/load.mjs measures them.
+WRITE_BUDGET = {"engaged": 46, "regular": 24, "casual": 11}
 
 #: §24.1: "The paid plan is $5 a month and includes 25 billion row reads and
 #: 50 million row writes". A month's writes.
@@ -293,14 +304,15 @@ FREE_CPU_MS = 10
 #: adults. (from hour, to hour), local time.
 NIGHT_HOURS = {"13-15": (21, 8), "16-17": (22, 8), "18+": (22, 8)}
 
-#: §24.3: "Raw replays and logs are kept 30 to 90 days". (least, most)
-RAW_KEEP_DAYS = (30, 90)
+#: §24.3 (v3.7, G29 B): "Raw replays and logs are kept 90 days". v3.6 gave a
+#: range of 30 to 90; the server always kept the most.
+RAW_KEEP_DAYS = 90
 
 #: §25.1's gate: "a third of monthly players play on a given day". A share.
 DAILY_SHARE = (1, 3)
 
-#: §18.2: "Fifty tiers, climbed with season points from heists, defences and
-#: discoveries."
+#: §18.2 (v3.7, F42 A): "Fifty tiers, climbed with season stars from heists and
+#: defences."
 SEASON_TIERS = 50
 
 #: §22.1 sells "The season pass premium track (cosmetic), about €6 a season".
@@ -345,13 +357,14 @@ HOME = {
     "CREW_RANGE": "12.5",
     "WARD_LIMITS": "5.2",
     "GUARD_POSTS": "10.2",
+    "REALM_WATCH": "12.17",
     "LAW_SLOTS": "5.2",
     "REALM_KEEPER_LEVELS": "5.2",
     "REALM_TYPES": "5.2",
     "REALM_LEVEL_SPIRE": "5.2",
     "REALM_OPEN_COST": "9.5",
     "REALM_LEVEL_COSTS": "9.5",
-    "STARTING_HEART": "14.2",
+    "STARTING_HEART": "9.6",
     "WIND_UP": "12.8",
     "TAKEDOWN_SECONDS": "29.1",
     "ASSIST_BONUS": "11.1",
@@ -453,8 +466,14 @@ STATED = {
     "CREW_RANGE": (r"A crew of (\d+) to (\d+)", lambda m: (int(m[0]), int(m[1]))),
     "WARD_LIMITS": (r"the legibility cap 13.2 sets: (\d+), (\d+), (\d+), (\d+) and (\d+)",
                     lambda m: tuple(int(x) for x in m)),
-    "GUARD_POSTS": (r"Every realm; (\d+), (\d+), (\d+), (\d+) and (\d+) by realm level "
-                    r"\(5\.2\)\. One ruleborn", lambda m: tuple(int(x) for x in m)),
+    "REALM_WATCH": (r"at realm level 1 suspicion fills at ([\d.]+) of the rates above; at level 2 every "
+                    r"zone reaches ([\d.]+) as far, and at level 3 ([\d.]+) as far; from level 4 guards see "
+                    r"and notice at full strength",
+                    lambda m: ((float(m[0]), 1.0), (1.0, float(m[1])), (1.0, float(m[2])),
+                               (1.0, 1.0), (1.0, 1.0))),
+    "GUARD_POSTS": (r"Every realm; (\d+), (\d+), (\d+), (\d+) and (\d+) by realm level"
+                    r"(?:, the Heart counting as realm level 3)? \(5\.2\)\. One ruleborn",
+                    lambda m: tuple(int(x) for x in m)),
     "LAW_SLOTS": (r"\| 10 by 10\n\| (\d+)\n[\s\S]*?\| 11 by 11\n\| (\d+)\n[\s\S]*?"
                   r"\| 12 by 12\n\| (\d+)\n[\s\S]*?\| 13 by 13\n\| (\d+)\n[\s\S]*?"
                   r"\| 14 by 14\n\| (\d+)\n", lambda m: tuple(int(x) for x in m)),
@@ -474,8 +493,13 @@ STATED = {
     "REALM_LEVEL_COSTS": (r"\| Realm levels 2 to 5\n\| ([\d,]+), ([\d,]+), ([\d,]+) and ([\d,]+) Starlight",
                           lambda m: tuple(int(x.replace(",", "")) for x in m)),
     # §14.2's first row names the Heart and the Lab; F56 decides the rest.
-    "STARTING_HEART": (r"\| 1\n\| 140\n\| 0\n\| Day 1\n\| Day 1\n\| Day 1\n\| (The Heart)[^\n]*\n",
-                       lambda m: m[0]),
+    "STARTING_HEART": (r"A new universe starts with the Heart and, at level 1 in it, the ([^:]+): the starting "
+                       r"universe",
+                       lambda m: tuple({"Keeper’s Spire": "keeper_s_spire", "Vault": "vault",
+                                        "Star Well": "star_well", "Aether Spring": "aether_spring",
+                                        "Garden": "garden", "Hearth": "hearth"}.get(n, n)
+                                       for n in re.split(r", (?:and )?| and ",
+                                                         re.sub(r"\b(?:the|a|an) ", "", m[0])))),
     "WIND_UP": (r"shows a ([\d.]+)-second wind-up", lambda m: float(m[0])),
     "TAKEDOWN_SECONDS": (r"after a (\d+) s takedown", lambda m: int(m[0])),
     "ASSIST_BONUS": (r"every hit on it deals (\d+)% more: the assist bonus",
@@ -512,9 +536,13 @@ STATED = {
     "HAUL_FATIGUE": (r"\| Fatigue\n\| ([\d.]+) on each successive raid", lambda m: float(m[0])),
     "RICHNESS_CLAMP": (r"clamped between ([\d.]+) and ([\d.]+), with a reduction above ([\d.]+)",
                        lambda m: tuple(float(x) for x in m)),
-    "DIFFICULTY": (r"Level or above ([\d.]+) to ([\d.]+), one below ([\d.]+), two below "
-                   r"([\d.]+), three or more below ([\d.]+)",
-                   lambda m: tuple(float(x) for x in m)),
+    "DIFFICULTY": (r"By Keeper level against the raider’s: same level ([\d.]+), one above ([\d.]+), two "
+                   r"or more above ([\d.]+); one below ([\d.]+), two below ([\d.]+), three or more below "
+                   r"([\d.]+)",
+                   # One above must be the 0.1 step the server takes; if not, the
+                   # six numbers are returned and the comparison fails.
+                   lambda m: (lambda v: (v[0], v[2], v[3], v[4], v[5])
+                              if round(v[1] - v[0], 6) == 0.1 else tuple(v))([float(x) for x in m])),
     "ROSTER_KEEP_SHARE": (r"\| The roster's keep\n\| (\d+)% of Essence production",
                           lambda m: int(m[0]) / 100),
     "ATTEMPT_BAND": (r"(0\.\d+) for a crew that stops at a fixed 70% fill and (0\.\d+) for one "
@@ -522,7 +550,7 @@ STATED = {
     "HEIST_CLOCK": (r"\| (\d+) seconds plus (\d+) seconds for each link on the shortest route "
                     r"from the landing realm to the Heart, up to (\d+) seconds",
                     lambda m: tuple(int(x) for x in m)),
-    "ENTRY_FEE_RATE": (r"Entry fee: (\d+)% of the raider's Starlight", lambda m: int(m[0]) / 100),
+    "ENTRY_FEE_RATE": (r"Entry fee: (\d+)% of B\(V\) at the target’s Vault level", lambda m: int(m[0]) / 100),
     "RENOWN_CLEAN": (r"Renown for a clean heist = (\d+) × \(1 \+ \(defender's Renown − raider's "
                      r"Renown\) ÷ ([\d,]+)\), kept between (\d+) and (\d+)",
                      lambda m: tuple(int(x.replace(",", "")) for x in m)),
@@ -547,27 +575,27 @@ STATED = {
     # The document's wording ("Keeper level within 3") or the decided one
     # (F44: "from 2 below to 3 above"), so the check tells when it catches up.
     "MATCH_WINDOW": (r"\| 1\. The band\n\| Renown within (\d+), Keeper level "
-                     r"(?:within (\d+)|from (\d+) below to (\d+) above)",
+                     r"(?:within (\d+)|from (\d+) below(?: the raider’s)? to (\d+) above)",
                      lambda m: (int(m[0]), int(m[1])) if m[1] else (int(m[0]), (int(m[2]), int(m[3])))),
     "GLICKO": (r"a wide deviation, (\d+) on Glicko-2's scale, which narrows with every observed "
                r"attack under Glicko-2's update \(volatility ([\d.]+), system constant ([\d.]+)\)",
                lambda m: (int(m[0]), float(m[1]), float(m[2]))),
-    "RAIDER_SUCCESS": (r"(\d+) to (\d+)% at realm level 1, (\d+) to (\d+)% from realm level 2 \(13\.2\)",
-                       lambda m: {"1": (int(m[0]), int(m[1])), "2": (int(m[2]), int(m[3]))}),
+    "RAIDER_SUCCESS": (r"(\d+) to (\d+)% at every realm level \(13\.2\)",
+                       lambda m: (int(m[0]), int(m[1]))),
     "THIN_BAND": (r"If fewer than (\w+) live candidates, echoes included",
                   lambda m: {"two": 2, "three": 3, "four": 4, "five": 5}.get(m[0])),
     "NEW_PLAYER_SHIELD_HOURS": (r"New players can't be raided by other players for their first (\d+) hours",
                                 lambda m: int(m[0])),
-    "TRACE_HOURS": (r"Trace: within (\d+) hours of being robbed", lambda m: int(m[0])),
+    "TRACE_HOURS": (r"Trace: within (\d+) hours of a raid on their island", lambda m: int(m[0])),
     "ECHO_DAYS": (r"snapshots of real universes from the last (\d+) days", lambda m: int(m[0])),
-    "DEFENCE_SHARE": (r"a foiled heist gives the defender the entry fee plus (\d+)% of what the crew "
-                      r"was carrying", lambda m: int(m[0])),
+    "DEFENCE_SHARE": (r"a foiled heist gives the defender the entry fee plus (\d+)% of the clean haul "
+                      r"the crew’s unbanked load would have made", lambda m: int(m[0])),
     "DEFENCE_SHARE_RISE": (r"Below (\d+)%, the defence reward's share of what a foiled crew was carrying "
                            r"\(9\.4\) rises by (\d+) points a season, at most (\w+) times, from (\d+)% to (\d+)%",
                            lambda m: (int(m[0]), int(m[1]), {"two": 2, "three": 3, "four": 4}.get(m[2]),
                                       int(m[3]), int(m[4]))),
-    "WRITE_BUDGET": (r"Budget: about \d+ to \d+ kilobytes and (\w+) writes per active player per day",
-                     lambda m: {"three": 3, "four": 4, "five": 5, "six": 6, "ten": 10}.get(m[0])),
+    "WRITE_BUDGET": (r"at least (\d+), (\d+) and (\d+) rows a day for engaged, regular and casual players",
+                     lambda m: {"engaged": int(m[0]), "regular": int(m[1]), "casual": int(m[2])}),
     "PAID_WRITES_MONTH": (r"The paid plan is \$\d+ a month and includes \d+ billion row reads and (\d+) "
                           r"million row writes", lambda m: int(m[0]) * 1_000_000),
     "WRITE_PRICE_PER_MILLION": (r"then \$[\d.]+ per million reads and \$([\d.]+) per million writes",
@@ -579,10 +607,10 @@ STATED = {
                     r"(\d+):00\n\| Off (\d+):00 to (\d+):00 by default",
                     lambda m: {"13-15": (int(m[0]), int(m[1])), "16-17": (int(m[2]), int(m[3])),
                                "18+": (int(m[4]), int(m[5]))}),
-    "RAW_KEEP_DAYS": (r"Raw replays and logs are kept (\d+) to (\d+) days", lambda m: (int(m[0]), int(m[1]))),
+    "RAW_KEEP_DAYS": (r"Raw replays and logs are kept (\d+) days", lambda m: int(m[0])),
     "DAILY_SHARE": (r"\| Players still playing after 1, 7 and 30 days: [^;\n]*; a (\w+) of monthly players "
                     r"play on a given day", lambda m: {"half": (1, 2), "third": (1, 3), "quarter": (1, 4)}.get(m[0])),
-    "SEASON_TIERS": (r"(\w+) tiers, climbed with season points",
+    "SEASON_TIERS": (r"(\w+) tiers, climbed with season stars",
                      lambda m: {"Forty": 40, "Fifty": 50, "Sixty": 60, "Seventy": 70, "Eighty": 80,
                                 "Ninety": 90, "A hundred": 100}.get(m[0])),
     "PREMIUM_TRACK_EUR": (r"The season pass premium track \(cosmetic\), about €(\d+) a season",
@@ -599,9 +627,6 @@ BEHIND: dict[str, tuple[str, str]] = {
     # A fact the owner has decided and the document does not state yet: the
     # value above is the decision, and the check holds it to that until the
     # document takes the edit and the item closes.
-    "MATCH_WINDOW": ("F44", "Keeper level from two below to three above"),
-    "STARTING_HEART": ("F56", "the Heart with a Spire, Vault, Star Well, Aether Spring, Garden and Hearth"),
-    "HAUL_BASE": ("F36", "5,000: the raid-worth check on every day, with the fee in the attempt (F53)"),
 }
 
 

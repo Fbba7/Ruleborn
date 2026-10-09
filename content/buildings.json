@@ -582,7 +582,7 @@
   {
     "id": "guardian_post",
     "name": "Guardian Post",
-    "placement": "Every realm; 1, 1, 2, 3 and 3 by realm level (5.2). One ruleborn stands at each (13.4).",
+    "placement": "Every realm; 1, 1, 2, 1 and 1 by realm level, the Heart counting as realm level 3 (5.2). One ruleborn of the eighteen kinds stands at each (13.4); paradox-born never do (11.8).",
     "levels": [
       {
         "level": 1,
@@ -619,7 +619,7 @@
   {
     "id": "ward",
     "name": "Ward",
-    "placement": "Every realm; 8, 8, 6, 7 and 8 by realm level (5.2). Levels 1 and 2 ship at launch; 3 to 5 follow (10.3).",
+    "placement": "Every realm; 8, 8, 6, 2 and 0 by realm level, the Heart counting as realm level 3 (5.2). Levels 1 and 2 ship at launch; 3 to 5 follow (10.3).",
     "levels": [
       {
         "level": 1,
@@ -729,7 +729,7 @@
         "level": 1,
         "cost_starlight": 1500,
         "needs": "Spire 1",
-        "gives": "1 slot(s); 8 h per experiment"
+        "gives": "1 slot(s); 8 h per experiment (the first, in the first session, takes 5 minutes and is free, 16)"
       },
       {
         "level": 2,
@@ -766,31 +766,31 @@
         "level": 1,
         "cost_starlight": 1200,
         "needs": "Spire 1",
-        "gives": "3 targets; scouting 0% cheaper; 5 replays"
+        "gives": "3 targets; 5 replays"
       },
       {
         "level": 2,
         "cost_starlight": 3360,
         "needs": "Spire 3",
-        "gives": "3 targets; scouting 10% cheaper; 8 replays"
+        "gives": "3 targets; 8 replays"
       },
       {
         "level": 3,
         "cost_starlight": 9410,
         "needs": "Spire 5",
-        "gives": "4 targets; scouting 20% cheaper; 12 replays"
+        "gives": "4 targets; 12 replays"
       },
       {
         "level": 4,
         "cost_starlight": 26300,
         "needs": "Spire 7",
-        "gives": "4 targets; scouting 30% cheaper; 16 replays"
+        "gives": "4 targets; 16 replays"
       },
       {
         "level": 5,
         "cost_starlight": 73800,
         "needs": "Spire 9",
-        "gives": "5 targets; scouting 40% cheaper; 20 replays"
+        "gives": "5 targets; 20 replays"
       }
     ]
   },

@@ -45,6 +45,7 @@
   "a_position_lands_in_the_tile_whose_centre_it_is": "passed",
   "a_posted_guard_holds_its_facing": "passed",
   "a_raider_held_in_the_near_zone_raises_a_guard_to_alerted": "passed",
+  "a_realms_watch_tunes_its_guards_by_realm_level": "passed",
   "a_regrow_time_takes_the_shortest_applied_not_the_product": "passed",
   "a_replay_carries_the_laws_it_was_made_under": "passed",
   "a_replay_verifies_on_its_island_and_nowhere_else": "passed",
@@ -313,7 +314,7 @@
   }
  ],
  "content": {
-  "agree": 157,
+  "agree": 158,
   "disagree": [],
   "not_modelled": [
    "noise.off_screen_multiplier \u2014 the simulation has no screen",

@@ -1,6 +1,7 @@
 {
- "_what": "The owner's decision brief: one entry per open register item waiting on the owner's decision, with its question, options, what the build does today, a recommendation and quotes from the design document; then the order to decide in, the groups that share one choice, the conflicts between answers and the ones safe to accept as recommended. Drafted, checked from two sides and merged by a multi-agent pass; tools/build_brief.py renders it and --check holds it to the register and the document.",
- "summary": "Of these 93 decisions, you answered 47 on 25–26 September; the build follows them, and the next version of the document takes their edits. 46 are open. 36 come from reading v3.6 and Screens v3 against each other and the build in October; the other 10 were found since: F56 and G43 building the home economy, F55 re-running §13.2's table, G44 in the security briefing, four reading your design handoff, C55 (landscape), D98 (the 390-point frame), D75's camera and one-finger controls and G70 (which raids open a Trace), and two folding it in, C56 (the second epoch's slot, after launch) and C57 (one guard's cone or every one). Answer C45 first: it confirms that your recorded answers stand over the v3.6 text that still contradicts them, and the screens are being built on that. Then the look, as one choice: D89 (surfaces) and D90 (typefaces), with D91 (icons and motion) and D92 (shading), which TD.2's tokens and every screen follow, and with them the handoff's frame: D98, C55 and D75. Then the heist group, G47 and G51 with G48 and C47, before the simulation contract locks (T5.1). F55 decides what the next harness work is. The rest can be answered in any order within their groups.",
+ "_what": "The owner's decision brief: one entry per register item that has waited on the owner's decision, with its question, options, what the build does today, a recommendation and quotes from the design document; then the order to decide in, the groups that share one choice, the conflicts between answers and the ones safe to accept as recommended. An entry is closed by the owner's answer (answers.json, the owner's alone) or settled by a version of the document taking an option by rule (`settled`: the version, the option it wrote, where, and any sentence still left), which is not an answer. Quotes are from the version the question was put against, `asked_of`, unless an entry names its own; an entry still open quotes the current document. Drafted, checked from two sides and merged by a multi-agent pass; tools/build_brief.py renders it and --check holds it to the register and the documents.",
+ "summary": "Of these 93 decisions, you answered 47 on 25–26 September, and version 3.7 writes every one of those answers in, one row each in its §32.8. The other 46 you did not answer: v3.7 closes each by rule, not by asking — every decision still waiting takes the option its brief recommended — so each card below is marked settled by v3.7, with the option it wrote and where, and none is recorded as your answer. Nothing here waits on you. A settled card can still be overruled: answer it and the build takes your answer, as it takes every recorded answer before the document (§32.8). Five settled cards left one sentence still disagreeing (C55, F55, F56, G51, G57); the register drafts those edits, which are the document's to take, not decisions.",
+ "asked_of": "3.6",
  "order": [
   "F33",
   "F35",
@@ -4242,7 +4243,20 @@
      "text": "Most raids should pay, or raiding dies"
     }
    ],
-   "also_needed": "Which raid-side levers are on the table for B (guard sight, the clock, crew abilities), and whether the harness's competent crew is the right reference: the optimal and clearing crews are held more often here, because their waits cost clock across three realms."
+   "also_needed": "Which raid-side levers are on the table for B (guard sight, the clock, crew abilities), and whether the harness's competent crew is the right reference: the optimal and clearing crews are held more often here, because their waits cost clock across three realms.",
+   "settled": {
+    "by": "v3.7",
+    "option": "D",
+    "where": [
+     "5.2",
+     "12.17",
+     "12.4",
+     "13.2",
+     "13.4",
+     "10.2"
+    ],
+    "left": "§32.9’s ledger, §5.2’s first paragraph, §13.2’s sample sizes and §13’s ward range still carry the budget before it; the register drafts the edits (F55)."
+   }
   },
   "F56": {
    "id": "F56",
@@ -4297,7 +4311,18 @@
      "text": "The Heart; 3 laws; 5 ruleborn; the Archivist; the Lab; 1 cast; Drifting ruins; Codex chapter 1 (12 laws)"
     }
    ],
-   "also_needed": "Whether the Lab in §14.2's first row means a building at level 1 or the Lab screen, which §8 opens with the first resonance."
+   "also_needed": "Whether the Lab in §14.2's first row means a building at level 1 or the Lab screen, which §8 opens with the first resonance.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "10",
+     "11.5",
+     "16",
+     "10.2"
+    ],
+    "left": "§16 runs the first experiment in a Lab the starting universe lacks; the register drafts the edit, the Lab raised free in the first session (F56)."
+   }
   },
   "G43": {
    "id": "G43",
@@ -4347,7 +4372,14 @@
      "text": "Each realm level now gets the smaller of the wards it needs to reach its hold band (13.2) and eight, the legibility cap 13.2 sets: 8, 8, 6, 7 and 8."
     }
    ],
-   "also_needed": "Nothing: F55's answer may change the limits themselves, and this rule applies to whatever they become."
+   "also_needed": "Nothing: F55's answer may change the limits themselves, and this rule applies to whatever they become.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "5.2"
+    ]
+   }
   },
   "G44": {
    "id": "G44",
@@ -4401,7 +4433,14 @@
      "text": "Absorbed at the edge as part of the platform"
     }
    ],
-   "also_needed": "Nothing."
+   "also_needed": "Nothing.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "24.1"
+    ]
+   }
   },
   "C44": {
    "id": "C44",
@@ -4465,7 +4504,17 @@
      "text": "Nothing interactive sits in a screen corner, where error rates are worst. Safe areas respected; nothing important within 44 points of the notch or home bar."
     }
    ],
-   "also_needed": "Nothing. Under B the exact place of the back control in the lower band is the build's to draw; the analysis proposes a plate above the tab bar."
+   "also_needed": "Nothing. Under B the exact place of the back control in the lower band is the build's to draw; the analysis proposes a plate above the tab bar.",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "21.8",
+     "21.1",
+     "23.1",
+     "23.5"
+    ]
+   }
   },
   "G46": {
    "id": "G46",
@@ -4540,7 +4589,17 @@
      "text": "Overloading is a legitimate choice for a player who wants more laws and accepts a weaker defence."
     }
    ],
-   "also_needed": "What §12.5's entry 'by a fault' means (landing in the fault's outer realm and taking it at once, or something else), and whether §5.4's clock counts a fault on the shortest route as a link."
+   "also_needed": "What §12.5's entry 'by a fault' means (landing in the fault's outer realm and taking it at once, or something else), and whether §5.4's clock counts a fault on the shortest route as a link.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "5.4",
+     "5.5",
+     "12.4",
+     "23.2"
+    ]
+   }
   },
   "C45": {
    "id": "C45",
@@ -4610,7 +4669,15 @@
      "text": "Three to five universes showing only the free scouting facts (12.4)"
     }
    ],
-   "also_needed": "If v3.6 meant to reverse any answer, name it: that one alone is reverted and recorded. Each answer's drafted edit is its option's doc_edit in docs/decisions/brief.json. Built to the answers, and changed only by B or C: the fee, the Keeper window and the free scout on the Observatory, scout and planner (TD.18), the shop's prices in money (TD.23), and the Vault call left out of sim/ (F35). Until you answer, those parts are built so one token switches each back to the document, as TD.2 does for the look."
+   "also_needed": "If v3.6 meant to reverse any answer, name it: that one alone is reverted and recorded. Each answer's drafted edit is its option's doc_edit in docs/decisions/brief.json. Built to the answers, and changed only by B or C: the fee, the Keeper window and the free scout on the Observatory, scout and planner (TD.18), the shop's prices in money (TD.23), and the Vault call left out of sim/ (F35). Until you answer, those parts are built so one token switches each back to the document, as TD.2 does for the look.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "32.8",
+     "23.5"
+    ]
+   }
   },
   "D77": {
    "id": "D77",
@@ -4677,7 +4744,16 @@
      "text": "Every outer realm's edge, what guards would hear, and the heist clock for each choice"
     }
    ],
-   "also_needed": "Whether a Cartographer's map also shows guard posts (§11.8 says 'with ward positions'). §23.5's Land here row stands under every option."
+   "also_needed": "Whether a Cartographer's map also shows guard posts (§11.8 says 'with ward positions'). §23.5's Land here row stands under every option.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "12.4",
+     "23.2",
+     "23.5"
+    ]
+   }
   },
   "C46": {
    "id": "C46",
@@ -4741,7 +4817,17 @@
      "text": "Every offered target shows its depth, so a longer run is a choice the player sees coming."
     }
    ],
-   "also_needed": "The name a card shows is G58's question: G58 recommends a word-list name for every Keeper, which raiders see as §12.4's free 'name'. §12.22's 'centred on three realms' must use the same depth count."
+   "also_needed": "The name a card shows is G58's question: G58 recommends a word-list name for every Keeper, which raiders see as §12.4's free 'name'. §12.22's 'centred on three realms' must use the same depth count.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "12.3",
+     "12.22",
+     "23.2",
+     "23.5"
+    ]
+   }
   },
   "G47": {
    "id": "G47",
@@ -4807,7 +4893,18 @@
      "text": "the heist can be paused at any time in ruins and rehearsals"
     }
    ],
-   "also_needed": "G51 holds the crew manifest (each member's kind, form, level and traits, the Sage and the casts) and its growth, home and rest rules: answer them together. The Archivist's three powers as parameter changes for sim/; C49's drafted edit keeps §11.7's parameter rule to the after-launch Sages."
+   "also_needed": "G51 holds the crew manifest (each member's kind, form, level and traits, the Sage and the casts) and its growth, home and rest rules: answer them together. The Archivist's three powers as parameter changes for sim/; C49's drafted edit keeps §11.7's parameter rule to the after-launch Sages.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "12.5",
+     "12.7",
+     "24.12",
+     "24.13",
+     "23.5"
+    ]
+   }
   },
   "C47": {
    "id": "C47",
@@ -4873,7 +4970,19 @@
      "text": "the Vault's contents are only revealed when it opens"
     }
    ],
-   "also_needed": "Whether the question goes on the first or the last result of a session; G29's answer already fixes what a session is. Waiting on this answer: the result's worth question and how often it is asked (TD.17), and the heist HUD's 'Left' before the Vault opens (client/scripts/heist_hud.gd:51). The server's 1-to-5 rating stands under A and C."
+   "also_needed": "Whether the question goes on the first or the last result of a session; G29's answer already fixes what a session is. Waiting on this answer: the result's worth question and how often it is asked (TD.17), and the heist HUD's 'Left' before the Vault opens (client/scripts/heist_hud.gd:51). The server's 1-to-5 rating stands under A and C.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "19.5",
+     "20.3",
+     "12.9",
+     "12.6",
+     "21.8",
+     "23.5"
+    ]
+   }
   },
   "G49": {
    "id": "G49",
@@ -4939,7 +5048,18 @@
      "text": "they are hidden until discovered in the Lab, or hinted at after crossing them in someone else's universe."
     }
    ],
-   "also_needed": "What a crossing hint says for a chord, which has three laws. Chapters 3 to 5 each need their list as seasons add laws."
+   "also_needed": "What a crossing hint says for a chord, which has three laws. Chapters 3 to 5 each need their list as seasons add laws.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "7.6",
+     "18.5",
+     "15.3",
+     "8.6",
+     "5.5"
+    ]
+   }
   },
   "C48": {
    "id": "C48",
@@ -5005,7 +5125,18 @@
      "text": "While a slot is being woven it is empty."
     }
    ],
-   "also_needed": "The upkeep share itself, which §9.5's sink rule sets only once the economy model models upkeep (it leaves it out today). The first session's weaves against §5.6's times are C51's question."
+   "also_needed": "The upkeep share itself, which §9.5's sink rule sets only once the economy model models upkeep (it leaves it out today). The first session's weaves against §5.6's times are C51's question.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "5.5",
+     "5.6",
+     "8.2",
+     "29.1",
+     "23.2"
+    ]
+   }
   },
   "G50": {
    "id": "G50",
@@ -5071,7 +5202,18 @@
      "text": "Yes, names from word lists"
     }
    ],
-   "also_needed": "The creature-name word lists themselves. G64 asks the same form question for a visiting Stray, and G51 the server's roster that hatching writes to."
+   "also_needed": "The creature-name word lists themselves. G64 asks the same form question for a visiting Stray, and G51 the server's roster that hatching writes to.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "23.2",
+     "20.2",
+     "11.5",
+     "11.9",
+     "23.5"
+    ]
+   }
   },
   "G51": {
    "id": "G51",
@@ -5137,7 +5279,20 @@
      "text": "Every character's state, rest timers, one-tap reassign"
     }
    ],
-   "also_needed": "Where the roster lives: under A the server must hold every character (kind, level, traits, form, home, rest), which it does not today, and G47's commands for abilities, Sage powers and casts."
+   "also_needed": "Where the roster lives: under A the server must hold every character (kind, level, traits, form, home, rest), which it does not today, and G47's commands for abilities, Sage powers and casts.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "12.5",
+     "11.4",
+     "11.6",
+     "11.3",
+     "14.1",
+     "23.2"
+    ],
+    "left": "§11.4’s Spire home overshoots the level cap, §11.6’s rest reads the Hearth’s level, and the staffing order has none inside a realm; the register drafts the edits (G51)."
+   }
   },
   "G52": {
    "id": "G52",
@@ -5202,7 +5357,17 @@
      "text": "Pages and Insight arrive as described in 7.6 and 11.7"
     }
    ],
-   "also_needed": "In every option, two §11.7 sentences. First, whether the lone Sage may guard rather than go (proposed: yes, and the heist then goes without one, which suits §16's 'who stays home' decision on days 4 to 7). Second, when an at-home effect applies (proposed: whenever the Sage is not on a heist). Under A or B, each launch Sage's eight improvements."
+   "also_needed": "In every option, two §11.7 sentences. First, whether the lone Sage may guard rather than go (proposed: yes, and the heist then goes without one, which suits §16's 'who stays home' decision on days 4 to 7). Second, when an at-home effect applies (proposed: whenever the Sage is not on a heist). Under A or B, each launch Sage's eight improvements.",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "11.7",
+     "9.1",
+     "9.5",
+     "14.3"
+    ]
+   }
   },
   "C49": {
    "id": "C49",
@@ -5264,7 +5429,17 @@
      "text": "1 slot(s); 8 h per experiment"
     }
    ],
-   "also_needed": "Nothing. The other eight lines are the register's drafted edits for C49 and your answers to F41 and G28."
+   "also_needed": "Nothing. The other eight lines are the register's drafted edits for C49 and your answers to F41 and G28.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "11.7",
+     "10.2",
+     "9.5",
+     "16"
+    ]
+   }
   },
   "G53": {
    "id": "G53",
@@ -5331,7 +5506,17 @@
      "text": "Lab experiments that find nothing give 3 pages of a law from those schools"
     }
    ],
-   "also_needed": "Under G52 A only, the Insight a discovery pays, from the economy model alongside G52's other Insight figures; whether the first experiment (§16's 5 minutes) is charged (C49); and whether an empty pair can be run again for its pages, which F37 raised."
+   "also_needed": "Under G52 A only, the Insight a discovery pays, from the economy model alongside G52's other Insight figures; whether the first experiment (§16's 5 minutes) is charged (C49); and whether an empty pair can be run again for its pages, which F37 raised.",
+   "settled": {
+    "by": "v3.7",
+    "option": "C",
+    "where": [
+     "8.6",
+     "8.5",
+     "7.6",
+     "23.2"
+    ]
+   }
   },
   "G54": {
    "id": "G54",
@@ -5398,7 +5583,16 @@
      "text": "Laws raise production and decide which characters hatch"
     }
    ],
-   "also_needed": "C48's open weaving rules (what a tier rise does to a woven law, whether a weave may take strain into Breaking) and C51's instant tutorial weaves, which the first generated defence would share."
+   "also_needed": "C48's open weaving rules (what a tier rise does to a woven law, whether a weave may take strain into Breaking) and C51's instant tutorial weaves, which the first generated defence would share.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "13.3",
+     "23.2",
+     "23.5"
+    ]
+   }
   },
   "G55": {
    "id": "G55",
@@ -5475,7 +5669,18 @@
      "text": "with the preview re-generating fast enough not to break the flow"
     }
    ],
-   "also_needed": "D66's reference crew ported into the simulation, without which the server cannot measure; and the CPU cost of 800 simulated raids per new digest against F47's plan."
+   "also_needed": "D66's reference crew ported into the simulation, without which the server cannot measure; and the CPU cost of 800 simulated raids per new digest against F47's plan.",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "13.3",
+     "13.2",
+     "18.6",
+     "23.2",
+     "23.5"
+    ]
+   }
   },
   "G56": {
    "id": "G56",
@@ -5543,7 +5748,19 @@
      "text": "It is a free sandbox with every law and terrain feature the player has unlocked and no stability limit"
     }
    ],
-   "also_needed": "Whether a patrol route is also the owner's to set (§12.17's 'patrols'), which this answer leaves to the generator; and the editor's direction gesture, which Screens v3 does not draw."
+   "also_needed": "Whether a patrol route is also the owner's to set (§12.17's 'patrols'), which this answer leaves to the generator; and the editor's direction gesture, which Screens v3 does not draw.",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "6.1",
+     "6.2",
+     "13.3",
+     "12.17",
+     "18.6",
+     "23.5"
+    ]
+   }
   },
   "G57": {
    "id": "G57",
@@ -5610,7 +5827,19 @@
      "text": "Raw replays and logs are kept 30 to 90 days, long enough for validation and analysis, then aggregated and discarded."
     }
    ],
-   "also_needed": "Whether 'seen' also counts a guard that only grew Suspicious, which would name more places per raid; and G69's definitions of held and records, which read these facts."
+   "also_needed": "Whether 'seen' also counts a guard that only grew Suspicious, which would name more places per raid; and G69's definitions of held and records, which read these facts.",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "13.2",
+     "13",
+     "24.3",
+     "24.8",
+     "23.2"
+    ],
+    "left": "Two of §23.2’s records have no fact behind them, one no rule, and an unsampled raid’s facts no stated source; the register drafts the edits (G57)."
+   }
   },
   "F57": {
    "id": "F57",
@@ -5685,7 +5914,18 @@
      "text": "Starglass, in packs from about €1 to €50"
     }
    ],
-   "also_needed": "The launch cosmetics' prices (D64: the catalogue is empty). Whether an open gift intent counts toward the limit while it holds its 15 minutes, as it does for the spending cap. The approval words for each store's family approval, shown to 13-to-15s only where it is set up (§20.2)."
+   "also_needed": "The launch cosmetics' prices (D64: the catalogue is empty). Whether an open gift intent counts toward the limit while it holds its 15 minutes, as it does for the spending cap. The approval words for each store's family approval, shown to 13-to-15s only where it is set up (§20.2).",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "22.1",
+     "22.4",
+     "9.1",
+     "19.12",
+     "23.5"
+    ]
+   }
   },
   "D86": {
    "id": "D86",
@@ -5752,7 +5992,16 @@
      "text": "Friends only, preset pings"
     }
    ],
-   "also_needed": "Under B or C, the ping cap and how long pings are kept. Under C, whether 16-to-17s are offered presence at all, and whether a poster can take a Beacon post down. In every option a friend's status never names a raid's target, as the design's own feed footer says: 'Raids show no names while they happen.'"
+   "also_needed": "Under B or C, the ping cap and how long pings are kept. Under C, whether 16-to-17s are offered presence at all, and whether a poster can take a Beacon post down. In every option a friend's status never names a raid's target, as the design's own feed footer says: 'Raids show no names while they happen.'",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "17.6",
+     "23.2",
+     "23.5"
+    ]
+   }
   },
   "C50": {
    "id": "C50",
@@ -5816,7 +6065,17 @@
      "text": "soft launch reports both and nothing waits on the comparison (27.5)"
     }
    ],
-   "also_needed": "Under A, which version brings the league. Under B or C, what an Open Vault raid takes from the defender, whether Open Vault players meet only each other, whether 13-to-15s may join (§20.2 gives them no rule for real loss), and how often a player may join or leave."
+   "also_needed": "Under A, which version brings the league. Under B or C, what an Open Vault raid takes from the defender, whether Open Vault players meet only each other, whether 13-to-15s may join (§20.2 gives them no rule for real loss), and how often a player may join or leave.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "9.4",
+     "26.1",
+     "19.21",
+     "27.5"
+    ]
+   }
   },
   "C51": {
    "id": "C51",
@@ -5881,7 +6140,17 @@
      "text": "While a slot is being woven it is empty."
     }
    ],
-   "also_needed": "§16's first experiment is suggested at 6:30, takes 5 minutes and finishes at 10:00, so it needs an earlier start or a shorter first experiment. The Keeper's name rule and where the terms are accepted (G58)."
+   "also_needed": "§16's first experiment is suggested at 6:30, takes 5 minutes and finishes at 10:00, so it needs an earlier start or a shorter first experiment. The Keeper's name rule and where the terms are accepted (G58).",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "15.2",
+     "16",
+     "25.2",
+     "5.6"
+    ]
+   }
   },
   "G58": {
    "id": "G58",
@@ -5953,7 +6222,17 @@
      "text": "no uploaded files and no free text"
     }
    ],
-   "also_needed": "Whether anything the game keeps rests on consent rather than on running the service (analytics, the push token); if it does, §20.5 needs a parent's consent below the player's country's age (13 to 16 in the EU) and a source for the country, such as the store's. When the platforms' age services are wired, since B's looser bands wait on them."
+   "also_needed": "Whether anything the game keeps rests on consent rather than on running the service (analytics, the push token); if it does, §20.5 needs a parent's consent below the player's country's age (13 to 16 in the EU) and a source for the country, such as the store's. When the platforms' age services are wired, since B's looser bands wait on them.",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "20.1",
+     "20.2",
+     "12.4",
+     "20.5"
+    ]
+   }
   },
   "D89": {
    "id": "D89",
@@ -6020,7 +6299,16 @@
      "text": "The designs carry the look: layout, art, motion, the models and the icons."
     }
    ],
-   "also_needed": "G59's rule for outlined words, and light alarm and success shades for the dark surfaces (D72, F58)."
+   "also_needed": "G59's rule for outlined words, and light alarm and success shades for the dark surfaces (D72, F58).",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "21.8",
+     "21.2",
+     "23.5"
+    ]
+   }
   },
   "D90": {
    "id": "D90",
@@ -6080,7 +6368,16 @@
      "text": "Open Font Licence only, which explicitly permits embedding in an application"
     }
    ],
-   "also_needed": "Nothing."
+   "also_needed": "Nothing.",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "21.8",
+     "21.11",
+     "23.5"
+    ]
+   }
   },
   "G59": {
    "id": "G59",
@@ -6140,7 +6437,14 @@
      "text": "Most screens set most text below 13 pt; only the heist, planner and result meet the floor"
     }
    ],
-   "also_needed": "D89's answer, which decides the surfaces most words sit on."
+   "also_needed": "D89's answer, which decides the surfaces most words sit on.",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "21.8"
+    ]
+   }
   },
   "D93": {
    "id": "D93",
@@ -6210,7 +6514,15 @@
      "text": "Install size is minimised because size gates installation in exactly those markets."
     }
    ],
-   "also_needed": "A reference device for TC.8: until a phone runs the fullest heist, 60,000 is an estimate."
+   "also_needed": "A reference device for TC.8: until a phone runs the fullest heist, 60,000 is an estimate.",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "21.3",
+     "23.5"
+    ]
+   }
   },
   "C52": {
    "id": "C52",
@@ -6281,7 +6593,15 @@
      "text": "A mid-range 4 GB Android at 60 Hz, not a flagship."
     }
    ],
-   "also_needed": "Which phone is the oldest supported, for C (today the iPhone export's minimum is iOS 15.0 and Android's is the engine's default), and a reference device for TC.8."
+   "also_needed": "Which phone is the oldest supported, for C (today the iPhone export's minimum is iOS 15.0 and Android's is the engine's default), and a reference device for TC.8.",
+   "settled": {
+    "by": "v3.7",
+    "option": "C",
+    "where": [
+     "21.3",
+     "24"
+    ]
+   }
   },
   "C53": {
    "id": "C53",
@@ -6354,7 +6674,15 @@
      "text": "Doubles only its own"
     }
    ],
-   "also_needed": "The Twinned's sound (G62). Under B, the ability's name and length."
+   "also_needed": "The Twinned's sound (G62). Under B, the ability's name and length.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "11.8",
+     "23.5"
+    ]
+   }
   },
   "G62": {
    "id": "G62",
@@ -6420,7 +6748,17 @@
      "text": "Eighteen kinds and three notes make 54 forms."
     }
    ],
-   "also_needed": "A rule-sheet line and a 'Sounds like' line for each gift, in the owner's words. The Twinned's line comes from C53, and the Reverser's swap names no §7.3 parameter yet. The paradox mark needs a §23.5 adopted row, alongside G65's other adoptions. It reads by its shape, so it never relies on colour alone."
+   "also_needed": "A rule-sheet line and a 'Sounds like' line for each gift, in the owner's words. The Twinned's line comes from C53, and the Reverser's swap names no §7.3 parameter yet. The paradox mark needs a §23.5 adopted row, alongside G65's other adoptions. It reads by its shape, so it never relies on colour alone.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "11.8",
+     "11.10",
+     "10.2",
+     "23.5"
+    ]
+   }
   },
   "G64": {
    "id": "G64",
@@ -6486,7 +6824,17 @@
      "text": "the Stray is a scruffy little creature with a bundle on a stick"
     }
    ],
-   "also_needed": "The list of favours, which §11.8 gives only by example. Whether the Stray costs anything to keep: §11.8 says it joins once the favour is done, while F38 prices a found stray at the next birth. Whether a kind shown as a visitor needs clips beyond §21.6's set, like the kitten's 'Ask a favour' (C54's count)."
+   "also_needed": "The list of favours, which §11.8 gives only by example. Whether the Stray costs anything to keep: §11.8 says it joins once the favour is done, while F38 prices a found stray at the next birth. Whether a kind shown as a visitor needs clips beyond §21.6's set, like the kitten's 'Ask a favour' (C54's count).",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "11.8",
+     "11.9",
+     "21.6",
+     "23.5"
+    ]
+   }
   },
   "C54": {
    "id": "C54",
@@ -6559,7 +6907,16 @@
      "text": "each has the fifteen animations of 21.6"
     }
    ],
-   "also_needed": "Whether the worker §21.5 shows re-shelving pages at the Library needs a fourth work loop, since the Library takes no workers (§10.2). The home habit §11.11 requires is in neither count (D94)."
+   "also_needed": "Whether the worker §21.5 shows re-shelving pages at the Library needs a fourth work loop, since the Library takes no workers (§10.2). The home habit §11.11 requires is in neither count (D94).",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "11.11",
+     "21.6",
+     "23.5"
+    ]
+   }
   },
   "G69": {
    "id": "G69",
@@ -6624,7 +6981,15 @@
      "text": "A design never adds a mechanic."
     }
    ],
-   "also_needed": "G57's per-raid facts, which most records read; and the badges' thresholds, if the design's are not kept."
+   "also_needed": "G57's per-raid facts, which most records read; and the badges' thresholds, if the design's are not kept.",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "23.2",
+     "18.5"
+    ]
+   }
   },
   "G48": {
    "id": "G48",
@@ -6690,7 +7055,17 @@
      "text": "At most one per session; never blocks play; can be turned off"
     }
    ],
-   "also_needed": "The tip table's lines, one per cause, in your words. In co-op, §12.13 singles out no player, so a co-op moment names the crew's mistake, not a person's."
+   "also_needed": "The tip table's lines, one per cause, in your words. In co-op, §12.13 singles out no player, so a co-op moment names the crew's mistake, not a person's.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "12.13",
+     "24.10",
+     "15.3",
+     "23.5"
+    ]
+   }
   },
   "D91": {
    "id": "D91",
@@ -6751,7 +7126,17 @@
      "text": "The designs carry the look: layout, art, motion, the models and the icons."
     }
    ],
-   "also_needed": "Which particles reduced motion keeps (§20.8); the build's reading is that a reward still lands in its counter. And whether §21.8's timing covers camera moves such as the dive; the build's reading is that it does not, and reduced motion (§20.8) makes each a cut."
+   "also_needed": "Which particles reduced motion keeps (§20.8); the build's reading is that a reward still lands in its counter. And whether §21.8's timing covers camera moves such as the dive; the build's reading is that it does not, and reduced motion (§20.8) makes each a cut.",
+   "settled": {
+    "by": "v3.7",
+    "option": "C",
+    "where": [
+     "21.8",
+     "20.8",
+     "21.2",
+     "23.5"
+    ]
+   }
   },
   "D92": {
    "id": "D92",
@@ -6822,7 +7207,15 @@
      "text": "The designs carry the look: layout, art, motion, the models and the icons."
     }
    ],
-   "also_needed": "The ink the outlines use, which D89's surfaces decision settles: #221C3A in §21.2, #1A0C14 in the designs. Under D the ink is the world's only. If 'soft lambert shading' meant smooth shading rather than the toon ramp, that is a fifth reading: say so, and the characters take a lambert-and-rim material instead."
+   "also_needed": "The ink the outlines use, which D89's surfaces decision settles: #221C3A in §21.2, #1A0C14 in the designs. Under D the ink is the world's only. If 'soft lambert shading' meant smooth shading rather than the toon ramp, that is a fifth reading: say so, and the characters take a lambert-and-rim material instead.",
+   "settled": {
+    "by": "v3.7",
+    "option": "C",
+    "where": [
+     "21.3",
+     "23.5"
+    ]
+   }
   },
   "C55": {
    "id": "C55",
@@ -6889,7 +7282,20 @@
      "text": "Cost: about 15 to 20% more interface work, concentrated in the heist HUD."
     }
    ],
-   "also_needed": "Under A, whether a tablet's menus stay portrait or turn with the device; §23.3 has tablets default to landscape."
+   "also_needed": "Under A, whether a tablet's menus stay portrait or turn with the device; §23.3 has tablets default to landscape.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "23.3",
+     "21.1",
+     "12.7",
+     "24",
+     "27.2",
+     "23.5"
+    ],
+    "left": "§23.3 still defaults tablets to landscape while §24 makes iPad a launch device; the register drafts the edit (C55), which is the document’s to take, not a decision."
+   }
   },
   "D98": {
    "id": "D98",
@@ -6945,7 +7351,14 @@
      "text": "13 pt at the smallest, 16 pt body"
     }
    ],
-   "also_needed": "Nothing."
+   "also_needed": "Nothing.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "21.1"
+    ]
+   }
   },
   "D75": {
    "id": "D75",
@@ -7007,7 +7420,16 @@
      "text": "The designs carry the look: layout, art, motion, the models and the icons."
     }
    ],
-   "also_needed": "Whether §21.8's 150 to 250 ms covers camera moves such as the dive into a realm (D91)."
+   "also_needed": "Whether §21.8's 150 to 250 ms covers camera moves such as the dive into a realm (D91).",
+   "settled": {
+    "by": "v3.7",
+    "option": "B",
+    "where": [
+     "21.1",
+     "20.8",
+     "23.5"
+    ]
+   }
   },
   "C56": {
    "id": "C56",
@@ -7056,7 +7478,15 @@
      "text": "A crown law works in every realm of its universe, including the Heart, and costs double stability. The Spire opens 1 crown slot at Spire level 2 and a second at Spire level 5."
     }
    ],
-   "also_needed": "Nothing."
+   "also_needed": "Nothing.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "14.9",
+     "18.4"
+    ]
+   }
   },
   "G70": {
    "id": "G70",
@@ -7116,7 +7546,15 @@
      "text": "Some caught; some loot out"
     }
    ],
-   "also_needed": "Nothing."
+   "also_needed": "Nothing.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "12.3",
+     "23.5"
+    ]
+   }
   },
   "C57": {
    "id": "C57",
@@ -7167,7 +7605,17 @@
      "text": "Sharp edges, no gradients."
     }
    ],
-   "also_needed": "Nothing."
+   "also_needed": "Nothing.",
+   "settled": {
+    "by": "v3.7",
+    "option": "A",
+    "where": [
+     "12.6",
+     "21.6",
+     "21.12",
+     "23.2"
+    ]
+   }
   }
  }
 }

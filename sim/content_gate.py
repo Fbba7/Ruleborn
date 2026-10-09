@@ -336,6 +336,14 @@ def facts_compare(text: str) -> dict:
               for n, body in re.findall(r"pub const (\w+): \[u8; 5\] = \[([\d,\s]+)\];", text)}
     for name in ("WARD_LIMITS", "GUARD_POSTS", "LAW_SLOTS"):
         rows.append((name, tuple(getattr(f, name)), arrays.get(name)))
+    # §12.17's realm's watch (v3.7), which `lib.rs` applies by the island's
+    # realm level: each ratio as a float, to compare with the document's.
+    watch = re.search(r"pub const REALM_WATCH: \[[^=]*\] = \[(.*?)\];", text, re.S)
+    have = None
+    if watch:
+        pairs = re.findall(r"\(\((\d+), (\d+)\), \((\d+), (\d+)\)\)", watch.group(1))
+        have = tuple((int(a) / int(b), int(c) / int(d)) for a, b, c, d in pairs)
+    rows.append(("REALM_WATCH", tuple(tuple(x) for x in f.REALM_WATCH), have))
     checked, wrong = [], []
     for name, want, have in rows:
         (checked if want == have else wrong).append(
@@ -424,7 +432,7 @@ def wards_compare(text: str) -> dict:
          (k.get("HEDGE_DAMAGE") or (0, 1))[0] * 100 / (k.get("HEDGE_DAMAGE") or (0, 1))[1]),
         ("lantern_glare reveal (ticks)", num("lantern_glare", r"for (\d+) seconds") * tps,
          k.get("GLARE_REVEAL_TICKS")),
-        ("lantern_glare blind (ticks)", num("lantern_glare", r"blinds them for (\d+)") * tps,
+        ("lantern_glare blind (ticks)", num("lantern_glare", r"blinds (?:them|the crew) for (\d+)") * tps,
          k.get("GLARE_BLIND_TICKS")),
         ("lantern_glare reset", reset("lantern_glare"), resets.get("LanternGlare")),
     ]

@@ -113,7 +113,8 @@ def dangling_prose_sections(doc: str) -> list:
     for item in REGISTER:
         for field in ("title", "body", "rec"):
             scan(item["id"], field, item.get(field, ""))
-    for name, table in (("v3.0 note", V3), ("v3.1 note", V31)):
+    from audit_register import V37
+    for name, table in (("v3.0 note", V3), ("v3.1 note", V31), ("v3.7 note", V37)):
         for item_id, entry in table.items():
             scan(item_id, name, entry.get("note", ""))
     return out
@@ -169,14 +170,12 @@ NO_EDIT_BECAUSE = {
     "G49": "a decision for the owner: chapter 1's laws, meeting a law, mastery and Codex notes",
     "C48": "a decision for the owner: the realm budget weaving's upkeep is priced against, and five weaving rules",
     "G50": "a decision for the owner: births on a screen, naming, a stray's form and a look changed later",
-    "G51": "a decision for the owner: what a server-checked heist knows of a crew's levels, homes and rest",
     "G52": "a decision for the owner: what Insight each source pays and what the Sage improvements are",
     "C49": "a decision for the owner: whether a Sage level shortens the 20-second cooldown, and whether the first experiment is charged; its other eight lines are drafted edits or recorded answers",
     "G53": "a decision for the owner: the Lab's hints, chord naming, and what an experiment takes and pays",
     "G54": "a decision for the owner: whether a curation swap is a weave",
     "G55": "a decision for the owner: what hold figure curation and the Workshop show, and from what",
     "G56": "a decision for the owner: who sets facings and directions, and where moss and terrain points are checked",
-    "G57": "a decision for the owner: the per-raid facts the defender's report and the rehearsal crews need",
     "F57": "a decision for the owner: that the Shop, the Starpass and gifts are priced in money, as F41's answer says",
     "D86": "a decision for the owner: whether friends see presence, last seen and what others are doing",
     "C50": "a decision for the owner: the Open Vault league, against §17.8's 'a raid takes nothing'",
@@ -193,38 +192,37 @@ NO_EDIT_BECAUSE = {
     "G69": "a decision for the owner: what a defence held and leaked, a record and a badge are",
     "G46": "a decision for the owner: which realms a fault joins, how many open, and whether a raider sees them",
     "C54": "a decision for the owner: the Sparkwright's goggles or its card, and one count of the animations",
-    "D73": "no document sentence: the build refuses the mechanics until the document has them (stage SD, TD.19)",
-    "D74": "no document sentence: the build draws §21.5's pylon per woven slot (TD.10, TD.19), from the owner's design (TD.31)",
+    "D73": "no document sentence: v3.7 states it (§23.5); the build follows its rows: instant upgrades, §10.2's buildings at their counts, one producer of each kind a realm, §6.2's features, no shield on home (TD.19)",
+    "D74": "no document sentence: v3.7 states it (§23.5); the build draws §21.5's pylon per woven slot (TD.10, TD.19), from the pylon the owner designs (TD.31)",
     "D75": "a decision for the owner: whether §21.1's camera is a rule or a look, and the one-finger form of rotate and zoom; the build follows the document on the other ten rows (TD.19), and §23.5 takes them when next edited",
-    "G45": "no document sentence: the fix is the build, the island format with §10.1's buildings and their tiles (TD.36, TC.12, TD.10)",
-    "D76": "no document sentence: the fix is the build, the engine move (TD.1)",
-    "D78": "no document sentence: the build follows the document (TD.18); §23.5 takes the rows when next edited",
+    "G45": "no document sentence: v3.7 states it (§10.1, §26.8); the build gives the island format and sim/ §10.1's buildings with their footprints, and the server each building's tile (TD.36, TC.12, TD.10)",
+    "D76": "no document sentence: v3.7 states it (§26.8's phase 0); the build moves the client to Godot 4.7.2 and godot-rust's api-4-7 (TD.1)",
+    "D78": "no document sentence: v3.7 states it (§23.5); the build ports the Observatory, scout report, landing picker and planner to its rows (TD.18)",
     "G48": "a decision for the owner: how the result's decisive moment and its one thing to try are chosen",
-    "D79": "no document sentence: the build refuses the mechanics until the document has them (TD.17, TD.20)",
-    "D80": "no document sentence: the build follows the document (TD.17); §23.5 takes the rows when next edited",
-    "D81": "no document sentence: the build follows the document (TD.20); §23.5 takes the rows when next edited",
-    "D82": "no document sentence: the build follows the document (TD.21); §23.5 takes the rows when next edited",
-    "D83": "no document sentence: the build follows the document (TD.22); §23.5 takes the rows when next edited",
-    "D84": "no document sentence: the build refuses the mechanics until the document has them (TD.23)",
-    "D85": "no document sentence: the build follows the document (TD.23, TD.24); §23.5 takes the rows when next edited",
-    "D87": "no document sentence: the build follows the document (TD.25, TD.26); §23.5 takes the rows when next edited",
-    "D88": "no document sentence: the build sends §14.6's notifications and no others (TD.25)",
+    "D79": "no document sentence: v3.7 states it (§23.5, §12.12); the build leaves out the start-up grace, slow motion, the easier copy and the Codex leads (TD.17, TD.20)",
+    "D80": "no document sentence: v3.7 states it (§23.5); the build ports the heist and the result to its thirteen rows (TD.17)",
+    "D81": "no document sentence: v3.7 states it (§23.5, §23.2); the build prices weaving with one function on the server and in sim/, and ports Weaving, the Law card and the Harmony view to its rows (TD.14, TD.20)",
+    "D82": "no document sentence: v3.7 states it (§23.5); the build ports the Roster, Character, Sage hall and Forms album to its rows, reading each kind from content (TD.21)",
+    "D83": "no document sentence: v3.7 states it (§23.5, §13); the build ports the Lab, curation, the terrain editor, the defence log and the Workshop to its rows (TD.22, TD.66)",
+    "D84": "no document sentence: v3.7 states it (§23.5, §14.6, §18.1); the build drops the Starpass boost, the pass-only quest and the star chests from the Season screen (TD.23)",
+    "D85": "no document sentence: v3.7 states it (§23.5, §23.2); the build ports the Season, Shop and Profile to its rows (TD.23, TD.24)",
+    "D87": "no document sentence: v3.7 states it (§23.5, §20.1, §16); the build ports Settings and the first launch to its rows (TD.25, TD.26)",
+    "D88": "no document sentence: v3.7 states it (§14.6, §23.5); the build lists §14.6's four kinds in Settings and starts the reminder at Off (TD.25)",
     "F58": "no document sentence: D72's edit is redrafted with the word shades TD.3 settles for each surface",
     "D91": "a decision for the owner: the icons' finish and interface motion, §21.8's or the design's; toasts, reduced motion, palettes and the sky follow the document",
     "D92": "a decision for the owner: the shading, §21.3's one three-step toon or the design's diorama ramp and physically based characters",
-    "G60": "no document sentence: the fix is the build, the guards' kind and form (TD.9) and level (TD.34) in the island bundle and outfits beside the replay",
-    "G61": "no document sentence: the fix is the build, the export harness (TD.7), with a row for it in §26.8's plan",
-    "D94": "no document sentence: the build follows the document (TD.11, TD.21); §23.5 takes the rows when next edited",
-    "G63": "no document sentence: the fix is the build, content tables and the simulation's crew (TD.33, TD.12, TD.21)",
-    "D95": "no document sentence: the build refuses the variants until the document has them (TD.11, TD.21)",
+    "G60": "no document sentence: v3.7 states it (§12.5, §24.8, §24.11); the build carries the crew manifest and the guards' kind, form and level, checked against the roster (TD.9, TD.34)",
+    "G61": "no document sentence: v3.7 states it (§26.8's phase 4c); the build's export harness lists §21.9 row by row (TD.7)",
+    "D94": "no document sentence: v3.7 states it (§23.5, §21.6); the build sets heights and colours in the export (TD.7), and draws the guard form, forms, accessories and work loops (TD.11, TD.21)",
+    "G63": "no document sentence: v3.7 states it (§26.8's phase 5, §11.8); the build adds the paradox-born and the visitors to content and a crew stat not keyed by role to sim/ (TD.33, TD.12, TD.21)",
+    "D95": "no document sentence: v3.7 states it (§23.5); the build carries none of the sheets' variants, a tint at most (TD.11, TD.21)",
     "G65": "no document sentence: the build adopts them under §23.5's rule; §23.5 lists them when next edited",
-    "G66": "no document sentence: the fix is the build, completion counting the screens (TD.47), with a phase for the interface in §26.8's plan, as G42 has for the home economy",
-    "G67": "no document sentence: the fix is completion's proofs and the build (TD.47, TD.12, TD.15)",
-    "G68": "no document sentence: the fix is one proof of the store builds in completion (TD.47)",
-    "D96": "no document sentence: the fix is the build (TD.27)",
+    "G66": "no document sentence: v3.7 states it (§26.8's phases 4a to 4c); the build weighs and proves them in completion (TD.47)",
+    "G67": "no document sentence: v3.7 states it (§26.8's phases 1 and 4); the build's completion proofs count the abilities, powers, casts, features and moss, and the work itself is TD.12 and TD.15 (TD.47)",
+    "G68": "no document sentence: v3.7 states it (§26.8's phase 0); the build proves the store builds once in completion, in phase 0 only (TD.47)",
+    "D96": "no document sentence: v3.7 states it (§20.8, §23.5); the build renames slower rehearsals to slower ruins, with its test and completion's proof (TD.27)",
     # Found reading the owner's design handoff against v3.6, and folding it in.
-    "C55": "a decision for the owner: where landscape ships at launch, on every screen, in heists only or nowhere (TD.28, TD.68)",
-    "D97": "no document sentence: the build reads §21.2's note colours, the wheel's, from TD.2's tokens; §23.5 takes the row when next edited",
+    "D97": "no document sentence: v3.7 states it (§23.5); the build reads §8.1's wheel colours from the tokens (TD.2)",
     "D98": "a decision for the owner: whether the 390-point design is reflowed on 360 points or scaled to the device (TD.2)",
     "C56": "a decision for the owner, after launch: whether the second epoch's extra slot is a crown slot or a slot in the Heart; no launch task waits on it (TD.20)",
     "G70": "a decision for the owner: which raids open a Trace, those not foiled and not past the raider's week cap as built (G20), every one not foiled, or every raid; no task waits on it (TD.66)",
@@ -236,91 +234,77 @@ NO_EDIT_BECAUSE = {
     "C37": "a decision for the owner: whether a scout shows patrol routes",
     "D56": "no document sentence: the fix is sim/ and the harness",
     "D57": "no document sentence: the fix is the harness",
-    "F33": "a design decision for the owner: whether the Lantern Glare is "
-           "budgeted apart or made a dial, which decides the sentence",
+    "F33": "no document sentence: v3.7 states it (§10.3, §13.2); the build adds the check over every ward kit a Keeper can build to the harness and the checks, and the Glare's 8 m from alarm level 4 to sim/ (TD.71 for the kit check, TD.69 for the Glare with F59; T0.12 measured the generator's kit only)",
     "G17": "four one-clause decisions for the owner; the server's readings "
            "are named where it takes them",
     "D58": "no document sentence: the fix is the economy model",
     "D59": "no document sentence: the fix is the harness",
     "F36": "a decision for the owner: which day the raid-worth check is read "
            "on, which sets the base and the sentence",
-    "F37": "a decision for the owner: where a non-raider's experience comes "
-           "from, which decides the sentence",
-    "G19": "a decision for the owner: the Heart's own ward and post counts",
+    "F37": "no document sentence: v3.7 states it (§14.4, §14.6, §12.10); the build adds daily goals with one a day that needs no heist, their pages to the marked law, and ruins outside the paid raids (the answer's client half)",
+    "G19": "no document sentence: v3.7 states it (§5.2, §10.2); the build's realm builder locks the Heart at realm level 3, which the server already enforces (TD.19)",
     "G20": "a decision for the owner: whose base the day and week caps are in; "
            "the server's reading is named where it takes it",
     "G21": "a decision for the owner: what a target list's band is and how often "
            "it is rebuilt; the server's reading is named where it takes it",
-    "F38": "a design decision for the owner: what the birth rate is tuned "
-           "against once strays fill the roster",
     "F39": "a design decision for the owner: what the entry fee is keyed to",
     "C41": "a decision for the owner: which section owns the fee's return",
     "C42": "a decision for the owner: the stray rate",
     "G22": "decisions for the owner: the staffing order, the realm order and "
            "whether posts are staffed, which decide the sentences",
-    "G23": "decisions for the owner: each reading is a rule the designer may "
-           "keep or replace, and the sheet's sentence follows the choice",
     "G24": "a decision for the owner: §7.3's sheet is closed and versioned, so "
            "splitting a row makes rule sheet version 3",
     "G25": "decisions for the owner: each row's rule is a design choice the "
            "readings only stand in for",
-    "D61": "a limit of this build, not a sentence in the document",
-    "G26": "decisions for the owner: each figure and list is a design choice the "
-           "server's constants only stand in for",
-    "D62": "limits of this build, not sentences in the document",
+    "D61": "no document sentence: v3.7 states it (§24.8, §8.6); the build carries the universe's crown laws in each realm's bundle and refuses a chord its stability cannot pay, once the server holds stability (TD.14)",
+    "D62": "no document sentence: v3.7 states it (§13.3, §18.6); the build measures a published island's hold on the server's queue, features it only inside the band, and pays the Island Fund from purchase records (TD.16)",
     "C43": "a decision for the owner: whether players 16 and over may type island names",
     "F40": "a decision for the owner: which of §14.7's two targets the leagues keep, "
            "and whether Renown is made as well as moved",
     "G27": "decisions for the owner: the boundaries, the lower leagues' rewards "
            "and the rounding",
-    "D63": "limits of this build, and version 1.1's scope",
+    "D63": "limits of this build: v3.7 states the launch rules (§17.1, §17.7, §20.12); chat, the Grand Law vote, anomalies, page requests and borrowed crew are version 1.1's (§26.8)",
     "F41": "a decision for the owner: what Starglass is, and what its 1:1 is to",
     "F42": "a one-word decision for the owner, and whether goals earn stars",
     "G28": "decisions for the owner: every figure is a design choice the "
            "server's constants only stand in for",
-    "D64": "limits of this build: the stores, the device's inventories, and "
-           "cosmetics not yet authored",
+    "D64": "no document sentence: v3.7 states it (§22.4, §26.8); the build moves pages and the roster to the server, counts three gifts a month with approval words for minors, and authors the launch cosmetic sets (TD.23)",
     "G29": "decisions for the owner: what a session is, the retention and the survey",
-    "D65": "limits of this build: the heatmaps need the simulation, and the reporter a choice",
+    "D65": "no document sentence: v3.7 states it (§24.1, §24.3); the build puts positions in the simulation's event log, so the heatmaps can be read from it (TD.13)",
     "F43": "a decision for the owner, with legal advice: what deletion keeps",
     "F44": "a one-number decision for the owner: the window or the tier",
     "F45": "a decision for the owner: whether strength filters targets",
     "G30": "decisions for the owner: each figure is a design choice the "
            "server's constants only stand in for",
-    "D66": "limits of this build: the reference crews and the generator live "
-           "in the harness",
+    "D66": "no document sentence: v3.7 states it (§26.8, §12.22); the build moves the reference crews and the generator into the simulation, then depth, ruins and the complexity budget (TD.16)",
     "G31": "decisions for the owner: the price of a carried bag, and which "
            "share the rule reads",
     "F46": "a decision for the owner: whether scouting is enforced, at the cost "
            "of the edge cache",
     "G32": "decisions for the owner: a proof's freshness and how refunds land",
-    "D67": "limits of this build: Google's APIs and Apple's notifications need the network",
-    "F47": "a decision for the owner: the budget and the cost table, re-derived "
-           "from what a heist must write",
-    "G33": "decisions for the owner: a budget for rows read, and a run on the edge itself",
+    "D67": "limits of this build: v3.7 states it (§24.8, §26.8); what is left is the operator's: the pinned roots, the keys, the Google service account, and the stores' notifications pointed at the server",
+    "G33": "limits of this build: v3.7 states it (§24.1, §26.8); the load test runs on the edge platform before soft launch, and §24.1's table is recomputed from it",
     "G34": "decisions for the owner: gathering raids, and reminders at night",
-    "D68": "limits of this build: push needs the operator's credentials",
+    "D68": "no document sentence: v3.7 states it (§14.6, §26.8); the build writes the four notification strings in both languages and the device's own timers, and asks for push after the third session (TD.25); the push key is the operator's",
     "F48": "a decision for the owner: what a game among friends pays and counts",
     "G35": "decisions for the owner: how friends are made, and what minors show them",
     "F49": "a decision for the owner: whether Quiet Week goes past the cap",
     "G36": "decisions for the owner: the eras' order, reach and strengthening",
-    "D69": "limits of this build: the economy, the harness and the client",
+    "D69": "no document sentence: v3.7 states it (§18.3); the build measures each era in the harness, prices Heavy Stars and High Tide in the economy model, and shows the week's era on the Season header (TD.23)",
     "G37": "a decision for the owner: the defender's cap, and a pair's once a day",
     "F50": "a decision for the owner: how a restore keeps a deletion made",
     "G38": "decisions for the owner: how long each closed thing is kept",
     "G39": "a decision for the owner: the web route to deletion, and its proof of ownership",
-    "D70": "limits of this build: filing, the client's screens and the edge's cache",
+    "D70": "no document sentence: v3.7 states it (§20.1, §20.5, §26.8); the build puts the age check and the deletion button on screens (TD.25, TD.26); filing both declarations and purging the edge are outside this repository",
     "F51": "a decision for the owner: which floor keeps the edge open to land on",
     "F52": "a decision for the owner: whether the Glare's reach stretches with Whispers",
     "F53": "a decision for the owner: 5,000 with the fee counted, or 4,600 without",
     "F54": "a decision for the owner: how a non-raider's last level is shown or reached",
-    "G42": "no document sentence: the fix is the build, the home economy on the server, with a phase for it in \u00a726.8's plan",
-    "F55": "a decision for the owner: how \u00a75.2's budget meets \u00a713.2's band now the guards are this strong",
-    "F56": "a decision for the owner: what a new universe starts with, which the build takes from the economy model",
+    "G42": "no document sentence: v3.7 states it (§26.8's phase 4a); the build moves workers and production, the roster and births, the Codex's restorations and §14.2's experience to the server (TC.12)",
     "G43": "a decision for the owner: what becomes of wards above \u00a75.2's limit when a realm rises to a lower one",
     "G44": "a decision for the owner: how fast a player may ask, which the build sets",
-    "D71": "limits of this build: a heist is one island until universes are built",
-    "D60": "no document sentence: the fix is the server",
+    "D71": "no document sentence: v3.7 states it (§5.4, §26.8); the build makes universes of several realms joined by links on the server, so the Heart's winds and the clock by links hold (T5.5)",
+    "D60": "no document sentence: v3.7 states it (§24.8); the build takes a bundle's Vault level and exposed loot from the owner's ledger and buildings, and refuses one that disagrees (TC.12)",
     "F35": "a design decision for the owner: how the reach is sized, and "
            "whether a hit on the Vault is heard at 5 m, which decides the "
            "sentence",
@@ -361,6 +345,13 @@ NO_EDIT_BECAUSE = {
     "D39": "no document sentence to replace: \u00a77.4 becomes generated from "
            "\u00a77.7 (D15's fix), and until it does the divergence is checked "
            "rather than prevented",
+    # Left open by v3.7 with build work, or found reading it, and not yet
+    # drafted because a build or a measurement decides the sentence.
+    "G18": "no document sentence: v3.7 states it (§10.3, the drafted edit applied); the build ignores a disarmer from the moment it sets out, in sim/'s wards_act() and the harness's disarm_approach, and inverts the test that pins the walk (TD.70; T0.13 ported the narrow reading)",
+    "F59": "no document sentence: v3.7 states the ladder (§12.17, §10.3); the build adds its missing rungs, a bell's step and the Glare's 8 m to sim/ and a realm alarm to the harness, then re-measures §13.2's table with it (TD.69)",
+    "F60": "a re-measurement first: the harness has no check over every ward kit a Keeper can build (F33), and which kits miss the band decides what §13.2's sentence does about them (TD.71)",
+    "G74": "a re-measurement first: the edge load test (G33) prices the server's hold queue, and its figure is the sentence §24.1 states (T3.3)",
+    "F61": "a re-measurement first: the economy model gives the Starlight an engaged player banks from heists, and Hoarder's mark is set from it (TD.72)",
 }
 
 
@@ -457,7 +448,9 @@ def dangling_edit_citations(doc: str) -> list:
 #: Items whose lines with one sensible reading are drafted edits, while the rest
 #: is the owner's to decide. They carry both an edit and a NO_EDIT_BECAUSE
 #: reason, and the reason names what is still the owner's. C49's ten lines:
-#: seven drafted, one already in recorded answers, two the owner's.
+#: seven drafted, one already in recorded answers, two the owner's. v3.7 closed
+#: it (its edits in, its two decisions by the brief's recommendation), and it
+#: stays here so its history reads as it was.
 PART_DRAFTED = frozenset({"C49"})
 
 
@@ -618,13 +611,14 @@ def orphan_references() -> list:
     they are spread through the file, and an item cannot vanish without leaving
     at least one of them pointing at nothing.
     """
-    from audit_register import (BOTH, DEPENDS, EDITS, FOUND_IN_V3, FRONTEND,
-                                REGISTER as ITEMS, RESEARCH, V3, V31)
+    from audit_register import (BOTH, DEPENDS, EDITS, FOUND_IN_V3, FOUND_IN_V37,
+                                FRONTEND, REGISTER as ITEMS, RESEARCH, V3, V31, V37)
 
     known = {i["id"] for i in ITEMS}
     out = []
     tables = [("EDITS", set(EDITS)), ("V3", set(V3)), ("V31", set(V31)),
-              ("FOUND_IN_V3", set(FOUND_IN_V3)), ("RESEARCH", set(RESEARCH))]
+              ("V37", set(V37)), ("FOUND_IN_V3", set(FOUND_IN_V3)),
+              ("FOUND_IN_V37", set(FOUND_IN_V37)), ("RESEARCH", set(RESEARCH))]
     # DEPENDS names items on both sides of each arrow.
     depends = set(DEPENDS) | {d for deps in DEPENDS.values() for d in deps}
     tables.append(("DEPENDS", depends))
@@ -916,12 +910,15 @@ def main() -> int:
     # v3.3 was read item by item (its layer in audit_register), so an item
     # with a note in any layer, or found in v3.3 itself, has been read.
     from audit_register import (V31 as _v31, V32 as _v32, V33 as _v33, V34 as _v34,
-                                V36 as _v36, FOUND_IN_V33, FOUND_IN_V34, FOUND_IN_V36)
+                                V36 as _v36, V37 as _v37, FOUND_IN_V33, FOUND_IN_V34,
+                                FOUND_IN_V36, FOUND_IN_V37)
     unread = [i["id"] for i in REGISTER
               if i["kind"] != "deviation"
               and status(i) not in ("done", "adopted")
-              and not any(i["id"] in layer for layer in (V3, _v31, _v32, _v33, _v34, _v36))
-              and i["id"] not in FOUND_IN_V3 | FOUND_IN_V33 | FOUND_IN_V34 | FOUND_IN_V36]
+              and not any(i["id"] in layer
+                          for layer in (V3, _v31, _v32, _v33, _v34, _v36, _v37))
+              and i["id"] not in (FOUND_IN_V3 | FOUND_IN_V33 | FOUND_IN_V34
+                                  | FOUND_IN_V36 | FOUND_IN_V37)]
 
     print(f"\nChecked {total} edits across {len(EDITS)} register items against "
           f"{DOC.name}.\n")
@@ -941,10 +938,11 @@ def main() -> int:
     # document was fixed and the edit retired with it. v3.1 retired twelve at
     # once. An edit that now matches *twice*, or an item whose sentence never
     # existed, is a different thing and still a failure.
-    from audit_register import V31, V32, V33, V34, V36
+    from audit_register import V31, V32, V33, V34, V36, V37
     closed = (set(V31) | set(V32) | {k for k, v in V33.items() if v["status"] != "open"}
               | {k for k, v in V34.items() if v["status"] != "open"}
-              | {k for k, v in V36.items() if v["status"] != "open"})
+              | {k for k, v in V36.items() if v["status"] != "open"}
+              | {k for k, v in V37.items() if v["status"] != "open"})
     retired = [p for p in problems
                if "does not contain" in p and p.split()[0] in closed]
     real = [p for p in problems if p not in retired]
