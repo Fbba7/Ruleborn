@@ -1,6 +1,6 @@
 # Client
 
-The game on the phone: Godot 4.5 with the simulation linked in as a Rust
+The game on the phone: Godot 4.7.2 with the simulation linked in as a Rust
 GDExtension, which is §24.7's plan — *"written once and compiled for every
 target it runs on"*. The crate the server validates heists with
 ([`sim/`](../sim/README.md)) is the crate this client plays them with, so a
@@ -12,8 +12,8 @@ bash client/build.sh        # the extension, the golden replays, Godot's import 
 python3 client/status.py    # build, run the tests headless, write client/status.json
 ```
 
-`build.sh` fetches Godot 4.5 once into `~/.cache/ruleborn` (or uses
-`$RULEBORN_GODOT`). To look at it on a desktop, open `client/` in Godot 4.5
+`build.sh` fetches Godot 4.7.2 once into `~/.cache/ruleborn` (or uses
+`$RULEBORN_GODOT`). To look at it on a desktop, open `client/` in Godot 4.7.2
 after building.
 
 ## How it is built
@@ -88,7 +88,7 @@ screen by `tests/a11y_tests.gd`:
   the player chooses.
 - *Comfort.* Reduced motion, on at first launch if the phone's setting is;
   nothing flashes or shakes.
-- *Screen readers.* Godot 4.5's AccessKit support: every control has a name
+- *Screen readers.* Godot 4.7's AccessKit support (its live regions on `AccessibilityServer`): every control has a name
   in words (a symbol button says what it does), banners announce themselves,
   and the realm is described in words.
 - *Grayscale (§21.10).* Every feature that changes a route, and water, is
@@ -279,7 +279,7 @@ To look at it without a desktop, `tests/screenshot.gd` renders a still under a
 virtual display:
 
 ```bash
-xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.5-stable_linux.x86_64 \
+xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.7.2-stable_linux.x86_64 \
     --path client --rendering-driver opengl3 -s res://tests/screenshot.gd -- out.png planned-clean 20
 ```
 

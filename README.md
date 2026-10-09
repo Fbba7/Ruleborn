@@ -6,8 +6,7 @@ A strategy game about floating islands that each follow a magic rule. You collec
 these rules, build your islands around them, and send a small crew of odd little
 creatures to rob other players' islands by outsmarting theirs.
 
-Native mobile (iPhone and Android), Godot (4.5 in the client today; v3.5 pins
-4.7.2, roadmap TD.1), rated 13+, cosmetic-only monetisation.
+Native mobile (iPhone and Android), Godot 4.7.2-stable with godot-rust v0.5.5 on its 4.7 API (§24, TD.1), rated 13+, cosmetic-only monetisation.
 
 ## Status
 
@@ -136,7 +135,7 @@ client's word until the economy is server-side. Target lists are §24.8's static
 neither the band nor how often a list is rebuilt is defined). And the 54
 law-shaped forms of §11.10 are now validated content.
 
-The frontend has started (T3.4). [`client/`](client/README.md) is a Godot 4.5
+The frontend has started (T3.4). [`client/`](client/README.md) is a Godot 4.7.2
 project with `sim/` linked in as a Rust GDExtension, as §24.7 plans. A heist
 can be played on it — every tap becomes a command stamped with its tick,
 recorded as the replay a device queues and checked as the server checks it —
@@ -208,7 +207,7 @@ prototypes/
   heist-gate/  a throwaway browser build that runs both pre-code gates
 sim/            the heist simulation core in Rust: determinism spike (T3.1), replays (T3.2), pathfinding, sight, noise, guard states, island bundles and the validator (T3.3)
 server/         the edge functions of §24.1: lease, validate, grant, over §24.8's tables (T3.3)
-client/         the Godot 4.5 client, with sim/ as a GDExtension: the replay screen (T3.4)
+client/         the Godot 4.7.2 client, with sim/ as a GDExtension: the replay screen (T3.4)
 tools/
   extract_design_doc.py           HTML -> greppable text
   check_document.py               every check over the document, in one verdict

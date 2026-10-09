@@ -7,7 +7,7 @@ client/export_presets.cfg from the server's declaration.
 
 Apple asks for the same answers twice: in App Store Connect's App Privacy form
 (server/declarations.md) and in the app's own PrivacyInfo.xcprivacy, which
-Godot 4.5 writes from the iOS preset's `privacy/collected_data/*` options.
+Godot 4.7.2 writes from the iOS preset's `privacy/collected_data/*` options.
 Both are read from server/privacy.json here, so the two cannot disagree. The
 export-compliance key (ITSAppUsesNonExemptEncryption) is read from
 server/ratings.json's answer.

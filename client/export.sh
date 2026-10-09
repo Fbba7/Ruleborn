@@ -18,12 +18,12 @@ root="$(cd "$here/.." && pwd)"
 target="${1:-check}"
 
 godot="$(bash "$here/build.sh" | tail -n 1)"
-templates="$HOME/.local/share/godot/export_templates/4.5.stable"
+templates="$HOME/.local/share/godot/export_templates/4.7.2.stable"
 if [ "$target" != check ] && [ ! -f "$templates/version.txt" ]; then
   echo "fetching Godot's export templates"
   mkdir -p "$templates"
   curl -sSL --fail -o "$templates.tpz" \
-    "https://github.com/godotengine/godot/releases/download/4.5-stable/Godot_v4.5-stable_export_templates.tpz"
+    "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz"
   python3 - "$templates.tpz" "$templates" <<'EOF'
 import os, sys, zipfile
 z = zipfile.ZipFile(sys.argv[1])

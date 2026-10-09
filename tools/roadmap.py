@@ -901,8 +901,7 @@ dict(
              detail="\u00a724.7: the simulation is <em>\u201cwritten once and "
                     "compiled for every target it runs on\u201d</em>, as a Rust "
                     "GDExtension. <strong>Built for the desktop.</strong> "
-                    "<code>client/</code> is a Godot project (4.5 until TD.1 moves it "
-                    "to 4.7.2) in \u00a721.1's "
+                    "<code>client/</code> is a Godot 4.7.2 project (TD.1) in \u00a721.1's "
                     "9:19.5 portrait frame with <code>sim/</code> linked in: the "
                     "replay screen re-simulates a golden replay one tick at a "
                     "time and draws it, and every second compares its own "
@@ -1310,38 +1309,35 @@ dict(
           "once, when TD.47 adds the new phases to what completion weighs.",
     tasks=[
         # -- Track A: the foundation ------------------------------------------
-        dict(id="TD.1", owner="claude", status="ready",
+        dict(id="TD.1", owner="claude", status="done",
              title="Move the client to Godot 4.7.2 and godot-rust's 4.7 API",
              detail="v3.5 pinned Godot 4.7.2-stable with godot-rust v0.5.5 built "
-                    "for the 4.7 API (§24, brief 39). <strong>Measured in a "
-                    "copy:</strong> the extension builds offline with "
-                    "<code>api-4-7</code> (the crate is already 0.5.5), and on "
-                    "4.7.2 the client passes 100 of 100 tests after one change: 4.7 "
-                    "moved the screen-reader live-region constants to a new "
-                    "<code>AccessibilityServer</code>, so <code>ui.gd:138</code> and "
-                    "<code>:321</code> name it instead of <code>DisplayServer</code>. "
-                    "The rest is pins: <code>project.godot</code>'s feature, "
-                    "<code>build.sh</code>, <code>compatibility_minimum</code>, the "
-                    "export templates (1.28 GB) and Android's "
-                    "<code>target_sdk=36</code> set in the preset rather than left "
-                    "to the engine's default. Two more steps: "
-                    "<code>settings.gd:40</code> and <code>:42</code> still ask "
-                    "<code>DisplayServer</code> for contrast and reduced animation, "
-                    "and are checked against 4.7's class reference and moved with "
-                    "the constants if 4.7 deprecates them; and the documentation "
-                    "that names 4.5 as the engine (<code>README.md</code>, "
-                    "<code>client/README.md</code>, T3.4 and stage SC here, "
-                    "<code>tools/privacy_manifest.py</code>'s docstring) says 4.7.2. "
-                    "v3.6's opening says no client code existed; it did, and the "
-                    "move cost one change. v3.7's §26.8 puts the move in phase 0, "
-                    "before the shell and the diorama are written.",
+                    "for the 4.7 API (§24, brief 39), and v3.7's §26.8 puts the "
+                    "move in phase 0. <strong>Done.</strong> "
+                    "<code>project.godot</code>'s feature is 4.7, "
+                    "<code>build.sh</code> fetches 4.7.2-stable, "
+                    "<code>compatibility_minimum</code> is 4.7, the extension "
+                    "builds with <code>api-4-7</code>, and <code>export.sh</code> "
+                    "takes the 4.7.2 templates. The one code change: 4.7 moved the "
+                    "screen-reader live-region constants to "
+                    "<code>AccessibilityServer</code>, so <code>ui.gd</code> names "
+                    "it. Asked of 4.7.2's own class database, the contrast and "
+                    "reduced-animation queries <code>settings.gd</code> makes are "
+                    "still <code>DisplayServer</code>'s, so they stay. Android's "
+                    "target SDK is left to the template: 4.7.2 passes "
+                    "<code>gradle_build/target_sdk</code> only to a Gradle build, "
+                    "which this preset does not use, so the API level 36 Play asks "
+                    "for is the template's to meet and TC.3's to check on the "
+                    "first APK. The documents that named 4.5 as the engine now say "
+                    "4.7.2.",
              gate="100 of 100 client tests on 4.7.2, the five goldens agreeing at "
-                  "every second, <code>export.sh check</code> on the 4.7.2 templates, "
+                  "every second, <code>export.sh check</code> compiling both phones, "
                   "gdlint clean, and none of the files above still naming 4.5 as "
                   "the engine",
-             evidence="python3 client/status.py; bash client/export.sh check",
+             evidence="python3 client/status.py (100 of 100 on 4.7.2.stable); "
+                      "bash client/export.sh check",
              register=["D76"]),
-        dict(id="TD.2", owner="claude", status="blocked",
+        dict(id="TD.2", owner="claude", status="ready",
              title="The tokens, §21.8's typefaces and surfaces, and the licence "
                    "ledger",
              detail="Screens v3 keeps its look in inline styles (852 colours, 402 "
@@ -1449,7 +1445,7 @@ dict(
                   "overshoot (a test)",
              blocked_by=["TD.2"],
              register=["D91"]),
-        dict(id="TD.5", owner="claude", status="blocked",
+        dict(id="TD.5", owner="claude", status="ready",
              title="The icons: 393 designed, exported once, imported on 4.7.2",
              detail="Four sources: <code>icons_rbi.js</code> (360 in 31 groups), "
                     "the school and law icons, the diorama's marks, and inline "

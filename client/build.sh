@@ -10,7 +10,7 @@ set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 root="$(cd "$here/.." && pwd)"
 
-version="4.5-stable"
+version="4.7.2-stable"
 godot="${RULEBORN_GODOT:-$HOME/.cache/ruleborn/Godot_v${version}_linux.x86_64}"
 if [ ! -x "$godot" ]; then
   mkdir -p "$(dirname "$godot")"

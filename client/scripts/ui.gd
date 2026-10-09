@@ -135,7 +135,7 @@ static func label(text := "", points := -1.0, wraps := false) -> Label:
 
 static func title(text: String) -> Label:
 	var l := label(text, TITLE_POINTS, true)
-	l.accessibility_live = DisplayServer.LIVE_OFF
+	l.accessibility_live = AccessibilityServer.LIVE_OFF
 	return l
 
 
@@ -318,7 +318,7 @@ static func banner(kind: String, text: String, ms := -1.0) -> PanelContainer:
 	var r := row()
 	var words := status(kind, text)
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	words.accessibility_live = DisplayServer.LIVE_ASSERTIVE if kind == "alarm" else DisplayServer.LIVE_POLITE
+	words.accessibility_live = AccessibilityServer.LIVE_ASSERTIVE if kind == "alarm" else AccessibilityServer.LIVE_POLITE
 	r.add_child(words)
 	r.add_child(button("×", p.queue_free, false, Color(), Strings.t("COMMON_DISMISS")))
 	p.add_child(r)

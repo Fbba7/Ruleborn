@@ -11016,12 +11016,15 @@ V37 = {
     "shape and colour and its law’s glyph”</em>, in the realm view and the "
     "heist. Left: the pylon designed (TD.31, yours) and drawn (TD.10, TD.19)."),
 
-"D76": dict(status="open", left="build", note=
-    "<strong>The document is done; the build is not.</strong> §26.8’s phase 0: "
-    "<em>“The client is on Godot 4.7.2 and godot-rust’s api-4-7 before the "
-    "shell and the diorama are written, with the Android target SDK at "
-    "36”</em>. Left: the move itself; <code>client/project.godot</code> and "
-    "<code>client/ext/Cargo.toml</code> are still on 4.5 (TD.1)."),
+"D76": dict(status="done", note=
+    "<strong>Built (TD.1).</strong> §26.8’s phase 0: <em>“The client is on "
+    "Godot 4.7.2 and godot-rust’s api-4-7 before the shell and the diorama are "
+    "written, with the Android target SDK at 36”</em>. The client runs on "
+    "4.7.2-stable with the extension on <code>api-4-7</code>, and passes 100 of "
+    "100 tests there; the one code change was 4.7’s move of the live-region "
+    "constants to <code>AccessibilityServer</code>. The target SDK is the "
+    "template’s: 4.7.2 passes the preset’s value only to a Gradle build, so "
+    "TC.3 reads API 36 off the first APK."),
 
 "D78": dict(status="open", left="build", note=
     "<strong>The document is done; the build is not.</strong> §23.5 lists all "
