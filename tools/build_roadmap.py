@@ -281,8 +281,10 @@ def completion_html() -> str:
         &sect;26.8's own cost of each build phase in agent runs, read from the
         document (midpoints); the deliverables are the ones each phase names; and
         a deliverable counts only through its proof &mdash; <code>sim/</code>
-        systems whose every test passed, server tests by name, the targets that
-        agree, or a count from <code>content/</code>. Phase 15, finding the fun,
+        systems whose every test passed, server and client tests by name, the
+        targets that agree, or a count from <code>content/</code> &mdash; and one
+        with no proof yet counts nothing and says what will count. All of
+        &sect;26.8's build phases weigh, 4a, 4b and 4c included. Phase 15, finding the fun,
         comes after the build and is not in these. <code>python3
         tools/completion.py</code> prints the same breakdown.</p>{lists}
     </section>"""

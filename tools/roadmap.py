@@ -1159,8 +1159,8 @@ dict(
                   "and the Codex, weaving state, links, births, the Sage "
                   "routes, the Lab's service and the defence log's routes; a "
                   "bundle whose Vault level or exposed loot disagrees with the "
-                  "ledger refused; the backend figure moves once completion reads "
-                  "\u00a726.8's phase 4a (TD.47)",
+                  "ledger refused; each slice moves completion's phase 4a row "
+                  "it proves",
              evidence="server/test/universe.test.mjs; client/tests/universe_tests.gd, "
                       "through python3 client/status.py",
              register=["G42", "F56", "G43", "D60", "G45", "G19"]),
@@ -1299,14 +1299,13 @@ dict(
           "§21.8's contrast and the layout check at 100%, 150% and 200% text, in "
           "both languages (<code>a11y_tests.gd</code>); every control named for a "
           "screen reader; and <code>tools/client_contract.py</code> clean.<br><br>"
-          "<strong>None of it moves the "
-          "frontend figure yet</strong>: completion reads §26.8's phases by "
-          "number and does not see 4a, 4b or 4c, so it still costs none of the "
-          "screens outside the heist, builder, Workshop, shop, social and "
-          "settings, no design port and no 3D world (G66). TD.47 adds the three "
-          "phases, and from then the screens and the art move the figure. Every "
-          "task below keeps the client's tests passing, so no figure falls except "
-          "once, when TD.47 adds the new phases to what completion weighs.",
+          "<strong>Every screen and art task moves the frontend figure</strong>: "
+          "completion reads §26.8's phases 4a, 4b and 4c (TD.47), each of the 21 "
+          "phase 4b screens a deliverable that counts when its screen gate passes, "
+          "and phase 4c's six art deliverables by TD.7's manifest. The figures "
+          "fell once, when TD.47 added the phases: backend 89.24% to 62.36%, "
+          "frontend 75.41% to 42.91%. Every task below keeps the client's tests "
+          "passing, so no figure falls again.",
     tasks=[
         # -- Track A: the foundation ------------------------------------------
         dict(id="TD.1", owner="claude", status="done",
@@ -1815,8 +1814,8 @@ dict(
              title="Abilities, Sage powers and casts in the simulation",
              detail="The simulation has twelve command kinds and none is an "
                     "ability, a Sage power or a cast, and its crew are five roles "
-                    "with no characters; completion's Crews row reads done all the "
-                    "same (G67). v3.7 wrote G47's and G51's recommended options, "
+                    "with no characters; completion counts this work as its own "
+                    "phase 1 deliverable, not started (G67, TD.47). v3.7 wrote G47's and G51's recommended options, "
                     "and §26.8's phase 1 now names this work: crews as ruleborn "
                     "from the manifest, with the eighteen abilities, Sage powers "
                     "and casts as commands (§12.5, §12.7). The work: Ability, Sage "
@@ -2937,10 +2936,25 @@ dict(
              blocked_by=["TD.6", "TD.17", "TD.42"],
              register=["C55"]),
         # -- Measuring it -----------------------------------------------------
-        dict(id="TD.47", owner="claude", status="ready",
+        dict(id="TD.47", owner="claude", status="done",
              title="Completion's proofs: the store builds, crews, terrain, and "
                    "§26.8's phases 4a to 4c",
-             detail="Three places where completion reads something other than "
+             detail="<strong>Done.</strong> Completion reads all 15 of v3.7's "
+                    "build phases, 4a, 4b and 4c included, and 100 deliverables "
+                    "where it read 47. Backend 89.24% to 62.36% and frontend "
+                    "75.41% to 42.91%, from: phase 4a (22 runs: three of nine "
+                    "built, experience two parts of three), 4b (32 runs, 21 "
+                    "screens, none at its gate) and 4c (20 runs, none); the "
+                    "abilities, Sage powers and casts and the event log in phase "
+                    "1; terrain at 5 of 39 features and moss, the builder scaled "
+                    "by it; buildings on the grid; the paradox-born, visitors and "
+                    "rule sheets; reference crews, the generator and linked "
+                    "universes; the launch cosmetic sets and the Island Fund; the "
+                    "device's notifications and the edge purge; the edge load run "
+                    "and store notifications pointed at the server; and phase 0's "
+                    "store builds (none) and engine pin (2 of 3). Project "
+                    "structure now reads the client's architecture tests. "
+                    "<br><br>Three places where completion read something other than "
                     "what is built. The store builds: v3.7's §26.8 counts them in "
                     "phase 0, “here and nowhere else”, where completion counts "
                     "them in phase 2 with a proof that reads nothing; one proof "

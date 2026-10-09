@@ -11236,25 +11236,34 @@ V37 = {
     "colours and signature”</em>. Left: those content tables and a crew stat "
     "not keyed by role in sim/ (TD.33, TD.12, TD.21)."),
 
-"G66": dict(status="open", left="build", note=
-    "<strong>The document is done; the build is not.</strong> §26.8 adds "
-    "phases 4a to 4c, costed, and the sums check. Left: "
-    "<code>tools/completion.py</code> weighs and proves them, so the frontend "
-    "figure follows the screens (TD.47). §32.9 keeps v3.6’s run estimate "
+"G66": dict(status="done", note=
+    "<strong>Built (TD.47).</strong> §26.8 adds phases 4a to 4c, costed, and "
+    "<code>tools/completion.py</code> now reads them: its phase pattern takes a "
+    "letter after the number, so all 15 build phases weigh, and the self-test "
+    "fails a phase with no deliverables. 4a has §26.8’s nine home-economy "
+    "deliverables, three proved by server tests; 4b the 21 screens, each "
+    "counting when its stage SD screen gate passes; 4c the art pass’s six. "
+    "The figures fell once, as the change said they would: backend 89.24% to "
+    "62.36%, frontend 75.41% to 42.91%. §32.9 keeps v3.6’s run estimate "
     "(C72)."),
 
 "G67": dict(status="open", left="build", note=
-    "<strong>The document is done; the build is not.</strong> §26.8’s phase 1 "
-    "names <em>“crews as ruleborn from the manifest with the eighteen "
-    "abilities, Sage powers and casts as commands”</em>, phase 4 <em>“all 39 of "
-    "6.2’s features and moss”</em>. Left: completion’s Crews and Terrain "
-    "proofs counting them (TD.47), and the work itself (TD.12, TD.15)."),
+    "<strong>Completion reads it (TD.47); the build is not done.</strong> "
+    "§26.8’s phase 1 names <em>“crews as ruleborn from the manifest with the "
+    "eighteen abilities, Sage powers and casts as commands”</em>, phase 4 "
+    "<em>“all 39 of 6.2’s features and moss”</em>. Completion now counts the "
+    "abilities, Sage powers and casts as their own phase 1 deliverable, not "
+    "started, and the event log beside it; terrain as 5 of 39 features and moss "
+    "in <code>sim/</code> (15%), with the builder’s Terrain editing scaled by "
+    "it. Left: the work itself (TD.12, TD.13, TD.15)."),
 
-"G68": dict(status="open", left="build", note=
-    "<strong>The document is done; the build is not.</strong> §26.8’s phase 0: "
-    "a recorded build for each store, <em>“counted here and nowhere "
-    "else”</em>. Left: one proof of it in completion, and phase 2’s Project "
-    "structure proof no longer counting the store builds (TD.47)."),
+"G68": dict(status="done", note=
+    "<strong>Built (TD.47).</strong> §26.8’s phase 0: a recorded build for each "
+    "store, <em>“counted here and nowhere else”</em>. Completion counts it in "
+    "phase 0 only, not started until a recorded build exists for each store "
+    "(TC.3), beside the engine pin read from the files that set it (2 of 3: the "
+    "Android target SDK is unread, D76). Phase 2’s Project structure now reads "
+    "the client’s architecture tests instead."),
 
 # -- partly: a sentence is still wrong; its edit is drafted ----------------
 

@@ -64,8 +64,8 @@ v3.6 itself answers none of the 70 items open against v3.4, narrows G28 and F37,
 and reopens C11.
 
 Seven versions have now answered the audit. **198 of 316 register items are fixed
-in the document itself**, the latest 87 by v3.7. 76 are still open: 51 of the
-139 open against v3.6 (41 waiting on the build, ten partly done with their edits
+in the document itself**, the latest 87 by v3.7. 74 are still open: 49 of the
+139 open against v3.6 (39 waiting on the build, ten partly done with their edits
 drafted) and 25 of the 26 found reading v3.7.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
