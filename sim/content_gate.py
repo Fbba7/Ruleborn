@@ -570,6 +570,11 @@ def terrain_compare(text: str) -> dict:
         m = re.search(pattern, rows_.get(fid, {}).get(col, ""))
         return float(m.group(1)) if m else None
 
+    def word(fid: str, col: str, pattern: str) -> float | None:
+        m = re.search(pattern, rows_.get(fid, {}).get(col, ""))
+        words = {"one": 1, "two": 2, "three": 3, "four": 4}
+        return float(words[m.group(1)]) if m and m.group(1) in words else None
+
     pct = lambda v: (lambda t: t[0] * 100 / t[1] if isinstance(t, tuple) else None)(v)
     rows = [
         ("stream pace", 100 - (num("stream", "movement", r"(\d+)% slower") or 999),
@@ -601,6 +606,25 @@ def terrain_compare(text: str) -> dict:
         ("hedge cut", num("hedge", "movement", r"in (\d+) seconds"), k.get("HEDGE_CUT_SECONDS")),
         ("boulder smash", num("boulder", "movement", r"about (\d+) seconds"),
          k.get("BOULDER_SMASH_SECONDS")),
+        ("marsh pace", 100 - (num("marsh", "movement", r"(\d+)% slower") or 999),
+         k.get("MARSH_PACE")),
+        ("marsh footprints", num("marsh", "movement", r"stay for (\d+) seconds"),
+         k.get("PRINT_SECONDS")),
+        ("flower_meadow footprints", num("flower_meadow", "sight", r"for (\d+) seconds"),
+         k.get("PRINT_SECONDS")),
+        ("ice_sheet stop", num("ice_sheet", "movement", r"takes (\d+) tile"),
+         k.get("ICE_STOP_TILES")),
+        ("bounce_mushroom tiles", num("bounce_mushroom", "movement", r"(\d+) tiles forward"),
+         k.get("MUSHROOM_TILES")),
+        ("bounce_mushroom half gravity", num("bounce_mushroom", "with_laws", r"makes it (\d+) tiles"),
+         k.get("MUSHROOM_LEAP_TILES")),
+        ("bounce_mushroom heard", num("bounce_mushroom", "sight", r"heard (\d+) tiles"),
+         k.get("MUSHROOM_HEARD_TILES")),
+        ("updraft_vent lift", word("updraft_vent", "movement", r"Lifts anyone (\w+) level"),
+         k.get("UPDRAFT_LEVELS")),
+        ("updraft_vent half gravity", word("updraft_vent", "with_laws", r"sends people (\w+) levels"),
+         k.get("UPDRAFT_LEAP_LEVELS")),
+        ("bell_post alarm", word("bell_post", "sight", r"alarm (\w+) level"), k.get("BELL_LEVELS")),
     ]
     for what, want, have in rows:
         ok = want is not None and have is not None and float(want) == float(have)

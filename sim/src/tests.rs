@@ -5062,3 +5062,228 @@ fn every_feature_built_travels_in_the_island_and_reads_back() {
     assert_eq!(Island::decode(&Island::example().encode()).unwrap().digest(),
                Island::example().digest(), "an island of the old five keeps its bytes");
 }
+
+/// Whether a guard on (3, 3), raised one level and facing south, sees a crew
+/// member on (3, y) at ground level, with `f` under it and (3, 4) raised to
+/// `edge` (and a ramp there if `ramp`).
+fn seen_from_above(f: Option<Feature>, y: u16, edge: u8, ramp: bool) -> bool {
+    let mut world = vault_world(1);
+    world.grid.set_height(3, 3, 1);
+    world.grid.set_height(3, 4, edge);
+    if ramp {
+        world.grid.make_climbable(3, 4);
+    }
+    let gi = post(&mut world, 0, 3, 3);
+    world.guards[gi].facing = Ang::from_degrees(90);
+    if let Some(f) = f {
+        world.grid.place(3, y, f);
+    }
+    put(&mut world, 0, 3, y);
+    world.noticed(gi, 0).is_some()
+}
+
+#[test]
+fn an_arch_is_walked_under_and_hides_whoever_is_under_it_from_above() {
+    assert!(!walled_by(Feature::Arch) && seen_past(Feature::Arch), "level with it: seen");
+    assert!(seen_from_above(None, 5, 0, false), "from above, on open ground: seen");
+    assert!(!seen_from_above(Some(Feature::Arch), 5, 0, false), "\"blocks sight from above\"");
+}
+
+#[test]
+fn a_guard_cannot_see_the_foot_of_its_own_cliff() {
+    assert!(!seen_from_above(None, 5, 1, false), "right under the edge: hidden");
+    assert!(seen_from_above(None, 5, 1, true), "a ramp is not a cliff");
+    assert!(seen_from_above(None, 7, 1, false), "two tiles out from the foot: seen");
+}
+
+/// Whether a crew member walking from (1, 2) to (6, 2) over `f` on (3, 2)
+/// left a footprint there.
+fn printed(f: Feature) -> bool {
+    let mut world = vault_world(1);
+    world.grid.place(3, 2, f);
+    put(&mut world, 0, 1, 2);
+    order(&mut world, 0, 6, 2);
+    run_for(&mut world, 3 * TICKS_PER_SECOND);
+    let tile = world.grid.index(3, 2).unwrap() as u16;
+    world.log.events.iter().any(|&(_, e)| e == crate::events::Event::Print { crew: 0, tile })
+}
+
+#[test]
+fn a_marsh_is_forty_percent_slower_wet_and_keeps_footprints() {
+    let mut world = vault_world(1);
+    world.grid.place(4, 4, Feature::Marsh);
+    let t = world.grid.index(4, 4).unwrap();
+    assert_eq!(world.grid.at(t).pace(), Fx::from_ratio(grid::MARSH_PACE as i64, 100));
+    assert_eq!(world.grid.surface(t), grid::Surface::Water);
+    assert!(printed(Feature::Marsh));
+    assert!(!printed(Feature::GravelPath), "only where §6.2 says");
+}
+
+#[test]
+fn a_flower_meadow_shows_footprints_and_slows_nobody() {
+    let mut world = vault_world(1);
+    world.grid.place(4, 4, Feature::FlowerMeadow);
+    assert_eq!(world.grid.at(world.grid.index(4, 4).unwrap()).pace(), Fx::ONE);
+    assert!(printed(Feature::FlowerMeadow));
+}
+
+#[test]
+fn an_ice_sheet_takes_a_tile_to_stop() {
+    let stop = |ice: bool, halt: bool| {
+        let mut world = vault_world(1);
+        if ice {
+            for x in 1..10 {
+                world.grid.place(x, 2, Feature::IceSheet);
+            }
+        }
+        put(&mut world, 0, 1, 2);
+        order(&mut world, 0, if halt { 8 } else { 4 }, 2);
+        if halt {
+            run_for(&mut world, TICKS_PER_SECOND / 2);
+            let tick = world.tick;
+            world.commands_for_test(vec![Command { tick, actor: 0, kind: Kind::Halt, x: 0, y: 0 }]);
+        }
+        run_for(&mut world, 4 * TICKS_PER_SECOND);
+        tile_of(&world, 0)
+    };
+    assert_eq!(stop(false, false), (4, 2));
+    assert_eq!(stop(true, false), (5, 2), "\"stopping takes 1 tile\"");
+    let (on_ground, on_ice) = (stop(false, true), stop(true, true));
+    assert!(on_ice.0 >= on_ground.0 && on_ice.0 <= on_ground.0 + 1,
+            "a halt on ice still reaches the tile ahead: {on_ground:?} {on_ice:?}");
+}
+
+#[test]
+fn a_pond_is_gone_round_seen_across_and_water() {
+    assert!(walled_by(Feature::Pond) && seen_past(Feature::Pond));
+    let mut world = vault_world(1);
+    world.grid.place(4, 4, Feature::Pond);
+    assert_eq!(world.grid.surface(world.grid.index(4, 4).unwrap()), grid::Surface::Water);
+}
+
+#[test]
+fn a_bell_post_bumped_raises_the_realm_alarm_a_level_late_under_delay() {
+    let rung = |laws: &[&str]| {
+        let mut world = vault_world(1);
+        weave(&mut world, laws);
+        world.grid.place(3, 2, Feature::BellPost);
+        put(&mut world, 0, 1, 2);
+        order(&mut world, 0, 5, 2);
+        let mut first = None;
+        for _ in 0..8 * TICKS_PER_SECOND {
+            world.step();
+            if world.alarm > 0 && first.is_none() {
+                first = Some(world.tick);
+            }
+        }
+        let bell = world.log.events.iter().find_map(|&(t, e)| match e {
+            crate::events::Event::Bell { crew: 0, .. } => Some(t),
+            _ => None,
+        });
+        (bell, first, world.alarm)
+    };
+    let (bell, raised, level) = rung(&[]);
+    assert!(bell.is_some() && raised.is_some() && level == grid::BELL_LEVELS);
+    assert!(raised.unwrap() - bell.unwrap() <= 1, "at once");
+    let (bell, raised, _) = rung(&["delay"]);
+    assert!(raised.unwrap() - bell.unwrap() >= 3 * TICKS_PER_SECOND, "\"Delay makes the ring come late\"");
+}
+
+#[test]
+fn stepping_stones_are_a_road_only_under_a_law_that_leaps() {
+    assert!(walled_by(Feature::SteppingStones));
+    let crossed = |laws: &[&str]| {
+        let mut world = vault_world(1);
+        weave(&mut world, laws);
+        for y in 0..14 {
+            world.grid.place(3, y, Feature::SteppingStones);
+        }
+        world.step();
+        let (a, b) = (world.grid.index(1, 5).unwrap(), world.grid.index(5, 5).unwrap());
+        path::find(&world.grid, a, b).is_some()
+    };
+    assert!(!crossed(&[]));
+    assert!(crossed(&["half_gravity"]), "\"Half gravity … makes them a road\"");
+}
+
+#[test]
+fn a_bounce_mushroom_launches_three_tiles_and_the_landing_is_heard_four_away() {
+    let launch = |laws: &[&str]| {
+        let mut world = vault_world(1);
+        weave(&mut world, laws);
+        world.grid.place(3, 2, Feature::BounceMushroom);
+        let near = post(&mut world, 0, 10, 4);
+        let far = post(&mut world, 0, 11, 4);
+        put(&mut world, 0, 1, 2);
+        order(&mut world, 0, 12, 2);
+        for _ in 0..3 * TICKS_PER_SECOND {
+            world.step();
+            if world.raiders[0].bounced {
+                return (tile_of(&world, 0), world.guards[near].heard.is_some(),
+                        world.guards[far].heard.is_some(), world.raiders[0].route.last().copied());
+            }
+        }
+        panic!("never launched");
+    };
+    let (landed, near, far, goal) = launch(&[]);
+    assert_eq!(landed, (6, 2), "3 tiles forward of the mushroom");
+    let mut world = vault_world(1);
+    world.grid.place(3, 2, Feature::BounceMushroom);
+    assert_eq!(goal, world.grid.index(12, 2), "and on to where it was going");
+    // (6, 2) to (10, 4) is 6 steps by the walk; the landing reaches 4.
+    assert!(!near && !far);
+    let (landed, _, _, _) = launch(&["half_gravity"]);
+    assert_eq!(landed, (8, 2), "\"Half gravity makes it 5 tiles\"");
+    let heard = |gx: u16| {
+        let mut world = vault_world(1);
+        world.grid.place(3, 2, Feature::BounceMushroom);
+        let gi = post(&mut world, 0, gx, 2);
+        world.guards[gi].facing = Ang::from_degrees(0);
+        put(&mut world, 0, 1, 2);
+        order(&mut world, 0, 6, 2);
+        loop {
+            world.step();
+            if world.raiders[0].bounced {
+                return world.guards[gi].heard.is_some();
+            }
+        }
+    };
+    assert!(heard(10), "4 tiles from the landing");
+    assert!(!heard(11), "5 tiles from it");
+}
+
+#[test]
+fn an_updraft_vent_lifts_one_level_and_two_under_a_law_that_leaps() {
+    let mut grid = Grid::new(10, 10);
+    let (vent, up) = (grid.index(3, 5).unwrap(), grid.index(4, 5).unwrap());
+    grid.set_height(4, 5, 1);
+    assert!(!grid.can_step(vent, up), "a level up needs a climb");
+    grid.place(3, 5, Feature::UpdraftVent);
+    assert!(grid.can_step(vent, up), "\"lifts anyone one level\"");
+    grid.set_height(4, 5, 2);
+    assert!(!grid.can_step(vent, up));
+    grid.leap = true;
+    assert!(grid.can_step(vent, up), "\"Half gravity sends people two levels\"");
+}
+
+#[test]
+fn a_pit_drops_anyone_a_level_and_needs_a_climb_out() {
+    let mut grid = Grid::new(10, 10);
+    let (edge, pit) = (grid.index(3, 5).unwrap(), grid.index(4, 5).unwrap());
+    grid.place(4, 5, Feature::Pit);
+    assert_eq!(grid.level(pit), -1);
+    assert!(grid.can_step(edge, pit) && !grid.can_step(pit, edge), "in free, out by a climb");
+    grid.make_climbable(4, 5);
+    assert!(grid.can_step(pit, edge), "a ramp out");
+    let mut world = vault_world(1);
+    world.grid.place(4, 2, Feature::Pit);
+    put(&mut world, 0, 2, 2);
+    order(&mut world, 0, 4, 2);
+    let mut dropped = 0;
+    for _ in 0..2 * TICKS_PER_SECOND {
+        world.step();
+        dropped = dropped.max(world.raiders[0].landed);
+    }
+    assert_eq!(dropped, 1, "a landing from one level, heard as one (12.17)");
+    assert_eq!(tile_of(&world, 0), (4, 2));
+}

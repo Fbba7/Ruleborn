@@ -618,6 +618,14 @@ the realm, where the planned heist does not go.
   differently: tall grass and gravel (C33).
 - **Sound** ignores height and travels any walkable path both ways: a cliff
   stops feet, not noise.
+- **A pit** is a tile whose floor is one level below the ground it is dug in
+  (`Grid::level`): walking in is a free drop, heard as a one-level landing,
+  and walking out is a climb. **An updraft vent** lets anyone stepping off it
+  go a level up, two under Half gravity.
+- **Looking down.** A guard higher than an arch's tile cannot see whoever is
+  under it, and a guard cannot see the foot of its own cliff: the tile right
+  below an edge, looked at over that edge (a ramp is not a cliff). Both are
+  readings, G80's.
 
 The fixture puts the Warden's post on a one-level rise with a ramp up from
 the north.

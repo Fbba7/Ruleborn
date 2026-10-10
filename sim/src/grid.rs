@@ -82,6 +82,9 @@ pub struct Grid {
     /// cliffs one level") or Half gravity ("turns one-level climbs into
     /// leaps"). Set each tick from the rule sheet.
     pub free_climb: bool,
+    /// A law that leaps (Half gravity's "leap one obstacle"): stepping stones
+    /// are a road and an updraft lifts two levels. Set each tick.
+    pub leap: bool,
 }
 
 /// What a tile is underfoot, for noise. §12.17 names three that differ from
@@ -119,6 +122,23 @@ pub const STONE_TILES: i32 = 1;
 /// "cut through in 3 seconds"; "a Breaker smashes it in about 6 seconds".
 pub const HEDGE_CUT_SECONDS: u32 = 3;
 pub const BOULDER_SMASH_SECONDS: u32 = 6;
+/// A marsh: "40% slower; footprints stay for 10 seconds"; a flower meadow
+/// "shows footprints for 10 seconds".
+pub const MARSH_PACE: u8 = 60;
+pub const PRINT_SECONDS: u32 = 10;
+/// An ice sheet: "Slippery: stopping takes 1 tile".
+pub const ICE_STOP_TILES: u16 = 1;
+/// A bounce mushroom "launches anyone 3 tiles forward, noisily"; "the landing
+/// can be heard 4 tiles away"; "Half gravity makes it 5 tiles".
+pub const MUSHROOM_TILES: i32 = 3;
+pub const MUSHROOM_LEAP_TILES: i32 = 5;
+pub const MUSHROOM_HEARD_TILES: u16 = 4;
+/// An updraft vent "lifts anyone one level"; "Half gravity sends people two
+/// levels".
+pub const UPDRAFT_LEVELS: u8 = 1;
+pub const UPDRAFT_LEAP_LEVELS: u8 = 2;
+/// A bell post "raises the realm's alarm one level (12.17)".
+pub const BELL_LEVELS: i32 = 1;
 
 /// Louder surfaces carry a sound five quarters as far, quieter three quarters.
 /// As (numerator, denominator), so the one division happens once, at the end.
@@ -194,6 +214,30 @@ pub enum Feature {
     EmberVent,
     /// "Zaps anyone within 1 tile every 4 seconds" / "Crackles".
     StaticStone,
+    /// "Pass under" / "Blocks sight from above".
+    Arch,
+    /// "40% slower; footprints stay for 10 seconds".
+    Marsh,
+    /// "Shows footprints for 10 seconds".
+    FlowerMeadow,
+    /// "Slippery: stopping takes 1 tile".
+    IceSheet,
+    /// "Deep: only swimmers cross; everyone else goes round". No crew member
+    /// swims yet: a trait is carried in the manifest and not played (§11.3).
+    Pond,
+    /// "Rings if bumped" / "Raises the realm's alarm one level (12.17)".
+    BellPost,
+    /// "Floating stones; crossing needs leaps": a road only under a law that
+    /// leaps ("Half gravity or a Featherkin makes them a road").
+    SteppingStones,
+    /// "Launches anyone 3 tiles forward, noisily" / "The landing can be heard
+    /// 4 tiles away".
+    BounceMushroom,
+    /// "Lifts anyone one level; flyers two".
+    UpdraftVent,
+    /// "Drops anyone to the level below": its floor is one level below the
+    /// ground it is dug in.
+    Pit,
 }
 
 impl Feature {
@@ -201,12 +245,14 @@ impl Feature {
         use Feature::*;
         match self {
             RockPillar | RuinWall | Fence | Vault | Pylon | CrystalWall | Hedge | Tree | Boulder
-            | Statue | CrystalOutcrop | LavaCrack => Terrain::Blocked,
+            | Statue | CrystalOutcrop | LavaCrack | Pond | SteppingStones => Terrain::Blocked,
             Stream => Terrain::Pace(STREAM_PACE),
+            Marsh => Terrain::Pace(MARSH_PACE),
             GravelPath => Terrain::Pace(GRAVEL_PACE),
             Thicket => Terrain::Pace(THICKET_PACE),
             FogBank | TallGrass | ShadeCanopy | Bush | HotSpring | LanternPost | Scree | EmberVent
-            | StaticStone => Terrain::Open,
+            | StaticStone | Arch | FlowerMeadow | IceSheet | BellPost | BounceMushroom
+            | UpdraftVent | Pit => Terrain::Open,
         }
     }
 
@@ -220,7 +266,7 @@ impl Feature {
     /// gravel path gravel. `None` leaves the tile's own.
     pub fn surface(self) -> Option<Surface> {
         match self {
-            Feature::Stream => Some(Surface::Water),
+            Feature::Stream | Feature::Marsh | Feature::Pond => Some(Surface::Water),
             Feature::GravelPath => Some(Surface::Gravel),
             _ => None,
         }
@@ -252,6 +298,7 @@ impl Grid {
             heights: vec![0; n],
             climbable: vec![false; n],
             free_climb: false,
+            leap: false,
         }
     }
 
@@ -378,22 +425,40 @@ impl Grid {
         }
     }
 
+    /// Whether a ramp, stairs or vines stand on this tile.
+    pub fn is_climbable(&self, index: TileIndex) -> bool {
+        self.climbable.get(index as usize).copied().unwrap_or(false)
+    }
+
     /// Whether a character may step from `a` to its neighbour `b`. §6.2:
     /// dropping is "free and one-way"; climbing one level needs a ramp,
     /// stairs or vines on either tile, or a law that lets anyone climb; two
     /// levels at once is a cliff.
     pub fn can_step(&self, a: TileIndex, b: TileIndex) -> bool {
-        if !self.at(b).passable() {
+        let stones = self.leap && self.feature(b) == Some(Feature::SteppingStones);
+        if !self.at(b).passable() && !stones {
             return false;
         }
-        let (ha, hb) = (self.height(a), self.height(b));
+        let (ha, hb) = (self.level(a), self.level(b));
         if hb <= ha {
             return true;
+        }
+        // An updraft vent "lifts anyone one level"; under a law that leaps,
+        // two.
+        if self.feature(a) == Some(Feature::UpdraftVent) {
+            let lift = if self.leap { UPDRAFT_LEAP_LEVELS } else { UPDRAFT_LEVELS };
+            return hb <= ha + lift as i8;
         }
         hb == ha + 1
             && (self.free_climb
                 || self.climbable.get(a as usize).copied().unwrap_or(false)
                 || self.climbable.get(b as usize).copied().unwrap_or(false))
+    }
+
+    /// The level a character stands at on a tile: its height, one lower in
+    /// a pit, whose floor is "the level below" the ground it is dug in.
+    pub fn level(&self, index: TileIndex) -> i8 {
+        self.height(index) as i8 - (self.feature(index) == Some(Feature::Pit)) as i8
     }
 
     /// Whether two tiles are the same or side by side. §12.20's "an ally

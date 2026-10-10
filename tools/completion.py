@@ -258,7 +258,8 @@ def sim_terrain():
 def builder_terrain():
     """What the builder can lay of §6.2's 39 features and moss: those the
     client's island editor offers (client/ext/src/island.rs `GROUND`) that the
-    simulation has built, each by its test."""
+    simulation has built, each by its test. The cliff edge comes with raised
+    ground."""
     def proof():
         manifest, status = _sim_status()
         results = status.get("tests", {})
@@ -266,6 +267,10 @@ def builder_terrain():
         ext = (CLIENT / "ext" / "src" / "island.rs").read_text(encoding="utf-8")
         body = re.search(r"pub const GROUND: \[&str; \d+\] = \[(.*?)\];", ext, re.S)
         offered = set(re.findall(r'"(\w+)"', body.group(1))) if body else set()
+        # §6.2: a cliff edge is "Free (made by height)" — laid with raised
+        # ground, never on its own.
+        if "raised_ground" in offered:
+            offered.add("cliff_edge")
         ids = [r["id"] for r in json.loads((CONTENT / "terrain.json").read_text(encoding="utf-8"))]
         both = [i for i in ids if i in offered and results.get(mapped.get(i, "")) == "passed"]
         return (len(both) / (len(ids) + 1),

@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9857,6 +9857,39 @@ dict(id="F62", kind="finding", severity="significant", status="open",
          "holds 38.8% with the ladder against a band centred on 37.5%; the edits "
          "are drafted."),
 
+dict(id="G80", kind="gap", severity="minor", status="open",
+     title="§6.2 leaves open where a pit’s floor is, what “from above” and a "
+           "cliff’s foot are, who ice and a bounce mushroom move and what bumps a "
+           "bell, and the simulation reads each one way",
+     refs=["6.2", "12.17", "11.3"],
+     body="Building the rest of §6.2’s features (TD.15) needed seven readings. "
+          "<strong>A pit</strong> <em>“drops anyone to the level below”</em>: its "
+          "floor is one level below the ground it is dug in, so walking in is a "
+          "free drop, heard as a one-level landing, and walking out is a climb. "
+          "<strong>An arch</strong> <em>“blocks sight from above”</em>: a guard "
+          "standing higher than the arch’s tile cannot see whoever is under it. "
+          "<strong>A cliff’s foot:</strong> <em>“Guards can’t see the foot of "
+          "their own cliff”</em> is read as the tile right below an edge, looked "
+          "at over that edge from above; a ramp is not a cliff. <strong>Ice</strong>"
+          ": <em>“stopping takes 1 tile”</em> moves a crew member who stops on it "
+          "one tile on, the way it was going, once; guards walk their patrols on "
+          "it. <strong>A bounce mushroom</strong> launches a crew member the way it "
+          "stepped on, onto the furthest of the 3 tiles it can stand on, over "
+          "whatever is between, and it walks on from there; guards walk over it. "
+          "<strong>A bell post</strong> <em>“rings if bumped”</em>: a crew member "
+          "walking into its tile rings it, every time, and guards do not ring "
+          "their own. <strong>An updraft vent</strong> lets anyone stepping off it "
+          "go a level up. Two rows are built as far as the build allows, not "
+          "read: a pond is crossed by <em>“only swimmers”</em>, and Swimmer is a "
+          "trait (§11.3) the manifest carries and the simulation does not play "
+          "yet, so nobody crosses; and a marsh’s and a meadow’s footprints are "
+          "logged and drawn, since nothing reads a footprint until a Trails law "
+          "does and none ships at launch (§7.3). An updraft’s <em>“flyers "
+          "two”</em> waits on flight (§12.21). Found building TD.15.",
+     rec="State the readings in §6.2 (the edits are drafted), or give others and "
+         "the simulation follows (<code>sim/src/grid.rs</code>, "
+         "<code>sim/src/lib.rs</code>)."),
+
 dict(id="G79", kind="gap", severity="minor", status="open",
      title="§23.5 adopts the paradox-born’s character and the visitors’ and "
            "anomalies’ sizes from the sheets, and the document writes none of "
@@ -11256,6 +11289,11 @@ V37 = {
 "F62": dict(status="open", left="document", note=
     "Found building TD.69, after v3.7: a balance figure for the document, with "
     "its edits drafted (TD.75)."),
+
+"G80": dict(status="open", left="document", note=
+    "Found building TD.15, after v3.7: seven readings the simulation takes for "
+    "the pit, the arch, a cliff’s foot, ice, the bounce mushroom, the bell post "
+    "and the updraft vent, with the §6.2 edits that state them drafted (TD.75)."),
 
 "G79": dict(status="open", left="document", note=
     "Found building TD.33, after v3.7: §23.5 adopts the paradox-born’s "
@@ -14662,6 +14700,45 @@ EDITS = {
                  "for one task in three); iteration 415 (301 to 531), a floor at 1x "
                  "the build; plan about 830 (602 to 1,062)",
          why="§26.8 and §27.2, with phases 4a to 4c. C72."),
+],
+"G80": [
+    dict(section="6.2", action="replace",
+         find="Drops anyone to the level below",
+         replace="Drops anyone to the level below: its floor is one level below the ground "
+                 "it is dug in, so climbing out needs a ramp, stairs, vines, a leap or an "
+                 "updraft",
+         why="Where the level below is, on ground already at level 0. G80."),
+    dict(section="6.2", action="replace",
+         find="Blocks sight from above",
+         replace="Blocks sight from above: a guard standing higher cannot see whoever is "
+                 "under it",
+         why="“From above” read as from higher ground. G80."),
+    dict(section="6.2", action="replace",
+         find="Guards can't see the foot of their own cliff",
+         replace="Guards can't see the foot of their own cliff: the tile right below an "
+                 "edge, looked at over that edge from above; a ramp is not a cliff",
+         why="Which tiles are the foot. G80."),
+    dict(section="6.2", action="replace",
+         find="Slippery: stopping takes 1 tile",
+         replace="Slippery: a crew member who stops on it slides 1 tile further the way "
+                 "it was going; guards walk their patrols on it",
+         why="Who slides, which way, and whether guards do. G80."),
+    dict(section="6.2", action="replace",
+         find="Launches anyone 3 tiles forward, noisily",
+         replace="Launches a crew member 3 tiles forward, the way it stepped on, noisily, "
+                 "onto the furthest of those tiles it can stand on; it walks on from there, "
+                 "and guards walk over it",
+         why="Which way is forward, where it lands when the third tile is a wall, and "
+             "whether guards are launched. G80."),
+    dict(section="6.2", action="replace",
+         find="Rings if bumped",
+         replace="Rings when a crew member walks into its tile, every time; guards do not "
+                 "ring their own",
+         why="What a bump is. G80."),
+    dict(section="6.2", action="replace",
+         find="Lifts anyone one level; flyers two",
+         replace="Anyone stepping off it may go one level up; flyers two",
+         why="When the lift happens: as a step off the vent, like a ramp. G80."),
 ],
 "G79": [
     dict(section="11.8", action="insert",

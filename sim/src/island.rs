@@ -186,7 +186,7 @@ impl Problem {
 
 /// §6.2's ground features by their code in the bundle. The code is part of
 /// every island's bytes, so it is written out and never reused.
-pub const FEATURE_CODES: [(Feature, &str, u8); 21] = [
+pub const FEATURE_CODES: [(Feature, &str, u8); 31] = [
     (Feature::RockPillar, "rock_pillar", 1),
     (Feature::RuinWall, "ruin_wall", 2),
     (Feature::Fence, "fence", 3),
@@ -208,6 +208,16 @@ pub const FEATURE_CODES: [(Feature, &str, u8); 21] = [
     (Feature::StaticStone, "static_stone", 19),
     (Feature::Statue, "statue", 20),
     (Feature::HotSpring, "hot_spring", 21),
+    (Feature::Arch, "arch", 22),
+    (Feature::Marsh, "marsh", 23),
+    (Feature::FlowerMeadow, "flower_meadow", 24),
+    (Feature::IceSheet, "ice_sheet", 25),
+    (Feature::Pond, "pond", 26),
+    (Feature::BellPost, "bell_post", 27),
+    (Feature::SteppingStones, "stepping_stones", 28),
+    (Feature::BounceMushroom, "bounce_mushroom", 29),
+    (Feature::UpdraftVent, "updraft_vent", 30),
+    (Feature::Pit, "pit", 31),
 ];
 
 fn feature_code(f: Option<Feature>) -> Option<u8> {

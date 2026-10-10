@@ -95,6 +95,11 @@ pub enum Event {
     Ability { crew: u8 },
     /// The Sage's power, used: its number, 0 to 2.
     Power { power: u8 },
+    /// A footprint left in a marsh or a flower meadow, which stays for
+    /// `grid::PRINT_SECONDS` (§6.2).
+    Print { crew: u8, tile: u16 },
+    /// A bell post bumped by a crew member (§6.2).
+    Bell { crew: u8, tile: u16 },
 }
 
 /// The log of one heist.

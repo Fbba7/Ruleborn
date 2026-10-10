@@ -39,6 +39,8 @@ pub enum Sound {
     Running,
     /// "Breaking something — 5 m."
     Breaking,
+    /// A bounce mushroom's landing: "can be heard 4 tiles away" (§6.2).
+    Bounce,
 }
 
 impl Sound {
@@ -52,6 +54,7 @@ impl Sound {
             Sound::LandingOne => 4,
             Sound::LandingTwo => 6,
             Sound::LandingThree => 8,
+            Sound::Bounce => 2 * crate::grid::MUSHROOM_HEARD_TILES,
         }
     }
 

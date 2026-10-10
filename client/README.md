@@ -166,10 +166,11 @@ harmonies, clashes, resonances and chords) is named as they are woven. The
 realm is drawn by the heist's own view, from a heist started on the island, so
 what the builder shows is what a raider meets. Raid it plays the island on the
 heist screen, offline, and the result leads back to the builder; the island is
-kept on the phone. The ground offered is the twenty-two of §6.2's thirty-nine
+kept on the phone. The ground offered is the thirty-two of §6.2's thirty-nine
 features the simulation models (`ext/src/island.rs` `GROUND`, in the island's
-own codes) — from rock pillars and fog banks to hedges, lantern posts and hot
-springs, and raised ground — and the laws are §7.10's launch twenty-four.
+own codes) — from rock pillars and fog banks to hedges, lantern posts, ponds,
+bell posts and pits, and raised ground with the cliff edges it makes — and the
+laws are §7.10's launch twenty-four.
 
 **The heist screen** (`scenes/heist_screen.tscn`). A heist on the fixture
 realm, played: the world steps in real time and every tap becomes a simulation

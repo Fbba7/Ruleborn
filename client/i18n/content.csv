@@ -138,6 +138,16 @@ GROUND_LAVA_CRACK,Lava crack,Lava crack
 GROUND_STATIC_STONE,Static stone,Static stone
 GROUND_STATUE,Statue,Statue
 GROUND_HOT_SPRING,Hot spring,Hot spring
+GROUND_ARCH,Arch,Arch
+GROUND_MARSH,Marsh,Marsh
+GROUND_FLOWER_MEADOW,Flower meadow,Flower meadow
+GROUND_ICE_SHEET,Ice sheet,Ice sheet
+GROUND_POND,Pond,Pond
+GROUND_BELL_POST,Bell post,Bell post
+GROUND_STEPPING_STONES,Stepping stones,Stepping stones
+GROUND_BOUNCE_MUSHROOM,Bounce mushroom,Bounce mushroom
+GROUND_UPDRAFT_VENT,Updraft vent,Updraft vent
+GROUND_PIT,Pit,Pit
 GROUND_RAISED_GROUND,Raised ground,Raised ground
 BUILDING_KEEPER_S_SPIRE,Keeper's Spire,Keeper's Spire
 BUILDING_VAULT,Vault,Vault

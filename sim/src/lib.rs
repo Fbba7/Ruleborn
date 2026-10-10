@@ -652,6 +652,12 @@ pub struct Raider {
     pub frozen_until: u32,
     /// Levels dropped this tick, for §12.17's landing noise.
     pub landed: u8,
+    /// Launched by a bounce mushroom this tick: "the landing can be heard 4
+    /// tiles away".
+    pub bounced: bool,
+    /// Whether an ice sheet has already carried it its one tile past where it
+    /// stopped, so the stop after that one holds.
+    pub skid: bool,
     /// How many ticks it has stood still, for Stillness.
     pub still_for: u32,
     /// When it went down, and how long an ally has been reviving it.
@@ -825,6 +831,10 @@ pub struct World {
     pub log: Log,
     why: Cause,
     found_logged: i32,
+    /// Bell posts rung: each "raises the realm's alarm one level (12.17)".
+    /// Under Delay a ring lands late, at the ticks in `bells_due`.
+    pub bells_rung: i32,
+    bells_due: Vec<u32>,
     /// §6.2's features that act on what is around them, found on the grid
     /// at the start of each tick: lantern posts (each with whether a crystal
     /// outcrop beside it carries its light further), ember vents, static
@@ -889,6 +899,8 @@ impl World {
                 standing: Standing::Active,
                 still_for: 0,
                 landed: 0,
+                bounced: false,
+                skid: false,
                 frozen_until: 0,
                 down_since: 0,
                 revive: 0,
@@ -963,6 +975,8 @@ impl World {
             log: Log::default(),
             why: Cause::Table,
             found_logged: 0,
+            bells_rung: 0,
+            bells_due: Vec::new(),
             lanterns: Vec::new(),
             vents: Vec::new(),
             stones: Vec::new(),
@@ -1186,6 +1200,7 @@ impl World {
                     };
                     raider.along = 0;
                     raider.came_from = from.unwrap_or(raider.came_from);
+                    raider.skid = false;
                 }
                 // An unknown gait is dropped like an unknown crew member.
                 Kind::Gait => {
@@ -1193,9 +1208,19 @@ impl World {
                         raider.gait = gait;
                     }
                 }
+                // On an ice sheet "stopping takes 1 tile": the tile it is
+                // heading for is still reached.
                 Kind::Halt => {
-                    raider.route.clear();
-                    raider.along = 0;
+                    let here = self.grid.tile_at(raider.at.x, raider.at.y);
+                    let on_ice = here.is_some_and(|t| self.grid.feature(t)
+                        == Some(Feature::IceSheet));
+                    if on_ice && raider.along < raider.route.len() && !raider.skid {
+                        raider.route.truncate(raider.along + 1);
+                        raider.skid = true;
+                    } else {
+                        raider.route.clear();
+                        raider.along = 0;
+                    }
                 }
                 Kind::Crack => raider.task = Task::Crack,
                 Kind::Attack => {
@@ -1671,6 +1696,7 @@ impl World {
         }
         self.grid.free_climb = self.sheet.flag(Param::ClimbLevels).is_some_and(|v| v >= 1)
             || self.sheet.flag(Param::LeapObstacles).is_some_and(|v| v >= 1);
+        self.grid.leap = self.sheet.flag(Param::LeapObstacles).is_some_and(|v| v >= 1);
         // "the heist clock runs 25% faster in this realm"
         let (n, d) = self.sheet.factor(Param::ClockRate);
         self.clock_run += (1000 * n / d) as u64;
@@ -1973,6 +1999,9 @@ impl World {
             _ => raider.at,
         };
         let (d, in_cone, from, to) = self.sees_geometry(gi, seen_at)?;
+        if self.below_sight(from, to) {
+            return None;
+        }
         // A lantern post: "Lights 3 tiles: nothing hides inside the light".
         let lit = self.lantern_lit(to);
         // "Standing still in tall grass makes you invisible until a
@@ -2050,7 +2079,7 @@ impl World {
             let Some((_, in_cone, from, to)) = self.sees_geometry(gi, Point { x, y }) else {
                 continue;
             };
-            if in_cone && self.line_clear(from, to) {
+            if in_cone && self.line_clear(from, to) && !self.below_sight(from, to) {
                 out.push(tile);
             }
         }
@@ -2069,7 +2098,28 @@ impl World {
         if from != to && self.grid.feature(to) == Some(Feature::TallGrass) {
             return false;
         }
-        self.line_clear(from, to)
+        !self.below_sight(from, to) && self.line_clear(from, to)
+    }
+
+    /// What ground hides from a guard looking down. An arch "blocks sight
+    /// from above": a guard higher than the tile under it cannot see in.
+    /// And "guards can't see the foot of their own cliff": a guard above a
+    /// tile cannot see it when the tile before it on the line of sight is a
+    /// drop — higher than it, no higher than the guard, and not a ramp.
+    fn below_sight(&self, from: grid::TileIndex, to: grid::TileIndex) -> bool {
+        let (lf, lt) = (self.grid.level(from), self.grid.level(to));
+        if lf <= lt {
+            return false;
+        }
+        if self.grid.feature(to) == Some(Feature::Arch) {
+            return true;
+        }
+        let line = sight::line(&self.grid, from, to);
+        line.len() >= 2 && {
+            let edge = line[line.len() - 2];
+            let le = self.grid.level(edge);
+            le > lt && le <= lf && !self.grid.is_climbable(edge)
+        }
     }
 
     /// The body a raider is dragging, if it is: a Drag task on a knocked-out
@@ -2272,7 +2322,7 @@ impl World {
     /// its far zone entirely." A metre per level of the difference.
     fn outer_zone(&self, gi: usize, from: grid::TileIndex, to: grid::TileIndex) -> Fx {
         let g = &self.guards[gi];
-        let (hg, ht) = (self.grid.height(from) as i32, self.grid.height(to) as i32);
+        let (hg, ht) = (self.grid.level(from) as i32, self.grid.level(to) as i32);
         let outer = if g.far.0 > 0 { g.far } else { g.mid };
         if hg > ht {
             outer + Fx::from_int((hg - ht) * heist::HIGHER_GROUND_METRES)
@@ -2316,8 +2366,12 @@ impl World {
         let guard_pace: Vec<(i64, i64)> = self.guards.iter()
             .map(|g| self.pace_here(self.grid.tile_at(g.at.x, g.at.y), false, g.slowed_until))
             .collect();
+        // Tiles walked into this tick, for the features that act on whoever
+        // enters them: (crew member, the tile, the tile it came from).
+        let mut entered: Vec<(usize, grid::TileIndex, grid::TileIndex)> = Vec::new();
         for (ri, raider) in self.raiders.iter_mut().enumerate() {
             raider.landed = 0;
+            raider.bounced = false;
             raider.still_for = if raider.still() && raider.active() {
                 raider.still_for.saturating_add(1)
             } else {
@@ -2348,12 +2402,43 @@ impl World {
                     raider.route.push(next);
                 }
             }
+            // An ice sheet: "stopping takes 1 tile". A route that ends on ice
+            // carries on one tile the way it was going, once.
+            if !slide && !raider.skid && was < raider.route.len()
+                && along >= raider.route.len()
+                && raider.route.last().is_some_and(|&t| self.grid.feature(t)
+                    == Some(Feature::IceSheet))
+            {
+                raider.skid = true;
+                if let Some(next) = slide_on(&self.grid, &self.guards, raider, false) {
+                    raider.route.push(next);
+                }
+            }
             // Dropped a level or more this tick: §12.17's landing noise.
             let there = self.grid.tile_at(at.x, at.y);
             raider.landed = match (here, there) {
-                (Some(a), Some(b)) => self.grid.height(a).saturating_sub(self.grid.height(b)),
+                (Some(a), Some(b)) => (self.grid.level(a) - self.grid.level(b)).max(0) as u8,
                 _ => 0,
             };
+            if let (Some(a), Some(b)) = (here, there) {
+                if a != b {
+                    entered.push((ri, b, a));
+                }
+            }
+        }
+        for (ri, tile, from) in entered {
+            match self.grid.feature(tile) {
+                // A marsh's "footprints stay for 10 seconds"; a flower meadow
+                // "shows footprints for 10 seconds". Nothing in the heist
+                // reads a footprint until a Trails law does, and none ships
+                // at launch (§7.3): they are drawn, from the log.
+                Some(Feature::Marsh) | Some(Feature::FlowerMeadow) => {
+                    self.log.push(now, Event::Print { crew: ri as u8, tile: tile as u16 });
+                }
+                Some(Feature::BellPost) => self.ring(ri, tile),
+                Some(Feature::BounceMushroom) => self.bounce(ri, from, tile),
+                _ => {}
+            }
         }
         // A guard that is not walking turns steadily at its role's rate, one
         // way, so a player watching it can say where it will face next. The
@@ -2610,6 +2695,7 @@ impl World {
                 2 => Some(noise::Sound::LandingTwo),
                 _ => Some(noise::Sound::LandingThree),
             };
+            let landing = if raider.bounced { Some(noise::Sound::Bounce) } else { landing };
             if !breaking && landing.is_none() && (raider.still() || !raider.active()) {
                 continue;                             // standing still is silent
             }
@@ -2787,9 +2873,13 @@ impl World {
 
         // The realm alarm: one level every thirty seconds, one per knocked-out
         // guard discovered, never above six.
+        // Bells rung under Delay land when their ring comes.
+        let due = self.bells_due.iter().filter(|&&t| t <= now).count() as i32;
+        self.bells_due.retain(|&t| t > now);
+        self.bells_rung += due * grid::BELL_LEVELS;
         let before = self.alarm;
-        self.alarm = ((now / guard::ALARM_STEP_TICKS) as i32 + self.knockouts_discovered)
-            .min(guard::ALARM_MAX);
+        self.alarm = ((now / guard::ALARM_STEP_TICKS) as i32 + self.knockouts_discovered
+            + self.bells_rung).min(guard::ALARM_MAX);
         if self.alarm > before {
             let found = self.knockouts_discovered > self.found_logged;
             for level in before + 1..=self.alarm {
@@ -3729,6 +3819,51 @@ impl World {
         self.log.push(self.tick, Event::GuardDown { guard: gi as u16 });
     }
 
+    /// A bell post "rings if bumped" and "raises the realm's alarm one level
+    /// (12.17)": a crew member walking into its tile bumps it, every time.
+    /// Under Delay "the ring comes late", by Delay's own seconds.
+    fn ring(&mut self, ri: usize, tile: grid::TileIndex) {
+        self.log.push(self.tick, Event::Bell { crew: ri as u8, tile: tile as u16 });
+        match self.sheet.ticks(Param::EffectDelaySeconds) {
+            Some(delay) => self.bells_due.push(self.tick + delay),
+            None => self.bells_rung += grid::BELL_LEVELS,
+        }
+    }
+
+    /// A bounce mushroom "launches anyone 3 tiles forward, noisily" — 5
+    /// under Half gravity — the way it walked in. It lands on the furthest of
+    /// those tiles it can stand on, over whatever is between, and walks on
+    /// from there to where it was going; with nowhere to land it is not
+    /// launched.
+    fn bounce(&mut self, ri: usize, from: grid::TileIndex, tile: grid::TileIndex) {
+        let ((fx, fy), (tx, ty)) = (self.grid.coords(from), self.grid.coords(tile));
+        let (dx, dy) = (tx as i32 - fx as i32, ty as i32 - fy as i32);
+        if (dx, dy) == (0, 0) {
+            return;
+        }
+        let reach = if self.grid.leap { grid::MUSHROOM_LEAP_TILES } else { grid::MUSHROOM_TILES };
+        let grid = &self.grid;
+        let Some(land) = (1..=reach).rev().find_map(|k| {
+            let (x, y) = (tx as i32 + dx * k, ty as i32 + dy * k);
+            if x < 0 || y < 0 {
+                return None;
+            }
+            grid.index(x as u16, y as u16).filter(|&t| grid.at(t).passable())
+        }) else {
+            return;
+        };
+        let drop = (grid.level(tile) - grid.level(land)).max(0) as u8;
+        let (x, y) = grid.centre(land);
+        let r = &mut self.raiders[ri];
+        let goal = r.route.last().copied().filter(|&g| g != tile && g != land);
+        r.at = Point { x, y };
+        r.route = goal.and_then(|g| path::find(&self.grid, land, g)).unwrap_or_default();
+        r.along = 0;
+        r.came_from = tile;
+        r.bounced = true;
+        r.landed = drop;
+    }
+
     /// The features that act on what is around them, read off the grid once
     /// a tick, so a hedge cut or grass grown this tick is seen next tick.
     fn find_terrain(&mut self) {
@@ -4203,6 +4338,18 @@ impl World {
         }
         for w in self.wards.iter().filter(|w| w.held_until > 0) {
             mix(w.held_until as i64);
+        }
+        // Bells and ice, only once there are any, so no replay recorded
+        // before them moves.
+        if self.bells_rung > 0 || !self.bells_due.is_empty() {
+            mix(self.bells_rung as i64);
+            for &t in &self.bells_due {
+                mix(t as i64);
+            }
+        }
+        for r in self.raiders.iter().filter(|r| r.skid || r.bounced) {
+            mix(r.id as i64);
+            mix(r.skid as i64 * 2 + r.bounced as i64);
         }
         // The Sage and what its powers left running; nothing for a heist
         // with no Sage, so no replay recorded before Sages moves.

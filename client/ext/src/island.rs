@@ -15,11 +15,12 @@ use sim::laws_table::{note, CHORDS, CHORD_IDS, LAWS, RESONANCES, RES_IDS};
 /// every feature in the island's codes (`sim::island::FEATURE_CODES`), in
 /// their order, and raised ground. A feature not in the simulation yet is not
 /// offered.
-pub const GROUND: [&str; 22] = [
+pub const GROUND: [&str; 32] = [
     "rock_pillar", "ruin_wall", "fence", "fog_bank", "tall_grass", "stream", "bush", "hedge",
     "tree", "thicket", "boulder", "gravel_path", "scree", "crystal_outcrop", "lantern_post",
     "shade_canopy", "ember_vent", "lava_crack", "static_stone", "statue", "hot_spring",
-    "raised_ground",
+    "arch", "marsh", "flower_meadow", "ice_sheet", "pond", "bell_post", "stepping_stones",
+    "bounce_mushroom", "updraft_vent", "pit", "raised_ground",
 ];
 
 /// §10.3's wards, by content id (content/wards.json).
