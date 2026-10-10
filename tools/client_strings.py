@@ -22,6 +22,7 @@ import csv
 import io
 import json
 import pathlib
+import re
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -31,9 +32,11 @@ CONTENT = ROOT / "content"
 OUT = ROOT / "client" / "i18n" / "content.csv"
 
 #: The terrain features the builder can lay, which are the ones the
-#: simulation models (client/ext/src/island.rs `GROUND`).
-GROUND = ["rock_pillar", "ruin_wall", "fence", "fog_bank", "tall_grass",
-          "gravel_path", "stream", "raised_ground"]
+#: simulation models: read from their one home, client/ext/src/island.rs
+#: `GROUND`.
+GROUND = re.findall(r'"(\w+)"', re.search(
+    r"pub const GROUND: \[&str; \d+\] = \[(.*?)\];",
+    (ROOT / "client" / "ext" / "src" / "island.rs").read_text(encoding="utf-8"), re.S).group(1))
 
 
 def rows() -> list[tuple[str, str]]:

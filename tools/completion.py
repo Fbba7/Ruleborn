@@ -240,19 +240,36 @@ def engine_pin():
 
 
 def sim_terrain():
-    """§6.2's 39 features and moss in the simulation: a feature counts once
-    sim/src/grid.rs has it as a Feature, moss once it is a Surface."""
+    """§6.2's 39 features and moss in the simulation: each counts once
+    sim/systems.json's "Terrain features" maps it to a test that passed."""
     def proof():
-        grid = (SIM / "src" / "grid.rs").read_text(encoding="utf-8")
-        body = grid[grid.index("pub enum Feature"):]
-        body = body[:body.index("\n}")]
-        variants = set(re.findall(r"^\s+(\w+),", body, re.M))
+        manifest, status = _sim_status()
+        results = status.get("tests", {})
+        mapped = manifest.get("Terrain features", {}).get("features", {})
         ids = [r["id"] for r in json.loads((CONTENT / "terrain.json").read_text(encoding="utf-8"))]
-        have = [i for i in ids if "".join(w.capitalize() for w in i.split("_")) in variants]
-        moss = "Moss," in grid[grid.index("pub enum Surface"):]
-        n = len(have) + moss
-        return (n / (len(ids) + 1), f"{len(have)} of {len(ids)} features"
-                f"{' and moss' if moss else ', no moss'} in sim/", [])
+        have = [i for i in ids if results.get(mapped.get(i, "")) == "passed"]
+        moss = results.get(mapped.get("moss", "")) == "passed"
+        missing = [t for t in mapped.values() if t not in results]
+        return ((len(have) + moss) / (len(ids) + 1), f"{len(have)} of {len(ids)} features"
+                f"{' and moss' if moss else ', no moss'} in sim/, each by its test", missing)
+    return proof
+
+
+def builder_terrain():
+    """What the builder can lay of §6.2's 39 features and moss: those the
+    client's island editor offers (client/ext/src/island.rs `GROUND`) that the
+    simulation has built, each by its test."""
+    def proof():
+        manifest, status = _sim_status()
+        results = status.get("tests", {})
+        mapped = manifest.get("Terrain features", {}).get("features", {})
+        ext = (CLIENT / "ext" / "src" / "island.rs").read_text(encoding="utf-8")
+        body = re.search(r"pub const GROUND: \[&str; \d+\] = \[(.*?)\];", ext, re.S)
+        offered = set(re.findall(r'"(\w+)"', body.group(1))) if body else set()
+        ids = [r["id"] for r in json.loads((CONTENT / "terrain.json").read_text(encoding="utf-8"))]
+        both = [i for i in ids if i in offered and results.get(mapped.get(i, "")) == "passed"]
+        return (len(both) / (len(ids) + 1),
+                f"{len(both)} of {len(ids)} features and moss in the builder", [])
     return proof
 
 
@@ -345,7 +362,7 @@ DELIVERABLES = [
     # §26.8: "Terrain with all 39 of 6.2's features and moss" (G67). The
     # builder can lay only what the simulation has, so its row is scaled by it.
     ("4", "Terrain: §6.2's 39 features and moss in the simulation", BACKEND, sim_terrain()),
-    ("4", "Terrain editing", FRONTEND, times(sim_terrain(), client_tests(
+    ("4", "Terrain editing", FRONTEND, times(builder_terrain(), client_tests(
         "the builder lays §6.2's ground on the realm's grid, and the island it writes reads back the same"))),
     ("4", "Buildings on the grid with their footprints (§10.1)", BACKEND, not_started(
         "buildings stand on the island's grid with §10.1's footprints, in the "

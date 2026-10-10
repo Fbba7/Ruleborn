@@ -8,15 +8,18 @@ use ruleborn_sim as sim;
 use sim::combos::Combos;
 use sim::grid::{Feature, Surface};
 use sim::heist::WardKind;
-use sim::island::{Island, Occupant, GUARD_POSTS, LAW_SLOTS, WARD_LIMITS};
+use sim::island::{Island, Occupant, FEATURE_CODES, GUARD_POSTS, LAW_SLOTS, WARD_LIMITS};
 use sim::laws_table::{note, CHORDS, CHORD_IDS, LAWS, RESONANCES, RES_IDS};
 
-/// §6.2's ground the simulation models, by content id (content/terrain.json).
-/// The other thirty-one features are not in the simulation yet, so the
-/// builder cannot offer them.
-pub const GROUND: [&str; 8] = [
-    "rock_pillar", "ruin_wall", "fence", "fog_bank", "tall_grass",
-    "gravel_path", "stream", "raised_ground",
+/// §6.2's ground the simulation models, by content id (content/terrain.json):
+/// every feature in the island's codes (`sim::island::FEATURE_CODES`), in
+/// their order, and raised ground. A feature not in the simulation yet is not
+/// offered.
+pub const GROUND: [&str; 22] = [
+    "rock_pillar", "ruin_wall", "fence", "fog_bank", "tall_grass", "stream", "bush", "hedge",
+    "tree", "thicket", "boulder", "gravel_path", "scree", "crystal_outcrop", "lantern_post",
+    "shade_canopy", "ember_vent", "lava_crack", "static_stone", "statue", "hot_spring",
+    "raised_ground",
 ];
 
 /// §10.3's wards, by content id (content/wards.json).
@@ -30,25 +33,11 @@ pub const WARDS: [(&str, WardKind); 6] = [
 ];
 
 fn feature(id: &str) -> Option<Feature> {
-    Some(match id {
-        "rock_pillar" => Feature::RockPillar,
-        "ruin_wall" => Feature::RuinWall,
-        "fence" => Feature::Fence,
-        "fog_bank" => Feature::FogBank,
-        "tall_grass" => Feature::TallGrass,
-        _ => return None,
-    })
+    FEATURE_CODES.iter().find(|(_, i, _)| *i == id).map(|&(f, _, _)| f)
 }
 
 fn feature_id(f: Option<Feature>) -> &'static str {
-    match f {
-        Some(Feature::RockPillar) => "rock_pillar",
-        Some(Feature::RuinWall) => "ruin_wall",
-        Some(Feature::Fence) => "fence",
-        Some(Feature::FogBank) => "fog_bank",
-        Some(Feature::TallGrass) => "tall_grass",
-        _ => "",
-    }
+    f.and_then(|f| FEATURE_CODES.iter().find(|(g, _, _)| *g == f)).map_or("", |&(_, i, _)| i)
 }
 
 fn strings(items: impl IntoIterator<Item = impl AsRef<str>>) -> PackedStringArray {
@@ -138,11 +127,13 @@ impl RulebornIsland {
             return false;
         }
         let i = &mut self.island;
-        i.set_feature(x, y, feature(&id));
-        i.set_surface(x, y, match id.as_str() {
-            "gravel_path" => Surface::Gravel,
-            "stream" => Surface::Water,
-            _ => Surface::Plain,
+        let f = feature(&id);
+        i.set_feature(x, y, f);
+        // A stream is water and a gravel path gravel by themselves; anything
+        // else leaves the ground plain.
+        i.set_surface(x, y, match f.and_then(|f| f.surface()) {
+            Some(s) => s,
+            None => Surface::Plain,
         });
         i.set_height(x, y, (id == "raised_ground") as u8);
         true

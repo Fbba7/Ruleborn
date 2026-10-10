@@ -63,10 +63,10 @@ against itself, each a decision
 v3.6 itself answers none of the 70 items open against v3.4, narrows G28 and F37,
 and reopens C11.
 
-Seven versions have now answered the audit. **198 of 317 register items are fixed
-in the document itself**, the latest 87 by v3.7. 75 are still open: 49 of the
+Seven versions have now answered the audit. **198 of 318 register items are fixed
+in the document itself**, the latest 87 by v3.7. 76 are still open: 49 of the
 139 open against v3.6 (39 waiting on the build, ten partly done with their edits
-drafted) and 26 of the 27 found reading v3.7 or building against it.
+drafted) and 27 of the 28 found reading v3.7 or building against it.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -336,11 +336,11 @@ python3 tools/validate_content.py
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 317 tracked items with section references and status:
+document, as 318 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 206 are drafted across 99
+the sentence as it stands today, and what to put there. 210 are drafted across 100
 items, and every quoted sentence is checked against v3.7 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no

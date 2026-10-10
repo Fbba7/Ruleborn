@@ -122,8 +122,22 @@ GROUND_RUIN_WALL,Ruin wall,Ruin wall
 GROUND_FENCE,Fence,Fence
 GROUND_FOG_BANK,Fog bank,Fog bank
 GROUND_TALL_GRASS,Tall grass,Tall grass
-GROUND_GRAVEL_PATH,Gravel path,Gravel path
 GROUND_STREAM,Stream,Stream
+GROUND_BUSH,Bush,Bush
+GROUND_HEDGE,Hedge,Hedge
+GROUND_TREE,Tree,Tree
+GROUND_THICKET,Thicket,Thicket
+GROUND_BOULDER,Boulder,Boulder
+GROUND_GRAVEL_PATH,Gravel path,Gravel path
+GROUND_SCREE,Scree,Scree
+GROUND_CRYSTAL_OUTCROP,Crystal outcrop,Crystal outcrop
+GROUND_LANTERN_POST,Lantern post,Lantern post
+GROUND_SHADE_CANOPY,Shade canopy,Shade canopy
+GROUND_EMBER_VENT,Ember vent,Ember vent
+GROUND_LAVA_CRACK,Lava crack,Lava crack
+GROUND_STATIC_STONE,Static stone,Static stone
+GROUND_STATUE,Statue,Statue
+GROUND_HOT_SPRING,Hot spring,Hot spring
 GROUND_RAISED_GROUND,Raised ground,Raised ground
 BUILDING_KEEPER_S_SPIRE,Keeper's Spire,Keeper's Spire
 BUILDING_VAULT,Vault,Vault

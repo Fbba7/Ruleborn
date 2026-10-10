@@ -32,6 +32,7 @@ CONTENT = HERE.parent / "content" / "detection.json"
 ROLES = HERE.parent / "content" / "roles.json"
 SOURCES = ["src/lib.rs", "src/guard.rs", "src/noise.rs", "src/grid.rs", "src/heist.rs",
            "src/island.rs", "src/ruleborn.rs"]
+TERRAIN = HERE.parent / "content" / "terrain.json"
 
 # Values the content files hold that the simulation does not yet use, by path
 # prefix. Each is reported so none passes as agreeing by being absent.
@@ -554,6 +555,59 @@ def ruleborn_compare(text: str) -> dict:
     return {"checked": checked, "wrong": wrong}
 
 
+def terrain_compare(text: str) -> dict:
+    """§6.2's features against the simulation: every code's id is one of
+    content/terrain.json's, and each built feature's numbers are read out of
+    the content's own words, as the wards' are."""
+    k = constants(text)
+    rows_ = {r["id"]: r for r in json.loads(TERRAIN.read_text())}
+    checked, wrong = [], []
+    for fid in re.findall(r'\(Feature::\w+, "(\w+)", \d+\)', text):
+        (checked if fid in rows_ else wrong).append(f"island.rs FEATURE_CODES {fid}: "
+                                                    f"{'in' if fid in rows_ else 'not in'} terrain.json")
+
+    def num(fid: str, col: str, pattern: str) -> float | None:
+        m = re.search(pattern, rows_.get(fid, {}).get(col, ""))
+        return float(m.group(1)) if m else None
+
+    pct = lambda v: (lambda t: t[0] * 100 / t[1] if isinstance(t, tuple) else None)(v)
+    rows = [
+        ("stream pace", 100 - (num("stream", "movement", r"(\d+)% slower") or 999),
+         k.get("STREAM_PACE")),
+        ("gravel_path pace", 100 + (num("gravel_path", "movement", r"(\d+)% faster") or 999),
+         k.get("GRAVEL_PACE")),
+        ("thicket pace", 100 - (num("thicket", "movement", r"(\d+)% slower") or 999),
+         k.get("THICKET_PACE")),
+        ("thicket hides", num("thicket", "sight", r"beyond (\d+) tile"), k.get("THICKET_HIDES")),
+        ("shade_canopy hides", num("shade_canopy", "sight", r"beyond (\d+) tiles"),
+         k.get("SHADE_HIDES")),
+        ("hot_spring hides", num("hot_spring", "sight", r"beyond (\d+) tiles"), k.get("STEAM_HIDES")),
+        ("hot_spring heal (%)", num("hot_spring", "movement", r"Heals (\d+)%"), pct(k.get("SPRING_HEAL"))),
+        ("lantern_post tiles", num("lantern_post", "sight", r"Lights (\d+) tiles"),
+         k.get("LANTERN_TILES")),
+        ("crystal_outcrop extra", num("crystal_outcrop", "sight", r"reach (\d+) tiles further"),
+         k.get("OUTCROP_EXTRA_TILES")),
+        ("scree tiles", num("scree", "sight", r"within (\d+) tiles"), k.get("SCREE_TILES")),
+        ("scree faster (%)", num("scree", "sight", r"(\d+)% faster"),
+         (lambda v: v - 100 if v else None)(pct(k.get("SCREE_FILL")))),
+        ("ember_vent seconds", num("ember_vent", "movement", r"every (\d+) seconds"),
+         k.get("EMBER_SECONDS")),
+        ("ember_vent light", num("ember_vent", "sight", r"Lights (\d+) tiles"),
+         k.get("EMBER_LIGHT_TILES")),
+        ("static_stone seconds", num("static_stone", "movement", r"every (\d+) seconds"),
+         k.get("STONE_SECONDS")),
+        ("static_stone tiles", num("static_stone", "movement", r"within (\d+) tile"),
+         k.get("STONE_TILES")),
+        ("hedge cut", num("hedge", "movement", r"in (\d+) seconds"), k.get("HEDGE_CUT_SECONDS")),
+        ("boulder smash", num("boulder", "movement", r"about (\d+) seconds"),
+         k.get("BOULDER_SMASH_SECONDS")),
+    ]
+    for what, want, have in rows:
+        ok = want is not None and have is not None and float(want) == float(have)
+        (checked if ok else wrong).append(f"terrain.json {what}: content {want}, simulation {have}")
+    return {"checked": checked, "wrong": wrong}
+
+
 def source_text() -> str:
     return "\n".join((HERE / p).read_text() for p in SOURCES) + \
         (HERE / "src/tests.rs").read_text()
@@ -614,6 +668,9 @@ def self_test() -> int:
     assert any("stormhound faster" in w for w in slow["wrong"]), slow
     jammed = ruleborn_compare(text.replace("(Power::Jam, 2)", "(Power::Jam, 3)"))
     assert any("the_tinkerer" in w for w in jammed["wrong"]), jammed
+    assert not terrain_compare(text)["wrong"], terrain_compare(text)["wrong"]
+    muddy = terrain_compare(text.replace("STREAM_PACE: u8 = 80", "STREAM_PACE: u8 = 70"))
+    assert any("stream pace" in w for w in muddy["wrong"]), muddy
     moved = wards_compare(text.replace("SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 5 / 2",
                                        "SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 2"))
     assert any("time_snare freeze" in w for w in moved["wrong"]), moved
@@ -648,9 +705,11 @@ def main() -> int:
     laws = laws_compare(source_text())
     wards = wards_compare(source_text())
     kinds = ruleborn_compare(source_text())
-    r["checked"] += facts["checked"] + laws["checked"] + wards["checked"] + kinds["checked"]
-    r["wrong"] += facts["wrong"] + laws["wrong"] + wards["wrong"] + kinds["wrong"]
-    print(f"  content: {len(r['checked'])} values agree with content/ (detection, roles, wards, law effects, ruleborn), "
+    ground = terrain_compare(source_text())
+    r["checked"] += facts["checked"] + laws["checked"] + wards["checked"] + kinds["checked"] \
+        + ground["checked"]
+    r["wrong"] += facts["wrong"] + laws["wrong"] + wards["wrong"] + kinds["wrong"] + ground["wrong"]
+    print(f"  content: {len(r['checked'])} values agree with content/ (detection, roles, wards, law effects, ruleborn, terrain), "
           f"and tools/design_facts.py")
     for line in r["wrong"]:
         print(f"  DISAGREES {line}")

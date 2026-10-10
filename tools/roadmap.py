@@ -2030,9 +2030,26 @@ dict(
                   "publishing (a server test)",
              blocked_by=["TD.14", "TC.12"],
              register=["C48", "G46", "D61"]),
-        dict(id="TD.15", owner="claude", status="ready",
+        dict(id="TD.15", owner="claude", status="doing",
              title="Terrain in the simulation: the missing features, moss, heights",
-             detail="The simulation has 5 of §6.2's 39 features (rock pillar, "
+             detail="<strong>Built so far:</strong> twenty-two of §6.2's features "
+                    "and moss, each with a test and its numbers held to "
+                    "<code>content/terrain.json</code> by "
+                    "<code>sim/content_gate.py</code> — the hedge (cut through in "
+                    "3 s), tree, boulder (a Breaker smashes it in 6 s), statue, "
+                    "crystal outcrop, lava crack, stream, gravel path, thicket, "
+                    "shade canopy, bush, hot spring, lantern post, scree, ember "
+                    "vent and static stone beside the first five and raised "
+                    "ground. A feature's code rides in the island's two spare "
+                    "flag bits, so every island written before keeps its bytes; "
+                    "the builder offers every feature built. Completion counts "
+                    "features by their tests. What §6.2 leaves unmeasured is G78. "
+                    "<strong>Left:</strong> the pit, arch, stepping stones, pond, "
+                    "marsh, ice sheet, flower meadow, bounce mushroom, updraft "
+                    "vent and bell post, the cliff edge's hidden foot, moss on "
+                    "every bare tile, and §6.1's terrain points at publishing."
+                    "<br><br>"
+                    "The simulation had 5 of §6.2's 39 features (rock pillar, "
                     "ruin wall, fence, fog bank, tall grass); the terrain editor, "
                     "the realm view and the curation screens need the rest. "
                     "Completion's Terrain editing row reads done on one test (G67). "
@@ -2053,7 +2070,7 @@ dict(
                   "realm over §6.1's terrain points refused alike by the "
                   "simulation, the extension and the server, the Heart's at its "
                   "Spire level and a Workshop island at its realm level's",
-             register=["G56", "G67", "G65"]),
+             register=["G56", "G67", "G65", "G78"]),
         dict(id="TD.38", owner="claude", status="blocked",
              title="Directional features and tunnels",
              detail="Ramps, stairs and vines need an up side, a waterfall a ledge "
@@ -2293,7 +2310,7 @@ dict(
                   "edits applied, and check_document passes on it",
              evidence="tools/audit_register.py EDITS; tools/check_edits.py",
              blocked_by=[],
-             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77"]),
+             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77", "G78"]),
         dict(id="TD.74", owner="claude", status="blocked",
              title="Notifications and session telemetry on the device",
              detail="The server sends §14.6's notifications, keeps the night "

@@ -376,7 +376,9 @@ func _run() -> void:
 	var builder: BuilderScreen = await _mount("builder")
 	builder.tool = BuilderScreen.Tool.GROUND
 	var laid := {Vector2i(2, 4): "rock_pillar", Vector2i(3, 4): "gravel_path",
-		Vector2i(4, 4): "stream", Vector2i(5, 4): "raised_ground", Vector2i(6, 4): "tall_grass"}
+		Vector2i(4, 4): "stream", Vector2i(5, 4): "raised_ground", Vector2i(6, 4): "tall_grass",
+		Vector2i(7, 4): "hedge", Vector2i(8, 4): "lantern_post", Vector2i(2, 6): "hot_spring",
+		Vector2i(3, 6): "boulder"}
 	for at: Vector2i in laid:
 		builder.kind = builder.kinds().find(laid[at])
 		builder.tap_tile(at)

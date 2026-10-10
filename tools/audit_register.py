@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9857,6 +9857,27 @@ dict(id="F62", kind="finding", severity="significant", status="open",
          "holds 38.8% with the ladder against a band centred on 37.5%; the edits "
          "are drafted."),
 
+dict(id="G78", kind="gap", severity="minor", status="open",
+     title="§6.2 gives the ember vent and the static stone no harm, and the lantern "
+           "past an outcrop and a bush’s “one” no measure, and the simulation "
+           "reads each one way",
+     refs=["6.2"],
+     body="Building §6.2’s features (TD.15) needed four things the table leaves "
+          "unsaid. <strong>The ember vent</strong> <em>“hurts anyone on it”</em> and "
+          "<strong>the static stone</strong> <em>“zaps anyone within 1 tile”</em>, "
+          "with no size: <code>sim/</code> takes Wildfire’s 5% of full health for "
+          "a burst and a Static Coil’s 8% for a zap, crew and guards alike. "
+          "<strong>Past an outcrop</strong>, <em>“lanterns reach 2 tiles further”</em>: "
+          "a lantern post with an outcrop beside it lights 5 tiles all round, "
+          "since nothing says which way the light bends. <strong>A bush</strong> "
+          "<em>“hides one still character”</em>: two in one bush are both seen. "
+          "Every reach is centre to centre, as everywhere in the simulation, and "
+          "a lantern’s light lifts every hiding place inside it, fog included "
+          "(<em>“nothing hides inside the light”</em>). Found building TD.15.",
+     rec="State the simulation’s readings in §6.2 (the edits are drafted), or "
+         "give other numbers and the simulation follows (<code>sim/src/grid.rs"
+         "</code>)."),
+
 dict(id="G77", kind="gap", severity="minor", status="open",
      title="§11.7, §11.11 and §12.6 leave open who an ally is, the waiting order, "
            "who stops counting and what a Sage’s power is aimed at, and the "
@@ -11203,6 +11224,11 @@ V37 = {
     "Found building TD.69, after v3.7: a balance figure for the document, with "
     "its edits drafted (TD.75)."),
 
+"G78": dict(status="open", left="document", note=
+    "Found building TD.15, after v3.7: two harms, a light and a bush’s “one” "
+    "with no measure in §6.2, read one way in the simulation, with the edits "
+    "that state those readings drafted (TD.75)."),
+
 "G77": dict(status="open", left="document", note=
     "Found building TD.12, after v3.7: three readings the simulation takes, with "
     "their edits drafted (TD.75), the Sage’s readings beside them, and four "
@@ -11305,10 +11331,11 @@ V37 = {
     "abilities, Sage powers and casts as their own phase 1 deliverable in 33 "
     "equal parts, read from <code>sim/</code>’s systems: the crew manifest, "
     "§12.6’s rules, 12 of the 18 abilities and 7 of the Sage’s 12 powers are "
-    "built (TD.12), 21 of 33; casts are not. Terrain reads 5 of 39 features and "
-    "moss (15%), the builder’s Terrain editing scaled by it. Left: six "
-    "abilities, five Sage powers, casts, the event log and terrain (TD.12, "
-    "TD.13, TD.15)."),
+    "built (TD.12), 21 of 33; casts are not. The event log is built (TD.13). "
+    "Terrain reads 22 of 39 features and moss, each by its test (TD.15), and "
+    "the builder’s Terrain editing by what it offers of those. Left: six "
+    "abilities, five Sage powers, casts and seventeen features (TD.12, TD.15, "
+    "TD.38)."),
 
 "G68": dict(status="done", note=
     "<strong>Built (TD.47).</strong> §26.8’s phase 0: a recorded build for each "
@@ -14593,6 +14620,28 @@ EDITS = {
                  "for one task in three); iteration 415 (301 to 531), a floor at 1x "
                  "the build; plan about 830 (602 to 1,062)",
          why="§26.8 and §27.2, with phases 4a to 4c. C72."),
+],
+"G78": [
+    dict(section="6.2",
+         action="replace",
+         find="Bursts of flame every 8 seconds; hurts anyone on it",
+         replace="Bursts of flame every 8 seconds; hurts anyone on it 5% of their full health",
+         why="No size was given; Wildfire's burn is the nearest stated flame. G78."),
+    dict(section="6.2",
+         action="replace",
+         find="Zaps anyone within 1 tile every 4 seconds",
+         replace="Zaps anyone within 1 tile every 4 seconds for 8% of their full health",
+         why="No size was given; the Static Coil's shock is the nearest stated zap. G78."),
+    dict(section="6.2",
+         action="replace",
+         find="See-through; bends light, so lanterns reach 2 tiles further past it",
+         replace="See-through; bends light, so a lantern post beside it lights 2 tiles further all round",
+         why="Which way the light bends was not said. G78."),
+    dict(section="6.2",
+         action="replace",
+         find="Hides one still character completely",
+         replace="Hides one still character completely; two in one bush are both seen",
+         why="“One” read as a limit. G78."),
 ],
 "G77": [
     dict(section="12.6",

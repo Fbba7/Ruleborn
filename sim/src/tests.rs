@@ -2491,11 +2491,14 @@ fn a_second_encoding_of_an_island_is_refused() {
     let mut hundred = good.clone();
     hundred[tile0 + 1] = 100;            // a pace of 100 is written as 0
     assert_eq!(Island::decode(&hundred), Err(Malformed::NonCanonicalPace));
+    // Flag bits 2 and 3 are a feature code's high bits (TD.15); bit 4 and
+    // above mean nothing.
     let mut flags = good.clone();
-    flags[tile0 + 2] = 4;
+    flags[tile0 + 2] = 16;
     assert_eq!(Island::decode(&flags), Err(Malformed::FlagBits));
     let mut feature = good.clone();
-    feature[tile0] = 9;
+    feature[tile0] = 15;
+    feature[tile0 + 2] = 12;             // code 63, which is no feature
     assert_eq!(Island::decode(&feature), Err(Malformed::UnknownFeature));
     let mut magic = good.clone();
     magic[3] = b'2';
@@ -4820,4 +4823,242 @@ fn every_golden_heist_has_a_decisive_moment() {
         let grade = world.outcome().grade;
         assert!(world.log.moment(grade).is_some(), "{name}: {grade:?} has one");
     }
+}
+
+// -- §6.2's features (TD.15) ----------------------------------------------------
+
+use crate::grid;
+
+/// A Scout guard at (3, 3) facing south, and crew member 0 at (3, y),
+/// on `vault_world`'s open ground with `f` placed under the crew member:
+/// whether the guard notices it this tick, standing still.
+fn noticed_on(f: Option<Feature>, y: u16) -> bool {
+    let mut world = vault_world(1);
+    let gi = post(&mut world, 0, 3, 3);
+    world.guards[gi].facing = Ang::from_degrees(90);
+    if let Some(f) = f {
+        world.grid.place(3, y, f);
+    }
+    put(&mut world, 0, 3, y);
+    world.noticed(gi, 0).is_some()
+}
+
+/// Whether a route can be found from (1, 5) to (5, 5) with `f` on (3, 4..6).
+fn walled_by(f: Feature) -> bool {
+    let mut world = vault_world(1);
+    for y in 0..14 {
+        world.grid.place(3, y, f);
+    }
+    let a = world.grid.index(1, 5).unwrap();
+    let b = world.grid.index(5, 5).unwrap();
+    path::find(&world.grid, a, b).is_none()
+}
+
+/// Whether a guard at (1, 5) facing east sees a crew member at (5, 5) over a
+/// line of `f` on x = 3.
+fn seen_past(f: Feature) -> bool {
+    let mut world = vault_world(1);
+    for y in 0..14 {
+        world.grid.place(3, y, f);
+    }
+    let gi = post(&mut world, 0, 1, 5);
+    world.guards[gi].facing = Ang::from_degrees(0);
+    put(&mut world, 0, 5, 5);
+    world.noticed(gi, 0).is_some()
+}
+
+#[test]
+fn a_hedge_blocks_feet_and_eyes_and_is_cut_through_in_three_seconds() {
+    assert!(walled_by(Feature::Hedge) && !seen_past(Feature::Hedge));
+    let mut world = vault_world(1);
+    world.grid.place(4, 4, Feature::Hedge);
+    put(&mut world, 0, 4, 5);
+    world.raiders[0].task = Task::Break;
+    world.raiders[0].target = world.grid.index(4, 4).unwrap();
+    run_for(&mut world, grid::HEDGE_CUT_SECONDS * TICKS_PER_SECOND - 1);
+    assert_eq!(world.grid.feature(world.grid.index(4, 4).unwrap()), Some(Feature::Hedge));
+    world.step();
+    assert_eq!(world.grid.feature(world.grid.index(4, 4).unwrap()), None, "cut through at 3 s");
+}
+
+#[test]
+fn a_tree_is_walked_round_and_blocks_sight() {
+    assert!(walled_by(Feature::Tree) && !seen_past(Feature::Tree));
+}
+
+#[test]
+fn a_boulder_blocks_until_a_breaker_smashes_it_in_six_seconds() {
+    assert!(walled_by(Feature::Boulder) && !seen_past(Feature::Boulder));
+    let smashed = |role: Role| {
+        let mut world = vault_world(1);
+        world.grid.place(4, 4, Feature::Boulder);
+        world.raiders[0].role = role;
+        put(&mut world, 0, 4, 5);
+        world.raiders[0].task = Task::Break;
+        world.raiders[0].target = world.grid.index(4, 4).unwrap();
+        run_for(&mut world, grid::BOULDER_SMASH_SECONDS * TICKS_PER_SECOND);
+        world.grid.feature(world.grid.index(4, 4).unwrap()).is_none()
+    };
+    assert!(smashed(Role::Breaker), "\"a Breaker smashes it in about 6 seconds\"");
+    assert!(!smashed(Role::Scout), "nobody else can");
+}
+
+#[test]
+fn a_statue_blocks_one_tile_and_gives_cover() {
+    assert!(walled_by(Feature::Statue) && !seen_past(Feature::Statue));
+}
+
+#[test]
+fn a_crystal_outcrop_blocks_feet_not_eyes_and_carries_a_lantern_further() {
+    assert!(walled_by(Feature::CrystalOutcrop) && seen_past(Feature::CrystalOutcrop));
+    let lit = |outcrop: bool| {
+        let mut world = vault_world(1);
+        world.grid.place(2, 2, Feature::LanternPost);
+        if outcrop {
+            world.grid.place(2, 3, Feature::CrystalOutcrop);
+        }
+        world.step();
+        world.lantern_lit(world.grid.index(2, 7).unwrap())
+    };
+    assert!(!lit(false), "five tiles off: past a lantern's 3");
+    assert!(lit(true), "\"lanterns reach 2 tiles further past it\"");
+}
+
+#[test]
+fn a_lava_crack_is_impassable_and_seen_over() {
+    assert!(walled_by(Feature::LavaCrack) && seen_past(Feature::LavaCrack));
+}
+
+#[test]
+fn a_stream_is_waded_twenty_percent_slower_and_is_water() {
+    let mut world = vault_world(1);
+    world.grid.place(4, 4, Feature::Stream);
+    let t = world.grid.index(4, 4).unwrap();
+    assert_eq!(world.grid.at(t).pace(), Fx::from_ratio(80, 100));
+    assert_eq!(world.grid.surface(t), grid::Surface::Water, "louder underfoot (12.17)");
+}
+
+#[test]
+fn a_gravel_path_is_fifteen_percent_faster_and_crunchy() {
+    let mut world = vault_world(1);
+    world.grid.place(4, 4, Feature::GravelPath);
+    let t = world.grid.index(4, 4).unwrap();
+    assert_eq!(world.grid.at(t).pace(), Fx::from_ratio(115, 100));
+    assert_eq!(world.grid.surface(t), grid::Surface::Gravel);
+}
+
+#[test]
+fn a_thicket_is_slower_and_hides_anyone_beyond_a_tile() {
+    let mut world = vault_world(1);
+    world.grid.place(4, 4, Feature::Thicket);
+    assert_eq!(world.grid.at(world.grid.index(4, 4).unwrap()).pace(), Fx::from_ratio(70, 100));
+    assert!(noticed_on(Some(Feature::Thicket), 4), "a tile off: seen");
+    assert!(!noticed_on(Some(Feature::Thicket), 6), "three tiles off: hidden");
+    assert!(noticed_on(None, 6), "and seen there on open ground");
+}
+
+#[test]
+fn a_shade_canopy_hides_anyone_beyond_three_tiles() {
+    assert!(noticed_on(Some(Feature::ShadeCanopy), 6));
+    assert!(!noticed_on(Some(Feature::ShadeCanopy), 7));
+    assert!(noticed_on(None, 7));
+}
+
+#[test]
+fn a_bush_hides_one_still_character_completely() {
+    assert!(!noticed_on(Some(Feature::Bush), 4), "still, alone, a tile off: hidden");
+    let mut world = vault_world(2);
+    let gi = post(&mut world, 0, 3, 3);
+    world.guards[gi].facing = Ang::from_degrees(90);
+    world.grid.place(3, 4, Feature::Bush);
+    put(&mut world, 0, 3, 4);
+    put(&mut world, 1, 3, 4);
+    assert!(world.noticed(gi, 0).is_some(), "two in one bush: \"one\" character");
+}
+
+#[test]
+fn a_hot_spring_heals_both_sides_and_its_steam_hides_beyond_two_tiles() {
+    let mut world = vault_world(1);
+    world.grid.place(5, 5, Feature::HotSpring);
+    put(&mut world, 0, 5, 5);
+    world.raiders[0].health = 50;
+    let gi = post(&mut world, 0, 9, 9);
+    world.grid.place(9, 9, Feature::HotSpring);
+    world.guards[gi].health = 50;
+    run_for(&mut world, TICKS_PER_SECOND);
+    assert_eq!(world.raiders[0].health, 50 + Role::Scout.health() * 2 / 100);
+    assert_eq!(world.guards[gi].health, 50 + Role::Scout.health() * 2 / 100, "for both sides");
+    assert!(noticed_on(Some(Feature::HotSpring), 5));
+    assert!(!noticed_on(Some(Feature::HotSpring), 6), "steam, beyond 2 tiles");
+}
+
+#[test]
+fn a_lantern_post_lights_three_tiles_and_nothing_hides_inside_the_light() {
+    let seen = |lantern: bool| {
+        let mut world = vault_world(1);
+        let gi = post(&mut world, 0, 3, 3);
+        world.guards[gi].facing = Ang::from_degrees(90);
+        world.grid.place(3, 4, Feature::Bush);
+        if lantern {
+            world.grid.place(5, 4, Feature::LanternPost);
+        }
+        put(&mut world, 0, 3, 4);
+        world.step();
+        world.guards[gi].suspicion > 0
+    };
+    assert!(!seen(false), "in a bush, hidden");
+    assert!(seen(true), "in a bush two tiles from a lantern, seen");
+}
+
+#[test]
+fn scree_makes_guards_within_four_tiles_notice_a_quarter_faster() {
+    let fill = |scree: bool, y: u16| {
+        let mut world = vault_world(1);
+        let gi = post(&mut world, 0, 3, 3);
+        world.guards[gi].facing = Ang::from_degrees(90);
+        if scree {
+            world.grid.place(3, y, Feature::Scree);
+        }
+        put(&mut world, 0, 3, y);
+        world.noticed(gi, 0).map(|(n, _)| n)
+    };
+    assert_eq!(fill(true, 5).unwrap(), fill(false, 5).unwrap() * 5 / 4, "two tiles off");
+    assert_eq!(fill(true, 8), fill(false, 8), "five tiles off: as on open ground");
+}
+
+#[test]
+fn an_ember_vent_bursts_every_eight_seconds_and_hurts_whoever_is_on_it() {
+    let mut world = vault_world(1);
+    world.grid.place(5, 5, Feature::EmberVent);
+    put(&mut world, 0, 5, 5);
+    run_for(&mut world, grid::EMBER_SECONDS * TICKS_PER_SECOND);
+    assert_eq!(world.raiders[0].health, Role::Scout.health(), "nothing before the burst");
+    world.step();
+    assert_eq!(world.raiders[0].health,
+               Role::Scout.health() - Role::Scout.health() * h::BURN_DAMAGE.0 / h::BURN_DAMAGE.1);
+    assert!(world.lantern_lit(world.grid.index(5, 7).unwrap()), "\"Lights 2 tiles when it bursts\"");
+}
+
+#[test]
+fn a_static_stone_zaps_anyone_within_a_tile_every_four_seconds() {
+    let mut world = vault_world(2);
+    world.grid.place(5, 5, Feature::StaticStone);
+    put(&mut world, 0, 5, 6);
+    put(&mut world, 1, 5, 8);
+    run_for(&mut world, grid::STONE_SECONDS * TICKS_PER_SECOND + 1);
+    let zap = Role::Scout.health() * h::COIL_DAMAGE.0 / h::COIL_DAMAGE.1;
+    assert_eq!(world.raiders[0].health, Role::Scout.health() - zap);
+    assert_eq!(world.raiders[1].health, Role::Breaker.health(), "three tiles off");
+}
+
+#[test]
+fn every_feature_built_travels_in_the_island_and_reads_back() {
+    let mut island = Island::example_open();
+    for (i, &(f, _, _)) in crate::island::FEATURE_CODES.iter().enumerate() {
+        assert!(island.set_feature((i % 10) as u8, 9 + (i / 10) as u8 % 2, Some(f)), "{f:?}");
+    }
+    let back = Island::decode(&island.encode()).unwrap();
+    assert_eq!(back.encode(), island.encode());
+    assert_eq!(Island::decode(&Island::example().encode()).unwrap().digest(),
+               Island::example().digest(), "an island of the old five keeps its bytes");
 }

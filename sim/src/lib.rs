@@ -825,6 +825,14 @@ pub struct World {
     pub log: Log,
     why: Cause,
     found_logged: i32,
+    /// §6.2's features that act on what is around them, found on the grid
+    /// at the start of each tick: lantern posts (each with whether a crystal
+    /// outcrop beside it carries its light further), ember vents, static
+    /// stones and hot springs.
+    lanterns: Vec<(grid::TileIndex, bool)>,
+    vents: Vec<grid::TileIndex>,
+    stones: Vec<grid::TileIndex>,
+    springs: Vec<grid::TileIndex>,
 }
 
 impl World {
@@ -955,6 +963,10 @@ impl World {
             log: Log::default(),
             why: Cause::Table,
             found_logged: 0,
+            lanterns: Vec::new(),
+            vents: Vec::new(),
+            stones: Vec::new(),
+            springs: Vec::new(),
         }
     }
 
@@ -1645,6 +1657,7 @@ impl World {
     /// apply yet are carried on the sheet and read by nothing; the content
     /// gate lists them.
     fn phase_laws(&mut self) {
+        self.find_terrain();
         self.refresh_sheet();
         self.combinations();
         // A law switched off by its pylon takes its extra health with it:
@@ -1960,12 +1973,29 @@ impl World {
             _ => raider.at,
         };
         let (d, in_cone, from, to) = self.sees_geometry(gi, seen_at)?;
+        // A lantern post: "Lights 3 tiles: nothing hides inside the light".
+        let lit = self.lantern_lit(to);
         // "Standing still in tall grass makes you invisible until a
         // guard walks into the tile."
-        if raider.still() && from != to
+        if raider.still() && from != to && !lit
             && self.grid.feature(to) == Some(Feature::TallGrass)
         {
             return None;
+        }
+        match self.grid.feature(to) {
+            // A thicket, a shade canopy, a hot spring's steam: "hides anyone
+            // inside beyond N tiles".
+            Some(f) if !lit && f.hides_beyond().is_some_and(|n| d > Fx::from_int(n)) => {
+                return None;
+            }
+            // A bush "hides one still character completely".
+            Some(Feature::Bush) if !lit && raider.still()
+                && self.raiders.iter().filter(|o| o.active()
+                    && self.grid.tile_at(o.at.x, o.at.y) == Some(to)).count() == 1 =>
+            {
+                return None;
+            }
+            _ => {}
         }
         if !self.line_clear(from, to) {
             return None;
@@ -1983,9 +2013,16 @@ impl World {
         let (fn_, fd) = self.sheet.factor(Param::SuspicionFill);
         num *= fn_ as i32 * self.watch.0 .0;
         den *= fd as i32 * self.watch.0 .1;
-        if self.unlit(to) {
+        if self.unlit(to) && !lit {
             num *= UNLIT.0;
             den *= UNLIT.1;
+        }
+        // Scree: "Guards within 4 tiles notice 25% faster."
+        if self.grid.feature(to) == Some(Feature::Scree)
+            && guard.at.distance(raider.at) <= Fx::from_int(grid::SCREE_TILES)
+        {
+            num *= grid::SCREE_FILL.0;
+            den *= grid::SCREE_FILL.1;
         }
         if !in_cone {
             num *= PERIPHERAL.0;
@@ -3108,6 +3145,33 @@ impl World {
             if r.task != Task::Break {
                 continue;
             }
+            // A hedge is "cut through in 3 seconds" by anyone; a boulder a
+            // Breaker "smashes in about 6 seconds", and nobody else can.
+            let need = match self.grid.feature(r.target) {
+                Some(Feature::Hedge) => Some(grid::HEDGE_CUT_SECONDS * TICKS_PER_SECOND),
+                Some(Feature::Boulder) if r.role == Role::Breaker => {
+                    Some(grid::BOULDER_SMASH_SECONDS * TICKS_PER_SECOND)
+                }
+                Some(Feature::Boulder) => Some(0),
+                _ => None,
+            };
+            if let Some(need) = need {
+                let beside = self.grid.tile_at(r.at.x, r.at.y)
+                    .is_some_and(|t| self.grid.neighbours(r.target).contains(&Some(t)));
+                if need == 0 || !beside || !r.acting(now) {
+                    self.raiders[ri].swing = 0;
+                    continue;
+                }
+                self.raiders[ri].swing += 1;
+                if self.raiders[ri].swing >= need {
+                    let t = self.raiders[ri].target;
+                    self.grid.clear(t);
+                    self.raiders[ri].swing = 0;
+                    self.raiders[ri].task = Task::None;
+                }
+                continue;
+            }
+            let r = &self.raiders[ri];
             let li = self.laws.iter().position(|l| l.pylon == r.target && l.broken_at.is_none());
             let wi = self.wards.iter().position(|w| w.tile == r.target && w.live());
             let beside = self.grid.tile_at(r.at.x, r.at.y)
@@ -3190,6 +3254,8 @@ impl World {
         // comes back: a law that revives is a different rule.
         if now % TICKS_PER_SECOND == 0 {
             self.heal();
+            self.terrain_acts();
+            self.shield();
         }
         // The Gardener's Renew: "heal the crew 30% over 5 s" — a fifth of it
         // at each of the five seconds after.
@@ -3661,6 +3727,118 @@ impl World {
         g.health = 0;
         g.knocked_out = true;
         self.log.push(self.tick, Event::GuardDown { guard: gi as u16 });
+    }
+
+    /// The features that act on what is around them, read off the grid once
+    /// a tick, so a hedge cut or grass grown this tick is seen next tick.
+    fn find_terrain(&mut self) {
+        self.lanterns.clear();
+        self.vents.clear();
+        self.stones.clear();
+        self.springs.clear();
+        for t in 0..self.grid.len() as grid::TileIndex {
+            match self.grid.feature(t) {
+                Some(Feature::LanternPost) => {
+                    let outcrop = self.grid.neighbours(t).iter().flatten()
+                        .any(|&n| self.grid.feature(n) == Some(Feature::CrystalOutcrop));
+                    self.lanterns.push((t, outcrop));
+                }
+                Some(Feature::EmberVent) => self.vents.push(t),
+                Some(Feature::StaticStone) => self.stones.push(t),
+                Some(Feature::HotSpring) => self.springs.push(t),
+                _ => {}
+            }
+        }
+    }
+
+    /// Whether a tile is in a light nothing hides inside: a lantern post's 3
+    /// tiles, 2 more past a crystal outcrop beside it, or an ember vent's 2
+    /// in the second it bursts. Measured centre to centre.
+    fn lantern_lit(&self, tile: grid::TileIndex) -> bool {
+        let (x, y) = self.grid.centre(tile);
+        let at = Point { x, y };
+        let near = |t: grid::TileIndex, r: i32| {
+            let (cx, cy) = self.grid.centre(t);
+            at.distance(Point { x: cx, y: cy }) <= Fx::from_int(r)
+        };
+        let bursting = self.tick % (grid::EMBER_SECONDS * TICKS_PER_SECOND) < TICKS_PER_SECOND
+            && self.tick >= grid::EMBER_SECONDS * TICKS_PER_SECOND;
+        self.lanterns.iter().any(|&(t, outcrop)| {
+            near(t, grid::LANTERN_TILES + if outcrop { grid::OUTCROP_EXTRA_TILES } else { 0 })
+        }) || (bursting && self.vents.iter().any(|&t| near(t, grid::EMBER_LIGHT_TILES)))
+    }
+
+    /// §6.2's features that act once a second: a hot spring "heals 2% health
+    /// a second while standing in it, for both sides"; an ember vent's
+    /// "bursts of flame every 8 seconds" hurt anyone on it, and a static
+    /// stone "zaps anyone within 1 tile every 4 seconds". §6.2 gives neither
+    /// hurt a size: the burst takes Wildfire's 5% of full health and the zap
+    /// a Static Coil's 8% (register G78).
+    fn terrain_acts(&mut self) {
+        let now = self.tick;
+        let sheet = self.sheet;
+        let on = |grid: &Grid, tiles: &[grid::TileIndex], p: Point| {
+            grid.tile_at(p.x, p.y).is_some_and(|t| tiles.contains(&t))
+        };
+        let near = |grid: &Grid, tiles: &[grid::TileIndex], p: Point, r: i32| {
+            tiles.iter().any(|&t| {
+                let (x, y) = grid.centre(t);
+                p.distance(Point { x, y }) <= Fx::from_int(r)
+            })
+        };
+        if !self.springs.is_empty() {
+            let (n, d) = grid::SPRING_HEAL;
+            for r in self.raiders.iter_mut() {
+                if r.active() && on(&self.grid, &self.springs, r.at) {
+                    let full = r.full(&sheet);
+                    r.health = (r.health + full * n / d).min(full);
+                }
+            }
+            for g in self.guards.iter_mut() {
+                if !g.knocked_out && on(&self.grid, &self.springs, g.at) {
+                    let full = full_health(&sheet, g.role);
+                    g.health = (g.health + full * n / d).min(full);
+                }
+            }
+        }
+        let burst = now > 0 && now % (grid::EMBER_SECONDS * TICKS_PER_SECOND) == 0
+            && !self.vents.is_empty();
+        let zap = now > 0 && now % (grid::STONE_SECONDS * TICKS_PER_SECOND) == 0
+            && !self.stones.is_empty();
+        if !(burst || zap) {
+            return;
+        }
+        let hurt = |full: i32, at: Point, grid: &Grid, vents: &[grid::TileIndex],
+                    stones: &[grid::TileIndex]| {
+            let mut h = 0;
+            if burst && on(grid, vents, at) {
+                h += full * heist::BURN_DAMAGE.0 / heist::BURN_DAMAGE.1;
+            }
+            if zap && near(grid, stones, at, grid::STONE_TILES) {
+                h += full * heist::COIL_DAMAGE.0 / heist::COIL_DAMAGE.1;
+            }
+            h
+        };
+        for r in self.raiders.iter_mut().filter(|r| r.active()) {
+            let h = hurt(r.full(&sheet), r.at, &self.grid, &self.vents, &self.stones);
+            if h > 0 {
+                r.health -= h;
+                r.hurt_by = Hurt::Law;
+            }
+        }
+        for gi in 0..self.guards.len() {
+            let g = &self.guards[gi];
+            if g.knocked_out {
+                continue;
+            }
+            let h = hurt(full_health(&sheet, g.role), g.at, &self.grid, &self.vents, &self.stones);
+            if h > 0 {
+                self.guards[gi].health -= h;
+                if self.guards[gi].health <= 0 {
+                    self.knock_out_guard(gi);
+                }
+            }
+        }
     }
 
     /// Thorns (§7.3's Touch damage row): "touching walls or hedges costs 5%
@@ -4535,6 +4713,23 @@ pub fn rules_version() -> [u8; 32] {
                                       k.ability as u8, k.ability.built() as u8]);
         }
         for n in ruleborn::NUMBERS {
+            bytes.extend_from_slice(&n.to_le_bytes());
+        }
+        // §6.2's features: each one's code, what it does to feet and eyes,
+        // and its numbers. The goldens' fixture has none of the new ones.
+        for &(f, id, code) in island::FEATURE_CODES.iter() {
+            bytes.extend_from_slice(id.as_bytes());
+            bytes.extend_from_slice(&[0, code, f.terrain().passable() as u8,
+                                      f.hides_beyond().unwrap_or(-1) as u8]);
+            if let grid::Terrain::Pace(p) = f.terrain() {
+                bytes.push(p);
+            }
+        }
+        for n in [grid::LANTERN_TILES, grid::OUTCROP_EXTRA_TILES, grid::SCREE_TILES,
+                  grid::SCREE_FILL.0, grid::SCREE_FILL.1, grid::SPRING_HEAL.0, grid::SPRING_HEAL.1,
+                  grid::EMBER_SECONDS as i32, grid::EMBER_LIGHT_TILES, grid::STONE_SECONDS as i32,
+                  grid::STONE_TILES, grid::HEDGE_CUT_SECONDS as i32,
+                  grid::BOULDER_SMASH_SECONDS as i32] {
             bytes.extend_from_slice(&n.to_le_bytes());
         }
         // §11.7's Sages: each one's powers, their uses and whether built.

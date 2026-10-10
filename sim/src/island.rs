@@ -31,7 +31,12 @@
 //! side x side tiles, row-major, 3 bytes each:
 //!     feature (low 4 bits) | surface << 4 | height << 6
 //!     pace, per cent of normal speed; 0 for normal
-//!     flags: 1 unlit, 2 climbable
+//!     flags: 1 unlit, 2 climbable; bits 2-3 the feature's high bits
+//! ```
+//! A feature's code is six bits, its low four in the first byte and its high
+//! two in the flags, so every island written before features past code 15
+//! keeps its bytes and its hash (TD.15).
+//! ```text
 //! guards u8, then (role row u8, x u8, y u8) each
 //! wards u8, then (kind u8, x u8, y u8) each
 //! laws u8, then (id length u8, id, x u8, y u8) each
@@ -179,29 +184,47 @@ impl Problem {
     }
 }
 
+/// §6.2's ground features by their code in the bundle. The code is part of
+/// every island's bytes, so it is written out and never reused.
+pub const FEATURE_CODES: [(Feature, &str, u8); 21] = [
+    (Feature::RockPillar, "rock_pillar", 1),
+    (Feature::RuinWall, "ruin_wall", 2),
+    (Feature::Fence, "fence", 3),
+    (Feature::FogBank, "fog_bank", 4),
+    (Feature::TallGrass, "tall_grass", 5),
+    (Feature::Stream, "stream", 6),
+    (Feature::Bush, "bush", 7),
+    (Feature::Hedge, "hedge", 8),
+    (Feature::Tree, "tree", 9),
+    (Feature::Thicket, "thicket", 10),
+    (Feature::Boulder, "boulder", 11),
+    (Feature::GravelPath, "gravel_path", 12),
+    (Feature::Scree, "scree", 13),
+    (Feature::CrystalOutcrop, "crystal_outcrop", 14),
+    (Feature::LanternPost, "lantern_post", 15),
+    (Feature::ShadeCanopy, "shade_canopy", 16),
+    (Feature::EmberVent, "ember_vent", 17),
+    (Feature::LavaCrack, "lava_crack", 18),
+    (Feature::StaticStone, "static_stone", 19),
+    (Feature::Statue, "statue", 20),
+    (Feature::HotSpring, "hot_spring", 21),
+];
+
 fn feature_code(f: Option<Feature>) -> Option<u8> {
-    Some(match f {
-        None => 0,
-        Some(Feature::RockPillar) => 1,
-        Some(Feature::RuinWall) => 2,
-        Some(Feature::Fence) => 3,
-        Some(Feature::FogBank) => 4,
-        Some(Feature::TallGrass) => 5,
-        // Written by their own lists, never into the ground layer.
-        Some(Feature::Vault | Feature::Pylon | Feature::CrystalWall) => return None,
-    })
+    match f {
+        None => Some(0),
+        // The Vault, pylons and Crystal Walls are written by their own lists,
+        // never into the ground layer.
+        Some(f) => FEATURE_CODES.iter().find(|(g, _, _)| *g == f).map(|&(_, _, c)| c),
+    }
 }
 
 fn feature_from(code: u8) -> Result<Option<Feature>, Malformed> {
-    Ok(match code {
-        0 => None,
-        1 => Some(Feature::RockPillar),
-        2 => Some(Feature::RuinWall),
-        3 => Some(Feature::Fence),
-        4 => Some(Feature::FogBank),
-        5 => Some(Feature::TallGrass),
-        _ => return Err(Malformed::UnknownFeature),
-    })
+    if code == 0 {
+        return Ok(None);
+    }
+    FEATURE_CODES.iter().find(|&&(_, _, c)| c == code).map(|&(f, _, _)| Some(f))
+        .ok_or(Malformed::UnknownFeature)
 }
 
 fn surface_code(s: Surface) -> u8 {
@@ -231,7 +254,13 @@ pub fn ward_from(code: u8) -> Result<WardKind, Malformed> {
 
 /// Whether a feature stops feet, so a pace on it would mean nothing.
 fn blocks_feet(f: Option<Feature>) -> bool {
-    matches!(f, Some(Feature::RockPillar | Feature::RuinWall | Feature::Fence))
+    f.is_some_and(|f| !f.terrain().passable())
+}
+
+/// Whether a feature sets the tile's pace or surface itself, so a pace or a
+/// surface written beside it would be a second encoding of the same ground.
+fn sets_pace(f: Option<Feature>) -> bool {
+    blocks_feet(f) || f.is_some_and(|f| matches!(f.terrain(), crate::grid::Terrain::Pace(_)))
 }
 
 impl Island {
@@ -270,9 +299,9 @@ impl Island {
         out.extend_from_slice(&[self.vault.0, self.vault.1, self.entrance.0, self.entrance.1]);
         for t in &self.tiles {
             let feature = feature_code(t.feature).unwrap_or(0);
-            out.push(feature | surface_code(t.surface) << 4 | (t.height.min(3)) << 6);
+            out.push(feature & 15 | surface_code(t.surface) << 4 | (t.height.min(3)) << 6);
             out.push(if t.pace == 100 { 0 } else { t.pace });
-            out.push(t.unlit as u8 | (t.climbable as u8) << 1);
+            out.push(t.unlit as u8 | (t.climbable as u8) << 1 | (feature >> 4) << 2);
         }
         out.push(self.guards.len() as u8);
         for g in &self.guards {
@@ -320,11 +349,18 @@ impl Island {
         let mut tiles = Vec::with_capacity(side as usize * side as usize);
         for _ in 0..side as usize * side as usize {
             let t = take(3)?;
-            let feature = feature_from(t[0] & 15)?;
-            if t[2] & !3 != 0 {
+            if t[2] & !15 != 0 {
                 return Err(Malformed::FlagBits);
             }
-            if t[1] == 100 || (t[1] != 0 && blocks_feet(feature)) {
+            let feature = feature_from(t[0] & 15 | (t[2] >> 2) << 4)?;
+            if t[1] == 100 || (t[1] != 0 && sets_pace(feature)) {
+                return Err(Malformed::NonCanonicalPace);
+            }
+            // A stream is water and a gravel path gravel: any other surface
+            // written under one is a second encoding of the same island.
+            if feature.and_then(|f| f.surface())
+                .is_some_and(|s| surface_code(s) != t[0] >> 4 & 3)
+            {
                 return Err(Malformed::NonCanonicalPace);
             }
             tiles.push(Tile {
@@ -579,17 +615,26 @@ impl Island {
         }
         let t = self.tile_mut(x as u16, y as u16);
         t.feature = feature;
-        if blocks_feet(feature) {
+        if sets_pace(feature) {
             t.pace = 0;
+        }
+        if let Some(s) = feature.and_then(|f| f.surface()) {
+            t.surface = s;
         }
         true
     }
 
+    /// The ground underfoot; refused under a feature that is its own ground
+    /// (a stream is water).
     pub fn set_surface(&mut self, x: u8, y: u8, surface: Surface) -> bool {
         if !self.on_grid(x, y) {
             return false;
         }
-        self.tile_mut(x as u16, y as u16).surface = surface;
+        let t = self.tile_mut(x as u16, y as u16);
+        if t.feature.and_then(|f| f.surface()).is_some_and(|s| s != surface) {
+            return false;
+        }
+        t.surface = surface;
         true
     }
 

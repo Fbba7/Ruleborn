@@ -95,6 +95,31 @@ pub enum Surface {
     Moss,
 }
 
+/// §6.2's numbers for its features, as the table states them.
+pub const STREAM_PACE: u8 = 80;
+pub const GRAVEL_PACE: u8 = 115;
+pub const THICKET_PACE: u8 = 70;
+pub const THICKET_HIDES: i32 = 1;
+pub const SHADE_HIDES: i32 = 3;
+pub const STEAM_HIDES: i32 = 2;
+/// "Lights 3 tiles"; "lanterns reach 2 tiles further past" a crystal outcrop.
+pub const LANTERN_TILES: i32 = 3;
+pub const OUTCROP_EXTRA_TILES: i32 = 2;
+/// "Guards within 4 tiles notice 25% faster".
+pub const SCREE_TILES: i32 = 4;
+pub const SCREE_FILL: (i32, i32) = (5, 4);
+/// "Heals 2% health a second".
+pub const SPRING_HEAL: (i32, i32) = (2, 100);
+/// "Bursts of flame every 8 seconds", "Lights 2 tiles when it bursts".
+pub const EMBER_SECONDS: u32 = 8;
+pub const EMBER_LIGHT_TILES: i32 = 2;
+/// "Zaps anyone within 1 tile every 4 seconds".
+pub const STONE_SECONDS: u32 = 4;
+pub const STONE_TILES: i32 = 1;
+/// "cut through in 3 seconds"; "a Breaker smashes it in about 6 seconds".
+pub const HEDGE_CUT_SECONDS: u32 = 3;
+pub const BOULDER_SMASH_SECONDS: u32 = 6;
+
 /// Louder surfaces carry a sound five quarters as far, quieter three quarters.
 /// As (numerator, denominator), so the one division happens once, at the end.
 pub const LOUD_SURFACE: (u16, u16) = (5, 4);
@@ -134,21 +159,82 @@ pub enum Feature {
     Pylon,
     /// §10.3's Crystal Wall: a wall until it is broken.
     CrystalWall,
+    /// "Blocks; cut through in 3 seconds" / "Blocks sight".
+    Hedge,
+    /// "Walk around" / "Blocks sight in a line".
+    Tree,
+    /// "Blocks; a Breaker smashes it in about 6 seconds" / "Blocks sight".
+    Boulder,
+    /// "Blocks one tile" / "Cover for one character".
+    Statue,
+    /// "Blocks movement" / "See-through; bends light, so lanterns reach 2
+    /// tiles further past it".
+    CrystalOutcrop,
+    /// "Impassable line" / "Glows". Low, so sight passes over it.
+    LavaCrack,
+    /// "Wading is 20% slower"; water underfoot, so louder (§12.17).
+    Stream,
+    /// "15% faster" / "Crunchy: louder underfoot (12.17)".
+    GravelPath,
+    /// "30% slower" / "Hides anyone inside beyond 1 tile".
+    Thicket,
+    /// "Hides anyone beyond 3 tiles".
+    ShadeCanopy,
+    /// "Hides one still character completely".
+    Bush,
+    /// "Heals 2% health a second while standing in it, for both sides" /
+    /// "Steam hides anyone inside beyond 2 tiles".
+    HotSpring,
+    /// "Lights 3 tiles: nothing hides inside the light".
+    LanternPost,
+    /// "Loose stones" / "Guards within 4 tiles notice 25% faster".
+    Scree,
+    /// "Bursts of flame every 8 seconds; hurts anyone on it" / "Lights 2
+    /// tiles when it bursts".
+    EmberVent,
+    /// "Zaps anyone within 1 tile every 4 seconds" / "Crackles".
+    StaticStone,
 }
 
 impl Feature {
-    fn terrain(self) -> Terrain {
+    pub fn terrain(self) -> Terrain {
+        use Feature::*;
         match self {
-            Feature::RockPillar | Feature::RuinWall | Feature::Fence | Feature::Vault
-            | Feature::Pylon | Feature::CrystalWall => {
-                Terrain::Blocked
-            }
-            Feature::FogBank | Feature::TallGrass => Terrain::Open,
+            RockPillar | RuinWall | Fence | Vault | Pylon | CrystalWall | Hedge | Tree | Boulder
+            | Statue | CrystalOutcrop | LavaCrack => Terrain::Blocked,
+            Stream => Terrain::Pace(STREAM_PACE),
+            GravelPath => Terrain::Pace(GRAVEL_PACE),
+            Thicket => Terrain::Pace(THICKET_PACE),
+            FogBank | TallGrass | ShadeCanopy | Bush | HotSpring | LanternPost | Scree | EmberVent
+            | StaticStone => Terrain::Open,
         }
     }
 
     fn blocks_sight(self) -> bool {
-        !matches!(self, Feature::Fence | Feature::TallGrass | Feature::Pylon)
+        use Feature::*;
+        matches!(self, RockPillar | RuinWall | FogBank | Vault | CrystalWall | Hedge | Tree
+                 | Boulder | Statue)
+    }
+
+    /// The ground a feature is, for noise (§12.17): a stream is water, a
+    /// gravel path gravel. `None` leaves the tile's own.
+    pub fn surface(self) -> Option<Surface> {
+        match self {
+            Feature::Stream => Some(Surface::Water),
+            Feature::GravelPath => Some(Surface::Gravel),
+            _ => None,
+        }
+    }
+
+    /// "Hides anyone inside beyond N tiles": a guard further off than this
+    /// cannot see whoever stands on it.
+    pub fn hides_beyond(self) -> Option<i32> {
+        match self {
+            Feature::Thicket => Some(THICKET_HIDES),
+            Feature::ShadeCanopy => Some(SHADE_HIDES),
+            Feature::HotSpring => Some(STEAM_HIDES),
+            _ => None,
+        }
     }
 }
 
@@ -212,6 +298,9 @@ impl Grid {
             self.tiles[i as usize] = feature.terrain();
             self.sight_blocked[i as usize] = feature.blocks_sight();
             self.features[i as usize] = Some(feature);
+            if let Some(s) = feature.surface() {
+                self.surfaces[i as usize] = s;
+            }
         }
     }
 
