@@ -71,6 +71,12 @@ HOLD_BAND = (30.0, 45.0)
 DECISION_BAND = (15, 25)
 DECISION_SECONDS = (8, 12)
 
+#: §12.6: "each ruleborn's ability has two uses a heist, with a lockout of one
+#: decision slot (10 seconds) between them", and "At most four abilities are
+#: ready at once".
+ABILITY_LOCKOUT_SECONDS = 10
+ABILITIES_READY = 4
+
 #: §12.5. Three characters, four from Keeper level 8, five from level 16.
 CREW_RANGE = (3, 5)
 
@@ -354,6 +360,8 @@ HOME = {
     "KEEPER_XP_TO_NEXT": "14.2",
     "DECISION_BAND": "12.6",
     "DECISION_SECONDS": "12.6",
+    "ABILITY_LOCKOUT_SECONDS": "12.6",
+    "ABILITIES_READY": "12.6",
     "CREW_RANGE": "12.5",
     "WARD_LIMITS": "5.2",
     "GUARD_POSTS": "10.2",
@@ -461,6 +469,10 @@ STATED = {
     "HOLD_BAND": (r"Authored islands are held to (\d+) to (\d+)%",
                   lambda m: (float(m[0]), float(m[1]))),
     "DECISION_BAND": (r"or (\d+) to (\d+) in a run", lambda m: (int(m[0]), int(m[1]))),
+    "ABILITY_LOCKOUT_SECONDS": (r"with a lockout of one decision slot \((\d+) seconds\)",
+                                lambda m: int(m[0])),
+    "ABILITIES_READY": (r"At most (four) abilities are ready at once",
+                        lambda m: {"four": 4}[m[0]]),
     "DECISION_SECONDS": (r"roughly one every (\d+) to (\d+) seconds",
                          lambda m: (int(m[0]), int(m[1]))),
     "CREW_RANGE": (r"A crew of (\d+) to (\d+)", lambda m: (int(m[0]), int(m[1]))),

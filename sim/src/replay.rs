@@ -41,6 +41,12 @@ pub const MAGIC: [u8; 4] = *b"RBH1";
 /// was played in (§18.3). A heist with no era is still written `RBH1`, byte
 /// for byte as before, so every replay recorded before eras still reads.
 pub const MAGIC_ERA: [u8; 4] = *b"RBH2";
+/// `RBH3` — `RBH2`'s era byte, always present (0 for none), followed by
+/// §12.5's crew manifest: "The lease and the replay carry the crew: each
+/// member's kind, form, level and traits, the Sage and the casts carried".
+/// A heist with no manifest is written `RBH1` or `RBH2` as before, and plays
+/// its crew by role.
+pub const MAGIC_CREW: [u8; 4] = *b"RBH3";
 /// §24.10's limit, as a number the code can check itself against.
 pub const MAX_HEIST_BYTES: usize = 2048;
 /// The low bytes of each kept checksum. See the module docstring.
@@ -90,6 +96,11 @@ pub enum Kind {
     /// landing at tick 0 on an open edge tile counts; `verify_on` refuses a
     /// heist that never lands.
     Land = 11,
+    /// Fire the crew member's ability at (`x`, `y`). §12.7: "Fire the
+    /// character's ability at the best target, while it has a use left and
+    /// is ready (12.6)", or "Drag onto the world to aim". The device names
+    /// the target either way; an ability that needs none does not read it.
+    Ability = 12,
 }
 
 impl Kind {
@@ -107,6 +118,7 @@ impl Kind {
             9 => Some(Kind::Disarm),
             10 => Some(Kind::Drag),
             11 => Some(Kind::Land),
+            12 => Some(Kind::Ability),
             _ => None,
         }
     }
@@ -132,6 +144,75 @@ impl Command {
     }
 }
 
+/// One crew member as §12.5's manifest carries it: "each member's kind, form,
+/// level and traits". `kind` is its index in `ruleborn::RULEBORN`; `form` is
+/// 0 for the kind's own look and 1 to 3 for its forms in `content/forms.json`'s
+/// order; `traits` are indexes into `content/traits.json`. The simulation
+/// plays the kind; forms, levels and traits are carried for the server's
+/// roster check and played from TD.34.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Member {
+    pub kind: u8,
+    pub form: u8,
+    pub level: u8,
+    pub traits: Vec<u8>,
+}
+
+/// §12.5's crew manifest: the members in portrait order, the Sage (0 for
+/// none, else 1 to 4 in §11.7's order) and the casts carried, each a law's
+/// index in `laws_table::LAWS`.
+#[derive(Clone, Debug, PartialEq, Eq, Default)]
+pub struct Manifest {
+    pub members: Vec<Member>,
+    pub sage: u8,
+    pub casts: Vec<u8>,
+}
+
+/// The most traits a member carries on the wire, and the most casts: §12.5
+/// gives "1 slot, 2 from Keeper level 12".
+pub const MAX_TRAITS: usize = 8;
+pub const MAX_CASTS: usize = 2;
+
+impl Manifest {
+    /// On the wire: each member's kind, form, level and trait count, then its
+    /// traits; then the Sage, the cast count and the casts.
+    pub fn write(&self, out: &mut Vec<u8>) {
+        for m in self.members.iter() {
+            out.extend_from_slice(&[m.kind, m.form, m.level, m.traits.len() as u8]);
+            out.extend_from_slice(&m.traits);
+        }
+        out.push(self.sage);
+        out.push(self.casts.len() as u8);
+        out.extend_from_slice(&self.casts);
+    }
+
+    /// The inverse, for `crew` members, from `at`; `None` for a kind past the
+    /// eighteen, a form past the kind's three, too many traits or casts, a
+    /// Sage past the four, or bytes that run out.
+    pub fn read(bytes: &[u8], at: &mut usize, crew: u8) -> Option<Manifest> {
+        let mut take = |n: usize| -> Option<&[u8]> {
+            let slice = bytes.get(*at..*at + n)?;
+            *at += n;
+            Some(slice)
+        };
+        let mut members = Vec::with_capacity(crew as usize);
+        for _ in 0..crew {
+            let head = take(4)?;
+            let (kind, form, level, traits) = (head[0], head[1], head[2], head[3] as usize);
+            if kind as usize >= crate::ruleborn::RULEBORN.len() || form > 3 || traits > MAX_TRAITS {
+                return None;
+            }
+            members.push(Member { kind, form, level, traits: take(traits)?.to_vec() });
+        }
+        let sage = take(1)?[0];
+        let casts = take(1)?[0] as usize;
+        if sage > 4 || casts > MAX_CASTS {
+            return None;
+        }
+        Some(Manifest { members, sage, casts: take(casts)?.to_vec() })
+    }
+}
+
 /// A whole heist, in the four things §24.11 says it takes to reproduce one.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Heist {
@@ -148,6 +229,9 @@ pub struct Heist {
     /// §18.3's era of the week it was played in, if any: part of the rules
     /// it re-simulates under, so it travels with the heist.
     pub era: Option<Era>,
+    /// §12.5's crew manifest, when the heist carries one; `crew` members by
+    /// role when it does not.
+    pub manifest: Option<Manifest>,
     pub commands: Vec<Command>,
     /// One a second, truncated. See the module docstring.
     pub checksums: Vec<u32>,
@@ -158,13 +242,20 @@ impl Heist {
     /// command every few seconds would otherwise spend four bytes saying so.
     pub fn encode(&self) -> Vec<u8> {
         let mut out = Vec::with_capacity(MAX_HEIST_BYTES);
-        out.extend_from_slice(if self.era.is_some() { &MAGIC_ERA } else { &MAGIC });
+        out.extend_from_slice(match (&self.manifest, self.era) {
+            (Some(_), _) => &MAGIC_CREW,
+            (None, Some(_)) => &MAGIC_ERA,
+            (None, None) => &MAGIC,
+        });
         out.extend_from_slice(&self.seed.to_le_bytes());
         out.extend_from_slice(&self.island);
         out.extend_from_slice(&self.rules);
         out.extend_from_slice(&self.ticks.to_le_bytes());
         out.push(self.crew);
-        if let Some(era) = self.era {
+        if let Some(manifest) = &self.manifest {
+            out.push(self.era.map_or(0, |e| e as u8));
+            manifest.write(&mut out);
+        } else if let Some(era) = self.era {
             out.push(era as u8);
         }
         out.extend_from_slice(&(self.commands.len() as u16).to_le_bytes());
@@ -176,8 +267,8 @@ impl Heist {
             write_varint(&mut out, (command.tick - previous) as u64);
             previous = command.tick;
             // Actor in the high nibble, kind in the low one. A crew is at most
-            // five (§12.5) and there are twelve kinds, so one byte is plenty
-            // and the packing is stated rather than assumed.
+            // five (§12.5) and there are thirteen kinds, so one byte is
+            // plenty and the packing is stated rather than assumed.
             out.push((command.actor << 4) | (command.kind as u8));
             out.extend_from_slice(&command.x.to_le_bytes());
             out.extend_from_slice(&command.y.to_le_bytes());
@@ -199,10 +290,12 @@ impl Heist {
             Some(slice)
         };
         let magic = take(&mut at, 4)?;
-        let with_era = if magic == MAGIC {
-            false
+        let (with_era, with_crew) = if magic == MAGIC {
+            (false, false)
         } else if magic == MAGIC_ERA {
-            true
+            (true, false)
+        } else if magic == MAGIC_CREW {
+            (true, true)
         } else {
             return None;
         };
@@ -212,7 +305,13 @@ impl Heist {
         let ticks = u32::from_le_bytes(take(&mut at, 4)?.try_into().ok()?);
         let crew = take(&mut at, 1)?[0];
         // An `RBH2` names its era, and never none: that is what `RBH1` is for.
-        let era = if with_era { Some(Era::from_u8(take(&mut at, 1)?[0])??) } else { None };
+        // An `RBH3` always has the byte, and 0 is none.
+        let era = match (with_era, with_crew) {
+            (true, false) => Some(Era::from_u8(take(&mut at, 1)?[0])??),
+            (true, true) => Era::from_u8(take(&mut at, 1)?[0])?,
+            _ => None,
+        };
+        let manifest = if with_crew { Some(Manifest::read(bytes, &mut at, crew)?) } else { None };
         let command_count = u16::from_le_bytes(take(&mut at, 2)?.try_into().ok()?);
         let checksum_count = u16::from_le_bytes(take(&mut at, 2)?.try_into().ok()?);
 
@@ -237,7 +336,7 @@ impl Heist {
         if at != bytes.len() {
             return None;                  // trailing bytes are a malformed file
         }
-        Some(Heist { seed, island, rules, ticks, crew, era, commands, checksums })
+        Some(Heist { seed, island, rules, ticks, crew, era, manifest, commands, checksums })
     }
 
     /// §24.10's gate, as a question the code can answer about itself.

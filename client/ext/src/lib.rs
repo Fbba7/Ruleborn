@@ -125,6 +125,9 @@ impl RulebornReplay {
             ticks: ticks as u32,
             crew: crew as u8,
             era: self.era,
+            // The crew plays by role until the planner picks one (TD.18) and
+            // a lease carries its manifest (§12.5, TD.34).
+            manifest: None,
             commands: Vec::new(),
             checksums: Vec::new(),
         };

@@ -1810,12 +1810,33 @@ dict(
                   "the module's laws, realms, links, crew and Sages with content/ "
                   "and lists every difference as a §23.5 row or a register item",
              register=["G63", "G65"]),
-        dict(id="TD.12", owner="claude", status="ready",
+        dict(id="TD.12", owner="claude", status="doing",
              title="Abilities, Sage powers and casts in the simulation",
-             detail="The simulation has twelve command kinds and none is an "
-                    "ability, a Sage power or a cast, and its crew are five roles "
-                    "with no characters; completion counts this work as its own "
-                    "phase 1 deliverable, not started (G67, TD.47). v3.7 wrote G47's and G51's recommended options, "
+             detail="<strong>Built so far:</strong> §12.5's crew manifest in the "
+                    "replay (<code>RBH3</code>: each member's kind, form, level "
+                    "and traits, the Sage and the casts), recorded and "
+                    "re-simulated by the server; each member played by its kind's "
+                    "role, size band and ability, so Density's small band plays "
+                    "for a small kind (G23); the Ability command with §12.6's two "
+                    "uses, ten-second lockout and four-ready rule; and eleven of "
+                    "the eighteen abilities, each tested, their numbers held to "
+                    "<code>content/ruleborn.json</code> by "
+                    "<code>sim/content_gate.py</code>: the Stormhound's sprint, the "
+                    "Skyskipper's satchel, the Tidewalker unhindered, the "
+                    "Quarryback's pound, the Emberling's burst, the Hourkeeper's "
+                    "rewind, the Stillwatch's freeze, the Mossbear's root, the "
+                    "Bloomling's heal, the Echoplate standing over the crew and "
+                    "the Soulmender's link. Completion's row reads 13 of its 33 "
+                    "parts. What the document leaves open about them is G77. "
+                    "<strong>Left:</strong> the Glide, Charge and root bridge on "
+                    "gaps, hedges and boulders (TD.15); the Glass golem's wall, "
+                    "which needs a wall a walking route can meet; the Prism "
+                    "mite's split; the Lantern wisp's reveal; the Sage and its "
+                    "twelve powers with the Sparkwright's cut; casts; the "
+                    "harness's decision count.<br><br>"
+                    "The simulation had twelve command kinds and none was an "
+                    "ability, a Sage power or a cast, and its crew were five roles "
+                    "with no characters (G67, TD.47). v3.7 wrote G47's and G51's recommended options, "
                     "and §26.8's phase 1 now names this work: crews as ruleborn "
                     "from the manifest, with the eighteen abilities, Sage powers "
                     "and casts as commands (§12.5, §12.7). The work: Ability, Sage "
@@ -1845,7 +1866,7 @@ dict(
                   "small kind takes the small band whatever its role; a cast "
                   "carried and not used costs nothing (a server test); the "
                   "goldens regenerated and agreeing",
-             register=["G47", "G63", "G67", "G23"]),
+             register=["G47", "G63", "G67", "G23", "G77"]),
         dict(id="TD.34", owner="claude", status="blocked",
              title="The crew's levels, traits and rest, checked against the roster",
              detail="The manifest's levels and traits, each member's rest after a "
@@ -2247,7 +2268,7 @@ dict(
                   "edits applied, and check_document passes on it",
              evidence="tools/audit_register.py EDITS; tools/check_edits.py",
              blocked_by=[],
-             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62"]),
+             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77"]),
         dict(id="TD.74", owner="claude", status="blocked",
              title="Notifications and session telemetry on the device",
              detail="The server sends §14.6's notifications, keeps the night "

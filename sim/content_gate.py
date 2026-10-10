@@ -31,7 +31,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 CONTENT = HERE.parent / "content" / "detection.json"
 ROLES = HERE.parent / "content" / "roles.json"
 SOURCES = ["src/lib.rs", "src/guard.rs", "src/noise.rs", "src/grid.rs", "src/heist.rs",
-           "src/island.rs"]
+           "src/island.rs", "src/ruleborn.rs"]
 
 # Values the content files hold that the simulation does not yet use, by path
 # prefix. Each is reported so none passes as agreeing by being absent.
@@ -324,6 +324,8 @@ def facts_compare(text: str) -> dict:
         ("CROUCH_PACE", ratio(f.CROUCH_PACE), ratio(k.get("CROUCH_PACE"))),
         ("RUN_PACE", ratio(f.RUN_PACE), ratio(k.get("RUN_PACE"))),
         ("REVIVE_HEALTH", ratio(f.REVIVE_HEALTH), ratio(k.get("REVIVE_HEALTH"))),
+        ("ABILITY_LOCKOUT_SECONDS", f.ABILITY_LOCKOUT_SECONDS * tps, k.get("LOCKOUT_TICKS")),
+        ("ABILITIES_READY", f.ABILITIES_READY, k.get("MAX_READY")),
         # §9.6: exposed share in bag units = a full five-crew's carry at the
         # level median, which is what the fixture's Vault is.
         ("FIXTURE_EXPOSED (9.6: a full five-crew's carry)",
@@ -442,6 +444,78 @@ def wards_compare(text: str) -> dict:
     return {"checked": checked, "wrong": wrong}
 
 
+def ruleborn_compare(text: str) -> dict:
+    """§11.11's kinds against `ruleborn::RULEBORN`, row by row in
+    `content/ruleborn.json`'s order — the order is the wire value — and each
+    built ability's numbers read out of the content's own sentence, so an
+    ability reworded until a number no longer parses fails rather than
+    passing unread."""
+    k = constants(text)
+    tps = k.get("TICKS_PER_SECOND") or 0
+    kinds = json.loads((HERE.parent / "content" / "ruleborn.json").read_text())
+    table = re.findall(r'kind\("(\w+)", (\w+), (\w+), (true|false), (\w+)\)', text)
+    checked, wrong = [], []
+    if len(table) != len(kinds):
+        wrong.append(f"ruleborn.rs RULEBORN: {len(table)} rows, content/ruleborn.json "
+                     f"{len(kinds)}")
+    for i, (c, row) in enumerate(zip(kinds, table)):
+        want = (c["id"], c["role"], c["size"].capitalize(), "true" if c["flies"] == "yes" else "false")
+        have = row[:4]
+        (checked if want == have else wrong).append(
+            f"ruleborn.rs RULEBORN[{i}]: content {want}, simulation {have}")
+    text_of = {c["id"]: c["ability"] for c in kinds}
+
+    def num(kind: str, pattern: str, group: int = 1) -> float | None:
+        m = re.search(pattern, text_of.get(kind, ""))
+        return float(m.group(group)) if m else None
+
+    def frac(name: str) -> float | None:
+        v = k.get(name)
+        return v[0] / v[1] if isinstance(v, tuple) else None
+
+    def ticks(name: str) -> float | None:
+        v = k.get(name)
+        return v / tps if isinstance(v, int) and tps else None
+
+    rows = [
+        ("two uses", 2.0 if all("Two uses a heist" in a for a in text_of.values()) else None,
+         k.get("USES")),
+        ("skyskipper rate", (lambda a, b: a / b if a and b else None)(
+            num("skyskipper", r"loads at (\d+) a second"),
+            num("skyskipper", r"instead of (\d+)")), k.get("SATCHEL_RATE")),
+        ("skyskipper seconds", num("skyskipper", r"instead of \d+ for (\d+) s"),
+         ticks("SATCHEL_TICKS")),
+        ("quarryback seconds", num("quarryback", r"for (\d+) s its hits"), ticks("POUND_TICKS")),
+        ("quarryback hit (%)", num("quarryback", r"deal (\d+)% more"),
+         (lambda f: round((f - 1) * 100) if f else None)(frac("POUND_HIT"))),
+        ("tidewalker seconds", num("tidewalker", r"For (\d+) s nothing slows it"),
+         ticks("UNHINDERED_TICKS")),
+        ("hourkeeper window", num("hourkeeper", r"in the last (\d+) s"), ticks("REWIND_WINDOW")),
+        ("stillwatch seconds", num("stillwatch", r"for ([\d.]+) s"), ticks("FREEZE_TICKS")),
+        ("emberling power", 3.0 if "triple its Power" in text_of.get("emberling", "") else None,
+         k.get("BURST_POWER")),
+        ("emberling tiles", num("emberling", r"within (\d+) tile"), k.get("BURST_TILES")),
+        ("stormhound faster (%)", num("stormhound", r"Sprints (\d+)% faster"),
+         (lambda f: round((f - 1) * 100) if f else None)(frac("SPRINT_PACE"))),
+        ("stormhound seconds", num("stormhound", r"faster for (\d+) s"), ticks("SPRINT_TICKS")),
+        ("mossbear seconds", num("mossbear", r"for (\d+) s, taking"), ticks("ROOT_TICKS")),
+        ("mossbear damage", 0.5 if "taking half damage" in text_of.get("mossbear", "") else None,
+         frac("ROOT_DAMAGE")),
+        ("bloomling tiles", num("bloomling", r"within (\d+) tiles"), k.get("BLOOM_TILES")),
+        ("bloomling heal (%)", num("bloomling", r"by (\d+)% of its full health"),
+         (lambda f: round(f * 100) if f else None)(frac("BLOOM_HEAL"))),
+        ("echoplate seconds", num("echoplate", r"for (\d+) s:"), ticks("STAND_OVER_TICKS")),
+        ("echoplate tiles", num("echoplate", r"within (\d+) tiles"), k.get("STAND_OVER_TILES")),
+        ("echoplate return (%)", num("echoplate", r"at (\d+)% of its full health"),
+         (lambda f: round(f * 100) if f else None)(frac("STAND_OVER_RETURN"))),
+        ("soulmender seconds", num("soulmender", r"for (\d+) s"), ticks("LINK_TICKS")),
+    ]
+    for what, want, have in rows:
+        ok = want is not None and have is not None and float(want) == float(have)
+        (checked if ok else wrong).append(f"ruleborn.json {what}: content {want}, simulation {have}")
+    return {"checked": checked, "wrong": wrong}
+
+
 def source_text() -> str:
     return "\n".join((HERE / p).read_text() for p in SOURCES) + \
         (HERE / "src/tests.rs").read_text()
@@ -492,6 +566,14 @@ def self_test() -> int:
     assert not facts_compare(text)["wrong"], facts_compare(text)["wrong"]
     assert not laws_compare(text)["wrong"], laws_compare(text)["wrong"]
     assert not wards_compare(text)["wrong"], wards_compare(text)["wrong"]
+    assert not ruleborn_compare(text)["wrong"], ruleborn_compare(text)["wrong"]
+    # A kind given another size, and an ability's number drifted.
+    grown = ruleborn_compare(text.replace('kind("emberling", Breaker, Small,',
+                                          'kind("emberling", Breaker, Standard,'))
+    assert any("RULEBORN[9]" in w for w in grown["wrong"]), grown
+    slow = ruleborn_compare(text.replace("SPRINT_PACE: (i64, i64) = (8, 5)",
+                                         "SPRINT_PACE: (i64, i64) = (3, 2)"))
+    assert any("stormhound faster" in w for w in slow["wrong"]), slow
     moved = wards_compare(text.replace("SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 5 / 2",
                                        "SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 2"))
     assert any("time_snare freeze" in w for w in moved["wrong"]), moved
@@ -513,8 +595,8 @@ def self_test() -> int:
         lib.write_text(real_lib)
     print("content_gate self-test: halved Scout, moved floor, missing role, wrong "
           "multiplier, a slow takedown, slow Scout, weak Warden, an uncompared number, a deleted test, "
-          "a drifted design fact, a hand-edited law table and an unread rule-sheet "
-          "parameter all caught")
+          "a drifted design fact, a hand-edited law table, an unread rule-sheet "
+          "parameter, a resized kind and a drifted ability number all caught")
     return 0
 
 
@@ -525,9 +607,10 @@ def main() -> int:
     facts = facts_compare(source_text())
     laws = laws_compare(source_text())
     wards = wards_compare(source_text())
-    r["checked"] += facts["checked"] + laws["checked"] + wards["checked"]
-    r["wrong"] += facts["wrong"] + laws["wrong"] + wards["wrong"]
-    print(f"  content: {len(r['checked'])} values agree with content/ (detection, roles, wards, law effects), "
+    kinds = ruleborn_compare(source_text())
+    r["checked"] += facts["checked"] + laws["checked"] + wards["checked"] + kinds["checked"]
+    r["wrong"] += facts["wrong"] + laws["wrong"] + wards["wrong"] + kinds["wrong"]
+    print(f"  content: {len(r['checked'])} values agree with content/ (detection, roles, wards, law effects, ruleborn), "
           f"and tools/design_facts.py")
     for line in r["wrong"]:
         print(f"  DISAGREES {line}")

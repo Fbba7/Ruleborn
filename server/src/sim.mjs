@@ -13,7 +13,9 @@
 import { readFileSync } from "node:fs";
 
 /** The replay header's fixed fields (sim/src/replay.rs, `Heist::encode`).
- *  An `RBH2` header carries §18.3's era in one more byte after the crew. */
+ *  An `RBH2` header carries §18.3's era in one more byte after the crew; an
+ *  `RBH3` header always has that byte (0 for none) and §12.5's crew manifest
+ *  after it, which the module reads. */
 export const HEADER = { magic: 0, seed: 4, island: 12, rules: 44, ticks: 76, crew: 80, era: 81, bytes: 85 };
 
 /** `island::Problem`, in the order of its bits. */
@@ -27,6 +29,7 @@ export const REFUSED = {
   [-1]: "replay_malformed", [-2]: "island_malformed", [-3]: "wrong_island",
   [-4]: "wrong_rules", [-5]: "crew", [-6]: "length", [-7]: "log",
   [-8]: "checksums", [-9]: "too_large", [-10]: "era", [-11]: "landing",
+  [-12]: "manifest",
 };
 
 export const GRADES = ["clean", "loud", "partial", "foiled"];
@@ -34,16 +37,17 @@ export const GRADES = ["clean", "loud", "partial", "foiled"];
 /** `replay::Kind`, the command vocabulary on the wire. */
 export const KIND = {
   MoveTo: 0, Gait: 1, Halt: 2, Crack: 3, Load: 4, Skiff: 5,
-  Attack: 6, Break: 7, Drop: 8, Disarm: 9, Drag: 10, Land: 11,
+  Attack: 6, Break: 7, Drop: 8, Disarm: 9, Drag: 10, Land: 11, Ability: 12,
 };
 
 const hex = (bytes) => Buffer.from(bytes).toString("hex");
 
 /** A replay's header, or null if it is too short to have one. `era` is
- *  the era's wire value, 0 for none (an `RBH1` replay). */
+ *  the era's wire value, 0 for none (an `RBH1` replay, or an `RBH3` played
+ *  in none); `manifest` says whether it carries §12.5's crew manifest. */
 export function readHeader(bytes) {
   const magic = bytes.length >= 4 ? Buffer.from(bytes.subarray(0, 4)).toString() : "";
-  const withEra = magic === "RBH2";
+  const withEra = magic === "RBH2" || magic === "RBH3";
   if (!(magic === "RBH1" || withEra) || bytes.length < HEADER.bytes + (withEra ? 1 : 0)) return null;
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   return {
@@ -53,6 +57,7 @@ export function readHeader(bytes) {
     ticks: view.getUint32(HEADER.ticks, true),
     crew: bytes[HEADER.crew],
     era: withEra ? bytes[HEADER.era] : 0,
+    manifest: magic === "RBH3",
   };
 }
 
@@ -112,9 +117,12 @@ export class Build {
   /**
    * The device's half: play `commands` — [second-or-tick, member, kind, x, y]
    * with `tick` in ticks — on an island and record the replay. The server
-   * never calls this; its tests play the device with it.
+   * never calls this; its tests play the device with it. With `manifest`
+   * — `{ members: [{ kind, form, level, traits }], sage, casts }`, each kind
+   * its index in content/ruleborn.json — the replay carries §12.5's crew
+   * manifest (`RBH3`).
    */
-  record(island, { seed, ticks, crew, commands, era = 0 }) {
+  record(island, { seed, ticks, crew, commands, era = 0, manifest = null }) {
     const records = new Uint8Array(commands.length * 10);
     const view = new DataView(records.buffer);
     commands.forEach(({ tick, member, kind, x, y }, i) => {
@@ -127,8 +135,20 @@ export class Build {
     this.buffer().set(island);
     this.buffer().set(records, island.length);
     const s = BigInt.asUintN(64, BigInt(seed));
-    const n = this.x.rb_record(Number(s >> 32n), Number(s & 0xffffffffn), ticks, crew,
-                               island.length, commands.length, era);
+    let n;
+    if (manifest) {
+      const crewBytes = Uint8Array.from([
+        ...manifest.members.flatMap(({ kind, form = 0, level = 1, traits = [] }) =>
+          [kind, form, level, traits.length, ...traits]),
+        manifest.sage ?? 0, (manifest.casts ?? []).length, ...(manifest.casts ?? []),
+      ]);
+      this.buffer().set(crewBytes, island.length + records.length);
+      n = this.x.rb_record_crew(Number(s >> 32n), Number(s & 0xffffffffn), ticks, crew,
+                                island.length, commands.length, era, crewBytes.length);
+    } else {
+      n = this.x.rb_record(Number(s >> 32n), Number(s & 0xffffffffn), ticks, crew,
+                           island.length, commands.length, era);
+    }
     if (n < 0) throw new Error(`record refused: ${REFUSED[n]}`);
     return this.buffer().slice(0, n);
   }

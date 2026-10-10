@@ -135,6 +135,11 @@ island was a placeholder and every heist ran on the one fixture realm. Now:
   source, Static Storm's stronger coil and Quiet Week's 30 seconds more. The
   era table, read by `build_laws.py` from each era's own rule, is part of
   the rules version (register G36, F49, D69).
+- **The crew travels with the heist** (`ruleborn.rs`, §12.5, TD.12). A heist
+  that carries its crew manifest is written `RBH3`: the era byte always (0
+  for none), then each member's kind, form, level and traits, the Sage and
+  the casts. Each member plays its kind's role, size band and ability; a
+  heist with no manifest plays its crew by role, byte for byte as before.
 - **The WebAssembly surface** (`ffi.rs`): numbers in and out and one shared
   buffer, which the host writes between calls. Still no imports.
   `wasm_spike.mjs` and the native `spike` both print a validator line — the
@@ -502,6 +507,30 @@ carries, and a bundle carries no crown laws yet (D61). Where a row stops short
 of a rule the reading is G25's, named beside the code and held by a test —
 one per combination, which `sim/systems.json` maps and the completion report
 counts.
+
+## Abilities
+
+§12.6: *"each ruleborn's ability has two uses a heist, with a lockout of one
+decision slot (10 seconds) between them, and no cooldown"*, and *"At most four
+abilities are ready at once."* The Ability command (12 on the wire) names a
+crew member and a tile; the ability fires if it has a use left, is one of the
+ready four and its character can act, and spends a use only if it does
+something. The ready four are worked out before each tick's inputs: one
+whose lockout ends while four are ready waits, and the waiting take their
+turn in the order they came free.
+
+Eleven of §11.11's eighteen are built, each a named number changed for its
+stated time and each with a test: the Stormhound's sprint, the Skyskipper's
+satchel, the Tidewalker unhindered, the Quarryback's pound, the Emberling's
+burst, the Hourkeeper's rewind, the Stillwatch's freeze, the Mossbear's root,
+the Bloomling's heal, the Echoplate standing over the crew and the
+Soulmender's link. Their numbers are read out of `content/ruleborn.json`'s own
+sentences by `content_gate.py`, the table's rows held to its ids, roles, sizes
+and fliers. The root's half damage and the link's sharing are applied to what
+each crew member lost since the last share, before knockouts are settled, so
+every source of damage passes through them. The other seven wait on what they
+act on (`Ability::built`), and what the document leaves open about all of
+them is register G77.
 
 ## Wards
 

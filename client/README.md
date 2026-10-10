@@ -180,7 +180,8 @@ a guard is attacked, or dragged if it is down; the Vault is cracked, or loaded
 to full once open; a pylon is broken; a live ward is disarmed; anything else is
 walked to. The buttons cycle the selected member's gait (walk, crouch, run),
 halt it, drop half its loot, and — Get out — call the skiff (§5.4) to the next
-tile tapped. Of the twelve command kinds, every one but the landing has a control;
+tile tapped. Of the simulation's thirteen command kinds, every one but the landing and
+the ability has a control (the ability portraits are the heist screen's, TD.17);
 the crew lands (§5.4) before the first step on an edge tile it can walk to the
 Vault from, chosen by the heist's seed, until there is a landing picker. When the clock runs
 out the command log is written down as the replay a device queues (§24.12) and

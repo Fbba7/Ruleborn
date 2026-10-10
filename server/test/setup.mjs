@@ -124,11 +124,11 @@ export function twoPlayers(open = true) {
 /** Play a lease as the device would, with `plan` or the drawn test player,
  *  in the week's era the lease names (§18.3). A plan that does not say where
  *  it lands lands on the corner tile, (0, 0) (§5.4). */
-export function play(t, lease, { plan = null, crew = 3 } = {}) {
+export function play(t, lease, { plan = null, crew = 3, manifest = null } = {}) {
   const island = t.service.bundle(lease.bundle);
   const era = ERAS.find((e) => e.id === lease.era)?.wire ?? 0;
   const spec = { seed: BigInt(lease.seed), ticks: lease.ticks, crew, era };
-  return plan ? t.build.record(island, { ...spec, commands: landed(plan) })
+  return plan ? t.build.record(island, { ...spec, commands: landed(plan), manifest })
               : t.build.recordDrawn(island, spec);
 }
 

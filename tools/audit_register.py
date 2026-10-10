@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9857,6 +9857,33 @@ dict(id="F62", kind="finding", severity="significant", status="open",
          "holds 38.8% with the ladder against a band centred on 37.5%; the edits "
          "are drafted."),
 
+dict(id="G77", kind="gap", severity="minor", status="open",
+     title="§11.11 and §12.6 leave open who an ally is, the waiting order and who "
+           "stops counting, and the simulation reads each one way",
+     refs=["11.11", "12.6"],
+     body="Building the abilities (TD.12) needed six things the document does not "
+          "say. <strong>An ally:</strong> the Bloomling <em>“Heals every ally within "
+          "3 tiles”</em> and the Hourkeeper <em>“Gives one ally back”</em>; "
+          "<code>sim/</code> reads an ally as another crew member, so neither "
+          "heals itself, and the share as the ally’s own full health. <strong>The "
+          "waiting order:</strong> §12.6 says an ability whose lockout ends while "
+          "four are ready <em>“waits its turn”</em> and not what the turn is; the "
+          "waiting take theirs in the order they came free, then by portrait. "
+          "<strong>Who stops counting:</strong> §12.6 drops an ability <em>“with no "
+          "uses left”</em>; a crew member caught or already out can never use one "
+          "again, so it is dropped too, while one knocked down still counts. "
+          "<strong>Reach:</strong> <em>“within 1 tile”</em>, <em>“within 3 "
+          "tiles”</em> are measured centre to centre, as every radius in the "
+          "simulation is, so the Emberling’s burst misses a diagonal neighbour; the "
+          "Stillwatch’s freeze and the Hourkeeper’s rewind state no reach and have "
+          "none. <strong>The link:</strong> the Soulmender’s share is among the crew "
+          "standing. <strong>A return:</strong> the Echoplate’s return drops the "
+          "loot first, as Echoes does. Found building TD.12.",
+     rec="State the first three in §11.11 and §12.6 (the edits are drafted, taking "
+         "the simulation’s reading); say whether the freeze and the rewind have a "
+         "reach and whether a burst reaches diagonals, and the simulation follows "
+         "(<code>sim/src/ruleborn.rs</code>)."),
+
 ]
 
 # ===========================================================================
@@ -10840,8 +10867,10 @@ V37 = {
     "<strong>Settled by rule:</strong> the brief’s recommendation. §12.5’s load "
     "target, casts paid only if used, and the crew manifest; §12.7’s held taps "
     "and modal wheels; §24.12’s pause with the app. The clock tap makes a "
-    "ninth target in a ruin (C64). Left for the build: the commands in sim/ "
-    "and the client’s held-tap menus (TD.12, TD.17)."),
+    "ninth target in a ruin (C64). Built: the crew manifest in the replay and "
+    "the Ability command (TD.12). Left for the build: the Sage and Cast "
+    "commands, casts paid only if used, and the client’s held-tap menus "
+    "(TD.12, TD.17)."),
 
 "G48": dict(status="fixed", note=
     "<strong>Settled by rule:</strong> the brief’s recommendation. §12.13 "
@@ -11160,6 +11189,11 @@ V37 = {
     "Found building TD.69, after v3.7: a balance figure for the document, with "
     "its edits drafted (TD.75)."),
 
+"G77": dict(status="open", left="document", note=
+    "Found building TD.12, after v3.7: three readings the simulation takes, with "
+    "their edits drafted (TD.75), and three questions only the document can "
+    "answer."),
+
 "F33": dict(status="open", left="build", note=
     "<strong>The owner’s answer D is written in; the build is not "
     "done.</strong> §10.3: <em>“within 4 m of it for 5 seconds (8 m from alarm "
@@ -11233,8 +11267,10 @@ V37 = {
     "<strong>The document is done; the build is not.</strong> §26.8’s phase 5 "
     "now names <em>“the paradox-born from 11.8’s tables … the visitors (the "
     "Stray with no kind of its own), and every card’s rule sheet, height, "
-    "colours and signature”</em>. Left: those content tables and a crew stat "
-    "not keyed by role in sim/ (TD.33, TD.12, TD.21)."),
+    "colours and signature”</em>. The simulation’s crew are kinds now: §12.5’s "
+    "manifest gives each member its kind’s role, size band and ability "
+    "(<code>sim/src/ruleborn.rs</code>, TD.12). Left: those content tables, "
+    "and the paradox-born, who have no kind (TD.33, TD.35, TD.21)."),
 
 "G66": dict(status="done", note=
     "<strong>Built (TD.47).</strong> §26.8 adds phases 4a to 4c, costed, and "
@@ -11248,14 +11284,17 @@ V37 = {
     "(C72)."),
 
 "G67": dict(status="open", left="build", note=
-    "<strong>Completion reads it (TD.47); the build is not done.</strong> "
+    "<strong>Completion reads it (TD.47); the build is under way.</strong> "
     "§26.8’s phase 1 names <em>“crews as ruleborn from the manifest with the "
     "eighteen abilities, Sage powers and casts as commands”</em>, phase 4 "
-    "<em>“all 39 of 6.2’s features and moss”</em>. Completion now counts the "
-    "abilities, Sage powers and casts as their own phase 1 deliverable, not "
-    "started, and the event log beside it; terrain as 5 of 39 features and moss "
-    "in <code>sim/</code> (15%), with the builder’s Terrain editing scaled by "
-    "it. Left: the work itself (TD.12, TD.13, TD.15)."),
+    "<em>“all 39 of 6.2’s features and moss”</em>. Completion counts the "
+    "abilities, Sage powers and casts as their own phase 1 deliverable in 33 "
+    "equal parts, read from <code>sim/</code>’s systems: the crew manifest, "
+    "§12.6’s rules and 11 of the 18 abilities are built (TD.12), 13 of 33; the "
+    "Sage’s twelve powers and casts are not. Terrain reads 5 of 39 features and "
+    "moss (15%), the builder’s Terrain editing scaled by it. Left: seven "
+    "abilities, the Sage, casts, the event log and terrain (TD.12, TD.13, "
+    "TD.15)."),
 
 "G68": dict(status="done", note=
     "<strong>Built (TD.47).</strong> §26.8’s phase 0: a recorded build for each "
@@ -11333,8 +11372,10 @@ V37 = {
     "cells of the nine laws (§7.7), Delay’s guards included. Left: Density "
     "still reads <em>“Your Breakers become slow targets.”</em>, which the brief "
     "recorded under every option as false by §11.2’s roster (edit drafted). "
-    "For the build: sim/ sizes characters by role, so Density’s small band "
-    "never plays (TD.12, TD.34)."),
+    "For the build: a crew member with a kind is sized by its kind, so "
+    "Density’s small band plays for the Emberling, a small Breaker (TD.12, "
+    "tested); posted guards are still sized by role until the bundle carries "
+    "their kinds (TD.9, TD.34)."),
 
 "G26": dict(status="open", left="document", note=
     "<strong>Partly.</strong> The owner’s answer B is written in: §18.6 and "
@@ -14537,6 +14578,43 @@ EDITS = {
                  "for one task in three); iteration 415 (301 to 531), a floor at 1x "
                  "the build; plan about 830 (602 to 1,062)",
          why="§26.8 and §27.2, with phases 4a to 4c. C72."),
+],
+"G77": [
+    dict(section="12.6",
+         action="replace",
+         find="and an ability whose lockout ends while four are ready waits its turn; "
+              "an ability with no uses left no longer counts.",
+         replace="and an ability whose lockout ends while four are ready waits its turn, "
+                 "the waiting taking their turns in the order they came free; an ability "
+                 "with no uses left, or whose character is caught or out, no longer counts.",
+         why="“Waits its turn” names no turn, and a caught character’s ability would "
+             "hold a ready slot for the rest of the heist. G77."),
+    dict(section="11.11",
+         action="replace",
+         find="| Heals every ally within 3 tiles by 15% of its full health, at once\n"
+              "| Immune to Spores",
+         replace="| Heals every other crew member within 3 tiles by 15% of their full "
+                 "health, at once\n| Immune to Spores",
+         why="Whether the Bloomling heals itself, and whose full health the 15% is. G77."),
+    dict(section="11.11",
+         action="replace",
+         find="Heals every ally within 3 tiles by 15% of its full health, at once. Two uses a heist",
+         replace="Heals every other crew member within 3 tiles by 15% of their full health, "
+                 "at once. Two uses a heist",
+         why="The card says it again (one fact, two places): the same edit. G77."),
+    dict(section="11.11",
+         action="replace",
+         find="| Gives one ally back all the health it lost in the last 5 s\n"
+              "| Unaffected by Delay",
+         replace="| Gives one other crew member back all the health it lost in the last "
+                 "5 s\n| Unaffected by Delay",
+         why="Whether the Hourkeeper can rewind itself. G77."),
+    dict(section="11.11",
+         action="replace",
+         find="Gives one ally back all the health it lost in the last 5 s. Two uses a heist",
+         replace="Gives one other crew member back all the health it lost in the last 5 s. "
+                 "Two uses a heist",
+         why="The card says it again: the same edit. G77."),
 ],
 "F62": [
     dict(section="5.2",

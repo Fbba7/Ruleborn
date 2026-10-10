@@ -41,6 +41,7 @@ pub mod laws_table;
 pub mod noise;
 pub mod path;
 pub mod replay;
+pub mod ruleborn;
 pub mod sha256;
 pub mod sight;
 
@@ -54,6 +55,7 @@ use grid::{Feature, Grid};
 use heist::{Grade, Outcome, Skiff, Standing, Task, Vault, Ward, WardKind};
 use combos::Combos;
 use laws_table::{note, Chord, Param, Res, LAWS, PARAM_COUNT};
+use ruleborn::{Ability, RULEBORN};
 
 /// The laws the fixture's realm is woven with: three, the most §5.2 allows at
 /// realm level 5, all three whole-parameter laws so every effect is one the
@@ -266,10 +268,11 @@ pub enum Role {
 }
 
 /// A character's Size band (§11.2, v3.4): small, standard or large, derived
-/// from its proportions. The simulation's crew and guards are roles, not
-/// ruleborn. Every large ruleborn is a Warden and every other role has small
-/// and standard members, so a role reads as large if it is the Warden and as
-/// standard otherwise: nobody is small until a crew carries its ruleborn.
+/// from its proportions. A crew member with a kind (§12.5's manifest) has its
+/// kind's band (`ruleborn::RULEBORN`); a guard, and a crew member played by
+/// role, reads by role: every large ruleborn is a Warden and every other role
+/// has small and standard members, so a role reads as large if it is the
+/// Warden and as standard otherwise.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Size {
     Small,
@@ -279,8 +282,8 @@ pub enum Size {
 
 /// §7.3's Health and Speed rows, "read by size": Density's figures for the
 /// large and small bands, (1, 1) for standard or with no law set.
-fn by_size(sheet: &Sheet, role: Role, large: Param, small: Param) -> (i64, i64) {
-    match role.size() {
+fn by_size(sheet: &Sheet, size: Size, large: Param, small: Param) -> (i64, i64) {
+    match size {
         Size::Large => sheet.factor(large),
         Size::Small => sheet.factor(small),
         Size::Standard => (1, 1),
@@ -289,7 +292,12 @@ fn by_size(sheet: &Sheet, role: Role, large: Param, small: Param) -> (i64, i64) 
 
 /// Full health for a role under a sheet: its §11.1 health, read by size.
 pub fn full_health(sheet: &Sheet, role: Role) -> i32 {
-    let (n, d) = by_size(sheet, role, Param::LargeHealth, Param::SmallHealth);
+    full_health_of(sheet, role, role.size())
+}
+
+/// The same for a character whose size band is its kind's, not its role's.
+pub fn full_health_of(sheet: &Sheet, role: Role, size: Size) -> i32 {
+    let (n, d) = by_size(sheet, size, Param::LargeHealth, Param::SmallHealth);
     (role.health() as i64 * n / d) as i32
 }
 
@@ -648,9 +656,37 @@ pub struct Raider {
     pub tethered: bool,
     /// Drifting echoes: a returned echo may pass over one wall, once.
     pub wall_pass: bool,
+    /// Its kind's index in `ruleborn::RULEBORN`, from §12.5's manifest; none
+    /// for a crew member played by role.
+    pub kind: Option<u8>,
+    /// Its size band: its kind's, or its role's (`Size`).
+    pub size: Size,
+    /// §12.6's ability: uses left, the tick its lockout ends, whether it is
+    /// one of the (at most four) ready, the tick it last became free to be
+    /// ready, for the order the waiting ones get their turn, and the tick its
+    /// running effect ends.
+    pub uses: u8,
+    pub locked_until: u32,
+    pub ready: bool,
+    pub free_since: u32,
+    pub effect_until: u32,
+    /// The health it lost each tick of the last five seconds, for the
+    /// Hourkeeper's rewind, by tick.
+    pub lost: Vec<i32>,
 }
 
 impl Raider {
+    /// Its full health under a sheet, by its own size band.
+    pub fn full(&self, sheet: &Sheet) -> i32 {
+        full_health_of(sheet, self.role, self.size)
+    }
+
+    /// Whether its kind's ability is `ability` and is running now.
+    pub fn running(&self, ability: Ability, now: u32) -> bool {
+        now < self.effect_until
+            && self.kind.is_some_and(|k| RULEBORN[k as usize].ability == ability)
+    }
+
     pub fn active(&self) -> bool {
         self.standing == Standing::Active
     }
@@ -751,6 +787,11 @@ pub struct World {
     /// §12.17's realm's watch for this realm's level: (suspicion fill, sight).
     /// "The watch belongs to the realm, not the guard."
     pub watch: ((i32, i32), (i64, i64)),
+    /// Each crew member's health when this tick began, and when its damage
+    /// was last shared out: the Mossbear's root halves, and the Soulmender's
+    /// link shares, what was lost since (`shield`).
+    start_health: Vec<i32>,
+    shared_at: Vec<i32>,
 }
 
 impl World {
@@ -818,6 +859,14 @@ impl World {
                 slowed_until: 0,
                 tethered: false,
                 wall_pass: false,
+                kind: None,
+                size: role.size(),
+                uses: 0,
+                locked_until: 0,
+                ready: false,
+                free_since: 0,
+                effect_until: 0,
+                lost: vec![0; ruleborn::REWIND_TICKS],
             });
         }
         World {
@@ -862,6 +911,8 @@ impl World {
             era: None,
             landing: None,
             watch: REALM_WATCH[(island.realm_level.clamp(1, 5) - 1) as usize],
+            start_health: Vec::new(),
+            shared_at: Vec::new(),
         }
     }
 
@@ -880,7 +931,7 @@ impl World {
         // so Density's large start larger (§7.3's Health row).
         let sheet = self.sheet;
         for r in self.raiders.iter_mut() {
-            r.health = full_health(&sheet, r.role);
+            r.health = r.full(&sheet);
         }
         for g in self.guards.iter_mut() {
             g.health = full_health(&sheet, g.role);
@@ -899,6 +950,24 @@ impl World {
         }
     }
 
+    /// §12.5's crew manifest: "The simulation plays each member by its kind's
+    /// ability and numbers, not by its role alone." Each member takes its
+    /// kind's role (and so §11.1's numbers), its size band and its ability's
+    /// two uses. Called before the laws are woven, which set everyone's
+    /// health by size. A manifest naming fewer members than the crew leaves
+    /// the rest by role; a kind past the table is not one, and is left too.
+    pub fn crew_from(&mut self, manifest: &replay::Manifest) {
+        for (r, m) in self.raiders.iter_mut().zip(manifest.members.iter()) {
+            let Some(k) = RULEBORN.get(m.kind as usize) else { continue };
+            r.kind = Some(m.kind);
+            r.role = k.role;
+            r.size = k.size;
+            r.speed = k.role.speed();
+            r.health = r.full(&Sheet::plain());
+            r.uses = ruleborn::USES;
+        }
+    }
+
     /// The world a replay describes: the fixture realm, the heist's crew and
     /// commands, its laws, and its clock.
     pub fn from_heist(heist: &Heist) -> World {
@@ -913,6 +982,9 @@ impl World {
         let mut world = World::on_ground(island, heist.crew, heist.commands.clone());
         world.rng = Rng::new(heist.seed, Stream::Laws);
         world.era = heist.era;
+        if let Some(manifest) = &heist.manifest {
+            world.crew_from(manifest);
+        }
         let laws: Vec<(&str, (u16, u16))> = island.laws.iter()
             .map(|(id, x, y)| (id.as_str(), (*x as u16, *y as u16)))
             .collect();
@@ -952,12 +1024,21 @@ impl World {
 
     /// One tick, in §24.10's six phases. Returns the checksum after it.
     pub fn step(&mut self) -> u64 {
+        self.start_health = self.raiders.iter().map(|r| r.health).collect();
+        self.shared_at = self.start_health.clone();
         self.phase_inputs();
         self.phase_laws();
         self.phase_perception();
         self.phase_movement();
         self.phase_noise();
         self.phase_states();
+        // What each crew member lost this tick, kept five seconds for the
+        // Hourkeeper (§11.11). Healing in the same tick is not netted off:
+        // "all the health it lost".
+        let slot = self.tick as usize % ruleborn::REWIND_TICKS;
+        for (r, &was) in self.raiders.iter_mut().zip(self.start_health.iter()) {
+            r.lost[slot] = (was - r.health).max(0);
+        }
         self.tick += 1;
         self.checksum()
     }
@@ -966,6 +1047,7 @@ impl World {
     /// command for this tick is applied before anything reads the world, so
     /// no part of the tick sees a half-applied input.
     fn phase_inputs(&mut self) {
+        self.ready_abilities();
         // The landing comes before every other input of tick 0, wherever
         // the log's order puts it: a move given at tick 0 is a move from the
         // landing spot.
@@ -986,6 +1068,10 @@ impl World {
             self.next_command += 1;
             // The landing is the whole crew's, and was applied above.
             if command.kind == Kind::Land {
+                continue;
+            }
+            if command.kind == Kind::Ability {
+                self.fire(command);
                 continue;
             }
             let Some(raider) = self.raiders.get_mut(command.actor as usize) else {
@@ -1071,7 +1157,7 @@ impl World {
                 }
                 // One skiff, called once; an inland tile, or a wall, is not a
                 // place a skiff can come, and the call is dropped.
-                Kind::Land => {}
+                Kind::Land | Kind::Ability => {}
                 Kind::Skiff => {
                     let (x, y) = command.target();
                     if let Some(tile) = self.grid.tile_at(x, y) {
@@ -1087,6 +1173,234 @@ impl World {
                 }
             }
         }
+    }
+
+    /// §12.6's ready rule, before this tick's inputs: "At most four
+    /// abilities are ready at once. In a crew of five the rightmost
+    /// portrait's ability waits, and becomes ready the moment any other
+    /// ability's use is taken — that ability entering its lockout counts —
+    /// and an ability whose lockout ends while four are ready waits its turn;
+    /// an ability with no uses left no longer counts." The waiting take their
+    /// turn in the order they came free, then portrait order. A crew member
+    /// caught or already out can never use its ability again, so it no
+    /// longer counts either; one knocked down may yet be revived, and does.
+    fn ready_abilities(&mut self) {
+        let now = self.tick;
+        let mut ready = 0;
+        let mut waiting: Vec<(u32, usize)> = Vec::new();
+        for (i, r) in self.raiders.iter_mut().enumerate() {
+            if r.kind.is_none() {
+                continue;
+            }
+            let free = r.uses > 0 && now >= r.locked_until
+                && !matches!(r.standing, Standing::Caught | Standing::Out);
+            if !free {
+                r.ready = false;
+            } else if r.ready {
+                ready += 1;
+            } else {
+                waiting.push((r.free_since, i));
+            }
+        }
+        waiting.sort_unstable();
+        for (_, i) in waiting {
+            if ready >= ruleborn::MAX_READY {
+                break;
+            }
+            self.raiders[i].ready = true;
+            ready += 1;
+        }
+    }
+
+    /// An Ability command: crew member `actor`'s ability at the target, if
+    /// it has a use left, is ready, and can act (§12.7). A use is spent only
+    /// when the ability does something: one with no target where it was
+    /// aimed, or not built yet (`Ability::built`), is dropped like any
+    /// command that cannot be carried out.
+    fn fire(&mut self, command: Command) {
+        let now = self.tick;
+        let ri = command.actor as usize;
+        let Some(r) = self.raiders.get(ri) else { return };
+        let Some(k) = r.kind else { return };
+        if !(r.acting(now) && r.ready && r.uses > 0) {
+            return;
+        }
+        let ability = RULEBORN[k as usize].ability;
+        let (x, y) = command.target();
+        let aimed = self.grid.tile_at(x, y);
+        let done = match ability {
+            Ability::Sprint | Ability::Satchel | Ability::Unhindered | Ability::Pound
+            | Ability::Root | Ability::StandOver | Ability::Link => true,
+            Ability::Burst => {
+                self.burst(ri);
+                true
+            }
+            Ability::Bloom => {
+                self.bloom(ri);
+                true
+            }
+            Ability::Rewind => match aimed.and_then(|t| self.ally_on(ri, t)) {
+                Some(ai) => {
+                    self.rewind(ai);
+                    true
+                }
+                None => false,
+            },
+            Ability::Freeze => aimed.is_some_and(|t| self.freeze(t)),
+            _ => false,
+        };
+        if !done {
+            return;
+        }
+        let r = &mut self.raiders[ri];
+        r.uses -= 1;
+        r.ready = false;
+        r.locked_until = now + ruleborn::LOCKOUT_TICKS;
+        r.free_since = r.locked_until;
+        r.effect_until = now + ability.ticks();
+        if ability == Ability::Root {
+            r.route.clear();
+            r.along = 0;
+        }
+    }
+
+    /// Another crew member standing on tile `t`, able to be helped: the
+    /// lowest id, as every tie in the simulation breaks.
+    fn ally_on(&self, ri: usize, t: grid::TileIndex) -> Option<usize> {
+        self.raiders.iter().enumerate().position(|(i, o)| {
+            i != ri && o.active() && self.grid.tile_at(o.at.x, o.at.y) == Some(t)
+        })
+    }
+
+    /// The Emberling: "Bursts, dealing triple its Power at once to every ward
+    /// and pylon within 1 tile" — measured centre to centre, as every radius
+    /// here is. A structure hit, so a law on structure damage reads it.
+    fn burst(&mut self, ri: usize) {
+        let now = self.tick;
+        let at = self.raiders[ri].at;
+        let (sn, sd) = self.sheet.factor(Param::StructureDamage);
+        let hit = (self.raiders[ri].role.power() as i64 * ruleborn::BURST_POWER * sn / sd) as i32;
+        let near = |grid: &Grid, t: grid::TileIndex| {
+            let (x, y) = grid.centre(t);
+            at.distance(Point { x, y }) <= Fx::from_int(ruleborn::BURST_TILES)
+        };
+        let cracking = self.combos.resonance(Res::CrackedGardens) as u32;
+        for li in 0..self.laws.len() {
+            if self.laws[li].broken_at.is_none() && near(&self.grid, self.laws[li].pylon) {
+                let law = &mut self.laws[li];
+                law.health -= hit;
+                if law.health <= 0 {
+                    law.health = 0;
+                    law.broken_at = Some(now);
+                    self.cracked += cracking;
+                }
+            }
+        }
+        for wi in 0..self.wards.len() {
+            if self.wards[wi].live() && near(&self.grid, self.wards[wi].tile) {
+                let w = &mut self.wards[wi];
+                w.health -= hit;
+                if w.health <= 0 {
+                    w.health = 0;
+                    w.broken = true;
+                    w.broken_at = Some(now);
+                    self.cracked += cracking;
+                    if w.kind == WardKind::CrystalWall {
+                        let t = w.tile;
+                        self.grid.clear(t);
+                    }
+                }
+            }
+        }
+    }
+
+    /// The Bloomling: "Heals every ally within 3 tiles by 15% of its full
+    /// health, at once." An ally is another crew member, standing.
+    fn bloom(&mut self, ri: usize) {
+        let at = self.raiders[ri].at;
+        let sheet = self.sheet;
+        let (n, d) = ruleborn::BLOOM_HEAL;
+        for (i, o) in self.raiders.iter_mut().enumerate() {
+            if i != ri && o.active()
+                && at.distance(o.at) <= Fx::from_int(ruleborn::BLOOM_TILES)
+            {
+                let full = o.full(&sheet);
+                o.health = (o.health + full * n / d).min(full);
+            }
+        }
+    }
+
+    /// The Hourkeeper: "Gives one ally back all the health it lost in the
+    /// last 5 s." What it got back is not lost any more, so a second rewind
+    /// in the same five seconds gives nothing twice.
+    fn rewind(&mut self, ai: usize) {
+        let sheet = self.sheet;
+        let r = &mut self.raiders[ai];
+        let back: i32 = r.lost.iter().sum();
+        let full = r.full(&sheet);
+        r.health = (r.health + back).min(full);
+        r.lost.iter_mut().for_each(|l| *l = 0);
+    }
+
+    /// The Stillwatch: "Freezes one guard or ward for 2.5 s: it cannot move,
+    /// act, see or grow suspicious." A guard on the tile first, standing,
+    /// lowest id; else a ward there that still works. A frozen guard is
+    /// stunned, which already stops all four; a frozen ward does nothing.
+    fn freeze(&mut self, t: grid::TileIndex) -> bool {
+        let until = self.tick + ruleborn::FREEZE_TICKS;
+        let guard = self.guards.iter().position(|g| {
+            !g.knocked_out && self.grid.tile_at(g.at.x, g.at.y) == Some(t)
+        });
+        if let Some(gi) = guard {
+            let g = &mut self.guards[gi];
+            g.stunned_until = g.stunned_until.max(until);
+            return true;
+        }
+        if let Some(w) = self.wards.iter_mut().find(|w| w.tile == t && w.live()) {
+            w.held_until = w.held_until.max(until);
+            return true;
+        }
+        false
+    }
+
+    /// Damage taken since it was last shared, read again by two abilities.
+    /// The Mossbear rooted takes "half damage". While a Soulmender's link
+    /// runs, "every hit on one of them is shared evenly across all": what
+    /// the standing crew lost is pooled and split evenly, the remainder to
+    /// the lowest ids. Run before knockouts are settled, so a share can save
+    /// the one the hit fell on, and again after anything that hurts later in
+    /// the tick. A tick with neither running changes nothing.
+    fn shield(&mut self) {
+        let now = self.tick;
+        if self.shared_at.len() != self.raiders.len() {
+            return;
+        }
+        let linked = self.raiders.iter().any(|r| r.active() && r.running(Ability::Link, now));
+        for (r, &was) in self.raiders.iter_mut().zip(self.shared_at.iter()) {
+            let lost = was - r.health;
+            if lost > 0 && r.running(Ability::Root, now) {
+                let (n, d) = ruleborn::ROOT_DAMAGE;
+                r.health = was - (lost as i64 * n / d) as i32;
+            }
+        }
+        if linked {
+            let crew: Vec<usize> = (0..self.raiders.len())
+                .filter(|&i| self.raiders[i].active() && self.shared_at[i] > 0)
+                .collect();
+            let pooled: i32 = crew.iter()
+                .map(|&i| (self.shared_at[i] - self.raiders[i].health).max(0))
+                .sum();
+            if pooled > 0 && !crew.is_empty() {
+                let each = pooled / crew.len() as i32;
+                let extra = pooled % crew.len() as i32;
+                for (k, &i) in crew.iter().enumerate() {
+                    let gained = (self.raiders[i].health - self.shared_at[i]).max(0);
+                    let share = each + (k < extra as usize) as i32;
+                    self.raiders[i].health = self.shared_at[i] + gained - share;
+                }
+            }
+        }
+        self.shared_at = self.raiders.iter().map(|r| r.health).collect();
     }
 
     /// §5.4's landing: "The crew lands on any edge tile of any outer realm
@@ -1151,7 +1465,7 @@ impl World {
         // nobody stands above the full health the sheet now reads.
         let sheet = self.sheet;
         for r in self.raiders.iter_mut() {
-            r.health = r.health.min(full_health(&sheet, r.role));
+            r.health = r.health.min(r.full(&sheet));
         }
         for g in self.guards.iter_mut() {
             g.health = g.health.min(full_health(&sheet, g.role));
@@ -1735,8 +2049,18 @@ impl World {
         let charging = self.sheet.is_set(Param::TouchStunSeconds);
         // Where each stands decides §8's pace changes, read before anyone
         // moves, like the drags.
+        let now = self.tick;
         let crew_pace: Vec<(i64, i64)> = self.raiders.iter()
-            .map(|r| self.pace_here(self.grid.tile_at(r.at.x, r.at.y), true, r.slowed_until))
+            .map(|r| {
+                let (n, d) = self.pace_here(self.grid.tile_at(r.at.x, r.at.y), true,
+                                            r.slowed_until);
+                // The Stormhound's sprint: "60% faster for 4 s".
+                if r.running(Ability::Sprint, now) {
+                    (n * ruleborn::SPRINT_PACE.0, d * ruleborn::SPRINT_PACE.1)
+                } else {
+                    (n, d)
+                }
+            })
             .collect();
         let guard_pace: Vec<(i64, i64)> = self.guards.iter()
             .map(|g| self.pace_here(self.grid.tile_at(g.at.x, g.at.y), false, g.slowed_until))
@@ -1748,14 +2072,18 @@ impl World {
             } else {
                 0
             };
-            if raider.still() || !raider.acting(self.tick) {
+            // The Mossbear "cannot move while rooted".
+            if raider.still() || !raider.acting(self.tick)
+                || raider.running(Ability::Root, self.tick)
+            {
                 continue;
             }
             let here = self.grid.tile_at(raider.at.x, raider.at.y);
             // "At crouching speed", whatever gait the player last chose.
             let gait = if drags[ri].is_some() { Gait::Crouch } else { raider.gait };
             let step = step_with(&self.grid, &self.sheet, raider, gait, here,
-                                 raider.carried > 0, crew_pace[ri]);
+                                 raider.carried > 0, crew_pace[ri],
+                                 raider.running(Ability::Unhindered, self.tick));
             let was = raider.along;
             let (at, along) = walk_route(&self.grid, raider.at, &raider.route, raider.along, step);
             raider.at = at;
@@ -1781,14 +2109,14 @@ impl World {
         // first version chose the direction at random each tick, which
         // §12.17 forbids for the same reason as the jitter above.
         let sweep = 1;
-        let now = self.tick;
         let guard_speed = self.sheet.factor(Param::GuardSpeed);
         for (gi, guard) in self.guards.iter_mut().enumerate() {
             if !guard.awake(now) {
                 continue;
             }
             let mut walk = scale(guard.speed, guard_speed);     // §11.1's, by role
-            let size = by_size(&self.sheet, guard.role, Param::LargeSpeed, Param::SmallSpeed);
+            let size = by_size(&self.sheet, guard.role.size(), Param::LargeSpeed,
+                               Param::SmallSpeed);
             if size != (1, 1) {
                 walk = scale(walk, size);
             }
@@ -2311,12 +2639,35 @@ impl World {
             self.thorns();
         }
 
+        self.shield();
+
         // "A crew member at zero health drops its loot on the tile." Echoes
         // returns it at once, loot already dropped, the first time only.
         let revival = self.revival();
         let sheet = self.sheet;
         let drifting = self.combos.resonance(Res::DriftingEchoes);
+        // The Echoplate standing over the crew: "a crew member knocked out
+        // within 3 tiles of it, itself included, returns at once at 40% of
+        // its full health (12.20)". Every time, while it stands.
+        let over: Vec<Point> = self.raiders.iter()
+            .filter(|r| r.active() && r.running(Ability::StandOver, now))
+            .map(|r| r.at)
+            .collect();
         for raider in self.raiders.iter_mut() {
+            if raider.active() && raider.health <= 0
+                && over.iter().any(|p| p.distance(raider.at)
+                    <= Fx::from_int(ruleborn::STAND_OVER_TILES))
+            {
+                if raider.carried > 0 {
+                    if let Some(t) = self.grid.tile_at(raider.at.x, raider.at.y) {
+                        self.dropped.push((t, raider.carried));
+                    }
+                    raider.carried = 0;
+                }
+                let (n, d) = ruleborn::STAND_OVER_RETURN;
+                raider.health = ((raider.full(&sheet) as i64 * n / d) as i32).max(1);
+                continue;
+            }
             if raider.active() && raider.health <= 0 {
                 raider.route.clear();
                 raider.along = 0;
@@ -2329,8 +2680,7 @@ impl World {
                 match revival {
                     Some(Revival::Return(n, d)) if !raider.revived => {
                         raider.revived = true;
-                        raider.health =
-                            ((full_health(&sheet, raider.role) as i64 * n / d) as i32).max(1);
+                        raider.health = ((raider.full(&sheet) as i64 * n / d) as i32).max(1);
                         // Drifting echoes: the echo may float over one wall.
                         raider.wall_pass = drifting;
                     }
@@ -2369,7 +2719,7 @@ impl World {
                     };
                     if r.revive >= need {
                         let (n, d) = heist::REVIVE_HEALTH;
-                        r.health = (full_health(&self.sheet, r.role) * n / d).max(1);
+                        r.health = (r.full(&self.sheet) * n / d).max(1);
                         r.standing = Standing::Active;
                         r.revive = 0;
                         continue;
@@ -2393,7 +2743,7 @@ impl World {
                     r.last_tile = Some(tile);
                     r.route.clear();
                     r.along = 0;
-                    r.health = (full_health(&self.sheet, r.role) * n / d).max(1);
+                    r.health = (r.full(&self.sheet) * n / d).max(1);
                     r.standing = Standing::Active;
                     r.revive = 0;
                 } else {
@@ -2435,8 +2785,15 @@ impl World {
                         (1, 1)
                     };
                     let (sn, sd) = self.sheet.factor(Param::StructureDamage);
-                    self.vault.health -= (raider.role.power() as i64 * n as i64 * sn * an
-                        / (d as i64 * sd * ad)) as i32;
+                    // The Quarryback's pound: "its hits on the Vault, pylons
+                    // and wards deal 50% more".
+                    let (pn, pd) = if raider.running(Ability::Pound, now) {
+                        ruleborn::POUND_HIT
+                    } else {
+                        (1, 1)
+                    };
+                    self.vault.health -= (raider.role.power() as i64 * n as i64 * sn * an * pn
+                        / (d as i64 * sd * ad * pd)) as i32;
                 }
             }
             // No guard hears the Vault (F35, decided): v3.4's call "every 5
@@ -2471,7 +2828,14 @@ impl World {
                 }
                 let raider = &mut self.raiders[ri];
                 let target = raider.role.carry() * raider.target_fill / 100;
-                let take = per_tick.min(target - raider.carried).min(self.vault.exposed);
+                // The Skyskipper's satchel: "loads at 60 a second instead of
+                // 30 for 5 s".
+                let rate = if raider.running(Ability::Satchel, now) {
+                    per_tick * ruleborn::SATCHEL_RATE
+                } else {
+                    per_tick
+                };
+                let take = rate.min(target - raider.carried).min(self.vault.exposed);
                 if take > 0 {
                     raider.carried += take;
                     self.vault.exposed -= take;
@@ -2513,7 +2877,13 @@ impl World {
             let (sn, sd) = self.sheet.factor(Param::StructureDamage);
             let together = breakers.iter().filter(|t| **t == Some(self.raiders[ri].target)).count();
             let (an, ad) = if together >= 2 { heist::ASSIST_BONUS } else { (1, 1) };
-            let hit = (role.power() as i64 * n as i64 * sn * an / (d as i64 * sd * ad)) as i32;
+            let (pn, pd) = if self.raiders[ri].running(Ability::Pound, now) {
+                ruleborn::POUND_HIT
+            } else {
+                (1, 1)
+            };
+            let hit = (role.power() as i64 * n as i64 * sn * an * pn
+                / (d as i64 * sd * ad * pd)) as i32;
             let cracking = self.combos.resonance(Res::CrackedGardens);
             if let Some(li) = li {
                 let law = &mut self.laws[li];
@@ -2599,6 +2969,7 @@ impl World {
         // Wildfire's flames hurt anyone inside, once a second.
         if now % TICKS_PER_SECOND == 0 && !self.burning.is_empty() {
             self.burn();
+            self.shield();
         }
 
         // §5.4: "The crew must hold the spot until it arrives." Anyone on the
@@ -2689,6 +3060,7 @@ impl World {
         if self.combos.chord(Chord::Clockwork) && now > 0 && now % heist::CLOCKWORK_TICKS == 0 {
             for wi in 0..self.wards.len() {
                 let (kind, tile, live) = (self.wards[wi].kind, self.wards[wi].tile, self.wards[wi].live());
+                let live = live && now >= self.wards[wi].held_until;
                 if !live || !matches!(kind, WardKind::TimeSnare | WardKind::GravityWell
                                       | WardKind::LanternGlare) {
                     continue;
@@ -2710,7 +3082,8 @@ impl World {
         let tile_of = |p: Point, g: &Grid| g.tile_at(p.x, p.y);
         for wi in 0..self.wards.len() {
             let w = self.wards[wi].clone();
-            if !w.live() {
+            // A ward the Stillwatch froze does nothing until it thaws.
+            if !w.live() || now < w.held_until {
                 continue;
             }
             let (wx, wy) = self.grid.centre(w.tile);
@@ -2723,7 +3096,7 @@ impl World {
                     let (n, d) = (n as i64 * sn, d as i64 * sd);
                     for r in self.raiders.iter_mut() {
                         if r.active() && within(r.at, heist::COIL_RADIUS) {
-                            r.health -= (full_health(&self.sheet, r.role) as i64 * n / d) as i32;
+                            r.health -= (r.full(&self.sheet) as i64 * n / d) as i32;
                         }
                     }
                 }
@@ -2731,7 +3104,7 @@ impl World {
                     let (n, d) = heist::HEDGE_DAMAGE;
                     for r in self.raiders.iter_mut() {
                         if r.active() && tile_of(r.at, &self.grid) == Some(w.tile) {
-                            r.health -= full_health(&self.sheet, r.role) * n / d;
+                            r.health -= r.full(&self.sheet) * n / d;
                         }
                     }
                 }
@@ -2913,7 +3286,7 @@ impl World {
                 g.health = (g.health + full * n / d).min(full);
             } else {
                 let r = &mut self.raiders[k];
-                let full = full_health(&sheet, r.role);
+                let full = r.full(&sheet);
                 r.health = (r.health + full * n / d).min(full);
             }
         }
@@ -3040,7 +3413,7 @@ impl World {
         let sheet = self.sheet;
         for (r, hurt) in self.raiders.iter_mut().zip(crew) {
             if hurt {
-                r.health -= (full_health(&sheet, r.role) as i64 * n / d) as i32;
+                r.health -= (r.full(&sheet) as i64 * n / d) as i32;
             }
         }
         for (gi, hurt) in posts.into_iter().enumerate() {
@@ -3064,7 +3437,7 @@ impl World {
         };
         for r in self.raiders.iter_mut() {
             if r.active() && on_fire(&self.grid, &self.burning, r.at) {
-                r.health -= full_health(&sheet, r.role) * n / d;
+                r.health -= r.full(&sheet) * n / d;
             }
         }
         for gi in 0..self.guards.len() {
@@ -3102,7 +3475,7 @@ impl World {
             }).collect();
             for (r, heal) in self.raiders.iter_mut().zip(crew) {
                 if heal {
-                    let full = full_health(&self.sheet, r.role);
+                    let full = r.full(&self.sheet);
                     r.health = (r.health + (full as i64 * n / d) as i32).min(full);
                 }
             }
@@ -3170,7 +3543,10 @@ impl World {
         let mut on = from;
         for next in route {
             let step = step_with(&self.grid, &self.sheet, r, r.gait, Some(on), true,
-                                 self.pace_here(Some(on), true, r.slowed_until));
+                                 self.pace_here(Some(on), true, r.slowed_until),
+                                 // A run of a few seconds does not carry
+                                 // the whole walk home.
+                                 false);
             if step.0 <= 0 {
                 return false;
             }
@@ -3357,6 +3733,18 @@ impl World {
             mix(raider.still_for as i64);
             mix(raider.frozen_until as i64);
             mix(raider.landed as i64);
+            // A crew member played by role has no ability, and its sum is
+            // what it was before kinds, so no replay recorded then moves.
+            if let Some(k) = raider.kind {
+                mix(k as i64);
+                mix(raider.uses as i64);
+                mix(raider.locked_until as i64);
+                mix(raider.ready as i64);
+                mix(raider.effect_until as i64);
+            }
+        }
+        for w in self.wards.iter().filter(|w| w.held_until > 0) {
+            mix(w.held_until as i64);
         }
         h
     }
@@ -3374,25 +3762,38 @@ impl World {
 #[cfg(test)]
 fn step_for(grid: &Grid, sheet: &Sheet, raider: &Raider, gait: Gait,
             here: Option<grid::TileIndex>, loaded: bool) -> Fx {
-    step_with(grid, sheet, raider, gait, here, loaded, (1, 1))
+    step_with(grid, sheet, raider, gait, here, loaded, (1, 1), false)
+}
+
+/// A factor that slows, made 1 when nothing may slow (the Tidewalker's
+/// "nothing slows it"); one that speeds stays.
+fn unslowed((n, d): (i64, i64), unhindered: bool) -> (i64, i64) {
+    if unhindered && n < d { (1, 1) } else { (n, d) }
 }
 
 /// `step_for`, with a factor for where it stands and what it has walked
-/// through this tick (`World::pace_here`).
+/// through this tick (`World::pace_here`). `unhindered` is the Tidewalker's
+/// ability: "For 6 s nothing slows it: terrain, laws and its own load leave
+/// it at full speed." Its gait is the player's choice, not a slowing.
+#[allow(clippy::too_many_arguments)]
 fn step_with(grid: &Grid, sheet: &Sheet, raider: &Raider, gait: Gait,
-             here: Option<grid::TileIndex>, loaded: bool, extra: (i64, i64)) -> Fx {
+             here: Option<grid::TileIndex>, loaded: bool, extra: (i64, i64),
+             unhindered: bool) -> Fx {
     let pace = here.map_or(Fx::ONE, |t| grid.at(t).pace());
+    let pace = if unhindered && pace < Fx::ONE { Fx::ONE } else { pace };
     let (num, den) = gait.pace();
     let mut step = scale(raider.speed.mul(pace).mul(Fx::from_ratio(num, den)),
-                         sheet.factor(Param::CrewSpeed));
-    let size = by_size(sheet, raider.role, Param::LargeSpeed, Param::SmallSpeed);
+                         unslowed(sheet.factor(Param::CrewSpeed), unhindered));
+    let size = unslowed(by_size(sheet, raider.size, Param::LargeSpeed, Param::SmallSpeed),
+                        unhindered);
     if size != (1, 1) {
         step = scale(step, size);
     }
+    let extra = unslowed(extra, unhindered);
     if extra != (1, 1) {
         step = scale(step, extra);
     }
-    if loaded {
+    if loaded && !unhindered {
         step = scale(step, sheet.factor(Param::LoadedSpeed));
         if raider.role == Role::Carrier {
             let (n, d) = heist::CARRIER_LOADED_PACE;
@@ -3540,11 +3941,18 @@ pub fn record(island: &island::Island, seed: u64, ticks: u32, crew: u8,
 /// `record`, in a week's era (§18.3).
 pub fn record_in(island: &island::Island, seed: u64, ticks: u32, crew: u8, era: Option<era::Era>,
                  commands: Vec<Command>) -> Heist {
+    record_with(island, seed, ticks, crew, era, None, commands)
+}
+
+/// `record_in`, with §12.5's crew manifest when the heist carries one.
+pub fn record_with(island: &island::Island, seed: u64, ticks: u32, crew: u8,
+                   era: Option<era::Era>, manifest: Option<replay::Manifest>,
+                   commands: Vec<Command>) -> Heist {
     let mut heist = Heist {
         seed,
         island: island.digest(),
         rules: rules_version(),
-        ticks, crew, era, commands,
+        ticks, crew, era, manifest, commands,
         checksums: Vec::new(),
     };
     heist.checksums = run_on(island, &heist).iter().map(|s| truncate(*s)).collect();
@@ -3823,9 +4231,21 @@ pub fn rules_version() -> [u8; 32] {
             bytes.push(*c as u8);
             bytes.push(*notes);
         }
+        // §11.11's kinds and §12.6's ability rules. No golden carries a crew
+        // manifest, so a kind given another role, size or ability, or an
+        // ability re-numbered, is a rules change no golden would see.
+        for k in ruleborn::RULEBORN.iter() {
+            bytes.extend_from_slice(k.id.as_bytes());
+            bytes.push(0);
+            bytes.extend_from_slice(&[k.role as u8, k.size as u8, k.flies as u8,
+                                      k.ability as u8, k.ability.built() as u8]);
+        }
+        for n in ruleborn::NUMBERS {
+            bytes.extend_from_slice(&n.to_le_bytes());
+        }
         let fixture = island::Island::fixture();
         let bare = |seed: u64, ticks: u32, crew: u8, commands: Vec<Command>| Heist {
-            seed, island: [0; 32], rules: [0; 32], ticks, crew, era: None, commands,
+            seed, island: [0; 32], rules: [0; 32], ticks, crew, era: None, manifest: None, commands,
             checksums: Vec::new(),
         };
         let mut heists: Vec<Heist> = GOLDEN.iter()

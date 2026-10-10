@@ -3816,7 +3816,7 @@ fn landed(island: &crate::island::Island, (x, y): (i16, i16), rest: Vec<Command>
     commands.sort_by_key(|c| c.tick);
     let heist = Heist {
         seed: 1, island: island.digest(), rules: crate::rules_version(), ticks: 4_500, crew: 3,
-        era: None, commands, checksums: Vec::new(),
+        era: None, manifest: None, commands, checksums: Vec::new(),
     };
     let mut world = World::from_island(island, &heist);
     world.phase_inputs();
@@ -3913,7 +3913,7 @@ fn a_landing_off_the_edge_late_or_twice_is_dropped() {
     let late = Command { tick: 1, actor: 0, kind: Kind::Land, x: 13 * 256 + 128, y: 2 * 256 + 128 };
     let heist = Heist {
         seed: 1, island: island.digest(), rules: crate::rules_version(), ticks: 4_500, crew: 3,
-        era: None, commands: vec![late], checksums: Vec::new(),
+        era: None, manifest: None, commands: vec![late], checksums: Vec::new(),
     };
     let mut world = World::from_island(&island, &heist);
     let before: Vec<_> = world.raiders.iter().map(|r| (r.at.x, r.at.y)).collect();
@@ -3961,4 +3961,419 @@ fn every_open_edge_tile_is_a_landing_and_nothing_else_is() {
     for &(x, y) in &landings {
         assert!(landed(&island, (x as i16, y as i16), Vec::new()).landing.is_some(), "({x}, {y})");
     }
+}
+
+// -- §12.5's crew manifest and §12.6's abilities (TD.12) -----------------------
+
+use crate::replay::{Manifest, Member, MAGIC_CREW};
+use crate::ruleborn::{self, RULEBORN};
+
+fn manifest(kinds: &[&str]) -> Manifest {
+    Manifest {
+        members: kinds.iter().map(|id| Member {
+            kind: ruleborn::by_id(id).unwrap_or_else(|| panic!("no kind {id}")),
+            form: 0,
+            level: 1,
+            traits: Vec::new(),
+        }).collect(),
+        sage: 0,
+        casts: Vec::new(),
+    }
+}
+
+/// `vault_world`'s open 14x14 realm with a crew of these kinds, in portrait
+/// order, standing in a row along y = 10.
+fn kinds_world(kinds: &[&str]) -> World {
+    let mut world = vault_world(kinds.len() as u8);
+    world.crew_from(&manifest(kinds));
+    for i in 0..kinds.len() {
+        put(&mut world, i, 2 + 2 * i as u16, 10);
+    }
+    world
+}
+
+/// Crew member `ri`'s ability, aimed at tile (x, y), now.
+fn fire_at(world: &mut World, ri: u8, x: u16, y: u16) {
+    world.give(ri, Kind::Ability, x as i16 * 256 + 128, y as i16 * 256 + 128);
+}
+
+#[test]
+fn a_crew_manifest_travels_in_the_replay_and_reads_back() {
+    let mut heist = fixture(9, 60, 3);
+    let plain = heist.encode();
+    assert_eq!(&plain[..4], b"RBH1", "no manifest: the bytes every replay so far is in");
+    let mut crew = manifest(&["stormhound", "quarryback", "skyskipper"]);
+    crew.members[1].form = 2;
+    crew.members[1].level = 7;
+    crew.members[1].traits = vec![0, 6];
+    crew.sage = 1;
+    crew.casts = vec![3];
+    heist.manifest = Some(crew);
+    for era in [None, Some(Era::QuietWeek)] {
+        heist.era = era;
+        let bytes = heist.encode();
+        assert_eq!(&bytes[..4], &MAGIC_CREW);
+        assert_eq!(Heist::decode(&bytes).as_ref(), Some(&heist), "round trip, era {era:?}");
+        assert!(heist.size_fits(), "\u{a7}24.10's 2 KB holds a manifest");
+    }
+}
+
+#[test]
+fn a_manifest_naming_a_kind_past_the_eighteen_is_malformed() {
+    let mut heist = fixture(9, 60, 1);
+    heist.manifest = Some(manifest(&["mossbear"]));
+    let mut bytes = heist.encode();
+    let kind_at = 4 + 8 + 32 + 32 + 4 + 1 + 1;          // after the era byte
+    assert_eq!(bytes[kind_at], ruleborn::by_id("mossbear").unwrap());
+    bytes[kind_at] = RULEBORN.len() as u8;
+    assert_eq!(Heist::decode(&bytes), None, "no nineteenth kind");
+}
+
+#[test]
+fn each_member_plays_its_kinds_role_size_and_two_uses() {
+    let world = kinds_world(&["emberling", "glass_golem", "lantern_wisp"]);
+    let (r0, r1, r2) = (&world.raiders[0], &world.raiders[1], &world.raiders[2]);
+    assert_eq!((r0.role, r0.size), (Role::Breaker, crate::Size::Small));
+    assert_eq!((r1.role, r1.size), (Role::Warden, crate::Size::Large));
+    assert_eq!((r2.role, r2.size), (Role::Scout, crate::Size::Small));
+    assert_eq!(r0.uses, ruleborn::USES, "\u{a7}12.6: \"two uses a heist\"");
+    assert_eq!(r0.health, Role::Breaker.health(), "\u{a7}11.1's numbers, by role");
+    let by_role = World::new(1, 3, Vec::new());
+    assert!(by_role.raiders.iter().all(|r| r.kind.is_none() && r.uses == 0),
+            "a crew with no manifest plays by role, with no abilities");
+}
+
+#[test]
+fn a_heist_with_a_manifest_records_and_verifies() {
+    let island = Island::fixture();
+    let mut commands = crate::draw(&island, 4, 600, 3);
+    let at = commands.iter().position(|c| c.tick > 30).unwrap();
+    commands.insert(at, Command { tick: commands[at].tick, actor: 0, kind: Kind::Ability,
+                                   x: 0, y: 0 });
+    let mut heist = crate::record(&island, 4, 600, 3, Vec::new());
+    heist.manifest = Some(manifest(&["stormhound", "rambler", "skyskipper"]));
+    heist.commands = commands;
+    heist.checksums = crate::run_on(&island, &heist).iter().map(|s| crate::truncate(*s)).collect();
+    let back = Heist::decode(&heist.encode()).unwrap();
+    assert_eq!(crate::run_on(&island, &back).len(), heist.checksums.len());
+    assert_eq!(crate::run_on(&island, &back).iter().map(|s| crate::truncate(*s)).collect::<Vec<_>>(),
+               heist.checksums, "the same manifest plays the same heist");
+    let mut by_role = heist.clone();
+    by_role.manifest = None;
+    assert_ne!(crate::run_on(&island, &by_role).iter().map(|s| crate::truncate(*s)).collect::<Vec<_>>(),
+               heist.checksums, "and without it the crew is another crew");
+}
+
+#[test]
+fn density_reads_a_small_kind_by_its_size_whatever_its_role() {
+    // G23: sizing by role made the Warden the only large character and
+    // nobody small, so Density's small band never played. The Emberling is
+    // a small Breaker.
+    let mut world = kinds_world(&["emberling", "quarryback"]);
+    world.weave(&[("density", (0, 13))]);
+    assert_eq!(world.raiders[0].health, Role::Breaker.health() * 4 / 5,
+               "small: -20% health, a Breaker all the same");
+    assert_eq!(world.raiders[1].health, Role::Breaker.health(), "a standard Breaker");
+    let plain = crate::Sheet::plain();
+    let e = &world.raiders[0];
+    assert_eq!(crate::step_for(&world.grid, &world.sheet, e, e.gait, None, false),
+               crate::step_for(&world.grid, &plain, e, e.gait, None, false)
+                   .mul(Fx::from_ratio(5, 4)),
+               "small: +25% speed");
+}
+
+#[test]
+fn an_ability_has_two_uses_ten_seconds_apart() {
+    let mut world = kinds_world(&["stormhound"]);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert_eq!(world.raiders[0].uses, 1);
+    run_for(&mut world, 5 * TICKS_PER_SECOND);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert_eq!(world.raiders[0].uses, 1, "inside the lockout: refused, nothing spent");
+    run_for(&mut world, ruleborn::LOCKOUT_TICKS);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert_eq!(world.raiders[0].uses, 0, "ten seconds on: the second use");
+    run_for(&mut world, ruleborn::LOCKOUT_TICKS);
+    assert!(!world.raiders[0].ready, "no uses left: never ready again");
+}
+
+#[test]
+fn at_most_four_abilities_are_ready_and_the_fifth_waits_its_turn() {
+    let mut world = kinds_world(&["stormhound", "quarryback", "skyskipper", "mossbear",
+                                  "bloomling"]);
+    world.step();
+    let ready = |w: &World| w.raiders.iter().map(|r| r.ready).collect::<Vec<_>>();
+    assert_eq!(ready(&world), [true, true, true, true, false],
+               "\u{a7}12.6: \"the rightmost portrait's ability waits\"");
+    fire_at(&mut world, 1, 0, 0);                    // the Quarryback's pound
+    world.step();
+    world.step();
+    assert_eq!(ready(&world), [true, false, true, true, true],
+               "\"becomes ready the moment any other ability's use is taken\"");
+    run_for(&mut world, ruleborn::LOCKOUT_TICKS);
+    assert!(!world.raiders[1].ready,
+            "\"an ability whose lockout ends while four are ready waits its turn\"");
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    world.step();
+    assert_eq!(ready(&world), [false, true, true, true, true], "and takes the next turn");
+}
+
+#[test]
+fn an_ability_with_nothing_to_act_on_spends_no_use() {
+    let mut world = kinds_world(&["hourkeeper", "featherkin"]);
+    fire_at(&mut world, 0, 12, 12);                   // nobody there
+    world.step();
+    assert_eq!(world.raiders[0].uses, 2, "a rewind aimed at an empty tile is dropped");
+    assert!(!RULEBORN[ruleborn::by_id("featherkin").unwrap() as usize].ability.built());
+    fire_at(&mut world, 1, 5, 10);
+    world.step();
+    assert_eq!(world.raiders[1].uses, 2, "the glide waits for gaps (TD.15), and costs nothing");
+}
+
+#[test]
+fn the_stormhounds_sprint_runs_sixty_percent_faster_for_four_seconds() {
+    let walk = |sprint: bool| {
+        let mut world = kinds_world(&["stormhound"]);
+        put(&mut world, 0, 1, 1);
+        if sprint {
+            fire_at(&mut world, 0, 0, 0);
+            world.step();
+        }
+        let from = world.raiders[0].at;
+        let a = world.grid.index(1, 1).unwrap();
+        let b = world.grid.index(12, 1).unwrap();
+        world.raiders[0].route = path::find(&world.grid, a, b).unwrap();
+        world.raiders[0].along = 0;
+        run_for(&mut world, TICKS_PER_SECOND);
+        from.distance(world.raiders[0].at)
+    };
+    let (plain, fast) = (walk(false), walk(true));
+    // Thirty steps each rounded to the fixed-point unit: equal to well under
+    // a ten-thousandth of a tile.
+    let off = (fast.0 - plain.mul(Fx::from_ratio(8, 5)).0).abs();
+    assert!(off < Fx::from_ratio(1, 10_000).0, "\"Sprints 60% faster\", off by {off}");
+    let mut world = kinds_world(&["stormhound"]);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert!(world.raiders[0].running(ruleborn::Ability::Sprint, 4 * TICKS_PER_SECOND - 1));
+    assert!(!world.raiders[0].running(ruleborn::Ability::Sprint, 4 * TICKS_PER_SECOND),
+            "\"for 4 s\"");
+}
+
+/// A crew of these kinds beside an open Vault holding plenty, each told to
+/// load to full; how much each has after `ticks`.
+fn loaded_after(kinds: &[&str], fire: Option<u8>, ticks: u32) -> Vec<i32> {
+    let mut world = kinds_world(kinds);
+    world.vault.opened_at = Some(0);
+    world.vault.exposed = 10_000;
+    for i in 0..kinds.len() {
+        let (x, y) = BESIDE[i];
+        put(&mut world, i, x, y);
+        world.raiders[i].task = Task::Load;
+        world.raiders[i].target_fill = 100;
+    }
+    if let Some(ri) = fire {
+        fire_at(&mut world, ri, 0, 0);
+    }
+    run_for(&mut world, ticks);
+    world.raiders.iter().map(|r| r.carried).collect()
+}
+
+#[test]
+fn the_skyskippers_satchel_loads_sixty_a_second_for_five_seconds() {
+    assert_eq!(loaded_after(&["skyskipper"], None, TICKS_PER_SECOND), [h::LOAD_PER_SECOND]);
+    assert_eq!(loaded_after(&["skyskipper"], Some(0), TICKS_PER_SECOND),
+               [2 * h::LOAD_PER_SECOND], "\"loads at 60 a second instead of 30\"");
+    // A Carrier's bag holds 300, which the satchel fills in exactly its five
+    // seconds; a Breaker's holds 104, so a slower load shows the rate.
+    assert_eq!(loaded_after(&["skyskipper"], Some(0), 5 * TICKS_PER_SECOND), [300]);
+    let mut world = kinds_world(&["skyskipper"]);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert_eq!(world.raiders[0].effect_until, ruleborn::SATCHEL_TICKS, "\"for 5 s\"");
+}
+
+#[test]
+fn nothing_slows_the_tidewalker_for_six_seconds() {
+    let step = |unhindered: bool, carrying: i32| {
+        let mut world = kinds_world(&["tidewalker"]);
+        world.weave(&[("heavy_ground", (0, 13))]);
+        world.raiders[0].carried = carrying;
+        if unhindered {
+            fire_at(&mut world, 0, 0, 0);
+            world.step();
+        }
+        let r = &world.raiders[0];
+        crate::step_with(&world.grid, &world.sheet, r, r.gait, None, carrying > 0, (1, 1),
+                         r.running(ruleborn::Ability::Unhindered, world.tick))
+    };
+    let base = Role::Carrier.speed();
+    assert!(step(false, 100) < base, "loaded, under a law that slows the crew");
+    assert_eq!(step(true, 100), base,
+               "\"terrain, laws and its own load leave it at full speed\"");
+}
+
+#[test]
+fn the_quarrybacks_pound_hits_the_vault_half_again_as_hard() {
+    let hit = |pound: bool| {
+        let mut world = kinds_world(&["quarryback"]);
+        put(&mut world, 0, 6, 5);
+        world.raiders[0].task = Task::Crack;
+        if pound {
+            fire_at(&mut world, 0, 0, 0);
+        }
+        let before = world.vault.health;
+        run_for(&mut world, h::HIT_TICKS);
+        before - world.vault.health
+    };
+    let plain = Role::Breaker.power() * 2;           // a Breaker hits it for double
+    assert_eq!(hit(false), plain);
+    assert_eq!(hit(true), plain * 3 / 2, "\"deal 50% more\"");
+}
+
+#[test]
+fn the_emberling_bursts_triple_its_power_on_every_ward_and_pylon_within_a_tile() {
+    let mut world = kinds_world(&["emberling"]);
+    world.weave(&[("density", (3, 4))]);
+    world.place_wards(&[(WardKind::TimeSnare, (4, 3)), (WardKind::TimeSnare, (6, 3))]);
+    put(&mut world, 0, 4, 4);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    let burst = Role::Breaker.power() * 3;
+    assert_eq!(world.wards[0].health, h::WARD_HEALTH_PER_LEVEL - burst, "the ward a tile away");
+    assert_eq!(world.laws[0].health, h::PYLON_HEALTH - burst, "the pylon a tile away");
+    assert_eq!(world.wards[1].health, h::WARD_HEALTH_PER_LEVEL, "two tiles off: untouched");
+}
+
+/// A Thorn Hedge on (x, y), and crew member `ri` standing in it.
+fn in_a_hedge(world: &mut World, ri: usize, x: u16, y: u16) {
+    world.place_wards(&[(WardKind::ThornHedge, (x, y))]);
+    put(world, ri, x, y);
+}
+
+#[test]
+fn the_hourkeeper_gives_an_ally_back_what_it_lost_in_the_last_five_seconds() {
+    let mut world = kinds_world(&["hourkeeper", "stormhound"]);
+    in_a_hedge(&mut world, 1, 8, 8);
+    let each = Role::Scout.health() * 5 / 100;
+    run_for(&mut world, 7 * TICKS_PER_SECOND);        // seven thorns: ticks 0, 30 ... 180
+    assert_eq!(world.raiders[1].health, Role::Scout.health() - 7 * each);
+    put(&mut world, 1, 9, 9);
+    fire_at(&mut world, 0, 9, 9);
+    world.step();
+    assert_eq!(world.raiders[1].health, Role::Scout.health() - 2 * each,
+               "the five thorns of the last 5 s back, not the two before");
+    fire_at(&mut world, 0, 9, 9);
+    run_for(&mut world, ruleborn::LOCKOUT_TICKS + 1);
+    fire_at(&mut world, 0, 9, 9);
+    world.step();
+    assert_eq!(world.raiders[1].health, Role::Scout.health() - 2 * each,
+               "what was given back is not given twice");
+}
+
+#[test]
+fn the_stillwatch_freezes_a_guard_or_a_ward_for_two_and_a_half_seconds() {
+    let mut world = kinds_world(&["stillwatch", "stormhound"]);
+    let post = world.grid.index(3, 3).unwrap();
+    world.guards.push(make_guard(0, 0, post, &world.grid));
+    fire_at(&mut world, 0, 3, 3);
+    world.step();
+    assert_eq!(world.guards[0].stunned_until, ruleborn::FREEZE_TICKS,
+               "\"it cannot move, act, see or grow suspicious\"");
+    assert!(!world.guards[0].awake(1));
+
+    let mut world = kinds_world(&["stillwatch", "stormhound"]);
+    world.place_wards(&[(WardKind::TimeSnare, (8, 8))]);
+    fire_at(&mut world, 0, 8, 8);
+    world.step();
+    put(&mut world, 1, 8, 8);
+    world.step();
+    assert_eq!(world.raiders[1].frozen_until, 0, "a frozen snare catches nobody");
+    run_for(&mut world, ruleborn::FREEZE_TICKS);
+    assert!(world.raiders[1].frozen_until > 0, "thawed, it does");
+}
+
+#[test]
+fn the_mossbear_rooted_takes_half_damage_and_does_not_move() {
+    let hurt = |root: bool| {
+        let mut world = kinds_world(&["mossbear"]);
+        in_a_hedge(&mut world, 0, 5, 5);
+        if root {
+            fire_at(&mut world, 0, 0, 0);
+        }
+        world.step();
+        Role::Warden.health() - world.raiders[0].health
+    };
+    let thorn = Role::Warden.health() * 5 / 100;
+    assert_eq!(hurt(false), thorn);
+    assert_eq!(hurt(true), thorn / 2, "\"taking half damage\"");
+
+    let mut world = kinds_world(&["mossbear"]);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    world.give(0, Kind::MoveTo, 12 * 256 + 128, 10 * 256 + 128);
+    let at = world.raiders[0].at;
+    run_for(&mut world, ruleborn::ROOT_TICKS - 2);
+    assert_eq!(world.raiders[0].at, at, "\"it cannot move while rooted\"");
+    run_for(&mut world, TICKS_PER_SECOND);
+    assert_ne!(world.raiders[0].at, at, "then it goes where it was told");
+}
+
+#[test]
+fn the_bloomling_heals_every_ally_within_three_tiles_by_fifteen_percent() {
+    let mut world = kinds_world(&["bloomling", "stormhound", "quarryback"]);
+    put(&mut world, 0, 5, 5);
+    put(&mut world, 1, 7, 7);                         // 2.8 tiles
+    put(&mut world, 2, 9, 5);                         // 4 tiles
+    for r in world.raiders.iter_mut() {
+        r.health = 50;
+    }
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert_eq!(world.raiders[1].health, 50 + Role::Scout.health() * 15 / 100);
+    assert_eq!(world.raiders[2].health, 50, "four tiles off");
+    assert_eq!(world.raiders[0].health, 50, "an ally, not itself");
+}
+
+#[test]
+fn the_echoplate_returns_a_crew_member_knocked_out_within_three_tiles() {
+    let mut world = kinds_world(&["echoplate", "stormhound", "quarryback"]);
+    put(&mut world, 0, 5, 5);
+    in_a_hedge(&mut world, 1, 7, 5);
+    in_a_hedge(&mut world, 2, 10, 5);
+    world.raiders[1].health = 1;
+    world.raiders[2].health = 1;
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert_eq!(world.raiders[1].standing, Standing::Active);
+    assert_eq!(world.raiders[1].health, Role::Scout.health() * 40 / 100,
+               "\"returns at once at 40% of its full health\"");
+    assert_eq!(world.raiders[2].standing, Standing::Down, "five tiles off");
+
+    let mut world = kinds_world(&["echoplate"]);
+    in_a_hedge(&mut world, 0, 5, 5);
+    world.raiders[0].health = 1;
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert_eq!(world.raiders[0].standing, Standing::Active, "\"itself included\"");
+}
+
+#[test]
+fn the_soulmenders_link_shares_every_hit_evenly_across_the_crew() {
+    let mut world = kinds_world(&["soulmender", "stormhound", "quarryback"]);
+    in_a_hedge(&mut world, 1, 8, 8);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    let thorn = Role::Scout.health() * 5 / 100;      // 6
+    let lost: Vec<i32> = world.raiders.iter().map(|r| r.full(&world.sheet) - r.health).collect();
+    assert_eq!(lost.iter().sum::<i32>(), thorn, "nothing more is lost, nothing less");
+    assert_eq!(lost, [thorn / 3; 3], "\"shared evenly across all\"");
+    run_for(&mut world, ruleborn::LINK_TICKS);
+    let before = world.raiders[1].health;
+    run_for(&mut world, TICKS_PER_SECOND);
+    assert_eq!(before - world.raiders[1].health, thorn, "after 6 s, its own again");
 }

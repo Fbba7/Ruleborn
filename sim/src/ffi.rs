@@ -35,9 +35,9 @@ use std::sync::Mutex;
 
 use crate::heist::Grade;
 use crate::island::Island;
-use crate::replay::{Command, Heist, Kind, MAX_HEIST_BYTES};
+use crate::replay::{Command, Heist, Kind, Manifest, MAX_HEIST_BYTES};
 use crate::era::Era;
-use crate::{digest, draw, fixture, record_in, rules_version, verify_on, Refusal};
+use crate::{digest, draw, fixture, record_in, record_with, rules_version, verify_on, Refusal};
 
 /// Room for the largest island (14 x 14 tiles at three bytes, and its lists)
 /// and a replay beside it, many times over.
@@ -226,6 +226,56 @@ pub extern "C" fn rb_record(seed_hi: u32, seed_lo: u32, ticks: u32, crew: u32,
         }
         let crew = crew.min(u8::MAX as u32) as u8;
         let bytes = record_in(&island, seed, ticks, crew, era, commands).encode();
+        if bytes.len() > BUFFER_BYTES {
+            return -9;
+        }
+        b[..bytes.len()].copy_from_slice(&bytes);
+        bytes.len() as i32
+    })
+}
+
+/// `rb_record`, with §12.5's crew manifest: its `manifest_len` bytes follow
+/// the commands in the buffer, in the replay's own wire form (`Manifest::
+/// write`), for `crew` members. The replay is an `RBH3`. -12 for a manifest
+/// that does not read, or has bytes left over.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+#[allow(clippy::too_many_arguments)]
+pub extern "C" fn rb_record_crew(seed_hi: u32, seed_lo: u32, ticks: u32, crew: u32,
+                                 island_len: u32, count: u32, era: u32,
+                                 manifest_len: u32) -> i32 {
+    let Some(era) = Era::from_u8(era.min(255) as u8) else { return -10 };
+    let commands_len = count.saturating_mul(10);
+    if !fits(island_len, commands_len.saturating_add(manifest_len)) {
+        return -9;
+    }
+    let seed = ((seed_hi as u64) << 32) | seed_lo as u64;
+    let crew = crew.min(u8::MAX as u32) as u8;
+    with_buffer(|b| {
+        let Ok(island) = Island::decode(&b[..island_len as usize]) else { return -2 };
+        let start = (island_len + commands_len) as usize;
+        let end = start + manifest_len as usize;
+        let mut at = start;
+        let Some(manifest) = Manifest::read(&b[..end], &mut at, crew) else { return -12 };
+        if at != end {
+            return -12;
+        }
+        let mut commands = Vec::with_capacity(count as usize);
+        for i in 0..count as usize {
+            let c = &b[island_len as usize + i * 10..island_len as usize + i * 10 + 10];
+            let Some(kind) = Kind::from_u8(c[5]) else { return -7 };
+            commands.push(Command {
+                tick: u32::from_le_bytes([c[0], c[1], c[2], c[3]]),
+                actor: c[4],
+                kind,
+                x: i16::from_le_bytes([c[6], c[7]]),
+                y: i16::from_le_bytes([c[8], c[9]]),
+            });
+        }
+        if !commands.windows(2).all(|w| w[0].tick <= w[1].tick) {
+            return -7;
+        }
+        let bytes = record_with(&island, seed, ticks, crew, era, Some(manifest), commands).encode();
         if bytes.len() > BUFFER_BYTES {
             return -9;
         }

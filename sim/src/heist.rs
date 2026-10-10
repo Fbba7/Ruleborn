@@ -322,6 +322,8 @@ pub struct Ward {
     pub broken_at: Option<u32>,
     /// Grown back by Bloom, which Honey trap makes sticky.
     pub regrown: bool,
+    /// Frozen by a Stillwatch until this tick (§11.11): it does nothing.
+    pub held_until: u32,
 }
 
 impl Ward {
@@ -332,7 +334,7 @@ impl Ward {
             WARD_HEALTH_PER_LEVEL
         };
         Ward { kind, tile, level: 1, health, armed_at: 0, disarmed: false, broken: false,
-               disarm: 0, broken_at: None, regrown: false }
+               disarm: 0, broken_at: None, regrown: false, held_until: 0 }
     }
 
     /// Still doing anything at all.

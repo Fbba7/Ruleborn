@@ -200,6 +200,62 @@
       ]
     },
     {
+      "name": "Crew manifest",
+      "section": "12.5",
+      "task": "TD.12",
+      "what": "§12.5's crew manifest travels in the replay (RBH3): each member's kind, form, level and traits, the Sage and the casts carried, after the era byte. The simulation plays each member by its kind — the kind's role, so §11.1's numbers, its size band and its ability's two uses — so Density's small band plays for a small kind whatever its role (G23). A replay with no manifest is RBH1 or RBH2 byte for byte as before and plays its crew by role. The server records and re-simulates manifests (server/test/crew.test.mjs). Forms, levels and traits are carried and not yet played (TD.34), and the server does not yet check the manifest against the roster it holds (TD.34).",
+      "tests": [
+        "a_crew_manifest_travels_in_the_replay_and_reads_back",
+        "a_manifest_naming_a_kind_past_the_eighteen_is_malformed",
+        "each_member_plays_its_kinds_role_size_and_two_uses",
+        "a_heist_with_a_manifest_records_and_verifies",
+        "density_reads_a_small_kind_by_its_size_whatever_its_role"
+      ]
+    },
+    {
+      "name": "Ability rules",
+      "section": "12.6",
+      "task": "TD.12",
+      "what": "§12.6's rules for abilities, as the Ability command (12 on the wire, aimed at a tile): two uses a heist, a ten-second lockout after each, no cooldown, and at most four ready at once — in a crew of five the rightmost waits and becomes ready when another's use is taken; one whose lockout ends while four are ready waits its turn; one with no uses left no longer counts. An ability that finds nothing to act on, or is not built yet, is dropped and spends no use. Held breath's slowing of the lockout waits for Held breath, which is not a launch law.",
+      "tests": [
+        "an_ability_has_two_uses_ten_seconds_apart",
+        "at_most_four_abilities_are_ready_and_the_fifth_waits_its_turn",
+        "an_ability_with_nothing_to_act_on_spends_no_use"
+      ]
+    },
+    {
+      "name": "Abilities",
+      "section": "11.11",
+      "task": "TD.12",
+      "what": "§11.11's abilities, each a change to a named number for its stated time, eleven of eighteen: the Stormhound's sprint, the Skyskipper's satchel, the Tidewalker unhindered, the Quarryback's pound, the Emberling's burst, the Hourkeeper's rewind, the Stillwatch's freeze of a guard or a ward, the Mossbear's root, the Bloomling's heal, the Echoplate standing over the crew and the Soulmender's link. Seven wait on what they act on: the Featherkin's glide, the Rambler's charge and the Rootrunner's bridge on gaps, hedges and boulders (TD.15); the Glass golem's wall on a wall a route can meet mid-walk; the Sparkwright's cut on the Sage; the Prism mite's split on a crew member that can be two; and the Lantern wisp's reveal on something hidden. Their numbers are content_gate.py's, read from content/ruleborn.json's own sentences.",
+      "tests": [
+        "the_stormhounds_sprint_runs_sixty_percent_faster_for_four_seconds",
+        "the_skyskippers_satchel_loads_sixty_a_second_for_five_seconds",
+        "nothing_slows_the_tidewalker_for_six_seconds",
+        "the_quarrybacks_pound_hits_the_vault_half_again_as_hard",
+        "the_emberling_bursts_triple_its_power_on_every_ward_and_pylon_within_a_tile",
+        "the_hourkeeper_gives_an_ally_back_what_it_lost_in_the_last_five_seconds",
+        "the_stillwatch_freezes_a_guard_or_a_ward_for_two_and_a_half_seconds",
+        "the_mossbear_rooted_takes_half_damage_and_does_not_move",
+        "the_bloomling_heals_every_ally_within_three_tiles_by_fifteen_percent",
+        "the_echoplate_returns_a_crew_member_knocked_out_within_three_tiles",
+        "the_soulmenders_link_shares_every_hit_evenly_across_the_crew"
+      ],
+      "abilities": {
+        "stormhound": "the_stormhounds_sprint_runs_sixty_percent_faster_for_four_seconds",
+        "skyskipper": "the_skyskippers_satchel_loads_sixty_a_second_for_five_seconds",
+        "tidewalker": "nothing_slows_the_tidewalker_for_six_seconds",
+        "quarryback": "the_quarrybacks_pound_hits_the_vault_half_again_as_hard",
+        "emberling": "the_emberling_bursts_triple_its_power_on_every_ward_and_pylon_within_a_tile",
+        "hourkeeper": "the_hourkeeper_gives_an_ally_back_what_it_lost_in_the_last_five_seconds",
+        "stillwatch": "the_stillwatch_freezes_a_guard_or_a_ward_for_two_and_a_half_seconds",
+        "mossbear": "the_mossbear_rooted_takes_half_damage_and_does_not_move",
+        "bloomling": "the_bloomling_heals_every_ally_within_three_tiles_by_fifteen_percent",
+        "echoplate": "the_echoplate_returns_a_crew_member_knocked_out_within_three_tiles",
+        "soulmender": "the_soulmenders_link_shares_every_hit_evenly_across_the_crew"
+      }
+    },
+    {
       "name": "The Vault and loading",
       "section": "12.19",
       "task": "T5.5",

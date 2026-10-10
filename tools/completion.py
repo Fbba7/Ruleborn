@@ -168,6 +168,41 @@ def launch_combos():
     return proof
 
 
+def crew_powers():
+    """§26.8's phase 1: "crews as ruleborn from the manifest with the eighteen
+    abilities, Sage powers and casts as commands (12.5, 12.7)". Its parts,
+    each counted once and equally: the crew manifest, §12.6's rules for using
+    an ability, each of §11.11's eighteen abilities, each of §11.7's twelve
+    launch Sage powers, and casts — each through the sim/ system that proves
+    it, every test passed. An ability or a power counts when sim/systems.json
+    maps it to a test that passed; one not mapped is not built."""
+    def proof():
+        manifest, status = _sim_status()
+        results = status.get("tests", {})
+        whole = lambda name: name in manifest and all(
+            results.get(t) == "passed" for t in manifest[name]["tests"])
+        kinds = [k["id"] for k in json.loads((CONTENT / "ruleborn.json").read_text(encoding="utf-8"))]
+        powers = [f"{s['id']}:{name.strip().lower()}"
+                  for s in json.loads((CONTENT / "sages.json").read_text(encoding="utf-8"))
+                  for name in re.findall(r"(?:^|\. )([A-Z][a-z]+(?: [a-z]+)?):", s["heist_powers"])]
+        mapped = {**manifest.get("Abilities", {}).get("abilities", {}),
+                  **manifest.get("Sage powers", {}).get("powers", {})}
+        parts = {"the crew manifest": whole("Crew manifest"),
+                 "the ability rules": whole("Ability rules"),
+                 **{k: results.get(mapped.get(k, "")) == "passed" for k in kinds},
+                 **{p: results.get(mapped.get(p, "")) == "passed" for p in powers},
+                 "casts": whole("Casts")}
+        missing = [t for t in mapped.values() if t not in results]
+        n = sum(parts.values())
+        got = lambda keys: sum(parts[k] for k in keys)
+        return (n / len(parts),
+                f"{n} of {len(parts)}: the manifest {'built' if parts['the crew manifest'] else 'not'}"
+                f", §12.6's rules {'built' if parts['the ability rules'] else 'not'}"
+                f", {got(kinds)} of {len(kinds)} abilities, {got(powers)} of {len(powers)} Sage "
+                f"powers, casts {'built' if parts['casts'] else 'not'}", missing)
+    return proof
+
+
 def content_count(file: str, want: int, where=lambda rows: rows):
     """A content table extracted from the document, validated by
     validate_content.py in check_all.sh, holding the count §26.1 ships."""
@@ -271,9 +306,7 @@ DELIVERABLES = [
     # §26.8: "crews as ruleborn from the manifest with the eighteen abilities,
     # Sage powers and casts as commands (12.5, 12.7)" — the simulation has none
     # yet (G67), so they are their own deliverable, not a tenth of Crews.
-    ("1", "The eighteen abilities, Sage powers and casts as commands", BACKEND, not_started(
-        "the simulation runs §12.6's abilities and §12.7's Sage powers and casts as "
-        "replay commands, each with its tests (TD.12)")),
+    ("1", "The eighteen abilities, Sage powers and casts as commands", BACKEND, crew_powers()),
     ("1", "Stealth", BACKEND, systems(
         "Line of sight", "Noise", "Guard states", "Realm alarm", "Detection modifiers", "Wards")),
     ("1", "The law engine", BACKEND, launch_laws_simulated()),
