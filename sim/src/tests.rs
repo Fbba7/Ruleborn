@@ -4127,14 +4127,17 @@ fn at_most_four_abilities_are_ready_and_the_fifth_waits_its_turn() {
 
 #[test]
 fn an_ability_with_nothing_to_act_on_spends_no_use() {
-    let mut world = kinds_world(&["hourkeeper", "featherkin"]);
+    let mut world = kinds_world(&["hourkeeper", "lantern_wisp", "featherkin"]);
     fire_at(&mut world, 0, 12, 12);                   // nobody there
     world.step();
     assert_eq!(world.raiders[0].uses, 2, "a rewind aimed at an empty tile is dropped");
-    assert!(!RULEBORN[ruleborn::by_id("featherkin").unwrap() as usize].ability.built());
+    assert!(!RULEBORN[ruleborn::by_id("lantern_wisp").unwrap() as usize].ability.built());
     fire_at(&mut world, 1, 5, 10);
     world.step();
-    assert_eq!(world.raiders[1].uses, 2, "the glide waits for gaps (TD.15), and costs nothing");
+    assert_eq!(world.raiders[1].uses, 2, "the reveal waits for something hidden, and costs nothing");
+    fire_at(&mut world, 2, 5, 9);                     // it stands on (6, 10)
+    world.step();
+    assert_eq!(world.raiders[2].uses, 2, "a glide aimed off its row and column is dropped");
 }
 
 #[test]
@@ -5286,4 +5289,121 @@ fn a_pit_drops_anyone_a_level_and_needs_a_climb_out() {
     }
     assert_eq!(dropped, 1, "a landing from one level, heard as one (12.17)");
     assert_eq!(tile_of(&world, 0), (4, 2));
+}
+
+/// A pond `wide` tiles across, from x = 3, over every row.
+fn moat(world: &mut World, wide: u16) {
+    for x in 3..3 + wide {
+        for y in 0..14 {
+            if world.grid.feature(world.grid.index(x, y).unwrap()).is_none() {
+                world.grid.place(x, y, Feature::Pond);
+            }
+        }
+    }
+}
+
+#[test]
+fn the_featherkins_glide_crosses_a_gap_three_tiles_in_one_move() {
+    let glide = |to: (u16, u16), setup: &dyn Fn(&mut World)| {
+        let mut world = kinds_world(&["featherkin"]);
+        moat(&mut world, 2);
+        setup(&mut world);
+        put(&mut world, 0, 2, 2);
+        fire_at(&mut world, 0, to.0, to.1);
+        run_for(&mut world, 3 * TICKS_PER_SECOND);
+        (tile_of(&world, 0), world.raiders[0].uses)
+    };
+    assert_eq!(glide((5, 2), &|_| {}), ((5, 2), 1), "over a two-tile pond, three tiles");
+    assert_eq!(glide((6, 2), &|_| {}).1, 2, "four tiles is too far, and costs nothing");
+    assert_eq!(glide((5, 2), &|w| w.grid.place(5, 2, Feature::RockPillar)).1, 2,
+               "it lands on ground it can stand on");
+    assert_eq!(glide((5, 2), &|w| w.grid.set_height(5, 2, 1)), ((5, 2), 1), "rising a level");
+    assert_eq!(glide((5, 2), &|w| w.grid.set_height(5, 2, 2)).1, 2, "not two");
+    let mut world = kinds_world(&["featherkin"]);
+    world.grid.place(3, 2, Feature::RockPillar);
+    put(&mut world, 0, 2, 2);
+    fire_at(&mut world, 0, 4, 2);
+    world.step();
+    assert_eq!(world.raiders[0].uses, 2, "a gap, not a wall");
+}
+
+#[test]
+fn the_ramblers_charge_runs_four_tiles_twice_as_fast_and_breaks_the_first_hedge() {
+    let charge = |setup: &dyn Fn(&mut World)| {
+        let mut world = kinds_world(&["rambler"]);
+        setup(&mut world);
+        put(&mut world, 0, 1, 2);
+        fire_at(&mut world, 0, 8, 2);
+        let mut ticks = 0;
+        world.step();
+        while world.raiders[0].charging && ticks < 10 * TICKS_PER_SECOND {
+            world.step();
+            ticks += 1;
+        }
+        (world, ticks)
+    };
+    let (world, ticks) = charge(&|w| w.grid.place(3, 2, Feature::Hedge));
+    assert_eq!(world.grid.feature(world.grid.index(3, 2).unwrap()), None, "the hedge is broken");
+    assert_eq!(tile_of(&world, 0), (5, 2), "and the charge runs its 4 tiles");
+    let mut walk = kinds_world(&["rambler"]);
+    put(&mut walk, 0, 1, 2);
+    order(&mut walk, 0, 5, 2);
+    let mut walked = 0;
+    while tile_of(&walk, 0) != (5, 2) || !walk.raiders[0].still() {
+        walk.step();
+        walked += 1;
+    }
+    assert!(ticks * 2 <= walked + 2 && ticks * 2 + 2 >= walked, "\"Speed ×2\": {ticks} against {walked}");
+    let (world, _) = charge(&|w| w.grid.place(3, 2, Feature::RockPillar));
+    assert_eq!(tile_of(&world, 0), (2, 2), "a pillar cannot be broken: the charge stops before it");
+    let (world, _) = charge(&|w| {
+        w.grid.place(3, 2, Feature::Boulder);
+        w.grid.place(4, 2, Feature::Hedge);
+    });
+    assert_eq!(world.grid.feature(world.grid.index(4, 2).unwrap()), Some(Feature::Hedge),
+               "only the first in its way");
+    assert_eq!(tile_of(&world, 0), (3, 2));
+}
+
+#[test]
+fn the_rootrunners_bridge_spans_a_gap_of_up_to_three_tiles_for_eight_seconds() {
+    let bridged = |wide: u16| {
+        let mut world = kinds_world(&["rootrunner"]);
+        moat(&mut world, wide);
+        put(&mut world, 0, 2, 2);
+        fire_at(&mut world, 0, 3, 2);
+        world.step();
+        world
+    };
+    let across = |w: &World| {
+        let (a, b) = (w.grid.index(2, 2).unwrap(), w.grid.index(9, 2).unwrap());
+        path::find(&w.grid, a, b).is_some()
+    };
+    let mut world = bridged(3);
+    assert!(across(&world) && world.raiders[0].uses == 1, "a three-tile gap, bridged");
+    assert!(!across(&bridged(4)) && bridged(4).raiders[0].uses == 2, "four is too wide");
+    put(&mut world, 0, 4, 2);                     // standing on the roots
+    run_for(&mut world, ruleborn::ROOT_BRIDGE_TICKS);
+    assert!(!across(&world), "gone after 8 s");
+    assert_eq!(tile_of(&world, 0), (2, 2), "and whoever was on it is back where it was laid from");
+}
+
+#[test]
+fn the_tinkerers_plank_lays_a_four_tile_shortcut_over_a_gap_for_fifteen_seconds() {
+    let planked = |wide: u16| {
+        let mut world = sage_world(&["stormhound"], 2);
+        moat(&mut world, wide);
+        call_at(&mut world, 2, 4, 5);                 // Plank, the Tinkerer's third
+        world.step();
+        world
+    };
+    let across = |w: &World| {
+        let (a, b) = (w.grid.index(2, 5).unwrap(), w.grid.index(9, 5).unwrap());
+        path::find(&w.grid, a, b).is_some()
+    };
+    let mut world = planked(4);
+    assert!(across(&world), "four tiles across, along the row");
+    assert!(!across(&planked(5)), "five is too wide");
+    run_for(&mut world, ruleborn::PLANK_TICKS);
+    assert!(!across(&world), "gone after 15 s");
 }

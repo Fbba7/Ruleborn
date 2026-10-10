@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9857,6 +9857,36 @@ dict(id="F62", kind="finding", severity="significant", status="open",
          "holds 38.8% with the ladder against a band centred on 37.5%; the edits "
          "are drafted."),
 
+dict(id="G81", kind="gap", severity="minor", status="open",
+     title="§11.11 never says what a gap is, which way a glide, a charge or a "
+           "bridge goes, what a charge breaks through, or how long a plank "
+           "spans, and the simulation reads each one way",
+     refs=["11.11", "11.2", "11.7", "6.2"],
+     body="Building the glide, the charge, the root bridge and the plank (TD.12) "
+          "needed six readings. <strong>A gap</strong>, which the Featherkin "
+          "crosses and the Rootrunner and the Tinkerer bridge, is not defined: "
+          "the simulation takes §6.2’s ground nobody walks onto that is not a "
+          "wall — a pond, a lava crack, and stepping stones with no law to leap "
+          "them. <strong>The glide</strong> goes along a row or a column, over "
+          "open ground and gaps but not walls, onto ground it can stand on, at "
+          "its own pace. <strong>The charge</strong> goes along the row or column "
+          "aimed at; a hedge or a boulder it meets first is broken, and so is a "
+          "Crystal Wall the Rambler’s full health is enough for (the one wall "
+          "that breaks, §10.3), and the charge runs on through what broke; "
+          "anything else, or a second obstacle, ends it, and the break is heard "
+          "as <em>“Breaking something — 5 m”</em>. <strong>The root bridge</strong> "
+          "grows from where the Rootrunner stands toward the gap it is aimed at, "
+          "over the whole gap or not at all. <strong>Whoever is still on a "
+          "bridge</strong> when it goes is put back on the end it was laid from. "
+          "<strong>The plank’s</strong> <em>“4-tile shortcut”</em> is read as a "
+          "gap of up to 4 tiles, along the row aimed at or else the column. The "
+          "Gardener’s Vine bridge, <em>“join two points up to 6 tiles apart”</em>, "
+          "needs a command that names two points, which §24.10’s one-target "
+          "command does not carry; it waits. Found building TD.12.",
+     rec="State the readings in §11.2, §11.11 and §11.7 (the edits are "
+         "drafted), or give others and the simulation follows "
+         "(<code>sim/src/lib.rs</code>)."),
+
 dict(id="G80", kind="gap", severity="minor", status="open",
      title="§6.2 leaves open where a pit’s floor is, what “from above” and a "
            "cliff’s foot are, who ice and a bounce mushroom move and what bumps a "
@@ -11289,6 +11319,12 @@ V37 = {
 "F62": dict(status="open", left="document", note=
     "Found building TD.69, after v3.7: a balance figure for the document, with "
     "its edits drafted (TD.75)."),
+
+"G81": dict(status="open", left="document", note=
+    "Found building TD.12, after v3.7: what a gap is, which way a glide, a "
+    "charge and a bridge go, what a charge breaks through and how long a "
+    "plank spans, read one way in the simulation, with the edits drafted "
+    "(TD.75); Vine bridge waits on a two-point command."),
 
 "G80": dict(status="open", left="document", note=
     "Found building TD.15, after v3.7: seven readings the simulation takes for "
@@ -14700,6 +14736,36 @@ EDITS = {
                  "for one task in three); iteration 415 (301 to 531), a floor at 1x "
                  "the build; plan about 830 (602 to 1,062)",
          why="§26.8 and §27.2, with phases 4a to 4c. C72."),
+],
+"G81": [
+    dict(section="11.2", action="replace",
+         find="| Glides 3 tiles in one move, crossing a gap and rising or dropping one height level on the way\n| Ignores Half gravity's overshoot",
+         replace="| Glides 3 tiles in one move along a row or a column, crossing a gap (a pond, a lava crack, stepping stones it cannot leap) and rising or dropping one height level on the way, onto ground it can stand on\n| Ignores Half gravity's overshoot",
+         why="What a gap is, which way a glide goes and where it may land. G81."),
+    dict(section="11.11", action="replace",
+         find="Glides 3 tiles in one move, crossing a gap and rising or dropping one height level on the way. Two uses a heist",
+         replace="Glides 3 tiles in one move along a row or a column, crossing a gap (a pond, a lava crack, stepping stones it cannot leap) and rising or dropping one height level on the way, onto ground it can stand on. Two uses a heist",
+         why="The card says it again (one fact, two places): the same edit. G81."),
+    dict(section="11.2", action="replace",
+         find="| Charges 4 tiles in a straight line and breaks the first wall, hedge or boulder in its way\n| Immune to being pushed by Current or Tilt",
+         replace="| Charges 4 tiles in a straight line and breaks the first wall, hedge or boulder in its way, running on through it; a wall is a Crystal Wall, broken if its full health is enough, and anything else stops it\n| Immune to being pushed by Current or Tilt",
+         why="Which wall breaks, and whether the charge goes on. G81."),
+    dict(section="11.11", action="replace",
+         find="Charges 4 tiles in a straight line and breaks the first wall, hedge or boulder in its way. Two uses a heist",
+         replace="Charges 4 tiles in a straight line and breaks the first wall, hedge or boulder in its way, running on through it; a wall is a Crystal Wall, broken if its full health is enough, and anything else stops it. Two uses a heist",
+         why="The card: the same edit. G81."),
+    dict(section="11.2", action="replace",
+         find="| Grows a root bridge over one gap of up to 3 tiles for 8 s; anyone can cross it, guards included\n| Ignores Heavy ground",
+         replace="| Grows a root bridge from where it stands over one gap of up to 3 tiles for 8 s; anyone can cross it, guards included, and whoever is on it when it goes is put back on the end it grew from\n| Ignores Heavy ground",
+         why="Which way the roots grow, and what happens to whoever is on them when they go. G81."),
+    dict(section="11.11", action="replace",
+         find="Grows a root bridge over one gap of up to 3 tiles for 8 s; anyone can cross it, guards included. Two uses a heist",
+         replace="Grows a root bridge from where it stands over one gap of up to 3 tiles for 8 s; anyone can cross it, guards included, and whoever is on it when it goes is put back on the end it grew from. Two uses a heist",
+         why="The card: the same edit. G81."),
+    dict(section="11.7", action="replace",
+         find="Plank: lay a 4-tile shortcut over a gap for 15 s (2 uses)",
+         replace="Plank: lay a shortcut over a gap of up to 4 tiles, along the row aimed at or else the column, for 15 s (2 uses)",
+         why="How long a gap a 4-tile plank spans, and which way it is laid. G81."),
 ],
 "G80": [
     dict(section="6.2", action="replace",

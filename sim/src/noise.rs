@@ -99,7 +99,7 @@ pub const UNHEARD: u16 = u16::MAX;
 /// walks, and "the way a crew walks" in §12.17's heading is literal.
 pub fn field(grid: &Grid, source: TileIndex, max_steps: u16) -> Vec<u16> {
     let mut dist = vec![UNHEARD; grid.len()];
-    if !grid.at(source).passable() {
+    if !grid.standable(source) {
         return dist;
     }
     dist[source as usize] = 0;
@@ -111,7 +111,7 @@ pub fn field(grid: &Grid, source: TileIndex, max_steps: u16) -> Vec<u16> {
             continue;
         }
         for next in grid.neighbours(tile).into_iter().flatten() {
-            if dist[next as usize] != UNHEARD || !grid.at(next).passable() {
+            if dist[next as usize] != UNHEARD || !grid.standable(next) {
                 continue;
             }
             dist[next as usize] = d + 1;

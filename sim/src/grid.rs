@@ -85,6 +85,10 @@ pub struct Grid {
     /// A law that leaps (Half gravity's "leap one obstacle"): stepping stones
     /// are a road and an updraft lifts two levels. Set each tick.
     pub leap: bool,
+    /// Gap tiles under a bridge this tick — a Rootrunner's roots, a
+    /// Tinkerer's plank — walkable "for anyone, guards included". Set each
+    /// tick from the bridges standing.
+    bridged: Vec<bool>,
 }
 
 /// What a tile is underfoot, for noise. §12.17 names three that differ from
@@ -299,6 +303,7 @@ impl Grid {
             climbable: vec![false; n],
             free_climb: false,
             leap: false,
+            bridged: vec![false; n],
         }
     }
 
@@ -425,6 +430,33 @@ impl Grid {
         }
     }
 
+    /// A gap: ground nobody walks onto that is not a wall, so something can
+    /// cross it — a pond, a lava crack, stepping stones with no law to leap
+    /// them. A glide crosses one, and roots or a plank bridge one.
+    pub fn is_gap(&self, index: TileIndex) -> bool {
+        match self.feature(index) {
+            Some(Feature::Pond) | Some(Feature::LavaCrack) => true,
+            Some(Feature::SteppingStones) => !self.leap,
+            _ => false,
+        }
+    }
+
+    /// Whether a tile can be stood on: open ground, a leapt stone or a bridge.
+    pub fn standable(&self, index: TileIndex) -> bool {
+        self.at(index).passable() || self.is_bridged(index)
+            || (self.leap && self.feature(index) == Some(Feature::SteppingStones))
+    }
+
+    pub fn set_bridged(&mut self, index: TileIndex, on: bool) {
+        if let Some(b) = self.bridged.get_mut(index as usize) {
+            *b = on;
+        }
+    }
+
+    pub fn is_bridged(&self, index: TileIndex) -> bool {
+        self.bridged.get(index as usize).copied().unwrap_or(false)
+    }
+
     /// Whether a ramp, stairs or vines stand on this tile.
     pub fn is_climbable(&self, index: TileIndex) -> bool {
         self.climbable.get(index as usize).copied().unwrap_or(false)
@@ -436,7 +468,7 @@ impl Grid {
     /// levels at once is a cliff.
     pub fn can_step(&self, a: TileIndex, b: TileIndex) -> bool {
         let stones = self.leap && self.feature(b) == Some(Feature::SteppingStones);
-        if !self.at(b).passable() && !stones {
+        if !self.at(b).passable() && !stones && !self.is_bridged(b) {
             return false;
         }
         let (ha, hb) = (self.level(a), self.level(b));

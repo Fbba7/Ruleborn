@@ -658,6 +658,10 @@ pub struct Raider {
     /// Whether an ice sheet has already carried it its one tile past where it
     /// stopped, so the stop after that one holds.
     pub skid: bool,
+    /// On a Rambler's charge: "Speed ×2" until its line is run.
+    pub charging: bool,
+    /// Broke something this tick by a charge: "Breaking something — 5 m".
+    pub smashed: bool,
     /// How many ticks it has stood still, for Stillness.
     pub still_for: u32,
     /// When it went down, and how long an ally has been reviving it.
@@ -725,6 +729,15 @@ impl Raider {
     pub fn still(&self) -> bool {
         self.along >= self.route.len()
     }
+}
+
+/// A bridge over a gap — a Rootrunner's roots, a Tinkerer's plank: the gap
+/// tiles it covers, the end it was laid from, and the tick it goes.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Bridge {
+    pub tiles: Vec<grid::TileIndex>,
+    pub back: grid::TileIndex,
+    pub until: u32,
 }
 
 /// The whole simulated world. Vectors indexed by id, never a map.
@@ -835,6 +848,8 @@ pub struct World {
     /// Under Delay a ring lands late, at the ticks in `bells_due`.
     pub bells_rung: i32,
     bells_due: Vec<u32>,
+    /// The bridges standing over gaps.
+    pub bridges: Vec<Bridge>,
     /// §6.2's features that act on what is around them, found on the grid
     /// at the start of each tick: lantern posts (each with whether a crystal
     /// outcrop beside it carries its light further), ember vents, static
@@ -901,6 +916,8 @@ impl World {
                 landed: 0,
                 bounced: false,
                 skid: false,
+                charging: false,
+                smashed: false,
                 frozen_until: 0,
                 down_since: 0,
                 revive: 0,
@@ -977,6 +994,7 @@ impl World {
             found_logged: 0,
             bells_rung: 0,
             bells_due: Vec::new(),
+            bridges: Vec::new(),
             lanterns: Vec::new(),
             vents: Vec::new(),
             stones: Vec::new(),
@@ -1201,6 +1219,7 @@ impl World {
                     raider.along = 0;
                     raider.came_from = from.unwrap_or(raider.came_from);
                     raider.skid = false;
+                    raider.charging = false;
                 }
                 // An unknown gait is dropped like an unknown crew member.
                 Kind::Gait => {
@@ -1351,6 +1370,18 @@ impl World {
                 None => false,
             },
             Ability::Freeze => aimed.is_some_and(|t| self.freeze(t)),
+            Ability::Glide => aimed.is_some_and(|t| self.glide(ri, t)),
+            Ability::Charge => aimed.is_some_and(|t| self.charge(ri, t)),
+            // "Grows a root bridge over one gap of up to 3 tiles for 8 s",
+            // from where the Rootrunner stands toward the gap it is aimed at.
+            Ability::RootBridge => {
+                let from = self.grid.tile_at(r.at.x, r.at.y);
+                match (from, aimed) {
+                    (Some(f), Some(t)) => self.lay_bridge(Some(f), t, ruleborn::ROOT_BRIDGE_TILES,
+                                                          ruleborn::ROOT_BRIDGE_TICKS),
+                    _ => false,
+                }
+            }
             // The Sparkwright: "Cuts the Sage's cooldown by 10 s, so its next
             // power comes sooner". With no Sage cooling, nothing to cut.
             Ability::Quicken => match &mut self.sage {
@@ -1460,6 +1491,11 @@ impl World {
                 self.tailwind_until = now + ruleborn::TAILWIND_TICKS;
                 true
             }
+            // "lay a 4-tile shortcut over a gap for 15 s": across the gap the
+            // tile aimed at is in, along its row if that is short enough,
+            // else its column.
+            Power::Plank => aimed.is_some_and(|t| self.lay_bridge(None, t, ruleborn::PLANK_TILES,
+                                                                  ruleborn::PLANK_TICKS)),
             _ => false,
         };
         if done {
@@ -1683,6 +1719,7 @@ impl World {
     /// gate lists them.
     fn phase_laws(&mut self) {
         self.find_terrain();
+        self.stand_bridges();
         self.refresh_sheet();
         self.combinations();
         // A law switched off by its pylon takes its extra health with it:
@@ -2355,6 +2392,12 @@ impl World {
                 } else {
                     (n, d)
                 };
+                // The Rambler's charge: "Speed ×2" while it runs its line.
+                let (n, d) = if r.charging {
+                    (n * ruleborn::CHARGE_PACE.0, d * ruleborn::CHARGE_PACE.1)
+                } else {
+                    (n, d)
+                };
                 // The Wanderer's Tailwind: "crew moves 40% faster for 6 s".
                 if now < self.tailwind_until {
                     (n * ruleborn::TAILWIND_PACE.0, d * ruleborn::TAILWIND_PACE.1)
@@ -2393,6 +2436,9 @@ impl World {
             let (at, along) = walk_route(&self.grid, raider.at, &raider.route, raider.along, step);
             raider.at = at;
             raider.along = along;
+            if along >= raider.route.len() {
+                raider.charging = false;
+            }
             if let Some(gi) = drags[ri] {
                 self.guards[gi].at = at;           // the body comes along
             }
@@ -2683,7 +2729,7 @@ impl World {
             let landing = raider.active() && raider.swing + 1 >= heist::HIT_TICKS;
             // A hit on the Vault is heard by no guard (F35); a pylon or a ward
             // broken still is.
-            let breaking = landing && match raider.task {
+            let breaking = raider.smashed || landing && match raider.task {
                 heist::Task::Break => beside(raider.target) && (self.laws.iter()
                     .any(|l| l.pylon == raider.target && l.broken_at.is_none())
                     || self.wards.iter().any(|w| w.tile == raider.target && w.live())),
@@ -2749,6 +2795,9 @@ impl World {
                     nearest[gi] = Some((d, source, noise::way_around(&self.grid, &field, at)));
                 }
             }
+        }
+        for r in self.raiders.iter_mut() {
+            r.smashed = false;
         }
         for (gi, heard) in nearest.into_iter().enumerate() {
             let Some((_, source, step)) = heard else { continue };
@@ -3819,6 +3868,178 @@ impl World {
         self.log.push(self.tick, Event::GuardDown { guard: gi as u16 });
     }
 
+    /// The Featherkin's glide: "3 tiles in one move, crossing a gap and
+    /// rising or dropping one height level on the way". Straight along a row
+    /// or a column to the tile aimed at, at most 3 tiles off, over open ground
+    /// and gaps but not walls, no tile of it more than a level above or below
+    /// where it took off, onto ground it can stand on. It glides at its own
+    /// pace and stops there.
+    fn glide(&mut self, ri: usize, to: grid::TileIndex) -> bool {
+        let grid = &self.grid;
+        let r = &self.raiders[ri];
+        let Some(from) = grid.tile_at(r.at.x, r.at.y) else { return false };
+        let Some((dx, dy, n)) = straight(grid, from, to) else { return false };
+        if n > ruleborn::GLIDE_TILES || !grid.standable(to) {
+            return false;
+        }
+        let route: Vec<grid::TileIndex> = (1..=n).filter_map(|k| offset(grid, from, dx * k, dy * k))
+            .collect();
+        let level = grid.level(from);
+        let ok = route.iter().all(|&t| (grid.standable(t) || grid.is_gap(t))
+            && (grid.is_gap(t) || (grid.level(t) - level).abs() <= ruleborn::GLIDE_LEVELS));
+        if !ok {
+            return false;
+        }
+        let r = &mut self.raiders[ri];
+        r.route = route;
+        r.along = 0;
+        r.came_from = from;
+        true
+    }
+
+    /// The Rambler's charge: "Charges 4 tiles in a straight line and breaks
+    /// the first wall, hedge or boulder in its way"; on its rule sheet,
+    /// "Speed ×2" and "the first breakable terrain it meets takes its full
+    /// health". Along the row or column of the tile aimed at, 4 tiles at
+    /// most: a hedge or a boulder it meets first is broken, a Crystal Wall
+    /// takes its full health and breaks if that is enough, and the charge
+    /// runs on through; anything else, or a second obstacle, ends it before.
+    fn charge(&mut self, ri: usize, to: grid::TileIndex) -> bool {
+        let now = self.tick;
+        let r = &self.raiders[ri];
+        let full = r.full(&self.sheet);
+        let Some(from) = self.grid.tile_at(r.at.x, r.at.y) else { return false };
+        let Some((dx, dy, _)) = straight(&self.grid, from, to) else { return false };
+        let mut route = Vec::new();
+        let mut last = from;
+        let mut broke = false;
+        for k in 1..=ruleborn::CHARGE_TILES {
+            let Some(t) = offset(&self.grid, from, dx * k, dy * k) else { break };
+            if self.grid.can_step(last, t) {
+                route.push(t);
+                last = t;
+                continue;
+            }
+            if broke {
+                break;
+            }
+            match self.grid.feature(t) {
+                Some(Feature::Hedge) | Some(Feature::Boulder) => self.grid.clear(t),
+                _ => {
+                    let Some(wi) = self.wards.iter().position(|w| w.tile == t && w.live()
+                        && w.kind == WardKind::CrystalWall) else { break };
+                    let w = &mut self.wards[wi];
+                    w.health -= full;
+                    if w.health > 0 {
+                        broke = true;
+                        self.raiders[ri].smashed = true;
+                        break;
+                    }
+                    w.health = 0;
+                    w.broken = true;
+                    w.broken_at = Some(now);
+                    self.grid.clear(t);
+                }
+            }
+            broke = true;
+            self.raiders[ri].smashed = true;
+            if !self.grid.can_step(last, t) {
+                break;
+            }
+            route.push(t);
+            last = t;
+        }
+        if route.is_empty() && !broke {
+            return false;
+        }
+        let r = &mut self.raiders[ri];
+        r.route = route;
+        r.along = 0;
+        r.came_from = from;
+        r.charging = !r.route.is_empty();
+        true
+    }
+
+    /// A bridge over the gap the tile `at` is in: the run of gap tiles through
+    /// it along one line, no longer than `most`, with ground to stand on at
+    /// both ends. From a crew member's tile the line is the one toward `at`;
+    /// with no tile (a Sage's power) the row is tried, then the column.
+    fn lay_bridge(&mut self, origin: Option<grid::TileIndex>, at: grid::TileIndex,
+                  most: usize, ticks: u32) -> bool {
+        let grid = &self.grid;
+        if !grid.is_gap(at) || grid.is_bridged(at) {
+            return false;
+        }
+        let axes: Vec<(i32, i32)> = match origin {
+            Some(o) => match straight(grid, o, at) {
+                Some((dx, dy, _)) => vec![(dx, dy)],
+                None => return false,
+            },
+            None => vec![(1, 0), (0, 1)],
+        };
+        for (dx, dy) in axes {
+            let mut first = at;
+            while let Some(p) = offset(grid, first, -dx, -dy).filter(|&p| grid.is_gap(p)) {
+                first = p;
+            }
+            let mut run = vec![first];
+            while let Some(n) = offset(grid, *run.last().unwrap(), dx, dy)
+                .filter(|&n| grid.is_gap(n))
+            {
+                run.push(n);
+            }
+            let near = offset(grid, first, -dx, -dy);
+            let far = offset(grid, *run.last().unwrap(), dx, dy);
+            if run.len() <= most && near.is_some_and(|t| grid.standable(t))
+                && far.is_some_and(|t| grid.standable(t))
+            {
+                for &t in &run {
+                    self.grid.set_bridged(t, true);
+                }
+                self.bridges.push(Bridge { tiles: run, back: near.unwrap(), until: self.tick + ticks });
+                return true;
+            }
+        }
+        false
+    }
+
+    /// The bridges standing this tick, marked on the grid; a bridge whose
+    /// time is up goes, and whoever is still on it is put back on the end it
+    /// was laid from.
+    fn stand_bridges(&mut self) {
+        let now = self.tick;
+        let (ended, live): (Vec<Bridge>, Vec<Bridge>) = std::mem::take(&mut self.bridges)
+            .into_iter().partition(|b| b.until <= now);
+        for b in &ended {
+            for &t in &b.tiles {
+                self.grid.set_bridged(t, false);
+            }
+        }
+        for b in &live {
+            for &t in &b.tiles {
+                self.grid.set_bridged(t, true);
+            }
+        }
+        let grid = &self.grid;
+        for b in &ended {
+            let (x, y) = grid.centre(b.back);
+            let on = |p: Point| grid.tile_at(p.x, p.y).is_some_and(|t| b.tiles.contains(&t)
+                && !grid.standable(t));
+            for r in self.raiders.iter_mut().filter(|r| on(r.at)) {
+                r.at = Point { x, y };
+                r.route.clear();
+                r.along = 0;
+                r.charging = false;
+            }
+            for g in self.guards.iter_mut().filter(|g| on(g.at)) {
+                g.at = Point { x, y };
+                g.route.clear();
+                g.along = 0;
+            }
+        }
+        self.bridges = live;
+    }
+
     /// A bell post "rings if bumped" and "raises the realm's alarm one level
     /// (12.17)": a crew member walking into its tile bumps it, every time.
     /// Under Delay "the ring comes late", by Delay's own seconds.
@@ -4347,9 +4568,16 @@ impl World {
                 mix(t as i64);
             }
         }
-        for r in self.raiders.iter().filter(|r| r.skid || r.bounced) {
+        for r in self.raiders.iter().filter(|r| r.skid || r.bounced || r.charging) {
             mix(r.id as i64);
-            mix(r.skid as i64 * 2 + r.bounced as i64);
+            mix(r.skid as i64 * 2 + r.bounced as i64 + r.charging as i64 * 4);
+        }
+        for b in &self.bridges {
+            mix(b.until as i64);
+            mix(b.back as i64);
+            for &t in &b.tiles {
+                mix(t as i64);
+            }
         }
         // The Sage and what its powers left running; nothing for a heist
         // with no Sage, so no replay recorded before Sages moves.
@@ -4386,6 +4614,29 @@ fn step_for(grid: &Grid, sheet: &Sheet, raider: &Raider, gait: Gait,
 
 /// A factor that slows, made 1 when nothing may slow (the Tidewalker's
 /// "nothing slows it"); one that speeds stays.
+/// The unit step and the distance from `a` to `b`, when they share a row or a
+/// column and are not the same tile.
+fn straight(grid: &Grid, a: grid::TileIndex, b: grid::TileIndex) -> Option<(i32, i32, i32)> {
+    let ((ax, ay), (bx, by)) = (grid.coords(a), grid.coords(b));
+    let (dx, dy) = (bx as i32 - ax as i32, by as i32 - ay as i32);
+    match (dx, dy) {
+        (0, 0) => None,
+        (0, d) => Some((0, d.signum(), d.abs())),
+        (d, 0) => Some((d.signum(), 0, d.abs())),
+        _ => None,
+    }
+}
+
+/// The tile `dx`, `dy` from `t`, if it is on the grid.
+fn offset(grid: &Grid, t: grid::TileIndex, dx: i32, dy: i32) -> Option<grid::TileIndex> {
+    let (x, y) = grid.coords(t);
+    let (x, y) = (x as i32 + dx, y as i32 + dy);
+    if x < 0 || y < 0 {
+        return None;
+    }
+    grid.index(x as u16, y as u16)
+}
+
 fn unslowed((n, d): (i64, i64), unhindered: bool) -> (i64, i64) {
     if unhindered && n < d { (1, 1) } else { (n, d) }
 }

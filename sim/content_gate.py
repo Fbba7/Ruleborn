@@ -466,6 +466,7 @@ def ruleborn_compare(text: str) -> dict:
         (checked if want == have else wrong).append(
             f"ruleborn.rs RULEBORN[{i}]: content {want}, simulation {have}")
     text_of = {c["id"]: c["ability"] for c in kinds}
+    sheet_of = {c["id"]: c.get("rule_sheet", "") for c in kinds}
 
     def num(kind: str, pattern: str, group: int = 1) -> float | None:
         m = re.search(pattern, text_of.get(kind, ""))
@@ -512,6 +513,15 @@ def ruleborn_compare(text: str) -> dict:
          (lambda f: round(f * 100) if f else None)(frac("STAND_OVER_RETURN"))),
         ("soulmender seconds", num("soulmender", r"for (\d+) s"), ticks("LINK_TICKS")),
         ("sparkwright cut", num("sparkwright", r"cooldown by (\d+) s"), ticks("QUICKEN_TICKS")),
+        ("featherkin tiles", num("featherkin", r"Glides (\d+) tiles"), k.get("GLIDE_TILES")),
+        ("featherkin levels", 1.0 if "one height level" in text_of.get("featherkin", "") else None,
+         k.get("GLIDE_LEVELS")),
+        ("rambler tiles", num("rambler", r"Charges (\d+) tiles"), k.get("CHARGE_TILES")),
+        ("rambler speed", (lambda m: float(m.group(1)) if m else None)(
+            re.search(r"Speed ×(\d+)", sheet_of.get("rambler", ""))), frac("CHARGE_PACE")),
+        ("rootrunner tiles", num("rootrunner", r"gap of up to (\d+) tiles"),
+         k.get("ROOT_BRIDGE_TILES")),
+        ("rootrunner seconds", num("rootrunner", r"tiles for (\d+) s"), ticks("ROOT_BRIDGE_TICKS")),
     ]
     # §11.7's Sages: each one's three powers and their uses, in content
     # order, and every built power's numbers from its own sentence.
@@ -548,6 +558,8 @@ def ruleborn_compare(text: str) -> dict:
         ("tailwind faster (%)", said_num("tailwind", r"(\d+)% faster"),
          (lambda f: round((f - 1) * 100) if f else None)(frac("TAILWIND_PACE"))),
         ("tailwind seconds", said_num("tailwind", r"for (\d+) s"), ticks("TAILWIND_TICKS")),
+        ("plank tiles", said_num("plank", r"lay a (\d+)-tile shortcut"), k.get("PLANK_TILES")),
+        ("plank seconds", said_num("plank", r"for (\d+) s"), ticks("PLANK_TICKS")),
     ]
     for what, want, have in rows:
         ok = want is not None and have is not None and float(want) == float(have)

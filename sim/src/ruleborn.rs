@@ -162,10 +162,21 @@ pub const STAND_OVER_TILES: i32 = 3;
 pub const STAND_OVER_RETURN: (i64, i64) = (40, 100);
 /// "Links the crew for 6 s".
 pub const LINK_TICKS: u32 = TICKS_PER_SECOND * 6;
+/// The Featherkin: "Glides 3 tiles in one move, crossing a gap and rising or
+/// dropping one height level on the way."
+pub const GLIDE_TILES: i32 = 3;
+pub const GLIDE_LEVELS: i8 = 1;
+/// The Rambler: "Charges 4 tiles in a straight line"; its rule sheet's
+/// "Speed ×2".
+pub const CHARGE_TILES: i32 = 4;
+pub const CHARGE_PACE: (i64, i64) = (2, 1);
+/// The Rootrunner: "a root bridge over one gap of up to 3 tiles for 8 s".
+pub const ROOT_BRIDGE_TILES: usize = 3;
+pub const ROOT_BRIDGE_TICKS: u32 = TICKS_PER_SECOND * 8;
 
 /// Every number above, for the rules version: changing one changes how a
 /// heist with a manifest plays.
-pub const NUMBERS: [i64; 40] = [
+pub const NUMBERS: [i64; 49] = [
     USES as i64, LOCKOUT_TICKS as i64, MAX_READY as i64,
     SATCHEL_TICKS as i64, SATCHEL_RATE as i64, POUND_TICKS as i64, POUND_HIT.0, POUND_HIT.1,
     UNHINDERED_TICKS as i64, REWIND_TICKS as i64, FREEZE_TICKS as i64, BURST_POWER,
@@ -176,7 +187,9 @@ pub const NUMBERS: [i64; 40] = [
     SAGE_COOLDOWN_TICKS as i64, QUICKEN_TICKS as i64, SUSPEND_TICKS as i64, RECALL_RETURN.0,
     RECALL_RETURN.1, JAM_TICKS as i64, RENEW_SECONDS as i64, RENEW_HEAL.0 as i64,
     RENEW_HEAL.1 as i64, DECOY_TICKS as i64, TAILWIND_TICKS as i64, TAILWIND_PACE.0,
-    TAILWIND_PACE.1,
+    TAILWIND_PACE.1, GLIDE_TILES as i64, GLIDE_LEVELS as i64, CHARGE_TILES as i64,
+    CHARGE_PACE.0, CHARGE_PACE.1, ROOT_BRIDGE_TILES as i64, ROOT_BRIDGE_TICKS as i64,
+    PLANK_TILES as i64, PLANK_TICKS as i64,
 ];
 
 impl Ability {
@@ -196,12 +209,12 @@ impl Ability {
     }
 
     /// Whether the simulation carries it yet. The rest wait on what they act
-    /// on: gaps and boulders (TD.15) for Glide, Charge and the root bridge; a
-    /// wall a route can meet mid-walk for the crystal wall; a crew member that
-    /// can be two for Split; and something hidden for Reveal to show. Until then their command is dropped and spends no
-    /// use, like any command that cannot be carried out.
+    /// on: a wall a route can meet mid-walk for the crystal wall; a crew
+    /// member that can be two for Split; and something hidden for Reveal to
+    /// show. Until then their command is dropped and spends no use, like any
+    /// command that cannot be carried out.
     pub fn built(self) -> bool {
-        !matches!(self, Glide | Charge | CrystalWall | Split | RootBridge | Reveal)
+        !matches!(self, CrystalWall | Split | Reveal)
     }
 }
 
@@ -273,15 +286,18 @@ pub const DECOY_TICKS: u32 = TICKS_PER_SECOND * 8;
 pub const TAILWIND_TICKS: u32 = TICKS_PER_SECOND * 6;
 /// "40% faster".
 pub const TAILWIND_PACE: (i64, i64) = (7, 5);
+/// The Tinkerer's Plank: "lay a 4-tile shortcut over a gap for 15 s".
+pub const PLANK_TILES: usize = 4;
+pub const PLANK_TICKS: u32 = TICKS_PER_SECOND * 15;
 
 impl Power {
-    /// Whether the simulation carries it yet. Plank and Vine bridge wait on
-    /// gaps (TD.15); Rift on universes of more than one realm (D71); Invert
+    /// Whether the simulation carries it yet. Vine bridge waits on a
+    /// command that names two points; Rift on universes of more than one realm (D71); Invert
     /// on a rule for which of a law's parameters have an opposite; Copy on a
     /// law that applies around the crew rather than over the realm, which
     /// casts need too.
     pub fn built(self) -> bool {
         matches!(self, Power::Suspend | Power::Reveal | Power::Recall | Power::Jam
-                 | Power::Renew | Power::Decoy | Power::Tailwind)
+                 | Power::Plank | Power::Renew | Power::Decoy | Power::Tailwind)
     }
 }

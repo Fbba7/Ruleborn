@@ -1822,7 +1822,7 @@ dict(
                     "re-simulated by the server; each member played by its kind's "
                     "role, size band and ability, so Density's small band plays "
                     "for a small kind (G23); the Ability command with §12.6's two "
-                    "uses, ten-second lockout and four-ready rule; and eleven of "
+                    "uses, ten-second lockout and four-ready rule; and fifteen of "
                     "the eighteen abilities, each tested, their numbers held to "
                     "<code>content/ruleborn.json</code> by "
                     "<code>sim/content_gate.py</code>: the Stormhound's sprint, the "
@@ -1830,16 +1830,18 @@ dict(
                     "Quarryback's pound, the Emberling's burst, the Hourkeeper's "
                     "rewind, the Stillwatch's freeze, the Mossbear's root, the "
                     "Bloomling's heal, the Echoplate standing over the crew and "
-                    "the Soulmender's link, and the Sparkwright's cut to the "
-                    "Sage's cooldown. The Sage comes with the manifest: the Sage "
-                    "command (13 on the wire), each power's uses, the one "
-                    "twenty-second cooldown, and seven of §11.7's twelve powers "
-                    "— Suspend, Reveal, Recall, Jam, Renew, Decoy and Tailwind. "
-                    "Completion's row reads 21 of its 33 parts. What the document "
-                    "leaves open about them is G77. "
-                    "<strong>Left:</strong> the Glide, Charge and root bridge on "
-                    "gaps, hedges and boulders (TD.15), and Plank and Vine bridge "
-                    "with them; the Glass golem's wall, which needs a wall a "
+                    "the Soulmender's link, the Sparkwright's cut to the Sage's "
+                    "cooldown, and, over §6.2's gaps, the Featherkin's glide, the "
+                    "Rambler's charge (breaking the first hedge, boulder or "
+                    "Crystal Wall) and the Rootrunner's root bridge. The Sage "
+                    "comes with the manifest: the Sage command (13 on the wire), "
+                    "each power's uses, the one twenty-second cooldown, and eight "
+                    "of §11.7's twelve powers — Suspend, Reveal, Recall, Jam, "
+                    "Plank, Renew, Decoy and Tailwind. Completion's row reads 25 "
+                    "of its 33 parts. What the document leaves open about them is "
+                    "G77 and G81. "
+                    "<strong>Left:</strong> Vine bridge, which needs a command "
+                    "naming two points; the Glass golem's wall, which needs a wall a "
                     "walking route can meet; the Prism mite's split; the Lantern "
                     "wisp's reveal; Invert, which needs a rule for which "
                     "parameters have an opposite; Copy and casts, which need a "
@@ -2322,7 +2324,7 @@ dict(
                   "edits applied, and check_document passes on it",
              evidence="tools/audit_register.py EDITS; tools/check_edits.py",
              blocked_by=[],
-             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77", "G78", "G79", "G80"]),
+             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77", "G78", "G79", "G80", "G81"]),
         dict(id="TD.74", owner="claude", status="blocked",
              title="Notifications and session telemetry on the device",
              detail="The server sends §14.6's notifications, keeps the night "

@@ -34,7 +34,7 @@ pub fn find(grid: &Grid, from: TileIndex, to: TileIndex) -> Option<Route> {
     if from == to {
         return Some(Vec::new());
     }
-    if !grid.at(to).passable() || !grid.at(from).passable() {
+    if !grid.standable(to) || !grid.standable(from) {
         return None;
     }
     // A vector indexed by tile, not a map: §24.10's "iterating a map in
@@ -75,7 +75,7 @@ pub fn find_over_wall(grid: &Grid, from: TileIndex, to: TileIndex) -> Option<(Ro
     if from == to {
         return Some((Vec::new(), false));
     }
-    if !grid.at(to).passable() || !grid.at(from).passable() {
+    if !grid.standable(to) || !grid.standable(from) {
         return None;
     }
     let n = grid.len();
@@ -159,9 +159,9 @@ pub fn steps_to(grid: &Grid, to: TileIndex, limit: u16) -> Vec<Option<u16>> {
         }
         for neighbour in grid.neighbours(tile).into_iter().flatten() {
             let walks = if tile == to {
-                grid.at(neighbour).passable()
+                grid.standable(neighbour)
             } else {
-                grid.at(neighbour).passable() && grid.can_step(neighbour, tile)
+                grid.standable(neighbour) && grid.can_step(neighbour, tile)
             };
             if steps[neighbour as usize].is_some() || !walks {
                 continue;
