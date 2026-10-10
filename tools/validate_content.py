@@ -98,7 +98,8 @@ open_items: list[tuple[str, str]] = []
 EXTRACTED_FROM = {
     "laws":       [("7.7 Every law in full", "7.8 ")],
     "ruleborn":   [("11.11 The character bible", "12Heists"),
-                   ("11.2 The 18 ruleborn", "11.3 ")],
+                   ("11.2 The 18 ruleborn", "11.3 "),
+                   ("21.6 Characters", "21.7 ")],
     "terrain":    [("6.2 The 39 features", "6.3 ")],
     "notes":      [("8.1 The eight notes", "8.2 ")],
     "resonances": [("8.4 Signature resonances", "8.5 ")],
@@ -110,6 +111,8 @@ EXTRACTED_FROM = {
     "wards":      [("10.3 Wards", "10.4 ")],
     "eras":       [("18.3 Eras", "18.4 ")],
     "sages":      [("11.7 Sages, the heroes", "11.8 ")],
+    "visitors":   [("11.8 Special characters", "11.9 ")],
+    "paradox_born": [("11.8 Special characters", "11.9 ")],
     "forms":      [("11.10 Law-shaped forms", "11.11 "),
                    ("11.11 The character bible", "12Heists")],
 }
@@ -239,6 +242,74 @@ def load(name: str) -> list[dict]:
         err(f"{name}.json is missing — run tools/extract_content.py")
         return []
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def check_specials(visitors, paradox, ruleborn, roles, forms, sages) -> list[str]:
+    """§11.8 and the cards, as v3.7 settles them (G62, C53, G63, G52).
+
+    No nineteenth kind: the Stray is one of the eighteen, so there are still
+    eighteen ruleborn and 54 forms, and no paradox-born has a form. None is
+    better than any role in every number (§11.8: "none is better than any
+    role in every number"). The Twinned's health and carry are one body's
+    pools. Every card carries §11.11's rule sheet and §21.6's body, height,
+    colours and signature, and every Sage what it gains at each fifth level.
+    """
+    out = []
+    if len(ruleborn) != 18 or len(forms) != 54:
+        out.append(f"{len(ruleborn)} ruleborn and {len(forms)} forms: §11.8's Stray adds no kind")
+    if len(visitors) != 3:
+        out.append(f"visitors: {len(visitors)}, §11.8 lists 3")
+    stray = [v for v in visitors if v["id"] == "stray"]
+    if not stray or stray[0].get("kind") != "one of the eighteen":
+        out.append("the Stray is not marked as one of the eighteen kinds")
+    if len(paradox) != 3:
+        out.append(f"paradox-born: {len(paradox)}, §11.8 lists 3")
+    for p in paradox:
+        if p.get("forms"):
+            out.append(f"{p['name']}: has forms; paradox-born hatch without one (G62)")
+        for r in roles:
+            if (p["health"] >= r["health"] and p["speed"] >= r["speed"]
+                    and p["power"] >= r["power"] and p["carry"] >= r["carry"]):
+                out.append(f"{p['name']}: as good as a {r['name']} in every number, which "
+                           f"§11.8 rules out")
+    twinned = [p for p in paradox if p["id"] == "twinned"]
+    if not twinned or not twinned[0].get("shared_pools"):
+        out.append("the Twinned's health and carry are not one body's shared pools (C53)")
+    for k in ruleborn:
+        missing = [f for f in ("rule_sheet", "body", "height_m", "colours", "signature")
+                   if not k.get(f)]
+        if missing:
+            out.append(f"{k['name']}: no {', '.join(missing)} (§11.11, §21.6)")
+    for s in sages:
+        if len(s.get("levels", {})) != 8:
+            out.append(f"{s['name']}: what it gains at levels 5 to 40 is not all there (§11.7)")
+    return out
+
+
+def check_chapters(laws, text: str) -> list[str]:
+    """§7.6: the Codex holds the launch 24, "12 findable from the start and
+    all 24 from Keeper level 6. Chapter 1’s twelve are two of each school …
+    the three starting laws among them." """
+    out = []
+    one = [l for l in laws if l.get("chapter") == 1]
+    two = [l for l in laws if l.get("chapter") == 2]
+    if len(one) != 12 or len(two) != 12:
+        out.append(f"chapters: {len(one)} in chapter 1 and {len(two)} in chapter 2, §7.6 says 12 and 12")
+    if any(not l.get("launch") for l in one + two):
+        out.append("a law after launch is in chapter 1 or 2")
+    schools = collections.Counter(l["school"] for l in one)
+    if any(n != 2 for n in schools.values()) or len(schools) != 6:
+        out.append(f"chapter 1 is not two of each school: {dict(schools)}")
+    m = re.search(r"Starting laws: ([^.]+)", text)
+    starting = [n.strip() for n in re.split(r",| and ", m.group(1).split(", all at")[0])
+                if n.strip()] if m else []
+    named = {l["name"] for l in one}
+    for n in starting:
+        if n not in named:
+            out.append(f"starting law {n} is not in chapter 1")
+    if not starting:
+        out.append("§7.6's starting laws not found")
+    return out
 
 
 def check_forms(forms, ruleborn, laws, chords, note_names) -> list[str]:
@@ -389,6 +460,15 @@ def main() -> int:
     # -- forms (§11.10) ------------------------------------------------------
     for problem in check_forms(data["forms"], data["ruleborn"], laws, data["chords"],
                                note_names):
+        err(problem)
+
+    # -- the Codex's chapters (§7.6, G49) -----------------------------------
+    for problem in check_chapters(data["laws"], DOC_TEXT.read_text(encoding="utf-8")):
+        err(problem)
+
+    # -- special characters (§11.8) and the cards (§11.11, §21.6), TD.33 ---
+    for problem in check_specials(load("visitors"), load("paradox_born"), data["ruleborn"],
+                                  load("roles"), data["forms"], data["sages"]):
         err(problem)
 
     # -- terrain -----------------------------------------------------------
@@ -838,7 +918,9 @@ def self_test() -> int:
     path = CONTENT / "ruleborn.json"
     original = path.read_text(encoding="utf-8")
     rows = _json.loads(original)
-    rows[0]["look"] = "The Archivist"          # a Sage's name, from \u00a711.7
+    # An era's name, from \u00a718.3. (A Sage's name no longer serves: \u00a721.6,
+    # which the cards now read, describes the Sages too.)
+    rows[0]["look"] = "The Long Night"
     path.write_text(_json.dumps(rows, indent=1, ensure_ascii=False) + "\n",
                     encoding="utf-8")
     try:

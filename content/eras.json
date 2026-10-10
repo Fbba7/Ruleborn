@@ -1,12 +1,12 @@
 [
   {
     "name": "Heavy Stars",
-    "rule": "Motion laws cost 30% less; gravity can't be set lower",
+    "rule": "Motion laws cost 30% less; gravity can't be set lower. On the sheet: Half gravity’s gravity line is held off, while its notes still sound",
     "id": "heavy_stars"
   },
   {
     "name": "The Long Night",
-    "rule": "Vision is 30% shorter everywhere",
+    "rule": "Vision is 30% shorter everywhere. On the sheet: the guards’ sight range × 0.7, the only sight the simulation has",
     "id": "the_long_night"
   },
   {
@@ -16,17 +16,17 @@
   },
   {
     "name": "Wildgrowth",
-    "rule": "Life laws are 25% stronger",
+    "rule": "Life laws are 25% stronger. On the sheet, line by line: a time comes a quarter sooner, a rate or share is a quarter larger, a multiplier moves a quarter further from 1, and an on/off rule is unchanged; it applies before a harmony does",
     "id": "wildgrowth"
   },
   {
     "name": "Echoing Skies",
-    "rule": "Everyone returns once at 40% after being knocked out (the Revival row, 7.3; 12.20)",
+    "rule": "Everyone returns once at 40% after being knocked out (the Revival row, 7.3; 12.20). It is one Revival source, and 7.3’s highest N decides",
     "id": "echoing_skies"
   },
   {
     "name": "Static Storm",
-    "rule": "Energy wards are 50% stronger",
+    "rule": "Energy wards are 50% stronger. On the sheet: the Static Coil’s shock, what its upgrade scales, × 1.5",
     "id": "static_storm"
   },
   {
@@ -36,7 +36,7 @@
   },
   {
     "name": "Quiet Week",
-    "rule": "Heists are 30 seconds longer",
+    "rule": "Heists are 30 seconds longer, after 5.4’s cap: up to 270 seconds and 8,100 ticks (24.10)",
     "id": "quiet_week"
   }
 ]

@@ -1,0 +1,21 @@
+[
+  {
+    "id": "cartographer",
+    "name": "The Cartographer",
+    "offer": "Sells, for Starlight, a full scouting map of one target: its ward positions and guard posts, the only way to see them before the heist (12.4).",
+    "source": "11.8"
+  },
+  {
+    "id": "collector",
+    "name": "The Collector",
+    "offer": "Swaps pages: three of one law for one of another (five for two at Dock level 3).",
+    "source": "11.8"
+  },
+  {
+    "id": "stray",
+    "name": "The Stray",
+    "offer": "Asks a favour, such as crossing a Slow rivers realm twice or discovering a resonance, and joins the roster with three traits when it's done. It is a ruleborn of one of the eighteen kinds, its kind drawn as a birth’s is (11.5) with the Heart standing for the Nursery’s realm, since the Dock is in the Heart: 3 for each law woven in the Heart and 1 for each crown law, every school weighing the same if all are 0, roles the player has fewest of twice as likely, and the notes of those laws setting its form by 11.10’s tie rule. It is shown travelling with a bundle on a stick, every kind with a socket to hold it (21.6); there is no nineteenth kind.",
+    "source": "11.8",
+    "kind": "one of the eighteen"
+  }
+]

@@ -63,10 +63,10 @@ against itself, each a decision
 v3.6 itself answers none of the 70 items open against v3.4, narrows G28 and F37,
 and reopens C11.
 
-Seven versions have now answered the audit. **198 of 318 register items are fixed
-in the document itself**, the latest 87 by v3.7. 76 are still open: 49 of the
+Seven versions have now answered the audit. **198 of 319 register items are fixed
+in the document itself**, the latest 87 by v3.7. 77 are still open: 49 of the
 139 open against v3.6 (39 waiting on the build, ten partly done with their edits
-drafted) and 27 of the 28 found reading v3.7 or building against it.
+drafted) and 28 of the 29 found reading v3.7 or building against it.
 
 v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
 checked by section and line, not taken from its own list. The two that do not
@@ -215,6 +215,7 @@ tools/
   vendor/                         v3.1's own checker, kept unmodified to diff against
   extract_content.py              design document -> content/*.json
   validate_content.py             schema and cross-reference checks on content/
+  compare_module.py               the prototype's data module against content/, by hash, read as text
   generate_docs.py                content/ -> the design document's summary tables
   check_docs_consistency.py       this repository's own documents, against each other
   decision_support.py             prices the decisions that are the owner's
@@ -331,16 +332,18 @@ python3 tools/build_audit.py
 # content tables: extract from the document, then validate
 python3 tools/extract_content.py
 python3 tools/validate_content.py
+# the prototype's data module against content/ (the module is not kept here)
+python3 -I tools/compare_module.py PATH/TO/ruleborn-data.js
 ```
 
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 318 tracked items with section references and status:
+document, as 319 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 210 are drafted across 100
+the sentence as it stands today, and what to put there. 212 are drafted across 101
 items, and every quoted sentence is checked against v3.7 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no

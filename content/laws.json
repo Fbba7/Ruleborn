@@ -18,7 +18,8 @@
     "weakness": "Wardens are heavy enough to absorb a rebound.",
     "sound": "a rising whistle and a soft thump on landing",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "half_gravity",
@@ -38,7 +39,8 @@
     "weakness": "Heavy carriers barely rise; wind and slopes push a leaping crew off course.",
     "sound": "a rising whistle and a soft thump on landing",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "tilt",
@@ -140,7 +142,8 @@
     "weakness": "Nobody stops where they meant to, including you.",
     "sound": "a rising whistle and a soft thump on landing",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "inward_pull",
@@ -160,7 +163,8 @@
     "weakness": "Heavy crews barely feel it.",
     "sound": "a rising whistle and a soft thump on landing",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "brittle_stone",
@@ -180,7 +184,8 @@
     "weakness": "The defender can break their own walls to open a charge.",
     "sound": "a glassy chime and a low grind",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "crystal_growth",
@@ -221,7 +226,8 @@
     "weakness": "Shattered glass slows whoever is standing on it.",
     "sound": "a glassy chime and a low grind",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "density",
@@ -241,7 +247,8 @@
     "weakness": "Your Breakers become slow targets.",
     "sound": "a glassy chime and a low grind",
     "engine_rung": "Placement or attribute",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "honeycomb",
@@ -262,7 +269,8 @@
     "weakness": "Fire and Spark laws burn the stickiness away.",
     "sound": "a glassy chime and a low grind",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "lodestones",
@@ -365,7 +373,8 @@
     "weakness": "Tidewalkers and Swimmers ignore it entirely.",
     "sound": "a slow tick that stretches and snaps back",
     "engine_rung": "Placement or attribute",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "stillness",
@@ -385,7 +394,8 @@
     "weakness": "Any Glow law breaks the hiding.",
     "sound": "a slow tick that stretches and snaps back",
     "engine_rung": "Conditional or periodic",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "afterimage",
@@ -427,7 +437,8 @@
     "weakness": "Your own guards react late too.",
     "sound": "a slow tick that stretches and snaps back",
     "engine_rung": "Conditional or periodic",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "haste",
@@ -448,7 +459,8 @@
     "weakness": "Everything gets harder to control at speed.",
     "sound": "a slow tick that stretches and snaps back",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "held_breath",
@@ -509,7 +521,8 @@
     "weakness": "Anything that glows is a target.",
     "sound": "a crackle building to a short clap",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "heat_bloom",
@@ -569,7 +582,8 @@
     "weakness": "The pattern is readable, so it rewards patience on both sides.",
     "sound": "a crackle building to a short clap",
     "engine_rung": "Conditional or periodic",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "chain_lightning",
@@ -589,7 +603,8 @@
     "weakness": "It jumps between your crew as well.",
     "sound": "a crackle building to a short clap",
     "engine_rung": "Conditional or periodic",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "static",
@@ -609,7 +624,8 @@
     "weakness": "Crews that bunch up get stunned together.",
     "sound": "a crackle building to a short clap",
     "engine_rung": "Conditional or periodic",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "overcharge",
@@ -672,7 +688,8 @@
     "weakness": "It hides the crew as readily as it blocks them.",
     "sound": "a kalimba phrase and rustling leaves",
     "engine_rung": "Conditional or periodic",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "kinship",
@@ -692,7 +709,8 @@
     "weakness": "Splitting the crew loses the bonus.",
     "sound": "a kalimba phrase and rustling leaves",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "wild_paths",
@@ -775,7 +793,8 @@
     "weakness": "Your own guards cannot hug the hedges either.",
     "sound": "a kalimba phrase and rustling leaves",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "regrowth",
@@ -796,7 +815,8 @@
     "weakness": "Healing does nothing against a knockout.",
     "sound": "a kalimba phrase and rustling leaves",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "swarm_birth",
@@ -878,7 +898,8 @@
     "weakness": "Your guards' confusion also travels.",
     "sound": "a distant choir swell and a single bell",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "echoes",
@@ -898,7 +919,8 @@
     "weakness": "Echoes are visible: they mark where you fell.",
     "sound": "a distant choir swell and a single bell",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 1
   },
   {
     "id": "sleepwalk",
@@ -919,7 +941,8 @@
     "weakness": "Sleeping guards cannot raise an alarm quickly.",
     "sound": "a distant choir swell and a single bell",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "soul_swap",
@@ -939,7 +962,8 @@
     "weakness": "The swirl shows exactly where both ends are.",
     "sound": "a distant choir swell and a single bell",
     "engine_rung": "Parameter",
-    "launch": true
+    "launch": true,
+    "chapter": 2
   },
   {
     "id": "borrowed_face",

@@ -12,21 +12,34 @@ python3 tools/validate_content.py   # schema + cross-reference checks
 | File | Entries | Source |
 | --- | --- | --- |
 | `notes.json` | 8 | §8.1 |
-| `laws.json` | 48 | §7.7, the full sheets |
+| `laws.json` | 48 | §7.7, the full sheets; each launch law's Codex chapter from §7.6 |
 | `resonances.json` | 44 | §8.4 |
 | `chords.json` | 12 | §8.5 |
 | `terrain.json` | 39 | §6.2 |
-| `ruleborn.json` | 18 | §11.11, cross-checked against §11.2 |
+| `roles.json` | 5 | §11.1 |
+| `ruleborn.json` | 18 | §11.11, cross-checked against §11.2; each card's body, height, colours and signature from §21.6 |
 | `forms.json` | 54 | §11.10's three notes × §11.11's eighteen kinds; the notes recomputed from the launch laws |
+| `visitors.json` | 3 | §11.8; the Stray is one of the eighteen kinds, never a nineteenth |
+| `paradox_born.json` | 3 | §11.8's two tables; no forms, the Twinned's pools shared |
+| `traits.json` | 31 | §11.3 |
+| `buildings.json` | 17 | §10.2 |
+| `wards.json` | 6 | §10.3 |
+| `sages.json` | 4 | §11.7, with what each gains at every fifth level |
+| `eras.json` | 8 | §18.3 |
+
+Two more feed the simulation: `detection.json`, §12.17's detection numbers,
+which the heist harness reads, and `law_effects.json`, every law's rule-sheet
+rows, written by `tools/law_effects.py --write` and turned into
+`sim/src/laws_table.rs` by `sim/build_laws.py`.
 
 ## Two rules
 
 **Extraction only.** Nothing in `extract_content.py` invents or corrects a value.
 Where the document contradicts itself, both readings are kept and the entry is
 marked `needs_decision` with the audit register id — so the conflict is visible
-in the data rather than silently resolved by whichever section parsed last. Every
-ruleborn carries a `conflict_severity` of `role` (material: three creatures) or
-`wording` (fifteen more).
+in the data rather than silently resolved by whichever section parsed last. What
+the document adopts without writing it down (§23.5's rows for the paradox-born's
+character and the visitors' sizes) is not here either, until it is written (G79).
 
 **The document is the input, never the output.** When a contradiction is settled,
 the fix belongs in the design document; re-running the extractor reproduces it.

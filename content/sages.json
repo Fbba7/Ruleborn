@@ -4,27 +4,67 @@
     "unlocks": "Start",
     "heist_powers": "Suspend: switch off one law in the current realm for 10 s (1 use). Reveal: show every ward in the realm (2 uses). Recall: bring a knocked-out character back at 40% (1 use; the Revival row, 7.3; 12.20).",
     "at_home": "Lab experiments 20% faster. On guard: when an alarm sounds, the crew is shown to every guard for 5 s.",
-    "id": "the_archivist"
+    "id": "the_archivist",
+    "levels": {
+      "5": "Reveal 3 uses",
+      "10": "Suspend 12 s",
+      "15": "Recall 2 uses",
+      "20": "Suspend 14 s",
+      "25": "Reveal 4 uses",
+      "30": "Suspend 2 uses",
+      "35": "Suspend 16 s",
+      "40": "Suspend 18 s"
+    }
   },
   {
     "name": "The Tinkerer",
     "unlocks": "Keeper level 7",
     "heist_powers": "Invert: turn a law into its opposite for 10 s, such as Half gravity into heavy gravity (1 use). Jam: disable a ward for 12 s (2 uses). Plank: lay a 4-tile shortcut over a gap for 15 s (2 uses).",
     "at_home": "Buildings cost 10% less. On guard: the first ward the crew disables rearms after 5 s.",
-    "id": "the_tinkerer"
+    "id": "the_tinkerer",
+    "levels": {
+      "5": "Jam 15 s",
+      "10": "Plank 20 s",
+      "15": "Invert 12 s",
+      "20": "Jam 3 uses",
+      "25": "Plank 3 uses",
+      "30": "Invert 14 s",
+      "35": "Jam 18 s",
+      "40": "Invert 2 uses"
+    }
   },
   {
     "name": "The Gardener",
     "unlocks": "Keeper level 13",
     "heist_powers": "Vine bridge: join two points up to 6 tiles apart for 20 s (1 use). Renew: heal the crew 30% over 5 s (1 use). Decoy: plant a sapling guards chase for 8 s (2 uses).",
     "at_home": "Gardens make 15% more. On guard: hedges and wards in the Heart heal 50% faster.",
-    "id": "the_gardener"
+    "id": "the_gardener",
+    "levels": {
+      "5": "Decoy 10 s",
+      "10": "Vine bridge 25 s",
+      "15": "Renew 2 uses",
+      "20": "Decoy 3 uses",
+      "25": "Vine bridge 30 s",
+      "30": "Decoy 12 s",
+      "35": "Vine bridge 2 uses",
+      "40": "Decoy 4 uses"
+    }
   },
   {
     "name": "The Wanderer",
     "unlocks": "Keeper level 20",
     "heist_powers": "Copy: take one enemy law and carry it around the crew for the rest of the heist (1 use). Rift: open a two-way rift between two realms already visited for 20 s (1 use). Tailwind: crew moves 40% faster for 6 s (2 uses).",
     "at_home": "The Observatory offers one more target. On guard: raiders can't call their skiff to one chosen outer realm for the first 60 s.",
-    "id": "the_wanderer"
+    "id": "the_wanderer",
+    "levels": {
+      "5": "Tailwind 8 s",
+      "10": "Rift 25 s",
+      "15": "Tailwind 3 uses",
+      "20": "Rift 30 s",
+      "25": "Tailwind 10 s",
+      "30": "Rift 2 uses",
+      "35": "Tailwind 4 uses",
+      "40": "Copy 2 uses"
+    }
   }
 ]

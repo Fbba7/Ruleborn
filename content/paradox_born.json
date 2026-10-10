@@ -1,0 +1,47 @@
+[
+  {
+    "id": "reverser",
+    "name": "The Reverser",
+    "paradox": "Reversal",
+    "gift": "Swaps places with any character or guard in sight (two uses a heist, with the 10-second lockout, 11.11). On the rule sheet: an ability, not a parameter. Sounds like a tape played backwards.",
+    "health": 120,
+    "speed": 3.8,
+    "power": 8,
+    "carry": 70,
+    "body": "Standard, about 0.85 m, 2.2 heads",
+    "size": "Standard",
+    "shared_pools": false,
+    "forms": [],
+    "source": "11.8"
+  },
+  {
+    "id": "twinned",
+    "name": "The Twinned",
+    "paradox": "Twin suns",
+    "gift": "Acts twice: every hit it lands and every load it takes counts two times. Its crew’s abilities fire once. On the rule sheet (7.3): Damage ×2 and Loot load rate ×2, for itself, always, against its shared 120 health and 80 carry. Sounds like two voices a beat apart.",
+    "health": 120,
+    "speed": 3.6,
+    "power": 7,
+    "carry": 80,
+    "body": "Small, 0.6 m each, 1.8 heads; one character drawn as two silhouettes (21.6)",
+    "size": "Small",
+    "shared_pools": true,
+    "forms": [],
+    "source": "11.8"
+  },
+  {
+    "id": "unmade",
+    "name": "The Unmade",
+    "paradox": "Unmaking",
+    "gift": "Ignores every law, helpful or harmful. On the rule sheet: no row of 7.3 applies to it. Sounds like paper tearing softly.",
+    "health": 100,
+    "speed": 3.4,
+    "power": 8,
+    "carry": 85,
+    "body": "Standard, 0.8 m, 2.4 heads",
+    "size": "Standard",
+    "shared_pools": false,
+    "forms": [],
+    "source": "11.8"
+  }
+]

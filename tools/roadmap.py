@@ -1552,7 +1552,7 @@ dict(
              blocked_by=["TD.3", "TC.4"],
              register=[]),
         # -- Track B: the 3D world ---------------------------------------------
-        dict(id="TD.7", owner="claude", status="blocked",
+        dict(id="TD.7", owner="claude", status="ready",
              title="An export harness for the designs' 3D, held to the budgets",
              detail="The 43 creatures are signed-distance sculpts meshed in "
                     "three.js, auto-skinned, with 15 procedural animations each; "
@@ -1774,42 +1774,46 @@ dict(
              blocked_by=["TD.11"],
              register=["C54"]),
         # -- Track C: what the screens stand on ----------------------------
-        dict(id="TD.33", owner="claude", status="ready",
+        dict(id="TD.33", owner="claude", status="done",
              title="Content the screens and the 3D read: paradox-born, visitors, "
                    "§11.11's rule sheet and §21.6's heights",
-             detail="content/ has no paradox-born, no visitors and no §11.11 "
-                    "rule-sheet line, and §21.6's heights, colours and signatures "
-                    "are not extracted (G63). v3.7's §26.8 names this content in "
-                    "phase 5. New <code>content/paradox_born.json</code> from "
-                    "§11.8's two tables, with no forms (G62's recommended option) "
-                    "and the Twinned's 120 health and 80 carry shared as one body's "
-                    "pools, its gift Damage ×2 and Loot load rate ×2 for itself "
-                    "(C53's); <code>content/visitors.json</code>, the Stray one of "
-                    "the eighteen kinds and never a nineteenth; "
-                    "<code>ruleborn.json</code> gains the rule sheet and §21.6's "
-                    "height, colours and signature, so §23.5's “every card "
-                    "carries all of 11.11, word for word” is generated; and "
-                    "§11.7's table of what each launch Sage gains at every fifth "
-                    "level, now that a Sage's level is the Keeper's (G52), and "
-                    "§7.6's chapter 1, two laws of each school (G49). The rows "
-                    "§23.5's rule adopts from the sheets (the paradox-born's "
-                    "personality, home habit, best at and signature, and the "
-                    "visitors' and anomalies' sizes) are carried with their "
-                    "source (G65). <code>content/README.md</code>'s stale "
-                    "<code>conflict_severity</code> line goes, and so does the "
-                    "claim at <code>tools/check_document.py:1105</code>. The handoff names "
-                    "the prototype's <code>ruleborn-data.js</code> “the single data "
-                    "source” (README.md:17); content/ comes from the document, as "
-                    "§23.5 says, and no value is read or copied from the module.",
+             detail="<strong>Done.</strong> <code>tools/extract_content.py</code> "
+                    "now writes <code>content/paradox_born.json</code> from §11.8's "
+                    "two tables (no forms, G62; the Twinned's 120 health and 80 "
+                    "carry one body's shared pools, C53) and "
+                    "<code>content/visitors.json</code> (the Stray one of the "
+                    "eighteen kinds, never a nineteenth); every card in "
+                    "<code>ruleborn.json</code> carries §11.11's rule sheet and "
+                    "§21.6's body, height, colours and signature, so §23.5's "
+                    "“every card carries all of 11.11, word for word” is generated; "
+                    "<code>sages.json</code> carries §11.7's table of what each "
+                    "launch Sage gains at every fifth level (G52), which the old "
+                    "extractor had swallowed into the last Sage's text; and every "
+                    "launch law in <code>laws.json</code> its Codex chapter, §7.6's "
+                    "twelve of chapter 1, two of each school with the three "
+                    "starting laws among them (G49). Re-extracting also brought "
+                    "<code>eras.json</code> up to v3.7's “On the sheet” rules, which "
+                    "it had missed. <code>tools/validate_content.py</code> checks "
+                    "them all (no nineteenth kind, forms still 54, no paradox-born "
+                    "better than a role in every number, the chapters), and "
+                    "<code>tools/check_document.py</code> now counts §26.1's "
+                    "“Visitors, paradox-born, anomalies” row as 3, 3, none. "
+                    "<code>tools/compare_module.py</code> compares the prototype's "
+                    "data module with content/ as text, after checking its hash: "
+                    "its only differences are the three role healths §23.5 already "
+                    "lists, and it holds no realms, links, crew or Sages "
+                    "(<code>docs/analysis/screens-v3/handoff/module.md</code>). "
+                    "What could not be done: §23.5 adopts the paradox-born's "
+                    "personality, home habit, best at and signature and the "
+                    "visitors' and anomalies' sizes from the sheets, and no section "
+                    "writes them, so content/ cannot carry them; the edits are "
+                    "drafted (G79, TD.75).",
              gate="<code>python3 tools/validate_content.py</code> passes with the "
-                  "new tables (no nineteenth kind, forms still 54, no paradox-born "
-                  "form); re-extraction "
-                  "reproduces them byte for byte; "
-                  "<code>tools/check_document.py</code> no longer reports "
-                  "paradox-born and visitors as unenumerated; a check compares "
-                  "the module's laws, realms, links, crew and Sages with content/ "
-                  "and lists every difference as a §23.5 row or a register item",
-             register=["G63", "G65"]),
+                  "new tables; re-extraction reproduces them byte for byte; "
+                  "<code>tools/check_document.py</code> counts the paradox-born and "
+                  "visitors; <code>tools/compare_module.py</code> lists every "
+                  "difference as a §23.5 row or a register item",
+             register=["G63", "G65", "G79"]),
         dict(id="TD.12", owner="claude", status="doing",
              title="Abilities, Sage powers and casts in the simulation",
              detail="<strong>Built so far:</strong> §12.5's crew manifest in the "
@@ -2310,7 +2314,7 @@ dict(
                   "edits applied, and check_document passes on it",
              evidence="tools/audit_register.py EDITS; tools/check_edits.py",
              blocked_by=[],
-             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77", "G78"]),
+             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77", "G78", "G79"]),
         dict(id="TD.74", owner="claude", status="blocked",
              title="Notifications and session telemetry on the device",
              detail="The server sends §14.6's notifications, keeps the night "

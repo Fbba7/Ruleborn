@@ -457,15 +457,11 @@ DELIVERABLES = [
         "laws.json", 24, lambda rows: [r for r in rows if r.get("launch")])),
     ("5", "54 forms as validated data", BACKEND, content_count("forms.json", 54)),
     ("5", "39 terrain features as validated data", BACKEND, content_count("terrain.json", 39)),
-    ("5", "The paradox-born from §11.8's tables", BACKEND, not_started(
-        "content/paradox_born.json holds §11.8's two tables, the Twinned's pools shared, "
-        "validated (TD.33)")),
-    ("5", "The visitors", BACKEND, not_started(
-        "content/visitors.json holds the visitors, the Stray one of the eighteen kinds and "
-        "never a nineteenth, validated (TD.33)")),
-    ("5", "Every card's rule sheet, height, colours and signature", BACKEND, not_started(
-        "every card carries §11.11's rule sheet and §21.6's height, colours and signature, "
-        "validated (TD.33)")),
+    ("5", "The paradox-born from §11.8's tables", BACKEND, content_count("paradox_born.json", 3)),
+    ("5", "The visitors", BACKEND, content_count("visitors.json", 3)),
+    ("5", "Every card's rule sheet, height, colours and signature", BACKEND, content_count(
+        "ruleborn.json", 18, lambda rows: [r for r in rows if all(
+            r.get(f) for f in ("rule_sheet", "body", "height_m", "colours", "signature"))])),
 
     ("6", "Schema", BACKEND, server_tests("snapshots and the ledger cannot be edited")),
     ("6", "Identity: session tokens", BACKEND, server_tests(

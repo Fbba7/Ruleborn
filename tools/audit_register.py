@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9857,6 +9857,39 @@ dict(id="F62", kind="finding", severity="significant", status="open",
          "holds 38.8% with the ladder against a band centred on 37.5%; the edits "
          "are drafted."),
 
+dict(id="G79", kind="gap", severity="minor", status="open",
+     title="§23.5 adopts the paradox-born’s character and the visitors’ and "
+           "anomalies’ sizes from the sheets, and the document writes none of "
+           "them, so content/ cannot carry them",
+     refs=["23.5", "11.8", "21.6"],
+     body="§23.5 lists, as adopted, <em>“Paradox-born character | Their "
+          "personality, home habit, best at and signature moment”</em> and "
+          "<em>“Visitors and anomalies | Their sizes as the sheets draw them”</em>, "
+          "<em>“so this document stays the single source”</em>. Neither the values "
+          "nor a pointer to them is written anywhere in v3.7: §11.8 has the "
+          "paradox-born’s numbers and bodies and the visitors’ offers only. "
+          "content/ is extracted from the document and nothing else, so "
+          "<code>content/paradox_born.json</code> and <code>content/visitors.json"
+          "</code> (TD.33) carry no character and no size, and a card or the 3D "
+          "would have to read the sheets, which are not kept in this repository. "
+          "The sheets say (Reverser_dc.html, Twinned_dc.html, Unmade_dc.html, "
+          "Cartographer_dc.html, Collector_dc.html, Stray_dc.html and the three "
+          "anomalies’ sheets): the Reverser contrary and delighted by it, spinning "
+          "on one hand in the Nursery, best at escapes, the world the wrong way up "
+          "to everyone but it; the Twinned finishing each other’s sentences a word "
+          "late, dancing round each other by the Star Wells, one always a beat "
+          "behind, and <em>“Best at: Doubling a key ability at the Vault”</em>, "
+          "which §11.8’s <em>“Its crew’s abilities fire once”</em> rules out (C53); "
+          "the Unmade quiet and unbothered, folding itself flat between buildings, "
+          "best at realms whose laws stop everyone else, laws passing straight "
+          "through it; the Cartographer 0.8 m (1.75 m with its balloon), the "
+          "Collector 0.8 m (0.9 m with its hat), the Stray a 0.55 m kitten though "
+          "it is one of the eighteen kinds, and the Devourer 2.6 m, the Hourglass "
+          "Storm 2.4 m and the Wildfire Bloom 2.2 m. Found building TD.33.",
+     rec="Write the values into §11.8 (the edits are drafted): the Twinned’s best "
+         "at as its gift allows, and the Stray at its kind’s size, since a kind "
+         "sets its body (21.6)."),
+
 dict(id="G78", kind="gap", severity="minor", status="open",
      title="§6.2 gives the ember vent and the static stone no harm, and the lantern "
            "past an outcrop and a bush’s “one” no measure, and the simulation "
@@ -11224,6 +11257,12 @@ V37 = {
     "Found building TD.69, after v3.7: a balance figure for the document, with "
     "its edits drafted (TD.75)."),
 
+"G79": dict(status="open", left="document", note=
+    "Found building TD.33, after v3.7: §23.5 adopts the paradox-born’s "
+    "character and the visitors’ and anomalies’ sizes, and no section writes "
+    "them, so content/ cannot carry them; the §11.8 edits that write the "
+    "sheets’ values are drafted (TD.75)."),
+
 "G78": dict(status="open", left="document", note=
     "Found building TD.15, after v3.7: two harms, a light and a bush’s “one” "
     "with no measure in §6.2, read one way in the simulation, with the edits "
@@ -11309,8 +11348,11 @@ V37 = {
     "Stray with no kind of its own), and every card’s rule sheet, height, "
     "colours and signature”</em>. The simulation’s crew are kinds now: §12.5’s "
     "manifest gives each member its kind’s role, size band and ability "
-    "(<code>sim/src/ruleborn.rs</code>, TD.12). Left: those content tables, "
-    "and the paradox-born, who have no kind (TD.33, TD.35, TD.21)."),
+    "(<code>sim/src/ruleborn.rs</code>, TD.12). The content is there "
+    "(TD.33): <code>content/paradox_born.json</code>, "
+    "<code>content/visitors.json</code> and every card’s rule sheet, body, "
+    "height, colours and signature, validated. Left: the paradox-born in the "
+    "simulation, who have no kind (TD.35, TD.21)."),
 
 "G66": dict(status="done", note=
     "<strong>Built (TD.47).</strong> §26.8 adds phases 4a to 4c, costed, and "
@@ -14620,6 +14662,31 @@ EDITS = {
                  "for one task in three); iteration 415 (301 to 531), a floor at 1x "
                  "the build; plan about 830 (602 to 1,062)",
          why="§26.8 and §27.2, with phases 4a to 4c. C72."),
+],
+"G79": [
+    dict(section="11.8", action="insert",
+         find="every screen shows its 120 health and 80 carry as one figure.",
+         replace="Their characters, adopted from their sheets (23.5): the Reverser is "
+                 "contrary and delighted by it, says goodbye when it arrives, spins on "
+                 "one hand in the Nursery, is best at escapes and rescuing a caught "
+                 "crewmate, and to everyone but it the world looks the wrong way up; "
+                 "the Twinned finish each other’s sentences a word late, dance round "
+                 "each other by the Star Wells, are best at the Vault, where every load "
+                 "they take counts twice, and one of them is always a beat behind; the "
+                 "Unmade is quiet and unbothered, since nothing sticks to it, folds "
+                 "itself flat and slips between buildings, is best in realms whose "
+                 "laws stop everyone else, and laws pass straight through it.",
+         why="§23.5 adopts these and no section writes them. The Twinned’s sheet "
+             "says “doubling a key ability”, which “its crew’s abilities fire once” "
+             "rules out, so its best at is its gift as §11.8 has it. G79."),
+    dict(section="11.8", action="insert",
+         find="the Wildfire Bloom, where fire and growth run wild.",
+         replace="Sizes, as the sheets draw them (23.5): the Cartographer 0.8 m, 1.75 m "
+                 "with its balloon; the Collector 0.8 m, 0.9 m with its hat; the Stray "
+                 "its kind’s, as any ruleborn of that kind (21.6); the Devourer 2.6 m, "
+                 "the Hourglass Storm 2.4 m and the Wildfire Bloom 2.2 m.",
+         why="§23.5 adopts the sizes and no section writes them. The Stray’s sheet "
+             "draws a 0.55 m kitten, but it is one of the eighteen kinds. G79."),
 ],
 "G78": [
     dict(section="6.2",

@@ -1098,11 +1098,17 @@ LAUNCH_ROWS = {
     "Sages": "Sages", "Eras": "eras", "Terrain features": "terrain features",
     "Building types": "building types", "Law-shaped forms": "forms",
 }
+
+#: §26.1's row that states several counts in one cell, by the content table
+#: each count summarises: "3, 3, none" — visitors, paradox-born, and no
+#: anomaly at launch (TD.33).
+MULTI_ROWS = {
+    "Visitors, paradox-born, anomalies": ["visitors", "paradox_born", None],
+}
 NOT_DERIVED = {
     "Realms": "“Heart + 6 types” is the six schools, and no content "
               "table enumerates realms",
     "Paradoxes": "the three paradoxes are prose in §7.2, outside laws.json",
-    "Visitors, paradox-born, anomalies": "no content table enumerates them",
     "Modes": "a list of names, not a count",
     "Ward levels": "levels, not a content table; 10.3 specifies all five",
     "Languages": "a list of names, not a count",
@@ -1181,10 +1187,16 @@ def check_launch_inventory(doc: Doc, led: Ledger) -> None:
     pair = re.findall(r"\d+", rows.get("Signature resonances and chords", ""))
     if pair[:2] != [str(launch["resonances"]), str(counts["chords"][0])]:
         wrong.append(f"Signature resonances and chords: says {pair}")
+    # Rows that state one count per table, "none" for a table not at launch.
+    for label, tables in MULTI_ROWS.items():
+        said = [c.strip() for c in rows.get(label, "").split(",")]
+        want = [str(len(_content(t))) if t else "none" for t in tables]
+        if said != want:
+            wrong.append(f"{label}: 26.1 says {said}, content/ has {want}")
     led.check("every countable row of 26.1 matches the table it summarises",
               not wrong, "; ".join(wrong))
 
-    unknown = [r for r in rows if r not in LAUNCH_ROWS
+    unknown = [r for r in rows if r not in LAUNCH_ROWS and r not in MULTI_ROWS
                and r != "Signature resonances and chords" and r not in NOT_DERIVED]
     led.check("every row of 26.1 is either checked or named as uncheckable",
               not unknown, f"unclassified: {unknown}")

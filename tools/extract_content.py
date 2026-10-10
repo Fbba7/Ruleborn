@@ -148,6 +148,23 @@ def extract_laws(text: str) -> list[dict]:
     return laws
 
 
+def codex_chapters(text: str, laws: list[dict]) -> list[dict]:
+    """§7.6: "at launch it holds the launch 24 (7), 12 findable from the start
+    and all 24 from Keeper level 6. Chapter 1’s twelve are two of each school:
+    … — Bounce and Half gravity, …, Whispers and Echoes — …". A launch law
+    named there is chapter 1, any other launch law chapter 2. Laws after
+    launch are left without one: which come 25th to 36th is the release
+    order, which §26.1 does not number law by law (G49)."""
+    m = re.search(r"Chapter 1’s twelve are[^—]*— (.+?) —", text)
+    if not m:
+        return laws
+    names = {n.strip() for pair in m.group(1).split(",") for n in pair.split(" and ")}
+    for law in laws:
+        if law.get("launch"):
+            law["chapter"] = 1 if law["name"] in names else 2
+    return laws
+
+
 def slug(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
 
@@ -162,8 +179,8 @@ CREATURE_HEAD = re.compile(
 
 CREATURE_FIELDS = {
     "Look": "look", "Proportions": "proportions", "Personality": "personality",
-    "At home": "at_home", "Ability": "ability", "Resists": "resists",
-    "Best at": "best_at", "Sounds like": "sound",
+    "At home": "at_home", "Ability": "ability", "Rule sheet": "rule_sheet",
+    "Resists": "resists", "Best at": "best_at", "Sounds like": "sound",
 }
 
 
@@ -217,8 +234,27 @@ def summary_table(text: str) -> dict[str, dict]:
     return out
 
 
+def characters_on_screen(text: str) -> dict[str, dict]:
+    """§21.6's table: each ruleborn's body and size, colours and signature
+    moment, by name. The height is the body's last figure, "0.6 m"."""
+    block = section(text, heading(text, "Characters") or "21.6 Characters",
+                    heading(text, "Laws on screen") or "21.7 Laws on screen")
+    cells = [c.strip()[2:].strip() for c in block.split("\n") if c.strip().startswith("| ")]
+    head = ["Ruleborn", "Body and size", "Colours", "Signature moment"]
+    i = next(k for k in range(len(cells)) if cells[k:k + 4] == head) + 4
+    out = {}
+    while i + 4 <= len(cells) and cells[i] != "Character":
+        name, body, colours, signature = cells[i:i + 4]
+        m = re.search(r"([\d.]+) m$", body)
+        out[slug(name)] = {"body": body, "height_m": float(m.group(1)) if m else None,
+                           "colours": colours, "signature": signature}
+        i += 4
+    return out
+
+
 def extract_ruleborn(text: str) -> list[dict]:
     summary = summary_table(text)
+    screen = characters_on_screen(text)
     names = set()
     lines = text.split("\n")
     heads = []
@@ -285,7 +321,66 @@ def extract_ruleborn(text: str) -> list[dict]:
             for field in ("size", "flies"):
                 if field in alt:
                     entry[field] = alt[field]
+        # §21.6's body, height, colours and signature (G63), so a card can
+        # carry all of them (§23.5).
+        if entry["id"] in screen:
+            entry.update({k: v for k, v in screen[entry["id"]].items() if v is not None})
         out.append(entry)
+    return out
+
+
+def special_tables(text: str) -> dict[str, list[list[str]]]:
+    """§11.8's tables, as rows of cells under each subheading."""
+    block = section(text, heading(text, "Special characters") or "11.8 Special characters",
+                    heading(text, "How laws shape ruleborn") or "11.9 How laws shape ruleborn")
+    cells = [c.strip()[2:].strip() for c in block.split("\n") if c.strip().startswith("| ")]
+    return cells
+
+
+def extract_visitors(text: str) -> list[dict]:
+    """§11.8's visitors: who comes to the Visitor's Dock and what each offers.
+    The Stray is a ruleborn of one of the eighteen kinds, never a nineteenth."""
+    cells = special_tables(text)
+    i = cells.index("What they offer") + 1
+    out = []
+    while i + 2 <= len(cells) and cells[i].startswith("The "):
+        name, offer = cells[i:i + 2]
+        row = {"id": slug(name.removeprefix("The ")), "name": name, "offer": offer,
+               "source": "11.8"}
+        if "one of the eighteen kinds" in offer:
+            row["kind"] = "one of the eighteen"
+        out.append(row)
+        i += 2
+    return out
+
+
+def extract_paradox_born(text: str) -> list[dict]:
+    """§11.8's paradox-born: what each comes from and its gift, and its level-1
+    numbers and body. They have no role in §11.1 and no form (§11.10); the
+    Twinned's health and carry are one body's pools, shared (C53)."""
+    cells = special_tables(text)
+    i = cells.index("Gift") + 1
+    gifts = {}
+    while i + 3 <= len(cells) and cells[i].startswith("The "):
+        name, source, gift = cells[i:i + 3]
+        gifts[name] = (source, gift)
+        i += 3
+    j = cells.index("Body") + 1
+    out = []
+    while j + 6 <= len(cells) and cells[j].startswith("The "):
+        name, health, speed, power, carry, body = cells[j:j + 6]
+        source, gift = gifts.get(name, ("", ""))
+        lead = lambda s: int(re.match(r"\d+", s).group(0))
+        size = re.match(r"(Small|Standard|Large)", body)
+        out.append({
+            "id": slug(name.removeprefix("The ")), "name": name, "paradox": source,
+            "gift": gift, "health": lead(health), "speed": float(speed),
+            "power": int(power), "carry": lead(carry), "body": body,
+            "size": size.group(1) if size else None,
+            "shared_pools": "shared" in health and "shared" in carry,
+            "forms": [], "source": "11.8",
+        })
+        j += 6
     return out
 
 
@@ -441,9 +536,26 @@ def extract_eras(text: str) -> list[dict]:
 
 
 def extract_sages(text: str) -> list[dict]:
-    return table(text, "11.7 Sages, the heroes", "11.8 Special characters",
+    """§11.7's Sages, and what each gains at every fifth level (G52, v3.7):
+    the second table, which the first one's reader would otherwise read on
+    into as eleven more Sages."""
+    end = "What each launch Sage gains at every fifth level"
+    if end not in text:
+        end = "11.8 Special characters"
+    rows = table(text, "11.7 Sages, the heroes", end,
                  ["name", "unlocks", "heist_powers", "at_home"],
                  ["Sage", "Unlocks", "Heist powers", "At home"])
+    if end != "11.8 Special characters":
+        block = section(text, end, heading(text, "Special characters") or "11.8 Special characters")
+        cells = [c.strip()[2:].strip() for c in block.split("\n") if c.strip().startswith("| ")]
+        levels = cells[1:cells.index("The Archivist")] if "The Archivist" in cells else []
+        width = len(levels) + 1
+        by_name = {cells[i]: dict(zip(levels, cells[i + 1:i + width]))
+                   for i in range(len(levels) + 1, len(cells) - width + 1, width)}
+        for r in rows:
+            if r["name"] in by_name:
+                r["levels"] = by_name[r["name"]]
+    return rows
 
 
 def extract_traits(text: str) -> list[dict]:
@@ -582,7 +694,7 @@ def main() -> int:
     text = SRC.read_text(encoding="utf-8")
     print("Extracted from the design document:")
     write("notes", extract_notes(text))
-    write("laws", extract_laws(text))
+    write("laws", codex_chapters(text, extract_laws(text)))
     write("resonances", extract_resonances(text))
     write("chords", extract_chords(text))
     write("terrain", extract_terrain(text))
@@ -590,6 +702,8 @@ def main() -> int:
     ruleborn = extract_ruleborn(text)
     write("ruleborn", ruleborn)
     write("forms", extract_forms(text, ruleborn))
+    write("visitors", extract_visitors(text))
+    write("paradox_born", extract_paradox_born(text))
     write("traits", extract_traits(text))
     buildings = extract_buildings(text)
     # Before v3.3 the Library lived outside 10.2's table; read it from there

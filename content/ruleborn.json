@@ -10,11 +10,16 @@
     "personality": "Curious and easily distracted; the first to investigate anything new",
     "at_home": "Perches on the highest thing it can find and preens",
     "ability": "Glides 3 tiles in one move, crossing a gap and rising or dropping one height level on the way. Two uses a heist",
+    "rule_sheet": "Leap and climb: 3 tiles and one level, for itself, for one move",
     "resists": "Ignores Half gravity's overshoot",
     "best_at": "Star Wells, scouting",
     "sound": "a soft two-note whistle",
     "size": "standard",
-    "flies": "yes"
+    "flies": "yes",
+    "body": "Owl-like sprite with a feather cape, 0.6 m",
+    "height_m": 0.6,
+    "colours": "Gold and cream",
+    "signature": "Spreads its cape and glides"
   },
   {
     "id": "skyskipper",
@@ -27,11 +32,16 @@
     "personality": "Eager and clumsy; drops things and picks them straight back up",
     "at_home": "Practises hops over a fence until it trips",
     "ability": "Stuffs its satchel: loads at 60 a second instead of 30 for 5 s. Two uses a heist",
+    "rule_sheet": "Loot: load rate ×2, for itself, 5 s (12.19)",
     "resists": "Unbothered by Leapfrog's noise",
     "best_at": "Carrying, Star Wells",
     "sound": "a bouncing rubbery boing",
     "size": "standard",
-    "flies": "no"
+    "flies": "no",
+    "body": "Long-eared hopper with a big satchel, 0.8 m",
+    "height_m": 0.8,
+    "colours": "Gold and sky blue",
+    "signature": "Stuffs its satchel in a flurry of hops"
   },
   {
     "id": "rambler",
@@ -44,11 +54,16 @@
     "personality": "Stubborn and cheerful; charges first, apologises after",
     "at_home": "Headbutts a boulder in the yard, slowly",
     "ability": "Charges 4 tiles in a straight line and breaks the first wall, hedge or boulder in its way. Two uses a heist",
+    "rule_sheet": "Speed ×2 and Push: a fixed 4-tile line; Damage: the first breakable terrain it meets takes its full health",
     "resists": "Immune to being pushed by Current or Tilt",
     "best_at": "Breaking pylons and walls",
     "sound": "a low grunt and a dusty crash",
     "size": "standard",
-    "flies": "no"
+    "flies": "no",
+    "body": "Stocky ram-horned ball, 0.9 m",
+    "height_m": 0.9,
+    "colours": "Gold and brown",
+    "signature": "Head-down charge with a dust trail"
   },
   {
     "id": "glass_golem",
@@ -61,11 +76,16 @@
     "personality": "Quiet and patient; stands where it is put",
     "at_home": "Stands at the edge watching the sky for hours",
     "ability": "Raises a crystal wall 3 tiles long for 6 s: nothing passes it, and it does not block sight. Two uses a heist",
+    "rule_sheet": "Contact: three tiles become a crystal outcrop (6.2) that stops what hits it and does not block sight, 6 s",
     "resists": "Takes half damage from Spark laws",
     "best_at": "Guard posts, chokepoints",
     "sound": "a struck wineglass",
     "size": "large",
-    "flies": "no"
+    "flies": "no",
+    "body": "Tall faceted crystal body, 1.2 m",
+    "height_m": 1.2,
+    "colours": "Violet glass, inner glow",
+    "signature": "Plants its feet and raises a crystal wall"
   },
   {
     "id": "quarryback",
@@ -78,11 +98,16 @@
     "personality": "Grumpy and methodical; finishes what it starts",
     "at_home": "Digs a hole, fills it in, digs it again",
     "ability": "Pounds: for 6 s its hits on the Vault, pylons and wards deal 50% more. Two uses a heist",
+    "rule_sheet": "Damage ×1.5, for itself, against the Vault, pylons and wards, 6 s",
     "resists": "Ignores Brittle stone's crumbling ground",
     "best_at": "Breaking, Star Wells",
     "sound": "gravel poured from a bucket",
     "size": "standard",
-    "flies": "no"
+    "flies": "no",
+    "body": "Armadillo with a stone shell and pick tail, 0.9 m",
+    "height_m": 0.9,
+    "colours": "Violet-grey",
+    "signature": "Braces and pounds with its pick tail"
   },
   {
     "id": "prism_mite",
@@ -95,11 +120,16 @@
     "personality": "Bright and busy; talks to itself constantly",
     "at_home": "Splits in two and plays with itself",
     "ability": "Splits into two mites for 8 s, each with half its load and half its health; they can go different ways, a caught mite loses only its half, and they rejoin when it ends. Two uses a heist",
+    "rule_sheet": "Revival row's split shape at 50% (7.3), set off by the use rather than by a knockout, for 8 s",
     "resists": "Sees through Glass and Mirror images",
     "best_at": "Scouting, Gardens",
     "sound": "a rapid glassy chirp",
     "size": "small",
-    "flies": "no"
+    "flies": "no",
+    "body": "Tiny prism bug with a backpack, 0.5 m",
+    "height_m": 0.5,
+    "colours": "Violet with rainbow edges",
+    "signature": "Splits in two with a sparkle"
   },
   {
     "id": "tidewalker",
@@ -112,11 +142,16 @@
     "personality": "Calm and unbothered; never hurries",
     "at_home": "Floats on its back in the pond",
     "ability": "For 6 s nothing slows it: terrain, laws and its own load leave it at full speed. Two uses a heist",
+    "rule_sheet": "Speed: every multiplier below 1.0 is ignored, for itself, 6 s",
     "resists": "Ignores Slow rivers and Rapids",
     "best_at": "Aether Springs, water routes",
     "sound": "water poured slowly",
     "size": "standard",
-    "flies": "no"
+    "flies": "no",
+    "body": "Otter-like wader with a shell pack, 0.8 m",
+    "height_m": 0.8,
+    "colours": "Cyan and sand",
+    "signature": "Strides through water as if it weren't there"
   },
   {
     "id": "hourkeeper",
@@ -129,11 +164,16 @@
     "personality": "Precise and fussy; hates being interrupted",
     "at_home": "Turns its hourglass over and watches it drain",
     "ability": "Gives one ally back all the health it lost in the last 5 s. Two uses a heist",
+    "rule_sheet": "Ally healing: one ally, equal to the damage it took in the last 5 s (150 steps)",
     "resists": "Unaffected by Delay",
     "best_at": "Aether Springs, support",
     "sound": "a soft tick and a chime",
     "size": "standard",
-    "flies": "no"
+    "flies": "no",
+    "body": "Owl with an hourglass belly, 0.9 m",
+    "height_m": 0.9,
+    "colours": "Cyan and brass",
+    "signature": "Flips its hourglass, and the wounds an ally took in the last five seconds close"
   },
   {
     "id": "stillwatch",
@@ -146,11 +186,16 @@
     "personality": "Silent and unnervingly patient",
     "at_home": "Stands on one leg, motionless, all evening",
     "ability": "Freezes one guard or ward for 2.5 s: it cannot move, act, see or grow suspicious. Two uses a heist",
+    "rule_sheet": "Time ×0 for one guard or ward, 2.5 s",
     "resists": "Hides perfectly under Stillness",
     "best_at": "Guard posts, ambushes",
     "sound": "one long held note",
     "size": "large",
-    "flies": "no"
+    "flies": "no",
+    "body": "Tall heron-like sentinel, 1.2 m",
+    "height_m": 1.2,
+    "colours": "Cyan and slate",
+    "signature": "Freezes mid-step with a shimmering outline"
   },
   {
     "id": "emberling",
@@ -163,11 +208,16 @@
     "personality": "Excitable and reckless; cannot stand still",
     "at_home": "Chases sparks around the hearth",
     "ability": "Bursts, dealing triple its Power at once to every ward and pylon within 1 tile. Two uses a heist",
+    "rule_sheet": "Damage: 3 × Power, once, to wards and pylons within 1 tile",
     "resists": "Immune to Heat bloom and ember vents",
     "best_at": "Breaking, Aether Springs",
     "sound": "a struck match and a whoosh",
     "size": "small",
-    "flies": "no"
+    "flies": "no",
+    "body": "Flame-headed imp, 0.7 m",
+    "height_m": 0.7,
+    "colours": "Orange and charcoal",
+    "signature": "Puffs up and bursts"
   },
   {
     "id": "stormhound",
@@ -180,11 +230,16 @@
     "personality": "Loyal and impatient; runs ahead and comes back",
     "at_home": "Chases its own sparks in circles",
     "ability": "Sprints 60% faster for 4 s. Two uses a heist",
+    "rule_sheet": "Speed ×1.6, for itself, 4 s",
     "resists": "Immune to Static and Chain lightning",
     "best_at": "Chasing, Aether Springs",
     "sound": "a crackle and a happy yip",
     "size": "standard",
-    "flies": "no"
+    "flies": "no",
+    "body": "Lean fox-hound with a lightning mane, 0.9 m",
+    "height_m": 0.9,
+    "colours": "Orange and electric blue",
+    "signature": "Sprints, leaving spark afterimages"
   },
   {
     "id": "sparkwright",
@@ -197,11 +252,16 @@
     "personality": "Chatty and inventive; explains things nobody asked about",
     "at_home": "Rewires the lantern, badly, then fixes it",
     "ability": "Cuts the Sage's cooldown by 10 s, so its next power comes sooner (11.7). Two uses a heist",
+    "rule_sheet": "Time: the Sage's cooldown advances 10 s at once",
     "resists": "Unaffected by Overcharge's surges",
     "best_at": "Support, Aether Springs",
     "sound": "a coil winding up",
     "size": "standard",
-    "flies": "no"
+    "flies": "no",
+    "body": "Little tinker with copper lenses and a coil-wound satchel of leaves, 0.8 m",
+    "height_m": 0.8,
+    "colours": "Orange and copper",
+    "signature": "Zaps the Sage's cooldown dial"
   },
   {
     "id": "mossbear",
@@ -214,11 +274,16 @@
     "personality": "Gentle and slow; the one everyone leans on",
     "at_home": "Sleeps in the sun while flowers grow on its back",
     "ability": "Roots in place for 6 s, taking half damage; it cannot move while rooted. Two uses a heist",
+    "rule_sheet": "Health: damage taken ×0.5, and Speed ×0, for itself, 6 s",
     "resists": "Immune to Thorns",
     "best_at": "Guard posts, Gardens",
     "sound": "a deep hum and creaking wood",
     "size": "large",
-    "flies": "no"
+    "flies": "no",
+    "body": "Big mossy stone bear, 1.4 m",
+    "height_m": 1.4,
+    "colours": "Green and stone",
+    "signature": "Roots in place as flowers bloom on its back"
   },
   {
     "id": "bloomling",
@@ -231,11 +296,16 @@
     "personality": "Sweet and shy; hides behind bigger crew members",
     "at_home": "Waters the garden, including the stones",
     "ability": "Heals every ally within 3 tiles by 15% of its full health, at once. Two uses a heist",
+    "rule_sheet": "Ally healing: 15% of full health, once, to allies within 3 tiles",
     "resists": "Immune to Spores",
     "best_at": "Gardens, support",
     "sound": "a small bell and rustling petals",
     "size": "small",
-    "flies": "no"
+    "flies": "no",
+    "body": "Flower-headed sprite, 0.6 m",
+    "height_m": 0.6,
+    "colours": "Green and pink",
+    "signature": "Twirls, sprinkling healing petals"
   },
   {
     "id": "rootrunner",
@@ -248,11 +318,16 @@
     "personality": "Practical and tidy; always carrying something",
     "at_home": "Rearranges the garden into neat rows",
     "ability": "Grows a root bridge over one gap of up to 3 tiles for 8 s; anyone can cross it, guards included. Two uses a heist",
+    "rule_sheet": "Leap and climb: a gap of up to 3 tiles becomes walkable ground for anyone, 8 s",
     "resists": "Ignores Heavy ground",
     "best_at": "Gardens, routes",
     "sound": "creaking roots and soil",
     "size": "standard",
-    "flies": "no"
+    "flies": "no",
+    "body": "Root-legged sprout with a basket, 0.8 m",
+    "height_m": 0.8,
+    "colours": "Green and brown",
+    "signature": "Its roots grow into a bridge"
   },
   {
     "id": "echoplate",
@@ -265,11 +340,16 @@
     "personality": "Formal and brave; speaks rarely and kindly",
     "at_home": "Polishes armour nobody wears",
     "ability": "Stands over the crew for 8 s: a crew member knocked out within 3 tiles of it, itself included, returns at once at 40% of its full health (12.20). Two uses a heist",
+    "rule_sheet": "Revival: return once at 40% (7.3), for the crew within 3 tiles, 8 s",
     "resists": "Returns automatically under Echoes",
     "best_at": "Guard posts, heists",
     "sound": "armour settling and a soft chord",
     "size": "large",
-    "flies": "no"
+    "flies": "no",
+    "body": "Hollow armour with a wisp inside, 1.2 m",
+    "height_m": 1.2,
+    "colours": "Magenta and silver",
+    "signature": "Its shield flares and a fallen crewmate rises, translucent"
   },
   {
     "id": "lantern_wisp",
@@ -282,11 +362,16 @@
     "personality": "Playful and nosy; drifts toward anything hidden",
     "at_home": "Lights every lantern in the realm, one by one",
     "ability": "Reveals every hidden ward, hidden guard and illusion within 6 tiles for 6 s. Two uses a heist",
+    "rule_sheet": "Cover and Who is who: hiding is ignored and who is who reads clear within 6 tiles, 6 s",
     "resists": "Cannot be hidden by Glowing dark",
     "best_at": "Scouting, Gardens",
     "sound": "a warm flicker and a hush",
     "size": "small",
-    "flies": "yes"
+    "flies": "yes",
+    "body": "Floating lantern spirit, 0.6 m",
+    "height_m": 0.6,
+    "colours": "Magenta with warm light",
+    "signature": "Brightens to reveal what's hidden"
   },
   {
     "id": "soulmender",
@@ -299,10 +384,15 @@
     "personality": "Quiet and watchful; notices who is struggling",
     "at_home": "Sits with whoever lost a heist that day",
     "ability": "Links the crew for 6 s: every hit on one of them is shared evenly across all. Two uses a heist",
+    "rule_sheet": "Damage: every hit on the crew is divided evenly across it, 6 s",
     "resists": "Unaffected by Haunting's trails",
     "best_at": "Support, Hearths",
     "sound": "wingbeats and a low choir",
     "size": "standard",
-    "flies": "yes"
+    "flies": "yes",
+    "body": "Hooded moth-like spirit, 0.9 m",
+    "height_m": 0.9,
+    "colours": "Magenta and lilac",
+    "signature": "Spreads its wings, linking the crew with threads"
   }
 ]
