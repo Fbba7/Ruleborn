@@ -4547,3 +4547,277 @@ fn a_power_not_built_yet_spends_no_use() {
     assert_eq!(world.sage.unwrap().uses[2], 2);
     assert_eq!(world.sage.unwrap().cooling_until, 0, "and starts no cooldown");
 }
+
+// -- §24.10's event log (TD.13) -------------------------------------------------
+
+use crate::events::{Back, Cause, Event as E, Hurt, Log, MomentKind};
+
+/// Guard `gi`'s logged state changes: (to, cause), in order.
+fn changes(world: &World, gi: usize) -> Vec<(State, Cause)> {
+    world.log.events.iter().filter_map(|(_, e)| match *e {
+        E::Guard { guard, to, cause, .. } if guard as usize == gi => Some((to, cause)),
+        _ => None,
+    }).collect()
+}
+
+fn logged(world: &World, want: E) -> bool {
+    world.log.events.iter().any(|(_, e)| *e == want)
+}
+
+#[test]
+fn a_guard_that_sees_the_crew_is_logged_rising_with_who_it_saw() {
+    let mut world = vault_world(2);
+    put(&mut world, 0, 13, 13);
+    put(&mut world, 1, 3, 5);
+    let gi = post(&mut world, 2, 3, 3);
+    world.guards[gi].facing = Ang::from_degrees(90);  // south, at crew member 1
+    run_for(&mut world, 2 * TICKS_PER_SECOND);
+    let seen = changes(&world, gi);
+    assert_eq!(seen.first(), Some(&(State::Suspicious, Cause::Saw(1))));
+    assert!(seen.contains(&(State::Alerted, Cause::Saw(1))), "{seen:?}");
+}
+
+#[test]
+fn a_guard_that_hears_the_crew_is_logged_as_hearing() {
+    let mut world = World::new(3, 1, Vec::new());
+    let post_tile = world.grid.index(2, 3).unwrap();
+    let (gx, gy) = world.grid.centre(post_tile);
+    world.guards[0].at = Point { x: gx, y: gy };
+    world.guards[0].home = post_tile;
+    world.guards[0].facing = Ang::from_degrees(270);
+    let start = world.grid.index(2, 5).unwrap();
+    let (rx, ry) = world.grid.centre(start);
+    world.raiders[0].at = Point { x: rx, y: ry };
+    world.raiders[0].route = path::find(&world.grid, start, world.grid.index(2, 6).unwrap()).unwrap();
+    world.step();
+    assert_eq!(changes(&world, 0), [(State::Investigating, Cause::Heard)]);
+}
+
+#[test]
+fn an_alert_that_spreads_is_logged_as_spreading() {
+    let mut world = vault_world(1);
+    put(&mut world, 0, 13, 13);
+    let a = post(&mut world, 2, 3, 3);
+    let b = post(&mut world, 0, 5, 3);
+    world.enter(a, State::Alerted);
+    run_for(&mut world, TICKS_PER_SECOND);
+    assert_eq!(changes(&world, b).first(), Some(&(State::Investigating, Cause::Spread)));
+}
+
+#[test]
+fn a_guard_drawn_by_a_decoy_is_logged_as_lured() {
+    let mut world = sage_world(&["stormhound"], 3);
+    let gi = post(&mut world, 0, 3, 3);
+    call_at(&mut world, 2, 9, 3);
+    world.step();
+    assert_eq!(changes(&world, gi), [(State::Investigating, Cause::Lured)]);
+}
+
+#[test]
+fn alarm_level_six_sending_guards_searching_is_logged_as_the_alarms() {
+    let mut world = vault_world(1);
+    put(&mut world, 0, 13, 13);
+    let gi = post(&mut world, 0, 3, 3);
+    let mut world = at_alarm(world, 6);
+    world.step();
+    assert_eq!(changes(&world, gi), [(State::Searching, Cause::Alarm)]);
+}
+
+#[test]
+fn a_change_the_state_table_makes_is_logged_as_the_tables() {
+    // Suspicion left over, nothing seen or heard: the rise and the fall are
+    // the table's own.
+    let mut world = vault_world(1);
+    put(&mut world, 0, 13, 13);
+    let gi = post(&mut world, 0, 3, 3);
+    world.guards[gi].suspicion = 250;
+    run_for(&mut world, 2 * TICKS_PER_SECOND);
+    assert_eq!(changes(&world, gi), [(State::Suspicious, Cause::Table), (State::Unaware, Cause::Table)]);
+}
+
+#[test]
+fn a_knockout_on_either_side_is_logged_with_what_did_it() {
+    let mut world = vault_world(1);
+    put(&mut world, 0, 3, 4);
+    let gi = post(&mut world, 2, 3, 3);
+    world.guards[gi].facing = Ang::from_degrees(90);
+    world.enter(gi, State::Alerted);
+    world.guards[gi].route.clear();
+    world.guards[gi].interest = world.grid.index(3, 4);
+    run_for(&mut world, 3 * h::HIT_TICKS);
+    assert!(logged(&world, E::Down { crew: 0, by: Hurt::Guard(gi as u16) }));
+
+    let mut world = vault_world(1);
+    let gi = post(&mut world, 0, 3, 3);
+    world.guards[gi].facing = Ang::from_degrees(270);
+    put(&mut world, 0, 3, 4);
+    world.raiders[0].task = Task::Attack;
+    world.raiders[0].target = gi as u32;
+    run_for(&mut world, h::TAKEDOWN_TICKS);
+    assert!(logged(&world, E::GuardDown { guard: gi as u16 }));
+
+    let mut world = ward_world(1, WardKind::ThornHedge, (5, 5));
+    put(&mut world, 0, 5, 5);
+    world.raiders[0].health = 1;
+    world.step();
+    assert!(logged(&world, E::Down { crew: 0, by: Hurt::Ward(0) }), "a ward's thorns");
+}
+
+#[test]
+fn a_crew_member_back_on_its_feet_is_logged_with_how() {
+    let mut world = vault_world(2);
+    put(&mut world, 0, 3, 3);
+    put(&mut world, 1, 3, 4);
+    world.raiders[0].health = 0;
+    run_for(&mut world, 4 * TICKS_PER_SECOND);
+    assert!(logged(&world, E::Back { crew: 0, how: Back::Ally }));
+
+    let mut world = kinds_world(&["echoplate", "stormhound"]);
+    put(&mut world, 0, 5, 5);
+    in_a_hedge(&mut world, 1, 6, 5);
+    world.raiders[1].health = 1;
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert!(logged(&world, E::Back { crew: 1, how: Back::Echoplate }));
+}
+
+#[test]
+fn captures_and_escapes_are_logged() {
+    let mut world = vault_world(1);
+    put(&mut world, 0, 3, 3);
+    world.raiders[0].health = 0;
+    run_for(&mut world, 11 * TICKS_PER_SECOND);
+    assert!(logged(&world, E::Caught { crew: 0, clock: false }), "down ten seconds");
+
+    let mut world = vault_world(1);
+    world.clock = 5;
+    run_for(&mut world, 10);
+    assert!(logged(&world, E::Caught { crew: 0, clock: true }), "inside at the clock");
+
+    let mut world = vault_world(1);
+    let edge = world.grid.index(0, 3).unwrap();
+    world.skiff = Some(h::Skiff { tile: edge, arrives: 0 });
+    put(&mut world, 0, 0, 3);
+    world.raiders[0].carried = 50;
+    world.step();
+    assert!(logged(&world, E::Out { crew: 0, carried: 50 }), "aboard, with its loot");
+}
+
+#[test]
+fn the_realm_alarm_is_logged_level_by_level_with_its_cause() {
+    let mut world = vault_world(1);
+    put(&mut world, 0, 13, 13);
+    run_for(&mut world, crate::guard::ALARM_STEP_TICKS + 1);
+    assert!(logged(&world, E::Alarm { level: 1, found: false }), "thirty seconds");
+    world.knockouts_discovered += 1;
+    world.step();
+    assert!(logged(&world, E::Alarm { level: 2, found: true }), "a knocked-out guard found");
+    let mut world = at_alarm(vault_world(1), 5);
+    world.step();
+    assert!(world.log.events.iter().any(|(_, e)| matches!(e, E::Reinforced { .. })),
+            "level 5's Warden");
+}
+
+#[test]
+fn wards_pylons_and_the_vault_are_logged() {
+    let mut world = ward_world(1, WardKind::TimeSnare, (3, 3));
+    put(&mut world, 0, 3, 3);
+    world.step();
+    assert!(logged(&world, E::Ward { ward: 0, crew: 0 }));
+
+    let mut world = kinds_world(&["emberling"]);
+    world.weave(&[("density", (3, 4))]);
+    world.laws[0].health = 10;
+    put(&mut world, 0, 4, 4);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert!(logged(&world, E::Pylon { law: 0 }));
+
+    let mut world = vault_world(1);
+    put(&mut world, 0, 6, 5);
+    world.raiders[0].task = Task::Crack;
+    world.vault.health = 1;
+    run_for(&mut world, h::HIT_TICKS);
+    assert!(logged(&world, E::Vault));
+}
+
+#[test]
+fn a_law_suspended_an_ability_and_a_power_are_logged() {
+    let mut world = sage_world(&["stormhound"], 1);
+    world.weave(&[("density", (3, 4))]);
+    call_at(&mut world, 0, 3, 4);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert!(logged(&world, E::LawOff { law: 0, until: ruleborn::SUSPEND_TICKS }));
+    assert!(logged(&world, E::Power { power: 0 }));
+    assert!(logged(&world, E::Ability { crew: 0 }));
+}
+
+#[test]
+fn every_crew_member_on_the_island_is_logged_once_a_second() {
+    let mut world = vault_world(3);
+    world.raiders[2].standing = Standing::Out;
+    run_for(&mut world, 3 * TICKS_PER_SECOND);
+    let ticks: Vec<(u32, u8)> = world.log.positions.iter().map(|&(t, c, _, _)| (t, c)).collect();
+    assert_eq!(ticks, [(0, 0), (0, 1), (30, 0), (30, 1), (60, 0), (60, 1)],
+               "the two on the island, each second; the one out is not");
+    let (_, _, x, y) = world.log.positions[0];
+    let (cx, cy) = world.grid.centre(world.grid.index(0, 0).unwrap());
+    assert_eq!((x, y), ((cx.mul(Fx::from_int(256))).to_int() as i16,
+                        (cy.mul(Fx::from_int(256))).to_int() as i16), "at 1/256 of a tile");
+}
+
+#[test]
+fn the_log_is_outside_the_checksum() {
+    let heist = fixture(42, 900, 4);
+    let mut kept = World::from_heist(&heist);
+    let mut emptied = World::from_heist(&heist);
+    for _ in 0..900 {
+        let a = kept.step();
+        let b = emptied.step();
+        emptied.log = Log::default();
+        assert_eq!(a, b, "the log changes no checksum");
+    }
+    assert!(!kept.log.events.is_empty() && !kept.log.positions.is_empty());
+}
+
+#[test]
+fn the_decisive_moment_is_chosen_by_twelve_thirteens_rule() {
+    let mut log = Log::default();
+    log.push(50, E::LawOff { law: 3, until: 350 });
+    log.push(100, E::Guard { guard: 2, from: State::Suspicious, to: State::Alerted,
+                             cause: Cause::Saw(1) });
+    log.push(120, E::Guard { guard: 4, from: State::Searching, to: State::Alerted,
+                             cause: Cause::Saw(0) });
+    log.push(150, E::Down { crew: 1, by: Hurt::Guard(2) });
+    log.push(450, E::Caught { crew: 1, clock: false });
+    log.closest = Some((80, 2, 640));
+    let foiled = log.moment(Grade::Foiled).unwrap();
+    assert_eq!((foiled.kind, foiled.tick, foiled.guard, foiled.crew),
+               (MomentKind::Capture, 100, Some(2), Some(1)),
+               "the first capture, back to the tick its captor became Alerted to it");
+    assert_eq!(foiled.blink, Some(3), "a law's blink at that tick is named");
+    let loud = log.moment(Grade::Loud).unwrap();
+    assert_eq!((loud.kind, loud.tick, loud.cause), (MomentKind::Alert, 100, Some(Cause::Saw(1))),
+               "the first guard Alerted, and why");
+    let clean = log.moment(Grade::Clean).unwrap();
+    assert_eq!((clean.kind, clean.tick, clean.guard), (MomentKind::CloseCall, 80, Some(2)),
+               "the closest call");
+    // A capture with no guard behind it is its own moment.
+    let mut clock = Log::default();
+    clock.push(4500, E::Caught { crew: 0, clock: true });
+    assert_eq!(clock.moment(Grade::Partial).map(|m| m.tick), Some(4500));
+}
+
+#[test]
+fn every_golden_heist_has_a_decisive_moment() {
+    for (name, seed, ticks, crew) in crate::GOLDEN {
+        let heist = fixture(*seed, *ticks, *crew);
+        let mut world = World::from_heist(&heist);
+        for _ in 0..heist.ticks {
+            world.step();
+        }
+        let grade = world.outcome().grade;
+        assert!(world.log.moment(grade).is_some(), "{name}: {grade:?} has one");
+    }
+}

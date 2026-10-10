@@ -311,9 +311,7 @@ DELIVERABLES = [
         "Line of sight", "Noise", "Guard states", "Realm alarm", "Detection modifiers", "Wards")),
     ("1", "The law engine", BACKEND, launch_laws_simulated()),
     ("1", "Resonances and chords", BACKEND, launch_combos()),
-    ("1", "The event log", BACKEND, not_started(
-        "the simulation writes §26.8's event log, the record the result, the defence "
-        "log and the share clip read (TD.13)")),
+    ("1", "The event log", BACKEND, systems("Event log")),
     ("1", "Golden harness", BACKEND, systems("Replay format", "Golden replays")),
 
     # The client's architecture (TC.1). The store builds are phase 0's (G68).

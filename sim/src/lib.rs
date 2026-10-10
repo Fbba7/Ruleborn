@@ -31,6 +31,7 @@
 
 pub mod combos;
 pub mod era;
+pub mod events;
 pub mod ffi;
 pub mod fixed;
 pub mod grid;
@@ -56,6 +57,7 @@ use heist::{Grade, Outcome, Skiff, Standing, Task, Vault, Ward, WardKind};
 use combos::Combos;
 use laws_table::{note, Chord, Param, Res, LAWS, PARAM_COUNT};
 use ruleborn::{Ability, Power, RULEBORN, SAGES};
+use events::{Back, Cause, Event, Hurt, Log};
 
 /// The laws the fixture's realm is woven with: three, the most §5.2 allows at
 /// realm level 5, all three whole-parameter laws so every effect is one the
@@ -541,6 +543,9 @@ pub struct Guard {
     pub slowed_until: u32,
     /// Whether Soul tether has let it swap after returning.
     pub tethered: bool,
+    /// The crew member it noticed most this tick, for the event log's cause
+    /// (`events::Cause::Saw`). Not state: nothing reads it back.
+    pub seen: Option<u8>,
 }
 
 impl Guard {
@@ -607,6 +612,7 @@ fn make_guard(id: u32, row: usize, post: grid::TileIndex, grid: &Grid) -> Guard 
         prev_tile: None,
         slowed_until: 0,
         tethered: false,
+        seen: None,
     }
 }
 
@@ -684,6 +690,8 @@ pub struct Raider {
     /// The health it lost each tick of the last five seconds, for the
     /// Hourkeeper's rewind, by tick.
     pub lost: Vec<i32>,
+    /// What hurt it last, for the event log (`events::Hurt`).
+    pub hurt_by: Hurt,
 }
 
 impl Raider {
@@ -811,6 +819,12 @@ pub struct World {
     pub renew_from: Option<u32>,
     pub decoy: Option<(grid::TileIndex, u32, u32)>,
     pub wards_shown_at: Option<u32>,
+    /// §24.10's event log, outside the checksum (`events`), the cause the
+    /// next guard state change is logged with, and how many knocked-out
+    /// guards had been found when the alarm last moved.
+    pub log: Log,
+    why: Cause,
+    found_logged: i32,
 }
 
 impl World {
@@ -886,6 +900,7 @@ impl World {
                 free_since: 0,
                 effect_until: 0,
                 lost: vec![0; ruleborn::REWIND_TICKS],
+                hurt_by: Hurt::Law,
             });
         }
         World {
@@ -937,6 +952,9 @@ impl World {
             renew_from: None,
             decoy: None,
             wards_shown_at: None,
+            log: Log::default(),
+            why: Cause::Table,
+            found_logged: 0,
         }
     }
 
@@ -1069,6 +1087,15 @@ impl World {
         let slot = self.tick as usize % ruleborn::REWIND_TICKS;
         for (r, &was) in self.raiders.iter_mut().zip(self.start_health.iter()) {
             r.lost[slot] = (was - r.health).max(0);
+        }
+        // "every crew member's position once a second" (§24.10), while it is
+        // on the island.
+        if self.tick % TICKS_PER_SECOND == 0 {
+            let to_wire = |v: Fx| v.mul(Fx::from_int(256)).to_int().clamp(-32768, 32767) as i16;
+            for r in self.raiders.iter().filter(|r| matches!(r.standing,
+                                                              Standing::Active | Standing::Down)) {
+                self.log.positions.push((self.tick, r.id as u8, to_wire(r.at.x), to_wire(r.at.y)));
+            }
         }
         self.tick += 1;
         self.checksum()
@@ -1302,6 +1329,7 @@ impl World {
         if !done {
             return;
         }
+        self.log.push(now, Event::Ability { crew: ri as u8 });
         let r = &mut self.raiders[ri];
         r.uses -= 1;
         r.ready = false;
@@ -1342,7 +1370,9 @@ impl World {
                     l.pylon == t && l.broken_at.is_none() && now >= l.suspended_until
                 }));
                 if let Some(li) = law {
-                    self.laws[li].suspended_until = now + ruleborn::SUSPEND_TICKS;
+                    let until = now + ruleborn::SUSPEND_TICKS;
+                    self.laws[li].suspended_until = until;
+                    self.log.push(now, Event::LawOff { law: li as u16, until });
                 }
                 law.is_some()
             }
@@ -1364,6 +1394,7 @@ impl World {
                     r.health = ((r.full(&sheet) as i64 * n / d) as i32).max(1);
                     r.standing = Standing::Active;
                     r.revive = 0;
+                    self.log.push(now, Event::Back { crew: ri as u8, how: Back::Recall });
                 }
                 down.is_some()
             }
@@ -1399,6 +1430,7 @@ impl World {
                 s.uses[i] -= 1;
                 s.cooling_until = now + ruleborn::SAGE_COOLDOWN_TICKS;
             }
+            self.log.push(now, Event::Power { power: i as u8 });
         }
     }
 
@@ -1446,6 +1478,7 @@ impl World {
                     law.health = 0;
                     law.broken_at = Some(now);
                     self.cracked += cracking;
+                    self.log.push(now, Event::Pylon { law: li as u16 });
                 }
             }
         }
@@ -1751,8 +1784,16 @@ impl World {
         if self.guards[gi].state == guard::State::Investigating {
             self.aim(gi, Some(tile));
         } else {
-            self.rise(gi, guard::State::Investigating);
+            self.rise_because(gi, guard::State::Investigating, Cause::Lured);
         }
+    }
+
+    /// `rise`, logged with its cause; under Delay the rise lands later, and
+    /// is logged then as the table's.
+    fn rise_because(&mut self, gi: usize, state: guard::State, cause: Cause) {
+        self.why = cause;
+        self.rise(gi, state);
+        self.why = Cause::Table;
     }
 
     /// A guard triggered into `state` by something other than its own
@@ -1830,11 +1871,13 @@ impl World {
             // The raider noticed most this tick, ties to the lower id, so a
             // guard's interest is the same spot on every machine.
             let mut most: Option<(i32, grid::TileIndex)> = None;
+            let mut who: Option<u8> = None;
             for ri in 0..self.raiders.len() {
                 let Some((per_tick, to)) = self.noticed(gi, ri) else { continue };
                 gain += per_tick;
                 if most.is_none_or(|(g, _)| per_tick > g) {
                     most = Some((per_tick, to));
+                    who = Some(ri as u8);
                 }
             }
             // No jitter. §12.17: "nothing here is random: a player who scouts
@@ -1865,6 +1908,7 @@ impl World {
             }
             let guard = &mut self.guards[gi];
             guard.saw = most.is_some();
+            guard.seen = who;
             if let Some((_, at)) = most {
                 guard.interest = Some(at);
             }
@@ -1876,6 +1920,14 @@ impl World {
                 let halve = if self.alarm >= guard::DECAY_HALVED_AT { 2 } else { 1 };
                 guard.suspicion = (guard.suspicion
                     - DECAY_PER_TICK * n as i32 / (d as i32 * halve)).max(0);
+            }
+            // §12.13's closest call: "the tick a guard came nearest to
+            // Alerted", counting only guards not already there.
+            let (s, state) = (guard.suspicion, guard.state);
+            if state != guard::State::Alerted && s > 0
+                && self.log.closest.is_none_or(|(_, _, best)| s > best)
+            {
+                self.log.closest = Some((now, gi as u16, s));
             }
         }
     }
@@ -2600,7 +2652,7 @@ impl World {
         for (_, gi, spot) in due {
             if self.guards[gi].awake(now) && self.guards[gi].state.rank() < Investigating.rank() {
                 self.guards[gi].interest = Some(spot);
-                self.rise(gi, Investigating);
+                self.rise_because(gi, Investigating, Cause::Spread);
             }
         }
 
@@ -2613,6 +2665,14 @@ impl World {
             let held = now.saturating_sub(g.state_since);
             let by_suspicion = guard::State::from_suspicion(g.suspicion);
             let mut next = current;
+            // Why it would rise, for the log: what it saw this tick, else
+            // what it heard.
+            let seen_cause = match (g.saw, g.seen) {
+                (true, Some(ri)) => Some(Cause::Saw(ri)),
+                (true, None) => Some(Cause::Glare),
+                _ => None,
+            };
+            let heard_cause = g.heard.is_some().then_some(Cause::Heard);
 
             // Hearing: "600, or on hearing something". Never a step down.
             if let Some(spot) = g.heard {
@@ -2677,14 +2737,29 @@ impl World {
                 }
             }
             if next != current {
+                self.why = if next.rank() > current.rank() && by_suspicion.rank() >= next.rank() {
+                    seen_cause.or(heard_cause).unwrap_or(Cause::Table)
+                } else if next.rank() > current.rank() {
+                    heard_cause.or(seen_cause).unwrap_or(Cause::Table)
+                } else {
+                    Cause::Table
+                };
                 self.enter(gi, next);
             }
         }
 
         // The realm alarm: one level every thirty seconds, one per knocked-out
         // guard discovered, never above six.
+        let before = self.alarm;
         self.alarm = ((now / guard::ALARM_STEP_TICKS) as i32 + self.knockouts_discovered)
             .min(guard::ALARM_MAX);
+        if self.alarm > before {
+            let found = self.knockouts_discovered > self.found_logged;
+            for level in before + 1..=self.alarm {
+                self.log.push(now, Event::Alarm { level: level as u8, found });
+            }
+        }
+        self.found_logged = self.knockouts_discovered;
         // "At 5 another Warden arrives at an entrance."
         if self.alarm >= guard::REINFORCE_AT && !self.reinforced {
             self.reinforced = true;
@@ -2692,6 +2767,7 @@ impl World {
             let mut warden = make_guard(id, WARDEN, self.entrance, &self.grid);
             warden.state_since = now;
             self.guards.push(warden);
+            self.log.push(now, Event::Reinforced { guard: id as u16 });
         }
         // At 6 "Every guard in the realm enters Searching", once, as the
         // level is reached: a guard already Alerted keeps chasing.
@@ -2700,6 +2776,7 @@ impl World {
             for gi in 0..self.guards.len() {
                 let g = &self.guards[gi];
                 if g.awake(now) && !matches!(g.state, Alerted | Searching) {
+                    self.why = Cause::Alarm;
                     self.enter(gi, Searching);
                 }
             }
@@ -2743,6 +2820,7 @@ impl World {
                         g.swing = 0;
                         let (n, d) = self.sheet.factor(Param::Damage);
                         let power = g.power as i64 * n / d;
+                        self.raiders[ri].hurt_by = Hurt::Guard(gi as u16);
                         self.strike_raider(ri, power as i32, true);
                     }
                 }
@@ -2828,6 +2906,9 @@ impl World {
                 }
                 let (n, d) = ruleborn::STAND_OVER_RETURN;
                 raider.health = ((raider.full(&sheet) as i64 * n / d) as i32).max(1);
+                let crew = raider.id as u8;
+                self.log.push(now, Event::Down { crew, by: raider.hurt_by });
+                self.log.push(now, Event::Back { crew, how: Back::Echoplate });
                 continue;
             }
             if raider.active() && raider.health <= 0 {
@@ -2839,12 +2920,14 @@ impl World {
                     }
                     raider.carried = 0;
                 }
+                self.log.push(now, Event::Down { crew: raider.id as u8, by: raider.hurt_by });
                 match revival {
                     Some(Revival::Return(n, d)) if !raider.revived => {
                         raider.revived = true;
                         raider.health = ((raider.full(&sheet) as i64 * n / d) as i32).max(1);
                         // Drifting echoes: the echo may float over one wall.
                         raider.wall_pass = drifting;
+                        self.log.push(now, Event::Back { crew: raider.id as u8, how: Back::Law });
                     }
                     _ => {
                         raider.health = 0;
@@ -2884,6 +2967,7 @@ impl World {
                         r.health = (r.full(&self.sheet) * n / d).max(1);
                         r.standing = Standing::Active;
                         r.revive = 0;
+                        self.log.push(now, Event::Back { crew: r.id as u8, how: Back::Ally });
                         continue;
                     }
                 }
@@ -2908,8 +2992,10 @@ impl World {
                     r.health = (r.full(&self.sheet) * n / d).max(1);
                     r.standing = Standing::Active;
                     r.revive = 0;
+                    self.log.push(now, Event::Back { crew: r.id as u8, how: Back::GhostTide });
                 } else {
                     r.standing = Standing::Caught;
+                    self.log.push(now, Event::Caught { crew: r.id as u8, clock: false });
                 }
             }
         }
@@ -2965,6 +3051,7 @@ impl World {
             if self.vault.health <= 0 {
                 self.vault.health = 0;
                 self.vault.opened_at = Some(now);
+                self.log.push(now, Event::Vault);
                 // Cracked gardens: "broken structures leave Essence that the
                 // owner collects after the heist" — the Vault among them.
                 self.cracked += self.combos.resonance(Res::CrackedGardens) as u32;
@@ -3054,6 +3141,7 @@ impl World {
                     law.health = 0;
                     law.broken_at = Some(now);
                     self.cracked += cracking as u32;
+                    self.log.push(now, Event::Pylon { law: li as u16 });
                 }
             } else if let Some(wi) = wi {
                 // Shattered glass (Glass + Brittle stone): "glass walls break
@@ -3090,6 +3178,7 @@ impl World {
                 if self.sheet.is_set(Param::Rebound) && role != Role::Warden {
                     let (rn, rd) = self.sheet.factor(Param::Rebound);
                     self.raiders[ri].health -= (hit as i64 * rn / rd) as i32;
+                    self.raiders[ri].hurt_by = Hurt::Law;
                 }
             }
         }
@@ -3159,6 +3248,8 @@ impl World {
                         raider.standing = Standing::Out;
                         raider.route.clear();
                         raider.along = 0;
+                        self.log.push(now, Event::Out { crew: raider.id as u8,
+                                                        carried: raider.carried });
                     }
                 }
             }
@@ -3170,6 +3261,7 @@ impl World {
             for raider in self.raiders.iter_mut() {
                 if matches!(raider.standing, Standing::Active | Standing::Down) {
                     raider.standing = Standing::Caught;
+                    self.log.push(now, Event::Caught { crew: raider.id as u8, clock: true });
                     if raider.carried > 0 {
                         if let Some(t) = self.grid.tile_at(raider.at.x, raider.at.y) {
                             self.dropped.push((t, raider.carried));
@@ -3273,6 +3365,8 @@ impl World {
                     for r in self.raiders.iter_mut() {
                         if r.active() && within(r.at, heist::COIL_RADIUS) {
                             r.health -= (r.full(&self.sheet) as i64 * n / d) as i32;
+                            r.hurt_by = Hurt::Ward(wi as u16);
+                            self.log.push(now, Event::Ward { ward: wi as u16, crew: r.id as u8 });
                         }
                     }
                 }
@@ -3281,6 +3375,7 @@ impl World {
                     for r in self.raiders.iter_mut() {
                         if r.active() && tile_of(r.at, &self.grid) == Some(w.tile) {
                             r.health -= r.full(&self.sheet) * n / d;
+                            r.hurt_by = Hurt::Ward(wi as u16);
                         }
                     }
                 }
@@ -3312,6 +3407,7 @@ impl World {
     /// `first`: at once, or under Delay when its time comes.
     fn fire_ward(&mut self, wi: usize, first: usize) {
         let now = self.tick;
+        self.log.push(now, Event::Ward { ward: wi as u16, crew: first as u8 });
         let w = self.wards[wi].clone();
         let (wx, wy) = self.grid.centre(w.tile);
         let centre = Point { x: wx, y: wy };
@@ -3564,6 +3660,7 @@ impl World {
         }
         g.health = 0;
         g.knocked_out = true;
+        self.log.push(self.tick, Event::GuardDown { guard: gi as u16 });
     }
 
     /// Thorns (§7.3's Touch damage row): "touching walls or hedges costs 5%
@@ -3590,6 +3687,7 @@ impl World {
         for (r, hurt) in self.raiders.iter_mut().zip(crew) {
             if hurt {
                 r.health -= (r.full(&sheet) as i64 * n / d) as i32;
+                r.hurt_by = Hurt::Law;
             }
         }
         for (gi, hurt) in posts.into_iter().enumerate() {
@@ -3614,6 +3712,7 @@ impl World {
         for r in self.raiders.iter_mut() {
             if r.active() && on_fire(&self.grid, &self.burning, r.at) {
                 r.health -= r.full(&sheet) * n / d;
+                r.hurt_by = Hurt::Law;
             }
         }
         for gi in 0..self.guards.len() {
@@ -3771,6 +3870,11 @@ impl World {
     pub(crate) fn enter(&mut self, gi: usize, state: guard::State) {
         use guard::State::*;
         let now = self.tick;
+        let from = self.guards[gi].state;
+        if from != state {
+            self.log.push(now, Event::Guard { guard: gi as u16, from, to: state, cause: self.why });
+        }
+        self.why = Cause::Table;
         {
             let g = &mut self.guards[gi];
             g.state = state;

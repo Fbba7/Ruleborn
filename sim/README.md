@@ -542,6 +542,18 @@ gaps, Rift for universes of several realms, Invert for a rule on which
 parameters have an opposite, and Copy for a law that applies around the crew
 rather than over the realm (`Power::built`).
 
+## The event log
+
+§24.10: *"Beside the replay the simulation keeps an event log ... outside the
+checksum, so a result can name a moment without changing what is
+replayed."* `events.rs` is that log: every guard state change with its cause,
+knockouts and returns, captures and boardings, the alarm's levels and why,
+wards fired, pylons, the Vault, a suspended law, abilities and Sage powers,
+and every crew member's position once a second. Nothing in the simulation
+reads it back and `checksum` never sees it, which
+`the_log_is_outside_the_checksum` holds. §12.13's decisive moment is chosen
+from it by rule (`Log::moment`).
+
 ## Wards
 
 §10.3's six wards at level 1, built to `docs/design/spec/wards.md` (G3's

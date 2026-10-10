@@ -10885,7 +10885,9 @@ V37 = {
     "<strong>Settled by rule:</strong> the brief’s recommendation. §12.13 "
     "chooses the moment <em>“by rule from the simulation’s event log”</em>, by "
     "outcome, and the tip from a content table in the result’s own "
-    "<em>“Try this”</em> row (TD.13, TD.17)."),
+    "<em>“Try this”</em> row. The rule is built in <code>sim/</code> "
+    "(<code>Log::moment</code>, TD.13); the result screen showing it, and the "
+    "tip, are TD.17’s."),
 
 "G49": dict(status="fixed", note=
     "<strong>Settled by rule:</strong> the brief’s recommendation. §7.6 names "
@@ -11015,8 +11017,11 @@ V37 = {
 "D65": dict(status="open", left="build", note=
     "<strong>The document is done; the build is not.</strong> §24.1 picks the "
     "stores’ own crash reports, and §24.3 reads the heatmaps <em>“for sampled "
-    "re-simulations”</em> from the simulation’s event log. Left: positions in "
-    "that log, once a second, so the heatmaps can be read (TD.13)."),
+    "re-simulations”</em> from the simulation’s event log. The log now keeps "
+    "every crew member’s position once a second, with every sighting, alert, "
+    "knockout, capture and ward fired (<code>sim/src/events.rs</code>, TD.13). "
+    "Left: the server reading it from its sampled re-simulations into the "
+    "route, detection and failure heatmaps."),
 
 "D66": dict(status="open", left="build", note=
     "<strong>The document is done; the build is not.</strong> §26.8 now plans "
@@ -11410,8 +11415,9 @@ V37 = {
     "Left: two of §23.2’s ten records have no fact (<em>“most guards slept "
     "past”</em>, <em>“minutes played a day”</em>) and the favourite law no rule, "
     "and nothing says where an unsampled raid’s facts come from (edits "
-    "drafted). For the build: the event log, the facts at settlement and the "
-    "three crews in sim/ (TD.13, TD.39)."),
+    "drafted). For the build: the event log is built, so where the crew was "
+    "seen and what fired can be read from it (TD.13); left are the facts "
+    "written at settlement and the three crews in sim/ (TD.39)."),
 }
 
 

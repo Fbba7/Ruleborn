@@ -1927,9 +1927,25 @@ dict(
                   "test); the goldens agreeing",
              blocked_by=["TD.12", "TD.33"],
              register=["C53", "G62"]),
-        dict(id="TD.13", owner="claude", status="ready",
+        dict(id="TD.13", owner="claude", status="done",
              title="The simulation's event log",
-             detail="Outside the checksum, kept beside the replay (§24.10): guard "
+             detail="<strong>Done.</strong> <code>sim/src/events.rs</code> keeps "
+                    "the log beside the replay and outside the checksum, the five "
+                    "goldens unchanged with it on: every guard state change with "
+                    "its cause (the crew member seen, a Glare, a sound, a spread "
+                    "alert, a lure, the alarm, the table), knockouts on both sides "
+                    "with what did them, every way back up, captures by knockdown "
+                    "and by the clock, boardings with their loot, alarm levels "
+                    "with their cause, level 5's Warden, wards fired, pylons, the "
+                    "Vault, a law suspended, abilities and Sage powers used, and "
+                    "every crew member's position once a second; sixteen tests, "
+                    "one for each kind. §12.13's decisive moment is chosen from it "
+                    "by rule (<code>Log::moment</code>), and every golden heist "
+                    "has one. Bells, the defender's guardian Sage and faults are "
+                    "logged once they exist (TD.15, TD.21, TD.37); the server's "
+                    "heatmaps and the result screen read it in D65's and TD.17's "
+                    "work.<br><br>"
+                    "Outside the checksum, kept beside the replay (§24.10): guard "
                     "state changes with their cause (sightings and alerts), "
                     "knockouts and revivals, captures, escapes and boarding, alarm "
                     "levels and their cause, wards fired, bells rung, guardian "
