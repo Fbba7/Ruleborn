@@ -101,6 +101,10 @@ pub enum Kind {
     /// is ready (12.6)", or "Drag onto the world to aim". The device names
     /// the target either way; an ability that needs none does not read it.
     Ability = 12,
+    /// Use the Sage's power number `actor` (0 to 2, in §11.7's order) at
+    /// (`x`, `y`). §12.7: "Drag a power onto the world to aim it." The Sage
+    /// is not a crew member, so the crew-member nibble names the power.
+    Sage = 13,
 }
 
 impl Kind {
@@ -119,6 +123,7 @@ impl Kind {
             10 => Some(Kind::Drag),
             11 => Some(Kind::Land),
             12 => Some(Kind::Ability),
+            13 => Some(Kind::Sage),
             _ => None,
         }
     }
@@ -267,8 +272,9 @@ impl Heist {
             write_varint(&mut out, (command.tick - previous) as u64);
             previous = command.tick;
             // Actor in the high nibble, kind in the low one. A crew is at most
-            // five (§12.5) and there are thirteen kinds, so one byte is
-            // plenty and the packing is stated rather than assumed.
+            // five (§12.5), a Sage has three powers, and there are fourteen
+            // kinds, so one byte is plenty and the packing is stated rather
+            // than assumed.
             out.push((command.actor << 4) | (command.kind as u8));
             out.extend_from_slice(&command.x.to_le_bytes());
             out.extend_from_slice(&command.y.to_le_bytes());

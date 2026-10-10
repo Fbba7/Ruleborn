@@ -77,6 +77,10 @@ DECISION_SECONDS = (8, 12)
 ABILITY_LOCKOUT_SECONDS = 10
 ABILITIES_READY = 4
 
+#: §11.7: "After using any power the Sage cools down for 20 seconds before it
+#: can use another".
+SAGE_COOLDOWN_SECONDS = 20
+
 #: §12.5. Three characters, four from Keeper level 8, five from level 16.
 CREW_RANGE = (3, 5)
 
@@ -362,6 +366,7 @@ HOME = {
     "DECISION_SECONDS": "12.6",
     "ABILITY_LOCKOUT_SECONDS": "12.6",
     "ABILITIES_READY": "12.6",
+    "SAGE_COOLDOWN_SECONDS": "11.7",
     "CREW_RANGE": "12.5",
     "WARD_LIMITS": "5.2",
     "GUARD_POSTS": "10.2",
@@ -473,6 +478,8 @@ STATED = {
                                 lambda m: int(m[0])),
     "ABILITIES_READY": (r"At most (four) abilities are ready at once",
                         lambda m: {"four": 4}[m[0]]),
+    "SAGE_COOLDOWN_SECONDS": (r"After using any power the Sage cools down for (\d+) seconds",
+                              lambda m: int(m[0])),
     "DECISION_SECONDS": (r"roughly one every (\d+) to (\d+) seconds",
                          lambda m: (int(m[0]), int(m[1]))),
     "CREW_RANGE": (r"A crew of (\d+) to (\d+)", lambda m: (int(m[0]), int(m[1]))),

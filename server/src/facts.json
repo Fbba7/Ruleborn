@@ -280,6 +280,7 @@
  ],
  "ROSTER_KEEP_SHARE": 0.25,
  "RUN_PACE": 2.0,
+ "SAGE_COOLDOWN_SECONDS": 20,
  "SCHOOLS": [
   "Motion",
   "Matter",

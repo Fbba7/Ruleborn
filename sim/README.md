@@ -519,18 +519,28 @@ something. The ready four are worked out before each tick's inputs: one
 whose lockout ends while four are ready waits, and the waiting take their
 turn in the order they came free.
 
-Eleven of §11.11's eighteen are built, each a named number changed for its
+Twelve of §11.11's eighteen are built, each a named number changed for its
 stated time and each with a test: the Stormhound's sprint, the Skyskipper's
 satchel, the Tidewalker unhindered, the Quarryback's pound, the Emberling's
 burst, the Hourkeeper's rewind, the Stillwatch's freeze, the Mossbear's root,
-the Bloomling's heal, the Echoplate standing over the crew and the
-Soulmender's link. Their numbers are read out of `content/ruleborn.json`'s own
+the Bloomling's heal, the Echoplate standing over the crew, the Soulmender's
+link and the Sparkwright's cut to the Sage's cooldown. Their numbers are read out of `content/ruleborn.json`'s own
 sentences by `content_gate.py`, the table's rows held to its ids, roles, sizes
 and fliers. The root's half damage and the link's sharing are applied to what
 each crew member lost since the last share, before knockouts are settled, so
-every source of damage passes through them. The other seven wait on what they
+every source of damage passes through them. The other six wait on what they
 act on (`Ability::built`), and what the document leaves open about all of
 them is register G77.
+
+The Sage (§11.7) comes with the manifest. The Sage command (13 on the wire)
+names a power in the crew-member nibble and a tile; after any power the Sage
+*"cools down for 20 seconds before it can use another"*, and each power has
+its level-1 uses. Seven of the twelve launch powers are built: the
+Archivist's Suspend, Reveal and Recall, the Tinkerer's Jam, the Gardener's
+Renew and Decoy, and the Wanderer's Tailwind. Plank and Vine bridge wait for
+gaps, Rift for universes of several realms, Invert for a rule on which
+parameters have an opposite, and Copy for a law that applies around the crew
+rather than over the realm (`Power::built`).
 
 ## Wards
 

@@ -58,7 +58,7 @@ Nothing these depend on is still open.
 | G73 | minor | open | “Darkness” is read two ways: unlit ground for a landing, the whole realm under Glowing dark |  |
 | G75 | minor | open | No §26.8 phase builds friends or the Friends screen |  |
 | G76 | minor | open | The Unmade’s rule-sheet line removes the sheet’s defaults, not only laws |  |
-| G77 | minor | open | §11.11 and §12.6 leave open who an ally is, the waiting order and who stops counting, and the simulation reads each one way |  |
+| G77 | minor | open | §11.7, §11.11 and §12.6 leave open who an ally is, the waiting order, who stops counting and what a Sage’s power is aimed at, and the simulation reads each one way |  |
 | C55 | significant | open | v3.6 puts landscape on every screen (§23.3, §27.2) and in heists only (§24, §27.5), and the owner’s handoff says it is not supported |  |
 | C58 | significant | open | v3.7’s re-run figures match no single run, and not the generated run it cites |  |
 | C60 | significant | open | §24.4 keeps progress in iCloud and Play Games saves beside a server-authoritative account, and nothing joins two platforms’ sign-ins into one account |  |

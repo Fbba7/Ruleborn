@@ -326,6 +326,7 @@ def facts_compare(text: str) -> dict:
         ("REVIVE_HEALTH", ratio(f.REVIVE_HEALTH), ratio(k.get("REVIVE_HEALTH"))),
         ("ABILITY_LOCKOUT_SECONDS", f.ABILITY_LOCKOUT_SECONDS * tps, k.get("LOCKOUT_TICKS")),
         ("ABILITIES_READY", f.ABILITIES_READY, k.get("MAX_READY")),
+        ("SAGE_COOLDOWN_SECONDS", f.SAGE_COOLDOWN_SECONDS * tps, k.get("SAGE_COOLDOWN_TICKS")),
         # §9.6: exposed share in bag units = a full five-crew's carry at the
         # level median, which is what the fixture's Vault is.
         ("FIXTURE_EXPOSED (9.6: a full five-crew's carry)",
@@ -509,6 +510,43 @@ def ruleborn_compare(text: str) -> dict:
         ("echoplate return (%)", num("echoplate", r"at (\d+)% of its full health"),
          (lambda f: round(f * 100) if f else None)(frac("STAND_OVER_RETURN"))),
         ("soulmender seconds", num("soulmender", r"for (\d+) s"), ticks("LINK_TICKS")),
+        ("sparkwright cut", num("sparkwright", r"cooldown by (\d+) s"), ticks("QUICKEN_TICKS")),
+    ]
+    # §11.7's Sages: each one's three powers and their uses, in content
+    # order, and every built power's numbers from its own sentence.
+    sages = json.loads((HERE.parent / "content" / "sages.json").read_text())
+    rust = re.findall(r'Sage \{ id: "(\w+)", powers: \[\(Power::(\w+), (\d)\), '
+                      r'\(Power::(\w+), (\d)\), \(Power::(\w+), (\d)\)\] \}', text)
+    if len(rust) != len(sages):
+        wrong.append(f"ruleborn.rs SAGES: {len(rust)} rows, content/sages.json {len(sages)}")
+    said = {}
+    for s, row in zip(sages, rust):
+        parts = re.findall(r"([A-Z][a-z]+(?: [a-z]+)?): (.*?\((\d+) uses?[^)]*\))",
+                           s["heist_powers"])
+        want = (s["id"], *[x for name, _, uses in parts
+                           for x in (name.replace(" ", "").lower(), uses)])
+        have = (row[0], *[x.lower() if i % 2 == 0 else x for i, x in enumerate(row[1:])])
+        (checked if want == have else wrong).append(
+            f"ruleborn.rs SAGES {s['id']}: content {want}, simulation {have}")
+        for name, sentence, _ in parts:
+            said[name.lower()] = sentence
+
+    def said_num(power: str, pattern: str) -> float | None:
+        m = re.search(pattern, said.get(power, ""))
+        return float(m.group(1)) if m else None
+
+    rows += [
+        ("suspend seconds", said_num("suspend", r"for (\d+) s"), ticks("SUSPEND_TICKS")),
+        ("recall return (%)", said_num("recall", r"back at (\d+)%"),
+         (lambda f: round(f * 100) if f else None)(frac("RECALL_RETURN"))),
+        ("jam seconds", said_num("jam", r"for (\d+) s"), ticks("JAM_TICKS")),
+        ("renew heal (%)", said_num("renew", r"heal the crew (\d+)%"),
+         (lambda f: round(f * 100) if f else None)(frac("RENEW_HEAL"))),
+        ("renew seconds", said_num("renew", r"over (\d+) s"), k.get("RENEW_SECONDS")),
+        ("decoy seconds", said_num("decoy", r"for (\d+) s"), ticks("DECOY_TICKS")),
+        ("tailwind faster (%)", said_num("tailwind", r"(\d+)% faster"),
+         (lambda f: round((f - 1) * 100) if f else None)(frac("TAILWIND_PACE"))),
+        ("tailwind seconds", said_num("tailwind", r"for (\d+) s"), ticks("TAILWIND_TICKS")),
     ]
     for what, want, have in rows:
         ok = want is not None and have is not None and float(want) == float(have)
@@ -574,6 +612,8 @@ def self_test() -> int:
     slow = ruleborn_compare(text.replace("SPRINT_PACE: (i64, i64) = (8, 5)",
                                          "SPRINT_PACE: (i64, i64) = (3, 2)"))
     assert any("stormhound faster" in w for w in slow["wrong"]), slow
+    jammed = ruleborn_compare(text.replace("(Power::Jam, 2)", "(Power::Jam, 3)"))
+    assert any("the_tinkerer" in w for w in jammed["wrong"]), jammed
     moved = wards_compare(text.replace("SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 5 / 2",
                                        "SNARE_FREEZE_TICKS: u32 = TICKS_PER_SECOND * 2"))
     assert any("time_snare freeze" in w for w in moved["wrong"]), moved

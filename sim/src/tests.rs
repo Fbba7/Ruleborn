@@ -4377,3 +4377,173 @@ fn the_soulmenders_link_shares_every_hit_evenly_across_the_crew() {
     run_for(&mut world, TICKS_PER_SECOND);
     assert_eq!(before - world.raiders[1].health, thorn, "after 6 s, its own again");
 }
+
+// -- §11.7's Sage on a heist (TD.12) --------------------------------------------
+
+/// `kinds_world` with a Sage: 1 the Archivist, 2 the Tinkerer, 3 the
+/// Gardener, 4 the Wanderer.
+fn sage_world(kinds: &[&str], sage: u8) -> World {
+    let mut world = kinds_world(kinds);
+    let mut crew = manifest(kinds);
+    crew.sage = sage;
+    world.crew_from(&crew);
+    world
+}
+
+/// The Sage's power `i` (0 to 2), aimed at tile (x, y), now.
+fn call_at(world: &mut World, i: u8, x: u16, y: u16) {
+    world.give(i, Kind::Sage, x as i16 * 256 + 128, y as i16 * 256 + 128);
+}
+
+#[test]
+fn a_sage_comes_with_the_manifest_and_its_powers_uses() {
+    let world = sage_world(&["stormhound"], 1);
+    let s = world.sage.unwrap();
+    assert_eq!(ruleborn::SAGES[s.sage as usize].id, "the_archivist");
+    assert_eq!(s.uses, [1, 2, 1], "Suspend 1, Reveal 2, Recall 1 (\u{a7}11.7)");
+    assert_eq!(kinds_world(&["stormhound"]).sage, None, "\"a heist can go without a Sage\"");
+}
+
+#[test]
+fn the_sage_cools_down_twenty_seconds_after_any_power() {
+    let mut world = sage_world(&["stormhound"], 1);
+    call_at(&mut world, 1, 0, 0);                     // Reveal
+    world.step();
+    assert_eq!(world.sage.unwrap().uses[1], 1);
+    run_for(&mut world, 10 * TICKS_PER_SECOND);
+    call_at(&mut world, 1, 0, 0);
+    world.step();
+    assert_eq!(world.sage.unwrap().uses[1], 1, "cooling down: refused, nothing spent");
+    run_for(&mut world, ruleborn::SAGE_COOLDOWN_TICKS);
+    call_at(&mut world, 1, 0, 0);
+    world.step();
+    assert_eq!(world.sage.unwrap().uses[1], 0, "twenty seconds on");
+    run_for(&mut world, ruleborn::SAGE_COOLDOWN_TICKS);
+    call_at(&mut world, 1, 0, 0);
+    world.step();
+    assert_eq!(world.sage.unwrap().uses[1], 0, "and no use left");
+}
+
+#[test]
+fn suspend_switches_off_one_law_for_ten_seconds() {
+    let mut world = sage_world(&["glass_golem"], 1);
+    world.weave(&[("density", (3, 4))]);
+    assert!(world.sheet.is_set(Param::LargeHealth));
+    call_at(&mut world, 0, 3, 4);                     // its pylon
+    world.step();
+    assert!(!world.sheet.is_set(Param::LargeHealth), "\"switch off one law ... for 10 s\"");
+    assert_eq!(world.raiders[0].health, Role::Warden.health(), "its extra health goes with it");
+    run_for(&mut world, ruleborn::SUSPEND_TICKS);
+    assert!(world.sheet.is_set(Param::LargeHealth), "and it comes back");
+    assert!(world.laws[0].broken_at.is_none(), "suspended, not broken: no page");
+}
+
+#[test]
+fn reveal_shows_every_ward_in_the_realm() {
+    let mut world = sage_world(&["stormhound"], 1);
+    assert_eq!(world.wards_shown_at, None);
+    run_for(&mut world, 3);
+    call_at(&mut world, 1, 0, 0);
+    world.step();
+    assert_eq!(world.wards_shown_at, Some(3));
+}
+
+#[test]
+fn recall_brings_a_knocked_out_crew_member_back_at_forty_percent() {
+    let mut world = sage_world(&["stormhound", "quarryback"], 1);
+    in_a_hedge(&mut world, 1, 6, 9);
+    world.raiders[1].health = 1;
+    world.step();
+    assert_eq!(world.raiders[1].standing, Standing::Down);
+    put(&mut world, 1, 7, 9);                         // off the hedge, still down
+    call_at(&mut world, 2, 7, 9);
+    world.step();
+    assert_eq!(world.raiders[1].standing, Standing::Active);
+    assert_eq!(world.raiders[1].health, Role::Breaker.health() * 40 / 100);
+    assert_eq!(world.sage.unwrap().uses[2], 0);
+}
+
+#[test]
+fn jam_disables_a_ward_for_twelve_seconds() {
+    let mut world = sage_world(&["stormhound", "quarryback"], 2);
+    world.place_wards(&[(WardKind::TimeSnare, (8, 8))]);
+    call_at(&mut world, 1, 8, 8);
+    world.step();
+    put(&mut world, 1, 8, 8);
+    run_for(&mut world, ruleborn::JAM_TICKS - 2);
+    assert_eq!(world.raiders[1].frozen_until, 0, "\"disable a ward for 12 s\"");
+    run_for(&mut world, 2);
+    assert!(world.raiders[1].frozen_until > 0, "then it works again");
+}
+
+#[test]
+fn renew_heals_the_crew_thirty_percent_over_five_seconds() {
+    let mut world = sage_world(&["stormhound", "quarryback"], 3);
+    for r in world.raiders.iter_mut() {
+        r.health = 10;
+    }
+    call_at(&mut world, 1, 0, 0);
+    run_for(&mut world, 6 * TICKS_PER_SECOND);
+    assert_eq!(world.raiders[0].health, 10 + 5 * (Role::Scout.health() * 30 / 500));
+    assert_eq!(world.raiders[1].health, 10 + 5 * (Role::Breaker.health() * 30 / 500),
+               "30% of each one's full health, a fifth each second");
+}
+
+#[test]
+fn a_decoy_sapling_draws_the_guards_for_eight_seconds() {
+    let mut world = sage_world(&["stormhound"], 3);
+    let post = world.grid.index(3, 3).unwrap();
+    world.guards.push(make_guard(0, 0, post, &world.grid));
+    call_at(&mut world, 2, 9, 3);
+    world.step();
+    assert_eq!(world.guards[0].state, State::Investigating);
+    assert_eq!(world.guards[0].interest, world.grid.index(9, 3), "it chases the sapling");
+    run_for(&mut world, ruleborn::DECOY_TICKS);
+    assert_eq!(world.decoy, None, "\"for 8 s\"");
+}
+
+#[test]
+fn tailwind_moves_the_crew_forty_percent_faster_for_six_seconds() {
+    let walk = |tailwind: bool| {
+        let mut world = sage_world(&["quarryback"], 4);
+        put(&mut world, 0, 1, 1);
+        if tailwind {
+            call_at(&mut world, 2, 0, 0);
+            world.step();
+        }
+        let from = world.raiders[0].at;
+        let a = world.grid.index(1, 1).unwrap();
+        let b = world.grid.index(12, 1).unwrap();
+        world.raiders[0].route = path::find(&world.grid, a, b).unwrap();
+        world.raiders[0].along = 0;
+        run_for(&mut world, TICKS_PER_SECOND);
+        from.distance(world.raiders[0].at)
+    };
+    let off = (walk(true).0 - walk(false).mul(Fx::from_ratio(7, 5)).0).abs();
+    assert!(off < Fx::from_ratio(1, 10_000).0, "\"crew moves 40% faster\", off by {off}");
+}
+
+#[test]
+fn the_sparkwright_cuts_the_sages_cooldown_by_ten_seconds() {
+    let mut world = sage_world(&["sparkwright"], 1);
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert_eq!(world.raiders[0].uses, 2, "nothing cooling: nothing to cut, no use spent");
+    call_at(&mut world, 1, 0, 0);
+    world.step();
+    let cooling = world.sage.unwrap().cooling_until;
+    fire_at(&mut world, 0, 0, 0);
+    world.step();
+    assert_eq!(world.sage.unwrap().cooling_until, cooling - ruleborn::QUICKEN_TICKS,
+               "\"Cuts the Sage's cooldown by 10 s\"");
+    assert_eq!(world.raiders[0].uses, 1);
+}
+
+#[test]
+fn a_power_not_built_yet_spends_no_use() {
+    let mut world = sage_world(&["stormhound"], 2);
+    call_at(&mut world, 2, 5, 5);                     // Plank, which waits for gaps
+    world.step();
+    assert_eq!(world.sage.unwrap().uses[2], 2);
+    assert_eq!(world.sage.unwrap().cooling_until, 0, "and starts no cooldown");
+}

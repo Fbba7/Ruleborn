@@ -55,7 +55,7 @@ use grid::{Feature, Grid};
 use heist::{Grade, Outcome, Skiff, Standing, Task, Vault, Ward, WardKind};
 use combos::Combos;
 use laws_table::{note, Chord, Param, Res, LAWS, PARAM_COUNT};
-use ruleborn::{Ability, RULEBORN};
+use ruleborn::{Ability, Power, RULEBORN, SAGES};
 
 /// The laws the fixture's realm is woven with: three, the most §5.2 allows at
 /// realm level 5, all three whole-parameter laws so every effect is one the
@@ -189,6 +189,17 @@ pub struct Law {
     pub pylon: grid::TileIndex,
     pub health: i32,
     pub broken_at: Option<u32>,
+    /// Switched off by the Archivist's Suspend until this tick (§11.7).
+    pub suspended_until: u32,
+}
+
+/// The Sage on a heist (§11.7): which of `ruleborn::SAGES`, each power's uses
+/// left, and the tick its cooldown ends.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct SageOnHeist {
+    pub sage: u8,
+    pub uses: [u8; 3],
+    pub cooling_until: u32,
 }
 
 fn scale(x: Fx, (n, d): (i64, i64)) -> Fx {
@@ -792,6 +803,14 @@ pub struct World {
     /// link shares, what was lost since (`shield`).
     start_health: Vec<i32>,
     shared_at: Vec<i32>,
+    /// The Sage on this heist, from the manifest, and what its powers left
+    /// running: Tailwind's end, Renew's start, the Decoy's sapling (tile,
+    /// planted, gone), and the tick Reveal last showed the wards.
+    pub sage: Option<SageOnHeist>,
+    pub tailwind_until: u32,
+    pub renew_from: Option<u32>,
+    pub decoy: Option<(grid::TileIndex, u32, u32)>,
+    pub wards_shown_at: Option<u32>,
 }
 
 impl World {
@@ -913,6 +932,11 @@ impl World {
             watch: REALM_WATCH[(island.realm_level.clamp(1, 5) - 1) as usize],
             start_health: Vec::new(),
             shared_at: Vec::new(),
+            sage: None,
+            tailwind_until: 0,
+            renew_from: None,
+            decoy: None,
+            wards_shown_at: None,
         }
     }
 
@@ -924,7 +948,8 @@ impl World {
             let Some(def) = LAWS.iter().position(|l| l.id == *id) else { continue };
             let Some(pylon) = self.grid.index(*x, *y) else { continue };
             self.grid.place(*x, *y, Feature::Pylon);
-            self.laws.push(Law { def, pylon, health: heist::PYLON_HEALTH, broken_at: None });
+            self.laws.push(Law { def, pylon, health: heist::PYLON_HEALTH, broken_at: None,
+                                 suspended_until: 0 });
         }
         self.refresh_sheet();
         // Everyone starts the heist at full health as the sheet reads it,
@@ -966,6 +991,12 @@ impl World {
             r.health = r.full(&Sheet::plain());
             r.uses = ruleborn::USES;
         }
+        // §11.7: "A player brings one Sage on each heist", or none.
+        self.sage = SAGES.get((manifest.sage as usize).wrapping_sub(1)).map(|s| SageOnHeist {
+            sage: manifest.sage - 1,
+            uses: [s.powers[0].1, s.powers[1].1, s.powers[2].1],
+            cooling_until: 0,
+        });
     }
 
     /// The world a replay describes: the fixture realm, the heist's crew and
@@ -1048,6 +1079,11 @@ impl World {
     /// no part of the tick sees a half-applied input.
     fn phase_inputs(&mut self) {
         self.ready_abilities();
+        self.inputs();
+        self.sapling();
+    }
+
+    fn inputs(&mut self) {
         // The landing comes before every other input of tick 0, wherever
         // the log's order puts it: a move given at tick 0 is a move from the
         // landing spot.
@@ -1072,6 +1108,10 @@ impl World {
             }
             if command.kind == Kind::Ability {
                 self.fire(command);
+                continue;
+            }
+            if command.kind == Kind::Sage {
+                self.call(command);
                 continue;
             }
             let Some(raider) = self.raiders.get_mut(command.actor as usize) else {
@@ -1157,7 +1197,7 @@ impl World {
                 }
                 // One skiff, called once; an inland tile, or a wall, is not a
                 // place a skiff can come, and the call is dropped.
-                Kind::Land | Kind::Ability => {}
+                Kind::Land | Kind::Ability | Kind::Sage => {}
                 Kind::Skiff => {
                     let (x, y) = command.target();
                     if let Some(tile) = self.grid.tile_at(x, y) {
@@ -1247,6 +1287,16 @@ impl World {
                 None => false,
             },
             Ability::Freeze => aimed.is_some_and(|t| self.freeze(t)),
+            // The Sparkwright: "Cuts the Sage's cooldown by 10 s, so its next
+            // power comes sooner". With no Sage cooling, nothing to cut.
+            Ability::Quicken => match &mut self.sage {
+                Some(s) if s.cooling_until > now => {
+                    s.cooling_until = s.cooling_until.saturating_sub(ruleborn::QUICKEN_TICKS)
+                        .max(now);
+                    true
+                }
+                _ => false,
+            },
             _ => false,
         };
         if !done {
@@ -1261,6 +1311,109 @@ impl World {
         if ability == Ability::Root {
             r.route.clear();
             r.along = 0;
+        }
+    }
+
+    /// A Sage command: the Sage's power number `actor` at the target, if the
+    /// heist carries a Sage, it is not cooling down and the power has a use
+    /// left. §11.7: "After using any power the Sage cools down for 20 seconds
+    /// before it can use another." A use is spent, and the cooldown starts,
+    /// only when the power does something; one not built yet
+    /// (`Power::built`) is dropped like any command that cannot be carried
+    /// out.
+    fn call(&mut self, command: Command) {
+        let now = self.tick;
+        let Some(sage) = self.sage else { return };
+        let i = command.actor as usize;
+        if i >= 3 || now < sage.cooling_until || sage.uses[i] == 0 {
+            return;
+        }
+        let power = SAGES[sage.sage as usize].powers[i].0;
+        if !power.built() {
+            return;
+        }
+        let (x, y) = command.target();
+        let aimed = self.grid.tile_at(x, y);
+        let done = match power {
+            // "switch off one law in the current realm for 10 s": the law
+            // whose pylon it is aimed at, standing and not already off.
+            Power::Suspend => {
+                let law = aimed.and_then(|t| self.laws.iter().position(|l| {
+                    l.pylon == t && l.broken_at.is_none() && now >= l.suspended_until
+                }));
+                if let Some(li) = law {
+                    self.laws[li].suspended_until = now + ruleborn::SUSPEND_TICKS;
+                }
+                law.is_some()
+            }
+            // "show every ward in the realm": what the device draws, kept in
+            // the simulation so the replay shows it at the same tick.
+            Power::Reveal => {
+                self.wards_shown_at = Some(now);
+                true
+            }
+            // "bring a knocked-out character back at 40%".
+            Power::Recall => {
+                let down = aimed.and_then(|t| self.raiders.iter().position(|r| {
+                    r.standing == Standing::Down && self.grid.tile_at(r.at.x, r.at.y) == Some(t)
+                }));
+                if let Some(ri) = down {
+                    let sheet = self.sheet;
+                    let r = &mut self.raiders[ri];
+                    let (n, d) = ruleborn::RECALL_RETURN;
+                    r.health = ((r.full(&sheet) as i64 * n / d) as i32).max(1);
+                    r.standing = Standing::Active;
+                    r.revive = 0;
+                }
+                down.is_some()
+            }
+            // "disable a ward for 12 s", as the Stillwatch's freeze holds one.
+            Power::Jam => {
+                let ward = aimed.and_then(|t| self.wards.iter().position(|w| w.tile == t && w.live()));
+                if let Some(wi) = ward {
+                    let w = &mut self.wards[wi];
+                    w.held_until = w.held_until.max(now + ruleborn::JAM_TICKS);
+                }
+                ward.is_some()
+            }
+            Power::Renew => {
+                self.renew_from = Some(now);
+                true
+            }
+            // "plant a sapling guards chase for 8 s", on open ground.
+            Power::Decoy => match aimed {
+                Some(t) if self.grid.at(t).passable() => {
+                    self.decoy = Some((t, now, now + ruleborn::DECOY_TICKS));
+                    true
+                }
+                _ => false,
+            },
+            Power::Tailwind => {
+                self.tailwind_until = now + ruleborn::TAILWIND_TICKS;
+                true
+            }
+            _ => false,
+        };
+        if done {
+            if let Some(s) = self.sage.as_mut() {
+                s.uses[i] -= 1;
+                s.cooling_until = now + ruleborn::SAGE_COOLDOWN_TICKS;
+            }
+        }
+    }
+
+    /// The Decoy's sapling: every guard not yet chasing the crew is drawn to
+    /// it as a sound draws one, when it is planted and each second after,
+    /// until it goes.
+    fn sapling(&mut self) {
+        let now = self.tick;
+        let Some((tile, planted, gone)) = self.decoy else { return };
+        if now >= gone {
+            self.decoy = None;
+        } else if (now - planted) % TICKS_PER_SECOND == 0 {
+            for gi in 0..self.guards.len() {
+                self.lure(gi, tile);
+            }
         }
     }
 
@@ -1619,8 +1772,11 @@ impl World {
     }
 
     fn refresh_sheet(&mut self) {
+        // A suspended law is off "for 10 s", its combinations with it (§11.7).
+        let now = self.tick;
         let standing: Vec<usize> = self.laws.iter()
-            .filter(|l| l.broken_at.is_none()).map(|l| l.def).collect();
+            .filter(|l| l.broken_at.is_none() && now >= l.suspended_until)
+            .map(|l| l.def).collect();
         self.combos = Combos::of(&standing);
         let mut sheet = Sheet::plain();
         // §7.3: "Apply the Era, then the Grand Law, then crown laws, then the
@@ -2055,8 +2211,14 @@ impl World {
                 let (n, d) = self.pace_here(self.grid.tile_at(r.at.x, r.at.y), true,
                                             r.slowed_until);
                 // The Stormhound's sprint: "60% faster for 4 s".
-                if r.running(Ability::Sprint, now) {
+                let (n, d) = if r.running(Ability::Sprint, now) {
                     (n * ruleborn::SPRINT_PACE.0, d * ruleborn::SPRINT_PACE.1)
+                } else {
+                    (n, d)
+                };
+                // The Wanderer's Tailwind: "crew moves 40% faster for 6 s".
+                if now < self.tailwind_until {
+                    (n * ruleborn::TAILWIND_PACE.0, d * ruleborn::TAILWIND_PACE.1)
                 } else {
                     (n, d)
                 }
@@ -2940,6 +3102,20 @@ impl World {
         if now % TICKS_PER_SECOND == 0 {
             self.heal();
         }
+        // The Gardener's Renew: "heal the crew 30% over 5 s" — a fifth of it
+        // at each of the five seconds after.
+        if let Some(from) = self.renew_from {
+            let k = now - from;
+            if k > 0 && k % TICKS_PER_SECOND == 0 && k <= ruleborn::RENEW_SECONDS * TICKS_PER_SECOND {
+                let (n, d) = ruleborn::RENEW_HEAL;
+                let sheet = self.sheet;
+                for r in self.raiders.iter_mut().filter(|r| r.active()) {
+                    let full = r.full(&sheet);
+                    r.health = (r.health + full * n / (d * ruleborn::RENEW_SECONDS as i32))
+                        .min(full);
+                }
+            }
+        }
         // Bloom: "cut hedges regrow after 10 seconds", whole and live.
         // Briar maze (Thorns + Bloom): "cut hedges regrow thorny and one tile
         // wider" — a second hedge on the first bare side, north, east,
@@ -3746,6 +3922,20 @@ impl World {
         for w in self.wards.iter().filter(|w| w.held_until > 0) {
             mix(w.held_until as i64);
         }
+        // The Sage and what its powers left running; nothing for a heist
+        // with no Sage, so no replay recorded before Sages moves.
+        if let Some(s) = self.sage {
+            mix(s.sage as i64);
+            mix(s.uses[0] as i64 * 100 + s.uses[1] as i64 * 10 + s.uses[2] as i64);
+            mix(s.cooling_until as i64);
+            mix(self.tailwind_until as i64);
+            mix(self.renew_from.map_or(-1, |t| t as i64));
+            mix(self.decoy.map_or(-1, |(t, from, _)| t as i64 * 100_000 + from as i64));
+            mix(self.wards_shown_at.map_or(-1, |t| t as i64));
+        }
+        for law in self.laws.iter().filter(|l| l.suspended_until > 0) {
+            mix(law.suspended_until as i64);
+        }
         h
     }
 }
@@ -4242,6 +4432,14 @@ pub fn rules_version() -> [u8; 32] {
         }
         for n in ruleborn::NUMBERS {
             bytes.extend_from_slice(&n.to_le_bytes());
+        }
+        // §11.7's Sages: each one's powers, their uses and whether built.
+        for s in ruleborn::SAGES.iter() {
+            bytes.extend_from_slice(s.id.as_bytes());
+            bytes.push(0);
+            for (p, uses) in s.powers {
+                bytes.extend_from_slice(&[p as u8, uses, p.built() as u8]);
+            }
         }
         let fixture = island::Island::fixture();
         let bare = |seed: u64, ticks: u32, crew: u8, commands: Vec<Command>| Heist {

@@ -165,7 +165,7 @@ pub const LINK_TICKS: u32 = TICKS_PER_SECOND * 6;
 
 /// Every number above, for the rules version: changing one changes how a
 /// heist with a manifest plays.
-pub const NUMBERS: [i64; 27] = [
+pub const NUMBERS: [i64; 40] = [
     USES as i64, LOCKOUT_TICKS as i64, MAX_READY as i64,
     SATCHEL_TICKS as i64, SATCHEL_RATE as i64, POUND_TICKS as i64, POUND_HIT.0, POUND_HIT.1,
     UNHINDERED_TICKS as i64, REWIND_TICKS as i64, FREEZE_TICKS as i64, BURST_POWER,
@@ -173,6 +173,10 @@ pub const NUMBERS: [i64; 27] = [
     ROOT_DAMAGE.0, ROOT_DAMAGE.1, BLOOM_TILES as i64, BLOOM_HEAL.0 as i64,
     BLOOM_HEAL.1 as i64, STAND_OVER_TICKS as i64, STAND_OVER_TILES as i64,
     STAND_OVER_RETURN.0, STAND_OVER_RETURN.1, LINK_TICKS as i64,
+    SAGE_COOLDOWN_TICKS as i64, QUICKEN_TICKS as i64, SUSPEND_TICKS as i64, RECALL_RETURN.0,
+    RECALL_RETURN.1, JAM_TICKS as i64, RENEW_SECONDS as i64, RENEW_HEAL.0 as i64,
+    RENEW_HEAL.1 as i64, DECOY_TICKS as i64, TAILWIND_TICKS as i64, TAILWIND_PACE.0,
+    TAILWIND_PACE.1,
 ];
 
 impl Ability {
@@ -193,11 +197,91 @@ impl Ability {
 
     /// Whether the simulation carries it yet. The rest wait on what they act
     /// on: gaps and boulders (TD.15) for Glide, Charge and the root bridge; a
-    /// wall a route can meet mid-walk for the crystal wall; the Sage for
-    /// Quicken; a crew member that can be two for Split; and something hidden
-    /// for Reveal to show. Until then their command is dropped and spends no
+    /// wall a route can meet mid-walk for the crystal wall; a crew member that
+    /// can be two for Split; and something hidden for Reveal to show. Until then their command is dropped and spends no
     /// use, like any command that cannot be carried out.
     pub fn built(self) -> bool {
-        !matches!(self, Glide | Charge | CrystalWall | Split | Quicken | RootBridge | Reveal)
+        !matches!(self, Glide | Charge | CrystalWall | Split | RootBridge | Reveal)
+    }
+}
+
+// -- §11.7's Sages -------------------------------------------------------------
+
+/// §11.7's twelve launch Sage powers, three a Sage, in the table's order.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Power {
+    /// "Suspend: switch off one law in the current realm for 10 s (1 use)."
+    Suspend,
+    /// "Reveal: show every ward in the realm (2 uses)."
+    Reveal,
+    /// "Recall: bring a knocked-out character back at 40% (1 use; the Revival
+    /// row, 7.3; 12.20)."
+    Recall,
+    /// "Invert: turn a law into its opposite for 10 s, such as Half gravity
+    /// into heavy gravity (1 use)."
+    Invert,
+    /// "Jam: disable a ward for 12 s (2 uses)."
+    Jam,
+    /// "Plank: lay a 4-tile shortcut over a gap for 15 s (2 uses)."
+    Plank,
+    /// "Vine bridge: join two points up to 6 tiles apart for 20 s (1 use)."
+    VineBridge,
+    /// "Renew: heal the crew 30% over 5 s (1 use)."
+    Renew,
+    /// "Decoy: plant a sapling guards chase for 8 s (2 uses)."
+    Decoy,
+    /// "Copy: take one enemy law and carry it around the crew for the rest of
+    /// the heist (1 use)."
+    Copy,
+    /// "Rift: open a two-way rift between two realms already visited for 20 s
+    /// (1 use)."
+    Rift,
+    /// "Tailwind: crew moves 40% faster for 6 s (2 uses)."
+    Tailwind,
+}
+
+/// One of §11.7's launch Sages: its id in `content/sages.json` and its three
+/// powers with their uses at level 1.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct Sage {
+    pub id: &'static str,
+    pub powers: [(Power, u8); 3],
+}
+
+/// §11.7, in `content/sages.json`'s order. The manifest's Sage byte is the
+/// index plus one; 0 is a heist without a Sage.
+pub const SAGES: [Sage; 4] = [
+    Sage { id: "the_archivist", powers: [(Power::Suspend, 1), (Power::Reveal, 2), (Power::Recall, 1)] },
+    Sage { id: "the_tinkerer", powers: [(Power::Invert, 1), (Power::Jam, 2), (Power::Plank, 2)] },
+    Sage { id: "the_gardener", powers: [(Power::VineBridge, 1), (Power::Renew, 1), (Power::Decoy, 2)] },
+    Sage { id: "the_wanderer", powers: [(Power::Copy, 1), (Power::Rift, 1), (Power::Tailwind, 2)] },
+];
+
+/// §11.7: "After using any power the Sage cools down for 20 seconds before it
+/// can use another".
+pub const SAGE_COOLDOWN_TICKS: u32 = TICKS_PER_SECOND * 20;
+/// The Sparkwright: "Cuts the Sage's cooldown by 10 s".
+pub const QUICKEN_TICKS: u32 = TICKS_PER_SECOND * 10;
+pub const SUSPEND_TICKS: u32 = TICKS_PER_SECOND * 10;
+/// "back at 40%".
+pub const RECALL_RETURN: (i64, i64) = (40, 100);
+pub const JAM_TICKS: u32 = TICKS_PER_SECOND * 12;
+/// "heal the crew 30% over 5 s": a fifth of it at each of the five seconds.
+pub const RENEW_SECONDS: u32 = 5;
+pub const RENEW_HEAL: (i32, i32) = (30, 100);
+pub const DECOY_TICKS: u32 = TICKS_PER_SECOND * 8;
+pub const TAILWIND_TICKS: u32 = TICKS_PER_SECOND * 6;
+/// "40% faster".
+pub const TAILWIND_PACE: (i64, i64) = (7, 5);
+
+impl Power {
+    /// Whether the simulation carries it yet. Plank and Vine bridge wait on
+    /// gaps (TD.15); Rift on universes of more than one realm (D71); Invert
+    /// on a rule for which of a law's parameters have an opposite; Copy on a
+    /// law that applies around the crew rather than over the realm, which
+    /// casts need too.
+    pub fn built(self) -> bool {
+        matches!(self, Power::Suspend | Power::Reveal | Power::Recall | Power::Jam
+                 | Power::Renew | Power::Decoy | Power::Tailwind)
     }
 }

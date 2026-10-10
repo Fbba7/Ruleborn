@@ -9858,9 +9858,10 @@ dict(id="F62", kind="finding", severity="significant", status="open",
          "are drafted."),
 
 dict(id="G77", kind="gap", severity="minor", status="open",
-     title="§11.11 and §12.6 leave open who an ally is, the waiting order and who "
-           "stops counting, and the simulation reads each one way",
-     refs=["11.11", "12.6"],
+     title="§11.7, §11.11 and §12.6 leave open who an ally is, the waiting order, "
+           "who stops counting and what a Sage’s power is aimed at, and the "
+           "simulation reads each one way",
+     refs=["11.7", "11.11", "12.6"],
      body="Building the abilities (TD.12) needed six things the document does not "
           "say. <strong>An ally:</strong> the Bloomling <em>“Heals every ally within "
           "3 tiles”</em> and the Hourkeeper <em>“Gives one ally back”</em>; "
@@ -9878,11 +9879,19 @@ dict(id="G77", kind="gap", severity="minor", status="open",
           "Stillwatch’s freeze and the Hourkeeper’s rewind state no reach and have "
           "none. <strong>The link:</strong> the Soulmender’s share is among the crew "
           "standing. <strong>A return:</strong> the Echoplate’s return drops the "
-          "loot first, as Echoes does. Found building TD.12.",
+          "loot first, as Echoes does. <strong>The Sage (§11.7):</strong> Suspend is "
+          "aimed at the law’s pylon, and the law’s combinations go off with it; the "
+          "Decoy’s sapling draws every guard in the realm not yet chasing the "
+          "crew, since no reach is stated; Renew’s 30% is of each member’s own full "
+          "health, a fifth each second; Reveal’s showing is the device’s to draw "
+          "and changes nothing the simulation decides; and a power, like an "
+          "ability, that finds nothing to act on spends no use and starts no "
+          "cooldown, so the Sparkwright’s cut with no cooldown running is "
+          "refused. Found building TD.12.",
      rec="State the first three in §11.11 and §12.6 (the edits are drafted, taking "
          "the simulation’s reading); say whether the freeze and the rewind have a "
-         "reach and whether a burst reaches diagonals, and the simulation follows "
-         "(<code>sim/src/ruleborn.rs</code>)."),
+         "reach, whether a burst reaches diagonals and how far a Decoy draws, and "
+         "the simulation follows (<code>sim/src/ruleborn.rs</code>)."),
 
 ]
 
@@ -10867,9 +10876,9 @@ V37 = {
     "<strong>Settled by rule:</strong> the brief’s recommendation. §12.5’s load "
     "target, casts paid only if used, and the crew manifest; §12.7’s held taps "
     "and modal wheels; §24.12’s pause with the app. The clock tap makes a "
-    "ninth target in a ruin (C64). Built: the crew manifest in the replay and "
-    "the Ability command (TD.12). Left for the build: the Sage and Cast "
-    "commands, casts paid only if used, and the client’s held-tap menus "
+    "ninth target in a ruin (C64). Built: the crew manifest in the replay, and "
+    "the Ability and Sage commands (TD.12). Left for the build: the Cast "
+    "command, casts paid only if used, and the client’s held-tap menus "
     "(TD.12, TD.17)."),
 
 "G48": dict(status="fixed", note=
@@ -11191,8 +11200,8 @@ V37 = {
 
 "G77": dict(status="open", left="document", note=
     "Found building TD.12, after v3.7: three readings the simulation takes, with "
-    "their edits drafted (TD.75), and three questions only the document can "
-    "answer."),
+    "their edits drafted (TD.75), the Sage’s readings beside them, and four "
+    "questions only the document can answer."),
 
 "F33": dict(status="open", left="build", note=
     "<strong>The owner’s answer D is written in; the build is not "
@@ -11290,11 +11299,11 @@ V37 = {
     "<em>“all 39 of 6.2’s features and moss”</em>. Completion counts the "
     "abilities, Sage powers and casts as their own phase 1 deliverable in 33 "
     "equal parts, read from <code>sim/</code>’s systems: the crew manifest, "
-    "§12.6’s rules and 11 of the 18 abilities are built (TD.12), 13 of 33; the "
-    "Sage’s twelve powers and casts are not. Terrain reads 5 of 39 features and "
-    "moss (15%), the builder’s Terrain editing scaled by it. Left: seven "
-    "abilities, the Sage, casts, the event log and terrain (TD.12, TD.13, "
-    "TD.15)."),
+    "§12.6’s rules, 12 of the 18 abilities and 7 of the Sage’s 12 powers are "
+    "built (TD.12), 21 of 33; casts are not. Terrain reads 5 of 39 features and "
+    "moss (15%), the builder’s Terrain editing scaled by it. Left: six "
+    "abilities, five Sage powers, casts, the event log and terrain (TD.12, "
+    "TD.13, TD.15)."),
 
 "G68": dict(status="done", note=
     "<strong>Built (TD.47).</strong> §26.8’s phase 0: a recorded build for each "

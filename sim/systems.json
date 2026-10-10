@@ -227,7 +227,7 @@
       "name": "Abilities",
       "section": "11.11",
       "task": "TD.12",
-      "what": "§11.11's abilities, each a change to a named number for its stated time, eleven of eighteen: the Stormhound's sprint, the Skyskipper's satchel, the Tidewalker unhindered, the Quarryback's pound, the Emberling's burst, the Hourkeeper's rewind, the Stillwatch's freeze of a guard or a ward, the Mossbear's root, the Bloomling's heal, the Echoplate standing over the crew and the Soulmender's link. Seven wait on what they act on: the Featherkin's glide, the Rambler's charge and the Rootrunner's bridge on gaps, hedges and boulders (TD.15); the Glass golem's wall on a wall a route can meet mid-walk; the Sparkwright's cut on the Sage; the Prism mite's split on a crew member that can be two; and the Lantern wisp's reveal on something hidden. Their numbers are content_gate.py's, read from content/ruleborn.json's own sentences.",
+      "what": "§11.11's abilities, each a change to a named number for its stated time, twelve of eighteen: the Stormhound's sprint, the Skyskipper's satchel, the Tidewalker unhindered, the Quarryback's pound, the Emberling's burst, the Hourkeeper's rewind, the Stillwatch's freeze of a guard or a ward, the Mossbear's root, the Bloomling's heal, the Echoplate standing over the crew, the Soulmender's link and the Sparkwright's cut to the Sage's cooldown. Six wait on what they act on: the Featherkin's glide, the Rambler's charge and the Rootrunner's bridge on gaps, hedges and boulders (TD.15); the Glass golem's wall on a wall a route can meet mid-walk; the Prism mite's split on a crew member that can be two; and the Lantern wisp's reveal on something hidden. Their numbers are content_gate.py's, read from content/ruleborn.json's own sentences.",
       "tests": [
         "the_stormhounds_sprint_runs_sixty_percent_faster_for_four_seconds",
         "the_skyskippers_satchel_loads_sixty_a_second_for_five_seconds",
@@ -239,7 +239,8 @@
         "the_mossbear_rooted_takes_half_damage_and_does_not_move",
         "the_bloomling_heals_every_ally_within_three_tiles_by_fifteen_percent",
         "the_echoplate_returns_a_crew_member_knocked_out_within_three_tiles",
-        "the_soulmenders_link_shares_every_hit_evenly_across_the_crew"
+        "the_soulmenders_link_shares_every_hit_evenly_across_the_crew",
+        "the_sparkwright_cuts_the_sages_cooldown_by_ten_seconds"
       ],
       "abilities": {
         "stormhound": "the_stormhounds_sprint_runs_sixty_percent_faster_for_four_seconds",
@@ -252,7 +253,35 @@
         "mossbear": "the_mossbear_rooted_takes_half_damage_and_does_not_move",
         "bloomling": "the_bloomling_heals_every_ally_within_three_tiles_by_fifteen_percent",
         "echoplate": "the_echoplate_returns_a_crew_member_knocked_out_within_three_tiles",
-        "soulmender": "the_soulmenders_link_shares_every_hit_evenly_across_the_crew"
+        "soulmender": "the_soulmenders_link_shares_every_hit_evenly_across_the_crew",
+        "sparkwright": "the_sparkwright_cuts_the_sages_cooldown_by_ten_seconds"
+      }
+    },
+    {
+      "name": "Sage powers",
+      "section": "11.7",
+      "task": "TD.12",
+      "what": "§11.7's Sage on a heist, from the crew manifest: the Sage command (13 on the wire, the power in the crew-member nibble, aimed at a tile), each power's uses at level 1, and the one twenty-second cooldown after any power, which the Sparkwright cuts. Seven of the twelve launch powers are built: the Archivist's Suspend, Reveal and Recall, the Tinkerer's Jam, the Gardener's Renew and Decoy, and the Wanderer's Tailwind. Plank and Vine bridge wait for gaps (TD.15), Rift for universes of more than one realm (D71), Invert for a rule on which parameters have an opposite, and Copy for a law that applies around the crew, which casts need too. The levels' extra uses and longer effects every fifth level wait for the Keeper's level in the lease (TD.34).",
+      "tests": [
+        "a_sage_comes_with_the_manifest_and_its_powers_uses",
+        "the_sage_cools_down_twenty_seconds_after_any_power",
+        "a_power_not_built_yet_spends_no_use",
+        "suspend_switches_off_one_law_for_ten_seconds",
+        "reveal_shows_every_ward_in_the_realm",
+        "recall_brings_a_knocked_out_crew_member_back_at_forty_percent",
+        "jam_disables_a_ward_for_twelve_seconds",
+        "renew_heals_the_crew_thirty_percent_over_five_seconds",
+        "a_decoy_sapling_draws_the_guards_for_eight_seconds",
+        "tailwind_moves_the_crew_forty_percent_faster_for_six_seconds"
+      ],
+      "powers": {
+        "the_archivist:suspend": "suspend_switches_off_one_law_for_ten_seconds",
+        "the_archivist:reveal": "reveal_shows_every_ward_in_the_realm",
+        "the_archivist:recall": "recall_brings_a_knocked_out_crew_member_back_at_forty_percent",
+        "the_tinkerer:jam": "jam_disables_a_ward_for_twelve_seconds",
+        "the_gardener:renew": "renew_heals_the_crew_thirty_percent_over_five_seconds",
+        "the_gardener:decoy": "a_decoy_sapling_draws_the_guards_for_eight_seconds",
+        "the_wanderer:tailwind": "tailwind_moves_the_crew_forty_percent_faster_for_six_seconds"
       }
     },
     {
