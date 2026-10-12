@@ -627,6 +627,18 @@
       ]
     },
     {
+      "name": "Buildings on the grid",
+      "section": "10.1",
+      "task": "TD.36",
+      "what": "10.1's buildings on their footprints, 2 by 2 and the Spire 3 by 3, in the island's bundle after its laws (an island with none keeps its bytes) and on the ground every heist is played on, blocking feet and eyes on every tile; one thing a tile under them, and a building can seal the Vault. The Vault, pylons, posts and wards keep their own lists, and the Vault its one tile (G45).",
+      "tests": [
+        "a_building_blocks_feet_and_eyes_on_every_tile_of_its_footprint",
+        "no_crew_walks_through_a_building_on_its_way_across_the_realm",
+        "an_island_keeps_its_buildings_and_one_without_keeps_its_bytes",
+        "a_building_is_crowded_by_what_stands_under_it_and_can_seal_the_vault"
+      ]
+    },
+    {
       "name": "Rules version and the validator",
       "section": "24.11",
       "task": "T3.3",

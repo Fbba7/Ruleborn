@@ -44,6 +44,17 @@
 //! A law is named by its id rather than its row in the table, because an
 //! island outlives a rules version (§24.11: a re-tuned law re-costs the
 //! island; a removed one's "name is never reused").
+//! ```text
+//! buildings, only if there are any: count u8 (1 or more), then
+//!     (code u8, x u8, y u8) each, x and y its footprint's north-west tile
+//! ```
+//! §10.1: "Buildings sit on the realm grid and block movement and sight.
+//! Most are 2 by 2 tiles; the Spire and Vault are 3 by 3." A building's code
+//! is `BUILDING_CODES`', and its footprint the code's. An island with no
+//! building ends at its laws, so every island written before buildings
+//! keeps its bytes and its hash. The Vault, the pylons, the guard posts and
+//! the wards are §10.2's buildings too, and are written by their own lists;
+//! the Vault still stands on one tile (G45).
 //!
 //! Where the crew lands
 //! --------------------
@@ -111,6 +122,9 @@ pub struct Island {
     pub guards: Vec<Post>,
     pub wards: Vec<(WardKind, u8, u8)>,
     pub laws: Vec<(String, u8, u8)>,
+    /// §10.1's buildings: (code, x, y), x and y the footprint's north-west
+    /// tile.
+    pub buildings: Vec<(u8, u8, u8)>,
 }
 
 /// Why a bundle is not an island.
@@ -130,6 +144,10 @@ pub enum Malformed {
     /// enter: either is a second encoding of the same island.
     NonCanonicalPace,
     LawId,
+    /// A building code nobody defined.
+    UnknownBuilding,
+    /// A buildings list of none, which is written by leaving it out.
+    NoBuildings,
 }
 
 /// What stands on a tile, by its place in the island's list.
@@ -140,6 +158,7 @@ pub enum Occupant {
     Pylon(usize),
     Ward(usize),
     Guard(usize),
+    Building(usize),
 }
 
 /// Why an island may not be published. Each is a rule of the document's,
@@ -220,6 +239,40 @@ pub const FEATURE_CODES: [(Feature, &str, u8); 31] = [
     (Feature::Pit, "pit", 31),
 ];
 
+/// §10.1's buildings that stand on the grid, by their code in the bundle,
+/// with the side of their square footprint: "Most are 2 by 2 tiles; the
+/// Spire and Vault are 3 by 3." The id is content/buildings.json's, and
+/// `content_gate.py` holds the table to it and to `design_facts`. The Vault,
+/// the Law Pylon, the guardian post and the ward have their own lists. A
+/// code is part of every island's bytes, so it is written out and never
+/// reused.
+pub const BUILDING_CODES: [(&str, u8, u8); 13] = [
+    ("keeper_s_spire", 1, 3),
+    ("anchor_stone", 2, 2),
+    ("star_well", 3, 2),
+    ("aether_spring", 4, 2),
+    ("garden", 5, 2),
+    ("storehouse", 6, 2),
+    ("hearth", 7, 2),
+    ("nursery", 8, 2),
+    ("library", 9, 2),
+    ("resonance_lab", 10, 2),
+    ("observatory", 11, 2),
+    ("beacon", 12, 2),
+    ("visitor_s_dock", 13, 2),
+];
+
+/// The side of a building's footprint, by its code; `None` for a code no
+/// building has.
+pub fn footprint(code: u8) -> Option<u8> {
+    BUILDING_CODES.iter().find(|&&(_, c, _)| c == code).map(|&(_, _, side)| side)
+}
+
+/// A building's code, by its id.
+pub fn building_code(id: &str) -> Option<u8> {
+    BUILDING_CODES.iter().find(|&&(i, _, _)| i == id).map(|&(_, c, _)| c)
+}
+
 fn feature_code(f: Option<Feature>) -> Option<u8> {
     match f {
         None => Some(0),
@@ -297,7 +350,15 @@ impl Island {
             guards: Vec::new(),
             wards: Vec::new(),
             laws: Vec::new(),
+            buildings: Vec::new(),
         }
+    }
+
+    /// Every tile of building `i`'s footprint, as (x, y).
+    pub fn footprint_tiles(&self, i: usize) -> Vec<(u8, u8)> {
+        let (code, x, y) = self.buildings[i];
+        let side = footprint(code).unwrap_or(0);
+        (0..side).flat_map(|dy| (0..side).map(move |dx| (x + dx, y + dy))).collect()
     }
 
     pub fn encode(&self) -> Vec<u8> {
@@ -327,14 +388,20 @@ impl Island {
             out.extend_from_slice(id.as_bytes());
             out.extend_from_slice(&[*x, *y]);
         }
+        if !self.buildings.is_empty() {
+            out.push(self.buildings.len() as u8);
+            for (code, x, y) in &self.buildings {
+                out.extend_from_slice(&[*code, *x, *y]);
+            }
+        }
         out
     }
 
     pub fn decode(bytes: &[u8]) -> Result<Island, Malformed> {
-        let mut at = 0usize;
-        let mut take = |n: usize| -> Result<&[u8], Malformed> {
-            let s = bytes.get(at..at + n).ok_or(Malformed::Truncated)?;
-            at += n;
+        let at = std::cell::Cell::new(0usize);
+        let take = |n: usize| -> Result<&[u8], Malformed> {
+            let s = bytes.get(at.get()..at.get() + n).ok_or(Malformed::Truncated)?;
+            at.set(at.get() + n);
             Ok(s)
         };
         if take(4)? != MAGIC {
@@ -418,10 +485,25 @@ impl Island {
             }
             laws.push((id, p[0], p[1]));
         }
-        if at != bytes.len() {
+        let mut buildings = Vec::new();
+        if at.get() < bytes.len() {
+            let n = take(1)?[0];
+            if n == 0 {
+                return Err(Malformed::NoBuildings);
+            }
+            for _ in 0..n {
+                let b = take(3)?;
+                let size = footprint(b[0]).ok_or(Malformed::UnknownBuilding)? as u16;
+                if b[1] as u16 + size > side || b[2] as u16 + size > side {
+                    return Err(Malformed::OffGrid);
+                }
+                buildings.push((b[0], b[1], b[2]));
+            }
+        }
+        if at.get() != bytes.len() {
             return Err(Malformed::TrailingBytes);
         }
-        Ok(Island { realm_level, vault_level, exposed, vault, entrance, tiles, guards, wards, laws })
+        Ok(Island { realm_level, vault_level, exposed, vault, entrance, tiles, guards, wards, laws, buildings })
     }
 
     /// §24.8's content address.
@@ -429,7 +511,8 @@ impl Island {
         sha256(&self.encode())
     }
 
-    /// The ground as the simulation reads it: the tile layer and the Vault.
+    /// The ground as the simulation reads it: the tile layer, §10.1's
+    /// buildings on every tile of their footprints, and the Vault.
     /// The pylons and Crystal Walls are placed by `World::from_island` as it
     /// weaves the laws and places the wards, which is what they are.
     pub fn ground(&self) -> Grid {
@@ -454,6 +537,11 @@ impl Island {
                 }
             }
         }
+        for i in 0..self.buildings.len() {
+            for (x, y) in self.footprint_tiles(i) {
+                grid.place(x as u16, y as u16, Feature::Building);
+            }
+        }
         grid.place(self.vault.0 as u16, self.vault.1 as u16, Feature::Vault);
         grid
     }
@@ -476,8 +564,9 @@ impl Island {
             found.push(Problem::UnknownLaw);
         }
 
-        // One thing a tile: the Vault, each pylon, each ward, each post. The
-        // Vault, a pylon and a ward also need bare ground under them; a guard
+        // One thing a tile: the Vault, each pylon, each ward, each post, each
+        // tile of a building's footprint. The Vault, a pylon, a ward and a
+        // building also need bare ground under them; a guard
         // may stand in tall grass or fog, which is where a Keeper would hide
         // one (whether it can stand at all is `PostBlocked`'s question).
         let side = self.side();
@@ -494,6 +583,8 @@ impl Island {
         self.laws.iter().for_each(|(_, x, y)| claim(*x, *y, true));
         self.wards.iter().for_each(|(_, x, y)| claim(*x, *y, true));
         self.guards.iter().for_each(|g| claim(g.x, g.y, false));
+        (0..self.buildings.len()).flat_map(|i| self.footprint_tiles(i))
+            .for_each(|(x, y)| claim(x, y, true));
         if crowded {
             found.push(Problem::Crowded);
         }
@@ -593,8 +684,8 @@ impl Island {
         (x as u16) < self.side() && (y as u16) < self.side()
     }
 
-    /// What stands on a tile, beyond its ground: the Vault, a pylon, a ward
-    /// or a guard post.
+    /// What stands on a tile, beyond its ground: the Vault, a pylon, a ward,
+    /// a guard post or a building.
     pub fn occupant(&self, x: u8, y: u8) -> Occupant {
         if self.vault == (x, y) {
             return Occupant::Vault;
@@ -607,6 +698,9 @@ impl Island {
         }
         if let Some(i) = self.guards.iter().position(|g| (g.x, g.y) == (x, y)) {
             return Occupant::Guard(i);
+        }
+        if let Some(i) = (0..self.buildings.len()).find(|&i| self.footprint_tiles(i).contains(&(x, y))) {
+            return Occupant::Building(i);
         }
         Occupant::None
     }
@@ -658,7 +752,8 @@ impl Island {
     }
 
     /// Take whatever stands on a tile away — a pylon and its law, a ward, a
-    /// post — or, with nothing standing there, its ground feature. The Vault
+    /// post, the building whose footprint it is in — or, with nothing
+    /// standing there, its ground feature. The Vault
     /// is moved, never removed. True if anything changed.
     pub fn clear(&mut self, x: u8, y: u8) -> bool {
         match self.occupant(x, y) {
@@ -673,6 +768,10 @@ impl Island {
             }
             Occupant::Guard(i) => {
                 self.guards.remove(i);
+                true
+            }
+            Occupant::Building(i) => {
+                self.buildings.remove(i);
                 true
             }
             Occupant::None => self.tile(x, y).is_some_and(|t| t.feature.is_some())
@@ -718,6 +817,26 @@ impl Island {
             self.laws.push((id.to_string(), x, y));
             true
         }
+    }
+
+    /// Put building `code` with its footprint's north-west tile on (x, y),
+    /// taking away whatever stood on the footprint. Refused for a code no
+    /// building has, a footprint off the grid or one over the Vault.
+    pub fn place_building(&mut self, code: u8, x: u8, y: u8) -> bool {
+        let Some(size) = footprint(code) else { return false };
+        let side = self.side();
+        if x as u16 + size as u16 > side || y as u16 + size as u16 > side {
+            return false;
+        }
+        let tiles: Vec<(u8, u8)> = (0..size).flat_map(|dy| (0..size).map(move |dx| (x + dx, y + dy))).collect();
+        if tiles.contains(&self.vault) {
+            return false;
+        }
+        for &(tx, ty) in &tiles {
+            while self.clear(tx, ty) {}
+        }
+        self.buildings.push((code, x, y));
+        true
     }
 
     /// Move the Vault to a tile, taking what stood there away.

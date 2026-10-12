@@ -90,6 +90,9 @@ CREW_RANGE = (3, 5)
 #: 8 on 1, 1, 2, 3, 3; v3.2's were 3 + realm level and 1 + (level - 1) // 2.
 WARD_LIMITS = (8, 8, 6, 2, 0)
 GUARD_POSTS = (1, 1, 2, 1, 1)
+#: §10.1: "Most are 2 by 2 tiles; the Spire and Vault are 3 by 3": the side of
+#: most buildings' footprints, and the Spire's and the Vault's.
+BUILDING_FOOTPRINTS = (2, 3)
 #: §12.17 (v3.7), "A realm’s watch": "at realm level 1 suspicion fills at 0.6
 #: of the rates above; at level 2 every zone reaches 0.75 as far, and at level 3
 #: 0.7 as far; from level 4 guards see and notice at full strength". (suspicion
@@ -413,6 +416,7 @@ HOME = {
     "CREW_RANGE": "12.5",
     "WARD_LIMITS": "5.2",
     "GUARD_POSTS": "10.2",
+    "BUILDING_FOOTPRINTS": "10.1",
     "REALM_WATCH": "12.17",
     "LAW_SLOTS": "5.2",
     "REALM_KEEPER_LEVELS": "5.2",
@@ -550,6 +554,8 @@ STATED = {
                     r"and notice at full strength",
                     lambda m: ((float(m[0]), 1.0), (1.0, float(m[1])), (1.0, float(m[2])),
                                (1.0, 1.0), (1.0, 1.0))),
+    "BUILDING_FOOTPRINTS": (r"Most are (\d) by \1 tiles; the Spire and Vault are (\d) by \2",
+                            lambda m: (int(m[0]), int(m[1]))),
     "GUARD_POSTS": (r"Every realm; (\d+), (\d+), (\d+), (\d+) and (\d+) by realm level"
                     r"(?:, the Heart counting as realm level 3)? \(5\.2\)\. One ruleborn",
                     lambda m: tuple(int(x) for x in m)),

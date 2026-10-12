@@ -77,6 +77,39 @@ export class Build {
     return new Uint8Array(this.x.memory.buffer, this.x.rb_buffer(), this.x.rb_buffer_bytes());
   }
 
+  /** §10.1's buildings that stand on the grid, by id: each one's code in
+   *  the bundle and the side of its square footprint, from the simulation's
+   *  own table (island.rs `BUILDING_CODES`). The Vault, the pylons, the
+   *  posts and the wards are not in it: the island places them by their own
+   *  lists. */
+  get buildingKinds() {
+    if (!this._kinds) {
+      const n = this.x.rb_building_kinds();
+      const b = this.buffer().slice(0, n);
+      this._kinds = {};
+      for (let at = 0; at < n; at += 3 + b[at + 2]) {
+        this._kinds[Buffer.from(b.subarray(at + 3, at + 3 + b[at + 2])).toString()] = { code: b[at], side: b[at + 1] };
+      }
+    }
+    return this._kinds;
+  }
+
+  /** The side of each grid building's footprint, by id. */
+  get footprints() {
+    return Object.fromEntries(Object.entries(this.buildingKinds).map(([id, k]) => [id, k.side]));
+  }
+
+  /** An island's buildings: [{ kind, x, y }], x and y the footprint's
+   *  north-west tile; none for an island that does not decode. */
+  buildings(bytes) {
+    const kinds = Object.entries(this.buildingKinds);
+    this.buffer().set(bytes);
+    if (this.x.rb_island_buildings(bytes.length) < 0) return [];
+    const b = this.buffer();
+    return Array.from({ length: b[0] }, (_, i) => ({
+      kind: kinds.find(([, k]) => k.code === b[1 + 3 * i])[0], x: b[2 + 3 * i], y: b[3 + 3 * i] }));
+  }
+
   /** An island's hash and what stops it being published. */
   island(bytes) {
     this.buffer().set(bytes);

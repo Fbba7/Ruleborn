@@ -24,6 +24,7 @@
 //   POST /v1/universe/realms     {"type"}                    → the next outer realm opened (§5.2)
 //   POST /v1/universe/realms/:realm/level {"to"}             → an outer realm raised a level
 //   POST /v1/universe/buildings  {"realm", "kind", "n", "to"} → a building built (to 1) or raised (§10.2)
+//   PUT  /v1/universe/buildings/place {"realm", "kind", "n", "x", "y"} → a building moved, free (§10.1)
 //   GET  /v1/home                                            → the roster, its places, births and producers
 //   POST /v1/home/births         {"realm", "n"}              → a birth at the realm's Nursery (§11.5)
 //   POST /v1/home/characters/:id/work  {"realm", "kind", "n"} → set to work or to guard; no kind recalls (§5.8)
@@ -437,6 +438,7 @@ export function handler(service, { webClientId = null, appleNotifications = null
         if (m === "POST" && a === "realms" && !b) return json(u.open(me, text((await body(request)).type)));
         if (m === "POST" && a === "realms" && b && c === "level") return json(u.raise(me, b, (await body(request)).to));
         if (m === "POST" && a === "buildings" && !b) return json(u.build(me, await body(request)));
+        if (m === "PUT" && a === "buildings" && b === "place") return json(u.place(me, await body(request)));
         return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "home") {

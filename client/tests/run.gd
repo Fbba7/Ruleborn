@@ -394,6 +394,19 @@ func _run() -> void:
 	check("the builder lays §6.2's ground on the realm's grid, and the island it writes reads back the same",
 		same and drawn and builder.island.problems().is_empty(), "%s" % builder.island.problems())
 
+	# §10.1's buildings, through the simulation's own island (TD.36): placed
+	# on their footprints, named from any tile they cover, and carried in the
+	# bundle the server holds to the buildings placed.
+	var town := RulebornIsland.new()
+	var placed := town.place_building("keeper_s_spire", 2, 2) and town.place_building("star_well", 7, 2) \
+		and not town.place_building("vault", 5, 5) and not town.place_building("keeper_s_spire", 10, 0)
+	var back := RulebornIsland.new()
+	var carried := back.read(town.bytes()) \
+		and back.buildings() == [["keeper_s_spire", 2, 2, 3], ["star_well", 7, 2, 2]]
+	var named := town.occupant(4, 4) == "building:keeper_s_spire" and town.occupant(5, 5) == ""
+	check("the island the builder edits places §10.1's buildings on their footprints, and its bundle carries them",
+		placed and carried and named and town.problems().is_empty(), "%s / %s" % [back.buildings(), town.problems()])
+
 	builder.tool = BuilderScreen.Tool.LAW
 	for step: Array in [["haste", Vector2i(1, 10)], ["brittle_stone", Vector2i(11, 2)]]:
 		builder.kind = builder.kinds().find(step[0])

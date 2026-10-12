@@ -207,7 +207,7 @@ export class Service {
     // And what the owner's universe has built: the realm open, its level,
     // the Vault (universe.mjs).
     const problems = [...read.problems, ...(realm === "heart" && bundle[4] !== HEART_LEVEL ? ["heart_level"] : []),
-                      ...this.universe.problems(owner, realm, bundle[4], bundle[5])];
+                      ...this.universe.problems(owner, realm, bundle[4], bundle[5], build.buildings(bundle))];
     if (problems.length) throw new Refused(422, "island_not_publishable", { problems });
     const key = this.store.put(bundle, read.digest);      // the two SHA-256s must agree
     const now = this.now();

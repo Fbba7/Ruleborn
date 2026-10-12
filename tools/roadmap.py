@@ -1983,7 +1983,7 @@ dict(
                   "once a second for every crew member; the five goldens' "
                   "checksums unchanged with the log on",
              register=["D65", "G48", "G57"]),
-        dict(id="TD.36", owner="claude", status="ready",
+        dict(id="TD.36", owner="claude", status="doing",
              title="Buildings on the grid, in the simulation, the island and the server",
              detail="§10.1: buildings sit on the realm grid and block movement and "
                     "sight, most 2 by 2 and the Spire and Vault 3 by 3. The "
@@ -1996,7 +1996,18 @@ dict(
                     "and at once (§10.1), and refuses a published island whose "
                     "buildings disagree with those built. A rules-version change "
                     "(§24.11). v3.7's §26.8 puts it in phase 4, the island "
-                    "builder.",
+                    "builder. <strong>Built:</strong> the island's buildings list "
+                    "after its laws (none written for none, so every earlier "
+                    "island keeps its hash), the Spire 3 by 3 and the rest 2 by "
+                    "2, blocking feet and eyes on every footprint tile; the "
+                    "table in the rules version and the goldens re-recorded; the "
+                    "extension placing and reading them; the server storing each "
+                    "building's tile, moving it free, and refusing an island "
+                    "whose buildings are not the realm's placed ones on their "
+                    "tiles. <strong>Left:</strong> the Vault's 3 by 3, which "
+                    "moves every heist and the hold table measured on its one "
+                    "tile, and the builder's and realm view's screens drawing "
+                    "them (TD.31, TD.19).",
              gate="a simulation test that no crew walks or sees through a "
                   "footprint; server tests for the stored tile, the move and the "
                   "refused island; the goldens regenerated and agreeing",

@@ -104,6 +104,11 @@ CREATE TABLE IF NOT EXISTS buildings (
   n          INTEGER NOT NULL,
   level      INTEGER NOT NULL CHECK (level >= 1),
   changed_at INTEGER NOT NULL,
+  -- Where it stands (10.1): its footprint's north-west tile, or none until
+  -- it is placed. The Vault, pylons, posts and wards stand where the island
+  -- puts them.
+  x          INTEGER,
+  y          INTEGER,
   PRIMARY KEY (owner, realm, kind, n)
 );
 
@@ -735,6 +740,9 @@ const ADDED = [
   ["cohorts", "day60", "INTEGER"],
   ["purchase_intents", "recipient", "TEXT REFERENCES accounts(id)"],
   ["purchases", "recipient", "TEXT REFERENCES accounts(id)"],
+  // Where a building stands (universe.mjs `place`).
+  ["buildings", "x", "INTEGER"],
+  ["buildings", "y", "INTEGER"],
 ];
 
 /** A ledger of a row a currency — and one made while there was Starglass —

@@ -11462,9 +11462,12 @@ V37 = {
 "G45": dict(status="open", left="build", note=
     "<strong>The document is done; the build is not.</strong> §10.1 is "
     "unchanged, and §26.8’s phase 4 now builds <em>“buildings on the grid with "
-    "their footprints (10.1)”</em>. Left: §10.1’s buildings with 2 by 2 and 3 "
-    "by 3 footprints in the island format and sim/, each building’s tile on "
-    "the server (TD.36)."),
+    "their footprints (10.1)”</em>. Built (TD.36): the island’s buildings on "
+    "their footprints, the Spire 3 by 3 and the rest 2 by 2, blocking feet and "
+    "eyes in sim/; each building’s tile on the server, moved free, and a "
+    "published island held to the buildings placed. Left: the Vault’s 3 by 3, "
+    "which moves every heist and §13.2’s hold table, measured on its one tile, "
+    "so it needs a re-measure."),
 
 "G60": dict(status="open", left="build", note=
     "<strong>The document is done; the build is not.</strong> §12.5: <em>“The "

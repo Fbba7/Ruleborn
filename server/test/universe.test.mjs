@@ -1,5 +1,6 @@
-// The home economy's first part (§5.2, §9.5, §10.2, §14.2): realms and
-// buildings bought with Starlight, their gates, and the islands they allow.
+// The home economy's first part (§5.2, §9.5, §10.1, §10.2, §14.2): realms
+// and buildings bought with Starlight, their gates, where they stand, and the
+// islands they allow.
 
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -196,6 +197,73 @@ test("an island is published only as far as its owner's universe is built: the r
   assert.ok(t.service.publish(seed, island).bundle);
 });
 
+test("a building keeps the tile it is put on, moves free and at once, and stays on the grid and off the others (10.1)", () => {
+  const { t, me, u } = fresh();
+  const sizes = t.build.footprints;
+  assert.equal(sizes.keeper_s_spire, 3, "the Spire is 3 by 3");
+  assert.equal(sizes.star_well, 2, "most are 2 by 2");
+  for (const own of ["vault", "law_pylon", "guardian_post", "ward"]) assert.ok(!(own in sizes), `${own} has its own list`);
+  const spire = () => heart(u.view(me)).buildings.find((b) => b.kind === "keeper_s_spire");
+  assert.equal(spire().at, null, "not placed yet");
+  const starlight = u.view(me).starlight;
+  assert.deepEqual(heart(u.place(me, { realm: "heart", kind: "keeper_s_spire", n: 1, x: 0, y: 0 }).universe)
+    .buildings.find((b) => b.kind === "keeper_s_spire").at, { x: 0, y: 0 });
+  u.place(me, { realm: "heart", kind: "keeper_s_spire", n: 1, x: 1, y: 0 });
+  assert.deepEqual(spire().at, { x: 1, y: 0 }, "moved");
+  assert.equal(u.view(me).starlight, starlight, "free");
+  const at = (kind, x, y, n = 1, realm = "heart") => () => u.place(me, { realm, kind, n, x, y });
+  refused(at("vault", 4, 4), "not_on_the_grid");
+  refused(at("nope", 4, 4), "no_such_building");
+  refused(at("keeper_s_spire", 4, 4, 2), "not_built");
+  refused(at("observatory", 4, 4), "not_built");
+  refused(at("keeper_s_spire", 10, 0), "off_the_grid", undefined, "the Heart is 12 by 12 and the Spire 3");
+  refused(at("star_well", 2, 1), "tile_taken", undefined, "the Spire covers 1 to 3 by 0 to 2");
+  refused(at("star_well", 0, 0, 1, "outer-1"), "no_such_realm");
+  refused(at("star_well", -1, 0), "malformed_body");
+  at("star_well", 4, 0)();
+  at("keeper_s_spire", 9, 9)();
+  assert.deepEqual(spire().at, { x: 9, y: 9 }, "a building moved clears the tiles it left");
+  at("star_well", 1, 0)();
+});
+
+test("a published island carries the realm's placed buildings on their tiles, and no others (10.1)", () => {
+  const { t, me, u } = fresh();
+  const code = (kind) => t.build.buildingKinds[kind].code;
+  const island = (...buildings) => {
+    const base = bare(3, 1);
+    if (!buildings.length) return base;
+    const out = new Uint8Array(base.length + 1 + 3 * buildings.length);
+    out.set(base);
+    out[base.length] = buildings.length;
+    buildings.forEach(([kind, x, y], i) => out.set([code(kind), x, y], base.length + 1 + 3 * i));
+    return out;
+  };
+  const problems = (bytes) => {
+    try {
+      t.service.publish(me, bytes);
+      return [];
+    } catch (e) {
+      return e.detail.problems;
+    }
+  };
+  assert.deepEqual(problems(island()), [], "nothing placed, nothing carried");
+  assert.deepEqual(t.build.buildings(island(["keeper_s_spire", 0, 0], ["star_well", 4, 0])),
+                   [{ kind: "keeper_s_spire", x: 0, y: 0 }, { kind: "star_well", x: 4, y: 0 }], "the simulation reads them back");
+  assert.deepEqual(problems(island(["keeper_s_spire", 0, 0])), ["buildings_not_as_placed"], "a Spire not placed");
+  u.place(me, { realm: "heart", kind: "keeper_s_spire", n: 1, x: 0, y: 0 });
+  u.place(me, { realm: "heart", kind: "star_well", n: 1, x: 4, y: 0 });
+  assert.deepEqual(problems(island()), ["buildings_not_as_placed"], "the placed buildings left out");
+  assert.deepEqual(problems(island(["keeper_s_spire", 0, 0])), ["buildings_not_as_placed"], "the Star Well left out");
+  assert.deepEqual(problems(island(["keeper_s_spire", 1, 0], ["star_well", 4, 0])), ["buildings_not_as_placed"], "the Spire elsewhere");
+  assert.deepEqual(problems(island(["keeper_s_spire", 0, 0], ["star_well", 4, 0], ["observatory", 7, 3])),
+                   ["buildings_not_as_placed"], "an Observatory never built");
+  assert.deepEqual(problems(island(["star_well", 4, 0], ["keeper_s_spire", 0, 0])), [], "in any order");
+  // The simulation's own rules still hold: a footprint over the Vault is
+  // crowded, whatever was placed.
+  u.place(me, { realm: "heart", kind: "star_well", n: 1, x: 5, y: 7 });
+  assert.deepEqual(problems(island(["keeper_s_spire", 0, 0], ["star_well", 5, 7])), ["crowded"]);
+});
+
 test("the universe over HTTP: read, bought, and refused with the reason (5.2, 10.2)", async () => {
   const t = server({ strictUniverse: true });
   const call = async (method, path, token, json) => {
@@ -222,4 +290,9 @@ test("the universe over HTTP: read, bought, and refused with the reason (5.2, 10
   assert.equal(raise.body.error, "needs_spire_level");
   const typeless = await call("POST", "/v1/universe/realms", token, { type: 3 });
   assert.equal(typeless.status, 400);
+  const moved = await call("PUT", "/v1/universe/buildings/place", token, { realm: "heart", kind: "hearth", n: 1, x: 2, y: 2 });
+  assert.deepEqual(moved.body.universe.realms[0].buildings.find((b) => b.kind === "hearth").at, { x: 2, y: 2 });
+  const taken = await call("PUT", "/v1/universe/buildings/place", token, { realm: "heart", kind: "garden", n: 1, x: 3, y: 3 });
+  assert.equal(taken.status, 409);
+  assert.equal(taken.body.error, "tile_taken");
 });

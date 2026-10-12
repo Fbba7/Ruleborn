@@ -346,7 +346,7 @@
    ]
   },
   "buildings": {
-   "about": "Each player's buildings: kind, realm and level (§10.2).",
+   "about": "Each player's buildings: kind, realm, level and the tile each stands on (§10.1, §10.2).",
    "columns": {
     "owner": {
      "names": "account",
@@ -365,6 +365,12 @@
      "type": "gameplay"
     },
     "changed_at": {
+     "type": "gameplay"
+    },
+    "x": {
+     "type": "gameplay"
+    },
+    "y": {
      "type": "gameplay"
     }
    },

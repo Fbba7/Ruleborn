@@ -19,6 +19,12 @@
 // realm's, or with a Vault above the one built, is refused (service.publish).
 // Staffing, production and the roster come in the home economy's later parts
 // (G42).
+//
+// §10.1: "Buildings sit on the realm grid and block movement and sight. …
+// Moving a building is free and instant, like terrain." Each building keeps
+// the tile it was put on, and an island published to a realm carries the
+// realm's placed buildings on those tiles and no others, so a raid meets the
+// buildings the player built where the player put them.
 
 import { readFileSync } from "node:fs";
 
@@ -119,10 +125,11 @@ export class Universe {
               .all(account)];
   }
 
-  /** Every building: {realm, kind, n, level, changed_at}. */
+  /** Every building: {realm, kind, n, level, changed_at, x, y}, x and y
+   *  null until it is placed. */
   buildings(account) {
     const rows = this.db.prepare(
-      "SELECT realm, kind, n, level, changed_at FROM buildings WHERE owner = ? ORDER BY realm, kind, n").all(account);
+      "SELECT realm, kind, n, level, changed_at, x, y FROM buildings WHERE owner = ? ORDER BY realm, kind, n").all(account);
     return rows.length ? rows : facts.STARTING_HEART.map((kind) => ({ realm: "heart", kind, n: 1, level: 1 }));
   }
 
@@ -165,7 +172,8 @@ export class Universe {
         const levels = KINDS[b.kind].levels;
         const next = levels[b.level];
         return { kind: b.kind, name: KINDS[b.kind].name, n: b.n, level: b.level, top: levels.length,
-                 next: next ? offer({ cost: next.cost, ...next.needs }) : null };
+                 next: next ? offer({ cost: next.cost, ...next.needs }) : null,
+                 at: b.x == null ? null : { x: b.x, y: b.y } };
       });
       const room = Object.values(KINDS)
         .filter((k) => placeable(k.id, r.realm) && here.filter((b) => b.kind === k.id).length < allowed(k.id, r.level))
@@ -273,6 +281,35 @@ export class Universe {
     });
   }
 
+  /** §10.1: building `n` of `kind` in `realm` put with its footprint's
+   *  north-west tile on (x, y), free and at once. The footprint must lie on
+   *  the realm's grid and on no other building's; whether it stands on
+   *  ground the island leaves bare is the island's to say when published. */
+  place(account, { realm, kind, n, x, y }) {
+    if (typeof kind !== "string" || !Object.hasOwn(KINDS, kind)) throw new Refused(400, "no_such_building");
+    if (!integer(n, 1, 8) || !integer(x, 0, 255) || !integer(y, 0, 255)) throw new Refused(400, "malformed_body");
+    const sizes = this.service.builds.current.footprints;
+    if (!Object.hasOwn(sizes, kind)) throw new Refused(409, "not_on_the_grid");
+    const now = this.service.now();
+    return transaction(this.db, () => {
+      const r = this.realms(account).find((v) => v.realm === realm);
+      if (!r) throw new Refused(404, "no_such_realm");
+      this.ensure(account, now);
+      const here = this.buildings(account).filter((b) => b.realm === realm);
+      if (!here.some((b) => b.kind === kind && b.n === n)) throw new Refused(404, "not_built");
+      // §5.2's grid: 9 tiles and one a realm level; the Heart counts as 3.
+      const side = 9 + (realm === "heart" ? HEART_LEVEL : r.level);
+      const size = sizes[kind];
+      if (x + size > side || y + size > side) throw new Refused(409, "off_the_grid");
+      const overlaps = (b) => b.x != null && !(b.kind === kind && b.n === n)
+        && x < b.x + sizes[b.kind] && b.x < x + size && y < b.y + sizes[b.kind] && b.y < y + size;
+      if (here.some(overlaps)) throw new Refused(409, "tile_taken");
+      this.db.prepare("UPDATE buildings SET x = ?, y = ? WHERE owner = ? AND realm = ? AND kind = ? AND n = ?")
+        .run(x, y, account, realm, kind, n);
+      return { universe: this.view(account) };
+    });
+  }
+
   /** What a purchase answers: the universe after it, and the Keeper
    *  experience it earned — none for one already made. */
   done(account, keeper, repeated = false) {
@@ -280,9 +317,11 @@ export class Universe {
   }
 
   /** Why an island may not stand for `owner` in `realm`: the realm not
-   *  opened, its realm level above the realm's, or its Vault above the one
-   *  built. The game's own seeded islands answer to no universe (§13.1). */
-  problems(owner, realm, realmLevel, vaultLevel) {
+   *  opened, its realm level above the realm's, its Vault above the one
+   *  built, or its `buildings` ([{kind, x, y}]) not the realm's placed ones
+   *  on their tiles. The game's own seeded islands answer to no universe
+   *  (§13.1). */
+  problems(owner, realm, realmLevel, vaultLevel, buildings = []) {
     if (this.db.prepare("SELECT seeded FROM accounts WHERE id = ?").get(owner)?.seeded) return [];
     const out = [];
     const r = this.realms(owner).find((x) => x.realm === realm);
@@ -290,6 +329,9 @@ export class Universe {
     else if (realm !== "heart" && realmLevel > r.level) out.push("realm_level_not_built");
     const vault = this.buildings(owner).find((b) => b.realm === "heart" && b.kind === "vault")?.level ?? 0;
     if (vaultLevel > vault) out.push("vault_level_not_built");
+    const at = (b) => `${b.kind} ${b.x} ${b.y}`;
+    const placed = this.buildings(owner).filter((b) => b.realm === realm && b.x != null).map(at).sort();
+    if (placed.join() !== buildings.map(at).sort().join()) out.push("buildings_not_as_placed");
     return out;
   }
 }

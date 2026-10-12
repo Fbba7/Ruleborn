@@ -639,6 +639,19 @@ level above the realm's, or a Vault above the one built. `GET /v1/universe`
 answers what each thing costs and needs and whether it can be bought now,
 so the device never works a rule out itself.
 
+**Where buildings stand (§10.1, TD.36).** *"Buildings sit on the realm grid
+and block movement and sight. … Moving a building is free and instant, like
+terrain."* Each building keeps its footprint's north-west tile, null until it
+is placed; `PUT /v1/universe/buildings/place` moves one at no cost, refusing a
+footprint off the realm's grid (`off_the_grid`) or over another building's
+(`tile_taken`). The footprints are the simulation's own (`island.rs`
+`BUILDING_CODES`, read through the WebAssembly build's `rb_building_kinds`):
+the Spire 3 by 3, the rest 2 by 2. The Vault, pylons, posts and wards are
+placed by the island's own lists, so they have no tile here
+(`not_on_the_grid`). A published island must carry exactly the realm's
+placed buildings on their tiles (`buildings_not_as_placed`, read with
+`rb_island_buildings`); the simulation still judges what stands under them.
+
 ## The roster, its work, and what it produces
 
 `src/home.mjs` is the home economy's second part (§5.8, §9.2, §9.3, §9.5,

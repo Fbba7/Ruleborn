@@ -110,6 +110,43 @@ pub extern "C" fn rb_island(len: u32) -> i32 {
     })
 }
 
+/// §10.1's buildings that stand on the grid, so the server places one by
+/// the simulation's own footprints: for each of `island::BUILDING_CODES`,
+/// code u8, footprint side u8, id length u8 and the id, written to the
+/// buffer. Returns the bytes written.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_building_kinds() -> i32 {
+    with_buffer(|b| {
+        let mut at = 0;
+        for (id, code, side) in crate::island::BUILDING_CODES.iter() {
+            b[at..at + 3].copy_from_slice(&[*code, *side, id.len() as u8]);
+            b[at + 3..at + 3 + id.len()].copy_from_slice(id.as_bytes());
+            at += 3 + id.len();
+        }
+        at as i32
+    })
+}
+
+/// The buildings of an island of `len` bytes in the buffer, written over it:
+/// count u8, then (code u8, x u8, y u8) each, x and y the footprint's
+/// north-west tile. Returns the bytes written, or -2 if it does not decode.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_island_buildings(len: u32) -> i32 {
+    if !fits(0, len) {
+        return -9;
+    }
+    with_buffer(|b| {
+        let Ok(island) = Island::decode(&b[..len as usize]) else { return -2 };
+        b[0] = island.buildings.len() as u8;
+        for (i, (code, x, y)) in island.buildings.iter().enumerate() {
+            b[1 + 3 * i..4 + 3 * i].copy_from_slice(&[*code, *x, *y]);
+        }
+        1 + 3 * island.buildings.len() as i32
+    })
+}
+
 /// §24.12's "Validate": a replay of `replay_len` bytes at the start of the
 /// buffer and the island it claims at `replay_len`, re-simulated.
 ///

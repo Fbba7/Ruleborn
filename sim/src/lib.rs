@@ -4202,15 +4202,15 @@ impl World {
     /// standing on or beside — a side, not a corner — a wall or a live Thorn
     /// Hedge, and it costs the share of full health once a second, crew and
     /// guards alike: "your own guards cannot hug the hedges either". A wall
-    /// is anything that stops walking but the Vault and the pylons, which
-    /// are structures, not walls.
+    /// is anything that stops walking but the Vault, the pylons and §10.1's
+    /// buildings, which are structures, not walls.
     fn thorns(&mut self) {
         let (n, d) = self.sheet.factor(Param::TouchDamage);
         let hedges: Vec<grid::TileIndex> = self.wards.iter()
             .filter(|w| w.kind == WardKind::ThornHedge && w.live()).map(|w| w.tile).collect();
         let grid = &self.grid;
         let thorny = |t: grid::TileIndex| hedges.contains(&t) || (!grid.at(t).passable()
-            && !matches!(grid.feature(t), Some(Feature::Vault) | Some(Feature::Pylon)));
+            && !matches!(grid.feature(t), Some(Feature::Vault | Feature::Pylon | Feature::Building)));
         let touching = |p: Point| grid.tile_at(p.x, p.y).is_some_and(|t| {
             thorny(t) || grid.neighbours(t).iter().flatten().any(|&o| thorny(o))
         });
@@ -5082,6 +5082,14 @@ pub fn rules_version() -> [u8; 32] {
             bytes.extend_from_slice(&fd.to_le_bytes());
             bytes.extend_from_slice(&sn.to_le_bytes());
             bytes.extend_from_slice(&sd.to_le_bytes());
+        }
+        // §10.1's buildings and their footprints. No golden island has one,
+        // so a building re-sized or re-coded is a rules change no golden
+        // would see.
+        for (id, code, size) in island::BUILDING_CODES.iter() {
+            bytes.extend_from_slice(id.as_bytes());
+            bytes.push(0);
+            bytes.extend_from_slice(&[*code, *size]);
         }
         // §18.3's eras and their figures: a re-figured era is a rules change.
         for (id, figure) in laws_table::ERAS.iter() {

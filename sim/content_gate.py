@@ -644,6 +644,31 @@ def terrain_compare(text: str) -> dict:
     return {"checked": checked, "wrong": wrong}
 
 
+def buildings_compare(text: str) -> dict:
+    """§10.1's buildings against the simulation: `island.rs`'s
+    BUILDING_CODES names every building in content/buildings.json but the four
+    the island writes by their own lists, each once, the Spire's footprint
+    3 by 3 and the rest 2 by 2 (design_facts.BUILDING_FOOTPRINTS)."""
+    sys.path.insert(0, str(HERE.parent / "tools"))
+    import design_facts as f
+    most, spire = f.BUILDING_FOOTPRINTS
+    rows_ = re.findall(r'\("(\w+)", (\d+), (\d+)\),', text.split("pub const BUILDING_CODES", 1)[-1].split("];", 1)[0])
+    ids = [r[0] for r in rows_]
+    own = {"vault", "law_pylon", "guardian_post", "ward"}
+    want = [b["id"] for b in json.loads((HERE.parent / "content" / "buildings.json").read_text()) if b["id"] not in own]
+    checked, wrong = [], []
+    (checked if sorted(ids) == sorted(want) and len(set(ids)) == len(ids) else wrong).append(
+        f"island.rs BUILDING_CODES: {len(ids)} buildings, buildings.json {len(want)} on the grid")
+    codes = [int(r[1]) for r in rows_]
+    (checked if len(set(codes)) == len(codes) and 0 not in codes else wrong).append(
+        "island.rs BUILDING_CODES: every code once, none 0")
+    for bid, _, side in rows_:
+        expect = spire if bid == "keeper_s_spire" else most
+        (checked if int(side) == expect else wrong).append(
+            f"island.rs BUILDING_CODES {bid}: footprint {side}, design_facts {expect}")
+    return {"checked": checked, "wrong": wrong}
+
+
 def source_text() -> str:
     return "\n".join((HERE / p).read_text() for p in SOURCES) + \
         (HERE / "src/tests.rs").read_text()
@@ -742,10 +767,12 @@ def main() -> int:
     wards = wards_compare(source_text())
     kinds = ruleborn_compare(source_text())
     ground = terrain_compare(source_text())
+    built = buildings_compare(source_text())
     r["checked"] += facts["checked"] + laws["checked"] + wards["checked"] + kinds["checked"] \
-        + ground["checked"]
-    r["wrong"] += facts["wrong"] + laws["wrong"] + wards["wrong"] + kinds["wrong"] + ground["wrong"]
-    print(f"  content: {len(r['checked'])} values agree with content/ (detection, roles, wards, law effects, ruleborn, terrain), "
+        + ground["checked"] + built["checked"]
+    r["wrong"] += facts["wrong"] + laws["wrong"] + wards["wrong"] + kinds["wrong"] + ground["wrong"] \
+        + built["wrong"]
+    print(f"  content: {len(r['checked'])} values agree with content/ (detection, roles, wards, law effects, ruleborn, terrain, buildings), "
           f"and tools/design_facts.py")
     for line in r["wrong"]:
         print(f"  DISAGREES {line}")

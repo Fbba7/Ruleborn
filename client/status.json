@@ -85,6 +85,7 @@
   "the friends screen lists the players blocked, and unblocking one tells the server and lists them again (17.8)": "passed",
   "the heist just played replays on this phone with every second agreeing": "passed",
   "the island keeps its figures by value: every feature that changes a route, each guard and the outlines of wards, the Vault and the crew stand 3:1 from every ground, and water's ripples from water, in both contrast modes (§21.10)": "passed",
+  "the island the builder edits places §10.1's buildings on their footprints, and its bundle carries them": "passed",
   "the league shows the place, the division in numerals, Renown and the way to the next league; groups name their members and roles, the player as \"you\"; the feed says who raided whom (§17, §18.1)": "passed",
   "the league, groups and friends reducers keep what they had when a call fails, name the failure, read a null group as none, and the friends screen shows the latest outcome, not an older one": "passed",
   "the planned heist plays out Clean with every bag banked (§12.9)": "passed",

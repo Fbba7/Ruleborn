@@ -532,3 +532,7 @@ ERR_NOT_ENOUGH_AETHER,you need more Aether,você precisa de mais Aether
 ERR_NOT_ENOUGH_PAGES,you need more pages of that law,você precisa de mais páginas dessa lei
 ERR_NOT_THE_NEXT_TIER,that is not the next tier,esse não é o próximo nível da lei
 ERR_NOTHING_TO_STUDY,a heist among friends gives nothing to study,um assalto entre amigos não dá nada para estudar
+ERR_NOT_ON_THE_GRID,that is placed by the island builder,isso é colocado pelo construtor da ilha
+ERR_OFF_THE_GRID,that does not fit on the realm,isso não cabe no reino
+ERR_TILE_TAKEN,another building stands there,outra construção está ali
+ERR_NOT_BUILT,that has not been built,isso ainda não foi construído

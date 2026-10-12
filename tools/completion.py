@@ -381,9 +381,15 @@ DELIVERABLES = [
     ("4", "Terrain: §6.2's 39 features and moss in the simulation", BACKEND, sim_terrain()),
     ("4", "Terrain editing", FRONTEND, times(builder_terrain(), client_tests(
         "the builder lays §6.2's ground on the realm's grid, and the island it writes reads back the same"))),
-    ("4", "Buildings on the grid with their footprints (§10.1)", BACKEND, not_started(
-        "buildings stand on the island's grid with §10.1's footprints, in the "
-        "simulation, the bundle and the server (TD.36)")),
+    ("4", "Buildings on the grid with their footprints (§10.1)", BACKEND, parts(
+        systems("Buildings on the grid"),
+        server_tests(
+            "a building keeps the tile it is put on, moves free and at once, and stays on the grid and off the others (10.1)",
+            "a published island carries the realm's placed buildings on their tiles, and no others (10.1)"),
+        client_tests(
+            "the island the builder edits places §10.1's buildings on their footprints, and its bundle carries them"),
+        not_started("the Vault on §10.1's 3 by 3, which moves every heist and the hold table measured "
+                    "on its one tile (G45)"))),
     ("4", "Laws on the island", FRONTEND, client_tests(
         "the builder weaves laws and places their pylons, holds the realm to its law slots, and names what the laws make together (§8.6)")),
     ("4", "Bundle serialisation", BACKEND, systems("Island bundles", "Publishing rules")),

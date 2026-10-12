@@ -2485,9 +2485,14 @@ fn a_second_encoding_of_an_island_is_refused() {
     use crate::island::{Island, Malformed};
     let good = Island::example().encode();
     let tile0 = 4 + 10;                  // the first tile's three bytes
+    // Past the laws comes only a list of buildings (§10.1), and past that
+    // nothing.
     let mut trailing = good.clone();
-    trailing.push(0);
+    trailing.extend_from_slice(&[1, 2, 0, 0, 0]);
     assert_eq!(Island::decode(&trailing), Err(Malformed::TrailingBytes));
+    trailing.truncate(good.len() + 1);
+    trailing[good.len()] = 0;
+    assert_eq!(Island::decode(&trailing), Err(Malformed::NoBuildings));
     let mut hundred = good.clone();
     hundred[tile0 + 1] = 100;            // a pace of 100 is written as 0
     assert_eq!(Island::decode(&hundred), Err(Malformed::NonCanonicalPace));
@@ -3675,6 +3680,124 @@ fn an_edited_island_is_one_the_format_can_write_and_check_can_judge() {
     assert_eq!(island.check(), vec![Problem::Sealed]);
     assert!(island.clear(vx - 1, vy));
     assert_eq!(island.check(), vec![]);
+}
+
+// --------------------------------------------------------------------------
+// §10.1: buildings on the grid
+// --------------------------------------------------------------------------
+
+use crate::island::{building_code, Malformed};
+
+fn spire() -> u8 {
+    building_code("keeper_s_spire").unwrap()
+}
+
+fn well() -> u8 {
+    building_code("star_well").unwrap()
+}
+
+#[test]
+fn a_building_blocks_feet_and_eyes_on_every_tile_of_its_footprint() {
+    // "Buildings sit on the realm grid and block movement and sight. Most
+    // are 2 by 2 tiles; the Spire and Vault are 3 by 3."
+    let mut island = Island::blank(3);
+    assert!(island.place_building(spire(), 2, 2));
+    assert!(island.place_building(well(), 7, 2));
+    let grid = island.ground();
+    let square = |x0: u16, y0: u16, side: u16| {
+        (x0..x0 + side).flat_map(move |x| (y0..y0 + side).map(move |y| (x, y)))
+    };
+    for (x, y) in square(2, 2, 3).chain(square(7, 2, 2)) {
+        let t = grid.index(x, y).unwrap();
+        assert_eq!(grid.feature(t), Some(Feature::Building), "({x}, {y}) is under a building");
+        assert!(!grid.at(t).passable() && grid.blocks_sight(t));
+    }
+    for (x, y) in [(5, 2), (2, 5), (9, 2), (7, 4), (6, 3)] {
+        assert!(grid.at(grid.index(x, y).unwrap()).passable(), "({x}, {y}) is beside one");
+    }
+    let at = |x, y| grid.index(x, y).unwrap();
+    assert!(!sight::visible(&grid, at(1, 3), at(8, 3)), "the Spire stands between");
+    assert!(sight::visible(&grid, at(1, 6), at(8, 6)), "south of it the line is open");
+    assert!(walled_by(Feature::Building) && !seen_past(Feature::Building));
+}
+
+#[test]
+fn no_crew_walks_through_a_building_on_its_way_across_the_realm() {
+    // The Spire's 3 by 3 squarely between the landing and the tile the crew
+    // is sent to: every member goes round it, and gets there.
+    let mut island = Island::blank(3);
+    assert!(island.place_building(spire(), 4, 3));
+    assert_eq!(island.check(), vec![]);
+    let to = (5, 8);
+    let go: Vec<Command> = (0..3).map(|actor| Command {
+        tick: 0, actor, kind: Kind::MoveTo, x: to.0 * 256 + 128, y: to.1 * 256 + 128,
+    }).collect();
+    let mut world = landed(&island, (5, 0), go);
+    let footprint: Vec<_> = island.footprint_tiles(0).iter()
+        .map(|&(x, y)| world.grid.index(x as u16, y as u16).unwrap()).collect();
+    for _ in 0..30 * TICKS_PER_SECOND {
+        world.step();
+        for r in &world.raiders {
+            let t = world.grid.tile_at(r.at.x, r.at.y).unwrap();
+            assert!(!footprint.contains(&t), "crew member {} stood in the Spire", r.id);
+        }
+    }
+    let there = world.grid.index(to.0 as u16, to.1 as u16).unwrap();
+    assert!(world.raiders.iter().any(|r| world.grid.tile_at(r.at.x, r.at.y) == Some(there)),
+            "the crew went round and arrived");
+}
+
+#[test]
+fn an_island_keeps_its_buildings_and_one_without_keeps_its_bytes() {
+    let mut island = Island::blank(3);
+    let before = island.encode();
+    assert!(island.place_building(spire(), 2, 2));
+    let bytes = island.encode();
+    assert_eq!(&bytes[..before.len()], &before[..], "an island with no building ends at its laws");
+    assert_eq!(bytes.len(), before.len() + 4);
+    assert_eq!(Island::decode(&bytes), Ok(island.clone()));
+    let with = |tail: &[u8]| {
+        let mut b = before.clone();
+        b.extend_from_slice(tail);
+        Island::decode(&b)
+    };
+    assert_eq!(with(&[0]), Err(Malformed::NoBuildings), "a list of none is written by leaving it out");
+    assert_eq!(with(&[1, 99, 0, 0]), Err(Malformed::UnknownBuilding));
+    assert_eq!(with(&[1, spire(), 10, 0]), Err(Malformed::OffGrid), "the 3 by 3 overhangs a 12-tile side");
+    assert_eq!(with(&[1, well(), 10, 10]).map(|i| i.buildings), Ok(vec![(well(), 10, 10)]));
+    assert_eq!(with(&[2, spire(), 0, 0]), Err(Malformed::Truncated));
+}
+
+#[test]
+fn a_building_is_crowded_by_what_stands_under_it_and_can_seal_the_vault() {
+    let (vx, vy) = Island::blank(3).vault;
+    // Written straight into the lists, as a bundle could: check judges it.
+    let mut island = Island::blank(3);
+    island.wards.push((WardKind::ThornHedge, 3, 3));
+    island.buildings.push((spire(), 2, 2));
+    assert_eq!(island.check(), vec![Problem::Crowded]);
+    let mut island = Island::blank(3);
+    island.buildings = vec![(well(), 2, 2), (well(), 3, 3)];
+    assert_eq!(island.check(), vec![Problem::Crowded], "two footprints share (3, 3)");
+    // The builder clears what a footprint covers, refuses the Vault and the
+    // grid's edge, and a tap anywhere in a footprint takes the building.
+    let mut island = Island::blank(3);
+    assert!(island.place_ward(WardKind::ThornHedge, 3, 3));
+    assert!(island.place_building(spire(), 2, 2));
+    assert!(island.wards.is_empty());
+    assert_eq!(island.occupant(4, 4), Occupant::Building(0));
+    assert!(!island.place_building(spire(), vx - 1, vy - 1), "over the Vault");
+    assert!(!island.place_building(spire(), 10, 0), "off the grid");
+    assert!(island.clear(4, 4));
+    assert!(island.buildings.is_empty());
+    // A building closes the last side of the Vault (§6.1), and check says so.
+    let mut island = Island::blank(3);
+    for (x, y) in [(vx - 1, vy), (vx + 1, vy), (vx, vy + 1)] {
+        island.set_feature(x, y, Some(Feature::RockPillar));
+    }
+    assert_eq!(island.check(), vec![]);
+    assert!(island.place_building(spire(), vx - 1, vy - 3));
+    assert_eq!(island.check(), vec![Problem::Sealed]);
 }
 
 // --------------------------------------------------------------------------

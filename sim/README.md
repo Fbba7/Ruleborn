@@ -116,6 +116,15 @@ island was a placeholder and every heist ran on the one fixture realm. Now:
   the Vault from some open edge tile with every Crystal Wall standing. The fixture
   fails one of them on purpose — five posts where realm level 5 has three —
   and `Island::example()` is a legal realm-3 Heart for the server's tests.
+- **Buildings on the grid** (§10.1, TD.36): an island may end with a list of
+  buildings, each a code from `BUILDING_CODES` and its footprint's north-west
+  tile — the Spire 3 by 3, the rest 2 by 2. `ground` lays `Feature::Building`
+  on every footprint tile, which blocks feet and eyes and is a structure, not
+  a wall, for Thorns; `check` counts each footprint tile as taken and bare.
+  An island with no building writes no list, so every island before keeps its
+  bytes and its hash; the table is in the rules version. The Vault still
+  stands on one tile: its 3 by 3 would move every heist and the hold table
+  measured on it (G45).
 - **The rules version** (`rules_version`) is SHA-256 of the law table and of
   this build's digest of every golden heist. A number bumped by hand would be
   forgotten; this one moves whenever anything the goldens can see moves, and

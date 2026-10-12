@@ -181,6 +181,10 @@ pub enum Feature {
     /// §10.2's Law Pylon: one per law, walled like the Vault, but thin — it
     /// does not stop sight.
     Pylon,
+    /// A tile of one of §10.1's buildings: "Buildings sit on the realm grid
+    /// and block movement and sight." A structure like the Vault, not a wall
+    /// (Thorns, `World::thorns`), and never broken.
+    Building,
     /// §10.3's Crystal Wall: a wall until it is broken.
     CrystalWall,
     /// "Blocks; cut through in 3 seconds" / "Blocks sight".
@@ -248,8 +252,8 @@ impl Feature {
     pub fn terrain(self) -> Terrain {
         use Feature::*;
         match self {
-            RockPillar | RuinWall | Fence | Vault | Pylon | CrystalWall | Hedge | Tree | Boulder
-            | Statue | CrystalOutcrop | LavaCrack | Pond | SteppingStones => Terrain::Blocked,
+            RockPillar | RuinWall | Fence | Vault | Pylon | Building | CrystalWall | Hedge | Tree
+            | Boulder | Statue | CrystalOutcrop | LavaCrack | Pond | SteppingStones => Terrain::Blocked,
             Stream => Terrain::Pace(STREAM_PACE),
             Marsh => Terrain::Pace(MARSH_PACE),
             GravelPath => Terrain::Pace(GRAVEL_PACE),
@@ -262,8 +266,8 @@ impl Feature {
 
     fn blocks_sight(self) -> bool {
         use Feature::*;
-        matches!(self, RockPillar | RuinWall | FogBank | Vault | CrystalWall | Hedge | Tree
-                 | Boulder | Statue)
+        matches!(self, RockPillar | RuinWall | FogBank | Vault | Building | CrystalWall | Hedge
+                 | Tree | Boulder | Statue)
     }
 
     /// The ground a feature is, for noise (§12.17): a stream is water, a

@@ -8,7 +8,9 @@ use ruleborn_sim as sim;
 use sim::combos::Combos;
 use sim::grid::{Feature, Surface};
 use sim::heist::WardKind;
-use sim::island::{Island, Occupant, FEATURE_CODES, GUARD_POSTS, LAW_SLOTS, WARD_LIMITS};
+use sim::island::{
+    building_code, Island, Occupant, BUILDING_CODES, FEATURE_CODES, GUARD_POSTS, LAW_SLOTS, WARD_LIMITS,
+};
 use sim::laws_table::{note, CHORDS, CHORD_IDS, LAWS, RESONANCES, RES_IDS};
 
 /// §6.2's ground the simulation models, by content id (content/terrain.json):
@@ -141,7 +143,7 @@ impl RulebornIsland {
     }
 
     /// What stands on a tile: "vault", "pylon:<law>", "ward:<kind>",
-    /// "guard:<row>", or "".
+    /// "guard:<row>", "building:<kind>" anywhere in its footprint, or "".
     #[func]
     fn occupant(&self, x: i64, y: i64) -> GString {
         let s = match self.island.occupant(x as u8, y as u8) {
@@ -153,6 +155,10 @@ impl RulebornIsland {
                 format!("ward:{}", WARDS.iter().find(|w| w.1 == kind).map_or("", |w| w.0))
             }
             Occupant::Guard(i) => format!("guard:{}", self.island.guards[i].row),
+            Occupant::Building(i) => {
+                let code = self.island.buildings[i].0;
+                format!("building:{}", BUILDING_CODES.iter().find(|b| b.1 == code).map_or("", |b| b.0))
+            }
         };
         GString::from(&s)
     }
@@ -181,6 +187,33 @@ impl RulebornIsland {
     #[func]
     fn weave(&mut self, law: GString, x: i64, y: i64) -> bool {
         self.island.weave(&law.to_string(), x as u8, y as u8)
+    }
+
+    /// §10.1: one of the buildings content/buildings.json names, with its
+    /// footprint's north-west tile on (x, y), clearing what the footprint
+    /// covers. False for a kind not on the grid, a footprint off it or over
+    /// the Vault.
+    #[func]
+    fn place_building(&mut self, kind: GString, x: i64, y: i64) -> bool {
+        building_code(&kind.to_string())
+            .is_some_and(|code| self.island.place_building(code, x as u8, y as u8))
+    }
+
+    /// The buildings standing, each as [kind, x, y, side], x and y the
+    /// footprint's north-west tile: what the server holds the island to.
+    #[func]
+    fn buildings(&self) -> VarArray {
+        let mut out = VarArray::new();
+        for &(code, x, y) in &self.island.buildings {
+            let Some(&(id, _, side)) = BUILDING_CODES.iter().find(|b| b.1 == code) else { continue };
+            let mut b = VarArray::new();
+            b.push(&GString::from(id).to_variant());
+            for n in [x, y, side] {
+                b.push(&(n as i64).to_variant());
+            }
+            out.push(&b.to_variant());
+        }
+        out
     }
 
     #[func]
