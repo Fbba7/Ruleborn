@@ -11224,8 +11224,12 @@ V37 = {
     "<strong>The document is done; the build is not.</strong> §26.8 plans the "
     "declarations filed from the privacy inventory and the edge purged of an "
     "under-13 player’s bundles; §20.1 and §20.5 state the age check and "
-    "in-game deletion. Left: the age check and the deletion button on screens "
-    "(TD.25, TD.26); the filing and the purge are outside this repository."),
+    "in-game deletion. Built: the purge, server side (server/src/edge.mjs): "
+    "an under-13 deletion queues each erased bundle’s URL and asks the edge "
+    "to purge it, by Cloudflare’s purge by URL, until the edge confirms, "
+    "never giving one up. Left: the age check and the deletion button on "
+    "screens (TD.25, TD.26); the filing; and the deployed server given the "
+    "zone’s purge token, with one purge seen to land."),
 
 "D71": dict(status="open", left="build", note=
     "<strong>The document is done; the build is not.</strong> §5.4’s winds and "

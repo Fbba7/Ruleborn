@@ -3,6 +3,7 @@
  "tests": {
   "Apple's refund, posted to the server, takes the purchase back once, and a later receipt for it is refused (G32)": "passed",
   "B(V) is §9.6's 1.5^(V−1) at the owner's base: 5,000 at Vault level 1, 7,500 at 2, 192,216 at 10 (F36)": "passed",
+  "Cloudflare's purge by URL is asked with the zone's token for each URL, and its refusals are named (D70)": "passed",
   "Ember, once reached, is a floor: nobody drops out of Dust or Ember (18.1)": "passed",
   "Game Center's key is fetched only from a plain apple.com key URL, and few are kept (24.8)": "passed",
   "Glicko-2 reproduces Glickman's worked example, with §12.22's constants (12.22)": "passed",
@@ -181,6 +182,7 @@
   "an island's laws are read from its bundle": "passed",
   "an open raid on an under-13 player's erased island is refused as withdrawn, not crashed (20.11)": "passed",
   "an unchanged band regenerates to the same file, so the edge keeps its cache": "passed",
+  "an under-13 deletion asks the edge to purge every bundle it erased, until the edge confirms (20.11, D70)": "passed",
   "an under-13 deletion keeps bytes another player's challenge link still offers (17.6, 20.11)": "passed",
   "an under-13 deletion keeps bytes another player's island, link or raid still needs (20.11)": "passed",
   "an under-13 deletion stopped between its commit and its files is finished at the next start (20.11, 20.12)": "passed",
@@ -221,6 +223,7 @@
   "past 20 paid raids a week, a raid costs nothing and pays nothing, and the lease says so (9.6, G20)": "passed",
   "peek says what take would, and takes nothing": "passed",
   "publishing is content-addressed and idempotent": "passed",
+  "purges go to the edge a batch at a time, each refused batch waiting longer, and none given up (D70)": "passed",
   "recency of absence, the churn early warning, in bands (25.3)": "passed",
   "remixing hands over the island, and publishing the remix names the original (25.1)": "passed",
   "replays and notification settings over HTTP": "passed",
@@ -290,6 +293,7 @@
   "what privacy.json keeps for a number of days is deleted by a job the server runs daily (20.5)": "passed",
   "what runs the simulation has its own, smaller bucket, whichever route runs it (G44)": "passed",
   "while fewer than 15% change their defence, the share rises 5 points a season, to 20% at most (13.1)": "passed",
-  "with a reminder chosen, the day's raids come inside it, and a later raid waits for the next (G34)": "passed"
+  "with a reminder chosen, the day's raids come inside it, and a later raid waits for the next (G34)": "passed",
+  "with an edge that answers, the purge is asked as the deletion is made, and a deletion asked for keeps the edge's copy (20.5, 20.11)": "passed"
  }
 }

@@ -45,6 +45,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { Journal, reapplyDeletions } from "./accounts.mjs";
+import { CloudflarePurge, purgeEdge } from "./edge.mjs";
 import { PlayPurchases, ServiceAccount } from "./googleapi.mjs";
 import { Fcm } from "./push.mjs";
 import { open } from "./db.mjs";
@@ -125,6 +126,18 @@ if ((storeKit || play) && platforms.stubbed && process.env.RULEBORN_STUB_SIGNIN 
                   + "or RULEBORN_GOOGLE_CLIENT_IDS, or RULEBORN_STUB_SIGNIN=1 for a test deployment");
 }
 
+// D70: the edge's cache of an under-13 player's bundles, purged on their
+// deletion (edge.mjs). RULEBORN_CF_ZONE is the zone the bundles are served
+// from, RULEBORN_CF_PURGE_TOKEN an API token that may purge it, and
+// RULEBORN_PUBLIC_ORIGIN the https://host they are served under. Unset, the
+// server is behind no edge and the purges wait in the database.
+const edgeVars = ["RULEBORN_CF_ZONE", "RULEBORN_CF_PURGE_TOKEN", "RULEBORN_PUBLIC_ORIGIN"].map((k) => process.env[k]);
+if (edgeVars.some(Boolean) && !edgeVars.every(Boolean)) {
+  throw new Error("set RULEBORN_CF_ZONE, RULEBORN_CF_PURGE_TOKEN and RULEBORN_PUBLIC_ORIGIN together, or none");
+}
+const edge = edgeVars.every(Boolean)
+  ? new CloudflarePurge({ zone: edgeVars[0], token: edgeVars[1], origin: edgeVars[2] }) : null;
+
 mkdirSync(data, { recursive: true });
 // A key shorter than this signs nothing: an empty one, from a file a crash
 // left before it was written, would let anyone make any session token.
@@ -169,6 +182,7 @@ const service = new Service({
   // §24.3's replays, private: not in the store anyone may fetch by hash.
   replays: new Store(join(data, "replays")),
   deletions: new Journal(new Store(process.env.RULEBORN_DELETIONS ?? join(data, "deletions"))),
+  edge,
 });
 // G39's web page for deletion without the app signs in with Google under
 // RULEBORN_GOOGLE_WEB_CLIENT_ID, a web OAuth client id that must also be one
@@ -305,6 +319,14 @@ const push = fcm
 // A tick's retries, give-ups and refusals, by reason: a key without the
 // right to send, or the wrong project, shows here rather than as silence.
 const tally = (map) => Object.entries(map).map(([why, n]) => `${n} ${why}`).join(", ");
+// A purge the edge did not take waits and is asked again, never given up;
+// why it waits is logged every time (edge.mjs).
+setInterval(() => {
+  purgeEdge(service).then(({ waiting, reasons }) => {
+    if (Object.keys(reasons).length) console.error(`edge purge to retry: ${tally(reasons)}`);
+    else if (waiting && !edge) console.error(`edge purge: ${waiting} waiting, and no edge is configured`);
+  }).catch((err) => console.error("edge purge:", err));
+}, 60 * 1000).unref();
 setInterval(() => {
   service.notifications.deliver(push).then(() => {
     const t = service.notifications.tick;

@@ -678,9 +678,16 @@ DELIVERABLES = [
     ("10 to 13", "Compliance: store declarations", BACKEND, not_started(
         "the age, privacy and store declarations are filed; drafted from the schema in "
         "server/declarations.md, checked by server/test/privacy.test.mjs")),
-    ("10 to 13", "The edge purged of an under-13 player's bundles on deletion", BACKEND,
-     not_started("an under-13 deletion purges that player's bundles from the edge's "
-                 "cache, not only the server's store (§20.11, D70)")),
+    ("10 to 13", "The edge purged of an under-13 player's bundles on deletion", BACKEND, parts(
+        server_tests(
+            "an under-13 deletion asks the edge to purge every bundle it erased, until the edge confirms (20.11, D70)",
+            "with an edge that answers, the purge is asked as the deletion is made, and a deletion asked for keeps the edge's copy (20.5, 20.11)",
+            "purges go to the edge a batch at a time, each refused batch waiting longer, and none given up (D70)"),
+        server_tests(
+            "Cloudflare's purge by URL is asked with the zone's token for each URL, and its refusals are named (D70)"),
+        not_started("the deployed server holds the zone's purge token (RULEBORN_CF_ZONE, "
+                    "RULEBORN_CF_PURGE_TOKEN, RULEBORN_PUBLIC_ORIGIN) and one purge is seen to "
+                    "empty the edge's copy (§20.11, D70)"))),
     ("10 to 13", "Telemetry", BACKEND, server_tests(
         "the server records sign-ins, heists and purchases under a pseudonym, never the account (24, 20.5)",
         "a device's batch is checked whole: known events, known fields, no positions, sensible times (24.3)",

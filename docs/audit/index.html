@@ -2407,7 +2407,7 @@
         
         
         
-        <p class="v3 v36"><span class="vlabel">v3.6</span> Narrowed by the build and widened by v3.6. The age check is on a screen (TC.10), so half of the title is stale; the deletion button is still on none. §23.5 adopts a first-launch order with <em>“a summary of the protections that band sets”</em> after the age step, which is new work (TD.26), and Settings now shows <em>“any protection the age band fixes … locked”</em> (§23.2; TD.25).</p><p class="v3 v37"><span class="vlabel">v3.7</span> <strong>The document is done; the build is not.</strong> §26.8 plans the declarations filed from the privacy inventory and the edge purged of an under-13 player’s bundles; §20.1 and §20.5 state the age check and in-game deletion. Left: the age check and the deletion button on screens (TD.25, TD.26); the filing and the purge are outside this repository.</p>
+        <p class="v3 v36"><span class="vlabel">v3.6</span> Narrowed by the build and widened by v3.6. The age check is on a screen (TC.10), so half of the title is stale; the deletion button is still on none. §23.5 adopts a first-launch order with <em>“a summary of the protections that band sets”</em> after the age step, which is new work (TD.26), and Settings now shows <em>“any protection the age band fixes … locked”</em> (§23.2; TD.25).</p><p class="v3 v37"><span class="vlabel">v3.7</span> <strong>The document is done; the build is not.</strong> §26.8 plans the declarations filed from the privacy inventory and the edge purged of an under-13 player’s bundles; §20.1 and §20.5 state the age check and in-game deletion. Built: the purge, server side (server/src/edge.mjs): an under-13 deletion queues each erased bundle’s URL and asks the edge to purge it, by Cloudflare’s purge by URL, until the edge confirms, never giving one up. Left: the age check and the deletion button on screens (TD.25, TD.26); the filing; and the deployed server given the zone’s purge token, with one purge seen to land.</p>
         
       </article>
       <article class="item min" id="D71" data-group="changes"
@@ -8499,4 +8499,4 @@
     apply();
   })();
 </script>
-<!-- ruleborn-build 6a37d395cd30ae33 -->
+<!-- ruleborn-build 4123161b7e8366d7 -->

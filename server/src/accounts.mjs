@@ -42,6 +42,7 @@
 // older. It is kept for good as §20.12's log.
 
 import { transaction } from "./db.mjs";
+import { purgeEdge, queuePurge } from "./edge.mjs";
 import { Refused } from "./refused.mjs";
 import { Store } from "./store.mjs";
 
@@ -167,11 +168,14 @@ export function deleteAccount(service, account, reason = "requested", { journal 
         .run(now, account);
       left.push(crew);
     }
-    const erased = reason === "under-13" ? erase(db, account) : undefined;
+    const erased = reason === "under-13" ? erase(db, account, now) : undefined;
     return { islands: Number(islands), withdrawn: Number(withdrawn), events: Number(events), left,
              ...(erased ? { erased } : {}) };
   });
   finishErasures(service);
+  // The edge's copies, at once if it answers; if not, the server's minute
+  // tick asks again (edge.mjs).
+  if (done.erased) purgeEdge(service).catch((err) => console.error("edge purge:", err));
   return { deleted: true, reason: row.deleted_reason ?? reason, ...done };
 }
 
@@ -207,7 +211,7 @@ export function finishErasures(service) {
 
 /** §20.11's under-13 deletion, beyond what every deletion does: inside
  *  deleteAccount's transaction, with the files to delete after it. */
-function erase(db, account) {
+function erase(db, account, now) {
   const pending = db.prepare("INSERT OR IGNORE INTO erasures (store, hash) VALUES (?, ?)");
   // The replays they played. Two heists can carry the same bytes; the file
   // goes when no heist still keeps it.
@@ -232,7 +236,11 @@ function erase(db, account) {
         UNION ALL SELECT 1 FROM challenges WHERE bundle = :b AND account != :a
         UNION ALL SELECT 1 FROM leases WHERE bundle = :b AND defender != :a LIMIT 1`)
       .get({ a: account, b: bundle });
-    if (!shared) pending.run("bundles", bundle);
+    if (!shared) {
+      pending.run("bundles", bundle);
+      // The edge caches a bundle for a year by its hash (D70).
+      queuePurge(db, bundle, now);
+    }
   }
   pending.run("lists", "");
   const ratings = db.prepare(

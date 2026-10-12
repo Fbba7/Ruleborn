@@ -1713,6 +1713,30 @@
     }
    }
   },
+  "edge_purges": {
+   "about": "An under-13 deletion's bundles still to be purged from the edge's cache, until the edge confirms: a path by hash, no player.",
+   "purposes": [
+    "compliance"
+   ],
+   "keep": {
+    "for": "current"
+   },
+   "deletion": "kept",
+   "columns": {
+    "path": {
+     "type": "none"
+    },
+    "queued_at": {
+     "type": "none"
+    },
+    "attempts": {
+     "type": "none"
+    },
+    "due_at": {
+     "type": "none"
+    }
+   }
+  },
   "event_batches": {
    "about": "First-party telemetry (§24.3), batched, under a pseudonym: an HMAC of the account under the server's key.",
    "purposes": [

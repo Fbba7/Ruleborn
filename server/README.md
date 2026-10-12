@@ -501,7 +501,15 @@ already leased on their island is refused as `island_withdrawn`. Bytes are
 kept that another player's island, Workshop island, challenge link or lease
 still is. The files go after the deletion's commit, each written first to
 `erasures` in its transaction, so a deletion stopped between the two is
-finished when the server next starts. A raid leased on anyone before their
+finished when the server next starts. The edge caches a bundle for a year by
+its hash, so each erased bundle's URL is also queued in `edge_purges` and
+purged from the edge's cache (`src/edge.mjs`, D70): Cloudflare's purge by
+URL, thirty a call, asked as the deletion is made and then by the server's
+minute tick. A purge the edge refuses or cannot take waits five minutes,
+doubling to six hours, and is never given up, and the log says why each
+time. The row goes when the edge confirms. `RULEBORN_CF_ZONE`,
+`RULEBORN_CF_PURGE_TOKEN` and `RULEBORN_PUBLIC_ORIGIN` point it at the
+zone; unset, the server is behind no edge and the purges wait. A raid leased on anyone before their
 deletion settles for the raider and pays, rates and records nothing of the
 one who is gone. A ban keeps only the platform identity, and
 the day, in `bans`, apart from the account (§20.12's "minimum
@@ -746,6 +754,7 @@ built — register **D63**.
     src/shop.mjs      products priced in money, gifts, refunds, §20.2's caps, cosmetics owned and worn
     src/cosmetics.json  the cosmetics sold (none authored yet)
     src/telemetry.mjs first-party events, pseudonymous, kept 90 days, and the report
+    src/edge.mjs      an under-13 deletion's bundles purged from the edge's cache (D70)
     src/accounts.mjs  deleting an account: the person goes, the records stay; the journal
     web/delete.html   deletion without the app, signed in with Google (G39)
     src/privacy.mjs   privacy.json checked against the schema; declarations.md written

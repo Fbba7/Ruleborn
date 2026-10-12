@@ -117,10 +117,10 @@ export class Service {
                 random = randomBytes, seasonStart = 0, verifyReceipt = () => null,
                 settleReceipt = async () => ({ ok: true }),
                 cosmetics = undefined, preparePlatform = async () => {}, replays = new Store(),
-                firstBand = "13-15", deletions = new Journal() }) {
+                firstBand = "13-15", deletions = new Journal(), edge = null }) {
     if (!["13-15", "16-17", "18+"].includes(firstBand)) throw new Error(`no age band ${firstBand}`);
     Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random, verifyReceipt,
-                          preparePlatform, replays, firstBand, deletions });
+                          preparePlatform, replays, firstBand, deletions, edge });
     this.seasons = new Seasons(this, seasonStart);
     this.track = new Track(this);
     this.telemetry = new Telemetry(this);

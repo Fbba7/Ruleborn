@@ -151,6 +151,7 @@ Erased: gone. Severed: kept, under an account id that no longer leads to anyone 
 | `notifications` | erased | erased | 7 days after sent (`notifications.expire`) |
 | `bans` | kept | kept — kept: the ban outlives the account | as long as the ban |
 | `erasures` | kept | kept | while current |
+| `edge_purges` | kept | kept | while current |
 | `event_batches` | erased | erased | 90 days (`telemetry.compact`) |
 | `first_seen` | erased | erased | as long as the account |
 | `cohorts` | kept | kept | good: not about a person |

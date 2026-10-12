@@ -647,6 +647,16 @@ CREATE TABLE IF NOT EXISTS erasures (
   PRIMARY KEY (store, hash)
 );
 
+-- A bundle an under-13 deletion erased, still to be purged from the edge's
+-- cache (20.11; edge.mjs): its path, and when to ask again. Deleted when the
+-- edge confirms.
+CREATE TABLE IF NOT EXISTS edge_purges (
+  path      TEXT PRIMARY KEY,
+  queued_at INTEGER NOT NULL,
+  attempts  INTEGER NOT NULL DEFAULT 0,
+  due_at    INTEGER NOT NULL
+);
+
 -- First-party telemetry (§24, §24.3; telemetry.mjs). Keyed by a pseudonym,
 -- never an account (§20.5), and discarded after 90 days: not append-only,
 -- because §24.3 says the raw events go. §24.1: "Telemetry is batched rather
