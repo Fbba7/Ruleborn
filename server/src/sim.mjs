@@ -101,7 +101,7 @@ export class Build {
     const status = this.x.rb_verify(replay.length, island.length);
     if (status < 0) return { status: "refused", reason: REFUSED[status] };
     if (status > 0) return { status: "diverged", second: status };
-    const v = this.buffer().slice(0, 24);
+    const v = this.buffer().slice(0, 32);
     const view = new DataView(v.buffer);
     return {
       status: "verified",
@@ -110,6 +110,8 @@ export class Build {
         banked: view.getInt32(4, true), capacity: view.getInt32(8, true),
         pages: view.getUint32(12, true), cracked: view.getUint32(16, true),
         left: view.getInt32(20, true),
+        // Whose pylons broke, bit n §7.7's nth law (content/laws.json's order).
+        broken: Number(view.getBigUint64(24, true)),
       },
     };
   }

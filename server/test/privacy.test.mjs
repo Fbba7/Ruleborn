@@ -58,6 +58,13 @@ async function busy() {
   };
   raid(y.account, xBundle, openPlan());
   t.clock.now += DAY;
+  const studied = t.service.lease(x.account, yBundle);
+  t.service.submit(x.account, studied.token, play(t, studied, { plan: null }));
+  // The Codex: a heist studied, a law worked on (codex.mjs).
+  const crossed = t.service.codex.show(x.account).laws.find((l) => !["half_gravity", "slow_rivers", "bloom"].includes(l.law));
+  t.service.codex.study(x.account, { heist: studied.token, law: crossed.law });
+  t.service.codex.workOn(x.account, crossed.law);
+  t.clock.now += DAY;
   raid(x.account, yBundle, null);
   const held = t.service.lease(x.account, yBundle);
 

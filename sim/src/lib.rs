@@ -4395,9 +4395,11 @@ impl World {
             Grade::Clean
         };
         let pages = self.laws.iter().filter(|l| l.broken_at.is_some()).count() as u32;
+        let broken = self.laws.iter().filter(|l| l.broken_at.is_some())
+            .fold(0u64, |m, l| m | 1u64 << l.def);
         let left = self.dropped.iter().map(|&(_, n)| n).sum::<i32>()
             + self.raiders.iter().filter(|r| r.standing != Standing::Out).map(|r| r.carried).sum::<i32>();
-        Outcome { grade, banked, capacity, caught, out, pages, cracked: self.cracked, left }
+        Outcome { grade, banked, capacity, caught, out, pages, broken, cracked: self.cracked, left }
     }
 
     /// Enter a state, and do what entering it means.

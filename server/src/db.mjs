@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   keeper_level      INTEGER NOT NULL DEFAULT 1,
   -- §14.2: the experience toward the next level (keeper.mjs).
   keeper_xp         INTEGER NOT NULL DEFAULT 0,
+  -- §7.6's "a law you are actually working on" (codex.mjs).
+  working_on        TEXT,
   -- §20.11's terms-of-use gate: the version of the terms accepted (safety.mjs).
   terms_version     TEXT,
   created_at        INTEGER NOT NULL,
@@ -144,6 +146,28 @@ CREATE TABLE IF NOT EXISTS nurseries (
   realm TEXT NOT NULL,
   since INTEGER NOT NULL,
   PRIMARY KEY (owner, realm)
+);
+
+-- §7.6: the Codex — each law a player has met, its pages, and its tier (0
+-- not restored, then I to III). codex.mjs.
+CREATE TABLE IF NOT EXISTS codex (
+  owner       TEXT NOT NULL REFERENCES accounts(id),
+  law         TEXT NOT NULL,
+  pages       INTEGER NOT NULL DEFAULT 0 CHECK (pages >= 0),
+  tier        INTEGER NOT NULL DEFAULT 0 CHECK (tier BETWEEN 0 AND 3),
+  met_at      INTEGER NOT NULL,
+  restored_at INTEGER,
+  PRIMARY KEY (owner, law)
+);
+
+-- §7.6: "After each heist the player picks one law the crew crossed to
+-- study": the one study a heist allows, by its token. codex.mjs.
+CREATE TABLE IF NOT EXISTS studies (
+  token TEXT PRIMARY KEY REFERENCES heists(token),
+  owner TEXT NOT NULL REFERENCES accounts(id),
+  law   TEXT NOT NULL,
+  pages INTEGER NOT NULL,
+  at    INTEGER NOT NULL
 );
 
 -- §24.8: "Bundle hash as the key, realm type, difficulty band, when
@@ -695,6 +719,8 @@ const ADDED = [
   ["accounts", "push_token", "TEXT"],
   // §14.2's experience toward the next Keeper level (keeper.mjs).
   ["accounts", "keeper_xp", "INTEGER NOT NULL DEFAULT 0"],
+  // §7.6's "a law you are actually working on" (codex.mjs).
+  ["accounts", "working_on", "TEXT"],
   // The terms of use accepted (safety.mjs).
   ["accounts", "terms_version", "TEXT"],
   ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],

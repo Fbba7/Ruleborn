@@ -30,6 +30,11 @@
 //   POST /v1/home/characters/:id/level {"to"}                → raised a level with Essence (§11.4)
 //   POST /v1/home/characters/:id/home  {"home"}              → moved to another free place (§11.4)
 //   POST /v1/home/collect        {"realm", "kind"}           → what a producer holds, paid (§9.3)
+//   GET  /v1/codex                                           → every law met: pages, tier, chapter, next cost
+//   POST /v1/codex/study         {"heist", "law"}            → a heist's one study (§7.6)
+//   POST /v1/codex/working       {"law"}                     → the law worked on, for the floor's page
+//   POST /v1/codex/restore       {"law"}                     → restored at tier I for its pages (§7.6, §14.2)
+//   POST /v1/codex/tier          {"law", "to"}               → tier II or III for pages and Aether
 //   GET  /v1/targets                                         → {band: list hash}
 //   PUT  /v1/age                 {"band": "13-15"|"16-17"|"18+"} → {ageBand}
 //                                {"band": "under-13"}         → the account deleted (§20.11)
@@ -447,6 +452,23 @@ export function handler(service, { webClientId = null, appleNotifications = null
         if (m === "POST" && a === "characters" && b && c === "work") return json(h.work(me, b, await body(request)));
         if (m === "POST" && a === "characters" && b && c === "level") return json(h.level(me, b, (await body(request)).to));
         if (m === "POST" && a === "characters" && b && c === "home") return json(h.move(me, b, text((await body(request)).home)));
+        return json({ error: "no_such_route" }, 404);
+      }
+      if (parts[1] === "codex") {
+        // §7.6 (codex.mjs): a restoration or a tier names what it leads to,
+        // and a heist allows one study, so a retry is answered as done.
+        const me = who();
+        const cx = service.codex;
+        const m = request.method;
+        const a = parts[2];
+        if (m === "GET" && !a) return json(cx.show(me));
+        if (m === "POST" && parts.length === 3) {
+          const b = await body(request);
+          if (a === "study") return json(cx.study(me, { heist: text(b.heist), law: text(b.law) }));
+          if (a === "working") return json(cx.workOn(me, b.law == null ? null : text(b.law)));
+          if (a === "restore") return json(cx.restore(me, text(b.law)));
+          if (a === "tier") return json(cx.tier(me, text(b.law), b.to));
+        }
         return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "survey" && request.method === "GET") {

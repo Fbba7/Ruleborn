@@ -620,8 +620,8 @@ level 40 the top). It is earned wherever a haul is: not by a game among
 friends (F48) or a raid past the week's 20 (G20). `GET /v1/keeper` is the
 level and the bar to the next. The level is what the Keeper gates read — the
 Beacon's Keeper 6, matchmaking's window — which until this nothing raised.
-Spending earns it too, 1 for every 40 Starlight (below); restoring laws, the
-last source, comes with the Codex (**G42**).
+Spending earns it too, 1 for every 40 Starlight (below), and restoring a law
+60 + 10 × level (the Codex, below).
 
 ## The universe
 
@@ -665,6 +665,20 @@ so the device never works a rule out itself.
   pays the roster's keep, a quarter. The law, stability and fault terms are
   1 until weaving is kept here, and `GET /v1/home` says so. What the document
   leaves open is **G82**.
+
+## The Codex
+
+`src/codex.mjs` is §7.6's Codex. It starts with Half gravity, Slow rivers and
+Bloom restored at tier I. A validated heist gives a page of each law met for
+the first time, and a heist that pays gives a page for each pylon broken —
+read from the re-simulation, which reports whose pylons they were — and every
+eighth such heist a page of the law the player marked as worked on. A heist
+allows one study of a law it crossed: 3 pages if clean, 1 if foiled, 2
+otherwise. A friendly heist pays its owner a page of their worked-on law for
+each raider caught. A law is restored at tier I for 10, 20, 35 or 60 pages
+by rank, from Keeper level 6 for chapter 2, and pays §14.2's 60 + 10 × level;
+tiers II and III cost 20 and 40 pages, 2,000 and 8,000 Aether, and Spire
+levels 4 and 7. What the document leaves open is **G83**.
 
 ## Constellations and crews
 

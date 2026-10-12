@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9857,6 +9857,30 @@ dict(id="F62", kind="finding", severity="significant", status="open",
          "holds 38.8% with the ladder against a band centred on 37.5%; the edits "
          "are drafted."),
 
+dict(id="G83", kind="gap", severity="minor", status="open",
+     title="§7.6 and §12.11 leave open what a foiled heist’s page is, which heists "
+           "count to the floor and which law a friend’s page is of; the server "
+           "reads each one way",
+     refs=["7.6", "12.11", "17.6"],
+     body="Building the Codex on the server (TC.12) needed four readings. "
+          "<strong>A foiled heist:</strong> <em>“Breaking a pylon gives a page of "
+          "its law; a foiled heist gives one”</em> is read as the study after a "
+          "foiled heist giving one page where a heist that banked gives 2, 3 if "
+          "clean. <strong>The floor</strong> counts the heists that pay — not a "
+          "friendly heist or a challenge, which <em>“pays no haul”</em> — and "
+          "gives its page to the law marked as worked on, none when no law is "
+          "marked. <strong>A friendly heist</strong> pays the raider no study and "
+          "no pylon page, and its owner <em>“a page for every raider their guards "
+          "catch”</em> of the law the owner marked as worked on; any heist still "
+          "meets the laws it crosses. <strong>Laws after launch</strong> have no "
+          "chapter until their season adds one (G49), so they gather pages and are "
+          "not restored. A study may be made any time after its heist, once. The "
+          "pylons broken are read from the re-simulation, which now reports whose "
+          "they were. The Codex costs the load test a row for each starting law "
+          "and each law met, once: 50.6, 27.67 and 15.17 rows a player a day "
+          "(<code>server/load.json</code>). Found building TC.12.",
+     rec="State the readings in §7.6 and §12.11 (the edits are drafted)."),
+
 dict(id="G82", kind="gap", severity="minor", status="open",
      title="§11.3 gives each trait rarity’s odds and no trait a rarity, and §9.3 "
            "leaves open how worker bonuses combine, what a building holds and when "
@@ -11347,6 +11371,11 @@ V37 = {
 "F62": dict(status="open", left="document", note=
     "Found building TD.69, after v3.7: a balance figure for the document, with "
     "its edits drafted (TD.75)."),
+
+"G83": dict(status="open", left="document", note=
+    "Found building TC.12, after v3.7: what a foiled heist's page is, which "
+    "heists count to the floor and whose law a friend's page is, read one way "
+    "on the server, with the edits drafted (TD.75)."),
 
 "G82": dict(status="open", left="document", note=
     "Found building TC.12, after v3.7: no trait has a rarity, and four readings "
@@ -14771,6 +14800,20 @@ EDITS = {
                  "for one task in three); iteration 415 (301 to 531), a floor at 1x "
                  "the build; plan about 830 (602 to 1,062)",
          why="§26.8 and §27.2, with phases 4a to 4c. C72."),
+],
+"G83": [
+    dict(section="7.6", action="replace",
+         find="Breaking a pylon gives a page of its law; a foiled heist gives one.",
+         replace="Breaking a pylon gives a page of its law; a foiled heist’s study gives one.",
+         why="Whether a foiled heist’s page is its study’s or one more. G83."),
+    dict(section="7.6", action="replace",
+         find="Every eighth heist guarantees a page of a law you are actually working on",
+         replace="Every eighth heist that pays — not a friendly heist or a challenge — guarantees a page of the law you marked as working on",
+         why="Which heists count, and which law is the one worked on. G83."),
+    dict(section="12.11", action="replace",
+         find="the friend earns a page for every raider their guards catch",
+         replace="the friend earns a page of the law they marked as working on for every raider their guards catch",
+         why="Which law the friend’s pages are of. G83."),
 ],
 "G82": [
     dict(section="9.3", action="replace",

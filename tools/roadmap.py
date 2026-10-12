@@ -1132,8 +1132,14 @@ dict(
                     "after assignment, production at \u00a79.3's rate with the "
                     "staffing, the realm's school and the workers' bonuses, held "
                     "12 hours, collected into a ledger that now carries Aether, "
-                    "the roster's keep taken from the Essence (G82). Next: the "
-                    "Codex's pages and restorations; the builder publishing to the player's own "
+                    "the roster's keep taken from the Essence (G82); and the "
+                    "Codex (server/src/codex.mjs): the starting laws at tier I, "
+                    "a page for each law met, a page for each pylon broken "
+                    "(read from the re-simulation), one study a heist, the "
+                    "eighth heist's page, restorations at \u00a77.6's page costs "
+                    "with chapter 2 from Keeper level 6 and \u00a714.2's "
+                    "experience, and tiers II and III for pages, Aether and the "
+                    "Spire (G83). Next: the builder publishing to the player's own "
                     "realms, with the wards, posts and pylons an island places "
                     "held to those built (today only its realm, realm level "
                     "and Vault are), the Keeper choosing which wards publish "
@@ -1173,7 +1179,7 @@ dict(
                   "it proves",
              evidence="server/test/universe.test.mjs; client/tests/universe_tests.gd, "
                       "through python3 client/status.py",
-             register=["G42", "F56", "G43", "D60", "G45", "G19", "G82"]),
+             register=["G42", "F56", "G43", "D60", "G45", "G19", "G82", "G83"]),
         dict(id="TC.13", owner="claude", status="done",
              title="What the stores require of player-made content, and the declarations ready to file",
              detail="\u00a720.11 lists what the stores ask of a game where players "
@@ -2334,7 +2340,7 @@ dict(
                   "edits applied, and check_document passes on it",
              evidence="tools/audit_register.py EDITS; tools/check_edits.py",
              blocked_by=[],
-             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77", "G78", "G79", "G80", "G81", "G82"]),
+             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83"]),
         dict(id="TD.74", owner="claude", status="blocked",
              title="Notifications and session telemetry on the device",
              detail="The server sends §14.6's notifications, keeps the night "

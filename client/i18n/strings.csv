@@ -524,3 +524,11 @@ ERR_NOT_A_WORKPLACE,nobody can work there,ninguém pode trabalhar ali
 ERR_NOT_ENOUGH_ESSENCE,you need more Essence,você precisa de mais Essência
 ERR_NOT_THE_NEXT_BIRTH,that is not the next birth,esse não é o próximo nascimento
 ERR_SLOTS_FULL,every worker slot there is filled,todos os postos de trabalho ali estão ocupados
+ERR_ALREADY_STUDIED,that heist was already studied for another law,esse assalto já foi estudado para outra lei
+ERR_CHAPTER_CLOSED,that law's chapter of the Codex is not open yet,o capítulo dessa lei no Codex ainda não está aberto
+ERR_LAW_NOT_CROSSED,the crew did not cross that law,a equipe não cruzou essa lei
+ERR_NO_SUCH_LAW,there is no such law,essa lei não existe
+ERR_NOT_ENOUGH_AETHER,you need more Aether,você precisa de mais Aether
+ERR_NOT_ENOUGH_PAGES,you need more pages of that law,você precisa de mais páginas dessa lei
+ERR_NOT_THE_NEXT_TIER,that is not the next tier,esse não é o próximo nível da lei
+ERR_NOTHING_TO_STUDY,a heist among friends gives nothing to study,um assalto entre amigos não dá nada para estudar

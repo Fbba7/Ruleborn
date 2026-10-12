@@ -12,6 +12,7 @@
  ],
  "BREAKER_VAULT_MULTIPLIER": 2,
  "CARRIER_LOADED_PACE": 0.85,
+ "CHAPTER_TWO_KEEPER": 6,
  "CONSTELLATION_ELDERS": 4,
  "CONSTELLATION_KEEPER_LEVEL": 6,
  "CONSTELLATION_SIZE": 30,
@@ -55,6 +56,8 @@
  "DOWN_SECONDS": 10,
  "ECHO_DAYS": 14,
  "ENTRY_FEE_RATE": 0.02,
+ "FLOOR_HEISTS": 8,
+ "FOILED_PAGES": 1,
  "FREE_CPU_MS": 10,
  "FREE_WRITES_DAY": 100000,
  "GLICKO": [
@@ -166,6 +169,7 @@
    3
   ]
  ],
+ "MEET_PAGES": 1,
  "MENDER_REVIVE_SECONDS": 1.5,
  "NEW_PLAYER_SHIELD_HOURS": 72,
  "NIGHT_HOURS": {
@@ -203,6 +207,12 @@
   "Weight": "Flow"
  },
  "OWN_SCHOOL_PRODUCTION": 1.1,
+ "PAGE_COSTS": [
+  10,
+  20,
+  35,
+  60
+ ],
  "PAID_WRITES_MONTH": 50000000,
  "PREMIUM_TRACK_EUR": 6,
  "PRODUCER_HOLD_HOURS": 12,
@@ -335,8 +345,29 @@
   "garden",
   "hearth"
  ],
+ "STARTING_LAWS": [
+  "half_gravity",
+  "slow_rivers",
+  "bloom"
+ ],
+ "STUDY_PAGES": [
+  2,
+  3
+ ],
  "TAKEDOWN_SECONDS": 2,
  "THIN_BAND": 3,
+ "TIER_COSTS": [
+  [
+   20,
+   2000,
+   4
+  ],
+  [
+   40,
+   8000,
+   7
+  ]
+ ],
  "TRACE_HOURS": 24,
  "VAULT_HEALTH_PER_LEVEL": 1500,
  "WARD_HEALTH_PER_LEVEL": 550,

@@ -201,6 +201,11 @@
      "type": "gameplay",
      "holds": "the experience toward the next Keeper level (§14.2)"
     },
+    "working_on": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "the law the player marked as worked on, which the bad-luck floor's page goes to (§7.6)"
+    },
     "terms_version": {
      "type": "other-usage",
      "deletion": "cleared",
@@ -459,6 +464,65 @@
      "type": "gameplay"
     },
     "since": {
+     "type": "gameplay"
+    }
+   },
+   "deletion": "erased",
+   "keep": {
+    "for": "account"
+   },
+   "purposes": [
+    "functionality"
+   ]
+  },
+  "codex": {
+   "about": "Each player's Codex: the laws met, their pages and tiers (§7.6).",
+   "columns": {
+    "owner": {
+     "names": "account",
+     "type": "user-id"
+    },
+    "law": {
+     "type": "gameplay"
+    },
+    "pages": {
+     "type": "gameplay"
+    },
+    "tier": {
+     "type": "gameplay"
+    },
+    "met_at": {
+     "type": "gameplay"
+    },
+    "restored_at": {
+     "type": "gameplay"
+    }
+   },
+   "deletion": "erased",
+   "keep": {
+    "for": "account"
+   },
+   "purposes": [
+    "functionality"
+   ]
+  },
+  "studies": {
+   "about": "The one law each heist was studied for, and its pages (§7.6).",
+   "columns": {
+    "token": {
+     "type": "gameplay"
+    },
+    "owner": {
+     "names": "account",
+     "type": "user-id"
+    },
+    "law": {
+     "type": "gameplay"
+    },
+    "pages": {
+     "type": "gameplay"
+    },
+    "at": {
      "type": "gameplay"
     }
    },

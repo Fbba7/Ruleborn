@@ -154,6 +154,9 @@ pub struct Outcome {
     pub out: u32,
     /// Laws whose pylon the crew broke: a page of each (§12.6).
     pub pages: u32,
+    /// Which: bit n is §7.7's nth law (`laws_table::LAWS`, content/laws.json's
+    /// order), so the server knows whose page each is (§7.6).
+    pub broken: u64,
     /// Structures broken while Cracked gardens sounds (§8.4): "broken
     /// structures leave Essence that the owner collects after the heist".
     /// How much each leaves is not stated (G25), so the count is reported

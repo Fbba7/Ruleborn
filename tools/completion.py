@@ -420,8 +420,14 @@ DELIVERABLES = [
         not_started("a birth's kind weighted by the laws woven in its realm and the crown laws, "
                     "and law-linked traits three times as likely there (§11.3, §11.5), once the "
                     "server keeps what is woven (TC.12)"))),
-    ("4a", "The Codex's restorations", BACKEND, not_started(
-        "the server records the Codex's restorations and what they cost (TC.12)")),
+    ("4a", "The Codex's restorations", BACKEND, server_tests(
+        "the Codex starts with Half gravity, Slow rivers and Bloom restored at tier I (7.6)",
+        "a heist meets the island's laws, a page each, and a broken pylon gives a page of its law (7.6)",
+        "a heist allows one study of a law it crossed: 3 pages if clean, 1 if foiled, 2 otherwise (7.6)",
+        "every eighth paying heist gives a page of the law worked on (7.6)",
+        "restoring a law costs its rank's pages, waits for its chapter, and pays 60 + 10 × level experience (7.6, 14.2)",
+        "tiers II and III cost their pages, their Aether and a Spire level (7.6)",
+        "the Codex over HTTP: read, worked on, restored, and refused with the reason (7.6)")),
     # "14.2's experience from each": from heists and from spending so far, as
     # equal parts with what the unbuilt sources will add.
     ("4a", "§14.2's experience from each", BACKEND, parts(
@@ -433,7 +439,8 @@ DELIVERABLES = [
             "spending earns §14.2's experience, 1 for every 40 Starlight, with nothing lost between purchases"),
         # §14.2 pays nothing for production or births: "successful heists …,
         # foiled heists …, spending … and restoring laws".
-        not_started("restoring a law pays §14.2's 60 + 10 × Keeper level, with the Codex (TC.12)"))),
+        server_tests(
+            "restoring a law costs its rank's pages, waits for its chapter, and pays 60 + 10 × level experience (7.6, 14.2)"))),
     ("4a", "Offline building, weaving and assigning, confirmed on reconnection", BACKEND,
      not_started("what the device built, wove and assigned offline is confirmed or "
                  "refused by the server when it reconnects (TC.12)")),

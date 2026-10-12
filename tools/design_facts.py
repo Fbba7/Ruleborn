@@ -211,6 +211,24 @@ ROSTER_KEEP_SHARE = 0.25
 #: §9.5's birth price: "100 × 1.3455^ruleborn owned Essence, where owned is
 #: n − 1 for the nth birth" — the base and the growth.
 BIRTH_PRICE = (100, 1.3455)
+#: §7.6, "the home of the page costs": "Restoring a law: 10, 20, 35 or 60
+#: pages by rank" — common, uncommon, rare, deep.
+PAGE_COSTS = (10, 20, 35, 60)
+#: §7.6: "tier II costs 20 more pages and 2,000 Aether (Spire level 4); tier III
+#: costs 40 more pages and 8,000 Aether (Spire level 7)" — (pages, Aether, Spire).
+TIER_COSTS = ((20, 2_000, 4), (40, 8_000, 7))
+#: §7.6: "receives 2 of its pages, 3 if the heist was clean", "a foiled heist
+#: gives one", and a law met "joins the Codex with 1 page".
+STUDY_PAGES = (2, 3)
+FOILED_PAGES = 1
+MEET_PAGES = 1
+#: §7.6: "Every eighth heist guarantees a page of a law you are actually
+#: working on".
+FLOOR_HEISTS = 8
+#: §7.6: "Starting laws: Half gravity, Slow rivers and Bloom, all at tier I."
+STARTING_LAWS = ("half_gravity", "slow_rivers", "bloom")
+#: §7.6: "12 findable from the start and all 24 from Keeper level 6".
+CHAPTER_TWO_KEEPER = 6
 #: §9.5's character levels: "150 × 1.55^(level − 2) Essence per level, up to
 #: level 10" — the base, the growth and the top.
 LEVEL_PRICE = (150, 1.55, 10)
@@ -431,6 +449,14 @@ HOME = {
     "ATTEMPT_BAND": "9.6",
     "ROSTER_KEEP_SHARE": "9.5",
     "BIRTH_PRICE": "9.5",
+    "PAGE_COSTS": "7.6",
+    "TIER_COSTS": "7.6",
+    "STUDY_PAGES": "7.6",
+    "FOILED_PAGES": "7.6",
+    "MEET_PAGES": "7.6",
+    "FLOOR_HEISTS": "7.6",
+    "STARTING_LAWS": "7.6",
+    "CHAPTER_TWO_KEEPER": "7.6",
     "LEVEL_PRICE": "9.5",
     "WORKER_SCHOOL_BONUS": "9.2",
     "ROSTER_PLACES": "11.5",
@@ -600,6 +626,18 @@ STATED = {
                           lambda m: int(m[0]) / 100),
     "BIRTH_PRICE": (r"\| A new ruleborn\n\| (\d+) × ([\d.]+) ?ruleborn owned Essence, where owned is n − 1",
                     lambda m: (int(m[0]), float(m[1]))),
+    "PAGE_COSTS": (r"Restoring a law: (\d+), (\d+), (\d+) or (\d+) pages by rank",
+                   lambda m: tuple(int(x) for x in m)),
+    "TIER_COSTS": (r"tier II costs (\d+) more pages and ([\d,]+) Aether \(Spire level (\d+)\); tier III costs "
+                   r"(\d+) more pages and ([\d,]+) Aether \(Spire level (\d+)\)",
+                   lambda m: tuple(tuple(int(x.replace(",", "")) for x in m[i:i + 3]) for i in (0, 3))),
+    "STUDY_PAGES": (r"receives (\d+) of its pages, (\d+) if the heist was clean", lambda m: (int(m[0]), int(m[1]))),
+    "FOILED_PAGES": (r"a foiled heist gives (one|two)", lambda m: {"one": 1, "two": 2}[m[0]]),
+    "MEET_PAGES": (r"joins the Codex with (\d+) page", lambda m: int(m[0])),
+    "FLOOR_HEISTS": (r"Every (eighth|tenth|sixth) heist guarantees a page", lambda m: {"sixth": 6, "eighth": 8, "tenth": 10}[m[0]]),
+    "STARTING_LAWS": (r"Starting laws: ([\w ]+), ([\w ]+) and ([\w ]+), all at tier I",
+                      lambda m: tuple(x.strip().lower().replace(" ", "_") for x in m)),
+    "CHAPTER_TWO_KEEPER": (r"12 findable from the start and all 24 from Keeper level (\d+)", lambda m: int(m[0])),
     "LEVEL_PRICE": (r"\| Character levels\n\| (\d+) × ([\d.]+) ?level − 2 Essence per level, up to level (\d+)",
                     lambda m: (int(m[0]), float(m[1]), int(m[2]))),
     "WORKER_SCHOOL_BONUS": (r"Motion and Matter ruleborn \(\+(\d+)%\)", lambda m: int(m[0]) / 100),

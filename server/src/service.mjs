@@ -39,6 +39,7 @@ import { check, issue } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
 import { Track } from "./track.mjs";
 import { Safety } from "./safety.mjs";
+import { Codex } from "./codex.mjs";
 import { Home } from "./home.mjs";
 import { Universe } from "./universe.mjs";
 
@@ -129,6 +130,7 @@ export class Service {
     this.keeper = new Keeper(this);
     this.universe = new Universe(this);
     this.home = new Home(this);
+    this.codex = new Codex(this);
     this.safety = new Safety(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), settleReceipt, catalogue: cosmetics });
   }
@@ -631,6 +633,8 @@ export class Service {
         // §11.5: the first heist brings two strays home, free (home.mjs);
         // the roster says so, and the heist's outcome is the haul's alone.
         this.home.firstStrays(lease.attacker, lawsOf(this.store.get(lease.bundle)), now);
+        // §7.6: the laws met, the pylons' pages and the floor (codex.mjs).
+        this.codex.afterHeist(lease, decision.verdict, now);
         this.db.prepare("UPDATE heists SET validated = 1, outcome = ? WHERE token = ?")
           .run(JSON.stringify(outcome), lease.token);
       }

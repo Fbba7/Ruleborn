@@ -4,9 +4,9 @@
 // level), foiled heists (10 + 2 × level), spending (1 for every 40 Starlight)
 // and restoring laws (60 + 10 × level)", and its table gives the experience
 // from each level to the next, 1 to 40. The server settles heists, so it
-// awards their experience here, in the heist's own transaction; spending and
-// restoring laws come with the home economy, which the server does not hold
-// yet (G42). A level is what every Keeper gate reads: the Beacon's Keeper 6
+// awards their experience here, in the heist's own transaction; spending
+// (universe.mjs) and restoring laws (codex.mjs) award theirs in their own
+// purchase's. A level is what every Keeper gate reads: the Beacon's Keeper 6
 // (§17.1), matchmaking's window (§12.22).
 
 import { readFileSync } from "node:fs";
