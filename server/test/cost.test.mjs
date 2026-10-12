@@ -144,6 +144,12 @@ test("a player's sign-ins of a day are one event, and the day's other events joi
 // 23.75 now. The ceiling holds the saving.
 test("a scoring heist and its lease bill at most 24 rows, index entries counted, as D1 bills them (24.1, F47)", () => {
   const t = twoPlayers();
+  // A player's first heist also writes, once, the universe's start and the
+  // roster it brings home (§11.5's two strays, home.mjs): a player's cost,
+  // not a heist's, so one heist is played before the bill opens.
+  const first = t.service.lease(t.raider.account, t.bundle);
+  t.service.submit(t.raider.account, first.token, play(t, first, { plan: openPlan() }));
+  t.clock.now += 2 * 24 * 60 * 60 * 1000;
   const bill = billed(t.service.db);
   const cycles = 4;
   for (let i = 0; i < cycles; i++) {
@@ -177,6 +183,33 @@ test("a ledger of a row a currency is rebuilt as a row an event, its hauls and s
     const r = db.prepare("SELECT SUM(starlight) AS s, SUM(essence) AS e, SUM(paid) AS p FROM ledger WHERE account = 'a'").get();
     assert.deepEqual({ ...r }, { s: 800, e: 940, p: 1840 });
     assert.throws(() => db.prepare("UPDATE ledger SET starlight = 1").run(), /append-only/);
+    db.close();
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a ledger made before Aether is rebuilt with it, every row moved as it was and still append-only (9.3)", () => {
+  const dir = mkdtempSync(join(tmpdir(), "ruleborn-"));
+  const path = join(dir, "old.db");
+  try {
+    const old = new DatabaseSync(path);
+    old.exec(`CREATE TABLE accounts (id TEXT PRIMARY KEY, platform_identity TEXT NOT NULL UNIQUE,
+                league TEXT NOT NULL DEFAULT 'dust', cosmetics TEXT NOT NULL DEFAULT '[]',
+                pass_expires_at INTEGER, keeper_level INTEGER NOT NULL DEFAULT 1, created_at INTEGER NOT NULL);
+              CREATE TABLE ledger (id INTEGER PRIMARY KEY AUTOINCREMENT, account TEXT NOT NULL REFERENCES accounts(id),
+                starlight INTEGER NOT NULL DEFAULT 0, essence INTEGER NOT NULL DEFAULT 0,
+                paid INTEGER NOT NULL DEFAULT 0, reason TEXT NOT NULL, heist TEXT, at INTEGER NOT NULL,
+                CHECK (starlight != 0 OR essence != 0 OR paid != 0));
+              INSERT INTO accounts (id, platform_identity, created_at) VALUES ('a', 'gc:a', 0);
+              INSERT INTO ledger (account, starlight, essence, paid, reason, at) VALUES ('a', 900, 300, 1200, 'haul (9.6)', 5);
+              INSERT INTO ledger (account, starlight, reason, at) VALUES ('a', -100, 'entry fee (9.4)', 6);`);
+    old.close();
+    const db = open(path);
+    const r = db.prepare("SELECT SUM(starlight) AS s, SUM(essence) AS e, SUM(paid) AS p, SUM(aether) AS a FROM ledger").get();
+    assert.deepEqual({ ...r }, { s: 800, e: 300, p: 1200, a: 0 });
+    db.prepare("INSERT INTO ledger (account, aether, reason, at) VALUES ('a', 60, 'collected (9.3)', 7)").run();
+    assert.throws(() => db.prepare("UPDATE ledger SET aether = 1").run(), /append-only/);
     db.close();
   } finally {
     rmSync(dir, { recursive: true, force: true });

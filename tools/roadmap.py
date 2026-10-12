@@ -1123,7 +1123,17 @@ dict(
                     "raised at \u00a710.2's costs and needs, paid from the "
                     "ledger with \u00a714.2's experience for spending, islands "
                     "held to what is built \u2014 and the client's universe "
-                    "screen. Next: the builder publishing to the player's own "
+                    "screen; and the roster, workers and production "
+                    "(server/src/home.mjs): \u00a715.6's three who wake and the "
+                    "first heist's two strays, the Spire's and the Hearths' "
+                    "places, births at a Nursery at \u00a79.5's price, drawn "
+                    "from the realm's school, levels in Essence up to the home's "
+                    "top, work at producers and Guardian Posts from five minutes "
+                    "after assignment, production at \u00a79.3's rate with the "
+                    "staffing, the realm's school and the workers' bonuses, held "
+                    "12 hours, collected into a ledger that now carries Aether, "
+                    "the roster's keep taken from the Essence (G82). Next: the "
+                    "Codex's pages and restorations; the builder publishing to the player's own "
                     "realms, with the wards, posts and pylons an island places "
                     "held to those built (today only its realm, realm level "
                     "and Vault are), the Keeper choosing which wards publish "
@@ -1163,7 +1173,7 @@ dict(
                   "it proves",
              evidence="server/test/universe.test.mjs; client/tests/universe_tests.gd, "
                       "through python3 client/status.py",
-             register=["G42", "F56", "G43", "D60", "G45", "G19"]),
+             register=["G42", "F56", "G43", "D60", "G45", "G19", "G82"]),
         dict(id="TC.13", owner="claude", status="done",
              title="What the stores require of player-made content, and the declarations ready to file",
              detail="\u00a720.11 lists what the stores ask of a game where players "
@@ -2324,7 +2334,7 @@ dict(
                   "edits applied, and check_document passes on it",
              evidence="tools/audit_register.py EDITS; tools/check_edits.py",
              blocked_by=[],
-             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77", "G78", "G79", "G80", "G81"]),
+             register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77", "G78", "G79", "G80", "G81", "G82"]),
         dict(id="TD.74", owner="claude", status="blocked",
              title="Notifications and session telemetry on the device",
              detail="The server sends §14.6's notifications, keeps the night "

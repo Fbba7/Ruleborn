@@ -371,6 +371,105 @@
     "functionality"
    ]
   },
+  "characters": {
+   "about": "Each player's ruleborn: kind, traits, level, home and the work each is given (§11.2 to §11.6).",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "owner": {
+     "names": "account",
+     "type": "user-id"
+    },
+    "kind": {
+     "type": "gameplay"
+    },
+    "traits": {
+     "type": "gameplay"
+    },
+    "level": {
+     "type": "gameplay"
+    },
+    "home": {
+     "type": "gameplay"
+    },
+    "via": {
+     "type": "gameplay"
+    },
+    "joined_at": {
+     "type": "gameplay"
+    },
+    "work_realm": {
+     "type": "gameplay"
+    },
+    "work_kind": {
+     "type": "gameplay"
+    },
+    "work_n": {
+     "type": "gameplay"
+    },
+    "work_since": {
+     "type": "gameplay"
+    }
+   },
+   "deletion": "erased",
+   "keep": {
+    "for": "account"
+   },
+   "purposes": [
+    "functionality"
+   ]
+  },
+  "producers": {
+   "about": "What each player's Star Wells, Aether Springs and Gardens have made and not yet paid (§9.3).",
+   "columns": {
+    "owner": {
+     "names": "account",
+     "type": "user-id"
+    },
+    "realm": {
+     "type": "gameplay"
+    },
+    "kind": {
+     "type": "gameplay"
+    },
+    "stored": {
+     "type": "gameplay"
+    },
+    "settled_at": {
+     "type": "gameplay"
+    }
+   },
+   "deletion": "erased",
+   "keep": {
+    "for": "account"
+   },
+   "purposes": [
+    "functionality"
+   ]
+  },
+  "nurseries": {
+   "about": "When each player's Nurseries last gave a birth, for the births they hold (§10.2, §11.5).",
+   "columns": {
+    "owner": {
+     "names": "account",
+     "type": "user-id"
+    },
+    "realm": {
+     "type": "gameplay"
+    },
+    "since": {
+     "type": "gameplay"
+    }
+   },
+   "deletion": "erased",
+   "keep": {
+    "for": "account"
+   },
+   "purposes": [
+    "functionality"
+   ]
+  },
   "snapshots": {
    "about": "Every island ever published, by the hash of its bytes; never edited (§24.8). The bytes are in the public store, fetched by hash.",
    "purposes": [
@@ -575,7 +674,7 @@
    }
   },
   "ledger": {
-   "about": "Every movement of Starlight and Essence, the game's earned resources, append-only (§24.12), one row a player an event; nothing in it is bought (F41).",
+   "about": "Every movement of Starlight, Essence and Aether, the game's earned resources, append-only (§24.12), one row a player an event; nothing in it is bought (F41).",
    "purposes": [
     "functionality",
     "security"
@@ -597,6 +696,9 @@
      "type": "gameplay"
     },
     "essence": {
+     "type": "gameplay"
+    },
+    "aether": {
      "type": "gameplay"
     },
     "paid": {

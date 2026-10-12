@@ -88,6 +88,14 @@ async function busy() {
   // A realm of their own, opened and paid for (universe.mjs).
   t.service.book(x.account, "starlight", 5_000, "a test's grant");
   t.service.universe.open(x.account, "Verdant");
+  // Its roster at work, a producer collected, a birth at a Nursery (home.mjs).
+  t.service.universe.build(x.account, { realm: "outer-1", kind: "nursery", n: 1, to: 1 });
+  const home = t.service.home.show(x.account);
+  t.service.home.work(x.account, home.characters[0].id, { realm: "heart", kind: "garden" });
+  t.clock.now += 6 * 60 * 60 * 1000;
+  t.service.home.collect(x.account, { realm: "heart", kind: "garden" });
+  t.service.book(x.account, "essence", 1_000, "a test's grant");
+  t.service.home.birth(x.account, { realm: "outer-1", n: home.characters.length + 1 });
 
   const n = t.service.notifications;
   // Settings no player starts with, so clearing them is seen.

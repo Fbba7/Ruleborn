@@ -208,6 +208,31 @@ ATTEMPT_BAND = (0.1222, 0.1698)
 #: (32.9); the economy model charges it.
 ROSTER_KEEP_SHARE = 0.25
 
+#: §9.5's birth price: "100 × 1.3455^ruleborn owned Essence, where owned is
+#: n − 1 for the nth birth" — the base and the growth.
+BIRTH_PRICE = (100, 1.3455)
+#: §9.5's character levels: "150 × 1.55^(level − 2) Essence per level, up to
+#: level 10" — the base, the growth and the top.
+LEVEL_PRICE = (150, 1.55, 10)
+#: §9.2's best workers: "Motion and Matter ruleborn (+15%)" at a Star Well, and
+#: each resource's two schools alike.
+WORKER_SCHOOL_BONUS = 0.15
+#: §11.5: "The roster holds 3 characters for the Spire plus the places in every
+#: Hearth, 38 at the most at launch".
+ROSTER_PLACES = (3, 38)
+#: §11.6: "Production starts 5 minutes after assignment, so constant swapping
+#: doesn't pay."
+PRODUCTION_START_MINUTES = 5
+#: §9.3: "Each building holds 12 hours of output until collected", and a
+#: producer earns "× 1.1 in a realm of that school".
+PRODUCER_HOLD_HOURS = 12
+OWN_SCHOOL_PRODUCTION = 1.1
+#: §5.2's "Boosted resource" column, by realm type in the table's order.
+REALM_BOOSTS = ("starlight", "starlight", "aether", "aether", "essence", "essence")
+#: The first session's first minute (§15.6): "Three ruleborn wake: a Featherkin, an Emberling and a
+#: Tidewalker."
+STARTING_CREW = ("featherkin", "emberling", "tidewalker")
+
 #: §5.4, "the clock's one home": "150 seconds plus 15 seconds for each link on
 #: the shortest route from the landing realm to the Heart, up to 240 seconds".
 HEIST_CLOCK = (150, 15, 240)
@@ -405,6 +430,15 @@ HOME = {
     "DIFFICULTY": "9.6",
     "ATTEMPT_BAND": "9.6",
     "ROSTER_KEEP_SHARE": "9.5",
+    "BIRTH_PRICE": "9.5",
+    "LEVEL_PRICE": "9.5",
+    "WORKER_SCHOOL_BONUS": "9.2",
+    "ROSTER_PLACES": "11.5",
+    "PRODUCTION_START_MINUTES": "11.6",
+    "PRODUCER_HOLD_HOURS": "9.3",
+    "OWN_SCHOOL_PRODUCTION": "9.3",
+    "REALM_BOOSTS": "5.2",
+    "STARTING_CREW": "15.6",
     "HEIST_CLOCK": "5.4",
     "ENTRY_FEE_RATE": "9.4",
     "RENOWN_CLEAN": "12.9",
@@ -564,6 +598,24 @@ STATED = {
                               if round(v[1] - v[0], 6) == 0.1 else tuple(v))([float(x) for x in m])),
     "ROSTER_KEEP_SHARE": (r"\| The roster's keep\n\| (\d+)% of Essence production",
                           lambda m: int(m[0]) / 100),
+    "BIRTH_PRICE": (r"\| A new ruleborn\n\| (\d+) × ([\d.]+) ?ruleborn owned Essence, where owned is n − 1",
+                    lambda m: (int(m[0]), float(m[1]))),
+    "LEVEL_PRICE": (r"\| Character levels\n\| (\d+) × ([\d.]+) ?level − 2 Essence per level, up to level (\d+)",
+                    lambda m: (int(m[0]), float(m[1]), int(m[2]))),
+    "WORKER_SCHOOL_BONUS": (r"Motion and Matter ruleborn \(\+(\d+)%\)", lambda m: int(m[0]) / 100),
+    "ROSTER_PLACES": (r"The roster holds (\d+) characters for the Spire plus the places in every "
+                      r"Hearth, (\d+) at the most at launch", lambda m: (int(m[0]), int(m[1]))),
+    "PRODUCTION_START_MINUTES": (r"Production starts (\d+) minutes after assignment",
+                                 lambda m: int(m[0])),
+    "PRODUCER_HOLD_HOURS": (r"Each building holds (\d+) hours of output until collected",
+                            lambda m: int(m[0])),
+    "OWN_SCHOOL_PRODUCTION": (r"× ([\d.]+) in a realm of that school", lambda m: float(m[0])),
+    "REALM_BOOSTS": (r"\| Motion\n\| [^\n]+\n\| (\w+)\n[\s\S]*?\| Matter\n\| [^\n]+\n\| (\w+)\n"
+                     r"[\s\S]*?\| Time\n\| [^\n]+\n\| (\w+)\n[\s\S]*?\| Energy\n\| [^\n]+\n\| (\w+)\n"
+                     r"[\s\S]*?\| Life\n\| [^\n]+\n\| (\w+)\n[\s\S]*?\| Spirit\n\| [^\n]+\n\| (\w+)\n",
+                     lambda m: tuple(x.lower() for x in m)),
+    "STARTING_CREW": (r"Three ruleborn wake: an? (\w+), an? (\w+) and an? (\w+)\.",
+                      lambda m: tuple(x.lower() for x in m)),
     "ATTEMPT_BAND": (r"(0\.\d+) for a crew that stops at a fixed 70% fill and (0\.\d+) for one "
                      r"that reads the guards", lambda m: (float(m[0]), float(m[1]))),
     "HEIST_CLOCK": (r"\| (\d+) seconds plus (\d+) seconds for each link on the shortest route "

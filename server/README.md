@@ -639,6 +639,33 @@ level above the realm's, or a Vault above the one built. `GET /v1/universe`
 answers what each thing costs and needs and whether it can be bought now,
 so the device never works a rule out itself.
 
+## The roster, its work, and what it produces
+
+`src/home.mjs` is the home economy's second part (§5.8, §9.2, §9.3, §9.5,
+§11.3 to §11.6):
+
+- **The roster.** §15.6's Featherkin, Emberling and Tidewalker wake with the
+  universe, two traits each; the first validated heist brings §11.5's two
+  strays home free, born under the raided island's laws, three traits each.
+  Characters live in the Spire's three places and each Hearth's homes, 38 at
+  most, and rise a level for §9.5's Essence price up to twice their home's
+  level.
+- **Births** at a Nursery, one ready a period up to three, for 100 × 1.3455
+  to the power of the characters owned, drawn from the realm's school with
+  the roles the player has fewest of twice as likely. A birth names the
+  roster size it leads to, so a retry is answered as born.
+- **Work.** A character works a producer's slot or stands at a Guardian
+  Post; its share counts from five minutes after it is assigned.
+- **Production** is §9.3's: the table's rate at the producer's level, a
+  slot's share for each worker, ×1.1 in a realm of the resource's school,
+  and +15% for a worker of its schools and the work traits. The server
+  integrates each worker's share over the time it counted whenever the
+  staffing or the level changes, and a producer holds twelve hours. A
+  collection is paid into the ledger, which now carries Aether; a Garden's
+  pays the roster's keep, a quarter. The law, stability and fault terms are
+  1 until weaving is kept here, and `GET /v1/home` says so. What the document
+  leaves open is **G82**.
+
 ## Constellations and crews
 
 `src/social.mjs` is §17.1's constellations and §17.7's crews:

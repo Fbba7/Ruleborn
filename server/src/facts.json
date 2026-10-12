@@ -6,6 +6,10 @@
   0.1222,
   0.1698
  ],
+ "BIRTH_PRICE": [
+  100,
+  1.3455
+ ],
  "BREAKER_VAULT_MULTIPLIER": 2,
  "CARRIER_LOADED_PACE": 0.85,
  "CONSTELLATION_ELDERS": 4,
@@ -149,6 +153,11 @@
   "Star": 25,
   "Tide": 30
  },
+ "LEVEL_PRICE": [
+  150,
+  1.55,
+  10
+ ],
  "LOAD_PER_SECOND": 30,
  "MATCH_WINDOW": [
   150,
@@ -193,13 +202,24 @@
   "Veil": "Echo",
   "Weight": "Flow"
  },
+ "OWN_SCHOOL_PRODUCTION": 1.1,
  "PAID_WRITES_MONTH": 50000000,
  "PREMIUM_TRACK_EUR": 6,
+ "PRODUCER_HOLD_HOURS": 12,
+ "PRODUCTION_START_MINUTES": 5,
  "RAIDER_SUCCESS": [
   55,
   70
  ],
  "RAW_KEEP_DAYS": 90,
+ "REALM_BOOSTS": [
+  "starlight",
+  "starlight",
+  "aether",
+  "aether",
+  "essence",
+  "essence"
+ ],
  "REALM_KEEPER_LEVELS": [
   3,
   6,
@@ -279,6 +299,10 @@
   "Mender"
  ],
  "ROSTER_KEEP_SHARE": 0.25,
+ "ROSTER_PLACES": [
+  3,
+  38
+ ],
  "RUN_PACE": 2.0,
  "SAGE_COOLDOWN_SECONDS": 20,
  "SCHOOLS": [
@@ -298,6 +322,11 @@
   "16-17": 50
  },
  "STARLIGHT_PER_XP": 40,
+ "STARTING_CREW": [
+  "featherkin",
+  "emberling",
+  "tidewalker"
+ ],
  "STARTING_HEART": [
   "keeper_s_spire",
   "vault",
@@ -319,6 +348,7 @@
   0
  ],
  "WIND_UP": 0.8,
+ "WORKER_SCHOOL_BONUS": 0.15,
  "WRITE_BUDGET": {
   "casual": 11,
   "engaged": 46,

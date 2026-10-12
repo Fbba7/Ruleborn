@@ -138,6 +138,9 @@ export function deleteAccount(service, account, reason = "requested", { journal 
     // The universe they built: nobody's home now.
     db.prepare("DELETE FROM realms WHERE owner = ?").run(account);
     db.prepare("DELETE FROM buildings WHERE owner = ?").run(account);
+    db.prepare("DELETE FROM characters WHERE owner = ?").run(account);
+    db.prepare("DELETE FROM producers WHERE owner = ?").run(account);
+    db.prepare("DELETE FROM nurseries WHERE owner = ?").run(account);
     // Their groups, as Social.leave and leaveCrew do, but inside this
     // transaction: a founder hands the constellation on — to the
     // longest-standing elder, else the longest-standing member (§17.7).

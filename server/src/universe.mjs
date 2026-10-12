@@ -119,10 +119,10 @@ export class Universe {
               .all(account)];
   }
 
-  /** Every building: {realm, kind, n, level}. */
+  /** Every building: {realm, kind, n, level, changed_at}. */
   buildings(account) {
     const rows = this.db.prepare(
-      "SELECT realm, kind, n, level FROM buildings WHERE owner = ? ORDER BY realm, kind, n").all(account);
+      "SELECT realm, kind, n, level, changed_at FROM buildings WHERE owner = ? ORDER BY realm, kind, n").all(account);
     return rows.length ? rows : facts.STARTING_HEART.map((kind) => ({ realm: "heart", kind, n: 1, level: 1 }));
   }
 
@@ -262,6 +262,9 @@ export class Universe {
       const price = { cost: levels[to - 1].cost, ...levels[to - 1].needs };
       this.afford(account, price);
       this.ensure(account, now);
+      // What a producer made at the level it had is paid at that level
+      // before it rises (home.mjs).
+      if (have) this.service.home?.settle(account, realm, kind, now);
       this.db.prepare(
         `INSERT INTO buildings (owner, realm, kind, n, level, changed_at) VALUES (?, ?, ?, ?, ?, ?)
          ON CONFLICT (owner, realm, kind, n) DO UPDATE SET level = excluded.level, changed_at = excluded.changed_at`)

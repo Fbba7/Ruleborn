@@ -24,6 +24,12 @@
 //   POST /v1/universe/realms     {"type"}                    → the next outer realm opened (§5.2)
 //   POST /v1/universe/realms/:realm/level {"to"}             → an outer realm raised a level
 //   POST /v1/universe/buildings  {"realm", "kind", "n", "to"} → a building built (to 1) or raised (§10.2)
+//   GET  /v1/home                                            → the roster, its places, births and producers
+//   POST /v1/home/births         {"realm", "n"}              → a birth at the realm's Nursery (§11.5)
+//   POST /v1/home/characters/:id/work  {"realm", "kind", "n"} → set to work or to guard; no kind recalls (§5.8)
+//   POST /v1/home/characters/:id/level {"to"}                → raised a level with Essence (§11.4)
+//   POST /v1/home/characters/:id/home  {"home"}              → moved to another free place (§11.4)
+//   POST /v1/home/collect        {"realm", "kind"}           → what a producer holds, paid (§9.3)
 //   GET  /v1/targets                                         → {band: list hash}
 //   PUT  /v1/age                 {"band": "13-15"|"16-17"|"18+"} → {ageBand}
 //                                {"band": "under-13"}         → the account deleted (§20.11)
@@ -426,6 +432,21 @@ export function handler(service, { webClientId = null, appleNotifications = null
         if (m === "POST" && a === "realms" && !b) return json(u.open(me, text((await body(request)).type)));
         if (m === "POST" && a === "realms" && b && c === "level") return json(u.raise(me, b, (await body(request)).to));
         if (m === "POST" && a === "buildings" && !b) return json(u.build(me, await body(request)));
+        return json({ error: "no_such_route" }, 404);
+      }
+      if (parts[1] === "home") {
+        // §5.8, §9.3, §11.4 to §11.6 (home.mjs): a birth names the roster
+        // size it leads to and a level the level, so a retry is answered.
+        const me = who();
+        const h = service.home;
+        const [, , a, b, c] = parts;
+        const m = request.method;
+        if (m === "GET" && !a) return json(h.show(me));
+        if (m === "POST" && a === "births" && !b) return json(h.birth(me, await body(request)));
+        if (m === "POST" && a === "collect" && !b) return json(h.collect(me, await body(request)));
+        if (m === "POST" && a === "characters" && b && c === "work") return json(h.work(me, b, await body(request)));
+        if (m === "POST" && a === "characters" && b && c === "level") return json(h.level(me, b, (await body(request)).to));
+        if (m === "POST" && a === "characters" && b && c === "home") return json(h.move(me, b, text((await body(request)).home)));
         return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "survey" && request.method === "GET") {

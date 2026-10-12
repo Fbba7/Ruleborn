@@ -105,6 +105,47 @@ CREATE TABLE IF NOT EXISTS buildings (
   PRIMARY KEY (owner, realm, kind, n)
 );
 
+-- §11.5: every character a player owns — the three who wake in the first
+-- minute, the two strays of the first heist, the births — with its kind
+-- (§11.2's id), its traits (§11.3's ids), its level (§11.4), its home (the
+-- Spire, or the realm whose Hearth it lives in) and the work it is given:
+-- a producer or a Guardian Post, from when (§5.8, §11.6). home.mjs.
+CREATE TABLE IF NOT EXISTS characters (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  owner      TEXT NOT NULL REFERENCES accounts(id),
+  kind       TEXT NOT NULL,
+  traits     TEXT NOT NULL DEFAULT '[]',
+  level      INTEGER NOT NULL DEFAULT 1 CHECK (level >= 1),
+  home       TEXT NOT NULL,
+  via        TEXT NOT NULL CHECK (via IN ('woke', 'stray', 'birth')),
+  joined_at  INTEGER NOT NULL,
+  work_realm TEXT,
+  work_kind  TEXT,
+  work_n     INTEGER,
+  work_since INTEGER
+);
+CREATE INDEX IF NOT EXISTS characters_by_owner ON characters (owner);
+
+-- §9.3: what each producer has made and not yet paid, in thousandths, as of
+-- settled_at; it holds 12 hours of output until collected. home.mjs.
+CREATE TABLE IF NOT EXISTS producers (
+  owner      TEXT NOT NULL REFERENCES accounts(id),
+  realm      TEXT NOT NULL,
+  kind       TEXT NOT NULL,
+  stored     INTEGER NOT NULL DEFAULT 0 CHECK (stored >= 0),
+  settled_at INTEGER NOT NULL,
+  PRIMARY KEY (owner, realm, kind)
+);
+
+-- §10.2's Nursery: "one birth every 6 h; holds 3". Births are ready from
+-- since, one a period, up to what it holds. home.mjs.
+CREATE TABLE IF NOT EXISTS nurseries (
+  owner TEXT NOT NULL REFERENCES accounts(id),
+  realm TEXT NOT NULL,
+  since INTEGER NOT NULL,
+  PRIMARY KEY (owner, realm)
+);
+
 -- §24.8: "Bundle hash as the key, realm type, difficulty band, when
 -- published. Never edited." The owner is kept so a raider cannot lease their
 -- own island and a foiled heist's fee has somewhere to go.
@@ -214,13 +255,14 @@ CREATE TABLE IF NOT EXISTS ledger (
   account   TEXT NOT NULL REFERENCES accounts(id),
   starlight INTEGER NOT NULL DEFAULT 0,
   essence   INTEGER NOT NULL DEFAULT 0,
+  aether    INTEGER NOT NULL DEFAULT 0,
   paid      INTEGER NOT NULL DEFAULT 0,
   reason    TEXT NOT NULL,
   -- Deferred: the heist row and its ledger rows are written in one
   -- transaction, and the heist's outcome includes what the ledger booked.
   heist     TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
   at        INTEGER NOT NULL,
-  CHECK (starlight != 0 OR essence != 0 OR paid != 0)
+  CHECK (starlight != 0 OR essence != 0 OR aether != 0 OR paid != 0)
 );
 CREATE INDEX IF NOT EXISTS ledger_by_account ON ledger (account, at);
 CREATE TRIGGER IF NOT EXISTS ledger_append_only_update BEFORE UPDATE ON ledger
@@ -686,6 +728,19 @@ function ledgerByCurrency(db) {
   return true;
 }
 
+/** A ledger made before Aether (§9.3's Aether Springs) is rebuilt with the
+ *  column, each row moving as it was: its check names the currencies, and
+ *  SQLite cannot change a check in place. */
+function ledgerWithoutAether(db) {
+  const old = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'ledger'").get();
+  if (!old || /\baether\b/.test(old.sql) || /\bcurrency\b/.test(old.sql)) return false;
+  db.exec(`DROP TRIGGER IF EXISTS ledger_append_only_update;
+           DROP TRIGGER IF EXISTS ledger_append_only_delete;
+           DROP INDEX IF EXISTS ledger_by_account;
+           ALTER TABLE ledger RENAME TO ledger_before_aether;`);
+  return true;
+}
+
 export function open(path = ":memory:") {
   const db = new DatabaseSync(path);
   // Set here, as SCHEMA's own pragma does nothing inside a transaction.
@@ -715,6 +770,7 @@ export function open(path = ":memory:") {
       }
     }
     const rebuilt = ledgerByCurrency(db);
+    const aethered = ledgerWithoutAether(db);
     // Telemetry written before batching, a row an event: moved aside, and
     // poured into batches of one once the schema stands.
     const unbatched = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'").get();
@@ -742,6 +798,11 @@ export function open(path = ":memory:") {
              DELETE FROM friends WHERE a IN (SELECT id FROM accounts WHERE banned_at IS NOT NULL)
                                     OR b IN (SELECT id FROM accounts WHERE banned_at IS NOT NULL);
              DELETE FROM friend_invites WHERE account IN (SELECT id FROM accounts WHERE banned_at IS NOT NULL);`);
+    if (aethered) {
+      db.exec(`INSERT INTO ledger (id, account, starlight, essence, paid, reason, heist, at)
+                 SELECT id, account, starlight, essence, paid, reason, heist, at FROM ledger_before_aether;
+               DROP TABLE ledger_before_aether;`);
+    }
     if (rebuilt) {
       db.exec(`INSERT INTO ledger (id, account, starlight, essence, paid, reason, heist, at)
                  SELECT id, account,

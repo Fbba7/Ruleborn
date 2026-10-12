@@ -39,6 +39,7 @@ import { check, issue } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
 import { Track } from "./track.mjs";
 import { Safety } from "./safety.mjs";
+import { Home } from "./home.mjs";
 import { Universe } from "./universe.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
@@ -127,6 +128,7 @@ export class Service {
     this.friends = new Friends(this);
     this.keeper = new Keeper(this);
     this.universe = new Universe(this);
+    this.home = new Home(this);
     this.safety = new Safety(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), settleReceipt, catalogue: cosmetics });
   }
@@ -626,6 +628,9 @@ export class Service {
              JSON.stringify(outcome), decision.review ? 1 : 0, decision.grace ? 1 : 0, now, day(now));
       if (decision.validated) {
         Object.assign(outcome, this.grant(lease, decision.verdict, now), { grace: decision.grace });
+        // §11.5: the first heist brings two strays home, free (home.mjs);
+        // the roster says so, and the heist's outcome is the haul's alone.
+        this.home.firstStrays(lease.attacker, lawsOf(this.store.get(lease.bundle)), now);
         this.db.prepare("UPDATE heists SET validated = 1, outcome = ? WHERE token = ?")
           .run(JSON.stringify(outcome), lease.token);
       }
@@ -881,10 +886,17 @@ export class Service {
     return { starlight: Number(r.s), essence: Number(r.e) };
   }
 
+  /** The Aether a player holds (§9.3's Aether Springs): weaving's currency,
+   *  booked beside the two a heist moves. */
+  aether(account) {
+    return Number(this.db.prepare("SELECT COALESCE(SUM(aether), 0) AS a FROM ledger WHERE account = ?")
+      .get(account).a);
+  }
+
   /** One ledger row outside a heist: a track tier, a defence share. */
   book(account, currency, amount, reason, now = this.now()) {
     if (amount === 0) return;
-    if (currency !== "starlight" && currency !== "essence") throw new Error(`no currency ${currency}`);
+    if (!["starlight", "essence", "aether"].includes(currency)) throw new Error(`no currency ${currency}`);
     this.db.prepare(
       `INSERT INTO ledger (account, ${currency}, reason, heist, at) VALUES (?, ?, ?, NULL, ?)`)
       .run(account, amount, reason, now);

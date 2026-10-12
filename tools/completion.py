@@ -388,17 +388,38 @@ DELIVERABLES = [
         "a realm holds §5.2's count of each kind, where §10.2 places it",
         "what a building needs is checked before anything is paid: its Keeper and Spire levels, the Starlight, the next level only",
         "the universe over HTTP: read, bought, and refused with the reason (5.2, 10.2)")),
-    ("4a", "Production", BACKEND, not_started(
-        "the server pays what §9.3's buildings produce, and the device's collection is "
-        "confirmed by it (TC.12)")),
-    ("4a", "Workers", BACKEND, not_started(
-        "the server keeps §5.8's workers and the work they are assigned (TC.12)")),
+    # §9.3's formula: what the server keeps state for (the table rate, the
+    # staffing, the realm's school, the workers' bonuses, the hold, the
+    # keep), and the terms that wait on weaving and stability being kept.
+    ("4a", "Production", BACKEND, parts(
+        server_tests(
+            "a producer runs at the share of its slots filled, from five minutes after assignment, and holds twelve hours (5.8, 9.3, 11.6)",
+            "a worker of the resource's schools earns 15% more, and a work trait its share (9.2, 11.3)",
+            "a realm of the resource's school produces 10% more (5.2, 9.3)",
+            "collecting pays what a producer made into the ledger, a Garden's less the roster's 25% keep (9.3, 9.5)",
+            "a producer raised a level is paid at the old level for the time before (9.3, 10.2)"),
+        not_started("§9.3's law, stability-band and fault terms, once the server keeps what is "
+                    "woven and its stability (TC.12, TD.37)"))),
+    ("4a", "Workers", BACKEND, parts(
+        server_tests(
+            "a worker goes only into a free slot or Guardian Post, and what it made where it was is kept when it moves (5.8)",
+            "the home over HTTP: read, set to work, collected, and refused with the reason (9.3, 11.5)"),
+        not_started("a crew on a heist, and a character resting after one, off work (§5.8, "
+                    "§11.6), once a heist names the roster's characters (TD.34)"))),
     ("4a", "Spending", BACKEND, server_tests(
         "a building is bought with Starlight from the ledger, once, however often the purchase is sent (10.2, 24.12)")),
     ("4a", "The Spire", BACKEND, server_tests(
         "outer realms open at §5.2's Keeper levels, each of a type not yet owned, and rise at its Spire levels")),
-    ("4a", "The roster and births", BACKEND, not_started(
-        "the server keeps §11.5's roster and pays for its births at §11.5's rate (TC.12)")),
+    ("4a", "The roster and births", BACKEND, parts(
+        server_tests(
+            "the roster starts with the three who wake, two traits each, and the first heist brings two strays home free (11.5, 15.6)",
+            "the roster lives in the Spire's three places and each Hearth's homes, and a birth needs a free one (11.4, 11.5)",
+            "a character rises a level for 150 × 1.55^(level − 2) Essence, no higher than its home allows (9.5, 11.4)"),
+        server_tests(
+            "a birth at a Nursery costs 100 × 1.3455^owned Essence, waits for a ready birth, and is of the realm's school (9.5, 10.2, 11.5)"),
+        not_started("a birth's kind weighted by the laws woven in its realm and the crown laws, "
+                    "and law-linked traits three times as likely there (§11.3, §11.5), once the "
+                    "server keeps what is woven (TC.12)"))),
     ("4a", "The Codex's restorations", BACKEND, not_started(
         "the server records the Codex's restorations and what they cost (TC.12)")),
     # "14.2's experience from each": from heists and from spending so far, as
@@ -410,7 +431,9 @@ DELIVERABLES = [
             "experience climbs §14.2's table level by level, and stops counting at level 40"),
         server_tests(
             "spending earns §14.2's experience, 1 for every 40 Starlight, with nothing lost between purchases"),
-        not_started("production, the roster and the Codex pay their experience"))),
+        # §14.2 pays nothing for production or births: "successful heists …,
+        # foiled heists …, spending … and restoring laws".
+        not_started("restoring a law pays §14.2's 60 + 10 × Keeper level, with the Codex (TC.12)"))),
     ("4a", "Offline building, weaving and assigning, confirmed on reconnection", BACKEND,
      not_started("what the device built, wove and assigned offline is confirmed or "
                  "refused by the server when it reconnects (TC.12)")),

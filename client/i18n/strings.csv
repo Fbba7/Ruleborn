@@ -513,3 +513,14 @@ WORKSHOP_BLOCK_CONFIRM_NAMED,"Tap again to block %s, who made %s; a friendship b
 FRIENDS_BLOCKED,Players you blocked,Jogadores que você bloqueou
 FRIENDS_UNBLOCK,Unblock,Desbloquear
 FRIENDS_UNBLOCK_NAMED,Unblock %s,Desbloquear %s
+ERR_HOME_TOO_LOW,that home is not high enough for that level,essa casa não permite esse nível
+ERR_NO_BIRTH_READY,no birth is ready at that Nursery yet,nenhum nascimento está pronto nesse Nursery ainda
+ERR_NO_NURSERY,there is no Nursery in that realm,não há Nursery nesse reino
+ERR_NO_PLACE,there is no free place for another character,não há lugar livre para outro personagem
+ERR_NO_SUCH_CHARACTER,that character does not exist,esse personagem não existe
+ERR_NO_SUCH_HOME,there is no such home,essa casa não existe
+ERR_NOT_A_PRODUCER,"only a Star Well, an Aether Spring or a Garden is collected","só se coleta de um Star Well, um Aether Spring ou um Garden"
+ERR_NOT_A_WORKPLACE,nobody can work there,ninguém pode trabalhar ali
+ERR_NOT_ENOUGH_ESSENCE,you need more Essence,você precisa de mais Essência
+ERR_NOT_THE_NEXT_BIRTH,that is not the next birth,esse não é o próximo nascimento
+ERR_SLOTS_FULL,every worker slot there is filled,todos os postos de trabalho ali estão ocupados

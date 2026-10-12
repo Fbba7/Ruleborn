@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9857,6 +9857,33 @@ dict(id="F62", kind="finding", severity="significant", status="open",
          "holds 38.8% with the ladder against a band centred on 37.5%; the edits "
          "are drafted."),
 
+dict(id="G82", kind="gap", severity="minor", status="open",
+     title="§11.3 gives each trait rarity’s odds and no trait a rarity, and §9.3 "
+           "leaves open how worker bonuses combine, what a building holds and when "
+           "each worker starts; the server reads each one way",
+     refs=["11.3", "9.3", "11.5", "11.6", "9.2"],
+     body="Building the roster, the workers and production on the server (TC.12) "
+          "needed five readings and found one gap. <strong>Rarity:</strong> §11.3 "
+          "says traits <em>“are common (60% of rolls), uncommon (30%) or rare "
+          "(10%)”</em> and a stray has <em>“three traits, one of them rare”</em>, "
+          "and neither §11.3’s table nor content/traits.json says which of the 31 "
+          "is which; the server draws every trait as likely as another until it "
+          "is said. <strong>Worker bonuses:</strong> §9.3’s <em>“× (1 + worker "
+          "bonuses)”</em> with two workers of different schools is read as each "
+          "worker’s own bonuses on its slot’s share, added together (+15% for "
+          "the resource’s schools, §9.2; Well-digger’s +25%; Homebody’s +20% "
+          "work). <strong>What a building holds:</strong> <em>“12 hours of "
+          "output”</em> is read as 12 hours of its level’s table rate, before "
+          "staffing and bonuses, so an unstaffed building still holds what it "
+          "made. <strong>The five minutes</strong> of §11.6 are each worker’s, "
+          "from its own assignment, so adding a second worker never stalls the "
+          "first. <strong>The first heist’s strays</strong> come with the first "
+          "validated heist whatever its grade, born under the laws of the island "
+          "raided. The roster’s keep is a quarter of each collection rounded up. "
+          "Found building TC.12.",
+     rec="State the readings in §9.3, §11.5 and §11.6 (the edits are drafted), "
+         "and give each trait its rarity in §11.3’s table."),
+
 dict(id="G81", kind="gap", severity="minor", status="open",
      title="§11.11 never says what a gap is, which way a glide, a charge or a "
            "bridge goes, what a charge breaks through, or how long a plank "
@@ -11310,7 +11337,8 @@ V37 = {
     "arrives at 30, and are re-recorded. The harness keeps a realm alarm per "
     "realm and carries levels 1, 3, 4, 5 and 6; it has no footstep noise and no "
     "alert spread, so level 2 and level 4’s spread are the simulation’s alone. "
-    "A bell post’s ring waits for the bell post (TD.15). Re-measured, the hold "
+    "A bell post’s ring raises it a level too, now that bell posts are built "
+    "(TD.15, G80). Re-measured, the hold "
     "table stays in band at four levels and leaves it at level 2 (F62). The "
     "load test’s heists end a little differently under it: an engaged player "
     "writes 46.88 rows a day where it wrote 46.93, the others unchanged "
@@ -11319,6 +11347,13 @@ V37 = {
 "F62": dict(status="open", left="document", note=
     "Found building TD.69, after v3.7: a balance figure for the document, with "
     "its edits drafted (TD.75)."),
+
+"G82": dict(status="open", left="document", note=
+    "Found building TC.12, after v3.7: no trait has a rarity, and four readings "
+    "of §9.3, §11.5 and §11.6 the server takes, with the edits drafted (TD.75). "
+    "The roster costs the load test five rows a player once — the three who wake "
+    "and the first heist's two strays — so its three days write 1.67 rows a day "
+    "more: 48.55, 25.77 and 13.37 (<code>server/load.json</code>)."),
 
 "G81": dict(status="open", left="document", note=
     "Found building TD.12, after v3.7: what a gap is, which way a glide, a "
@@ -14736,6 +14771,24 @@ EDITS = {
                  "for one task in three); iteration 415 (301 to 531), a floor at 1x "
                  "the build; plan about 830 (602 to 1,062)",
          why="§26.8 and §27.2, with phases 4a to 4c. C72."),
+],
+"G82": [
+    dict(section="9.3", action="replace",
+         find="× (1 + worker bonuses)",
+         replace="× (1 + worker bonuses, each worker’s own on its slot’s share)",
+         why="How two workers’ different bonuses combine. G82."),
+    dict(section="9.3", action="replace",
+         find="Each building holds 12 hours of output until collected.",
+         replace="Each building holds 12 hours of its level’s output, before staffing and bonuses, until collected.",
+         why="Twelve hours of which rate, when the staffing changes. G82."),
+    dict(section="11.6", action="replace",
+         find="Produces in one building. Production starts 5 minutes after assignment, so constant swapping doesn't pay.",
+         replace="Produces in one building. Its share of production starts 5 minutes after it is assigned, so constant swapping doesn't pay.",
+         why="Whose five minutes: each worker’s own. G82."),
+    dict(section="11.5", action="replace",
+         find="two strays follow the crew home after the first heist, where the starting Hearth waits for them",
+         replace="two strays follow the crew home after the first heist, whatever its grade, born under the laws of the island it raided, where the starting Hearth waits for them",
+         why="Which heist, and which laws the strays are born under. G82."),
 ],
 "G81": [
     dict(section="11.2", action="replace",
