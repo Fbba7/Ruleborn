@@ -665,6 +665,11 @@ so the device never works a rule out itself.
   pays the roster's keep, a quarter. The law, stability and fault terms are
   1 until weaving is kept here, and `GET /v1/home` says so. What the document
   leaves open is **G82**.
+- **When it fills.** Each producer's `full_at` is the moment its store
+  reaches what it holds, each worker counting from its own start, or null
+  when it is full or unstaffed; the view's `night` is the §20.2 night the
+  player keeps. The device sets §14.6's storage-full notice from the two
+  (TD.74).
 
 ## The Codex
 

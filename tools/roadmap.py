@@ -2341,7 +2341,7 @@ dict(
              evidence="tools/audit_register.py EDITS; tools/check_edits.py",
              blocked_by=[],
              register=["G71", "C59", "G72", "C60", "C61", "C62", "C63", "G73", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "G75", "C72", "C73", "G76", "C55", "F38", "F47", "F55", "F56", "G23", "G26", "G51", "G57", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83"]),
-        dict(id="TD.74", owner="claude", status="blocked",
+        dict(id="TD.74", owner="claude", status="doing",
              title="Notifications and session telemetry on the device",
              detail="The server sends §14.6's notifications, keeps the night "
                     "(§20.2) and says when the survey is due, and the client does "
@@ -2356,14 +2356,34 @@ dict(
                     "(G29). v3.7's §26.8 lists the strings, the timers and the "
                     "permission in phases 10 to 13. The timers read production, "
                     "the roster and the Lab from TC.12. TC.8 measures them on "
-                    "phones; this builds them.",
+                    "phones; this builds them. <strong>Built:</strong> "
+                    "<code>client/platform/notifications.csv</code> holds the "
+                    "twelve keys — every one <code>push.mjs</code> sends and a "
+                    "title and body for each of §14.6's four kinds — and "
+                    "<code>tools/native_strings.py</code> writes iOS's "
+                    "<code>Localizable.strings</code> and Android's "
+                    "<code>strings.xml</code> from it and checks them in "
+                    "<code>check_all.sh</code>. The home view says when each "
+                    "producer fills (<code>full_at</code>) and the night the "
+                    "player keeps, and the device sets its storage-full timer "
+                    "from it, moved to the night's end "
+                    "(<code>DeviceNotices</code>). The permission is asked at "
+                    "the start of the third session, once. Sessions are kept on "
+                    "the phone and sent, a killed one ended at the next launch "
+                    "as crashed, and the device reports its time zone and push "
+                    "token (G34). <strong>Left:</strong> the rested and "
+                    "experiment timers, once the server keeps rest (TD.34) and "
+                    "the Lab (TD.22); the survey when <code>GET /v1/survey</code> "
+                    "says so (G29); and, on a phone, the tables bundled into "
+                    "both exports and the platforms' notification plugins "
+                    "behind <code>LocalNotifier</code> (TC.3).",
              gate="the four strings in both languages in the native string "
                   "tables (a check); each timer set from the server's state and "
                   "moved when it changes (tests on a fake clock); the permission "
                   "asked at the start of the third session and not before (a "
                   "test); session events sent, and the survey shown only when the "
                   "server says (tests against the fake server)",
-             blocked_by=["TC.12"],
+             blocked_by=[],
              register=["D68", "G29"]),
         # -- Track D: the screens, the slice's first -------------------------
         dict(id="TD.17", owner="claude", status="blocked",

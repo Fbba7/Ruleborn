@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-import { PRODUCERS, RULEBORN, birthPrice, levelPrice } from "../src/home.mjs";
+import { PRODUCERS, RULEBORN, birthPrice, fullAt, levelPrice } from "../src/home.mjs";
 import { openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
@@ -77,6 +77,24 @@ test("a producer runs at the share of its slots filled, from five minutes after 
   h.work(me, id("emberling"), { realm: "heart", kind: "star_well" });
   later(10 * MINUTE);
   assert.equal(producer(h.show(me), "heart", "star_well").per_hour, PRODUCERS.star_well[3].hourly, "both slots filled");
+});
+
+test("the home says when each producer fills and the night the device keeps its notice out of (14.6, 20.2)", () => {
+  const { t, me, h, id, later } = fresh();
+  assert.equal(producer(h.show(me), "heart", "star_well").full_at, null, "nobody works there");
+  const start = t.clock.now;
+  h.work(me, id("tidewalker"), { realm: "heart", kind: "star_well" });
+  const full = start + facts.PRODUCTION_START_MINUTES * MINUTE + facts.PRODUCER_HOLD_HOURS * HOUR;
+  assert.equal(producer(h.show(me), "heart", "star_well").full_at, full, "five minutes' wait, then twelve hours");
+  later(HOUR);
+  assert.equal(producer(h.show(me), "heart", "star_well").full_at, full, "the same time an hour on");
+  later(12 * HOUR);
+  assert.equal(producer(h.show(me), "heart", "star_well").full_at, null, "full already");
+  // Two workers, the second starting later: piecewise.
+  assert.equal(fullAt(0, 1000, [{ from: 0, perHour: 1 }, { from: HOUR / 2, perHour: 1 }], 0), HOUR / 2 + HOUR / 4);
+  assert.deepEqual(h.show(me).night, facts.NIGHT_HOURS["18+"], "an adult's night is quiet by default");
+  t.service.notifications.set(me, { nightQuiet: false });
+  assert.equal(h.show(me).night, null, "an adult who opened it keeps none");
 });
 
 test("a worker of the resource's schools earns 15% more, and a work trait its share (9.2, 11.3)", () => {

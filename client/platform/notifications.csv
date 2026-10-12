@@ -1,0 +1,13 @@
+key,en,pt_BR
+ruleborn_raided_title,Your island was raided,Sua ilha foi assaltada
+ruleborn_raided_body,Heists against your island: {0}. See how your defence held.,Assaltos contra a sua ilha: {0}. Veja como a sua defesa se saiu.
+ruleborn_reminder_title,Your daily reminder,Seu lembrete diário
+ruleborn_reminder_body,Your island is ready when you are.,Sua ilha está pronta quando você estiver.
+ruleborn_reminder_raided_title,Your daily reminder,Seu lembrete diário
+ruleborn_reminder_raided_body,Heists against your island today: {0}. See how your defence held.,Assaltos contra a sua ilha hoje: {0}. Veja como a sua defesa se saiu.
+ruleborn_storage_full_title,Storage full,Armazenamento cheio
+ruleborn_storage_full_body,A producer is full. Collect it so its work is not lost.,Um produtor está cheio. Faça a coleta para não perder o que ele fez.
+ruleborn_rested_title,A character has rested,Um personagem descansou
+ruleborn_rested_body,They are ready for the next heist.,Está pronto para o próximo assalto.
+ruleborn_experiment_title,Experiment finished,Experimento concluído
+ruleborn_experiment_body,The Lab has a result for you.,O Lab tem um resultado para você.

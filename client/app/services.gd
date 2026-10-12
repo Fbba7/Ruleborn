@@ -17,10 +17,16 @@ var social: SocialRepository
 var friends: FriendsRepository
 var workshop: WorkshopRepository
 var universe: UniverseRepository
+var home: HomeRepository
+var device: DeviceRepository
 ## The platform's store (StoreKit, Play Billing); a test's fake in tests.
 var purchases: StorePurchases
 ## §20.1's answer, kept on the phone: no account is made until it allows one.
 var age: AgeCheck
+## The phone's own notifications and their permission; a test's fake in tests.
+var notifier: LocalNotifier
+## Sessions, the permission's asking, and events not yet sent, kept on the phone.
+var notices: DeviceNotices
 ## The network, as this build reaches it; `close` releases it.
 var transport: Transport
 ## The flows that outlive a screen: a purchase or a join in flight goes on
@@ -64,6 +70,11 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.workshop = WorkshopRepository.new(s.api, s.outbox)
 	s.universe = UniverseRepository.new(s.api)
 	s.purchases = StorePurchases.new()
+	s.home = HomeRepository.new(s.api)
+	s.device = DeviceRepository.new(s.api)
+	s.notifier = LocalNotifier.new()
+	s.notices = DeviceNotices.new(DeviceNotices.FILE if outbox_path == Outbox.FILE
+		else outbox_path.get_basename() + "-notices.json")
 	s.api.reauth = s.session.bind(true)
 	s.shop_flow = ShopController.new(s)
 	s.social_flow = SocialController.new(s)
@@ -101,6 +112,49 @@ func session(fresh := false) -> Result:
 		if told.ok:
 			age.mark_sent()
 	return r
+
+
+## The app came to the foreground (TD.74): the session counted and its start
+## kept to send, the push permission asked at the third, and — with an
+## account — the time zone and push token told to the server (G34), the
+## session events sent, and the storage-full timer set from the home (§14.6).
+## Offline, the events wait for the next time.
+func foreground(now := 0) -> void:
+	var at := now if now > 0 else int(Time.get_unix_time_from_system() * 1000)
+	notices.start(at)
+	if notices.should_ask():
+		notifier.ask_permission()
+		notices.mark_asked()
+	if api.online() and age.allows_account() and (await session()).ok:
+		await sync_device()
+
+
+## The app went to the background: the session's end kept, and sent if it can be.
+func background(now := 0) -> void:
+	notices.stop(now if now > 0 else int(Time.get_unix_time_from_system() * 1000))
+	if api.online() and api.token != "":
+		await send_events()
+
+
+## The device told to the server: its zone and token, its events, and its
+## storage-full timer moved out of the night.
+func sync_device() -> void:
+	var zone := notifier.time_zone()
+	if zone != "":
+		await device.report(zone, notifier.push_token())
+	await send_events()
+	var h := await home.view()
+	if h.ok:
+		DeviceNotices.apply(notifier, h.value, int(Time.get_time_zone_from_system().get("bias", 0)))
+
+
+func send_events() -> void:
+	var batch := notices.pending()
+	if batch.is_empty():
+		return
+	var r := await device.events(batch)
+	if r.ok:
+		notices.sent(batch.size())
 
 
 ## Everything released: the transport node taken out of the tree and freed,

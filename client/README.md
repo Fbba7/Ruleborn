@@ -111,6 +111,19 @@ happens before it, and it reaches the server with the first sign-in
 (`PUT /v1/age`), which until then holds the account to the most protective
 band.
 
+**Notifications and sessions** (§14.6, §20.2, §24; TD.74). Not a screen:
+the app's life on the phone (`app/app_lifetime.gd`). Each time it comes to
+the foreground a session starts; at the third the push permission is asked,
+once. With an account, the device tells the server its time zone and push
+token (G34), sends its session events, and sets the storage-full notice for
+the first producer to fill, moved to the end of the player's night
+(`data/device_notices.gd`). A session the app never closed is ended at the
+next launch, marked crashed; events wait on the phone while offline. The
+phone draws a notification from its own string tables, written from
+`platform/notifications.csv` by `tools/native_strings.py`; the platforms'
+notification plugins sit behind `app/local_notifier.gd`, and a test uses
+`FakeLocalNotifier`.
+
 **Home.** The Keeper bar (§14.2): the level, ten pips filled by the share
 of the way to the next and the numbers, as the server keeps them, moved by
 each raid's answer — the result screen says what the raid earned. Play a heist, fixed at the bottom where the thumb rests, and every

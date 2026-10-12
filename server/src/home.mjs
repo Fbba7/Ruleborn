@@ -427,6 +427,7 @@ export class Home {
         producers.push({ realm: b.realm, kind: b.kind, level: b.level, resource: r.resource, slots: r.lv.slots,
                          workers: r.workers.map((w) => w.id), per_hour: Math.round(r.perHour),
                          stored: Math.min(holds, Math.floor((row.stored + made) / 1000)), holds,
+                         full_at: fullAt(row.stored + made, holds * 1000, r.workers, now),
                          // The terms kept at 1 until the server keeps weaving
                          // and stability (G82): the realm's and crown laws of
                          // the resource's schools, the stability band, faults.
@@ -447,6 +448,28 @@ export class Home {
       producers,
       essence: this.service.balance(account).essence,
       aether: this.service.aether(account),
+      // §14.6's storage-full notice is the device's own timer, and §20.2's
+      // night is the server's: the hours the device moves it out of.
+      night: this.service.notifications.night(this.service.notifications.settings(account)),
     };
   }
+}
+
+/** When a producer holding `stored` thousandths fills its `holds`, its
+ *  workers each counting from their own start: null if it is full already
+ *  or nobody works there (§14.6's storage-full notice). */
+export function fullAt(stored, holds, workers, now) {
+  if (stored >= holds) return null;
+  const starts = [...new Set(workers.map((w) => Math.max(w.from, now)))].sort((a, b) => a - b);
+  let at = now;
+  let left = holds - stored;
+  for (let i = 0; i < starts.length; i++) {
+    const rate = workers.filter((w) => Math.max(w.from, now) <= starts[i]).reduce((s, w) => s + w.perHour, 0);
+    const until = starts[i + 1] ?? Infinity;
+    const perMs = (rate * 1000) / HOUR;
+    at = starts[i];
+    if (perMs > 0 && at + left / perMs <= until) return Math.ceil(at + left / perMs);
+    left -= perMs * (until - at);
+  }
+  return null;
 }

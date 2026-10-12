@@ -255,6 +255,7 @@
   "the fee comes back in full after a loud heist and half after a partial one (9.4, C41)": "passed",
   "the friends' feed shows what friends did this week, and nothing of strangers (17.6)": "passed",
   "the home over HTTP: read, set to work, collected, and refused with the reason (9.3, 11.5)": "passed",
+  "the home says when each producer fills and the night the device keeps its notice out of (14.6, 20.2)": "passed",
   "the launch gates' figures: players, crash-free sessions, heists, worth-your-time, buyers (22.2, 25.3)": "passed",
   "the list is guaranteed only when its middle entry sits in the band (12.22)": "passed",
   "the middle target is drawn from the raider-success band, the list sorted by predicted success (12.22)": "passed",

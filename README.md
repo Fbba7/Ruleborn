@@ -233,6 +233,7 @@ tools/
   roadmap.py                      the roadmap, as data
   build_roadmap.py                renders it, computing progress from the register
   client_strings.py               writes client/i18n/content.csv, the content's names, from content/
+  native_strings.py               writes the phones' notification tables, iOS and Android, from client/platform/notifications.csv
   client_contract.py              the client's server routes and failure words, checked against server/src/http.mjs
   privacy_manifest.py             writes the iPhone build's privacy manifest from server/privacy.json
   league_model.py                 fits the league boundaries to §14.7's shares; writes server/src/leagues.json

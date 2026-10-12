@@ -278,6 +278,18 @@ def builder_terrain():
     return proof
 
 
+def native_strings():
+    """§14.6's notification strings in the phones' own tables, both
+    languages, every key the server pushes (tools/native_strings.py)."""
+    def proof():
+        import native_strings as ns
+        found = ns.problems()
+        return (0.0 if found else 1.0,
+                f"{len(ns.rows())} notification strings in both phones' tables"
+                + (f", {len(found)} problems" if found else ""), [])
+    return proof
+
+
 def parts(*proofs):
     """A deliverable §26.8 names as several things, each an equal part: the
     average of their proofs, every part's evidence shown."""
@@ -620,16 +632,30 @@ DELIVERABLES = [
         "the league shows the place, the division in numerals, Renown and the way to the next league; groups name their members and roles, the player as \"you\"; the feed says who raided whom (§17, §18.1)",
         "the league, groups and friends reducers keep what they had when a call fails, name the failure, read a null group as none, and the friends screen shows the latest outcome, not an older one")),
 
-    ("10 to 13", "Localisation: English and Brazilian Portuguese", FRONTEND, not_started(
-        "every launch screen and content name ships in both languages, the Portuguese read by a native speaker")),
+    # §26.9: the coined names are the owner's to translate, after a native
+    # speaker's read-aloud; a name invented here is a translation nobody
+    # decided on (tools/client_strings.py).
+    ("10 to 13", "Localisation: English and Brazilian Portuguese", FRONTEND, parts(
+        client_tests(
+            "every string a screen asks for is in the catalogue, in English and Brazilian Portuguese, with the same placeholders"),
+        not_started("phase 4b's screens are built, their words in both languages"),
+        not_started("every coined name in content.csv has its Portuguese, the owner's (§26.9)"),
+        not_started("a native speaker has read every coined name aloud (§26.9)"))),
     # §20.8's table, area by area, and §21.8's and §21.10's checks, on every
     # screen (client/tests/a11y_tests.gd). VoiceOver and TalkBack on a phone
     # are the device matrix's.
     ("10 to 13", "Notifications on the device: four strings, its own timers, the push permission",
-     FRONTEND, not_started(
-        "§14.6's four notification strings are in the app's string tables in both "
-        "languages, the device keeps its own timers, and the push permission is asked "
-        "after the third session (TD.74)")),
+     FRONTEND, parts(
+        native_strings(),
+        client_tests(
+            "the storage-full notice is set for the first producer to fill, moved out of the night to its end, and taken away when nothing will fill (14.6, 20.2)",
+            "on coming to the foreground the device tells the server its time zone and, once it may notify, its push token, sends its session events — those kept offline too — and sets its storage-full timer from the home (G34, 14.6, 24)"),
+        client_tests(
+            "the push permission is asked at the start of the third session, once, and kept across launches (TD.74)"),
+        not_started("a character's rest and the Lab's experiments have timers to set, "
+                    "once the server keeps them (TD.34, TD.22)"),
+        not_started("on a phone: the tables bundled into both exports, and the platforms' "
+                    "notification plugins behind LocalNotifier (TC.3)"))),
     ("10 to 13", "Accessibility", FRONTEND, client_tests(
         "a banner leads with its glyph, is announced, goes by itself, or stays until dismissed when the player asks (§20.8)",
         "a rehearsal can be paused at any time and run at 75%; a raid cannot be paused (§20.8)",

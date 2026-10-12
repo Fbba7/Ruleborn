@@ -49,6 +49,7 @@ python3 tools/build_brief.py --check
 echo
 echo "== the client: the same simulation inside Godot, and its screen =="
 python3 tools/client_strings.py --check
+python3 tools/native_strings.py --check
 python3 tools/client_contract.py
 (cd client && gdlint $(find . -name '*.gd' -not -path './.godot/*'))
 python3 client/status.py

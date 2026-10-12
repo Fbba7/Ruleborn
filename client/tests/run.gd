@@ -328,6 +328,7 @@ func _run() -> void:
 	await WorkshopTests.new(self, check, server_url).run()
 	await AgeTests.new(self, check, server_url).run()
 	await KeeperTests.new(self, check, _mount).run()
+	await NoticesTests.new(self, check).run()
 	await UniverseTests.new(self, check, _mount, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()

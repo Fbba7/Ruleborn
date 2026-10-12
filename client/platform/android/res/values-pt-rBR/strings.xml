@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Written by tools/native_strings.py from client/platform/notifications.csv; edit that. -->
+<resources>
+    <string name="ruleborn_raided_title">Sua ilha foi assaltada</string>
+    <string name="ruleborn_raided_body">Assaltos contra a sua ilha: %1$s. Veja como a sua defesa se saiu.</string>
+    <string name="ruleborn_reminder_title">Seu lembrete diário</string>
+    <string name="ruleborn_reminder_body">Sua ilha está pronta quando você estiver.</string>
+    <string name="ruleborn_reminder_raided_title">Seu lembrete diário</string>
+    <string name="ruleborn_reminder_raided_body">Assaltos contra a sua ilha hoje: %1$s. Veja como a sua defesa se saiu.</string>
+    <string name="ruleborn_storage_full_title">Armazenamento cheio</string>
+    <string name="ruleborn_storage_full_body">Um produtor está cheio. Faça a coleta para não perder o que ele fez.</string>
+    <string name="ruleborn_rested_title">Um personagem descansou</string>
+    <string name="ruleborn_rested_body">Está pronto para o próximo assalto.</string>
+    <string name="ruleborn_experiment_title">Experimento concluído</string>
+    <string name="ruleborn_experiment_body">O Lab tem um resultado para você.</string>
+</resources>
