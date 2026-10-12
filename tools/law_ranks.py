@@ -93,8 +93,11 @@ SPLITS = {
 #: §14.4's earning rates, which turn a page difference into days of play.
 PAGES_PER_DAY_EARLY, PAGES_PER_DAY_LATE, EARLY_DAYS = 16, 23, 60
 
-#: The starting laws (§7.6), which §14.4 excludes from the restore total.
-STARTING_LAWS = 3
+#: How many starting laws there are (§7.6, design_facts' one home), which
+#: §14.4 excludes from the restore total.
+sys.path.insert(0, str(ROOT / "tools"))
+from design_facts import STARTING_LAWS as _STARTING  # noqa: E402
+STARTING_LAW_COUNT = len(_STARTING)
 
 #: A law's own tier I text is the only place the document says what the law
 #: does at the rank it is tagged with, so it is where a condition would be
@@ -123,7 +126,7 @@ def codex_pages(split: dict) -> int:
 
 def restore_pages(split: dict) -> int:
     """§14.4's convention: the total less the three commons a player starts with."""
-    return codex_pages(split) - STARTING_LAWS * split["pages"]["Common"]
+    return codex_pages(split) - STARTING_LAW_COUNT * split["pages"]["Common"]
 
 
 def days_to_restore(pages: int) -> int:

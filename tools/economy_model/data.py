@@ -564,8 +564,12 @@ FREE_TRACK_ESSENCE, FREE_TRACK_PAGES = free_track(TRACK_TIERS)
 #: §7.6's chapters: the Keeper level at which the Codex holds each count of
 #: laws. The launch Codex is the first two; the full 48 all five.
 CODEX_CHAPTERS = ((1, 12), (6, 24), (12, 36), (18, 42), (24, 48))
-#: §7.6: "Half gravity, Slow rivers and Bloom", three commons.
-STARTING_LAWS = 3
+try:
+    from ..design_facts import STARTING_LAWS as _STARTING        # §7.6, its one home
+except ImportError:
+    from design_facts import STARTING_LAWS as _STARTING
+#: §7.6: "Half gravity, Slow rivers and Bloom", three commons — how many.
+STARTING_LAW_COUNT = len(_STARTING)
 
 
 def codex(launch_only: bool) -> list[int]:
