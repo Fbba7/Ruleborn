@@ -94,6 +94,8 @@ pub enum Event {
     /// A law switched off for a while — Suspend — until the tick given. The
     /// law's blink §12.13 names at the moment.
     LawOff { law: u16, until: u32 },
+    /// A raider's cast placed: its number in the manifest and its law's row.
+    Cast { cast: u8, law: u16 },
     /// A law turned into its opposite — Invert — until the tick given.
     LawTurned { law: u16, until: u32 },
     /// A crew member's ability, used.

@@ -149,6 +149,9 @@ pub struct Skiff {
 /// What a heist came to.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Outcome {
+    /// The manifest's casts used, a bit each: §12.5 bills a cast only if it
+    /// was used.
+    pub casts_used: u8,
     pub grade: Grade,
     pub banked: i32,
     /// The crew's whole Carry: `banked * 100 / capacity` is §12.19's fill.

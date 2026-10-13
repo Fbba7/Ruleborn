@@ -256,6 +256,12 @@ PRODUCTION_LAW_BONUS = (0.10, 0.05)
 #: stability cost"; and "the slot then rests for an hour", in minutes.
 WEAVE_MINUTES = (10, 40, 120)
 WEAVE_AETHER_PER_POINT = 40
+#: §12.5: a cast "costs 30 Aether per point of the law's base cost, paid at
+#: validation and only if it was used".
+CAST_AETHER_PER_POINT = 30
+#: §12.5: a cast "covers a circle of 4 tiles for 10 seconds".
+CAST_TILES = 4
+CAST_SECONDS = 10
 SLOT_REST_MINUTES = 60
 #: §5.1: "The Spire opens 1 crown slot at Spire level 2 and a second at Spire
 #: level 5" — the Spire level for each crown slot.
@@ -501,6 +507,9 @@ HOME = {
     "PRODUCTION_LAW_BONUS": "9.3",
     "WEAVE_MINUTES": "5.6",
     "WEAVE_AETHER_PER_POINT": "5.6",
+    "CAST_AETHER_PER_POINT": "12.5",
+    "CAST_TILES": "12.5",
+    "CAST_SECONDS": "12.5",
     "SLOT_REST_MINUTES": "5.6",
     "CROWN_SLOT_SPIRE": "5.1",
     "TIER_COST_FACTORS": "5.5",
@@ -705,6 +714,10 @@ STATED = {
                       lambda m: (int(m[0]), int(m[1]), int(m[2]) * 60)),
     "WEAVE_AETHER_PER_POINT": (r"Weaving costs (\d+) Aether per point of the law's stability cost",
                                lambda m: int(m[0])),
+    "CAST_AETHER_PER_POINT": (r"costs (\d+) Aether per point of the law's base cost",
+                              lambda m: int(m[0])),
+    "CAST_TILES": (r"covers a circle of (\d+) tiles for \d+ seconds", lambda m: int(m[0])),
+    "CAST_SECONDS": (r"covers a circle of \d+ tiles for (\d+) seconds", lambda m: int(m[0])),
     "SLOT_REST_MINUTES": (r"the slot then rests for (an hour|\d+ minutes)",
                           lambda m: 60 if m[0] == "an hour" else int(m[0].split()[0])),
     "CROWN_SLOT_SPIRE": (r"The Spire opens 1 crown slot at Spire level (\d+) and a second at Spire level (\d+)",

@@ -6027,3 +6027,111 @@ fn what_a_half_brings_out_is_banked_and_the_half_is_never_counted_as_crew() {
     let o = world.outcome();
     assert_eq!((o.banked, o.caught, o.left), (26, 0, 25));
 }
+
+// -- Casts and the Wanderer's Copy: laws that hold inside a circle (TD.12) ------
+
+use crate::zoned;
+
+/// A crew of these kinds carrying casts of these laws, standing as
+/// `kinds_world` puts them.
+fn casting_world(kinds: &[&str], casts: &[&str]) -> World {
+    let mut world = kinds_world(kinds);
+    let mut crew = manifest(kinds);
+    crew.casts = rows(casts).into_iter().map(|r| r as u8).collect();
+    world.crew_from(&crew);
+    world
+}
+
+fn cast_at(world: &mut World, i: u8, x: u16, y: u16) {
+    world.give(i, Kind::Cast, x as i16 * 256 + 128, y as i16 * 256 + 128);
+}
+
+#[test]
+fn a_cast_lays_its_law_on_a_circle_of_four_tiles_for_ten_seconds() {
+    let mut world = casting_world(&["stormhound", "quarryback"], &["haste"]);
+    assert_eq!(world.outcome().casts_used, 0, "carried and never placed: never billed");
+    cast_at(&mut world, 0, 2, 10);
+    world.step();
+    let at = |x: u16, y: u16| {
+        let (px, py) = world.grid.centre(world.grid.index(x, y).unwrap());
+        zoned(&world.sheet, &world.circles, Point { x: px, y: py }).factor(Param::CrewSpeed)
+    };
+    assert_eq!((at(2, 10), at(6, 10), at(7, 10)), ((5, 4), (5, 4), (1, 1)),
+               "\"a circle of 4 tiles\": Haste's 25% inside it, nothing beyond");
+    assert_eq!(world.sheet.factor(Param::ClockRate), (1, 1), "the clock is the realm's, not the circle's");
+    assert_eq!(world.outcome().casts_used, 0b1, "used: billed (§12.5)");
+    assert!(logged(&world, crate::events::Event::Cast { cast: 0, law: rows(&["haste"])[0] as u16 }));
+    // Walking inside it is faster.
+    let walked = |cast: bool| {
+        let mut w = casting_world(&["stormhound"], &["haste"]);
+        if cast {
+            cast_at(&mut w, 0, 2, 10);
+        }
+        w.step();
+        walk_to(&mut w, 0, 2, 7);
+        run_for(&mut w, 10);
+        w.raiders[0].at.y
+    };
+    assert!(walked(true) < walked(false), "further north in a third of a second inside the circle");
+    // Once a heist, and gone after 10 s.
+    cast_at(&mut world, 0, 12, 10);
+    world.step();
+    assert_eq!(world.zones.len(), 1, "a cast is used once");
+    run_for(&mut world, ruleborn::CAST_TICKS);
+    assert!(world.zones.is_empty());
+    // No cast in that slot: nothing.
+    let mut bare = kinds_world(&["stormhound"]);
+    cast_at(&mut bare, 0, 2, 10);
+    bare.step();
+    assert!(bare.zones.is_empty() && bare.outcome().casts_used == 0);
+}
+
+#[test]
+fn a_guard_looking_into_a_cast_of_glowing_dark_sees_half_as_far() {
+    let seen = |cast: bool| {
+        let mut world = casting_world(&["stormhound"], &["glowing_dark"]);
+        put(&mut world, 0, 2, 9);
+        let gi = post(&mut world, 0, 2, 5);
+        world.guards[gi].facing = Ang::from_degrees(90);
+        if cast {
+            cast_at(&mut world, 0, 2, 9);
+        }
+        world.step();
+        world.noticed(gi, 0).is_some()
+    };
+    assert!(seen(false), "four tiles off, in a Scout's far zone");
+    assert!(!seen(true), "inside the dark, half as far: out of reach");
+}
+
+#[test]
+fn copy_carries_an_enemy_law_around_the_crew_for_the_rest_of_the_heist() {
+    let mut world = sage_world(&["stormhound", "quarryback"], 4); // the Wanderer: Copy first
+    world.weave(&[("haste", (3, 4))]);
+    call_at(&mut world, 0, 3, 4);
+    world.step();
+    assert_eq!(world.sage.unwrap().uses[0], 0);
+    let at = |w: &World, p: Point| zoned(&w.sheet, &w.circles, p).factor(Param::CrewSpeed);
+    let far = {
+        let (x, y) = world.grid.centre(world.grid.index(13, 0).unwrap());
+        Point { x, y }
+    };
+    // Two crew members two tiles apart: the copy holds once where both
+    // circles meet, not twice.
+    assert_eq!(at(&world, world.raiders[0].at), (25, 16), "the realm's Haste and the copy");
+    assert_eq!(at(&world, world.raiders[1].at), (25, 16));
+    assert_eq!(at(&world, far), (5, 4), "away from the crew, the realm's alone");
+    // The pylon broken, the realm's law is off and the crew still carries it.
+    world.laws[0].broken_at = Some(world.tick);
+    run_for(&mut world, 60 * TICKS_PER_SECOND);
+    assert_eq!(at(&world, world.raiders[0].at), (5, 4), "for the rest of the heist");
+    assert_eq!(at(&world, far), (1, 1));
+}
+
+#[test]
+fn a_manifest_casting_no_law_is_refused() {
+    let mut heist = fixture(9, 60, 3);
+    let mut crew = manifest(&["stormhound", "quarryback", "skyskipper"]);
+    crew.casts = vec![LAWS.len() as u8];
+    heist.manifest = Some(crew);
+    assert!(Heist::decode(&heist.encode()).is_none());
+}

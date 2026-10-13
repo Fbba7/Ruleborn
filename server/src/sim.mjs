@@ -37,7 +37,7 @@ export const GRADES = ["clean", "loud", "partial", "foiled"];
 /** `replay::Kind`, the command vocabulary on the wire. */
 export const KIND = {
   MoveTo: 0, Gait: 1, Halt: 2, Crack: 3, Load: 4, Skiff: 5,
-  Attack: 6, Break: 7, Drop: 8, Disarm: 9, Drag: 10, Land: 11, Ability: 12,
+  Attack: 6, Break: 7, Drop: 8, Disarm: 9, Drag: 10, Land: 11, Ability: 12, Sage: 13, Cast: 14,
 };
 
 const hex = (bytes) => Buffer.from(bytes).toString("hex");
@@ -59,6 +59,27 @@ export function readHeader(bytes) {
     era: withEra ? bytes[HEADER.era] : 0,
     manifest: magic === "RBH3",
   };
+}
+
+/** §12.5's crew manifest an `RBH3` replay carries after its header: each
+ *  member's kind, form, level and traits, the Sage, and the casts (each a
+ *  law's row in content/laws.json's order). Null for a replay with none, or
+ *  bytes that run out before it ends; the simulation refuses those anyway. */
+export function readManifest(bytes, header) {
+  if (!header?.manifest) return null;
+  let at = HEADER.era + 1;
+  const members = [];
+  for (let i = 0; i < header.crew; i++) {
+    if (at + 4 > bytes.length) return null;
+    const [kind, form, level, n] = bytes.subarray(at, at + 4);
+    members.push({ kind, form, level, traits: [...bytes.subarray(at + 4, at + 4 + n)] });
+    at += 4 + n;
+  }
+  if (at + 2 > bytes.length) return null;
+  const sage = bytes[at];
+  const n = bytes[at + 1];
+  if (at + 2 + n > bytes.length) return null;
+  return { members, sage, casts: [...bytes.subarray(at + 2, at + 2 + n)] };
 }
 
 /** One compiled build of the simulation. */
@@ -149,6 +170,7 @@ export class Build {
         broken: Number(view.getBigUint64(24, true)),
         // Who got out, bit n the crew's nth member; null from an older build.
         outMask: length > 32 ? v[32] : null,
+        castsUsed: length > 33 ? v[33] : null,
       },
     };
   }

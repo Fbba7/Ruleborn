@@ -686,6 +686,15 @@ placed buildings on their tiles (`buildings_not_as_placed`, read with
   pays the roster's keep, a quarter. The law term is weaving.mjs's; the
   stability and fault terms are 1 until TD.37 keeps them, and `GET /v1/home`
   says so. What the document leaves open is **G82**.
+- **Casts** (§12.5, §7.6). A cast the replay's manifest carries must be one
+  of the raider's own restored laws (`cast_not_restored` otherwise). The
+  verdict's 34th byte (`castsUsed`) says which were placed, and each used is
+  billed at validation, `CAST_AETHER_PER_POINT` Aether a point of its law's
+  stability cost, on the heist's one ledger row for the raider; a cast
+  carried and never placed costs nothing, and a raider who cannot pay for
+  what was cast has no heist to settle (`not_enough_aether`). A foiled heist
+  gives the defender a page of each law cast. What a cast does is
+  `sim/`'s: its law's zoned lines on a circle of 4 tiles for 10 seconds.
 - **The crew and its rest** (§11.6, §12.9, TD.34). A heist names its crew from
   the roster: `POST /v1/heists/:token?crew=ids`, each a character the player
   holds, none twice, none away, as many as the replay's crew and, in an RBH3

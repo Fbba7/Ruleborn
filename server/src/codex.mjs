@@ -34,6 +34,12 @@ const RANKS = ["Common", "Uncommon", "Rare", "Deep"];
 /** §7.6's restoration price for a law, by its rank. */
 export const restorePrice = (law) => facts.PAGE_COSTS[RANKS.indexOf(BY_ID[law].rank)];
 
+/** §12.5's casts: the law a manifest's cast row names (content/laws.json's
+ *  order, the simulation's table's), or null; and what using it costs —
+ *  "30 Aether per point of the law's base cost", its stability cost. */
+export const castLaw = (row) => LAWS[row]?.id ?? null;
+export const castPrice = (law) => Math.round(BY_ID[law].stability_cost * facts.CAST_AETHER_PER_POINT);
+
 /** The laws whose pylons a heist broke: bit n of the verdict's `broken` is
  *  §7.7's nth law, content/laws.json's order (sim/src/heist.rs). */
 export function brokenLaws(broken) {
@@ -76,7 +82,7 @@ export class Codex {
    *  of its law; every eighth paying heist a page of the law worked on; and a
    *  friendly heist's owner a page for each raider caught. Returns the pages
    *  given, by law. */
-  afterHeist(lease, verdict, now) {
+  afterHeist(lease, verdict, now, cast = []) {
     const raider = lease.attacker;
     this.ensure(raider, now);
     const given = {};
@@ -95,7 +101,19 @@ export class Codex {
         .get(raider).n + 1;                       // this one is not marked validated yet
       const working = this.db.prepare("SELECT working_on FROM accounts WHERE id = ?").get(raider).working_on;
       if (heists % facts.FLOOR_HEISTS === 0 && working) give(raider, working, 1);
-    } else if (lease.mode === "friendly" && verdict.caught > 0) {
+    }
+    // §7.6: "If the raider cast a law during a foiled heist, the defender
+    // gets one page of it" — a page of each law cast, to a defender who is
+    // still someone (an echo's owner is not defending; G30, §20.12).
+    if (verdict.grade === "foiled" && cast.length && !lease.echo) {
+      const owner = this.db.prepare(
+        "SELECT a.id FROM accounts a WHERE a.id = ? AND a.deleted_at IS NULL").get(lease.defender)?.id;
+      if (owner) {
+        this.ensure(owner, now);
+        for (const law of cast) this.add(owner, law, 1, now);
+      }
+    }
+    if (lease.mode === "friendly" && verdict.caught > 0) {
       const owner = this.db.prepare("SELECT owner FROM snapshots WHERE bundle = ?").get(lease.bundle)?.owner;
       const working = owner && this.db.prepare("SELECT working_on FROM accounts WHERE id = ?").get(owner)?.working_on;
       if (working) {

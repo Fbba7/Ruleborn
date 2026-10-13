@@ -14,6 +14,7 @@
   "a_building_blocks_feet_and_eyes_on_every_tile_of_its_footprint": "passed",
   "a_building_is_crowded_by_what_stands_under_it_and_can_seal_the_vault": "passed",
   "a_bush_hides_one_still_character_completely": "passed",
+  "a_cast_lays_its_law_on_a_circle_of_four_tiles_for_ten_seconds": "passed",
   "a_caught_half_loses_only_its_half_whichever_half_it_is": "passed",
   "a_change_the_state_table_makes_is_logged_as_the_tables": "passed",
   "a_command_for_a_crew_member_who_is_not_there_is_dropped": "passed",
@@ -44,6 +45,7 @@
   "a_guard_can_always_see_out_of_its_own_tile": "passed",
   "a_guard_cannot_see_the_foot_of_its_own_cliff": "passed",
   "a_guard_drawn_by_a_decoy_is_logged_as_lured": "passed",
+  "a_guard_looking_into_a_cast_of_glowing_dark_sees_half_as_far": "passed",
   "a_guard_that_hears_the_crew_is_logged_as_hearing": "passed",
   "a_guard_that_notices_mid_takedown_takes_an_ordinary_hit": "passed",
   "a_guard_that_sees_the_crew_is_logged_rising_with_who_it_saw": "passed",
@@ -68,6 +70,7 @@
   "a_lava_crack_is_impassable_and_seen_over": "passed",
   "a_law_suspended_an_ability_and_a_power_are_logged": "passed",
   "a_line_is_the_same_from_either_end": "passed",
+  "a_manifest_casting_no_law_is_refused": "passed",
   "a_manifest_naming_a_kind_past_the_eighteen_is_malformed": "passed",
   "a_marsh_is_forty_percent_slower_wet_and_keeps_footprints": "passed",
   "a_pit_drops_anyone_a_level_and_needs_a_climb_out": "passed",
@@ -152,6 +155,7 @@
   "clockwork_triggers_every_ward_together_every_fifteen_seconds": "passed",
   "commands_are_what_drives_the_crew": "passed",
   "commands_given_live_record_the_same_heist_as_the_log_they_make": "passed",
+  "copy_carries_an_enemy_law_around_the_crew_for_the_rest_of_the_heist": "passed",
   "cracked_gardens_counts_every_structure_broken_for_the_owner": "passed",
   "cracking_takes_what_12_19_says_with_and_without_a_breaker": "passed",
   "crew_pass_through_one_another": "passed",
@@ -417,7 +421,7 @@
   }
  ],
  "content": {
-  "agree": 161,
+  "agree": 163,
   "disagree": [],
   "not_modelled": [
    "noise.off_screen_multiplier \u2014 the simulation has no screen",

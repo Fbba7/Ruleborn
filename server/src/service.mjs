@@ -31,7 +31,7 @@ import { Matchmaking } from "./matchmaking.mjs";
 import { Notifications } from "./notifications.mjs";
 import { Seasons } from "./seasons.mjs";
 import { GIFT_KEEP_DAYS, INTENT_MS, Shop } from "./shop.mjs";
-import { readHeader } from "./sim.mjs";
+import { readHeader, readManifest } from "./sim.mjs";
 import { Journal } from "./accounts.mjs";
 import { Keeper, heistExperience } from "./keeper.mjs";
 import { Store } from "./store.mjs";
@@ -39,7 +39,7 @@ import { check, issue } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
 import { Track } from "./track.mjs";
 import { Safety } from "./safety.mjs";
-import { Codex } from "./codex.mjs";
+import { Codex, castLaw, castPrice } from "./codex.mjs";
 import { Home } from "./home.mjs";
 import { Universe } from "./universe.mjs";
 import { Weaving } from "./weaving.mjs";
@@ -592,6 +592,14 @@ export class Service {
       if (why) return refuse(why);
     }
 
+    // §12.5: "A cast brings one of your own unlocked laws": each cast the
+    // manifest carries a law the raider's Codex has restored.
+    const casts = (readManifest(replay, header)?.casts ?? []).map(castLaw);
+    if (casts.length) {
+      const restored = new Set(this.weaving.restored(attacker).map((r) => r.law));
+      if (casts.some((law) => !law || !restored.has(law))) return refuse("cast_not_restored");
+    }
+
     // §24.11: re-simulated by the build it was played under, however old.
     const build = this.builds.get(header.rules);
     if (!build) return refuse("rules_not_held");
@@ -605,8 +613,15 @@ export class Service {
       // for review. One mismatch is never a ban."
       return refuse("diverged", { second: result.second, review: true });
     }
+    // §12.5: a cast "costs 30 Aether per point of the law's base cost, paid
+    // at validation and only if it was used" — the verdict says which were.
+    // A raider who cannot pay for what was cast has no heist to settle.
+    const cast = casts.filter((_, i) => (result.verdict.castsUsed ?? 0) & (1 << i));
+    const castAether = cast.reduce((n, law) => n + castPrice(law), 0);
+    if (castAether > this.aether(attacker)) return refuse("not_enough_aether", { cost: castAether });
     return this.settle(lease, replay, logHash, now,
                        { validated: true, verdict: result.verdict, grace, crew,
+                         cast: { laws: cast, aether: castAether },
                          heistMs: Math.round((header.ticks / TICKS_PER_SECOND) * 1000) });
   }
 
@@ -639,12 +654,13 @@ export class Service {
         .run(lease.token, lease.attacker, lease.bundle, lease.seed, logHash, stateHash,
              JSON.stringify(outcome), decision.review ? 1 : 0, decision.grace ? 1 : 0, now, day(now));
       if (decision.validated) {
-        Object.assign(outcome, this.grant(lease, decision.verdict, now), { grace: decision.grace });
+        Object.assign(outcome, this.grant(lease, decision.verdict, now, decision.cast),
+                      { grace: decision.grace });
         // §11.5: the first heist brings two strays home, free (home.mjs);
         // the roster says so, and the heist's outcome is the haul's alone.
         this.home.firstStrays(lease.attacker, lawsOf(this.store.get(lease.bundle)), now);
         // §7.6: the laws met, the pylons' pages and the floor (codex.mjs).
-        this.codex.afterHeist(lease, decision.verdict, now);
+        this.codex.afterHeist(lease, decision.verdict, now, decision.cast?.laws ?? []);
         // §11.6: the crew away and resting, each by its outcome (home.mjs).
         if (decision.crew) this.home.rest(lease.attacker, decision.crew, decision.verdict, decision.heistMs, now);
         this.db.prepare("UPDATE heists SET validated = 1, outcome = ? WHERE token = ?")
@@ -660,7 +676,7 @@ export class Service {
   }
 
   /** The fee, the haul and the defender's share, minted. */
-  grant(lease, verdict, now) {
+  grant(lease, verdict, now, cast = { laws: [], aether: 0 }) {
     const attacker = lease.attacker;
     const snapshot = this.db.prepare("SELECT * FROM snapshots WHERE bundle = ?").get(lease.bundle);
     const level = (id) => this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(id).keeper_level;
@@ -674,7 +690,8 @@ export class Service {
     // ledger row each at the end (§24.1's writes; F47): `paid` is the part
     // §9.6's caps count, a haul or a defence share (G37). The heist's
     // outcome keeps every line the rows sum.
-    const moved = { raider: { starlight: 0, essence: 0, paid: 0 }, defender: { starlight: 0, essence: 0, paid: 0 } };
+    const moved = { raider: { starlight: 0, essence: 0, aether: 0, paid: 0 },
+                    defender: { starlight: 0, essence: 0, aether: 0, paid: 0 } };
     const book = (who, currency, amount, counted = false) => {
       moved[who][currency] += amount;
       if (counted) moved[who].paid += amount;
@@ -690,6 +707,8 @@ export class Service {
     const fee = lease.trace_of || friendly || overWeek
       ? 0 : entryFee(this.balance(attacker).starlight, snapshot.vault_level);
     book("raider", "starlight", -fee);
+    // §12.5's casts used, paid at validation with the rest of the heist.
+    book("raider", "aether", -cast.aether);
     // §24.12's Validate "checks the token, the expiry and the caps": §9.6's
     // three, against what this raider was paid today and this week — hauls,
     // and the defence shares below, which count to the same caps (G37).
@@ -771,12 +790,14 @@ export class Service {
       defence = { percent, total: share.total, essence: share.essence, starlight: share.starlight };
     }
     const mint = this.db.prepare(
-      `INSERT INTO ledger (account, starlight, essence, paid, reason, heist, at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`);
-    for (const [who, account, reason] of [["raider", attacker, "a heist: fee, haul and fee returned (9.4, 9.6)"],
+      `INSERT INTO ledger (account, starlight, essence, aether, paid, reason, heist, at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+    for (const [who, account, reason] of [["raider", attacker, "a heist: fee, haul, fee returned and casts (9.4, 9.6, 12.5)"],
                                           ["defender", lease.defender, "a foiled raid: fee and defence share (9.4, 12.9)"]]) {
       const m = moved[who];
-      if (m.starlight || m.essence || m.paid) mint.run(account, m.starlight, m.essence, m.paid, reason, lease.token, now);
+      if (m.starlight || m.essence || m.aether || m.paid) {
+        mint.run(account, m.starlight, m.essence, m.aether, m.paid, reason, lease.token, now);
+      }
     }
     // §12.9's Renown, §18.2's season stars and §12.22's ratings, in the same
     // transaction as the haul. An echo is nobody's defence: it moves no
@@ -802,7 +823,7 @@ export class Service {
     // "the friend earns a page for every raider their guards catch": pages
     // are the device's, so the outcome is their record (D64).
     const friendPages = friendly ? verdict.caught : undefined;
-    return { verdict, fee, feeReturned: returned, haul: pay, renown, renownCounted, stars, rating,
+    return { verdict, fee, feeReturned: returned, cast, haul: pay, renown, renownCounted, stars, rating,
              defence, keeper, mode: lease.mode ?? "raid",
              ...(friendly ? { friendPages } : {}) };
   }

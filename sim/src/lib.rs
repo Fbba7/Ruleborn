@@ -757,6 +757,53 @@ pub struct Bridge {
     pub until: u32,
 }
 
+/// A law that holds inside a circle rather than over the realm (§7.3: "Apply
+/// terrain, then zones (wards and raider casts)"): a raider's cast, centred
+/// where it was placed, or the Wanderer's Copy, around every crew member on
+/// its feet. `ZONED` says which of its law's lines a zone carries.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Zone {
+    /// Its law's row in `laws_table::LAWS`.
+    pub def: usize,
+    /// Its centre; `None` for a law carried around the crew.
+    pub at: Option<Point>,
+    pub until: u32,
+}
+
+/// The lines of a law a zone carries: those read for one place or one
+/// character — how fast whoever is inside moves, how far it is seen and how
+/// soon, whether stillness or walls hide it, how far its sounds carry, and
+/// what its blows deal. A line that holds for the realm or the heist as a
+/// whole — the clock, a delay, regrowth, revival, the alarm's reach, light
+/// bands, healing over time, health — is the realm's alone, so a zone of a
+/// law made only of those does nothing (G81).
+pub const ZONED: [Param; 12] = [
+    Param::CrewSpeed, Param::GuardSpeed, Param::LoadedSpeed, Param::LargeSpeed,
+    Param::SmallSpeed, Param::SightRange, Param::HideBehindWalls, Param::StillIsInvisible,
+    Param::SuspicionFill, Param::NoiseRadius, Param::Damage, Param::StructureDamage,
+];
+
+/// The sheet at a point: the realm's, with every zone covering the point
+/// laid on top, once each — a law carried around the crew holds once however
+/// many crew members stand near. With no zone covering it, the realm's sheet
+/// itself.
+fn zoned<'a>(sheet: &'a Sheet, circles: &[(usize, Vec<Point>)], at: Point)
+    -> std::borrow::Cow<'a, Sheet> {
+    let reach = Fx::from_int(ruleborn::CAST_TILES);
+    let mut out = std::borrow::Cow::Borrowed(sheet);
+    for (def, centres) in circles {
+        if centres.iter().any(|c| c.distance(at) <= reach) {
+            let s = out.to_mut();
+            for &(p, n, d) in LAWS[*def].params {
+                if ZONED.contains(&p) {
+                    s.apply(p, n, d);
+                }
+            }
+        }
+    }
+    out
+}
+
 /// A Glass golem's crystal wall: the tiles it stands on, until a tick.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Wall {
@@ -876,6 +923,13 @@ pub struct World {
     pub bridges: Vec<Bridge>,
     /// The Glass golems' crystal walls standing.
     pub walls: Vec<Wall>,
+    /// The casts the manifest carries (law rows), which have been used (a
+    /// bit each: §12.5 bills only a cast used), and the zones in force, with
+    /// their circles this tick.
+    pub casts: Vec<u8>,
+    pub casts_used: u8,
+    pub zones: Vec<Zone>,
+    circles: Vec<(usize, Vec<Point>)>,
     /// The Lantern wisps' reveals running: (crew member, until). Each shows
     /// what is hidden within `ruleborn::REVEAL_TILES` of the wisp as it goes.
     pub reveals: Vec<(usize, u32)>,
@@ -1033,6 +1087,10 @@ impl World {
             bridges: Vec::new(),
             walls: Vec::new(),
             reveals: Vec::new(),
+            casts: Vec::new(),
+            casts_used: 0,
+            zones: Vec::new(),
+            circles: Vec::new(),
             lanterns: Vec::new(),
             vents: Vec::new(),
             stones: Vec::new(),
@@ -1091,6 +1149,7 @@ impl World {
             r.health = r.full(&Sheet::plain());
             r.uses = ruleborn::USES;
         }
+        self.casts = manifest.casts.clone();
         // §11.7: "A player brings one Sage on each heist", or none.
         self.sage = SAGES.get((manifest.sage as usize).wrapping_sub(1)).map(|s| SageOnHeist {
             sage: manifest.sage - 1,
@@ -1223,6 +1282,10 @@ impl World {
                 self.call(command);
                 continue;
             }
+            if command.kind == Kind::Cast {
+                self.cast(command);
+                continue;
+            }
             let Some(raider) = self.raiders.get_mut(command.actor as usize) else {
                 continue;                 // a command for a crew member who is
                                           // not here is dropped, not fatal: the
@@ -1328,7 +1391,7 @@ impl World {
                 }
                 // One skiff, called once; an inland tile, or a wall, is not a
                 // place a skiff can come, and the call is dropped.
-                Kind::Land | Kind::Ability | Kind::Sage => {}
+                Kind::Land | Kind::Ability | Kind::Sage | Kind::Cast => {}
                 Kind::Skiff => {
                     let (x, y) = command.target();
                     if let Some(tile) = self.grid.tile_at(x, y) {
@@ -1559,6 +1622,19 @@ impl World {
             Power::VineBridge => aimed.is_some_and(|t| {
                 self.lay_bridge(None, t, ruleborn::VINE_BRIDGE_TILES - 1, ruleborn::VINE_BRIDGE_TICKS)
             }),
+            // "take one enemy law and carry it around the crew for the rest
+            // of the heist": the law whose pylon it is aimed at, standing,
+            // carried as a zone around every crew member on its feet, in the
+            // cast's circle. The realm keeps it: a copy, not a theft.
+            Power::Copy => {
+                let law = aimed.and_then(|t| self.laws.iter().position(|l| {
+                    l.pylon == t && l.broken_at.is_none()
+                }));
+                if let Some(li) = law {
+                    self.zones.push(Zone { def: self.laws[li].def, at: None, until: u32::MAX });
+                }
+                law.is_some()
+            }
             // "turn a law into its opposite for 10 s": the law whose pylon it
             // is aimed at, standing, not off and not already turned.
             Power::Invert => {
@@ -1613,7 +1689,7 @@ impl World {
     fn burst(&mut self, ri: usize) {
         let now = self.tick;
         let at = self.raiders[ri].at;
-        let (sn, sd) = self.sheet.factor(Param::StructureDamage);
+        let (sn, sd) = zoned(&self.sheet, &self.circles, at).factor(Param::StructureDamage);
         let hit = (self.raiders[ri].role.power() as i64 * ruleborn::BURST_POWER * sn / sd) as i32;
         let near = |grid: &Grid, t: grid::TileIndex| {
             let (x, y) = grid.centre(t);
@@ -1802,6 +1878,11 @@ impl World {
         let now = self.tick;
         self.reveals.retain(|&(_, until)| now < until);
         self.refresh_sheet();
+        self.zones.retain(|z| now < z.until);
+        let crew: Vec<Point> = self.raiders.iter().filter(|r| r.active()).map(|r| r.at).collect();
+        self.circles = self.zones.iter()
+            .map(|z| (z.def, z.at.map_or_else(|| crew.clone(), |c| vec![c])))
+            .collect();
         self.combinations();
         // A law switched off by its pylon takes its extra health with it:
         // nobody stands above the full health the sheet now reads.
@@ -2111,7 +2192,8 @@ impl World {
         }
         // Stillness: "Anyone standing still for 1.5 seconds becomes
         // invisible to guards."
-        if self.sheet.flag(Param::StillIsInvisible) == Some(1)
+        let here = zoned(&self.sheet, &self.circles, raider.at);
+        if here.flag(Param::StillIsInvisible) == Some(1)
             && raider.still_for >= heist::STILL_TICKS
         {
             return None;
@@ -2172,7 +2254,7 @@ impl World {
             FILL_FAR
         };
         let (mut num, mut den) = raider.gait.noticed();
-        let (fn_, fd) = self.sheet.factor(Param::SuspicionFill);
+        let (fn_, fd) = here.factor(Param::SuspicionFill);
         num *= fn_ as i32 * self.watch.0 .0;
         den *= fd as i32 * self.watch.0 .1;
         if self.unlit(to) && !lit {
@@ -2224,7 +2306,7 @@ impl World {
     /// fog or a tunnel hides it" — so it is `noticed`'s rules for a still
     /// raider, Stillness included, since a body has never moved.
     fn sees_body(&self, gi: usize, at: Point) -> bool {
-        if self.sheet.flag(Param::StillIsInvisible) == Some(1) {
+        if zoned(&self.sheet, &self.circles, at).flag(Param::StillIsInvisible) == Some(1) {
             return false;
         }
         let Some((_, _, from, to)) = self.sees_geometry(gi, at) else { return false };
@@ -2273,7 +2355,9 @@ impl World {
     /// Whether sight passes between two tiles. Glass: "Walls become
     /// see-through: nobody can hide behind them".
     fn line_clear(&self, from: grid::TileIndex, to: grid::TileIndex) -> bool {
-        self.sheet.flag(Param::HideBehindWalls) == Some(0) || sight::visible(&self.grid, from, to)
+        let (x, y) = self.grid.centre(to);
+        zoned(&self.sheet, &self.circles, Point { x, y }).flag(Param::HideBehindWalls) == Some(0)
+            || sight::visible(&self.grid, from, to)
     }
 
     /// Distance, whether in the cone proper, and the two tiles — or `None`
@@ -2284,7 +2368,7 @@ impl World {
         let d = guard.at.distance(at);
         // A law may shorten sight — Glowing dark halves it, Sleepwalk closes
         // the guards' eyes — so every range is read through the sheet.
-        if self.sheet.factor(Param::SightRange).0 == 0 {
+        if zoned(&self.sheet, &self.circles, guard.at).factor(Param::SightRange).0 == 0 {
             return None;
         }
         let from = self.grid.tile_at(guard.at.x, guard.at.y)?;
@@ -2320,7 +2404,8 @@ impl World {
     /// entering and leaving it whole, once every period — so every row is
     /// lit once a sweep, and the period is the law's "every 10 seconds".
     fn sight_at(&self, tile: grid::TileIndex) -> (i64, i64) {
-        let (n, d) = self.sheet.factor(Param::SightRange);
+        let (x, y) = self.grid.centre(tile);
+        let (n, d) = zoned(&self.sheet, &self.circles, Point { x, y }).factor(Param::SightRange);
         // The realm's watch scales every zone, as a law that shortens sight does.
         let (n, d) = (n * self.watch.1 .0, d * self.watch.1 .1);
         match self.in_band(tile) {
@@ -2526,7 +2611,8 @@ impl World {
             let here = crew_tile(&self.grid, raider);
             // "At crouching speed", whatever gait the player last chose.
             let gait = if drags[ri].is_some() { Gait::Crouch } else { raider.gait };
-            let step = step_with(&self.grid, &self.sheet, raider, gait, here,
+            let sheet = zoned(&self.sheet, &self.circles, raider.at);
+            let step = step_with(&self.grid, &sheet, raider, gait, here,
                                  raider.carried > 0, crew_pace[ri],
                                  raider.running(Ability::Unhindered, self.tick));
             let was = raider.along;
@@ -2588,13 +2674,13 @@ impl World {
         // first version chose the direction at random each tick, which
         // §12.17 forbids for the same reason as the jitter above.
         let sweep = 1;
-        let guard_speed = self.sheet.factor(Param::GuardSpeed);
         for (gi, guard) in self.guards.iter_mut().enumerate() {
             if !guard.awake(now) {
                 continue;
             }
-            let mut walk = scale(guard.speed, guard_speed);     // §11.1's, by role
-            let size = by_size(&self.sheet, guard.role.size(), Param::LargeSpeed,
+            let sheet = zoned(&self.sheet, &self.circles, guard.at);
+            let mut walk = scale(guard.speed, sheet.factor(Param::GuardSpeed)); // §11.1's, by role
+            let size = by_size(&sheet, guard.role.size(), Param::LargeSpeed,
                                Param::SmallSpeed);
             if size != (1, 1) {
                 walk = scale(walk, size);
@@ -2925,7 +3011,9 @@ impl World {
             // From alarm level 2 "every noise ... carries 1 m further, except
             // a crouched step on moss".
             let surface = self.grid.surface(source);
-            let mut reach = sound.steps_further(surface, self.sheet.factor(Param::NoiseRadius),
+            let (sx, sy) = self.grid.centre(source);
+            let carry = zoned(&self.sheet, &self.circles, Point { x: sx, y: sy }).factor(Param::NoiseRadius);
+            let mut reach = sound.steps_further(surface, carry,
                                                 alarm_noise_extra(self.alarm, sound, surface));
             // Deep sleep's flowers muffle footsteps; Iron bell's every step
             // echoes, "guards hear 2 tiles further".
@@ -3148,7 +3236,7 @@ impl World {
                     g.swing += 1;
                     if g.swing >= heist::HIT_TICKS {
                         g.swing = 0;
-                        let (n, d) = self.sheet.factor(Param::Damage);
+                        let (n, d) = zoned(&self.sheet, &self.circles, g.at).factor(Param::Damage);
                         let power = g.power as i64 * n / d;
                         self.raiders[ri].hurt_by = Hurt::Guard(gi as u16);
                         self.strike_raider(ri, power as i32, true);
@@ -3192,7 +3280,7 @@ impl World {
                 continue;
             }
             self.raiders[ri].swing = 0;
-            let (dn, dd) = self.sheet.factor(Param::Damage);
+            let (dn, dd) = zoned(&self.sheet, &self.circles, self.raiders[ri].at).factor(Param::Damage);
             let power = (self.raiders[ri].role.power() as i64 * dn / dd) as i32;
             let blow = if unaware {
                 // "It deals exactly what the guard has left."
@@ -3362,7 +3450,7 @@ impl World {
                     } else {
                         (1, 1)
                     };
-                    let (sn, sd) = self.sheet.factor(Param::StructureDamage);
+                    let (sn, sd) = zoned(&self.sheet, &self.circles, raider.at).factor(Param::StructureDamage);
                     // The Quarryback's pound: "its hits on the Vault, pylons
                     // and wards deal 50% more".
                     let (pn, pd) = if raider.running(Ability::Pound, now) {
@@ -3480,7 +3568,8 @@ impl World {
             self.raiders[ri].swing = 0;
             let role = self.raiders[ri].role;
             let (n, d) = if role == Role::Breaker { heist::BREAKER_VAULT_DAMAGE } else { (1, 1) };
-            let (sn, sd) = self.sheet.factor(Param::StructureDamage);
+            let (sn, sd) = zoned(&self.sheet, &self.circles, self.raiders[ri].at)
+                .factor(Param::StructureDamage);
             let together = breakers.iter().filter(|t| **t == Some(self.raiders[ri].target)).count();
             let (an, ad) = if together >= 2 { heist::ASSIST_BONUS } else { (1, 1) };
             let (pn, pd) = if self.raiders[ri].running(Ability::Pound, now) {
@@ -4114,6 +4203,29 @@ impl World {
         true
     }
 
+    /// A Cast command: the manifest's cast number `actor`, not yet used,
+    /// centred on the tile aimed at. §12.5: "A cast brings one of your own
+    /// unlocked laws into their universe: it covers a circle of 4 tiles for 10
+    /// seconds" — its zoned lines (`ZONED`) on top of the realm's for whoever
+    /// is inside, from the tile's centre. Whether the law is the raider's own
+    /// is the server's to check against the Codex it holds; the simulation
+    /// plays what the manifest carries.
+    fn cast(&mut self, command: Command) {
+        let now = self.tick;
+        let i = command.actor as usize;
+        let Some(&def) = self.casts.get(i) else { return };
+        if self.casts_used & (1 << i) != 0 || self.raiders.iter().all(|r| !r.active()) {
+            return;
+        }
+        let (x, y) = command.target();
+        let Some(t) = self.grid.tile_at(x, y) else { return };
+        let (cx, cy) = self.grid.centre(t);
+        self.casts_used |= 1 << i;
+        self.zones.push(Zone { def: def as usize, at: Some(Point { x: cx, y: cy }),
+                               until: now + ruleborn::CAST_TICKS });
+        self.log.push(now, Event::Cast { cast: i as u8, law: def as u16 });
+    }
+
     /// The Prism mite: "Splits into two mites for 8 s, each with half its
     /// load and half its health; they can go different ways, a caught mite
     /// loses only its half, and they rejoin when it ends." The other half is
@@ -4682,7 +4794,9 @@ impl World {
         let mut walk: u64 = 0;
         let mut on = from;
         for next in route {
-            let step = step_with(&self.grid, &self.sheet, r, r.gait, Some(on), true,
+            let (ox, oy) = self.grid.centre(on);
+            let sheet = zoned(&self.sheet, &self.circles, Point { x: ox, y: oy });
+            let step = step_with(&self.grid, &sheet, r, r.gait, Some(on), true,
                                  self.pace_here(Some(on), true, r.slowed_until),
                                  // A run of a few seconds does not carry
                                  // the whole walk home.
@@ -4737,7 +4851,8 @@ impl World {
             .fold(0u64, |m, l| m | 1u64 << l.def);
         let left = self.dropped.iter().map(|&(_, n)| n).sum::<i32>()
             + self.raiders.iter().filter(|r| r.standing != Standing::Out).map(|r| r.carried).sum::<i32>();
-        Outcome { grade, banked, capacity, caught, out, out_mask, pages, broken, cracked: self.cracked, left }
+        Outcome { grade, banked, capacity, caught, out, out_mask, pages, broken, cracked: self.cracked, left,
+                  casts_used: self.casts_used }
     }
 
     /// Enter a state, and do what entering it means.
@@ -4941,6 +5056,15 @@ impl World {
         }
         for law in self.laws.iter().filter(|l| l.inverted_until > 0) {
             mix(law.inverted_until as i64 + 1_000_000);
+        }
+        if !self.zones.is_empty() || self.casts_used != 0 {
+            mix(self.casts_used as i64);
+            for z in &self.zones {
+                mix(z.def as i64);
+                mix(z.until as i64);
+                mix(z.at.map_or(-1, |p| p.x.0));
+                mix(z.at.map_or(-1, |p| p.y.0));
+            }
         }
         for w in &self.walls {
             mix(w.until as i64);
@@ -5548,6 +5672,10 @@ pub fn rules_version() -> [u8; 32] {
         for n in [grid::RAPIDS_TILES, grid::RAPIDS_SECONDS as i32, grid::TUNNEL_TILES as i32,
                   grid::TUNNEL_MIN_TILES as i32, Feature::Tunnel as i32] {
             bytes.extend_from_slice(&n.to_le_bytes());
+        }
+        // Which lines of a law a zone — a cast, a Copy — carries.
+        for p in ZONED {
+            bytes.push(p as u8);
         }
         // §11.7's Sages: each one's powers, their uses and whether built.
         for s in ruleborn::SAGES.iter() {

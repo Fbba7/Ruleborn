@@ -173,6 +173,11 @@ pub const CHARGE_PACE: (i64, i64) = (2, 1);
 /// The Glass golem: "Raises a crystal wall 3 tiles long for 6 s".
 pub const WALL_TILES: i32 = 3;
 pub const WALL_TICKS: u32 = TICKS_PER_SECOND * 6;
+/// §12.5's cast: "it covers a circle of 4 tiles for 10 seconds". The
+/// Wanderer's Copy carries its law in the same circle around each crew
+/// member.
+pub const CAST_TILES: i32 = 4;
+pub const CAST_TICKS: u32 = TICKS_PER_SECOND * 10;
 /// The Prism mite: "Splits into two mites for 8 s, each with half its load
 /// and half its health".
 pub const SPLIT_TICKS: u32 = TICKS_PER_SECOND * 8;
@@ -189,7 +194,7 @@ pub const ROOT_BRIDGE_TICKS: u32 = TICKS_PER_SECOND * 8;
 
 /// Every number above, for the rules version: changing one changes how a
 /// heist with a manifest plays.
-pub const NUMBERS: [i64; 58] = [
+pub const NUMBERS: [i64; 60] = [
     USES as i64, LOCKOUT_TICKS as i64, MAX_READY as i64,
     SATCHEL_TICKS as i64, SATCHEL_RATE as i64, POUND_TICKS as i64, POUND_HIT.0, POUND_HIT.1,
     UNHINDERED_TICKS as i64, REWIND_TICKS as i64, FREEZE_TICKS as i64, BURST_POWER,
@@ -204,7 +209,8 @@ pub const NUMBERS: [i64; 58] = [
     CHARGE_PACE.0, CHARGE_PACE.1, ROOT_BRIDGE_TILES as i64, ROOT_BRIDGE_TICKS as i64,
     PLANK_TILES as i64, PLANK_TICKS as i64, WALL_TILES as i64, WALL_TICKS as i64,
     REVEAL_TILES as i64, REVEAL_TICKS as i64, INVERT_TICKS as i64, VINE_BRIDGE_TILES as i64,
-    VINE_BRIDGE_TICKS as i64, SPLIT_TICKS as i64, MAX_RAIDERS as i64,
+    VINE_BRIDGE_TICKS as i64, SPLIT_TICKS as i64, MAX_RAIDERS as i64, CAST_TILES as i64,
+    CAST_TICKS as i64,
 ];
 
 impl Ability {
@@ -311,11 +317,10 @@ pub const VINE_BRIDGE_TICKS: u32 = TICKS_PER_SECOND * 20;
 
 impl Power {
     /// Whether the simulation carries it yet. Rift waits on universes of
-    /// more than one realm (D71); Copy on a law that applies around the crew
-    /// rather than over the realm, which casts need too.
+    /// more than one realm (D71).
     pub fn built(self) -> bool {
         matches!(self, Power::Suspend | Power::Reveal | Power::Recall | Power::Jam
                  | Power::Plank | Power::Renew | Power::Decoy | Power::Tailwind
-                 | Power::Invert | Power::VineBridge)
+                 | Power::Invert | Power::VineBridge | Power::Copy)
     }
 }

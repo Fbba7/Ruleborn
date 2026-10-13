@@ -27,7 +27,7 @@ import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
-import { HEADER } from "./sim.mjs";
+import { readManifest } from "./sim.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 const content = (name) => JSON.parse(readFileSync(new URL(`../../content/${name}.json`, import.meta.url), "utf8"));
@@ -444,15 +444,14 @@ export class Home {
     const crew = ids.map((id) => mine.find((c) => c.id === id));
     if (crew.some((c) => !c)) return "crew_not_held";
     if (crew.some((c) => away(c, now))) return "crew_resting";
+    const manifest = readManifest(replay, header);
     if (header.manifest) {
-      let at = HEADER.era + 1;
-      for (const c of crew) {
-        const [kind, , level, n] = replay.subarray(at, at + 4);
-        const traits = [...replay.subarray(at + 4, at + 4 + n)];
-        at += 4 + n;
+      if (!manifest) return "crew_mismatch";
+      for (const [i, c] of crew.entries()) {
+        const { kind, level, traits } = manifest.members[i];
         const want = c.traits.map((t) => TRAIT_INDEX[t]);
         if (kind !== KIND_INDEX[c.kind] || level !== c.level || traits.length !== want.length
-            || traits.some((t, i) => t !== want[i])) return "crew_mismatch";
+            || traits.some((t, j) => t !== want[j])) return "crew_mismatch";
       }
     }
     return null;

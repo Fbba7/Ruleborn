@@ -334,6 +334,8 @@ def facts_compare(text: str) -> dict:
         ("ABILITY_LOCKOUT_SECONDS", f.ABILITY_LOCKOUT_SECONDS * tps, k.get("LOCKOUT_TICKS")),
         ("ABILITIES_READY", f.ABILITIES_READY, k.get("MAX_READY")),
         ("SAGE_COOLDOWN_SECONDS", f.SAGE_COOLDOWN_SECONDS * tps, k.get("SAGE_COOLDOWN_TICKS")),
+        ("CAST_TILES", f.CAST_TILES, k.get("CAST_TILES")),
+        ("CAST_SECONDS", f.CAST_SECONDS * tps, k.get("CAST_TICKS")),
         # §9.6: exposed share in bag units = a full five-crew's carry at the
         # level median, which is what the fixture's Vault is.
         ("FIXTURE_EXPOSED (9.6: a full five-crew's carry)",

@@ -9988,7 +9988,19 @@ dict(id="G81", kind="gap", severity="minor", status="open",
           "carried on by the half where the half is, and a half still inside "
           "when the mite is aboard goes on alone. A half is never one of the crew "
           "the outcome counts out or caught, though what it brings out is "
-          "banked.",
+          "banked. <strong>Zones — a cast, the Wanderer’s Copy:</strong> §7.3 "
+          "orders <em>“terrain, then zones (wards and raider casts)”</em> and "
+          "says no more; a zone carries the lines of its law read for one place "
+          "or one character — speeds, sight, stillness, walls, suspicion, noise "
+          "and blows — on the realm’s sheet for whoever is inside, a blow by "
+          "where its striker stands and sight by where its target does; a law’s "
+          "realm-wide lines (the clock, delays, regrowth, revival, the alarm’s "
+          "reach, health) stay the realm’s, so a cast of Haste quickens feet "
+          "inside its circle and not the clock. <strong>Copy</strong> "
+          "<em>“carr[ies] it around the crew”</em> as that zone around every "
+          "crew member on its feet, in the cast’s circle, once however many "
+          "circles meet, and the realm keeps its own. A cast the raider cannot "
+          "pay for leaves no heist to settle.",
      rec="State the readings in §11.2, §11.11 and §11.7 (the edits are "
          "drafted), or give others and the simulation follows "
          "(<code>sim/src/lib.rs</code>)."),
@@ -11464,8 +11476,8 @@ V37 = {
     "charge and a bridge go, what a charge breaks through and how long a "
     "plank spans, read one way in the simulation, with the edits drafted "
     "(TD.75); then the Glass golem’s wall, the Lantern wisp’s reveal, "
-    "Invert’s opposite, Vine bridge’s two points and the Prism mite’s two "
-    "halves, read too and built."),
+    "Invert’s opposite, Vine bridge’s two points, the Prism mite’s two "
+    "halves and what a zone carries, read too and built."),
 
 "G80": dict(status="open", left="document", note=
     "Found building TD.15, after v3.7: seven readings the simulation takes for "

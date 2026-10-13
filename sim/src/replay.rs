@@ -105,6 +105,12 @@ pub enum Kind {
     /// (`x`, `y`). §12.7: "Drag a power onto the world to aim it." The Sage
     /// is not a crew member, so the crew-member nibble names the power.
     Sage = 13,
+    /// Cast the manifest's cast number `actor` (0 or 1) centred on (`x`,
+    /// `y`). §12.5: "A cast brings one of your own unlocked laws into their
+    /// universe: it covers a circle of 4 tiles for 10 seconds"; §12.7 places
+    /// it by a drag. The crew-member nibble names the cast, as it names the
+    /// Sage's power.
+    Cast = 14,
 }
 
 impl Kind {
@@ -124,6 +130,7 @@ impl Kind {
             11 => Some(Kind::Land),
             12 => Some(Kind::Ability),
             13 => Some(Kind::Sage),
+            14 => Some(Kind::Cast),
             _ => None,
         }
     }
@@ -214,7 +221,11 @@ impl Manifest {
         if sage > 4 || casts > MAX_CASTS {
             return None;
         }
-        Some(Manifest { members, sage, casts: take(casts)?.to_vec() })
+        let casts = take(casts)?.to_vec();
+        if casts.iter().any(|&c| c as usize >= crate::laws_table::LAWS.len()) {
+            return None;                  // a cast that is no law
+        }
+        Some(Manifest { members, sage, casts })
     }
 }
 
