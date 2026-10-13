@@ -133,6 +133,39 @@ export function birthSchools(realmSchool, realmLaws, crownLaws) {
   return Object.entries(schools);
 }
 
+/** §11.10's form notes — "Hush, Spark and Echo", the same for every kind —
+ *  read from the 54 forms, their one home. */
+export const FORM_NOTES = [...new Set(content("forms").map((f) => f.note))];
+const LAW_NOTES = Object.fromEntries(content("laws").map((l) => [l.id, l.notes ?? []]));
+
+/** §11.10: "whichever of the three notes is carried by the most laws in the
+ *  Nursery's realm, crown laws included, sets the form. When they tie,
+ *  including when the realm carries none of the three, the odds are shown
+ *  before hatching" — evenly among the tied notes, since §11.10 weights
+ *  none of them. Each form note with its odds, in FORM_NOTES' order. */
+export function formOdds(laws) {
+  const count = Object.fromEntries(FORM_NOTES.map((n) => [n, 0]));
+  for (const law of laws) for (const n of LAW_NOTES[law] ?? []) if (n in count) count[n]++;
+  const most = Math.max(...Object.values(count));
+  const tied = FORM_NOTES.filter((n) => count[n] === most);
+  return FORM_NOTES.map((n) => ({ note: n.toLowerCase(), odds: tied.includes(n) ? 1 / tied.length : 0 }));
+}
+
+/** §11.10's 54 forms: each kind's id and its note, in the content's order. */
+const KIND_BY_NAME = Object.fromEntries(content("ruleborn").map((k) => [k.name, k.id]));
+const FORMS = content("forms").map((f) => ({ kind: KIND_BY_NAME[f.kind], note: f.note.toLowerCase() }));
+/** Each form note's launch laws: "to hatch Hush forms, weave Hush laws next to
+ *  a Nursery" (§11.10). */
+const NOTE_LAWS = Object.fromEntries(FORM_NOTES.map((n) => [n.toLowerCase(),
+  content("laws").filter((l) => l.launch && (l.notes ?? []).includes(n)).map((l) => l.id)]));
+
+/** A form drawn by formOdds: the one note that leads, or one of the tied
+ *  notes evenly. */
+function formOf(roll, laws) {
+  const lead = formOdds(laws).filter((f) => f.odds > 0);
+  return lead.length === 1 ? lead[0].note : weighted(roll, lead.map((f) => [f.note, 1]));
+}
+
 /** One of `items` by integer weight, none if every weight is 0. */
 function weighted(roll, items) {
   const total = items.reduce((s, [, w]) => s + w, 0);
@@ -170,7 +203,10 @@ export class Home {
     this.universe.ensure(account, now);
     if (this.db.prepare("SELECT 1 FROM characters WHERE owner = ? LIMIT 1").get(account)) return;
     facts.STARTING_CREW.forEach((kind, i) => {
-      this.add(account, kind, this.traits(dice(`${account}:woke:${i}`), 2), "woke", now);
+      // §11.10: no laws around them, so the three notes tie.
+      const roll = dice(`${account}:woke:${i}`);
+      const traits = this.traits(roll, 2);
+      this.add(account, kind, traits, "woke", now, null, formOf(roll, []));
     });
   }
 
@@ -221,15 +257,15 @@ export class Home {
 
   /** A new character, in the first place with room — `prefer` first — or
    *  refused when there is none. */
-  add(account, kind, traits, via, now, prefer = null) {
+  add(account, kind, traits, via, now, prefer = null, form = null) {
     const places = this.places(account);
     const free = [...places.filter((p) => p.home === prefer), ...places].find((p) => p.living < p.room);
     if (!free || places.reduce((s, p) => s + p.living, 0) >= facts.ROSTER_PLACES[1]) {
       throw new Refused(409, "no_place");
     }
     return Number(this.db.prepare(
-      "INSERT INTO characters (owner, kind, traits, home, via, joined_at) VALUES (?, ?, ?, ?, ?, ?)")
-      .run(account, kind, JSON.stringify(traits), free.home, via, now).lastInsertRowid);
+      "INSERT INTO characters (owner, kind, traits, home, via, form, joined_at) VALUES (?, ?, ?, ?, ?, ?, ?)")
+      .run(account, kind, JSON.stringify(traits), free.home, via, form, now).lastInsertRowid);
   }
 
   /** §11.5: "two strays follow the crew home after the first heist, where the
@@ -243,8 +279,12 @@ export class Home {
     const known = laws.filter((l) => LAW_SCHOOL[l]);
     return [0, 1].map((i) => {
       const roll = dice(`${account}:first-stray:${i}`);
-      const school = known.length ? LAW_SCHOOL[known[roll(known.length)]] : facts.SCHOOLS[roll(facts.SCHOOLS.length)];
-      return this.add(account, this.kindOf(account, school, roll), this.traits(roll, 3), "stray", now, "heart");
+      const law = known.length ? known[roll(known.length)] : null;
+      const school = law ? LAW_SCHOOL[law] : facts.SCHOOLS[roll(facts.SCHOOLS.length)];
+      const kind = this.kindOf(account, school, roll);
+      const traits = this.traits(roll, 3);
+      // §11.10's form, from the one law it was born under.
+      return this.add(account, kind, traits, "stray", now, "heart", formOf(roll, law ? [law] : []));
     });
   }
 
@@ -427,7 +467,10 @@ export class Home {
       const crown = (working.crown ?? []).map((w) => w.law);
       const school = weighted(roll, birthSchools(schoolOfType(r.type), here, crown));
       const running = [...here, ...crown];
-      const id = this.add(account, this.kindOf(account, school, roll), this.traits(roll, 2, running), "birth", now);
+      const kind = this.kindOf(account, school, roll);
+      const traits = this.traits(roll, 2, running);
+      // §11.10: the form the laws around the Nursery set, crown laws included.
+      const id = this.add(account, kind, traits, "birth", now, null, formOf(roll, running));
       this.service.book(account, "essence", -price, `a birth at the Nursery in ${realm} (9.5)`, now);
       const since = nursery.ready >= nursery.holds
         ? now - (nursery.holds - 1) * nursery.period : nursery.since + nursery.period;
@@ -535,6 +578,30 @@ export class Home {
     });
   }
 
+  /** §23.2's Forms album: the 54 forms by kind and note, how many of each
+   *  the player has; each note's launch laws, which hatch it; and the sets —
+   *  "completing all three forms of one kind unlocks an outfit; completing
+   *  one note across every kind unlocks a skiff sail" (§11.10). */
+  album(account) {
+    return transaction(this.db, () => {
+      this.ensure(account, this.service.now());
+      const mine = {};
+      for (const c of this.characters(account)) {
+        if (c.form) mine[`${c.kind}/${c.form}`] = (mine[`${c.kind}/${c.form}`] ?? 0) + 1;
+      }
+      const forms = FORMS.map((f) => ({ ...f, owned: mine[`${f.kind}/${f.note}`] ?? 0 }));
+      const kinds = [...new Set(FORMS.map((f) => f.kind))];
+      const notes = FORM_NOTES.map((n) => n.toLowerCase());
+      const have = (pick) => forms.filter((f) => pick(f) && f.owned > 0).length;
+      return {
+        forms,
+        notes: notes.map((note) => ({ note, laws: NOTE_LAWS[note] })),
+        outfits: kinds.map((kind) => ({ kind, have: have((f) => f.kind === kind), of: notes.length })),
+        sails: notes.map((note) => ({ note, have: have((f) => f.note === note), of: kinds.length })),
+      };
+    });
+  }
+
   /** The view, the roster written first if this is the first time. */
   show(account) {
     return transaction(this.db, () => {
@@ -557,7 +624,7 @@ export class Home {
     const characters = this.characters(account).map((c) => ({
       id: c.id, kind: c.kind, school: RULEBORN[c.kind].school, role: RULEBORN[c.kind].role,
       traits: c.traits, level: c.level, top: places.find((p) => p.home === c.home)?.top ?? 1,
-      home: c.home, via: c.via,
+      home: c.home, via: c.via, form: c.form ?? null,
       state: away(c, now) ? "resting" : c.work_kind === POST ? "guarding" : c.work_kind ? "working" : "idle",
       // §11.6's wake price and §11.4's next level, the server's arithmetic,
       // so the device shows a price it never works out.
@@ -571,6 +638,8 @@ export class Home {
     }));
     const producers = [];
     const nurseries = [];
+    const working = this.service.weaving.working(account, now);
+    const crown = (working.crown ?? []).map((w) => w.law);
     for (const b of this.universe.buildings(account)) {
       if (PRODUCERS[b.kind]) {
         const r = this.rate(account, b.realm, b.kind, now);
@@ -589,7 +658,9 @@ export class Home {
       }
       if (b.kind === "nursery") {
         const n = this.nursery(account, b.realm, now);
-        nurseries.push({ realm: n.realm, ready: n.ready, holds: n.holds, next_at: n.next_at });
+        // §11.10: the form a birth here takes, and its odds on a tie.
+        const around = [...(working[b.realm] ?? []).map((w) => w.law), ...crown];
+        nurseries.push({ realm: n.realm, ready: n.ready, holds: n.holds, next_at: n.next_at, forms: formOdds(around) });
       }
     }
     const used = characters.length;

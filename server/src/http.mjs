@@ -38,6 +38,7 @@
 //   POST /v1/home/characters/:id/home  {"home"}              → moved to another free place (§11.4)
 //   POST /v1/home/characters/:id/wake                       → a resting character back early, in Essence (§11.6)
 //   POST /v1/home/collect        {"realm", "kind"}           → what a producer holds, paid (§9.3)
+//   GET  /v1/forms                                           → §11.10's album: the 54 forms, owned, and the sets
 //   GET  /v1/codex                                           → every law met: pages, tier, chapter, next cost
 //   POST /v1/codex/study         {"heist", "law"}            → a heist's one study (§7.6)
 //   POST /v1/codex/working       {"law"}                     → the law worked on, for the floor's page
@@ -597,6 +598,8 @@ export function handler(service, { webClientId = null, appleNotifications = null
           return json(service.balance(who()));
         case "GET /v1/keeper":
           return json(service.keeper.view(who()));
+        case "GET /v1/forms":
+          return json(service.home.album(who()));
         case "GET /v1/sages":
           return json(service.keeper.sages(who()));
         case "PUT /v1/sages": {

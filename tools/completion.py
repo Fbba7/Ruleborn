@@ -533,7 +533,22 @@ DELIVERABLES = [
     ("4b", "First launch", FRONTEND, not_started("TD.26's screen gate passes for it")),
     ("4b", "Landing picker", FRONTEND, not_started("TD.41's screen gate passes for it")),
     ("4b", "Harmony view", FRONTEND, not_started("TD.44's screen gate passes for it")),
-    ("4b", "Forms album", FRONTEND, not_started("TD.45's screen gate passes for it")),
+    ("4b", "Forms album", FRONTEND, client_tests(
+        "the Forms album shows the forms by kind and note, which the player has, and each form's quirk "
+        "(11.10, 23.2)",
+        "the Forms album says how to hatch each note's forms: the launch laws that carry it, woven in a "
+        "Nursery's realm, with the note's look and symbol (11.10, 23.2)",
+        "the Forms album shows the outfit each kind's three forms unlock and the skiff sail each note "
+        "across every kind unlocks, and how far each is (11.10, 23.2)",
+        "the Forms album's Show mine keeps only the forms the player has, and Show all brings the rest "
+        "back; a failure keeps the album on show (23.2)",
+        "the Forms album screen draws each note, each kind's forms and the sails, and its Show mine button "
+        "filters them (23.2)",
+        "against the server: the album holds the 54 forms, starts with the player's own three, and names "
+        "the launch laws that hatch each note (11.10, 23.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control "
+        "in reach (§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
     ("4b", "Share sheet", FRONTEND, not_started("TD.23's screen gate passes for it")),
     ("4b", "Profile", FRONTEND, not_started("TD.24's screen gate passes for it")),
     ("4b", "Hatch", FRONTEND, not_started("TD.63's screen gate passes for it")),

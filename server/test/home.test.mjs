@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-import { PRODUCERS, RULEBORN, birthPrice, fullAt, levelPrice } from "../src/home.mjs";
+import { FORM_NOTES, PRODUCERS, RULEBORN, birthPrice, formOdds, fullAt, levelPrice } from "../src/home.mjs";
 import { openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
@@ -256,4 +256,46 @@ test("the home over HTTP: read, set to work, collected, and refused with the rea
   const birth = await call("POST", "/v1/home/births", token, { realm: "heart", n: 4 });
   assert.equal(birth.status, 404);
   assert.equal(birth.body.error, "no_nursery");
+});
+
+test("a ruleborn takes the form the most laws around its birth carry, crown laws included; a tie is drawn evenly and its odds shown (11.10)", () => {
+  assert.deepEqual(FORM_NOTES, ["Hush", "Spark", "Echo"], "the three notes of the 54 forms");
+  const odds = (laws) => Object.fromEntries(formOdds(laws).map((f) => [f.note, f.odds]));
+  assert.deepEqual(odds(["stillness"]), { hush: 1, spark: 0, echo: 0 }, "Stillness carries Hush");
+  assert.deepEqual(odds(["stillness", "tidemark", "glowing_dark"]), { hush: 1, spark: 0, echo: 0 }, "two Hush to one Echo");
+  assert.deepEqual(odds(["stillness", "tidemark"]), { hush: 0.5, spark: 0, echo: 0.5 }, "a tie of two");
+  assert.deepEqual(odds([]), { hush: 1 / 3, spark: 1 / 3, echo: 1 / 3 }, "none of the three: all tie");
+  assert.deepEqual(odds(["half_gravity"]), { hush: 1 / 3, spark: 1 / 3, echo: 1 / 3 }, "Flow is not a form's note");
+  const { t, me, h, grant, keeper } = fresh();
+  const forms = h.show(me).characters.map((c) => c.form);
+  assert.equal(forms.length, 3);
+  assert.ok(forms.every((f) => ["hush", "spark", "echo"].includes(f)), "every ruleborn has its form");
+  keeper(3);
+  grant("starlight", 5_000);
+  t.service.universe.open(me, "Verdant");
+  t.service.universe.build(me, { realm: "outer-1", kind: "nursery", n: 1, to: 1 });
+  assert.deepEqual(h.show(me).nurseries[0].forms.map((f) => f.odds), [1 / 3, 1 / 3, 1 / 3],
+                   "a Nursery with no laws around it shows the even odds");
+});
+
+test("the Forms album: 54 forms by kind and note, each note's launch laws, the player's own, and the sets each unlocks (11.10, 23.2)", async () => {
+  const { t, me, h } = fresh();
+  const a = h.album(me);
+  assert.equal(a.forms.length, 54);
+  assert.deepEqual(a.forms.slice(0, 3).map((f) => `${f.kind}/${f.note}`),
+                   ["featherkin/hush", "featherkin/spark", "featherkin/echo"]);
+  assert.equal(a.forms.reduce((n, f) => n + f.owned, 0), 3, "the album starts with the forms the player owns");
+  for (const c of h.show(me).characters) {
+    assert.ok(a.forms.find((f) => f.kind === c.kind && f.note === c.form).owned >= 1, `${c.kind} ${c.form}`);
+  }
+  assert.ok(a.notes.find((n) => n.note === "hush").laws.includes("stillness"), "Stillness hatches Hush");
+  assert.deepEqual(a.notes.map((n) => n.laws.length), [6, 5, 5], "§11.10: Hush by six launch laws, Echo and Spark by five");
+  assert.equal(a.outfits.length, 18);
+  assert.equal(a.outfits.find((o) => o.kind === "featherkin").of, 3);
+  assert.deepEqual(a.sails.map((x) => x.of), [18, 18, 18]);
+  const me2 = t.service.session("gc:forms");
+  const r = await t.handle(new Request("https://edge.example/v1/forms", {
+    headers: { authorization: `Bearer ${me2.token}` } }));
+  assert.equal(r.status, 200);
+  assert.equal((await r.json()).forms.length, 54);
 });

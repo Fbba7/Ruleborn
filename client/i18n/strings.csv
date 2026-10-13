@@ -622,3 +622,21 @@ SAGE_STATIONED,%s is on guard at the Heart,%s is on guard at the Heart,%s está 
 SAGE_FAILED,The Sages did not change: %s,The Sages did not change: %s,Os Sábios não mudaram: %s,Os Sábios não mudaram: %s,Die Weisen haben sich nicht geändert: %s,Les Sages n'ont pas changé : %s
 ERR_SAGE_LOCKED,that Sage is not unlocked yet,that Sage is not unlocked yet,esse Sábio ainda não foi desbloqueado,esse Sábio ainda não foi desbloqueado,dieser Weise ist noch nicht freigeschaltet,ce Sage n'est pas encore débloqué
 ERR_NO_SUCH_SAGE,there is no such Sage,there is no such Sage,esse Sábio não existe,esse Sábio não existe,diesen Weisen gibt es nicht,ce Sage n'existe pas
+HOME_FORMS,Forms album,Forms album,Álbum de formas,Álbum de formas,Formenalbum,Album des formes
+FORMS_TITLE,Forms album,Forms album,Álbum de formas,Álbum de formas,Formenalbum,Album des formes
+FORMS_HEADER,%d of %d forms hatched,%d of %d forms hatched,%d de %d formas chocadas,%d de %d formas chocadas,%d von %d Formen geschlüpft,%d formes écloses sur %d
+FORMS_SHOW_MINE,Show mine,Show mine,Mostrar as minhas,Mostrar as minhas,Meine zeigen,Voir les miennes
+FORMS_SHOW_ALL,Show all,Show all,Mostrar todas,Mostrar todas,Alle zeigen,Tout voir
+FORMS_NOTE_TITLE,%s · symbol: %s,%s · symbol: %s,%s · símbolo: %s,%s · símbolo: %s,%s · Symbol: %s,%s · symbole : %s
+FORMS_LOOK,Looks: %s,Looks: %s,Aparência: %s,Aparência: %s,Aussehen: %s,Allure : %s
+FORMS_QUIRK,Quirk: %s,Quirk: %s,Peculiaridade: %s,Peculiaridade: %s,Eigenheit: %s,Particularité : %s
+FORMS_HOW,"Laws that hatch it, woven in the realm with a %s: %s","Laws that hatch it, woven in the realm with a %s: %s","Leis que a fazem chocar, tecidas no reino com %s: %s","Leis que a fazem chocar, tecidas no reino com %s: %s","Gesetze, die sie ausbrüten, gewebt im Reich mit %s: %s","Lois qui la font éclore, tissées dans le royaume avec %s : %s"
+FORMS_HAVE,✓ %s: you have %d,✓ %s: you have %d,✓ %s: você tem %d,✓ %s: tens %d,✓ %s: du hast %d,✓ %s : tu en as %d
+FORMS_MISSING,%s: not hatched yet,%s: not hatched yet,%s: ainda não chocada,%s: ainda não chocada,%s: noch nicht geschlüpft,%s : pas encore éclose
+FORMS_OUTFIT,%d of %d forms: all of them unlock an outfit,%d of %d forms: all of them unlock an outfit,%d de %d formas: todas desbloqueiam um traje,%d de %d formas: todas desbloqueiam um traje,%d von %d Formen: alle schalten ein Outfit frei,%d formes sur %d : toutes débloquent une tenue
+FORMS_OUTFIT_DONE,✓ All %d forms: outfit unlocked,✓ All %d forms: outfit unlocked,✓ Todas as %d formas: traje desbloqueado,✓ Todas as %d formas: traje desbloqueado,✓ Alle %d Formen: Outfit freigeschaltet,✓ Les %d formes : tenue débloquée
+FORMS_SAIL,%s in %d of %d kinds: every kind unlocks a skiff sail,%s in %d of %d kinds: every kind unlocks a skiff sail,%s em %d de %d espécies: todas desbloqueiam uma vela de esquife,%s em %d de %d espécies: todas desbloqueiam uma vela de esquife,%s bei %d von %d Arten: alle schalten ein Bootssegel frei,%s chez %d espèces sur %d : toutes débloquent une voile d'esquif
+FORMS_SAIL_DONE,✓ %s in every kind: skiff sail unlocked,✓ %s in every kind: skiff sail unlocked,✓ %s em todas as espécies: vela de esquife desbloqueada,✓ %s em todas as espécies: vela de esquife desbloqueada,✓ %s bei allen Arten: Bootssegel freigeschaltet,✓ %s chez toutes les espèces : voile d'esquif débloquée
+FORMS_SAILS_TITLE,Skiff sails,Skiff sails,Velas de esquife,Velas de esquife,Bootssegel,Voiles d'esquif
+FORMS_FAILED,The album could not be read: %s,The album could not be read: %s,Não foi possível ler o álbum: %s,Não foi possível ler o álbum: %s,Das Album konnte nicht gelesen werden: %s,Impossible de lire l'album : %s
+FORMS_FORM,%s · %s,%s · %s,%s · %s,%s · %s,%s · %s,%s · %s

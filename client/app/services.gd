@@ -38,6 +38,7 @@ var keeper_flow: KeeperController
 var universe_flow: UniverseController
 var roster_flow: RosterController
 var sage_flow: SageController
+var forms_flow: FormsController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -54,6 +55,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	UniverseState.register(s.store)
 	RosterState.register(s.store)
 	SageState.register(s.store)
+	FormsState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -87,6 +89,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.universe_flow = UniverseController.new(s)
 	s.roster_flow = RosterController.new(s)
 	s.sage_flow = SageController.new(s)
+	s.forms_flow = FormsController.new(s)
 	# What the phone built or assigned offline is answered when the outbox
 	# sends it (§24).
 	s.outbox.settled.connect(s.universe_flow.offline_settled)
@@ -177,6 +180,7 @@ func close() -> void:
 	universe_flow = null
 	roster_flow = null
 	sage_flow = null
+	forms_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):

@@ -2742,9 +2742,25 @@ dict(
                   "recommended laws in the server's order (flow tests)",
              blocked_by=["TD.3", "TD.14", "TD.37", "TC.12"],
              register=["G23", "G25", "D81", "D79", "C56", "D75", "C48"]),
-        dict(id="TD.21", owner="claude", status="blocked",
+        dict(id="TD.21", owner="claude", status="doing",
              title="Roster, Character and Sage hall",
-             detail="The roster on the server comes first (TC.12), and the cards "
+             detail="<strong>Built, the screen gate passing.</strong> The Roster shows each state as a "
+                    "symbol, a word and a colour swatch, each rest's time left by "
+                    "the minute begun, where each works, and a one-tap reassign "
+                    "to the first producer with a free slot in §14.1's order, a "
+                    "resting worker's slot still held; work sent offline waits in "
+                    "the outbox (§24). The Character screen gives §11.11's card "
+                    "from content (name, ability, best at) and §11.3's traits "
+                    "with their effects; its level and wake are spent at the "
+                    "prices the home view now carries. The Sage hall shows the "
+                    "Keeper's level as the Sages', each fifth level's gain marked "
+                    "reached in words, each locked Sage's unlock level, and the "
+                    "guard choice, kept on the server (GET and PUT "
+                    "<code>/v1/sages</code>). Not here: the Sage's 20-second "
+                    "dial and the heist that cannot take the Sage on guard, both "
+                    "the planner's (TD.18)."
+                    "<br><br>"
+                    "The roster on the server comes first (TC.12), and the cards "
                     "read TD.33's tables. The character screen shows §11.11's card "
                     "word for word and §11.1's role numbers, not the sheets' own; "
                     "the design's stealth and grit stats, its role-keyed abilities "
@@ -2819,9 +2835,21 @@ dict(
                   "each of the three acts (server tests)",
              blocked_by=["TD.20", "TC.12"],
              register=["G49"]),
-        dict(id="TD.45", owner="claude", status="blocked",
+        dict(id="TD.45", owner="claude", status="doing",
              title="The Forms album",
-             detail="The 54 forms by kind, each drawn with its accessory and "
+             detail="<strong>Built in words.</strong> Every character now takes "
+                    "§11.10's form when it joins: the note most of the laws "
+                    "around its birth carry, crown laws included, a tie drawn "
+                    "evenly with the odds each Nursery shows; the starting three "
+                    "tie, and a stray's form is its one law's. "
+                    "<code>GET /v1/forms</code> answers the 54 with what the "
+                    "player has, each note's launch laws and the sets; the album "
+                    "shows each note's look, quirk, symbol and laws, each kind's "
+                    "three forms and outfit, each note's sail, and “Show mine”. "
+                    "Left: each form drawn (TD.11, TD.7's manifest), and the "
+                    "quirks in the simulation."
+                    "<br><br>"
+                    "The 54 forms by kind, each drawn with its accessory and "
                     "pattern (TD.11), filled by births at a Nursery from TC.12's "
                     "hatch route, with the sail, quirks, note symbols and “Show "
                     "mine”, not the design's USE THIS LOOK (D82, G50). Paradox-born "

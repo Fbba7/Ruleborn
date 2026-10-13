@@ -388,7 +388,7 @@
    ]
   },
   "characters": {
-   "about": "Each player's ruleborn: kind, traits, level, home and the work each is given (§11.2 to §11.6).",
+   "about": "Each player's ruleborn: kind, form, traits, level, home and the work each is given (§11.2 to §11.6, §11.10).",
    "columns": {
     "id": {
      "type": "none"
@@ -410,6 +410,9 @@
      "type": "gameplay"
     },
     "via": {
+     "type": "gameplay"
+    },
+    "form": {
      "type": "gameplay"
     },
     "joined_at": {

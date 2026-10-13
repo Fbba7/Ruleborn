@@ -22,6 +22,7 @@ const ROUTES := {
 	&"roster": "res://scenes/roster.tscn",
 	&"character": "res://scenes/character.tscn",
 	&"sages": "res://scenes/sage_hall.tscn",
+	&"forms": "res://scenes/forms.tscn",
 }
 
 var store: Store

@@ -332,6 +332,20 @@ SAGE_LEVEL_25_THE_WANDERER,Tailwind 10 s,Tailwind 10 s,Tailwind 10 s,Tailwind 10
 SAGE_LEVEL_30_THE_WANDERER,Rift 2 uses,Rift 2 uses,Rift 2 uses,Rift 2 uses,Rift 2 uses,Rift 2 uses
 SAGE_LEVEL_35_THE_WANDERER,Tailwind 4 uses,Tailwind 4 uses,Tailwind 4 uses,Tailwind 4 uses,Tailwind 4 uses,Tailwind 4 uses
 SAGE_LEVEL_40_THE_WANDERER,Copy 2 uses,Copy 2 uses,Copy 2 uses,Copy 2 uses,Copy 2 uses,Copy 2 uses
+FORM_LOOK_HUSH,"Midnight colours and soft, silent edges","Midnight colors and soft, silent edges","Midnight colours and soft, silent edges","Midnight colours and soft, silent edges","Midnight colours and soft, silent edges","Midnight colours and soft, silent edges"
+FORM_QUIRK_HUSH,Noticed 10% later,Noticed 10% later,Noticed 10% later,Noticed 10% later,Noticed 10% later,Noticed 10% later
+FORM_LOOK_SPARK,Crackling tips and ember flecks,Crackling tips and ember flecks,Crackling tips and ember flecks,Crackling tips and ember flecks,Crackling tips and ember flecks,Crackling tips and ember flecks
+FORM_QUIRK_SPARK,+5% power,+5% power,+5% power,+5% power,+5% power,+5% power
+FORM_LOOK_ECHO,Faint ghost outlines that trail a step behind,Faint ghost outlines that trail a step behind,Faint ghost outlines that trail a step behind,Faint ghost outlines that trail a step behind,Faint ghost outlines that trail a step behind,Faint ghost outlines that trail a step behind
+FORM_QUIRK_ECHO,"Returns once after a knockout, at N = 20%","Returns once after a knockout, at N = 20%","Returns once after a knockout, at N = 20%","Returns once after a knockout, at N = 20%","Returns once after a knockout, at N = 20%","Returns once after a knockout, at N = 20%"
+NOTE_SYMBOL_FLOW,A wave,A wave,A wave,A wave,A wave,A wave
+NOTE_SYMBOL_WEIGHT,An anchor,An anchor,An anchor,An anchor,An anchor,An anchor
+NOTE_SYMBOL_GLOW,A sun,A sun,A sun,A sun,A sun,A sun
+NOTE_SYMBOL_HUSH,A crescent,A crescent,A crescent,A crescent,A crescent,A crescent
+NOTE_SYMBOL_BLOOM,A sprout,A sprout,A sprout,A sprout,A sprout,A sprout
+NOTE_SYMBOL_SPARK,A star,A star,A star,A star,A star,A star
+NOTE_SYMBOL_ECHO,A ring,A ring,A ring,A ring,A ring,A ring
+NOTE_SYMBOL_VEIL,A mask,A mask,A mask,A mask,A mask,A mask
 REALM_SKYFIELD,Skyfield,Skyfield,Skyfield,Skyfield,Skyfield,Skyfield
 REALM_CRYSTALLINE,Crystalline,Crystalline,Crystalline,Crystalline,Crystalline,Crystalline
 REALM_TIDEHOLD,Tidehold,Tidehold,Tidehold,Tidehold,Tidehold,Tidehold

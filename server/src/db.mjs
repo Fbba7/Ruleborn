@@ -127,6 +127,8 @@ CREATE TABLE IF NOT EXISTS characters (
   level      INTEGER NOT NULL DEFAULT 1 CHECK (level >= 1),
   home       TEXT NOT NULL,
   via        TEXT NOT NULL CHECK (via IN ('woke', 'stray', 'birth')),
+  -- §11.10's form, the note the laws around its birth set (home.mjs).
+  form       TEXT,
   joined_at  INTEGER NOT NULL,
   work_realm TEXT,
   work_kind  TEXT,
@@ -772,6 +774,7 @@ const ADDED = [
   ["purchase_intents", "recipient", "TEXT REFERENCES accounts(id)"],
   ["purchases", "recipient", "TEXT REFERENCES accounts(id)"],
   // A character away on a heist and resting after it (home.mjs).
+  ["characters", "form", "TEXT"],
   ["characters", "away_from", "INTEGER"],
   ["characters", "away_until", "INTEGER"],
   // Where a building stands (universe.mjs `place`).

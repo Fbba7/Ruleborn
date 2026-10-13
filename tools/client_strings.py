@@ -7,8 +7,8 @@ client's string catalogue.
 
 A law's name, a note's, a resonance's, a chord's, a ward's, a terrain
 feature's, a building's, a realm type's, a ruleborn's name and card, a
-trait's name and effect, and a Sage's name, powers and levels each have one
-home: the content file they are
+trait's name and effect, a Sage's name, powers and levels, and a form's
+look and quirk each have one home: the content file they are
 extracted into. The
 client shows them, and every word the client shows comes from its catalogue
 (client/scripts/strings.gd), so this writes them there rather than anyone
@@ -72,6 +72,20 @@ def rows() -> list[tuple[str, str]]:
         out += [(f"SAGE_{key}", sg["name"]), (f"SAGE_POWERS_{key}", sg["heist_powers"]),
                 (f"SAGE_HOME_{key}", sg["at_home"])]
         out += [(f"SAGE_LEVEL_{lv}_{key}", text) for lv, text in sg["levels"].items()]
+    # §11.10's forms: each note's look and quirk, the same for every kind
+    # (one per note, or the content disagrees with itself), and each note's
+    # symbol (§8), for the Forms album (§23.2).
+    looks = {}
+    for f in load("forms.json"):
+        looks.setdefault(f["note"], set()).add((f["look"], f["quirk"]))
+    for note, pairs in looks.items():
+        assert len(pairs) == 1, f"{note}'s forms differ in look or quirk"
+        look, quirk = next(iter(pairs))
+        # A cross-reference to this document's sections is for its readers,
+        # not the player's: "(Revival, 7.3)" goes.
+        quirk = re.sub(r" \([^)]*\b\d+\.\d+\)", "", quirk)
+        out += [(f"FORM_LOOK_{note.upper()}", look), (f"FORM_QUIRK_{note.upper()}", quirk)]
+    out += [(f"NOTE_SYMBOL_{n['id'].upper()}", n["symbol"]) for n in load("notes.json")]
     # §5.2's realm types, from their one home (the server sends the name).
     from design_facts import REALM_TYPES
     out += [(f"REALM_{t.upper().replace(' ', '_')}", t) for t in REALM_TYPES]

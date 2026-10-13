@@ -30,3 +30,9 @@ func wake(id: int) -> Result:
 ## §11.4: character `id` raised to level `to`, the next.
 func level(id: int, to: int) -> Result:
 	return await api.post_json("/v1/home/characters/%d/level" % id, {"to": to})
+
+
+## §11.10's Forms album: the 54 forms by kind and note with how many the
+## player has, each note's launch laws, and the sets each unlocks.
+func album() -> Result:
+	return await api.get_json("/v1/forms")
