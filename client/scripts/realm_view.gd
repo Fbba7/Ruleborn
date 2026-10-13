@@ -297,7 +297,8 @@ func _draw_guard(g: Dictionary, selected: bool, index: int, t: float) -> void:
 
 
 func _draw_member(m: Dictionary, t: float) -> void:
-	if m["standing"] == "Out":
+	# Aboard the skiff, or a Prism mite's half folded back in: not on the realm.
+	if m["standing"] in ["Out", "Gone"]:
 		return
 	var c := to_screen(m["at"])
 	var colour: Color = Palette.ROLE.get(m["role"], Palette.PAPER)

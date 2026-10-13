@@ -110,6 +110,9 @@ pub enum Standing {
     Caught = 2,
     /// Aboard the skiff, with what it carried banked.
     Out = 3,
+    /// A Prism mite's half folded back into the mite when its split ended
+    /// (§11.11): nobody, carrying nothing.
+    Gone = 4,
 }
 
 /// §12.9's four outcomes.

@@ -4255,14 +4255,13 @@ fn at_most_four_abilities_are_ready_and_the_fifth_waits_its_turn() {
 
 #[test]
 fn an_ability_with_nothing_to_act_on_spends_no_use() {
-    let mut world = kinds_world(&["hourkeeper", "prism_mite", "featherkin"]);
+    let mut world = kinds_world(&["hourkeeper", "glass_golem", "featherkin"]);
     fire_at(&mut world, 0, 12, 12);                   // nobody there
     world.step();
     assert_eq!(world.raiders[0].uses, 2, "a rewind aimed at an empty tile is dropped");
-    assert!(!RULEBORN[ruleborn::by_id("prism_mite").unwrap() as usize].ability.built());
-    fire_at(&mut world, 1, 5, 10);
+    fire_at(&mut world, 1, 4, 10);                    // where the golem stands
     world.step();
-    assert_eq!(world.raiders[1].uses, 2, "the split waits for a crew member that can be two, and costs nothing");
+    assert_eq!(world.raiders[1].uses, 2, "a wall aimed at the golem's own tile is dropped");
     fire_at(&mut world, 2, 5, 9);                     // it stands on (6, 10)
     world.step();
     assert_eq!(world.raiders[2].uses, 2, "a glide aimed off its row and column is dropped");
@@ -5939,4 +5938,92 @@ fn the_gardeners_vine_bridge_joins_two_banks_up_to_six_tiles_apart_for_twenty_se
     assert!(!across(&vined(6)) && vined(6).sage.unwrap().uses[0] == 1, "seven is too far");
     run_for(&mut world, ruleborn::VINE_BRIDGE_TICKS);
     assert!(!across(&world), "gone after 20 s");
+}
+
+// -- The Prism mite's split (TD.12) ---------------------------------------------
+
+/// A Prism mite at (2, 10) carrying 51, split at tick 0.
+fn split_mite() -> World {
+    let mut world = kinds_world(&["prism_mite"]);
+    world.raiders[0].carried = 51;
+    fire_at(&mut world, 0, 2, 10);
+    world.step();
+    world
+}
+
+fn walk_to(world: &mut World, actor: u8, x: i16, y: i16) {
+    world.give(actor, Kind::MoveTo, x * 256 + 128, y * 256 + 128);
+}
+
+#[test]
+fn the_prism_mite_splits_into_two_halves_that_go_different_ways_and_rejoin_after_eight_seconds() {
+    let full = kinds_world(&["prism_mite"]).raiders[0].health;
+    let mut world = split_mite();
+    assert_eq!(world.raiders.len(), 2, "\"splits into two mites\"");
+    let (mite, half) = (&world.raiders[0], &world.raiders[1]);
+    assert_eq!((mite.carried, half.carried), (26, 25), "\"each with half its load\"");
+    assert_eq!(mite.health + half.health, full);
+    assert_eq!(half.health, full / 2, "and half its health");
+    assert_eq!(half.size, mite.size, "a mite still");
+    assert_eq!((half.kind, half.uses), (None, 0), "the half has no ability of its own");
+    assert_eq!(world.raiders[0].uses, 1);
+    // "They can go different ways": the half answers to its own index.
+    walk_to(&mut world, 0, 8, 10);
+    walk_to(&mut world, 1, 2, 4);
+    run_for(&mut world, 5 * TICKS_PER_SECOND);
+    assert_eq!((tile_of(&world, 0), tile_of(&world, 1)), ((8, 10), (2, 4)));
+    // §12.6's lockout outlasts the split: the second use is a new half, with
+    // a new index, and the first's is never reused.
+    run_for(&mut world, ruleborn::LOCKOUT_TICKS);
+    assert_eq!(world.raiders[1].standing, Standing::Gone);
+    fire_at(&mut world, 0, 8, 10);
+    world.step();
+    assert_eq!((world.raiders.len(), world.raiders[2].half_of, world.raiders[0].uses), (3, Some(0), 0));
+    // "They rejoin when it ends", where the mite stands.
+    let mut world = split_mite();
+    walk_to(&mut world, 1, 2, 4);
+    run_for(&mut world, ruleborn::SPLIT_TICKS);
+    assert_eq!(world.raiders[1].standing, Standing::Gone);
+    assert_eq!((world.raiders[0].carried, world.raiders[0].health), (51, full));
+    assert_eq!(tile_of(&world, 0), (2, 10));
+}
+
+#[test]
+fn a_caught_half_loses_only_its_half_whichever_half_it_is() {
+    // The half caught: the mite rejoins alone, with its own half.
+    let mut world = split_mite();
+    world.raiders[1].standing = Standing::Caught;
+    run_for(&mut world, ruleborn::SPLIT_TICKS);
+    assert_eq!(world.raiders[0].carried, 26, "\"a caught mite loses only its half\"");
+    assert_eq!(world.raiders[1].standing, Standing::Gone);
+    assert_eq!(world.outcome().caught, 0, "the half is never one of the crew caught");
+    // The mite caught: the half carries on as the mite, where it is.
+    let mut world = split_mite();
+    walk_to(&mut world, 1, 2, 6);
+    run_for(&mut world, 3 * TICKS_PER_SECOND);
+    world.raiders[0].standing = Standing::Caught;
+    run_for(&mut world, ruleborn::SPLIT_TICKS);
+    let mite = &world.raiders[0];
+    assert_eq!((mite.standing, mite.carried, mite.kind.is_some(), mite.half_of), (Standing::Active, 25, true, None));
+    assert_eq!(tile_of(&world, 0), (2, 6));
+    assert!(logged(&world, crate::events::Event::Back { crew: 0, how: crate::events::Back::Split }));
+}
+
+#[test]
+fn what_a_half_brings_out_is_banked_and_the_half_is_never_counted_as_crew() {
+    let mut world = split_mite();
+    world.raiders[0].standing = Standing::Out;
+    world.raiders[1].standing = Standing::Out;
+    let o = world.outcome();
+    assert_eq!((o.banked, o.out, o.out_mask, o.capacity), (51, 1, 0b1, Role::Carrier.carry()));
+    assert_ne!(o.grade, Grade::Partial, "one crew member, out: the half is not a second");
+    // The mite out and the half still inside: the half goes on alone, and its
+    // load is left if the clock catches it.
+    let mut world = split_mite();
+    world.raiders[0].standing = Standing::Out;
+    run_for(&mut world, ruleborn::SPLIT_TICKS);
+    assert_eq!(world.raiders[1].standing, Standing::Active, "the half goes on");
+    world.raiders[1].standing = Standing::Caught;
+    let o = world.outcome();
+    assert_eq!((o.banked, o.caught, o.left), (26, 0, 25));
 }

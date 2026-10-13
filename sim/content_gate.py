@@ -532,6 +532,7 @@ def ruleborn_compare(text: str) -> dict:
         ("glass_golem seconds", num("glass_golem", r"long for (\d+) s"), ticks("WALL_TICKS")),
         ("lantern_wisp tiles", num("lantern_wisp", r"within (\d+) tiles"), k.get("REVEAL_TILES")),
         ("lantern_wisp seconds", num("lantern_wisp", r"tiles for (\d+) s"), ticks("REVEAL_TICKS")),
+        ("prism_mite seconds", num("prism_mite", r"two mites for (\d+) s"), ticks("SPLIT_TICKS")),
     ]
     # §11.7's Sages: each one's three powers and their uses, in content
     # order, and every built power's numbers from its own sentence.

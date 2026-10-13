@@ -173,6 +173,12 @@ pub const CHARGE_PACE: (i64, i64) = (2, 1);
 /// The Glass golem: "Raises a crystal wall 3 tiles long for 6 s".
 pub const WALL_TILES: i32 = 3;
 pub const WALL_TICKS: u32 = TICKS_PER_SECOND * 6;
+/// The Prism mite: "Splits into two mites for 8 s, each with half its load
+/// and half its health".
+pub const SPLIT_TICKS: u32 = TICKS_PER_SECOND * 8;
+/// The most a heist's raiders can number, crew and split halves together:
+/// a command names one in four bits (§24.10).
+pub const MAX_RAIDERS: usize = 16;
 /// The Lantern wisp: "Reveals every hidden ward, hidden guard and illusion
 /// within 6 tiles for 6 s."
 pub const REVEAL_TILES: i32 = 6;
@@ -183,7 +189,7 @@ pub const ROOT_BRIDGE_TICKS: u32 = TICKS_PER_SECOND * 8;
 
 /// Every number above, for the rules version: changing one changes how a
 /// heist with a manifest plays.
-pub const NUMBERS: [i64; 56] = [
+pub const NUMBERS: [i64; 58] = [
     USES as i64, LOCKOUT_TICKS as i64, MAX_READY as i64,
     SATCHEL_TICKS as i64, SATCHEL_RATE as i64, POUND_TICKS as i64, POUND_HIT.0, POUND_HIT.1,
     UNHINDERED_TICKS as i64, REWIND_TICKS as i64, FREEZE_TICKS as i64, BURST_POWER,
@@ -198,7 +204,7 @@ pub const NUMBERS: [i64; 56] = [
     CHARGE_PACE.0, CHARGE_PACE.1, ROOT_BRIDGE_TILES as i64, ROOT_BRIDGE_TICKS as i64,
     PLANK_TILES as i64, PLANK_TICKS as i64, WALL_TILES as i64, WALL_TICKS as i64,
     REVEAL_TILES as i64, REVEAL_TICKS as i64, INVERT_TICKS as i64, VINE_BRIDGE_TILES as i64,
-    VINE_BRIDGE_TICKS as i64,
+    VINE_BRIDGE_TICKS as i64, SPLIT_TICKS as i64, MAX_RAIDERS as i64,
 ];
 
 impl Ability {
@@ -217,13 +223,11 @@ impl Ability {
         }
     }
 
-    /// Whether the simulation carries it yet. Split waits on a crew member
-    /// that can be two: a second body with its own commands, load and health,
-    /// which the outcome and the manifest would have to count. Until then its
-    /// command is dropped and spends no use, like any command that cannot be
-    /// carried out.
+    /// Whether the simulation carries it yet: all eighteen do. Kept, so a
+    /// kind added to §11.11 ahead of its rule is dropped like any command
+    /// that cannot be carried out, and the rules version says so.
     pub fn built(self) -> bool {
-        !matches!(self, Split)
+        true
     }
 }
 

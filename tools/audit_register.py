@@ -9979,7 +9979,16 @@ dict(id="G81", kind="gap", severity="minor", status="open",
           "measure turned over (25% faster becomes 20% slower), and nothing for "
           "a switch, a time, a share or Whispers’ realm-wide reach, which are off "
           "while the law is turned: so Half gravity turned is a realm with no "
-          "leap, and what more <em>“heavy gravity”</em> does is not written.",
+          "leap, and what more <em>“heavy gravity”</em> does is not written. "
+          "<strong>The Prism mite’s split:</strong> the other half is a raider "
+          "of its own, its index the next a command names, with no ability; the "
+          "larger half of an odd health or load stays with the mite; when the 8 "
+          "s end, two halves standing fold together where the mite stands, a "
+          "half down or caught is gone with its load, a mite down or caught is "
+          "carried on by the half where the half is, and a half still inside "
+          "when the mite is aboard goes on alone. A half is never one of the crew "
+          "the outcome counts out or caught, though what it brings out is "
+          "banked.",
      rec="State the readings in §11.2, §11.11 and §11.7 (the edits are "
          "drafted), or give others and the simulation follows "
          "(<code>sim/src/lib.rs</code>)."),
@@ -11455,7 +11464,8 @@ V37 = {
     "charge and a bridge go, what a charge breaks through and how long a "
     "plank spans, read one way in the simulation, with the edits drafted "
     "(TD.75); then the Glass golem’s wall, the Lantern wisp’s reveal, "
-    "Invert’s opposite and Vine bridge’s two points, read too and built."),
+    "Invert’s opposite, Vine bridge’s two points and the Prism mite’s two "
+    "halves, read too and built."),
 
 "G80": dict(status="open", left="document", note=
     "Found building TD.15, after v3.7: seven readings the simulation takes for "

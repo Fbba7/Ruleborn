@@ -60,6 +60,9 @@ pub enum Back {
     Recall,
     /// Ghost tide drifted it back to the landing spot (§8).
     GhostTide,
+    /// A Prism mite down or caught when its split ended, carried on by its
+    /// other half (§11.11).
+    Split,
 }
 
 /// One thing that happened, at a tick.

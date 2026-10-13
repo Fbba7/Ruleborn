@@ -712,6 +712,13 @@ pub struct Raider {
     pub lost: Vec<i32>,
     /// What hurt it last, for the event log (`events::Hurt`).
     pub hurt_by: Hurt,
+    /// The Prism mite's split (§11.11): on the mite, its other half's index
+    /// and the tick they rejoin; on that half, the mite it came from. A half
+    /// is a raider of its own, with its own commands (its index on the
+    /// wire), and never one of the crew the outcome counts.
+    pub twin: Option<usize>,
+    pub split_until: u32,
+    pub half_of: Option<usize>,
 }
 
 impl Raider {
@@ -964,6 +971,9 @@ impl World {
                 effect_until: 0,
                 lost: vec![0; ruleborn::REWIND_TICKS],
                 hurt_by: Hurt::Law,
+                twin: None,
+                split_until: 0,
+                half_of: None,
             });
         }
         World {
@@ -1420,6 +1430,7 @@ impl World {
             }
             Ability::Glide => aimed.is_some_and(|t| self.glide(ri, t)),
             Ability::Charge => aimed.is_some_and(|t| self.charge(ri, t)),
+            Ability::Split => self.split(ri),
             // "Grows a root bridge over one gap of up to 3 tiles for 8 s",
             // from where the Rootrunner stands toward the gap it is aimed at.
             Ability::RootBridge => {
@@ -1440,7 +1451,6 @@ impl World {
                 }
                 _ => false,
             },
-            _ => false,
         };
         if !done {
             return;
@@ -1785,6 +1795,7 @@ impl World {
     /// apply yet are carried on the sheet and read by nothing; the content
     /// gate lists them.
     fn phase_laws(&mut self) {
+        self.rejoin();
         self.find_terrain();
         self.stand_bridges();
         self.stand_walls();
@@ -4103,6 +4114,111 @@ impl World {
         true
     }
 
+    /// The Prism mite: "Splits into two mites for 8 s, each with half its
+    /// load and half its health; they can go different ways, a caught mite
+    /// loses only its half, and they rejoin when it ends." The other half is
+    /// a raider of its own, appended, so its index is the next on the wire:
+    /// it goes on where the mite was going until told otherwise, has no
+    /// ability of its own, and the larger half of an odd health or load stays
+    /// with the mite. One split at a time, and no more raiders than a command
+    /// can name.
+    fn split(&mut self, ri: usize) -> bool {
+        let now = self.tick;
+        let r = &self.raiders[ri];
+        if r.twin.is_some() || r.half_of.is_some() || self.raiders.len() >= ruleborn::MAX_RAIDERS {
+            return false;
+        }
+        let ti = self.raiders.len();
+        let mut half = r.clone();
+        half.id = ti as u32;
+        half.kind = None;
+        half.uses = 0;
+        half.ready = false;
+        half.effect_until = 0;
+        half.twin = None;
+        half.split_until = 0;
+        half.half_of = Some(ri);
+        half.health = r.health / 2;
+        half.carried = r.carried / 2;
+        let r = &mut self.raiders[ri];
+        r.health -= half.health;
+        r.carried -= half.carried;
+        r.twin = Some(ti);
+        r.split_until = now + ruleborn::SPLIT_TICKS;
+        // Halving is not a hit: what this tick began with is what each half
+        // has now, so a Soulmender's link shares nothing of it.
+        let health = r.health;
+        if let Some(h) = self.start_health.get_mut(ri) {
+            *h = health;
+        }
+        if let Some(h) = self.shared_at.get_mut(ri) {
+            *h = health;
+        }
+        self.start_health.push(half.health);
+        self.shared_at.push(half.health);
+        self.raiders.push(half);
+        true
+    }
+
+    /// The Prism mite's halves rejoin when the split ends. Both on their
+    /// feet: the half folds into the mite where the mite stands, health and
+    /// load added back. The half down or caught: it is gone, and its half of
+    /// the load with it ("a caught mite loses only its half"). The mite down
+    /// or caught and the half on its feet: the half carries on as the mite,
+    /// where it is, with what it has — so a caught half is lost whichever
+    /// half it was. The mite already aboard the skiff: the half goes on alone
+    /// until it is out or caught, and what it brings out is banked. A half
+    /// already aboard has banked its load and stays aboard.
+    fn rejoin(&mut self) {
+        let now = self.tick;
+        for ri in 0..self.raiders.len() {
+            let Some(ti) = self.raiders[ri].twin else { continue };
+            if now < self.raiders[ri].split_until {
+                continue;
+            }
+            self.raiders[ri].twin = None;
+            let (mite, half) = (self.raiders[ri].standing, self.raiders[ti].standing);
+            match (mite, half) {
+                (_, Standing::Out) | (Standing::Out, Standing::Active) => {}
+                (Standing::Active, Standing::Active) => {
+                    let (health, carried) = (self.raiders[ti].health, self.raiders[ti].carried);
+                    let full = self.raiders[ri].full(&self.sheet);
+                    let r = &mut self.raiders[ri];
+                    r.health = (r.health + health).min(full);
+                    r.carried += carried;
+                    self.retire(ti);
+                }
+                (Standing::Down | Standing::Caught, Standing::Active) => {
+                    let mut carried_on = self.raiders[ti].clone();
+                    let r = &self.raiders[ri];
+                    carried_on.id = r.id;
+                    carried_on.kind = r.kind;
+                    carried_on.uses = r.uses;
+                    carried_on.ready = r.ready;
+                    carried_on.locked_until = r.locked_until;
+                    carried_on.free_since = r.free_since;
+                    carried_on.effect_until = r.effect_until;
+                    carried_on.half_of = None;
+                    self.raiders[ri] = carried_on;
+                    self.retire(ti);
+                    self.log.push(now, Event::Back { crew: ri as u8, how: Back::Split });
+                }
+                _ => self.retire(ti),
+            }
+        }
+    }
+
+    /// A half folded away: nobody, carrying nothing, going nowhere.
+    fn retire(&mut self, ti: usize) {
+        let h = &mut self.raiders[ti];
+        h.standing = Standing::Gone;
+        h.carried = 0;
+        h.health = 0;
+        h.route.clear();
+        h.along = 0;
+        h.task = Task::default();
+    }
+
     /// The Glass golem: "Raises a crystal wall 3 tiles long for 6 s: nothing
     /// passes it, and it does not block sight." Across the way from the
     /// golem to the tile aimed at, centred on it: along the column when the
@@ -4597,16 +4713,19 @@ impl World {
     /// has run or everyone is out or caught; before that it says what the
     /// heist would come to if it stopped now.
     pub fn outcome(&self) -> Outcome {
+        // What a Prism mite's half brings out is banked; the half is not one
+        // of the crew, so it is never counted out, caught or in the mask.
         let banked: i32 = self.raiders.iter()
             .filter(|r| r.standing == Standing::Out).map(|r| r.carried).sum();
-        let capacity: i32 = self.raiders.iter().map(|r| r.role.carry()).sum();
-        let caught = self.raiders.iter().filter(|r| r.standing == Standing::Caught).count() as u32;
-        let out = self.raiders.iter().filter(|r| r.standing == Standing::Out).count() as u32;
-        let out_mask = self.raiders.iter().enumerate()
+        let crew = || self.raiders.iter().enumerate().filter(|(_, r)| r.half_of.is_none());
+        let capacity: i32 = crew().map(|(_, r)| r.role.carry()).sum();
+        let caught = crew().filter(|(_, r)| r.standing == Standing::Caught).count() as u32;
+        let out = crew().filter(|(_, r)| r.standing == Standing::Out).count() as u32;
+        let out_mask = crew()
             .filter(|(_, r)| r.standing == Standing::Out).fold(0u8, |m, (i, _)| m | 1 << i);
         let grade = if banked == 0 {
             Grade::Foiled
-        } else if out as usize != self.raiders.len() {
+        } else if out as usize != crew().count() {
             Grade::Partial
         } else if self.alarm_raised {
             Grade::Loud
@@ -4776,6 +4895,12 @@ impl World {
                 mix(raider.locked_until as i64);
                 mix(raider.ready as i64);
                 mix(raider.effect_until as i64);
+            }
+            // A Prism mite split, and which half is which.
+            if raider.twin.is_some() || raider.half_of.is_some() {
+                mix(raider.twin.map_or(-1, |t| t as i64));
+                mix(raider.split_until as i64);
+                mix(raider.half_of.map_or(-1, |t| t as i64));
             }
         }
         for w in self.wards.iter().filter(|w| w.held_until > 0) {
