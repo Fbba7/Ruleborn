@@ -686,6 +686,13 @@ placed buildings on their tiles (`buildings_not_as_placed`, read with
   pays the roster's keep, a quarter. The law term is weaving.mjs's; the
   stability and fault terms are 1 until TD.37 keeps them, and `GET /v1/home`
   says so. What the document leaves open is **G82**.
+- **Generated targets** (§12.22, `generator.mjs`, D66). A seeded account,
+  the game's own, publishes one island a realm level each UTC day, made by
+  the simulation from that day's seed (`rb_generate`), so every server makes
+  the same five; each realm's rating starts at the generated band's prior and
+  is kept across the days. `offer` reaches for them after echoes and before
+  widening any filter, and says so (`generated`); yesterday's are no echoes.
+  The server stocks them before each target list.
 - **Casts** (§12.5, §7.6). A cast the replay's manifest carries must be one
   of the raider's own restored laws (`cast_not_restored` otherwise). The
   verdict's 34th byte (`castsUsed`) says which were placed, and each used is

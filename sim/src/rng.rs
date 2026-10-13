@@ -47,6 +47,9 @@ pub enum Stream {
     /// déjà vu, fair lights and quicksand. Drawn only while one sounds, in a
     /// fixed order within the tick, so a realm without them draws nothing.
     Laws = 5,
+    /// §12.22's generated targets and §12.12's ruins: an island made from a
+    /// seed (`Island::generated`), never drawn during a heist.
+    Generator = 6,
 }
 
 /// xoshiro256++ 1.0. Pure integer operations.

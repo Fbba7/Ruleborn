@@ -6135,3 +6135,48 @@ fn a_manifest_casting_no_law_is_refused() {
     heist.manifest = Some(crew);
     assert!(Heist::decode(&heist.encode()).is_none());
 }
+
+// -- §12.22's generated targets (TD.16) ------------------------------------------
+
+#[test]
+fn a_generated_island_is_made_from_its_seed_to_5_2s_budget_and_passes_every_check() {
+    use crate::island::{GUARD_POSTS, LAW_SLOTS, WARD_LIMITS};
+    for level in 1..=5u8 {
+        let li = (level - 1) as usize;
+        for seed in 0..40u64 {
+            let island = Island::generated(seed, level);
+            assert_eq!(island.check(), vec![], "level {level} seed {seed}");
+            assert_eq!(island.realm_level, level);
+            assert_eq!(island.guards.len(), GUARD_POSTS[li] as usize, "§5.2's posts, all of them");
+            assert_eq!(island.laws.len(), LAW_SLOTS[li] as usize, "§5.2's law slots, filled");
+            assert_eq!(island.wards.len(), WARD_LIMITS[li] as usize, "§5.2's wards, all of them");
+            assert!(!island.wards.iter().any(|w| w.0 == WardKind::CrystalWall));
+            for (i, g) in island.guards.iter().enumerate() {
+                assert_eq!(g.facing, island.default_facing(i), "faced as the generator faces a post");
+            }
+            let back = Island::decode(&island.encode()).expect("a generated island is a bundle");
+            assert_eq!(back, island);
+        }
+    }
+    assert_eq!(Island::generated(7, 3).digest(), Island::generated(7, 3).digest(), "one seed, one island");
+    assert_ne!(Island::generated(7, 3).digest(), Island::generated(8, 3).digest());
+    // Wards keep their distance from every edge: a crew lands where it likes.
+    for seed in 0..40 {
+        let island = Island::generated(seed, 3);
+        let side = island.side() as u8;
+        let e = crate::island::WARD_EDGE;
+        assert!(island.wards.iter().all(|&(_, x, y)| x >= e && y >= e && x + e < side && y + e < side));
+    }
+}
+#[test]
+fn every_first_draw_of_the_generator_passes_its_checks() {
+    // The retry in `generated` is a backstop, not the method: a seed's own
+    // draw is legal, so neighbouring seeds make different islands.
+    for level in 1..=5u8 {
+        for seed in 0..50u64 {
+            assert_eq!(Island::draw_for_test(seed, level).check(), vec![], "level {level} seed {seed}");
+        }
+    }
+    let distinct: std::collections::BTreeSet<[u8; 32]> = (0..20).map(|s| Island::generated(s, 2).digest()).collect();
+    assert_eq!(distinct.len(), 20, "twenty seeds, twenty islands");
+}

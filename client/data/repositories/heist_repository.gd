@@ -28,11 +28,14 @@ func fetch(key: String) -> Result:
 
 ## The first island in the target lists that is not the player's own: the
 ## list file is fetched by hash, as §24.8 intends. §12.22's ordering runs on
-## the server (GET /v1/offer); this is the fallback on a list alone.
+## the server (GET /v1/offer); this is the fallback on a list alone, and like
+## §12.22 it reaches for the game's generated islands only when no player's
+## island is there.
 func first_target(account: String, skip: Array[String] = []) -> Result:
 	var index := await target_index()
 	if not index.ok:
 		return index
+	var generated: Dictionary = {}
 	for band: String in index.value:
 		var file := await fetch(str(index.value[band]))
 		if not file.ok:
@@ -40,8 +43,14 @@ func first_target(account: String, skip: Array[String] = []) -> Result:
 		var list: Variant = JSON.parse_string((file.value as PackedByteArray).get_string_from_utf8())
 		if list is Dictionary:
 			for candidate: Dictionary in list.get("candidates", []):
-				if candidate.get("owner") != account and str(candidate.get("bundle")) not in skip:
+				if candidate.get("owner") == account or str(candidate.get("bundle")) in skip:
+					continue
+				if candidate.get("origin") != "generated":
 					return Result.success(candidate)
+				if generated.is_empty():
+					generated = candidate
+	if not generated.is_empty():
+		return Result.success(generated)
 	return Result.failure("no_target")
 
 

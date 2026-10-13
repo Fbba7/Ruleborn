@@ -18,6 +18,7 @@
 import { readFileSync } from "node:fs";
 
 import { expected, fresh, ratingFor, update } from "./glicko.mjs";
+import { GENERATOR } from "./generator.mjs";
 import { Refused } from "./refused.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
@@ -103,9 +104,10 @@ export class Matchmaking {
   /** A published island's rating: the prior for a new one; a republished
    *  one keeps its mean and widens back to the prior's deviation, since the
    *  defence it measured has changed (G30). */
-  published(owner, realm, realmLevel, now) {
+  published(owner, realm, realmLevel, now, origin = "authored") {
     const had = this.islandRating(owner, realm);
-    const r = had ? { ...had, deviation: Math.max(had.deviation, prior(realmLevel).deviation) } : { ...prior(realmLevel), games: 0 };
+    const start = prior(realmLevel, origin);
+    const r = had ? { ...had, deviation: Math.max(had.deviation, start.deviation) } : { ...start, games: 0 };
     this.store("island", this.islandKey(owner, realm), r, now);
   }
 
@@ -186,14 +188,16 @@ export class Matchmaking {
       `SELECT s.bundle, s.owner, s.realm, s.realm_level, a.keeper_level
          FROM snapshots s JOIN accounts a ON a.id = s.owner
         WHERE s.published_at > ? AND a.banned_at IS NULL AND a.deleted_at IS NULL
+          AND s.owner != ?
           AND NOT EXISTS (SELECT 1 FROM islands i WHERE i.bundle = s.bundle)
-        ORDER BY s.bundle`).all(now - facts.ECHO_DAYS * DAY_MS);
+        ORDER BY s.bundle`).all(now - facts.ECHO_DAYS * DAY_MS, GENERATOR);
     const view = (r, echo) => {
       const rating = this.islandRating(r.owner, r.realm) ?? prior(r.realm_level);
       return {
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
         keeperLevel: r.keeper_level, renown: this.service.seasons.league(r.owner, now).renown,
-        rating: rating.rating, deviation: rating.deviation, origin: "authored", echo,
+        rating: rating.rating, deviation: rating.deviation, echo,
+        origin: r.owner === GENERATOR ? "generated" : "authored",
       };
     };
     return [
@@ -225,10 +229,10 @@ export class Matchmaking {
  *
  * Step 1 filters; step 3 sorts by predicted success and draws the middle
  * from the raider-success band of the target's realm level; step 4, when
- * fewer than three candidates sit in the band, counts echoes, and only then
- * widens the filters in order: rating, then Keeper level, then Renown. The
- * generated fallbacks that come before any widening are not built (D66), so
- * the list says when it widened.
+ * fewer than three candidates sit in the band, counts echoes, then the
+ * game's generated islands (generator.mjs), and only then widens the
+ * filters in order: rating, then Keeper level, then Renown. The list says
+ * when it reached for echoes, for generated islands, and what it widened.
  */
 export function offer(raider, candidates, { size = 3 } = {}) {
   const own = new Set(raider.bundles ?? []);
@@ -249,17 +253,24 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   const pass = (pool) => pool.filter((c) => Object.entries(filters)
     .every(([name, f]) => widened.includes(name) || f(c)));
   const enough = (pool) => pool.filter(inBand).length >= facts.THIN_BAND;
-  const liveOnly = others.filter((c) => !c.echo);
+  const authored = others.filter((c) => c.origin !== "generated");
+  const liveOnly = authored.filter((c) => !c.echo);
   let pool = pass(liveOnly);
   let echoes = false;
+  let generated = false;
   if (!enough(pool)) {
-    pool = pass(others);
+    pool = pass(authored);
     echoes = true;
   }
+  if (!enough(pool) && others.length > authored.length) {
+    pool = pass(others);
+    generated = true;
+  }
+  const reach = () => (generated ? others : echoes ? authored : liveOnly);
   for (const name of ["rating", "keeper", "renown"]) {
-    if (enough(pool) || pool.length >= others.length) break;
+    if (enough(pool) || pool.length >= reach().length) break;
     widened.push(name);
-    pool = pass(echoes ? others : liveOnly);
+    pool = pass(reach());
   }
   // Step 3: by predicted success, easiest first; the middle from the band.
   const sorted = pool.map((c) => ({ ...c, predicted: predicted(c) }))
@@ -286,5 +297,5 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   // `middle` is the easiest or hardest there is, a neighbour takes the
   // middle (§12.22 step 4: never "silently unfair").
   const median = targets[Math.floor(targets.length / 2)];
-  return { targets, guaranteed: Boolean(median) && inBand(median), echoes, widened };
+  return { targets, guaranteed: Boolean(median) && inBand(median), echoes, generated, widened };
 }

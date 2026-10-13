@@ -664,6 +664,16 @@
       ]
     },
     {
+      "name": "Generator",
+      "section": "12.22",
+      "task": "TD.16",
+      "what": "§12.22's generated targets, made from a seed (Island::generated, D66): the Vault near the middle in rings of ruin wall whose gaps alternate sides, cover off the route, §5.2's posts faced as the generator faces a post, its wards on and beside the shortest route and clear of the edges (WARD_EDGE), its law slots from the launch laws; every first draw passes check, and one seed makes one island everywhere (rb_generate).",
+      "tests": [
+        "a_generated_island_is_made_from_its_seed_to_5_2s_budget_and_passes_every_check",
+        "every_first_draw_of_the_generator_passes_its_checks"
+      ]
+    },
+    {
       "name": "Publishing rules",
       "section": "5.2",
       "task": "T3.3",

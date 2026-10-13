@@ -2189,9 +2189,23 @@ dict(
              # It waited on TD.15's thirty-three; what TD.15 has left (moss on
              # every bare tile, terrain points, swimmers) is not under it.
              register=["G56"]),
-        dict(id="TD.16", owner="claude", status="ready",
+        dict(id="TD.16", owner="claude", status="doing",
              title="The generator: ruins, reference crews, fallbacks",
-             detail="D66: the reference crews and the generator inside the "
+             detail="<strong>Built so far:</strong> the generator inside the "
+                    "simulation, <code>Island::generated</code>: from a seed, the "
+                    "Vault near the middle in rings of ruin wall with gaps on "
+                    "alternating sides (F16's shaped layout), cover off the route, "
+                    "§5.2's guard posts faced as the generator faces a post, its "
+                    "wards on and beside the shortest route clear of the edges, "
+                    "and its law slots filled from the launch laws; every island "
+                    "passes <code>check</code>. The server's seeded generator "
+                    "account publishes one a realm level each UTC day from that "
+                    "day's seed, its realms' ratings starting at the generated "
+                    "band's prior, and §12.22's offer reaches for them after "
+                    "echoes and before widening (generator.mjs). "
+                    "<strong>Left:</strong> the reference crews and the hold "
+                    "queue, the ruins and the tutorial ruins.<br><br>"
+                    "D66: the reference crews and the generator inside the "
                     "simulation, as v3.7's §26.8 now plans in phase 6, so the "
                     "server rates a new island from the simulator's prior and "
                     "makes generated fallback targets itself (§12.22); drifting "

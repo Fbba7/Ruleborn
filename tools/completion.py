@@ -552,9 +552,14 @@ DELIVERABLES = [
         "a day's ceiling is half again above the whole fatigue curve; a week's is five days of it",
         "a haul is capped by what the raider was already paid today (§9.6, §24.12)",
         "past 20 paid raids a week, a raid costs nothing and pays nothing, and the lease says so (9.6, G20)")),
-    ("6", "Reference crews and the generator inside the simulation", BACKEND, not_started(
-        "the simulation's reference crews rate a new island and its generator makes "
-        "§12.22's fallback targets, on the server (TD.16)")),
+    ("6", "Reference crews and the generator inside the simulation", BACKEND, parts(
+        parts(systems("Generator"), server_tests(
+            "each day the generator publishes one island a realm level from that day's seed, "
+            "the same on every server (12.22)",
+            "a thin list reaches for the game's generated islands after echoes and before widening "
+            "any filter (12.22)")),
+        not_started("the simulation's reference crews rate a new island: §13.3's 800 raids of "
+                    "the competent crew, queued and cached by the island's digest (TD.16)"))),
     ("6", "Universes of several realms joined by links", BACKEND, not_started(
         "the server holds universes of several realms joined by links, with the Heart's "
         "winds and §5.4's clock by links (D71)")),

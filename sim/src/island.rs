@@ -97,6 +97,11 @@ pub const GUARD_POSTS: [u8; 5] = [1, 1, 2, 1, 1];
 pub const LAW_SLOTS: [u8; 5] = [1, 1, 2, 2, 3];
 
 
+/// How far from an edge a generated island's wards keep: a crew lands on
+/// any edge tile (§5.4), and a ward whose sensor reaches the landing decides
+/// the raid before it starts (the harness's rule).
+pub const WARD_EDGE: u8 = 2;
+
 /// One tile of the ground layer.
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
 pub struct Tile {
@@ -1245,6 +1250,238 @@ impl Island {
         ];
         island.laws = vec![("haste".to_string(), 1, 10), ("brittle_stone".to_string(), 11, 2)];
         island
+    }
+
+    /// §12.22's generated target, made from a seed: "the game's own", which
+    /// the server offers when a raider's list runs thin, and §12.12's ruins
+    /// draw on (D66, TD.16). The same seed makes the same island on every
+    /// machine, and every one passes `check`.
+    ///
+    /// What it lays is §13.2's five layers, each to §5.2's budget for the
+    /// realm level and no further:
+    ///
+    /// - **Geometry.** The Vault near the middle, the place furthest from
+    ///   every edge a crew can land on. Rings of ruin wall around it, each
+    ///   with a two-tile gap on alternating sides, so the way in winds round
+    ///   rather than running straight — F16's shaped layout, which the
+    ///   harness measured; no ring touches an edge, so every side stays open
+    ///   to land on (F51). Tall grass in clumps, and a few rock pillars, off
+    ///   the shortest route.
+    /// - **Guards.** §5.2's posts for the level: Warden, Scout, Breaker in
+    ///   turn, the first beside the Vault on the shortest way in and the rest
+    ///   at the ring gaps, each facing as the generator faces a post
+    ///   (`default_facing`).
+    /// - **Wards.** §5.2's count: on the shortest route, then beside it,
+    ///   then on the open tiles nearest the Vault, never within `WARD_EDGE`
+    ///   tiles of an edge, since a crew lands where it likes (§5.4); the
+    ///   kinds in turn, the Crystal Wall left out, since on the route it
+    ///   would seal it.
+    /// - **Laws.** §5.2's slots, filled from §7.10's launch laws, each pylon
+    ///   beside the Vault off the route.
+    ///
+    /// The Vault is the realm level's, and it exposes a full five-crew's
+    /// carry (§9.6), as the fixture's does. A layout that fails `check` is
+    /// drawn again from the next seed, which the next draw always is.
+    pub fn generated(seed: u64, realm_level: u8) -> Island {
+        let level = realm_level.clamp(1, 5);
+        let mut attempt = 0u64;
+        loop {
+            let island = Island::draw(seed.wrapping_add(attempt), level);
+            if island.check().is_empty() || attempt >= 64 {
+                return island;
+            }
+            attempt += 1;
+        }
+    }
+
+    #[cfg(test)]
+    pub(crate) fn draw_for_test(seed: u64, level: u8) -> Island {
+        Island::draw(seed, level)
+    }
+
+    fn draw(seed: u64, level: u8) -> Island {
+        use crate::grid::Feature::*;
+        use crate::rng::{Rng, Stream};
+        let mut rng = Rng::new(seed, Stream::Generator);
+        let mut island = Island::empty(level);
+        let side = island.side() as u8;
+        let li = (level - 1) as usize;
+        island.vault_level = level;
+        island.exposed = crate::heist::FIXTURE_EXPOSED as u32;
+        island.entrance = (side - 1, side - 1);
+        // The Vault near the middle, the place furthest from every edge a
+        // crew can land on (§5.4).
+        let c = side / 2;
+        let vx = c - 1 + rng.below(3) as u8;
+        let vy = c - 1 + rng.below(3) as u8;
+        island.vault = (vx, vy);
+        // Rings of ruin wall around it, each with a gap two tiles wide, the
+        // gaps on alternating sides, so the way in winds round the Vault
+        // rather than running straight at it — F16's shaped layout. No ring
+        // touches an edge, so every side stays open to land on (F51).
+        let reach = vx.min(vy).min(side - 1 - vx).min(side - 1 - vy);
+        let radii: Vec<u8> = [2u8, 4].into_iter().filter(|&r| r + 2 <= reach).collect();
+        let first = rng.below(4) as u8;
+        let mut gaps: Vec<(u8, u8)> = Vec::new();
+        for (i, &r) in radii.iter().enumerate() {
+            let way = (first + 2 * i as u8) % 4;           // N, E, S, W
+            let (r, cx, cy) = (r as i32, vx as i32, vy as i32);
+            let gap: [(i32, i32); 2] = match way {
+                0 => [(cx, cy - r), (cx + 1, cy - r)],
+                1 => [(cx + r, cy), (cx + r, cy + 1)],
+                2 => [(cx, cy + r), (cx - 1, cy + r)],
+                _ => [(cx - r, cy), (cx - r, cy - 1)],
+            };
+            for dy in -r..=r {
+                for dx in -r..=r {
+                    if dx.abs().max(dy.abs()) != r {
+                        continue;
+                    }
+                    let (x, y) = (cx + dx, cy + dy);
+                    if gap.contains(&(x, y)) {
+                        gaps.push((x as u8, y as u8));
+                        continue;
+                    }
+                    island.tile_mut(x as u16, y as u16).feature = Some(RuinWall);
+                }
+            }
+        }
+        let route = island.way_in();
+        // Cover off the route: clumps of tall grass, and a few rock pillars.
+        let clumps = 3 + rng.below(3);
+        for _ in 0..clumps {
+            let (cx, cy) = (1 + rng.below((side - 3) as u64) as u8, 1 + rng.below((side - 3) as u64) as u8);
+            for (dx, dy) in [(0, 0), (1, 0), (0, 1), (1, 1)] {
+                let (x, y) = (cx + dx, cy + dy);
+                if island.bare(x, y) && !route.contains(&(x, y)) {
+                    island.tile_mut(x as u16, y as u16).feature = Some(TallGrass);
+                }
+            }
+        }
+        for _ in 0..1 + rng.below(3) {
+            let (x, y) = (1 + rng.below((side - 2) as u64) as u8, 1 + rng.below((side - 2) as u64) as u8);
+            if island.bare(x, y) && !route.contains(&(x, y)) {
+                island.tile_mut(x as u16, y as u16).feature = Some(RockPillar);
+            }
+        }
+        let route = island.way_in();
+        // Guards: the first beside the Vault on the way in, the rest at the
+        // band gaps.
+        let rows = [1u8, 0, 2];
+        let mut spots: Vec<(u8, u8)> = route.iter().rev().take(1).copied().collect();
+        spots.extend(route.iter().filter(|t| gaps.contains(t)).copied());
+        spots.extend(gaps.iter().copied());
+        for i in 0..GUARD_POSTS[li] as usize {
+            let Some(&(x, y)) = spots.get(i) else { break };
+            island.post_guard(rows[i % rows.len()], x, y);
+        }
+        // Wards on the route, away from the edges.
+        let kinds = [WardKind::TimeSnare, WardKind::ThornHedge, WardKind::StaticCoil,
+                     WardKind::GravityWell, WardKind::LanternGlare];
+        let start = rng.below(kinds.len() as u64) as usize;
+        let far = |&(x, y): &(u8, u8)| x >= WARD_EDGE && y >= WARD_EDGE
+            && (x as u16) + (WARD_EDGE as u16) < side as u16 && (y as u16) + (WARD_EDGE as u16) < side as u16;
+        let open = |t: &(u8, u8)| island.occupant(t.0, t.1) == Occupant::None && *t != island.vault
+            && island.tile(t.0, t.1).is_some_and(|tile| tile.feature.is_none());
+        // The route's own tiles first, then the tiles beside it.
+        let mut free: Vec<(u8, u8)> = route.iter().filter(|t| far(t) && open(t)).copied().collect();
+        for &(x, y) in &route {
+            for (dx, dy) in [(0i32, -1i32), (1, 0), (0, 1), (-1, 0)] {
+                let t = ((x as i32 + dx) as u8, (y as i32 + dy) as u8);
+                if far(&t) && open(&t) && !free.contains(&t) && !route.contains(&t) {
+                    free.push(t);
+                }
+            }
+        }
+        // Then, where the budget is still larger than the route allows, the
+        // open tiles nearest the Vault: a ward guarding the approach.
+        let mut rest: Vec<(u8, u8)> = (0..side).flat_map(|y| (0..side).map(move |x| (x, y)))
+            .filter(|t| far(t) && open(t) && !free.contains(t) && !route.contains(t))
+            .collect();
+        rest.sort_by_key(|&(x, y)| (x.abs_diff(vx) as u16 + y.abs_diff(vy) as u16, y, x));
+        free.extend(rest);
+        let count = (WARD_LIMITS[li] as usize).min(free.len());
+        for (k, &(x, y)) in free.iter().take(count).enumerate() {
+            island.wards.push((kinds[(start + k) % kinds.len()], x, y));
+        }
+        // Laws: the launch laws, drawn without repeats, their pylons beside
+        // the Vault off the route.
+        let launch: Vec<&str> = LAWS.iter().filter(|l| l.launch).map(|l| l.id).collect();
+        let mut chosen: Vec<&str> = Vec::new();
+        while chosen.len() < LAW_SLOTS[li] as usize && chosen.len() < launch.len() {
+            let id = launch[rng.below(launch.len() as u64) as usize];
+            if !chosen.contains(&id) {
+                chosen.push(id);
+            }
+        }
+        let route: Vec<(u8, u8)> = island.way_in();
+        let mut pylon_spots = Vec::new();
+        for r in 1..side {
+            for dy in -(r as i32)..=r as i32 {
+                for dx in -(r as i32)..=r as i32 {
+                    if dx.abs().max(dy.abs()) != r as i32 {
+                        continue;
+                    }
+                    let (x, y) = (vx as i32 + dx, vy as i32 + dy);
+                    if x < 1 || y < 1 || x >= side as i32 - 1 || y >= side as i32 - 1 {
+                        continue;
+                    }
+                    let t = (x as u8, y as u8);
+                    if island.bare(t.0, t.1) && island.occupant(t.0, t.1) == Occupant::None
+                        && !route.contains(&t) && !pylon_spots.contains(&t)
+                    {
+                        pylon_spots.push(t);
+                    }
+                }
+            }
+            if pylon_spots.len() >= chosen.len() * 3 {
+                break;
+            }
+        }
+        for (i, id) in chosen.iter().enumerate() {
+            if let Some(&(x, y)) = pylon_spots.get(i * 3) {
+                island.laws.push((id.to_string(), x, y));
+            }
+        }
+        island
+    }
+
+    /// Open ground with no feature on it.
+    fn bare(&self, x: u8, y: u8) -> bool {
+        self.tile(x, y).is_some_and(|t| t.feature.is_none()) && self.vault != (x, y)
+    }
+
+    /// The shortest way in: from the nearest open edge tile to a tile beside
+    /// the Vault, by §12.18's walk, every Crystal Wall standing — the route
+    /// the generator lays its defence along, as (x, y).
+    fn way_in(&self) -> Vec<(u8, u8)> {
+        let grid = self.standing();
+        let landings = Self::open_edge(&grid);
+        let (vx, vy) = (self.vault.0 as i32, self.vault.1 as i32);
+        let beside: Vec<crate::grid::TileIndex> = (0..grid.len() as crate::grid::TileIndex)
+            .filter(|&t| {
+                let (x, y) = grid.coords(t);
+                (x as i32 - vx).abs() + (y as i32 - vy).abs() == 1 && grid.at(t).passable()
+            })
+            .collect();
+        let mut best: Option<Vec<crate::grid::TileIndex>> = None;
+        for &from in &landings {
+            for &to in &beside {
+                if let Some(route) = crate::path::find(&grid, from, to) {
+                    if best.as_ref().is_none_or(|b| route.len() + 1 < b.len()) {
+                        let mut whole = vec![from];
+                        whole.extend(route);
+                        best = Some(whole);
+                    }
+                }
+            }
+        }
+        best.unwrap_or_default().into_iter()
+            .map(|t| {
+                let (x, y) = grid.coords(t);
+                (x as u8, y as u8)
+            })
+            .collect()
     }
 
     /// `example()` with nothing defending it: no guards, no wards, no laws.

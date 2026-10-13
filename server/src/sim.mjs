@@ -225,6 +225,14 @@ export class Build {
   }
 
   /** `Island::example()`, or `example_open()` with `open`. */
+  /** §12.22's generated target for a seed and a realm level, 1 to 5:
+   *  the island's bundle (`Island::generated`). */
+  generate(seed, realmLevel) {
+    const s = BigInt.asUintN(64, BigInt(seed));
+    const n = this.x.rb_generate(Number(s >> 32n), Number(s & 0xffffffffn), realmLevel);
+    return this.buffer().slice(0, n);
+  }
+
   exampleIsland(open = false) {
     const n = this.x.rb_example_island(open ? 1 : 0);
     return this.buffer().slice(0, n);

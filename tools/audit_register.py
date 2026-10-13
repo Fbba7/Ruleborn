@@ -11270,9 +11270,12 @@ V37 = {
 "D66": dict(status="open", left="build", note=
     "<strong>The document is done; the build is not.</strong> §26.8 now plans "
     "<em>“the reference crews and the generator inside the simulation, so the "
-    "server rates a new island and makes fallback targets itself”</em>. Left: "
-    "that port, then depth, ruins and the complexity budget on unfamiliar laws "
-    "(TD.16)."),
+    "server rates a new island and makes fallback targets itself”</em>. The "
+    "generator is built: <code>Island::generated</code> makes a legal island "
+    "to §5.2's budget from a seed, and the server publishes one a realm level "
+    "each day as the game's own and offers them after echoes, before any "
+    "filter widens. Left: the reference crews and the hold they measure, then "
+    "ruins and the complexity budget on unfamiliar laws (TD.16)."),
 
 "D67": dict(status="open", left="build", note=
     "<strong>The document is done; what is left is outside this "

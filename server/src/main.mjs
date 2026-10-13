@@ -224,8 +224,14 @@ service.sweepLists();
 
 // §24.8's lists are "generated periodically"; how often is not said. The
 // owner decided once an hour (G21), and once at start.
+// Today's generated islands (§12.22) before each list, so a new day's are
+// on the next list made.
+service.generator.stock();
 service.targetLists();
-setInterval(() => service.targetLists(), TARGET_LISTS_MS).unref();
+setInterval(() => {
+  service.generator.stock();
+  service.targetLists();
+}, TARGET_LISTS_MS).unref();
 
 // §18.1: a season that has ended is closed — results, rewards, the pull back
 // — and the next opened, checked every fifteen minutes; closing twice is a

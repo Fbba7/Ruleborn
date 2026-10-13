@@ -347,6 +347,18 @@ pub extern "C" fn rb_example_island(open: u32) -> i32 {
     bytes.len() as i32
 }
 
+/// §12.22's generated target for a seed and a realm level, 1 to 5
+/// (`Island::generated`), written to the buffer as its bundle; the length is
+/// returned. The server offers these when a raider's list runs thin.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_generate(seed_hi: u32, seed_lo: u32, realm_level: u32) -> i32 {
+    let seed = ((seed_hi as u64) << 32) | seed_lo as u64;
+    let bytes = Island::generated(seed, realm_level.clamp(1, 5) as u8).encode();
+    with_buffer(|b| b[..bytes.len()].copy_from_slice(&bytes));
+    bytes.len() as i32
+}
+
 /// The cross-target spike's number: one call in, one number out.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]

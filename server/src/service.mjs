@@ -43,6 +43,7 @@ import { Codex, castLaw, castPrice } from "./codex.mjs";
 import { Home } from "./home.mjs";
 import { Universe } from "./universe.mjs";
 import { Weaving } from "./weaving.mjs";
+import { GENERATOR, Generator } from "./generator.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 
@@ -133,6 +134,7 @@ export class Service {
     this.home = new Home(this);
     this.codex = new Codex(this);
     this.weaving = new Weaving(this);
+    this.generator = new Generator(this);
     this.safety = new Safety(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), settleReceipt, catalogue: cosmetics });
   }
@@ -198,7 +200,7 @@ export class Service {
    * hash." Checked by the simulation first: an island §5.2 or §6.1 forbids is
    * refused, with every rule it breaks named.
    */
-  publish(owner, bundle, realm = "heart") {
+  publish(owner, bundle, realm = "heart", { origin = "authored" } = {}) {
     if (!REALMS.includes(realm)) throw new Refused(404, "no_such_realm");
     const build = this.builds.current;
     const read = build.island(bundle);
@@ -227,7 +229,7 @@ export class Service {
            changed_at = excluded.changed_at`)
         .run(owner, realm, key, now);
       // §12.22: a new island enters with the simulator's prior.
-      this.matchmaking.published(owner, realm, bundle[4], now);
+      this.matchmaking.published(owner, realm, bundle[4], now, origin);
     });
     return { bundle: key };
   }
@@ -274,7 +276,8 @@ export class Service {
       bands.get(r.band).push({
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
         vaultLevel: r.vault_level, exposed: r.exposed, keeperLevel: r.keeper_level,
-        renown: this.seasons.league(r.owner, now).renown, origin: "authored",
+        renown: this.seasons.league(r.owner, now).renown,
+        origin: r.owner === GENERATOR ? "generated" : "authored",
         rating: rating ? Math.round(rating.rating) : null,
         deviation: rating ? Math.round(rating.deviation) : null,
       });
