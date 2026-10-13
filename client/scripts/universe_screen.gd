@@ -50,8 +50,12 @@ func _refresh() -> void:
 	var u := UniversePresenter.screen(App.services.store.get_slice(UniverseState.UNIVERSE))
 	if u["error"] != "":
 		UI.set_status(status_label, "alarm", u["error"])
+	elif u["refused"] != "":
+		UI.set_status(status_label, "alarm", u["refused"])
 	elif u["said"] != "":
 		UI.set_status(status_label, "success", u["said"])
+	elif u["confirming"] != "":
+		UI.set_status(status_label, "info", u["confirming"])
 	elif u["busy"] != "":
 		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
 	else:

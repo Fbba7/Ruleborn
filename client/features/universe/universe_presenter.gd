@@ -11,7 +11,8 @@ extends RefCounted
 static func screen(slice: Dictionary) -> Dictionary:
 	var v: Dictionary = slice.get("view", {})
 	var out := {"ready": not v.is_empty(), "busy": str(slice.get("busy", "")),
-		"error": _error(str(slice.get("error", "")), slice.get("detail", {})), "said": said(slice.get("last", {}))}
+		"error": _error(str(slice.get("error", "")), slice.get("detail", {})), "said": said(slice.get("last", {})),
+		"confirming": confirming(slice.get("confirming", {})), "refused": refused(slice.get("refused", {}))}
 	if v.is_empty():
 		return out
 	out["header"] = Strings.t("UNIVERSE_HEADER", [ShopPresenter.grouped(int(v["starlight"])), int(v["spire"]),
@@ -22,6 +23,22 @@ static func screen(slice: Dictionary) -> Dictionary:
 	out["realms"] = realms
 	out["open"] = opening(v.get("open"))
 	return out
+
+
+## What the phone built offline and the server has not yet confirmed (§24).
+static func confirming(waiting: Variant) -> String:
+	var n := (waiting as Dictionary).size() if waiting is Dictionary else 0
+	return Strings.t("UNIVERSE_CONFIRMING", n) if n > 0 else ""
+
+
+## The last thing built offline that the server refused, and why.
+static func refused(r: Variant) -> String:
+	if not (r is Dictionary) or (r as Dictionary).is_empty():
+		return ""
+	var d: Dictionary = r
+	var what: Dictionary = d["what"] if d["what"] is Dictionary else {}
+	var name := building_name(str(what.get("kind", ""))) if what.has("kind") else ""
+	return Strings.t("UNIVERSE_OFFLINE_REFUSED", [name, _error(str(d["code"]), d.get("detail", {}))])
 
 
 ## A failure in words, with what it needed when the server said.

@@ -50,6 +50,13 @@ func send(api: Api, key: String, route: String, body: PackedByteArray) -> Result
 	return answered["result"]
 
 
+## Let a kept request go unsent: one the player took back before the
+## network returned.
+func drop(key: String) -> void:
+	_items = _items.filter(func(i: Dictionary) -> bool: return i["key"] != key)
+	_write()
+
+
 func pending() -> int:
 	return _items.size()
 

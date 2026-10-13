@@ -21,6 +21,7 @@ func run() -> void:
 	_reducers()
 	_words()
 	await _flows()
+	await _offline()
 	await _on_screen()
 	await _online()
 
@@ -162,6 +163,52 @@ func _flows() -> void:
 	s.close()
 
 
+## §24: "The device may build … offline, confirmed on reconnection". A build
+## the network does not reach waits in the outbox, shown as confirming; when
+## the outbox is sent, the server confirms one and refuses another, and the
+## screen says which, and why.
+func _offline() -> void:
+	var path := "user://outbox-universe-offline-test.json"
+	DirAccess.remove_absolute(path)
+	var transport := FakeTransport.new()
+	var s := Fixtures.answered(Services.build(tree.root, "https://edge.example", transport, path))
+	s.api.token = "t"
+	transport.on("GET /v1/universe", sample())
+	await s.universe_flow.load_universe()
+	transport.offline = true
+	await s.universe_flow.build("heart", "ward", 2, 1)
+	await s.universe_flow.build("heart", "library", 1, 1)
+	var waiting: Dictionary = s.store.get_slice(UniverseState.UNIVERSE)
+	var shown := UniversePresenter.screen(waiting)
+	var kept := s.outbox.pending()
+	transport.offline = false
+	transport.then("POST /v1/offline", [
+		[{"results": [{"confirmed": true, "keeper": {"gained": 8, "level": 3, "xp": 18, "toNext": 270, "levelled": 0}}],
+			"universe": sample(4300), "home": {}}, 200],
+		[{"results": [{"refused": "needs_keeper_level", "detail": {"needs": 4}}], "universe": sample(4300),
+			"home": {}}, 200]])
+	await s.outbox.flush(s.api)
+	var after: Dictionary = s.store.get_slice(UniverseState.UNIVERSE)
+	var sent: Array = transport.calls.filter(func(c: Dictionary) -> bool: return c["route"] == "POST /v1/offline")
+	var first: Dictionary = JSON.parse_string((sent[0]["body"] as PackedByteArray).get_string_from_utf8()) \
+		if not sent.is_empty() else {}
+	var action: Dictionary = (first.get("actions", [{}]) as Array)[0]
+	var refused_line := str(UniversePresenter.screen(after)["refused"])
+	check.call("a build the network does not reach waits in the outbox, shown as confirming; sent on reconnection, "
+			+ "each is confirmed or refused by the server, and the screen says which and why (24)",
+		kept == 2 and (waiting["confirming"] as Dictionary).size() == 2 and waiting["busy"] == ""
+			and shown["confirming"] == Strings.t("UNIVERSE_CONFIRMING", 2)
+			and sent.size() == 2 and action.get("do") == "build" and action.get("kind") == "ward"
+			and int(action.get("n", 0)) == 2 and int(action.get("to", 0)) == 1
+			and s.outbox.pending() == 0 and (after["confirming"] as Dictionary).is_empty()
+			and int(after["view"]["starlight"]) == 4300
+			and refused_line == Strings.t("UNIVERSE_OFFLINE_REFUSED",
+				[UniversePresenter.building_name("library"), Strings.t("UNIVERSE_NEEDS_KEEPER", 4)]),
+		"%s | %s | %s | %s" % [kept, waiting["confirming"], after, refused_line])
+	s.close()
+	DirAccess.remove_absolute(path)
+
+
 ## The screen as drawn: a blocked purchase says why beside its button; the
 ## first tap on one that can be bought asks to confirm, and only the second
 ## buys.
@@ -189,14 +236,18 @@ func _on_screen() -> void:
 	asked.pressed.emit()
 	for i in 5:
 		await tree.process_frame
-	# Offline here: the purchase was asked for, and its failure is shown.
+	# Offline here: the purchase was asked for, and waits in the outbox to be
+	# confirmed (§24), which the screen says.
 	var tried: Dictionary = services.store.get_slice(UniverseState.UNIVERSE)
 	var shown := screen.status_label.text
 	screen.queue_free()
+	var kept := services.outbox.has(UniverseController.OFFLINE + "build:heart:ward:2:1")
+	services.outbox.drop(UniverseController.OFFLINE + "build:heart:ward:2:1")
 	check.call("the universe screen shows why a purchase waits beside its button; the first tap on one asks to "
 			+ "spend the Starlight, and the second buys (5.2, 10.2, 20.8)",
-		blocked and before.begins_with("Build: Ward 2") and confirming and tried["error"] != ""
-			and shown != "",
+		blocked and before.begins_with("Build: Ward 2") and confirming and kept
+			and (tried["confirming"] as Dictionary).has("build:heart:ward:2:1")
+			and shown.contains(Strings.t("UNIVERSE_CONFIRMING", 1)),
 		"%s %s %s | %s | %s" % [blocked, before, confirming, tried, shown])
 
 

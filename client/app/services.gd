@@ -81,6 +81,8 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.workshop_flow = WorkshopController.new(s)
 	s.keeper_flow = KeeperController.new(s)
 	s.universe_flow = UniverseController.new(s)
+	# What the phone built offline is answered when the outbox sends it (§24).
+	s.outbox.settled.connect(s.universe_flow.offline_settled)
 	s.router = Router.new(s.store)
 	return s
 

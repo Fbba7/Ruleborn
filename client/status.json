@@ -5,6 +5,7 @@
   "a Workshop card reads the island's name in the player's language, its realm level, completions (a quarter from the creator's constellation), remixes and ratings, and who made it; a deleted creator is no one (F43), a withdrawn or removed island says so and offers nothing; a 13-to-15 sees only the featured list and their own; the creator's level shows on their own list (§18.6, §18.7, §20.7)": "passed",
   "a Workshop play's answer reads as cleared and counted, or already counted, by the server; one still waiting shows the phone's own check as confirming; a play the server did not accept names why (§18.7, §24.12)": "passed",
   "a banner leads with its glyph, is announced, goes by itself, or stays until dismissed when the player asks (§20.8)": "passed",
+  "a build the network does not reach waits in the outbox, shown as confirming; sent on reconnection, each is confirmed or refused by the server, and the screen says which and why (24)": "passed",
   "a failure is logged by its code and route, never the path's token": "passed",
   "a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by the server": "passed",
   "a heist played live on the heist screen records the golden replay byte for byte, and the server's check grades it Clean": "passed",

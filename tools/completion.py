@@ -459,9 +459,15 @@ DELIVERABLES = [
         # foiled heists …, spending … and restoring laws".
         server_tests(
             "restoring a law costs its rank's pages, waits for its chapter, and pays 60 + 10 × level experience (7.6, 14.2)"))),
-    ("4a", "Offline building, weaving and assigning, confirmed on reconnection", BACKEND,
-     not_started("what the device built, wove and assigned offline is confirmed or "
-                 "refused by the server when it reconnects (TC.12)")),
+    ("4a", "Offline building, weaving and assigning, confirmed on reconnection", BACKEND, parts(
+        server_tests(
+            "the device's offline queue is made in order, each action confirmed or refused on its own, by the online rules (24)",
+            "a queue sent twice, its answer lost on the way back, is confirmed again and pays nothing twice (24.12)",
+            "the offline queue over HTTP, and a queue that is not one refused whole (24)"),
+        client_tests(
+            "a build the network does not reach waits in the outbox, shown as confirming; sent on reconnection, "
+            "each is confirmed or refused by the server, and the screen says which and why (24)"),
+        not_started("weaving offline, confirmed on reconnection, once the server keeps what is woven (TD.14)"))),
 
     # §26.8's phase 4b: the §23.2 screens no other phase builds, "ported from
     # the designs to this document's rules (23.5)". Each counts when its

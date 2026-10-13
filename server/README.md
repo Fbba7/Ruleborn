@@ -706,6 +706,21 @@ by rank, from Keeper level 6 for chapter 2, and pays §14.2's 60 + 10 × level;
 tiers II and III cost 20 and 40 pages, 2,000 and 8,000 Aether, and Spire
 levels 4 and 7. What the document leaves open is **G83**.
 
+## Built offline, confirmed on reconnection
+
+§24: *"The device may build, weave and assign work offline, confirmed on
+reconnection; everything else waits for the server."* `src/offline.mjs` takes
+what the phone kept, `POST /v1/offline {"actions": [...]}`, up to 50 at once:
+each `build`, `place` or `work` is made now, in the order the player made
+them, by the same calls as online (universe.mjs's `build` and `place`,
+home.mjs's `work`), and answered on its own — confirmed, with §14.2's
+experience a build earned, or refused with the online reason. A refusal stops
+nothing after it. A repeat is confirmed and changes nothing, since each
+action names the state it leads to, so a queue sent twice pays once; and the
+work counts from the server's confirmation, never from the phone's clock.
+Weaving is refused as an action the server does not know until it keeps what
+is woven (TD.14).
+
 ## Constellations and crews
 
 `src/social.mjs` is §17.1's constellations and §17.7's crews:

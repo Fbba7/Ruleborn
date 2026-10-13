@@ -57,7 +57,12 @@ it is sent, and the result shows the phone's own check, marked as confirming
 (§24.12). What waited is sent by itself when the network is back, from home
 or the next heist, with a banner saying so; one result the server cannot
 decide now waits without holding up the rest, and the server answers a
-repeat from its first decision, so nothing is paid twice.
+repeat from its first decision, so nothing is paid twice. A building bought
+with no network waits the same way (§24: "The device may build … offline,
+confirmed on reconnection"): kept in the outbox for `POST /v1/offline`,
+shown on the universe screen as waiting to be confirmed, and, once sent,
+confirmed with the universe the server answers or refused with the reason
+named.
 
 **Accessibility (§20.8, §21.8, §21.10).** Built into the components, so
 every screen and Claude Design's components inherit it, and checked on every

@@ -502,6 +502,8 @@ UNIVERSE_OPEN,Open %s,Open %s,Abrir %s,Abrir %s,%s öffnen,Ouvrir %s
 UNIVERSE_OPENED,%s is open,%s is open,%s está aberto,%s está aberto,%s ist offen,%s est ouvert
 UNIVERSE_RAISED,The realm is at level %d,The realm is at level %d,O reino está no nível %d,O reino está no nível %d,Das Reich ist auf Level %d,Le royaume est au niveau %d
 UNIVERSE_BUILT,"%s, level %d","%s, level %d","%s, nível %d","%s, nível %d","%s, Level %d","%s, niveau %d"
+UNIVERSE_CONFIRMING,%d waiting to be confirmed when you are back online,%d waiting to be confirmed when you are back online,%d aguardando confirmação quando você voltar a ficar online,%d à espera de confirmação quando voltares a estar online,"%d warten auf Bestätigung, sobald du wieder online bist",%d en attente de confirmation à ton retour en ligne
+UNIVERSE_OFFLINE_REFUSED,The server refused %s: %s,The server refused %s: %s,O servidor recusou %s: %s,O servidor recusou %s: %s,Der Server hat %s abgelehnt: %s,Le serveur a refusé %s : %s
 ERR_NOT_ENOUGH_STARLIGHT,you need more Starlight,you need more Starlight,você precisa de mais Luz Estelar,precisas de mais Luz Estelar,du brauchst mehr Sternenlicht,il te faut plus de Lumière stellaire
 ERR_NEEDS_KEEPER_LEVEL,that needs a higher Keeper level,that needs a higher Keeper level,isso precisa de um nível de Guardião mais alto,isso requer um nível de Guardião mais alto,dafür brauchst du ein höheres Hüter-Level,ça demande un niveau de Gardien plus élevé
 ERR_NEEDS_SPIRE_LEVEL,that needs the Spire higher,that needs the Spire higher,isso precisa da Torre mais alta,isso requer a Torre num nível mais alto,dafür muss der Turm höher sein,ça demande une Tour plus haute

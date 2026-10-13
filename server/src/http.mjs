@@ -25,6 +25,7 @@
 //   POST /v1/universe/realms/:realm/level {"to"}             → an outer realm raised a level
 //   POST /v1/universe/buildings  {"realm", "kind", "n", "to"} → a building built (to 1) or raised (§10.2)
 //   PUT  /v1/universe/buildings/place {"realm", "kind", "n", "x", "y"} → a building moved, free (§10.1)
+//   POST /v1/offline {"actions": [{"do": "build"|"place"|"work", …}]} → each confirmed or refused, in order (24)
 //   GET  /v1/home                                            → the roster, its places, births and producers
 //   POST /v1/home/births         {"realm", "n"}              → a birth at the realm's Nursery (§11.5)
 //   POST /v1/home/characters/:id/work  {"realm", "kind", "n"} → set to work or to guard; no kind recalls (§5.8)
@@ -126,6 +127,7 @@ import { privacyPage, supportPage, termsPage } from "./pages.mjs";
 import { Limiter, peerKey } from "./limits.mjs";
 import { Refused, TARGET_LISTS_MS } from "./service.mjs";
 import { Social } from "./social.mjs";
+import { confirm as confirmOffline } from "./offline.mjs";
 import { WORDS, Workshop } from "./workshop.mjs";
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
@@ -426,6 +428,12 @@ export function handler(service, { webClientId = null, appleNotifications = null
         if (m === "POST" && !parts[2]) return json(service.safety.block(me, text((await body(request)).account)), 201);
         if (m === "DELETE" && parts[2]) return json(service.safety.unblock(me, parts[2]));
         return json({ error: "no_such_route" }, 404);
+      }
+      if (parts[1] === "offline" && !parts[2]) {
+        // §24: what the device built, placed and assigned offline, made now
+        // in order and answered one by one (offline.mjs).
+        if (request.method !== "POST") return json({ error: "no_such_route" }, 404);
+        return json(confirmOffline(service, who(), (await body(request)).actions));
       }
       if (parts[1] === "universe") {
         // §5.2 and §10.2 (universe.mjs): each purchase names the level it
