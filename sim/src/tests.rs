@@ -4255,14 +4255,14 @@ fn at_most_four_abilities_are_ready_and_the_fifth_waits_its_turn() {
 
 #[test]
 fn an_ability_with_nothing_to_act_on_spends_no_use() {
-    let mut world = kinds_world(&["hourkeeper", "lantern_wisp", "featherkin"]);
+    let mut world = kinds_world(&["hourkeeper", "prism_mite", "featherkin"]);
     fire_at(&mut world, 0, 12, 12);                   // nobody there
     world.step();
     assert_eq!(world.raiders[0].uses, 2, "a rewind aimed at an empty tile is dropped");
-    assert!(!RULEBORN[ruleborn::by_id("lantern_wisp").unwrap() as usize].ability.built());
+    assert!(!RULEBORN[ruleborn::by_id("prism_mite").unwrap() as usize].ability.built());
     fire_at(&mut world, 1, 5, 10);
     world.step();
-    assert_eq!(world.raiders[1].uses, 2, "the reveal waits for something hidden, and costs nothing");
+    assert_eq!(world.raiders[1].uses, 2, "the split waits for a crew member that can be two, and costs nothing");
     fire_at(&mut world, 2, 5, 9);                     // it stands on (6, 10)
     world.step();
     assert_eq!(world.raiders[2].uses, 2, "a glide aimed off its row and column is dropped");
@@ -5822,4 +5822,121 @@ fn the_six_and_a_tunnel_travel_in_the_island_and_a_second_encoding_is_refused() 
     let side = crowded.side() as usize;
     crowded.tiles[3 * side].feature = Some(Feature::Bush);
     assert!(crowded.check().contains(&crate::island::Problem::Crowded));
+}
+
+// -- The Glass golem's wall, the Lantern wisp's reveal, Invert and the vine
+// bridge (TD.12) ---------------------------------------------------------------
+
+#[test]
+fn the_glass_golems_wall_stands_three_tiles_across_the_way_for_six_seconds_and_is_seen_through() {
+    let mut world = kinds_world(&["glass_golem", "stormhound"]);
+    put(&mut world, 0, 2, 3);
+    put(&mut world, 1, 2, 5);
+    order(&mut world, 1, 8, 5);
+    run_for(&mut world, 15);                          // under way, toward (5, 5)
+    fire_at(&mut world, 0, 5, 5);
+    world.step();
+    let raised = |w: &World| -> Vec<(u16, u16)> {
+        (0..w.grid.len() as u32).filter(|&t| w.grid.is_raised(t)).map(|t| w.grid.coords(t)).collect()
+    };
+    // The golem at (2, 3) aims east of south-east: the wall runs north to south.
+    assert_eq!(raised(&world), vec![(5, 4), (5, 5), (5, 6)], "\"a crystal wall 3 tiles long\"");
+    assert_eq!(world.raiders[0].uses, 1);
+    run_for(&mut world, 3 * TICKS_PER_SECOND);
+    assert_eq!(tile_of(&world, 1), (4, 5), "\"nothing passes it\": the walk waits at the wall");
+    // A guard beyond it sees the Stormhound through it.
+    let gi = post(&mut world, 0, 7, 5);
+    world.guards[gi].facing = Ang::from_degrees(180);
+    assert!(world.noticed(gi, 1).is_some(), "\"it does not block sight\"");
+    world.guards.clear();
+    run_for(&mut world, ruleborn::WALL_TICKS);
+    assert!(raised(&world).is_empty(), "gone after 6 s");
+    run_for(&mut world, 3 * TICKS_PER_SECOND);
+    assert_eq!(tile_of(&world, 1), (8, 5), "and the walk goes on");
+    // Not on a tile someone stands on: dropped, nothing spent.
+    let mut world = kinds_world(&["glass_golem", "stormhound"]);
+    fire_at(&mut world, 0, 4, 10);
+    world.step();
+    assert!(raised(&world).is_empty() && world.raiders[0].uses == 2);
+}
+
+#[test]
+fn the_lantern_wisps_reveal_shows_what_is_hidden_within_six_tiles_for_six_seconds() {
+    let mut world = kinds_world(&["lantern_wisp"]);
+    let at = |w: &World, x, y| w.grid.index(x, y).unwrap();
+    assert!(!world.revealed(at(&world, 2, 10)), "nothing shown before it is used");
+    fire_at(&mut world, 0, 2, 10);
+    world.step();
+    assert_eq!(world.raiders[0].uses, 1);
+    assert!(world.revealed(at(&world, 8, 10)), "6 tiles away");
+    assert!(!world.revealed(at(&world, 9, 10)), "7 is beyond it");
+    // It goes with the wisp.
+    put(&mut world, 0, 9, 10);
+    assert!(world.revealed(at(&world, 13, 10)) && !world.revealed(at(&world, 2, 10)));
+    run_for(&mut world, ruleborn::REVEAL_TICKS);
+    assert!(!world.revealed(at(&world, 9, 10)), "for 6 s");
+    // Shown, not simulated: a heist with a reveal plays as one without.
+    let plain = |reveal: bool| {
+        let mut w = kinds_world(&["lantern_wisp"]);
+        w.place_wards(&[(WardKind::TimeSnare, (6, 10))]);
+        if reveal {
+            fire_at(&mut w, 0, 2, 10);
+            w.step();
+            w.reveals.clear();
+        } else {
+            w.step();
+        }
+        order(&mut w, 0, 10, 10);
+        run_for(&mut w, 5 * TICKS_PER_SECOND);
+        (w.raiders[0].at, w.raiders[0].frozen_until)
+    };
+    assert_eq!(plain(true), plain(false));
+}
+
+#[test]
+fn invert_turns_a_law_into_its_opposite_for_ten_seconds() {
+    let mut world = sage_world(&["stormhound"], 2);   // the Tinkerer: Invert first
+    world.weave(&[("haste", (3, 4))]);
+    world.step();
+    assert_eq!(world.sheet.factor(Param::CrewSpeed), (5, 4));
+    call_at(&mut world, 0, 3, 4);
+    world.step();
+    assert_eq!(world.sheet.factor(Param::CrewSpeed), (4, 5), "25% faster turned: 20% slower");
+    assert_eq!(world.sheet.factor(Param::ClockRate), (4, 5), "and the clock with it");
+    assert!(logged(&world, crate::events::Event::LawTurned { law: 0, until: 1 + ruleborn::INVERT_TICKS }));
+    assert_eq!(world.sage.unwrap().uses[0], 0);
+    run_for(&mut world, ruleborn::INVERT_TICKS);
+    assert_eq!(world.sheet.factor(Param::CrewSpeed), (5, 4), "back after 10 s");
+    // Half gravity's one line is the leap, which has no opposite: turned, the
+    // realm has no leap.
+    let mut world = sage_world(&["stormhound"], 2);
+    world.weave(&[("half_gravity", (8, 4))]);
+    call_at(&mut world, 0, 8, 4);
+    world.step();
+    assert!(!world.sheet.is_set(Param::LeapObstacles) && !world.grid.leap);
+    // Aimed at bare ground: nothing to turn, nothing spent.
+    let mut world = sage_world(&["stormhound"], 2);
+    call_at(&mut world, 0, 1, 1);
+    world.step();
+    assert_eq!(world.sage.unwrap().uses[0], 1);
+}
+
+#[test]
+fn the_gardeners_vine_bridge_joins_two_banks_up_to_six_tiles_apart_for_twenty_seconds() {
+    let vined = |wide: u16| {
+        let mut world = sage_world(&["stormhound"], 3); // the Gardener: Vine bridge first
+        moat(&mut world, wide);
+        call_at(&mut world, 0, 4, 5);
+        world.step();
+        world
+    };
+    let across = |w: &World| {
+        let (a, b) = (w.grid.index(2, 5).unwrap(), w.grid.index(10, 5).unwrap());
+        path::find(&w.grid, a, b).is_some()
+    };
+    let mut world = vined(5);
+    assert!(across(&world), "(2, 5) to (8, 5): six apart");
+    assert!(!across(&vined(6)) && vined(6).sage.unwrap().uses[0] == 1, "seven is too far");
+    run_for(&mut world, ruleborn::VINE_BRIDGE_TICKS);
+    assert!(!across(&world), "gone after 20 s");
 }

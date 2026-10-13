@@ -9962,8 +9962,24 @@ dict(id="G81", kind="gap", severity="minor", status="open",
           "<strong>The plank’s</strong> <em>“4-tile shortcut”</em> is read as a "
           "gap of up to 4 tiles, along the row aimed at or else the column. The "
           "Gardener’s Vine bridge, <em>“join two points up to 6 tiles apart”</em>, "
-          "needs a command that names two points, which §24.10’s one-target "
-          "command does not carry; it waits. Found building TD.12.",
+          "was waiting on a command that names two points, which §24.10’s "
+          "one-target command does not carry; it is now read as the plank is, "
+          "its two points the banks of the gap aimed at, so a gap of up to 5. "
+          "Found building TD.12.<br><br>"
+          "<strong>Four more, building the last abilities and powers.</strong> "
+          "<strong>The Glass golem’s wall</strong> stands across the way from the "
+          "golem to the tile aimed at, centred on it, on those of its three tiles "
+          "that are open ground with nobody and no ward on them, and not at all if "
+          "the tile aimed at is not one; a walk that meets it waits at it, since "
+          "§12.18 does not re-route. <strong>The Lantern wisp’s reveal</strong> "
+          "goes with the wisp for its 6 s and is drawn, not simulated (§7.3’s "
+          "view-layer reveal), so nothing the simulation decides reads it — "
+          "though §10.3 lets only a known ward be disarmed, and the simulation "
+          "lets any be. <strong>Invert’s opposite</strong> is a factor on a "
+          "measure turned over (25% faster becomes 20% slower), and nothing for "
+          "a switch, a time, a share or Whispers’ realm-wide reach, which are off "
+          "while the law is turned: so Half gravity turned is a realm with no "
+          "leap, and what more <em>“heavy gravity”</em> does is not written.",
      rec="State the readings in §11.2, §11.11 and §11.7 (the edits are "
          "drafted), or give others and the simulation follows "
          "(<code>sim/src/lib.rs</code>)."),
@@ -11438,7 +11454,8 @@ V37 = {
     "Found building TD.12, after v3.7: what a gap is, which way a glide, a "
     "charge and a bridge go, what a charge breaks through and how long a "
     "plank spans, read one way in the simulation, with the edits drafted "
-    "(TD.75); Vine bridge waits on a two-point command."),
+    "(TD.75); then the Glass golem’s wall, the Lantern wisp’s reveal, "
+    "Invert’s opposite and Vine bridge’s two points, read too and built."),
 
 "G80": dict(status="open", left="document", note=
     "Found building TD.15, after v3.7: seven readings the simulation takes for "

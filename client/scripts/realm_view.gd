@@ -148,6 +148,12 @@ func _draw() -> void:
 			if i < _facings.size() and _facings[i] < 4:
 				_draw_facing(_facings[i], r, t)
 	_draw_tunnels(t, o)
+	# A Glass golem's crystal wall: clear crystal, so what is behind it shows
+	# through, edged in ink so it reads without its colour (§20.8).
+	for w: Vector2i in replay.walls():
+		var r := Rect2(o + Vector2(w) * t, Vector2(t, t)).grow(-t * 0.1)
+		draw_rect(r, Color(Palette.TIME, 0.45))
+		draw_rect(r, Palette.INK, false, max(1.0, t * 0.05))
 	_draw_vault(t)
 	for ward in replay.wards():
 		_draw_ward(ward, t)

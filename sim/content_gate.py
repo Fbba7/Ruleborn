@@ -528,6 +528,10 @@ def ruleborn_compare(text: str) -> dict:
         ("rootrunner tiles", num("rootrunner", r"gap of up to (\d+) tiles"),
          k.get("ROOT_BRIDGE_TILES")),
         ("rootrunner seconds", num("rootrunner", r"tiles for (\d+) s"), ticks("ROOT_BRIDGE_TICKS")),
+        ("glass_golem tiles", num("glass_golem", r"crystal wall (\d+) tiles long"), k.get("WALL_TILES")),
+        ("glass_golem seconds", num("glass_golem", r"long for (\d+) s"), ticks("WALL_TICKS")),
+        ("lantern_wisp tiles", num("lantern_wisp", r"within (\d+) tiles"), k.get("REVEAL_TILES")),
+        ("lantern_wisp seconds", num("lantern_wisp", r"tiles for (\d+) s"), ticks("REVEAL_TICKS")),
     ]
     # §11.7's Sages: each one's three powers and their uses, in content
     # order, and every built power's numbers from its own sentence.
@@ -566,6 +570,9 @@ def ruleborn_compare(text: str) -> dict:
         ("tailwind seconds", said_num("tailwind", r"for (\d+) s"), ticks("TAILWIND_TICKS")),
         ("plank tiles", said_num("plank", r"lay a (\d+)-tile shortcut"), k.get("PLANK_TILES")),
         ("plank seconds", said_num("plank", r"for (\d+) s"), ticks("PLANK_TICKS")),
+        ("invert seconds", said_num("invert", r"for (\d+) s"), ticks("INVERT_TICKS")),
+        ("vine bridge tiles", said_num("vine bridge", r"up to (\d+) tiles"), k.get("VINE_BRIDGE_TILES")),
+        ("vine bridge seconds", said_num("vine bridge", r"for (\d+) s"), ticks("VINE_BRIDGE_TICKS")),
     ]
     for what, want, have in rows:
         ok = want is not None and have is not None and float(want) == float(have)

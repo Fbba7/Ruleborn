@@ -92,6 +92,10 @@ pub struct Grid {
     /// The way each directional feature faces (`NORTH` to `WEST`); 0
     /// elsewhere.
     facing: Vec<u8>,
+    /// Tiles a Glass golem's crystal wall stands on this tick: "nothing
+    /// passes it, and it does not block sight". Set each tick from the walls
+    /// standing, over whatever ground is there.
+    raised: Vec<bool>,
     /// Each tunnel mouth's other end.
     tunnels: Vec<Option<TileIndex>>,
     any_tunnel: bool,
@@ -363,6 +367,7 @@ impl Grid {
             leap: false,
             bridged: vec![false; n],
             facing: vec![0; n],
+            raised: vec![false; n],
             tunnels: vec![None; n],
             any_tunnel: false,
         }
@@ -396,7 +401,22 @@ impl Grid {
     }
 
     pub fn at(&self, index: TileIndex) -> Terrain {
+        if self.raised.get(index as usize).copied().unwrap_or(false) {
+            return Terrain::Blocked;
+        }
         self.tiles.get(index as usize).copied().unwrap_or(Terrain::Blocked)
+    }
+
+    /// Stand a crystal wall on a tile, or take it away: feet stop, eyes
+    /// pass.
+    pub fn set_raised(&mut self, index: TileIndex, on: bool) {
+        if let Some(r) = self.raised.get_mut(index as usize) {
+            *r = on;
+        }
+    }
+
+    pub fn is_raised(&self, index: TileIndex) -> bool {
+        self.raised.get(index as usize).copied().unwrap_or(false)
     }
 
     pub fn set(&mut self, x: u16, y: u16, terrain: Terrain) {

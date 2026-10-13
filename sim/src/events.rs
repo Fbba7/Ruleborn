@@ -91,6 +91,8 @@ pub enum Event {
     /// A law switched off for a while — Suspend — until the tick given. The
     /// law's blink §12.13 names at the moment.
     LawOff { law: u16, until: u32 },
+    /// A law turned into its opposite — Invert — until the tick given.
+    LawTurned { law: u16, until: u32 },
     /// A crew member's ability, used.
     Ability { crew: u8 },
     /// The Sage's power, used: its number, 0 to 2.

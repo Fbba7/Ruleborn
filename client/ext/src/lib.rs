@@ -306,6 +306,20 @@ impl RulebornReplay {
             .collect()
     }
 
+    /// The tiles a Glass golem's crystal wall stands on this tick (§11.11).
+    #[func]
+    fn walls(&self) -> Array<Vector2i> {
+        let mut out = Array::new();
+        let Some(w) = self.world.as_ref() else { return out };
+        for i in 0..w.grid.len() {
+            if w.grid.is_raised(i as _) {
+                let (x, y) = w.grid.coords(i as _);
+                out.push(Vector2i::new(x as i32, y as i32));
+            }
+        }
+        out
+    }
+
     /// §6.2's tunnels, each its two mouths as tiles, the lower first.
     #[func]
     fn tunnels(&self) -> Array<Vector2i> {

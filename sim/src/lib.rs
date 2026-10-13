@@ -193,6 +193,9 @@ pub struct Law {
     pub broken_at: Option<u32>,
     /// Switched off by the Archivist's Suspend until this tick (§11.7).
     pub suspended_until: u32,
+    /// Turned into its opposite by the Tinkerer's Invert until this tick
+    /// (§11.7, `opposite`).
+    pub inverted_until: u32,
 }
 
 /// The Sage on a heist (§11.7): which of `ruleborn::SAGES`, each power's uses
@@ -747,6 +750,13 @@ pub struct Bridge {
     pub until: u32,
 }
 
+/// A Glass golem's crystal wall: the tiles it stands on, until a tick.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Wall {
+    pub tiles: Vec<grid::TileIndex>,
+    pub until: u32,
+}
+
 /// The whole simulated world. Vectors indexed by id, never a map.
 #[derive(Clone, Debug)]
 pub struct World {
@@ -857,6 +867,11 @@ pub struct World {
     bells_due: Vec<u32>,
     /// The bridges standing over gaps.
     pub bridges: Vec<Bridge>,
+    /// The Glass golems' crystal walls standing.
+    pub walls: Vec<Wall>,
+    /// The Lantern wisps' reveals running: (crew member, until). Each shows
+    /// what is hidden within `ruleborn::REVEAL_TILES` of the wisp as it goes.
+    pub reveals: Vec<(usize, u32)>,
     /// §6.2's features that act on what is around them, found on the grid
     /// at the start of each tick: lantern posts (each with whether a crystal
     /// outcrop beside it carries its light further), ember vents, static
@@ -1006,6 +1021,8 @@ impl World {
             bells_rung: 0,
             bells_due: Vec::new(),
             bridges: Vec::new(),
+            walls: Vec::new(),
+            reveals: Vec::new(),
             lanterns: Vec::new(),
             vents: Vec::new(),
             stones: Vec::new(),
@@ -1022,7 +1039,7 @@ impl World {
             let Some(pylon) = self.grid.index(*x, *y) else { continue };
             self.grid.place(*x, *y, Feature::Pylon);
             self.laws.push(Law { def, pylon, health: heist::PYLON_HEALTH, broken_at: None,
-                                 suspended_until: 0 });
+                                 suspended_until: 0, inverted_until: 0 });
         }
         self.refresh_sheet();
         // Everyone starts the heist at full health as the sheet reads it,
@@ -1391,6 +1408,16 @@ impl World {
                 None => false,
             },
             Ability::Freeze => aimed.is_some_and(|t| self.freeze(t)),
+            Ability::CrystalWall => match (self.grid.tile_at(r.at.x, r.at.y), aimed) {
+                (Some(f), Some(t)) => self.raise_wall(f, t),
+                _ => false,
+            },
+            // "Reveals every hidden ward, hidden guard and illusion within 6
+            // tiles for 6 s", around the wisp as it goes (`revealed`).
+            Ability::Reveal => {
+                self.reveals.push((ri, now + ruleborn::REVEAL_TICKS));
+                true
+            }
             Ability::Glide => aimed.is_some_and(|t| self.glide(ri, t)),
             Ability::Charge => aimed.is_some_and(|t| self.charge(ri, t)),
             // "Grows a root bridge over one gap of up to 3 tiles for 8 s",
@@ -1517,6 +1544,25 @@ impl World {
             // else its column.
             Power::Plank => aimed.is_some_and(|t| self.lay_bridge(None, t, ruleborn::PLANK_TILES,
                                                                   ruleborn::PLANK_TICKS)),
+            // "join two points up to 6 tiles apart for 20 s": the two banks
+            // of the gap the tile aimed at is in, as the Plank finds them.
+            Power::VineBridge => aimed.is_some_and(|t| {
+                self.lay_bridge(None, t, ruleborn::VINE_BRIDGE_TILES - 1, ruleborn::VINE_BRIDGE_TICKS)
+            }),
+            // "turn a law into its opposite for 10 s": the law whose pylon it
+            // is aimed at, standing, not off and not already turned.
+            Power::Invert => {
+                let law = aimed.and_then(|t| self.laws.iter().position(|l| {
+                    l.pylon == t && l.broken_at.is_none() && now >= l.suspended_until
+                        && now >= l.inverted_until
+                }));
+                if let Some(li) = law {
+                    let until = now + ruleborn::INVERT_TICKS;
+                    self.laws[li].inverted_until = until;
+                    self.log.push(now, Event::LawTurned { law: li as u16, until });
+                }
+                law.is_some()
+            }
             _ => false,
         };
         if done {
@@ -1741,6 +1787,9 @@ impl World {
     fn phase_laws(&mut self) {
         self.find_terrain();
         self.stand_bridges();
+        self.stand_walls();
+        let now = self.tick;
+        self.reveals.retain(|&(_, until)| now < until);
         self.refresh_sheet();
         self.combinations();
         // A law switched off by its pylon takes its extra health with it:
@@ -1922,6 +1971,9 @@ impl World {
         for (p, n, d) in era::first_lines(self.era) {
             sheet.apply(p, n, d);
         }
+        let turned: Vec<usize> = self.laws.iter()
+            .filter(|l| l.broken_at.is_none() && now >= l.suspended_until && now < l.inverted_until)
+            .map(|l| l.def).collect();
         for &def in &standing {
             if era::suspends(self.era, LAWS[def].id) {
                 continue;
@@ -1930,6 +1982,14 @@ impl World {
             for &(p, n, d) in LAWS[def].params {
                 let (n, d) = era::line(self.era, LAWS[def].school, p, n, d);
                 let (n, d) = harmonised(p, n, d, shared);
+                // The Tinkerer's Invert: the line's opposite, or nothing for
+                // a line that has none.
+                if turned.contains(&def) {
+                    if let Some((n, d)) = opposite(p, n, d) {
+                        sheet.apply(p, n, d);
+                    }
+                    continue;
+                }
                 sheet.apply(p, n, d);
             }
         }
@@ -4043,6 +4103,74 @@ impl World {
         true
     }
 
+    /// The Glass golem: "Raises a crystal wall 3 tiles long for 6 s: nothing
+    /// passes it, and it does not block sight." Across the way from the
+    /// golem to the tile aimed at, centred on it: along the column when the
+    /// tile lies more east or west of the golem than north or south, else
+    /// along the row. It stands on those of its three tiles that are open
+    /// ground with nobody and nothing on them — no ward, no bridge, no body
+    /// — and is not raised at all if the tile aimed at is not one.
+    fn raise_wall(&mut self, from: grid::TileIndex, at: grid::TileIndex) -> bool {
+        let ((fx, fy), (ax, ay)) = (self.grid.coords(from), self.grid.coords(at));
+        let (dx, dy) = (ax as i32 - fx as i32, ay as i32 - fy as i32);
+        if (dx, dy) == (0, 0) {
+            return false;
+        }
+        let (sx, sy) = if dx.abs() >= dy.abs() { (0, 1) } else { (1, 0) };
+        let half = ruleborn::WALL_TILES / 2;
+        let free = |t: grid::TileIndex| {
+            self.grid.at(t).passable() && !self.grid.is_bridged(t)
+                && !self.wards.iter().any(|w| w.tile == t)
+                && !self.raiders.iter().any(|r| r.standing != Standing::Out
+                    && r.standing != Standing::Caught && self.grid.tile_at(r.at.x, r.at.y) == Some(t))
+                && !self.guards.iter().any(|g| self.grid.tile_at(g.at.x, g.at.y) == Some(t))
+        };
+        if !free(at) {
+            return false;
+        }
+        let tiles: Vec<grid::TileIndex> = (-half..=half)
+            .filter_map(|k| offset(&self.grid, at, sx * k, sy * k))
+            .filter(|&t| free(t))
+            .collect();
+        for &t in &tiles {
+            self.grid.set_raised(t, true);
+        }
+        self.walls.push(Wall { tiles, until: self.tick + ruleborn::WALL_TICKS });
+        true
+    }
+
+    /// The walls standing this tick, marked on the grid; a wall whose time is
+    /// up goes.
+    fn stand_walls(&mut self) {
+        let now = self.tick;
+        let (ended, live): (Vec<Wall>, Vec<Wall>) = std::mem::take(&mut self.walls)
+            .into_iter().partition(|w| w.until <= now);
+        for w in &ended {
+            for &t in &w.tiles {
+                self.grid.set_raised(t, false);
+            }
+        }
+        for w in &live {
+            for &t in &w.tiles {
+                self.grid.set_raised(t, true);
+            }
+        }
+        self.walls = live;
+    }
+
+    /// Whether a Lantern wisp's reveal shows what is hidden on a tile this
+    /// tick: within `ruleborn::REVEAL_TILES` of a wisp whose reveal runs,
+    /// measured centre to centre from where the wisp is now. What it shows —
+    /// the hidden wards (§10.3's "Hidden until revealed or fired"), the
+    /// Quicksand's pits — is drawn, not simulated: §7.3's reveal is the view
+    /// layer's, and nothing the simulation decides reads it.
+    pub fn revealed(&self, tile: grid::TileIndex) -> bool {
+        let (x, y) = self.grid.centre(tile);
+        let at = Point { x, y };
+        self.reveals.iter().any(|&(ri, _)| self.raiders.get(ri)
+            .is_some_and(|r| r.at.distance(at) <= Fx::from_int(ruleborn::REVEAL_TILES)))
+    }
+
     /// A bridge over the gap the tile `at` is in: the run of gap tiles through
     /// it along one line, no longer than `most`, with ground to stand on at
     /// both ends. From a crew member's tile the line is the one toward `at`;
@@ -4686,6 +4814,18 @@ impl World {
         for law in self.laws.iter().filter(|l| l.suspended_until > 0) {
             mix(law.suspended_until as i64);
         }
+        for law in self.laws.iter().filter(|l| l.inverted_until > 0) {
+            mix(law.inverted_until as i64 + 1_000_000);
+        }
+        for w in &self.walls {
+            mix(w.until as i64);
+            for &t in &w.tiles {
+                mix(t as i64);
+            }
+        }
+        for &(ri, until) in &self.reveals {
+            mix(ri as i64 * 1_000_000 + until as i64);
+        }
         h
     }
 }
@@ -4738,6 +4878,26 @@ fn unslowed((n, d): (i64, i64), unhindered: bool) -> (i64, i64) {
 /// through this tick (`World::pace_here`). `unhindered` is the Tidewalker's
 /// ability: "For 6 s nothing slows it: terrain, laws and its own load leave
 /// it at full speed." Its gait is the player's choice, not a slowing.
+/// The Tinkerer's Invert: "turn a law into its opposite for 10 s, such as
+/// Half gravity into heavy gravity" (§11.7). The opposite of one line of a
+/// law's rule sheet, read as G81 records: a factor on a measure — a speed, a
+/// health, a range, a rate, a damage — is turned over, so 25% faster becomes
+/// 20% slower; a switch, a time, a share and Whispers' realm-wide reach have
+/// no opposite on the sheet and are off while the law is turned. Half
+/// gravity's one line is the leap, so turned it is a realm with no leap;
+/// what more heavy gravity would do is not written.
+fn opposite(p: Param, n: i64, d: i64) -> Option<(i64, i64)> {
+    use Param::*;
+    match p {
+        CrewSpeed | GuardSpeed | LoadedSpeed | LargeSpeed | SmallSpeed | LargeHealth
+        | SmallHealth | SightRange | NoiseRadius | SuspicionFill | SuspicionDecay
+        | StructureDamage | Damage | ClockRate | ConeAngle | CarryWeight if n > 0 && d > 0 => {
+            Some((d, n))
+        }
+        _ => None,
+    }
+}
+
 /// The tunnel a crew member is inside, as (the mouth it went in by, the one
 /// it comes out of): on a step between two mouths and on neither's tile. At
 /// a mouth it is above ground and seen like anyone; between them, "nobody can
@@ -4840,6 +5000,11 @@ fn walk_route(grid: &Grid, mut at: Point, route: &[grid::TileIndex], mut along: 
     let mut left = step;
     while left.0 > 0 {
         let Some(tile) = route.get(along) else { break };
+        // A crystal wall raised across a route since it was chosen: "nothing
+        // passes it". The walk waits at the wall, as §12.18 does not re-route.
+        if grid.is_raised(*tile) {
+            break;
+        }
         let (x, y) = grid.centre(*tile);
         let target = Point { x, y };
         let d = at.distance(target);

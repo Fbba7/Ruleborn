@@ -170,13 +170,20 @@ pub const GLIDE_LEVELS: i8 = 1;
 /// "Speed ×2".
 pub const CHARGE_TILES: i32 = 4;
 pub const CHARGE_PACE: (i64, i64) = (2, 1);
+/// The Glass golem: "Raises a crystal wall 3 tiles long for 6 s".
+pub const WALL_TILES: i32 = 3;
+pub const WALL_TICKS: u32 = TICKS_PER_SECOND * 6;
+/// The Lantern wisp: "Reveals every hidden ward, hidden guard and illusion
+/// within 6 tiles for 6 s."
+pub const REVEAL_TILES: i32 = 6;
+pub const REVEAL_TICKS: u32 = TICKS_PER_SECOND * 6;
 /// The Rootrunner: "a root bridge over one gap of up to 3 tiles for 8 s".
 pub const ROOT_BRIDGE_TILES: usize = 3;
 pub const ROOT_BRIDGE_TICKS: u32 = TICKS_PER_SECOND * 8;
 
 /// Every number above, for the rules version: changing one changes how a
 /// heist with a manifest plays.
-pub const NUMBERS: [i64; 49] = [
+pub const NUMBERS: [i64; 56] = [
     USES as i64, LOCKOUT_TICKS as i64, MAX_READY as i64,
     SATCHEL_TICKS as i64, SATCHEL_RATE as i64, POUND_TICKS as i64, POUND_HIT.0, POUND_HIT.1,
     UNHINDERED_TICKS as i64, REWIND_TICKS as i64, FREEZE_TICKS as i64, BURST_POWER,
@@ -189,7 +196,9 @@ pub const NUMBERS: [i64; 49] = [
     RENEW_HEAL.1 as i64, DECOY_TICKS as i64, TAILWIND_TICKS as i64, TAILWIND_PACE.0,
     TAILWIND_PACE.1, GLIDE_TILES as i64, GLIDE_LEVELS as i64, CHARGE_TILES as i64,
     CHARGE_PACE.0, CHARGE_PACE.1, ROOT_BRIDGE_TILES as i64, ROOT_BRIDGE_TICKS as i64,
-    PLANK_TILES as i64, PLANK_TICKS as i64,
+    PLANK_TILES as i64, PLANK_TICKS as i64, WALL_TILES as i64, WALL_TICKS as i64,
+    REVEAL_TILES as i64, REVEAL_TICKS as i64, INVERT_TICKS as i64, VINE_BRIDGE_TILES as i64,
+    VINE_BRIDGE_TICKS as i64,
 ];
 
 impl Ability {
@@ -208,13 +217,13 @@ impl Ability {
         }
     }
 
-    /// Whether the simulation carries it yet. The rest wait on what they act
-    /// on: a wall a route can meet mid-walk for the crystal wall; a crew
-    /// member that can be two for Split; and something hidden for Reveal to
-    /// show. Until then their command is dropped and spends no use, like any
-    /// command that cannot be carried out.
+    /// Whether the simulation carries it yet. Split waits on a crew member
+    /// that can be two: a second body with its own commands, load and health,
+    /// which the outcome and the manifest would have to count. Until then its
+    /// command is dropped and spends no use, like any command that cannot be
+    /// carried out.
     pub fn built(self) -> bool {
-        !matches!(self, CrystalWall | Split | Reveal)
+        !matches!(self, Split)
     }
 }
 
@@ -289,15 +298,20 @@ pub const TAILWIND_PACE: (i64, i64) = (7, 5);
 /// The Tinkerer's Plank: "lay a 4-tile shortcut over a gap for 15 s".
 pub const PLANK_TILES: usize = 4;
 pub const PLANK_TICKS: u32 = TICKS_PER_SECOND * 15;
+/// The Tinkerer's Invert: "turn a law into its opposite for 10 s".
+pub const INVERT_TICKS: u32 = TICKS_PER_SECOND * 10;
+/// The Gardener's Vine bridge: "join two points up to 6 tiles apart for
+/// 20 s" — the two banks of a gap, so the gap between them is up to 5.
+pub const VINE_BRIDGE_TILES: usize = 6;
+pub const VINE_BRIDGE_TICKS: u32 = TICKS_PER_SECOND * 20;
 
 impl Power {
-    /// Whether the simulation carries it yet. Vine bridge waits on a
-    /// command that names two points; Rift on universes of more than one realm (D71); Invert
-    /// on a rule for which of a law's parameters have an opposite; Copy on a
-    /// law that applies around the crew rather than over the realm, which
-    /// casts need too.
+    /// Whether the simulation carries it yet. Rift waits on universes of
+    /// more than one realm (D71); Copy on a law that applies around the crew
+    /// rather than over the realm, which casts need too.
     pub fn built(self) -> bool {
         matches!(self, Power::Suspend | Power::Reveal | Power::Recall | Power::Jam
-                 | Power::Plank | Power::Renew | Power::Decoy | Power::Tailwind)
+                 | Power::Plank | Power::Renew | Power::Decoy | Power::Tailwind
+                 | Power::Invert | Power::VineBridge)
     }
 }
