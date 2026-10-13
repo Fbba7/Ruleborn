@@ -1,174 +1,174 @@
-key,en,pt_BR
-LAW_BOUNCE,Bounce,Bounce
-LAW_HALF_GRAVITY,Half gravity,Half gravity
-LAW_TILT,Tilt,Tilt
-LAW_CURRENT,Current,Current
-LAW_HEAVY_GROUND,Heavy ground,Heavy ground
-LAW_LEAPFROG,Leapfrog,Leapfrog
-LAW_FRICTIONLESS,Frictionless,Frictionless
-LAW_INWARD_PULL,Inward pull,Inward pull
-LAW_BRITTLE_STONE,Brittle stone,Brittle stone
-LAW_CRYSTAL_GROWTH,Crystal growth,Crystal growth
-LAW_GLASS,Glass,Glass
-LAW_DENSITY,Density,Density
-LAW_HONEYCOMB,Honeycomb,Honeycomb
-LAW_LODESTONES,Lodestones,Lodestones
-LAW_SHIFTING_STONES,Shifting stones,Shifting stones
-LAW_TRANSMUTE,Transmute,Transmute
-LAW_DAY_AND_NIGHT,Day and night,Day and night
-LAW_SLOW_RIVERS,Slow rivers,Slow rivers
-LAW_STILLNESS,Stillness,Stillness
-LAW_AFTERIMAGE,Afterimage,Afterimage
-LAW_DELAY,Delay,Delay
-LAW_HASTE,Haste,Haste
-LAW_HELD_BREATH,Held breath,Held breath
-LAW_TIDEMARK,Tidemark,Tidemark
-LAW_GLOWING_DARK,Glowing dark,Glowing dark
-LAW_HEAT_BLOOM,Heat bloom,Heat bloom
-LAW_SPARK_TRAILS,Spark trails,Spark trails
-LAW_AURORA,Aurora,Aurora
-LAW_CHAIN_LIGHTNING,Chain lightning,Chain lightning
-LAW_STATIC,Static,Static
-LAW_OVERCHARGE,Overcharge,Overcharge
-LAW_SUNBURST,Sunburst,Sunburst
-LAW_BLOOM,Bloom,Bloom
-LAW_KINSHIP,Kinship,Kinship
-LAW_WILD_PATHS,Wild paths,Wild paths
-LAW_FLOCK,Flock,Flock
-LAW_SPORES,Spores,Spores
-LAW_THORNS,Thorns,Thorns
-LAW_REGROWTH,Regrowth,Regrowth
-LAW_SWARM_BIRTH,Swarm birth,Swarm birth
-LAW_HAUNTING,Haunting,Haunting
-LAW_SOUL_LANTERNS,Soul lanterns,Soul lanterns
-LAW_WHISPERS,Whispers,Whispers
-LAW_ECHOES,Echoes,Echoes
-LAW_SLEEPWALK,Sleepwalk,Sleepwalk
-LAW_SOUL_SWAP,Soul swap,Soul swap
-LAW_BORROWED_FACE,Borrowed Face,Borrowed Face
-LAW_MIRROR_IMAGES,Mirror images,Mirror images
-NOTE_FLOW,Flow,Flow
-NOTE_WEIGHT,Weight,Weight
-NOTE_GLOW,Glow,Glow
-NOTE_HUSH,Hush,Hush
-NOTE_BLOOM,Bloom,Bloom
-NOTE_SPARK,Spark,Spark
-NOTE_ECHO,Echo,Echo
-NOTE_VEIL,Veil,Veil
-RES_DRIFTING_ECHOES,Drifting echoes,Drifting echoes
-RES_MANGROVE_BANKS,Mangrove banks,Mangrove banks
-RES_NIGHT_RUNNERS,Night runners,Night runners
-RES_CRACKED_GARDENS,Cracked gardens,Cracked gardens
-RES_LANTERN_CHOIR,Lantern choir,Lantern choir
-RES_BEDROCK,Bedrock,Bedrock
-RES_PINBALL,Pinball,Pinball
-RES_EVERGREEN,Evergreen,Evergreen
-RES_FROZEN_REFLECTIONS,Frozen reflections,Frozen reflections
-RES_STORM_GRID,Storm grid,Storm grid
-RES_MIDSUMMER,Midsummer,Midsummer
-RES_HIVE,Hive,Hive
-RES_TIDAL_PULL,Tidal pull,Tidal pull
-RES_ECHO_CHAMBER,Echo chamber,Echo chamber
-RES_THE_HUNT,The hunt,The hunt
-RES_ALCHEMY,Alchemy,Alchemy
-RES_MAELSTROM,Maelstrom,Maelstrom
-RES_HALL_OF_MIRRORS,Hall of mirrors,Hall of mirrors
-RES_DUSK_WATCH,Dusk watch,Dusk watch
-RES_BRIAR_MAZE,Briar maze,Briar maze
-RES_SLEEPING_STREAMS,Sleeping streams,Sleeping streams
-RES_TWIN_SOULS,Twin souls,Twin souls
-RES_DEEP_WELL,Deep well,Deep well
-RES_SUN_PRISM,Sun prism,Sun prism
-RES_NIGHT_BLOOM,Night bloom,Night bloom
-RES_NETTLE_WIND,Nettle wind,Nettle wind
-RES_POLLEN_STORM,Pollen storm,Pollen storm
-RES_SOUL_TETHER,Soul tether,Soul tether
-RES_LIGHTHOUSE,Lighthouse,Lighthouse
-RES_SHATTERED_GLASS,Shattered glass,Shattered glass
-RES_ECHOING_HOURS,Echoing hours,Echoing hours
-RES_CHARGED_POLLEN,Charged pollen,Charged pollen
-RES_CROWDED_HOP,Crowded hop,Crowded hop
-RES_ROLLING_STONES,Rolling stones,Rolling stones
-RES_HONEY_TRAP,Honey trap,Honey trap
-RES_NIGHT_MAZE,Night maze,Night maze
-RES_GHOST_RELAY,Ghost relay,Ghost relay
-RES_FROZEN_GLIDE,Frozen glide,Frozen glide
-RES_SPARK_STORM,Spark storm,Spark storm
-RES_NORTHERN_LIGHTS,Northern lights,Northern lights
-RES_MEADOW_ROADS,Meadow roads,Meadow roads
-RES_SHEPHERD_S_BELL,Shepherd's bell,Shepherd's bell
-RES_DREAM_PARADE,Dream parade,Dream parade
-RES_MASKED_MIRRORS,Masked mirrors,Masked mirrors
-CHORD_TEMPEST,Tempest,Tempest
-CHORD_DEEP_SLEEP,Deep sleep,Deep sleep
-CHORD_GHOST_TIDE,Ghost tide,Ghost tide
-CHORD_FAIR_LIGHTS,Fair lights,Fair lights
-CHORD_IRON_BELL,Iron bell,Iron bell
-CHORD_MIRAGE,Mirage,Mirage
-CHORD_CLOCKWORK,Clockwork,Clockwork
-CHORD_WILD_HUNT,Wild hunt,Wild hunt
-CHORD_HIDDEN_GARDEN,Hidden garden,Hidden garden
-CHORD_LANTERN_FESTIVAL,Lantern festival,Lantern festival
-CHORD_QUICKSAND,Quicksand,Quicksand
-CHORD_REBOUND,Rebound,Rebound
-WARD_GRAVITY_WELL,Gravity Well,Gravity Well
-WARD_CRYSTAL_WALL,Crystal Wall,Crystal Wall
-WARD_TIME_SNARE,Time Snare,Time Snare
-WARD_STATIC_COIL,Static Coil,Static Coil
-WARD_THORN_HEDGE,Thorn Hedge,Thorn Hedge
-WARD_LANTERN_GLARE,Lantern Glare,Lantern Glare
-GROUND_ROCK_PILLAR,Rock pillar,Rock pillar
-GROUND_RUIN_WALL,Ruin wall,Ruin wall
-GROUND_FENCE,Fence,Fence
-GROUND_FOG_BANK,Fog bank,Fog bank
-GROUND_TALL_GRASS,Tall grass,Tall grass
-GROUND_STREAM,Stream,Stream
-GROUND_BUSH,Bush,Bush
-GROUND_HEDGE,Hedge,Hedge
-GROUND_TREE,Tree,Tree
-GROUND_THICKET,Thicket,Thicket
-GROUND_BOULDER,Boulder,Boulder
-GROUND_GRAVEL_PATH,Gravel path,Gravel path
-GROUND_SCREE,Scree,Scree
-GROUND_CRYSTAL_OUTCROP,Crystal outcrop,Crystal outcrop
-GROUND_LANTERN_POST,Lantern post,Lantern post
-GROUND_SHADE_CANOPY,Shade canopy,Shade canopy
-GROUND_EMBER_VENT,Ember vent,Ember vent
-GROUND_LAVA_CRACK,Lava crack,Lava crack
-GROUND_STATIC_STONE,Static stone,Static stone
-GROUND_STATUE,Statue,Statue
-GROUND_HOT_SPRING,Hot spring,Hot spring
-GROUND_ARCH,Arch,Arch
-GROUND_MARSH,Marsh,Marsh
-GROUND_FLOWER_MEADOW,Flower meadow,Flower meadow
-GROUND_ICE_SHEET,Ice sheet,Ice sheet
-GROUND_POND,Pond,Pond
-GROUND_BELL_POST,Bell post,Bell post
-GROUND_STEPPING_STONES,Stepping stones,Stepping stones
-GROUND_BOUNCE_MUSHROOM,Bounce mushroom,Bounce mushroom
-GROUND_UPDRAFT_VENT,Updraft vent,Updraft vent
-GROUND_PIT,Pit,Pit
-GROUND_RAISED_GROUND,Raised ground,Raised ground
-BUILDING_KEEPER_S_SPIRE,Keeper's Spire,Keeper's Spire
-BUILDING_VAULT,Vault,Vault
-BUILDING_ANCHOR_STONE,Anchor Stone,Anchor Stone
-BUILDING_STAR_WELL,Star Well,Star Well
-BUILDING_AETHER_SPRING,Aether Spring,Aether Spring
-BUILDING_GARDEN,Garden,Garden
-BUILDING_STOREHOUSE,Storehouse,Storehouse
-BUILDING_LAW_PYLON,Law Pylon,Law Pylon
-BUILDING_HEARTH,Hearth,Hearth
-BUILDING_NURSERY,Nursery,Nursery
-BUILDING_GUARDIAN_POST,Guardian Post,Guardian Post
-BUILDING_WARD,Ward,Ward
-BUILDING_LIBRARY,Library,Library
-BUILDING_RESONANCE_LAB,Resonance Lab,Resonance Lab
-BUILDING_OBSERVATORY,Observatory,Observatory
-BUILDING_BEACON,Beacon,Beacon
-BUILDING_VISITOR_S_DOCK,Visitor's Dock,Visitor's Dock
-REALM_SKYFIELD,Skyfield,Skyfield
-REALM_CRYSTALLINE,Crystalline,Crystalline
-REALM_TIDEHOLD,Tidehold,Tidehold
-REALM_EMBERREACH,Emberreach,Emberreach
-REALM_VERDANT,Verdant,Verdant
-REALM_LANTERN_VALE,Lantern Vale,Lantern Vale
+key,en,en_US,pt_BR,pt_PT,de,fr
+LAW_BOUNCE,Bounce,Bounce,Bounce,Bounce,Bounce,Bounce
+LAW_HALF_GRAVITY,Half gravity,Half gravity,Half gravity,Half gravity,Half gravity,Half gravity
+LAW_TILT,Tilt,Tilt,Tilt,Tilt,Tilt,Tilt
+LAW_CURRENT,Current,Current,Current,Current,Current,Current
+LAW_HEAVY_GROUND,Heavy ground,Heavy ground,Heavy ground,Heavy ground,Heavy ground,Heavy ground
+LAW_LEAPFROG,Leapfrog,Leapfrog,Leapfrog,Leapfrog,Leapfrog,Leapfrog
+LAW_FRICTIONLESS,Frictionless,Frictionless,Frictionless,Frictionless,Frictionless,Frictionless
+LAW_INWARD_PULL,Inward pull,Inward pull,Inward pull,Inward pull,Inward pull,Inward pull
+LAW_BRITTLE_STONE,Brittle stone,Brittle stone,Brittle stone,Brittle stone,Brittle stone,Brittle stone
+LAW_CRYSTAL_GROWTH,Crystal growth,Crystal growth,Crystal growth,Crystal growth,Crystal growth,Crystal growth
+LAW_GLASS,Glass,Glass,Glass,Glass,Glass,Glass
+LAW_DENSITY,Density,Density,Density,Density,Density,Density
+LAW_HONEYCOMB,Honeycomb,Honeycomb,Honeycomb,Honeycomb,Honeycomb,Honeycomb
+LAW_LODESTONES,Lodestones,Lodestones,Lodestones,Lodestones,Lodestones,Lodestones
+LAW_SHIFTING_STONES,Shifting stones,Shifting stones,Shifting stones,Shifting stones,Shifting stones,Shifting stones
+LAW_TRANSMUTE,Transmute,Transmute,Transmute,Transmute,Transmute,Transmute
+LAW_DAY_AND_NIGHT,Day and night,Day and night,Day and night,Day and night,Day and night,Day and night
+LAW_SLOW_RIVERS,Slow rivers,Slow rivers,Slow rivers,Slow rivers,Slow rivers,Slow rivers
+LAW_STILLNESS,Stillness,Stillness,Stillness,Stillness,Stillness,Stillness
+LAW_AFTERIMAGE,Afterimage,Afterimage,Afterimage,Afterimage,Afterimage,Afterimage
+LAW_DELAY,Delay,Delay,Delay,Delay,Delay,Delay
+LAW_HASTE,Haste,Haste,Haste,Haste,Haste,Haste
+LAW_HELD_BREATH,Held breath,Held breath,Held breath,Held breath,Held breath,Held breath
+LAW_TIDEMARK,Tidemark,Tidemark,Tidemark,Tidemark,Tidemark,Tidemark
+LAW_GLOWING_DARK,Glowing dark,Glowing dark,Glowing dark,Glowing dark,Glowing dark,Glowing dark
+LAW_HEAT_BLOOM,Heat bloom,Heat bloom,Heat bloom,Heat bloom,Heat bloom,Heat bloom
+LAW_SPARK_TRAILS,Spark trails,Spark trails,Spark trails,Spark trails,Spark trails,Spark trails
+LAW_AURORA,Aurora,Aurora,Aurora,Aurora,Aurora,Aurora
+LAW_CHAIN_LIGHTNING,Chain lightning,Chain lightning,Chain lightning,Chain lightning,Chain lightning,Chain lightning
+LAW_STATIC,Static,Static,Static,Static,Static,Static
+LAW_OVERCHARGE,Overcharge,Overcharge,Overcharge,Overcharge,Overcharge,Overcharge
+LAW_SUNBURST,Sunburst,Sunburst,Sunburst,Sunburst,Sunburst,Sunburst
+LAW_BLOOM,Bloom,Bloom,Bloom,Bloom,Bloom,Bloom
+LAW_KINSHIP,Kinship,Kinship,Kinship,Kinship,Kinship,Kinship
+LAW_WILD_PATHS,Wild paths,Wild paths,Wild paths,Wild paths,Wild paths,Wild paths
+LAW_FLOCK,Flock,Flock,Flock,Flock,Flock,Flock
+LAW_SPORES,Spores,Spores,Spores,Spores,Spores,Spores
+LAW_THORNS,Thorns,Thorns,Thorns,Thorns,Thorns,Thorns
+LAW_REGROWTH,Regrowth,Regrowth,Regrowth,Regrowth,Regrowth,Regrowth
+LAW_SWARM_BIRTH,Swarm birth,Swarm birth,Swarm birth,Swarm birth,Swarm birth,Swarm birth
+LAW_HAUNTING,Haunting,Haunting,Haunting,Haunting,Haunting,Haunting
+LAW_SOUL_LANTERNS,Soul lanterns,Soul lanterns,Soul lanterns,Soul lanterns,Soul lanterns,Soul lanterns
+LAW_WHISPERS,Whispers,Whispers,Whispers,Whispers,Whispers,Whispers
+LAW_ECHOES,Echoes,Echoes,Echoes,Echoes,Echoes,Echoes
+LAW_SLEEPWALK,Sleepwalk,Sleepwalk,Sleepwalk,Sleepwalk,Sleepwalk,Sleepwalk
+LAW_SOUL_SWAP,Soul swap,Soul swap,Soul swap,Soul swap,Soul swap,Soul swap
+LAW_BORROWED_FACE,Borrowed Face,Borrowed Face,Borrowed Face,Borrowed Face,Borrowed Face,Borrowed Face
+LAW_MIRROR_IMAGES,Mirror images,Mirror images,Mirror images,Mirror images,Mirror images,Mirror images
+NOTE_FLOW,Flow,Flow,Flow,Flow,Flow,Flow
+NOTE_WEIGHT,Weight,Weight,Weight,Weight,Weight,Weight
+NOTE_GLOW,Glow,Glow,Glow,Glow,Glow,Glow
+NOTE_HUSH,Hush,Hush,Hush,Hush,Hush,Hush
+NOTE_BLOOM,Bloom,Bloom,Bloom,Bloom,Bloom,Bloom
+NOTE_SPARK,Spark,Spark,Spark,Spark,Spark,Spark
+NOTE_ECHO,Echo,Echo,Echo,Echo,Echo,Echo
+NOTE_VEIL,Veil,Veil,Veil,Veil,Veil,Veil
+RES_DRIFTING_ECHOES,Drifting echoes,Drifting echoes,Drifting echoes,Drifting echoes,Drifting echoes,Drifting echoes
+RES_MANGROVE_BANKS,Mangrove banks,Mangrove banks,Mangrove banks,Mangrove banks,Mangrove banks,Mangrove banks
+RES_NIGHT_RUNNERS,Night runners,Night runners,Night runners,Night runners,Night runners,Night runners
+RES_CRACKED_GARDENS,Cracked gardens,Cracked gardens,Cracked gardens,Cracked gardens,Cracked gardens,Cracked gardens
+RES_LANTERN_CHOIR,Lantern choir,Lantern choir,Lantern choir,Lantern choir,Lantern choir,Lantern choir
+RES_BEDROCK,Bedrock,Bedrock,Bedrock,Bedrock,Bedrock,Bedrock
+RES_PINBALL,Pinball,Pinball,Pinball,Pinball,Pinball,Pinball
+RES_EVERGREEN,Evergreen,Evergreen,Evergreen,Evergreen,Evergreen,Evergreen
+RES_FROZEN_REFLECTIONS,Frozen reflections,Frozen reflections,Frozen reflections,Frozen reflections,Frozen reflections,Frozen reflections
+RES_STORM_GRID,Storm grid,Storm grid,Storm grid,Storm grid,Storm grid,Storm grid
+RES_MIDSUMMER,Midsummer,Midsummer,Midsummer,Midsummer,Midsummer,Midsummer
+RES_HIVE,Hive,Hive,Hive,Hive,Hive,Hive
+RES_TIDAL_PULL,Tidal pull,Tidal pull,Tidal pull,Tidal pull,Tidal pull,Tidal pull
+RES_ECHO_CHAMBER,Echo chamber,Echo chamber,Echo chamber,Echo chamber,Echo chamber,Echo chamber
+RES_THE_HUNT,The hunt,The hunt,The hunt,The hunt,The hunt,The hunt
+RES_ALCHEMY,Alchemy,Alchemy,Alchemy,Alchemy,Alchemy,Alchemy
+RES_MAELSTROM,Maelstrom,Maelstrom,Maelstrom,Maelstrom,Maelstrom,Maelstrom
+RES_HALL_OF_MIRRORS,Hall of mirrors,Hall of mirrors,Hall of mirrors,Hall of mirrors,Hall of mirrors,Hall of mirrors
+RES_DUSK_WATCH,Dusk watch,Dusk watch,Dusk watch,Dusk watch,Dusk watch,Dusk watch
+RES_BRIAR_MAZE,Briar maze,Briar maze,Briar maze,Briar maze,Briar maze,Briar maze
+RES_SLEEPING_STREAMS,Sleeping streams,Sleeping streams,Sleeping streams,Sleeping streams,Sleeping streams,Sleeping streams
+RES_TWIN_SOULS,Twin souls,Twin souls,Twin souls,Twin souls,Twin souls,Twin souls
+RES_DEEP_WELL,Deep well,Deep well,Deep well,Deep well,Deep well,Deep well
+RES_SUN_PRISM,Sun prism,Sun prism,Sun prism,Sun prism,Sun prism,Sun prism
+RES_NIGHT_BLOOM,Night bloom,Night bloom,Night bloom,Night bloom,Night bloom,Night bloom
+RES_NETTLE_WIND,Nettle wind,Nettle wind,Nettle wind,Nettle wind,Nettle wind,Nettle wind
+RES_POLLEN_STORM,Pollen storm,Pollen storm,Pollen storm,Pollen storm,Pollen storm,Pollen storm
+RES_SOUL_TETHER,Soul tether,Soul tether,Soul tether,Soul tether,Soul tether,Soul tether
+RES_LIGHTHOUSE,Lighthouse,Lighthouse,Lighthouse,Lighthouse,Lighthouse,Lighthouse
+RES_SHATTERED_GLASS,Shattered glass,Shattered glass,Shattered glass,Shattered glass,Shattered glass,Shattered glass
+RES_ECHOING_HOURS,Echoing hours,Echoing hours,Echoing hours,Echoing hours,Echoing hours,Echoing hours
+RES_CHARGED_POLLEN,Charged pollen,Charged pollen,Charged pollen,Charged pollen,Charged pollen,Charged pollen
+RES_CROWDED_HOP,Crowded hop,Crowded hop,Crowded hop,Crowded hop,Crowded hop,Crowded hop
+RES_ROLLING_STONES,Rolling stones,Rolling stones,Rolling stones,Rolling stones,Rolling stones,Rolling stones
+RES_HONEY_TRAP,Honey trap,Honey trap,Honey trap,Honey trap,Honey trap,Honey trap
+RES_NIGHT_MAZE,Night maze,Night maze,Night maze,Night maze,Night maze,Night maze
+RES_GHOST_RELAY,Ghost relay,Ghost relay,Ghost relay,Ghost relay,Ghost relay,Ghost relay
+RES_FROZEN_GLIDE,Frozen glide,Frozen glide,Frozen glide,Frozen glide,Frozen glide,Frozen glide
+RES_SPARK_STORM,Spark storm,Spark storm,Spark storm,Spark storm,Spark storm,Spark storm
+RES_NORTHERN_LIGHTS,Northern lights,Northern lights,Northern lights,Northern lights,Northern lights,Northern lights
+RES_MEADOW_ROADS,Meadow roads,Meadow roads,Meadow roads,Meadow roads,Meadow roads,Meadow roads
+RES_SHEPHERD_S_BELL,Shepherd's bell,Shepherd's bell,Shepherd's bell,Shepherd's bell,Shepherd's bell,Shepherd's bell
+RES_DREAM_PARADE,Dream parade,Dream parade,Dream parade,Dream parade,Dream parade,Dream parade
+RES_MASKED_MIRRORS,Masked mirrors,Masked mirrors,Masked mirrors,Masked mirrors,Masked mirrors,Masked mirrors
+CHORD_TEMPEST,Tempest,Tempest,Tempest,Tempest,Tempest,Tempest
+CHORD_DEEP_SLEEP,Deep sleep,Deep sleep,Deep sleep,Deep sleep,Deep sleep,Deep sleep
+CHORD_GHOST_TIDE,Ghost tide,Ghost tide,Ghost tide,Ghost tide,Ghost tide,Ghost tide
+CHORD_FAIR_LIGHTS,Fair lights,Fair lights,Fair lights,Fair lights,Fair lights,Fair lights
+CHORD_IRON_BELL,Iron bell,Iron bell,Iron bell,Iron bell,Iron bell,Iron bell
+CHORD_MIRAGE,Mirage,Mirage,Mirage,Mirage,Mirage,Mirage
+CHORD_CLOCKWORK,Clockwork,Clockwork,Clockwork,Clockwork,Clockwork,Clockwork
+CHORD_WILD_HUNT,Wild hunt,Wild hunt,Wild hunt,Wild hunt,Wild hunt,Wild hunt
+CHORD_HIDDEN_GARDEN,Hidden garden,Hidden garden,Hidden garden,Hidden garden,Hidden garden,Hidden garden
+CHORD_LANTERN_FESTIVAL,Lantern festival,Lantern festival,Lantern festival,Lantern festival,Lantern festival,Lantern festival
+CHORD_QUICKSAND,Quicksand,Quicksand,Quicksand,Quicksand,Quicksand,Quicksand
+CHORD_REBOUND,Rebound,Rebound,Rebound,Rebound,Rebound,Rebound
+WARD_GRAVITY_WELL,Gravity Well,Gravity Well,Gravity Well,Gravity Well,Gravity Well,Gravity Well
+WARD_CRYSTAL_WALL,Crystal Wall,Crystal Wall,Crystal Wall,Crystal Wall,Crystal Wall,Crystal Wall
+WARD_TIME_SNARE,Time Snare,Time Snare,Time Snare,Time Snare,Time Snare,Time Snare
+WARD_STATIC_COIL,Static Coil,Static Coil,Static Coil,Static Coil,Static Coil,Static Coil
+WARD_THORN_HEDGE,Thorn Hedge,Thorn Hedge,Thorn Hedge,Thorn Hedge,Thorn Hedge,Thorn Hedge
+WARD_LANTERN_GLARE,Lantern Glare,Lantern Glare,Lantern Glare,Lantern Glare,Lantern Glare,Lantern Glare
+GROUND_ROCK_PILLAR,Rock pillar,Rock pillar,Rock pillar,Rock pillar,Rock pillar,Rock pillar
+GROUND_RUIN_WALL,Ruin wall,Ruin wall,Ruin wall,Ruin wall,Ruin wall,Ruin wall
+GROUND_FENCE,Fence,Fence,Fence,Fence,Fence,Fence
+GROUND_FOG_BANK,Fog bank,Fog bank,Fog bank,Fog bank,Fog bank,Fog bank
+GROUND_TALL_GRASS,Tall grass,Tall grass,Tall grass,Tall grass,Tall grass,Tall grass
+GROUND_STREAM,Stream,Stream,Stream,Stream,Stream,Stream
+GROUND_BUSH,Bush,Bush,Bush,Bush,Bush,Bush
+GROUND_HEDGE,Hedge,Hedge,Hedge,Hedge,Hedge,Hedge
+GROUND_TREE,Tree,Tree,Tree,Tree,Tree,Tree
+GROUND_THICKET,Thicket,Thicket,Thicket,Thicket,Thicket,Thicket
+GROUND_BOULDER,Boulder,Boulder,Boulder,Boulder,Boulder,Boulder
+GROUND_GRAVEL_PATH,Gravel path,Gravel path,Gravel path,Gravel path,Gravel path,Gravel path
+GROUND_SCREE,Scree,Scree,Scree,Scree,Scree,Scree
+GROUND_CRYSTAL_OUTCROP,Crystal outcrop,Crystal outcrop,Crystal outcrop,Crystal outcrop,Crystal outcrop,Crystal outcrop
+GROUND_LANTERN_POST,Lantern post,Lantern post,Lantern post,Lantern post,Lantern post,Lantern post
+GROUND_SHADE_CANOPY,Shade canopy,Shade canopy,Shade canopy,Shade canopy,Shade canopy,Shade canopy
+GROUND_EMBER_VENT,Ember vent,Ember vent,Ember vent,Ember vent,Ember vent,Ember vent
+GROUND_LAVA_CRACK,Lava crack,Lava crack,Lava crack,Lava crack,Lava crack,Lava crack
+GROUND_STATIC_STONE,Static stone,Static stone,Static stone,Static stone,Static stone,Static stone
+GROUND_STATUE,Statue,Statue,Statue,Statue,Statue,Statue
+GROUND_HOT_SPRING,Hot spring,Hot spring,Hot spring,Hot spring,Hot spring,Hot spring
+GROUND_ARCH,Arch,Arch,Arch,Arch,Arch,Arch
+GROUND_MARSH,Marsh,Marsh,Marsh,Marsh,Marsh,Marsh
+GROUND_FLOWER_MEADOW,Flower meadow,Flower meadow,Flower meadow,Flower meadow,Flower meadow,Flower meadow
+GROUND_ICE_SHEET,Ice sheet,Ice sheet,Ice sheet,Ice sheet,Ice sheet,Ice sheet
+GROUND_POND,Pond,Pond,Pond,Pond,Pond,Pond
+GROUND_BELL_POST,Bell post,Bell post,Bell post,Bell post,Bell post,Bell post
+GROUND_STEPPING_STONES,Stepping stones,Stepping stones,Stepping stones,Stepping stones,Stepping stones,Stepping stones
+GROUND_BOUNCE_MUSHROOM,Bounce mushroom,Bounce mushroom,Bounce mushroom,Bounce mushroom,Bounce mushroom,Bounce mushroom
+GROUND_UPDRAFT_VENT,Updraft vent,Updraft vent,Updraft vent,Updraft vent,Updraft vent,Updraft vent
+GROUND_PIT,Pit,Pit,Pit,Pit,Pit,Pit
+GROUND_RAISED_GROUND,Raised ground,Raised ground,Raised ground,Raised ground,Raised ground,Raised ground
+BUILDING_KEEPER_S_SPIRE,Keeper's Spire,Keeper's Spire,Keeper's Spire,Keeper's Spire,Keeper's Spire,Keeper's Spire
+BUILDING_VAULT,Vault,Vault,Vault,Vault,Vault,Vault
+BUILDING_ANCHOR_STONE,Anchor Stone,Anchor Stone,Anchor Stone,Anchor Stone,Anchor Stone,Anchor Stone
+BUILDING_STAR_WELL,Star Well,Star Well,Star Well,Star Well,Star Well,Star Well
+BUILDING_AETHER_SPRING,Aether Spring,Aether Spring,Aether Spring,Aether Spring,Aether Spring,Aether Spring
+BUILDING_GARDEN,Garden,Garden,Garden,Garden,Garden,Garden
+BUILDING_STOREHOUSE,Storehouse,Storehouse,Storehouse,Storehouse,Storehouse,Storehouse
+BUILDING_LAW_PYLON,Law Pylon,Law Pylon,Law Pylon,Law Pylon,Law Pylon,Law Pylon
+BUILDING_HEARTH,Hearth,Hearth,Hearth,Hearth,Hearth,Hearth
+BUILDING_NURSERY,Nursery,Nursery,Nursery,Nursery,Nursery,Nursery
+BUILDING_GUARDIAN_POST,Guardian Post,Guardian Post,Guardian Post,Guardian Post,Guardian Post,Guardian Post
+BUILDING_WARD,Ward,Ward,Ward,Ward,Ward,Ward
+BUILDING_LIBRARY,Library,Library,Library,Library,Library,Library
+BUILDING_RESONANCE_LAB,Resonance Lab,Resonance Lab,Resonance Lab,Resonance Lab,Resonance Lab,Resonance Lab
+BUILDING_OBSERVATORY,Observatory,Observatory,Observatory,Observatory,Observatory,Observatory
+BUILDING_BEACON,Beacon,Beacon,Beacon,Beacon,Beacon,Beacon
+BUILDING_VISITOR_S_DOCK,Visitor's Dock,Visitor's Dock,Visitor's Dock,Visitor's Dock,Visitor's Dock,Visitor's Dock
+REALM_SKYFIELD,Skyfield,Skyfield,Skyfield,Skyfield,Skyfield,Skyfield
+REALM_CRYSTALLINE,Crystalline,Crystalline,Crystalline,Crystalline,Crystalline,Crystalline
+REALM_TIDEHOLD,Tidehold,Tidehold,Tidehold,Tidehold,Tidehold,Tidehold
+REALM_EMBERREACH,Emberreach,Emberreach,Emberreach,Emberreach,Emberreach,Emberreach
+REALM_VERDANT,Verdant,Verdant,Verdant,Verdant,Verdant,Verdant
+REALM_LANTERN_VALE,Lantern Vale,Lantern Vale,Lantern Vale,Lantern Vale,Lantern Vale,Lantern Vale

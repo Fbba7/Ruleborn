@@ -1,7 +1,10 @@
 class_name Strings
 ## Every word the client shows, from i18n/strings.csv: one row a key, one
 ## column a language. §20.6 ships English and Brazilian Portuguese at launch;
-## a language is a column, so adding one touches no script.
+## the owner added English's US form, European Portuguese, German and French
+## (D99). A language is a column, so adding one touches no other script.
+## `en` is English as the document writes it, British; `en_US` is written
+## from it by tools/english_us.py.
 ##
 ## Screens never hold text of their own. They call `Strings.t(key)`, and a
 ## pseudo-locale in the tests wraps every catalogue string, so a word typed
@@ -10,7 +13,7 @@ class_name Strings
 ## The client's own words, and the content's names (law, note, resonance,
 ## chord, ward, ground), which tools/client_strings.py writes from content/.
 const CATALOGUES := ["res://i18n/strings.csv", "res://i18n/content.csv"]
-const LOCALES := ["en", "pt_BR"]
+const LOCALES := ["en", "en_US", "pt_BR", "pt_PT", "de", "fr"]
 
 static var _loaded := false
 static var _rows := {}
@@ -72,7 +75,22 @@ static func set_locale(locale: String) -> void:
 	TranslationServer.set_locale(locale)
 
 
-## The locale a new player starts in: Portuguese on a phone set to any
-## Portuguese, English otherwise.
+## The locale a new player starts in, from the phone's: Brazilian Portuguese
+## in Brazil and European Portuguese anywhere else Portuguese is spoken;
+## English's US form in the United States and British English anywhere else;
+## German and French wherever they are spoken; British English otherwise.
 static func default_locale() -> String:
-	return "pt_BR" if OS.get_locale_language() == "pt" else "en"
+	return locale_for(OS.get_locale())
+
+
+static func locale_for(phone: String) -> String:
+	var language := phone.get_slice("_", 0)
+	var region := phone.get_slice("_", 1) if phone.contains("_") else ""
+	match language:
+		"pt":
+			return "pt_BR" if region == "BR" else "pt_PT"
+		"en":
+			return "en_US" if region == "US" else "en"
+		"de", "fr":
+			return language
+	return "en"

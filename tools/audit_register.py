@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "D99"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9857,6 +9857,36 @@ dict(id="F62", kind="finding", severity="significant", status="open",
          "holds 38.8% with the ladder against a band centred on 37.5%; the edits "
          "are drafted."),
 
+dict(id="D99", kind="deviation", severity="significant", status="open",
+     title="The owner added four languages to §20.6’s two: the game ships in "
+           "English (UK and US), Portuguese (Brazil and Portugal), German and French",
+     refs=["20.6", "26.3", "26.4", "26.9", "19.20"],
+     body="§20.6: <em>“Languages at launch: English and Brazilian Portuguese. "
+          "Store listings are localised more widely … as the demand test, and each "
+          "season the locale whose listing brought the most installs is translated "
+          "next, one at a time.”</em> The owner asked for more after v3.7: "
+          "<em>“Portuguese from Portugal, German and French at least. In English we "
+          "should have UK and US.”</em> The client now has the six "
+          "(<code>client/i18n/strings.csv</code>, one column a language): British "
+          "English as the document writes it; US English written from it by a "
+          "spelling table (<code>tools/english_us.py</code>), never typed; "
+          "European Portuguese, German and French drafted here and checked by "
+          "test for every key and placeholder. A new player starts in the "
+          "phone’s language. The phones’ notification tables, the server’s island "
+          "names (each language’s word order and gender) and the language picker "
+          "follow. The coined names stay English in every new column until the "
+          "owner names them after §26.9’s read-aloud, which now runs in four "
+          "languages, not two. Every screen passes its layout checks in all six at "
+          "150% and 200% text; the builder’s status now scrolls in its place, "
+          "since German and French lines wrap where English does not. Two "
+          "tensions: §26.4’s demand test, which picks the next language from the "
+          "listings’ installs, no longer picks German or French; and the drafted "
+          "European Portuguese, German and French want a native speaker’s read "
+          "before launch, as the Brazilian Portuguese does.",
+     rec="State the six languages in §20.6, §26.3 and §26.4 (the edits are "
+         "drafted); keep §26.4’s demand test for the languages after these; have "
+         "a native speaker read each drafted language."),
+
 dict(id="G83", kind="gap", severity="minor", status="open",
      title="§7.6 and §12.11 leave open what a foiled heist’s page is, which heists "
            "count to the floor and which law a friend’s page is of; the server "
@@ -11375,6 +11405,13 @@ V37 = {
 "F62": dict(status="open", left="document", note=
     "Found building TD.69, after v3.7: a balance figure for the document, with "
     "its edits drafted (TD.75)."),
+
+"D99": dict(status="open", left="document", note=
+    "Asked by the owner after v3.7, and built: six languages in the client, "
+    "the phones’ notification tables and the server’s island names, US English "
+    "written from British by a spelling table. Left: the document’s §20.6, "
+    "§26.3 and §26.4 (drafted), the coined names in each language (the "
+    "owner’s, §26.9), and a native speaker’s read of the drafted languages."),
 
 "G83": dict(status="open", left="document", note=
     "Found building TC.12, after v3.7: what a foiled heist's page is, which "
@@ -14807,6 +14844,20 @@ EDITS = {
                  "for one task in three); iteration 415 (301 to 531), a floor at 1x "
                  "the build; plan about 830 (602 to 1,062)",
          why="§26.8 and §27.2, with phases 4a to 4c. C72."),
+],
+"D99": [
+    dict(section="20.6", action="replace",
+         find="Languages at launch: English and Brazilian Portuguese. Store listings are localised more widely — Spanish, French, German, Italian, Japanese, Korean and Chinese — as the demand test",
+         replace="Languages at launch: English (UK and US), Portuguese (Brazil and Portugal), German and French. Store listings are localised more widely — Spanish, Italian, Japanese, Korean and Chinese — as the demand test",
+         why="The owner’s six languages. D99."),
+    dict(section="26.3", action="replace",
+         find="both launch languages, English and Brazilian Portuguese, and a native-speaker read-aloud of every coined name in both (26.9)",
+         replace="the launch languages — English (UK and US), Portuguese (Brazil and Portugal), German and French — and a native-speaker read-aloud of every coined name in each (26.9)",
+         why="Translation and the read-aloud now cover four languages. D99."),
+    dict(section="26.4", action="replace",
+         find="English and Brazilian Portuguese at launch.",
+         replace="English, Portuguese, German and French at launch.",
+         why="The demand test starts after the owner’s six. D99."),
 ],
 "G83": [
     dict(section="7.6", action="replace",

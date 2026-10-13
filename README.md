@@ -63,7 +63,7 @@ against itself, each a decision
 v3.6 itself answers none of the 70 items open against v3.4, narrows G28 and F37,
 and reopens C11.
 
-Seven versions have now answered the audit. **198 of 323 register items are fixed
+Seven versions have now answered the audit. **198 of 324 register items are fixed
 in the document itself**, the latest 87 by v3.7. 81 are still open: 49 of the
 139 open against v3.6 (39 waiting on the build, ten partly done with their edits
 drafted) and 32 of the 33 found reading v3.7 or building against it.
@@ -234,6 +234,7 @@ tools/
   build_roadmap.py                renders it, computing progress from the register
   client_strings.py               writes client/i18n/content.csv, the content's names, from content/
   native_strings.py               writes the phones' notification tables, iOS and Android, from client/platform/notifications.csv
+  english_us.py                   writes US English from British English by a spelling table, in the catalogues and the island words
   client_contract.py              the client's server routes and failure words, checked against server/src/http.mjs
   privacy_manifest.py             writes the iPhone build's privacy manifest from server/privacy.json
   league_model.py                 fits the league boundaries to §14.7's shares; writes server/src/leagues.json
@@ -340,11 +341,11 @@ python3 -I tools/compare_module.py PATH/TO/ruleborn-data.js
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 323 tracked items with section references and status:
+document, as 324 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 233 are drafted across 105
+the sentence as it stands today, and what to put there. 236 are drafted across 106
 items, and every quoted sentence is checked against v3.7 by
 `python3 tools/check_edits.py`, which fails the build if one is not there or
 appears twice — because an edit naming a sentence nobody wrote is worse than no

@@ -353,7 +353,7 @@ DELIVERABLES = [
         "the router shows a route's scene, and the screen history is in the store and its log",
         "the store changes a slice only through an action its reducer owns, tells who listens, and logs every action")),
     ("2", "Localisation", FRONTEND, client_tests(
-        "every string a screen asks for is in the catalogue, in English and Brazilian Portuguese, with the same placeholders",
+        "every string a screen asks for is in the catalogue, in each of the game's languages, with the same placeholders",
         "no screen shows a word that is not from the catalogue")),
     ("2", "Portrait interface", FRONTEND, client_tests(
         "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:19.5",
@@ -613,7 +613,7 @@ DELIVERABLES = [
         "a receipt the network cannot carry, or that the server cannot check with the store yet, waits in the outbox and is sent later, never lost (§24.12, D67)",
         "against the server: the track shows this season, its first tier is claimed free and pays its Essence into the wallet, and the premium track is offered at its price; the store's receipt is checked by the server (§18.2, §22.1)",
         "money and numbers are written the player's way: €6.00 and 11,250 in English, €6,00 and 11.250 in Portuguese, and the store's own price before the server's (§19.12)",
-        "the track shows the season, the stars in hand, the next tier and its price, and each tier's rewards from both tracks, claimed or not, in both languages (§18.2)",
+        "the track shows the season, the stars in hand, the next tier and its price, and each tier's rewards from both tracks, claimed or not, in every language (§18.2)",
         "the track, shop and wallet reducers change only their own slice, keep what they had when a call fails, and name the failure")),
 
     ("9", "Leagues", BACKEND, server_tests(
@@ -641,12 +641,19 @@ DELIVERABLES = [
     # §26.9: the coined names are the owner's to translate, after a native
     # speaker's read-aloud; a name invented here is a translation nobody
     # decided on (tools/client_strings.py).
+    # The languages: §20.6's English and Brazilian Portuguese, and the four
+    # the owner added (D99): US English, European Portuguese, German, French.
     ("10 to 13", "Localisation: English and Brazilian Portuguese", FRONTEND, parts(
         client_tests(
-            "every string a screen asks for is in the catalogue, in English and Brazilian Portuguese, with the same placeholders"),
-        not_started("phase 4b's screens are built, their words in both languages"),
-        not_started("every coined name in content.csv has its Portuguese, the owner's (§26.9)"),
-        not_started("a native speaker has read every coined name aloud (§26.9)"))),
+            "every string a screen asks for is in the catalogue, in each of the game's languages, with the same placeholders"),
+        client_tests(
+            "a new player starts in the phone's language: Portuguese and English by region, German and French, "
+            "British English otherwise, and the picker names each language in itself"),
+        not_started("phase 4b's screens are built, their words in every language"),
+        not_started("every coined name in content.csv has each language's name, the owner's (§26.9)"),
+        not_started("a native speaker has read every coined name aloud, in each language (§26.9)"),
+        not_started("a native speaker has read the European Portuguese, German and French interface "
+                    "strings, which were drafted here, not commissioned (D99)"))),
     # §20.8's table, area by area, and §21.8's and §21.10's checks, on every
     # screen (client/tests/a11y_tests.gd). VoiceOver and TalkBack on a phone
     # are the device matrix's.

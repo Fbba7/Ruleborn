@@ -1,0 +1,13 @@
+/* Written by tools/native_strings.py from client/platform/notifications.csv; edit that. */
+"ruleborn_raided_title" = "A tua ilha foi assaltada";
+"ruleborn_raided_body" = "Assaltos contra a tua ilha: %@. Vê como se aguentou a tua defesa.";
+"ruleborn_reminder_title" = "O teu lembrete diário";
+"ruleborn_reminder_body" = "A tua ilha está pronta quando estiveres.";
+"ruleborn_reminder_raided_title" = "O teu lembrete diário";
+"ruleborn_reminder_raided_body" = "Assaltos contra a tua ilha hoje: %@. Vê como se aguentou a tua defesa.";
+"ruleborn_storage_full_title" = "Armazenamento cheio";
+"ruleborn_storage_full_body" = "Um produtor está cheio. Recolhe-o para não perderes o que produziu.";
+"ruleborn_rested_title" = "Uma personagem descansou";
+"ruleborn_rested_body" = "Está pronta para o próximo assalto.";
+"ruleborn_experiment_title" = "Experiência concluída";
+"ruleborn_experiment_body" = "O Lab tem um resultado para ti.";

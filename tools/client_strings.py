@@ -11,11 +11,13 @@ client shows them, and every word the client shows comes from its catalogue
 (client/scripts/strings.gd), so this writes them there rather than anyone
 typing them twice.
 
-The Portuguese column is the English name for now. These are the coined words
-§26.9 sends to a native speaker's read-aloud before anything is translated,
-and a name invented here would be a translation nobody decided on; the column
-is filled so the catalogue test holds every key to both languages, and the
-real names replace it when that read is done.
+Every language's column but English is the English name for now. These are
+the coined words §26.9 sends to a native speaker's read-aloud before anything
+is translated, and a name invented here would be a translation nobody
+decided on; the columns are filled so the catalogue test holds every key to
+every language, and the owner's names replace them when that read is done.
+The languages are client/i18n/strings.csv's columns, their one home; US
+English is the name in US spelling (tools/english_us.py).
 """
 
 import csv
@@ -56,12 +58,19 @@ def rows() -> list[tuple[str, str]]:
     return out
 
 
+def locales() -> list[str]:
+    """The game's languages: client/i18n/strings.csv's columns."""
+    with (ROOT / "client" / "i18n" / "strings.csv").open(encoding="utf-8", newline="") as f:
+        return next(csv.reader(f))[1:]
+
+
 def render() -> str:
+    from english_us import us
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")
-    w.writerow(["key", "en", "pt_BR"])
+    w.writerow(["key", *locales()])
     for key, name in rows():
-        w.writerow([key, name, name])
+        w.writerow([key, *[us(name) if loc == "en_US" else name for loc in locales()]])
     return buf.getvalue()
 
 

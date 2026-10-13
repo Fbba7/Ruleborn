@@ -1,13 +1,13 @@
-key,en,pt_BR
-ruleborn_raided_title,Your island was raided,Sua ilha foi assaltada
-ruleborn_raided_body,Heists against your island: {0}. See how your defence held.,Assaltos contra a sua ilha: {0}. Veja como a sua defesa se saiu.
-ruleborn_reminder_title,Your daily reminder,Seu lembrete diário
-ruleborn_reminder_body,Your island is ready when you are.,Sua ilha está pronta quando você estiver.
-ruleborn_reminder_raided_title,Your daily reminder,Seu lembrete diário
-ruleborn_reminder_raided_body,Heists against your island today: {0}. See how your defence held.,Assaltos contra a sua ilha hoje: {0}. Veja como a sua defesa se saiu.
-ruleborn_storage_full_title,Storage full,Armazenamento cheio
-ruleborn_storage_full_body,A producer is full. Collect it so its work is not lost.,Um produtor está cheio. Faça a coleta para não perder o que ele fez.
-ruleborn_rested_title,A character has rested,Um personagem descansou
-ruleborn_rested_body,They are ready for the next heist.,Está pronto para o próximo assalto.
-ruleborn_experiment_title,Experiment finished,Experimento concluído
-ruleborn_experiment_body,The Lab has a result for you.,O Lab tem um resultado para você.
+key,en,en_US,pt_BR,pt_PT,de,fr
+ruleborn_raided_title,Your island was raided,Your island was raided,Sua ilha foi assaltada,A tua ilha foi assaltada,Deine Insel wurde überfallen,Ton île a été braquée
+ruleborn_raided_body,Heists against your island: {0}. See how your defence held.,Heists against your island: {0}. See how your defense held.,Assaltos contra a sua ilha: {0}. Veja como a sua defesa se saiu.,Assaltos contra a tua ilha: {0}. Vê como se aguentou a tua defesa.,"Raubzüge gegen deine Insel: {0}. Sieh nach, wie deine Abwehr hielt.",Casses contre ton île : {0}. Découvre comment ta défense a tenu.
+ruleborn_reminder_title,Your daily reminder,Your daily reminder,Seu lembrete diário,O teu lembrete diário,Deine tägliche Erinnerung,Ton rappel du jour
+ruleborn_reminder_body,Your island is ready when you are.,Your island is ready when you are.,Sua ilha está pronta quando você estiver.,A tua ilha está pronta quando estiveres.,"Deine Insel ist bereit, wenn du es bist.",Ton île t'attend quand tu veux.
+ruleborn_reminder_raided_title,Your daily reminder,Your daily reminder,Seu lembrete diário,O teu lembrete diário,Deine tägliche Erinnerung,Ton rappel du jour
+ruleborn_reminder_raided_body,Heists against your island today: {0}. See how your defence held.,Heists against your island today: {0}. See how your defense held.,Assaltos contra a sua ilha hoje: {0}. Veja como a sua defesa se saiu.,Assaltos contra a tua ilha hoje: {0}. Vê como se aguentou a tua defesa.,"Raubzüge gegen deine Insel heute: {0}. Sieh nach, wie deine Abwehr hielt.",Casses contre ton île aujourd'hui : {0}. Découvre comment ta défense a tenu.
+ruleborn_storage_full_title,Storage full,Storage full,Armazenamento cheio,Armazenamento cheio,Lager voll,Stockage plein
+ruleborn_storage_full_body,A producer is full. Collect it so its work is not lost.,A producer is full. Collect it so its work is not lost.,Um produtor está cheio. Faça a coleta para não perder o que ele fez.,Um produtor está cheio. Recolhe-o para não perderes o que produziu.,"Ein Produzent ist voll. Sammle ein, damit nichts verloren geht.",Un producteur est plein. Récolte-le pour ne rien perdre.
+ruleborn_rested_title,A character has rested,A character has rested,Um personagem descansou,Uma personagem descansou,Ein Charakter hat sich ausgeruht,Un personnage s'est reposé
+ruleborn_rested_body,They are ready for the next heist.,They are ready for the next heist.,Está pronto para o próximo assalto.,Está pronta para o próximo assalto.,Bereit für den nächsten Raubzug.,Il est prêt pour le prochain casse.
+ruleborn_experiment_title,Experiment finished,Experiment finished,Experimento concluído,Experiência concluída,Experiment beendet,Expérience terminée
+ruleborn_experiment_body,The Lab has a result for you.,The Lab has a result for you.,O Lab tem um resultado para você.,O Lab tem um resultado para ti.,Das Lab hat ein Ergebnis für dich.,Le Lab a un résultat pour toi.

@@ -2396,6 +2396,33 @@ dict(
                   "server says (tests against the fake server)",
              blocked_by=[],
              register=["D68", "G29"]),
+        dict(id="TD.76", owner="claude", status="doing",
+             title="The owner's six languages: English (UK and US), Portuguese "
+                   "(Brazil and Portugal), German and French",
+             detail="§20.6 launches in English and Brazilian Portuguese; the owner "
+                    "asked for European Portuguese, German and French, and English "
+                    "in UK and US forms (D99). <strong>Built:</strong> the "
+                    "client's catalogue, one column a language, with British "
+                    "English as the document writes it and US English written from "
+                    "it by <code>tools/english_us.py</code>'s spelling table; the "
+                    "European Portuguese, German and French drafted and held by "
+                    "test to every key and placeholder; a new player starting in "
+                    "the phone's language; the picker naming each language in "
+                    "itself; the phones' notification tables in all six; the "
+                    "server's island names in each language's order and gender; "
+                    "every screen laid out at 150% and 200% in all six, the "
+                    "builder's status scrolling in its place. <strong>Left:"
+                    "</strong> the coined names in each language, the owner's "
+                    "after §26.9's read-aloud; a native speaker's read of the "
+                    "drafted languages; the document's §20.6, §26.3 and §26.4 "
+                    "(drafted).",
+             gate="every string in every language with the same placeholders "
+                  "(the catalogue test); a new player in the phone's language (a "
+                  "test); every screen's layout at large text in every language "
+                  "(the accessibility tests); the notification tables and the US "
+                  "English checked in check_all.sh",
+             blocked_by=[],
+             register=["D99"]),
         # -- Track D: the screens, the slice's first -------------------------
         dict(id="TD.17", owner="claude", status="blocked",
              title="Heist and result on the design, on the flat view",

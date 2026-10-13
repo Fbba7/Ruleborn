@@ -8,7 +8,7 @@ extends RefCounted
 
 
 ## A name the server gives in each language ({"en": …, "pt_BR": …}), in
-## the player's; a plain string as it is.
+## the player's, else English; a plain string as it is.
 static func named(v: Variant) -> String:
 	if v is Dictionary:
 		var d: Dictionary = v
@@ -17,8 +17,10 @@ static func named(v: Variant) -> String:
 
 
 ## A name made from the word lists, as the server makes it (workshop.mjs's
-## Workshop.name): "Quiet Harbour"; in Portuguese the noun first and the
-## adjective agreeing with it, "Porto Silencioso".
+## Workshop.name): "Quiet Harbour", "Quiet Harbor" in US English; in
+## Portuguese and French the noun first and the adjective agreeing with it,
+## "Porto Silencioso"; in German the adjective first in the noun's gender's
+## ending, "Stiller Hafen".
 static func word_name(words: Dictionary, adjective: int, noun: int) -> String:
 	var adjectives: Array = words.get("adjectives", [])
 	var nouns: Array = words.get("nouns", [])
@@ -26,9 +28,22 @@ static func word_name(words: Dictionary, adjective: int, noun: int) -> String:
 		return ""
 	var a: Dictionary = adjectives[adjective % adjectives.size()]
 	var n: Dictionary = nouns[noun % nouns.size()]
-	if TranslationServer.get_locale() == "pt_BR":
-		return "%s %s" % [str(n.get("pt_BR", "")), str((a.get("pt_BR", {}) as Dictionary).get(n.get("gender", "m"), ""))]
+	var locale := TranslationServer.get_locale()
+	match locale:
+		"pt_BR":
+			return "%s %s" % [str(n.get("pt_BR", "")), _form(a, "pt_BR", str(n.get("gender", "m")))]
+		"pt_PT", "fr":
+			return "%s %s" % [str(n.get(locale, "")), _form(a, locale, str(n.get(locale + "_gender", "m")))]
+		"de":
+			return "%s %s" % [_form(a, "de", str(n.get("de_gender", "m"))), str(n.get("de", ""))]
+		"en_US":
+			return "%s %s" % [str(a.get("en_US", a.get("en", ""))), str(n.get("en_US", n.get("en", "")))]
 	return "%s %s" % [str(a.get("en", "")), str(n.get("en", ""))]
+
+
+## An adjective's form in `locale` for a noun of `gender`.
+static func _form(adjective: Dictionary, locale: String, gender: String) -> String:
+	return str((adjective.get(locale, {}) as Dictionary).get(gender, ""))
 
 
 ## A player as the screens name them: "you", or "Keeper 3F2A".

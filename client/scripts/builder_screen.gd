@@ -56,10 +56,17 @@ func _build() -> void:
 	column.add_child(view)
 	status_label = UI.label("", UI.TEXT_POINTS, true)
 	together_label = UI.label("", UI.TEXT_POINTS, true)
-	var words := VBoxContainer.new()
+	# What the island says scrolls in its place when it runs long, so the
+	# controls below keep theirs: at §20.8's 200% a German or French line
+	# wraps where an English one does not, and would push the bottom row
+	# into the phone's safe area. It takes a share of the room the realm
+	# leaves, never less than a line.
+	var words := UI.scroll(column, true)
+	var said := words.get_parent().get_parent() as ScrollContainer
+	said.size_flags_stretch_ratio = 0.4
+	said.custom_minimum_size.y = UI.px(UI.TEXT_POINTS * 2)
 	words.add_child(status_label)
 	words.add_child(together_label)
-	column.add_child(UI.plate(words))
 
 	var tools := UI.row()
 	tool_button = UI.button("", next_tool)

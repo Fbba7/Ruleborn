@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { Refused, clockTicks } from "../src/service.mjs";
-import { BUILDER_SLOTS, SLOTS, SPIKE_MIN, Workshop } from "../src/workshop.mjs";
+import { BUILDER_SLOTS, SLOTS, SPIKE_MIN, WORDS, Workshop } from "../src/workshop.mjs";
 import { T0, established, openPlan, server } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
@@ -46,8 +46,12 @@ test("an island reaches the Workshop only once its creator has cleared it (18.6)
   refusal(() => t.w.publish(me, t.island, t.cleared, { adjective: 99, noun: 0 }),
           "name_not_from_the_word_lists");
   const item = t.w.publish(me, t.island, t.cleared, t.name);
-  assert.deepEqual(item.name, { en: "Hidden Isle", pt_BR: "Ilha Oculta" },
-                   "a name from the word lists, in both launch languages");
+  assert.deepEqual(item.name, { en: "Hidden Isle", en_US: "Hidden Isle", pt_BR: "Ilha Oculta",
+                                pt_PT: "Ilha Oculta", de: "Verborgene Insel", fr: "Île Cachée" },
+                   "a name from the word lists, in each of the game's languages, agreeing in gender");
+  const harbour = Workshop.name(1, WORDS.nouns.findIndex((n) => n.en === "Harbour"));
+  assert.equal(harbour.en_US, "Hidden Harbor", "US spelling");
+  assert.equal(harbour.de, "Verborgener Hafen", "a masculine noun takes the masculine ending");
   assert.equal(item.creator, me);
   assert.deepEqual(t.service.bundle(item.bundle), t.island);
 });

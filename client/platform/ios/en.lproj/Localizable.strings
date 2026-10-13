@@ -1,10 +1,10 @@
 /* Written by tools/native_strings.py from client/platform/notifications.csv; edit that. */
 "ruleborn_raided_title" = "Your island was raided";
-"ruleborn_raided_body" = "Heists against your island: %@. See how your defence held.";
+"ruleborn_raided_body" = "Heists against your island: %@. See how your defense held.";
 "ruleborn_reminder_title" = "Your daily reminder";
 "ruleborn_reminder_body" = "Your island is ready when you are.";
 "ruleborn_reminder_raided_title" = "Your daily reminder";
-"ruleborn_reminder_raided_body" = "Heists against your island today: %@. See how your defence held.";
+"ruleborn_reminder_raided_body" = "Heists against your island today: %@. See how your defense held.";
 "ruleborn_storage_full_title" = "Storage full";
 "ruleborn_storage_full_body" = "A producer is full. Collect it so its work is not lost.";
 "ruleborn_rested_title" = "A character has rested";

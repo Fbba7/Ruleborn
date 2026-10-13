@@ -90,7 +90,7 @@ func _track_words() -> void:
 	var five: Dictionary = rows[4]
 	var pt_rows: Array = out["pt_BR"]["rows"]
 	check.call("the track shows the season, the stars in hand, the next tier and its price, and each tier's "
-			+ "rewards from both tracks, claimed or not, in both languages (§18.2)",
+			+ "rewards from both tracks, claimed or not, in every language (§18.2)",
 		en["title"].contains("1") and en["stars"].contains("30") and en["next"].contains("5")
 			and en["next"].contains("20") and en["can_claim"] and rows.size() == 10
 			and rows[0]["state"] == "claimed" and five["state"] == "next" and five["premium_held"]

@@ -1,11 +1,24 @@
 {
- "_what": "§18.6: \"island names come from word lists\". The document gives no lists, so these are this server's (G26); the owner decided 64 of each, 4,096 names. A name is an adjective and a noun, stored as two indices, so every client shows it in its own language: English puts the adjective first; Brazilian Portuguese puts the noun first and the adjective in the noun's gender. Indices are never reused or reordered: a published name is two numbers.",
+ "_what": "§18.6: \"island names come from word lists\". The document gives no lists, so these are this server's (G26); the owner decided 64 of each, 4,096 names. A name is an adjective and a noun, stored as two indices, so every client shows it in its own language: English puts the adjective first (en_US where its US spelling differs, written by tools/english_us.py); Portuguese (pt_BR, pt_PT) and French put the noun first and the adjective in the noun's gender (gender is pt_BR's; pt_PT_gender and fr_gender theirs); German puts the adjective first in the strong ending for de_gender. Indices are never reused or reordered: a published name is two numbers.",
  "adjectives": [
   {
    "en": "Amber",
    "pt_BR": {
     "m": "Âmbar",
     "f": "Âmbar"
+   },
+   "pt_PT": {
+    "m": "Âmbar",
+    "f": "Âmbar"
+   },
+   "de": {
+    "m": "Bernsteinfarbener",
+    "f": "Bernsteinfarbene",
+    "n": "Bernsteinfarbenes"
+   },
+   "fr": {
+    "m": "Ambré",
+    "f": "Ambrée"
    }
   },
   {
@@ -13,6 +26,19 @@
    "pt_BR": {
     "m": "Oculto",
     "f": "Oculta"
+   },
+   "pt_PT": {
+    "m": "Oculto",
+    "f": "Oculta"
+   },
+   "de": {
+    "m": "Verborgener",
+    "f": "Verborgene",
+    "n": "Verborgenes"
+   },
+   "fr": {
+    "m": "Caché",
+    "f": "Cachée"
    }
   },
   {
@@ -20,12 +46,38 @@
    "pt_BR": {
     "m": "Silencioso",
     "f": "Silenciosa"
+   },
+   "pt_PT": {
+    "m": "Silencioso",
+    "f": "Silenciosa"
+   },
+   "de": {
+    "m": "Stiller",
+    "f": "Stille",
+    "n": "Stilles"
+   },
+   "fr": {
+    "m": "Silencieux",
+    "f": "Silencieuse"
    }
   },
   {
    "en": "Drifting",
    "pt_BR": {
     "m": "Errante",
+    "f": "Errante"
+   },
+   "pt_PT": {
+    "m": "Errante",
+    "f": "Errante"
+   },
+   "de": {
+    "m": "Treibender",
+    "f": "Treibende",
+    "n": "Treibendes"
+   },
+   "fr": {
+    "m": "Errant",
     "f": "Errante"
    }
   },
@@ -34,6 +86,19 @@
    "pt_BR": {
     "m": "Dourado",
     "f": "Dourada"
+   },
+   "pt_PT": {
+    "m": "Dourado",
+    "f": "Dourada"
+   },
+   "de": {
+    "m": "Goldener",
+    "f": "Goldene",
+    "n": "Goldenes"
+   },
+   "fr": {
+    "m": "Doré",
+    "f": "Dorée"
    }
   },
   {
@@ -41,6 +106,19 @@
    "pt_BR": {
     "m": "Adormecido",
     "f": "Adormecida"
+   },
+   "pt_PT": {
+    "m": "Adormecido",
+    "f": "Adormecida"
+   },
+   "de": {
+    "m": "Schlafender",
+    "f": "Schlafende",
+    "n": "Schlafendes"
+   },
+   "fr": {
+    "m": "Endormi",
+    "f": "Endormie"
    }
   },
   {
@@ -48,6 +126,19 @@
    "pt_BR": {
     "m": "Sinuoso",
     "f": "Sinuosa"
+   },
+   "pt_PT": {
+    "m": "Sinuoso",
+    "f": "Sinuosa"
+   },
+   "de": {
+    "m": "Gewundener",
+    "f": "Gewundene",
+    "n": "Gewundenes"
+   },
+   "fr": {
+    "m": "Sinueux",
+    "f": "Sinueuse"
    }
   },
   {
@@ -55,6 +146,19 @@
    "pt_BR": {
     "m": "Torto",
     "f": "Torta"
+   },
+   "pt_PT": {
+    "m": "Torto",
+    "f": "Torta"
+   },
+   "de": {
+    "m": "Krummer",
+    "f": "Krumme",
+    "n": "Krummes"
+   },
+   "fr": {
+    "m": "Tordu",
+    "f": "Tordue"
    }
   },
   {
@@ -62,6 +166,19 @@
    "pt_BR": {
     "m": "Prateado",
     "f": "Prateada"
+   },
+   "pt_PT": {
+    "m": "Prateado",
+    "f": "Prateada"
+   },
+   "de": {
+    "m": "Silberner",
+    "f": "Silberne",
+    "n": "Silbernes"
+   },
+   "fr": {
+    "m": "Argenté",
+    "f": "Argentée"
    }
   },
   {
@@ -69,6 +186,19 @@
    "pt_BR": {
     "m": "Nebuloso",
     "f": "Nebulosa"
+   },
+   "pt_PT": {
+    "m": "Nebuloso",
+    "f": "Nebulosa"
+   },
+   "de": {
+    "m": "Nebliger",
+    "f": "Neblige",
+    "n": "Nebliges"
+   },
+   "fr": {
+    "m": "Brumeux",
+    "f": "Brumeuse"
    }
   },
   {
@@ -76,6 +206,19 @@
    "pt_BR": {
     "m": "Afundado",
     "f": "Afundada"
+   },
+   "pt_PT": {
+    "m": "Afundado",
+    "f": "Afundada"
+   },
+   "de": {
+    "m": "Versunkener",
+    "f": "Versunkene",
+    "n": "Versunkenes"
+   },
+   "fr": {
+    "m": "Englouti",
+    "f": "Engloutie"
    }
   },
   {
@@ -83,6 +226,19 @@
    "pt_BR": {
     "m": "Brilhante",
     "f": "Brilhante"
+   },
+   "pt_PT": {
+    "m": "Brilhante",
+    "f": "Brilhante"
+   },
+   "de": {
+    "m": "Heller",
+    "f": "Helle",
+    "n": "Helles"
+   },
+   "fr": {
+    "m": "Brillant",
+    "f": "Brillante"
    }
   },
   {
@@ -90,6 +246,19 @@
    "pt_BR": {
     "m": "Oco",
     "f": "Oca"
+   },
+   "pt_PT": {
+    "m": "Oco",
+    "f": "Oca"
+   },
+   "de": {
+    "m": "Hohler",
+    "f": "Hohle",
+    "n": "Hohles"
+   },
+   "fr": {
+    "m": "Creux",
+    "f": "Creuse"
    }
   },
   {
@@ -97,6 +266,19 @@
    "pt_BR": {
     "m": "Musgoso",
     "f": "Musgosa"
+   },
+   "pt_PT": {
+    "m": "Musgoso",
+    "f": "Musgosa"
+   },
+   "de": {
+    "m": "Moosiger",
+    "f": "Moosige",
+    "n": "Moosiges"
+   },
+   "fr": {
+    "m": "Moussu",
+    "f": "Moussue"
    }
   },
   {
@@ -104,6 +286,19 @@
    "pt_BR": {
     "m": "Ventoso",
     "f": "Ventosa"
+   },
+   "pt_PT": {
+    "m": "Ventoso",
+    "f": "Ventosa"
+   },
+   "de": {
+    "m": "Windiger",
+    "f": "Windige",
+    "n": "Windiges"
+   },
+   "fr": {
+    "m": "Venteux",
+    "f": "Venteuse"
    }
   },
   {
@@ -111,6 +306,19 @@
    "pt_BR": {
     "m": "Estrelado",
     "f": "Estrelada"
+   },
+   "pt_PT": {
+    "m": "Estrelado",
+    "f": "Estrelada"
+   },
+   "de": {
+    "m": "Sternklarer",
+    "f": "Sternklare",
+    "n": "Sternklares"
+   },
+   "fr": {
+    "m": "Étoilé",
+    "f": "Étoilée"
    }
   },
   {
@@ -118,6 +326,19 @@
    "pt_BR": {
     "m": "Antigo",
     "f": "Antiga"
+   },
+   "pt_PT": {
+    "m": "Antigo",
+    "f": "Antiga"
+   },
+   "de": {
+    "m": "Uralter",
+    "f": "Uralte",
+    "n": "Uraltes"
+   },
+   "fr": {
+    "m": "Ancien",
+    "f": "Ancienne"
    }
   },
   {
@@ -125,6 +346,19 @@
    "pt_BR": {
     "m": "Anil",
     "f": "Anil"
+   },
+   "pt_PT": {
+    "m": "Anil",
+    "f": "Anil"
+   },
+   "de": {
+    "m": "Azurblauer",
+    "f": "Azurblaue",
+    "n": "Azurblaues"
+   },
+   "fr": {
+    "m": "Azuré",
+    "f": "Azurée"
    }
   },
   {
@@ -132,6 +366,19 @@
    "pt_BR": {
     "m": "Florido",
     "f": "Florida"
+   },
+   "pt_PT": {
+    "m": "Florido",
+    "f": "Florida"
+   },
+   "de": {
+    "m": "Blühender",
+    "f": "Blühende",
+    "n": "Blühendes"
+   },
+   "fr": {
+    "m": "Fleuri",
+    "f": "Fleurie"
    }
   },
   {
@@ -139,6 +386,19 @@
    "pt_BR": {
     "m": "Arejado",
     "f": "Arejada"
+   },
+   "pt_PT": {
+    "m": "Arejado",
+    "f": "Arejada"
+   },
+   "de": {
+    "m": "Luftiger",
+    "f": "Luftige",
+    "n": "Luftiges"
+   },
+   "fr": {
+    "m": "Aéré",
+    "f": "Aérée"
    }
   },
   {
@@ -146,6 +406,19 @@
    "pt_BR": {
     "m": "Calmo",
     "f": "Calma"
+   },
+   "pt_PT": {
+    "m": "Calmo",
+    "f": "Calma"
+   },
+   "de": {
+    "m": "Ruhiger",
+    "f": "Ruhige",
+    "n": "Ruhiges"
+   },
+   "fr": {
+    "m": "Calme",
+    "f": "Calme"
    }
   },
   {
@@ -153,6 +426,19 @@
    "pt_BR": {
     "m": "Astuto",
     "f": "Astuta"
+   },
+   "pt_PT": {
+    "m": "Astuto",
+    "f": "Astuta"
+   },
+   "de": {
+    "m": "Kluger",
+    "f": "Kluge",
+    "n": "Kluges"
+   },
+   "fr": {
+    "m": "Futé",
+    "f": "Futée"
    }
   },
   {
@@ -160,6 +446,19 @@
    "pt_BR": {
     "m": "Nublado",
     "f": "Nublada"
+   },
+   "pt_PT": {
+    "m": "Nublado",
+    "f": "Nublada"
+   },
+   "de": {
+    "m": "Wolkiger",
+    "f": "Wolkige",
+    "n": "Wolkiges"
+   },
+   "fr": {
+    "m": "Nuageux",
+    "f": "Nuageuse"
    }
   },
   {
@@ -167,6 +466,19 @@
    "pt_BR": {
     "m": "Acobreado",
     "f": "Acobreada"
+   },
+   "pt_PT": {
+    "m": "Acobreado",
+    "f": "Acobreada"
+   },
+   "de": {
+    "m": "Kupferner",
+    "f": "Kupferne",
+    "n": "Kupfernes"
+   },
+   "fr": {
+    "m": "Cuivré",
+    "f": "Cuivrée"
    }
   },
   {
@@ -174,6 +486,19 @@
    "pt_BR": {
     "m": "Cristalino",
     "f": "Cristalina"
+   },
+   "pt_PT": {
+    "m": "Cristalino",
+    "f": "Cristalina"
+   },
+   "de": {
+    "m": "Kristallener",
+    "f": "Kristallene",
+    "n": "Kristallenes"
+   },
+   "fr": {
+    "m": "Cristallin",
+    "f": "Cristalline"
    }
   },
   {
@@ -181,6 +506,19 @@
    "pt_BR": {
     "m": "Dançante",
     "f": "Dançante"
+   },
+   "pt_PT": {
+    "m": "Dançante",
+    "f": "Dançante"
+   },
+   "de": {
+    "m": "Tanzender",
+    "f": "Tanzende",
+    "n": "Tanzendes"
+   },
+   "fr": {
+    "m": "Dansant",
+    "f": "Dansante"
    }
   },
   {
@@ -188,6 +526,19 @@
    "pt_BR": {
     "m": "Distante",
     "f": "Distante"
+   },
+   "pt_PT": {
+    "m": "Distante",
+    "f": "Distante"
+   },
+   "de": {
+    "m": "Ferner",
+    "f": "Ferne",
+    "n": "Fernes"
+   },
+   "fr": {
+    "m": "Lointain",
+    "f": "Lointaine"
    }
   },
   {
@@ -195,6 +546,19 @@
    "pt_BR": {
     "m": "Sonhador",
     "f": "Sonhadora"
+   },
+   "pt_PT": {
+    "m": "Sonhador",
+    "f": "Sonhadora"
+   },
+   "de": {
+    "m": "Träumender",
+    "f": "Träumende",
+    "n": "Träumendes"
+   },
+   "fr": {
+    "m": "Rêveur",
+    "f": "Rêveuse"
    }
   },
   {
@@ -202,6 +566,19 @@
    "pt_BR": {
     "m": "Ecoante",
     "f": "Ecoante"
+   },
+   "pt_PT": {
+    "m": "Ecoante",
+    "f": "Ecoante"
+   },
+   "de": {
+    "m": "Hallender",
+    "f": "Hallende",
+    "n": "Hallendes"
+   },
+   "fr": {
+    "m": "Résonnant",
+    "f": "Résonnante"
    }
   },
   {
@@ -209,6 +586,19 @@
    "pt_BR": {
     "m": "Esmeralda",
     "f": "Esmeralda"
+   },
+   "pt_PT": {
+    "m": "Esmeralda",
+    "f": "Esmeralda"
+   },
+   "de": {
+    "m": "Smaragdgrüner",
+    "f": "Smaragdgrüne",
+    "n": "Smaragdgrünes"
+   },
+   "fr": {
+    "m": "Émeraude",
+    "f": "Émeraude"
    }
   },
   {
@@ -216,6 +606,19 @@
    "pt_BR": {
     "m": "Infinito",
     "f": "Infinita"
+   },
+   "pt_PT": {
+    "m": "Infinito",
+    "f": "Infinita"
+   },
+   "de": {
+    "m": "Endloser",
+    "f": "Endlose",
+    "n": "Endloses"
+   },
+   "fr": {
+    "m": "Infini",
+    "f": "Infinie"
    }
   },
   {
@@ -223,6 +626,19 @@
    "pt_BR": {
     "m": "Desbotado",
     "f": "Desbotada"
+   },
+   "pt_PT": {
+    "m": "Desbotado",
+    "f": "Desbotada"
+   },
+   "de": {
+    "m": "Verblasster",
+    "f": "Verblasste",
+    "n": "Verblasstes"
+   },
+   "fr": {
+    "m": "Fané",
+    "f": "Fanée"
    }
   },
   {
@@ -230,6 +646,19 @@
    "pt_BR": {
     "m": "Flutuante",
     "f": "Flutuante"
+   },
+   "pt_PT": {
+    "m": "Flutuante",
+    "f": "Flutuante"
+   },
+   "de": {
+    "m": "Schwebender",
+    "f": "Schwebende",
+    "n": "Schwebendes"
+   },
+   "fr": {
+    "m": "Flottant",
+    "f": "Flottante"
    }
   },
   {
@@ -237,6 +666,19 @@
    "pt_BR": {
     "m": "Gelado",
     "f": "Gelada"
+   },
+   "pt_PT": {
+    "m": "Gelado",
+    "f": "Gelada"
+   },
+   "de": {
+    "m": "Frostiger",
+    "f": "Frostige",
+    "n": "Frostiges"
+   },
+   "fr": {
+    "m": "Givré",
+    "f": "Givrée"
    }
   },
   {
@@ -244,6 +686,19 @@
    "pt_BR": {
     "m": "Gentil",
     "f": "Gentil"
+   },
+   "pt_PT": {
+    "m": "Gentil",
+    "f": "Gentil"
+   },
+   "de": {
+    "m": "Sanfter",
+    "f": "Sanfte",
+    "n": "Sanftes"
+   },
+   "fr": {
+    "m": "Doux",
+    "f": "Douce"
    }
   },
   {
@@ -251,6 +706,19 @@
    "pt_BR": {
     "m": "Calado",
     "f": "Calada"
+   },
+   "pt_PT": {
+    "m": "Calado",
+    "f": "Calada"
+   },
+   "de": {
+    "m": "Leiser",
+    "f": "Leise",
+    "n": "Leises"
+   },
+   "fr": {
+    "m": "Feutré",
+    "f": "Feutrée"
    }
   },
   {
@@ -258,6 +726,19 @@
    "pt_BR": {
     "m": "Luminoso",
     "f": "Luminosa"
+   },
+   "pt_PT": {
+    "m": "Luminoso",
+    "f": "Luminosa"
+   },
+   "de": {
+    "m": "Glühender",
+    "f": "Glühende",
+    "n": "Glühendes"
+   },
+   "fr": {
+    "m": "Lumineux",
+    "f": "Lumineuse"
    }
   },
   {
@@ -265,6 +746,19 @@
    "pt_BR": {
     "m": "Verde",
     "f": "Verde"
+   },
+   "pt_PT": {
+    "m": "Verde",
+    "f": "Verde"
+   },
+   "de": {
+    "m": "Grüner",
+    "f": "Grüne",
+    "n": "Grünes"
+   },
+   "fr": {
+    "m": "Vert",
+    "f": "Verte"
    }
   },
   {
@@ -272,6 +766,19 @@
    "pt_BR": {
     "m": "Salgado",
     "f": "Salgada"
+   },
+   "pt_PT": {
+    "m": "Salgado",
+    "f": "Salgada"
+   },
+   "de": {
+    "m": "Salziger",
+    "f": "Salzige",
+    "n": "Salziges"
+   },
+   "fr": {
+    "m": "Salé",
+    "f": "Salée"
    }
   },
   {
@@ -279,6 +786,19 @@
    "pt_BR": {
     "m": "Solitário",
     "f": "Solitária"
+   },
+   "pt_PT": {
+    "m": "Solitário",
+    "f": "Solitária"
+   },
+   "de": {
+    "m": "Einsamer",
+    "f": "Einsame",
+    "n": "Einsames"
+   },
+   "fr": {
+    "m": "Solitaire",
+    "f": "Solitaire"
    }
   },
   {
@@ -286,6 +806,19 @@
    "pt_BR": {
     "m": "Perdido",
     "f": "Perdida"
+   },
+   "pt_PT": {
+    "m": "Perdido",
+    "f": "Perdida"
+   },
+   "de": {
+    "m": "Verlorener",
+    "f": "Verlorene",
+    "n": "Verlorenes"
+   },
+   "fr": {
+    "m": "Perdu",
+    "f": "Perdue"
    }
   },
   {
@@ -293,6 +826,19 @@
    "pt_BR": {
     "m": "Sortudo",
     "f": "Sortuda"
+   },
+   "pt_PT": {
+    "m": "Sortudo",
+    "f": "Sortuda"
+   },
+   "de": {
+    "m": "Glücklicher",
+    "f": "Glückliche",
+    "n": "Glückliches"
+   },
+   "fr": {
+    "m": "Chanceux",
+    "f": "Chanceuse"
    }
   },
   {
@@ -300,6 +846,19 @@
    "pt_BR": {
     "m": "Alegre",
     "f": "Alegre"
+   },
+   "pt_PT": {
+    "m": "Alegre",
+    "f": "Alegre"
+   },
+   "de": {
+    "m": "Fröhlicher",
+    "f": "Fröhliche",
+    "n": "Fröhliches"
+   },
+   "fr": {
+    "m": "Joyeux",
+    "f": "Joyeuse"
    }
   },
   {
@@ -307,6 +866,19 @@
    "pt_BR": {
     "m": "Enluarado",
     "f": "Enluarada"
+   },
+   "pt_PT": {
+    "m": "Enluarado",
+    "f": "Enluarada"
+   },
+   "de": {
+    "m": "Mondheller",
+    "f": "Mondhelle",
+    "n": "Mondhelles"
+   },
+   "fr": {
+    "m": "Lunaire",
+    "f": "Lunaire"
    }
   },
   {
@@ -314,6 +886,19 @@
    "pt_BR": {
     "m": "do Norte",
     "f": "do Norte"
+   },
+   "pt_PT": {
+    "m": "do Norte",
+    "f": "do Norte"
+   },
+   "de": {
+    "m": "Nördlicher",
+    "f": "Nördliche",
+    "n": "Nördliches"
+   },
+   "fr": {
+    "m": "Boréal",
+    "f": "Boréale"
    }
   },
   {
@@ -321,6 +906,19 @@
    "pt_BR": {
     "m": "Pintado",
     "f": "Pintada"
+   },
+   "pt_PT": {
+    "m": "Pintado",
+    "f": "Pintada"
+   },
+   "de": {
+    "m": "Bemalter",
+    "f": "Bemalte",
+    "n": "Bemaltes"
+   },
+   "fr": {
+    "m": "Peint",
+    "f": "Peinte"
    }
   },
   {
@@ -328,6 +926,19 @@
    "pt_BR": {
     "m": "Paciente",
     "f": "Paciente"
+   },
+   "pt_PT": {
+    "m": "Paciente",
+    "f": "Paciente"
+   },
+   "de": {
+    "m": "Geduldiger",
+    "f": "Geduldige",
+    "n": "Geduldiges"
+   },
+   "fr": {
+    "m": "Patient",
+    "f": "Patiente"
    }
   },
   {
@@ -335,6 +946,19 @@
    "pt_BR": {
     "m": "Orgulhoso",
     "f": "Orgulhosa"
+   },
+   "pt_PT": {
+    "m": "Orgulhoso",
+    "f": "Orgulhosa"
+   },
+   "de": {
+    "m": "Stolzer",
+    "f": "Stolze",
+    "n": "Stolzes"
+   },
+   "fr": {
+    "m": "Fier",
+    "f": "Fière"
    }
   },
   {
@@ -342,6 +966,19 @@
    "pt_BR": {
     "m": "Chuvoso",
     "f": "Chuvosa"
+   },
+   "pt_PT": {
+    "m": "Chuvoso",
+    "f": "Chuvosa"
+   },
+   "de": {
+    "m": "Regnerischer",
+    "f": "Regnerische",
+    "n": "Regnerisches"
+   },
+   "fr": {
+    "m": "Pluvieux",
+    "f": "Pluvieuse"
    }
   },
   {
@@ -349,6 +986,19 @@
    "pt_BR": {
     "m": "Inquieto",
     "f": "Inquieta"
+   },
+   "pt_PT": {
+    "m": "Inquieto",
+    "f": "Inquieta"
+   },
+   "de": {
+    "m": "Rastloser",
+    "f": "Rastlose",
+    "n": "Rastloses"
+   },
+   "fr": {
+    "m": "Agité",
+    "f": "Agitée"
    }
   },
   {
@@ -356,6 +1006,19 @@
    "pt_BR": {
     "m": "Rosado",
     "f": "Rosada"
+   },
+   "pt_PT": {
+    "m": "Rosado",
+    "f": "Rosada"
+   },
+   "de": {
+    "m": "Rosiger",
+    "f": "Rosige",
+    "n": "Rosiges"
+   },
+   "fr": {
+    "m": "Rosé",
+    "f": "Rosée"
    }
   },
   {
@@ -363,6 +1026,19 @@
    "pt_BR": {
     "m": "Secreto",
     "f": "Secreta"
+   },
+   "pt_PT": {
+    "m": "Secreto",
+    "f": "Secreta"
+   },
+   "de": {
+    "m": "Geheimer",
+    "f": "Geheime",
+    "n": "Geheimes"
+   },
+   "fr": {
+    "m": "Secret",
+    "f": "Secrète"
    }
   },
   {
@@ -370,6 +1046,19 @@
    "pt_BR": {
     "m": "Sombreado",
     "f": "Sombreada"
+   },
+   "pt_PT": {
+    "m": "Sombreado",
+    "f": "Sombreada"
+   },
+   "de": {
+    "m": "Schattiger",
+    "f": "Schattige",
+    "n": "Schattiges"
+   },
+   "fr": {
+    "m": "Ombragé",
+    "f": "Ombragée"
    }
   },
   {
@@ -377,6 +1066,19 @@
    "pt_BR": {
     "m": "Reluzente",
     "f": "Reluzente"
+   },
+   "pt_PT": {
+    "m": "Reluzente",
+    "f": "Reluzente"
+   },
+   "de": {
+    "m": "Strahlender",
+    "f": "Strahlende",
+    "n": "Strahlendes"
+   },
+   "fr": {
+    "m": "Radieux",
+    "f": "Radieuse"
    }
   },
   {
@@ -384,6 +1086,19 @@
    "pt_BR": {
     "m": "Cantante",
     "f": "Cantante"
+   },
+   "pt_PT": {
+    "m": "Cantante",
+    "f": "Cantante"
+   },
+   "de": {
+    "m": "Singender",
+    "f": "Singende",
+    "n": "Singendes"
+   },
+   "fr": {
+    "m": "Chantant",
+    "f": "Chantante"
    }
   },
   {
@@ -391,6 +1106,19 @@
    "pt_BR": {
     "m": "do Sul",
     "f": "do Sul"
+   },
+   "pt_PT": {
+    "m": "do Sul",
+    "f": "do Sul"
+   },
+   "de": {
+    "m": "Südlicher",
+    "f": "Südliche",
+    "n": "Südliches"
+   },
+   "fr": {
+    "m": "Austral",
+    "f": "Australe"
    }
   },
   {
@@ -398,6 +1126,19 @@
    "pt_BR": {
     "m": "Tempestuoso",
     "f": "Tempestuosa"
+   },
+   "pt_PT": {
+    "m": "Tempestuoso",
+    "f": "Tempestuosa"
+   },
+   "de": {
+    "m": "Stürmischer",
+    "f": "Stürmische",
+    "n": "Stürmisches"
+   },
+   "fr": {
+    "m": "Orageux",
+    "f": "Orageuse"
    }
   },
   {
@@ -405,6 +1146,19 @@
    "pt_BR": {
     "m": "Ensolarado",
     "f": "Ensolarada"
+   },
+   "pt_PT": {
+    "m": "Soalheiro",
+    "f": "Soalheira"
+   },
+   "de": {
+    "m": "Sonniger",
+    "f": "Sonnige",
+    "n": "Sonniges"
+   },
+   "fr": {
+    "m": "Ensoleillé",
+    "f": "Ensoleillée"
    }
   },
   {
@@ -412,6 +1166,19 @@
    "pt_BR": {
     "m": "Emaranhado",
     "f": "Emaranhada"
+   },
+   "pt_PT": {
+    "m": "Emaranhado",
+    "f": "Emaranhada"
+   },
+   "de": {
+    "m": "Verschlungener",
+    "f": "Verschlungene",
+    "n": "Verschlungenes"
+   },
+   "fr": {
+    "m": "Emmêlé",
+    "f": "Emmêlée"
    }
   },
   {
@@ -419,6 +1186,19 @@
    "pt_BR": {
     "m": "Minúsculo",
     "f": "Minúscula"
+   },
+   "pt_PT": {
+    "m": "Minúsculo",
+    "f": "Minúscula"
+   },
+   "de": {
+    "m": "Winziger",
+    "f": "Winzige",
+    "n": "Winziges"
+   },
+   "fr": {
+    "m": "Minuscule",
+    "f": "Minuscule"
    }
   },
   {
@@ -426,6 +1206,19 @@
    "pt_BR": {
     "m": "Aveludado",
     "f": "Aveludada"
+   },
+   "pt_PT": {
+    "m": "Aveludado",
+    "f": "Aveludada"
+   },
+   "de": {
+    "m": "Samtiger",
+    "f": "Samtige",
+    "n": "Samtiges"
+   },
+   "fr": {
+    "m": "Velouté",
+    "f": "Veloutée"
    }
   },
   {
@@ -433,6 +1226,19 @@
    "pt_BR": {
     "m": "Andarilho",
     "f": "Andarilha"
+   },
+   "pt_PT": {
+    "m": "Andarilho",
+    "f": "Andarilha"
+   },
+   "de": {
+    "m": "Wandernder",
+    "f": "Wandernde",
+    "n": "Wanderndes"
+   },
+   "fr": {
+    "m": "Vagabond",
+    "f": "Vagabonde"
    }
   },
   {
@@ -440,6 +1246,19 @@
    "pt_BR": {
     "m": "Sussurrante",
     "f": "Sussurrante"
+   },
+   "pt_PT": {
+    "m": "Sussurrante",
+    "f": "Sussurrante"
+   },
+   "de": {
+    "m": "Flüsternder",
+    "f": "Flüsternde",
+    "n": "Flüsterndes"
+   },
+   "fr": {
+    "m": "Murmurant",
+    "f": "Murmurante"
    }
   },
   {
@@ -447,6 +1266,19 @@
    "pt_BR": {
     "m": "Selvagem",
     "f": "Selvagem"
+   },
+   "pt_PT": {
+    "m": "Selvagem",
+    "f": "Selvagem"
+   },
+   "de": {
+    "m": "Wilder",
+    "f": "Wilde",
+    "n": "Wildes"
+   },
+   "fr": {
+    "m": "Sauvage",
+    "f": "Sauvage"
    }
   }
  ],
@@ -454,322 +1286,707 @@
   {
    "en": "Garden",
    "pt_BR": "Jardim",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Jardim",
+   "pt_PT_gender": "m",
+   "de": "Garten",
+   "de_gender": "m",
+   "fr": "Jardin",
+   "fr_gender": "m"
   },
   {
    "en": "Maze",
    "pt_BR": "Labirinto",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Labirinto",
+   "pt_PT_gender": "m",
+   "de": "Labyrinth",
+   "de_gender": "n",
+   "fr": "Labyrinthe",
+   "fr_gender": "m"
   },
   {
    "en": "Harbour",
    "pt_BR": "Porto",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Porto",
+   "pt_PT_gender": "m",
+   "de": "Hafen",
+   "de_gender": "m",
+   "fr": "Port",
+   "fr_gender": "m",
+   "en_US": "Harbor"
   },
   {
    "en": "Tower",
    "pt_BR": "Torre",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Torre",
+   "pt_PT_gender": "f",
+   "de": "Turm",
+   "de_gender": "m",
+   "fr": "Tour",
+   "fr_gender": "f"
   },
   {
    "en": "Grove",
    "pt_BR": "Bosque",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Bosque",
+   "pt_PT_gender": "m",
+   "de": "Hain",
+   "de_gender": "m",
+   "fr": "Bosquet",
+   "fr_gender": "m"
   },
   {
    "en": "Bridge",
    "pt_BR": "Ponte",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Ponte",
+   "pt_PT_gender": "f",
+   "de": "Brücke",
+   "de_gender": "f",
+   "fr": "Pont",
+   "fr_gender": "m"
   },
   {
    "en": "Meadow",
    "pt_BR": "Campina",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Prado",
+   "pt_PT_gender": "m",
+   "de": "Wiese",
+   "de_gender": "f",
+   "fr": "Prairie",
+   "fr_gender": "f"
   },
   {
    "en": "Cove",
    "pt_BR": "Enseada",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Enseada",
+   "pt_PT_gender": "f",
+   "de": "Bucht",
+   "de_gender": "f",
+   "fr": "Crique",
+   "fr_gender": "f"
   },
   {
    "en": "Ruin",
    "pt_BR": "Ruína",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Ruína",
+   "pt_PT_gender": "f",
+   "de": "Ruine",
+   "de_gender": "f",
+   "fr": "Ruine",
+   "fr_gender": "f"
   },
   {
    "en": "Isle",
    "pt_BR": "Ilha",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Ilha",
+   "pt_PT_gender": "f",
+   "de": "Insel",
+   "de_gender": "f",
+   "fr": "Île",
+   "fr_gender": "f"
   },
   {
    "en": "Keep",
    "pt_BR": "Fortaleza",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Fortaleza",
+   "pt_PT_gender": "f",
+   "de": "Festung",
+   "de_gender": "f",
+   "fr": "Donjon",
+   "fr_gender": "m"
   },
   {
    "en": "Path",
    "pt_BR": "Trilha",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Trilho",
+   "pt_PT_gender": "m",
+   "de": "Pfad",
+   "de_gender": "m",
+   "fr": "Sentier",
+   "fr_gender": "m"
   },
   {
    "en": "Lagoon",
    "pt_BR": "Lagoa",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Lagoa",
+   "pt_PT_gender": "f",
+   "de": "Lagune",
+   "de_gender": "f",
+   "fr": "Lagune",
+   "fr_gender": "f"
   },
   {
    "en": "Cliff",
    "pt_BR": "Penhasco",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Falésia",
+   "pt_PT_gender": "f",
+   "de": "Klippe",
+   "de_gender": "f",
+   "fr": "Falaise",
+   "fr_gender": "f"
   },
   {
    "en": "Orchard",
    "pt_BR": "Pomar",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Pomar",
+   "pt_PT_gender": "m",
+   "de": "Obstgarten",
+   "de_gender": "m",
+   "fr": "Verger",
+   "fr_gender": "m"
   },
   {
    "en": "Well",
    "pt_BR": "Poço",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Poço",
+   "pt_PT_gender": "m",
+   "de": "Brunnen",
+   "de_gender": "m",
+   "fr": "Puits",
+   "fr_gender": "m"
   },
   {
    "en": "Arch",
    "pt_BR": "Arco",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Arco",
+   "pt_PT_gender": "m",
+   "de": "Bogen",
+   "de_gender": "m",
+   "fr": "Arche",
+   "fr_gender": "f"
   },
   {
    "en": "Bay",
    "pt_BR": "Baía",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Baía",
+   "pt_PT_gender": "f",
+   "de": "Bai",
+   "de_gender": "f",
+   "fr": "Baie",
+   "fr_gender": "f"
   },
   {
    "en": "Beacon",
    "pt_BR": "Farol",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Farol",
+   "pt_PT_gender": "m",
+   "de": "Leuchtfeuer",
+   "de_gender": "n",
+   "fr": "Phare",
+   "fr_gender": "m"
   },
   {
    "en": "Brook",
    "pt_BR": "Riacho",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Ribeiro",
+   "pt_PT_gender": "m",
+   "de": "Bach",
+   "de_gender": "m",
+   "fr": "Ruisseau",
+   "fr_gender": "m"
   },
   {
    "en": "Canyon",
    "pt_BR": "Cânion",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Desfiladeiro",
+   "pt_PT_gender": "m",
+   "de": "Schlucht",
+   "de_gender": "f",
+   "fr": "Canyon",
+   "fr_gender": "m"
   },
   {
    "en": "Castle",
    "pt_BR": "Castelo",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Castelo",
+   "pt_PT_gender": "m",
+   "de": "Burg",
+   "de_gender": "f",
+   "fr": "Château",
+   "fr_gender": "m"
   },
   {
    "en": "Cave",
    "pt_BR": "Caverna",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Gruta",
+   "pt_PT_gender": "f",
+   "de": "Höhle",
+   "de_gender": "f",
+   "fr": "Grotte",
+   "fr_gender": "f"
   },
   {
    "en": "Citadel",
    "pt_BR": "Cidadela",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Cidadela",
+   "pt_PT_gender": "f",
+   "de": "Zitadelle",
+   "de_gender": "f",
+   "fr": "Citadelle",
+   "fr_gender": "f"
   },
   {
    "en": "Crossing",
    "pt_BR": "Travessia",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Travessia",
+   "pt_PT_gender": "f",
+   "de": "Übergang",
+   "de_gender": "m",
+   "fr": "Passage",
+   "fr_gender": "m"
   },
   {
    "en": "Dell",
    "pt_BR": "Recanto",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Recanto",
+   "pt_PT_gender": "m",
+   "de": "Senke",
+   "de_gender": "f",
+   "fr": "Vallon",
+   "fr_gender": "m"
   },
   {
    "en": "Dune",
    "pt_BR": "Duna",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Duna",
+   "pt_PT_gender": "f",
+   "de": "Düne",
+   "de_gender": "f",
+   "fr": "Dune",
+   "fr_gender": "f"
   },
   {
    "en": "Falls",
    "pt_BR": "Cascata",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Cascata",
+   "pt_PT_gender": "f",
+   "de": "Kaskade",
+   "de_gender": "f",
+   "fr": "Cascade",
+   "fr_gender": "f"
   },
   {
    "en": "Fen",
    "pt_BR": "Charco",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Charco",
+   "pt_PT_gender": "m",
+   "de": "Moor",
+   "de_gender": "n",
+   "fr": "Tourbière",
+   "fr_gender": "f"
   },
   {
    "en": "Field",
    "pt_BR": "Campo",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Campo",
+   "pt_PT_gender": "m",
+   "de": "Feld",
+   "de_gender": "n",
+   "fr": "Champ",
+   "fr_gender": "m"
   },
   {
    "en": "Forest",
    "pt_BR": "Floresta",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Floresta",
+   "pt_PT_gender": "f",
+   "de": "Wald",
+   "de_gender": "m",
+   "fr": "Forêt",
+   "fr_gender": "f"
   },
   {
    "en": "Fountain",
    "pt_BR": "Fonte",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Fonte",
+   "pt_PT_gender": "f",
+   "de": "Fontäne",
+   "de_gender": "f",
+   "fr": "Fontaine",
+   "fr_gender": "f"
   },
   {
    "en": "Gate",
    "pt_BR": "Portão",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Portão",
+   "pt_PT_gender": "m",
+   "de": "Tor",
+   "de_gender": "n",
+   "fr": "Porte",
+   "fr_gender": "f"
   },
   {
    "en": "Glade",
    "pt_BR": "Clareira",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Clareira",
+   "pt_PT_gender": "f",
+   "de": "Lichtung",
+   "de_gender": "f",
+   "fr": "Clairière",
+   "fr_gender": "f"
   },
   {
    "en": "Hall",
    "pt_BR": "Salão",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Salão",
+   "pt_PT_gender": "m",
+   "de": "Halle",
+   "de_gender": "f",
+   "fr": "Salle",
+   "fr_gender": "f"
   },
   {
    "en": "Haven",
    "pt_BR": "Refúgio",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Refúgio",
+   "pt_PT_gender": "m",
+   "de": "Zuflucht",
+   "de_gender": "f",
+   "fr": "Refuge",
+   "fr_gender": "m"
   },
   {
    "en": "Hill",
    "pt_BR": "Colina",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Colina",
+   "pt_PT_gender": "f",
+   "de": "Hügel",
+   "de_gender": "m",
+   "fr": "Colline",
+   "fr_gender": "f"
   },
   {
    "en": "Ravine",
    "pt_BR": "Ravina",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Ravina",
+   "pt_PT_gender": "f",
+   "de": "Klamm",
+   "de_gender": "f",
+   "fr": "Ravin",
+   "fr_gender": "m"
   },
   {
    "en": "Lake",
    "pt_BR": "Lago",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Lago",
+   "pt_PT_gender": "m",
+   "de": "See",
+   "de_gender": "m",
+   "fr": "Lac",
+   "fr_gender": "m"
   },
   {
    "en": "Lantern",
    "pt_BR": "Lanterna",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Lanterna",
+   "pt_PT_gender": "f",
+   "de": "Laterne",
+   "de_gender": "f",
+   "fr": "Lanterne",
+   "fr_gender": "f"
   },
   {
    "en": "Library",
    "pt_BR": "Biblioteca",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Biblioteca",
+   "pt_PT_gender": "f",
+   "de": "Bibliothek",
+   "de_gender": "f",
+   "fr": "Bibliothèque",
+   "fr_gender": "f"
   },
   {
    "en": "Marsh",
    "pt_BR": "Pântano",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Pântano",
+   "pt_PT_gender": "m",
+   "de": "Sumpf",
+   "de_gender": "m",
+   "fr": "Marais",
+   "fr_gender": "m"
   },
   {
    "en": "Mill",
    "pt_BR": "Moinho",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Moinho",
+   "pt_PT_gender": "m",
+   "de": "Mühle",
+   "de_gender": "f",
+   "fr": "Moulin",
+   "fr_gender": "m"
   },
   {
    "en": "Mountain",
    "pt_BR": "Montanha",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Montanha",
+   "pt_PT_gender": "f",
+   "de": "Berg",
+   "de_gender": "m",
+   "fr": "Montagne",
+   "fr_gender": "f"
   },
   {
    "en": "Nest",
    "pt_BR": "Ninho",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Ninho",
+   "pt_PT_gender": "m",
+   "de": "Nest",
+   "de_gender": "n",
+   "fr": "Nid",
+   "fr_gender": "m"
   },
   {
    "en": "Oasis",
    "pt_BR": "Oásis",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Oásis",
+   "pt_PT_gender": "m",
+   "de": "Oase",
+   "de_gender": "f",
+   "fr": "Oasis",
+   "fr_gender": "f"
   },
   {
    "en": "Palace",
    "pt_BR": "Palácio",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Palácio",
+   "pt_PT_gender": "m",
+   "de": "Palast",
+   "de_gender": "m",
+   "fr": "Palais",
+   "fr_gender": "m"
   },
   {
    "en": "Peak",
    "pt_BR": "Pico",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Pico",
+   "pt_PT_gender": "m",
+   "de": "Horn",
+   "de_gender": "n",
+   "fr": "Pic",
+   "fr_gender": "m"
   },
   {
    "en": "Pond",
    "pt_BR": "Açude",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Charca",
+   "pt_PT_gender": "f",
+   "de": "Teich",
+   "de_gender": "m",
+   "fr": "Étang",
+   "fr_gender": "m"
   },
   {
    "en": "Reef",
    "pt_BR": "Recife",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Recife",
+   "pt_PT_gender": "m",
+   "de": "Riff",
+   "de_gender": "n",
+   "fr": "Récif",
+   "fr_gender": "m"
   },
   {
    "en": "Ridge",
    "pt_BR": "Serra",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Serra",
+   "pt_PT_gender": "f",
+   "de": "Grat",
+   "de_gender": "m",
+   "fr": "Crête",
+   "fr_gender": "f"
   },
   {
    "en": "River",
    "pt_BR": "Rio",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Rio",
+   "pt_PT_gender": "m",
+   "de": "Fluss",
+   "de_gender": "m",
+   "fr": "Rivière",
+   "fr_gender": "f"
   },
   {
    "en": "Rock",
    "pt_BR": "Rocha",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Rocha",
+   "pt_PT_gender": "f",
+   "de": "Fels",
+   "de_gender": "m",
+   "fr": "Rocher",
+   "fr_gender": "m"
   },
   {
    "en": "Sanctuary",
    "pt_BR": "Santuário",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Santuário",
+   "pt_PT_gender": "m",
+   "de": "Heiligtum",
+   "de_gender": "n",
+   "fr": "Sanctuaire",
+   "fr_gender": "m"
   },
   {
    "en": "Shore",
    "pt_BR": "Praia",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Praia",
+   "pt_PT_gender": "f",
+   "de": "Strand",
+   "de_gender": "m",
+   "fr": "Rivage",
+   "fr_gender": "m"
   },
   {
    "en": "Spire",
    "pt_BR": "Agulha",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Agulha",
+   "pt_PT_gender": "f",
+   "de": "Spitze",
+   "de_gender": "f",
+   "fr": "Aiguille",
+   "fr_gender": "f"
   },
   {
    "en": "Spring",
    "pt_BR": "Nascente",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Nascente",
+   "pt_PT_gender": "f",
+   "de": "Quelle",
+   "de_gender": "f",
+   "fr": "Source",
+   "fr_gender": "f"
   },
   {
    "en": "Summit",
    "pt_BR": "Cume",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Cume",
+   "pt_PT_gender": "m",
+   "de": "Gipfel",
+   "de_gender": "m",
+   "fr": "Sommet",
+   "fr_gender": "m"
   },
   {
    "en": "Temple",
    "pt_BR": "Templo",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Templo",
+   "pt_PT_gender": "m",
+   "de": "Tempel",
+   "de_gender": "m",
+   "fr": "Temple",
+   "fr_gender": "m"
   },
   {
    "en": "Terrace",
    "pt_BR": "Terraço",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Terraço",
+   "pt_PT_gender": "m",
+   "de": "Terrasse",
+   "de_gender": "f",
+   "fr": "Terrasse",
+   "fr_gender": "f"
   },
   {
    "en": "Thicket",
    "pt_BR": "Matagal",
-   "gender": "m"
+   "gender": "m",
+   "pt_PT": "Matagal",
+   "pt_PT_gender": "m",
+   "de": "Dickicht",
+   "de_gender": "n",
+   "fr": "Fourré",
+   "fr_gender": "m"
   },
   {
    "en": "Valley",
    "pt_BR": "Várzea",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Vale",
+   "pt_PT_gender": "m",
+   "de": "Tal",
+   "de_gender": "n",
+   "fr": "Vallée",
+   "fr_gender": "f"
   },
   {
    "en": "Village",
    "pt_BR": "Aldeia",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Aldeia",
+   "pt_PT_gender": "f",
+   "de": "Dorf",
+   "de_gender": "n",
+   "fr": "Village",
+   "fr_gender": "m"
   },
   {
    "en": "Waterfall",
    "pt_BR": "Catarata",
-   "gender": "f"
+   "gender": "f",
+   "pt_PT": "Catarata",
+   "pt_PT_gender": "f",
+   "de": "Wasserfall",
+   "de_gender": "m",
+   "fr": "Cataracte",
+   "fr_gender": "f"
   }
  ]
 }

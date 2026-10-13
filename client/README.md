@@ -66,7 +66,7 @@ screen by `tests/a11y_tests.gd`:
 - *Seeing.* Text size to 200% (Settings), body text scaling in full and
   titles only until body text reaches them; buttons wrap their words past a
   width and rows wrap onto more lines, and every screen is laid out again at
-  150% and 200% in both languages against §21.1's rules. A high-contrast mode
+  150% and 200% in every language against §21.1's rules. A high-contrast mode
   (`color_high_contrast` in the tokens), on at first launch if the phone's
   own setting is. Every word on every screen is checked against what is
   behind it by WCAG's 4.5:1 and by APCA's perceptual model, in both modes
@@ -233,12 +233,17 @@ work.
 `i18n/strings.csv`, or — for the content's own names, laws, notes,
 resonances, chords, wards and ground — from `i18n/content.csv`, which
 `tools/client_strings.py` writes from `content/` so each name keeps one home;
-its Portuguese column holds the English names until §26.9's read-aloud.
-Both reach the screens — one row a key, one column a language, English and
-Brazilian Portuguese (§20.6) — through `scripts/strings.gd`, so a language is a
-column and adding one touches no script. The Portuguese is a working draft for
-these test screens: §26.9 puts the coined vocabulary's native-speaker
-read-aloud before anything is translated for launch.
+every column but English holds the English names until §26.9's read-aloud.
+Both reach the screens — one row a key, one column a language — through
+`scripts/strings.gd`, so a language is a column and adding one touches no
+other script. The languages are §20.6's English and Brazilian Portuguese and
+the four the owner added (D99): `en` is British English as the document writes
+it, `en_US` is written from it by `tools/english_us.py`'s spelling table and
+never typed, and `pt_PT`, `de` and `fr` are drafts, held by test to every key
+and placeholder, that want a native speaker's read, as the Brazilian
+Portuguese does. A new player starts in the phone's language
+(`Strings.locale_for`): Brazil's Portuguese or Portugal's, the United States'
+English or Britain's, German, French, and British English for any other.
 
 Every screen is built from `scripts/ui.gd`, so §21.1 and §21.8 are applied in
 one place: a 9:19.5 portrait frame, the clock and alarm at the top centre and
@@ -275,9 +280,9 @@ and what the player does is what the server re-plays.
 - every control on every screen meets §21.1's size, reach, corner and
   safe-area rules, in a 9:19.5 frame and a 9:16 one (a headless run has no
   screen, so the test sets the window to each), and no text is smaller than 13
-  points (§21.8); nothing asks for more width than the phone has — in both
-  languages, since Portuguese runs longer;
-- every string a script asks for is in the catalogue in both languages with
+  points (§21.8); nothing asks for more width than the phone has — in every
+  language, since Portuguese, German and French run longer;
+- every string a script asks for is in the catalogue in every language with
   the same placeholders, and in a pseudo-locale that wraps every catalogue
   string no screen shows a word that is not wrapped — a word typed into a
   script instead;

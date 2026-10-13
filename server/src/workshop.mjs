@@ -74,11 +74,23 @@ export class Workshop {
   get db() { return this.service.db; }
   now() { return this.service.now(); }
 
-  /** The name an item carries, in both launch languages (§20.6). */
+  /** The name an item carries, in each of the game's languages (§20.6, and
+   *  the owner's six): in English the adjective first, its US spelling where
+   *  it differs; in Portuguese and French the noun first and the adjective
+   *  agreeing with its gender; in German the adjective first, in the strong
+   *  ending for the noun's gender. words.json holds each language's forms
+   *  (tools/english_us.py writes the US English). */
   static name(adjective, noun) {
     const a = WORDS.adjectives[adjective];
     const n = WORDS.nouns[noun];
-    return { en: `${a.en} ${n.en}`, pt_BR: `${n.pt_BR} ${a.pt_BR[n.gender]}` };
+    return {
+      en: `${a.en} ${n.en}`,
+      en_US: `${a.en_US ?? a.en} ${n.en_US ?? n.en}`,
+      pt_BR: `${n.pt_BR} ${a.pt_BR[n.gender]}`,
+      pt_PT: `${n.pt_PT} ${a.pt_PT[n.pt_PT_gender]}`,
+      de: `${a.de[n.de_gender]} ${n.de}`,
+      fr: `${n.fr} ${a.fr[n.fr_gender]}`,
+    };
   }
 
   account(id) {

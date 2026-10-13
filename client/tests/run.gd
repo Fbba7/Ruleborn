@@ -99,11 +99,34 @@ func _run() -> void:
 	# §20.8's accessibility set, on every screen, offline (tests/a11y_tests.gd).
 	await A11yTests.new(self, check, _mount, _control_problems, SCREENS).run()
 
-	# §20.6's two launch languages: every key a script asks for is in the
-	# catalogue, in every language, with the same placeholders.
-	check("every string a screen asks for is in the catalogue, in English and Brazilian Portuguese, "
+	# The game's languages (§20.6 and the owner's, D99): every key a script
+	# asks for is in the catalogue, in every language, with the same
+	# placeholders, and the catalogue's columns are the languages.
+	var columns := FileAccess.open("res://i18n/strings.csv", FileAccess.READ).get_csv_line().slice(1)
+	check("every string a screen asks for is in the catalogue, in each of the game's languages, "
 			+ "with the same placeholders",
-		_catalogue_problems().is_empty(), "; ".join(_catalogue_problems()))
+		_catalogue_problems().is_empty() and Array(columns) == Strings.LOCALES,
+		"; ".join(_catalogue_problems()) + " columns %s" % columns)
+
+	# A new player starts in the phone's language: Brazil's Portuguese or
+	# Portugal's, the United States' English or Britain's, German, French,
+	# and British English for any other.
+	var phones := {"pt_BR": "pt_BR", "pt_PT": "pt_PT", "pt_AO": "pt_PT", "pt": "pt_PT", "en_US": "en_US",
+		"en_GB": "en", "en_AU": "en", "en": "en", "de_DE": "de", "de_AT": "de", "fr_FR": "fr", "fr_CA": "fr",
+		"es_ES": "en", "ja_JP": "en"}
+	var picked := []
+	for phone: String in phones:
+		if Strings.locale_for(phone) != phones[phone]:
+			picked.append("%s -> %s" % [phone, Strings.locale_for(phone)])
+	var language_names := []
+	for locale: String in Strings.LOCALES:
+		Strings.set_locale(locale)
+		language_names.append(Strings.t("LANGUAGE_" + locale))
+	Strings.set_locale("en")
+	check("a new player starts in the phone's language: Portuguese and English by region, German and French, "
+			+ "British English otherwise, and the picker names each language in itself",
+		picked.is_empty() and language_names == ["English (UK)", "English (US)", "Português (Brasil)",
+			"Português (Portugal)", "Deutsch", "Français"], "%s / %s" % [picked, language_names])
 
 	# §24.7: one simulation, compiled for every target. The client's build must
 	# be the server's, rule for rule.
@@ -346,7 +369,10 @@ func _run() -> void:
 		tap.call("−", 0)
 	tap.call("−", 1)
 	tap.call(Strings.t("SETTINGS_MOTION_OFF"))
+	# The language button goes through the languages in turn: from British
+	# English to US English, and on to Brazilian Portuguese.
 	tap.call(Strings.t("LANGUAGE_en"))
+	tap.call(Strings.t("LANGUAGE_en_US"))
 	await process_frame
 	var saved := [Settings.locale, Settings.volume.duplicate(), Settings.reduced_motion, Settings.haptics]
 	Settings.locale = ""

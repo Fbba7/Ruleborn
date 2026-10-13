@@ -1,538 +1,554 @@
-key,en,pt_BR
-APP_NAME,Ruleborn,Ruleborn
-HOME_TAGLINE,"A heist on the fixture realm, played and checked on this phone.","Um assalto no reino de teste, jogado e conferido neste celular."
-HOME_PLAY,Play a heist,Jogar um assalto
-HOME_WATCH,Watch replays,Ver replays
-HOME_SETTINGS,Settings,Ajustes
-COMMON_HOME,Home,Início
-COMMON_DISMISS,Dismiss,Dispensar
-COMMON_LOADING,Loading…,Carregando…
-HEIST_ASKING,Asking the server for a target,Pedindo um alvo ao servidor
-HEIST_NONE,No heist: %s,Sem assalto: %s
-HEIST_CHECKING,The server is checking the heist,O servidor está conferindo o assalto
-HEIST_SKIFF_HINT,Tap an edge tile for the skiff,Toque numa casa da borda para chamar o esquife
-HEIST_HINT,"%s — tap ground, a guard, the Vault, a pylon or a ward","%s — toque no chão, num guarda, no Cofre, num pilar ou numa proteção"
-HEIST_HALT,Halt,Parar
-HEIST_DROP,Drop,Largar
-HEIST_GET_OUT,Get out,Fugir
-HEIST_PAUSE,Pause,Pausar
-HEIST_RESUME,Resume,Continuar
-HEIST_CREW,%s,%s
-HEIST_CREW_CHOSEN,"%s, chosen","%s, escolhido"
-GAIT_WALK,Walk,Andar
-GAIT_CROUCH,Crouch,Agachar
-GAIT_RUN,Run,Correr
-ROLE_SCOUT,Scout,Batedor
-ROLE_BREAKER,Breaker,Quebrador
-ROLE_CARRIER,Carrier,Carregador
-ROLE_WARDEN,Warden,Sentinela
-ROLE_MENDER,Mender,Curandeiro
-HUD_ALARM,Alarm %s,Alarme %s
+key,en,en_US,pt_BR,pt_PT,de,fr
+APP_NAME,Ruleborn,Ruleborn,Ruleborn,Ruleborn,Ruleborn,Ruleborn
+HOME_TAGLINE,"A heist on the fixture realm, played and checked on this phone.","A heist on the fixture realm, played and checked on this phone.","Um assalto no reino de teste, jogado e conferido neste celular.","Um assalto no reino de teste, jogado e verificado neste telemóvel.","Ein Raubzug im Testreich, gespielt und geprüft auf diesem Handy.","Un casse dans le royaume de test, joué et vérifié sur ce téléphone."
+HOME_PLAY,Play a heist,Play a heist,Jogar um assalto,Jogar um assalto,Raubzug spielen,Jouer un casse
+HOME_WATCH,Watch replays,Watch replays,Ver replays,Ver replays,Replays ansehen,Voir les replays
+HOME_SETTINGS,Settings,Settings,Ajustes,Definições,Einstellungen,Réglages
+COMMON_HOME,Home,Home,Início,Início,Start,Accueil
+COMMON_DISMISS,Dismiss,Dismiss,Dispensar,Dispensar,Schließen,Fermer
+COMMON_LOADING,Loading…,Loading…,Carregando…,A carregar…,Lädt…,Chargement…
+HEIST_ASKING,Asking the server for a target,Asking the server for a target,Pedindo um alvo ao servidor,A pedir um alvo ao servidor,Server sucht ein Ziel,Demande d'une cible au serveur
+HEIST_NONE,No heist: %s,No heist: %s,Sem assalto: %s,Sem assalto: %s,Kein Raubzug: %s,Pas de casse : %s
+HEIST_CHECKING,The server is checking the heist,The server is checking the heist,O servidor está conferindo o assalto,O servidor está a verificar o assalto,Der Server prüft den Raubzug,Le serveur vérifie le casse
+HEIST_SKIFF_HINT,Tap an edge tile for the skiff,Tap an edge tile for the skiff,Toque numa casa da borda para chamar o esquife,Toca numa casa da borda para o esquife,Tippe auf ein Randfeld für das Boot,Touche une case du bord pour l'esquif
+HEIST_HINT,"%s — tap ground, a guard, the Vault, a pylon or a ward","%s — tap ground, a guard, the Vault, a pylon or a ward","%s — toque no chão, num guarda, no Cofre, num pilar ou numa proteção","%s — toca no chão, num guarda, no Cofre, num pilar ou numa proteção","%s — tippe auf Boden, Wache, Tresor, Pylon oder Siegel","%s — touche le sol, un garde, le Coffre, un pylône ou une protection"
+HEIST_HALT,Halt,Halt,Parar,Parar,Halt,Stop
+HEIST_DROP,Drop,Drop,Largar,Largar,Ablegen,Lâcher
+HEIST_GET_OUT,Get out,Get out,Fugir,Fugir,Fliehen,Fuir
+HEIST_PAUSE,Pause,Pause,Pausar,Pausa,Pause,Pause
+HEIST_RESUME,Resume,Resume,Continuar,Continuar,Weiter,Reprendre
+HEIST_CREW,%s,%s,%s,%s,%s,%s
+HEIST_CREW_CHOSEN,"%s, chosen","%s, chosen","%s, escolhido","%s, escolhido","%s, gewählt","%s, choisi"
+GAIT_WALK,Walk,Walk,Andar,Andar,Gehen,Marcher
+GAIT_CROUCH,Crouch,Crouch,Agachar,Agachar,Ducken,S'accroupir
+GAIT_RUN,Run,Run,Correr,Correr,Rennen,Courir
+ROLE_SCOUT,Scout,Scout,Batedor,Batedor,Späher,Éclaireur
+ROLE_BREAKER,Breaker,Breaker,Quebrador,Quebrador,Knacker,Briseur
+ROLE_CARRIER,Carrier,Carrier,Carregador,Carregador,Träger,Porteur
+ROLE_WARDEN,Warden,Warden,Sentinela,Sentinela,Wächter,Veilleur
+ROLE_MENDER,Mender,Mender,Curandeiro,Curandeiro,Heiler,Soigneur
+HUD_ALARM,Alarm %s,Alarm %s,Alarme %s,Alarme %s,Alarm %s,Alarme %s
 HUD_LOOT,"Bags can take %d
+Vault %d left","Bags can take %d
 Vault %d left","Bolsas: cabem %d
-Cofre: restam %d"
-REPLAY_GOLDEN,Golden replay: %s,Replay de referência: %s
-REPLAY_YOURS,Your heist,Seu assalto
-REPLAY_DIVERGED,Diverged at %d:%02d,Divergiu em %d:%02d
-REPLAY_MATCHES,Matches the server: %d s,Confere com o servidor: %d s
-REPLAY_GRADE,%s — %d of %d banked,%s — %d de %d guardados
-REPLAY_PLAY,Play,Jogar
-REPLAY_PAUSE,Pause,Pausar
-REPLAY_PREVIOUS,Previous replay,Replay anterior
-REPLAY_NEXT,Next replay,Próximo replay
-REPLAY_SPEED,Playback speed ×%d,Velocidade de reprodução ×%d
-RESULT_BANKED,%d loot banked,%d de saque guardado
-RESULT_BANKED_SERVER,%d loot banked — the server minted %d (fee %d),%d de saque guardado — o servidor gerou %d (taxa %d)
+Cofre: restam %d","Sacos: cabem %d
+Cofre: restam %d","Taschen fassen %d
+Im Tresor noch %d","Sacs : encore %d
+Coffre : reste %d"
+REPLAY_GOLDEN,Golden replay: %s,Golden replay: %s,Replay de referência: %s,Replay de referência: %s,Referenz-Replay: %s,Replay de référence : %s
+REPLAY_YOURS,Your heist,Your heist,Seu assalto,O teu assalto,Dein Raubzug,Ton casse
+REPLAY_DIVERGED,Diverged at %d:%02d,Diverged at %d:%02d,Divergiu em %d:%02d,Divergiu aos %d:%02d,Abweichung bei %d:%02d,Divergence à %d:%02d
+REPLAY_MATCHES,Matches the server: %d s,Matches the server: %d s,Confere com o servidor: %d s,Coincide com o servidor: %d s,Passt zum Server: %d s,Conforme au serveur : %d s
+REPLAY_GRADE,%s — %d of %d banked,%s — %d of %d banked,%s — %d de %d guardados,%s — %d de %d guardados,%s — %d von %d gesichert,%s — %d sur %d encaissés
+REPLAY_PLAY,Play,Play,Jogar,Reproduzir,Start,Lire
+REPLAY_PAUSE,Pause,Pause,Pausar,Pausa,Pause,Pause
+REPLAY_PREVIOUS,Previous replay,Previous replay,Replay anterior,Replay anterior,Voriges Replay,Replay précédent
+REPLAY_NEXT,Next replay,Next replay,Próximo replay,Replay seguinte,Nächstes Replay,Replay suivant
+REPLAY_SPEED,Playback speed ×%d,Playback speed ×%d,Velocidade de reprodução ×%d,Velocidade de reprodução ×%d,Tempo ×%d,Vitesse de lecture ×%d
+RESULT_BANKED,%d loot banked,%d loot banked,%d de saque guardado,%d de saque guardado,%d Beute gesichert,%d de butin encaissé
+RESULT_BANKED_SERVER,%d loot banked — the server minted %d (fee %d),%d loot banked — the server minted %d (fee %d),%d de saque guardado — o servidor gerou %d (taxa %d),%d de saque guardado — o servidor cunhou %d (taxa %d),%d Beute gesichert — der Server prägte %d (Gebühr %d),%d de butin encaissé — le serveur a émis %d (frais %d)
 RESULT_ACCEPTED_SERVER,"Re-simulated by the server: accepted
+%d-byte replay","Re-simulated by the server: accepted
 %d-byte replay","Ressimulado pelo servidor: aceito
-replay de %d bytes"
+replay de %d bytes","Ressimulado pelo servidor: aceite
+replay de %d bytes","Vom Server nachsimuliert: akzeptiert
+%d-Byte-Replay","Re-simulé par le serveur : accepté
+Replay de %d octets"
 RESULT_ACCEPTED_LOCAL,"Re-simulated as the server would: accepted
+%d-byte replay","Re-simulated as the server would: accepted
 %d-byte replay","Ressimulado como o servidor faria: aceito
-replay de %d bytes"
-RESULT_NOT_ACCEPTED,Not accepted,Não aceito
-RESULT_REFUSED,Refused: %s,Recusado: %s
-RESULT_PAID_NOTHING,The server paid nothing for this replay,O servidor não pagou nada por este replay
-RESULT_WOULD_PAY_NOTHING,The server would pay nothing for this replay,O servidor não pagaria nada por este replay
-RESULT_WATCH,Watch it,Assistir
-RESULT_AGAIN,Again,De novo
-GRADE_CLEAN,Clean,Limpo
-GRADE_LOUD,Loud,Barulhento
-GRADE_PARTIAL,Partial,Parcial
-GRADE_FOILED,Foiled,Frustrado
-SETTINGS_TITLE,Settings,Ajustes
-SETTINGS_LANGUAGE,Language,Idioma
-LANGUAGE_en,English,English
-LANGUAGE_pt_BR,Português (Brasil),Português (Brasil)
-SETTINGS_MUSIC,Music %d,Música %d
-SETTINGS_EFFECTS,Effects %d,Efeitos %d
-SETTINGS_ALERTS,Alerts %d,Alertas %d
-SETTINGS_MOTION_OFF,Motion: full,Movimento: normal
-SETTINGS_MOTION_ON,Motion: reduced,Movimento: reduzido
-SETTINGS_HAPTICS_ON,Haptics: on,Vibração: sim
-SETTINGS_HAPTICS_OFF,Haptics: off,Vibração: não
-SETTINGS_QUIETER,%s: quieter,%s: mais baixo
-SETTINGS_LOUDER,%s: louder,%s: mais alto
-SETTINGS_TEXT_SIZE,Text %d%%,Texto %d%%
-SETTINGS_SMALLER,%s: smaller,%s: menor
-SETTINGS_LARGER,%s: larger,%s: maior
-SETTINGS_CONTRAST_ON,High contrast: on,Alto contraste: sim
-SETTINGS_CONTRAST_OFF,High contrast: off,Alto contraste: não
-SETTINGS_LEFT_HANDED_ON,Left-handed: on,Canhoto: sim
-SETTINGS_LEFT_HANDED_OFF,Left-handed: off,Canhoto: não
-SETTINGS_SLOW_REHEARSALS_ON,Rehearsals at 75%: on,Ensaios a 75%: sim
-SETTINGS_SLOW_REHEARSALS_OFF,Rehearsals at 75%: off,Ensaios a 75%: não
-SETTINGS_BANNERS_STAY_ON,Banners stay until dismissed,Avisos ficam até serem dispensados
-SETTINGS_BANNERS_STAY_OFF,Banners go by themselves,Avisos somem sozinhos
-HOME_BUILD,Build your island,Construir sua ilha
-HOME_TRACK,Season track,Trilha da temporada
-HOME_SHOP,Shop,Loja
-HOME_SOCIAL,League and crews,Liga e equipes
-HOME_FRIENDS,Friends,Amigos
-HOME_WORKSHOP,Workshop,Oficina
-BUILDER_TITLE,"Your island, realm level %d","Sua ilha, reino nível %d"
-BUILDER_HINT,Tap the realm to place what is chosen below,Toque no reino para pôr o que está escolhido abaixo
-BUILDER_TOOL_GROUND,Ground,Terreno
-BUILDER_TOOL_WARD,Ward,Proteção
-BUILDER_TOOL_GUARD,Guard,Guarda
-BUILDER_TOOL_LAW,Law,Lei
-BUILDER_TOOL_VAULT,Vault,Cofre
-BUILDER_TOOL_ERASE,Erase,Apagar
-BUILDER_BARE,Bare ground,Chão limpo
-BUILDER_LEVEL,Level %d,Nível %d
-BUILDER_SAVE,Save,Salvar
-BUILDER_SAVED,Saved on this phone,Salva neste celular
-BUILDER_RAID,Raid it,Invadir
-BUILDER_READY,"Ready to raid: %d of %d wards, %d of %d guards, %d of %d laws","Pronta para invadir: %d de %d proteções, %d de %d guardas, %d de %d leis"
-BUILDER_BLOCKED,Not ready: %s,Ainda não: %s
-BUILDER_TOGETHER,Together: %s,Juntas: %s
-BUILDER_ALONE,The laws make nothing together yet,As leis ainda não fazem nada juntas
-BUILDER_HARMONY,%s harmony,harmonia de %s
-BUILDER_CLASH,%s clash,choque de %s
-BUILDER_RESTORE,Swap back,Trocar de volta
-BUILDER_RESTORE_NAMED,Swap back to the island the remix replaced; the remix is kept,Trocar de volta para a ilha que o remix substituiu; o remix fica guardado
-PROBLEM_TOOMANYWARDS,too many wards for the realm,proteções demais para o reino
-PROBLEM_TOOMANYGUARDS,too many guards for the realm,guardas demais para o reino
-PROBLEM_TOOMANYLAWS,too many laws for the realm,leis demais para o reino
-PROBLEM_UNKNOWNLAW,a law this version does not have,uma lei que esta versão não tem
-PROBLEM_CROWDED,two things on one tile,duas coisas numa casa
-PROBLEM_POSTBLOCKED,a guard where it cannot stand,um guarda onde não pode ficar
-PROBLEM_LANDINGBLOCKED,the landing is blocked,o desembarque está bloqueado
-PROBLEM_SEALED,no path reaches the Vault,nenhum caminho chega ao Cofre
-PROBLEM_EDGECLOSED,a side has fewer than half its edge open to land on,um lado tem menos da metade da borda aberta para desembarque
-RESULT_BUILDER,Back to the builder,Voltar ao construtor
-RESULT_CONFIRMING,"Checked on this phone (%d bytes); the server confirms it when you are back online.","Conferido neste celular (%d bytes); o servidor confirma quando você voltar a ficar online."
-RESULT_PUBLISH,Publish it,Publicar
-RESULT_RATE,Rate this island,Avaliar esta ilha
-RESULT_COUNTED,It counts as a completion for its creator,Conta como uma conclusão para quem a criou
-RESULT_NOT_COUNTED,Already counted: a player's clear counts once,Já contada: a vitória de cada jogador conta uma vez
-RESULT_PLAY_NOT_COUNTED,This play does not count as a clear of the island,Esta partida não conta como vitória na ilha
-RESULT_KEEPER,+%s Keeper experience,+%s de experiência de Guardião
-RESULT_KEEPER_UP,Keeper %d reached,Guardião %d alcançado
-ERR_UNKNOWN,something went wrong (%s),algo deu errado (%s)
-ERR_OFFLINE,no server is set,nenhum servidor configurado
-ERR_UNREACHABLE,the server could not be reached,não foi possível falar com o servidor
-ERR_TIMEOUT,the server took too long to answer,o servidor demorou demais para responder
-ERR_REQUEST_FAILED,the request could not be sent,não foi possível enviar o pedido
-ERR_MALFORMED_RESPONSE,the server's answer could not be read,não foi possível ler a resposta do servidor
-ERR_NO_TARGET,there is no island to raid yet,ainda não há ilha para assaltar
-ERR_ISLAND_DOES_NOT_LOAD,the island did not load,a ilha não carregou
-ERR_A_REASON_IS_OWED,a reason is needed,é preciso um motivo
-ERR_ACCOUNT_DELETED,this account has been deleted,esta conta foi excluída
-ERR_ALREADY_FRIENDS,you are already friends,vocês já são amigos
-ERR_ALREADY_IN_A_CONSTELLATION,you are already in a constellation,você já está em uma constelação
-ERR_ALREADY_IN_A_CREW,you are already in a crew,você já está em uma tripulação
-ERR_ALREADY_OWNED,that is already owned,isso já é seu
-ERR_ANALYSTS_ONLY,only analysts can see this,só analistas podem ver isto
-ERR_BAD_DATA,the game sent something it should not have,o jogo enviou algo que não devia
-ERR_BAD_FIELD,the game sent something it should not have,o jogo enviou algo que não devia
-ERR_BAD_PUSH_TOKEN,notifications could not be set up on this device,não foi possível ativar as notificações neste aparelho
-ERR_BAD_REMINDER_TIME,that reminder time is not a time of day,esse horário de lembrete não é um horário do dia
-ERR_BAD_TIME,this device's clock looks wrong,o relógio deste aparelho parece errado
-ERR_BAD_TIME_ZONE,this device's time zone was not recognised,o fuso horário deste aparelho não foi reconhecido
-ERR_BAD_WITHDRAW,the game sent something it should not have,o jogo enviou algo que não devia
-ERR_BANNED,this account has been banned,esta conta foi banida
-ERR_BATCH_TOO_LARGE,too much was sent at once,muita coisa foi enviada de uma vez
-ERR_CHALLENGE_ALREADY_PLAYED,you have already played this challenge,você já jogou este desafio
-ERR_CONSTELLATION_CLOSED,that constellation is closed,essa constelação está fechada
-ERR_CONSTELLATION_FULL,that constellation is full,essa constelação está cheia
-ERR_CREW_FULL,that crew is full,essa tripulação está cheia
-ERR_CURATED_LISTS_ONLY,only the featured list is open to you,só a lista em destaque está aberta para você
-ERR_ELDERS_FULL,the constellation has all its elders,a constelação já tem todos os seus anciãos
-ERR_FOUNDER_ONLY,only the founder can do that,só o fundador pode fazer isso
-ERR_GIFTS_GO_TO_FRIENDS,gifts can only go to friends,presentes só podem ir para amigos
-ERR_GOOGLE_IDENTITY_REFUSED,that Google account could not be confirmed,não foi possível confirmar essa conta Google
-ERR_INTENT_MISMATCH,the purchase did not match what was asked for,a compra não corresponde ao que foi pedido
-ERR_INTERNAL,the server had a problem; try again,o servidor teve um problema; tente de novo
-ERR_ISLAND_NOT_PUBLISHABLE,the island breaks a building rule,a ilha quebra uma regra de construção
-ERR_ISLAND_WITHDRAWN,that island was withdrawn,essa ilha foi retirada
-ERR_KEEPER_LEVEL_TOO_LOW,your Keeper level is too low,seu nível de Guardião é baixo demais
-ERR_LEASE_EXPIRED,the heist's time ran out before it was sent,o tempo do assalto acabou antes do envio
-ERR_LEASE_HELD_IN_ANOTHER_MODE,that island is already held for another kind of heist,essa ilha já está reservada para outro tipo de assalto
-ERR_LEASE_REFUSED,that heist is not yours to send,esse assalto não é seu para enviar
-ERR_MALFORMED_BODY,the game sent something it should not have,o jogo enviou algo que não devia
-ERR_MALFORMED_JSON,the game sent something it should not have,o jogo enviou algo que não devia
-ERR_MISSING_FIELD,the game sent something it should not have,o jogo enviou algo que não devia
-ERR_MONTHLY_CAP,this month's spending limit is reached,o limite de gastos deste mês foi atingido
-ERR_NAME_NOT_FROM_THE_WORD_LISTS,the name must come from the word lists,o nome deve vir das listas de palavras
-ERR_NEW_PLAYER_PROTECTED,that player is new and still protected,esse jogador é novo e ainda está protegido
-ERR_NO_EVENTS,there was nothing to send,não havia nada para enviar
-ERR_NO_FREE_SLOT,all your Workshop slots are in use,todos os seus espaços na Oficina estão em uso
-ERR_NO_ISLAND_TO_SHARE,you have no island to share yet,você ainda não tem ilha para compartilhar
-ERR_NO_SUCH_ACCOUNT,no account was found,nenhuma conta foi encontrada
-ERR_NO_SUCH_ACTION,that action does not exist,essa ação não existe
-ERR_NO_SUCH_AGE_BAND,that age is not one the game knows,essa idade não é uma que o jogo conhece
-ERR_NO_SUCH_CHALLENGE,that challenge no longer exists,esse desafio não existe mais
-ERR_NO_SUCH_CONSTELLATION,that constellation no longer exists,essa constelação não existe mais
-ERR_NO_SUCH_CREW,that crew no longer exists,essa tripulação não existe mais
-ERR_NO_SUCH_EVENT,the game sent something it should not have,o jogo enviou algo que não devia
-ERR_NO_SUCH_FIELD,the game sent something it should not have,o jogo enviou algo que não devia
-ERR_NO_SUCH_HEIST,that heist was not found,esse assalto não foi encontrado
-ERR_NO_SUCH_INVITE,that invite has expired or was already used,esse convite expirou ou já foi usado
-ERR_NO_SUCH_ISLAND,that island was not found,essa ilha não foi encontrada
-ERR_NO_SUCH_LIST,that list does not exist,essa lista não existe
-ERR_NO_SUCH_MODE,that kind of heist does not exist,esse tipo de assalto não existe
-ERR_NO_SUCH_PRODUCT,that item is not for sale,esse item não está à venda
-ERR_NO_SUCH_REALM,that realm does not exist,esse reino não existe
-ERR_NO_SUCH_REASON,that reason is not one the game knows,esse motivo não é um que o jogo conhece
-ERR_NO_SUCH_REPORT,that report was not found,essa denúncia não foi encontrada
-ERR_NO_SUCH_ROLE,that role does not exist,esse papel não existe
-ERR_NO_SUCH_ROUTE,the game asked for something the server does not know,o jogo pediu algo que o servidor não conhece
-ERR_NO_SUCH_SEASON,that season does not exist,essa temporada não existe
-ERR_NO_SUCH_SLOT,that slot does not exist,esse espaço não existe
-ERR_NO_SUCH_SNAPSHOT,that island has changed since the list was made,essa ilha mudou desde que a lista foi feita
-ERR_NO_SUCH_TARGET,that target is not in the list,esse alvo não está na lista
-ERR_NO_TRANSPORT,the game could not reach the network,o jogo não conseguiu acessar a rede
-ERR_NOT_A_MEMBER,you are not a member,você não é membro
-ERR_NOT_A_MODERATOR,only moderators can do that,só moderadores podem fazer isso
-ERR_NOT_CLEARED,clear the island yourself before publishing it,vença a ilha você mesmo antes de publicá-la
-ERR_NOT_CONFIGURED,this is not available here yet,isto ainda não está disponível aqui
-ERR_NOT_ENOUGH_STARS,you need more season stars,você precisa de mais estrelas da temporada
-ERR_NOT_FOUND,it was not found,não foi encontrado
-ERR_NOT_FRIENDS,you are not friends,vocês não são amigos
-ERR_NOT_IN_A_CONSTELLATION,you are not in a constellation,você não está em uma constelação
-ERR_NOT_IN_A_CREW,you are not in a crew,você não está em uma tripulação
-ERR_NOT_OWNED,you do not own that,isso não é seu
-ERR_NOT_PLAYED,play the island before rating it,jogue a ilha antes de avaliá-la
-ERR_NOT_THIS_CHALLENGE,that island is not this challenge's,essa ilha não é a deste desafio
-ERR_NOTHING_TO_TRACE,there is no raid to trace back,não há assalto para rastrear
-ERR_NOTIFICATION_REFUSED,the store's message was not accepted,a mensagem da loja não foi aceita
-ERR_OWN_GIFT,"a gift is for a friend, not yourself","um presente é para um amigo, não para você"
-ERR_OWN_INVITE,that is your own invite,esse é o seu próprio convite
-ERR_OWN_ISLAND,that is your own island,essa é a sua própria ilha
-ERR_PLATFORM_IDENTITY_REFUSED,your sign-in could not be confirmed,não foi possível confirmar seu login
-ERR_PLAY_REFUSED,that play is not yours to send,essa partida não é sua para enviar
-ERR_POSITIONS_ARE_NEVER_SENT,the game sent something it should not have,o jogo enviou algo que não devia
-ERR_QUOTA_FULL,your Workshop storage is full,seu espaço na Oficina está cheio
-ERR_RATINGS_ARE_ONE_TO_FIVE,ratings go from one to five,as avaliações vão de um a cinco
-ERR_RECEIPT_BELONGS_TO_ANOTHER_ACCOUNT,that purchase belongs to another account,essa compra pertence a outra conta
-ERR_RECEIPT_REFUNDED,that purchase was refunded,essa compra foi reembolsada
-ERR_RECEIPT_REFUSED,the store did not confirm the purchase,a loja não confirmou a compra
-ERR_REMINDER_AT_NIGHT,reminders cannot be set during your quiet hours,lembretes não podem ser marcados no seu horário de silêncio
-ERR_REPLAY_MALFORMED,the heist could not be read,não foi possível ler o assalto
-ERR_REPLAY_NO_LONGER_KEPT,that replay is no longer kept,esse replay não é mais guardado
-ERR_RULES_NOT_HELD,this version of the game is out of date,esta versão do jogo está desatualizada
-ERR_SEASON_STILL_OPEN,the season has not ended yet,a temporada ainda não terminou
-ERR_SESSION_REFUSED,please sign in again,"entre de novo, por favor"
-ERR_SUPERSEDED,that island has been changed since,essa ilha foi alterada desde então
-ERR_SURVEY_ONCE_A_QUARTER,the survey has already been answered,a pesquisa já foi respondida
-ERR_THE_NIGHT_IS_ALWAYS_QUIET_UNDER_18,quiet hours stay on under 18,o horário de silêncio fica ligado para menores de 18
-ERR_TOO_LARGE,too much was sent at once,muita coisa foi enviada de uma vez
-ERR_TRACK_COMPLETE,the whole track is claimed,a trilha inteira já foi resgatada
-ERR_WRONG_CLOCK,the heist ran on the wrong clock,o assalto rodou com o relógio errado
-ERR_WRONG_ERA,the heist was played in the wrong era,o assalto foi jogado na era errada
-ERR_WRONG_ISLAND,the heist was played on the wrong island,o assalto foi jogado na ilha errada
-ERR_WRONG_SEED,the heist was played on the wrong seed,o assalto foi jogado com a semente errada
-ERR_WRONG_SLOT,that does not go in that slot,isso não vai nesse espaço
-ERR_GIFT_INTENT_GONE,this gift is too old to deliver; the store will refund it,este presente é antigo demais para ser entregue; a loja vai reembolsá-lo
-ERR_STARTING,the server is starting; try again in a moment,o servidor está iniciando; tente de novo em instantes
-ERR_STORE_NOT_CONNECTED,this build cannot reach the store,esta versão não consegue acessar a loja
-ERR_PURCHASE_CANCELLED,the purchase was cancelled,a compra foi cancelada
-ERR_PURCHASE_PENDING,the purchase waits for a family member to approve it,a compra aguarda a aprovação de alguém da família
-ERR_DRAFT_NOT_KEPT,the island could not be kept on this phone,não foi possível guardar a ilha neste celular
-ERR_AGE_CHECK_FIRST,the age check has not been answered on this phone,a verificação de idade ainda não foi respondida neste celular
-SCHOOL_MOTION,Motion,Movimento
-SCHOOL_MATTER,Matter,Matéria
-SCHOOL_TIME,Time,Tempo
-SCHOOL_ENERGY,Energy,Energia
-SCHOOL_LIFE,Life,Vida
-SCHOOL_SPIRIT,Spirit,Espírito
-REALM_DESCRIBED,"The realm, %d by %d tiles: the Vault %s, %d guards on their feet, %d wards standing","O reino, %d por %d casas: o Cofre %s, %d guardas de pé, %d proteções ativas"
-REALM_VAULT_OPEN,open,aberto
-REALM_VAULT_SHUT,shut,fechado
-MONEY_EUR,€%s,€ %s
-NUMBER_DECIMAL,.,","
-NUMBER_GROUP,",",.
-WALLET,%s Starlight · %s Essence,%s Luz Estelar · %s Essência
-TRACK_TITLE,Season %d track,Trilha da temporada %d
-TRACK_TITLE_LOADING,Season track,Trilha da temporada
-TRACK_STARS,%s stars to spend,%s estrelas para gastar
-TRACK_NEXT,Next: tier %d for %d stars,Próximo: nível %d por %d estrelas
-TRACK_COMPLETE,Every tier claimed,Todos os níveis resgatados
-TRACK_CLAIM,Claim the next tier,Resgatar o próximo nível
-TRACK_CLAIMED,Tier %d: %s,Nível %d: %s
-TRACK_TIER,Tier %d: %s%s,Nível %d: %s%s
-TRACK_AND_PREMIUM,", and with the premium track %s",", e com a trilha premium %s"
-TRACK_ESSENCE,%s Essence,%s de Essência
-TRACK_PAGES,%d pages,%d páginas
-TRACK_STRAY,a stray to adopt,um errante para adotar
-TRACK_COSMETIC,a %s,um item: %s
-TRACK_PREMIUM,Premium track,Trilha premium
-TRACK_PREMIUM_PRICE,"Premium track, %s","Trilha premium, %s"
-TRACK_FAILED,The track could not be shown: %s,Não foi possível mostrar a trilha: %s
-TRACK_PREMIUM_FAILED,The premium track could not be bought: %s,Não foi possível comprar a trilha premium: %s
-SHOP_TITLE,Shop,Loja
-SHOP_TRACK,Season track,Trilha da temporada
-SHOP_EMPTY,No cosmetics are on sale yet.,Ainda não há itens cosméticos à venda.
-SHOP_ITEM,%s — %s,%s — %s
-SHOP_BUY,Buy,Comprar
-SHOP_BUY_NAMED,Buy %s for %s,Comprar %s por %s
-SHOP_GIVE,Give,Presentear
-SHOP_WEAR,Wear,Usar
-SHOP_TAKE_OFF,Take off,Tirar
-SHOP_BUYING,Buying…,Comprando…
-SHOP_BOUGHT,"Bought, and yours","Comprado, e já é seu"
-SHOP_PENDING,Paid; the server confirms it when you are back online,Pago; o servidor confirma quando você voltar a ficar online
-SHOP_MONTH,"%s: %s spent, %s refunded","%s: %s gastos, %s reembolsados"
-SHOP_LEFT,%s left to spend this month,%s restantes para gastar este mês
-SHOP_FAILED,The shop could not do that: %s,A loja não conseguiu fazer isso: %s
-SHOP_GIVE_NAMED,Give %s to %s,Presentear %s a %s
-SHOP_GIFT_TO,Gifts go to %s,Presentes vão para %s
-SHOP_OTHER_FRIEND,Another friend,Outro amigo
-SHOP_OWNED,Yours: %s,Seu: %s
-SHOP_OWNED_WORN,"Yours, worn: %s","Seu, em uso: %s"
-SHOP_OWNED_NAME,%s (%s),%s (%s)
-SHOP_WORN_BY,Worn by: %s,Usado por: %s
-SHOP_WORN_BY_NEXT,Worn by %s: choose another,Usado por %s: escolher outro
-SHOP_WEAR_NAMED,Wear %s,Usar %s
-SHOP_TAKE_OFF_NAMED,Take off %s,Tirar %s
-KIND_REALM_SKIN,realm skin,visual de reino
-KIND_SKY_THEME,sky theme,tema de céu
-KIND_BRIDGE_STYLE,bridge style,estilo de ponte
-KIND_OUTFIT,outfit,traje
-KIND_SAGE_ROBE,sage robe,manto de sábio
-KIND_LAW_VISUAL,law visual,visual de lei
-KIND_EMOTE,emote,emote
-LEAGUE_DUST,Dust,Poeira
-LEAGUE_EMBER,Ember,Brasa
-LEAGUE_TIDE,Tide,Maré
-LEAGUE_STAR,Star,Estrela
-LEAGUE_NOVA,Nova,Nova
-LEAGUE_PARADOX,Paradox,Paradoxo
-LEAGUE_PLACE,%s %s,%s %s
-LEAGUE_PLACE_TOP,%s,%s
-LEAGUE_RENOWN,%s Renown in season %d,%s de Renome na temporada %d
-LEAGUE_TO_NEXT,%s Renown to the next league,%s de Renome até a próxima liga
-LEAGUE_TOP,The top league,A liga mais alta
-RANK_FOUNDER,founder,fundador
-RANK_ELDER,elder,ancião
-RANK_MEMBER,member,membro
-SOCIAL_TITLE,League and crews,Liga e equipes
-SOCIAL_YOU,you,você
-SOCIAL_KEEPER,Keeper %s,Guardião %s
-SOCIAL_MEMBER,"%s, %s","%s, %s"
-SOCIAL_CONSTELLATION,"Constellation %s, %d members","Constelação %s, %d membros"
-SOCIAL_NO_CONSTELLATION,You are in no constellation,Você não está em nenhuma constelação
-SOCIAL_FOUND,Found a constellation,Fundar uma constelação
-SOCIAL_LEAVE_CONSTELLATION,Leave the constellation,Sair da constelação
-SOCIAL_CREW_FORMED,Your crew: %d members,Sua equipe: %d membros
-SOCIAL_CREW_FORMING,Your crew is forming: %d of the 4 it needs,Sua equipe está se formando: %d dos 4 necessários
-SOCIAL_NO_CREW,You are in no crew,Você não está em nenhuma equipe
-SOCIAL_CREW_INVITE,Its invite: %s,O convite dela: %s
-SOCIAL_CREW_CODE,A crew's invite,O convite de uma equipe
-SOCIAL_START_CREW,Start a crew,Criar uma equipe
-SOCIAL_JOIN_CREW,Join the crew,Entrar na equipe
-SOCIAL_LEAVE_CREW,Leave the crew,Sair da equipe
-SOCIAL_FRIENDS,Friends,Amigos
-SOCIAL_FAILED,That could not be done: %s,Não foi possível fazer isso: %s
-SOCIAL_FOUND_NAMED,Found the constellation %s,Fundar a constelação %s
-SOCIAL_NAME,Its name: %s,Nome: %s
-SOCIAL_OTHER_ADJECTIVE,Another first word,Outra palavra de qualidade
-SOCIAL_OTHER_NOUN,Another second word,Outro substantivo
-FRIENDS_TITLE,Friends,Amigos
-FRIENDS_NONE,"No friends yet: share an invite, or accept one.",Ainda sem amigos: compartilhe um convite ou aceite um.
-FRIENDS_CODE,A friend's invite,O convite de um amigo
-FRIENDS_ACCEPT,Accept,Aceitar
-FRIENDS_ACCEPTED,You and %s are friends,Você e %s agora são amigos
-FRIENDS_INVITE,Invite a friend,Convidar um amigo
-FRIENDS_INVITE_CODE,Your invite to share: %s,Seu convite para compartilhar: %s
-FRIENDS_CHALLENGE,Challenge link,Link de desafio
-FRIENDS_CHALLENGE_CODE,Your island's challenge link: %s,O link de desafio da sua ilha: %s
-FRIENDS_REMOVE,Remove,Remover
-FRIENDS_REMOVE_NAMED,Remove %s from your friends,Remover %s dos seus amigos
-FRIENDS_FEED,This week,Esta semana
-FRIENDS_FAILED,That could not be done: %s,Não foi possível fazer isso: %s
-FEED_RAID,%s raided %s: %s,%s assaltou %s: %s
-FEED_FRIENDLY,%s played a friendly heist on %s: %s,%s jogou um assalto amistoso em %s: %s
-FEED_CHALLENGE,%s took %s's challenge: %s,%s aceitou o desafio de %s: %s
-OFFLINE_RECOMMEND,You are offline. Going online first is recommended: a heist played now counts only once the server confirms it.,Você está offline. É recomendado ficar online primeiro: um assalto jogado agora só conta quando o servidor o confirmar.
-OFFLINE_NONE,"You are offline, and no island is ready to play offline. Go online to play.",Você está offline e nenhuma ilha está pronta para jogar offline. Fique online para jogar.
-OFFLINE_TRY_AGAIN,Try online again,Tentar online de novo
-OFFLINE_PLAY_ANYWAY,Play offline anyway,Jogar offline mesmo assim
-OFFLINE_SENT,"%d results played offline were sent, and the server has them","%d resultados jogados offline foram enviados, e o servidor os recebeu"
-WALLET_FAILED,The wallet could not be shown: %s,Não foi possível mostrar a carteira: %s
-WORKSHOP_TITLE,Island Workshop,Oficina de Ilhas
-WORKSHOP_FAILED,The Workshop could not do that: %s,A Oficina não conseguiu fazer isso: %s
-WORKSHOP_BUILD,Build,Construir
-WORKSHOP_TAB_TOP,Top,Mais concluídas
-WORKSHOP_TAB_NEW,New,Novas
-WORKSHOP_TAB_FEATURED,Featured,Em destaque
-WORKSHOP_TAB_MINE,My islands,Minhas ilhas
-WORKSHOP_LIST_TOP,The islands most finished,As ilhas mais concluídas
-WORKSHOP_LIST_NEW,The newest islands,As ilhas mais novas
-WORKSHOP_LIST_FEATURED,This week's featured islands,As ilhas em destaque da semana
-WORKSHOP_LIST_MINE,Your islands,Suas ilhas
-WORKSHOP_EMPTY_TOP,No islands yet: publish the first,Ainda não há ilhas: publique a primeira
-WORKSHOP_EMPTY_NEW,No islands yet: publish the first,Ainda não há ilhas: publique a primeira
-WORKSHOP_EMPTY_FEATURED,No island is featured this week,Nenhuma ilha em destaque nesta semana
-WORKSHOP_EMPTY_MINE,You have not published an island. Clear one of yours in the builder to publish it.,Você ainda não publicou uma ilha. Vença uma das suas no construtor para publicá-la.
-WORKSHOP_ITEM,%s — realm level %d,%s — nível de reino %d
-WORKSHOP_STATS,Completions: %s · remixes: %s,Conclusões: %s · remixes: %s
-WORKSHOP_RATINGS,Fun %s · cleverness %s · fairness %s · ratings: %s,Diversão %s · engenhosidade %s · justiça %s · avaliações: %s
-WORKSHOP_UNRATED,Not rated yet,Ainda sem avaliações
-WORKSHOP_BY_YOU,Made by you,Feita por você
-WORKSHOP_BY_NOBODY,Its maker's account is gone,A conta de quem a fez não existe mais
-WORKSHOP_A_REMIX,A remix of another island,Um remix de outra ilha
-WORKSHOP_FEATURED,Featured,Em destaque
-WORKSHOP_WITHDRAWN,Withdrawn: no longer listed,Retirada: não aparece mais nas listas
-WORKSHOP_REMOVED,Removed by a moderator: %s,Removida por um moderador: %s
-WORKSHOP_PLAY,Play,Jogar
-WORKSHOP_PLAY_NAMED,Play %s,Jogar %s
-WORKSHOP_REMIX,Remix,Remixar
-WORKSHOP_REMIX_NAMED,Remix %s in the builder,Remixar %s no construtor
-WORKSHOP_WITHDRAW,Withdraw,Retirar
-WORKSHOP_WITHDRAW_NAMED,Withdraw %s from the lists,Retirar %s das listas
-WORKSHOP_REASON,Reason: %s,Motivo: %s
-WORKSHOP_REASON_NAMED,Report reason for %s: %s; choose another,Motivo da denúncia de %s: %s; escolher outro
-WORKSHOP_REPORT,Report,Denunciar
-WORKSHOP_REPORT_NAMED,Report %s — reason: %s,Denunciar %s — motivo: %s
-WORKSHOP_PUBLISH_TITLE,Publish the island you just cleared,Publique a ilha que você acabou de vencer
-WORKSHOP_PUBLISH_REMIX,It is a remix: the original is named with it,É um remix: a original aparece junto
-WORKSHOP_NAME,Its name: %s,O nome: %s
-WORKSHOP_PUBLISH,Publish,Publicar
-WORKSHOP_PUBLISH_NAMED,Publish as %s,Publicar como %s
-WORKSHOP_RATE_TITLE,Rate %s,Avaliar %s
-WORKSHOP_SCORE_FUN,Fun: %d of 5,Diversão: %d de 5
-WORKSHOP_SCORE_CLEVERNESS,Cleverness: %d of 5,Engenhosidade: %d de 5
-WORKSHOP_SCORE_FAIRNESS,Fairness: %d of 5,Justiça: %d de 5
-WORKSHOP_LOWER,Lower — %s,Diminuir — %s
-WORKSHOP_HIGHER,Raise — %s,Aumentar — %s
-WORKSHOP_SEND_RATING,Send the rating,Enviar a avaliação
-WORKSHOP_SEND_RATING_NAMED,Send the rating for %s,Enviar a avaliação de %s
-WORKSHOP_CLEARED,Cleared: you got out with loot,Vencida: você saiu com o saque
-WORKSHOP_NOT_CLEARED,Not cleared this time,Não vencida desta vez
-WORKSHOP_DONE_PUBLISHED,Published as %s,Publicada como %s
-WORKSHOP_DONE_RATED,Your rating is in,Sua avaliação foi registrada
-WORKSHOP_DONE_REPORTED,Reported: a person will look at it,Denunciada: uma pessoa vai analisar
-WORKSHOP_DONE_REMIXED,"In the builder, yours to change","No construtor, pronta para você mudar"
-WORKSHOP_DONE_WITHDRAWN,Withdrawn: it is no longer listed,Retirada: não aparece mais nas listas
-WORKSHOP_LADDER,%s · completions of your islands: %s · featured: %s,%s · conclusões das suas ilhas: %s · em destaque: %s
-WORKSHOP_LEVEL,Creator level: %s,Nível de criador: %s
-WORKSHOP_NO_LEVEL,No creator level yet: it starts when someone finishes one of your islands,Ainda sem nível de criador: começa quando alguém concluir uma das suas ilhas
-WORKSHOP_TAB_SHOW,Show %s,Mostrar %s
-WORKSHOP_TAB_SHOWN,"%s, shown","%s, em exibição"
-WORKSHOP_REMIX_CONFIRM,Into your builder? Yours is kept,Para o seu construtor? A sua fica guardada
-WORKSHOP_REMIX_CONFIRM_NAMED,"Put %s in your builder; your own island is kept, to swap back","Colocar %s no seu construtor; a sua ilha fica guardada, para trocar de volta"
-WORKSHOP_WORDS_AGAIN,Get the name words again,Buscar as palavras do nome de novo
-WORKSHOP_OTHER_ADJECTIVE,Another first word for %s,Outra palavra de qualidade para %s
-WORKSHOP_OTHER_NOUN,Another second word for %s,Outro substantivo para %s
-CREATOR_BUILDER,Builder,Construtor
-CREATOR_WRIGHT,Wright,Artífice
-CREATOR_ARCHITECT,Architect,Arquiteto
-CREATOR_LOREMAKER,Loremaker,Mestre das Lendas
-REPORT_UNFAIR,unfair,injusta
-REPORT_UNPLAYABLE,unplayable,injogável
-REPORT_COPIED,copied,copiada
-REPORT_OFFENSIVE,offensive,ofensiva
-REPORT_OTHER,other,outro
-REMOVAL_UNFAIR,unfair,injusta
-REMOVAL_UNPLAYABLE,unplayable,injogável
-REMOVAL_COPIED,copied,copiada
-REMOVAL_OFFENSIVE,offensive,ofensiva
-REMOVAL_BAN,its maker was banned,quem a fez foi banido
-AGE_QUESTION,How old are you?,Quantos anos você tem?
-AGE_UNDER_13,Under 13,Menos de 13
-AGE_13_15,13 to 15,13 a 15
-AGE_16_17,16 or 17,16 ou 17
-AGE_18_UP,18 or older,18 ou mais
-AGE_TOO_YOUNG,"Ruleborn is for players aged 13 and up. No account has been made, and nothing about you has been sent.","Ruleborn é para jogadores a partir de 13 anos. Nenhuma conta foi criada, e nada sobre você foi enviado."
-KEEPER_TITLE,Keeper %d,Guardião %d
-KEEPER_PROGRESS,%s of %s experience to Keeper %d,%s de %s de experiência até Guardião %d
-KEEPER_TOP,"Keeper %d, the highest level","Guardião %d, o nível mais alto"
-KEEPER_SPOKEN,Keeper %d: %s,Guardião %d: %s
-HOME_UNIVERSE,Your universe,Seu universo
-UNIVERSE_TITLE,Your universe,Seu universo
-UNIVERSE_HEADER,%s Starlight · Spire %d · Keeper %d,%s de Luz Estelar · Torre %d · Guardião %d
-UNIVERSE_FAILED,Not bought: %s,Não comprado: %s
-UNIVERSE_HEART,The Heart,O Coração
-UNIVERSE_HEART_TITLE,"The Heart, which counts as realm level %d","O Coração, que conta como reino nível %d"
-UNIVERSE_REALM_TITLE,"%s, realm level %d","%s, reino nível %d"
-UNIVERSE_LEVEL,"%s, level %d of %d","%s, nível %d de %d"
-UNIVERSE_AT_TOP,"%s: the highest level","%s: o nível mais alto"
-UNIVERSE_NUMBERED,%s %d,%s %d
-UNIVERSE_RAISE,Raise to level %d,Subir ao nível %d
-UNIVERSE_RAISE_REALM,Raise the realm to level %d,Subir o reino ao nível %d
-UNIVERSE_BUILD,Build: %s,Construir: %s
-UNIVERSE_PRICE,"%s, %s Starlight","%s, %s de Luz Estelar"
-UNIVERSE_BLOCKED,%s. %s,%s. %s
-UNIVERSE_SPOKEN,%s. %s,%s. %s
-UNIVERSE_NEEDS_KEEPER,Needs Keeper %d,Precisa de Guardião %d
-UNIVERSE_NEEDS_SPIRE,Needs the Spire at level %d,Precisa da Torre no nível %d
-UNIVERSE_NEEDS_STARLIGHT,Needs %s Starlight,Precisa de %s de Luz Estelar
-UNIVERSE_CONFIRM,"Tap again to spend %s Starlight","Toque de novo para gastar %s de Luz Estelar"
-UNIVERSE_CONFIRM_SPOKEN,"%s: tap again to spend %s Starlight","%s: toque de novo para gastar %s de Luz Estelar"
-UNIVERSE_ROOM,Room to build here,Espaço para construir aqui
-UNIVERSE_OPEN_TITLE,Open a new outer realm,Abrir um novo reino exterior
-UNIVERSE_OPEN,Open %s,Abrir %s
-UNIVERSE_OPENED,%s is open,%s está aberto
-UNIVERSE_RAISED,The realm is at level %d,O reino está no nível %d
-UNIVERSE_BUILT,"%s, level %d","%s, nível %d"
-ERR_NOT_ENOUGH_STARLIGHT,you need more Starlight,você precisa de mais Luz Estelar
-ERR_NEEDS_KEEPER_LEVEL,that needs a higher Keeper level,isso precisa de um nível de Guardião mais alto
-ERR_NEEDS_SPIRE_LEVEL,that needs the Spire higher,isso precisa da Torre mais alta
-ERR_NOT_THE_NEXT_LEVEL,that is not the next level,esse não é o próximo nível
-ERR_NO_ROOM,there is no room for another here,não há espaço para outro aqui
-ERR_NOT_IN_THIS_REALM,that cannot stand in this realm,isso não pode ficar neste reino
-ERR_NO_SUCH_BUILDING,that building does not exist,essa construção não existe
-ERR_NO_SUCH_REALM_TYPE,that kind of realm does not exist,esse tipo de reino não existe
-ERR_EVERY_REALM_OPEN,every realm is already open,todos os reinos já estão abertos
-WORKSHOP_TERMS,"Before you publish, play, rate or remix Workshop islands, read the terms of use (version %s) and accept them. Reporting an island never waits for them.","Antes de publicar, jogar, avaliar ou remixar ilhas da Oficina, leia os termos de uso (versão %s) e aceite-os. Denunciar uma ilha nunca espera por eles."
-WORKSHOP_TERMS_READ,Read the terms,Ler os termos
-WORKSHOP_TERMS_ACCEPT,Accept the terms,Aceitar os termos
-WORKSHOP_DONE_TERMS,Terms accepted,Termos aceitos
-WORKSHOP_BLOCK,Block creator,Bloquear criador
-WORKSHOP_BLOCK_NAMED,"Block %s, who made %s","Bloquear %s, que fez %s"
-WORKSHOP_DONE_BLOCKED,"Blocked: you will not see each other's Workshop islands, and you are no longer friends","Bloqueado: vocês não verão as ilhas da Oficina um do outro, e não são mais amigos"
-ERR_TERMS_FIRST,accept the terms of use first,aceite os termos de uso primeiro
-ERR_NOT_THE_CURRENT_TERMS,the terms have changed; read the new ones,os termos mudaram; leia os novos
-ERR_OWN_ACCOUNT,that is your own account,essa é a sua própria conta
-ERR_NOT_BLOCKED,that player is not blocked,esse jogador não está bloqueado
-ERR_TOO_MANY_BLOCKS,you have blocked as many players as you can,você já bloqueou o máximo de jogadores
-ERR_TOO_MANY_REQUESTS,the game asked too often; try again in a moment,o jogo pediu vezes demais; tente de novo em instantes
-WORKSHOP_BLOCK_CONFIRM,Tap again to block,Toque de novo para bloquear
-WORKSHOP_BLOCK_CONFIRM_NAMED,"Tap again to block %s, who made %s; a friendship between you ends","Toque de novo para bloquear %s, que fez %s; uma amizade entre vocês termina"
-FRIENDS_BLOCKED,Players you blocked,Jogadores que você bloqueou
-FRIENDS_UNBLOCK,Unblock,Desbloquear
-FRIENDS_UNBLOCK_NAMED,Unblock %s,Desbloquear %s
-ERR_HOME_TOO_LOW,that home is not high enough for that level,essa casa não permite esse nível
-ERR_NO_BIRTH_READY,no birth is ready at that Nursery yet,nenhum nascimento está pronto nesse Nursery ainda
-ERR_NO_NURSERY,there is no Nursery in that realm,não há Nursery nesse reino
-ERR_NO_PLACE,there is no free place for another character,não há lugar livre para outro personagem
-ERR_NO_SUCH_CHARACTER,that character does not exist,esse personagem não existe
-ERR_NO_SUCH_HOME,there is no such home,essa casa não existe
-ERR_NOT_A_PRODUCER,"only a Star Well, an Aether Spring or a Garden is collected","só se coleta de um Star Well, um Aether Spring ou um Garden"
-ERR_NOT_A_WORKPLACE,nobody can work there,ninguém pode trabalhar ali
-ERR_NOT_ENOUGH_ESSENCE,you need more Essence,você precisa de mais Essência
-ERR_NOT_THE_NEXT_BIRTH,that is not the next birth,esse não é o próximo nascimento
-ERR_SLOTS_FULL,every worker slot there is filled,todos os postos de trabalho ali estão ocupados
-ERR_ALREADY_STUDIED,that heist was already studied for another law,esse assalto já foi estudado para outra lei
-ERR_CHAPTER_CLOSED,that law's chapter of the Codex is not open yet,o capítulo dessa lei no Codex ainda não está aberto
-ERR_LAW_NOT_CROSSED,the crew did not cross that law,a equipe não cruzou essa lei
-ERR_NO_SUCH_LAW,there is no such law,essa lei não existe
-ERR_NOT_ENOUGH_AETHER,you need more Aether,você precisa de mais Aether
-ERR_NOT_ENOUGH_PAGES,you need more pages of that law,você precisa de mais páginas dessa lei
-ERR_NOT_THE_NEXT_TIER,that is not the next tier,esse não é o próximo nível da lei
-ERR_NOTHING_TO_STUDY,a heist among friends gives nothing to study,um assalto entre amigos não dá nada para estudar
-ERR_NOT_ON_THE_GRID,that is placed by the island builder,isso é colocado pelo construtor da ilha
-ERR_OFF_THE_GRID,that does not fit on the realm,isso não cabe no reino
-ERR_TILE_TAKEN,another building stands there,outra construção está ali
-ERR_NOT_BUILT,that has not been built,isso ainda não foi construído
+replay de %d bytes","Ressimulado como o servidor faria: aceite
+replay de %d bytes","Nachsimuliert wie vom Server: akzeptiert
+%d-Byte-Replay","Re-simulé comme le ferait le serveur : accepté
+Replay de %d octets"
+RESULT_NOT_ACCEPTED,Not accepted,Not accepted,Não aceito,Não aceite,Nicht akzeptiert,Non accepté
+RESULT_REFUSED,Refused: %s,Refused: %s,Recusado: %s,Recusado: %s,Abgelehnt: %s,Refusé : %s
+RESULT_PAID_NOTHING,The server paid nothing for this replay,The server paid nothing for this replay,O servidor não pagou nada por este replay,O servidor não pagou nada por este replay,Der Server zahlte nichts für dieses Replay,Le serveur n'a rien payé pour ce replay
+RESULT_WOULD_PAY_NOTHING,The server would pay nothing for this replay,The server would pay nothing for this replay,O servidor não pagaria nada por este replay,O servidor não pagaria nada por este replay,Der Server würde nichts für dieses Replay zahlen,Le serveur ne paierait rien pour ce replay
+RESULT_WATCH,Watch it,Watch it,Assistir,Ver,Ansehen,Regarder
+RESULT_AGAIN,Again,Again,De novo,Outra vez,Nochmal,Rejouer
+GRADE_CLEAN,Clean,Clean,Limpo,Limpo,Sauber,Propre
+GRADE_LOUD,Loud,Loud,Barulhento,Barulhento,Laut,Bruyant
+GRADE_PARTIAL,Partial,Partial,Parcial,Parcial,Teilweise,Partiel
+GRADE_FOILED,Foiled,Foiled,Frustrado,Frustrado,Vereitelt,Déjoué
+SETTINGS_TITLE,Settings,Settings,Ajustes,Definições,Einstellungen,Réglages
+SETTINGS_LANGUAGE,Language,Language,Idioma,Idioma,Sprache,Langue
+LANGUAGE_en,English (UK),English (UK),English (UK),English (UK),English (UK),English (UK)
+LANGUAGE_pt_BR,Português (Brasil),Português (Brasil),Português (Brasil),Português (Brasil),Português (Brasil),Português (Brasil)
+LANGUAGE_en_US,English (US),English (US),English (US),English (US),English (US),English (US)
+LANGUAGE_pt_PT,Português (Portugal),Português (Portugal),Português (Portugal),Português (Portugal),Português (Portugal),Português (Portugal)
+LANGUAGE_de,Deutsch,Deutsch,Deutsch,Deutsch,Deutsch,Deutsch
+LANGUAGE_fr,Français,Français,Français,Français,Français,Français
+SETTINGS_MUSIC,Music %d,Music %d,Música %d,Música %d,Musik %d,Musique %d
+SETTINGS_EFFECTS,Effects %d,Effects %d,Efeitos %d,Efeitos %d,Effekte %d,Effets %d
+SETTINGS_ALERTS,Alerts %d,Alerts %d,Alertas %d,Alertas %d,Hinweise %d,Alertes %d
+SETTINGS_MOTION_OFF,Motion: full,Motion: full,Movimento: normal,Movimento: normal,Bewegung: voll,Animations : complètes
+SETTINGS_MOTION_ON,Motion: reduced,Motion: reduced,Movimento: reduzido,Movimento: reduzido,Bewegung: reduziert,Animations : réduites
+SETTINGS_HAPTICS_ON,Haptics: on,Haptics: on,Vibração: sim,Vibração: sim,Vibration: an,Vibrations : oui
+SETTINGS_HAPTICS_OFF,Haptics: off,Haptics: off,Vibração: não,Vibração: não,Vibration: aus,Vibrations : non
+SETTINGS_QUIETER,%s: quieter,%s: quieter,%s: mais baixo,%s: mais baixo,%s: leiser,%s : moins fort
+SETTINGS_LOUDER,%s: louder,%s: louder,%s: mais alto,%s: mais alto,%s: lauter,%s : plus fort
+SETTINGS_TEXT_SIZE,Text %d%%,Text %d%%,Texto %d%%,Texto %d%%,Text %d %%,Texte %d %%
+SETTINGS_SMALLER,%s: smaller,%s: smaller,%s: menor,%s: mais pequeno,%s: kleiner,%s : plus petit
+SETTINGS_LARGER,%s: larger,%s: larger,%s: maior,%s: maior,%s: größer,%s : plus grand
+SETTINGS_CONTRAST_ON,High contrast: on,High contrast: on,Alto contraste: sim,Alto contraste: sim,Hoher Kontrast: an,Contraste élevé : oui
+SETTINGS_CONTRAST_OFF,High contrast: off,High contrast: off,Alto contraste: não,Alto contraste: não,Hoher Kontrast: aus,Contraste élevé : non
+SETTINGS_LEFT_HANDED_ON,Left-handed: on,Left-handed: on,Canhoto: sim,Canhoto: sim,Linkshänder: an,Gaucher : oui
+SETTINGS_LEFT_HANDED_OFF,Left-handed: off,Left-handed: off,Canhoto: não,Canhoto: não,Linkshänder: aus,Gaucher : non
+SETTINGS_SLOW_REHEARSALS_ON,Rehearsals at 75%: on,Rehearsals at 75%: on,Ensaios a 75%: sim,Ensaios a 75%: sim,Proben mit 75 %: an,Répétitions à 75 % : oui
+SETTINGS_SLOW_REHEARSALS_OFF,Rehearsals at 75%: off,Rehearsals at 75%: off,Ensaios a 75%: não,Ensaios a 75%: não,Proben mit 75 %: aus,Répétitions à 75 % : non
+SETTINGS_BANNERS_STAY_ON,Banners stay until dismissed,Banners stay until dismissed,Avisos ficam até serem dispensados,Os avisos ficam até serem dispensados,Banner bleiben bis zum Schließen,Bannières affichées jusqu'à fermeture
+SETTINGS_BANNERS_STAY_OFF,Banners go by themselves,Banners go by themselves,Avisos somem sozinhos,Os avisos desaparecem sozinhos,Banner verschwinden von selbst,Bannières masquées d'elles-mêmes
+HOME_BUILD,Build your island,Build your island,Construir sua ilha,Construir a tua ilha,Insel bauen,Construis ton île
+HOME_TRACK,Season track,Season track,Trilha da temporada,Percurso da temporada,Saisonpfad,Parcours de saison
+HOME_SHOP,Shop,Shop,Loja,Loja,Shop,Boutique
+HOME_SOCIAL,League and crews,League and crews,Liga e equipes,Liga e equipas,Liga und Crews,Ligue et équipes
+HOME_FRIENDS,Friends,Friends,Amigos,Amigos,Freunde,Amis
+HOME_WORKSHOP,Workshop,Workshop,Oficina,Oficina,Werkstatt,Atelier
+BUILDER_TITLE,"Your island, realm level %d","Your island, realm level %d","Sua ilha, reino nível %d","A tua ilha, nível de reino %d","Deine Insel, Reichslevel %d","Ton île, royaume niveau %d"
+BUILDER_HINT,Tap the realm to place what is chosen below,Tap the realm to place what is chosen below,Toque no reino para pôr o que está escolhido abaixo,Toca no reino para colocar o que está escolhido abaixo,"Tippe ins Reich, um das unten Gewählte zu platzieren",Touche le royaume pour placer la sélection ci-dessous
+BUILDER_TOOL_GROUND,Ground,Ground,Terreno,Terreno,Boden,Sol
+BUILDER_TOOL_WARD,Ward,Ward,Proteção,Proteção,Siegel,Protection
+BUILDER_TOOL_GUARD,Guard,Guard,Guarda,Guarda,Wache,Garde
+BUILDER_TOOL_LAW,Law,Law,Lei,Lei,Gesetz,Loi
+BUILDER_TOOL_VAULT,Vault,Vault,Cofre,Cofre,Tresor,Coffre
+BUILDER_TOOL_ERASE,Erase,Erase,Apagar,Apagar,Löschen,Effacer
+BUILDER_BARE,Bare ground,Bare ground,Chão limpo,Chão limpo,Leerer Boden,Sol nu
+BUILDER_LEVEL,Level %d,Level %d,Nível %d,Nível %d,Level %d,Niveau %d
+BUILDER_SAVE,Save,Save,Salvar,Guardar,Sichern,Enregistrer
+BUILDER_SAVED,Saved on this phone,Saved on this phone,Salva neste celular,Guardada neste telemóvel,Auf diesem Handy gespeichert,Enregistrée sur ce téléphone
+BUILDER_RAID,Raid it,Raid it,Invadir,Invadir,Überfallen,Braquer
+BUILDER_READY,"Ready to raid: %d of %d wards, %d of %d guards, %d of %d laws","Ready to raid: %d of %d wards, %d of %d guards, %d of %d laws","Pronta para invadir: %d de %d proteções, %d de %d guardas, %d de %d leis","Pronta para invadir: %d de %d proteções, %d de %d guardas, %d de %d leis","Bereit: %d von %d Siegeln, %d von %d Wachen, %d von %d Gesetzen","Prête au casse : %d sur %d protections, %d sur %d gardes, %d sur %d lois"
+BUILDER_BLOCKED,Not ready: %s,Not ready: %s,Ainda não: %s,Ainda não: %s,Nicht bereit: %s,Pas prête : %s
+BUILDER_TOGETHER,Together: %s,Together: %s,Juntas: %s,Juntas: %s,Zusammen: %s,Ensemble : %s
+BUILDER_ALONE,The laws make nothing together yet,The laws make nothing together yet,As leis ainda não fazem nada juntas,As leis ainda não fazem nada juntas,Die Gesetze bewirken noch nichts zusammen,Les lois ne forment encore rien ensemble
+BUILDER_HARMONY,%s harmony,%s harmony,harmonia de %s,harmonia de %s,%s-Harmonie,harmonie %s
+BUILDER_CLASH,%s clash,%s clash,choque de %s,choque de %s,%s-Konflikt,choc %s
+BUILDER_RESTORE,Swap back,Swap back,Trocar de volta,Trocar de volta,Zurücktauschen,Rétablir
+BUILDER_RESTORE_NAMED,Swap back to the island the remix replaced; the remix is kept,Swap back to the island the remix replaced; the remix is kept,Trocar de volta para a ilha que o remix substituiu; o remix fica guardado,Voltar à ilha que o remix substituiu; o remix fica guardado,"Zurück zur Insel, die der Remix ersetzt hat; der Remix bleibt erhalten",Revenir à l'île remplacée par le remix ; le remix est conservé
+PROBLEM_TOOMANYWARDS,too many wards for the realm,too many wards for the realm,proteções demais para o reino,demasiadas proteções para o reino,zu viele Siegel für das Reich,trop de protections pour le royaume
+PROBLEM_TOOMANYGUARDS,too many guards for the realm,too many guards for the realm,guardas demais para o reino,demasiados guardas para o reino,zu viele Wachen für das Reich,trop de gardes pour le royaume
+PROBLEM_TOOMANYLAWS,too many laws for the realm,too many laws for the realm,leis demais para o reino,demasiadas leis para o reino,zu viele Gesetze für das Reich,trop de lois pour le royaume
+PROBLEM_UNKNOWNLAW,a law this version does not have,a law this version does not have,uma lei que esta versão não tem,uma lei que esta versão não tem,"ein Gesetz, das diese Version nicht kennt",une loi absente de cette version
+PROBLEM_CROWDED,two things on one tile,two things on one tile,duas coisas numa casa,duas coisas numa casa,zwei Dinge auf einem Feld,deux choses sur une case
+PROBLEM_POSTBLOCKED,a guard where it cannot stand,a guard where it cannot stand,um guarda onde não pode ficar,um guarda onde não pode ficar,"eine Wache, wo sie nicht stehen kann",un garde là où il ne peut pas se tenir
+PROBLEM_LANDINGBLOCKED,the landing is blocked,the landing is blocked,o desembarque está bloqueado,o desembarque está bloqueado,die Landestelle ist blockiert,le débarquement est bloqué
+PROBLEM_SEALED,no path reaches the Vault,no path reaches the Vault,nenhum caminho chega ao Cofre,nenhum caminho chega ao Cofre,kein Weg führt zum Tresor,aucun chemin ne mène au Coffre
+PROBLEM_EDGECLOSED,a side has fewer than half its edge open to land on,a side has fewer than half its edge open to land on,um lado tem menos da metade da borda aberta para desembarque,um lado tem menos de metade da borda aberta para desembarcar,eine Seite hat weniger als die Hälfte ihres Rands zum Landen frei,un côté a moins de la moitié de son bord ouvert au débarquement
+RESULT_BUILDER,Back to the builder,Back to the builder,Voltar ao construtor,Voltar ao construtor,Zurück zum Editor,Retour au constructeur
+RESULT_CONFIRMING,Checked on this phone (%d bytes); the server confirms it when you are back online.,Checked on this phone (%d bytes); the server confirms it when you are back online.,Conferido neste celular (%d bytes); o servidor confirma quando você voltar a ficar online.,Verificado neste telemóvel (%d bytes); o servidor confirma quando voltares a estar online.,"Auf diesem Handy geprüft (%d Byte); der Server bestätigt es, sobald du wieder online bist.",Vérifié sur ce téléphone (%d octets) ; le serveur confirmera à ton retour en ligne.
+RESULT_PUBLISH,Publish it,Publish it,Publicar,Publicar,Veröffentlichen,Publier
+RESULT_RATE,Rate this island,Rate this island,Avaliar esta ilha,Avaliar esta ilha,Insel bewerten,Noter cette île
+RESULT_COUNTED,It counts as a completion for its creator,It counts as a completion for its creator,Conta como uma conclusão para quem a criou,Conta como uma conclusão para quem a criou,Zählt als Abschluss für den Ersteller,Ça compte comme une réussite pour son créateur
+RESULT_NOT_COUNTED,Already counted: a player's clear counts once,Already counted: a player's clear counts once,Já contada: a vitória de cada jogador conta uma vez,Já contada: a vitória de cada jogador conta uma vez,Schon gezählt: Jeder Spieler zählt nur einmal,Déjà comptée : la réussite d'un joueur compte une fois
+RESULT_PLAY_NOT_COUNTED,This play does not count as a clear of the island,This play does not count as a clear of the island,Esta partida não conta como vitória na ilha,Esta partida não conta como vitória na ilha,Diese Partie zählt nicht als Abschluss der Insel,Cette partie ne compte pas comme une réussite de l'île
+RESULT_KEEPER,+%s Keeper experience,+%s Keeper experience,+%s de experiência de Guardião,+%s de experiência de Guardião,+%s Hüter-EP,+%s d'expérience de Gardien
+RESULT_KEEPER_UP,Keeper %d reached,Keeper %d reached,Guardião %d alcançado,Guardião %d alcançado,Hüter %d erreicht,Gardien %d atteint
+ERR_UNKNOWN,something went wrong (%s),something went wrong (%s),algo deu errado (%s),algo correu mal (%s),etwas ist schiefgelaufen (%s),un problème est survenu (%s)
+ERR_OFFLINE,no server is set,no server is set,nenhum servidor configurado,nenhum servidor definido,kein Server eingestellt,aucun serveur n'est défini
+ERR_UNREACHABLE,the server could not be reached,the server could not be reached,não foi possível falar com o servidor,não foi possível contactar o servidor,der Server war nicht erreichbar,le serveur est injoignable
+ERR_TIMEOUT,the server took too long to answer,the server took too long to answer,o servidor demorou demais para responder,o servidor demorou demasiado a responder,der Server hat zu lange gebraucht,le serveur a mis trop de temps à répondre
+ERR_REQUEST_FAILED,the request could not be sent,the request could not be sent,não foi possível enviar o pedido,não foi possível enviar o pedido,die Anfrage konnte nicht gesendet werden,la requête n'a pas pu être envoyée
+ERR_MALFORMED_RESPONSE,the server's answer could not be read,the server's answer could not be read,não foi possível ler a resposta do servidor,não foi possível ler a resposta do servidor,die Antwort des Servers war unlesbar,la réponse du serveur est illisible
+ERR_NO_TARGET,there is no island to raid yet,there is no island to raid yet,ainda não há ilha para assaltar,ainda não há nenhuma ilha para assaltar,es gibt noch keine Insel zum Überfallen,aucune île à braquer pour l'instant
+ERR_ISLAND_DOES_NOT_LOAD,the island did not load,the island did not load,a ilha não carregou,a ilha não carregou,die Insel wurde nicht geladen,l'île ne s'est pas chargée
+ERR_A_REASON_IS_OWED,a reason is needed,a reason is needed,é preciso um motivo,é preciso um motivo,ein Grund ist nötig,un motif est requis
+ERR_ACCOUNT_DELETED,this account has been deleted,this account has been deleted,esta conta foi excluída,esta conta foi eliminada,dieses Konto wurde gelöscht,ce compte a été supprimé
+ERR_ALREADY_FRIENDS,you are already friends,you are already friends,vocês já são amigos,já são amigos,ihr seid schon befreundet,vous êtes déjà amis
+ERR_ALREADY_IN_A_CONSTELLATION,you are already in a constellation,you are already in a constellation,você já está em uma constelação,já estás numa constelação,du bist schon in einem Sternbild,tu es déjà dans une constellation
+ERR_ALREADY_IN_A_CREW,you are already in a crew,you are already in a crew,você já está em uma tripulação,já estás numa equipa,du bist schon in einer Crew,tu es déjà dans une équipe
+ERR_ALREADY_OWNED,that is already owned,that is already owned,isso já é seu,isso já é teu,das gehört dir schon,tu le possèdes déjà
+ERR_ANALYSTS_ONLY,only analysts can see this,only analysts can see this,só analistas podem ver isto,só os analistas podem ver isto,nur Analysten können das sehen,réservé aux analystes
+ERR_BAD_DATA,the game sent something it should not have,the game sent something it should not have,o jogo enviou algo que não devia,o jogo enviou algo que não devia,das Spiel hat etwas Falsches gesendet,le jeu a envoyé une donnée invalide
+ERR_BAD_FIELD,the game sent something it should not have,the game sent something it should not have,o jogo enviou algo que não devia,o jogo enviou algo que não devia,das Spiel hat etwas Falsches gesendet,le jeu a envoyé une donnée invalide
+ERR_BAD_PUSH_TOKEN,notifications could not be set up on this device,notifications could not be set up on this device,não foi possível ativar as notificações neste aparelho,não foi possível ativar as notificações neste dispositivo,Benachrichtigungen konnten auf diesem Gerät nicht eingerichtet werden,impossible d'activer les notifications sur cet appareil
+ERR_BAD_REMINDER_TIME,that reminder time is not a time of day,that reminder time is not a time of day,esse horário de lembrete não é um horário do dia,essa hora de lembrete não é uma hora do dia,diese Erinnerungszeit ist keine Uhrzeit,cette heure de rappel n'est pas une heure valide
+ERR_BAD_TIME,this device's clock looks wrong,this device's clock looks wrong,o relógio deste aparelho parece errado,o relógio deste dispositivo parece errado,die Uhr dieses Geräts scheint falsch zu gehen,l'horloge de cet appareil semble fausse
+ERR_BAD_TIME_ZONE,this device's time zone was not recognised,this device's time zone was not recognized,o fuso horário deste aparelho não foi reconhecido,o fuso horário deste dispositivo não foi reconhecido,die Zeitzone dieses Geräts wurde nicht erkannt,le fuseau horaire de cet appareil n'est pas reconnu
+ERR_BAD_WITHDRAW,the game sent something it should not have,the game sent something it should not have,o jogo enviou algo que não devia,o jogo enviou algo que não devia,das Spiel hat etwas Falsches gesendet,le jeu a envoyé une donnée invalide
+ERR_BANNED,this account has been banned,this account has been banned,esta conta foi banida,esta conta foi banida,dieses Konto wurde gesperrt,ce compte a été banni
+ERR_BATCH_TOO_LARGE,too much was sent at once,too much was sent at once,muita coisa foi enviada de uma vez,foi enviado demasiado de uma vez,zu viel auf einmal gesendet,trop de données envoyées d'un coup
+ERR_CHALLENGE_ALREADY_PLAYED,you have already played this challenge,you have already played this challenge,você já jogou este desafio,já jogaste este desafio,du hast diese Herausforderung schon gespielt,tu as déjà joué ce défi
+ERR_CONSTELLATION_CLOSED,that constellation is closed,that constellation is closed,essa constelação está fechada,essa constelação está fechada,dieses Sternbild ist geschlossen,cette constellation est fermée
+ERR_CONSTELLATION_FULL,that constellation is full,that constellation is full,essa constelação está cheia,essa constelação está cheia,dieses Sternbild ist voll,cette constellation est complète
+ERR_CREW_FULL,that crew is full,that crew is full,essa tripulação está cheia,essa equipa está cheia,diese Crew ist voll,cette équipe est complète
+ERR_CURATED_LISTS_ONLY,only the featured list is open to you,only the featured list is open to you,só a lista em destaque está aberta para você,só a lista em destaque está aberta para ti,nur die empfohlene Liste steht dir offen,seule la liste à la une t'est ouverte
+ERR_ELDERS_FULL,the constellation has all its elders,the constellation has all its elders,a constelação já tem todos os seus anciãos,a constelação já tem todos os anciãos,das Sternbild hat schon alle Ältesten,la constellation a déjà tous ses anciens
+ERR_FOUNDER_ONLY,only the founder can do that,only the founder can do that,só o fundador pode fazer isso,só o fundador pode fazer isso,nur der Gründer kann das,seul le fondateur peut faire ça
+ERR_GIFTS_GO_TO_FRIENDS,gifts can only go to friends,gifts can only go to friends,presentes só podem ir para amigos,os presentes só podem ir para amigos,Geschenke gehen nur an Freunde,les cadeaux sont réservés aux amis
+ERR_GOOGLE_IDENTITY_REFUSED,that Google account could not be confirmed,that Google account could not be confirmed,não foi possível confirmar essa conta Google,não foi possível confirmar essa conta Google,dieses Google-Konto konnte nicht bestätigt werden,ce compte Google n'a pas pu être confirmé
+ERR_INTENT_MISMATCH,the purchase did not match what was asked for,the purchase did not match what was asked for,a compra não corresponde ao que foi pedido,a compra não corresponde ao que foi pedido,der Kauf passt nicht zur Anfrage,l'achat ne correspond pas à la demande
+ERR_INTERNAL,the server had a problem; try again,the server had a problem; try again,o servidor teve um problema; tente de novo,o servidor teve um problema; tenta de novo,der Server hatte ein Problem; versuch es nochmal,le serveur a eu un problème ; réessaie
+ERR_ISLAND_NOT_PUBLISHABLE,the island breaks a building rule,the island breaks a building rule,a ilha quebra uma regra de construção,a ilha quebra uma regra de construção,die Insel verstößt gegen eine Bauregel,l'île enfreint une règle de construction
+ERR_ISLAND_WITHDRAWN,that island was withdrawn,that island was withdrawn,essa ilha foi retirada,essa ilha foi retirada,diese Insel wurde zurückgezogen,cette île a été retirée
+ERR_KEEPER_LEVEL_TOO_LOW,your Keeper level is too low,your Keeper level is too low,seu nível de Guardião é baixo demais,o teu nível de Guardião é demasiado baixo,dein Hüter-Level ist zu niedrig,ton niveau de Gardien est trop bas
+ERR_LEASE_EXPIRED,the heist's time ran out before it was sent,the heist's time ran out before it was sent,o tempo do assalto acabou antes do envio,o tempo do assalto acabou antes do envio,die Zeit für den Raubzug lief vor dem Senden ab,le temps du casse s'est écoulé avant l'envoi
+ERR_LEASE_HELD_IN_ANOTHER_MODE,that island is already held for another kind of heist,that island is already held for another kind of heist,essa ilha já está reservada para outro tipo de assalto,essa ilha já está reservada para outro tipo de assalto,diese Insel ist schon für eine andere Raubzugart reserviert,cette île est déjà réservée pour un autre type de casse
+ERR_LEASE_REFUSED,that heist is not yours to send,that heist is not yours to send,esse assalto não é seu para enviar,esse assalto não é teu para enviar,diesen Raubzug darfst du nicht senden,tu ne peux pas envoyer ce casse
+ERR_MALFORMED_BODY,the game sent something it should not have,the game sent something it should not have,o jogo enviou algo que não devia,o jogo enviou algo que não devia,das Spiel hat etwas Falsches gesendet,le jeu a envoyé une donnée invalide
+ERR_MALFORMED_JSON,the game sent something it should not have,the game sent something it should not have,o jogo enviou algo que não devia,o jogo enviou algo que não devia,das Spiel hat etwas Falsches gesendet,le jeu a envoyé une donnée invalide
+ERR_MISSING_FIELD,the game sent something it should not have,the game sent something it should not have,o jogo enviou algo que não devia,o jogo enviou algo que não devia,das Spiel hat etwas Falsches gesendet,le jeu a envoyé une donnée invalide
+ERR_MONTHLY_CAP,this month's spending limit is reached,this month's spending limit is reached,o limite de gastos deste mês foi atingido,o limite de gastos deste mês foi atingido,das Ausgabenlimit für diesen Monat ist erreicht,la limite de dépenses du mois est atteinte
+ERR_NAME_NOT_FROM_THE_WORD_LISTS,the name must come from the word lists,the name must come from the word lists,o nome deve vir das listas de palavras,o nome tem de vir das listas de palavras,der Name muss aus den Wortlisten stammen,le nom doit venir des listes de mots
+ERR_NEW_PLAYER_PROTECTED,that player is new and still protected,that player is new and still protected,esse jogador é novo e ainda está protegido,esse jogador é novo e ainda está protegido,dieser Spieler ist neu und noch geschützt,ce joueur est nouveau et encore protégé
+ERR_NO_EVENTS,there was nothing to send,there was nothing to send,não havia nada para enviar,não havia nada para enviar,es gab nichts zu senden,il n'y avait rien à envoyer
+ERR_NO_FREE_SLOT,all your Workshop slots are in use,all your Workshop slots are in use,todos os seus espaços na Oficina estão em uso,todos os teus espaços na Oficina estão em uso,alle deine Werkstattplätze sind belegt,tous tes emplacements de l'Atelier sont occupés
+ERR_NO_ISLAND_TO_SHARE,you have no island to share yet,you have no island to share yet,você ainda não tem ilha para compartilhar,ainda não tens nenhuma ilha para partilhar,du hast noch keine Insel zum Teilen,tu n'as pas encore d'île à partager
+ERR_NO_SUCH_ACCOUNT,no account was found,no account was found,nenhuma conta foi encontrada,não foi encontrada nenhuma conta,kein Konto gefunden,aucun compte trouvé
+ERR_NO_SUCH_ACTION,that action does not exist,that action does not exist,essa ação não existe,essa ação não existe,diese Aktion gibt es nicht,cette action n'existe pas
+ERR_NO_SUCH_AGE_BAND,that age is not one the game knows,that age is not one the game knows,essa idade não é uma que o jogo conhece,essa idade não é uma que o jogo conheça,dieses Alter kennt das Spiel nicht,cet âge est inconnu du jeu
+ERR_NO_SUCH_CHALLENGE,that challenge no longer exists,that challenge no longer exists,esse desafio não existe mais,esse desafio já não existe,diese Herausforderung gibt es nicht mehr,ce défi n'existe plus
+ERR_NO_SUCH_CONSTELLATION,that constellation no longer exists,that constellation no longer exists,essa constelação não existe mais,essa constelação já não existe,dieses Sternbild gibt es nicht mehr,cette constellation n'existe plus
+ERR_NO_SUCH_CREW,that crew no longer exists,that crew no longer exists,essa tripulação não existe mais,essa equipa já não existe,diese Crew gibt es nicht mehr,cette équipe n'existe plus
+ERR_NO_SUCH_EVENT,the game sent something it should not have,the game sent something it should not have,o jogo enviou algo que não devia,o jogo enviou algo que não devia,das Spiel hat etwas Falsches gesendet,le jeu a envoyé une donnée invalide
+ERR_NO_SUCH_FIELD,the game sent something it should not have,the game sent something it should not have,o jogo enviou algo que não devia,o jogo enviou algo que não devia,das Spiel hat etwas Falsches gesendet,le jeu a envoyé une donnée invalide
+ERR_NO_SUCH_HEIST,that heist was not found,that heist was not found,esse assalto não foi encontrado,esse assalto não foi encontrado,dieser Raubzug wurde nicht gefunden,ce casse est introuvable
+ERR_NO_SUCH_INVITE,that invite has expired or was already used,that invite has expired or was already used,esse convite expirou ou já foi usado,esse convite expirou ou já foi usado,diese Einladung ist abgelaufen oder schon benutzt,cette invitation a expiré ou a déjà servi
+ERR_NO_SUCH_ISLAND,that island was not found,that island was not found,essa ilha não foi encontrada,essa ilha não foi encontrada,diese Insel wurde nicht gefunden,cette île est introuvable
+ERR_NO_SUCH_LIST,that list does not exist,that list does not exist,essa lista não existe,essa lista não existe,diese Liste gibt es nicht,cette liste n'existe pas
+ERR_NO_SUCH_MODE,that kind of heist does not exist,that kind of heist does not exist,esse tipo de assalto não existe,esse tipo de assalto não existe,diese Raubzugart gibt es nicht,ce type de casse n'existe pas
+ERR_NO_SUCH_PRODUCT,that item is not for sale,that item is not for sale,esse item não está à venda,esse artigo não está à venda,dieser Artikel ist nicht zu kaufen,cet article n'est pas en vente
+ERR_NO_SUCH_REALM,that realm does not exist,that realm does not exist,esse reino não existe,esse reino não existe,dieses Reich gibt es nicht,ce royaume n'existe pas
+ERR_NO_SUCH_REASON,that reason is not one the game knows,that reason is not one the game knows,esse motivo não é um que o jogo conhece,esse motivo não é um que o jogo conheça,diesen Grund kennt das Spiel nicht,ce motif est inconnu du jeu
+ERR_NO_SUCH_REPORT,that report was not found,that report was not found,essa denúncia não foi encontrada,essa denúncia não foi encontrada,diese Meldung wurde nicht gefunden,ce signalement est introuvable
+ERR_NO_SUCH_ROLE,that role does not exist,that role does not exist,esse papel não existe,esse papel não existe,diese Rolle gibt es nicht,ce rôle n'existe pas
+ERR_NO_SUCH_ROUTE,the game asked for something the server does not know,the game asked for something the server does not know,o jogo pediu algo que o servidor não conhece,o jogo pediu algo que o servidor não conhece,"das Spiel fragte nach etwas, das der Server nicht kennt",le jeu a demandé une chose inconnue du serveur
+ERR_NO_SUCH_SEASON,that season does not exist,that season does not exist,essa temporada não existe,essa temporada não existe,diese Saison gibt es nicht,cette saison n'existe pas
+ERR_NO_SUCH_SLOT,that slot does not exist,that slot does not exist,esse espaço não existe,esse espaço não existe,diesen Platz gibt es nicht,cet emplacement n'existe pas
+ERR_NO_SUCH_SNAPSHOT,that island has changed since the list was made,that island has changed since the list was made,essa ilha mudou desde que a lista foi feita,essa ilha mudou desde que a lista foi feita,diese Insel hat sich seit Erstellung der Liste geändert,cette île a changé depuis la création de la liste
+ERR_NO_SUCH_TARGET,that target is not in the list,that target is not in the list,esse alvo não está na lista,esse alvo não está na lista,dieses Ziel ist nicht in der Liste,cette cible n'est pas dans la liste
+ERR_NO_TRANSPORT,the game could not reach the network,the game could not reach the network,o jogo não conseguiu acessar a rede,o jogo não conseguiu aceder à rede,das Spiel konnte das Netzwerk nicht erreichen,le jeu n'a pas pu accéder au réseau
+ERR_NOT_A_MEMBER,you are not a member,you are not a member,você não é membro,não és membro,du bist kein Mitglied,tu n'es pas membre
+ERR_NOT_A_MODERATOR,only moderators can do that,only moderators can do that,só moderadores podem fazer isso,só os moderadores podem fazer isso,nur Moderatoren können das,seuls les modérateurs peuvent faire ça
+ERR_NOT_CLEARED,clear the island yourself before publishing it,clear the island yourself before publishing it,vença a ilha você mesmo antes de publicá-la,vence tu a ilha antes de a publicar,"schaff die Insel erst selbst, bevor du sie veröffentlichst",réussis l'île toi-même avant de la publier
+ERR_NOT_CONFIGURED,this is not available here yet,this is not available here yet,isto ainda não está disponível aqui,isto ainda não está disponível aqui,das ist hier noch nicht verfügbar,ce n'est pas encore disponible ici
+ERR_NOT_ENOUGH_STARS,you need more season stars,you need more season stars,você precisa de mais estrelas da temporada,precisas de mais estrelas da temporada,du brauchst mehr Saisonsterne,il te faut plus d'étoiles de saison
+ERR_NOT_FOUND,it was not found,it was not found,não foi encontrado,não foi encontrado,nicht gefunden,introuvable
+ERR_NOT_FRIENDS,you are not friends,you are not friends,vocês não são amigos,não são amigos,ihr seid nicht befreundet,vous n'êtes pas amis
+ERR_NOT_IN_A_CONSTELLATION,you are not in a constellation,you are not in a constellation,você não está em uma constelação,não estás numa constelação,du bist in keinem Sternbild,tu n'es dans aucune constellation
+ERR_NOT_IN_A_CREW,you are not in a crew,you are not in a crew,você não está em uma tripulação,não estás numa equipa,du bist in keiner Crew,tu n'es dans aucune équipe
+ERR_NOT_OWNED,you do not own that,you do not own that,isso não é seu,isso não é teu,das gehört dir nicht,tu ne possèdes pas ça
+ERR_NOT_PLAYED,play the island before rating it,play the island before rating it,jogue a ilha antes de avaliá-la,joga a ilha antes de a avaliar,"spiel die Insel, bevor du sie bewertest",joue l'île avant de la noter
+ERR_NOT_THIS_CHALLENGE,that island is not this challenge's,that island is not this challenge's,essa ilha não é a deste desafio,essa ilha não é a deste desafio,diese Insel gehört nicht zu dieser Herausforderung,cette île n'est pas celle de ce défi
+ERR_NOTHING_TO_TRACE,there is no raid to trace back,there is no raid to trace back,não há assalto para rastrear,não há nenhum assalto para rastrear,es gibt keinen Überfall zum Zurückverfolgen,aucun casse à retracer
+ERR_NOTIFICATION_REFUSED,the store's message was not accepted,the store's message was not accepted,a mensagem da loja não foi aceita,a mensagem da loja não foi aceite,die Nachricht des Stores wurde nicht akzeptiert,le message de la boutique n'a pas été accepté
+ERR_OWN_GIFT,"a gift is for a friend, not yourself","a gift is for a friend, not yourself","um presente é para um amigo, não para você","um presente é para um amigo, não para ti","ein Geschenk ist für Freunde, nicht für dich selbst","un cadeau, c'est pour un ami, pas pour toi"
+ERR_OWN_INVITE,that is your own invite,that is your own invite,esse é o seu próprio convite,esse é o teu próprio convite,das ist deine eigene Einladung,c'est ta propre invitation
+ERR_OWN_ISLAND,that is your own island,that is your own island,essa é a sua própria ilha,essa é a tua própria ilha,das ist deine eigene Insel,c'est ta propre île
+ERR_PLATFORM_IDENTITY_REFUSED,your sign-in could not be confirmed,your sign-in could not be confirmed,não foi possível confirmar seu login,não foi possível confirmar o teu início de sessão,deine Anmeldung konnte nicht bestätigt werden,ta connexion n'a pas pu être confirmée
+ERR_PLAY_REFUSED,that play is not yours to send,that play is not yours to send,essa partida não é sua para enviar,essa partida não é tua para enviar,diese Partie darfst du nicht senden,tu ne peux pas envoyer cette partie
+ERR_POSITIONS_ARE_NEVER_SENT,the game sent something it should not have,the game sent something it should not have,o jogo enviou algo que não devia,o jogo enviou algo que não devia,das Spiel hat etwas Falsches gesendet,le jeu a envoyé une donnée invalide
+ERR_QUOTA_FULL,your Workshop storage is full,your Workshop storage is full,seu espaço na Oficina está cheio,o teu espaço na Oficina está cheio,dein Werkstatt-Speicher ist voll,ton espace de l'Atelier est plein
+ERR_RATINGS_ARE_ONE_TO_FIVE,ratings go from one to five,ratings go from one to five,as avaliações vão de um a cinco,as avaliações vão de um a cinco,Bewertungen gehen von eins bis fünf,les notes vont de un à cinq
+ERR_RECEIPT_BELONGS_TO_ANOTHER_ACCOUNT,that purchase belongs to another account,that purchase belongs to another account,essa compra pertence a outra conta,essa compra pertence a outra conta,dieser Kauf gehört zu einem anderen Konto,cet achat appartient à un autre compte
+ERR_RECEIPT_REFUNDED,that purchase was refunded,that purchase was refunded,essa compra foi reembolsada,essa compra foi reembolsada,dieser Kauf wurde erstattet,cet achat a été remboursé
+ERR_RECEIPT_REFUSED,the store did not confirm the purchase,the store did not confirm the purchase,a loja não confirmou a compra,a loja não confirmou a compra,der Store hat den Kauf nicht bestätigt,la boutique n'a pas confirmé l'achat
+ERR_REMINDER_AT_NIGHT,reminders cannot be set during your quiet hours,reminders cannot be set during your quiet hours,lembretes não podem ser marcados no seu horário de silêncio,não podes marcar lembretes nas tuas horas de silêncio,in deiner Ruhezeit sind keine Erinnerungen möglich,pas de rappel possible pendant tes heures de silence
+ERR_REPLAY_MALFORMED,the heist could not be read,the heist could not be read,não foi possível ler o assalto,não foi possível ler o assalto,der Raubzug konnte nicht gelesen werden,le casse est illisible
+ERR_REPLAY_NO_LONGER_KEPT,that replay is no longer kept,that replay is no longer kept,esse replay não é mais guardado,esse replay já não está guardado,dieses Replay wird nicht mehr aufbewahrt,ce replay n'est plus conservé
+ERR_RULES_NOT_HELD,this version of the game is out of date,this version of the game is out of date,esta versão do jogo está desatualizada,esta versão do jogo está desatualizada,diese Spielversion ist veraltet,cette version du jeu est obsolète
+ERR_SEASON_STILL_OPEN,the season has not ended yet,the season has not ended yet,a temporada ainda não terminou,a temporada ainda não terminou,die Saison ist noch nicht vorbei,la saison n'est pas encore finie
+ERR_SESSION_REFUSED,please sign in again,please sign in again,"entre de novo, por favor","volta a iniciar sessão, por favor",bitte melde dich neu an,reconnecte-toi
+ERR_SUPERSEDED,that island has been changed since,that island has been changed since,essa ilha foi alterada desde então,essa ilha foi alterada entretanto,diese Insel wurde seitdem geändert,cette île a changé depuis
+ERR_SURVEY_ONCE_A_QUARTER,the survey has already been answered,the survey has already been answered,a pesquisa já foi respondida,o inquérito já foi respondido,die Umfrage wurde schon beantwortet,tu as déjà répondu au sondage
+ERR_THE_NIGHT_IS_ALWAYS_QUIET_UNDER_18,quiet hours stay on under 18,quiet hours stay on under 18,o horário de silêncio fica ligado para menores de 18,as horas de silêncio ficam ativas para menores de 18,unter 18 bleibt die Ruhezeit an,les heures de silence restent actives avant 18 ans
+ERR_TOO_LARGE,too much was sent at once,too much was sent at once,muita coisa foi enviada de uma vez,foi enviado demasiado de uma vez,zu viel auf einmal gesendet,trop de données envoyées d'un coup
+ERR_TRACK_COMPLETE,the whole track is claimed,the whole track is claimed,a trilha inteira já foi resgatada,o percurso inteiro já foi resgatado,der ganze Pfad ist eingelöst,tout le parcours est récupéré
+ERR_WRONG_CLOCK,the heist ran on the wrong clock,the heist ran on the wrong clock,o assalto rodou com o relógio errado,o assalto usou o relógio errado,der Raubzug lief mit der falschen Uhr,le casse a tourné avec la mauvaise horloge
+ERR_WRONG_ERA,the heist was played in the wrong era,the heist was played in the wrong era,o assalto foi jogado na era errada,o assalto foi jogado na era errada,der Raubzug wurde in der falschen Ära gespielt,le casse a été joué dans la mauvaise ère
+ERR_WRONG_ISLAND,the heist was played on the wrong island,the heist was played on the wrong island,o assalto foi jogado na ilha errada,o assalto foi jogado na ilha errada,der Raubzug wurde auf der falschen Insel gespielt,le casse a été joué sur la mauvaise île
+ERR_WRONG_SEED,the heist was played on the wrong seed,the heist was played on the wrong seed,o assalto foi jogado com a semente errada,o assalto foi jogado com a semente errada,der Raubzug wurde mit dem falschen Seed gespielt,le casse a été joué avec la mauvaise graine
+ERR_WRONG_SLOT,that does not go in that slot,that does not go in that slot,isso não vai nesse espaço,isso não vai nesse espaço,das passt nicht in diesen Platz,ça ne va pas dans cet emplacement
+ERR_GIFT_INTENT_GONE,this gift is too old to deliver; the store will refund it,this gift is too old to deliver; the store will refund it,este presente é antigo demais para ser entregue; a loja vai reembolsá-lo,este presente é demasiado antigo para ser entregue; a loja vai reembolsá-lo,dieses Geschenk ist zu alt zum Zustellen; der Store erstattet es,ce cadeau est trop ancien pour être livré ; la boutique le remboursera
+ERR_STARTING,the server is starting; try again in a moment,the server is starting; try again in a moment,o servidor está iniciando; tente de novo em instantes,o servidor está a arrancar; tenta de novo daqui a pouco,der Server startet; versuch es gleich nochmal,le serveur démarre ; réessaie dans un instant
+ERR_STORE_NOT_CONNECTED,this build cannot reach the store,this build cannot reach the store,esta versão não consegue acessar a loja,esta versão não consegue aceder à loja,diese Version erreicht den Store nicht,cette version n'a pas accès à la boutique
+ERR_PURCHASE_CANCELLED,the purchase was cancelled,the purchase was canceled,a compra foi cancelada,a compra foi cancelada,der Kauf wurde abgebrochen,l'achat a été annulé
+ERR_PURCHASE_PENDING,the purchase waits for a family member to approve it,the purchase waits for a family member to approve it,a compra aguarda a aprovação de alguém da família,a compra aguarda a aprovação de um familiar,der Kauf wartet auf die Zustimmung eines Familienmitglieds,l'achat attend l'accord d'un membre de la famille
+ERR_DRAFT_NOT_KEPT,the island could not be kept on this phone,the island could not be kept on this phone,não foi possível guardar a ilha neste celular,não foi possível guardar a ilha neste telemóvel,die Insel konnte nicht auf diesem Handy gespeichert werden,l'île n'a pas pu être conservée sur ce téléphone
+ERR_AGE_CHECK_FIRST,the age check has not been answered on this phone,the age check has not been answered on this phone,a verificação de idade ainda não foi respondida neste celular,a verificação de idade ainda não foi respondida neste telemóvel,die Altersabfrage wurde auf diesem Handy noch nicht beantwortet,la vérification d'âge n'a pas été faite sur ce téléphone
+SCHOOL_MOTION,Motion,Motion,Movimento,Movimento,Bewegung,Mouvement
+SCHOOL_MATTER,Matter,Matter,Matéria,Matéria,Materie,Matière
+SCHOOL_TIME,Time,Time,Tempo,Tempo,Zeit,Temps
+SCHOOL_ENERGY,Energy,Energy,Energia,Energia,Energie,Énergie
+SCHOOL_LIFE,Life,Life,Vida,Vida,Leben,Vie
+SCHOOL_SPIRIT,Spirit,Spirit,Espírito,Espírito,Geist,Esprit
+REALM_DESCRIBED,"The realm, %d by %d tiles: the Vault %s, %d guards on their feet, %d wards standing","The realm, %d by %d tiles: the Vault %s, %d guards on their feet, %d wards standing","O reino, %d por %d casas: o Cofre %s, %d guardas de pé, %d proteções ativas","O reino, %d por %d casas: o Cofre %s, %d guardas de pé, %d proteções ativas","Das Reich, %d mal %d Felder: der Tresor %s, %d Wachen auf den Beinen, %d Siegel aktiv","Le royaume, %d sur %d cases : le Coffre %s, %d gardes debout, %d protections actives"
+REALM_VAULT_OPEN,open,open,aberto,aberto,offen,ouvert
+REALM_VAULT_SHUT,shut,shut,fechado,fechado,zu,fermé
+MONEY_EUR,€%s,€%s,€ %s,%s €,%s €,%s €
+NUMBER_DECIMAL,.,.,",",",",",",","
+NUMBER_GROUP,",",",",.,.,., 
+WALLET,%s Starlight · %s Essence,%s Starlight · %s Essence,%s Luz Estelar · %s Essência,%s Luz Estelar · %s Essência,%s Sternenlicht · %s Essenz,%s Lumière stellaire · %s Essence
+TRACK_TITLE,Season %d track,Season %d track,Trilha da temporada %d,Percurso da temporada %d,Saisonpfad %d,Parcours de la saison %d
+TRACK_TITLE_LOADING,Season track,Season track,Trilha da temporada,Percurso da temporada,Saisonpfad,Parcours de saison
+TRACK_STARS,%s stars to spend,%s stars to spend,%s estrelas para gastar,%s estrelas para gastar,%s Sterne verfügbar,%s étoiles à dépenser
+TRACK_NEXT,Next: tier %d for %d stars,Next: tier %d for %d stars,Próximo: nível %d por %d estrelas,Seguinte: nível %d por %d estrelas,Nächste: Stufe %d für %d Sterne,Suivant : palier %d pour %d étoiles
+TRACK_COMPLETE,Every tier claimed,Every tier claimed,Todos os níveis resgatados,Todos os níveis resgatados,Alle Stufen eingelöst,Tous les paliers récupérés
+TRACK_CLAIM,Claim the next tier,Claim the next tier,Resgatar o próximo nível,Resgatar o nível seguinte,Nächste Stufe einlösen,Récupérer le palier suivant
+TRACK_CLAIMED,Tier %d: %s,Tier %d: %s,Nível %d: %s,Nível %d: %s,Stufe %d: %s,Palier %d : %s
+TRACK_TIER,Tier %d: %s%s,Tier %d: %s%s,Nível %d: %s%s,Nível %d: %s%s,Stufe %d: %s%s,Palier %d : %s%s
+TRACK_AND_PREMIUM,", and with the premium track %s",", and with the premium track %s",", e com a trilha premium %s",", e com o percurso premium %s",", mit Premium-Pfad auch %s",", et avec le parcours premium %s"
+TRACK_ESSENCE,%s Essence,%s Essence,%s de Essência,%s de Essência,%s Essenz,%s Essence
+TRACK_PAGES,%d pages,%d pages,%d páginas,%d páginas,%d Seiten,%d pages
+TRACK_STRAY,a stray to adopt,a stray to adopt,um errante para adotar,um errante para adotar,ein Streuner zum Adoptieren,un errant à adopter
+TRACK_COSMETIC,a %s,a %s,um item: %s,um cosmético: %s,ein %s,un cosmétique : %s
+TRACK_PREMIUM,Premium track,Premium track,Trilha premium,Percurso premium,Premium-Pfad,Parcours premium
+TRACK_PREMIUM_PRICE,"Premium track, %s","Premium track, %s","Trilha premium, %s","Percurso premium, %s","Premium-Pfad, %s","Parcours premium, %s"
+TRACK_FAILED,The track could not be shown: %s,The track could not be shown: %s,Não foi possível mostrar a trilha: %s,Não foi possível mostrar o percurso: %s,Der Pfad konnte nicht angezeigt werden: %s,Impossible d'afficher le parcours : %s
+TRACK_PREMIUM_FAILED,The premium track could not be bought: %s,The premium track could not be bought: %s,Não foi possível comprar a trilha premium: %s,Não foi possível comprar o percurso premium: %s,Der Premium-Pfad konnte nicht gekauft werden: %s,Impossible d'acheter le parcours premium : %s
+SHOP_TITLE,Shop,Shop,Loja,Loja,Shop,Boutique
+SHOP_TRACK,Season track,Season track,Trilha da temporada,Percurso da temporada,Saisonpfad,Parcours de saison
+SHOP_EMPTY,No cosmetics are on sale yet.,No cosmetics are on sale yet.,Ainda não há itens cosméticos à venda.,Ainda não há cosméticos à venda.,Noch keine Kosmetik im Angebot.,Aucun cosmétique en vente pour l'instant.
+SHOP_ITEM,%s — %s,%s — %s,%s — %s,%s — %s,%s — %s,%s — %s
+SHOP_BUY,Buy,Buy,Comprar,Comprar,Kaufen,Acheter
+SHOP_BUY_NAMED,Buy %s for %s,Buy %s for %s,Comprar %s por %s,Comprar %s por %s,%s für %s kaufen,Acheter %s pour %s
+SHOP_GIVE,Give,Give,Presentear,Oferecer,Schenken,Offrir
+SHOP_WEAR,Wear,Wear,Usar,Usar,Anlegen,Équiper
+SHOP_TAKE_OFF,Take off,Take off,Tirar,Tirar,Ablegen,Enlever
+SHOP_BUYING,Buying…,Buying…,Comprando…,A comprar…,Kauf läuft…,Achat…
+SHOP_BOUGHT,"Bought, and yours","Bought, and yours","Comprado, e já é seu","Comprado, e já é teu","Gekauft, gehört dir","Acheté, il est à toi"
+SHOP_PENDING,Paid; the server confirms it when you are back online,Paid; the server confirms it when you are back online,Pago; o servidor confirma quando você voltar a ficar online,Pago; o servidor confirma quando voltares a estar online,"Bezahlt; der Server bestätigt es, sobald du wieder online bist",Payé ; le serveur confirmera à ton retour en ligne
+SHOP_MONTH,"%s: %s spent, %s refunded","%s: %s spent, %s refunded","%s: %s gastos, %s reembolsados","%s: %s gastos, %s reembolsados","%s: %s ausgegeben, %s erstattet","%s : %s dépensés, %s remboursés"
+SHOP_LEFT,%s left to spend this month,%s left to spend this month,%s restantes para gastar este mês,%s por gastar este mês,%s diesen Monat noch verfügbar,Reste à dépenser ce mois-ci : %s
+SHOP_FAILED,The shop could not do that: %s,The shop could not do that: %s,A loja não conseguiu fazer isso: %s,A loja não conseguiu fazer isso: %s,Der Shop konnte das nicht: %s,La boutique n'a pas pu faire ça : %s
+SHOP_GIVE_NAMED,Give %s to %s,Give %s to %s,Presentear %s a %s,Oferecer %s a %s,%s an %s verschenken,Offrir %s à %s
+SHOP_GIFT_TO,Gifts go to %s,Gifts go to %s,Presentes vão para %s,Os presentes vão para %s,Geschenke gehen an %s,Cadeaux pour %s
+SHOP_OTHER_FRIEND,Another friend,Another friend,Outro amigo,Outro amigo,Anderer Freund,Un autre ami
+SHOP_OWNED,Yours: %s,Yours: %s,Seu: %s,Teu: %s,Deins: %s,À toi : %s
+SHOP_OWNED_WORN,"Yours, worn: %s","Yours, worn: %s","Seu, em uso: %s","Teu, em uso: %s","Deins, angelegt: %s","À toi, équipé : %s"
+SHOP_OWNED_NAME,%s (%s),%s (%s),%s (%s),%s (%s),%s (%s),%s (%s)
+SHOP_WORN_BY,Worn by: %s,Worn by: %s,Usado por: %s,Usado por: %s,Getragen von: %s,Équipé par : %s
+SHOP_WORN_BY_NEXT,Worn by %s: choose another,Worn by %s: choose another,Usado por %s: escolher outro,Usado por %s: escolher outro,Getragen von %s: anderen wählen,Équipé par %s : en choisir un autre
+SHOP_WEAR_NAMED,Wear %s,Wear %s,Usar %s,Usar %s,%s anlegen,Équiper %s
+SHOP_TAKE_OFF_NAMED,Take off %s,Take off %s,Tirar %s,Tirar %s,%s ablegen,Enlever %s
+KIND_REALM_SKIN,realm skin,realm skin,visual de reino,visual de reino,Reichs-Skin,apparence de royaume
+KIND_SKY_THEME,sky theme,sky theme,tema de céu,tema de céu,Himmelsthema,thème de ciel
+KIND_BRIDGE_STYLE,bridge style,bridge style,estilo de ponte,estilo de ponte,Brückenstil,style de pont
+KIND_OUTFIT,outfit,outfit,traje,traje,Outfit,tenue
+KIND_SAGE_ROBE,sage robe,sage robe,manto de sábio,manto de sábio,Weisengewand,robe de sage
+KIND_LAW_VISUAL,law visual,law visual,visual de lei,visual de lei,Gesetzes-Look,visuel de loi
+KIND_EMOTE,emote,emote,emote,emote,Emote,emote
+LEAGUE_DUST,Dust,Dust,Poeira,Poeira,Staub,Poussière
+LEAGUE_EMBER,Ember,Ember,Brasa,Brasa,Glut,Braise
+LEAGUE_TIDE,Tide,Tide,Maré,Maré,Flut,Marée
+LEAGUE_STAR,Star,Star,Estrela,Estrela,Stern,Étoile
+LEAGUE_NOVA,Nova,Nova,Nova,Nova,Nova,Nova
+LEAGUE_PARADOX,Paradox,Paradox,Paradoxo,Paradoxo,Paradox,Paradoxe
+LEAGUE_PLACE,%s %s,%s %s,%s %s,%s %s,%s %s,%s %s
+LEAGUE_PLACE_TOP,%s,%s,%s,%s,%s,%s
+LEAGUE_RENOWN,%s Renown in season %d,%s Renown in season %d,%s de Renome na temporada %d,%s de Renome na temporada %d,%s Ruhm in Saison %d,%s Renom en saison %d
+LEAGUE_TO_NEXT,%s Renown to the next league,%s Renown to the next league,%s de Renome até a próxima liga,%s de Renome até à próxima liga,%s Ruhm bis zur nächsten Liga,%s Renom avant la ligue suivante
+LEAGUE_TOP,The top league,The top league,A liga mais alta,A liga mais alta,Die höchste Liga,La plus haute ligue
+RANK_FOUNDER,founder,founder,fundador,fundador,Gründer,fondateur
+RANK_ELDER,elder,elder,ancião,ancião,Ältester,ancien
+RANK_MEMBER,member,member,membro,membro,Mitglied,membre
+SOCIAL_TITLE,League and crews,League and crews,Liga e equipes,Liga e equipas,Liga und Crews,Ligue et équipes
+SOCIAL_YOU,you,you,você,tu,du,toi
+SOCIAL_KEEPER,Keeper %s,Keeper %s,Guardião %s,Guardião %s,Hüter %s,Gardien %s
+SOCIAL_MEMBER,"%s, %s","%s, %s","%s, %s","%s, %s","%s, %s","%s, %s"
+SOCIAL_CONSTELLATION,"Constellation %s, %d members","Constellation %s, %d members","Constelação %s, %d membros","Constelação %s, %d membros","Sternbild %s, %d Mitglieder","Constellation %s, %d membres"
+SOCIAL_NO_CONSTELLATION,You are in no constellation,You are in no constellation,Você não está em nenhuma constelação,Não estás em nenhuma constelação,Du bist in keinem Sternbild,Tu n'es dans aucune constellation
+SOCIAL_FOUND,Found a constellation,Found a constellation,Fundar uma constelação,Fundar uma constelação,Sternbild gründen,Fonder une constellation
+SOCIAL_LEAVE_CONSTELLATION,Leave the constellation,Leave the constellation,Sair da constelação,Sair da constelação,Sternbild verlassen,Quitter la constellation
+SOCIAL_CREW_FORMED,Your crew: %d members,Your crew: %d members,Sua equipe: %d membros,A tua equipa: %d membros,Deine Crew: %d Mitglieder,Ton équipe : %d membres
+SOCIAL_CREW_FORMING,Your crew is forming: %d of the 4 it needs,Your crew is forming: %d of the 4 it needs,Sua equipe está se formando: %d dos 4 necessários,A tua equipa está a formar-se: %d dos 4 necessários,Deine Crew bildet sich: %d von 4 nötigen,Ton équipe se forme : %d sur les 4 requis
+SOCIAL_NO_CREW,You are in no crew,You are in no crew,Você não está em nenhuma equipe,Não estás em nenhuma equipa,Du bist in keiner Crew,Tu n'es dans aucune équipe
+SOCIAL_CREW_INVITE,Its invite: %s,Its invite: %s,O convite dela: %s,Convite da equipa: %s,Einladung: %s,Son invitation : %s
+SOCIAL_CREW_CODE,A crew's invite,A crew's invite,O convite de uma equipe,O convite de uma equipa,Crew-Einladung,L'invitation d'une équipe
+SOCIAL_START_CREW,Start a crew,Start a crew,Criar uma equipe,Criar uma equipa,Crew gründen,Créer une équipe
+SOCIAL_JOIN_CREW,Join the crew,Join the crew,Entrar na equipe,Entrar na equipa,Crew beitreten,Rejoindre l'équipe
+SOCIAL_LEAVE_CREW,Leave the crew,Leave the crew,Sair da equipe,Sair da equipa,Crew verlassen,Quitter l'équipe
+SOCIAL_FRIENDS,Friends,Friends,Amigos,Amigos,Freunde,Amis
+SOCIAL_FAILED,That could not be done: %s,That could not be done: %s,Não foi possível fazer isso: %s,Não foi possível fazer isso: %s,Das ging nicht: %s,Action impossible : %s
+SOCIAL_FOUND_NAMED,Found the constellation %s,Found the constellation %s,Fundar a constelação %s,Fundar a constelação %s,Sternbild %s gründen,Fonder la constellation %s
+SOCIAL_NAME,Its name: %s,Its name: %s,Nome: %s,Nome: %s,Name: %s,Nom : %s
+SOCIAL_OTHER_ADJECTIVE,Another first word,Another first word,Outra palavra de qualidade,Outro adjetivo,Anderes erstes Wort,Autre premier mot
+SOCIAL_OTHER_NOUN,Another second word,Another second word,Outro substantivo,Outro substantivo,Anderes zweites Wort,Autre second mot
+FRIENDS_TITLE,Friends,Friends,Amigos,Amigos,Freunde,Amis
+FRIENDS_NONE,"No friends yet: share an invite, or accept one.","No friends yet: share an invite, or accept one.",Ainda sem amigos: compartilhe um convite ou aceite um.,Ainda sem amigos: partilha um convite ou aceita um.,Noch keine Freunde: Teile eine Einladung oder nimm eine an.,Pas encore d'amis : partage une invitation ou acceptes-en une.
+FRIENDS_CODE,A friend's invite,A friend's invite,O convite de um amigo,O convite de um amigo,Freundeseinladung,L'invitation d'un ami
+FRIENDS_ACCEPT,Accept,Accept,Aceitar,Aceitar,Annehmen,Accepter
+FRIENDS_ACCEPTED,You and %s are friends,You and %s are friends,Você e %s agora são amigos,Tu e %s são amigos,Du und %s seid jetzt Freunde,%s et toi êtes amis
+FRIENDS_INVITE,Invite a friend,Invite a friend,Convidar um amigo,Convidar um amigo,Freund einladen,Inviter un ami
+FRIENDS_INVITE_CODE,Your invite to share: %s,Your invite to share: %s,Seu convite para compartilhar: %s,O teu convite para partilhar: %s,Deine Einladung zum Teilen: %s,Ton invitation à partager : %s
+FRIENDS_CHALLENGE,Challenge link,Challenge link,Link de desafio,Link de desafio,Herausforderungslink,Lien de défi
+FRIENDS_CHALLENGE_CODE,Your island's challenge link: %s,Your island's challenge link: %s,O link de desafio da sua ilha: %s,O link de desafio da tua ilha: %s,Herausforderungslink deiner Insel: %s,Lien de défi de ton île : %s
+FRIENDS_REMOVE,Remove,Remove,Remover,Remover,Entfernen,Retirer
+FRIENDS_REMOVE_NAMED,Remove %s from your friends,Remove %s from your friends,Remover %s dos seus amigos,Remover %s dos teus amigos,%s aus Freunden entfernen,Retirer %s de tes amis
+FRIENDS_FEED,This week,This week,Esta semana,Esta semana,Diese Woche,Cette semaine
+FRIENDS_FAILED,That could not be done: %s,That could not be done: %s,Não foi possível fazer isso: %s,Não foi possível fazer isso: %s,Das ging nicht: %s,Action impossible : %s
+FEED_RAID,%s raided %s: %s,%s raided %s: %s,%s assaltou %s: %s,%s assaltou %s: %s,%s überfiel %s: %s,%s a braqué %s : %s
+FEED_FRIENDLY,%s played a friendly heist on %s: %s,%s played a friendly heist on %s: %s,%s jogou um assalto amistoso em %s: %s,%s jogou um assalto amigável em %s: %s,%s überfiel %s freundschaftlich: %s,%s a fait un casse amical sur %s : %s
+FEED_CHALLENGE,%s took %s's challenge: %s,%s took %s's challenge: %s,%s aceitou o desafio de %s: %s,%s aceitou o desafio de %s: %s,%s nahm die Herausforderung von %s an: %s,%s a relevé le défi de %s : %s
+OFFLINE_RECOMMEND,You are offline. Going online first is recommended: a heist played now counts only once the server confirms it.,You are offline. Going online first is recommended: a heist played now counts only once the server confirms it.,Você está offline. É recomendado ficar online primeiro: um assalto jogado agora só conta quando o servidor o confirmar.,Estás offline. Recomendamos que fiques online primeiro: um assalto jogado agora só conta quando o servidor o confirmar.,"Du bist offline. Geh am besten erst online: Ein jetzt gespielter Raubzug zählt erst, wenn der Server ihn bestätigt.",Tu es hors ligne. Mieux vaut te connecter d'abord : un casse joué maintenant ne compte qu'une fois confirmé par le serveur.
+OFFLINE_NONE,"You are offline, and no island is ready to play offline. Go online to play.","You are offline, and no island is ready to play offline. Go online to play.",Você está offline e nenhuma ilha está pronta para jogar offline. Fique online para jogar.,Estás offline e nenhuma ilha está pronta para jogar offline. Fica online para jogar.,"Du bist offline, und keine Insel ist offline spielbar. Geh online, um zu spielen.",Tu es hors ligne et aucune île n'est jouable hors ligne. Connecte-toi pour jouer.
+OFFLINE_TRY_AGAIN,Try online again,Try online again,Tentar online de novo,Tentar online de novo,Erneut online versuchen,Réessayer en ligne
+OFFLINE_PLAY_ANYWAY,Play offline anyway,Play offline anyway,Jogar offline mesmo assim,Jogar offline na mesma,Trotzdem offline spielen,Jouer hors ligne quand même
+OFFLINE_SENT,"%d results played offline were sent, and the server has them","%d results played offline were sent, and the server has them","%d resultados jogados offline foram enviados, e o servidor os recebeu",%d resultados jogados offline foram enviados e o servidor recebeu-os,%d offline gespielte Ergebnisse gesendet und vom Server empfangen,%d résultats joués hors ligne ont été envoyés et reçus par le serveur
+WALLET_FAILED,The wallet could not be shown: %s,The wallet could not be shown: %s,Não foi possível mostrar a carteira: %s,Não foi possível mostrar a carteira: %s,Die Geldbörse konnte nicht angezeigt werden: %s,Impossible d'afficher le portefeuille : %s
+WORKSHOP_TITLE,Island Workshop,Island Workshop,Oficina de Ilhas,Oficina de Ilhas,Insel-Werkstatt,Atelier d'îles
+WORKSHOP_FAILED,The Workshop could not do that: %s,The Workshop could not do that: %s,A Oficina não conseguiu fazer isso: %s,A Oficina não conseguiu fazer isso: %s,Die Werkstatt konnte das nicht: %s,L'Atelier n'a pas pu faire ça : %s
+WORKSHOP_BUILD,Build,Build,Construir,Construir,Bauen,Construire
+WORKSHOP_TAB_TOP,Top,Top,Mais concluídas,Top,Top,Top
+WORKSHOP_TAB_NEW,New,New,Novas,Novas,Neu,Récentes
+WORKSHOP_TAB_FEATURED,Featured,Featured,Em destaque,Em destaque,Empfohlen,À la une
+WORKSHOP_TAB_MINE,My islands,My islands,Minhas ilhas,As minhas ilhas,Meine Inseln,Mes îles
+WORKSHOP_LIST_TOP,The islands most finished,The islands most finished,As ilhas mais concluídas,As ilhas mais concluídas,Die meistgeschafften Inseln,Les îles les plus souvent réussies
+WORKSHOP_LIST_NEW,The newest islands,The newest islands,As ilhas mais novas,As ilhas mais recentes,Die neuesten Inseln,Les îles les plus récentes
+WORKSHOP_LIST_FEATURED,This week's featured islands,This week's featured islands,As ilhas em destaque da semana,As ilhas em destaque desta semana,Empfohlene Inseln der Woche,Les îles à la une cette semaine
+WORKSHOP_LIST_MINE,Your islands,Your islands,Suas ilhas,As tuas ilhas,Deine Inseln,Tes îles
+WORKSHOP_EMPTY_TOP,No islands yet: publish the first,No islands yet: publish the first,Ainda não há ilhas: publique a primeira,Ainda não há ilhas: publica a primeira,Noch keine Inseln: Veröffentliche die erste,Aucune île pour l'instant : publie la première
+WORKSHOP_EMPTY_NEW,No islands yet: publish the first,No islands yet: publish the first,Ainda não há ilhas: publique a primeira,Ainda não há ilhas: publica a primeira,Noch keine Inseln: Veröffentliche die erste,Aucune île pour l'instant : publie la première
+WORKSHOP_EMPTY_FEATURED,No island is featured this week,No island is featured this week,Nenhuma ilha em destaque nesta semana,Nenhuma ilha em destaque esta semana,Diese Woche ist keine Insel empfohlen,Aucune île à la une cette semaine
+WORKSHOP_EMPTY_MINE,You have not published an island. Clear one of yours in the builder to publish it.,You have not published an island. Clear one of yours in the builder to publish it.,Você ainda não publicou uma ilha. Vença uma das suas no construtor para publicá-la.,Ainda não publicaste nenhuma ilha. Vence uma das tuas no construtor para a publicar.,"Du hast noch keine Insel veröffentlicht. Schaff eine eigene im Editor, um sie zu veröffentlichen.",Tu n'as publié aucune île. Réussis l'une des tiennes dans le constructeur pour la publier.
+WORKSHOP_ITEM,%s — realm level %d,%s — realm level %d,%s — nível de reino %d,%s — nível de reino %d,%s — Reichslevel %d,%s — royaume niveau %d
+WORKSHOP_STATS,Completions: %s · remixes: %s,Completions: %s · remixes: %s,Conclusões: %s · remixes: %s,Conclusões: %s · remixes: %s,Abschlüsse: %s · Remixe: %s,Réussites : %s · remix : %s
+WORKSHOP_RATINGS,Fun %s · cleverness %s · fairness %s · ratings: %s,Fun %s · cleverness %s · fairness %s · ratings: %s,Diversão %s · engenhosidade %s · justiça %s · avaliações: %s,Diversão %s · engenho %s · justiça %s · avaliações: %s,Spaß %s · Raffinesse %s · Fairness %s · Bewertungen: %s,Plaisir %s · astuce %s · équité %s · notes : %s
+WORKSHOP_UNRATED,Not rated yet,Not rated yet,Ainda sem avaliações,Ainda sem avaliações,Noch nicht bewertet,Pas encore notée
+WORKSHOP_BY_YOU,Made by you,Made by you,Feita por você,Feita por ti,Von dir gebaut,Créée par toi
+WORKSHOP_BY_NOBODY,Its maker's account is gone,Its maker's account is gone,A conta de quem a fez não existe mais,A conta de quem a fez já não existe,Konto des Erstellers gelöscht,Le compte de son créateur n'existe plus
+WORKSHOP_A_REMIX,A remix of another island,A remix of another island,Um remix de outra ilha,Um remix de outra ilha,Ein Remix einer anderen Insel,Un remix d'une autre île
+WORKSHOP_FEATURED,Featured,Featured,Em destaque,Em destaque,Empfohlen,À la une
+WORKSHOP_WITHDRAWN,Withdrawn: no longer listed,Withdrawn: no longer listed,Retirada: não aparece mais nas listas,Retirada: já não aparece nas listas,Zurückgezogen: nicht mehr gelistet,Retirée : plus listée
+WORKSHOP_REMOVED,Removed by a moderator: %s,Removed by a moderator: %s,Removida por um moderador: %s,Removida por um moderador: %s,Von einem Moderator entfernt: %s,Retirée par un modérateur : %s
+WORKSHOP_PLAY,Play,Play,Jogar,Jogar,Spielen,Jouer
+WORKSHOP_PLAY_NAMED,Play %s,Play %s,Jogar %s,Jogar %s,%s spielen,Jouer %s
+WORKSHOP_REMIX,Remix,Remix,Remixar,Remixar,Remixen,Remixer
+WORKSHOP_REMIX_NAMED,Remix %s in the builder,Remix %s in the builder,Remixar %s no construtor,Remixar %s no construtor,%s im Editor remixen,Remixer %s dans le constructeur
+WORKSHOP_WITHDRAW,Withdraw,Withdraw,Retirar,Retirar,Zurückziehen,Retirer
+WORKSHOP_WITHDRAW_NAMED,Withdraw %s from the lists,Withdraw %s from the lists,Retirar %s das listas,Retirar %s das listas,%s aus den Listen nehmen,Retirer %s des listes
+WORKSHOP_REASON,Reason: %s,Reason: %s,Motivo: %s,Motivo: %s,Grund: %s,Motif : %s
+WORKSHOP_REASON_NAMED,Report reason for %s: %s; choose another,Report reason for %s: %s; choose another,Motivo da denúncia de %s: %s; escolher outro,Motivo da denúncia de %s: %s; escolher outro,Meldegrund für %s: %s; anderen wählen,Motif du signalement de %s : %s ; en choisir un autre
+WORKSHOP_REPORT,Report,Report,Denunciar,Denunciar,Melden,Signaler
+WORKSHOP_REPORT_NAMED,Report %s — reason: %s,Report %s — reason: %s,Denunciar %s — motivo: %s,Denunciar %s — motivo: %s,%s melden — Grund: %s,Signaler %s — motif : %s
+WORKSHOP_PUBLISH_TITLE,Publish the island you just cleared,Publish the island you just cleared,Publique a ilha que você acabou de vencer,Publica a ilha que acabaste de vencer,Gerade geschaffte Insel veröffentlichen,Publie l'île que tu viens de réussir
+WORKSHOP_PUBLISH_REMIX,It is a remix: the original is named with it,It is a remix: the original is named with it,É um remix: a original aparece junto,É um remix: a original aparece junto,Es ist ein Remix: Das Original wird mitgenannt,C'est un remix : l'île d'origine est citée
+WORKSHOP_NAME,Its name: %s,Its name: %s,O nome: %s,Nome: %s,Name: %s,Nom : %s
+WORKSHOP_PUBLISH,Publish,Publish,Publicar,Publicar,Veröffentlichen,Publier
+WORKSHOP_PUBLISH_NAMED,Publish as %s,Publish as %s,Publicar como %s,Publicar como %s,Als %s veröffentlichen,Publier sous le nom %s
+WORKSHOP_RATE_TITLE,Rate %s,Rate %s,Avaliar %s,Avaliar %s,%s bewerten,Noter %s
+WORKSHOP_SCORE_FUN,Fun: %d of 5,Fun: %d of 5,Diversão: %d de 5,Diversão: %d de 5,Spaß: %d von 5,Plaisir : %d sur 5
+WORKSHOP_SCORE_CLEVERNESS,Cleverness: %d of 5,Cleverness: %d of 5,Engenhosidade: %d de 5,Engenho: %d de 5,Raffinesse: %d von 5,Astuce : %d sur 5
+WORKSHOP_SCORE_FAIRNESS,Fairness: %d of 5,Fairness: %d of 5,Justiça: %d de 5,Justiça: %d de 5,Fairness: %d von 5,Équité : %d sur 5
+WORKSHOP_LOWER,Lower — %s,Lower — %s,Diminuir — %s,Baixar — %s,Senken — %s,Baisser — %s
+WORKSHOP_HIGHER,Raise — %s,Raise — %s,Aumentar — %s,Subir — %s,Erhöhen — %s,Monter — %s
+WORKSHOP_SEND_RATING,Send the rating,Send the rating,Enviar a avaliação,Enviar a avaliação,Bewertung senden,Envoyer la note
+WORKSHOP_SEND_RATING_NAMED,Send the rating for %s,Send the rating for %s,Enviar a avaliação de %s,Enviar a avaliação de %s,Bewertung für %s senden,Envoyer la note de %s
+WORKSHOP_CLEARED,Cleared: you got out with loot,Cleared: you got out with loot,Vencida: você saiu com o saque,Vencida: saíste com o saque,Geschafft: Du bist mit Beute entkommen,Réussie : butin en poche
+WORKSHOP_NOT_CLEARED,Not cleared this time,Not cleared this time,Não vencida desta vez,Não vencida desta vez,Diesmal nicht geschafft,Pas réussie cette fois
+WORKSHOP_DONE_PUBLISHED,Published as %s,Published as %s,Publicada como %s,Publicada como %s,Veröffentlicht als %s,Publiée sous le nom %s
+WORKSHOP_DONE_RATED,Your rating is in,Your rating is in,Sua avaliação foi registrada,A tua avaliação foi registada,Bewertung gespeichert,Ta note est enregistrée
+WORKSHOP_DONE_REPORTED,Reported: a person will look at it,Reported: a person will look at it,Denunciada: uma pessoa vai analisar,Denunciada: uma pessoa vai analisá-la,Gemeldet: Ein Mensch sieht es sich an,Signalée : une personne va l'examiner
+WORKSHOP_DONE_REMIXED,"In the builder, yours to change","In the builder, yours to change","No construtor, pronta para você mudar","No construtor, pronta para alterares","Im Editor, bereit zum Ändern","Dans le constructeur, à toi de la modifier"
+WORKSHOP_DONE_WITHDRAWN,Withdrawn: it is no longer listed,Withdrawn: it is no longer listed,Retirada: não aparece mais nas listas,Retirada: já não aparece nas listas,Zurückgezogen: nicht mehr gelistet,Retirée : elle n'est plus listée
+WORKSHOP_LADDER,%s · completions of your islands: %s · featured: %s,%s · completions of your islands: %s · featured: %s,%s · conclusões das suas ilhas: %s · em destaque: %s,%s · conclusões das tuas ilhas: %s · em destaque: %s,%s · Abschlüsse deiner Inseln: %s · empfohlen: %s,%s · réussites de tes îles : %s · à la une : %s
+WORKSHOP_LEVEL,Creator level: %s,Creator level: %s,Nível de criador: %s,Nível de criador: %s,Ersteller-Level: %s,Niveau de créateur : %s
+WORKSHOP_NO_LEVEL,No creator level yet: it starts when someone finishes one of your islands,No creator level yet: it starts when someone finishes one of your islands,Ainda sem nível de criador: começa quando alguém concluir uma das suas ilhas,Ainda sem nível de criador: começa quando alguém concluir uma das tuas ilhas,"Noch kein Ersteller-Level: Es beginnt, wenn jemand eine deiner Inseln schafft",Pas encore de niveau de créateur : il démarre quand quelqu'un réussit une de tes îles
+WORKSHOP_TAB_SHOW,Show %s,Show %s,Mostrar %s,Mostrar %s,%s anzeigen,Afficher %s
+WORKSHOP_TAB_SHOWN,"%s, shown","%s, shown","%s, em exibição","%s, em exibição","%s, angezeigt","%s, affiché"
+WORKSHOP_REMIX_CONFIRM,Into your builder? Yours is kept,Into your builder? Yours is kept,Para o seu construtor? A sua fica guardada,Para o teu construtor? A tua fica guardada,In deinen Editor? Deine bleibt erhalten,Dans ton constructeur ? La tienne est conservée
+WORKSHOP_REMIX_CONFIRM_NAMED,"Put %s in your builder; your own island is kept, to swap back","Put %s in your builder; your own island is kept, to swap back","Colocar %s no seu construtor; a sua ilha fica guardada, para trocar de volta","Colocar %s no teu construtor; a tua ilha fica guardada, para voltares a trocar",%s in deinen Editor laden; deine Insel bleibt zum Zurücktauschen erhalten,Mettre %s dans ton constructeur ; ton île est conservée pour y revenir
+WORKSHOP_WORDS_AGAIN,Get the name words again,Get the name words again,Buscar as palavras do nome de novo,Obter de novo as palavras do nome,Namenswörter neu holen,Recharger les mots du nom
+WORKSHOP_OTHER_ADJECTIVE,Another first word for %s,Another first word for %s,Outra palavra de qualidade para %s,Outro adjetivo para %s,Anderes erstes Wort für %s,Autre premier mot pour %s
+WORKSHOP_OTHER_NOUN,Another second word for %s,Another second word for %s,Outro substantivo para %s,Outro substantivo para %s,Anderes zweites Wort für %s,Autre second mot pour %s
+CREATOR_BUILDER,Builder,Builder,Construtor,Construtor,Erbauer,Bâtisseur
+CREATOR_WRIGHT,Wright,Wright,Artífice,Artífice,Werkmeister,Artisan
+CREATOR_ARCHITECT,Architect,Architect,Arquiteto,Arquiteto,Architekt,Architecte
+CREATOR_LOREMAKER,Loremaker,Loremaker,Mestre das Lendas,Mestre das Lendas,Sagenschmied,Mythographe
+REPORT_UNFAIR,unfair,unfair,injusta,injusta,unfair,injuste
+REPORT_UNPLAYABLE,unplayable,unplayable,injogável,injogável,unspielbar,injouable
+REPORT_COPIED,copied,copied,copiada,copiada,kopiert,copiée
+REPORT_OFFENSIVE,offensive,offensive,ofensiva,ofensiva,beleidigend,offensante
+REPORT_OTHER,other,other,outro,outro,Sonstiges,autre
+REMOVAL_UNFAIR,unfair,unfair,injusta,injusta,unfair,injuste
+REMOVAL_UNPLAYABLE,unplayable,unplayable,injogável,injogável,unspielbar,injouable
+REMOVAL_COPIED,copied,copied,copiada,copiada,kopiert,copiée
+REMOVAL_OFFENSIVE,offensive,offensive,ofensiva,ofensiva,beleidigend,offensante
+REMOVAL_BAN,its maker was banned,its maker was banned,quem a fez foi banido,quem a fez foi banido,der Ersteller wurde gesperrt,son créateur a été banni
+AGE_QUESTION,How old are you?,How old are you?,Quantos anos você tem?,Que idade tens?,Wie alt bist du?,Quel âge as-tu ?
+AGE_UNDER_13,Under 13,Under 13,Menos de 13,Menos de 13,Unter 13,Moins de 13 ans
+AGE_13_15,13 to 15,13 to 15,13 a 15,13 a 15,13 bis 15,13 à 15 ans
+AGE_16_17,16 or 17,16 or 17,16 ou 17,16 ou 17,16 oder 17,16 ou 17 ans
+AGE_18_UP,18 or older,18 or older,18 ou mais,18 ou mais,18 oder älter,18 ans ou plus
+AGE_TOO_YOUNG,"Ruleborn is for players aged 13 and up. No account has been made, and nothing about you has been sent.","Ruleborn is for players aged 13 and up. No account has been made, and nothing about you has been sent.","Ruleborn é para jogadores a partir de 13 anos. Nenhuma conta foi criada, e nada sobre você foi enviado.",Ruleborn é para jogadores a partir dos 13 anos. Não foi criada nenhuma conta e nada sobre ti foi enviado.,Ruleborn ist für Spieler ab 13 Jahren. Es wurde kein Konto erstellt und nichts über dich gesendet.,Ruleborn est réservé aux joueurs de 13 ans et plus. Aucun compte n'a été créé et rien te concernant n'a été envoyé.
+KEEPER_TITLE,Keeper %d,Keeper %d,Guardião %d,Guardião %d,Hüter %d,Gardien %d
+KEEPER_PROGRESS,%s of %s experience to Keeper %d,%s of %s experience to Keeper %d,%s de %s de experiência até Guardião %d,%s de %s de experiência até Guardião %d,%s von %s EP bis Hüter %d,%s sur %s d'expérience pour Gardien %d
+KEEPER_TOP,"Keeper %d, the highest level","Keeper %d, the highest level","Guardião %d, o nível mais alto","Guardião %d, o nível mais alto","Hüter %d, das höchste Level","Gardien %d, le plus haut niveau"
+KEEPER_SPOKEN,Keeper %d: %s,Keeper %d: %s,Guardião %d: %s,Guardião %d: %s,Hüter %d: %s,Gardien %d : %s
+HOME_UNIVERSE,Your universe,Your universe,Seu universo,O teu universo,Dein Universum,Ton univers
+UNIVERSE_TITLE,Your universe,Your universe,Seu universo,O teu universo,Dein Universum,Ton univers
+UNIVERSE_HEADER,%s Starlight · Spire %d · Keeper %d,%s Starlight · Spire %d · Keeper %d,%s de Luz Estelar · Torre %d · Guardião %d,%s de Luz Estelar · Torre %d · Guardião %d,%s Sternenlicht · Turm %d · Hüter %d,%s Lumière stellaire · Tour %d · Gardien %d
+UNIVERSE_FAILED,Not bought: %s,Not bought: %s,Não comprado: %s,Não comprado: %s,Nicht gekauft: %s,Non acheté : %s
+UNIVERSE_HEART,The Heart,The Heart,O Coração,O Coração,Das Herz,Le Cœur
+UNIVERSE_HEART_TITLE,"The Heart, which counts as realm level %d","The Heart, which counts as realm level %d","O Coração, que conta como reino nível %d","O Coração, que conta como nível de reino %d","Das Herz, zählt als Reichslevel %d","Le Cœur, qui compte comme royaume niveau %d"
+UNIVERSE_REALM_TITLE,"%s, realm level %d","%s, realm level %d","%s, reino nível %d","%s, nível de reino %d","%s, Reichslevel %d","%s, royaume niveau %d"
+UNIVERSE_LEVEL,"%s, level %d of %d","%s, level %d of %d","%s, nível %d de %d","%s, nível %d de %d","%s, Level %d von %d","%s, niveau %d sur %d"
+UNIVERSE_AT_TOP,%s: the highest level,%s: the highest level,%s: o nível mais alto,%s: o nível mais alto,%s: höchstes Level,%s : le plus haut niveau
+UNIVERSE_NUMBERED,%s %d,%s %d,%s %d,%s %d,%s %d,%s %d
+UNIVERSE_RAISE,Raise to level %d,Raise to level %d,Subir ao nível %d,Subir ao nível %d,Auf Level %d ausbauen,Monter au niveau %d
+UNIVERSE_RAISE_REALM,Raise the realm to level %d,Raise the realm to level %d,Subir o reino ao nível %d,Subir o reino ao nível %d,Reich auf Level %d ausbauen,Monter le royaume au niveau %d
+UNIVERSE_BUILD,Build: %s,Build: %s,Construir: %s,Construir: %s,Bauen: %s,Construire : %s
+UNIVERSE_PRICE,"%s, %s Starlight","%s, %s Starlight","%s, %s de Luz Estelar","%s, %s de Luz Estelar","%s, %s Sternenlicht","%s, %s Lumière stellaire"
+UNIVERSE_BLOCKED,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s
+UNIVERSE_SPOKEN,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s
+UNIVERSE_NEEDS_KEEPER,Needs Keeper %d,Needs Keeper %d,Precisa de Guardião %d,Requer Guardião %d,Braucht Hüter %d,Requiert Gardien %d
+UNIVERSE_NEEDS_SPIRE,Needs the Spire at level %d,Needs the Spire at level %d,Precisa da Torre no nível %d,Requer a Torre no nível %d,Braucht Turm auf Level %d,Requiert la Tour au niveau %d
+UNIVERSE_NEEDS_STARLIGHT,Needs %s Starlight,Needs %s Starlight,Precisa de %s de Luz Estelar,Requer %s de Luz Estelar,Braucht %s Sternenlicht,Requiert %s Lumière stellaire
+UNIVERSE_CONFIRM,Tap again to spend %s Starlight,Tap again to spend %s Starlight,Toque de novo para gastar %s de Luz Estelar,Toca de novo para gastar %s de Luz Estelar,"Nochmal tippen, um %s Sternenlicht auszugeben",Touche encore pour dépenser %s Lumière stellaire
+UNIVERSE_CONFIRM_SPOKEN,%s: tap again to spend %s Starlight,%s: tap again to spend %s Starlight,%s: toque de novo para gastar %s de Luz Estelar,%s: toca de novo para gastar %s de Luz Estelar,"%s: nochmal tippen, um %s Sternenlicht auszugeben",%s : touche encore pour dépenser %s Lumière stellaire
+UNIVERSE_ROOM,Room to build here,Room to build here,Espaço para construir aqui,Espaço para construir aqui,Hier ist Platz zum Bauen,Place pour construire ici
+UNIVERSE_OPEN_TITLE,Open a new outer realm,Open a new outer realm,Abrir um novo reino exterior,Abrir um novo reino exterior,Neues äußeres Reich öffnen,Ouvrir un nouveau royaume extérieur
+UNIVERSE_OPEN,Open %s,Open %s,Abrir %s,Abrir %s,%s öffnen,Ouvrir %s
+UNIVERSE_OPENED,%s is open,%s is open,%s está aberto,%s está aberto,%s ist offen,%s est ouvert
+UNIVERSE_RAISED,The realm is at level %d,The realm is at level %d,O reino está no nível %d,O reino está no nível %d,Das Reich ist auf Level %d,Le royaume est au niveau %d
+UNIVERSE_BUILT,"%s, level %d","%s, level %d","%s, nível %d","%s, nível %d","%s, Level %d","%s, niveau %d"
+ERR_NOT_ENOUGH_STARLIGHT,you need more Starlight,you need more Starlight,você precisa de mais Luz Estelar,precisas de mais Luz Estelar,du brauchst mehr Sternenlicht,il te faut plus de Lumière stellaire
+ERR_NEEDS_KEEPER_LEVEL,that needs a higher Keeper level,that needs a higher Keeper level,isso precisa de um nível de Guardião mais alto,isso requer um nível de Guardião mais alto,dafür brauchst du ein höheres Hüter-Level,ça demande un niveau de Gardien plus élevé
+ERR_NEEDS_SPIRE_LEVEL,that needs the Spire higher,that needs the Spire higher,isso precisa da Torre mais alta,isso requer a Torre num nível mais alto,dafür muss der Turm höher sein,ça demande une Tour plus haute
+ERR_NOT_THE_NEXT_LEVEL,that is not the next level,that is not the next level,esse não é o próximo nível,esse não é o nível seguinte,das ist nicht das nächste Level,ce n'est pas le niveau suivant
+ERR_NO_ROOM,there is no room for another here,there is no room for another here,não há espaço para outro aqui,não há espaço para outro aqui,hier ist kein Platz für noch eins,plus de place pour un autre ici
+ERR_NOT_IN_THIS_REALM,that cannot stand in this realm,that cannot stand in this realm,isso não pode ficar neste reino,isso não pode ficar neste reino,das kann in diesem Reich nicht stehen,ça ne peut pas se trouver dans ce royaume
+ERR_NO_SUCH_BUILDING,that building does not exist,that building does not exist,essa construção não existe,essa construção não existe,dieses Gebäude gibt es nicht,ce bâtiment n'existe pas
+ERR_NO_SUCH_REALM_TYPE,that kind of realm does not exist,that kind of realm does not exist,esse tipo de reino não existe,esse tipo de reino não existe,diese Reichsart gibt es nicht,ce type de royaume n'existe pas
+ERR_EVERY_REALM_OPEN,every realm is already open,every realm is already open,todos os reinos já estão abertos,todos os reinos já estão abertos,alle Reiche sind schon offen,tous les royaumes sont déjà ouverts
+WORKSHOP_TERMS,"Before you publish, play, rate or remix Workshop islands, read the terms of use (version %s) and accept them. Reporting an island never waits for them.","Before you publish, play, rate or remix Workshop islands, read the terms of use (version %s) and accept them. Reporting an island never waits for them.","Antes de publicar, jogar, avaliar ou remixar ilhas da Oficina, leia os termos de uso (versão %s) e aceite-os. Denunciar uma ilha nunca espera por eles.","Antes de publicares, jogares, avaliares ou remixares ilhas da Oficina, lê os termos de utilização (versão %s) e aceita-os. Denunciar uma ilha nunca depende deles.","Bevor du Werkstatt-Inseln veröffentlichst, spielst, bewertest oder remixt, lies die Nutzungsbedingungen (Version %s) und akzeptiere sie. Melden geht immer, auch ohne sie.","Avant de publier, jouer, noter ou remixer des îles de l'Atelier, lis les conditions d'utilisation (version %s) et accepte-les. Signaler une île ne les exige jamais."
+WORKSHOP_TERMS_READ,Read the terms,Read the terms,Ler os termos,Ler os termos,Bedingungen lesen,Lire les conditions
+WORKSHOP_TERMS_ACCEPT,Accept the terms,Accept the terms,Aceitar os termos,Aceitar os termos,Bedingungen akzeptieren,Accepter les conditions
+WORKSHOP_DONE_TERMS,Terms accepted,Terms accepted,Termos aceitos,Termos aceites,Bedingungen akzeptiert,Conditions acceptées
+WORKSHOP_BLOCK,Block creator,Block creator,Bloquear criador,Bloquear criador,Ersteller blockieren,Bloquer le créateur
+WORKSHOP_BLOCK_NAMED,"Block %s, who made %s","Block %s, who made %s","Bloquear %s, que fez %s","Bloquear %s, que fez %s",%s blockieren (hat %s gebaut),"Bloquer %s, créateur de %s"
+WORKSHOP_DONE_BLOCKED,"Blocked: you will not see each other's Workshop islands, and you are no longer friends","Blocked: you will not see each other's Workshop islands, and you are no longer friends","Bloqueado: vocês não verão as ilhas da Oficina um do outro, e não são mais amigos",Bloqueado: deixam de ver as ilhas da Oficina um do outro e já não são amigos,Blockiert: Ihr seht die Werkstatt-Inseln des anderen nicht mehr und seid keine Freunde mehr,Bloqué : vous ne verrez plus vos îles de l'Atelier respectives et n'êtes plus amis
+ERR_TERMS_FIRST,accept the terms of use first,accept the terms of use first,aceite os termos de uso primeiro,aceita primeiro os termos de utilização,akzeptiere zuerst die Nutzungsbedingungen,accepte d'abord les conditions d'utilisation
+ERR_NOT_THE_CURRENT_TERMS,the terms have changed; read the new ones,the terms have changed; read the new ones,os termos mudaram; leia os novos,os termos mudaram; lê os novos,die Bedingungen haben sich geändert; lies die neuen,les conditions ont changé ; lis les nouvelles
+ERR_OWN_ACCOUNT,that is your own account,that is your own account,essa é a sua própria conta,essa é a tua própria conta,das ist dein eigenes Konto,c'est ton propre compte
+ERR_NOT_BLOCKED,that player is not blocked,that player is not blocked,esse jogador não está bloqueado,esse jogador não está bloqueado,dieser Spieler ist nicht blockiert,ce joueur n'est pas bloqué
+ERR_TOO_MANY_BLOCKS,you have blocked as many players as you can,you have blocked as many players as you can,você já bloqueou o máximo de jogadores,já bloqueaste o máximo de jogadores possível,du hast schon die maximale Zahl an Spielern blockiert,tu as bloqué le maximum de joueurs
+ERR_TOO_MANY_REQUESTS,the game asked too often; try again in a moment,the game asked too often; try again in a moment,o jogo pediu vezes demais; tente de novo em instantes,o jogo fez pedidos demasiadas vezes; tenta de novo daqui a pouco,das Spiel hat zu oft gefragt; versuch es gleich nochmal,le jeu a fait trop de demandes ; réessaie dans un instant
+WORKSHOP_BLOCK_CONFIRM,Tap again to block,Tap again to block,Toque de novo para bloquear,Toca de novo para bloquear,Nochmal tippen zum Blockieren,Touche encore pour bloquer
+WORKSHOP_BLOCK_CONFIRM_NAMED,"Tap again to block %s, who made %s; a friendship between you ends","Tap again to block %s, who made %s; a friendship between you ends","Toque de novo para bloquear %s, que fez %s; uma amizade entre vocês termina","Toca de novo para bloquear %s, que fez %s; a amizade entre vocês termina","Nochmal tippen, um %s zu blockieren (hat %s gebaut); eine Freundschaft zwischen euch endet","Touche encore pour bloquer %s, créateur de %s ; toute amitié entre vous prend fin"
+FRIENDS_BLOCKED,Players you blocked,Players you blocked,Jogadores que você bloqueou,Jogadores que bloqueaste,Von dir blockierte Spieler,Joueurs bloqués
+FRIENDS_UNBLOCK,Unblock,Unblock,Desbloquear,Desbloquear,Entsperren,Débloquer
+FRIENDS_UNBLOCK_NAMED,Unblock %s,Unblock %s,Desbloquear %s,Desbloquear %s,%s entsperren,Débloquer %s
+ERR_HOME_TOO_LOW,that home is not high enough for that level,that home is not high enough for that level,essa casa não permite esse nível,essa casa não permite esse nível,dieses Heim reicht für dieses Level nicht,cette maison n'a pas le niveau requis
+ERR_NO_BIRTH_READY,no birth is ready at that Nursery yet,no birth is ready at that Nursery yet,nenhum nascimento está pronto nesse Nursery ainda,ainda não há nenhum nascimento pronto nesse Nursery,in dieser Nursery ist noch keine Geburt bereit,aucune naissance n'est encore prête dans cette Nursery
+ERR_NO_NURSERY,there is no Nursery in that realm,there is no Nursery in that realm,não há Nursery nesse reino,não há nenhum Nursery nesse reino,in diesem Reich gibt es keine Nursery,il n'y a pas de Nursery dans ce royaume
+ERR_NO_PLACE,there is no free place for another character,there is no free place for another character,não há lugar livre para outro personagem,não há lugar livre para outra personagem,kein freier Platz für einen weiteren Charakter,plus de place libre pour un autre personnage
+ERR_NO_SUCH_CHARACTER,that character does not exist,that character does not exist,esse personagem não existe,essa personagem não existe,diesen Charakter gibt es nicht,ce personnage n'existe pas
+ERR_NO_SUCH_HOME,there is no such home,there is no such home,essa casa não existe,essa casa não existe,dieses Heim gibt es nicht,cette maison n'existe pas
+ERR_NOT_A_PRODUCER,"only a Star Well, an Aether Spring or a Garden is collected","only a Star Well, an Aether Spring or a Garden is collected","só se coleta de um Star Well, um Aether Spring ou um Garden","só se recolhe de um Star Well, de um Aether Spring ou de um Garden","einsammeln geht nur bei Star Well, Aether Spring oder Garden","seuls un Star Well, un Aether Spring ou un Garden se récoltent"
+ERR_NOT_A_WORKPLACE,nobody can work there,nobody can work there,ninguém pode trabalhar ali,ninguém pode trabalhar ali,dort kann niemand arbeiten,personne ne peut travailler là
+ERR_NOT_ENOUGH_ESSENCE,you need more Essence,you need more Essence,você precisa de mais Essência,precisas de mais Essência,du brauchst mehr Essenz,il te faut plus d'Essence
+ERR_NOT_THE_NEXT_BIRTH,that is not the next birth,that is not the next birth,esse não é o próximo nascimento,esse não é o nascimento seguinte,das ist nicht die nächste Geburt,ce n'est pas la naissance suivante
+ERR_SLOTS_FULL,every worker slot there is filled,every worker slot there is filled,todos os postos de trabalho ali estão ocupados,todos os postos de trabalho ali estão ocupados,alle Arbeitsplätze dort sind belegt,tous les postes de travail y sont occupés
+ERR_ALREADY_STUDIED,that heist was already studied for another law,that heist was already studied for another law,esse assalto já foi estudado para outra lei,esse assalto já foi estudado para outra lei,dieser Raubzug wurde schon für ein anderes Gesetz studiert,ce casse a déjà été étudié pour une autre loi
+ERR_CHAPTER_CLOSED,that law's chapter of the Codex is not open yet,that law's chapter of the Codex is not open yet,o capítulo dessa lei no Codex ainda não está aberto,o capítulo dessa lei no Codex ainda não está aberto,das Kapitel dieses Gesetzes im Codex ist noch nicht offen,le chapitre de cette loi dans le Codex n'est pas encore ouvert
+ERR_LAW_NOT_CROSSED,the crew did not cross that law,the crew did not cross that law,a equipe não cruzou essa lei,a equipa não cruzou essa lei,die Crew hat dieses Gesetz nicht übertreten,l'équipe n'a pas franchi cette loi
+ERR_NO_SUCH_LAW,there is no such law,there is no such law,essa lei não existe,essa lei não existe,dieses Gesetz gibt es nicht,cette loi n'existe pas
+ERR_NOT_ENOUGH_AETHER,you need more Aether,you need more Aether,você precisa de mais Aether,precisas de mais Aether,du brauchst mehr Aether,il te faut plus d'Aether
+ERR_NOT_ENOUGH_PAGES,you need more pages of that law,you need more pages of that law,você precisa de mais páginas dessa lei,precisas de mais páginas dessa lei,du brauchst mehr Seiten dieses Gesetzes,il te faut plus de pages de cette loi
+ERR_NOT_THE_NEXT_TIER,that is not the next tier,that is not the next tier,esse não é o próximo nível da lei,esse não é o nível seguinte da lei,das ist nicht die nächste Stufe,ce n'est pas le palier suivant
+ERR_NOTHING_TO_STUDY,a heist among friends gives nothing to study,a heist among friends gives nothing to study,um assalto entre amigos não dá nada para estudar,um assalto entre amigos não dá nada para estudar,ein Raubzug unter Freunden bringt nichts zum Studieren,un casse entre amis n'apporte rien à étudier
+ERR_NOT_ON_THE_GRID,that is placed by the island builder,that is placed by the island builder,isso é colocado pelo construtor da ilha,isso é colocado pelo construtor da ilha,das wird im Inseleditor platziert,ça se place avec le constructeur d'île
+ERR_OFF_THE_GRID,that does not fit on the realm,that does not fit on the realm,isso não cabe no reino,isso não cabe no reino,das passt nicht ins Reich,ça ne tient pas dans le royaume
+ERR_TILE_TAKEN,another building stands there,another building stands there,outra construção está ali,já há outra construção ali,dort steht schon ein Gebäude,un autre bâtiment occupe cette case
+ERR_NOT_BUILT,that has not been built,that has not been built,isso ainda não foi construído,isso ainda não foi construído,das wurde noch nicht gebaut,ça n'a pas été construit
