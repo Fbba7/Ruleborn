@@ -11,7 +11,14 @@
 
 import { readFileSync } from "node:fs";
 
+import { Refused } from "./refused.mjs";
+
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
+
+/** §11.7's launch Sages and the Keeper level each unlocks at, read from the
+ *  table's "Unlocks" column ("Start" is level 1). */
+export const SAGES = JSON.parse(readFileSync(new URL("../../content/sages.json", import.meta.url), "utf8"))
+  .map((s) => ({ id: s.id, unlocksAt: s.unlocks === "Start" ? 1 : Number(/Keeper level (\d+)/.exec(s.unlocks)[1]) }));
 
 /** The highest level: the table gives the experience to each level after 1. */
 export const KEEPER_LEVEL_CAP = facts.KEEPER_XP_TO_NEXT.length + 1;
@@ -65,6 +72,29 @@ export class Keeper {
   /** The experience from `level` to the next, or null at the top. */
   toNext(level) {
     return level < KEEPER_LEVEL_CAP ? facts.KEEPER_XP_TO_NEXT[level - 1] : null;
+  }
+
+  /** §11.7's Sages for one player: each with the Keeper level it unlocks
+   *  at and whether it has, the Sages' level — the Keeper's — and the one
+   *  stationed at the Heart as its guardian, if any. */
+  sages(account) {
+    const row = this.db.prepare("SELECT keeper_level, guardian_sage FROM accounts WHERE id = ?").get(account);
+    return { level: row.keeper_level, guardian: row.guardian_sage ?? null,
+             sages: SAGES.map((s) => ({ id: s.id, unlocks_at: s.unlocksAt, unlocked: row.keeper_level >= s.unlocksAt,
+                                         guardian: row.guardian_sage === s.id })) };
+  }
+
+  /** §11.7: "can station another at the Heart as its guardian" — one Sage the
+   *  Keeper has unlocked, or none (`sage` null). */
+  setGuardian(account, sage) {
+    if (sage !== null) {
+      const s = SAGES.find((x) => x.id === sage);
+      if (!s) throw new Refused(404, "no_such_sage");
+      const level = this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(account).keeper_level;
+      if (level < s.unlocksAt) throw new Refused(409, "sage_locked", { unlocks_at: s.unlocksAt });
+    }
+    this.db.prepare("UPDATE accounts SET guardian_sage = ? WHERE id = ?").run(sage, account);
+    return this.sages(account);
   }
 
   /** A player's Keeper level and the bar toward the next. */

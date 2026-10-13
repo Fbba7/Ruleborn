@@ -6,11 +6,11 @@ extends Control
 ## fixed at the bottom where the thumb rests.
 
 ## The screens a player goes to from home, in the order they are listed.
-const PLACES := [&"universe", &"roster", &"builder", &"workshop", &"replay", &"track", &"shop", &"social", &"friends",
-	&"settings"]
-const WORDS := {&"universe": "HOME_UNIVERSE", &"roster": "HOME_ROSTER", &"builder": "HOME_BUILD",
-	&"workshop": "HOME_WORKSHOP", &"replay": "HOME_WATCH", &"track": "HOME_TRACK", &"shop": "HOME_SHOP",
-	&"social": "HOME_SOCIAL", &"friends": "HOME_FRIENDS", &"settings": "HOME_SETTINGS"}
+const PLACES := [&"universe", &"roster", &"sages", &"builder", &"workshop", &"replay", &"track", &"shop", &"social",
+	&"friends", &"settings"]
+const WORDS := {&"universe": "HOME_UNIVERSE", &"roster": "HOME_ROSTER", &"sages": "HOME_SAGES",
+	&"builder": "HOME_BUILD", &"workshop": "HOME_WORKSHOP", &"replay": "HOME_WATCH", &"track": "HOME_TRACK",
+	&"shop": "HOME_SHOP", &"social": "HOME_SOCIAL", &"friends": "HOME_FRIENDS", &"settings": "HOME_SETTINGS"}
 
 var keeper_label: Label
 var keeper_plate: PanelContainer

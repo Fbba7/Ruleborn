@@ -62,3 +62,14 @@ func blocks() -> Result:
 ## §14.2's Keeper level and the bar to the next: `{level, xp, toNext, cap}`.
 func keeper() -> Result:
 	return await api.get_json("/v1/keeper")
+
+
+## §11.7's Sages: each with the Keeper level it unlocks at, the Sages' level
+## (the Keeper's) and the one on guard at the Heart.
+func sages() -> Result:
+	return await api.get_json("/v1/sages")
+
+
+## §11.7: `sage` put on guard at the Heart, or none when it is null.
+func set_guardian(sage: Variant) -> Result:
+	return await api.json(HTTPClient.METHOD_PUT, "/v1/sages/guardian", {"sage": sage})

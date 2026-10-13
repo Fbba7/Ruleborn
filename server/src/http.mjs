@@ -14,6 +14,8 @@
 //   POST /v1/heists/:token       replay bytes                → what was settled; ?crew=ids names the roster's crew (11.6)
 //   GET  /v1/balance                                         → {starlight, essence}
 //   GET  /v1/keeper                                          → {level, xp, toNext, cap} (§14.2)
+//   GET  /v1/sages                                           → each Sage, its unlock, the guardian (§11.7)
+//   PUT  /v1/sages/guardian      {"sage": id | null}         → the Sage stationed at the Heart, or none
 //   GET  /v1/terms                                           → {version, accepted, url} (§20.11)
 //   PUT  /v1/terms               {"version"}                 → the current terms accepted
 //   GET  /v1/blocks                                          → the caller's blocks (§17.8)
@@ -595,6 +597,15 @@ export function handler(service, { webClientId = null, appleNotifications = null
           return json(service.balance(who()));
         case "GET /v1/keeper":
           return json(service.keeper.view(who()));
+        case "GET /v1/sages":
+          return json(service.keeper.sages(who()));
+        case "PUT /v1/sages": {
+          if (parts[2] !== "guardian") return json({ error: "no_such_route" }, 404);
+          const me = who();
+          const { sage = null } = await body(request);
+          if (sage !== null && typeof sage !== "string") return json({ error: "malformed_body" }, 400);
+          return json(service.keeper.setGuardian(me, sage));
+        }
         case "GET /v1/targets":
           who();
           return json(service.targets());

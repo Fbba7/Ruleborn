@@ -85,6 +85,7 @@
   "a generated island is raided like any target, and its defence moves no player's Renown (12.22, G30)": "passed",
   "a gift is the same item bought for a friend, and goes to them (F41)": "passed",
   "a gift's receipt after its intent is gone is refused before the store settles it, never given to the buyer (F41, G38)": "passed",
+  "a guardian Sage is one the Keeper has unlocked, one at a time, kept on the account, and over HTTP (11.7)": "passed",
   "a haul is capped by what the raider was already paid today (§9.6, §24.12)": "passed",
   "a haul is cut by the first cap it meets, and re-split half Essence": "passed",
   "a haul is minted half Essence (§32.9's reading, G17) and rounds down once": "passed",

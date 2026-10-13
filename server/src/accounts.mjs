@@ -113,7 +113,7 @@ export function deleteAccount(service, account, reason = "requested", { journal 
     db.prepare(
       `UPDATE accounts SET platform_identity = ?,
          deleted_at = COALESCE(deleted_at, ?),
-         deleted_reason = COALESCE(deleted_reason, ?), equipped = '{}', working_on = NULL, push_token = NULL,
+         deleted_reason = COALESCE(deleted_reason, ?), equipped = '{}', working_on = NULL, guardian_sage = NULL, push_token = NULL,
          reminder_at = NULL, time_zone = NULL, night_quiet = 1, terms_version = NULL,
          banned_at = NULL, banned_reason = NULL WHERE id = ?`)
       .run(`deleted:${account}`, now, reason, account);

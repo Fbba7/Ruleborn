@@ -5,8 +5,8 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 import { defenceShare } from "../src/economy.mjs";
-import { KEEPER_LEVEL_CAP, climb, counted, heistExperience } from "../src/keeper.mjs";
-import { openPlan, play, twoPlayers } from "./setup.mjs";
+import { KEEPER_LEVEL_CAP, SAGES, climb, counted, heistExperience } from "../src/keeper.mjs";
+import { openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
 
@@ -97,4 +97,35 @@ test("at Keeper 40 a raid's experience counts for nothing, and says so; a challe
   const played = other.service.lease(other.raider.account, bundle, null, { mode: "challenge", challenge });
   const game = other.service.submit(other.raider.account, played.token, play(other, played, { plan: openPlan() }));
   assert.equal(game.keeper, null);
+});
+
+test("a guardian Sage is one the Keeper has unlocked, one at a time, kept on the account, and over HTTP (11.7)", async () => {
+  assert.deepEqual(SAGES.map((x) => [x.id, x.unlocksAt]),
+                   [["the_archivist", 1], ["the_tinkerer", 7], ["the_gardener", 13], ["the_wanderer", 20]],
+                   "§11.7's Unlocks column");
+  const t = server();
+  const { account: me, token } = t.service.session("gc:sages");
+  const k = t.service.keeper;
+  const first = k.sages(me);
+  assert.equal(first.level, 1, "the Sages' level is the Keeper's");
+  assert.equal(first.guardian, null, "none on guard at first");
+  assert.deepEqual(first.sages.map((x) => x.unlocked), [true, false, false, false]);
+  assert.throws(() => k.setGuardian(me, "the_tinkerer"),
+                (e) => e.reason === "sage_locked" && e.detail.unlocks_at === 7);
+  assert.throws(() => k.setGuardian(me, "the_chronicler"), (e) => e.reason === "no_such_sage");
+  assert.equal(k.setGuardian(me, "the_archivist").guardian, "the_archivist");
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 7 WHERE id = ?").run(me);
+  const put = (body) => t.handle(new Request("https://edge.example/v1/sages/guardian", {
+    method: "PUT", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+    body: JSON.stringify(body) }));
+  const r = await put({ sage: "the_tinkerer" });
+  assert.equal(r.status, 200);
+  const after = await r.json();
+  assert.equal(after.guardian, "the_tinkerer", "one at a time: the Tinkerer takes the Archivist's place");
+  assert.deepEqual(after.sages.filter((x) => x.guardian).map((x) => x.id), ["the_tinkerer"]);
+  assert.equal((await put({ sage: 7 })).status, 400);
+  assert.equal((await (await put({ sage: null })).json()).guardian, null, "and none");
+  const got = await t.handle(new Request("https://edge.example/v1/sages", {
+    headers: { authorization: `Bearer ${token}` } }));
+  assert.equal((await got.json()).sages[1].unlocked, true);
 });

@@ -601,3 +601,24 @@ CHARACTER_RAISED,Now level %d,Now level %d,Agora no nível %d,Agora no nível %d
 CHARACTER_WOKEN,Back from rest,Back from rest,De volta do descanso,De volta do descanso,Zurück von der Rast,De retour du repos
 CHARACTER_MISSING,This character is not in the roster,This character is not in the roster,Este personagem não está no plantel,Esta personagem não está no plantel,Diese Figur ist nicht in der Aufstellung,Ce personnage n'est pas dans l'effectif
 ROSTER_SEND_WORK,Send to work,Send to work,Mandar trabalhar,Mandar trabalhar,Zur Arbeit schicken,Envoyer au travail
+HOME_SAGES,Sage hall,Sage hall,Salão dos Sábios,Salão dos Sábios,Halle der Weisen,Salle des Sages
+SAGE_TITLE,Sage hall,Sage hall,Salão dos Sábios,Salão dos Sábios,Halle der Weisen,Salle des Sages
+SAGE_HEADER,"Your Sages are at level %d, the Keeper's","Your Sages are at level %d, the Keeper's","Seus Sábios estão no nível %d, o do Guardião","Os teus Sábios estão no nível %d, o do Guardião","Deine Weisen sind auf Stufe %d, der des Hüters","Tes Sages sont au niveau %d, celui du Gardien"
+SAGE_UNLOCKS,Unlocks at Keeper level %d,Unlocks at Keeper level %d,Desbloqueia no nível de Guardião %d,Desbloqueia no nível de Guardião %d,Freigeschaltet ab Hüter-Stufe %d,Se débloque au niveau de Gardien %d
+SAGE_UNLOCKED,Unlocked,Unlocked,Desbloqueado,Desbloqueado,Freigeschaltet,Débloqué
+SAGE_POWERS,Heist powers: %s,Heist powers: %s,Poderes no assalto: %s,Poderes no assalto: %s,Kräfte im Raubzug: %s,Pouvoirs en casse : %s
+SAGE_AT_HOME,At home: %s,At home: %s,Em casa: %s,Em casa: %s,Zu Hause: %s,À la maison : %s
+SAGE_EVERY_FIFTH,What every fifth level adds,What every fifth level adds,O que cada quinto nível acrescenta,O que cada quinto nível acrescenta,Was jede fünfte Stufe bringt,Ce qu'apporte chaque cinquième niveau
+SAGE_LEVEL_REACHED,"✓ Level %d, reached: %s","✓ Level %d, reached: %s","✓ Nível %d, alcançado: %s","✓ Nível %d, alcançado: %s","✓ Stufe %d, erreicht: %s","✓ Niveau %d, atteint : %s"
+SAGE_LEVEL_AHEAD,Level %d: %s,Level %d: %s,Nível %d: %s,Nível %d: %s,Stufe %d: %s,Niveau %d : %s
+SAGE_ON_GUARD,On guard at the Heart,On guard at the Heart,De guarda no Coração,De guarda no Coração,Hält Wache im Herzen,De garde au Cœur
+SAGE_STATION,Put on guard at the Heart,Put on guard at the Heart,Pôr de guarda no Coração,Pôr de guarda no Coração,Im Herzen Wache halten lassen,Mettre de garde au Cœur
+SAGE_STATION_SPOKEN,Put %s on guard at the Heart,Put %s on guard at the Heart,Pôr %s de guarda no Coração,Pôr %s de guarda no Coração,%s im Herzen Wache halten lassen,Mettre %s de garde au Cœur
+SAGE_RECALL,Take off guard,Take off guard,Tirar da guarda,Tirar da guarda,Von der Wache holen,Retirer de la garde
+SAGE_RECALL_SPOKEN,Take %s off guard,Take %s off guard,Tirar %s da guarda,Tirar %s da guarda,%s von der Wache holen,Retirer %s de la garde
+SAGE_STAYS,A Sage on guard stays home from heists,A Sage on guard stays home from heists,Um Sábio de guarda não vai a assaltos,Um Sábio de guarda não vai a assaltos,Ein Weiser auf Wache geht auf keinen Raubzug,Un Sage de garde ne part pas en casse
+SAGE_NONE_ON_GUARD,No Sage is on guard,No Sage is on guard,Nenhum Sábio está de guarda,Nenhum Sábio está de guarda,Kein Weiser hält Wache,Aucun Sage n'est de garde
+SAGE_STATIONED,%s is on guard at the Heart,%s is on guard at the Heart,%s está de guarda no Coração,%s está de guarda no Coração,%s hält Wache im Herzen,%s est de garde au Cœur
+SAGE_FAILED,The Sages did not change: %s,The Sages did not change: %s,Os Sábios não mudaram: %s,Os Sábios não mudaram: %s,Die Weisen haben sich nicht geändert: %s,Les Sages n'ont pas changé : %s
+ERR_SAGE_LOCKED,that Sage is not unlocked yet,that Sage is not unlocked yet,esse Sábio ainda não foi desbloqueado,esse Sábio ainda não foi desbloqueado,dieser Weise ist noch nicht freigeschaltet,ce Sage n'est pas encore débloqué
+ERR_NO_SUCH_SAGE,there is no such Sage,there is no such Sage,esse Sábio não existe,esse Sábio não existe,diesen Weisen gibt es nicht,ce Sage n'existe pas

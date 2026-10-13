@@ -6,8 +6,9 @@ client's string catalogue.
     python3 tools/client_strings.py --check    # fail if the committed file differs
 
 A law's name, a note's, a resonance's, a chord's, a ward's, a terrain
-feature's, a building's, a realm type's, a ruleborn's name and card, and a
-trait's name and effect each have one home: the content file they are
+feature's, a building's, a realm type's, a ruleborn's name and card, a
+trait's name and effect, and a Sage's name, powers and levels each have one
+home: the content file they are
 extracted into. The
 client shows them, and every word the client shows comes from its catalogue
 (client/scripts/strings.gd), so this writes them there rather than anyone
@@ -64,6 +65,13 @@ def rows() -> list[tuple[str, str]]:
                 (f"BEST_AT_{k['id'].upper()}", k["best_at"])]
     for t in load("traits.json"):
         out += [(f"TRAIT_{t['id'].upper()}", t["name"]), (f"TRAIT_EFFECT_{t['id'].upper()}", t["effect"])]
+    # §11.7's Sages: each one's name, heist powers, at-home effect, and what
+    # each fifth level adds (the Sage hall, §23.2).
+    for sg in load("sages.json"):
+        key = sg["id"].upper()
+        out += [(f"SAGE_{key}", sg["name"]), (f"SAGE_POWERS_{key}", sg["heist_powers"]),
+                (f"SAGE_HOME_{key}", sg["at_home"])]
+        out += [(f"SAGE_LEVEL_{lv}_{key}", text) for lv, text in sg["levels"].items()]
     # §5.2's realm types, from their one home (the server sends the name).
     from design_facts import REALM_TYPES
     out += [(f"REALM_{t.upper().replace(' ', '_')}", t) for t in REALM_TYPES]

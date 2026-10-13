@@ -512,7 +512,20 @@ DELIVERABLES = [
         "every screen works with text at 150% and 200%: nothing wider than the phone, every control "
         "in reach (§20.8, §21.1)",
         "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
-    ("4b", "Sage hall", FRONTEND, not_started("TD.21's screen gate passes for it")),
+    ("4b", "Sage hall", FRONTEND, client_tests(
+        "the Sage hall shows each Sage's powers and what each fifth level adds, those the Keeper's level "
+        "has reached marked in words (11.7, 23.2)",
+        "the Sage hall shows the Sages' level, which is the Keeper's, and when each locked Sage unlocks "
+        "(11.7, 23.2)",
+        "the Sage hall's guardian choice puts one unlocked Sage on guard at the Heart, in another's place, "
+        "takes it off again, and a locked one waits and says until when (11.7, 23.2)",
+        "the Sage hall screen draws the level, each Sage's gains reached, the one on guard and the "
+        "choice; a choice the server does not hear is said not to be made (11.7, 23.2)",
+        "against the server: a new Keeper's hall has the Archivist alone unlocked and none on guard; the "
+        "Archivist goes on guard, and a locked Sage is refused in words (11.7)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control "
+        "in reach (§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
     ("4b", "Codex", FRONTEND, not_started("TD.44's screen gate passes for it")),
     ("4b", "Lab", FRONTEND, not_started("TD.22's screen gate passes for it")),
     ("4b", "Curation", FRONTEND, not_started("TD.22's screen gate passes for it")),

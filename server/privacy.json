@@ -206,6 +206,11 @@
      "deletion": "cleared",
      "holds": "the law the player marked as worked on, which the bad-luck floor's page goes to (§7.6)"
     },
+    "guardian_sage": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "the Sage the player stationed at the Heart as its guardian (§11.7)"
+    },
     "terms_version": {
      "type": "other-usage",
      "deletion": "cleared",

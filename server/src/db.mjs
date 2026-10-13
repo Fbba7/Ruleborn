@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   keeper_xp         INTEGER NOT NULL DEFAULT 0,
   -- §7.6's "a law you are actually working on" (codex.mjs).
   working_on        TEXT,
+  -- §11.7's guardian Sage, stationed at the Heart (keeper.mjs).
+  guardian_sage     TEXT,
   -- §20.11's terms-of-use gate: the version of the terms accepted (safety.mjs).
   terms_version     TEXT,
   created_at        INTEGER NOT NULL,
@@ -753,6 +755,8 @@ const ADDED = [
   ["accounts", "keeper_xp", "INTEGER NOT NULL DEFAULT 0"],
   // §7.6's "a law you are actually working on" (codex.mjs).
   ["accounts", "working_on", "TEXT"],
+  // §11.7's guardian Sage, stationed at the Heart (keeper.mjs).
+  ["accounts", "guardian_sage", "TEXT"],
   // The terms of use accepted (safety.mjs).
   ["accounts", "terms_version", "TEXT"],
   ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],

@@ -106,6 +106,8 @@ async function busy() {
   t.service.home.collect(x.account, { realm: "heart", kind: "garden" });
   t.service.book(x.account, "essence", 1_000, "a test's grant");
   t.service.home.birth(x.account, { realm: "outer-1", n: home.characters.length + 1 });
+  // A Sage stationed at the Heart (§11.7).
+  t.service.keeper.setGuardian(x.account, "the_archivist");
 
   const n = t.service.notifications;
   // Settings no player starts with, so clearing them is seen.
