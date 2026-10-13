@@ -26,7 +26,7 @@ test("the device's offline queue is made in order, each action confirmed or refu
     { do: "place", realm: "heart", kind: "hearth", n: 1, x: 2, y: 2 },
     { do: "build", realm: "heart", kind: "ward", n: 2, to: 1 },
     { do: "build", realm: "heart", kind: "ward", n: 3, to: 1 },
-    { do: "weave", realm: "heart", law: "haste" },
+    { do: "fly", realm: "heart" },
     "a stray string",
   ];
   const answer = confirm(t.service, me, queue);

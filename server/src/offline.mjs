@@ -17,9 +17,9 @@
 // minutes), never from a time the phone claims: the phone's clock is not
 // the server's to trust.
 //
-// Weaving is the third thing §24 lets the device do offline. The server does
-// not keep what is woven yet (TD.14), so an action to weave is refused as
-// one the server does not know.
+// Weaving is the third thing §24 lets the device do offline (weaving.mjs):
+// a weave names its slot and its law, so it too is confirmed once. Its
+// weaving time runs from the server's confirmation, as work's does.
 
 import { Refused } from "./refused.mjs";
 
@@ -31,6 +31,8 @@ const ACTIONS = {
   place: (service, account, a) => service.universe.place(account, a),
   work: (service, account, a) => service.home.work(account, a.character,
     a.kind == null ? {} : { realm: a.realm, kind: a.kind, n: a.n ?? 1 }),
+  weave: (service, account, a) => service.weaving.weave(account, a),
+  unweave: (service, account, a) => service.weaving.unweave(account, a),
 };
 
 /** The device's queue made in order: each action's answer, and the

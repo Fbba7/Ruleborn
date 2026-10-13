@@ -367,9 +367,12 @@ CHARACTER_LEVEL_BASE = 150
 CHARACTER_LEVEL_GROWTH = 1.55
 MAX_CHARACTER_LEVEL = 10
 
-#: §9.5: weaving costs 40 Aether per point of stability, and upkeep 0.5 Aether an
-#: hour per point.
-WEAVE_AETHER_PER_POINT = 40
+#: §5.6: weaving costs 40 Aether per point of stability, from its one home;
+#: and upkeep 0.5 Aether an hour per point.
+try:
+    from ..design_facts import WEAVE_AETHER_PER_POINT  # tools/ as a package
+except ImportError:
+    from design_facts import WEAVE_AETHER_PER_POINT
 UPKEEP_AETHER_PER_POINT_HOUR = 0.5
 
 # §9.5's scouting price, 20 Aether a realm, is gone: the owner made scouting

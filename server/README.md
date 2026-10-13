@@ -718,8 +718,31 @@ experience a build earned, or refused with the online reason. A refusal stops
 nothing after it. A repeat is confirmed and changes nothing, since each
 action names the state it leads to, so a queue sent twice pays once; and the
 work counts from the server's confirmation, never from the phone's clock.
-Weaving is refused as an action the server does not know until it keeps what
-is woven (TD.14).
+A weave and an unweave are confirmed the same way, the weaving time running
+from the confirmation.
+
+## Weaving
+
+`src/weaving.mjs` keeps what is woven (§5.1, §5.5, §5.6). A realm has §5.2's
+law slots for its level, the Heart realm level 3's two, and the crown its
+slots by the Spire, one at Spire level 2 and a second at 5. A law is woven
+only once the Codex has restored it, at the Codex's tier, into an empty slot
+that is not resting, once a realm, and crowned or woven in realms, never
+both. It costs §5.6's 40 Aether a point of §5.5's cost of the law alone —
+base × tier (1.0, 1.3, 1.6) × 2 if crowned × 0.8 in a realm of its school —
+and works after §5.6's 10 minutes, 40 minutes or 2 hours; until then the slot
+is empty. Removing one is instant, and the slot rests an hour. The terms
+that depend on a realm's other laws — harmonies, resonances, chords,
+dissonances — and an era's discounts are TD.14's one pricing function;
+strain, upkeep and Breaking are TD.37's. `GET /v1/weaving` shows each realm's
+slots and each restored law's price there; `POST /v1/weaving` weaves; `DELETE
+/v1/weaving/:realm/:slot` empties. What is woven is what home.mjs reads:
+§9.3's 1 + 0.10 per realm law of a producer's school and 0.05 per crown law,
+a producer's store integrated in stretches cut where a weaving finishes, so a
+law counts from then; and §11.5's births, their school drawn 3 for each law
+woven in the realm, 2 for its own school and 1 for each crown law, a
+law-linked trait three times as likely for a law the realm runs (§11.3). The
+load run does not weave yet, so its rows a player a day leave weaving out.
 
 ## Constellations and crews
 
@@ -770,6 +793,8 @@ built — register **D63**.
     src/cosmetics.json  the cosmetics sold (none authored yet)
     src/telemetry.mjs first-party events, pseudonymous, kept 90 days, and the report
     src/edge.mjs      an under-13 deletion's bundles purged from the edge's cache (D70)
+    src/offline.mjs   what the device built, placed, assigned and wove offline, confirmed in order
+    src/weaving.mjs   §5.6's law slots, the crown's, and what each weave costs
     src/accounts.mjs  deleting an account: the person goes, the records stay; the journal
     web/delete.html   deletion without the app, signed in with Google (G39)
     src/privacy.mjs   privacy.json checked against the schema; declarations.md written

@@ -416,8 +416,10 @@ DELIVERABLES = [
             "a realm of the resource's school produces 10% more (5.2, 9.3)",
             "collecting pays what a producer made into the ledger, a Garden's less the roster's 25% keep (9.3, 9.5)",
             "a producer raised a level is paid at the old level for the time before (9.3, 10.2)"),
-        not_started("§9.3's law, stability-band and fault terms, once the server keeps what is "
-                    "woven and its stability (TC.12, TD.37)"))),
+        server_tests(
+            "a law of a producer's school adds 10% to it in its realm, a crowned one 5% in every realm, from when its weaving ends (9.3)"),
+        not_started("§9.3's stability-band and fault terms, once the server keeps the universe's "
+                    "stability and its faults (TD.37)"))),
     ("4a", "Workers", BACKEND, parts(
         server_tests(
             "a worker goes only into a free slot or Guardian Post, and what it made where it was is kept when it moves (5.8)",
@@ -435,9 +437,8 @@ DELIVERABLES = [
             "a character rises a level for 150 × 1.55^(level − 2) Essence, no higher than its home allows (9.5, 11.4)"),
         server_tests(
             "a birth at a Nursery costs 100 × 1.3455^owned Essence, waits for a ready birth, and is of the realm's school (9.5, 10.2, 11.5)"),
-        not_started("a birth's kind weighted by the laws woven in its realm and the crown laws, "
-                    "and law-linked traits three times as likely there (§11.3, §11.5), once the "
-                    "server keeps what is woven (TC.12)"))),
+        server_tests(
+            "a birth's school is drawn 3 for each law woven in its realm, 2 for the realm's own and 1 for each crown law, and a law's traits three times as likely there (11.3, 11.5)"))),
     ("4a", "The Codex's restorations", BACKEND, server_tests(
         "the Codex starts with Half gravity, Slow rivers and Bloom restored at tier I (7.6)",
         "a heist meets the island's laws, a page each, and a broken pylon gives a page of its law (7.6)",
@@ -467,7 +468,8 @@ DELIVERABLES = [
         client_tests(
             "a build the network does not reach waits in the outbox, shown as confirming; sent on reconnection, "
             "each is confirmed or refused by the server, and the screen says which and why (24)"),
-        not_started("weaving offline, confirmed on reconnection, once the server keeps what is woven (TD.14)"))),
+        server_tests(
+            "weaving offline is confirmed on reconnection, once, and over HTTP (24, 5.6)"))),
 
     # §26.8's phase 4b: the §23.2 screens no other phase builds, "ported from
     # the designs to this document's rules (23.5)". Each counts when its

@@ -42,6 +42,7 @@ import { Safety } from "./safety.mjs";
 import { Codex } from "./codex.mjs";
 import { Home } from "./home.mjs";
 import { Universe } from "./universe.mjs";
+import { Weaving } from "./weaving.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 
@@ -131,6 +132,7 @@ export class Service {
     this.universe = new Universe(this);
     this.home = new Home(this);
     this.codex = new Codex(this);
+    this.weaving = new Weaving(this);
     this.safety = new Safety(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), settleReceipt, catalogue: cosmetics });
   }

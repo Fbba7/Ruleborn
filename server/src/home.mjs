@@ -38,6 +38,11 @@ const HOUR = 60 * MINUTE;
 export const RULEBORN = Object.fromEntries(content("ruleborn").map((k) => [k.id, { school: k.school, role: k.role }]));
 const TRAITS = content("traits").map((t) => t.id);
 const LAW_SCHOOL = Object.fromEntries(content("laws").map((l) => [l.id, l.school]));
+/** §11.3's law-linked traits, each with the laws its effect names ("an extra
+ *  leap under Half gravity"): "three times as likely when a character is born
+ *  in a realm running that law". */
+export const LAW_TRAITS = Object.fromEntries(content("traits").filter((t) => t.family === "Law-linked")
+  .map((t) => [t.id, content("laws").filter((l) => t.effect.includes(l.name)).map((l) => l.id)]));
 const BUILDINGS = Object.fromEntries(content("buildings").map((b) => [b.id, b]));
 
 /** The resource each producer makes (§9.3). */
@@ -89,6 +94,19 @@ function dice(seed) {
   return (n) => createHash("sha256").update(`${seed}:${i++}`).digest().readUInt32BE(0) % n;
 }
 
+/** §11.5: the schools a birth is drawn from, by weight — "3 for each law
+ *  woven in its realm, 2 for the realm's own school and 1 for each crown
+ *  law" — as [school, weight] pairs. */
+export function birthSchools(realmSchool, realmLaws, crownLaws) {
+  const [perLaw, own, perCrown] = facts.BIRTH_WEIGHTS;
+  const schools = {};
+  const add = (school, w) => { if (school) schools[school] = (schools[school] ?? 0) + w; };
+  add(realmSchool, own);
+  for (const law of realmLaws) add(LAW_SCHOOL[law], perLaw);
+  for (const law of crownLaws) add(LAW_SCHOOL[law], perCrown);
+  return Object.entries(schools);
+}
+
 /** One of `items` by integer weight, none if every weight is 0. */
 function weighted(roll, items) {
   const total = items.reduce((s, [, w]) => s + w, 0);
@@ -135,10 +153,15 @@ export class Home {
   /** `n` distinct traits, every one as likely as another: §11.3 gives each
    *  rarity's odds and no trait a rarity, and no law is woven here yet to
    *  make a law-linked trait likelier (G82). */
-  traits(roll, n) {
+  traits(roll, n, running = []) {
     const left = [...TRAITS];
     const out = [];
-    while (out.length < n && left.length) out.push(left.splice(roll(left.length), 1)[0]);
+    const weight = (t) => ((LAW_TRAITS[t] ?? []).some((l) => running.includes(l)) ? facts.LAW_TRAIT_WEIGHT : 1);
+    while (out.length < n && left.length) {
+      const t = weighted(roll, left.map((x) => [x, weight(x)]));
+      out.push(t);
+      left.splice(left.indexOf(t), 1);
+    }
     return out;
   }
 
@@ -201,16 +224,23 @@ export class Home {
     return this.universe.buildings(account).find((b) => b.realm === realm && b.kind === kind && b.n === n);
   }
 
-  /** What a producer makes an hour now, by each worker counting: its level's
-   *  rate, a slot's share for each worker from five minutes after it
-   *  started, the realm's school (§5.2) and the worker's bonuses (§9.2). */
+  /** What a producer makes an hour at `at`, by each worker counting: its
+   *  level's rate, a slot's share for each worker from five minutes after it
+   *  started, §9.3's laws working at `at` — "1 + 0.10 per realm law of a
+   *  matching school + 0.05 per matching crown law" — the realm's school
+   *  (§5.2) and the worker's bonuses (§9.2). */
   rate(account, realm, kind, at) {
     const b = this.building(account, realm, kind);
     if (!b) return { level: null, workers: [], perHour: 0 };
     const lv = PRODUCERS[kind][b.level - 1];
     const resource = RESOURCE[kind];
     const type = this.universe.realms(account).find((r) => r.realm === realm)?.type;
-    const boost = type && schoolsOf(resource).includes(schoolOfType(type)) ? facts.OWN_SCHOOL_PRODUCTION : 1;
+    const working = this.service.weaving.working(account, at);
+    const matches = (w) => schoolsOf(resource).includes(LAW_SCHOOL[w.law]);
+    const [perRealmLaw, perCrownLaw] = facts.PRODUCTION_LAW_BONUS;
+    const laws = 1 + perRealmLaw * (working[realm] ?? []).filter(matches).length
+      + perCrownLaw * (working.crown ?? []).filter(matches).length;
+    const boost = (type && schoolsOf(resource).includes(schoolOfType(type)) ? facts.OWN_SCHOOL_PRODUCTION : 1) * laws;
     const workers = this.characters(account)
       .filter((c) => c.work_realm === realm && c.work_kind === kind)
       .map((c) => {
@@ -233,11 +263,7 @@ export class Home {
     if (r.level === null) return 0;
     const row = this.db.prepare("SELECT * FROM producers WHERE owner = ? AND realm = ? AND kind = ?")
       .get(account, realm, kind) ?? { stored: 0, settled_at: r.built };
-    let made = 0;
-    for (const w of r.workers) {
-      const from = Math.max(row.settled_at, w.from);
-      if (from < now) made += (w.perHour * (now - from) * 1000) / HOUR;
-    }
+    const made = this.made(account, realm, kind, row.settled_at, now);
     const holds = facts.PRODUCER_HOLD_HOURS * r.lv.hourly * 1000;
     const stored = Math.min(holds, row.stored + Math.floor(made));
     this.db.prepare(
@@ -245,6 +271,31 @@ export class Home {
        ON CONFLICT (owner, realm, kind) DO UPDATE SET stored = excluded.stored, settled_at = excluded.settled_at`)
       .run(account, realm, kind, stored, now);
     return stored;
+  }
+
+  /** What a producer made from `from` to `to`, in thousandths: each worker
+   *  from when its share counts, at the laws working in each stretch — a
+   *  weaving that finishes between the two starts its term there (§5.6,
+   *  §9.3). */
+  made(account, realm, kind, from, to) {
+    const cuts = [from, ...this.service.weaving.finishing(account, from, to), to];
+    let made = 0;
+    for (let i = 0; i + 1 < cuts.length; i++) {
+      const r = this.rate(account, realm, kind, cuts[i]);
+      for (const w of r.workers) {
+        const start = Math.max(cuts[i], w.from);
+        if (start < cuts[i + 1]) made += (w.perHour * (cuts[i + 1] - start) * 1000) / HOUR;
+      }
+    }
+    return made;
+  }
+
+  /** Every producer's store brought up to `now`: before what is woven
+   *  changes, so the time before is paid at the laws that held. */
+  settleAll(account, now) {
+    for (const b of this.universe.buildings(account)) {
+      if (PRODUCERS[b.kind]) this.settle(account, b.realm, b.kind, now);
+    }
   }
 
   /** §9.3: what a producer holds, paid into the ledger; the fraction stays.
@@ -334,8 +385,15 @@ export class Home {
       const price = birthPrice(owned);
       if (this.service.balance(account).essence < price) throw new Refused(409, "not_enough_essence", { cost: price });
       const roll = dice(`${account}:birth:${owned}`);
-      const school = weighted(roll, [[schoolOfType(r.type), 2]]);
-      const id = this.add(account, this.kindOf(account, school, roll), this.traits(roll, 2), "birth", now);
+      // §11.5: "3 for each law woven in its realm, 2 for the realm's own
+      // school and 1 for each crown law"; §11.3: a law-linked trait three
+      // times as likely for a law the realm runs, its own or a crown law.
+      const working = this.service.weaving.working(account, now);
+      const here = (working[realm] ?? []).map((w) => w.law);
+      const crown = (working.crown ?? []).map((w) => w.law);
+      const school = weighted(roll, birthSchools(schoolOfType(r.type), here, crown));
+      const running = [...here, ...crown];
+      const id = this.add(account, this.kindOf(account, school, roll), this.traits(roll, 2, running), "birth", now);
       this.service.book(account, "essence", -price, `a birth at the Nursery in ${realm} (9.5)`, now);
       const since = nursery.ready >= nursery.holds
         ? now - (nursery.holds - 1) * nursery.period : nursery.since + nursery.period;
@@ -418,11 +476,7 @@ export class Home {
         const r = this.rate(account, b.realm, b.kind, now);
         const row = this.db.prepare("SELECT * FROM producers WHERE owner = ? AND realm = ? AND kind = ?")
           .get(account, b.realm, b.kind) ?? { stored: 0, settled_at: b.changed_at };
-        let made = 0;
-        for (const w of r.workers) {
-          const from = Math.max(row.settled_at, w.from);
-          if (from < now) made += (w.perHour * (now - from) * 1000) / HOUR;
-        }
+        const made = this.made(account, b.realm, b.kind, row.settled_at, now);
         const holds = facts.PRODUCER_HOLD_HOURS * r.lv.hourly;
         producers.push({ realm: b.realm, kind: b.kind, level: b.level, resource: r.resource, slots: r.lv.slots,
                          workers: r.workers.map((w) => w.id), per_hour: Math.round(r.perHour),
@@ -431,7 +485,7 @@ export class Home {
                          // The terms kept at 1 until the server keeps weaving
                          // and stability (G82): the realm's and crown laws of
                          // the resource's schools, the stability band, faults.
-                         unkept: ["laws", "stability", "faults"] });
+                         unkept: ["stability", "faults"] });
       }
       if (b.kind === "nursery") {
         const n = this.nursery(account, b.realm, now);

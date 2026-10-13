@@ -25,7 +25,10 @@
 //   POST /v1/universe/realms/:realm/level {"to"}             → an outer realm raised a level
 //   POST /v1/universe/buildings  {"realm", "kind", "n", "to"} → a building built (to 1) or raised (§10.2)
 //   PUT  /v1/universe/buildings/place {"realm", "kind", "n", "x", "y"} → a building moved, free (§10.1)
-//   POST /v1/offline {"actions": [{"do": "build"|"place"|"work", …}]} → each confirmed or refused, in order (24)
+//   POST /v1/offline {"actions": [{"do": "build"|"place"|"work"|"weave"|"unweave", …}]} → each confirmed or refused, in order (24)
+//   GET  /v1/weaving                                        → each realm's law slots and the crown's, and prices (5.6)
+//   POST /v1/weaving {"realm", "slot", "law"}               → a restored law woven into a slot (5.6)
+//   DELETE /v1/weaving/:realm/:slot                         → a slot emptied; it rests an hour (5.6)
 //   GET  /v1/home                                            → the roster, its places, births and producers
 //   POST /v1/home/births         {"realm", "n"}              → a birth at the realm's Nursery (§11.5)
 //   POST /v1/home/characters/:id/work  {"realm", "kind", "n"} → set to work or to guard; no kind recalls (§5.8)
@@ -434,6 +437,18 @@ export function handler(service, { webClientId = null, appleNotifications = null
         // in order and answered one by one (offline.mjs).
         if (request.method !== "POST") return json({ error: "no_such_route" }, 404);
         return json(confirmOffline(service, who(), (await body(request)).actions));
+      }
+      if (parts[1] === "weaving") {
+        // §5.1 and §5.6 (weaving.mjs): a weave names the slot and the law,
+        // so a retry is answered as woven.
+        const me = who();
+        const w = service.weaving;
+        const [, , a, b] = parts;
+        const m = request.method;
+        if (m === "GET" && !a) return json(w.show(me));
+        if (m === "POST" && !a) return json(w.weave(me, await body(request)));
+        if (m === "DELETE" && a && b) return json(w.unweave(me, { realm: a, slot: Number(b) }));
+        return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "universe") {
         // §5.2 and §10.2 (universe.mjs): each purchase names the level it

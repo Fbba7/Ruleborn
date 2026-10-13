@@ -248,6 +248,29 @@ PRODUCTION_START_MINUTES = 5
 #: producer earns "× 1.1 in a realm of that school".
 PRODUCER_HOLD_HOURS = 12
 OWN_SCHOOL_PRODUCTION = 1.1
+#: §9.3: "(1 + 0.10 per realm law of a matching school + 0.05 per matching
+#: crown law)" — a realm law's share, and a crown law's.
+PRODUCTION_LAW_BONUS = (0.10, 0.05)
+#: §5.6: "10 minutes at tier I, 40 minutes at tier II and 2 hours at tier III"
+#: to weave a law, in minutes; "Weaving costs 40 Aether per point of the law's
+#: stability cost"; and "the slot then rests for an hour", in minutes.
+WEAVE_MINUTES = (10, 40, 120)
+WEAVE_AETHER_PER_POINT = 40
+SLOT_REST_MINUTES = 60
+#: §5.1: "The Spire opens 1 crown slot at Spire level 2 and a second at Spire
+#: level 5" — the Spire level for each crown slot.
+CROWN_SLOT_SPIRE = (2, 5)
+#: §5.5: "Cost of a law = base cost × tier (1.0, 1.3 or 1.6) × 2 if crowned ×
+#: 0.8 in a realm of its school × …" — the terms that are the law's alone.
+TIER_COST_FACTORS = (1.0, 1.3, 1.6)
+CROWN_COST_FACTOR = 2
+OWN_SCHOOL_COST_FACTOR = 0.8
+#: §11.5: a birth's school "weighted as 11.9 states: 3 for each law woven in its
+#: realm, 2 for the realm's own school and 1 for each crown law".
+BIRTH_WEIGHTS = (3, 2, 1)
+#: §11.3: "Traits tied to a law are three times as likely when a character is
+#: born in a realm running that law."
+LAW_TRAIT_WEIGHT = 3
 #: §5.2's "Boosted resource" column, by realm type in the table's order.
 REALM_BOOSTS = ("starlight", "starlight", "aether", "aether", "essence", "essence")
 #: The first session's first minute (§15.6): "Three ruleborn wake: a Featherkin, an Emberling and a
@@ -467,6 +490,16 @@ HOME = {
     "PRODUCTION_START_MINUTES": "11.6",
     "PRODUCER_HOLD_HOURS": "9.3",
     "OWN_SCHOOL_PRODUCTION": "9.3",
+    "PRODUCTION_LAW_BONUS": "9.3",
+    "WEAVE_MINUTES": "5.6",
+    "WEAVE_AETHER_PER_POINT": "5.6",
+    "SLOT_REST_MINUTES": "5.6",
+    "CROWN_SLOT_SPIRE": "5.1",
+    "TIER_COST_FACTORS": "5.5",
+    "CROWN_COST_FACTOR": "5.5",
+    "OWN_SCHOOL_COST_FACTOR": "5.5",
+    "BIRTH_WEIGHTS": "11.5",
+    "LAW_TRAIT_WEIGHT": "11.3",
     "REALM_BOOSTS": "5.2",
     "STARTING_CREW": "15.6",
     "HEIST_CLOCK": "5.4",
@@ -654,6 +687,24 @@ STATED = {
     "PRODUCER_HOLD_HOURS": (r"Each building holds (\d+) hours of output until collected",
                             lambda m: int(m[0])),
     "OWN_SCHOOL_PRODUCTION": (r"× ([\d.]+) in a realm of that school", lambda m: float(m[0])),
+    "PRODUCTION_LAW_BONUS": (r"\(1 \+ ([\d.]+) per realm law of a matching school \+ ([\d.]+) per matching crown law\)",
+                             lambda m: (float(m[0]), float(m[1]))),
+    "WEAVE_MINUTES": (r"(\d+) minutes at tier I, (\d+) minutes at tier II and (\d+) hours at tier III",
+                      lambda m: (int(m[0]), int(m[1]), int(m[2]) * 60)),
+    "WEAVE_AETHER_PER_POINT": (r"Weaving costs (\d+) Aether per point of the law's stability cost",
+                               lambda m: int(m[0])),
+    "SLOT_REST_MINUTES": (r"the slot then rests for (an hour|\d+ minutes)",
+                          lambda m: 60 if m[0] == "an hour" else int(m[0].split()[0])),
+    "CROWN_SLOT_SPIRE": (r"The Spire opens 1 crown slot at Spire level (\d+) and a second at Spire level (\d+)",
+                         lambda m: (int(m[0]), int(m[1]))),
+    "TIER_COST_FACTORS": (r"Cost of a law = base cost × tier \(([\d.]+), ([\d.]+) or ([\d.]+)\)",
+                          lambda m: tuple(float(x) for x in m)),
+    "CROWN_COST_FACTOR": (r"Cost of a law = base cost × tier \([^)]*\) × (\d+) if crowned", lambda m: int(m[0])),
+    "OWN_SCHOOL_COST_FACTOR": (r"× (\d+) if crowned × ([\d.]+) in a realm of its school", lambda m: float(m[1])),
+    "LAW_TRAIT_WEIGHT": (r"Traits tied to a law are (two|three|four) times as likely",
+                         lambda m: {"two": 2, "three": 3, "four": 4}[m[0]]),
+    "BIRTH_WEIGHTS": (r"weighted as 11\.9 states: (\d+) for each law woven in its realm, (\d+) for the realm's own "
+                      r"school and (\d+) for each crown law", lambda m: tuple(int(x) for x in m)),
     "REALM_BOOSTS": (r"\| Motion\n\| [^\n]+\n\| (\w+)\n[\s\S]*?\| Matter\n\| [^\n]+\n\| (\w+)\n"
                      r"[\s\S]*?\| Time\n\| [^\n]+\n\| (\w+)\n[\s\S]*?\| Energy\n\| [^\n]+\n\| (\w+)\n"
                      r"[\s\S]*?\| Life\n\| [^\n]+\n\| (\w+)\n[\s\S]*?\| Spirit\n\| [^\n]+\n\| (\w+)\n",

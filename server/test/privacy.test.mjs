@@ -64,6 +64,9 @@ async function busy() {
   const crossed = t.service.codex.show(x.account).laws.find((l) => !["half_gravity", "slow_rivers", "bloom"].includes(l.law));
   t.service.codex.study(x.account, { heist: studied.token, law: crossed.law });
   t.service.codex.workOn(x.account, crossed.law);
+  // A law woven (weaving.mjs).
+  t.service.book(x.account, "aether", 1_000, "a test's grant");
+  t.service.weaving.weave(x.account, { realm: "heart", slot: 1, law: "bloom" });
   t.clock.now += DAY;
   raid(x.account, yBundle, null);
   const held = t.service.lease(x.account, yBundle);

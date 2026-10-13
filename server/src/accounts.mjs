@@ -144,6 +144,7 @@ export function deleteAccount(service, account, reason = "requested", { journal 
     db.prepare("DELETE FROM nurseries WHERE owner = ?").run(account);
     db.prepare("DELETE FROM studies WHERE owner = ?").run(account);
     db.prepare("DELETE FROM codex WHERE owner = ?").run(account);
+    db.prepare("DELETE FROM law_slots WHERE owner = ?").run(account);
     // Their groups, as Social.leave and leaveCrew do, but inside this
     // transaction: a founder hands the constellation on — to the
     // longest-standing elder, else the longest-standing member (§17.7).

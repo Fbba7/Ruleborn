@@ -647,6 +647,20 @@ CREATE TABLE IF NOT EXISTS erasures (
   PRIMARY KEY (store, hash)
 );
 
+-- 5.6's law slots: what each realm's slot holds, and the crown's as realm
+-- 'crown' (weaving.mjs). A law weaves until ready_at, at the tier the Codex
+-- has it; an emptied slot rests until rests_until.
+CREATE TABLE IF NOT EXISTS law_slots (
+  owner       TEXT NOT NULL REFERENCES accounts(id),
+  realm       TEXT NOT NULL,
+  slot        INTEGER NOT NULL CHECK (slot >= 1),
+  law         TEXT,
+  tier        INTEGER CHECK (tier BETWEEN 1 AND 3),
+  ready_at    INTEGER,
+  rests_until INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (owner, realm, slot)
+);
+
 -- A bundle an under-13 deletion erased, still to be purged from the edge's
 -- cache (20.11; edge.mjs): its path, and when to ask again. Deleted when the
 -- edge confirms.
