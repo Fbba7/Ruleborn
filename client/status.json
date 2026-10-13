@@ -25,6 +25,7 @@
   "a purchase sends the level it leads to, shows the universe the server answers, and moves the Keeper bar with what it earned; a refusal keeps the universe on show and says what it needed; a second purchase waits for the first (10.2, 14.2, 24.12)": "passed",
   "a purchase's button keeps its item when bought, so focus returns to the same building, and its spoken words name what is bought": "passed",
   "a raid settled by the server earns its raider Keeper experience, and the Keeper bar moves with the answer, as the server keeps it (14.2)": "passed",
+  "a reassign sends the building the server is to staff and shows the home it answers, and says where the character went; a refusal keeps the roster on show and says why; a second change waits for the first (5.8, 23.2)": "passed",
   "a receipt the network cannot carry, or that the server cannot check with the store yet, waits in the outbox and is sent later, never lost (§24.12, D67)": "passed",
   "a refusal is shown in the player's words: founding below Keeper 6, an invite that does not exist; an invite code is sent without its spaces (§17.1, §17.6)": "passed",
   "a rehearsal can be paused at any time and run at 75%; a raid cannot be paused (§20.8)": "passed",
@@ -43,6 +44,7 @@
   "against the server: a creator rehearses an island on the heist screen, clears it and publishes it named from the word lists; another player finds it among the new islands, plays it on the heist screen, clears it, sees the clear counted and rates it; the creator withdraws it and it leaves the lists (§18.6, §18.7)": "passed",
   "against the server: a new universe is the Heart and its start, and a purchase with no Starlight is refused in words (5.2, 10.2, F56)": "passed",
   "against the server: an adult's answer reaches the account, and the Workshop's every list opens to them; before it, a new account sees the featured list only (§20.1, §20.7)": "passed",
+  "against the server: the roster is §15.6's three, idle, and one tap sends the first to the Heart's first producer with a free slot (14.1, 15.6, 23.2)": "passed",
   "against the server: the track shows this season, its first tier is claimed free and pays its Essence into the wallet, and the premium track is offered at its price; the store's receipt is checked by the server (§18.2, §22.1)": "passed",
   "an item is put once by its key; one the server refused is done, one the server failed on waits for the next try": "passed",
   "another player's island offers to block its creator and one's own does not; blocking tells the server, says what it does, and shows the list again without them (§17.8)": "passed",
@@ -72,9 +74,15 @@
   "only HTTPS leaves the phone; plain HTTP only to this machine, for tests": "passed",
   "only the list asked for last is shown: tapping one list and then another ends on the second": "passed",
   "settings changed on the settings screen are saved as they change and restored on the next launch: language, three volumes, reduced motion, haptics (§20.6)": "passed",
+  "the Character screen shows school, role, ability, traits, level and best work, from the character's card (11.11, 23.2)": "passed",
+  "the Character screen spends Essence at the server's price: the next level, held back in words when its home allows no higher, none past the top, and waking from a rest (11.4, 11.6)": "passed",
   "the Keeper bar is the server's level, and a failed fetch leaves the last one on show (14.2)": "passed",
   "the Keeper bar says the level, fills ten pips by the share of the way to the next, and gives the numbers in the player's own way of writing them; the top level says so; nothing is shown before the server has said (14.2, 20.8)": "passed",
   "the Keeper reducers keep the bar on show when a fetch fails, and a heist's answer moves it without asking again (14.2)": "passed",
+  "the Roster screen draws each state's colour beside its symbol and word, and its one tap sends the character to the producer it names; a name opens the character, whose Essence is spent on a second tap (20.8, 23.2)": "passed",
+  "the Roster shows each rest's time left, by the minute begun (11.6, 23.2)": "passed",
+  "the Roster shows every character's state as a symbol and a word as well as a colour, each state's symbol and colour its own (23.2, 20.8)": "passed",
+  "the Roster's one tap sends a character to the first producer with a free slot in 14.1's order: the Heart's first, then each outer realm's as they opened, a resting worker's slot still held; with none free it waits and says why (14.1, 23.2)": "passed",
   "the Workshop reducers keep the list on show when a call fails and name the failure, keep the island played for rating, and a new call clears what the last one said": "passed",
   "the action log keeps the last actions only, and no long string or bytes that could name a player": "passed",
   "the age band goes to the server with the first sign-in, and once": "passed",
@@ -97,6 +105,7 @@
   "the replay screen plays a golden to its end and shows its grade": "passed",
   "the rested notice is set for the first character whose rest ends, moved out of the night, and taken away once nobody rests (14.6, 11.6)": "passed",
   "the result screen shows the validator's verdict: the re-simulation's grade, or nothing paid when refused": "passed",
+  "the roster reducers mark the change on its way, keep the roster on show when one fails, take the server's home when one is made, and never put back a home fetched before it (11.4, 11.6)": "passed",
   "the router shows a route's scene, and the screen history is in the store and its log": "passed",
   "the session is kept for its hour: a heist does not sign in again (G44)": "passed",
   "the shop lists what is for sale, and everything owned, bought or earned, to wear where it is worn: an earned outfit by a crew role, an emote used rather than worn; gifts go to a friend (§22.1, F41, G28)": "passed",
@@ -110,6 +119,7 @@
   "the universe screen shows why a purchase waits beside its button; the first tap on one asks to spend the Starlight, and the second buys (5.2, 10.2, 20.8)": "passed",
   "what was played offline is sent by itself when the network is back, and a banner says so (G41, §24.12)": "passed",
   "while online the phone keeps three leases in stock, each on another player's island and no two alike, and a restart keeps them (G41)": "passed",
-  "with no network a heist recommends going online first, and plays a stocked lease only if the player chooses to; with none in stock it says to go online (G41, §24.12)": "passed"
+  "with no network a heist recommends going online first, and plays a stocked lease only if the player chooses to; with none in stock it says to go online (G41, §24.12)": "passed",
+  "work assigned with no network waits in the outbox, shown as confirming, and is confirmed on reconnection with the home after it (24)": "passed"
  }
 }

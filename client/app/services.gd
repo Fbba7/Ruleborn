@@ -36,6 +36,7 @@ var social_flow: SocialController
 var workshop_flow: WorkshopController
 var keeper_flow: KeeperController
 var universe_flow: UniverseController
+var roster_flow: RosterController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -50,6 +51,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	WorkshopState.register(s.store)
 	KeeperState.register(s.store)
 	UniverseState.register(s.store)
+	RosterState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -81,8 +83,11 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.workshop_flow = WorkshopController.new(s)
 	s.keeper_flow = KeeperController.new(s)
 	s.universe_flow = UniverseController.new(s)
-	# What the phone built offline is answered when the outbox sends it (§24).
+	s.roster_flow = RosterController.new(s)
+	# What the phone built or assigned offline is answered when the outbox
+	# sends it (§24).
 	s.outbox.settled.connect(s.universe_flow.offline_settled)
+	s.outbox.settled.connect(s.roster_flow.offline_settled)
 	s.router = Router.new(s.store)
 	return s
 
@@ -167,6 +172,7 @@ func close() -> void:
 	workshop_flow = null
 	keeper_flow = null
 	universe_flow = null
+	roster_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):

@@ -19,6 +19,8 @@ const ROUTES := {
 	&"friends": "res://scenes/friends.tscn",
 	&"workshop": "res://scenes/workshop.tscn",
 	&"universe": "res://scenes/universe.tscn",
+	&"roster": "res://scenes/roster.tscn",
+	&"character": "res://scenes/character.tscn",
 }
 
 var store: Store

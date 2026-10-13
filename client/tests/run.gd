@@ -7,7 +7,7 @@ extends SceneTree
 ## quits; so the run has a deadline, and missing it is a failure.
 const DEADLINE_SECONDS := 480.0
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
-	"social", "friends", "workshop", "age", "universe"]
+	"social", "friends", "workshop", "age", "universe", "roster", "character"]
 
 var _n := 0
 var _failed := 0
@@ -60,6 +60,14 @@ func _golden(name: String) -> PackedByteArray:
 	return FileAccess.get_file_as_bytes("res://goldens/%s.rbh" % name)
 
 
+## The screens drawn with something on them, so the checks that run over
+## every screen read a roster and a character rather than an empty page: the
+## roster tests' home, and the resting character's page.
+func _seed() -> void:
+	App.services.store.dispatch(&"roster_loaded", {"view": RosterTests.sample()})
+	App.services.store.dispatch(&"navigated", {"name": &"character", "params": {"id": 2}})
+
+
 func _mount(scene: String) -> Control:
 	var node: Control = load("res://scenes/%s.tscn" % scene).instantiate()
 	root.add_child(node)
@@ -97,6 +105,7 @@ func _run() -> void:
 	await CoreTests.new(self, check).run()
 
 	# §20.8's accessibility set, on every screen, offline (tests/a11y_tests.gd).
+	_seed()
 	await A11yTests.new(self, check, _mount, _control_problems, SCREENS).run()
 
 	# The game's languages (§20.6 and the owner's, D99): every key a script
@@ -353,6 +362,7 @@ func _run() -> void:
 	await KeeperTests.new(self, check, _mount).run()
 	await NoticesTests.new(self, check).run()
 	await UniverseTests.new(self, check, _mount, server_url).run()
+	await RosterTests.new(self, check, _mount, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 
@@ -529,6 +539,7 @@ func _run() -> void:
 		pseudo.add_message(key, "⟦" + Strings.rows()[key]["en"] + "⟧")
 	TranslationServer.add_translation(pseudo)
 	Strings.set_locale("xx")
+	_seed()
 	App.services.store.dispatch(&"heist_finished", {"replay": _golden("planned-clean"),
 			"verdict": RulebornReplay.validate(_golden("planned-clean"), PackedByteArray())})
 	var bare := []

@@ -6,14 +6,16 @@ client's string catalogue.
     python3 tools/client_strings.py --check    # fail if the committed file differs
 
 A law's name, a note's, a resonance's, a chord's, a ward's, a terrain
-feature's, a building's and a realm type's each have one home: the content file they are extracted into. The
+feature's, a building's, a realm type's, a ruleborn's name and card, and a
+trait's name and effect each have one home: the content file they are
+extracted into. The
 client shows them, and every word the client shows comes from its catalogue
 (client/scripts/strings.gd), so this writes them there rather than anyone
 typing them twice.
 
 Every language's column but English is the English name for now. These are
 the coined words §26.9 sends to a native speaker's read-aloud before anything
-is translated, and a name invented here would be a translation nobody
+is translated (a card's sentences go with its name, to the same reader), and a name invented here would be a translation nobody
 decided on; the columns are filled so the catalogue test holds every key to
 every language, and the owner's names replace them when that read is done.
 The languages are client/i18n/strings.csv's columns, their one home; US
@@ -54,6 +56,14 @@ def rows() -> list[tuple[str, str]]:
     # is an ordinary word, translated in strings.csv.
     out += [(f"GROUND_{g.upper()}", terrain[g]) for g in GROUND if g in terrain]
     out += [(f"BUILDING_{b['id'].upper()}", b["name"]) for b in load("buildings.json")]
+    # §11.11's character cards: each ruleborn's name, its ability and what
+    # it is best at, as the Character screen shows them (§23.2); and §11.3's
+    # traits, each with what it does. The card's words are its one home.
+    for k in load("ruleborn.json"):
+        out += [(f"RULEBORN_{k['id'].upper()}", k["name"]), (f"ABILITY_{k['id'].upper()}", k["ability"]),
+                (f"BEST_AT_{k['id'].upper()}", k["best_at"])]
+    for t in load("traits.json"):
+        out += [(f"TRAIT_{t['id'].upper()}", t["name"]), (f"TRAIT_EFFECT_{t['id'].upper()}", t["effect"])]
     # §5.2's realm types, from their one home (the server sends the name).
     from design_facts import REALM_TYPES
     out += [(f"REALM_{t.upper().replace(' ', '_')}", t) for t in REALM_TYPES]

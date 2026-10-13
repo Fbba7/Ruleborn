@@ -95,6 +95,8 @@ test("the home says when each producer fills and the night the device keeps its 
   assert.deepEqual(h.show(me).night, facts.NIGHT_HOURS["18+"], "an adult's night is quiet by default");
   t.service.notifications.set(me, { nightQuiet: false });
   assert.equal(h.show(me).night, null, "an adult who opened it keeps none");
+  assert.deepEqual(h.show(me).realms, [{ realm: "heart", type: "Heart" }],
+                   "the realms in the order they opened, the order the Roster staffs (14.1, 23.2)");
 });
 
 test("a worker of the resource's schools earns 15% more, and a work trait its share (9.2, 11.3)", () => {
@@ -216,7 +218,11 @@ test("a character rises a level for 150 × 1.55^(level − 2) Essence, no higher
   const { t, me, h, id, grant } = fresh();
   grant("essence", 1_000);
   refused(() => h.level(me, id("featherkin"), 3), "not_the_next_level");
+  const before = h.show(me).characters.find((c) => c.kind === "featherkin");
+  assert.deepEqual(before.next_level, { to: 2, cost: 150, blocked: null }, "the home says the next level's price");
   h.level(me, id("featherkin"), 2);
+  assert.deepEqual(h.show(me).characters.find((c) => c.kind === "featherkin").next_level,
+                   { to: 3, cost: levelPrice(3), blocked: "home_too_low" }, "and that its home holds it back");
   assert.equal(t.service.balance(me).essence, 1_000 - levelPrice(2));
   assert.equal(levelPrice(2), 150);
   assert.equal(levelPrice(10), Math.round(150 * 1.55 ** 8), "about 5,000 for level 10");

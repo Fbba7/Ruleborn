@@ -567,3 +567,37 @@ ERR_CREW_NOT_HELD,a crew member is not in your roster,a crew member is not in yo
 ERR_CREW_MISMATCH,the crew named is not the crew that played,the crew named is not the crew that played,a equipe informada não é a que jogou,a equipa indicada não é a que jogou,"die genannte Crew ist nicht die, die gespielt hat",l'équipe indiquée n'est pas celle qui a joué
 ERR_CREW_RESTING,a crew member is still resting,a crew member is still resting,um membro da equipe ainda está descansando,um membro da equipa ainda está a descansar,ein Crewmitglied ruht sich noch aus,un membre de l'équipe se repose encore
 ERR_CAST_NOT_RESTORED,A cast must be one of your own restored laws,A cast must be one of your own restored laws,Um lançamento tem de ser uma das suas leis restauradas,Um lançamento tem de ser uma das suas leis restauradas,Ein Zauber muss eines deiner wiederhergestellten Gesetze sein,Un sort doit être l'une de vos lois restaurées
+HOME_ROSTER,Roster,Roster,Plantel,Plantel,Aufstellung,Effectif
+ROSTER_TITLE,Roster,Roster,Plantel,Plantel,Aufstellung,Effectif
+ROSTER_HEADER,%d of %d places · %s Essence,%d of %d places · %s Essence,%d de %d lugares · %s de Essência,%d de %d lugares · %s de Essência,%d von %d Plätzen · %s Essenz,%d places sur %d · %s d'Essence
+ROSTER_STATE_WORKING,working,working,trabalhando,a trabalhar,arbeitet,au travail
+ROSTER_STATE_GUARDING,guarding,guarding,de guarda,de guarda,hält Wache,de garde
+ROSTER_STATE_RESTING,resting,resting,descansando,a descansar,ruht,au repos
+ROSTER_STATE_IDLE,free,free,livre,livre,frei,libre
+ROSTER_BACK_MINUTES,back in %d min,back in %d min,volta em %d min,volta dentro de %d min,zurück in %d Min.,de retour dans %d min
+ROSTER_BACK_HOURS,back in %d h %d min,back in %d h %d min,volta em %d h %d min,volta dentro de %d h %d min,zurück in %d Std. %d Min.,de retour dans %d h %d min
+ROSTER_PLACE,"%s, %s","%s, %s","%s, %s","%s, %s","%s, %s","%s, %s"
+ROSTER_SEND,Send to %s,Send to %s,Enviar para: %s,Enviar para: %s,Schicken: %s,Envoyer : %s
+ROSTER_SEND_SPOKEN,Send %s to %s,Send %s to %s,Enviar %s para: %s,Enviar %s para: %s,%s schicken: %s,Envoyer %s : %s
+ROSTER_ALL_STAFFED,every producer is staffed,every producer is staffed,todos os produtores estão ocupados,todos os produtores estão preenchidos,alle Erzeuger sind besetzt,tous les producteurs sont pourvus
+ROSTER_OPEN_SPOKEN,"%s, %s: details","%s, %s: details","%s, %s: detalhes","%s, %s: detalhes","%s, %s: Details","%s, %s : détails"
+ROSTER_SENT,%s goes to %s,%s goes to %s,%s vai para: %s,%s vai para: %s,%s geht zu: %s,%s part vers : %s
+ROSTER_FAILED,The roster did not change: %s,The roster did not change: %s,O plantel não mudou: %s,O plantel não mudou: %s,Die Aufstellung hat sich nicht geändert: %s,L'effectif n'a pas changé : %s
+ROSTER_OFFLINE_REFUSED,%s was not sent: %s,%s was not sent: %s,%s não foi enviado: %s,%s não foi enviado: %s,%s wurde nicht geschickt: %s,%s n'a pas été envoyé : %s
+CHARACTER_SCHOOL_ROLE,%s · %s,%s · %s,%s · %s,%s · %s,%s · %s,%s · %s
+CHARACTER_ABILITY,Ability: %s,Ability: %s,Habilidade: %s,Habilidade: %s,Fähigkeit: %s,Capacité : %s
+CHARACTER_BEST_AT,Best at: %s,Best at: %s,Melhor em: %s,Melhor em: %s,Am besten bei: %s,Doué pour : %s
+CHARACTER_TRAITS,Traits,Traits,Traços,Traços,Eigenschaften,Traits
+CHARACTER_TRAIT,%s: %s,%s: %s,%s: %s,%s: %s,%s: %s,%s : %s
+CHARACTER_LEVEL,"Level %d, of the %d its home allows","Level %d, of the %d its home allows","Nível %d, dos %d que sua casa permite","Nível %d, dos %d que a sua casa permite","Stufe %d von %d, die sein Zuhause erlaubt","Niveau %d, sur les %d que permet son logis"
+CHARACTER_LIVES,Lives in: %s,Lives in: %s,Mora em: %s,Vive em: %s,Wohnt in: %s,Vit à : %s
+CHARACTER_RAISE,"Raise to level %d, %s Essence","Raise to level %d, %s Essence","Subir ao nível %d, %s de Essência","Subir ao nível %d, %s de Essência","Auf Stufe %d, %s Essenz","Passer au niveau %d, %s d'Essence"
+CHARACTER_TOP,its home allows no higher,its home allows no higher,sua casa não permite mais,a sua casa não permite mais,sein Zuhause erlaubt nicht mehr,son logis ne permet pas plus
+CHARACTER_TOP_LEVEL,at the highest level,at the highest level,no nível máximo,no nível máximo,auf der höchsten Stufe,au niveau maximal
+CHARACTER_WAKE,"Wake now, %s Essence","Wake now, %s Essence","Acordar agora, %s de Essência","Acordar agora, %s de Essência","Jetzt wecken, %s Essenz","Réveiller maintenant, %s d'Essence"
+CHARACTER_CONFIRM,Tap again to spend %s Essence,Tap again to spend %s Essence,Toque de novo para gastar %s de Essência,Toca de novo para gastar %s de Essência,"Nochmal tippen, um %s Essenz auszugeben",Touche encore pour dépenser %s d'Essence
+CHARACTER_CONFIRM_SPOKEN,%s: tap again to spend %s Essence,%s: tap again to spend %s Essence,%s: toque de novo para gastar %s de Essência,%s: toca de novo para gastar %s de Essência,"%s: nochmal tippen, um %s Essenz auszugeben",%s : touche encore pour dépenser %s d'Essence
+CHARACTER_RAISED,Now level %d,Now level %d,Agora no nível %d,Agora no nível %d,Jetzt Stufe %d,Désormais niveau %d
+CHARACTER_WOKEN,Back from rest,Back from rest,De volta do descanso,De volta do descanso,Zurück von der Rast,De retour du repos
+CHARACTER_MISSING,This character is not in the roster,This character is not in the roster,Este personagem não está no plantel,Esta personagem não está no plantel,Diese Figur ist nicht in der Aufstellung,Ce personnage n'est pas dans l'effectif
+ROSTER_SEND_WORK,Send to work,Send to work,Mandar trabalhar,Mandar trabalhar,Zur Arbeit schicken,Envoyer au travail

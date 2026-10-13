@@ -149,6 +149,9 @@ function weighted(roll, items) {
 export const birthPrice = (owned) => Math.round(facts.BIRTH_PRICE[0] * facts.BIRTH_PRICE[1] ** owned);
 
 /** §9.5: "150 × 1.55^(level − 2) Essence per level". */
+/** §11.6: "Waking early costs 2 Essence per level per minute left", by the
+ *  minute begun. */
+export const wakePrice = (c, now) => facts.WAKE_ESSENCE * c.level * Math.ceil((c.away_until - now) / MINUTE);
 export const levelPrice = (to) => Math.round(facts.LEVEL_PRICE[0] * facts.LEVEL_PRICE[1] ** (to - 2));
 
 export class Home {
@@ -484,7 +487,7 @@ export class Home {
       const c = this.characters(account).find((x) => x.id === Number(id));
       if (!c) throw new Refused(404, "no_such_character");
       if (!away(c, now)) return this.done(account, true);
-      const price = facts.WAKE_ESSENCE * c.level * Math.ceil((c.away_until - now) / MINUTE);
+      const price = wakePrice(c, now);
       if (this.service.balance(account).essence < price) throw new Refused(409, "not_enough_essence", { cost: price });
       this.settleAll(account, now);
       this.db.prepare("UPDATE characters SET away_until = ? WHERE id = ?").run(now, c.id);
@@ -556,7 +559,13 @@ export class Home {
       traits: c.traits, level: c.level, top: places.find((p) => p.home === c.home)?.top ?? 1,
       home: c.home, via: c.via,
       state: away(c, now) ? "resting" : c.work_kind === POST ? "guarding" : c.work_kind ? "working" : "idle",
-      ...(away(c, now) ? { resting_until: c.away_until } : {}),
+      // §11.6's wake price and §11.4's next level, the server's arithmetic,
+      // so the device shows a price it never works out.
+      ...(away(c, now) ? { resting_until: c.away_until,
+                           wake_cost: wakePrice(c, now) } : {}),
+      next_level: c.level >= facts.LEVEL_PRICE[2] ? null
+        : { to: c.level + 1, cost: levelPrice(c.level + 1),
+            blocked: c.level + 1 > (places.find((p) => p.home === c.home)?.top ?? 1) ? "home_too_low" : null },
       work: c.work_kind ? { realm: c.work_realm, kind: c.work_kind, n: c.work_n, since: c.work_since,
                             counts_from: c.work_since + facts.PRODUCTION_START_MINUTES * MINUTE } : null,
     }));
@@ -586,6 +595,9 @@ export class Home {
     const used = characters.length;
     return {
       characters,
+      // The realms in the order they opened, each with its type: the order
+      // §14.1's staffing follows, and the names the device shows.
+      realms: this.universe.realms(account).map(({ realm, type }) => ({ realm, type })),
       places: places.map(({ home, room, living, top }) => ({ home, room, living, top })),
       roster: { used, most: facts.ROSTER_PLACES[1] },
       next_birth: birthPrice(used),

@@ -485,8 +485,33 @@ DELIVERABLES = [
     ("4b", "Planner", FRONTEND, not_started("TD.18's screen gate passes for it")),
     ("4b", "Observatory", FRONTEND, not_started("TD.18's screen gate passes for it")),
     ("4b", "Scout report", FRONTEND, not_started("TD.18's screen gate passes for it")),
-    ("4b", "Roster", FRONTEND, not_started("TD.21's screen gate passes for it")),
-    ("4b", "Character screen", FRONTEND, not_started("TD.21's screen gate passes for it")),
+    ("4b", "Roster", FRONTEND, client_tests(
+        "the Roster shows every character's state as a symbol and a word as well as a colour, each "
+        "state's symbol and colour its own (23.2, 20.8)",
+        "the Roster shows each rest's time left, by the minute begun (11.6, 23.2)",
+        "the Roster's one tap sends a character to the first producer with a free slot in 14.1's order: "
+        "the Heart's first, then each outer realm's as they opened, a resting worker's slot still held; "
+        "with none free it waits and says why (14.1, 23.2)",
+        "the Roster screen draws each state's colour beside its symbol and word, and its one tap sends the "
+        "character to the producer it names; a name opens the character, whose Essence is spent on a "
+        "second tap (20.8, 23.2)",
+        "against the server: the roster is §15.6's three, idle, and one tap sends the first to the "
+        "Heart's first producer with a free slot (14.1, 15.6, 23.2)",
+        # The screen gate's checks over every screen, the Roster among them.
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control "
+        "in reach (§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
+    ("4b", "Character screen", FRONTEND, client_tests(
+        "the Character screen shows school, role, ability, traits, level and best work, from the "
+        "character's card (11.11, 23.2)",
+        "the Character screen spends Essence at the server's price: the next level, held back in words "
+        "when its home allows no higher, none past the top, and waking from a rest (11.4, 11.6)",
+        "the Roster screen draws each state's colour beside its symbol and word, and its one tap sends the "
+        "character to the producer it names; a name opens the character, whose Essence is spent on a "
+        "second tap (20.8, 23.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control "
+        "in reach (§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
     ("4b", "Sage hall", FRONTEND, not_started("TD.21's screen gate passes for it")),
     ("4b", "Codex", FRONTEND, not_started("TD.44's screen gate passes for it")),
     ("4b", "Lab", FRONTEND, not_started("TD.22's screen gate passes for it")),

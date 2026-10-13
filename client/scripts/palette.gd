@@ -57,6 +57,13 @@ static var ROLE: Dictionary = {}
 ## too, so a ring's colour is never the only sign (§20.8).
 static var GUARD_STATE: Dictionary = {}
 
+## A character's state on the Roster, as the swatch beside its mark and
+## word (§23.2: "a symbol and a word as well as a colour"). §21 names no
+## colour for any state, so these are the client's: success's green for
+## work, Matter's for a guard, Time's for rest, stone for one with nothing to
+## do.
+static var ROSTER_STATE: Dictionary = {}
+
 ## Each ward in its school's colour and shape, by content/wards.json's
 ## schools (§10.3).
 static var WARD_SCHOOL: Dictionary = {
@@ -106,6 +113,7 @@ static func reload() -> void:
 		"Suspicious": MOTION, "Investigating": MOTION, "Searching": MOTION,
 		"Alerted": ALARM,
 	}
+	ROSTER_STATE = {"working": SUCCESS, "guarding": MATTER, "resting": TIME, "idle": STONE}
 	WARD = {}
 	for kind: String in WARD_SCHOOL:
 		WARD[kind] = SCHOOL[WARD_SCHOOL[kind]]

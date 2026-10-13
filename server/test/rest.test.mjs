@@ -102,6 +102,7 @@ test("a resting character is woken early for 2 Essence a level a minute left, an
   const c = h.show(me).characters[0];
   const left = Math.ceil((c.resting_until - t.clock.now) / MINUTE);
   const price = facts.WAKE_ESSENCE * c.level * left;
+  assert.equal(c.wake_cost, price, "the home says the wake's price, so the device never works it out");
   t.service.book(me, "essence", price, "a test's grant");
   const essence = t.service.balance(me).essence;
   const r = await t.handle(new Request(`https://edge.example/v1/home/characters/${c.id}/wake`, {
