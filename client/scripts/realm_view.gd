@@ -36,6 +36,10 @@ var _size := Vector2i.ZERO
 var _features := PackedByteArray()
 var _heights := PackedByteArray()
 var _surfaces := PackedByteArray()
+## Each tile's facing (0 north to 3 west, 255 for none) and the tunnels'
+## mouths in pairs: the ground that has a direction (G56).
+var _facings := PackedByteArray()
+var _tunnels: Array[Vector2i] = []
 
 
 func show_replay(r: RulebornReplay) -> void:
@@ -44,6 +48,8 @@ func show_replay(r: RulebornReplay) -> void:
 	_features = r.features()
 	_heights = r.heights()
 	_surfaces = r.surfaces()
+	_facings = r.facings()
+	_tunnels = r.tunnels()
 	describe()
 	queue_redraw()
 
@@ -139,6 +145,9 @@ func _draw() -> void:
 			_draw_feature(_features[i], r, t)
 			if _features[i] in HERO:
 				draw_rect(r.grow(-t * 0.06), edge_colour(_features[i]), false, max(1.0, t * 0.04))
+			if i < _facings.size() and _facings[i] < 4:
+				_draw_facing(_facings[i], r, t)
+	_draw_tunnels(t, o)
 	_draw_vault(t)
 	for ward in replay.wards():
 		_draw_ward(ward, t)
@@ -180,6 +189,30 @@ func _draw_feature(code: int, r: Rect2, t: float) -> void:
 					c + Vector2(-d, 0)]), Palette.MATTER)
 		Tile.CRYSTAL_WALL:
 			draw_rect(r.grow(-t * 0.1), Palette.TIME)
+
+
+## The way a ramp, stairs, vines, a waterfall or rapids face (G56), as an
+## ink chevron pointing that way: a shape, never a colour alone (§20.8).
+func _draw_facing(facing: int, r: Rect2, t: float) -> void:
+	var c := r.get_center()
+	var ahead := [Vector2.UP, Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT][facing] as Vector2
+	var side := Vector2(-ahead.y, ahead.x)
+	var tip := c + ahead * t * 0.3
+	var back := c - ahead * t * 0.05
+	draw_polyline(PackedVector2Array([back + side * t * 0.25, tip, back - side * t * 0.25]),
+		Palette.INK, max(1.5, t * 0.06))
+
+
+## A tunnel's two mouths as ink rings, joined by a dashed line: "a hidden
+## path", so the owner sees it and a raider's map shows where it runs.
+func _draw_tunnels(t: float, o: Vector2) -> void:
+	for k in range(0, _tunnels.size() - 1, 2):
+		var a := o + (Vector2(_tunnels[k]) + Vector2(0.5, 0.5)) * t
+		var b := o + (Vector2(_tunnels[k + 1]) + Vector2(0.5, 0.5)) * t
+		draw_dashed_line(a, b, Palette.INK, max(1.0, t * 0.04), t * 0.2)
+		for m: Vector2 in [a, b]:
+			draw_circle(m, t * 0.3, Palette.SOIL.darkened(0.4))
+			draw_arc(m, t * 0.3, 0, TAU, 24, Palette.INK, max(1.0, t * 0.05))
 
 
 ## A ward as its school's shape in its school's colour; hollow once disarmed

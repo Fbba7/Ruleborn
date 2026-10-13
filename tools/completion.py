@@ -273,8 +273,9 @@ def builder_terrain():
             offered.add("cliff_edge")
         ids = [r["id"] for r in json.loads((CONTENT / "terrain.json").read_text(encoding="utf-8"))]
         both = [i for i in ids if i in offered and results.get(mapped.get(i, "")) == "passed"]
-        return (len(both) / (len(ids) + 1),
-                f"{len(both)} of {len(ids)} features and moss in the builder", [])
+        moss = "moss" in offered and results.get(mapped.get("moss", "")) == "passed"
+        return ((len(both) + moss) / (len(ids) + 1),
+                f"{len(both)} of {len(ids)} features{' and moss' if moss else ', no moss,'} in the builder", [])
     return proof
 
 
@@ -380,7 +381,9 @@ DELIVERABLES = [
     # builder can lay only what the simulation has, so its row is scaled by it.
     ("4", "Terrain: §6.2's 39 features and moss in the simulation", BACKEND, sim_terrain()),
     ("4", "Terrain editing", FRONTEND, times(builder_terrain(), client_tests(
-        "the builder lays §6.2's ground on the realm's grid, and the island it writes reads back the same"))),
+        "the builder lays §6.2's ground on the realm's grid, and the island it writes reads back the same",
+        "the builder lays the six with a direction, turns them with a second tap, digs a tunnel mouth by "
+        "mouth, and the island it writes carries both (6.2, G56)"))),
     ("4", "Buildings on the grid with their footprints (§10.1)", BACKEND, parts(
         systems("Buildings on the grid"),
         server_tests(

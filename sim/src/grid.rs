@@ -89,6 +89,12 @@ pub struct Grid {
     /// Tinkerer's plank — walkable "for anyone, guards included". Set each
     /// tick from the bridges standing.
     bridged: Vec<bool>,
+    /// The way each directional feature faces (`NORTH` to `WEST`); 0
+    /// elsewhere.
+    facing: Vec<u8>,
+    /// Each tunnel mouth's other end.
+    tunnels: Vec<Option<TileIndex>>,
+    any_tunnel: bool,
 }
 
 /// What a tile is underfoot, for noise. §12.17 names three that differ from
@@ -143,6 +149,24 @@ pub const UPDRAFT_LEVELS: u8 = 1;
 pub const UPDRAFT_LEAP_LEVELS: u8 = 2;
 /// A bell post "raises the realm's alarm one level (12.17)".
 pub const BELL_LEVELS: i32 = 1;
+/// Stairs: "Climb one level 20% faster than a ramp". A ramp is walked at the
+/// ground's own pace, so stairs are 120 (G56's reading, TD.38).
+pub const STAIRS_PACE: u8 = 120;
+/// Rapids: "Pushes anyone 1 tile a second downstream".
+pub const RAPIDS_TILES: i32 = 1;
+pub const RAPIDS_SECONDS: u32 = 1;
+/// A tunnel: "A hidden path joining two points up to 6 tiles apart", the
+/// tiles counted as a walk counts them, and at least two, since a mouth
+/// beside a mouth is no path.
+pub const TUNNEL_TILES: u16 = 6;
+pub const TUNNEL_MIN_TILES: u16 = 2;
+
+/// The four ways a tile can face, in `Grid::neighbours`' order: north, east,
+/// south, west. A directional feature's facing and a guard post's (G56).
+pub const NORTH: u8 = 0;
+pub const EAST: u8 = 1;
+pub const SOUTH: u8 = 2;
+pub const WEST: u8 = 3;
 
 /// Louder surfaces carry a sound five quarters as far, quieter three quarters.
 /// As (numerator, denominator), so the one division happens once, at the end.
@@ -246,6 +270,23 @@ pub enum Feature {
     /// "Drops anyone to the level below": its floor is one level below the
     /// ground it is dug in.
     Pit,
+    // The six with a direction (TD.38, G56). Appended, so every code above
+    // keeps its number: `RulebornReplay.features()` sends `self as u8 + 1`.
+    /// "Climb one level", up the side it faces.
+    Ramp,
+    /// "Climb one level 20% faster than a ramp", up the side it faces.
+    Stairs,
+    /// "Climb one level without a ramp", up the side it faces.
+    ClimbingVines,
+    /// "Walk behind it on a hidden ledge" / "Blocks sight". It faces the way
+    /// its water falls toward; the ledge runs across that, so it is walked
+    /// along the fall's face and never through it.
+    Waterfall,
+    /// "Pushes anyone 1 tile a second downstream": the way it faces.
+    Rapids,
+    /// A tunnel's mouth: "A hidden path joining two points up to 6 tiles
+    /// apart" / "Nobody can see into it". Its other end is `tunnel_exit`'s.
+    Tunnel,
 }
 
 impl Feature {
@@ -260,21 +301,34 @@ impl Feature {
             Thicket => Terrain::Pace(THICKET_PACE),
             FogBank | TallGrass | ShadeCanopy | Bush | HotSpring | LanternPost | Scree | EmberVent
             | StaticStone | Arch | FlowerMeadow | IceSheet | BellPost | BounceMushroom
-            | UpdraftVent | Pit => Terrain::Open,
+            | UpdraftVent | Pit | Ramp | ClimbingVines | Waterfall | Rapids | Tunnel => Terrain::Open,
+            Stairs => Terrain::Pace(STAIRS_PACE),
         }
     }
 
     fn blocks_sight(self) -> bool {
         use Feature::*;
         matches!(self, RockPillar | RuinWall | FogBank | Vault | Building | CrystalWall | Hedge
-                 | Tree | Boulder | Statue)
+                 | Tree | Boulder | Statue | Waterfall)
+    }
+
+    /// The features that face one of the four ways (G56): their owner sets
+    /// it, and the island carries it.
+    pub fn directional(self) -> bool {
+        use Feature::*;
+        matches!(self, Ramp | Stairs | ClimbingVines | Waterfall | Rapids)
+    }
+
+    /// A ramp, stairs or vines: a way up one level on the side it faces.
+    pub fn climbs(self) -> bool {
+        matches!(self, Feature::Ramp | Feature::Stairs | Feature::ClimbingVines)
     }
 
     /// The ground a feature is, for noise (§12.17): a stream is water, a
     /// gravel path gravel. `None` leaves the tile's own.
     pub fn surface(self) -> Option<Surface> {
         match self {
-            Feature::Stream | Feature::Marsh | Feature::Pond => Some(Surface::Water),
+            Feature::Stream | Feature::Marsh | Feature::Pond | Feature::Rapids => Some(Surface::Water),
             Feature::GravelPath => Some(Surface::Gravel),
             _ => None,
         }
@@ -308,6 +362,9 @@ impl Grid {
             free_climb: false,
             leap: false,
             bridged: vec![false; n],
+            facing: vec![0; n],
+            tunnels: vec![None; n],
+            any_tunnel: false,
         }
     }
 
@@ -461,9 +518,60 @@ impl Grid {
         self.bridged.get(index as usize).copied().unwrap_or(false)
     }
 
-    /// Whether a ramp, stairs or vines stand on this tile.
+    /// Whether a tile is a slope rather than a drop: the climbing flag, a
+    /// ramp or stairs. A guard sees down a slope; vines hang on a cliff, so
+    /// its foot stays hidden (§6.2, `World::below_sight`).
     pub fn is_climbable(&self, index: TileIndex) -> bool {
         self.climbable.get(index as usize).copied().unwrap_or(false)
+            || matches!(self.feature(index), Some(Feature::Ramp) | Some(Feature::Stairs))
+    }
+
+    /// Face a directional feature one of the four ways.
+    pub fn set_facing(&mut self, x: u16, y: u16, facing: u8) {
+        if let Some(i) = self.index(x, y) {
+            self.facing[i as usize] = facing & 3;
+        }
+    }
+
+    pub fn facing(&self, index: TileIndex) -> u8 {
+        self.facing.get(index as usize).copied().unwrap_or(0)
+    }
+
+    /// Join two tiles as a tunnel's mouths (TD.38).
+    pub fn dig_tunnel(&mut self, a: TileIndex, b: TileIndex) {
+        let (ax, ay) = self.coords(a);
+        let (bx, by) = self.coords(b);
+        self.place(ax, ay, Feature::Tunnel);
+        self.place(bx, by, Feature::Tunnel);
+        self.tunnels[a as usize] = Some(b);
+        self.tunnels[b as usize] = Some(a);
+        self.any_tunnel = true;
+    }
+
+    /// A tunnel mouth's other end.
+    pub fn tunnel_exit(&self, index: TileIndex) -> Option<TileIndex> {
+        self.tunnels.get(index as usize).copied().flatten()
+    }
+
+    pub fn has_tunnels(&self) -> bool {
+        self.any_tunnel
+    }
+
+    /// The tiles between two tiles as a walk counts them: across plus down.
+    pub fn walk_tiles(&self, a: TileIndex, b: TileIndex) -> u16 {
+        let ((ax, ay), (bx, by)) = (self.coords(a), self.coords(b));
+        ax.abs_diff(bx) + ay.abs_diff(by)
+    }
+
+    /// The way from a tile to its neighbour, `NORTH` to `WEST`; `None` if
+    /// they are not neighbours.
+    pub fn direction(&self, a: TileIndex, b: TileIndex) -> Option<u8> {
+        self.neighbours(a).iter().position(|n| *n == Some(b)).map(|d| d as u8)
+    }
+
+    /// The neighbour a tile faces, if it has one.
+    pub fn ahead(&self, index: TileIndex, facing: u8) -> Option<TileIndex> {
+        self.neighbours(index)[(facing & 3) as usize]
     }
 
     /// Whether a character may step from `a` to its neighbour `b`. §6.2:
@@ -475,6 +583,16 @@ impl Grid {
         if !self.at(b).passable() && !stones && !self.is_bridged(b) {
             return false;
         }
+        let way = self.direction(a, b);
+        // A waterfall's ledge runs across its fall: walked along, never
+        // through the water.
+        for t in [a, b] {
+            if self.feature(t) == Some(Feature::Waterfall)
+                && way.is_some_and(|w| w % 2 == self.facing(t) % 2)
+            {
+                return false;
+            }
+        }
         let (ha, hb) = (self.level(a), self.level(b));
         if hb <= ha {
             return true;
@@ -485,10 +603,14 @@ impl Grid {
             let lift = if self.leap { UPDRAFT_LEAP_LEVELS } else { UPDRAFT_LEVELS };
             return hb <= ha + lift as i8;
         }
+        // A ramp, stairs or vines climb one level, going the way they face.
+        let up = |t: TileIndex| self.feature(t).is_some_and(|f| f.climbs())
+            && way == Some(self.facing(t));
         hb == ha + 1
             && (self.free_climb
                 || self.climbable.get(a as usize).copied().unwrap_or(false)
-                || self.climbable.get(b as usize).copied().unwrap_or(false))
+                || self.climbable.get(b as usize).copied().unwrap_or(false)
+                || up(a) || up(b))
     }
 
     /// The level a character stands at on a tile: its height, one lower in

@@ -50,7 +50,9 @@ def rows() -> list[tuple[str, str]]:
     out += [(f"CHORD_{c['id'].upper()}", c["name"]) for c in load("chords.json")]
     out += [(f"WARD_{w['id'].upper()}", w["name"]) for w in load("wards.json")]
     terrain = {t["id"]: t["name"] for t in load("terrain.json")}
-    out += [(f"GROUND_{g.upper()}", terrain[g]) for g in GROUND]
+    # Moss is a surface (§6.1, §12.17), not one of §6.2's features: its name
+    # is an ordinary word, translated in strings.csv.
+    out += [(f"GROUND_{g.upper()}", terrain[g]) for g in GROUND if g in terrain]
     out += [(f"BUILDING_{b['id'].upper()}", b["name"]) for b in load("buildings.json")]
     # §5.2's realm types, from their one home (the server sends the name).
     from design_facts import REALM_TYPES

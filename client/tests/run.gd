@@ -406,7 +406,7 @@ func _run() -> void:
 		Vector2i(4, 4): "stream", Vector2i(5, 4): "raised_ground", Vector2i(6, 4): "tall_grass",
 		Vector2i(7, 4): "hedge", Vector2i(8, 4): "lantern_post", Vector2i(2, 6): "hot_spring",
 		Vector2i(3, 6): "boulder", Vector2i(4, 6): "bell_post", Vector2i(5, 6): "marsh",
-		Vector2i(6, 6): "pit"}
+		Vector2i(6, 6): "pit", Vector2i(7, 6): "moss"}
 	for at: Vector2i in laid:
 		builder.kind = builder.kinds().find(laid[at])
 		builder.tap_tile(at)
@@ -419,6 +419,38 @@ func _run() -> void:
 		and builder.preview.surfaces()[4 * side + 4] == 2
 	check("the builder lays §6.2's ground on the realm's grid, and the island it writes reads back the same",
 		same and drawn and builder.island.problems().is_empty(), "%s" % builder.island.problems())
+
+	# The six with a direction (TD.38, G56): a second tap turns ground that
+	# faces, a tunnel is tunnel_dug with a tap for each mouth, and the island carries
+	# both; the realm view is given each facing and each tunnel to draw.
+	var reach: Array = builder.palette["tunnel"]
+	builder.kind = builder.kinds().find("ramp")
+	builder.tap_tile(Vector2i(2, 8))
+	builder.tap_tile(Vector2i(2, 8))
+	builder.kind = builder.kinds().find("rapids")
+	builder.tap_tile(Vector2i(3, 8))
+	builder.kind = builder.kinds().find("tunnel")
+	builder.tap_tile(Vector2i(5, 8))
+	var tunnel_asked := builder.status_label.text == Strings.t("BUILDER_TUNNEL_END", reach)
+	builder.tap_tile(Vector2i(9, 8))
+	builder.tap_tile(Vector2i(0, 9))
+	builder.tap_tile(Vector2i(10, 2))
+	var tunnel_too_far := builder.status_label.text == Strings.t("BUILDER_TUNNEL_FAR", reach)
+	var faced_turned := builder.island.facing(2, 8) == 1 and builder.island.facing(3, 8) == 0 \
+		and builder.island.facing(2, 4) == -1
+	var tunnel_dug := builder.island.ground(5, 8) == "tunnel" and builder.island.ground(9, 8) == "tunnel" \
+		and builder.island.ground(0, 9) == ""
+	var faced := RulebornIsland.new()
+	var faced_carried := faced.read(builder.island.bytes()) and faced.facing(2, 8) == 1 \
+		and faced.ground(9, 8) == "tunnel" and faced.ground(3, 8) == "rapids"
+	var faced_shown := builder.preview.facings()[8 * side + 2] == 1 and builder.preview.facings()[8 * side + 4] == 255 \
+		and builder.preview.tunnels() == [Vector2i(5, 8), Vector2i(9, 8)]
+	check("the builder lays the six with a direction, turns them with a second tap, digs a tunnel mouth by mouth, "
+			+ "and the island it writes carries both (6.2, G56)",
+		tunnel_asked and tunnel_too_far and faced_turned and tunnel_dug and faced_carried and faced_shown
+			and builder.island.problems().is_empty(),
+		"%s %s %s %s %s %s %s" % [tunnel_asked, tunnel_too_far, faced_turned, tunnel_dug, faced_carried,
+			faced_shown, builder.island.problems()])
 
 	# §10.1's buildings, through the simulation's own island (TD.36): placed
 	# on their footprints, named from any tile they cover, and carried in the
@@ -459,6 +491,12 @@ func _run() -> void:
 	builder.tool = BuilderScreen.Tool.GUARD
 	builder.kind = 1
 	builder.tap_tile(Vector2i(8, 6))
+	var posted := builder.island.facing(8, 6)
+	builder.tap_tile(Vector2i(8, 6))
+	check("a second tap on a guard post turns it a quarter: a held post faces where its owner sets it (G56)",
+		posted >= 0 and builder.island.facing(8, 6) == (posted + 1) % 4
+			and builder.island.occupant(8, 6) == "guard:1",
+		"%d then %d" % [posted, builder.island.facing(8, 6)])
 	builder.raid()
 	var built := builder.island.bytes()
 	var kept := FileAccess.get_file_as_bytes(Draft.path) == built

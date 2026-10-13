@@ -2089,8 +2089,8 @@ dict(
              register=["C48", "G46", "D61"]),
         dict(id="TD.15", owner="claude", status="doing",
              title="Terrain in the simulation: the missing features, moss, heights",
-             detail="<strong>Built so far:</strong> thirty-three of §6.2's "
-                    "thirty-nine features and moss, each with a test and its numbers "
+             detail="<strong>Built so far:</strong> all thirty-nine of §6.2's "
+                    "features and moss, each with a test and its numbers "
                     "held to <code>content/terrain.json</code> by "
                     "<code>sim/content_gate.py</code>. The first slice: the hedge (cut "
                     "through in 3 s), tree, boulder (a Breaker smashes it in 6 s), "
@@ -2104,15 +2104,16 @@ dict(
                     "alarm up a level, late under Delay), stepping stones (a road "
                     "under Half gravity), the bounce mushroom (3 tiles, 5 under Half "
                     "gravity, heard 4 away), the updraft vent (a level up, two under "
-                    "Half gravity) and the pit (a level down, a climb out). A "
+                    "Half gravity) and the pit (a level down, a climb out). The "
+                    "third, TD.38's: the six with a direction. A "
                     "feature's code rides in the island's two spare flag bits, so "
                     "every island written before keeps its bytes; the builder offers "
-                    "every feature built. Completion counts features by their tests. "
+                    "every feature built, and moss. Completion counts features by their tests. "
                     "What §6.2 leaves unmeasured or open is G78 and G80. "
                     "<strong>Left:</strong> swimmers across a pond and flyers two "
                     "levels up an updraft, which wait on traits and flight being "
-                    "played; moss on every bare tile; §6.1's terrain points at "
-                    "publishing; and the six with a direction (TD.38)."
+                    "played; moss on every bare tile; and §6.1's terrain points at "
+                    "publishing."
                     "<br><br>"
                     "The simulation had 5 of §6.2's 39 features (rock pillar, "
                     "ruin wall, fence, fog bank, tall grass); the terrain editor, "
@@ -2136,9 +2137,34 @@ dict(
                   "simulation, the extension and the server, the Heart's at its "
                   "Spire level and a Workshop island at its realm level's",
              register=["G56", "G67", "G65", "G78", "G80"]),
-        dict(id="TD.38", owner="claude", status="blocked",
+        dict(id="TD.38", owner="claude", status="done",
              title="Directional features and tunnels",
-             detail="Ramps, stairs and vines need an up side, a waterfall a ledge "
+             detail="<strong>Built.</strong> Each of the five that face one "
+                    "of four ways carries its facing in two more of a tile's flag "
+                    "bits; a tunnel is its own list after the buildings, its "
+                    "mouths 2 to 6 tiles apart by the walk; a post's facing rides "
+                    "in its role byte, north (0) as every post faced before, so "
+                    "every island written before keeps its bytes and only the "
+                    "rules version moved (the goldens re-pinned on it alone, every "
+                    "checksum the same). A ramp, stairs (20% faster, a ramp being "
+                    "the ground's pace) and vines climb a level going the way they "
+                    "face, a guard seeing down a ramp but not past vines to a "
+                    "cliff's foot; a waterfall is walked along its ledge, never "
+                    "through the fall, and hides whoever is behind it; rapids push "
+                    "anyone, crew and guards, a tile downstream on each whole "
+                    "second; a tunnel is walked by the crew as long as it is, "
+                    "nobody seeing into it, guards keeping to the surface. The "
+                    "generator's default facing, toward the nearest tile on a "
+                    "shortest route from a landing edge, is "
+                    "<code>Island::default_facing</code>, and a post the builder "
+                    "places takes it until a second tap turns it. The builder "
+                    "lays the six, turning one with a second tap and digging a "
+                    "tunnel mouth by mouth, and the realm view draws each facing "
+                    "and tunnel. The readings §6.2 leaves open are named in "
+                    "<code>sim/content_gate.py</code> under G56. Left to TD.22: "
+                    "the designs' terrain editor and four-way facing dial."
+                    "<br><br>"
+                    "Ramps, stairs and vines need an up side, a waterfall a ledge "
                     "side, rapids a downstream and a tunnel two ends, and a held "
                     "guard a facing (G56). v3.7 wrote G56's recommended option: "
                     "the owner sets each, and the generator places them by §7.10's "
@@ -2153,7 +2179,8 @@ dict(
                   "facing; the generator's default facing toward the nearest "
                   "shortest route (a test); all 39 of §6.2's features in the "
                   "simulation",
-             blocked_by=["TD.15"],
+             # It waited on TD.15's thirty-three; what TD.15 has left (moss on
+             # every bare tile, terrain points, swimmers) is not under it.
              register=["G56"]),
         dict(id="TD.16", owner="claude", status="ready",
              title="The generator: ruins, reference crews, fallbacks",
@@ -2895,14 +2922,15 @@ dict(
                     "alternatives, changing laws at TD.14's weaving prices; the "
                     "terrain editor on the simulation's features and §6.1's "
                     "budgets (not the design's 80 points, or its Hill and Grove), "
-                    "placing the six directional features once TD.38 has them; and "
+                    "placing the six directional features TD.38 built (the "
+                    "prototype builder already lays and turns them); and "
                     "the Workshop on the design, keeping remix and withdraw. Every "
                     "resonance, feature, law and ladder text is read from content; "
                     "one Lab chamber a slot with its price and the Archivist-cut "
                     "time; one guard's sight, hard-edged, in curation and the "
                     "editor (§21.12); moss by default with a Clear moss tool; "
-                    "“turn a post” on the designs' four-way facing dial (§13.3) "
-                    "once TD.38 carries a post's facing; a raid shown only once it "
+                    "“turn a post” on the designs' four-way facing dial (§13.3), "
+                    "the facing TD.38 carries; a raid shown only once it "
                     "has ended; publishing once "
                     "the checks pass (D83). The Lab's hints, chord naming and "
                     "payouts (G53), curation's swaps as weaves (G54) and the hold "

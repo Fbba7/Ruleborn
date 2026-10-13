@@ -2485,20 +2485,25 @@ fn a_second_encoding_of_an_island_is_refused() {
     use crate::island::{Island, Malformed};
     let good = Island::example().encode();
     let tile0 = 4 + 10;                  // the first tile's three bytes
-    // Past the laws comes only a list of buildings (§10.1), and past that
-    // nothing.
+    // Past the laws comes only a list of buildings (§10.1), then one of
+    // tunnels (TD.38), and past that nothing.
     let mut trailing = good.clone();
-    trailing.extend_from_slice(&[1, 2, 0, 0, 0]);
+    trailing.extend_from_slice(&[1, 2, 0, 0, 1, 0, 0, 2, 0, 0]);
     assert_eq!(Island::decode(&trailing), Err(Malformed::TrailingBytes));
     trailing.truncate(good.len() + 1);
     trailing[good.len()] = 0;
     assert_eq!(Island::decode(&trailing), Err(Malformed::NoBuildings));
+    trailing.extend_from_slice(&[0]);
+    assert_eq!(Island::decode(&trailing), Err(Malformed::Tunnel), "a tunnels list of none");
     let mut hundred = good.clone();
     hundred[tile0 + 1] = 100;            // a pace of 100 is written as 0
     assert_eq!(Island::decode(&hundred), Err(Malformed::NonCanonicalPace));
     // Flag bits 2 and 3 are a feature code's high bits (TD.15); bit 4 and
     // above mean nothing.
     let mut flags = good.clone();
+    flags[tile0 + 2] = 64;
+    assert_eq!(Island::decode(&flags), Err(Malformed::FlagBits));
+    // Bits 4 and 5 are a facing, which only a directional feature has.
     flags[tile0 + 2] = 16;
     assert_eq!(Island::decode(&flags), Err(Malformed::FlagBits));
     let mut feature = good.clone();
@@ -5529,4 +5534,292 @@ fn the_tinkerers_plank_lays_a_four_tile_shortcut_over_a_gap_for_fifteen_seconds(
     assert!(!across(&planked(5)), "five is too wide");
     run_for(&mut world, ruleborn::PLANK_TICKS);
     assert!(!across(&world), "gone after 15 s");
+}
+
+// -- The six with a direction, a tunnel, and a post's facing (TD.38, G56) ----
+
+use crate::grid::{EAST, NORTH, SOUTH, WEST};
+
+#[test]
+fn a_ramp_climbs_one_level_up_the_side_it_faces() {
+    let mut grid = Grid::new(10, 10);
+    let (low, high) = (grid.index(3, 5).unwrap(), grid.index(4, 5).unwrap());
+    grid.set_height(4, 5, 1);
+    assert!(!grid.can_step(low, high), "a level up needs a climb");
+    grid.place(3, 5, Feature::Ramp);
+    for (facing, climbs) in [(EAST, true), (WEST, false), (NORTH, false), (SOUTH, false)] {
+        grid.set_facing(3, 5, facing);
+        assert_eq!(grid.can_step(low, high), climbs, "a ramp facing {facing}");
+    }
+    assert!(grid.can_step(high, low), "down is free, whichever way it faces");
+    // On the high tile it is the same ramp, climbed onto the way it faces.
+    let mut grid = Grid::new(10, 10);
+    grid.set_height(4, 5, 1);
+    grid.place(4, 5, Feature::Ramp);
+    grid.set_facing(4, 5, EAST);
+    assert!(grid.can_step(low, high));
+    grid.set_height(4, 5, 2);
+    assert!(!grid.can_step(low, high), "two levels at once is a cliff, ramp or not");
+    // A guard looks down a ramp: the foot of a slope is not a cliff's foot.
+    let mut world = vault_world(1);
+    world.grid.set_height(3, 3, 1);
+    world.grid.set_height(3, 4, 1);
+    world.grid.place(3, 4, Feature::Ramp);
+    world.grid.set_facing(3, 4, NORTH);
+    let gi = post(&mut world, 0, 3, 3);
+    world.guards[gi].facing = Ang::from_degrees(90);
+    put(&mut world, 0, 3, 5);
+    assert!(world.noticed(gi, 0).is_some());
+}
+
+#[test]
+fn stairs_climb_a_level_a_fifth_faster_than_a_ramp() {
+    assert_eq!(Feature::Ramp.terrain(), Terrain::Open, "a ramp is walked at the ground's pace");
+    assert_eq!(Feature::Stairs.terrain(), Terrain::Pace(crate::grid::STAIRS_PACE));
+    assert_eq!(crate::grid::STAIRS_PACE, 120, "\"20% faster than a ramp\"");
+    let mut grid = Grid::new(10, 10);
+    let (low, high) = (grid.index(3, 5).unwrap(), grid.index(3, 4).unwrap());
+    grid.set_height(3, 4, 1);
+    grid.place(3, 5, Feature::Stairs);
+    grid.set_facing(3, 5, NORTH);
+    assert!(grid.can_step(low, high));
+    grid.set_facing(3, 5, SOUTH);
+    assert!(!grid.can_step(low, high), "up the side it faces, and no other");
+    // The walk up: a crew member crosses stairs sooner than a ramp.
+    let climb = |f: Feature| {
+        let mut world = vault_world(1);
+        world.grid.set_height(2, 1, 1);
+        world.grid.set_height(2, 0, 1);
+        world.grid.place(2, 2, f);
+        world.grid.set_facing(2, 2, NORTH);
+        put(&mut world, 0, 2, 4);
+        order(&mut world, 0, 2, 0);
+        for t in 0..10 * TICKS_PER_SECOND {
+            world.step();
+            if tile_of(&world, 0) == (2, 0) {
+                return t;
+            }
+        }
+        panic!("never climbed");
+    };
+    assert!(climb(Feature::Stairs) < climb(Feature::Ramp));
+}
+
+#[test]
+fn climbing_vines_climb_a_level_where_there_is_no_ramp() {
+    let mut grid = Grid::new(10, 10);
+    let (foot, top) = (grid.index(5, 6).unwrap(), grid.index(5, 5).unwrap());
+    grid.set_height(5, 5, 1);
+    grid.place(5, 6, Feature::ClimbingVines);
+    grid.set_facing(5, 6, NORTH);
+    assert!(grid.can_step(foot, top), "\"climb one level without a ramp\"");
+    grid.set_facing(5, 6, EAST);
+    assert!(!grid.can_step(foot, top));
+    // Vines hang on a cliff: its foot is still hidden from a guard above.
+    let mut world = vault_world(1);
+    world.grid.set_height(3, 3, 1);
+    world.grid.set_height(3, 4, 1);
+    world.grid.place(3, 4, Feature::ClimbingVines);
+    let gi = post(&mut world, 0, 3, 3);
+    world.guards[gi].facing = Ang::from_degrees(90);
+    put(&mut world, 0, 3, 5);
+    assert!(world.noticed(gi, 0).is_none());
+}
+
+#[test]
+fn a_waterfall_is_walked_behind_along_its_ledge_and_blocks_sight() {
+    let mut grid = Grid::new(10, 10);
+    grid.place(4, 5, Feature::Waterfall);
+    grid.set_facing(4, 5, SOUTH);                  // the water falls south
+    let at = |x, y| grid.index(x, y).unwrap();
+    assert!(grid.can_step(at(3, 5), at(4, 5)) && grid.can_step(at(4, 5), at(5, 5)),
+            "along the ledge, across the fall");
+    assert!(!grid.can_step(at(4, 6), at(4, 5)) && !grid.can_step(at(4, 4), at(4, 5)),
+            "never through the water");
+    assert!(grid.blocks_sight(at(4, 5)));
+    // A guard south of it sees neither whoever is behind it nor beyond.
+    let seen = |crew_y: u16, fall: bool| {
+        let mut world = vault_world(1);
+        if fall {
+            world.grid.place(4, 5, Feature::Waterfall);
+            world.grid.set_facing(4, 5, SOUTH);
+        }
+        let gi = post(&mut world, 0, 4, 8);
+        world.guards[gi].facing = Ang::from_degrees(270);
+        put(&mut world, 0, 4, crew_y);
+        world.noticed(gi, 0).is_some()
+    };
+    assert!(seen(5, false) && seen(4, false));
+    assert!(!seen(5, true), "on the hidden ledge");
+    assert!(!seen(4, true), "beyond it");
+}
+
+#[test]
+fn rapids_push_anyone_a_tile_a_second_downstream() {
+    let mut world = vault_world(1);
+    for x in 2..=5 {
+        world.grid.place(x, 2, Feature::Rapids);
+        world.grid.set_facing(x, 2, EAST);
+    }
+    world.grid.place(5, 3, Feature::Rapids);
+    world.grid.set_facing(5, 3, SOUTH);
+    world.grid.place(6, 2, Feature::RockPillar);
+    put(&mut world, 0, 2, 2);
+    let gi = post(&mut world, 0, 5, 3);
+    assert_eq!(world.grid.surface(world.grid.index(3, 2).unwrap()), crate::grid::Surface::Water);
+    world.step();                                    // the first whole second
+    assert_eq!(tile_of(&world, 0), (3, 2), "a tile downstream on the second");
+    let g = world.guards[gi].at;
+    assert_eq!(world.grid.coords(world.grid.tile_at(g.x, g.y).unwrap()), (5, 4), "guards too");
+    run_for(&mut world, TICKS_PER_SECOND - 1);
+    assert_eq!(tile_of(&world, 0), (3, 2), "and only on the second");
+    run_for(&mut world, 1);
+    assert_eq!(tile_of(&world, 0), (4, 2));
+    run_for(&mut world, 2 * TICKS_PER_SECOND);
+    assert_eq!(tile_of(&world, 0), (5, 2), "a rock stops the push");
+}
+
+#[test]
+fn a_tunnel_is_a_hidden_path_up_to_six_tiles_and_nobody_sees_into_it() {
+    let mut world = vault_world(1);
+    for y in 0..14 {
+        world.grid.place(4, y, Feature::RockPillar);
+    }
+    let at = |w: &World, x, y| w.grid.index(x, y).unwrap();
+    let (from, to) = (at(&world, 2, 2), at(&world, 8, 2));
+    assert!(path::find_through(&world.grid, from, to).is_none(), "the wall is whole");
+    world.grid.dig_tunnel(at(&world, 3, 2), at(&world, 6, 2));
+    let route = path::find_through(&world.grid, from, to).expect("through the tunnel");
+    assert_eq!(route, vec![at(&world, 3, 2), at(&world, 6, 2), at(&world, 7, 2), at(&world, 8, 2)]);
+    assert!(path::find(&world.grid, from, to).is_none(), "guards keep to the surface");
+    // A guard looking at the tunnel's middle sees nobody in it.
+    let gi = post(&mut world, 0, 5, 6);
+    world.guards[gi].facing = Ang::from_degrees(270);
+    put(&mut world, 0, 2, 2);
+    order(&mut world, 0, 8, 2);
+    let mut inside = 0;
+    for _ in 0..10 * TICKS_PER_SECOND {
+        world.step();
+        if tile_of(&world, 0) == (5, 2) {
+            inside += 1;
+            assert!(world.noticed(gi, 0).is_none(), "\"nobody can see into it\"");
+        }
+    }
+    assert!(inside > 0, "it walked under (5, 2)");
+    assert_eq!(tile_of(&world, 0), (8, 2), "and came out the far side");
+    // Its walk is as long as it is: the six tiles take what six tiles in the
+    // open take.
+    let arrive = |tunnel: bool| {
+        let mut w = vault_world(1);
+        if tunnel {
+            for y in 0..14 {
+                w.grid.place(4, y, Feature::RockPillar);
+            }
+            let (a, b) = (w.grid.index(3, 2).unwrap(), w.grid.index(6, 2).unwrap());
+            w.grid.dig_tunnel(a, b);
+        }
+        put(&mut w, 0, 2, 2);
+        order(&mut w, 0, 8, 2);
+        (0..10 * TICKS_PER_SECOND).find(|_| {
+            w.step();
+            tile_of(&w, 0) == (8, 2)
+        })
+    };
+    assert_eq!(arrive(true), arrive(false));
+    // Standing on (5, 2) in the open, it is seen.
+    let mut seen = vault_world(1);
+    let gi = post(&mut seen, 0, 5, 6);
+    seen.guards[gi].facing = Ang::from_degrees(270);
+    put(&mut seen, 0, 5, 2);
+    assert!(seen.noticed(gi, 0).is_some());
+}
+
+#[test]
+fn a_held_post_faces_the_way_its_owner_sets() {
+    let mut island = Island::example();
+    let post = island.guards[0];
+    assert!(island.face(post.x, post.y, EAST));
+    assert_eq!(island.facing(post.x, post.y), Some(EAST));
+    let back = Island::decode(&island.encode()).unwrap();
+    assert_eq!(back.guards[0].facing, EAST);
+    let world = World::on_ground(&back, 1, Vec::new());
+    assert_eq!(world.guards[0].facing, Ang::from_degrees(0), "east is 0°");
+    // North is how every post faced before, so it costs an island no bytes.
+    assert!(island.face(post.x, post.y, NORTH));
+    assert_eq!(island.encode(), Island::example().encode());
+    assert_eq!(World::on_ground(&island, 1, Vec::new()).guards[0].facing, Ang::from_degrees(270));
+    assert!(!island.face(0, 0, EAST), "bare ground has no facing");
+}
+
+#[test]
+fn the_generator_faces_a_post_toward_the_nearest_shortest_route() {
+    // A blank realm 1: 10 by 10, the Vault at (5, 7). The shortest way in
+    // is from (5, 9) to (5, 8), beside it.
+    let mut island = Island::blank(1);
+    assert!(island.post_guard(0, 2, 2));
+    assert_eq!(island.guards[0].facing, SOUTH, "north-west of the route: it looks south");
+    assert!(island.post_guard(0, 8, 8));
+    assert_eq!(island.guards[1].facing, WEST, "east of it: it looks west");
+    assert_eq!(island.default_facing(1), WEST);
+    assert!(island.post_guard(0, 0, 4));
+    assert_eq!(island.guards[2].facing, EAST, "toward (5, 8), five across and four down");
+    // A wall across the south moves the route to the sides, and the post
+    // turns with it: (0, 7) to (4, 7) is now a shortest way in.
+    let mut walled = Island::blank(1);
+    for x in 1..10 {
+        walled.set_feature(x, 8, Some(Feature::RockPillar));
+    }
+    walled.set_feature(9, 7, Some(Feature::RockPillar));
+    assert!(walled.post_guard(0, 0, 4));
+    assert_eq!(walled.guards[0].facing, SOUTH, "toward (0, 7), three down");
+}
+
+#[test]
+fn the_six_and_a_tunnel_travel_in_the_island_and_a_second_encoding_is_refused() {
+    use crate::island::Malformed;
+    let mut island = Island::example_open();
+    for (i, f) in [Feature::Ramp, Feature::Stairs, Feature::ClimbingVines, Feature::Waterfall,
+                   Feature::Rapids].into_iter().enumerate() {
+        assert!(island.set_feature(i as u8, 0, Some(f)));
+        assert!(island.face(i as u8, 0, i as u8 % 4));
+    }
+    assert!(island.dig_tunnel((9, 4), (5, 2)));
+    assert!(island.dig_tunnel((0, 3), (0, 5)));
+    assert_eq!(island.tunnels, vec![((5, 2), (9, 4)), ((0, 3), (0, 5))],
+               "each first by its lower mouth, in order of tile index");
+    assert!(!island.dig_tunnel((0, 0), (7, 0)), "7 tiles is further than a tunnel goes");
+    assert!(!island.dig_tunnel((1, 1), (2, 1)), "a mouth beside a mouth is no path");
+    let bytes = island.encode();
+    let back = Island::decode(&bytes).unwrap();
+    assert_eq!(back, island);
+    assert_eq!(back.encode(), bytes);
+    let grid = back.ground();
+    assert_eq!(grid.tunnel_exit(grid.index(5, 2).unwrap()), grid.index(9, 4));
+    assert_eq!(grid.facing(grid.index(3, 0).unwrap()), 3);
+    // Taking a mouth away takes the tunnel.
+    let mut gone = island.clone();
+    assert!(gone.clear(9, 4));
+    assert_eq!(gone.tunnels.len(), 1);
+    // The tunnels come last, after a buildings count of 0.
+    let n = bytes.len();
+    assert_eq!(&bytes[n - 10..], &[0, 2, 5, 2, 9, 4, 0, 3, 0, 5]);
+    let refused = |edit: &dyn Fn(&mut Vec<u8>)| {
+        let mut b = bytes.clone();
+        edit(&mut b);
+        Island::decode(&b)
+    };
+    assert_eq!(refused(&|b| { b.swap(n - 8, n - 6); b.swap(n - 7, n - 5); }),
+               Err(Malformed::Tunnel), "mouths out of order");
+    assert_eq!(refused(&|b| { b[n - 3] = 1; b[n - 1] = 3; }), Err(Malformed::Tunnel),
+               "tunnels out of order");
+    assert_eq!(refused(&|b| b[n - 4..].copy_from_slice(&[8, 3, 9, 4])), Err(Malformed::Tunnel),
+               "a mouth shared");
+    assert_eq!(refused(&|b| { b[n - 2] = 6; b[n - 1] = 9; }), Err(Malformed::Tunnel),
+               "12 tiles apart");
+    assert!(refused(&|_| {}).is_ok());
+    // A tunnel's mouth is dug in bare ground.
+    let mut crowded = island.clone();
+    let side = crowded.side() as usize;
+    crowded.tiles[3 * side].feature = Some(Feature::Bush);
+    assert!(crowded.check().contains(&crate::island::Problem::Crowded));
 }

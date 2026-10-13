@@ -11126,7 +11126,16 @@ V37 = {
     "<strong>Settled by rule:</strong> the brief’s option B. §6.1 checks terrain "
     "points at publish; §13.3 and §12.17 give a held post an owner-set facing; "
     "§6.2 has the owner set every feature’s direction; §18.6 makes a Workshop "
-    "island one realm."),
+    "island one realm. <strong>Built (TD.38):</strong> the five that face, the "
+    "tunnel and a post’s facing in the simulation, the island bundle and the "
+    "builder; the generator’s default facing as "
+    "<code>Island::default_facing</code>. What §6.2 leaves open is read and "
+    "named in <code>sim/content_gate.py</code>: stairs at 120% with a ramp at "
+    "the ground’s own pace, rapids pushing on each whole second, and a tunnel’s "
+    "2 to 6 tiles counted by the walk. Also read, not stated: a waterfall is "
+    "walked across its fall, never through it; guards keep to the surface and "
+    "do not take tunnels; and a guard sent back to its post keeps the facing it "
+    "walked in on rather than turning to the one its owner set."),
 
 "G58": dict(status="fixed", note=
     "<strong>Settled by rule:</strong> the brief’s option B. §20.1: the band "

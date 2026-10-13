@@ -149,6 +149,12 @@ GROUND_BOUNCE_MUSHROOM,Bounce mushroom,Bounce mushroom,Bounce mushroom,Bounce mu
 GROUND_UPDRAFT_VENT,Updraft vent,Updraft vent,Updraft vent,Updraft vent,Updraft vent,Updraft vent
 GROUND_PIT,Pit,Pit,Pit,Pit,Pit,Pit
 GROUND_RAISED_GROUND,Raised ground,Raised ground,Raised ground,Raised ground,Raised ground,Raised ground
+GROUND_RAMP,Ramp,Ramp,Ramp,Ramp,Ramp,Ramp
+GROUND_STAIRS,Stairs,Stairs,Stairs,Stairs,Stairs,Stairs
+GROUND_CLIMBING_VINES,Climbing vines,Climbing vines,Climbing vines,Climbing vines,Climbing vines,Climbing vines
+GROUND_WATERFALL,Waterfall,Waterfall,Waterfall,Waterfall,Waterfall,Waterfall
+GROUND_RAPIDS,Rapids,Rapids,Rapids,Rapids,Rapids,Rapids
+GROUND_TUNNEL,Tunnel,Tunnel,Tunnel,Tunnel,Tunnel,Tunnel
 BUILDING_KEEPER_S_SPIRE,Keeper's Spire,Keeper's Spire,Keeper's Spire,Keeper's Spire,Keeper's Spire,Keeper's Spire
 BUILDING_VAULT,Vault,Vault,Vault,Vault,Vault,Vault
 BUILDING_ANCHOR_STONE,Anchor Stone,Anchor Stone,Anchor Stone,Anchor Stone,Anchor Stone,Anchor Stone

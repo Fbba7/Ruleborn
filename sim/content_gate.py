@@ -94,6 +94,12 @@ READINGS = [
      "§8.5 says \"a few tiles\" (G25)"),
     ("PIT_HOLD_TICKS", "a pit holds whoever falls in for a second",
      "§8.5 says a pit drops anyone a level and not what that costs (G25)"),
+    ("STAIRS_PACE", "stairs are walked at 120% of the ground's pace, a ramp at the ground's own",
+     "§6.2 says stairs climb \"20% faster than a ramp\" and not how fast a ramp is (G56)"),
+    ("RAPIDS_SECONDS", "rapids push on each whole second of the heist, whoever stands on them then",
+     "§6.2 says \"1 tile a second\" and not when in the second (G56)"),
+    ("TUNNEL_MIN_TILES", "a tunnel's mouths are at least 2 tiles apart by the walk, and 6 is counted the same way",
+     "§6.2 says \"up to 6 tiles apart\" and not how apart is counted (G56)"),
 ]
 
 
@@ -637,6 +643,10 @@ def terrain_compare(text: str) -> dict:
         ("updraft_vent half gravity", word("updraft_vent", "with_laws", r"sends people (\w+) levels"),
          k.get("UPDRAFT_LEAP_LEVELS")),
         ("bell_post alarm", word("bell_post", "sight", r"alarm (\w+) level"), k.get("BELL_LEVELS")),
+        ("stairs faster (%)", num("stairs", "movement", r"(\d+)% faster"),
+         (lambda v: v - 100 if v else None)(k.get("STAIRS_PACE"))),
+        ("rapids tiles", num("rapids", "movement", r"Pushes anyone (\d+) tile"), k.get("RAPIDS_TILES")),
+        ("tunnel tiles", num("tunnel", "movement", r"up to (\d+) tiles"), k.get("TUNNEL_TILES")),
     ]
     for what, want, have in rows:
         ok = want is not None and have is not None and float(want) == float(have)

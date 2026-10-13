@@ -64,6 +64,74 @@ pub fn find(grid: &Grid, from: TileIndex, to: TileIndex) -> Option<Route> {
     None
 }
 
+/// The shortest route for the crew, which may go through a tunnel: §6.2's
+/// "hidden path joining two points up to 6 tiles apart" (TD.38). A tunnel is
+/// one more way out of its mouth, after the four neighbours, as long as the
+/// walk between the mouths, so a route through one is the shortest by the
+/// tiles it walks. With no tunnel on the grid it is `find` itself.
+///
+/// Breadth-first still, by distance: a bucket for each distance, each a queue
+/// in the order tiles were put in it, so the ties are §12.18's — the fixed
+/// neighbour order, then the order tiles were reached. A tile reached again by
+/// a shorter way moves to the nearer bucket; one already taken out is final.
+/// Guards keep to the surface and use `find`: the defender built the tunnel
+/// for the crew to look for.
+pub fn find_through(grid: &Grid, from: TileIndex, to: TileIndex) -> Option<Route> {
+    if !grid.has_tunnels() {
+        return find(grid, from, to);
+    }
+    if from == to {
+        return Some(Vec::new());
+    }
+    if !grid.standable(to) || !grid.standable(from) {
+        return None;
+    }
+    let n = grid.len();
+    let mut dist = vec![u32::MAX; n];
+    let mut done = vec![false; n];
+    let mut came_from: Vec<Option<TileIndex>> = vec![None; n];
+    let mut buckets: Vec<std::collections::VecDeque<TileIndex>> = Vec::new();
+    let put = |buckets: &mut Vec<std::collections::VecDeque<TileIndex>>, d: u32, t: TileIndex| {
+        while buckets.len() <= d as usize {
+            buckets.push(std::collections::VecDeque::new());
+        }
+        buckets[d as usize].push_back(t);
+    };
+    dist[from as usize] = 0;
+    put(&mut buckets, 0, from);
+    let mut d = 0usize;
+    while d < buckets.len() {
+        let Some(tile) = buckets[d].pop_front() else {
+            d += 1;
+            continue;
+        };
+        if done[tile as usize] || dist[tile as usize] != d as u32 {
+            continue;
+        }
+        done[tile as usize] = true;
+        if tile == to {
+            return Some(walk_back(&came_from, from, to));
+        }
+        let mut ways: Vec<(TileIndex, u32)> = grid.neighbours(tile).into_iter().flatten()
+            .filter(|&nb| grid.can_step(tile, nb))
+            .map(|nb| (nb, 1))
+            .collect();
+        if let Some(exit) = grid.tunnel_exit(tile) {
+            ways.push((exit, grid.walk_tiles(tile, exit) as u32));
+        }
+        for (next, cost) in ways {
+            let nd = d as u32 + cost;
+            if done[next as usize] || nd >= dist[next as usize] {
+                continue;
+            }
+            dist[next as usize] = nd;
+            came_from[next as usize] = Some(tile);
+            put(&mut buckets, nd, next);
+        }
+    }
+    None
+}
+
 /// The shortest route that may float over one wall: Drifting echoes'
 /// "returning echoes float and can pass over one wall". A wall is a tile
 /// nobody can stand on, and passing over it goes from the tile before it to

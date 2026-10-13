@@ -16,6 +16,9 @@ enum Tool { GROUND, WARD, GUARD, LAW, VAULT, ERASE }
 const TOOLS := ["GROUND", "WARD", "GUARD", "LAW", "VAULT", "ERASE"]
 ## §12.17's role rows, in order: a guard post is its row.
 const GUARD_ROLES := ["Scout", "Warden", "Breaker", "Carrier", "Mender"]
+## §6.2's tunnel: ground laid with two taps, one for each mouth.
+const TUNNEL := "tunnel"
+const NO_MOUTH := Vector2i(-1, -1)
 
 var island := RulebornIsland.new()
 var preview := RulebornReplay.new()
@@ -23,6 +26,10 @@ var palette: Dictionary = RulebornIsland.palette()
 var tool := Tool.GROUND
 ## Which of the tool's kinds is chosen: an index into `kinds()`.
 var kind := 0
+## A tunnel's first mouth, tapped and waiting for the second.
+var mouth := NO_MOUTH
+## A word for the player about the last tap, shown once in the status line.
+var hint := ""
 
 var view: RealmView
 var title_label: Label
@@ -121,6 +128,7 @@ func kind_name(k: Variant) -> String:
 func next_tool() -> void:
 	tool = ((tool + 1) % TOOLS.size()) as Tool
 	kind = 0
+	mouth = NO_MOUTH
 	_refresh()
 
 
@@ -128,6 +136,7 @@ func next_kind() -> void:
 	var ks := kinds()
 	if not ks.is_empty():
 		kind = (kind + 1) % ks.size()
+	mouth = NO_MOUTH
 	_refresh()
 
 
@@ -147,11 +156,17 @@ func tap_tile(tile: Vector2i) -> void:
 	var k: Variant = ks[kind] if kind < ks.size() else null
 	match tool:
 		Tool.GROUND:
-			island.set_ground(tile.x, tile.y, k)
+			lay(tile, str(k))
 		Tool.WARD:
 			island.place_ward(k, tile.x, tile.y)
 		Tool.GUARD:
-			island.post_guard(k, tile.x, tile.y)
+			# A second tap on a post of the same role turns it a quarter: a
+			# held post faces where its owner sets (G56). A new post faces
+			# the way a crew comes in.
+			if island.occupant(tile.x, tile.y) == "guard:%d" % k:
+				island.turn(tile.x, tile.y)
+			else:
+				island.post_guard(k, tile.x, tile.y)
 		Tool.LAW:
 			island.weave(k, tile.x, tile.y)
 		Tool.VAULT:
@@ -159,6 +174,25 @@ func tap_tile(tile: Vector2i) -> void:
 		Tool.ERASE:
 			island.clear(tile.x, tile.y)
 	_refresh()
+
+
+## Ground on a tapped tile. Ground that faces one of the four ways (G56),
+## laid where the same ground already is, turns a quarter instead; a tunnel
+## takes two taps, its mouths 2 to 6 tiles apart (§6.2).
+func lay(tile: Vector2i, k: String) -> void:
+	if k == TUNNEL:
+		if mouth == NO_MOUTH:
+			mouth = tile
+			return
+		var reach: Array = palette["tunnel"]
+		if not island.dig_tunnel(mouth.x, mouth.y, tile.x, tile.y):
+			hint = Strings.t("BUILDER_TUNNEL_FAR", reach)
+		mouth = NO_MOUTH
+		return
+	if k in Array(palette["facing"]) and island.ground(tile.x, tile.y) == k:
+		island.turn(tile.x, tile.y)
+	else:
+		island.set_ground(tile.x, tile.y, k)
 
 
 func save() -> void:
@@ -200,6 +234,11 @@ func _refresh() -> void:
 	else:
 		var why := Array(problems).map(func(p: Variant) -> String: return Strings.t("PROBLEM_" + str(p).to_upper()))
 		status_label.text = Strings.t("BUILDER_BLOCKED", ", ".join(why))
+	if mouth != NO_MOUTH:
+		status_label.text = Strings.t("BUILDER_TUNNEL_END", palette["tunnel"])
+	elif hint != "":
+		status_label.text = hint
+		hint = ""
 	together_label.text = together(island.combos())
 	UI.relabel(tool_button, Strings.t("BUILDER_TOOL_" + TOOLS[tool]))
 	var ks := kinds()

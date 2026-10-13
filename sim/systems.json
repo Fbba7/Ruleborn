@@ -114,8 +114,8 @@
     {
       "name": "Terrain features",
       "section": "6.2",
-      "task": "TD.15",
-      "what": "§6.2's features, each by what it does to feet and to eyes and its stated numbers, and each with a test; the map below is what completion counts, moss among them. Thirty-three of the thirty-nine are built: raised ground (the Height system's, 0 to 3 levels) and the cliff edge it makes, whose foot its own guards cannot see; the five the spike began with; the hedge (cut through in 3 s), the tree, the boulder (a Breaker smashes it in 6 s), the statue, the crystal outcrop (see-through, a lantern 2 tiles further past it), the lava crack, the stream (20% slower, water), the gravel path (15% faster, gravel), the thicket (30% slower, hides beyond a tile), the shade canopy (hides beyond 3), the bush (hides one still character), the hot spring (heals both sides 2% a second, steam hides beyond 2), the lantern post (nothing hides within 3 tiles), scree (guards within 4 tiles notice a quarter faster), the ember vent (bursts every 8 s) and the static stone (zaps within a tile every 4 s); and the arch (hides whoever is under it from above), the marsh (40% slower, water, footprints), the flower meadow (footprints), the ice sheet (a tile to stop), the pond (deep: gone round), the bell post (bumped, the realm alarm up a level, late under Delay), stepping stones (a road under a law that leaps), the bounce mushroom (3 tiles forward, 5 under Half gravity, the landing heard 4 away), the updraft vent (a level up, two under a law that leaps) and the pit (a level down, a climb out). A feature's code travels in the island's two spare flag bits, so every island written before keeps its bytes. Left: the six with a direction (TD.38). Where §6.2 gives no size or leaves a reading open, the reading is G78's or G80's.",
+      "task": "TD.15, TD.38",
+      "what": "§6.2's features, each by what it does to feet and to eyes and its stated numbers, and each with a test; the map below is what completion counts, moss among them. All thirty-nine are built: raised ground (the Height system's, 0 to 3 levels) and the cliff edge it makes, whose foot its own guards cannot see; the five the spike began with; the hedge (cut through in 3 s), the tree, the boulder (a Breaker smashes it in 6 s), the statue, the crystal outcrop (see-through, a lantern 2 tiles further past it), the lava crack, the stream (20% slower, water), the gravel path (15% faster, gravel), the thicket (30% slower, hides beyond a tile), the shade canopy (hides beyond 3), the bush (hides one still character), the hot spring (heals both sides 2% a second, steam hides beyond 2), the lantern post (nothing hides within 3 tiles), scree (guards within 4 tiles notice a quarter faster), the ember vent (bursts every 8 s) and the static stone (zaps within a tile every 4 s); and the arch (hides whoever is under it from above), the marsh (40% slower, water, footprints), the flower meadow (footprints), the ice sheet (a tile to stop), the pond (deep: gone round), the bell post (bumped, the realm alarm up a level, late under Delay), stepping stones (a road under a law that leaps), the bounce mushroom (3 tiles forward, 5 under Half gravity, the landing heard 4 away), the updraft vent (a level up, two under a law that leaps) and the pit (a level down, a climb out). A feature's code travels in the island's two spare flag bits, so every island written before keeps its bytes. And the six with a direction (TD.38, G56), each facing the way its owner sets, carried in two more flag bits: the ramp, stairs (20% faster, a ramp being the ground's own pace) and climbing vines climb one level going the way they face, the vines on a cliff whose foot stays hidden; the waterfall is walked along its ledge, across its fall, never through it, and hides whoever is behind it; rapids push anyone a tile downstream on each whole second; and the tunnel joins two mouths 2 to 6 tiles apart by the walk, carried in its own list after the buildings, walked by the crew as long as it is, nobody seeing into it, guards keeping to the surface. Where §6.2 gives no size or leaves a reading open, the reading is G78's or G80's.",
       "tests": [
         "a_hedge_blocks_feet_and_eyes_and_is_cut_through_in_three_seconds",
         "a_tree_is_walked_round_and_blocks_sight",
@@ -144,7 +144,14 @@
         "a_bounce_mushroom_launches_three_tiles_and_the_landing_is_heard_four_away",
         "an_updraft_vent_lifts_one_level_and_two_under_a_law_that_leaps",
         "a_pit_drops_anyone_a_level_and_needs_a_climb_out",
-        "every_feature_built_travels_in_the_island_and_reads_back"
+        "every_feature_built_travels_in_the_island_and_reads_back",
+        "a_ramp_climbs_one_level_up_the_side_it_faces",
+        "stairs_climb_a_level_a_fifth_faster_than_a_ramp",
+        "climbing_vines_climb_a_level_where_there_is_no_ramp",
+        "a_waterfall_is_walked_behind_along_its_ledge_and_blocks_sight",
+        "rapids_push_anyone_a_tile_a_second_downstream",
+        "a_tunnel_is_a_hidden_path_up_to_six_tiles_and_nobody_sees_into_it",
+        "the_six_and_a_tunnel_travel_in_the_island_and_a_second_encoding_is_refused"
       ],
       "features": {
         "rock_pillar": "a_rock_pillar_hides_what_is_behind_it",
@@ -180,8 +187,24 @@
         "updraft_vent": "an_updraft_vent_lifts_one_level_and_two_under_a_law_that_leaps",
         "pit": "a_pit_drops_anyone_a_level_and_needs_a_climb_out",
         "moss": "gravel_and_water_carry_further_and_moss_less",
-        "raised_ground": "climbing_a_level_needs_a_ramp_and_dropping_is_free_and_one_way"
+        "raised_ground": "climbing_a_level_needs_a_ramp_and_dropping_is_free_and_one_way",
+        "ramp": "a_ramp_climbs_one_level_up_the_side_it_faces",
+        "stairs": "stairs_climb_a_level_a_fifth_faster_than_a_ramp",
+        "climbing_vines": "climbing_vines_climb_a_level_where_there_is_no_ramp",
+        "waterfall": "a_waterfall_is_walked_behind_along_its_ledge_and_blocks_sight",
+        "rapids": "rapids_push_anyone_a_tile_a_second_downstream",
+        "tunnel": "a_tunnel_is_a_hidden_path_up_to_six_tiles_and_nobody_sees_into_it"
       }
+    },
+    {
+      "name": "Post facing",
+      "section": "13.3",
+      "task": "TD.38",
+      "what": "G56, as v3.7 wrote its recommended option: a held post faces one of four directions its owner sets, carried in its role byte (north, 0, the way every post faced before, so an island written before keeps its bytes); and the generator's default, toward the nearest tile on a shortest route from a landing edge to the Vault, the one of the four ways nearest its bearing (§13.3, §12.17). A post the builder places takes that default until its owner turns it.",
+      "tests": [
+        "a_held_post_faces_the_way_its_owner_sets",
+        "the_generator_faces_a_post_toward_the_nearest_shortest_route"
+      ]
     },
     {
       "name": "Pathfinding",

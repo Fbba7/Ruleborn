@@ -574,6 +574,13 @@ const ROLES: [(u32, i32, i64, i64, i64, i32, i32); 5] = [
 ];
 const WARDEN: usize = 1;
 
+/// A held post's facing (G56) as the angle a guard looks along: north, the
+/// way every post faced before facings were set, is 270°, since y runs
+/// south.
+pub fn facing_angle(facing: u8) -> Ang {
+    Ang::from_degrees([270, 0, 90, 180][(facing & 3) as usize])
+}
+
 fn make_guard(id: u32, row: usize, post: grid::TileIndex, grid: &Grid) -> Guard {
     let (_, cone, near, mid, far, turn, peripheral) = ROLES[row];
     let (x, y) = grid.centre(post);
@@ -886,7 +893,11 @@ impl World {
         let guards: Vec<Guard> = island.guards
             .iter()
             .enumerate()
-            .map(|(id, post)| make_guard(id as u32, post.row as usize, tile((post.x, post.y)), &grid))
+            .map(|(id, post)| {
+                let mut g = make_guard(id as u32, post.row as usize, tile((post.x, post.y)), &grid);
+                g.facing = facing_angle(post.facing);
+                g
+            })
             .collect();
         let entrance = tile(island.entrance);
         let vault_tile = tile(island.vault);
@@ -1197,7 +1208,13 @@ impl World {
             match command.kind {
                 Kind::MoveTo => {
                     let (x, y) = command.target();
-                    let from = self.grid.tile_at(raider.at.x, raider.at.y);
+                    // Inside a tunnel there is no turning back: the new route
+                    // starts at the far mouth, and the tunnel is walked first.
+                    let inside = underground(&self.grid, raider);
+                    let from = match inside {
+                        Some((_, far)) => Some(far),
+                        None => self.grid.tile_at(raider.at.x, raider.at.y),
+                    };
                     let to = self.grid.tile_at(x, y);
                     // A destination off the grid or inside a wall is not
                     // re-aimed at the nearest open tile. §12.18: "the crew
@@ -1212,12 +1229,16 @@ impl World {
                                 None => Vec::new(),
                             }
                         }
-                        (Some(a), Some(b)) => path::find(&self.grid, a, b)
+                        (Some(a), Some(b)) => path::find_through(&self.grid, a, b)
                             .unwrap_or_default(),
                         _ => Vec::new(),
                     };
                     raider.along = 0;
                     raider.came_from = from.unwrap_or(raider.came_from);
+                    if let Some((near, far)) = inside {
+                        raider.route.insert(0, far);
+                        raider.came_from = near;
+                    }
                     raider.skid = false;
                     raider.charging = false;
                 }
@@ -2024,6 +2045,10 @@ impl World {
         {
             return None;
         }
+        // A tunnel: "Nobody can see into it."
+        if underground(&self.grid, raider).is_some() {
+            return None;
+        }
         // In range and in the cone is not enough: something between may
         // stop sight, checked below, last, because it is the costly test.
         // Mirage: "anything moving appears one tile from where it really
@@ -2384,8 +2409,7 @@ impl World {
         let now = self.tick;
         let crew_pace: Vec<(i64, i64)> = self.raiders.iter()
             .map(|r| {
-                let (n, d) = self.pace_here(self.grid.tile_at(r.at.x, r.at.y), true,
-                                            r.slowed_until);
+                let (n, d) = self.pace_here(crew_tile(&self.grid, r), true, r.slowed_until);
                 // The Stormhound's sprint: "60% faster for 4 s".
                 let (n, d) = if r.running(Ability::Sprint, now) {
                     (n * ruleborn::SPRINT_PACE.0, d * ruleborn::SPRINT_PACE.1)
@@ -2426,7 +2450,9 @@ impl World {
             {
                 continue;
             }
-            let here = self.grid.tile_at(raider.at.x, raider.at.y);
+            // In a tunnel, the ground overhead is not underfoot: the walk is
+            // the mouth's.
+            let here = crew_tile(&self.grid, raider);
             // "At crouching speed", whatever gait the player last chose.
             let gait = if drags[ri].is_some() { Gait::Crouch } else { raider.gait };
             let step = step_with(&self.grid, &self.sheet, raider, gait, here,
@@ -2461,7 +2487,7 @@ impl World {
                 }
             }
             // Dropped a level or more this tick: §12.17's landing noise.
-            let there = self.grid.tile_at(at.x, at.y);
+            let there = crew_tile(&self.grid, raider);
             raider.landed = match (here, there) {
                 (Some(a), Some(b)) => (self.grid.level(a) - self.grid.level(b)).max(0) as u8,
                 _ => 0,
@@ -2562,6 +2588,62 @@ impl World {
             }
         }
         self.static_touches(charging);
+        if self.tick % (TICKS_PER_SECOND * grid::RAPIDS_SECONDS) == 0 {
+            self.rapids();
+        }
+    }
+
+    /// Rapids: "Pushes anyone 1 tile a second downstream" — on each whole
+    /// second, whoever stands on rapids, crew and guards, goes one tile the
+    /// way they run, if a step that way can be taken (TD.38). Where it was
+    /// going stands: the route is recomputed from where the water left it,
+    /// as a gravity well's pull does, because the order was the tile.
+    fn rapids(&mut self) {
+        let downstream = |grid: &Grid, at: Point| -> Option<(grid::TileIndex, grid::TileIndex)> {
+            let tile = grid.tile_at(at.x, at.y)?;
+            if grid.feature(tile) != Some(Feature::Rapids) {
+                return None;
+            }
+            let mut next = tile;
+            for _ in 0..grid::RAPIDS_TILES {
+                let on = grid.ahead(next, grid.facing(next))?;
+                if !grid.can_step(next, on) {
+                    break;
+                }
+                next = on;
+            }
+            (next != tile).then_some((tile, next))
+        };
+        for ri in 0..self.raiders.len() {
+            let r = &self.raiders[ri];
+            if !r.active() || underground(&self.grid, r).is_some() {
+                continue;
+            }
+            let Some((tile, next)) = downstream(&self.grid, r.at) else { continue };
+            let goal = r.route.last().copied().filter(|&g| g != next);
+            let route = goal.and_then(|g| path::find_through(&self.grid, next, g))
+                .unwrap_or_default();
+            let (x, y) = self.grid.centre(next);
+            let r = &mut self.raiders[ri];
+            r.at = Point { x, y };
+            r.route = route;
+            r.along = 0;
+            r.came_from = tile;
+        }
+        for gi in 0..self.guards.len() {
+            let g = &self.guards[gi];
+            if g.knocked_out {
+                continue;
+            }
+            let Some((_, next)) = downstream(&self.grid, g.at) else { continue };
+            let goal = g.route.get(g.along..).and_then(|r| r.last().copied())
+                .filter(|&t| t != next);
+            let (x, y) = self.grid.centre(next);
+            self.guards[gi].at = Point { x, y };
+            if goal.is_some() {
+                self.aim(gi, goal);
+            }
+        }
     }
 
     /// Static (§7.3's Stun row): "moving builds charge; after 5 tiles, the
@@ -2577,7 +2659,8 @@ impl World {
         // Who stepped onto a new tile this tick: (is a guard, index, tile).
         let mut entered: Vec<(bool, usize, grid::TileIndex)> = Vec::new();
         for (i, r) in self.raiders.iter_mut().enumerate() {
-            let t = self.grid.tile_at(r.at.x, r.at.y);
+            // Under a tunnel's roof nothing on the ground is stepped on.
+            let t = crew_tile(&self.grid, r);
             if t != r.last_tile {
                 r.prev_tile = r.last_tile;
                 r.last_tile = t;
@@ -3631,7 +3714,7 @@ impl World {
                         continue;
                     }
                     let goal = r.route.last().copied();
-                    let route = goal.and_then(|g| path::find(&self.grid, w.tile, g))
+                    let route = goal.and_then(|g| path::find_through(&self.grid, w.tile, g))
                         .unwrap_or_default();
                     let r = &mut self.raiders[ri];
                     r.at = centre;
@@ -4078,7 +4161,7 @@ impl World {
         let r = &mut self.raiders[ri];
         let goal = r.route.last().copied().filter(|&g| g != tile && g != land);
         r.at = Point { x, y };
-        r.route = goal.and_then(|g| path::find(&self.grid, land, g)).unwrap_or_default();
+        r.route = goal.and_then(|g| path::find_through(&self.grid, land, g)).unwrap_or_default();
         r.along = 0;
         r.came_from = tile;
         r.bounced = true;
@@ -4328,7 +4411,11 @@ impl World {
             return true;                      // a world with no clock
         }
         let r = &self.raiders[ri];
-        let Some(from) = self.grid.tile_at(r.at.x, r.at.y) else { return false };
+        let here = match underground(&self.grid, r) {
+            Some((_, far)) => Some(far),
+            None => self.grid.tile_at(r.at.x, r.at.y),
+        };
+        let Some(from) = here else { return false };
         let exit = match self.skiff {
             Some(s) => Some(s.tile),
             None => {
@@ -4343,7 +4430,7 @@ impl World {
         let route = if exit == from {
             Vec::new()
         } else {
-            match path::find(&self.grid, from, exit) {
+            match path::find_through(&self.grid, from, exit) {
                 Some(route) => route,
                 None => return false,
             }
@@ -4359,9 +4446,11 @@ impl World {
             if step.0 <= 0 {
                 return false;
             }
-            // Ticks to cross one tile, rounded up: a part-tick is a tick.
+            // Ticks to cross one tile, rounded up: a part-tick is a tick. A
+            // tunnel is as many tiles as it is long.
             let t = Fx::ONE.div(step).0;
-            walk += ((t + fixed::FX_ONE - 1) / fixed::FX_ONE) as u64;
+            let tiles = self.grid.walk_tiles(on, next).max(1) as u64;
+            walk += ((t + fixed::FX_ONE - 1) / fixed::FX_ONE) as u64 * tiles;
             on = next;
         }
         let wait = match self.skiff {
@@ -4649,6 +4738,27 @@ fn unslowed((n, d): (i64, i64), unhindered: bool) -> (i64, i64) {
 /// through this tick (`World::pace_here`). `unhindered` is the Tidewalker's
 /// ability: "For 6 s nothing slows it: terrain, laws and its own load leave
 /// it at full speed." Its gait is the player's choice, not a slowing.
+/// The tunnel a crew member is inside, as (the mouth it went in by, the one
+/// it comes out of): on a step between two mouths and on neither's tile. At
+/// a mouth it is above ground and seen like anyone; between them, "nobody can
+/// see into it" (§6.2, TD.38). Read off its route, so it is never stored.
+fn underground(grid: &Grid, r: &Raider) -> Option<(grid::TileIndex, grid::TileIndex)> {
+    let far = *r.route.get(r.along)?;
+    let near = if r.along > 0 { r.route[r.along - 1] } else { r.came_from };
+    let here = grid.tile_at(r.at.x, r.at.y);
+    (grid.tunnel_exit(near) == Some(far) && here != Some(near) && here != Some(far))
+        .then_some((near, far))
+}
+
+/// The tile a crew member's feet are on: where it stands, or inside a tunnel
+/// the mouth it went in by, whose ground the tunnel's is.
+fn crew_tile(grid: &Grid, r: &Raider) -> Option<grid::TileIndex> {
+    match underground(grid, r) {
+        Some((near, _)) => Some(near),
+        None => grid.tile_at(r.at.x, r.at.y),
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 fn step_with(grid: &Grid, sheet: &Sheet, raider: &Raider, gait: Gait,
              here: Option<grid::TileIndex>, loaded: bool, extra: (i64, i64),
@@ -5140,6 +5250,13 @@ pub fn rules_version() -> [u8; 32] {
                   grid::EMBER_SECONDS as i32, grid::EMBER_LIGHT_TILES, grid::STONE_SECONDS as i32,
                   grid::STONE_TILES, grid::HEDGE_CUT_SECONDS as i32,
                   grid::BOULDER_SMASH_SECONDS as i32] {
+            bytes.extend_from_slice(&n.to_le_bytes());
+        }
+        // The six with a direction (TD.38): stairs' pace is in the loop above;
+        // the rapids' push and a tunnel's reach are here, and the tunnel's
+        // mouth, which no feature code carries.
+        for n in [grid::RAPIDS_TILES, grid::RAPIDS_SECONDS as i32, grid::TUNNEL_TILES as i32,
+                  grid::TUNNEL_MIN_TILES as i32, Feature::Tunnel as i32] {
             bytes.extend_from_slice(&n.to_le_bytes());
         }
         // §11.7's Sages: each one's powers, their uses and whether built.

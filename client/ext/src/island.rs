@@ -17,13 +17,18 @@ use sim::laws_table::{note, CHORDS, CHORD_IDS, LAWS, RESONANCES, RES_IDS};
 /// every feature in the island's codes (`sim::island::FEATURE_CODES`), in
 /// their order, and raised ground. A feature not in the simulation yet is not
 /// offered.
-pub const GROUND: [&str; 32] = [
+pub const GROUND: [&str; 39] = [
     "rock_pillar", "ruin_wall", "fence", "fog_bank", "tall_grass", "stream", "bush", "hedge",
     "tree", "thicket", "boulder", "gravel_path", "scree", "crystal_outcrop", "lantern_post",
     "shade_canopy", "ember_vent", "lava_crack", "static_stone", "statue", "hot_spring",
     "arch", "marsh", "flower_meadow", "ice_sheet", "pond", "bell_post", "stepping_stones",
-    "bounce_mushroom", "updraft_vent", "pit", "raised_ground",
+    "bounce_mushroom", "updraft_vent", "pit", "raised_ground", "ramp", "stairs",
+    "climbing_vines", "waterfall", "rapids", "tunnel", "moss",
 ];
+
+/// The tunnel's id: a ground the builder lays with two taps, one for each
+/// mouth (`dig_tunnel`), never with `set_ground`.
+pub const TUNNEL: &str = "tunnel";
 
 /// §10.3's wards, by content id (content/wards.json).
 pub const WARDS: [(&str, WardKind); 6] = [
@@ -107,10 +112,14 @@ impl RulebornIsland {
     #[func]
     fn ground(&self, x: i64, y: i64) -> GString {
         let Some(t) = self.island.tile(x as u8, y as u8) else { return GString::new() };
+        if matches!(self.island.occupant(x as u8, y as u8), Occupant::Tunnel(_)) {
+            return GString::from(TUNNEL);
+        }
         let id = match (t.feature, t.surface, t.height) {
             (Some(f), _, _) => feature_id(Some(f)),
             (None, Surface::Gravel, _) => "gravel_path",
             (None, Surface::Water, _) => "stream",
+            (None, Surface::Moss, _) => "moss",
             (None, _, h) if h > 0 => "raised_ground",
             _ => "",
         };
@@ -126,16 +135,22 @@ impl RulebornIsland {
             return false;
         }
         let id = id.to_string();
-        if !id.is_empty() && !GROUND.contains(&id.as_str()) {
+        if (!id.is_empty() && !GROUND.contains(&id.as_str())) || id == TUNNEL {
             return false;
+        }
+        // Laying ground on a tunnel's mouth fills the tunnel in.
+        if matches!(self.island.occupant(x, y), Occupant::Tunnel(_)) {
+            self.island.clear(x, y);
         }
         let i = &mut self.island;
         let f = feature(&id);
         i.set_feature(x, y, f);
         // A stream is water and a gravel path gravel by themselves; anything
         // else leaves the ground plain.
+        // Moss is ground underfoot, no feature: "quieter (6.1)".
         i.set_surface(x, y, match f.and_then(|f| f.surface()) {
             Some(s) => s,
+            None if id == "moss" => Surface::Moss,
             None => Surface::Plain,
         });
         i.set_height(x, y, (id == "raised_ground") as u8);
@@ -159,6 +174,7 @@ impl RulebornIsland {
                 let code = self.island.buildings[i].0;
                 format!("building:{}", BUILDING_CODES.iter().find(|b| b.1 == code).map_or("", |b| b.0))
             }
+            Occupant::Tunnel(_) => TUNNEL.into(),
         };
         GString::from(&s)
     }
@@ -182,6 +198,28 @@ impl RulebornIsland {
     #[func]
     fn post_guard(&mut self, row: i64, x: i64, y: i64) -> bool {
         (0..5).contains(&row) && self.island.post_guard(row as u8, x as u8, y as u8)
+    }
+
+    /// The way a directional feature or a guard post on a tile faces (G56):
+    /// 0 north, 1 east, 2 south, 3 west; -1 where nothing faces.
+    #[func]
+    fn facing(&self, x: i64, y: i64) -> i64 {
+        self.island.facing(x as u8, y as u8).map_or(-1, |f| f as i64)
+    }
+
+    /// Turn what faces on a tile a quarter clockwise. False if nothing there
+    /// faces.
+    #[func]
+    fn turn(&mut self, x: i64, y: i64) -> bool {
+        let Some(f) = self.island.facing(x as u8, y as u8) else { return false };
+        self.island.face(x as u8, y as u8, (f + 1) % 4)
+    }
+
+    /// §6.2's tunnel between two tiles, 2 to 6 apart by the walk, clearing
+    /// both mouths. False, and nothing changed, if it cannot be dug there.
+    #[func]
+    fn dig_tunnel(&mut self, x1: i64, y1: i64, x2: i64, y2: i64) -> bool {
+        self.island.dig_tunnel((x1 as u8, y1 as u8), (x2 as u8, y2 as u8))
     }
 
     #[func]
@@ -280,6 +318,11 @@ impl RulebornIsland {
     fn palette() -> VarDictionary {
         let mut d = VarDictionary::new();
         d.set("ground", &strings(GROUND));
+        // How far apart a tunnel's mouths may be, by the walk.
+        d.set("tunnel", &Array::from(&[sim::grid::TUNNEL_MIN_TILES as i64, sim::grid::TUNNEL_TILES as i64]));
+        // The ground that faces one of the four ways, which a second tap turns.
+        d.set("facing", &strings(FEATURE_CODES.iter().filter(|(f, _, _)| f.directional())
+            .map(|(_, id, _)| *id)));
         d.set("wards", &strings(WARDS.iter().map(|w| w.0)));
         d.set("laws", &strings(LAWS.iter().filter(|l| l.launch).map(|l| l.id)));
         d

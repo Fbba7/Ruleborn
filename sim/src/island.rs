@@ -31,13 +31,16 @@
 //! side x side tiles, row-major, 3 bytes each:
 //!     feature (low 4 bits) | surface << 4 | height << 6
 //!     pace, per cent of normal speed; 0 for normal
-//!     flags: 1 unlit, 2 climbable; bits 2-3 the feature's high bits
+//!     flags: 1 unlit, 2 climbable; bits 2-3 the feature's high bits;
+//!            bits 4-5 the way a directional feature faces
 //! ```
 //! A feature's code is six bits, its low four in the first byte and its high
 //! two in the flags, so every island written before features past code 15
-//! keeps its bytes and its hash (TD.15).
+//! keeps its bytes and its hash (TD.15). A ramp, stairs, vines, a waterfall
+//! and rapids face one of four ways, north, east, south or west, which their
+//! owner sets (G56, TD.38); any other tile's facing bits are 0.
 //! ```text
-//! guards u8, then (role row u8, x u8, y u8) each
+//! guards u8, then (role row u8 | facing << 4, x u8, y u8) each
 //! wards u8, then (kind u8, x u8, y u8) each
 //! laws u8, then (id length u8, id, x u8, y u8) each
 //! ```
@@ -55,6 +58,18 @@
 //! keeps its bytes and its hash. The Vault, the pylons, the guard posts and
 //! the wards are §10.2's buildings too, and are written by their own lists;
 //! the Vault still stands on one tile (G45).
+//! ```text
+//! tunnels, only if there are any: the buildings list first, its count 0 if
+//!     there are no buildings; then count u8 (1 or more), then
+//!     (x1 u8, y1 u8, x2 u8, y2 u8) each
+//! ```
+//! A tunnel is "a hidden path joining two points up to 6 tiles apart"
+//! (§6.2): its two mouths, the first the lower tile index, the tunnels in
+//! order of their first mouths, no mouth shared, 2 to 6 tiles apart as a
+//! walk counts them. One home for each: the ground layer does not carry a
+//! mouth, the list does. A held post faces where its owner sets (G56); north
+//! is 0, the way every post faced before, so an island written before keeps
+//! its bytes.
 //!
 //! Where the crew lands
 //! --------------------
@@ -94,6 +109,9 @@ pub struct Tile {
     pub height: u8,
     pub unlit: bool,
     pub climbable: bool,
+    /// The way a directional feature faces, `grid::NORTH` to `grid::WEST`;
+    /// 0 for any other tile.
+    pub facing: u8,
 }
 
 /// A guard post: §12.17's role row (0 Scout, 1 Warden, 2 Breaker, 3 Carrier,
@@ -103,6 +121,8 @@ pub struct Post {
     pub row: u8,
     pub x: u8,
     pub y: u8,
+    /// The way a held post faces (G56), `grid::NORTH` to `grid::WEST`.
+    pub facing: u8,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -125,6 +145,8 @@ pub struct Island {
     /// §10.1's buildings: (code, x, y), x and y the footprint's north-west
     /// tile.
     pub buildings: Vec<(u8, u8, u8)>,
+    /// §6.2's tunnels, each its two mouths, in the order `decode` requires.
+    pub tunnels: Vec<((u8, u8), (u8, u8))>,
 }
 
 /// Why a bundle is not an island.
@@ -148,6 +170,9 @@ pub enum Malformed {
     UnknownBuilding,
     /// A buildings list of none, which is written by leaving it out.
     NoBuildings,
+    /// A tunnels list of none, a mouth shared or out of order, or mouths
+    /// nearer than 2 tiles or further than 6.
+    Tunnel,
 }
 
 /// What stands on a tile, by its place in the island's list.
@@ -159,6 +184,8 @@ pub enum Occupant {
     Ward(usize),
     Guard(usize),
     Building(usize),
+    /// A mouth of tunnel `i`.
+    Tunnel(usize),
 }
 
 /// Why an island may not be published. Each is a rule of the document's,
@@ -205,7 +232,7 @@ impl Problem {
 
 /// §6.2's ground features by their code in the bundle. The code is part of
 /// every island's bytes, so it is written out and never reused.
-pub const FEATURE_CODES: [(Feature, &str, u8); 31] = [
+pub const FEATURE_CODES: [(Feature, &str, u8); 36] = [
     (Feature::RockPillar, "rock_pillar", 1),
     (Feature::RuinWall, "ruin_wall", 2),
     (Feature::Fence, "fence", 3),
@@ -237,6 +264,11 @@ pub const FEATURE_CODES: [(Feature, &str, u8); 31] = [
     (Feature::BounceMushroom, "bounce_mushroom", 29),
     (Feature::UpdraftVent, "updraft_vent", 30),
     (Feature::Pit, "pit", 31),
+    (Feature::Ramp, "ramp", 32),
+    (Feature::Stairs, "stairs", 33),
+    (Feature::ClimbingVines, "climbing_vines", 34),
+    (Feature::Waterfall, "waterfall", 35),
+    (Feature::Rapids, "rapids", 36),
 ];
 
 /// §10.1's buildings that stand on the grid, by their code in the bundle,
@@ -276,8 +308,8 @@ pub fn building_code(id: &str) -> Option<u8> {
 fn feature_code(f: Option<Feature>) -> Option<u8> {
     match f {
         None => Some(0),
-        // The Vault, pylons and Crystal Walls are written by their own lists,
-        // never into the ground layer.
+        // The Vault, pylons, Crystal Walls and tunnel mouths are written by
+        // their own lists, never into the ground layer.
         Some(f) => FEATURE_CODES.iter().find(|(g, _, _)| *g == f).map(|&(_, _, c)| c),
     }
 }
@@ -351,6 +383,7 @@ impl Island {
             wards: Vec::new(),
             laws: Vec::new(),
             buildings: Vec::new(),
+            tunnels: Vec::new(),
         }
     }
 
@@ -372,11 +405,12 @@ impl Island {
             let feature = feature_code(t.feature).unwrap_or(0);
             out.push(feature & 15 | surface_code(t.surface) << 4 | (t.height.min(3)) << 6);
             out.push(if t.pace == 100 { 0 } else { t.pace });
-            out.push(t.unlit as u8 | (t.climbable as u8) << 1 | (feature >> 4) << 2);
+            let facing = if t.feature.is_some_and(|f| f.directional()) { t.facing & 3 } else { 0 };
+            out.push(t.unlit as u8 | (t.climbable as u8) << 1 | (feature >> 4) << 2 | facing << 4);
         }
         out.push(self.guards.len() as u8);
         for g in &self.guards {
-            out.extend_from_slice(&[g.row, g.x, g.y]);
+            out.extend_from_slice(&[g.row | (g.facing & 3) << 4, g.x, g.y]);
         }
         out.push(self.wards.len() as u8);
         for (kind, x, y) in &self.wards {
@@ -388,10 +422,16 @@ impl Island {
             out.extend_from_slice(id.as_bytes());
             out.extend_from_slice(&[*x, *y]);
         }
-        if !self.buildings.is_empty() {
+        if !self.buildings.is_empty() || !self.tunnels.is_empty() {
             out.push(self.buildings.len() as u8);
             for (code, x, y) in &self.buildings {
                 out.extend_from_slice(&[*code, *x, *y]);
+            }
+        }
+        if !self.tunnels.is_empty() {
+            out.push(self.tunnels.len() as u8);
+            for ((ax, ay), (bx, by)) in &self.tunnels {
+                out.extend_from_slice(&[*ax, *ay, *bx, *by]);
             }
         }
         out
@@ -426,10 +466,16 @@ impl Island {
         let mut tiles = Vec::with_capacity(side as usize * side as usize);
         for _ in 0..side as usize * side as usize {
             let t = take(3)?;
-            if t[2] & !15 != 0 {
+            if t[2] & !63 != 0 {
                 return Err(Malformed::FlagBits);
             }
-            let feature = feature_from(t[0] & 15 | (t[2] >> 2) << 4)?;
+            let feature = feature_from(t[0] & 15 | (t[2] >> 2 & 3) << 4)?;
+            let facing = t[2] >> 4 & 3;
+            // Only a directional feature faces: a facing anywhere else is a
+            // second encoding of the same tile.
+            if facing != 0 && !feature.is_some_and(|f| f.directional()) {
+                return Err(Malformed::FlagBits);
+            }
             if t[1] == 100 || (t[1] != 0 && sets_pace(feature)) {
                 return Err(Malformed::NonCanonicalPace);
             }
@@ -447,19 +493,20 @@ impl Island {
                 height: t[0] >> 6,
                 unlit: t[2] & 1 != 0,
                 climbable: t[2] & 2 != 0,
+                facing,
             });
         }
         let n = take(1)?[0];
         let mut guards = Vec::with_capacity(n as usize);
         for _ in 0..n {
             let g = take(3)?;
-            if g[0] > 4 {
+            if g[0] & 15 > 4 || g[0] & !0x3f != 0 {
                 return Err(Malformed::UnknownRole);
             }
             if !on_grid(g[1], g[2]) {
                 return Err(Malformed::OffGrid);
             }
-            guards.push(Post { row: g[0], x: g[1], y: g[2] });
+            guards.push(Post { row: g[0] & 15, x: g[1], y: g[2], facing: g[0] >> 4 & 3 });
         }
         let n = take(1)?[0];
         let mut wards = Vec::with_capacity(n as usize);
@@ -488,7 +535,8 @@ impl Island {
         let mut buildings = Vec::new();
         if at.get() < bytes.len() {
             let n = take(1)?[0];
-            if n == 0 {
+            // None is written only ahead of a tunnels list.
+            if n == 0 && at.get() == bytes.len() {
                 return Err(Malformed::NoBuildings);
             }
             for _ in 0..n {
@@ -500,10 +548,37 @@ impl Island {
                 buildings.push((b[0], b[1], b[2]));
             }
         }
+        let mut tunnels: Vec<((u8, u8), (u8, u8))> = Vec::new();
+        if at.get() < bytes.len() {
+            let n = take(1)?[0];
+            if n == 0 {
+                return Err(Malformed::Tunnel);
+            }
+            let index = |(x, y): (u8, u8)| y as u16 * side + x as u16;
+            let mut mouths: Vec<u16> = Vec::new();
+            for _ in 0..n {
+                let m = take(4)?;
+                let (a, b) = ((m[0], m[1]), (m[2], m[3]));
+                if !on_grid(a.0, a.1) || !on_grid(b.0, b.1) {
+                    return Err(Malformed::OffGrid);
+                }
+                let walk = a.0.abs_diff(b.0) as u16 + a.1.abs_diff(b.1) as u16;
+                let after = tunnels.last().is_none_or(|&(p, _)| index(p) < index(a));
+                if index(a) >= index(b) || !after
+                    || !(crate::grid::TUNNEL_MIN_TILES..=crate::grid::TUNNEL_TILES).contains(&walk)
+                    || mouths.contains(&index(a)) || mouths.contains(&index(b))
+                {
+                    return Err(Malformed::Tunnel);
+                }
+                mouths.extend([index(a), index(b)]);
+                tunnels.push((a, b));
+            }
+        }
         if at.get() != bytes.len() {
             return Err(Malformed::TrailingBytes);
         }
-        Ok(Island { realm_level, vault_level, exposed, vault, entrance, tiles, guards, wards, laws, buildings })
+        Ok(Island { realm_level, vault_level, exposed, vault, entrance, tiles, guards, wards, laws, buildings,
+                    tunnels })
     }
 
     /// §24.8's content address.
@@ -535,6 +610,14 @@ impl Island {
                 if t.climbable {
                     grid.make_climbable(x, y);
                 }
+                if t.feature.is_some_and(|f| f.directional()) {
+                    grid.set_facing(x, y, t.facing);
+                }
+            }
+        }
+        for &((ax, ay), (bx, by)) in &self.tunnels {
+            if let (Some(a), Some(b)) = (grid.index(ax as u16, ay as u16), grid.index(bx as u16, by as u16)) {
+                grid.dig_tunnel(a, b);
             }
         }
         for i in 0..self.buildings.len() {
@@ -585,6 +668,8 @@ impl Island {
         self.guards.iter().for_each(|g| claim(g.x, g.y, false));
         (0..self.buildings.len()).flat_map(|i| self.footprint_tiles(i))
             .for_each(|(x, y)| claim(x, y, true));
+        // A tunnel's mouth is dug in bare ground.
+        self.tunnels.iter().flat_map(|&(a, b)| [a, b]).for_each(|(x, y)| claim(x, y, true));
         if crowded {
             found.push(Problem::Crowded);
         }
@@ -702,6 +787,9 @@ impl Island {
         if let Some(i) = (0..self.buildings.len()).find(|&i| self.footprint_tiles(i).contains(&(x, y))) {
             return Occupant::Building(i);
         }
+        if let Some(i) = self.tunnels.iter().position(|&(a, b)| a == (x, y) || b == (x, y)) {
+            return Occupant::Tunnel(i);
+        }
         Occupant::None
     }
 
@@ -719,6 +807,9 @@ impl Island {
         }
         let t = self.tile_mut(x as u16, y as u16);
         t.feature = feature;
+        if !feature.is_some_and(|f| f.directional()) {
+            t.facing = 0;
+        }
         if sets_pace(feature) {
             t.pace = 0;
         }
@@ -774,6 +865,10 @@ impl Island {
                 self.buildings.remove(i);
                 true
             }
+            Occupant::Tunnel(i) => {
+                self.tunnels.remove(i);
+                true
+            }
             Occupant::None => self.tile(x, y).is_some_and(|t| t.feature.is_some())
                 && self.set_feature(x, y, None),
         }
@@ -796,11 +891,140 @@ impl Island {
         }
     }
 
-    /// A guard post of §12.17's role `row`, 0 to 4.
+    /// A guard post of §12.17's role `row`, 0 to 4, facing the way §13.3's
+    /// generator would face it (`default_facing`) until its owner turns it.
     pub fn post_guard(&mut self, row: u8, x: u8, y: u8) -> bool {
         row < 5 && self.claim(x, y) && {
-            self.guards.push(Post { row, x, y });
+            self.guards.push(Post { row, x, y, facing: 0 });
+            let i = self.guards.len() - 1;
+            self.guards[i].facing = self.default_facing(i);
             true
+        }
+    }
+
+    /// Face a directional feature or a guard post on a tile one of the four
+    /// ways (G56). False if nothing there faces.
+    pub fn face(&mut self, x: u8, y: u8, facing: u8) -> bool {
+        if let Occupant::Guard(i) = self.occupant(x, y) {
+            self.guards[i].facing = facing & 3;
+            return true;
+        }
+        match self.tile(x, y) {
+            Some(t) if t.feature.is_some_and(|f| f.directional()) => {
+                self.tile_mut(x as u16, y as u16).facing = facing & 3;
+                true
+            }
+            _ => false,
+        }
+    }
+
+    /// The way a directional feature or a post on a tile faces, if one does.
+    pub fn facing(&self, x: u8, y: u8) -> Option<u8> {
+        if let Occupant::Guard(i) = self.occupant(x, y) {
+            return Some(self.guards[i].facing);
+        }
+        self.tile(x, y).filter(|t| t.feature.is_some_and(|f| f.directional())).map(|t| t.facing)
+    }
+
+    /// Dig a tunnel between two tiles (§6.2), taking away what stood on
+    /// each and any tunnel already using either. Refused for mouths off the
+    /// grid, on the Vault, or nearer than 2 tiles or further than 6.
+    pub fn dig_tunnel(&mut self, a: (u8, u8), b: (u8, u8)) -> bool {
+        let walk = a.0.abs_diff(b.0) as u16 + a.1.abs_diff(b.1) as u16;
+        if !self.on_grid(a.0, a.1) || !self.on_grid(b.0, b.1) || a == self.vault || b == self.vault
+            || !(crate::grid::TUNNEL_MIN_TILES..=crate::grid::TUNNEL_TILES).contains(&walk)
+        {
+            return false;
+        }
+        for (x, y) in [a, b] {
+            while self.clear(x, y) {}
+        }
+        let side = self.side();
+        let index = |(x, y): (u8, u8)| y as u16 * side + x as u16;
+        let (a, b) = if index(a) < index(b) { (a, b) } else { (b, a) };
+        let at = self.tunnels.iter().position(|&(p, _)| index(p) > index(a)).unwrap_or(self.tunnels.len());
+        self.tunnels.insert(at, (a, b));
+        true
+    }
+
+    /// The way §13.3's generator faces a held post (G56): toward the nearest
+    /// tile on a shortest route from a landing edge to the Vault (§12.17's
+    /// "toward the route a crew takes"), as the one of the four ways nearest
+    /// its bearing. A route tile is one whose walk from the nearest open edge
+    /// plus its walk to beside the Vault is the least any tile has; the
+    /// nearest is by the walk's count of tiles, ties to the lower index; the
+    /// way is along the longer of the two offsets, a tie to the first in
+    /// north, east, south, west. With no route, or the post on it, north.
+    pub fn default_facing(&self, i: usize) -> u8 {
+        let Some(post) = self.guards.get(i) else { return crate::grid::NORTH };
+        let mut grid = self.standing();
+        // The post's own tile is open ground for the route: a guard does not
+        // close its own path.
+        if let Some(p) = grid.index(post.x as u16, post.y as u16) {
+            if !grid.at(p).passable() {
+                return crate::grid::NORTH;
+            }
+        }
+        let n = grid.len();
+        let field = |starts: &[crate::grid::TileIndex], grid: &mut Grid| -> Vec<u32> {
+            let mut d = vec![u32::MAX; n];
+            let mut q = std::collections::VecDeque::new();
+            for &s in starts {
+                d[s as usize] = 0;
+                q.push_back(s);
+            }
+            while let Some(t) = q.pop_front() {
+                for nb in grid.neighbours(t).into_iter().flatten() {
+                    if d[nb as usize] == u32::MAX && grid.can_step(t, nb) {
+                        d[nb as usize] = d[t as usize] + 1;
+                        q.push_back(nb);
+                    }
+                }
+            }
+            d
+        };
+        let from_edge = field(&Self::open_edge(&grid), &mut grid);
+        let (vx, vy) = (self.vault.0 as i32, self.vault.1 as i32);
+        let beside: Vec<crate::grid::TileIndex> = (0..n as crate::grid::TileIndex)
+            .filter(|&t| {
+                let (x, y) = grid.coords(t);
+                (x as i32 - vx).abs() + (y as i32 - vy).abs() == 1 && grid.at(t).passable()
+            })
+            .collect();
+        // Toward the Vault is the walk back from beside it, so the field from
+        // there runs over reversed steps.
+        let to_vault = {
+            let mut d = vec![u32::MAX; n];
+            let mut q = std::collections::VecDeque::new();
+            for &s in &beside {
+                d[s as usize] = 0;
+                q.push_back(s);
+            }
+            while let Some(t) = q.pop_front() {
+                for nb in grid.neighbours(t).into_iter().flatten() {
+                    if d[nb as usize] == u32::MAX && grid.can_step(nb, t) {
+                        d[nb as usize] = d[t as usize] + 1;
+                        q.push_back(nb);
+                    }
+                }
+            }
+            d
+        };
+        let total = |t: usize| from_edge[t].checked_add(to_vault[t]);
+        let Some(best) = (0..n).filter_map(total).min() else { return crate::grid::NORTH };
+        let (px, py) = (post.x as i32, post.y as i32);
+        let Some(near) = (0..n).filter(|&t| total(t) == Some(best))
+            .min_by_key(|&t| {
+                let (x, y) = grid.coords(t as crate::grid::TileIndex);
+                ((x as i32 - px).abs() + (y as i32 - py).abs(), t)
+            }) else { return crate::grid::NORTH };
+        let (x, y) = grid.coords(near as crate::grid::TileIndex);
+        let (dx, dy) = (x as i32 - px, y as i32 - py);
+        let ways = [(crate::grid::NORTH, -dy), (crate::grid::EAST, dx),
+                    (crate::grid::SOUTH, dy), (crate::grid::WEST, -dx)];
+        match ways.iter().max_by_key(|&&(w, v)| (v, std::cmp::Reverse(w))) {
+            Some(&(w, v)) if v > 0 => w,
+            _ => crate::grid::NORTH,
         }
     }
 
@@ -866,6 +1090,13 @@ impl Island {
             }
             for n in grid.neighbours(at).into_iter().flatten() {
                 if !seen[n as usize] && grid.can_step(at, n) {
+                    seen[n as usize] = true;
+                    frontier.push(n);
+                }
+            }
+            // A tunnel is a route a crew can walk.
+            if let Some(n) = grid.tunnel_exit(at) {
+                if !seen[n as usize] {
                     seen[n as usize] = true;
                     frontier.push(n);
                 }
@@ -964,7 +1195,7 @@ impl Island {
         island.guards = [(2, 10), (5, 12), (9, 4), (11, 10), (12, 2)]
             .iter()
             .enumerate()
-            .map(|(row, (x, y))| Post { row: row as u8, x: *x, y: *y })
+            .map(|(row, (x, y))| Post { row: row as u8, x: *x, y: *y, facing: 0 })
             .collect();
         island.wards = crate::FIXTURE_WARDS.iter()
             .map(|(k, (x, y))| (*k, *x as u8, *y as u8))
@@ -1005,7 +1236,7 @@ impl Island {
         island.vault_level = 3;
         island.exposed = crate::heist::FIXTURE_EXPOSED as u32;
         island.entrance = ((side - 1) as u8, (side - 1) as u8);
-        island.guards = vec![Post { row: 2, x: 9, y: 7 }, Post { row: 1, x: 4, y: 10 }];
+        island.guards = vec![Post { row: 2, x: 9, y: 7, facing: 0 }, Post { row: 1, x: 4, y: 10, facing: 0 }];
         island.wards = vec![
             (WardKind::TimeSnare, 9, 6),
             (WardKind::GravityWell, 10, 10),

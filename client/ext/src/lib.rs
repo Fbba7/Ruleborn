@@ -293,6 +293,34 @@ impl RulebornReplay {
             .collect()
     }
 
+    /// The way each tile's directional feature faces, row by row: 0 north,
+    /// 1 east, 2 south, 3 west, and 255 where nothing faces (G56).
+    #[func]
+    fn facings(&self) -> PackedByteArray {
+        let Some(w) = self.world.as_ref() else { return PackedByteArray::new() };
+        (0..w.grid.len())
+            .map(|i| match w.grid.feature(i as _) {
+                Some(f) if f.directional() => w.grid.facing(i as _),
+                _ => 255,
+            })
+            .collect()
+    }
+
+    /// §6.2's tunnels, each its two mouths as tiles, the lower first.
+    #[func]
+    fn tunnels(&self) -> Array<Vector2i> {
+        let mut out = Array::new();
+        let Some(w) = self.world.as_ref() else { return out };
+        for i in 0..w.grid.len() {
+            if let Some(far) = w.grid.tunnel_exit(i as _).filter(|&f| f as usize > i) {
+                let ((ax, ay), (bx, by)) = (w.grid.coords(i as _), w.grid.coords(far));
+                out.push(Vector2i::new(ax as i32, ay as i32));
+                out.push(Vector2i::new(bx as i32, by as i32));
+            }
+        }
+        out
+    }
+
     /// Each tile's surface, row by row: 0 plain, 1 gravel, 2 water, 3 moss,
     /// in `sim::grid::Surface`'s order.
     #[func]
