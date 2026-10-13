@@ -271,6 +271,14 @@ BIRTH_WEIGHTS = (3, 2, 1)
 #: §11.3: "Traits tied to a law are three times as likely when a character is
 #: born in a realm running that law."
 LAW_TRAIT_WEIGHT = 3
+#: §11.6's rest after a heist, in minutes: "45 minutes after a clean escape, 60
+#: after a loud one, 180 if caught"; "Hearths shorten rest 5% per level"; the
+#: traits' factors, "Loyal 0.75 after a success … Sleepy 1.5"; and "Waking early
+#: costs 2 Essence per level per minute left".
+REST_MINUTES = (45, 60, 180)
+HEARTH_REST_CUT = 0.05
+REST_TRAIT_FACTORS = (0.75, 1.5)
+WAKE_ESSENCE = 2
 #: §5.2's "Boosted resource" column, by realm type in the table's order.
 REALM_BOOSTS = ("starlight", "starlight", "aether", "aether", "essence", "essence")
 #: The first session's first minute (§15.6): "Three ruleborn wake: a Featherkin, an Emberling and a
@@ -500,6 +508,10 @@ HOME = {
     "OWN_SCHOOL_COST_FACTOR": "5.5",
     "BIRTH_WEIGHTS": "11.5",
     "LAW_TRAIT_WEIGHT": "11.3",
+    "REST_MINUTES": "11.6",
+    "HEARTH_REST_CUT": "11.6",
+    "REST_TRAIT_FACTORS": "11.6",
+    "WAKE_ESSENCE": "11.6",
     "REALM_BOOSTS": "5.2",
     "STARTING_CREW": "15.6",
     "HEIST_CLOCK": "5.4",
@@ -701,6 +713,12 @@ STATED = {
                           lambda m: tuple(float(x) for x in m)),
     "CROWN_COST_FACTOR": (r"Cost of a law = base cost × tier \([^)]*\) × (\d+) if crowned", lambda m: int(m[0])),
     "OWN_SCHOOL_COST_FACTOR": (r"× (\d+) if crowned × ([\d.]+) in a realm of its school", lambda m: float(m[1])),
+    "REST_MINUTES": (r"(\d+) minutes after a clean escape, (\d+) after a loud one, (\d+) if caught",
+                     lambda m: tuple(int(x) for x in m)),
+    "HEARTH_REST_CUT": (r"Hearths shorten rest (\d+)% per level", lambda m: int(m[0]) / 100),
+    "REST_TRAIT_FACTORS": (r"Loyal ([\d.]+) after a success.*?Sleepy ([\d.]+)\)",
+                           lambda m: (float(m[0]), float(m[1]))),
+    "WAKE_ESSENCE": (r"Waking early costs (\d+) Essence per level per minute left", lambda m: int(m[0])),
     "LAW_TRAIT_WEIGHT": (r"Traits tied to a law are (two|three|four) times as likely",
                          lambda m: {"two": 2, "three": 3, "four": 4}[m[0]]),
     "BIRTH_WEIGHTS": (r"weighted as 11\.9 states: (\d+) for each law woven in its realm, (\d+) for the realm's own "

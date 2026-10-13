@@ -549,7 +549,7 @@ export class Service {
    * single-use and keys the result, so a retry after a dropped connection is
    * answered with what was decided the first time and pays nothing twice.
    */
-  submit(attacker, token, replay) {
+  submit(attacker, token, replay, crew = null) {
     const now = this.now();
     const lease = this.db.prepare("SELECT * FROM leases WHERE token = ?").get(token);
     // §24.8: "each carries a server-issued nonce bound to attacker and target".
@@ -585,6 +585,13 @@ export class Service {
       grace = true;
     }
 
+    // TD.34: the roster's characters the device names as the crew, held,
+    // not away, and the replay manifest's own (home.mjs).
+    if (crew) {
+      const why = this.home.crewProblem(attacker, crew, replay, header, now);
+      if (why) return refuse(why);
+    }
+
     // §24.11: re-simulated by the build it was played under, however old.
     const build = this.builds.get(header.rules);
     if (!build) return refuse("rules_not_held");
@@ -599,7 +606,8 @@ export class Service {
       return refuse("diverged", { second: result.second, review: true });
     }
     return this.settle(lease, replay, logHash, now,
-                       { validated: true, verdict: result.verdict, grace });
+                       { validated: true, verdict: result.verdict, grace, crew,
+                         heistMs: Math.round((header.ticks / TICKS_PER_SECOND) * 1000) });
   }
 
   /**
@@ -637,6 +645,8 @@ export class Service {
         this.home.firstStrays(lease.attacker, lawsOf(this.store.get(lease.bundle)), now);
         // §7.6: the laws met, the pylons' pages and the floor (codex.mjs).
         this.codex.afterHeist(lease, decision.verdict, now);
+        // §11.6: the crew away and resting, each by its outcome (home.mjs).
+        if (decision.crew) this.home.rest(lease.attacker, decision.crew, decision.verdict, decision.heistMs, now);
         this.db.prepare("UPDATE heists SET validated = 1, outcome = ? WHERE token = ?")
           .run(JSON.stringify(outcome), lease.token);
       }

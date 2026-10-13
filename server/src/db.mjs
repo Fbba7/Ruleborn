@@ -129,7 +129,10 @@ CREATE TABLE IF NOT EXISTS characters (
   work_realm TEXT,
   work_kind  TEXT,
   work_n     INTEGER,
-  work_since INTEGER
+  work_since INTEGER,
+  -- 11.6: away on a heist and resting after it, from and until (home.mjs).
+  away_from  INTEGER,
+  away_until INTEGER
 );
 CREATE INDEX IF NOT EXISTS characters_by_owner ON characters (owner);
 
@@ -764,6 +767,9 @@ const ADDED = [
   ["cohorts", "day60", "INTEGER"],
   ["purchase_intents", "recipient", "TEXT REFERENCES accounts(id)"],
   ["purchases", "recipient", "TEXT REFERENCES accounts(id)"],
+  // A character away on a heist and resting after it (home.mjs).
+  ["characters", "away_from", "INTEGER"],
+  ["characters", "away_until", "INTEGER"],
   // Where a building stands (universe.mjs `place`).
   ["buildings", "x", "INTEGER"],
   ["buildings", "y", "INTEGER"],

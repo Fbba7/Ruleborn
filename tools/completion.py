@@ -424,8 +424,9 @@ DELIVERABLES = [
         server_tests(
             "a worker goes only into a free slot or Guardian Post, and what it made where it was is kept when it moves (5.8)",
             "the home over HTTP: read, set to work, collected, and refused with the reason (9.3, 11.5)"),
-        not_started("a crew on a heist, and a character resting after one, off work (§5.8, "
-                    "§11.6), once a heist names the roster's characters (TD.34)"))),
+        server_tests(
+            "a heist names its crew from the roster, and each rests by its own outcome, off work until it is back (11.6, 12.9, TD.34)",
+            "a crew the roster does not hold, or that is not the replay's, does not record (TD.34)"))),
     ("4a", "Spending", BACKEND, server_tests(
         "a building is bought with Starlight from the ledger, once, however often the purchase is sent (10.2, 24.12)")),
     ("4a", "The Spire", BACKEND, server_tests(
@@ -673,8 +674,10 @@ DELIVERABLES = [
             "on coming to the foreground the device tells the server its time zone and, once it may notify, its push token, sends its session events — those kept offline too — and sets its storage-full timer from the home (G34, 14.6, 24)"),
         client_tests(
             "the push permission is asked at the start of the third session, once, and kept across launches (TD.74)"),
-        not_started("a character's rest and the Lab's experiments have timers to set, "
-                    "once the server keeps them (TD.34, TD.22)"),
+        client_tests(
+            "the rested notice is set for the first character whose rest ends, moved out of the night, "
+            "and taken away once nobody rests (14.6, 11.6)"),
+        not_started("the Lab's experiments have a timer to set, once the server keeps them (TD.22)"),
         not_started("on a phone: the tables bundled into both exports, and the platforms' "
                     "notification plugins behind LocalNotifier (TC.3)"))),
     ("10 to 13", "Accessibility", FRONTEND, client_tests(

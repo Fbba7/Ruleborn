@@ -109,7 +109,7 @@ def codex_cost(rule: str = "three_rank") -> float:
 def rest_minutes(grade: str, hearth_level: int) -> float:
     """§11.6's rest, after the Hearth's 5% a level."""
     cut = 1 - data.HEARTH_REST_CUT_PER_LEVEL * hearth_level
-    return data.REST_MINUTES[grade] * max(0.0, cut)
+    return data.REST_MINUTES_BY_GRADE[grade] * max(0.0, cut)
 
 
 def wake_cost(character_level: int, minutes_left: float) -> float:

@@ -20,6 +20,7 @@ func _init(t: SceneTree, c: Callable) -> void:
 func run() -> void:
 	_permission()
 	_storage_full()
+	_rested()
 	_sessions()
 	await _foreground()
 
@@ -74,6 +75,30 @@ func _storage_full() -> void:
 			and without.is_empty() and kept.get("at") == at.call(32.0)
 			and kept.get("title") == "ruleborn_storage_full_title" and notifier.timers.is_empty(),
 		"%d %d %d %d %s %s" % [day, night, west, opened, without, kept])
+
+
+## §14.6's "a character rested": the first rest the home names to end,
+## moved out of the night, and taken away once nobody rests (§11.6).
+func _rested() -> void:
+	var at := func(h: float) -> int: return MIDNIGHT + int(h * HOUR)
+	var home := {"night": [22, 8], "characters": [
+		{"kind": "featherkin", "state": "resting", "resting_until": at.call(13.0)},
+		{"kind": "emberling", "state": "resting", "resting_until": at.call(12.5)},
+		{"kind": "tidewalker", "state": "idle"}]}
+	var day := DeviceNotices.rested_at(home, 0)
+	home["characters"][1]["resting_until"] = at.call(23.5)
+	home["characters"][0]["resting_until"] = at.call(24.5)
+	var night := DeviceNotices.rested_at(home, 0)
+	var notifier := FakeLocalNotifier.new()
+	notifier.ask_permission()
+	DeviceNotices.apply(notifier, home, 0)
+	var kept: Dictionary = notifier.timers.get(DeviceNotices.RESTED, {})
+	DeviceNotices.apply(notifier, {"night": [22, 8], "characters": [{"state": "idle"}]}, 0)
+	check.call("the rested notice is set for the first character whose rest ends, moved out of the night, "
+			+ "and taken away once nobody rests (14.6, 11.6)",
+		day == at.call(12.5) and night == at.call(32.0) and kept.get("at") == at.call(32.0)
+			and kept.get("title") == "ruleborn_rested_title" and not notifier.timers.has(DeviceNotices.RESTED),
+		"%d %d %s %s" % [day, night, kept, notifier.timers])
 
 
 func _sessions() -> void:

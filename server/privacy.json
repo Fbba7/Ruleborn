@@ -421,6 +421,12 @@
     },
     "work_since": {
      "type": "gameplay"
+    },
+    "away_from": {
+     "type": "gameplay"
+    },
+    "away_until": {
+     "type": "gameplay"
     }
    },
    "deletion": "erased",

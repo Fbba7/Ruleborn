@@ -408,9 +408,13 @@ PAGES_BY_RANK_V3 = {"Common": 10, "Uncommon": 20, "Rare": 35, "Deep": 60}
 # per level per minute left." That last clause is the only price in the whole
 # document that a player pays again every time they play, which is what makes it
 # the one candidate for a recurring Essence sink.
-REST_MINUTES = {"clean": 45, "loud": 60, "caught": 180}
-HEARTH_REST_CUT_PER_LEVEL = 0.05
-WAKE_ESSENCE_PER_LEVEL_MINUTE = 2
+try:
+    from ..design_facts import HEARTH_REST_CUT, REST_MINUTES as _REST, WAKE_ESSENCE
+except ImportError:
+    from design_facts import HEARTH_REST_CUT, REST_MINUTES as _REST, WAKE_ESSENCE
+REST_MINUTES_BY_GRADE = dict(zip(("clean", "loud", "caught"), _REST))
+HEARTH_REST_CUT_PER_LEVEL = HEARTH_REST_CUT
+WAKE_ESSENCE_PER_LEVEL_MINUTE = WAKE_ESSENCE
 
 #: The proposal in docs/design/spec/sinks.md: upkeep as a share of the player's
 #: own hourly Aether production, per point of stability held, so the price sits

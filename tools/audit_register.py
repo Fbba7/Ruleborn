@@ -11514,8 +11514,10 @@ V37 = {
     "<strong>The document is done; the build is not.</strong> §12.5: <em>“The "
     "lease and the replay carry the crew: each member’s kind, form, level and "
     "traits”</em>; §24.8 puts each posted guard’s kind, form and level in the "
-    "bundle. Left: the manifest and the guards checked against the roster, "
-    "and the simulation playing each by its kind (TD.9, TD.34)."),
+    "bundle. Built: the manifest checked against the roster at submission — "
+    "each member a character the player holds, not resting, its kind, level "
+    "and traits the roster’s (TD.34). Left: the posted guards checked against "
+    "the roster, and the simulation playing levels and traits (TD.9, TD.34)."),
 
 "G61": dict(status="open", left="build", note=
     "<strong>The document is done; the build is not.</strong> §26.8 adds "

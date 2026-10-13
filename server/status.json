@@ -57,6 +57,7 @@
   "a creator holds five islands, eight once a Builder, and a withdrawn one frees its slot (20.12, 18.7)": "passed",
   "a crew is four to eight, joined by its invite, and survives its founder leaving (17.7)": "passed",
   "a crew that never lands is refused and pays nothing (5.4)": "passed",
+  "a crew the roster does not hold, or that is not the replay's, does not record (TD.34)": "passed",
   "a daily reminder at the time the player chose, or none (14.6)": "passed",
   "a database made while there was Starglass opens without it: its Starglass rows go, the rest stay (F41)": "passed",
   "a day's ceiling is half again above the whole fatigue curve; a week's is five days of it": "passed",
@@ -91,6 +92,7 @@
   "a heist earns §14.2's experience: 30 + 6 × level for a success, 10 + 2 × level foiled": "passed",
   "a heist is re-simulated in its era, and a replay that claims another pays nothing (18.3)": "passed",
   "a heist meets the island's laws, a page each, and a broken pylon gives a page of its law (7.6)": "passed",
+  "a heist names its crew from the roster, and each rests by its own outcome, off work until it is back (11.6, 12.9, TD.34)": "passed",
   "a heist's row is written before the rows that name it, so none of their tables is read whole (F47)": "passed",
   "a law of a producer's school adds 10% to it in its realm, a crowned one 5% in every realm, from when its weaving ends (9.3)": "passed",
   "a lease closed unplayed when its target was leased again goes too (G38)": "passed",
@@ -141,6 +143,7 @@
   "a replay is kept 90 days, then goes, and its heist stays (24.3)": "passed",
   "a replay must be the heist its lease allowed: the snapshot, the seed, the clock": "passed",
   "a replay that does not reproduce pays nothing, takes nothing, and is flagged (§24.12)": "passed",
+  "a resting character is woken early for 2 Essence a level a minute left, and over HTTP (11.6)": "passed",
   "a restored law is woven into a realm's slot for 40 Aether a point of its cost, weaving 10 minutes at tier I and working after (5.6)": "passed",
   "a retry is answered from the first decision and pays nothing twice (§24.12)": "passed",
   "a robbed player may Trace the raider once within 24 hours, with no entry fee (12.3)": "passed",
@@ -303,6 +306,7 @@
   "what runs the simulation has its own, smaller bucket, whichever route runs it (G44)": "passed",
   "while fewer than 15% change their defence, the share rises 5 points a season, to 20% at most (13.1)": "passed",
   "with a reminder chosen, the day's raids come inside it, and a later raid waits for the next (G34)": "passed",
-  "with an edge that answers, the purge is asked as the deletion is made, and a deletion asked for keeps the edge's copy (20.5, 20.11)": "passed"
+  "with an edge that answers, the purge is asked as the deletion is made, and a deletion asked for keeps the edge's copy (20.5, 20.11)": "passed",
+  "§11.6's rest: 45, 60 or 180 minutes by the outcome, less 5% a Hearth level, Loyal's 0.75 after a success and Sleepy's 1.5": "passed"
  }
 }

@@ -683,9 +683,23 @@ placed buildings on their tiles (`buildings_not_as_placed`, read with
   integrates each worker's share over the time it counted whenever the
   staffing or the level changes, and a producer holds twelve hours. A
   collection is paid into the ledger, which now carries Aether; a Garden's
-  pays the roster's keep, a quarter. The law, stability and fault terms are
-  1 until weaving is kept here, and `GET /v1/home` says so. What the document
-  leaves open is **G82**.
+  pays the roster's keep, a quarter. The law term is weaving.mjs's; the
+  stability and fault terms are 1 until TD.37 keeps them, and `GET /v1/home`
+  says so. What the document leaves open is **G82**.
+- **The crew and its rest** (§11.6, §12.9, TD.34). A heist names its crew from
+  the roster: `POST /v1/heists/:token?crew=ids`, each a character the player
+  holds, none twice, none away, as many as the replay's crew and, in an RBH3
+  replay, each member's kind, level and traits the manifest's; otherwise the
+  heist is refused as `crew_not_held`, `crew_mismatch` or `crew_resting`.
+  The re-simulation's verdict now says who got out (`outMask`), so each
+  member rests by its own outcome — 45 minutes clean, 60 loud or out of a
+  Partial, 180 caught or foiled — × (1 − 0.05 × its Hearth's level) ×
+  Loyal's 0.75 after a success and Sleepy's 1.5. The server learns of a heist
+  when it is submitted, so the crew is away from then for the heist's length
+  and its rest; production does not count it meanwhile, and `GET /v1/home`
+  shows it resting until then. `POST /v1/home/characters/:id/wake` brings one
+  back early for 2 Essence a level a minute left. A Spire home cuts nothing
+  from rest until §11.6 says what it does (G51).
 - **When it fills.** Each producer's `full_at` is the moment its store
   reaches what it holds, each worker counting from its own start, or null
   when it is full or unstaffed; the view's `night` is the §20.2 night the

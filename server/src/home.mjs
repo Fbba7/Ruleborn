@@ -27,6 +27,7 @@ import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
+import { HEADER } from "./sim.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 const content = (name) => JSON.parse(readFileSync(new URL(`../../content/${name}.json`, import.meta.url), "utf8"));
@@ -92,6 +93,31 @@ const WORK = Object.fromEntries(content("traits").flatMap((t) => {
 function dice(seed) {
   let i = 0;
   return (n) => createHash("sha256").update(`${seed}:${i++}`).digest().readUInt32BE(0) % n;
+}
+
+/** Whether character `c` is away at `at`: on a heist or resting after it. */
+const away = (c, at) => c.away_from != null && c.away_from <= at && at < c.away_until;
+
+/** The traits' indexes in content/traits.json, as a crew manifest carries
+ *  them (sim/src/replay.rs `Member`). */
+const TRAIT_INDEX = Object.fromEntries(content("traits").map((t, i) => [t.id, i]));
+const KIND_INDEX = Object.fromEntries(content("ruleborn").map((k, i) => [k.id, i]));
+
+/** §11.6's rest for one member, in minutes: "45 minutes after a clean
+ *  escape, 60 after a loud one, 180 if caught" — in a Partial, 60 for one who
+ *  got out and 180 for one who did not, and 180 for a foiled crew (§12.9) —
+ *  × (1 − 0.05 × its Hearth's level) × each trait's factor, Loyal's "after a
+ *  success, which counts a member who got out of a Partial", Sleepy's
+ *  always. */
+export function restMinutes(grade, out, traits, hearth) {
+  const [clean, loud, caught] = facts.REST_MINUTES;
+  const base = grade === "clean" ? clean : grade === "loud" ? loud
+    : grade === "partial" ? (out ? loud : caught) : caught;
+  const [loyal, sleepy] = facts.REST_TRAIT_FACTORS;
+  let m = base * (1 - facts.HEARTH_REST_CUT * hearth);
+  if (traits.includes("loyal") && grade !== "foiled" && out) m *= loyal;
+  if (traits.includes("sleepy")) m *= sleepy;
+  return m;
 }
 
 /** §11.5: the schools a birth is drawn from, by weight — "3 for each law
@@ -241,8 +267,10 @@ export class Home {
     const laws = 1 + perRealmLaw * (working[realm] ?? []).filter(matches).length
       + perCrownLaw * (working.crown ?? []).filter(matches).length;
     const boost = (type && schoolsOf(resource).includes(schoolOfType(type)) ? facts.OWN_SCHOOL_PRODUCTION : 1) * laws;
+    // §11.6: "A character on a heist isn't working or guarding", nor while
+    // it rests after one.
     const workers = this.characters(account)
-      .filter((c) => c.work_realm === realm && c.work_kind === kind)
+      .filter((c) => c.work_realm === realm && c.work_kind === kind && !away(c, at))
       .map((c) => {
         let bonus = schoolsOf(resource).includes(RULEBORN[c.kind].school) ? facts.WORKER_SCHOOL_BONUS : 0;
         for (const t of c.traits) if (WORK[t] && (WORK[t].at === null || WORK[t].at === kind)) bonus += WORK[t].share;
@@ -278,7 +306,10 @@ export class Home {
    *  weaving that finishes between the two starts its term there (§5.6,
    *  §9.3). */
   made(account, realm, kind, from, to) {
-    const cuts = [from, ...this.service.weaving.finishing(account, from, to), to];
+    const ends = this.characters(account).flatMap((c) => [c.away_from, c.away_until])
+      .filter((t) => t != null && t > from && t < to);
+    const cuts = [...new Set([from, ...this.service.weaving.finishing(account, from, to), ...ends, to])]
+      .sort((a, b) => a - b);
     let made = 0;
     for (let i = 0; i + 1 < cuts.length; i++) {
       const r = this.rate(account, realm, kind, cuts[i]);
@@ -403,6 +434,66 @@ export class Home {
     });
   }
 
+  /** Why `ids` cannot be the crew of the heist a replay records, or null:
+   *  each a character the player holds, none twice, none away, as many as
+   *  the replay's crew, and — when the replay carries §12.5's manifest —
+   *  each member's kind, level and traits the character's (TD.34). */
+  crewProblem(account, ids, replay, header, now) {
+    if (!Array.isArray(ids) || ids.length !== header.crew || new Set(ids).size !== ids.length) return "crew_mismatch";
+    const mine = this.characters(account);
+    const crew = ids.map((id) => mine.find((c) => c.id === id));
+    if (crew.some((c) => !c)) return "crew_not_held";
+    if (crew.some((c) => away(c, now))) return "crew_resting";
+    if (header.manifest) {
+      let at = HEADER.era + 1;
+      for (const c of crew) {
+        const [kind, , level, n] = replay.subarray(at, at + 4);
+        const traits = [...replay.subarray(at + 4, at + 4 + n)];
+        at += 4 + n;
+        const want = c.traits.map((t) => TRAIT_INDEX[t]);
+        if (kind !== KIND_INDEX[c.kind] || level !== c.level || traits.length !== want.length
+            || traits.some((t, i) => t !== want[i])) return "crew_mismatch";
+      }
+    }
+    return null;
+  }
+
+  /** §11.6: the crew away for the heist's length and resting after it, each
+   *  by its own outcome, its Hearth and its traits; the producers settled
+   *  first, so what each made before it left is paid. Inside the heist's
+   *  transaction. */
+  rest(account, ids, verdict, heistMs, now) {
+    this.settleAll(account, now);
+    const built = this.universe.buildings(account);
+    ids.forEach((id, i) => {
+      const c = this.characters(account).find((x) => x.id === id);
+      if (!c) return;
+      const hearth = c.home === "spire" ? 0
+        : built.find((b) => b.realm === c.home && b.kind === "hearth")?.level ?? 0;
+      const out = verdict.outMask == null ? verdict.grade !== "foiled" : Boolean(verdict.outMask & (1 << i));
+      const until = now + heistMs + Math.round(restMinutes(verdict.grade, out, c.traits, hearth) * MINUTE);
+      this.db.prepare("UPDATE characters SET away_from = ?, away_until = ? WHERE id = ?").run(now, until, id);
+    });
+  }
+
+  /** §11.6: "Waking early costs 2 Essence per level per minute left": a
+   *  resting character back now, paid by the minute begun. One not resting
+   *  is answered as awake. */
+  wake(account, id) {
+    const now = this.service.now();
+    return transaction(this.db, () => {
+      const c = this.characters(account).find((x) => x.id === Number(id));
+      if (!c) throw new Refused(404, "no_such_character");
+      if (!away(c, now)) return this.done(account, true);
+      const price = facts.WAKE_ESSENCE * c.level * Math.ceil((c.away_until - now) / MINUTE);
+      if (this.service.balance(account).essence < price) throw new Refused(409, "not_enough_essence", { cost: price });
+      this.settleAll(account, now);
+      this.db.prepare("UPDATE characters SET away_until = ? WHERE id = ?").run(now, c.id);
+      this.service.book(account, "essence", -price, `a character woken early (11.6)`, now);
+      return this.done(account);
+    });
+  }
+
   /** §11.4: character `id` raised to level `to`, the next, paid in Essence at
    *  §9.5's price, no higher than its home allows: "2 × the level of the
    *  Hearth the character lives in", the Spire's places at the Spire's. */
@@ -465,7 +556,8 @@ export class Home {
       id: c.id, kind: c.kind, school: RULEBORN[c.kind].school, role: RULEBORN[c.kind].role,
       traits: c.traits, level: c.level, top: places.find((p) => p.home === c.home)?.top ?? 1,
       home: c.home, via: c.via,
-      state: c.work_kind === POST ? "guarding" : c.work_kind ? "working" : "idle",
+      state: away(c, now) ? "resting" : c.work_kind === POST ? "guarding" : c.work_kind ? "working" : "idle",
+      ...(away(c, now) ? { resting_until: c.away_until } : {}),
       work: c.work_kind ? { realm: c.work_realm, kind: c.work_kind, n: c.work_n, since: c.work_since,
                             counts_from: c.work_since + facts.PRODUCTION_START_MINUTES * MINUTE } : null,
     }));

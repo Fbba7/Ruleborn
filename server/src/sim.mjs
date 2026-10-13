@@ -134,7 +134,9 @@ export class Build {
     const status = this.x.rb_verify(replay.length, island.length);
     if (status < 0) return { status: "refused", reason: REFUSED[status] };
     if (status > 0) return { status: "diverged", second: status };
-    const v = this.buffer().slice(0, 32);
+    // A build before the verdict carried who got out wrote 32 bytes.
+    const length = this.x.rb_verdict_bytes ? this.x.rb_verdict_bytes() : 32;
+    const v = this.buffer().slice(0, length);
     const view = new DataView(v.buffer);
     return {
       status: "verified",
@@ -145,6 +147,8 @@ export class Build {
         left: view.getInt32(20, true),
         // Whose pylons broke, bit n §7.7's nth law (content/laws.json's order).
         broken: Number(view.getBigUint64(24, true)),
+        // Who got out, bit n the crew's nth member; null from an older build.
+        outMask: length > 32 ? v[32] : null,
       },
     };
   }

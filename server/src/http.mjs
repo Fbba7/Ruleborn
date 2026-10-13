@@ -11,7 +11,7 @@
 //   GET  /v1/heists/:token/replay                            → the replay, to its raider or defender (§13)
 //   PUT  /v1/notifications       {"timeZone", "reminder", "nightQuiet", "pushToken"} → the settings,
 //                                                              and "reminderCleared" if the night took it
-//   POST /v1/heists/:token       replay bytes                → what was settled
+//   POST /v1/heists/:token       replay bytes                → what was settled; ?crew=ids names the roster's crew (11.6)
 //   GET  /v1/balance                                         → {starlight, essence}
 //   GET  /v1/keeper                                          → {level, xp, toNext, cap} (§14.2)
 //   GET  /v1/terms                                           → {version, accepted, url} (§20.11)
@@ -34,6 +34,7 @@
 //   POST /v1/home/characters/:id/work  {"realm", "kind", "n"} → set to work or to guard; no kind recalls (§5.8)
 //   POST /v1/home/characters/:id/level {"to"}                → raised a level with Essence (§11.4)
 //   POST /v1/home/characters/:id/home  {"home"}              → moved to another free place (§11.4)
+//   POST /v1/home/characters/:id/wake                       → a resting character back early, in Essence (§11.6)
 //   POST /v1/home/collect        {"realm", "kind"}           → what a producer holds, paid (§9.3)
 //   GET  /v1/codex                                           → every law met: pages, tier, chapter, next cost
 //   POST /v1/codex/study         {"heist", "law"}            → a heist's one study (§7.6)
@@ -477,6 +478,7 @@ export function handler(service, { webClientId = null, appleNotifications = null
         if (m === "POST" && a === "characters" && b && c === "work") return json(h.work(me, b, await body(request)));
         if (m === "POST" && a === "characters" && b && c === "level") return json(h.level(me, b, (await body(request)).to));
         if (m === "POST" && a === "characters" && b && c === "home") return json(h.move(me, b, text((await body(request)).home)));
+        if (m === "POST" && a === "characters" && b && c === "wake") return json(h.wake(me, b));
         return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "codex") {
@@ -571,7 +573,10 @@ export function handler(service, { webClientId = null, appleNotifications = null
           return json(service.notifications.set(who(), await body(request)));
         case "POST /v1/heists": {
           const attacker = who();
-          return json(service.submit(attacker, parts[2] ?? "", await bytes(request)));
+          // TD.34: ?crew=12,15,19 names the roster's characters who went.
+          const named = new URL(request.url).searchParams.get("crew");
+          const crew = named ? named.split(",").map(Number) : null;
+          return json(service.submit(attacker, parts[2] ?? "", await bytes(request), crew));
         }
         case "GET /v1/era": {
           who();

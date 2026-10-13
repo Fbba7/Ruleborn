@@ -152,6 +152,10 @@ pub struct Outcome {
     pub capacity: i32,
     pub caught: u32,
     pub out: u32,
+    /// Which got out: bit n is the crew's nth member, so the server rests
+    /// each by its own outcome (§12.9: "60 min, 180 for caught"; §11.6's
+    /// Loyal counts "a member who got out of a Partial").
+    pub out_mask: u8,
     /// Laws whose pylon the crew broke: a page of each (§12.6).
     pub pages: u32,
     /// Which: bit n is §7.7's nth law (`laws_table::LAWS`, content/laws.json's

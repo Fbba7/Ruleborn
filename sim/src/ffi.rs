@@ -147,19 +147,29 @@ pub extern "C" fn rb_island_buildings(len: u32) -> i32 {
     })
 }
 
+/// The length of `rb_verify`'s verdict.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_verdict_bytes() -> u32 {
+    33
+}
+
 /// §24.12's "Validate": a replay of `replay_len` bytes at the start of the
 /// buffer and the island it claims at `replay_len`, re-simulated.
 ///
 /// Returns 0 when every second agrees, the first second that does not when
 /// one does not, or a negative status (see the module docstring). On 0 the
-/// verdict is written to the buffer's first 32 bytes — the re-simulation's,
+/// verdict is written to the buffer's first 33 bytes — the re-simulation's,
 /// never the device's:
 ///
 /// ```text
 /// grade u8 (0 clean, 1 loud, 2 partial, 3 foiled), out u8, caught u8,
 /// crew u8, banked i32 LE, capacity i32 LE, pages u32 LE, cracked u32 LE,
-/// left i32 LE, broken u64 LE (bit n: §7.7's nth law's pylon)
+/// left i32 LE, broken u64 LE (bit n: §7.7's nth law's pylon), out u8 (bit n:
+/// the crew's nth member got out)
 /// ```
+/// `rb_verdict_bytes` says how long the verdict is, so a host reading an
+/// older build, which wrote 32, knows not to read the 33rd.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
 pub extern "C" fn rb_verify(replay_len: u32, island_len: u32) -> i32 {
@@ -191,6 +201,7 @@ pub extern "C" fn rb_verify(replay_len: u32, island_len: u32) -> i32 {
                 b[16..20].copy_from_slice(&outcome.cracked.to_le_bytes());
                 b[20..24].copy_from_slice(&outcome.left.to_le_bytes());
                 b[24..32].copy_from_slice(&outcome.broken.to_le_bytes());
+                b[32] = outcome.out_mask;
                 0
             }
             Err(refusal) => refusal_code(refusal),

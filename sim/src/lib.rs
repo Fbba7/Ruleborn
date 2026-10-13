@@ -4385,6 +4385,8 @@ impl World {
         let capacity: i32 = self.raiders.iter().map(|r| r.role.carry()).sum();
         let caught = self.raiders.iter().filter(|r| r.standing == Standing::Caught).count() as u32;
         let out = self.raiders.iter().filter(|r| r.standing == Standing::Out).count() as u32;
+        let out_mask = self.raiders.iter().enumerate()
+            .filter(|(_, r)| r.standing == Standing::Out).fold(0u8, |m, (i, _)| m | 1 << i);
         let grade = if banked == 0 {
             Grade::Foiled
         } else if out as usize != self.raiders.len() {
@@ -4399,7 +4401,7 @@ impl World {
             .fold(0u64, |m, l| m | 1u64 << l.def);
         let left = self.dropped.iter().map(|&(_, n)| n).sum::<i32>()
             + self.raiders.iter().filter(|r| r.standing != Standing::Out).map(|r| r.carried).sum::<i32>();
-        Outcome { grade, banked, capacity, caught, out, pages, broken, cracked: self.cracked, left }
+        Outcome { grade, banked, capacity, caught, out, out_mask, pages, broken, cracked: self.cracked, left }
     }
 
     /// Enter a state, and do what entering it means.

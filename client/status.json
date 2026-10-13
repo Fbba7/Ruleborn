@@ -93,6 +93,7 @@
   "the planned heist plays out Clean with every bag banked (§12.9)": "passed",
   "the push permission is asked at the start of the third session, once, and kept across launches (TD.74)": "passed",
   "the replay screen plays a golden to its end and shows its grade": "passed",
+  "the rested notice is set for the first character whose rest ends, moved out of the night, and taken away once nobody rests (14.6, 11.6)": "passed",
   "the result screen shows the validator's verdict: the re-simulation's grade, or nothing paid when refused": "passed",
   "the router shows a route's scene, and the screen history is in the store and its log": "passed",
   "the session is kept for its hour: a heist does not sign in again (G44)": "passed",

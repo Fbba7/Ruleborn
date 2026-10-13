@@ -1941,6 +1941,13 @@ dict(
                     "the build holds a level to 10 until the document says. It needs TC.12's "
                     "roster. The Roster's and Character's numbers are shown as the "
                     "heist's only once this lands.",
+             # Built, the server's half: a heist names its crew from the
+             # roster at submission, checked against the manifest's kinds,
+             # levels and traits and refused for one not held or resting;
+             # each rests by its own outcome (the verdict's out mask), its
+             # Hearth and its traits, off work meanwhile, and wakes early for
+             # Essence. Left: the simulation playing levels and traits, the
+             # posted guards against the roster, and the Sage's levels.
              gate="a lease refused for a crew member the roster does not hold or "
                   "one still resting (server tests); one simulation test each "
                   "for growth, the level cap, rest and a Sage's fifth-level "
@@ -2399,9 +2406,10 @@ dict(
                     "the start of the third session, once. Sessions are kept on "
                     "the phone and sent, a killed one ended at the next launch "
                     "as crashed, and the device reports its time zone and push "
-                    "token (G34). <strong>Left:</strong> the rested and "
-                    "experiment timers, once the server keeps rest (TD.34) and "
-                    "the Lab (TD.22); the survey when <code>GET /v1/survey</code> "
+                    "token (G34); and the rested timer, from the first rest the "
+                    "home names to end. <strong>Left:</strong> the "
+                    "experiment timer, once the server keeps the Lab (TD.22); "
+                    "the survey when <code>GET /v1/survey</code> "
                     "says so (G29); and, on a phone, the tables bundled into "
                     "both exports and the platforms' notification plugins "
                     "behind <code>LocalNotifier</code> (TC.3).",
