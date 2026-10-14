@@ -2600,9 +2600,20 @@ dict(
                   "listing what was kept (§12.14, §20.3)",
              blocked_by=["TD.3", "TD.12", "TD.13", "TC.12"],
              register=["C47", "D79", "D80", "G48", "G47", "C57"]),
-        dict(id="TD.41", owner="claude", status="blocked",
+        dict(id="TD.41", owner="claude", status="doing",
              title="The landing picker on one island",
-             detail="Stage A of the landing picker, on the one-island heist that "
+             detail="<strong>Built on the one-island heist.</strong> "
+                    "<code>Island::landing_covered</code> marks each open edge tile "
+                    "covered (fog, tall grass or unlit ground on it) or open from the "
+                    "terrain alone, and <code>World::landing_reach</code> is how far "
+                    "a landing is heard; the extension serves both. The heist screen "
+                    "waits at tick 0 with the picker in place of its action and crew "
+                    "rows: each spot named by its side and place, covered or open, "
+                    "the heist clock, a stepper and Land here, and a tap on a marked "
+                    "spot lands there too; the chosen tile is the replay's first "
+                    "command. Every outer realm's edge and each fault are TD.18's."
+                    "<br><br>"
+                    "Stage A of the landing picker, on the one-island heist that "
                     "exists: <code>landing_heard</code> and "
                     "<code>landing_reach</code> in the simulation and the "
                     "extension, the leased island's edge with what guards would "

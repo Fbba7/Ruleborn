@@ -1853,8 +1853,7 @@ impl World {
         if hidden {
             return;
         }
-        let (ln, ld) = self.sheet.factor(Param::NoiseRadius);
-        let reach = (heist::LANDING_HEARD_TILES as i64 * ln / ld).clamp(0, u16::MAX as i64 - 1) as u16;
+        let reach = self.landing_reach();
         let field = noise::field(&self.grid, tile, reach);
         let (grid, now) = (&self.grid, self.tick);
         for g in self.guards.iter_mut() {
@@ -2474,6 +2473,13 @@ impl World {
     /// unless a light is over the whole realm — Flicker's bright or dark
     /// seconds, Tempest's lightning — or Northern lights makes the bands
     /// "the only light".
+    /// §5.4: how far a landing is heard, in walked tiles: six, stretched by
+    /// a law's noise radius. What a landing picker says beside each spot.
+    pub fn landing_reach(&self) -> u16 {
+        let (ln, ld) = self.sheet.factor(Param::NoiseRadius);
+        (heist::LANDING_HEARD_TILES as i64 * ln / ld).clamp(0, u16::MAX as i64 - 1) as u16
+    }
+
     fn unlit(&self, tile: grid::TileIndex) -> bool {
         if let Some((bright, _)) = self.light {
             return !bright;

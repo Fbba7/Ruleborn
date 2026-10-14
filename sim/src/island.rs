@@ -728,6 +728,18 @@ impl Island {
     /// Crystal Wall standing: what a default landing chooses from, since
     /// `check` promises only that one exists and a Keeper may leave closed
     /// pockets along the edge.
+    /// §5.4: whether a landing on (x, y) goes unheard — fog, tall grass or
+    /// unlit ground on the spot — read from the terrain alone, as the scout
+    /// shows it, so a landing picker's mark is the same whatever guards and
+    /// wards the island places (§12.4, D77).
+    pub fn landing_covered(&self, x: u8, y: u8) -> bool {
+        if !self.on_grid(x, y) {
+            return false;
+        }
+        let t = &self.tiles[y as usize * self.side() as usize + x as usize];
+        matches!(t.feature, Some(Feature::FogBank | Feature::TallGrass)) || t.unlit
+    }
+
     pub fn reaching(&self) -> Vec<(u8, u8)> {
         let grid = self.standing();
         Self::open_edge(&grid).into_iter()

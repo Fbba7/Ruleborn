@@ -29,6 +29,13 @@ var calling_skiff := false
 var island := PackedByteArray()
 var seed_text := ""
 var over := false
+## §5.4's landing picker: while `choosing`, the heist waits at tick 0 for the
+## player to pick an edge spot. `marks` are the island's spots, each with
+## whether a landing there goes unheard, read from the terrain alone; `pick`
+## is the one on show.
+var choosing := false
+var marks: Array = []
+var pick := 0
 
 
 ## Start a fresh heist on this seed and clock, on `realm` (a bundle; empty for
@@ -41,8 +48,32 @@ func begin(new_seed: String, ticks: int, crew: int, realm := PackedByteArray(), 
 	selected = 0
 	calling_skiff = false
 	over = false
+	# An island of its own is landed on where the player picks; the fixture
+	# realm, played with no island, lands on the seed's default.
+	marks = world.landing_marks() if not realm.is_empty() else []
+	choosing = not marks.is_empty()
+	pick = maxi(0, marks.map(func(m: Dictionary) -> Vector2i: return m["at"]).find(default_landing()))
 	changed.emit()
 	return true
+
+
+## The spot on show, one along or back.
+func next_spot(by: int) -> void:
+	if marks.is_empty():
+		return
+	pick = posmod(pick + by, marks.size())
+	changed.emit()
+
+
+## §5.4: the crew lands on the spot on show, the replay's first command, and
+## the heist begins.
+func land_here() -> bool:
+	if not choosing or marks.is_empty():
+		return false
+	var landed_ok := land(Vector2i(marks[pick]["at"]))
+	choosing = false
+	changed.emit()
+	return landed_ok
 
 
 ## The era a lease names (§18.3), as `begin` takes it: a lease in none sends
@@ -70,6 +101,13 @@ func select(member: int) -> void:
 ##   anything else      walk there (§12.18)
 func tap_tile(t: Vector2i) -> void:
 	if t.x < 0:
+		return
+	# Choosing where to land: a tap on an edge spot picks it and lands.
+	if choosing:
+		var at := marks.map(func(m: Dictionary) -> Vector2i: return m["at"]).find(t)
+		if at >= 0:
+			pick = at
+			land_here()
 		return
 	var at := Vector2i(t.x * 256 + 128, t.y * 256 + 128)
 	if calling_skiff:
@@ -167,7 +205,11 @@ func advance(ticks: int) -> void:
 func land(t: Vector2i) -> bool:
 	if world.tick() != 0:
 		return false
-	return world.give(0, Kind.LAND, t.x * 256 + 128, t.y * 256 + 128)
+	var given := world.give(0, Kind.LAND, t.x * 256 + 128, t.y * 256 + 128)
+	# However the crew lands, the picking is over.
+	if given:
+		choosing = false
+	return given
 
 
 ## A landing the crew can walk to the Vault from, chosen by the heist's seed

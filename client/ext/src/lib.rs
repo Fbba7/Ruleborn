@@ -362,6 +362,29 @@ impl RulebornReplay {
         out
     }
 
+    /// §5.4's landing picker: each open edge tile with whether a landing
+    /// there goes unheard, read from the terrain alone (`landing_covered`),
+    /// so the mark is the same whatever guards and wards the island places.
+    #[func]
+    fn landing_marks(&self) -> Array<VarDictionary> {
+        let mut out = Array::new();
+        let Some(realm) = self.island.as_ref() else { return out };
+        for (x, y) in realm.landings() {
+            let mut d = VarDictionary::new();
+            d.set("at", Vector2i::new(x as i32, y as i32));
+            d.set("covered", realm.landing_covered(x, y));
+            out.push(&d);
+        }
+        out
+    }
+
+    /// §5.4: how many walked tiles a landing is heard across, a law's noise
+    /// radius stretching the six (`World::landing_reach`).
+    #[func]
+    fn landing_reach(&self) -> i64 {
+        self.world.as_ref().map_or(sim::heist::LANDING_HEARD_TILES as i64, |w| w.landing_reach() as i64)
+    }
+
     /// The landings from which the crew can walk to the Vault: what a
     /// default landing chooses from (`Island::reaching`).
     #[func]

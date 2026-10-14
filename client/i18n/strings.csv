@@ -815,3 +815,17 @@ SCOUT_NONE,none,none,nenhum,nenhum,keine,aucun
 SCOUT_WATCH,"Watch: suspicion fills at %d%%, sight reaches %d%%","Watch: suspicion fills at %d%%, sight reaches %d%%","Vigia: suspeita enche a %d%%, a visão alcança %d%%","Vigia: a suspeita enche a %d%%, a visão alcança %d%%","Wache: Verdacht füllt sich zu %d%%, Sicht reicht %d%%","Guet : le soupçon monte à %d %%, la vue porte à %d %%"
 SCOUT_HIDDEN,Where guards stand and wards lie is found in the heist,Where guards stand and wards lie is found in the heist,Onde ficam guardas e proteções se descobre no assalto,Onde estão guardas e proteções descobre-se no assalto,"Wo Wachen stehen und Siegel liegen, zeigt erst der Raubzug",Où se tiennent les gardes et les protections se découvre pendant le casse
 SCOUT_RAID,Raid · %s,Raid · %s,Assaltar · %s,Assaltar · %s,Überfallen · %s,Piller · %s
+LANDING_TITLE,Choose where to land,Choose where to land,Escolha onde pousar,Escolhe onde aterrar,Wähle den Landeplatz,Choisis où atterrir
+LANDING_HINT,"Tap an edge spot to land there, or step through the spots below","Tap an edge spot to land there, or step through the spots below","Toque num ponto da borda para pousar lá, ou percorra os pontos abaixo","Toca num ponto da orla para aterrar lá, ou percorre os pontos abaixo","Tippe auf einen Randplatz, um dort zu landen, oder geh die Plätze unten durch","Touche un point du bord pour y atterrir, ou parcours les points ci-dessous"
+LANDING_SPOT,"%s edge, %d of %d: %s","%s edge, %d of %d: %s","Borda %s, %d de %d: %s","Orla %s, %d de %d: %s","%s Rand, %d von %d: %s","Bord %s, %d sur %d : %s"
+LANDING_NORTH,North,North,norte,norte,Nördlicher,nord
+LANDING_SOUTH,South,South,sul,sul,Südlicher,sud
+LANDING_EAST,East,East,leste,este,Östlicher,est
+LANDING_WEST,West,West,oeste,oeste,Westlicher,ouest
+LANDING_COVERED,"covered, so no guard hears the skiff","covered, so no guard hears the skiff","coberto, nenhum guarda ouve o barco","coberto, nenhum guarda ouve o barco","gedeckt, keine Wache hört das Boot","couvert, aucun garde n'entend l'esquif"
+LANDING_OPEN,"open, heard by guards within %d tiles","open, heard by guards within %d tiles","aberto, guardas a até %d casas ouvem","aberto, guardas até %d casas ouvem","offen, Wachen in %d Feldern hören es","ouvert, les gardes à %d cases l'entendent"
+LANDING_COUNT,"%d spots, %d of them covered","%d spots, %d of them covered","%d pontos, %d cobertos","%d pontos, %d cobertos","%d Plätze, davon %d gedeckt","%d points, dont %d couverts"
+LANDING_CLOCK,Heist clock %s,Heist clock %s,Relógio do assalto %s,Relógio do assalto %s,Raubzug-Uhr %s,Horloge du casse %s
+LANDING_PREV,Previous spot,Previous spot,Ponto anterior,Ponto anterior,Voriger Platz,Point précédent
+LANDING_NEXT,Next spot,Next spot,Próximo ponto,Ponto seguinte,Nächster Platz,Point suivant
+LANDING_HERE,Land here,Land here,Pousar aqui,Aterrar aqui,Hier landen,Atterrir ici

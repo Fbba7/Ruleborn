@@ -627,7 +627,23 @@ DELIVERABLES = [
     ("4b", "Curation", FRONTEND, not_started("TD.22's screen gate passes for it")),
     ("4b", "Defence log", FRONTEND, not_started("TD.66's screen gate passes for it")),
     ("4b", "First launch", FRONTEND, not_started("TD.26's screen gate passes for it")),
-    ("4b", "Landing picker", FRONTEND, not_started("TD.41's screen gate passes for it")),
+    ("4b", "Landing picker", FRONTEND, parts(client_tests(
+        "the landing picker names each edge spot by its side and place along it, covered or open, with how "
+        "far a landing is heard and the heist clock (5.4, 23.2)",
+        "the heist screen shows the picker in place of the action and crew rows, its clock waits until the "
+        "crew lands, and Land here lands it (5.4, 21.8)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        client_tests(
+        "each edge spot is marked covered or open from the terrain alone, the same whatever guards and wards "
+        "the island places (5.4, 12.4, TD.41)",
+        "the chosen spot is the replay's first command, at tick 0, whether stepped to or tapped; a tap off "
+        "the edge lands nowhere (5.4, TD.41)",
+        "a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by "
+        "the server"),
+        not_started("every outer realm's edge and each fault, with each choice's clock and depth, on "
+                    "universes of several realms (§5.4, TD.18, T3.3)"))),
     ("4b", "Harmony view", FRONTEND, parts(client_tests(
         "the Harmony view shows every law working in a realm with its notes, a crown law among them as "
         "crowned, and the universe's strain (8.1, 5.1, 23.2)",

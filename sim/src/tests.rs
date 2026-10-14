@@ -4027,6 +4027,35 @@ fn a_landing_is_heard_within_six_tiles_unless_the_spot_is_hidden() {
 }
 
 #[test]
+fn a_landing_spot_is_marked_covered_from_the_terrain_alone_as_the_simulation_hears_it() {
+    use crate::grid::Feature;
+    // §5.4 and §12.4: the picker marks each edge spot covered or open from
+    // the terrain alone, so the marks are the same whatever guards and wards
+    // the island places, and a covered spot is one no guard hears.
+    let mut island = crate::island::Island::fixture();
+    let side = island.side() as usize;
+    island.tiles[2 * side + 13].feature = Some(Feature::FogBank);
+    island.tiles[side - 1].unlit = true;
+    let marks = |i: &crate::island::Island| -> Vec<bool> {
+        i.landings().iter().map(|&(x, y)| i.landing_covered(x, y)).collect()
+    };
+    let with = marks(&island);
+    assert!(island.landing_covered(13, 2) && island.landing_covered(side as u8 - 1, 0));
+    assert!(with.iter().any(|&c| !c), "most of the edge is open");
+    let mut bare = island.clone();
+    bare.guards.clear();
+    bare.wards.clear();
+    assert_eq!(marks(&bare), with, "guards and wards change no mark");
+    for (k, &(x, y)) in island.landings().iter().enumerate().step_by(5) {
+        let world = landed(&island, (x as i16, y as i16), Vec::new());
+        assert_eq!(world.landing_reach(), crate::heist::LANDING_HEARD_TILES as u16, "no law stretches it here");
+        if with[k] {
+            assert!(world.guards.iter().all(|g| g.suspicion == 0), "covered ({x}, {y}) is unheard");
+        }
+    }
+}
+
+#[test]
 fn a_landing_off_the_edge_late_or_twice_is_dropped() {
     let island = crate::island::Island::fixture();
     // Inland, off the grid, and on a closed edge tile.

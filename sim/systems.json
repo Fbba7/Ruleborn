@@ -491,6 +491,7 @@
       "tests": [
         "the_whole_crew_lands_on_the_spot_the_log_names",
         "a_landing_is_heard_within_six_tiles_unless_the_spot_is_hidden",
+        "a_landing_spot_is_marked_covered_from_the_terrain_alone_as_the_simulation_hears_it",
         "a_landing_off_the_edge_late_or_twice_is_dropped",
         "the_server_refuses_a_heist_that_never_lands",
         "every_open_edge_tile_is_a_landing_and_nothing_else_is"

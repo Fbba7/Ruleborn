@@ -39,6 +39,14 @@ var lease := {}
 var offline_prompt: Control
 var column_node: VBoxContainer
 
+## §5.4's landing picker, shown in place of the action and crew rows until
+## the crew lands.
+var picker: Control
+var picker_spot: Label
+var picker_count: Label
+var picker_clock: Label
+var actions_node: Control
+var crew_node: Control
 var _owed := 0.0
 var _alarm := 0
 var _live_wards := -1
@@ -219,7 +227,7 @@ func toggle_pause() -> void:
 
 
 func _process(delta: float) -> void:
-	if not playing or paused:
+	if not playing or paused or controller.choosing:
 		return
 	_owed += delta * RulebornReplay.ticks_per_second() * pace()
 	var whole := int(_owed)
@@ -237,6 +245,20 @@ func _refresh() -> void:
 	var me: Dictionary = controller.world.crew()[controller.selected]
 	hint_label.text = Strings.t("HEIST_SKIFF_HINT") if controller.calling_skiff else \
 		Strings.t("HEIST_HINT", Strings.term("ROLE", me["role"]))
+	# Before the crew lands: where, and nothing else (§5.4).
+	var choosing := controller.choosing
+	picker.visible = choosing
+	actions_node.visible = not choosing
+	crew_node.visible = not choosing
+	view.landing_marks = controller.marks if choosing else []
+	view.landing_pick = controller.pick
+	if choosing:
+		var p := LandingPresenter.picker(controller.marks, controller.pick, controller.world.size().x,
+			controller.world.landing_reach(), controller.world.ticks() / RulebornReplay.ticks_per_second())
+		hint_label.text = Strings.t("LANDING_HINT")
+		picker_spot.text = p["spot"]
+		picker_count.text = p["count"]
+		picker_clock.text = p["clock"]
 	UI.relabel(gait_button, Strings.term("GAIT", me["gait"]), true)
 	var crew := controller.world.crew()
 	for i in crew_buttons.size():
@@ -300,7 +322,24 @@ func _build() -> void:
 	hint_label = UI.label("", UI.TEXT_POINTS, true)
 	column.add_child(UI.plate(hint_label))
 
+	var box := VBoxContainer.new()
+	box.add_child(UI.label(Strings.t("LANDING_TITLE"), UI.TEXT_POINTS, true))
+	picker_spot = UI.label("", UI.TEXT_POINTS, true)
+	box.add_child(picker_spot)
+	picker_count = UI.label("", UI.TEXT_POINTS, true)
+	box.add_child(picker_count)
+	picker_clock = UI.label("", UI.TEXT_POINTS, true)
+	box.add_child(picker_clock)
+	var steps := UI.row(-1.0, true)
+	steps.add_child(UI.button(Strings.t("LANDING_PREV"), controller.next_spot.bind(-1)))
+	steps.add_child(UI.button(Strings.t("LANDING_NEXT"), controller.next_spot.bind(1)))
+	steps.add_child(UI.button(Strings.t("LANDING_HERE"), controller.land_here, true))
+	box.add_child(steps)
+	picker = UI.plate(box)
+	column.add_child(picker)
+
 	var actions := UI.row(-1.0, true)
+	actions_node = actions
 	column.add_child(actions)
 	if rehearsal:
 		pause_button = UI.button(Strings.t("HEIST_PAUSE"), toggle_pause)
@@ -315,7 +354,8 @@ func _build() -> void:
 	# The crew's portraits lowest, where the thumb rests (§21.8 puts them at
 	# the bottom); a narrow row, so it stays clear of the corners.
 	var crew_row := UI.row(-1.0, true)
-	column.add_child(UI.narrow(crew_row))
+	crew_node = UI.narrow(crew_row)
+	column.add_child(crew_node)
 	var crew := controller.world.crew()
 	for i in crew.size():
 		var role: String = crew[i]["role"]

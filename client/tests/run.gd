@@ -382,6 +382,7 @@ func _run() -> void:
 	await CodexTests.new(self, check, _mount, server_url).run()
 	await HarmonyTests.new(self, check, _mount, server_url).run()
 	await ObservatoryTests.new(self, check, _mount, server_url).run()
+	await LandingTests.new(self, check, _mount).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

@@ -64,6 +64,7 @@
   "a_knockout_on_either_side_is_logged_with_what_did_it": "passed",
   "a_landing_is_heard_within_six_tiles_unless_the_spot_is_hidden": "passed",
   "a_landing_off_the_edge_late_or_twice_is_dropped": "passed",
+  "a_landing_spot_is_marked_covered_from_the_terrain_alone_as_the_simulation_hears_it": "passed",
   "a_lantern_glare_fires_when_a_crew_member_comes_within_two_tiles": "passed",
   "a_lantern_glare_shows_the_crew_to_the_guards_within_4_m_and_blinds_it": "passed",
   "a_lantern_glares_reach_is_4_m_whatever_the_alarms_reach": "passed",

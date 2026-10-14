@@ -32,6 +32,11 @@ var replay: RulebornReplay
 ## facing." -1 is the first guard still on its feet.
 var selected_guard := -1
 
+## §5.4's landing spots while the player picks one: a ring where a landing
+## is heard, a filled dot where it is covered, the one on show ringed twice —
+## told apart by shape, not colour (§20.8).
+var landing_marks: Array = []
+var landing_pick := 0
 var _size := Vector2i.ZERO
 var _features := PackedByteArray()
 var _heights := PackedByteArray()
@@ -154,6 +159,15 @@ func _draw() -> void:
 		var r := Rect2(o + Vector2(w) * t, Vector2(t, t)).grow(-t * 0.1)
 		draw_rect(r, Color(Palette.TIME, 0.45))
 		draw_rect(r, Palette.INK, false, max(1.0, t * 0.05))
+	for k in landing_marks.size():
+		var m: Dictionary = landing_marks[k]
+		var c := o + (Vector2(m["at"]) + Vector2(0.5, 0.5)) * t
+		if m.get("covered", false):
+			draw_circle(c, t * 0.22, Palette.INK)
+		else:
+			draw_arc(c, t * 0.25, 0.0, TAU, 16, Palette.INK, max(1.0, t * 0.06))
+		if k == landing_pick:
+			draw_arc(c, t * 0.42, 0.0, TAU, 20, Palette.INK, max(1.5, t * 0.09))
 	_draw_vault(t)
 	for ward in replay.wards():
 		_draw_ward(ward, t)
