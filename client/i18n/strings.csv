@@ -766,3 +766,16 @@ LAW_RANK_COMMON,Common,Common,Comum,Comum,Gewöhnlich,Commune
 LAW_RANK_UNCOMMON,Uncommon,Uncommon,Incomum,Invulgar,Ungewöhnlich,Peu commune
 LAW_RANK_RARE,Rare,Rare,Rara,Rara,Selten,Rare
 LAW_RANK_DEEP,Deep,Deep,Profunda,Profunda,Tief,Profonde
+HARMONY_TITLE,Harmony,Harmony,Harmonia,Harmonia,Harmonie,Harmonie
+HARMONY_STRAIN,"Strain %s, %s","Strain %s, %s","Tensão %s, %s","Tensão %s, %s","Belastung %s, %s","Tension %s, %s"
+HARMONY_LAW,%s: %s,%s: %s,%s: %s,%s: %s,%s: %s,%s : %s
+HARMONY_LAW_CROWNED,"%s, crowned: %s","%s, crowned: %s","%s, na coroa: %s","%s, na coroa: %s","%s, gekrönt: %s","%s, couronnée : %s"
+HARMONY_EMPTY,No laws work here yet,No laws work here yet,Nenhuma lei atua aqui ainda,Ainda não atua aqui nenhuma lei,Hier wirkt noch kein Gesetz,Aucune loi n'agit encore ici
+HARMONY_NONE,"No harmonies, clashes, resonances or chords","No harmonies, clashes, resonances or chords","Sem harmonias, choques, ressonâncias ou acordes","Sem harmonias, choques, ressonâncias ou acordes","Keine Harmonien, Konflikte, Resonanzen oder Akkorde","Ni harmonies, ni heurts, ni résonances, ni accords"
+HARMONY_HARMONY,"Harmony on %s: %s, each costs %d%% less","Harmony on %s: %s, each costs %d%% less","Harmonia em %s: %s, cada uma %d%% mais barata","Harmonia em %s: %s, cada uma %d%% mais barata","Harmonie in %s: %s, je %d%% günstiger","Harmonie sur %s : %s, chacune %d %% moins chère"
+HARMONY_CLASH,"Clash of %s and %s: %s, each costs %d%% more","Clash of %s and %s: %s, each costs %d%% more","Choque de %s e %s: %s, cada uma %d%% mais cara","Choque de %s e %s: %s, cada uma %d%% mais cara","Konflikt von %s und %s: %s, je %d%% teurer","Heurt entre %s et %s : %s, chacune %d %% plus chère"
+HARMONY_RESONANCE,"%s: %s, each costs %d%% less","%s: %s, each costs %d%% less","%s: %s, cada uma %d%% mais barata","%s: %s, cada uma %d%% mais barata","%s: %s, je %d%% günstiger","%s : %s, chacune %d %% moins chère"
+HARMONY_RESONANCE_UNNAMED,"An unnamed resonance: %s, each costs %d%% less","An unnamed resonance: %s, each costs %d%% less","Uma ressonância sem nome: %s, cada uma %d%% mais barata","Uma ressonância sem nome: %s, cada uma %d%% mais barata","Eine unbenannte Resonanz: %s, je %d%% günstiger","Une résonance sans nom : %s, chacune %d %% moins chère"
+HARMONY_CHORD,"%s, of %s: %s, each costs %d%% less","%s, of %s: %s, each costs %d%% less","%s, de %s: %s, cada uma %d%% mais barata","%s, de %s: %s, cada uma %d%% mais barata","%s, aus %s: %s, je %d%% günstiger","%s, de %s : %s, chacune %d %% moins chère"
+HARMONY_CHORD_UNNAMED,"An unnamed chord of %s: %s, each costs %d%% less","An unnamed chord of %s: %s, each costs %d%% less","Um acorde sem nome de %s: %s, cada uma %d%% mais barata","Um acorde sem nome de %s: %s, cada uma %d%% mais barata","Ein unbenannter Akkord aus %s: %s, je %d%% günstiger","Un accord sans nom de %s : %s, chacune %d %% moins chère"
+HARMONY_FAILED,The Harmony view did not load: %s,The Harmony view did not load: %s,A Harmonia não carregou: %s,A Harmonia não carregou: %s,Die Harmonie wurde nicht geladen: %s,L'harmonie n'a pas chargé : %s

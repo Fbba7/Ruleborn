@@ -49,6 +49,7 @@ func _build() -> void:
 	column.add_child(UI.plate(status_label))
 	body = UI.scroll(column)
 	var actions := UI.row(-1.0, true)
+	actions.add_child(UI.button(Strings.t("HARMONY_TITLE"), func() -> void: App.services.router.go(&"harmony")))
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
 	column.add_child(UI.narrow(actions))
 

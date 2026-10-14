@@ -2854,7 +2854,8 @@ dict(
         # -- Track D, outside the slice ------------------------------------------
         dict(id="TD.44", owner="claude", status="doing",
              title="The Codex and the Harmony view",
-             detail="<strong>The Codex is built; the Harmony view is not.</strong> "
+             detail="<strong>The Codex and the Harmony view are built; the Harmony "
+                    "view names nothing until the Lab keeps what it discovers.</strong> "
                     "<code>scripts/codex_screen.gd</code> shows each school's album by "
                     "its shape and name, its four launch laws in chapter order, one "
                     "not met a “?” that names nothing (D79) and one in a closed "
@@ -2868,8 +2869,15 @@ dict(
                     "albums; matchmaking shows a raider only islands whose laws are "
                     "all from chapters they have open, and the generator's islands "
                     "run chapter 1's laws, open to everyone, so a thin list still "
-                    "fills. Left: the Harmony view, the Codex note from the heist "
-                    "rows, and the priced line for an unnamed resonance or chord."
+                    "fills. <code>scripts/harmony_screen.gd</code>, from "
+                    "<code>GET /v1/weaving/harmony</code>, shows each realm's laws "
+                    "with their notes, the crown's among them, and the harmonies, "
+                    "clashes, resonances and the chords the simulation sounds "
+                    "within capacity, each with what it does to its laws' cost; "
+                    "every resonance and chord is an unnamed line (§8.6) until the "
+                    "Lab (TD.65) keeps what it finds. Left: the names, the Codex "
+                    "note from the heist rows, and a crossing's hint of the "
+                    "partner's school."
                     "<br><br>"
                     "The Codex's chapters are unlock steps by Keeper level and its "
                     "schools are albums (§7.6), with restoration and study from "

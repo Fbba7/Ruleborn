@@ -250,3 +250,49 @@ test("no weave may take strain to Breaking, and a universe at Breaking weaves no
   w.unweave(me, { realm: CROWN, slot: 1 });
   assert.ok(w.show(me).stability.band < facts.STRAIN_BANDS.length, "taking a law out is how strain comes down");
 });
+
+test("the Harmony view shows each realm's laws with their notes, the crown's among them, and the harmonies, clashes, resonances and chords they make, each with its factor, a resonance or chord unnamed until the Lab names it (8.2, 8.3, 8.4, 8.6, 23.2)", () => {
+  const { t, me, w } = fresh(100_000);
+  t.service.codex.show(me);
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 40 WHERE id = ?").run(me);
+  t.service.book(me, "starlight", 500_000, "a test's grant");
+  t.service.universe.build(me, { realm: "heart", kind: "keeper_s_spire", n: 1, to: 2 });
+  t.service.codex.add(me, "bounce", 10, t.clock.now);
+  t.service.codex.restore(me, "bounce");
+  w.weave(me, { realm: "heart", slot: 1, law: "half_gravity" });
+  w.weave(me, { realm: "heart", slot: 2, law: "bounce" });
+  w.weave(me, { realm: CROWN, slot: 1, law: "slow_rivers" });
+  const heart = w.harmony(me).realms.find((r) => r.realm === "heart");
+  assert.deepEqual(heart.laws, [
+    { law: "half_gravity", notes: ["Flow"], crowned: false },
+    { law: "bounce", notes: ["Flow", "Echo"], crowned: false },
+    { law: "slow_rivers", notes: ["Weight"], crowned: true },
+  ], "a crown law works in every realm (5.1)");
+  assert.deepEqual(heart.harmonies, [{ note: "Flow", laws: ["half_gravity", "bounce"], factor: facts.HARMONY_COST_FACTOR }]);
+  assert.deepEqual(heart.clashes, [{ notes: ["Flow", "Weight"], laws: ["half_gravity", "bounce", "slow_rivers"],
+                                     factor: facts.DISSONANCE_COST_FACTOR }]);
+  assert.deepEqual(heart.resonances, [], "no signature pair here");
+  assert.deepEqual(heart.chords, [], "no chord sounds within this capacity");
+  // A chord the simulation sounds in the Heart, with every law carrying one
+  // of its notes; and Mangrove banks, Slow rivers with Bloom.
+  w.unweave(me, { realm: "heart", slot: 2 });
+  t.clock.now += 2 * 60 * MINUTE;
+  w.weave(me, { realm: "heart", slot: 2, law: "bloom" });
+  const real = w.stability.bind(w);
+  w.stability = (account, extra) => ({ ...real(account, extra), chords: [{ realm: 0, chord: "tempest" }] });
+  const again = w.harmony(me).realms.find((r) => r.realm === "heart");
+  assert.deepEqual(again.resonances, [{ name: null, laws: ["slow_rivers", "bloom"], factor: facts.RESONANCE_COST_FACTOR }]);
+  assert.deepEqual(again.chords, [{ name: null, notes: ["Flow", "Spark", "Glow"], laws: ["half_gravity"],
+                                   factor: facts.CHORD_COST_FACTOR }]);
+});
+
+test("the Harmony view is served over HTTP (23.2)", async () => {
+  const { t, me } = fresh();
+  t.service.weaving.weave(me, { realm: "heart", slot: 1, law: "slow_rivers" });
+  const token = t.service.session("gc:weaver").token;
+  const r = await t.handle(new Request("https://edge.example/v1/weaving/harmony",
+    { headers: { authorization: `Bearer ${token}` } }));
+  assert.equal(r.status, 200);
+  const body = await r.json();
+  assert.deepEqual(body.realms[0].laws, [{ law: "slow_rivers", notes: ["Weight"], crowned: false }]);
+});

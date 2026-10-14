@@ -40,6 +40,13 @@ const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), 
 const LAWS = Object.fromEntries(JSON.parse(readFileSync(new URL("../../content/laws.json", import.meta.url), "utf8"))
   .map((l) => [l.id, l]));
 const MINUTE = 60_000;
+const NOTES = JSON.parse(readFileSync(new URL("../../content/notes.json", import.meta.url), "utf8"));
+const RESONANCES = JSON.parse(readFileSync(new URL("../../content/resonances.json", import.meta.url), "utf8"));
+const CHORDS = Object.fromEntries(JSON.parse(readFileSync(new URL("../../content/chords.json", import.meta.url), "utf8"))
+  .map((c) => [c.id, c]));
+/** §8.3's opposite pairs, each once, in notes.json's order. */
+const OPPOSITES = NOTES.filter((n, i) => NOTES.findIndex((m) => m.name === n.opposite) > i)
+  .map((n) => [n.name, n.opposite]);
 
 /** The crown's slots, kept as a realm of their own. */
 export const CROWN = "crown";
@@ -235,6 +242,48 @@ export class Weaving {
         "UPDATE law_slots SET law = NULL, tier = NULL, ready_at = NULL, rests_until = ? WHERE owner = ? AND realm = ? AND slot = ?")
         .run(now + facts.SLOT_REST_MINUTES * MINUTE, account, realm, slot);
       return this.done(account);
+    });
+  }
+
+  /** §23.2's Harmony view: for each realm, the laws working there — its
+   *  own, and the crown's, which work in every realm (§5.1) — with their
+   *  notes (§8.1); the harmonies (a note two or more of them carry, §8.2)
+   *  and clashes (opposite notes on two different laws, §8.3) they make;
+   *  the signature resonances (§8.4) and the chords the simulation sounds
+   *  within capacity (§8.6); each with what it does to its laws' cost
+   *  (§5.5). A resonance or chord the Lab has not named is an unnamed line
+   *  with its discount (§8.6): the Lab names them (TD.65), and until it
+   *  keeps what it finds, every one is unnamed. What is weaving counts, as
+   *  it does for the price. */
+  harmony(account) {
+    return transaction(this.db, () => {
+      this.universe.ensure(account, this.service.now());
+      const rows = this.rows(account).filter((r) => r.law);
+      const crowned = rows.filter((r) => r.realm === CROWN).map((r) => r.law);
+      const priced = this.stability(account);
+      const realms = this.universe.realms(account).map((r) => {
+        const own = rows.filter((x) => x.realm === r.realm).map((x) => x.law);
+        const laws = [...own, ...crowned.filter((l) => !own.includes(l))];
+        const carry = (note) => laws.filter((l) => LAWS[l].notes.includes(note));
+        const harmonies = NOTES.map((n) => ({ note: n.name, laws: carry(n.name) }))
+          .filter((h) => h.laws.length >= 2)
+          .map((h) => ({ ...h, factor: facts.HARMONY_COST_FACTOR }));
+        const clashes = OPPOSITES.map(([a, b]) => ({ notes: [a, b], laws: [carry(a), carry(b)] }))
+          .filter((c) => c.laws[0].length && c.laws[1].length
+            && c.laws[0].some((x) => c.laws[1].some((y) => y !== x)))
+          .map((c) => ({ notes: c.notes, laws: [...new Set(c.laws.flat())], factor: facts.DISSONANCE_COST_FACTOR }));
+        const resonances = RESONANCES.filter((x) => x.laws.every((l) => laws.includes(l)))
+          .map((x) => ({ name: null, laws: x.laws, factor: facts.RESONANCE_COST_FACTOR }));
+        const chords = priced.chords.filter((c) => c.realm === realmIndex(r.realm)).map((c) => {
+          const notes = CHORDS[c.chord].notes;
+          return { name: null, notes, laws: laws.filter((l) => LAWS[l].notes.some((n) => notes.includes(n))),
+                   factor: facts.CHORD_COST_FACTOR };
+        });
+        return { realm: r.realm, type: r.type,
+                 laws: laws.map((l) => ({ law: l, notes: LAWS[l].notes, crowned: crowned.includes(l) })),
+                 harmonies, clashes, resonances, chords };
+      });
+      return { realms, stability: { band: priced.band, strain: priced.strain } };
     });
   }
 

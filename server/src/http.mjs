@@ -31,6 +31,7 @@
 //   GET  /v1/weaving                                        → each realm's law slots and the crown's, and prices (5.6)
 //   POST /v1/weaving {"realm", "slot", "law"}               → a restored law woven into a slot (5.6)
 //   DELETE /v1/weaving/:realm/:slot                         → a slot emptied; it rests an hour (5.6)
+//   GET  /v1/weaving/harmony                                → how each realm's laws combine (8, 23.2)
 //   GET  /v1/home                                            → the roster, its places, births and producers
 //   POST /v1/home/births         {"realm", "n"}              → a birth at the realm's Nursery (§11.5)
 //   POST /v1/home/characters/:id/work  {"realm", "kind", "n"} → set to work or to guard; no kind recalls (§5.8)
@@ -453,6 +454,7 @@ export function handler(service, { webClientId = null, appleNotifications = null
         const [, , a, b] = parts;
         const m = request.method;
         if (m === "GET" && !a) return json(w.show(me));
+        if (m === "GET" && a === "harmony" && !b) return json(w.harmony(me));
         if (m === "POST" && !a) return json(w.weave(me, await body(request)));
         if (m === "DELETE" && a && b) return json(w.unweave(me, { realm: a, slot: Number(b) }));
         return json({ error: "no_such_route" }, 404);

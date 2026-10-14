@@ -25,3 +25,8 @@ func weave(realm: String, slot: int, law: String) -> Result:
 ## §5.6: the law in slot `slot` of `realm` taken out; the slot rests an hour.
 func unweave(realm: String, slot: int) -> Result:
 	return await api.json(HTTPClient.METHOD_DELETE, "/v1/weaving/%s/%d" % [realm.uri_encode(), slot])
+
+
+## §23.2's Harmony view: how each realm's laws combine (§8).
+func harmony() -> Result:
+	return await api.get_json("/v1/weaving/harmony")

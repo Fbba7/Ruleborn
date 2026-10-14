@@ -585,7 +585,27 @@ DELIVERABLES = [
     ("4b", "Defence log", FRONTEND, not_started("TD.66's screen gate passes for it")),
     ("4b", "First launch", FRONTEND, not_started("TD.26's screen gate passes for it")),
     ("4b", "Landing picker", FRONTEND, not_started("TD.41's screen gate passes for it")),
-    ("4b", "Harmony view", FRONTEND, not_started("TD.44's screen gate passes for it")),
+    ("4b", "Harmony view", FRONTEND, parts(client_tests(
+        "the Harmony view shows every law working in a realm with its notes, a crown law among them as "
+        "crowned, and the universe's strain (8.1, 5.1, 23.2)",
+        "the Harmony view shows each realm's harmonies and clashes, and its resonances and chords, a "
+        "named one by its name and one not yet named as an unnamed line, each with what it does to its "
+        "laws' cost (8.2, 8.3, 8.4, 8.6, 5.5)",
+        "a realm with no laws working says so (23.2)",
+        "the Harmony view is fetched from the server, and a failed fetch keeps the last view on show and "
+        "says why (23.2)",
+        "the Harmony screen draws each realm and every combination its laws make, in words (23.2, 20.8)",
+        "against the server: the Harmony view shows a new universe's Heart running nothing yet (23.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "the Harmony view shows each realm's laws with their notes, the crown's among them, and the "
+        "harmonies, clashes, resonances and chords they make, each with its factor, a resonance or chord "
+        "unnamed until the Lab names it (8.2, 8.3, 8.4, 8.6, 23.2)",
+        "the Harmony view is served over HTTP (23.2)"),
+        not_started("the Lab keeps the resonances and chords it discovers, so the Harmony view names them "
+                    "(§8.4, §8.6; TD.65)"))),
     ("4b", "Forms album", FRONTEND, client_tests(
         "the Forms album shows the forms by kind and note, which the player has, and each form's quirk "
         "(11.10, 23.2)",

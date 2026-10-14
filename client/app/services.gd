@@ -43,6 +43,7 @@ var sage_flow: SageController
 var forms_flow: FormsController
 var weaving_flow: WeavingController
 var codex_flow: CodexController
+var harmony_flow: HarmonyController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -62,6 +63,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	FormsState.register(s.store)
 	WeavingState.register(s.store)
 	CodexState.register(s.store)
+	HarmonyState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -100,6 +102,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.forms_flow = FormsController.new(s)
 	s.weaving_flow = WeavingController.new(s)
 	s.codex_flow = CodexController.new(s)
+	s.harmony_flow = HarmonyController.new(s)
 	# What the phone built, wove or assigned offline is answered when the
 	# outbox sends it (§24).
 	s.outbox.settled.connect(s.universe_flow.offline_settled)
@@ -194,6 +197,7 @@ func close() -> void:
 	forms_flow = null
 	weaving_flow = null
 	codex_flow = null
+	harmony_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):

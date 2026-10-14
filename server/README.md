@@ -784,13 +784,17 @@ time, band after, the notes it would harmonise and clash on, its resonances
 and chords, and why it is refused, if it is — with two or three recommended,
 harmony first, clash last, then the cheapest; and the universe's capacity,
 strain and band. `POST /v1/weaving` weaves; `DELETE /v1/weaving/:realm/:slot`
-empties. What is woven is what home.mjs reads: §9.3's 1 + 0.10 per realm law
-of a producer's school and 0.05 per crown law, a producer's store integrated
-in stretches cut where a weaving finishes, so a law counts from then; and
-§11.5's births, their school drawn 3 for each law woven in the realm, 2 for
-its own school and 1 for each crown law, a law-linked trait three times as
-likely for a law the realm runs (§11.3). The load run does not weave yet, so
-its rows a player a day leave weaving out.
+empties. `GET /v1/weaving/harmony` is §23.2's Harmony view: each realm's laws,
+the crown's among them, with their notes, and the harmonies, clashes,
+resonances and the chords the simulation sounds, each with its factor; a
+resonance or chord is unnamed until the Lab keeps what it finds (§8.6). What
+is woven is what home.mjs reads: §9.3's 1 + 0.10 per realm law of a producer's
+school and 0.05 per crown law, a producer's store integrated in stretches cut
+where a weaving finishes, so a law counts from then; and §11.5's births, their
+school drawn 3 for each law woven in the realm, 2 for its own school and 1 for
+each crown law, a law-linked trait three times as likely for a law the realm
+runs (§11.3). The load run does not weave yet, so its rows a player a day
+leave weaving out.
 
 ## Constellations and crews
 

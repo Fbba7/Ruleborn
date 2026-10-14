@@ -26,6 +26,7 @@ const ROUTES := {
 	&"hatch": "res://scenes/hatch.tscn",
 	&"weaving": "res://scenes/weaving.tscn",
 	&"codex": "res://scenes/codex.tscn",
+	&"harmony": "res://scenes/harmony.tscn",
 }
 
 var store: Store
