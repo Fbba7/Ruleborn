@@ -6,9 +6,10 @@ class_name Settings
 ## pace for rehearsals, and banners that stay until dismissed. High contrast
 ## and reduced motion start as the phone's own settings say.
 ##
-## §20.8 also asks for adjustable hold times and a way to switch screen shake
-## off: nothing in the client is held or shakes, so neither is offered until
-## something does.
+## §20.8's adjustable hold times are one setting, for every held control: a
+## held Weave is the first (§23.5), with a tap path beside it. §20.8 also asks
+## for a way to switch screen shake off: nothing in the client shakes, so it
+## is not offered until something does.
 
 const FILE := "user://settings.cfg"
 ## Volumes are steps of a tenth, so a stepper reaches every value in ten taps.
@@ -27,6 +28,8 @@ static var haptics := true
 ## §20.8: "text size adjustable to 200%", in ui/tokens.json's steps.
 static var text_scale := 100
 static var high_contrast := false
+## §20.8: "hold times adjustable", in milliseconds, in ui/tokens.json's steps.
+static var hold_ms: int = int(Tokens.number("hold", "default"))
 ## §20.8: "controls can be mirrored for left-handed play".
 static var left_handed := false
 ## §20.8: "a slower mode for ruins that runs the simulation at 75% speed".
@@ -68,6 +71,8 @@ static func read_file() -> void:
 	var scale := int(cfg.get_value("access", "text_scale", 100))
 	text_scale = scale if scale in text_steps() else 100
 	high_contrast = bool(cfg.get_value("access", "high_contrast", phone_says("increase_contrast")))
+	var hold := int(cfg.get_value("access", "hold_ms", hold_default()))
+	hold_ms = hold if hold in hold_steps() else hold_default()
 	left_handed = bool(cfg.get_value("access", "left_handed", false))
 	slow_rehearsals = bool(cfg.get_value("access", "slow_rehearsals", false))
 	banners_stay = bool(cfg.get_value("access", "banners_stay", false))
@@ -126,6 +131,17 @@ static func text_steps() -> Array[int]:
 	return out
 
 
+static func hold_steps() -> Array[int]:
+	var out: Array[int] = []
+	for s: Variant in Tokens.list("hold", "steps"):
+		out.append(int(s))
+	return out
+
+
+static func hold_default() -> int:
+	return int(Tokens.number("hold", "default"))
+
+
 static func save() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("general", "locale", locale)
@@ -135,6 +151,7 @@ static func save() -> void:
 	cfg.set_value("motion", "haptics", haptics)
 	cfg.set_value("access", "text_scale", text_scale)
 	cfg.set_value("access", "high_contrast", high_contrast)
+	cfg.set_value("access", "hold_ms", hold_ms)
 	cfg.set_value("access", "left_handed", left_handed)
 	cfg.set_value("access", "slow_rehearsals", slow_rehearsals)
 	cfg.set_value("access", "banners_stay", banners_stay)

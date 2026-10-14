@@ -266,6 +266,7 @@ func _settings() -> void:
 		Settings.left_handed = true
 		Settings.slow_rehearsals = true
 		Settings.banners_stay = true
+		Settings.hold_ms = 2000
 		Settings.reduced_motion = true)
 	var contrast_applied := Palette.INK == Color("#000000")
 	var still := UI.motion_ms(200) == 0.0
@@ -274,19 +275,21 @@ func _settings() -> void:
 	Settings.left_handed = false
 	Settings.slow_rehearsals = false
 	Settings.banners_stay = false
+	Settings.hold_ms = 1000
 	Settings.reduced_motion = false
 	Settings.read_file()
 	var restored := [Settings.text_scale, Settings.high_contrast, Settings.left_handed, Settings.slow_rehearsals,
-		Settings.banners_stay, Settings.reduced_motion] == [175, true, true, true, true, true]
+		Settings.banners_stay, Settings.reduced_motion, Settings.hold_ms] == [175, true, true, true, true, true, 2000]
 	Settings.change(func() -> void:
 		Settings.text_scale = 100
 		Settings.high_contrast = false
 		Settings.left_handed = false
 		Settings.slow_rehearsals = false
 		Settings.banners_stay = false
+		Settings.hold_ms = 1000
 		Settings.reduced_motion = false)
 	check.call("high contrast and reduced motion start as the phone says; text size, contrast, left-handed "
-			+ "controls, rehearsal pace, banners and motion are saved and restored, and take effect (§20.8)",
+			+ "controls, rehearsal pace, banners, hold time and motion are saved and restored, and take effect (§20.8)",
 		from_phone == [true, true] and contrast_applied and still and restored and Palette.INK == Color("#221C3A"),
 		"phone %s, contrast %s, still %s, restored %s" % [from_phone, contrast_applied, still, restored])
 

@@ -481,7 +481,34 @@ DELIVERABLES = [
     ("4b", "Universe map", FRONTEND, not_started("TD.19's screen gate passes for it")),
     ("4b", "Law card", FRONTEND, not_started("TD.20's screen gate passes for it")),
     ("4b", "Realm view", FRONTEND, not_started("TD.19's screen gate passes for it")),
-    ("4b", "Weaving", FRONTEND, not_started("TD.20's screen gate passes for it")),
+    ("4b", "Weaving", FRONTEND, client_tests(
+        "Weaving shows the universe's stability as a bar of §5.5's seven bands, the current one marked in "
+        "words with its effect, and strain against capacity (5.5, 23.2)",
+        "Weaving recommends two or three laws for a realm, ranked: one that harmonises first, one that "
+        "clashes last, then the cheapest, each compared by its points, the band after weaving and its "
+        "harmonies and clashes (23.2, C48)",
+        "Weaving shows the harmonies, clashes and resonances every law would make before it is woven "
+        "(8.2, 8.3, 8.4, 23.2)",
+        "Weaving puts each weave's Aether price and weaving time on its button, the server's price for that "
+        "weave, into the realm's first free slot (5.6, 23.2)",
+        "a weave that would take strain into Breaking waits and says why (5.5)",
+        "Weaving shows each realm's slots and the crown's: a law woven with its tier, a free slot, a resting "
+        "one and when it frees (5.1, 5.6)",
+        "Weaving shows the Heart's two slots and no third, and the crown's slots the Spire has opened, none "
+        "at Spire level 1, one at 2, two at 5 and 6, with the level that opens the next (5.1, TD.20)",
+        "a weave sends the realm, slot and law and shows the view the server answers; a refusal keeps the "
+        "view on show and says why; taking a law out rests the slot (5.5, 5.6)",
+        "a weave with no network waits in the outbox, shown as confirming, and is confirmed on "
+        "reconnection with what is woven after it, or said refused and why (24, 5.6)",
+        "the Weaving screen draws the seven bands with the current one marked, each law's comparison and its "
+        "button; a weave into Breaking waits, and Aether is spent on a second tap (5.5, 5.6, 23.2)",
+        "a Weave held for the hold time weaves and one let go sooner does not; a tap path is beside it, the "
+        "screen says both, and the hold time is the player's to change (20.8, 23.5)",
+        "against the server: Weaving offers the starting laws at the simulation's prices, recommends them, "
+        "and charges for a weave the price it showed (5.5, 5.6, TD.14)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
     ("4b", "Planner", FRONTEND, not_started("TD.18's screen gate passes for it")),
     ("4b", "Observatory", FRONTEND, not_started("TD.18's screen gate passes for it")),
     ("4b", "Scout report", FRONTEND, not_started("TD.18's screen gate passes for it")),
@@ -765,7 +792,7 @@ DELIVERABLES = [
         "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)",
         "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach (§20.8, §21.1)",
         "haptics: a light tap on a button, a warning as the alarm rises, a pulse as a ward or a pylon goes down, nothing when switched off (§21.8, §20.8)",
-        "high contrast and reduced motion start as the phone says; text size, contrast, left-handed controls, rehearsal pace, banners and motion are saved and restored, and take effect (§20.8)",
+        "high contrast and reduced motion start as the phone says; text size, contrast, left-handed controls, rehearsal pace, banners, hold time and motion are saved and restored, and take effect (§20.8)",
         "left-handed play mirrors the heist's controls: Get out moves to the other hand (§20.8)",
         "nothing is carried by colour alone: wards by their school's shape, guards by a mark, crew by their role's letters, a status by its glyph (§20.8)",
         "on every screen, every word reads against what is behind it, in every state a control is drawn in and faded as it is, in both contrast modes (§21.8, §21.10)",

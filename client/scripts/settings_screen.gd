@@ -72,6 +72,15 @@ func _layout() -> void:
 		"text+"))
 	list.add_child(size)
 
+	var hold := UI.row()
+	var hold_name := Strings.t("SETTINGS_HOLD", seconds(Settings.hold_ms))
+	hold.add_child(_tag(UI.button("−", hold_step.bind(-1), false, Color(), Strings.t("SETTINGS_SHORTER", hold_name)),
+		"hold-"))
+	hold.add_child(UI.plate(UI.label(hold_name)))
+	hold.add_child(_tag(UI.button("+", hold_step.bind(1), false, Color(), Strings.t("SETTINGS_LONGER", hold_name)),
+		"hold+"))
+	list.add_child(hold)
+
 	for toggle: Array in [
 			["high_contrast", "SETTINGS_CONTRAST"], ["reduced_motion", "SETTINGS_MOTION"],
 			["haptics", "SETTINGS_HAPTICS"], ["left_handed", "SETTINGS_LEFT_HANDED"],
@@ -101,6 +110,22 @@ func text_step(by: int) -> void:
 	var i := clampi(steps.find(Settings.text_scale) + by, 0, steps.size() - 1)
 	Settings.change(func() -> void: Settings.text_scale = int(steps[i]))
 	_build()
+
+
+## §20.8's hold time, one step shorter or longer.
+func hold_step(by: int) -> void:
+	var steps := Settings.hold_steps()
+	var i := clampi(steps.find(Settings.hold_ms) + by, 0, steps.size() - 1)
+	Settings.change(func() -> void: Settings.hold_ms = int(steps[i]))
+	_build()
+
+
+## Milliseconds as seconds in the language's numbers: 0.5, 1, 1.5.
+static func seconds(ms: int) -> String:
+	var tenths := roundi(ms / 100.0)
+	if tenths % 10 == 0:
+		return str(tenths / 10)
+	return "%d%s%d" % [tenths / 10, Strings.t("NUMBER_DECIMAL"), tenths % 10]
 
 
 func flip(setting: String) -> void:

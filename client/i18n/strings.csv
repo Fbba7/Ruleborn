@@ -676,3 +676,54 @@ ERR_NO_SUCH_STRAY,there is no such stray,there is no such stray,esse perdido nã
 ERR_STRAY_GONE,that stray has gone on its way,that stray has gone on its way,esse perdido já seguiu o seu caminho,esse perdido já seguiu o seu caminho,dieser Streuner ist schon weitergezogen,cet errant a déjà repris sa route
 ERR_STRAY_TAKEN,that stray is already in the roster,that stray is already in the roster,esse perdido já está no plantel,esse perdido já está no plantel,dieser Streuner ist schon in der Aufstellung,cet errant est déjà dans l'effectif
 ERR_NOT_A_WORD,that name is not from the word lists,that name is not from the word lists,esse nome não vem das listas de palavras,esse nome não vem das listas de palavras,dieser Name stammt nicht aus den Wortlisten,ce nom ne vient pas des listes de mots
+HOME_WEAVING,Weave laws,Weave laws,Tecer leis,Tecer leis,Gesetze weben,Tisser des lois
+WEAVING_TITLE,Weaving,Weaving,Tecelagem,Tecelagem,Weben,Tissage
+WEAVING_AETHER,%s Aether to weave with,%s Aether to weave with,%s de Aether para tecer,%s de Aether para tecer,%s Aether zum Weben,%s d'Aether pour tisser
+WEAVING_STRAIN,"Strain %s: %s of %s stability, %s","Strain %s: %s of %s stability, %s","Tensão %s: %s de %s de estabilidade, %s","Tensão %s: %s de %s de estabilidade, %s","Belastung %s: %s von %s Stabilität, %s","Tension %s : %s sur %s de stabilité, %s"
+WEAVING_BAND_0,Quiet,Quiet,Quiet,Quiet,Quiet,Quiet
+WEAVING_BAND_1,Steady,Steady,Steady,Steady,Steady,Steady
+WEAVING_BAND_2,Humming,Humming,Humming,Humming,Humming,Humming
+WEAVING_BAND_3,Brimming,Brimming,Brimming,Brimming,Brimming,Brimming
+WEAVING_BAND_4,Strained,Strained,Strained,Strained,Strained,Strained
+WEAVING_BAND_5,Cracking,Cracking,Cracking,Cracking,Cracking,Cracking
+WEAVING_BAND_6,Breaking,Breaking,Breaking,Breaking,Breaking,Breaking
+WEAVING_EFFECT_0,No effect,No effect,Sem efeito,Sem efeito,Keine Wirkung,Aucun effet
+WEAVING_EFFECT_1,+5% production everywhere,+5% production everywhere,+5% de produção em todo lugar,+5% de produção em todo o lado,+5% Produktion überall,+5 % de production partout
+WEAVING_EFFECT_2,+10% production,+10% production,+10% de produção,+10% de produção,+10% Produktion,+10 % de production
+WEAVING_EFFECT_3,+15% production; pylons have 10% more health,+15% production; pylons have 10% more health,+15% de produção; pilares com 10% mais vida,+15% de produção; pilares com 10% mais vida,+15% Produktion; Pylone haben 10% mehr Leben,+15 % de production ; les pylônes ont 10 % de vie en plus
+WEAVING_EFFECT_4,+15% production; one fault opens to the Heart,+15% production; one fault opens to the Heart,+15% de produção; uma falha se abre até o Coração,+15% de produção; abre-se uma falha até ao Coração,+15% Produktion; ein Riss öffnet sich zum Herzen,+15 % de production ; une faille s'ouvre vers le Cœur
+WEAVING_EFFECT_5,Two or three faults; laws flicker in heists,Two or three faults; laws flicker in heists,Duas ou três falhas; leis piscam nos assaltos,Duas ou três falhas; as leis piscam nos assaltos,Zwei oder drei Risse; Gesetze flackern bei Raubzügen,Deux ou trois failles ; les lois clignotent pendant les casses
+WEAVING_EFFECT_6,No new weaving; four faults; laws flicker twice as often,No new weaving; four faults; laws flicker twice as often,Nada novo a tecer; quatro falhas; leis piscam o dobro,Nada novo a tecer; quatro falhas; as leis piscam o dobro,Kein neues Weben; vier Risse; Gesetze flackern doppelt so oft,Plus de tissage ; quatre failles ; les lois clignotent deux fois plus
+WEAVING_CROWN,The crown,The crown,A coroa,A coroa,Die Krone,La couronne
+WEAVING_SLOT_EMPTY,Slot %d: empty,Slot %d: empty,Espaço %d: vazio,Espaço %d: vazio,Platz %d: leer,Emplacement %d : vide
+WEAVING_SLOT_LAW,"Slot %d: %s, tier %d","Slot %d: %s, tier %d","Espaço %d: %s, nível %d","Espaço %d: %s, nível %d","Platz %d: %s, Stufe %d","Emplacement %d : %s, rang %d"
+WEAVING_SLOT_WEAVING,"Slot %d: %s, woven in %s","Slot %d: %s, woven in %s","Espaço %d: %s, tecida em %s","Espaço %d: %s, tecida dentro de %s","Platz %d: %s, gewebt in %s","Emplacement %d : %s, tissée dans %s"
+WEAVING_SLOT_RESTING,"Slot %d: resting, free in %s","Slot %d: resting, free in %s","Espaço %d: descansando, livre em %s","Espaço %d: a descansar, livre dentro de %s","Platz %d: ruht, frei in %s","Emplacement %d : au repos, libre dans %s"
+WEAVING_UNWEAVE,Take out,Take out,Retirar,Retirar,Herausnehmen,Retirer
+WEAVING_UNWEAVE_SPOKEN,Take %s out of slot %d,Take %s out of slot %d,Retirar %s do espaço %d,Retirar %s do espaço %d,%s aus Platz %d nehmen,Retirer %s de l'emplacement %d
+WEAVING_RECOMMENDED,Recommended,Recommended,Recomendadas,Recomendadas,Empfohlen,Recommandées
+WEAVING_OTHERS,Every other restored law,Every other restored law,Todas as outras leis restauradas,Todas as outras leis restauradas,Alle anderen wiederhergestellten Gesetze,Toutes les autres lois restaurées
+WEAVING_OFFER,"%s: %s points, %s after weaving","%s: %s points, %s after weaving","%s: %s pontos, %s depois de tecer","%s: %s pontos, %s depois de tecer","%s: %s Punkte, danach %s","%s : %s points, %s après le tissage"
+WEAVING_HARMONISES,Harmonises on %s,Harmonizes on %s,Harmoniza em %s,Harmoniza em %s,Harmoniert in %s,S'harmonise sur %s
+WEAVING_CLASHES,Clashes on %s,Clashes on %s,Destoa em %s,Destoa em %s,Kollidiert in %s,Se heurte sur %s
+WEAVING_RESONANCE,Resonances it would sound: %d,Resonances it would sound: %d,Ressonâncias que soaria: %d,Ressonâncias que soaria: %d,"Resonanzen, die erklängen: %d",Résonances qu'elle ferait sonner : %d
+WEAVING_CHORD,Chords it would join: %d,Chords it would join: %d,Acordes de que faria parte: %d,Acordes de que faria parte: %d,"Akkorde, zu denen es gehörte: %d",Accords dont elle ferait partie : %d
+WEAVING_BUTTON,"Weave, %s Aether, %s","Weave, %s Aether, %s","Tecer, %s de Aether, %s","Tecer, %s de Aether, %s","Weben, %s Aether, %s","Tisser, %s d'Aether, %s"
+WEAVING_BUTTON_SPOKEN,"Weave %s: %s Aether, %s","Weave %s: %s Aether, %s","Tecer %s: %s de Aether, %s","Tecer %s: %s de Aether, %s","%s weben: %s Aether, %s","Tisser %s : %s d'Aether, %s"
+WEAVING_MINUTES,%d min,%d min,%d min,%d min,%d Min.,%d min
+WEAVING_HOURS,%d h,%d h,%d h,%d h,%d Std.,%d h
+WEAVING_HOURS_MINUTES,%d h %d min,%d h %d min,%d h %d min,%d h %d min,%d Std. %d Min.,%d h %d min
+WEAVING_CONFIRM,Tap again to spend %s Aether,Tap again to spend %s Aether,Toque de novo para gastar %s de Aether,Toca de novo para gastar %s de Aether,"Nochmal tippen, um %s Aether auszugeben",Touche encore pour dépenser %s d'Aether
+WEAVING_CONFIRM_SPOKEN,%s: tap again to spend %s Aether,%s: tap again to spend %s Aether,%s: toque de novo para gastar %s de Aether,%s: toca de novo para gastar %s de Aether,"%s: nochmal tippen, um %s Aether auszugeben",%s : touche encore pour dépenser %s d'Aether
+WEAVING_NO_SLOT,no free slot here,no free slot here,nenhum espaço livre aqui,nenhum espaço livre aqui,hier ist kein Platz frei,aucun emplacement libre ici
+WEAVING_WOVEN,%s is being woven,%s is being woven,%s está sendo tecida,%s está a ser tecida,%s wird gewebt,%s est en cours de tissage
+WEAVING_UNWOVEN,Taken out; the slot rests an hour,Taken out; the slot rests an hour,Retirada; o espaço descansa uma hora,Retirada; o espaço descansa uma hora,Herausgenommen; der Platz ruht eine Stunde,Retirée ; l'emplacement se repose une heure
+WEAVING_OFFLINE_REFUSED,%s was not woven: %s,%s was not woven: %s,%s não foi tecida: %s,%s não foi tecida: %s,%s wurde nicht gewebt: %s,%s n'a pas été tissée : %s
+WEAVING_FAILED,Nothing was woven: %s,Nothing was woven: %s,Nada foi tecido: %s,Nada foi tecido: %s,Nichts wurde gewebt: %s,Rien n'a été tissé : %s
+ERR_WOULD_BREAK,it would take strain to Breaking,it would take strain to Breaking,levaria a tensão a Breaking,levaria a tensão a Breaking,es brächte die Belastung auf Breaking,cela porterait la tension à Breaking
+ERR_BREAKING,no new weaving while strain is Breaking,no new weaving while strain is Breaking,nada novo a tecer com a tensão em Breaking,nada novo a tecer com a tensão em Breaking,"kein neues Weben, solange die Belastung Breaking ist",plus de tissage tant que la tension est Breaking
+WEAVING_HOW,"Hold a Weave button for %s s, or tap it twice","Hold a Weave button for %s s, or tap it twice","Segure um botão Tecer por %s s, ou toque nele duas vezes","Mantém um botão Tecer premido %s s, ou toca nele duas vezes",Halte eine Weben-Taste %s s gedrückt oder tippe zweimal,"Maintiens un bouton Tisser %s s, ou touche-le deux fois"
+SETTINGS_HOLD,Hold %s s,Hold %s s,Segurar %s s,Premir %s s,Halten %s s,Appui %s s
+SETTINGS_SHORTER,%s: shorter,%s: shorter,%s: menor,%s: mais curto,%s: kürzer,%s : plus court
+SETTINGS_LONGER,%s: longer,%s: longer,%s: maior,%s: mais longo,%s: länger,%s : plus long
+WEAVING_CROWN_OPENS,The next crown slot opens at Spire level %d,The next crown slot opens at Spire level %d,O próximo espaço da coroa abre com a Torre no nível %d,O próximo espaço da coroa abre com a Torre no nível %d,Der nächste Kronenplatz öffnet sich mit Turm auf Level %d,Le prochain emplacement de la couronne s'ouvre avec la Tour au niveau %d

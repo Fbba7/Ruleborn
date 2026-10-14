@@ -757,22 +757,29 @@ from the confirmation.
 law slots for its level, the Heart realm level 3's two, and the crown its
 slots by the Spire, one at Spire level 2 and a second at 5. A law is woven
 only once the Codex has restored it, at the Codex's tier, into an empty slot
-that is not resting, once a realm, and crowned or woven in realms, never
-both. It costs §5.6's 40 Aether a point of §5.5's cost of the law alone —
-base × tier (1.0, 1.3, 1.6) × 2 if crowned × 0.8 in a realm of its school —
-and works after §5.6's 10 minutes, 40 minutes or 2 hours; until then the slot
-is empty. Removing one is instant, and the slot rests an hour. The terms
-that depend on a realm's other laws — harmonies, resonances, chords,
-dissonances — and an era's discounts are TD.14's one pricing function;
-strain, upkeep and Breaking are TD.37's. `GET /v1/weaving` shows each realm's
-slots and each restored law's price there; `POST /v1/weaving` weaves; `DELETE
-/v1/weaving/:realm/:slot` empties. What is woven is what home.mjs reads:
-§9.3's 1 + 0.10 per realm law of a producer's school and 0.05 per crown law,
-a producer's store integrated in stretches cut where a weaving finishes, so a
-law counts from then; and §11.5's births, their school drawn 3 for each law
-woven in the realm, 2 for its own school and 1 for each crown law, a
-law-linked trait three times as likely for a law the realm runs (§11.3). The
-load run does not weave yet, so its rows a player a day leave weaving out.
+that is not resting, once a realm, and crowned or woven in realms, never both.
+It costs §5.6's 40 Aether a point of §5.5's cost of the law where it would be
+woven — base × tier (1.0, 1.3, 1.6) × 2 if crowned × 0.8 in a realm of its
+school, the terms that depend on the realm's other laws (harmonies,
+resonances, chords, dissonances) and the week's era — priced by the
+simulation's one function (TD.14, `sim/src/stability.rs`), which the client
+calls too. It works after §5.6's 10 minutes, 40 minutes or 2 hours; until then
+the slot is empty. Removing one is instant, and the slot rests an hour. No
+weave is taken in a universe at Breaking, nor one that would take strain there
+(§5.5: `breaking`, `would_break`); upkeep is TD.37's. `GET /v1/weaving` shows
+each realm's slots, type, each restored law's price there, the Spire level
+that opens the next crown slot, and §23.2's offers — each law's points, price,
+time, band after, the notes it would harmonise and clash on, its resonances
+and chords, and why it is refused, if it is — with two or three recommended,
+harmony first, clash last, then the cheapest; and the universe's capacity,
+strain and band. `POST /v1/weaving` weaves; `DELETE /v1/weaving/:realm/:slot`
+empties. What is woven is what home.mjs reads: §9.3's 1 + 0.10 per realm law
+of a producer's school and 0.05 per crown law, a producer's store integrated
+in stretches cut where a weaving finishes, so a law counts from then; and
+§11.5's births, their school drawn 3 for each law woven in the realm, 2 for
+its own school and 1 for each crown law, a law-linked trait three times as
+likely for a law the realm runs (§11.3). The load run does not weave yet, so
+its rows a player a day leave weaving out.
 
 ## Constellations and crews
 

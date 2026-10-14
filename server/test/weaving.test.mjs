@@ -7,7 +7,7 @@ import { test } from "node:test";
 
 import { LAW_TRAITS, birthSchools } from "../src/home.mjs";
 import { confirm } from "../src/offline.mjs";
-import { CROWN } from "../src/weaving.mjs";
+import { CROWN, recommend } from "../src/weaving.mjs";
 import { server } from "./setup.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
@@ -58,10 +58,12 @@ test("a restored law is woven into a realm's slot for 40 Aether a point of its c
 test("crown slots open at Spire levels 2 and 5, a crown law costs double, and a law is crowned or woven in a realm, never both (5.1, 5.5)", () => {
   const { t, me, w, slot } = fresh();
   refused(() => w.weave(me, { realm: CROWN, slot: 1, law: "bloom" }), "no_such_slot");
+  assert.equal(w.show(me).realms[0].opens_at, 2, "the first crown slot opens at Spire level 2");
   t.service.db.prepare("UPDATE accounts SET keeper_level = 40 WHERE id = ?").run(me);
   t.service.book(me, "starlight", 500_000, "a test's grant");
   t.service.universe.build(me, { realm: "heart", kind: "keeper_s_spire", n: 1, to: 2 });
   assert.equal(w.show(me).realms[0].slots.length, 1, "Spire 2 opens the first crown slot");
+  assert.equal(w.show(me).realms[0].opens_at, 5, "and the second waits for Spire level 5");
   const before = t.service.aether(me);
   w.weave(me, { realm: CROWN, slot: 1, law: "bloom" });
   assert.equal(before - t.service.aether(me),
@@ -74,6 +76,8 @@ test("crown slots open at Spire levels 2 and 5, a crown law costs double, and a 
   t.service.universe.build(me, { realm: "heart", kind: "keeper_s_spire", n: 1, to: 4 });
   t.service.universe.build(me, { realm: "heart", kind: "keeper_s_spire", n: 1, to: 5 });
   assert.equal(w.show(me).realms[0].slots.length, 2, "Spire 5 opens the second");
+  assert.equal(w.show(me).realms[0].opens_at, null, "and no more open");
+  assert.equal(w.show(me).realms[1].slots.length, facts.LAW_SLOTS[2], "the Heart keeps realm level 3's slots");
   refused(() => w.weave(me, { realm: CROWN, slot: 2, law: "slow_rivers" }), "woven_in_a_realm");
 });
 
@@ -145,7 +149,9 @@ test("a birth's school is drawn 3 for each law woven in its realm, 2 for the rea
 test("weaving offline is confirmed on reconnection, once, and over HTTP (24, 5.6)", async () => {
   const { t, me, w } = fresh();
   const queue = [{ do: "weave", realm: "heart", slot: 1, law: "bloom" }, { do: "unweave", realm: "heart", slot: 2 }];
-  assert.deepEqual(confirm(t.service, me, queue).results, [{ confirmed: true }, { confirmed: true, repeated: true }]);
+  const first = confirm(t.service, me, queue);
+  assert.deepEqual(first.results, [{ confirmed: true }, { confirmed: true, repeated: true }]);
+  assert.equal(first.weaving.realms[1].slots[0].law, "bloom", "a queue that weaves answers with what is woven");
   const aether = t.service.aether(me);
   assert.deepEqual(confirm(t.service, me, queue).results.map((r) => r.repeated), [true, true]);
   assert.equal(t.service.aether(me), aether, "paid once");
@@ -182,4 +188,65 @@ test("a law's price counts the realm's other laws and the week's era, as the sim
   const s = w.show(me).stability;
   assert.equal(s.capacity, 30 + 8 * t.service.universe.spire(me), "a Spire and no Anchor Stone yet");
   assert.ok(Math.abs(s.total - 10) < 1e-9 && s.band === 0, JSON.stringify(s));
+});
+
+test("each realm offers every restored law with its points, price, time, band after and the notes it would harmonise and clash on, and recommends two or three, harmony first, clash last, then the cheapest (23.2, 5.5, 5.6)", () => {
+  const { me, w } = fresh();
+  w.weave(me, { realm: "heart", slot: 1, law: "slow_rivers" });
+  const heart = w.show(me).realms.find((r) => r.realm === "heart");
+  assert.equal(heart.type, "Heart");
+  assert.equal(w.show(me).realms[0].type, null, "the crown is no realm");
+  assert.deepEqual(heart.offers.map((o) => o.law), ["bloom", "half_gravity"], "what is woven there is not offered");
+  const bloom = heart.offers.find((o) => o.law === "bloom");
+  const gravity = heart.offers.find((o) => o.law === "half_gravity");
+  assert.equal(bloom.price, heart.prices.bloom, "the offer's price is the price shown");
+  assert.equal(bloom.resonances, 1, "Mangrove banks");
+  assert.equal(bloom.minutes, facts.WEAVE_MINUTES[0]);
+  assert.deepEqual(gravity.clashes, ["flow"], "Weight against Slow rivers' Flow");
+  assert.ok(gravity.band >= bloom.band && gravity.strain > bloom.strain);
+  assert.deepEqual(heart.recommended, ["bloom", "half_gravity"], "the one that harmonises first, the one that clashes last");
+  w.weave(me, { realm: "heart", slot: 2, law: "bloom" });
+  assert.deepEqual(w.show(me).realms.find((r) => r.realm === "heart").recommended, [], "no free slot, no recommendation");
+});
+
+test("recommendations: a clash after every law without one, a harmony or resonance before a law with neither, by price within each, at most three (23.2)", () => {
+  const offer = (law, price, { harmonies = [], clashes = [], resonances = 0, refused = null } = {}) =>
+    ({ law, price, harmonies, clashes, resonances, refused });
+  const offers = [
+    offer("a", 100, { clashes: ["flow"], harmonies: ["life"] }),
+    offer("b", 500),
+    offer("c", 300, { harmonies: ["life"] }),
+    offer("d", 50, { refused: "would_break" }),
+    offer("e", 200),
+    offer("f", 400, { resonances: 1 }),
+  ];
+  assert.deepEqual(recommend(offers, true), ["c", "f", "e"]);
+  assert.deepEqual(recommend(offers.filter((o) => o.law !== "c" && o.law !== "f" && o.law !== "e" && o.law !== "b"), true),
+                   ["a"], "a clash is still recommended when nothing else can be woven");
+  assert.deepEqual(recommend(offers, false), []);
+});
+
+test("no weave may take strain to Breaking, and a universe at Breaking weaves nothing new (5.5)", () => {
+  const { t, me, w } = fresh(100_000);
+  w.show(me);
+  t.service.db.prepare("UPDATE codex SET tier = 3 WHERE owner = ? AND tier > 0").run(me);
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 40 WHERE id = ?").run(me);
+  t.service.book(me, "starlight", 500_000, "a test's grant");
+  t.service.universe.build(me, { realm: "heart", kind: "keeper_s_spire", n: 1, to: 2 });
+  w.weave(me, { realm: "heart", slot: 1, law: "slow_rivers" });
+  // Half gravity crowned in Heavy Stars' week: 30% off, as a Motion law.
+  w.weave(me, { realm: CROWN, slot: 1, law: "half_gravity" });
+  assert.equal(w.show(me).stability.band, 5, "Cracking, under 125%");
+  const before = t.service.aether(me);
+  refused(() => w.weave(me, { realm: "heart", slot: 2, law: "bloom" }), "would_break");
+  assert.equal(t.service.aether(me), before, "a refused weave costs nothing");
+  assert.equal(w.show(me).realms.find((r) => r.realm === "heart").offers[0].refused, "would_break", "and is shown refused");
+  // The week turns, the discount ends, and strain passes 125% by itself.
+  t.clock.now += 7 * 24 * 60 * MINUTE;
+  assert.notEqual(t.service.era().id, "heavy_stars");
+  assert.equal(w.show(me).stability.band, facts.STRAIN_BANDS.length, "Breaking");
+  refused(() => w.weave(me, { realm: "heart", slot: 2, law: "bloom" }), "breaking");
+  assert.deepEqual(w.show(me).realms.find((r) => r.realm === "heart").recommended, [], "nothing to recommend");
+  w.unweave(me, { realm: CROWN, slot: 1 });
+  assert.ok(w.show(me).stability.band < facts.STRAIN_BANDS.length, "taking a law out is how strain comes down");
 });

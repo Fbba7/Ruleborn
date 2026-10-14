@@ -36,7 +36,8 @@ const ACTIONS = {
 };
 
 /** The device's queue made in order: each action's answer, and the
- *  universe and home after them all. */
+ *  universe and home after them all — and what is woven, when the queue
+ *  weaves, so the Weaving screen shows the server's prices after it. */
 export function confirm(service, account, actions) {
   if (!Array.isArray(actions) || actions.length === 0 || actions.length > MAX_ACTIONS) {
     throw new Refused(400, "malformed_body", { most: MAX_ACTIONS });
@@ -54,5 +55,7 @@ export function confirm(service, account, actions) {
       return { refused: err.reason, ...(err.detail ? { detail: err.detail } : {}) };
     }
   });
-  return { results, universe: service.universe.view(account), home: service.home.show(account) };
+  const weaves = actions.some((a) => a?.do === "weave" || a?.do === "unweave");
+  return { results, universe: service.universe.view(account), home: service.home.show(account),
+           ...(weaves ? { weaving: service.weaving.view(account) } : {}) };
 }

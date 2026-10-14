@@ -33,7 +33,7 @@ SPELLING = {
     "analys": "analyz", "apologis": "apologiz", "armour": "armor", "behaviour": "behavior",
     "cancelled": "canceled", "cancelling": "canceling", "catalogue": "catalog", "centre": "center",
     "colour": "color", "defence": "defense", "dialogue": "dialog", "enrol": "enroll",
-    "favour": "favor", "fulfil": "fulfill", "grey": "gray", "harbour": "harbor", "honour": "honor",
+    "favour": "favor", "fulfil": "fulfill", "grey": "gray", "harbour": "harbor", "harmonis": "harmoniz", "honour": "honor",
     "jewellery": "jewelry", "labour": "labor", "licence": "license", "metre": "meter",
     "neighbour": "neighbor", "odour": "odor", "offence": "offense", "organis": "organiz",
     "practise": "practice", "programme": "program", "realis": "realiz", "recognis": "recogniz",

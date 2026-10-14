@@ -7,7 +7,8 @@ extends SceneTree
 ## quits; so the run has a deadline, and missing it is a failure.
 const DEADLINE_SECONDS := 480.0
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
-	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch"]
+	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch",
+	"weaving"]
 
 var _n := 0
 var _failed := 0
@@ -71,6 +72,7 @@ func _seed() -> void:
 	App.services.store.dispatch(&"navigated", {"name": &"character", "params": {"id": 2}})
 	App.services.store.dispatch(&"sages_loaded", {"view": SageTests.sample()})
 	App.services.store.dispatch(&"forms_loaded", {"view": FormsTests.sample()})
+	App.services.store.dispatch(&"weaving_loaded", {"view": WeavingTests.sample()})
 
 
 func _mount(scene: String) -> Control:
@@ -372,6 +374,7 @@ func _run() -> void:
 	await FormsTests.new(self, check, _mount, server_url).run()
 	await HatchTests.new(self, check, _mount, server_url).run()
 	StabilityTests.new(check).run()
+	await WeavingTests.new(self, check, _mount, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

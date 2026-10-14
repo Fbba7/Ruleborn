@@ -85,8 +85,9 @@ screen by `tests/a11y_tests.gd`:
 - *Hearing.* Nothing is carried by sound: the client has no sounds yet, and
   every cue it has is visual, with a haptic form (§21.8's four patterns, in
   `app/haptics.gd`). Three volumes, music apart from alerts.
-- *Moving.* One finger, taps only; nothing is held, so there is no hold time
-  to adjust. The hand's controls mirror for left-handed play. A rehearsal —
+- *Moving.* One finger. The one held control, Weave, is held for the
+  player's hold time (Settings, half a second to three, one to start) or
+  tapped twice instead. The hand's controls mirror for left-handed play. A rehearsal —
   the player's own island, raided from the builder — pauses at any time and
   runs at 75% on request.
 - *Understanding.* Banners lead with their glyph and stay until dismissed if

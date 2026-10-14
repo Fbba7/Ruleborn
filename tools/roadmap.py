@@ -2736,9 +2736,29 @@ dict(
                   "(TD.10's check); the heist tests passing with either view",
              blocked_by=["TD.17", "TD.10", "TD.11"],
              register=["C57"]),
-        dict(id="TD.20", owner="claude", status="blocked",
+        dict(id="TD.20", owner="claude", status="doing",
              title="Weaving and the law card",
-             detail="Weaving shows the big card with its looping preview, cost, "
+             detail="<strong>Weaving is built; the law card and the realm view's "
+                    "threads are not.</strong> <code>scripts/weaving_screen.gd</code> "
+                    "shows §5.5's seven-band bar with the current band marked in "
+                    "words and its effect, each realm's slots and the crown's (the "
+                    "Heart its two, the crown those the Spire has opened, with the "
+                    "level that opens the next), and for each realm the two or "
+                    "three laws the server recommends, harmony first, clash last, "
+                    "then the cheapest, before every other restored law, each with "
+                    "its points, the band after weaving and the notes it would "
+                    "harmonise and clash on. Every number is the server's, priced "
+                    "by TD.14's function: <code>GET /v1/weaving</code> carries each "
+                    "offer, and the server refuses a weave in a universe at "
+                    "Breaking or one that would take it there. Weave is held for "
+                    "the player's hold time (Settings, §20.8, one second to start) "
+                    "or tapped twice, and a weave or an unweave made offline waits "
+                    "in the outbox to be confirmed (§24). Left: the big law card "
+                    "with its looping preview and the card's back (the Law card "
+                    "row, on TD.3's world), and pylons joined by threads in the "
+                    "realm view (TD.19)."
+                    "<br><br>"
+                    "Weaving shows the big card with its looping preview, cost, "
                     "strain and ready time, the seven bands and every harmony and "
                     "clash it makes, and the two or three recommended laws §23.2 "
                     "asks for, which the design omits, ranked with their "

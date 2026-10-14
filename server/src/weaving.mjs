@@ -20,8 +20,9 @@
 // and the terms that depend on the realm's other laws — harmonies,
 // resonances, chords, dissonances — and the week's era, all priced by the
 // simulation's one function (TD.14, sim/src/stability.rs), which the client
-// prices with too. What is in a slot counts, woven or still weaving. Upkeep,
-// Breaking's "no new weaving" and the tier rise in place are TD.37's. The
+// prices with too. What is in a slot counts, woven or still weaving.
+// Breaking's "no new weaving, and no weave that would take strain to 125% or
+// over" is kept here; upkeep and the tier rise in place are TD.37's. The
 // first session's instant weaves are the tutorial's (§16).
 //
 // What is woven is what home.mjs reads: §9.3's "1 + 0.10 per realm law of a
@@ -43,12 +44,30 @@ const MINUTE = 60_000;
 /** The crown's slots, kept as a realm of their own. */
 export const CROWN = "crown";
 
+/** §5.5's last band, Breaking: no weave may reach it. */
+const BREAKING = facts.STRAIN_BANDS.length;
+/** §23.2: "Two or three recommended laws". */
+const RECOMMENDED = 3;
+
 /** The Anchor Stone, the building §5.5's capacity counts beside the Spire. */
 const ANCHOR = "anchor_stone";
 
 /** A realm's index in the simulation's universe: 0 the Heart, k outer realm
  *  k, the crown its own. */
 const realmIndex = (realm) => (realm === CROWN ? "crown" : realm === "heart" ? 0 : Number(realm.split("-")[1]));
+
+/** §23.2's recommended laws for a realm with a free slot: two or three of
+ *  the offers it can weave, "ranked with one that harmonises first, one that
+ *  clashes last, then the cheapest" — a law that clashes after every one
+ *  that does not, among the rest one that harmonises before one that does
+ *  not, and by price within each. */
+export function recommend(offers, free) {
+  if (!free) return [];
+  const rank = (o) => (o.clashes.length ? 2 : o.harmonies.length || o.resonances ? 0 : 1);
+  return offers.filter((o) => !o.refused)
+    .sort((a, b) => rank(a) - rank(b) || a.price - b.price || a.law.localeCompare(b.law))
+    .slice(0, RECOMMENDED).map((o) => o.law);
+}
 
 /** §5.2's realm types' schools: the Heart has none. */
 const schoolOfType = (type) => facts.SCHOOLS[facts.REALM_TYPES.indexOf(type)];
@@ -133,6 +152,25 @@ export class Weaving {
     return Math.round((priced.lines.at(-1).micro * facts.WEAVE_AETHER_PER_POINT) / 1_000_000);
   }
 
+  /** What each restored law would come to woven in `realm`, as §23.2's
+   *  Weaving compares them: its points and price, §5.6's time, the notes it
+   *  would harmonise and clash on, its resonances and chords, the band
+   *  strain would reach, and why it cannot be woven there, if it cannot. */
+  offers(account, realm, rows, restored) {
+    const here = new Set(rows.filter((r) => r.realm === realm && r.law).map((r) => r.law));
+    const now = this.stability(account);
+    return restored.filter(({ law }) => !here.has(law)).map(({ law, tier }) => {
+      const p = this.stability(account, { law, tier, realm });
+      const line = p.lines.at(-1);
+      const elsewhere = rows.some((r) => r.law === law && (r.realm === CROWN) !== (realm === CROWN));
+      const why = elsewhere ? (realm === CROWN ? "woven_in_a_realm" : "crowned")
+        : now.band >= BREAKING ? "breaking" : p.band >= BREAKING ? "would_break" : null;
+      return { law, tier, points: line.cost, price: Math.round((line.micro * facts.WEAVE_AETHER_PER_POINT) / 1_000_000),
+               minutes: facts.WEAVE_MINUTES[tier - 1], harmonies: line.harmonyNotes, clashes: line.dissonanceNotes,
+               resonances: line.resonances, chords: line.chords, band: p.band, strain: p.strain, refused: why };
+    });
+  }
+
   /** Law `law` woven into slot `slot` of `realm` (the crown's as "crown"),
    *  at the tier the Codex has it, paid in Aether, working once §5.6's
    *  weaving time has passed. A repeat of one already woven there is
@@ -160,7 +198,13 @@ export class Weaving {
       if (rows.some((r) => r.law === law && (r.realm === CROWN) !== (realm === CROWN))) {
         throw new Refused(409, realm === CROWN ? "woven_in_a_realm" : "crowned");
       }
-      const cost = this.price(account, law, tier, realm);
+      // §5.5's Breaking: "No new weaving, and no weave that would take
+      // strain to 125% or over".
+      const now_ = this.stability(account);
+      if (now_.band >= BREAKING) throw new Refused(409, "breaking", { strain: now_.strain });
+      const after = this.stability(account, { law, tier, realm });
+      if (after.band >= BREAKING) throw new Refused(409, "would_break", { strain: after.strain });
+      const cost = Math.round((after.lines.at(-1).micro * facts.WEAVE_AETHER_PER_POINT) / 1_000_000);
       if (this.service.aether(account) < cost) throw new Refused(409, "not_enough_aether", { cost });
       // What a producer made under the laws that held is paid before they
       // change (home.mjs).
@@ -212,15 +256,23 @@ export class Weaving {
     const now = this.service.now();
     const rows = this.rows(account);
     const restored = this.restored(account);
-    const realms = [CROWN, ...this.universe.realms(account).map((r) => r.realm)].map((realm) => ({
+    const types = Object.fromEntries(this.universe.realms(account).map((r) => [r.realm, r.type]));
+    const spire = this.universe.spire(account);
+    const realms = [CROWN, ...Object.keys(types)].map((realm) => ({
       realm,
+      type: types[realm] ?? null,
+      // §5.1: the Spire level that opens the crown's next slot, none once
+      // both are open.
+      ...(realm === CROWN ? { opens_at: facts.CROWN_SLOT_SPIRE.find((s) => spire < s) ?? null } : {}),
       slots: Array.from({ length: this.slots(account, realm) }, (_, i) => {
         const r = rows.find((x) => x.realm === realm && x.slot === i + 1);
         if (r?.law) return { slot: i + 1, law: r.law, tier: r.tier, ready_at: r.ready_at, weaving: r.ready_at > now };
         return { slot: i + 1, law: null, rests_until: r?.rests_until > now ? r.rests_until : null };
       }),
       prices: Object.fromEntries(restored.map(({ law, tier }) => [law, this.price(account, law, tier, realm)])),
+      offers: this.offers(account, realm, rows, restored),
     }));
+    for (const r of realms) r.recommended = recommend(r.offers, r.slots.some((x) => !x.law && !x.rests_until));
     const p = this.stability(account);
     return { realms, aether: this.service.aether(account),
              // §5.5: the universe's capacity, what is woven costs, the
