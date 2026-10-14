@@ -8,7 +8,7 @@ extends SceneTree
 const DEADLINE_SECONDS := 480.0
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
 	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch",
-	"weaving", "codex", "harmony"]
+	"weaving", "codex", "harmony", "observatory", "scout"]
 
 var _n := 0
 var _failed := 0
@@ -75,6 +75,8 @@ func _seed() -> void:
 	App.services.store.dispatch(&"weaving_loaded", {"view": WeavingTests.sample()})
 	App.services.store.dispatch(&"codex_loaded", {"view": CodexTests.sample()})
 	App.services.store.dispatch(&"harmony_loaded", {"view": HarmonyTests.sample()})
+	App.services.store.dispatch(&"observatory_loaded", {"view": ObservatoryTests.sample()})
+	App.services.store.dispatch(&"observatory_chosen", {"bundle": "p1"})
 
 
 func _mount(scene: String) -> Control:
@@ -379,6 +381,7 @@ func _run() -> void:
 	await WeavingTests.new(self, check, _mount, server_url).run()
 	await CodexTests.new(self, check, _mount, server_url).run()
 	await HarmonyTests.new(self, check, _mount, server_url).run()
+	await ObservatoryTests.new(self, check, _mount, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

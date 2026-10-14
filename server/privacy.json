@@ -578,6 +578,28 @@
     "functionality"
    ]
   },
+  "observatory_refreshes": {
+   "about": "Each refresh of a player's Observatory list, and the targets it set aside (§12.3).",
+   "columns": {
+    "owner": {
+     "names": "account",
+     "type": "user-id"
+    },
+    "at": {
+     "type": "gameplay"
+    },
+    "shown": {
+     "type": "gameplay"
+    }
+   },
+   "deletion": "erased",
+   "keep": {
+    "for": "account"
+   },
+   "purposes": [
+    "functionality"
+   ]
+  },
   "law_slots": {
    "about": "Each player's law slots: the law woven in each, its tier, when its weaving ends, and when an emptied slot may be woven again (§5.6).",
    "columns": {

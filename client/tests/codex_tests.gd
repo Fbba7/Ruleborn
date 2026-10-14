@@ -73,7 +73,8 @@ func _words() -> void:
 	var lines: Array = (motion["laws"] as Array).map(func(l: Dictionary) -> String: return l["text"])
 	check.call("the Codex shows each school's album by its shape and name, its laws in chapter order, a law not met "
 			+ "a ? that names nothing, and when a closed chapter opens (7.6, 21.2, D79)",
-		(c["albums"] as Array).size() == 6 and motion["title"] == UI.school_mark("Motion")
+		(c["albums"] as Array).size() == 6 and motion["title"] == UI.school_mark("motion")
+			and not str(motion["title"]).begins_with("?")
 			and lines == ["Half gravity · Common · tier I · 3 pages",
 				"? · not met yet: a heist through a realm running it meets it",
 				"? · chapter 2, from Keeper level 6", "? · chapter 2, from Keeper level 6"]

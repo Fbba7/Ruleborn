@@ -6,12 +6,13 @@ extends Control
 ## fixed at the bottom where the thumb rests.
 
 ## The screens a player goes to from home, in the order they are listed.
-const PLACES := [&"universe", &"weaving", &"codex", &"roster", &"hatch", &"sages", &"forms", &"builder", &"workshop",
-	&"replay", &"track", &"shop", &"social", &"friends", &"settings"]
-const WORDS := {&"universe": "HOME_UNIVERSE", &"weaving": "HOME_WEAVING", &"codex": "HOME_CODEX",
-	&"roster": "HOME_ROSTER", &"hatch": "HOME_HATCH", &"sages": "HOME_SAGES", &"forms": "HOME_FORMS",
-	&"builder": "HOME_BUILD", &"workshop": "HOME_WORKSHOP", &"replay": "HOME_WATCH", &"track": "HOME_TRACK",
-	&"shop": "HOME_SHOP", &"social": "HOME_SOCIAL", &"friends": "HOME_FRIENDS", &"settings": "HOME_SETTINGS"}
+const PLACES := [&"observatory", &"universe", &"weaving", &"codex", &"roster", &"hatch", &"sages", &"forms", &"builder",
+	&"workshop", &"replay", &"track", &"shop", &"social", &"friends", &"settings"]
+const WORDS := {&"observatory": "HOME_OBSERVATORY", &"universe": "HOME_UNIVERSE", &"weaving": "HOME_WEAVING",
+	&"codex": "HOME_CODEX", &"roster": "HOME_ROSTER", &"hatch": "HOME_HATCH", &"sages": "HOME_SAGES",
+	&"forms": "HOME_FORMS", &"builder": "HOME_BUILD", &"workshop": "HOME_WORKSHOP", &"replay": "HOME_WATCH",
+	&"track": "HOME_TRACK", &"shop": "HOME_SHOP", &"social": "HOME_SOCIAL", &"friends": "HOME_FRIENDS",
+	&"settings": "HOME_SETTINGS"}
 
 var keeper_label: Label
 var keeper_plate: PanelContainer

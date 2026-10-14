@@ -510,8 +510,51 @@ DELIVERABLES = [
         "(§20.8, §21.1)",
         "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
     ("4b", "Planner", FRONTEND, not_started("TD.18's screen gate passes for it")),
-    ("4b", "Observatory", FRONTEND, not_started("TD.18's screen gate passes for it")),
-    ("4b", "Scout report", FRONTEND, not_started("TD.18's screen gate passes for it")),
+    ("4b", "Observatory", FRONTEND, parts(client_tests(
+        "the Observatory labels each target — a player's universe, an echo, the game's own island with its "
+        "band — and pins a Trace apart, with no fee (12.3, 12.22)",
+        "each target card shows §12.4's free facts — realms, Renown, a rough loot estimate, strain and open "
+        "faults — the lease's fee and why it was offered (12.4, 12.15)",
+        "a refresh says its price, and waits with why when the Aether is short; a protected new Keeper is told "
+        "raiding a player ends it (12.3)",
+        "the Observatory is fetched and refreshed from the server; a card opens its scout report, and raiding "
+        "it leases that island, a Trace as a Trace (12.3, 24.12)",
+        "the Observatory screen draws the Trace first and apart, then each target, and a refresh that waits "
+        "while the Aether is short (12.3, 23.2)",
+        "against the server: a new Keeper's Observatory lists targets as cards with no rating and a fee, "
+        "and a refresh it cannot pay for is refused at 50 Aether (12.3, 12.4)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "the Observatory's cards carry §12.4's free facts, counted from the bundle, the lease's own fee and why "
+        "each was offered, and no rating, deviation or position reaches the device (12.4, 12.22, TD.18)",
+        "the Observatory offers 3 targets, 4 from level 3 and 5 at level 5, and a new player is told raiding a "
+        "player ends their protection (12.3, 10.2)",
+        "a refresh costs 50 Aether, doubling with each refresh in the same hour, and buys a list without the "
+        "targets on show (12.3)",
+        "a Trace is shown apart from the list and first, with no fee, and only while it can be answered (12.3)",
+        "the Observatory and its refresh are served over HTTP (12.3)"),
+        not_started("universes of several realms give each card its depth, \"up to N realms to the Heart\", "
+                    "and its faults' places; visitors give the Wanderer's extra target; the first launch "
+                    "gives the Keeper's name (T3.3, §11.7, G58)"))),
+    ("4b", "Scout report", FRONTEND, parts(client_tests(
+        "the scout report reads a target realm by realm — its laws, guards by role, wards by kind, its watch — "
+        "and says nothing placed is shown (12.4)",
+        "each target card shows §12.4's free facts — realms, Renown, a rough loot estimate, strain and open "
+        "faults — the lease's fee and why it was offered (12.4, 12.15)",
+        "the Observatory is fetched and refreshed from the server; a card opens its scout report, and raiding "
+        "it leases that island, a Trace as a Trace (12.3, 24.12)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "the Observatory's cards carry §12.4's free facts, counted from the bundle, the lease's own fee and why "
+        "each was offered, and no rating, deviation or position reaches the device (12.4, 12.22, TD.18)",
+        "open faults follow §5.5's strain, never more than the outer realms, and a loot estimate is rough "
+        "(5.5, 12.4)"),
+        not_started("matchups worked out from each kind's ability and the realm's laws, and each realm's page "
+                    "opening on its law cards, realm by realm across a universe (TD.18, TD.20)"))),
     ("4b", "Roster", FRONTEND, client_tests(
         "the Roster shows every character's state as a symbol and a word as well as a colour, each "
         "state's symbol and colour its own (23.2, 20.8)",

@@ -86,6 +86,24 @@
  "ECHO_DAYS": 14,
  "ENTRY_FEE_RATE": 0.02,
  "EPOCH_CAPACITY_RAISE": 0.08,
+ "FAULTS_BY_STRAIN": [
+  [
+   100,
+   1
+  ],
+  [
+   110,
+   2
+  ],
+  [
+   118,
+   3
+  ],
+  [
+   125,
+   4
+  ]
+ ],
  "FLOOR_HEISTS": 8,
  "FOILED_PAGES": 1,
  "FREE_CPU_MS": 10,
@@ -235,6 +253,7 @@
   "Echo",
   "Veil"
  ],
+ "OBSERVATORY_REFRESH_AETHER": 50,
  "OPPOSITE": {
   "Bloom": "Spark",
   "Echo": "Veil",

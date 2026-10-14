@@ -236,6 +236,14 @@ CHAPTER_TWO_KEEPER = 6
 #: laws restored: a Codex stamp, a skiff pennant in the school's colour and
 #: shape, and the school's crest on the player's islands".
 ALBUM_MILESTONES = (2, 4, 8)
+#: §5.5's faults by strain: "one fault opens" at Strained (100%), "Two faults
+#: from 110%, three from 118%", and at Breaking (125%) "four faults, or one
+#: per outer realm if there are fewer, and none in a universe of the Heart
+#: alone" — (strain %, faults) from the lowest.
+FAULTS_BY_STRAIN = ((100, 1), (110, 2), (118, 3), (125, 4))
+#: §12.3: "Refreshing the list costs Aether: 50, doubling with each refresh in
+#: the same hour."
+OBSERVATORY_REFRESH_AETHER = 50
 #: §18.5's mastery track: "three steps for each law the school has in play —
 #: woven, crossed in a successful heist, raised to tier III — with a title
 #: at a third of them and at all of them, and the school's new visual style
@@ -528,6 +536,8 @@ HOME = {
     "STARTING_LAWS": "7.6",
     "CHAPTER_TWO_KEEPER": "7.6",
     "ALBUM_MILESTONES": "7.6",
+    "FAULTS_BY_STRAIN": "5.5",
+    "OBSERVATORY_REFRESH_AETHER": "12.3",
     "MASTERY_STEPS_PER_LAW": "18.5",
     "MASTERY_MARKS_AT_LAUNCH": "18.5",
     "LEVEL_PRICE": "9.5",
@@ -743,6 +753,10 @@ STATED = {
     "ALBUM_MILESTONES": (r"pays a milestone at (two|three|four), (two|three|four|five|six) and all (six|eight|ten) laws restored",
                          lambda m: tuple({"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "eight": 8, "ten": 10}[x]
                                          for x in m)),
+    "FAULTS_BY_STRAIN": (r"\| Strained\n\| (\d+) to \d+%[\s\S]*?Two faults from (\d+)%, three from (\d+)%[\s\S]*?\| Breaking\n\| (\d+)% and over\n\| No new weaving[^|]*?(four) faults",
+                         lambda m: ((int(m[0]), 1), (int(m[1]), 2), (int(m[2]), 3), (int(m[3]), 4))),
+    "OBSERVATORY_REFRESH_AETHER": (r"Refreshing the list costs Aether: (\d+), doubling with each refresh in the same hour",
+                                   lambda m: int(m[0])),
     "MASTERY_STEPS_PER_LAW": (r"(two|three|four) steps for each law the school has in play",
                               lambda m: {"two": 2, "three": 3, "four": 4}[m[0]]),
     "MASTERY_MARKS_AT_LAUNCH": (r"\((\d+), (\d+) and (\d+) steps on the four launch laws a school has",

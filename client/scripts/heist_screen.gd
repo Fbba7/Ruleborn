@@ -146,13 +146,17 @@ func begin_online(services: Services) -> String:
 	var me := await services.session()
 	if not me.ok:
 		return me.code
-	var target := await services.heists.first_target(str(me.value["account"]))
+	# The target chosen in the Observatory (§12.3), or the lists' first.
+	var chosen: Dictionary = services.store.get_slice(AppState.HEIST).get("target", {})
+	var target := Result.success(chosen) if not chosen.is_empty() \
+		else await services.heists.first_target(str(me.value["account"]))
 	if not target.ok:
 		return target.code
 	var bundle := await services.heists.fetch(str(target.value["bundle"]))
 	if not bundle.ok:
 		return bundle.code
-	var leased := await services.heists.lease(str(target.value["bundle"]), str(target.value["owner"]))
+	var leased := await services.heists.lease(str(target.value["bundle"]), str(target.value.get("owner", "")),
+		bool(target.value.get("trace", false)))
 	if not leased.ok:
 		return leased.code
 	lease = leased.value

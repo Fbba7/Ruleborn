@@ -1,0 +1,77 @@
+class_name ObservatoryScreen
+extends Control
+## The Observatory (§12.3, §23.2, "Choose a target"): a Trace first and
+## apart, then the offered universes as their free target cards, each with
+## its fee and why it was offered, and the paid refresh. A card opens its
+## scout report.
+
+var controller: ObservatoryController
+var body: VBoxContainer
+var header_label: Label
+var status_label: Label
+
+
+func _ready() -> void:
+	App.ready(self)
+	controller = App.services.observatory_flow
+	_build()
+	App.services.store.changed.connect(_on_changed)
+	_refresh()
+	await controller.load_observatory()
+
+
+func _on_changed(slice: StringName) -> void:
+	if slice == ObservatoryState.OBSERVATORY and is_inside_tree():
+		_refresh()
+
+
+func _build() -> void:
+	var column := UI.frame(self)
+	column.add_child(UI.title(Strings.t("OBS_TITLE")))
+	header_label = UI.label("", UI.TEXT_POINTS, true)
+	column.add_child(UI.plate(header_label))
+	status_label = UI.status("info", "")
+	column.add_child(UI.plate(status_label))
+	body = UI.scroll(column)
+	var actions := UI.row(-1.0, true)
+	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
+	column.add_child(UI.narrow(actions))
+
+
+func _refresh() -> void:
+	if not is_inside_tree():
+		return
+	var o := ObservatoryPresenter.screen(App.services.store.get_slice(ObservatoryState.OBSERVATORY))
+	if o["error"] != "":
+		UI.set_status(status_label, "alarm", o["error"])
+	elif o["busy"] != "" or not o["ready"]:
+		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
+	else:
+		UI.set_status(status_label, "info", o.get("protected", ""))
+	header_label.text = o.get("header", "")
+	for child in body.get_children():
+		body.remove_child(child)
+		child.queue_free()
+	if not o["ready"]:
+		return
+	var busy: bool = o["busy"] != ""
+	if not (o["trace"] as Dictionary).is_empty():
+		body.add_child(_card(o["trace"], busy))
+	if o.get("fallback", "") != "":
+		body.add_child(UI.plate(UI.label(o["fallback"], UI.TEXT_POINTS, true)))
+	for c: Dictionary in o["cards"]:
+		body.add_child(_card(c, busy))
+	if o.has("empty"):
+		body.add_child(UI.plate(UI.label(o["empty"], UI.TEXT_POINTS, true)))
+	body.add_child(UI.plate(RosterScreen.offer(o["refresh"], busy, controller.refresh)))
+
+
+func _card(c: Dictionary, busy: bool) -> Control:
+	var box := VBoxContainer.new()
+	var title := UI.label(c["title"], UI.TEXT_POINTS, true)
+	title.set_meta("kind", c["kind"])
+	box.add_child(title)
+	for line: String in c["lines"]:
+		box.add_child(UI.label(line, UI.TEXT_POINTS, true))
+	box.add_child(RosterScreen.offer(c, busy, controller.choose.bind(str(c["bundle"]))))
+	return UI.plate(box)

@@ -762,6 +762,19 @@ work counts from the server's confirmation, never from the phone's clock.
 A weave and an unweave are confirmed the same way, the weaving time running
 from the confirmation.
 
+## The Observatory
+
+`src/observatory.mjs` is §12.3's Observatory and §12.4's free scouting. `GET
+/v1/observatory` offers 3 targets (4 from Observatory level 3, 5 at level 5),
+each as its target card: the Keeper level, realms, Renown, a rough loot
+estimate, the universe's strain and its open faults by §5.5's thresholds, and
+for the realm its laws, guards by role, wards by kind and watch, counted from
+the public bundle with nothing placed. Each card carries the fee the lease
+will charge (`stakes`) and why it was offered, never the rating; `GET
+/v1/offer` drops the rating too. A Trace is pinned apart, with no fee.
+`POST /v1/observatory/refresh` costs 50 Aether, doubling with each refresh in
+the hour, and sets the targets shown aside.
+
 ## Weaving
 
 `src/weaving.mjs` keeps what is woven (§5.1, §5.5, §5.6). A realm has §5.2's

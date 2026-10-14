@@ -23,7 +23,7 @@ static func register(store: Store) -> void:
 		&"signed_out": signed_out,
 	})
 	store.register(HEIST, {"replay": PackedByteArray(), "verdict": {}, "island": PackedByteArray(),
-			"testing": false, "published": false, "workshop": {}}, {
+			"testing": false, "published": false, "workshop": {}, "target": {}}, {
 		&"heist_started": heist_started,
 		&"heist_finished": heist_finished,
 		&"heist_verdict": heist_verdict,
@@ -44,12 +44,14 @@ static func signed_out(_s: Dictionary, _p: Dictionary) -> Dictionary:
 
 ## A heist begins on `island` (empty: the fixture realm); `testing` when it is
 ## the player's own island from the builder; `workshop` when it is a play of
-## a Workshop island.
+## a Workshop island; `target` when the player chose it in the Observatory
+## ({bundle, trace}), which the heist leases instead of the lists' first.
 static func heist_started(s: Dictionary, p: Dictionary) -> Dictionary:
 	var next := s.duplicate()
 	next["island"] = p.get("island", PackedByteArray())
 	next["testing"] = bool(p.get("testing", false))
 	next["workshop"] = p.get("workshop", {})
+	next["target"] = p.get("target", {})
 	next["published"] = false
 	next["replay"] = PackedByteArray()
 	next["verdict"] = {}

@@ -99,6 +99,16 @@ CREATE TABLE IF NOT EXISTS realms (
 -- §10.2: every building a universe holds, by realm, kind (§10.2's id) and
 -- its number among that kind there. A universe with no rows holds the start
 -- (F56), written the first time it changes. universe.mjs.
+-- §12.3: "Refreshing the list costs Aether: 50, doubling with each refresh
+-- in the same hour" — each refresh, and the targets it set aside so the list
+-- it bought is new. observatory.mjs.
+CREATE TABLE IF NOT EXISTS observatory_refreshes (
+  owner TEXT NOT NULL REFERENCES accounts(id),
+  at    INTEGER NOT NULL,
+  shown TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS observatory_refreshes_by_owner ON observatory_refreshes (owner, at);
+
 CREATE TABLE IF NOT EXISTS buildings (
   owner      TEXT NOT NULL REFERENCES accounts(id),
   realm      TEXT NOT NULL,

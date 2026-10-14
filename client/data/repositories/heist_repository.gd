@@ -77,10 +77,13 @@ func fill_stock(account: String) -> int:
 
 ## §24.12: "a target snapshot, a seed, a single-use token and an expiry".
 ## The owner names whose island it is: two players can publish the same one.
-func lease(bundle: String, owner := "") -> Result:
+func lease(bundle: String, owner := "", trace := false) -> Result:
 	var body := {"bundle": bundle}
 	if owner != "":
 		body["owner"] = owner
+	# §12.3's Trace: the raider's island, once, with no fee.
+	if trace:
+		body["trace"] = true
 	return await api.post_json("/v1/leases", body)
 
 

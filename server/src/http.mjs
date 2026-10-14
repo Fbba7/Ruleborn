@@ -6,7 +6,9 @@
 //   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}; heart or outer-1 … outer-6
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
 //   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?} → the lease
-//   GET  /v1/offer?size=3                                    → §12.22's list for the caller
+//   GET  /v1/offer?size=3                                    → §12.22's list for the caller, no rating
+//   GET  /v1/observatory                                     → §12.3's targets as §12.4's cards, a Trace apart
+//   POST /v1/observatory/refresh                             → a new list, for 50 Aether doubling in the hour
 //   GET  /v1/era                                             → §18.3's era of the week, and when it ends
 //   GET  /v1/heists/:token/replay                            → the replay, to its raider or defender (§13)
 //   PUT  /v1/notifications       {"timeZone", "reminder", "nightQuiet", "pushToken"} → the settings,
@@ -446,6 +448,10 @@ export function handler(service, { webClientId = null, appleNotifications = null
         if (request.method !== "POST") return json({ error: "no_such_route" }, 404);
         return json(confirmOffline(service, who(), (await body(request)).actions));
       }
+      if (parts[1] === "observatory" && parts[2] === "refresh" && parts.length === 3 && request.method === "POST") {
+        // §12.3: a paid refresh, which buys a list without the targets shown.
+        return json(service.observatory.refresh(who()));
+      }
       if (parts[1] === "weaving") {
         // §5.1 and §5.6 (weaving.mjs): a weave names the slot and the law,
         // so a retry is answered as woven.
@@ -596,12 +602,17 @@ export function handler(service, { webClientId = null, appleNotifications = null
         }
         case "GET /v1/offer": {
           // The server's run of §12.22's steps; the device can run the same
-          // `offer` on a downloaded target list.
+          // `offer` on a downloaded target list. The rating that orders it
+          // stays here (TD.18): each target says why it was offered instead.
           const me = who();
           const size = Math.min(5, Math.max(1, Number(url.searchParams.get("size") ?? 3) || 3));
           const mm = service.matchmaking;
-          return json(offer(mm.raider(me), mm.candidates(), { size }));
+          const list = offer(mm.raider(me), mm.candidates(), { size });
+          return json({ ...list, targets: list.targets.map(({ rating, deviation, predicted, ...c }) => c) });
         }
+        case "GET /v1/observatory":
+          return json(service.observatory.view(who()));
+
         case "GET /v1/balance":
           return json(service.balance(who()));
         case "GET /v1/keeper":

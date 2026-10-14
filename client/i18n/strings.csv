@@ -779,3 +779,39 @@ HARMONY_RESONANCE_UNNAMED,"An unnamed resonance: %s, each costs %d%% less","An u
 HARMONY_CHORD,"%s, of %s: %s, each costs %d%% less","%s, of %s: %s, each costs %d%% less","%s, de %s: %s, cada uma %d%% mais barata","%s, de %s: %s, cada uma %d%% mais barata","%s, aus %s: %s, je %d%% günstiger","%s, de %s : %s, chacune %d %% moins chère"
 HARMONY_CHORD_UNNAMED,"An unnamed chord of %s: %s, each costs %d%% less","An unnamed chord of %s: %s, each costs %d%% less","Um acorde sem nome de %s: %s, cada uma %d%% mais barata","Um acorde sem nome de %s: %s, cada uma %d%% mais barata","Ein unbenannter Akkord aus %s: %s, je %d%% günstiger","Un accord sans nom de %s : %s, chacune %d %% moins chère"
 HARMONY_FAILED,The Harmony view did not load: %s,The Harmony view did not load: %s,A Harmonia não carregou: %s,A Harmonia não carregou: %s,Die Harmonie wurde nicht geladen: %s,L'harmonie n'a pas chargé : %s
+HOME_OBSERVATORY,Find a target,Find a target,Encontrar um alvo,Encontrar um alvo,Ziel suchen,Trouver une cible
+OBS_TITLE,Observatory,Observatory,Observatório,Observatório,Observatorium,Observatoire
+OBS_HEADER,%s Aether · %d targets,%s Aether · %d targets,%s de Aether · %d alvos,%s de Aether · %d alvos,%s Aether · %d Ziele,%s d'Aether · %d cibles
+OBS_PROTECTED,You are protected as a new Keeper; raiding a player ends that,You are protected as a new Keeper; raiding a player ends that,Você está protegido como novo Guardião; assaltar um jogador acaba com isso,Estás protegido como novo Guardião; assaltar um jogador acaba com isso,Du bist als neuer Hüter geschützt; ein Raubzug bei einem Spieler beendet das,Tu es protégé en tant que nouveau Gardien ; piller un joueur y met fin
+OBS_ECHOES_NOTE,Few universes fit you now: echoes of recent ones are among these,Few universes fit you now: echoes of recent ones are among these,Poucos universos combinam com você agora: ecos de universos recentes estão entre eles,Poucos universos condizem contigo agora: ecos de universos recentes estão entre eles,Gerade passen wenige Universen: Echos jüngerer sind darunter,Peu d'univers te correspondent : des échos d'univers récents en font partie
+OBS_GENERATED_NOTE,Few universes fit you now: the game's own islands are among these,Few universes fit you now: the game's own islands are among these,Poucos universos combinam com você agora: ilhas do próprio jogo estão entre eles,Poucos universos condizem contigo agora: ilhas do próprio jogo estão entre eles,Gerade passen wenige Universen: Inseln des Spiels selbst sind darunter,Peu d'univers te correspondent : des îles du jeu lui-même en font partie
+OBS_EMPTY,No target fits you right now,No target fits you right now,Nenhum alvo combina com você agora,Nenhum alvo condiz contigo agora,Gerade passt kein Ziel,Aucune cible ne te correspond pour l'instant
+OBS_PLAYER,A Keeper of level %d,A Keeper of level %d,Um Guardião de nível %d,Um Guardião de nível %d,Ein Hüter auf Level %d,Un Gardien de niveau %d
+OBS_ECHO,An echo of a Keeper of level %d,An echo of a Keeper of level %d,Um eco de um Guardião de nível %d,Um eco de um Guardião de nível %d,Ein Echo eines Hüters auf Level %d,Un écho d'un Gardien de niveau %d
+OBS_GENERATED,"The game's own island, won %d to %d%% of the time","The game's own island, won %d to %d%% of the time","Ilha do próprio jogo, vencida %d a %d%% das vezes","Ilha do próprio jogo, vencida %d a %d%% das vezes","Insel des Spiels, in %d bis %d%% der Fälle geschafft","Île du jeu, réussie %d à %d %% du temps"
+OBS_TRACE,Trace: the Keeper of level %d who robbed you,Trace: the Keeper of level %d who robbed you,Rastro: o Guardião de nível %d que roubou você,Rasto: o Guardião de nível %d que te roubou,"Spur: der Hüter auf Level %d, der dich beraubt hat",Piste : le Gardien de niveau %d qui t'a volé
+OBS_FACTS,%d realms · Renown %d · about %s loot,%d realms · Renown %d · about %s loot,%d reinos · Renome %d · cerca de %s de saque,%d reinos · Renome %d · cerca de %s de saque,%d Reiche · Ruhm %d · etwa %s Beute,%d royaumes · Renom %d · environ %s de butin
+OBS_STRAIN,"Strain %s, %s · open faults: %d","Strain %s, %s · open faults: %d","Tensão %s, %s · falhas abertas: %d","Tensão %s, %s · falhas abertas: %d","Belastung %s, %s · offene Risse: %d","Tension %s, %s · failles ouvertes : %d"
+OBS_REALM,Realm level %d · %d laws · %d guards · %d wards,Realm level %d · %d laws · %d guards · %d wards,Reino nível %d · %d leis · %d guardas · %d proteções,Reino nível %d · %d leis · %d guardas · %d proteções,Reichslevel %d · %d Gesetze · %d Wachen · %d Siegel,Royaume niveau %d · %d lois · %d gardes · %d protections
+OBS_FEE,Entry fee %s Starlight,Entry fee %s Starlight,Taxa de entrada %s de Luz Estelar,Taxa de entrada %s de Luz Estelar,Eintritt %s Sternenlicht,Droit d'entrée %s Lumière stellaire
+OBS_NO_FEE,No entry fee,No entry fee,Sem taxa de entrada,Sem taxa de entrada,Kein Eintritt,Pas de droit d'entrée
+OBS_REASON_EASIER,Offered as an easier target,Offered as an easier target,Oferecido como alvo mais fácil,Oferecido como alvo mais fácil,Als leichteres Ziel angeboten,Proposée comme cible plus facile
+OBS_REASON_FAIR,Offered as a fair match,Offered as a fair match,Oferecido como disputa equilibrada,Oferecido como disputa equilibrada,Als faires Duell angeboten,Proposée comme cible à ta mesure
+OBS_REASON_HARDER,Offered as a harder target,Offered as a harder target,Oferecido como alvo mais difícil,Oferecido como alvo mais difícil,Als schwereres Ziel angeboten,Proposée comme cible plus difficile
+OBS_SCOUT,Scout,Scout,Espiar,Espiar,Auskundschaften,Reconnaître
+OBS_SCOUT_SPOKEN,Scout %s,Scout %s,Espiar %s,Espiar %s,%s auskundschaften,Reconnaître %s
+OBS_REFRESH,New targets for %s Aether,New targets for %s Aether,Novos alvos por %s de Aether,Novos alvos por %s de Aether,Neue Ziele für %s Aether,Nouvelles cibles pour %s d'Aether
+OBS_FAILED,The Observatory did not answer: %s,The Observatory did not answer: %s,O Observatório não respondeu: %s,O Observatório não respondeu: %s,Das Observatorium hat nicht geantwortet: %s,L'Observatoire n'a pas répondu : %s
+SCOUT_TITLE,Scout report,Scout report,Relatório de espionagem,Relatório de espionagem,Späherbericht,Rapport de reconnaissance
+SCOUT_NONE_CHOSEN,Choose a target in the Observatory,Choose a target in the Observatory,Escolha um alvo no Observatório,Escolhe um alvo no Observatório,Wähle ein Ziel im Observatorium,Choisis une cible dans l'Observatoire
+SCOUT_REALM,%s · realm level %d · Vault level %d,%s · realm level %d · Vault level %d,%s · reino nível %d · Cofre nível %d,%s · reino nível %d · Cofre nível %d,%s · Reichslevel %d · Tresor-Level %d,%s · royaume niveau %d · Coffre niveau %d
+SCOUT_OUTER,An outer realm,An outer realm,Um reino exterior,Um reino exterior,Ein äußeres Reich,Un royaume extérieur
+SCOUT_LAWS,Laws: %s,Laws: %s,Leis: %s,Leis: %s,Gesetze: %s,Lois : %s
+SCOUT_NO_LAWS,No laws,No laws,Nenhuma lei,Nenhuma lei,Keine Gesetze,Aucune loi
+SCOUT_GUARDS,Guards: %s,Guards: %s,Guardas: %s,Guardas: %s,Wachen: %s,Gardes : %s
+SCOUT_WARDS,Wards: %s,Wards: %s,Proteções: %s,Proteções: %s,Siegel: %s,Protections : %s
+SCOUT_COUNT,%s %d,%s %d,%s %d,%s %d,%s %d,%s %d
+SCOUT_NONE,none,none,nenhum,nenhum,keine,aucun
+SCOUT_WATCH,"Watch: suspicion fills at %d%%, sight reaches %d%%","Watch: suspicion fills at %d%%, sight reaches %d%%","Vigia: suspeita enche a %d%%, a visão alcança %d%%","Vigia: a suspeita enche a %d%%, a visão alcança %d%%","Wache: Verdacht füllt sich zu %d%%, Sicht reicht %d%%","Guet : le soupçon monte à %d %%, la vue porte à %d %%"
+SCOUT_HIDDEN,Where guards stand and wards lie is found in the heist,Where guards stand and wards lie is found in the heist,Onde ficam guardas e proteções se descobre no assalto,Onde estão guardas e proteções descobre-se no assalto,"Wo Wachen stehen und Siegel liegen, zeigt erst der Raubzug",Où se tiennent les gardes et les protections se découvre pendant le casse
+SCOUT_RAID,Raid · %s,Raid · %s,Assaltar · %s,Assaltar · %s,Überfallen · %s,Piller · %s

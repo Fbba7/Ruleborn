@@ -49,7 +49,7 @@ static func album(a: Dictionary, m: Dictionary, v: Dictionary) -> Dictionary:
 	for l: Dictionary in laws:
 		entries.append(entry(l, v))
 	var marks: Dictionary = m.get("marks", {})
-	return {"school": a["school"], "title": UI.school_mark(str(a["school"])),
+	return {"school": a["school"], "title": UI.school_mark(str(a["school"]).to_lower()),
 		"count": Strings.t("CODEX_ALBUM", [int(a.get("restored", 0)), laws.size()]), "milestones": milestones,
 		"mastery": Strings.t("CODEX_MASTERY", [int(m.get("steps", 0)), int(m.get("total", 0))]),
 		"marks": Strings.t("CODEX_MASTERY_MARKS", [int(marks.get("title", 0)), int(marks.get("style", 0)),

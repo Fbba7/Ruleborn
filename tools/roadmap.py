@@ -2620,9 +2620,27 @@ dict(
                   "mark is the same whatever guards and wards the island places "
                   "(tests)",
              blocked_by=["TD.3"]),
-        dict(id="TD.18", owner="claude", status="blocked",
+        dict(id="TD.18", owner="claude", status="doing",
              title="Observatory, scout report and planner",
-             detail="They draw universes of several realms (T3.3), and each piece "
+             detail="<strong>The Observatory and the scout report are built on one realm; "
+                    "the planner, matchups and universes of several realms are "
+                    "not.</strong> <code>server/src/observatory.mjs</code> offers 3 "
+                    "targets, 4 from Observatory level 3 and 5 at 5, each as §12.4's "
+                    "free card: realms, Renown, a rough loot estimate, strain and "
+                    "open faults by §5.5's thresholds, and for the realm its laws, "
+                    "guards by role, wards by kind and watch, counted from the "
+                    "bundle with nothing placed; the fee is the lease's own "
+                    "(<code>stakes</code>), each says why it was offered, and no "
+                    "rating, deviation or position reaches the device, from the "
+                    "Observatory or <code>GET /v1/offer</code>. A Trace is pinned "
+                    "apart with no fee; a refresh costs 50 Aether, doubling in the "
+                    "hour, and sets the targets shown aside. The client's "
+                    "Observatory and scout report screens draw them, and Raid "
+                    "leases the chosen island. Left: the planner, matchups, the "
+                    "Wanderer's extra target, the Keeper's name, and depth and "
+                    "fault places, which need universes of several realms (T3.3)."
+                    "<br><br>"
+                    "They draw universes of several realms (T3.3), and each piece "
                     "stands on work below it: the Observatory's refresh and casts "
                     "cost Aether, and the planner's crew needs the "
                     "roster and rest (TC.12); its Sage and casts rows bind to the "

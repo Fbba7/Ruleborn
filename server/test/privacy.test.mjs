@@ -64,6 +64,9 @@ async function busy() {
   const crossed = t.service.codex.show(x.account).laws.find((l) => !["half_gravity", "slow_rivers", "bloom"].includes(l.law));
   t.service.codex.study(x.account, { heist: studied.token, law: crossed.law });
   t.service.codex.workOn(x.account, crossed.law);
+  // The Observatory's list refreshed (observatory.mjs).
+  t.service.book(x.account, "aether", 50, "a test's grant");
+  t.service.observatory.refresh(x.account);
   // A law woven (weaving.mjs).
   t.service.book(x.account, "aether", 1_000, "a test's grant");
   t.service.weaving.weave(x.account, { realm: "heart", slot: 1, law: "bloom" });

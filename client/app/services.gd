@@ -20,6 +20,7 @@ var universe: UniverseRepository
 var home: HomeRepository
 var weaving: WeavingRepository
 var codex: CodexRepository
+var observatory: ObservatoryRepository
 var device: DeviceRepository
 ## The platform's store (StoreKit, Play Billing); a test's fake in tests.
 var purchases: StorePurchases
@@ -44,6 +45,7 @@ var forms_flow: FormsController
 var weaving_flow: WeavingController
 var codex_flow: CodexController
 var harmony_flow: HarmonyController
+var observatory_flow: ObservatoryController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -64,6 +66,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	WeavingState.register(s.store)
 	CodexState.register(s.store)
 	HarmonyState.register(s.store)
+	ObservatoryState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -87,6 +90,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.home = HomeRepository.new(s.api)
 	s.weaving = WeavingRepository.new(s.api)
 	s.codex = CodexRepository.new(s.api)
+	s.observatory = ObservatoryRepository.new(s.api)
 	s.device = DeviceRepository.new(s.api)
 	s.notifier = LocalNotifier.new()
 	s.notices = DeviceNotices.new(DeviceNotices.FILE if outbox_path == Outbox.FILE
@@ -103,6 +107,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.weaving_flow = WeavingController.new(s)
 	s.codex_flow = CodexController.new(s)
 	s.harmony_flow = HarmonyController.new(s)
+	s.observatory_flow = ObservatoryController.new(s)
 	# What the phone built, wove or assigned offline is answered when the
 	# outbox sends it (§24).
 	s.outbox.settled.connect(s.universe_flow.offline_settled)
@@ -198,6 +203,7 @@ func close() -> void:
 	weaving_flow = null
 	codex_flow = null
 	harmony_flow = null
+	observatory_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):
