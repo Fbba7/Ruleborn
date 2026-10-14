@@ -15,13 +15,14 @@
 // the tier the Codex has restored it to (codex.mjs), and only once it is
 // restored; a realm weaves a law once, as the island does (island.rs).
 //
-// The price is §5.5's cost of the law alone — base × tier × 2 if crowned ×
-// 0.8 in a realm of its school — at §5.6's 40 Aether a point. The terms that
-// depend on the other laws in the realm (harmonies, resonances, chords,
-// dissonances) and an era's discounts are TD.14's one function, which the
-// client and the server will both call; until then they are not charged.
-// Strain, upkeep, Breaking's "no new weaving" and the tier rise in place are
-// TD.37's. The first session's instant weaves are the tutorial's (§16).
+// The price is §5.5's cost of the law where it would be woven, at §5.6's 40
+// Aether a point: base × tier × 2 if crowned × 0.8 in a realm of its school,
+// and the terms that depend on the realm's other laws — harmonies,
+// resonances, chords, dissonances — and the week's era, all priced by the
+// simulation's one function (TD.14, sim/src/stability.rs), which the client
+// prices with too. What is in a slot counts, woven or still weaving. Upkeep,
+// Breaking's "no new weaving" and the tier rise in place are TD.37's. The
+// first session's instant weaves are the tutorial's (§16).
 //
 // What is woven is what home.mjs reads: §9.3's "1 + 0.10 per realm law of a
 // matching school + 0.05 per matching crown law", and §11.5's births "3 for
@@ -41,6 +42,13 @@ const MINUTE = 60_000;
 
 /** The crown's slots, kept as a realm of their own. */
 export const CROWN = "crown";
+
+/** The Anchor Stone, the building §5.5's capacity counts beside the Spire. */
+const ANCHOR = "anchor_stone";
+
+/** A realm's index in the simulation's universe: 0 the Heart, k outer realm
+ *  k, the crown its own. */
+const realmIndex = (realm) => (realm === CROWN ? "crown" : realm === "heart" ? 0 : Number(realm.split("-")[1]));
 
 /** §5.2's realm types' schools: the Heart has none. */
 const schoolOfType = (type) => facts.SCHOOLS[facts.REALM_TYPES.indexOf(type)];
@@ -100,16 +108,29 @@ export class Weaving {
       .all(account, from, to).map((r) => r.ready_at);
   }
 
-  /** §5.5's cost of `law` alone at `tier`, woven in `realm` (TD.14 adds
-   *  the terms that depend on the realm's other laws), and §5.6's price in
-   *  Aether: 40 a point. */
+  /** The universe as §5.5 prices it (TD.14): what is in every slot, woven
+   *  or weaving, each realm's school, the Spire's and the Anchor Stones'
+   *  levels, and the week's era; `extra`, {law, tier, realm}, priced in its
+   *  place as the last line. The simulation's answer: each law's cost, the
+   *  chords that sound, capacity, strain and band. */
+  stability(account, extra = null) {
+    const realms = this.universe.realms(account);
+    const schools = [];
+    for (const r of realms) schools[realmIndex(r.realm)] = r.realm === "heart" ? null : schoolOfType(r.type);
+    for (let i = 0; i < schools.length; i++) schools[i] ??= null;
+    const laws = this.rows(account).filter((r) => r.law)
+      .map((r) => ({ law: r.law, tier: r.tier, realm: realmIndex(r.realm) }));
+    if (extra) laws.push({ ...extra, realm: realmIndex(extra.realm) });
+    const anchors = this.universe.buildings(account).filter((b) => b.kind === ANCHOR).map((b) => b.level);
+    return this.service.builds.current.stability({ spire: this.universe.spire(account), anchors,
+      era: this.service.era().wire, schools, laws });
+  }
+
+  /** §5.5's cost of `law` at `tier` woven in `realm` beside what is already
+   *  there, and §5.6's price in Aether: 40 a point. */
   price(account, law, tier, realm) {
-    const l = LAWS[law];
-    const type = this.universe.realms(account).find((x) => x.realm === realm)?.type;
-    const own = realm !== CROWN && type && schoolOfType(type) === l.school;
-    const points = l.stability_cost * facts.TIER_COST_FACTORS[tier - 1]
-      * (realm === CROWN ? facts.CROWN_COST_FACTOR : 1) * (own ? facts.OWN_SCHOOL_COST_FACTOR : 1);
-    return Math.round(points * facts.WEAVE_AETHER_PER_POINT);
+    const priced = this.stability(account, { law, tier, realm });
+    return Math.round((priced.lines.at(-1).micro * facts.WEAVE_AETHER_PER_POINT) / 1_000_000);
   }
 
   /** Law `law` woven into slot `slot` of `realm` (the crown's as "crown"),
@@ -200,6 +221,11 @@ export class Weaving {
       }),
       prices: Object.fromEntries(restored.map(({ law, tier }) => [law, this.price(account, law, tier, realm)])),
     }));
-    return { realms, aether: this.service.aether(account) };
+    const p = this.stability(account);
+    return { realms, aether: this.service.aether(account),
+             // §5.5: the universe's capacity, what is woven costs, the
+             // chords' draw, strain and its band, 0 Quiet to 6 Breaking.
+             stability: { capacity: p.capacity, total: p.total, draw: p.draw, strain: p.strain, band: p.band,
+                          chords: p.chords } };
   }
 }

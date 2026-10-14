@@ -1,6 +1,10 @@
 {
  "ABILITIES_READY": 4,
  "ABILITY_LOCKOUT_SECONDS": 10,
+ "ANCHOR_STABILITY": [
+  8,
+  5
+ ],
  "ASSIST_BONUS": 0.25,
  "ATTEMPT_BAND": [
   0.1222,
@@ -25,6 +29,8 @@
  "CAST_SECONDS": 10,
  "CAST_TILES": 4,
  "CHAPTER_TWO_KEEPER": 6,
+ "CHORD_COST_FACTOR": 0.9,
+ "CHORD_DRAW": 192,
  "CONSTELLATION_ELDERS": 4,
  "CONSTELLATION_KEEPER_LEVEL": 6,
  "CONSTELLATION_SIZE": 30,
@@ -70,9 +76,11 @@
   0.25
  ],
  "DISARM_SECONDS": 15,
+ "DISSONANCE_COST_FACTOR": 1.25,
  "DOWN_SECONDS": 10,
  "ECHO_DAYS": 14,
  "ENTRY_FEE_RATE": 0.02,
+ "EPOCH_CAPACITY_RAISE": 0.08,
  "FLOOR_HEISTS": 8,
  "FOILED_PAGES": 1,
  "FREE_CPU_MS": 10,
@@ -95,6 +103,7 @@
   1,
   1
  ],
+ "HARMONY_COST_FACTOR": 0.85,
  "HAUL_BASE": 5000,
  "HAUL_FATIGUE": 0.85,
  "HAUL_GROWTH": 1.5,
@@ -318,6 +327,7 @@
   "loud": 0.8,
   "partial": 0.5
  },
+ "RESONANCE_COST_FACTOR": 0.8,
  "REST_MINUTES": [
   45,
   60,
@@ -365,6 +375,10 @@
   "13-15": 25,
   "16-17": 50
  },
+ "SPIRE_STABILITY": [
+  30,
+  8
+ ],
  "STARLIGHT_PER_XP": 40,
  "STARTING_CREW": [
   "featherkin",
@@ -383,6 +397,14 @@
   "half_gravity",
   "slow_rivers",
   "bloom"
+ ],
+ "STRAIN_BANDS": [
+  40,
+  70,
+  90,
+  100,
+  110,
+  125
  ],
  "STRAY_HEIST_ODDS": 8,
  "STUDY_PAGES": [

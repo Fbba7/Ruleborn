@@ -371,6 +371,7 @@ func _run() -> void:
 	await SageTests.new(self, check, _mount, server_url).run()
 	await FormsTests.new(self, check, _mount, server_url).run()
 	await HatchTests.new(self, check, _mount, server_url).run()
+	StabilityTests.new(check).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

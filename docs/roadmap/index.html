@@ -267,7 +267,7 @@
   <nav class="filters" aria-label="Filter the roadmap">
     <button class="chip" data-filter="all" aria-pressed="true">Everything<span class="n">139</span></button>
     <button class="chip" data-filter="owner:you">Yours<span class="n">34</span></button>
-    <button class="chip" data-filter="status:done">Done<span class="n">58</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">18</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">9</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">51</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
+    <button class="chip" data-filter="status:done">Done<span class="n">58</span></button><button class="chip" data-filter="status:doing">Under way<span class="n">19</span></button><button class="chip" data-filter="status:ready">Ready to start<span class="n">8</span></button><button class="chip" data-filter="status:blocked">Blocked<span class="n">51</span></button><button class="chip" data-filter="status:yours">Waiting on you<span class="n">3</span></button>
   </nav>
 
   <main id="list">
@@ -1720,15 +1720,15 @@
         
         
       </article>
-      <article class="task st-ready" id="TD-14"
-               data-status="ready" data-owner="claude">
+      <article class="task st-doing" id="TD-14"
+               data-status="doing" data-owner="claude">
         <header class="task-head">
           <span class="tid">TD.14</span>
           <h3>Stability and weaving prices, priced once for client and server</h3>
-          <span class="status st-ready">Ready to start</span>
+          <span class="status st-doing">Under way</span>
           <span class="owner o-claude">from here</span>
         </header>
-        <p class="detail">Weaving and the Harmony view show strain, harmonies and clashes as the player decides; the server must charge the same. One function in the simulation (§5.5, §8), exported to the client and the server's WebAssembly, with crown laws carried in each realm's bundle (D61): each law's cost, the universe's capacity and strain, and harmonies and clashes within a realm. v3.7 wrote C48's recommended option, so one reading is built and no switch: a harmony counts once per shared note, so three laws on one note each pay 0.85 once and two laws sharing two notes pay it twice, and a crown law is priced once, by the Heart's laws and its own crowning (§5.5, §8.2). An era's discounts are priced in the same function: Heavy Stars' 30% off Motion laws and High Tide's free Slow rivers (§18.3, D69). Upkeep, Breaking, faults and the server's refusal are TD.37's. Strain and its seven bands (§5.5) belong to the universe, not four bands to each realm as the handoff's state has them (README.md:163).</p>
+        <p class="detail"><strong>Built, but for the bundle's crown laws.</strong> <code>sim/src/stability.rs</code> prices the universe: §5.5's capacity, each woven law's cost with every term (tier, crowning, its school, a 0.85 for each shared note, 0.8 for each signature resonance, 0.9 for each sounding chord one of whose notes it carries, 1.25 for each clashing note, Heavy Stars' and High Tide's prices), the chords that sound within capacity and their 192 draw, strain and its seven bands. Its factors are <code>design_facts.py</code>'s, read from §5.5 and §8.5 and held by the content gate; §8.5's worked example comes out at 6.8 + 8.67 + 11.968, silent at 215 and sounding at 217. The server charges through <code>rb_stability</code> in the WebAssembly and the client prices through <code>RulebornStability</code> in the extension; both re-price the 372 cases the simulation writes (<code>sim/stability_cases.json</code>: every launch law alone, crowned, under each era that changes a price, and in every pair) and must agree to the millionth of a point, the unit the simulation keeps costs in, integers throughout as §24.10's float ban requires. The weaving view carries the universe's capacity, strain and band. Left: D61's crown laws carried in each realm's bundle, so a heist plays a crown law in every realm it crosses; the server prices them already.<br><br>Weaving and the Harmony view show strain, harmonies and clashes as the player decides; the server must charge the same. One function in the simulation (§5.5, §8), exported to the client and the server's WebAssembly, with crown laws carried in each realm's bundle (D61): each law's cost, the universe's capacity and strain, and harmonies and clashes within a realm. v3.7 wrote C48's recommended option, so one reading is built and no switch: a harmony counts once per shared note, so three laws on one note each pay 0.85 once and two laws sharing two notes pay it twice, and a crown law is priced once, by the Heart's laws and its own crowning (§5.5, §8.2). An era's discounts are priced in the same function: Heavy Stars' 30% off Motion laws and High Tide's free Slow rivers (§18.3, D69). Upkeep, Breaking, faults and the server's refusal are TD.37's. Strain and its seven bands (§5.5) belong to the universe, not four bands to each realm as the handoff's state has them (README.md:163).</p>
         
         <div class="prog" title="C48 D61">
           <div class="bar">
@@ -3183,4 +3183,4 @@
     }
   })();
 </script>
-<!-- ruleborn-build e8d54f97951b2211 -->
+<!-- ruleborn-build 19e5e052e2ab26de -->

@@ -30,11 +30,14 @@ function refused(fn, reason) {
 
 test("a restored law is woven into a realm's slot for 40 Aether a point of its cost, weaving 10 minutes at tier I and working after (5.6)", () => {
   const { t, me, w, slot } = fresh();
-  const cost = Math.round(LAWS.half_gravity.stability_cost * facts.WEAVE_AETHER_PER_POINT);
+  // The tests' first week is Heavy Stars': "Motion laws cost 30% less"
+  // (§18.3), priced in the same function as every other term (TD.14).
+  assert.equal(t.service.era().id, "heavy_stars");
+  const cost = Math.round(LAWS.half_gravity.stability_cost * 0.7 * facts.WEAVE_AETHER_PER_POINT);
   const before = t.service.aether(me);
   assert.equal(w.show(me).realms.find((r) => r.realm === "heart").prices.half_gravity, cost, "the price is shown first");
   w.weave(me, { realm: "heart", slot: 1, law: "half_gravity" });
-  assert.equal(before - t.service.aether(me), cost, "12 points at tier I, 480 Aether");
+  assert.equal(before - t.service.aether(me), cost, "12 points at tier I, 30% off in Heavy Stars' week: 336 Aether");
   assert.deepEqual(slot("heart", 1), { slot: 1, law: "half_gravity", tier: 1, ready_at: t.clock.now + 10 * MINUTE, weaving: true });
   assert.deepEqual(w.working(me), {}, "while a slot is being woven it is empty");
   t.clock.now += 10 * MINUTE;
@@ -163,4 +166,20 @@ test("weaving offline is confirmed on reconnection, once, and over HTTP (24, 5.6
   assert.equal(resting.status, 409);
   assert.equal(resting.body.error, "slot_resting");
   assert.ok(w);
+});
+
+test("a law's price counts the realm's other laws and the week's era, as the simulation prices them (5.5, 8.3, 8.4, 18.3, TD.14)", () => {
+  const { t, me, w } = fresh();
+  w.weave(me, { realm: "heart", slot: 1, law: "slow_rivers" });
+  const heart = w.show(me).realms.find((r) => r.realm === "heart");
+  // Bloom beside Slow rivers: Mangrove banks, 0.8. Half gravity: Flow
+  // against Weight, 1.25, and Heavy Stars' 30% off a Motion law.
+  assert.equal(heart.prices.bloom, Math.round(11 * 0.8 * 40));
+  assert.equal(heart.prices.half_gravity, Math.round(12 * 0.7 * 1.25 * 40));
+  const priced = w.stability(me, { law: "bloom", tier: 1, realm: "heart" });
+  assert.equal(priced.lines.at(-1).resonances, 1);
+  assert.equal(heart.prices.bloom, Math.round(priced.lines.at(-1).micro * 40 / 1_000_000), "the same function");
+  const s = w.show(me).stability;
+  assert.equal(s.capacity, 30 + 8 * t.service.universe.spire(me), "a Spire and no Anchor Stone yet");
+  assert.ok(Math.abs(s.total - 10) < 1e-9 && s.band === 0, JSON.stringify(s));
 });

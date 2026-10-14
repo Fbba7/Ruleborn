@@ -494,3 +494,68 @@ impl RulebornReplay {
         d
     }
 }
+
+/// §5.5's stability, priced by the simulation's one function (TD.14), the
+/// same the server charges with: a weave's price on screen is the price
+/// paid.
+#[derive(GodotClass)]
+#[class(base = RefCounted, init)]
+pub struct RulebornStability {}
+
+#[godot_api]
+impl RulebornStability {
+    /// The universe in `sim::stability::decode`'s wire form, priced:
+    /// `{"ok", "band", "capacity", "draw", "total", "strain", "chords":
+    /// [{"realm", "chord"}], "lines": [{"cost", "micro", "harmonies",
+    /// "resonances", "chords", "dissonances", "harmony_notes",
+    /// "dissonance_notes"}]}`, or `{"ok": false}` if it does not read. Amounts
+    /// are points for showing, and each line's `micro` the simulation's
+    /// exact millionths.
+    #[func]
+    fn price(wire: PackedByteArray) -> VarDictionary {
+        let mut d = VarDictionary::new();
+        let Some((laws, schools, capacity, era)) = sim::stability::decode(wire.as_slice()) else {
+            d.set("ok", false);
+            return d;
+        };
+        let p = sim::stability::price(&laws, &schools, capacity, era);
+        let points = |v: u64| v as f64 / sim::stability::POINT as f64;
+        d.set("ok", true);
+        d.set("band", p.band as i64);
+        d.set("capacity", points(p.capacity));
+        d.set("draw", points(p.draw));
+        d.set("total", points(p.total));
+        d.set("total_micro", p.total as i64);
+        d.set("strain", points(p.strain));
+        let mut chords: Array<VarDictionary> = Array::new();
+        for (realm, c) in &p.chords {
+            let mut cd = VarDictionary::new();
+            cd.set("realm", *realm as i64);
+            let row = sim::laws_table::CHORDS.iter().position(|(k, _)| k == c).unwrap_or(0);
+            cd.set("chord", &GString::from(sim::laws_table::CHORD_IDS[row]));
+            chords.push(&cd);
+        }
+        d.set("chords", &chords);
+        let mut lines: Array<VarDictionary> = Array::new();
+        for l in &p.lines {
+            let mut ld = VarDictionary::new();
+            ld.set("cost", points(l.cost));
+            ld.set("micro", l.cost as i64);
+            ld.set("harmonies", l.harmonies as i64);
+            ld.set("resonances", l.resonances as i64);
+            ld.set("chords", l.chords as i64);
+            ld.set("dissonances", l.dissonances as i64);
+            ld.set("harmony_notes", l.harmony_notes as i64);
+            ld.set("dissonance_notes", l.dissonance_notes as i64);
+            lines.push(&ld);
+        }
+        d.set("lines", &lines);
+        d
+    }
+
+    /// The simulation's laws, in the rows the wire names them by.
+    #[func]
+    fn law_ids() -> PackedStringArray {
+        sim::laws_table::LAWS.iter().map(|l| GString::from(l.id)).collect()
+    }
+}

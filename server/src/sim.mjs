@@ -83,6 +83,15 @@ export function readManifest(bytes, header) {
 }
 
 /** One compiled build of the simulation. */
+/** §7.4's schools in the order `stability`'s wire names them (stability.rs
+ *  `SCHOOLS`). */
+const SCHOOL_WIRE = ["Motion", "Matter", "Time", "Energy", "Life", "Spirit"];
+/** §8.1's notes, one bit each in this order (laws_table.rs `note`). */
+const NOTE_WIRE = JSON.parse(readFileSync(new URL("../../content/notes.json", import.meta.url), "utf8"))
+  .map((n) => n.id);
+/** The simulation's millionths of a point. */
+const MICRO = 1_000_000;
+
 export class Build {
   constructor(wasmBytes) {
     this.x = new WebAssembly.Instance(new WebAssembly.Module(wasmBytes), {}).exports;
@@ -129,6 +138,61 @@ export class Build {
     const b = this.buffer();
     return Array.from({ length: b[0] }, (_, i) => ({
       kind: kinds.find(([, k]) => k.code === b[1 + 3 * i])[0], x: b[2 + 3 * i], y: b[3 + 3 * i] }));
+  }
+
+  /** The simulation's rows: its laws' ids (`which` 0) or its chords' (1),
+   *  the order `stability` names them by. */
+  ids(which) {
+    const key = which === 0 ? "_lawIds" : "_chordIds";
+    if (!this[key]) {
+      const n = this.x.rb_ids(which);
+      this[key] = Buffer.from(this.buffer().slice(0, n)).toString().split("\0").slice(0, -1);
+    }
+    return this[key];
+  }
+
+  /**
+   * §5.5's stability, priced by the simulation (TD.14), the one function the
+   * client prices with too: the universe's capacity from the Spire's level,
+   * each Anchor Stone's and the epoch; each woven law's cost and why; the
+   * chords that sound and their draw; strain and its band (0 Quiet to 6
+   * Breaking). `laws` are {law, tier, realm}, a realm its index — 0 the
+   * Heart, k outer realm k — or "crown"; `schools[k]` is realm k's school,
+   * null for the Heart; `era` the era's wire value.
+   */
+  stability({ spire, anchors = [], epoch = 1, era = 0, schools, laws }) {
+    const rows = this.ids(0);
+    const wire = [spire, epoch, era, anchors.length, ...anchors, schools.length,
+      ...schools.map((s) => (s == null ? 255 : SCHOOL_WIRE.indexOf(s))), laws.length,
+      ...laws.flatMap((l) => [rows.indexOf(l.law), l.tier, l.realm === "crown" ? 255 : l.realm])];
+    if (wire.some((v) => v < 0)) throw new Error("stability: a law or school the simulation does not know");
+    return this.priced(Uint8Array.from(wire));
+  }
+
+  /** `stability` from its wire form (`stability::decode`). Every amount is
+   *  the simulation's integer millionths of a point (`micro`) and the same
+   *  in points; strain is a share of capacity. */
+  priced(wire) {
+    this.buffer().set(wire);
+    const n = this.x.rb_stability(wire.length);
+    if (n < 0) throw new Error(`stability: ${REFUSED[n] ?? n}`);
+    const b = this.buffer().slice(0, n);
+    const view = new DataView(b.buffer, b.byteOffset, n);
+    const chordIds = this.ids(1);
+    const chords = Array.from({ length: b[1] }, (_, i) => ({ realm: b[2 + 2 * i], chord: chordIds[b[3 + 2 * i]] }));
+    let at = 2 + 2 * b[1];
+    const u64 = () => { const v = Number(view.getBigUint64(at, true)); at += 8; return v; };
+    const [capacity, draw, total, strain] = [u64(), u64(), u64(), u64()];
+    const notes = (mask) => NOTE_WIRE.filter((_, i) => mask & (1 << i));
+    const lines = [];
+    while (at < n) {
+      const micro = u64();
+      lines.push({ micro, cost: micro / MICRO, harmonies: b[at], resonances: b[at + 1], chords: b[at + 2],
+                   dissonances: b[at + 3], harmonyNotes: notes(b[at + 4]), dissonanceNotes: notes(b[at + 5]) });
+      at += 6;
+    }
+    return { band: b[0], chords, capacity: capacity / MICRO, draw: draw / MICRO, total: total / MICRO,
+             strain: strain / MICRO, micro: { capacity, draw, total }, lines };
   }
 
   /** An island's hash and what stops it being published. */

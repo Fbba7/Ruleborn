@@ -136,14 +136,14 @@ class EconomyModel:
 
     def band_multiplier(self) -> float:
         strain = self.strain()
-        for upper, mult, _ in data.STRAIN_BANDS:
+        for upper, mult, _ in data.STRAIN_BAND_TABLE:
             if strain < upper:
                 return mult
         return 1.15
 
     def band_name(self) -> str:
         strain = self.strain()
-        for upper, _, name in data.STRAIN_BANDS:
+        for upper, _, name in data.STRAIN_BAND_TABLE:
             if strain < upper:
                 return name
         return "Breaking"

@@ -271,6 +271,23 @@ CROWN_SLOT_SPIRE = (2, 5)
 TIER_COST_FACTORS = (1.0, 1.3, 1.6)
 CROWN_COST_FACTOR = 2
 OWN_SCHOOL_COST_FACTOR = 0.8
+#: §5.5's capacity: "Keeper's Spire (30 + 8 × Spire level) + every Anchor
+#: Stone (8 + 5 × its level), raised 8% for each epoch after the first".
+SPIRE_STABILITY = (30, 8)
+ANCHOR_STABILITY = (8, 5)
+EPOCH_CAPACITY_RAISE = 0.08
+#: §5.5's terms that depend on the realm's other laws: "× 0.85 for each
+#: harmony × 0.8 for each signature resonance × 0.9 in a chord × 1.25 for a
+#: dissonance".
+HARMONY_COST_FACTOR = 0.85
+RESONANCE_COST_FACTOR = 0.8
+CHORD_COST_FACTOR = 0.9
+DISSONANCE_COST_FACTOR = 1.25
+#: §8.5's chord draw: "192 stability".
+CHORD_DRAW = 192
+#: §5.5's seven bands, by where each from Steady on starts, in percent of
+#: capacity: Quiet under 40, Steady 40 to 70 … Breaking 125 and over.
+STRAIN_BANDS = (40, 70, 90, 100, 110, 125)
 #: §11.5: a birth's school "weighted as 11.9 states: 3 for each law woven in its
 #: realm, 2 for the realm's own school and 1 for each crown law".
 BIRTH_WEIGHTS = (3, 2, 1)
@@ -517,6 +534,15 @@ HOME = {
     "TIER_COST_FACTORS": "5.5",
     "CROWN_COST_FACTOR": "5.5",
     "OWN_SCHOOL_COST_FACTOR": "5.5",
+    "SPIRE_STABILITY": "5.5",
+    "ANCHOR_STABILITY": "5.5",
+    "EPOCH_CAPACITY_RAISE": "5.5",
+    "HARMONY_COST_FACTOR": "5.5",
+    "RESONANCE_COST_FACTOR": "5.5",
+    "CHORD_COST_FACTOR": "5.5",
+    "DISSONANCE_COST_FACTOR": "5.5",
+    "CHORD_DRAW": "8.5",
+    "STRAIN_BANDS": "5.5",
     "BIRTH_WEIGHTS": "11.5",
     "LAW_TRAIT_WEIGHT": "11.3",
     "REST_MINUTES": "11.6",
@@ -729,6 +755,18 @@ STATED = {
                           lambda m: tuple(float(x) for x in m)),
     "CROWN_COST_FACTOR": (r"Cost of a law = base cost × tier \([^)]*\) × (\d+) if crowned", lambda m: int(m[0])),
     "OWN_SCHOOL_COST_FACTOR": (r"× (\d+) if crowned × ([\d.]+) in a realm of its school", lambda m: float(m[1])),
+    "SPIRE_STABILITY": (r"Capacity = Keeper.s Spire \((\d+) \+ (\d+) × Spire level\)",
+                        lambda m: (int(m[0]), int(m[1]))),
+    "ANCHOR_STABILITY": (r"every Anchor Stone \((\d+) \+ (\d+) × its level\)", lambda m: (int(m[0]), int(m[1]))),
+    "EPOCH_CAPACITY_RAISE": (r"raised (\d+)% for each epoch after the first", lambda m: int(m[0]) / 100),
+    "HARMONY_COST_FACTOR": (r"× ([\d.]+) for each harmony", lambda m: float(m[0])),
+    "RESONANCE_COST_FACTOR": (r"× ([\d.]+) for each signature resonance", lambda m: float(m[0])),
+    "CHORD_COST_FACTOR": (r"× ([\d.]+) in a chord", lambda m: float(m[0])),
+    "DISSONANCE_COST_FACTOR": (r"× ([\d.]+) for a dissonance", lambda m: float(m[0])),
+    "CHORD_DRAW": (r"so (\d+) stability: on day 41", lambda m: int(m[0])),
+    "STRAIN_BANDS": (r"\| Under (\d+)%[\s\S]*?\| \d+ to (\d+)%[\s\S]*?\| \d+ to (\d+)%[\s\S]*?\| \d+ to (\d+)%"
+                     r"[\s\S]*?\| \d+ to (\d+)%[\s\S]*?\| \d+ to (\d+)%",
+                     lambda m: tuple(int(x) for x in m)),
     "REST_MINUTES": (r"(\d+) minutes after a clean escape, (\d+) after a loud one, (\d+) if caught",
                      lambda m: tuple(int(x) for x in m)),
     "HEARTH_REST_CUT": (r"Hearths shorten rest (\d+)% per level", lambda m: int(m[0]) / 100),

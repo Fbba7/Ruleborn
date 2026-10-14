@@ -178,7 +178,7 @@ def formulas() -> str:
     out.append(row("Stability capacity",
                    f"{econ.spire_stability(0)} + 8 x Spire level, plus every Anchor "
                    f"Stone ({econ.anchor_stability(0)} + 5 x its level)", "5.5"))
-    bands = ", ".join(f"{b[2]} under {b[0]:.0%}" for b in econ.STRAIN_BANDS[:-1])
+    bands = ", ".join(f"{b[2]} under {b[0]:.0%}" for b in econ.STRAIN_BAND_TABLE[:-1])
     out.append(row("Strain bands", bands + ", then Breaking", "5.5"))
     out.append(row("Production",
                    "base x 1.35^(level-1) x staffing x law bonuses x realm match "

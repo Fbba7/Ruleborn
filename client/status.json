@@ -111,6 +111,7 @@
   "the builder lays §6.2's ground on the realm's grid, and the island it writes reads back the same": "passed",
   "the builder weaves laws and places their pylons, holds the realm to its law slots, and names what the laws make together (§8.6)": "passed",
   "the client speaks to a server over HTTPS only, plain HTTP to this machine's own for tests": "passed",
+  "the client's prices equal the simulation's, to the millionth of a point, for every launch law alone, crowned, in each era and in every pair (TD.14)": "passed",
   "the client's simulation is the rules version every golden replay names": "passed",
   "the crew lands together on the open edge tile the player chose, recorded at tick 0 (5.4)": "passed",
   "the debug overlay shows the route, the account, what waits in the outbox, and the last actions": "passed",
@@ -140,6 +141,7 @@
   "what was played offline is sent by itself when the network is back, and a banner says so (G41, §24.12)": "passed",
   "while online the phone keeps three leases in stock, each on another player's island and no two alike, and a restart keeps them (G41)": "passed",
   "with no network a heist recommends going online first, and plays a stocked lease only if the player chooses to; with none in stock it says to go online (G41, §24.12)": "passed",
-  "work assigned with no network waits in the outbox, shown as confirming, and is confirmed on reconnection with the home after it (24)": "passed"
+  "work assigned with no network waits in the outbox, shown as confirming, and is confirmed on reconnection with the home after it (24)": "passed",
+  "§8.5's worked example priced on the client: 215 of capacity, the chord silent, 6.8 + 8.67 + 11.97 (5.5, 8.5, TD.14)": "passed"
  }
 }

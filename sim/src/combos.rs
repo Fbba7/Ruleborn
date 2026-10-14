@@ -87,7 +87,7 @@ impl Combos {
 /// §8.8: "a chord now requires three distinct laws contributing the three
 /// notes" — three laws, each carrying a different one of the chord's notes.
 /// A law with two of them still counts once.
-fn carried_by_three(laws: &[usize], notes: u8) -> bool {
+pub(crate) fn carried_by_three(laws: &[usize], notes: u8) -> bool {
     let each: Vec<u8> = (0..8).map(|b| 1u8 << b).filter(|n| notes & n != 0).collect();
     if each.len() != 3 {
         return false;

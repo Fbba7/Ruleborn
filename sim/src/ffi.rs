@@ -366,3 +366,48 @@ pub extern "C" fn rb_digest(seed_hi: u32, seed_lo: u32, ticks: u32) -> u64 {
     let seed = ((seed_hi as u64) << 32) | seed_lo as u64;
     digest(&fixture(seed, ticks, 3))
 }
+
+
+/// §5.5's stability, priced (TD.14): the universe in the buffer's first
+/// `len` bytes as `stability::decode` reads it, answered over it as
+/// `stability::encode` writes it. Returns the bytes written, or -2 when the
+/// universe does not read.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_stability(len: u32) -> i32 {
+    if !fits(0, len) {
+        return -9;
+    }
+    with_buffer(|b| {
+        let Some((laws, schools, capacity, era)) = crate::stability::decode(&b[..len as usize]) else { return -2 };
+        let out = crate::stability::encode(&crate::stability::price(&laws, &schools, capacity, era));
+        if out.len() > b.len() {
+            return -9;
+        }
+        b[..out.len()].copy_from_slice(&out);
+        out.len() as i32
+    })
+}
+
+/// The ids of `LAWS` (`which` 0) or of `CHORDS` (1), each followed by a NUL,
+/// written to the buffer: the rows `rb_stability` names. Returns the bytes
+/// written.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_ids(which: u32) -> i32 {
+    let ids: Vec<&str> = if which == 0 {
+        crate::laws_table::LAWS.iter().map(|l| l.id).collect()
+    } else {
+        crate::laws_table::CHORD_IDS.to_vec()
+    };
+    with_buffer(|b| {
+        let mut at = 0;
+        for id in ids {
+            b[at..at + id.len()].copy_from_slice(id.as_bytes());
+            b[at + id.len()] = 0;
+            at += id.len() + 1;
+        }
+        at as i32
+    })
+}
+

@@ -45,6 +45,7 @@ pub mod replay;
 pub mod ruleborn;
 pub mod sha256;
 pub mod sight;
+pub mod stability;
 
 #[cfg(test)]
 mod tests;

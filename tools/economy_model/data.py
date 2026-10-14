@@ -155,24 +155,27 @@ HEART_LAW_SLOTS = 2
 # Stability (§5.5)
 # --------------------------------------------------------------------------
 
+try:                                        # §5.5's capacity and bands,
+    from ..design_facts import ANCHOR_STABILITY, SPIRE_STABILITY, STRAIN_BANDS  # from their one home
+except ImportError:
+    from design_facts import ANCHOR_STABILITY, SPIRE_STABILITY, STRAIN_BANDS
+
+
 def spire_stability(level: int) -> int:
-    return 30 + 8 * level
+    return SPIRE_STABILITY[0] + SPIRE_STABILITY[1] * level
 
 
 def anchor_stability(level: int) -> int:
-    return 8 + 5 * level
+    return ANCHOR_STABILITY[0] + ANCHOR_STABILITY[1] * level
 
 
-#: (upper strain bound, production multiplier, band name). Last entry is open-ended.
-STRAIN_BANDS = (
-    (0.40, 1.00, "Quiet"),
-    (0.70, 1.05, "Steady"),
-    (0.90, 1.10, "Humming"),
-    (1.00, 1.15, "Brimming"),
-    (1.10, 1.15, "Strained"),
-    (1.25, 1.15, "Cracking"),
-    (float("inf"), 1.15, "Breaking"),
-)
+#: (upper strain bound, production multiplier, band name). Last entry is
+#: open-ended. The bounds are §5.5's (design_facts.STRAIN_BANDS); the
+#: multipliers are this model's reading of each band's production line.
+STRAIN_BAND_TABLE = tuple(zip(
+    [b / 100 for b in STRAIN_BANDS] + [float("inf")],
+    (1.00, 1.05, 1.10, 1.15, 1.15, 1.15, 1.15),
+    ("Quiet", "Steady", "Humming", "Brimming", "Strained", "Cracking", "Breaking")))
 
 TIER_COST_MULTIPLIER = (1.0, 1.3, 1.6)
 

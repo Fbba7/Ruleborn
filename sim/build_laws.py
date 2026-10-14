@@ -79,6 +79,8 @@ def render() -> str:
         "    pub launch: bool,",
         "    /// Its school (§7.4): what an era that strengthens a school reads.",
         "    pub school: &'static str,",
+        "    /// Its base stability cost (§5.5, §7): what `stability` prices.",
+        "    pub cost: u16,",
         "}",
         "",
         f"pub const LAWS: [LawDef; {len(data['laws'])}] = [",
@@ -87,6 +89,7 @@ def render() -> str:
     catalogue = json.loads(LAWS.read_text(encoding="utf-8"))
     launch = {l["id"] for l in catalogue if l.get("launch")}
     school = {l["id"]: l["school"] for l in catalogue}
+    base = {l["id"]: l["stability_cost"] for l in catalogue}
     bit = {n["name"]: 1 << i for i, n in enumerate(notes)}
     mask = lambda names: " | ".join(f"note::{n.upper()}" for n in names) or "0"
     for law in data["laws"]:
@@ -96,7 +99,7 @@ def render() -> str:
                      f"simulated: {'true' if law['simulated'] else 'false'}, "
                      f"params: &[{ps}], notes: {mask(law['notes'])}, "
                      f"launch: {'true' if law['id'] in launch else 'false'}, "
-                     f"school: \"{school[law['id']]}\" }},")
+                     f"school: \"{school[law['id']]}\", cost: {base[law['id']]} }},")
     lines.append("];")
     lines += ["", "/// §8.1's eight notes, one bit each, in the table's order.", "pub mod note {"]
     lines += [f"    pub const {n['name'].upper()}: u8 = {bit[n['name']]};" for n in notes]

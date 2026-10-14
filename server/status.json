@@ -102,6 +102,7 @@
   "a heist's row is written before the rows that name it, so none of their tables is read whole (F47)": "passed",
   "a law cast in a foiled heist gives the defender a page of it (7.6)": "passed",
   "a law of a producer's school adds 10% to it in its realm, a crowned one 5% in every realm, from when its weaving ends (9.3)": "passed",
+  "a law's price counts the realm's other laws and the week's era, as the simulation prices them (5.5, 8.3, 8.4, 18.3, TD.14)": "passed",
   "a lease closed unplayed when its target was leased again goes too (G38)": "passed",
   "a lease held in one mode is not handed back as another: a Trace is never charged as a raid (12.3, 24.13)": "passed",
   "a lease is a seed, a token, the clock and an expiry a day away (§24.12)": "passed",
@@ -302,6 +303,7 @@
   "the server records sign-ins, heists and purchases under a pseudonym, never the account (24, 20.5)": "passed",
   "the server starts by making journalled deletions again and sweeping stray lists, before it listens, with a kept secret (20.12)": "passed",
   "the server's own log names a route, never an id in its path, a token or a heist (20.5)": "passed",
+  "the server's prices equal the simulation's, to the millionth of a point, for every launch law alone, crowned, in each era and in every pair (TD.14)": "passed",
   "the simulation and the store agree on every island's hash": "passed",
   "the survey's quarter runs from when the server received it, however the device dates it (25.4)": "passed",
   "the terms, the privacy policy and the support page are served for the stores to link to (20.10, 20.11)": "passed",
@@ -322,6 +324,7 @@
   "while fewer than 15% change their defence, the share rises 5 points a season, to 20% at most (13.1)": "passed",
   "with a reminder chosen, the day's raids come inside it, and a later raid waits for the next (G34)": "passed",
   "with an edge that answers, the purge is asked as the deletion is made, and a deletion asked for keeps the edge's copy (20.5, 20.11)": "passed",
-  "§11.6's rest: 45, 60 or 180 minutes by the outcome, less 5% a Hearth level, Loyal's 0.75 after a success and Sleepy's 1.5": "passed"
+  "§11.6's rest: 45, 60 or 180 minutes by the outcome, less 5% a Hearth level, Loyal's 0.75 after a success and Sleepy's 1.5": "passed",
+  "§8.5's worked example, through the server's binding: 27.44 silent at 215, the chord sounding at 217 (5.5, 8.5)": "passed"
  }
 }

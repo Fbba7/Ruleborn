@@ -31,7 +31,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 CONTENT = HERE.parent / "content" / "detection.json"
 ROLES = HERE.parent / "content" / "roles.json"
 SOURCES = ["src/lib.rs", "src/guard.rs", "src/noise.rs", "src/grid.rs", "src/heist.rs",
-           "src/island.rs", "src/ruleborn.rs"]
+           "src/island.rs", "src/ruleborn.rs", "src/stability.rs"]
 TERRAIN = HERE.parent / "content" / "terrain.json"
 
 # Values the content files hold that the simulation does not yet use, by path
@@ -343,6 +343,26 @@ def facts_compare(text: str) -> dict:
                                             .read_text(encoding="utf-8"))),
          k.get("FIXTURE_EXPOSED")),
     ]
+    # §5.5's stability, which `stability.rs` prices (TD.14).
+    rows += [
+        ("SPIRE_STABILITY", tuple(f.SPIRE_STABILITY), k.get("SPIRE_STABILITY")),
+        ("ANCHOR_STABILITY", tuple(f.ANCHOR_STABILITY), k.get("ANCHOR_STABILITY")),
+        ("EPOCH_CAPACITY_RAISE", ratio(f.EPOCH_CAPACITY_RAISE), ratio(k.get("EPOCH_CAPACITY_RAISE"))),
+        ("CROWN_COST_FACTOR", ratio(f.CROWN_COST_FACTOR), ratio(k.get("CROWN_COST"))),
+        ("OWN_SCHOOL_COST_FACTOR", ratio(f.OWN_SCHOOL_COST_FACTOR), ratio(k.get("OWN_SCHOOL_COST"))),
+        ("HARMONY_COST_FACTOR", ratio(f.HARMONY_COST_FACTOR), ratio(k.get("HARMONY_COST"))),
+        ("RESONANCE_COST_FACTOR", ratio(f.RESONANCE_COST_FACTOR), ratio(k.get("RESONANCE_COST"))),
+        ("CHORD_COST_FACTOR", ratio(f.CHORD_COST_FACTOR), ratio(k.get("CHORD_COST"))),
+        ("DISSONANCE_COST_FACTOR", ratio(f.DISSONANCE_COST_FACTOR), ratio(k.get("DISSONANCE_COST"))),
+        ("CHORD_DRAW", f.CHORD_DRAW, k.get("CHORD_DRAW")),
+    ]
+    tiers = re.search(r"pub const TIER_COST: \[[^=]*\] = \[(.*?)\];", text, re.S)
+    rows.append(("TIER_COST_FACTORS", tuple(ratio(t) for t in f.TIER_COST_FACTORS),
+                 tuple(ratio((int(a), int(b))) for a, b in re.findall(r"\((\d+), (\d+)\)", tiers.group(1)))
+                 if tiers else None))
+    bands = re.search(r"pub const STRAIN_BANDS: \[u32; \d+\] = \[([\d,\s]+)\];", text)
+    rows.append(("STRAIN_BANDS", tuple(f.STRAIN_BANDS),
+                 tuple(int(v) for v in re.findall(r"\d+", bands.group(1))) if bands else None))
     # §5.2's budgets by realm level, which `island.rs` publishes against.
     arrays = {n: tuple(int(v) for v in re.findall(r"\d+", body))
               for n, body in re.findall(r"pub const (\w+): \[u8; 5\] = \[([\d,\s]+)\];", text)}
