@@ -2852,9 +2852,26 @@ dict(
                   "replay",
              blocked_by=["TD.3", "TD.39"]),
         # -- Track D, outside the slice ------------------------------------------
-        dict(id="TD.44", owner="claude", status="blocked",
+        dict(id="TD.44", owner="claude", status="doing",
              title="The Codex and the Harmony view",
-             detail="The Codex's chapters are unlock steps by Keeper level and its "
+             detail="<strong>The Codex is built; the Harmony view is not.</strong> "
+                    "<code>scripts/codex_screen.gd</code> shows each school's album by "
+                    "its shape and name, its four launch laws in chapter order, one "
+                    "not met a “?” that names nothing (D79) and one in a closed "
+                    "chapter the Keeper level that opens it; each album's restored "
+                    "count and §7.6's milestones at 2, 4 and 8; each school's §18.5 "
+                    "mastery track, a step for each law woven, crossed in a "
+                    "successful heist and raised to tier III, with its marks at 4, "
+                    "8 and 12; and each law's restoration or next tier with its "
+                    "price, on a second tap, and why it waits. The server's "
+                    "<code>codex.mjs</code> keeps the mastery steps and serves the "
+                    "albums; matchmaking shows a raider only islands whose laws are "
+                    "all from chapters they have open, and the generator's islands "
+                    "run chapter 1's laws, open to everyone, so a thin list still "
+                    "fills. Left: the Harmony view, the Codex note from the heist "
+                    "rows, and the priced line for an unnamed resonance or chord."
+                    "<br><br>"
+                    "The Codex's chapters are unlock steps by Keeper level and its "
                     "schools are albums (§7.6), with restoration and study from "
                     "TC.12; Harmony shows harmonies, clashes and chords as TD.14 "
                     "prices them. v3.7 wrote G49's recommended option: chapter 1 "

@@ -266,6 +266,9 @@ test("the offer over HTTP: the caller's list, its middle in the band, and rating
   const t = twoPlayers(false);
   const call = (method, path, token) => t.handle(new Request(`https://edge.example${path}`, {
     method, headers: { authorization: `Bearer ${token}` } }));
+  // The example island runs Haste, a chapter 2 law: open from Keeper level 6
+  // (§7.6).
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6 WHERE id = ?").run(t.raider.account);
   const res = await call("GET", "/v1/offer", t.raider.token);
   assert.equal(res.status, 200);
   const body = await res.json();
@@ -288,4 +291,25 @@ test("a Trace asked for twice is handed the Trace already held, however many rob
   const first = t.service.lease(t.defender.account, home, null, { trace: true });
   const again = t.service.lease(t.defender.account, home, null, { trace: true });
   assert.equal(again.token, first.token, "§24.13: the same heist asked for twice");
+});
+
+test("matchmaking shows only universes running laws from the raider's open chapters, whatever else it widens (7.6)", () => {
+  const t = twoPlayers(false);
+  const mm = t.service.matchmaking;
+  const [island] = mm.candidates();
+  assert.equal(island.chapter, 2, "Brittle stone is chapter 1's, Haste chapter 2's");
+  assert.deepEqual(offer(mm.raider(t.raider.account), mm.candidates()).targets, [],
+                   "a new Keeper has chapter 1 alone, and no widening reaches past it");
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6 WHERE id = ?").run(t.raider.account);
+  assert.equal(mm.raider(t.raider.account).chapter, 2);
+  assert.deepEqual(offer(mm.raider(t.raider.account), mm.candidates()).targets.map((c) => c.bundle), [t.bundle]);
+  // The pure list: no target from a closed chapter, on any band or pool.
+  const raider = { account: "r", rating: 1500, deviation: 50, renown: 0, keeperLevel: 1, chapter: 1, recent: 0.6 };
+  const candidates = Array.from({ length: 12 }, (_, i) => ({
+    bundle: `b${i}`, owner: `o${i}`, realmLevel: 1, keeperLevel: 1, renown: 0, rating: 1400 + 20 * i,
+    deviation: 50, echo: i % 3 === 0, origin: i % 4 === 0 ? "generated" : "authored", chapter: 1 + (i % 2) }));
+  for (const size of [1, 3, 5]) {
+    const { targets } = offer(raider, candidates, { size });
+    assert.ok(targets.length > 0 && targets.every((c) => c.chapter === 1), JSON.stringify(targets));
+  }
 });

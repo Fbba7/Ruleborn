@@ -17,9 +17,11 @@
 
 import { readFileSync } from "node:fs";
 
+import { chapterOf, openChapter } from "./codex.mjs";
 import { expected, fresh, ratingFor, update } from "./glicko.mjs";
 import { GENERATOR } from "./generator.mjs";
 import { Refused } from "./refused.mjs";
+import { lawsOf } from "./telemetry.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 const HOUR_MS = 60 * 60 * 1000;
@@ -73,6 +75,8 @@ export function prior(realmLevel, origin = "authored") {
 export class Matchmaking {
   constructor(service) {
     this.service = service;
+    /** Each bundle's chapter, by its hash (§7.6). */
+    this.chapters = new Map();
   }
 
   get db() { return this.service.db; }
@@ -191,12 +195,17 @@ export class Matchmaking {
           AND s.owner != ?
           AND NOT EXISTS (SELECT 1 FROM islands i WHERE i.bundle = s.bundle)
         ORDER BY s.bundle`).all(now - facts.ECHO_DAYS * DAY_MS, GENERATOR);
+    // A bundle never changes (§24.8), so its chapter is worked out once.
+    const chapter = (bundle) => {
+      if (!this.chapters.has(bundle)) this.chapters.set(bundle, chapterOf(lawsOf(this.service.store.get(bundle))));
+      return this.chapters.get(bundle);
+    };
     const view = (r, echo) => {
       const rating = this.islandRating(r.owner, r.realm) ?? prior(r.realm_level);
       return {
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
         keeperLevel: r.keeper_level, renown: this.service.seasons.league(r.owner, now).renown,
-        rating: rating.rating, deviation: rating.deviation, echo,
+        rating: rating.rating, deviation: rating.deviation, echo, chapter: chapter(r.bundle),
         origin: r.owner === GENERATOR ? "generated" : "authored",
       };
     };
@@ -210,10 +219,11 @@ export class Matchmaking {
   /** The raider as `offer` needs them. */
   raider(account, now = this.service.now()) {
     const r = this.raiderRating(account);
+    const keeperLevel = this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(account).keeper_level;
     return {
       account, rating: r.rating, deviation: r.deviation,
       renown: this.service.seasons.league(account, now).renown,
-      keeperLevel: this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(account).keeper_level,
+      keeperLevel, chapter: openChapter(keeperLevel),
       recent: this.recentSuccess(account),
       // A bundle is one snapshot however many players publish it: one they
       // hold is their own island.
@@ -236,7 +246,10 @@ export class Matchmaking {
  */
 export function offer(raider, candidates, { size = 3 } = {}) {
   const own = new Set(raider.bundles ?? []);
-  const others = candidates.filter((c) => c.owner !== raider.account && !own.has(c.bundle));
+  // §7.6: "Matchmaking only shows universes running laws from open
+  // chapters" — a rule, never a filter step 4 widens.
+  const others = candidates.filter((c) => c.owner !== raider.account && !own.has(c.bundle)
+    && (c.chapter ?? 1) <= (raider.chapter ?? Infinity));
   const predicted = (c) => expected(raider, c);
   const inBand = (c) => {
     const [lo, hi] = successBand(c.realmLevel, c.origin);

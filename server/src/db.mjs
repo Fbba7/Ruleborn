@@ -187,6 +187,9 @@ CREATE TABLE IF NOT EXISTS codex (
   tier        INTEGER NOT NULL DEFAULT 0 CHECK (tier BETWEEN 0 AND 3),
   met_at      INTEGER NOT NULL,
   restored_at INTEGER,
+  -- §18.5's mastery steps: first woven, first crossed in a successful heist.
+  woven_at    INTEGER,
+  crossed_at  INTEGER,
   PRIMARY KEY (owner, law)
 );
 
@@ -800,6 +803,9 @@ const ADDED = [
   // Where a building stands (universe.mjs `place`).
   ["buildings", "x", "INTEGER"],
   ["buildings", "y", "INTEGER"],
+  // §18.5's mastery steps (codex.mjs).
+  ["codex", "woven_at", "INTEGER"],
+  ["codex", "crossed_at", "INTEGER"],
 ];
 
 /** A ledger of a row a currency — and one made while there was Starglass —

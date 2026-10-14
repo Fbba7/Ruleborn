@@ -727,3 +727,42 @@ SETTINGS_HOLD,Hold %s s,Hold %s s,Segurar %s s,Premir %s s,Halten %s s,Appui %s 
 SETTINGS_SHORTER,%s: shorter,%s: shorter,%s: menor,%s: mais curto,%s: kürzer,%s : plus court
 SETTINGS_LONGER,%s: longer,%s: longer,%s: maior,%s: mais longo,%s: länger,%s : plus long
 WEAVING_CROWN_OPENS,The next crown slot opens at Spire level %d,The next crown slot opens at Spire level %d,O próximo espaço da coroa abre com a Torre no nível %d,O próximo espaço da coroa abre com a Torre no nível %d,Der nächste Kronenplatz öffnet sich mit Turm auf Level %d,Le prochain emplacement de la couronne s'ouvre avec la Tour au niveau %d
+HOME_CODEX,The Codex,The Codex,O Codex,O Codex,Der Codex,Le Codex
+CODEX_TITLE,Codex,Codex,Codex,Codex,Codex,Codex
+CODEX_HEADER,%s Aether · Keeper %d · Spire %d,%s Aether · Keeper %d · Spire %d,%s de Aether · Guardião %d · Torre %d,%s de Aether · Guardião %d · Torre %d,%s Aether · Hüter %d · Turm %d,%s d'Aether · Gardien %d · Tour %d
+CODEX_CHAPTER_NEXT,Chapter 2 opens at Keeper level %d,Chapter 2 opens at Keeper level %d,O capítulo 2 abre no nível %d de Guardião,O capítulo 2 abre no nível %d de Guardião,Kapitel 2 öffnet sich ab Hüter-Level %d,Le chapitre 2 s'ouvre au niveau %d de Gardien
+CODEX_CHAPTERS_OPEN,Every chapter is open,Every chapter is open,Todos os capítulos estão abertos,Todos os capítulos estão abertos,Alle Kapitel sind offen,Tous les chapitres sont ouverts
+CODEX_WORKING,Working on %s: every eighth heist brings a page of it,Working on %s: every eighth heist brings a page of it,Trabalhando em %s: a cada oito assaltos vem uma página dela,A trabalhar em %s: a cada oito assaltos vem uma página dela,Arbeit an %s: jeder achte Raubzug bringt eine Seite davon,En travail : %s ; un casse sur huit en rapporte une page
+CODEX_WORKING_NONE,"No law worked on: mark one, and every eighth heist brings a page of it","No law worked on: mark one, and every eighth heist brings a page of it","Nenhuma lei em trabalho: marque uma, e a cada oito assaltos vem uma página dela","Nenhuma lei em trabalho: marca uma, e a cada oito assaltos vem uma página dela","Kein Gesetz in Arbeit: markiere eins, und jeder achte Raubzug bringt eine Seite davon","Aucune loi en travail : marques-en une, et un casse sur huit en rapporte une page"
+CODEX_ALBUM,%d of %d restored,%d of %d restored,%d de %d restauradas,%d de %d restauradas,%d von %d wiederhergestellt,%d sur %d restaurées
+CODEX_MILESTONE_STAMP,a Codex stamp at %d restored,a Codex stamp at %d restored,um selo do Codex com %d restauradas,um selo do Codex com %d restauradas,ein Codex-Stempel bei %d wiederhergestellt,un tampon du Codex à %d restaurées
+CODEX_MILESTONE_PENNANT,a skiff pennant at %d,a skiff pennant at %d,uma flâmula do barco com %d,uma flâmula do barco com %d,ein Wimpel fürs Boot bei %d,un fanion d'esquif à %d
+CODEX_MILESTONE_CREST,the school's crest on your islands at %d,the school's crest on your islands at %d,o brasão da escola nas suas ilhas com %d,o brasão da escola nas tuas ilhas com %d,das Wappen der Schule auf deinen Inseln bei %d,le blason de l'école sur tes îles à %d
+CODEX_MASTERY,Mastery: %d of %d steps,Mastery: %d of %d steps,Maestria: %d de %d passos,Mestria: %d de %d passos,Meisterschaft: %d von %d Schritten,Maîtrise : %d étapes sur %d
+CODEX_MASTERY_MARKS,"A title at %d, the school's new style at %d, a title at %d","A title at %d, the school's new style at %d, a title at %d","Um título com %d, o novo estilo da escola com %d, um título com %d","Um título com %d, o novo estilo da escola com %d, um título com %d","Ein Titel bei %d, der neue Stil der Schule bei %d, ein Titel bei %d","Un titre à %d, le nouveau style de l'école à %d, un titre à %d"
+CODEX_LAW,%s · %s · tier %s · %d pages,%s · %s · tier %s · %d pages,%s · %s · nível %s · %d páginas,%s · %s · nível %s · %d páginas,%s · %s · Stufe %s · %d Seiten,%s · %s · rang %s · %d pages
+CODEX_LAW_UNRESTORED,%s · %s · %d of %d pages to restore,%s · %s · %d of %d pages to restore,%s · %s · %d de %d páginas para restaurar,%s · %s · %d de %d páginas para restaurar,%s · %s · %d von %d Seiten zum Wiederherstellen,%s · %s · %d pages sur %d pour restaurer
+CODEX_UNKNOWN,? · not met yet: a heist through a realm running it meets it,? · not met yet: a heist through a realm running it meets it,? · ainda não encontrada: um assalto por um reino que a usa a encontra,? · ainda não encontrada: um assalto por um reino que a usa encontra-a,? · noch nicht getroffen: ein Raubzug durch ein Reich mit diesem Gesetz trifft es,? · pas encore rencontrée : un casse dans un royaume qui l'applique la fait rencontrer
+CODEX_UNKNOWN_CLOSED,"? · chapter %d, from Keeper level %d","? · chapter %d, from Keeper level %d","? · capítulo %d, a partir do nível %d de Guardião","? · capítulo %d, a partir do nível %d de Guardião","? · Kapitel %d, ab Hüter-Level %d","? · chapitre %d, dès le niveau %d de Gardien"
+CODEX_RESTORE,Restore: %d pages,Restore: %d pages,Restaurar: %d páginas,Restaurar: %d páginas,Wiederherstellen: %d Seiten,Restaurer : %d pages
+CODEX_RESTORE_SPOKEN,Restore %s for %d pages,Restore %s for %d pages,Restaurar %s por %d páginas,Restaurar %s por %d páginas,%s für %d Seiten wiederherstellen,Restaurer %s pour %d pages
+CODEX_TIER,"Tier %s: %d pages, %s Aether","Tier %s: %d pages, %s Aether","Nível %s: %d páginas, %s de Aether","Nível %s: %d páginas, %s de Aether","Stufe %s: %d Seiten, %s Aether","Rang %s : %d pages, %s d'Aether"
+CODEX_TIER_SPOKEN,Raise %s to tier %s for %d pages and %s Aether,Raise %s to tier %s for %d pages and %s Aether,Elevar %s ao nível %s por %d páginas e %s de Aether,Elevar %s ao nível %s por %d páginas e %s de Aether,%s auf Stufe %s heben für %d Seiten und %s Aether,Élever %s au rang %s pour %d pages et %s d'Aether
+CODEX_PAGES,%d pages,%d pages,%d páginas,%d páginas,%d Seiten,%d pages
+CODEX_TIER_COST,%d pages and %s Aether,%d pages and %s Aether,%d páginas e %s de Aether,%d páginas e %s de Aether,%d Seiten und %s Aether,%d pages et %s d'Aether
+CODEX_CONFIRM,Tap again to spend %s,Tap again to spend %s,Toque de novo para gastar %s,Toca de novo para gastar %s,"Nochmal tippen, um %s auszugeben",Touche encore pour dépenser %s
+CODEX_CONFIRM_SPOKEN,%s: tap again to spend %s,%s: tap again to spend %s,%s: toque de novo para gastar %s,%s: toca de novo para gastar %s,"%s: nochmal tippen, um %s auszugeben",%s : touche encore pour dépenser %s
+CODEX_NEEDS_PAGES,%d of %d pages,%d of %d pages,%d de %d páginas,%d de %d páginas,%d von %d Seiten,%d pages sur %d
+CODEX_NEEDS_AETHER,needs %s Aether,needs %s Aether,precisa de %s de Aether,requer %s de Aether,braucht %s Aether,il faut %s d'Aether
+CODEX_CLOSED,chapter %d opens at Keeper level %d,chapter %d opens at Keeper level %d,o capítulo %d abre no nível %d de Guardião,o capítulo %d abre no nível %d de Guardião,Kapitel %d öffnet sich ab Hüter-Level %d,le chapitre %d s'ouvre au niveau %d de Gardien
+CODEX_WORK_ON,Work on it,Work on it,Trabalhar nela,Trabalhar nela,Daran arbeiten,Travailler dessus
+CODEX_WORK_ON_SPOKEN,Work on %s,Work on %s,Trabalhar em %s,Trabalhar em %s,An %s arbeiten,Travailler sur %s
+CODEX_WORKED,Worked on,Worked on,Em trabalho,Em trabalho,In Arbeit,En travail
+CODEX_RESTORED,%s restored,%s restored,%s restaurada,%s restaurada,%s wiederhergestellt,%s restaurée
+CODEX_RAISED,%s raised to tier %s,%s raised to tier %s,%s elevada ao nível %s,%s elevada ao nível %s,%s auf Stufe %s gehoben,%s élevée au rang %s
+CODEX_WORKING_SET,Working on %s,Working on %s,Trabalhando em %s,A trabalhar em %s,Arbeit an %s,En travail : %s
+CODEX_FAILED,Nothing was changed: %s,Nothing was changed: %s,Nada foi alterado: %s,Nada foi alterado: %s,Nichts wurde geändert: %s,Rien n'a été changé : %s
+LAW_RANK_COMMON,Common,Common,Comum,Comum,Gewöhnlich,Commune
+LAW_RANK_UNCOMMON,Uncommon,Uncommon,Incomum,Invulgar,Ungewöhnlich,Peu commune
+LAW_RANK_RARE,Rare,Rare,Rara,Rara,Selten,Rare
+LAW_RANK_DEEP,Deep,Deep,Profunda,Profunda,Tief,Profonde

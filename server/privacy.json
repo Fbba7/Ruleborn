@@ -562,6 +562,12 @@
     },
     "restored_at": {
      "type": "gameplay"
+    },
+    "woven_at": {
+     "type": "gameplay"
+    },
+    "crossed_at": {
+     "type": "gameplay"
     }
    },
    "deletion": "erased",

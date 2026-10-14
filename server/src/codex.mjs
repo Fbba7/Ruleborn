@@ -46,6 +46,38 @@ export function brokenLaws(broken) {
   return LAWS.filter((_, i) => Math.floor(broken / 2 ** i) % 2 === 1).map((l) => l.id);
 }
 
+/** §7.6's last chapter open to a Keeper of `level`: 1 from the start, 2
+ *  from Keeper level 6. */
+export const openChapter = (level) => (level >= facts.CHAPTER_TWO_KEEPER ? 2 : 1);
+
+/** The highest chapter among `laws`, which a raider must have open to be
+ *  offered an island running them (§7.6). A law after launch has no chapter
+ *  until its season names one, and no player can restore or weave it (G49):
+ *  only the game's own fixtures run one, and it closes nothing. */
+export const chapterOf = (laws) => Math.max(1, ...laws.map((l) => BY_ID[l]?.chapter ?? 1));
+
+/** §18.5's laws "the school has in play": its launch laws, in the order
+ *  the Codex opens them, chapter by chapter. */
+const inPlay = (school) => LAWS.filter((l) => l.school === school && l.launch)
+  .sort((a, b) => a.chapter - b.chapter);
+
+/** §18.5's mastery track for each school, from the Codex's rows by law:
+ *  three steps a law in play — woven, crossed in a successful heist, raised
+ *  to tier III — and the marks: a title at a third of them, the school's new
+ *  style at two thirds, a title at all of them. */
+export function mastery(by) {
+  return facts.SCHOOLS.map((school) => {
+    const laws = inPlay(school);
+    const steps = laws.reduce((n, l) => {
+      const r = by[l.id];
+      return n + (r?.woven_at != null) + (r?.crossed_at != null) + (r?.tier === 3);
+    }, 0);
+    const total = facts.MASTERY_STEPS_PER_LAW * laws.length;
+    return { school, steps, total,
+             marks: { title: Math.ceil(total / 3), style: Math.ceil((2 * total) / 3), last_title: total } };
+  });
+}
+
 /** Whether a mode pays its raider (§12.11, §17.6). */
 const pays = (mode) => mode !== "friendly" && mode !== "challenge";
 
@@ -90,8 +122,18 @@ export class Codex {
       this.add(account, law, n, now);
       if (account === raider) given[law] = (given[law] ?? 0) + n;
     };
-    for (const law of lawsOf(this.service.store.get(lease.bundle))) {
-      if (BY_ID[law] && !this.row(raider, law)) give(raider, law, facts.MEET_PAGES);
+    const crossed = lawsOf(this.service.store.get(lease.bundle)).filter((law) => BY_ID[law]);
+    for (const law of crossed) {
+      if (!this.row(raider, law)) give(raider, law, facts.MEET_PAGES);
+    }
+    // §18.5: each law crossed in a successful heist is a step on its
+    // school's mastery track — a heist that pays its raider and banks loot,
+    // any grade but Foiled, as §18.6 counts a clear.
+    if (pays(lease.mode) && verdict.grade !== "foiled") {
+      for (const law of crossed) {
+        this.db.prepare("UPDATE codex SET crossed_at = COALESCE(crossed_at, ?) WHERE owner = ? AND law = ?")
+          .run(now, raider, law);
+      }
     }
     if (pays(lease.mode)) {
       for (const law of brokenLaws(verdict.broken ?? 0)) give(raider, law, 1);
@@ -153,6 +195,13 @@ export class Codex {
     });
   }
 
+  /** §18.5: `law` woven, a step on its school's mastery track, the first
+   *  time it is (weaving.mjs). */
+  woven(account, law, now) {
+    this.db.prepare("UPDATE codex SET woven_at = COALESCE(woven_at, ?) WHERE owner = ? AND law = ?")
+      .run(now, account, law);
+  }
+
   /** §7.6: the law the floor's page goes to, and the Lab's. */
   workOn(account, law) {
     if (law !== null && !BY_ID[law]) throw new Refused(400, "no_such_law");
@@ -168,7 +217,7 @@ export class Codex {
    *  chapter yet and cannot be restored (G49). */
   open(law, level) {
     const chapter = BY_ID[law]?.chapter;
-    return chapter === 1 || (chapter === 2 && level >= facts.CHAPTER_TWO_KEEPER);
+    return chapter != null && chapter <= openChapter(level);
   }
 
   /** §7.6: `law` restored at tier I for its rank's pages, and §14.2's
@@ -215,11 +264,15 @@ export class Codex {
   }
 
   /** The Codex as the device draws it: every law met, with its pages, its
-   *  tier, its chapter and whether it is open, and what its next step costs. */
+   *  tier, its chapter and whether it is open, and what its next step costs;
+   *  each school's album (§7.6), its laws in chapter order, one not yet met
+   *  a "?" that names nothing (D79), with the milestones its restored laws
+   *  have reached; each school's mastery track (§18.5); the Keeper level
+   *  that opens the next chapter, and the Spire's, which a tier needs. */
   view(account) {
     const level = this.db.prepare("SELECT keeper_level, working_on FROM accounts WHERE id = ?").get(account);
     const rows = this.db.prepare("SELECT * FROM codex WHERE owner = ? ORDER BY law").all(account);
-    const laws = rows.map((r) => {
+    const entry = (r) => {
       const l = BY_ID[r.law];
       const next = r.tier === 0 ? { pages: restorePrice(r.law) }
         : r.tier < 3 ? { pages: facts.TIER_COSTS[r.tier - 1][0], aether: facts.TIER_COSTS[r.tier - 1][1],
@@ -227,8 +280,19 @@ export class Codex {
         : null;
       return { law: r.law, name: l.name, school: l.school, rank: l.rank, chapter: l.chapter ?? null,
                open: this.open(r.law, level.keeper_level), pages: r.pages, tier: r.tier, next };
+    };
+    const by = Object.fromEntries(rows.map((r) => [r.law, r]));
+    const albums = facts.SCHOOLS.map((school) => {
+      const laws = inPlay(school).map((l) => (by[l.id] ? { known: true, ...entry(by[l.id]) }
+        : { known: false, chapter: l.chapter, open: this.open(l.id, level.keeper_level) }));
+      const restored = laws.filter((l) => l.tier >= 1).length;
+      return { school, laws, restored,
+               milestones: facts.ALBUM_MILESTONES.map((at) => ({ at, reached: restored >= at })) };
     });
-    return { laws, working_on: level.working_on, aether: this.service.aether(account) };
+    return { laws: rows.map(entry), albums, mastery: mastery(by), working_on: level.working_on,
+             keeper_level: level.keeper_level, spire: this.service.universe.spire(account),
+             aether: this.service.aether(account),
+             next_chapter_at: openChapter(level.keeper_level) < 2 ? facts.CHAPTER_TWO_KEEPER : null };
   }
 
   /** The view, the Codex written first if this is the first time. */

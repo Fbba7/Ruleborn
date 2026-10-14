@@ -553,7 +553,33 @@ DELIVERABLES = [
         "every screen works with text at 150% and 200%: nothing wider than the phone, every control "
         "in reach (§20.8, §21.1)",
         "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
-    ("4b", "Codex", FRONTEND, not_started("TD.44's screen gate passes for it")),
+    ("4b", "Codex", FRONTEND, parts(client_tests(
+        "the Codex shows each school's album by its shape and name, its laws in chapter order, a law not met "
+        "a ? that names nothing, and when a closed chapter opens (7.6, 21.2, D79)",
+        "the Codex shows each album's restored count and its three milestones, and each school's mastery "
+        "track with its marks: a title at a third, the style at two thirds, a title at all (7.6, 18.5)",
+        "each law met says its next step with its price on the button, and why it waits: too few pages, a "
+        "closed chapter, or the Spire a tier needs (7.6)",
+        "the Codex names the law worked on, which every eighth heist pages, and any law met can be marked "
+        "worked on in one tap (7.6)",
+        "restoring sends the law and shows the Codex and the Keeper's experience the server answers; a "
+        "refused tier keeps the Codex on show and says why; marking a law worked on shows it (7.6, 14.2)",
+        "the Codex screen draws the six albums by their marks, each law's step with its price, a step that "
+        "waits disabled with why, and spends pages on a second tap (7.6, 23.2)",
+        "against the server: a new Keeper's Codex holds six albums of four launch laws, the starting "
+        "three restored and the rest a ?, mastery tracks of twelve steps, and a law marked worked on (7.6, 18.5)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "matchmaking shows only universes running laws from the raider's open chapters, whatever else it "
+        "widens (7.6)",
+        "a law is met by a heist's route into a realm running it, never by the offer or the lease that "
+        "scouts it (7.6)",
+        "a school's mastery track takes a step for each law woven, crossed in a successful heist and raised "
+        "to tier III, with marks at a third, two thirds and all (18.5)",
+        "each school's album holds its launch laws in chapter order, one not met a ? that names nothing, "
+        "with its milestones and the level that opens chapter 2 (7.6, D79)"))),
     ("4b", "Lab", FRONTEND, not_started("TD.22's screen gate passes for it")),
     ("4b", "Curation", FRONTEND, not_started("TD.22's screen gate passes for it")),
     ("4b", "Defence log", FRONTEND, not_started("TD.66's screen gate passes for it")),

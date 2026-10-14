@@ -1404,9 +1404,13 @@ impl Island {
         for (k, &(x, y)) in free.iter().take(count).enumerate() {
             island.wards.push((kinds[(start + k) % kinds.len()], x, y));
         }
-        // Laws: the launch laws, drawn without repeats, their pylons beside
-        // the Vault off the route.
-        let launch: Vec<&str> = LAWS.iter().filter(|l| l.launch).map(|l| l.id).collect();
+        // Laws: chapter 1's twelve, drawn without repeats, their pylons
+        // beside the Vault off the route. Chapter 1 is open to every Keeper
+        // (§7.6), and matchmaking shows only universes running laws from a
+        // raider's open chapters, so the game's own islands, offered to any
+        // raider whose list runs thin (§12.22), run only laws every raider
+        // may meet.
+        let launch: Vec<&str> = LAWS.iter().filter(|l| l.launch && l.chapter == 1).map(|l| l.id).collect();
         let mut chosen: Vec<&str> = Vec::new();
         while chosen.len() < LAW_SLOTS[li] as usize && chosen.len() < launch.len() {
             let id = launch[rng.below(launch.len() as u64) as usize];

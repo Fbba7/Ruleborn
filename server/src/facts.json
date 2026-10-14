@@ -1,6 +1,11 @@
 {
  "ABILITIES_READY": 4,
  "ABILITY_LOCKOUT_SECONDS": 10,
+ "ALBUM_MILESTONES": [
+  2,
+  4,
+  8
+ ],
  "ANCHOR_STABILITY": [
   8,
   5
@@ -190,6 +195,12 @@
   10
  ],
  "LOAD_PER_SECOND": 30,
+ "MASTERY_MARKS_AT_LAUNCH": [
+  4,
+  8,
+  12
+ ],
+ "MASTERY_STEPS_PER_LAW": 3,
  "MATCH_WINDOW": [
   150,
   [

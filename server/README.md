@@ -734,7 +734,18 @@ otherwise. A friendly heist pays its owner a page of their worked-on law for
 each raider caught. A law is restored at tier I for 10, 20, 35 or 60 pages
 by rank, from Keeper level 6 for chapter 2, and pays §14.2's 60 + 10 × level;
 tiers II and III cost 20 and 40 pages, 2,000 and 8,000 Aether, and Spire
-levels 4 and 7. What the document leaves open is **G83**.
+levels 4 and 7. `GET /v1/codex` also shows each school's album, its four
+launch laws in chapter order, one not yet met a "?" that names nothing
+(D79), with the milestones its restored laws reach at 2, 4 and 8; and each
+school's §18.5 mastery track, a step for each launch law woven, crossed in
+a successful heist (any grade but Foiled, in a heist that pays) and raised
+to tier III, with a title at a third, the school's style at two thirds and
+a title at all of them (4, 8 and 12 at launch). §7.6's chapters close
+matchmaking too: `offer` shows a raider only islands whose laws are all
+from chapters they have open, a rule no widening reaches past, and the
+game's generated islands run chapter 1's laws, open to everyone, so a thin
+list still fills. A law is met by a heist's route, never by the offer or
+the lease. What the document leaves open is **G83**.
 
 ## Built offline, confirmed on reconnection
 

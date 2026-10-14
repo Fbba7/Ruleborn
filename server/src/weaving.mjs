@@ -214,6 +214,8 @@ export class Weaving {
          ON CONFLICT (owner, realm, slot) DO UPDATE SET law = excluded.law, tier = excluded.tier,
            ready_at = excluded.ready_at, rests_until = 0`)
         .run(account, realm, slot, law, tier, now + facts.WEAVE_MINUTES[tier - 1] * MINUTE);
+      // §18.5: a law woven is a step on its school's mastery track.
+      this.service.codex.woven(account, law, now);
       this.service.book(account, "aether", -cost,
         `${LAWS[law].name} woven in ${realm === CROWN ? "the crown" : realm} (5.6)`, now);
       return this.done(account);

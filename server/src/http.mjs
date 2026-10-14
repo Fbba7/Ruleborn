@@ -42,7 +42,7 @@
 //   POST /v1/home/strays/:id/take                            → a heist's stray into the roster, at a birth's price (§11.5)
 //   POST /v1/home/strays/:id/decline                         → it goes on its way
 //   GET  /v1/forms                                           → §11.10's album: the 54 forms, owned, and the sets
-//   GET  /v1/codex                                           → every law met: pages, tier, chapter, next cost
+//   GET  /v1/codex                                           → laws met, albums, mastery tracks (§7.6, §18.5)
 //   POST /v1/codex/study         {"heist", "law"}            → a heist's one study (§7.6)
 //   POST /v1/codex/working       {"law"}                     → the law worked on, for the floor's page
 //   POST /v1/codex/restore       {"law"}                     → restored at tier I for its pages (§7.6, §14.2)

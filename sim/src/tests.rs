@@ -6151,6 +6151,10 @@ fn a_generated_island_is_made_from_its_seed_to_5_2s_budget_and_passes_every_chec
             assert_eq!(island.laws.len(), LAW_SLOTS[li] as usize, "§5.2's law slots, filled");
             assert_eq!(island.wards.len(), WARD_LIMITS[li] as usize, "§5.2's wards, all of them");
             assert!(!island.wards.iter().any(|w| w.0 == WardKind::CrystalWall));
+            // §7.6: chapter 1's laws only, which every Keeper may meet, so
+            // matchmaking can offer the game's own islands to any raider.
+            assert!(island.laws.iter().all(|(id, _, _)| crate::laws_table::LAWS.iter()
+                .any(|l| l.id == id && l.launch && l.chapter == 1)), "level {level} seed {seed}: {:?}", island.laws);
             for (i, g) in island.guards.iter().enumerate() {
                 assert_eq!(g.facing, island.default_facing(i), "faced as the generator faces a post");
             }

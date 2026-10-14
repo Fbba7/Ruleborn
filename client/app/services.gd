@@ -19,6 +19,7 @@ var workshop: WorkshopRepository
 var universe: UniverseRepository
 var home: HomeRepository
 var weaving: WeavingRepository
+var codex: CodexRepository
 var device: DeviceRepository
 ## The platform's store (StoreKit, Play Billing); a test's fake in tests.
 var purchases: StorePurchases
@@ -41,6 +42,7 @@ var roster_flow: RosterController
 var sage_flow: SageController
 var forms_flow: FormsController
 var weaving_flow: WeavingController
+var codex_flow: CodexController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -59,6 +61,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	SageState.register(s.store)
 	FormsState.register(s.store)
 	WeavingState.register(s.store)
+	CodexState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -81,6 +84,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.purchases = StorePurchases.new()
 	s.home = HomeRepository.new(s.api)
 	s.weaving = WeavingRepository.new(s.api)
+	s.codex = CodexRepository.new(s.api)
 	s.device = DeviceRepository.new(s.api)
 	s.notifier = LocalNotifier.new()
 	s.notices = DeviceNotices.new(DeviceNotices.FILE if outbox_path == Outbox.FILE
@@ -95,6 +99,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.sage_flow = SageController.new(s)
 	s.forms_flow = FormsController.new(s)
 	s.weaving_flow = WeavingController.new(s)
+	s.codex_flow = CodexController.new(s)
 	# What the phone built, wove or assigned offline is answered when the
 	# outbox sends it (§24).
 	s.outbox.settled.connect(s.universe_flow.offline_settled)
@@ -188,6 +193,7 @@ func close() -> void:
 	sage_flow = null
 	forms_flow = null
 	weaving_flow = null
+	codex_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):

@@ -6,6 +6,7 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 import { brokenLaws, restorePrice } from "../src/codex.mjs";
+import { offer as offerList } from "../src/matchmaking.mjs";
 import { lawsOf } from "../src/telemetry.mjs";
 import { openPlan, play, server, twoPlayers } from "./setup.mjs";
 
@@ -163,3 +164,84 @@ test("the Codex over HTTP: read, worked on, restored, and refused with the reaso
   assert.equal(done.status, 200);
   assert.equal(done.body.keeper.gained, 70);
 });
+
+test("each school's album holds its launch laws in chapter order, one not met a ? that names nothing, with its milestones and the level that opens chapter 2 (7.6, D79)", () => {
+  const t = server();
+  const me = t.service.session("gc:albums").account;
+  const v = t.service.codex.show(me);
+  assert.deepEqual(v.albums.map((a) => a.school), facts.SCHOOLS);
+  const motion = v.albums[0];
+  assert.equal(motion.laws.length, 4, "the four launch laws a school has");
+  assert.deepEqual(motion.laws.map((l) => l.chapter), [1, 1, 2, 2]);
+  const hg = motion.laws.find((l) => l.known);
+  assert.equal(hg.law, "half_gravity");
+  const unknown = motion.laws.filter((l) => !l.known);
+  assert.equal(unknown.length, 3);
+  assert.ok(unknown.every((l) => !("law" in l) && !("name" in l) && !("rank" in l)), "a ? with no lead");
+  assert.deepEqual(unknown.map((l) => l.open), [true, false, false], "chapter 2 opens at Keeper level 6");
+  assert.equal(motion.restored, 1);
+  assert.deepEqual(motion.milestones, facts.ALBUM_MILESTONES.map((at) => ({ at, reached: false })));
+  assert.equal(v.next_chapter_at, facts.CHAPTER_TWO_KEEPER);
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6 WHERE id = ?").run(me);
+  const later = t.service.codex.show(me);
+  assert.equal(later.next_chapter_at, null);
+  assert.ok(later.albums[0].laws.every((l) => l.open), "every launch law's chapter open");
+  // Two restored in a school reach its first milestone, the Codex stamp.
+  t.service.codex.add(me, "bounce", restorePrice("bounce"), t.clock.now);
+  t.service.codex.restore(me, "bounce");
+  assert.deepEqual(t.service.codex.show(me).albums[0].milestones.map((m) => m.reached), [true, false, false]);
+});
+
+test("a law is met by a heist's route into a realm running it, never by the offer or the lease that scouts it (7.6)", () => {
+  const t = twoPlayers(false);
+  const me = t.raider.account;
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6 WHERE id = ?").run(me);
+  const mm = t.service.matchmaking;
+  const { targets } = offerFor(mm, me);
+  assert.deepEqual(targets.map((c) => c.bundle), [t.bundle], "the target is shown");
+  const island = lawsOf(t.service.store.get(t.bundle));
+  const lease = t.service.lease(me, t.bundle);
+  const before = t.service.codex.show(me);
+  assert.ok(island.every((l) => !law(before, l)), "shown and leased: no page, not met");
+  t.service.submit(me, lease.token, play(t, lease, { plan: openPlan() }));
+  const after = t.service.codex.show(me);
+  assert.ok(island.every((l) => law(after, l)?.pages >= facts.MEET_PAGES), "the route met them");
+});
+
+test("a school's mastery track takes a step for each law woven, crossed in a successful heist and raised to tier III, with marks at a third, two thirds and all (18.5)", () => {
+  const t = twoPlayers(false);
+  const me = t.raider.account;
+  const track = (school) => t.service.codex.show(me).mastery.find((m) => m.school === school);
+  const motion = track("Motion");
+  assert.deepEqual([motion.steps, motion.total], [0, facts.MASTERY_STEPS_PER_LAW * 4]);
+  assert.deepEqual(Object.values(motion.marks), [...facts.MASTERY_MARKS_AT_LAUNCH], "4, 8 and 12 at launch");
+  // Woven: once, however often.
+  t.service.book(me, "aether", 50_000, "a test's grant");
+  t.service.weaving.weave(me, { realm: "heart", slot: 1, law: "half_gravity" });
+  t.service.weaving.unweave(me, { realm: "heart", slot: 1 });
+  t.clock.now += 2 * 60 * 60 * 1000;
+  t.service.weaving.weave(me, { realm: "heart", slot: 1, law: "half_gravity" });
+  assert.equal(track("Motion").steps, 1, "woven");
+  // Crossed: a successful heist steps every law on its route; a foiled one none.
+  const matter = (id) => track(LAWS.find((l) => l.id === id).school).steps;
+  const foiled = raid(t, []);
+  assert.equal(foiled.out.verdict.grade, "foiled");
+  assert.equal(matter("brittle_stone"), 0, "a foiled heist crosses nothing for mastery");
+  const robbed = raid(t);
+  assert.notEqual(robbed.out.verdict.grade, "foiled");
+  assert.equal(matter("brittle_stone"), 1, "crossed in a successful heist");
+  assert.equal(matter("haste"), 1);
+  // Raised to tier III, through the Codex's own tiers.
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 40 WHERE id = ?").run(me);
+  t.service.book(me, "starlight", 5_000_000, "a test's grant");
+  for (let to = 2; to <= 7; to++) t.service.universe.build(me, { realm: "heart", kind: "keeper_s_spire", n: 1, to });
+  t.service.codex.add(me, "half_gravity", 60, t.clock.now);
+  t.service.codex.tier(me, "half_gravity", 2);
+  t.service.codex.tier(me, "half_gravity", 3);
+  assert.equal(track("Motion").steps, 2, "tier III");
+});
+
+/** §12.22's list for `account`, as GET /v1/offer runs it. */
+function offerFor(mm, account) {
+  return offerList(mm.raider(account), mm.candidates());
+}

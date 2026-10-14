@@ -232,6 +232,16 @@ FLOOR_HEISTS = 8
 STARTING_LAWS = ("half_gravity", "slow_rivers", "bloom")
 #: §7.6: "12 findable from the start and all 24 from Keeper level 6".
 CHAPTER_TWO_KEEPER = 6
+#: §7.6: each school's album "pays a milestone at two, four and all eight
+#: laws restored: a Codex stamp, a skiff pennant in the school's colour and
+#: shape, and the school's crest on the player's islands".
+ALBUM_MILESTONES = (2, 4, 8)
+#: §18.5's mastery track: "three steps for each law the school has in play —
+#: woven, crossed in a successful heist, raised to tier III — with a title
+#: at a third of them and at all of them, and the school's new visual style
+#: at two thirds (4, 8 and 12 steps on the four launch laws a school has)".
+MASTERY_STEPS_PER_LAW = 3
+MASTERY_MARKS_AT_LAUNCH = (4, 8, 12)
 #: §9.5's character levels: "150 × 1.55^(level − 2) Essence per level, up to
 #: level 10" — the base, the growth and the top.
 LEVEL_PRICE = (150, 1.55, 10)
@@ -517,6 +527,9 @@ HOME = {
     "FLOOR_HEISTS": "7.6",
     "STARTING_LAWS": "7.6",
     "CHAPTER_TWO_KEEPER": "7.6",
+    "ALBUM_MILESTONES": "7.6",
+    "MASTERY_STEPS_PER_LAW": "18.5",
+    "MASTERY_MARKS_AT_LAUNCH": "18.5",
     "LEVEL_PRICE": "9.5",
     "WORKER_SCHOOL_BONUS": "9.2",
     "ROSTER_PLACES": "11.5",
@@ -727,6 +740,13 @@ STATED = {
     "STARTING_LAWS": (r"Starting laws: ([\w ]+), ([\w ]+) and ([\w ]+), all at tier I",
                       lambda m: tuple(x.strip().lower().replace(" ", "_") for x in m)),
     "CHAPTER_TWO_KEEPER": (r"12 findable from the start and all 24 from Keeper level (\d+)", lambda m: int(m[0])),
+    "ALBUM_MILESTONES": (r"pays a milestone at (two|three|four), (two|three|four|five|six) and all (six|eight|ten) laws restored",
+                         lambda m: tuple({"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "eight": 8, "ten": 10}[x]
+                                         for x in m)),
+    "MASTERY_STEPS_PER_LAW": (r"(two|three|four) steps for each law the school has in play",
+                              lambda m: {"two": 2, "three": 3, "four": 4}[m[0]]),
+    "MASTERY_MARKS_AT_LAUNCH": (r"\((\d+), (\d+) and (\d+) steps on the four launch laws a school has",
+                                lambda m: tuple(int(x) for x in m)),
     "LEVEL_PRICE": (r"\| Character levels\n\| (\d+) × ([\d.]+) ?level − 2 Essence per level, up to level (\d+)",
                     lambda m: (int(m[0]), float(m[1]), int(m[2]))),
     "WORKER_SCHOOL_BONUS": (r"Motion and Matter ruleborn \(\+(\d+)%\)", lambda m: int(m[0]) / 100),
