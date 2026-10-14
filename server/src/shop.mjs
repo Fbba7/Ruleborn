@@ -376,6 +376,8 @@ export class Shop {
     const track = /^track-\d+-(\d+)$/.exec(id);
     if (track) return PREMIUM_KINDS[(Number(track[1]) / 5 - 1) % PREMIUM_KINDS.length];
     if (/^season-\d+-[a-z]+$/.test(id)) return "realm_skin";
+    // §19.20's free outfit with the first hatch (home.mjs).
+    if (id === "hatch-outfit") return "outfit";
     return null;
   }
 

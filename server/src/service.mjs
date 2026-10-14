@@ -661,7 +661,13 @@ export class Service {
                       { grace: decision.grace });
         // §11.5: the first heist brings two strays home, free (home.mjs);
         // the roster says so, and the heist's outcome is the haul's alone.
-        this.home.firstStrays(lease.attacker, lawsOf(this.store.get(lease.bundle)), now);
+        const crossed = lawsOf(this.store.get(lease.bundle));
+        const first = this.home.firstStrays(lease.attacker, crossed, now);
+        // §11.5: about one successful heist in eight finds a stray (home.mjs).
+        if (!first.length && decision.verdict.grade !== "foiled") {
+          const stray = this.home.findStray(lease.attacker, lease.token, crossed, now);
+          if (stray) outcome.stray = stray;
+        }
         // §7.6: the laws met, the pylons' pages and the floor (codex.mjs).
         this.codex.afterHeist(lease, decision.verdict, now, decision.cast?.laws ?? []);
         // §11.6: the crew away and resting, each by its outcome (home.mjs).

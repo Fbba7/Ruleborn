@@ -54,6 +54,37 @@ func wake(id: int) -> void:
 	await _change("wake:%d" % id, {"do": "wake"}, services.home.wake.bind(id))
 
 
+## §19.20's word lists, which a given name is read from, fetched once and
+## kept where the Workshop keeps them; without them a name is its kind's.
+func load_words() -> void:
+	if not (_store().get_slice(WorkshopState.WORKSHOP)["words"] as Dictionary).is_empty():
+		return
+	var r := await services.social.words()
+	if r.ok:
+		_store().dispatch(&"workshop_words", {"words": r.value})
+
+
+## §11.5: a birth at the Nursery in `realm`, the roster's next.
+func hatch(realm: String) -> void:
+	var n := (_store().get_slice(RosterState.ROSTER)["view"].get("characters", []) as Array).size() + 1
+	await _change("birth:%s:%d" % [realm, n], {"do": "birth"}, services.home.birth.bind(realm, n))
+
+
+## §11.5: a heist's stray taken in, or let go.
+func take_stray(id: int) -> void:
+	await _change("stray:%d" % id, {"do": "stray"}, services.home.take_stray.bind(id))
+
+
+func decline_stray(id: int) -> void:
+	await _change("decline:%d" % id, {"do": "decline"}, services.home.decline_stray.bind(id))
+
+
+## §19.20: character `id` named from the word lists.
+func name_character(id: int, adjective: int, noun: int) -> void:
+	await _change("name:%d" % id, {"do": "name", "id": id, "adjective": adjective, "noun": noun},
+		services.home.name_character.bind(id, adjective, noun))
+
+
 ## One change at a time: a second tap while one is on its way is ignored.
 func _change(key: String, what: Dictionary, call: Callable, offline := {}) -> void:
 	if str(_store().get_slice(RosterState.ROSTER)["busy"]) != "":
@@ -68,7 +99,12 @@ func _change(key: String, what: Dictionary, call: Callable, offline := {}) -> vo
 		_store().dispatch(&"roster_failed", {"code": r.code, "detail": r.detail})
 		return
 	var answer: Dictionary = r.value
-	_store().dispatch(&"roster_changed", {"home": answer["home"], "what": what,
+	# What a birth or a stray brought: the newborn, and the first hatch's outfit.
+	var made := what.duplicate()
+	for k: String in ["born", "first", "outfit"]:
+		if answer.has(k):
+			made[k] = answer[k]
+	_store().dispatch(&"roster_changed", {"home": answer["home"], "what": made,
 		"repeated": answer.get("repeated", false)})
 
 

@@ -129,6 +129,9 @@ CREATE TABLE IF NOT EXISTS characters (
   via        TEXT NOT NULL CHECK (via IN ('woke', 'stray', 'birth')),
   -- §11.10's form, the note the laws around its birth set (home.mjs).
   form       TEXT,
+  -- §19.20's name from the word lists, as their indices (home.mjs).
+  name_adjective INTEGER,
+  name_noun  INTEGER,
   joined_at  INTEGER NOT NULL,
   work_realm TEXT,
   work_kind  TEXT,
@@ -153,6 +156,21 @@ CREATE TABLE IF NOT EXISTS producers (
 
 -- §10.2's Nursery: "one birth every 6 h; holds 3". Births are ready from
 -- since, one a period, up to what it holds. home.mjs.
+-- §11.5: a stray a heist found, offered to the roster until it is taken
+-- or declined; its form is drawn when it is taken (home.mjs).
+CREATE TABLE IF NOT EXISTS stray_offers (
+  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  owner     TEXT NOT NULL REFERENCES accounts(id),
+  heist     TEXT NOT NULL,
+  kind      TEXT NOT NULL,
+  traits    TEXT NOT NULL,
+  law       TEXT,
+  found_at  INTEGER NOT NULL,
+  answer    TEXT CHECK (answer IN ('taken', 'declined')),
+  character INTEGER
+);
+CREATE INDEX IF NOT EXISTS stray_offers_by_owner ON stray_offers (owner);
+
 CREATE TABLE IF NOT EXISTS nurseries (
   owner TEXT NOT NULL REFERENCES accounts(id),
   realm TEXT NOT NULL,
@@ -775,6 +793,8 @@ const ADDED = [
   ["purchases", "recipient", "TEXT REFERENCES accounts(id)"],
   // A character away on a heist and resting after it (home.mjs).
   ["characters", "form", "TEXT"],
+  ["characters", "name_adjective", "INTEGER"],
+  ["characters", "name_noun", "INTEGER"],
   ["characters", "away_from", "INTEGER"],
   ["characters", "away_until", "INTEGER"],
   // Where a building stands (universe.mjs `place`).

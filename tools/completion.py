@@ -551,7 +551,24 @@ DELIVERABLES = [
         "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
     ("4b", "Share sheet", FRONTEND, not_started("TD.23's screen gate passes for it")),
     ("4b", "Profile", FRONTEND, not_started("TD.24's screen gate passes for it")),
-    ("4b", "Hatch", FRONTEND, not_started("TD.63's screen gate passes for it")),
+    ("4b", "Hatch", FRONTEND, client_tests(
+        "Hatch shows each Nursery's ready births of the three it holds, when the next comes, and the price "
+        "(10.2, 9.5, 23.2)",
+        "Hatch shows each kind's odds by 11.9's weights and the form's odds on a tie, as the server works "
+        "them out, and says why a birth waits (11.9, 11.10, 23.2)",
+        "Hatch shows the two traits a birth rolled, its form, and the free outfit with the first hatch, and "
+        "offers a name from the word lists (11.3, 19.20, 23.2)",
+        "Hatch offers a heist's stray at a birth's price, with the law it was born under, its traits and "
+        "its form's odds, to take in or let go (11.5, 23.2)",
+        "a hatch names the roster size it leads to, a stray is taken or let go, and a name is sent as the "
+        "word lists' indices; a refusal says why (11.5, 19.20)",
+        "the Hatch screen draws each Nursery, the strays and the newborn's card; a word changes with a tap, "
+        "and a birth is spent on a second tap (23.2)",
+        "against the server: with no Nursery yet Hatch says to build one, and a ruleborn is named from "
+        "the word lists, the Roster then calling it by its name (19.20, 23.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control "
+        "in reach (§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
 
     # §26.8's phase 4c: "The designs' models exported into Godot within 21.3's
     # budgets, by a harness whose manifest lists 21.9 row by row as exported,

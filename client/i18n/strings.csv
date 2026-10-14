@@ -640,3 +640,39 @@ FORMS_SAIL_DONE,✓ %s in every kind: skiff sail unlocked,✓ %s in every kind: 
 FORMS_SAILS_TITLE,Skiff sails,Skiff sails,Velas de esquife,Velas de esquife,Bootssegel,Voiles d'esquif
 FORMS_FAILED,The album could not be read: %s,The album could not be read: %s,Não foi possível ler o álbum: %s,Não foi possível ler o álbum: %s,Das Album konnte nicht gelesen werden: %s,Impossible de lire l'album : %s
 FORMS_FORM,%s · %s,%s · %s,%s · %s,%s · %s,%s · %s,%s · %s
+HOME_HATCH,Hatch,Hatch,Chocar,Chocar,Ausbrüten,Faire éclore
+HATCH_TITLE,Hatch,Hatch,Chocar,Chocar,Ausbrüten,Faire éclore
+HATCH_HEADER,Each birth costs %s Essence; you have %s,Each birth costs %s Essence; you have %s,Cada nascimento custa %s de Essência; você tem %s,Cada nascimento custa %s de Essência; tens %s,Jede Geburt kostet %s Essenz; du hast %s,Chaque naissance coûte %s d'Essence ; tu en as %s
+HATCH_NURSERY,%s in %s,%s in %s,%s em %s,%s em %s,%s in %s,"%s, %s"
+HATCH_READY,%d of %d births ready,%d of %d births ready,%d de %d nascimentos prontos,%d de %d nascimentos prontos,%d von %d Geburten bereit,%d naissances prêtes sur %d
+HATCH_NEXT_MINUTES,the next in %d min,the next in %d min,o próximo em %d min,o próximo dentro de %d min,die nächste in %d Min.,la prochaine dans %d min
+HATCH_NEXT_HOURS,the next in %d h %d min,the next in %d h %d min,o próximo em %d h %d min,o próximo dentro de %d h %d min,die nächste in %d Std. %d Min.,la prochaine dans %d h %d min
+HATCH_KINDS,What may hatch,What may hatch,O que pode nascer,O que pode nascer,Was schlüpfen kann,Ce qui peut éclore
+HATCH_ODDS,%s: %s,%s: %s,%s: %s,%s: %s,%s: %s,%s : %s
+HATCH_FORMS,Its form,Its form,A forma,A forma,Die Form,Sa forme
+HATCH_FORM_CERTAIN,"%s, certain","%s, certain","%s, certa","%s, certa","%s, sicher","%s, certaine"
+HATCH_BUTTON,"Hatch, %s Essence","Hatch, %s Essence","Chocar, %s de Essência","Chocar, %s de Essência","Ausbrüten, %s Essenz","Faire éclore, %s d'Essence"
+HATCH_BUTTON_SPOKEN,"%s: hatch, %s Essence","%s: hatch, %s Essence","%s: chocar, %s de Essência","%s: chocar, %s de Essência","%s: ausbrüten, %s Essenz","%s : faire éclore, %s d'Essence"
+HATCH_NONE_READY,no birth ready yet,no birth ready yet,nenhum nascimento pronto ainda,nenhum nascimento pronto ainda,noch keine Geburt bereit,aucune naissance prête
+HATCH_NEEDS,needs %s Essence,needs %s Essence,precisa de %s de Essência,precisa de %s de Essência,braucht %s Essenz,il faut %s d'Essence
+HATCH_NO_NURSERY,Build a %s in an outer realm to hatch ruleborn,Build a %s in an outer realm to hatch ruleborn,Construa um %s em um reino externo para chocar ruleborn,Constrói um %s num reino exterior para chocar ruleborn,"Baue eine %s in einem äußeren Reich, um Ruleborn auszubrüten",Construis une %s dans un royaume extérieur pour faire éclore des ruleborn
+HATCH_STRAYS,Strays found on heists,Strays found on heists,Perdidos encontrados em assaltos,Perdidos encontrados em assaltos,Streuner von Raubzügen,Errants trouvés lors de casses
+HATCH_STRAY,"A stray %s, found on a heist","A stray %s, found on a heist","Um %s perdido, encontrado em um assalto","Um %s perdido, encontrado num assalto","Ein streunender %s, auf einem Raubzug gefunden","Un %s errant, trouvé lors d'un casse"
+HATCH_BORN_UNDER,Born under %s,Born under %s,Nascido sob %s,Nascido sob %s,Geboren unter %s,Né sous %s
+HATCH_TRAITS,Traits: %s,Traits: %s,Traços: %s,Traços: %s,Eigenschaften: %s,Traits : %s
+HATCH_TAKE,"Take it in, %s Essence","Take it in, %s Essence","Acolher, %s de Essência","Acolher, %s de Essência","Aufnehmen, %s Essenz","L'accueillir, %s d'Essence"
+HATCH_TAKE_SPOKEN,"Take the %s in, %s Essence","Take the %s in, %s Essence","Acolher o %s, %s de Essência","Acolher o %s, %s de Essência","%s aufnehmen, %s Essenz","Accueillir le %s, %s d'Essence"
+HATCH_DECLINE,Let it go,Let it go,Deixar ir,Deixar ir,Ziehen lassen,Le laisser partir
+HATCH_DECLINE_SPOKEN,Let the %s go,Let the %s go,Deixar o %s ir,Deixar o %s ir,%s ziehen lassen,Laisser partir le %s
+HATCH_HATCHED,Hatched: %s,Hatched: %s,Nasceu: %s,Nasceu: %s,Geschlüpft: %s,Éclos : %s
+HATCH_JOINED,Joined the roster: %s,Joined the roster: %s,Entrou no plantel: %s,Entrou no plantel: %s,In die Aufstellung aufgenommen: %s,A rejoint l'effectif : %s
+HATCH_LET_GO,The stray went on its way,The stray went on its way,O perdido seguiu o seu caminho,O perdido seguiu o seu caminho,Der Streuner ist weitergezogen,L'errant a repris sa route
+HATCH_OUTFIT,A free outfit comes with your first hatch,A free outfit comes with your first hatch,Um traje grátis vem com o seu primeiro nascimento,Um traje grátis vem com o teu primeiro nascimento,Zu deinem ersten Schlüpfen gibt es ein Outfit gratis,Une tenue gratuite accompagne ta première éclosion
+HATCH_NAME,Name: %s,Name: %s,Nome: %s,Nome: %s,Name: %s,Nom : %s
+HATCH_NAME_GIVE,Give this name,Give this name,Dar este nome,Dar este nome,Diesen Namen geben,Donner ce nom
+HATCH_NAMED,Named: %s,Named: %s,Nome dado: %s,Nome dado: %s,Benannt: %s,Nommé : %s
+HATCH_FAILED,Nothing changed: %s,Nothing changed: %s,Nada mudou: %s,Nada mudou: %s,Nichts hat sich geändert: %s,Rien n'a changé : %s
+ERR_NO_SUCH_STRAY,there is no such stray,there is no such stray,esse perdido não existe,esse perdido não existe,diesen Streuner gibt es nicht,cet errant n'existe pas
+ERR_STRAY_GONE,that stray has gone on its way,that stray has gone on its way,esse perdido já seguiu o seu caminho,esse perdido já seguiu o seu caminho,dieser Streuner ist schon weitergezogen,cet errant a déjà repris sa route
+ERR_STRAY_TAKEN,that stray is already in the roster,that stray is already in the roster,esse perdido já está no plantel,esse perdido já está no plantel,dieser Streuner ist schon in der Aufstellung,cet errant est déjà dans l'effectif
+ERR_NOT_A_WORD,that name is not from the word lists,that name is not from the word lists,esse nome não vem das listas de palavras,esse nome não vem das listas de palavras,dieser Name stammt nicht aus den Wortlisten,ce nom ne vient pas des listes de mots

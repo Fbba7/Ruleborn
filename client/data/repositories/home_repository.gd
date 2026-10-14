@@ -36,3 +36,24 @@ func level(id: int, to: int) -> Result:
 ## player has, each note's launch laws, and the sets each unlocks.
 func album() -> Result:
 	return await api.get_json("/v1/forms")
+
+
+## §11.5: a birth at the Nursery in `realm`; `n` is the roster size it leads
+## to, so a retry of one already born is answered as born.
+func birth(realm: String, n: int) -> Result:
+	return await api.post_json("/v1/home/births", {"realm": realm, "n": n})
+
+
+## §11.5: a heist's stray taken into the roster, at a birth's price.
+func take_stray(id: int) -> Result:
+	return await api.post_json("/v1/home/strays/%d/take" % id)
+
+
+## §11.5: a heist's stray let go.
+func decline_stray(id: int) -> Result:
+	return await api.post_json("/v1/home/strays/%d/decline" % id)
+
+
+## §19.20: character `id` named from the word lists.
+func name_character(id: int, adjective: int, noun: int) -> Result:
+	return await api.post_json("/v1/home/characters/%d/name" % id, {"adjective": adjective, "noun": noun})

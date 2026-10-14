@@ -30,6 +30,12 @@ import { Refused } from "./refused.mjs";
 import { readManifest } from "./sim.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
+/** §19.20's "naming from word lists": the Workshop's lists, the only ones
+ *  the server holds (G26), an adjective and a noun stored as indices. */
+const WORDS = JSON.parse(readFileSync(new URL("./words.json", import.meta.url), "utf8"));
+/** §19.20: "Naming a ruleborn is offered the first time one hatches, and a
+ *  free outfit comes with it" — an earned cosmetic, like the track's. */
+export const HATCH_OUTFIT = "hatch-outfit";
 const content = (name) => JSON.parse(readFileSync(new URL(`../../content/${name}.json`, import.meta.url), "utf8"));
 
 const MINUTE = 60_000;
@@ -162,7 +168,29 @@ const NOTE_LAWS = Object.fromEntries(FORM_NOTES.map((n) => [n.toLowerCase(),
 /** A form drawn by formOdds: the one note that leads, or one of the tied
  *  notes evenly. */
 function formOf(roll, laws) {
-  const lead = formOdds(laws).filter((f) => f.odds > 0);
+  return drawForm(roll, formOdds(laws));
+}
+
+/** §11.10's order for a tie: "the note that completes more chords … and
+ *  then … alphabetical order" — read from the chords, their one home. */
+const CHORDS = content("chords");
+export const FORM_ORDER = [...FORM_NOTES].sort((a, b) =>
+  CHORDS.filter((c) => c.notes.includes(b)).length - CHORDS.filter((c) => c.notes.includes(a)).length
+  || a.localeCompare(b)).map((n) => n.toLowerCase());
+
+/** §11.9: a stray is "born under one of the laws the crew crossed …: its
+ *  note among Hush, Spark and Echo the form, Echo first on a tie (11.10's
+ *  order); a law carrying none of the three gives even odds". Each note
+ *  with its odds, in FORM_NOTES' order. */
+export function strayFormOdds(law) {
+  const carried = FORM_ORDER.filter((n) => (LAW_NOTES[law] ?? []).some((x) => x.toLowerCase() === n));
+  return FORM_NOTES.map((n) => n.toLowerCase())
+    .map((note) => ({ note, odds: carried.length ? (note === carried[0] ? 1 : 0) : 1 / FORM_NOTES.length }));
+}
+
+/** A form drawn from a list of odds, each a multiple of a third or whole. */
+function drawForm(roll, odds) {
+  const lead = odds.filter((f) => f.odds > 0);
   return lead.length === 1 ? lead[0].note : weighted(roll, lead.map((f) => [f.note, 1]));
 }
 
@@ -240,6 +268,25 @@ export class Home {
     return weighted(roll, kinds.map((k) => [k, (have[RULEBORN[k].role] ?? 0) === fewest ? 2 : 1]));
   }
 
+  /** §11.5 and §11.9 as odds: each kind a birth at a Nursery among
+   *  `schools` (birthSchools' pairs) can be, the school by its weight and,
+   *  within it, "roles the player has fewest of … twice as likely" — what
+   *  kindOf draws, written out for the Hatch screen. */
+  kindOdds(account, schools) {
+    const have = {};
+    for (const c of this.characters(account)) have[RULEBORN[c.kind].role] = (have[RULEBORN[c.kind].role] ?? 0) + 1;
+    const total = schools.reduce((n, [, w]) => n + w, 0);
+    const out = {};
+    for (const [school, w] of schools) {
+      const kinds = Object.keys(RULEBORN).filter((k) => RULEBORN[k].school === school);
+      const fewest = Math.min(...kinds.map((k) => have[RULEBORN[k].role] ?? 0));
+      const weight = (k) => ((have[RULEBORN[k].role] ?? 0) === fewest ? 2 : 1);
+      const sum = kinds.reduce((n, k) => n + weight(k), 0);
+      for (const k of kinds) out[k] = (out[k] ?? 0) + (w / total) * (weight(k) / sum);
+    }
+    return Object.entries(out).map(([kind, odds]) => ({ kind, odds })).sort((a, b) => b.odds - a.odds);
+  }
+
   /** Every place a character can live: the Spire's three, and each Hearth's
    *  homes at its level (§11.4, §11.5), each with the highest level a
    *  character living there reaches, and who lives there. */
@@ -283,8 +330,8 @@ export class Home {
       const school = law ? LAW_SCHOOL[law] : facts.SCHOOLS[roll(facts.SCHOOLS.length)];
       const kind = this.kindOf(account, school, roll);
       const traits = this.traits(roll, 3);
-      // §11.10's form, from the one law it was born under.
-      return this.add(account, kind, traits, "stray", now, "heart", formOf(roll, law ? [law] : []));
+      // §11.9's form, from the one law it was born under.
+      return this.add(account, kind, traits, "stray", now, "heart", drawForm(roll, strayFormOdds(law)));
     });
   }
 
@@ -470,13 +517,89 @@ export class Home {
       const kind = this.kindOf(account, school, roll);
       const traits = this.traits(roll, 2, running);
       // §11.10: the form the laws around the Nursery set, crown laws included.
+      const first = !this.db.prepare("SELECT 1 FROM characters WHERE owner = ? AND via = 'birth' LIMIT 1").get(account);
       const id = this.add(account, kind, traits, "birth", now, null, formOf(roll, running));
       this.service.book(account, "essence", -price, `a birth at the Nursery in ${realm} (9.5)`, now);
+      // §19.20: the first hatch offers naming, "and a free outfit comes with it".
+      if (first) this.service.seasons.grantCosmetic(account, HATCH_OUTFIT);
       const since = nursery.ready >= nursery.holds
         ? now - (nursery.holds - 1) * nursery.period : nursery.since + nursery.period;
       this.db.prepare(`INSERT INTO nurseries (owner, realm, since) VALUES (?, ?, ?)
                        ON CONFLICT (owner, realm) DO UPDATE SET since = excluded.since`).run(account, realm, since);
-      return { born: id, ...this.done(account) };
+      return { born: id, ...(first ? { first: true, outfit: HATCH_OUTFIT } : {}), ...this.done(account) };
+    });
+  }
+
+  /** §11.5: "About one successful heist in eight finds a stray in the
+   *  target universe. It is born under one of the laws the crew crossed,
+   *  drawn evenly, and that law's school … sets its kind"; its three traits
+   *  are drawn now, its form when it is taken, by §11.9's odds for that law.
+   *  Inside the heist's settlement; the first heist's two strays are their
+   *  own (firstStrays), so it finds none. §11.5's "one of them rare" waits
+   *  for a trait to have a rarity (G82). */
+  findStray(account, token, laws, now) {
+    const roll = dice(`${account}:stray:${token}`);
+    if (roll(facts.STRAY_HEIST_ODDS) !== 0) return null;
+    const known = laws.filter((l) => LAW_SCHOOL[l]);
+    const law = known.length ? known[roll(known.length)] : null;
+    const school = law ? LAW_SCHOOL[law] : facts.SCHOOLS[roll(facts.SCHOOLS.length)];
+    const kind = this.kindOf(account, school, roll);
+    return Number(this.db.prepare(
+      "INSERT INTO stray_offers (owner, heist, kind, traits, law, found_at) VALUES (?, ?, ?, ?, ?, ?)")
+      .run(account, token, kind, JSON.stringify(this.traits(roll, 3)), law, now).lastInsertRowid);
+  }
+
+  /** The strays waiting for an answer, each at the next birth's price. */
+  strays(account) {
+    const price = birthPrice(this.characters(account).length);
+    return this.db.prepare("SELECT * FROM stray_offers WHERE owner = ? AND answer IS NULL ORDER BY id").all(account)
+      .map((o) => ({ id: o.id, kind: o.kind, school: RULEBORN[o.kind].school, role: RULEBORN[o.kind].role,
+                     traits: JSON.parse(o.traits), law: o.law, forms: strayFormOdds(o.law), cost: price }));
+  }
+
+  /** §11.5: a stray taken into the roster "for the next birth's Essence
+   *  price", its form drawn by §11.9's odds. A retry of one taken is
+   *  answered as taken; one declined has gone its way. */
+  takeStray(account, id) {
+    const now = this.service.now();
+    return transaction(this.db, () => {
+      this.ensure(account, now);
+      const o = this.db.prepare("SELECT * FROM stray_offers WHERE id = ? AND owner = ?").get(Number(id), account);
+      if (!o) throw new Refused(404, "no_such_stray");
+      if (o.answer === "taken") return { born: o.character, ...this.done(account, true) };
+      if (o.answer === "declined") throw new Refused(409, "stray_gone");
+      const price = birthPrice(this.characters(account).length);
+      if (this.service.balance(account).essence < price) throw new Refused(409, "not_enough_essence", { cost: price });
+      const form = drawForm(dice(`${account}:stray-form:${o.id}`), strayFormOdds(o.law));
+      const born = this.add(account, o.kind, JSON.parse(o.traits), "stray", now, null, form);
+      this.service.book(account, "essence", -price, "a stray taken into the roster (11.5)", now);
+      this.db.prepare("UPDATE stray_offers SET answer = 'taken', character = ? WHERE id = ?").run(born, o.id);
+      return { born, ...this.done(account) };
+    });
+  }
+
+  /** §11.5: "declined, it goes on its way". */
+  declineStray(account, id) {
+    return transaction(this.db, () => {
+      const o = this.db.prepare("SELECT * FROM stray_offers WHERE id = ? AND owner = ?").get(Number(id), account);
+      if (!o) throw new Refused(404, "no_such_stray");
+      if (o.answer === "taken") throw new Refused(409, "stray_taken");
+      if (o.answer === "declined") return this.done(account, true);
+      this.db.prepare("UPDATE stray_offers SET answer = 'declined' WHERE id = ?").run(o.id);
+      return this.done(account);
+    });
+  }
+
+  /** §19.20: a ruleborn named from the word lists, an adjective and a noun. */
+  name(account, id, { adjective, noun } = {}) {
+    return transaction(this.db, () => {
+      const c = this.characters(account).find((x) => x.id === Number(id));
+      if (!c) throw new Refused(404, "no_such_character");
+      if (!Number.isInteger(adjective) || !Number.isInteger(noun) || !WORDS.adjectives[adjective]
+          || !WORDS.nouns[noun]) throw new Refused(400, "not_a_word");
+      if (c.name_adjective === adjective && c.name_noun === noun) return this.done(account, true);
+      this.db.prepare("UPDATE characters SET name_adjective = ?, name_noun = ? WHERE id = ?").run(adjective, noun, c.id);
+      return this.done(account);
     });
   }
 
@@ -625,6 +748,7 @@ export class Home {
       id: c.id, kind: c.kind, school: RULEBORN[c.kind].school, role: RULEBORN[c.kind].role,
       traits: c.traits, level: c.level, top: places.find((p) => p.home === c.home)?.top ?? 1,
       home: c.home, via: c.via, form: c.form ?? null,
+      name: c.name_adjective == null ? null : { adjective: c.name_adjective, noun: c.name_noun },
       state: away(c, now) ? "resting" : c.work_kind === POST ? "guarding" : c.work_kind ? "working" : "idle",
       // §11.6's wake price and §11.4's next level, the server's arithmetic,
       // so the device shows a price it never works out.
@@ -659,8 +783,11 @@ export class Home {
       if (b.kind === "nursery") {
         const n = this.nursery(account, b.realm, now);
         // §11.10: the form a birth here takes, and its odds on a tie.
-        const around = [...(working[b.realm] ?? []).map((w) => w.law), ...crown];
-        nurseries.push({ realm: n.realm, ready: n.ready, holds: n.holds, next_at: n.next_at, forms: formOdds(around) });
+        const here = (working[b.realm] ?? []).map((w) => w.law);
+        const type = this.universe.realms(account).find((r) => r.realm === b.realm)?.type;
+        nurseries.push({ realm: n.realm, ready: n.ready, holds: n.holds, next_at: n.next_at,
+                         kinds: this.kindOdds(account, birthSchools(schoolOfType(type), here, crown)),
+                         forms: formOdds([...here, ...crown]) });
       }
     }
     const used = characters.length;
@@ -673,6 +800,7 @@ export class Home {
       roster: { used, most: facts.ROSTER_PLACES[1] },
       next_birth: birthPrice(used),
       nurseries,
+      strays: this.strays(account),
       producers,
       essence: this.service.balance(account).essence,
       aether: this.service.aether(account),

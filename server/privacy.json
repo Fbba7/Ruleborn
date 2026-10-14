@@ -415,6 +415,12 @@
     "form": {
      "type": "gameplay"
     },
+    "name_adjective": {
+     "type": "gameplay"
+    },
+    "name_noun": {
+     "type": "gameplay"
+    },
     "joined_at": {
      "type": "gameplay"
     },
@@ -484,6 +490,46 @@
      "type": "gameplay"
     },
     "since": {
+     "type": "gameplay"
+    }
+   },
+   "deletion": "erased",
+   "keep": {
+    "for": "account"
+   },
+   "purposes": [
+    "functionality"
+   ]
+  },
+  "stray_offers": {
+   "about": "The strays heists found and offered to each player's roster, until taken or declined (§11.5).",
+   "columns": {
+    "id": {
+     "type": "none"
+    },
+    "owner": {
+     "names": "account",
+     "type": "user-id"
+    },
+    "heist": {
+     "type": "gameplay"
+    },
+    "kind": {
+     "type": "gameplay"
+    },
+    "traits": {
+     "type": "gameplay"
+    },
+    "law": {
+     "type": "gameplay"
+    },
+    "found_at": {
+     "type": "gameplay"
+    },
+    "answer": {
+     "type": "gameplay"
+    },
+    "character": {
      "type": "gameplay"
     }
    },

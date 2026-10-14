@@ -38,6 +38,9 @@
 //   POST /v1/home/characters/:id/home  {"home"}              → moved to another free place (§11.4)
 //   POST /v1/home/characters/:id/wake                       → a resting character back early, in Essence (§11.6)
 //   POST /v1/home/collect        {"realm", "kind"}           → what a producer holds, paid (§9.3)
+//   POST /v1/home/characters/:id/name {"adjective", "noun"}  → named from the word lists (§19.20)
+//   POST /v1/home/strays/:id/take                            → a heist's stray into the roster, at a birth's price (§11.5)
+//   POST /v1/home/strays/:id/decline                         → it goes on its way
 //   GET  /v1/forms                                           → §11.10's album: the 54 forms, owned, and the sets
 //   GET  /v1/codex                                           → every law met: pages, tier, chapter, next cost
 //   POST /v1/codex/study         {"heist", "law"}            → a heist's one study (§7.6)
@@ -482,6 +485,9 @@ export function handler(service, { webClientId = null, appleNotifications = null
         if (m === "POST" && a === "characters" && b && c === "level") return json(h.level(me, b, (await body(request)).to));
         if (m === "POST" && a === "characters" && b && c === "home") return json(h.move(me, b, text((await body(request)).home)));
         if (m === "POST" && a === "characters" && b && c === "wake") return json(h.wake(me, b));
+        if (m === "POST" && a === "characters" && b && c === "name") return json(h.name(me, b, await body(request)));
+        if (m === "POST" && a === "strays" && b && c === "take") return json(h.takeStray(me, b));
+        if (m === "POST" && a === "strays" && b && c === "decline") return json(h.declineStray(me, b));
         return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "codex") {

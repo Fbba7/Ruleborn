@@ -2888,9 +2888,23 @@ dict(
                   "guards, and one that a foiled raid offers no Trace",
              blocked_by=["TD.3", "TD.6", "TD.39", "TC.12"],
              register=["G31", "G57", "G69", "G70", "D83"]),
-        dict(id="TD.63", owner="claude", status="blocked",
+        dict(id="TD.63", owner="claude", status="doing",
              title="Hatching, naming and the visiting Stray",
-             detail="Births had no screen and naming no rule (G50), and no realm "
+             detail="<strong>Built, but for the visiting Stray.</strong> Each "
+                    "Nursery in the home view carries its kinds' odds (§11.9's "
+                    "weights, the fewest roles twice as likely) and its form's; "
+                    "about one successful heist in eight finds a stray "
+                    "(<code>STRAY_HEIST_ODDS</code>, read from §11.5), born under "
+                    "one of the laws crossed, offered at the next birth's price "
+                    "and taken or declined once, its form by §11.9's order, Echo "
+                    "first on a tie; a name is two indices into the word lists, "
+                    "the owner's alone and changeable, and the first birth brings "
+                    "an earned outfit. The Hatch screen shows all of it, and the "
+                    "Roster calls a named ruleborn by its name. Left: the "
+                    "visiting Stray at the Dock, which waits on the Dock; and "
+                    "§11.5's “one of them rare”, since no trait has a rarity (G82)."
+                    "<br><br>"
+                    "Births had no screen and naming no rule (G50), and no realm "
                     "decided a visiting Stray's kind and form (G64). v3.7 wrote "
                     "both recommended options. The Hatch screen is §23.2's 29th "
                     "row: ready births and the Nursery's three places, the Essence "

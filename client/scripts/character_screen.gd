@@ -27,10 +27,11 @@ func _ready() -> void:
 	_refresh()
 	if (App.services.store.get_slice(RosterState.ROSTER)["view"] as Dictionary).is_empty():
 		await controller.load_roster()
+	await controller.load_words()
 
 
 func _on_changed(slice: StringName) -> void:
-	if slice == RosterState.ROSTER and is_inside_tree():
+	if slice in [RosterState.ROSTER, WorkshopState.WORKSHOP] and is_inside_tree():
 		_refresh()
 
 
@@ -51,7 +52,8 @@ func _refresh() -> void:
 		return
 	var focused := get_viewport().gui_get_focus_owner()
 	var focus_item := str(focused.get_meta("item", "")) if focused != null else ""
-	var c := RosterPresenter.character(App.services.store.get_slice(RosterState.ROSTER), id, clock.call())
+	var c := RosterPresenter.character(App.services.store.get_slice(RosterState.ROSTER), id, clock.call(),
+		App.services.store.get_slice(WorkshopState.WORKSHOP)["words"])
 	if c["error"] != "":
 		UI.set_status(status_label, "alarm", c["error"])
 	elif c["missing"]:

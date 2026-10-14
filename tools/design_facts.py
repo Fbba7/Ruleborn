@@ -285,6 +285,8 @@ REST_MINUTES = (45, 60, 180)
 HEARTH_REST_CUT = 0.05
 REST_TRAIT_FACTORS = (0.75, 1.5)
 WAKE_ESSENCE = 2
+#: §11.5: "About one successful heist in eight finds a stray".
+STRAY_HEIST_ODDS = 8
 #: §5.2's "Boosted resource" column, by realm type in the table's order.
 REALM_BOOSTS = ("starlight", "starlight", "aether", "aether", "essence", "essence")
 #: The first session's first minute (§15.6): "Three ruleborn wake: a Featherkin, an Emberling and a
@@ -521,6 +523,7 @@ HOME = {
     "HEARTH_REST_CUT": "11.6",
     "REST_TRAIT_FACTORS": "11.6",
     "WAKE_ESSENCE": "11.6",
+    "STRAY_HEIST_ODDS": "11.5",
     "REALM_BOOSTS": "5.2",
     "STARTING_CREW": "15.6",
     "HEIST_CLOCK": "5.4",
@@ -732,6 +735,9 @@ STATED = {
     "REST_TRAIT_FACTORS": (r"Loyal ([\d.]+) after a success.*?Sleepy ([\d.]+)\)",
                            lambda m: (float(m[0]), float(m[1]))),
     "WAKE_ESSENCE": (r"Waking early costs (\d+) Essence per level per minute left", lambda m: int(m[0])),
+    "STRAY_HEIST_ODDS": (r"About one successful heist in (\w+) finds a stray",
+                         lambda m: ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+                                    "ten"].index(m[0]) + 1),
     "LAW_TRAIT_WEIGHT": (r"Traits tied to a law are (two|three|four) times as likely",
                          lambda m: {"two": 2, "three": 3, "four": 4}[m[0]]),
     "BIRTH_WEIGHTS": (r"weighted as 11\.9 states: (\d+) for each law woven in its realm, (\d+) for the realm's own "

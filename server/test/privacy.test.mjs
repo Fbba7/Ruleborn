@@ -108,6 +108,9 @@ async function busy() {
   t.service.home.birth(x.account, { realm: "outer-1", n: home.characters.length + 1 });
   // A Sage stationed at the Heart (§11.7).
   t.service.keeper.setGuardian(x.account, "the_archivist");
+  // A heist's stray waiting for an answer (§11.5): found by the first of
+  // the heist tokens the one-in-eight roll finds one for.
+  for (let i = 0; !t.service.home.findStray(x.account, `privacy-${i}`, ["stillness"], t.clock.now); i++);
 
   const n = t.service.notifications;
   // Settings no player starts with, so clearing them is seen.

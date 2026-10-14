@@ -7,7 +7,7 @@ extends SceneTree
 ## quits; so the run has a deadline, and missing it is a failure.
 const DEADLINE_SECONDS := 480.0
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
-	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms"]
+	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch"]
 
 var _n := 0
 var _failed := 0
@@ -64,7 +64,10 @@ func _golden(name: String) -> PackedByteArray:
 ## every screen read a roster and a character rather than an empty page: the
 ## roster tests' home, and the resting character's page.
 func _seed() -> void:
-	App.services.store.dispatch(&"roster_loaded", {"view": RosterTests.sample()})
+	App.services.store.dispatch(&"roster_loaded", {"view": HatchTests.born()})
+	App.services.store.dispatch(&"roster_changed", {"home": HatchTests.born(),
+		"what": {"do": "birth", "born": 9, "first": true, "outfit": "hatch-outfit"}})
+	App.services.store.dispatch(&"workshop_words", {"words": HatchTests.words()})
 	App.services.store.dispatch(&"navigated", {"name": &"character", "params": {"id": 2}})
 	App.services.store.dispatch(&"sages_loaded", {"view": SageTests.sample()})
 	App.services.store.dispatch(&"forms_loaded", {"view": FormsTests.sample()})
@@ -367,6 +370,7 @@ func _run() -> void:
 	await RosterTests.new(self, check, _mount, server_url).run()
 	await SageTests.new(self, check, _mount, server_url).run()
 	await FormsTests.new(self, check, _mount, server_url).run()
+	await HatchTests.new(self, check, _mount, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

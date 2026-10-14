@@ -15,7 +15,7 @@ const GUARD_POST := "guardian_post"
 
 
 ## The screen: a header and one row a character.
-static func screen(slice: Dictionary, now_ms: int) -> Dictionary:
+static func screen(slice: Dictionary, now_ms: int, words := {}) -> Dictionary:
 	var v: Dictionary = slice.get("view", {})
 	var out := {"ready": not v.is_empty(), "busy": str(slice.get("busy", "")),
 		"error": error(str(slice.get("error", "")), slice.get("detail", {})), "said": said(slice.get("last", {}), v),
@@ -26,7 +26,7 @@ static func screen(slice: Dictionary, now_ms: int) -> Dictionary:
 	var roster: Dictionary = v.get("roster", {})
 	out["header"] = Strings.t("ROSTER_HEADER", [int(roster.get("used", 0)), int(roster.get("most", 0)),
 		ShopPresenter.grouped(int(v.get("essence", 0)))])
-	var named := names(v.get("characters", []))
+	var named := names(v.get("characters", []), words)
 	var rows: Array[Dictionary] = []
 	for c: Dictionary in v.get("characters", []):
 		rows.append(row(c, v, named, now_ms))
@@ -66,9 +66,10 @@ static func back_in(ms: int) -> String:
 	return Strings.t("ROSTER_BACK_HOURS", [minutes / 60, minutes % 60])
 
 
-## Each character's name: its kind's, numbered by the order it joined when
-## the roster holds more than one of that kind.
-static func names(characters: Array) -> Dictionary:
+## Each character's name: the one it was given from the word lists (§19.20)
+## when the lists are at hand, else its kind's, numbered by the order it
+## joined when the roster holds more than one of that kind.
+static func names(characters: Array, words := {}) -> Dictionary:
 	var count := {}
 	for c: Dictionary in characters:
 		count[c["kind"]] = int(count.get(c["kind"], 0)) + 1
@@ -77,7 +78,14 @@ static func names(characters: Array) -> Dictionary:
 	for c: Dictionary in characters:
 		var kind := str(c["kind"])
 		seen[kind] = int(seen.get(kind, 0)) + 1
-		out[int(c["id"])] = kind_name(kind) if int(count[kind]) == 1 else "%s %d" % [kind_name(kind), int(seen[kind])]
+		var given: Variant = c.get("name")
+		var word := SocialPresenter.word_name(words, int(given["adjective"]), int(given["noun"])) \
+			if given is Dictionary else ""
+		if word != "":
+			out[int(c["id"])] = word
+		else:
+			out[int(c["id"])] = kind_name(kind) if int(count[kind]) == 1 \
+				else "%s %d" % [kind_name(kind), int(seen[kind])]
 	return out
 
 
@@ -164,7 +172,7 @@ static func reassign(c: Dictionary, v: Dictionary, name: String) -> Dictionary:
 ## ability, traits, level, best work; where it lives and works; and what
 ## Essence can do for it now — the next level, or waking from a rest — at
 ## the prices the server says.
-static func character(slice: Dictionary, id: int, now_ms: int) -> Dictionary:
+static func character(slice: Dictionary, id: int, now_ms: int, words := {}) -> Dictionary:
 	var v: Dictionary = slice.get("view", {})
 	var out := {"ready": not v.is_empty(), "missing": false, "busy": str(slice.get("busy", "")),
 		"error": error(str(slice.get("error", "")), slice.get("detail", {})), "said": said(slice.get("last", {}), v)}
@@ -179,7 +187,7 @@ static func character(slice: Dictionary, id: int, now_ms: int) -> Dictionary:
 		return out
 	var c := found
 	var kind := str(c["kind"])
-	var r := row(c, v, names(v.get("characters", [])), now_ms)
+	var r := row(c, v, names(v.get("characters", []), words), now_ms)
 	var traits: Array[String] = []
 	for t: String in c.get("traits", []):
 		traits.append(Strings.t("CHARACTER_TRAIT", [Strings.term("TRAIT", t), Strings.term("TRAIT_EFFECT", t)]))

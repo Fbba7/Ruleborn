@@ -142,6 +142,7 @@ export function deleteAccount(service, account, reason = "requested", { journal 
     db.prepare("DELETE FROM characters WHERE owner = ?").run(account);
     db.prepare("DELETE FROM producers WHERE owner = ?").run(account);
     db.prepare("DELETE FROM nurseries WHERE owner = ?").run(account);
+    db.prepare("DELETE FROM stray_offers WHERE owner = ?").run(account);
     db.prepare("DELETE FROM studies WHERE owner = ?").run(account);
     db.prepare("DELETE FROM codex WHERE owner = ?").run(account);
     db.prepare("DELETE FROM law_slots WHERE owner = ?").run(account);

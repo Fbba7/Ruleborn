@@ -31,10 +31,11 @@ func _ready() -> void:
 	tick.start()
 	_refresh()
 	await controller.load_roster()
+	await controller.load_words()
 
 
 func _on_changed(slice: StringName) -> void:
-	if slice == RosterState.ROSTER and is_inside_tree():
+	if slice in [RosterState.ROSTER, WorkshopState.WORKSHOP] and is_inside_tree():
 		_refresh()
 
 
@@ -58,7 +59,8 @@ func _refresh() -> void:
 		return
 	var focused := get_viewport().gui_get_focus_owner()
 	var focus_item := str(focused.get_meta("item", "")) if focused != null else ""
-	var r := RosterPresenter.screen(App.services.store.get_slice(RosterState.ROSTER), clock.call())
+	var r := RosterPresenter.screen(App.services.store.get_slice(RosterState.ROSTER), clock.call(),
+		App.services.store.get_slice(WorkshopState.WORKSHOP)["words"])
 	if r["error"] != "":
 		UI.set_status(status_label, "alarm", r["error"])
 	elif r["refused"] != "":
