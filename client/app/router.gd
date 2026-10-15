@@ -34,6 +34,8 @@ const ROUTES := {
 	&"planner": "res://scenes/planner.tscn",
 	&"map": "res://scenes/map.tscn",
 	&"realm": "res://scenes/realm.tscn",
+	&"share": "res://scenes/share.tscn",
+	&"first": "res://scenes/first.tscn",
 	&"defences": "res://scenes/defences.tscn",
 	&"scout": "res://scenes/scout.tscn",
 }

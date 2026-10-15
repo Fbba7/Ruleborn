@@ -96,6 +96,24 @@ func get_json(path: String) -> Result:
 	return await json(HTTPClient.METHOD_GET, path)
 
 
+## A GET that needs no session — the word lists, §20.2's protections — which
+## the first launch makes before any account exists (§25.2): no sign-in, and
+## no token sent.
+func public_json(path: String) -> Result:
+	if not online():
+		return Result.failure("offline")
+	var held := token
+	token = ""
+	var r := await _raw(HTTPClient.METHOD_GET, path, PackedByteArray())
+	token = held
+	if not r.ok:
+		return r
+	var parsed: Variant = JSON.parse_string((r.value as PackedByteArray).get_string_from_utf8())
+	if not (parsed is Dictionary or parsed is Array):
+		return _failed(path, "malformed_response", {})
+	return Result.success(parsed)
+
+
 func post_json(path: String, body: Variant = {}) -> Result:
 	return await json(HTTPClient.METHOD_POST, path, body)
 

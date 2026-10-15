@@ -293,6 +293,7 @@
   "the Harmony view shows each realm's laws with their notes, the crown's among them, and the harmonies, clashes, resonances and chords they make, each with its factor, a resonance or chord unnamed until the Lab names it (8.2, 8.3, 8.4, 8.6, 23.2)": "passed",
   "the Heart is realm level 3, and an island of another level is published only as an outer realm (5.2, G19)": "passed",
   "the Keeper window runs from two levels below the raider to three above (12.22, F44)": "passed",
+  "the Keeper's name is picked from the word lists, read before any account, and shown on raiders' target cards (G58, 12.4, 25.2)": "passed",
   "the Lab has §10.2's chambers and hours, 12 signature resonances at launch, and none before it is built (8.6, 10.2)": "passed",
   "the Lab is served over HTTP (8.6)": "passed",
   "the Observatory and its refresh are served over HTTP (12.3)": "passed",
@@ -362,6 +363,7 @@
   "§11.6's rest: 45, 60 or 180 minutes by the outcome, less 5% a Hearth level, Loyal's 0.75 after a success and Sleepy's 1.5": "passed",
   "§12.5's planning holds by Keeper level: a crew of 3, 4 from level 8 and 5 from 16; a Sage from level 2, unlocked and not the Heart's guardian; one cast slot, two from level 12 (12.5, 11.7)": "passed",
   "§18.5's badges are graded gold at the mark, silver at half and bronze at a tenth, rounded up, and a mark of 1 has one grade (18.5)": "passed",
+  "§20.2's protections by band are read before any account: each band's quiet night and spending cap (20.2, 25.2)": "passed",
   "§8.5's worked example, through the server's binding: 27.44 silent at 215, the chord sounding at 217 (5.5, 8.5)": "passed"
  }
 }

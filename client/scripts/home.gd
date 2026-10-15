@@ -7,14 +7,14 @@ extends Control
 
 ## The screens a player goes to from home, in the order they are listed.
 const PLACES := [&"map", &"observatory", &"defences", &"universe", &"weaving", &"codex", &"lab", &"roster", &"hatch",
-	&"sages", &"forms", &"builder", &"workshop", &"replay", &"profile", &"track", &"shop", &"social", &"friends",
-	&"settings"]
+	&"sages", &"forms", &"builder", &"workshop", &"replay", &"profile", &"share", &"track", &"shop", &"social",
+	&"friends", &"settings"]
 const WORDS := {&"map": "HOME_MAP", &"observatory": "HOME_OBSERVATORY", &"defences": "HOME_DEFENCES",
 	&"universe": "HOME_UNIVERSE", &"weaving": "HOME_WEAVING", &"codex": "HOME_CODEX", &"lab": "HOME_LAB",
 	&"roster": "HOME_ROSTER", &"hatch": "HOME_HATCH", &"sages": "HOME_SAGES", &"forms": "HOME_FORMS",
 	&"builder": "HOME_BUILD", &"workshop": "HOME_WORKSHOP", &"replay": "HOME_WATCH", &"profile": "HOME_PROFILE",
-	&"track": "HOME_TRACK", &"shop": "HOME_SHOP", &"social": "HOME_SOCIAL", &"friends": "HOME_FRIENDS",
-	&"settings": "HOME_SETTINGS"}
+	&"share": "HOME_SHARE", &"track": "HOME_TRACK", &"shop": "HOME_SHOP", &"social": "HOME_SOCIAL",
+	&"friends": "HOME_FRIENDS", &"settings": "HOME_SETTINGS"}
 
 var keeper_label: Label
 var keeper_plate: PanelContainer
@@ -25,7 +25,11 @@ var defences_button: Button
 func _ready() -> void:
 	App.ready(self)
 	Settings.restore()
-	# §20.1: the age check comes first; nothing else until it allows play.
+	# TD.26: the first launch's beats come first, the age check among them
+	# (§20.1); nothing else until they are done.
+	if not App.services.first.done():
+		App.services.router.go.call_deferred(&"first")
+		return
 	if not App.services.age.allows_account():
 		App.services.router.go.call_deferred(&"age")
 		return

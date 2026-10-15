@@ -81,6 +81,8 @@ async function busy() {
   t.service.defences.show(x.account);
   // The profile shown to others (profile.mjs).
   t.service.profile.share(x.account, true);
+  // The Keeper's name from the word lists (keeper.mjs, G58).
+  t.service.keeper.setName(x.account, { adjective: 0, noun: 0 });
   t.clock.now += DAY;
   raid(x.account, yBundle, null);
   const held = t.service.lease(x.account, yBundle);

@@ -8,7 +8,8 @@ const OBSERVATORY := &"observatory"
 
 
 static func register(store: Store) -> void:
-	store.register(OBSERVATORY, {"view": {}, "busy": "", "error": "", "detail": {}, "chosen": ""}, {
+	store.register(OBSERVATORY, {"view": {}, "busy": "", "error": "", "detail": {}, "chosen": "", "words": {}}, {
+		&"observatory_words": words,
 		&"observatory_asked": asked,
 		&"observatory_loaded": loaded,
 		&"observatory_failed": failed,
@@ -38,6 +39,13 @@ static func failed(s: Dictionary, p: Dictionary) -> Dictionary:
 	next["busy"] = ""
 	next["error"] = str(p["code"])
 	next["detail"] = p.get("detail", {})
+	return next
+
+
+## The name word lists, which each card's Keeper's name is read from (G58).
+static func words(s: Dictionary, p: Dictionary) -> Dictionary:
+	var next := s.duplicate()
+	next["words"] = p["words"]
 	return next
 
 

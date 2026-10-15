@@ -833,6 +833,16 @@ device's planner, with the load targets; the home gives each character the
 fields the replay's manifest carries (`wire`), and each Observatory card its
 clock.
 
+## Before the first heist
+
+The first launch (§2.6, §20.2) reads two things before there is an
+account, so neither route asks for a token: `GET /v1/protections`, each age
+band's quiet night and spending cap from §20.2, and `GET /v1/words`, the
+Workshop's word lists. The Keeper's name is an adjective and a noun from
+those lists (G58), so it never needs moderation: `PUT /v1/keeper/name
+{"adjective", "noun"}` refuses any other word, `GET /v1/keeper` answers it
+as `name`, and each Observatory card names its target's Keeper.
+
 ## The defence log
 
 `src/defences.mjs` is §23.2's defence log. `GET /v1/defences` lists the

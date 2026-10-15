@@ -20,10 +20,11 @@ static func screen(slice: Dictionary) -> Dictionary:
 	out["protected"] = Strings.t("OBS_PROTECTED") if v.get("protected", false) else ""
 	out["fallback"] = Strings.t("OBS_GENERATED_NOTE") if v.get("generated", false) \
 		else (Strings.t("OBS_ECHOES_NOTE") if v.get("echoes", false) else "")
-	out["trace"] = card(v["trace"]) if v.get("trace") is Dictionary else {}
+	var words: Dictionary = slice.get("words", {})
+	out["trace"] = card(v["trace"], words) if v.get("trace") is Dictionary else {}
 	var cards: Array[Dictionary] = []
 	for c: Dictionary in v.get("targets", []):
-		cards.append(card(c))
+		cards.append(card(c, words))
 	out["cards"] = cards
 	if cards.is_empty():
 		out["empty"] = Strings.t("OBS_EMPTY")
@@ -55,7 +56,7 @@ static func fee(c: Dictionary) -> String:
 
 ## A target card: the free facts in a few lines, its fee and why it was
 ## offered, and its button to the scout report.
-static func card(c: Dictionary) -> Dictionary:
+static func card(c: Dictionary, words := {}) -> Dictionary:
 	var r: Dictionary = c.get("realm", {})
 	var lines: Array[String] = [
 		Strings.t("OBS_FACTS", [int(c.get("realms", 1)), int(c.get("renown", 0)) if c.get("renown") != null else 0,
@@ -68,6 +69,12 @@ static func card(c: Dictionary) -> Dictionary:
 	]
 	if str(c.get("kind", "")) != "trace":
 		lines.append(Strings.t("OBS_REASON_" + str(c.get("reason", "fair")).to_upper()))
+	# G58: the Keeper's name, from the word lists, a free fact (§12.4).
+	var named: Variant = c.get("keeper_name")
+	var name := SocialPresenter.word_name(words, int(named["adjective"]), int(named["noun"])) \
+		if named is Dictionary else ""
+	if name != "":
+		lines.insert(0, Strings.t("OBS_KEEPER_NAME", name))
 	var t := title(c)
 	return {"bundle": c["bundle"], "kind": c.get("kind", "player"), "title": t, "lines": lines,
 		"key": "scout:" + str(c["bundle"]), "item": "scout:" + str(c["bundle"]), "action": Strings.t("OBS_SCOUT"),
@@ -118,7 +125,7 @@ static func scout(slice: Dictionary) -> Dictionary:
 		Strings.t("SCOUT_WATCH", [roundi(float(watch[0]) * 100.0), roundi(float(watch[1]) * 100.0)]),
 		Strings.t("SCOUT_HIDDEN"),
 	]
-	var shown_card := card(found)
+	var shown_card := card(found, slice.get("words", {}))
 	var raid := {"key": "raid:" + chosen, "item": "raid:" + chosen,
 		"action": Strings.t("SCOUT_RAID", fee(found)), "spoken": Strings.t("SCOUT_RAID", fee(found)),
 		"can": true, "why": ""}

@@ -38,6 +38,7 @@ CLIENT_FAILURE = re.compile(r'(?:Result\.failure|_fail)\("([a-z0-9_]+)"')
 TRANSPORT_ERROR = re.compile(r'\{"error":\s*"([a-z0-9_]+)"\}')
 CALLS = [
     (re.compile(r'api\.get_json\("(/v1/[^"]*)"\s*(?:\+\s*\w+)?'), "GET"),
+    (re.compile(r'api\.public_json\("(/v1/[^"]*)"\s*(?:\+\s*\w+)?'), "GET"),
     (re.compile(r'api\.post_json\("(/v1/[^"]*)"\s*(?:\+\s*\w+)?'), "POST"),
     (re.compile(r'api\.(?:json|raw)\(HTTPClient\.METHOD_(\w+),\s*"(/v1/[^"]*)"\s*(\+\s*\w+)?'), None),
     (re.compile(r'route := "(/v1/[^"]*)"\s*(\+\s*\w+)?'), "POST"),

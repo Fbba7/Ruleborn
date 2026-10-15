@@ -171,6 +171,8 @@ export class Observatory {
       // §5.4's heist clock the lease would carry, in seconds (§12.5's planner).
       clock: clockTicks() / TICKS_PER_SECOND,
       keeper_level: owner?.keeper_level ?? null, realms, renown: c.renown ?? null,
+      // G58: the Keeper's name is §12.4's free fact, from the word lists.
+      keeper_name: generated ? null : this.service.keeper.name(c.owner),
       loot: rough(snap.exposed), strain, band, faults: faults(strain, realms - 1),
       ...(generated ? { success: [lo, hi] } : {}),
       realm: { realm: snap.realm, realm_level: snap.realm_level, vault_level: snap.vault_level,

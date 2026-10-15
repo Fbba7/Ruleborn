@@ -221,6 +221,16 @@
      "deletion": "cleared",
      "holds": "whether the player shows their profile to others, never for 13 to 15 (§20.2)"
     },
+    "keeper_adjective": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "the Keeper's name's adjective, by its place in the word lists (G58)"
+    },
+    "keeper_noun": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "the Keeper's name's noun, by its place in the word lists (G58)"
+    },
     "terms_version": {
      "type": "other-usage",
      "deletion": "cleared",

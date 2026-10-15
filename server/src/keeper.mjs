@@ -12,6 +12,7 @@
 import { readFileSync } from "node:fs";
 
 import { Refused } from "./refused.mjs";
+import { WORDS } from "./workshop.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 
@@ -123,6 +124,24 @@ export class Keeper {
       if (row.guardian_sage === s.id) return "sage_on_guard";
     }
     return null;
+  }
+
+  /** G58: the Keeper's name, picked from the word lists at every age, as
+   *  {adjective, noun} indexes; null before one is picked. */
+  name(account) {
+    const row = this.db.prepare("SELECT keeper_adjective, keeper_noun FROM accounts WHERE id = ?").get(account);
+    return row?.keeper_adjective == null ? null : { adjective: row.keeper_adjective, noun: row.keeper_noun };
+  }
+
+  /** G58: the name the first launch picked, kept on the phone until the
+   *  account was made, from the word lists only. */
+  setName(account, { adjective, noun }) {
+    if (!Number.isInteger(adjective) || !Number.isInteger(noun)
+        || !WORDS.adjectives[adjective] || !WORDS.nouns[noun]) {
+      throw new Refused(400, "name_not_from_the_word_lists");
+    }
+    this.db.prepare("UPDATE accounts SET keeper_adjective = ?, keeper_noun = ? WHERE id = ?").run(adjective, noun, account);
+    return this.name(account);
   }
 
   /** A player's Keeper level and the bar toward the next. */

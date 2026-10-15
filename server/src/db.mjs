@@ -39,6 +39,9 @@ CREATE TABLE IF NOT EXISTS accounts (
   defences_seen_at  INTEGER,
   -- §20.2's profile visibility: off by default, never on for 13 to 15.
   profile_public    INTEGER NOT NULL DEFAULT 0,
+  -- G58: the Keeper's name from the word lists, by index; raiders see it.
+  keeper_adjective  INTEGER,
+  keeper_noun       INTEGER,
   -- §20.11's terms-of-use gate: the version of the terms accepted (safety.mjs).
   terms_version     TEXT,
   created_at        INTEGER NOT NULL,
@@ -818,6 +821,8 @@ const ADDED = [
   ["accounts", "guardian_sage", "TEXT"],
   ["accounts", "defences_seen_at", "INTEGER"],
   ["accounts", "profile_public", "INTEGER NOT NULL DEFAULT 0"],
+  ["accounts", "keeper_adjective", "INTEGER"],
+  ["accounts", "keeper_noun", "INTEGER"],
   // The terms of use accepted (safety.mjs).
   ["accounts", "terms_version", "TEXT"],
   ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],

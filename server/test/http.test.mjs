@@ -39,7 +39,7 @@ test("sign in, publish, lease, play, submit and read the balance over HTTP", asy
   assert.deepEqual(balance, { starlight: 5625, essence: 5625 });
   const level = await (await call("GET", "/v1/keeper", { token: raider.token })).json();
   assert.deepEqual(level, { level: 1, xp: 36, toNext: 140, cap: 40,
-                           plan: { crew: 3, casts: 1, sage: false, load: [50, 100, 10] } },
+                           plan: { crew: 3, casts: 1, sage: false, load: [50, 100, 10] }, name: null },
                    "§14.2: 30 + 6 × Keeper 1, and §12.5's planning at level 1");
 });
 

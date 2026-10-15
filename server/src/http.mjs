@@ -23,7 +23,10 @@
 //                                                              and "reminderCleared" if the night took it
 //   POST /v1/heists/:token       replay bytes                → what was settled; ?crew=ids names the roster's crew (11.6)
 //   GET  /v1/balance                                         → {starlight, essence}
-//   GET  /v1/keeper                                          → {level, xp, toNext, cap} (§14.2)
+//   GET  /v1/keeper                                          → {level, xp, toNext, cap, plan, name} (§14.2)
+//   PUT  /v1/keeper/name         {"adjective", "noun"}       → the Keeper's name from the word lists (G58)
+//   GET  /v1/words                                           → the name word lists, before any account
+//   GET  /v1/protections                                     → §20.2's night and spending cap by band
 //   GET  /v1/sages                                           → each Sage, its unlock, the guardian (§11.7)
 //   PUT  /v1/sages/guardian      {"sage": id | null}         → the Sage stationed at the Heart, or none
 //   GET  /v1/terms                                           → {version, accepted, url} (§20.11)
@@ -151,6 +154,8 @@ import { Refused, TARGET_LISTS_MS } from "./service.mjs";
 import { Social } from "./social.mjs";
 import { confirm as confirmOffline } from "./offline.mjs";
 import { WORDS, Workshop } from "./workshop.mjs";
+
+const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { "content-type": "application/json" },
@@ -654,10 +659,28 @@ export function handler(service, { webClientId = null, appleNotifications = null
 
         case "GET /v1/balance":
           return json(service.balance(who()));
-        case "GET /v1/keeper":
-          // The bar, and §12.5's planning at this level for the planner.
-          const keeper = service.keeper.view(who());
-          return json({ ...keeper, plan: planning(keeper.level) });
+        case "GET /v1/keeper": {
+          // The bar, §12.5's planning at this level for the planner, and the
+          // Keeper's name (G58).
+          const me = who();
+          const keeper = service.keeper.view(me);
+          return json({ ...keeper, plan: planning(keeper.level), name: service.keeper.name(me) });
+        }
+        case "PUT /v1/keeper": {
+          if (parts[2] !== "name") return json({ error: "no_such_route" }, 404);
+          const q = await body(request);
+          return json({ name: service.keeper.setName(who(), { adjective: q.adjective, noun: q.noun }) });
+        }
+        case "GET /v1/protections":
+          // §20.2's protections by age band, which the first launch sums up
+          // before any account exists: each band's quiet night and monthly
+          // spending cap (none for adults), from their one home.
+          return json(Object.fromEntries(Object.entries(facts.NIGHT_HOURS).map(([band, night]) =>
+            [band, { night, cap: facts.SPENDING_CAPS_EUR[band] ?? null }])));
+        case "GET /v1/words":
+          // The name word lists, which a first launch reads before any
+          // account exists (§25.2, G58): nothing in them is anyone's.
+          return json(WORDS);
         case "GET /v1/forms":
           return json(service.home.album(who()));
         case "GET /v1/sages":

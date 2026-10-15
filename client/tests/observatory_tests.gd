@@ -19,6 +19,7 @@ func _init(t: SceneTree, c: Callable, m: Callable, url: String) -> void:
 
 func run() -> void:
 	_words()
+	_names()
 	await _flows()
 	await _on_screen()
 	await _online()
@@ -77,6 +78,22 @@ func _words() -> void:
 			"Where guards stand and wards lie is found in the heist"]
 			and s["raid"]["action"] == "Plan · Entry fee 120 Starlight",
 		"%s" % [s.get("lines")])
+
+
+## G58: a card names its Keeper from the word lists; the game's own island
+## has none.
+func _names() -> void:
+	var words := HatchTests.words()
+	var named := sample()
+	named["targets"][0]["keeper_name"] = {"adjective": 1, "noun": 0}
+	var o := ObservatoryPresenter.screen({"view": named, "busy": "", "error": "", "words": words})
+	var expected := "Keeper: " + SocialPresenter.word_name(words, 1, 0)
+	var s := ObservatoryPresenter.scout({"view": named, "chosen": "p1", "words": words})
+	check.call("each target card names its Keeper from the word lists, a free fact, and the game's own island names "
+			+ "none (12.4, G58)",
+		o["cards"][0]["lines"][0] == expected and s["facts"][0] == expected
+			and not str(o["cards"][2]["lines"]).contains("Keeper: "),
+		"%s | %s" % [o["cards"][0]["lines"], s["facts"]])
 
 
 func _flows() -> void:

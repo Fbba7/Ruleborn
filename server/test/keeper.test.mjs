@@ -129,3 +129,28 @@ test("a guardian Sage is one the Keeper has unlocked, one at a time, kept on the
     headers: { authorization: `Bearer ${token}` } }));
   assert.equal((await got.json()).sages[1].unlocked, true);
 });
+
+test("the Keeper's name is picked from the word lists, read before any account, and shown on raiders' target cards (G58, 12.4, 25.2)", async () => {
+  const t = twoPlayers(true);
+  const words = await (await t.handle(new Request("https://edge.example/v1/words"))).json();
+  assert.ok(words.adjectives.length > 0 && words.nouns.length > 0, "no session needed");
+  const me = t.defender.account;
+  assert.equal(t.service.keeper.name(me), null);
+  assert.throws(() => t.service.keeper.setName(me, { adjective: words.adjectives.length, noun: 0 }),
+                (e) => e.reason === "name_not_from_the_word_lists");
+  assert.deepEqual(t.service.keeper.setName(me, { adjective: 2, noun: 5 }), { adjective: 2, noun: 5 });
+  const card = t.service.observatory.view(t.raider.account, t.clock.now).targets.find((c) => c.kind === "player");
+  assert.deepEqual(card.keeper_name, { adjective: 2, noun: 5 }, "§12.4's free fact");
+  const { token } = t.service.session("gc:defender");
+  const put = await t.handle(new Request("https://edge.example/v1/keeper/name", { method: "PUT",
+    headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+    body: JSON.stringify({ adjective: 1, noun: 1 }) }));
+  assert.deepEqual(await put.json(), { name: { adjective: 1, noun: 1 } });
+});
+
+test("§20.2's protections by band are read before any account: each band's quiet night and spending cap (20.2, 25.2)", async () => {
+  const t = twoPlayers(true);
+  const p = await (await t.handle(new Request("https://edge.example/v1/protections"))).json();
+  assert.deepEqual(p, { "13-15": { night: [21, 8], cap: 25 }, "16-17": { night: [22, 8], cap: 50 },
+                        "18+": { night: [22, 8], cap: null } });
+});

@@ -7,8 +7,9 @@ extends SceneTree
 ## quits; so the run has a deadline, and missing it is a failure.
 const DEADLINE_SECONDS := 480.0
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
-	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch",
-	"weaving", "codex", "harmony", "observatory", "scout", "lab", "defences", "law", "profile", "planner", "map", "realm"]
+	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch", "weaving",
+	"codex", "harmony", "observatory", "scout", "lab", "defences", "law", "profile", "planner", "map", "realm", "share",
+	"first"]
 
 var _n := 0
 var _failed := 0
@@ -80,6 +81,8 @@ func _seed() -> void:
 	App.services.store.dispatch(&"lab_loaded", {"view": LabTests.sample()})
 	App.services.store.dispatch(&"defences_loaded", {"view": DefencesTests.sample()})
 	App.services.store.dispatch(&"profile_loaded", {"view": ProfileTests.sample()})
+	App.services.store.dispatch(&"first_loaded", {"protections": FirstTests.protections(), "words": FirstTests.words()})
+	App.services.store.dispatch(&"first_moved", {"beat": "protections"})
 
 
 func _mount(scene: String) -> Control:
@@ -393,6 +396,8 @@ func _run() -> void:
 	await PlannerTests.new(self, check, _mount, server_url).run()
 	await MapTests.new(self, check, _mount, server_url).run()
 	await RealmTests.new(self, check, _mount, server_url).run()
+	await ShareTests.new(self, check, _mount, server_url).run()
+	await FirstTests.new(self, check, _mount, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

@@ -619,9 +619,15 @@ DELIVERABLES = [
         "targets on show (12.3)",
         "a Trace is shown apart from the list and first, with no fee, and only while it can be answered (12.3)",
         "the Observatory and its refresh are served over HTTP (12.3)"),
+        # G58: the Keeper's name, picked at the first launch, on every card.
+        parts(client_tests(
+            "each target card names its Keeper from the word lists, a free fact, and the game's own island names none "
+            "(12.4, G58)"),
+            server_tests(
+            "the Keeper's name is picked from the word lists, read before any account, and shown on raiders' target "
+            "cards (G58, 12.4, 25.2)")),
         not_started("universes of several realms give each card its depth, \"up to N realms to the Heart\", "
-                    "and its faults' places; visitors give the Wanderer's extra target; the first launch "
-                    "gives the Keeper's name (T3.3, §11.7, G58)"))),
+                    "and its faults' places; visitors give the Wanderer's extra target (T3.3, §11.7)"))),
     ("4b", "Scout report", FRONTEND, parts(client_tests(
         "the scout report reads a target realm by realm — its laws, guards by role, wards by kind, its watch — "
         "and says nothing placed is shown (12.4)",
@@ -777,7 +783,32 @@ DELIVERABLES = [
         "the defence log and its badge are served over HTTP (13.2)"),
         not_started("where the crew was seen and what fired, the island drawn with them and the guards that "
                     "caught anyone, recorded from the simulation's event log at settlement (TD.39, TD.13)"))),
-    ("4b", "First launch", FRONTEND, not_started("TD.26's screen gate passes for it")),
+    # §23.2's first launch (TD.26): the title, the age check, §20.2's
+    # protections and the Keeper's name, kept on the phone with no account;
+    # the face and §16's moments are not built.
+    ("4b", "First launch", FRONTEND, parts(client_tests(
+        "the first launch sums up §20.2's protections for the band the age check answered, with its quiet night and "
+        "spending cap as the server holds them (20.1, 20.2)",
+        "the first launch opens on the title, and asks for the Keeper's name from the word lists, saying raiders will "
+        "see it (12.4, G58)",
+        "the first launch goes title, age check, protections, name, each beat kept on the phone so a killed app "
+        "resumes there, with no account made; the name stays on the phone (20.1, 25.2, G58)",
+        "the first launch screen draws one beat at a time, the name with a button for each word and one to keep it, "
+        "and no skip (23.2)",
+        "against the server: the first launch reads §20.2's protections and the word lists before any account, and "
+        "the Keeper's name it kept reaches the server once the account is made (G58, 25.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "the Keeper's name is picked from the word lists, read before any account, and shown on raiders' target cards "
+        "(G58, 12.4, 25.2)",
+        "§20.2's protections by band are read before any account: each band's quiet night and spending cap "
+        "(20.2, 25.2)"),
+        not_started("the Keeper's face, which no content defines yet, and §16's moments each on its own screen, "
+                    "finished by a real event — three ruleborn wake, the first heist on a tutorial ruin, two strays "
+                    "put to work, a law woven, the first experiment, two ruins to choose from, three daily goals — "
+                    "with the account made after the first heist (§16, TD.26)"))),
     ("4b", "Landing picker", FRONTEND, parts(client_tests(
         "the landing picker names each edge spot by its side and place along it, covered or open, with how "
         "far a landing is heard and the heist clock (5.4, 23.2)",
@@ -833,7 +864,27 @@ DELIVERABLES = [
         "every screen works with text at 150% and 200%: nothing wider than the phone, every control "
         "in reach (§20.8, §21.1)",
         "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
-    ("4b", "Share sheet", FRONTEND, not_started("TD.23's screen gate passes for it")),
+    # §23.2's share sheet: the challenge link and §20.7's limits are built;
+    # the clip and the invite gift are not.
+    ("4b", "Share sheet", FRONTEND, parts(client_tests(
+        "the share sheet says §20.7's limits for the player's band: a 13-to-15's challenge to in-game friends only "
+        "and no clip outside the game, a 16-to-17's clip after a confirmation, an adult's anywhere (20.7)",
+        "before a link is made the sheet offers to make one; once made it shows the code and how a friend opens it, "
+        "and says when it was copied; nothing posts to the Beacon or grades a moment (17.6, 23.2)",
+        "a challenge link is made by the server and its code copied to paste; a refusal says why (17.6)",
+        "the share sheet screen draws the link's code with Make and Copy, and the band's limits (23.2)",
+        "against the server: a Keeper with a published island makes a challenge link whose code opens that island "
+        "(17.6)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "a challenge link plays the island once for anyone who holds it (17.6)",
+        "a 13-to-15's challenge link is played by their friends only (17.6, 20.7)",
+        "a 13-to-15's challenge link shows nothing to a stranger (20.7)"),
+        not_started("the 15-second clip, with its confirmation for 16 to 17 (TD.46)"),
+        not_started("the invite gift on a friend's first heist, and deep links for the challenge and the invite "
+                    "(TD.23)"))),
     # §23.2's Profile and stats (TD.24), counted from the heist rows, the
     # Codex and the Lab (profile.mjs).
     ("4b", "Profile", FRONTEND, parts(client_tests(

@@ -29,6 +29,9 @@ var device: DeviceRepository
 var purchases: StorePurchases
 ## §20.1's answer, kept on the phone: no account is made until it allows one.
 var age: AgeCheck
+## The first launch's beat and the Keeper's name, kept on the phone (TD.26).
+var first: FirstLaunch
+var first_repo: FirstRepository
 ## The phone's own notifications and their permission; a test's fake in tests.
 var notifier: LocalNotifier
 ## Sessions, the permission's asking, and events not yet sent, kept on the phone.
@@ -55,6 +58,8 @@ var profile_flow: ProfileController
 var planner_flow: PlannerController
 var map_flow: MapController
 var realm_flow: RealmController
+var share_flow: ShareController
+var first_flow: FirstController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -81,6 +86,8 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	ProfileState.register(s.store)
 	PlannerState.register(s.store)
 	RealmState.register(s.store)
+	ShareState.register(s.store)
+	FirstState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -94,6 +101,9 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 		else outbox_path.get_basename() + "-leases.json"
 	s.heists = HeistRepository.new(s.api, s.outbox, LeaseStock.new(stock_path))
 	s.age = AgeCheck.new(AgeCheck.FILE if outbox_path == Outbox.FILE else outbox_path.get_basename() + "-age.json")
+	s.first = FirstLaunch.new(FirstLaunch.FILE if outbox_path == Outbox.FILE
+		else outbox_path.get_basename() + "-first.json")
+	s.first_repo = FirstRepository.new(s.api)
 	s.track = TrackRepository.new(s.api)
 	s.shop = ShopRepository.new(s.api, s.outbox)
 	s.social = SocialRepository.new(s.api)
@@ -131,6 +141,8 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.planner_flow = PlannerController.new(s)
 	s.map_flow = MapController.new(s)
 	s.realm_flow = RealmController.new(s)
+	s.share_flow = ShareController.new(s)
+	s.first_flow = FirstController.new(s)
 	# What the phone built, wove or assigned offline is answered when the
 	# outbox sends it (§24).
 	s.outbox.settled.connect(s.universe_flow.offline_settled)
@@ -166,6 +178,12 @@ func session(fresh := false) -> Result:
 		var told := await account.set_age_band(age.band())
 		if told.ok:
 			age.mark_sent()
+	# G58: the Keeper's name the first launch picked, kept on the phone until
+	# the account was made, sent once.
+	if not first.name().is_empty() and not first.sent():
+		var named := await first_repo.send_name(first.name())
+		if named.ok:
+			first.mark_sent()
 	return r
 
 
@@ -239,6 +257,8 @@ func close() -> void:
 	planner_flow = null
 	map_flow = null
 	realm_flow = null
+	share_flow = null
+	first_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):

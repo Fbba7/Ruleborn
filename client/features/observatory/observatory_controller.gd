@@ -18,6 +18,10 @@ func load_observatory() -> void:
 	if str(_store().get_slice(ObservatoryState.OBSERVATORY)["busy"]) != "":
 		return
 	await _ask("view", services.observatory.view)
+	if (_store().get_slice(ObservatoryState.OBSERVATORY)["words"] as Dictionary).is_empty():
+		var w := await services.first_repo.words()
+		if w.ok:
+			_store().dispatch(&"observatory_words", {"words": w.value})
 
 
 ## §12.3's refresh, paid.
