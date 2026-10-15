@@ -20,6 +20,7 @@ const FILE := "user://notices.json"
 const ASK_AT_SESSION := 3
 const STORAGE_FULL := "storage_full"
 const RESTED := "rested"
+const EXPERIMENT := "experiment"
 const MINUTE_MS := 60 * 1000
 const DAY_MS := 24 * 60 * MINUTE_MS
 
@@ -116,6 +117,19 @@ static func rested_at(home: Dictionary, bias: int) -> int:
 	return out_of_night(at, home.get("night"), bias)
 
 
+## When the first experiment running in the Lab finishes (§8.6), from the
+## home the server answers, moved out of the night; 0 when none runs.
+static func experiment_at(home: Dictionary, bias: int) -> int:
+	var at := 0
+	for e: Variant in home.get("experiments", []):
+		var ready: Variant = (e as Dictionary).get("ready_at")
+		if ready != null and (at == 0 or int(ready) < at):
+			at = int(ready)
+	if at == 0:
+		return 0
+	return out_of_night(at, home.get("night"), bias)
+
+
 ## `at` (unix ms), or the end of the night it falls in.
 static func out_of_night(at: int, night: Variant, bias: int) -> int:
 	if not (night is Array) or (night as Array).size() != 2:
@@ -129,12 +143,13 @@ static func out_of_night(at: int, night: Variant, bias: int) -> int:
 	return at + posmod(to - local, DAY_MS)
 
 
-## §14.6's timers set on `notifier` from `home` — storage full and a
-## character rested — each taken away when nothing will happen, and nothing
-## set without the permission.
+## §14.6's timers set on `notifier` from `home` — storage full, a
+## character rested and an experiment finished — each taken away when
+## nothing will happen, and nothing set without the permission.
 static func apply(notifier: LocalNotifier, home: Dictionary, bias: int) -> void:
 	_timer(notifier, STORAGE_FULL, storage_full_at(home, bias))
 	_timer(notifier, RESTED, rested_at(home, bias))
+	_timer(notifier, EXPERIMENT, experiment_at(home, bias))
 
 
 static func _timer(notifier: LocalNotifier, id: String, at: int) -> void:

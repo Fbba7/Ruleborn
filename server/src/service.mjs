@@ -42,6 +42,7 @@ import { Safety } from "./safety.mjs";
 import { Codex, castLaw, castPrice } from "./codex.mjs";
 import { Home } from "./home.mjs";
 import { Universe } from "./universe.mjs";
+import { Lab } from "./lab.mjs";
 import { Observatory } from "./observatory.mjs";
 import { Weaving } from "./weaving.mjs";
 import { GENERATOR, Generator } from "./generator.mjs";
@@ -136,6 +137,7 @@ export class Service {
     this.codex = new Codex(this);
     this.weaving = new Weaving(this);
     this.observatory = new Observatory(this);
+    this.lab = new Lab(this);
     this.generator = new Generator(this);
     this.safety = new Safety(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), settleReceipt, catalogue: cosmetics });

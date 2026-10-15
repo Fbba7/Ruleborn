@@ -381,7 +381,10 @@ UPKEEP_AETHER_PER_POINT_HOUR = 0.5
 # §9.5's scouting price, 20 Aether a realm, is gone: the owner made scouting
 # free (F46), so it is not a sink.
 #: §9.5: a Lab experiment is 400 Aether x Lab level.
-LAB_AETHER_PER_LEVEL = 400
+try:
+    from ..design_facts import LAB_AETHER_PER_LEVEL  # its one home
+except ImportError:
+    from design_facts import LAB_AETHER_PER_LEVEL
 
 #: §10.4's Library curve, all ten levels.
 #:

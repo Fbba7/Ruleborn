@@ -28,6 +28,7 @@ const ROUTES := {
 	&"codex": "res://scenes/codex.tscn",
 	&"harmony": "res://scenes/harmony.tscn",
 	&"observatory": "res://scenes/observatory.tscn",
+	&"lab": "res://scenes/lab.tscn",
 	&"scout": "res://scenes/scout.tscn",
 }
 

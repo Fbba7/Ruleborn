@@ -807,6 +807,8 @@ export class Home {
       // §14.6's storage-full notice is the device's own timer, and §20.2's
       // night is the server's: the hours the device moves it out of.
       night: this.service.notifications.night(this.service.notifications.settings(account)),
+      // §14.6's "an experiment finished" is the device's timer too.
+      experiments: this.service.lab.running(account, now),
     };
   }
 }

@@ -126,6 +126,8 @@ export class Codex {
     for (const law of crossed) {
       if (!this.row(raider, law)) give(raider, law, facts.MEET_PAGES);
     }
+    // §8.6: crossing a resonance or chord hints it.
+    this.service.lab.crossed(raider, crossed, now);
     // §18.5: each law crossed in a successful heist is a step on its
     // school's mastery track — a heist that pays its raider and banks loot,
     // any grade but Foiled, as §18.6 counts a clear.

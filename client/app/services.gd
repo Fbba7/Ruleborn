@@ -21,6 +21,7 @@ var home: HomeRepository
 var weaving: WeavingRepository
 var codex: CodexRepository
 var observatory: ObservatoryRepository
+var lab: LabRepository
 var device: DeviceRepository
 ## The platform's store (StoreKit, Play Billing); a test's fake in tests.
 var purchases: StorePurchases
@@ -46,6 +47,7 @@ var weaving_flow: WeavingController
 var codex_flow: CodexController
 var harmony_flow: HarmonyController
 var observatory_flow: ObservatoryController
+var lab_flow: LabController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -67,6 +69,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	CodexState.register(s.store)
 	HarmonyState.register(s.store)
 	ObservatoryState.register(s.store)
+	LabState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -91,6 +94,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.weaving = WeavingRepository.new(s.api)
 	s.codex = CodexRepository.new(s.api)
 	s.observatory = ObservatoryRepository.new(s.api)
+	s.lab = LabRepository.new(s.api)
 	s.device = DeviceRepository.new(s.api)
 	s.notifier = LocalNotifier.new()
 	s.notices = DeviceNotices.new(DeviceNotices.FILE if outbox_path == Outbox.FILE
@@ -108,6 +112,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.codex_flow = CodexController.new(s)
 	s.harmony_flow = HarmonyController.new(s)
 	s.observatory_flow = ObservatoryController.new(s)
+	s.lab_flow = LabController.new(s)
 	# What the phone built, wove or assigned offline is answered when the
 	# outbox sends it (§24).
 	s.outbox.settled.connect(s.universe_flow.offline_settled)
@@ -149,7 +154,7 @@ func session(fresh := false) -> Result:
 ## The app came to the foreground (TD.74): the session counted and its start
 ## kept to send, the push permission asked at the third, and — with an
 ## account — the time zone and push token told to the server (G34), the
-## session events sent, and the storage-full timer set from the home (§14.6).
+## session events sent, and its own timers set from the home (§14.6).
 ## Offline, the events wait for the next time.
 func foreground(now := 0) -> void:
 	var at := now if now > 0 else int(Time.get_unix_time_from_system() * 1000)
@@ -169,12 +174,18 @@ func background(now := 0) -> void:
 
 
 ## The device told to the server: its zone and token, its events, and its
-## storage-full timer moved out of the night.
+## timers moved out of the night.
 func sync_device() -> void:
 	var zone := notifier.time_zone()
 	if zone != "":
 		await device.report(zone, notifier.push_token())
 	await send_events()
+	await set_timers()
+
+
+## §14.6's timers the device keeps itself, set from the home the server
+## answers: storage full, a character rested, an experiment finished.
+func set_timers() -> void:
 	var h := await home.view()
 	if h.ok:
 		DeviceNotices.apply(notifier, h.value, int(Time.get_time_zone_from_system().get("bias", 0)))
@@ -204,6 +215,7 @@ func close() -> void:
 	codex_flow = null
 	harmony_flow = null
 	observatory_flow = null
+	lab_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):

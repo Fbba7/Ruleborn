@@ -251,16 +251,16 @@ export class Weaving {
    *  and clashes (opposite notes on two different laws, §8.3) they make;
    *  the signature resonances (§8.4) and the chords the simulation sounds
    *  within capacity (§8.6); each with what it does to its laws' cost
-   *  (§5.5). A resonance or chord the Lab has not named is an unnamed line
-   *  with its discount (§8.6): the Lab names them (TD.65), and until it
-   *  keeps what it finds, every one is unnamed. What is weaving counts, as
-   *  it does for the price. */
+   *  (§5.5). A resonance or chord the Lab has not named (lab.mjs) is an
+   *  unnamed line with its discount (§8.6). What is weaving counts, as it
+   *  does for the price. */
   harmony(account) {
     return transaction(this.db, () => {
       this.universe.ensure(account, this.service.now());
       const rows = this.rows(account).filter((r) => r.law);
       const crowned = rows.filter((r) => r.realm === CROWN).map((r) => r.law);
       const priced = this.stability(account);
+      const named = this.service.lab.names(account);
       const realms = this.universe.realms(account).map((r) => {
         const own = rows.filter((x) => x.realm === r.realm).map((x) => x.law);
         const laws = [...own, ...crowned.filter((l) => !own.includes(l))];
@@ -273,10 +273,11 @@ export class Weaving {
             && c.laws[0].some((x) => c.laws[1].some((y) => y !== x)))
           .map((c) => ({ notes: c.notes, laws: [...new Set(c.laws.flat())], factor: facts.DISSONANCE_COST_FACTOR }));
         const resonances = RESONANCES.filter((x) => x.laws.every((l) => laws.includes(l)))
-          .map((x) => ({ name: null, laws: x.laws, factor: facts.RESONANCE_COST_FACTOR }));
+          .map((x) => ({ name: named.resonances.has(x.id) ? x.name : null, laws: x.laws,
+                         factor: facts.RESONANCE_COST_FACTOR }));
         const chords = priced.chords.filter((c) => c.realm === realmIndex(r.realm)).map((c) => {
           const notes = CHORDS[c.chord].notes;
-          return { name: null, notes, laws: laws.filter((l) => LAWS[l].notes.some((n) => notes.includes(n))),
+          return { name: named.chords.has(c.chord) ? CHORDS[c.chord].name : null, notes, laws: laws.filter((l) => LAWS[l].notes.some((n) => notes.includes(n))),
                    factor: facts.CHORD_COST_FACTOR };
         });
         return { realm: r.realm, type: r.type,

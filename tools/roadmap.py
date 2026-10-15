@@ -3046,7 +3046,12 @@ dict(
              register=["D86", "C50"]),
         dict(id="TD.65", owner="claude", status="blocked",
              title="The Lab's hints, curation's swaps and the hold figure",
-             detail="v3.7 wrote the three recommended options, built on TD.22's "
+             detail="<strong>The Lab's third is built</strong> with TD.22's Lab "
+                    "(G53 as v3.7 wrote it, server-tested: the hint after the third "
+                    "empty experiment, the third sphere's daily free naming, pages "
+                    "for a failure, restored laws only); curation's swaps and the "
+                    "hold figure wait on TD.22's curation and TD.16.<br><br>"
+                    "v3.7 wrote the three recommended options, built on TD.22's "
                     "screens and the server. The Lab (G53): after three empty "
                     "experiments that included the same law it hints one "
                     "undiscovered resonance of that law, in the Codex's one "
@@ -3079,7 +3084,20 @@ dict(
              register=["G53", "G54", "G55"]),
         dict(id="TD.22", owner="claude", status="blocked",
              title="Lab, defence curation, terrain editor and Workshop",
-             detail="The Lab at §10.2's times (5 h at level 3, not the design's "
+             detail="<strong>The Lab is built.</strong> <code>lab.mjs</code> "
+                    "keeps each chamber's experiment: two restored laws, the first "
+                    "five free minutes (§16), then 400 Aether a Lab level for "
+                    "§10.2's hours with the Archivist's fifth off (§11.7: at home "
+                    "or on guard); a find names a resonance for the Harmony view, "
+                    "an empty one pays 3 pages (§7.6) and the third with one law "
+                    "hints; from level 3 the third sphere names, once a UTC day and "
+                    "free, the first chord in §8.5's table woven or crossed; a heist "
+                    "crossing a resonance or chord hints it (§8.6); the home names "
+                    "running experiments, which set the device's own timer (§14.6). "
+                    "The Lab screen draws it all. A discovery's pages are 3 of the "
+                    "first law placed, an assumption: §8.6 says pages, not how many. "
+                    "Curation, the terrain editor and the Workshop remain.<br><br>"
+                    "The Lab at §10.2's times (5 h at level 3, not the design's "
                     "5 h 30) on TC.12's Lab service; curation over the generator's "
                     "alternatives, changing laws at TD.14's weaving prices; the "
                     "terrain editor on the simulation's features and §6.1's "

@@ -623,7 +623,44 @@ DELIVERABLES = [
         "to tier III, with marks at a third, two thirds and all (18.5)",
         "each school's album holds its launch laws in chapter order, one not met a ? that names nothing, "
         "with its milestones and the level that opens chapter 2 (7.6, D79)"))),
-    ("4b", "Lab", FRONTEND, not_started("TD.22's screen gate passes for it")),
+    # §23.2's Resonance Lab: the screen and the server it draws (lab.mjs).
+    ("4b", "Lab", FRONTEND, parts(client_tests(
+        "the Lab shows one chamber per Lab slot, an idle one with a sphere for each restored law placed and its "
+        "price and time on the button, which waits with why while the Aether is short (8.6, 10.2, 23.2)",
+        "a running chamber says its laws and time left, and warns of a paradox; a finished one says what it found, "
+        "or nothing with its pages and the hint after three empty experiments (7.6, 8.6, 23.2)",
+        "the Lab lists what it has found by name, how many are hinted, and how many signature resonances remain "
+        "in each school (8.6)",
+        "the first experiment runs free for five minutes; a Lab below level 3 says what its third sphere will do; "
+        "a universe without a Lab is told to build one (8.5, 8.6, 10.2)",
+        "a tap moves a sphere to the next restored law, past any another sphere holds; an untouched chamber holds "
+        "the first two restored (8.6, 23.2)",
+        "from Lab level 3 the third sphere names a chord free, and waits with why once it has named one today or "
+        "no chord woven or crossed is left; a name it gives is said (8.5)",
+        "an experiment sends its chamber and the laws in its spheres, shows the Lab the server answers, and sets "
+        "the device's experiment-finished timer from the home (8.6, 14.6)",
+        "a refused experiment keeps the Lab on show and says why; the third sphere asks the server, says the chord "
+        "it named and waits for tomorrow (8.5, 8.6)",
+        "the Lab screen draws each chamber, a sphere a tap moves along the restored laws, and a run that spends on "
+        "a second tap; a running chamber has no run; the third sphere has its button (8.5, 8.6, 23.2)",
+        "against the server: a new Keeper's Lab is not built, has no chambers, and refuses an experiment until it "
+        "is (8.6, 10.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "the Lab has §10.2's chambers and hours, 12 signature resonances at launch, and none before it is built "
+        "(8.6, 10.2)",
+        "the first experiment takes five free minutes and finds Mangrove banks in Slow rivers and Bloom, paying "
+        "pages; the home names when it finishes, and the Harmony view then names it (8.6, 10.2, 14.6, 16)",
+        "an experiment after the first costs 400 Aether a Lab level and the level's hours, a fifth off by the "
+        "Archivist at home or on guard (8.6, 9.5, 11.7)",
+        "an empty experiment pays 3 pages of the worked-on law if it shares a placed law's school, else of the "
+        "first placed; after three empties with one law the Lab hints one of its resonances by its partner's "
+        "school (7.6, 8.6)",
+        "from Lab level 3 the third sphere names, once a day and free, the first chord in §8.5's table the player "
+        "has woven or crossed; a heist crossing a resonance or chord hints it (8.5, 8.6)",
+        "the Lab is served over HTTP (8.6)"))),
     ("4b", "Curation", FRONTEND, not_started("TD.22's screen gate passes for it")),
     ("4b", "Defence log", FRONTEND, not_started("TD.66's screen gate passes for it")),
     ("4b", "First launch", FRONTEND, not_started("TD.26's screen gate passes for it")),
@@ -663,8 +700,9 @@ DELIVERABLES = [
         "harmonies, clashes, resonances and chords they make, each with its factor, a resonance or chord "
         "unnamed until the Lab names it (8.2, 8.3, 8.4, 8.6, 23.2)",
         "the Harmony view is served over HTTP (23.2)"),
-        not_started("the Lab keeps the resonances and chords it discovers, so the Harmony view names them "
-                    "(§8.4, §8.6; TD.65)"))),
+        server_tests(
+        "the first experiment takes five free minutes and finds Mangrove banks in Slow rivers and Bloom, paying "
+        "pages; the home names when it finishes, and the Harmony view then names it (8.6, 10.2, 14.6, 16)"))),
     ("4b", "Forms album", FRONTEND, client_tests(
         "the Forms album shows the forms by kind and note, which the player has, and each form's quirk "
         "(11.10, 23.2)",
@@ -887,7 +925,11 @@ DELIVERABLES = [
         client_tests(
             "the rested notice is set for the first character whose rest ends, moved out of the night, "
             "and taken away once nobody rests (14.6, 11.6)"),
-        not_started("the Lab's experiments have a timer to set, once the server keeps them (TD.22)"),
+        client_tests(
+            "the experiment-finished notice is set for the first experiment to finish, moved out of the night, "
+            "and taken away once none runs (14.6, 8.6)",
+            "an experiment sends its chamber and the laws in its spheres, shows the Lab the server answers, and "
+            "sets the device's experiment-finished timer from the home (8.6, 14.6)"),
         not_started("on a phone: the tables bundled into both exports, and the platforms' "
                     "notification plugins behind LocalNotifier (TC.3)"))),
     ("10 to 13", "Accessibility", FRONTEND, client_tests(

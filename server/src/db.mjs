@@ -109,6 +109,28 @@ CREATE TABLE IF NOT EXISTS observatory_refreshes (
 );
 CREATE INDEX IF NOT EXISTS observatory_refreshes_by_owner ON observatory_refreshes (owner, at);
 
+-- §8.6's Resonance Lab: each experiment, in its chamber, running until
+-- ready_at and settled once with its result; and what the Lab has found and
+-- hinted, a resonance, a chord or a hint by its id. lab.mjs.
+CREATE TABLE IF NOT EXISTS lab_experiments (
+  owner      TEXT NOT NULL REFERENCES accounts(id),
+  chamber    INTEGER NOT NULL,
+  laws       TEXT NOT NULL,
+  started_at INTEGER NOT NULL,
+  ready_at   INTEGER NOT NULL,
+  unstable   INTEGER NOT NULL DEFAULT 0,
+  settled_at INTEGER,
+  result     TEXT
+);
+CREATE INDEX IF NOT EXISTS lab_experiments_by_owner ON lab_experiments (owner, chamber);
+CREATE TABLE IF NOT EXISTS lab_discoveries (
+  owner    TEXT NOT NULL REFERENCES accounts(id),
+  kind     TEXT NOT NULL CHECK (kind IN ('resonance', 'chord', 'hint')),
+  id       TEXT NOT NULL,
+  found_at INTEGER NOT NULL,
+  PRIMARY KEY (owner, kind, id)
+);
+
 CREATE TABLE IF NOT EXISTS buildings (
   owner      TEXT NOT NULL REFERENCES accounts(id),
   realm      TEXT NOT NULL,

@@ -244,6 +244,19 @@ FAULTS_BY_STRAIN = ((100, 1), (110, 2), (118, 3), (125, 4))
 #: §12.3: "Refreshing the list costs Aether: 50, doubling with each refresh in
 #: the same hour."
 OBSERVATORY_REFRESH_AETHER = 50
+#: §9.5: "Lab experiment | 400 Aether × Lab level".
+LAB_AETHER_PER_LEVEL = 400
+#: §10.2's Resonance Lab: "the first, in the first session, takes 5 minutes
+#: and is free".
+LAB_FIRST_MINUTES = 5
+#: §7.6: "Lab experiments that find nothing give 3 pages of the law the
+#: player marked as working on".
+LAB_EMPTY_PAGES = 3
+#: §8.6: "After three empty experiments that included the same law, the Lab
+#: hints one undiscovered resonance of that law".
+LAB_HINT_AFTER = 3
+#: §8.6: a chord — "the Lab names it from level 3".
+LAB_CHORD_LEVEL = 3
 #: §18.5's mastery track: "three steps for each law the school has in play —
 #: woven, crossed in a successful heist, raised to tier III — with a title
 #: at a third of them and at all of them, and the school's new visual style
@@ -538,6 +551,11 @@ HOME = {
     "ALBUM_MILESTONES": "7.6",
     "FAULTS_BY_STRAIN": "5.5",
     "OBSERVATORY_REFRESH_AETHER": "12.3",
+    "LAB_AETHER_PER_LEVEL": "9.5",
+    "LAB_FIRST_MINUTES": "10.2",
+    "LAB_EMPTY_PAGES": "7.6",
+    "LAB_HINT_AFTER": "8.6",
+    "LAB_CHORD_LEVEL": "8.6",
     "MASTERY_STEPS_PER_LAW": "18.5",
     "MASTERY_MARKS_AT_LAUNCH": "18.5",
     "LEVEL_PRICE": "9.5",
@@ -757,6 +775,12 @@ STATED = {
                          lambda m: ((int(m[0]), 1), (int(m[1]), 2), (int(m[2]), 3), (int(m[3]), 4))),
     "OBSERVATORY_REFRESH_AETHER": (r"Refreshing the list costs Aether: (\d+), doubling with each refresh in the same hour",
                                    lambda m: int(m[0])),
+    "LAB_AETHER_PER_LEVEL": (r"\| Lab experiment\n\| (\d+) Aether × Lab level", lambda m: int(m[0])),
+    "LAB_FIRST_MINUTES": (r"the first, in the first session, takes (\d+) minutes and is free", lambda m: int(m[0])),
+    "LAB_EMPTY_PAGES": (r"Lab experiments that find nothing give (\d+) pages", lambda m: int(m[0])),
+    "LAB_HINT_AFTER": (r"After (two|three|four) empty experiments that included the same law",
+                       lambda m: {"two": 2, "three": 3, "four": 4}[m[0]]),
+    "LAB_CHORD_LEVEL": (r"the Lab names it from level (\d+)", lambda m: int(m[0])),
     "MASTERY_STEPS_PER_LAW": (r"(two|three|four) steps for each law the school has in play",
                               lambda m: {"two": 2, "three": 3, "four": 4}[m[0]]),
     "MASTERY_MARKS_AT_LAUNCH": (r"\((\d+), (\d+) and (\d+) steps on the four launch laws a school has",

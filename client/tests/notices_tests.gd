@@ -21,6 +21,7 @@ func run() -> void:
 	_permission()
 	_storage_full()
 	_rested()
+	_experiment()
 	_sessions()
 	await _foreground()
 
@@ -98,6 +99,31 @@ func _rested() -> void:
 			+ "and taken away once nobody rests (14.6, 11.6)",
 		day == at.call(12.5) and night == at.call(32.0) and kept.get("at") == at.call(32.0)
 			and kept.get("title") == "ruleborn_rested_title" and not notifier.timers.has(DeviceNotices.RESTED),
+		"%d %d %s %s" % [day, night, kept, notifier.timers])
+
+
+## §14.6's "an experiment finished": the first experiment the home names to
+## finish, moved out of the night, and taken away once none runs (§8.6).
+func _experiment() -> void:
+	var at := func(h: float) -> int: return MIDNIGHT + int(h * HOUR)
+	var home := {"night": [22, 8], "experiments": [{"chamber": 2, "ready_at": at.call(16.0)},
+		{"chamber": 1, "ready_at": at.call(13.5)}]}
+	var day := DeviceNotices.experiment_at(home, 0)
+	home["experiments"][1]["ready_at"] = at.call(23.0)
+	home["experiments"][0]["ready_at"] = at.call(30.0)
+	var night := DeviceNotices.experiment_at(home, 0)
+	var notifier := FakeLocalNotifier.new()
+	DeviceNotices.apply(notifier, home, 0)
+	var without := notifier.timers.duplicate()
+	notifier.ask_permission()
+	DeviceNotices.apply(notifier, home, 0)
+	var kept: Dictionary = notifier.timers.get(DeviceNotices.EXPERIMENT, {})
+	DeviceNotices.apply(notifier, {"night": [22, 8], "experiments": []}, 0)
+	check.call("the experiment-finished notice is set for the first experiment to finish, moved out of the night, "
+			+ "and taken away once none runs (14.6, 8.6)",
+		day == at.call(13.5) and night == at.call(32.0) and without.is_empty() and kept.get("at") == at.call(32.0)
+			and kept.get("title") == "ruleborn_experiment_title" and kept.get("body") == "ruleborn_experiment_body"
+			and not notifier.timers.has(DeviceNotices.EXPERIMENT),
 		"%d %d %s %s" % [day, night, kept, notifier.timers])
 
 

@@ -70,6 +70,13 @@ async function busy() {
   // A law woven (weaving.mjs).
   t.service.book(x.account, "aether", 1_000, "a test's grant");
   t.service.weaving.weave(x.account, { realm: "heart", slot: 1, law: "bloom" });
+  // A Lab experiment run and settled (lab.mjs).
+  t.service.db.prepare("UPDATE accounts SET keeper_level = MAX(keeper_level, 3) WHERE id = ?").run(x.account);
+  t.service.book(x.account, "starlight", 2_000, "a test's grant");
+  t.service.universe.build(x.account, { realm: "heart", kind: "resonance_lab", n: 1, to: 1 });
+  t.service.lab.start(x.account, { chamber: 1, laws: ["slow_rivers", "bloom"] });
+  t.clock.now += 5 * 60_000;
+  t.service.lab.show(x.account);
   t.clock.now += DAY;
   raid(x.account, yBundle, null);
   const held = t.service.lease(x.account, yBundle);

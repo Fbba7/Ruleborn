@@ -800,7 +800,7 @@ strain and band. `POST /v1/weaving` weaves; `DELETE /v1/weaving/:realm/:slot`
 empties. `GET /v1/weaving/harmony` is §23.2's Harmony view: each realm's laws,
 the crown's among them, with their notes, and the harmonies, clashes,
 resonances and the chords the simulation sounds, each with its factor; a
-resonance or chord is unnamed until the Lab keeps what it finds (§8.6). What
+resonance or chord is unnamed until the Lab names it (§8.6). What
 is woven is what home.mjs reads: §9.3's 1 + 0.10 per realm law of a producer's
 school and 0.05 per crown law, a producer's store integrated in stretches cut
 where a weaving finishes, so a law counts from then; and §11.5's births, their
@@ -808,6 +808,31 @@ school drawn 3 for each law woven in the realm, 2 for its own school and 1 for
 each crown law, a law-linked trait three times as likely for a law the realm
 runs (§11.3). The load run does not weave yet, so its rows a player a day
 leave weaving out.
+
+## The Resonance Lab
+
+`src/lab.mjs` is §8.6's Lab. It has §10.2's chambers and hours for its level
+(one chamber and 8 hours at level 1, three and 3 hours at 5), and each
+chamber runs one experiment at a time: two restored laws, the first ever
+five free minutes (§16), any other 400 Aether a Lab level (§9.5) for the
+level's hours less the Archivist's fifth, which applies at home or on guard
+(§11.7). An experiment settles when the Lab is next read: a resonance of its
+two laws not yet found is found, and named from then on in the Harmony view;
+otherwise it is empty and pays §7.6's 3 pages of the law worked on when that
+law is in a placed law's school, else of the first placed, and the third
+empty experiment with one law hints one of its undiscovered resonances by
+its partner's school. A find pays 3 pages of the first law placed; §8.6 says
+a discovery pays pages, not how many. From Lab level 3 the third sphere
+names, once a UTC day and free, the first chord in §8.5's table the player
+has woven (sounding in the universe, as the simulation sounds it) or crossed
+and not named. A heist hints each resonance and chord the island it crossed
+makes (§8.6). Two tier III laws with opposite notes are warned an unstable
+pairing and run as an ordinary experiment until the paradox laws ship. The
+home names the experiments running, so the device sets its own "experiment
+finished" timer (§14.6). `GET /v1/lab` settles and shows the chambers, the
+next experiment's price and time, what is found and hinted, and how many of
+launch's 12 signature resonances remain in each school; `POST /v1/lab`
+starts one; `POST /v1/lab/sphere` names a chord.
 
 ## Constellations and crews
 
