@@ -2767,8 +2767,13 @@ dict(
              register=["C57"]),
         dict(id="TD.20", owner="claude", status="doing",
              title="Weaving and the law card",
-             detail="<strong>Weaving is built; the law card and the realm view's "
-                    "threads are not.</strong> <code>scripts/weaving_screen.gd</code> "
+             detail="<strong>Weaving and the law card are built; the card's looping "
+                    "preview and the realm view's threads are not.</strong> The law "
+                    "card opens from a law met in the Codex: the school's shape and "
+                    "name, the law's one-line rule (the first sentence of its tier I "
+                    "rule) and §7.7's one weakness from content, its notes as "
+                    "symbols, its rank, its tier as pips and its pages from "
+                    "<code>GET /v1/codex</code>. <code>scripts/weaving_screen.gd</code> "
                     "shows §5.5's seven-band bar with the current band marked in "
                     "words and its effect, each realm's slots and the crown's (the "
                     "Heart its two, the crown those the Spire has opened, with the "

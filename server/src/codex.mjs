@@ -280,7 +280,7 @@ export class Codex {
         : r.tier < 3 ? { pages: facts.TIER_COSTS[r.tier - 1][0], aether: facts.TIER_COSTS[r.tier - 1][1],
                          spire: facts.TIER_COSTS[r.tier - 1][2] }
         : null;
-      return { law: r.law, name: l.name, school: l.school, rank: l.rank, chapter: l.chapter ?? null,
+      return { law: r.law, name: l.name, school: l.school, rank: l.rank, notes: l.notes, chapter: l.chapter ?? null,
                open: this.open(r.law, level.keeper_level), pages: r.pages, tier: r.tier, next };
     };
     const by = Object.fromEntries(rows.map((r) => [r.law, r]));

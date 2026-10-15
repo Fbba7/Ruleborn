@@ -479,7 +479,22 @@ DELIVERABLES = [
     # the designs to this document's rules (23.5)". Each counts when its
     # screen gate (stage SD) passes, by client tests kept by name.
     ("4b", "Universe map", FRONTEND, not_started("TD.19's screen gate passes for it")),
-    ("4b", "Law card", FRONTEND, not_started("TD.20's screen gate passes for it")),
+    # §23.2's law card, on the Codex's facts and the law's own content; its
+    # looping preview is a movement drawn on the world (TD.3).
+    ("4b", "Law card", FRONTEND, parts(client_tests(
+        "the law card shows the school's shape and name, the law's one-line rule and its notes as symbols (21.7, 23.2)",
+        "the law card shows the law's rank, its tier as pips, its pages toward the next step and §7.7's one weakness "
+        "(7.6, 7.7, 23.5)",
+        "a law met in the Codex opens its law card, which draws the card for that law (7.6, 23.2)",
+        "against the server: each law a new Keeper's Codex holds opens a law card with its rule, notes, rank, tier and "
+        "weakness (7.7, 23.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "each law the Codex holds carries its law card's facts: school, rank, notes, tier and pages (7.7, 21.7, 23.2)"),
+        not_started("the looping four-second preview of the law's movement signature, drawn on TD.3's world "
+                    "(21.7)"))),
     ("4b", "Realm view", FRONTEND, not_started("TD.19's screen gate passes for it")),
     ("4b", "Weaving", FRONTEND, client_tests(
         "Weaving shows the universe's stability as a bar of §5.5's seven bands, the current one marked in "

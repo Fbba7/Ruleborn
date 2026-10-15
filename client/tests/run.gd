@@ -8,7 +8,7 @@ extends SceneTree
 const DEADLINE_SECONDS := 480.0
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
 	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch",
-	"weaving", "codex", "harmony", "observatory", "scout", "lab", "defences"]
+	"weaving", "codex", "harmony", "observatory", "scout", "lab", "defences", "law"]
 
 var _n := 0
 var _failed := 0
@@ -69,7 +69,7 @@ func _seed() -> void:
 	App.services.store.dispatch(&"roster_changed", {"home": HatchTests.born(),
 		"what": {"do": "birth", "born": 9, "first": true, "outfit": "hatch-outfit"}})
 	App.services.store.dispatch(&"workshop_words", {"words": HatchTests.words()})
-	App.services.store.dispatch(&"navigated", {"name": &"character", "params": {"id": 2}})
+	App.services.store.dispatch(&"navigated", {"name": &"character", "params": {"id": 2, "law": "bloom"}})
 	App.services.store.dispatch(&"sages_loaded", {"view": SageTests.sample()})
 	App.services.store.dispatch(&"forms_loaded", {"view": FormsTests.sample()})
 	App.services.store.dispatch(&"weaving_loaded", {"view": WeavingTests.sample()})
@@ -387,6 +387,7 @@ func _run() -> void:
 	await LandingTests.new(self, check, _mount).run()
 	await LabTests.new(self, check, _mount, server_url).run()
 	await DefencesTests.new(self, check, _mount, server_url).run()
+	await LawTests.new(self, check, _mount, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

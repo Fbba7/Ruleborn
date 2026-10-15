@@ -79,7 +79,9 @@ static func entry(l: Dictionary, v: Dictionary) -> Dictionary:
 	var worked: bool = v.get("working_on") == law
 	var work := {} if worked else {"key": "work:" + law, "item": "work:" + law, "action": Strings.t("CODEX_WORK_ON"),
 		"spoken": Strings.t("CODEX_WORK_ON_SPOKEN", name), "can": true, "why": "", "args": {"law": law}}
-	return {"known": true, "law": law, "text": text, "act": act, "work": work, "worked": worked,
+	var card := {"key": "card:" + law, "item": "card:" + law, "action": Strings.t("CODEX_CARD"),
+		"spoken": Strings.t("CODEX_CARD_SPOKEN", name), "can": true, "why": ""}
+	return {"known": true, "law": law, "text": text, "act": act, "work": work, "worked": worked, "card": card,
 		"worked_text": Strings.t("CODEX_WORKED") if worked else ""}
 
 

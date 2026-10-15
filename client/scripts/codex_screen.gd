@@ -4,8 +4,8 @@ extends Control
 ## Spire; when the next chapter opens; the law worked on; and each school's
 ## album — its shape and name, its restored count and milestones, its mastery
 ## track, and its laws, a "?" until met. Restoring a law or raising its tier
-## spends on a second tap; marking it worked on takes one. Every number is
-## the server's.
+## spends on a second tap; marking it worked on takes one; a law met opens its
+## law card. Every number is the server's.
 
 var controller: CodexController
 var body: VBoxContainer
@@ -89,6 +89,9 @@ func _album(a: Dictionary, busy: bool) -> Control:
 	box.add_child(UI.label(a["marks"], UI.TEXT_POINTS, true))
 	for l: Dictionary in a["laws"]:
 		box.add_child(UI.label(l["text"], UI.TEXT_POINTS, true))
+		if l.has("card"):
+			box.add_child(RosterScreen.offer(l["card"], false,
+				App.services.router.go.bind(&"law", {"law": str(l["law"])})))
 		if not (l["act"] as Dictionary).is_empty():
 			var shown: Dictionary = (l["act"] as Dictionary).duplicate()
 			if confirm == shown["key"]:

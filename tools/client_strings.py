@@ -48,6 +48,13 @@ def rows() -> list[tuple[str, str]]:
     load = lambda name: json.loads((CONTENT / name).read_text(encoding="utf-8"))
     out = []
     out += [(f"LAW_{l['id'].upper()}", l["name"]) for l in load("laws.json")]
+    # §21.7's law card: "a one-line rule" — the first sentence of the law's
+    # tier I rule, its section references dropped — and §7.7's one weakness
+    # (§23.5's law card row). The law's own text is their one home.
+    for l in load("laws.json"):
+        rule = re.sub(r" \([^)]*\b\d+\.\d+[^)]*\)", "", l["tier_1"])
+        out += [(f"LAW_RULE_{l['id'].upper()}", re.split(r"(?<=[.!?])\s+(?=[A-Z])", rule)[0]),
+                (f"LAW_WEAKNESS_{l['id'].upper()}", l["weakness"])]
     out += [(f"NOTE_{n['id'].upper()}", n["name"]) for n in load("notes.json")]
     out += [(f"RES_{r['id'].upper()}", r["name"]) for r in load("resonances.json")]
     out += [(f"CHORD_{c['id'].upper()}", c["name"]) for c in load("chords.json")]

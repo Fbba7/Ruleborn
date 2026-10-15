@@ -245,3 +245,14 @@ test("a school's mastery track takes a step for each law woven, crossed in a suc
 function offerFor(mm, account) {
   return offerList(mm.raider(account), mm.candidates());
 }
+
+test("each law the Codex holds carries its law card's facts: school, rank, notes, tier and pages (7.7, 21.7, 23.2)", () => {
+  const t = server();
+  const me = t.service.session("gc:card").account;
+  const v = t.service.codex.show(me);
+  const bloom = law(v, "bloom");
+  const content = LAWS.find((l) => l.id === "bloom");
+  assert.deepEqual([bloom.school, bloom.rank, bloom.notes, bloom.tier],
+                   [content.school, content.rank, content.notes, 1]);
+  assert.ok(v.laws.every((l) => Array.isArray(l.notes) && l.notes.length > 0 && Number.isInteger(l.pages)));
+});

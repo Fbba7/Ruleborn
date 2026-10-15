@@ -894,3 +894,15 @@ DEFENCES_REPLAY_GONE,The replay is no longer kept,The replay is no longer kept,O
 DEFENCES_TRACE,Trace · no fee,Trace · no fee,Rastro · sem taxa,Rasto · sem taxa,Spur · ohne Gebühr,Piste · sans frais
 DEFENCES_TRACE_SPOKEN,Trace %s: raid them back once with no entry fee,Trace %s: raid them back once with no entry fee,Rastro de %s: assaltar de volta uma vez sem taxa de entrada,Rasto de %s: assaltar de volta uma vez sem taxa de entrada,Spur zu %s: einmal ohne Eintrittsgebühr zurückrauben,Piste de %s : le braquer en retour une fois sans frais d'entrée
 REPLAY_RAID,A raid on your universe,A raid on your universe,Um assalto ao seu universo,Um assalto ao teu universo,Ein Raubzug gegen dein Universum,Un casse contre ton univers
+LAW_CARD_TITLE,Law card,Law card,Carta da lei,Carta da lei,Gesetzeskarte,Carte de loi
+LAW_CARD_NOTE,%s (%s),%s (%s),%s (%s),%s (%s),%s (%s),%s (%s)
+LAW_CARD_NOTES,Notes: %s,Notes: %s,Notas: %s,Notas: %s,Noten: %s,Notes : %s
+LAW_CARD_RANK,Rank: %s,Rank: %s,Raridade: %s,Raridade: %s,Rang: %s,Rang : %s
+LAW_CARD_TIER,Tier %s %s,Tier %s %s,Nível %s %s,Nível %s %s,Stufe %s %s,Rang %s %s
+LAW_CARD_UNRESTORED,Tier %s not restored,Tier %s not restored,Nível %s não restaurada,Nível %s não restaurada,Stufe %s nicht wiederhergestellt,Rang %s non restaurée
+LAW_CARD_TIER_SPOKEN,Restored to tier %d of 3,Restored to tier %d of 3,Restaurada no nível %d de 3,Restaurada no nível %d de 3,Wiederhergestellt bis Stufe %d von 3,Restaurée au rang %d sur 3
+LAW_CARD_PAGES_TO,Pages: %d of %d for the next step,Pages: %d of %d for the next step,Páginas: %d de %d para o próximo passo,Páginas: %d de %d para o próximo passo,Seiten: %d von %d für den nächsten Schritt,Pages : %d sur %d pour l'étape suivante
+LAW_CARD_PAGES,Pages: %d,Pages: %d,Páginas: %d,Páginas: %d,Seiten: %d,Pages : %d
+LAW_CARD_WEAKNESS,Weakness: %s,Weakness: %s,Fraqueza: %s,Fraqueza: %s,Schwäche: %s,Faiblesse : %s
+CODEX_CARD,Law card,Law card,Carta da lei,Carta da lei,Gesetzeskarte,Carte de loi
+CODEX_CARD_SPOKEN,Open the law card of %s,Open the law card of %s,Abrir a carta da lei %s,Abrir a carta da lei %s,Gesetzeskarte von %s öffnen,Ouvrir la carte de loi de %s
