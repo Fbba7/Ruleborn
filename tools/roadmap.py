@@ -2957,9 +2957,20 @@ dict(
              gate="the screen gate for the Forms album row; every form in it "
                   "drawn from TD.7's manifest",
              blocked_by=["TD.21", "TD.11", "TC.12"]),
-        dict(id="TD.66", owner="claude", status="blocked",
+        dict(id="TD.66", owner="claude", status="doing",
              title="The defence log",
-             detail="The raids on the player from TC.12's defence routes, each "
+             detail="<strong>The log is built on the facts settlement keeps.</strong> "
+                    "<code>defences.mjs</code> lists the season's raids on the "
+                    "player, newest first, each held when Foiled and leaked otherwise "
+                    "with Partial counted apart, the haul denied and how long the "
+                    "defence held (both now written into the heist's outcome at "
+                    "settlement), who was caught and the share earned; Watch replay "
+                    "while the replay is kept, and Trace on the raid "
+                    "<code>traceable()</code> names. Reading it clears the raid "
+                    "badge the home's button carries. Left: where the crew was seen "
+                    "and what fired, the island drawn with them and the catching "
+                    "guards, which need the event log at settlement (TD.39).<br><br>"
+                    "The raids on the player from TC.12's defence routes, each "
                     "with its report (§23.2: the haul denied, how long the defence "
                     "held, where the crew was seen, what fired) from TD.39's "
                     "record, its haul denied priced as §9.4 prices a crew's "

@@ -22,6 +22,7 @@ var weaving: WeavingRepository
 var codex: CodexRepository
 var observatory: ObservatoryRepository
 var lab: LabRepository
+var defences: DefencesRepository
 var device: DeviceRepository
 ## The platform's store (StoreKit, Play Billing); a test's fake in tests.
 var purchases: StorePurchases
@@ -48,6 +49,7 @@ var codex_flow: CodexController
 var harmony_flow: HarmonyController
 var observatory_flow: ObservatoryController
 var lab_flow: LabController
+var defences_flow: DefencesController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -70,6 +72,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	HarmonyState.register(s.store)
 	ObservatoryState.register(s.store)
 	LabState.register(s.store)
+	DefencesState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -95,6 +98,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.codex = CodexRepository.new(s.api)
 	s.observatory = ObservatoryRepository.new(s.api)
 	s.lab = LabRepository.new(s.api)
+	s.defences = DefencesRepository.new(s.api)
 	s.device = DeviceRepository.new(s.api)
 	s.notifier = LocalNotifier.new()
 	s.notices = DeviceNotices.new(DeviceNotices.FILE if outbox_path == Outbox.FILE
@@ -113,6 +117,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.harmony_flow = HarmonyController.new(s)
 	s.observatory_flow = ObservatoryController.new(s)
 	s.lab_flow = LabController.new(s)
+	s.defences_flow = DefencesController.new(s)
 	# What the phone built, wove or assigned offline is answered when the
 	# outbox sends it (§24).
 	s.outbox.settled.connect(s.universe_flow.offline_settled)
@@ -216,6 +221,7 @@ func close() -> void:
 	harmony_flow = null
 	observatory_flow = null
 	lab_flow = null
+	defences_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):

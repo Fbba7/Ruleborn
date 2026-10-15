@@ -872,3 +872,25 @@ LAB_SPHERE_SPOKEN,"Name a chord you have woven or crossed, free, once a day","Na
 LAB_SPHERE_TODAY,named one today; the next tomorrow,named one today; the next tomorrow,já nomeou um hoje; o próximo amanhã,já nomeou um hoje; o próximo amanhã,heute schon einer; der nächste morgen,un nommé aujourd'hui ; le suivant demain
 LAB_SPHERE_NONE,weave or cross a chord first,weave or cross a chord first,teça ou atravesse um acorde antes,tece ou atravessa um acorde primeiro,webe oder durchquere zuerst einen Akkord,tisse ou traverse d'abord un accord
 LAB_NAMED,The third sphere named the chord %s,The third sphere named the chord %s,A terceira esfera nomeou o acorde %s,A terceira esfera nomeou o acorde %s,Die dritte Kugel hat den Akkord %s benannt,La troisième sphère a nommé l'accord %s
+HOME_DEFENCES,Defence log,Defense log,Registro de defesa,Registo de defesa,Verteidigungslog,Journal de défense
+HOME_DEFENCES_NEW,Defence log · %d new,Defense log · %d new,Registro de defesa · %d novos,Registo de defesa · %d novos,Verteidigungslog · %d neu,Journal de défense · %d nouveaux
+DEFENCES_TITLE,Defence log,Defense log,Registro de defesa,Registo de defesa,Verteidigungslog,Journal de défense
+DEFENCES_FAILED,The defence log could not answer: %s,The defense log could not answer: %s,O registro de defesa não pôde responder: %s,O registo de defesa não pôde responder: %s,Das Verteidigungslog konnte nicht antworten: %s,Le journal de défense n'a pas pu répondre : %s
+DEFENCES_SEASON,"This season: held %d, leaked %d (%d partial)","This season: held %d, leaked %d (%d partial)","Nesta temporada: resistiu %d, vazou %d (%d parciais)","Nesta temporada: resistiu %d, cedeu %d (%d parciais)","Diese Saison: gehalten %d, durchgelassen %d (%d teilweise)","Cette saison : tenu %d, cédé %d (%d partiels)"
+DEFENCES_EMPTY,No raids on your universe this season,No raids on your universe this season,Nenhum assalto ao seu universo nesta temporada,Nenhum assalto ao teu universo nesta temporada,Diese Saison keine Raubzüge gegen dein Universum,Aucun casse contre ton univers cette saison
+DEFENCES_RAIDER,A Keeper of level %d,A Keeper of level %d,Um Guardião de nível %d,Um Guardião de nível %d,Ein Hüter der Stufe %d,Un Gardien de niveau %d
+DEFENCES_NEW, · new, · new, · novo, · novo, · neu, · nouveau
+DEFENCES_HELD,Held (%s),Held (%s),Resistiu (%s),Resistiu (%s),Gehalten (%s),Tenu (%s)
+DEFENCES_LEAKED,Leaked (%s),Leaked (%s),Vazou (%s),Cedeu (%s),Durchgelassen (%s),Cédé (%s)
+DEFENCES_DENIED,Haul denied: %s,Haul denied: %s,Saque negado: %s,Saque negado: %s,Verhinderte Beute: %s,Butin refusé : %s
+DEFENCES_DENIED_UNKNOWN,Haul denied: not recorded,Haul denied: not recorded,Saque negado: não registrado,Saque negado: não registado,Verhinderte Beute: nicht erfasst,Butin refusé : non enregistré
+DEFENCES_HELD_FOR,The defence held %s,The defense held %s,A defesa durou %s,A defesa durou %s,Die Abwehr hielt %s,La défense a tenu %s
+DEFENCES_HELD_UNKNOWN,How long it held: not recorded,How long it held: not recorded,Quanto durou: não registrado,Quanto durou: não registado,Wie lange sie hielt: nicht erfasst,Durée tenue : non enregistrée
+DEFENCES_CAUGHT,Crew caught: %d,Crew caught: %d,Equipe capturada: %d,Equipa capturada: %d,Gefangene Crew: %d,Équipiers capturés : %d
+DEFENCES_SHARE,Defence share earned: %s,Defense share earned: %s,Parte da defesa ganha: %s,Parte da defesa ganha: %s,Verdienter Verteidigungsanteil: %s,Part de défense gagnée : %s
+DEFENCES_WATCH,Watch replay,Watch replay,Ver replay,Ver repetição,Wiederholung ansehen,Voir le replay
+DEFENCES_WATCH_SPOKEN,Watch the replay of the raid by %s,Watch the replay of the raid by %s,Ver o replay do assalto de %s,Ver a repetição do assalto de %s,Wiederholung des Raubzugs von %s ansehen,Voir le replay du casse de %s
+DEFENCES_REPLAY_GONE,The replay is no longer kept,The replay is no longer kept,O replay não está mais guardado,A repetição já não está guardada,Die Wiederholung wird nicht mehr aufbewahrt,Le replay n'est plus conservé
+DEFENCES_TRACE,Trace · no fee,Trace · no fee,Rastro · sem taxa,Rasto · sem taxa,Spur · ohne Gebühr,Piste · sans frais
+DEFENCES_TRACE_SPOKEN,Trace %s: raid them back once with no entry fee,Trace %s: raid them back once with no entry fee,Rastro de %s: assaltar de volta uma vez sem taxa de entrada,Rasto de %s: assaltar de volta uma vez sem taxa de entrada,Spur zu %s: einmal ohne Eintrittsgebühr zurückrauben,Piste de %s : le braquer en retour une fois sans frais d'entrée
+REPLAY_RAID,A raid on your universe,A raid on your universe,Um assalto ao seu universo,Um assalto ao teu universo,Ein Raubzug gegen dein Universum,Un casse contre ton univers

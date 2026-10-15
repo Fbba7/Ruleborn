@@ -42,6 +42,7 @@ import { Safety } from "./safety.mjs";
 import { Codex, castLaw, castPrice } from "./codex.mjs";
 import { Home } from "./home.mjs";
 import { Universe } from "./universe.mjs";
+import { Defences } from "./defences.mjs";
 import { Lab } from "./lab.mjs";
 import { Observatory } from "./observatory.mjs";
 import { Weaving } from "./weaving.mjs";
@@ -138,6 +139,7 @@ export class Service {
     this.weaving = new Weaving(this);
     this.observatory = new Observatory(this);
     this.lab = new Lab(this);
+    this.defences = new Defences(this);
     this.generator = new Generator(this);
     this.safety = new Safety(this);
     this.shop = new Shop(this, { verifyReceipt: (s, r) => this.verifyReceipt(s, r), settleReceipt, catalogue: cosmetics });
@@ -662,7 +664,10 @@ export class Service {
              JSON.stringify(outcome), decision.review ? 1 : 0, decision.grace ? 1 : 0, now, day(now));
       if (decision.validated) {
         Object.assign(outcome, this.grant(lease, decision.verdict, now, decision.cast),
-                      { grace: decision.grace });
+                      { grace: decision.grace },
+                      // §13.2's "how long the defence held": the heist's length,
+                      // its crew landing at tick 0 (TD.39, defences.mjs).
+                      Number.isInteger(decision.heistMs) ? { heldMs: decision.heistMs } : {});
         // §11.5: the first heist brings two strays home, free (home.mjs);
         // the roster says so, and the heist's outcome is the haul's alone.
         const crossed = lawsOf(this.store.get(lease.bundle));
@@ -771,6 +776,13 @@ export class Service {
     // by a raid past the week's 20, which pays nothing (G20).
     const keeper = friendly || overWeek ? null
       : this.keeper.award(attacker, heistExperience(raiderLevel, verdict.grade === "foiled"));
+    // §13.2's "haul denied" (TD.39, G31): the clean haul a full bag would
+    // make on this island less the clean haul of what the raider banked, both
+    // priced as §9.4 prices a crew's unbanked load — before fatigue and caps.
+    const worth = (banked) => (verdict.capacity > 0 ? haul({
+      vaultLevel: snapshot.vault_level, gradeName: "clean", raiderLevel, targetLevel, exposed: snapshot.exposed,
+      raidsEarlierToday: 0, banked, capacity: verdict.capacity }).total : 0);
+    const denied = Math.max(0, worth(verdict.capacity) - worth(Math.min(verdict.banked ?? 0, verdict.capacity)));
     const returned = feeReturned(fee, verdict.grade);
     book("raider", "starlight", returned);
     // §9.4: "a foiled heist gives the defender the entry fee plus 5% of what
@@ -837,7 +849,7 @@ export class Service {
     // are the device's, so the outcome is their record (D64).
     const friendPages = friendly ? verdict.caught : undefined;
     return { verdict, fee, feeReturned: returned, cast, haul: pay, renown, renownCounted, stars, rating,
-             defence, keeper, mode: lease.mode ?? "raid",
+             defence, denied, keeper, mode: lease.mode ?? "raid",
              ...(friendly ? { friendPages } : {}) };
   }
 

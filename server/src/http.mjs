@@ -8,6 +8,8 @@
 //   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?} → the lease
 //   GET  /v1/offer?size=3                                    → §12.22's list for the caller, no rating
 //   GET  /v1/observatory                                     → §12.3's targets as §12.4's cards, a Trace apart
+//   GET  /v1/defences                                        → the season's raids on you, each with its report (13.2)
+//   GET  /v1/defences/badge                                  → {unseen}: raids since the log was last read
 //   GET  /v1/lab                                             → the Lab's chambers, finds and hints (8.6)
 //   POST /v1/lab                 {"chamber", "laws"}         → an experiment placed and paid (8.6, 9.5)
 //   POST /v1/lab/sphere                                      → the third sphere names a chord, daily (8.5)
@@ -450,6 +452,13 @@ export function handler(service, { webClientId = null, appleNotifications = null
         // in order and answered one by one (offline.mjs).
         if (request.method !== "POST") return json({ error: "no_such_route" }, 404);
         return json(confirmOffline(service, who(), (await body(request)).actions));
+      }
+      if (parts[1] === "defences" && request.method === "GET") {
+        // §23.2's defence log (defences.mjs): reading it clears the raid
+        // badge, which the badge route only counts.
+        if (parts.length === 2) return json(service.defences.show(who()));
+        if (parts[2] === "badge" && parts.length === 3) return json(service.defences.badge(who()));
+        return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "lab") {
         // §8.6's Resonance Lab (lab.mjs): an experiment names its chamber,

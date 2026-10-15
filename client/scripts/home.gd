@@ -6,16 +6,18 @@ extends Control
 ## fixed at the bottom where the thumb rests.
 
 ## The screens a player goes to from home, in the order they are listed.
-const PLACES := [&"observatory", &"universe", &"weaving", &"codex", &"lab", &"roster", &"hatch", &"sages", &"forms",
-	&"builder", &"workshop", &"replay", &"track", &"shop", &"social", &"friends", &"settings"]
-const WORDS := {&"observatory": "HOME_OBSERVATORY", &"universe": "HOME_UNIVERSE", &"weaving": "HOME_WEAVING",
-	&"codex": "HOME_CODEX", &"lab": "HOME_LAB", &"roster": "HOME_ROSTER", &"hatch": "HOME_HATCH", &"sages": "HOME_SAGES",
-	&"forms": "HOME_FORMS", &"builder": "HOME_BUILD", &"workshop": "HOME_WORKSHOP", &"replay": "HOME_WATCH",
-	&"track": "HOME_TRACK", &"shop": "HOME_SHOP", &"social": "HOME_SOCIAL", &"friends": "HOME_FRIENDS",
-	&"settings": "HOME_SETTINGS"}
+const PLACES := [&"observatory", &"defences", &"universe", &"weaving", &"codex", &"lab", &"roster", &"hatch", &"sages",
+	&"forms", &"builder", &"workshop", &"replay", &"track", &"shop", &"social", &"friends", &"settings"]
+const WORDS := {&"observatory": "HOME_OBSERVATORY", &"defences": "HOME_DEFENCES", &"universe": "HOME_UNIVERSE",
+	&"weaving": "HOME_WEAVING", &"codex": "HOME_CODEX", &"lab": "HOME_LAB", &"roster": "HOME_ROSTER",
+	&"hatch": "HOME_HATCH", &"sages": "HOME_SAGES", &"forms": "HOME_FORMS", &"builder": "HOME_BUILD",
+	&"workshop": "HOME_WORKSHOP", &"replay": "HOME_WATCH", &"track": "HOME_TRACK", &"shop": "HOME_SHOP",
+	&"social": "HOME_SOCIAL", &"friends": "HOME_FRIENDS", &"settings": "HOME_SETTINGS"}
 
 var keeper_label: Label
 var keeper_plate: PanelContainer
+## The defence log's button, which carries the raid badge (TD.66).
+var defences_button: Button
 
 
 func _ready() -> void:
@@ -38,7 +40,10 @@ func _ready() -> void:
 	var list := UI.scroll(column)
 	var places := UI.row()
 	for route: StringName in PLACES:
-		places.add_child(UI.button(Strings.t(WORDS[route]), func() -> void: App.services.router.go(route)))
+		var b := UI.button(Strings.t(WORDS[route]), func() -> void: App.services.router.go(route))
+		if route == &"defences":
+			defences_button = b
+		places.add_child(b)
 	list.add_child(places)
 	var play := UI.row(-1.0, true)
 	play.add_child(UI.button(Strings.t("HOME_PLAY"), _play, true))
@@ -46,11 +51,16 @@ func _ready() -> void:
 	await send_waiting(column)
 	if App.services.api.online() and is_inside_tree():
 		await App.services.keeper_flow.load_keeper()
+	if App.services.api.online() and is_inside_tree():
+		await App.services.defences_flow.load_badge()
 
 
 func _on_changed(slice: StringName) -> void:
 	if slice == KeeperState.KEEPER and is_inside_tree():
 		show_keeper()
+	if slice == DefencesState.DEFENCES and is_inside_tree() and defences_button != null:
+		UI.relabel(defences_button, DefencesPresenter.place(
+			int(App.services.store.get_slice(DefencesState.DEFENCES)["unseen"])))
 
 
 ## The Keeper level, its pips and the way to the next, in words.

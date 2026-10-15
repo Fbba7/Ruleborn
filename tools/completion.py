@@ -662,7 +662,37 @@ DELIVERABLES = [
         "has woven or crossed; a heist crossing a resonance or chord hints it (8.5, 8.6)",
         "the Lab is served over HTTP (8.6)"))),
     ("4b", "Curation", FRONTEND, not_started("TD.22's screen gate passes for it")),
-    ("4b", "Defence log", FRONTEND, not_started("TD.66's screen gate passes for it")),
+    # §23.2's "Rehearsal and defence log": its defence half (TD.66), on the
+    # facts settlement records (defences.mjs). The rehearsal half is the
+    # Rehearsal row's.
+    ("4b", "Defence log", FRONTEND, parts(client_tests(
+        "the defence log counts the season's raids held and leaked, Partial apart, and names each raid held when "
+        "foiled and leaked otherwise, with its grade (12.9, 13.2, G69)",
+        "each raid's report gives the haul denied, how long the defence held, who was caught and the share earned, "
+        "and says when the server did not record a fact (13.2, 9.4)",
+        "a raid offers Watch replay while the replay is kept and says when it is gone, and Trace only where the "
+        "server offers it (12.3, 13, 24.3)",
+        "the home names new raids on the log's button, and reading the log clears the raid badge (TD.66)",
+        "Watch replay fetches the raid's replay and the island it was played on and opens the replay; Trace leases "
+        "the raider's island as a Trace (12.3, 13)",
+        "the defence log screen draws the season's raids newest first, each with its Watch replay and Trace where "
+        "it has them (13.2, 23.2)",
+        "the replay screen plays a watched raid first (13)",
+        "against the server: a new Keeper's defence log holds no raids, a season of none held or leaked, and no "
+        "raid badge (13.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "the defence log lists the season's raids on a player, newest first, held when foiled and leaked otherwise "
+        "with Partial counted apart, each with the haul denied and how long the defence held (13.2, 12.9, G69)",
+        "a raid settled from a real replay records its haul denied and how long it held (13.2, TD.39)",
+        "the log offers Watch replay while the replay is kept and says when it is gone, and Trace only on the raid "
+        "the server can trace, never a foiled one (12.3, 13, 24.3, G70)",
+        "reading the defence log clears the raid badge, and a new raid sets it again (TD.66)",
+        "the defence log and its badge are served over HTTP (13.2)"),
+        not_started("where the crew was seen and what fired, the island drawn with them and the guards that "
+                    "caught anyone, recorded from the simulation's event log at settlement (TD.39, TD.13)"))),
     ("4b", "First launch", FRONTEND, not_started("TD.26's screen gate passes for it")),
     ("4b", "Landing picker", FRONTEND, parts(client_tests(
         "the landing picker names each edge spot by its side and place along it, covered or open, with how "

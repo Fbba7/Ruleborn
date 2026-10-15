@@ -77,6 +77,8 @@ async function busy() {
   t.service.lab.start(x.account, { chamber: 1, laws: ["slow_rivers", "bloom"] });
   t.clock.now += 5 * 60_000;
   t.service.lab.show(x.account);
+  // The defence log read (defences.mjs).
+  t.service.defences.show(x.account);
   t.clock.now += DAY;
   raid(x.account, yBundle, null);
   const held = t.service.lease(x.account, yBundle);

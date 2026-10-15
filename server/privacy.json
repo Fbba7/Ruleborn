@@ -211,6 +211,11 @@
      "deletion": "cleared",
      "holds": "the Sage the player stationed at the Heart as its guardian (§11.7)"
     },
+    "defences_seen_at": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "when the player last read the defence log, so later raids show as new (§23.2)"
+    },
     "terms_version": {
      "type": "other-usage",
      "deletion": "cleared",

@@ -7,13 +7,15 @@ extends Control
 ## centre, loot at the top right — with the playback controls in the thumb
 ## zone (§21.1). Each second, the client's checksum is compared with the one the
 ## replay carries; the badge says whether this phone is showing the heist the
-## server validated. It plays the heist just played, if there is one, and the
-## golden replays after it.
+## server validated. It plays a raid on the player's universe opened from the
+## defence log, on the island it was played on; else the heist just played,
+## if there is one; and the golden replays after it.
 
 const SPEEDS := [1, 2, 4, 8]
 
 var replay := RulebornReplay.new()
-## (name, bytes) for each replay the screen can show.
+## (name, bytes, golden name, island) for each replay the screen can show:
+## a golden's name, and a raid's island, where it has them.
 var entries: Array = []
 var current := 0
 var playing := true
@@ -32,6 +34,9 @@ var _owed := 0.0
 
 func _ready() -> void:
 	App.ready(self)
+	var watching: Dictionary = App.services.store.get_slice(DefencesState.DEFENCES)["watching"]
+	if not watching.is_empty():
+		entries.append([Strings.t("REPLAY_RAID"), watching["replay"], "", watching["island"]])
 	var yours: PackedByteArray = App.services.store.get_slice(AppState.HEIST)["replay"]
 	if not yours.is_empty():
 		entries.append([Strings.t("REPLAY_YOURS"), yours])
@@ -65,7 +70,8 @@ func open_golden(name: String) -> int:
 
 func open_entry(index: int) -> bool:
 	current = posmod(index, entries.size())
-	var ok := replay.load(entries[current][1], PackedByteArray())
+	var island: PackedByteArray = entries[current][3] if entries[current].size() > 3 else PackedByteArray()
+	var ok := replay.load(entries[current][1], island)
 	name_label.text = entries[current][0]
 	grade_label.text = ""
 	_owed = 0.0

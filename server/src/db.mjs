@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   working_on        TEXT,
   -- §11.7's guardian Sage, stationed at the Heart (keeper.mjs).
   guardian_sage     TEXT,
+  -- §23.2's defence log last read: raids after it are new (defences.mjs).
+  defences_seen_at  INTEGER,
   -- §20.11's terms-of-use gate: the version of the terms accepted (safety.mjs).
   terms_version     TEXT,
   created_at        INTEGER NOT NULL,
@@ -812,6 +814,7 @@ const ADDED = [
   ["accounts", "working_on", "TEXT"],
   // §11.7's guardian Sage, stationed at the Heart (keeper.mjs).
   ["accounts", "guardian_sage", "TEXT"],
+  ["accounts", "defences_seen_at", "INTEGER"],
   // The terms of use accepted (safety.mjs).
   ["accounts", "terms_version", "TEXT"],
   ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],
