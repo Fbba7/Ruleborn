@@ -10,6 +10,12 @@
 // an invite and the other accepts it, and either can end it. A friendly heist
 // and a challenge are leases of their own mode (service.lease), settled
 // with nothing taken from the friend and no Renown moved (F48).
+//
+// §17.6's invite gift: "A personal invite gives both players a matching
+// cosmetic when the friend plays their first heist." The friendship keeps
+// who shared the invite, and the friend's first validated heist gives both
+// of them `INVITE_GIFT`, an earned cosmetic like the first hatch's outfit,
+// once. A friend who had played a heist before accepting brings no gift.
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
@@ -22,6 +28,10 @@ export const CHALLENGE_DAYS = 7;
 export const FEED_DAYS = 7;
 
 const pair = (a, b) => (a < b ? [a, b] : [b, a]);
+
+/** §17.6's matching cosmetic, earned by an invite and the friend's first
+ *  heist; worn like any outfit, and never sold. */
+export const INVITE_GIFT = "invite-gift";
 
 export class Friends {
   constructor(service) {
@@ -62,10 +72,33 @@ export class Friends {
       // A block either way: the invite is as good as gone (safety.mjs).
       if (this.service.safety.between(account, i.account)) throw new Refused(404, "no_such_invite");
       const [a, b] = pair(account, i.account);
-      this.db.prepare("INSERT INTO friends (a, b, since) VALUES (?, ?, ?)").run(a, b, this.now());
+      this.db.prepare("INSERT INTO friends (a, b, since, invited_by) VALUES (?, ?, ?, ?)")
+        .run(a, b, this.now(), i.account);
       this.db.prepare("UPDATE friend_invites SET used_at = ? WHERE code = ?").run(this.now(), code);
       return { friend: i.account };
     });
+  }
+
+  /** §17.6: at `account`'s first validated heist, each friend whose invite
+   *  they accepted and they themselves get the matching cosmetic, once.
+   *  Called inside settlement's transaction, before the heist being settled
+   *  is marked validated; answers the gift, or null. */
+  firstHeist(account, now = this.now()) {
+    const before = this.db.prepare("SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND validated = 1")
+      .get(account).n;
+    if (before !== 0) return null;
+    const rows = this.db.prepare(
+      `SELECT a, b, invited_by FROM friends
+        WHERE (a = ? OR b = ?) AND invited_by IS NOT NULL AND invited_by != ? AND gift_at IS NULL`)
+      .all(account, account, account);
+    if (!rows.length) return null;
+    const seasons = this.service.seasons;
+    seasons.grantCosmetic(account, INVITE_GIFT);
+    for (const r of rows) {
+      seasons.grantCosmetic(r.invited_by, INVITE_GIFT);
+      this.db.prepare("UPDATE friends SET gift_at = ? WHERE a = ? AND b = ?").run(now, r.a, r.b);
+    }
+    return { cosmetic: INVITE_GIFT, friends: rows.length };
   }
 
   remove(account, friend) {

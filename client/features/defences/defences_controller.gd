@@ -25,10 +25,19 @@ func load_log() -> void:
 		return
 	_store().dispatch(&"defences_asked", {"what": "view"})
 	var r := await services.defences.view()
-	if r.ok:
-		_store().dispatch(&"defences_loaded", {"view": r.value})
-	else:
+	if not r.ok:
 		_store().dispatch(&"defences_failed", {"code": r.code, "detail": r.detail})
+		return
+	_store().dispatch(&"defences_loaded", {"view": r.value})
+	# Each raid's island, once a bundle, so the report names each place by
+	# its nearest building or feature (§13.2); one that does not come leaves
+	# its places as tiles.
+	for raid: Dictionary in (r.value as Dictionary).get("raids", []):
+		var bundle := str(raid.get("island", ""))
+		if raid.get("report") is Dictionary and bundle != "" and not (_slice()["islands"] as Dictionary).has(bundle):
+			var b := await services.heists.fetch(bundle)
+			if b.ok:
+				_store().dispatch(&"defences_island", {"bundle": bundle, "island": b.value})
 
 
 ## The raid badge's count, asked without reading the log.

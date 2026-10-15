@@ -1,8 +1,8 @@
 class_name ShareScreen
 extends Control
 ## The share sheet (§23.2, "Share a moment or a challenge"): a challenge link
-## to the player's island, its code to copy, and §20.7's limits for the
-## player's age band. Nothing here posts to the Beacon or grades a moment.
+## to the player's island, its code to copy, a personal invite with its gift
+## (§17.6), and §20.7's limits for the player's age band. Nothing here posts to the Beacon or grades a moment.
 
 var controller: ShareController
 var body: VBoxContainer
@@ -52,6 +52,15 @@ func _refresh() -> void:
 	if not (s["copy"] as Dictionary).is_empty():
 		link.add_child(RosterScreen.offer(s["copy"], s["busy"], controller.copy))
 	body.add_child(UI.plate(link))
+	var invite := VBoxContainer.new()
+	invite.set_meta("section", "invite")
+	invite.add_child(UI.label(s["gift"], UI.TEXT_POINTS, true))
+	if s["invitation"] != "":
+		invite.add_child(UI.label(s["invitation"], UI.TEXT_POINTS, true))
+	invite.add_child(RosterScreen.offer(s["invite"], s["busy"], controller.make_invite))
+	if not (s["copy_invite"] as Dictionary).is_empty():
+		invite.add_child(RosterScreen.offer(s["copy_invite"], s["busy"], controller.copy.bind("invite")))
+	body.add_child(UI.plate(invite))
 	var limits := VBoxContainer.new()
 	limits.add_child(UI.label(Strings.t("SHARE_LIMITS"), UI.TEXT_POINTS, true))
 	for line: String in s["limits"]:

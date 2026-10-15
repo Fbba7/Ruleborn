@@ -648,6 +648,8 @@ CREATE TABLE IF NOT EXISTS friends (
   a     TEXT NOT NULL REFERENCES accounts(id),
   b     TEXT NOT NULL REFERENCES accounts(id),
   since INTEGER NOT NULL,
+  invited_by TEXT,
+  gift_at    INTEGER,
   PRIMARY KEY (a, b),
   CHECK (a < b)
 );
@@ -804,6 +806,10 @@ const DROPPED = [
 /** Columns added to a table after a database was first made: `CREATE TABLE IF
  *  NOT EXISTS` leaves an old table as it was, so each is added if missing. */
 const ADDED = [
+  // §17.6's invite gift (friends.mjs): which of a pair shared the invite the
+  // other accepted, and when the matching cosmetic was given.
+  ["friends", "invited_by", "TEXT"],
+  ["friends", "gift_at", "INTEGER"],
   // §13.3's curation (curation.mjs): an island's origin, and for a layout
   // the generator made, its seed and its terrain's digest; the name its
   // owner gave it from the word lists.

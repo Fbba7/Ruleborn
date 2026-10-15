@@ -256,4 +256,6 @@ static func settled(r: Result, local: Dictionary) -> Dictionary:
 	var verdict: Dictionary = out["verdict"]
 	return {"ok": true, "grade": str(verdict["grade"]).capitalize(), "banked": verdict["banked"],
 		"haul": out["haul"]["total"], "fee": out["fee"], "server": true,
-		"keeper": null if out.get("repeated", false) else out.get("keeper")}
+		"keeper": null if out.get("repeated", false) else out.get("keeper"),
+		# §17.6: an invited friend's first heist brings both the gift.
+		"gift": out.get("inviteGift") is Dictionary}

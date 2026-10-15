@@ -18,6 +18,9 @@ static func screen(slice: Dictionary) -> Dictionary:
 	var aether := int(v.get("aether", 0))
 	out["header"] = Strings.t("OBS_HEADER", [ShopPresenter.grouped(aether), int(v.get("size", 3))])
 	out["protected"] = Strings.t("OBS_PROTECTED") if v.get("protected", false) else ""
+	# §12.3: one more target while the Wanderer is at home (11.7).
+	out["wanderer"] = Strings.t("OBS_WANDERER", Strings.t("SAGE_THE_WANDERER")) if v.get("wanderer", false) \
+		else ""
 	out["fallback"] = Strings.t("OBS_GENERATED_NOTE") if v.get("generated", false) \
 		else (Strings.t("OBS_ECHOES_NOTE") if v.get("echoes", false) else "")
 	var words: Dictionary = slice.get("words", {})

@@ -6,6 +6,11 @@ extends SceneTree
 ## A test that errors stops its coroutine, and a stopped coroutine never
 ## quits; so the run has a deadline, and missing it is a failure.
 const DEADLINE_SECONDS := 480.0
+## Phase 4b's screens (§26.8), each a row of tools/completion.py's; the
+## landing picker is the heist screen's.
+const PHASE_4B := ["map", "law", "realm", "weaving", "planner", "observatory", "scout", "roster", "character",
+	"sage_hall", "codex", "lab", "curation", "defences", "first", "heist_screen", "harmony", "forms", "share",
+	"profile", "hatch"]
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
 	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch", "weaving",
 	"codex", "harmony", "observatory", "scout", "lab", "defences", "law", "profile", "planner", "map", "realm", "share",
@@ -603,6 +608,13 @@ func _run() -> void:
 	# Both languages: Portuguese runs longer, and a label that fits in English
 	# can push a row into a corner in Portuguese.
 	var screens := {}
+	# And phase 4b's screens in each language: no catalogue key shown bare and
+	# no placeholder left unfilled (§20.6, D99).
+	var untranslated := []
+	var bare_key := RegEx.create_from_string("\\b[A-Z][A-Z0-9]+_[A-Z0-9_]+\\b|%[0-9]*[sd]")
+	for sname: String in PHASE_4B:
+		if not Router.ROUTES.values().has("res://scenes/%s.tscn" % sname):
+			untranslated.append("%s is not a route" % sname)
 	for aspect: Array in [[9, 19.5], [9, 16]]:
 		root.size = Vector2i(540, int(540 * aspect[1] / aspect[0]))
 		var problems := []
@@ -615,6 +627,10 @@ func _run() -> void:
 				await process_frame
 				for p: Variant in _control_problems(screen):
 					problems.append("%s %s: %s" % [locale, sname, p])
+				if aspect[1] == 19.5 and sname in PHASE_4B:
+					for c in screen.find_children("*", "", true, false):
+						if (c is Label or c is Button) and c.is_visible_in_tree() and bare_key.search(c.text):
+							untranslated.append("%s %s: %s" % [locale, sname, c.text.replace("\n", " ")])
 				screens[sname] = screen
 				if locale != Strings.LOCALES[-1] or aspect[1] != 16:
 					screen.queue_free()
@@ -622,6 +638,8 @@ func _run() -> void:
 				+ "clear of corners and safe areas (§21.1), at %s:%s") % aspect,
 			problems.is_empty(), "; ".join(problems))
 	Strings.set_locale("en")
+	check("every phase 4b screen is in the router and, in each of the game's languages, shows no catalogue key bare "
+			+ "and no placeholder unfilled (§20.6, D99)", untranslated.is_empty(), "; ".join(untranslated))
 
 	var small := []
 	for s: String in SCREENS:

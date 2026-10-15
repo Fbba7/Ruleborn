@@ -91,6 +91,8 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 			var keeper := KeeperPresenter.earned(v.get("keeper"))
 			if keeper != "":
 				detail_label.text += "\n" + keeper
+			if v.get("gift", false):
+				detail_label.text += "\n" + Strings.t("RESULT_INVITE_GIFT")
 			check_label.text = Strings.t("RESULT_ACCEPTED_SERVER", replay_bytes)
 		else:
 			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))

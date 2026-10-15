@@ -57,6 +57,14 @@ func _words() -> void:
 			and "No entry fee" in o["trace"]["lines"]
 			and o["fallback"] == "Few universes fit you now: the game's own islands are among these",
 		"%s | %s" % [cards.map(func(c: Dictionary) -> String: return c["title"]), o["trace"]])
+	var at_home := sample()
+	at_home["wanderer"] = true
+	at_home["size"] = 4
+	var w := ObservatoryPresenter.screen({"view": at_home, "busy": "", "error": ""})
+	check.call("with the Wanderer at home the Observatory says so and offers one more target (12.3, 11.7)",
+		w["wanderer"] == "The Wanderer is at home: one more target" and w["header"].ends_with("4 targets")
+			and o["wanderer"] == "",
+		"%s | %s" % [w.get("wanderer"), w.get("header")])
 	var lines: Array = cards[0]["lines"]
 	check.call("each target card shows §12.4's free facts — realms, Renown, a rough loot estimate, strain and open "
 			+ "faults — the lease's fee and why it was offered (12.4, 12.15)",

@@ -13,7 +13,8 @@
 // highest level — and the most guards slept past in a heist that got out,
 // and the edge raiders most often land on. Most realms in one raid waits on
 // universes of several realms (T3.3); the favourite law and minutes played
-// a day have no fact the server keeps (G57), and say so.
+// a day have no fact the server keeps (G57), and say so. The collection is
+// the album's forms brought home and the cosmetics owned.
 //
 // §18.5's nine badges pay nothing; each is graded at its mark, gold at the
 // mark, silver at half of it and bronze at a tenth, rounded up, while First
@@ -29,6 +30,7 @@
 import { readFileSync } from "node:fs";
 
 import { mastery } from "./codex.mjs";
+import { FORMS } from "./home.mjs";
 import { Refused } from "./refused.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
@@ -127,8 +129,10 @@ export class Profile {
     const seasons = this.service.seasons;
     const now = this.service.now();
     const lab = this.service.lab.names(account);
-    // The Codex as it starts, written the first time it is asked for.
+    // The Codex and the roster as they start, written the first time they
+    // are asked for.
     this.service.codex.ensure(account, now);
+    this.service.home.ensure(account, now);
     const codex = this.db.prepare("SELECT law, tier, woven_at, crossed_at FROM codex WHERE owner = ?").all(account);
     const counts = {
       first_heist: mine.length,
@@ -153,6 +157,14 @@ export class Profile {
       heists: Object.fromEntries(["clean", "loud", "partial", "foiled"].map((g) => [g, count(raids.map((h) => h.o), g)])),
       defences: { held: count(on, "foiled"), leaked: on.length - count(on, "foiled"), partial: count(on, "partial") },
       records: RECORDS.map((id) => ({ id, value: record[id] ?? null })),
+      // §23.2's "collection": the forms of §11.10's album the roster has
+      // brought home, and the cosmetics owned, bought or earned.
+      collection: {
+        forms: new Set(this.service.home.characters(account).filter((c) => c.form)
+          .map((c) => `${c.kind}/${c.form}`)).size,
+        of: FORMS.length,
+        cosmetics: JSON.parse(this.db.prepare("SELECT cosmetics FROM accounts WHERE id = ?").get(account).cosmetics).length,
+      },
       badges: BADGES.map((id) => {
         const mark = facts.BADGE_MARKS[id];
         return { id, count: counts[id], mark, grade: grade(counts[id], mark) };

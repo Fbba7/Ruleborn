@@ -1670,6 +1670,15 @@
     },
     "since": {
      "type": "social"
+    },
+    "invited_by": {
+     "type": "user-id",
+     "names": "account",
+     "holds": "which of the pair shared the invite the other accepted (17.6)"
+    },
+    "gift_at": {
+     "type": "social",
+     "holds": "when the invite gift was given to both (17.6)"
     }
    }
   },

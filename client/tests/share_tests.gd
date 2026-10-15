@@ -64,6 +64,21 @@ func _flows() -> void:
 			and refused["error"] == "no_island_to_share"
 			and SharePresenter.screen(refused, "18+")["error"].ends_with("you have no island to share yet"),
 		"%s %s %s" % [slice, pasted, refused["error"]])
+	transport.on("POST /v1/friends/invites", {"invite": "f00d", "expiresAt": 1}, 201)
+	await s.share_flow.make_invite()
+	s.share_flow.copy("invite")
+	var invited: Dictionary = s.store.get_slice(ShareState.SHARE)
+	var sheet := SharePresenter.screen(invited, "18+")
+	var won := HeistController.settled(Result.success({"validated": true, "verdict": {"grade": "clean", "banked": 10},
+		"haul": {"total": 40}, "fee": 0, "inviteGift": {"cosmetic": "invite-gift", "friends": 1}}), {})
+	check.call("a personal invite is made by the server and its code copied, with the matching cosmetic it brings "
+			+ "both players at the friend's first heist, which the result then names (17.6)",
+		invited["invite"].get("invite") == "f00d" and pasted[-1] == "Join me in Ruleborn: open Friends and enter the "
+			+ "invite f00d" and sheet["gift"] == "Invite a friend: you both get a matching cosmetic when they play their "
+			+ "first heist" and not (sheet["copy_invite"] as Dictionary).is_empty() and won["gift"]
+			and not HeistController.settled(Result.success({"validated": true, "verdict": {"grade": "clean",
+				"banked": 10}, "haul": {"total": 40}, "fee": 0}), {})["gift"],
+		"%s %s %s" % [invited["invite"], pasted, sheet.get("gift")])
 	s.close()
 
 
@@ -79,7 +94,7 @@ func _on_screen() -> void:
 	screen.queue_free()
 	await tree.process_frame
 	check.call("the share sheet screen draws the link's code with Make and Copy, and the band's limits (23.2)",
-		keys == ["make", "copy"] and shown == ["Challenge me in Ruleborn: open Friends and enter the code a1b2c3"],
+		keys == ["make", "copy", "invite"] and shown == ["Challenge me in Ruleborn: open Friends and enter the code a1b2c3"],
 		"%s %s" % [keys, shown])
 
 

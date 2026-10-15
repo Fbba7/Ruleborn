@@ -626,8 +626,14 @@ DELIVERABLES = [
             server_tests(
             "the Keeper's name is picked from the word lists, read before any account, and shown on raiders' target "
             "cards (G58, 12.4, 25.2)")),
-        not_started("universes of several realms give each card its depth, \"up to N realms to the Heart\", "
-                    "and its faults' places; visitors give the Wanderer's extra target (T3.3, §11.7)"))),
+        # §12.3's one more target while the Wanderer is at home (11.7), and
+        # what waits on universes of several realms.
+        parts(parts(client_tests(
+            "with the Wanderer at home the Observatory says so and offers one more target (12.3, 11.7)"),
+            server_tests(
+            "one more target while the Wanderer is at home, from the Keeper level that brings it (12.3, 11.7)")),
+            not_started("universes of several realms give each card its depth, \"up to N realms to the Heart\", "
+                        "and its faults' places (T3.3)")))),
     ("4b", "Scout report", FRONTEND, parts(client_tests(
         "the scout report reads a target realm by realm — its laws, guards by role, wards by kind, its watch — "
         "and says nothing placed is shown (12.4)",
@@ -826,8 +832,15 @@ DELIVERABLES = [
             server_tests(
             "a raid on a defended island records from the event log where the crew landed, each place a guard "
             "reached Alerted, what fired and whose guards caught anyone (13.2, TD.39)"),
-            not_started("each place named by its nearest building or feature, and the island drawn on the world "
-                        "with the crew and the guards that caught anyone (13.2, TD.13)")))),
+            # Each place named by its nearest building or feature, from the
+            # island the raid was played on; the island drawn is the world's.
+            parts(client_tests(
+                "with the island it was played on, the report names each place a guard was alerted to the crew by "
+                "its nearest building or feature, a guard post being none (13.2)",
+                "the log fetches each reported raid's island once, by its bundle, and its report names the places "
+                "on it (13.2, 24.8)"),
+                not_started("the island drawn on the world with the crew and the guards that caught anyone "
+                            "(13.2, TD.13)"))))),
     # §23.2's first launch (TD.26): the title, the age check, §20.2's
     # protections and the Keeper's name, kept on the phone with no account;
     # the face and §16's moments are not built.
@@ -928,8 +941,14 @@ DELIVERABLES = [
         "a 13-to-15's challenge link is played by their friends only (17.6, 20.7)",
         "a 13-to-15's challenge link shows nothing to a stranger (20.7)"),
         not_started("the 15-second clip, with its confirmation for 16 to 17 (TD.46)"),
-        not_started("the invite gift on a friend's first heist, and deep links for the challenge and the invite "
-                    "(TD.23)"))),
+        # §17.6's invite gift, and the deep links that are not built.
+        parts(parts(client_tests(
+            "a personal invite is made by the server and its code copied, with the matching cosmetic it brings both "
+            "players at the friend's first heist, which the result then names (17.6)"),
+            server_tests(
+            "an invite gives both players a matching cosmetic when the friend plays their first heist, once, and "
+            "never to a friend who had played before (17.6)")),
+            not_started("deep links for the challenge and the invite (TD.23)")))),
     # §23.2's Profile and stats (TD.24), counted from the heist rows, the
     # Codex and the Lab (profile.mjs).
     ("4b", "Profile", FRONTEND, parts(client_tests(
@@ -967,8 +986,15 @@ DELIVERABLES = [
             server_tests(
             "the profile's records from each heist's event-log report: the fewest alarms and the most guards slept "
             "past in a heist that got out, and the edge raiders most often land on (13.2, 23.2, TD.39)"),
-            not_started("most realms in one raid (T3.3), the favourite law and minutes played a day, which no fact "
-                        "the server keeps defines (G57), and the collection")))),
+            # The collection, and the records still without a fact.
+            parts(parts(client_tests(
+                "the profile's collection says the album's forms brought home and the cosmetics owned, before the "
+                "badges (23.2, 11.10)"),
+                server_tests(
+                "the profile's collection counts the album's forms the roster has brought home and the cosmetics "
+                "owned (23.2, 11.10)")),
+                not_started("most realms in one raid (T3.3), the favourite law and minutes played a day, which no "
+                            "fact the server keeps defines (G57)"))))),
     ("4b", "Hatch", FRONTEND, client_tests(
         "Hatch shows each Nursery's ready births of the three it holds, when the next comes, and the price "
         "(10.2, 9.5, 23.2)",
@@ -1154,7 +1180,9 @@ DELIVERABLES = [
         client_tests(
             "a new player starts in the phone's language: Portuguese and English by region, German and French, "
             "British English otherwise, and the picker names each language in itself"),
-        not_started("phase 4b's screens are built, their words in every language"),
+        client_tests(
+            "every phase 4b screen is in the router and, in each of the game's languages, shows no catalogue key "
+            "bare and no placeholder unfilled (§20.6, D99)"),
         not_started("every coined name in content.csv has each language's name, the owner's (§26.9)"),
         not_started("a native speaker has read every coined name aloud, in each language (§26.9)"),
         not_started("a native speaker has read the European Portuguese, German and French interface "

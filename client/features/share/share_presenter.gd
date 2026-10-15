@@ -4,8 +4,9 @@ extends RefCounted
 ## invite gift, age-band limits (20.7); no posting to the Beacon and no
 ## grading of moments"). §20.7 by band: a 13-to-15's challenge goes to
 ## in-game friends only, and clips stay in the game; a 16-to-17's clip
-## leaves it after a confirmation; an adult's goes anywhere. The clip is
-## TD.46's, and the invite gift waits for its rule (TD.23).
+## leaves it after a confirmation; an adult's goes anywhere. §17.6's personal
+## invite brings both players a matching cosmetic at the friend's first
+## heist. The clip is TD.46's; deep links are not built (TD.23).
 
 
 static func screen(slice: Dictionary, band: String) -> Dictionary:
@@ -16,6 +17,14 @@ static func screen(slice: Dictionary, band: String) -> Dictionary:
 		"limits": limits(band)}
 	out["make"] = {"key": "make", "item": "make", "action": Strings.t("SHARE_MAKE"), "spoken": Strings.t("SHARE_MAKE"),
 		"can": true, "why": ""}
+	out["copied"] = Strings.t("SHARE_COPIED") if slice.get("copied", false) else ""
+	var invite: Dictionary = slice.get("invite", {})
+	out["gift"] = Strings.t("SHARE_INVITE_GIFT")
+	out["invite"] = {"key": "invite", "item": "invite", "action": Strings.t("SHARE_INVITE"),
+		"spoken": Strings.t("SHARE_INVITE"), "can": true, "why": ""}
+	out["invitation"] = invitation(invite) if not invite.is_empty() else ""
+	out["copy_invite"] = {} if invite.is_empty() else {"key": "copy_invite", "item": "copy_invite",
+		"action": Strings.t("SHARE_COPY_INVITE"), "spoken": Strings.t("SHARE_COPY_INVITE"), "can": true, "why": ""}
 	if link.is_empty():
 		out["link"] = Strings.t("SHARE_NO_LINK")
 		out["copy"] = {}
@@ -23,8 +32,12 @@ static func screen(slice: Dictionary, band: String) -> Dictionary:
 	out["link"] = message(link)
 	out["copy"] = {"key": "copy", "item": "copy", "action": Strings.t("SHARE_COPY"), "spoken": Strings.t("SHARE_COPY"),
 		"can": true, "why": ""}
-	out["copied"] = Strings.t("SHARE_COPIED") if slice.get("copied", false) else ""
 	return out
+
+
+## What is pasted for an invite: its code and how a friend accepts it.
+static func invitation(invite: Dictionary) -> String:
+	return Strings.t("SHARE_INVITE_MESSAGE", str(invite.get("invite", "")))
 
 
 ## What is pasted: the challenge's code and how a friend opens it.

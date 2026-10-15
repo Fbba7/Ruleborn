@@ -40,6 +40,9 @@ static func screen(slice: Dictionary) -> Dictionary:
 		records.append(record(r))
 	out["records"] = records
 	var badges: Array[String] = []
+	var c: Variant = v.get("collection")
+	if c is Dictionary:
+		badges.append(Strings.t("PROFILE_COLLECTION", [int(c["forms"]), int(c["of"]), int(c["cosmetics"])]))
 	for b: Dictionary in v.get("badges", []):
 		badges.append(badge(b))
 	out["badges"] = badges

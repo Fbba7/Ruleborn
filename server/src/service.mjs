@@ -697,6 +697,9 @@ export class Service {
           const stray = this.home.findStray(lease.attacker, lease.token, crossed, now);
           if (stray) outcome.stray = stray;
         }
+        // §17.6: an invited friend's first heist gives both the gift.
+        const gift = this.friends.firstHeist(lease.attacker, now);
+        if (gift) outcome.inviteGift = gift;
         // §7.6: the laws met, the pylons' pages and the floor (codex.mjs).
         this.codex.afterHeist(lease, decision.verdict, now, decision.cast?.laws ?? []);
         // §11.6: the crew away and resting, each by its outcome (home.mjs).

@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-import { faults, realmFacts, rough, targetsAt } from "../src/observatory.mjs";
+import { faults, realmFacts, rough, targetsAt, WANDERER_EXTRA, WANDERER_FROM } from "../src/observatory.mjs";
 import { established, openPlan, play, twoPlayers } from "./setup.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
@@ -51,6 +51,17 @@ test("the Observatory offers 3 targets, 4 from level 3 and 5 at level 5, and a n
   assert.equal(t.service.observatory.view(t.raider.account).protected, true);
   established(t, t.raider.account);
   assert.equal(t.service.observatory.view(t.raider.account).protected, false);
+});
+
+test("one more target while the Wanderer is at home, from the Keeper level that brings it (12.3, 11.7)", () => {
+  assert.deepEqual([WANDERER_FROM, WANDERER_EXTRA], [20, 1], "§11.7: Keeper level 20, one more target");
+  const t = twoPlayers(false);
+  keeper6(t);
+  const before = t.service.observatory.view(t.raider.account);
+  assert.deepEqual([before.size, before.wanderer], [3, false]);
+  t.service.db.prepare("UPDATE accounts SET keeper_level = ? WHERE id = ?").run(WANDERER_FROM, t.raider.account);
+  const after = t.service.observatory.view(t.raider.account);
+  assert.deepEqual([after.size, after.wanderer], [4, true], "3 from an unbuilt Observatory, and the Wanderer's");
 });
 
 test("a refresh costs 50 Aether, doubling with each refresh in the same hour, and buys a list without the targets on show (12.3)", () => {

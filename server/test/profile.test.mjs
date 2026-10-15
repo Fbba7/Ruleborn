@@ -84,6 +84,17 @@ test("the profile's records from each heist's event-log report: the fewest alarm
   for (const id of ["most_realms", "favourite_law", "minutes_a_day"]) assert.equal(p[id], null, id);
 });
 
+test("the profile's collection counts the album's forms the roster has brought home and the cosmetics owned (23.2, 11.10)", () => {
+  const t = twoPlayers();
+  const before = t.service.profile.view(t.raider.account).collection;
+  const forms = new Set(t.service.home.characters(t.raider.account).filter((c) => c.form)
+    .map((c) => `${c.kind}/${c.form}`)).size;
+  assert.deepEqual(before, { forms, of: 54, cosmetics: 0 }, "the three who woke, each in a form");
+  assert.ok(forms >= 1);
+  t.service.seasons.grantCosmetic(t.raider.account, "hatch-outfit");
+  assert.equal(t.service.profile.view(t.raider.account).collection.cosmetics, 1);
+});
+
 test("the profile's badges count first heist, clean heists, Vaults opened, defences held, laws met, resonances found, Starlight banked and friendly heists, each graded (18.5)", () => {
   const t = twoPlayers();
   const a = raid(t, verdict("clean", 800), 70_000);

@@ -57,8 +57,9 @@ func _refresh() -> void:
 	var busy: bool = o["busy"] != ""
 	if not (o["trace"] as Dictionary).is_empty():
 		body.add_child(_card(o["trace"], busy))
-	if o.get("fallback", "") != "":
-		body.add_child(UI.plate(UI.label(o["fallback"], UI.TEXT_POINTS, true)))
+	for note: String in ["wanderer", "fallback"]:
+		if o.get(note, "") != "":
+			body.add_child(UI.plate(UI.label(o[note], UI.TEXT_POINTS, true)))
 	for c: Dictionary in o["cards"]:
 		body.add_child(_card(c, busy))
 	if o.has("empty"):

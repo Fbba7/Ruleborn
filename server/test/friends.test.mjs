@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
+import { INVITE_GIFT } from "../src/friends.mjs";
 import { Refused } from "../src/service.mjs";
 import { Workshop } from "../src/workshop.mjs";
 import { openPlan, play, twoPlayers } from "./setup.mjs";
@@ -48,6 +49,32 @@ test("a friendly heist is for fun: no fee, no Renown, the friend loses nothing a
   assert.ok(out.friendPages > 0);
   assert.deepEqual(t.service.balance(t.defender.account), { starlight: 0, essence: 0 });
   assert.deepEqual(t.service.replay(t.defender.account, lease.token).length > 0, true, "both see the replay");
+});
+
+test("an invite gives both players a matching cosmetic when the friend plays their first heist, once, and never to a friend who had played before (17.6)", () => {
+  const t = twoPlayers(true);
+  friends(t);
+  const HOUR = 60 * 60 * 1000;
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  assert.deepEqual(out.inviteGift, { cosmetic: INVITE_GIFT, friends: 1 });
+  for (const who of [t.raider.account, t.defender.account]) {
+    assert.ok(t.service.shop.owned(who).includes(INVITE_GIFT), "both get the matching cosmetic");
+  }
+  t.clock.now += HOUR;
+  const again = t.service.lease(t.raider.account, t.bundle);
+  assert.equal(t.service.submit(t.raider.account, again.token, play(t, again, { plan: openPlan() })).inviteGift,
+               undefined, "once, at the first heist");
+  // A player who raided before accepting brings no gift.
+  const late = t.service.session("gc:veteran").account;
+  t.clock.now += HOUR;
+  const first = t.service.lease(late, t.bundle);
+  t.service.submit(late, first.token, play(t, first, { plan: openPlan() }));
+  t.service.friends.accept(late, t.service.friends.invite(t.defender.account).invite);
+  t.clock.now += HOUR;
+  const next = t.service.lease(late, t.bundle);
+  assert.equal(t.service.submit(late, next.token, play(t, next, { plan: openPlan() })).inviteGift, undefined);
+  assert.ok(!t.service.shop.owned(late).includes(INVITE_GIFT));
 });
 
 test("the friends' feed shows what friends did this week, and nothing of strangers (17.6)", () => {

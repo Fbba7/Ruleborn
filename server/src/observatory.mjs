@@ -16,10 +16,14 @@
 // the list stays on the server (TD.18), and each card says instead why it
 // was offered and what the lease will charge (`stakes`, the lease's own).
 //
+// §12.3: "and one more while the Wanderer is at home (11.7)": a Sage's
+// at-home effect "applies whenever it is not on a heist, at home or on
+// guard", and the list is offered between heists, so it is one more target
+// from the Keeper level that unlocks the Wanderer.
+//
 // Left for universes of several realms (T3.3): a card's depth, "up to N
 // realms to the Heart", and where its faults open; a heist crosses one realm
-// today. The Wanderer's extra target waits for visitors on the server, and
-// the Keeper's name for the first launch, which picks it (G58).
+// today.
 
 import { readFileSync } from "node:fs";
 
@@ -34,6 +38,11 @@ const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), 
 const OBSERVATORY = JSON.parse(readFileSync(new URL("../../content/buildings.json", import.meta.url), "utf8"))
   .find((b) => b.id === "observatory");
 const HOUR = 60 * 60 * 1000;
+const WANDERER = JSON.parse(readFileSync(new URL("../../content/sages.json", import.meta.url), "utf8"))
+  .find((s) => s.id === "the_wanderer");
+/** The Keeper level the Wanderer comes at, and the targets it adds at home. */
+export const WANDERER_FROM = Number(/Keeper level (\d+)/.exec(WANDERER.unlocks)[1]);
+export const WANDERER_EXTRA = /offers one more target/.test(WANDERER.at_home) ? 1 : 0;
 
 /** §12.17's role rows and §10.3's ward kinds, in the bundle's numbering
  *  (sim/src/island.rs `Post::row`, sim/src/heist.rs `WardKind`). */
@@ -114,11 +123,13 @@ export class Observatory {
    *  protected new player, whom raiding a player un-protects (§12.3). */
   view(account, now = this.service.now()) {
     const mm = this.service.matchmaking;
-    const size = targetsAt(this.level(account));
+    const keeper = this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(account)?.keeper_level ?? 1;
+    const wanderer = keeper >= WANDERER_FROM;
+    const size = targetsAt(this.level(account)) + (wanderer ? WANDERER_EXTRA : 0);
     const aside = this.setAside(account);
     const list = offer(mm.raider(account, now), mm.candidates(now).filter((c) => !aside.has(c.bundle)), { size });
     const targets = list.targets.map((c) => this.card(account, c));
-    return { size, targets, trace: this.trace(account, now), echoes: list.echoes, generated: list.generated,
+    return { size, wanderer, targets, trace: this.trace(account, now), echoes: list.echoes, generated: list.generated,
              refresh: { aether: this.refreshCost(account, now) }, aether: this.service.aether(account),
              protected: mm.shielded(account, now) };
   }

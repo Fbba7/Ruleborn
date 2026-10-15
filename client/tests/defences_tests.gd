@@ -63,12 +63,26 @@ func _words() -> void:
 	check.call("a raid's report says from the event log where the crew landed, each place a guard was alerted to it, "
 			+ "each ward that fired and how often, the bells, how high the alarm climbed and whose guards caught "
 			+ "anyone (13.2, TD.39)",
-		DefencesPresenter.report(rep) == ["Landed: West edge, 7 of 12", "A guard was alerted to the crew at 5, 6; 8, 8",
+		DefencesPresenter.report(rep) == ["Landed: West edge, 7 of 12", "A guard was alerted to the crew at 5, 6; at 8, 8",
 			"Wards fired: Static Coil at 7, 7 ×2", "Bells rung: 1", "The realm alarm reached level 3",
 			"Caught by the %s post at 5, 5" % Strings.term("ROLE", "Scout"),
 			"Caught by the Warden who came at alarm level 5"]
 			and DefencesPresenter.report(quiet) == ["Landed: North edge, 4 of 10", "No guard was ever alerted to the crew"],
 		"%s | %s" % [DefencesPresenter.report(rep), DefencesPresenter.report(quiet)])
+	var isl := RulebornIsland.new()
+	isl.reset(3)
+	isl.set_ground(2, 1, "tall_grass")
+	isl.place_ward("static_coil", 6, 6)
+	isl.post_guard(0, 2, 2)
+	var placed := {"side": 12, "landing": {"x": 0, "y": 6}, "fired": [], "bells": 0, "alarm": 0, "caught_by": [],
+		"seen": [{"crew": 0, "x": 2, "y": 2}, {"crew": 1, "x": 6, "y": 8}, {"crew": 2, "x": 6, "y": 5}]}
+	var near := DefencesPresenter.report(placed, isl.bytes())
+	check.call("with the island it was played on, the report names each place a guard was alerted to the crew by its "
+			+ "nearest building or feature, a guard post being none (13.2)",
+		near[1] == "A guard was alerted to the crew near the Tall grass at 3, 3; near the %s at 7, 9; " \
+			% UniversePresenter.building_name("vault") + "near the Static Coil at 7, 6"
+			and DefencesPresenter.report(placed)[1].begins_with("A guard was alerted to the crew at 3, 3"),
+		"%s" % [near])
 	check.call("a raid offers Watch replay while the replay is kept and says when it is gone, and Trace only where "
 			+ "the server offers it (12.3, 13, 24.3)",
 		not (raids[0]["watch"] as Dictionary).is_empty() and (raids[1]["watch"] as Dictionary).is_empty()
@@ -110,6 +124,22 @@ func _flows() -> void:
 			and &"replay_screen" in routes and heist["target"] == {"bundle": "r1", "trace": true}
 			and &"heist_screen" in routes,
 		"%s %s" % [routes, heist["target"]])
+	var isl := RulebornIsland.new()
+	isl.reset(3)
+	isl.set_ground(2, 1, "tall_grass")
+	var reported := sample()
+	reported["raids"][0]["island"] = "b9"
+	reported["raids"][0]["report"] = {"side": 12, "landing": {"x": 0, "y": 6}, "fired": [], "bells": 0,
+		"alarm": 0, "caught_by": [], "seen": [{"crew": 0, "x": 2, "y": 2}]}
+	transport.on("GET /v1/defences", reported)
+	transport.on("GET /v1/bundles/b9", isl.bytes())
+	await s.defences_flow.load_log()
+	var shown: Array = DefencesPresenter.screen(s.store.get_slice(DefencesState.DEFENCES))["raids"][0]["lines"]
+	var fetched := transport.calls.filter(func(c: Dictionary) -> bool: return c["route"] == "GET /v1/bundles/b9")
+	check.call("the log fetches each reported raid's island once, by its bundle, and its report names the places "
+			+ "on it (13.2, 24.8)",
+		fetched.size() == 1 and "A guard was alerted to the crew near the Tall grass at 3, 3" in shown,
+		"%s %s" % [fetched.size(), shown])
 	s.close()
 
 

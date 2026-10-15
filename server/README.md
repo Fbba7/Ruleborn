@@ -364,6 +364,9 @@ Quiet Week's clock past §5.4's cap is **F49**.
   heist in which either side is 13 to 15 appears in no feed (**G35**).
 - **A challenge link** is a code for the player's island that anyone holding
   it can play once, as a friendly heist is played.
+- **The invite gift**: the friendship keeps who shared the invite, and the
+  friend's first validated heist gives both players the matching cosmetic
+  `invite-gift`, once; a friend who had played before accepting brings none.
 
 How friends are made and whom the feed shows is the owner's answer to
 **G35**; what a game among friends pays is **F48**.
@@ -766,7 +769,8 @@ from the confirmation.
 
 `src/observatory.mjs` is §12.3's Observatory and §12.4's free scouting. `GET
 /v1/observatory` offers 3 targets (4 from Observatory level 3, 5 at level 5),
-each as its target card: the Keeper level, realms, Renown, a rough loot
+one more while the Wanderer is at home, from Keeper level 20 (§11.7), each as
+its target card: the Keeper level, realms, Renown, a rough loot
 estimate, the universe's strain and its open faults by §5.5's thresholds, and
 for the realm its laws, guards by role, wards by kind and watch, counted from
 the public bundle with nothing placed. Each card carries the fee the lease
@@ -818,7 +822,8 @@ name; defences held and leaked, Partial apart (G69); seven of the designs'
 ten records that have a fact — the fastest escape, the fewest caught, the
 biggest haul, the longest defence held, and from each heist's event-log
 report the fewest alarms, the most guards slept past and the edge raiders
-most often land on — the other three answered as null; §18.5's nine
+most often land on — the other three answered as null; the collection, the
+album's forms the roster has brought home and the cosmetics owned; §18.5's nine
 badges graded at their marks (gold at the mark, silver at half and bronze at
 a tenth, rounded up); titles from mastery; and the battle log with its
 replays. §20.2: a 13-to-15 profile is never served to another account and

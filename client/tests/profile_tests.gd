@@ -73,6 +73,13 @@ func _words() -> void:
 			and ProfilePresenter.record({"id": "favourite_edge", "value": "west"})
 				== "The edge raiders most often enter by: West edge",
 		ProfilePresenter.record({"id": "favourite_edge", "value": "west"}))
+	var collected := sample()
+	collected["collection"] = {"forms": 7, "of": 54, "cosmetics": 2}
+	check.call("the profile's collection says the album's forms brought home and the cosmetics owned, before the "
+			+ "badges (23.2, 11.10)",
+		ProfilePresenter.screen({"view": collected, "busy": "", "error": ""})["badges"][0]
+			== "Collection: 7 of 54 forms, 2 cosmetics",
+		ProfilePresenter.screen({"view": collected, "busy": "", "error": ""})["badges"][0])
 	check.call("each badge shows its count against its mark and the grade reached, and titles come from mastery "
 			+ "only (18.5)",
 		p["badges"] == ["First heist: 10 of 1 · gold", "Ghost: 26 of 50 · silver", "Hoarder: 600 of 5,000 · bronze",

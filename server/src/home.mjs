@@ -159,7 +159,7 @@ export function formOdds(laws) {
 
 /** §11.10's 54 forms: each kind's id and its note, in the content's order. */
 const KIND_BY_NAME = Object.fromEntries(content("ruleborn").map((k) => [k.name, k.id]));
-const FORMS = content("forms").map((f) => ({ kind: KIND_BY_NAME[f.kind], note: f.note.toLowerCase() }));
+export const FORMS = content("forms").map((f) => ({ kind: KIND_BY_NAME[f.kind], note: f.note.toLowerCase() }));
 /** A character's form as the manifest numbers it: 0 for its kind's own
  *  look, else its place among its kind's forms, from 1. */
 const formIndex = (c) => (c.form ? FORMS.filter((f) => f.kind === c.kind).findIndex((f) => f.note === c.form) + 1 : 0);
