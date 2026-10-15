@@ -24,6 +24,9 @@ const CREW := 3
 const GAITS := ["Walk", "Crouch", "Run"]
 
 var world := RulebornReplay.new()
+## §12.5's load target: how full the crew loads before leaving the Vault,
+## the planner's, else full.
+var load_target := 100
 var selected := 0
 var calling_skiff := false
 var island := PackedByteArray()
@@ -40,8 +43,9 @@ var pick := 0
 
 ## Start a fresh heist on this seed and clock, on `realm` (a bundle; empty for
 ## the fixture realm), in the week's `era` (§18.3) as a lease names it.
-func begin(new_seed: String, ticks: int, crew: int, realm := PackedByteArray(), era := "") -> bool:
-	if not world.set_era(era) or not world.start(new_seed, ticks, crew, realm):
+func begin(new_seed: String, ticks: int, crew: int, realm := PackedByteArray(), era := "",
+		manifest := PackedByteArray()) -> bool:
+	if not world.set_era(era) or not world.start_planned(new_seed, ticks, crew, manifest, realm):
 		return false
 	island = realm
 	seed_text = new_seed
@@ -129,7 +133,7 @@ func tap_tile(t: Vector2i) -> void:
 	var vault := world.vault()
 	if Vector2i(vault["at"]) == t:
 		if vault["open"]:
-			load_up(100)
+			load_up(load_target)
 		else:
 			crack()
 		changed.emit()

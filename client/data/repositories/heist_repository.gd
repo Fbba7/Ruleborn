@@ -90,11 +90,16 @@ func lease(bundle: String, owner := "", trace := false) -> Result:
 ## §24.12's queue, validate and grant: the replay is kept in the outbox under
 ## its lease token, then sent. The answer is the server's decision; if the
 ## network is not there, `pending` is true and the outbox sends it later.
-func submit(lease_token: String, replay_bytes: PackedByteArray) -> Result:
+## `crew` names the roster's characters who went (TD.34), in the manifest's
+## order, when the planner chose them.
+func submit(lease_token: String, replay_bytes: PackedByteArray, crew: Array = []) -> Result:
 	# The server hands back a raider's open lease on the same island, so the
 	# token played may be one the stock holds: once played, it leaves it.
 	stock.drop(lease_token)
-	return await outbox.send(api, lease_token, "/v1/heists/" + lease_token, replay_bytes)
+	var path := "/v1/heists/" + lease_token
+	if not crew.is_empty():
+		path += "?crew=" + ",".join(crew.map(func(i: Variant) -> String: return str(int(i))))
+	return await outbox.send(api, lease_token, path, replay_bytes)
 
 
 func replay(heist_token: String) -> Result:

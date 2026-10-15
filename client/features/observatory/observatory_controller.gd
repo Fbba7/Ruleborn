@@ -42,7 +42,7 @@ func choose(bundle: String) -> void:
 	services.router.go(&"scout")
 
 
-## The chosen target raided: the heist leases it (§24.12), a Trace as one.
+## The scout report's Plan: the planner on the chosen target (§12.5), whose
+## Start leases it (§24.12), a Trace as one.
 func raid(card: Dictionary) -> void:
-	_store().dispatch(&"heist_started", {"target": {"bundle": card["bundle"], "trace": card["kind"] == "trace"}})
-	services.router.go(&"heist")
+	services.planner_flow.open(card)

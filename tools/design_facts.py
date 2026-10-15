@@ -251,6 +251,14 @@ OBSERVATORY_REFRESH_AETHER = 50
 #: grade".
 BADGE_MARKS = {"first_heist": 1, "ghost": 50, "vault_breaker": 250, "iron_wall": 100, "law_hunter": 24,
                "resonant": 12, "hoarder": 5000, "friendly": 25, "paradox": 1}
+#: §12.5's planning, by Keeper level: "A crew of 3 to 5: 3 characters, 4
+#: from Keeper level 8, 5 from level 16"; a Sage "One, from Keeper level 2";
+#: casts "1 slot, 2 from Keeper level 12"; and the load target, "50 to 100%
+#: in tens". Each limit as (most, from Keeper level).
+CREW_BY_KEEPER = ((3, 1), (4, 8), (5, 16))
+SAGE_FROM_KEEPER = 2
+CAST_SLOTS = ((1, 1), (2, 12))
+LOAD_TARGETS = (50, 100, 10)
 #: §9.5: "Lab experiment | 400 Aether × Lab level".
 LAB_AETHER_PER_LEVEL = 400
 #: §10.2's Resonance Lab: "the first, in the first session, takes 5 minutes
@@ -559,6 +567,10 @@ HOME = {
     "FAULTS_BY_STRAIN": "5.5",
     "OBSERVATORY_REFRESH_AETHER": "12.3",
     "LAB_AETHER_PER_LEVEL": "9.5",
+    "CREW_BY_KEEPER": "12.5",
+    "SAGE_FROM_KEEPER": "12.5",
+    "CAST_SLOTS": "12.5",
+    "LOAD_TARGETS": "12.5",
     "BADGE_MARKS": "18.5",
     "LAB_FIRST_MINUTES": "10.2",
     "LAB_EMPTY_PAGES": "7.6",
@@ -788,6 +800,12 @@ STATED = {
                     lambda m: {"first_heist": int(m[7]), "ghost": int(m[0]), "vault_breaker": int(m[1]),
                                "iron_wall": int(m[2]), "law_hunter": int(m[3]), "resonant": int(m[4]),
                                "hoarder": int(m[5].replace(",", "")), "friendly": int(m[6]), "paradox": int(m[7])}),
+    "CREW_BY_KEEPER": (r"A crew of \d to \d: (\d) characters, (\d) from Keeper level (\d+), (\d) from level (\d+)",
+                       lambda m: ((int(m[0]), 1), (int(m[1]), int(m[2])), (int(m[3]), int(m[4])))),
+    "SAGE_FROM_KEEPER": (r"\| Sage\n\| One, from Keeper level (\d+)", lambda m: int(m[0])),
+    "CAST_SLOTS": (r"\| Casts\n\| (\d) slot, (\d) from Keeper level (\d+)",
+                   lambda m: ((int(m[0]), 1), (int(m[1]), int(m[2])))),
+    "LOAD_TARGETS": (r"(\d+) to (\d+)% in (tens)", lambda m: (int(m[0]), int(m[1]), 10)),
     "LAB_AETHER_PER_LEVEL": (r"\| Lab experiment\n\| (\d+) Aether × Lab level", lambda m: int(m[0])),
     "LAB_FIRST_MINUTES": (r"the first, in the first session, takes (\d+) minutes and is free", lambda m: int(m[0])),
     "LAB_EMPTY_PAGES": (r"Lab experiments that find nothing give (\d+) pages", lambda m: int(m[0])),

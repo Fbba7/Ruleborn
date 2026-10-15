@@ -17,6 +17,16 @@ const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), 
 
 /** §11.7's launch Sages and the Keeper level each unlocks at, read from the
  *  table's "Unlocks" column ("Start" is level 1). */
+/** §12.5: the most crew a Keeper of `level` brings, and the cast slots. */
+export const crewMost = (level) => facts.CREW_BY_KEEPER.filter(([, from]) => level >= from).at(-1)[0];
+export const castSlots = (level) => facts.CAST_SLOTS.filter(([, from]) => level >= from).at(-1)[0];
+
+/** §12.5's planning at Keeper level `level`: the most crew, the cast slots,
+ *  whether a Sage may go, and the load targets (from, to, step), for the
+ *  device's planner. */
+export const planning = (level) => ({ crew: crewMost(level), casts: castSlots(level),
+                                      sage: level >= facts.SAGE_FROM_KEEPER, load: facts.LOAD_TARGETS });
+
 export const SAGES = JSON.parse(readFileSync(new URL("../../content/sages.json", import.meta.url), "utf8"))
   .map((s) => ({ id: s.id, unlocksAt: s.unlocks === "Start" ? 1 : Number(/Keeper level (\d+)/.exec(s.unlocks)[1]) }));
 
@@ -95,6 +105,24 @@ export class Keeper {
     }
     this.db.prepare("UPDATE accounts SET guardian_sage = ? WHERE id = ?").run(sage, account);
     return this.sages(account);
+  }
+
+  /** Why a replay's crew breaks §12.5's planning for the raider's Keeper
+   *  level, or null: more crew than the level brings, more casts than its
+   *  slots, or a Sage before level 2, not yet unlocked, or the one stationed
+   *  at the Heart as its guardian (§11.7: "A player brings one Sage on each
+   *  heist, and can station another at the Heart"). */
+  planProblem(account, header, manifest) {
+    const row = this.db.prepare("SELECT keeper_level, guardian_sage FROM accounts WHERE id = ?").get(account);
+    if (header.crew > crewMost(row.keeper_level)) return "crew_too_large";
+    if (!manifest) return null;
+    if (manifest.casts.length > castSlots(row.keeper_level)) return "too_many_casts";
+    if (manifest.sage) {
+      const s = SAGES[manifest.sage - 1];
+      if (!s || row.keeper_level < facts.SAGE_FROM_KEEPER || row.keeper_level < s.unlocksAt) return "sage_locked";
+      if (row.guardian_sage === s.id) return "sage_on_guard";
+    }
+    return null;
   }
 
   /** A player's Keeper level and the bar toward the next. */

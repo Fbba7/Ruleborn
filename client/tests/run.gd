@@ -8,7 +8,7 @@ extends SceneTree
 const DEADLINE_SECONDS := 480.0
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
 	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch",
-	"weaving", "codex", "harmony", "observatory", "scout", "lab", "defences", "law", "profile"]
+	"weaving", "codex", "harmony", "observatory", "scout", "lab", "defences", "law", "profile", "planner"]
 
 var _n := 0
 var _failed := 0
@@ -390,6 +390,7 @@ func _run() -> void:
 	await DefencesTests.new(self, check, _mount, server_url).run()
 	await LawTests.new(self, check, _mount, server_url).run()
 	await ProfileTests.new(self, check, _mount, server_url).run()
+	await PlannerTests.new(self, check, _mount, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

@@ -43,6 +43,16 @@
  "CARRIER_LOADED_PACE": 0.85,
  "CAST_AETHER_PER_POINT": 30,
  "CAST_SECONDS": 10,
+ "CAST_SLOTS": [
+  [
+   1,
+   1
+  ],
+  [
+   2,
+   12
+  ]
+ ],
  "CAST_TILES": 4,
  "CHAPTER_TWO_KEEPER": 6,
  "CHORD_COST_FACTOR": 0.9,
@@ -50,6 +60,20 @@
  "CONSTELLATION_ELDERS": 4,
  "CONSTELLATION_KEEPER_LEVEL": 6,
  "CONSTELLATION_SIZE": 30,
+ "CREW_BY_KEEPER": [
+  [
+   3,
+   1
+  ],
+  [
+   4,
+   8
+  ],
+  [
+   5,
+   16
+  ]
+ ],
  "CREW_RANGE": [
   3,
   5
@@ -229,6 +253,11 @@
   10
  ],
  "LOAD_PER_SECOND": 30,
+ "LOAD_TARGETS": [
+  50,
+  100,
+  10
+ ],
  "MASTERY_MARKS_AT_LAUNCH": [
   4,
   8,
@@ -404,6 +433,7 @@
  ],
  "RUN_PACE": 2.0,
  "SAGE_COOLDOWN_SECONDS": 20,
+ "SAGE_FROM_KEEPER": 2,
  "SCHOOLS": [
   "Motion",
   "Matter",

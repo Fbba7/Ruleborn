@@ -143,6 +143,7 @@
 import { readFileSync } from "node:fs";
 
 import { deleteAccount, reapplyDeletions } from "./accounts.mjs";
+import { planning } from "./keeper.mjs";
 import { offer } from "./matchmaking.mjs";
 import { privacyPage, supportPage, termsPage } from "./pages.mjs";
 import { Limiter, peerKey } from "./limits.mjs";
@@ -654,7 +655,9 @@ export function handler(service, { webClientId = null, appleNotifications = null
         case "GET /v1/balance":
           return json(service.balance(who()));
         case "GET /v1/keeper":
-          return json(service.keeper.view(who()));
+          // The bar, and §12.5's planning at this level for the planner.
+          const keeper = service.keeper.view(who());
+          return json({ ...keeper, plan: planning(keeper.level) });
         case "GET /v1/forms":
           return json(service.home.album(who()));
         case "GET /v1/sages":

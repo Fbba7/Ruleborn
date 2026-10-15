@@ -75,7 +75,7 @@ func _words() -> void:
 			"Guards: Breaker 1, Warden 1", "Wards: Gravity Well 2, Time Snare 1",
 			"Watch: suspicion fills at 100%, sight reaches 70%",
 			"Where guards stand and wards lie is found in the heist"]
-			and s["raid"]["action"] == "Raid · Entry fee 120 Starlight",
+			and s["raid"]["action"] == "Plan · Entry fee 120 Starlight",
 		"%s" % [s.get("lines")])
 
 
@@ -96,13 +96,13 @@ func _flows() -> void:
 	s.observatory_flow.choose("t1")
 	var chosen := str(s.store.get_slice(ObservatoryState.OBSERVATORY)["chosen"])
 	s.observatory_flow.raid(sample()["trace"])
-	var heist: Dictionary = s.store.get_slice(AppState.HEIST)
-	check.call("the Observatory is fetched and refreshed from the server; a card opens its scout report, and raiding "
-			+ "it leases that island, a Trace as a Trace (12.3, 24.12)",
+	var planned: Dictionary = s.store.get_slice(PlannerState.PLANNER)["target"]
+	check.call("the Observatory is fetched and refreshed from the server; a card opens its scout report, and its Plan "
+			+ "opens the planner on that target, a Trace as a Trace (12.3, 12.5)",
 		int(after["view"]["aether"]) == 0 and transport.calls[-1]["route"] == "POST /v1/observatory/refresh"
-			and chosen == "t1" and heist["target"] == {"bundle": "t1", "trace": true}
-			and &"scout" in routes and &"heist_screen" in routes,
-		"%s | %s | %s" % [chosen, heist["target"], routes])
+			and chosen == "t1" and planned.get("bundle") == "t1" and planned.get("kind") == "trace"
+			and &"scout" in routes and &"planner" in routes,
+		"%s | %s | %s" % [chosen, planned, routes])
 	s.close()
 
 

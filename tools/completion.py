@@ -524,7 +524,38 @@ DELIVERABLES = [
         "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
         "(§20.8, §21.1)",
         "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
-    ("4b", "Planner", FRONTEND, not_started("TD.18's screen gate passes for it")),
+    # §23.2's heist planner (TD.18): §12.5's choices on one island, the plan
+    # carried into the replay as its crew manifest and checked by the server.
+    ("4b", "Planner", FRONTEND, parts(client_tests(
+        "the planner shows the target's clock and laws, flags those the Codex has not met, and says the entry is "
+        "chosen on landing (5.4, 12.5, 23.2)",
+        "the crew is 3 to the Keeper's most, a resting character unavailable, and Start waits until 3 are chosen "
+        "(11.6, 12.5)",
+        "a Sage goes from Keeper level 2, never one not yet unlocked or the one guarding the Heart; casts fill the "
+        "Keeper's slots from restored laws (11.7, 12.5)",
+        "the load target steps from 50 to 100% in tens, and a protected Keeper's Start says raiding a player ends it "
+        "(12.3, 12.5)",
+        "the plan is the replay's crew manifest: each member's kind, form, level and traits in portrait order, the "
+        "Sage and the casts, with the crew's ids and the load target (12.5, TD.34)",
+        "a heist begun on the plan records a replay carrying its manifest, and one that does not fit its crew is "
+        "refused (12.5, 24.11)",
+        "the scout report's Plan opens the planner on its target, where a resting character cannot join; Start "
+        "carries the crew, Sage, casts and load target into the heist, which names its crew to the server "
+        "(12.5, TD.34)",
+        "the planner screen draws the crew with resting characters unavailable, a tap adds a member, and Start "
+        "waits for a full crew (12.5, 23.2)",
+        "against the server: a new Keeper's planner offers the starting crew of three, no Sage before level 2, one "
+        "cast slot from the restored laws and the target's clock (12.5)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "§12.5's planning holds by Keeper level: a crew of 3, 4 from level 8 and 5 from 16; a Sage from level 2, "
+        "unlocked and not the Heart's guardian; one cast slot, two from level 12 (12.5, 11.7)",
+        "the planner reads §12.5's limits from GET /v1/keeper, each roster member's manifest fields from the home, "
+        "and each target's clock from the Observatory (12.5, 5.4)"),
+        not_started("the route through a universe's realms to the Heart and out, and an entry at a fault, on "
+                    "universes of several realms (§12.5, T3.3)"))),
     ("4b", "Observatory", FRONTEND, parts(client_tests(
         "the Observatory labels each target — a player's universe, an echo, the game's own island with its "
         "band — and pins a Trace apart, with no fee (12.3, 12.22)",
@@ -532,8 +563,8 @@ DELIVERABLES = [
         "faults — the lease's fee and why it was offered (12.4, 12.15)",
         "a refresh says its price, and waits with why when the Aether is short; a protected new Keeper is told "
         "raiding a player ends it (12.3)",
-        "the Observatory is fetched and refreshed from the server; a card opens its scout report, and raiding "
-        "it leases that island, a Trace as a Trace (12.3, 24.12)",
+        "the Observatory is fetched and refreshed from the server; a card opens its scout report, and its Plan "
+        "opens the planner on that target, a Trace as a Trace (12.3, 12.5)",
         "the Observatory screen draws the Trace first and apart, then each target, and a refresh that waits "
         "while the Aether is short (12.3, 23.2)",
         "against the server: a new Keeper's Observatory lists targets as cards with no rating and a fee, "
@@ -558,8 +589,8 @@ DELIVERABLES = [
         "and says nothing placed is shown (12.4)",
         "each target card shows §12.4's free facts — realms, Renown, a rough loot estimate, strain and open "
         "faults — the lease's fee and why it was offered (12.4, 12.15)",
-        "the Observatory is fetched and refreshed from the server; a card opens its scout report, and raiding "
-        "it leases that island, a Trace as a Trace (12.3, 24.12)",
+        "the Observatory is fetched and refreshed from the server; a card opens its scout report, and its Plan "
+        "opens the planner on that target, a Trace as a Trace (12.3, 12.5)",
         "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
         "(§20.8, §21.1)",
         "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),

@@ -56,7 +56,7 @@ test("a foiled raid earns a foiled heist's experience; a game among friends earn
     "INSERT INTO ledger (account, starlight, reason, at) VALUES (?, 50000, \'grant\', 0)")
     .run(t.raider.account);
   const lease = t.service.lease(t.raider.account, t.bundle);
-  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 3 }));
   assert.equal(out.verdict.grade, "foiled");
   assert.equal(out.keeper.gained, 12);
   const { invite } = t.service.friends.invite(t.defender.account);

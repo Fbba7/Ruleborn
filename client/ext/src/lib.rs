@@ -113,9 +113,29 @@ impl RulebornReplay {
     /// and GDScript's integers are signed, so half of all seeds would not
     /// survive the trip as one.
     fn start(&mut self, seed: GString, ticks: i64, crew: i64, island: PackedByteArray) -> bool {
+        self.start_planned(seed, ticks, crew, PackedByteArray::new(), island)
+    }
+
+    /// `start`, with the planner's crew (§12.5): `manifest` is the replay's
+    /// own wire form of it — each member's kind, form, level and traits, the
+    /// Sage and the casts — which the replay then carries (`RBH3`) and the
+    /// server checks against the roster. Empty plays the crew by role. False
+    /// if it does not read for `crew` members.
+    #[func]
+    fn start_planned(&mut self, seed: GString, ticks: i64, crew: i64, manifest: PackedByteArray,
+                     island: PackedByteArray) -> bool {
         if !(3..=5).contains(&crew) || ticks <= 0 {
             return false;
         }
+        let manifest = if manifest.is_empty() {
+            None
+        } else {
+            let mut at = 0usize;
+            match sim::replay::Manifest::read(manifest.as_slice(), &mut at, crew as u8) {
+                Some(m) if at == manifest.len() => Some(m),
+                _ => return false,
+            }
+        };
         let Ok(seed) = seed.to_string().parse::<u64>() else { return false };
         let Some(realm) = realm_of(&island) else { return false };
         let heist = Heist {
@@ -125,9 +145,8 @@ impl RulebornReplay {
             ticks: ticks as u32,
             crew: crew as u8,
             era: self.era,
-            // The crew plays by role until the planner picks one (TD.18) and
-            // a lease carries its manifest (§12.5, TD.34).
-            manifest: None,
+            // §12.5: the planner's crew, or by role when there is none.
+            manifest,
             commands: Vec::new(),
             checksums: Vec::new(),
         };
@@ -163,8 +182,8 @@ impl RulebornReplay {
         else {
             return PackedByteArray::new();
         };
-        let bytes = sim::record_in(realm, heist.seed, heist.ticks, heist.crew, heist.era,
-                                   world.commands().to_vec()).encode();
+        let bytes = sim::record_with(realm, heist.seed, heist.ticks, heist.crew, heist.era,
+                                     heist.manifest.clone(), world.commands().to_vec()).encode();
         PackedByteArray::from(bytes.as_slice())
     }
 

@@ -603,6 +603,11 @@ export class Service {
       if (why) return refuse(why);
     }
 
+    // §12.5's planning by Keeper level: the crew's size, the Sage and the
+    // cast slots (keeper.mjs).
+    const planned = this.keeper.planProblem(attacker, header, readManifest(replay, header));
+    if (planned) return refuse(planned);
+
     // §12.5: "A cast brings one of your own unlocked laws": each cast the
     // manifest carries a law the raider's Codex has restored.
     const casts = (readManifest(replay, header)?.casts ?? []).map(castLaw);

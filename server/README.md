@@ -809,6 +809,30 @@ each crown law, a law-linked trait three times as likely for a law the realm
 runs (§11.3). The load run does not weave yet, so its rows a player a day
 leave weaving out.
 
+## The profile
+
+`src/profile.mjs` is §23.2's Profile and stats. `GET /v1/profile` counts the
+player's record from the heist rows, the Codex and the Lab: Renown and league
+this season and each closed one, never the rating; heists by each outcome's
+name; defences held and leaked, Partial apart (G69); four of the designs' ten
+records that have a fact — the fastest escape, the fewest caught, the biggest
+haul, the longest defence held — the other six answered as null; §18.5's nine
+badges graded at their marks (gold at the mark, silver at half and bronze at
+a tenth, rounded up); titles from mastery; and the battle log with its
+replays. §20.2: a 13-to-15 profile is never served to another account and
+its switch cannot be turned on; anyone else's is served by
+`GET /v1/profile/:account` only once `PUT /v1/profile {"public": true}`.
+
+## Planning a heist
+
+§12.5's limits hold by the raider's Keeper level when a heist is submitted
+(keeper.mjs): a crew of 3, 4 from level 8 and 5 from 16; a Sage from level
+2, unlocked, and never the one stationed at the Heart (§11.7); one cast
+slot, two from level 12. `GET /v1/keeper` answers them as `plan` for the
+device's planner, with the load targets; the home gives each character the
+fields the replay's manifest carries (`wire`), and each Observatory card its
+clock.
+
 ## The defence log
 
 `src/defences.mjs` is §23.2's defence log. `GET /v1/defences` lists the

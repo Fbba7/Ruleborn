@@ -2633,9 +2633,16 @@ dict(
              blocked_by=["TD.3"]),
         dict(id="TD.18", owner="claude", status="doing",
              title="Observatory, scout report and planner",
-             detail="<strong>The Observatory and the scout report are built on one realm; "
-                    "the planner, matchups and universes of several realms are "
-                    "not.</strong> <code>server/src/observatory.mjs</code> offers 3 "
+             detail="<strong>The Observatory, the scout report and the planner are built on "
+                    "one realm; matchups, the route and universes of several realms are "
+                    "not.</strong> The scout report's Plan opens the planner: the "
+                    "target's clock and laws with the unfamiliar flagged, the crew of "
+                    "3 to the Keeper's most with resting characters unavailable, the "
+                    "Sage from level 2 and never the Heart's guardian, the casts by the "
+                    "Keeper's slots, and the load target; Start carries the plan into "
+                    "the replay as §12.5's crew manifest (the extension's "
+                    "<code>start_planned</code>) and names the crew to the server, "
+                    "which now holds the crew, Sage and casts to the Keeper's level. <code>server/src/observatory.mjs</code> offers 3 "
                     "targets, 4 from Observatory level 3 and 5 at 5, each as §12.4's "
                     "free card: realms, Renown, a rough loot estimate, strain and "
                     "open faults by §5.5's thresholds, and for the realm its laws, "

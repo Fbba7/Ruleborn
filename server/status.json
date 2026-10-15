@@ -324,6 +324,7 @@
   "the offline queue over HTTP, and a queue that is not one refused whole (24)": "passed",
   "the pages answer HEAD, and are never kept by a cache, so new terms are never shown old (20.11)": "passed",
   "the per-raid cap is 1.98 times the base, derived from richness and difficulty (§9.6)": "passed",
+  "the planner reads §12.5's limits from GET /v1/keeper, each roster member's manifest fields from the home, and each target's clock from the Observatory (12.5, 5.4)": "passed",
   "the premium track is a store product and adds only cosmetics, for tiers already claimed too (18.2, F41)": "passed",
   "the profile counts heists by each outcome's name and defences held and leaked, Partial apart, and never the rating (12.9, 12.15, G69)": "passed",
   "the profile is served over HTTP, its switch set there (20.2, 23.2)": "passed",
@@ -357,6 +358,7 @@
   "with a reminder chosen, the day's raids come inside it, and a later raid waits for the next (G34)": "passed",
   "with an edge that answers, the purge is asked as the deletion is made, and a deletion asked for keeps the edge's copy (20.5, 20.11)": "passed",
   "§11.6's rest: 45, 60 or 180 minutes by the outcome, less 5% a Hearth level, Loyal's 0.75 after a success and Sleepy's 1.5": "passed",
+  "§12.5's planning holds by Keeper level: a crew of 3, 4 from level 8 and 5 from 16; a Sage from level 2, unlocked and not the Heart's guardian; one cast slot, two from level 12 (12.5, 11.7)": "passed",
   "§18.5's badges are graded gold at the mark, silver at half and bronze at a tenth, rounded up, and a mark of 1 has one grade (18.5)": "passed",
   "§8.5's worked example, through the server's binding: 27.44 silent at 215, the chord sounding at 217 (5.5, 8.5)": "passed"
  }

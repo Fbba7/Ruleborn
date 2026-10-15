@@ -160,6 +160,9 @@ export function formOdds(laws) {
 /** §11.10's 54 forms: each kind's id and its note, in the content's order. */
 const KIND_BY_NAME = Object.fromEntries(content("ruleborn").map((k) => [k.name, k.id]));
 const FORMS = content("forms").map((f) => ({ kind: KIND_BY_NAME[f.kind], note: f.note.toLowerCase() }));
+/** A character's form as the manifest numbers it: 0 for its kind's own
+ *  look, else its place among its kind's forms, from 1. */
+const formIndex = (c) => (c.form ? FORMS.filter((f) => f.kind === c.kind).findIndex((f) => f.note === c.form) + 1 : 0);
 /** Each form note's launch laws: "to hatch Hush forms, weave Hush laws next to
  *  a Nursery" (§11.10). */
 const NOTE_LAWS = Object.fromEntries(FORM_NOTES.map((n) => [n.toLowerCase(),
@@ -748,6 +751,10 @@ export class Home {
       id: c.id, kind: c.kind, school: RULEBORN[c.kind].school, role: RULEBORN[c.kind].role,
       traits: c.traits, level: c.level, top: places.find((p) => p.home === c.home)?.top ?? 1,
       home: c.home, via: c.via, form: c.form ?? null,
+      // §12.5's manifest as the replay carries this member — its kind, form
+      // (0 its own look, else 1 to 3 in forms.json's order for its kind),
+      // level and traits, each by its index — which the server checks.
+      wire: { kind: KIND_INDEX[c.kind], form: formIndex(c), level: c.level, traits: c.traits.map((t) => TRAIT_INDEX[t]) },
       name: c.name_adjective == null ? null : { adjective: c.name_adjective, noun: c.name_noun },
       state: away(c, now) ? "resting" : c.work_kind === POST ? "guarding" : c.work_kind ? "working" : "idle",
       // §11.6's wake price and §11.4's next level, the server's arithmetic,

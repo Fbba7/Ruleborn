@@ -134,12 +134,13 @@ func play_stocked(services: Services) -> bool:
 
 
 ## Start a fresh heist; see `HeistController.begin`.
-func begin(seed_text: String, ticks: int, crew: int, realm := PackedByteArray(), era := "") -> bool:
+func begin(seed_text: String, ticks: int, crew: int, realm := PackedByteArray(), era := "",
+		manifest := PackedByteArray()) -> bool:
 	# A new world: the next refresh only takes the haptic cues' baseline.
 	_alarm = 0
 	_live_wards = -1
 	_pylons = -1
-	if not controller.begin(seed_text, ticks, crew, realm, era):
+	if not controller.begin(seed_text, ticks, crew, realm, era, manifest):
 		return false
 	playing = true
 	view.show_replay(controller.world)
@@ -168,9 +169,13 @@ func begin_online(services: Services) -> String:
 	if not leased.ok:
 		return leased.code
 	lease = leased.value
-	if not begin(str(lease["seed"]), int(lease["ticks"]), HeistController.CREW, bundle.value,
-			HeistController.lease_era(lease)):
+	# §12.5: the planner's crew, Sage, casts and load target, when it made one.
+	var plan: Dictionary = services.store.get_slice(AppState.HEIST).get("plan", {})
+	var crew: int = (plan["crew"] as Array).size() if plan.has("crew") else HeistController.CREW
+	if not begin(str(lease["seed"]), int(lease["ticks"]), crew, bundle.value,
+			HeistController.lease_era(lease), plan.get("manifest", PackedByteArray())):
 		return "island_does_not_load"
+	controller.load_target = int(plan.get("load", 100))
 	return ""
 
 
@@ -200,7 +205,8 @@ func finish() -> void:
 		services.store.dispatch(&"heist_verdict", WorkshopController.settled(played, local))
 	elif not lease.is_empty():
 		hint_label.text = Strings.t("HEIST_CHECKING")
-		var answer := await services.heists.submit(str(lease["token"]), replay)
+		var plan: Dictionary = services.store.get_slice(AppState.HEIST).get("plan", {})
+		var answer := await services.heists.submit(str(lease["token"]), replay, plan.get("crew", []))
 		var settled := HeistController.settled(answer, local)
 		services.store.dispatch(&"heist_verdict", settled)
 		# §14.2: the experience it earned moves the Keeper bar; an answer the

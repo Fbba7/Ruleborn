@@ -814,7 +814,7 @@ SCOUT_COUNT,%s %d,%s %d,%s %d,%s %d,%s %d,%s %d
 SCOUT_NONE,none,none,nenhum,nenhum,keine,aucun
 SCOUT_WATCH,"Watch: suspicion fills at %d%%, sight reaches %d%%","Watch: suspicion fills at %d%%, sight reaches %d%%","Vigia: suspeita enche a %d%%, a visão alcança %d%%","Vigia: a suspeita enche a %d%%, a visão alcança %d%%","Wache: Verdacht füllt sich zu %d%%, Sicht reicht %d%%","Guet : le soupçon monte à %d %%, la vue porte à %d %%"
 SCOUT_HIDDEN,Where guards stand and wards lie is found in the heist,Where guards stand and wards lie is found in the heist,Onde ficam guardas e proteções se descobre no assalto,Onde estão guardas e proteções descobre-se no assalto,"Wo Wachen stehen und Siegel liegen, zeigt erst der Raubzug",Où se tiennent les gardes et les protections se découvre pendant le casse
-SCOUT_RAID,Raid · %s,Raid · %s,Assaltar · %s,Assaltar · %s,Überfallen · %s,Piller · %s
+SCOUT_RAID,Plan · %s,Plan · %s,Planejar · %s,Planear · %s,Planen · %s,Planifier · %s
 LANDING_TITLE,Choose where to land,Choose where to land,Escolha onde pousar,Escolhe onde aterrar,Wähle den Landeplatz,Choisis où atterrir
 LANDING_HINT,"Tap an edge spot to land there, or step through the spots below","Tap an edge spot to land there, or step through the spots below","Toque num ponto da borda para pousar lá, ou percorra os pontos abaixo","Toca num ponto da orla para aterrar lá, ou percorre os pontos abaixo","Tippe auf einen Randplatz, um dort zu landen, oder geh die Plätze unten durch","Touche un point du bord pour y atterrir, ou parcours les points ci-dessous"
 LANDING_SPOT,"%s edge, %d of %d: %s","%s edge, %d of %d: %s","Borda %s, %d de %d: %s","Orla %s, %d de %d: %s","%s Rand, %d von %d: %s","Bord %s, %d sur %d : %s"
@@ -958,3 +958,28 @@ PROFILE_SHOWN,Other players can see your profile,Other players can see your prof
 PROFILE_HIDDEN,Your profile is private,Your profile is private,Seu perfil é privado,O teu perfil é privado,Dein Profil ist privat,Ton profil est privé
 PROFILE_SHOW,Show my profile,Show my profile,Mostrar meu perfil,Mostrar o meu perfil,Mein Profil zeigen,Montrer mon profil
 PROFILE_HIDE,Make my profile private,Make my profile private,Tornar meu perfil privado,Tornar o meu perfil privado,Mein Profil privat machen,Rendre mon profil privé
+ERR_CREW_TOO_LARGE,your Keeper level brings a smaller crew,your Keeper level brings a smaller crew,seu nível de Guardião leva uma equipe menor,o teu nível de Guardião leva uma equipa menor,deine Hüterstufe erlaubt eine kleinere Crew,ton niveau de Gardien permet une équipe plus petite
+ERR_TOO_MANY_CASTS,your Keeper level carries fewer casts,your Keeper level carries fewer casts,seu nível de Guardião leva menos lançamentos,o teu nível de Guardião leva menos lançamentos,deine Hüterstufe erlaubt weniger Würfe,ton niveau de Gardien permet moins de sorts
+ERR_SAGE_ON_GUARD,that Sage is guarding the Heart,that Sage is guarding the Heart,esse Sábio está guardando o Coração,esse Sábio está a guardar o Coração,dieser Weise bewacht das Herz,ce Sage garde le Cœur
+PLAN_TITLE,Plan the run,Plan the run,Planejar o assalto,Planear o assalto,Den Raubzug planen,Planifier le casse
+PLAN_ENTRY,Entry: you choose an edge spot as the crew lands,Entry: you choose an edge spot as the crew lands,Entrada: você escolhe um ponto da borda ao pousar,Entrada: escolhes um ponto da orla ao aterrar,Einstieg: du wählst beim Landen einen Randplatz,Entrée : tu choisis un point du bord à l'atterrissage
+PLAN_UNFAMILIAR,Unfamiliar: %s,Unfamiliar: %s,Desconhecidas: %s,Desconhecidas: %s,Unbekannt: %s,Inconnues : %s
+PLAN_CREW,Crew: %d of %d,Crew: %d of %d,Equipe: %d de %d,Equipa: %d de %d,Crew: %d von %d,Équipe : %d sur %d
+PLAN_MEMBER,"%s, level %d","%s, level %d","%s, nível %d","%s, nível %d","%s, Stufe %d","%s, niveau %d"
+PLAN_MEMBER_IN,"● %s, level %d","● %s, level %d","● %s, nível %d","● %s, nível %d","● %s, Stufe %d","● %s, niveau %d"
+PLAN_RESTING,resting,resting,descansando,a descansar,ruht,au repos
+PLAN_CREW_FULL,the crew is full at %d,the crew is full at %d,a equipe está cheia com %d,a equipa está cheia com %d,die Crew ist mit %d voll,l'équipe est complète à %d
+PLAN_SAGE,Sage,Sage,Sábio,Sábio,Weiser,Sage
+PLAN_NO_SAGE,No Sage,No Sage,Sem Sábio,Sem Sábio,Kein Weiser,Pas de Sage
+PLAN_SAGE_LEVEL,a Sage joins from Keeper level 2,a Sage joins from Keeper level 2,um Sábio vem a partir do nível 2 de Guardião,um Sábio vem a partir do nível 2 de Guardião,ein Weiser kommt ab Hüterstufe 2,un Sage vient dès le niveau 2 de Gardien
+PLAN_SAGE_GUARDING,guarding the Heart,guarding the Heart,guardando o Coração,a guardar o Coração,bewacht das Herz,garde le Cœur
+PLAN_CASTS,"Casts: %d of %d, paid only if used","Casts: %d of %d, paid only if used","Lançamentos: %d de %d, pagos só se usados","Lançamentos: %d de %d, pagos só se usados","Würfe: %d von %d, nur bezahlt, wenn genutzt","Sorts : %d sur %d, payés seulement s'ils servent"
+PLAN_CAST,Cast %s,Cast %s,Lançar %s,Lançar %s,%s werfen,Lancer %s
+PLAN_CAST_IN,● Cast %s,● Cast %s,● Lançar %s,● Lançar %s,● %s werfen,● Lancer %s
+PLAN_CASTS_FULL,%d cast slots in use,%d cast slots in use,%d espaços de lançamento em uso,%d espaços de lançamento em uso,%d Wurfplätze belegt,%d emplacements de sort utilisés
+PLAN_LOAD,Load target: %d%%,Load target: %d%%,Meta de carga: %d%%,Meta de carga: %d%%,Ladeziel: %d%%,Objectif de charge : %d%%
+PLAN_LOAD_DOWN,Load less,Load less,Carregar menos,Carregar menos,Weniger laden,Charger moins
+PLAN_LOAD_UP,Load more,Load more,Carregar mais,Carregar mais,Mehr laden,Charger plus
+PLAN_NEEDS_CREW,choose %d to %d crew,choose %d to %d crew,escolha de %d a %d membros,escolhe de %d a %d membros,wähle %d bis %d Crewmitglieder,choisis de %d à %d équipiers
+PLAN_START,Start the heist,Start the heist,Começar o assalto,Começar o assalto,Raubzug starten,Lancer le casse
+PLAN_START_SPOKEN,Start the heist on %s,Start the heist on %s,Começar o assalto a %s,Começar o assalto a %s,Raubzug auf %s starten,Lancer le casse contre %s

@@ -189,7 +189,7 @@ test("two players with the same island are two targets, and a foiled fee goes to
     "INSERT INTO ledger (account, starlight, reason, at) VALUES (?, 50000, \'grant\', 0)")
     .run(t.raider.account);
   const lease = t.service.lease(t.raider.account, t.bundle, twin.account);
-  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 3 }));
   assert.equal(out.verdict.grade, "foiled");
   assert.equal(t.service.balance(twin.account).starlight, 225, "the twin was raided");
   assert.equal(t.service.balance(t.defender.account).starlight, 0);
@@ -227,7 +227,7 @@ test("a foiled raider pays the fee to the defender (§12.9)", () => {
     "INSERT INTO ledger (account, starlight, reason, at) VALUES (?, 50000, \'grant\', 0)")
     .run(t.raider.account);
   const lease = t.service.lease(t.raider.account, t.bundle);
-  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 3 }));
   assert.equal(out.validated, true);
   assert.equal(out.verdict.grade, "foiled");
   assert.equal(out.fee, 225, "2% of B(3), 11,250 (F39)");
@@ -279,7 +279,7 @@ test("a pair's second foil of the day keeps the fee with the game (9.4, G37)", (
   for (const hour of [0, 1]) {
     t.clock.now += hour * 60 * 60 * 1000;
     const lease = t.service.lease(t.raider.account, t.bundle);
-    const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 4 }));
+    const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { crew: 3 }));
     assert.deepEqual([out.verdict.grade, out.fee, out.feeReturned], ["foiled", 225, 0]);
   }
   assert.equal(t.service.balance(t.raider.account).starlight, 50_000 - 2 * 225);

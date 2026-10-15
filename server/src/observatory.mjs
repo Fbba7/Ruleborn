@@ -27,6 +27,7 @@ import { transaction } from "./db.mjs";
 import { GENERATOR } from "./generator.mjs";
 import { offer, successBand } from "./matchmaking.mjs";
 import { Refused } from "./refused.mjs";
+import { clockTicks, TICKS_PER_SECOND } from "./service.mjs";
 import { lawsOf } from "./telemetry.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
@@ -167,6 +168,8 @@ export class Observatory {
     const facts_ = realmFacts(this.service.store.get(c.bundle));
     return {
       bundle: c.bundle, kind, reason, fee,
+      // §5.4's heist clock the lease would carry, in seconds (§12.5's planner).
+      clock: clockTicks() / TICKS_PER_SECOND,
       keeper_level: owner?.keeper_level ?? null, realms, renown: c.renown ?? null,
       loot: rough(snap.exposed), strain, band, faults: faults(strain, realms - 1),
       ...(generated ? { success: [lo, hi] } : {}),
