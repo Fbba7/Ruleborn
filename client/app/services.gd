@@ -22,6 +22,7 @@ var weaving: WeavingRepository
 var codex: CodexRepository
 var observatory: ObservatoryRepository
 var lab: LabRepository
+var curation: CurationRepository
 var defences: DefencesRepository
 var profile: ProfileRepository
 var device: DeviceRepository
@@ -53,6 +54,7 @@ var codex_flow: CodexController
 var harmony_flow: HarmonyController
 var observatory_flow: ObservatoryController
 var lab_flow: LabController
+var curation_flow: CurationController
 var defences_flow: DefencesController
 var profile_flow: ProfileController
 var planner_flow: PlannerController
@@ -82,6 +84,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	HarmonyState.register(s.store)
 	ObservatoryState.register(s.store)
 	LabState.register(s.store)
+	CurationState.register(s.store)
 	DefencesState.register(s.store)
 	ProfileState.register(s.store)
 	PlannerState.register(s.store)
@@ -116,6 +119,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.codex = CodexRepository.new(s.api)
 	s.observatory = ObservatoryRepository.new(s.api)
 	s.lab = LabRepository.new(s.api)
+	s.curation = CurationRepository.new(s.api)
 	s.defences = DefencesRepository.new(s.api)
 	s.profile = ProfileRepository.new(s.api)
 	s.device = DeviceRepository.new(s.api)
@@ -136,6 +140,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.harmony_flow = HarmonyController.new(s)
 	s.observatory_flow = ObservatoryController.new(s)
 	s.lab_flow = LabController.new(s)
+	s.curation_flow = CurationController.new(s)
 	s.defences_flow = DefencesController.new(s)
 	s.profile_flow = ProfileController.new(s)
 	s.planner_flow = PlannerController.new(s)
@@ -252,6 +257,7 @@ func close() -> void:
 	harmony_flow = null
 	observatory_flow = null
 	lab_flow = null
+	curation_flow = null
 	defences_flow = null
 	profile_flow = null
 	planner_flow = null

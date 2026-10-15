@@ -78,6 +78,11 @@ CREATE TABLE IF NOT EXISTS islands (
   realm      TEXT NOT NULL,
   bundle     TEXT NOT NULL REFERENCES snapshots(bundle),
   changed_at INTEGER NOT NULL,
+  origin     TEXT,
+  seed       TEXT,
+  terrain    TEXT,
+  name_adjective INTEGER,
+  name_noun  INTEGER,
   PRIMARY KEY (owner, realm)
 );
 
@@ -254,7 +259,8 @@ CREATE TABLE IF NOT EXISTS snapshots (
   exposed      INTEGER NOT NULL,
   band         TEXT,
   rules        TEXT NOT NULL,
-  published_at INTEGER NOT NULL
+  published_at INTEGER NOT NULL,
+  origin       TEXT
 );
 CREATE TRIGGER IF NOT EXISTS snapshots_never_edited BEFORE UPDATE ON snapshots
   BEGIN SELECT RAISE(ABORT, 'snapshots are never edited (24.8)'); END;
@@ -798,6 +804,15 @@ const DROPPED = [
 /** Columns added to a table after a database was first made: `CREATE TABLE IF
  *  NOT EXISTS` leaves an old table as it was, so each is added if missing. */
 const ADDED = [
+  // §13.3's curation (curation.mjs): an island's origin, and for a layout
+  // the generator made, its seed and its terrain's digest; the name its
+  // owner gave it from the word lists.
+  ["islands", "origin", "TEXT"],
+  ["islands", "seed", "TEXT"],
+  ["islands", "terrain", "TEXT"],
+  ["islands", "name_adjective", "INTEGER"],
+  ["islands", "name_noun", "INTEGER"],
+  ["snapshots", "origin", "TEXT"],
   ["accounts", "age_band", "TEXT NOT NULL DEFAULT '18+'"],
   ["accounts", "moderator", "INTEGER NOT NULL DEFAULT 0"],
   ["accounts", "banned_at", "INTEGER"],

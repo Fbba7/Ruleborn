@@ -359,6 +359,67 @@ pub extern "C" fn rb_generate(seed_hi: u32, seed_lo: u32, realm_level: u32) -> i
     bytes.len() as i32
 }
 
+/// §13.3's curation (`Island::curated`): the generator's layout of a
+/// player's realm from a seed. The buffer's first `len` bytes say what the
+/// realm holds: a building count u8 and (code u8, x u8, y u8) each, then a
+/// law count u8 and (id length u8, id) each. The island's bundle is written
+/// over them; returns its length, or -2 when the wire does not read.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_curated(seed_hi: u32, seed_lo: u32, realm_level: u32, vault_level: u32, len: u32) -> i32 {
+    if !fits(0, len) {
+        return -9;
+    }
+    let seed = ((seed_hi as u64) << 32) | seed_lo as u64;
+    with_buffer(|b| {
+        let wire = &b[..len as usize];
+        let mut at = 0usize;
+        let mut next = |n: usize| -> Option<&[u8]> {
+            let out = wire.get(at..at + n)?;
+            at += n;
+            Some(out)
+        };
+        let Some(&[count]) = next(1) else { return -2 };
+        let mut buildings = Vec::new();
+        for _ in 0..count {
+            let Some(&[code, x, y]) = next(3) else { return -2 };
+            buildings.push((code, x, y));
+        }
+        let Some(&[count]) = next(1) else { return -2 };
+        let mut ids = Vec::new();
+        for _ in 0..count {
+            let Some(&[n]) = next(1) else { return -2 };
+            let Some(id) = next(n as usize) else { return -2 };
+            let Ok(id) = std::str::from_utf8(id) else { return -2 };
+            ids.push(id.to_string());
+        }
+        if at != wire.len() {
+            return -2;
+        }
+        let laws: Vec<&str> = ids.iter().map(String::as_str).collect();
+        let bytes = Island::curated(seed, realm_level.clamp(1, 5) as u8, vault_level.clamp(1, 10) as u8,
+                                    &buildings, &laws).encode();
+        b[..bytes.len()].copy_from_slice(&bytes);
+        bytes.len() as i32
+    })
+}
+
+/// An island's terrain digest (`Island::terrain_digest`): the island in the
+/// buffer's first `len` bytes, its 32 bytes written over it. Returns 32, or
+/// -2 when the island does not decode.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_terrain(len: u32) -> i32 {
+    if !fits(0, len) {
+        return -9;
+    }
+    with_buffer(|b| {
+        let Ok(island) = Island::decode(&b[..len as usize]) else { return -2 };
+        b[..32].copy_from_slice(&island.terrain_digest());
+        32
+    })
+}
+
 /// The cross-target spike's number: one call in, one number out.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]

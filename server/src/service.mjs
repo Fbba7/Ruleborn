@@ -42,6 +42,7 @@ import { Safety } from "./safety.mjs";
 import { Codex, castLaw, castPrice } from "./codex.mjs";
 import { Home } from "./home.mjs";
 import { Universe } from "./universe.mjs";
+import { Curation } from "./curation.mjs";
 import { Defences } from "./defences.mjs";
 import { Lab } from "./lab.mjs";
 import { Observatory } from "./observatory.mjs";
@@ -141,6 +142,7 @@ export class Service {
     this.observatory = new Observatory(this);
     this.lab = new Lab(this);
     this.defences = new Defences(this);
+    this.curation = new Curation(this);
     this.profile = new Profile(this);
     this.generator = new Generator(this);
     this.safety = new Safety(this);
@@ -208,7 +210,7 @@ export class Service {
    * hash." Checked by the simulation first: an island §5.2 or §6.1 forbids is
    * refused, with every rule it breaks named.
    */
-  publish(owner, bundle, realm = "heart", { origin = "authored" } = {}) {
+  publish(owner, bundle, realm = "heart", { origin = "authored", seed = null, terrain = null } = {}) {
     if (!REALMS.includes(realm)) throw new Refused(404, "no_such_realm");
     const build = this.builds.current;
     const read = build.island(bundle);
@@ -227,15 +229,18 @@ export class Service {
     transaction(this.db, () => {
       this.db.prepare(
         `INSERT OR IGNORE INTO snapshots
-           (bundle, owner, realm, realm_level, vault_level, exposed, rules, published_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
+           (bundle, owner, realm, realm_level, vault_level, exposed, rules, published_at, origin)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
         .run(key, owner, realm, bundle[4], bundle[5], view.getUint32(6, true),
-             build.rulesVersion, now);
+             build.rulesVersion, now, origin);
+      // §13.3: a curated layout keeps the seed it was drawn from and its
+      // terrain's digest while it stays generated (curation.mjs).
       this.db.prepare(
-        `INSERT INTO islands (owner, realm, bundle, changed_at) VALUES (?, ?, ?, ?)
+        `INSERT INTO islands (owner, realm, bundle, changed_at, origin, seed, terrain) VALUES (?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT (owner, realm) DO UPDATE SET bundle = excluded.bundle,
-           changed_at = excluded.changed_at`)
-        .run(owner, realm, key, now);
+           changed_at = excluded.changed_at, origin = excluded.origin, seed = excluded.seed,
+           terrain = excluded.terrain`)
+        .run(owner, realm, key, now, origin, seed, terrain);
       // §12.22: a new island enters with the simulator's prior.
       this.matchmaking.published(owner, realm, bundle[4], now, origin);
     });
@@ -267,7 +272,7 @@ export class Service {
     // The owner is the island's, not the snapshot's: two players who publish
     // the same bytes share a snapshot, and each is a target of their own.
     const rows = this.db.prepare(
-      `SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed,
+      `SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin,
               COALESCE(s.band, 'realm-level-' || s.realm_level) AS band, a.keeper_level
          FROM islands i
          JOIN snapshots s ON s.bundle = i.bundle
@@ -285,7 +290,7 @@ export class Service {
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
         vaultLevel: r.vault_level, exposed: r.exposed, keeperLevel: r.keeper_level,
         renown: this.seasons.league(r.owner, now).renown,
-        origin: r.owner === GENERATOR ? "generated" : "authored",
+        origin: r.origin ?? (r.owner === GENERATOR ? "generated" : "authored"),
         rating: rating ? Math.round(rating.rating) : null,
         deviation: rating ? Math.round(rating.deviation) : null,
       });

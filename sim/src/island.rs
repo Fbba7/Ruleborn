@@ -1306,6 +1306,59 @@ impl Island {
         }
     }
 
+    /// §13.3's curation: the generator's layout for a player's own realm —
+    /// "pick a different generated layout". `generated`'s draw from `seed`,
+    /// with the realm's buildings standing where its owner placed them
+    /// (§10.1), the Vault at the level its owner has built, and the laws the
+    /// realm has woven on the generator's pylon spots in place of its own
+    /// draw: the generator never weaves for a player, only lays out what
+    /// they have (G54). A draw that loses a building, a law, a post or a
+    /// ward to a building's footprint, or that fails `check`, is drawn again
+    /// from the next seed; after 64 the last is answered, problems and all,
+    /// for the server to refuse by name.
+    pub fn curated(seed: u64, realm_level: u8, vault_level: u8, buildings: &[(u8, u8, u8)],
+                   laws: &[&str]) -> Island {
+        let level = realm_level.clamp(1, 5);
+        let mut last = Island::empty(level);
+        for attempt in 0..64u64 {
+            let mut island = Island::draw(seed.wrapping_add(attempt), level);
+            island.vault_level = vault_level.clamp(1, 10);
+            let spots: Vec<(u8, u8)> = island.laws.iter().map(|&(_, x, y)| (x, y)).collect();
+            island.laws.clear();
+            let (guards, wards) = (island.guards.len(), island.wards.len());
+            let mut whole = laws.len() <= spots.len();
+            for (id, &(x, y)) in laws.iter().zip(&spots) {
+                whole &= island.weave(id, x, y);
+            }
+            for &(code, x, y) in buildings {
+                whole &= island.place_building(code, x, y);
+            }
+            whole &= island.laws.len() == laws.len() && island.buildings.len() == buildings.len()
+                && island.guards.len() == guards && island.wards.len() == wards;
+            if whole && island.check().is_empty() {
+                return island;
+            }
+            last = island;
+        }
+        last
+    }
+
+    /// The digest of an island's terrain alone: its ground, the Vault, the
+    /// entrance and the tunnels, with no post, ward, law or building. §13.3:
+    /// "A curated defence keeps the generated origin while only curation's
+    /// verbs are used, and is authored once its terrain is edited" — the
+    /// server keeps a curated layout's and compares a republished island's.
+    pub fn terrain_digest(&self) -> [u8; 32] {
+        let mut bare = self.clone();
+        bare.guards.clear();
+        bare.wards.clear();
+        bare.laws.clear();
+        bare.buildings.clear();
+        bare.vault_level = 1;
+        bare.exposed = 0;
+        bare.digest()
+    }
+
     #[cfg(test)]
     pub(crate) fn draw_for_test(seed: u64, level: u8) -> Island {
         Island::draw(seed, level)

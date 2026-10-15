@@ -1055,3 +1055,49 @@ FIRST_CAP,Spending capped at €%d a month,Spending capped at €%d a month,Gast
 FIRST_SUMMARY,A summary of your spending each month,A summary of your spending each month,Um resumo dos seus gastos todo mês,Um resumo dos teus gastos todos os meses,Jeden Monat eine Übersicht deiner Ausgaben,Un récapitulatif de tes dépenses chaque mois
 FIRST_NO_ADS,No tracking and no ads,No tracking and no ads,Sem rastreamento e sem anúncios,Sem rastreio e sem anúncios,Kein Tracking und keine Werbung,Ni pistage ni publicité
 OBS_KEEPER_NAME,Keeper: %s,Keeper: %s,Guardião: %s,Guardião: %s,Hüter: %s,Gardien : %s
+ERR_NO_ISLAND,there is no island in that realm yet,there is no island in that realm yet,ainda não há ilha nesse reino,ainda não há ilha nesse reino,in diesem Reich gibt es noch keine Insel,il n'y a pas encore d'île dans ce royaume
+ERR_NOTHING_TO_SWAP,no law is woven in that slot to swap,no law is woven in that slot to swap,nenhuma lei está tecida nesse espaço para trocar,nenhuma lei está tecida nesse espaço para trocar,in diesem Platz ist kein Gesetz zum Tauschen gewoben,aucune loi n'est tissée à cet emplacement pour l'échanger
+ERR_REALM_NOT_OPEN,that realm is not open yet,that realm is not open yet,esse reino ainda não está aberto,esse reino ainda não está aberto,dieses Reich ist noch nicht geöffnet,ce royaume n'est pas encore ouvert
+ERR_POST_CANNOT_MOVE,a post moves only onto open ground,a post moves only onto open ground,um posto só se move para chão livre,um posto só se move para chão livre,ein Posten zieht nur auf freien Boden,un poste ne se déplace que sur un sol libre
+RV_CURATE,Curate,Curate,Curar,Curar,Kuratieren,Arranger
+CUR_TITLE,Curate your defence,Curate your defense,Cure sua defesa,Cura a tua defesa,Verteidigung kuratieren,Arrange ta défense
+CUR_HEADER,"%s, realm level %d","%s, realm level %d","%s, nível de reino %d","%s, nível de reino %d","%s, Reichsstufe %d","%s, niveau de royaume %d"
+CUR_FAILED,Curation could not answer: %s,Curation could not answer: %s,A curadoria não pôde responder: %s,A curadoria não pôde responder: %s,Das Kuratieren konnte nicht antworten: %s,L'arrangement n'a pas pu répondre : %s
+CUR_REFUSED,not here: %s,not here: %s,aqui não: %s,aqui não: %s,nicht hier: %s,pas ici : %s
+CUR_GENERATED,A generated layout: judged against the generated band while only curation changes it,A generated layout: judged against the generated band while only curation changes it,Um traçado gerado: julgado pela faixa dos gerados enquanto só a curadoria o mudar,Um traçado gerado: julgado pela faixa dos gerados enquanto só a curadoria o mudar,"Ein erzeugter Grundriss: am Band der erzeugten gemessen, solange nur Kuratieren ihn ändert",Un tracé généré : jugé sur la plage des générés tant que seul l'arrangement le change
+CUR_AUTHORED,"Authored: its terrain is your own, judged against the authored band","Authored: its terrain is your own, judged against the authored band","Autoral: o terreno é seu, julgado pela faixa dos autorais","De autor: o terreno é teu, julgado pela faixa dos de autor","Selbst gebaut: das Gelände ist deins, am Band der gebauten gemessen","D'auteur : son terrain est le tien, jugé sur la plage des îles d'auteur"
+CUR_NONE,No defence here yet: pick one of the generator's layouts,No defense here yet: pick one of the generator's layouts,Ainda não há defesa aqui: escolha um dos traçados do gerador,Ainda não há defesa aqui: escolhe um dos traçados do gerador,Hier steht noch keine Verteidigung: wähle einen Grundriss des Generators,Pas encore de défense ici : choisis un des tracés du générateur
+CUR_NAMED,Named %s,Named %s,Chamada %s,Chamada %s,Name: %s,Nommée %s
+CUR_UNNAMED,Not named yet,Not named yet,Ainda sem nome,Ainda sem nome,Noch ohne Namen,Pas encore nommée
+CUR_LAYOUTS,The generator's layouts,The generator's layouts,Os traçados do gerador,Os traçados do gerador,Die Grundrisse des Generators,Les tracés du générateur
+CUR_LAYOUT,Layout %d,Layout %d,Traçado %d,Traçado %d,Grundriss %d,Tracé %d
+CUR_LAYOUT_SPOKEN,Lay the generator's layout %d on this realm,Lay the generator's layout %d on this realm,Aplicar o traçado %d do gerador neste reino,Aplicar o traçado %d do gerador neste reino,Grundriss %d des Generators auf dieses Reich legen,Poser le tracé %d du générateur sur ce royaume
+CUR_MORE,More layouts,More layouts,Mais traçados,Mais traçados,Weitere Grundrisse,Autres tracés
+CUR_REPLACES,a layout replaces this island,a layout replaces this island,um traçado substitui esta ilha,um traçado substitui esta ilha,ein Grundriss ersetzt diese Insel,un tracé remplace cette île
+CUR_POSTS,Guard posts: tap one to turn or move it,Guard posts: tap one to turn or move it,Postos de guarda: toque num para virar ou mover,Postos de guarda: toca num para virar ou mover,"Wachposten: tippe einen an, um ihn zu drehen oder zu versetzen",Postes de garde : touche-en un pour le tourner ou le déplacer
+CUR_POST,"Post %d: %s at %d, %d, facing %s","Post %d: %s at %d, %d, facing %s","Posto %d: %s em %d, %d, virado para %s","Posto %d: %s em %d, %d, virado para %s","Posten %d: %s auf %d, %d, Blick nach %s","Poste %d : %s en %d, %d, tourné vers %s"
+CUR_FACE_NORTH,north,north,o norte,o norte,Norden,le nord
+CUR_FACE_EAST,east,east,o leste,o este,Osten,l'est
+CUR_FACE_SOUTH,south,south,o sul,o sul,Süden,le sud
+CUR_FACE_WEST,west,west,o oeste,o oeste,Westen,l'ouest
+CUR_TURN,Face %s,Face %s,Virar para %s,Virar para %s,Blick nach %s,Tourner vers %s
+CUR_TURN_SPOKEN,Turn the picked post to face %s,Turn the picked post to face %s,Virar o posto escolhido para %s,Virar o posto escolhido para %s,Den gewählten Posten nach %s drehen,Tourner le poste choisi vers %s
+CUR_MOVE,Move toward %s,Move toward %s,Mover para %s,Mover para %s,Nach %s versetzen,Déplacer vers %s
+CUR_MOVE_SPOKEN,Move the picked post a tile toward %s,Move the picked post a tile toward %s,Mover o posto escolhido uma casa para %s,Mover o posto escolhido uma casa para %s,Den gewählten Posten ein Feld nach %s versetzen,Déplacer le poste choisi d'une case vers %s
+CUR_SLOT,Slot %d: %s,Slot %d: %s,Espaço %d: %s,Espaço %d: %s,Platz %d: %s,Emplacement %d : %s
+CUR_PREVIEW,Preview %s,Preview %s,Prever %s,Pré-visualizar %s,%s ansehen,Aperçu : %s
+CUR_PREVIEW_SPOKEN,"Preview %s in place of %s, free","Preview %s in place of %s, free","Prever %s no lugar de %s, grátis","Pré-visualizar %s no lugar de %s, grátis","%s anstelle von %s ansehen, gratis","Aperçu de %s à la place de %s, gratuit"
+CUR_PREVIEWING,"Preview: %s in place of %s, free until you apply it","Preview: %s in place of %s, free until you apply it","Prévia: %s no lugar de %s, grátis até aplicar","Pré-visualização: %s no lugar de %s, grátis até aplicares","Vorschau: %s anstelle von %s, gratis bis du es anwendest","Aperçu : %s à la place de %s, gratuit jusqu'à ce que tu l'appliques"
+CUR_APPLY,Weave it · %s Aether · %s,Weave it · %s Aether · %s,Tecer · %s de Aether · %s,Tecer · %s de Aether · %s,Weben · %s Aether · %s,Tisser · %s d'Aether · %s
+CUR_APPLY_SPOKEN,"Weave %s in place of %s for %s Aether, ready in %s","Weave %s in place of %s for %s Aether, ready in %s","Tecer %s no lugar de %s por %s de Aether, pronta em %s","Tecer %s no lugar de %s por %s de Aether, pronta em %s","%s anstelle von %s für %s Aether weben, fertig in %s","Tisser %s à la place de %s pour %s d'Aether, prête dans %s"
+CUR_UNSAVED,Changes not saved yet,Changes not saved yet,Mudanças ainda não salvas,Alterações ainda não guardadas,Änderungen noch nicht gespeichert,Changements pas encore enregistrés
+CUR_SAVE,Save the defence,Save the defense,Salvar a defesa,Guardar a defesa,Verteidigung speichern,Enregistrer la défense
+CUR_REVERT,Undo the changes,Undo the changes,Desfazer as mudanças,Desfazer as alterações,Änderungen verwerfen,Annuler les changements
+CUR_NAMING,Name it from the word lists,Name it from the word lists,Dê um nome pelas listas de palavras,Dá-lhe um nome pelas listas de palavras,Benenne sie aus den Wortlisten,Nomme-la avec les listes de mots
+CUR_NEXT_ADJECTIVE,Next word,Next word,Próxima palavra,Próxima palavra,Nächstes Wort,Mot suivant
+CUR_NEXT_NOUN,Next name,Next name,Próximo nome,Próximo nome,Nächster Name,Nom suivant
+CUR_NAME_IT,Name it %s,Name it %s,Chamar de %s,Chamar-lhe %s,%s nennen,La nommer %s
+CUR_SAID_LAID,The layout is laid and published as generated,The layout is laid and published as generated,O traçado foi aplicado e publicado como gerado,O traçado foi aplicado e publicado como gerado,Der Grundriss liegt und ist als erzeugt veröffentlicht,Le tracé est posé et publié comme généré
+CUR_SAID_SAVED,Your defence is saved,Your defense is saved,Sua defesa foi salva,A tua defesa foi guardada,Deine Verteidigung ist gespeichert,Ta défense est enregistrée
+CUR_SAID_SWAPPED,The swap is weaving and your defence is saved,The swap is weaving and your defense is saved,A troca está sendo tecida e sua defesa foi salva,A troca está a ser tecida e a tua defesa foi guardada,Der Tausch wird gewoben und deine Verteidigung ist gespeichert,L'échange se tisse et ta défense est enregistrée
+CUR_SAID_NAMED,Your defence is named,Your defense is named,Sua defesa tem nome,A tua defesa tem nome,Deine Verteidigung hat einen Namen,Ta défense est nommée

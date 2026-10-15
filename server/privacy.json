@@ -339,6 +339,26 @@
     },
     "changed_at": {
      "type": "gameplay"
+    },
+    "origin": {
+     "type": "gameplay",
+     "holds": "authored or generated, the band it is judged against (12.22, 13.3)"
+    },
+    "seed": {
+     "type": "gameplay",
+     "holds": "the generator's seed for a curated layout"
+    },
+    "terrain": {
+     "type": "gameplay",
+     "holds": "the curated layout's terrain digest, which keeps it generated (13.3)"
+    },
+    "name_adjective": {
+     "type": "gameplay",
+     "holds": "the island's name, a word-list index"
+    },
+    "name_noun": {
+     "type": "gameplay",
+     "holds": "the island's name, a word-list index"
     }
    }
   },
@@ -785,6 +805,10 @@
     },
     "published_at": {
      "type": "gameplay"
+    },
+    "origin": {
+     "type": "gameplay",
+     "holds": "authored or generated (12.22)"
     }
    }
   },

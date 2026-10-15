@@ -67,9 +67,9 @@ export function server({ strictUniverse = false, strictTerms = false, ...options
   if (!strictTerms) service.safety.requireTerms = () => {};
   if (!strictUniverse) {
     const publish = service.publish.bind(service);
-    service.publish = (owner, bundle, realm = "heart") => {
+    service.publish = (owner, bundle, realm = "heart", options = {}) => {
       if (REALMS.includes(realm) && bundle?.length > 5) raiseTo(service.db, owner, realm, bundle[4], bundle[5]);
-      return publish(owner, bundle, realm);
+      return publish(owner, bundle, realm, options);
     };
   }
   return { service, clock, handle: handler(service), build: simulation() };

@@ -751,7 +751,42 @@ DELIVERABLES = [
         "from Lab level 3 the third sphere names, once a day and free, the first chord in §8.5's table the player "
         "has woven or crossed; a heist crossing a resonance or chord hints it (8.5, 8.6)",
         "the Lab is served over HTTP (8.6)"))),
-    ("4b", "Curation", FRONTEND, not_started("TD.22's screen gate passes for it")),
+    # §13.3's curation (TD.22, G54): the generator's layouts laid on the
+    # player's realm (curation.mjs, Island::curated), the posts moved and
+    # turned, swaps as weaves, the name; the origin kept while the terrain is
+    # the layout's.
+    ("4b", "Curation", FRONTEND, parts(client_tests(
+        "curation names the island's origin and the band it is judged against, its name from the word lists, "
+        "and the generator's layouts a page at a time, warning that one replaces the island (13.3, 12.22)",
+        "each guard post is named with its role, tile and facing; a picked one gets the four-way dial, its "
+        "own facing greyed, and a move a tile each way onto open ground only (13.3, G56)",
+        "each woven law offers each swap as a free preview, one it cannot be with why; a previewed swap says "
+        "so and weaves on a button with §5.6's price and time, which waits while the Aether is short (G54, "
+        "5.6)",
+        "curation's verbs move a post a tile onto open ground only, keeping its role and facing, turn it on "
+        "the four-way dial and swap a law on its pylon, and leave the terrain as it was (13.3, G56, G54)",
+        "curation loads the realm's view and its island by bundle; a post moves onto open ground and not onto "
+        "grass, turns on the dial, and a save publishes the curated island and reloads (13.3, 24.8)",
+        "a swap previews on the draft at once and free, and applying it weaves through the server as a swap "
+        "and publishes the island with the new pylon; a layout is laid by its seed and a name sent from the "
+        "word lists (G54, 13.3, G58)",
+        "the curation screen draws the layouts, the posts — a tap brings up the dial — each law's swaps, the "
+        "draft's save and revert once it changes, and a swap that spends on a second tap (13.3, 23.2)",
+        "against the server: a new Keeper's Heart is offered three layouts, one is laid as generated with its "
+        "posts, and a post turned and saved keeps it generated (13.3, 12.22)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "a curated defence keeps the generated origin while only curation's verbs are used, is authored once "
+        "its terrain is edited, and is named from the word lists, over HTTP (13.3, G58)",
+        "a swap weaves the new law in the old one's place at §5.6's price and time as curation prices it, "
+        "with no hour's rest (G54, 5.6)",
+        "curation offers the generator's layouts for a realm and lays one with the player's own laws, "
+        "published as generated and rated from the generated band (13.3, 12.22, G54)"),
+        not_started("§13.3's stealth-path count shown at once for every edit and the hold the server measures, "
+                    "\"measuring…\" until it lands (G55, TD.16, TD.65), and one guard's sight drawn hard-edged on "
+                    "the world (21.12, TD.3)"))),
     # §23.2's "Rehearsal and defence log": its defence half (TD.66), on the
     # facts settlement records (defences.mjs). The rehearsal half is the
     # Rehearsal row's.

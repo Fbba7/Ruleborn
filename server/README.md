@@ -843,6 +843,25 @@ those lists (G58), so it never needs moderation: `PUT /v1/keeper/name
 {"adjective", "noun"}` refuses any other word, `GET /v1/keeper` answers it
 as `name`, and each Observatory card names its target's Keeper.
 
+## Curation
+
+`src/curation.mjs` is §13.3's curation, "the default creative act".
+`GET /v1/curation/:realm?page=n` answers the realm's island, its origin and
+name, three of the generator's layouts a page — seeds that are the same for
+one player and realm on every server — and what each woven law's swaps
+would cost. `POST /v1/curation/:realm/layout {"seed"}` lays one: the
+simulation draws the generated island from the seed with the realm's placed
+buildings, its Vault's level and the laws woven there in place of its own
+(`Island::curated`), and the server publishes it with the generated origin,
+its seed and its terrain's digest. An island republished with
+`PUT /v1/islands` keeps that origin while its terrain is the layout's —
+posts moved and turned, laws swapped — and is authored once the terrain is
+edited, so matchmaking judges it against the matching band (§12.22). A swap
+is a weave with `"swap": true`: the new law in the old one's slot at §5.6's
+price and time, with no hour's rest (G54). `PUT /v1/curation/:realm/name`
+names the island from the word lists. The stealth-path count and the hold
+measured for an island's digest (G55) are not built.
+
 ## The defence log
 
 `src/defences.mjs` is §23.2's defence log. `GET /v1/defences` lists the

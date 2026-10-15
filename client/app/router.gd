@@ -29,6 +29,7 @@ const ROUTES := {
 	&"harmony": "res://scenes/harmony.tscn",
 	&"observatory": "res://scenes/observatory.tscn",
 	&"lab": "res://scenes/lab.tscn",
+	&"curation": "res://scenes/curation.tscn",
 	&"law": "res://scenes/law.tscn",
 	&"profile": "res://scenes/profile.tscn",
 	&"planner": "res://scenes/planner.tscn",

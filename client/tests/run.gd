@@ -9,7 +9,7 @@ const DEADLINE_SECONDS := 480.0
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
 	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch", "weaving",
 	"codex", "harmony", "observatory", "scout", "lab", "defences", "law", "profile", "planner", "map", "realm", "share",
-	"first"]
+	"first", "curation"]
 
 var _n := 0
 var _failed := 0
@@ -83,6 +83,9 @@ func _seed() -> void:
 	App.services.store.dispatch(&"profile_loaded", {"view": ProfileTests.sample()})
 	App.services.store.dispatch(&"first_loaded", {"protections": FirstTests.protections(), "words": FirstTests.words()})
 	App.services.store.dispatch(&"first_moved", {"beat": "protections"})
+	App.services.store.dispatch(&"curation_loaded", {"view": CurationTests.sample()})
+	App.services.store.dispatch(&"curation_island", {"island": CurationTests.island()})
+	App.services.store.dispatch(&"curation_words", {"words": FirstTests.words()})
 
 
 func _mount(scene: String) -> Control:
@@ -398,6 +401,7 @@ func _run() -> void:
 	await RealmTests.new(self, check, _mount, server_url).run()
 	await ShareTests.new(self, check, _mount, server_url).run()
 	await FirstTests.new(self, check, _mount, server_url).run()
+	await CurationTests.new(self, check, _mount, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

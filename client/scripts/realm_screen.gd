@@ -37,6 +37,8 @@ func _build() -> void:
 	body = UI.scroll(column)
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("HOME_MAP"), func() -> void: App.services.router.go(&"map"), true))
+	actions.add_child(UI.button(Strings.t("RV_CURATE"), func() -> void:
+		App.services.curation_flow.open(str(App.services.store.get_slice(RealmState.REALM)["realm"]))))
 	actions.add_child(UI.button(Strings.t("HOME_BUILD"), func() -> void: App.services.router.go(&"builder")))
 	column.add_child(UI.narrow(actions))
 

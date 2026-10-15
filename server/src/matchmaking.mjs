@@ -185,11 +185,11 @@ export class Matchmaking {
    */
   candidates(now = this.service.now()) {
     const live = this.db.prepare(
-      `SELECT s.bundle, i.owner, i.realm, s.realm_level, a.keeper_level
+      `SELECT s.bundle, i.owner, i.realm, s.realm_level, a.keeper_level, i.origin
          FROM islands i JOIN snapshots s ON s.bundle = i.bundle JOIN accounts a ON a.id = i.owner
         WHERE a.banned_at IS NULL AND a.deleted_at IS NULL ORDER BY s.bundle, i.owner`).all();
     const echoes = this.db.prepare(
-      `SELECT s.bundle, s.owner, s.realm, s.realm_level, a.keeper_level
+      `SELECT s.bundle, s.owner, s.realm, s.realm_level, a.keeper_level, s.origin
          FROM snapshots s JOIN accounts a ON a.id = s.owner
         WHERE s.published_at > ? AND a.banned_at IS NULL AND a.deleted_at IS NULL
           AND s.owner != ?
@@ -201,12 +201,14 @@ export class Matchmaking {
       return this.chapters.get(bundle);
     };
     const view = (r, echo) => {
-      const rating = this.islandRating(r.owner, r.realm) ?? prior(r.realm_level);
+      // §13.3: a player's curated layout is judged as generated too.
+      const origin = r.origin ?? (r.owner === GENERATOR ? "generated" : "authored");
+      const rating = this.islandRating(r.owner, r.realm) ?? prior(r.realm_level, origin);
       return {
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
         keeperLevel: r.keeper_level, renown: this.service.seasons.league(r.owner, now).renown,
         rating: rating.rating, deviation: rating.deviation, echo, chapter: chapter(r.bundle),
-        origin: r.owner === GENERATOR ? "generated" : "authored",
+        origin,
       };
     };
     return [

@@ -139,13 +139,14 @@ export class Weaving {
    *  or weaving, each realm's school, the Spire's and the Anchor Stones'
    *  levels, and the week's era; `extra`, {law, tier, realm}, priced in its
    *  place as the last line. The simulation's answer: each law's cost, the
-   *  chords that sound, capacity, strain and band. */
-  stability(account, extra = null) {
+   *  chords that sound, capacity, strain and band. `without`, {realm,
+   *  slot}, leaves that slot's law out, as a swap prices its successor. */
+  stability(account, extra = null, without = null) {
     const realms = this.universe.realms(account);
     const schools = [];
     for (const r of realms) schools[realmIndex(r.realm)] = r.realm === "heart" ? null : schoolOfType(r.type);
     for (let i = 0; i < schools.length; i++) schools[i] ??= null;
-    const laws = this.rows(account).filter((r) => r.law)
+    const laws = this.rows(account).filter((r) => r.law && !(without && r.realm === without.realm && r.slot === without.slot))
       .map((r) => ({ law: r.law, tier: r.tier, realm: realmIndex(r.realm) }));
     if (extra) laws.push({ ...extra, realm: realmIndex(extra.realm) });
     const anchors = this.universe.buildings(account).filter((b) => b.kind === ANCHOR).map((b) => b.level);
@@ -183,7 +184,7 @@ export class Weaving {
    *  at the tier the Codex has it, paid in Aether, working once §5.6's
    *  weaving time has passed. A repeat of one already woven there is
    *  answered as woven. */
-  weave(account, { realm, slot, law }) {
+  weave(account, { realm, slot, law, swap = false }) {
     if (typeof law !== "string" || !Object.hasOwn(LAWS, law)) throw new Refused(400, "no_such_law");
     if (!Number.isInteger(slot) || slot < 1) throw new Refused(400, "malformed_body");
     const now = this.service.now();
@@ -196,21 +197,26 @@ export class Weaving {
       const rows = this.rows(account);
       const here = rows.find((r) => r.realm === realm && r.slot === slot);
       if (here?.law === law) return this.done(account, true);
-      if (here?.law) throw new Refused(409, "slot_taken");
+      // G54: curation's swap weaves the new law in the old one's place, at
+      // §5.6's price and time, with no hour's rest between.
+      if (here?.law && swap !== true) throw new Refused(409, "slot_taken");
+      if (swap === true && !here?.law) throw new Refused(409, "nothing_to_swap");
       if (here?.rests_until > now) throw new Refused(409, "slot_resting", { until: here.rests_until });
+      const without = swap === true ? { realm, slot } : null;
+      const others = rows.filter((r) => r !== here || !without);
       const tier = this.tierOf(account, law);
       if (!tier) throw new Refused(409, "law_not_restored");
-      if (rows.some((r) => r.law === law && r.realm === realm)) throw new Refused(409, "already_woven_here");
+      if (others.some((r) => r.law === law && r.realm === realm)) throw new Refused(409, "already_woven_here");
       // §5.1: "The same law can't be both a crown law and a realm law in
       // one universe."
-      if (rows.some((r) => r.law === law && (r.realm === CROWN) !== (realm === CROWN))) {
+      if (others.some((r) => r.law === law && (r.realm === CROWN) !== (realm === CROWN))) {
         throw new Refused(409, realm === CROWN ? "woven_in_a_realm" : "crowned");
       }
       // §5.5's Breaking: "No new weaving, and no weave that would take
       // strain to 125% or over".
-      const now_ = this.stability(account);
+      const now_ = this.stability(account, null, without);
       if (now_.band >= BREAKING) throw new Refused(409, "breaking", { strain: now_.strain });
-      const after = this.stability(account, { law, tier, realm });
+      const after = this.stability(account, { law, tier, realm }, without);
       if (after.band >= BREAKING) throw new Refused(409, "would_break", { strain: after.strain });
       const cost = Math.round((after.lines.at(-1).micro * facts.WEAVE_AETHER_PER_POINT) / 1_000_000);
       if (this.service.aether(account) < cost) throw new Refused(409, "not_enough_aether", { cost });
@@ -227,6 +233,32 @@ export class Weaving {
       this.service.book(account, "aether", -cost,
         `${LAWS[law].name} woven in ${realm === CROWN ? "the crown" : realm} (5.6)`, now);
       return this.done(account);
+    });
+  }
+
+  /** G54's swaps for curation: for each law woven in `realm`, what each
+   *  other restored law would cost in its place, priced as a weave there
+   *  with the old law gone (§5.5, §5.6), and why it could not be. */
+  swaps(account, realm) {
+    const rows = this.rows(account);
+    const restored = this.restored(account);
+    return rows.filter((r) => r.realm === realm && r.law).map((here) => {
+      const without = { realm, slot: here.slot };
+      const others = rows.filter((r) => r !== here);
+      const now = this.stability(account, null, without);
+      return {
+        slot: here.slot, law: here.law,
+        offers: restored.filter(({ law }) => !others.some((r) => r.law === law && r.realm === realm) && law !== here.law)
+          .map(({ law, tier }) => {
+            const p = this.stability(account, { law, tier, realm }, without);
+            const line = p.lines.at(-1);
+            const elsewhere = others.some((r) => r.law === law && (r.realm === CROWN) !== (realm === CROWN));
+            return { law, tier, price: Math.round((line.micro * facts.WEAVE_AETHER_PER_POINT) / 1_000_000),
+                     minutes: facts.WEAVE_MINUTES[tier - 1],
+                     refused: elsewhere ? (realm === CROWN ? "woven_in_a_realm" : "crowned")
+                       : now.band >= BREAKING ? "breaking" : p.band >= BREAKING ? "would_break" : null };
+          }),
+      };
     });
   }
 

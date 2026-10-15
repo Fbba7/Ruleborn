@@ -6202,6 +6202,50 @@ fn a_generated_island_is_made_from_its_seed_to_5_2s_budget_and_passes_every_chec
     }
 }
 #[test]
+fn a_curated_layout_keeps_its_owners_buildings_vault_and_woven_laws_and_its_terrain_survives_curation() {
+    // §13.3's curation: "pick a different generated layout" for a player's
+    // own realm. The generator lays out what the player has: their placed
+    // buildings, their Vault's level and the laws they have woven (G54).
+    use crate::island::building_code;
+    let garden = building_code("garden").expect("a garden is a building");
+    let store = building_code("storehouse").expect("a storehouse is a building");
+    let buildings = [(garden, 0u8, 0u8), (store, 10, 0)];
+    let laws = ["bounce", "glass"];
+    for seed in 0..30u64 {
+        let island = Island::curated(seed, 3, 2, &buildings, &laws);
+        assert_eq!(island.check(), vec![], "seed {seed}");
+        assert_eq!((island.realm_level, island.vault_level), (3, 2));
+        assert_eq!(island.buildings, buildings.to_vec(), "where its owner placed them (10.1)");
+        let woven: Vec<&str> = island.laws.iter().map(|(id, _, _)| id.as_str()).collect();
+        assert_eq!(woven, laws.to_vec(), "the realm's own laws, and no other");
+        assert_eq!(island.guards.len(), crate::island::GUARD_POSTS[2] as usize);
+        assert_eq!(Island::decode(&island.encode()).expect("a bundle"), island);
+    }
+    let a = Island::curated(4, 3, 1, &[], &[]);
+    assert_eq!(a, Island::curated(4, 3, 1, &[], &[]), "one seed, one layout");
+    assert_ne!(a.terrain_digest(), Island::curated(5, 3, 1, &[], &[]).terrain_digest());
+    // Curation's verbs leave the terrain as it was: a post moved and
+    // turned, a law swapped, a ward taken up.
+    let mut curated = a.clone();
+    let (x, y) = (curated.guards[0].x, curated.guards[0].y);
+    let row = curated.guards[0].row;
+    let free = (1..curated.side() as u8 - 1).flat_map(|y| (1..curated.side() as u8 - 1).map(move |x| (x, y)))
+        .find(|&(x, y)| curated.tile(x, y).is_some_and(|t| t.feature.is_none())
+            && curated.occupant(x, y) == crate::island::Occupant::None && curated.vault != (x, y))
+        .expect("open ground");
+    assert!(curated.clear(x, y) && curated.post_guard(row, free.0, free.1) && curated.face(free.0, free.1, 2));
+    if let Some((_, lx, ly)) = curated.laws.first().cloned() {
+        assert!(curated.clear(lx, ly) && curated.weave("stillness", lx, ly));
+    }
+    assert_ne!(curated.digest(), a.digest());
+    assert_eq!(curated.terrain_digest(), a.terrain_digest(), "curation's verbs keep the generated origin");
+    // An edit to the ground makes it authored.
+    let mut edited = curated.clone();
+    assert!(edited.set_feature(0, 0, Some(crate::grid::Feature::RockPillar)));
+    assert_ne!(edited.terrain_digest(), a.terrain_digest(), "the terrain edited, authored (13.3)");
+}
+
+#[test]
 fn every_first_draw_of_the_generator_passes_its_checks() {
     // The retry in `generated` is a backstop, not the method: a seed's own
     // draw is legal, so neighbouring seeds make different islands.

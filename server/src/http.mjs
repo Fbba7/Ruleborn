@@ -13,6 +13,9 @@
 //   PUT  /v1/profile             {"public"}                  → your profile shown to others or hidden (20.2)
 //   GET  /v1/defences                                        → the season's raids on you, each with its report (13.2)
 //   GET  /v1/defences/badge                                  → {unseen}: raids since the log was last read
+//   GET  /v1/curation/:realm?page=n                          → the realm's island, origin, name, layouts, swaps (13.3)
+//   POST /v1/curation/:realm/layout {"seed"}                 → the generator's layout laid and published, generated
+//   PUT  /v1/curation/:realm/name {"adjective", "noun"}      → the island named from the word lists
 //   GET  /v1/lab                                             → the Lab's chambers, finds and hints (8.6)
 //   POST /v1/lab                 {"chamber", "laws"}         → an experiment placed and paid (8.6, 9.5)
 //   POST /v1/lab/sphere                                      → the third sphere names a chord, daily (8.5)
@@ -42,7 +45,7 @@
 //   PUT  /v1/universe/buildings/place {"realm", "kind", "n", "x", "y"} → a building moved, free (§10.1)
 //   POST /v1/offline {"actions": [{"do": "build"|"place"|"work"|"weave"|"unweave", …}]} → each confirmed or refused, in order (24)
 //   GET  /v1/weaving                                        → each realm's law slots and the crown's, and prices (5.6)
-//   POST /v1/weaving {"realm", "slot", "law"}               → a restored law woven into a slot (5.6)
+//   POST /v1/weaving {"realm", "slot", "law", "swap"?}      → a restored law woven into a slot (5.6), or swapped in (G54)
 //   DELETE /v1/weaving/:realm/:slot                         → a slot emptied; it rests an hour (5.6)
 //   GET  /v1/weaving/harmony                                → how each realm's laws combine (8, 23.2)
 //   GET  /v1/home                                            → the roster, its places, births and producers
@@ -371,6 +374,7 @@ export function handler(service, { webClientId = null, appleNotifications = null
     // Workshop entry and its clearing replay (G44's second bucket).
     const simulates = (request.method === "PUT" && parts[1] === "islands")
       || (request.method === "POST" && parts[1] === "heists")
+      || (request.method === "POST" && parts[1] === "curation")
       || (request.method === "POST" && parts[1] === "workshop" && (parts.length === 2 || parts[2] === "plays"));
     const limit = (kind, key) => {
       const wait = limiter.take(kind, key, service.now());
@@ -478,6 +482,24 @@ export function handler(service, { webClientId = null, appleNotifications = null
         // badge, which the badge route only counts.
         if (parts.length === 2) return json(service.defences.show(who()));
         if (parts[2] === "badge" && parts.length === 3) return json(service.defences.badge(who()));
+        return json({ error: "no_such_route" }, 404);
+      }
+      if (parts[1] === "curation") {
+        // §13.3's curation (curation.mjs): a layout names its seed, so a
+        // retry lays the same island.
+        const me = who();
+        const [, , realm, verb] = parts;
+        const m = request.method;
+        if (m === "GET" && realm && !verb) {
+          return json(service.curation.view(me, realm, Number(url.searchParams.get("page") ?? 0)));
+        }
+        if (m === "POST" && verb === "layout" && parts.length === 4) {
+          return json(service.curation.layout(me, realm, (await body(request)).seed));
+        }
+        if (m === "PUT" && verb === "name" && parts.length === 4) {
+          const q = await body(request);
+          return json(service.curation.name(me, realm, { adjective: q.adjective, noun: q.noun }));
+        }
         return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "lab") {
@@ -604,7 +626,11 @@ export function handler(service, { webClientId = null, appleNotifications = null
           });
         case "PUT /v1/islands": {
           const owner = who();
-          return json(service.publish(owner, await bytes(request), parts[2] ?? "heart"), 201);
+          const realm = parts[2] ?? "heart";
+          const island = await bytes(request);
+          // §13.3: curation's verbs keep a layout generated; an edited
+          // terrain makes it authored (curation.mjs).
+          return json(service.publish(owner, island, realm, service.curation.origin(owner, realm, island)), 201);
         }
         case "GET /v1/bundles": {
           const body = service.bundle(parts[2] ?? "");

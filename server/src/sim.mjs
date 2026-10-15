@@ -288,7 +288,6 @@ export class Build {
     return this.buffer().slice(0, n);
   }
 
-  /** `Island::example()`, or `example_open()` with `open`. */
   /** §12.22's generated target for a seed and a realm level, 1 to 5:
    *  the island's bundle (`Island::generated`). */
   generate(seed, realmLevel) {
@@ -297,6 +296,32 @@ export class Build {
     return this.buffer().slice(0, n);
   }
 
+  /** §13.3's curation: the generator's layout of a player's realm from a
+   *  seed, with its buildings where the universe placed them, the Vault at
+   *  `vaultLevel` and `laws`, the realm's woven ids, on the generator's
+   *  pylon spots (`Island::curated`). */
+  curated(seed, realmLevel, vaultLevel, buildings, laws) {
+    const kinds = this.buildingKinds;
+    const ids = laws.map((l) => Buffer.from(l));
+    const wire = Uint8Array.from([buildings.length, ...buildings.flatMap((b) => [kinds[b.kind].code, b.x, b.y]),
+      ids.length, ...ids.flatMap((id) => [id.length, ...id])]);
+    this.buffer().set(wire);
+    const s = BigInt.asUintN(64, BigInt(seed));
+    const n = this.x.rb_curated(Number(s >> 32n), Number(s & 0xffffffffn), realmLevel, vaultLevel, wire.length);
+    if (n < 0) throw new Error(`curated: ${REFUSED[n] ?? n}`);
+    return this.buffer().slice(0, n);
+  }
+
+  /** An island's terrain digest, hex: its ground, Vault and tunnels without
+   *  posts, wards, laws or buildings (`Island::terrain_digest`); null for
+   *  one that does not decode. */
+  terrain(bytes) {
+    this.buffer().set(bytes);
+    if (this.x.rb_terrain(bytes.length) < 0) return null;
+    return hex(this.buffer().slice(0, 32));
+  }
+
+  /** `Island::example()`, or `example_open()` with `open`. */
   exampleIsland(open = false) {
     const n = this.x.rb_example_island(open ? 1 : 0);
     return this.buffer().slice(0, n);
