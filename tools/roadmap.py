@@ -2718,7 +2718,15 @@ dict(
              register=["F46", "F51", "D77", "C46", "D78", "C45", "F55"]),
         dict(id="TD.19", owner="claude", status="blocked",
              title="Home and the realm view on the world",
-             detail="The Universe map and the realm view are the diorama with "
+             detail="<strong>Both are built in words; the diorama is not.</strong> "
+                    "The Universe map shows each realm with its laws and the "
+                    "crown's, the strain band and open faults, resources and what "
+                    "each producer has ready, new raids and full producers, and the "
+                    "way to a heist; the realm view, the grid and terrain of the "
+                    "realm's published island, wards and guard posts against their "
+                    "limits, each building on its tile, the workers and the law "
+                    "pylons. Left: everything below, on the world.<br><br>"
+                    "The Universe map and the realm view are the diorama with "
                     "the shell's chrome: realms with their realm and crown laws, "
                     "links, TD.10's pylon in every woven slot with its zone and "
                     "the law's chip over it (D74), the universe's one strain band "

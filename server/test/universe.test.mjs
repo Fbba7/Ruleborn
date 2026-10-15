@@ -296,3 +296,12 @@ test("the universe over HTTP: read, bought, and refused with the reason (5.2, 10
   assert.equal(taken.status, 409);
   assert.equal(taken.body.error, "tile_taken");
 });
+
+test("the universe names each realm's published island, which the realm view reads (23.2)", () => {
+  const { t, me, u } = fresh();
+  assert.equal(u.view(me).realms[0].island, null, "nothing published yet");
+  const island = t.build.exampleIsland(true);
+  island[5] = 1;
+  const { bundle } = t.service.publish(me, island);
+  assert.equal(u.view(me).realms[0].island, bundle);
+});

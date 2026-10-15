@@ -7,6 +7,7 @@ import { test } from "node:test";
 
 import { LAW_TRAITS, birthSchools } from "../src/home.mjs";
 import { confirm } from "../src/offline.mjs";
+import { faults } from "../src/observatory.mjs";
 import { CROWN, recommend } from "../src/weaving.mjs";
 import { server } from "./setup.mjs";
 
@@ -295,4 +296,12 @@ test("the Harmony view is served over HTTP (23.2)", async () => {
   assert.equal(r.status, 200);
   const body = await r.json();
   assert.deepEqual(body.realms[0].laws, [{ law: "slow_rivers", notes: ["Weight"], crowned: false }]);
+});
+
+test("the weaving view counts the universe's open faults by its strain, never more than its outer realms (5.5)", () => {
+  const { t, me } = fresh();
+  const v = t.service.weaving.view(me);
+  assert.equal(v.stability.faults, 0, "a Heart alone opens none, whatever its strain");
+  assert.deepEqual([[1.0, 0], [1.0, 3], [1.1, 3], [1.25, 6], [0.9, 6]].map(([s, outer]) => faults(s, outer)),
+                   [0, 1, 2, 4, 0], "§5.5's thresholds, capped by the outer realms");
 });

@@ -983,3 +983,35 @@ PLAN_LOAD_UP,Load more,Load more,Carregar mais,Carregar mais,Mehr laden,Charger 
 PLAN_NEEDS_CREW,choose %d to %d crew,choose %d to %d crew,escolha de %d a %d membros,escolhe de %d a %d membros,wähle %d bis %d Crewmitglieder,choisis de %d à %d équipiers
 PLAN_START,Start the heist,Start the heist,Começar o assalto,Começar o assalto,Raubzug starten,Lancer le casse
 PLAN_START_SPOKEN,Start the heist on %s,Start the heist on %s,Começar o assalto a %s,Começar o assalto a %s,Raubzug auf %s starten,Lancer le casse contre %s
+HOME_MAP,Your universe,Your universe,Seu universo,O teu universo,Dein Universum,Ton univers
+MAP_TITLE,Your universe,Your universe,Seu universo,O teu universo,Dein Universum,Ton univers
+MAP_STRAIN,Strain %s: %s · open faults %d,Strain %s: %s · open faults %d,Tensão %s: %s · falhas abertas %d,Tensão %s: %s · falhas abertas %d,Belastung %s: %s · offene Risse %d,Tension %s : %s · failles ouvertes %d
+MAP_LAWS,Laws: %s,Laws: %s,Leis: %s,Leis: %s,Gesetze: %s,Lois : %s
+MAP_NO_LAWS,No law woven,No law woven,Nenhuma lei tecida,Nenhuma lei tecida,Kein Gesetz gewoben,Aucune loi tissée
+MAP_CROWN,Crown: %s,Crown: %s,Coroa: %s,Coroa: %s,Krone: %s,Couronne : %s
+MAP_RESOURCES,Starlight %s · Essence %s · Aether %s,Starlight %s · Essence %s · Aether %s,Luz Estelar %s · Essência %s · Aether %s,Luz Estelar %s · Essência %s · Aether %s,Sternenlicht %s · Essenz %s · Aether %s,Lumière stellaire %s · Essence %s · Aether %s
+MAP_PRODUCER,%s in %s,%s in %s,%s em %s,%s em %s,%s in %s,%s dans %s
+MAP_READY,%s: %s ready of %s,%s: %s ready of %s,%s: %s prontos de %s,%s: %s prontos de %s,%s: %s bereit von %s,%s : %s prêts sur %s
+MAP_FULL,%s is full,%s is full,%s está cheio,%s está cheio,%s ist voll,%s est plein
+MAP_RAIDS,New raids on your universe: %d,New raids on your universe: %d,Novos assaltos ao seu universo: %d,Novos assaltos ao teu universo: %d,Neue Raubzüge gegen dein Universum: %d,Nouveaux casses contre ton univers : %d
+MAP_NO_ALERTS,Nothing needs you now,Nothing needs you now,Nada precisa de você agora,Nada precisa de ti agora,Gerade braucht dich nichts,Rien ne t'attend pour l'instant
+MAP_OPEN_REALM,View realm,View realm,Ver reino,Ver reino,Reich ansehen,Voir le royaume
+MAP_OPEN_REALM_SPOKEN,View %s,View %s,Ver %s,Ver %s,%s ansehen,Voir %s
+RV_TITLE,Realm view,Realm view,Vista do reino,Vista do reino,Reichsansicht,Vue du royaume
+RV_VIEW_TITLE,%s · realm level %d,%s · realm level %d,%s · nível de reino %d,%s · nível de reino %d,%s · Reichsstufe %d,%s · niveau de royaume %d
+RV_FAILED,The realm could not load: %s,The realm could not load: %s,O reino não pôde carregar: %s,O reino não pôde carregar: %s,Das Reich konnte nicht laden: %s,Le royaume n'a pas pu charger : %s
+RV_SECTION_ISLAND,Grid and terrain,Grid and terrain,Grade e terreno,Grelha e terreno,Raster und Gelände,Grille et terrain
+RV_SECTION_BUILDINGS,Buildings,Buildings,Construções,Edifícios,Gebäude,Bâtiments
+RV_SECTION_WORKERS,Workers,Workers,Trabalhadores,Trabalhadores,Arbeiter,Travailleurs
+RV_SECTION_PYLONS,Law pylons,Law pylons,Pilares de lei,Pilares de lei,Gesetzespylonen,Pylônes de loi
+RV_GRID,Grid %d by %d tiles,Grid %d by %d tiles,Grade de %d por %d casas,Grelha de %d por %d casas,Raster %d mal %d Felder,Grille de %d sur %d cases
+RV_TERRAIN,Terrain: %s,Terrain: %s,Terreno: %s,Terreno: %s,Gelände: %s,Terrain : %s
+RV_NO_TERRAIN,Terrain: bare ground,Terrain: bare ground,Terreno: chão limpo,Terreno: chão limpo,Gelände: blanker Boden,Terrain : sol nu
+RV_HOLDS,Wards %d of %d · guard posts %d of %d,Wards %d of %d · guard posts %d of %d,Proteções %d de %d · postos de guarda %d de %d,Proteções %d de %d · postos de guarda %d de %d,Siegel %d von %d · Wachposten %d von %d,Protections %d sur %d · postes de garde %d sur %d
+RV_NO_ISLAND,No island published for this realm yet,No island published for this realm yet,Nenhuma ilha publicada para este reino ainda,Nenhuma ilha publicada para este reino ainda,Für dieses Reich ist noch keine Insel veröffentlicht,Aucune île publiée pour ce royaume
+RV_BUILDING,"%s, level %d, at %d, %d","%s, level %d, at %d, %d","%s, nível %d, em %d, %d","%s, nível %d, em %d, %d","%s, Stufe %d, bei %d, %d","%s, niveau %d, en %d, %d"
+RV_BUILDING_UNPLACED,"%s, level %d, not placed","%s, level %d, not placed","%s, nível %d, não posicionado","%s, nível %d, não colocado","%s, Stufe %d, nicht platziert","%s, niveau %d, non placé"
+RV_WORKERS,%s: %s,%s: %s,%s: %s,%s: %s,%s: %s,%s : %s
+RV_NO_WORKERS,%s: nobody working,%s: nobody working,%s: ninguém trabalhando,%s: ninguém a trabalhar,%s: niemand arbeitet,%s : personne au travail
+RV_PYLON,Pylon %d: %s,Pylon %d: %s,Pilar %d: %s,Pilar %d: %s,Pylon %d: %s,Pylône %d : %s
+RV_PYLON_EMPTY,Pylon %d: empty,Pylon %d: empty,Pilar %d: vazio,Pilar %d: vazio,Pylon %d: leer,Pylône %d : vide

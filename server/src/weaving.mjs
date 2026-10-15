@@ -33,6 +33,7 @@
 import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
+import { faults } from "./observatory.mjs";
 import { Refused } from "./refused.mjs";
 import { HEART_LEVEL } from "./service.mjs";
 
@@ -330,6 +331,10 @@ export class Weaving {
              // §5.5: the universe's capacity, what is woven costs, the
              // chords' draw, strain and its band, 0 Quiet to 6 Breaking.
              stability: { capacity: p.capacity, total: p.total, draw: p.draw, strain: p.strain, band: p.band,
-                          chords: p.chords } };
+                          chords: p.chords,
+                          // §5.5's open faults at this strain, as a raider's
+                          // card counts them (observatory.mjs); where each
+                          // opens is TD.37's.
+                          faults: faults(p.strain, this.universe.realms(account).length - 1) } };
   }
 }

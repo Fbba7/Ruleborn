@@ -32,6 +32,8 @@ const ROUTES := {
 	&"law": "res://scenes/law.tscn",
 	&"profile": "res://scenes/profile.tscn",
 	&"planner": "res://scenes/planner.tscn",
+	&"map": "res://scenes/map.tscn",
+	&"realm": "res://scenes/realm.tscn",
 	&"defences": "res://scenes/defences.tscn",
 	&"scout": "res://scenes/scout.tscn",
 }

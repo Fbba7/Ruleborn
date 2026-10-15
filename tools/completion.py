@@ -478,7 +478,25 @@ DELIVERABLES = [
     # §26.8's phase 4b: the §23.2 screens no other phase builds, "ported from
     # the designs to this document's rules (23.5)". Each counts when its
     # screen gate (stage SD) passes, by client tests kept by name.
-    ("4b", "Universe map", FRONTEND, not_started("TD.19's screen gate passes for it")),
+    # §23.2's Universe map: what it must show, in words (map_screen.gd); the
+    # diorama it becomes on the world is TD.19's.
+    ("4b", "Universe map", FRONTEND, parts(client_tests(
+        "the Universe map shows each realm with the laws woven in it, the crown's laws, and the universe's strain, "
+        "band and open faults (5.1, 5.5, 23.2)",
+        "the map shows the resources held and what each producer has ready, and alerts the player can act on: new "
+        "raids and a full producer (9.3, 14.6, 23.2)",
+        "the map asks the server for the weaving view, the home, the wallet and the raid badge, and draws from them "
+        "(23.2)",
+        "the Universe map screen draws each realm and the way to a heist (23.2)",
+        "against the server: a new Keeper's map shows the Heart with no law woven, a Quiet universe with no open "
+        "faults, and the resources held (5.5, 23.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "the weaving view counts the universe's open faults by its strain, never more than its outer realms (5.5)"),
+        not_started("the diorama on the world: every building on its tile, §5.3's four links drawn, the camera's "
+                    "dive and slide, zoom by taps and rotation by the Settings switch's buttons (TD.19, TD.3, T3.3)"))),
     # §23.2's law card, on the Codex's facts and the law's own content; its
     # looping preview is a movement drawn on the world (TD.3).
     ("4b", "Law card", FRONTEND, parts(client_tests(
@@ -495,7 +513,27 @@ DELIVERABLES = [
         "each law the Codex holds carries its law card's facts: school, rank, notes, tier and pages (7.7, 21.7, 23.2)"),
         not_started("the looping four-second preview of the law's movement signature, drawn on TD.3's world "
                     "(21.7)"))),
-    ("4b", "Realm view", FRONTEND, not_started("TD.19's screen gate passes for it")),
+    # §23.2's realm view: what it must show, in words (realm_screen.gd), read
+    # from the realm's published island and the server's views; §6.1's
+    # terrain budget is the terrain editor's, the diorama the world's.
+    ("4b", "Realm view", FRONTEND, parts(client_tests(
+        "the realm view reads its grid and terrain from the realm's published island, and its wards and guard posts "
+        "against §5.2's limits at its level (5.2, 6.2, 23.2)",
+        "the realm view lists each building with its level and tile, who works each producer, and each law pylon "
+        "with what is woven in it (5.1, 10.1, 14.1, 23.2)",
+        "a realm with no island published says so (23.2)",
+        "a realm opened from the Universe map fetches its published island by its bundle and draws from it "
+        "(23.2, 24.8)",
+        "the realm view screen draws the grid and terrain, the buildings, the workers and the law pylons (23.2)",
+        "against the server: a new Keeper's Heart shows its starting buildings and two empty law pylons, and says no "
+        "island is published yet (10.2, 23.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "the universe names each realm's published island, which the realm view reads (23.2)"),
+        not_started("§6.1's terrain budget (the terrain editor's, TD.22) and the realm drawn on the world: "
+                    "buildings, workers, pylons with their zones, wards and posts in the diorama (TD.19, TD.3)"))),
     ("4b", "Weaving", FRONTEND, client_tests(
         "Weaving shows the universe's stability as a bar of §5.5's seven bands, the current one marked in "
         "words with its effect, and strain against capacity (5.5, 23.2)",

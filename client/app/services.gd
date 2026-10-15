@@ -53,6 +53,8 @@ var lab_flow: LabController
 var defences_flow: DefencesController
 var profile_flow: ProfileController
 var planner_flow: PlannerController
+var map_flow: MapController
+var realm_flow: RealmController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -78,6 +80,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	DefencesState.register(s.store)
 	ProfileState.register(s.store)
 	PlannerState.register(s.store)
+	RealmState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -126,6 +129,8 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.defences_flow = DefencesController.new(s)
 	s.profile_flow = ProfileController.new(s)
 	s.planner_flow = PlannerController.new(s)
+	s.map_flow = MapController.new(s)
+	s.realm_flow = RealmController.new(s)
 	# What the phone built, wove or assigned offline is answered when the
 	# outbox sends it (§24).
 	s.outbox.settled.connect(s.universe_flow.offline_settled)
@@ -232,6 +237,8 @@ func close() -> void:
 	defences_flow = null
 	profile_flow = null
 	planner_flow = null
+	map_flow = null
+	realm_flow = null
 	if api != null:
 		api.reauth = Callable()
 	if transport != null and is_instance_valid(transport):

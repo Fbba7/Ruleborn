@@ -182,7 +182,11 @@ export class Universe {
                        ...offer({ cost: k.levels[0].cost, ...k.levels[0].needs }) }));
       const raise = r.realm !== "heart" && r.level < facts.REALM_LEVEL_SPIRE.length
         ? offer(realmPrice(r.level + 1)) : null;
-      return { ...r, buildings, room, raise };
+      // The realm's published island, by its bundle: what the realm view
+      // reads its grid, terrain, wards and guard posts from (§23.2).
+      const island = this.db.prepare("SELECT bundle FROM islands WHERE owner = ? AND realm = ?")
+        .get(account, r.realm)?.bundle ?? null;
+      return { ...r, buildings, room, raise, island };
     });
     const owned = realms.length - 1;
     const open = owned < facts.REALM_TYPES.length ? {
