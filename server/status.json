@@ -9,6 +9,7 @@
   "Glicko-2 reproduces Glickman's worked example, with §12.22's constants (12.22)": "passed",
   "Google's keys are fetched once a minute at most, whoever asks, and a rotated key is picked up (24.8, G32)": "passed",
   "Renown within 150 and Keeper level within 3 filter first; a thin band widens rating, Keeper level, Renown (12.22)": "passed",
+  "a 13-to-15 profile is never served to another account, a 16-to-17 or adult one only once its switch is on, and a 13-to-15 player cannot turn it on (20.2)": "passed",
   "a 13-to-15's challenge link is played by their friends only (17.6, 20.7)": "passed",
   "a 13-to-15's challenge link shows nothing to a stranger (20.7)": "passed",
   "a 13-to-15's heists are in no feed, as the friend or as the other party (G35)": "passed",
@@ -324,6 +325,10 @@
   "the pages answer HEAD, and are never kept by a cache, so new terms are never shown old (20.11)": "passed",
   "the per-raid cap is 1.98 times the base, derived from richness and difficulty (§9.6)": "passed",
   "the premium track is a store product and adds only cosmetics, for tiers already claimed too (18.2, F41)": "passed",
+  "the profile counts heists by each outcome's name and defences held and leaked, Partial apart, and never the rating (12.9, 12.15, G69)": "passed",
+  "the profile is served over HTTP, its switch set there (20.2, 23.2)": "passed",
+  "the profile's badges count first heist, clean heists, Vaults opened, defences held, laws met, resonances found, Starlight banked and friendly heists, each graded (18.5)": "passed",
+  "the profile's records come from the heist rows: the fastest escape, the fewest caught, the biggest haul and the longest defence held, the rest not recorded yet (13.2, 23.2)": "passed",
   "the roster lives in the Spire's three places and each Hearth's homes, and a birth needs a free one (11.4, 11.5)": "passed",
   "the roster starts with the three who wake, two traits each, and the first heist brings two strays home free (11.5, 15.6)": "passed",
   "the second raid of the day pays 0.85 of the first, and the fee is 2% (§9.4, §9.6)": "passed",
@@ -352,6 +357,7 @@
   "with a reminder chosen, the day's raids come inside it, and a later raid waits for the next (G34)": "passed",
   "with an edge that answers, the purge is asked as the deletion is made, and a deletion asked for keeps the edge's copy (20.5, 20.11)": "passed",
   "§11.6's rest: 45, 60 or 180 minutes by the outcome, less 5% a Hearth level, Loyal's 0.75 after a success and Sleepy's 1.5": "passed",
+  "§18.5's badges are graded gold at the mark, silver at half and bronze at a tenth, rounded up, and a mark of 1 has one grade (18.5)": "passed",
   "§8.5's worked example, through the server's binding: 27.44 silent at 215, the chord sounding at 217 (5.5, 8.5)": "passed"
  }
 }

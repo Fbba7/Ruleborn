@@ -30,6 +30,7 @@ const ROUTES := {
 	&"observatory": "res://scenes/observatory.tscn",
 	&"lab": "res://scenes/lab.tscn",
 	&"law": "res://scenes/law.tscn",
+	&"profile": "res://scenes/profile.tscn",
 	&"defences": "res://scenes/defences.tscn",
 	&"scout": "res://scenes/scout.tscn",
 }

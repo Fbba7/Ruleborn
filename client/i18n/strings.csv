@@ -906,3 +906,55 @@ LAW_CARD_PAGES,Pages: %d,Pages: %d,Páginas: %d,Páginas: %d,Seiten: %d,Pages : 
 LAW_CARD_WEAKNESS,Weakness: %s,Weakness: %s,Fraqueza: %s,Fraqueza: %s,Schwäche: %s,Faiblesse : %s
 CODEX_CARD,Law card,Law card,Carta da lei,Carta da lei,Gesetzeskarte,Carte de loi
 CODEX_CARD_SPOKEN,Open the law card of %s,Open the law card of %s,Abrir a carta da lei %s,Abrir a carta da lei %s,Gesetzeskarte von %s öffnen,Ouvrir la carte de loi de %s
+HOME_PROFILE,Profile,Profile,Perfil,Perfil,Profil,Profil
+PROFILE_TITLE,Profile and stats,Profile and stats,Perfil e estatísticas,Perfil e estatísticas,Profil und Statistik,Profil et statistiques
+PROFILE_FAILED,The profile could not answer: %s,The profile could not answer: %s,O perfil não pôde responder: %s,O perfil não pôde responder: %s,Das Profil konnte nicht antworten: %s,Le profil n'a pas pu répondre : %s
+ERR_PROFILE_PRIVATE,that profile is private,that profile is private,esse perfil é privado,esse perfil é privado,dieses Profil ist privat,ce profil est privé
+ERR_PROFILE_PRIVATE_AT_THIS_AGE,at your age your profile stays private,at your age your profile stays private,na sua idade o seu perfil continua privado,na tua idade o teu perfil continua privado,in deinem Alter bleibt dein Profil privat,à ton âge ton profil reste privé
+PROFILE_HEADER,Keeper level %d · %s,Keeper level %d · %s,Guardião nível %d · %s,Guardião nível %d · %s,Hüter Stufe %d · %s,Gardien niveau %d · %s
+PROFILE_RENOWN,Renown and league,Renown and league,Renome e liga,Renome e liga,Ruhm und Liga,Renom et ligue
+PROFILE_SEASON,"Season %d: Renown %s, %s","Season %d: Renown %s, %s","Temporada %d: Renome %s, %s","Temporada %d: Renome %s, %s","Saison %d: Ruhm %s, %s","Saison %d : Renom %s, %s"
+PROFILE_RECORD_TITLE,Outcomes,Outcomes,Resultados,Resultados,Ergebnisse,Résultats
+PROFILE_HEISTS,Heists: %s,Heists: %s,Assaltos: %s,Assaltos: %s,Raubzüge: %s,Casses : %s
+PROFILE_COUNT,%s %d,%s %d,%s %d,%s %d,%s %d,%s %d
+PROFILE_DEFENCES,"Defences: held %d, leaked %d (%d partial)","Defenses: held %d, leaked %d (%d partial)","Defesas: resistiu %d, vazou %d (%d parciais)","Defesas: resistiu %d, cedeu %d (%d parciais)","Abwehr: gehalten %d, durchgelassen %d (%d teilweise)","Défenses : tenu %d, cédé %d (%d partiels)"
+PROFILE_RECORDS,Records,Records,Recordes,Recordes,Rekorde,Records
+PROFILE_RECORD,%s: %s,%s: %s,%s: %s,%s: %s,%s: %s,%s : %s
+PROFILE_RECORD_NONE,%s: not recorded yet,%s: not recorded yet,%s: ainda não registrado,%s: ainda não registado,%s: noch nicht erfasst,%s : pas encore enregistré
+PROFILE_RECORD_FASTEST_ESCAPE,Fastest escape,Fastest escape,Fuga mais rápida,Fuga mais rápida,Schnellste Flucht,Fuite la plus rapide
+PROFILE_RECORD_FEWEST_ALARMS,Fewest alarms in a heist,Fewest alarms in a heist,Menos alarmes num assalto,Menos alarmes num assalto,Wenigste Alarme in einem Raubzug,Le moins d'alarmes en un casse
+PROFILE_RECORD_MOST_GUARDS_SLEPT_PAST,Most guards slept past,Most guards slept past,Mais guardas passados dormindo,Mais guardas passados a dormir,Meiste schlafende Wachen passiert,Le plus de gardes passés endormis
+PROFILE_RECORD_FEWEST_CAUGHT,Fewest crew caught,Fewest crew caught,Menos membros capturados,Menos membros capturados,Wenigste gefangene Crew,Le moins d'équipiers capturés
+PROFILE_RECORD_MOST_REALMS,Most realms in one raid,Most realms in one raid,Mais reinos num assalto,Mais reinos num assalto,Meiste Reiche in einem Raubzug,Le plus de royaumes en un casse
+PROFILE_RECORD_BIGGEST_HAUL,Biggest haul,Biggest haul,Maior saque,Maior saque,Größte Beute,Plus gros butin
+PROFILE_RECORD_LONGEST_DEFENCE,Longest defence held,Longest defense held,Defesa mais longa,Defesa mais longa,Längste gehaltene Abwehr,Plus longue défense tenue
+PROFILE_RECORD_FAVOURITE_EDGE,The edge raiders most often enter by,The edge raiders most often enter by,A borda por onde mais entram,A orla por onde mais entram,"Der Rand, über den Räuber meist kommen",Le bord par où les braqueurs entrent le plus
+PROFILE_RECORD_FAVOURITE_LAW,Favourite law,Favorite law,Lei favorita,Lei favorita,Lieblingsgesetz,Loi favorite
+PROFILE_RECORD_MINUTES_A_DAY,Minutes played a day,Minutes played a day,Minutos jogados por dia,Minutos jogados por dia,Gespielte Minuten am Tag,Minutes jouées par jour
+PROFILE_BADGES,Badges,Badges,Insígnias,Insígnias,Abzeichen,Badges
+PROFILE_BADGE,%s: %s of %s · %s,%s: %s of %s · %s,%s: %s de %s · %s,%s: %s de %s · %s,%s: %s von %s · %s,%s : %s sur %s · %s
+PROFILE_BADGE_FIRST_HEIST,First heist,First heist,First heist,First heist,First heist,First heist
+PROFILE_BADGE_GHOST,Ghost,Ghost,Ghost,Ghost,Ghost,Ghost
+PROFILE_BADGE_VAULT_BREAKER,Vault breaker,Vault breaker,Vault breaker,Vault breaker,Vault breaker,Vault breaker
+PROFILE_BADGE_IRON_WALL,Iron wall,Iron wall,Iron wall,Iron wall,Iron wall,Iron wall
+PROFILE_BADGE_LAW_HUNTER,Law hunter,Law hunter,Law hunter,Law hunter,Law hunter,Law hunter
+PROFILE_BADGE_RESONANT,Resonant,Resonant,Resonant,Resonant,Resonant,Resonant
+PROFILE_BADGE_HOARDER,Hoarder,Hoarder,Hoarder,Hoarder,Hoarder,Hoarder
+PROFILE_BADGE_FRIENDLY,Friendly,Friendly,Friendly,Friendly,Friendly,Friendly
+PROFILE_BADGE_PARADOX,Paradox,Paradox,Paradox,Paradox,Paradox,Paradox
+PROFILE_GRADE_GOLD,gold,gold,ouro,ouro,Gold,or
+PROFILE_GRADE_SILVER,silver,silver,prata,prata,Silber,argent
+PROFILE_GRADE_BRONZE,bronze,bronze,bronze,bronze,Bronze,bronze
+PROFILE_GRADE_NONE,not yet,not yet,ainda não,ainda não,noch nicht,pas encore
+PROFILE_TITLES_TITLE,Titles,Titles,Títulos,Títulos,Titel,Titres
+PROFILE_TITLES,"%s: %d titles, %d of %d mastery steps","%s: %d titles, %d of %d mastery steps","%s: %d títulos, %d de %d passos de maestria","%s: %d títulos, %d de %d passos de mestria","%s: %d Titel, %d von %d Meisterschaftsschritten","%s : %d titres, %d sur %d étapes de maîtrise"
+PROFILE_NO_TITLES,No titles yet: they come from mastery,No titles yet: they come from mastery,Ainda sem títulos: eles vêm da maestria,Ainda sem títulos: vêm da mestria,Noch keine Titel: sie kommen aus der Meisterschaft,Pas encore de titre : ils viennent de la maîtrise
+PROFILE_LOG_TITLE,Battle log,Battle log,Registro de batalhas,Registo de batalhas,Kampflog,Journal des combats
+PROFILE_LOG,%s heist · haul %s,%s heist · haul %s,Assalto %s · saque %s,Assalto %s · saque %s,Raubzug %s · Beute %s,Casse %s · butin %s
+PROFILE_LOG_GONE, · replay gone, · replay gone, · replay apagado, · repetição apagada, · Wiederholung gelöscht, · replay supprimé
+PROFILE_WATCH_SPOKEN,Watch the replay: %s,Watch the replay: %s,Ver o replay: %s,Ver a repetição: %s,Wiederholung ansehen: %s,Voir le replay : %s
+PROFILE_PRIVATE_AT_AGE,"Your profile stays private at your age, with no sharing","Your profile stays private at your age, with no sharing","Seu perfil continua privado na sua idade, sem compartilhamento","O teu perfil continua privado na tua idade, sem partilha","Dein Profil bleibt in deinem Alter privat, ohne Teilen","Ton profil reste privé à ton âge, sans partage"
+PROFILE_SHOWN,Other players can see your profile,Other players can see your profile,Outros jogadores podem ver seu perfil,Outros jogadores podem ver o teu perfil,Andere Spieler können dein Profil sehen,Les autres joueurs peuvent voir ton profil
+PROFILE_HIDDEN,Your profile is private,Your profile is private,Seu perfil é privado,O teu perfil é privado,Dein Profil ist privat,Ton profil est privé
+PROFILE_SHOW,Show my profile,Show my profile,Mostrar meu perfil,Mostrar o meu perfil,Mein Profil zeigen,Montrer mon profil
+PROFILE_HIDE,Make my profile private,Make my profile private,Tornar meu perfil privado,Tornar o meu perfil privado,Mein Profil privat machen,Rendre mon profil privé

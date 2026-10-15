@@ -3201,9 +3201,19 @@ dict(
                   "replay's checksums; a preview leaves the universe unchanged "
                   "(a test)",
              blocked_by=["TD.6", "TD.10", "TD.11", "TD.13", "TD.17", "TD.23"]),
-        dict(id="TD.24", owner="claude", status="blocked",
+        dict(id="TD.24", owner="claude", status="doing",
              title="Profile and stats, with its server route",
-             detail="v3.6's new §23.2 row: Renown and league over time, never "
+             detail="<strong>The Profile is built on the facts the server keeps.</strong> "
+                    "<code>GET /v1/profile</code> answers Renown and league this "
+                    "season and each closed one, heists by outcome, defences held and "
+                    "leaked with Partial apart, four of the ten records (the fastest "
+                    "escape, the fewest caught, the biggest haul, the longest defence "
+                    "held), §18.5's nine badges graded at their marks, titles from "
+                    "mastery, and the battle log with its replays. A 13-to-15 profile "
+                    "is never served to another account; anyone else's only once its "
+                    "switch is on. Left: the six records with no fact yet and the "
+                    "collection.<br><br>"
+                    "v3.6's new §23.2 row: Renown and league over time, never "
                     "the rating; heists by outcome, each by its own name with "
                     "Partial counted apart; defences held (Foiled) and leaked "
                     "(Clean, Loud and Partial), as v3.7 writes G69's recommended "

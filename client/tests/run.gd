@@ -8,7 +8,7 @@ extends SceneTree
 const DEADLINE_SECONDS := 480.0
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
 	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch",
-	"weaving", "codex", "harmony", "observatory", "scout", "lab", "defences", "law"]
+	"weaving", "codex", "harmony", "observatory", "scout", "lab", "defences", "law", "profile"]
 
 var _n := 0
 var _failed := 0
@@ -79,6 +79,7 @@ func _seed() -> void:
 	App.services.store.dispatch(&"observatory_chosen", {"bundle": "p1"})
 	App.services.store.dispatch(&"lab_loaded", {"view": LabTests.sample()})
 	App.services.store.dispatch(&"defences_loaded", {"view": DefencesTests.sample()})
+	App.services.store.dispatch(&"profile_loaded", {"view": ProfileTests.sample()})
 
 
 func _mount(scene: String) -> Control:
@@ -388,6 +389,7 @@ func _run() -> void:
 	await LabTests.new(self, check, _mount, server_url).run()
 	await DefencesTests.new(self, check, _mount, server_url).run()
 	await LawTests.new(self, check, _mount, server_url).run()
+	await ProfileTests.new(self, check, _mount, server_url).run()
 	# Online first, offline the exception (G41; tests/offline_tests.gd).
 	await OfflineTests.new(self, check, _mount).run()
 

@@ -79,6 +79,8 @@ async function busy() {
   t.service.lab.show(x.account);
   // The defence log read (defences.mjs).
   t.service.defences.show(x.account);
+  // The profile shown to others (profile.mjs).
+  t.service.profile.share(x.account, true);
   t.clock.now += DAY;
   raid(x.account, yBundle, null);
   const held = t.service.lease(x.account, yBundle);

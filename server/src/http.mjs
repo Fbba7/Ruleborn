@@ -8,6 +8,9 @@
 //   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?} → the lease
 //   GET  /v1/offer?size=3                                    → §12.22's list for the caller, no rating
 //   GET  /v1/observatory                                     → §12.3's targets as §12.4's cards, a Trace apart
+//   GET  /v1/profile                                         → your record, badges, titles and battle log (23.2)
+//   GET  /v1/profile/:account                                → another's record, if they opened it (20.2)
+//   PUT  /v1/profile             {"public"}                  → your profile shown to others or hidden (20.2)
 //   GET  /v1/defences                                        → the season's raids on you, each with its report (13.2)
 //   GET  /v1/defences/badge                                  → {unseen}: raids since the log was last read
 //   GET  /v1/lab                                             → the Lab's chambers, finds and hints (8.6)
@@ -452,6 +455,17 @@ export function handler(service, { webClientId = null, appleNotifications = null
         // in order and answered one by one (offline.mjs).
         if (request.method !== "POST") return json({ error: "no_such_route" }, 404);
         return json(confirmOffline(service, who(), (await body(request)).actions));
+      }
+      if (parts[1] === "profile") {
+        // §23.2's Profile and stats (profile.mjs): the player's own, its
+        // switch, and another's only as §20.2 lets it be seen.
+        const me = who();
+        if (request.method === "GET" && parts.length === 2) return json(service.profile.view(me));
+        if (request.method === "GET" && parts.length === 3) return json(service.profile.show(me, parts[2]));
+        if (request.method === "PUT" && parts.length === 2) {
+          return json(service.profile.share(me, (await body(request)).public));
+        }
+        return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "defences" && request.method === "GET") {
         // §23.2's defence log (defences.mjs): reading it clears the raid

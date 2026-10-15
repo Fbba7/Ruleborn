@@ -765,7 +765,38 @@ DELIVERABLES = [
         "in reach (§20.8, §21.1)",
         "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)")),
     ("4b", "Share sheet", FRONTEND, not_started("TD.23's screen gate passes for it")),
-    ("4b", "Profile", FRONTEND, not_started("TD.24's screen gate passes for it")),
+    # §23.2's Profile and stats (TD.24), counted from the heist rows, the
+    # Codex and the Lab (profile.mjs).
+    ("4b", "Profile", FRONTEND, parts(client_tests(
+        "the profile shows Renown and league over time and never a rating, heists by each outcome's name, and "
+        "defences held and leaked with Partial apart (12.9, 12.15, 23.2)",
+        "the profile's ten records say each value, times as a clock, and a record with no fact yet says so (13.2, 23.2)",
+        "each badge shows its count against its mark and the grade reached, and titles come from mastery only (18.5)",
+        "the battle log offers each heist's replay while it is kept; a 13-to-15 profile is locked private with no "
+        "sharing, and anyone else's switch shows or hides it (20.2, 23.2)",
+        "the profile is fetched, its switch is sent to the server, and a refusal keeps the profile on show and says "
+        "why (20.2)",
+        "the profile screen draws the record, the battle log with its replays and the visibility switch (23.2)",
+        "against the server: a new Keeper's profile is private, with no heists or defences, the starting laws a "
+        "bronze Law hunter and no first heist yet (18.5, 20.2)",
+        "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach "
+        "(§20.8, §21.1)",
+        "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)"),
+        server_tests(
+        "§18.5's badges are graded gold at the mark, silver at half and bronze at a tenth, rounded up, and a mark of 1 "
+        "has one grade (18.5)",
+        "the profile counts heists by each outcome's name and defences held and leaked, Partial apart, and never the "
+        "rating (12.9, 12.15, G69)",
+        "the profile's records come from the heist rows: the fastest escape, the fewest caught, the biggest haul and "
+        "the longest defence held, the rest not recorded yet (13.2, 23.2)",
+        "the profile's badges count first heist, clean heists, Vaults opened, defences held, laws met, resonances "
+        "found, Starlight banked and friendly heists, each graded (18.5)",
+        "a 13-to-15 profile is never served to another account, a 16-to-17 or adult one only once its switch is on, "
+        "and a 13-to-15 player cannot turn it on (20.2)",
+        "the profile is served over HTTP, its switch set there (20.2, 23.2)"),
+        not_started("the six records with no fact on the server yet — fewest alarms, most guards slept past, most "
+                    "realms in one raid, the edge raiders most often enter by, the favourite law and minutes played "
+                    "a day — and the collection (TD.39, G57, T3.3)"))),
     ("4b", "Hatch", FRONTEND, client_tests(
         "Hatch shows each Nursery's ready births of the three it holds, when the next comes, and the price "
         "(10.2, 9.5, 23.2)",

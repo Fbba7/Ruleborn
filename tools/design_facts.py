@@ -244,6 +244,13 @@ FAULTS_BY_STRAIN = ((100, 1), (110, 2), (118, 3), (125, 4))
 #: §12.3: "Refreshing the list costs Aether: 50, doubling with each refresh in
 #: the same hour."
 OBSERVATORY_REFRESH_AETHER = 50
+#: §18.5's badges, each "graded at the designs' marks: gold at the mark,
+#: silver at half of it and bronze at a tenth, rounded up — Ghost 50, Vault
+#: breaker 250, Iron wall 100, Law hunter 24, Resonant 12, Hoarder 5,000,
+#: Friendly 25 — while First heist and Paradox, whose mark is 1, have one
+#: grade".
+BADGE_MARKS = {"first_heist": 1, "ghost": 50, "vault_breaker": 250, "iron_wall": 100, "law_hunter": 24,
+               "resonant": 12, "hoarder": 5000, "friendly": 25, "paradox": 1}
 #: §9.5: "Lab experiment | 400 Aether × Lab level".
 LAB_AETHER_PER_LEVEL = 400
 #: §10.2's Resonance Lab: "the first, in the first session, takes 5 minutes
@@ -552,6 +559,7 @@ HOME = {
     "FAULTS_BY_STRAIN": "5.5",
     "OBSERVATORY_REFRESH_AETHER": "12.3",
     "LAB_AETHER_PER_LEVEL": "9.5",
+    "BADGE_MARKS": "18.5",
     "LAB_FIRST_MINUTES": "10.2",
     "LAB_EMPTY_PAGES": "7.6",
     "LAB_HINT_AFTER": "8.6",
@@ -775,6 +783,11 @@ STATED = {
                          lambda m: ((int(m[0]), 1), (int(m[1]), 2), (int(m[2]), 3), (int(m[3]), 4))),
     "OBSERVATORY_REFRESH_AETHER": (r"Refreshing the list costs Aether: (\d+), doubling with each refresh in the same hour",
                                    lambda m: int(m[0])),
+    "BADGE_MARKS": (r"Ghost (\d+), Vault breaker (\d+), Iron wall (\d+), Law hunter (\d+), Resonant (\d+), "
+                    r"Hoarder ([\d,]+), Friendly (\d+) — while First heist and Paradox, whose mark is (\d+)",
+                    lambda m: {"first_heist": int(m[7]), "ghost": int(m[0]), "vault_breaker": int(m[1]),
+                               "iron_wall": int(m[2]), "law_hunter": int(m[3]), "resonant": int(m[4]),
+                               "hoarder": int(m[5].replace(",", "")), "friendly": int(m[6]), "paradox": int(m[7])}),
     "LAB_AETHER_PER_LEVEL": (r"\| Lab experiment\n\| (\d+) Aether × Lab level", lambda m: int(m[0])),
     "LAB_FIRST_MINUTES": (r"the first, in the first session, takes (\d+) minutes and is free", lambda m: int(m[0])),
     "LAB_EMPTY_PAGES": (r"Lab experiments that find nothing give (\d+) pages", lambda m: int(m[0])),

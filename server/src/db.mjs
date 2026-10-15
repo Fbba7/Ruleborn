@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   guardian_sage     TEXT,
   -- §23.2's defence log last read: raids after it are new (defences.mjs).
   defences_seen_at  INTEGER,
+  -- §20.2's profile visibility: off by default, never on for 13 to 15.
+  profile_public    INTEGER NOT NULL DEFAULT 0,
   -- §20.11's terms-of-use gate: the version of the terms accepted (safety.mjs).
   terms_version     TEXT,
   created_at        INTEGER NOT NULL,
@@ -815,6 +817,7 @@ const ADDED = [
   // §11.7's guardian Sage, stationed at the Heart (keeper.mjs).
   ["accounts", "guardian_sage", "TEXT"],
   ["accounts", "defences_seen_at", "INTEGER"],
+  ["accounts", "profile_public", "INTEGER NOT NULL DEFAULT 0"],
   // The terms of use accepted (safety.mjs).
   ["accounts", "terms_version", "TEXT"],
   ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],

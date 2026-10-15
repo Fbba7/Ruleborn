@@ -216,6 +216,11 @@
      "deletion": "cleared",
      "holds": "when the player last read the defence log, so later raids show as new (§23.2)"
     },
+    "profile_public": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "whether the player shows their profile to others, never for 13 to 15 (§20.2)"
+    },
     "terms_version": {
      "type": "other-usage",
      "deletion": "cleared",

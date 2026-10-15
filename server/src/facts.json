@@ -15,6 +15,17 @@
   0.1222,
   0.1698
  ],
+ "BADGE_MARKS": {
+  "first_heist": 1,
+  "friendly": 25,
+  "ghost": 50,
+  "hoarder": 5000,
+  "iron_wall": 100,
+  "law_hunter": 24,
+  "paradox": 1,
+  "resonant": 12,
+  "vault_breaker": 250
+ },
  "BIRTH_PRICE": [
   100,
   1.3455
