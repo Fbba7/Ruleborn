@@ -31,13 +31,14 @@
 //! | -10 | an era that is not one (`rb_record`, `rb_record_drawn`) |
 //! | -11 | the crew never landed: no landing at tick 0 on an open edge tile (§5.4) |
 
+use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Mutex;
 
 use crate::heist::Grade;
 use crate::island::Island;
 use crate::replay::{Command, Heist, Kind, Manifest, MAX_HEIST_BYTES};
 use crate::era::Era;
-use crate::{digest, draw, fixture, record_in, record_with, rules_version, verify_on, Refusal};
+use crate::{digest, draw, fixture, record_in, record_with, rules_version, verify_report, Refusal};
 
 /// Room for the largest island (14 x 14 tiles at three bytes, and its lists)
 /// and a replay beside it, many times over.
@@ -51,6 +52,18 @@ fn with_buffer<T>(f: impl FnOnce(&mut Vec<u8>) -> T) -> T {
         *guard = vec![0; BUFFER_BYTES];
     }
     f(&mut guard)
+}
+
+/// Where `rb_verify` writes a verified heist's report (`Report::encode`),
+/// after the verdict, and how long the last one was.
+const REPORT_AT: usize = 64;
+static REPORT_BYTES: AtomicU32 = AtomicU32::new(0);
+
+/// The length of the report the last `rb_verify` wrote at byte 64 (TD.39).
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_report_bytes() -> u32 {
+    REPORT_BYTES.load(Ordering::Relaxed)
 }
 
 fn refusal_code(r: Refusal) -> i32 {
@@ -170,7 +183,9 @@ pub extern "C" fn rb_verdict_bytes() -> u32 {
 /// was used, which §12.5 bills)
 /// ```
 /// `rb_verdict_bytes` says how long the verdict is, so a host reading an
-/// older build, which wrote 32 or 33, knows not to read past it.
+/// older build, which wrote 32 or 33, knows not to read past it. From byte
+/// 64 the heist's report follows (`Report::encode`, TD.39), its length
+/// `rb_report_bytes`.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
 pub extern "C" fn rb_verify(replay_len: u32, island_len: u32) -> i32 {
@@ -184,8 +199,8 @@ pub extern "C" fn rb_verify(replay_len: u32, island_len: u32) -> i32 {
         let (r, i) = (replay_len as usize, island_len as usize);
         let Some(heist) = Heist::decode(&b[..r]) else { return -1 };
         let Ok(island) = Island::decode(&b[r..r + i]) else { return -2 };
-        match verify_on(&island, &heist) {
-            Ok(outcome) => {
+        match verify_report(&island, &heist) {
+            Ok((outcome, report)) => {
                 let grade = match outcome.grade {
                     Grade::Clean => 0,
                     Grade::Loud => 1,
@@ -204,6 +219,10 @@ pub extern "C" fn rb_verify(replay_len: u32, island_len: u32) -> i32 {
                 b[24..32].copy_from_slice(&outcome.broken.to_le_bytes());
                 b[32] = outcome.out_mask;
                 b[33] = outcome.casts_used;
+                // TD.39: the report, after the verdict at REPORT_AT.
+                let wire = report.encode();
+                b[REPORT_AT..REPORT_AT + wire.len()].copy_from_slice(&wire);
+                REPORT_BYTES.store(wire.len() as u32, Ordering::Relaxed);
                 0
             }
             Err(refusal) => refusal_code(refusal),

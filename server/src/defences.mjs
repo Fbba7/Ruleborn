@@ -8,11 +8,13 @@
 // are written into the heist's outcome at settlement (service.mjs), so the
 // log reads one record (TD.39): `denied`, the clean haul a full bag would
 // make on this island less the clean haul of what the raider banked, both
-// priced as §9.4 prices a crew's unbanked load (G31); and `heldMs`, the
-// heist's length, which is the seconds from the landing, at tick 0, to the
-// last crew member's escape or capture. Where the crew was seen and what
-// fired need the simulation's event log at settlement (TD.13, TD.39), and
-// a raid settled before these facts were kept shows them as not recorded.
+// priced as §9.4 prices a crew's unbanked load (G31); `heldMs`, the seconds
+// from the landing to the last crew member's escape or capture; and
+// `report`, what the simulation's event log says at settlement (sim.mjs
+// `report`, TD.39): where the crew landed, each place a guard reached
+// Alerted, each ward that fired, the bells rung, the realm alarm's highest
+// level and the posts whose guards caught anyone. A raid settled before
+// these facts were kept shows them as not recorded.
 //
 // The log keeps the season's raids, newest first; it offers Watch replay
 // while the replay is kept (§13, §24.3) and says when it is gone; it offers
@@ -39,8 +41,9 @@ export class Defences {
   rows(account, now) {
     const season = this.service.seasons.current(now);
     return this.db.prepare(
-      `SELECT h.token, h.bundle, h.attacker, h.submitted_at, h.outcome, h.replay_gone, a.keeper_level
+      `SELECT h.token, h.bundle, h.attacker, h.submitted_at, h.outcome, h.replay_gone, a.keeper_level, s.realm_level
          FROM heists h JOIN leases l ON l.token = h.token JOIN accounts a ON a.id = h.attacker
+         JOIN snapshots s ON s.bundle = h.bundle
         WHERE l.defender = ? AND h.validated = 1 AND ${RAIDED} AND h.submitted_at >= ?
         ORDER BY h.submitted_at DESC, h.token`).all(account, season.starts_at);
   }
@@ -63,6 +66,10 @@ export class Defences {
         held_seconds: Number.isInteger(o.heldMs) ? Math.round(o.heldMs / 1000) : null,
         caught: o.verdict?.caught ?? 0, crew: o.verdict?.crew ?? null,
         defence: o.defence ? { total: o.defence.total } : null,
+        // The island's side, so the landing is named by its edge (§5.4).
+        report: o.report ? { side: 9 + r.realm_level, landing: o.report.landing, seen: o.report.seen,
+                             fired: o.report.fired, bells: o.report.bells, alarm: o.report.alarm,
+                             caught_by: o.report.caughtBy } : null,
         replay: r.replay_gone ? "gone" : "kept",
         trace: trace ? { bundle: trace } : null,
         new: r.submitted_at > seen,

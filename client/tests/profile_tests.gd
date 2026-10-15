@@ -66,6 +66,13 @@ func _words() -> void:
 			and r[5] == "Biggest haul: 1,840" and r[6] == "Longest defence held: 2:20"
 			and r[1] == "Fewest alarms in a heist: not recorded yet",
 		"%s" % [r])
+	check.call("the records the event log feeds say the fewest alarms, the most guards slept past and the edge "
+			+ "raiders most often land on by its name (13.2, 23.2, TD.39)",
+		ProfilePresenter.record({"id": "fewest_alarms", "value": 1}) == "Fewest alarms in a heist: 1"
+			and ProfilePresenter.record({"id": "most_guards_slept_past", "value": 2}) == "Most guards slept past: 2"
+			and ProfilePresenter.record({"id": "favourite_edge", "value": "west"})
+				== "The edge raiders most often enter by: West edge",
+		ProfilePresenter.record({"id": "favourite_edge", "value": "west"}))
 	check.call("each badge shows its count against its mark and the grade reached, and titles come from mastery "
 			+ "only (18.5)",
 		p["badges"] == ["First heist: 10 of 1 · gold", "Ghost: 26 of 50 · silver", "Hoarder: 600 of 5,000 · bronze",

@@ -643,7 +643,8 @@ export class Service {
     return this.settle(lease, replay, logHash, now,
                        { validated: true, verdict: result.verdict, grace, crew,
                          cast: { laws: cast, aether: castAether },
-                         heistMs: Math.round((header.ticks / TICKS_PER_SECOND) * 1000) });
+                         heistMs: Math.round((header.ticks / TICKS_PER_SECOND) * 1000),
+                         report: result.report });
   }
 
   /**
@@ -679,7 +680,14 @@ export class Service {
                       { grace: decision.grace },
                       // §13.2's "how long the defence held": the heist's length,
                       // its crew landing at tick 0 (TD.39, defences.mjs).
-                      Number.isInteger(decision.heistMs) ? { heldMs: decision.heistMs } : {});
+                      // §13.2's "held": from the landing to the last crew
+                      // member out or caught, as the event log has it; the
+                      // heist's whole length from a build without one.
+                      decision.report ? { heldMs: decision.report.held * 1000 }
+                        : Number.isInteger(decision.heistMs) ? { heldMs: decision.heistMs } : {},
+                      // §13.2's report and the Profile's facts, from the
+                      // event log at settlement (TD.39, G57).
+                      decision.report ? { report: decision.report } : {});
         // §11.5: the first heist brings two strays home, free (home.mjs);
         // the roster says so, and the heist's outcome is the haul's alone.
         const crossed = lawsOf(this.store.get(lease.bundle));

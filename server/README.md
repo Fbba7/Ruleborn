@@ -814,9 +814,11 @@ leave weaving out.
 `src/profile.mjs` is §23.2's Profile and stats. `GET /v1/profile` counts the
 player's record from the heist rows, the Codex and the Lab: Renown and league
 this season and each closed one, never the rating; heists by each outcome's
-name; defences held and leaked, Partial apart (G69); four of the designs' ten
-records that have a fact — the fastest escape, the fewest caught, the biggest
-haul, the longest defence held — the other six answered as null; §18.5's nine
+name; defences held and leaked, Partial apart (G69); seven of the designs'
+ten records that have a fact — the fastest escape, the fewest caught, the
+biggest haul, the longest defence held, and from each heist's event-log
+report the fewest alarms, the most guards slept past and the edge raiders
+most often land on — the other three answered as null; §18.5's nine
 badges graded at their marks (gold at the mark, silver at half and bronze at
 a tenth, rounded up); titles from mastery; and the battle log with its
 replays. §20.2: a 13-to-15 profile is never served to another account and
@@ -867,16 +869,19 @@ measured for an island's digest (G55) are not built.
 `src/defences.mjs` is §23.2's defence log. `GET /v1/defences` lists the
 season's raids on the player, newest first: matchmade and Trace raids, not
 echoes or games among friends. Each is held when Foiled and leaked otherwise,
-Partial counted apart (§12.9, G69), with two facts settlement now writes into
-the heist's outcome (TD.39): the haul denied, the clean haul a full bag would
-make on the island less the clean haul of what the raider banked, both
-priced as §9.4 prices a crew's unbanked load (G31); and how long the defence
-held, the heist's length from the landing at tick 0. A raid settled before
-these were kept says so. Each row says whether its replay is kept, names the
-island it was played on, and offers Trace where `traceable()` names that raid
-(§12.3, G70). Reading the log clears the raid badge, which
-`GET /v1/defences/badge` counts. Where the crew was seen and what fired need
-the simulation's event log at settlement, and are not recorded yet.
+Partial counted apart (§12.9, G69), with the facts settlement writes into the
+heist's outcome (TD.39): the haul denied, the clean haul a full bag would make
+on the island less the clean haul of what the raider banked, both priced as
+§9.4 prices a crew's unbanked load (G31); how long the defence held, from the
+landing to the last crew member out or caught; and the report the
+re-simulation's event log gives (`rb_verify` writes it after the verdict,
+sim.mjs `report`): where the crew landed, each place a guard reached Alerted
+on seeing it, each ward that fired and how often, the bells rung, the realm
+alarm's highest level and the posts whose guards caught anyone. A raid
+settled before these were kept says so. Each row says whether its replay is
+kept, names the island it was played on, and offers Trace where
+`traceable()` names that raid (§12.3, G70). Reading the log clears the raid
+badge, which `GET /v1/defences/badge` counts.
 
 ## The Resonance Lab
 

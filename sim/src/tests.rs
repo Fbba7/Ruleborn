@@ -2593,6 +2593,40 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
 }
 
 #[test]
+fn a_verified_heist_reports_where_the_crew_landed_and_was_seen_what_fired_and_who_caught_them() {
+    // TD.39: the defender's report and Profile's records read the event log
+    // at settlement (§13.2, §23.2), outside the checksum.
+    use crate::island::Island;
+    use crate::{draw, record, verify_on, verify_report};
+    let island = Island::example();
+    let mut caught = 0;
+    let mut seen = 0;
+    for seed in 0..12u64 {
+        let heist = record(&island, seed, 4_500, 4, draw(&island, seed, 4_500, 4));
+        let (outcome, report) = verify_report(&island, &heist).expect("verified");
+        assert_eq!(outcome, verify_on(&island, &heist).expect("verified"), "the same verdict");
+        let (lx, ly) = report.landing.expect("a crew always lands");
+        let side = island.side() as u8;
+        assert!(lx == 0 || ly == 0 || lx == side - 1 || ly == side - 1, "on an edge (5.4)");
+        assert!(report.slept as usize <= island.guards.len());
+        assert!(report.alerted as usize <= island.guards.len() + 1);
+        for &(row, x, y) in &report.caught_by {
+            assert!(row == 255 || island.guards.iter().any(|p| (p.row, p.x, p.y) == (row, x, y)), "a post's guard");
+        }
+        for &(kind, x, y, n) in &report.fired {
+            assert!(n > 0 && island.wards.iter().any(|w| *w == (kind, x, y)), "a ward of the island's");
+        }
+        assert!(report.seen.iter().all(|&(c, x, y)| c < 4 && x < side && y < side));
+        caught += report.caught_by.len();
+        seen += report.seen.len();
+        let wire = report.encode();
+        assert!(report.held as u32 <= 4_500 / crate::TICKS_PER_SECOND);
+        assert_eq!(wire.len(), 11 + 3 * report.seen.len() + 4 * report.fired.len() + 3 * report.caught_by.len());
+    }
+    assert!(caught > 0 && seen > 0, "the drawn crews are seen and caught on the example island");
+}
+
+#[test]
 fn a_replay_verifies_on_its_island_and_nowhere_else() {
     use crate::island::Island;
     use crate::{draw, record, verify_on, Refusal};

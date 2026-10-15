@@ -236,6 +236,8 @@ export class Build {
         outMask: length > 32 ? v[32] : null,
         castsUsed: length > 33 ? v[33] : null,
       },
+      // TD.39: the event log's report, from a build that writes one.
+      report: this.x.rb_report_bytes ? report(this.buffer().slice(64, 64 + this.x.rb_report_bytes())) : null,
     };
   }
 
@@ -326,6 +328,28 @@ export class Build {
     const n = this.x.rb_example_island(open ? 1 : 0);
     return this.buffer().slice(0, n);
   }
+}
+
+/** The wards by their code in a bundle (island.rs `ward_from`). */
+export const WARD_CODES = ["crystal_wall", "thorn_hedge", "static_coil", "gravity_well", "time_snare", "lantern_glare"];
+
+/**
+ * A verified heist's report (sim `Report::encode`, §13.2, TD.39): where the
+ * crew landed, the seconds the defence held, the realm alarm's highest
+ * level, the bells rung, the posts that never noticed anyone and those
+ * Alerted; each place a guard reached Alerted on seeing a crew member, each
+ * ward that fired with how often, and the posts whose guards caught anyone
+ * (row null for alarm level 5's Warden).
+ */
+export function report(b) {
+  const view = new DataView(b.buffer, b.byteOffset, b.byteLength);
+  let at = 8;
+  const list = (size, read) => Array.from({ length: b[at++] }, () => { const r = read(at); at += size; return r; });
+  const seen = list(3, (i) => ({ crew: b[i], x: b[i + 1], y: b[i + 2] }));
+  const fired = list(4, (i) => ({ ward: WARD_CODES[b[i]], x: b[i + 1], y: b[i + 2], times: b[i + 3] }));
+  const caughtBy = list(3, (i) => ({ row: b[i] === 255 ? null : b[i], x: b[i + 1], y: b[i + 2] }));
+  return { landing: b[0] === 255 ? null : { x: b[0], y: b[1] }, held: view.getUint16(2, true), alarm: b[4],
+           bells: b[5], slept: b[6], alerted: b[7], seen, fired, caughtBy };
 }
 
 /**

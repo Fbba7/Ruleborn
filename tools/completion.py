@@ -816,8 +816,18 @@ DELIVERABLES = [
         "the server can trace, never a foiled one (12.3, 13, 24.3, G70)",
         "reading the defence log clears the raid badge, and a new raid sets it again (TD.66)",
         "the defence log and its badge are served over HTTP (13.2)"),
-        not_started("where the crew was seen and what fired, the island drawn with them and the guards that "
-                    "caught anyone, recorded from the simulation's event log at settlement (TD.39, TD.13)"))),
+        # §13.2's facts from the event log at settlement (TD.39); naming each
+        # place by its nearest building or feature, and the island drawn
+        # with the crew, are the world's (TD.13).
+        parts(client_tests(
+            "a raid's report says from the event log where the crew landed, each place a guard was alerted to it, "
+            "each ward that fired and how often, the bells, how high the alarm climbed and whose guards caught "
+            "anyone (13.2, TD.39)"),
+            server_tests(
+            "a raid on a defended island records from the event log where the crew landed, each place a guard "
+            "reached Alerted, what fired and whose guards caught anyone (13.2, TD.39)"),
+            not_started("each place named by its nearest building or feature, and the island drawn on the world "
+                        "with the crew and the guards that caught anyone (13.2, TD.13)")))),
     # §23.2's first launch (TD.26): the title, the age check, §20.2's
     # protections and the Keeper's name, kept on the phone with no account;
     # the face and §16's moments are not built.
@@ -949,9 +959,16 @@ DELIVERABLES = [
         "a 13-to-15 profile is never served to another account, a 16-to-17 or adult one only once its switch is on, "
         "and a 13-to-15 player cannot turn it on (20.2)",
         "the profile is served over HTTP, its switch set there (20.2, 23.2)"),
-        not_started("the six records with no fact on the server yet — fewest alarms, most guards slept past, most "
-                    "realms in one raid, the edge raiders most often enter by, the favourite law and minutes played "
-                    "a day — and the collection (TD.39, G57, T3.3)"))),
+        # The ten records' last six and the collection: three from each
+        # heist's event-log report (TD.39), the rest not yet.
+        parts(client_tests(
+            "the records the event log feeds say the fewest alarms, the most guards slept past and the edge raiders "
+            "most often land on by its name (13.2, 23.2, TD.39)"),
+            server_tests(
+            "the profile's records from each heist's event-log report: the fewest alarms and the most guards slept "
+            "past in a heist that got out, and the edge raiders most often land on (13.2, 23.2, TD.39)"),
+            not_started("most realms in one raid (T3.3), the favourite law and minutes played a day, which no fact "
+                        "the server keeps defines (G57), and the collection")))),
     ("4b", "Hatch", FRONTEND, client_tests(
         "Hatch shows each Nursery's ready births of the three it holds, when the next comes, and the price "
         "(10.2, 9.5, 23.2)",

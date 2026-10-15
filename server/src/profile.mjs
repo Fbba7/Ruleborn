@@ -6,12 +6,14 @@
 // Private, with no sharing, for 13 to 15 (20.2)."
 //
 // Every number is counted from the heist rows, the Codex and the Lab. Of the
-// ten records, four have a fact on the server: the fastest escape and the
-// longest defence held (each heist's length, written at settlement), the
-// biggest haul, and the fewest crew caught in a heist that got out. The
-// fewest alarms, most guards slept past, most realms in one raid, the edge
-// raiders most often enter by, the favourite law and minutes played a day
-// have no fact the server keeps yet (TD.39, G57, T3.3), and say so.
+// ten records, seven have a fact on the server: the fastest escape and the
+// longest defence held (§13.2's held, written at settlement), the biggest
+// haul, the fewest crew caught in a heist that got out, and from each
+// heist's event-log report (TD.39) the fewest alarms — the realm alarm's
+// highest level — and the most guards slept past in a heist that got out,
+// and the edge raiders most often land on. Most realms in one raid waits on
+// universes of several realms (T3.3); the favourite law and minutes played
+// a day have no fact the server keeps (G57), and say so.
 //
 // §18.5's nine badges pay nothing; each is graded at its mark, gold at the
 // mark, silver at half of it and bronze at a tenth, rounded up, while First
@@ -54,6 +56,25 @@ export const RECORDS = ["fastest_escape", "fewest_alarms", "most_guards_slept_pa
                         "most_realms", "biggest_haul", "longest_defence", "favourite_edge", "favourite_law",
                         "minutes_a_day"];
 
+/** The side of the island a landing tile is on (§5.4), a corner counted
+ *  north or south; null for none. */
+export function edgeOf(landing, side) {
+  if (!landing) return null;
+  if (landing.y === 0) return "north";
+  if (landing.y === side - 1) return "south";
+  if (landing.x === 0) return "west";
+  return landing.x === side - 1 ? "east" : null;
+}
+
+/** The commonest of `xs`, the first met on a tie; null for none. */
+function favourite(xs) {
+  const n = new Map();
+  for (const x of xs) n.set(x, (n.get(x) ?? 0) + 1);
+  let best = null;
+  for (const [x, c] of n) if (best === null || c > n.get(best)) best = x;
+  return best;
+}
+
 export class Profile {
   constructor(service) {
     this.service = service;
@@ -70,12 +91,13 @@ export class Profile {
       .map((r) => ({ ...r, o: JSON.parse(r.outcome) }));
   }
 
-  /** The raids on the player, every season. */
+  /** The raids on the player, every season, each with its island's side. */
   raids(account) {
     return this.db.prepare(
-      `SELECT h.outcome FROM heists h JOIN leases l ON l.token = h.token
+      `SELECT h.outcome, s.realm_level FROM heists h JOIN leases l ON l.token = h.token
+         JOIN snapshots s ON s.bundle = h.bundle
         WHERE l.defender = ? AND h.validated = 1 AND l.mode = 'raid' AND l.echo = 0`).all(account)
-      .map((r) => JSON.parse(r.outcome));
+      .map((r) => ({ ...JSON.parse(r.outcome), side: 9 + r.realm_level }));
   }
 
   /** The profile: the player's whole record, and, for themselves, the battle
@@ -98,6 +120,9 @@ export class Profile {
       fewest_caught: min(escaped.map((o) => o.verdict?.caught ?? null)),
       biggest_haul: max(raids.map((h) => h.o.haul?.total ?? null)),
       longest_defence: max(on.filter((o) => !out(o)).map(heldMs)),
+      fewest_alarms: min(escaped.map((o) => o.report?.alarm ?? null)),
+      most_guards_slept_past: max(escaped.map((o) => o.report?.slept ?? null)),
+      favourite_edge: favourite(on.map((o) => edgeOf(o.report?.landing, o.side)).filter(Boolean)),
     };
     const seasons = this.service.seasons;
     const now = this.service.now();

@@ -57,7 +57,40 @@ test("a raid settled from a real replay records its haul denied and how long it 
   assert.equal(out.validated, true);
   const [r] = t.service.defences.show(t.defender.account).raids;
   assert.ok(Number.isInteger(r.denied) && r.denied >= 0);
-  assert.equal(r.held_seconds, Math.round(lease.ticks / TICKS_PER_SECOND), "the heist's length, landed at tick 0");
+  assert.ok(r.held_seconds > 0 && r.held_seconds < Math.round(lease.ticks / TICKS_PER_SECOND),
+            "from the landing to the last of the crew aboard the skiff, before the clock");
+  const { alarm, ...rest } = r.report;
+  assert.deepEqual(rest, { side: 12, landing: { x: 0, y: 0 }, seen: [], fired: [], bells: 0, caught_by: [] },
+                   "an undefended island: nobody saw them, nothing fired");
+  assert.ok(alarm > 0, "the realm alarm still climbs with time (12.17)");
+});
+
+test("a raid on a defended island records from the event log where the crew landed, each place a guard reached Alerted, what fired and whose guards caught anyone (13.2, TD.39)", () => {
+  const t = twoPlayers(false);
+  const island = t.island;
+  const side = 9 + island[4];
+  const reports = [];
+  for (let i = 0; i < 10; i++) {
+    t.clock.now += HOUR;
+    const lease = t.service.lease(t.raider.account, t.bundle);
+    const out = t.service.submit(t.raider.account, lease.token, play(t, lease));
+    assert.equal(out.validated, true);
+    const o = JSON.parse(t.service.db.prepare("SELECT outcome FROM heists WHERE token = ?").get(lease.token).outcome);
+    reports.push({ ...o.report, caught: o.verdict.caught, seconds: Math.round(lease.ticks / TICKS_PER_SECOND),
+                   heldMs: o.heldMs });
+  }
+  const edge = ({ x, y }) => x === 0 || y === 0 || x === side - 1 || y === side - 1;
+  for (const r of reports) {
+    assert.ok(edge(r.landing), "a crew lands on an edge (5.4)");
+    assert.ok(r.held > 0 && r.held <= r.seconds && r.heldMs === r.held * 1000);
+    assert.ok(r.seen.every((s) => s.x < side && s.y < side && s.crew < 3));
+    assert.ok(r.fired.every((f) => f.times > 0 && typeof f.ward === "string"));
+    assert.ok(r.caughtBy.every((c) => c.row === null || (c.row >= 0 && c.row < 5)));
+    assert.ok(r.slept + r.alerted >= 0 && r.alarm >= 0);
+  }
+  assert.ok(reports.some((r) => r.seen.length > 0), "somewhere a guard saw the crew");
+  const v = t.service.defences.show(t.defender.account);
+  assert.deepEqual(v.raids.at(-1).report.seen, reports[0].seen, "the log shows the report");
 });
 
 test("the log offers Watch replay while the replay is kept and says when it is gone, and Trace only on the raid the server can trace, never a foiled one (12.3, 13, 24.3, G70)", () => {

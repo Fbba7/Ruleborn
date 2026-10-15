@@ -10,14 +10,19 @@ import { twoPlayers } from "./setup.mjs";
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
 const HOUR = 60 * 60 * 1000;
 
-/** A raid on the defender settled with `verdict`, lasting `heistMs`. */
-function raid(t, verdict, heistMs) {
+/** A raid on the defender settled with `verdict`, lasting `heistMs`, with
+ *  the event log's `report` if one is given. */
+function raid(t, verdict, heistMs, report = null) {
   t.clock.now += HOUR;
   const lease = t.service.lease(t.raider.account, t.bundle);
   const row = t.service.db.prepare("SELECT * FROM leases WHERE token = ?").get(lease.token);
   return t.service.settle(row, new Uint8Array(8), `pr-${t.clock.now}`, t.clock.now,
-                          { validated: true, verdict, heistMs });
+                          { validated: true, verdict, heistMs, report });
 }
+
+/** An event-log report (sim.mjs `report`) landing on (x, y). */
+const report = (x, y, alarm, slept) => ({ landing: { x, y }, held: 60, alarm, bells: 0, slept, alerted: 0,
+                                         seen: [], fired: [], caughtBy: [] });
 
 const verdict = (g, banked, caught = 0) =>
   ({ grade: g, out: 3 - caught, caught, crew: 3, banked, capacity: 800, pages: 0, cracked: 0, left: 0 });
@@ -61,6 +66,22 @@ test("the profile's records come from the heist rows: the fastest escape, the fe
   assert.equal(rec(t.service.profile.view(t.defender.account)).longest_defence, 140_000);
   for (const id of ["fewest_alarms", "most_guards_slept_past", "most_realms", "favourite_edge", "favourite_law",
                     "minutes_a_day"]) assert.equal(p[id], null, id);
+});
+
+test("the profile's records from each heist's event-log report: the fewest alarms and the most guards slept past in a heist that got out, and the edge raiders most often land on (13.2, 23.2, TD.39)", () => {
+  const t = twoPlayers();
+  // The example island is realm level 3: 12 tiles a side.
+  raid(t, verdict("clean", 800), 70_000, report(0, 5, 2, 1));
+  raid(t, verdict("loud", 500, 1), 50_000, report(11, 4, 1, 0));
+  raid(t, verdict("partial", 200, 2), 50_000, report(0, 8, 4, 2));
+  raid(t, verdict("foiled", 0, 3), 140_000, report(5, 11, 0, 3));
+  const rec = (p) => Object.fromEntries(p.records.map((r) => [r.id, r.value]));
+  const p = rec(t.service.profile.view(t.raider.account));
+  assert.equal(p.fewest_alarms, 1, "the lowest the realm alarm stayed in a heist that got out");
+  assert.equal(p.most_guards_slept_past, 2, "a foiled heist slept past nobody it counts");
+  assert.equal(rec(t.service.profile.view(t.defender.account)).favourite_edge, "west",
+               "two raids landed on the west edge, one each on the east and south");
+  for (const id of ["most_realms", "favourite_law", "minutes_a_day"]) assert.equal(p[id], null, id);
 });
 
 test("the profile's badges count first heist, clean heists, Vaults opened, defences held, laws met, resonances found, Starlight banked and friendly heists, each graded (18.5)", () => {

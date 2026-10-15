@@ -5775,6 +5775,18 @@ pub enum Refusal {
 /// re-simulation's, never anything the device claims — the replay carries no
 /// outcome at all, only commands and checksums.
 pub fn verify_on(island: &island::Island, heist: &Heist) -> Result<heist::Outcome, Refusal> {
+    verified(island, heist).map(|world| world.outcome())
+}
+
+/// `verify_on` with the heist's `Report` beside its verdict: one
+/// re-simulation for both (TD.39).
+pub fn verify_report(island: &island::Island, heist: &Heist) -> Result<(heist::Outcome, Report), Refusal> {
+    verified(island, heist).map(|world| (world.outcome(), world.report(island)))
+}
+
+/// The world a replay plays to its end on its island, every second's
+/// checksum compared on the way.
+fn verified(island: &island::Island, heist: &Heist) -> Result<World, Refusal> {
     if heist.island != island.digest() {
         return Err(Refusal::Island);
     }
@@ -5810,7 +5822,135 @@ pub fn verify_on(island: &island::Island, heist: &Heist) -> Result<heist::Outcom
             second += 1;
         }
     }
-    Ok(world.outcome())
+    Ok(world)
+}
+
+/// What a verified heist's event log says for the defender's report and
+/// Profile's records (§13.2, §23.2, TD.39). §13.2 defines each for one raid:
+/// "held is the seconds from the first landing to the last crew member's
+/// escape or capture; seen is each place a guard reached Alerted …; fired is
+/// each ward set off, bell rung". Beside them: where the crew landed, how
+/// high the realm alarm climbed, how many of the island's posts never
+/// noticed anyone and how many were Alerted, and the posts whose guards
+/// caught anyone. Read from `events::Log`, outside the checksum, so it is
+/// the same wherever the replay is re-simulated.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Report {
+    pub landing: Option<(u8, u8)>,
+    /// Seconds from the landing to the last crew member out or caught; the
+    /// whole clock if one was still inside when it ran out.
+    pub held: u16,
+    pub alarm: u8,
+    pub bells: u16,
+    pub slept: u8,
+    pub alerted: u8,
+    /// (crew member, x, y): where a crew member stood when a guard reached
+    /// Alerted on seeing it, each place once.
+    pub seen: Vec<(u8, u8, u8)>,
+    /// (ward, x, y, times it fired).
+    pub fired: Vec<(heist::WardKind, u8, u8, u16)>,
+    /// (post's role row, x, y): the island's posts whose guards caught a
+    /// crew member; row 255 for alarm level 5's Warden, at its entrance.
+    pub caught_by: Vec<(u8, u8, u8)>,
+}
+
+impl Report {
+    /// The report's wire form, as `rb_verify` writes it after the verdict:
+    /// landing x, y (255, 255 for none), held u16 LE, alarm, bells (to 255),
+    /// slept, alerted; then a count and (crew, x, y) each seen, a count and (ward
+    /// code, x, y, times to 255) each fired, a count and (row, x, y) each
+    /// captor.
+    pub fn encode(&self) -> Vec<u8> {
+        let (lx, ly) = self.landing.unwrap_or((255, 255));
+        let mut out = vec![lx, ly];
+        out.extend_from_slice(&self.held.to_le_bytes());
+        out.extend_from_slice(&[self.alarm, self.bells.min(255) as u8, self.slept, self.alerted]);
+        out.push(self.seen.len() as u8);
+        self.seen.iter().for_each(|&(c, x, y)| out.extend_from_slice(&[c, x, y]));
+        out.push(self.fired.len() as u8);
+        self.fired.iter().for_each(|&(k, x, y, n)| out.extend_from_slice(&[k as u8, x, y, n.min(255) as u8]));
+        out.push(self.caught_by.len() as u8);
+        self.caught_by.iter().for_each(|&(r, x, y)| out.extend_from_slice(&[r, x, y]));
+        out
+    }
+}
+
+impl World {
+    /// `Report` from this world's log, the island it was played on beside it.
+    pub fn report(&self, island: &island::Island) -> Report {
+        use events::{Cause, Event, Hurt};
+        let at = |t: grid::TileIndex| {
+            let (x, y) = self.grid.coords(t);
+            (x as u8, y as u8)
+        };
+        let mut r = Report { landing: self.landing.map(at), ..Report::default() };
+        let mut noticed = std::collections::BTreeSet::new();
+        let mut alerted = std::collections::BTreeSet::new();
+        let mut fired: Vec<(u16, u16)> = Vec::new();
+        let mut captors: Vec<u16> = Vec::new();
+        let mut last = 0u32;
+        let mut done = std::collections::BTreeSet::new();
+        for (i, &(t, e)) in self.log.events.iter().enumerate() {
+            match e {
+                Event::Guard { guard, to, cause, .. } => {
+                    if cause != Cause::Table {
+                        noticed.insert(guard);
+                    }
+                    if to == guard::State::Alerted {
+                        alerted.insert(guard);
+                    }
+                    if let (guard::State::Alerted, Cause::Saw(c)) = (to, cause) {
+                        let place = self.log.positions.iter().rev().find(|p| p.0 <= t && p.1 == c)
+                            .map(|p| ((p.2.max(0) / 256) as u8, (p.3.max(0) / 256) as u8));
+                        if let Some((x, y)) = place.filter(|&(x, y)| !r.seen.iter().any(|s| (s.1, s.2) == (x, y))) {
+                            r.seen.push((c, x, y));
+                        }
+                    }
+                }
+                Event::Alarm { level, .. } => r.alarm = r.alarm.max(level),
+                Event::Bell { .. } => r.bells += 1,
+                Event::Ward { ward, .. } => match fired.iter_mut().find(|f| f.0 == ward) {
+                    Some(f) => f.1 += 1,
+                    None => fired.push((ward, 1)),
+                },
+                Event::Out { crew, .. } => {
+                    last = last.max(t);
+                    done.insert(crew);
+                }
+                Event::Caught { crew, .. } => {
+                    last = last.max(t);
+                    done.insert(crew);
+                    let captor = self.log.events[..i].iter().rev().find_map(|&(_, d)| match d {
+                        Event::Down { crew: c, by: Hurt::Guard(g) } if c == crew => Some(g),
+                        _ => None,
+                    });
+                    if let Some(g) = captor.filter(|g| !captors.contains(g)) {
+                        captors.push(g);
+                    }
+                }
+                _ => {}
+            }
+        }
+        // Everyone out or caught before the clock: the last of them; else
+        // the clock itself.
+        let ended = if done.len() >= self.raiders.len() { last } else { self.clock };
+        r.held = (ended / TICKS_PER_SECOND).min(u16::MAX as u32) as u16;
+        let posts = island.guards.len();
+        r.slept = (0..posts as u16).filter(|g| !noticed.contains(g)).count() as u8;
+        r.alerted = alerted.len() as u8;
+        r.fired = fired.iter().filter_map(|&(w, n)| self.wards.get(w as usize).map(|ward| {
+            let (x, y) = at(ward.tile);
+            (ward.kind, x, y, n)
+        })).collect();
+        r.caught_by = captors.iter().filter_map(|&g| match island.guards.get(g as usize) {
+            Some(p) => Some((p.row, p.x, p.y)),
+            None => self.guards.get(g as usize).map(|w| {
+                let (x, y) = at(w.home);
+                (255, x, y)
+            }),
+        }).collect();
+        r
+    }
 }
 
 // The WebAssembly surface is `ffi.rs`.

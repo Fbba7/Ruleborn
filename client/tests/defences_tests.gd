@@ -51,9 +51,24 @@ func _words() -> void:
 	check.call("each raid's report gives the haul denied, how long the defence held, who was caught and the share "
 			+ "earned, and says when the server did not record a fact (13.2, 9.4)",
 		raids[0]["lines"] == ["Held (Foiled)", "Haul denied: 1,840", "The defence held 1:35", "Crew caught: 3",
-			"Defence share earned: 92"]
+			"Where the crew was seen and what fired: not recorded for this raid", "Defence share earned: 92"]
 			and raids[2]["lines"].slice(1, 3) == ["Haul denied: not recorded", "How long it held: not recorded"],
 		"%s | %s" % [raids[0]["lines"], raids[2]["lines"]])
+	var rep := {"side": 12, "landing": {"x": 0, "y": 6},
+		"seen": [{"crew": 1, "x": 4, "y": 5}, {"crew": 0, "x": 7, "y": 7}],
+		"fired": [{"ward": "static_coil", "x": 6, "y": 6, "times": 2}], "bells": 1, "alarm": 3,
+		"caught_by": [{"row": 0, "x": 4, "y": 4}, {"row": null, "x": 11, "y": 11}]}
+	var quiet := {"side": 10, "landing": {"x": 3, "y": 0}, "seen": [], "fired": [], "bells": 0, "alarm": 0,
+		"caught_by": []}
+	check.call("a raid's report says from the event log where the crew landed, each place a guard was alerted to it, "
+			+ "each ward that fired and how often, the bells, how high the alarm climbed and whose guards caught "
+			+ "anyone (13.2, TD.39)",
+		DefencesPresenter.report(rep) == ["Landed: West edge, 7 of 12", "A guard was alerted to the crew at 5, 6; 8, 8",
+			"Wards fired: Static Coil at 7, 7 ×2", "Bells rung: 1", "The realm alarm reached level 3",
+			"Caught by the %s post at 5, 5" % Strings.term("ROLE", "Scout"),
+			"Caught by the Warden who came at alarm level 5"]
+			and DefencesPresenter.report(quiet) == ["Landed: North edge, 4 of 10", "No guard was ever alerted to the crew"],
+		"%s | %s" % [DefencesPresenter.report(rep), DefencesPresenter.report(quiet)])
 	check.call("a raid offers Watch replay while the replay is kept and says when it is gone, and Trace only where "
 			+ "the server offers it (12.3, 13, 24.3)",
 		not (raids[0]["watch"] as Dictionary).is_empty() and (raids[1]["watch"] as Dictionary).is_empty()

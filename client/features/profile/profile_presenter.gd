@@ -64,6 +64,9 @@ static func record(r: Dictionary) -> String:
 	var name := Strings.t("PROFILE_RECORD_" + id.to_upper())
 	if r.get("value") == null:
 		return Strings.t("PROFILE_RECORD_NONE", name)
+	if id == "favourite_edge":
+		return Strings.t("PROFILE_RECORD", [name, Strings.t("PROFILE_EDGE",
+			Strings.t("LANDING_" + str(r["value"]).to_upper()))])
 	var value := int(r["value"])
 	var said := DefencesPresenter.clock(roundi(value / 1000.0)) if id in TIMED else ShopPresenter.grouped(value)
 	return Strings.t("PROFILE_RECORD", [name, said])
