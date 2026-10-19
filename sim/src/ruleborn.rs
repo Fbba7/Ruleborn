@@ -315,12 +315,13 @@ pub const INVERT_TICKS: u32 = TICKS_PER_SECOND * 10;
 pub const VINE_BRIDGE_TILES: usize = 6;
 pub const VINE_BRIDGE_TICKS: u32 = TICKS_PER_SECOND * 20;
 
+/// The Wanderer's Rift: "open a two-way rift between two realms already
+/// visited for 20 s".
+pub const RIFT_TICKS: u32 = TICKS_PER_SECOND * 20;
+
 impl Power {
-    /// Whether the simulation carries it yet. Rift waits on universes of
-    /// more than one realm (D71).
+    /// Whether the simulation carries it yet: all twelve do.
     pub fn built(self) -> bool {
-        matches!(self, Power::Suspend | Power::Reveal | Power::Recall | Power::Jam
-                 | Power::Plank | Power::Renew | Power::Decoy | Power::Tailwind
-                 | Power::Invert | Power::VineBridge | Power::Copy)
+        true
     }
 }

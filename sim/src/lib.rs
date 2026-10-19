@@ -858,6 +858,12 @@ pub struct World {
     /// Heart, which a one-island heist is played on, and 5 to an outer realm
     /// (`universe`).
     pub skiff_ticks: u32,
+    /// The Wanderer's Rift opened here: its tile and the tick it shuts, for
+    /// the crossing to carry the crew through (`universe`); and whether there
+    /// is a realm the crew has been in to open one to, which only a heist
+    /// across a universe has.
+    pub rift_open: Option<(grid::TileIndex, u32)>,
+    pub rift_back: bool,
     /// Loot dropped by a crew member knocked down: (tile, units). §12.20:
     /// "Drops its loot on the tile." Picking it up again is not built.
     pub dropped: Vec<(grid::TileIndex, i32)>,
@@ -1103,6 +1109,8 @@ impl World {
             stones: Vec::new(),
             springs: Vec::new(),
             skiff_ticks: heist::SKIFF_HEART_TICKS,
+            rift_open: None,
+            rift_back: false,
         }
     }
 
@@ -1543,9 +1551,8 @@ impl World {
     /// heist carries a Sage, it is not cooling down and the power has a use
     /// left. §11.7: "After using any power the Sage cools down for 20 seconds
     /// before it can use another." A use is spent, and the cooldown starts,
-    /// only when the power does something; one not built yet
-    /// (`Power::built`) is dropped like any command that cannot be carried
-    /// out.
+    /// only when the power does something; one that cannot is dropped like
+    /// any command that cannot be carried out.
     fn call(&mut self, command: Command) {
         let now = self.tick;
         let Some(sage) = self.sage else { return };
@@ -1554,9 +1561,6 @@ impl World {
             return;
         }
         let power = SAGES[sage.sage as usize].powers[i].0;
-        if !power.built() {
-            return;
-        }
         let (x, y) = command.target();
         let aimed = self.grid.tile_at(x, y);
         let done = match power {
@@ -1620,6 +1624,17 @@ impl World {
                 self.tailwind_until = now + ruleborn::TAILWIND_TICKS;
                 true
             }
+            // "open a two-way rift between two realms already visited for
+            // 20 s": on the open tile aimed at, to a realm the crew has been
+            // in — none on a heist of one island. Where it leads, and the
+            // crew going through it, are the crossing's (`universe`).
+            Power::Rift => match aimed {
+                Some(t) if self.rift_back && self.grid.standable(t) => {
+                    self.rift_open = Some((t, now + ruleborn::RIFT_TICKS));
+                    true
+                }
+                _ => false,
+            },
             // "lay a 4-tile shortcut over a gap for 15 s": across the gap the
             // tile aimed at is in, along its row if that is short enough,
             // else its column.
@@ -1657,7 +1672,6 @@ impl World {
                 }
                 law.is_some()
             }
-            _ => false,
         };
         if done {
             if let Some(s) = self.sage.as_mut() {
@@ -5698,6 +5712,14 @@ pub fn rules_version() -> [u8; 32] {
             for (p, uses) in s.powers {
                 bytes.extend_from_slice(&[p as u8, uses, p.built() as u8]);
             }
+        }
+        // A heist across a universe (§5.4), which no golden plays: the clock
+        // by links, the skiff to an outer realm, a Rift link's 30 seconds shut
+        // and the Wanderer's Rift's 20 open, so a change to any is a rules
+        // change.
+        for n in [universe::HEIST_CLOCK.0, universe::HEIST_CLOCK.1, universe::HEIST_CLOCK.2,
+                  heist::SKIFF_OUTER_TICKS, universe::RIFT_CLOSED_TICKS, ruleborn::RIFT_TICKS] {
+            bytes.extend_from_slice(&n.to_le_bytes());
         }
         let fixture = island::Island::fixture();
         let bare = |seed: u64, ticks: u32, crew: u8, commands: Vec<Command>| Heist {

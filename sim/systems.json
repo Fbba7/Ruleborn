@@ -395,7 +395,7 @@
       "name": "Sage powers",
       "section": "11.7",
       "task": "TD.12",
-      "what": "§11.7's Sage on a heist, from the crew manifest: the Sage command (13 on the wire, the power in the crew-member nibble, aimed at a tile), each power's uses at level 1, and the one twenty-second cooldown after any power, which the Sparkwright cuts. Eleven of the twelve launch powers are built: the Archivist's Suspend, Reveal and Recall, the Tinkerer's Invert (a law's factors turned over for 10 s, its switches, times and shares off: G81), Jam and Plank (a gap of up to 4 tiles bridged for 15 s, along the row aimed at, else the column), the Gardener's Vine bridge (the two banks of a gap up to 6 apart, joined for 20 s), Renew and Decoy, and the Wanderer's Copy (an enemy law carried as a zone around every crew member on its feet, the cast's circle, for the rest of the heist; the realm keeps it) and Tailwind. Rift waits for universes of more than one realm (D71). The levels' extra uses and longer effects every fifth level wait for the Keeper's level in the lease (TD.34).",
+      "what": "§11.7's Sage on a heist, from the crew manifest: the Sage command (13 on the wire, the power in the crew-member nibble, aimed at a tile), each power's uses at level 1, and the one twenty-second cooldown after any power, which the Sparkwright cuts. All twelve launch powers are built: the Archivist's Suspend, Reveal and Recall, the Tinkerer's Invert (a law's factors turned over for 10 s, its switches, times and shares off: G81), Jam and Plank (a gap of up to 4 tiles bridged for 15 s, along the row aimed at, else the column), the Gardener's Vine bridge (the two banks of a gap up to 6 apart, joined for 20 s), Renew and Decoy, and the Wanderer's Copy (an enemy law carried as a zone around every crew member on its feet, the cast's circle, for the rest of the heist; the realm keeps it), Tailwind and Rift (on an open tile, to where the crew entered the realm behind it on its route, or the one ahead it came back from: open 20 s, crossed both ways by the whole crew still on the realm standing beside its end, once each has been away from it; on a heist of one island there is no other realm and it does nothing). The levels' extra uses and longer effects every fifth level wait for the Keeper's level in the lease (TD.34).",
       "tests": [
         "a_sage_comes_with_the_manifest_and_its_powers_uses",
         "the_sage_cools_down_twenty_seconds_after_any_power",
@@ -410,7 +410,8 @@
         "the_tinkerers_plank_lays_a_four_tile_shortcut_over_a_gap_for_fifteen_seconds",
         "invert_turns_a_law_into_its_opposite_for_ten_seconds",
         "the_gardeners_vine_bridge_joins_two_banks_up_to_six_tiles_apart_for_twenty_seconds",
-        "copy_carries_an_enemy_law_around_the_crew_for_the_rest_of_the_heist"
+        "copy_carries_an_enemy_law_around_the_crew_for_the_rest_of_the_heist",
+        "the_wanderers_rift_opens_for_twenty_seconds_between_two_realms_the_crew_has_been_in_and_goes_both_ways"
       ],
       "powers": {
         "the_archivist:suspend": "suspend_switches_off_one_law_for_ten_seconds",
@@ -423,7 +424,8 @@
         "the_tinkerer:plank": "the_tinkerers_plank_lays_a_four_tile_shortcut_over_a_gap_for_fifteen_seconds",
         "the_tinkerer:invert": "invert_turns_a_law_into_its_opposite_for_ten_seconds",
         "the_gardener:vine bridge": "the_gardeners_vine_bridge_joins_two_banks_up_to_six_tiles_apart_for_twenty_seconds",
-        "the_wanderer:copy": "copy_carries_an_enemy_law_around_the_crew_for_the_rest_of_the_heist"
+        "the_wanderer:copy": "copy_carries_an_enemy_law_around_the_crew_for_the_rest_of_the_heist",
+        "the_wanderer:rift": "the_wanderers_rift_opens_for_twenty_seconds_between_two_realms_the_crew_has_been_in_and_goes_both_ways"
       }
     },
     {
@@ -690,7 +692,7 @@
       "name": "Universes",
       "section": "5.4",
       "task": "D71",
-      "what": "A heist across a universe's realms (sim/src/universe.rs, T3.3): the universe travels as RBU1, its realms in code order with their islands' hashes and its links, addressed by its SHA-256. The crew lands on an outer realm (the Land command's crew-member nibble names it; the Heart's winds refuse it) and goes realm by realm along the shortest route to the Heart in links, a Chute only its own way and ties to the earlier realm; an outer realm's Vault is its way on and holds nothing, and the crew crosses when every member still on the realm stands beside it, arriving at the next realm's entrance with the clock, the Sage and the casts, the realm's alarm staying behind. A Rift on the route stays shut for 30 seconds after a guard reaches Alerted. The skiff takes 5 seconds to an outer realm and 20 to the Heart. A replay across a universe is verified as one on an island is, and rb_verify_universe gives the verdict, the landing realm and its links, and each realm's report. The reference crew plays across one (play_universe). §5.3's crossing speeds, a Stone bridge's ward and a Rope bridge's Snap are not built (G87).",
+      "what": "A heist across a universe's realms (sim/src/universe.rs, T3.3): the universe travels as RBU1, its realms in code order with their islands' hashes and its links, addressed by its SHA-256. The crew lands on an outer realm (the Land command's crew-member nibble names it; the Heart's winds refuse it) and goes realm by realm along the shortest route to the Heart in links, a Chute only its own way and ties to the earlier realm; an outer realm's Vault is its way on and holds nothing, and the crew crosses when every member still on the realm stands beside it, arriving at the next realm's entrance with the clock, the Sage and the casts, the realm's alarm staying behind. A Rift on the route stays shut for 30 seconds after a guard reaches Alerted. The skiff takes 5 seconds to an outer realm and 20 to the Heart. A replay across a universe is verified as one on an island is, and rb_verify_universe gives the verdict, the landing realm and its links, and each realm's report. The worlds of the realms behind and ahead are kept, so a realm the crew comes back to by the Wanderer's Rift is as it left it, and a law the Wanderer copied goes with the crew. The reference crew plays across one (play_universe). §5.3's crossing speeds, a Stone bridge's ward and a Rope bridge's Snap are not built (G87).",
       "tests": [
         "a_universe_bundle_is_its_realms_in_order_and_its_links_and_decodes_only_what_it_encodes",
         "the_route_to_the_heart_is_the_fewest_links_a_chute_crossed_only_its_own_way_ties_to_the_earlier_realm",

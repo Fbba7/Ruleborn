@@ -203,7 +203,8 @@ impl Universe {
 }
 
 /// A heist across the realms: the world of the realm the crew is in, the
-/// worlds of the realms it has crossed, and where it goes next.
+/// worlds of the realms behind it and ahead of it on its route, and where it
+/// goes next.
 pub struct Crossing {
     pub universe: Universe,
     islands: Vec<Island>,
@@ -215,13 +216,28 @@ pub struct Crossing {
     /// How far along `route` the crew is.
     pub leg: usize,
     pub world: World,
-    /// The worlds of the realms crossed, in order.
+    /// The worlds of the realms behind the crew on its route, in order, and
+    /// of those ahead it has been in and come back from by the Sage's rift,
+    /// the next last.
     pub crossed: Vec<World>,
+    pub ahead: Vec<World>,
     commands: Vec<Command>,
     next_command: usize,
     /// When an alarm last sounded in the realm the crew is in: the last
     /// guard to reach Alerted (§5.3's Rift).
     pub alarm_at: Option<u32>,
+    /// The Wanderer's rift, once open: its two ends, each a leg of the route
+    /// and a tile there, the tick it shuts, and whether the crew has been
+    /// away from the end it is at since it opened or came through.
+    pub rift: Option<SageRift>,
+}
+
+/// The Wanderer's Rift between two realms the crew has been in (§11.7).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct SageRift {
+    pub ends: [(usize, grid::TileIndex); 2],
+    pub until: u32,
+    pub armed: bool,
 }
 
 impl Crossing {
@@ -244,7 +260,8 @@ impl Crossing {
         let header = Heist { commands: Vec::new(), checksums: Vec::new(), ..heist.clone() };
         let world = Self::realm(&islands[landing], &header, false);
         Ok(Crossing { universe: universe.clone(), islands: islands.to_vec(), header, route, leg: 0, world,
-                      crossed: Vec::new(), commands: heist.commands.clone(), next_command: 0, alarm_at: None })
+                      crossed: Vec::new(), ahead: Vec::new(), commands: heist.commands.clone(), next_command: 0,
+                      alarm_at: None, rift: None })
     }
 
     /// One realm's world for the heist: an outer realm's Vault is its way on
@@ -283,10 +300,10 @@ impl Crossing {
     }
 
     /// A tick: the commands given at it to the realm the crew is in, the
-    /// realm's world stepped, and the crossing if the crew is ready. The
-    /// checksum is the world's with the realm the crew is in folded into its
-    /// top byte, so two machines that disagree on where the crew is part
-    /// company at once.
+    /// realm's world stepped, and the crew through the Sage's rift or on to
+    /// the next realm if it is ready. The checksum is the world's with the
+    /// realm the crew is in folded into its top byte, so two machines that
+    /// disagree on where the crew is part company at once.
     pub fn step(&mut self) -> u64 {
         let now = self.world.tick;
         while let Some(&c) = self.commands.get(self.next_command) {
@@ -308,57 +325,133 @@ impl Crossing {
         {
             self.alarm_at = Some(t);
         }
-        self.cross();
+        self.open_rift();
+        if !self.through_rift() {
+            self.cross();
+        }
         sum ^ ((self.realm_now() as u64) << 56)
+    }
+
+    /// The world of leg `leg` of the route, if the crew has been there.
+    fn world_of(&self, leg: usize) -> Option<&World> {
+        if leg < self.leg {
+            self.crossed.get(leg)
+        } else if leg == self.leg {
+            Some(&self.world)
+        } else {
+            self.ahead.len().checked_sub(leg - self.leg).and_then(|i| self.ahead.get(i))
+        }
+    }
+
+    /// Whether every crew member still on the realm stands up within a tile
+    /// of `tile`; never when none is.
+    fn all_beside(&self, tile: grid::TileIndex) -> bool {
+        let w = &self.world;
+        let (vx, vy) = w.grid.coords(tile);
+        let here: Vec<&crate::Raider> = w.raiders.iter()
+            .filter(|r| r.half_of.is_none() && matches!(r.standing, Standing::Active | Standing::Down))
+            .collect();
+        !here.is_empty() && here.iter().all(|r| {
+            r.standing == Standing::Active && w.grid.tile_at(r.at.x, r.at.y).is_some_and(|t| {
+                let (x, y) = w.grid.coords(t);
+                x.abs_diff(vx) <= 1 && y.abs_diff(vy) <= 1
+            })
+        })
+    }
+
+    /// Whether any crew member still on the realm is within a tile of `tile`.
+    fn any_beside(&self, tile: grid::TileIndex) -> bool {
+        let w = &self.world;
+        let (vx, vy) = w.grid.coords(tile);
+        w.raiders.iter().filter(|r| r.half_of.is_none() && r.standing == Standing::Active).any(|r| {
+            w.grid.tile_at(r.at.x, r.at.y).is_some_and(|t| {
+                let (x, y) = w.grid.coords(t);
+                x.abs_diff(vx) <= 1 && y.abs_diff(vy) <= 1
+            })
+        })
+    }
+
+    /// The Wanderer's rift, as the Sage opened it this tick: from its tile
+    /// here to where the crew entered the realm behind it on the route, or,
+    /// in the landing realm, the realm ahead it came back from.
+    fn open_rift(&mut self) {
+        let Some((tile, until)) = self.world.rift_open.take() else { return };
+        let other = if self.leg > 0 { self.leg - 1 } else { self.leg + 1 };
+        let Some(far) = self.world_of(other).and_then(|w| w.landing) else { return };
+        self.rift = Some(SageRift { ends: [(self.leg, tile), (other, far)], until, armed: false });
+    }
+
+    /// The crew through the Sage's rift, while it is open, once every crew
+    /// member still on the realm stands beside its end here, having been
+    /// away from it since it opened or since the crew came through.
+    fn through_rift(&mut self) -> bool {
+        let Some(mut rift) = self.rift else { return false };
+        if self.world.tick >= rift.until {
+            self.rift = None;
+            return false;
+        }
+        let Some(i) = rift.ends.iter().position(|&(leg, _)| leg == self.leg) else { return false };
+        let (here, (there, far)) = (rift.ends[i].1, rift.ends[1 - i]);
+        if !rift.armed {
+            rift.armed = !self.any_beside(here);
+            self.rift = Some(rift);
+            return false;
+        }
+        if !self.all_beside(here) {
+            return false;
+        }
+        rift.armed = false;
+        self.rift = Some(rift);
+        self.go(there, Some(far));
+        true
     }
 
     /// The crew on to the next realm, once every crew member still on this
     /// one stands up beside its way on and the link is open. A crew member
     /// down holds the crew until it is revived or caught.
     fn cross(&mut self) {
-        if self.at_heart() {
-            return;
-        }
-        let w = &self.world;
-        let (vx, vy) = w.grid.coords(w.vault.tile);
-        let here: Vec<&crate::Raider> = w.raiders.iter()
-            .filter(|r| r.half_of.is_none() && matches!(r.standing, Standing::Active | Standing::Down))
-            .collect();
-        let beside = |r: &crate::Raider| {
-            r.standing == Standing::Active && w.grid.tile_at(r.at.x, r.at.y).is_some_and(|t| {
-                let (x, y) = w.grid.coords(t);
-                x.abs_diff(vx) <= 1 && y.abs_diff(vy) <= 1
-            })
-        };
-        if here.is_empty() || !here.iter().all(|r| beside(r)) {
+        if self.at_heart() || !self.all_beside(self.world.vault.tile) {
             return;
         }
         let (from, to) = (self.route[self.leg], self.route[self.leg + 1]);
         if self.universe.link(from, to) == Some(LinkKind::Rift)
-            && self.alarm_at.is_some_and(|a| w.tick < a + RIFT_CLOSED_TICKS)
+            && self.alarm_at.is_some_and(|a| self.world.tick < a + RIFT_CLOSED_TICKS)
         {
             return;
         }
-        self.leg += 1;
-        let heart = self.at_heart();
-        let mut next = Self::realm(&self.islands[to], &self.header, heart);
+        self.go(self.leg + 1, None);
+    }
+
+    /// The crew to leg `to` of the route, one either side of where it is: to
+    /// the realm's world as the crew left it, or a new one, arriving at
+    /// `arrive`, else at the realm's entrance or the nearest tile to it a
+    /// crew member can stand on. The clock, the alarm raised, the Sage, the
+    /// casts and a law the Wanderer copied go with the crew; whoever is out
+    /// or caught stays so.
+    fn go(&mut self, to: usize, arrive: Option<grid::TileIndex>) {
+        let back = to < self.leg;
+        let kept = if back { self.crossed.pop() } else { self.ahead.pop() };
+        let mut next = kept.unwrap_or_else(|| {
+            let mut w = Self::realm(&self.islands[self.route[to]], &self.header, to + 1 == self.route.len());
+            // Where the crew entered the realm is its landing there: where
+            // Ghost tide sends the knocked-out back to, and the report's.
+            w.landing = Some(Self::standable_near(&w, w.entrance));
+            w
+        });
         let prev = &self.world;
         next.tick = prev.tick;
         next.clock = prev.clock;
         next.clock_run = prev.clock_run;
-        next.alarm_raised = prev.alarm_raised;
+        next.alarm_raised |= prev.alarm_raised;
         next.sage = prev.sage;
         next.tailwind_until = prev.tailwind_until;
         next.renew_from = prev.renew_from;
         next.casts = prev.casts.clone();
         next.casts_used = prev.casts_used;
-        // Arriving at the realm's entrance, or the nearest tile to it a crew
-        // member can stand on; whoever is out or caught stays so.
-        let entrance = Self::standable_near(&next, next.entrance);
-        // Where the crew entered the realm is its landing there: where Ghost
-        // tide sends the knocked-out back to, and the report's landing.
-        next.landing = Some(entrance);
-        let (cx, cy) = next.grid.centre(entrance);
+        next.zones.retain(|z| z.at.is_some());
+        next.zones.extend(prev.zones.iter().filter(|z| z.at.is_none()).cloned());
+        let tile = arrive.unwrap_or_else(|| Self::standable_near(&next, next.entrance));
+        let (cx, cy) = next.grid.centre(tile);
         next.raiders = prev.raiders.iter().map(|r| {
             let mut r = r.clone();
             if matches!(r.standing, Standing::Active | Standing::Down) {
@@ -366,8 +459,8 @@ impl Crossing {
             }
             r.route.clear();
             r.along = 0;
-            r.came_from = entrance;
-            r.last_tile = Some(entrance);
+            r.came_from = tile;
+            r.last_tile = Some(tile);
             r.prev_tile = None;
             r.task = Task::None;
             r.swing = 0;
@@ -375,7 +468,13 @@ impl Crossing {
             r
         }).collect();
         let prev = std::mem::replace(&mut self.world, next);
-        self.crossed.push(prev);
+        if back {
+            self.ahead.push(prev);
+        } else {
+            self.crossed.push(prev);
+        }
+        self.leg = to;
+        self.world.rift_back = self.leg > 0 || !self.ahead.is_empty();
         self.alarm_at = None;
     }
 
@@ -394,11 +493,11 @@ impl Crossing {
 
     /// §12.9's outcome across the realms: the crew's standings and what it
     /// banked where it is now, the pylons broken and the gardens cracked in
-    /// every realm it crossed. The alarm raised anywhere is carried, so Loud
+    /// every realm it has been in. The alarm raised anywhere is carried, so Loud
     /// is the heist's.
     pub fn outcome(&self) -> Outcome {
         let mut o = self.world.outcome();
-        for w in &self.crossed {
+        for w in self.crossed.iter().chain(&self.ahead) {
             let p = w.outcome();
             o.pages += p.pages;
             o.broken |= p.broken;
@@ -408,9 +507,10 @@ impl Crossing {
     }
 
     /// Each realm's report for its island's defender (§13.2), by its place
-    /// in the universe's order, in the order the crew went through them.
+    /// in the universe's order, in the route's order: every realm the crew
+    /// has been in.
     pub fn reports(&self) -> Vec<(usize, Report)> {
-        self.crossed.iter().chain(std::iter::once(&self.world)).enumerate()
+        self.crossed.iter().chain(std::iter::once(&self.world)).chain(self.ahead.iter().rev()).enumerate()
             .map(|(leg, w)| {
                 let realm = self.route[leg];
                 (realm, w.report(&self.islands[realm]))

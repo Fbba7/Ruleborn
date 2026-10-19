@@ -712,8 +712,9 @@ universe's depth and fault realms.
 
 `src/crossings.mjs` is §5.4's heist across the realms (D71). A raid asked for
 with `POST /v1/leases {"bundle", "universe": true}` is leased across the
-defender's universe: the Heart leased, each outer realm with an island on
-it, and the open links between them, written as an `RBU1` bundle
+defender's universe: their current Heart island, the one leased, each outer
+realm with an island on it, and the open links between them (an outer
+realm's island, or a past one, is raided alone), written as an `RBU1` bundle
 (`sim/src/universe.rs`) stored by its hash beside the islands it names. The
 lease names it, each realm's island and links to the Heart, and the clock a
 crew landing there plays on — 150 seconds and 15 a link up to 240, and Quiet

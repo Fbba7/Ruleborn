@@ -62,11 +62,15 @@ export class Crossings {
 
   get db() { return this.service.db; }
 
-  /** The universe a raid on `defender`'s Heart island `heart` crosses: its
-   *  hash, stored with its bytes, or null when no outer realm of theirs has
-   *  an island on it. */
+  /** The universe a raid on `defender`'s island `heart` crosses: its hash,
+   *  stored with its bytes; null when that island is not their Heart's now —
+   *  an outer realm's island or a past one is raided alone — or no outer
+   *  realm of theirs has an island on it. */
   of(defender, heart) {
     const store = this.service.store;
+    const current = this.db.prepare("SELECT 1 FROM islands WHERE owner = ? AND realm = 'heart' AND bundle = ?")
+      .get(defender, heart);
+    if (!current) return null;
     // Read as the owner's universe page reads it: links made for realms
     // opened before they were kept, and a Rift's upkeep paid or not.
     const now = this.service.now();

@@ -6478,3 +6478,88 @@ fn a_rift_on_the_route_holds_the_crew_thirty_seconds_after_an_alarm_in_the_realm
     assert_eq!(ready(LinkKind::Rift, Some(RIFT_CLOSED_TICKS - 1)).1, 0, "for thirty seconds");
     assert_eq!(ready(LinkKind::Rift, Some(RIFT_CLOSED_TICKS)).1, 1);
 }
+
+#[test]
+fn the_wanderers_rift_opens_for_twenty_seconds_between_two_realms_the_crew_has_been_in_and_goes_both_ways() {
+    // §11.7: "Rift: open a two-way rift between two realms already visited
+    // for 20 s (1 use)."
+    use crate::universe::{Crossing, LinkKind};
+    // On one island there is no other realm: the power does nothing and
+    // spends nothing.
+    let mut alone = sage_world(&["stormhound"], 4);
+    call_at(&mut alone, 1, 5, 5);
+    alone.step();
+    assert_eq!((alone.sage.unwrap().uses[1], alone.rift_open), (1, None));
+    // Across a universe: land on outer realm 1, cross to the Heart.
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+    let mut crew = manifest(&["stormhound", "stormhound", "stormhound"]);
+    crew.sage = 4;
+    let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                        manifest: Some(crew), commands: vec![land], checksums: Vec::new() };
+    let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+    let stand = |c: &mut Crossing, t: crate::grid::TileIndex| {
+        let (x, y) = c.world.grid.centre(t);
+        c.world.wards.clear();
+        for r in c.world.raiders.iter_mut() {
+            r.at = Point { x, y };
+            r.route.clear();
+        }
+    };
+    let open = |w: &World, near: crate::grid::TileIndex| w.grid.neighbours(near).into_iter().flatten()
+        .find(|&t| w.grid.standable(t)).unwrap();
+    // An open tile more than a tile from `t`.
+    let away_from = |w: &World, t: crate::grid::TileIndex| {
+        let (tx, ty) = w.grid.coords(t);
+        (0..w.grid.len() as crate::grid::TileIndex).find(|&o| {
+            let (x, y) = w.grid.coords(o);
+            w.grid.standable(o) && (x.abs_diff(tx) > 1 || y.abs_diff(ty) > 1)
+        }).unwrap()
+    };
+    c.step();
+    let outer_landing = c.world.landing.unwrap();
+    let way = open(&c.world, c.world.vault.tile);
+    stand(&mut c, way);
+    c.step();
+    assert_eq!(c.leg, 1, "at the Heart");
+    // The Rift, aimed at an open tile away from the crew at the Heart.
+    let r0 = &c.world.raiders[0];
+    let far = away_from(&c.world, c.world.grid.tile_at(r0.at.x, r0.at.y).unwrap());
+    let (fx, fy) = c.world.grid.coords(far);
+    c.give(1, Kind::Sage, fx as i16 * 256 + 128, fy as i16 * 256 + 128);
+    c.step();
+    let opened = c.world.tick;
+    let rift = c.rift.expect("open");
+    assert_eq!(rift.ends, [(1, far), (0, outer_landing)], "to where the crew entered the realm behind it");
+    assert_eq!(rift.until, opened - 1 + 20 * TICKS_PER_SECOND);
+    assert_eq!(c.world.sage.unwrap().uses[1], 0, "one use");
+    // Through it: the crew stands at its end and comes out where it landed,
+    // the Heart kept as it left it, the skiff 5 seconds away.
+    c.step();                                             // away from it first
+    c.world.bells_rung = 7;                               // a mark on this Heart
+    stand(&mut c, far);
+    c.step();
+    assert_eq!((c.leg, c.ahead.len()), (0, 1), "back in outer realm 1");
+    let r0 = &c.world.raiders[0];
+    assert_eq!(c.world.grid.tile_at(r0.at.x, r0.at.y), Some(outer_landing));
+    assert_eq!(c.world.skiff_ticks, crate::heist::SKIFF_OUTER_TICKS);
+    // Not straight back: the crew must leave its end and come again.
+    c.step();
+    assert_eq!(c.leg, 0);
+    let away = away_from(&c.world, outer_landing);
+    stand(&mut c, away);
+    c.step();
+    stand(&mut c, outer_landing);
+    c.step();
+    assert_eq!((c.leg, c.ahead.len()), (1, 0), "two-way: back to the Heart as it was");
+    assert_eq!(c.world.bells_rung, 7, "the same Heart, as the crew left it");
+    // Shut after 20 seconds.
+    while c.world.tick < rift.until {
+        let elsewhere = away_from(&c.world, far);
+        stand(&mut c, elsewhere);
+        c.step();
+    }
+    stand(&mut c, far);
+    c.step();
+    assert_eq!((c.leg, c.rift), (1, None), "shut");
+}

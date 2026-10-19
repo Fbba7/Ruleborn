@@ -693,6 +693,11 @@ a test that does not exist, so the band cannot drift from the code.
     src/replay.rs     the heist as bytes: header, command log, checksums
     src/island.rs     an island as a bundle; §5.2's and §6.1's publishing rules
     src/sha256.rs     FIPS 180-4, for §24.8's content addressing
+    src/events.rs     §24.10's event log, outside the checksum, and the report it gives
+    src/ruleborn.rs   the eighteen kinds, their abilities, §11.7's Sages and powers
+    src/stability.rs  §5.5's stability: capacity, each law's cost, chords, strain
+    src/reference.rs  §13.3's competent reference crew and the hold it measures
+    src/universe.rs   a heist across a universe: RBU1, the route, the crossing
     src/ffi.rs        the WebAssembly surface the server calls
     src/tests.rs      the invariants the checksum rests on
     golden/*.rbh      replays committed today, re-simulated on every build
@@ -717,6 +722,13 @@ realm alarm, the Vault, fights, capture, the skiff, three woven laws with
 their pylons and what they make together, and §12.9's grade at the end. Every number in the fixture is
 the document's except the ones listed as the simulation's reading, and
 `content_gate.py` checks that rather than this sentence asserting it.
+
+And a heist across a universe (`universe.rs`, §5.4): the crew lands on an
+outer realm and goes realm by realm along the shortest route to the Heart,
+each outer realm's Vault its way on, one world at a time with the clock, the
+Sage and the casts carried across; the Wanderer's Rift opens back to a realm
+the crew has been in. `rb_verify_universe` verifies one as `rb_verify` does an
+island, and the readings are the register's G87.
 
 The crew is driven by the command log and nothing else — `commands_are_what_
 drives_the_crew` asserts that with no commands nothing moves, because if the

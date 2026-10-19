@@ -71,6 +71,10 @@ test("a raid leased across the universe names it, its realms' islands and each l
   // alone is not handed back for it.
   assert.equal(t.service.lease(me, bundle, null, { universe: true }).token, lease.token);
   refused(() => t.service.lease(me, bundle), "lease_held_in_another_mode");
+  // An outer realm's island leased is raided alone: the universe is the
+  // Heart's.
+  const outer = t.service.db.prepare("SELECT bundle FROM islands WHERE realm = 'outer-1'").get().bundle;
+  assert.equal(t.service.lease(raider(), outer, null, { universe: true }).universe, null);
   // A defender with no outer island has no universe to cross.
   const lone = server();
   const d = lone.service.session("gc:lone").account;
