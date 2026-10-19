@@ -34,6 +34,17 @@
 //! The landing names its realm: in a universe's replay, the Land command's
 //! crew-member nibble is the landing realm's place in the universe's order,
 //! and a landing on the Heart is refused (§5.4's winds).
+//!
+//! An overloaded universe (§5.5) carries its faults and its flicker in the
+//! bundle, as the server read them when it leased the heist. A fault is an
+//! entry: §5.4's landing picker offers "Any edge tile of any outer realm, or
+//! a fault", and a fault "joins an outer realm to the Heart", so a crew
+//! entering at one jumps through the crack straight to the Heart's entrance —
+//! the Land command's nibble is 8 and the fault's realm — on the clock of the
+//! realm it opens from, counted by links as every landing is. Its laws
+//! flicker in every realm the crew is in: at Cracking "each law has a 5%
+//! chance every 10 seconds of blinking off for 2 seconds", and at Breaking
+//! "laws flicker twice as often", every 5 seconds (G88).
 
 use crate::heist::{self, Outcome, Standing, Task};
 use crate::island::Island;
@@ -74,6 +85,16 @@ pub fn clock_ticks(links: u32) -> u32 {
 /// A Rift "Closes for 30 seconds when an alarm sounds in either realm".
 pub const RIFT_CLOSED_TICKS: u32 = 30 * TICKS_PER_SECOND;
 
+/// §5.5's flicker: a 5% chance for each law, every 10 seconds at Cracking
+/// and every 5 at Breaking, of blinking off for 2 seconds.
+pub const FLICKER_CHANCE: u64 = 5;
+pub const FLICKER_EVERY_TICKS: u32 = 10 * TICKS_PER_SECOND;
+pub const FLICKER_TICKS: u32 = 2 * TICKS_PER_SECOND;
+/// §5.5: "four faults" at most.
+pub const MAX_FAULTS: usize = 4;
+/// The Land command's nibble for an entry at a fault: this, and the realm.
+pub const FAULT_ENTRY: u8 = 8;
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Universe {
     /// Each realm's code (0 the Heart, k outer realm k) and island digest,
@@ -82,6 +103,10 @@ pub struct Universe {
     /// Each link: its kind and the two realms by their place in `realms`,
     /// a Chute running from the first to the second.
     pub links: Vec<(LinkKind, u8, u8)>,
+    /// §5.5's flicker: 0 none, 1 Cracking's, 2 Breaking's twice as often.
+    pub flicker: u8,
+    /// The outer realms a fault opens from, by place, rising.
+    pub faults: Vec<u8>,
 }
 
 impl Universe {
@@ -96,13 +121,17 @@ impl Universe {
         for (kind, a, b) in &self.links {
             out.extend_from_slice(&[*kind as u8, *a, *b]);
         }
+        out.push(self.flicker);
+        out.push(self.faults.len() as u8);
+        out.extend_from_slice(&self.faults);
         out
     }
 
     /// The inverse, refusing anything `encode` would not write: realms in
     /// rising code order with the Heart first and no code twice, links
-    /// joining two different realms that exist, each pair once, and no bytes
-    /// after.
+    /// joining two different realms that exist, each pair once, a flicker of
+    /// 0 to 2, up to four faults from outer realms in rising order, and no
+    /// bytes after.
     pub fn decode(bytes: &[u8]) -> Option<Universe> {
         let mut at = 0usize;
         let mut take = |n: usize| -> Option<&[u8]> {
@@ -141,10 +170,19 @@ impl Universe {
             }
             links.push((kind, a, b));
         }
+        let flicker = take(1)?[0];
+        if flicker > 2 {
+            return None;
+        }
+        let f = take(1)?[0] as usize;
+        let faults = take(f)?.to_vec();
+        if f > MAX_FAULTS || faults.iter().any(|&p| p == 0 || p as usize >= n) || faults.windows(2).any(|w| w[0] >= w[1]) {
+            return None;
+        }
         if at != bytes.len() {
             return None;
         }
-        Some(Universe { realms, links })
+        Some(Universe { realms, links, flicker, faults })
     }
 
     pub fn digest(&self) -> [u8; 32] {
@@ -211,7 +249,12 @@ pub struct Crossing {
     /// The replay's header with no commands: each realm's world is made from
     /// it, so the crew, its manifest, the seed and the clock are the heist's.
     header: Heist,
-    /// The realms the crew goes through, by place, landing realm first.
+    /// The realm the crew landed on, by place, and whether it came in at its
+    /// fault, straight to the Heart.
+    pub landed: usize,
+    pub at_fault: bool,
+    /// The realms the crew goes through, by place, landing realm first —
+    /// the Heart alone for an entry at a fault.
     pub route: Vec<usize>,
     /// How far along `route` the crew is.
     pub leg: usize,
@@ -243,7 +286,8 @@ pub struct SageRift {
 impl Crossing {
     /// The heist's crossing, from its universe and islands: refused when the
     /// islands are not the universe's, when the heist never lands at tick 0,
-    /// lands on the Heart, or lands where no route reaches the Heart.
+    /// lands on the Heart, lands where no route of links reaches the Heart,
+    /// or enters at a fault the universe does not have.
     pub fn new(universe: &Universe, islands: &[Island], heist: &Heist) -> Result<Crossing, Refusal> {
         if islands.len() != universe.realms.len()
             || islands.iter().zip(&universe.realms).any(|(i, r)| i.digest() != r.1)
@@ -252,27 +296,50 @@ impl Crossing {
         }
         let land = heist.commands.iter().take_while(|c| c.tick == 0).find(|c| c.kind == Kind::Land)
             .ok_or(Refusal::Landing)?;
-        let landing = land.actor as usize;
-        if landing == 0 || landing >= islands.len() {
+        let at_fault = land.actor & FAULT_ENTRY != 0;
+        let landed = (land.actor & !FAULT_ENTRY) as usize;
+        if landed == 0 || landed >= islands.len() || (at_fault && !universe.faults.contains(&(landed as u8))) {
             return Err(Refusal::Landing);
         }
-        let route = universe.route(landing).ok_or(Refusal::Landing)?;
+        // Every landing's clock is counted by links, so a realm a fault
+        // opens from still needs a route of them.
+        let route = universe.route(landed).ok_or(Refusal::Landing)?;
+        let route = if at_fault { vec![0] } else { route };
         let header = Heist { commands: Vec::new(), checksums: Vec::new(), ..heist.clone() };
-        let world = Self::realm(&islands[landing], &header, false);
-        Ok(Crossing { universe: universe.clone(), islands: islands.to_vec(), header, route, leg: 0, world,
-                      crossed: Vec::new(), ahead: Vec::new(), commands: heist.commands.clone(), next_command: 0,
-                      alarm_at: None, rift: None })
+        let mut world = Self::realm(&islands[route[0]], &header, at_fault, universe.flicker);
+        if at_fault {
+            // Through the crack to the Heart's entrance, where it lands.
+            let entrance = Self::standable_near(&world, world.entrance);
+            let (x, y) = world.grid.centre(entrance);
+            world.landing = Some(entrance);
+            for r in world.raiders.iter_mut() {
+                r.at = crate::Point { x, y };
+                r.came_from = entrance;
+                r.last_tile = Some(entrance);
+            }
+        }
+        Ok(Crossing { universe: universe.clone(), islands: islands.to_vec(), header, landed, at_fault, route, leg: 0,
+                      world, crossed: Vec::new(), ahead: Vec::new(), commands: heist.commands.clone(),
+                      next_command: 0, alarm_at: None, rift: None })
     }
 
     /// One realm's world for the heist: an outer realm's Vault is its way on
-    /// and holds nothing, and the skiff comes to it in §5.4's 5 seconds.
-    fn realm(island: &Island, header: &Heist, heart: bool) -> World {
+    /// and holds nothing, and the skiff comes to it in §5.4's 5 seconds; and
+    /// the universe's laws flicker in it (§5.5).
+    fn realm(island: &Island, header: &Heist, heart: bool, flicker: u8) -> World {
         let mut world = World::from_island(island, header);
         if !heart {
             world.vault.exposed = 0;
             world.skiff_ticks = heist::SKIFF_OUTER_TICKS;
         }
+        world.flicker = flicker;
         world
+    }
+
+    /// The links on the shortest route from the realm landed on to the
+    /// Heart, which §5.4's clock counts, a fault's realm's as any other's.
+    pub fn clock_links(&self) -> u32 {
+        self.universe.route(self.landed).map_or(0, |r| r.len() as u32 - 1)
     }
 
     /// The realm the crew is in, by place in the universe's order.
@@ -313,7 +380,10 @@ impl Crossing {
             self.next_command += 1;
             if c.tick == now {
                 // The landing's nibble is its realm; to the world it is the
-                // crew's one landing.
+                // crew's one landing. An entry at a fault has landed already.
+                if c.kind == Kind::Land && self.at_fault {
+                    continue;
+                }
                 let actor = if c.kind == Kind::Land { 0 } else { c.actor };
                 self.world.give(actor, c.kind, c.x, c.y);
             }
@@ -432,7 +502,8 @@ impl Crossing {
         let back = to < self.leg;
         let kept = if back { self.crossed.pop() } else { self.ahead.pop() };
         let mut next = kept.unwrap_or_else(|| {
-            let mut w = Self::realm(&self.islands[self.route[to]], &self.header, to + 1 == self.route.len());
+            let mut w = Self::realm(&self.islands[self.route[to]], &self.header, to + 1 == self.route.len(),
+                                    self.universe.flicker);
             // Where the crew entered the realm is its landing there: where
             // Ghost tide sends the knocked-out back to, and the report's.
             w.landing = Some(Self::standable_near(&w, w.entrance));

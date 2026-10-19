@@ -669,7 +669,8 @@ export class Service {
       if (clocks.realms[result.landing]?.ticks !== header.ticks) return refuse("wrong_clock");
       // The realms the crew went through; the defence log's report is the
       // Heart's, where its island is, if the crew reached it (defences.mjs).
-      crossing = { landed: universe.realms[result.landing], realms: result.reports.map((r) => universe.realms[r.realm]) };
+      crossing = { landed: universe.realms[result.landing], fault: result.fault,
+                   realms: result.reports.map((r) => universe.realms[r.realm]) };
       result.report = result.reports.find((r) => r.realm === 0)?.report ?? null;
     }
     // §12.5: a cast "costs 30 Aether per point of the law's base cost, paid

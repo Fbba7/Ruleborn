@@ -727,8 +727,10 @@ And a heist across a universe (`universe.rs`, §5.4): the crew lands on an
 outer realm and goes realm by realm along the shortest route to the Heart,
 each outer realm's Vault its way on, one world at a time with the clock, the
 Sage and the casts carried across; the Wanderer's Rift opens back to a realm
-the crew has been in. `rb_verify_universe` verifies one as `rb_verify` does an
-island, and the readings are the register's G87.
+the crew has been in. An overloaded universe's crew may enter at a fault,
+straight to the Heart, and its laws flicker. `rb_verify_universe` verifies one
+as `rb_verify` does an island, and the readings are the register's G87 and
+G88.
 
 The crew is driven by the command log and nothing else — `commands_are_what_
 drives_the_crew` asserts that with no commands nothing moves, because if the

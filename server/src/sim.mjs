@@ -349,7 +349,8 @@ export class Build {
    * `verify` for a heist across a universe (§5.4, D71): `universe` its
    * `RBU1` bundle and `islands` its realms' islands in its order. The
    * verdict is `verify`'s, with the realm the crew landed on (`landing`, its
-   * place in the universe's order) and its links to the Heart; `reports` is
+   * place in the universe's order), its links to the Heart and whether it
+   * came in at its fault; `reports` is
    * each realm the crew went through, in order, with its report.
    */
   verifyUniverse(replay, universe, islands) {
@@ -361,7 +362,7 @@ export class Build {
     const status = this.x.rb_verify_universe(replay.length, universe.length, framed);
     if (status < 0) return { status: "refused", reason: REFUSED[status] };
     if (status > 0) return { status: "diverged", second: status };
-    const v = this.buffer().slice(0, 36);
+    const v = this.buffer().slice(0, 37);
     const view = new DataView(v.buffer);
     const wire = this.buffer().slice(64, 64 + this.x.rb_report_bytes());
     const reports = [];
@@ -379,7 +380,7 @@ export class Build {
         left: view.getInt32(20, true), broken: Number(view.getBigUint64(24, true)),
         outMask: v[32], castsUsed: v[33],
       },
-      landing: v[34], links: v[35], reports,
+      landing: v[34], links: v[35], fault: v[36] === 1, reports,
     };
   }
 

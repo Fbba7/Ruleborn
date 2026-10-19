@@ -260,8 +260,9 @@ fn universe_at(b: &[u8], at: usize, universe_len: usize, islands_len: usize)
 
 /// `rb_verify` for a heist across a universe (§5.4, D71): the replay's
 /// `replay_len` bytes, then the universe's and its islands' as `universe_at`
-/// reads them. The verdict is `rb_verify`'s, then the landing realm's place
-/// and its route's links at bytes 34 and 35; after it, at byte 64, each realm
+/// reads them. The verdict is `rb_verify`'s, then the landing realm's place,
+/// the links on its route that its clock counts, and 1 if the crew came in
+/// at its fault, at bytes 34 to 36; after it, at byte 64, each realm
 /// the crew went through: a count, then each realm's place in the universe's
 /// order, its report's length as u16 LE and its report (`Report::encode`).
 #[allow(unsafe_code)]
@@ -282,8 +283,9 @@ pub extern "C" fn rb_verify_universe(replay_len: u32, universe_len: u32, islands
                 verdict(b, &crossing.outcome(), heist.crew);
                 // The realm landed on, by place, and its links to the Heart:
                 // the server holds the replay's clock to them (§5.4).
-                b[34] = crossing.route[0] as u8;
-                b[35] = (crossing.route.len() - 1) as u8;
+                b[34] = crossing.landed as u8;
+                b[35] = crossing.clock_links() as u8;
+                b[36] = crossing.at_fault as u8;
                 let reports = crossing.reports();
                 let mut wire = vec![reports.len() as u8];
                 for (realm, report) in reports {
@@ -304,8 +306,8 @@ pub extern "C" fn rb_verify_universe(replay_len: u32, universe_len: u32, islands
 /// A heist of the competent reference crew across the universe and islands
 /// in the buffer (as `universe_at` reads them from byte 0), from `seed`:
 /// its replay written to the buffer and its length returned, for the
-/// server's tests. It lands on the realm at place `realm`, or the one its
-/// seed draws for 0, on a clock of `ticks`, or §5.4's for 0, in §18.3's
+/// server's tests. It lands on the realm at place `realm` (8 and the place
+/// for its fault), or the one its seed draws for 0, on a clock of `ticks`, or §5.4's for 0, in §18.3's
 /// `era` (its wire value, 0 for none; -10 for one that is not). -14 when no
 /// outer realm it can land on reaches the Heart, or `realm` does not.
 #[allow(unsafe_code)]

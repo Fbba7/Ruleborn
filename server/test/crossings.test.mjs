@@ -42,9 +42,10 @@ function across(t, lease, opts = {}) {
 
 test("a universe bundle is its realms by code and island and its links, as the simulation reads it (5.3, D71)", () => {
   const realms = [{ realm: "heart", bundle: "aa".repeat(32) }, { realm: "outer-3", bundle: "bb".repeat(32) }];
-  const bytes = encodeUniverse(realms, [{ kind: "chute", a: 1, b: 0 }]);
+  const bytes = encodeUniverse(realms, [{ kind: "chute", a: 1, b: 0 }], { flicker: 2, faults: [1] });
   assert.equal(Buffer.from(bytes.subarray(0, 4)).toString(), "RBU1");
-  assert.deepEqual(decodeUniverse(bytes), { realms, links: [{ kind: "chute", a: "outer-3", b: "heart" }] });
+  assert.deepEqual(decodeUniverse(bytes),
+                   { realms, links: [{ kind: "chute", a: "outer-3", b: "heart" }], flicker: 2, faults: ["outer-3"] });
   assert.equal(decodeUniverse(bytes.subarray(0, bytes.length - 1)), null);
 });
 
@@ -89,7 +90,7 @@ test("a heist across the universe is verified on its realms' islands, on the lan
   const lease = t.service.lease(me, bundle, null, { universe: true });
   const out = t.service.submit(me, lease.token, across(t, lease, { realm: 1 }));
   assert.equal(out.validated, true, JSON.stringify(out));
-  assert.deepEqual(out.crossing, { landed: "outer-1", realms: ["outer-1", "heart"] });
+  assert.deepEqual(out.crossing, { landed: "outer-1", fault: false, realms: ["outer-1", "heart"] });
   assert.ok(["clean", "loud", "partial", "foiled"].includes(out.verdict.grade));
   // Landed two links out, on that realm's clock.
   const far = raider();
@@ -128,4 +129,25 @@ test("a universe is the defender's open links between realms with islands: a clo
   assert.deepEqual(lease.universe.realms.map((r) => [r.realm, r.ticks === null]),
                    [["heart", true], ["outer-1", false], ["outer-2", true]], "no route from outer realm 2");
   assert.equal(lease.universe.links.length, 1);
+});
+
+test("an overloaded universe's lease carries its faults and its laws' flicker, and a crew may enter at a fault straight to the Heart on that realm's clock (5.4, 5.5, G88)", () => {
+  const { t, bundle, raider } = universeOfTwo();
+  // Cracking, two faults (§5.5): from the deepest outer realms.
+  t.service.weaving.stability = () => ({ strain: 1.12, band: 5 });
+  const me = raider();
+  const lease = t.service.lease(me, bundle, null, { universe: true });
+  assert.equal(lease.universe.flicker, 1, "Cracking's flicker");
+  assert.deepEqual(lease.universe.realms.map((r) => [r.realm, r.fault]),
+                   [["heart", false], ["outer-1", true], ["outer-2", true]]);
+  const out = t.service.submit(me, lease.token, across(t, lease, { realm: 8 | 2 }));
+  assert.equal(out.validated, true, JSON.stringify(out));
+  assert.deepEqual(out.crossing, { landed: "outer-2", fault: true, realms: ["heart"] },
+                   "through the crack, on outer realm 2's clock of two links");
+  // Breaking flickers twice as often; a universe under 100% has neither.
+  t.service.weaving.stability = () => ({ strain: 1.3, band: 6 });
+  assert.equal(t.service.lease(raider(), bundle, null, { universe: true }).universe.flicker, 2);
+  t.service.weaving.stability = () => ({ strain: 0.5, band: 1 });
+  const calm = t.service.lease(raider(), bundle, null, { universe: true }).universe;
+  assert.deepEqual([calm.flicker, calm.realms.some((r) => r.fault)], [0, false]);
 });

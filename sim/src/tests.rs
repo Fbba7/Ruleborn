@@ -6341,10 +6341,12 @@ fn a_universe_bundle_is_its_realms_in_order_and_its_links_and_decodes_only_what_
     let u = Universe {
         realms: vec![(0, [1; 32]), (1, [2; 32]), (3, [3; 32])],
         links: vec![(LinkKind::Stone, 1, 0), (LinkKind::Chute, 2, 1), (LinkKind::Rift, 2, 0)],
+        flicker: 1,
+        faults: vec![2],
     };
     let bytes = u.encode();
     assert_eq!(&bytes[..4], &MAGIC);
-    assert_eq!(bytes.len(), 4 + 1 + 3 * 33 + 1 + 3 * 3);
+    assert_eq!(bytes.len(), 4 + 1 + 3 * 33 + 1 + 3 * 3 + 1 + 1 + 1);
     assert_eq!(Universe::decode(&bytes), Some(u.clone()));
     assert_eq!(u.digest(), crate::sha256::sha256(&bytes));
     let refused = |f: &dyn Fn(&mut Universe)| {
@@ -6363,9 +6365,14 @@ fn a_universe_bundle_is_its_realms_in_order_and_its_links_and_decodes_only_what_
     long.push(0);
     assert_eq!(Universe::decode(&long), None, "nothing after");
     let mut kind = bytes.clone();
-    let at = bytes.len() - 3;
+    let at = bytes.len() - 6;
     kind[at] = 4;
     assert_eq!(Universe::decode(&kind), None, "four kinds of link");
+    assert_eq!(refused(&|v| v.flicker = 3), None, "Cracking's flicker or Breaking's");
+    assert_eq!(refused(&|v| v.faults = vec![0]), None, "a fault opens from an outer realm");
+    assert_eq!(refused(&|v| v.faults = vec![3]), None, "that exists");
+    assert_eq!(refused(&|v| v.faults = vec![2, 1]), None, "in rising order");
+    assert_eq!(refused(&|v| v.faults = vec![1, 1]), None, "once");
     let mut magic = bytes;
     magic[3] = b'2';
     assert_eq!(Universe::decode(&magic), None);
@@ -6377,11 +6384,13 @@ fn the_route_to_the_heart_is_the_fewest_links_a_chute_crossed_only_its_own_way_t
     // realm to the Heart"; §5.3: a Chute is "one-way".
     use crate::universe::{LinkKind::*, Universe};
     let realms = |n: u8| (0..n).map(|c| (c, [c; 32])).collect::<Vec<_>>();
-    let u = Universe { realms: realms(4), links: vec![(Stone, 1, 0), (Stone, 2, 0), (Rope, 3, 1), (Rope, 3, 2)] };
+    let u = Universe { realms: realms(4), links: vec![(Stone, 1, 0), (Stone, 2, 0), (Rope, 3, 1), (Rope, 3, 2)],
+                      flicker: 0, faults: Vec::new() };
     assert_eq!(u.route(3), Some(vec![3, 1, 0]), "two ways of two links: the earlier realm's");
     assert_eq!(u.route(2), Some(vec![2, 0]));
     assert_eq!(u.route(0), Some(vec![0]));
-    let down = Universe { realms: realms(3), links: vec![(Chute, 1, 0), (Chute, 0, 2)] };
+    let down = Universe { realms: realms(3), links: vec![(Chute, 1, 0), (Chute, 0, 2)], flicker: 0,
+                         faults: Vec::new() };
     assert_eq!(down.route(1), Some(vec![1, 0]), "down a Chute");
     assert_eq!(down.route(2), None, "never up one");
     assert_eq!(down.link(0, 1), Some(Chute));
@@ -6397,7 +6406,7 @@ fn two_realms(kind: crate::universe::LinkKind) -> (crate::universe::Universe, Ve
     use crate::island::Island;
     let (heart, outer) = (Island::example(), Island::generated(2, 1));
     let u = crate::universe::Universe { realms: vec![(0, heart.digest()), (1, outer.digest())],
-                                        links: vec![(kind, 1, 0)] };
+                                        links: vec![(kind, 1, 0)], flicker: 0, faults: Vec::new() };
     (u, vec![heart, outer])
 }
 
@@ -6562,4 +6571,67 @@ fn the_wanderers_rift_opens_for_twenty_seconds_between_two_realms_the_crew_has_b
     stand(&mut c, far);
     c.step();
     assert_eq!((c.leg, c.rift), (1, None), "shut");
+}
+
+#[test]
+fn a_crew_entering_at_a_fault_jumps_through_the_crack_to_the_hearts_entrance_on_its_realms_clock() {
+    // §5.4: "faults open: cracks a crew can jump through once per heist,
+    // ignoring the links. A fault joins an outer realm to the Heart", and the
+    // entry is "Any edge tile of any outer realm, or a fault".
+    use crate::reference::competent_universe;
+    use crate::universe::{verified, LinkKind, FAULT_ENTRY};
+    let (mut u, islands) = two_realms(LinkKind::Stone);
+    assert!(competent_universe(&u, &islands, 1, 3, Some((FAULT_ENTRY | 1) as usize), None, None).is_none(),
+            "no fault, no entry at one");
+    u.faults = vec![1];
+    let heist = competent_universe(&u, &islands, 1, 3, Some((FAULT_ENTRY | 1) as usize), None, None).unwrap();
+    assert_eq!((heist.commands[0].kind, heist.commands[0].actor), (Kind::Land, FAULT_ENTRY | 1));
+    assert_eq!(heist.ticks, 165 * TICKS_PER_SECOND, "the clock of the realm the fault opens from, by its links");
+    let c = verified(&u, &islands, &heist).expect("verified");
+    assert_eq!((c.landed, c.at_fault, c.route.clone(), c.crossed.len(), c.clock_links()), (1, true, vec![0], 0, 1));
+    assert_eq!(c.world.landing, Some(c.world.entrance), "at the Heart's entrance");
+    assert_eq!(c.world.skiff_ticks, crate::heist::SKIFF_HEART_TICKS);
+    assert_eq!(c.reports().iter().map(|r| r.0).collect::<Vec<_>>(), vec![0], "the Heart alone");
+    // A fault the universe does not have is no entry.
+    let mut other = heist.clone();
+    other.commands[0].actor = FAULT_ENTRY | 2;
+    assert_eq!(crate::universe::verify_universe(&u, &islands, &other), Err(crate::Refusal::Landing));
+}
+
+#[test]
+fn laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_at_cracking_and_five_at_breaking() {
+    // §5.5: Cracking, "each law has a 5% chance every 10 seconds of
+    // blinking off for 2 seconds"; Breaking, "laws flicker twice as often".
+    use crate::island::Island;
+    use crate::universe::{FLICKER_EVERY_TICKS, FLICKER_TICKS};
+    let island = Island::example();
+    assert!(!island.laws.is_empty());
+    let blinks = |flicker: u8, seed: u64| {
+        let heist = Heist { seed, island: island.digest(), rules: crate::rules_version(), ticks: 7_200, crew: 3,
+                            era: None, manifest: None, commands: Vec::new(), checksums: Vec::new() };
+        let mut w = World::from_island(&island, &heist);
+        w.flicker = flicker;
+        for _ in 0..7_200 {
+            w.step();
+        }
+        w.log.of(|e| matches!(e, E::LawOff { .. }))
+    };
+    let mut counts = [0usize; 3];
+    for seed in 0..20u64 {
+        for flicker in 0..3u8 {
+            let off = blinks(flicker, seed);
+            let every = if flicker == 0 { u32::MAX } else { FLICKER_EVERY_TICKS / flicker as u32 };
+            for &(t, e) in &off {
+                assert!(t > 0 && t % every == 0, "drawn every {every} ticks: {t}");
+                assert!(matches!(e, E::LawOff { until, .. } if until == t + FLICKER_TICKS), "off for 2 s");
+            }
+            counts[flicker as usize] += off.len();
+        }
+    }
+    // 20 heists of 240 s: 24 draws a law at Cracking, 48 at Breaking, 5% each.
+    let draws = 20 * island.laws.len();
+    assert_eq!(counts[0], 0, "a universe not overloaded never flickers");
+    assert!(counts[1] * 100 > draws * 24 * 2 && counts[1] * 100 < draws * 24 * 9, "about 5%: {counts:?}");
+    assert!(counts[2] > counts[1] * 3 / 2, "twice as often: {counts:?}");
+    assert_eq!(blinks(1, 3), blinks(1, 3), "the same heist flickers the same everywhere");
 }

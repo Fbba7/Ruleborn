@@ -864,6 +864,9 @@ pub struct World {
     /// across a universe has.
     pub rift_open: Option<(grid::TileIndex, u32)>,
     pub rift_back: bool,
+    /// §5.5's flicker in an overloaded universe: 0 none, 1 Cracking's, 2
+    /// Breaking's (`universe`). A heist of one island has none.
+    pub flicker: u8,
     /// Loot dropped by a crew member knocked down: (tile, units). §12.20:
     /// "Drops its loot on the tile." Picking it up again is not built.
     pub dropped: Vec<(grid::TileIndex, i32)>,
@@ -1111,6 +1114,7 @@ impl World {
             skiff_ticks: heist::SKIFF_HEART_TICKS,
             rift_open: None,
             rift_back: false,
+            flicker: 0,
         }
     }
 
@@ -1898,6 +1902,7 @@ impl World {
         self.stand_walls();
         let now = self.tick;
         self.reveals.retain(|&(_, until)| now < until);
+        self.flicker_laws();
         self.refresh_sheet();
         self.zones.retain(|z| now < z.until);
         let crew: Vec<Point> = self.raiders.iter().filter(|r| r.active()).map(|r| r.at).collect();
@@ -2068,6 +2073,32 @@ impl World {
                 }
             }
             None => self.enter(gi, state),
+        }
+    }
+
+    /// §5.5's flicker: at Cracking "each law has a 5% chance every 10
+    /// seconds of blinking off for 2 seconds", and at Breaking "laws flicker
+    /// twice as often", every 5 (G88): each standing law in order, drawn from
+    /// the heist's law stream, off as a suspended law is and logged as one,
+    /// so §12.13's moment names the blink.
+    fn flicker_laws(&mut self) {
+        if self.flicker == 0 {
+            return;
+        }
+        let now = self.tick;
+        let every = universe::FLICKER_EVERY_TICKS / self.flicker as u32;
+        if now == 0 || !now.is_multiple_of(every) {
+            return;
+        }
+        for li in 0..self.laws.len() {
+            if self.laws[li].broken_at.is_some() {
+                continue;
+            }
+            if self.rng.below(100) < universe::FLICKER_CHANCE {
+                let until = now + universe::FLICKER_TICKS;
+                self.laws[li].suspended_until = self.laws[li].suspended_until.max(until);
+                self.log.push(now, Event::LawOff { law: li as u16, until });
+            }
         }
     }
 
@@ -5714,11 +5745,12 @@ pub fn rules_version() -> [u8; 32] {
             }
         }
         // A heist across a universe (§5.4), which no golden plays: the clock
-        // by links, the skiff to an outer realm, a Rift link's 30 seconds shut
-        // and the Wanderer's Rift's 20 open, so a change to any is a rules
-        // change.
+        // by links, the skiff to an outer realm, a Rift link's 30 seconds shut,
+        // the Wanderer's Rift's 20 open and §5.5's flicker, so a change to any
+        // is a rules change.
         for n in [universe::HEIST_CLOCK.0, universe::HEIST_CLOCK.1, universe::HEIST_CLOCK.2,
-                  heist::SKIFF_OUTER_TICKS, universe::RIFT_CLOSED_TICKS, ruleborn::RIFT_TICKS] {
+                  heist::SKIFF_OUTER_TICKS, universe::RIFT_CLOSED_TICKS, ruleborn::RIFT_TICKS,
+                  universe::FLICKER_CHANCE as u32, universe::FLICKER_EVERY_TICKS, universe::FLICKER_TICKS] {
             bytes.extend_from_slice(&n.to_le_bytes());
         }
         let fixture = island::Island::fixture();

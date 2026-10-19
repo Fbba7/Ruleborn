@@ -722,7 +722,11 @@ Week's 30 — with none for the Heart, whose winds turn skiffs away. The
 replay's header names the universe; its clock must be a landing realm's, and
 once `rb_verify_universe` has re-simulated it across the realms, the one the
 crew landed on. It settles as a raid on the Heart, its outcome naming the
-realms crossed, and the defence log's report is the Heart's. A defender with
+realms crossed, and the defence log's report is the Heart's. An overloaded
+universe's bundle carries what §5.5's strain does to the heist, read at the
+lease: its faults, each an entry straight to the Heart's entrance on the
+clock of the outer realm it opens from, which the lease marks, and its laws'
+flicker at Cracking and Breaking (G88). A defender with
 no outer island has no universe, and a lease asked without one is the
 Heart's alone, as before; one held of the other kind is refused as
 `lease_held_in_another_mode`. The readings are **G87**.

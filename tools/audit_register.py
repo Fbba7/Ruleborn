@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "G87", "D99"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "G87", "G88", "D99"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9887,6 +9887,37 @@ dict(id="D99", kind="deviation", severity="significant", status="open",
          "drafted); keep §26.4’s demand test for the languages after these; have "
          "a native speaker read each drafted language."),
 
+dict(id="G88", kind="gap", severity="minor", status="open",
+     title="§5.4’s faults have no tile and no clock of their own, §5.5’s "
+           "“twice as often” has two readings, and a universe of the Heart "
+           "alone carries no strain to its heist",
+     refs=["5.4", "5.5", "12.4", "24.11"],
+     body="Building faults and flicker into heists across a universe "
+          "(sim/src/universe.rs, crossings.mjs) needed readings. "
+          "<strong>A fault:</strong> <em>“cracks a crew can jump through once "
+          "per heist, ignoring the links. A fault joins an outer realm to the "
+          "Heart … The crack is drawn across that outer realm … and the "
+          "landing picker offers each fault”</em>, and the Entry row reads "
+          "<em>“Any edge tile of any outer realm (see 5.4), or a fault”</em>. "
+          "The crack has no tile in the realm it is drawn across, so a fault "
+          "is read as an entry: the crew comes in through it straight to the "
+          "Heart’s entrance, once because it enters once. Its clock is "
+          "<em>“for each link on the shortest route from the landing realm to "
+          "the Heart”</em>, the fault not a link, so the realm it opens from — "
+          "the deepest — gives the longest clock and the shortest way in: the "
+          "price of overloading. <strong>Flicker:</strong> Breaking’s "
+          "<em>“laws flicker twice as often”</em> could double the chance or "
+          "the draws; it is read as Cracking’s 5% drawn every 5 seconds "
+          "instead of every 10, in every realm of the universe, each law in "
+          "turn from the heist’s law stream. <strong>The Heart alone:</strong> "
+          "a universe of the Heart alone has no faults (§5.5) but can flicker, "
+          "and its heist is a replay of one island, whose header carries no "
+          "strain, so it does not flicker. The faults and the flicker are the "
+          "lease’s, read when it is issued.",
+     rec="State in §5.4 that a fault is an entry to the Heart’s entrance on "
+         "its realm’s clock, in §5.5 which way “twice as often” goes, and "
+         "whether a universe of the Heart alone flickers."),
+
 dict(id="G87", kind="gap", severity="significant", status="open",
      title="§5.3 gives each link a crossing speed, a Stone bridge a ward and a "
            "Rope bridge a Snap, with no length for a link and no rule for them; "
@@ -11582,6 +11613,11 @@ V37 = {
     "written from British by a spelling table. Left: the document’s §20.6, "
     "§26.3 and §26.4 (drafted), the coined names in each language (the "
     "owner’s, §26.9), and a native speaker’s read of the drafted languages."),
+
+"G88": dict(status="open", left="document", note=
+    "Found building faults and flicker into heists across a universe, after "
+    "v3.7: built as read, the readings drafted (TD.75); a universe of the "
+    "Heart alone does not flicker, which the document should confirm."),
 
 "G87": dict(status="open", left="document", note=
     "Found building D71, after v3.7: heists across a universe played, leased "
@@ -15054,6 +15090,16 @@ EDITS = {
          find="English and Brazilian Portuguese at launch.",
          replace="English, Portuguese, German and French at launch.",
          why="The demand test starts after the owner’s six. D99."),
+],
+"G88": [
+    dict(section="5.4", action="replace",
+         find="The crack is drawn across that outer realm, a target’s strain and faults are free facts (12.4), and the landing picker offers each fault.",
+         replace="The crack is drawn across that outer realm, a target’s strain and faults are free facts (12.4), and the landing picker offers each fault: a crew entering at one comes through to the Heart’s entrance, on the clock of the realm it opens from.",
+         why="What entering at a fault does, and its clock. G88."),
+    dict(section="5.5", action="replace",
+         find="faults and flickering are the price of pushing past it.",
+         replace="faults and flickering are the price of pushing past it. Flickering twice as often is the same 5% chance drawn every 5 seconds, in every realm of the universe.",
+         why="Which way twice as often goes. G88."),
 ],
 "G87": [
     dict(section="5.4", action="replace",

@@ -1125,6 +1125,10 @@ DELIVERABLES = [
             "a heist across the universe is refused on another realm's clock, on the Heart's, or as the Heart alone "
             "(5.4)",
             "a universe is the defender's open links between realms with islands: a closed Rift crosses nothing (5.3)")),
+        # §5.4's faults and §5.5's flicker in an overloaded universe's heist.
+        server_tests(
+            "an overloaded universe's lease carries its faults and its laws' flicker, and a crew may enter at a fault "
+            "straight to the Heart on that realm's clock (5.4, 5.5, G88)"),
         not_started("§5.3's crossing speeds — Rope 30% faster, a Chute fast, a Rift instant — a ward on a Stone "
                     "bridge and a Snap on a Rope bridge, which wait on a link's length (G87)"))),
 

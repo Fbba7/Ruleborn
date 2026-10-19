@@ -16,6 +16,12 @@
 // realm's; the replay's header names one, and the simulation says which realm
 // the crew landed on, so the server holds the two to each other.
 //
+// An overloaded universe (§5.5) carries what its strain does to a heist as
+// the server reads it at the lease: its faults, each an entry from the outer
+// realm it opens from straight to the Heart (§5.4: "or a fault if the target
+// is overloaded"), on that realm's clock, and its laws' flicker, at Cracking
+// and at Breaking twice as often (G88).
+//
 // A universe with no outer realm on it is the Heart alone, and a lease asked
 // for one is the one-island lease it always was.
 
@@ -26,20 +32,28 @@ import { REALMS, clockTicks } from "./service.mjs";
 export const LINK_WIRE = ["stone_bridge", "rope_bridge", "chute", "rift"];
 const MAGIC = "RBU1";
 
+/** §5.5's flicker by the strain band: Cracking's, and Breaking's twice as
+ *  often; none below. */
+export const flickerOf = (band) => (band >= 6 ? 2 : band >= 5 ? 1 : 0);
+
 /** A universe's bundle: its realms in code order, each its code (0 the
  *  Heart, k outer realm k) and island's hash, then its links, each its kind
- *  and the realms' places in that order, a Chute running from the first. */
-export function encodeUniverse(realms, links) {
+ *  and the realms' places in that order, a Chute running from the first;
+ *  then its flicker and the places of the realms its faults open from,
+ *  rising. */
+export function encodeUniverse(realms, links, { flicker = 0, faults = [] } = {}) {
   return Uint8Array.from([
     ...Buffer.from(MAGIC), realms.length,
     ...realms.flatMap((r) => [REALMS.indexOf(r.realm), ...Buffer.from(r.bundle, "hex")]),
     links.length, ...links.flatMap((l) => [LINK_WIRE.indexOf(l.kind), l.a, l.b]),
+    flicker, faults.length, ...[...faults].sort((x, y) => x - y),
   ]);
 }
 
-/** The inverse, as far as the server reads it: realms {realm, bundle} and
- *  links {kind, a, b} by realm name; null for bytes that are not one. The
- *  simulation checks the rest. */
+/** The inverse, as far as the server reads it: realms {realm, bundle},
+ *  links {kind, a, b} by realm name, the flicker and the realms the faults
+ *  open from; null for bytes that are not one. The simulation checks the
+ *  rest. */
 export function decodeUniverse(bytes) {
   if (!bytes || bytes.length < 6 || Buffer.from(bytes.subarray(0, 4)).toString() !== MAGIC) return null;
   const n = bytes[4];
@@ -52,7 +66,10 @@ export function decodeUniverse(bytes) {
   for (let i = 0, m = bytes[at++]; i < m; i++, at += 3) {
     links.push({ kind: LINK_WIRE[bytes[at]], a: realms[bytes[at + 1]]?.realm, b: realms[bytes[at + 2]]?.realm });
   }
-  return at === bytes.length ? { realms, links } : null;
+  const flicker = bytes[at++];
+  const f = bytes[at++] ?? 0;
+  const faults = Array.from(bytes.subarray(at, at + f), (p) => realms[p]?.realm);
+  return at + f === bytes.length ? { realms, links, flicker, faults } : null;
 }
 
 export class Crossings {
@@ -85,13 +102,18 @@ export class Crossings {
     const links = this.service.links.rows(defender)
       .filter((l) => l.open && place.has(l.a) && place.has(l.b))
       .map((l) => ({ kind: l.kind, a: place.get(l.a), b: place.get(l.b) }));
-    return store.put(encodeUniverse(realms, links));
+    // §5.5 at the lease: the strain's band, and the faults open from the
+    // realms with islands on them (links.mjs, as the Observatory card says).
+    const { strain, band } = this.service.weaving.stability(defender);
+    const faults = this.service.links.view(defender, strain).faults.filter((r) => place.has(r)).map((r) => place.get(r));
+    return store.put(encodeUniverse(realms, links, { flicker: flickerOf(band), faults }));
   }
 
   /** What the lease shows of its universe: its hash, each realm with its
-   *  island, its links to the Heart and the clock a crew landing there
-   *  plays on (null for the Heart, and for a realm with no route to it),
-   *  and the links. `extra` is the era's ticks on every clock (§18.3). */
+   *  island, its links to the Heart, the clock a crew landing there plays
+   *  on (null for the Heart, and for a realm with no route to it) and
+   *  whether a fault opens from it, the links, and the flicker. `extra` is
+   *  the era's ticks on every clock (§18.3). */
   view(digest, extra = 0) {
     const u = decodeUniverse(this.service.store.get(digest));
     if (!u) return null;
@@ -101,8 +123,10 @@ export class Crossings {
       realms: u.realms.map(({ realm, bundle }) => ({
         realm, bundle, links: Number.isFinite(depth[realm]) ? depth[realm] : null,
         ticks: realm !== "heart" && Number.isFinite(depth[realm]) ? clockTicks(depth[realm]) + extra : null,
+        fault: u.faults.includes(realm),
       })),
       links: u.links,
+      flicker: u.flicker,
     };
   }
 

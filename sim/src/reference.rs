@@ -34,7 +34,7 @@ use crate::heist::{self, Grade, Outcome, WardKind};
 use crate::island::Island;
 use crate::rng::{Rng, Stream};
 use crate::replay::{Command, Heist, Kind};
-use crate::universe::{clock_ticks, record_universe, Crossing, Universe};
+use crate::universe::{clock_ticks, record_universe, Crossing, Universe, FAULT_ENTRY};
 use crate::{era, record_with, rules_version, Point, World};
 
 /// §12.19's break-even, in per cent of the bag.
@@ -244,9 +244,10 @@ pub fn play_universe(universe: &Universe, islands: &[Island], seed: u64, crew: u
 }
 
 /// `play_universe`, landing on the realm at place `on` rather than the one
-/// the seed draws, on a clock of `ticks` rather than §5.4's for it and the
-/// week's `era` (§18.3): a test's device, which may play a clock the lease
-/// does not allow.
+/// the seed draws — or entering at its fault for `FAULT_ENTRY` and the
+/// place, straight to the Heart — on a clock of `ticks` rather than §5.4's
+/// for it and the week's `era` (§18.3): a test's device, which may play a
+/// clock the lease does not allow.
 pub fn play_universe_on(universe: &Universe, islands: &[Island], seed: u64, crew: u8, on: Option<usize>,
                         ticks: Option<u32>, era: Option<era::Era>) -> Option<Crossing> {
     let mut rng = Rng::new(seed, Stream::Loot);
@@ -254,8 +255,9 @@ pub fn play_universe_on(universe: &Universe, islands: &[Island], seed: u64, crew
     if realms.is_empty() || islands.len() != universe.realms.len() {
         return None;
     }
-    let realm = match on {
-        Some(r) if realms.contains(&r) => r,
+    let fault = on.is_some_and(|r| r & FAULT_ENTRY as usize != 0);
+    let realm = match on.map(|r| r & !(FAULT_ENTRY as usize)) {
+        Some(r) if realms.contains(&r) && (!fault || universe.faults.contains(&(r as u8))) => r,
         Some(_) => return None,
         None => realms[rng.below(realms.len() as u64) as usize],
     };
@@ -263,10 +265,14 @@ pub fn play_universe_on(universe: &Universe, islands: &[Island], seed: u64, crew
     let ticks = ticks.unwrap_or_else(|| clock_ticks(links) + era::extra_ticks(era));
     let header = Heist { seed, island: universe.digest(), rules: rules_version(), ticks, crew, era,
                          manifest: None, commands: Vec::new(), checksums: Vec::new() };
-    let first = World::from_island(&islands[realm], &header);
-    let spot = landing(&first, &islands[realm], &beside_vault(&first), &mut rng)?;
-    let (lx, ly) = aim(&first, spot);
-    let mut commands = vec![Command { tick: 0, actor: realm as u8, kind: Kind::Land, x: lx, y: ly }];
+    let mut commands = if fault {
+        vec![Command { tick: 0, actor: FAULT_ENTRY | realm as u8, kind: Kind::Land, x: 0, y: 0 }]
+    } else {
+        let first = World::from_island(&islands[realm], &header);
+        let spot = landing(&first, &islands[realm], &beside_vault(&first), &mut rng)?;
+        let (lx, ly) = aim(&first, spot);
+        vec![Command { tick: 0, actor: realm as u8, kind: Kind::Land, x: lx, y: ly }]
+    };
     commands.extend((0..crew).map(|i| Command { tick: 0, actor: i, kind: Kind::Gait, x: 1, y: 0 }));
     let mut c = Crossing::new(universe, islands, &Heist { commands, ..header }).ok()?;
     let n = crew as usize;
