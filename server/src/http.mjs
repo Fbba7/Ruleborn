@@ -16,6 +16,8 @@
 //   GET  /v1/curation/:realm?page=n                          → the realm's island, origin, name, layouts, swaps (13.3)
 //   POST /v1/curation/:realm/layout {"seed"}                 → the generator's layout laid and published, generated
 //   PUT  /v1/curation/:realm/name {"adjective", "noun"}      → the island named from the word lists
+//   GET  /v1/fund                                            → the Island Fund: opted in, and each closed quarter's pay (18.9)
+//   PUT  /v1/fund                {"optIn"}                   → opted in or out, at 18 or over
 //   GET  /v1/lab                                             → the Lab's chambers, finds and hints (8.6)
 //   POST /v1/lab                 {"chamber", "laws"}         → an experiment placed and paid (8.6, 9.5)
 //   POST /v1/lab/sphere                                      → the third sphere names a chord, daily (8.5)
@@ -503,6 +505,13 @@ export function handler(service, { webClientId = null, appleNotifications = null
           const q = await body(request);
           return json(service.curation.name(me, realm, { adjective: q.adjective, noun: q.noun }));
         }
+        return json({ error: "no_such_route" }, 404);
+      }
+      if (parts[1] === "fund" && parts.length === 2) {
+        // §18.9's Island Fund (fund.mjs): the settings page's opt-in and the
+        // quarters already paid, never a live counter.
+        if (request.method === "GET") return json(service.fund.view(who()));
+        if (request.method === "PUT") return json(service.fund.optIn(who(), (await body(request)).optIn));
         return json({ error: "no_such_route" }, 404);
       }
       if (parts[1] === "lab") {

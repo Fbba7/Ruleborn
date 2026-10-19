@@ -439,6 +439,24 @@ pub extern "C" fn rb_terrain(len: u32) -> i32 {
     })
 }
 
+/// §13.3's hold measurement (`reference::hold`): `raids` heists of the
+/// competent reference crew of `crew`, on a clock of `ticks`, on the island
+/// in the buffer's first `len` bytes, from seed `seed` and those after it.
+/// Returns how many it held (Foiled), or -2 when the island does not decode.
+/// A queue measures an island in parts by moving the seed on.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_hold(seed_hi: u32, seed_lo: u32, raids: u32, ticks: u32, crew: u32, len: u32) -> i32 {
+    if !fits(0, len) {
+        return -9;
+    }
+    let seed = ((seed_hi as u64) << 32) | seed_lo as u64;
+    with_buffer(|b| {
+        let Ok(island) = Island::decode(&b[..len as usize]) else { return -2 };
+        crate::reference::hold(&island, seed, raids, ticks, crew.clamp(3, 5) as u8).0 as i32
+    })
+}
+
 /// The cross-target spike's number: one call in, one number out.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]

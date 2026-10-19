@@ -663,6 +663,33 @@ placed by the island's own lists, so they have no tile here
 placed buildings on their tiles (`buildings_not_as_placed`, read with
 `rb_island_buildings`); the simulation still judges what stands under them.
 
+## The hold, measured
+
+`src/holds.mjs` is §13.3's hold. Every island published is queued once by
+its bundle and the rules version for §13.3's 800 raids of the competent
+reference crew, which plays inside the simulation (`sim/src/reference.rs`,
+`rb_hold`): three of a new Keeper's crew on the Heart's clock, each raid
+landing where its seed draws among the spots near the shortest walk to the
+Vault (G86). The queue is worked a few raids at a time (main.mjs), each part
+from the digest's seed moved on, so a measurement in parts is the one in a
+single call. When it lands, every island on that bundle not yet raided takes
+§12.22's prior from it; the same bundle published again is answered from the
+cache. Curation shows it as measuring until it lands, never as an estimate.
+
+## The Island Fund
+
+`src/fund.mjs` is §18.9's Island Fund. The daily job closes each ended
+calendar quarter once: 10% of its net revenue — each purchase, less a
+refund the store has not reversed, less §22.5's 15% — divided by the time
+played on each opted-in creator of 18 or over's islands (each validated
+Workshop play's seconds from the event log, none of the creator's own, a
+quarter of a constellation-mate's, nothing on a removed island), no one
+above 2%, what a cap leaves going to the rest in proportion (G85). `GET
+/v1/fund` is the settings page: opted in or not, and each closed quarter's
+pay, never a running counter; `PUT /v1/fund {"optIn"}` opts in at 18 or
+over. The bands, the floor and the per-player cap have no numbers (G85);
+identity checks and paying the money are outside the server.
+
 ## Links between realms
 
 `src/links.mjs` is §5.3's links. Each outer realm opens with a Stone bridge to

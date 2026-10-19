@@ -66,6 +66,8 @@ func _refresh() -> void:
 	var top := VBoxContainer.new()
 	top.add_child(UI.label(c["origin"], UI.TEXT_POINTS, true))
 	top.add_child(UI.label(c["name"], UI.TEXT_POINTS, true))
+	if c["hold"] != "":
+		top.add_child(UI.label(c["hold"], UI.TEXT_POINTS, true))
 	body.add_child(UI.plate(top))
 	_section("layouts", Strings.t("CUR_LAYOUTS"), c["layouts"], busy, _lay)
 	if not (c["posts"] as Array).is_empty():

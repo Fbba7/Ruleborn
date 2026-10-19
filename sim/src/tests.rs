@@ -6291,3 +6291,45 @@ fn every_first_draw_of_the_generator_passes_its_checks() {
     let distinct: std::collections::BTreeSet<[u8; 32]> = (0..20).map(|s| Island::generated(s, 2).digest()).collect();
     assert_eq!(distinct.len(), 20, "twenty seeds, twenty islands");
 }
+
+#[test]
+fn the_competent_reference_crew_lands_routes_round_what_it_sees_cracks_loads_to_break_even_and_leaves() {
+    // §13.3's reference crew inside the simulation (D66, TD.16): on an island
+    // with nothing defending it, every raid it plays gets everyone out with
+    // the bag at §12.19's break-even.
+    use crate::island::Island;
+    use crate::reference::{competent, hold, play, BREAKEVEN_FILL};
+    let open = Island::example_open();
+    let (held, outcomes) = hold(&open, 0, 12, 4_500, 3);
+    assert_eq!(held, 0);
+    assert!(outcomes.iter().all(|o| o.grade == crate::heist::Grade::Clean && o.out == 3), "{outcomes:?}");
+    let w = play(&open, 3, 4_500, 3, None);
+    assert!(w.raiders.iter().all(|r| r.carried == 0 || r.carried >= r.role.carry() * BREAKEVEN_FILL / 100));
+    assert!(w.commands().iter().any(|c| c.kind == crate::replay::Kind::Crack));
+    assert!(w.commands().iter().all(|c| c.kind != crate::replay::Kind::MoveTo || c.tick > 0));
+    // Its heist is a replay like any other: it verifies, to the outcome it
+    // played, and fits §24.10's size.
+    let heist = competent(&open, 3, 4_500, 3, None);
+    assert_eq!(crate::verify_on(&open, &heist), Ok(w.outcome()));
+    assert!(heist.encode().len() <= crate::replay::MAX_HEIST_BYTES);
+}
+
+#[test]
+fn a_hold_is_counted_over_the_reference_crews_raids_their_landings_drawn_from_the_seed() {
+    // §13.3: "800 raids of the competent reference crew". Each raid's seed
+    // draws its landing among the spots a competent crew weighs, so raids
+    // differ; one seed is one raid everywhere.
+    use crate::island::Island;
+    use crate::reference::{hold, play};
+    let island = Island::example();
+    let (held, outcomes) = hold(&island, 0, 24, 4_500, 3);
+    assert_eq!(outcomes.len(), 24);
+    assert!(held > 0 && held < 24, "the example island holds some raids and not others: {held}");
+    assert_eq!(hold(&island, 0, 24, 4_500, 3).0, held, "one seed, one count");
+    let landings: std::collections::BTreeSet<_> = (0..24u64).map(|s| play(&island, s, 4_500, 3, None).landing).collect();
+    assert!(landings.len() > 1, "raids come in at more than one spot");
+    for s in 0..4u64 {
+        let heist = crate::reference::competent(&island, s, 4_500, 3, None);
+        assert_eq!(crate::verify_on(&island, &heist).map(|o| o.grade), Ok(outcomes[s as usize].grade));
+    }
+}

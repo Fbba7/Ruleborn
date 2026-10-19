@@ -141,6 +141,7 @@ export function deleteAccount(service, account, reason = "requested", { journal 
     // The universe they built: nobody's home now.
     db.prepare("DELETE FROM realms WHERE owner = ?").run(account);
     db.prepare("DELETE FROM links WHERE owner = ?").run(account);
+    db.prepare("DELETE FROM fund_payouts WHERE creator = ?").run(account);
     db.prepare("DELETE FROM buildings WHERE owner = ?").run(account);
     db.prepare("DELETE FROM characters WHERE owner = ?").run(account);
     db.prepare("DELETE FROM producers WHERE owner = ?").run(account);

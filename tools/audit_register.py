@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "D99"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "D99"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9887,6 +9887,60 @@ dict(id="D99", kind="deviation", severity="significant", status="open",
          "drafted); keep §26.4’s demand test for the languages after these; have "
          "a native speaker read each drafted language."),
 
+dict(id="G86", kind="gap", severity="significant", status="open",
+     title="Measured by the simulation’s own reference crew, the generator’s "
+           "islands hold 0% or 100% of raids, far outside §12.22’s generated band",
+     refs=["13.3", "12.22", "13.2", "13.4"],
+     body="§13.3’s hold is now measured on the server by the competent "
+          "reference crew inside the simulation (sim/src/reference.rs, "
+          "holds.mjs), and that needed readings: the crew is three, a new "
+          "Keeper’s (§12.5), on the Heart’s 150-second clock; and since one "
+          "crew on one island plays one heist, each of the 800 raids draws its "
+          "landing, from the raid’s seed, among the spots within six tiles of "
+          "the shortest walk to the Vault, a spot the skiff is heard at counted "
+          "six tiles longer — §13.3 says 800 raids, not what differs between "
+          "them. <strong>What it measures:</strong> of the generator’s islands "
+          "(<code>Island::generated</code>), five seeds at each realm level, 20 "
+          "raids each, 13 of 25 held every raid and 4 held none; level 3 held "
+          "every raid on all five; the example island held 4 of 40. §12.22 "
+          "puts a generated island at <em>“55 to 70% at every realm level”</em> "
+          "of raider success, so 30 to 45% held: almost no generated island is "
+          "inside it. The generator rings the Vault in wards and posts a guard "
+          "beside it, and a crew that keeps off every cone and sensor it can "
+          "see finds no way in. Found building TD.16.",
+     measured="sim/src/reference.rs hold() at 20 raids, Island::generated(seed 0 to 4, realm levels 1 to 5): "
+              "level 1: 18 1 20 17 12; level 2: 19 12 19 20 7; level 3: 20 20 20 20 20; level 4: 20 0 20 20 20; "
+              "level 5: 20 0 0 20 0; Island::example(): 4 of 40",
+     rec="Tune the generator to the generated band against the reference crew, "
+         "which can now measure it (TD.16), and state in §13.3 what the 800 "
+         "raids vary."),
+
+dict(id="G85", kind="gap", severity="significant", status="open",
+     title="§18.9’s Island Fund gives no numbers for its bands, its floor or its "
+           "cap on a player’s time, and leaves open what net revenue is and how "
+           "the remainder spreads",
+     refs=["18.9", "22.5", "18.7"],
+     body="Building the fund on the server (fund.mjs) needed readings and "
+          "met three gaps. <strong>Read:</strong> net revenue is each purchase "
+          "less a refund the store has not reversed (G32), less §22.5’s 15% — "
+          "the rate of the low and base scenarios and of both stores’ first "
+          "million, where the high scenario’s Apple half pays 30%; a quarter is "
+          "a calendar quarter in UTC, closed once by the daily job after it "
+          "ends; time played is each validated Workshop play’s seconds from the "
+          "landing to the last crew member out or caught, none of the creator’s "
+          "own and a quarter of a constellation-mate’s (§18.7’s readings); and "
+          "<em>“The remainder spreads down the tail”</em> is read as what a "
+          "capped creator would have taken going to the rest in proportion, "
+          "again until no one is over 2%, so a fund with fewer than fifty "
+          "creators leaves some of itself unpaid. <strong>Unstated:</strong> "
+          "<em>“The share per hour played falls in bands as a creator’s total "
+          "rises”</em> names no band; <em>“Any island that passes 500 "
+          "completions in a quarter earns a minimum payment”</em> names no "
+          "minimum; and <em>“Time played is capped per player per island per "
+          "quarter”</em> names no cap. None is built. Found building D62.",
+     rec="The owner decides the bands, the floor and the cap; state the "
+         "readings in §18.9 (the edits are drafted)."),
+
 dict(id="G84", kind="gap", severity="minor", status="open",
      title="§5.3 and §5.5 leave open where a new realm’s link goes, what an "
            "unpaid Rift does, and Cracking’s and Breaking’s production; the "
@@ -11484,6 +11538,17 @@ V37 = {
     "written from British by a spelling table. Left: the document’s §20.6, "
     "§26.3 and §26.4 (drafted), the coined names in each language (the "
     "owner’s, §26.9), and a native speaker’s read of the drafted languages."),
+
+"G86": dict(status="open", left="build", note=
+    "Found building TD.16, after v3.7: the reference crew inside the "
+    "simulation measures the generator's islands outside the generated band; "
+    "the generator's tuning is the build's, the 800 raids' landing draw the "
+    "document's (TD.75)."),
+
+"G85": dict(status="open", left="document", note=
+    "Found building D62, after v3.7: the fund built on the server as §18.9 "
+    "states it, its readings drafted (TD.75), and its bands, floor and "
+    "per-player cap waiting on numbers only the owner can give."),
 
 "G84": dict(status="open", left="document", note=
     "Found building TD.37, after v3.7: where a new realm’s link goes, what an "
@@ -14939,6 +15004,22 @@ EDITS = {
          find="English and Brazilian Portuguese at launch.",
          replace="English, Portuguese, German and French at launch.",
          why="The demand test starts after the owner’s six. D99."),
+],
+"G86": [
+    dict(section="13.3", action="replace",
+         find="it is measured on the server — 800 raids of the competent reference crew, queued and cached by the island’s digest —",
+         replace="it is measured on the server — 800 raids of the competent reference crew, each landing at a spot its seed draws among those within six tiles of the shortest walk to the Vault, queued and cached by the island’s digest —",
+         why="What the 800 raids vary. G86."),
+],
+"G85": [
+    dict(section="18.9", action="replace",
+         find="The share per hour played falls in bands as a creator's total rises, and no single creator may take more than 2% of a quarter's fund. The remainder spreads down the tail.",
+         replace="The share per hour played falls in bands as a creator's total rises, and no single creator may take more than 2% of a quarter's fund. What a capped creator would have taken goes to the rest in proportion to their time, again until no one is over the cap.",
+         why="How the remainder spreads. G85."),
+    dict(section="18.9", action="replace",
+         find="10% of net cosmetic and season-pass revenue goes into a Island Fund each quarter.",
+         replace="10% of net cosmetic and season-pass revenue — what was paid, less refunds the store did not reverse and its commission at 22.5's rate — goes into a Island Fund each calendar quarter.",
+         why="What net revenue is, and which quarter. G85."),
 ],
 "G84": [
     dict(section="5.3", action="replace",

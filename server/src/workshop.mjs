@@ -20,6 +20,21 @@ import { Social } from "./social.mjs";
 import { sha256 } from "./store.mjs";
 
 export const WORDS = JSON.parse(readFileSync(new URL("./words.json", import.meta.url), "utf8"));
+const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
+
+/** Whether `player` and `creator` shared a constellation at any time since
+ *  `published`, the two memberships overlapping each other and it: §18.7's
+ *  "a creator's own constellation", which the Island Fund reads too
+ *  (fund.mjs). */
+export function kin(db, player, creator, published) {
+  return Boolean(db.prepare(
+    `SELECT 1 FROM constellation_members a JOIN constellation_members b
+       ON a.constellation = b.constellation
+      WHERE a.account = :player AND b.account = :creator
+        AND (a.left_at IS NULL OR a.left_at > MAX(b.joined_at, :published))
+        AND (b.left_at IS NULL OR b.left_at > MAX(a.joined_at, :published))`)
+    .get({ player, creator, published }));
+}
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
@@ -296,8 +311,11 @@ export class Workshop {
       const result = !build ? { status: "refused", reason: "rules_not_held" }
         : !island ? { status: "refused", reason: "island_withdrawn" }
         : build.verify(replay, island);
+      // The event log's report rides along (TD.39): the Island Fund counts a
+      // play's time from it (fund.mjs).
       outcome = result.status === "verified"
-        ? { validated: true, verdict: result.verdict, cleared: clears(result.verdict) }
+        ? { validated: true, verdict: result.verdict, cleared: clears(result.verdict),
+            ...(result.report ? { report: { held: result.report.held } } : {}) }
         : { validated: false, reason: result.reason ?? result.status };
     }
     const now = this.now();
@@ -306,16 +324,10 @@ export class Workshop {
         // §18.7: "completions from a creator's own constellation count at a
         // quarter" — any constellation both were in together in the item's
         // life, the two memberships overlapping each other and it.
-        const kin = this.db.prepare(
-          `SELECT 1 FROM constellation_members a JOIN constellation_members b
-             ON a.constellation = b.constellation
-            WHERE a.account = :player AND b.account = :creator
-              AND (a.left_at IS NULL OR a.left_at > MAX(b.joined_at, :published))
-              AND (b.left_at IS NULL OR b.left_at > MAX(a.joined_at, :published))`)
-          .get({ player, creator: item.creator, published: item.published_at });
+        const mate = this.kin(player, item.creator, item.published_at);
         const fresh = this.db.prepare(
           `INSERT OR IGNORE INTO workshop_completions (item, player, weight, at)
-           VALUES (?, ?, ?, ?)`).run(item.id, player, kin ? 0.25 : 1, now).changes;
+           VALUES (?, ?, ?, ?)`).run(item.id, player, mate ? facts.KIN_COMPLETION_WEIGHT : 1, now).changes;
         outcome.counted = fresh === 1;
         if (fresh) this.spike(item.id, now);
       }
@@ -323,6 +335,11 @@ export class Workshop {
         .run(now, JSON.stringify(outcome), token);
       return outcome;
     });
+  }
+
+  /** §18.7's constellation rule for this play's creator (`kin`). */
+  kin(player, creator, published) {
+    return kin(this.db, player, creator, published);
   }
 
   /** §18.7's "sudden spikes are reviewed by a person": the item is flagged

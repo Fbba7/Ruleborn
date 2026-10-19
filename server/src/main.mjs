@@ -300,11 +300,16 @@ const tidy = () => {
   service.notifications.expire();
   service.friends.expire();
   service.expireLapsed();
+  // §18.9: each ended quarter's Island Fund divided, once.
+  service.fund.closeEnded();
   // G32: what Google refunded or revoked, taken back, once a day.
   if (playPurchases) service.shop.voided(playPurchases).catch((err) => console.error("voided purchases:", err));
 };
 tidy();
 setInterval(tidy, DAY_MS).unref();
+// §13.3's hold measurements, a few of the reference crew's raids at a time,
+// so the queue never holds up a request for long (holds.mjs).
+setInterval(() => service.holds.work(), 5_000).unref();
 
 // §14.6's notifications, sent once a minute through Firebase Cloud Messaging
 // (§24.1, push.mjs) as the project's service account: RULEBORN_FCM_SERVICE_ACCOUNT

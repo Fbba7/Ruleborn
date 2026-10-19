@@ -6,9 +6,9 @@ extends RefCounted
 ## post with its role and facing, the picked one with the four-way dial and
 ## its moves; each woven law with what a swap would cost, previewed free and
 ## applied as a weave (G54); the draft's changes and why it cannot be saved;
-## and the name from the word lists. The stealth-path count and the hold
-## the server measures are G55's, and one guard's sight drawn hard-edged is
-## the world's (§21.12): none of them is here.
+## and the name from the word lists; and §13.3's hold as the server measures
+## it. The stealth-path count is G55's, and one guard's sight drawn
+## hard-edged is the world's (§21.12): neither is here.
 
 ## A move a tile along each way, in the dial's order.
 const STEPS := [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
@@ -103,6 +103,7 @@ static func screen(slice: Dictionary) -> Dictionary:
 	out["header"] = Strings.t("CUR_HEADER", [UniversePresenter.realm_name(str(v.get("type", "Heart"))),
 		int(v.get("level", 1))])
 	out["origin"] = origin(v)
+	out["hold"] = hold(v.get("hold"))
 	out["name"] = Strings.t("CUR_NAMED", SocialPresenter.word_name(slice.get("words", {}),
 		int(v["name"]["adjective"]), int(v["name"]["noun"]))) if v.get("name") is Dictionary \
 		else Strings.t("CUR_UNNAMED")
@@ -126,6 +127,18 @@ static func origin(v: Dictionary) -> String:
 		"authored":
 			return Strings.t("CUR_AUTHORED")
 	return Strings.t("CUR_NONE")
+
+
+## §13.3's hold, the server's measurement by the reference crew: measuring
+## until it lands, never an estimate; "" before the island is published.
+static func hold(h: Variant) -> String:
+	if not (h is Dictionary):
+		return ""
+	if str(h.get("status", "")) == "measuring":
+		return Strings.t("CUR_HOLD_MEASURING", [int(h.get("played", 0)), int(h.get("raids", 0))])
+	var raids := int(h.get("raids", 0))
+	var held := int(h.get("held", 0))
+	return Strings.t("CUR_HOLD", [held, raids, str(roundi(100.0 * held / maxi(1, raids))) + "%"])
 
 
 ## The generator's layouts on this page, and the next page.

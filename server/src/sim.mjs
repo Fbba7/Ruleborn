@@ -323,6 +323,17 @@ export class Build {
     return hex(this.buffer().slice(0, 32));
   }
 
+  /** §13.3's hold measurement, in part: of `raids` heists of the competent
+   *  reference crew of `crew` on a clock of `ticks`, from `seed` on, how many
+   *  it held (sim/src/reference.rs). */
+  hold(island, { seed, raids, ticks, crew = 3 }) {
+    this.buffer().set(island);
+    const s = BigInt.asUintN(64, BigInt(seed));
+    const n = this.x.rb_hold(Number(s >> 32n), Number(s & 0xffffffffn), raids, ticks, crew, island.length);
+    if (n < 0) throw new Error(`hold refused: ${REFUSED[n] ?? n}`);
+    return n;
+  }
+
   /** `Island::example()`, or `example_open()` with `open`. */
   exampleIsland(open = false) {
     const n = this.x.rb_example_island(open ? 1 : 0);

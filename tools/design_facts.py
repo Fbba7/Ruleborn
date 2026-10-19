@@ -262,6 +262,20 @@ LINKS_EXTRA = 2
 STRAIN_BAND_PRODUCTION = (0, 5, 10, 15, 15, 15, 15)
 #: §9.3's "× (1 − 0.10 per fault opening from the realm, 5.5)", in per cent.
 FAULT_PRODUCTION_CUT = 10
+#: §13.3: "it is measured on the server — 800 raids of the competent reference
+#: crew, queued and cached by the island's digest".
+HOLD_RAIDS = 800
+#: §18.9's Island Fund: "10% of net cosmetic and season-pass revenue goes into
+#: a Island Fund each quarter", and "no single creator may take more than 2%
+#: of a quarter's fund", in per cent.
+ISLAND_FUND_SHARE = 10
+ISLAND_FUND_CAP = 2
+#: §22.5's store commission, in per cent: "15% on the low and base
+#: scenarios", both stores' rate on their first US$1 million.
+STORE_COMMISSION = 15
+#: §18.7: "completions from a creator's own constellation count at a
+#: quarter".
+KIN_COMPLETION_WEIGHT = 0.25
 #: §12.3: "Refreshing the list costs Aether: 50, doubling with each refresh in
 #: the same hour."
 OBSERVATORY_REFRESH_AETHER = 50
@@ -586,6 +600,11 @@ HOME = {
     "CHAPTER_TWO_KEEPER": "7.6",
     "ALBUM_MILESTONES": "7.6",
     "FAULTS_BY_STRAIN": "5.5",
+    "HOLD_RAIDS": "13.3",
+    "ISLAND_FUND_SHARE": "18.9",
+    "ISLAND_FUND_CAP": "18.9",
+    "STORE_COMMISSION": "22.5",
+    "KIN_COMPLETION_WEIGHT": "18.7",
     "LINK_KINDS": "5.3",
     "LINK_SOCKETS": "5.3",
     "LINKS_EXTRA": "5.3",
@@ -837,6 +856,13 @@ STATED = {
                                r"[\s\S]*?\| Strained\n\| [^\n]*\n\| \+(\d+)% production",
                                lambda m: (0, int(m[0]), int(m[1]), int(m[2]), int(m[3]), int(m[3]), int(m[3]))),
     "FAULT_PRODUCTION_CUT": (r"× \(1 − 0\.(\d+) per fault opening from the realm", lambda m: int(m[0])),
+    "HOLD_RAIDS": (r"measured on the server — (\d+) raids of the competent reference crew", lambda m: int(m[0])),
+    "ISLAND_FUND_SHARE": (r"(\d+)% of net cosmetic and season-pass revenue goes into a Island Fund each quarter",
+                          lambda m: int(m[0])),
+    "ISLAND_FUND_CAP": (r"no single creator may take more than (\d+)% of a quarter's fund", lambda m: int(m[0])),
+    "STORE_COMMISSION": (r"(\d+)% on the low and base scenarios", lambda m: int(m[0])),
+    "KIN_COMPLETION_WEIGHT": (r"completions from a creator's own constellation count at a (quarter)",
+                              lambda m: {"quarter": 0.25}[m[0]]),
     "OBSERVATORY_REFRESH_AETHER": (r"Refreshing the list costs Aether: (\d+), doubling with each refresh in the same hour",
                                    lambda m: int(m[0])),
     "BADGE_MARKS": (r"Ghost (\d+), Vault breaker (\d+), Iron wall (\d+), Law hunter (\d+), Resonant (\d+), "

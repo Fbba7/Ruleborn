@@ -313,6 +313,10 @@
     "seeded": {
      "type": "none",
      "holds": "marks the game's own seeded islands' account"
+    },
+    "fund_opt_in": {
+     "type": "gameplay",
+     "holds": "whether the creator opted in to the Island Fund (18.9)"
     }
    }
   },
@@ -2120,6 +2124,92 @@
     },
     "open": {
      "type": "gameplay"
+    }
+   }
+  },
+  "fund_quarters": {
+   "about": "Each closed quarter of the Island Fund: its net revenue and fund (§18.9).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "ever",
+    "why": "not about a person"
+   },
+   "deletion": "kept",
+   "columns": {
+    "quarter": {
+     "type": "none"
+    },
+    "net": {
+     "type": "none"
+    },
+    "pool": {
+     "type": "none"
+    },
+    "closed_at": {
+     "type": "none"
+    }
+   }
+  },
+  "fund_payouts": {
+   "about": "What each opted-in creator's islands earned of a quarter's Island Fund (§18.9).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased",
+   "columns": {
+    "quarter": {
+     "type": "none"
+    },
+    "creator": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "seconds": {
+     "type": "gameplay",
+     "holds": "time played on the creator's islands that quarter"
+    },
+    "cents": {
+     "type": "other",
+     "holds": "the creator's share, in euro cents"
+    }
+   }
+  },
+  "island_holds": {
+   "about": "Each island bundle's hold, measured by the reference crew (§13.3).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "ever",
+    "why": "not about a person"
+   },
+   "deletion": "kept",
+   "columns": {
+    "bundle": {
+     "type": "none"
+    },
+    "rules": {
+     "type": "none"
+    },
+    "raids": {
+     "type": "none"
+    },
+    "played": {
+     "type": "none"
+    },
+    "held": {
+     "type": "none"
+    },
+    "queued_at": {
+     "type": "none"
+    },
+    "measured_at": {
+     "type": "none"
     }
    }
   }

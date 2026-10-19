@@ -8,6 +8,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
+import { quarterOf } from "../src/fund.mjs";
+
 import { Journal, REAPPLY_DAYS, deleteAccount, reapplyDeletions } from "../src/accounts.mjs";
 import { Store } from "../src/store.mjs";
 import { open } from "../src/db.mjs";
@@ -98,6 +100,19 @@ async function busy() {
   w.rate(x.account, theirs.id, { fun: 5, cleverness: 4, fairness: 3 });
   w.remix(x.account, theirs.id);
   w.report(x.account, theirs.id, "other");
+  // A quarter of the Island Fund closed, paying x for y's play on its island
+  // (fund.mjs).
+  t.service.fund.optIn(x.account, true);
+  const yp = w.play(y.account, mine.id);
+  w.submitPlay(y.account, yp.token, t.build.record(t.service.bundle(yp.bundle),
+    { seed: BigInt(yp.seed), ticks: yp.ticks, crew: 3, commands: openPlan() }));
+  t.service.db.prepare("INSERT INTO purchases (store, txn, account, product, price, at) VALUES ('apple', 'f1', ?, 'p', 999, ?)")
+    .run(y.account, t.clock.now);
+  const quarterNow = quarterOf(t.clock.now);
+  const realNow = t.clock.now;
+  t.clock.now = quarterNow.ends_at + 1;
+  t.service.fund.close(quarterNow.q);
+  t.clock.now = realNow;
 
   t.service.db.prepare("UPDATE accounts SET keeper_level = 6").run();
   const social = new Social(t.service);

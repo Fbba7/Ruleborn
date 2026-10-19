@@ -798,9 +798,16 @@ DELIVERABLES = [
         "with no hour's rest (G54, 5.6)",
         "curation offers the generator's layouts for a realm and lays one with the player's own laws, "
         "published as generated and rated from the generated band (13.3, 12.22, G54)"),
-        not_started("§13.3's stealth-path count shown at once for every edit and the hold the server measures, "
-                    "\"measuring…\" until it lands (G55, TD.16, TD.65), and one guard's sight drawn hard-edged on "
-                    "the world (21.12, TD.3)"))),
+        # §13.3's hold as the server measures it (holds.mjs), and what is
+        # left: the stealth-path count and the guard's sight on the world.
+        parts(parts(client_tests(
+            "curation shows §13.3's hold as the server measures it: measuring, with the reference crew's raids so "
+            "far, until it lands, then the raids held, never an estimate (13.3, G55)"),
+            server_tests(
+            "curation shows the hold as measuring until it lands, then as measured, never as an estimate "
+            "(13.3, G55)")),
+            not_started("§13.3's stealth-path count shown at once for every edit (G55, TD.65), and one guard's sight "
+                        "drawn hard-edged on the world (21.12, TD.3)")))),
     # §23.2's "Rehearsal and defence log": its defence half (TD.66), on the
     # facts settlement records (defences.mjs). The rehearsal half is the
     # Rehearsal row's.
@@ -1080,8 +1087,13 @@ DELIVERABLES = [
             "the same on every server (12.22)",
             "a thin list reaches for the game's generated islands after echoes and before widening "
             "any filter (12.22)")),
-        not_started("the simulation's reference crews rate a new island: §13.3's 800 raids of "
-                    "the competent crew, queued and cached by the island's digest (TD.16)"))),
+        # §13.3's competent reference crew in the simulation, and the
+        # server's queue that measures and rates each island by it.
+        parts(systems("Reference crew"), server_tests(
+            "a published island is queued for §13.3's 800 raids of the competent reference crew, measured in parts "
+            "as in one call, and rated from the hold that lands (13.3, 12.22, TD.16)",
+            "curation shows the hold as measuring until it lands, then as measured, never as an estimate "
+            "(13.3, G55)")))),
     ("6", "Universes of several realms joined by links", BACKEND, parts(
         # §5.3's links held on the server, with each realm's depth and §5.4's
         # clock and faults from them (links.mjs).
@@ -1150,8 +1162,21 @@ DELIVERABLES = [
         "the track, the shop and the wardrobe over HTTP")),
     ("8", "The launch cosmetic sets, authored", BACKEND, not_started(
         "server/src/cosmetics.json lists §22.1's launch sets, priced (D64)")),
-    ("8", "The Island Fund, paid from purchase records (§18.9)", BACKEND, not_started(
-        "the server pays §18.9's Island Fund from its purchase records (D62)")),
+    ("8", "The Island Fund, paid from purchase records (§18.9)", BACKEND, parts(
+        # What §18.9 states, built (fund.mjs): the fund, the time played, the
+        # cap and the opt-in.
+        server_tests(
+            "a cap is held at its share and what it would have taken goes to the rest in proportion, until none is "
+            "over (18.9)",
+            "the Island Fund pays 10% of a quarter's net revenue, after refunds and §22.5's commission, by time "
+            "played on each opted-in adult creator's islands, none above 2%, at the quarter's end and once "
+            "(18.9, 22.5)",
+            "time played counts the event log's seconds where it has them, a quarter of a constellation-mate's, and "
+            "the daily job closes each ended quarter (18.7, 18.9, TD.39)",
+            "the Island Fund's settings page and opt-in are served over HTTP (18.9)"),
+        not_started("the share per hour falling in bands, the floor for an island past 500 completions and the cap "
+                    "on one player's time, which §18.9 gives no numbers for; identity checks and paying the money, "
+                    "which are outside the server (D62)"))),
     # The screens' data side, headless and against the real server
     # (client/tests/shop_tests.gd); the screens are also in every layout,
     # catalogue and accessibility check. Drawn with placeholder components

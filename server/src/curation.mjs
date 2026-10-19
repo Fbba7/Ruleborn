@@ -19,9 +19,9 @@
 // SHA-256("curation:<account>:<realm>:<n>"). Any seed may be laid; the
 // three are a menu, not a limit.
 //
-// §13.3's stealth-path count, shown at once for every edit, and the hold
-// the server measures for an island's digest are TD.16's and G55's: not
-// here.
+// The hold the server measures for an island's digest rides on the view
+// (holds.mjs); §13.3's stealth-path count, shown at once for every edit, is
+// G55's and not here.
 
 import { createHash } from "node:crypto";
 
@@ -82,6 +82,9 @@ export class Curation {
       page,
       layouts: Array.from({ length: LAYOUTS }, (_, i) => layoutSeed(account, realm, page * LAYOUTS + i)),
       swaps: this.service.weaving.swaps(account, realm),
+      // §13.3's hold: "measuring…" until the reference crew's raids land
+      // (holds.mjs), never an estimate.
+      hold: row ? this.service.holds.status(row.bundle) : null,
     };
   }
 

@@ -82,6 +82,14 @@ func _words() -> void:
 			and n["layouts"][0]["action"] == "Layout 4" and n["layouts"][0]["why"] == ""
 			and (n["naming"] as Dictionary).is_empty(),
 		"%s | %s | %s" % [c.get("origin"), layouts, n.get("layouts")])
+	check.call("curation shows §13.3's hold as the server measures it: measuring, with the reference crew's raids "
+			+ "so far, until it lands, then the raids held, never an estimate (13.3, G55)",
+		CurationPresenter.hold({"status": "measuring", "played": 120, "raids": 800})
+			== "Hold: measuring… 120 of 800 raids of the reference crew"
+			and CurationPresenter.hold({"status": "measured", "held": 232, "raids": 800, "hold": 0.29})
+				== "Held 232 of 800 raids of the reference crew (29%)"
+			and CurationPresenter.hold(null) == "" and c["hold"] == "",
+		CurationPresenter.hold({"status": "measured", "held": 232, "raids": 800}))
 	var posts: Array = c["posts"]
 	var i := RulebornIsland.new()
 	i.read(island())

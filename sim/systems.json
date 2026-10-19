@@ -677,6 +677,16 @@
       ]
     },
     {
+      "name": "Reference crew",
+      "section": "13.3",
+      "task": "TD.16",
+      "what": "§13.3's competent reference crew inside the simulation (sim/src/reference.rs, D66): it lands at a spot within six tiles of the shortest walk to the Vault, a heard spot counted six longer, drawn from the raid's seed; crouches; plans one route a leg round every guard's cone and every live ward's sensor as it reads them, walking it a checkpoint every third tile and planning again when a cone reaches its next tile; cracks, loads to §12.19's break-even and leaves when loaded, when the Vault is empty, at the first Alerted guard with anything carried, or when the clock left is the way in, 15% more and the skiff's time; and calls the skiff to the nearest open edge. Its heist is a replay like any other. `hold` counts the raids it was held on, which rb_hold gives the server's queue.",
+      "tests": [
+        "the_competent_reference_crew_lands_routes_round_what_it_sees_cracks_loads_to_break_even_and_leaves",
+        "a_hold_is_counted_over_the_reference_crews_raids_their_landings_drawn_from_the_seed"
+      ]
+    },
+    {
       "name": "Publishing rules",
       "section": "5.2",
       "task": "T3.3",

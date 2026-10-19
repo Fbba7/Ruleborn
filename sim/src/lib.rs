@@ -41,6 +41,7 @@ pub mod island;
 pub mod laws_table;
 pub mod noise;
 pub mod path;
+pub mod reference;
 pub mod replay;
 pub mod ruleborn;
 pub mod sha256;

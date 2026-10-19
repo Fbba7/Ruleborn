@@ -68,7 +68,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   push_token        TEXT,
   -- §13.1's seeded islands: the game's own, "stocked with designed islands
   -- from the start", and no new player to protect (matchmaking.mjs).
-  seeded            INTEGER NOT NULL DEFAULT 0
+  seeded            INTEGER NOT NULL DEFAULT 0,
+  fund_opt_in       INTEGER NOT NULL DEFAULT 0
 );
 
 -- §24.8: "Owner, the hash of the current bundle, when it changed." One row a
@@ -654,6 +655,33 @@ CREATE TABLE IF NOT EXISTS friends (
   CHECK (a < b)
 );
 CREATE INDEX IF NOT EXISTS friends_by_b ON friends (b);
+-- §13.3's hold, measured on the server (holds.mjs): each bundle's
+-- measurement under a rules version, how far it has come and what it held.
+CREATE TABLE IF NOT EXISTS island_holds (
+  bundle      TEXT NOT NULL,
+  rules       TEXT NOT NULL,
+  raids       INTEGER NOT NULL,
+  played      INTEGER NOT NULL,
+  held        INTEGER NOT NULL,
+  queued_at   INTEGER NOT NULL,
+  measured_at INTEGER,
+  PRIMARY KEY (bundle, rules)
+);
+-- §18.9's Island Fund (fund.mjs): each closed quarter's net revenue and
+-- fund, and what each opted-in creator's islands earned of it.
+CREATE TABLE IF NOT EXISTS fund_quarters (
+  quarter   INTEGER PRIMARY KEY,
+  net       INTEGER NOT NULL,
+  pool      INTEGER NOT NULL,
+  closed_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS fund_payouts (
+  quarter INTEGER NOT NULL REFERENCES fund_quarters(quarter),
+  creator TEXT NOT NULL REFERENCES accounts(id),
+  seconds INTEGER NOT NULL,
+  cents   INTEGER NOT NULL,
+  PRIMARY KEY (quarter, creator)
+);
 -- §5.3's links between a universe's realms (links.mjs): each its kind and
 -- the two realms it joins, a Chute running from a to b; a Rift's upkeep paid
 -- to paid_to, and whether it stands open.
@@ -820,6 +848,8 @@ const DROPPED = [
 /** Columns added to a table after a database was first made: `CREATE TABLE IF
  *  NOT EXISTS` leaves an old table as it was, so each is added if missing. */
 const ADDED = [
+  // §18.9: a creator's opting in to the Island Fund (fund.mjs).
+  ["accounts", "fund_opt_in", "INTEGER NOT NULL DEFAULT 0"],
   // §17.6's invite gift (friends.mjs): which of a pair shared the invite the
   // other accepted, and when the matching cosmetic was given.
   ["friends", "invited_by", "TEXT"],

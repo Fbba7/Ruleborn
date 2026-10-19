@@ -45,6 +45,8 @@ import { Universe } from "./universe.mjs";
 import { Curation } from "./curation.mjs";
 import { Defences } from "./defences.mjs";
 import { Lab } from "./lab.mjs";
+import { Fund } from "./fund.mjs";
+import { Holds } from "./holds.mjs";
 import { Links } from "./links.mjs";
 import { Observatory } from "./observatory.mjs";
 import { Profile } from "./profile.mjs";
@@ -138,6 +140,8 @@ export class Service {
     this.keeper = new Keeper(this);
     this.universe = new Universe(this);
     this.links = new Links(this);
+    this.fund = new Fund(this);
+    this.holds = new Holds(this);
     this.home = new Home(this);
     this.codex = new Codex(this);
     this.weaving = new Weaving(this);
@@ -243,8 +247,12 @@ export class Service {
            changed_at = excluded.changed_at, origin = excluded.origin, seed = excluded.seed,
            terrain = excluded.terrain`)
         .run(owner, realm, key, now, origin, seed, terrain);
-      // §12.22: a new island enters with the simulator's prior.
+      // §12.22: a new island enters with the simulator's prior, and is
+      // queued for the reference crew's measurement (holds.mjs).
       this.matchmaking.published(owner, realm, bundle[4], now, origin);
+      this.holds.request(key, now);
+      const measured = this.holds.status(key);
+      if (measured?.status === "measured") this.holds.rate(key, measured.hold, now);
     });
     return { bundle: key };
   }
