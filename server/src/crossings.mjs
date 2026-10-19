@@ -82,7 +82,8 @@ export class Crossings {
   /** The universe a raid on `defender`'s island `heart` crosses: its hash,
    *  stored with its bytes; null when that island is not their Heart's now —
    *  an outer realm's island or a past one is raided alone — or no outer
-   *  realm of theirs has an island on it. */
+   *  realm of theirs with an island on it reaches the Heart by the links
+   *  between realms with islands, so there is nowhere to land. */
   of(defender, heart) {
     const store = this.service.store;
     const current = this.db.prepare("SELECT 1 FROM islands WHERE owner = ? AND realm = 'heart' AND bundle = ?")
@@ -99,13 +100,16 @@ export class Crossings {
     if (!outer.length) return null;
     const realms = [{ realm: "heart", bundle: heart }, ...outer];
     const place = new Map(realms.map((r, i) => [r.realm, i]));
-    const links = this.service.links.rows(defender)
-      .filter((l) => l.open && place.has(l.a) && place.has(l.b))
-      .map((l) => ({ kind: l.kind, a: place.get(l.a), b: place.get(l.b) }));
+    const rows = this.service.links.rows(defender).filter((l) => l.open && place.has(l.a) && place.has(l.b));
+    const links = rows.map((l) => ({ kind: l.kind, a: place.get(l.a), b: place.get(l.b) }));
+    const depth = depths(realms.map((r) => r.realm), rows);
+    const reaches = (r) => r !== "heart" && Number.isFinite(depth[r]);
+    if (!outer.some((r) => reaches(r.realm))) return null;
     // §5.5 at the lease: the strain's band, and the faults open from the
-    // realms with islands on them (links.mjs, as the Observatory card says).
+    // realms with islands on them that a crew can land on (links.mjs, as the
+    // Observatory card says).
     const { strain, band } = this.service.weaving.stability(defender);
-    const faults = this.service.links.view(defender, strain).faults.filter((r) => place.has(r)).map((r) => place.get(r));
+    const faults = this.service.links.view(defender, strain).faults.filter(reaches).map((r) => place.get(r));
     return store.put(encodeUniverse(realms, links, { flicker: flickerOf(band), faults }));
   }
 

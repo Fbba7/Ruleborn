@@ -266,9 +266,11 @@ pub struct Crossing {
     pub ahead: Vec<World>,
     commands: Vec<Command>,
     next_command: usize,
-    /// When an alarm last sounded in the realm the crew is in: the last
-    /// guard to reach Alerted (§5.3's Rift).
-    pub alarm_at: Option<u32>,
+    /// When an alarm last sounded in each realm, by place: the last guard
+    /// to reach Alerted there (§5.3's Rift, "when an alarm sounds in either
+    /// realm"). Kept while the crew is elsewhere, so a Rift link the crew
+    /// comes back to is still shut.
+    pub alarms: Vec<Option<u32>>,
     /// The Wanderer's rift, once open: its two ends, each a leg of the route
     /// and a tile there, the tick it shuts, and whether the crew has been
     /// away from the end it is at since it opened or came through.
@@ -320,7 +322,7 @@ impl Crossing {
         }
         Ok(Crossing { universe: universe.clone(), islands: islands.to_vec(), header, landed, at_fault, route, leg: 0,
                       world, crossed: Vec::new(), ahead: Vec::new(), commands: heist.commands.clone(),
-                      next_command: 0, alarm_at: None, rift: None })
+                      next_command: 0, alarms: vec![None; universe.realms.len()], rift: None })
     }
 
     /// One realm's world for the heist: an outer realm's Vault is its way on
@@ -369,8 +371,9 @@ impl Crossing {
     /// A tick: the commands given at it to the realm the crew is in, the
     /// realm's world stepped, and the crew through the Sage's rift or on to
     /// the next realm if it is ready. The checksum is the world's with the
-    /// realm the crew is in folded into its top byte, so two machines that
-    /// disagree on where the crew is part company at once.
+    /// realm the crew is in folded into the bits a replay keeps (`truncate`),
+    /// so two machines that disagree on where the crew is part company at
+    /// once.
     pub fn step(&mut self) -> u64 {
         let now = self.world.tick;
         while let Some(&c) = self.commands.get(self.next_command) {
@@ -393,13 +396,14 @@ impl Crossing {
         if let Some(&(t, _)) = self.world.log.events[logged..].iter().rev()
             .find(|(_, e)| matches!(e, crate::events::Event::Guard { to: guard::State::Alerted, .. }))
         {
-            self.alarm_at = Some(t);
+            let here = self.realm_now();
+            self.alarms[here] = Some(t);
         }
         self.open_rift();
         if !self.through_rift() {
             self.cross();
         }
-        sum ^ ((self.realm_now() as u64) << 56)
+        sum ^ ((self.realm_now() as u64) << 24)
     }
 
     /// The world of leg `leg` of the route, if the crew has been there.
@@ -485,7 +489,7 @@ impl Crossing {
         }
         let (from, to) = (self.route[self.leg], self.route[self.leg + 1]);
         if self.universe.link(from, to) == Some(LinkKind::Rift)
-            && self.alarm_at.is_some_and(|a| self.world.tick < a + RIFT_CLOSED_TICKS)
+            && [from, to].iter().any(|&r| self.alarms[r].is_some_and(|a| self.world.tick < a + RIFT_CLOSED_TICKS))
         {
             return;
         }
@@ -546,7 +550,6 @@ impl Crossing {
         }
         self.leg = to;
         self.world.rift_back = self.leg > 0 || !self.ahead.is_empty();
-        self.alarm_at = None;
     }
 
     fn standable_near(world: &World, tile: grid::TileIndex) -> grid::TileIndex {
@@ -564,8 +567,8 @@ impl Crossing {
 
     /// §12.9's outcome across the realms: the crew's standings and what it
     /// banked where it is now, the pylons broken and the gardens cracked in
-    /// every realm it has been in. The alarm raised anywhere is carried, so Loud
-    /// is the heist's.
+    /// every realm it has been in, and the loot dropped in each. The alarm
+    /// raised anywhere is carried, so Loud is the heist's.
     pub fn outcome(&self) -> Outcome {
         let mut o = self.world.outcome();
         for w in self.crossed.iter().chain(&self.ahead) {
@@ -573,18 +576,35 @@ impl Crossing {
             o.pages += p.pages;
             o.broken |= p.broken;
             o.cracked += p.cracked;
+            o.left += w.dropped.iter().map(|&(_, n)| n).sum::<i32>();
         }
         o
     }
 
     /// Each realm's report for its island's defender (§13.2), by its place
     /// in the universe's order, in the route's order: every realm the crew
-    /// has been in.
+    /// has been in. "held" is the heist's: the seconds to the last crew
+    /// member out or caught in whichever realm, or the whole clock if one
+    /// was still inside when it ran out.
     pub fn reports(&self) -> Vec<(usize, Report)> {
-        self.crossed.iter().chain(std::iter::once(&self.world)).chain(self.ahead.iter().rev()).enumerate()
+        let worlds: Vec<&World> = self.crossed.iter().chain(std::iter::once(&self.world))
+            .chain(self.ahead.iter().rev()).collect();
+        let mut last = 0u32;
+        let mut done = std::collections::BTreeSet::new();
+        for w in &worlds {
+            for &(t, e) in &w.log.events {
+                if let crate::events::Event::Out { crew, .. } | crate::events::Event::Caught { crew, .. } = e {
+                    last = last.max(t);
+                    done.insert(crew);
+                }
+            }
+        }
+        let ended = if done.len() >= self.world.raiders.len() { last } else { self.world.clock };
+        let held = (ended / TICKS_PER_SECOND).min(u16::MAX as u32) as u16;
+        worlds.iter().enumerate()
             .map(|(leg, w)| {
                 let realm = self.route[leg];
-                (realm, w.report(&self.islands[realm]))
+                (realm, Report { held, ..w.report(&self.islands[realm]) })
             })
             .collect()
     }

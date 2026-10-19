@@ -1124,7 +1124,9 @@ DELIVERABLES = [
             "settles as a raid on the Heart (5.4, 24.12)",
             "a heist across the universe is refused on another realm's clock, on the Heart's, or as the Heart alone "
             "(5.4)",
-            "a universe is the defender's open links between realms with islands: a closed Rift crosses nothing (5.3)")),
+            "a universe is the defender's open links between realms with islands: a closed Rift crosses nothing (5.3)",
+            "a universe with no realm a crew can land on is the Heart alone, and a held universe lease is handed back "
+            "when asked for again whatever has changed (5.4, 24.13)")),
         # §5.4's faults and §5.5's flicker in an overloaded universe's heist.
         server_tests(
             "an overloaded universe's lease carries its faults and its laws' flicker, and a crew may enter at a fault "

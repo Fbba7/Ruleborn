@@ -513,9 +513,12 @@ export class Service {
         // names: traceable() skips robberies already traced, so the second
         // ask finds an older one.
         // So is one across the universe when the Heart alone is asked for,
-        // or the other way round: the device plays the one it asked for.
+        // and one of the Heart alone when a universe is asked for and there
+        // is one now: the device plays the kind it asked for. A universe
+        // asked for and not there now is the Heart alone, as issued.
+        const kind = held.universe ? universe : !crossing;
         if ((held.mode ?? "raid") !== mode || Boolean(held.trace_of) !== Boolean(traceOf)
-            || (held.challenge ?? null) !== challenge || Boolean(held.universe) !== Boolean(crossing)) {
+            || (held.challenge ?? null) !== challenge || !kind) {
           throw new Refused(409, "lease_held_in_another_mode", {
             mode: held.mode ?? "raid", trace: Boolean(held.trace_of), universe: Boolean(held.universe),
             expiresAt: held.expires_at });

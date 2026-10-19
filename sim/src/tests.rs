@@ -6432,7 +6432,19 @@ fn a_crew_lands_on_an_outer_realm_crosses_at_its_way_on_and_takes_the_hearts_vau
         assert_eq!(heart.tick, heart.clock, "one clock, run to its end");
         assert!(outer.tick > 0 && outer.tick < heart.tick);
         assert_eq!(heart.landing, Some(heart.entrance), "where it entered the realm, as Ghost tide reads it");
-        assert_eq!(c.reports().iter().map(|r| r.0).collect::<Vec<_>>(), vec![1, 0]);
+        let reports = c.reports();
+        assert_eq!(reports.iter().map(|r| r.0).collect::<Vec<_>>(), vec![1, 0]);
+        // "held" is the heist's, counting whoever went out or was caught in
+        // either realm.
+        let o = c.outcome();
+        assert!(reports.iter().all(|r| r.1.held == reports[0].1.held));
+        if o.out + o.caught == 3 {
+            assert!((reports[0].1.held as u32) * TICKS_PER_SECOND < heart.clock, "ended before the clock");
+        }
+        // Loot dropped in a realm the crew has left is still what it left.
+        let mut dropped = play_universe(&u, &islands, seed, 3).unwrap();
+        dropped.crossed[0].dropped.push((0, 7));
+        assert_eq!(dropped.outcome().left, o.left + 7);
         banked += c.outcome().banked;
         outcomes.push(c.outcome());
     }
@@ -6478,7 +6490,8 @@ fn a_rift_on_the_route_holds_the_crew_thirty_seconds_after_an_alarm_in_the_realm
             r.at = Point { x, y };
         }
         // An alarm `ago` ticks before the tick the crew stands there.
-        c.alarm_at = alarm_ago.map(|ago| c.world.tick + 1 - ago);
+        let here = c.realm_now();
+        c.alarms[here] = alarm_ago.map(|ago| c.world.tick + 1 - ago);
         (c.step(), c.leg)
     };
     assert_eq!(ready(LinkKind::Stone, Some(0)).1, 1, "a bridge stays open");
@@ -6486,6 +6499,23 @@ fn a_rift_on_the_route_holds_the_crew_thirty_seconds_after_an_alarm_in_the_realm
     assert_eq!(ready(LinkKind::Rift, Some(0)).1, 0, "closed");
     assert_eq!(ready(LinkKind::Rift, Some(RIFT_CLOSED_TICKS - 1)).1, 0, "for thirty seconds");
     assert_eq!(ready(LinkKind::Rift, Some(RIFT_CLOSED_TICKS)).1, 1);
+    // "in either realm": an alarm in the Heart, kept while the crew was away.
+    let (u, islands) = two_realms(LinkKind::Rift);
+    let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+    let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                        manifest: None, commands: vec![Command { tick: 0, ..land }], checksums: Vec::new() };
+    let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+    c.step();
+    c.world.wards.clear();
+    let w = &mut c.world;
+    let beside = w.grid.neighbours(w.vault.tile).into_iter().flatten().find(|&t| w.grid.standable(t)).unwrap();
+    let (x, y) = w.grid.centre(beside);
+    for r in w.raiders.iter_mut() {
+        r.at = Point { x, y };
+    }
+    c.alarms[0] = Some(c.world.tick);
+    c.step();
+    assert_eq!(c.leg, 0, "shut by the Heart's alarm");
 }
 
 #[test]

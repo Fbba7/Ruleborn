@@ -151,3 +151,20 @@ test("an overloaded universe's lease carries its faults and its laws' flicker, a
   const calm = t.service.lease(raider(), bundle, null, { universe: true }).universe;
   assert.deepEqual([calm.flicker, calm.realms.some((r) => r.fault)], [0, false]);
 });
+
+test("a universe with no realm a crew can land on is the Heart alone, and a held universe lease is handed back when asked for again whatever has changed (5.4, 24.13)", () => {
+  const { t, defender, bundle, raider } = universeOfTwo();
+  const me = raider();
+  const lease = t.service.lease(me, bundle, null, { universe: true });
+  // The defender republishes their Heart: the leased island is an echo now,
+  // and the held lease is still the one handed back.
+  t.service.publish(defender, t.build.exampleIsland(true));
+  assert.equal(t.service.lease(me, bundle, null, { universe: true }).token, lease.token);
+  refused(() => t.service.lease(me, bundle), "lease_held_in_another_mode");
+  // Outer realm 2 reaches the Heart only through outer realm 1: with no
+  // island on outer realm 1 there is nowhere to land, and no fault from it.
+  const heart = t.service.db.prepare("SELECT bundle FROM islands WHERE owner = ? AND realm = 'heart'").get(defender).bundle;
+  t.service.db.prepare("DELETE FROM islands WHERE owner = ? AND realm = 'outer-1'").run(defender);
+  t.service.weaving.stability = () => ({ strain: 1.3, band: 6 });
+  assert.equal(t.service.lease(raider(), heart, null, { universe: true }).universe, null);
+});
