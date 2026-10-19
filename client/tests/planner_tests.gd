@@ -65,6 +65,20 @@ func _words() -> void:
 		p["clock"] == "Heist clock 2:30" and p["laws"]["line"] == "Laws: Brittle stone, Glass"
 			and p["laws"]["unfamiliar"] == "Unfamiliar: Brittle stone" and p["entry"].begins_with("Entry: "),
 		"%s | %s" % [p["laws"], p["clock"]])
+	var across := slices()
+	across["planner"]["target"].merge({"across": true, "clock": 165, "clock_longest": 180, "depth": 2,
+		"fault_realms": ["outer-2"]}, true)
+	var u := drawn(across)
+	check.call("across a universe the planner says the entry is any outer realm's edge or a fault, the route realm by "
+			+ "realm to the Heart and out, where the faults open, and the clock by the realm landed in "
+			+ "(5.4, 12.5, 23.2, T3.3)",
+		u["entry"] == "Entry: you choose an outer realm's edge spot, or a fault, as the crew lands"
+			and u["route"] == "Route: realm by realm to the Heart, up to 2 realms, then out by skiff from wherever "
+				+ "the crew stands"
+			and u["faults"] == "Faults open from outer realm 2"
+			and u["clock"] == "Heist clock 2:45 to 3:00, by the realm you land in"
+			and p["route"] == "" and p["faults"] == "",
+		"%s | %s | %s | %s" % [u["entry"], u["route"], u["faults"], u["clock"]])
 	s["planner"]["crew"] = [1, 2, 3]
 	var full := drawn(s)
 	check.call("the crew is 3 to the Keeper's most, a resting character unavailable, and Start waits until 3 are "
@@ -144,7 +158,8 @@ func _flows() -> void:
 	check.call("the scout report's Plan opens the planner on its target, where a resting character cannot join; Start "
 			+ "carries the crew, Sage, casts and load target into the heist, which names its crew to the server "
 			+ "(12.5, TD.34)",
-		&"planner" in routes and &"heist_screen" in routes and heist["target"] == {"bundle": "p1", "trace": false}
+		&"planner" in routes and &"heist_screen" in routes
+			and heist["target"] == {"bundle": "p1", "trace": false, "across": false}
 			and plan.get("crew") == [1, 2, 3] and int(plan.get("load", 0)) == 80 and url.ends_with("?crew=1,2,3"),
 		"%s %s %s" % [routes, plan.get("crew"), url])
 	s.close()

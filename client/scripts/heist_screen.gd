@@ -45,8 +45,16 @@ var picker: Control
 var picker_spot: Label
 var picker_count: Label
 var picker_clock: Label
+## Across a universe: the realm of the choice on show, the realms and faults
+## there are, and a step to the next realm.
+var picker_realm: Label
+var picker_across: Label
+var next_realm_button: Button
 var actions_node: Control
 var crew_node: Control
+## Which realm the view is drawing, so a new one is drawn when the crew (or
+## the picker) moves to another.
+var _shown_realm := ""
 var _owed := 0.0
 var _alarm := 0
 var _live_wards := -1
@@ -143,9 +151,40 @@ func begin(seed_text: String, ticks: int, crew: int, realm := PackedByteArray(),
 	if not controller.begin(seed_text, ticks, crew, realm, era, manifest):
 		return false
 	playing = true
+	_shown_realm = ""
 	view.show_replay(controller.world)
 	_refresh()
 	return true
+
+
+## Start a heist across the universe a lease names; see
+## `HeistController.begin_universe`.
+func begin_universe(seed_text: String, crew: int, leased: Dictionary, bundle: PackedByteArray,
+		islands: Array[PackedByteArray], era := "", manifest := PackedByteArray()) -> bool:
+	_alarm = 0
+	_live_wards = -1
+	_pylons = -1
+	if not controller.begin_universe(seed_text, crew, leased, bundle, islands, era, manifest):
+		return false
+	playing = true
+	_shown_realm = ""
+	_refresh()
+	return true
+
+
+## The lease's universe fetched by hash (§24.8), its bundle and each realm's
+## island, in its order; an empty bundle if any is missing.
+static func fetch_universe(services: Services, leased: Dictionary) -> Array:
+	var bundle := await services.heists.fetch(str(leased["digest"]))
+	var islands: Array[PackedByteArray] = []
+	if not bundle.ok:
+		return [PackedByteArray(), islands]
+	for r: Dictionary in leased["realms"]:
+		var island := await services.heists.fetch(str(r["bundle"]))
+		if not island.ok:
+			return [PackedByteArray(), islands]
+		islands.append(island.value)
+	return [bundle.value, islands]
 
 
 ## §24.12's Lease: sign in, take the first target from the lists, fetch its
@@ -164,15 +203,23 @@ func begin_online(services: Services) -> String:
 	var bundle := await services.heists.fetch(str(target.value["bundle"]))
 	if not bundle.ok:
 		return bundle.code
+	# §5.4: a target whose raid crosses a universe is leased across it.
 	var leased := await services.heists.lease(str(target.value["bundle"]), str(target.value.get("owner", "")),
-		bool(target.value.get("trace", false)))
+		bool(target.value.get("trace", false)), bool(target.value.get("across", false)))
 	if not leased.ok:
 		return leased.code
 	lease = leased.value
 	# §12.5: the planner's crew, Sage, casts and load target, when it made one.
 	var plan: Dictionary = services.store.get_slice(AppState.HEIST).get("plan", {})
 	var crew: int = (plan["crew"] as Array).size() if plan.has("crew") else HeistController.CREW
-	if not begin(str(lease["seed"]), int(lease["ticks"]), crew, bundle.value,
+	if lease.get("universe") is Dictionary:
+		var got: Array = await fetch_universe(services, lease["universe"])
+		if (got[0] as PackedByteArray).is_empty():
+			return "island_does_not_load"
+		if not begin_universe(str(lease["seed"]), crew, lease["universe"], got[0], got[1],
+				HeistController.lease_era(lease), plan.get("manifest", PackedByteArray())):
+			return "island_does_not_load"
+	elif not begin(str(lease["seed"]), int(lease["ticks"]), crew, bundle.value,
 			HeistController.lease_era(lease), plan.get("manifest", PackedByteArray())):
 		return "island_does_not_load"
 	controller.load_target = int(plan.get("load", 100))
@@ -194,7 +241,8 @@ func finish() -> void:
 	playing = false
 	var services: Services = App.services
 	var replay := controller.record()
-	var local := RulebornReplay.validate(replay, controller.island)
+	var local := RulebornReplay.validate(replay, controller.island) if controller.universe.is_empty() \
+		else RulebornReplay.validate_universe(replay, controller.universe_bytes, controller.realm_islands)
 	services.store.dispatch(&"heist_finished", {"replay": replay, "verdict": local})
 	if local.get("ok", false) and str(local.get("grade", "")) != "Foiled":
 		Haptics.play("success")
@@ -246,6 +294,14 @@ func _process(delta: float) -> void:
 func _refresh() -> void:
 	if hud == null:
 		return
+	# A new realm on show — the picker's, or the crew's across a universe —
+	# is drawn afresh.
+	var key := "%s:%s:%s" % [controller.choosing, controller.world.realm_code(), controller.world.size()]
+	if controller.choosing and not controller.universe.is_empty():
+		key += ":%s:%s" % [controller.marks[controller.pick]["place"], controller.marks[controller.pick].get("fault", false)]
+	if key != _shown_realm:
+		_shown_realm = key
+		view.show_replay(controller.world)
 	hud.show_state(controller.world)
 	_feel(controller.world)
 	var me: Dictionary = controller.world.crew()[controller.selected]
@@ -256,8 +312,12 @@ func _refresh() -> void:
 	picker.visible = choosing
 	actions_node.visible = not choosing
 	crew_node.visible = not choosing
-	view.landing_marks = controller.marks if choosing else []
-	view.landing_pick = controller.pick
+	view.landing_marks = controller.shown_marks() if choosing else []
+	view.landing_pick = controller.shown_pick()
+	var across := not controller.universe.is_empty()
+	picker_realm.visible = across
+	picker_across.visible = across
+	next_realm_button.visible = across
 	if choosing:
 		var p := LandingPresenter.picker(controller.marks, controller.pick, controller.world.size().x,
 			controller.world.landing_reach(), controller.world.ticks() / RulebornReplay.ticks_per_second())
@@ -265,6 +325,8 @@ func _refresh() -> void:
 		picker_spot.text = p["spot"]
 		picker_count.text = p["count"]
 		picker_clock.text = p["clock"]
+		picker_realm.text = p.get("realm", "")
+		picker_across.text = p.get("across", "")
 	UI.relabel(gait_button, Strings.term("GAIT", me["gait"]), true)
 	var crew := controller.world.crew()
 	for i in crew_buttons.size():
@@ -330,6 +392,10 @@ func _build() -> void:
 
 	var box := VBoxContainer.new()
 	box.add_child(UI.label(Strings.t("LANDING_TITLE"), UI.TEXT_POINTS, true))
+	picker_realm = UI.label("", UI.TEXT_POINTS, true)
+	box.add_child(picker_realm)
+	picker_across = UI.label("", UI.TEXT_POINTS, true)
+	box.add_child(picker_across)
 	picker_spot = UI.label("", UI.TEXT_POINTS, true)
 	box.add_child(picker_spot)
 	picker_count = UI.label("", UI.TEXT_POINTS, true)
@@ -339,6 +405,8 @@ func _build() -> void:
 	var steps := UI.row(-1.0, true)
 	steps.add_child(UI.button(Strings.t("LANDING_PREV"), controller.next_spot.bind(-1)))
 	steps.add_child(UI.button(Strings.t("LANDING_NEXT"), controller.next_spot.bind(1)))
+	next_realm_button = UI.button(Strings.t("LANDING_NEXT_REALM"), controller.next_realm)
+	steps.add_child(next_realm_button)
 	steps.add_child(UI.button(Strings.t("LANDING_HERE"), controller.land_here, true))
 	box.add_child(steps)
 	picker = UI.plate(box)

@@ -168,3 +168,14 @@ test("a universe with no realm a crew can land on is the Heart alone, and a held
   t.service.weaving.stability = () => ({ strain: 1.3, band: 6 });
   assert.equal(t.service.lease(raider(), heart, null, { universe: true }).universe, null);
 });
+
+test("an Observatory card says whether a raid would cross the target's universe and its clock, shortest and longest by the realm landed on (12.5, 5.4)", () => {
+  const { t, bundle, raider } = universeOfTwo();
+  const me = raider();
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6 WHERE id = ?").run(me);
+  const card = t.service.observatory.view(me).targets.find((c) => c.bundle === bundle);
+  assert.deepEqual([card.across, card.clock, card.clock_longest], [true, 165, 180]);
+  const outer = t.service.db.prepare("SELECT bundle FROM islands WHERE realm = 'outer-1'").get().bundle;
+  const alone = t.service.observatory.view(me).targets.find((c) => c.bundle === outer);
+  if (alone) assert.deepEqual([alone.across, alone.clock, alone.clock_longest], [false, 150, 150]);
+});

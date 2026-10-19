@@ -11,6 +11,7 @@ const DEADLINE_SECONDS := 480.0
 const PHASE_4B := ["map", "law", "realm", "weaving", "planner", "observatory", "scout", "roster", "character",
 	"sage_hall", "codex", "lab", "curation", "defences", "first", "heist_screen", "harmony", "forms", "share",
 	"profile", "hatch"]
+const HEIST_SCENE := "res://scenes/heist_screen.tscn"
 const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "settings", "builder", "track", "shop",
 	"social", "friends", "workshop", "age", "universe", "roster", "character", "sage_hall", "forms", "hatch", "weaving",
 	"codex", "harmony", "observatory", "scout", "lab", "defences", "law", "profile", "planner", "map", "realm", "share",
@@ -45,6 +46,60 @@ func _play(bytes: PackedByteArray) -> RulebornReplay:
 	while r.step():
 		pass
 	return r
+
+
+## §5.4 against the server: the example universe's Heart (a generated Heart
+## with one outer realm, server/src/main.mjs --example) leased across its
+## realms, landed on the outer realm's edge from the picker, played out on the
+## heist screen and re-simulated and settled by the server.
+func _across_the_server(server_url: String) -> void:
+	var name := "against the server: a raid leased across a universe of two realms lands on the outer realm from the " \
+		+ "picker, is played on the heist screen and is re-simulated across both realms and settled by the server " \
+		+ "(5.4, 24.12, T3.3)"
+	if server_url == "":
+		check(name, false, "no server: run through client/status.py, which starts one")
+		return
+	var s := _services(server_url)
+	await s.session()
+	var index := await s.heists.target_index()
+	var target := {}
+	var owners := {}
+	for band: String in (index.value if index.ok else {}):
+		var file := await s.heists.fetch(str(index.value[band]))
+		var list: Variant = JSON.parse_string((file.value as PackedByteArray).get_string_from_utf8()) if file.ok else null
+		for c: Dictionary in (list.get("candidates", []) if list is Dictionary else []):
+			if not owners.has(c["owner"]):
+				owners[c["owner"]] = []
+			owners[c["owner"]].append(c)
+	for owner: String in owners:
+		var realms: Array = owners[owner].map(func(c: Dictionary) -> String: return str(c["realm"]))
+		if "heart" in realms and "outer-1" in realms:
+			target = owners[owner][realms.find("heart")]
+	s.store.dispatch(&"heist_started", {"target": {"bundle": target.get("bundle", ""), "owner": target.get("owner", ""),
+		"across": true}})
+	var online: HeistScreen = load(HEIST_SCENE).instantiate()
+	root.add_child(online)
+	online.set_process(false)
+	# The lease comes first, then the universe and its islands by hash.
+	for i in 1200:
+		if not online.controller.universe.is_empty() or online.hint_label.text.begins_with("No heist"):
+			break
+		await process_frame
+	var picked := online.controller.choosing and not online.controller.universe.is_empty() \
+		and online.picker_realm.text.begins_with("In outer realm 1")
+	var played := {}
+	if picked:
+		online.controller.land_here()
+		online.controller.advance(int(online.lease["universe"]["realms"][1]["ticks"]) + 30)
+		if _heist()["verdict"].is_empty() or not _heist()["verdict"].get("server", false):
+			await online.finished
+		played = _heist()["verdict"]
+	check(name, not target.is_empty() and picked and played.get("ok", false) and played.get("server", false),
+		"%s | %s | %s | %s" % [target, picked, played, online.hint_label.text])
+	online.queue_free()
+	s.store.dispatch(&"heist_started", {})
+	_services()
+	await process_frame
 
 
 ## The heist slice of the store: what the result and replay screens read.
@@ -346,7 +401,7 @@ func _run() -> void:
 			false, "no server: run through client/status.py, which starts one")
 	else:
 		_services(server_url)
-		var online: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
+		var online: HeistScreen = load(HEIST_SCENE).instantiate()
 		root.add_child(online)
 		online.set_process(false)
 		for i in 600:
@@ -376,6 +431,7 @@ func _run() -> void:
 		online.queue_free()
 		_services()
 		await process_frame
+	await _across_the_server(server_url)
 
 	# The season track, the shop and the wallet (tests/shop_tests.gd), and the
 	# league, groups and friends (tests/social_tests.gd): headless, and

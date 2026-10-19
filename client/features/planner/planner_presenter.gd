@@ -29,6 +29,22 @@ static func screen(planner: Dictionary, keeper: Dictionary, roster: Dictionary, 
 	out["title"] = ObservatoryPresenter.title(card)
 	out["clock"] = LandingPresenter.clock(int(card.get("clock", 150)))
 	out["entry"] = Strings.t("PLAN_ENTRY")
+	out["route"] = ""
+	out["faults"] = ""
+	# §23.2's "Entry (any edge tile, or a fault), route": across a universe,
+	# any outer realm's edge or a fault, realm by realm to the Heart, on the
+	# clock of the realm landed in (§5.4).
+	if card.get("across", false):
+		var mmss := func(s: int) -> String: return "%d:%02d" % [s / 60, s % 60]
+		out["entry"] = Strings.t("PLAN_ENTRY_ACROSS")
+		out["route"] = Strings.t("PLAN_ROUTE", maxi(1, int(card.get("depth", 1))))
+		out["clock"] = Strings.t("PLAN_CLOCK_RANGE", [mmss.call(int(card.get("clock", 150))),
+			mmss.call(int(card.get("clock_longest", card.get("clock", 150))))])
+		var at := PackedStringArray()
+		for realm: String in card.get("fault_realms", []):
+			at.append(Strings.t("OBS_OUTER_REALM", int(realm.get_slice("-", 1))))
+		if not at.is_empty():
+			out["faults"] = Strings.t("OBS_FAULTS_FROM", ", ".join(at))
 	out["laws"] = laws(card, codex)
 	# The crew: every character, the resting ones unavailable.
 	var chosen: Array = planner.get("crew", [])

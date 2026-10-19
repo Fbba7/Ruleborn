@@ -85,6 +85,7 @@ func start() -> void:
 	if not p["ready"] or not p["start"]["can"]:
 		return
 	var card: Dictionary = _slice()["target"]
-	_store().dispatch(&"heist_started", {"target": {"bundle": card["bundle"], "trace": card.get("kind") == "trace"},
-		"plan": p["plan"]})
+	# §5.4: a target whose raid crosses a universe is leased across it.
+	_store().dispatch(&"heist_started", {"target": {"bundle": card["bundle"], "trace": card.get("kind") == "trace",
+		"across": bool(card.get("across", false))}, "plan": p["plan"]})
 	services.router.go(&"heist")

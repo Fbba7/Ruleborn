@@ -26,7 +26,7 @@
 // for one is the one-island lease it always was.
 
 import { depths } from "./links.mjs";
-import { REALMS, clockTicks } from "./service.mjs";
+import { REALMS, TICKS_PER_SECOND, clockTicks } from "./service.mjs";
 
 /** §5.3's links in the order the bundle numbers them. */
 export const LINK_WIRE = ["stone_bridge", "rope_bridge", "chute", "rift"];
@@ -85,32 +85,53 @@ export class Crossings {
    *  realm of theirs with an island on it reaches the Heart by the links
    *  between realms with islands, so there is nowhere to land. */
   of(defender, heart) {
-    const store = this.service.store;
-    const current = this.db.prepare("SELECT 1 FROM islands WHERE owner = ? AND realm = 'heart' AND bundle = ?")
-      .get(defender, heart);
-    if (!current) return null;
     // Read as the owner's universe page reads it: links made for realms
     // opened before they were kept, and a Rift's upkeep paid or not.
     const now = this.service.now();
+    if (!this.plan(defender, heart)) return null;
     this.service.links.ensure(defender, now);
     this.service.links.upkeep(defender, now);
-    const outer = this.db.prepare("SELECT realm, bundle FROM islands WHERE owner = ? AND realm != 'heart'")
-      .all(defender).filter((r) => REALMS.includes(r.realm) && store.get(r.bundle))
-      .sort((x, y) => REALMS.indexOf(x.realm) - REALMS.indexOf(y.realm));
-    if (!outer.length) return null;
-    const realms = [{ realm: "heart", bundle: heart }, ...outer];
-    const place = new Map(realms.map((r, i) => [r.realm, i]));
-    const rows = this.service.links.rows(defender).filter((l) => l.open && place.has(l.a) && place.has(l.b));
-    const links = rows.map((l) => ({ kind: l.kind, a: place.get(l.a), b: place.get(l.b) }));
-    const depth = depths(realms.map((r) => r.realm), rows);
+    const plan = this.plan(defender, heart);
+    if (!plan) return null;
+    const { realms, place, links, depth } = plan;
     const reaches = (r) => r !== "heart" && Number.isFinite(depth[r]);
-    if (!outer.some((r) => reaches(r.realm))) return null;
     // §5.5 at the lease: the strain's band, and the faults open from the
     // realms with islands on them that a crew can land on (links.mjs, as the
     // Observatory card says).
     const { strain, band } = this.service.weaving.stability(defender);
     const faults = this.service.links.view(defender, strain).faults.filter(reaches).map((r) => place.get(r));
-    return store.put(encodeUniverse(realms, links, { flicker: flickerOf(band), faults }));
+    return this.service.store.put(encodeUniverse(realms, links, { flicker: flickerOf(band), faults }));
+  }
+
+  /** The universe `of` would make, read and nothing changed: its realms with
+   *  islands, their places, its open links between them and each realm's
+   *  depth; null when `heart` is not the defender's Heart now or no outer
+   *  realm with an island reaches it. */
+  plan(defender, heart) {
+    const store = this.service.store;
+    const current = this.db.prepare("SELECT 1 FROM islands WHERE owner = ? AND realm = 'heart' AND bundle = ?")
+      .get(defender, heart);
+    if (!current) return null;
+    const outer = this.db.prepare("SELECT realm, bundle FROM islands WHERE owner = ? AND realm != 'heart'")
+      .all(defender).filter((r) => REALMS.includes(r.realm) && store.get(r.bundle))
+      .sort((x, y) => REALMS.indexOf(x.realm) - REALMS.indexOf(y.realm));
+    const realms = [{ realm: "heart", bundle: heart }, ...outer];
+    const place = new Map(realms.map((r, i) => [r.realm, i]));
+    const rows = this.service.links.rows(defender).filter((l) => l.open && place.has(l.a) && place.has(l.b));
+    const links = rows.map((l) => ({ kind: l.kind, a: place.get(l.a), b: place.get(l.b) }));
+    const depth = depths(realms.map((r) => r.realm), rows);
+    if (!outer.some((r) => Number.isFinite(depth[r.realm]))) return null;
+    return { realms, place, links, depth };
+  }
+
+  /** The clocks a raid across `defender`'s universe from `heart` may play
+   *  on, in seconds, shortest and longest by the realm landed on (§5.4); the
+   *  Heart's alone with no universe. The era's extra is the lease's. */
+  clocks(defender, heart) {
+    const plan = this.plan(defender, heart);
+    const reach = plan ? Object.entries(plan.depth).filter(([r, d]) => r !== "heart" && Number.isFinite(d))
+      .map(([, d]) => d) : [0];
+    return [Math.min(...reach), Math.max(...reach)].map((d) => clockTicks(d) / TICKS_PER_SECOND);
   }
 
   /** What the lease shows of its universe: its hash, each realm with its

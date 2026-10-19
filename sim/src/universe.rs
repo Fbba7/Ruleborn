@@ -344,6 +344,11 @@ impl Crossing {
         self.universe.route(self.landed).map_or(0, |r| r.len() as u32 - 1)
     }
 
+    /// The island of the realm the crew is in.
+    pub fn island_now(&self) -> &Island {
+        &self.islands[self.realm_now()]
+    }
+
     /// The realm the crew is in, by place in the universe's order.
     pub fn realm_now(&self) -> usize {
         self.route[self.leg]

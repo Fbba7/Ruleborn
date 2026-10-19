@@ -594,8 +594,15 @@ DELIVERABLES = [
         "unlocked and not the Heart's guardian; one cast slot, two from level 12 (12.5, 11.7)",
         "the planner reads §12.5's limits from GET /v1/keeper, each roster member's manifest fields from the home, "
         "and each target's clock from the Observatory (12.5, 5.4)"),
-        not_started("the route through a universe's realms to the Heart and out, and an entry at a fault, on "
-                    "universes of several realms (§12.5, T3.3)"))),
+        # Across a universe: the entry, the route, the faults and the clock
+        # by the realm landed in, from the card (crossings.mjs).
+        parts(client_tests(
+            "across a universe the planner says the entry is any outer realm's edge or a fault, the route realm by "
+            "realm to the Heart and out, where the faults open, and the clock by the realm landed in "
+            "(5.4, 12.5, 23.2, T3.3)"),
+            server_tests(
+            "an Observatory card says whether a raid would cross the target's universe and its clock, shortest and "
+            "longest by the realm landed on (12.5, 5.4)")))),
     ("4b", "Observatory", FRONTEND, parts(client_tests(
         "the Observatory labels each target — a player's universe, an echo, the game's own island with its "
         "band — and pins a Trace apart, with no fee (12.3, 12.22)",
@@ -897,8 +904,20 @@ DELIVERABLES = [
         "the edge lands nowhere (5.4, TD.41)",
         "a heist leased from the server, played on the heist screen and submitted is re-simulated and paid by "
         "the server"),
-        not_started("every outer realm's edge and each fault, with each choice's clock and depth, on "
-                    "universes of several realms (§5.4, TD.18, T3.3)"))),
+        # §5.4 across a universe of several realms: every outer realm's edge
+        # and each fault, each with its clock and depth (crossings.mjs).
+        client_tests(
+            "the landing picker offers every outer realm's edge spots and each fault, each choice with its realm, "
+            "its links to the Heart and its own clock, across a universe of several realms (5.4, 23.2, T3.3)",
+            "a landing across a universe is the replay's first command naming its realm, or its fault, and the "
+            "heist plays realm by realm on the landing realm's clock, as the server checks it (5.4, T3.3)",
+            "the heist's top row says the realm the crew is in and how many it has yet to cross to the Heart "
+            "(5.4, 21.8)",
+            "the heist screen's picker says each choice's realm and steps realm by realm, drawing each, and the "
+            "top row says the realm the crew is in (5.4, 21.8, T3.3)",
+            "against the server: a raid leased across a universe of two realms lands on the outer realm from the "
+            "picker, is played on the heist screen and is re-simulated across both realms and settled by the server "
+            "(5.4, 24.12, T3.3)"))),
     ("4b", "Harmony view", FRONTEND, parts(client_tests(
         "the Harmony view shows every law working in a realm with its notes, a crown law among them as "
         "crowned, and the universe's strain (8.1, 5.1, 23.2)",

@@ -205,6 +205,7 @@
   "account deletion from inside the game, over HTTP (20.5)": "passed",
   "an App Store Server Notification counts only as Apple signed it, for this app, and names what it takes back (G32)": "passed",
   "an IPv6 address is limited by its /64, an IPv4 one as it is": "passed",
+  "an Observatory card says whether a raid would cross the target's universe and its clock, shortest and longest by the realm landed on (12.5, 5.4)": "passed",
   "an account asking past its bucket is answered 429, with how long to wait, and no other account is (G44)": "passed",
   "an account is held to the most protective age band until the device's age check answers (20.1, 20.2)": "passed",
   "an echo raid's stars fix the raider's tier price then, not at their first look late on (18.8)": "passed",

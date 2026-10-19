@@ -14,6 +14,7 @@ use ruleborn_sim as sim;
 use sim::fixed::{Ang, Fx, ANG_TURN, FX_ONE};
 use sim::island::Island;
 use sim::replay::Heist;
+use sim::universe::{Crossing, Universe, FAULT_ENTRY};
 use sim::World;
 
 struct Ruleborn;
@@ -35,6 +36,13 @@ pub struct RulebornReplay {
     agreed: i64,
     /// §18.3's era the next `start` plays in, as the lease named it.
     era: Option<sim::era::Era>,
+    /// A heist across a universe (§5.4): the universe and its islands, the
+    /// realm a landing now would be in and whether at its fault, and, once
+    /// the crew has landed, the crossing. Until then `world` is the realm
+    /// on show in the landing picker.
+    universe: Option<(Universe, Vec<Island>)>,
+    entry: (usize, bool),
+    crossing: Option<Crossing>,
 }
 
 fn tiles(f: Fx) -> f32 {
@@ -59,6 +67,39 @@ fn hex(bytes: &[u8]) -> GString {
     GString::from(&s)
 }
 
+impl RulebornReplay {
+    /// The world on show: the crossing's realm once a heist across a
+    /// universe has landed, else the one world.
+    fn w(&self) -> Option<&World> {
+        self.crossing.as_ref().map(|c| &c.world).or(self.world.as_ref())
+    }
+
+    fn w_mut(&mut self) -> Option<&mut World> {
+        match self.crossing.as_mut() {
+            Some(c) => Some(&mut c.world),
+            None => self.world.as_mut(),
+        }
+    }
+
+    /// The island of the realm on show.
+    fn realm(&self) -> Option<&Island> {
+        self.crossing.as_ref().map(|c| c.island_now()).or(self.island.as_ref())
+    }
+
+    /// One heist's checksum for the second just ended, against the replay's.
+    fn compare(&mut self, tick: u32, sum: u64) {
+        let Some(heist) = self.heist.as_ref() else { return };
+        if tick % sim::TICKS_PER_SECOND == 0 {
+            let second = (tick / sim::TICKS_PER_SECOND) as usize;
+            match heist.checksums.get(second - 1) {
+                Some(&kept) if kept == sim::truncate(sum) => self.agreed += 1,
+                Some(_) if self.mismatch == 0 => self.mismatch = second as i64,
+                _ => {}
+            }
+        }
+    }
+}
+
 #[godot_api]
 impl RulebornReplay {
     /// The rules version this build computes, which a replay's header must name.
@@ -80,6 +121,8 @@ impl RulebornReplay {
         self.world = Some(World::from_island(&realm, &heist));
         self.island = Some(realm);
         self.heist = Some(heist);
+        self.universe = None;
+        self.crossing = None;
         self.mismatch = 0;
         self.agreed = 0;
         true
@@ -153,9 +196,106 @@ impl RulebornReplay {
         self.world = Some(World::from_island(&realm, &heist));
         self.heist = Some(heist);
         self.island = Some(realm);
+        self.universe = None;
+        self.crossing = None;
         self.mismatch = 0;
         self.agreed = 0;
         true
+    }
+
+    /// Start a heist across a universe (§5.4): `universe` its `RBU1` bundle
+    /// and `islands` its realms' islands in its order, as the lease names
+    /// them, with this seed and crew and the planner's manifest (empty for
+    /// none). Nothing is landed yet: `preview` shows a realm for the landing
+    /// picker, and the landing (`give` of Land at tick 0) lands there. False
+    /// if anything does not decode or the islands are not the universe's.
+    #[func]
+    fn start_universe(&mut self, seed: GString, crew: i64, manifest: PackedByteArray, universe: PackedByteArray,
+                      islands: Array<PackedByteArray>) -> bool {
+        let Some(u) = Universe::decode(universe.as_slice()) else { return false };
+        let realms: Vec<Island> = islands.iter_shared().filter_map(|b| Island::decode(b.as_slice()).ok()).collect();
+        if realms.len() != u.realms.len() || realms.iter().zip(&u.realms).any(|(i, r)| i.digest() != r.1) {
+            return false;
+        }
+        // The heist header, on the Heart's clock until a realm is previewed.
+        if !self.start_planned(seed, sim::universe::clock_ticks(0) as i64, crew, manifest,
+                               PackedByteArray::from(realms[0].encode().as_slice())) {
+            return false;
+        }
+        if let Some(h) = self.heist.as_mut() {
+            h.island = u.digest();
+        }
+        self.universe = Some((u, realms));
+        self.entry = (0, false);
+        true
+    }
+
+    /// The universe's realms, in its order: each its code (0 the Heart, k
+    /// outer realm k), the links on its shortest route to the Heart (-1 for
+    /// none), whether a fault opens from it, and its island's side. Empty
+    /// for a heist of one island.
+    #[func]
+    fn universe_realms(&self) -> Array<VarDictionary> {
+        let mut out = Array::new();
+        let Some((u, islands)) = self.universe.as_ref() else { return out };
+        for (place, (code, _)) in u.realms.iter().enumerate() {
+            let mut d = VarDictionary::new();
+            d.set("code", *code as i64);
+            d.set("links", u.route(place).map_or(-1, |r| r.len() as i64 - 1));
+            d.set("fault", u.faults.contains(&(place as u8)));
+            d.set("side", islands[place].side() as i64);
+            out.push(&d);
+        }
+        out
+    }
+
+    /// The landing picker's realm on show: `place`'s island to land on its
+    /// edge, or — with `fault` — the Heart, which an entry at `place`'s fault
+    /// comes straight into; on a clock of `ticks`, the lease's for that
+    /// realm. False before the crew has landed only if there is no such
+    /// realm; always false once it has.
+    #[func]
+    fn preview(&mut self, place: i64, fault: bool, ticks: i64) -> bool {
+        if self.crossing.is_some() || ticks <= 0 {
+            return false;
+        }
+        let Some((u, islands)) = self.universe.as_ref() else { return false };
+        let place = place as usize;
+        if place == 0 || place >= islands.len() || (fault && !u.faults.contains(&(place as u8))) {
+            return false;
+        }
+        let shown = islands[if fault { 0 } else { place }].clone();
+        let Some(heist) = self.heist.as_mut() else { return false };
+        heist.ticks = ticks as u32;
+        self.world = Some(World::from_island(&shown, heist));
+        self.island = Some(shown);
+        self.entry = (place, fault);
+        true
+    }
+
+    /// The realm the crew is in, by its code (0 the Heart, k outer realm
+    /// k), and the realms still on its route to the Heart after it; -1 and
+    /// 0 for a heist of one island or before the crew has landed.
+    #[func]
+    fn realm_code(&self) -> i64 {
+        match (self.crossing.as_ref(), self.universe.as_ref()) {
+            (Some(c), Some((u, _))) => u.realms[c.realm_now()].0 as i64,
+            _ => -1,
+        }
+    }
+
+    #[func]
+    fn realms_to_go(&self) -> i64 {
+        self.crossing.as_ref().map_or(0, |c| (c.route.len() - 1 - c.leg) as i64)
+    }
+
+    /// The realms the crew has been through, by code, in the route's order.
+    #[func]
+    fn realms_crossed(&self) -> PackedInt32Array {
+        match (self.crossing.as_ref(), self.universe.as_ref()) {
+            (Some(c), Some((u, _))) => c.route[..=c.leg].iter().map(|&p| u.realms[p].0 as i32).collect(),
+            _ => PackedInt32Array::new(),
+        }
     }
 
     /// A command, now: `kind` is replay.rs's Kind (0 MoveTo, 1 Gait, 2 Halt,
@@ -165,10 +305,30 @@ impl RulebornReplay {
     /// run out. A landing counts only at tick 0 (§5.4).
     #[func]
     fn give(&mut self, actor: i64, kind: i64, x: i64, y: i64) -> bool {
-        let (Some(world), Some(kind)) = (self.world.as_mut(), sim::replay::Kind::from_u8(kind as u8))
-        else {
-            return false;
-        };
+        let Some(kind) = sim::replay::Kind::from_u8(kind as u8) else { return false };
+        // Across a universe, the landing makes the crossing: in the realm
+        // previewed, or at its fault, the Land command's nibble naming it.
+        if let (Some((u, islands)), None) = (self.universe.as_ref(), self.crossing.as_ref()) {
+            let Some(heist) = self.heist.as_ref() else { return false };
+            if kind != sim::replay::Kind::Land {
+                return false;
+            }
+            let (place, fault) = self.entry;
+            let actor = place as u8 | if fault { FAULT_ENTRY } else { 0 };
+            let land = sim::replay::Command { tick: 0, actor, kind, x: x as i16, y: y as i16 };
+            let header = Heist { commands: vec![land], ..heist.clone() };
+            return match Crossing::new(u, islands, &header) {
+                Ok(c) => {
+                    self.crossing = Some(c);
+                    true
+                }
+                Err(_) => false,
+            };
+        }
+        if let Some(c) = self.crossing.as_mut() {
+            return c.give(actor as u8, kind, x as i16, y as i16);
+        }
+        let Some(world) = self.w_mut() else { return false };
         world.give(actor as u8, kind, x as i16, y as i16)
     }
 
@@ -177,8 +337,18 @@ impl RulebornReplay {
     /// re-simulating the log from the start.
     #[func]
     fn record(&self) -> PackedByteArray {
+        if let (Some(c), Some((u, islands)), Some(heist)) =
+            (self.crossing.as_ref(), self.universe.as_ref(), self.heist.as_ref())
+        {
+            let Ok(h) = sim::universe::record_universe(u, islands, heist.seed, heist.ticks, heist.crew, heist.era,
+                                                       heist.manifest.clone(), c.commands().to_vec())
+            else {
+                return PackedByteArray::new();
+            };
+            return PackedByteArray::from(h.encode().as_slice());
+        }
         let (Some(world), Some(heist), Some(realm)) =
-            (self.world.as_ref(), self.heist.as_ref(), self.island.as_ref())
+            (self.w(), self.heist.as_ref(), self.realm())
         else {
             return PackedByteArray::new();
         };
@@ -212,25 +382,55 @@ impl RulebornReplay {
         d
     }
 
-    /// One tick. False once the heist's clock has run out.
+    /// One tick. False once the heist's clock has run out, and across a
+    /// universe before the crew has landed.
     #[func]
     fn step(&mut self) -> bool {
-        let (Some(world), Some(heist)) = (self.world.as_mut(), self.heist.as_ref()) else {
-            return false;
-        };
-        if world.tick >= heist.ticks {
+        let Some(ticks) = self.heist.as_ref().map(|h| h.ticks) else { return false };
+        if self.universe.is_some() {
+            let Some(c) = self.crossing.as_mut() else { return false };
+            if c.world.tick >= ticks {
+                return false;
+            }
+            let sum = c.step();
+            let tick = c.world.tick;
+            self.compare(tick, sum);
+            return true;
+        }
+        let Some(world) = self.world.as_mut() else { return false };
+        if world.tick >= ticks {
             return false;
         }
         let sum = world.step();
-        if world.tick % sim::TICKS_PER_SECOND == 0 {
-            let second = (world.tick / sim::TICKS_PER_SECOND) as usize;
-            match heist.checksums.get(second - 1) {
-                Some(&kept) if kept == sim::truncate(sum) => self.agreed += 1,
-                Some(_) if self.mismatch == 0 => self.mismatch = second as i64,
-                _ => {}
+        let tick = world.tick;
+        self.compare(tick, sum);
+        true
+    }
+
+    /// `validate` for a heist across a universe: its bundle and islands as
+    /// `start_universe` takes them.
+    #[func]
+    fn validate_universe(replay: PackedByteArray, universe: PackedByteArray,
+                         islands: Array<PackedByteArray>) -> VarDictionary {
+        let mut d = VarDictionary::new();
+        let realms: Vec<Island> = islands.iter_shared().filter_map(|b| Island::decode(b.as_slice()).ok()).collect();
+        let (Some(heist), Some(u)) = (Heist::decode(replay.as_slice()), Universe::decode(universe.as_slice())) else {
+            d.set("ok", false);
+            d.set("refused", &GString::from("malformed"));
+            return d;
+        };
+        match sim::universe::verify_universe(&u, &realms, &heist) {
+            Ok(o) => {
+                d.set("ok", true);
+                d.set("grade", &GString::from(&format!("{:?}", o.grade)));
+                d.set("banked", o.banked);
+            }
+            Err(r) => {
+                d.set("ok", false);
+                d.set("refused", &GString::from(&format!("{r:?}")));
             }
         }
-        true
+        d
     }
 
     /// The rules version the loaded replay's header names.
@@ -244,8 +444,12 @@ impl RulebornReplay {
     #[func]
     fn commands(&self) -> Array<VarDictionary> {
         let mut out = Array::new();
-        let Some(w) = self.world.as_ref() else { return out };
-        for c in w.commands() {
+        let log = match (self.crossing.as_ref(), self.w()) {
+            (Some(c), _) => c.commands(),
+            (None, Some(w)) => w.commands(),
+            _ => return out,
+        };
+        for c in log {
             let mut d = VarDictionary::new();
             d.set("tick", c.tick as i64);
             d.set("actor", c.actor as i64);
@@ -271,7 +475,7 @@ impl RulebornReplay {
 
     #[func]
     fn tick(&self) -> i64 {
-        self.world.as_ref().map_or(0, |w| w.tick as i64)
+        self.w().map_or(0, |w| w.tick as i64)
     }
 
     #[func]
@@ -297,7 +501,7 @@ impl RulebornReplay {
 
     #[func]
     fn size(&self) -> Vector2i {
-        self.world.as_ref().map_or(Vector2i::ZERO, |w| {
+        self.w().map_or(Vector2i::ZERO, |w| {
             Vector2i::new(w.grid.width as i32, w.grid.height as i32)
         })
     }
@@ -306,7 +510,7 @@ impl RulebornReplay {
     /// otherwise, in `sim::grid::Feature`'s order.
     #[func]
     fn features(&self) -> PackedByteArray {
-        let Some(w) = self.world.as_ref() else { return PackedByteArray::new() };
+        let Some(w) = self.w() else { return PackedByteArray::new() };
         (0..w.grid.len())
             .map(|i| w.grid.feature(i as _).map_or(0, |f| f as u8 + 1))
             .collect()
@@ -316,7 +520,7 @@ impl RulebornReplay {
     /// 1 east, 2 south, 3 west, and 255 where nothing faces (G56).
     #[func]
     fn facings(&self) -> PackedByteArray {
-        let Some(w) = self.world.as_ref() else { return PackedByteArray::new() };
+        let Some(w) = self.w() else { return PackedByteArray::new() };
         (0..w.grid.len())
             .map(|i| match w.grid.feature(i as _) {
                 Some(f) if f.directional() => w.grid.facing(i as _),
@@ -329,7 +533,7 @@ impl RulebornReplay {
     #[func]
     fn walls(&self) -> Array<Vector2i> {
         let mut out = Array::new();
-        let Some(w) = self.world.as_ref() else { return out };
+        let Some(w) = self.w() else { return out };
         for i in 0..w.grid.len() {
             if w.grid.is_raised(i as _) {
                 let (x, y) = w.grid.coords(i as _);
@@ -343,7 +547,7 @@ impl RulebornReplay {
     #[func]
     fn tunnels(&self) -> Array<Vector2i> {
         let mut out = Array::new();
-        let Some(w) = self.world.as_ref() else { return out };
+        let Some(w) = self.w() else { return out };
         for i in 0..w.grid.len() {
             if let Some(far) = w.grid.tunnel_exit(i as _).filter(|&f| f as usize > i) {
                 let ((ax, ay), (bx, by)) = (w.grid.coords(i as _), w.grid.coords(far));
@@ -358,14 +562,14 @@ impl RulebornReplay {
     /// in `sim::grid::Surface`'s order.
     #[func]
     fn surfaces(&self) -> PackedByteArray {
-        let Some(w) = self.world.as_ref() else { return PackedByteArray::new() };
+        let Some(w) = self.w() else { return PackedByteArray::new() };
         (0..w.grid.len()).map(|i| w.grid.surface(i as _) as u8).collect()
     }
 
     /// Each tile's height in levels, row by row.
     #[func]
     fn heights(&self) -> PackedByteArray {
-        let Some(w) = self.world.as_ref() else { return PackedByteArray::new() };
+        let Some(w) = self.w() else { return PackedByteArray::new() };
         (0..w.grid.len()).map(|i| w.grid.height(i as _)).collect()
     }
 
@@ -374,7 +578,7 @@ impl RulebornReplay {
     #[func]
     fn landings(&self) -> Array<Vector2i> {
         let mut out = Array::new();
-        let Some(realm) = self.island.as_ref() else { return out };
+        let Some(realm) = self.realm() else { return out };
         for (x, y) in realm.landings() {
             out.push(Vector2i::new(x as i32, y as i32));
         }
@@ -387,7 +591,7 @@ impl RulebornReplay {
     #[func]
     fn landing_marks(&self) -> Array<VarDictionary> {
         let mut out = Array::new();
-        let Some(realm) = self.island.as_ref() else { return out };
+        let Some(realm) = self.realm() else { return out };
         for (x, y) in realm.landings() {
             let mut d = VarDictionary::new();
             d.set("at", Vector2i::new(x as i32, y as i32));
@@ -401,7 +605,7 @@ impl RulebornReplay {
     /// radius stretching the six (`World::landing_reach`).
     #[func]
     fn landing_reach(&self) -> i64 {
-        self.world.as_ref().map_or(sim::heist::LANDING_HEARD_TILES as i64, |w| w.landing_reach() as i64)
+        self.w().map_or(sim::heist::LANDING_HEARD_TILES as i64, |w| w.landing_reach() as i64)
     }
 
     /// The landings from which the crew can walk to the Vault: what a
@@ -409,7 +613,7 @@ impl RulebornReplay {
     #[func]
     fn reaching(&self) -> Array<Vector2i> {
         let mut out = Array::new();
-        let Some(realm) = self.island.as_ref() else { return out };
+        let Some(realm) = self.realm() else { return out };
         for (x, y) in realm.reaching() {
             out.push(Vector2i::new(x as i32, y as i32));
         }
@@ -421,13 +625,13 @@ impl RulebornReplay {
     /// would meet it, so nothing should draw it.
     #[func]
     fn has_landed(&self) -> bool {
-        self.world.as_ref().is_some_and(|w| w.landing.is_some() || w.tick > 0)
+        self.w().is_some_and(|w| w.landing.is_some() || w.tick > 0)
     }
 
     #[func]
     fn crew(&self) -> Array<VarDictionary> {
         let mut out = Array::new();
-        let Some(w) = self.world.as_ref() else { return out };
+        let Some(w) = self.w() else { return out };
         for r in &w.raiders {
             let mut d = VarDictionary::new();
             d.set("at", Vector2::new(tiles(r.at.x), tiles(r.at.y)));
@@ -445,7 +649,7 @@ impl RulebornReplay {
     #[func]
     fn guards(&self) -> Array<VarDictionary> {
         let mut out = Array::new();
-        let Some(w) = self.world.as_ref() else { return out };
+        let Some(w) = self.w() else { return out };
         for g in &w.guards {
             let mut d = VarDictionary::new();
             d.set("at", Vector2::new(tiles(g.at.x), tiles(g.at.y)));
@@ -463,7 +667,7 @@ impl RulebornReplay {
     #[func]
     fn wards(&self) -> Array<VarDictionary> {
         let mut out = Array::new();
-        let Some(w) = self.world.as_ref() else { return out };
+        let Some(w) = self.w() else { return out };
         for ward in &w.wards {
             let mut d = VarDictionary::new();
             let (x, y) = w.grid.centre(ward.tile);
@@ -480,7 +684,7 @@ impl RulebornReplay {
     #[func]
     fn pylons(&self) -> Array<VarDictionary> {
         let mut out = Array::new();
-        let Some(w) = self.world.as_ref() else { return out };
+        let Some(w) = self.w() else { return out };
         for law in &w.laws {
             let mut d = VarDictionary::new();
             let (x, y) = w.grid.centre(law.pylon);
@@ -495,7 +699,7 @@ impl RulebornReplay {
     #[func]
     fn vault(&self) -> VarDictionary {
         let mut d = VarDictionary::new();
-        if let Some(w) = self.world.as_ref() {
+        if let Some(w) = self.w() {
             let (x, y) = w.grid.centre(w.vault.tile);
             d.set("at", Vector2::new(tiles(x), tiles(y)));
             d.set("health", w.vault.health);
@@ -509,7 +713,7 @@ impl RulebornReplay {
     /// simulation's own sight rule, so what is drawn is what is decided.
     #[func]
     fn seen(&self, index: i64) -> PackedInt32Array {
-        let Some(w) = self.world.as_ref() else { return PackedInt32Array::new() };
+        let Some(w) = self.w() else { return PackedInt32Array::new() };
         if index < 0 {
             return PackedInt32Array::new();
         }
@@ -518,15 +722,20 @@ impl RulebornReplay {
 
     #[func]
     fn alarm(&self) -> i64 {
-        self.world.as_ref().map_or(0, |w| w.alarm as i64)
+        self.w().map_or(0, |w| w.alarm as i64)
     }
 
-    /// What the heist came to (§12.9), as the re-simulation reads it.
+    /// What the heist came to (§12.9), as the re-simulation reads it: across
+    /// a universe, every realm's.
     #[func]
     fn outcome(&self) -> VarDictionary {
         let mut d = VarDictionary::new();
-        if let Some(w) = self.world.as_ref() {
-            let o = w.outcome();
+        let o = match (self.crossing.as_ref(), self.w()) {
+            (Some(c), _) => Some(c.outcome()),
+            (None, Some(w)) => Some(w.outcome()),
+            _ => None,
+        };
+        if let Some(o) = o {
             d.set("grade", &GString::from(&format!("{:?}", o.grade)));
             d.set("banked", o.banked);
             d.set("capacity", o.capacity);

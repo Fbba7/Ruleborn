@@ -53,6 +53,7 @@ import { handler, routeOf } from "./http.mjs";
 import { Service, TARGET_LISTS_MS } from "./service.mjs";
 import { Builds } from "./sim.mjs";
 import { Store } from "./store.mjs";
+import { raiseTo } from "./universe.mjs";
 import { GOOGLE_KEYS_URL, GameCenter, GoogleSignIn, appStoreNotification, receipts, signIn } from "./stores.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -244,8 +245,21 @@ if (process.argv.includes("--example")) {
   const { account } = service.session("example:defender");
   service.db.prepare("UPDATE accounts SET seeded = 1 WHERE id = ?").run(account);
   const { bundle } = service.publish(account, service.builds.current.exampleIsland(true));
+  // And a universe to raid across (§5.4, crossings.mjs): another seeded
+  // account's Heart and one outer realm, each laid by the generator — so
+  // generated, never the lists' first authored target — joined by the
+  // Stone bridge the outer realm opens with.
+  const across = service.session("example:universe").account;
+  service.db.prepare("UPDATE accounts SET seeded = 1 WHERE id = ?").run(across);
+  const heart = service.builds.current.generate(7, 3);
+  raiseTo(service.db, across, "heart", heart[4], heart[5]);
+  service.publish(across, heart, "heart", { origin: "generated" });
+  const outer = service.builds.current.generate(8, 1);
+  raiseTo(service.db, across, "outer-1", outer[4], outer[5]);
+  service.publish(across, outer, "outer-1", { origin: "generated" });
+  service.links.ensure(across, service.now());
   service.targetLists();
-  console.log(`example island ${bundle.slice(0, 12)} published`);
+  console.log(`example island ${bundle.slice(0, 12)} published, and a universe of two realms`);
 }
 
 const port = Number(process.argv.slice(2).find((a) => /^\d+$/.test(a)) ?? 8787);

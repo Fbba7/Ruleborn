@@ -57,7 +57,7 @@ func _refresh() -> void:
 	if not p["ready"]:
 		return
 	var target := VBoxContainer.new()
-	for line: String in [p["clock"], p["entry"], p["laws"]["line"], p["laws"]["unfamiliar"]]:
+	for line: String in [p["clock"], p["entry"], p["route"], p["faults"], p["laws"]["line"], p["laws"]["unfamiliar"]]:
 		if line != "":
 			target.add_child(UI.label(line, UI.TEXT_POINTS, true))
 	body.add_child(UI.plate(target))

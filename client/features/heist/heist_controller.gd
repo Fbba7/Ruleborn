@@ -39,6 +39,13 @@ var over := false
 var choosing := false
 var marks: Array = []
 var pick := 0
+## A heist across a universe (§5.4): the lease's universe as it names it, its
+## bundle and its realms' islands. Each mark then carries its realm's place
+## and code, its links to the Heart, its clock and its island's side, and a
+## fault is a mark of its own with no tile.
+var universe := {}
+var universe_bytes := PackedByteArray()
+var realm_islands: Array[PackedByteArray] = []
 
 
 ## Start a fresh heist on this seed and clock, on `realm` (a bundle; empty for
@@ -61,20 +68,121 @@ func begin(new_seed: String, ticks: int, crew: int, realm := PackedByteArray(), 
 	return true
 
 
+## Start a heist across the universe a lease names (§5.4): `leased` is the
+## lease's `universe` — each realm with its clock and fault — `bundle` its
+## RBU1 bytes and `islands` its realms' islands in its order. The picker
+## offers every outer realm's edge spots and each fault, each with its clock.
+func begin_universe(new_seed: String, crew: int, leased: Dictionary, bundle: PackedByteArray,
+		islands: Array[PackedByteArray], era := "", manifest := PackedByteArray()) -> bool:
+	if not world.set_era(era) or not world.start_universe(new_seed, crew, manifest, bundle, islands):
+		return false
+	island = PackedByteArray()
+	universe = leased
+	universe_bytes = bundle
+	realm_islands = islands
+	seed_text = new_seed
+	selected = 0
+	calling_skiff = false
+	over = false
+	marks = _universe_marks()
+	choosing = not marks.is_empty()
+	pick = 0
+	if choosing:
+		_show(pick)
+	changed.emit()
+	return choosing
+
+
+## Every outer realm's edge spots and each fault, realm by realm in the
+## universe's order: a realm with no route to the Heart, and so no clock in
+## the lease, offers none.
+func _universe_marks() -> Array:
+	var ticks := {}
+	for r: Dictionary in universe.get("realms", []):
+		var name := str(r["realm"])
+		var code := 0 if name == "heart" else int(name.trim_prefix("outer-"))
+		if r.get("ticks") != null:
+			ticks[code] = int(r["ticks"])
+	var out: Array = []
+	var faults: Array = []
+	var realms: Array = world.universe_realms()
+	for place: int in realms.size():
+		var r: Dictionary = realms[place]
+		var code := int(r["code"])
+		if code == 0 or not ticks.has(code):
+			continue
+		var base := {"place": place, "code": code, "links": int(r["links"]), "ticks": ticks[code],
+			"side": int(r["side"])}
+		world.preview(place, false, ticks[code])
+		for m: Dictionary in world.landing_marks():
+			var spot := base.duplicate()
+			spot["at"] = m["at"]
+			spot["covered"] = m["covered"]
+			out.append(spot)
+		if r["fault"]:
+			var fault := base.duplicate()
+			fault["fault"] = true
+			fault["at"] = Vector2i(-1, -1)
+			fault["side"] = int(realms[0]["side"])
+			faults.append(fault)
+	return out + faults
+
+
+## The realm the choice `i` lands in, shown: its island, or the Heart for a
+## fault, on its own clock.
+func _show(i: int) -> void:
+	var m: Dictionary = marks[i]
+	if m.has("place"):
+		world.preview(int(m["place"]), m.get("fault", false), int(m["ticks"]))
+
+
+## The marks to draw on the realm on show: across a universe, its own
+## realm's edge spots; and which of them is on show, -1 for none.
+func shown_marks() -> Array:
+	if universe.is_empty() or marks.is_empty():
+		return marks
+	var now: Dictionary = marks[pick]
+	return marks.filter(func(m: Dictionary) -> bool:
+		return m["place"] == now["place"] and not m.get("fault", false))
+
+
+func shown_pick() -> int:
+	if universe.is_empty() or marks.is_empty():
+		return pick
+	return shown_marks().find(marks[pick])
+
+
 ## The spot on show, one along or back.
 func next_spot(by: int) -> void:
 	if marks.is_empty():
 		return
 	pick = posmod(pick + by, marks.size())
+	_show(pick)
 	changed.emit()
 
 
+## Across a universe: the first choice of the next realm, or of its faults.
+func next_realm() -> void:
+	if marks.is_empty() or universe.is_empty():
+		return
+	var key := func(m: Dictionary) -> String: return "%s:%s" % [m["place"], m.get("fault", false)]
+	var now: String = key.call(marks[pick])
+	for k in range(1, marks.size() + 1):
+		var i := posmod(pick + k, marks.size())
+		if key.call(marks[i]) != now:
+			pick = i
+			_show(pick)
+			changed.emit()
+			return
+
+
 ## §5.4: the crew lands on the spot on show, the replay's first command, and
-## the heist begins.
+## the heist begins; at a fault, it comes through to the Heart.
 func land_here() -> bool:
 	if not choosing or marks.is_empty():
 		return false
-	var landed_ok := land(Vector2i(marks[pick]["at"]))
+	var at: Vector2i = marks[pick]["at"]
+	var landed_ok := land(Vector2i(maxi(at.x, 0), maxi(at.y, 0)))
 	choosing = false
 	changed.emit()
 	return landed_ok
@@ -108,9 +216,10 @@ func tap_tile(t: Vector2i) -> void:
 		return
 	# Choosing where to land: a tap on an edge spot picks it and lands.
 	if choosing:
-		var at := marks.map(func(m: Dictionary) -> Vector2i: return m["at"]).find(t)
+		var shown := shown_marks()
+		var at := shown.map(func(m: Dictionary) -> Vector2i: return m["at"]).find(t)
 		if at >= 0:
-			pick = at
+			pick = marks.find(shown[at])
 			land_here()
 		return
 	var at := Vector2i(t.x * 256 + 128, t.y * 256 + 128)

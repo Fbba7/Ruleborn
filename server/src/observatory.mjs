@@ -180,8 +180,12 @@ export class Observatory {
     const facts_ = realmFacts(this.service.store.get(c.bundle));
     return {
       bundle: c.bundle, kind, reason, fee,
-      // §5.4's heist clock the lease would carry, in seconds (§12.5's planner).
-      clock: clockTicks() / TICKS_PER_SECOND,
+      // §5.4's heist clock the lease would carry, in seconds (§12.5's
+      // planner): across a universe, the shortest and the longest by the
+      // realm landed on, and whether a raid would cross one (crossings.mjs).
+      ...(([clock, longest]) => ({ clock, clock_longest: longest, across: longest > clockTicks() / TICKS_PER_SECOND }))(
+        generated ? [clockTicks() / TICKS_PER_SECOND, clockTicks() / TICKS_PER_SECOND]
+          : this.service.crossings.clocks(c.owner, c.bundle)),
       keeper_level: owner?.keeper_level ?? null, realms, renown: c.renown ?? null,
       // G58: the Keeper's name is §12.4's free fact, from the word lists.
       keeper_name: generated ? null : this.service.keeper.name(c.owner),

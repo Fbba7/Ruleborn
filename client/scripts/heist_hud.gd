@@ -8,6 +8,9 @@ extends HFlowContainer
 var clock_label: Label
 var alarm_label: Label
 var loot_label: Label
+## Across a universe, the realm the crew is in and how many it has yet to
+## cross to the Heart (§5.4).
+var realm_label: Label
 
 
 func _init() -> void:
@@ -20,8 +23,11 @@ func _init() -> void:
 	centre.add_child(centre_box)
 	clock_label = UI.label()
 	alarm_label = UI.label()
+	realm_label = UI.label()
+	realm_label.visible = false
 	centre_box.add_child(clock_label)
 	centre_box.add_child(alarm_label)
+	centre_box.add_child(realm_label)
 	add_child(centre)
 	var right := UI.panel()
 	loot_label = UI.label()
@@ -49,3 +55,15 @@ func show_state(r: RulebornReplay) -> void:
 		carried += int(m["carried"])
 		carry += int(m["carry"])
 	loot_label.text = Strings.t("HUD_LOOT", [carry - carried, int(r.vault().get("exposed", 0))])
+	realm_label.text = realm(r.realm_code(), r.realms_to_go())
+	realm_label.visible = realm_label.text != ""
+
+
+## The realm the crew is in across a universe, in words; "" for a heist of
+## one island or before the crew has landed.
+static func realm(code: int, to_go: int) -> String:
+	if code < 0:
+		return ""
+	if code == 0:
+		return Strings.t("HEIST_IN_HEART")
+	return Strings.t("HEIST_IN_REALM", [LandingPresenter.realm_name(code), to_go])
