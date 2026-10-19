@@ -140,6 +140,7 @@ export function deleteAccount(service, account, reason = "requested", { journal 
     db.prepare("DELETE FROM blocks WHERE blocker = ? OR blocked = ?").run(account, account);
     // The universe they built: nobody's home now.
     db.prepare("DELETE FROM realms WHERE owner = ?").run(account);
+    db.prepare("DELETE FROM links WHERE owner = ?").run(account);
     db.prepare("DELETE FROM buildings WHERE owner = ?").run(account);
     db.prepare("DELETE FROM characters WHERE owner = ?").run(account);
     db.prepare("DELETE FROM producers WHERE owner = ?").run(account);

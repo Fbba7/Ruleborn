@@ -65,6 +65,15 @@ func _words() -> void:
 		w["wanderer"] == "The Wanderer is at home: one more target" and w["header"].ends_with("4 targets")
 			and o["wanderer"] == "",
 		"%s | %s" % [w.get("wanderer"), w.get("header")])
+	var deep: Dictionary = (sample()["targets"] as Array)[0].duplicate(true)
+	deep["depth"] = 2
+	deep["fault_realms"] = ["outer-2", "outer-1"]
+	var deep_lines: Array = ObservatoryPresenter.card(deep)["lines"]
+	check.call("a card says how many realms its universe's longest route to the Heart crosses and which outer "
+			+ "realms its faults open from (12.22, 5.4)",
+		deep_lines[2] == "Up to 2 realms to the Heart" and deep_lines[3] == "Faults open from outer realm 2, outer realm 1"
+			and not str(cards[0]["lines"]).contains("realms to the Heart"),
+		"%s" % [deep_lines])
 	var lines: Array = cards[0]["lines"]
 	check.call("each target card shows §12.4's free facts — realms, Renown, a rough loot estimate, strain and open "
 			+ "faults — the lease's fee and why it was offered (12.4, 12.15)",

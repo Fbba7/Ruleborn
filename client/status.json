@@ -19,6 +19,7 @@
   "a Workshop play's answer reads as cleared and counted, or already counted, by the server; one still waiting shows the phone's own check as confirming; a play the server did not accept names why (§18.7, §24.12)": "passed",
   "a banner leads with its glyph, is announced, goes by itself, or stays until dismissed when the player asks (§20.8)": "passed",
   "a build the network does not reach waits in the outbox, shown as confirming; sent on reconnection, each is confirmed or refused by the server, and the screen says which and why (24)": "passed",
+  "a card says how many realms its universe's longest route to the Heart crosses and which outer realms its faults open from (12.22, 5.4)": "passed",
   "a challenge link is made by the server and its code copied to paste; a refusal says why (17.6)": "passed",
   "a failure is logged by its code and route, never the path's token": "passed",
   "a guard choice sends the Sage, or none, and shows the hall the server answers; a refusal keeps the hall on show and says why (11.7)": "passed",

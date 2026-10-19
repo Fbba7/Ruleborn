@@ -2084,6 +2084,44 @@
      "type": "none"
     }
    }
+  },
+  "links": {
+   "about": "The links between a player's realms (§5.3).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased",
+   "columns": {
+    "owner": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "n": {
+     "type": "gameplay"
+    },
+    "kind": {
+     "type": "gameplay"
+    },
+    "a": {
+     "type": "gameplay"
+    },
+    "b": {
+     "type": "gameplay"
+    },
+    "built_at": {
+     "type": "gameplay"
+    },
+    "paid_to": {
+     "type": "gameplay",
+     "holds": "when a Rift's upkeep was last paid"
+    },
+    "open": {
+     "type": "gameplay"
+    }
+   }
   }
  },
  "files": {

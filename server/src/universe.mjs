@@ -194,7 +194,21 @@ export class Universe {
       types: facts.REALM_TYPES.filter((t) => !realms.some((r) => r.type === t)),
       ...offer({ ...realmPrice(1), keeper: facts.REALM_KEEPER_LEVELS[owned] }),
     } : null;
-    return { ...me, realms, open };
+    // §5.3's links, each realm's depth and where the faults open (links.mjs).
+    const links = this.service.links.view(account, this.service.weaving.stability(account).strain);
+    return { ...me, realms, open, ...links };
+  }
+
+  /** The universe as the device reads it: its links made for a universe
+   *  opened before they were kept, and a Rift's upkeep paid, first. */
+  show(account) {
+    const now = this.service.now();
+    return transaction(this.db, () => {
+      this.ensure(account, now);
+      this.service.links.ensure(account, now);
+      this.service.links.upkeep(account, now);
+      return this.view(account);
+    });
   }
 
   /** Starlight paid for `what`, and §14.2's experience for it: 1 for every
@@ -230,8 +244,14 @@ export class Universe {
       this.afford(account, { ...realmPrice(1), keeper: facts.REALM_KEEPER_LEVELS[owned] });
       this.ensure(account, now);
       const realm = REALMS[owned + 1];
+      // A new outer realm can move where the faults open (§5.4): what the
+      // producers made before is paid under the faults that held.
+      this.service.links.ensure(account, now);
+      this.service.home?.settleAll(account, now);
       this.db.prepare("INSERT INTO realms (owner, realm, type, level, opened_at) VALUES (?, ?, ?, 1, ?)")
         .run(account, realm, type, now);
+      // §5.3: "A universe needs one link per outer realm".
+      this.service.links.join(account, realm, now);
       return this.done(account, this.pay(account, facts.REALM_OPEN_COST, `opening ${realm} (9.5)`, now));
     });
   }
@@ -275,8 +295,9 @@ export class Universe {
       this.afford(account, price);
       this.ensure(account, now);
       // What a producer made at the level it had is paid at that level
-      // before it rises (home.mjs).
-      if (have) this.service.home?.settle(account, realm, kind, now);
+      // before it rises, and every producer before the Spire or an Anchor
+      // Stone moves the universe's stability band (home.mjs).
+      this.service.home?.settleAll(account, now);
       this.db.prepare(
         `INSERT INTO buildings (owner, realm, kind, n, level, changed_at) VALUES (?, ?, ?, ?, ?, ?)
          ON CONFLICT (owner, realm, kind, n) DO UPDATE SET level = excluded.level, changed_at = excluded.changed_at`)

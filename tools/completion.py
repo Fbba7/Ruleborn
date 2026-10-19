@@ -421,8 +421,10 @@ DELIVERABLES = [
             "a producer raised a level is paid at the old level for the time before (9.3, 10.2)"),
         server_tests(
             "a law of a producer's school adds 10% to it in its realm, a crowned one 5% in every realm, from when its weaving ends (9.3)"),
-        not_started("§9.3's stability-band and fault terms, once the server keeps the universe's "
-                    "stability and its faults (TD.37)"))),
+        server_tests(
+            "faults open from the outer realms whose routes to the Heart are longest, ties by the order they "
+            "opened; a fault cuts its realm's production by 10% and the stability band adds its share everywhere "
+            "(5.4, 5.5, 9.3)"))),
     ("4a", "Workers", BACKEND, parts(
         server_tests(
             "a worker goes only into a free slot or Guardian Post, and what it made where it was is kept when it moves (5.8)",
@@ -632,8 +634,14 @@ DELIVERABLES = [
             "with the Wanderer at home the Observatory says so and offers one more target (12.3, 11.7)"),
             server_tests(
             "one more target while the Wanderer is at home, from the Keeper level that brings it (12.3, 11.7)")),
-            not_started("universes of several realms give each card its depth, \"up to N realms to the Heart\", "
-                        "and its faults' places (T3.3)")))),
+            # The universe's links give each card its depth and where its
+            # faults open (links.mjs).
+            parts(client_tests(
+                "a card says how many realms its universe's longest route to the Heart crosses and which outer realms "
+                "its faults open from (12.22, 5.4)"),
+                server_tests(
+                "each card says how many realms its universe's longest shortest route to the Heart crosses, and "
+                "where its faults open (12.22, 5.4)"))))),
     ("4b", "Scout report", FRONTEND, parts(client_tests(
         "the scout report reads a target realm by realm — its laws, guards by role, wards by kind, its watch — "
         "and says nothing placed is shown (12.4)",
@@ -1074,9 +1082,20 @@ DELIVERABLES = [
             "any filter (12.22)")),
         not_started("the simulation's reference crews rate a new island: §13.3's 800 raids of "
                     "the competent crew, queued and cached by the island's digest (TD.16)"))),
-    ("6", "Universes of several realms joined by links", BACKEND, not_started(
-        "the server holds universes of several realms joined by links, with the Heart's "
-        "winds and §5.4's clock by links (D71)")),
+    ("6", "Universes of several realms joined by links", BACKEND, parts(
+        # §5.3's links held on the server, with each realm's depth and §5.4's
+        # clock and faults from them (links.mjs).
+        server_tests(
+            "each outer realm opens with a Stone bridge to the Heart while it has a socket, then to the first opened "
+            "realm with one; each realm's depth sets §5.4's clock for a crew landing there (5.3, 5.4)",
+            "a link is built at §5.3's price and refused past a socket, a kind's limit, one an outer realm and two, "
+            "or a realm cut off; a Chute runs one way, and a link comes down only while every realm still reaches "
+            "the Heart (5.3)",
+            "a Rift costs 20 Aether an hour, paid as the universe is read; one its owner cannot pay for stands "
+            "closed, crossing nothing, and opens again with Aether for an hour (5.3)",
+            "links are built, rebuilt and taken down over HTTP (5.3)"),
+        not_started("a heist across the realms, landing on an outer realm's edge past the Heart's winds, with "
+                    "§5.4's clock by links (D71, T3.3)"))),
 
     ("7", "Workshop services: publish, browse, moderate, remix", BACKEND, server_tests(
         "an island reaches the Workshop only once its creator has cleared it (18.6)",

@@ -14,9 +14,12 @@
 // hour is the building's table rate (§10.2, which is base × 1.35^(level − 1)),
 // times the staffing, times 1.1 in a realm of the resource's school, times
 // one plus the worker's bonuses (§9.2: +15% for a ruleborn of the resource's
-// schools, and §11.3's work traits). The terms the server has no state for
-// yet — the laws woven in the realm, the stability band, faults — are 1
-// until weaving is kept here (TC.12's later parts), and say so in `view`.
+// schools, and §11.3's work traits), times §5.5's stability band bonus —
+// the universe's strain as weaving.mjs prices it, in the week's era — and
+// "(1 − 0.10 per fault opening from the realm, 5.5)", the realms the faults
+// open from being links.mjs's. What changes the band or the faults — a
+// weave, a Spire or Anchor Stone raised, a realm opened, a link changed —
+// pays what was made before it, and a new week's era starts a new stretch.
 //
 // The server works out what has been made, by integrating each worker's
 // share over the time it counted, whenever the staffing or the level of a
@@ -359,7 +362,14 @@ export class Home {
     const [perRealmLaw, perCrownLaw] = facts.PRODUCTION_LAW_BONUS;
     const laws = 1 + perRealmLaw * (working[realm] ?? []).filter(matches).length
       + perCrownLaw * (working.crown ?? []).filter(matches).length;
-    const boost = (type && schoolsOf(resource).includes(schoolOfType(type)) ? facts.OWN_SCHOOL_PRODUCTION : 1) * laws;
+    // §5.5's band and §9.3's fault cut, from the universe as it stands at
+    // `at` (weaving.mjs, links.mjs).
+    const stability = this.service.weaving.stability(account, null, null, at);
+    const band = 1 + facts.STRAIN_BAND_PRODUCTION[stability.band] / 100;
+    const fault = this.service.links.view(account, stability.strain).faults.includes(realm);
+    const cut = fault ? 1 - facts.FAULT_PRODUCTION_CUT / 100 : 1;
+    const boost = (type && schoolsOf(resource).includes(schoolOfType(type)) ? facts.OWN_SCHOOL_PRODUCTION : 1)
+      * laws * band * cut;
     // §11.6: "A character on a heist isn't working or guarding", nor while
     // it rests after one.
     const workers = this.characters(account)
@@ -371,7 +381,7 @@ export class Home {
                  perHour: (lv.hourly * boost * (1 + bonus)) / lv.slots };
       });
     const perHour = workers.filter((w) => w.from <= at).reduce((s, w) => s + w.perHour, 0);
-    return { level: b.level, lv, workers, perHour, boost, resource, built: b.changed_at };
+    return { level: b.level, lv, workers, perHour, boost, resource, built: b.changed_at, band: stability.band, fault };
   }
 
   /** A producer's store brought up to `now`, in thousandths, and written:
@@ -401,7 +411,10 @@ export class Home {
   made(account, realm, kind, from, to) {
     const ends = this.characters(account).flatMap((c) => [c.away_from, c.away_until])
       .filter((t) => t != null && t > from && t < to);
-    const cuts = [...new Set([from, ...this.service.weaving.finishing(account, from, to), ...ends, to])]
+    // §18.3: a new week's era moves the stability band with it.
+    const weeks = [];
+    for (let at = this.service.era(from).endsAt; at < to; at = this.service.era(at).endsAt) weeks.push(at);
+    const cuts = [...new Set([from, ...this.service.weaving.finishing(account, from, to), ...ends, ...weeks, to])]
       .sort((a, b) => a - b);
     let made = 0;
     for (let i = 0; i + 1 < cuts.length; i++) {
@@ -782,10 +795,9 @@ export class Home {
                          workers: r.workers.map((w) => w.id), per_hour: Math.round(r.perHour),
                          stored: Math.min(holds, Math.floor((row.stored + made) / 1000)), holds,
                          full_at: fullAt(row.stored + made, holds * 1000, r.workers, now),
-                         // The terms kept at 1 until the server keeps weaving
-                         // and stability (G82): the realm's and crown laws of
-                         // the resource's schools, the stability band, faults.
-                         unkept: ["stability", "faults"] });
+                         // §5.5's band, 0 Quiet to 6 Breaking, and whether a
+                         // fault opens from this realm (§9.3).
+                         band: r.band, fault: r.fault });
       }
       if (b.kind === "nursery") {
         const n = this.nursery(account, b.realm, now);

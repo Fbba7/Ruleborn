@@ -106,23 +106,27 @@ test("a law of a producer's school adds 10% to it in its realm, a crowned one 5%
   const tide = h.show(me).characters.find((c) => c.kind === "tidewalker").id;
   h.work(me, tide, { realm: "heart", kind: "star_well" });
   t.clock.now += 5 * MINUTE;
-  const plain = h.rate(me, "heart", "star_well", t.clock.now).perHour;
+  // The law term alone: §5.5's band, which a law in a slot moves at once, set apart.
+  const lawTerm = (r) => r.perHour / (1 + facts.STRAIN_BAND_PRODUCTION[r.band] / 100);
+  const plain = h.rate(me, "heart", "star_well", t.clock.now);
   w.weave(me, { realm: "heart", slot: 1, law: "half_gravity" });
-  assert.equal(h.rate(me, "heart", "star_well", t.clock.now).perHour, plain, "not while it weaves");
+  const weaving = h.rate(me, "heart", "star_well", t.clock.now);
+  assert.ok(Math.abs(lawTerm(weaving) - lawTerm(plain)) < 1e-9, "not while it weaves");
   const start = t.clock.now;
   t.clock.now += 70 * MINUTE;
-  const woven = h.rate(me, "heart", "star_well", t.clock.now).perHour;
-  assert.ok(Math.abs(woven / plain - (1 + facts.PRODUCTION_LAW_BONUS[0])) < 1e-9, "Half gravity is Motion's: Starlight +10%");
+  const woven = h.rate(me, "heart", "star_well", t.clock.now);
+  assert.ok(Math.abs(lawTerm(woven) / lawTerm(plain) - (1 + facts.PRODUCTION_LAW_BONUS[0])) < 1e-9,
+            "Half gravity is Motion's: Starlight +10%");
   // What the Star Well made: ten minutes at the old rate, an hour at the new.
   const made = h.made(me, "heart", "star_well", start, t.clock.now);
-  const expect = (plain * 10 + woven * 60) / 60 * 1000;
+  const expect = (weaving.perHour * 10 + woven.perHour * 60) / 60 * 1000;
   assert.ok(Math.abs(made - expect) < 1, `${made} against ${expect}`);
-  // Bloom, Life's, does nothing for Starlight.
+  // Bloom, Life's, does nothing for Starlight but what it moves the band by.
   w.weave(me, { realm: "heart", slot: 2, law: "bloom" });
   t.clock.now += 10 * MINUTE;
-  assert.ok(Math.abs(h.rate(me, "heart", "star_well", t.clock.now).perHour - woven) < 1e-9);
-  assert.equal(h.show(me).producers.find((p) => p.kind === "star_well").unkept.includes("laws"), false,
-               "the law term is kept now");
+  assert.ok(Math.abs(lawTerm(h.rate(me, "heart", "star_well", t.clock.now)) - lawTerm(woven)) < 1e-9);
+  assert.equal(typeof h.show(me).producers.find((p) => p.kind === "star_well").band, "number",
+               "the band is kept now");
 });
 
 test("a birth's school is drawn 3 for each law woven in its realm, 2 for the realm's own and 1 for each crown law, and a law's traits three times as likely there (11.3, 11.5)", () => {

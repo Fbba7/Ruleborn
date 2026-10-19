@@ -663,6 +663,24 @@ placed by the island's own lists, so they have no tile here
 placed buildings on their tiles (`buildings_not_as_placed`, read with
 `rb_island_buildings`); the simulation still judges what stands under them.
 
+## Links between realms
+
+`src/links.mjs` is §5.3's links. Each outer realm opens with a Stone bridge to
+the Heart while the Heart has one of its four sockets free, else to the first
+opened realm with one (G84). `POST /v1/universe/links {"a", "b", "kind"}`
+builds another at §5.3's price — a Rope bridge 300 Starlight, a Chute 1,500
+and at most two, running from `a` to `b`, a Rift 5,000 and at most one — up
+to one link an outer realm and two; `PUT /v1/universe/links/:n {"kind",
+"from"?}` rebuilds one as another kind, and `DELETE /v1/universe/links/:n`
+takes one down while every realm still reaches the Heart without a Rift. A
+Rift's 20 Aether an hour is charged as the universe is read, and an unpaid
+one stands closed. `GET /v1/universe` answers the links, each realm's depth
+(the links on its shortest route to the Heart, which sets §5.4's clock for a
+crew landing there), the deepest, and the realms §5.5's faults open from,
+deepest first. Production takes §5.5's band and §9.3's 10% cut for a fault
+opening from the producer's realm (home.mjs), and each Observatory card its
+universe's depth and fault realms.
+
 ## The roster, its work, and what it produces
 
 `src/home.mjs` is the home economy's second part (§5.8, §9.2, §9.3, §9.5,

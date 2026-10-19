@@ -45,6 +45,7 @@ import { Universe } from "./universe.mjs";
 import { Curation } from "./curation.mjs";
 import { Defences } from "./defences.mjs";
 import { Lab } from "./lab.mjs";
+import { Links } from "./links.mjs";
 import { Observatory } from "./observatory.mjs";
 import { Profile } from "./profile.mjs";
 import { Weaving } from "./weaving.mjs";
@@ -136,6 +137,7 @@ export class Service {
     this.friends = new Friends(this);
     this.keeper = new Keeper(this);
     this.universe = new Universe(this);
+    this.links = new Links(this);
     this.home = new Home(this);
     this.codex = new Codex(this);
     this.weaving = new Weaving(this);

@@ -43,6 +43,9 @@
 //   POST /v1/universe/realms/:realm/level {"to"}             → an outer realm raised a level
 //   POST /v1/universe/buildings  {"realm", "kind", "n", "to"} → a building built (to 1) or raised (§10.2)
 //   PUT  /v1/universe/buildings/place {"realm", "kind", "n", "x", "y"} → a building moved, free (§10.1)
+//   POST /v1/universe/links      {"a", "b", "kind"}          → a link built between two realms (§5.3)
+//   PUT  /v1/universe/links/:n   {"kind", "from"?}           → a link rebuilt as another kind, a Chute's way
+//   DELETE /v1/universe/links/:n                             → a link taken down, if every realm still reaches the Heart
 //   POST /v1/offline {"actions": [{"do": "build"|"place"|"work"|"weave"|"unweave", …}]} → each confirmed or refused, in order (24)
 //   GET  /v1/weaving                                        → each realm's law slots and the crown's, and prices (5.6)
 //   POST /v1/weaving {"realm", "slot", "law", "swap"?}      → a restored law woven into a slot (5.6), or swapped in (G54)
@@ -538,7 +541,14 @@ export function handler(service, { webClientId = null, appleNotifications = null
         const u = service.universe;
         const [, , a, b, c] = parts;
         const m = request.method;
-        if (m === "GET" && !a) return json(u.view(me));
+        if (m === "GET" && !a) return json(u.show(me));
+        // §5.3's links (links.mjs): a rebuild names the kind it leads to.
+        if (m === "POST" && a === "links" && !b) return json(service.links.build(me, await body(request)));
+        if (m === "PUT" && a === "links" && b && !c) {
+          const q = await body(request);
+          return json(service.links.rebuild(me, Number(b), { kind: q.kind, from: q.from ?? null }));
+        }
+        if (m === "DELETE" && a === "links" && b && !c) return json(service.links.remove(me, Number(b)));
         if (m === "POST" && a === "realms" && !b) return json(u.open(me, text((await body(request)).type)));
         if (m === "POST" && a === "realms" && b && c === "level") return json(u.raise(me, b, (await body(request)).to));
         if (m === "POST" && a === "buildings" && !b) return json(u.build(me, await body(request)));

@@ -241,6 +241,27 @@ ALBUM_MILESTONES = (2, 4, 8)
 #: per outer realm if there are fewer, and none in a universe of the Heart
 #: alone" — (strain %, faults) from the lowest.
 FAULTS_BY_STRAIN = ((100, 1), (110, 2), (118, 3), (125, 4))
+#: §5.3's links: each kind's price in Starlight and how many a universe may
+#: hold (None for no limit), the Rope bridge's "30% faster", the Rift's "Closes
+#: for 30 seconds when an alarm sounds in either realm; 20 Aether an hour",
+#: and which crosses one way only (the Chute's "Fast, one way").
+LINK_KINDS = {
+    "stone_bridge": {"cost": 0, "limit": None, "one_way": False},
+    "rope_bridge": {"cost": 300, "limit": None, "one_way": False, "faster": 30},
+    "chute": {"cost": 1500, "limit": 2, "one_way": True},
+    "rift": {"cost": 5000, "limit": 1, "one_way": False, "closes_seconds": 30, "aether_an_hour": 20},
+}
+#: §5.3: "The Heart has four link sockets and outer realms three", and "A
+#: universe needs one link per outer realm and may have two extra".
+LINK_SOCKETS = {"heart": 4, "outer": 3}
+LINKS_EXTRA = 2
+#: §5.5's production by stability band, Quiet to Breaking, in per cent:
+#: "+5% production everywhere" at Steady, +10% at Humming, +15% at Brimming
+#: and Strained. Cracking and Breaking state no production line of their own
+#: and keep Strained's 15%, the economy model's reading (STRAIN_BAND_TABLE).
+STRAIN_BAND_PRODUCTION = (0, 5, 10, 15, 15, 15, 15)
+#: §9.3's "× (1 − 0.10 per fault opening from the realm, 5.5)", in per cent.
+FAULT_PRODUCTION_CUT = 10
 #: §12.3: "Refreshing the list costs Aether: 50, doubling with each refresh in
 #: the same hour."
 OBSERVATORY_REFRESH_AETHER = 50
@@ -565,6 +586,11 @@ HOME = {
     "CHAPTER_TWO_KEEPER": "7.6",
     "ALBUM_MILESTONES": "7.6",
     "FAULTS_BY_STRAIN": "5.5",
+    "LINK_KINDS": "5.3",
+    "LINK_SOCKETS": "5.3",
+    "LINKS_EXTRA": "5.3",
+    "STRAIN_BAND_PRODUCTION": "5.5",
+    "FAULT_PRODUCTION_CUT": "9.3",
     "OBSERVATORY_REFRESH_AETHER": "12.3",
     "LAB_AETHER_PER_LEVEL": "9.5",
     "CREW_BY_KEEPER": "12.5",
@@ -793,6 +819,24 @@ STATED = {
                                          for x in m)),
     "FAULTS_BY_STRAIN": (r"\| Strained\n\| (\d+) to \d+%[\s\S]*?Two faults from (\d+)%, three from (\d+)%[\s\S]*?\| Breaking\n\| (\d+)% and over\n\| No new weaving[^|]*?(four) faults",
                          lambda m: ((int(m[0]), 1), (int(m[1]), 2), (int(m[2]), 3), (int(m[3]), 4))),
+    "LINK_KINDS": (r"\| Stone bridge\n\| Normal speed\n\| [^\n]*\n\| None\n\| (Free)\n+\| Rope bridge\n\| (\d+)% faster\n"
+                   r"\| [^\n]*\n\| None\n\| ([\d,]+)\n+\| Chute\n\| Fast, (one way)\n\| [^\n]*\n\| (\d+)\n\| ([\d,]+)\n+"
+                   r"\| Rift\n\| Instant\n\| Closes for (\d+) seconds when an alarm sounds in either realm; (\d+) Aether "
+                   r"an hour\n\| (\d+)\n\| ([\d,]+)",
+                   lambda m: {"stone_bridge": {"cost": 0, "limit": None, "one_way": False},
+                              "rope_bridge": {"cost": int(m[2].replace(",", "")), "limit": None, "one_way": False,
+                                              "faster": int(m[1])},
+                              "chute": {"cost": int(m[5].replace(",", "")), "limit": int(m[4]), "one_way": True},
+                              "rift": {"cost": int(m[9].replace(",", "")), "limit": int(m[8]), "one_way": False,
+                                       "closes_seconds": int(m[6]), "aether_an_hour": int(m[7])}}),
+    "LINK_SOCKETS": (r"The Heart has (four) link sockets and outer realms (three)",
+                     lambda m: {"heart": {"four": 4}[m[0]], "outer": {"three": 3}[m[1]]}),
+    "LINKS_EXTRA": (r"one link per outer realm and may have (two) extra", lambda m: {"two": 2}[m[0]]),
+    "STRAIN_BAND_PRODUCTION": (r"\| Steady\n\| [^\n]*\n\| \+(\d+)% production everywhere[\s\S]*?\| Humming\n\| [^\n]*\n"
+                               r"\| \+(\d+)% production[\s\S]*?\| Brimming\n\| [^\n]*\n\| \+(\d+)% production"
+                               r"[\s\S]*?\| Strained\n\| [^\n]*\n\| \+(\d+)% production",
+                               lambda m: (0, int(m[0]), int(m[1]), int(m[2]), int(m[3]), int(m[3]), int(m[3]))),
+    "FAULT_PRODUCTION_CUT": (r"× \(1 − 0\.(\d+) per fault opening from the realm", lambda m: int(m[0])),
     "OBSERVATORY_REFRESH_AETHER": (r"Refreshing the list costs Aether: (\d+), doubling with each refresh in the same hour",
                                    lambda m: int(m[0])),
     "BADGE_MARKS": (r"Ghost (\d+), Vault breaker (\d+), Iron wall (\d+), Law hunter (\d+), Resonant (\d+), "

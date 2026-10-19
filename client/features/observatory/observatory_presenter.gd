@@ -70,6 +70,14 @@ static func card(c: Dictionary, words := {}) -> Dictionary:
 			total(r.get("guards", {})), total(r.get("wards", {}))]),
 		fee(c),
 	]
+	# §12.22: "up to N realms to the Heart", and where the faults open (5.4).
+	if int(c.get("depth", 0)) > 0:
+		lines.insert(2, Strings.t("OBS_DEPTH", int(c["depth"])))
+	var at := PackedStringArray()
+	for realm: String in c.get("fault_realms", []):
+		at.append(Strings.t("OBS_OUTER_REALM", int(realm.get_slice("-", 1))))
+	if not at.is_empty():
+		lines.insert(3 if int(c.get("depth", 0)) > 0 else 2, Strings.t("OBS_FAULTS_FROM", ", ".join(at)))
 	if str(c.get("kind", "")) != "trace":
 		lines.append(Strings.t("OBS_REASON_" + str(c.get("reason", "fair")).to_upper()))
 	# G58: the Keeper's name, from the word lists, a free fact (§12.4).

@@ -21,9 +21,9 @@
 // guard", and the list is offered between heists, so it is one more target
 // from the Keeper level that unlocks the Wanderer.
 //
-// Left for universes of several realms (T3.3): a card's depth, "up to N
-// realms to the Heart", and where its faults open; a heist crosses one realm
-// today.
+// A card carries its universe's depth, "up to N realms to the Heart", and
+// the realms its faults open from (links.mjs); a heist crossing those realms
+// is T3.3's.
 
 import { readFileSync } from "node:fs";
 
@@ -162,8 +162,9 @@ export class Observatory {
     const generated = c.owner === GENERATOR;
     const owner = generated ? null
       : this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(c.owner);
+    // The Heart and the outer realms, which are the realms table's rows.
     const realms = generated ? 1
-      : Math.max(1, this.db.prepare("SELECT COUNT(*) AS n FROM realms WHERE owner = ?").get(c.owner).n);
+      : 1 + this.db.prepare("SELECT COUNT(*) AS n FROM realms WHERE owner = ?").get(c.owner).n;
     let strain = 0;
     let band = 0;
     if (!generated && this.db.prepare("SELECT 1 FROM realms WHERE owner = ? LIMIT 1").get(c.owner)) {
@@ -185,6 +186,11 @@ export class Observatory {
       // G58: the Keeper's name is §12.4's free fact, from the word lists.
       keeper_name: generated ? null : this.service.keeper.name(c.owner),
       loot: rough(snap.exposed), strain, band, faults: faults(strain, realms - 1),
+      // §12.22: "up to N realms to the Heart", the most links any outer
+      // realm's shortest route takes, and the realms the faults open from
+      // (§5.4, links.mjs); the game's own island is one realm.
+      ...(generated ? { depth: 0, fault_realms: [] } : (({ deepest, faults: at }) =>
+        ({ depth: deepest, fault_realms: at }))(this.service.links.view(c.owner, strain))),
       ...(generated ? { success: [lo, hi] } : {}),
       realm: { realm: snap.realm, realm_level: snap.realm_level, vault_level: snap.vault_level,
                watch: facts.REALM_WATCH[snap.realm_level - 1], ...facts_ },

@@ -139,6 +139,7 @@
    4
   ]
  ],
+ "FAULT_PRODUCTION_CUT": 10,
  "FLOOR_HEISTS": 8,
  "FOILED_PAGES": 1,
  "FREE_CPU_MS": 10,
@@ -252,6 +253,36 @@
   1.55,
   10
  ],
+ "LINKS_EXTRA": 2,
+ "LINK_KINDS": {
+  "chute": {
+   "cost": 1500,
+   "limit": 2,
+   "one_way": true
+  },
+  "rift": {
+   "aether_an_hour": 20,
+   "closes_seconds": 30,
+   "cost": 5000,
+   "limit": 1,
+   "one_way": false
+  },
+  "rope_bridge": {
+   "cost": 300,
+   "faster": 30,
+   "limit": null,
+   "one_way": false
+  },
+  "stone_bridge": {
+   "cost": 0,
+   "limit": null,
+   "one_way": false
+  }
+ },
+ "LINK_SOCKETS": {
+  "heart": 4,
+  "outer": 3
+ },
  "LOAD_PER_SECOND": 30,
  "LOAD_TARGETS": [
   50,
@@ -481,6 +512,15 @@
   100,
   110,
   125
+ ],
+ "STRAIN_BAND_PRODUCTION": [
+  0,
+  5,
+  10,
+  15,
+  15,
+  15,
+  15
  ],
  "STRAY_HEIST_ODDS": 8,
  "STUDY_PAGES": [

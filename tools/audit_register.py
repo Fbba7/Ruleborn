@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "D99"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "D99"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9887,6 +9887,29 @@ dict(id="D99", kind="deviation", severity="significant", status="open",
          "drafted); keep §26.4’s demand test for the languages after these; have "
          "a native speaker read each drafted language."),
 
+dict(id="G84", kind="gap", severity="minor", status="open",
+     title="§5.3 and §5.5 leave open where a new realm’s link goes, what an "
+           "unpaid Rift does, and Cracking’s and Breaking’s production; the "
+           "server reads each one way",
+     refs=["5.3", "5.5", "9.3"],
+     body="Building §5.3’s links on the server (links.mjs) needed three "
+          "readings. <strong>A new realm’s link:</strong> <em>“A universe needs "
+          "one link per outer realm”</em> says how many, not where, so a realm "
+          "opens with a Stone bridge to the Heart while the Heart has one of its "
+          "four sockets free, and else to the first opened realm with one. "
+          "<strong>The Rift’s upkeep:</strong> <em>“20 Aether an hour”</em> gives "
+          "the price, not what happens when it goes unpaid, so the hours are "
+          "charged as the universe is read, an unpaid Rift stands closed and "
+          "crosses nothing until there is Aether for an hour, and the hours it "
+          "stands closed cost nothing; so that a closing Rift never cuts a realm "
+          "off, every realm must reach the Heart without one. <strong>Cracking and "
+          "Breaking:</strong> the band table gives Steady to Strained a production "
+          "line (+5% to +15%) and Cracking and Breaking none, so they keep "
+          "Strained’s +15%, as the economy model already read them, and the "
+          "price of pushing past capacity stays the faults’ 10% cut and the "
+          "flicker. Found building TD.37.",
+     rec="State the readings in §5.3 and §5.5 (the edits are drafted)."),
+
 dict(id="G83", kind="gap", severity="minor", status="open",
      title="§7.6 and §12.11 leave open what a foiled heist’s page is, which heists "
            "count to the floor and which law a friend’s page is of; the server "
@@ -11461,6 +11484,11 @@ V37 = {
     "written from British by a spelling table. Left: the document’s §20.6, "
     "§26.3 and §26.4 (drafted), the coined names in each language (the "
     "owner’s, §26.9), and a native speaker’s read of the drafted languages."),
+
+"G84": dict(status="open", left="document", note=
+    "Found building TD.37, after v3.7: where a new realm’s link goes, what an "
+    "unpaid Rift does and Cracking’s and Breaking’s production, read one way on "
+    "the server, with the edits drafted (TD.75)."),
 
 "G83": dict(status="open", left="document", note=
     "Found building TC.12, after v3.7: what a foiled heist's page is, which "
@@ -14911,6 +14939,20 @@ EDITS = {
          find="English and Brazilian Portuguese at launch.",
          replace="English, Portuguese, German and French at launch.",
          why="The demand test starts after the owner’s six. D99."),
+],
+"G84": [
+    dict(section="5.3", action="replace",
+         find="A universe needs one link per outer realm and may have two extra, for loops and shortcuts.",
+         replace="A universe needs one link per outer realm and may have two extra, for loops and shortcuts. A new outer realm opens with a Stone bridge to the Heart while the Heart has a socket free, else to the first opened realm with one. A Rift its owner cannot pay for stands closed until there is Aether for an hour, costing nothing while closed, so every realm must reach the Heart without one.",
+         why="Where a new realm’s link goes, and what an unpaid Rift does. G84."),
+    dict(section="5.5", action="replace",
+         find="each law has a 5% chance every 10 seconds of blinking off for 2 seconds",
+         replace="each law has a 5% chance every 10 seconds of blinking off for 2 seconds; +15% production",
+         why="Cracking’s production, which the table leaves out. G84."),
+    dict(section="5.5", action="replace",
+         find="laws flicker twice as often",
+         replace="laws flicker twice as often; +15% production",
+         why="Breaking’s production, which the table leaves out. G84."),
 ],
 "G83": [
     dict(section="7.6", action="replace",

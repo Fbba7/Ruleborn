@@ -140,8 +140,9 @@ export class Weaving {
    *  levels, and the week's era; `extra`, {law, tier, realm}, priced in its
    *  place as the last line. The simulation's answer: each law's cost, the
    *  chords that sound, capacity, strain and band. `without`, {realm,
-   *  slot}, leaves that slot's law out, as a swap prices its successor. */
-  stability(account, extra = null, without = null) {
+   *  slot}, leaves that slot's law out, as a swap prices its successor;
+   *  `at` names the week whose era it is priced in. */
+  stability(account, extra = null, without = null, at = this.service.now()) {
     const realms = this.universe.realms(account);
     const schools = [];
     for (const r of realms) schools[realmIndex(r.realm)] = r.realm === "heart" ? null : schoolOfType(r.type);
@@ -151,7 +152,7 @@ export class Weaving {
     if (extra) laws.push({ ...extra, realm: realmIndex(extra.realm) });
     const anchors = this.universe.buildings(account).filter((b) => b.kind === ANCHOR).map((b) => b.level);
     return this.service.builds.current.stability({ spire: this.universe.spire(account), anchors,
-      era: this.service.era().wire, schools, laws });
+      era: this.service.era(at).wire, schools, laws });
   }
 
   /** §5.5's cost of `law` at `tier` woven in `realm` beside what is already

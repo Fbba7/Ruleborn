@@ -43,6 +43,28 @@ test("the Observatory's cards carry §12.4's free facts, counted from the bundle
             JSON.stringify(body));
 });
 
+test("each card says how many realms its universe's longest shortest route to the Heart crosses, and where its faults open (12.22, 5.4)", () => {
+  const t = twoPlayers(false);
+  keeper6(t);
+  const d = t.service.defender ?? t.defender.account;
+  for (const [i, type] of [[1, "Skyfield"], [2, "Crystalline"]]) {
+    t.service.db.prepare("INSERT INTO realms (owner, realm, type, level, opened_at) VALUES (?, ?, ?, 1, 0)")
+      .run(d, `outer-${i}`, type);
+  }
+  t.service.book(d, "starlight", 10_000, "a test's grant");
+  t.service.links.build(d, { a: "outer-2", b: "outer-1", kind: "stone_bridge" });
+  const own = t.service.db.prepare("SELECT n FROM links WHERE owner = ? AND a = 'outer-2' AND b = 'heart'").get(d).n;
+  t.service.links.remove(d, own);
+  const real = t.service.weaving.stability.bind(t.service.weaving);
+  t.service.weaving.stability = (...args) => ({ ...real(...args), strain: 1.12, band: 5 });
+  const card = t.service.observatory.view(t.raider.account).targets[0];
+  t.service.weaving.stability = real;
+  assert.equal(card.realms, 3, "the Heart and two outer realms (12.4)");
+  assert.equal(card.depth, 2, "\"up to 2 realms to the Heart\"");
+  assert.equal(card.faults, 2, "two faults from 110% (5.5)");
+  assert.deepEqual(card.fault_realms, ["outer-2", "outer-1"], "the deepest first (5.4)");
+});
+
 test("the Observatory offers 3 targets, 4 from level 3 and 5 at level 5, and a new player is told raiding a player ends their protection (12.3, 10.2)", () => {
   assert.deepEqual([0, 1, 2, 3, 4, 5].map(targetsAt), [3, 3, 3, 4, 4, 5]);
   const t = twoPlayers(false);

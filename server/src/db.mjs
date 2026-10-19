@@ -654,6 +654,20 @@ CREATE TABLE IF NOT EXISTS friends (
   CHECK (a < b)
 );
 CREATE INDEX IF NOT EXISTS friends_by_b ON friends (b);
+-- §5.3's links between a universe's realms (links.mjs): each its kind and
+-- the two realms it joins, a Chute running from a to b; a Rift's upkeep paid
+-- to paid_to, and whether it stands open.
+CREATE TABLE IF NOT EXISTS links (
+  owner    TEXT NOT NULL REFERENCES accounts(id),
+  n        INTEGER NOT NULL,
+  kind     TEXT NOT NULL,
+  a        TEXT NOT NULL,
+  b        TEXT NOT NULL,
+  built_at INTEGER NOT NULL,
+  paid_to  INTEGER NOT NULL,
+  open     INTEGER NOT NULL DEFAULT 1,
+  PRIMARY KEY (owner, n)
+);
 CREATE TABLE IF NOT EXISTS friend_invites (
   code       TEXT PRIMARY KEY,
   account    TEXT NOT NULL REFERENCES accounts(id),
