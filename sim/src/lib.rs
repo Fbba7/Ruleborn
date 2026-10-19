@@ -52,6 +52,7 @@ pub mod stability;
 mod tests;
 pub mod rng;
 pub mod trig;
+pub mod universe;
 
 use fixed::{Ang, Fx};
 use grid::{Feature, Grid};
@@ -853,6 +854,10 @@ pub struct World {
     pub clock_run: u64,
     pub vault: Vault,
     pub skiff: Option<Skiff>,
+    /// How long a called skiff takes to come: §5.4's 20 seconds to the
+    /// Heart, which a one-island heist is played on, and 5 to an outer realm
+    /// (`universe`).
+    pub skiff_ticks: u32,
     /// Loot dropped by a crew member knocked down: (tile, units). §12.20:
     /// "Drops its loot on the tile." Picking it up again is not built.
     pub dropped: Vec<(grid::TileIndex, i32)>,
@@ -1097,6 +1102,7 @@ impl World {
             vents: Vec::new(),
             stones: Vec::new(),
             springs: Vec::new(),
+            skiff_ticks: heist::SKIFF_HEART_TICKS,
         }
     }
 
@@ -1402,7 +1408,7 @@ impl World {
                         {
                             self.skiff = Some(Skiff {
                                 tile,
-                                arrives: self.tick + heist::SKIFF_HEART_TICKS,
+                                arrives: self.tick + self.skiff_ticks,
                             });
                         }
                     }
@@ -4821,7 +4827,7 @@ impl World {
         }
         let wait = match self.skiff {
             Some(s) => s.arrives.saturating_sub(self.tick) as u64,
-            None => heist::SKIFF_HEART_TICKS as u64,
+            None => self.skiff_ticks as u64,
         };
         let need = walk.max(wait);
         // Clock left, in ticks, at this realm's clock rate.

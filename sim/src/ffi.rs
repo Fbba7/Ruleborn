@@ -30,6 +30,9 @@
 //! | -9 | the input does not fit the buffer, or a replay over 2 KB (§24.10) |
 //! | -10 | an era that is not one (`rb_record`, `rb_record_drawn`) |
 //! | -11 | the crew never landed: no landing at tick 0 on an open edge tile (§5.4) |
+//! | -12 | a crew manifest that does not read (`rb_record_crew`) |
+//! | -13 | the universe does not decode, or its islands do not frame (`rb_verify_universe`) |
+//! | -14 | no outer realm the reference crew can land on reaches the Heart |
 
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Mutex;
@@ -38,6 +41,7 @@ use crate::heist::Grade;
 use crate::island::Island;
 use crate::replay::{Command, Heist, Kind, Manifest, MAX_HEIST_BYTES};
 use crate::era::Era;
+use crate::universe::Universe;
 use crate::{digest, draw, fixture, record_in, record_with, rules_version, verify_report, Refusal};
 
 /// Room for the largest island (14 x 14 tiles at three bytes, and its lists)
@@ -201,24 +205,7 @@ pub extern "C" fn rb_verify(replay_len: u32, island_len: u32) -> i32 {
         let Ok(island) = Island::decode(&b[r..r + i]) else { return -2 };
         match verify_report(&island, &heist) {
             Ok((outcome, report)) => {
-                let grade = match outcome.grade {
-                    Grade::Clean => 0,
-                    Grade::Loud => 1,
-                    Grade::Partial => 2,
-                    Grade::Foiled => 3,
-                };
-                b[0] = grade;
-                b[1] = outcome.out as u8;
-                b[2] = outcome.caught as u8;
-                b[3] = heist.crew;
-                b[4..8].copy_from_slice(&outcome.banked.to_le_bytes());
-                b[8..12].copy_from_slice(&outcome.capacity.to_le_bytes());
-                b[12..16].copy_from_slice(&outcome.pages.to_le_bytes());
-                b[16..20].copy_from_slice(&outcome.cracked.to_le_bytes());
-                b[20..24].copy_from_slice(&outcome.left.to_le_bytes());
-                b[24..32].copy_from_slice(&outcome.broken.to_le_bytes());
-                b[32] = outcome.out_mask;
-                b[33] = outcome.casts_used;
+                verdict(b, &outcome, heist.crew);
                 // TD.39: the report, after the verdict at REPORT_AT.
                 let wire = report.encode();
                 b[REPORT_AT..REPORT_AT + wire.len()].copy_from_slice(&wire);
@@ -227,6 +214,124 @@ pub extern "C" fn rb_verify(replay_len: u32, island_len: u32) -> i32 {
             }
             Err(refusal) => refusal_code(refusal),
         }
+    })
+}
+
+/// A verified heist's verdict, at the buffer's start: grade (0 Clean, 1
+/// Loud, 2 Partial, 3 Foiled), out, caught, crew, then banked, capacity,
+/// pages, cracked and left as i32/u32 LE, the broken laws' bits as u64 LE,
+/// the out mask and the casts used.
+fn verdict(b: &mut [u8], outcome: &crate::heist::Outcome, crew: u8) {
+    b[0] = match outcome.grade {
+        Grade::Clean => 0,
+        Grade::Loud => 1,
+        Grade::Partial => 2,
+        Grade::Foiled => 3,
+    };
+    b[1] = outcome.out as u8;
+    b[2] = outcome.caught as u8;
+    b[3] = crew;
+    b[4..8].copy_from_slice(&outcome.banked.to_le_bytes());
+    b[8..12].copy_from_slice(&outcome.capacity.to_le_bytes());
+    b[12..16].copy_from_slice(&outcome.pages.to_le_bytes());
+    b[16..20].copy_from_slice(&outcome.cracked.to_le_bytes());
+    b[20..24].copy_from_slice(&outcome.left.to_le_bytes());
+    b[24..32].copy_from_slice(&outcome.broken.to_le_bytes());
+    b[32] = outcome.out_mask;
+    b[33] = outcome.casts_used;
+}
+
+/// A universe and its islands from the buffer: the universe's `universe_len`
+/// bytes at `at`, then its islands in its order, each its length as u16 LE
+/// and its bytes, `islands_len` bytes in all. `Err` with the status code.
+fn universe_at(b: &[u8], at: usize, universe_len: usize, islands_len: usize)
+               -> Result<(Universe, Vec<Island>), i32> {
+    let universe = Universe::decode(&b[at..at + universe_len]).ok_or(-13)?;
+    let mut rest = &b[at + universe_len..at + universe_len + islands_len];
+    let mut islands = Vec::with_capacity(universe.realms.len());
+    while !rest.is_empty() {
+        let Some(len) = rest.get(..2).map(|l| u16::from_le_bytes([l[0], l[1]]) as usize) else { return Err(-13) };
+        let Some(bytes) = rest.get(2..2 + len) else { return Err(-13) };
+        islands.push(Island::decode(bytes).map_err(|_| -2)?);
+        rest = &rest[2 + len..];
+    }
+    Ok((universe, islands))
+}
+
+/// `rb_verify` for a heist across a universe (§5.4, D71): the replay's
+/// `replay_len` bytes, then the universe's and its islands' as `universe_at`
+/// reads them. The verdict is `rb_verify`'s, then the landing realm's place
+/// and its route's links at bytes 34 and 35; after it, at byte 64, each realm
+/// the crew went through: a count, then each realm's place in the universe's
+/// order, its report's length as u16 LE and its report (`Report::encode`).
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_verify_universe(replay_len: u32, universe_len: u32, islands_len: u32) -> i32 {
+    if !fits(replay_len, universe_len.saturating_add(islands_len)) || replay_len as usize > MAX_HEIST_BYTES {
+        return -9;
+    }
+    with_buffer(|b| {
+        let r = replay_len as usize;
+        let Some(heist) = Heist::decode(&b[..r]) else { return -1 };
+        let (universe, islands) = match universe_at(b, r, universe_len as usize, islands_len as usize) {
+            Ok(u) => u,
+            Err(code) => return code,
+        };
+        match crate::universe::verified(&universe, &islands, &heist) {
+            Ok(crossing) => {
+                verdict(b, &crossing.outcome(), heist.crew);
+                // The realm landed on, by place, and its links to the Heart:
+                // the server holds the replay's clock to them (§5.4).
+                b[34] = crossing.route[0] as u8;
+                b[35] = (crossing.route.len() - 1) as u8;
+                let reports = crossing.reports();
+                let mut wire = vec![reports.len() as u8];
+                for (realm, report) in reports {
+                    let bytes = report.encode();
+                    wire.push(realm as u8);
+                    wire.extend_from_slice(&(bytes.len() as u16).to_le_bytes());
+                    wire.extend_from_slice(&bytes);
+                }
+                b[REPORT_AT..REPORT_AT + wire.len()].copy_from_slice(&wire);
+                REPORT_BYTES.store(wire.len() as u32, Ordering::Relaxed);
+                0
+            }
+            Err(refusal) => refusal_code(refusal),
+        }
+    })
+}
+
+/// A heist of the competent reference crew across the universe and islands
+/// in the buffer (as `universe_at` reads them from byte 0), from `seed`:
+/// its replay written to the buffer and its length returned, for the
+/// server's tests. It lands on the realm at place `realm`, or the one its
+/// seed draws for 0, on a clock of `ticks`, or §5.4's for 0, in §18.3's
+/// `era` (its wire value, 0 for none; -10 for one that is not). -14 when no
+/// outer realm it can land on reaches the Heart, or `realm` does not.
+#[allow(unsafe_code)]
+#[unsafe(no_mangle)]
+pub extern "C" fn rb_competent_universe(seed_hi: u32, seed_lo: u32, crew: u32, realm: u32, ticks: u32, era: u32,
+                                        universe_len: u32, islands_len: u32) -> i32 {
+    let Some(era) = Era::from_u8(era.min(255) as u8) else { return -10 };
+    if !fits(universe_len, islands_len) {
+        return -9;
+    }
+    let seed = ((seed_hi as u64) << 32) | seed_lo as u64;
+    with_buffer(|b| {
+        let (universe, islands) = match universe_at(b, 0, universe_len as usize, islands_len as usize) {
+            Ok(u) => u,
+            Err(code) => return code,
+        };
+        let crew = crew.clamp(3, 5) as u8;
+        let Some(heist) = crate::reference::competent_universe(&universe, &islands, seed, crew,
+                                                                       (realm > 0).then_some(realm as usize),
+                                                                       (ticks > 0).then_some(ticks), era)
+        else {
+            return -14;
+        };
+        let bytes = heist.encode();
+        b[..bytes.len()].copy_from_slice(&bytes);
+        bytes.len() as i32
     })
 }
 

@@ -708,6 +708,24 @@ deepest first. Production takes §5.5's band and §9.3's 10% cut for a fault
 opening from the producer's realm (home.mjs), and each Observatory card its
 universe's depth and fault realms.
 
+## Heists across a universe
+
+`src/crossings.mjs` is §5.4's heist across the realms (D71). A raid asked for
+with `POST /v1/leases {"bundle", "universe": true}` is leased across the
+defender's universe: the Heart leased, each outer realm with an island on
+it, and the open links between them, written as an `RBU1` bundle
+(`sim/src/universe.rs`) stored by its hash beside the islands it names. The
+lease names it, each realm's island and links to the Heart, and the clock a
+crew landing there plays on — 150 seconds and 15 a link up to 240, and Quiet
+Week's 30 — with none for the Heart, whose winds turn skiffs away. The
+replay's header names the universe; its clock must be a landing realm's, and
+once `rb_verify_universe` has re-simulated it across the realms, the one the
+crew landed on. It settles as a raid on the Heart, its outcome naming the
+realms crossed, and the defence log's report is the Heart's. A defender with
+no outer island has no universe, and a lease asked without one is the
+Heart's alone, as before; one held of the other kind is refused as
+`lease_held_in_another_mode`. The readings are **G87**.
+
 ## The roster, its work, and what it produces
 
 `src/home.mjs` is the home economy's second part (§5.8, §9.2, §9.3, §9.5,
@@ -983,11 +1001,9 @@ built — register **D63**.
 
 - **A Play Games player id** (D67), and the operator's side of refunds:
   setting the notification URL in App Store Connect.
-- **Crossing realms.** The simulation plays one island at a time, so every
-  lease is §5.4's 150 seconds with no links, and a crew lands on the island
-  it raids even when that is the Heart (D71).
+- **§5.3's crossing speeds, a Stone bridge's ward and a Rope bridge's
+  Snap** in a heist across a universe, which wait on a link's length (G87).
 - **Family approval** for 13 to 15 (D64).
-- §12.22's generated fallback targets (D66).
 - **Constellation chat, votes and anomalies** (D63).
 
 ## Layout
@@ -1022,6 +1038,23 @@ built — register **D63**.
     src/notifications.mjs  the outbox: a heist against you, the daily reminder, §20.2's nights
     src/friends.mjs   friends, friendly heists, the friends' feed, challenge links
     src/eras.mjs      §18.3's era of the week, on every lease
+    src/universe.mjs  §5.2's realms, buildings and Vault: opened, raised, built, placed
+    src/links.mjs     §5.3's links, each realm's depth, the Rift's upkeep, §5.4's faults
+    src/crossings.mjs §5.4's heist across a universe: its RBU1 bundle, its clocks, its lease
+    src/home.mjs      the roster, its work and rest, and what the producers make
+    src/keeper.mjs    §14.2's Keeper levels and §12.5's planning by them
+    src/codex.mjs     §7.6's Codex: laws met, pages, restorations
+    src/observatory.mjs  §12.3's Observatory cards and §12.4's scouting
+    src/curation.mjs  §13.3's curation of a generated layout, and its hold shown
+    src/holds.mjs     §13.3's hold, measured by the simulation's reference crew
+    src/generator.mjs §12.22's generated targets, the game's own account
+    src/defences.mjs  §23.2's defence log, each raid's report
+    src/profile.mjs   §23.2's Profile and its records
+    src/lab.mjs       §8.6's Resonance Lab
+    src/fund.mjs      §18.9's Island Fund, closed each quarter
+    src/safety.mjs    blocks, reports and the terms (§20.11, §20.12)
+    src/limits.mjs    how fast an account or an address may ask (C26, G44)
+    src/pages.mjs     the privacy policy and terms the stores ask for (§20.10)
     load.mjs          the load test; load.json its last measurement
     src/workshop.mjs  §18.6's Workshop: publish, browse, play, rate, report, moderate, remix
     src/words.json    the word lists Workshop names come from

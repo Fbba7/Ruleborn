@@ -29,7 +29,7 @@ export const REFUSED = {
   [-1]: "replay_malformed", [-2]: "island_malformed", [-3]: "wrong_island",
   [-4]: "wrong_rules", [-5]: "crew", [-6]: "length", [-7]: "log",
   [-8]: "checksums", [-9]: "too_large", [-10]: "era", [-11]: "landing",
-  [-12]: "manifest",
+  [-12]: "manifest", [-13]: "universe_malformed", [-14]: "no_landing_realm",
 };
 
 export const GRADES = ["clean", "loud", "partial", "foiled"];
@@ -332,6 +332,69 @@ export class Build {
     const n = this.x.rb_hold(Number(s >> 32n), Number(s & 0xffffffffn), raids, ticks, crew, island.length);
     if (n < 0) throw new Error(`hold refused: ${REFUSED[n] ?? n}`);
     return n;
+  }
+
+  /** A universe's bundle and its islands as the module reads them after
+   *  `at`: the bundle, then each island its length (u16 LE) and its bytes.
+   *  The length of what was written, or null when it does not fit. */
+  putUniverse(at, universe, islands) {
+    const framed = islands.flatMap((i) => [i.length & 0xff, i.length >> 8, ...i]);
+    if (at + universe.length + framed.length > this.x.rb_buffer_bytes()) return null;
+    this.buffer().set(universe, at);
+    this.buffer().set(framed, at + universe.length);
+    return framed.length;
+  }
+
+  /**
+   * `verify` for a heist across a universe (§5.4, D71): `universe` its
+   * `RBU1` bundle and `islands` its realms' islands in its order. The
+   * verdict is `verify`'s, with the realm the crew landed on (`landing`, its
+   * place in the universe's order) and its links to the Heart; `reports` is
+   * each realm the crew went through, in order, with its report.
+   */
+  verifyUniverse(replay, universe, islands) {
+    // A build from before universes were built cannot play one.
+    if (!this.x.rb_verify_universe) return { status: "refused", reason: "rules_not_held" };
+    this.buffer().set(replay);
+    const framed = replay.length <= this.x.rb_buffer_bytes() ? this.putUniverse(replay.length, universe, islands) : null;
+    if (framed === null) return { status: "refused", reason: "too_large" };
+    const status = this.x.rb_verify_universe(replay.length, universe.length, framed);
+    if (status < 0) return { status: "refused", reason: REFUSED[status] };
+    if (status > 0) return { status: "diverged", second: status };
+    const v = this.buffer().slice(0, 36);
+    const view = new DataView(v.buffer);
+    const wire = this.buffer().slice(64, 64 + this.x.rb_report_bytes());
+    const reports = [];
+    for (let at = 1, i = 0; i < wire[0]; i++) {
+      const length = wire[at + 1] | (wire[at + 2] << 8);
+      reports.push({ realm: wire[at], report: report(wire.slice(at + 3, at + 3 + length)) });
+      at += 3 + length;
+    }
+    return {
+      status: "verified",
+      verdict: {
+        grade: GRADES[v[0]], out: v[1], caught: v[2], crew: v[3],
+        banked: view.getInt32(4, true), capacity: view.getInt32(8, true),
+        pages: view.getUint32(12, true), cracked: view.getUint32(16, true),
+        left: view.getInt32(20, true), broken: Number(view.getBigUint64(24, true)),
+        outMask: v[32], castsUsed: v[33],
+      },
+      landing: v[34], links: v[35], reports,
+    };
+  }
+
+  /** The competent reference crew's heist across a universe, recorded: a
+   *  device for the server's tests (`reference::competent_universe`). It
+   *  lands on the realm at place `realm`, else the one its seed draws, on a
+   *  clock of `ticks`, else §5.4's for it, in the era of wire value `era`. */
+  competentUniverse(universe, islands, { seed, crew = 3, realm = 0, ticks = 0, era = 0 }) {
+    const framed = this.putUniverse(0, universe, islands);
+    if (framed === null) throw new Error("competentUniverse: too large");
+    const s = BigInt.asUintN(64, BigInt(seed));
+    const n = this.x.rb_competent_universe(Number(s >> 32n), Number(s & 0xffffffffn), crew, realm, ticks, era,
+                                           universe.length, framed);
+    if (n < 0) throw new Error(`competentUniverse refused: ${REFUSED[n] ?? n}`);
+    return this.buffer().slice(0, n);
   }
 
   /** `Island::example()`, or `example_open()` with `open`. */

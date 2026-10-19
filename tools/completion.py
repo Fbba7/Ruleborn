@@ -1106,8 +1106,19 @@ DELIVERABLES = [
             "a Rift costs 20 Aether an hour, paid as the universe is read; one its owner cannot pay for stands "
             "closed, crossing nothing, and opens again with Aether for an hour (5.3)",
             "links are built, rebuilt and taken down over HTTP (5.3)"),
-        not_started("a heist across the realms, landing on an outer realm's edge past the Heart's winds, with "
-                    "§5.4's clock by links (D71, T3.3)"))),
+        # §5.4's heist across the realms: played by the simulation, leased,
+        # verified and settled by the server (universe.rs, crossings.mjs).
+        parts(systems("Universes"), server_tests(
+            "a universe bundle is its realms by code and island and its links, as the simulation reads it (5.3, D71)",
+            "a raid leased across the universe names it, its realms' islands and each landing realm's clock; the "
+            "Heart alone unless asked (5.4, D71)",
+            "a heist across the universe is verified on its realms' islands, on the landing realm's clock, and "
+            "settles as a raid on the Heart (5.4, 24.12)",
+            "a heist across the universe is refused on another realm's clock, on the Heart's, or as the Heart alone "
+            "(5.4)",
+            "a universe is the defender's open links between realms with islands: a closed Rift crosses nothing (5.3)")),
+        not_started("§5.3's crossing speeds — Rope 30% faster, a Chute fast, a Rift instant — a ward on a Stone "
+                    "bridge and a Snap on a Rope bridge, which wait on a link's length (G87)"))),
 
     ("7", "Workshop services: publish, browse, moderate, remix", BACKEND, server_tests(
         "an island reaches the Workshop only once its creator has cleared it (18.6)",

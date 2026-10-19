@@ -687,6 +687,18 @@
       ]
     },
     {
+      "name": "Universes",
+      "section": "5.4",
+      "task": "D71",
+      "what": "A heist across a universe's realms (sim/src/universe.rs, T3.3): the universe travels as RBU1, its realms in code order with their islands' hashes and its links, addressed by its SHA-256. The crew lands on an outer realm (the Land command's crew-member nibble names it; the Heart's winds refuse it) and goes realm by realm along the shortest route to the Heart in links, a Chute only its own way and ties to the earlier realm; an outer realm's Vault is its way on and holds nothing, and the crew crosses when every member still on the realm stands beside it, arriving at the next realm's entrance with the clock, the Sage and the casts, the realm's alarm staying behind. A Rift on the route stays shut for 30 seconds after a guard reaches Alerted. The skiff takes 5 seconds to an outer realm and 20 to the Heart. A replay across a universe is verified as one on an island is, and rb_verify_universe gives the verdict, the landing realm and its links, and each realm's report. The reference crew plays across one (play_universe). §5.3's crossing speeds, a Stone bridge's ward and a Rope bridge's Snap are not built (G87).",
+      "tests": [
+        "a_universe_bundle_is_its_realms_in_order_and_its_links_and_decodes_only_what_it_encodes",
+        "the_route_to_the_heart_is_the_fewest_links_a_chute_crossed_only_its_own_way_ties_to_the_earlier_realm",
+        "a_crew_lands_on_an_outer_realm_crosses_at_its_way_on_and_takes_the_hearts_vault_on_one_clock",
+        "a_rift_on_the_route_holds_the_crew_thirty_seconds_after_an_alarm_in_the_realm"
+      ]
+    },
+    {
       "name": "Publishing rules",
       "section": "5.2",
       "task": "T3.3",

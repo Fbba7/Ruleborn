@@ -47,6 +47,7 @@ import { Defences } from "./defences.mjs";
 import { Lab } from "./lab.mjs";
 import { Fund } from "./fund.mjs";
 import { Holds } from "./holds.mjs";
+import { Crossings, eraExtra } from "./crossings.mjs";
 import { Links } from "./links.mjs";
 import { Observatory } from "./observatory.mjs";
 import { Profile } from "./profile.mjs";
@@ -69,9 +70,9 @@ export const CLOSED_KEEP_DAYS = 7;
 export const TICKS_PER_SECOND = 30;
 
 /**
- * §5.4's clock for a heist that crosses `links` realms. The simulation plays
- * the Heart alone for now — crossing realms is not built — so every lease is
- * `links = 0`: 150 seconds.
+ * §5.4's clock for a heist landing `links` links from the Heart: 150 seconds
+ * for the Heart alone, which a one-island lease plays, and 15 more for each
+ * link up to 240 for a universe's (crossings.mjs).
  */
 export function clockTicks(links = 0) {
   const [base, perLink, cap] = facts.HEIST_CLOCK;
@@ -140,6 +141,7 @@ export class Service {
     this.keeper = new Keeper(this);
     this.universe = new Universe(this);
     this.links = new Links(this);
+    this.crossings = new Crossings(this);
     this.fund = new Fund(this);
     this.holds = new Holds(this);
     this.home = new Home(this);
@@ -403,9 +405,10 @@ export class Service {
    * protections hold here: a new player's island is refused, a past
    * snapshot is leased as an echo, and `trace` answers a robbery. `mode`
    * is §12.11's friendly heist on a friend's island, or a play of §17.6's
-   * challenge link named by `challenge`.
+   * challenge link named by `challenge`. With `universe`, a device that
+   * plays across realms asks for the defender's universe (crossings.mjs).
    */
-  lease(attacker, bundle, owner = null, { trace = false, mode = "raid", challenge = null } = {}) {
+  lease(attacker, bundle, owner = null, { trace = false, mode = "raid", challenge = null, universe = false } = {}) {
     const now = this.now();
     if (!["raid", "friendly", "challenge"].includes(mode)) throw new Refused(400, "no_such_mode");
     if (mode === "challenge") return this.challengeLease(attacker, bundle, challenge, now);
@@ -446,7 +449,7 @@ export class Service {
     } else if (this.matchmaking.shielded(defender, now)) {
       throw new Refused(403, "new_player_protected", { hours: facts.NEW_PLAYER_SHIELD_HOURS });
     }
-    return this.issue(attacker, bundle, defender, now, { echo, traceOf, mode });
+    return this.issue(attacker, bundle, defender, now, { echo, traceOf, mode, universe });
   }
 
   /** §17.6's challenge link, to one who holds it. §20.7 sends a 13-to-15's
@@ -484,9 +487,12 @@ export class Service {
   /** The lease itself, or the one this attacker already holds on the bundle.
    *  Every heist against a universe is in the week's era, and Quiet Week's
    *  clock is its "30 seconds longer". */
-  issue(attacker, bundle, defender, now, { echo = false, traceOf = null, mode = "raid", challenge = null }) {
+  issue(attacker, bundle, defender, now,
+        { echo = false, traceOf = null, mode = "raid", challenge = null, universe = false }) {
     const era = this.era(now);
     return transaction(this.db, () => {
+      // An echo is one past island, robbed from nobody: never a universe.
+      const crossing = universe && !echo ? this.crossings.of(defender, bundle) : null;
       // The newest lease on the bundle, held while no heist has settled it.
       // Only the newest can be: a lease is issued only once the one before
       // lapsed or was played, so every older unplayed one has expired too —
@@ -506,10 +512,13 @@ export class Service {
         // A held Trace answers a Trace asked for again, whichever robbery it
         // names: traceable() skips robberies already traced, so the second
         // ask finds an older one.
+        // So is one across the universe when the Heart alone is asked for,
+        // or the other way round: the device plays the one it asked for.
         if ((held.mode ?? "raid") !== mode || Boolean(held.trace_of) !== Boolean(traceOf)
-            || (held.challenge ?? null) !== challenge) {
+            || (held.challenge ?? null) !== challenge || Boolean(held.universe) !== Boolean(crossing)) {
           throw new Refused(409, "lease_held_in_another_mode", {
-            mode: held.mode ?? "raid", trace: Boolean(held.trace_of), expiresAt: held.expires_at });
+            mode: held.mode ?? "raid", trace: Boolean(held.trace_of), universe: Boolean(held.universe),
+            expiresAt: held.expires_at });
         }
         return this.leaseView(held);
       }
@@ -528,24 +537,29 @@ export class Service {
         mode,
         challenge,
         era: era.wire,
+        universe: crossing,
       };
       this.db.prepare(
         `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at,
-                             echo, trace_of, mode, challenge, era)
+                             echo, trace_of, mode, challenge, era, universe)
          VALUES (:token, :attacker, :bundle, :defender, :seed, :ticks, :rules, :issued_at, :expires_at,
-                 :echo, :trace_of, :mode, :challenge, :era)`)
+                 :echo, :trace_of, :mode, :challenge, :era, :universe)`)
         .run(row);
       return this.leaseView(row);
     });
   }
 
   /** The lease, and what the defender wears, so the raider sees their
-   *  island as they dressed it. */
+   *  island as they dressed it. A lease across a universe names it, its
+   *  realms' islands and each landing realm's clock; `ticks` stays the
+   *  Heart's, for a device that reads no more. */
   leaseView(row) {
     return { token: row.token, bundle: row.bundle, seed: row.seed, ticks: row.ticks,
              rules: row.rules, expiresAt: row.expires_at, look: this.shop.equipped(row.defender),
              echo: Boolean(row.echo), trace: Boolean(row.trace_of), mode: row.mode ?? "raid",
-             era: byWire(row.era)?.id ?? null, ...this.stakes(row) };
+             era: byWire(row.era)?.id ?? null,
+             universe: row.universe ? this.crossings.view(row.universe, eraExtra(row)) : null,
+             ...this.stakes(row) };
   }
 
   /**
@@ -591,12 +605,16 @@ export class Service {
     const refuse = (reason, extra = {}) => this.settle(lease, replay, logHash, now,
                                                        { validated: false, reason, ...extra });
 
-    // The replay must be the heist this lease allowed: its snapshot, its
-    // seed, its clock.
+    // The replay must be the heist this lease allowed: its snapshot, or its
+    // universe, its seed, its clock — across a universe, one of its landing
+    // realms', and the one the crew landed on once it is re-simulated.
     if (!header) return refuse("replay_malformed");
-    if (header.island !== lease.bundle) return refuse("wrong_island");
+    if (header.island !== (lease.universe ?? lease.bundle)) return refuse("wrong_island");
     if (header.seed.toString() !== lease.seed) return refuse("wrong_seed");
-    if (header.ticks !== lease.ticks) return refuse("wrong_clock");
+    const clocks = lease.universe ? this.crossings.view(lease.universe, eraExtra(lease)) : null;
+    if (clocks ? !clocks.realms.some((r) => r.ticks === header.ticks) : header.ticks !== lease.ticks) {
+      return refuse("wrong_clock");
+    }
     // §18.3: played in the week's era the lease named, and no kinder one.
     if (header.era !== (lease.era ?? 0)) return refuse("wrong_era");
 
@@ -634,15 +652,25 @@ export class Service {
     // §24.11: re-simulated by the build it was played under, however old.
     const build = this.builds.get(header.rules);
     if (!build) return refuse("rules_not_held");
-    const island = this.store.get(lease.bundle);
     // An island erased with its under-13 owner's account (accounts.mjs).
-    if (!island) return refuse("island_withdrawn");
-    const result = build.verify(replay, island);
+    const universe = lease.universe ? this.crossings.bundles(lease.universe) : null;
+    const island = this.store.get(lease.bundle);
+    if (!island || (lease.universe && !universe)) return refuse("island_withdrawn");
+    const result = universe ? build.verifyUniverse(replay, universe.bytes, universe.islands)
+      : build.verify(replay, island);
     if (result.status === "refused") return refuse(result.reason);
     if (result.status === "diverged") {
       // "No reward for that heist, nothing taken away from before, and a note
       // for review. One mismatch is never a ban."
       return refuse("diverged", { second: result.second, review: true });
+    }
+    let crossing = null;
+    if (universe) {
+      if (clocks.realms[result.landing]?.ticks !== header.ticks) return refuse("wrong_clock");
+      // The realms the crew went through; the defence log's report is the
+      // Heart's, where its island is, if the crew reached it (defences.mjs).
+      crossing = { landed: universe.realms[result.landing], realms: result.reports.map((r) => universe.realms[r.realm]) };
+      result.report = result.reports.find((r) => r.realm === 0)?.report ?? null;
     }
     // §12.5: a cast "costs 30 Aether per point of the law's base cost, paid
     // at validation and only if it was used" — the verdict says which were.
@@ -654,7 +682,7 @@ export class Service {
                        { validated: true, verdict: result.verdict, grace, crew,
                          cast: { laws: cast, aether: castAether },
                          heistMs: Math.round((header.ticks / TICKS_PER_SECOND) * 1000),
-                         report: result.report });
+                         report: result.report, crossing });
   }
 
   /**
@@ -664,7 +692,7 @@ export class Service {
    */
   settle(lease, replay, logHash, now, decision) {
     return transaction(this.db, () => {
-      const outcome = { validated: decision.validated };
+      const outcome = { validated: decision.validated, ...(decision.crossing ? { crossing: decision.crossing } : {}) };
       if (!decision.validated) {
         Object.assign(outcome, { reason: decision.reason },
                       decision.second ? { second: decision.second } : {});

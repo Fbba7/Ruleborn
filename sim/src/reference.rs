@@ -33,7 +33,8 @@ use crate::fixed::Fx;
 use crate::heist::{self, Grade, Outcome, WardKind};
 use crate::island::Island;
 use crate::rng::{Rng, Stream};
-use crate::replay::{Heist, Kind};
+use crate::replay::{Command, Heist, Kind};
+use crate::universe::{clock_ticks, record_universe, Crossing, Universe};
 use crate::{era, record_with, rules_version, Point, World};
 
 /// §12.19's break-even, in per cent of the bag.
@@ -183,22 +184,9 @@ pub fn play(island: &Island, seed: u64, ticks: u32, crew: u8, era: Option<era::E
     let mut members: Vec<Member> = (0..n)
         .map(|_| Member { route: Vec::new(), next: 0, leg: Leg::In, cracking: false, loading: false })
         .collect();
-    // Where to land: one of the spots within `LANDING_SLACK` tiles of the
-    // shortest walk to beside the Vault, a heard spot counted six tiles
-    // longer, drawn from the seed — the one thing a raid's seed decides, so
-    // §13.3's raids differ by where they come in.
     let goals = beside_vault(&world);
-    let mut spots: Vec<(usize, TileIndex)> = Vec::new();
-    for (x, y) in island.landings() {
-        let Some(t) = world.grid.index(x as u16, y as u16) else { continue };
-        let walk = goals.iter().filter_map(|&g| crate::path::find(&world.grid, t, g)).map(|r| r.len()).min();
-        let Some(walk) = walk else { continue };
-        spots.push((walk + if island.landing_covered(x, y) { 0 } else { HEARD_LANDING }, t));
-    }
-    let Some(shortest) = spots.iter().map(|s| s.0).min() else { return world };
-    spots.retain(|s| s.0 <= shortest + LANDING_SLACK);
     let mut rng = Rng::new(seed, Stream::Loot);
-    let landing = spots[rng.below(spots.len() as u64) as usize].1;
+    let Some(landing) = landing(&world, island, &goals, &mut rng) else { return world };
     let (lx, ly) = aim(&world, landing);
     world.give(0, Kind::Land, lx, ly);
     for i in 0..n {
@@ -209,15 +197,126 @@ pub fn play(island: &Island, seed: u64, ticks: u32, crew: u8, era: Option<era::E
     let mut skiff: Option<TileIndex> = None;
     for _ in 0..ticks {
         if world.tick > 0 && world.tick % ACT_EVERY == 0 {
-            act(&mut world, &mut members, &goals, &mut cracked_at, &mut leaving, &mut skiff);
+            let taps = act(&world, &mut members, &goals, true, 0, &mut cracked_at, &mut leaving, &mut skiff);
+            for (actor, kind, x, y) in taps {
+                world.give(actor, kind, x, y);
+            }
         }
         world.step();
     }
     world
 }
 
-fn act(world: &mut World, members: &mut [Member], goals: &[TileIndex], cracked_at: &mut Option<u32>,
-       leaving: &mut bool, skiff: &mut Option<TileIndex>) {
+/// Where to land on `island`: one of the spots within `LANDING_SLACK` tiles
+/// of the shortest walk to `goals`, a heard spot counted six tiles longer,
+/// drawn from `rng` — the one thing a raid's seed decides, so §13.3's raids
+/// differ by where they come in.
+fn landing(world: &World, island: &Island, goals: &[TileIndex], rng: &mut Rng) -> Option<TileIndex> {
+    let mut spots: Vec<(usize, TileIndex)> = Vec::new();
+    for (x, y) in island.landings() {
+        let Some(t) = world.grid.index(x as u16, y as u16) else { continue };
+        let walk = goals.iter().filter_map(|&g| crate::path::find(&world.grid, t, g)).map(|r| r.len()).min();
+        let Some(walk) = walk else { continue };
+        spots.push((walk + if island.landing_covered(x, y) { 0 } else { HEARD_LANDING }, t));
+    }
+    let shortest = spots.iter().map(|s| s.0).min()?;
+    spots.retain(|s| s.0 <= shortest + LANDING_SLACK);
+    Some(spots[rng.below(spots.len() as u64) as usize].1)
+}
+
+/// One heist of the competent crew across `universe` (§5.4): its replay.
+/// `on`, `ticks` and `era` as `play_universe_on`.
+pub fn competent_universe(universe: &Universe, islands: &[Island], seed: u64, crew: u8, on: Option<usize>,
+                          ticks: Option<u32>, era: Option<era::Era>) -> Option<Heist> {
+    let c = play_universe_on(universe, islands, seed, crew, on, ticks, era)?;
+    record_universe(universe, islands, seed, c.world.clock, crew, era, None, c.commands().to_vec()).ok()
+}
+
+/// The competent crew across a universe: it lands on an outer realm its
+/// seed draws among those with a route to the Heart, at a spot drawn as on
+/// one island, on §5.4's clock for that realm's route. In each realm before
+/// the Heart it walks to the way on, round what it sees, and waits there for
+/// the rest; at the Heart it plays as on one island from the entrance, its
+/// way in counted from its arrival. `None` when no outer realm reaches the
+/// Heart or the landing realm has nowhere to land.
+pub fn play_universe(universe: &Universe, islands: &[Island], seed: u64, crew: u8) -> Option<Crossing> {
+    play_universe_on(universe, islands, seed, crew, None, None, None)
+}
+
+/// `play_universe`, landing on the realm at place `on` rather than the one
+/// the seed draws, on a clock of `ticks` rather than §5.4's for it and the
+/// week's `era` (§18.3): a test's device, which may play a clock the lease
+/// does not allow.
+pub fn play_universe_on(universe: &Universe, islands: &[Island], seed: u64, crew: u8, on: Option<usize>,
+                        ticks: Option<u32>, era: Option<era::Era>) -> Option<Crossing> {
+    let mut rng = Rng::new(seed, Stream::Loot);
+    let realms: Vec<usize> = (1..universe.realms.len()).filter(|&r| universe.route(r).is_some()).collect();
+    if realms.is_empty() || islands.len() != universe.realms.len() {
+        return None;
+    }
+    let realm = match on {
+        Some(r) if realms.contains(&r) => r,
+        Some(_) => return None,
+        None => realms[rng.below(realms.len() as u64) as usize],
+    };
+    let links = universe.route(realm)?.len() as u32 - 1;
+    let ticks = ticks.unwrap_or_else(|| clock_ticks(links) + era::extra_ticks(era));
+    let header = Heist { seed, island: universe.digest(), rules: rules_version(), ticks, crew, era,
+                         manifest: None, commands: Vec::new(), checksums: Vec::new() };
+    let first = World::from_island(&islands[realm], &header);
+    let spot = landing(&first, &islands[realm], &beside_vault(&first), &mut rng)?;
+    let (lx, ly) = aim(&first, spot);
+    let mut commands = vec![Command { tick: 0, actor: realm as u8, kind: Kind::Land, x: lx, y: ly }];
+    commands.extend((0..crew).map(|i| Command { tick: 0, actor: i, kind: Kind::Gait, x: 1, y: 0 }));
+    let mut c = Crossing::new(universe, islands, &Heist { commands, ..header }).ok()?;
+    let n = crew as usize;
+    let fresh = || -> Vec<Member> {
+        (0..n).map(|_| Member { route: Vec::new(), next: 0, leg: Leg::In, cracking: false, loading: false }).collect()
+    };
+    let mut members = fresh();
+    let mut leg = 0;
+    let mut arrived = 0;
+    let mut goals = beside_vault(&c.world);
+    let mut cracked_at: Option<u32> = None;
+    let mut leaving = false;
+    let mut skiff: Option<TileIndex> = None;
+    for _ in 0..ticks {
+        if c.leg != leg {
+            leg = c.leg;
+            arrived = c.world.tick;
+            members = fresh();
+            goals = beside_vault(&c.world);
+        }
+        if c.world.tick > 0 && c.world.tick % ACT_EVERY == 0 {
+            let heart = c.at_heart();
+            let taps = act(&c.world, &mut members, &goals, heart, arrived, &mut cracked_at, &mut leaving, &mut skiff);
+            for (actor, kind, x, y) in taps {
+                c.give(actor, kind, x, y);
+            }
+        }
+        c.step();
+    }
+    Some(c)
+}
+
+/// §13.3's hold of a universe's Heart: of `raids` heists of the competent
+/// crew across it, the seeds `seed` and those after it, how many it held.
+pub fn hold_universe(universe: &Universe, islands: &[Island], seed: u64, raids: u32, crew: u8)
+                     -> (u32, Vec<Outcome>) {
+    let outcomes: Vec<Outcome> = (0..raids as u64)
+        .filter_map(|k| play_universe(universe, islands, seed.wrapping_add(k), crew).map(|c| c.outcome()))
+        .collect();
+    (outcomes.iter().filter(|o| o.grade == Grade::Foiled).count() as u32, outcomes)
+}
+
+/// The crew's taps this tick: (crew member, command, x, y). In a realm
+/// before the Heart (`heart` false) its Vault is the way on, and the crew
+/// stands beside it to cross; its way in is counted from `arrived`.
+#[allow(clippy::too_many_arguments)]
+fn act(world: &World, members: &mut [Member], goals: &[TileIndex], heart: bool, arrived: u32,
+       cracked_at: &mut Option<u32>, leaving: &mut bool, skiff: &mut Option<TileIndex>)
+       -> Vec<(u8, Kind, i16, i16)> {
+    let mut taps = Vec::new();
     let now = world.tick;
     let carrying = world.raiders.iter().take(members.len()).any(|r| r.carried > 0);
     // Flee at the first Alerted guard, once there is anything to take home.
@@ -229,7 +328,7 @@ fn act(world: &mut World, members: &mut [Member], goals: &[TileIndex], cracked_a
     if !*leaving {
         if let Some(at) = *cracked_at {
             let left = world.clock.saturating_sub(now);
-            if left <= at * CLOCK_MARGIN.0 / CLOCK_MARGIN.1 + crate::heist::SKIFF_HEART_TICKS {
+            if left <= at * CLOCK_MARGIN.0 / CLOCK_MARGIN.1 + world.skiff_ticks {
                 *leaving = true;
             }
         }
@@ -268,7 +367,7 @@ fn act(world: &mut World, members: &mut [Member], goals: &[TileIndex], cracked_a
                 }
                 if let Some((_, t)) = best {
                     let (x, y) = aim(world, t);
-                    world.give(i as u8, Kind::Skiff, x, y);
+                    taps.push((i as u8, Kind::Skiff, x, y));
                     *skiff = Some(t);
                 }
             }
@@ -279,15 +378,16 @@ fn act(world: &mut World, members: &mut [Member], goals: &[TileIndex], cracked_a
                 m.leg = Leg::Vault;
                 m.route.clear();
             }
+            Leg::Vault if !heart => continue,
             Leg::Vault => {
                 if world.vault.opened_at.is_none() {
                     if !m.cracking {
-                        world.give(i as u8, Kind::Crack, 0, 0);
+                        taps.push((i as u8, Kind::Crack, 0, 0));
                         m.cracking = true;
-                        cracked_at.get_or_insert(now);
+                        cracked_at.get_or_insert(now - arrived);
                     }
                 } else if !m.loading {
-                    world.give(i as u8, Kind::Load, BREAKEVEN_FILL as i16, 0);
+                    taps.push((i as u8, Kind::Load, BREAKEVEN_FILL as i16, 0));
                     m.loading = true;
                 }
                 continue;
@@ -322,8 +422,9 @@ fn act(world: &mut World, members: &mut [Member], goals: &[TileIndex], cracked_a
         let to = m.route[reach];
         m.next = reach + 1;
         let (x, y) = aim(world, to);
-        world.give(i as u8, Kind::MoveTo, x, y);
+        taps.push((i as u8, Kind::MoveTo, x, y));
     }
+    taps
 }
 
 /// §13.3's hold of `island`: of `raids` heists of the competent crew of

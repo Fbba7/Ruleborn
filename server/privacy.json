@@ -907,6 +907,9 @@
     },
     "era": {
      "type": "gameplay"
+    },
+    "universe": {
+     "type": "gameplay"
     }
    }
   },

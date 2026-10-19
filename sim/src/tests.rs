@@ -6333,3 +6333,148 @@ fn a_hold_is_counted_over_the_reference_crews_raids_their_landings_drawn_from_th
         assert_eq!(crate::verify_on(&island, &heist).map(|o| o.grade), Ok(outcomes[s as usize].grade));
     }
 }
+
+#[test]
+fn a_universe_bundle_is_its_realms_in_order_and_its_links_and_decodes_only_what_it_encodes() {
+    // §5.3, D71: a universe travels as RBU1, addressed by its SHA-256.
+    use crate::universe::{LinkKind, Universe, MAGIC};
+    let u = Universe {
+        realms: vec![(0, [1; 32]), (1, [2; 32]), (3, [3; 32])],
+        links: vec![(LinkKind::Stone, 1, 0), (LinkKind::Chute, 2, 1), (LinkKind::Rift, 2, 0)],
+    };
+    let bytes = u.encode();
+    assert_eq!(&bytes[..4], &MAGIC);
+    assert_eq!(bytes.len(), 4 + 1 + 3 * 33 + 1 + 3 * 3);
+    assert_eq!(Universe::decode(&bytes), Some(u.clone()));
+    assert_eq!(u.digest(), crate::sha256::sha256(&bytes));
+    let refused = |f: &dyn Fn(&mut Universe)| {
+        let mut v = u.clone();
+        f(&mut v);
+        Universe::decode(&v.encode())
+    };
+    assert_eq!(refused(&|v| v.realms.truncate(1)), None, "a Heart alone is an island, not a universe");
+    assert_eq!(refused(&|v| v.realms.swap(0, 1)), None, "the Heart first, codes rising");
+    assert_eq!(refused(&|v| v.realms[2].0 = 1), None, "no code twice");
+    assert_eq!(refused(&|v| v.realms[2].0 = 7), None, "six outer realms at most");
+    assert_eq!(refused(&|v| v.links.push((LinkKind::Rope, 1, 1))), None, "a link joins two realms");
+    assert_eq!(refused(&|v| v.links.push((LinkKind::Rope, 3, 0))), None, "that exist");
+    assert_eq!(refused(&|v| v.links.push((LinkKind::Rope, 0, 1))), None, "each pair once, either way");
+    let mut long = bytes.clone();
+    long.push(0);
+    assert_eq!(Universe::decode(&long), None, "nothing after");
+    let mut kind = bytes.clone();
+    let at = bytes.len() - 3;
+    kind[at] = 4;
+    assert_eq!(Universe::decode(&kind), None, "four kinds of link");
+    let mut magic = bytes;
+    magic[3] = b'2';
+    assert_eq!(Universe::decode(&magic), None);
+}
+
+#[test]
+fn the_route_to_the_heart_is_the_fewest_links_a_chute_crossed_only_its_own_way_ties_to_the_earlier_realm() {
+    // §5.4's clock counts "each link on the shortest route from the landing
+    // realm to the Heart"; §5.3: a Chute is "one-way".
+    use crate::universe::{LinkKind::*, Universe};
+    let realms = |n: u8| (0..n).map(|c| (c, [c; 32])).collect::<Vec<_>>();
+    let u = Universe { realms: realms(4), links: vec![(Stone, 1, 0), (Stone, 2, 0), (Rope, 3, 1), (Rope, 3, 2)] };
+    assert_eq!(u.route(3), Some(vec![3, 1, 0]), "two ways of two links: the earlier realm's");
+    assert_eq!(u.route(2), Some(vec![2, 0]));
+    assert_eq!(u.route(0), Some(vec![0]));
+    let down = Universe { realms: realms(3), links: vec![(Chute, 1, 0), (Chute, 0, 2)] };
+    assert_eq!(down.route(1), Some(vec![1, 0]), "down a Chute");
+    assert_eq!(down.route(2), None, "never up one");
+    assert_eq!(down.link(0, 1), Some(Chute));
+    assert_eq!(down.link(1, 2), None);
+    assert_eq!(crate::universe::clock_ticks(1), 165 * TICKS_PER_SECOND);
+    assert_eq!(crate::universe::clock_ticks(9), 240 * TICKS_PER_SECOND, "up to 240 seconds");
+}
+
+/// The Heart's example island and an outer realm's generated one, joined by
+/// a Stone bridge.
+#[cfg(test)]
+fn two_realms(kind: crate::universe::LinkKind) -> (crate::universe::Universe, Vec<crate::island::Island>) {
+    use crate::island::Island;
+    let (heart, outer) = (Island::example(), Island::generated(2, 1));
+    let u = crate::universe::Universe { realms: vec![(0, heart.digest()), (1, outer.digest())],
+                                        links: vec![(kind, 1, 0)] };
+    (u, vec![heart, outer])
+}
+
+#[test]
+fn a_crew_lands_on_an_outer_realm_crosses_at_its_way_on_and_takes_the_hearts_vault_on_one_clock() {
+    // §5.4: "The crew lands on any edge tile of any outer realm"; §13.3: an
+    // outer realm's Vault is the way on toward the Heart; §12.6: one clock.
+    use crate::heist::{Grade, SKIFF_HEART_TICKS, SKIFF_OUTER_TICKS};
+    use crate::reference::{competent_universe, hold_universe, play_universe};
+    use crate::universe::{verify_universe, LinkKind};
+    use crate::Refusal;
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let mut banked = 0;
+    let mut outcomes = Vec::new();
+    for seed in 0..6u64 {
+        let c = play_universe(&u, &islands, seed, 3).unwrap();
+        assert_eq!((c.route.clone(), c.leg, c.crossed.len()), (vec![1, 0], 1, 1), "crossed to the Heart");
+        let (outer, heart) = (&c.crossed[0], &c.world);
+        assert!(outer.landing.is_some() && outer.vault.opened_at.is_none(), "the way on is not cracked");
+        assert_eq!(outer.vault.exposed, 0, "and holds nothing");
+        assert_eq!((outer.skiff_ticks, heart.skiff_ticks), (SKIFF_OUTER_TICKS, SKIFF_HEART_TICKS));
+        assert_eq!(heart.clock, 165 * TICKS_PER_SECOND, "150 seconds and 15 for the one link");
+        assert_eq!(heart.tick, heart.clock, "one clock, run to its end");
+        assert!(outer.tick > 0 && outer.tick < heart.tick);
+        assert_eq!(heart.landing, Some(heart.entrance), "where it entered the realm, as Ghost tide reads it");
+        assert_eq!(c.reports().iter().map(|r| r.0).collect::<Vec<_>>(), vec![1, 0]);
+        banked += c.outcome().banked;
+        outcomes.push(c.outcome());
+    }
+    assert!(banked > 0, "the crew takes the Heart's Vault");
+    let (held, counted) = hold_universe(&u, &islands, 0, 6, 3);
+    assert_eq!(counted, outcomes);
+    assert_eq!(held as usize, outcomes.iter().filter(|o| o.grade == Grade::Foiled).count());
+    // A replay like any other: verified on the universe and its islands, and
+    // refused where a one-island replay is.
+    let heist = competent_universe(&u, &islands, 1, 3, None, None, None).unwrap();
+    assert_eq!(heist.island, u.digest());
+    assert_eq!(verify_universe(&u, &islands, &heist), Ok(outcomes[1]));
+    let mut heart_landing = heist.clone();
+    heart_landing.commands[0].actor = 0;
+    assert_eq!(verify_universe(&u, &islands, &heart_landing), Err(Refusal::Landing), "§5.4's winds");
+    let mut swapped = islands.clone();
+    swapped.swap(0, 1);
+    assert_eq!(verify_universe(&u, &swapped, &heist), Err(Refusal::Island));
+    assert_eq!(crate::verify_on(&islands[0], &heist), Err(Refusal::Island), "not a one-island replay");
+    let mut tampered = heist.clone();
+    tampered.checksums[100] ^= 1;
+    assert_eq!(verify_universe(&u, &islands, &tampered), Err(Refusal::Diverged(101)));
+}
+
+#[test]
+fn a_rift_on_the_route_holds_the_crew_thirty_seconds_after_an_alarm_in_the_realm() {
+    // §5.3's Rift: "Closes for 30 seconds when an alarm sounds in either
+    // realm". The crew waits at the way on, and crosses once it opens.
+    use crate::universe::{Crossing, LinkKind, RIFT_CLOSED_TICKS};
+    let ready = |kind: LinkKind, alarm_ago: Option<u32>| {
+        let (u, islands) = two_realms(kind);
+        let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+        let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                            manifest: None, commands: vec![Command { tick: 0, ..land }], checksums: Vec::new() };
+        let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+        c.step();
+        let w = &mut c.world;
+        w.wards.clear();                  // nothing pulls them off the spot
+        w.tick = RIFT_CLOSED_TICKS + 30;   // far enough in for an alarm long ago
+        let beside = w.grid.neighbours(w.vault.tile).into_iter().flatten().find(|&t| w.grid.standable(t)).unwrap();
+        let (x, y) = w.grid.centre(beside);
+        for r in w.raiders.iter_mut() {
+            r.at = Point { x, y };
+        }
+        // An alarm `ago` ticks before the tick the crew stands there.
+        c.alarm_at = alarm_ago.map(|ago| c.world.tick + 1 - ago);
+        (c.step(), c.leg)
+    };
+    assert_eq!(ready(LinkKind::Stone, Some(0)).1, 1, "a bridge stays open");
+    assert_eq!(ready(LinkKind::Rift, None).1, 1, "a Rift with no alarm is open");
+    assert_eq!(ready(LinkKind::Rift, Some(0)).1, 0, "closed");
+    assert_eq!(ready(LinkKind::Rift, Some(RIFT_CLOSED_TICKS - 1)).1, 0, "for thirty seconds");
+    assert_eq!(ready(LinkKind::Rift, Some(RIFT_CLOSED_TICKS)).1, 1);
+}

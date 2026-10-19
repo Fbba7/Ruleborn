@@ -5,7 +5,7 @@
 //   POST /v1/session             {"credential": …}          → {account, token}
 //   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}; heart or outer-1 … outer-6
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
-//   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?} → the lease
+//   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?, "universe"?} → the lease
 //   GET  /v1/offer?size=3                                    → §12.22's list for the caller, no rating
 //   GET  /v1/observatory                                     → §12.3's targets as §12.4's cards, a Trace apart
 //   GET  /v1/profile                                         → your record, badges, titles and battle log (23.2)
@@ -667,9 +667,10 @@ export function handler(service, { webClientId = null, appleNotifications = null
         }
         case "POST /v1/leases": {
           const attacker = who();
-          const { bundle, owner, trace = false, mode = "raid", challenge } = await body(request);
+          const { bundle, owner, trace = false, mode = "raid", challenge, universe = false } = await body(request);
           return json(service.lease(attacker, text(bundle), text(owner, true),
-                                    { trace: trace === true, mode, challenge: text(challenge, true) }), 201);
+                                    { trace: trace === true, mode, challenge: text(challenge, true),
+                                      universe: universe === true }), 201);
         }
         case "GET /v1/heists": {
           if (parts[3] !== "replay") return json({ error: "no_such_route" }, 404);

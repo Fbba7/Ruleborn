@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "D99"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "G87", "D99"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -9887,6 +9887,44 @@ dict(id="D99", kind="deviation", severity="significant", status="open",
          "drafted); keep §26.4’s demand test for the languages after these; have "
          "a native speaker read each drafted language."),
 
+dict(id="G87", kind="gap", severity="significant", status="open",
+     title="§5.3 gives each link a crossing speed, a Stone bridge a ward and a "
+           "Rope bridge a Snap, with no length for a link and no rule for them; "
+           "how a crew goes from realm to realm is unstated",
+     refs=["5.3", "5.4", "12.6", "13.3"],
+     body="Heists across a universe are now played by the simulation "
+          "(sim/src/universe.rs) and leased and verified by the server "
+          "(crossings.mjs), and that needed readings. <strong>Read:</strong> "
+          "the crew goes realm by realm along the shortest route from its "
+          "landing realm to the Heart, in links, a Chute only its own way and "
+          "ties to the realm opened first — the harness’s crossing, which the "
+          "hold tables were measured on; it crosses when every crew member "
+          "still on the realm stands beside its way on (§13.3’s outer-realm "
+          "Vault), so one knocked down holds the crew until revived or caught; "
+          "it arrives at the next realm’s entrance, the alarm staying behind "
+          "(§12.17’s alarm is the realm’s) and the clock, the Sage and the "
+          "casts going with it; §12.6’s <em>“one-second swoop”</em> is the "
+          "camera’s, so the crossing takes no time; a Rift’s <em>“alarm in "
+          "either realm”</em> is a guard reaching Alerted in the realm the crew "
+          "is in, the only one with guards awake to it; a realm with no island "
+          "on it is not in the universe, nor a closed Rift; the landing realm "
+          "is named by the Land command’s crew-member nibble; a lease asks for "
+          "the universe, so a device that plays the Heart alone keeps doing so; "
+          "and the defence log’s report is the Heart’s, none when the crew "
+          "never reached it. <strong>Unstated:</strong> §5.3’s Crossing "
+          "column — Stone <em>“Normal speed”</em>, Rope <em>“30% faster”</em>, "
+          "Chute <em>“Fast”</em>, Rift <em>“Instant”</em> — has no link "
+          "length or walk to be faster than, and a Stone bridge’s one ward and "
+          "a Rope bridge’s Snap (<em>“anyone on it falls back”</em>) have no "
+          "place to stand: a link is not a tile in any realm. Those three are "
+          "not built. Found building D71.",
+     measured="sim/src/reference.rs play_universe, Island::example() as the Heart and Island::generated(2, 1) "
+              "as outer realm 1 by a Stone bridge: all six seeds cross to the Heart on 165 s; outer realms of "
+              "Island::generated(0..2, 1..3), six seeds each: the crew reached the Heart in 51 of 54",
+     rec="Give a link a length in tiles, or a crossing time, for §5.3’s "
+         "speeds to apply to, say where a bridge’s ward and Snap stand, and "
+         "state the crossing in §5.4."),
+
 dict(id="G86", kind="gap", severity="significant", status="open",
      title="Measured by the simulation’s own reference crew, the generator’s "
            "islands hold 0% or 100% of raids, far outside §12.22’s generated band",
@@ -11351,8 +11389,11 @@ V37 = {
     "generator is built: <code>Island::generated</code> makes a legal island "
     "to §5.2's budget from a seed, and the server publishes one a realm level "
     "each day as the game's own and offers them after echoes, before any "
-    "filter widens. Left: the reference crews and the hold they measure, then "
-    "ruins and the complexity budget on unfamiliar laws (TD.16)."),
+    "filter widens. The reference crew is built too, and the hold it measures "
+    "rates each new island (<code>sim/src/reference.rs</code>, "
+    "<code>holds.mjs</code>, G86), and universes can be crossed (D71). Left: "
+    "depth in the band, ruins and the complexity budget on unfamiliar laws "
+    "(TD.16)."),
 
 "D67": dict(status="open", left="build", note=
     "<strong>The document is done; what is left is outside this "
@@ -11387,11 +11428,14 @@ V37 = {
     "screens (TD.25, TD.26); the filing; and the deployed server given the "
     "zone’s purge token, with one purge seen to land."),
 
-"D71": dict(status="open", left="build", note=
-    "<strong>The document is done; the build is not.</strong> §5.4’s winds and "
-    "clock stand, and §26.8 now plans <em>“universes of several realms joined "
-    "by links, so the Heart’s winds and the clock by links (5.4) hold on the "
-    "server”</em>. Left: that; until then a heist is one island."),
+"D71": dict(status="fixed", note=
+    "<strong>Built.</strong> A raid can be leased across the defender’s "
+    "universe: the crew lands on an outer realm, the Heart’s winds turning it "
+    "away, and crosses realm by realm to the Heart on §5.4’s clock for its "
+    "landing realm, played by the simulation (<code>sim/src/universe.rs</code>) "
+    "and leased and verified by the server (<code>crossings.mjs</code>). The "
+    "crossing’s readings, and §5.3’s crossing speeds, bridge ward and Snap "
+    "that wait on a link’s length, are G87."),
 
 "D73": dict(status="open", left="build", note=
     "<strong>The document is done; the build is not.</strong> §23.5 lists every "
@@ -11538,6 +11582,12 @@ V37 = {
     "written from British by a spelling table. Left: the document’s §20.6, "
     "§26.3 and §26.4 (drafted), the coined names in each language (the "
     "owner’s, §26.9), and a native speaker’s read of the drafted languages."),
+
+"G87": dict(status="open", left="document", note=
+    "Found building D71, after v3.7: heists across a universe played, leased "
+    "and verified as §5.4 states them, the crossing's readings drafted "
+    "(TD.75), and §5.3's crossing speeds, bridge ward and Snap left for a "
+    "link length the document does not give."),
 
 "G86": dict(status="open", left="build", note=
     "Found building TD.16, after v3.7: the reference crew inside the "
@@ -15004,6 +15054,12 @@ EDITS = {
          find="English and Brazilian Portuguese at launch.",
          replace="English, Portuguese, German and French at launch.",
          why="The demand test starts after the owner’s six. D99."),
+],
+"G87": [
+    dict(section="5.4", action="replace",
+         find="The Heart is ringed by strong winds, so skiffs can't land there.",
+         replace="The Heart is ringed by strong winds, so skiffs can't land there. From the landing realm the crew crosses realm by realm along the shortest route to the Heart, going on together once every crew member still on a realm stands beside its way on, and arriving at the next realm's entrance; the clock goes with it and the realm's alarm stays behind.",
+         why="How a crew goes from realm to realm. G87."),
 ],
 "G86": [
     dict(section="13.3", action="replace",

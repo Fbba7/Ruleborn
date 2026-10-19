@@ -61,11 +61,11 @@ export const BAND_WIDTH = 0.15;
 export const RECENT = 20;
 
 /**
- * §12.22's prior: "its hold rate against the reference crews (13.4),
- * converted to the rating scale". The reference crews are the Python
- * harness's, not the simulation's (D66), so a new island's hold rate is read
- * as the middle of its band until they are: a raider at the centre of the
- * scale succeeds against it at the band's middle.
+ * §12.22's prior until the island's hold lands: a new island is measured
+ * against the simulation's reference crew in the background (holds.mjs),
+ * and until that measurement is in, its hold rate is read as the middle of
+ * its band — a raider at the centre of the scale succeeds against it at the
+ * band's middle.
  */
 export function prior(realmLevel, origin = "authored") {
   const [lo, hi] = successBand(realmLevel, origin);

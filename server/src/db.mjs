@@ -294,7 +294,10 @@ CREATE TABLE IF NOT EXISTS leases (
   challenge   TEXT,
   -- §18.3's era of the week it was leased in, as the replay's header must
   -- name it: the wire value, 0 for none (eras.mjs).
-  era         INTEGER NOT NULL DEFAULT 0
+  era         INTEGER NOT NULL DEFAULT 0,
+  -- §5.4: the universe a heist across the defender's realms crosses, its
+  -- RBU1 bundle's hash (crossings.mjs); null for the Heart alone.
+  universe    TEXT
 );
 -- §24.13's one lease a target is kept by the issuing transaction, which
 -- hands back the newest lease the attacker holds on it with no heist; a
@@ -896,6 +899,7 @@ const ADDED = [
   ["leases", "mode", "TEXT NOT NULL DEFAULT 'raid'"],
   ["leases", "challenge", "TEXT"],
   ["leases", "era", "INTEGER NOT NULL DEFAULT 0"],
+  ["leases", "universe", "TEXT"],
   ["target_lists", "previous", "TEXT"],
   ["target_lists", "superseded_at", "INTEGER"],
   ["notifications", "attempts", "INTEGER NOT NULL DEFAULT 0"],
