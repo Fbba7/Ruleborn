@@ -225,6 +225,7 @@
   "the profile screen draws the record, the battle log with its replays and the visibility switch (23.2)": "passed",
   "the profile shows Renown and league over time and never a rating, heists by each outcome's name, and defences held and leaked with Partial apart (12.9, 12.15, 23.2)": "passed",
   "the profile's collection says the album's forms brought home and the cosmetics owned, before the badges (23.2, 11.10)": "passed",
+  "the profile's most realms in one raid says how many realms a raid went through, the Heart alone one (23.2, 5.4, T3.3)": "passed",
   "the profile's ten records say each value, times as a clock, and a record with no fact yet says so (13.2, 23.2)": "passed",
   "the push permission is asked at the start of the third session, once, and kept across launches (TD.74)": "passed",
   "the realm view lists each building with its level and tile, who works each producer, and each law pylon with what is woven in it (5.1, 10.1, 14.1, 23.2)": "passed",

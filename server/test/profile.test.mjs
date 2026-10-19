@@ -12,12 +12,12 @@ const HOUR = 60 * 60 * 1000;
 
 /** A raid on the defender settled with `verdict`, lasting `heistMs`, with
  *  the event log's `report` if one is given. */
-function raid(t, verdict, heistMs, report = null) {
+function raid(t, verdict, heistMs, report = null, crossing = null) {
   t.clock.now += HOUR;
   const lease = t.service.lease(t.raider.account, t.bundle);
   const row = t.service.db.prepare("SELECT * FROM leases WHERE token = ?").get(lease.token);
   return t.service.settle(row, new Uint8Array(8), `pr-${t.clock.now}`, t.clock.now,
-                          { validated: true, verdict, heistMs, report });
+                          { validated: true, verdict, heistMs, report, crossing });
 }
 
 /** An event-log report (sim.mjs `report`) landing on (x, y). */
@@ -64,7 +64,8 @@ test("the profile's records come from the heist rows: the fastest escape, the fe
   assert.equal(p.fewest_caught, 0);
   assert.equal(p.biggest_haul, Math.max(a.haul.total, b.haul.total));
   assert.equal(rec(t.service.profile.view(t.defender.account)).longest_defence, 140_000);
-  for (const id of ["fewest_alarms", "most_guards_slept_past", "most_realms", "favourite_edge", "favourite_law",
+  assert.equal(p.most_realms, 1, "the Heart alone");
+  for (const id of ["fewest_alarms", "most_guards_slept_past", "favourite_edge", "favourite_law",
                     "minutes_a_day"]) assert.equal(p[id], null, id);
 });
 
@@ -81,7 +82,19 @@ test("the profile's records from each heist's event-log report: the fewest alarm
   assert.equal(p.most_guards_slept_past, 2, "a foiled heist slept past nobody it counts");
   assert.equal(rec(t.service.profile.view(t.defender.account)).favourite_edge, "west",
                "two raids landed on the west edge, one each on the east and south");
-  for (const id of ["most_realms", "favourite_law", "minutes_a_day"]) assert.equal(p[id], null, id);
+  for (const id of ["favourite_law", "minutes_a_day"]) assert.equal(p[id], null, id);
+});
+
+test("the profile's most realms in one raid counts the realms a raid across a universe went through, and its landing edge is not the Heart's (23.2, 5.4, T3.3)", () => {
+  const t = twoPlayers();
+  raid(t, verdict("clean", 800), 70_000, report(0, 5, 2, 1));
+  const across = (realms) => ({ landed: realms[0], realms });
+  raid(t, verdict("loud", 500), 90_000, report(11, 4, 1, 0), across(["outer-2", "outer-1", "heart"]));
+  raid(t, verdict("foiled", 0, 3), 140_000, report(11, 6, 0, 0), across(["outer-1", "heart"]));
+  const rec = (p) => Object.fromEntries(p.records.map((r) => [r.id, r.value]));
+  assert.equal(rec(t.service.profile.view(t.raider.account)).most_realms, 3);
+  assert.equal(rec(t.service.profile.view(t.defender.account)).favourite_edge, "west",
+               "the two that crossed came in at the Heart's entrance, not over an edge");
 });
 
 test("the profile's collection counts the album's forms the roster has brought home and the cosmetics owned (23.2, 11.10)", () => {

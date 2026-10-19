@@ -124,7 +124,12 @@ export class Profile {
       longest_defence: max(on.filter((o) => !out(o)).map(heldMs)),
       fewest_alarms: min(escaped.map((o) => o.report?.alarm ?? null)),
       most_guards_slept_past: max(escaped.map((o) => o.report?.slept ?? null)),
-      favourite_edge: favourite(on.map((o) => edgeOf(o.report?.landing, o.side)).filter(Boolean)),
+      // A raid across a universe landed on an outer realm, not this island:
+      // the Heart's report says where the crew came into it (crossings.mjs).
+      favourite_edge: favourite(on.filter((o) => !o.crossing)
+        .map((o) => edgeOf(o.report?.landing, o.side)).filter(Boolean)),
+      // The realms one raid went through: the Heart alone is one (5.4).
+      most_realms: max(raids.map((h) => h.o.crossing?.realms.length ?? 1)),
     };
     const seasons = this.service.seasons;
     const now = this.service.now();

@@ -73,6 +73,11 @@ func _words() -> void:
 			and ProfilePresenter.record({"id": "favourite_edge", "value": "west"})
 				== "The edge raiders most often enter by: West edge",
 		ProfilePresenter.record({"id": "favourite_edge", "value": "west"}))
+	check.call("the profile's most realms in one raid says how many realms a raid went through, the Heart alone "
+			+ "one (23.2, 5.4, T3.3)",
+		ProfilePresenter.record({"id": "most_realms", "value": 3}) == "Most realms in one raid: 3"
+			and ProfilePresenter.record({"id": "most_realms", "value": 1}) == "Most realms in one raid: 1",
+		ProfilePresenter.record({"id": "most_realms", "value": 3}))
 	var collected := sample()
 	collected["collection"] = {"forms": 7, "of": 54, "cosmetics": 2}
 	check.call("the profile's collection says the album's forms brought home and the cosmetics owned, before the "

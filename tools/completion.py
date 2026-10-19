@@ -1008,8 +1008,16 @@ DELIVERABLES = [
                 server_tests(
                 "the profile's collection counts the album's forms the roster has brought home and the cosmetics "
                 "owned (23.2, 11.10)")),
-                not_started("most realms in one raid (T3.3), the favourite law and minutes played a day, which no "
-                            "fact the server keeps defines (G57)"))))),
+                # Most realms in one raid, from the realms a raid across a
+                # universe went through (crossings.mjs).
+                parts(client_tests(
+                    "the profile's most realms in one raid says how many realms a raid went through, the Heart alone "
+                    "one (23.2, 5.4, T3.3)"),
+                    server_tests(
+                    "the profile's most realms in one raid counts the realms a raid across a universe went through, "
+                    "and its landing edge is not the Heart's (23.2, 5.4, T3.3)")),
+                not_started("the favourite law and minutes played a day, which no fact the server keeps defines "
+                            "(G57)"))))),
     ("4b", "Hatch", FRONTEND, client_tests(
         "Hatch shows each Nursery's ready births of the three it holds, when the next comes, and the price "
         "(10.2, 9.5, 23.2)",
