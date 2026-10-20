@@ -107,8 +107,14 @@ static func meshes(view: WorldView) -> Array:
 
 
 func _materials(view: WorldView) -> void:
+	var sky_shader := load("res://world/sky.gdshader")
 	var kit := [load("res://world/toon.gdshader"), load("res://world/toon_clear.gdshader"),
-		load("res://world/water.gdshader")]
+		load("res://world/water.gdshader"), load("res://world/look_ground.gdshader"),
+		load("res://world/look_fall.gdshader"), load("res://world/look_mist.gdshader"),
+		load("res://world/look_cloud.gdshader"), load("res://world/look_glow.gdshader"), sky_shader,
+		load("res://world/kit_toon.gdshader"), load("res://world/kit_clear.gdshader"),
+		load("res://world/kit_ground.gdshader")]
+	var inks := [load("res://world/outline.gdshader"), load("res://world/kit_outline.gdshader")]
 	var stray := []
 	var outlined := 0
 	for mi: MeshInstance3D in meshes(view):
@@ -118,10 +124,10 @@ func _materials(view: WorldView) -> void:
 		elif m.next_pass is ShaderMaterial:
 			var o := m.next_pass as ShaderMaterial
 			outlined += 1
-			if o.shader != load("res://world/outline.gdshader") or o.get_shader_parameter("width_px") != null \
+			if not (o.shader in inks) or o.get_shader_parameter("width_px") != null \
 					and float(o.get_shader_parameter("width_px")) != 1.5:
 				stray.append(mi.name)
-	var sky := (view.environment.sky.sky_material as ShaderMaterial).shader == load("res://world/sky.gdshader")
+	var sky := view.look.sky_material.shader == sky_shader
 	check.call("every model in the world carries the toon kit's material, the figures and hero features its "
 			+ "1.5-pixel ink outline, under §21.2's sky (21.3, 21.2, TD.8)",
 		stray.is_empty() and outlined >= 8 and sky, "%s %d %s" % [stray, outlined, sky])
@@ -135,6 +141,11 @@ func _budgets(view: WorldView) -> void:
 			triangles += mi.mesh.surface_get_array_index_len(s) / 3 if mi.mesh.surface_get_array_index_len(s) > 0 \
 				else mi.mesh.surface_get_array_len(s) / 3
 			calls += 2 if (mi.material_override as ShaderMaterial).next_pass != null else 1
+	# The island's scatter: one draw call a kind, every instance's triangles.
+	for n in view.world.find_children("*", "MultiMeshInstance3D", true, false):
+		var mm := (n as MultiMeshInstance3D).multimesh
+		triangles += mm.mesh.surface_get_array_len(0) / 3 * mm.instance_count
+		calls += 1
 	check.call("a heist's realm on the world is inside §21.3's budgets: up to about 60,000 triangles and under 150 "
 			+ "draw calls (21.3)",
 		triangles > 2000 and triangles <= 60000 and calls < 150, "%d triangles, %d draw calls" % [triangles, calls])
