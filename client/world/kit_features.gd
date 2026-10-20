@@ -413,16 +413,43 @@ func _ruin(t: Vector2i, c: Vector3) -> void:
 	kit.prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 
 
+## A fence by realm: a split-rail of timber; a white picket in Skyfield and
+## Tidehold; crystal rails on lilac posts in Crystalline; black iron with
+## spear points in Emberreach and Lantern Vale.
 func _fence(t: Vector2i, c: Vector3) -> void:
 	var yaw := _run_yaw(t, RealmKit.F.FENCE)
 	var dir := Vector3.RIGHT.rotated(Vector3.UP, yaw)
-	var wood := KitStyle.WOOD.lightened(0.15)
-	for k in 3:
-		var p := c + dir * (-0.38 + 0.38 * k)
-		kit.hero.box(Geo.place(p + Vector3(0, 0.26, 0), yaw), Vector3(0.08, 0.52, 0.08), wood.darkened(0.1))
-		kit.hero.prism(Geo.place(p + Vector3(0, 0.52, 0), yaw + PI / 4.0), 4, 0.057, 0.0, 0.08, wood.darkened(0.1))
-	for y: float in [0.18, 0.38]:
-		kit.hero.box(Geo.place(c + Vector3(0, y, 0), yaw), Vector3(1.0, 0.06, 0.04), wood)
+	var post := KitStyle.WOOD.darkened(0.05)
+	var rail := KitStyle.WOOD.lightened(0.15)
+	var cap := "point"
+	var n := 3
+	match kit.realm:
+		"skyfield", "tidehold":
+			post = Color("#F4EEE2")
+			rail = Color("#E8E0D2")
+			n = 6
+		"crystalline":
+			post = Color("#C9C0E6")
+			rail = Color(Palette.MATTER.lightened(0.35), 0.75)
+			cap = "gem"
+		"emberreach", "lanternvale":
+			post = KitStyle.IRON
+			rail = KitStyle.IRON.lightened(0.1)
+			cap = "spear"
+			n = 5
+	for k in n:
+		var p := c + dir * (-0.42 + 0.84 * k / (n - 1))
+		var w := 0.08 if n == 3 else 0.05
+		kit.hero.box(Geo.place(p + Vector3(0, 0.25, 0), yaw), Vector3(w, 0.5, w), post)
+		match cap:
+			"gem":
+				kit.hero.gem(Geo.place(p + Vector3(0, 0.56, 0), yaw), 0.05, 0.07, Color(Palette.MATTER.lightened(0.4), 0.6), 4)
+			"spear":
+				kit.hero.prism(Geo.place(p + Vector3(0, 0.5, 0), yaw + PI / 4.0), 4, 0.03, 0.0, 0.1, post)
+			_:
+				kit.hero.prism(Geo.place(p + Vector3(0, 0.5, 0), yaw + PI / 4.0), 4, w * 0.71, 0.0, 0.08, post)
+	for y: float in ([0.18, 0.38] if cap != "spear" else [0.12, 0.42]):
+		kit.hero.box(Geo.place(c + Vector3(0, y, 0), yaw), Vector3(1.0, 0.05, 0.035), rail)
 
 
 func _hedge(t: Vector2i, c: Vector3, plant: Color) -> void:
@@ -614,14 +641,38 @@ func _spring(t: Vector2i, c: Vector3, rock: Color) -> void:
 	kit.clear.moving(Geo.Anim.NONE, Vector3.ZERO)
 
 
+## A lantern post by realm: iron and a glass box; a gilded post in the
+## Heart; a paper lantern hung from a crook in Lantern Vale; a brazier in
+## Emberreach; a crystal on a post in Crystalline.
 func _lantern(c: Vector3) -> void:
 	var hero := kit.hero
 	var iron := KitStyle.IRON
-	hero.cyl(Geo.place(c), 0.07, 0.05, 0.1, iron, 6)
-	hero.cyl(Geo.place(c + Vector3(0, 0.1, 0)), 0.035, 0.028, 0.95, iron.lightened(0.1), 6)
-	hero.box(Geo.place(c + Vector3(0, 1.05, 0)), Vector3(0.24, 0.025, 0.24), iron)
-	hero.rbox(Geo.place(c + Vector3(0, 1.16, 0)), Vector3(0.17, 0.2, 0.17), Color(Color("#FFD27A"), 0.15), 0.02)
-	hero.prism(Geo.place(c + Vector3(0, 1.26, 0), PI / 4.0), 4, 0.17, 0.0, 0.12, iron)
+	match kit.realm:
+		"lanternvale":
+			hero.cyl(Geo.place(c), 0.04, 0.03, 1.1, KitStyle.WOOD_DARK, 6)
+			hero.box(Geo.place(c + Vector3(0.14, 1.08, 0)), Vector3(0.3, 0.035, 0.035), KitStyle.WOOD_DARK)
+			hero.moving(Geo.Anim.SWING, c + Vector3(0.26, 1.06, 0))
+			hero.cyl(Geo.place(c + Vector3(0.26, 0.82, 0)), 0.09, 0.11, 0.2, Color(Color("#FF9A5C"), 0.15), 8)
+			hero.cyl(Geo.place(c + Vector3(0.26, 1.02, 0)), 0.05, 0.05, 0.03, KitStyle.WOOD_DARK, 6)
+			hero.moving(Geo.Anim.NONE, Vector3.ZERO)
+		"emberreach":
+			hero.cyl(Geo.place(c), 0.05, 0.04, 0.8, iron, 6)
+			hero.cyl(Geo.place(c + Vector3(0, 0.8, 0)), 0.1, 0.16, 0.12, iron, 8)
+			hero.moving(Geo.Anim.BOB, c + Vector3(0, 0.95, 0))
+			hero.ball(Geo.place(c + Vector3(0, 0.97, 0), 0.0, Vector3(1, 1.4, 1)), 0.09, Color(Color("#FF8A3C"), 0.1), 3, 7)
+			hero.moving(Geo.Anim.NONE, Vector3.ZERO)
+		"crystalline":
+			hero.cyl(Geo.place(c), 0.06, 0.04, 0.95, Color("#C9C0E6"), 6)
+			hero.moving(Geo.Anim.SPIN_Y, c + Vector3(0, 1.15, 0))
+			hero.gem(Geo.place(c + Vector3(0, 1.15, 0)), 0.09, 0.16, Color(Color("#C8B8FF"), 0.25), 5)
+			hero.moving(Geo.Anim.NONE, Vector3.ZERO)
+		_:
+			var metal := KitStyle.GOLD if kit.realm == "heart" else iron
+			hero.cyl(Geo.place(c), 0.07, 0.05, 0.1, metal.darkened(0.2), 6)
+			hero.cyl(Geo.place(c + Vector3(0, 0.1, 0)), 0.035, 0.028, 0.95, metal, 6)
+			hero.box(Geo.place(c + Vector3(0, 1.05, 0)), Vector3(0.24, 0.025, 0.24), metal.darkened(0.15))
+			hero.rbox(Geo.place(c + Vector3(0, 1.16, 0)), Vector3(0.17, 0.2, 0.17), Color(Color("#FFD27A"), 0.15), 0.02)
+			hero.prism(Geo.place(c + Vector3(0, 1.26, 0), PI / 4.0), 4, 0.17, 0.0, 0.12, metal.darkened(0.15))
 	# Its pool of light on the ground.
 	kit.clear.ring(Geo.place(c + Vector3(0, 0.015, 0)), 0.0, 0.42, Color(Color("#FFC860"), 0.35), 14)
 
