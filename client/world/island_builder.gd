@@ -914,4 +914,13 @@ func sky_dressing() -> Array:
 		var w := 2.2 + _rng.randf() * 2.4
 		clouds.append(Transform3D(Basis().scaled(Vector3(w, w * (0.42 + _rng.randf() * 0.12), 1.0)),
 			Vector3(cos(a) * d, -2.5 + _rng.randf() * 4.5 - (3.0 if i % 3 == 0 else 0.0), sin(a) * d)))
+	if kind == "skyfield":
+		# §21.4: Skyfield's "High clouds": a few more, wide and high.
+		# Beyond the rim, so none hides the realm.
+		for i in 4:
+			var a := TAU * (i + 0.5 + _rng.randf() * 0.5) / 4.0
+			var d := r * (1.05 + _rng.randf() * 0.5)
+			var w := 3.5 + _rng.randf() * 2.5
+			clouds.append(Transform3D(Basis().scaled(Vector3(w, w * 0.36, 1.0)),
+				Vector3(cos(a) * d, 5.0 + _rng.randf() * 3.0, sin(a) * d)))
 	return [m.mesh(), clouds]
