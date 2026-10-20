@@ -268,6 +268,7 @@ func _build_statics() -> void:
 	look.island(statics, _size, seed_from, colours)
 	var kit := RealmKit.new(replay, colours)
 	kit.buildings = buildings
+	kit.island_seed = seed_from
 	kit.build()
 	# The kit's layers with its own materials (T3: they carry its idle motion).
 	for mi: MeshInstance3D in kit.instances():
