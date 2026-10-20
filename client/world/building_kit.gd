@@ -366,8 +366,8 @@ func _dress(kind: String) -> void:
 	box(0.07, 0.08, 0.07, KitStyle.lit(Color("#FFD27A"), 0.75), lx, 0.44, lz)
 	cone(0.06, 0.05, KitStyle.WOOD_DARK, lx, 0.48, lz, 4)
 	# Warm light spilling onto the ground at the door and under the lamp.
-	glass.ring(place(0, 0.012, 0.5), 0.0, 0.2 * unit, Color(Color("#FFB860"), 0.35), 12)
-	glass.ring(place(lx, 0.014, lz), 0.0, 0.13 * unit, Color(Color("#FFB860"), 0.35), 10)
+	glass.ring(place(0, 0.012, 0.5), 0.0, 0.2 * unit, Color(Color("#FFB860"), 0.35), 8)
+	glass.ring(place(lx, 0.014, lz), 0.0, 0.13 * unit, Color(Color("#FFB860"), 0.35), 6)
 	_topper()
 	if level >= 3:
 		flag(-0.32, top * 0.82, -0.22, 0.42)
@@ -456,10 +456,6 @@ func _pad() -> void:
 		# dark (the design's night realm).
 		earth = Color(Color("#D8CCE8"), 0.8)
 	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.6 * unit, 0.57 * unit, 0.03 * unit, earth.darkened(0.08), false, earth)
-	for k in 4:
-		var a := TAU * k / 4.0 + 0.5
-		d.rock(Geo.place(at(cos(a) * 0.6, 0.012, sin(a) * 0.6), a, Vector3(1, 0.5, 1)), 0.035 * unit,
-			(palette["rock"] as Color).lightened(0.2), k)
 
 
 ## The Hearth: "a cottage with a round door and chimney", warm window light.
