@@ -106,3 +106,9 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 - Butterflies for Verdant (as the birds: a MultiMesh flapping in the shader); wind streaks for Skyfield.
 - Pulsing mist and a brighter core for the falls.
 - A swoop-proof check: the look rebuilt on every realm change (`island()` already resets the mists and clouds).
+
+## Stopped here (at the owner's request, 2026-10-20)
+
+- **Done and checked:** everything above, up to `bdbcb96` (check_all passed on that commit: client 293/293, server 393/393, simulation 326/326).
+- **In progress:** nothing; no uncommitted work.
+- **Next step:** merge the second integration when it lands (it carries the same sky-depth fix); then soften Heart at dusk, give clouds the design's soft sprite look, add a bright pulsing core to the waterfalls, and make the small particles readable at the home zoom.
