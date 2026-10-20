@@ -133,7 +133,7 @@ func _realm(r: Dictionary, busy: bool) -> Control:
 	var box := VBoxContainer.new()
 	var title := UI.label(r["title"], UI.TEXT_POINTS, true)
 	title.set_meta("realm", r["key"])
-	box.add_child(title)
+	box.add_child(UniverseHeading.make(title, str(r["key"]), world))
 	if r["raise"] is Dictionary:
 		box.add_child(_offer(r["raise"], busy))
 	for b: Dictionary in r["rows"]:

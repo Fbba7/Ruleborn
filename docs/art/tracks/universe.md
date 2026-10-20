@@ -114,6 +114,10 @@ universe, inside §21.3's 40,000 and 150.
   locale; the screen's own title is unchanged).
   Still: `round12_budget_home_zoom1_zoom2.png`.
 
+- Round 13 (resumed): in the map and universe screens' word lists each realm's heading carries its
+  realm's icon, and a tap on it swoops the map to that realm (`UniverseHeading`).
+  Still: `round13_screens_headings.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 
