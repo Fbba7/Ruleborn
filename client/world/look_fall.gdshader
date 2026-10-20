@@ -20,6 +20,11 @@ void fragment() {
 	float run = UV.y * 3.0 - TIME * speed * (0.8 + 0.4 * hash(vec2(col, 1.0)));
 	float dash = step(0.55, fract(run + hash(vec2(col, 7.0))));
 	vec3 c = mix(water.rgb, foam.rgb, 0.35 + 0.45 * dash * (1.0 - across));
+	// A bright core down the middle that swells and ebbs, as the diorama's
+	// falls do (realm-diorama.js:1003, its texture brightest at the middle).
+	float pulse = 0.75 + 0.25 * sin(TIME * 2.2 - UV.y * 6.0);
+	float core = 1.0 - smoothstep(0.0, 0.42, across);
+	c = mix(c, foam.rgb, core * pulse * 0.7);
 	ALBEDO = c;
 	float foot = 1.0 - smoothstep(0.62, 1.0, UV.y);
 	ALPHA = edge * foot * (0.82 + 0.18 * dash);

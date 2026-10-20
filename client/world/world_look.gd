@@ -44,6 +44,9 @@ func _init(world: Node3D) -> void:
 	environment.background_mode = Environment.BG_COLOR
 	sky_material = ShaderMaterial.new()
 	sky_material.shader = _sky
+	# First of everything: drawn without depth, it is sorted with the see-through
+	# pieces and would otherwise cover clouds and mist sorted before it.
+	sky_material.render_priority = Material.RENDER_PRIORITY_MIN
 	var sky_quad := MeshInstance3D.new()
 	sky_quad.mesh = _quad()
 	sky_quad.material_override = sky_material
@@ -195,10 +198,7 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 				mist_alpha.append(1.0)
 	var dressing := builder.sky_dressing()
 	statics.add_child(_piece(dressing[0], _painted(LookPaint.rock(), 0.0, 0.6), true))
-	var cloud := ShaderMaterial.new()
-	cloud.shader = _cloud
-	_clouds = cloud
-	statics.add_child(_piece(dressing[1], cloud, false))
+	statics.add_child(_clouds_of(dressing[1], seed_from))
 	# The cloud sea under the island: soft, wide and slow.
 	var r := builder.radius()
 	var rng := RandomNumberGenerator.new()
@@ -251,17 +251,42 @@ func _scatter_part(part: Array) -> MultiMeshInstance3D:
 	return mi
 
 
+## The clouds: painted sprites facing the camera (look_cloud.gdshader), one
+## MultiMesh; each transform's scale is a cloud's width (x) and height (y).
+func _clouds_of(at: Array[Transform3D], seed_from: int) -> MultiMeshInstance3D:
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	# Colours on as well: the Compatibility renderer misreads an instance's
+	# data with custom data and no colours.
+	mm.use_colors = true
+	mm.use_custom_data = true
+	mm.mesh = _quad()
+	mm.instance_count = at.size()
+	for i in at.size():
+		mm.set_instance_transform(i, at[i])
+		mm.set_instance_color(i, Color.WHITE)
+		var shape := float(posmod(seed_from + i * 7919, 1000)) / 37.0
+		mm.set_instance_custom_data(i, Color(0, 0, 0, shape))
+	_clouds = ShaderMaterial.new()
+	_clouds.shader = _cloud
+	var mi := MultiMeshInstance3D.new()
+	mi.multimesh = mm
+	mi.material_override = _clouds
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Clouds drift a little beyond their placed box.
+	mi.custom_aabb = AABB(Vector3(-40, -20, -40), Vector3(80, 40, 80))
+	return mi
+
+
 ## Wind streaks: long thin dashes facing the camera, one MultiMesh; each
 ## transform's scale gives a streak's length (x) and thickness (y).
 static func _streaks_of(at: Array[Transform3D]) -> MultiMeshInstance3D:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.use_custom_data = true
 	mm.mesh = _quad()
 	mm.instance_count = at.size()
 	for i in at.size():
-		mm.set_instance_transform(i, Transform3D(Basis(), at[i].origin))
-		mm.set_instance_custom_data(i, Color(at[i].basis.x.length(), at[i].basis.y.length(), 0, 0))
+		mm.set_instance_transform(i, at[i])
 	var m := ShaderMaterial.new()
 	m.shader = _streak
 	var mi := MultiMeshInstance3D.new()

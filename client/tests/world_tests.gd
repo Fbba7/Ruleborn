@@ -144,10 +144,11 @@ func _budgets(view: WorldView) -> void:
 	var triangles := 0
 	var calls := 0
 	for mi: MeshInstance3D in meshes(view):
+		# Any kind of mesh, primitive ones included.
+		triangles += mi.mesh.get_faces().size() / 3
 		for s in mi.mesh.get_surface_count():
-			triangles += mi.mesh.surface_get_array_index_len(s) / 3 if mi.mesh.surface_get_array_index_len(s) > 0 \
-				else mi.mesh.surface_get_array_len(s) / 3
-			calls += 2 if (mi.material_override as ShaderMaterial).next_pass != null else 1
+			var mat := mi.material_override if mi.material_override != null else mi.get_active_material(s)
+			calls += 2 if mat != null and mat.next_pass != null else 1
 	# The island's scatter: one draw call a kind, every instance's triangles.
 	for n in view.world.find_children("*", "MultiMeshInstance3D", true, false):
 		var mm := (n as MultiMeshInstance3D).multimesh

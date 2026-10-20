@@ -1,7 +1,7 @@
 // Wind streaks across Skyfield's sky (§21.4: "High clouds, wind streaks"):
 // a long thin quad facing the camera, a bright dash running along it and
 // fading, each on its own beat. One MultiMesh; the instance's transform is
-// in MODELVIEW_MATRIX, its length and thickness in its custom data.
+// in MODELVIEW_MATRIX, its length and thickness its scale.
 shader_type spatial;
 render_mode skip_vertex_transform, unshaded, cull_disabled, depth_draw_never, shadows_disabled, fog_disabled;
 
@@ -12,7 +12,8 @@ uniform float speed = 0.22;
 varying float run;
 
 void vertex() {
-	vec2 corner = (UV - 0.5) * vec2(INSTANCE_CUSTOM.x, INSTANCE_CUSTOM.y);
+	vec2 size = vec2(length(MODELVIEW_MATRIX[0].xyz), length(MODELVIEW_MATRIX[1].xyz));
+	vec2 corner = (UV - 0.5) * size;
 	VERTEX = (MODELVIEW_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz + vec3(corner, 0.0);
 	run = fract(TIME * speed + float(INSTANCE_ID) * 0.37);
 }

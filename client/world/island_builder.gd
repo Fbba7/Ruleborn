@@ -860,11 +860,11 @@ static func _catmull(pts: Array[Vector2], u: float) -> Vector2:
 
 
 ## Small islets floating beside the island, with a grass cap and, on most,
-## a bush (`islandFX`, :1007), and puffy clouds at the island's level and
-## below (`cloud`, :940), one mesh each.
-func sky_dressing() -> Array[ArrayMesh]:
+## a bush (`islandFX`, :1007), one mesh; and where the clouds float at the
+## island's level and below (`cloud`, :940), drawn as painted sprites.
+func sky_dressing() -> Array:
 	var m := LookMesh.new()
-	var clouds := LookMesh.new()
+	var clouds: Array[Transform3D] = []
 	var r := radius()
 	var grass: Color = palette["grass"]
 	var cliff: Color = palette["cliff"]
@@ -895,14 +895,12 @@ func sky_dressing() -> Array[ArrayMesh]:
 		for v in piece.verts.size() / 3:
 			m.tri(piece.verts[v * 3] + c, piece.verts[v * 3 + 2] + c, piece.verts[v * 3 + 1] + c, piece.colours[v * 3],
 				piece.normals[v * 3], piece.uvs[v * 3], piece.uvs[v * 3 + 2], piece.uvs[v * 3 + 1])
-	for i in 5:
-		var a := TAU * (i + _rng.randf() * 0.7) / 5.0
-		var d := r + 2.0 + _rng.randf() * 5.0
-		var base := Vector3(cos(a) * d, -1.5 - _rng.randf() * 6.0, sin(a) * d)
-		var puffs := 4 + _rng.randi() % 3
-		var scale := 0.55 + _rng.randf() * 0.5
-		for p in puffs:
-			var o := Vector3((p - puffs / 2.0) * 0.55, (_rng.randf() - 0.5) * 0.3, (_rng.randf() - 0.5) * 0.5) * scale
-			var rad := (0.5 + _rng.randf() * 0.5) * scale
-			clouds.puff(Transform3D(Basis().scaled(Vector3(rad, rad * 0.75, rad)), base + o), Color.WHITE, 4, 8)
-	return [m.mesh(), clouds.mesh()]
+	# Clouds at the island's level and below, a few in front of the rim:
+	# each a centre and its width (scale x) and height (scale y).
+	for i in 7:
+		var a := TAU * (i + _rng.randf() * 0.7) / 7.0
+		var d := r + 1.0 + _rng.randf() * 5.5
+		var w := 2.2 + _rng.randf() * 2.4
+		clouds.append(Transform3D(Basis().scaled(Vector3(w, w * (0.42 + _rng.randf() * 0.12), 1.0)),
+			Vector3(cos(a) * d, -2.5 + _rng.randf() * 4.5 - (3.0 if i % 3 == 0 else 0.0), sin(a) * d)))
+	return [m.mesh(), clouds]

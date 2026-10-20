@@ -87,7 +87,9 @@ static func light_at(hour: int, type := "heart") -> Array:
 	var tint := Color(h[0])
 	# The realm's light keeps its hue but not all its strength of colour, so
 	# the ground's own colours read under it (§21.10).
-	var sun := Color(TYPES.get(type, TYPES["heart"])["light"]).lerp(Color.WHITE, 0.35) * tint
+	# The hour's tint is blended in rather than multiplied, so a green meadow
+	# under a low amber sun stays green and glows, not olive.
+	var sun := Color(TYPES.get(type, TYPES["heart"])["light"]).lerp(Color.WHITE, 0.35).lerp(tint, 0.45)
 	var ambient := Color(l["sky"]).lerp(Color(l["under"]), 0.45).lerp(Color("#B8B0E0"), 0.3) * Color(h[2])
 	return [sun, float(l["sun"]) * float(h[1]), ambient, 0.24 if hour_key(hour) != "night" else 0.3]
 

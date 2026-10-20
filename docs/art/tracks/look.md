@@ -112,3 +112,14 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 - **Done and checked:** everything above, up to `bdbcb96` (check_all passed on that commit: client 293/293, server 393/393, simulation 326/326).
 - **In progress:** nothing; no uncommitted work.
 - **Next step:** merge the second integration when it lands (it carries the same sky-depth fix); then soften Heart at dusk, give clouds the design's soft sprite look, add a bright pulsing core to the waterfalls, and make the small particles readable at the home zoom.
+
+## Resumed (2026-10-20, 14:34 UTC)
+
+- Merged the second integration (d694b73), keeping its sky-depth version.
+- **The sky drew over the see-through pieces.** Drawn without depth, the sky quad was sorted among the clouds, mist and the cloud sea and could cover them, so the cloud sea and the falls' mist had rarely shown. Its material now has the lowest render priority, so it is always drawn first.
+- **Clouds** are painted sprites, as the design's are: rounded lobes on a flat base, white on top and the sky's violet beneath, two triangles each, one MultiMesh (`look_cloud.gdshader`).
+- **Waterfalls** have a bright core that swells and ebbs.
+- **Dusk**: the hour's tint is blended into the sun rather than multiplied, so a meadow under the low sun glows gold instead of going olive.
+- MultiMesh trap: in the Compatibility renderer a quad's size read from the custom data's x and y did not arrive; sizes come from the instance's scale (`MODELVIEW_MATRIX`'s columns).
+- `world_tests.gd`'s budget count no longer stops on another track's primitive mesh or non-shader material (it counts `get_faces()` and asks each surface's material). This happened on the merged base too.
+- Still: `r12-integrated.png` (Heart noon and dusk, Lantern Vale, and the heist screen, on the integrated build).
