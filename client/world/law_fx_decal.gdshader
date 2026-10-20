@@ -145,7 +145,8 @@ void fragment() {
 		float moss = smoothstep(reach, reach + 0.06, n);
 		float rim = smoothstep(reach, reach + 0.02, n) - smoothstep(reach + 0.03, reach + 0.06, n);
 		c = mix(colour_a.rgb, colour_b.rgb, noise(p * 9.0) * 0.6 + rim);
-		a = moss * 0.72 + rim * 0.2;
+		c = mix(c, colour_b.rgb, rim * 0.8);
+		a = moss * 0.78 + rim * 0.5;
 	} else if (pattern == 7) {
 		// Glowing dark: a rune ring glowing on a tile, pulsing slowly.
 		vec2 d = p - local.xy;

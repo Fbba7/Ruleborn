@@ -86,6 +86,11 @@ static func attach(v: WorldView, replay: RulebornReplay) -> LawFx:
 	fx.environment = v.environment
 	var hook: Variant = v.get("effects")
 	var parent: Node3D = hook if hook is Node3D else v.world
+	# The view's own law motes (T5's FxLaws) give way to these signatures;
+	# FxLaws still bends the figures' walk, which is not drawn here.
+	var own: Variant = v.get("laws")
+	if own is Node3D and own != fx:
+		(own as Node3D).visible = false
 	parent.add_child(fx)
 	fx.source = replay
 	fx.build(LawFxSite.from_replay(replay))
