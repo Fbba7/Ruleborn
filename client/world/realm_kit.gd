@@ -178,8 +178,9 @@ func build() -> void:
 		var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
 		var turn := 0.0 if fp[0] == "keeper_s_spire" else facing(Vector2i(fp[1], fp[2]), side)
 		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear, turn)
-	for m: Vector2i in tunnels:
-		_tunnel(m)
+	for k in range(0, tunnels.size() - 1, 2):
+		_tunnel(tunnels[k], tunnels[k + 1])
+		_tunnel(tunnels[k + 1], tunnels[k])
 	# The realm's signature round its home (the Heart's walls, Skyfield's
 	# windmills, …), just past the grid, where the Spire stands.
 	if footprints.any(func(fp: Array) -> bool: return fp[0] == "keeper_s_spire"):
@@ -299,19 +300,32 @@ func facing(nw: Vector2i, side: int) -> float:
 	return way
 
 
-## A tunnel's mouth: a grassy mound with a dark arch toward its partner.
-func _tunnel(m: Vector2i) -> void:
+## A tunnel's mouth: a grassy mound of rock with a stone archway in it, its
+## dark opening facing the partner mouth (§6.2's tunnels go under the
+## realm between the two).
+func _tunnel(m: Vector2i, toward: Vector2i) -> void:
 	var c := centre(m)
 	var rock: Color = palette["rock"]
-	hero.ball(Geo.place(c, 0.0, Vector3(1.0, 0.62, 1.0)), 0.44, rock.lightened(0.05), 4, 10, true)
-	prop.ball(Geo.place(c + Vector3(0, 0.22, 0), 0.0, Vector3(1.0, 0.4, 1.0)), 0.36, palette["grass"].darkened(0.08), 3,
-		10, true)
-	prop.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), c + Vector3(0, 0.0, 0.42)), 0.2, 0.2, 0.04,
+	var stone: Color = KitStyle.of(realm)["stone2"]
+	var d := Vector2(toward - m)
+	var turn := atan2(d.x, d.y) if d.length() > 0.0 else 0.0
+	var basis := Basis(Vector3.UP, turn)
+	var front := basis * Vector3(0, 0, 0.3)
+	hero.ball(Geo.place(c - front * 0.4, turn, Vector3(1.0, 1.15, 1.1)), 0.46, rock.lightened(0.05), 4, 10, true)
+	prop.ball(Geo.place(c - front * 0.4 + Vector3(0, 0.36, 0), turn, Vector3(1.0, 0.5, 1.1)), 0.38,
+		(palette["grass"] as Color).darkened(0.08), 3, 10, true)
+	# The dark opening and its arch of stones.
+	prop.cyl(Transform3D(basis * Basis(Vector3.RIGHT, PI / 2.0), c + front + Vector3(0, 0.0, 0)), 0.2, 0.2, 0.02,
 		Palette.INK.lightened(0.05), 10)
-	for k in 5:
-		var a := PI * (k + 0.5) / 5.0
-		hero.rbox(Geo.place(c + Vector3(cos(a) * 0.24, sin(a) * 0.24, 0.42)), Vector3(0.1, 0.1, 0.08),
-			palette["stone"].darkened(0.05), 0.015)
+	prop.box(Transform3D(basis, c + front + Vector3(0, 0.0, 0) - basis * Vector3(0, 0, 0.01)), Vector3(0.4, 0.02, 0.02),
+		Palette.INK)
+	for k in 7:
+		var a := PI * k / 6.0
+		hero.rbox(Transform3D(basis * Basis(Vector3.BACK, a - PI / 2.0), c + front + basis * Vector3(cos(a) * 0.25,
+			sin(a) * 0.25 + 0.0, 0.02)), Vector3(0.1, 0.1, 0.12), stone.darkened(0.04 * (k % 2)), 0.015)
+	# A worn patch before it.
+	prop.ring(Geo.place(c + front * 1.5 + Vector3(0, 0.012, 0)), 0.0, 0.22,
+		(palette["grass"] as Color).lerp(KitGround.earth(palette), 0.5), 8)
 
 
 ## The layers as instances with the kit's materials: the painted ground,
