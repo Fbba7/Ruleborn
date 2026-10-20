@@ -51,6 +51,8 @@ func show_laws(which: Array, type := "heart") -> void:
 	view.show_replay(replay)
 	view.set_zoom(2)
 	fx = LawFx.attach(view, replay)
+	# The preview runs on its own clock, not the replay's.
+	fx.source = null
 	var law := str(laws[0]) if not laws.is_empty() else ""
 	walker = LawFxWalker.new(law, ActorBuilder.mesh("Scout"), WorldView.material(_toon(), true))
 	walker.reach = 1.6

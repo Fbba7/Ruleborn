@@ -36,6 +36,7 @@ func _go() -> void:
 		if OS.get_environment("ZOOM") != "":
 			view.set_zoom(int(OS.get_environment("ZOOM")))
 		var fx := LawFx.attach(view, replay)
+		fx.source = null
 		fx.sync(ticks)
 		fx.sync_world(replay)
 		for i in 3:

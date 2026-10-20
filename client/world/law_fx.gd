@@ -54,6 +54,9 @@ var links: Node3D
 var paradox := ""
 ## The heist's seconds at the last sync.
 var seconds := 0.0
+## The replay it follows by itself, frame by frame, once attached; null in a
+## preview, which its owner moves.
+var source: RulebornReplay
 
 var _clocked: Array[ShaderMaterial] = []
 var _hooks: Array[Callable] = []
@@ -61,6 +64,8 @@ var _watchers: Array[Callable] = []
 var _followers: Array[Dictionary] = []
 var _tint: MeshInstance3D
 var _light := {}
+var _tick := -1
+var _since := 0.0
 
 
 ## Every woven law of `replay`'s realm drawn over `v`'s world: under T5's
@@ -74,7 +79,9 @@ static func attach(v: WorldView, replay: RulebornReplay) -> LawFx:
 	var hook: Variant = v.get("effects")
 	var parent: Node3D = hook if hook is Node3D else v.world
 	parent.add_child(fx)
+	fx.source = replay
 	fx.build(LawFxSite.from_replay(replay))
+	fx.sync_world(replay)
 	return fx
 
 
@@ -358,6 +365,22 @@ func _restore_light() -> void:
 
 func _exit_tree() -> void:
 	_restore_light()
+
+
+## Attached to a heist, it keeps itself in step with the replay: between
+## ticks it draws on from the last one, as the world view moves its actors,
+## and on each new tick it reads the pylons and the characters again.
+func _process(delta: float) -> void:
+	if source == null or site == null:
+		return
+	var tick := source.tick()
+	if tick != _tick:
+		_tick = tick
+		_since = 0.0
+		sync_world(source)
+	else:
+		_since += delta
+	sync(tick + clampf(_since * TPS, 0.0, 1.0))
 
 
 ## Haste quickens every signature's clock and Stillness all but stops it
