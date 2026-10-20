@@ -51,8 +51,10 @@ func show_laws(which: Array, type := "heart") -> void:
 	view.show_replay(replay)
 	view.set_zoom(2)
 	fx = LawFx.attach(view, replay)
-	# The preview runs on its own clock, not the replay's.
+	# The preview runs on its own clock, not the replay's, which never ticks:
+	# the view would hold the signatures still at tick 0 each frame.
 	fx.source = null
+	view.set_process(false)
 	var law := str(laws[0]) if not laws.is_empty() else ""
 	walker = LawFxWalker.new(law, ActorBuilder.mesh("Scout"), WorldView.material(_toon(), true))
 	walker.reach = 1.6
