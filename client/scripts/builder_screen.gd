@@ -7,9 +7,15 @@ extends Control
 ## never judges an island itself: `problems()` is `Island::check`, the rules
 ## the server publishes by, and the Raid button waits until it is empty.
 ##
-## The realm is drawn by the heist's own `RealmView`, from a heist started on
-## the island at tick 0, so what the builder shows is what a raider meets
-## before it lands: no crew, which lands wherever the raider chooses (§5.4).
+## The realm is drawn by the heist's own world (`StageView`, a `WorldView`),
+## full-bleed under the controls, from a heist started on the island at tick
+## 0, so what the builder shows is what a raider meets before it lands: no
+## crew, which lands wherever the raider chooses (§5.4). Over it, the terrain
+## overlay (`OverlayTiles`): the grid as plates, a ghost of what the tool
+## would place under the finger — gold where the island takes it, red where
+## it refuses — and the last tile tapped edged the same way, so what
+## `RulebornIsland` allows and rejects shows on the tile. Ground and the
+## eraser paint with a drag; every stroke can be undone.
 
 enum Tool { GROUND, WARD, GUARD, LAW, VAULT, ERASE }
 
@@ -19,6 +25,8 @@ const GUARD_ROLES := ["Scout", "Warden", "Breaker", "Carrier", "Mender"]
 ## §6.2's tunnel: ground laid with two taps, one for each mouth.
 const TUNNEL := "tunnel"
 const NO_MOUTH := Vector2i(-1, -1)
+## How many edits Undo remembers.
+const UNDO_DEPTH := 40
 
 var island := RulebornIsland.new()
 var preview := RulebornReplay.new()
@@ -30,6 +38,12 @@ var kind := 0
 var mouth := NO_MOUTH
 ## A word for the player about the last tap, shown once in the status line.
 var hint := ""
+## The island before each edit, newest last.
+var undo_stack: Array[PackedByteArray] = []
+## The tile last acted on and whether the island took the action.
+var last_tile := NO_MOUTH
+var last_ok := true
+var tiles: OverlayTiles
 
 var view: RealmView
 var title_label: Label
@@ -40,6 +54,10 @@ var kind_button: Button
 var level_button: Button
 var raid_button: Button
 var restore_button: Button
+var undo_button: Button
+var _stroke := false
+var _dock: Control
+var _stroke_tile := NO_MOUTH
 
 
 func _ready() -> void:
@@ -53,14 +71,15 @@ func _ready() -> void:
 
 func _build() -> void:
 	var column := UI.frame(self)
+	var stage := StageScreen.mount(self, column)
+	stage.swipe_turns = false
+	stage.fill = 0.86
+	view = stage
+	tiles = OverlayTiles.new(stage)
+	view.gui_input.connect(_on_input)
 	title_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(UI.plate(title_label))
-	view = WorldView.new()
-	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	view.gui_input.connect(func(event: InputEvent) -> void:
-		if event is InputEventMouseButton and event.pressed:
-			tap_tile(view.tile_at(event.position)))
-	column.add_child(view)
+	column.add_child(OverlaySheet.ribbon(title_label))
+	StageScreen.window(column, 2.0)
 	status_label = UI.label("", UI.TEXT_POINTS, true)
 	together_label = UI.label("", UI.TEXT_POINTS, true)
 	# What the island says scrolls in its place when it runs long, so the
@@ -84,7 +103,11 @@ func _build() -> void:
 	restore_button = UI.button(Strings.t("BUILDER_RESTORE"), restore)
 	restore_button.accessibility_name = Strings.t("BUILDER_RESTORE_NAMED")
 	tools.add_child(restore_button)
-	column.add_child(tools)
+	undo_button = UI.button(Strings.t("BUILDER_UNDO"), undo)
+	tools.add_child(undo_button)
+	var keys := VBoxContainer.new()
+	keys.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	keys.add_child(tools)
 	var actions := UI.row()
 	level_button = UI.button("", next_level)
 	actions.add_child(level_button)
@@ -94,7 +117,10 @@ func _build() -> void:
 	# Home rides with the actions: one row fewer, so the realm keeps its room
 	# at §20.8's large text.
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
-	column.add_child(UI.narrow(actions))
+	keys.add_child(actions)
+	_dock = OverlaySheet.dock(keys)
+	column.add_child(UI.narrow(_dock))
+	OverlaySheet.dress(self)
 
 
 ## The kinds the chosen tool offers, as ids: ground and wards by content id,
@@ -142,6 +168,7 @@ func next_kind() -> void:
 
 ## A new, blank realm of the next level, 1 to 5 (§5.2's 10 by 10 to 14 by 14).
 func next_level() -> void:
+	undo_stack.append(island.bytes())
 	island.reset(island.realm_level() % 5 + 1)
 	# A blank realm is the player's own island, not a remix of one (§18.6).
 	Draft.forget_origin()
@@ -152,6 +179,22 @@ func next_level() -> void:
 func tap_tile(tile: Vector2i) -> void:
 	if tile.x < 0 or tile.y < 0 or tile.x >= island.side() or tile.y >= island.side():
 		return
+	var before := island.bytes()
+	var asked_mouth := mouth
+	_apply(tile)
+	var after := island.bytes()
+	last_tile = tile
+	# A tunnel's first mouth changes nothing yet, and is not refused.
+	last_ok = after != before or (tool == Tool.GROUND and mouth != NO_MOUTH and asked_mouth == NO_MOUTH)
+	if after != before:
+		undo_stack.append(before)
+		if undo_stack.size() > UNDO_DEPTH:
+			undo_stack.pop_front()
+	_refresh()
+
+
+## The chosen tool on `tile`, through the island.
+func _apply(tile: Vector2i) -> void:
 	var ks := kinds()
 	var k: Variant = ks[kind] if kind < ks.size() else null
 	match tool:
@@ -173,7 +216,6 @@ func tap_tile(tile: Vector2i) -> void:
 			island.set_vault(tile.x, tile.y)
 		Tool.ERASE:
 			island.clear(tile.x, tile.y)
-	_refresh()
 
 
 ## Ground on a tapped tile. Ground that faces one of the four ways (G56),
@@ -193,6 +235,91 @@ func lay(tile: Vector2i, k: String) -> void:
 		island.turn(tile.x, tile.y)
 	else:
 		island.set_ground(tile.x, tile.y, k)
+
+
+## The island as it was before the last edit.
+func undo() -> void:
+	if undo_stack.is_empty():
+		return
+	island.read(undo_stack.pop_back())
+	mouth = NO_MOUTH
+	last_tile = NO_MOUTH
+	_refresh()
+
+
+## A press acts on its tile; a drag with ground or the eraser paints every
+## tile it crosses; a finger or pointer resting over a tile shows the ghost.
+func _on_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		var e := event as InputEventMouseButton
+		_stroke = e.pressed
+		if e.pressed:
+			_stroke_tile = view.tile_at(e.position)
+			tap_tile(_stroke_tile)
+	elif event is InputEventMouseMotion:
+		var t := view.tile_at((event as InputEventMouseMotion).position)
+		if _stroke and t != _stroke_tile and paints():
+			_stroke_tile = t
+			var ks := kinds()
+			if tool == Tool.ERASE or str(island.ground(t.x, t.y)) != str(ks[kind] if kind < ks.size() else ""):
+				tap_tile(t)
+		elif not _stroke:
+			show_ghost(t)
+
+
+## Whether a drag paints with the chosen tool: ground that has no direction
+## and is not a tunnel, and the eraser.
+func paints() -> bool:
+	if tool == Tool.ERASE:
+		return true
+	if tool != Tool.GROUND:
+		return false
+	var ks := kinds()
+	var k := str(ks[kind]) if kind < ks.size() else ""
+	return k != TUNNEL and k not in Array(palette["facing"])
+
+
+## Whether the island would take the chosen tool on `t`, tried on a copy.
+func would_take(t: Vector2i) -> bool:
+	if t.x < 0 or t.y < 0 or t.x >= island.side() or t.y >= island.side():
+		return false
+	var probe := RulebornIsland.new()
+	probe.read(island.bytes())
+	var keep := island
+	island = probe
+	var was_mouth := mouth
+	_apply(t)
+	var took := probe.bytes() != keep.bytes() or (mouth != was_mouth)
+	island = keep
+	mouth = was_mouth
+	hint = ""
+	return took
+
+
+## The ghost of what the tool places on `t`, gold or red.
+func show_ghost(t: Vector2i) -> void:
+	if tiles == null:
+		return
+	var ok := would_take(t)
+	tiles.cursor(t, ok)
+	tiles.ghost(ghost_mesh(), t, ok)
+
+
+## What the chosen tool puts on a tile, as a mesh for its ghost; null for
+## ground and the eraser, which the cursor alone shows.
+func ghost_mesh() -> Mesh:
+	var ks := kinds()
+	var k: Variant = ks[kind] if kind < ks.size() else null
+	match tool:
+		Tool.WARD:
+			return PieceKit.ward(str(k).to_pascal_case())
+		Tool.GUARD:
+			return ActorBuilder.mesh("guard")
+		Tool.LAW:
+			return PieceKit.pylon()
+		Tool.VAULT:
+			return PieceKit.vault(false)
+	return null
 
 
 func save() -> void:
@@ -240,6 +367,15 @@ func _refresh() -> void:
 		status_label.text = hint
 		hint = ""
 	together_label.text = together(island.combos())
+	undo_button.disabled = undo_stack.is_empty()
+	if tiles != null:
+		tiles.show_grid()
+		tiles.cursor(last_tile, last_ok)
+		if mouth != NO_MOUTH:
+			tiles.paint({mouth: OverlayTiles.OPEN})
+		else:
+			tiles.paint({})
+		tiles.ghost(null, Vector2i.ZERO)
 	UI.relabel(tool_button, Strings.t("BUILDER_TOOL_" + TOOLS[tool]))
 	var ks := kinds()
 	UI.relabel(kind_button, kind_name(ks[kind]) if kind < ks.size() else "—")
@@ -265,3 +401,10 @@ static func together(c: Dictionary) -> String:
 	if parts.is_empty():
 		return Strings.t("BUILDER_ALONE")
 	return Strings.t("BUILDER_TOGETHER", ", ".join(parts))
+
+
+func _process(_delta: float) -> void:
+	var stage := view as StageView
+	if stage != null and _dock != null:
+		stage.cover_bottom = StageScreen.covered_below(stage, status_label.get_parent().get_parent().get_parent())
+		stage.cover_top = StageScreen.covered_above(stage, title_label)

@@ -1,9 +1,20 @@
 class_name HeistHud
-extends HFlowContainer
+extends VBoxContainer
 ## §21.8's heist layout, top row: "Clock and alarm meter at the top centre;
 ## loot at the top right as two numbers, what the bags can still take and what
-## is left to load (12.19), beside the Vault's progress". With §20.8's large
-## text the two panels stack rather than outgrow the phone.
+## is left to load (12.19), beside the Vault's progress; the law banner at the
+## top left". Drawn as the Screens v3 heist draws it: dark glass pills over
+## the world with ink outlines, the clock in Lilita One counting down and
+## turning red in its last 30 seconds, the alarm as six bells, amber to three
+## and red from four, with "N / 6" beside them so the level never rests on
+## colour (§20.8); the loot as its two numbers with the bags' fill and the
+## Vault's cracking as bars; each law running in the realm as a chip with its
+## school's shape. Three columns, left, centre and right; with §20.8's large
+## text their words wrap rather than outgrow the phone.
+
+## §21.8: the clock turns red in its last 30 seconds.
+const RED_SECONDS := 30
+const BELLS := 6
 
 var clock_label: Label
 var alarm_label: Label
@@ -11,52 +22,196 @@ var loot_label: Label
 ## Across a universe, the realm the crew is in and how many it has yet to
 ## cross to the Heart (§5.4).
 var realm_label: Label
+var laws_box: VBoxContainer
+var clock_panel: PanelContainer
+var meter: FxDraw
+var loot_bars: FxDraw
+
+var _alarm := 0
+var _bags := 0.0
+var _cracked := 0.0
+var _open := false
+var _vault_full := -1
+var _laws_key := ""
+var _red := false
 
 
 func _init() -> void:
-	alignment = FlowContainer.ALIGNMENT_END
-	var gap := UI.px(Tokens.number("size", "gap_points"))
-	add_theme_constant_override("h_separation", gap)
-	add_theme_constant_override("v_separation", gap)
-	var centre := UI.panel()
-	var centre_box := VBoxContainer.new()
-	centre.add_child(centre_box)
-	clock_label = UI.label()
-	alarm_label = UI.label()
-	realm_label = UI.label()
-	realm_label.visible = false
-	centre_box.add_child(clock_label)
-	centre_box.add_child(alarm_label)
-	centre_box.add_child(realm_label)
-	add_child(centre)
-	var right := UI.panel()
-	loot_label = UI.label()
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
+	var top := HBoxContainer.new()
+	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	top.add_theme_constant_override("separation", UI.px(4))
+	add_child(top)
+	# The law banner, top left.
+	var left := _side(top, BoxContainer.ALIGNMENT_BEGIN)
+	var laws := FxSkin.panel("glass", 12.0, 5.0)
+	laws.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	laws_box = VBoxContainer.new()
+	laws_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	laws_box.add_theme_constant_override("separation", UI.px(3))
+	laws.add_child(laws_box)
+	laws.name = "Laws"
+	laws.visible = false
+	left.add_child(laws)
+	# The clock in its pill, the alarm's bells beneath.
+	var centre := VBoxContainer.new()
+	centre.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	centre.add_theme_constant_override("separation", UI.px(3))
+	centre.alignment = BoxContainer.ALIGNMENT_BEGIN
+	centre.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	clock_panel = FxSkin.panel("glass", 20.0, 6.0)
+	clock_label = FxSkin.label("", 24.0, "glass", true)
+	clock_panel.add_child(clock_label)
+	centre.add_child(clock_panel)
+	var alarm := FxSkin.panel("glass", 12.0, 6.0)
+	var alarm_box := VBoxContainer.new()
+	alarm_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	alarm_box.add_theme_constant_override("separation", 0)
+	alarm_label = FxSkin.label("", 13.0)
+	alarm_box.add_child(alarm_label)
+	meter = FxDraw.new(_draw_meter, Vector2(UI.px(13) * BELLS, UI.px(17)))
+	alarm_box.add_child(meter)
+	alarm.add_child(alarm_box)
+	centre.add_child(alarm)
+	top.add_child(centre)
+	# The loot, top right: two numbers and the bars beside them.
+	var right_side := _side(top, BoxContainer.ALIGNMENT_END)
+	var right := FxSkin.panel("glass", 12.0, 6.0)
+	right.size_flags_horizontal = Control.SIZE_SHRINK_END
+	var right_box := VBoxContainer.new()
+	right_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	right_box.add_theme_constant_override("separation", UI.px(2))
+	loot_label = FxSkin.label("", 13.0)
 	loot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	right.add_child(loot_label)
-	add_child(right)
+	loot_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	right_box.add_child(loot_label)
+	loot_bars = FxDraw.new(_draw_bars, Vector2(UI.px(72), UI.px(22)))
+	right_box.add_child(loot_bars)
+	right.add_child(right_box)
+	right_side.add_child(right)
+	realm_label = FxSkin.label("", 14.0)
+	realm_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	realm_label.visible = false
+	var realm_panel := FxSkin.panel("glass", 12.0, 6.0)
+	realm_panel.add_child(realm_label)
+	realm_panel.name = "Realm"
+	realm_panel.visible = false
+	add_child(realm_panel)
+
+
+## Words that wrap between words: as narrow as their longest word, so a long
+## law's name wraps the line rather than breaking a word; with §20.8's large
+## text a word too long for its column breaks rather than outgrow the phone.
+static func _wrap_by_words(l: Label) -> void:
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var font := l.get_theme_font("font")
+	var px := l.get_theme_font_size("font_size")
+	var widest := 0.0
+	for w: String in l.text.replace("\n", " ").split(" ", false):
+		widest = maxf(widest, font.get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x)
+	l.custom_minimum_size.x = minf(ceilf(widest) + 2.0, UI.px(84))
+
+
+## A side column of the top row: it takes what room there is and holds its
+## panel to its edge.
+func _side(top: HBoxContainer, edge: BoxContainer.AlignmentMode) -> VBoxContainer:
+	var v := VBoxContainer.new()
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.alignment = BoxContainer.ALIGNMENT_BEGIN
+	v.set_meta("edge", edge)
+	top.add_child(v)
+	return v
 
 
 func show_state(r: RulebornReplay) -> void:
 	var tps := RulebornReplay.ticks_per_second()
-	var now := r.tick() / tps
-	var total := r.ticks() / tps
-	clock_label.text = "%d:%02d / %d:%02d" % [now / 60, now % 60, total / 60, total % 60]
-	var alarm := r.alarm()
-	var meter := Strings.t("HUD_ALARM", "●".repeat(alarm) + "○".repeat(6 - alarm))
-	# The meter's filled pips say how loud it is; the colour only repeats it.
-	if alarm > 0:
-		UI.set_status(alarm_label, "alarm", meter)
-	else:
-		alarm_label.text = meter
-		alarm_label.add_theme_color_override("font_color", Palette.INK)
+	var left := maxi(0, (r.ticks() - r.tick()) / tps)
+	clock_label.text = "%d:%02d" % [left / 60, left % 60]
+	var red := r.ticks() > 0 and left <= RED_SECONDS
+	if red != _red:
+		_red = red
+		var box := FxSkin.glass(20.0, 6.0)
+		if red:
+			# Paper on §21.8's alarm fill: the one red that carries words.
+			box.bg_color = FxSkin.ALARM_DEEP
+		clock_panel.add_theme_stylebox_override("panel", box)
+	_alarm = r.alarm()
+	alarm_label.text = Strings.t("HUD_ALARM", "%d / %d" % [_alarm, BELLS])
+	_wrap_by_words(alarm_label)
+	alarm_label.add_theme_color_override("font_color", FxSkin.ALARM_ON_DARK if _alarm >= 4 else FxSkin.ON_DARK)
+	meter.queue_redraw()
 	var carried := 0
 	var carry := 0
-	for m in r.crew():
+	for m: Dictionary in r.crew():
 		carried += int(m["carried"])
 		carry += int(m["carry"])
-	loot_label.text = Strings.t("HUD_LOOT", [carry - carried, int(r.vault().get("exposed", 0))])
+	var v := r.vault()
+	loot_label.text = Strings.t("HUD_LOOT", [carry - carried, int(v.get("exposed", 0))])
+	_wrap_by_words(loot_label)
+	_bags = float(carried) / maxf(1.0, float(carry))
+	var health := int(v.get("health", 0))
+	if _vault_full < 0 or health > _vault_full:
+		_vault_full = health
+	_open = bool(v.get("open", false))
+	_cracked = 1.0 if _open else 1.0 - float(health) / maxf(1.0, float(_vault_full))
+	loot_bars.queue_redraw()
 	realm_label.text = realm(r.realm_code(), r.realms_to_go())
 	realm_label.visible = realm_label.text != ""
+	(realm_label.get_parent() as Control).visible = realm_label.visible
+	_show_laws(r)
+
+
+## The laws running in the realm: one chip a standing pylon's law, with its
+## school's shape (§21.8's law banner; §15.3).
+func _show_laws(r: RulebornReplay) -> void:
+	var laws: Array[Dictionary] = []
+	for p: Dictionary in r.pylons():
+		if p.get("standing", false):
+			laws.append(p)
+	var key := ",".join(laws.map(func(p: Dictionary) -> String: return str(p.get("law", ""))))
+	if key == _laws_key:
+		return
+	_laws_key = key
+	for c in laws_box.get_children():
+		c.queue_free()
+	for p in laws:
+		var chip := HBoxContainer.new()
+		chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		chip.add_theme_constant_override("separation", UI.px(3))
+		var school := str(p.get("school", ""))
+		chip.add_child(FxDraw.new(func(ci: Control) -> void:
+			FxIcons.school(ci, ci.size / 2.0, minf(ci.size.x, ci.size.y), school), Vector2(UI.px(20), UI.px(20))))
+		var words := FxSkin.label(Strings.term("LAW", str(p.get("law", ""))), 13.0)
+		words.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		_wrap_by_words(words)
+		words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		chip.add_child(words)
+		laws_box.add_child(chip)
+	(laws_box.get_parent() as Control).visible = not laws.is_empty()
+
+
+func _draw_meter(ci: Control) -> void:
+	var s := ci.size.y
+	var step := ci.size.x / BELLS
+	for i in BELLS:
+		var c := Vector2(step * (i + 0.5), s * 0.5)
+		var fill := FxSkin.ALARM if i >= 3 else FxSkin.GOLD
+		FxIcons.bell(ci, c, s * 0.9, fill, i < _alarm)
+
+
+## The bags' fill beside a sack, and the Vault's cracking beside a lock that
+## opens: the bars say which binds first without a word (§12.19).
+func _draw_bars(ci: Control) -> void:
+	var h := ci.size.y * 0.4
+	var icon := ci.size.y * 0.5
+	var w := ci.size.x - icon - 4.0
+	FxIcons.sack(ci, Vector2(icon * 0.5, h * 0.5), icon * 0.95, _bags)
+	FxIcons.bar(ci, Rect2(Vector2(icon + 4.0, 0), Vector2(w, h)), _bags, FxSkin.GOLD)
+	FxIcons.lock(ci, Vector2(icon * 0.5, ci.size.y - h * 0.5), icon * 0.9, _open)
+	FxIcons.bar(ci, Rect2(Vector2(icon + 4.0, ci.size.y - h), Vector2(w, h)), _cracked,
+		FxSkin.SUCCESS if _open else Color("#9B8CF0"))
 
 
 ## The realm the crew is in across a universe, in words; "" for a heist of

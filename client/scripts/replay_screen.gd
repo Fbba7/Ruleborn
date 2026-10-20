@@ -21,7 +21,7 @@ var current := 0
 var playing := true
 var speed_index := 1
 
-var view: RealmView
+var view: WorldView
 var hud: HeistHud
 var name_label: Label
 var badge_label: Label
@@ -76,6 +76,7 @@ func open_entry(index: int) -> bool:
 	grade_label.text = ""
 	_owed = 0.0
 	view.show_replay(replay)
+	view.follow = range(replay.crew().size())
 	_refresh()
 	return ok
 
@@ -101,10 +102,10 @@ func _process(delta: float) -> void:
 func _refresh() -> void:
 	hud.show_state(replay)
 	if replay.mismatch() > 0:
-		UI.set_status(badge_label, "alarm",
+		FxSkin.set_status(badge_label, "alarm",
 			Strings.t("REPLAY_DIVERGED", [replay.mismatch() / 60, replay.mismatch() % 60]))
 	else:
-		UI.set_status(badge_label, "success", Strings.t("REPLAY_MATCHES", replay.seconds_agreed()))
+		FxSkin.set_status(badge_label, "success", Strings.t("REPLAY_MATCHES", replay.seconds_agreed()))
 	if replay.tick() >= replay.ticks() and replay.ticks() > 0:
 		var o := replay.outcome()
 		grade_label.text = Strings.t("REPLAY_GRADE", [Strings.term("GRADE", o["grade"]), o["banked"], o["capacity"]])
@@ -116,42 +117,60 @@ func _refresh() -> void:
 
 
 func _build() -> void:
-	var column := UI.frame(self)
-	hud = HeistHud.new()
-	column.add_child(hud)
+	# The world fills the screen, as in the heist; the HUD and the playback
+	# controls float over it inside §21.1's safe areas.
 	view = WorldView.new()
-	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	view.gui_input.connect(_on_view_input)
-	column.add_child(view)
+	view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	view.tapped.connect(_on_view_tap)
+	add_child(view)
+	var columns := FxSkin.frame(self)
+	hud = HeistHud.new()
+	columns[0].add_child(hud)
+	var column := columns[1]
 
-	var status := UI.panel()
+	var status := FxSkin.panel("card", 16.0, 8.0)
 	var status_box := VBoxContainer.new()
+	status_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	status_box.add_theme_constant_override("separation", 0)
 	status.add_child(status_box)
-	name_label = UI.label("", UI.TEXT_POINTS, true)
-	badge_label = UI.label("", UI.TEXT_POINTS, true)
-	grade_label = UI.label("", UI.TEXT_POINTS, true)
+	name_label = FxSkin.label("", UI.TEXT_POINTS + 2.0, "glass", true)
+	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	badge_label = FxSkin.label("", 14.0)
+	badge_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	grade_label = FxSkin.label("", 14.0)
+	grade_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	status_box.add_child(name_label)
 	status_box.add_child(badge_label)
 	status_box.add_child(grade_label)
 	column.add_child(status)
 
+	column.add_child(FxSkin.camera_row(view))
 	var controls := UI.row(-1.0, true)
-	controls.add_child(UI.button("‹", func() -> void: open_entry(current - 1); playing = true, false, Color(),
+	controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	controls.add_child(_button("‹", func() -> void: open_entry(current - 1); playing = true, "leather",
 			Strings.t("REPLAY_PREVIOUS")))
-	play_button = UI.button(Strings.t("REPLAY_PAUSE"), func() -> void: playing = not playing; _refresh(), true)
+	play_button = _button(Strings.t("REPLAY_PAUSE"), func() -> void: playing = not playing; _refresh(), "gold")
 	controls.add_child(play_button)
-	speed_button = UI.button("×2", func() -> void: speed_index = (speed_index + 1) % SPEEDS.size(); _refresh(),
-			false, Color(), Strings.t("REPLAY_SPEED", SPEEDS[speed_index]))
+	speed_button = _button("×2", func() -> void: speed_index = (speed_index + 1) % SPEEDS.size(); _refresh(),
+			"leather", Strings.t("REPLAY_SPEED", SPEEDS[speed_index]))
 	controls.add_child(speed_button)
-	controls.add_child(UI.button("›", func() -> void: open_entry(current + 1); playing = true, false, Color(),
+	controls.add_child(_button("›", func() -> void: open_entry(current + 1); playing = true, "leather",
 			Strings.t("REPLAY_NEXT")))
 	# Home rides with the playback controls: one row fewer, so the realm
 	# keeps its room when §20.8's large text makes the words take more.
-	controls.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
+	controls.add_child(_button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "card"))
 	column.add_child(UI.narrow(controls))
+	column.add_child(FxSkin.corner_clear())
+
+
+## A playback button in the heist's skin.
+func _button(words: String, call: Callable, kind: String, spoken := "") -> Button:
+	var b := UI.button(words, call, false, Color(), spoken)
+	FxSkin.style_button(b, kind)
+	UI.fit(b)
+	return b
 
 
 ## Tap a guard to see what it sees (§21.12: one shape at a time).
-func _on_view_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed:
-		view.select_guard_near(event.position)
+func _on_view_tap(at: Vector2) -> void:
+	view.select_guard_near(at)
