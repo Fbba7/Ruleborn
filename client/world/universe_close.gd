@@ -13,7 +13,7 @@ extends RefCounted
 
 
 ## The map's night over T2's day colours.
-const NIGHT := Color(0.7, 0.7, 0.8)
+const NIGHT := Color(0.62, 0.76, 0.74)
 
 
 ## The island of `isl`'s realm, `tiles` across, as a node to stand at its

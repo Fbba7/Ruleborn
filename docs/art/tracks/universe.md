@@ -135,6 +135,12 @@ universe, inside §21.3's 40,000 and 150.
   Stills: `round16_home.png`, `round16_zoom0.png`, `round16_zoom1.png`, `round16_zoom2_heart.png`,
   `round16_zoom2_skyfield.png`, `round16_zoom2_crystalline.png`.
 
+- Round 17: paths as the design's network (its scout stills), from the plaza to each first-ring
+  building and round each ring between neighbours, in tan cobbles, drawn with the buildings so they stay
+  on T2's island in a close-up; T2's ground tinted greener for the night.
+  Stills: `round17_zoom2_skyfield_paths.png`, `round17_zoom2_verdant_paths.png`,
+  `round17_compare_scout_skyfield.png` (ours at night beside the design's daytime scout still).
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

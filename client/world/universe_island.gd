@@ -132,7 +132,7 @@ func build(body: Geo, hero: Geo, glows: UniversePaint, light: UniversePaint, flo
 	_rock(body, hero)
 	_beneath(hero, glows, light, flow)
 	_dress(hero, glows)
-	_buildings(body, hero, glows, buildings)
+	_buildings(hero, glows, buildings)
 	if key == "heart":
 		light.beam(at + Vector3(0, 9.5, 0), 0.9, 3.0, 30.0, Color(BEAM, 0.22), 16)
 		light.beam(at + Vector3(0, 9.5, 0), 0.3, 0.8, 20.0, Color(BEAM.lightened(0.4), 0.3), 10)
@@ -359,7 +359,7 @@ func _windmill(g: Geo, p: Vector3, s: float, a: float) -> void:
 
 ## The realm's buildings, each at its level, in rings from the middle; the
 ## Heart's middle is its Spire.
-func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) -> void:
+func _buildings(hero: Geo, glows: UniversePaint, buildings: Array) -> void:
 	var spots := _spots()
 	var next := 0
 	var lit := key == "lanternvale" or key == "heart" or key == "crystalline"
@@ -370,16 +370,17 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 		_shade(at, 6.2 * UniverseCitadel.MAP_SCALE, 0.55)
 		places["keeper_s_spire:1"] = at + Vector3(0, 11.0, 0)
 		next = 1
+	var stands: Array[Vector3] = []
 	for b: Dictionary in buildings:
 		if next >= spots.size():
 			break
 		var kind := str(b.get("kind", ""))
 		var spot: Vector3 = spots[next]
+		stands.append(spot)
 		next += 1
 		var f := Vector2(spot.x - at.x, spot.z - at.z).length() / radius
 		var mid := spot + Vector3(0, dome(f), 0)
 		var lv := int(b.get("level", 1))
-		_path(body, spot)
 		_lamp(hero, glows, spot)
 		_used.append(spot)
 		_shade(mid, 2.1, 0.5)
@@ -397,6 +398,7 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 		# Windows lit, more of them in the realms of night (§21.2: "lanterns
 		# and glows carry the realm").
 		glows.glow(mid + Vector3(0, 0.7, 0.9), 0.7 if lit else 0.45, Color("#FFC36A", 0.7 if lit else 0.4))
+	_paths(stands)
 
 
 ## A building as seen from across the universe: the realm kit's own map
@@ -406,24 +408,59 @@ func _far_building(kind: String, mid: Vector3, side: int, lv: int) -> void:
 	BuildingKit.build_map(far, kind, mid, side, lv, palette)
 
 
-## Stepping stones from the plaza to a building's door.
-func _path(g: Geo, to: Vector3) -> void:
-	var from := Vector3(at.x, 0, at.z)
-	var flat := Vector3(to.x - at.x, 0, to.z - at.z)
+## The realm's paths, the design's network (its scout stills): from the
+## plaza to each building on the first ring, and between neighbours round
+## each ring. They go with the buildings, so they stay on T2's island in a
+## close-up as well as on the map's rock from afar.
+func _paths(stands: Array[Vector3]) -> void:
+	var plaza := 4.4 * UniverseCitadel.MAP_SCALE if key == "heart" else 1.8
+	var by_ring := {}
+	for p: Vector3 in stands:
+		var r := Vector2(p.x - at.x, p.z - at.z).length()
+		var ring := 0 if r < radius * 0.56 else 1
+		if not by_ring.has(ring):
+			by_ring[ring] = []
+		(by_ring[ring] as Array).append(p)
+		if ring == 0:
+			var dir := Vector3(p.x - at.x, 0, p.z - at.z).normalized()
+			_walk(at + dir * plaza, p)
+	for ring: int in by_ring:
+		var loop: Array = by_ring[ring]
+		loop.sort_custom(func(a: Vector3, b: Vector3) -> bool:
+			return atan2(a.z - at.z, a.x - at.x) < atan2(b.z - at.z, b.x - at.x))
+		for k in loop.size():
+			if loop.size() > 2 or k == 0:
+				var a: Vector3 = loop[k]
+				var b: Vector3 = loop[(k + 1) % loop.size()]
+				if a.distance_to(b) < radius * 1.1 and a != b:
+					_walk(a, b)
+	# The outer ring joins the inner at its nearest building.
+	if by_ring.has(0) and by_ring.has(1):
+		for p: Vector3 in by_ring[1]:
+			var best: Vector3 = by_ring[0][0]
+			for q: Vector3 in by_ring[0]:
+				if q.distance_to(p) < best.distance_to(p):
+					best = q
+			if best.distance_to(p) < radius * 0.7:
+				_walk(best, p)
+
+
+## Stepping stones from `a` to `b`, leaving room round a building at each
+## end, into the buildings' near and far layers.
+func _walk(a: Vector3, b: Vector3) -> void:
+	var stone: Color = Color(PATH.get(key, "#D2AE80"))
+	var flat := Vector3(b.x - a.x, 0, b.z - a.z)
 	var reach := flat.length()
-	if reach < 3.0:
-		return
-	var dir := flat / reach
-	var start := 4.4 * UniverseCitadel.MAP_SCALE if key == "heart" else 1.8
-	var stone: Color = Color(PATH[key]) if PATH.has(key) else (palette["ground"] as Color).lightened(0.08)
-	var n := int((reach - start - 1.3) / 0.55)
+	var dir := flat / maxf(reach, 0.001)
+	var n := int((reach - 2.0) / 0.55)
 	for k in n:
-		var d := start + k * 0.55
-		var side := Vector3(-dir.z, 0, dir.x) * (0.12 if k % 2 == 0 else -0.12)
-		var p := from + dir * d + side
-		var f := d / radius
-		g.ring(Geo.place(p + Vector3(0, at.y + dome(f) + 0.03, 0), k * 0.7), 0.0, 0.27,
-			stone.darkened(0.06 * (k % 3)), 5)
+		var d := 1.0 + k * 0.55 + 0.27
+		var side := Vector3(-dir.z, 0, dir.x) * (0.1 if k % 2 == 0 else -0.1)
+		var p := Vector3(a.x, 0, a.z) + dir * d + side
+		var f := Vector2(p.x - at.x, p.z - at.z).length() / radius
+		var t := Geo.place(Vector3(p.x, at.y + dome(f) + 0.03, p.z), k * 0.7)
+		for g: Geo in [near, far]:
+			g.ring(t, 0.0, 0.27, stone.darkened(0.06 * (k % 3)), 5)
 
 
 ## A lamp where a building's path leaves the plaza: the realm's warm lights
