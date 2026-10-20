@@ -159,6 +159,10 @@ func _pieces(r: RulebornReplay, now: Dictionary) -> void:
 			burst(at, Color("#F2B43C"), 30, 4.5, "coin")
 			ring(at - Vector3(0, 0.85, 0), Color("#FFE27A"), 3.0)
 			view.shake(1.0)
+			# The crew beside it cheer for a moment (the design's celebrate).
+			for c: Node3D in view._crew:
+				if c.position.distance_to(at) < 3.0:
+					c.set_meta("cheer", 90)
 		elif int(now["health"]) < int(_last["health"]) and int(now["tick"]) % 6 == 0:
 			burst(at, Color("#D9D2FF"), 4, 1.6, "shard")
 

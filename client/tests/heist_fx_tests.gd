@@ -272,6 +272,11 @@ func _models(replay: RulebornReplay) -> void:
 	var played: Array = figure.get("played")
 	var guard_figure := view._guards[0].get_node("Rig/Figure")
 	WorldView.figure_maker = Callable()
+	var clips := [FxMotion.model_clip(true, true, "Run", true, true),
+		FxMotion.model_clip(false, false, "Walk", true, true),
+		FxMotion.model_clip(false, true, "Run", true, false), FxMotion.model_clip(false, true, "Run", false, false),
+		FxMotion.model_clip(false, true, "Crouch", false, false), FxMotion.model_clip(false, false, "Walk", false, false)]
+	played = played if clips == ["ko", "hit", "carry", "run", "walk", "idle"] else []
 	check.call("a character model, when the integrator gives one, takes each actor's figure and is played the clip "
 			+ "for what the simulation says it is doing (TD.9)",
 		made.size() == replay.crew().size() + replay.guards().size() and made.has("guard") and played.size() == 1

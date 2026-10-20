@@ -4,6 +4,9 @@ extends RefCounted
 ## stand-ins' bobs, squashes, leans and swinging limbs, and a character
 ## model's clips, each from what the simulation says its actor is doing.
 
+## The simulation's water surface (`RulebornReplay.surfaces`).
+const WATER := 2
+
 
 ## Gentle physical humour (§21.1): a figure on the move bobs and squashes
 ## with its steps — tiptoeing crouched, bounding at a run — and one standing
@@ -61,16 +64,25 @@ static func bounce(view: WorldView, node: Node3D, key: String, t: float) -> void
 ## only lays it down when it is down.
 static func play_model(view: WorldView, node: Node3D, rig: Node3D, key: String, t := 0.0) -> void:
 	var down: bool = node.get_meta("down", false)
+	var moving := _moving(view, key)
+	var move := movement(view.gait, moving, t)
 	# Knocked out, a model lies on its back whatever its kind's "ko" pose, so
-	# who is out reads from above at a glance.
-	var moving_now := _moving(view, key)
-	var move := movement(view.gait, moving_now, t)
-	# The laws bend a model's walk too: it leans, sways and floats as they say.
+	# who is out reads from above at a glance; else the laws bend its walk
+	# too: it leans, sways and floats as they say.
 	rig.rotation = Vector3(-PI / 2.0, 0, 0) if down else Vector3(0, 0, float(move["lean"]))
 	rig.position = Vector3(0, 0.25, 0) if down else Vector3(0, float(move["float"]), 0)
-	var moving := _moving(view, key)
 	var gait := str(node.get_meta("gait", "Walk"))
 	var clip := model_clip(down, moving, gait, node.get_meta("carrying", false), int(node.get_meta("hit", 0)) > 0)
+	# Where it walks, by the simulation's grid: wading through water, climbing
+	# between height levels.
+	if moving and not down:
+		var ground := terrain(view, key)
+		if ground != "":
+			clip = ground
+	if int(node.get_meta("cheer", 0)) > 0:
+		node.set_meta("cheer", int(node.get_meta("cheer", 0)) - 1)
+		if not down and not moving:
+			clip = "celebrate"
 	# A screen may hold a pose (the result's celebration) while it stands.
 	if not down and not moving and str(node.get_meta("pose", "")) != "":
 		clip = str(node.get_meta("pose", ""))
@@ -140,3 +152,19 @@ static func movement(g: Dictionary, moving: bool, t: float) -> Dictionary:
 		out["hop"] = minf(float(out["hop"]), 1.0)
 		out["lean"] = 0.0
 	return out
+
+
+## "wade" for an actor walking on a water tile, "climb" for one going between
+## height levels this tick, else "": read from the grid the simulation gives.
+static func terrain(view: WorldView, key: String) -> String:
+	if not view._to.has(key) or not view._from.has(key):
+		return ""
+	var a: Vector3 = view._from[key]
+	var b: Vector3 = view._to[key]
+	if absf(b.y - a.y) > 0.01:
+		return "climb"
+	var tile := Vector2i(floori(b.x + view._size.x / 2.0), floori(b.z + view._size.y / 2.0))
+	var i := tile.y * view._size.x + tile.x
+	if i >= 0 and i < view._surfaces.size() and view._surfaces[i] == WATER:
+		return "wade"
+	return ""
