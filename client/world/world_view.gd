@@ -64,6 +64,9 @@ static var _cache := {}
 ## or "ko" by what the simulation says the actor is doing. Unset, the
 ## stand-in figures of `ActorBuilder` are drawn.
 static var figure_maker: Callable = Callable()
+## Whether the laws' world signatures are T8's `LawFx` (on) or this track's
+## own `FxLaws` motes (off).
+static var law_effects := true
 
 ## §21.4's realm type, which picks the palette; and whether this is a heist.
 var realm_type := "heart"
@@ -100,6 +103,10 @@ var sight_edge: MeshInstance3D
 var anchors: FxAnchors
 var events: FxEvents
 var laws: FxLaws
+## Where the laws' world signatures hang (T8's `LawFx` attaches under it),
+## and the `LawFx` drawn there, synced each tick; null where it is not.
+var effects: Node3D
+var law_fx: LawFx
 
 var _static_key := ""
 var _vault: MeshInstance3D
@@ -189,6 +196,9 @@ func _build_stage() -> void:
 	_rings.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_rings.material_override = clear_material(0.85)
 	world.add_child(_rings)
+	effects = Node3D.new()
+	effects.name = "Effects"
+	world.add_child(effects)
 	laws = FxLaws.new()
 	world.add_child(laws)
 	set_sky_hour(Time.get_datetime_dict_from_system()["hour"])
@@ -295,7 +305,15 @@ func _build_statics() -> void:
 	var woven: Array[String] = []
 	for p: Dictionary in replay.pylons():
 		woven.append(str(p.get("law", "")))
-	laws.build(woven, _size, self)
+	# The laws' world signatures are T8's `LawFx` where it draws (a 3D
+	# renderer; when `law_effects` is on); this track's `FxLaws` then keeps
+	# only the movement signatures, and draws the motes itself otherwise.
+	if law_fx != null:
+		law_fx.queue_free()
+		law_fx = null
+	if law_effects and rendering_3d():
+		law_fx = LawFx.attach(self, replay)
+	laws.build(woven, _size, self, law_fx == null)
 	_build_actors()
 
 
@@ -564,6 +582,9 @@ func sync() -> void:
 	FxGround.sight(self)
 	_sync_marks()
 	events.read(replay)
+	if law_fx != null:
+		law_fx.sync_world(replay)
+		law_fx.sync(float(tick))
 	var landed := replay.has_landed()
 	if landed and not _landed and heist and not follow.is_empty() and not Settings.reduced_motion \
 			and replay.tick() < 60:
@@ -712,6 +733,8 @@ func _process(delta: float) -> void:
 	_frame_camera()
 	FxGround.rings(self, _rings, t / TPS)
 	laws.tick(delta, self)
+	if law_fx != null:
+		law_fx.sync(t)
 	anchors.tick(delta)
 	_read_hold()
 
