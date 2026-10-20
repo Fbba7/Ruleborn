@@ -37,6 +37,8 @@ func draw(island: RulebornIsland, replay: RulebornReplay, picked: Vector2i, move
 	for t: Vector2i in moves:
 		paint[t] = OverlayTiles.OPEN if moves[t] else OverlayTiles.BAD
 	tiles.paint(paint)
+	var open: Array = moves.keys().filter(func(t: Vector2i) -> bool: return moves[t])
+	tiles.arrows(picked, open if picked.x >= 0 else [])
 	var index := guard_at(replay, picked)
 	view.selected_guard = index
 	tiles.cursor(picked, true)
