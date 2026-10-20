@@ -29,6 +29,8 @@ var grade_label: Label
 var play_button: Button
 var speed_button: Button
 
+var progress: FxDraw
+
 var _owed := 0.0
 
 
@@ -114,6 +116,8 @@ func _refresh() -> void:
 	speed_button.accessibility_name = Strings.t("REPLAY_SPEED", SPEEDS[speed_index])
 	view.describe()
 	view.queue_redraw()
+	if progress != null:
+		progress.queue_redraw()
 
 
 func _build() -> void:
@@ -143,6 +147,10 @@ func _build() -> void:
 	status_box.add_child(name_label)
 	status_box.add_child(badge_label)
 	status_box.add_child(grade_label)
+	# How far into the heist the playback is: a bar, the alarm's levels
+	# ticked along it.
+	progress = FxDraw.new(_draw_progress, Vector2(0, UI.px(10)))
+	status_box.add_child(progress)
 	column.add_child(status)
 
 	column.add_child(FxSkin.camera_row(view))
@@ -162,6 +170,11 @@ func _build() -> void:
 	controls.add_child(_button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "card"))
 	column.add_child(UI.narrow(controls))
 	column.add_child(FxSkin.corner_clear())
+
+
+func _draw_progress(ci: Control) -> void:
+	var share := float(replay.tick()) / maxf(1.0, float(replay.ticks()))
+	FxIcons.bar(ci, Rect2(Vector2(0, ci.size.y * 0.15), Vector2(ci.size.x, ci.size.y * 0.7)), share, FxSkin.GOLD)
 
 
 ## A playback button in the heist's skin.

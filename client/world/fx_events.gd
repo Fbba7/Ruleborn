@@ -234,8 +234,8 @@ static func _bit(kind: String) -> Mesh:
 			s.size = Vector3(0.16, 0.16, 0.05)
 			m = s
 		"shard":
-			var b := BoxMesh.new()
-			b.size = Vector3(0.12, 0.08, 0.1)
+			var b := PrismMesh.new()
+			b.size = Vector3(0.2, 0.22, 0.12)
 			m = b
 		_:
 			var q := SphereMesh.new()
