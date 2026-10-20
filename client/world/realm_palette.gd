@@ -22,11 +22,11 @@ const TYPES := {
 		"dirt": "#B9875C", "cliff": "#9C8FB4", "cliff_deep": "#746A92", "trim": "#F2B43C", "plant": "#E8D27A",
 		"accent": "#F2B43C", "bloom": "#FFFFFF", "light": "#FFF2D0",
 		"sky_top": "#3B6FD0", "sky_mid": "#7FB5EE", "sky_low": "#FFE3B0"},
-	"crystalline": {"ground": "#CDBDE6", "grass": "#9C9CCB", "stone": "#BFAEDB", "rock": "#7E6AA8", "soil": "#5E4A86",
+	"crystalline": {"ground": "#CDBDE6", "grass": "#ABA9D8", "stone": "#BFAEDB", "rock": "#7E6AA8", "soil": "#5E4A86",
 		"dirt": "#8C86B0", "cliff": "#4F4C86", "cliff_deep": "#37346A", "trim": "#8C6CF0", "plant": "#A9D8E8",
 		"accent": "#8C6CF0", "bloom": "#BFAEFF", "light": "#E0E8FF",
 		"sky_top": "#15123F", "sky_mid": "#34307D", "sky_low": "#8F7FE0"},
-	"tidehold": {"ground": "#E6D6AE", "grass": "#4E957C", "stone": "#9FB0B8", "rock": "#6E8290", "soil": "#7C6A55",
+	"tidehold": {"ground": "#E6D6AE", "grass": "#40806A", "stone": "#9FB0B8", "rock": "#6E8290", "soil": "#7C6A55",
 		"dirt": "#7C6A58", "cliff": "#4E6D86", "cliff_deep": "#375068", "trim": "#3CC6D8", "plant": "#5CB88A",
 		"accent": "#3CC6D8", "bloom": "#F3E6C0", "light": "#E8FFFF",
 		"sky_top": "#0E2F4F", "sky_mid": "#2A6D8E", "sky_low": "#A7E6EA"},
@@ -34,7 +34,7 @@ const TYPES := {
 		"dirt": "#5A3B34", "cliff": "#3F2A30", "cliff_deep": "#2B1C22", "trim": "#F07A3C", "plant": "#E0A04A",
 		"accent": "#F07A3C", "bloom": "#FF8A3C", "light": "#FFB070",
 		"sky_top": "#22091A", "sky_mid": "#5E1F2E", "sky_low": "#F08A4C"},
-	"verdant": {"ground": "#86B866", "grass": "#4E9650", "stone": "#C9C2A8", "rock": "#7F7462", "soil": "#7A5A3E",
+	"verdant": {"ground": "#86B866", "grass": "#468A48", "stone": "#C9C2A8", "rock": "#7F7462", "soil": "#7A5A3E",
 		"dirt": "#7A5A40", "cliff": "#6B5846", "cliff_deep": "#4F4034", "trim": "#5CC46A", "plant": "#3E9A48",
 		"accent": "#F2E07A", "bloom": "#F7A6DA", "light": "#FFF0B8",
 		"sky_top": "#17402F", "sky_mid": "#3B8657", "sky_low": "#DCF1A8"},
@@ -50,11 +50,11 @@ const TYPES := {
 ## (Lantern Vale keeps its twilight at noon, §21.4).
 const LIGHTS := {
 	"heart": {"sun": 0.53, "sky": "#FFC8F0", "under": "#4B2F6E", "at": Vector3(12, 20, 8), "hour": 0.3},
-	"skyfield": {"sun": 0.57, "sky": "#CFE8FF", "under": "#6A5A40", "at": Vector3(14, 24, 6), "hour": 0.45},
-	"crystalline": {"sun": 0.51, "sky": "#C8C0FF", "under": "#2A2660", "at": Vector3(8, 22, 12), "hour": 0.25},
-	"tidehold": {"sun": 0.52, "sky": "#B8F0F0", "under": "#284860", "at": Vector3(10, 20, 14), "hour": 0.3},
+	"skyfield": {"sun": 0.59, "sky": "#CFE8FF", "under": "#6A5A40", "at": Vector3(14, 24, 6), "hour": 0.45},
+	"crystalline": {"sun": 0.57, "sky": "#C8C0FF", "under": "#2A2660", "at": Vector3(8, 22, 12), "hour": 0.25},
+	"tidehold": {"sun": 0.42, "sky": "#B8F0F0", "under": "#284860", "at": Vector3(10, 20, 14), "hour": 0.3},
 	"emberreach": {"sun": 0.53, "sky": "#FF9A70", "under": "#2A1018", "at": Vector3(16, 14, 4), "hour": 0.2},
-	"verdant": {"sun": 0.56, "sky": "#D8FFC0", "under": "#3A4A20", "at": Vector3(12, 22, 10), "hour": 0.4},
+	"verdant": {"sun": 0.50, "sky": "#D8FFC0", "under": "#3A4A20", "at": Vector3(12, 22, 10), "hour": 0.4},
 	"lanternvale": {"sun": 0.33, "sky": "#6060B0", "under": "#100820", "at": Vector3(8, 20, 10), "hour": 0.12},
 }
 
