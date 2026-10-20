@@ -98,6 +98,21 @@ static func clash(fx: LawFx, into: Node3D, which: String, a: Vector3, b: Vector3
 ## §8.5's effect of `id` over the realm.
 static func chord(fx: LawFx, into: Node3D, id: String, pts: Array[Vector3]) -> void:
 	var want: Array = LawFxLinks.CHORDS[id]
+	# A sheet of light spans the three crowns, each corner in its note's colour.
+	var sheet := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
+	var sg := Geo.new()
+	var cs: Array[Color] = []
+	for k in 3:
+		cs.append(LawFxLinks.note_colour(want[k]).lightened(0.35))
+	var mid0 := (pts[0] + pts[1] + pts[2]) / 3.0
+	for k in 3:
+		var c := cs[k].lerp(cs[(k + 1) % 3], 0.5)
+		sg.tri(mid0, pts[k], pts[(k + 1) % 3], c, Vector3.UP)
+		sg.tri(mid0, pts[(k + 1) % 3], pts[k], c, Vector3.DOWN)
+	sheet.solid(sg.mesh(), Transform3D.IDENTITY, mid0, 0.0)
+	var sm := fx.glass_material(Color.WHITE, 0, 1.0, 0.16)
+	sm.set_shader_parameter("rim", 0.0)
+	fx.layer(into, sheet, sm)
 	var mid := (pts[0] + pts[1] + pts[2]) / 3.0 + Vector3(0, 0.5, 0)
 	var tri := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	var g := Geo.new()

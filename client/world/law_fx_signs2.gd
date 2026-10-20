@@ -180,8 +180,8 @@ static func _bloom(fx: LawFx, sig: Node3D) -> void:
 			g.ball(Geo.place(Vector3(0, 0.56, 0)), 0.05, Color("#F6C453", 0.6), 2, 6)
 			sprouts.geo(g, at, r.randf() * 0.3 + float(k) * 0.12)
 	fx.layer(sig, sprouts, fx.solid_material(2, 1.0), true)
-	LawFxPaint.spray(fx, sig, "bloom", {"n": 34, "shape": 5, "colour": Color("#F7A6DA", 0.95),
-		"colour_b": Color("#FFF2A0", 0.95), "radius": [0.06, 0.09], "lift": [0.3, 1.8], "vel": Vector3(0.12, -0.08, 0.05),
+	LawFxPaint.spray(fx, sig, "bloom", {"n": 34, "shape": 5, "colour": Color("#F07AC0", 1.0),
+		"colour_b": Color("#F6C453", 1.0), "radius": [0.06, 0.09], "lift": [0.3, 1.8], "vel": Vector3(0.12, -0.08, 0.05),
 		"period": [6.0, 9.0], "wobble": 0.25})
 
 
