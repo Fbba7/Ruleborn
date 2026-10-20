@@ -226,6 +226,18 @@ void fragment() {
 		c = mix(colour_a.rgb, colour_b.rgb, lo * 0.7);
 		c = mix(c, vec3(1.0), hi * 0.85);
 		a = 0.78;
+	} else if (pattern == 17) {
+		// A pylon's ground: a ring in its school's colour, inked at the rim,
+		// with a soft fill and four notches turning slowly.
+		vec2 d = (p - local.xy) / max(local.w, 0.1);
+		float r = length(d);
+		float ang = atan(d.y, d.x);
+		float band = smoothstep(0.09, 0.05, abs(r - 0.8));
+		float rim = smoothstep(0.035, 0.0, abs(r - 0.9));
+		float notch = step(0.9, fract(ang / 6.28318 * 4.0 + s * 0.05)) * smoothstep(0.08, 0.04, abs(r - 0.66));
+		c = mix(colour_a.rgb, colour_b.rgb, rim);
+		a = smoothstep(0.85, 0.2, r) * 0.25 + band * 0.85 + rim * 0.9 + notch * 0.8;
+		a *= step(r, 0.95);
 	} else {
 		// Density: the ground's grain enlarged, a heavy coarse weave.
 		float n = noise(p * 2.0);

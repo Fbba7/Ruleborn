@@ -148,7 +148,9 @@ func build(s: LawFxSite) -> void:
 		under.decal(c + Vector3(0, 0.03, 0), Vector2(1.1, 1.1), 1.0, Vector4(c.x, c.z, 0.0, 1.1), 0.0,
 			LawFxCrown.colours(str(p["school"]))[0])
 	if under.triangles > 0:
-		layer(crowns, under, decal_material(8, Color.WHITE))
+		var ring := decal_material(17, Color.WHITE, Color("#1A0C14"))
+		ring.set_shader_parameter("lit", 0.3)
+		layer(crowns, under, ring)
 	_share_ground()
 	links = Node3D.new()
 	links.name = "Links"
