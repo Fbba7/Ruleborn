@@ -66,9 +66,12 @@ void fragment() {
 	vec3 c = colour.rgb;
 	if (kind < 0.5) {
 		// Harmony: light flows along the thread, both ways.
+		// The note's colour through the body, darker at the rim so it reads
+		// by value too, white only where a pulse is passing.
 		float pulse = smoothstep(0.2, 0.0, abs(fract(along * 3.0 - s * 0.5) - 0.5) - 0.3);
-		c = mix(c, vec3(1.0), pulse * 0.6 + step(0.75, core) * 0.4);
-		a *= 0.6 + 0.4 * pulse;
+		c = mix(c * 0.55, c, smoothstep(0.15, 0.45, core));
+		c = mix(c, vec3(1.0), pulse * 0.55 * step(0.5, core));
+		a = smoothstep(0.0, 0.25, core) * (0.85 + 0.15 * pulse);
 	} else if (kind < 1.5) {
 		// Dissonance: flickers on and off, uneasy.
 		float k = floor(s * 9.0);
