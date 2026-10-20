@@ -2,8 +2,9 @@ extends SceneTree
 ## The kit's buildings (T3): §10.1's kinds in rows, each at §21.5's four
 ## looks (levels 1, 4, 7 and 10) left to right, in a realm (REALM, default
 ## heart), saved as a still (tools/render/shoot.sh). ROWS picks the kinds by
-## their place in BuildingKit.KINDS ("0-5", the default "0-16"); SHOT is the
-## file, PITCH and HOUR optional.
+## their place in BuildingKit.KINDS ("0-5", the default "0-16"); MAP set
+## draws the universe map's versions; SHOT is the file, PITCH and HOUR
+## optional.
 func _initialize() -> void:
 	_shoot()
 
@@ -49,7 +50,10 @@ func _shoot() -> void:
 			var side := 3 if kind == "keeper_s_spire" else 2
 			var mid := Vector3(-span.x / 2.0 + spacing * (col + 0.5), 0, -span.y / 2.0 + spacing * (r + 0.5))
 			var before := g.triangles + fine.triangles
-			BuildingKit.build(g, kind, mid, side, lvl, colours, fine, panes)
+			if OS.get_environment("MAP") != "":
+				BuildingKit.build_map(g, kind, mid, side, lvl, colours)
+			else:
+				BuildingKit.build(g, kind, mid, side, lvl, colours, fine, panes)
 			tris.append("%s@%d=%d" % [kind, lvl, g.triangles + fine.triangles - before])
 	print("triangles ", tris)
 	var ground_mat := RealmKit.material("ground")
