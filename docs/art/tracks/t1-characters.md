@@ -64,35 +64,102 @@ Fur shells are next passes (`creature_fur.gdshader`), off in the world and on
 in the Character screen. The ink outline (`creature_outline.gdshader`) is one
 constant, `CreatureModel.OUTLINE`.
 
+## What is exported
+
+All 43 characters, each 3,000–5,880 triangles (the export fails above 6,000),
+one skinned mesh with one opaque and at most one glass surface, 13–22 clips,
+the design's expressions, and sockets:
+
+- the 18 ruleborn (§21.6), the 4 launch Sages (Archivist, Tinkerer, Gardener,
+  Wanderer), the 3 visitors (Cartographer, Collector, Stray) and the 3
+  paradox-born (Reverser, Twinned, Unmade);
+- Chronicler and Lamplighter, the 3 anomalies (Devourer, Hourglass Storm,
+  Wildfire Bloom), the law creatures (Illusory Guard, Swarmling; the third,
+  Stray as a law's echo, has no module of its own) and the 7 wildlife modules
+  (Sky Jelly, Lanternfish, Prism Beetle, Puffball Flock, Puffballs and Bees,
+  and the three moths).
+
+`client/tests/creature_tests.gd` checks the list, the budget, §21.6's heights,
+the shared clips, the standard sockets, and that `CreatureModel` makes, places,
+faces, plays, takes forms and the guard form.
+
 ## Decisions and conflicts
 
 - **Character outline.** §21.3 asks for 1.5 px ink outlines; the design's
   handoff says the owner had the character outline removed. Default: on, per
   §21.3, 1.5 px on the body and 0.45 px on accessories so eyes and straps are
   not ringed. One switch: `CreatureModel.OUTLINE`.
-- **Shade tint.** The world's violet shade turns saturated warm paint crimson
-  on a character, so characters use a lighter violet (0.68, 0.6, 0.9).
-- **Vertex colours** come through Godot's glTF import in linear space; the
-  atlas is sRGB.
-- **Heights.** Prism Mite (0.5 m) and Glass Golem (1.2 m) are scaled to §21.6
-  by their body height (`fix` in `tools/art/kinds.mjs`); the rest keep their
-  module's `GAME_SCALE`.
+- **Shade tint and ramp on characters.** The world's violet shade turns
+  saturated warm paint crimson, so characters use a lighter violet
+  (0.68, 0.6, 0.9). The world's sun is high (58°), which leaves faces, being
+  vertical, in the lower steps; on characters the same four steps start 0.22
+  earlier in N·L (`ramp_bias`), so faces read in the light.
+- **Lift.** The design's sculpts are pale where lit (sheen, image-based light,
+  ACES). The top two steps lift light paint toward warm white by its value;
+  dark paint (pupils, ink) stays dark; metal does not lift; Hush barely.
+- **Body surfaces from the design's `bodyMat`.** Echoplate (metalness 1) is
+  toon chrome (sky-facing bright, ground-facing dark, a hard highlight band);
+  clearcoat kinds get the band; iridescent kinds a rainbow edge; the Golem and
+  Lantern Wisp their emissive glow.
+- **Vertex colours** arrive linear through Godot's glTF import; the atlas is
+  sRGB. Gear built in GDScript converts its sRGB palette colours.
+- **Heights.** Kept at the module's `GAME_SCALE` where it matches §21.6. Scaled
+  to §21.6 by body height (without hover, plumes or crests): Prism Mite
+  0.76 → 0.5 m, Glass Golem 1.39 → 1.2 m, Lantern Wisp 0.72 → 0.6 m, Skyskipper
+  0.8 m. Sages: §21.1's "about 1.5 m"; the Archivist "tall" at 1.6 m, the
+  Tinkerer "small" at 1.2 m, Gardener 1.55, Wanderer and Chronicler 1.5,
+  Lamplighter 1.45. Anomalies and wildlife to the heights measured from the
+  design in `docs/analysis/screens-v3/3d-pipeline.md` §3.3 (their modules
+  have no `GAME_SCALE`).
+- **Forms.** Hush: the paint remapped by its own luminance into midnight (the
+  pattern survives), a scatter of star freckles on the body, and a small
+  glowing crescent turning over the head (the accessory change §21.6 asks for).
+  Spark: the paint warmed toward embers, lit from within, a hot rim, embers
+  rising from the design's ember sockets. Echo: a translucent magenta twin a
+  little behind and to the side, 0.3 s late on the same clip.
+- **Guard form (ours; the design has none).** A red sash with gold trim and a
+  knot, over the chest bone a little outside the body so fleece does not hide
+  it, and a small brass lantern with a glowing body at the right hand socket.
+- **Wings and sheets.** Double-sided sheets get real back faces with a little
+  self-light; alpha-tested sheets (moth wings) are cut into geometry from
+  their texture's alpha.
+- **Bakes.** Kit modules bake from the sculpt's own field and paint.
+  Skyskipper and the Archivist keep theirs private, so their atlas is
+  transferred from the fine mesh's painted vertices.
+- **Files I touched outside the track:** `client/tests/run.gd` (one line
+  registering `CreatureTests`), `README.md` (the `tools/art/` row).
 
 ## Stills
 
-Before (the placeholder chibi actors in the heist):
-`docs/art/shots/t1-characters/before_world_shot.png`.
-
-Featherkin, design portrait beside ours, and the turntable:
-`docs/art/shots/t1-characters/featherkin_portrait_r6.png`,
-`docs/art/shots/t1-characters/featherkin_turntable_r6.png`.
+- Before: `docs/art/shots/t1-characters/before_world_shot.png` (the chibi
+  placeholders in the heist).
+- Design portrait above ours, with grayscale thumbnails:
+  `portraits_a_r7.png`, `portraits_b_r7.png` (the ruleborn),
+  `portraits_c.png` (Skyskipper, Sages, visitors, paradox-born).
+- `featherkin_portrait_r6.png`: Featherkin, design beside ours at portrait size.
+- `lineup_ruleborn.png`: the eighteen to scale. `lineup_others.png`: Sages,
+  visitors, paradox-born, anomalies, law creatures, wildlife.
+- `forms_featherkin_guard.png`: base, Hush, Spark, Echo, and the guard form
+  on Rambler and Bloomling.
 
 ## Still worse than the design
 
-- The design's hero renders are softer (sheen, image-based light, ACES); ours
-  are crisper and a shade more saturated.
-- The cape's 59 feathers are flat slabs without bevel at this budget.
+- Softness: the hero renders have sheen, image-based light and ACES; ours are
+  crisper and more saturated (Glass Golem reads deep violet, not lilac glass).
+- Accessory detail is coarse at the budget: the Gardener's woven vine hat is a
+  thin ring, the Featherkin cape feathers are flat slabs, small brass parts
+  are simplified.
+- Atlas packing wastes about a third of the texture; charts could be packed
+  tighter for sharper paint.
+- File sizes are 330–1,050 KB per kind (32 MB in all); the glTF JSON of the
+  thinned animation tracks is a large share.
+- The forms are shader and gear work, not the per-kind pattern and accessory
+  §21.6 imagines for each of the 54.
 
 ## Next
 
-The other 17 ruleborn, the Sages, visitors and paradox-born, then the rest.
+- The integrator swaps `CreatureModel` into the heist's actors
+  (`ActorBuilder` today): `make`, `place`, `play`.
+- Tighter atlas packing (skyline packer) and 1,024 for the Character screen.
+- Per-kind accessory budgets so faces and signature props keep their segments.
+- Shared animation time accessors to shrink files.

@@ -31,7 +31,7 @@ export const KINDS = {
 	bloomling: { module: 'bloomling.js', res: 0.006, body: 2800, seg: 0.35, height: 0.6, school: 'life', group: 'ruleborn' },
 	rootrunner: { module: 'rootrunner.js', res: 0.007, body: 3000, seg: 0.35, height: 0.8, school: 'life', group: 'ruleborn' },
 	echoplate: { module: 'echoplate.js', res: 0.011, body: 3200, seg: 0.4, height: 1.2, school: 'spirit', group: 'ruleborn' },
-	lanternwisp: { module: 'lanternwisp.js', res: 0.006, body: 3000, seg: 0.35, height: 0.6, school: 'spirit', group: 'ruleborn' },
+	lanternwisp: { module: 'lanternwisp.js', res: 0.006, body: 3000, seg: 0.35, height: 0.6, fix: true, school: 'spirit', group: 'ruleborn' },
 	soulmender: { module: 'soulmender.js', res: 0.007, body: 3000, seg: 0.35, height: 0.9, school: 'spirit', group: 'ruleborn' },
 	// The four launch Sages.
 	archivist: { module: 'archivist-rig.js', family: 'archivist', res: 0.0078, body: 3400, seg: 0.3, height: 1.6, fix: true, school: 'sage', group: 'sage' },
@@ -48,19 +48,19 @@ export const KINDS = {
 	// The rest: Sages after launch, anomalies, law creatures, wildlife.
 	chronicler: { module: 'chronicler.js', res: 0.011, body: 3000, seg: 0.3, height: 1.5, fix: true, school: 'sage', group: 'sage' },
 	lamplighter: { module: 'lamplighter.js', res: 0.011, body: 3000, seg: 0.3, height: 1.45, fix: true, school: 'sage', group: 'sage' },
-	devourer: { module: 'devourer.js', res: 0.008, body: 3400, seg: 0.35, height: 1.92, school: 'anomaly', group: 'anomaly' },
-	hourglassstorm: { module: 'hourglassstorm.js', res: 0.008, body: 3400, seg: 0.35, height: 1.93, school: 'anomaly', group: 'anomaly' },
-	wildfirebloom: { module: 'wildfirebloom.js', res: 0.0075, body: 3200, seg: 0.3, height: 1.87, school: 'anomaly', group: 'anomaly' },
+	devourer: { module: 'devourer.js', res: 0.008, body: 3400, seg: 0.35, height: 1.92, fix: true, school: 'anomaly', group: 'anomaly' },
+	hourglassstorm: { module: 'hourglassstorm.js', res: 0.008, body: 3400, seg: 0.35, height: 1.93, fix: true, school: 'anomaly', group: 'anomaly' },
+	wildfirebloom: { module: 'wildfirebloom.js', res: 0.0075, body: 3200, seg: 0.3, height: 1.87, fix: true, school: 'anomaly', group: 'anomaly' },
 	illusoryguard: { module: 'illusoryguard.js', family: 'illusory', res: 0.0095, body: 2600, seg: 0.3, height: 0.6, school: 'law', group: 'law' },
 	swarmling: { module: 'swarmling.js', res: 0.005, body: 2000, seg: 0.35, height: 0.36, school: 'law', group: 'law' },
-	skyjelly: { module: 'skyjelly.js', res: 0.006, body: 2400, seg: 0.35, height: 0.65, school: 'wildlife', group: 'wildlife' },
-	lanternfish: { module: 'lanternfish.js', res: 0.0055, body: 2000, seg: 0.35, height: 0.39, school: 'wildlife', group: 'wildlife' },
+	skyjelly: { module: 'skyjelly.js', res: 0.006, body: 2400, seg: 0.35, height: 0.65, fix: true, school: 'wildlife', group: 'wildlife' },
+	lanternfish: { module: 'lanternfish.js', res: 0.0055, body: 2000, seg: 0.35, height: 0.39, fix: true, school: 'wildlife', group: 'wildlife' },
 	prismbeetle: { module: 'prismbeetle.js', res: 0.005, body: 2000, seg: 0.35, height: 0.38, school: 'wildlife', group: 'wildlife' },
 	puffballflock: { module: 'puffballflock.js', family: 'shared', res: 0.0065, body: 2600, seg: 0.35, height: 0.47, school: 'wildlife', group: 'wildlife' },
 	puffbee: { module: 'puffbee.js', family: 'shared', res: 0.0065, body: 2600, seg: 0.35, height: 0.57, school: 'wildlife', group: 'wildlife' },
-	ashmoth: { module: 'ashmoth.js', family: 'shared', res: 0.005, body: 1600, seg: 0.35, height: 0.4, school: 'wildlife', group: 'wildlife' },
-	lanternmoth: { module: 'lanternmoth.js', family: 'shared', res: 0.005, body: 1600, seg: 0.35, height: 0.32, school: 'wildlife', group: 'wildlife' },
-	valemoth: { module: 'valemoth.js', family: 'shared', res: 0.005, body: 1600, seg: 0.35, height: 0.34, school: 'wildlife', group: 'wildlife' },
+	ashmoth: { module: 'ashmoth.js', family: 'shared', res: 0.005, body: 1600, seg: 0.35, height: 0.4, fix: true, school: 'wildlife', group: 'wildlife' },
+	lanternmoth: { module: 'lanternmoth.js', family: 'shared', res: 0.005, body: 1600, seg: 0.35, height: 0.32, fix: true, school: 'wildlife', group: 'wildlife' },
+	valemoth: { module: 'valemoth.js', family: 'shared', res: 0.005, body: 1600, seg: 0.35, height: 0.34, fix: true, school: 'wildlife', group: 'wildlife' },
 };
 
 // §21.3: "characters 3,000 to 6,000 triangles".

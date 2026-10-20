@@ -401,6 +401,39 @@ function bake(S, pos, nrm, tan, idx, uv, img, imgN, TS, area) {
 
 // ---------------------------------------------------------------- accessories
 
+// An alpha-tested sheet (a moth's wing) keeps its shape as geometry: each
+// triangle is cut into a fine grid and only the cells the texture keeps stay.
+function cutout(g, tex, cut) {
+	const P = g.attributes.position, N = g.attributes.normal, U = g.attributes.uv;
+	const I = g.index ? g.index.array : [...Array(P.count).keys()];
+	const n = 14;
+	const pos = [], nrm = [], uv = [];
+	const at = (a, b, c, i, j) => {
+		const u = i / n, v = j / n, w = 1 - u - v;
+		const f = (A, k) => A.getComponent(a, k) * w + A.getComponent(b, k) * u + A.getComponent(c, k) * v;
+		return { p: [f(P, 0), f(P, 1), f(P, 2)], n: N ? [f(N, 0), f(N, 1), f(N, 2)] : [0, 0, 1], t: [f(U, 0), f(U, 1)] };
+	};
+	for (let t = 0; t < I.length; t += 3) {
+		const a = I[t], b = I[t + 1], c = I[t + 2];
+		for (let i = 0; i < n; i++) for (let j = 0; j < n - i; j++) {
+			const tris = [[[i, j], [i + 1, j], [i, j + 1]]];
+			if (i + j < n - 1) tris.push([[i + 1, j], [i + 1, j + 1], [i, j + 1]]);
+			for (const tr of tris) {
+				const vs = tr.map(([x, y]) => at(a, b, c, x, y));
+				const cu = (vs[0].t[0] + vs[1].t[0] + vs[2].t[0]) / 3, cv = (vs[0].t[1] + vs[1].t[1] + vs[2].t[1]) / 3;
+				const smp = sampleTexture(tex, cu, cv);
+				if (!smp || smp[3] < cut) continue;
+				for (const q of vs) { pos.push(...q.p); nrm.push(...q.n); uv.push(...q.t); }
+			}
+		}
+	}
+	const out = new THREE.BufferGeometry();
+	out.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+	out.setAttribute('normal', new THREE.Float32BufferAttribute(nrm, 3));
+	out.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+	return out;
+}
+
 function sampleTexture(tex, u, v) {
 	const img = tex.image;
 	if (!img || !img.width) return null;
@@ -418,6 +451,14 @@ function sampleTexture(tex, u, v) {
 	const o = (y * img.width + x) * 4, p = tex.__px;
 	const srgb = tex.colorSpace === THREE.SRGBColorSpace;
 	const f = (k) => (srgb ? LIN(p[o + k] / 255) : p[o + k] / 255);
+	if (p[o + 3] < 13 && !tex.__probe) {
+		// A clear texel (outside a cut-out's shape) has no colour: take the nearest opaque one toward the middle.
+		tex.__probe = true;
+		let r = null;
+		for (let k = 1; k <= 12 && (!r || r[3] < 0.05); k++) r = sampleTexture(tex, (u + (0.5 - u) * k * 0.04 - tex.offset.x) / tex.repeat.x, ((tex.flipY ? 1 - v : v) + (0.5 - (tex.flipY ? 1 - v : v)) * k * 0.04 - tex.offset.y) / tex.repeat.y);
+		tex.__probe = false;
+		if (r) return [r[0], r[1], r[2], p[o + 3] / 255];
+	}
 	return [f(0), f(1), f(2), p[o + 3] / 255];
 }
 
@@ -426,7 +467,8 @@ function materialClass(m) {
 	if (m.color) c.copy(m.color);
 	let emit = 0, gloss = 0, glass = false, alpha = 1;
 	if (m.isMeshBasicMaterial) emit = 1;
-	if (m.emissive) {
+	if (m.emissiveMap) emit = Math.min(1, m.emissiveIntensity ?? 1);
+	else if (m.emissive) {
 		const e = m.emissive.clone().multiplyScalar(m.emissiveIntensity ?? 1);
 		const me = Math.max(e.r, e.g, e.b);
 		if (me > 0.02) {
@@ -783,8 +825,9 @@ window.exportKind = async function exportKind(cfg) {
 		// Bind-space position = inv(IBM_anchor) * inv(W_anchor(rest)) * W_mesh(rest) * v.
 		const toBind = new THREE.Matrix4().copy(ibm[j]).invert().multiply(restW(anc).invert()).multiply(restW(o));
 		const nm = new THREE.Matrix3().getNormalMatrix(toBind);
-		const mirrored = toBind.determinant() < 0;
-		const g = o.geometry;
+		let g = o.geometry;
+		const m0 = Array.isArray(o.material) ? o.material[0] : o.material;
+		if (m0 && m0.alphaTest > 0 && m0.map && g.attributes.uv) g = cutout(g, m0.map, m0.alphaTest);
 		const gp = g.attributes.position, gn = g.attributes.normal, gc = g.attributes.color, guv = g.attributes.uv;
 		const mats = Array.isArray(o.material) ? o.material : [o.material];
 		const groups = g.groups.length ? g.groups : [{ start: 0, count: g.index ? g.index.count : gp.count, materialIndex: 0 }];
@@ -834,8 +877,16 @@ window.exportKind = async function exportKind(cfg) {
 					map.set(v, nvI);
 				}
 				list.push(nvI);
-				// A mirrored placement (scale −1 for the left of a pair) turns the faces inside out.
-				if (mirrored && (list.length - startLen) % 3 === 0) { const e = list.length; const t = list[e - 1]; list[e - 1] = list[e - 2]; list[e - 2] = t; }
+				// A mirrored placement (scale −1 for the left of a pair)
+				// (or a geometry mirrored in place) can leave faces wound against their normals: rewind them.
+				if ((list.length - startLen) % 3 === 0) {
+					const e = list.length, A = list[e - 3], B = list[e - 2], Cc = list[e - 1];
+					const ux = P[B * 3] - P[A * 3], uy = P[B * 3 + 1] - P[A * 3 + 1], uz = P[B * 3 + 2] - P[A * 3 + 2];
+					const vx = P[Cc * 3] - P[A * 3], vy = P[Cc * 3 + 1] - P[A * 3 + 1], vz = P[Cc * 3 + 2] - P[A * 3 + 2];
+					const cx = uy * vz - uz * vy, cy = uz * vx - ux * vz, cz = ux * vy - uy * vx;
+					const nx = N[A * 3] + N[B * 3] + N[Cc * 3], ny = N[A * 3 + 1] + N[B * 3 + 1] + N[Cc * 3 + 1], nz = N[A * 3 + 2] + N[B * 3 + 2] + N[Cc * 3 + 2];
+					if (cx * nx + cy * ny + cz * nz < 0) { list[e - 1] = B; list[e - 2] = Cc; }
+				}
 			}
 			// A double-sided sheet (wing, leaf, page, banner) gets its back as real faces.
 			const openSheet = ['PlaneGeometry', 'ShapeGeometry', 'CircleGeometry', 'RingGeometry', 'LatheGeometry', 'BufferGeometry'].includes(g.type) || (g.parameters && g.parameters.openEnded);
@@ -845,14 +896,19 @@ window.exportKind = async function exportKind(cfg) {
 					let b = flip.get(v);
 					if (b !== undefined) return b;
 					b = P.length / 3; flip.set(v, b);
-					P.push(P[v * 3], P[v * 3 + 1], P[v * 3 + 2]); N.push(-N[v * 3], -N[v * 3 + 1], -N[v * 3 + 2]);
+					P.push(P[v * 3], P[v * 3 + 1], P[v * 3 + 2]);
+					N.push(-N[v * 3], -N[v * 3 + 1], -N[v * 3 + 2]);
 					TG.push(TG[v * 4], TG[v * 4 + 1], TG[v * 4 + 2], -TG[v * 4 + 3]);
-					C.push(C[v * 4], C[v * 4 + 1], C[v * 4 + 2], C[v * 4 + 3]); UV.push(UV[v * 2], UV[v * 2 + 1]); UV1.push(UV1[v * 2], UV1[v * 2 + 1]);
+					C.push(C[v * 4], C[v * 4 + 1], C[v * 4 + 2], C[v * 4 + 3]); UV.push(UV[v * 2], UV[v * 2 + 1]);
+					// A sheet's far side glows a little, as light through a wing or leaf, so it never reads black.
+					UV1.push(UV1[v * 2], Math.max(UV1[v * 2 + 1], 0.3));
 					SI.push(SI[v * 4], 0, 0, 0); SW.push(1, 0, 0, 0);
 					return b;
 				};
 				const end = list.length;
 				for (let t = startLen; t < end; t += 3) list.push(back(list[t]), back(list[t + 2]), back(list[t + 1]));
+				// The near side glows the same, so both faces of a sheet match.
+				for (let t = startLen; t < end; t++) UV1[list[t] * 2 + 1] = Math.max(UV1[list[t] * 2 + 1], 0.3);
 			}
 			accTris += grp.count / 3;
 			const key = (o.name || o.parent.name || '?') + ':' + g.type;
@@ -997,7 +1053,7 @@ window.exportKind = async function exportKind(cfg) {
 		const pw = W(idleFr, keptIdx[kParent[j]].i);
 		return pw.multiply(bones[j].matrix);
 	});
-	let maxY = -1e9, minY = 1e9, maxBodyY = -1e9;
+	let maxY = -1e9, minY = 1e9, maxBodyY = -1e9, minBodyY = 1e9;
 	const tmp = new THREE.Vector3(), acc = new THREE.Vector3();
 	for (let v = 0; v < P.length / 3; v++) {
 		acc.set(0, 0, 0);
@@ -1011,6 +1067,7 @@ window.exportKind = async function exportKind(cfg) {
 		if (acc.y > maxY) maxY = acc.y;
 		if (acc.y < minY) minY = acc.y;
 		if (v < nv && acc.y > maxBodyY) maxBodyY = acc.y;
+		if (v < nv && acc.y < minBodyY) minBodyY = acc.y;
 	}
 
 	// ---- write
@@ -1036,7 +1093,7 @@ window.exportKind = async function exportKind(cfg) {
 			chest_radius: +chestRadius.toFixed(4),
 			radius_units: +footprint.toFixed(4),
 			height_units: +maxY.toFixed(4),
-			body_height_units: +maxBodyY.toFixed(4),
+			body_height_units: +(maxBodyY - minBodyY).toFixed(4),
 			floor_units: +minY.toFixed(4),
 			game_scale: M.GAME_SCALE ?? null,
 			fur: Object.assign({ len: 0.0045, dens: [900, 700, 900], shells: 4 }, (S && S.def && S.def.fur) || {}),
