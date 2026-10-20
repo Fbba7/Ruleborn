@@ -52,6 +52,11 @@ var realm := "heart"
 var buildings: Array = []
 ## The level a building is drawn at when its own is not given.
 var level := 3
+## The island's seed (WorldView's, as it gives T2's IslandBuilder), so the
+## grid's ground takes the meadow's own colour; 0 when unknown.
+var island_seed := 0
+## The Vault's tile, which the worn trails lead to; (-1, -1) for none.
+var vault_at := Vector2i(-1, -1)
 
 var ground := Geo.new()
 var scatter := Geo.new()
@@ -70,6 +75,9 @@ func _init(r: RulebornReplay, colours: Dictionary) -> void:
 		surfaces = r.surfaces()
 		facings = r.facings()
 		tunnels = r.tunnels()
+		var v: Dictionary = r.vault()
+		if v.has("at"):
+			vault_at = Vector2i(floori((v["at"] as Vector2).x), floori((v["at"] as Vector2).y))
 	palette = colours
 	realm = KitStyle.realm_of(colours)
 	for g: Geo in [ground, scatter, hero, prop, clear, water, lava]:
@@ -140,6 +148,9 @@ func build() -> void:
 	ground.painted = true
 	water.painted = true
 	kg.scatter = scatter
+	if island_seed != 0:
+		kg.island = IslandBuilder.new(size, island_seed, palette)
+	kg.trails = _trails(footprints)
 	for i in features.size():
 		if features[i] in WATER_TINT:
 			kg.tints[Vector2i(i % size.x, i / size.x)] = Color(WATER_TINT[features[i]])
@@ -166,6 +177,43 @@ func build() -> void:
 	# windmills, …), just past the grid, where the Spire stands.
 	if footprints.any(func(fp: Array) -> bool: return fp[0] == "keeper_s_spire"):
 		KitSignature.build(hero, prop, realm, Vector2(size).length() / 2.0 + 0.5, palette)
+
+
+## Worn trails joining the buildings' doors and the Vault, as the design's
+## lanes join its houses: the shortest set of straight runs that links them
+## all (a spanning tree), in tile space.
+func _trails(footprints: Array) -> Array:
+	var stops: Array[Vector2] = []
+	for fp: Array in footprints:
+		var side: int = fp[3]
+		var mid := Vector2(fp[1], fp[2]) + Vector2(side, side) / 2.0
+		var turn := 0.0 if fp[0] == "keeper_s_spire" else facing(Vector2i(fp[1], fp[2]), side)
+		stops.append(mid + Vector2(sin(turn), cos(turn)) * (side / 2.0 + 0.45))
+	if inside(vault_at):
+		stops.append(Vector2(vault_at) + Vector2(0.5, 0.5))
+	var out: Array = []
+	if stops.size() < 2:
+		return out
+	var joined: Array[int] = [0]
+	while joined.size() < stops.size():
+		var best := INF
+		var pair := Vector2i(-1, -1)
+		for a: int in joined:
+			for b in stops.size():
+				if b in joined:
+					continue
+				var d := stops[a].distance_to(stops[b])
+				if d < best:
+					best = d
+					pair = Vector2i(a, b)
+		joined.append(pair.y)
+		# An elbow rather than a diagonal, so a trail follows the grid's lanes.
+		var a2 := stops[pair.x]
+		var b2 := stops[pair.y]
+		var corner := Vector2(b2.x, a2.y)
+		out.append([a2, corner])
+		out.append([corner, b2])
+	return out
 
 
 ## Every building: [kind, x, y, side, level], from `buildings` where a
@@ -261,11 +309,14 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
 	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
-	ground_mat.set_shader_parameter("petal", (KitStyle.of(realm)["accent"] as Color).lightened(0.35))
-	ground_mat.set_shader_parameter("pebble", palette["rock"].lightened(0.3))
-	var patterns := {"skyfield": 1, "crystalline": 2, "tidehold": 3, "emberreach": 4, "lanternvale": 5}
-	ground_mat.set_shader_parameter("pattern", patterns.get(realm, 0))
-	ground_mat.set_shader_parameter("specks", 2.0 if realm == "verdant" else 1.0)
+	# T2's painted grass and the realm's own marks, laid as on the island's
+	# meadow, so the grid and the meadow are one painted ground.
+	ground_mat.set_shader_parameter("paint", LookPaint.grass())
+	var marks := LookPaint.deco(realm)
+	if marks != null:
+		ground_mat.set_shader_parameter("deco", marks)
+		ground_mat.set_shader_parameter("deco_scale", 8.0)
+		ground_mat.set_shader_parameter("deco_glow", 1.0 if realm == "lanternvale" else 0.0)
 	var water_mat := material("water")
 	water_mat.set_shader_parameter("bank", KitGround.earth(palette).lightened(0.2).lerp(palette["grass"], 0.2))
 	var lava_mat := material("water")

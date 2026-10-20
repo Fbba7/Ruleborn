@@ -36,6 +36,12 @@ var water := Geo.new()
 var scatter := Geo.new()
 ## A water tile's tint (marsh, spring, rapids), by tile.
 var tints := {}
+## The island's own builder (T2's), for the meadow's colour: the grid's
+## ground starts from the very colour the island's meadow has under it.
+var island: IslandBuilder
+## Worn earth trails, tile-space segments [a, b] (Vector2), joining the
+## buildings' doors and the Vault: ground paint, not the simulation's gravel.
+var trails: Array = []
 
 ## Fields at tile centres, sampled between them so the paint never shows a
 ## tile's square: path, lush, apron, scorch, stone, shade, wet.
@@ -196,7 +202,8 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	var dirt := earth(palette)
 	var n1 := noise(u, v, 0.55)
 	var n2 := noise(u + 17.0, v - 9.0, 1.7)
-	var c := grass.lightened(0.07 * (n1 - 0.4)).darkened(0.06 * (n2 - 0.5))
+	var w := world(u, v, 0.0)
+	var c := meadow(w.x, w.z)
 	# Lush ground (moss, tall grass, thickets) is deeper and cooler.
 	var lush := field("lush", u, v)
 	c = c.lerp(grass.darkened(0.2).lerp(Color("#3E8A5A"), 0.15), clampf(lush * 1.2, 0.0, 1.0) * 0.8)
@@ -221,10 +228,42 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 		c = dirt.lerp(soil, 0.45).darkened(0.1)
 	# Higher ground catches a little more light.
 	c = c.lightened(0.03 * lvl)
+	# A worn trail between doors: trodden earth through the grass.
+	var trail := trail_at(u, v)
+	c = c.lerp(dirt.lerp(soil, 0.35), smoothstep(0.35, 0.8, trail + (n2 - 0.5) * 0.3) * 0.8)
 	var path := path_at(u, v)
 	# Worn earth round a path, before its cobbles start.
 	c = c.lerp(dirt.lerp(soil, 0.3), smoothstep(0.25, 0.5, path) * 0.5)
 	return [c, Vector4(path, lush, 0.0, stone)]
+
+
+## The island meadow's colour at world (x, z), as T2's `IslandBuilder.meadow`
+## paints it where the ground is flat (its two noise fields and the touch of
+## accent), so the grid and the island are one meadow.
+func meadow(x: float, z: float) -> Color:
+	var grass: Color = palette["grass"]
+	var gc := IslandBuilder.hsl(grass, 0.0, -0.08, -0.03)
+	if island == null:
+		return gc
+	var lt := IslandBuilder.hsl(gc, 0.015, 0.02, 0.06)
+	var dk := IslandBuilder.hsl(gc, -0.01, 0.02, -0.1)
+	var nn := island.n2(x * 0.42 + 3.0, z * 0.42 - 2.0)
+	var c := gc.lerp(lt if nn > 0.55 else dk, minf(1.0, absf(nn - 0.55) * 1.8))
+	var wn := island.n2(x * 0.22 + 9.0, z * 0.22 - 4.0)
+	if wn > 0.62:
+		c = c.lerp(palette["accent"], minf(0.22, (wn - 0.62) * 0.9))
+	if wn < 0.36:
+		c = IslandBuilder.hsl(c, 0.02, 0.06, 0.02)
+	return c
+
+
+## How near (u, v) is to a worn trail: 1 on its line, 0 a third of a tile out.
+func trail_at(u: float, v: float) -> float:
+	var best := 9.0
+	var p := Vector2(u, v)
+	for seg: Array in trails:
+		best = minf(best, _segment(p, seg[0], seg[1]))
+	return clampf(1.0 - best / 0.36, 0.0, 1.0)
 
 
 ## Tile `t`'s flat top, SUB × SUB quads, its edge rounded where it falls away.
@@ -369,6 +408,8 @@ func _skirt(t: Vector2i, d: Vector2i, y: float) -> void:
 		var e := world(q0.x, q0.y, ISLAND_Y - 0.01)
 		var ca: Color = paint(p0.x, p0.y, 0, false)[0]
 		var cb: Color = paint(p1.x, p1.y, 0, false)[0]
+		var far := world(q0.x, q0.y, 0.0)
+		grass = meadow(far.x, far.z)
 		var up := Vector3.UP
 		var z := Vector4.ZERO
 		var face := (b - a).cross(e - a)

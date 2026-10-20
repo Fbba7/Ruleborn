@@ -157,10 +157,10 @@ func _ground() -> void:
 		var v := verts[i]
 		var out := maxf(absf(v.x), absf(v.z))
 		reach = maxf(reach, out)
-		if out > 3.4 and not cols[i].is_equal_approx(colours["grass"]):
+		if out > 3.4 and not cols[i].is_equal_approx(IslandBuilder.hsl(colours["grass"], 0.0, -0.08, -0.03)):
 			off += 1
-	check.call("the grid's ground runs out past its edge onto the island and ends in the island's own grass, so the "
-			+ "two meet with no seam (21.1)", reach > 3.4 and off == 0, "%f %d" % [reach, off])
+	check.call("the grid's ground runs out past its edge onto the island and ends in the island meadow's own colour, "
+			+ "so the two meet with no seam (21.1)", reach > 3.4 and off == 0, "%f %d" % [reach, off])
 
 
 func _realm() -> void:
