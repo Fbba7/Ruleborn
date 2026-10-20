@@ -50,7 +50,7 @@ var top := 1.0
 
 
 ## The materials of a level's look: walls, roof, trim.
-static func look(lvl: int, colours: Dictionary) -> Array[Color]:
+static func _look(lvl: int, colours: Dictionary) -> Array[Color]:
 	var s := KitStyle.of(KitStyle.realm_of(colours))
 	if lvl >= 7:
 		return [Color("#ECE6FF"), (s["roof"] as Color).lerp(Color("#8C6CF0"), 0.35).lightened(0.1), KitStyle.GOLD]
@@ -60,20 +60,34 @@ static func look(lvl: int, colours: Dictionary) -> Array[Color]:
 
 
 ## Building `kind` of `side` tiles a side, centred on `mid` on the ground,
-## at `lvl` (1 to 10).
+## at `lvl` (1 to 10), its door turned `yaw` from +Z (quarter turns).
 static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, colours: Dictionary,
-		details: Geo = null, panes: Geo = null) -> void:
+		details: Geo = null, panes: Geo = null, yaw := 0.0) -> void:
+	if absf(yaw) > 0.01:
+		var tg := Geo.new()
+		var td := Geo.new()
+		var tp := Geo.new()
+		for t: Geo in [tg, td, tp]:
+			t.skip_down = geo.skip_down
+		build(tg, kind, Vector3.ZERO, side, lvl, colours, td, tp)
+		var xf := Transform3D(Basis(Vector3.UP, yaw), mid)
+		geo.absorb(tg, xf)
+		(details if details != null else geo).absorb(td, xf)
+		(panes if panes != null else (details if details != null else geo)).absorb(tp, xf)
+		return
 	var b := BuildingKit.new()
 	b.g = geo
 	b.d = details if details != null else geo
 	b.glass = panes if panes != null else b.d
+	for layer: Geo in [b.g, b.d, b.glass]:
+		layer.standing(mid.y)
 	b.origin = mid
 	b.level = clampi(lvl, 1, 10)
 	b.tier = 2 if b.level >= 7 else (1 if b.level >= 4 else 0)
 	b.palette = colours
 	b.style = KitStyle.of(KitStyle.realm_of(colours))
 	b.unit = side * 0.92
-	var c := look(b.level, colours)
+	var c := _look(b.level, colours)
 	b.wall = c[0]
 	b.roof_col = c[1]
 	b.roof_dark = b.roof_col.darkened(0.22)
@@ -114,9 +128,17 @@ func move(kind: Geo.Anim, pivot: Vector3) -> void:
 
 
 func stop() -> void:
-	g.still()
-	d.still()
-	glass.still()
+	g.moving(Geo.Anim.NONE, Vector3.ZERO)
+	d.moving(Geo.Anim.NONE, Vector3.ZERO)
+	glass.moving(Geo.Anim.NONE, Vector3.ZERO)
+
+
+## The light version of building `kind` for the universe map (the design's
+## `makeB`, realm-diorama.js :756–880), 80–250 triangles, reading by kind
+## and by §21.5's look from far away: KitMap's.
+static func build_map(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, colours: Dictionary) -> void:
+	var c := _look(clampi(lvl, 1, 10), colours)
+	KitMap.build(geo, kind, mid, side * 0.92, clampi(lvl, 1, 10), colours, c)
 
 
 ## A point in the building's units, placed in the world.
@@ -132,7 +154,7 @@ func place(x: float, y: float, z: float, yaw := 0.0) -> Transform3D:
 ## softened when it is big enough to show them.
 func box(w: float, h: float, depth: float, col: Color, x: float, y: float, z: float, yaw := 0.0) -> void:
 	var size := Vector3(w, h, depth) * unit
-	if minf(size.x, minf(size.y, size.z)) > 0.07:
+	if minf(size.x, minf(size.y, size.z)) > 0.1:
 		g.rbox(place(x, y, z, yaw), size, col, minf(0.035, minf(size.x, minf(size.y, size.z)) * 0.25))
 	else:
 		d.box(place(x, y, z, yaw), size, col)
@@ -152,21 +174,32 @@ func ball(r: float, col: Color, x: float, y: float, z: float, squash := 1.0, rin
 		segments)
 
 
+## A flat pane `w` × `h` facing `at`'s +Z, un-inked: a window's glass, a
+## shutter, a mullion — two triangles where a box would take twelve.
+func _pane(xf: Transform3D, w: float, h: float, col: Color) -> void:
+	d.quad(xf * Vector3(-w / 2.0, -h / 2.0, 0), xf * Vector3(w / 2.0, -h / 2.0, 0), xf * Vector3(w / 2.0, h / 2.0, 0),
+		xf * Vector3(-w / 2.0, h / 2.0, 0), col)
+
+
+## A ring lying flat at (x, y, z), un-inked: a collar, a mooring ring.
+func torus_at(r: float, t: float, col: Color, x: float, y: float, z: float) -> void:
+	d.torus(place(x, y, z), r * unit, t * unit, col, 12, 3)
+
+
 ## A window on a wall facing `yaw`: a frame, warm glass, mullions, a sill
 ## and, by default, a pair of open shutters in the roof's colour.
 func window(x: float, y: float, z: float, yaw: float, s := 1.0, shutters := true) -> void:
 	var turn := Basis(Vector3.UP, yaw)
 	var p := func(dx: float, dy: float, dz: float) -> Vector3: return at(x, y, z) + turn * Vector3(dx, dy, dz) * unit
 	d.box(Transform3D(turn, p.call(0, 0, 0)), Vector3(0.15 * s, 0.19 * s, 0.03) * unit, KitStyle.WOOD_DARK)
-	d.box(Transform3D(turn, p.call(0, 0, 0.012)), Vector3(0.11 * s, 0.15 * s, 0.02) * unit,
-		KitStyle.lit(KitStyle.WINDOW, 0.55))
-	d.box(Transform3D(turn, p.call(0, 0, 0.02)), Vector3(0.014, 0.15 * s, 0.012) * unit, KitStyle.WOOD_DARK)
-	d.box(Transform3D(turn, p.call(0, 0, 0.02)), Vector3(0.11 * s, 0.014, 0.012) * unit, KitStyle.WOOD_DARK)
+	_pane(Transform3D(turn, p.call(0, 0, 0.016)), 0.11 * s * unit, 0.15 * s * unit, KitStyle.lit(KitStyle.WINDOW, 0.55))
+	_pane(Transform3D(turn, p.call(0, 0, 0.018)), 0.014 * unit, 0.15 * s * unit, KitStyle.WOOD_DARK)
+	_pane(Transform3D(turn, p.call(0, 0, 0.019)), 0.11 * s * unit, 0.014 * unit, KitStyle.WOOD_DARK)
 	d.box(Transform3D(turn, p.call(0, -0.105 * s, 0.025)), Vector3(0.19 * s, 0.025, 0.06) * unit, stone2)
 	if shutters:
 		for sx: float in [-1.0, 1.0]:
 			var b := turn * Basis(Vector3.UP, sx * 0.35)
-			d.box(Transform3D(b, p.call(sx * 0.115 * s, 0, 0.025)), Vector3(0.06 * s, 0.19 * s, 0.015) * unit,
+			_pane(Transform3D(b, p.call(sx * 0.115 * s, 0, 0.03)), 0.06 * s * unit, 0.19 * s * unit,
 				roof_col if tier > 0 else KitStyle.WOOD.lightened(0.2))
 
 
@@ -176,15 +209,14 @@ func door(x: float, y: float, z: float, yaw: float, s := 1.0) -> void:
 	var p := func(dx: float, dy: float, dz: float) -> Vector3: return at(x, y, z) + turn * Vector3(dx, dy, dz) * unit
 	d.box(Transform3D(turn, p.call(0, 0.1 * s, 0)), Vector3(0.21 * s, 0.2 * s, 0.03) * unit, stone2)
 	d.cyl(Transform3D(turn * Basis(Vector3.RIGHT, PI / 2.0), p.call(0, 0.2 * s, -0.015)), 0.105 * s * unit,
-		0.105 * s * unit, 0.03 * unit, stone2, 10)
+		0.105 * s * unit, 0.03 * unit, stone2, 8)
 	var wood := KitStyle.WOOD if tier < 2 else KitStyle.WOOD.lerp(Color("#8C6CF0"), 0.3)
-	d.box(Transform3D(turn, p.call(0, 0.085 * s, 0.012)), Vector3(0.15 * s, 0.17 * s, 0.02) * unit, wood)
-	d.cyl(Transform3D(turn * Basis(Vector3.RIGHT, PI / 2.0), p.call(0, 0.17 * s, 0.002)), 0.075 * s * unit,
-		0.075 * s * unit, 0.02 * unit, wood, 10)
+	_pane(Transform3D(turn, p.call(0, 0.085 * s, 0.017)), 0.15 * s * unit, 0.17 * s * unit, wood)
+	d.cyl(Transform3D(turn * Basis(Vector3.RIGHT, PI / 2.0), p.call(0, 0.17 * s, 0.006)), 0.075 * s * unit,
+		0.075 * s * unit, 0.012 * unit, wood, 8)
 	for px: float in [-0.04, 0.04]:
-		d.box(Transform3D(turn, p.call(px * s, 0.1 * s, 0.024)), Vector3(0.008, 0.2 * s, 0.01) * unit,
-			KitStyle.WOOD_DARK)
-	d.ball(Geo.place(p.call(0.045 * s, 0.09 * s, 0.03)), 0.014 * unit, KitStyle.GOLD, 2, 5)
+		_pane(Transform3D(turn, p.call(px * s, 0.1 * s, 0.019)), 0.008 * unit, 0.2 * s * unit, KitStyle.WOOD_DARK)
+	d.ball(Geo.place(p.call(0.045 * s, 0.09 * s, 0.03)), 0.014 * unit, KitStyle.GOLD, 2, 4)
 	d.box(Transform3D(turn, p.call(0, 0.017, 0.06)), Vector3(0.26 * s, 0.035, 0.1) * unit, stone)
 
 
@@ -208,6 +240,37 @@ func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 
 		-(depth / 2.0 + over + 0.01)) * unit), 0.03 * unit, 0.03 * unit, (depth + over * 2.0 + 0.02) * unit,
 		KitStyle.GOLD if tier == 2 else roof_dark, 6)
 	g.gable(Transform3D(turn, at(0, y0, 0)), w * unit, rise * unit, (depth - 0.01) * unit, wall)
+	return y0 + rise
+
+
+## A hip roof: four shingled slopes rising from eaves `w` × `depth` at
+## `y0` to a short ridge, `rise` high; reads as a roof from every side.
+func _hip_roof(w: float, depth: float, y0: float, rise: float) -> float:
+	var rows := 3
+	for i in rows:
+		var t0 := float(i) / rows
+		var t1 := float(i + 1) / rows
+		var col := roof_col if i % 2 == 1 else roof_dark
+		var hw0 := lerpf(w / 2.0 + 0.06, 0.04, t0)
+		var hd0 := lerpf(depth / 2.0 + 0.06, 0.12, t0)
+		var hw1 := lerpf(w / 2.0 + 0.06, 0.04, t1)
+		var hd1 := lerpf(depth / 2.0 + 0.06, 0.12, t1)
+		var ya := y0 + rise * t0
+		var yb := y0 + rise * t1
+		var lo: Array[Vector3] = [at(-hw0, ya, -hd0), at(hw0, ya, -hd0), at(hw0, ya, hd0), at(-hw0, ya, hd0)]
+		var hi: Array[Vector3] = [at(-hw1, yb, -hd1), at(hw1, yb, -hd1), at(hw1, yb, hd1), at(-hw1, yb, hd1)]
+		for k in 4:
+			var n := (k + 1) % 4
+			var a: Vector3 = lo[k]
+			var b: Vector3 = lo[n]
+			var c: Vector3 = hi[n]
+			var e: Vector3 = hi[k]
+			if (b - a).cross(e - a).y > 0:
+				g.quad(a, b, c, e, col.darkened(0.04 * (k % 2)))
+			else:
+				g.quad(a, e, c, b, col.darkened(0.04 * (k % 2)))
+	var ridge := at(0, y0 + rise, 0)
+	g.box(Geo.place(ridge), Vector3(0.1, 0.035, 0.28) * unit, KitStyle.GOLD if tier == 2 else roof_dark)
 	return y0 + rise
 
 
@@ -246,8 +309,8 @@ func courses(w: float, depth: float, y0: float, y1: float, n: int) -> void:
 func plinth(w: float, depth: float, h := 0.08) -> void:
 	box(w, h, depth, stone2, 0, h / 2.0, 0)
 	if tier == 0:
-		for k in 8:
-			var a := TAU * k / 8.0
+		for k in 5:
+			var a := TAU * k / 5.0 + 0.3
 			d.rock(Geo.place(at(cos(a) * w * 0.5, 0.02, sin(a) * depth * 0.5), a, Vector3(1, 0.6, 1)), 0.05 * unit,
 				stone.darkened(0.05 * (k % 2)), k)
 	elif tier == 2:
@@ -255,7 +318,7 @@ func plinth(w: float, depth: float, h := 0.08) -> void:
 
 
 ## Smoke rising from a chimney's top at (x, y, z), three soft puffs.
-func smoke(x: float, y: float, z: float) -> void:
+func _smoke(x: float, y: float, z: float) -> void:
 	for k in 3:
 		var p := at(x + 0.03 * k, y + 0.12 + 0.16 * k, z)
 		move(Geo.Anim.BOB, p + Vector3(k * 2.0, 0, 0))
@@ -267,7 +330,7 @@ func smoke(x: float, y: float, z: float) -> void:
 func chimney(x: float, y: float, z: float, h: float) -> void:
 	box(0.13, h, 0.13, stone2 if tier > 0 else Color("#8A4A3A"), x, y + h / 2.0, z)
 	box(0.17, 0.045, 0.17, stone.darkened(0.2), x, y + h, z)
-	smoke(x, y + h, z)
+	_smoke(x, y + h, z)
 
 
 ## A flag on a pole from (x, y, z), fluttering in the realm's accent.
@@ -383,10 +446,10 @@ func _topper() -> void:
 ## The packed-earth pad a building stands on (the design's foundation disc,
 ## :981): an octagon of trodden earth and stone, wider than the house.
 func _pad() -> void:
-	var earth: Color = (palette["ground"] as Color).lerp(Color("#E8D8B8"), 0.4)
+	var earth := KitGround.earth(palette).lerp(Color("#E8D8B8"), 0.35)
 	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.6 * unit, 0.57 * unit, 0.03 * unit, earth.darkened(0.08), false, earth)
-	for k in 6:
-		var a := TAU * k / 6.0 + 0.3
+	for k in 4:
+		var a := TAU * k / 4.0 + 0.5
 		d.rock(Geo.place(at(cos(a) * 0.6, 0.012, sin(a) * 0.6), a, Vector3(1, 0.5, 1)), 0.035 * unit,
 			(palette["rock"] as Color).lightened(0.2), k)
 
@@ -406,11 +469,17 @@ func _hearth() -> void:
 		window(0.22, 0.62, 0.375, 0, 0.9)
 		for z: float in [0.16, -0.16]:
 			window(0.455, 0.62, z, PI / 2.0, 0.9, false)
+			window(-0.455, 0.62, z, -PI / 2.0, 0.9, false)
+		for x: float in [-0.22, 0.22]:
+			window(x, 0.62, -0.375, PI, 0.9)
 	var y := roof(0.9 if two else 0.86, 0.74 if two else 0.7, eave, 0.42, 0.1)
 	door(0, 0.08, 0.335, 0)
 	window(-0.25, 0.27, 0.335, 0)
 	window(0.25, 0.27, 0.335, 0)
 	window(0.415, 0.27, 0, PI / 2.0, 0.9, false)
+	window(-0.415, 0.27, 0, -PI / 2.0, 0.9, false)
+	window(-0.2, 0.27, -0.335, PI, 0.9)
+	window(0.2, 0.27, -0.335, PI, 0.9)
 	# The round window in the gable.
 	g.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), at(0, eave + 0.15, 0.36)), 0.06 * unit, 0.06 * unit,
 		0.03 * unit, KitStyle.lit(KitStyle.WINDOW, 0.5), 12)
@@ -458,6 +527,11 @@ func _storehouse() -> void:
 	d.gem(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), at(0, 0.3, 0.4)), 0.05 * unit, 0.03 * unit,
 		KitStyle.lit(KitStyle.GOLD, 0.3), 5)
 	stop()
+	for x: float in [-0.25, 0.25]:
+		window(x, 0.34, -0.37, PI, 0.8, false)
+	for z: float in [-0.15, 0.15]:
+		window(0.47, 0.34, z, PI / 2.0, 0.8, false)
+		window(-0.47, 0.34, z, -PI / 2.0, 0.8, false)
 	# The hay loft.
 	box(0.16, 0.14, 0.03, KitStyle.WOOD_DARK, 0, 0.7, 0.37)
 	ball(0.05, KitStyle.THATCH, 0, 0.68, 0.39, 0.6, 2, 6)
@@ -529,7 +603,7 @@ func _star_well() -> void:
 	stop()
 	cyl(0.004, 0.004, 0.36, Color("#D8C8A8"), 0, 0.82, 0, 3)
 	# Its little roof, turned across the beam.
-	var y := roof(0.5, 0.84, 1.25, 0.34, 0.05, 3, PI / 2.0)
+	var y := _hip_roof(0.62, 0.48, 1.25, 0.38)
 	move(Geo.Anim.SPIN_Y, at(0, y + 0.3, 0))
 	d.gem(Geo.place(at(0, y + 0.3, 0)), 0.15 * unit, 0.22 * unit, KitStyle.lit(Color("#FFE9A0"), 0.45), 4)
 	stop()

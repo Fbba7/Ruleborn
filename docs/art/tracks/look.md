@@ -9,7 +9,7 @@ Branch `claude/3d-look`. Owns `client/world/world_look.gd`, `island_builder.gd`,
   - a grass lip, three earth bands and an inverted, jittered rock cone in strata, a second cone hanging off-centre and a ring of hanging spikes;
   - roots under the rim, curtains of long roots off the cone, and vines with leaves that sway in the wind;
   - the scatter as `MultiMeshInstance3D`s, one draw call a kind: grass tufts, pebbles, flowers (crystal shards on Crystalline, ember cracks on Emberreach), the rim's soft grass fringe, the hanging fringe, rim rocks, stones round the pools;
-  - waterfalls with pools and mist at their feet (lava falls on Emberreach), floating islets, puffy two-tone clouds, and a soft cloud sea under the rock.
+  - waterfalls with pools and mist at their feet (lava falls on Emberreach), floating islets, puffy two-tone clouds, a soft cloud sea under the rock, and a flock of birds wheeling round the island by day (`look_bird.gdshader`, the diorama's `birds`).
 - **Each realm's signature off the grid** (§21.4): Crystalline's glowing crystal spires round the rim, Skyfield's fence of posts, Lantern Vale's fireflies, glowing caps and pools of light, the Heart's golden motes, Emberreach's rising sparks and heat glows, Verdant's pollen; Tidehold's beach of sand round the rim and four waterfalls, the Heart three. Nothing is put on the grid: the grid is the simulation's.
 - **Painted textures** (`LookPaint`), all drawn in code at start-up, as the diorama draws its canvases:
   - the meadow (soft blots, upward strokes, tufts, flower dots) and the strata (bands, seams, lumps, cracks), grey and tiled, painted by the vertex colour;
@@ -30,11 +30,30 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 
 ## Traps found
 
-- **The sky.** Godot's sky shader under an orthographic camera sees one direction, so the whole sky was one colour. The environment's canvas background fixes that, but in the Compatibility renderer the background is lost as soon as a material with `cull_front` (the ink outline's inverted hull) is drawn. The sky is now a quad over the whole screen at the far plane (`far_z` 0.00001: the renderer's depth is reversed).
+- **The sky.** Godot's sky shader under an orthographic camera sees one direction, so the whole sky was one colour. The environment's canvas background fixes that, but in the Compatibility renderer the background is lost as soon as a material with `cull_front` (the ink outline's inverted hull) is drawn. The sky is now a quad over the whole screen, placed at `sky_depth` (180 m) through the camera's own projection. An earlier fixed clip depth (`far_z` 0.00001) assumed a reversed depth buffer; the Compatibility renderer's is not, and under T5's perspective heist camera the sky covered the island (found and fixed in the second integration; never use a fixed clip depth here).
 - **MultiMesh instances**: the instance's transform is in `MODELVIEW_MATRIX` (and `MODEL_MATRIX`), so a camera-facing puff is rebuilt round `MODELVIEW_MATRIX * (0, 0, 0, 1)` (`look_mist.gdshader`); its size comes in the custom data.
 - **`QuadMesh`** has no `surface_get_array_index_len`, which the budget test calls on every mesh; the look's quads are `ArrayMesh`es.
 - A `Color` times a number scales its alpha too, and alpha under 1 means "glow" in the toon kit: darken with `IslandBuilder._dim`.
 - The sky ambient barely answered `ambient_light_energy` here (0.4 to 0.24 changed little); its strength is set by the hemisphere shader's `strength`.
+
+## After the integration merge (da71550)
+
+- The grid's ground is T3's (`kit_ground.gdshader`); `WorldLook.ground_material()` is no longer used for it and stays only as an option.
+- **One meadow across the grid's edge:** within 2.5 m of the grid (`IslandBuilder.GRID_BLEND`), the meadow's vertex colour turns to the palette's `grass` (what KitGround paints the grid with), and its painted texture and realm marks fade out. Everywhere it carries the same brush as the grid's ground: `look_brush.gdshaderinc` writes out T3's patches, dabs and flecks with the same constants. T3 can `#include` it in place of its own copy.
+- Palette `grass` deepened for the Heart, Skyfield and Verdant. Both the island and the grid read it, so their noon greens are near the design's scout stills: Heart 126,143,94 against the design's 111,122,88; Skyfield 152,185,89 against 142,165,89.
+- The waterfall pools give T3's new water shader its shore distance (UV.x), so they have a foam ring and ripples instead of shore everywhere.
+- Night: a soft crescent moon in the sky at night and over Lantern Vale; the fog is lighter so more of the rock shows under the island.
+- Known on the merged base, not from this track: `StageHeroTests._stage` raises a script error (`material_override` on a Nil) in a headless run.
+- Stills: `merged-world.png`, `merged-realms-sheet.png`.
+
+## Rounds 9–11 (after the merge)
+
+- Night: fireflies and warm pools of light off the grid, shown by the hour; moonlit blue shade from above so the meadow keeps its hue.
+- Under the island: the cone is 13 deep (the diorama stretches it 1.45× when looking down on a whole island) and darker than the sky; the fog sits lower; roots and curtains are thicker.
+- Dusk: a softer, golden sun, so dusk islands glow rather than go olive.
+- §21.4's particles: Verdant's butterflies (the bird shader in their own colours, fluttering), Skyfield's wind streaks (`look_streak.gdshader`), Crystalline's crystals twinkle.
+- Sky depth: placed through the camera's projection (see the traps); `look_realms.gd` takes `FOV` to check a perspective camera (`r11-perspective.png`, FOV 22°).
+- Stills: `r9-realms-sheet.png`, `r9-night-close.png`, `r10-underside.png`, `r11-realms-sheet.png`, `r11-perspective.png`.
 
 ## Hooks outside the track
 
@@ -78,12 +97,18 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 - Skyfield at noon is a little brighter and paler than the design's; Lantern Vale at noon is brighter than the design's (kept so it reads on a phone).
 - Clouds are low-poly puffs, not the design's soft sprites at the island's level; the cloud sea is subtle.
 - Waterfalls are ribbons with streaks; the design's have a bright core and mist that pulses.
-- No birds, butterflies or wind streaks (§21.4's particles for Skyfield and Verdant).
+- Birds are dark Vs wheeling in the shader; no butterflies or wind streaks yet (§21.4's particles for Skyfield and Verdant).
 - The rock cone is barely seen from the home camera's 35°; it shows from the side and at zoom 0.
 
 ## Next
 
 - With T3: decide whether the flagstones become paths over the meadow (the design's way), using `ground_material()`.
-- Birds and butterflies as a MultiMesh with vertex flapping; wind streaks for Skyfield.
+- Butterflies for Verdant (as the birds: a MultiMesh flapping in the shader); wind streaks for Skyfield.
 - Pulsing mist and a brighter core for the falls.
 - A swoop-proof check: the look rebuilt on every realm change (`island()` already resets the mists and clouds).
+
+## Stopped here (at the owner's request, 2026-10-20)
+
+- **Done and checked:** everything above, up to `bdbcb96` (check_all passed on that commit: client 293/293, server 393/393, simulation 326/326).
+- **In progress:** nothing; no uncommitted work.
+- **Next step:** merge the second integration when it lands (it carries the same sky-depth fix); then soften Heart at dusk, give clouds the design's soft sprite look, add a bright pulsing core to the waterfalls, and make the small particles readable at the home zoom.

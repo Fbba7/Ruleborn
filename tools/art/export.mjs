@@ -15,7 +15,7 @@ import { KINDS, MAX_TRIS } from './kinds.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, '../..');
-const outDir = path.join(repo, 'client/art/creatures');
+const outDir = process.env.OUT_DIR ? path.resolve(process.env.OUT_DIR) : path.join(repo, 'client/art/creatures');
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || '/opt/node22/lib/node_modules/playwright');
 
@@ -66,11 +66,57 @@ function seedScript(kind) {
 
 const round = (x, n = 3) => Math.round(x * 10 ** n) / 10 ** n;
 
+// Godot's import settings for a kind's two textures: compressed for the GPU
+// with mipmaps (a small character must not shimmer), the relief map read as a
+// normal map and held to 256. Written when missing or patched when present, so
+// Godot keeps its own uid lines.
+const TEXTURE_PARAMS = {
+	paint: { 'compress/mode': 2, 'mipmaps/generate': 'true', 'compress/normal_map': 2, 'process/size_limit': 0 },
+	relief: { 'compress/mode': 2, 'mipmaps/generate': 'true', 'compress/normal_map': 1, 'process/size_limit': 256 },
+};
+function textureImport(file, role) {
+	const p = file + '.import';
+	const want = TEXTURE_PARAMS[role];
+	let text = fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : '[remap]\n\nimporter="texture"\ntype="CompressedTexture2D"\n\n[params]\n\n';
+	for (const [k, v] of Object.entries(want)) {
+		const re = new RegExp('^' + k.replace('/', '\\/') + '=.*$', 'm');
+		text = re.test(text) ? text.replace(re, `${k}=${v}`) : text.replace('[params]\n', `[params]\n${k}=${v}\n`);
+	}
+	fs.writeFileSync(p, text);
+}
+
 // Lighter glTF JSON: min/max kept only where glTF requires them (positions and
 // animation times), numbers there rounded. The binary chunk is untouched.
-function slim(glb) {
+function slim(glb, kind) {
 	const jsonLen = glb.readUInt32LE(12);
 	const j = JSON.parse(glb.subarray(20, 20 + jsonLen).toString('utf8'));
+	let src = glb.subarray(20 + jsonLen + 8);
+	// Textures go beside the model as files the .glb names, so Godot imports
+	// each once (no embedded copy to extract), and the buffer is compacted.
+	const images = {};
+	(j.images || []).forEach((im, i) => {
+		if (im.bufferView === undefined) return;
+		const v = j.bufferViews[im.bufferView];
+		const name = `${kind}_${i === 0 ? 'paint' : 'relief'}.jpg`;
+		images[name] = Buffer.from(src.subarray(v.byteOffset || 0, (v.byteOffset || 0) + v.byteLength));
+		delete im.bufferView; delete im.mimeType; im.uri = name;
+	});
+	{
+		const used = new Set(j.accessors.map((a) => a.bufferView));
+		const parts = []; let off = 0; const remap = new Map(); const views = [];
+		j.bufferViews.forEach((v, i) => {
+			if (!used.has(i)) return;
+			const bytes = src.subarray(v.byteOffset || 0, (v.byteOffset || 0) + v.byteLength);
+			const nv = Object.assign({}, v, { byteOffset: off });
+			remap.set(i, views.length); views.push(nv); parts.push(bytes);
+			off += v.byteLength;
+			const pad = (4 - (off % 4)) % 4; if (pad) { parts.push(Buffer.alloc(pad)); off += pad; }
+		});
+		j.bufferViews = views;
+		for (const a of j.accessors) a.bufferView = remap.get(a.bufferView);
+		src = Buffer.concat(parts);
+		j.buffers[0].byteLength = src.length;
+	}
 	const need = new Set();
 	for (const m of j.meshes || []) for (const p of m.primitives) need.add(p.attributes.POSITION);
 	for (const a of j.animations || []) for (const sm of a.samplers) need.add(sm.input);
@@ -100,14 +146,16 @@ function slim(glb) {
 		for (const a of j.accessors) a.bufferView = remap.get(a.bufferView);
 		for (const im of j.images || []) im.bufferView = remap.get(im.bufferView);
 	}
-	const bin = glb.subarray(20 + jsonLen);
+	const binHead = Buffer.alloc(8);
+	binHead.writeUInt32LE(src.length, 0); binHead.writeUInt32LE(0x004e4942, 4);
+	const bin = Buffer.concat([binHead, src]);
 	let text = Buffer.from(JSON.stringify(j), 'utf8');
 	const pad = (4 - (text.length % 4)) % 4;
 	text = Buffer.concat([text, Buffer.alloc(pad, 0x20)]);
 	const head = Buffer.alloc(20);
 	head.writeUInt32LE(0x46546c67, 0); head.writeUInt32LE(2, 4); head.writeUInt32LE(20 + text.length + bin.length, 8);
 	head.writeUInt32LE(text.length, 12); head.writeUInt32LE(0x4e4f534a, 16);
-	return Buffer.concat([head, text, bin]);
+	return { glb: Buffer.concat([head, text, bin]), images };
 }
 
 async function main() {
@@ -147,12 +195,17 @@ async function main() {
 			const gs = info.game_scale ?? 1;
 			const bodyH = info.body_height_units * gs;
 			const scale = cfg.fix ? cfg.height / info.body_height_units : gs;
-			const glb = slim(Buffer.from(r.glb, 'base64'));
+			const slimmed = slim(Buffer.from(r.glb, 'base64'), kind);
+			const glb = slimmed.glb;
 			const line = `${kind}: ${info.triangles} tris (body ${info.body_triangles} from ${info.source_triangles}, accessories ${info.accessory_triangles}), ${info.bones} bones, ${Object.keys(info.clips).length} clips, ${(glb.length / 1024).toFixed(0)} KB, ${(info.ms / 1000).toFixed(1)} s, height ${round(info.height_units * scale, 2)} m (body ${round(info.body_height_units * scale, 2)}; §21.6 ${cfg.height})`;
 			if (process.env.VERBOSE) console.log(info.acc_by);
 			if (info.triangles > MAX_TRIS && !process.env.FORCE) { console.log(`FAIL ${line}: over the ${MAX_TRIS}-triangle budget`); failed++; continue; }
 			console.log(line);
 			fs.writeFileSync(path.join(outDir, `${kind}.glb`), glb);
+			for (const [n, b] of Object.entries(slimmed.images)) {
+				fs.writeFileSync(path.join(outDir, n), b);
+				textureImport(path.join(outDir, n), n.endsWith('_relief.jpg') ? 'relief' : 'paint');
+			}
 			manifest.kinds[kind] = {
 				file: `${kind}.glb`,
 				group: cfg.group,

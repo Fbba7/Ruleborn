@@ -15,11 +15,18 @@ extends RefCounted
 
 const BURST_SECONDS := 1.2
 
+## Loot comes a little every tick while a crew member loads; it is shown
+## gathered, at most every this many ticks a member.
+const LOOT_TICKS := 12
+
 static var _mesh_cache := {}
 
 var view: WorldView
 var _last := {}
 var _first := true
+## Loot gathered since each member's last pop-up, and that pop-up's tick.
+var _gain := {}
+var _gain_tick := {}
 
 
 func _init(world_view: WorldView) -> void:
@@ -30,6 +37,8 @@ func _init(world_view: WorldView) -> void:
 func reset() -> void:
 	_last.clear()
 	_first = true
+	_gain.clear()
+	_gain_tick.clear()
 
 
 ## Compare this tick's reading with the last, and show what changed. A
@@ -39,9 +48,11 @@ func read(r: RulebornReplay) -> void:
 	var now := _reading(r)
 	if _first or int(now["tick"]) < int(_last.get("tick", 0)):
 		_first = false
+		_gain.clear()
+		_gain_tick.clear()
 		_last = now
 		return
-	if int(now["realm"]) != int(_last["realm"]) and int(_last["realm"]) >= 0 and int(now["realm"]) >= 0:
+	if int(now["realm"]) != int(_last["realm"]) and int(_last["realm"]) >= 0:
 		view.swoop()
 		_last = now
 		return
@@ -80,21 +91,31 @@ func _crew(r: RulebornReplay, now: Dictionary) -> void:
 	for i in mini(was.size(), (now["crew"] as Array).size()):
 		var a: Array = was[i]
 		var b: Array = now["crew"][i]
-		var at := view.world_at(crew[i]["at"]) + Vector3(0, 1.3, 0)
+		# Pop-ups rise from above the head and a little to one side, so a
+		# number never sits on the figure it is about.
+		var head := float(view._crew[i].get_meta("head", 1.0)) if i < view._crew.size() else 1.0
+		var ground := view.world_at(crew[i]["at"])
+		var at := ground + Vector3(0.35, head + 0.45, 0)
 		if int(b[0]) > int(a[0]):
-			view.anchors.pop(at, "+%d" % (int(b[0]) - int(a[0])), FxSkin.GOLD, "coin")
-			burst(at - Vector3(0, 0.6, 0), Color("#F2B43C"), 10, 2.2, "coin")
+			_gain[i] = int(_gain.get(i, 0)) + int(b[0]) - int(a[0])
+		var gained := int(_gain.get(i, 0))
+		if gained > 0 and (int(now["tick"]) - int(_gain_tick.get(i, -999)) >= LOOT_TICKS or int(b[0]) <= int(a[0])):
+			_gain[i] = 0
+			_gain_tick[i] = int(now["tick"])
+			view.anchors.pop(at, "+%d" % gained, FxSkin.GOLD, "coin")
+			view.looted.emit(view.get_global_transform() * view.camera.unproject_position(at), gained)
+			burst(ground + Vector3(0, head * 0.7, 0), Color("#F2B43C"), 6, 2.2, "coin")
 		if int(b[1]) < int(a[1]):
 			view.anchors.pop(at, "-%d" % (int(a[1]) - int(b[1])), FxSkin.ALARM_ON_DARK)
-			burst(at - Vector3(0, 0.6, 0), Color("#FFFFFF"), 5, 1.6)
+			burst(ground + Vector3(0, head * 0.6, 0), Color("#FFFFFF"), 5, 1.6)
 			view.shake(0.3)
 		if str(a[2]) == "Active" and str(b[2]) != "Active" and str(b[2]) not in ["Out", "Gone"]:
-			burst(at - Vector3(0, 0.8, 0), Color("#FFE27A"), 12, 2.6, "star")
+			burst(ground + Vector3(0, 0.5, 0), Color("#FFE27A"), 12, 2.6, "star")
 			view.shake(0.7)
 		elif str(a[2]) != "Active" and str(b[2]) == "Active":
 			view.anchors.pop(at, "♥", FxSkin.SUCCESS)
-			burst(at - Vector3(0, 0.9, 0), FxSkin.SUCCESS, 14, 2.0)
-			ring(at - Vector3(0, 1.25, 0), FxSkin.SUCCESS, 1.4)
+			burst(ground + Vector3(0, 0.4, 0), FxSkin.SUCCESS, 14, 2.0)
+			ring(ground + Vector3(0, 0.05, 0), FxSkin.SUCCESS, 1.4)
 
 
 func _guards(r: RulebornReplay, now: Dictionary) -> void:
@@ -103,14 +124,15 @@ func _guards(r: RulebornReplay, now: Dictionary) -> void:
 	for i in mini(was.size(), (now["guards"] as Array).size()):
 		var a: Array = was[i]
 		var b: Array = now["guards"][i]
-		var at := view.world_at(guards[i]["at"]) + Vector3(0, 1.0, 0)
+		var ghead := float(view._guards[i].get_meta("head", 1.2)) if i < view._guards.size() else 1.2
+		var at := view.world_at(guards[i]["at"]) + Vector3(0, ghead * 0.7, 0)
 		if not bool(a[0]) and bool(b[0]):
 			burst(at, Color("#FFE27A"), 16, 3.0, "star")
 			view.anchors.pop(at + Vector3(0, 0.5, 0), "KO", Color("#FFE27A"), "star")
 			view.shake(0.9)
 		if str(b[1]) == "Alerted" and str(a[1]) != "Alerted":
 			view.anchors.flash = maxf(view.anchors.flash, 0.7)
-			ring(at - Vector3(0, 0.95, 0), FxSkin.ALARM, 1.8)
+			ring(view.world_at(guards[i]["at"]) + Vector3(0, 0.05, 0), FxSkin.ALARM, 1.8)
 
 
 func _pieces(r: RulebornReplay, now: Dictionary) -> void:
@@ -217,8 +239,8 @@ static func _bit(kind: String) -> Mesh:
 			s.size = Vector3(0.16, 0.16, 0.05)
 			m = s
 		"shard":
-			var b := BoxMesh.new()
-			b.size = Vector3(0.12, 0.08, 0.1)
+			var b := PrismMesh.new()
+			b.size = Vector3(0.2, 0.22, 0.12)
 			m = b
 		_:
 			var q := SphereMesh.new()

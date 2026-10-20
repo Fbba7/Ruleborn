@@ -26,6 +26,9 @@ const DESIGN_R := 12.7
 ## a realm's 25,000–40,000 triangles).
 const RINGS := 12
 const SPOKES := 100
+## Metres from the grid's edge over which the meadow turns from the grid
+## ground's colour and brush to its own painted texture.
+const GRID_BLEND := 2.5
 
 var size := Vector2i(12, 12)
 var island_seed := 1
@@ -160,11 +163,13 @@ func meadow() -> ArrayMesh:
 	var pts: Array[PackedVector3Array] = []
 	var nrm: Array[PackedVector3Array] = []
 	var col: Array[PackedColorArray] = []
+	var off: Array[PackedFloat32Array] = []
 	for i in RINGS + 1:
 		var f := 1.0 - pow(1.0 - float(i) / RINGS, 1.7)
 		var row := PackedVector3Array()
 		var nrow := PackedVector3Array()
 		var crow := PackedColorArray()
+		var orow := PackedFloat32Array()
 		for j in SPOKES:
 			var a := TAU * j / SPOKES
 			var e := edge(a)
@@ -189,10 +194,16 @@ func meadow() -> ArrayMesh:
 				# A beach of sand round the rim (:889).
 				c = c.lerp(Color("#E8D9B0"), smoothstep(e - 1.9, e - 1.2, r) * 0.85)
 			c = c.lerp(dk, smoothstep(e - 0.7, e, r) * 0.45)
+			# Next to the grid, the grid ground's own colour (KitGround paints
+			# the grass `grass`), so the meadow runs on under the tiles.
+			var beside := off_grid(x, z)
+			c = c.lerp(grass, 1.0 - smoothstep(0.0, GRID_BLEND, beside))
 			crow.append(c)
+			orow.append(beside)
 		pts.append(row)
 		nrm.append(nrow)
 		col.append(crow)
+		off.append(orow)
 	for i in RINGS:
 		for j in SPOKES:
 			var j1 := (j + 1) % SPOKES
@@ -200,8 +211,14 @@ func meadow() -> ArrayMesh:
 			var b := pts[i][j1]
 			var c := pts[i + 1][j]
 			var d := pts[i + 1][j1]
-			m.smooth([a, c, b], [nrm[i][j], nrm[i + 1][j], nrm[i][j1]], [col[i][j], col[i + 1][j], col[i][j1]])
-			m.smooth([b, c, d], [nrm[i][j1], nrm[i + 1][j], nrm[i + 1][j1]], [col[i][j1], col[i + 1][j], col[i + 1][j1]])
+			var ua := Vector2(off[i][j], 0)
+			var ub := Vector2(off[i][j1], 0)
+			var uc := Vector2(off[i + 1][j], 0)
+			var ud := Vector2(off[i + 1][j1], 0)
+			m.smooth([a, c, b], [nrm[i][j], nrm[i + 1][j], nrm[i][j1]], [col[i][j], col[i + 1][j], col[i][j1]],
+				[ua, uc, ub])
+			m.smooth([b, c, d], [nrm[i][j1], nrm[i + 1][j], nrm[i + 1][j1]], [col[i][j1], col[i + 1][j],
+				col[i + 1][j1]], [ub, uc, ud])
 	return m.mesh()
 
 
@@ -264,11 +281,15 @@ func cliffs() -> ArrayMesh:
 	_lathe(m, bands, 96, 0.4, 0.05, [dirt, dirt_dark, cliff.lerp(dirt, 0.35)], 2.2, 2)
 	var cone: Array[Vector2] = []
 	var top_r := e - 1.04 * s
-	var depth := 10.0 * s
+	# The diorama's cone is 10 deep, stretched 1.45 times when the camera
+	# looks down on the whole island (realm-diorama.js:963), so it shows
+	# below the rim from the home camera's 35°.
+	var depth := 13.0 * s
 	for i in 9:
 		var f := float(i) / 8.0
 		cone.append(Vector2(top_r * (1.0 - f) * (1.0 - 0.15 * f * (1.0 - f)), -1.74 - depth * f))
-	_lathe(m, cone, 30, 0.3, 0.6 * s + 0.15, [cliff], 0.9, 3)
+	# Darker than the sky behind it, so the rock reads under the island.
+	_lathe(m, cone, 30, 0.3, 0.6 * s + 0.15, [cliff.lerp(deep, 0.7).darkened(0.12)], 0.9, 3)
 	# A second, smaller cone off-centre, so the rock is not a spinning top.
 	var off := Vector3(2.3, 0, -1.3) * s
 	var sub := LookMesh.new()
@@ -321,7 +342,7 @@ func roots() -> Array[ArrayMesh]:
 			x += cos(q) * 0.12 + (_rng.randf() - 0.5) * 0.25
 			z += sin(q) * 0.12 + (_rng.randf() - 0.5) * 0.25
 			y -= 0.35 + _rng.randf() * 0.25
-		m.tube(pts, 0.07, 0.025, 3, root_col)
+		m.tube(pts, 0.1, 0.03, 3, root_col)
 	# Curtains: long roots off the cone's flank, deeper under the island.
 	for i in (16 if kind != "emberreach" else 6):
 		var q := TAU * (i + _rng.randf() * 0.6) / 16.0
@@ -334,8 +355,8 @@ func roots() -> Array[ArrayMesh]:
 			pts.append(Vector3(x, y, z))
 			x += cos(q) * 0.08 + (_rng.randf() - 0.5) * 0.18
 			z += sin(q) * 0.08 + (_rng.randf() - 0.5) * 0.18
-			y -= 0.55 + _rng.randf() * 0.4
-		m.tube(pts, 0.06, 0.02, 3, root_col.darkened(0.1))
+			y -= 0.7 + _rng.randf() * 0.5
+		m.tube(pts, 0.09, 0.025, 3, root_col.darkened(0.1))
 	var vine_col := Color("#3F8A45")
 	match kind:
 		"emberreach":
@@ -444,7 +465,39 @@ func scatter() -> Array:
 			rock_cols.append(rock if kk % 2 == 1 else mixed)
 	out.append([ico_mesh(), rocks, rock_cols, 0.0, 0.0])
 	out.append_array(signature())
+	if kind != "emberreach" and kind != "lanternvale":
+		# Fireflies for the night (§21.2: at night "lanterns and glows carry the
+		# realm"), shown by the hour.
+		var spots := _meadow_spots(64, -10.0)
+		var flies: Array[Transform3D] = []
+		for p in spots:
+			flies.append(Transform3D(Basis().scaled(Vector3.ONE * (0.05 + _rng.randf() * 0.04)),
+				p + Vector3(0, 0.25 + _rng.randf() * 1.2, 0)))
+		var fly := Color("#E8FF9A") if kind != "crystalline" else Color("#BFEAFF")
+		fly.a = 0.0
+		out.append([_octa_mesh(), flies, _pick(flies.size(), [fly, Color(1.0, 0.86, 0.5, 0.0)]), 0.0, 0.25, "night"])
+		var pools := _glows(18, [Color("#D8FF9A"), Color("#FFD27A")], 0.7, 1.3)
+		pools[5] = "night glow"
+		out.append(pools)
+		var birds: Array[Transform3D] = []
+		for i in 9:
+			var a := TAU * i / 9.0 + _rng.randf() * 0.4
+			var d := radius() + 0.5 + _rng.randf() * 3.0
+			var face := Basis(Vector3.UP, -a)
+			birds.append(Transform3D(face.scaled(Vector3.ONE * (1.3 + _rng.randf() * 0.6)),
+				Vector3(cos(a) * d, 1.6 + _rng.randf() * 2.4, sin(a) * d)))
+		out.append([_bird_mesh(), birds, _pick(birds.size(), [Color.WHITE]), 0.0, 0.0, "bird"])
 	return out
+
+
+## A bird: a V of two wings, 0.36 m across, flying along -Z.
+static func _bird_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	var body := Vector3(0, 0, 0)
+	var nose := Vector3(0, 0, -0.06)
+	m.tri(body, nose, Vector3(-0.18, 0.02, 0.03), Color.WHITE, Vector3.UP)
+	m.tri(body, nose, Vector3(0.18, 0.02, 0.03), Color.WHITE, Vector3.UP)
+	return m.mesh()
 
 
 ## Each realm's own dressing off the grid (§21.4's "Signature terrain and
@@ -453,7 +506,10 @@ func scatter() -> Array:
 ## of posts, Lantern Vale's fireflies and glowing caps, the Heart's golden
 ## motes, Emberreach's sparks, Verdant's pollen. Same form as `scatter`, with
 ## a fifth value, how far each drifts on the wind, and an optional sixth:
-## how far each rises before it starts again, or "glow" for pools of light.
+## how far each rises before it starts again, "glow" for pools of light,
+## "bird" for the flock, "butterfly", "streak" for wind streaks (no mesh),
+## "twinkle" for glowing pieces that sparkle, "night" for what shows only
+## after dark, or "night glow" for pools of light that do.
 func signature() -> Array:
 	var out := []
 	var accent: Color = palette["accent"]
@@ -473,11 +529,18 @@ func signature() -> Array:
 				var c := Color("#BFAEFF") if i % 2 == 0 else Color("#9BEAF3")
 				c.a = 0.75
 				cols.append(c)
-			out.append([_octa_mesh(), spires, cols, 0.0, 0.0])
+			out.append([_octa_mesh(), spires, cols, 0.0, 0.0, "twinkle"])
 		"skyfield":
 			var one: Array[Transform3D] = [Transform3D()]
 			var cream: Array[Color] = [Color("#F6EBD6")]
 			out.append([_fence_mesh(), one, cream, 0.0, 0.0])
+			var streaks: Array[Transform3D] = []
+			for i in 8:
+				var a := TAU * i / 8.0 + _rng.randf() * 0.5
+				var d := radius() * (0.6 + _rng.randf() * 0.9)
+				streaks.append(Transform3D(Basis().scaled(Vector3(3.0 + _rng.randf() * 3.0, 0.09, 1.0)),
+					Vector3(cos(a) * d, 1.5 + _rng.randf() * 4.0, sin(a) * d)))
+			out.append([null, streaks, _pick(streaks.size(), [Color.WHITE]), 0.0, 0.0, "streak"])
 		"lanternvale":
 			var flies := _meadow_spots(60, 0.0)
 			var at: Array[Transform3D] = []
@@ -496,6 +559,13 @@ func signature() -> Array:
 			out.append([_mushroom_mesh(), _spin_all(caps, 0.8, 1.5), cap_cols, 0.0, 0.0])
 			out.append(_glows(56, [Color("#B4FF8C"), Color("#FFD27A"), Color("#7AD8C8")], 0.5, 1.2))
 		"heart", "verdant", "emberreach":
+			if kind == "verdant":
+				var wings: Array[Transform3D] = []
+				for p in _meadow_spots(16, 0.5):
+					wings.append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * 0.45),
+						p + Vector3(0, 0.5 + _rng.randf() * 0.6, 0)))
+				var hues: Array[Color] = [Color("#FFE07A"), Color("#F7A6DA"), Color("#FFFFFF"), Color("#9ADFE8")]
+				out.append([_bird_mesh(), wings, _pick(wings.size(), hues), 0.0, 0.0, "butterfly"])
 			if kind == "emberreach":
 				out.append(_glows(26, [Color("#FF6A1C"), Color("#FF9A3C")], 0.6, 1.4))
 			var motes := _meadow_spots(60 if kind != "emberreach" else 50, -10.0)
@@ -739,8 +809,9 @@ func waterfalls() -> Array:
 		for i in 20:
 			var a0 := TAU * i / 20.0
 			var a1 := TAU * (i + 1) / 20.0
+			# UV.x is how far from the shore, as the water shader reads it.
 			pools.tri(pool_c, pool_c + Vector3(cos(a0), 0, sin(a0)) * 0.8, pool_c + Vector3(cos(a1), 0, sin(a1)) * 0.8,
-				Color("#6FCDEB"), Vector3.UP)
+				Color.WHITE, Vector3.UP, Vector2(1, 0), Vector2.ZERO, Vector2.ZERO)
 		for st in 9:
 			var sa2 := TAU * (st + _rng.randf() * 0.4) / 9.0
 			var sp := pool_c + Vector3(cos(sa2), -0.02, sin(sa2)) * (0.8 + _rng.randf() * 0.1)
