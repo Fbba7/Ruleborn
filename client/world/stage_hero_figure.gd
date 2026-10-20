@@ -19,6 +19,7 @@ const KINDS := {
 	"lantern_wisp": ["spirit", "Scout", 0.6], "soulmender": ["spirit", "Mender", 0.9],
 	"archivist": ["spirit", "", 1.5], "tinkerer": ["matter", "", 1.5], "gardener": ["life", "", 1.5],
 	"wanderer": ["motion", "", 1.5], "chronicler": ["time", "", 1.5], "lamplighter": ["energy", "", 1.5],
+	"egg": ["spirit", "", 0.7], "shell": ["spirit", "", 0.7],
 }
 ## Each school's home realm (§21.4), whose ground a character stands on.
 const REALM := {"motion": "skyfield", "matter": "crystalline", "time": "tidehold", "energy": "emberreach",
@@ -67,7 +68,7 @@ static func pedestal(for_school: String, radius := 0.75) -> ArrayMesh:
 	var at := func(k: int, r: float, y: float) -> Vector3:
 		var a := TAU * (k % n) / n
 		return Vector3(cos(a) * r * edge[k % n], y, sin(a) * r * edge[k % n])
-	var grass: Color = (c["grass"] as Color).darkened(0.2)
+	var grass: Color = (c["grass"] as Color).lerp(c["rock"], 0.25).darkened(0.12)
 	var top: Color = grass.lightened(0.05)
 	# The top: a gentle dome, so the rim falls away softly.
 	var rings: Array[Array] = [[0.0, 0.04], [0.55, 0.035], [0.85, 0.02], [1.0, 0.0]]
@@ -140,3 +141,44 @@ static func shadow_disc() -> MeshInstance3D:
 	mi.material_override = mat
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	return mi
+
+
+## The Sage hall's floor and walls, `wide` across: a round dais of warm
+## flagstones in the Heart's colours, a step, and arches behind with
+## lanterns, all one mesh.
+static func hall(wide: float) -> ArrayMesh:
+	var cache_key := "hall:%.2f" % wide
+	if _cache.has(cache_key):
+		return _cache[cache_key]
+	var c := RealmPalette.of("heart")
+	var g := Geo.new()
+	var r := wide * 0.62
+	var stone: Color = (c["stone"] as Color).darkened(0.42)
+	g.prism(Geo.place(Vector3(0, -0.12, 0)), 40, r * 1.06, r * 1.04, 0.08, stone.darkened(0.25), true)
+	g.prism(Geo.place(Vector3(0, -0.04, 0)), 40, r, r * 0.99, 0.06, stone.darkened(0.08), true, stone)
+	# Flagstone joints: a few rings of darker stone on the top.
+	for k in 3:
+		g.ring(Geo.place(Vector3(0, 0.022 + k * 0.0005, 0)), r * (0.3 + 0.27 * k), r * (0.3 + 0.27 * k) + 0.015,
+			stone.darkened(0.2), 40)
+	g.ring(Geo.place(Vector3(0, 0.024, 0)), 0.0, r * 0.22, Color(c["trim"]).lightened(0.2), 24)
+	# Arches round the back half, each a pair of columns under a round top, a
+	# lantern hanging in it.
+	var arches := 7
+	for k in arches:
+		var a := PI + PI * (k + 0.5) / arches
+		var at := Vector3(cos(a) * r * 1.02, 0.0, sin(a) * r * 1.02)
+		var face := atan2(at.x, at.z)
+		var span := r * 0.42
+		for side: float in [-1.0, 1.0]:
+			var off := Vector3(cos(face) * side * span * 0.5, 0, -sin(face) * side * span * 0.5)
+			g.prism(Geo.place(at + off), 8, 0.07, 0.06, 1.5, stone.lightened(0.05), true)
+			g.box(Geo.place(at + off + Vector3(0, 1.52, 0), -face), Vector3(0.18, 0.06, 0.18), Color(c["trim"]))
+		for j in 14:
+			var t := PI * j / 13.0
+			var p := at + Vector3(cos(face) * cos(t) * span * 0.5, 1.55 + sin(t) * span * 0.45,
+				-sin(face) * cos(t) * span * 0.5)
+			g.ball(Geo.place(p), 0.075, stone.lightened(0.12), 4, 8)
+		g.ball(Geo.place(at + Vector3(0, 1.25, 0)), 0.06, Color(1.0, 0.82, 0.45, 0.1), 4, 8)
+	var m := g.mesh()
+	_cache[cache_key] = m
+	return m

@@ -19,6 +19,8 @@ var glow := Color("#F2B43C")
 var centre := Vector2(0.5, 0.52)
 ## How far the glow reaches, as a fraction of the shorter side.
 var reach := 0.62
+## A burst of light round the glow, 1 at its height (a hatch's reveal).
+var flash := 0.0
 ## Seconds since the stage was shown: the rays' turn and the motes' drift.
 var time := 0.0
 var _glow_texture: GradientTexture2D
@@ -74,6 +76,11 @@ func _draw() -> void:
 		var pts := PackedVector2Array([c, c + Vector2.from_angle(a - w) * far, c + Vector2.from_angle(a + w) * far])
 		draw_colored_polygon(pts, Color(glow.lightened(0.4), 0.07 if k % 2 == 0 else 0.045))
 	draw_texture_rect(_glow_texture, Rect2(c - Vector2.ONE * span * 1.25, Vector2.ONE * span * 2.5), false)
+	if flash > 0.0:
+		var ring := span * (1.6 - flash)
+		draw_arc(c, ring, 0, TAU, 64, Color(Color.WHITE, 0.6 * flash), span * 0.08 * flash + 1.0)
+		draw_texture_rect(_glow_texture, Rect2(c - Vector2.ONE * span * 1.6, Vector2.ONE * span * 3.2), false,
+			Color(1, 1, 1, flash))
 	# Motes: small sparks rising slowly through the glow, each on its own beat.
 	for k in MOTES:
 		var seed_x := fposmod(sin(k * 12.9898) * 43758.5453, 1.0)

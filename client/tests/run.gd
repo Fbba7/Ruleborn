@@ -191,6 +191,7 @@ func _run() -> void:
 	# §20.8's accessibility set, on every screen, offline (tests/a11y_tests.gd).
 	_seed()
 	await A11yTests.new(self, check, _mount, _control_problems, SCREENS).run()
+	StageHeroTests.new(check).run()
 
 	# The game's languages (§20.6 and the owner's, D99): every key a script
 	# asks for is in the catalogue, in every language, with the same

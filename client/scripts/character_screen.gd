@@ -24,6 +24,7 @@ var status_label: Label
 var stage: StageHero
 var forms: StageHero
 var level_badge: PanelContainer
+var forms_names: PanelContainer
 var cards: VBoxContainer
 ## The spend tapped once, by its key: the next tap on it spends.
 var confirm := ""
@@ -63,6 +64,21 @@ func _build() -> void:
 	forms.custom_minimum_size = Vector2(0, UI.px(120))
 	forms.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(forms)
+	var names := HBoxContainer.new()
+	for look: String in LOOKS:
+		var l := UI.label(Strings.t("ROSTER_STATE_GUARDING") if look == "guard" else FormsPresenter.note_name(look),
+			UI.TEXT_POINTS, true)
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		l.add_theme_color_override("font_color", StageHeroSkin.LIGHT)
+		names.add_child(l)
+	var strip := PanelContainer.new()
+	var flat := StyleBoxFlat.new()
+	flat.bg_color = StageHeroSkin.CARD
+	flat.set_content_margin_all(UI.px(2))
+	strip.add_theme_stylebox_override("panel", flat)
+	strip.add_child(names)
+	body.add_child(strip)
+	forms_names = strip
 	cards = VBoxContainer.new()
 	cards.add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
 	body.add_child(cards)
@@ -78,7 +94,8 @@ func _refresh() -> void:
 	var focused := get_viewport().gui_get_focus_owner()
 	var focus_item := str(focused.get_meta("item", "")) if focused != null else ""
 	var slice: Dictionary = App.services.store.get_slice(RosterState.ROSTER)
-	var c := RosterPresenter.character(slice, id, clock.call(), App.services.store.get_slice(WorkshopState.WORKSHOP)["words"])
+	var c := RosterPresenter.character(slice, id, clock.call(),
+		App.services.store.get_slice(WorkshopState.WORKSHOP)["words"])
 	if c["error"] != "":
 		UI.set_status(status_label, "alarm", c["error"])
 	elif c["missing"]:
@@ -97,6 +114,7 @@ func _refresh() -> void:
 	var shown: bool = c["ready"] and not c["missing"]
 	stage.visible = shown
 	forms.visible = shown
+	forms_names.visible = shown
 	if not shown:
 		return
 	_stand(str(RosterScreen.kinds_of(slice).get(id, "")), c)

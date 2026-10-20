@@ -81,6 +81,10 @@ func build() -> ArrayMesh:
 			_wisp()
 		"soulmender":
 			_moth()
+		"egg":
+			_egg()
+		"shell":
+			_shell()
 		"archivist", "tinkerer", "gardener", "wanderer", "chronicler", "lamplighter":
 			_sage()
 		_:
@@ -328,7 +332,8 @@ func _panda() -> void:
 		_ball(Vector3(s * 0.17, 0.28, 0.05), 0.05, dark, Vector3(0.8, 1.3, 0.8))
 		_ball(Vector3(s * 0.09, 0.04, 0.06), 0.06, dark, Vector3(1.0, 0.6, 1.3))
 	for k in 5:
-		_ball(Vector3(0.05 * k, 0.12 + 0.07 * k, -0.2 - 0.03 * k), 0.08 - 0.006 * k, red if k % 2 == 0 else Color("#F2D2A8"))
+		_ball(Vector3(0.05 * k, 0.12 + 0.07 * k, -0.2 - 0.03 * k), 0.08 - 0.006 * k, red if k % 2 == 0 else Color("#F2D2A8"),
+			Vector3.ONE, Vector3.ZERO, 1)
 	var coil := Vector3(-0.22, 0.2, 0.04)
 	_ball(coil, 0.09, Color("#B07A4F"), Vector3(0.8, 1.0, 0.8))
 	for k in 6:
@@ -519,6 +524,35 @@ func _sage() -> void:
 	_mark(Vector3(0, 0.3, 0.24), 0.05)
 
 
+## A Nursery's egg (§10.2): speckled cream with a band in each school's
+## colour, since the kind is not known until it hatches.
+func _egg() -> void:
+	var cream := Color("#F6EBD2")
+	_ball(Vector3(0, 0.42, 0), 0.32, cream, Vector3(0.85, 1.3, 0.85))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 11
+	for k in 12:
+		var p := _on(Vector3(0, 0.42, 0), 0.3, rng.randf() * TAU, rng.randf_range(-0.6, 0.9))
+		p.y = 0.42 + (p.y - 0.42) * 1.3
+		_ball(p, 0.03, Color("#C9A0D8").lerp(Color("#9AD8E8"), rng.randf()), Vector3.ONE, Vector3.ZERO, 1)
+	var schools: Array[Color] = [Palette.MOTION, Palette.MATTER, Palette.TIME, Palette.ENERGY, Palette.LIFE,
+		Palette.SPIRIT]
+	for k in schools.size():
+		var a := TAU * k / schools.size()
+		_ball(Vector3(cos(a) * 0.27, 0.36, sin(a) * 0.27), 0.045, Color(schools[k], 0.5))
+	_ring_flat(Vector3(0, 0.36, 0), 0.272, 0.02, Color("#D9A548"))
+
+
+## Half an egg's shell, cup up, for a hatch's burst.
+func _shell() -> void:
+	var cream := Color("#F6EBD2")
+	for k in 7:
+		var a := TAU * k / 7.0
+		_cone(Vector3(cos(a) * 0.2, 0.0, sin(a) * 0.2), Vector3(cos(a) * 0.25, 0.12 + 0.04 * (k % 2), sin(a) * 0.25),
+			0.08, cream)
+	_ball(Vector3(0, 0.02, 0), 0.24, cream, Vector3(1.0, 0.3, 1.0))
+
+
 func _chibi(body: Color, belly: Color) -> void:
 	var head := Vector3(0, 0.58, 0.02)
 	_ball(Vector3(0, 0.25, 0), 0.18, body, Vector3(1.0, 1.1, 0.95))
@@ -623,8 +657,8 @@ func _strap(a: Vector3, b: Vector3, col: Color, width := 0.035) -> void:
 ## ground at zero): belts, goggles, halos.
 func _ring_flat(at: Vector3, r: float, w: float, col: Color, rot := Vector3.ZERO) -> void:
 	var b := Basis.from_euler(rot)
-	var segs := 20
-	var sides := 6
+	var segs := 20 if r > 0.1 else 12
+	var sides := 6 if w > 0.015 else 4
 	var point := func(i: int, j: int) -> Array:
 		var u := TAU * i / segs
 		var v := TAU * j / sides

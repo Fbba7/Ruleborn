@@ -147,12 +147,12 @@ static func button(b: Button, main := false) -> Button:
 	return b
 
 
-## A control that reads as a name on its card: no fill, brown ink in
+## A control that reads as a name on its card: the card's own fill, brown ink in
 ## Marcellus, an ink underline, a full outline only when focused.
 static func flat(b: Button, points := 22.0) -> Button:
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 		var s := StyleBoxFlat.new()
-		s.bg_color = Color(PARCHMENT_EDGE, 0.0 if state != "pressed" else 0.6)
+		s.bg_color = PARCHMENT if state != "pressed" else PARCHMENT_EDGE
 		s.border_color = OUTLINE
 		s.border_width_bottom = edge_px()
 		if state == "focus":

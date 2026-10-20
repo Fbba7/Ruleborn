@@ -69,7 +69,7 @@ func _run() -> void:
 		var look: String = job[1]
 		var figure := StageHero.make_figure(kind, "" if look == "shadow" else look)
 		if look == "shadow":
-			_shadow(figure)
+			StageHero.shade(figure)
 		figure.rotation.y = -0.35
 		world.add_child(figure)
 		_frame(kind)
@@ -87,17 +87,8 @@ func _run() -> void:
 ## side and above, as the design's portraits frame it.
 func _frame(kind: String) -> void:
 	var h := StageHeroFigure.height(kind)
-	var target := Vector3(0, h * 0.6, 0)
+	var target := Vector3(0, h * 0.64, 0)
 	var view_h := h * 0.95
 	var dist := view_h * 0.5 / tan(deg_to_rad(camera.fov) * 0.5)
 	camera.position = target + Vector3(0.0, 0.22, 1.0).normalized() * dist
 	camera.look_at(target)
-
-
-## A locked card's silhouette: the figure in one flat ink.
-func _shadow(figure: Node3D) -> void:
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.albedo_color = Color("#2A1E52")
-	for mi: MeshInstance3D in figure.find_children("*", "MeshInstance3D", true, false):
-		mi.material_override = m

@@ -43,6 +43,8 @@ var key_light: DirectionalLight3D
 var rim_light: DirectionalLight3D
 ## One turntable a figure: its pedestal and the figure on it.
 var tables: Array[Node3D] = []
+## What stands round them all: a hall's floor and arches.
+var scenery: Node3D
 var figures: Array[Node3D] = []
 var kinds: Array[String] = []
 ## The stage's school, whose colour is in the glow and the rim.
@@ -57,6 +59,9 @@ var _press := Vector2.ZERO
 var _pressed := false
 var _dragged := 0.0
 var _actions: Array[float] = []
+## Seconds since a hatch's reveal began, or below zero when none plays.
+var _reveal := -1.0
+var _shells: Array[Node3D] = []
 
 
 func _init() -> void:
@@ -78,6 +83,8 @@ func _init() -> void:
 	world = Node3D.new()
 	viewport.add_child(world)
 	_light()
+	scenery = Node3D.new()
+	world.add_child(scenery)
 	camera = Camera3D.new()
 	camera.fov = FOV
 	camera.near = 0.05
@@ -109,11 +116,15 @@ static func toon(rim: Color, inked := INKED) -> ShaderMaterial:
 
 
 ## Stands `list` of kinds on the stage, side by side, each in its look from
-## `looks` (the same index; "" when missing); the stage takes the first
-## one's school.
-func show_kinds(list: Array, looks: Array = []) -> void:
+## `looks` (the same index; "" when missing; "shadow" for a silhouette, as a
+## locked one shows); the stage takes the first one's school. `ground`
+## "hall" stands them on one floor of flagstones under arches, "island" on
+## one island together; otherwise each has its own patch.
+func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 	for t in tables:
 		t.queue_free()
+	for n in scenery.get_children():
+		n.queue_free()
 	tables.clear()
 	figures.clear()
 	kinds.clear()
@@ -127,23 +138,37 @@ func show_kinds(list: Array, looks: Array = []) -> void:
 	var gap := 0.0
 	for k: Variant in list:
 		gap = maxf(gap, StageHeroFigure.height(StageHeroFigure.key(str(k))))
-	gap = maxf(gap * 0.95, 0.75)
+	var hall := ground == "hall"
+	var shared := hall or ground == "island"
+	gap = maxf(gap * (0.62 if shared else 0.95), 0.75)
+	if shared:
+		var hall_mesh := MeshInstance3D.new()
+		hall_mesh.mesh = StageHeroFigure.hall(gap * list.size()) if hall \
+			else StageHeroFigure.pedestal(school, gap * list.size() * 0.4)
+		hall_mesh.material_override = toon(rim, false)
+		scenery.add_child(hall_mesh)
 	for i in list.size():
 		var kind := StageHeroFigure.key(str(list[i]))
 		var table := Node3D.new()
-		table.position = Vector3((i - (list.size() - 1) / 2.0) * gap, 0, 0)
+		var x := (i - (list.size() - 1) / 2.0) * gap
+		# Together, they stand on an arc, the middle ones a little forward.
+		table.position = Vector3(x, 0, 0) if not shared or hall else Vector3(x * 0.85, 0, 0.25 - absf(x) * 0.35)
 		world.add_child(table)
 		var h := StageHeroFigure.height(kind)
 		var own_school := StageHeroFigure.school(kind)
-		var ground := MeshInstance3D.new()
-		ground.mesh = StageHeroFigure.pedestal(own_school, maxf(0.42, h * 0.55))
-		ground.material_override = toon(rim, false)
-		table.add_child(ground)
+		if not shared:
+			var patch := MeshInstance3D.new()
+			patch.mesh = StageHeroFigure.pedestal(own_school, maxf(0.3, h * (0.55 if list.size() == 1 else 0.4)))
+			patch.material_override = toon(rim, false)
+			table.add_child(patch)
 		var blob := StageHeroFigure.shadow_disc()
 		blob.scale = Vector3.ONE * h * 0.75
 		blob.position.y = 0.045
 		table.add_child(blob)
-		var figure := make_figure(kind, str(looks[i]) if i < looks.size() else "")
+		var look := str(looks[i]) if i < looks.size() else ""
+		var figure := make_figure(kind, "" if look == "shadow" else look)
+		if look == "shadow":
+			shade(figure)
 		figure.position.y = 0.04
 		table.add_child(figure)
 		tables.append(table)
@@ -154,6 +179,15 @@ func show_kinds(list: Array, looks: Array = []) -> void:
 	_pose()
 
 
+## A locked one's silhouette: the figure in one flat night ink.
+static func shade(figure: Node3D) -> void:
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.albedo_color = Color("#2A1E52")
+	for mi: MeshInstance3D in figure.find_children("*", "MeshInstance3D", true, false):
+		mi.material_override = m
+
+
 ## Plays the tapped action on figure `index`: a hop and a twirl for a
 ## stand-in, the model's ability clip once the models land.
 func act(index: int) -> void:
@@ -162,6 +196,27 @@ func act(index: int) -> void:
 	_actions[index] = 0.0
 	if figures[index].has_method("play"):
 		figures[index].call("play", "ability")
+
+
+## A hatch's moment (§23.2's Hatch): the egg's shell bursts in two, a ring
+## of light flares, and the newborn pops up with a squash and a twirl.
+func reveal() -> void:
+	if figures.is_empty():
+		return
+	_reveal = 0.0
+	for sh in _shells:
+		sh.queue_free()
+	_shells.clear()
+	var rim: Color = Palette.SCHOOL.get(school, Palette.MOTION)
+	for side: float in [-1.0, 1.0]:
+		var mi := MeshInstance3D.new()
+		mi.mesh = StageHeroSculpt.of("shell")
+		mi.material_override = toon(rim)
+		mi.scale = Vector3.ONE * 0.7
+		mi.set_meta("side", side)
+		tables[0].add_child(mi)
+		_shells.append(mi)
+	act(0)
 
 
 ## Sets the stage's clock, for a still that is the same every time.
@@ -183,6 +238,13 @@ func _process(delta: float) -> void:
 			_actions[i] += delta
 			if _actions[i] > ACTION_SECONDS:
 				_actions[i] = -1.0
+	if _reveal >= 0.0:
+		_reveal += delta
+		if _reveal > 1.6:
+			_reveal = -1.0
+			for sh in _shells:
+				sh.queue_free()
+			_shells.clear()
 	if not _pressed:
 		_spin_speed = lerpf(_spin_speed, 0.0, clampf(delta * SETTLE, 0.0, 1.0))
 		_spin += _spin_speed * delta
@@ -261,8 +323,8 @@ func _frame() -> void:
 	var need_h := maxf(tall * 1.75, wide / aspect)
 	var dist := need_h * 0.5 / tan(deg_to_rad(FOV) * 0.5)
 	var target := Vector3(0, tall * 0.42, 0)
-	camera.position = target + Vector3(0, 0.32, 1.0).normalized() * dist
-	camera.look_at(target)
+	var eye := target + Vector3(0, 0.32, 1.0).normalized() * dist
+	camera.transform = Transform3D(Basis.looking_at(target - eye, Vector3.UP), eye)
 
 
 func _notification(what: int) -> void:
@@ -290,6 +352,20 @@ func _pose() -> void:
 			f.position.y += hop * StageHeroFigure.height(kinds[i]) * 0.45
 			f.rotation.y = TAU * clampf(u * 1.25, 0.0, 1.0)
 			f.scale = Vector3(1.0 + squash, 1.0 - squash, 1.0 + squash)
+	if _reveal >= 0.0 and not figures.is_empty():
+		# The newborn grows out of the egg with one overshoot (§21.8 keeps
+		# interface motion to 250 ms; this is the world's, not the interface's).
+		var u := clampf(_reveal / 0.7, 0.0, 1.0)
+		var grow := 1.0 + 0.25 * sin(u * PI) * (1.0 - u) if u > 0.4 else u / 0.4
+		figures[0].scale *= maxf(0.01, grow)
+		for sh in _shells:
+			var side: float = sh.get_meta("side")
+			var t := _reveal
+			sh.position = Vector3(side * t * 0.9, 0.3 + t * 1.4 - t * t * 1.6, 0.2 * t)
+			sh.rotation = Vector3(0, 0, side * (PI * 0.5 + t * 4.0))
+		backdrop.flash = clampf(1.0 - _reveal / 1.2, 0.0, 1.0)
+	else:
+		backdrop.flash = 0.0
 
 
 ## The stand-in: StageHeroSculpt's figure for the kind, grown to its height.
