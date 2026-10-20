@@ -15,11 +15,11 @@ extends RefCounted
 
 const BURST_SECONDS := 1.2
 
-static var _mesh_cache := {}
-
 ## Loot comes a little every tick while a crew member loads; it is shown
 ## gathered, at most every this many ticks a member.
 const LOOT_TICKS := 12
+
+static var _mesh_cache := {}
 
 var view: WorldView
 var _last := {}

@@ -1,14 +1,14 @@
 extends SceneTree
 ## The heist screen at a moment of a rehearsal on WorldTests' island
 ## (tools/render/shoot.sh). SHOT is the file; MOMENT picks the moment:
-## "start" (just landed, the first orders given), "sneak" (the crew spread, a guard looking),
-## "vault" (the crew at the Vault, cracking), "alarm" (a guard alerted, the
-## alarm up), "pick" (the landing picker, before landing), "cross" (the swoop to
-## another realm, at its middle). HOUR and ZOOM are optional; BUTTONS shows Settings' turn and
-## zoom buttons.
+## "start" (just landed, the first orders given), "sneak" (the crew spread, a
+## guard looking), "vault" (the crew at the Vault, cracking), "alarm" (a
+## guard alerted, the alarm up), "pick" (the landing picker, before landing),
+## "cross" (the swoop to another realm, at its middle). HOUR and ZOOM are
+## optional; BUTTONS shows Settings' turn and zoom buttons.
 
-const TO := {"cross": [[4, 9], [3, 10], [4, 11]], "sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]],
-	"alarm": [[5, 6], [3, 10], [4, 11]], "start": [[7, 8], [2, 10], [1, 10]]}
+const TO := {"cross": [[4, 9], [3, 10], [4, 11]], "sneak": [[4, 9], [3, 10], [4, 11]],
+	"vault": [[6, 10], [5, 10], [7, 10]], "alarm": [[5, 6], [3, 10], [4, 11]], "start": [[7, 8], [2, 10], [1, 10]]}
 const TICKS := {"cross": 60, "start": 30, "sneak": 150, "vault": 300, "alarm": 150}
 
 
