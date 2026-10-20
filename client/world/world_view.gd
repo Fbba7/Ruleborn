@@ -48,7 +48,7 @@ const CLOSE_TILES := 8.0
 ## A character model's scale on the heist's world, for readability.
 const MODEL_SCALE := 1.18
 ## The least height a character model is drawn at in a heist, in metres.
-const MODEL_LEAST := 0.95
+const MODEL_LEAST := 1.05
 ## How aware each guard state is, for choosing whose sight to show.
 const AWARE := {"Unaware": 0, "Returning": 0, "Suspicious": 1, "Investigating": 2, "Searching": 3, "Alerted": 4}
 ## A press that moves less than this many pixels is a tap.
@@ -385,7 +385,8 @@ func _actor(role: String, height: float) -> Node3D:
 		# at the heist's 12 tiles across among the marks over it.
 		var tall: float = model.call("height") if model.has_method("height") else height
 		# The small kinds most: none drawn under `MODEL_LEAST` metres.
-		var grow := maxf(MODEL_SCALE, MODEL_LEAST / maxf(0.1, tall))
+		# Guards keep their own height, so the crew is not dwarfed beside them.
+		var grow := 1.0 if role == "guard" else maxf(MODEL_SCALE, MODEL_LEAST / maxf(0.1, tall))
 		figure.scale = Vector3.ONE * grow
 		root.set_meta("head", tall * grow)
 		return root
