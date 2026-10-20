@@ -126,10 +126,19 @@ func _footprints() -> void:
 	var plain := kit._footprints()
 	kit.buildings = [["library", 5, 5, 2, 7]]
 	var told := kit._footprints()
+	# A path down the east side of the 2 × 2 at (5, 5) turns its door east.
+	var lanes := zeros.duplicate()
+	lanes[5 * 8 + 7] = KitGround.GRAVEL
+	lanes[6 * 8 + 7] = KitGround.GRAVEL
+	kit.surfaces = lanes
+	var east := kit.facing(Vector2i(5, 5), 2)
+	kit.surfaces = zeros
+	var south := kit.facing(Vector2i(5, 5), 2)
 	check.call("a 3 × 3 footprint is drawn as the Keeper's Spire and another as its building where the screen names "
-			+ "it, at its level (10.1, 21.5)",
+			+ "it, at its level, its door toward the path beside it (10.1, 21.5)",
 		plain.size() == 2 and plain[0][0] == "keeper_s_spire" and plain[1][0] == "hearth" and told[1][0] == "library"
-			and told[1][4] == 7, "%s %s" % [plain, told])
+			and told[1][4] == 7 and is_equal_approx(east, PI / 2.0) and is_zero_approx(south),
+		"%s %s %f %f" % [plain, told, east, south])
 
 
 func _ground() -> void:

@@ -358,6 +358,33 @@ func gable(at: Transform3D, w: float, rise: float, d: float, col: Color) -> void
 	quad(p.call(hw, 0, hz), p.call(hw, 0, -hz), p.call(0, rise, -hz), p.call(0, rise, hz), col.darkened(0.04))
 
 
+## Everything drawn into `other`, moved by `xform` into this one, its
+## motion's pivots moved with it (a turn about X or Z trades axes when the
+## piece is turned a quarter).
+func absorb(other: Geo, xform: Transform3D) -> void:
+	if other.triangles == 0:
+		return
+	var arrays := other.st.commit_to_arrays()
+	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+	var cols: PackedColorArray = arrays[Mesh.ARRAY_COLOR]
+	var customs: PackedFloat32Array = arrays[Mesh.ARRAY_CUSTOM0]
+	var quarter := absf(xform.basis.x.z) > 0.7
+	var keep := anim
+	for i in verts.size():
+		var kind := customs[i * 4 + 3]
+		if kind > 0.5:
+			var pivot := xform * Vector3(customs[i * 4], customs[i * 4 + 1], customs[i * 4 + 2])
+			if quarter and int(kind + 0.5) in [Anim.SPIN_X, Anim.SPIN_Z]:
+				kind = float(Anim.SPIN_Z if int(kind + 0.5) == Anim.SPIN_X else Anim.SPIN_X)
+			anim = Color(pivot.x, pivot.y, pivot.z, kind)
+		else:
+			anim = Color(0, 0, 0, 0)
+		_vertex(xform * verts[i], (xform.basis * normals[i]).normalized(), cols[i])
+	triangles += other.triangles
+	anim = keep
+
+
 ## The mesh so far, or null if nothing was drawn.
 func mesh() -> ArrayMesh:
 	if triangles == 0:

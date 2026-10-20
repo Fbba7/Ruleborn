@@ -262,6 +262,8 @@ static func _lab(b: BuildingKit) -> void:
 	b.door(-0.1, 0.08, 0.22, 0, 0.9)
 	b.window(-0.36, 0.3, 0.22, 0, 0.8)
 	b.window(0.255, 0.3, -0.06, PI / 2.0, 0.8, false)
+	b.window(-0.1, 0.3, -0.34, PI, 0.8)
+	b.window(-0.455, 0.3, -0.06, -PI / 2.0, 0.8, false)
 	b.chimney(-0.3, y - 0.15, -0.2, 0.3)
 	var brass := Color("#D4A04A")
 	var spheres := [Vector3(0.36, 0, 0.2), Vector3(0.36, 0, -0.26)]

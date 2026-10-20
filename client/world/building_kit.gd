@@ -60,9 +60,19 @@ static func look(lvl: int, colours: Dictionary) -> Array[Color]:
 
 
 ## Building `kind` of `side` tiles a side, centred on `mid` on the ground,
-## at `lvl` (1 to 10).
+## at `lvl` (1 to 10), its door turned `yaw` from +Z (quarter turns).
 static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, colours: Dictionary,
-		details: Geo = null, panes: Geo = null) -> void:
+		details: Geo = null, panes: Geo = null, yaw := 0.0) -> void:
+	if absf(yaw) > 0.01:
+		var tg := Geo.new()
+		var td := Geo.new()
+		var tp := Geo.new()
+		build(tg, kind, Vector3.ZERO, side, lvl, colours, td, tp)
+		var xf := Transform3D(Basis(Vector3.UP, yaw), mid)
+		geo.absorb(tg, xf)
+		(details if details != null else geo).absorb(td, xf)
+		(panes if panes != null else (details if details != null else geo)).absorb(tp, xf)
+		return
 	var b := BuildingKit.new()
 	b.g = geo
 	b.d = details if details != null else geo
@@ -440,11 +450,17 @@ func _hearth() -> void:
 		window(0.22, 0.62, 0.375, 0, 0.9)
 		for z: float in [0.16, -0.16]:
 			window(0.455, 0.62, z, PI / 2.0, 0.9, false)
+			window(-0.455, 0.62, z, -PI / 2.0, 0.9, false)
+		for x: float in [-0.22, 0.22]:
+			window(x, 0.62, -0.375, PI, 0.9)
 	var y := roof(0.9 if two else 0.86, 0.74 if two else 0.7, eave, 0.42, 0.1)
 	door(0, 0.08, 0.335, 0)
 	window(-0.25, 0.27, 0.335, 0)
 	window(0.25, 0.27, 0.335, 0)
 	window(0.415, 0.27, 0, PI / 2.0, 0.9, false)
+	window(-0.415, 0.27, 0, -PI / 2.0, 0.9, false)
+	window(-0.2, 0.27, -0.335, PI, 0.9)
+	window(0.2, 0.27, -0.335, PI, 0.9)
 	# The round window in the gable.
 	g.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), at(0, eave + 0.15, 0.36)), 0.06 * unit, 0.06 * unit,
 		0.03 * unit, KitStyle.lit(KitStyle.WINDOW, 0.5), 12)
@@ -492,6 +508,11 @@ func _storehouse() -> void:
 	d.gem(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), at(0, 0.3, 0.4)), 0.05 * unit, 0.03 * unit,
 		KitStyle.lit(KitStyle.GOLD, 0.3), 5)
 	stop()
+	for x: float in [-0.25, 0.25]:
+		window(x, 0.34, -0.37, PI, 0.8, false)
+	for z: float in [-0.15, 0.15]:
+		window(0.47, 0.34, z, PI / 2.0, 0.8, false)
+		window(-0.47, 0.34, z, -PI / 2.0, 0.8, false)
 	# The hay loft.
 	box(0.16, 0.14, 0.03, KitStyle.WOOD_DARK, 0, 0.7, 0.37)
 	ball(0.05, KitStyle.THATCH, 0, 0.68, 0.39, 0.6, 2, 6)

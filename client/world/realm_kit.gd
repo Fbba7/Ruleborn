@@ -156,7 +156,8 @@ func build() -> void:
 		var a := centre(Vector2i(fp[1], fp[2]))
 		var side: int = fp[3]
 		var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
-		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear)
+		var turn := 0.0 if fp[0] == "keeper_s_spire" else facing(Vector2i(fp[1], fp[2]), side)
+		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear, turn)
 	for m: Vector2i in tunnels:
 		_tunnel(m)
 	# The Heart's walls round its citadel, just past the grid.
@@ -195,6 +196,43 @@ func _footprints() -> Array:
 					lvl = int(given[t][4])
 			out.append([kind, x, y, side, lvl])
 	return out
+
+
+## Which way a building's door faces, as the design's houses face their
+## lanes: toward the side of its footprint with the most path beside it
+## (then the most open ground), south when none is better. A yaw from +Z.
+func facing(nw: Vector2i, side: int) -> float:
+	var best := -1.0
+	var way := 0.0
+	# South, east, north, west: the door's side and the yaw that turns +Z to it.
+	for option: Array in [[Vector2i(0, 1), 0.0], [Vector2i(1, 0), PI / 2.0], [Vector2i(0, -1), PI],
+			[Vector2i(-1, 0), -PI / 2.0]]:
+		var d: Vector2i = option[0]
+		var score := 0.0
+		for k in side:
+			var t := nw
+			if d.y > 0:
+				t = nw + Vector2i(k, side)
+			elif d.y < 0:
+				t = nw + Vector2i(k, -1)
+			elif d.x > 0:
+				t = nw + Vector2i(side, k)
+			else:
+				t = nw + Vector2i(-1, k)
+			if not inside(t):
+				continue
+			var i := t.y * size.x + t.x
+			var gravel := i < surfaces.size() and surfaces[i] == KitGround.GRAVEL
+			if gravel or code(t) == F.GRAVEL_PATH:
+				score += 1.0
+			elif code(t) == F.OPEN:
+				score += 0.1
+		# A little for facing the first camera, so a tie stays south.
+		score += 0.05 if d.y > 0 else 0.0
+		if score > best:
+			best = score
+			way = option[1]
+	return way
 
 
 ## A tunnel's mouth: a grassy mound with a dark arch toward its partner.
