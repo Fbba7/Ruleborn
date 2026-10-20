@@ -44,11 +44,15 @@ func build(t: Vector2i, f: int) -> void:
 		RealmKit.F.FENCE:
 			_fence(t, c)
 		RealmKit.F.FOG_BANK:
-			for k in 4:
-				var o := Vector3(RealmKit.jitter(t, k) - 0.5, 0, RealmKit.jitter(t, k + 5) - 0.5) * 0.5
-				kit.clear.moving(Geo.Anim.BOB, c + o)
-				kit.clear.ball(Geo.place(c + o + Vector3(0, 0.32 + 0.12 * (k % 2), 0), 0.0, Vector3(1.3, 0.62, 1.3)),
-					0.32 + 0.1 * RealmKit.jitter(t, k + 9), Color("#F3EEFF"), 4, 9)
+			# A low, wide drift of flattened puffs spilling past the tile, each
+			# bobbing on its own.
+			for k in 7:
+				var a := TAU * k / 7.0 + RealmKit.jitter(t, k)
+				var r := 0.12 + 0.3 * RealmKit.jitter(t, k + 5)
+				var o := Vector3(cos(a) * r, 0.14 + 0.1 * RealmKit.jitter(t, k + 2), sin(a) * r)
+				kit.clear.moving(Geo.Anim.BOB, c + o + Vector3(k * 3.0, 0, 0))
+				kit.clear.ball(Geo.place(c + o, a, Vector3(1.5, 0.45, 1.2)), 0.2 + 0.08 * RealmKit.jitter(t, k + 9),
+					Color("#F6F2FF"), 3, 8)
 			kit.clear.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.TALL_GRASS:
 			_grass(t, c, plant)
