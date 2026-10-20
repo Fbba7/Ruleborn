@@ -30,6 +30,9 @@ var sky_material: ShaderMaterial
 var hemi_material: ShaderMaterial
 var _mists: Array[ShaderMaterial] = []
 var _clouds: ShaderMaterial
+## What shows only after dark: its share by the hour.
+var _night: Array[ShaderMaterial] = []
+var _night_glows: Array[ShaderMaterial] = []
 
 
 ## One warm sun with its shadow, a sky by the hour, ambient light from the
@@ -123,6 +126,11 @@ func set_hour(new_hour: int) -> void:
 	environment.fog_light_energy = 1.0
 	for mist: ShaderMaterial in _mists:
 		mist.set_shader_parameter("colour", sky[2].lerp(Color.WHITE, 0.55))
+	var after_dark: float = {"day": 0.0, "dusk": 0.6, "night": 1.0}[RealmPalette.hour_key(hour)]
+	for n: ShaderMaterial in _night:
+		n.set_shader_parameter("appear", after_dark)
+	for n: ShaderMaterial in _night_glows:
+		n.set_shader_parameter("strength", 0.45 * after_dark)
 	if _clouds != null:
 		var lit: Color = light[0]
 		_clouds.set_shader_parameter("top", Color.WHITE.lerp(lit, 0.25).lerp(sky[2], 0.12))
@@ -140,6 +148,8 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 	var builder := IslandBuilder.new(grid, seed_from, colours, type)
 	realm = builder.kind
 	_mists.clear()
+	_night.clear()
+	_night_glows.clear()
 	var paint_scale := 4.2
 	var meadow := _decorated(_painted(LookPaint.grass(), paint_scale))
 	meadow.set_shader_parameter("grid_blend", IslandBuilder.GRID_BLEND)
@@ -154,7 +164,14 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 	statics.add_child(_piece(roots[1], vines, false))
 	for part: Array in builder.scatter():
 		var mi := _scatter(part[0], part[1], part[2], part[3], part[4])
-		if part.size() > 5 and part[5] is String:
+		if part.size() > 5 and part[5] is String and part[5] == "night":
+			_night.append(mi.material_override as ShaderMaterial)
+		elif part.size() > 5 and part[5] is String and part[5] == "night glow":
+			var ng := ShaderMaterial.new()
+			ng.shader = _glow
+			mi.material_override = ng
+			_night_glows.append(ng)
+		elif part.size() > 5 and part[5] is String:
 			var gm := ShaderMaterial.new()
 			gm.shader = _glow if part[5] == "glow" else _bird
 			mi.material_override = gm

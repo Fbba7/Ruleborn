@@ -338,7 +338,7 @@ func roots() -> Array[ArrayMesh]:
 			x += cos(q) * 0.12 + (_rng.randf() - 0.5) * 0.25
 			z += sin(q) * 0.12 + (_rng.randf() - 0.5) * 0.25
 			y -= 0.35 + _rng.randf() * 0.25
-		m.tube(pts, 0.07, 0.025, 3, root_col)
+		m.tube(pts, 0.1, 0.03, 3, root_col)
 	# Curtains: long roots off the cone's flank, deeper under the island.
 	for i in (16 if kind != "emberreach" else 6):
 		var q := TAU * (i + _rng.randf() * 0.6) / 16.0
@@ -351,8 +351,8 @@ func roots() -> Array[ArrayMesh]:
 			pts.append(Vector3(x, y, z))
 			x += cos(q) * 0.08 + (_rng.randf() - 0.5) * 0.18
 			z += sin(q) * 0.08 + (_rng.randf() - 0.5) * 0.18
-			y -= 0.55 + _rng.randf() * 0.4
-		m.tube(pts, 0.06, 0.02, 3, root_col.darkened(0.1))
+			y -= 0.7 + _rng.randf() * 0.5
+		m.tube(pts, 0.09, 0.025, 3, root_col.darkened(0.1))
 	var vine_col := Color("#3F8A45")
 	match kind:
 		"emberreach":
@@ -462,6 +462,19 @@ func scatter() -> Array:
 	out.append([ico_mesh(), rocks, rock_cols, 0.0, 0.0])
 	out.append_array(signature())
 	if kind != "emberreach" and kind != "lanternvale":
+		# Fireflies for the night (§21.2: at night "lanterns and glows carry the
+		# realm"), shown by the hour.
+		var spots := _meadow_spots(64, -10.0)
+		var flies: Array[Transform3D] = []
+		for p in spots:
+			flies.append(Transform3D(Basis().scaled(Vector3.ONE * (0.05 + _rng.randf() * 0.04)),
+				p + Vector3(0, 0.25 + _rng.randf() * 1.2, 0)))
+		var fly := Color("#E8FF9A") if kind != "crystalline" else Color("#BFEAFF")
+		fly.a = 0.0
+		out.append([_octa_mesh(), flies, _pick(flies.size(), [fly, Color(1.0, 0.86, 0.5, 0.0)]), 0.0, 0.25, "night"])
+		var pools := _glows(18, [Color("#D8FF9A"), Color("#FFD27A")], 0.7, 1.3)
+		pools[5] = "night glow"
+		out.append(pools)
 		var birds: Array[Transform3D] = []
 		for i in 9:
 			var a := TAU * i / 9.0 + _rng.randf() * 0.4
@@ -489,8 +502,9 @@ static func _bird_mesh() -> ArrayMesh:
 ## of posts, Lantern Vale's fireflies and glowing caps, the Heart's golden
 ## motes, Emberreach's sparks, Verdant's pollen. Same form as `scatter`, with
 ## a fifth value, how far each drifts on the wind, and an optional sixth:
-## how far each rises before it starts again, "glow" for pools of light, or
-## "bird" for the flock.
+## how far each rises before it starts again, "glow" for pools of light,
+## "bird" for the flock, "night" for what shows only after dark, or "night
+## glow" for pools of light that do.
 func signature() -> Array:
 	var out := []
 	var accent: Color = palette["accent"]

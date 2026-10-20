@@ -38,12 +38,15 @@ uniform float drift = 0.0;
 // again from the ground, shrinking away at the top (sparks, motes).
 uniform float rise = 0.0;
 uniform float rise_period = 6.0;
+// How much of a piece shows: 0 hides it (the night's fireflies by day).
+uniform float appear = 1.0;
 uniform float glow_from_alpha = 1.0;
 
 varying vec3 world_pos;
 varying vec3 world_normal;
 
 void vertex() {
+	VERTEX *= appear;
 	if (sway > 0.0) {
 		vec3 root = (MODEL_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 		float phase = root.x * 1.7 + root.z * 1.3 + float(INSTANCE_ID) * 0.37 + (sway_by_uv ? (VERTEX.x + VERTEX.z) * 0.8 : 0.0);

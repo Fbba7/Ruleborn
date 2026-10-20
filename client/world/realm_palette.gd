@@ -64,7 +64,7 @@ const SKIES := {
 }
 ## The hour's own light: the sun's tint and strength, and the ambient's tint.
 const HOUR_LIGHT := {
-	"day": ["#FFFFFF", 1.0, "#FFFFFF"], "dusk": ["#FFB98A", 0.86, "#B49AE8"], "night": ["#B4BCFF", 0.62, "#9A92D4"],
+	"day": ["#FFFFFF", 1.0, "#FFFFFF"], "dusk": ["#FFB98A", 0.86, "#B49AE8"], "night": ["#A2AEFF", 0.5, "#7E76C4"],
 }
 
 
@@ -97,7 +97,14 @@ static func light_at(hour: int, type := "heart") -> Array:
 static func hemisphere_at(hour: int, type := "heart") -> Array[Color]:
 	var l: Dictionary = LIGHTS.get(type, LIGHTS["heart"])
 	var tint := Color(HOUR_LIGHT[hour_key(hour)][2])
-	return [Color(l["sky"]) * tint, Color(l["under"]) * tint]
+	var above := Color(l["sky"]) * tint
+	var below := Color(l["under"]) * tint
+	if hour_key(hour) == "night":
+		# Moonlight: a cool blue from above keeps the ground's hue instead of
+		# greying it.
+		above = above.lerp(Color("#5868C8"), 0.55)
+		below = below.lerp(Color("#1A1840"), 0.3)
+	return [above, below]
 
 
 ## Where the sun stands for a realm, as a direction from the island to it;
