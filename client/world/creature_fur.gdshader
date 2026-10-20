@@ -39,6 +39,6 @@ void fragment() {
 		discard;
 	}
 	vec3 c = texture(atlas, UV).rgb * mix(0.85, 1.15, layer);
-	creature_surface(c, true, 0.0, 0.0, UV, NORMAL, VIEW, ALBEDO, EMISSION);
+	creature_surface(c, true, 0.0, 0.0, UV, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
 	gloss_band = 0.0;
 }

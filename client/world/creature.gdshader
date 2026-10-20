@@ -37,6 +37,6 @@ void fragment() {
 	}
 	float gloss = body ? body_gloss : flags.x / 0.45;
 	float emit = body ? 0.0 : flags.y;
-	creature_surface(c, body, gloss, emit, UV, NORMAL, VIEW, ALBEDO, EMISSION);
+	creature_surface(c, body, gloss, emit, UV, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
 	gloss_band = gloss;
 }

@@ -24,6 +24,10 @@ const ECHO_DELAY := 0.3
 const ONCE := [&"hit", &"ko"]
 const FORMS := [&"base", &"hush", &"spark", &"echo"]
 const MANIFEST := "res://art/creatures/manifest.json"
+## The guard form's rim (CreatureGear.SASH, lifted).
+const GUARD_RIM := Color("#FF6F5E")
+## The heights the ruleborn band (0.5–1.4 m) is drawn at in a heist.
+const READABLE := Vector2(0.95, 1.4)
 
 static var _manifest: Dictionary = {}
 static var _shader: Shader = load("res://world/creature.gdshader")
@@ -164,6 +168,9 @@ func set_guard(on: bool) -> void:
 	_drop_gear(&"guard")
 	if on:
 		_gear[&"guard"] = CreatureGear.guard_kit(self)
+	# A guard's rim is the sash's warm red, so at the heist's size a guard
+	# is told from the crew by its edge as well as its kit.
+	_material.set_shader_parameter("rim_colour", GUARD_RIM if on else Color(str(info.get("rim", "#9FD4FF"))))
 
 
 ## A socket by name (a node that follows its bone): the design's glow points
@@ -199,6 +206,17 @@ func set_fur(shells: int) -> void:
 ## it a little larger without changing what the simulation measures.
 func set_display_scale(factor: float) -> void:
 	_model.scale = Vector3.ONE * float(info.get("scale", 1.0)) * clampf(factor, 0.5, 2.0)
+
+
+## The heist's readability scale (§21.6's heights, read at 40 px): the
+## ruleborn band 0.5–1.4 m drawn as `READABLE` (0.95–1.4 m), so the smallest
+## kinds grow most, the largest not at all, and the order of heights holds.
+## Anything over the band keeps its true size. Hand it to `set_display_scale`
+## or scale the node by it.
+func readable_scale() -> float:
+	var tall := maxf(0.1, height())
+	var t := clampf((tall - 0.5) / 0.9, 0.0, 1.0)
+	return maxf(1.0, lerpf(READABLE.x, READABLE.y, t) / tall)
 
 
 ## The animation player, for callers that sync or seek clips.

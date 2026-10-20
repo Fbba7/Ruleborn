@@ -389,7 +389,8 @@ func _actor(role: String, height: float) -> Node3D:
 		# at the heist's 12 tiles across among the marks over it.
 		var tall: float = model.call("height") if model.has_method("height") else height
 		# The small kinds most: none drawn under `MODEL_LEAST` metres.
-		var grow := maxf(MODEL_SCALE, MODEL_LEAST / maxf(0.1, tall))
+		var grow: float = model.call("readable_scale") if model.has_method("readable_scale") \
+			else maxf(MODEL_SCALE, MODEL_LEAST / maxf(0.1, tall))
 		figure.scale = Vector3.ONE * grow
 		root.set_meta("head", tall * grow)
 		return root
