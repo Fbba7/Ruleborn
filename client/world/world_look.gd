@@ -14,6 +14,7 @@ static var _fall: Shader = load("res://world/look_fall.gdshader")
 static var _mist: Shader = load("res://world/look_mist.gdshader")
 static var _cloud: Shader = load("res://world/look_cloud.gdshader")
 static var _hemi: Shader = load("res://world/look_hemi.gdshader")
+static var _glow: Shader = load("res://world/look_glow.gdshader")
 static var _vignette: Shader = load("res://world/look_vignette.gdshader")
 
 var environment: Environment
@@ -147,16 +148,30 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 	statics.add_child(_piece(roots[1], vines, false))
 	for part: Array in builder.scatter():
 		var mi := _scatter(part[0], part[1], part[2], part[3], part[4])
-		if part.size() > 5:
+		if part.size() > 5 and part[5] is String:
+			var gm := ShaderMaterial.new()
+			gm.shader = _glow
+			mi.material_override = gm
+		elif part.size() > 5:
 			(mi.material_override as ShaderMaterial).set_shader_parameter("rise", part[5])
 		statics.add_child(mi)
+	var mist_at: Array[Transform3D] = []
+	var mist_alpha: Array[float] = []
 	var falls := builder.waterfalls()
 	if falls[0] != null:
 		var fm := ShaderMaterial.new()
 		fm.shader = _fall
-		statics.add_child(_piece(falls[0], fm, false))
 		var pm := ShaderMaterial.new()
 		pm.shader = load("res://world/water.gdshader")
+		if realm == "emberreach":
+			# Lava falls off Emberreach's rim (§21.4: "Lava glows brighter").
+			fm.set_shader_parameter("water", Color("#FF6A1C"))
+			fm.set_shader_parameter("foam", Color("#FFD27A"))
+			fm.set_shader_parameter("speed", 0.6)
+			pm.set_shader_parameter("deep", Color("#C8401E"))
+			pm.set_shader_parameter("foam", Color("#FFC24A"))
+			pm.set_shader_parameter("glowing", 0.8)
+		statics.add_child(_piece(falls[0], fm, false))
 		statics.add_child(_piece(falls[1], pm, false))
 		var stones: Array[Transform3D] = falls[3]
 		var grey: Array[Color] = []
@@ -164,8 +179,10 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 			grey.append((colours["stone"] as Color).darkened(0.1 + 0.15 * (i % 2)))
 		statics.add_child(_scatter(IslandBuilder.ico_mesh(), stones, grey, 0.0, 0.0))
 		for foot: Vector3 in falls[2]:
-			for j in 3:
-				statics.add_child(_mist_at(foot + Vector3((j - 1) * 0.5, j * 0.3, 0), 2.4 + j, 0.35))
+			for j in 3 if realm != "emberreach" else 0:
+				mist_at.append(Transform3D(Basis().scaled(Vector3(2.4 + j, (2.4 + j) * 0.6, 1.0)),
+					foot + Vector3((j - 1) * 0.5, j * 0.3, 0)))
+				mist_alpha.append(1.0)
 	var dressing := builder.sky_dressing()
 	statics.add_child(_piece(dressing[0], _painted(LookPaint.rock(), 0.0, 0.6), true))
 	var cloud := ShaderMaterial.new()
@@ -179,9 +196,11 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 	for i in 6:
 		var a := rng.randf() * TAU
 		var d := r * (0.5 + rng.randf() * 0.7)
-		var mist := _mist_at(Vector3(cos(a) * d, -6.5 - rng.randf() * 3.0, sin(a) * d), 9.0 + rng.randf() * 5.0, 0.24)
-		mist.scale.y *= 0.5
-		statics.add_child(mist)
+		var w := 9.0 + rng.randf() * 5.0
+		mist_at.append(Transform3D(Basis().scaled(Vector3(w, w * 0.3, 1.0)),
+			Vector3(cos(a) * d, -6.5 - rng.randf() * 3.0, sin(a) * d)))
+		mist_alpha.append(0.7)
+	statics.add_child(_mists_of(mist_at, mist_alpha))
 	set_hour(hour)
 
 
@@ -236,16 +255,29 @@ static func _scatter(mesh: Mesh, at: Array[Transform3D], colours: Array[Color], 
 	return mi
 
 
-## A soft puff of mist facing the camera, `width` across.
-func _mist_at(at: Vector3, width: float, opacity: float) -> MeshInstance3D:
+## The mist at the waterfalls' feet and the cloud sea: soft puffs facing
+## the camera, one MultiMesh; `alpha` is each one's share of the opacity.
+func _mists_of(at: Array[Transform3D], alpha: Array[float]) -> MultiMeshInstance3D:
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = true
+	mm.use_custom_data = true
+	mm.mesh = _quad()
+	mm.instance_count = at.size()
+	for i in at.size():
+		mm.set_instance_transform(i, at[i])
+		var w := at[i].basis.x.length()
+		mm.set_instance_color(i, Color(at[i].basis.y.length() / w, 0, 0, alpha[i]))
+		mm.set_instance_custom_data(i, Color(0, 0, at[i].origin.z, w))
 	var m := ShaderMaterial.new()
 	m.shader = _mist
-	m.set_shader_parameter("opacity", opacity)
+	m.set_shader_parameter("opacity", 0.34)
 	m.set_shader_parameter("drift", 0.8)
 	_mists.append(m)
-	var mi := _piece(_quad(), m, false)
-	mi.position = at
-	mi.scale = Vector3(width, width * 0.6, 1.0)
+	var mi := MultiMeshInstance3D.new()
+	mi.multimesh = mm
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	return mi
 
 

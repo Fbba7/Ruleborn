@@ -111,7 +111,7 @@ func _materials(view: WorldView) -> void:
 	var kit := [load("res://world/toon.gdshader"), load("res://world/toon_clear.gdshader"),
 		load("res://world/water.gdshader"), load("res://world/look_ground.gdshader"),
 		load("res://world/look_fall.gdshader"), load("res://world/look_mist.gdshader"),
-		load("res://world/look_cloud.gdshader"), sky_shader]
+		load("res://world/look_cloud.gdshader"), load("res://world/look_glow.gdshader"), sky_shader]
 	var stray := []
 	var outlined := 0
 	for mi: MeshInstance3D in meshes(view):

@@ -24,8 +24,8 @@ const TOP := 0.0
 const DESIGN_R := 12.7
 ## The meadow's rings and spokes (§21.3: the island stays a small share of
 ## a realm's 25,000–40,000 triangles).
-const RINGS := 14
-const SPOKES := 120
+const RINGS := 12
+const SPOKES := 100
 
 var size := Vector2i(12, 12)
 var island_seed := 1
@@ -321,7 +321,7 @@ func roots() -> Array[ArrayMesh]:
 			x += cos(q) * 0.12 + (_rng.randf() - 0.5) * 0.25
 			z += sin(q) * 0.12 + (_rng.randf() - 0.5) * 0.25
 			y -= 0.35 + _rng.randf() * 0.25
-		m.tube(pts, 0.07, 0.025, 4, root_col)
+		m.tube(pts, 0.07, 0.025, 3, root_col)
 	# Curtains: long roots off the cone's flank, deeper under the island.
 	for i in (16 if kind != "emberreach" else 6):
 		var q := TAU * (i + _rng.randf() * 0.6) / 16.0
@@ -335,7 +335,7 @@ func roots() -> Array[ArrayMesh]:
 			x += cos(q) * 0.08 + (_rng.randf() - 0.5) * 0.18
 			z += sin(q) * 0.08 + (_rng.randf() - 0.5) * 0.18
 			y -= 0.55 + _rng.randf() * 0.4
-		m.tube(pts, 0.06, 0.02, 4, root_col.darkened(0.1))
+		m.tube(pts, 0.06, 0.02, 3, root_col.darkened(0.1))
 	var vine_col := Color("#3F8A45")
 	match kind:
 		"emberreach":
@@ -357,7 +357,7 @@ func roots() -> Array[ArrayMesh]:
 			var side := 0.07 if leaf % 2 == 0 else -0.07
 			var p := at + Vector3(-sin(q) * side, 0, cos(q) * side)
 			var before := vines.uvs.size()
-			vines.ico(Transform3D(Basis().scaled(Vector3(0.08, 0.05, 0.08)), p), vine_col.lightened(0.12))
+			vines.octa(Transform3D(Basis().scaled(Vector3(0.08, 0.05, 0.08)), p), vine_col.lightened(0.12))
 			for u in range(before, vines.uvs.size()):
 				vines.uvs[u] = Vector2(0, length * (leaf + 1) / 3.0)
 	return [m.mesh(), vines.mesh()]
@@ -381,10 +381,10 @@ func scatter() -> Array:
 			tuft_cols = [Color("#8A5A48"), Color("#9A6A50")]
 		"crystalline":
 			tuft_cols = [Color("#A8A2D8"), Color("#E6E2F8")]
-	var tufts := _meadow_spots(380 if kind != "emberreach" else 90, 0.15)
+	var tufts := _meadow_spots(270 if kind != "emberreach" else 90, 0.15)
 	out.append([_tuft_mesh(), _spin_all(tufts, 0.8, 1.3), _pick(tufts.size(), tuft_cols), 0.25, 0.0])
 	var pebbles := _meadow_spots(70, 0.1)
-	out.append([ico_mesh(), _spin_all(pebbles, 0.04, 0.09, 0.6), _pick(pebbles.size(), [stone, rock]), 0.0, 0.0])
+	out.append([_octa_mesh(), _spin_all(pebbles, 0.04, 0.09, 0.6), _pick(pebbles.size(), [stone, rock]), 0.0, 0.0])
 	if kind != "emberreach" and kind != "crystalline":
 		var flowers := _meadow_spots(130, 0.1)
 		var fc: Array[Color] = [accent, Color.WHITE, Color("#FFE08F"), bloom]
@@ -452,8 +452,8 @@ func scatter() -> Array:
 ## :891–899): Crystalline's crystal spires round the rim, Skyfield's fence
 ## of posts, Lantern Vale's fireflies and glowing caps, the Heart's golden
 ## motes, Emberreach's sparks, Verdant's pollen. Same form as `scatter`, with
-## a fifth value, how far each drifts on the wind, and an optional sixth,
-## how far each rises before it starts again.
+## a fifth value, how far each drifts on the wind, and an optional sixth:
+## how far each rises before it starts again, or "glow" for pools of light.
 func signature() -> Array:
 	var out := []
 	var accent: Color = palette["accent"]
@@ -479,22 +479,25 @@ func signature() -> Array:
 			var cream: Array[Color] = [Color("#F6EBD6")]
 			out.append([_fence_mesh(), one, cream, 0.0, 0.0])
 		"lanternvale":
-			var flies := _meadow_spots(90, 0.0)
+			var flies := _meadow_spots(60, 0.0)
 			var at: Array[Transform3D] = []
 			for p in flies:
 				at.append(Transform3D(Basis().scaled(Vector3.ONE * (0.035 + _rng.randf() * 0.03)),
 					p + Vector3(0, 0.3 + _rng.randf() * 1.4, 0)))
 			var glow := Color("#C8FF96")
 			glow.a = 0.0
-			out.append([ico_mesh(), at, _pick(at.size(), [glow, Color(1.0, 0.85, 0.45, 0.0)]), 0.0, 0.25])
-			var caps := _meadow_spots(40, 0.2)
+			out.append([_octa_mesh(), at, _pick(at.size(), [glow, Color(1.0, 0.85, 0.45, 0.0)]), 0.0, 0.25])
+			var caps := _meadow_spots(32, 0.2)
 			var cap_cols: Array[Color] = []
 			for i in caps.size():
 				var c := Color("#7AD8C8") if i % 3 else Color("#E05CB4")
 				c.a = 0.45
 				cap_cols.append(c)
 			out.append([_mushroom_mesh(), _spin_all(caps, 0.8, 1.5), cap_cols, 0.0, 0.0])
+			out.append(_glows(56, [Color("#B4FF8C"), Color("#FFD27A"), Color("#7AD8C8")], 0.5, 1.2))
 		"heart", "verdant", "emberreach":
+			if kind == "emberreach":
+				out.append(_glows(26, [Color("#FF6A1C"), Color("#FF9A3C")], 0.6, 1.4))
 			var motes := _meadow_spots(60 if kind != "emberreach" else 50, -10.0)
 			var at: Array[Transform3D] = []
 			for p in motes:
@@ -502,9 +505,33 @@ func signature() -> Array:
 					p + Vector3(0, 0.4 + _rng.randf() * 2.2, 0)))
 			var c := Color("#FFD27A") if kind == "heart" else (Color("#FFF6B0") if kind == "verdant" else Color("#FF8A3C"))
 			c.a = 0.0
-			out.append([ico_mesh(), at, _pick(at.size(), [c, c.lerp(accent, 0.4)]), 0.0, 0.3,
+			out.append([_octa_mesh(), at, _pick(at.size(), [c, c.lerp(accent, 0.4)]), 0.0, 0.3,
 				2.5 if kind == "emberreach" else 0.8])
 	return out
+
+
+## Pools of light on the meadow off the grid (the grid is the simulation's),
+## `lo` to `hi` metres across,
+## drawn by look_glow.gdshader (the sixth value "glow").
+func _glows(n: int, cols: Array[Color], lo: float, hi: float) -> Array:
+	var spots := _meadow_spots(n, 0.3)
+	var at: Array[Transform3D] = []
+	for p in spots:
+		var sz := lerpf(lo, hi, _rng.randf())
+		at.append(Transform3D(Basis().scaled(Vector3(sz, 1.0, sz)), p + Vector3(0, 0.02, 0)))
+	return [_flat_quad(), at, _pick(at.size(), cols), 0.0, 0.0, "glow"]
+
+
+## A unit square lying flat, centred, with its UV.
+static func _flat_quad() -> ArrayMesh:
+	var m := LookMesh.new()
+	var a := Vector3(-0.5, 0, -0.5)
+	var b := Vector3(0.5, 0, -0.5)
+	var c := Vector3(0.5, 0, 0.5)
+	var d := Vector3(-0.5, 0, 0.5)
+	m.tri(a, b, c, Color.WHITE, Vector3.UP, Vector2(0, 0), Vector2(1, 0), Vector2(1, 1))
+	m.tri(a, c, d, Color.WHITE, Vector3.UP, Vector2(0, 0), Vector2(1, 1), Vector2(0, 1))
+	return m.mesh()
 
 
 ## A crystal: an octahedron of radius 1, standing on its lower point.
@@ -522,8 +549,8 @@ static func _octa_mesh() -> ArrayMesh:
 ## A glowing mushroom: a short stem under a round cap.
 static func _mushroom_mesh() -> ArrayMesh:
 	var m := LookMesh.new()
-	m.puff(Transform3D(Basis().scaled(Vector3(0.02, 0.06, 0.02)), Vector3(0, 0.05, 0)), Color("#E8E0F0"), 3, 5)
-	m.puff(Transform3D(Basis().scaled(Vector3(0.07, 0.04, 0.07)), Vector3(0, 0.11, 0)), Color.WHITE, 3, 7)
+	m.octa(Transform3D(Basis().scaled(Vector3(0.025, 0.06, 0.025)), Vector3(0, 0.05, 0)), Color("#E8E0F0"))
+	m.puff(Transform3D(Basis().scaled(Vector3(0.07, 0.04, 0.07)), Vector3(0, 0.11, 0)), Color.WHITE, 3, 6)
 	return m.mesh()
 
 
@@ -618,7 +645,7 @@ static func _tuft_mesh() -> ArrayMesh:
 ## A soft lump with round normals, for the rim's grass fringe.
 static func _puff_mesh() -> ArrayMesh:
 	var m := LookMesh.new()
-	m.puff(Transform3D(), Color.WHITE, 3, 7)
+	m.puff(Transform3D(), Color.WHITE, 3, 5)
 	return m.mesh()
 
 
@@ -633,7 +660,7 @@ static func ico_mesh() -> ArrayMesh:
 static func _flower_mesh() -> ArrayMesh:
 	var m := LookMesh.new()
 	m.tri(Vector3(-0.008, 0, 0), Vector3(0.008, 0, 0), Vector3(0, 0.07, 0), Color("#4E9A40"), Vector3(0, 0, 1))
-	m.ico(Transform3D(Basis().scaled(Vector3(0.04, 0.025, 0.04)), Vector3(0, 0.075, 0)), Color.WHITE)
+	m.octa(Transform3D(Basis().scaled(Vector3(0.045, 0.03, 0.045)), Vector3(0, 0.075, 0)), Color.WHITE)
 	return m.mesh()
 
 
@@ -684,7 +711,7 @@ static func _hang_mesh() -> ArrayMesh:
 ## one off every side (§21.4: "waterfalls off the edges").
 func fall_angles() -> PackedFloat32Array:
 	match kind:
-		"emberreach", "crystalline":
+		"crystalline":
 			return PackedFloat32Array()
 		"tidehold":
 			return PackedFloat32Array([0.15, PI / 2.0 - 0.2, PI + 0.1, PI * 1.5 + 0.2])
@@ -806,5 +833,5 @@ func sky_dressing() -> Array[ArrayMesh]:
 		for p in puffs:
 			var o := Vector3((p - puffs / 2.0) * 0.55, (_rng.randf() - 0.5) * 0.3, (_rng.randf() - 0.5) * 0.5) * scale
 			var rad := (0.5 + _rng.randf() * 0.5) * scale
-			clouds.puff(Transform3D(Basis().scaled(Vector3(rad, rad * 0.75, rad)), base + o), Color.WHITE, 5, 9)
+			clouds.puff(Transform3D(Basis().scaled(Vector3(rad, rad * 0.75, rad)), base + o), Color.WHITE, 4, 8)
 	return [m.mesh(), clouds.mesh()]

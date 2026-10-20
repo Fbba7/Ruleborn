@@ -61,6 +61,17 @@ func ico(at: Transform3D, col: Color, uv := Vector2.ZERO) -> void:
 		tri(a, b, c, col, (a + b + c) / 3.0 - at.origin, uv, uv, uv)
 
 
+## A diamond: an octahedron of radius 1 placed by `at`, flat-shaded; the
+## cheapest round thing, for leaves, petals and specks.
+func octa(at: Transform3D, col: Color) -> void:
+	var ring: Array[Vector3] = [Vector3(1, 0, 0), Vector3(0, 0, 1), Vector3(-1, 0, 0), Vector3(0, 0, -1)]
+	for i in 4:
+		var a: Vector3 = at * ring[i]
+		var b: Vector3 = at * ring[(i + 1) % 4]
+		for tip: Vector3 in [at * Vector3.UP, at * Vector3.DOWN]:
+			tri(a, b, tip, col, (a + b + tip) / 3.0 - at.origin)
+
+
 ## A smooth, low ball (an ellipsoid when `at` scales it): `rings` by
 ## `segments`, its normals round, for soft shapes like clouds.
 func puff(at: Transform3D, col: Color, rings := 4, segments := 8) -> void:
