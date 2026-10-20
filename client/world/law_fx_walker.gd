@@ -26,6 +26,17 @@ func _init(law := "", mesh: ArrayMesh = null, mat: Material = null) -> void:
 	body.mesh = mesh
 	body.material_override = mat
 	add_child(body)
+	# A soft shadow that stays on the ground, so a hop or a float reads.
+	var g := Geo.new()
+	g.ring(Geo.place(Vector3(0, 0.02, 0)), 0.0, 0.3, Palette.INK, 16)
+	_shadow = MeshInstance3D.new()
+	_shadow.mesh = g.mesh()
+	var m := ShaderMaterial.new()
+	m.shader = load("res://world/toon_clear.gdshader")
+	m.set_shader_parameter("opacity", 0.3)
+	_shadow.material_override = m
+	_shadow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(_shadow)
 
 
 ## Where the preview's figure is `t` seconds in: round a soft square, pausing
@@ -37,6 +48,8 @@ func walk(t: float) -> void:
 	position = Vector3(cos(a) * reach, position.y, sin(a) * reach * 0.6)
 	rotation.y = atan2(sin(a), -cos(a) * 0.6) if moving else rotation.y
 	pose(body, gait, t, moving)
+	var k := clampf(1.0 - body.position.y * 1.5, 0.45, 1.0)
+	_shadow.scale = Vector3(k, 1.0, k)
 
 
 ## A figure's body posed by `g` at `t` seconds, walking or standing.

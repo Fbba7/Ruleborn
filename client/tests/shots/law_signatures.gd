@@ -4,7 +4,7 @@ extends SceneTree
 ## a stream, a lantern, a static stone, two guards and a ward — with one law
 ## woven, LawFx attached and moved to the heist's tick TICKS (default 150).
 ## LAWS (comma-separated) picks the laws, default the 24 at launch; COLS the
-## sheet's columns; CELL the cell's width and height ("360x420").
+## sheet's columns; CELL the cell's width and height ("360x420"); ZOOM the view's zoom.
 
 func _initialize() -> void:
 	_go()
@@ -33,6 +33,8 @@ func _go() -> void:
 		root.add_child(view)
 		view.set_sky_hour(12)
 		view.show_replay(replay)
+		if OS.get_environment("ZOOM") != "":
+			view.set_zoom(int(OS.get_environment("ZOOM")))
 		var fx := LawFx.attach(view, replay)
 		fx.sync(ticks)
 		fx.sync_world(replay)

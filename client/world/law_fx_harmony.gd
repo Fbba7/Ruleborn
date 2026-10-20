@@ -176,27 +176,25 @@ static func paradox(fx: LawFx, into: Node3D, id: String) -> void:
 	match id:
 		"reversal":
 			# Dust falls up, and the sky's violet creeps in from the edges.
-			LawFxPaint.spray(fx, into, "reversal", {"n": 60, "shape": 1, "colour": Color("#C8B8E8", 0.85),
-				"colour_b": Color("#8A6A4E", 0.85), "radius": [0.04, 0.07], "lift": [0.0, 0.3], "vel": Vector3(0, 0.6, 0),
+			LawFxPaint.spray(fx, into, "reversal", {"n": 70, "shape": 1, "colour": Color("#8C6CF0", 0.95),
+				"colour_b": Color("#8A6A4E", 0.95), "radius": [0.06, 0.1], "lift": [0.0, 0.3], "vel": Vector3(0, 0.6, 0),
 				"spread": Vector3(0.05, 0.2, 0.05), "period": [4.0, 6.0]})
 			fx.tint(Color("#6A4FC9"), 0.25)
 		"twin_suns":
-			# A second sun low on the other side: its light and its disc.
-			if fx.sun != null:
-				var second := DirectionalLight3D.new()
-				second.light_color = Color("#FFD6A0")
-				second.light_energy = fx.sun.light_energy * 0.35
-				second.rotation_degrees = Vector3(-35, 215, 0)
-				into.add_child(second)
+			# Two suns in the sky behind the island. A second light would wash
+			# the toon ramp out, so the doubling is drawn, not lit.
 			var h := fx.site.half()
 			var b := LawFxBatch.new(LawFxBatch.Kind.MOTES)
-			b.mote(Vector3(-h.x * 0.8, 7.0, -h.y), Vector3.ZERO, 0.0, 0.0, 0.9, 0.0, 0, Color("#FFF2B0", 0.95))
-			b.mote(Vector3(h.x * 0.8, 6.0, -h.y * 0.9), Vector3.ZERO, 0.0, 0.5, 0.7, 0.0, 0, Color("#FFD27A", 0.95))
+			var side := Vector3(1, 0, -1).normalized()
+			for k in 2:
+				var at := Vector3(-h.x * 0.6, 6.0 + k * 0.6, -h.y * 0.6) + side * (k * 2 - 1) * 2.4
+				b.mote(at, Vector3.ZERO, 0.0, k * 0.5, 1.3, 0.0, 0, Color("#FFE07A", 1.0))
+				b.mote(at, Vector3.ZERO, 0.0, k * 0.5, 0.55, 0.0, 0, Color("#FFFFFF", 1.0))
 			fx.layer(into, b, fx.mote_material(1.0))
 		"unmaking":
 			# Torn scraps flutter; every signature stutters now and then.
-			LawFxPaint.spray(fx, into, "unmaking", {"n": 40, "shape": 7, "colour": Color("#FCFBFF", 0.9),
-				"radius": [0.05, 0.09], "lift": [0.2, 2.0], "vel": Vector3(0.2, -0.15, 0.1), "period": [5.0, 8.0],
+			LawFxPaint.spray(fx, into, "unmaking", {"n": 50, "shape": 5, "colour": Color("#FCFBFF", 1.0),
+				"radius": [0.08, 0.12], "lift": [0.2, 2.0], "vel": Vector3(0.2, -0.15, 0.1), "period": [5.0, 8.0],
 				"wobble": 0.3})
 			fx.every(func(s: float) -> void:
 				var u := fmod(s, 20.0)

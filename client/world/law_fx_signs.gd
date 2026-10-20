@@ -44,18 +44,32 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> void:
 			LawFxSigns2.build(fx, sig, law)
 
 
-## How tall a wall-like feature stands, for what a law lays over it.
+## How tall a wall-like feature stands, for what a law lays over it: the
+## realm kit's pieces (RealmKit's `_feature`), measured.
 static func wall_height(code: int) -> float:
+	return wall_size(code).y
+
+
+## A wall-like feature's footprint and height, as the realm kit builds it.
+static func wall_size(code: int) -> Vector3:
 	match code:
 		RealmKit.F.ROCK_PILLAR:
-			return 1.9
+			return Vector3(0.84, 1.45, 0.84)
 		RealmKit.F.BUILDING:
-			return 1.7
-		RealmKit.F.BOULDER, RealmKit.F.STATUE:
-			return 0.9
+			return Vector3(1.0, 1.7, 1.0)
+		RealmKit.F.BOULDER:
+			return Vector3(0.84, 0.62, 0.76)
+		RealmKit.F.STATUE:
+			return Vector3(0.6, 1.15, 0.6)
 		RealmKit.F.FENCE:
-			return 0.7
-	return 1.05
+			return Vector3(0.94, 0.62, 0.14)
+		RealmKit.F.RUIN_WALL:
+			return Vector3(0.94, 0.94, 0.38)
+		RealmKit.F.HEDGE:
+			return Vector3(0.96, 0.74, 0.64)
+		RealmKit.F.CRYSTAL_WALL:
+			return Vector3(0.92, 1.1, 0.32)
+	return Vector3(0.9, 0.8, 0.9)
 
 
 ## Bounce: "Walls wobble like jelly when touched." Every wall wears a coat
@@ -66,9 +80,10 @@ static func _bounce(fx: LawFx, sig: Node3D) -> void:
 	var feet: Array = []
 	for t: Vector2i in walls:
 		var c := fx.site.centre(t)
-		var h := wall_height(fx.site.code(t)) + 0.12
+		var w := wall_size(fx.site.code(t)) + Vector3(0.14, 0.12, 0.14)
+		var h := w.y
 		var g := Geo.new()
-		g.ball(Geo.place(Vector3(0, h * 0.5, 0), 0.0, Vector3(0.58, h * 0.56, 0.58)), 1.0,
+		g.ball(Geo.place(Vector3(0, h * 0.5, 0), 0.0, Vector3(w.x * 0.58, h * 0.56, w.z * 0.62)), 1.0,
 			Color("#FF7AC8"), 5, 10)
 		jelly.geo(g, c, RealmKit.jitter(t, 1))
 		feet.append(c)
@@ -187,18 +202,22 @@ static func _glass(fx: LawFx, sig: Node3D) -> void:
 	var hues: Array[Color] = [Color("#8C6CF0"), Color("#3CC6D8"), Color("#E05CB4"), Color("#F2B43C")]
 	for t: Vector2i in fx.site.tiles(LawFxSite.WALLS):
 		var c := fx.site.centre(t)
-		var h := wall_height(fx.site.code(t)) + 0.08
+		var w := wall_size(fx.site.code(t)) + Vector3(0.08, 0.08, 0.08)
+		var h := w.y
 		var g := Geo.new()
-		g.box(Geo.place(Vector3(0, h / 2.0, 0)), Vector3(1.02, h, 1.02), Color("#E6F4FF"))
+		g.box(Geo.place(Vector3(0, h / 2.0, 0)), w, Color("#E6F4FF"))
 		shell.geo(g, c, RealmKit.jitter(t, 2))
 		var e := Geo.new()
 		var hue: Color = hues[(t.x + t.y) % hues.size()]
 		var glow := Color(hue.lightened(0.25), 0.25)
-		for sx: float in [-0.51, 0.51]:
-			for sz: float in [-0.51, 0.51]:
+		var hx := w.x / 2.0
+		var hz := w.z / 2.0
+		for sx: float in [-hx, hx]:
+			for sz: float in [-hz, hz]:
 				e.box(Geo.place(Vector3(sx, h / 2.0, sz)), Vector3(0.05, h, 0.05), glow)
-			e.box(Geo.place(Vector3(sx, h, 0)), Vector3(0.05, 0.05, 1.04), glow)
-			e.box(Geo.place(Vector3(0, h, sx)), Vector3(1.04, 0.05, 0.05), glow)
+			e.box(Geo.place(Vector3(sx, h, 0)), Vector3(0.05, 0.05, w.z + 0.02), glow)
+		for sz: float in [-hz, hz]:
+			e.box(Geo.place(Vector3(0, h, sz)), Vector3(w.x + 0.02, 0.05, 0.05), glow)
 		edges.geo(e, c, 0.0)
 	if shell.triangles > 0:
 		fx.layer(sig, shell, fx.glass_material(Color("#8C6CF0"), 0, 1.0, 0.28))

@@ -54,6 +54,7 @@ func show_laws(which: Array, type := "heart") -> void:
 	var law := str(laws[0]) if not laws.is_empty() else ""
 	walker = LawFxWalker.new(law, ActorBuilder.mesh("Scout"), WorldView.material(_toon(), true))
 	walker.reach = 1.6
+	walker.scale = Vector3.ONE * 1.4
 	fx.add_child(walker)
 	_tick(0.0)
 

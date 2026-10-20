@@ -43,7 +43,7 @@ void vertex() {
 		float seg = floor(along * 14.0);
 		float j = (hash(seg + k * 7.0) - 0.5) * 0.28 * sin(3.14159 * along);
 		v.xy += n * j;
-		w *= 0.8;
+		w *= 1.25;
 	} else if (kind > 2.5 && kind < 3.5) {
 		// A bolt: jags like a dissonance's, redrawn faster.
 		float k = floor(s * 14.0);
@@ -72,9 +72,11 @@ void fragment() {
 	} else if (kind < 1.5) {
 		// Dissonance: flickers on and off, uneasy.
 		float k = floor(s * 9.0);
+		// An ink core in a rim of the clashing notes' colour, so it reads
+		// by value on any ground (§21.10).
 		float f = step(0.3, hash(k + 3.0));
-		c = mix(c, vec3(1.0), step(0.7, core) * 0.6);
-		a *= 0.35 + 0.65 * f;
+		c = mix(c, vec3(0.16, 0.06, 0.14), smoothstep(0.45, 0.7, core));
+		a = smoothstep(0.0, 0.35, core) * (0.5 + 0.5 * f);
 	} else if (kind > 2.5 && kind < 3.5) {
 		// A bolt: white-hot in the middle, its colour as a glow round it,
 		// flickering out now and then.
