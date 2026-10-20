@@ -64,6 +64,8 @@ func _build() -> void:
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
 	column.add_child(UI.narrow(actions))
 	column.sort_children.connect(func() -> void: world.fit_between(_top, _sheet))
+	# What is bought is seen close: the Heart first, any realm a tap away.
+	world.focus_realm.call_deferred("heart", 1)
 
 
 ## The universe in 3D, as the store holds it, and said in words.

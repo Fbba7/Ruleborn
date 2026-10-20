@@ -15,7 +15,7 @@ var _busy := false
 
 
 func _init() -> void:
-	size = Vector2i(SIZE, SIZE)
+	size = Vector2i(SIZE * 2, SIZE * 2)
 	own_world_3d = true
 	transparent_bg = true
 	msaa_3d = Viewport.MSAA_4X
@@ -72,23 +72,72 @@ func _run() -> void:
 			StageHero.shade(figure)
 		figure.rotation.y = -0.35
 		world.add_child(figure)
-		_frame(kind)
+		_frame(kind, figure)
 		render_target_update_mode = SubViewport.UPDATE_ONCE
 		await RenderingServer.frame_post_draw
 		var image := get_texture().get_image()
 		if image != null and not image.is_empty():
 			image.convert(Image.FORMAT_RGBA8)
-			(job[2] as ImageTexture).set_image(image)
+			(job[2] as ImageTexture).set_image(crop(image))
 		figure.queue_free()
 	_busy = false
 
 
-## Head and shoulders: the top two-thirds of the figure, a little from the
-## side and above, as the design's portraits frame it.
-func _frame(kind: String) -> void:
+## The whole figure, with room to spare: the portrait is cut from what is
+## drawn (crop), so a kind's own height or props never mis-frame it.
+func _frame(kind: String, _figure: Node3D) -> void:
 	var h := StageHeroFigure.height(kind)
-	var target := Vector3(0, h * 0.64, 0)
-	var view_h := h * 0.95
+	var view_h := h * 2.2
+	var target := Vector3(0, h * 0.62, 0)
 	var dist := view_h * 0.5 / tan(deg_to_rad(camera.fov) * 0.5)
 	camera.position = target + Vector3(0.0, 0.22, 1.0).normalized() * dist
 	camera.look_at(target)
+
+
+## A portrait cut from a render: a square from the top of what was drawn,
+## as wide as the figure's body and tall enough for head and shoulders down
+## to the knees, as the design's portraits frame them; then SIZE across.
+static func crop(image: Image) -> Image:
+	var used := _body(image)
+	if used.size.x < 4 or used.size.y < 4:
+		image.resize(SIZE, SIZE, Image.INTERPOLATE_LANCZOS)
+		return image
+	# A tall, thin one (a heron) is cut to its upper body, as the design does.
+	var side := int(clampf(maxf(minf(used.size.y * 0.82, used.size.x * 1.7), used.size.x * 0.78), 8.0,
+		float(image.get_width())))
+	var x := clampi(int(used.position.x + used.size.x / 2.0 - side / 2.0), 0, image.get_width() - side)
+	var y := clampi(used.position.y - int(side * 0.04), 0, image.get_height() - side)
+	var out := image.get_region(Rect2i(x, y, side, side))
+	out.resize(SIZE, SIZE, Image.INTERPOLATE_LANCZOS)
+	return out
+
+
+## Where the figure is drawn, leaving out a stray glint or a thin antenna
+## tip: columns and rows with little drawn in them are trimmed from the
+## edges, judged on a 64-pixel copy so it costs next to nothing.
+static func _body(image: Image) -> Rect2i:
+	var n := 64
+	var small := image.duplicate() as Image
+	small.resize(n, n, Image.INTERPOLATE_BILINEAR)
+	var cols := PackedInt32Array()
+	var rows := PackedInt32Array()
+	cols.resize(n)
+	rows.resize(n)
+	for y in n:
+		for x in n:
+			if small.get_pixel(x, y).a > 0.4:
+				cols[x] += 1
+				rows[y] += 1
+	var lo := Vector2i(n, n)
+	var hi := Vector2i(-1, -1)
+	for i in n:
+		if cols[i] >= 2:
+			lo.x = mini(lo.x, i)
+			hi.x = maxi(hi.x, i)
+		if rows[i] >= 2:
+			lo.y = mini(lo.y, i)
+			hi.y = maxi(hi.y, i)
+	if hi.x < lo.x or hi.y < lo.y:
+		return image.get_used_rect()
+	var k := float(image.get_width()) / n
+	return Rect2i(Vector2i(int(lo.x * k), int(lo.y * k)), Vector2i(int((hi.x - lo.x + 1) * k), int((hi.y - lo.y + 1) * k)))

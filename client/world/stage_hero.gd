@@ -99,10 +99,12 @@ func _init() -> void:
 ## sits in a node of the stage's own, so the stage's sway and hop never fight
 ## its facing; `close` asks for its fur, as only a close view affords.
 static func make_figure(kind: String, look := "", close := false) -> Node3D:
-	if not CreatureModel.manifest().has(kind):
+	# The export names a kind without its underscores ("glassgolem").
+	var exported := kind.replace("_", "")
+	if not CreatureModel.manifest().has(exported):
 		return _stand_in(kind, look)
-	var fur := int(((CreatureModel.manifest()[kind] as Dictionary).get("fur", {}) as Dictionary).get("shells", 0))
-	var model := CreatureModel.make(StringName(kind), fur if close else 0)
+	var fur := int(((CreatureModel.manifest()[exported] as Dictionary).get("fur", {}) as Dictionary).get("shells", 0))
+	var model := CreatureModel.make(StringName(exported), fur if close else 0)
 	model.face(Vector3.BACK)
 	if look in ["hush", "spark", "echo"]:
 		model.set_form(StringName(look))
@@ -116,10 +118,14 @@ static func make_figure(kind: String, look := "", close := false) -> Node3D:
 	return root
 
 
-## A material in §21.3's look, its rim in `rim`; inked when INKED.
-static func toon(rim: Color, inked := INKED) -> ShaderMaterial:
+## A material in §21.3's look, its rim in `rim`; inked when INKED. Ground
+## is drawn a step darker than a figure, so the character is the brightest
+## thing on the stage.
+static func toon(rim: Color, inked := INKED, ground := false) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = _toon
+	if ground:
+		m.set_shader_parameter("tint", Color(0.8, 0.78, 0.84))
 	m.set_shader_parameter("glow_from_alpha", 1.0)
 	m.set_shader_parameter("rim_colour", rim.lightened(0.45))
 	m.set_shader_parameter("rim_strength", 0.5)
@@ -161,7 +167,7 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		var hall_mesh := MeshInstance3D.new()
 		hall_mesh.mesh = StageHeroFigure.hall(gap * list.size()) if hall \
 			else StageHeroFigure.pedestal(school, gap * list.size() * 0.4)
-		hall_mesh.material_override = toon(rim, false)
+		hall_mesh.material_override = toon(rim, false, true)
 		scenery.add_child(hall_mesh)
 	for i in list.size():
 		var kind := StageHeroFigure.key(str(list[i]))
@@ -175,7 +181,7 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		if not shared:
 			var patch := MeshInstance3D.new()
 			patch.mesh = StageHeroFigure.pedestal(own_school, maxf(0.3, h * (0.55 if list.size() == 1 else 0.4)))
-			patch.material_override = toon(rim, false)
+			patch.material_override = toon(rim, false, true)
 			table.add_child(patch)
 		var blob := StageHeroFigure.shadow_disc()
 		blob.scale = Vector3.ONE * h * 0.75
@@ -195,12 +201,39 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 	_pose()
 
 
+## What a figure takes up, in its own space: every mesh under it at rest,
+## leaving out flat ones (a ground shadow); where the model has a skinned
+## body, that body alone, so a staff or a lamp pole never shrinks the frame.
+static func bounds(figure: Node3D) -> AABB:
+	var out := AABB()
+	var first := true
+	var all := figure.find_children("*", "VisualInstance3D", true, false)
+	var bodies := all.filter(func(v: Node) -> bool: return v.get_parent() is Skeleton3D)
+	for vi: VisualInstance3D in (bodies if not bodies.is_empty() else all):
+		var box := vi.get_aabb()
+		if box.size.y < 0.02 or not vi.visible:
+			continue
+		var t := Transform3D()
+		var n: Node = vi
+		while n != null and n != figure:
+			if n is Node3D:
+				t = (n as Node3D).transform * t
+			n = n.get_parent()
+		box = t * box
+		out = box if first else out.merge(box)
+		first = false
+	return out
+
+
 ## A locked one's silhouette: the figure in one flat night ink.
 static func shade(figure: Node3D) -> void:
 	var m := StandardMaterial3D.new()
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	m.albedo_color = Color("#2A1E52")
 	for mi: MeshInstance3D in figure.find_children("*", "MeshInstance3D", true, false):
+		# A ground shadow stays a shadow, not a dark plate.
+		if mi.get_aabb().size.y < 0.02:
+			continue
 		mi.material_override = m
 
 
@@ -336,8 +369,9 @@ func _light() -> void:
 ## centre, as the design's hero view frames one.
 func _frame() -> void:
 	var tall := 0.0
-	for k: String in kinds:
-		tall = maxf(tall, StageHeroFigure.height(k))
+	for i in figures.size():
+		var b := bounds(figures[i])
+		tall = maxf(tall, b.end.y if b.size.y > 0.0 else StageHeroFigure.height(kinds[i]))
 	var wide := (tables[-1].position.x - tables[0].position.x) + tall * 1.3 if tables.size() > 1 else tall * 1.3
 	var aspect := maxf(0.2, size.x / maxf(1.0, size.y)) if size.y > 0.0 else 1.0
 	var need_h := maxf(tall * 1.75, wide / aspect)
@@ -369,7 +403,7 @@ func _pose() -> void:
 			var u := a / ACTION_SECONDS
 			var hop := sin(clampf(u * 1.25, 0.0, 1.0) * PI)
 			var squash := 0.18 * (sin(u * PI * 4.0) * (1.0 - u))
-			f.position.y += hop * StageHeroFigure.height(kinds[i]) * 0.45
+			f.position.y += hop * StageHeroFigure.height(kinds[i]) * 0.28
 			f.rotation.y = TAU * clampf(u * 1.25, 0.0, 1.0)
 			f.scale = Vector3(1.0 + squash, 1.0 - squash, 1.0 + squash)
 	if _reveal >= 0.0 and not figures.is_empty():

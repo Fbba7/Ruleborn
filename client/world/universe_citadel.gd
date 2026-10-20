@@ -8,6 +8,8 @@ extends RefCounted
 ## the one shape that says "home" from across the universe (§21.1: "every
 ## building … must read as a dark shape at 32 points tall").
 
+## How much larger than its own metres the map draws the citadel.
+const MAP_SCALE := 1.35
 const GOLD := Color("#E9B65C")
 const LIT := Color("#FFD77A", 0.15)
 const STONE := Color("#E6DCCB")

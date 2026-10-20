@@ -29,6 +29,10 @@ var grade_label: Label
 var play_button: Button
 var speed_button: Button
 
+var progress: FxDraw
+## The heist's moments on the timeline (`moments`).
+var marks: Array[Dictionary] = []
+
 var _owed := 0.0
 
 
@@ -77,8 +81,40 @@ func open_entry(index: int) -> bool:
 	_owed = 0.0
 	view.show_replay(replay)
 	view.follow = range(replay.crew().size())
+	marks = moments(entries[current][1], island)
 	_refresh()
 	return ok
+
+
+## The moments of a heist worth marking on its timeline, read by playing it
+## through once: each guard knocked out, each rise of the alarm, the Vault
+## opening, each pylon broken. [{tick, kind}], kind "ko", "alarm", "vault" or
+## "pylon".
+static func moments(bytes: PackedByteArray, island: PackedByteArray) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var r := RulebornReplay.new()
+	if bytes.is_empty() or not r.load(bytes, island):
+		return out
+	var down := 0
+	var alarm := 0
+	var open := false
+	var standing := -1
+	while r.step():
+		var d := r.guards().filter(func(g: Dictionary) -> bool: return g["down"]).size()
+		if d > down:
+			out.append({"tick": r.tick(), "kind": "ko"})
+		down = d
+		if r.alarm() > alarm:
+			out.append({"tick": r.tick(), "kind": "alarm"})
+		alarm = r.alarm()
+		if bool(r.vault().get("open", false)) and not open:
+			out.append({"tick": r.tick(), "kind": "vault"})
+			open = true
+		var up := r.pylons().filter(func(p: Dictionary) -> bool: return p["standing"]).size()
+		if standing >= 0 and up < standing:
+			out.append({"tick": r.tick(), "kind": "pylon"})
+		standing = up
+	return out
 
 
 ## Run `ticks` ticks of the heist, as the playback clock does.
@@ -114,6 +150,8 @@ func _refresh() -> void:
 	speed_button.accessibility_name = Strings.t("REPLAY_SPEED", SPEEDS[speed_index])
 	view.describe()
 	view.queue_redraw()
+	if progress != null:
+		progress.queue_redraw()
 
 
 func _build() -> void:
@@ -126,6 +164,7 @@ func _build() -> void:
 	var columns := FxSkin.frame(self)
 	hud = HeistHud.new()
 	columns[0].add_child(hud)
+	view.looted.connect(func(at: Vector2, amount: int) -> void: hud.fly_coins(at, amount / 20))
 	var column := columns[1]
 
 	var status := FxSkin.panel("card", 16.0, 8.0)
@@ -142,6 +181,10 @@ func _build() -> void:
 	status_box.add_child(name_label)
 	status_box.add_child(badge_label)
 	status_box.add_child(grade_label)
+	# How far into the heist the playback is: a bar, the alarm's levels
+	# ticked along it.
+	progress = FxDraw.new(_draw_progress, Vector2(0, UI.px(20)))
+	status_box.add_child(progress)
 	column.add_child(status)
 
 	column.add_child(FxSkin.camera_row(view))
@@ -161,6 +204,28 @@ func _build() -> void:
 	controls.add_child(_button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "card"))
 	column.add_child(UI.narrow(controls))
 	column.add_child(FxSkin.corner_clear())
+
+
+func _draw_progress(ci: Control) -> void:
+	var whole := maxf(1.0, float(replay.ticks()))
+	var bar := Rect2(Vector2(0, ci.size.y * 0.42), Vector2(ci.size.x, ci.size.y * 0.4))
+	FxIcons.bar(ci, bar, float(replay.tick()) / whole, FxSkin.GOLD)
+	# Each moment's mark above the bar where it happens: stars for a
+	# knock-out, a bell for the alarm, a lock for the Vault, a shard for a
+	# pylon.
+	var s := ci.size.y * 0.42
+	for m in marks:
+		var x := bar.position.x + bar.size.x * float(m["tick"]) / whole
+		var at := Vector2(clampf(x, s * 0.5, ci.size.x - s * 0.5), s * 0.5)
+		match str(m["kind"]):
+			"ko":
+				FxIcons.star(ci, at, s * 0.45, Color("#FFE27A"))
+			"alarm":
+				FxIcons.bell(ci, at, s, FxSkin.ALARM, true)
+			"vault":
+				FxIcons.lock(ci, at, s, true)
+			"pylon":
+				FxIcons.star(ci, at, s * 0.4, Palette.MATTER, PI / 5.0)
 
 
 ## A playback button in the heist's skin.

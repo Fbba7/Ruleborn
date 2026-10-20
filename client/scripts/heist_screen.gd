@@ -407,6 +407,7 @@ func _build() -> void:
 	column_node = lower
 	hud = HeistHud.new()
 	column.add_child(hud)
+	view.looted.connect(func(at: Vector2, amount: int) -> void: hud.fly_coins(at, amount / 20))
 	column = lower
 	hint_label = FxSkin.label("", 13.0)
 	hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

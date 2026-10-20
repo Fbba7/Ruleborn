@@ -11,6 +11,9 @@ static var services: Services
 ## Build the services if nothing has yet: the real network, and the server
 ## the environment or the project names.
 static func ready(node: Node) -> void:
+	# The realm's actors are the design's characters (world/cast.gd).
+	if not WorldView.figure_maker.is_valid():
+		WorldView.figure_maker = Cast.figure
 	if services == null:
 		var root := node.get_tree().root
 		services = Services.build(root, Services.server_url())
