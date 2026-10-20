@@ -20,6 +20,7 @@ uniform vec4 tint : source_color = vec4(1.0);
 uniform sampler2D deco : source_color, filter_linear_mipmap, repeat_enable;
 uniform float deco_scale = 0.0;
 uniform float deco_glow = 0.0;
+uniform float deco_strength = 1.0;
 uniform float sway = 0.0;
 // Sway by the distance along a vine (its UV.y) rather than by height.
 uniform bool sway_by_uv = false;
@@ -71,6 +72,7 @@ void fragment() {
 	vec3 lit = vec3(0.0);
 	if (deco_scale > 0.0 && world_normal.y > 0.6) {
 		vec4 d = texture(deco, world_pos.xz / deco_scale);
+		d.a *= deco_strength;
 		albedo = mix(albedo, d.rgb, d.a * (1.0 - deco_glow));
 		lit = d.rgb * d.a * deco_glow;
 	}

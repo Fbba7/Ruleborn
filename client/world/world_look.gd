@@ -208,7 +208,10 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 ## the meadow's painted texture laid lightly over it, so the grid and the
 ## island read as one painted ground.
 func ground_material() -> ShaderMaterial:
-	return _decorated(_painted(LookPaint.grass(), 4.2, 0.55))
+	var m := _decorated(_painted(LookPaint.grass(), 4.2, 0.55))
+	# Lighter on the grid, where the simulation's tiles must still read.
+	m.set_shader_parameter("deco_strength", 0.4)
+	return m
 
 
 ## `m` with the realm's own marks laid over it (LookPaint.deco).

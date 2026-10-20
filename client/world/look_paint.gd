@@ -54,9 +54,9 @@ static func _deco_image(kind: String) -> Image:
 	var r := _rng(hash(kind))
 	match kind:
 		"heart":
-			for i in 140:
-				_ellipse(img, Vector2(r.randf(), r.randf()) * n, Vector2(9, 4.5), r.randf() * PI,
-					Color(1.0, 0.72, 0.87, 0.8))
+			for i in 120:
+				_ellipse(img, Vector2(r.randf(), r.randf()) * n, Vector2(6, 3), r.randf() * PI,
+					Color(1.0, 0.72, 0.87, 0.7))
 		"crystalline":
 			for i in 70:
 				var c := Vector2(r.randf(), r.randf()) * n
