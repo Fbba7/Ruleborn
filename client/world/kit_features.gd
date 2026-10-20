@@ -49,13 +49,7 @@ func build(t: Vector2i, f: int) -> void:
 					0.32 + 0.1 * RealmKit.jitter(t, k + 9), Color("#F3EEFF"), 4, 9)
 			kit.clear.still()
 		RealmKit.F.TALL_GRASS:
-			prop.moving(Geo.Anim.SHIVER, c)
-			for k in 13:
-				var p := c + Vector3(RealmKit.jitter(t, k) - 0.5, 0, RealmKit.jitter(t, k + 9) - 0.5) * 0.86
-				prop.moving(Geo.Anim.SHIVER, p)
-				prop.blade(p, 0.42 + 0.22 * RealmKit.jitter(t, k + 2), 0.045,
-					plant.darkened(0.08 + 0.1 * (k % 3)).lerp(Color("#3E7A3A"), 0.25), 0.25, RealmKit.jitter(t, k + 3) * TAU)
-			prop.still()
+			_grass(t, c, plant)
 		RealmKit.F.CRYSTAL_WALL:
 			for k in 5:
 				var x := -0.36 + 0.18 * k
@@ -67,9 +61,7 @@ func build(t: Vector2i, f: int) -> void:
 		RealmKit.F.TREE:
 			_tree(t, c, j, plant)
 		RealmKit.F.BOULDER:
-			hero.rock(Geo.place(c + Vector3(0, 0.24, 0), j * TAU, Vector3(1.0, 0.72, 0.92)), 0.4, rock.lightened(0.1),
-				t.x * 13 + t.y)
-			hero.rock(Geo.place(c + Vector3(0.3, 0.08, 0.18), j * 3.0, Vector3(1.0, 0.75, 1.0)), 0.16, rock, t.x + 5)
+			_boulder(t, c, j, rock)
 		RealmKit.F.STATUE:
 			_statue(c, j, stone)
 		RealmKit.F.CRYSTAL_OUTCROP:
@@ -90,11 +82,7 @@ func build(t: Vector2i, f: int) -> void:
 		RealmKit.F.SHADE_CANOPY:
 			_canopy(c, wood)
 		RealmKit.F.BUSH:
-			prop.moving(Geo.Anim.SWAY, c)
-			prop.ball(Geo.place(c + Vector3(0, 0.22, 0), j, Vector3(1.0, 0.85, 1.0)), 0.3, plant.darkened(0.1), 4, 8)
-			prop.ball(Geo.place(c + Vector3(0.24, 0.16, 0.12)), 0.22, plant.lightened(0.04), 3, 7)
-			prop.ball(Geo.place(c + Vector3(-0.2, 0.13, 0.16)), 0.2, plant.darkened(0.02), 3, 7)
-			prop.still()
+			_bush(t, c, j, plant)
 		RealmKit.F.HOT_SPRING:
 			_spring(t, c, rock)
 		RealmKit.F.LANTERN_POST:
@@ -202,14 +190,137 @@ func build(t: Vector2i, f: int) -> void:
 			prop.ball(Geo.place(c + Vector3(0.14, -KitGround.WATER_DROP + 0.03, -0.1)), 0.025, Color("#F7A6DA"), 2, 5)
 
 
+## A rock pillar by realm: banded stone; a glassy column in Crystalline;
+## basalt columns in Emberreach; a mossy stack lit by mushrooms in Lantern
+## Vale; a pale sea stack in Tidehold.
 func _pillar(c: Vector3, j: float, rock: Color) -> void:
 	var hero := kit.hero
-	hero.prism(Geo.place(c, j), 7, 0.34, 0.25, 1.0, rock, false, rock.lightened(0.12))
+	var seed_from := int(j * 100)
+	match kit.realm:
+		"crystalline":
+			hero.gem(Geo.place(c + Vector3(0, 0.75, 0), j), 0.26, 0.75, Color(Palette.MATTER.lightened(0.4), 0.85), 6)
+			hero.gem(Geo.place(c + Vector3(0.24, 0.35, 0.12), j + 1.0), 0.12, 0.35, Color(Palette.MATTER.lightened(0.3), 0.8),
+				5)
+			hero.rock(Geo.place(c + Vector3(0, 0.08, 0), j, Vector3(1.2, 0.5, 1.2)), 0.26, rock, seed_from)
+			return
+		"emberreach":
+			var hs := [1.25, 0.95, 0.7, 1.1]
+			for k in 4:
+				var a := TAU * k / 4.0 + j
+				var o := Vector3(cos(a), 0, sin(a)) * (0.0 if k == 0 else 0.2)
+				hero.prism(Geo.place(c + o, j), 6, 0.14, 0.13, hs[k], rock.lightened(0.05 * k), false,
+					rock.lightened(0.2))
+			kit.prop.ring(Geo.place(c + Vector3(0.3, 0.012, -0.25)), 0.0, 0.07, Color(Palette.ENERGY, 0.2), 8)
+			return
+	var band := rock.darkened(0.12)
+	var body := rock
+	if kit.realm == "tidehold":
+		body = rock.lightened(0.25)
+		band = Color("#E8E2D0")
+	hero.prism(Geo.place(c, j), 7, 0.34, 0.25, 1.0, body, false, body.lightened(0.12))
 	for y: float in [0.3, 0.62]:
-		hero.prism(Geo.place(c + Vector3(0, y, 0), j), 7, 0.33 - y * 0.09, 0.32 - y * 0.09, 0.05, rock.darkened(0.12))
-	hero.prism(Geo.place(c + Vector3(0, 1.0, 0), j + 0.4), 7, 0.25, 0.18, 0.3, rock.darkened(0.06))
-	hero.rock(Geo.place(c + Vector3(0, 1.38, 0), j, Vector3(1, 0.7, 1)), 0.2, rock.lightened(0.06), int(j * 100))
+		hero.prism(Geo.place(c + Vector3(0, y, 0), j), 7, 0.33 - y * 0.09, 0.32 - y * 0.09, 0.05, band)
+	hero.prism(Geo.place(c + Vector3(0, 1.0, 0), j + 0.4), 7, 0.25, 0.18, 0.3, body.darkened(0.06))
+	hero.rock(Geo.place(c + Vector3(0, 1.38, 0), j, Vector3(1, 0.7, 1)), 0.2, body.lightened(0.06), seed_from)
 	kit.prop.rock(Geo.place(c + Vector3(0.32, 0.04, 0.22)), 0.08, rock.darkened(0.05), int(j * 50))
+	if kit.realm == "lanternvale" or kit.realm == "verdant":
+		kit.prop.ball(Geo.place(c + Vector3(-0.1, 0.55, 0.26), 0.0, Vector3(1.4, 0.7, 0.6)), 0.14,
+			kit.palette["plant"].darkened(0.3), 3, 6)
+		if kit.realm == "lanternvale":
+			for k in 3:
+				var a := TAU * k / 3.0 + j
+				kit.prop.cyl(Geo.place(c + Vector3(cos(a) * 0.4, 0, sin(a) * 0.4)), 0.015, 0.015, 0.08, Color("#E8E0F0"), 4)
+				kit.prop.ball(Geo.place(c + Vector3(cos(a) * 0.4, 0.09, sin(a) * 0.4), 0.0, Vector3(1, 0.6, 1)), 0.05,
+					Color(Color("#7AD8C8"), 0.3), 2, 6)
+
+
+## A boulder by realm: grey stone; crystal-studded in Crystalline; basalt
+## with a glowing vein in Emberreach; a smooth pebble in Tidehold; mossy
+## elsewhere green grows.
+func _boulder(t: Vector2i, c: Vector3, j: float, rock: Color) -> void:
+	var hero := kit.hero
+	var body := rock.lightened(0.1)
+	if kit.realm == "tidehold":
+		hero.ball(Geo.place(c + Vector3(0, 0.2, 0), j, Vector3(1.0, 0.62, 0.85)), 0.36, rock.lightened(0.2), 4, 9)
+		hero.ball(Geo.place(c + Vector3(0.3, 0.07, 0.2), j), 0.13, rock.lightened(0.3), 3, 7)
+		return
+	hero.rock(Geo.place(c + Vector3(0, 0.24, 0), j * TAU, Vector3(1.0, 0.72, 0.92)), 0.4, body, t.x * 13 + t.y)
+	hero.rock(Geo.place(c + Vector3(0.3, 0.08, 0.18), j * 3.0, Vector3(1.0, 0.75, 1.0)), 0.16, rock, t.x + 5)
+	match kit.realm:
+		"crystalline":
+			for k in 3:
+				var a := TAU * k / 3.0 + j
+				hero.gem(Transform3D(Basis(Vector3(cos(a), 0, sin(a)).cross(Vector3.UP), 0.5),
+					c + Vector3(cos(a) * 0.18, 0.42, sin(a) * 0.15)), 0.06, 0.16, Color(Palette.MATTER.lightened(0.35), 0.7), 4)
+		"emberreach":
+			kit.prop.box(Geo.place(c + Vector3(0, 0.3, 0.33), j), Vector3(0.3, 0.035, 0.02), Color(Palette.ENERGY, 0.15))
+		"verdant", "heart", "lanternvale":
+			kit.prop.ball(Geo.place(c + Vector3(-0.05, 0.47, 0), j, Vector3(1.3, 0.35, 1.1)), 0.2,
+				kit.palette["plant"].darkened(0.2), 3, 7)
+
+
+## A bush by realm: leafy; dandelion puffs in Skyfield; frost moss in
+## Crystalline; ember grass in Emberreach; berried in Verdant.
+func _bush(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
+	var prop := kit.prop
+	prop.moving(Geo.Anim.SWAY, c)
+	match kit.realm:
+		"skyfield":
+			prop.ball(Geo.place(c + Vector3(0, 0.1, 0), j, Vector3(1.2, 0.6, 1.2)), 0.22, plant.darkened(0.25), 3, 7)
+			for k in 5:
+				var a := TAU * k / 5.0 + j
+				var p := c + Vector3(cos(a) * 0.18, 0, sin(a) * 0.18)
+				prop.blade(p, 0.32 + 0.1 * RealmKit.jitter(t, k), 0.012, plant.darkened(0.3))
+				prop.ball(Geo.place(p + Vector3(0, 0.36 + 0.1 * RealmKit.jitter(t, k), 0)), 0.06, Color("#FFFDF4"), 3, 6)
+		"crystalline":
+			for k in 4:
+				var a := TAU * k / 4.0 + j
+				prop.ball(Geo.place(c + Vector3(cos(a) * 0.16, 0.12, sin(a) * 0.16), 0.0, Vector3(1, 0.6, 1)), 0.18,
+					Color("#BFE8F2").lerp(plant, 0.3), 3, 7)
+			prop.gem(Geo.place(c + Vector3(0, 0.3, 0), j), 0.05, 0.12, Color(Color("#E6F8FF"), 0.6), 4)
+		"emberreach":
+			for k in 9:
+				var a := TAU * k / 9.0 + j
+				var p := c + Vector3(cos(a), 0, sin(a)) * 0.12 * (1 + k % 2)
+				prop.blade(p, 0.3 + 0.12 * RealmKit.jitter(t, k), 0.03, plant.darkened(0.2), 0.35, a)
+				prop.ball(Geo.place(p + Vector3(cos(a) * 0.1, 0.33, sin(a) * 0.1)), 0.025, Color(Palette.ENERGY, 0.3), 2, 4)
+		_:
+			prop.ball(Geo.place(c + Vector3(0, 0.22, 0), j, Vector3(1.0, 0.85, 1.0)), 0.3, plant.darkened(0.1), 4, 8)
+			prop.ball(Geo.place(c + Vector3(0.24, 0.16, 0.12)), 0.22, plant.lightened(0.04), 3, 7)
+			prop.ball(Geo.place(c + Vector3(-0.2, 0.13, 0.16)), 0.2, plant.darkened(0.02), 3, 7)
+			if kit.realm == "verdant" or kit.realm == "heart":
+				for k in 5:
+					var a := TAU * k / 5.0 + j * 2.0
+					prop.ball(Geo.place(c + Vector3(cos(a) * 0.27, 0.25 + 0.05 * (k % 2), sin(a) * 0.27)), 0.035,
+						Color("#E2536B") if kit.realm == "verdant" else Color("#F7A6DA"), 2, 4)
+	prop.still()
+
+
+## Tall grass by realm: long blades; golden wheat in Skyfield; ember grass
+## with glowing tips in Emberreach and Lantern Vale; frosted in Crystalline.
+func _grass(t: Vector2i, c: Vector3, plant: Color) -> void:
+	var prop := kit.prop
+	var wheat := kit.realm == "skyfield"
+	var tips := kit.realm == "emberreach" or kit.realm == "lanternvale"
+	var blade := plant.darkened(0.08).lerp(Color("#3E7A3A"), 0.25)
+	if wheat:
+		blade = Color("#E6C468")
+	elif kit.realm == "crystalline":
+		blade = Color("#CFE6F2")
+	for k in 13:
+		var p := c + Vector3(RealmKit.jitter(t, k) - 0.5, 0, RealmKit.jitter(t, k + 9) - 0.5) * 0.86
+		var tall := 0.42 + 0.22 * RealmKit.jitter(t, k + 2)
+		var lean := 0.25
+		var dir := RealmKit.jitter(t, k + 3) * TAU
+		prop.moving(Geo.Anim.SHIVER, p)
+		prop.blade(p, tall, 0.04 if not wheat else 0.02, blade.darkened(0.1 * (k % 3)), lean, dir)
+		var tip := p + Vector3(sin(lean) * cos(dir), cos(lean), sin(lean) * sin(dir)) * tall
+		if wheat:
+			prop.ball(Geo.place(tip, dir, Vector3(0.6, 1.6, 0.6)), 0.035, Color("#F2D27A"), 2, 5)
+		elif tips and k % 3 == 0:
+			var glow := Palette.ENERGY if kit.realm == "emberreach" else Color("#9BF0C8")
+			prop.ball(Geo.place(tip), 0.025, Color(glow, 0.2), 2, 4)
+	prop.still()
 
 
 ## The yaw (local −Z) toward a neighbour standing `rise` levels above `t`
