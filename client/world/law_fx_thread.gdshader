@@ -15,7 +15,7 @@ uniform float t = 0.0;
 uniform float pace = 1.0;
 uniform float strength = 1.0;
 // Half the strip's width, in metres.
-uniform float width = 0.09;
+uniform float width = 0.07;
 
 varying float along;
 varying float side;
@@ -71,7 +71,7 @@ void fragment() {
 		float pulse = smoothstep(0.2, 0.0, abs(fract(along * 3.0 - s * 0.5) - 0.5) - 0.3);
 		c = mix(c * 0.55, c, smoothstep(0.15, 0.45, core));
 		c = mix(c, vec3(1.0), pulse * 0.55 * step(0.5, core));
-		a = smoothstep(0.0, 0.25, core) * (0.85 + 0.15 * pulse);
+		a = smoothstep(0.0, 0.25, core) * (0.7 + 0.25 * pulse);
 	} else if (kind < 1.5) {
 		// Dissonance: flickers on and off, uneasy.
 		float k = floor(s * 9.0);

@@ -43,12 +43,11 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> void:
 ## fireflies drift. The sight overlay and the guards' marks keep their own
 ## light, so nothing a player must read goes dark.
 static func _glowing_dark(fx: LawFx, sig: Node3D) -> void:
-	var base := fx.light()
-	if not base.is_empty():
-		fx.sun.light_energy = float(base["sun"]) * 0.55
-		fx.environment.ambient_light_energy = float(base["ambient"]) * 0.8
-		fx.environment.ambient_light_color = Color("#4A4AA0")
-	fx.tint(Color("#07041A"), 0.5, 0.0)
+	# The ambient comes from the sky (T2's look), so its strength is what
+	# dims; the sun falls to a glow.
+	fx.set_light(0.35, 0.4, Color("#4A4AA0"))
+	fx.every(func(_s: float) -> void: fx.set_light(0.35, 0.4, Color("#4A4AA0")))
+	fx.tint(Color("#07041A"), 0.6, 0.2)
 	var r := fx.site.rng("glowing_dark")
 	var caps := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	var spots := fx.site.tiles(LawFxSite.PLANTS + LawFxSite.WALLS)

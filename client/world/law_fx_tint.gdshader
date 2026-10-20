@@ -20,9 +20,10 @@ void vertex() {
 }
 
 void fragment() {
+	// Portrait first (§21.1): the sides darken as much as the ends.
 	vec2 d = SCREEN_UV - vec2(0.5);
-	d.x *= 0.75;
-	float v = smoothstep(0.25, 0.75, length(d));
+	d.y *= 0.8;
+	float v = smoothstep(0.18, 0.62, length(d));
 	float a = clamp(v * edge + wash, 0.0, 1.0);
 	ALBEDO = mix(colour.rgb, vec3(1.0, 0.98, 0.9), flash);
 	ALPHA = clamp(a + flash * 0.55, 0.0, 0.95);

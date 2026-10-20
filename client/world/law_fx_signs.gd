@@ -356,7 +356,6 @@ static func _haste(fx: LawFx, sig: Node3D) -> void:
 ## thirty-second day: the sun and the shade dim and brighten, a dusk wash
 ## falls over the screen in the dark phase, lanterns glow up.
 static func _day_and_night(fx: LawFx, sig: Node3D) -> void:
-	var base := fx.light()
 	var lights := fx.site.tiles(LawFxSite.LIGHTS)
 	var pools: Array = []
 	for t: Vector2i in lights:
@@ -367,9 +366,7 @@ static func _day_and_night(fx: LawFx, sig: Node3D) -> void:
 	var tint := fx.tint(Color("#1A1433"), 0.0, 0.0)
 	fx.every(func(s: float) -> void:
 		var d := sin(s * TAU / 30.0) * 0.5 + 0.5
-		if not base.is_empty():
-			fx.sun.light_energy = float(base["sun"]) * (0.3 + 0.7 * d)
-			fx.environment.ambient_light_energy = float(base["ambient"]) * (0.55 + 0.45 * d)
+		fx.set_light(0.3 + 0.7 * d, 0.55 + 0.45 * d)
 		if tint != null:
 			tint.set_shader_parameter("wash", (1.0 - d) * 0.28)
 			tint.set_shader_parameter("edge", (1.0 - d) * 0.5)

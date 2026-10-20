@@ -350,7 +350,7 @@ func glass_material(edge: Color, motion := 0, amount := 1.0, fill := 0.12) -> Sh
 ## A screen-space tint (§21.3): one quad just before the camera, darkening
 ## the screen's edges toward `colour` by `edge` and washing all of it by
 ## `wash`. Nothing of the world is re-rendered for it.
-func thread_material(width := 0.09) -> ShaderMaterial:
+func thread_material(width := 0.07) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = _shader("thread")
 	m.set_shader_parameter("width", width)
@@ -369,6 +369,9 @@ func tint(colour: Color, edge: float, wash := 0.0) -> ShaderMaterial:
 		_tint.mesh = q
 		_tint.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		_tint.extra_cull_margin = 1000.0
+		# In front of the camera, so a perspective camera's frustum holds it;
+		# its shader puts it over the whole screen whatever its place.
+		_tint.position = Vector3(0, 0, -1.0)
 		var m := ShaderMaterial.new()
 		m.shader = _shader("tint")
 		m.render_priority = 100
@@ -376,10 +379,18 @@ func tint(colour: Color, edge: float, wash := 0.0) -> ShaderMaterial:
 		camera.add_child(_tint)
 		_clocked.append(m)
 		tree_exiting.connect(_tint.queue_free)
+	# Several laws share the one tint: the deepest edge and wash win, with
+	# the colour of the law that set the edge.
 	var mat := _tint.material_override as ShaderMaterial
-	mat.set_shader_parameter("colour", colour)
-	mat.set_shader_parameter("edge", edge)
-	mat.set_shader_parameter("wash", wash)
+	var had_edge := float(_tint.get_meta("edge", -1.0))
+	if edge > had_edge:
+		mat.set_shader_parameter("colour", colour)
+		mat.set_shader_parameter("edge", edge)
+		_tint.set_meta("edge", edge)
+	var had_wash := float(_tint.get_meta("wash", -1.0))
+	if wash > had_wash:
+		mat.set_shader_parameter("wash", wash)
+		_tint.set_meta("wash", wash)
 	return mat
 
 
@@ -390,6 +401,25 @@ func light() -> Dictionary:
 		_light = {"sun": sun.light_energy, "sun_colour": sun.light_color, "ambient": environment.ambient_light_energy,
 			"ambient_colour": environment.ambient_light_color}
 	return _light
+
+
+## Dim or brighten the realm's light from its own: the sun to `sun_k` of it,
+## the ambient to `ambient_k` and, if given, toward `colour`. Called every
+## sync, so when the view relights (the hour changes, a screen sets its sky)
+## the law's light follows from the new light, never compounding.
+func set_light(sun_k: float, ambient_k: float, colour := Color(0, 0, 0, 0)) -> void:
+	if sun == null or environment == null:
+		return
+	var base := light()
+	if _light.has("wrote") and not is_equal_approx(sun.light_energy, float(_light["wrote"])):
+		# Someone else lit the realm since: that is the base now.
+		_light = {}
+		base = light()
+	sun.light_energy = float(base["sun"]) * sun_k
+	environment.ambient_light_energy = float(base["ambient"]) * ambient_k
+	if colour.a > 0.0:
+		environment.ambient_light_color = colour
+	_light["wrote"] = sun.light_energy
 
 
 func _restore_light() -> void:
