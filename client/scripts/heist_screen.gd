@@ -381,7 +381,7 @@ func _build() -> void:
 	column_node = column
 	hud = HeistHud.new()
 	column.add_child(hud)
-	view = RealmView.new()
+	view = WorldView.new()
 	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	view.gui_input.connect(func(event: InputEvent) -> void:
 		if event is InputEventMouseButton and event.pressed:

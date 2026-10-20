@@ -55,7 +55,7 @@ func _build() -> void:
 	var column := UI.frame(self)
 	title_label = UI.label("", UI.TEXT_POINTS, true)
 	column.add_child(UI.plate(title_label))
-	view = RealmView.new()
+	view = WorldView.new()
 	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	view.gui_input.connect(func(event: InputEvent) -> void:
 		if event is InputEventMouseButton and event.pressed:

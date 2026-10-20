@@ -1654,9 +1654,20 @@ dict(
                   "fate",
              blocked_by=["TD.1", "TD.33"],
              register=["G61", "D93", "D92"]),
-        dict(id="TD.8", owner="claude", status="blocked",
+        dict(id="TD.8", owner="claude", status="doing",
              title="One toon look for everything",
-             detail="The diorama is a four-step toon with world-space hulls; the "
+             detail="<strong>Built so far</strong> (<code>client/world/</code>): "
+                    "the toon kit in Godot — the four-step ramp with its 10% "
+                    "saturation, shade toward violet, the rim light, the "
+                    "1.5-pixel ink outline in clip space, water and lava, and "
+                    "§21.2's sky and light by the player's hour — on every piece "
+                    "of the world, checked by <code>tests/world_tests.gd</code>. "
+                    "The prototype's modules were not to hand, so the world is "
+                    "built in code from the designs' measured description "
+                    "(<code>docs/analysis/screens-v3/3d-pipeline.md</code>); the "
+                    "imported models, their materials and the Hush, Spark and "
+                    "Echo variants wait on TD.7's export. "
+                    "The diorama is a four-step toon with world-space hulls; the "
                     "characters are physically based with clearcoat, sheen and "
                     "transmission under ACES, and the portraits are renders of "
                     "that. v3.7's §21.3 writes one toon look for everything, "
@@ -1702,9 +1713,25 @@ dict(
                   "and a client test); changing an outfit changes no checksum",
              blocked_by=["TD.12"],
              register=["G60"]),
-        dict(id="TD.10", owner="claude", status="blocked",
+        dict(id="TD.10", owner="claude", status="doing",
              title="The world drawn from the simulation",
-             detail="The island base built around the simulation's square grid "
+             detail="<strong>Built so far</strong> (<code>client/world/</code>, "
+                    "<code>WorldView</code>, a <code>RealmView</code> the heist, "
+                    "replay and builder screens draw with): the floating island "
+                    "round the grid with its cliffs, strata, roots and clouds; "
+                    "every tile at its height and surface; a piece for each of "
+                    "the simulation's 41 features, hero features outlined; the "
+                    "Vault, pylons and wards with their states; the crew and "
+                    "guards on their tiles, drawn between ticks and bobbing as "
+                    "they walk; the selected guard's sight tile by tile "
+                    "(§21.12); the landing marks; the orthographic camera at "
+                    "§21.1's pitches in 90° steps with three zoom levels; tile "
+                    "picking. Tested headless: every figure on its tile, every "
+                    "tile picked where drawn, the materials and §21.3's budgets. "
+                    "Left: buildings with footprints and pylons per slot from "
+                    "the designs' models, workers, pinch and twist, the GPU "
+                    "goldens. "
+                    "The island base built around the simulation's square grid "
                     "(§5.2's 10 to 14 tiles, 1 tile = 1 m; the design's realm "
                     "is a 42-tile disc), its features and heights (a level is half "
                     "a tile, the design's ratio, which §23.5's rule adopts: G65), "

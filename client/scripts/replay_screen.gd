@@ -119,7 +119,7 @@ func _build() -> void:
 	var column := UI.frame(self)
 	hud = HeistHud.new()
 	column.add_child(hud)
-	view = RealmView.new()
+	view = WorldView.new()
 	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	view.gui_input.connect(_on_view_input)
 	column.add_child(view)

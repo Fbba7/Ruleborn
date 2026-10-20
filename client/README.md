@@ -33,6 +33,7 @@ repositories in front of the network), in Godot's own terms:
 | The API and transport | `data/api.gd`, `data/*_transport.gd` | HTTPS only, a bearer token, the server's refusal reason as the failure code | headless |
 | Services | `app/services.gd`, `app/app.gd` | Build everything once (the composition root); a test builds its own with fakes | by every test |
 | The look | `ui/tokens.json`, `ui/tokens.gd`, `scripts/ui.gd`, `scripts/palette.gd` | Every colour, size and timing, cited; the components built from them | the token check |
+| The world | `world/` | The realm in 3D from the simulation's own state: the island round its grid, the realm kit's ground and features, the figures, the selected guard's sight, §21.3's one toon look | headless: every figure on its tile, picking, materials, budgets (`tests/world_tests.gd`) |
 
 **Where the design lands.** Claude Design's tokens replace `ui/tokens.json`
 and its components replace `scripts/ui.gd`'s; no screen names a colour or a
@@ -353,9 +354,12 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.7.2-stable_linux
     i18n/strings.csv        every word on screen, a column a language
     scenes/                 the screens: home, heist, result, replay, settings,
                             builder, track, shop, social, friends, workshop, age
+    world/                  the realm in 3D: WorldView (a RealmView), the island
+                            builder, the realm kit, the figures, the toon shaders
     scripts/                the screens, the realm view and heads-up display,
                             the shared UI pieces, the palette, the string catalogue,
                             the saved settings
     tests/run.gd            headless tests, TAP; tests/core_tests.gd, the layers'
-    tests/screenshot.gd     a still, under a virtual display
+    tests/screenshot.gd     a still, under a virtual display (Xvfb and Mesa's
+                            software OpenGL render the world)
     build.sh, status.py     build, test, write status.json
