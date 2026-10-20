@@ -213,8 +213,22 @@ func _build_stage() -> void:
 ## §21.2: the sky follows the player's local time, and the light with it.
 func set_sky_hour(when: int) -> void:
 	hour = when
-	# A realm under Glowing dark is lit as at night (§21.7).
 	look.set_hour(when)
+	_light_figures()
+
+
+## By night (§21.2: "lanterns and glows carry the realm") the crew's models
+## take a stronger, warmer rim, so they read against the dark ground.
+func _light_figures() -> void:
+	var night := hour >= 19 or hour < 6
+	for actor: Node3D in _crew:
+		var figure := actor.get_node_or_null("Rig/Figure")
+		if figure != null and figure.has_method("material"):
+			var m := figure.call("material") as ShaderMaterial
+			if m != null:
+				m.set_shader_parameter("rim_strength", 1.6 if night else 0.38)
+				m.set_shader_parameter("lift", 0.85 if night else 0.5)
+				m.set_shader_parameter("rim_colour", Color("#FFD89A") if night else Color(0.62, 0.83, 1.0))
 
 
 static func material(shader: Shader, outlined := false) -> ShaderMaterial:
@@ -355,6 +369,7 @@ func _build_actors() -> void:
 			bag.position = Vector3(0, 0, 0.08)
 		actors.add_child(root)
 		_crew.append(root)
+	_light_figures()
 	for _g: Dictionary in replay.guards():
 		var root := _actor("guard", ActorBuilder.HEIGHT["guard"])
 		actors.add_child(root)
