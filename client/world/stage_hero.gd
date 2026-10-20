@@ -172,7 +172,7 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		if hall:
 			var hall_mesh := MeshInstance3D.new()
 			hall_mesh.mesh = StageHeroFigure.hall(gap * list.size())
-			hall_mesh.material_override = toon(rim, false, true)
+			hall_mesh.material_override = toon(KEY, false, true)
 			scenery.add_child(hall_mesh)
 		else:
 			scenery.add_child(StageHeroFigure.realm_ground(school, gap * list.size() * 0.4))
