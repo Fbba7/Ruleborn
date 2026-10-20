@@ -72,6 +72,8 @@ var hour := 12
 var follow: Array = []
 ## The crew member drawn as chosen, -1 for none.
 var chosen := -1
+## The crew members standing where a guard can see them, by index.
+var in_sight := {}
 
 var viewport: SubViewport
 var container: SubViewportContainer
@@ -526,6 +528,18 @@ func sync() -> void:
 		# down; the model faces −Z.
 		var f: float = g["facing"]
 		node.rotation.y = atan2(-cos(f), -sin(f))
+	# Which of the crew stand where a guard on its feet can see, by the
+	# simulation's own sight (`seen`): the HUD marks them with an eye.
+	in_sight.clear()
+	var sighted := {}
+	for gi in guards.size():
+		if not guards[gi]["down"]:
+			for tile in replay.seen(gi):
+				sighted[tile] = true
+	for i in crew.size():
+		var at: Vector2 = crew[i]["at"]
+		if crew[i]["standing"] == "Active" and sighted.has(floori(at.y) * _size.x + floori(at.x)):
+			in_sight[i] = true
 	for k: String in _to:
 		if not _from.has(k):
 			_from[k] = _to[k]

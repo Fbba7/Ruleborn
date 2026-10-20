@@ -308,6 +308,10 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 			draw_colored_polygon(PackedVector2Array([tri[0] + Vector2(0, 3), tri[1] + Vector2(-3, -2),
 				tri[2] + Vector2(3, -2)]), FxSkin.INK_LINE)
 			draw_colored_polygon(tri, FxSkin.GOLD)
+		if view.in_sight.has(i):
+			# In a guard's sight: an eye beside the head, blinking open.
+			var blink := 1.0 if calm else 0.85 + 0.15 * absf(sin(_time * 4.0))
+			FxIcons.eye(self, at + Vector2(w * 0.62, -h * 0.2), w * 0.55 * blink)
 		if names_for > 0.0:
 			_name_tag(at + Vector2(0, -w * 0.45), Strings.term("ROLE", str(mem["role"])))
 

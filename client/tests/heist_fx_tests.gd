@@ -36,6 +36,7 @@ func run() -> void:
 	_calm(view)
 	_skiff(view, replay)
 	_moments()
+	_sight_marks(view, replay)
 	view.queue_free()
 	await tree.process_frame
 
@@ -243,3 +244,21 @@ func _moments() -> void:
 			+ "broken, in the order they happen",
 		count.call("ko") == 4 and count.call("vault") == 1 and count.call("alarm") >= 1 and count.call("pylon") == 1
 			and ordered, "%s" % [marks])
+
+
+## The eye over a crew member is the simulation's sight: one standing on a
+## tile any guard on its feet sees, and no other.
+func _sight_marks(view: WorldView, replay: RulebornReplay) -> void:
+	view.describe()
+	var want := {}
+	var crew := replay.crew()
+	for gi in replay.guards().size():
+		if replay.guards()[gi]["down"]:
+			continue
+		var seen := Array(replay.seen(gi))
+		for i in crew.size():
+			var at: Vector2 = crew[i]["at"]
+			if crew[i]["standing"] == "Active" and seen.has(floori(at.y) * replay.size().x + floori(at.x)):
+				want[i] = true
+	check.call("a crew member is marked as in sight exactly when it stands on a tile a guard on its feet sees, by the "
+			+ "simulation's own sight (21.12)", view.in_sight == want, "%s %s" % [view.in_sight, want])
