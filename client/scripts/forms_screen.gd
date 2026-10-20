@@ -133,6 +133,16 @@ func _stand(kinds: Array) -> void:
 		return
 	stage.set_meta("showing", key)
 	stage.show_kinds(list, looks)
+	for n in stage.get_children():
+		if n.has_meta("words"):
+			n.queue_free()
+	var names := HBoxContainer.new()
+	for f: Dictionary in k["forms"]:
+		var p := StageHeroSkin.pill(FormsPresenter.note_name(str(f["note"])))
+		p.size_flags_horizontal = Control.SIZE_EXPAND | Control.SIZE_SHRINK_CENTER
+		names.add_child(p)
+	StageHeroSkin.on_stage(stage, names, Control.PRESET_CENTER_BOTTOM).set_meta("words", true)
+	names.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 
 func _choose(event: InputEvent, kind: String) -> void:
