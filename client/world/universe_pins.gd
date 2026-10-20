@@ -62,6 +62,16 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 			plate.add_child(words)
 		_pins.append({"node": plate, "realm": str(p.get("realm", "")), "building": kind, "lift": 0.0,
 			"zooms": [0, 1, 2], "rank": 2})
+	# A gold arrow over each building the server says can be raised now: a
+	# price met and nothing in the way (§10.2's `next`, unblocked).
+	for r: Dictionary in universe.get("realms", []):
+		for b: Dictionary in r.get("buildings", []):
+			var next: Variant = b.get("next")
+			if next is Dictionary and (next as Dictionary).get("blocked") == null:
+				var arrow := _plate(Palette.MOTION, Palette.INK, true)
+				arrow.add_child(_icon("levelup"))
+				_pins.append({"node": arrow, "realm": str(r.get("realm", "")), "lift": 1.2,
+					"place": "%s:%d" % [str(b.get("kind", "")), int(b.get("n", 1))], "zooms": [1, 2], "rank": 2})
 	# §5.5's strain band over the Heart, in words beside the rings' colour.
 	if extras.has("strain"):
 		var plate := _plate(Palette.INK, Palette.STONE)
@@ -220,6 +230,11 @@ func follow() -> void:
 			at = isl.at - toward * isl.radius * 0.95 + Vector3(0, 1.0, 0)
 		elif p.has("building"):
 			at = _producer_at(isl, str(p["building"]))
+		elif p.has("place"):
+			if not isl.places.has(str(p["place"])):
+				node.visible = false
+				continue
+			at = (isl.places[str(p["place"])] as Vector3) + Vector3(0, float(p["lift"]), 0)
 		_place(node, view.camera.unproject_position(at), taken)
 
 

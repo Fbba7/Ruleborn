@@ -118,6 +118,10 @@ universe, inside §21.3's 40,000 and 150.
   realm's icon, and a tap on it swoops the map to that realm (`UniverseHeading`).
   Still: `round13_screens_headings.png`.
 
+- Round 14: a gold level-up marker (the design's `levelup` icon) over each building the server's
+  universe view says can be raised now (its `next` with nothing blocking), at the realm zooms.
+  Still: `round14_levelup_markers.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

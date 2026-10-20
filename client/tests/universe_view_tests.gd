@@ -159,15 +159,20 @@ func _pins() -> void:
 				overlap = overlap or o.intersects(r)
 			shown.append(r)
 	view.show_universe(UniverseSample.view(6), {})
+	var raisable := 0
+	for r: Dictionary in UniverseSample.view(6)["realms"]:
+		for b: Dictionary in r["buildings"]:
+			raisable += 1 if b["next"] is Dictionary and b["next"]["blocked"] == null else 0
 	var quiet := view.pins.get_children().filter(func(c: Node) -> bool: return not c.is_queued_for_deletion())
 	Settings.reduced_motion = false
 	check.call("the map's pins name every realm, say what each producer has ready and the raids, mark the fault, "
-			+ "and never cover one another; with nothing ready and no raids, only the realms, faults and links are "
-			+ "pinned (23.2, 20.8)",
+			+ "and never cover one another; with nothing ready and no raids, only the realms, faults, links and the "
+			+ "buildings that can be raised now are pinned (23.2, 10.2, 20.8)",
 		names.size() == 7 and texts.has(WeavingPresenter.band_name(1) + " 74%") and texts.has("! 2")
 			and texts.has("✦ 320") and texts.any(func(t: String) -> bool:
-			return t.begins_with("ϟ")) and not overlap and quiet.size() == 8 + view.links.size(),
-		"names %d texts %s overlap %s quiet %d" % [names.size(), texts, overlap, quiet.size()])
+			return t.begins_with("ϟ")) and not overlap and quiet.size() == 8 + view.links.size() + raisable,
+		"names %d texts %s overlap %s quiet %d raisable %d" % [names.size(), texts, overlap, quiet.size(),
+			raisable])
 	view.queue_free()
 	await tree.process_frame
 
