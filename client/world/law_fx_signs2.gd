@@ -78,7 +78,7 @@ static func _glowing_dark(fx: LawFx, sig: Node3D) -> void:
 ## Aurora: "Ribbons of light sweep across the ground."
 static func _aurora(fx: LawFx, sig: Node3D) -> void:
 	var ground := fx.site.tiles(LawFxSite.GROUND + LawFxSite.PLANTS + LawFxSite.WATER)
-	LawFxPaint.mark(fx, sig, ground, 5, Color("#18C890"), Color("#9A4CF0"))
+	LawFxPaint.mark(fx, sig, ground, 5, Color("#18D890"), Color("#B05CF0"))
 	LawFxPaint.spray(fx, sig, "aurora", {"n": 30, "shape": 2, "colour": Color("#B8FFE0", 0.85),
 		"colour_b": Color("#F0C0FF", 0.85), "radius": [0.05, 0.1], "lift": [0.1, 1.4], "vel": Vector3(0, 0.15, 0),
 		"period": [4.0, 7.0], "glow": 0.8})
@@ -107,9 +107,10 @@ static func _chain_lightning(fx: LawFx, sig: Node3D) -> void:
 				near = d
 		if best >= 0:
 			done[Vector2i(mini(i, best), maxi(i, best))] = true
-			arcs.strip(LawFxBatch.sagging(props[i], props[best], -0.6, 22), Color("#7AD8FF"), 1)
+			arcs.strip(LawFxBatch.sagging(props[i], props[best], -0.6, 22), Color("#4AB8FF"), 3)
+			arcs.strip(LawFxBatch.sagging(props[i], props[best], -0.9, 22), Color("#9A7AFF"), 3)
 	if arcs.triangles > 0:
-		fx.layer(sig, arcs, fx.thread_material(0.13))
+		fx.layer(sig, arcs, fx.thread_material(0.2))
 	var sparks := LawFxBatch.new(LawFxBatch.Kind.MOTES)
 	var r := fx.site.rng("chain_sparks")
 	for p: Vector3 in props:
@@ -146,6 +147,18 @@ static func _bloom(fx: LawFx, sig: Node3D) -> void:
 			spots.append(p + Vector3(cos(k * TAU / 8.0) * 1.3, 0, sin(k * TAU / 8.0) * 1.3))
 	var sprouts := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	var petals: Array[Color] = [Color("#F7A6DA"), Color("#FFF2A0"), Color("#FFFFFF")]
+	# On each hedge a leafy crown grows back, in a wave along the row.
+	var cap := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
+	for t: Vector2i in hedges:
+		var top := fx.site.centre(t) + Vector3(0, 0.95 if fx.site.code(t) == RealmKit.F.HEDGE else 0.45, 0)
+		for k in 4:
+			var g := Geo.new()
+			var at := Vector3(r.randf_range(-0.3, 0.3), 0, r.randf_range(-0.3, 0.3))
+			g.ball(Geo.place(Vector3(0, 0.12, 0), 0.0, Vector3(1.0, 0.8, 1.0)), r.randf_range(0.17, 0.24),
+				Color("#6CD06A").darkened(r.randf() * 0.2), 4, 8)
+			cap.solid(g.mesh(), Geo.place(top + at), top + at, fmod((t.x + t.y) * 0.08 + k * 0.02, 1.0))
+	if cap.triangles > 0:
+		fx.layer(sig, cap, fx.solid_material(2, 1.0), true)
 	for c: Vector3 in spots:
 		for k in 2:
 			var at := c + Vector3(r.randf_range(-0.3, 0.3), 0, r.randf_range(-0.3, 0.3))
@@ -192,9 +205,9 @@ static func _kinship(fx: LawFx, sig: Node3D) -> void:
 				for k in pts.size():
 					var u := float(k) / (pts.size() - 1)
 					pts[k] += side * sin(u * TAU * 2.0 + strand * PI) * 0.06
-				vines.strip(pts, Color("#2F8A45") if strand == 0 else Color("#5CC46A"), 0)
+				vines.strip(pts, Color("#1F5A2A") if strand == 0 else Color("#3E9B4A"), 4)
 	if vines.triangles > 0:
-		fx.layer(sig, vines, fx.thread_material(0.055))
+		fx.layer(sig, vines, fx.thread_material(0.075))
 	LawFxPaint.spray(fx, sig, "kinship", {"n": 26, "shape": 10, "colour": Color("#5CC46A", 1.0), "radius": [0.07, 0.1],
 		"tiles": anchors, "lift": [1.0, 1.4], "wobble": 0.05})
 	# The crew, shoulder to shoulder, each to the next by a green thread.
@@ -277,15 +290,22 @@ static func _whispers(fx: LawFx, sig: Node3D) -> void:
 		posts = [p + Vector3(-2, 0, -1), p + Vector3(2, 0, 1), p + Vector3(0, 0, 2.5)]
 	var r := fx.site.rng("whispers")
 	var b := LawFxBatch.new(LawFxBatch.Kind.MOTES)
+	var lines := LawFxBatch.new(LawFxBatch.Kind.THREADS)
 	for i in posts.size():
 		var a: Vector3 = posts[i]
 		var c: Vector3 = posts[(i + 1) % posts.size()]
+		if posts.size() == 2 and i == 1:
+			break
+		for k in 2:
+			var up := Vector3(0, 1.0 + k * 0.35, 0)
+			lines.strip(LawFxBatch.sagging(a + up, c + up, -0.3 - k * 0.2, 24), Color("#E07AC8", 0.8), 4)
 		var period := maxf(3.0, a.distance_to(c) / 1.2)
-		for k in 9:
+		for k in 5:
 			var lift := Vector3(r.randf_range(-0.2, 0.2), 1.1 + r.randf_range(-0.25, 0.35), r.randf_range(-0.2, 0.2))
-			b.mote(a + lift, (c - a) / period, period, float(k) / 9.0 + r.randf() * 0.05, r.randf_range(0.2, 0.3),
+			b.mote(a + lift, (c - a) / period, period, float(k) / 5.0 + r.randf() * 0.05, r.randf_range(0.2, 0.3),
 				0.12, 11, Color("#C83C9A", 0.9))
 	fx.layer(sig, b, fx.mote_material(0.6))
+	fx.layer(sig, lines, fx.thread_material(0.07))
 	LawFxPaint.spray(fx, sig, "whispers_lines", {"n": 18, "shape": 3, "colour": Color("#9C3380", 0.6),
 		"radius": [0.04, 0.06], "lift": [0.8, 2.0], "vel": Vector3(0.8, 0, -0.4), "spread": Vector3(0.4, 0, 0.4),
 		"period": [3.0, 5.0], "wobble": 0.2})
@@ -327,17 +347,17 @@ static func _soul_swap(fx: LawFx, sig: Node3D) -> void:
 	var b := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	for k in 3:
 		var g := Geo.new()
-		g.ball(Geo.place(Vector3.ZERO, 0.0, Vector3(1.4, 1, 1)), 0.12, Color("#E05CB4", 0.35), 3, 7)
-		g.ball(Geo.place(Vector3(-0.15, 0.02, 0)), 0.08, Color("#F07AD0", 0.4), 2, 6)
-		g.ball(Geo.place(Vector3(-0.26, 0.04, 0)), 0.05, Color("#F7A6DA", 0.5), 2, 5)
+		g.ball(Geo.place(Vector3.ZERO, 0.0, Vector3(1.4, 1, 1)), 0.15, Color("#E05CB4", 0.6), 3, 7)
+		g.ball(Geo.place(Vector3(-0.19, 0.02, 0)), 0.1, Color("#F07AD0", 0.6), 2, 6)
+		g.ball(Geo.place(Vector3(-0.33, 0.04, 0)), 0.06, Color("#F7A6DA", 0.6), 2, 5)
 		var a := k * TAU / 3.0
 		var at := Vector3(cos(a) * 0.5, 0.5 + k * 0.15, sin(a) * 0.5)
 		b.solid(g.mesh(), Geo.place(at, -a), Vector3.ZERO, float(k) / 3.0)
 	var g2 := Geo.new()
-	g2.ring(Geo.place(Vector3(0, 0.04, 0)), 0.42, 0.5, Color("#E05CB4", 0.4), 24)
+	g2.ring(Geo.place(Vector3(0, 0.04, 0)), 0.4, 0.52, Color("#E05CB4", 0.6), 24)
 	b.solid(g2.mesh(), Transform3D.IDENTITY, Vector3.ZERO, 0.0)
 	var wisp := fx.solid_material(6, 1.8)
-	wisp.set_shader_parameter("glow", 1.4)
+	wisp.set_shader_parameter("glow", 1.2)
 	fx.follow(sig, b, wisp, "all")
 	LawFxPaint.spray(fx, sig, "soul_swap", {"n": 20, "shape": 11, "colour": Color("#F07AD0", 0.7),
 		"radius": [0.12, 0.18], "lift": [0.4, 1.6], "wobble": 0.3, "glow": 0.6})

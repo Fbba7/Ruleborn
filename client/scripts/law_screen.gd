@@ -35,11 +35,12 @@ func _build() -> void:
 	column.add_child(UI.title(Strings.t("LAW_CARD_TITLE")))
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))
+	var list := UI.scroll(column)
+	# In the scroll, so large text never pushes the buttons off the phone.
 	preview = LawFxPreview.new()
-	column.add_child(preview)
+	list.add_child(preview)
 	if law != "":
 		preview.show_laws([law])
-	var list := UI.scroll(column)
 	box = VBoxContainer.new()
 	list.add_child(UI.plate(box))
 	var actions := UI.row(-1.0, true)

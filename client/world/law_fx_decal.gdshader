@@ -20,11 +20,13 @@ uniform vec2 focus = vec2(0.0);
 varying vec2 world;
 varying vec4 local;
 varying float weight;
+varying vec3 tint;
 
 void vertex() {
 	world = UV;
 	local = CUSTOM0;
 	weight = COLOR.a;
+	tint = COLOR.rgb;
 }
 
 float hash(vec2 p) {
@@ -109,7 +111,7 @@ void fragment() {
 		float dash = smoothstep(0.5, 0.1, abs(fract(r * 0.8 + s * 0.6) - 0.5));
 		float line = smoothstep(0.12, 0.03, abs(arm - 0.5));
 		c = mix(colour_a.rgb, colour_b.rgb, smoothstep(0.03, 0.0, abs(arm - 0.5)));
-		a = line * (0.45 + 0.5 * dash) * smoothstep(0.3, 1.6, r);
+		a = line * (0.3 + 0.4 * dash) * smoothstep(0.3, 1.6, r);
 	} else if (pattern == 4) {
 		// Delay: ripples that linger round anything triggered, each ring
 		// a beat behind the one before.
@@ -124,10 +126,10 @@ void fragment() {
 		a = ring;
 	} else if (pattern == 5) {
 		// Aurora: ribbons of light sweeping slowly across the ground.
-		float w = sin(p.x * 0.45 + p.y * 0.3 + sin(p.y * 0.5 + s * 0.3) * 1.5 - s * 0.45);
+		float w = sin(p.x * 0.8 + p.y * 0.45 + sin(p.y * 0.6 + s * 0.3) * 1.5 - s * 0.45);
 		float band = smoothstep(0.25, 0.85, w);
 		float edge = smoothstep(0.8, 0.95, w);
-		float hue = sin(p.x * 0.25 - p.y * 0.2 + s * 0.2) * 0.5 + 0.5;
+		float hue = smoothstep(-0.6, 0.6, sin(p.x * 0.35 - p.y * 0.5 + s * 0.2));
 		c = mix(colour_a.rgb, colour_b.rgb, hue);
 		c = mix(c, vec3(1.0), edge * 0.6);
 		a = band * 0.72;
@@ -225,6 +227,6 @@ void fragment() {
 		c = mix(colour_a.rgb, colour_b.rgb, n);
 		a = line * 0.45 + n * 0.12;
 	}
-	ALBEDO = c;
+	ALBEDO = c * tint;
 	ALPHA = clamp(a, 0.0, 1.0) * weight * strength;
 }

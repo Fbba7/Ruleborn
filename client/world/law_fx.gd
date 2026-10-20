@@ -99,7 +99,9 @@ func build(s: LawFxSite) -> void:
 	crowns = Node3D.new()
 	crowns.name = "Crowns"
 	add_child(crowns)
+	var pools: Array = []
 	for p: Dictionary in site.pylons:
+		pools.append(p)
 		var law: String = p["law"]
 		if not signatures.has(law):
 			var sig := Node3D.new()
@@ -115,6 +117,15 @@ func build(s: LawFxSite) -> void:
 		var grown := Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 1.5), top)
 		cap.solid(LawFxCrown.mesh(str(p["school"])), grown, top, RealmKit.jitter(p["tile"], 9))
 		layer(crowns, cap, mat, true)
+	# A pool of its school's colour under each pylon, so a signature reads as
+	# its pylon's.
+	var under := LawFxBatch.new(LawFxBatch.Kind.DECALS)
+	for p: Dictionary in pools:
+		var c: Vector3 = p["at"]
+		under.decal(c + Vector3(0, 0.03, 0), Vector2(1.1, 1.1), 1.0, Vector4(c.x, c.z, 0.0, 1.1), 0.0,
+			LawFxCrown.colours(str(p["school"]))[0])
+	if under.triangles > 0:
+		layer(crowns, under, decal_material(8, Color.WHITE))
 	_share_ground()
 	links = Node3D.new()
 	links.name = "Links"

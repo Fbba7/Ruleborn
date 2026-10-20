@@ -315,6 +315,16 @@ static func _haste(fx: LawFx, sig: Node3D) -> void:
 	var h := fx.site.half()
 	LawFxPaint.spray(fx, sig, "haste", {"n": 30, "shape": 3, "colour": Color("#4A5AC8", 0.75), "radius": [0.05, 0.08],
 		"lift": [0.3, 2.0], "vel": Vector3(h.x * 1.4, 0, h.y * 0.4), "period": [1.2, 1.8]})
+	# Clouds racing past the island's edge, in the sky round it.
+	var r := fx.site.rng("haste_clouds")
+	var clouds := LawFxBatch.new(LawFxBatch.Kind.MOTES)
+	for k in 10:
+		var z := r.randf_range(-h.y - 6.0, -h.y - 2.0) if k % 2 == 0 else r.randf_range(h.y + 1.0, h.y + 4.0)
+		var at := Vector3(-h.x - 8.0, r.randf_range(2.0, 4.0), z)
+		for puff in 3:
+			clouds.mote(at + Vector3(puff * 0.7, sin(puff) * 0.2, 0), Vector3(h.x * 1.6, 0, 0), 2.2, k * 0.1,
+				r.randf_range(0.5, 0.8), 0.0, 0, Color("#FFFFFF", 0.9))
+	fx.layer(sig, clouds, fx.mote_material(0.2))
 	LawFxPaint.spray(fx, sig, "haste_leaves", {"n": 16, "shape": 10, "colour": Color("#7CC46A", 0.95),
 		"radius": [0.06, 0.09], "tiles": fx.site.tiles(LawFxSite.PLANTS), "lift": [0.3, 1.2], "wobble": 0.35,
 		"pace": 2.2})

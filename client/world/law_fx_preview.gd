@@ -58,6 +58,23 @@ func show_laws(which: Array, type := "heart") -> void:
 	_tick(0.0)
 
 
+## The laws a realm of the server's Weaving or Harmony view holds: its
+## slots' laws (Weaving) or its laws (Harmony), and its type in the
+## world's words ("Heart" is "heart").
+static func realm_laws(r: Dictionary) -> Array:
+	var out: Array = []
+	for s: Dictionary in r.get("slots", []):
+		if s.get("law") is String:
+			out.append(s["law"])
+	for l: Dictionary in r.get("laws", []):
+		out.append(str(l["law"]))
+	return out
+
+
+static func realm_type_of(r: Dictionary) -> String:
+	return str(r["type"]).to_lower() if r.get("type") is String else "heart"
+
+
 static func _toon() -> Shader:
 	return load("res://world/toon.gdshader")
 
