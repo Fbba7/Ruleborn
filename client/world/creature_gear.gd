@@ -137,13 +137,26 @@ static func guard_kit(c: CreatureModel) -> Node3D:
 	# The lantern at the right hand: brass cap and base, a glowing body, a ring.
 	var hand := _anchor(c, &"hand_R")
 	var lt := _tool()
-	var lr := 0.055 * c.height() / s
+	var lr := 0.08 * c.height() / s
 	_ball(lt, Vector3(0, -lr * 1.9, 0), lr, LANTERN_GLOW, 0.0, 1.0)
 	_cylinder(lt, Vector3(0, -lr * 0.95, 0), lr * 0.7, lr * 0.32, BRASS, 0.45)
 	_cylinder(lt, Vector3(0, -lr * 2.85, 0), lr * 0.75, lr * 0.25, BRASS, 0.45)
 	_ring(lt, Vector3(0, -lr * 0.45, 0), lr * 0.35, lr * 0.07, BRASS)
 	var lantern := _instance(lt, "lantern")
 	hand.add_child(lantern)
+	# A soft halo, so the lantern reads at the heist's scale (a guard is found by its light).
+	var halo := MeshInstance3D.new()
+	var hq := QuadMesh.new()
+	hq.size = Vector2(lr * 6.0, lr * 6.0)
+	halo.mesh = hq
+	var hm := ShaderMaterial.new()
+	hm.shader = _blob_shader
+	hm.set_shader_parameter("face_camera", true)
+	hm.set_shader_parameter("shade", Color(LANTERN_GLOW, 0.45))
+	halo.material_override = hm
+	halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	halo.position = Vector3(0, -lr * 1.9, 0)
+	lantern.add_child(halo)
 	holder.set_meta("parts", [sash, lantern])
 	c.add_child(holder)
 	return holder

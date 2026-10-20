@@ -164,11 +164,13 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 	var shared := hall or ground == "island"
 	gap = maxf(gap * (0.62 if shared else 0.95), 0.75)
 	if shared:
-		var hall_mesh := MeshInstance3D.new()
-		hall_mesh.mesh = StageHeroFigure.hall(gap * list.size()) if hall \
-			else StageHeroFigure.pedestal(school, gap * list.size() * 0.4)
-		hall_mesh.material_override = toon(rim, false, true)
-		scenery.add_child(hall_mesh)
+		if hall:
+			var hall_mesh := MeshInstance3D.new()
+			hall_mesh.mesh = StageHeroFigure.hall(gap * list.size())
+			hall_mesh.material_override = toon(rim, false, true)
+			scenery.add_child(hall_mesh)
+		else:
+			scenery.add_child(StageHeroFigure.realm_ground(school, gap * list.size() * 0.4))
 	for i in list.size():
 		var kind := StageHeroFigure.key(str(list[i]))
 		var table := Node3D.new()
@@ -179,10 +181,7 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		var h := StageHeroFigure.height(kind)
 		var own_school := StageHeroFigure.school(kind)
 		if not shared:
-			var patch := MeshInstance3D.new()
-			patch.mesh = StageHeroFigure.pedestal(own_school, maxf(0.3, h * (0.55 if list.size() == 1 else 0.4)))
-			patch.material_override = toon(rim, false, true)
-			table.add_child(patch)
+			table.add_child(StageHeroFigure.realm_ground(own_school, maxf(0.3, h * (0.55 if list.size() == 1 else 0.4))))
 		var blob := StageHeroFigure.shadow_disc()
 		blob.scale = Vector3.ONE * h * 0.75
 		blob.position.y = 0.045
@@ -267,6 +266,9 @@ func reveal() -> void:
 		tables[0].add_child(mi)
 		_shells.append(mi)
 	act(0)
+	var model: Variant = figures[0].get_meta("model", null)
+	if model is CreatureModel:
+		(model as CreatureModel).play(&"celebrate")
 
 
 ## Sets the stage's clock, for a still that is the same every time.

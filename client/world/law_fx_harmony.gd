@@ -110,7 +110,7 @@ static func chord(fx: LawFx, into: Node3D, id: String, pts: Array[Vector3]) -> v
 		sg.tri(mid0, pts[k], pts[(k + 1) % 3], c, Vector3.UP)
 		sg.tri(mid0, pts[(k + 1) % 3], pts[k], c, Vector3.DOWN)
 	sheet.solid(sg.mesh(), Transform3D.IDENTITY, mid0, 0.0)
-	var sm := fx.glass_material(Color.WHITE, 0, 1.0, 0.16)
+	var sm := fx.glass_material(Color.WHITE, 0, 1.0, 0.1)
 	sm.set_shader_parameter("rim", 0.0)
 	fx.layer(into, sheet, sm)
 	var mid := (pts[0] + pts[1] + pts[2]) / 3.0 + Vector3(0, 0.5, 0)

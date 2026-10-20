@@ -507,8 +507,9 @@ static func _bird_mesh() -> ArrayMesh:
 ## motes, Emberreach's sparks, Verdant's pollen. Same form as `scatter`, with
 ## a fifth value, how far each drifts on the wind, and an optional sixth:
 ## how far each rises before it starts again, "glow" for pools of light,
-## "bird" for the flock, "night" for what shows only after dark, or "night
-## glow" for pools of light that do.
+## "bird" for the flock, "butterfly", "streak" for wind streaks (no mesh),
+## "twinkle" for glowing pieces that sparkle, "night" for what shows only
+## after dark, or "night glow" for pools of light that do.
 func signature() -> Array:
 	var out := []
 	var accent: Color = palette["accent"]
@@ -528,11 +529,18 @@ func signature() -> Array:
 				var c := Color("#BFAEFF") if i % 2 == 0 else Color("#9BEAF3")
 				c.a = 0.75
 				cols.append(c)
-			out.append([_octa_mesh(), spires, cols, 0.0, 0.0])
+			out.append([_octa_mesh(), spires, cols, 0.0, 0.0, "twinkle"])
 		"skyfield":
 			var one: Array[Transform3D] = [Transform3D()]
 			var cream: Array[Color] = [Color("#F6EBD6")]
 			out.append([_fence_mesh(), one, cream, 0.0, 0.0])
+			var streaks: Array[Transform3D] = []
+			for i in 8:
+				var a := TAU * i / 8.0 + _rng.randf() * 0.5
+				var d := radius() * (0.6 + _rng.randf() * 0.9)
+				streaks.append(Transform3D(Basis().scaled(Vector3(3.0 + _rng.randf() * 3.0, 0.09, 1.0)),
+					Vector3(cos(a) * d, 1.5 + _rng.randf() * 4.0, sin(a) * d)))
+			out.append([null, streaks, _pick(streaks.size(), [Color.WHITE]), 0.0, 0.0, "streak"])
 		"lanternvale":
 			var flies := _meadow_spots(60, 0.0)
 			var at: Array[Transform3D] = []
@@ -551,6 +559,13 @@ func signature() -> Array:
 			out.append([_mushroom_mesh(), _spin_all(caps, 0.8, 1.5), cap_cols, 0.0, 0.0])
 			out.append(_glows(56, [Color("#B4FF8C"), Color("#FFD27A"), Color("#7AD8C8")], 0.5, 1.2))
 		"heart", "verdant", "emberreach":
+			if kind == "verdant":
+				var wings: Array[Transform3D] = []
+				for p in _meadow_spots(16, 0.5):
+					wings.append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * 0.45),
+						p + Vector3(0, 0.5 + _rng.randf() * 0.6, 0)))
+				var hues: Array[Color] = [Color("#FFE07A"), Color("#F7A6DA"), Color("#FFFFFF"), Color("#9ADFE8")]
+				out.append([_bird_mesh(), wings, _pick(wings.size(), hues), 0.0, 0.0, "butterfly"])
 			if kind == "emberreach":
 				out.append(_glows(26, [Color("#FF6A1C"), Color("#FF9A3C")], 0.6, 1.4))
 			var motes := _meadow_spots(60 if kind != "emberreach" else 50, -10.0)

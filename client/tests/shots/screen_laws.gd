@@ -10,6 +10,8 @@ func _initialize() -> void:
 
 
 func _go() -> void:
+	cast()
+	WorldView.heist_perspective = OS.get_environment("ORTHO") == ""
 	var frame := SubViewport.new()
 	frame.size = Vector2i(1080, 2340)
 	frame.render_target_update_mode = SubViewport.UPDATE_ALWAYS
@@ -37,6 +39,7 @@ func _go() -> void:
 		screen._refresh()
 		view._process(1.0 / 3.0)
 	view.set_zoom(int(OS.get_environment("ZOOM")) if OS.get_environment("ZOOM") != "" else 1)
+	settle(root)
 	screen.set_process(false)
 	screen._refresh()
 	for i in 8:
@@ -45,3 +48,26 @@ func _go() -> void:
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()
+
+
+## The integrator's cast of character models, until the app sets one: each
+## role's default kind, guards as Glass Golems in the guard form (CAST).
+static func cast() -> void:
+	if WorldView.figure_maker.is_valid() or OS.get_environment("CAST") == "":
+		return
+	var kinds := {"Scout": &"featherkin", "Breaker": &"rambler", "Carrier": &"skyskipper", "Warden": &"mossbear",
+		"Mender": &"hourkeeper", "guard": &"glassgolem"}
+	WorldView.figure_maker = func(role: String, _height: float) -> Node3D:
+		var c := CreatureModel.make(kinds.get(role, &"featherkin"))
+		if c != null and role == "guard":
+			c.set_guard(true)
+		return c
+
+
+## Let each character model's clip play on as it would have in real time,
+## since a shot runs a heist's seconds in a few frames.
+func settle(node: Node) -> void:
+	for c in node.find_children("*", "CreatureModel", true, false):
+		var p: AnimationPlayer = (c as CreatureModel).player()
+		if p != null:
+			p.advance(2.0)
