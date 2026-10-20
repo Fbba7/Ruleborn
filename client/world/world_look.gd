@@ -64,8 +64,8 @@ func _init(world: Node3D) -> void:
 	environment.fog_enabled = true
 	environment.fog_mode = Environment.FOG_MODE_EXPONENTIAL
 	environment.fog_density = 0.0
-	environment.fog_height = -2.5
-	environment.fog_height_density = 0.035
+	environment.fog_height = -4.0
+	environment.fog_height_density = 0.03
 	environment.fog_sky_affect = 0.0
 	var env_node := WorldEnvironment.new()
 	env_node.environment = environment

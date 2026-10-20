@@ -281,11 +281,15 @@ func cliffs() -> ArrayMesh:
 	_lathe(m, bands, 96, 0.4, 0.05, [dirt, dirt_dark, cliff.lerp(dirt, 0.35)], 2.2, 2)
 	var cone: Array[Vector2] = []
 	var top_r := e - 1.04 * s
-	var depth := 10.0 * s
+	# The diorama's cone is 10 deep, stretched 1.45 times when the camera
+	# looks down on the whole island (realm-diorama.js:963), so it shows
+	# below the rim from the home camera's 35°.
+	var depth := 13.0 * s
 	for i in 9:
 		var f := float(i) / 8.0
 		cone.append(Vector2(top_r * (1.0 - f) * (1.0 - 0.15 * f * (1.0 - f)), -1.74 - depth * f))
-	_lathe(m, cone, 30, 0.3, 0.6 * s + 0.15, [cliff], 0.9, 3)
+	# Darker than the sky behind it, so the rock reads under the island.
+	_lathe(m, cone, 30, 0.3, 0.6 * s + 0.15, [cliff.lerp(deep, 0.7).darkened(0.12)], 0.9, 3)
 	# A second, smaller cone off-centre, so the rock is not a spinning top.
 	var off := Vector3(2.3, 0, -1.3) * s
 	var sub := LookMesh.new()
