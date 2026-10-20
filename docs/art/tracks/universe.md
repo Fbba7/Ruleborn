@@ -159,6 +159,10 @@ universe, inside §21.3's 40,000 and 150.
   it (one more layer of instances, about 260 triangles).
   Still: `round21_zoom2_heart_petals.png`.
 
+- Round 22: the winds round the Heart (§5.4: "ringed by strong winds, so skiffs can't land there") as
+  the design's faint dome, a shell seen only at its edge with streaks of wind (`universe_dome.gdshader`).
+  Still: `round22_zoom1_heart_dome.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

@@ -47,6 +47,7 @@ static var _outline: Shader = load("res://world/outline.gdshader")
 static var _glow: Shader = load("res://world/universe_glow.gdshader")
 static var _veil: Shader = load("res://world/universe_veil.gdshader")
 static var _shade: Shader = load("res://world/universe_shade.gdshader")
+static var _dome: Shader = load("res://world/universe_dome.gdshader")
 
 var viewport: SubViewport
 var container: SubViewportContainer
@@ -556,6 +557,22 @@ func _build_heart_rings() -> void:
 	if not islands.has("heart"):
 		return
 	var heart: UniverseIsland = islands["heart"]
+	# The winds' dome over the Heart (§5.4), faint, seen at its edge.
+	var dome := MeshInstance3D.new()
+	var shell := SphereMesh.new()
+	shell.radius = heart.radius * 1.15
+	shell.height = heart.radius * 1.15 * 1.6
+	shell.is_hemisphere = true
+	shell.radial_segments = 32
+	shell.rings = 8
+	dome.mesh = shell
+	var dm := ShaderMaterial.new()
+	dm.shader = _dome
+	dome.material_override = dm
+	dome.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	dome.position = heart.at
+	statics.add_child(dome)
+	triangles += 32 * 8 * 2
 	var band := int(_extras.get("band", 0))
 	var colours: Array[Color] = [Color("#E6F4FF"), Color("#FFD27A"), Color("#FF9A5A"), FAULT]
 	var tint: Color = colours[clampi(band, 0, colours.size() - 1)]
