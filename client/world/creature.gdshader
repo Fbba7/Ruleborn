@@ -35,7 +35,7 @@ void fragment() {
 		vec3 n = normalize(TANGENT * nt.x + BINORMAL * nt.y * binormal_sign + NORMAL * nt.z);
 		NORMAL = normalize(mix(NORMAL, n, relief));
 	}
-	float gloss = body ? 0.0 : flags.x / 0.45;
+	float gloss = body ? body_gloss : flags.x / 0.45;
 	float emit = body ? 0.0 : flags.y;
 	creature_surface(c, body, gloss, emit, UV, NORMAL, VIEW, ALBEDO, EMISSION);
 	gloss_band = gloss;

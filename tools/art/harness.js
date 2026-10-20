@@ -75,14 +75,68 @@ function sampleClips(rig, nodes, clips) {
 
 function decimate(g, targetTris) {
 	const pos = g.attributes.position.array;
-	const nrm = g.attributes.normal.array;
-	const idx = Uint32Array.from(g.index.array);
-	if (idx.length / 3 <= targetTris) return { idx, err: 0 };
+	let nrm = g.attributes.normal.array;
+	let idx = Uint32Array.from(g.index ? g.index.array : [...Array(pos.length / 3).keys()]);
+	// A faceted body (the Glass Golem's crystal) repeats each corner per face;
+	// weld by position so it can be simplified, and keep it flat afterwards.
+	const rep = new Map();
+	const first = new Uint32Array(pos.length / 3);
+	for (let v = 0; v < pos.length / 3; v++) {
+		const k = Math.round(pos[v * 3] * 1e5) + ',' + Math.round(pos[v * 3 + 1] * 1e5) + ',' + Math.round(pos[v * 3 + 2] * 1e5);
+		if (!rep.has(k)) rep.set(k, v);
+		first[v] = rep.get(k);
+	}
+	const faceted = rep.size < (pos.length / 3) * 0.7;
+	if (faceted) {
+		idx = idx.map((v) => first[v]);
+		const sm = new Float32Array(nrm.length);
+		for (let v = 0; v < pos.length / 3; v++) for (let k = 0; k < 3; k++) sm[first[v] * 3 + k] += nrm[v * 3 + k];
+		nrm = sm;
+	}
+	if (globalThis.__DEBUG) console.error("decimate", pos.length / 3, rep.size, idx.length / 3, faceted, targetTris);
+	if (idx.length / 3 <= targetTris) return { idx, err: 0, faceted };
 	MeshoptSimplifier.useExperimentalFeatures = true;
 	let [out, err] = MeshoptSimplifier.simplifyWithAttributes(idx, pos, 3, nrm, 3, [0.25, 0.25, 0.25], null,
 		targetTris * 3, 1.0, []);
 	if (out.length / 3 > targetTris * 1.08) [out, err] = MeshoptSimplifier.simplify(idx, pos, 3, targetTris * 3, 1.0, []);
-	return { idx: out, err };
+	if (out.length / 3 > targetTris * 1.3) {
+		// meshoptimizer will not touch some meshes (non-manifold corners lock
+		// every vertex); fall back to clustering the corners on a grid, which
+		// suits a faceted body anyway.
+		const best = clusterDecimate(pos, idx, targetTris);
+		if (best) out = best;
+	}
+	if (globalThis.__DEBUG) console.error("decimated", out.length / 3, err);
+	return { idx: out, err, faceted };
+}
+
+function clusterDecimate(pos, idx, target) {
+	const run = (h) => {
+		const cell = new Map(), rep = new Map();
+		const cl = (v) => {
+			let c = rep.get(v);
+			if (c !== undefined) return c;
+			const k = Math.floor(pos[v * 3] / h) + ',' + Math.floor(pos[v * 3 + 1] / h) + ',' + Math.floor(pos[v * 3 + 2] / h);
+			if (!cell.has(k)) cell.set(k, v);
+			c = cell.get(k); rep.set(v, c); return c;
+		};
+		const out = [], seen = new Set();
+		for (let f = 0; f < idx.length; f += 3) {
+			const a = cl(idx[f]), b = cl(idx[f + 1]), c = cl(idx[f + 2]);
+			if (a === b || b === c || a === c) continue;
+			const key = [a, b, c].sort((x, y) => x - y).join(',');
+			if (seen.has(key)) continue;
+			seen.add(key); out.push(a, b, c);
+		}
+		return Uint32Array.from(out);
+	};
+	let lo = 0.001, hi = 0.2, best = null;
+	for (let it = 0; it < 24; it++) {
+		const h = Math.sqrt(lo * hi);
+		const o = run(h);
+		if (o.length / 3 > target) lo = h; else { best = o; hi = h; }
+	}
+	return best;
 }
 
 // Charts: each face goes to the axis (±X, ±Y, ±Z) its normal leans to most;
@@ -180,7 +234,8 @@ function unwrap(pos, nrm, idx) {
 	return { idx: nidx, oldOf: Uint32Array.from(oldOf), uv: Float32Array.from(uv), chartOf: Int32Array.from(chartOf), nc: L.nc, chartAxis };
 }
 
-// Shelf-pack the charts into the atlas's body area; returns final uv in [0,1].
+// Shelf-pack the charts into the atlas's body area (W wide, H of the square
+// atlas's W rows); returns uv in [0,1] of the whole atlas.
 function pack(un, W, H, pad) {
 	const { uv, chartOf, nc } = un;
 	const bb = Array.from({ length: nc }, () => [1e9, 1e9, -1e9, -1e9]);
@@ -215,7 +270,7 @@ function pack(un, W, H, pad) {
 	for (let v = 0; v < chartOf.length; v++) {
 		const c = chartOf[v];
 		out[v * 2] = (best[c][0] + (uv[v * 2] - bb[c][0]) * bs) / W;
-		out[v * 2 + 1] = (best[c][1] + (uv[v * 2 + 1] - bb[c][1]) * bs) / H;
+		out[v * 2 + 1] = (best[c][1] + (uv[v * 2 + 1] - bb[c][1]) * bs) / W;
 	}
 	return { uv: out, texelsPerUnit: bs, rot };
 }
@@ -541,6 +596,16 @@ window.exportKind = async function exportKind(cfg) {
 	const TS = cfg.tex || 512;
 	const STRIP = 64;
 	const pk = pack(un, TS, TS - STRIP - 2, 2);
+	if (dec.faceted) {
+		// Flat facets: every face its own corners, so each takes its plane's normal.
+		const n3 = un.idx.length;
+		const oldOf = new Uint32Array(n3), chartOf = new Int32Array(n3), uv = new Float32Array(n3 * 2);
+		for (let i = 0; i < n3; i++) {
+			const v = un.idx[i];
+			oldOf[i] = un.oldOf[v]; chartOf[i] = un.chartOf[v]; uv[i * 2] = pk.uv[v * 2]; uv[i * 2 + 1] = pk.uv[v * 2 + 1];
+		}
+		un.oldOf = oldOf; un.chartOf = chartOf; un.idx = Uint32Array.from({ length: n3 }, (_, i) => i); pk.uv = uv;
+	}
 	const img = new Uint8ClampedArray(TS * TS * 4);
 	// The low mesh's own positions and normals per new vertex for the bake.
 	const nv = un.oldOf.length;
@@ -548,6 +613,11 @@ window.exportKind = async function exportKind(cfg) {
 	for (let v = 0; v < nv; v++) for (let k = 0; k < 3; k++) {
 		bpos[v * 3 + k] = bg.attributes.position.array[un.oldOf[v] * 3 + k];
 		bnrm[v * 3 + k] = bg.attributes.normal.array[un.oldOf[v] * 3 + k];
+	}
+	if (dec.faceted) for (let f = 0; f < nv / 3; f++) {
+		const a = new THREE.Vector3().fromArray(bpos, f * 9), b = new THREE.Vector3().fromArray(bpos, f * 9 + 3), c = new THREE.Vector3().fromArray(bpos, f * 9 + 6);
+		const n = b.sub(a).cross(c.sub(a)).normalize();
+		for (let k = 0; k < 3; k++) n.toArray(bnrm, f * 9 + k * 3);
 	}
 	// Tangents: the chart's projection axes (u right, v down the atlas).
 	const PUa = [[0, 0, -1], [0, 0, 1], [1, 0, 0], [1, 0, 0], [1, 0, 0], [-1, 0, 0]];
@@ -566,7 +636,7 @@ window.exportKind = async function exportKind(cfg) {
 	}
 	const imgN = new Uint8ClampedArray(TS * TS * 4);
 	const texels = bake(S, bpos, bnrm, btan, un.idx, pk.uv, img, imgN, TS, [0, 0, TS, TS - STRIP]);
-	for (let y = TS - STRIP; y < TS; y++) for (let x = 0; x < TS; x++) imgN.set([128, 128, 255, 255], (y * TS + x) * 4);
+	for (let y = dec.faceted ? 0 : TS - STRIP; y < TS; y++) for (let x = 0; x < TS; x++) imgN.set([128, 128, 255, 255], (y * TS + x) * 4);
 	// White cell for plain-coloured parts, and room for eye textures.
 	for (let y = TS - STRIP; y < TS; y++) for (let x = 0; x < TS; x++) img.set(x < 32 ? [255, 255, 255, 255] : [128, 128, 128, 255], (y * TS + x) * 4);
 	const WHITE_UV = [16 / TS, (TS - STRIP / 2) / TS];
@@ -624,6 +694,7 @@ window.exportKind = async function exportKind(cfg) {
 		// Bind-space position = inv(IBM_anchor) * inv(W_anchor(rest)) * W_mesh(rest) * v.
 		const toBind = new THREE.Matrix4().copy(ibm[j]).invert().multiply(restW(anc).invert()).multiply(restW(o));
 		const nm = new THREE.Matrix3().getNormalMatrix(toBind);
+		const mirrored = toBind.determinant() < 0;
 		const g = o.geometry;
 		const gp = g.attributes.position, gn = g.attributes.normal, gc = g.attributes.color, guv = g.attributes.uv;
 		const mats = Array.isArray(o.material) ? o.material : [o.material];
@@ -637,6 +708,7 @@ window.exportKind = async function exportKind(cfg) {
 			const base = P.length / 3;
 			const map = new Map();
 			const list = IDX[mc.glass ? 1 : 0];
+			const startLen = list.length;
 			for (let q = grp.start; q < grp.start + grp.count; q++) {
 				const v = ix ? ix[q] : q;
 				let nvI = map.get(v);
@@ -673,6 +745,25 @@ window.exportKind = async function exportKind(cfg) {
 					map.set(v, nvI);
 				}
 				list.push(nvI);
+				// A mirrored placement (scale −1 for the left of a pair) turns the faces inside out.
+				if (mirrored && (list.length - startLen) % 3 === 0) { const e = list.length; const t = list[e - 1]; list[e - 1] = list[e - 2]; list[e - 2] = t; }
+			}
+			// A double-sided sheet (wing, leaf, page, banner) gets its back as real faces.
+			const openSheet = ['PlaneGeometry', 'ShapeGeometry', 'CircleGeometry', 'RingGeometry', 'LatheGeometry', 'BufferGeometry'].includes(g.type) || (g.parameters && g.parameters.openEnded);
+			if (m.side === THREE.DoubleSide && openSheet) {
+				const flip = new Map();
+				const back = (v) => {
+					let b = flip.get(v);
+					if (b !== undefined) return b;
+					b = P.length / 3; flip.set(v, b);
+					P.push(P[v * 3], P[v * 3 + 1], P[v * 3 + 2]); N.push(-N[v * 3], -N[v * 3 + 1], -N[v * 3 + 2]);
+					TG.push(TG[v * 4], TG[v * 4 + 1], TG[v * 4 + 2], -TG[v * 4 + 3]);
+					C.push(C[v * 4], C[v * 4 + 1], C[v * 4 + 2], C[v * 4 + 3]); UV.push(UV[v * 2], UV[v * 2 + 1]); UV1.push(UV1[v * 2], UV1[v * 2 + 1]);
+					SI.push(SI[v * 4], 0, 0, 0); SW.push(1, 0, 0, 0);
+					return b;
+				};
+				const end = list.length;
+				for (let t = startLen; t < end; t += 3) list.push(back(list[t]), back(list[t + 2]), back(list[t + 1]));
 			}
 			accTris += grp.count / 3;
 			const key = (o.name || o.parent.name || '?') + ':' + g.type;
@@ -843,6 +934,7 @@ window.exportKind = async function exportKind(cfg) {
 		info: {
 			triangles: tris,
 			body_triangles: un.idx.length / 3,
+			faceted: !!dec.faceted,
 			accessory_triangles: accIdx.length / 3 + IDX[1].length / 3,
 			accessory_source_triangles: accTris,
 			source_triangles: bg.index.count / 3,

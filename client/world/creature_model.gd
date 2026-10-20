@@ -242,6 +242,16 @@ func _materials() -> void:
 	_material.shader = _shader
 	_material.set_shader_parameter("atlas", atlas)
 	_material.set_shader_parameter("normals", normals)
+	_material.set_shader_parameter("relief", float(info.get("relief", 1.0)))
+	var surface: Dictionary = info.get("surface", {})
+	var metal := float(surface.get("metal", 0.0))
+	_material.set_shader_parameter("body_metal", metal)
+	_material.set_shader_parameter("body_gloss", clampf(float(surface.get("gloss", 0.0)) * 0.8, 0.0, 1.0))
+	_material.set_shader_parameter("body_iris", float(surface.get("iris", 0.0)))
+	var emit: Array = surface.get("emit", [0.0, 0.0, 0.0])
+	_material.set_shader_parameter("body_emit", Vector3(float(emit[0]), float(emit[1]), float(emit[2])))
+	# Metal keeps its greys; only paint pales toward the design's sheen.
+	_material.set_shader_parameter("lift", (0.5 + 0.25 * float(surface.get("gloss", 0.0))) * (1.0 - metal))
 	_material.set_shader_parameter("rim_colour", Color(str(info.get("rim", "#9FD4FF"))))
 	_material.set_shader_parameter("glow_vc", float(info.get("glow", 0.0)))
 	for i in mesh.get_surface_count():
