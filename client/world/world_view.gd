@@ -32,6 +32,9 @@ static var _cache := {}
 ## §21.4's realm type, which picks the palette; and whether this is a heist.
 var realm_type := "heart"
 var heist := true
+## The buildings standing ([kind, x, y, side], `RulebornIsland.buildings()`),
+## when the screen knows them, so each footprint is drawn as its kind.
+var buildings: Array = []
 var pitch := HEIST_PITCH
 ## The camera's quarter turns (§21.1: "rotatable in 90° steps") and zoom.
 var turns := 0
@@ -166,23 +169,22 @@ func _build_statics() -> void:
 	var seed_from := hash(_features) ^ (_size.x * 131 + _size.y)
 	look.island(statics, _size, seed_from, colours)
 	var kit := RealmKit.new(replay, colours)
+	kit.buildings = buildings
 	kit.build()
-	for layer: Array in [[kit.ground.mesh(), material(_toon), true], [kit.hero.mesh(), material(_toon, true), true],
-			[kit.clear.mesh(), material(_clear), false], [kit.water.mesh(), _water_material(false), false],
-			[kit.lava.mesh(), _water_material(true), false]]:
-		if layer[0] != null:
-			statics.add_child(_instance(layer[0], layer[1], layer[2]))
+	# The kit's layers with its own materials (T3: they carry its idle motion).
+	for mi: MeshInstance3D in kit.instances():
+		statics.add_child(mi)
 	# The Vault, the pylons and the wards change as the heist goes, so each
 	# is its own piece.
-	_vault = _instance(PieceKit.vault(false), material(_toon, true))
+	_vault = _instance(PieceKit.vault(false), RealmKit.material("toon", true))
 	statics.add_child(_vault)
 	for p: Dictionary in replay.pylons():
-		var mi := _instance(PieceKit.pylon(), material(_toon, true))
+		var mi := _instance(PieceKit.pylon(), RealmKit.material("toon", true))
 		mi.position = world_at(p["at"])
 		statics.add_child(mi)
 		_pylons.append(mi)
 	for w: Dictionary in replay.wards():
-		var mi := _instance(PieceKit.ward(str(w["kind"])), material(_toon, true))
+		var mi := _instance(PieceKit.ward(str(w["kind"])), RealmKit.material("toon", true))
 		mi.position = world_at(w["at"])
 		statics.add_child(mi)
 		_wards.append(mi)

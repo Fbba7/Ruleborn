@@ -108,7 +108,9 @@ static func meshes(view: WorldView) -> Array:
 
 func _materials(view: WorldView) -> void:
 	var kit := [load("res://world/toon.gdshader"), load("res://world/toon_clear.gdshader"),
-		load("res://world/water.gdshader")]
+		load("res://world/water.gdshader"), load("res://world/kit_toon.gdshader"), load("res://world/kit_clear.gdshader"),
+		load("res://world/kit_ground.gdshader")]
+	var inks := [load("res://world/outline.gdshader"), load("res://world/kit_outline.gdshader")]
 	var stray := []
 	var outlined := 0
 	for mi: MeshInstance3D in meshes(view):
@@ -118,7 +120,7 @@ func _materials(view: WorldView) -> void:
 		elif m.next_pass is ShaderMaterial:
 			var o := m.next_pass as ShaderMaterial
 			outlined += 1
-			if o.shader != load("res://world/outline.gdshader") or o.get_shader_parameter("width_px") != null \
+			if not (o.shader in inks) or o.get_shader_parameter("width_px") != null \
 					and float(o.get_shader_parameter("width_px")) != 1.5:
 				stray.append(mi.name)
 	var sky := (view.environment.sky.sky_material as ShaderMaterial).shader == load("res://world/sky.gdshader")

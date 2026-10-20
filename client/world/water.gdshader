@@ -1,19 +1,91 @@
-// Water and lava: the toon ramp, with bands that drift with time — hand
-// painted, never a photographic texture (§21.3).
+// Water and lava, hand painted (§21.3), never a photographic texture.
+// Water: deep in the middle and light at the banks, a foam line where it
+// meets the shore (UV.x: 0 at the shore, 1 a half tile out, from KitGround),
+// drifting light streaks, and ink ripples — §21.10: "water also carries ink
+// ripples", so it reads in grayscale against stone. COLOR tints it (marsh,
+// spring). Lava (glowing > 0): a dark crust in plates over a glowing melt
+// that pulses through the cracks.
 shader_type spatial;
 render_mode diffuse_toon, specular_disabled;
 
 #include "res://world/toon_light.gdshaderinc"
 
-uniform vec4 deep : source_color = vec4(0.35, 0.72, 0.86, 1.0);
-uniform vec4 foam : source_color = vec4(0.86, 0.97, 1.0, 1.0);
+uniform vec4 deep : source_color = vec4(0.22, 0.58, 0.80, 1.0);
+uniform vec4 foam : source_color = vec4(0.88, 0.97, 1.0, 1.0);
+uniform vec4 ink : source_color = vec4(0.10, 0.18, 0.32, 1.0);
 uniform float speed = 0.35;
 uniform float glowing = 0.0;
 
+varying vec3 wpos;
+
+void vertex() {
+	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	// A slow swell, so the surface is never still.
+	if (glowing <= 0.0) {
+		VERTEX.y += sin(wpos.x * 2.1 + TIME * 1.3) * sin(wpos.z * 1.7 - TIME) * 0.012 * clamp(UV.x * 2.0, 0.0, 1.0);
+	}
+}
+
+float hash(vec2 p) {
+	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+float vnoise(vec2 p) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	f = f * f * (3.0 - 2.0 * f);
+	return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0)), f.x),
+		f.y);
+}
+
+vec2 cells(vec2 p) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	float d1 = 8.0;
+	float d2 = 8.0;
+	for (int y = -1; y <= 1; y++) {
+		for (int x = -1; x <= 1; x++) {
+			vec2 g = vec2(float(x), float(y));
+			vec2 o = vec2(hash(i + g), hash(i + g + 7.31)) * 0.8 + 0.1;
+			float d = length(g + o - f);
+			if (d < d1) {
+				d2 = d1;
+				d1 = d;
+			} else if (d < d2) {
+				d2 = d;
+			}
+		}
+	}
+	return vec2(d1, d2);
+}
+
 void fragment() {
-	vec2 p = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).xz;
-	float band = sin(p.x * 3.1 + p.y * 1.7 + TIME * speed * 6.0) + sin(p.y * 4.3 - TIME * speed * 4.0) * 0.6;
-	float f = step(1.15, band);
-	ALBEDO = saturated(mix(deep.rgb, foam.rgb, f));
-	EMISSION = ALBEDO * glowing;
+	vec2 p = wpos.xz;
+	float t = TIME * speed;
+	if (glowing > 0.0) {
+		vec2 cb = cells(p * 3.2 + vec2(t * 0.2, 0.0));
+		float crack = 1.0 - smoothstep(0.03, 0.12, cb.y - cb.x);
+		float pulse = 0.75 + 0.25 * sin(TIME * 2.0 + vnoise(p * 2.0) * 6.0);
+		vec3 melt = mix(deep.rgb, foam.rgb, crack * pulse);
+		vec3 crust = vec3(0.17, 0.10, 0.11) * (0.8 + 0.4 * vnoise(p * 9.0));
+		float lit = max(crack, smoothstep(0.4, 0.0, cb.x) * 0.25);
+		ALBEDO = mix(crust, melt, lit);
+		EMISSION = melt * lit * glowing * 1.4;
+	} else {
+	float shore = clamp(UV.x, 0.0, 1.0);
+	vec3 base = mix(foam.rgb * 0.9, deep.rgb, smoothstep(0.0, 0.85, shore)) * COLOR.rgb;
+	// Light streaks drifting along.
+	float drift = vnoise(vec2(p.x * 1.5 - t * 2.0, p.y * 5.0));
+	base = mix(base, foam.rgb, smoothstep(0.72, 0.8, drift) * 0.45);
+	// Ink ripples: thin arcs that come and go.
+	float r = vnoise(p * 2.4 + vec2(t, -t * 0.7));
+	float ring = abs(fract(r * 4.0 - TIME * 0.25) - 0.5);
+	float arc = (1.0 - smoothstep(0.0, 0.05, ring)) * step(0.45, vnoise(p * 1.3 + 3.0));
+	base = mix(base, ink.rgb, arc * 0.55 * smoothstep(0.15, 0.5, shore));
+	// The foam at the bank, broken up.
+	float edge = 1.0 - smoothstep(0.08, 0.22, shore + (vnoise(p * 7.0 + t) - 0.5) * 0.12);
+	base = mix(base, foam.rgb, edge);
+	ALBEDO = saturated(base);
+	EMISSION = vec3(0.0);
+	}
 }

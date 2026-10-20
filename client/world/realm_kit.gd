@@ -2,10 +2,18 @@ class_name RealmKit
 extends RefCounted
 ## A realm's ground and features in 3D, from the simulation's own grid
 ## (`RulebornReplay.features()`, `heights()`, `surfaces()`, `facings()`):
-## every tile a flagstone at its height, every feature a piece from this kit
-## on its tile. §21.10's hero features — the ones that change a route — are
-## built apart so they carry the ink outline; ground features stay ground
-## ("Tall grass, shade and cover are drawn as ground", §21.12).
+## the ground one painted surface at the tiles' heights (KitGround), every
+## feature a piece from the kit on its tile (KitFeatures), every building
+## footprint its building (BuildingKit). §21.10's hero features — the ones
+## that change a route — are built apart so they carry the ink outline;
+## ground features stay ground ("Tall grass, shade and cover are drawn as
+## ground", §21.12).
+##
+## Layers, each one merged mesh (§21.3: under 150 draw calls): `ground` (the
+## painted terrain, kit_ground.gdshader), `scatter` (grass tufts), `hero`
+## (inked), `prop` (ambient features, not inked), `clear` (see-through),
+## `water` and `lava`. `instances()` gives them as MeshInstance3Ds with the
+## kit's own materials, which carry each piece's idle motion.
 ##
 ## Codes are `RulebornReplay.features()`'s: 0 open, 1 + sim::grid::Feature's
 ## index.
@@ -20,6 +28,14 @@ const HERO := [F.ROCK_PILLAR, F.RUIN_WALL, F.FENCE, F.HEDGE, F.TREE, F.BOULDER, 
 	F.ARCH, F.BELL_POST, F.LANTERN_POST, F.STATIC_STONE, F.BUILDING, F.BOUNCE_MUSHROOM, F.SHADE_CANOPY]
 ## Water-like ground drawn by the water shader.
 const WET := [F.STREAM, F.POND, F.MARSH, F.RAPIDS, F.HOT_SPRING, F.WATERFALL]
+## The tint each kind of water takes.
+const WATER_TINT := {F.MARSH: "#9CC48A", F.HOT_SPRING: "#C8FFF0", F.RAPIDS: "#D8F2FF"}
+
+static var _shaders := {
+	"toon": load("res://world/kit_toon.gdshader"), "outline": load("res://world/kit_outline.gdshader"),
+	"clear": load("res://world/kit_clear.gdshader"), "ground": load("res://world/kit_ground.gdshader"),
+	"water": load("res://world/water.gdshader"),
+}
 
 var size := Vector2i.ZERO
 var features := PackedByteArray()
@@ -28,22 +44,49 @@ var surfaces := PackedByteArray()
 var facings := PackedByteArray()
 var tunnels: Array[Vector2i] = []
 var palette := RealmPalette.of("heart")
+## §21.4's realm, read from the palette (KitStyle.realm_of).
+var realm := "heart"
+## The buildings standing, as `RulebornIsland.buildings()` gives them
+## ([kind, x, y, side], optionally a level after), when a screen knows them;
+## a footprint not listed is the Spire if 3 × 3, else a Hearth.
+var buildings: Array = []
+## The level a building is drawn at when its own is not given.
+var level := 3
 
 var ground := Geo.new()
+var scatter := Geo.new()
 var hero := Geo.new()
+var prop := Geo.new()
 var clear := Geo.new()
 var water := Geo.new()
 var lava := Geo.new()
 
 
 func _init(r: RulebornReplay, colours: Dictionary) -> void:
-	size = r.size()
-	features = r.features()
-	heights = r.heights()
-	surfaces = r.surfaces()
-	facings = r.facings()
-	tunnels = r.tunnels()
+	if r != null:
+		size = r.size()
+		features = r.features()
+		heights = r.heights()
+		surfaces = r.surfaces()
+		facings = r.facings()
+		tunnels = r.tunnels()
 	palette = colours
+	realm = KitStyle.realm_of(colours)
+
+
+## A kit for a grid given directly (the kit's own shots and tests).
+static func of_grid(grid: Vector2i, codes: PackedByteArray, levels: PackedByteArray, ground_kinds: PackedByteArray,
+		colours: Dictionary) -> RealmKit:
+	var k := RealmKit.new(null, colours)
+	k.size = grid
+	k.features = codes
+	k.heights = levels
+	k.surfaces = ground_kinds
+	return k
+
+
+func inside(t: Vector2i) -> bool:
+	return t.x >= 0 and t.y >= 0 and t.x < size.x and t.y < size.y
 
 
 ## The middle of tile `t` on the ground at its height.
@@ -52,20 +95,24 @@ func centre(t: Vector2i) -> Vector3:
 
 
 func height(t: Vector2i) -> float:
+	if not inside(t):
+		return 0.0
 	var i := t.y * size.x + t.x
-	return (heights[i] if i >= 0 and i < heights.size() else 0) * IslandBuilder.LEVEL
+	return (heights[i] if i < heights.size() else 0) * IslandBuilder.LEVEL
 
 
 func code(t: Vector2i) -> int:
+	if not inside(t):
+		return 0
 	var i := t.y * size.x + t.x
-	return features[i] if i >= 0 and i < features.size() else 0
+	return features[i] if i < features.size() else 0
 
 
 ## The way a directional tile faces, as a yaw: 0 north (−Z), then east,
 ## south, west; 0 for none.
 func yaw(t: Vector2i) -> float:
 	var i := t.y * size.x + t.x
-	var f := facings[i] if i < facings.size() else 255
+	var f := facings[i] if i >= 0 and i < facings.size() else 255
 	return 0.0 if f > 3 else -PI / 2.0 * f
 
 
@@ -79,197 +126,122 @@ static func jitter(t: Vector2i, slot: int) -> float:
 
 ## Build every layer.
 func build() -> void:
+	var footprints := _footprints()
+	var blocked := {}
+	for fp: Array in footprints:
+		for dy in int(fp[3]):
+			for dx in int(fp[3]):
+				blocked[Vector2i(fp[1] + dx, fp[2] + dy)] = true
+	var kg := KitGround.new(size, heights, surfaces, features, blocked, WET, palette)
+	kg.terrain = ground
+	kg.water = water
+	ground.painted = true
+	water.painted = true
+	kg.scatter = scatter
+	for i in features.size():
+		if features[i] in WATER_TINT:
+			kg.tints[Vector2i(i % size.x, i / size.x)] = Color(WATER_TINT[features[i]])
+	kg.build(func(t: Vector2i) -> bool: return code(t) == F.OPEN and not blocked.has(t))
+	var kf := KitFeatures.new(self)
+	var mouths := {}
+	for m: Vector2i in tunnels:
+		mouths[m] = true
 	for y in size.y:
 		for x in size.x:
 			var t := Vector2i(x, y)
-			_tile(t)
-			_feature(t, code(t))
-	_buildings()
-	for k in range(0, tunnels.size() - 1, 2):
-		for m: Vector2i in [tunnels[k], tunnels[k + 1]]:
-			var c := centre(m)
-			ground.ring(Geo.place(c + Vector3(0, 0.03, 0)), 0.0, 0.34, palette["soil"].darkened(0.6), 14)
-			hero.prism(Geo.place(c), 10, 0.42, 0.36, 0.22, palette["rock"])
+			var f := code(t)
+			if f != F.OPEN and f != F.BUILDING and not mouths.has(t):
+				kf.build(t, f)
+	for fp: Array in footprints:
+		var a := centre(Vector2i(fp[1], fp[2]))
+		var side: int = fp[3]
+		var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
+		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop)
+	for m: Vector2i in tunnels:
+		_tunnel(m)
 
 
-## A flagstone at the tile's height: its surface's colour on top, the earth
-## and stone of its levels down its sides.
-func _tile(t: Vector2i) -> void:
-	var i := t.y * size.x + t.x
-	var h := height(t)
-	var c := centre(t)
-	var surface: int = surfaces[i] if i < surfaces.size() else 0
-	var top: Color = palette["ground"]
-	match surface:
-		1:
-			top = Palette.GRAVEL
-		3:
-			top = Color("#7FB069")
-	# Every other flagstone a shade apart, so the grid reads in a still.
-	top = top.darkened(0.035 * ((t.x + t.y) % 2) + 0.03 * jitter(t, 0))
-	if surface == 2 or code(t) in WET:
-		water.box(Geo.place(c + Vector3(0, -0.06, 0)), Vector3(1.0, 0.04, 1.0), Color.WHITE)
-		ground.box(Geo.place(Vector3(c.x, (h - 0.12) / 2.0 - 0.06, c.z)), Vector3(1.0, h + 0.12, 1.0),
-			palette["soil"])
-		return
-	var block := Vector3(0.98, h + 0.12, 0.98)
-	ground.box(Geo.place(Vector3(c.x, (h - 0.12) / 2.0, c.z)), block, palette["stone"].darkened(0.12 + 0.05 * h), top)
-
-
-func _feature(t: Vector2i, f: int) -> void:
-	var c := centre(t)
-	var j := jitter(t, 1)
-	var rock: Color = palette["rock"]
-	var plant: Color = palette["plant"]
-	var wood := Palette.WOOD
-	match f:
-		F.ROCK_PILLAR:
-			hero.prism(Geo.place(c, j), 6, 0.42, 0.34, 0.9, rock, false, rock.lightened(0.15))
-			hero.prism(Geo.place(c + Vector3(0, 0.9, 0), j + 0.4), 6, 0.33, 0.2, 0.55, rock.darkened(0.08))
-		F.RUIN_WALL:
-			hero.box(Geo.place(c + Vector3(0, 0.35, 0), j * 0.2), Vector3(0.92, 0.7, 0.36), palette["stone"])
-			hero.box(Geo.place(c + Vector3(-0.22, 0.82, 0), 0.0), Vector3(0.42, 0.24, 0.34), palette["stone"].darkened(0.06))
-		F.FENCE:
-			for k in 3:
-				hero.box(Geo.place(c + Vector3(-0.38 + 0.38 * k, 0.3, 0)), Vector3(0.09, 0.6, 0.09), wood)
-			for y: float in [0.2, 0.45]:
-				hero.box(Geo.place(c + Vector3(0, y, 0)), Vector3(0.92, 0.07, 0.05), wood.lightened(0.08))
-		F.FOG_BANK:
-			for k in 4:
-				clear.ball(Geo.place(c + Vector3(jitter(t, k) - 0.5, 0.35 + 0.15 * (k % 2), jitter(t, k + 5) - 0.5) * 0.6,
-					0.0, Vector3(1.3, 0.75, 1.3)), 0.4, Color("#F3EEFF"), 4, 8)
-		F.TALL_GRASS:
-			for k in 7:
-				var p := c + Vector3(jitter(t, k) - 0.5, 0, jitter(t, k + 9) - 0.5) * 0.8
-				ground.prism(Transform3D(Basis(Vector3(1, 0, 0.3).normalized(), (jitter(t, k + 3) - 0.5) * 0.4), p),
-					3, 0.08, 0.0, 0.55 + 0.25 * jitter(t, k + 2), plant.darkened(0.1 * (k % 3)))
-		F.CRYSTAL_WALL:
-			clear.box(Geo.place(c + Vector3(0, 0.55, 0)), Vector3(0.9, 1.1, 0.3), Palette.MATTER.lightened(0.3))
-		F.HEDGE:
-			hero.box(Geo.place(c + Vector3(0, 0.36, 0)), Vector3(0.94, 0.72, 0.62), plant.darkened(0.15),
-				plant.lightened(0.05))
-		F.TREE:
-			hero.prism(Geo.place(c), 6, 0.12, 0.09, 0.85, wood.darkened(0.2))
-			hero.ball(Geo.place(c + Vector3(0, 1.05, 0), j, Vector3(1.0, 0.85, 1.0)), 0.48, plant, 4, 8)
-			hero.ball(Geo.place(c + Vector3(0.18, 1.35, 0.1), j), 0.3, plant.lightened(0.1), 3, 7)
-		F.BOULDER:
-			hero.ball(Geo.place(c + Vector3(0, 0.3, 0), j * TAU, Vector3(1.0, 0.75, 0.9)), 0.42, rock.lightened(0.05), 4, 7)
-		F.STATUE:
-			hero.box(Geo.place(c + Vector3(0, 0.12, 0)), Vector3(0.6, 0.24, 0.6), palette["stone"])
-			hero.prism(Geo.place(c + Vector3(0, 0.24, 0)), 8, 0.2, 0.14, 0.6, palette["stone"].lightened(0.08), true)
-			hero.ball(Geo.place(c + Vector3(0, 0.98, 0)), 0.17, palette["stone"].lightened(0.08), 3, 7)
-		F.CRYSTAL_OUTCROP:
-			for k in 4:
-				var tilt := Basis(Vector3(jitter(t, k) - 0.5, 0, jitter(t, k + 4) - 0.5).normalized(), 0.3)
-				hero.prism(Transform3D(tilt, c + Vector3(jitter(t, k + 1) - 0.5, 0, jitter(t, k + 2) - 0.5) * 0.5),
-					6, 0.12, 0.0, 0.5 + 0.5 * jitter(t, k + 3), Palette.MATTER.lightened(0.35 - 0.1 * k))
-		F.LAVA_CRACK:
-			lava.box(Geo.place(c + Vector3(0, 0.005, 0), j), Vector3(0.8, 0.02, 0.18), Color.WHITE)
-			lava.box(Geo.place(c + Vector3(0.15, 0.005, 0.1), j + 1.1), Vector3(0.45, 0.02, 0.14), Color.WHITE)
-		F.GRAVEL_PATH:
-			for k in 5:
-				ground.ball(Geo.place(c + Vector3(jitter(t, k) - 0.5, 0.01, jitter(t, k + 6) - 0.5) * 0.8,
-					0.0, Vector3(1, 0.4, 1)), 0.06, Palette.GRAVEL.darkened(0.15), 2, 5)
-		F.THICKET:
-			for k in 5:
-				ground.ball(Geo.place(c + Vector3(jitter(t, k) - 0.5, 0.25, jitter(t, k + 3) - 0.5) * 0.7),
-					0.26, plant.darkened(0.25), 3, 6)
-		F.SHADE_CANOPY:
-			for p: Vector2 in [Vector2(-0.4, -0.4), Vector2(0.4, -0.4), Vector2(-0.4, 0.4), Vector2(0.4, 0.4)]:
-				hero.box(Geo.place(c + Vector3(p.x, 0.55, p.y)), Vector3(0.06, 1.1, 0.06), wood)
-			hero.box(Geo.place(c + Vector3(0, 1.12, 0)), Vector3(1.0, 0.06, 1.0), palette["trim"].lightened(0.3))
-		F.BUSH:
-			ground.ball(Geo.place(c + Vector3(0, 0.22, 0), j, Vector3(1.0, 0.8, 1.0)), 0.3, plant.darkened(0.05), 3, 7)
-		F.HOT_SPRING:
-			for k in 3:
-				clear.ball(Geo.place(c + Vector3(jitter(t, k) - 0.5, 0.35 + 0.25 * k, jitter(t, k + 1) - 0.5) * 0.5),
-					0.16 + 0.05 * k, Color.WHITE, 3, 6)
-		F.LANTERN_POST:
-			hero.prism(Geo.place(c), 6, 0.06, 0.05, 1.2, Palette.INK.lightened(0.15))
-			hero.box(Geo.place(c + Vector3(0, 1.28, 0)), Vector3(0.24, 0.26, 0.24), Color(palette["accent"], 0.0))
-		F.SCREE:
-			for k in 7:
-				ground.ball(Geo.place(c + Vector3(jitter(t, k) - 0.5, 0.04, jitter(t, k + 7) - 0.5) * 0.85,
-					jitter(t, k) * TAU), 0.08 + 0.05 * jitter(t, k + 1), rock.lightened(0.1), 2, 5)
-		F.EMBER_VENT:
-			ground.prism(Geo.place(c), 7, 0.4, 0.2, 0.3, rock.darkened(0.2))
-			ground.ring(Geo.place(c + Vector3(0, 0.31, 0)), 0.0, 0.18, Color(Palette.ENERGY, 0.0), 10)
-		F.STATIC_STONE:
-			hero.prism(Geo.place(c, j), 5, 0.2, 0.14, 0.95, rock.lightened(0.2))
-			hero.ring(Geo.place(c + Vector3(0, 0.96, 0)), 0.0, 0.12, Color(Palette.TIME, 0.0), 8)
-		F.ARCH:
-			for x: float in [-0.36, 0.36]:
-				hero.box(Geo.place(c + Vector3(x, 0.55, 0), yaw(t)), Vector3(0.2, 1.1, 0.3), palette["stone"])
-			hero.box(Geo.place(c + Vector3(0, 1.2, 0), yaw(t)), Vector3(0.96, 0.22, 0.34), palette["stone"].lightened(0.06))
-		F.MARSH:
-			for k in 5:
-				ground.prism(Geo.place(c + Vector3(jitter(t, k) - 0.5, -0.05, jitter(t, k + 2) - 0.5) * 0.8), 3, 0.03, 0.0,
-					0.45, plant.darkened(0.3))
-		F.FLOWER_MEADOW:
-			for k in 9:
-				var p := c + Vector3(jitter(t, k) - 0.5, 0.02, jitter(t, k + 9) - 0.5) * 0.85
-				var petal: Color = [Palette.SPIRIT, Palette.MOTION, Palette.PAPER][k % 3]
-				ground.ball(Geo.place(p + Vector3(0, 0.08, 0)), 0.06, petal.lightened(0.2), 2, 5)
-		F.ICE_SHEET:
-			clear.box(Geo.place(c + Vector3(0, 0.02, 0)), Vector3(0.98, 0.05, 0.98), Color("#DDF4FF"))
-		F.BELL_POST:
-			hero.box(Geo.place(c + Vector3(0, 0.55, 0)), Vector3(0.1, 1.1, 0.1), wood)
-			hero.box(Geo.place(c + Vector3(0.18, 1.08, 0)), Vector3(0.44, 0.07, 0.07), wood)
-			hero.prism(Transform3D(Basis(Vector3.RIGHT, PI), c + Vector3(0.32, 1.04, 0)), 8, 0.0, 0.14, 0.24,
-				palette["trim"], true)
-		F.STEPPING_STONES:
-			for k in 3:
-				ground.prism(Geo.place(c + Vector3(-0.3 + 0.3 * k, -0.04, (jitter(t, k) - 0.5) * 0.4)), 7, 0.15, 0.14,
-					0.1, rock.lightened(0.2))
-		F.BOUNCE_MUSHROOM:
-			hero.prism(Geo.place(c), 7, 0.1, 0.08, 0.4, Palette.PAPER)
-			hero.ball(Geo.place(c + Vector3(0, 0.45, 0), 0.0, Vector3(1.0, 0.55, 1.0)), 0.36, Palette.SPIRIT.lightened(0.15),
-				3, 9)
-		F.UPDRAFT_VENT:
-			ground.ring(Geo.place(c + Vector3(0, 0.02, 0)), 0.18, 0.42, rock.darkened(0.1), 14)
-			ground.ring(Geo.place(c + Vector3(0, 0.03, 0)), 0.0, 0.18, Color(Palette.PAPER, 0.0), 10)
-		F.PIT:
-			ground.box(Geo.place(c + Vector3(0, 0.01, 0)), Vector3(0.84, 0.02, 0.84), Palette.INK.lightened(0.05))
-		F.RAMP:
-			ground.wedge(Geo.place(c + Vector3(0, 0.0, 0), yaw(t)), Vector3(0.96, IslandBuilder.LEVEL, 0.96),
-				palette["stone"].lightened(0.05))
-		F.STAIRS:
-			for k in 3:
-				var step := Vector3(0, 0, 0.32 - 0.32 * k).rotated(Vector3.UP, yaw(t))
-				ground.box(Geo.place(c + step + Vector3(0, IslandBuilder.LEVEL * (k + 1) / 6.0, 0), yaw(t)),
-					Vector3(0.9, IslandBuilder.LEVEL * (k + 1) / 3.0, 0.32), palette["stone"].lightened(0.08))
-		F.CLIMBING_VINES:
-			for k in 4:
-				ground.prism(Geo.place(c + Vector3(-0.3 + 0.2 * k, 0, -0.45).rotated(Vector3.UP, yaw(t))), 4, 0.04, 0.02,
-					0.8, plant.darkened(0.2))
-		F.WATERFALL:
-			clear.box(Geo.place(c + Vector3(0, 0.45, 0), yaw(t)), Vector3(0.9, 0.9, 0.08), Palette.WATER.lightened(0.2))
-		F.RAPIDS:
-			for k in 3:
-				ground.box(Geo.place(c + Vector3(0, -0.03, -0.3 + 0.3 * k), yaw(t)), Vector3(0.6, 0.02, 0.06), Palette.PAPER)
-
-
-## §10.1's buildings, each footprint of Building tiles one house: walls of
-## dressed stone, a roof in the realm's trim, a door.
-func _buildings() -> void:
+## Every building: [kind, x, y, side, level], from `buildings` where a
+## screen gave them, else from the Building tiles' footprints.
+func _footprints() -> Array:
+	var out: Array = []
 	var seen := {}
+	var given := {}
+	for b: Array in buildings:
+		if b.size() >= 4:
+			given[Vector2i(int(b[1]), int(b[2]))] = b
 	for y in size.y:
 		for x in size.x:
 			var t := Vector2i(x, y)
 			if seen.has(t) or code(t) != F.BUILDING:
 				continue
-			# The footprint: the square of Building tiles from its north-west.
 			var side := 1
 			while x + side < size.x and y + side < size.y and code(Vector2i(x + side, y)) == F.BUILDING \
 					and code(Vector2i(x, y + side)) == F.BUILDING:
 				side += 1
+			if given.has(t):
+				side = int(given[t][3])
 			for dy in side:
 				for dx in side:
 					seen[Vector2i(x + dx, y + dy)] = true
-			var a := centre(t)
-			var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
-			var wall := Vector3(side - 0.3, 0.8 + 0.25 * side, side - 0.3)
-			hero.box(Geo.place(mid + Vector3(0, wall.y / 2.0, 0)), wall, palette["stone"].lightened(0.08))
-			var roof := Transform3D(Basis(Vector3.UP, PI / 4.0), mid + Vector3(0, wall.y, 0))
-			hero.prism(roof, 4, wall.x * 0.78, 0.0, 0.45 + 0.3 * side, palette["trim"].darkened(0.1))
-			hero.box(Geo.place(mid + Vector3(0, 0.28, wall.z / 2.0)), Vector3(0.3, 0.5, 0.04), Palette.WOOD.darkened(0.2))
+			var kind := "keeper_s_spire" if side >= 3 else "hearth"
+			var lvl := level
+			if given.has(t):
+				kind = str(given[t][0])
+				if (given[t] as Array).size() > 4:
+					lvl = int(given[t][4])
+			out.append([kind, x, y, side, lvl])
+	return out
+
+
+## A tunnel's mouth: a grassy mound with a dark arch toward its partner.
+func _tunnel(m: Vector2i) -> void:
+	var c := centre(m)
+	var rock: Color = palette["rock"]
+	hero.ball(Geo.place(c, 0.0, Vector3(1.0, 0.62, 1.0)), 0.44, rock.lightened(0.05), 4, 10, true)
+	prop.ball(Geo.place(c + Vector3(0, 0.22, 0), 0.0, Vector3(1.0, 0.4, 1.0)), 0.36, palette["grass"].darkened(0.08), 3,
+		10, true)
+	prop.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), c + Vector3(0, 0.0, 0.42)), 0.2, 0.2, 0.04,
+		Palette.INK.lightened(0.05), 10)
+	for k in 5:
+		var a := PI * (k + 0.5) / 5.0
+		hero.rbox(Geo.place(c + Vector3(cos(a) * 0.24, sin(a) * 0.24, 0.42)), Vector3(0.1, 0.1, 0.08),
+			palette["stone"].darkened(0.05), 0.015)
+
+
+## The layers as instances with the kit's materials: the painted ground,
+## the inked heroes, the props and tufts, the see-through, water and lava.
+func instances() -> Array[MeshInstance3D]:
+	var out: Array[MeshInstance3D] = []
+	var ground_mat := material("ground")
+	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
+	ground_mat.set_shader_parameter("cobble", palette["ground"].lightened(0.1))
+	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
+	var lava_mat := material("water")
+	lava_mat.set_shader_parameter("deep", Color("#C8401E"))
+	lava_mat.set_shader_parameter("foam", Color("#FFC24A"))
+	lava_mat.set_shader_parameter("glowing", 0.8)
+	for layer: Array in [[ground, ground_mat, true], [scatter, material("toon"), false],
+			[hero, material("toon", true), true], [prop, material("toon"), true], [clear, material("clear"), false],
+			[water, material("water"), false], [lava, lava_mat, false]]:
+		var m := (layer[0] as Geo).mesh()
+		if m == null:
+			continue
+		var mi := MeshInstance3D.new()
+		mi.mesh = m
+		mi.material_override = layer[1]
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if layer[2] \
+			else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		out.append(mi)
+	return out
+
+
+## A kit material: `toon` (optionally inked), `clear`, `ground`, `water`.
+static func material(kind: String, outlined := false) -> ShaderMaterial:
+	var m := ShaderMaterial.new()
+	m.shader = _shaders[kind]
+	if outlined:
+		var o := ShaderMaterial.new()
+		o.shader = _shaders["outline"]
+		m.next_pass = o
+	return m

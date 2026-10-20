@@ -1,0 +1,372 @@
+class_name KitGround
+extends RefCounted
+## The realm's ground as one painted surface (§21.1's picture-book diorama,
+## the design's "painted grass with worn dirt paths"), built from the
+## simulation's own grid: every tile flat at its height (`heights()`), its
+## surface (`surfaces()`: plain, gravel, water, moss) painted into the
+## vertices and read by kit_ground.gdshader, which adds the brush strokes,
+## the cobbles of a path and the faint seams that keep the grid readable.
+## A step between levels is a soft earthy cliff with a rounded grass lip;
+## water lies in a bed below its banks, its surface a mesh of its own for
+## water.gdshader, carrying how far each point is from the shore.
+##
+## Paint channels (UV, UV2): path, lushness; cliff, stone.
+
+## Quads along a tile's side: the ground's resolution.
+const SUB := 4
+## How far a water bed lies below its tile, and the water under its banks.
+const BED := 0.24
+const WATER_DROP := 0.012
+## The island's own grass top, which the grid's edge meets.
+const ISLAND_Y := -0.02
+## A tile's surfaces, as `surfaces()` gives them.
+const GRAVEL := 1
+const WATER := 2
+const MOSS := 3
+
+var size := Vector2i.ZERO
+var levels := PackedInt32Array()
+var wet := PackedByteArray()
+var palette: Dictionary = {}
+
+var terrain := Geo.new()
+var water := Geo.new()
+var scatter := Geo.new()
+## A water tile's tint (marsh, spring, rapids), by tile.
+var tints := {}
+
+## Fields at tile centres, sampled between them so the paint never shows a
+## tile's square: path, lush, apron, scorch, stone, shade, wet.
+var _fields: Dictionary = {}
+
+
+## `codes` are `RulebornReplay.features()`; `blocked` the tiles under a
+## building; `wet_codes` the features drawn as water.
+func _init(grid: Vector2i, heights: PackedByteArray, surfaces: PackedByteArray, codes: PackedByteArray,
+		blocked: Dictionary, wet_codes: Array, colours: Dictionary) -> void:
+	size = grid
+	palette = colours
+	terrain.painted = true
+	water.painted = true
+	var n := size.x * size.y
+	levels.resize(n)
+	wet.resize(n)
+	for key: String in ["path", "lush", "apron", "scorch", "stone", "shade", "wet", "bloom"]:
+		var f := PackedFloat32Array()
+		f.resize(n)
+		_fields[key] = f
+	for i in n:
+		levels[i] = heights[i] if i < heights.size() else 0
+		var s: int = surfaces[i] if i < surfaces.size() else 0
+		var c: int = codes[i] if i < codes.size() else 0
+		var t := Vector2i(i % size.x, i / size.x)
+		wet[i] = 1 if s == WATER or c in wet_codes else 0
+		_put("path", i, 1.0 if s == GRAVEL or c == RealmKit.F.GRAVEL_PATH else 0.0)
+		_put("lush", i, 1.0 if s == MOSS else (0.7 if c in [RealmKit.F.TALL_GRASS, RealmKit.F.THICKET,
+			RealmKit.F.MARSH, RealmKit.F.HEDGE, RealmKit.F.CLIMBING_VINES] else 0.0))
+		_put("apron", i, 1.0 if blocked.has(t) else 0.0)
+		_put("scorch", i, 1.0 if c in [RealmKit.F.LAVA_CRACK, RealmKit.F.EMBER_VENT] else 0.0)
+		_put("stone", i, 1.0 if c in [RealmKit.F.SCREE, RealmKit.F.ROCK_PILLAR, RealmKit.F.PIT,
+			RealmKit.F.STATIC_STONE, RealmKit.F.TUNNEL] else 0.0)
+		_put("shade", i, 1.0 if c in [RealmKit.F.TREE, RealmKit.F.SHADE_CANOPY, RealmKit.F.THICKET] else 0.0)
+		_put("bloom", i, 1.0 if c == RealmKit.F.FLOWER_MEADOW else 0.0)
+		_put("wet", i, float(wet[i]))
+
+
+func _put(key: String, i: int, v: float) -> void:
+	var f: PackedFloat32Array = _fields[key]
+	f[i] = v
+	_fields[key] = f
+
+
+## Build the terrain, the water and the grass between features.
+func build(open: Callable) -> void:
+	for y in size.y:
+		for x in size.x:
+			var t := Vector2i(x, y)
+			_top(t)
+			for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+				_side(t, d)
+			if is_wet(t):
+				_water(t, tints.get(t, Color.WHITE))
+			elif open.call(t):
+				_tufts(t)
+
+
+func index(t: Vector2i) -> int:
+	return t.y * size.x + t.x
+
+
+func inside(t: Vector2i) -> bool:
+	return t.x >= 0 and t.y >= 0 and t.x < size.x and t.y < size.y
+
+
+func is_wet(t: Vector2i) -> bool:
+	return inside(t) and wet[index(t)] == 1
+
+
+## The ground's height on tile `t`: its level, or its bed if it is water;
+## the island's top outside the grid.
+func top_y(t: Vector2i) -> float:
+	if not inside(t):
+		return ISLAND_Y
+	var y := levels[index(t)] * IslandBuilder.LEVEL
+	return y - BED if wet[index(t)] == 1 else y
+
+
+## World position of the tile-space point (u, v) (0..size) at height y.
+func world(u: float, v: float, y: float) -> Vector3:
+	return Vector3(u - size.x / 2.0, y, v - size.y / 2.0)
+
+
+## Field `key` at the tile-space point (u, v), bilinear between tile centres.
+func field(key: String, u: float, v: float) -> float:
+	var f: PackedFloat32Array = _fields[key]
+	var fu := clampf(u - 0.5, 0.0, size.x - 1.0)
+	var fv := clampf(v - 0.5, 0.0, size.y - 1.0)
+	var x0 := mini(int(fu), size.x - 1)
+	var y0 := mini(int(fv), size.y - 1)
+	var x1 := mini(x0 + 1, size.x - 1)
+	var y1 := mini(y0 + 1, size.y - 1)
+	var a := fu - x0
+	var b := fv - y0
+	var top := lerpf(f[y0 * size.x + x0], f[y0 * size.x + x1], a)
+	var low := lerpf(f[y1 * size.x + x0], f[y1 * size.x + x1], a)
+	return lerpf(top, low, b)
+
+
+## A smooth seeded noise in [0, 1) over the ground, for the paint.
+static func noise(u: float, v: float, scale: float) -> float:
+	var p := Vector2(u, v) * scale
+	var i := Vector2i(floori(p.x), floori(p.y))
+	var f := p - Vector2(i)
+	f = f * f * (Vector2(3, 3) - 2.0 * f)
+	var h := func(q: Vector2i) -> float: return RealmKit.jitter(q, 77)
+	return lerpf(lerpf(h.call(i), h.call(i + Vector2i(1, 0)), f.x),
+		lerpf(h.call(i + Vector2i(0, 1)), h.call(i + Vector2i(1, 1)), f.x), f.y)
+
+
+## The paint at (u, v) on a tile of level `lvl`: the colour, and the
+## shader's channels (path, lush, cliff, stone).
+func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
+	var grass: Color = palette["grass"]
+	var soil: Color = palette["soil"]
+	var dirt: Color = palette["ground"]
+	var n1 := noise(u, v, 0.55)
+	var n2 := noise(u + 17.0, v - 9.0, 1.7)
+	var c := grass.lightened(0.07 * (n1 - 0.4)).darkened(0.06 * (n2 - 0.5))
+	# Lush ground (moss, tall grass, thickets) is deeper and cooler.
+	var lush := field("lush", u, v)
+	c = c.lerp(grass.darkened(0.2).lerp(Color("#3E8A5A"), 0.15), clampf(lush * 1.2, 0.0, 1.0) * 0.8)
+	var bloom := field("bloom", u, v)
+	c = c.lerp(grass.lightened(0.12).lerp(palette["accent"], 0.12), bloom * 0.6)
+	# Worn earth where a building stands, fading into the grass.
+	var apron := smoothstep(0.25, 0.7, field("apron", u, v) + (n2 - 0.5) * 0.35)
+	c = c.lerp(dirt.lerp(soil, 0.25), apron * 0.85)
+	var stone := smoothstep(0.3, 0.7, field("stone", u, v) + (n1 - 0.5) * 0.3)
+	c = c.lerp(palette["rock"].lightened(0.25), stone * 0.6)
+	var scorch := smoothstep(0.2, 0.7, field("scorch", u, v) + (n2 - 0.5) * 0.3)
+	c = c.lerp(palette["rock"].darkened(0.35), scorch * 0.75)
+	var shade := field("shade", u, v)
+	c = c.darkened(0.1 * shade)
+	# A sandy bank where the grass meets water.
+	var bank := smoothstep(0.12, 0.45, field("wet", u, v))
+	c = c.lerp(dirt.lightened(0.12), bank * 0.75)
+	if on_wet:
+		c = dirt.lerp(soil, 0.45).darkened(0.1)
+	# Higher ground catches a little more light.
+	c = c.lightened(0.03 * lvl)
+	var path := smoothstep(0.3, 0.62, field("path", u, v) + (n2 - 0.5) * 0.3)
+	return [c, Vector4(path, lush, 0.0, stone)]
+
+
+## Tile `t`'s flat top, SUB × SUB quads, its edge rounded where it falls away.
+func _top(t: Vector2i) -> void:
+	var y := top_y(t)
+	var lvl := levels[index(t)]
+	var on_wet := is_wet(t)
+	var pts: Array[Vector3] = []
+	var nrm: Array[Vector3] = []
+	var cols: Array[Color] = []
+	var chans: Array[Vector4] = []
+	for j in SUB + 1:
+		for i in SUB + 1:
+			var u := t.x + float(i) / SUB
+			var v := t.y + float(j) / SUB
+			# Where this point sits on a side that falls away, round it over.
+			var out := Vector3.ZERO
+			if i == 0 and top_y(t + Vector2i(-1, 0)) < y - 0.01:
+				out.x -= 1.0
+			if i == SUB and top_y(t + Vector2i(1, 0)) < y - 0.01:
+				out.x += 1.0
+			if j == 0 and top_y(t + Vector2i(0, -1)) < y - 0.01:
+				out.z -= 1.0
+			if j == SUB and top_y(t + Vector2i(0, 1)) < y - 0.01:
+				out.z += 1.0
+			var drop := 0.06 if out != Vector3.ZERO else 0.0
+			pts.append(world(u, v, y - drop))
+			nrm.append((Vector3.UP + out * 0.8).normalized())
+			var p := paint(u, v, lvl, on_wet)
+			var col: Color = p[0]
+			cols.append(col.lightened(0.05) if drop > 0.0 else col)
+			chans.append(p[1])
+	for j in SUB:
+		for i in SUB:
+			var a := j * (SUB + 1) + i
+			var b := a + 1
+			var c := a + SUB + 2
+			var d := a + SUB + 1
+			terrain.tri_painted([pts[a], pts[c], pts[b]], [nrm[a], nrm[c], nrm[b]], [cols[a], cols[c], cols[b]],
+				[chans[a], chans[c], chans[b]])
+			terrain.tri_painted([pts[a], pts[d], pts[c]], [nrm[a], nrm[d], nrm[c]], [cols[a], cols[d], cols[c]],
+				[chans[a], chans[d], chans[c]])
+
+
+## The side of tile `t` toward `d`: a soft earthy cliff down to the lower
+## neighbour, a bank down into water, or the grass running out onto the
+## island past the grid's edge.
+func _side(t: Vector2i, d: Vector2i) -> void:
+	var n := t + d
+	var y0 := top_y(t) - 0.06
+	var y1 := top_y(n)
+	var edge_out := not inside(n)
+	if y1 >= y0 + 0.05 and not edge_out:
+		return
+	var out := Vector3(d.x, 0, d.y)
+	# The side's two ends along the tile edge, in tile space.
+	var along := Vector2(-d.y, d.x)
+	var mid := Vector2(t) + Vector2(0.5, 0.5) + Vector2(d) * 0.5
+	var bank := is_wet(n) and not is_wet(t)
+	var soil: Color = palette["soil"]
+	var rock: Color = palette["rock"]
+	var grass: Color = palette["grass"]
+	var dirt: Color = palette["ground"]
+	if y1 < y0 - 0.02:
+		var rows := [0.0, 0.18, 0.55, 1.0]
+		var bulge := [0.0, 0.05, 0.035, 0.0]
+		var tint := [grass.darkened(0.1), soil.lightened(0.12), soil, rock.lerp(soil, 0.4).darkened(0.1)]
+		if bank:
+			tint = [dirt.lightened(0.05), dirt.darkened(0.08), soil.lightened(0.05), soil.darkened(0.15)]
+		var grid: Array = []
+		for r in rows.size():
+			var line: Array[Vector3] = []
+			for k in SUB + 1:
+				var s := float(k) / SUB - 0.5
+				var p2 := mid + along * s
+				var taper := 1.0 - pow(absf(s) * 2.0, 4.0)
+				var jit := (RealmKit.jitter(Vector2i(int(p2.x * 8.0), int(p2.y * 8.0)), r) - 0.5) * 0.05
+				var push: float = (bulge[r] + (jit if r in [1, 2] else 0.0)) * taper
+				var y := lerpf(y0, y1, rows[r])
+				line.append(world(p2.x, p2.y, y) + out * push)
+			grid.append(line)
+		for r in rows.size() - 1:
+			for k in SUB:
+				var a: Vector3 = grid[r][k]
+				var b: Vector3 = grid[r][k + 1]
+				var c: Vector3 = grid[r + 1][k + 1]
+				var e: Vector3 = grid[r + 1][k]
+				var na := (out + Vector3.UP * (0.5 if r == 0 else 0.05)).normalized()
+				var ca: Color = tint[r]
+				var cb: Color = tint[r + 1]
+				var shade := 0.04 * RealmKit.jitter(Vector2i(t.x * 7 + k, t.y * 5 + r), 3)
+				ca = ca.darkened(shade)
+				cb = cb.darkened(shade)
+				var ch := Vector4(0, 0, 0.0 if r == 0 else 1.0, 0)
+				var ch2 := Vector4(0, 0, 1.0, 0)
+				_wall_quad(a, b, c, e, na, ca, cb, ch, ch2, out)
+	if edge_out:
+		_skirt(t, d, minf(y1, y0 + 0.06))
+
+
+func _wall_quad(a: Vector3, b: Vector3, c: Vector3, e: Vector3, n: Vector3, top: Color, low: Color,
+		ch_top: Vector4, ch_low: Vector4, out: Vector3) -> void:
+	var face := (b - a).cross(e - a)
+	if face.dot(out) > 0:
+		terrain.tri_painted([a, b, c], [n, n, n], [top, top, low], [ch_top, ch_top, ch_low])
+		terrain.tri_painted([a, c, e], [n, n, n], [top, low, low], [ch_top, ch_low, ch_low])
+	else:
+		terrain.tri_painted([a, c, b], [n, n, n], [top, low, top], [ch_top, ch_low, ch_top])
+		terrain.tri_painted([a, e, c], [n, n, n], [top, low, low], [ch_top, ch_low, ch_low])
+
+
+## Grass running from the grid's edge out over the island's top, so the
+## realm's ground and the island's meet with no seam.
+func _skirt(t: Vector2i, d: Vector2i, y: float) -> void:
+	var along := Vector2(-d.y, d.x)
+	var mid := Vector2(t) + Vector2(0.5, 0.5) + Vector2(d) * 0.5
+	var grass: Color = palette["grass"]
+	var reach := 0.45
+	for k in SUB:
+		var s0 := float(k) / SUB - 0.5
+		var s1 := float(k + 1) / SUB - 0.5
+		var p0 := mid + along * s0
+		var p1 := mid + along * s1
+		var q0 := p0 + Vector2(d) * reach + along * (s0 * 0.0)
+		var q1 := p1 + Vector2(d) * reach
+		var a := world(p0.x, p0.y, y)
+		var b := world(p1.x, p1.y, y)
+		var c := world(q1.x, q1.y, ISLAND_Y - 0.01)
+		var e := world(q0.x, q0.y, ISLAND_Y - 0.01)
+		var ca: Color = paint(p0.x, p0.y, 0, false)[0]
+		var cb: Color = paint(p1.x, p1.y, 0, false)[0]
+		var up := Vector3.UP
+		var z := Vector4.ZERO
+		var face := (b - a).cross(e - a)
+		if face.y > 0:
+			terrain.tri_painted([a, b, c], [up, up, up], [ca, cb, grass], [z, z, z])
+			terrain.tri_painted([a, c, e], [up, up, up], [ca, grass, grass], [z, z, z])
+		else:
+			terrain.tri_painted([a, c, b], [up, up, up], [ca, grass, cb], [z, z, z])
+			terrain.tri_painted([a, e, c], [up, up, up], [ca, grass, grass], [z, z, z])
+
+
+## The water on a wet tile: its surface below the banks, each point carrying
+## its distance from the shore (UV.x) for the shader's foam and ripples, and
+## its colour (stream, marsh, spring) in COLOR.
+func _water(t: Vector2i, tint := Color.WHITE) -> void:
+	var y := levels[index(t)] * IslandBuilder.LEVEL - WATER_DROP
+	var pts: Array[Vector3] = []
+	var chans: Array[Vector4] = []
+	for j in SUB + 1:
+		for i in SUB + 1:
+			var fu := float(i) / SUB
+			var fv := float(j) / SUB
+			var shore := 1.0
+			for dd: Array in [[Vector2i(-1, 0), fu], [Vector2i(1, 0), 1.0 - fu], [Vector2i(0, -1), fv],
+					[Vector2i(0, 1), 1.0 - fv]]:
+				var nb: Vector2i = t + (dd[0] as Vector2i)
+				if not is_wet(nb) or levels[index(nb)] != levels[index(t)]:
+					shore = minf(shore, float(dd[1]) * 2.0)
+			pts.append(world(t.x + fu, t.y + fv, y))
+			chans.append(Vector4(shore, 0, 0, 0))
+	var up := Vector3.UP
+	for j in SUB:
+		for i in SUB:
+			var a := j * (SUB + 1) + i
+			var b := a + 1
+			var c := a + SUB + 2
+			var d := a + SUB + 1
+			water.tri_painted([pts[a], pts[c], pts[b]], [up, up, up], [tint, tint, tint], [chans[a], chans[c], chans[b]])
+			water.tri_painted([pts[a], pts[d], pts[c]], [up, up, up], [tint, tint, tint], [chans[a], chans[d], chans[c]])
+
+
+## A couple of grass tufts on an open tile, which shiver in the wind: the
+## ground's texture made solid (§21.10: ambient, never told apart).
+func _tufts(t: Vector2i) -> void:
+	var y := top_y(t)
+	var grass: Color = palette["grass"]
+	var plant: Color = palette["plant"]
+	for k in 2:
+		if RealmKit.jitter(t, 40 + k) < 0.25:
+			continue
+		var u := t.x + 0.15 + 0.7 * RealmKit.jitter(t, 50 + k)
+		var v := t.y + 0.15 + 0.7 * RealmKit.jitter(t, 60 + k)
+		var base := world(u, v, y)
+		scatter.moving(Geo.Anim.SHIVER, base)
+		for b in 3:
+			var a := TAU * (b / 3.0 + RealmKit.jitter(t, 70 + k))
+			var lean := Basis(Vector3(cos(a), 0, sin(a)).cross(Vector3.UP).normalized(), 0.35)
+			var col := grass.darkened(0.12).lerp(plant, 0.35).lightened(0.06 * b)
+			scatter.prism(Transform3D(lean, base + Vector3(cos(a), 0, sin(a)) * 0.03), 3, 0.035, 0.0,
+				0.16 + 0.08 * RealmKit.jitter(t, 80 + k * 3 + b), col)
+		scatter.still()
