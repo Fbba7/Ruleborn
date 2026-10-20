@@ -99,7 +99,7 @@ static func _chain_lightning(fx: LawFx, sig: Node3D) -> void:
 	var done := {}
 	for i in props.size():
 		var best := -1
-		var near := 7.0
+		var near := 4.5
 		for j in props.size():
 			var d := (props[i] as Vector3).distance_to(props[j])
 			if j != i and d < near and not done.has(Vector2i(mini(i, j), maxi(i, j))):
@@ -107,10 +107,10 @@ static func _chain_lightning(fx: LawFx, sig: Node3D) -> void:
 				near = d
 		if best >= 0:
 			done[Vector2i(mini(i, best), maxi(i, best))] = true
-			arcs.strip(LawFxBatch.sagging(props[i], props[best], -0.6, 22), Color("#4AB8FF"), 3)
-			arcs.strip(LawFxBatch.sagging(props[i], props[best], -0.9, 22), Color("#9A7AFF"), 3)
+			arcs.strip(LawFxBatch.sagging(props[i], props[best], -0.35, 22), Color("#4AB8FF"), 3)
+			arcs.strip(LawFxBatch.sagging(props[i], props[best], -0.55, 22), Color("#9A7AFF"), 3)
 	if arcs.triangles > 0:
-		fx.layer(sig, arcs, fx.thread_material(0.2))
+		fx.layer(sig, arcs, fx.thread_material(0.11))
 	var sparks := LawFxBatch.new(LawFxBatch.Kind.MOTES)
 	var r := fx.site.rng("chain_sparks")
 	for p: Vector3 in props:
@@ -330,7 +330,7 @@ static func _whispers(fx: LawFx, sig: Node3D) -> void:
 		b.mote(a + Vector3(0, 1.05, 0), Vector3.ZERO, 0.0, r.randf(), 0.22, 0.0, 6, Color("#F8D8F4"))
 		for j in range(i + 1, ears.size()):
 			var c: Vector3 = ears[j]
-			if a.distance_to(c) > 9.0:
+			if a.distance_to(c) > 6.5:
 				continue
 			for k in 2:
 				var up := Vector3(0, 0.95 + k * 0.3, 0)
@@ -342,7 +342,7 @@ static func _whispers(fx: LawFx, sig: Node3D) -> void:
 				b.mote(a + lift, (c - a) / period, period, float(k) / 4.0 + r.randf() * 0.05, r.randf_range(0.22, 0.3),
 					0.1, 11, Color("#FFFFFF", 0.95))
 	fx.layer(sig, b, fx.mote_material(0.6))
-	fx.layer(sig, lines, fx.thread_material(0.11))
+	fx.layer(sig, lines, fx.thread_material(0.06))
 	# Wind lines drift along the way the whispers carry, guard to guard.
 	var way: Vector3 = (posts[1] as Vector3) - (posts[0] as Vector3)
 	way.y = 0.0
