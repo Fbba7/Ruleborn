@@ -489,6 +489,26 @@ func _hedge(t: Vector2i, c: Vector3, plant: Color) -> void:
 		hero.ball(Geo.place(c + o + Vector3(0, 0.52 + 0.1 * RealmKit.jitter(t, k + 2), 0), 0.0, Vector3(1, 0.85, 1)),
 			r, plant.darkened(0.12 - 0.05 * (k % 3)), 3, 7)
 	hero.moving(Geo.Anim.NONE, Vector3.ZERO)
+	# The realm's touch: flowers in Verdant and the Heart, frost in
+	# Crystalline, thorns in Emberreach.
+	var touch := Color.BLACK
+	match kit.realm:
+		"verdant":
+			touch = Color("#F7A6DA")
+		"heart":
+			touch = Color("#FFFFFF")
+		"crystalline":
+			touch = Color("#EAF6FF")
+		"emberreach":
+			touch = Color("#E8C8A0")
+	if touch != Color.BLACK:
+		for k in 6:
+			var o := Vector3(RealmKit.jitter(t, k + 20) - 0.5, 0, RealmKit.jitter(t, k + 26) - 0.5) * 0.7
+			var p := c + o + Vector3(0, 0.62 + 0.12 * RealmKit.jitter(t, k + 32), 0)
+			if kit.realm == "emberreach":
+				kit.prop.prism(Geo.place(p, k), 3, 0.02, 0.0, 0.08, touch)
+			else:
+				kit.prop.ball(Geo.place(p, 0.0, Vector3(1, 0.6, 1)), 0.035, touch, 2, 5)
 
 
 func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
