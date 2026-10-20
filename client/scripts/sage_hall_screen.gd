@@ -114,7 +114,16 @@ func _stand(sages: Array) -> void:
 
 func _sage(s: Dictionary, busy: bool) -> Control:
 	var box := VBoxContainer.new()
-	box.add_child(StageHeroSkin.portrait_tile(str(s["id"]), "" if s["unlocked"] else "shadow", 120.0))
+	var tile := StageHeroSkin.portrait_tile(str(s["id"]), "" if s["unlocked"] else "shadow", 120.0)
+	var school := StageHeroFigure.school(StageHeroFigure.key(str(s["id"])))
+	var shade: Color = (Palette.SCHOOL.get(school, Palette.MOTION) as Color).darkened(0.55)
+	StageHeroSkin.pin(tile, StageHeroSkin.badge(str(UI.SHAPE_GLYPH.get(Tokens.shape(school), "")), shade, 18.0),
+		Control.PRESET_TOP_RIGHT)
+	if s["guarding"]:
+		# The Roster's mark for a guard, so the post reads without its colour.
+		StageHeroSkin.pin(tile, StageHeroSkin.badge(str(RosterPresenter.MARK["guarding"]), Palette.MATTER.darkened(0.45),
+			18.0), Control.PRESET_TOP_LEFT)
+	box.add_child(tile)
 	box.add_child(StageHeroSkin.named(UI.label(s["name"], UI.TITLE_POINTS * 0.75, true)))
 	box.add_child(UI.status("success" if s["unlocked"] else "info", s["lock"]))
 	if s["guarding"]:
