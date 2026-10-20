@@ -25,6 +25,7 @@ func run() -> void:
 	_gaits()
 	_crowns()
 	await _creature()
+	await _restores()
 	await _signatures()
 	await _same_every_time()
 
@@ -117,6 +118,37 @@ func _creature() -> void:
 	check.call("a law changes how a character moves: Half gravity lifts a walking body, Frictionless slides it, and "
 			+ "the model stays where it was placed (21.7)", lifted and slides and back and float(g["float"]) > 0.5,
 		"%s %s %s %s" % [kinds[0], lifted, slides, back])
+
+
+## A law that darkens the realm (Glowing dark) gives the realm's own sky,
+## hemisphere and light back when its effects leave, so nothing it changed
+## outlives it.
+func _restores() -> void:
+	var replay := RulebornReplay.new()
+	replay.start("11", 4500, 3, realm("glowing_dark"))
+	var view := WorldView.new()
+	view.size = Vector2(360, 640)
+	tree.root.add_child(view)
+	view.set_sky_hour(12)
+	view.show_replay(replay)
+	# Headless the view draws no LawFx of its own (in a window it does, and
+	# then the realm is already dark here).
+	var before_sun := view.sun.light_energy
+	var before_top: Color = view.look.sky_material.get_shader_parameter("top")
+	var fx := LawFx.attach(view, replay)
+	fx.sync(30)
+	var dark := view.sun.light_energy < before_sun * 0.6 \
+		and (view.look.sky_material.get_shader_parameter("top") as Color) != before_top
+	var again := LawFx.attach(view, replay) == fx
+	fx.get_parent().remove_child(fx)
+	var back := is_equal_approx(view.sun.light_energy, before_sun) \
+		and (view.look.sky_material.get_shader_parameter("top") as Color).is_equal_approx(before_top)
+	fx.queue_free()
+	view.queue_free()
+	await tree.process_frame
+	check.call("a law that darkens a realm darkens its sun and sky while woven and gives them back when its effects "
+			+ "leave; attaching twice to a view draws its laws once (21.7)", dark and back and again,
+		"%s %s %s" % [dark, back, again])
 
 
 static func realm(law: String) -> PackedByteArray:

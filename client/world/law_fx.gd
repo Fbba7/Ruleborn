@@ -99,6 +99,9 @@ static func attach(v: WorldView, replay: RulebornReplay) -> LawFx:
 		(own as Node3D).visible = false
 	parent.add_child(fx)
 	fx.source = replay
+	# The view keeps it as its own, so the next attach hands it back.
+	if "law_fx" in v and v.get("law_fx") == null:
+		v.set("law_fx", fx)
 	fx.build(LawFxSite.from_replay(replay))
 	fx.sync_world(replay)
 	return fx
