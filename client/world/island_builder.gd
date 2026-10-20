@@ -902,9 +902,14 @@ func sky_dressing() -> Array:
 				plant, 3, 6)
 			piece.puff(Transform3D(Basis().scaled(Vector3.ONE * sz * 0.24), Vector3(sz * 0.18, sz * 0.82, 0.04)),
 				plant.lightened(0.12), 3, 5)
+		elif kind == "crystalline":
+			# A crystal standing on it (read from above, a dark boulder looked
+			# like a hole).
+			piece.octa(Transform3D(Basis().scaled(Vector3(0.22, 0.6, 0.22) * sz), Vector3(0, sz * 0.5, 0)),
+				Color("#BFAEFF"))
 		else:
 			piece.ico(Transform3D(Basis().scaled(Vector3(1, 0.7, 1) * sz * 0.35), Vector3(sz * 0.2, 0.15, 0)),
-				palette["cliff_deep"])
+				(palette["cliff"] as Color).lightened(0.25))
 		# Two roots dangling from the islet's point.
 		for rt in 2:
 			var ra := _rng.randf() * TAU
