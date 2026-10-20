@@ -35,6 +35,13 @@ const PARADOXES: Array[String] = ["reversal", "twin_suns", "unmaking"]
 ## sight overlay (render priority 0), motes and clear pieces over it.
 const UNDER := -2
 const OVER := 1
+## How much of the realm's light each ground pattern takes (law_fx_decal's
+## `lit`); a pattern not named takes it all. Light that glows by itself takes
+## none: Aurora's ribbons, Glowing dark's runes, pools of light, Static.
+const LIT := {4: 0.4, 5: 0.0, 7: 0.0, 8: 0.0, 9: 0.5, 10: 0.0, 3: 0.5}
+## The sun's strength at noon (RealmPalette.light_at), the light marks are
+## drawn for.
+const NOON_SUN := 0.82
 
 static var _shaders := {}
 
@@ -59,6 +66,7 @@ var seconds := 0.0
 var source: RulebornReplay
 
 var _clocked: Array[ShaderMaterial] = []
+var _lit: Array[ShaderMaterial] = []
 var _hooks: Array[Callable] = []
 var _watchers: Array[Callable] = []
 var _followers: Array[Dictionary] = []
@@ -78,6 +86,11 @@ static func attach(v: WorldView, replay: RulebornReplay) -> LawFx:
 	fx.environment = v.environment
 	var hook: Variant = v.get("effects")
 	var parent: Node3D = hook if hook is Node3D else v.world
+	# The view's own law motes (T5's FxLaws) give way to these signatures;
+	# FxLaws still bends the figures' walk, which is not drawn here.
+	var own: Variant = v.get("laws")
+	if own is Node3D and own != fx:
+		(own as Node3D).visible = false
 	parent.add_child(fx)
 	fx.source = replay
 	fx.build(LawFxSite.from_replay(replay))
@@ -97,6 +110,7 @@ func build(s: LawFxSite) -> void:
 		remove_child(c)
 		c.queue_free()
 	_clocked.clear()
+	_lit.clear()
 	_hooks.clear()
 	_watchers.clear()
 	_followers.clear()
@@ -116,6 +130,8 @@ func build(s: LawFxSite) -> void:
 			add_child(sig)
 			signatures[law] = sig
 			LawFxSigns.build(self, sig, law)
+		if _kit_crowns():
+			continue
 		var mat := solid_material(4, 0.6)
 		mat.set_shader_parameter("glow", 0.8)
 		mat.set_shader_parameter("pulse", 0.4)
@@ -141,6 +157,15 @@ func build(s: LawFxSite) -> void:
 	if paradox != "":
 		LawFxLinks.paradox(self, paradox)
 	sync(seconds * TPS)
+
+
+## Whether the realm kit's pylon already wears its school's shape
+## (`PieceKit.pylon(school)`), so a crown here would only double it.
+static func _kit_crowns() -> bool:
+	for m: Dictionary in (PieceKit as Script).get_script_method_list():
+		if m["name"] == "pylon":
+			return (m["args"] as Array).size() > 0
+	return false
 
 
 ## Ground marks laid over the whole realm by several laws at once share
@@ -180,6 +205,10 @@ func sync(tick: float) -> void:
 		m.set_shader_parameter("t", seconds)
 	for h: Callable in _hooks:
 		h.call(seconds)
+	if sun != null:
+		var lum := clampf(sun.light_energy / NOON_SUN, 0.35, 1.0)
+		for m: ShaderMaterial in _lit:
+			m.set_shader_parameter("lum", lum)
 
 
 ## What the heist shows this tick: each pylon standing or broken (§7.1:
@@ -283,7 +312,9 @@ func decal_material(pattern: int, a: Color, b := Color("#1A0C14"), pace := 1.0) 
 	m.set_shader_parameter("colour_b", b)
 	m.set_shader_parameter("pace", pace * _pace())
 	m.set_shader_parameter("focus", Vector2(site.heart.x, site.heart.z) if site != null else Vector2.ZERO)
+	m.set_shader_parameter("lit", float(LIT.get(pattern, 1.0)))
 	m.render_priority = UNDER
+	_lit.append(m)
 	return m
 
 

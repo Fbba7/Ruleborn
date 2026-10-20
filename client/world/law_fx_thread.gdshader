@@ -93,8 +93,8 @@ void fragment() {
 	} else {
 		// Chord: light runs round the triangle.
 		float run = smoothstep(0.25, 0.0, abs(fract(along - s * 0.12) - 0.5) - 0.2);
-		c = mix(c, vec3(1.0, 0.98, 0.9), run * 0.55);
-		a *= 0.55 + 0.45 * run;
+		c = mix(c, vec3(1.0, 0.98, 0.9), run * 0.3);
+		a *= 0.4 + 0.45 * run;
 	}
 	ALBEDO = c * 1.15;
 	ALPHA = clamp(a * colour.a * strength, 0.0, 1.0);

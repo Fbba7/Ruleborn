@@ -479,7 +479,7 @@ KEEPER_TITLE,Keeper %d,Keeper %d,Guardião %d,Guardião %d,Hüter %d,Gardien %d
 KEEPER_PROGRESS,%s of %s experience to Keeper %d,%s of %s experience to Keeper %d,%s de %s de experiência até Guardião %d,%s de %s de experiência até Guardião %d,%s von %s EP bis Hüter %d,%s sur %s d'expérience pour Gardien %d
 KEEPER_TOP,"Keeper %d, the highest level","Keeper %d, the highest level","Guardião %d, o nível mais alto","Guardião %d, o nível mais alto","Hüter %d, das höchste Level","Gardien %d, le plus haut niveau"
 KEEPER_SPOKEN,Keeper %d: %s,Keeper %d: %s,Guardião %d: %s,Guardião %d: %s,Hüter %d: %s,Gardien %d : %s
-HOME_UNIVERSE,Your universe,Your universe,Seu universo,O teu universo,Dein Universum,Ton univers
+HOME_UNIVERSE,Buildings and realms,Buildings and realms,Construções e reinos,Construções e reinos,Gebäude und Reiche,Bâtiments et royaumes
 UNIVERSE_TITLE,Your universe,Your universe,Seu universo,O teu universo,Dein Universum,Ton univers
 UNIVERSE_HEADER,%s Starlight · Spire %d · Keeper %d,%s Starlight · Spire %d · Keeper %d,%s de Luz Estelar · Torre %d · Guardião %d,%s de Luz Estelar · Torre %d · Guardião %d,%s Sternenlicht · Turm %d · Hüter %d,%s Lumière stellaire · Tour %d · Gardien %d
 UNIVERSE_FAILED,Not bought: %s,Not bought: %s,Não comprado: %s,Não comprado: %s,Nicht gekauft: %s,Non acheté : %s

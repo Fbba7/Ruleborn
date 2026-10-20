@@ -2,7 +2,8 @@ extends SceneTree
 ## The eighteen ruleborn side by side to scale in their idle, in §21.6's order
 ## (three to a school), saved as a still (tools/render/shoot.sh). GROUP picks
 ## another group from the manifest (sage, visitor, paradox, anomaly, law,
-## wildlife); SILHOUETTE=1 draws them black for the squint test (§21.6).
+## wildlife); SILHOUETTE=1 draws them black for the squint test (§21.6);
+## GUARD=1 dresses them as guards; FORM picks a form (hush, spark, echo).
 
 
 func _initialize() -> void:
@@ -48,6 +49,9 @@ func _initialize() -> void:
 		rows[row] += r + 0.12
 		models.append(c)
 		row_of.append(row)
+		c.set_guard(OS.get_environment("GUARD") == "1")
+		if OS.get_environment("FORM") != "":
+			c.set_form(StringName(OS.get_environment("FORM")))
 		if OS.get_environment("SILHOUETTE") == "1":
 			c.material().set_shader_parameter("flash", Color(0.0, 0.0, 0.0, 1.0))
 			c.material().set_shader_parameter("rim_strength", 0.0)

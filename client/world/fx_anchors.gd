@@ -248,7 +248,7 @@ func _draw_guards(replay: RulebornReplay, m: float, calm: bool) -> void:
 	for i in mini(guards.size(), nodes.size()):
 		var g: Dictionary = guards[i]
 		var node := nodes[i]
-		var head := node.position + Vector3(0, 1.45, 0)
+		var head := node.position + Vector3(0, float(node.get_meta("head", 1.2)) + 0.25, 0)
 		var at := _on_screen(head)
 		if at == OFF:
 			continue
@@ -279,10 +279,18 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 		if not node.visible:
 			continue
 		var mem: Dictionary = crew[i]
-		var at := _on_screen(node.position + Vector3(0, 1.15, 0))
+		var at := _on_screen(node.position + Vector3(0, float(node.get_meta("head", 0.95)) + 0.2, 0))
 		if at == OFF:
 			continue
 		var w := clampf(m * 0.8, 40.0, 110.0)
+		# Sharing its spot with a guard (grabbed, or fighting), its marks step
+		# to the side so they never pile on the guard's.
+		var side := 1.0
+		for gn: Node3D in view._guards:
+			if gn.position.distance_to(node.position) < 0.7:
+				at += Vector2(-w * 1.05, w * 0.3)
+				side = -1.0
+				break
 		var h := maxf(7.0, w * 0.13)
 		var key := "c%d" % i
 		_most[key] = maxi(int(_most.get(key, 0)), int(mem["health"]))
@@ -315,7 +323,7 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 		if view.in_sight.has(i):
 			# In a guard's sight: an eye beside the head, blinking open.
 			var blink := 1.0 if calm else 0.85 + 0.15 * absf(sin(_time * 4.0))
-			FxIcons.eye(self, at + Vector2(w * 0.62, -h * 0.2), w * 0.55 * blink)
+			FxIcons.eye(self, at + Vector2(w * 0.62 * side, -h * 0.2), w * 0.55 * blink)
 		if names_for > 0.0:
 			_name_tag(at + Vector2(0, -w * 0.45), Strings.term("ROLE", str(mem["role"])))
 

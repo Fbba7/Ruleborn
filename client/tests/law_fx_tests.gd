@@ -124,14 +124,14 @@ func _signatures() -> void:
 		var b := fx.budget(law)
 		counts[law] = b
 		if not fx.signatures.has(law) or b["triangles"] <= 0 or b["triangles"] > MAX_TRIANGLES \
-				or b["draws"] > MAX_DRAWS or fx.crowns.get_child_count() != 2:
+				or b["draws"] > MAX_DRAWS or fx.crowns.get_child_count() < 1:
 			off.append([law, b])
 		view.queue_free()
 		await tree.process_frame
 	var detail: Variant = counts
 	if not off.is_empty():
 		detail = off
-	check.call("every launch law has a world signature over its realm and a crowned pylon, each within %d "
+	check.call("every launch law has a world signature over its realm and its pylon marked, each within %d "
 			% MAX_TRIANGLES + "triangles and %d draw calls (21.3, 21.7, 21.9)" % MAX_DRAWS, off.is_empty(),
 		"%s" % [detail])
 
