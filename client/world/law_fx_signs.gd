@@ -88,7 +88,7 @@ static func _bounce(fx: LawFx, sig: Node3D) -> void:
 		jelly.geo(g, c, RealmKit.jitter(t, 1))
 		feet.append(c)
 	if jelly.triangles > 0:
-		fx.layer(sig, jelly, fx.glass_material(Color("#FFE07A"), 3, 1.0, 0.34))
+		fx.layer(sig, jelly, fx.glass_material(Color("#C0287A"), 3, 1.0, 0.5))
 	LawFxPaint.rounds(fx, sig, LawFxPaint.some_points(feet, 24), 1.0, 4, Color("#E05CB4"))
 	LawFxPaint.spray(fx, sig, "bounce", {"n": 22, "shape": 1, "colour": Color("#FF7AC8", 0.95),
 		"radius": [0.07, 0.11], "tiles": LawFxPaint.ground(fx.site), "lift": [0.15, 0.9], "wobble": 0.3,
@@ -234,7 +234,7 @@ static func _density(fx: LawFx, sig: Node3D) -> void:
 	var r := fx.site.rng("density")
 	var tufts := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	var ground := LawFxPaint.ground(fx.site)
-	for t: Vector2i in LawFxPaint.some(ground, 40):
+	for t: Vector2i in LawFxPaint.some(ground, 56):
 		var c := fx.site.centre(t) + Vector3(r.randf_range(-0.4, 0.4), 0, r.randf_range(-0.4, 0.4))
 		var g := Geo.new()
 		if r.randf() < 0.7:
@@ -242,9 +242,9 @@ static func _density(fx: LawFx, sig: Node3D) -> void:
 				var a := k * TAU / 4.0 + r.randf()
 				var lean := Basis(Vector3(cos(a), 0, sin(a)).cross(Vector3.UP).normalized(), 0.3)
 				g.prism(Transform3D(lean, Vector3(cos(a) * 0.05, 0, sin(a) * 0.05)), 3, 0.06, 0.0,
-					r.randf_range(0.45, 0.7), Color("#6DB85A").darkened(r.randf() * 0.2))
+					r.randf_range(0.6, 0.95), Color("#3E7A30").lightened(r.randf() * 0.15))
 		else:
-			g.ball(Geo.place(Vector3(0, 0.1, 0), 0.0, Vector3(1.3, 0.8, 1.0)), 0.2, Color("#B9AE9F"), 3, 7)
+			g.ball(Geo.place(Vector3(0, 0.13, 0), 0.0, Vector3(1.3, 0.8, 1.0)), 0.27, Color("#D8CFC2"), 3, 7)
 		tufts.geo(g, c, r.randf())
 	fx.layer(sig, tufts, fx.solid_material(5, 0.12, 0.5), true)
 

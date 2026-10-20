@@ -361,13 +361,13 @@ static func _echoes(fx: LawFx, sig: Node3D) -> void:
 	for t: Vector2i in LawFxPaint.some(LawFxPaint.ground(fx.site), 7):
 		var c := fx.site.centre(t) + Vector3(r.randf_range(-0.2, 0.2), 0, r.randf_range(-0.2, 0.2))
 		var g := Geo.new()
-		g.ball(Geo.place(Vector3(0, 0.4, 0), 0.0, Vector3(0.7, 1.25, 0.6)), 0.32, Color("#9CC4FF"), 6, 12)
-		g.ball(Geo.place(Vector3(0, 0.88, 0)), 0.21, Color("#9CC4FF"), 6, 12)
+		g.ball(Geo.place(Vector3(0, 0.4, 0), 0.0, Vector3(0.7, 1.25, 0.6)), 0.32, Color("#C8E0FF"), 6, 12)
+		g.ball(Geo.place(Vector3(0, 0.88, 0)), 0.21, Color("#C8E0FF"), 6, 12)
 		for side: float in [-1.0, 1.0]:
 			g.ball(Geo.place(Vector3(side * 0.12, 1.0, 0), 0.0, Vector3(0.5, 1.0, 0.5)), 0.07, Color("#9CC4FF"), 2, 6)
 		ghosts.geo(g, c, r.randf(), r.randf() * TAU)
 		feet.append(c)
-	fx.layer(sig, ghosts, fx.glass_material(Color("#3A6AE0"), 7, 1.0, 0.5))
+	fx.layer(sig, ghosts, fx.glass_material(Color("#1F3AA0"), 7, 1.0, 0.7))
 	LawFxPaint.rounds(fx, sig, feet, 0.8, 12, Color("#3A6AE0"))
 	LawFxPaint.rounds(fx, sig, feet, 1.2, 4, Color("#3CC6D8"), INK, 0.6)
 
