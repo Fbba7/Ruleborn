@@ -104,13 +104,13 @@ func _build_world(heist: Dictionary) -> void:
 	world_view.show_replay(r)
 	world_view.set_zoom(1)
 	world_view.describe()
+	# The island as a diorama: no bars or marks over it.
+	world_view.anchors.visible = false
 	# A heist that paid: the crew that got away celebrates on the island,
 	# where character models stand in for them.
 	var v0: Dictionary = heist["verdict"]
 	if v0.get("ok", false) and str(v0.get("grade", "")) in ["Clean", "Loud", "Partial"]:
 		var crew := r.crew()
-		# The island as a diorama: no bars or marks over it.
-		world_view.anchors.visible = false
 		world_view._sync_skiff(0.0)
 		var aboard: Array[int] = []
 		var deck: Vector3 = world_view._skiff.position if world_view._skiff.visible else Vector3.ZERO
