@@ -62,7 +62,9 @@ func build(realm: Dictionary) -> void:
 		var at := Vector3(size.x * 0.5 + 1.0 + across * 0.7071, 0.0, size.y * 0.5 + 1.0 - across * 0.7071)
 		g.prism(Geo.place(at), 6, 0.07, 0.05, 2.6, Palette.WOOD.darkened(0.25))
 		g.ball(Geo.place(at + Vector3(0, 2.65, 0)), 0.11, Palette.MOTION, 3, 6)
-		var cloth := Palette.MATTER.lightened(0.15 * (i % 2))
+		# Each banner in its law's school colour (§21.2), the school's mark
+		# reading by the shape pinned on the sheet's words.
+		var cloth: Color = Palette.SCHOOL.get(LawFxLinks.school(str(laws[i])), Palette.MATTER)
 		g.box(Geo.place(at + Vector3(0.36, 2.15, 0.36), PI / 4.0), Vector3(0.9, 0.62, 0.05), cloth)
 	banners.mesh = g.mesh()
 
@@ -94,7 +96,7 @@ func _line(counts: Dictionary, wards: bool, size: Vector2i) -> void:
 		if wards:
 			var school := str(Palette.WARD_SCHOOL.get(k.to_pascal_case(), "matter"))
 			fill = (Palette.SCHOOL.get(school, Palette.MATTER) as Color).lightened(0.55)
-		pins.pin(OverlaySheet.chip(str(int(counts[k])), fill), _ground(top) + Vector3(0, 1.75, 0))
+		pins.pin(OverlaySheet.chip(str(int(counts[k])), fill), _ground(top) + Vector3(0, 1.15 if wards else 1.35, 0))
 		along += step * 0.5
 
 
