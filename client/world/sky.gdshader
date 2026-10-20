@@ -3,8 +3,9 @@
 // the diorama's CSS sky, realm-diorama.js:1057–1059): a gradient down the
 // screen, a soft glow of the low colour behind the island, and stars when
 // the sky is dark. The world view sets the colours by the realm and the
-// player's local time. Drawn as a quad over the whole screen at the far
-// plane, behind everything, as the diorama draws its sky behind its canvas,
+// player's local time. Drawn as a quad over the whole screen at a depth
+// `sky_depth` metres out, projected by the camera's own projection so it
+// lies behind everything under the orthographic or a perspective camera, as the diorama draws its sky behind its canvas,
 // so the orthographic camera sees the whole gradient. (The environment's
 // sky would show the orthographic camera one colour, and its canvas
 // background is lost in the Compatibility renderer once an ink outline,
@@ -20,12 +21,8 @@ uniform vec4 glow : source_color = vec4(1.0, 1.0, 1.0, 0.0);
 uniform float stars = 0.0;
 // A soft moon high on the left, 0 for none.
 uniform float moon = 0.0;
-// How far from the camera the quad stands, in metres along its view: behind
-// everything the world draws and inside the camera's far plane (WorldView's
-// is 200). Put through the camera's own projection, so the sky is behind the
-// world under the orthographic and the perspective camera alike, whichever
-// way the renderer's depth runs (the Compatibility renderer's is not
-// reversed).
+// How far behind the camera's eye the sky is drawn, in metres: behind every
+// island, inside the camera's far plane, under any projection.
 uniform float sky_depth = 180.0;
 
 float hash(vec2 p) {

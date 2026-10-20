@@ -38,6 +38,9 @@ const NIGHT := {
 ## How many peaks stand on each realm's rim (the design's three cones,
 ## :1146); the gentle realms have none.
 const PEAKS := {"skyfield": 2, "crystalline": 3, "emberreach": 3, "lanternvale": 2}
+## The most a realm's buildings may cost drawn close before the rest leave
+## out their fine parts (windows, frames, flags).
+const NEAR_BUDGET := 4500
 ## Path stones, by realm: the Heart's are the design's rose cobbles.
 const PATH := {"heart": "#F0B8C8", "lanternvale": "#8E86B8", "emberreach": "#7A5A50"}
 ## Where buildings stand: the middle, then a ring, then the rim's ring, as
@@ -60,6 +63,14 @@ var island_seed := 1
 var places := {}
 ## Ghost: a realm still to open, drawn as mist and outline only.
 var ghost := false
+
+## The realm's buildings drawn close — the kit's own (`BuildingKit`), inked,
+## and its fine parts — and from afar, a block in each one's colours: the
+## map shows the close ones only on the realm the camera is on (§21.3: far
+## islands use simplified pieces).
+var near := Geo.new()
+var near_fine := Geo.new()
+var far := Geo.new()
 
 ## Soft shade on the ground under what stands on it (the map's shade layer).
 var shades := UniversePaint.new()
@@ -132,8 +143,8 @@ func build(body: Geo, hero: Geo, glows: UniversePaint, light: UniversePaint, flo
 ## by two noise fields (the design's, :953) so it reads as meadow, not felt,
 ## lighter at the lip.
 func _top(g: Geo) -> void:
-	var spokes := 48
-	var rings := 7
+	var spokes := 40
+	var rings := 5
 	var grass: Color = palette["grass"]
 	var plant: Color = palette["plant"]
 	var accent: Color = palette["accent"]
@@ -169,7 +180,7 @@ func patch(p: Vector3) -> float:
 ## The earth rim and the rock beneath in strata, narrowing to a point, with
 ## roots, and three peaks on the rim (the design's, :1146).
 func _rock(g: Geo, hero: Geo) -> void:
-	var spokes := 36
+	var spokes := 24
 	var soil: Color = palette["soil"]
 	var rock: Color = palette["rock"]
 	var dark: Color = palette.get("rock2", rock.darkened(0.22))
@@ -218,8 +229,8 @@ func _rock(g: Geo, hero: Geo) -> void:
 ## a falling stream of light from the tip, and falls from the rim.
 func _beneath(hero: Geo, glows: UniversePaint, light: UniversePaint, flow: UniversePaint) -> void:
 	var glow_col := Color(school, 0.15)
-	for q in 6:
-		var a := q / 6.0 * TAU + noise(q * 41) * 0.5
+	for q in 4:
+		var a := q / 4.0 * TAU + noise(q * 41) * 0.5
 		var y := -3.0 - noise(q * 43) * 3.5
 		var cone_r := 0.95 - (absf(y) / 9.0) * 0.95
 		var p := point(a, cone_r * 0.95, y)
@@ -270,7 +281,7 @@ func _waterfall(flow: UniversePaint, glows: UniversePaint, a: float, colour: Col
 func _dress(hero: Geo, glows: UniversePaint) -> void:
 	var plant: Color = palette["plant"]
 	var accent: Color = palette["accent"]
-	var n := 22
+	var n := 11
 	for i in n:
 		var a := TAU * (i + noise(i * 29) * 0.6) / n
 		var f := 0.82 + 0.12 * noise(i * 31)
@@ -320,14 +331,14 @@ func _dress(hero: Geo, glows: UniversePaint) -> void:
 
 ## Shade on the ground at `p`, `r` across, `dark` at its middle.
 func _shade(p: Vector3, r: float, dark: float) -> void:
-	shades.disc(p + Vector3(0.25, 0.05, 0.25), Vector3.UP, r, Color(0, 0, 0, minf(1.0, dark * 1.3)), 14)
+	shades.disc(p + Vector3(0.25, 0.05, 0.25), Vector3.UP, r, Color(0, 0, 0, minf(1.0, dark * 1.3)), 10)
 
 
 func _tree(g: Geo, p: Vector3, s: float, crown: Color, i: int) -> void:
 	_shade(p, 0.85 * s, 0.45)
 	g.prism(Geo.place(p), 5, 0.13 * s, 0.09 * s, 0.7 * s, Palette.WOOD.darkened(0.25))
-	g.ball(Geo.place(p + Vector3(0, 1.0 * s, 0)), 0.55 * s, crown, 3, 6)
-	g.ball(Geo.place(p + Vector3(0.25 * s, 1.3 * s, 0.1 * s)), 0.36 * s, crown.lightened(0.12 + 0.04 * (i % 3)), 3, 6)
+	g.ball(Geo.place(p + Vector3(0, 1.0 * s, 0)), 0.55 * s, crown, 3, 5)
+	g.ball(Geo.place(p + Vector3(0.25 * s, 1.3 * s, 0.1 * s)), 0.36 * s, crown.lightened(0.12 + 0.04 * (i % 3)), 2, 5)
 
 
 func _pine(g: Geo, p: Vector3, s: float, col: Color) -> void:
@@ -375,33 +386,22 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 		if kind == "ward":
 			_ward(hero, glows, mid, lv)
 		else:
-			_building(hero, kind, mid, lv)
+			var side := 4 if kind in ["vault", "keeper_s_spire"] else 3
+			# The kit's fine parts while the close-up has room for them (§21.3).
+			var fine := near_fine if near.triangles + near_fine.triangles < NEAR_BUDGET else Geo.new()
+			BuildingKit.build(near, kind, mid, side, lv, palette, fine)
+			_far_building(kind, mid, side, lv)
 		places["%s:%d" % [kind, int(b.get("n", 1))]] = mid + Vector3(0, 2.2, 0)
 		# Windows lit, more of them in the realms of night (§21.2: "lanterns
 		# and glows carry the realm").
 		glows.glow(mid + Vector3(0, 0.7, 0.9), 0.7 if lit else 0.45, Color("#FFC36A", 0.7 if lit else 0.4))
 
 
-## A building as the map shows it (§21.3's budget): the Heart's in the realm
-## kit's full look; an outer realm's, far across the universe, as the
-## diorama's lighter map version (realm-diorama.js `makeB`): walls and a
-## roof in its level's colours (§21.5), the kit's details left off.
-func _building(hero: Geo, kind: String, mid: Vector3, lv: int) -> void:
-	var side := 4 if kind in ["vault", "keeper_s_spire"] else 3
-	if key == "heart":
-		var unseen := Geo.new()
-		BuildingKit.build(hero, kind, mid, side, lv, palette, unseen, unseen)
-		return
-	var look := BuildingKit.look(lv, palette)
-	var w := 1.15 + 0.12 * side
-	var h := 1.0 + 0.08 * lv
-	if kind in ["star_well", "observatory", "beacon", "keeper_s_spire"]:
-		hero.prism(Geo.place(mid), 8, w * 0.5, w * 0.45, h * 1.5, look[0])
-		hero.prism(Geo.place(mid + Vector3(0, h * 1.5, 0)), 8, w * 0.6, 0.0, h * 0.8, look[1])
-	else:
-		hero.box(Geo.place(mid + Vector3(0, h / 2.0, 0)), Vector3(w, h, w * 0.8), look[0])
-		hero.prism(Geo.place(mid + Vector3(0, h, 0), PI / 4.0), 4, w * 0.78, 0.0, h * 0.7, look[1])
-	hero.box(Geo.place(mid + Vector3(0, h * 0.3, w * 0.41)), Vector3(w * 0.22, h * 0.6, 0.04), look[2])
+## A building as seen from across the universe: the realm kit's own map
+## version (`BuildingKit.build_map`, the diorama's lighter `makeB`), its kind
+## and its level's look (§21.5) in a couple of hundred triangles.
+func _far_building(kind: String, mid: Vector3, side: int, lv: int) -> void:
+	BuildingKit.build_map(far, kind, mid, side, lv, palette)
 
 
 ## Stepping stones from the plaza to a building's door.
@@ -420,8 +420,8 @@ func _path(g: Geo, to: Vector3) -> void:
 		var side := Vector3(-dir.z, 0, dir.x) * (0.12 if k % 2 == 0 else -0.12)
 		var p := from + dir * d + side
 		var f := d / radius
-		g.prism(Geo.place(p + Vector3(0, at.y + dome(f) - 0.02, 0), k * 0.7), 6, 0.26, 0.24, 0.06,
-			stone.darkened(0.06 * (k % 3)))
+		g.ring(Geo.place(p + Vector3(0, at.y + dome(f) + 0.03, 0), k * 0.7), 0.0, 0.27,
+			stone.darkened(0.06 * (k % 3)), 5)
 
 
 ## A lamp where a building's path leaves the plaza: the realm's warm lights
@@ -436,7 +436,7 @@ func _lamp(hero: Geo, glows: UniversePaint, to: Vector3) -> void:
 	p.y = at.y + dome(d / radius)
 	var post := Color("#3A2E4A") if key in ["lanternvale", "crystalline"] else Palette.WOOD.darkened(0.35)
 	hero.prism(Geo.place(p), 4, 0.06, 0.05, 1.15, post)
-	hero.ball(Geo.place(p + Vector3(0, 1.22, 0)), 0.13, Color("#FFD27A", 0.1), 2, 5)
+	hero.prism(Geo.place(p + Vector3(0, 1.12, 0)), 4, 0.12, 0.0, 0.22, Color("#FFD27A", 0.1))
 	glows.glow(p + Vector3(0, 1.22, 0), 0.95, Color("#FFC36A", 0.85))
 
 
@@ -453,8 +453,8 @@ func scatter(tufts: Array, flowers: Array) -> void:
 	elif key == "lanternvale":
 		bloom = [Color("#7AD8C8", 0.4), Color("#FFD27A", 0.4)]
 	var placed := 0
-	for i in 260:
-		if placed >= 150:
+	for i in 200:
+		if placed >= 80:
 			break
 		var a := noise(i * 7 + 1) * TAU
 		var f := sqrt(noise(i * 7 + 2)) * 0.93

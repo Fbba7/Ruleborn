@@ -46,6 +46,10 @@ const FOLLOW_TILES := 12.0
 const CLOSE_TILES := 8.0
 ## The hour a realm under Glowing dark is lit at.
 const NIGHT := 23
+## A character model's scale on the heist's world, for readability.
+const MODEL_SCALE := 1.18
+## The least height a character model is drawn at in a heist, in metres.
+const MODEL_LEAST := 0.95
 ## How aware each guard state is, for choosing whose sight to show.
 const AWARE := {"Unaware": 0, "Returning": 0, "Suspicious": 1, "Investigating": 2, "Searching": 3, "Alerted": 4}
 ## A press that moves less than this many pixels is a tap.
@@ -64,6 +68,12 @@ static var _cache := {}
 ## or "ko" by what the simulation says the actor is doing. Unset, the
 ## stand-in figures of `ActorBuilder` are drawn.
 static var figure_maker: Callable = Callable()
+## Whether the laws' world signatures are T8's `LawFx` (on) or this track's
+## own `FxLaws` motes (off).
+static var law_effects := true
+## Whether the heist's own views use the narrow perspective (else every view
+## is orthographic).
+static var heist_perspective := true
 
 ## §21.4's realm type, which picks the palette; and whether this is a heist.
 var realm_type := "heart"
@@ -100,6 +110,10 @@ var sight_edge: MeshInstance3D
 var anchors: FxAnchors
 var events: FxEvents
 var laws: FxLaws
+## Where the laws' world signatures hang (T8's `LawFx` attaches under it),
+## and the `LawFx` drawn there, synced each tick; null where it is not.
+var effects: Node3D
+var law_fx: LawFx
 
 var _static_key := ""
 var _vault: MeshInstance3D
@@ -189,6 +203,9 @@ func _build_stage() -> void:
 	_rings.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_rings.material_override = clear_material(0.85)
 	world.add_child(_rings)
+	effects = Node3D.new()
+	effects.name = "Effects"
+	world.add_child(effects)
 	laws = FxLaws.new()
 	world.add_child(laws)
 	set_sky_hour(Time.get_datetime_dict_from_system()["hour"])
@@ -268,6 +285,7 @@ func _build_statics() -> void:
 	look.island(statics, _size, seed_from, colours)
 	var kit := RealmKit.new(replay, colours)
 	kit.buildings = buildings
+	kit.island_seed = seed_from
 	kit.build()
 	# The kit's layers with its own materials (T3: they carry its idle motion).
 	for mi: MeshInstance3D in kit.instances():
@@ -295,7 +313,15 @@ func _build_statics() -> void:
 	var woven: Array[String] = []
 	for p: Dictionary in replay.pylons():
 		woven.append(str(p.get("law", "")))
-	laws.build(woven, _size, self)
+	# The laws' world signatures are T8's `LawFx` where it draws (a 3D
+	# renderer; when `law_effects` is on); this track's `FxLaws` then keeps
+	# only the movement signatures, and draws the motes itself otherwise.
+	if law_fx != null:
+		law_fx.queue_free()
+		law_fx = null
+	if law_effects and rendering_3d():
+		law_fx = LawFx.attach(self, replay)
+	laws.build(woven, _size, self, law_fx == null)
 	_build_actors()
 
 
@@ -324,6 +350,11 @@ func _build_actors() -> void:
 		bag.name = "Sack"
 		bag.position = Vector3(0, 0.42, 0.26)
 		root.get_node("Rig").add_child(bag)
+		var back: Node3D = _socket(root, &"back")
+		if back != null:
+			# On a character model the loot rides its back socket.
+			bag.reparent(back, false)
+			bag.position = Vector3(0, 0, 0.08)
 		actors.add_child(root)
 		_crew.append(root)
 	for _g: Dictionary in replay.guards():
@@ -354,6 +385,13 @@ func _actor(role: String, height: float) -> Node3D:
 	if model != null:
 		root.set_meta("model", true)
 		feet.visible = false
+		# A touch larger than life, inside §21.1's heights, so a figure reads
+		# at the heist's 12 tiles across among the marks over it.
+		var tall: float = model.call("height") if model.has_method("height") else height
+		# The small kinds most: none drawn under `MODEL_LEAST` metres.
+		var grow := maxf(MODEL_SCALE, MODEL_LEAST / maxf(0.1, tall))
+		figure.scale = Vector3.ONE * grow
+		root.set_meta("head", tall * grow)
 		return root
 	figure.scale = Vector3.ONE * height
 	var body := _instance(ActorBuilder.mesh(role), material(_toon, true))
@@ -368,7 +406,17 @@ func _actor(role: String, height: float) -> Node3D:
 		foot.name = "FootL" if side < 0.0 else "FootR"
 		foot.position = Vector3(ActorBuilder.HIP.x * side, 0, ActorBuilder.HIP.z)
 		feet.add_child(foot)
+	root.set_meta("head", 0.95 * height)
 	return root
+
+
+## A socket of an actor's character model by name, or null (the stand-ins
+## have none).
+static func _socket(actor: Node3D, socket_name: StringName) -> Node3D:
+	var figure := actor.get_node_or_null("Rig/Figure")
+	if figure != null and figure.has_method("socket"):
+		return figure.call("socket", socket_name) as Node3D
+	return null
 
 
 ## A soft dark shadow on the ground under a figure, so it stands on the
@@ -425,7 +473,8 @@ func _frame_camera() -> void:
 	# the designs' narrow perspective, so the diorama has depth; every other
 	# view keeps §21.1's orthographic one. Either way `cam_size` metres fit
 	# the screen's height at the point looked at.
-	var perspective := heist and pitch == HEIST_PITCH and not (follow.is_empty() and landing_marks.is_empty())
+	var perspective := heist_perspective and heist and pitch == HEIST_PITCH \
+		and not (follow.is_empty() and landing_marks.is_empty())
 	camera.projection = Camera3D.PROJECTION_PERSPECTIVE if perspective else Camera3D.PROJECTION_ORTHOGONAL
 	camera.fov = HEIST_FOV
 	var distance := cam_size / (2.0 * tan(deg_to_rad(HEIST_FOV) / 2.0)) if perspective else 40.0
@@ -528,7 +577,11 @@ func sync() -> void:
 		_to["c%d" % i] = world_at(m["at"])
 		node.set_meta("down", m["standing"] != "Active")
 		node.set_meta("gait", str(m["gait"]))
-		var bag := node.get_node("Rig/Sack") as MeshInstance3D
+		var bag := node.find_child("Sack", true, false) as MeshInstance3D
+		node.set_meta("carrying", float(m["carried"]) > 0.0)
+		if int(m["health"]) < int(node.get_meta("health", m["health"])):
+			node.set_meta("hit", 6)
+		node.set_meta("health", int(m["health"]))
 		var share: float = float(m["carried"]) / maxf(1.0, float(m["carry"]))
 		bag.visible = share > 0.0 and m["standing"] == "Active"
 		bag.scale = Vector3.ONE * (0.6 + 0.8 * share)
@@ -564,6 +617,9 @@ func sync() -> void:
 	FxGround.sight(self)
 	_sync_marks()
 	events.read(replay)
+	if law_fx != null:
+		law_fx.sync_world(replay)
+		law_fx.sync(float(tick))
 	var landed := replay.has_landed()
 	if landed and not _landed and heist and not follow.is_empty() and not Settings.reduced_motion \
 			and replay.tick() < 60:
@@ -703,7 +759,7 @@ func _process(delta: float) -> void:
 	_swoop = maxf(0.0, _swoop - delta)
 	_place_actors(clampf(_since * TPS, 0.0, 1.0))
 	var t := replay.tick() + clampf(_since * TPS, 0.0, 1.0)
-	_animate(t)
+	FxMotion.animate(self, t)
 	_sync_skiff(t / TPS)
 	if heist and not follow.is_empty():
 		var goal := _follow_point()
@@ -712,98 +768,10 @@ func _process(delta: float) -> void:
 	_frame_camera()
 	FxGround.rings(self, _rings, t / TPS)
 	laws.tick(delta, self)
+	if law_fx != null:
+		law_fx.sync(t)
 	anchors.tick(delta)
 	_read_hold()
-
-
-## Gentle physical humour (§21.1): a figure on the move bobs and squashes
-## with its steps — tiptoeing crouched, bounding at a run — and one standing
-## still breathes; one that is down lies on its back. Its time is the
-## heist's ticks, so a replay moves the same every time it is played. The
-## laws running bend how everyone moves (§21.7's movement signatures).
-func _animate(ticks: float) -> void:
-	var t := ticks / TPS
-	for i in _crew.size():
-		_bounce(_crew[i], "c%d" % i, t + i * 0.37)
-	for i in _guards.size():
-		_bounce(_guards[i], "g%d" % i, t + i * 0.61)
-
-
-func _bounce(node: Node3D, key: String, t: float) -> void:
-	var rig := node.get_node_or_null("Rig") as Node3D
-	if rig == null:
-		return
-	var feet := node.get_node_or_null("Feet") as Node3D
-	if node.get_meta("model", false):
-		_play_model(node, rig, key)
-		return
-	if node.get_meta("down", false):
-		rig.rotation = Vector3(-PI / 2.0, 0, 0)
-		rig.position = Vector3(0, 0.22, 0)
-		rig.scale = Vector3.ONE
-		if feet != null:
-			feet.visible = false
-		_limbs(rig, null, 0.0, 0.0, 0.0)
-		return
-	if feet != null:
-		feet.visible = true
-	var moving := _from.has(key) and _to.has(key) and (_from[key] as Vector3).distance_to(_to[key]) > 0.001
-	var gait := str(node.get_meta("gait", "Walk"))
-	var move := laws.movement(moving, gait, t)
-	if moving:
-		var rate: float = (2.2 if gait == "Walk" else (1.6 if gait == "Crouch" else 3.0)) * move["rate"]
-		var step := absf(sin(t * TAU * rate))
-		var lift: float = (0.07 if gait != "Crouch" else 0.03) * move["hop"]
-		rig.position = Vector3(0, step * lift + move["float"], 0)
-		var squat := 0.82 if gait == "Crouch" else 1.0
-		rig.scale = Vector3(1.0 + 0.05 * (1.0 - step), (0.94 + 0.08 * step) * squat, 1.0 + 0.05 * (1.0 - step))
-		rig.rotation = Vector3(-0.12 if gait == "Run" else (-0.05 if gait == "Crouch" else 0.0), 0,
-			sin(t * TAU * rate * 0.5) * 0.06 + move["lean"])
-		var swing := 1.0 if gait == "Run" else (0.35 if gait == "Crouch" else 0.7)
-		_limbs(rig, feet, sin(t * TAU * rate * 0.5) * swing, 0.08 * swing, move["float"])
-	else:
-		rig.position = Vector3(0, move["float"], 0)
-		rig.scale = Vector3(1.0, 1.0 + 0.02 * sin(t * TAU * 0.4), 1.0)
-		rig.rotation = Vector3(0, 0, move["lean"] * 0.4)
-		_limbs(rig, feet, sin(t * TAU * 0.4) * 0.08, 0.0, move["float"])
-
-
-## A character model plays the clip for what its actor is doing; the rig
-## only lays it down when it is down.
-func _play_model(node: Node3D, rig: Node3D, key: String) -> void:
-	var down: bool = node.get_meta("down", false)
-	rig.rotation = Vector3.ZERO
-	rig.position = Vector3.ZERO
-	var moving := _from.has(key) and _to.has(key) and (_from[key] as Vector3).distance_to(_to[key]) > 0.001
-	var gait := str(node.get_meta("gait", "Walk"))
-	var clip: String = "ko" if down else ("idle" if not moving else {"Run": "run", "Crouch": "crouch"}.get(gait, "walk"))
-	var figure := rig.get_node_or_null("Figure")
-	if figure != null and figure.has_method("play") and node.get_meta("clip", "") != clip:
-		node.set_meta("clip", clip)
-		figure.call("play", clip)
-
-
-## Arms swing against the steps and feet step out in turn: `phase` is the
-## stride's swing (-1 to 1), `stride` how far a foot steps, `lift` how far
-## the figure floats (feet rise with it).
-func _limbs(rig: Node3D, feet: Node3D, phase: float, stride: float, lift: float) -> void:
-	var figure := rig.get_node_or_null("Figure") as Node3D
-	if figure != null:
-		var l := figure.get_node_or_null("ArmL") as Node3D
-		var r := figure.get_node_or_null("ArmR") as Node3D
-		if l != null and r != null:
-			l.rotation = Vector3(phase * 0.9, 0, -0.15)
-			r.rotation = Vector3(-phase * 0.9, 0, 0.15)
-	if feet == null:
-		return
-	feet.position.y = lift
-	var fl := feet.get_node_or_null("FootL") as Node3D
-	var fr := feet.get_node_or_null("FootR") as Node3D
-	if fl != null and fr != null:
-		fl.position.z = ActorBuilder.HIP.z - phase * stride / maxf(0.01, feet.scale.z)
-		fr.position.z = ActorBuilder.HIP.z + phase * stride / maxf(0.01, feet.scale.z)
-		fl.position.y = maxf(0.0, phase) * stride * 0.6
-		fr.position.y = maxf(0.0, -phase) * stride * 0.6
 
 
 ## A screen describes the view after every tick: the words for a screen

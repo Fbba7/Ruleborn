@@ -194,6 +194,13 @@ func set_fur(shells: int) -> void:
 	_chain_passes()
 
 
+## A light readability scale on top of §21.6's height (1 is true size): the
+## heist's camera shows a character 30–60 px tall, and a caller there may draw
+## it a little larger without changing what the simulation measures.
+func set_display_scale(factor: float) -> void:
+	_model.scale = Vector3.ONE * float(info.get("scale", 1.0)) * clampf(factor, 0.5, 2.0)
+
+
 ## The animation player, for callers that sync or seek clips.
 func player() -> AnimationPlayer:
 	return _player

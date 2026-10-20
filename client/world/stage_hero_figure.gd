@@ -182,3 +182,33 @@ static func hall(wide: float) -> ArrayMesh:
 	var m := g.mesh()
 	_cache[cache_key] = m
 	return m
+
+
+## The realm's own ground under a hero (§21.4): T2's island — painted
+## meadow, grass lip, earth bands, rock strata and roots — built for one
+## tile and shrunk to `radius`, in the painted ground look the realm view
+## uses. The node is built fresh; the meshes are made once a school.
+static func realm_ground(for_school: String, radius: float) -> Node3D:
+	var realm: String = REALM.get(for_school, "heart")
+	var cache_key := "realm:" + realm
+	if not _cache.has(cache_key):
+		var builder := IslandBuilder.new(Vector2i(1, 1), hash(realm), RealmPalette.of(realm), realm)
+		_cache[cache_key] = [builder.meadow(), builder.cliffs(), builder.roots()[0], builder.radius()]
+	var parts: Array = _cache[cache_key]
+	var root := Node3D.new()
+	# The rock beneath is the realm's full depth; a pedestal needs less of it.
+	var k := radius / float(parts[3])
+	root.scale = Vector3(k, k * 0.45, k)
+	var ground: Shader = load("res://world/look_ground.gdshader")
+	var paints: Array = [[LookPaint.grass(), 4.2, 1.0], [LookPaint.rock(), 0.0, 1.0], [LookPaint.rock(), 0.0, 0.5]]
+	for i in 3:
+		var m := ShaderMaterial.new()
+		m.shader = ground
+		m.set_shader_parameter("paint", paints[i][0])
+		m.set_shader_parameter("paint_strength", paints[i][2])
+		m.set_shader_parameter("world_scale", paints[i][1])
+		var mi := MeshInstance3D.new()
+		mi.mesh = parts[i]
+		mi.material_override = m
+		root.add_child(mi)
+	return root

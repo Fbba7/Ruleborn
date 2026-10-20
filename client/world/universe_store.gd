@@ -19,7 +19,8 @@ static func extras(store: Store) -> Dictionary:
 	var home: Dictionary = store.get_slice(RosterState.ROSTER).get("view", {})
 	var weaving: Dictionary = store.get_slice(WeavingState.WEAVING).get("view", {})
 	var stability: Dictionary = weaving.get("stability", {})
-	var out := {"producers": home.get("producers", []), "band": int(stability.get("band", 0)),
+	var out := {"producers": home.get("producers", []), "characters": home.get("characters", []),
+		"band": int(stability.get("band", 0)),
 		"raids": int(store.get_slice(DefencesState.DEFENCES).get("unseen", 0))}
 	if stability.has("strain"):
 		out["strain"] = float(stability["strain"])
