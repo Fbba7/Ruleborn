@@ -41,6 +41,7 @@ func _on_changed(slice: StringName) -> void:
 func _build() -> void:
 	var column := UI.frame(self)
 	world = UniverseView.behind(self, column)
+	world.next_chosen.connect(func() -> void: App.services.router.go(&"universe"))
 	world.realm_chosen.connect(_show_realm)
 	# The title, the header and the status on one plate at the top.
 	var words := VBoxContainer.new()

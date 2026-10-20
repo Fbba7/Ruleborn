@@ -73,7 +73,11 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 		var plate := _plate(Color(Palette.INK, 0.8), Palette.STONE)
 		var name := UniversePresenter.realm_name(str((open as Dictionary)["types"][0]))
 		plate.add_child(_words("+ " + name, Palette.PAPER))
-		_pins.append({"node": plate, "realm": "next:0", "lift": 1.0, "zooms": [0], "rank": 3})
+		plate.mouse_filter = Control.MOUSE_FILTER_STOP
+		plate.gui_input.connect(func(e: InputEvent) -> void:
+			if _tapped(e):
+				view.next_chosen.emit())
+		_pins.append({"node": plate, "realm": "next:0", "lift": 1.0, "zooms": [0], "rank": 1})
 	# The most urgent first: a pin that would cover one before it waits.
 	_pins.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["rank"]) < int(b["rank"]))
 	for p: Dictionary in _pins:
@@ -105,12 +109,16 @@ func _realm_pin(id: String, title: String, level: int, school: Color, key: Strin
 	plate.mouse_filter = Control.MOUSE_FILTER_STOP
 	plate.set_meta("realm", id)
 	plate.gui_input.connect(func(e: InputEvent) -> void:
-		var tap := (e is InputEventMouseButton and not (e as InputEventMouseButton).pressed
-			and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT) \
-			or (e is InputEventScreenTouch and not (e as InputEventScreenTouch).pressed)
-		if tap:
+		if _tapped(e):
 			view.choose(id))
 	return plate
+
+
+## A finger or the mouse lifted off a pin.
+static func _tapped(e: InputEvent) -> bool:
+	return (e is InputEventMouseButton and not (e as InputEventMouseButton).pressed
+		and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT) \
+		or (e is InputEventScreenTouch and not (e as InputEventScreenTouch).pressed)
 
 
 ## One of the design's icons, at the height of a pin's words.

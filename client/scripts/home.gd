@@ -54,6 +54,7 @@ func _ready() -> void:
 		return
 	var column := UI.frame(self)
 	world = UniverseView.behind(self, column)
+	world.next_chosen.connect(func() -> void: App.services.router.go(&"universe"))
 	world.realm_chosen.connect(_on_realm)
 	# The game's name and what it is, said aloud; the world shows the rest.
 	accessibility_name = Strings.t("APP_NAME")

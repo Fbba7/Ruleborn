@@ -20,6 +20,8 @@ extends Control
 signal realm_chosen(id: String)
 ## The zoom level changed: 0 the whole universe, 1 a realm, 2 a close-up.
 signal zoomed(level: int)
+## The realm still to open was tapped (its pin): where it is bought.
+signal next_chosen
 
 const PITCH := 35.0
 ## A swoop between realms, in milliseconds (§21.1: "a one-second swoop").
@@ -450,7 +452,7 @@ func _build_skiffs() -> void:
 		mi.mesh = SkiffBuilder.mesh(school)
 		mi.material_override = _material(true)
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mi.scale = Vector3.ONE * 0.8
+		mi.scale = Vector3.ONE * 1.1
 		movers.add_child(mi)
 		triangles += (mi.mesh as ArrayMesh).surface_get_array_len(0) / 3 if mi.mesh != null else 0
 		_skiffs.append({"node": mi, "route": route, "phase": i * 0.37, "speed": 0.06 + 0.015 * i,

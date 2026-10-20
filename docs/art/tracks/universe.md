@@ -71,6 +71,11 @@ universe, inside §21.3's 40,000 and 150.
   the universe screen opens on the Heart; on home a third tap on a realm seen close opens its realm view.
   Still: `round5_home_map_universe.png` (home, the map, the universe screen).
 
+- Round 6: skiff hulls faced the right way and drawn larger; the realm still to open keeps its pin, which
+  leads to the universe screen where it is bought; the galaxy's core no longer glares.
+  Stills: `round6_young_universe.png` (the Heart and two realms, the next to open as mist),
+  `round6_skiff_close.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

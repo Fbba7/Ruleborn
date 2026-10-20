@@ -109,8 +109,8 @@ void fragment() {
 	float motes = dust(p, 1.4, 0.3, 0.4) + dust(p + 31.0, 1.0, 0.2, 0.3) * 0.6;
 	vec3 arm_col = mix(vec3(1.0, 0.78, 0.9), vec3(0.8, 0.68, 1.0), smoothstep(0.2, 0.8, r));
 	col += arm_col * arms * fade * (0.1 + 0.75 * motes);
-	col += vec3(1.0, 0.86, 0.72) * exp(-r * r * 60.0) * 1.1;
-	col += vec3(1.0, 0.62, 0.78) * exp(-r * r * 9.0) * 0.4;
+	col += vec3(1.0, 0.86, 0.72) * exp(-r * r * 90.0) * 0.75;
+	col += vec3(1.0, 0.62, 0.78) * exp(-r * r * 9.0) * 0.3;
 	// Star dust: fine and many, and a few brighter ones.
 	float stars = dust(p, 2.3, 0.3, 0.2) * 0.45 + dust(p + 50.0, 6.0, 0.25, 0.32) * 0.8;
 	col += vec3(0.95, 0.92, 1.0) * stars;
