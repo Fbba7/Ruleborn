@@ -42,7 +42,7 @@ func _on_changed(slice: StringName) -> void:
 func _build() -> void:
 	var column := UI.frame(self)
 	view = StageScreen.mount(self, column)
-	view.tapped.connect(_on_tap)
+	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at), at))
 	view.fill = 0.7
 	town = StageTown.new(view)
 	var top := VBoxContainer.new()

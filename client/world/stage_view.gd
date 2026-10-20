@@ -8,10 +8,7 @@ extends WorldView
 ## the camera a quarter, and a slow breath of the camera so the diorama is
 ## never a still picture (§21.1: "gentle physical humour").
 
-signal tapped(tile: Vector2i, at: Vector2)
 
-## How far a press may move and still be a tap, in pixels.
-const TAP_SLOP := 24.0
 
 ## The share of the view's height the panels cover at its bottom and top:
 ## the island is framed in what is left.
@@ -28,9 +25,7 @@ var swipe_turns := true
 ## Layers a screen adds over the realm: tiles, ghosts, its own pieces.
 var layers: Node3D
 
-var _press := Vector2.ZERO
-var _pressed := false
-var _clock := 0.0
+var _breath := 0.0
 
 
 func _init() -> void:
@@ -40,33 +35,16 @@ func _init() -> void:
 	layers = Node3D.new()
 	layers.name = "Layers"
 	world.add_child(layers)
-	mouse_filter = Control.MOUSE_FILTER_STOP
-	gui_input.connect(_on_input)
-
-
-func _on_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
-		var e := event as InputEventMouseButton
-		if e.pressed:
-			_press = e.position
-			_pressed = true
-		elif _pressed:
-			_pressed = false
-			var moved := e.position - _press
-			if moved.length() <= TAP_SLOP:
-				tapped.emit(tile_at(e.position), e.position)
-			elif swipe_turns and absf(moved.x) > absf(moved.y) * 1.5:
-				turn(-1 if moved.x > 0 else 1)
 
 
 func _process(delta: float) -> void:
 	super._process(delta)
-	_clock += delta
+	_breath += delta
 	if camera == null:
 		return
 	# The panels' share of the height, the island lifted into the rest;
 	# and a breath of a few centimetres, so the diorama is alive.
-	var breath := 0.0 if Settings.reduced_motion else sin(_clock * 0.5) * 0.04
+	var breath := 0.0 if Settings.reduced_motion else sin(_breath * 0.5) * 0.04
 	if _size.x > 0 and size.y > 0.0:
 		var diag := Vector2(_size).length()
 		var open := maxf(0.2, 1.0 - cover_bottom - cover_top)

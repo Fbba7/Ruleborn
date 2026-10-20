@@ -41,7 +41,7 @@ func _build() -> void:
 	var column := UI.frame(self)
 	view = StageScreen.mount(self, column)
 	view.fill = 0.74
-	view.tapped.connect(_on_tap)
+	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at), at))
 	defence = OverlayDefence.new(view)
 	column.add_child(OverlaySheet.ribbon(UI.title(Strings.t("CUR_TITLE"))))
 	header_label = UI.label("", UI.TEXT_POINTS, true)

@@ -111,7 +111,8 @@ func build(s: LawFxSite) -> void:
 		mat.set_shader_parameter("pulse", 0.6)
 		var cap := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 		var top: Vector3 = p["at"] + Vector3(0, LawFxCrown.HEIGHT, 0)
-		cap.solid(LawFxCrown.mesh(str(p["school"])), Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 1.5), top), top, RealmKit.jitter(p["tile"], 9))
+		cap.solid(LawFxCrown.mesh(str(p["school"])), Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 1.5), top), top,
+			RealmKit.jitter(p["tile"], 9))
 		layer(crowns, cap, mat, true)
 	links = Node3D.new()
 	links.name = "Links"
