@@ -1,27 +1,20 @@
 // The realm's ground, painted (§21.3: "hand-painted gradient textures only"):
 // the vertex colour carries the paint KitGround laid (the island meadow's own
-// colour, worn earth, trails, banks, moss), and this lays T2's painted grass
-// and the realm's marks over it exactly as the island's meadow takes them,
-// so grid and meadow are one ground; then the cobbles of a gravel path, the
+// colour beside the grid, worn earth, trails, banks, moss), and this lays the
+// meadow's shared brush over it (look_brush.gdshaderinc), exactly as the
+// island's meadow wears it next to the grid, so the two are one ground; then
+// the cobbles of a gravel path, the
 // strata of a cliff, and seams at the tiles' edges faint enough to read the
 // grid as texture, not a chequer.
 shader_type spatial;
 render_mode diffuse_toon, specular_disabled;
 
 #include "res://world/toon_light.gdshaderinc"
+#include "res://world/look_brush.gdshaderinc"
 
 // Where tile edges fall: 0 for an even grid, 0.5 for an odd one.
 uniform vec2 grid_offset = vec2(0.0);
 uniform float seam = 0.035;
-// T2's painted grass (LookPaint.grass) and the realm's marks (LookPaint.deco),
-// laid exactly as look_ground.gdshader lays them on the island's meadow.
-uniform sampler2D paint : source_color, filter_linear_mipmap, repeat_enable;
-uniform float paint_scale = 4.2;
-uniform float paint_strength = 1.0;
-uniform sampler2D deco : source_color, filter_linear_mipmap, repeat_enable;
-uniform float deco_scale = 0.0;
-uniform float deco_glow = 0.0;
-uniform float deco_strength = 1.0;
 uniform vec4 cobble : source_color = vec4(0.91, 0.84, 0.74, 1.0);
 uniform vec4 mortar : source_color = vec4(0.62, 0.52, 0.45, 1.0);
 uniform vec4 strata : source_color = vec4(0.42, 0.33, 0.30, 1.0);
@@ -78,16 +71,10 @@ void fragment() {
 	vec2 p = wpos.xz;
 	float n1 = vnoise(p * 0.9) * 0.6 + vnoise(p * 2.3 + 5.0) * 0.4;
 	float grassy = (1.0 - cliff) * (1.0 - smoothstep(0.4, 0.46, path)) * (1.0 - stone * 0.6);
-	// The island's own paint over the flat ground, as on the meadow.
-	float pt = texture(paint, p / paint_scale).r;
-	c *= mix(1.0, pt * 1.25, paint_strength * (up > 0.6 ? 1.0 : 0.0));
+	// The meadow's brush (look_brush.gdshaderinc), the very one the island's
+	// meadow wears beside the grid, so the two meet as one painted ground.
+	c = look_brush(c, p, grassy);
 	vec3 glow = vec3(0.0);
-	if (deco_scale > 0.0 && up > 0.6) {
-		vec4 d = texture(deco, p / deco_scale);
-		d.a *= deco_strength * grassy;
-		c = mix(c, d.rgb, d.a * (1.0 - deco_glow));
-		glow += d.rgb * d.a * deco_glow;
-	}
 	// A path: a ribbon of cobbles laid in worn earth (UV.x is how near the
 	// path's middle line this is), a darker kerb at its edge.
 	if (path > 0.3) {

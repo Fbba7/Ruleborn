@@ -309,14 +309,6 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
 	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
-	# T2's painted grass and the realm's own marks, laid as on the island's
-	# meadow, so the grid and the meadow are one painted ground.
-	ground_mat.set_shader_parameter("paint", LookPaint.grass())
-	var marks := LookPaint.deco(realm)
-	if marks != null:
-		ground_mat.set_shader_parameter("deco", marks)
-		ground_mat.set_shader_parameter("deco_scale", 8.0)
-		ground_mat.set_shader_parameter("deco_glow", 1.0 if realm == "lanternvale" else 0.0)
 	var water_mat := material("water")
 	water_mat.set_shader_parameter("bank", KitGround.earth(palette).lightened(0.2).lerp(palette["grass"], 0.2))
 	var lava_mat := material("water")

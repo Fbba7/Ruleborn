@@ -237,11 +237,14 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	return [c, Vector4(path, lush, 0.0, stone)]
 
 
-## The island meadow's colour at world (x, z), as T2's `IslandBuilder.meadow`
-## paints it where the ground is flat (its two noise fields and the touch of
-## accent), so the grid and the island are one meadow.
-func meadow(x: float, z: float) -> Color:
+## The island meadow's colour beside the grid: T2's `IslandBuilder.meadow`
+## turns to the palette's `grass` over its GRID_BLEND metres next to the grid
+## (and lays the same brush), so the grid paints that `grass`. The meadow's
+## own noise fields are kept for a pass that wants them (`far`).
+func meadow(x: float, z: float, far := false) -> Color:
 	var grass: Color = palette["grass"]
+	if not far:
+		return grass
 	var gc := IslandBuilder.hsl(grass, 0.0, -0.08, -0.03)
 	if island == null:
 		return gc
