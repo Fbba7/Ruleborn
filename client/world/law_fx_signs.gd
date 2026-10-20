@@ -214,13 +214,13 @@ static func _glass(fx: LawFx, sig: Node3D) -> void:
 		var hz := w.z / 2.0
 		for sx: float in [-hx, hx]:
 			for sz: float in [-hz, hz]:
-				e.box(Geo.place(Vector3(sx, h / 2.0, sz)), Vector3(0.05, h, 0.05), glow)
-			e.box(Geo.place(Vector3(sx, h, 0)), Vector3(0.05, 0.05, w.z + 0.02), glow)
+				e.box(Geo.place(Vector3(sx, h / 2.0, sz)), Vector3(0.07, h, 0.07), glow)
+			e.box(Geo.place(Vector3(sx, h, 0)), Vector3(0.07, 0.07, w.z + 0.04), glow)
 		for sz: float in [-hz, hz]:
-			e.box(Geo.place(Vector3(0, h, sz)), Vector3(w.x + 0.02, 0.05, 0.05), glow)
+			e.box(Geo.place(Vector3(0, h, sz)), Vector3(w.x + 0.04, 0.07, 0.07), glow)
 		edges.geo(e, c, 0.0)
 	if shell.triangles > 0:
-		fx.layer(sig, shell, fx.glass_material(Color("#8C6CF0"), 0, 1.0, 0.28))
+		fx.layer(sig, shell, fx.glass_material(Color("#8C6CF0"), 0, 1.0, 0.4))
 		var m := fx.solid_material(0)
 		m.set_shader_parameter("glow", 1.4)
 		fx.layer(sig, edges, m)
@@ -321,6 +321,9 @@ static func _delay(fx: LawFx, sig: Node3D) -> void:
 	for p: Dictionary in fx.site.pylons:
 		at.append(p["at"])
 	at.append_array(fx.site.wards)
+	at.append_array(fx.site.posts)
+	for t: Vector2i in fx.site.tiles(LawFxSite.METAL + LawFxSite.LIGHTS):
+		at.append(fx.site.centre(t))
 	LawFxPaint.rounds(fx, sig, at, 1.9, 4, Color("#1F8499"))
 	LawFxPaint.spray(fx, sig, "delay", {"n": 26, "shape": 6, "colour": Color("#1F8499", 0.8), "radius": [0.08, 0.14],
 		"lift": [0.2, 1.6], "vel": Vector3(0, 0.08, 0), "period": [5.0, 8.0]})
@@ -330,7 +333,7 @@ static func _delay(fx: LawFx, sig: Node3D) -> void:
 ## over the ground, wind lines whip past, leaves whirl.
 static func _haste(fx: LawFx, sig: Node3D) -> void:
 	LawFxPaint.mark(fx, sig, fx.site.tiles(LawFxSite.GROUND + LawFxSite.PLANTS + LawFxSite.WATER), 15,
-		Color("#4A3A9A"))
+		Color("#6A5AD8"))
 	var h := fx.site.half()
 	LawFxPaint.spray(fx, sig, "haste", {"n": 30, "shape": 3, "colour": Color("#4A5AC8", 0.75), "radius": [0.05, 0.08],
 		"lift": [0.3, 2.0], "vel": Vector3(h.x * 1.4, 0, h.y * 0.4), "period": [1.2, 1.8]})

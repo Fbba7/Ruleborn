@@ -120,7 +120,7 @@ void fragment() {
 		float ring = 0.0;
 		for (int i = 0; i < 3; i++) {
 			float ui = fract(u - float(i) * 0.18);
-			ring += smoothstep(0.09, 0.0, abs(r - ui * local.w * 0.9)) * (1.0 - ui);
+			ring += smoothstep(0.12, 0.0, abs(r - ui * local.w * 0.9)) * (1.0 - ui);
 		}
 		c = colour_a.rgb;
 		a = ring;
