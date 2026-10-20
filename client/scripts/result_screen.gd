@@ -102,7 +102,7 @@ func _build_world(heist: Dictionary) -> void:
 	world_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(world_view)
 	world_view.show_replay(r)
-	world_view.set_zoom(0)
+	world_view.set_zoom(1)
 	world_view.describe()
 	# A heist that paid: the crew that got away celebrates on the island,
 	# where character models stand in for them.
@@ -112,6 +112,7 @@ func _build_world(heist: Dictionary) -> void:
 		# The island as a diorama: no bars or marks over it.
 		world_view.anchors.visible = false
 		world_view._sync_skiff(0.0)
+		var aboard: Array[int] = []
 		var deck: Vector3 = world_view._skiff.position if world_view._skiff.visible else Vector3.ZERO
 		for i in world_view._crew.size():
 			var actor := world_view._crew[i]
@@ -122,7 +123,16 @@ func _build_world(heist: Dictionary) -> void:
 				var at := deck + along * ((i - (crew.size() - 1) * 0.5) * 0.55) + Vector3(0, 0.35, 0)
 				world_view._to["c%d" % i] = at
 				world_view._from["c%d" % i] = at
+				actor.position = at
 				actor.visible = true
+				aboard.append(i)
+		if not aboard.is_empty():
+			# The camera comes close on the skiff and the crew in it, at the
+			# heist's own pitch: the moment to celebrate.
+			world_view.heist = true
+			world_view.pitch = WorldView.HEIST_PITCH
+			world_view.follow = aboard
+			world_view.set_zoom(1)
 	var v: Dictionary = heist["verdict"]
 	_haul = int(v.get("banked", 0)) if v.get("ok", false) else 0
 	flight = FxDraw.new(_draw_flight)
