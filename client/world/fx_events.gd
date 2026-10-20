@@ -17,9 +17,16 @@ const BURST_SECONDS := 1.2
 
 static var _mesh_cache := {}
 
+## Loot comes a little every tick while a crew member loads; it is shown
+## gathered, at most every this many ticks a member.
+const LOOT_TICKS := 12
+
 var view: WorldView
 var _last := {}
 var _first := true
+## Loot gathered since each member's last pop-up, and that pop-up's tick.
+var _gain := {}
+var _gain_tick := {}
 
 
 func _init(world_view: WorldView) -> void:
@@ -30,6 +37,8 @@ func _init(world_view: WorldView) -> void:
 func reset() -> void:
 	_last.clear()
 	_first = true
+	_gain.clear()
+	_gain_tick.clear()
 
 
 ## Compare this tick's reading with the last, and show what changed. A
@@ -39,9 +48,11 @@ func read(r: RulebornReplay) -> void:
 	var now := _reading(r)
 	if _first or int(now["tick"]) < int(_last.get("tick", 0)):
 		_first = false
+		_gain.clear()
+		_gain_tick.clear()
 		_last = now
 		return
-	if int(now["realm"]) != int(_last["realm"]) and int(_last["realm"]) >= 0 and int(now["realm"]) >= 0:
+	if int(now["realm"]) != int(_last["realm"]) and int(_last["realm"]) >= 0:
 		view.swoop()
 		_last = now
 		return
@@ -82,8 +93,14 @@ func _crew(r: RulebornReplay, now: Dictionary) -> void:
 		var b: Array = now["crew"][i]
 		var at := view.world_at(crew[i]["at"]) + Vector3(0, 1.3, 0)
 		if int(b[0]) > int(a[0]):
-			view.anchors.pop(at, "+%d" % (int(b[0]) - int(a[0])), FxSkin.GOLD, "coin")
-			burst(at - Vector3(0, 0.6, 0), Color("#F2B43C"), 10, 2.2, "coin")
+			_gain[i] = int(_gain.get(i, 0)) + int(b[0]) - int(a[0])
+		var gained := int(_gain.get(i, 0))
+		if gained > 0 and (int(now["tick"]) - int(_gain_tick.get(i, -999)) >= LOOT_TICKS or int(b[0]) <= int(a[0])):
+			_gain[i] = 0
+			_gain_tick[i] = int(now["tick"])
+			view.anchors.pop(at, "+%d" % gained, FxSkin.GOLD, "coin")
+			view.looted.emit(view.get_global_transform() * view.camera.unproject_position(at), gained)
+			burst(at - Vector3(0, 0.6, 0), Color("#F2B43C"), 6, 2.2, "coin")
 		if int(b[1]) < int(a[1]):
 			view.anchors.pop(at, "-%d" % (int(a[1]) - int(b[1])), FxSkin.ALARM_ON_DARK)
 			burst(at - Vector3(0, 0.6, 0), Color("#FFFFFF"), 5, 1.6)

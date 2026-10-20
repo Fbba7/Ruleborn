@@ -43,7 +43,7 @@ const LOOK := {
 	"haste": {"shape": "streak", "motion": "stream", "count": 26, "colour": "#FFFFFF", "glow": false,
 		"rate": 1.5, "hop": 1.2},
 	"glowing_dark": {"shape": "mote", "motion": "drift", "count": 30, "colour": "#9DF2B0", "glow": true,
-		"dark": 0.5, "rate": 0.85, "hop": 0.5},
+		"dark": 0.85, "rate": 0.85, "hop": 0.5},
 	"aurora": {"shape": "mote", "motion": "drift", "count": 14, "colour": "#9BF0D8", "glow": true,
 		"ground": "bands"},
 	"chain_lightning": {"shape": "spark", "motion": "spark", "count": 12, "colour": "#BFE8FF", "glow": true,

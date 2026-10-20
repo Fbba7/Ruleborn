@@ -105,9 +105,24 @@ func _draw() -> void:
 	_draw_crew(replay, m, calm)
 	_draw_pops(m, calm)
 	if wipe > 0.0:
-		# The crossing's cloud wipe: the swoop's middle in the rift's violet.
+		# The crossing's cloud wipe: the swoop's middle in the rift's violet,
+		# clouds rolling across it.
 		var a := sin(wipe * PI) * 0.85
 		draw_rect(Rect2(Vector2.ZERO, size), Color(0.36, 0.22, 0.6, a))
+		var u := 1.0 - wipe
+		for k in 9:
+			var row := float(k % 3) / 2.0
+			var x := lerpf(-0.4, 1.4, fmod(u * (1.0 + 0.2 * k) + k * 0.37, 1.0)) * size.x
+			var y := lerpf(0.15, 0.85, (row + float(k) / 9.0) * 0.5 + 0.2) * size.y
+			var r := size.x * (0.16 + 0.05 * (k % 4))
+			var cloud := Color(0.93, 0.9, 1.0, clampf(a * 1.6, 0.0, 1.0))
+			var shade := Color(0.72, 0.64, 0.9, cloud.a)
+			# Opaque puffs, so where they meet is one cloud: its underside
+			# first, a shade deeper, then its body.
+			for pass_shade: bool in [true, false]:
+				for blob: Vector3 in [Vector3(0, 0, 1.0), Vector3(0.7, 0.15, 0.75), Vector3(-0.7, 0.18, 0.7)]:
+					var c := Vector2(x + blob.x * r, y + blob.y * r + (r * 0.12 if pass_shade else 0.0))
+					draw_circle(c, r * blob.z, shade if pass_shade else cloud)
 
 
 ## A soft shade of the night's ink at the top and bottom of a heist, behind

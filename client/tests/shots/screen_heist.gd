@@ -3,12 +3,13 @@ extends SceneTree
 ## (tools/render/shoot.sh). SHOT is the file; MOMENT picks the moment:
 ## "start" (just landed, the first orders given), "sneak" (the crew spread, a guard looking),
 ## "vault" (the crew at the Vault, cracking), "alarm" (a guard alerted, the
-## alarm up), "pick" (the landing picker, before landing). HOUR and ZOOM are optional; BUTTONS shows Settings' turn and
+## alarm up), "pick" (the landing picker, before landing), "cross" (the swoop to
+## another realm, at its middle). HOUR and ZOOM are optional; BUTTONS shows Settings' turn and
 ## zoom buttons.
 
-const TO := {"sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]],
+const TO := {"cross": [[4, 9], [3, 10], [4, 11]], "sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]],
 	"alarm": [[5, 6], [3, 10], [4, 11]], "start": [[7, 8], [2, 10], [1, 10]]}
-const TICKS := {"start": 30, "sneak": 150, "vault": 300, "alarm": 150}
+const TICKS := {"cross": 60, "start": 30, "sneak": 150, "vault": 300, "alarm": 150}
 
 
 func _initialize() -> void:
@@ -59,6 +60,11 @@ func _go() -> void:
 			screen.controller.advance(10)
 			screen._refresh()
 			view._process(1.0 / 3.0)
+	if moment == "cross":
+		# §21.1's swoop between realms, caught at its middle.
+		view.swoop()
+		view._process(0.45)
+		view.set_process(false)
 	if OS.get_environment("ZOOM") != "":
 		view.set_zoom(int(OS.get_environment("ZOOM")))
 	screen.set_process(false)

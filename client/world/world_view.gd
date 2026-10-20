@@ -25,6 +25,9 @@ extends RealmView
 signal tapped(at: Vector2)
 ## A press held for §20.8's hold time.
 signal held(at: Vector2)
+## A crew member grabbed `amount` of loot, drawn at `at` (global, on the
+## screen): the HUD flies coins from there into its counter (§21.8).
+signal looted(at: Vector2, amount: int)
 
 ## §21.1's pitches: the heist's follow camera, and the home diorama's.
 const HEIST_PITCH := 50.0

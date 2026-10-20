@@ -83,9 +83,20 @@ func _events(view: WorldView, replay: RulebornReplay) -> void:
 	fx._last = back
 	fx.read(replay)
 	var fresh := view.anchors.pops.is_empty()
+	# A reading in another realm than the last: the crew crossed, and the
+	# camera swoops (21.1).
+	var crossed: Dictionary = fx._reading(replay)
+	crossed["realm"] = 5
+	fx._last = crossed
+	view._swoop = 0.0
+	fx.read(replay)
+	var swooped := view._swoop > 0.99 and view.anchors.wipe > 0.99
+	view._swoop = 0.0
+	view.anchors.wipe = 0.0
 	check.call("what happens is drawn from the simulation's own readings: a grab rises as its number, the alarm "
 			+ "flashes the screen's edge, a knock-out shows; nothing is shown twice, and a replay restarted starts "
-			+ "afresh (21.8, 24.1)", quiet and shown and fresh, "%s %s %s %s" % [quiet, texts, view.anchors.flash, fresh])
+			+ "afresh; a crossing to another realm swoops (21.8, 24.1, 21.1)", quiet and shown and fresh and swooped,
+		"%s %s %s %s %s" % [quiet, texts, view.anchors.flash, fresh, swooped])
 
 
 ## §21.1: the heist's follow camera shows about 12 tiles across, eight close

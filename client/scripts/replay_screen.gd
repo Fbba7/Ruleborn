@@ -126,6 +126,7 @@ func _build() -> void:
 	var columns := FxSkin.frame(self)
 	hud = HeistHud.new()
 	columns[0].add_child(hud)
+	view.looted.connect(func(at: Vector2, amount: int) -> void: hud.fly_coins(at, amount / 20))
 	var column := columns[1]
 
 	var status := FxSkin.panel("card", 16.0, 8.0)
