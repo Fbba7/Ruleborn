@@ -423,20 +423,31 @@ static func _ward(b: BuildingKit) -> void:
 
 ## §21.5's level-10 crown for each kind, above the building's top.
 static func crown(b: BuildingKit, kind: String) -> void:
-	var y := b.top
+	# The floating crowns drawn half as big again, so level 10 reads at the
+	# home camera; those standing beside the building keep its scale.
+	var keep := b.unit
+	if not kind in ["keeper_s_spire", "hearth", "garden", "guardian_post", "visitor_s_dock"]:
+		b.unit *= 1.5
+	var y := b.top * keep / b.unit + 0.05
 	var gold := KitStyle.GOLD
 	var glow := KitStyle.lit(Color("#FFF1C4"), 0.3)
+	_crown(b, kind, y, gold, glow)
+	b.unit = keep
+
+
+static func _crown(b: BuildingKit, kind: String, y: float, gold: Color, glow: Color) -> void:
 	match kind:
 		"keeper_s_spire":
 			# The Book of Laws, open at the top.
 			var u := b.unit
 			b.unit = u / 3.0 * 1.55
-			var p := b.at(0, 4.62, 0)
+			var p := b.at(0, 4.75, 0)
 			b.move(Geo.Anim.BOB, p)
 			for s: float in [-1.0, 1.0]:
-				b.d.box(Transform3D(Basis(Vector3.BACK, s * 0.25), p + Vector3(s * 0.11, 0, 0) * b.unit),
-					Vector3(0.22, 0.02, 0.28) * b.unit, Color("#FFF8E6"))
-			b.d.box(Geo.place(p + Vector3(0, -0.02, 0) * b.unit), Vector3(0.46, 0.02, 0.3) * b.unit, b.roof_col)
+				b.d.box(Transform3D(Basis(Vector3.BACK, s * 0.25), p + Vector3(s * 0.17, 0, 0) * b.unit),
+					Vector3(0.34, 0.025, 0.42) * b.unit, Color("#FFF8E6"))
+			b.d.box(Geo.place(p + Vector3(0, -0.03, 0) * b.unit), Vector3(0.7, 0.03, 0.45) * b.unit, b.roof_col)
+			b.d.ball(Geo.place(p + Vector3(0, 0.12, 0) * b.unit), 0.1 * b.unit, KitStyle.lit(Color("#FFF1C4"), 0.3), 3, 8)
 			b.stop()
 			b.unit = u
 		"vault":
