@@ -519,7 +519,7 @@ func _follow_point() -> Vector3:
 		return Vector3(0, 0.3, 0)
 	var at := sum / n
 	var half := Vector2(_size) * 0.5
-	return Vector3(clampf(at.x, -half.x + 3.0, half.x - 3.0), 0.3, clampf(at.z, -half.y + 3.0, half.y - 3.0))
+	return Vector3(clampf(at.x, -half.x + 1.5, half.x - 1.5), 0.3, clampf(at.z, -half.y + 1.5, half.y - 1.5))
 
 
 ## A quarter turn of the camera, either way (§21.1).
