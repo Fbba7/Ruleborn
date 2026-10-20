@@ -51,7 +51,7 @@ func _init(grid: Vector2i, heights: PackedByteArray, surfaces: PackedByteArray, 
 	var n := size.x * size.y
 	levels.resize(n)
 	wet.resize(n)
-	for key: String in ["path", "lush", "apron", "scorch", "stone", "shade", "wet", "bloom"]:
+	for key: String in ["path", "lush", "apron", "scorch", "stone", "shade", "wet", "bloom", "occ"]:
 		var f := PackedFloat32Array()
 		f.resize(n)
 		_fields[key] = f
@@ -70,6 +70,7 @@ func _init(grid: Vector2i, heights: PackedByteArray, surfaces: PackedByteArray, 
 			RealmKit.F.STATIC_STONE, RealmKit.F.TUNNEL] else 0.0)
 		_put("shade", i, 1.0 if c in [RealmKit.F.TREE, RealmKit.F.SHADE_CANOPY, RealmKit.F.THICKET] else 0.0)
 		_put("bloom", i, 1.0 if c == RealmKit.F.FLOWER_MEADOW else 0.0)
+		_put("occ", i, 1.0 if c in RealmKit.HERO or blocked.has(t) else 0.0)
 		_put("wet", i, float(wet[i]))
 
 
@@ -199,6 +200,9 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	c = c.lerp(palette["rock"].darkened(0.35), scorch * 0.75)
 	var shade := field("shade", u, v)
 	c = c.darkened(0.1 * shade)
+	# A soft contact shade round whatever stands up from the ground.
+	var occ := field("occ", u, v)
+	c = c.darkened(0.09 * smoothstep(0.1, 0.6, occ) * (1.0 - apron))
 	# A sandy bank where the grass meets water.
 	var bank := smoothstep(0.12, 0.45, field("wet", u, v))
 	c = c.lerp(dirt.lightened(0.12), bank * 0.75)
