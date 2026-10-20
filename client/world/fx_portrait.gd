@@ -13,12 +13,18 @@ var chosen := false
 var health := 1.0
 var carried := 0.0
 var standing := "Active"
+## The portrait rendered from the role's character model (T1's `Portrait`),
+## when the cast has one; else the drawn face.
+var picture: Texture2D
 var _time := 0.0
+var _picture_ready := false
 
 
 func _init(member_role := "", pressed_call: Callable = Callable()) -> void:
 	role = member_role
 	letters = Strings.term("ROLE", role).substr(0, 2)
+	if Cast.KIND.has(role) and CreatureModel.manifest().has(String(Cast.KIND[role])):
+		picture = Portrait.of(String(Cast.KIND[role]))
 	text = ""
 	var side := UI.CONTROL_POINTS * UI.PX_PER_POINT * 1.2
 	custom_minimum_size = Vector2(side, side * 1.12)
@@ -44,7 +50,16 @@ func show_member(m: Dictionary, is_chosen: bool) -> void:
 	queue_redraw()
 
 
+## Whether a rendered portrait has been drawn yet (it fills in a frame or
+## two after it is asked for).
+static func _drawn(t: Texture2D) -> bool:
+	return t.get_image() != null and not t.get_image().is_invisible()
+
+
 func _process(delta: float) -> void:
+	if picture != null and not _picture_ready and Engine.get_process_frames() % 10 == 0 and _drawn(picture):
+		_picture_ready = true
+		queue_redraw()
 	if standing != "Active" or chosen:
 		_time += delta
 		queue_redraw()
@@ -62,7 +77,9 @@ func _draw() -> void:
 	var lift := -r * 0.06 if chosen else 0.0
 	c.y += lift
 	draw_circle(c, r, FxSkin.INK_LINE)
-	var disc := FxSkin.CARD_TOP
+	# A rendered portrait stands on its role's colour, as the cards put a
+	# school-coloured ground behind one.
+	var disc := colour.darkened(0.2) if _picture_ready and not out else FxSkin.CARD_TOP
 	if down:
 		disc = FxSkin.ALARM_DEEP if fmod(_time, 1.0) < 0.5 or Settings.reduced_motion else FxSkin.ALARM_DEEP.darkened(0.25)
 	draw_circle(c, r * 0.9, disc)
@@ -73,7 +90,14 @@ func _draw() -> void:
 	if health > 0.0:
 		draw_arc(c, r * 0.9, -PI / 2.0, -PI / 2.0 + TAU * health, 48, ring_col, r * 0.14, true)
 	var face_col := colour if not out else Color("#7A7488")
-	FxIcons.face(self, c + Vector2(0, r * 0.12), r * 0.62, face_col, role, down or out)
+	if _picture_ready:
+		# The model's own head and shoulders, inside the disc; greyed when out.
+		var side := r * 1.62
+		var tint := Color(0.55, 0.55, 0.6) if out else (Color(1.0, 0.75, 0.75) if down else Color.WHITE)
+		draw_texture_rect(picture, Rect2(c - Vector2(side, side) * 0.5 + Vector2(0, r * 0.05), Vector2(side, side)),
+			false, tint)
+	else:
+		FxIcons.face(self, c + Vector2(0, r * 0.12), r * 0.62, face_col, role, down or out)
 	if chosen:
 		draw_arc(c, r * 1.02, 0, TAU, 56, FxSkin.GOLD, r * 0.13, true)
 		draw_arc(c, r * 1.1, 0, TAU, 56, FxSkin.INK_LINE, r * 0.05, true)

@@ -90,7 +90,8 @@ func _go() -> void:
 	settle(root)
 	screen.set_process(false)
 	screen._refresh()
-	for i in 6:
+	# Portraits rendered from the models fill in over a few frames.
+	for i in 40:
 		await process_frame
 	await RenderingServer.frame_post_draw
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
