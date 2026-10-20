@@ -207,12 +207,16 @@ static func paradox(fx: LawFx, into: Node3D, id: String) -> void:
 				b.mote(at, Vector3.ZERO, 0.0, k * 0.5, 0.55, 0.0, 0, Color("#FFFFFF", 1.0))
 			fx.layer(into, b, fx.mote_material(1.0))
 		"unmaking":
-			# Torn scraps flutter; every signature stutters now and then.
-			LawFxPaint.spray(fx, into, "unmaking", {"n": 50, "shape": 5, "colour": Color("#FCFBFF", 1.0),
-				"radius": [0.08, 0.12], "lift": [0.2, 2.0], "vel": Vector3(0.2, -0.15, 0.1), "period": [5.0, 8.0],
-				"wobble": 0.3})
+			# Torn scraps of parchment flutter; every signature stutters now and
+			# then, the screen's edges flickering with it.
+			LawFxPaint.spray(fx, into, "unmaking", {"n": 50, "shape": 7, "colour": Color("#E8D4A8", 1.0),
+				"colour_b": Color("#C9B6FF", 1.0), "radius": [0.08, 0.13], "lift": [0.2, 2.0],
+				"vel": Vector3(0.2, -0.15, 0.1), "period": [5.0, 8.0], "wobble": 0.3})
+			var tint := fx.tint(Color("#2A1A4A"), 0.0)
 			fx.every(func(s: float) -> void:
 				var u := fmod(s, 20.0)
 				var on := not (u < 1.2 and int(s * 10.0) % 3 == 0)
 				for sig: Node in fx.signatures.values():
-					(sig as Node3D).visible = on)
+					(sig as Node3D).visible = on
+				if tint != null:
+					tint.set_shader_parameter("edge", 0.0 if on else 0.6))
