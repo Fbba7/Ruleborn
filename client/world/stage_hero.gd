@@ -284,6 +284,9 @@ func cheer() -> void:
 func reveal() -> void:
 	if figures.is_empty():
 		return
+	if not moving:
+		# Reduced motion's form: the newborn is simply there.
+		return
 	_reveal = 0.0
 	for sh in _shells:
 		sh.queue_free()
@@ -292,7 +295,9 @@ func reveal() -> void:
 	for side: float in [-1.0, 1.0]:
 		var mi := MeshInstance3D.new()
 		mi.mesh = StageHeroSculpt.of("shell")
-		mi.material_override = toon(rim)
+		var shell_paint := toon(rim)
+		shell_paint.set_shader_parameter("tint", Color(0.84, 0.82, 0.86))
+		mi.material_override = shell_paint
 		mi.scale = Vector3.ONE * 0.45
 		mi.set_meta("side", side)
 		tables[0].add_child(mi)
@@ -465,7 +470,8 @@ func _pose() -> void:
 			var w := fposmod(time, 4.0)
 			f.rotation.z = sin(w * 14.0) * 0.12 * exp(-w * 2.2) if w < 1.4 else 0.0
 		var a: float = _actions[i] if i < _actions.size() else -1.0
-		if a >= 0.0:
+		# Reduced motion (§20.8) keeps the clip and drops the hop and twirl.
+		if a >= 0.0 and moving:
 			var u := a / ACTION_SECONDS
 			var hop := sin(clampf(u * 1.25, 0.0, 1.0) * PI)
 			var squash := 0.18 * (sin(u * PI * 4.0) * (1.0 - u))

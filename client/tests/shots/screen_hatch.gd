@@ -17,14 +17,15 @@ func _go() -> void:
 	App.services.store.dispatch(&"roster_loaded", {"view": HatchTests.sample()})
 	for i in 10:
 		await process_frame
-	screen.stage.moving = false
 	var t := float(OS.get_environment("T")) if OS.get_environment("T") != "" else 0.6
 	if OS.get_environment("BORN") != "":
 		App.services.store.dispatch(&"roster_changed", {"home": HatchTests.born(),
 			"what": {"do": "birth", "born": 9, "first": true, "outfit": "hatch-outfit"}})
 		await process_frame
+		screen.stage.moving = false
 		screen.stage.set("_reveal", t)
 		screen.stage.set("_actions", [t] as Array[float])
+	screen.stage.moving = false
 	screen.stage.at_time(1.5)
 	for i in 30:
 		await process_frame
