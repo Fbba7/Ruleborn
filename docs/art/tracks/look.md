@@ -130,3 +130,10 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 - Merged the third integration (282e149); `r16-third-integration.png` shows Heart, Tidehold, Lantern Vale and the heist screen on it.
 - Round 16: the floating islets carry a small round tree and two dangling roots and are larger; birds are larger, so they read as Vs at the home zoom.
 - Round 17: Tidehold's sun is lower, so it sits ten grey steps under Verdant at noon.
+- Skyfield's high clouds (§21.4), placed beyond the rim so none hides the realm.
+
+## State at the end of the resumed run
+
+- Final stills on the integrated build (third integration plus this track): `final2-integrated-sheet.png` (every realm with T3's buildings at 12, 19 and 23, grayscale thumbnails beneath), `final2-world.png` (the heist camera on world_shot), `r16-third-integration.png`, `r15-noon-values.png`, `r13-land-vs-design.png`.
+- Still worse than the design: Lantern Vale stays brighter than its land still (kept so it reads on a phone); the grid's tile seams are T3's and still show the grid faintly; wind streaks and fireflies are small at the home zoom; the cloud sea under the Heart is a strong pink band at the foot of a tall frame.
+- Next: tune the cloud sea's strength per realm; give Emberreach's meadow a few glowing lava runnels like its land still; check every screen T5 draws (builder, planner, replay) in both cameras.
