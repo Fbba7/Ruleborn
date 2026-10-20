@@ -23,6 +23,7 @@ func run() -> void:
 	_defence()
 	await _scout()
 	await _builder()
+	await _drag()
 	await _thumbs()
 
 
@@ -78,7 +79,7 @@ func _scout() -> void:
 	check.call("the scout report draws what the scout counted and nothing placed: the guards by role and wards by kind "
 			+ "on the rim with their counts pinned, the laws as banners, and the Vault hidden (12.4)",
 		scout.figures.get_child_count() == 5 and on_grid.is_empty() and pins.count() == 4 and scout.banners.mesh != null
-			and not view._vault.visible,
+			and not view._vault.visible and not view.anchors.vault_shown,
 		"%d figures, %d on the grid, %d pins" % [scout.figures.get_child_count(), on_grid.size(), pins.count()])
 	pins.queue_free()
 	view.queue_free()
@@ -111,6 +112,51 @@ func _builder() -> void:
 			+ "Undo puts the island back as it was (13, 6.2)",
 		laid and takes and refuses and untouched and undone,
 		"%s %s %s %s %s" % [laid, takes, refuses, untouched, undone])
+
+
+## A press, a drag across a row and a release on the builder's world, then
+## two quick taps, as `WorldView`'s gestures receive them.
+func _drag() -> void:
+	var b: BuilderScreen = await mount.call("builder")
+	b.island.reset(3)
+	b.undo_stack.clear()
+	b.tool = BuilderScreen.Tool.GROUND
+	b.kind = b.kinds().find("moss")
+	b._refresh()
+	for i in 3:
+		await tree.process_frame
+	var v := b.view as StageView
+	var a := v.screen_at(Vector2i(2, 5))
+	var c := v.screen_at(Vector2i(8, 5))
+	var feed := func(e: InputEvent) -> void:
+		v.gui_input.emit(e)
+		v._gui_input(e)
+	feed.call(_button(a, true))
+	for i in 21:
+		var m := InputEventMouseMotion.new()
+		m.position = a.lerp(c, i / 20.0)
+		m.button_mask = MOUSE_BUTTON_MASK_LEFT
+		feed.call(m)
+	feed.call(_button(c, false))
+	var painted := range(12).filter(func(x: int) -> bool: return b.island.ground(x, 5) == "moss").size()
+	for t: Vector2i in [Vector2i(3, 3), Vector2i(4, 3)]:
+		feed.call(_button(v.screen_at(t), true))
+		feed.call(_button(v.screen_at(t), false))
+	var still := v.turns == 0 and is_equal_approx(v._zoom_f, 1.0)
+	var edits := b.undo_stack.size()
+	b.queue_free()
+	await tree.process_frame
+	check.call("in the builder a drag paints every tile it crosses and neither turns nor zooms the camera, and two "
+			+ "quick taps are two edits, never a zoom (13, 21.1)",
+		painted == 7 and still and edits == 9, "%d painted, still %s" % [painted, still])
+
+
+static func _button(at: Vector2, pressed: bool) -> InputEventMouseButton:
+	var e := InputEventMouseButton.new()
+	e.button_index = MOUSE_BUTTON_LEFT
+	e.pressed = pressed
+	e.position = at
+	return e
 
 
 func _thumbs() -> void:
