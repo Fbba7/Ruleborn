@@ -158,3 +158,15 @@ Judged beside `art/design/stills/obs/*.png` at phone size and in grayscale (`rou
 - T2/T3: `toon.gdshader` reads vertex colours as linear, so every hex colour renders paler than the
   design (three.js converts hex from sRGB). `universe_toon.gdshader` converts; the realm view may want the
   same.
+
+## Stopped here
+
+Stopped at the integrator's request (2026-10-20).
+
+- Done: the universe map in 3D (islands, the four link kinds, skiffs, galaxy sky, pins, the three zooms with
+  turns, swoop and cloud wipe), home, the map and the universe screens over it; merged with the first
+  integration (T3's buildings and citadel, T1's characters on a close-up); inside §21.3's budget, counted
+  honestly (39,735 triangles, about 70 draw calls); `check_all` passed on `a196c75`.
+- In progress: nothing; the second integration had not landed, so it is not merged.
+- Next: merge the second integration and reconcile its `universe_island.gd` `_building()` with this
+  branch's near/far buildings (keep one); then use T2's island for the realm seen close.
