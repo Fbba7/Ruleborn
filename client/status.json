@@ -145,6 +145,7 @@
   "from Lab level 3 the third sphere names a chord free, and waits with why once it has named one today or no chord woven or crossed is left; a name it gives is said (8.5)": "passed",
   "haptics: a light tap on a button, a warning as the alarm rises, a pulse as a ward or a pylon goes down, nothing when switched off (§21.8, §20.8)": "passed",
   "high contrast and reduced motion start as the phone says; text size, contrast, left-handed controls, rehearsal pace, banners, hold time and motion are saved and restored, and take effect (§20.8)": "passed",
+  "in the builder a drag paints every tile it crosses and neither turns nor zooms the camera, and two quick taps are two edits, never a zoom (13, 21.1)": "passed",
   "left-handed play mirrors the heist's controls: Get out moves to the other hand (§20.8)": "passed",
   "money and numbers are written the player's way: €6.00 and 11,250 in English, €6,00 and 11.250 in Portuguese, and the store's own price before the server's (§19.12)": "passed",
   "no account is made before the age check answers, nor ever under 13: no sign-in reaches the server (§20.1, §20.11)": "passed",
