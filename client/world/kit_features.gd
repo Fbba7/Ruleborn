@@ -150,9 +150,18 @@ func build(t: Vector2i, f: int) -> void:
 			prop.ring(Geo.place(c + Vector3(0, 0.02, 0)), 0.2, 0.38, rock.darkened(0.15), 14)
 			for k in 4:
 				prop.box(Geo.place(c + Vector3(0, 0.021, -0.15 + 0.1 * k)), Vector3(0.36, 0.01, 0.03), KitStyle.IRON)
+			# Wind spiralling up out of it, and a leaf riding the air.
 			kit.clear.moving(Geo.Anim.SPIN_Y, c)
-			kit.clear.cyl(Geo.place(c + Vector3(0, 0.02, 0)), 0.3, 0.42, 1.6, Color("#CFEFFF", 0.7), 10)
+			for s2 in 3:
+				for m in 9:
+					var a := TAU * s2 / 3.0 + m * 0.55
+					var r := 0.18 + 0.025 * m
+					kit.clear.box(Geo.place(c + Vector3(cos(a) * r, 0.12 + 0.14 * m, sin(a) * r), -a),
+						Vector3(0.16, 0.012, 0.025), Color(Color("#F4FBFF"), 0.6))
 			kit.clear.moving(Geo.Anim.NONE, Vector3.ZERO)
+			prop.moving(Geo.Anim.SPIN_Y, c)
+			prop.box(Geo.place(c + Vector3(0.24, 0.9, 0), 0.6), Vector3(0.07, 0.01, 0.04), kit.palette["plant"])
+			prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.PIT:
 			prop.ring(Geo.place(c + Vector3(0, 0.01, 0)), 0.3, 0.44, kit.palette["soil"].darkened(0.1), 12)
 			prop.ring(Geo.place(c + Vector3(0, 0.015, 0)), 0.0, 0.31, Palette.INK.lightened(0.04), 12)
@@ -541,19 +550,34 @@ func _lava(t: Vector2i, c: Vector3) -> void:
 			* 0.8), 0.06, Color("#2B1C22"), k)
 
 
+## A shade canopy: a striped awning peaked over four posts, its scalloped
+## hem stirring in the wind.
 func _canopy(c: Vector3, wood: Color) -> void:
 	var hero := kit.hero
-	var cloth: Color = style["accent"].lightened(0.35)
+	var cloth: Color = (style["accent"] as Color).lightened(0.2)
+	var stripe := Color("#FFF8EE")
 	for p: Vector2 in [Vector2(-0.36, -0.36), Vector2(0.36, -0.36), Vector2(-0.36, 0.36), Vector2(0.36, 0.36)]:
-		hero.cyl(Geo.place(c + Vector3(p.x, 0, p.y)), 0.035, 0.03, 0.92, wood, 5)
+		hero.cyl(Geo.place(c + Vector3(p.x, 0, p.y)), 0.035, 0.03, 0.88, wood, 5)
 	hero.moving(Geo.Anim.SWAY, c)
-	hero.prism(Geo.place(c + Vector3(0, 0.9, 0), PI / 4.0), 4, 0.66, 0.0, 0.26, cloth, false)
-	for k in 4:
-		var a := PI / 2.0 * k
-		var o := Vector3(cos(a), 0, sin(a)) * 0.45
-		hero.box(Geo.place(c + o + Vector3(0, 0.86, 0), a + PI / 2.0), Vector3(0.9, 0.09, 0.02), cloth.darkened(0.1))
+	var peak := c + Vector3(0, 1.2, 0)
+	var rim: Array[Vector3] = []
+	for k in 8:
+		var a := TAU * k / 8.0 + PI / 8.0
+		rim.append(c + Vector3(cos(a) * 0.62, 0.86, sin(a) * 0.62))
+	for k in 8:
+		hero.tri(peak, rim[(k + 1) % 8], rim[k], cloth if k % 2 == 0 else stripe)
+	# The scalloped hem hanging from the rim.
+	for k in 8:
+		var a0 := rim[k]
+		var a1 := rim[(k + 1) % 8]
+		var mid := (a0 + a1) / 2.0 + Vector3(0, -0.1, 0)
+		kit.prop.moving(Geo.Anim.SWAY, c)
+		kit.prop.tri(a0, a1, mid, cloth.darkened(0.08) if k % 2 == 0 else stripe.darkened(0.05))
+		kit.prop.tri(a0, mid, a1, cloth.darkened(0.15))
 	hero.moving(Geo.Anim.NONE, Vector3.ZERO)
-	hero.ball(Geo.place(c + Vector3(0, 1.18, 0)), 0.04, KitStyle.GOLD, 2, 5)
+	kit.prop.moving(Geo.Anim.NONE, Vector3.ZERO)
+	hero.ball(Geo.place(peak + Vector3(0, 0.03, 0)), 0.045, KitStyle.GOLD, 2, 5)
+	kit.prop.ring(Geo.place(c + Vector3(0, 0.012, 0)), 0.0, 0.5, Color(0, 0, 0, 1).lerp(kit.palette["grass"], 0.88), 10)
 
 
 func _spring(t: Vector2i, c: Vector3, rock: Color) -> void:
