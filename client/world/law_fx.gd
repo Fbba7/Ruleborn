@@ -130,6 +130,8 @@ func build(s: LawFxSite) -> void:
 			add_child(sig)
 			signatures[law] = sig
 			LawFxSigns.build(self, sig, law)
+		if _kit_crowns():
+			continue
 		var mat := solid_material(4, 0.6)
 		mat.set_shader_parameter("glow", 0.8)
 		mat.set_shader_parameter("pulse", 0.4)
@@ -155,6 +157,15 @@ func build(s: LawFxSite) -> void:
 	if paradox != "":
 		LawFxLinks.paradox(self, paradox)
 	sync(seconds * TPS)
+
+
+## Whether the realm kit's pylon already wears its school's shape
+## (`PieceKit.pylon(school)`), so a crown here would only double it.
+static func _kit_crowns() -> bool:
+	for m: Dictionary in (PieceKit as Script).get_script_method_list():
+		if m["name"] == "pylon":
+			return (m["args"] as Array).size() > 0
+	return false
 
 
 ## Ground marks laid over the whole realm by several laws at once share
