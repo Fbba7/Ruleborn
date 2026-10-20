@@ -136,6 +136,7 @@ faces, plays, takes forms and the guard form.
 - Design portrait above ours, with grayscale thumbnails:
   `portraits_a_r7.png`, `portraits_b_r7.png` (the ruleborn),
   `portraits_c.png` (Skyskipper, Sages, visitors, paradox-born).
+- `portraits_d_r9.png`: after skyline packing and the Gardener's brim fix.
 - `featherkin_portrait_r6.png`: Featherkin, design beside ours at portrait size.
 - `lineup_ruleborn.png`: the eighteen to scale. `lineup_others.png`: Sages,
   visitors, paradox-born, anomalies, law creatures, wildlife.
@@ -146,11 +147,11 @@ faces, plays, takes forms and the guard form.
 
 - Softness: the hero renders have sheen, image-based light and ACES; ours are
   crisper and more saturated (Glass Golem reads deep violet, not lilac glass).
-- Accessory detail is coarse at the budget: the Gardener's woven vine hat is a
-  thin ring, the Featherkin cape feathers are flat slabs, small brass parts
-  are simplified.
-- Atlas packing wastes about a third of the texture; charts could be packed
-  tighter for sharper paint.
+- Accessory detail is coarse at the budget: the Featherkin cape feathers are
+  flat slabs, small brass parts are simplified. (The Gardener's woven brim
+  needed a lighter body, 2,100 triangles, to keep its vines.)
+- Atlas packing (skyline) still leaves gaps between charts; a 1,024 atlas for
+  the Character screen would show the paint sharper.
 - File sizes are 330–1,050 KB per kind (32 MB in all); the glTF JSON of the
   thinned animation tracks is a large share.
 - The forms are shader and gear work, not the per-kind pattern and accessory

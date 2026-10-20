@@ -36,7 +36,7 @@ export const KINDS = {
 	// The four launch Sages.
 	archivist: { module: 'archivist-rig.js', family: 'archivist', res: 0.0078, body: 3400, seg: 0.3, height: 1.6, fix: true, school: 'sage', group: 'sage' },
 	tinkerer: { module: 'tinkerer.js', res: 0.011, body: 2800, seg: 0.3, height: 1.2, fix: true, school: 'sage', group: 'sage' },
-	gardener: { module: 'gardener.js', res: 0.011, body: 2800, seg: 0.25, height: 1.55, fix: true, school: 'sage', group: 'sage' },
+	gardener: { module: 'gardener.js', res: 0.011, body: 2100, seg: 0.16, height: 1.55, fix: true, school: 'sage', group: 'sage' },
 	wanderer: { module: 'wanderer.js', res: 0.011, body: 3000, seg: 0.3, height: 1.5, fix: true, school: 'sage', group: 'sage' },
 	// Visitors and paradox-born.
 	cartographer: { module: 'cartographer.js', res: 0.007, body: 2800, seg: 0.3, height: 1.66, school: 'visitor', group: 'visitor' },

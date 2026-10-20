@@ -248,20 +248,28 @@ function pack(un, W, H, pad) {
 	for (let c = 0; c < nc; c++) if (bb[c][3] - bb[c][1] > bb[c][2] - bb[c][0]) { rot[c] = 1; bb[c] = [bb[c][1], bb[c][0], bb[c][3], bb[c][2]]; }
 	for (let v = 0; v < chartOf.length; v++) if (rot[chartOf[v]]) { const t = uv[v * 2]; uv[v * 2] = uv[v * 2 + 1]; uv[v * 2 + 1] = t; }
 	const order = [...Array(nc).keys()].sort((a, b) => (bb[b][3] - bb[b][1]) - (bb[a][3] - bb[a][1]) || a - b);
+	// Skyline packing: each chart (tallest first) goes where the skyline under
+	// it is lowest, so short charts fill the gaps beside tall ones.
 	const tryPack = (s) => {
 		const at = new Array(nc);
-		let x = pad, y = pad, row = 0;
+		const sky = new Int32Array(W).fill(pad);
 		for (const c of order) {
 			const w = Math.ceil((bb[c][2] - bb[c][0]) * s) + pad * 2, h = Math.ceil((bb[c][3] - bb[c][1]) * s) + pad * 2;
-			if (x + w > W) { x = pad; y += row; row = 0; }
-			if (x + w > W || y + h > H) return null;
-			at[c] = [x + pad, y + pad];
-			x += w; row = Math.max(row, h);
+			if (w > W) return null;
+			let bx = -1, by = 1e9;
+			for (let x = 0; x + w <= W; x++) {
+				let y = 0;
+				for (let k = x; k < x + w; k++) if (sky[k] > y) { y = sky[k]; if (y >= by) break; }
+				if (y < by) { by = y; bx = x; }
+			}
+			if (bx < 0 || by + h > H) return null;
+			for (let k = bx; k < bx + w; k++) sky[k] = by + h;
+			at[c] = [bx + pad, by + pad];
 		}
 		return at;
 	};
 	let lo = 1, hi = 20000, best = null, bs = 1;
-	for (let it = 0; it < 30; it++) {
+	for (let it = 0; it < 22; it++) {
 		const mid = (lo + hi) / 2;
 		const at = tryPack(mid);
 		if (at) { best = at; bs = mid; lo = mid; } else hi = mid;
