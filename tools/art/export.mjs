@@ -45,7 +45,17 @@ function moduleFacts(file) {
 		if (st) furFacts.strand = st[1].split(',').map(Number);
 	}
 	const rim = src.match(/rim:0x([0-9A-Fa-f]{6})/);
-	return { rim: rim ? '#' + rim[1].toUpperCase() : '#9FD4FF', glow: num(/vcGlow:([\d.]+)/) || 0, fur: furFacts };
+	// The body material's character (bodyMat): metal, clearcoat, iridescence, glow.
+	const bm = (src.match(/bodyMat:\{([^}]*)\}/) || [])[1] || '';
+	const f = (k) => { const m = bm.match(new RegExp('(?:^|,)' + k + ':([\\d.]+)')); return m ? Number(m[1]) : 0; };
+	const em = bm.match(/emissive:0x([0-9A-Fa-f]{6})/);
+	const surface = { metal: f('metalness'), gloss: Math.max(f('clearcoat'), f('metalness')), iris: f('iridescence'), glass: f('transmission') };
+	if (em) {
+		const lin = (h) => { const c = parseInt(h, 16) / 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+		const k = f('emissiveIntensity') || 1;
+		surface.emit = [0, 2, 4].map((i) => round(lin(em[1].slice(i, i + 2)) * k, 4));
+	}
+	return { rim: rim ? '#' + rim[1].toUpperCase() : '#9FD4FF', glow: num(/vcGlow:([\d.]+)/) || 0, fur: furFacts, surface };
 }
 
 function seedScript(kind) {
@@ -55,6 +65,50 @@ function seedScript(kind) {
 }
 
 const round = (x, n = 3) => Math.round(x * 10 ** n) / 10 ** n;
+
+// Lighter glTF JSON: min/max kept only where glTF requires them (positions and
+// animation times), numbers there rounded. The binary chunk is untouched.
+function slim(glb) {
+	const jsonLen = glb.readUInt32LE(12);
+	const j = JSON.parse(glb.subarray(20, 20 + jsonLen).toString('utf8'));
+	const need = new Set();
+	for (const m of j.meshes || []) for (const p of m.primitives) need.add(p.attributes.POSITION);
+	for (const a of j.animations || []) for (const sm of a.samplers) need.add(sm.input);
+	j.accessors.forEach((a, i) => {
+		if (!need.has(i)) { delete a.min; delete a.max; return; }
+		if (a.min) a.min = a.min.map((x) => round(x, 6));
+		if (a.max) a.max = a.max.map((x) => round(x, 6));
+	});
+	// Animation accessors all read one buffer view (GLTFExporter writes one per accessor).
+	const animAcc = new Set();
+	for (const a of j.animations || []) for (const sm of a.samplers) { animAcc.add(sm.input); animAcc.add(sm.output); }
+	if (animAcc.size) {
+		const whole = j.bufferViews.length;
+		j.bufferViews.push({ buffer: 0, byteOffset: 0, byteLength: j.buffers[0].byteLength });
+		for (const i of animAcc) {
+			const a = j.accessors[i];
+			const v = j.bufferViews[a.bufferView];
+			a.byteOffset = (v.byteOffset || 0) + (a.byteOffset || 0);
+			a.bufferView = whole;
+		}
+		const used = new Set(j.accessors.map((a) => a.bufferView));
+		for (const im of j.images || []) used.add(im.bufferView);
+		const remap = new Map();
+		const views = [];
+		j.bufferViews.forEach((v, i) => { if (used.has(i)) { remap.set(i, views.length); views.push(v); } });
+		j.bufferViews = views;
+		for (const a of j.accessors) a.bufferView = remap.get(a.bufferView);
+		for (const im of j.images || []) im.bufferView = remap.get(im.bufferView);
+	}
+	const bin = glb.subarray(20 + jsonLen);
+	let text = Buffer.from(JSON.stringify(j), 'utf8');
+	const pad = (4 - (text.length % 4)) % 4;
+	text = Buffer.concat([text, Buffer.alloc(pad, 0x20)]);
+	const head = Buffer.alloc(20);
+	head.writeUInt32LE(0x46546c67, 0); head.writeUInt32LE(2, 4); head.writeUInt32LE(20 + text.length + bin.length, 8);
+	head.writeUInt32LE(text.length, 12); head.writeUInt32LE(0x4e4f534a, 16);
+	return Buffer.concat([head, text, bin]);
+}
 
 async function main() {
 	const want = process.argv.slice(2);
@@ -93,7 +147,7 @@ async function main() {
 			const gs = info.game_scale ?? 1;
 			const bodyH = info.body_height_units * gs;
 			const scale = cfg.fix ? cfg.height / info.body_height_units : gs;
-			const glb = Buffer.from(r.glb, 'base64');
+			const glb = slim(Buffer.from(r.glb, 'base64'));
 			const line = `${kind}: ${info.triangles} tris (body ${info.body_triangles} from ${info.source_triangles}, accessories ${info.accessory_triangles}), ${info.bones} bones, ${Object.keys(info.clips).length} clips, ${(glb.length / 1024).toFixed(0)} KB, ${(info.ms / 1000).toFixed(1)} s, height ${round(info.height_units * scale, 2)} m (body ${round(info.body_height_units * scale, 2)}; §21.6 ${cfg.height})`;
 			if (process.env.VERBOSE) console.log(info.acc_by);
 			if (info.triangles > MAX_TRIS && !process.env.FORCE) { console.log(`FAIL ${line}: over the ${MAX_TRIS}-triangle budget`); failed++; continue; }
@@ -106,6 +160,7 @@ async function main() {
 				triangles: info.triangles,
 				body_triangles: info.body_triangles,
 				texels_per_unit: info.texels_per_unit,
+				relief: info.faceted ? 0 : 1,
 				bones: info.bones,
 				scale: round(scale, 5),
 				scale_note: cfg.fix ? `scaled to §21.6's ${cfg.height} m (module GAME_SCALE ${info.game_scale ?? 'none'} gives ${round(bodyH, 2)} m)` : undefined,
@@ -119,6 +174,7 @@ async function main() {
 				sockets: info.sockets,
 				rim: facts.rim,
 				glow: facts.glow,
+				surface: facts.surface,
 				fur: facts.fur,
 				bytes: glb.length,
 			};

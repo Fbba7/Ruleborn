@@ -84,7 +84,8 @@ func _layout() -> void:
 	for toggle: Array in [
 			["high_contrast", "SETTINGS_CONTRAST"], ["reduced_motion", "SETTINGS_MOTION"],
 			["haptics", "SETTINGS_HAPTICS"], ["left_handed", "SETTINGS_LEFT_HANDED"],
-			["slow_rehearsals", "SETTINGS_SLOW_REHEARSALS"], ["banners_stay", "SETTINGS_BANNERS_STAY"]]:
+			["slow_rehearsals", "SETTINGS_SLOW_REHEARSALS"], ["banners_stay", "SETTINGS_BANNERS_STAY"],
+			["camera_buttons", "SETTINGS_CAMERA_BUTTONS"]]:
 		var r := UI.row()
 		var on := Settings.flag(toggle[0])
 		r.add_child(_tag(UI.button(Strings.t(toggle[1] + ("_ON" if on else "_OFF")), flip.bind(toggle[0])), toggle[0]))

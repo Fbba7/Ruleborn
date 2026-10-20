@@ -36,6 +36,9 @@ static var left_handed := false
 static var slow_rehearsals := false
 ## §20.8: banners "stay until dismissed if the player chooses".
 static var banners_stay := false
+## §21.1: "a Settings switch shows rotate and zoom buttons, so no action needs
+## two fingers".
+static var camera_buttons := false
 ## How the phone is asked; a test puts its own answer here.
 static var phone: Callable = func(what: String) -> bool:
 	match what:
@@ -76,6 +79,7 @@ static func read_file() -> void:
 	left_handed = bool(cfg.get_value("access", "left_handed", false))
 	slow_rehearsals = bool(cfg.get_value("access", "slow_rehearsals", false))
 	banners_stay = bool(cfg.get_value("access", "banners_stay", false))
+	camera_buttons = bool(cfg.get_value("access", "camera_buttons", false))
 	apply()
 	if not found:
 		save()
@@ -102,6 +106,8 @@ static func flag(name: String) -> bool:
 			return slow_rehearsals
 		"banners_stay":
 			return banners_stay
+		"camera_buttons":
+			return camera_buttons
 	assert(false, "no setting %s" % name)
 	return false
 
@@ -120,6 +126,8 @@ static func set_flag(name: String, on: bool) -> void:
 			slow_rehearsals = on
 		"banners_stay":
 			banners_stay = on
+		"camera_buttons":
+			camera_buttons = on
 		_:
 			assert(false, "no setting %s" % name)
 
@@ -155,6 +163,7 @@ static func save() -> void:
 	cfg.set_value("access", "left_handed", left_handed)
 	cfg.set_value("access", "slow_rehearsals", slow_rehearsals)
 	cfg.set_value("access", "banners_stay", banners_stay)
+	cfg.set_value("access", "camera_buttons", camera_buttons)
 	if cfg.save(path) != OK:
 		push_error("could not save settings to %s" % path)
 

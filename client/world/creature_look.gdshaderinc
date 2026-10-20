@@ -18,8 +18,19 @@ uniform float wrap : hint_range(0.0, 1.0) = 0.35;
 // ramp lift the paint toward this warm white.
 uniform vec4 sheen : source_color = vec4(1.0, 0.95, 0.84, 1.0);
 uniform float lift : hint_range(0.0, 1.0) = 0.5;
+// The world's sun stands high (58°), which leaves a character's face, a
+// vertical surface, in the lower steps. The steps keep §21.3's values; on a
+// character they start earlier, so faces and fronts read in the light.
+uniform float ramp_bias : hint_range(0.0, 0.5) = 0.22;
 // The design's vcGlow: the body's warm paint glows (embers, lanterns).
 uniform float glow_vc = 0.0;
+// The body material's character, from the design's bodyMat: metal (Echoplate),
+// clearcoat (the highlight band, set as gloss in the shader), iridescence
+// (Prism Mite's rainbow edges) and a body glow (the Golem's inner light).
+uniform float body_metal : hint_range(0.0, 1.0) = 0.0;
+uniform float body_gloss : hint_range(0.0, 1.0) = 0.0;
+uniform float body_iris : hint_range(0.0, 1.0) = 0.0;
+uniform vec3 body_emit = vec3(0.0);
 // Forms.
 uniform float hush : hint_range(0.0, 1.0) = 0.0;
 uniform float spark : hint_range(0.0, 1.0) = 0.0;
@@ -78,13 +89,26 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 		col = mix(c, creature_hush(c, uv, body, stars), hush);
 		stars *= hush;
 	}
+	float fr = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 3.0);
+	vec3 extra = vec3(0.0);
+	if (body) {
+		if (body_metal > 0.0) {
+			// Toon chrome: what faces the sky is bright, what faces the ground dark.
+			float up = reflect(-v, n).y;
+			col *= mix(1.0, mix(0.32, 1.15, smoothstep(-0.2, 0.5, up)), body_metal);
+		}
+		if (body_iris > 0.0) {
+			vec3 bow = 0.5 + 0.5 * cos(6.2831 * (fr * 1.6 + dot(n, v) * 0.6 + vec3(0.0, 0.33, 0.67)));
+			extra += bow * smoothstep(0.05, 0.6, fr) * body_iris * 0.8;
+		}
+		extra += body_emit * (1.0 - hush);
+	}
 	col = mix(col, flash.rgb, flash.a);
 	albedo = creature_saturate(col);
-	float fr = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 3.0);
 	float side = smoothstep(-0.2, 0.6, n.x * 0.8 + n.y * 0.4);
 	vec3 rim = mix(rim_colour.rgb, vec3(0.62, 0.7, 1.0), hush) * fr * side * 0.9 * rim_strength
 		+ albedo * vec3(1.0, 0.55, 0.35) * wrap * fr * 0.6 * rim_strength;
-	emission = albedo * glow + rim + stars;
+	emission = albedo * glow + rim + stars + extra;
 	if (spark > 0.0) {
 		// Spark: lit from within (the Rig page's emissive #6A2208 at 0.35), hotter at the edge.
 		emission += (albedo * 0.45 + spark_colour.rgb * (0.25 + fr * 1.2)) * spark;
@@ -92,7 +116,7 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 }
 
 void light() {
-	float ndl = dot(NORMAL, LIGHT);
+	float ndl = dot(NORMAL, LIGHT) + ramp_bias;
 	float lit = creature_ramp(ndl) * mix(0.62, 1.0, smoothstep(0.3, 0.7, ATTENUATION));
 	vec3 shade = mix(shade_tint.rgb, vec3(1.0), lit);
 	DIFFUSE_LIGHT += LIGHT_COLOR / PI * lit * shade;
