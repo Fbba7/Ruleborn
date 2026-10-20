@@ -68,13 +68,19 @@ func _build() -> void:
 	forms.add_theme_constant_override("separation", UI.px(6))
 	forms.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(forms)
-	var names := HBoxContainer.new()
+	var names := HFlowContainer.new()
+	names.alignment = FlowContainer.ALIGNMENT_CENTER
 	for look: String in LOOKS:
-		var l := UI.label(Strings.t("ROSTER_STATE_GUARDING") if look == "guard" else FormsPresenter.note_name(look),
-			UI.TEXT_POINTS, true)
-		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		l.add_theme_color_override("font_color", StageHeroSkin.LIGHT)
-		names.add_child(l)
+		# Each form's name on a pill edged in its note's colour, as Forms has it.
+		var pill := StageHeroSkin.pill(Strings.t("ROSTER_STATE_GUARDING") if look == "guard"
+			else FormsPresenter.note_name(look))
+		var edge := pill.get_theme_stylebox("panel") as StyleBoxFlat
+		edge.border_color = StageHeroSculpt.NOTE.get(look, Palette.ALARM)
+		edge.set_border_width_all(UI.px(1) + StageHeroSkin.edge_px())
+		var slot := CenterContainer.new()
+		slot.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		slot.add_child(pill)
+		names.add_child(slot)
 	var strip := PanelContainer.new()
 	var flat := StyleBoxFlat.new()
 	flat.bg_color = StageHeroSkin.CARD
