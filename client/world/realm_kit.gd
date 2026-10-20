@@ -160,9 +160,10 @@ func build() -> void:
 		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear, turn)
 	for m: Vector2i in tunnels:
 		_tunnel(m)
-	# The Heart's walls round its citadel, just past the grid.
-	if realm == "heart" and footprints.any(func(fp: Array) -> bool: return fp[0] == "keeper_s_spire"):
-		KitCitadel.walls(hero, prop, Vector2(size).length() / 2.0 + 0.5, palette)
+	# The realm's signature round its home (the Heart's walls, Skyfield's
+	# windmills, …), just past the grid, where the Spire stands.
+	if footprints.any(func(fp: Array) -> bool: return fp[0] == "keeper_s_spire"):
+		KitSignature.build(hero, prop, realm, Vector2(size).length() / 2.0 + 0.5, palette)
 
 
 ## Every building: [kind, x, y, side, level], from `buildings` where a
