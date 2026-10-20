@@ -10,7 +10,7 @@ extends RefCounted
 ## piece stands on its tile's centre, one tile wide at most.
 
 const GOLD := Color("#E9B65C")
-const BRASS := Color("#D9A441")
+const BRASS := Color("#EBC25A")
 const IRON := Color("#3A3440")
 
 
@@ -43,7 +43,7 @@ static func _vault_into(g: Geo, open: bool) -> void:
 	for x: float in [-0.36, 0.36]:
 		for z: float in [-0.31, 0.31]:
 			g.rbox(Geo.place(Vector3(x, 0.25, z)), Vector3(0.1, 0.42, 0.1), stone2, 0.02)
-	g.box(Geo.place(Vector3(0, 0.47, 0)), Vector3(0.76, 0.04, 0.66), GOLD)
+	g.rbox(Geo.place(Vector3(0, 0.47, 0)), Vector3(0.76, 0.04, 0.66), Color("#B9AE9C"), 0.015)
 	# Star rivets round the drum.
 	for k in 10:
 		var a := TAU * k / 10.0
@@ -93,8 +93,6 @@ static func pylon(school := "matter") -> ArrayMesh:
 				Color(colour, 0.4))
 	g.moving(Geo.Anim.SPIN_Y, Vector3(0, 1.66, 0))
 	_shape(g, school, Vector3(0, 1.66, 0), 0.13, Color(colour.lightened(0.15), 0.35))
-	g.torus(Transform3D(Basis(Vector3.RIGHT, 0.4), Vector3(0, 1.66, 0)), 0.22, 0.012, Color(colour.lightened(0.3), 0.3),
-		20, 3)
 	g.moving(Geo.Anim.NONE, Vector3.ZERO)
 	return g.mesh()
 
