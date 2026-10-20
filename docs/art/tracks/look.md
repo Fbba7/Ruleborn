@@ -137,3 +137,9 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 - Final stills on the integrated build (third integration plus this track): `final2-integrated-sheet.png` (every realm with T3's buildings at 12, 19 and 23, grayscale thumbnails beneath), `final2-world.png` (the heist camera on world_shot), `r16-third-integration.png`, `r15-noon-values.png`, `r13-land-vs-design.png`.
 - Still worse than the design: Lantern Vale stays brighter than its land still (kept so it reads on a phone); the grid's tile seams are T3's and still show the grid faintly; wind streaks and fireflies are small at the home zoom; the cloud sea under the Heart is a strong pink band at the foot of a tall frame.
 - Next: tune the cloud sea's strength per realm; give Emberreach's meadow a few glowing lava runnels like its land still; check every screen T5 draws (builder, planner, replay) in both cameras.
+
+## Stopped here (second stop, at the owner's request, 2026-10-20 19:22 UTC)
+
+- **Done:** everything above through Lantern Vale's darker twilight (`0c8d449`). The last full check_all passed on `60f0383` (client 323/323); `8566d4a` and `0c8d449` change only palette values and islet dressing and were rendered and linted but not run through check_all (skipped: it takes about 25 minutes).
+- **Still worse than the design:** the grid's tile seams (T3's) still show faintly; wind streaks and fireflies are small at the home zoom; Lantern Vale stays a little brighter than its land still; Verdant and Tidehold read close in hue at dusk.
+- **Next step:** run check_all on the last commit; then tune the cloud sea per realm and check the remaining T5 screens (curation, defences, observatory) in both cameras.
