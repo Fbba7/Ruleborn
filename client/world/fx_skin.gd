@@ -246,6 +246,48 @@ static func _camera_icon(ci: Control, kind: String, by: int) -> void:
 		tip - out * s * 0.4 - along * s * 0.1]), ON_DARK)
 
 
+## A drawn icon before a button's words (`FxIcons.order`): its meta "icon"
+## names it, so a button whose meaning changes (the gait) changes it too.
+static func add_icon(b: Button, icon: String) -> void:
+	b.set_meta("icon", icon)
+	var room := UI.px(26)
+	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+		var box := b.get_theme_stylebox(state) as StyleBoxFlat
+		if box != null:
+			box.content_margin_left += room
+	b.custom_minimum_size.x += room
+	var ink := ink_on(str(b.get_meta("surface", "leather")))
+	var draw := FxDraw.new(func(ci: Control) -> void:
+		var h := ci.size.y
+		FxIcons.order(ci, Vector2(UI.px(6) + room * 0.5, h * 0.5), room * 0.8, str(b.get_meta("icon", "")), ink))
+	draw.set_anchors_preset(Control.PRESET_FULL_RECT)
+	b.add_child(draw)
+
+
+## Draw a button's icon again, after its meta "icon" changed.
+static func redraw(b: Button) -> void:
+	for c in b.get_children():
+		if c is FxDraw:
+			(c as FxDraw).queue_redraw()
+
+
+## A round button that is its icon alone, named in words for a screen
+## reader and on a long press.
+static func icon_button(name: String, call: Callable, icon: String, kind := "leather") -> Button:
+	var b := UI.button("", call, false, Color(), name)
+	style_button(b, kind, 30.0)
+	b.tooltip_text = name
+	b.set_meta("icon", icon)
+	var side := UI.CONTROL_POINTS * UI.PX_PER_POINT * 1.1
+	b.custom_minimum_size = Vector2(side, side)
+	var ink := ink_on(kind)
+	var draw := FxDraw.new(func(ci: Control) -> void:
+		FxIcons.order(ci, ci.size * 0.5, minf(ci.size.x, ci.size.y) * 0.5, str(b.get_meta("icon", "")), ink))
+	draw.set_anchors_preset(Control.PRESET_FULL_RECT)
+	b.add_child(draw)
+	return b
+
+
 ## Space under the lowest controls, so none sits in a bottom corner (§21.1).
 static func corner_clear() -> Control:
 	var c := Control.new()

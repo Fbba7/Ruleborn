@@ -1,14 +1,14 @@
 extends SceneTree
 ## The heist screen at a moment of a rehearsal on WorldTests' island
 ## (tools/render/shoot.sh). SHOT is the file; MOMENT picks the moment:
-## "start" (just landed), "sneak" (the crew spread, a guard looking),
+## "start" (just landed, the first orders given), "sneak" (the crew spread, a guard looking),
 ## "vault" (the crew at the Vault, cracking), "alarm" (a guard alerted, the
-## alarm up). HOUR and ZOOM are optional; BUTTONS shows Settings' turn and
+## alarm up), "pick" (the landing picker, before landing). HOUR and ZOOM are optional; BUTTONS shows Settings' turn and
 ## zoom buttons.
 
 const TO := {"sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]],
-	"alarm": [[5, 6], [3, 10], [4, 11]], "start": []}
-const TICKS := {"start": 20, "sneak": 150, "vault": 300, "alarm": 150}
+	"alarm": [[5, 6], [3, 10], [4, 11]], "start": [[7, 8], [2, 10], [1, 10]]}
+const TICKS := {"start": 30, "sneak": 150, "vault": 300, "alarm": 150}
 
 
 func _initialize() -> void:
@@ -31,6 +31,16 @@ func _go() -> void:
 	var view := screen.view
 	view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)
 	var moment := OS.get_environment("MOMENT") if OS.get_environment("MOMENT") != "" else "sneak"
+	if moment == "pick":
+		# §5.4's landing picker, before the crew lands.
+		screen.set_process(false)
+		screen._refresh()
+		for i in 8:
+			await process_frame
+		await RenderingServer.frame_post_draw
+		frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
+		quit()
+		return
 	screen.controller.land_here()
 	var to: Array = TO.get(moment, [])
 	for i in to.size():

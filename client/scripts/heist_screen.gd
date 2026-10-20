@@ -335,6 +335,8 @@ func _refresh() -> void:
 		picker_realm.text = p.get("realm", "")
 		picker_across.text = p.get("across", "")
 	UI.relabel(gait_button, Strings.term("GAIT", me["gait"]), true)
+	gait_button.set_meta("icon", str(me["gait"]))
+	FxSkin.redraw(gait_button)
 	var crew := controller.world.crew()
 	for i in crew_buttons.size():
 		var b := crew_buttons[i]
@@ -352,8 +354,10 @@ func _refresh() -> void:
 		b.accessibility_name = Strings.t("HEIST_CREW_CHOSEN" if chosen else "HEIST_CREW", role)
 		b.tooltip_text = b.accessibility_name
 	if pause_button != null:
-		UI.relabel(pause_button, Strings.t("HEIST_RESUME" if paused else "HEIST_PAUSE"))
-		pause_button.accessibility_name = pause_button.text
+		pause_button.accessibility_name = Strings.t("HEIST_RESUME" if paused else "HEIST_PAUSE")
+		pause_button.tooltip_text = pause_button.accessibility_name
+		pause_button.set_meta("icon", "play" if paused else "pause")
+		FxSkin.redraw(pause_button)
 	view.describe()
 	view.queue_redraw()
 
@@ -444,14 +448,15 @@ func _build() -> void:
 	small.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	small.alignment = FlowContainer.ALIGNMENT_END
 	if rehearsal:
-		pause_button = _button(Strings.t("HEIST_PAUSE"), toggle_pause, "card")
+		pause_button = FxSkin.icon_button(Strings.t("HEIST_PAUSE"), toggle_pause, "pause", "card")
 		small.add_child(pause_button)
 	gait_button = _button(Strings.term("GAIT", "Walk"), controller.next_gait)
 	# As wide as its widest word, so a change of gait never moves the row.
 	UI.fit_to(gait_button, HeistController.GAITS.map(func(g: String) -> String: return Strings.term("GAIT", g)))
+	FxSkin.add_icon(gait_button, "Walk")
 	small.add_child(gait_button)
-	small.add_child(_button(Strings.t("HEIST_HALT"), controller.halt))
-	small.add_child(_button(Strings.t("HEIST_DROP"), controller.drop_half))
+	small.add_child(FxSkin.icon_button(Strings.t("HEIST_HALT"), controller.halt, "halt"))
+	small.add_child(FxSkin.icon_button(Strings.t("HEIST_DROP"), controller.drop_half, "drop"))
 	actions.add_child(small)
 	column.add_child(actions)
 	var band := UI.row(-1.0, true)
@@ -474,7 +479,8 @@ func _build() -> void:
 	go.add_theme_constant_override("outline_size", UI.px(1.5))
 	go.set_meta("points", UI.TEXT_POINTS + 6.0)
 	UI.fit(go)
-	go.custom_minimum_size = Vector2(maxf(go.custom_minimum_size.x, UI.px(112)), UI.px(64))
+	go.custom_minimum_size.y = UI.px(64)
+	FxSkin.add_icon(go, "skiff")
 	go.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	band.add_child(go)
 	actions_band = band

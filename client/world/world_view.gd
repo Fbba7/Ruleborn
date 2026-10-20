@@ -285,7 +285,8 @@ func _build_actors() -> void:
 	_crew.clear()
 	_guards.clear()
 	for m: Dictionary in replay.crew():
-		var root := _actor(ActorBuilder.mesh(str(m["role"])), ActorBuilder.HEIGHT.get(str(m["role"]), 1.0))
+		var role := str(m["role"])
+		var root := _actor(role, ActorBuilder.HEIGHT.get(role, 1.0))
 		var bag := _instance(ActorBuilder.sack(), material(_toon, true))
 		bag.name = "Sack"
 		bag.position = Vector3(0, 0.42, 0.26)
@@ -293,21 +294,40 @@ func _build_actors() -> void:
 		actors.add_child(root)
 		_crew.append(root)
 	for _g: Dictionary in replay.guards():
-		var root := _actor(ActorBuilder.mesh("guard"), ActorBuilder.HEIGHT["guard"])
+		var root := _actor("guard", ActorBuilder.HEIGHT["guard"])
 		actors.add_child(root)
 		_guards.append(root)
 
 
-func _actor(body_mesh: ArrayMesh, height: float) -> Node3D:
+## A figure: its shadow, its feet on the ground, and its rig — the body and
+## the arms that swing from its shoulders. A character model replaces the
+## "Figure" under the rig.
+func _actor(role: String, height: float) -> Node3D:
 	var root := Node3D.new()
 	root.add_child(_blob())
+	var feet := Node3D.new()
+	feet.name = "Feet"
+	feet.scale = Vector3.ONE * height
+	root.add_child(feet)
 	var rig := Node3D.new()
 	rig.name = "Rig"
 	root.add_child(rig)
-	var body := _instance(body_mesh, material(_toon, true))
+	var figure := Node3D.new()
+	figure.name = "Figure"
+	figure.scale = Vector3.ONE * height
+	rig.add_child(figure)
+	var body := _instance(ActorBuilder.mesh(role), material(_toon, true))
 	body.name = "Body"
-	body.scale = Vector3.ONE * height
-	rig.add_child(body)
+	figure.add_child(body)
+	for side: float in [-1.0, 1.0]:
+		var arm := _instance(ActorBuilder.arm(role), material(_toon, true))
+		arm.name = "ArmL" if side < 0.0 else "ArmR"
+		arm.position = Vector3(ActorBuilder.SHOULDER.x * side, ActorBuilder.SHOULDER.y, ActorBuilder.SHOULDER.z)
+		figure.add_child(arm)
+		var foot := _instance(ActorBuilder.foot(role), material(_toon))
+		foot.name = "FootL" if side < 0.0 else "FootR"
+		foot.position = Vector3(ActorBuilder.HIP.x * side, 0, ActorBuilder.HIP.z)
+		feet.add_child(foot)
 	root.set_meta("base", Vector3.ONE)
 	return root
 
@@ -353,6 +373,11 @@ func _frame_camera() -> void:
 		var hi: int = mini(2, lo + 1)
 		cam_size = lerpf(_whole_size(aspect, lo), _whole_size(aspect, hi), z - lo)
 		target = Vector3(0, lerpf(-2.2, 0.3, clampf(z, 0.0, 1.0)), 0)
+		if heist and landing_pick >= 0 and landing_pick < landing_marks.size():
+			# The landing picker leans toward the spot on show, so an edge
+			# spot is never off the side of a tall screen.
+			var spot := world_at(Vector2(landing_marks[landing_pick]["at"]) + Vector2(0.5, 0.5))
+			target = target.lerp(Vector3(spot.x, target.y, spot.z), 0.55)
 	if _swoop > 0.0:
 		# §21.1's swoop between realms: out and back in, in about a second.
 		cam_size *= 1.0 + 0.9 * sin(_swoop * PI)
@@ -367,6 +392,10 @@ func _frame_camera() -> void:
 	# The HUD covers the top and the bottom of a heist: the crew is framed a
 	# little above the middle, where the screen is clear.
 	camera.v_offset = -cam_size * 0.05 if following else 0.0
+	if heist and not landing_marks.is_empty():
+		# While the landing picker's card covers the lower screen, the realm
+		# sits above it.
+		camera.v_offset = -cam_size * 0.24
 	camera.h_offset = 0.0
 	if _shake > 0.0 and not Settings.reduced_motion:
 		# §21.8: "Screen shake never above 4 pixels".
@@ -598,8 +627,8 @@ func _sync_overlay() -> void:
 func _cone_outline(g: Geo, at: Vector3, facing: float, cone: float, far: float) -> void:
 	var half := cone * 0.5
 	var steps := 10
-	var colour := Color("#F3EEFF")
-	var w := 0.05
+	var colour := Color("#F3EEFF", 0.55)
+	var w := 0.04
 	var pts: Array[Vector3] = [at]
 	for k in steps + 1:
 		var a := facing - half + cone * k / steps
@@ -671,11 +700,17 @@ func _bounce(node: Node3D, key: String, t: float) -> void:
 	var rig := node.get_node_or_null("Rig") as Node3D
 	if rig == null:
 		return
+	var feet := node.get_node_or_null("Feet") as Node3D
 	if node.get_meta("down", false):
 		rig.rotation = Vector3(-PI / 2.0, 0, 0)
 		rig.position = Vector3(0, 0.22, 0)
 		rig.scale = Vector3.ONE
+		if feet != null:
+			feet.visible = false
+		_limbs(rig, null, 0.0, 0.0, 0.0)
 		return
+	if feet != null:
+		feet.visible = true
 	var moving := _from.has(key) and _to.has(key) and (_from[key] as Vector3).distance_to(_to[key]) > 0.001
 	var gait := str(node.get_meta("gait", "Walk"))
 	var move := laws.movement(moving, gait, t)
@@ -688,10 +723,36 @@ func _bounce(node: Node3D, key: String, t: float) -> void:
 		rig.scale = Vector3(1.0 + 0.05 * (1.0 - step), (0.94 + 0.08 * step) * squat, 1.0 + 0.05 * (1.0 - step))
 		rig.rotation = Vector3(-0.12 if gait == "Run" else (-0.05 if gait == "Crouch" else 0.0), 0,
 			sin(t * TAU * rate * 0.5) * 0.06 + move["lean"])
+		var swing := 1.0 if gait == "Run" else (0.35 if gait == "Crouch" else 0.7)
+		_limbs(rig, feet, sin(t * TAU * rate * 0.5) * swing, 0.08 * swing, move["float"])
 	else:
 		rig.position = Vector3(0, move["float"], 0)
 		rig.scale = Vector3(1.0, 1.0 + 0.02 * sin(t * TAU * 0.4), 1.0)
 		rig.rotation = Vector3(0, 0, move["lean"] * 0.4)
+		_limbs(rig, feet, sin(t * TAU * 0.4) * 0.08, 0.0, move["float"])
+
+
+## Arms swing against the steps and feet step out in turn: `phase` is the
+## stride's swing (-1 to 1), `stride` how far a foot steps, `lift` how far
+## the figure floats (feet rise with it).
+func _limbs(rig: Node3D, feet: Node3D, phase: float, stride: float, lift: float) -> void:
+	var figure := rig.get_node_or_null("Figure") as Node3D
+	if figure != null:
+		var l := figure.get_node_or_null("ArmL") as Node3D
+		var r := figure.get_node_or_null("ArmR") as Node3D
+		if l != null and r != null:
+			l.rotation = Vector3(phase * 0.9, 0, -0.15)
+			r.rotation = Vector3(-phase * 0.9, 0, 0.15)
+	if feet == null:
+		return
+	feet.position.y = lift
+	var fl := feet.get_node_or_null("FootL") as Node3D
+	var fr := feet.get_node_or_null("FootR") as Node3D
+	if fl != null and fr != null:
+		fl.position.z = ActorBuilder.HIP.z - phase * stride / maxf(0.01, feet.scale.z)
+		fr.position.z = ActorBuilder.HIP.z + phase * stride / maxf(0.01, feet.scale.z)
+		fl.position.y = maxf(0.0, phase) * stride * 0.6
+		fr.position.y = maxf(0.0, -phase) * stride * 0.6
 
 
 ## The rings on the ground: each crew member's in its role's colour, as the
@@ -715,7 +776,67 @@ func _sync_rings(t: float) -> void:
 			continue
 		var c: Color = Palette.GUARD_STATE.get(str(node.get_meta("state", "Unaware")), Palette.PAPER)
 		g.ring(Geo.place(node.position + Vector3(0, 0.05, 0)), 0.42, 0.5, c, 24)
+	_route(g, t)
 	_rings.mesh = g.mesh()
+
+
+## The chosen crew member's last order, drawn as the designs' route preview:
+## ink dots on the ground from where it stands to where it was sent, white
+## where they cross the shown guard's red sight, and a ring at the end. It draws the
+## order the player gave, not a path the client works out (§12.18).
+func _route(g: Geo, t: float) -> void:
+	if not heist or chosen < 0 or chosen >= _crew.size() or not _crew[chosen].visible:
+		return
+	var goal := _order_goal(chosen)
+	if goal.x < 0.0:
+		return
+	var from := _crew[chosen].position
+	var to := world_at(goal)
+	var flat := Vector2(to.x - from.x, to.z - from.z)
+	if flat.length() < 0.6:
+		return
+	var seen := {}
+	var shown := shown_guard()
+	if shown >= 0:
+		for tile in replay.seen(shown):
+			seen[tile] = true
+	var steps := int(flat.length() / 0.36)
+	var drift := 0.0 if Settings.reduced_motion else fmod(t * 1.2, 1.0)
+	for k in range(1, steps):
+		var u := (k + drift) / float(steps)
+		var p := from.lerp(to, u)
+		var tile := Vector2i(floori(p.x + _size.x / 2.0), floori(p.z + _size.y / 2.0))
+		var lit := seen.has(tile.y * _size.x + tile.x)
+		g.ring(Geo.place(Vector3(p.x, world_at(Vector2(tile) + Vector2(0.5, 0.5)).y + 0.06, p.z)), 0.0, 0.09,
+			Palette.PAPER if lit else Color(Palette.INK, 0.8), 8)
+	var pulse := 0.0 if Settings.reduced_motion else 0.05 * sin(t * TAU)
+	g.ring(Geo.place(to + Vector3(0, 0.06, 0)), 0.24 + pulse, 0.33 + pulse, Palette.INK, 20)
+	g.ring(Geo.place(to + Vector3(0, 0.061, 0)), 0.0, 0.1, Palette.MOTION, 10)
+
+
+## Where crew member `i` was last sent, in tiles, or (-1, -1) when its last
+## order sends it nowhere (a halt, a gait, nothing yet).
+func _order_goal(i: int) -> Vector2:
+	var orders := replay.commands()
+	for k in range(orders.size() - 1, -1, -1):
+		var c: Dictionary = orders[k]
+		if int(c["actor"]) != i:
+			continue
+		match int(c["kind"]):
+			HeistController.Kind.MOVE_TO, HeistController.Kind.BREAK, HeistController.Kind.DISARM:
+				return Vector2(c["x"], c["y"]) / 256.0
+			HeistController.Kind.CRACK, HeistController.Kind.LOAD:
+				var v := replay.vault()
+				return (v["at"] as Vector2) if v.has("at") else Vector2(-1, -1)
+			HeistController.Kind.ATTACK, HeistController.Kind.DRAG:
+				var guards := replay.guards()
+				var gi := int(c["x"])
+				return (guards[gi]["at"] as Vector2) if gi >= 0 and gi < guards.size() else Vector2(-1, -1)
+			HeistController.Kind.GAIT:
+				continue
+			_:
+				return Vector2(-1, -1)
+	return Vector2(-1, -1)
 
 
 ## A screen describes the view after every tick: the words for a screen
@@ -788,6 +909,10 @@ func _release(at: Vector2) -> void:
 	else:
 		_last_tap_ms = now
 		_last_tap_at = at
+	if heist and replay != null:
+		var t := tile_at(at)
+		if t.x >= 0:
+			events.ring(world_at(Vector2(t) + Vector2(0.5, 0.5)), Palette.PAPER, 0.9)
 	tapped.emit(at)
 
 

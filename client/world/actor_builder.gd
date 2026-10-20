@@ -34,16 +34,10 @@ static func mesh(role: String) -> ArrayMesh:
 		return _cache[role]
 	var g := Geo.new()
 	var body: Color = Palette.ROLE.get(role, Palette.STONE) if role != "guard" else Color("#A58BFF")
-	var deep := body.darkened(0.35)
-	# Feet, flattened and long; the body, a little taller than round; the
-	# face patch low on the front.
-	for x: float in [-0.121, 0.121]:
-		g.ball(Geo.place(Vector3(x, 0.055, -0.02), 0.0, Vector3(1.0, 0.6, 1.3)), 0.084, deep, 4, 8)
+	# The body, a little taller than round; the face patch low on the front.
+	# Arms and feet are their own pieces (`arm`, `foot`), so they swing.
 	g.ball(Geo.place(Vector3(0, 0.44, 0), 0.0, Vector3(1.0, 1.12, 0.95)), 0.286, body, 8, 14)
 	g.ball(Geo.place(Vector3(0, 0.374, -0.165), 0.0, Vector3(1.0, 1.0, 0.7)), 0.187, CREAM, 5, 10)
-	# Arms, out to the sides.
-	for x: float in [-0.275, 0.275]:
-		g.ball(Geo.place(Vector3(x, 0.374, 0.0), 0.0, Vector3(0.9, 1.1, 0.9)), 0.073, body.darkened(0.08), 4, 8)
 	# Eyes: white, an ink pupil, a catch-light; and the cheeks.
 	for x: float in [-0.114, 0.114]:
 		g.ball(Geo.place(Vector3(x, 0.583, -0.228)), 0.077, Color.WHITE, 4, 8)
@@ -117,6 +111,39 @@ static func _kit(g: Geo, role: String, body: Color) -> void:
 		"Scout":
 			g.box(Transform3D(Basis(Vector3.RIGHT, 0.2), Vector3(0, 0.5, 0.26)), Vector3(0.36, 0.2, 0.1),
 				body.darkened(0.25))
+
+
+## Where an arm hangs from, and a foot stands, on a figure of height 1.
+const SHOULDER := Vector3(0.275, 0.43, 0.0)
+const HIP := Vector3(0.121, 0.0, -0.02)
+
+
+## One arm, hanging from its shoulder at the origin: the diorama's stubby
+## ball, in the body's colour a shade darker.
+static func arm(role: String) -> ArrayMesh:
+	var key := "arm:" + role
+	if _cache.has(key):
+		return _cache[key]
+	var body: Color = Palette.ROLE.get(role, Palette.STONE) if role != "guard" else Color("#A58BFF")
+	var g := Geo.new()
+	g.ball(Geo.place(Vector3(0, -0.06, 0), 0.0, Vector3(0.9, 1.15, 0.9)), 0.075, body.darkened(0.08), 4, 8)
+	var m := g.mesh()
+	_cache[key] = m
+	return m
+
+
+## One foot, standing at the origin: flattened and long, in the body's
+## colour deepened.
+static func foot(role: String) -> ArrayMesh:
+	var key := "foot:" + role
+	if _cache.has(key):
+		return _cache[key]
+	var body: Color = Palette.ROLE.get(role, Palette.STONE) if role != "guard" else Color("#A58BFF")
+	var g := Geo.new()
+	g.ball(Geo.place(Vector3(0, 0.055, 0), 0.0, Vector3(1.0, 0.6, 1.3)), 0.084, body.darkened(0.35), 4, 8)
+	var m := g.mesh()
+	_cache[key] = m
+	return m
 
 
 ## A bag of loot on the back, its size by how full it is (§12.19): the

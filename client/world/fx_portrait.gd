@@ -20,7 +20,7 @@ func _init(member_role := "", pressed_call: Callable = Callable()) -> void:
 	role = member_role
 	letters = Strings.term("ROLE", role).substr(0, 2)
 	text = ""
-	var side := UI.CONTROL_POINTS * UI.PX_PER_POINT * 1.3
+	var side := UI.CONTROL_POINTS * UI.PX_PER_POINT * 1.2
 	custom_minimum_size = Vector2(side, side * 1.12)
 	focus_mode = Control.FOCUS_ALL
 	var clear := StyleBoxFlat.new()

@@ -180,6 +180,57 @@ static func face(ci: CanvasItem, c: Vector2, r: float, body: Color, role: String
 			ci.draw_circle(e + Vector2(r * 0.04, -r * 0.03), r * 0.035, Color.WHITE)
 
 
+## An order's icon on its button: a gait's footprints ("Walk", "Crouch",
+## "Run"), a halt's octagon, a drop's sack and arrow, a pause's bars, the
+## skiff of Get out.
+static func order(ci: CanvasItem, c: Vector2, s: float, icon: String, ink: Color) -> void:
+	var w := maxf(2.0, s * 0.12)
+	match icon:
+		"Walk", "Crouch", "Run":
+			var small := 0.75 if icon == "Crouch" else 1.0
+			for k in 2:
+				var p := c + Vector2((k - 0.5) * s * 0.42, (0.5 - k) * s * 0.36) * small
+				var pts := PackedVector2Array()
+				for i in 12:
+					var a := TAU * i / 12.0
+					pts.append(p + Vector2(cos(a) * s * 0.13, sin(a) * s * 0.22) * small)
+				ci.draw_colored_polygon(pts, ink)
+				ci.draw_circle(p + Vector2(0, -s * 0.3) * small, s * 0.07 * small, ink)
+			if icon == "Run":
+				for k in 3:
+					var y := c.y + (k - 1) * s * 0.22
+					ci.draw_line(Vector2(c.x - s * 0.55, y), Vector2(c.x - s * 0.32, y), ink, w * 0.7, true)
+			elif icon == "Crouch":
+				ci.draw_line(c + Vector2(-s * 0.45, -s * 0.45), c + Vector2(s * 0.45, -s * 0.45), ink, w * 0.7, true)
+		"halt":
+			var pts := PackedVector2Array()
+			for i in 8:
+				var a := TAU * (i + 0.5) / 8.0
+				pts.append(c + Vector2(cos(a), sin(a)) * s * 0.45)
+			ci.draw_colored_polygon(pts, Color("#E2536B"))
+			pts.append(pts[0])
+			ci.draw_polyline(pts, INK, w * 0.6, true)
+			ci.draw_line(c + Vector2(-s * 0.2, 0), c + Vector2(s * 0.2, 0), Color.WHITE, w, true)
+		"drop":
+			sack(ci, c + Vector2(-s * 0.08, s * 0.08), s * 0.8, 0.0)
+			ci.draw_line(c + Vector2(s * 0.38, -s * 0.4), c + Vector2(s * 0.38, s * 0.15), ink, w * 0.8, true)
+			ci.draw_colored_polygon(PackedVector2Array([c + Vector2(s * 0.24, s * 0.08), c + Vector2(s * 0.52, s * 0.08),
+				c + Vector2(s * 0.38, s * 0.32)]), ink)
+		"play":
+			ci.draw_colored_polygon(PackedVector2Array([c + Vector2(-s * 0.22, -s * 0.32), c + Vector2(s * 0.3, 0),
+				c + Vector2(-s * 0.22, s * 0.32)]), ink)
+		"pause":
+			for dx: float in [-0.16, 0.16]:
+				ci.draw_rect(Rect2(c + Vector2(dx * s - s * 0.08, -s * 0.3), Vector2(s * 0.16, s * 0.6)), ink)
+		"skiff":
+			var hull := PackedVector2Array([c + Vector2(-s * 0.5, s * 0.1), c + Vector2(s * 0.5, s * 0.1),
+				c + Vector2(s * 0.32, s * 0.36), c + Vector2(-s * 0.32, s * 0.36)])
+			ci.draw_colored_polygon(hull, ink)
+			ci.draw_line(c + Vector2(0, s * 0.1), c + Vector2(0, -s * 0.5), ink, w * 0.7, true)
+			ci.draw_colored_polygon(PackedVector2Array([c + Vector2(s * 0.05, -s * 0.46), c + Vector2(s * 0.42, s * 0.0),
+				c + Vector2(s * 0.05, s * 0.0)]), ink)
+
+
 ## A bar: a dark track, the fill, an ink rim; `tick` marks a target share.
 static func bar(ci: CanvasItem, r: Rect2, share: float, fill: Color, tick := -1.0) -> void:
 	var rad := int(r.size.y * 0.5)

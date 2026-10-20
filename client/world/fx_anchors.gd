@@ -99,6 +99,7 @@ func _draw() -> void:
 	_draw_frame()
 	_draw_edge(calm)
 	_draw_pylons(replay, m)
+	_draw_pick(m, calm)
 	_draw_vault(replay, m)
 	_draw_guards(replay, m, calm)
 	_draw_crew(replay, m, calm)
@@ -144,6 +145,31 @@ func _draw_edge(calm: bool) -> void:
 		draw_rect(Rect2(0, size.y - w, size.x, w), c)
 		draw_rect(Rect2(0, 0, w, size.y), c)
 		draw_rect(Rect2(size.x - w, 0, w, size.y), c)
+
+
+## §5.4's spot on show in the landing picker: a gold pin over it, bobbing,
+## so the choice reads at a glance among the edge's rings.
+func _draw_pick(m: float, calm: bool) -> void:
+	var marks: Array = view.landing_marks
+	var k: int = view.landing_pick
+	if marks.is_empty() or k < 0 or k >= marks.size():
+		return
+	var spot: Dictionary = marks[k]
+	var at := _on_screen(view.world_at(Vector2(spot["at"]) + Vector2(0.5, 0.5)) + Vector3(0, 0.2, 0))
+	if at == OFF:
+		return
+	var s := clampf(m * 0.7, 36.0, 90.0)
+	var bob := 0.0 if calm else absf(sin(_time * 3.0)) * s * 0.25
+	var tip := at + Vector2(0, -bob)
+	var head := tip + Vector2(0, -s * 0.9)
+	draw_colored_polygon(PackedVector2Array([tip, head + Vector2(-s * 0.36, s * 0.12), head + Vector2(s * 0.36, s * 0.12)]),
+		FxSkin.INK_LINE)
+	draw_circle(head, s * 0.42, FxSkin.INK_LINE)
+	draw_colored_polygon(PackedVector2Array([tip + Vector2(0, -4), head + Vector2(-s * 0.3, s * 0.1),
+		head + Vector2(s * 0.3, s * 0.1)]), FxSkin.GOLD)
+	draw_circle(head, s * 0.35, FxSkin.GOLD)
+	draw_circle(head, s * 0.14, FxSkin.INK_LINE)
+	draw_circle(head + Vector2(-s * 0.12, -s * 0.14), s * 0.08, Color(1, 1, 1, 0.6))
 
 
 func _draw_pylons(replay: RulebornReplay, m: float) -> void:
