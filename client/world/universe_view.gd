@@ -233,7 +233,7 @@ func _build() -> void:
 	_build_links(hero, glows, light, flow)
 	_build_faults(light, glows)
 	_bounds = UniverseLayout.bounds(places, UniverseLayout.radius(UniverseLayout.OUTER_GRID) + 2.0)
-	triangles = body.triangles + hero.triangles + (glows.count + light.count + flow.count)
+	triangles += body.triangles + hero.triangles + (glows.count + light.count + flow.count)
 	_add(body.mesh(), _material(), true)
 	_add(hero.mesh(), _material(true), true)
 	_add(glows.mesh(), _glow_material(0.3, 0.35), false)
@@ -242,6 +242,7 @@ func _build() -> void:
 	var shade := ShaderMaterial.new()
 	shade.shader = _shade
 	_add(shades.mesh(), shade, false)
+	triangles += shades.count
 	_build_citadel()
 	_build_heart_rings()
 	var centre := _bounds.get_center()
@@ -352,7 +353,11 @@ func _build_scatter() -> void:
 		tuft.tri(root - side, tip, root + side, Color.WHITE)
 	var bloom := Geo.new()
 	bloom.tri(Vector3(-0.02, 0, 0), Vector3(0, 0.26, 0), Vector3(0.02, 0, 0), Color("#5A9A48"))
-	bloom.prism(Geo.place(Vector3(0, 0.22, 0)), 4, 0.1, 0.0, 0.1, Color.WHITE)
+	for k in 3:
+		var a0 := TAU * k / 3.0
+		var a1 := TAU * (k + 1) / 3.0
+		bloom.tri(Vector3(0, 0.34, 0), Vector3(cos(a1) * 0.1, 0.24, sin(a1) * 0.1),
+			Vector3(cos(a0) * 0.1, 0.24, sin(a0) * 0.1), Color.WHITE)
 	for layer: Array in [[tufts, tuft.mesh()], [flowers, bloom.mesh()]]:
 		var items: Array = layer[0]
 		if items.is_empty():

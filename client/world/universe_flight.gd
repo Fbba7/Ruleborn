@@ -78,7 +78,7 @@ func _debris_build() -> void:
 		var isl: UniverseIsland = islands[id]
 		if isl.ghost:
 			continue
-		for k in 3:
+		for k in 2:
 			_orbits.append({"centre": isl.at, "r": isl.radius * (1.18 + 0.25 * isl.noise(900 + k)),
 				"y": -2.0 - 5.0 * isl.noise(910 + k), "a": isl.noise(920 + k) * TAU,
 				"speed": (0.05 + 0.06 * isl.noise(930 + k)) * (1.0 if k % 2 else -1.0),

@@ -35,7 +35,7 @@ Branch `claude/3d-universe`. Owns `client/world/universe_*`, `link_*`, `skiff_*`
 - Light: the map uses `universe_toon.gdshader` (the shared toon light, but vertex colours read as sRGB,
   as three.js reads them), which is why it is not washed out like a vertex colour read as linear.
 
-Budget (`universe_zoom.gd` prints it): about 27,000 triangles and 25 draw calls for the full seven-realm
+Budget (`universe_zoom.gd` prints it; first rounds, before the merge): about 27,000 triangles and 25 draw calls for the full seven-realm
 universe, inside §21.3's 40,000 and 150.
 
 ## Stills
@@ -105,6 +105,15 @@ universe, inside §21.3's 40,000 and 150.
   Stills: `round11_merged_home.png`, `round11_merged_zoom0..2.png`, `round11_merged_map.png`,
   `round11_compare_marta.png`.
 
+- Round 12 (the integrator's notes): the triangle count no longer drops the scatter, the far buildings and
+  the rope bridges (it was assigned after they were added); counted honestly the map was 54,600, now
+  39,700 for seven realms: lighter tops and rims, flat path stones, fewer peaks' crystals and debris,
+  three-blade tufts and three-petal flowers, a lighter chute, and the kit's fine parts (windows, frames,
+  flags) only while the close realm's buildings are under 4,500 triangles. The home menu's two "Your
+  universe" tiles are now "Your universe" (the map) and "Buildings and realms" (`HOME_UNIVERSE`, every
+  locale; the screen's own title is unchanged).
+  Still: `round12_budget_home_zoom1_zoom2.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 
@@ -117,7 +126,7 @@ Judged beside `art/design/stills/obs/*.png` at phone size and in grayscale (`rou
   four link kinds are built to their gap and carry their icons; skiffs fly the links with wakes; the sky
   has depth (three star layers, haze and debris that part on a tilt); the camera has the three zooms,
   quarter turns, the swoop and the cloud wipe; pins follow and declutter; and the whole seven-realm
-  universe costs about 32,000 triangles in about 32 draw calls (`universe_zoom.gd` prints both), against
+  universe costs about 39,700 triangles in about 70 draw calls (`universe_zoom.gd` prints both), against
   the design's 676,192 in 1,207.
 - As good: the night colours, the Heart's citadel, beam and rings, the lit rims and halos, the glowing
   crystals and falls beneath, the dust-armed galaxy.
@@ -127,8 +136,6 @@ Judged beside `art/design/stills/obs/*.png` at phone size and in grayscale (`rou
   - No cast shadows: the shared toon light shows none under this renderer (see "For other tracks");
     the map's contact shade stands in.
   - Island tops at the far zoom are sparser than the design's, which packs props densely.
-  - `HOME_MAP` and `HOME_UNIVERSE` are both "Your universe" in English, so two menu tiles read alike
-    (the icons differ); one string should change (integrator, the strings table).
 
 ## Next
 
