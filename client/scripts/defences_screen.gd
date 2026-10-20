@@ -5,11 +5,21 @@ extends Control
 ## haul denied, how long the defence held, who was caught and the share
 ## earned; Watch replay while it is kept; and Trace where the server offers
 ## it. Reading it clears the raid badge.
+##
+## Behind the log stands the defence it records: the player's own island with
+## the defence overlay (`OverlayDefence`), its posts numbered and its wards
+## marked, from the curation draft, the realm view's island or the builder's
+## draft, whichever the phone holds.
 
 var controller: DefencesController
 var body: VBoxContainer
 var header_label: Label
 var status_label: Label
+var view: StageView
+var defence: OverlayDefence
+var _sheet: ScrollContainer
+var _top: Control
+var _drawn_key := ""
 
 
 func _ready() -> void:
@@ -28,15 +38,23 @@ func _on_changed(slice: StringName) -> void:
 
 func _build() -> void:
 	var column := UI.frame(self)
-	column.add_child(UI.title(Strings.t("DEFENCES_TITLE")))
+	view = StageScreen.mount(self, column)
+	view.fill = 0.86
+	defence = OverlayDefence.new(view)
+	column.add_child(OverlaySheet.ribbon(UI.title(Strings.t("DEFENCES_TITLE"))))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(UI.plate(header_label))
+	_top = UI.plate(header_label)
+	column.add_child(_top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))
+	StageScreen.window(column, 1.2)
 	body = UI.scroll(column)
+	_sheet = StageScreen.sheet(body, 0.9)
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
-	column.add_child(UI.narrow(actions))
+	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
+	OverlaySheet.dress(self)
+	_draw_world()
 
 
 func _refresh() -> void:
@@ -49,6 +67,7 @@ func _refresh() -> void:
 		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
 	else:
 		UI.set_status(status_label, "info", "")
+	(status_label.get_parent() as Control).visible = status_label.text != ""
 	header_label.text = d.get("header", "")
 	for child in body.get_children():
 		body.remove_child(child)
@@ -60,6 +79,8 @@ func _refresh() -> void:
 		body.add_child(UI.plate(UI.label(d["empty"], UI.TEXT_POINTS, true)))
 	for r: Dictionary in d["raids"]:
 		body.add_child(_raid(r, busy))
+	OverlaySheet.dress(body)
+	OverlaySheet.unsqueeze(body)
 
 
 func _raid(r: Dictionary, busy: bool) -> Control:
@@ -74,3 +95,37 @@ func _raid(r: Dictionary, busy: bool) -> Control:
 	if not (r["trace"] as Dictionary).is_empty():
 		box.add_child(RosterScreen.offer(r["trace"], busy, controller.trace.bind(r["raid"])))
 	return UI.plate(box)
+
+
+## The island the phone holds for the player's own defence: the curation
+## draft, else the realm view's island, else the builder's draft.
+static func own_island() -> PackedByteArray:
+	var store := App.services.store
+	for bytes: Variant in [store.get_slice(CurationState.CURATION).get("draft", PackedByteArray()),
+			store.get_slice(RealmState.REALM).get("island", PackedByteArray()), Draft.island()]:
+		if bytes is PackedByteArray and not (bytes as PackedByteArray).is_empty():
+			return bytes
+	return PackedByteArray()
+
+
+## The player's defence in 3D, with its overlay.
+func _draw_world() -> void:
+	var bytes := own_island()
+	var key := str(hash(bytes))
+	if key == _drawn_key:
+		return
+	_drawn_key = key
+	var island := RulebornIsland.new()
+	if bytes.is_empty() or not island.read(bytes):
+		island.reset(3)
+	var replay := StageRealm.replay_of(island.bytes())
+	if replay == null:
+		return
+	view.show_replay(replay)
+	defence.draw(island, replay, CurationState.NO_POST, {})
+
+
+func _process(_delta: float) -> void:
+	if _sheet != null and view != null:
+		view.cover_bottom = StageScreen.covered_below(view, _sheet)
+		view.cover_top = StageScreen.covered_above(view, _top)

@@ -22,6 +22,9 @@ var cover_top := 0.0
 var fill := 1.0
 ## How far above the grid's centre the camera looks, in metres on screen.
 var look_up := 0.0
+## Whether a sideways swipe turns the camera; a screen that paints with a
+## drag turns it with its own control instead.
+var swipe_turns := true
 ## Layers a screen adds over the realm: tiles, ghosts, its own pieces.
 var layers: Node3D
 
@@ -52,7 +55,7 @@ func _on_input(event: InputEvent) -> void:
 			var moved := e.position - _press
 			if moved.length() <= TAP_SLOP:
 				tapped.emit(tile_at(e.position), e.position)
-			elif absf(moved.x) > absf(moved.y) * 1.5:
+			elif swipe_turns and absf(moved.x) > absf(moved.y) * 1.5:
 				turn(-1 if moved.x > 0 else 1)
 
 
