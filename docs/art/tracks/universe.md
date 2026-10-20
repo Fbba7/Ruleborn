@@ -219,3 +219,21 @@ Stopped at the integrator's request (2026-10-20).
 - In progress: nothing; the second integration had not landed, so it is not merged.
 - Next: merge the second integration and reconcile its `universe_island.gd` `_building()` with this
   branch's near/far buildings (keep one); then use T2's island for the realm seen close.
+
+## Stopped here (second stop, 19:22 UTC)
+
+- Done since the resume: merged the third integration (one building path: T3's kit up close,
+  `BuildingKit.build_map` from afar); each island and link its own node, so a zoomed-in view draws only
+  what is on screen; an outer realm seen close is T2's own island toned to the map's night per realm; the
+  budget held to the triangles in view at every zoom of every realm (whole universe about 33,500; realm
+  zooms up to about 39,100; close-ups 19,800 to 38,700); detailed buildings and close islands built only
+  when needed (universe build 454 ms to 172 ms on a desktop CPU); paths as the design's network; level-up
+  markers in a close-up; realm headings with icons that swoop the map; blossom petals on the Heart; the
+  winds' dome over the Heart. 315 offline client tests pass; the last full `check_all` passed on
+  `b841025` (later commits are visual and test-only; `check_all` was not rerun at the stop).
+- Still worse than the design: no cast shadows under this renderer (soft painted shade stands in); far
+  islands sparser than the design's dense props; the Heart's close-up keeps the map's rock rather than
+  T2's meadow (no room in the budget); one character at most in a close-up; the Heart's realm zoom sits
+  near the 40,000 ceiling.
+- Next: run `check_all` on the last commit; a lighter T2 scatter for the close-up would make room for the
+  Heart's T2 meadow and a second character.
