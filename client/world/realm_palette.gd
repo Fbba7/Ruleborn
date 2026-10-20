@@ -64,7 +64,7 @@ const SKIES := {
 }
 ## The hour's own light: the sun's tint and strength, and the ambient's tint.
 const HOUR_LIGHT := {
-	"day": ["#FFFFFF", 1.0, "#FFFFFF"], "dusk": ["#FFB98A", 0.86, "#B49AE8"], "night": ["#A2AEFF", 0.5, "#7E76C4"],
+	"day": ["#FFFFFF", 1.0, "#FFFFFF"], "dusk": ["#FFD2A8", 0.92, "#C4B0EE"], "night": ["#A2AEFF", 0.5, "#7E76C4"],
 }
 
 

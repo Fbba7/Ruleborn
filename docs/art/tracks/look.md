@@ -30,7 +30,7 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 
 ## Traps found
 
-- **The sky.** Godot's sky shader under an orthographic camera sees one direction, so the whole sky was one colour. The environment's canvas background fixes that, but in the Compatibility renderer the background is lost as soon as a material with `cull_front` (the ink outline's inverted hull) is drawn. The sky is now a quad over the whole screen at the far plane (`far_z` 0.00001: the renderer's depth is reversed).
+- **The sky.** Godot's sky shader under an orthographic camera sees one direction, so the whole sky was one colour. The environment's canvas background fixes that, but in the Compatibility renderer the background is lost as soon as a material with `cull_front` (the ink outline's inverted hull) is drawn. The sky is now a quad over the whole screen, placed at `sky_depth` (180 m) through the camera's own projection. An earlier fixed clip depth (`far_z` 0.00001) assumed a reversed depth buffer; the Compatibility renderer's is not, and under T5's perspective heist camera the sky covered the island (found and fixed in the second integration; never use a fixed clip depth here).
 - **MultiMesh instances**: the instance's transform is in `MODELVIEW_MATRIX` (and `MODEL_MATRIX`), so a camera-facing puff is rebuilt round `MODELVIEW_MATRIX * (0, 0, 0, 1)` (`look_mist.gdshader`); its size comes in the custom data.
 - **`QuadMesh`** has no `surface_get_array_index_len`, which the budget test calls on every mesh; the look's quads are `ArrayMesh`es.
 - A `Color` times a number scales its alpha too, and alpha under 1 means "glow" in the toon kit: darken with `IslandBuilder._dim`.
@@ -45,6 +45,15 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 - Night: a soft crescent moon in the sky at night and over Lantern Vale; the fog is lighter so more of the rock shows under the island.
 - Known on the merged base, not from this track: `StageHeroTests._stage` raises a script error (`material_override` on a Nil) in a headless run.
 - Stills: `merged-world.png`, `merged-realms-sheet.png`.
+
+## Rounds 9–11 (after the merge)
+
+- Night: fireflies and warm pools of light off the grid, shown by the hour; moonlit blue shade from above so the meadow keeps its hue.
+- Under the island: the cone is 13 deep (the diorama stretches it 1.45× when looking down on a whole island) and darker than the sky; the fog sits lower; roots and curtains are thicker.
+- Dusk: a softer, golden sun, so dusk islands glow rather than go olive.
+- §21.4's particles: Verdant's butterflies (the bird shader in their own colours, fluttering), Skyfield's wind streaks (`look_streak.gdshader`), Crystalline's crystals twinkle.
+- Sky depth: placed through the camera's projection (see the traps); `look_realms.gd` takes `FOV` to check a perspective camera (`r11-perspective.png`, FOV 22°).
+- Stills: `r9-realms-sheet.png`, `r9-night-close.png`, `r10-underside.png`, `r11-realms-sheet.png`, `r11-perspective.png`.
 
 ## Hooks outside the track
 

@@ -3,8 +3,9 @@
 // the diorama's CSS sky, realm-diorama.js:1057–1059): a gradient down the
 // screen, a soft glow of the low colour behind the island, and stars when
 // the sky is dark. The world view sets the colours by the realm and the
-// player's local time. Drawn as a quad over the whole screen at the far
-// plane, behind everything, as the diorama draws its sky behind its canvas,
+// player's local time. Drawn as a quad over the whole screen at a depth
+// `sky_depth` metres out, projected by the camera's own projection so it
+// lies behind everything under the orthographic or a perspective camera, as the diorama draws its sky behind its canvas,
 // so the orthographic camera sees the whole gradient. (The environment's
 // sky would show the orthographic camera one colour, and its canvas
 // background is lost in the Compatibility renderer once an ink outline,
@@ -20,16 +21,17 @@ uniform vec4 glow : source_color = vec4(1.0, 1.0, 1.0, 0.0);
 uniform float stars = 0.0;
 // A soft moon high on the left, 0 for none.
 uniform float moon = 0.0;
-// The quad's depth in clip space: just short of the far plane, which the
-// renderer's reversed depth puts at 0.
-uniform float far_z = 0.00001;
+// How far behind the camera's eye the sky is drawn, in metres: behind every
+// island, inside the camera's far plane, under any projection.
+uniform float sky_depth = 180.0;
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
 }
 
 void vertex() {
-	POSITION = vec4(VERTEX.xy * 2.0, far_z, 1.0);
+	vec4 far_point = PROJECTION_MATRIX * vec4(0.0, 0.0, -sky_depth, 1.0);
+	POSITION = vec4(VERTEX.xy * 2.0 * far_point.w, far_point.z, far_point.w);
 }
 
 void fragment() {

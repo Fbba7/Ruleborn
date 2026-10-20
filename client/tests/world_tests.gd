@@ -112,7 +112,7 @@ func _materials(view: WorldView) -> void:
 		load("res://world/water.gdshader"), load("res://world/look_ground.gdshader"),
 		load("res://world/look_fall.gdshader"), load("res://world/look_mist.gdshader"),
 		load("res://world/look_cloud.gdshader"), load("res://world/look_glow.gdshader"),
-		load("res://world/look_bird.gdshader"), sky_shader,
+		load("res://world/look_bird.gdshader"), load("res://world/look_streak.gdshader"), sky_shader,
 		load("res://world/kit_toon.gdshader"), load("res://world/kit_clear.gdshader"),
 		load("res://world/kit_ground.gdshader")]
 	var inks := [load("res://world/outline.gdshader"), load("res://world/kit_outline.gdshader")]
