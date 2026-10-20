@@ -25,8 +25,12 @@ var look_up := 0.0
 var taps_zoom := true
 ## Layers a screen adds over the realm: tiles, ghosts, its own pieces.
 var layers: Node3D
+## The woven laws' world signatures (T8's `LawFx`, §21.7), when shown.
+var law_fx: LawFx
 
 var _breath := 0.0
+## The laws' clock, for signatures with no heist behind them.
+var _law_seconds := 0.0
 
 
 func _init() -> void:
@@ -42,6 +46,42 @@ func _process(delta: float) -> void:
 	super._process(delta)
 	_breath += delta
 	fit()
+	if law_fx != null and law_fx.source == null:
+		_law_seconds += delta
+		law_fx.sync(_law_seconds * LawFx.TPS)
+
+
+## §21.7: every law woven in `r`'s realm, its world signature always on, so a
+## player reads the island without a menu (T8's `LawFx.attach`).
+func show_laws(r: RulebornReplay) -> void:
+	_drop_laws()
+	if r != null:
+		law_fx = LawFx.attach(self, r)
+
+
+## The signatures of `laws` over this realm with nothing placed: what a
+## scout knows (§12.4). Their crowns and the threads between pylons stand on
+## tiles, so they are left out; the realm still wears each law's look.
+func show_bare_laws(laws: Array) -> void:
+	_drop_laws()
+	if laws.is_empty() or _size.x == 0:
+		return
+	law_fx = LawFx.new()
+	law_fx.view = self
+	law_fx.camera = camera
+	law_fx.sun = sun
+	law_fx.environment = environment
+	world.add_child(law_fx)
+	law_fx.build(LawFxSite.bare(_size, laws))
+	for hidden: Node3D in [law_fx.crowns, law_fx.links]:
+		if hidden != null:
+			hidden.visible = false
+
+
+func _drop_laws() -> void:
+	if law_fx != null:
+		law_fx.queue_free()
+	law_fx = null
 
 
 ## The camera framed for the screen: `WorldView` frames it for a zoom level

@@ -91,6 +91,7 @@ func _draw_world(card: Dictionary) -> void:
 		return
 	view.realm_type = StageRealm.realm_type(str(realm.get("type", "Heart")))
 	view.show_replay(replay)
+	view.show_bare_laws(realm.get("laws", []))
 	view.show_vault(false)
 	scout.build(realm)
 

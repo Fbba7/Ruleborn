@@ -21,6 +21,7 @@ var defence: OverlayDefence
 var _sheet: ScrollContainer
 var _top: Control
 var _drawn_key := ""
+var _laws_key := 0
 
 
 func _ready() -> void:
@@ -195,6 +196,11 @@ func _draw_world() -> void:
 		return
 	view.realm_type = StageRealm.realm_type(str((slice.get("view", {}) as Dictionary).get("type", "Heart")))
 	view.show_replay(replay)
+	# The laws' signatures change only with the draft, not with the pick.
+	var woven := hash(island.bytes())
+	if woven != _laws_key:
+		_laws_key = woven
+		view.show_laws(replay)
 	defence.draw(island, replay, picked, moves(island, picked))
 
 

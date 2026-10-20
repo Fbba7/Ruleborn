@@ -122,6 +122,7 @@ func _draw_world() -> void:
 	if replay == null:
 		return
 	view.show_replay(replay)
+	view.show_laws(replay)
 	defence.draw(island, replay, CurationState.NO_POST, {})
 
 

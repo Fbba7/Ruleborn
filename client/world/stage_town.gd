@@ -50,8 +50,8 @@ func _init(on: StageView) -> void:
 
 ## Draws `buildings` ({kind, at, side, level}, as `StageRealm.buildings`
 ## gives them) and, for each `producers` entry {kind, workers}, a figure per
-## worker by its building, in `roles` order (a worker's role, by id).
-func build(buildings: Array[Dictionary], colours: Dictionary, producers: Array, roles: Dictionary) -> void:
+## worker by its building; `who` gives each worker's {kind, role} by id.
+func build(buildings: Array[Dictionary], colours: Dictionary, producers: Array, who: Dictionary) -> void:
 	for w: Node3D in _workers:
 		w.queue_free()
 	_workers.clear()
@@ -80,7 +80,7 @@ func build(buildings: Array[Dictionary], colours: Dictionary, producers: Array, 
 			continue
 		var ids: Array = p.get("workers", [])
 		for k in ids.size():
-			_worker(home, k, ids.size(), str(roles.get(int(ids[k]), "")))
+			_worker(home, k, ids.size(), who.get(int(ids[k]), {}))
 
 
 func _find(kind: String) -> Dictionary:
@@ -100,18 +100,29 @@ func at_tile(t: Vector2i) -> Dictionary:
 	return {}
 
 
-## Worker `k` of `n` before the building's door, facing it.
-func _worker(home: Dictionary, k: int, n: int, role: String) -> void:
+## Worker `k` of `n` before the building's door, turned toward the camera:
+## its own kind's model (§21.6) playing the design's `work` clip, or the
+## stand-in figure of its role where the model is not exported.
+func _worker(home: Dictionary, k: int, n: int, who: Dictionary) -> void:
 	var side: int = home["side"]
 	var mid: Vector3 = home["mid"]
 	var along := (k - (n - 1) / 2.0) * 0.55
 	var root := Node3D.new()
 	root.position = mid + Vector3(along, 0, side * 0.5 + 0.45)
 	root.rotation.y = PI - 0.45 + 0.3 * k
-	var body := WorldView._instance(ActorBuilder.mesh(role if role != "" else "Carrier"),
-		WorldView.material(_toon, true))
+	var kind := str(who.get("kind", ""))
+	var role := str(who.get("role", ""))
+	var body: Node3D = null
+	if kind != "" and CreatureModel.manifest().has(kind):
+		var model := CreatureModel.make(StringName(kind))
+		if model != null:
+			model.play(&"work")
+			root.set_meta("model", true)
+			body = model
+	if body == null:
+		body = WorldView._instance(ActorBuilder.mesh(role if role != "" else "Carrier"), WorldView.material(_toon, true))
+		body.scale = Vector3.ONE * 0.9
 	body.name = "Body"
-	body.scale = Vector3.ONE * 0.9
 	root.add_child(body)
 	root.set_meta("beat", float(k) * 0.9 + mid.x * 0.37)
 	add_child(root)
@@ -145,6 +156,8 @@ func _process(delta: float) -> void:
 		var mid: Vector3 = _chosen["mid"]
 		ring.position = mid - mid * ring.scale
 	for w: Node3D in _workers:
+		if w.get_meta("model", false):
+			continue
 		var t: float = _clock * 2.4 + float(w.get_meta("beat"))
 		var body := w.get_node("Body") as Node3D
 		# A worker's hop and lean into the work, then a breath.

@@ -119,12 +119,13 @@ func _draw_realm() -> void:
 		return
 	view.realm_type = StageRealm.realm_type(str(realm.get("type", "Heart")))
 	view.show_replay(replay)
+	view.show_laws(replay)
 	var producers: Array = (home.get("producers", []) as Array).filter(func(p: Dictionary) -> bool:
 		return str(p["realm"]) == id)
-	var roles := {}
+	var who := {}
 	for c: Dictionary in home.get("characters", []):
-		roles[int(c["id"])] = str(c.get("role", ""))
-	town.build(buildings, RealmPalette.of(view.realm_type), producers, roles)
+		who[int(c["id"])] = {"kind": str(c.get("kind", "")), "role": str(c.get("role", ""))}
+	town.build(buildings, RealmPalette.of(view.realm_type), producers, who)
 	_pin(replay)
 
 
