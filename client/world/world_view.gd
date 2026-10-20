@@ -41,10 +41,12 @@ const HEIST_FOV := 22.0
 const ZOOM_SPAN := [1.25, 1.0, 0.6]
 ## Ticks a second, for drawing between them.
 const TPS := 30.0
-## §21.1: the heist's follow camera shows "about 12 tiles across"; its close
-## zoom, eight.
-const FOLLOW_TILES := 12.0
-const CLOSE_TILES := 8.0
+## §21.1: the heist's follow camera shows "about 12 tiles across": on a
+## portrait phone, 10.5 tiles across its width (about 12 on its diagonal),
+## so a realm of 10 to 14 tiles is followed rather than shown whole and the
+## creatures read; its close zoom, seven.
+const FOLLOW_TILES := 10.5
+const CLOSE_TILES := 7.0
 ## A character model's scale on the heist's world, for readability.
 const MODEL_SCALE := 1.18
 ## The least height a character model is drawn at in a heist, in metres.
