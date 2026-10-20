@@ -375,11 +375,33 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 		if kind == "ward":
 			_ward(hero, glows, mid, lv)
 		else:
-			BuildingKit.build(hero, kind, mid, 4 if kind in ["vault", "keeper_s_spire"] else 3, lv, palette)
+			_building(hero, kind, mid, lv)
 		places["%s:%d" % [kind, int(b.get("n", 1))]] = mid + Vector3(0, 2.2, 0)
 		# Windows lit, more of them in the realms of night (§21.2: "lanterns
 		# and glows carry the realm").
 		glows.glow(mid + Vector3(0, 0.7, 0.9), 0.7 if lit else 0.45, Color("#FFC36A", 0.7 if lit else 0.4))
+
+
+## A building as the map shows it (§21.3's budget): the Heart's in the realm
+## kit's full look; an outer realm's, far across the universe, as the
+## diorama's lighter map version (realm-diorama.js `makeB`): walls and a
+## roof in its level's colours (§21.5), the kit's details left off.
+func _building(hero: Geo, kind: String, mid: Vector3, lv: int) -> void:
+	var side := 4 if kind in ["vault", "keeper_s_spire"] else 3
+	if key == "heart":
+		var unseen := Geo.new()
+		BuildingKit.build(hero, kind, mid, side, lv, palette, unseen, unseen)
+		return
+	var look := BuildingKit.look(lv, palette)
+	var w := 1.15 + 0.12 * side
+	var h := 1.0 + 0.08 * lv
+	if kind in ["star_well", "observatory", "beacon", "keeper_s_spire"]:
+		hero.prism(Geo.place(mid), 8, w * 0.5, w * 0.45, h * 1.5, look[0])
+		hero.prism(Geo.place(mid + Vector3(0, h * 1.5, 0)), 8, w * 0.6, 0.0, h * 0.8, look[1])
+	else:
+		hero.box(Geo.place(mid + Vector3(0, h / 2.0, 0)), Vector3(w, h, w * 0.8), look[0])
+		hero.prism(Geo.place(mid + Vector3(0, h, 0), PI / 4.0), 4, w * 0.78, 0.0, h * 0.7, look[1])
+	hero.box(Geo.place(mid + Vector3(0, h * 0.3, w * 0.41)), Vector3(w * 0.22, h * 0.6, 0.04), look[2])
 
 
 ## Stepping stones from the plaza to a building's door.

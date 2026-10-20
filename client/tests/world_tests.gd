@@ -114,12 +114,18 @@ func _materials(view: WorldView) -> void:
 		load("res://world/look_cloud.gdshader"), load("res://world/look_glow.gdshader"),
 		load("res://world/look_bird.gdshader"), sky_shader,
 		load("res://world/kit_toon.gdshader"), load("res://world/kit_clear.gdshader"),
-		load("res://world/kit_ground.gdshader")]
-	var inks := [load("res://world/outline.gdshader"), load("res://world/kit_outline.gdshader")]
+		load("res://world/kit_ground.gdshader"), load("res://world/creature.gdshader"),
+		load("res://world/creature_glass.gdshader"), load("res://world/creature_fur.gdshader"),
+		load("res://world/creature_blob.gdshader")]
+	var inks := [load("res://world/outline.gdshader"), load("res://world/kit_outline.gdshader"),
+		load("res://world/creature_outline.gdshader")]
 	var stray := []
 	var outlined := 0
 	for mi: MeshInstance3D in meshes(view):
 		var m := mi.material_override as ShaderMaterial
+		# A character model (T1's CreatureModel) sets its body per surface.
+		if m == null and mi.get_surface_override_material_count() > 0:
+			m = mi.get_surface_override_material(0) as ShaderMaterial
 		if m == null or not (m.shader in kit):
 			stray.append(mi.name)
 		elif m.next_pass is ShaderMaterial:
