@@ -129,7 +129,8 @@ universe, inside §21.3's 40,000 and 150.
   roots, falls and scatter, toned to the map's night through its `tint`); the Heart keeps the map's rock,
   as its citadel and buildings cover its ground. One character in a close-up. Wards are drawn with the
   buildings, so they stay in a close-up. The budget is now held to what is in view (`drawn_triangles`,
-  counted per instance against the camera's frustum): 32,600 for the whole universe and 19,800–37,800
+  counted per instance against the camera's frustum), at every zoom of every realm: 32,600 for the whole
+  universe, at most 38,400 at a realm's zoom (the kit's fine parts only in a close-up) and 19,800–37,800
   for each realm seen close, all under 40,000; `universe_zoom.gd` prints both counts.
   Stills: `round16_home.png`, `round16_zoom0.png`, `round16_zoom1.png`, `round16_zoom2_heart.png`,
   `round16_zoom2_skyfield.png`, `round16_zoom2_crystalline.png`.

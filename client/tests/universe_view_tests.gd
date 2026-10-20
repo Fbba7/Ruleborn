@@ -85,9 +85,11 @@ func _drawn() -> void:
 	view._process(0.01)
 	var drawn: Array[int] = [view.drawn_triangles()]
 	for id: String in ["heart", "outer-1", "outer-2", "outer-3", "outer-4", "outer-5", "outer-6"]:
-		view.focus_realm(id, 2)
-		view._process(0.01)
-		drawn.append(view.drawn_triangles())
+		for level: int in [1, 2]:
+			view.set_zoom(0)
+			view.focus_realm(id, level)
+			view._process(0.01)
+			drawn.append(view.drawn_triangles())
 	view.set_zoom(0)
 	Settings.reduced_motion = reduced
 	var budget: bool = drawn.max() < 40000 and view.draw_calls() < 150
@@ -97,8 +99,8 @@ func _drawn() -> void:
 	var shrunk := view.islands.size() == 3 and view.islands.has("next:0")
 	check.call("the map draws every realm the server names and only those, the next realm to open as mist, a rope "
 			+ "bridge on a node of its own so it sways, all four kinds of link, and is not built again for the same "
-			+ "universe; seven realms stay inside 21.3's 40,000 triangles in view and 150 draw calls, from afar and each "
-			+ "realm seen close (23.2, 5.3, 21.3)",
+			+ "universe; seven realms stay inside 21.3's 40,000 triangles in view and 150 draw calls, from afar and at "
+			+ "each realm's two zooms (23.2, 5.3, 21.3)",
 		realms.size() == 7 and kinds.size() == 4 and bridges >= 1 and same and budget and shrunk,
 		"realms %s kinds %s ropes %d same %s drawn %s calls %d shrunk %s" % [realms, kinds, bridges, same,
 			drawn, view.draw_calls(), view.islands.keys()])

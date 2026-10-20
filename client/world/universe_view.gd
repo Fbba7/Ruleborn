@@ -384,13 +384,14 @@ func _build_lods() -> void:
 		statics.add_child(node)
 		var near := Node3D.new()
 		node.add_child(near)
-		for part: Array in [[isl.near, _material(true)], [isl.near_fine, _material()]]:
+		for part: Array in [[isl.near, _material(true), "Kit"], [isl.near_fine, _material(), "Fine"]]:
 			var mesh: ArrayMesh = (part[0] as Geo).mesh()
 			if mesh != null:
 				var mi := MeshInstance3D.new()
 				mi.mesh = mesh
 				mi.material_override = part[1]
 				mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				mi.name = part[2]
 				near.add_child(mi)
 		var far_mesh := isl.far.mesh()
 		var far := MeshInstance3D.new()
@@ -411,6 +412,11 @@ func _show_lods() -> void:
 		var close := zoom > 0 and id == focus_id
 		(_lods[id][0] as Node3D).visible = close
 		(_lods[id][1] as Node3D).visible = not close
+		# The kit's fine parts (windows, frames, flags) only in a close-up,
+		# where they can be seen.
+		var fine := (_lods[id][0] as Node3D).get_node_or_null("Fine") as Node3D
+		if fine != null:
+			fine.visible = zoom == 2
 	_show_close()
 	# The realm's own characters, in a close-up only.
 	var shown := focus_id if zoom == 2 and islands.has(focus_id) else ""
