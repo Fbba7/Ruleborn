@@ -321,6 +321,7 @@
   "what was played offline is sent by itself when the network is back, and a banner says so (G41, §24.12)": "passed",
   "while online the phone keeps three leases in stock, each on another player's island and no two alike, and a restart keeps them (G41)": "passed",
   "with no network a heist recommends going online first, and plays a stocked lease only if the player chooses to; with none in stock it says to go online (G41, §24.12)": "passed",
+  "with reduced motion a law's flashes swell softly, never past a fifth, and its lines stop flickering (20.8, 21.7)": "passed",
   "with the Wanderer at home the Observatory says so and offers one more target (12.3, 11.7)": "passed",
   "with the island it was played on, the report names each place a guard was alerted to the crew by its nearest building or feature, a guard post being none (13.2)": "passed",
   "work assigned with no network waits in the outbox, shown as confirming, and is confirmed on reconnection with the home after it (24)": "passed",
