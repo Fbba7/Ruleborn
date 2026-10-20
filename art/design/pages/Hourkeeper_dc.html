@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#140C30}*{box-sizing:border-box}a{color:#F9DE9C}a:hover{color:#FFF3CC}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height:100vh;padding:28px 32px 40px;background:radial-gradient(ellipse 80% 50% at 30% 0%,#2E1F5E 0%,#140C30 60%,#0A0620 100%);color:#F3EEFF;font-family:Manrope,system-ui,sans-serif">
+  <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:22px">
+
+    <div style="display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap">
+      <div style="width:64px;height:64px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#FFF3CC,#3CC6D8 55%,#B8741E);box-shadow:inset 0 0 0 2.5px #1A0C14,0 4px 0 #4A2A10">
+        <svg width="34" height="34" viewBox="0 0 24 24"><path d="M6 3H18M6 21H18M7 3C7 8 12 10 12 12C12 14 7 16 7 21M17 3C17 8 12 10 12 12C12 14 17 16 17 21" fill="none" stroke="#1A0C14" stroke-width="3.4" stroke-linecap="round"></path><path d="M6 3H18M6 21H18M7 3C7 8 12 10 12 12C12 14 7 16 7 21M17 3C17 8 12 10 12 12C12 14 17 16 17 21" fill="none" stroke="#FFF3CC" stroke-width="1.6" stroke-linecap="round"></path><path d="M9 19.5C9.5 17 12 15.5 12 15.5C12 15.5 14.5 17 15 19.5Z" fill="#1F8499"></path></svg>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+        <span style="font:800 11px Manrope,system-ui;letter-spacing:.18em;color:#E9B65C;white-space:nowrap">RULEBORN 08 OF 18 · CHARACTER BIBLE</span>
+        <span style="font-family:Marcellus,serif;font-size:46px;line-height:1;color:#FFF3CC">Hourkeeper</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+        <span style="padding:5px 12px;border-radius:14px;background:#3CC6D8;color:#1A0C14;font:800 12px Manrope,system-ui;letter-spacing:.06em;box-shadow:inset 0 0 0 1.5px #1A0C14;white-space:nowrap">TIME</span>
+        <span style="padding:5px 12px;border-radius:14px;background:rgba(20,10,22,.7);color:#F9DE9C;font:800 12px Manrope,system-ui;letter-spacing:.06em;box-shadow:inset 0 0 0 1.5px rgba(233,182,92,.6);white-space:nowrap">MENDER</span>
+        <span style="padding:5px 12px;border-radius:14px;background:rgba(20,10,22,.7);color:#E9D8B8;font:700 12px Manrope,system-ui;box-shadow:inset 0 0 0 1.5px rgba(233,182,92,.3);white-space:nowrap">0.9 m · cyan and brass</span>
+      </div>
+      <a href="Ruleborn Screens v3.dc.html" style="margin-left:auto;margin-bottom:8px;font:700 13px Manrope,system-ui;text-decoration:none;white-space:nowrap">← All screens</a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;align-items:start">
+
+      <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+        <div style="position:relative;height:620px;border-radius:18px;overflow:hidden;box-shadow:inset 0 0 0 2px #1A0C14,0 0 0 2px #B8741E,0 0 0 4px #1A0C14,0 18px 40px rgba(0,0,0,.45)">
+          <iframe src="Hourkeeper Hero.html?embed=1" title="Hourkeeper hero render" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+          <div style="position:absolute;left:14px;top:14px;display:flex;flex-direction:column;gap:6px;pointer-events:none">
+            <span style="align-self:flex-start;padding:3px 9px;border-radius:6px;background:rgba(20,10,22,.8);box-shadow:inset 0 0 0 1px rgba(233,182,92,.5);font:800 10px Manrope,system-ui;letter-spacing:.12em;color:#F9DE9C;white-space:nowrap">HERO RENDER · SCULPTED</span>
+            <span style="align-self:flex-start;padding:3px 9px;border-radius:6px;background:rgba(20,10,22,.8);font:700 11px Manrope,system-ui;color:#E9D8B8;white-space:nowrap">Hourglass belly, facial discs, ear tufts · drag to orbit</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:12px">
+          <div style="display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:14px;background:rgba(20,10,22,.6);box-shadow:inset 0 0 0 1.5px rgba(233,182,92,.3)">
+            <span style="font:800 10px Manrope,system-ui;letter-spacing:.14em;color:#F9DE9C;white-space:nowrap">FORM</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ forms }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.pick }}" style="{{ f.s }}">{{ f.t }}</button></sc-for></div>
+          </div>
+        </div>
+        <div style="position:relative;height:340px;border-radius:18px;overflow:hidden;box-shadow:inset 0 0 0 2px #1A0C14,0 0 0 2px #B8741E,0 0 0 4px #1A0C14,0 18px 40px rgba(0,0,0,.45)">
+          <iframe src="Hourkeeper Rig.html?embed=1&amp;res=.011&amp;view=game&amp;form={{ form }}" title="Hourkeeper in game" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+          <div style="position:absolute;left:14px;top:14px;display:flex;flex-direction:column;gap:6px;pointer-events:none">
+            <span style="align-self:flex-start;padding:3px 9px;border-radius:6px;background:rgba(20,10,22,.8);box-shadow:inset 0 0 0 1px rgba(233,182,92,.5);font:800 10px Manrope,system-ui;letter-spacing:.12em;color:#F9DE9C;white-space:nowrap">IN GAME · REALM CAMERA</span>
+            <span style="align-self:flex-start;padding:3px 9px;border-radius:6px;background:rgba(20,10,22,.8);font:700 11px Manrope,system-ui;color:#E9D8B8;white-space:nowrap">{{ formLabel }} · walking its routine · 1 tile = 1 m</span>
+          </div>
+        </div>
+        <span style="font:600 12px Manrope,system-ui;color:#A89CC8;line-height:1.5">Top: the hero render, sculpted as one clay volume: a round egg of a body with a big head, dished facial discs, wide-set golden eyes, ear tufts, folded wings and feathered legs. Overlapping cyan feather scallops cover it, with a barred cream chest. A brass-framed hourglass of glowing cyan sand is set into its belly. Bottom: the same sculpt at game scale from the realm camera, working its routine: watching its hourglass drain, flipping it and napping. The form buttons tint it. The full animation set and the character sheet are below.</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+        <div style="display:flex;flex-direction:column;gap:0;border-radius:16px;overflow:hidden;background:linear-gradient(180deg,#FFFBF0,#F1E3C4);color:#2A1A10;box-shadow:inset 0 0 0 2px #1A0C14,inset 0 0 0 4px #C98B34,0 5px 0 #4A2A10">
+          <div style="padding:14px 16px 10px;display:flex;align-items:baseline;justify-content:space-between;gap:4px 10px;flex-wrap:wrap"><span style="font:800 10px Manrope,system-ui;letter-spacing:.14em;color:#8A5A1C;white-space:nowrap">CHARACTER CARD · 11.11</span><span style="font:700 11px Manrope,system-ui;color:#6B5040;white-space:nowrap">Mender · Time</span></div>
+          <sc-for list="{{ card }}" as="r" hint-placeholder-count="9">
+            <div style="display:grid;grid-template-columns:104px minmax(0,1fr);gap:12px;padding:8px 16px;border-top:1px solid rgba(107,68,32,.18)"><span style="font:800 10px Manrope,system-ui;letter-spacing:.1em;color:#8A5A1C;text-transform:uppercase;padding-top:2px">{{ r.k }}</span><span style="font:600 13.5px Manrope,system-ui;line-height:1.4;text-wrap:pretty">{{ r.v }}</span></div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:16px;background:linear-gradient(180deg,#FFFBF0,#F1E3C4);color:#2A1A10;box-shadow:inset 0 0 0 2px #1A0C14,inset 0 0 0 4px #C98B34,0 5px 0 #4A2A10">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap"><span style="font:800 10px Manrope,system-ui;letter-spacing:.14em;color:#8A5A1C;white-space:nowrap">MENDER · LEVEL 1 · 11.1</span><span style="font:700 11px Manrope,system-ui;color:#6B5040;white-space:nowrap">Heals allies and keeps the crew standing</span></div>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px"><sc-for list="{{ stats }}" as="s" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:10px;background:rgba(107,68,32,.08);border:1px solid rgba(107,68,32,.18)"><span style="font:900 20px Manrope,system-ui;line-height:1">{{ s.v }}</span><span style="font:800 9.5px Manrope,system-ui;letter-spacing:.1em;color:#8A5A1C">{{ s.k }}</span></div></sc-for></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-family:Marcellus,serif;font-size:30px;color:#FFF3CC;white-space:nowrap">Character sheet</span><span style="font:600 13px Manrope,system-ui;color:#A89CC8">Turnaround, expressions and the 15 animations the design document lists for every Ruleborn (11.4)</span></div>
+      <div style="position:relative;height:380px;border-radius:18px;overflow:hidden;background:radial-gradient(ellipse 70% 80% at 50% 60%,#FFFFFF,#EDE6F2 70%,#DCD2E8);box-shadow:inset 0 0 0 2px #1A0C14,0 0 0 2px #B8741E,0 0 0 4px #1A0C14,0 18px 40px rgba(0,0,0,.45)">
+        <iframe src="Hourkeeper Rig.html?embed=1&amp;res=.011&amp;sheet=turn" title="Turnaround" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+        <span style="position:absolute;left:14px;top:14px;padding:3px 9px;border-radius:6px;background:rgba(20,10,22,.8);box-shadow:inset 0 0 0 1px rgba(233,182,92,.5);font:800 10px Manrope,system-ui;letter-spacing:.12em;color:#F9DE9C;white-space:nowrap">TURNAROUND</span>
+        <div style="position:absolute;left:0;right:0;bottom:12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));pointer-events:none"><sc-for list="{{ turnLabels }}" as="l" hint-placeholder-count="4"><span style="justify-self:center;padding:3px 10px;border-radius:6px;background:rgba(20,10,22,.78);font:800 10px Manrope,system-ui;letter-spacing:.12em;color:#F6E6C8;white-space:nowrap">{{ l }}</span></sc-for></div>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px">
+        <div style="position:relative;height:320px;border-radius:18px;overflow:hidden;background:radial-gradient(ellipse 70% 80% at 50% 60%,#FFFFFF,#EDE6F2 70%,#DCD2E8);box-shadow:inset 0 0 0 2px #1A0C14,0 0 0 2px #B8741E,0 0 0 4px #1A0C14,0 18px 40px rgba(0,0,0,.45)">
+          <iframe src="Hourkeeper Rig.html?embed=1&amp;res=.011&amp;sheet=expr" title="Expressions" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+          <span style="position:absolute;left:14px;top:14px;padding:3px 9px;border-radius:6px;background:rgba(20,10,22,.8);box-shadow:inset 0 0 0 1px rgba(233,182,92,.5);font:800 10px Manrope,system-ui;letter-spacing:.12em;color:#F9DE9C;white-space:nowrap">EXPRESSIONS</span>
+          <div style="position:absolute;left:0;right:0;bottom:12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));pointer-events:none"><sc-for list="{{ exprLabels }}" as="l" hint-placeholder-count="4"><span style="justify-self:center;padding:3px 10px;border-radius:6px;background:rgba(20,10,22,.78);font:800 10px Manrope,system-ui;letter-spacing:.1em;color:#F6E6C8;white-space:nowrap">{{ l }}</span></sc-for></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:16px;background:linear-gradient(180deg,#FFFBF0,#F1E3C4);color:#2A1A10;box-shadow:inset 0 0 0 2px #1A0C14,inset 0 0 0 4px #C98B34,0 5px 0 #4A2A10">
+          <span style="font:800 10px Manrope,system-ui;letter-spacing:.14em;color:#8A5A1C;white-space:nowrap">COLOUR KEY</span>
+          <sc-for list="{{ palette }}" as="c" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:10px"><span style="{{ c.sw }}"></span><div style="display:flex;flex-direction:column;min-width:0"><span style="font:800 13px Manrope,system-ui;white-space:nowrap">{{ c.n }}</span><span style="font:700 11px ui-monospace,Menlo,monospace;color:#6B5040">{{ c.hex }}</span></div><span style="margin-left:auto;font:600 11.5px Manrope,system-ui;color:#6B5040;text-align:right;white-space:nowrap">{{ c.use }}</span></div></sc-for>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px">
+        <div style="position:relative;height:440px;border-radius:18px;overflow:hidden;background:radial-gradient(ellipse 70% 80% at 50% 60%,#FFFFFF,#EDE6F2 70%,#DCD2E8);box-shadow:inset 0 0 0 2px #1A0C14,0 0 0 2px #B8741E,0 0 0 4px #1A0C14,0 18px 40px rgba(0,0,0,.45)">
+          <iframe id="rb-anim" src="Hourkeeper Rig.html?embed=1&amp;res=.011" title="Animation player" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+          <div style="position:absolute;left:14px;top:14px;display:flex;flex-direction:column;gap:6px;pointer-events:none"><span style="align-self:flex-start;padding:3px 9px;border-radius:6px;background:rgba(20,10,22,.8);box-shadow:inset 0 0 0 1px rgba(233,182,92,.5);font:800 10px Manrope,system-ui;letter-spacing:.12em;color:#F9DE9C;white-space:nowrap">ANIMATION · {{ clipUp }}</span><span style="align-self:flex-start;padding:3px 9px;border-radius:6px;background:rgba(20,10,22,.8);font:700 11px Manrope,system-ui;color:#E9D8B8;white-space:nowrap">{{ clipNote }}</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:16px;background:linear-gradient(180deg,#FFFBF0,#F1E3C4);color:#2A1A10;box-shadow:inset 0 0 0 2px #1A0C14,inset 0 0 0 4px #C98B34,0 5px 0 #4A2A10">
+          <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font:800 10px Manrope,system-ui;letter-spacing:.14em;color:#8A5A1C;white-space:nowrap">ANIMATION SET · 15 / 15</span><span style="font:700 11px Manrope,system-ui;color:#6B5040">Tap to play</span></div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px"><sc-for list="{{ clips }}" as="c" hint-placeholder-count="15"><button onClick="{{ c.pick }}" style="{{ c.s }}"><span style="font:800 12.5px Manrope,system-ui;white-space:nowrap">{{ c.t }}</span><span style="font:600 10.5px Manrope,system-ui;line-height:1.3;opacity:.75;text-wrap:pretty">{{ c.w }}</span></button></sc-for></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:relative">
+    <iframe src="Hourkeeper Rig.html?embed=1&amp;res=.011&amp;sheet=forms" title="Form previews" style="position:absolute;left:0;right:0;top:0;width:100%;height:210px;border:0;z-index:2;pointer-events:none"></iframe>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+      <sc-for list="{{ formCards }}" as="f" hint-placeholder-count="3">
+        <div onClick="{{ f.pick }}" style="{{ f.card }}">
+          <div style="position:relative;height:210px;border-radius:12px 12px 0 0;overflow:hidden;background:radial-gradient(ellipse 70% 60% at 50% 55%,#FBF6EC,#E6DDF0)"></div>
+          <div style="display:flex;flex-direction:column;gap:5px;padding:12px 14px 14px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="{{ f.dot }}"></span><span style="font-family:Marcellus,serif;font-size:20px">{{ f.name }}</span><span style="margin-left:auto;font:800 10px Manrope,system-ui;letter-spacing:.1em;color:#8A5A1C;white-space:nowrap">FORM · 11.10</span></div>
+            <span style="font:600 13px Manrope,system-ui;color:#4A3020;line-height:1.4">{{ f.look }}</span>
+            <span style="font:800 12px Manrope,system-ui;color:#2A1A10">Quirk: {{ f.quirk }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr);gap:14px">
+      <div style="display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:16px;background:rgba(20,10,22,.6);box-shadow:inset 0 0 0 1.5px rgba(233,182,92,.3)">
+        <span style="font:800 10px Manrope,system-ui;letter-spacing:.14em;color:#F9DE9C;white-space:nowrap">BUILT TO THE SPEC · 21.6 AND 19.19</span>
+        <sc-for list="{{ spec }}" as="c" hint-placeholder-count="8"><div style="display:flex;align-items:flex-start;gap:9px"><span style="width:18px;height:18px;flex:none;margin-top:1px;border-radius:50%;background:#3FBF7F;box-shadow:inset 0 0 0 1.5px #1A0C14;display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10" stroke="#1A0C14" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="flex:1;min-width:0;font-weight:600;font-size:13px;font-family:Manrope,system-ui;line-height:1.4;color:#E9E2F7;text-wrap:pretty">{{ c }}</span></div></sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:16px;background:rgba(20,10,22,.6);box-shadow:inset 0 0 0 1.5px rgba(233,182,92,.3)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font:800 10px Manrope,system-ui;letter-spacing:.14em;color:#F9DE9C;white-space:nowrap">ANIMATION SET · 21.6</span><span style="font:700 11px Manrope,system-ui;color:#A89CC8">{{ animDone }}</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ animSet }}" as="a" hint-placeholder-count="14"><span style="{{ a.s }}">{{ a.t }}</span></sc-for></div>
+        <span style="font:600 12px Manrope,system-ui;color:#A89CC8;line-height:1.45">Laws change these procedurally (gravity, speed, lean, squash and stretch, time scale, trails). A round, light body like this one bobs under Half gravity and puffs up in wind, and by its own rule Delay never touches it (21.6).</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:16px;background:rgba(20,10,22,.6);box-shadow:inset 0 0 0 1.5px rgba(233,182,92,.3)">
+        <span style="font:800 10px Manrope,system-ui;letter-spacing:.14em;color:#F9DE9C;white-space:nowrap">SQUINT TEST</span>
+        <div style="display:flex;gap:12px;align-items:flex-end">
+          <div style="position:relative;width:150px;height:170px;flex:none;border-radius:12px;overflow:hidden;background:#F4F1E8"><iframe src="Hourkeeper Rig.html?embed=1&amp;res=.011&amp;sil=1&amp;clip=idle" title="Silhouette" style="position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none"></iframe></div>
+          <div style="width:32px;height:44px;flex:none;border-radius:6px;overflow:hidden;background:#F4F1E8;position:relative"><canvas data-sil32="" width="64" height="72" style="position:absolute;left:-2px;top:-2px;width:36px;height:40px"></canvas></div>
+        </div>
+        <span style="font:600 12px Manrope,system-ui;color:#A89CC8;line-height:1.45">Recognisable in black from its egg-shaped body, ear tufts and the hourglass in its belly, at full size and at 32 points.</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { form: 'base', anim: 'idle', clip: 'idle' };
+  renderVals() {
+    const st = this.state;
+    const NOTE = { hush: '#8C6CF0', spark: '#F07A3C', echo: '#E05CB4' };
+    const chip = (on) => ({ height: '30px', padding: '0 12px', borderRadius: '15px', cursor: 'pointer', font: '800 11.5px Manrope,system-ui', letterSpacing: '.04em', border: '1.5px solid ' + (on ? '#1A0C14' : 'rgba(233,182,92,.45)'), background: on ? 'linear-gradient(180deg,#FFE9A8,#E9B65C)' : 'rgba(20,10,22,.6)', color: on ? '#2A1A10' : '#E9D8B8', boxShadow: on ? '0 2px 0 #4A2A10' : 'none', whiteSpace: 'nowrap' });
+    const FL = [['base', 'Base'], ['hush', 'Hush'], ['spark', 'Spark'], ['echo', 'Echo'], ['guard', 'As a guard']];
+    const AL = [['idle', 'Idle'], ['hop', 'Hop'], ['ability', 'Flip the hourglass'], ['trip', 'Trip (at home)']];
+    const FD = {
+      hush: ['Hush', 'Midnight colours and soft, silent edges', 'Noticed 10% later'],
+      spark: ['Spark', 'Crackling tips and ember flecks', '+5% power'],
+      echo: ['Echo', 'Faint ghost outlines that trail a step behind', 'Returns once after a knockout, at N = 20%']
+    };
+    const ANIM = ['Idle', 'Idle 2', 'Walk', 'Run', 'Carry', 'Climb', 'Leap', 'Slide', 'Wade', 'Ability', 'Hit', 'Knocked out', 'Celebrate', 'Nap', 'Work loop'];
+    const DONE = Object.fromEntries(ANIM.map(a => [a, 1]));
+    const CL = [["idle","Idle","Head turns in owl snaps"],["idle2","Idle 2","Bobs, then fluffs up"],["walk","Walk","Stiff little waddle"],["run","Run","Hurried hops, wings out"],["carry","Carry","Loot tucked under a wing"],["climb","Climb","Talons and beak"],["leap","Leap","A flap-assisted hop"],["slide","Slide","Wings out for balance"],["wade","Wade","Fussy high steps"],["ability","Flip the hourglass","Hops, turns over, cyan light spreads"],["hit","Hit","Feathers puff out"],["ko","Knocked out","Falls over, dizzy"],["celebrate","Celebrate","Flaps and hops"],["nap","Nap","Head swivelled back, eyes shut"],["work","Watches it drain","Head down, ticking tilts"]];
+    const cur = CL.find(c => c[0] === st.clip) || CL[0];
+    return {
+      form: st.form, anim: st.anim,
+      turnLabels: ['FRONT', 'THREE-QUARTER', 'SIDE', 'BACK'],
+      exprLabels: ["FUSSY","PRECISE","STARTLED","CAUGHT"],
+      palette: [["Feathers","#2A7690","Body, Time cyan"],["Feather light","#5EAEC4","Feather centres"],["Feather edge","#0E2C3C","Scallop edges"],["Chest","#EEE4CC","Barred front"],["Facial disc","#F6F0E0","Face"],["Brass","#C8963E","Hourglass, beak"]].map(([n, hex, use]) => ({ n, hex, use, sw: { width: '26px', height: '26px', flex: 'none', borderRadius: '7px', background: hex, boxShadow: 'inset 0 0 0 2px #1A0C14' } })),
+      clipUp: cur[1].toUpperCase(), clipNote: cur[2],
+      clips: CL.map(([k, t, w]) => ({ t, w, pick: () => { this.setState({ clip: k }); const f = document.getElementById('rb-anim'); f && f.contentWindow && f.contentWindow.postMessage({ rbClip: k }, '*'); }, s: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1px', minWidth: 0, padding: '7px 10px', borderRadius: '10px', cursor: 'pointer', textAlign: 'left', border: 'none', background: st.clip === k ? 'linear-gradient(180deg,#FFE9A8,#E9B65C)' : 'rgba(107,68,32,.08)', color: '#2A1A10', boxShadow: st.clip === k ? 'inset 0 0 0 2px #1A0C14,0 2px 0 #4A2A10' : 'inset 0 0 0 1px rgba(107,68,32,.2)' } })),
+      formLabel: st.form === 'guard' ? 'AS A GUARD · SASH + LANTERN' : st.form === 'base' ? 'BASE FORM' : (FD[st.form][0].toUpperCase() + ' FORM'),
+      animLabel: (AL.find(a => a[0] === st.anim) || AL[0])[1],
+      forms: FL.map(([k, t]) => ({ t, pick: () => this.setState({ form: k }), s: chip(st.form === k) })),
+      anims: AL.map(([k, t]) => ({ t, pick: () => this.setState({ anim: k }), s: chip(st.anim === k) })),
+      card: [{"k":"Look","v":"Owl with an hourglass belly"},{"k":"Proportions","v":"2.5 heads, round face, wide-set eyes"},{"k":"Personality","v":"Precise and fussy; hates being interrupted"},{"k":"At home","v":"Turns its hourglass over and watches it drain"},{"k":"Ability","v":"Gives one ally back all the health it lost in the last 5 s. Two uses a heist"},{"k":"Rule sheet","v":"Ally healing: one ally, equal to the damage it took in the last 5 s (150 steps)"},{"k":"Resists","v":"Unaffected by Delay"},{"k":"Best at","v":"Aether Springs, support"},{"k":"Sounds like","v":"a soft tick and a chime"},{"k":"Signature","v":"Flips its hourglass, and the wounds an ally took in the last five seconds close"},{"k":"Size","v":"Standard"}],
+      stats: [{"k":"HEALTH","v":"180"},{"k":"SPEED","v":"2.6"},{"k":"POWER","v":"16"},{"k":"CARRY","v":"60"}],
+      formCards: ['hush', 'spark', 'echo'].map(k => ({
+        name: FD[k][0], look: FD[k][1], quirk: FD[k][2],
+        src: 'Hourkeeper Rig.html?embed=1&form=' + k + '&clip=idle',
+        pick: () => this.setState({ form: k }),
+        dot: { width: '12px', height: '12px', borderRadius: '50%', background: NOTE[k], boxShadow: '0 0 0 1.5px #1A0C14' },
+        card: { display: 'flex', flexDirection: 'column', borderRadius: '14px', overflow: 'hidden', cursor: 'pointer', background: 'linear-gradient(180deg,#FFFBF0,#F1E3C4)', color: '#2A1A10', boxShadow: st.form === k ? 'inset 0 0 0 2px #1A0C14,inset 0 0 0 4.5px ' + NOTE[k] + ',0 5px 0 #4A2A10,0 0 24px ' + NOTE[k] + '66' : 'inset 0 0 0 2px #1A0C14,inset 0 0 0 4px #C98B34,0 5px 0 #4A2A10' }
+      })),
+      spec: ["2.5 heads tall, in the upper middle of the 1.7–2.9 range","Round egg body; the head merges into it","Wide-set golden eyes in pale dished facial discs","Overlapping feather scallops, a barred cream chest","School colour (Time cyan) in the feathers and sand","Time hourglass as a marking, set into the belly","Mender accessory: the brass-framed hourglass and a brow pin","Forms change pattern, glow and one accessory in the note colour; one shared model"],
+      animSet: ANIM.map(t => ({ t: DONE[t] ? t + ' ✓' : t, s: { padding: '3px 9px', borderRadius: '8px', font: '700 11.5px Manrope,system-ui', whiteSpace: 'nowrap', background: DONE[t] ? '#5CC46A' : 'rgba(20,10,22,.6)', color: DONE[t] ? '#1A0C14' : '#A89CC8', boxShadow: DONE[t] ? 'inset 0 0 0 1.5px #1A0C14' : 'inset 0 0 0 1px rgba(233,182,92,.25)' } })),
+      animDone: '15 of 15 animated'
+    };
+  }
+}
+</script>
+</body>
+</html>

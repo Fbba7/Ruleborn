@@ -27,7 +27,6 @@ static var _toon: Shader = load("res://world/toon.gdshader")
 static var _clear: Shader = load("res://world/toon_clear.gdshader")
 static var _outline: Shader = load("res://world/outline.gdshader")
 static var _water: Shader = load("res://world/water.gdshader")
-static var _sky: Shader = load("res://world/sky.gdshader")
 static var _cache := {}
 
 ## §21.4's realm type, which picks the palette; and whether this is a heist.
@@ -43,6 +42,7 @@ var container: SubViewportContainer
 var world: Node3D
 var camera: Camera3D
 var sun: DirectionalLight3D
+var look: WorldLook
 var environment: Environment
 var statics: Node3D
 var actors: Node3D
@@ -82,31 +82,11 @@ func _init() -> void:
 	_build_stage()
 
 
-## The light, the sky and the camera: one warm sun with its shadow, a sky by
-## the hour, ambient light from the sky so shade is violet, not black.
+## The look (light, sky, fog: `WorldLook`) and the camera.
 func _build_stage() -> void:
-	environment = Environment.new()
-	environment.background_mode = Environment.BG_SKY
-	var sky := Sky.new()
-	var sky_material := ShaderMaterial.new()
-	sky_material.shader = _sky
-	sky.sky_material = sky_material
-	environment.sky = sky
-	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.ambient_light_color = Color("#8E86C8")
-	environment.ambient_light_energy = 0.42
-	environment.tonemap_mode = Environment.TONE_MAPPER_LINEAR
-	var env_node := WorldEnvironment.new()
-	env_node.environment = environment
-	world.add_child(env_node)
-	sun = DirectionalLight3D.new()
-	sun.light_color = Color("#FFF1DA")
-	sun.light_energy = 0.82
-	sun.shadow_enabled = true
-	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
-	sun.directional_shadow_max_distance = 60.0
-	sun.rotation_degrees = Vector3(-58, 35, 0)
-	world.add_child(sun)
+	look = WorldLook.new(world)
+	environment = look.environment
+	sun = look.sun
 	camera = Camera3D.new()
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	camera.near = 0.1
@@ -125,19 +105,9 @@ func _build_stage() -> void:
 	set_sky_hour(Time.get_datetime_dict_from_system()["hour"])
 
 
-## §21.2: the sky follows the player's local time, and the light with it:
-## a warm sun by day, a low amber one at dusk, a cool moon at night, when
-## lanterns and glows carry the realm.
+## §21.2: the sky follows the player's local time, and the light with it.
 func set_sky_hour(hour: int) -> void:
-	var pair := RealmPalette.sky_at(hour)
-	var m := environment.sky.sky_material as ShaderMaterial
-	m.set_shader_parameter("top", pair[0])
-	m.set_shader_parameter("bottom", pair[1])
-	var light: Array = RealmPalette.light_at(hour)
-	sun.light_color = light[0]
-	sun.light_energy = light[1]
-	environment.ambient_light_color = light[2]
-	environment.ambient_light_energy = light[3]
+	look.set_hour(hour)
 
 
 static func material(shader: Shader, outlined := false) -> ShaderMaterial:
@@ -194,16 +164,7 @@ func _build_statics() -> void:
 		return
 	var colours := RealmPalette.of(realm_type)
 	var seed_from := hash(_features) ^ (_size.x * 131 + _size.y)
-	var island := IslandBuilder.new(_size, seed_from, colours)
-	var rock := island.rock()
-	if rock != null:
-		statics.add_child(_instance(rock, material(_toon)))
-	var scatter := island.scatter()
-	if scatter != null:
-		statics.add_child(_instance(scatter, material(_toon), false))
-	var dressing := island.sky_dressing()
-	if dressing != null:
-		statics.add_child(_instance(dressing, material(_toon), false))
+	look.island(statics, _size, seed_from, colours)
 	var kit := RealmKit.new(replay, colours)
 	kit.build()
 	for layer: Array in [[kit.ground.mesh(), material(_toon), true], [kit.hero.mesh(), material(_toon, true), true],
@@ -213,15 +174,15 @@ func _build_statics() -> void:
 			statics.add_child(_instance(layer[0], layer[1], layer[2]))
 	# The Vault, the pylons and the wards change as the heist goes, so each
 	# is its own piece.
-	_vault = _instance(_vault_mesh(false), material(_toon, true))
+	_vault = _instance(PieceKit.vault(false), material(_toon, true))
 	statics.add_child(_vault)
 	for p: Dictionary in replay.pylons():
-		var mi := _instance(_pylon_mesh(), material(_toon, true))
+		var mi := _instance(PieceKit.pylon(), material(_toon, true))
 		mi.position = world_at(p["at"])
 		statics.add_child(mi)
 		_pylons.append(mi)
 	for w: Dictionary in replay.wards():
-		var mi := _instance(_ward_mesh(str(w["kind"])), material(_toon, true))
+		var mi := _instance(PieceKit.ward(str(w["kind"])), material(_toon, true))
 		mi.position = world_at(w["at"])
 		statics.add_child(mi)
 		_wards.append(mi)
@@ -237,67 +198,6 @@ func _water_material(lava: bool) -> ShaderMaterial:
 		m.set_shader_parameter("foam", Color("#FFC24A"))
 		m.set_shader_parameter("glowing", 0.8)
 	return m
-
-
-static func _vault_mesh(open: bool) -> ArrayMesh:
-	var g := Geo.new()
-	var gold := Palette.MOTION
-	g.box(Geo.place(Vector3(0, 0.3, 0)), Vector3(0.82, 0.6, 0.66), Palette.WOOD.darkened(0.15))
-	for x: float in [-0.3, 0.0, 0.3]:
-		g.box(Geo.place(Vector3(x, 0.3, 0)), Vector3(0.08, 0.62, 0.68), gold)
-	if open:
-		g.box(Transform3D(Basis(Vector3.RIGHT, -1.1), Vector3(0, 0.75, 0.36)), Vector3(0.84, 0.08, 0.66),
-			Palette.WOOD.darkened(0.15))
-		g.ball(Geo.place(Vector3(0, 0.62, 0)), 0.26, Color(gold.lightened(0.3), 0.0), 3, 8)
-	else:
-		g.box(Geo.place(Vector3(0, 0.66, 0)), Vector3(0.86, 0.14, 0.7), Palette.WOOD.darkened(0.05), gold)
-		g.box(Geo.place(Vector3(0, 0.42, -0.34)), Vector3(0.16, 0.18, 0.04), gold.darkened(0.2))
-	return g.mesh()
-
-
-static func _pylon_mesh() -> ArrayMesh:
-	var g := Geo.new()
-	g.prism(Geo.place(Vector3.ZERO, PI / 4.0), 4, 0.32, 0.26, 0.2, Palette.STONE.darkened(0.15))
-	g.prism(Geo.place(Vector3(0, 0.2, 0), PI / 4.0), 4, 0.17, 0.09, 1.2, Palette.STONE)
-	g.ball(Geo.place(Vector3(0, 1.55, 0)), 0.16, Color(Palette.MATTER.lightened(0.2), 0.0), 3, 7)
-	return g.mesh()
-
-
-static func _broken_pylon_mesh() -> ArrayMesh:
-	var g := Geo.new()
-	g.prism(Geo.place(Vector3.ZERO, PI / 4.0), 4, 0.32, 0.26, 0.2, Palette.STONE.darkened(0.25))
-	g.prism(Geo.place(Vector3(0, 0.2, 0), PI / 4.0), 4, 0.17, 0.14, 0.35, Palette.STONE.darkened(0.2))
-	return g.mesh()
-
-
-## A ward as a small totem in its school's colour, crowned by its school's
-## shape (§21.2), as the flat view draws it.
-static func _ward_mesh(kind: String) -> ArrayMesh:
-	var g := Geo.new()
-	var colour: Color = Palette.WARD.get(kind, Palette.INK)
-	g.prism(Geo.place(Vector3.ZERO), 6, 0.2, 0.16, 0.18, Palette.STONE.darkened(0.2))
-	match str(Palette.WARD_SCHOOL.get(kind, "motion")):
-		"matter":
-			g.box(Geo.place(Vector3(0, 0.45, 0), PI / 4.0), Vector3(0.32, 0.32, 0.32), colour)
-		"time":
-			g.prism(Geo.place(Vector3(0, 0.18, 0)), 6, 0.18, 0.02, 0.24, colour)
-			g.prism(Geo.place(Vector3(0, 0.66, 0)), 6, 0.18, 0.02, -0.24, colour)
-		"energy":
-			g.box(Transform3D(Basis(Vector3.FORWARD, 0.5), Vector3(0, 0.46, 0)), Vector3(0.12, 0.5, 0.12), colour)
-		"life":
-			g.ball(Geo.place(Vector3(0, 0.46, 0), 0.0, Vector3(0.6, 1.2, 0.3)), 0.2, colour, 3, 7)
-		"spirit":
-			g.ball(Geo.place(Vector3(0, 0.46, 0), 0.0, Vector3(1.3, 0.7, 0.6)), 0.18, colour, 3, 8)
-			g.ball(Geo.place(Vector3(0, 0.46, -0.08)), 0.07, Palette.INK, 2, 6)
-		_:
-			g.prism(Geo.place(Vector3(0, 0.25, 0)), 3, 0.22, 0.0, 0.42, colour)
-	return g.mesh()
-
-
-static func _dead_ward_mesh() -> ArrayMesh:
-	var g := Geo.new()
-	g.prism(Geo.place(Vector3.ZERO), 6, 0.2, 0.16, 0.18, Palette.STONE.darkened(0.35))
-	return g.mesh()
 
 
 ## The crew and the guards, made once a heist and moved every tick.
@@ -457,19 +357,19 @@ func _sync_pieces() -> void:
 		_vault.position = world_at(v["at"])
 		var open: bool = v["open"]
 		if _vault.get_meta("open", false) != open:
-			_vault.mesh = _vault_mesh(open)
+			_vault.mesh = PieceKit.vault(open)
 			_vault.set_meta("open", open)
 	var pylons := replay.pylons()
 	for i in mini(pylons.size(), _pylons.size()):
 		var up: bool = pylons[i]["standing"]
 		if _pylons[i].get_meta("up", true) != up:
-			_pylons[i].mesh = _pylon_mesh() if up else _broken_pylon_mesh()
+			_pylons[i].mesh = PieceKit.pylon() if up else PieceKit.broken_pylon()
 			_pylons[i].set_meta("up", up)
 	var wards := replay.wards()
 	for i in mini(wards.size(), _wards.size()):
 		var live: bool = wards[i]["live"]
 		if _wards[i].get_meta("live", true) != live:
-			_wards[i].mesh = _ward_mesh(str(wards[i]["kind"])) if live else _dead_ward_mesh()
+			_wards[i].mesh = PieceKit.ward(str(wards[i]["kind"])) if live else PieceKit.dead_ward()
 			_wards[i].set_meta("live", live)
 	var walls := replay.walls()
 	var g := Geo.new()

@@ -71,17 +71,21 @@ func _across_the_server(server_url: String) -> void:
 			if not owners.has(c["owner"]):
 				owners[c["owner"]] = []
 			owners[c["owner"]].append(c)
+	# The example universe's owner: the generator's own targets are listed
+	# under one name for every realm, but belong to no universe.
 	for owner: String in owners:
 		var realms: Array = owners[owner].map(func(c: Dictionary) -> String: return str(c["realm"]))
-		if "heart" in realms and "outer-1" in realms:
+		if owner != "the-game-generator" and "heart" in realms and "outer-1" in realms:
 			target = owners[owner][realms.find("heart")]
 	s.store.dispatch(&"heist_started", {"target": {"bundle": target.get("bundle", ""), "owner": target.get("owner", ""),
 		"across": true}})
 	var online: HeistScreen = load(HEIST_SCENE).instantiate()
 	root.add_child(online)
 	online.set_process(false)
-	# The lease comes first, then the universe and its islands by hash.
-	for i in 1200:
+	# The lease comes first, then the universe and its islands by hash: waited
+	# for by the clock, since a headless frame takes about a millisecond.
+	var until := Time.get_ticks_msec() + 30000
+	while Time.get_ticks_msec() < until:
 		if not online.controller.universe.is_empty() or online.hint_label.text.begins_with("No heist"):
 			break
 		await process_frame

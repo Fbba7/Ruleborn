@@ -204,6 +204,8 @@ docs/design/spec/   the reconciled specification, one file per system
 docs/design/dependencies.md  what has to be settled before what, generated
 docs/audit/    the generated audit register page
 docs/roadmap/  the generated roadmap page
+docs/art/      the 3D program: the plan, each track's notes and the stills it was judged by
+art/design/    the Screens v3 design's own 3D sources (sculpts, rigs, diorama) and its target stills
 prototypes/
   heist-gate/  a throwaway browser build that runs both pre-code gates
 sim/            the heist simulation core in Rust: determinism spike (T3.1), replays (T3.2), pathfinding, sight, noise, guard states, island bundles and the validator (T3.3)
@@ -257,6 +259,7 @@ tools/
   twice_stated.py                 facts the document states in more than one section
   inventory_homes.py              every section stating a launch-inventory count, and what checks it
   version_diff.py                 what one version of the document changed, section by section
+  render/                         renders a still from the Godot client on a machine with no screen
 ```
 
 ## The design in one page

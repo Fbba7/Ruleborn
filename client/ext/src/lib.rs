@@ -679,8 +679,8 @@ impl RulebornReplay {
         out
     }
 
-    /// Each woven law's pylon: where it stands and whether it is still up
-    /// (§7.1: breaking the pylon ends the law).
+    /// Each woven law's pylon: where it stands, whether it is still up (§7.1:
+    /// breaking the pylon ends the law), its law's id and its school.
     #[func]
     fn pylons(&self) -> Array<VarDictionary> {
         let mut out = Array::new();
@@ -690,6 +690,11 @@ impl RulebornReplay {
             let (x, y) = w.grid.centre(law.pylon);
             d.set("at", Vector2::new(tiles(x), tiles(y)));
             d.set("standing", law.broken_at.is_none());
+            // The law woven in it and its school (§21.5: a pylon is crowned
+            // with its school's shape).
+            let def = &sim::laws_table::LAWS[law.def];
+            d.set("law", &GString::from(def.id));
+            d.set("school", &GString::from(&def.school.to_lowercase()));
             out.push(&d);
         }
         out

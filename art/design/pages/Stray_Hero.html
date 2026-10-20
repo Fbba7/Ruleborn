@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Stray · Hero</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Manrope:wght@600;800&display=swap" rel="stylesheet">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(ellipse 70% 60% at 50% 45%,#FFFFFF 0%,#F4EFF8 60%,#E4DCEE 100%);font-family:Manrope,system-ui,sans-serif}#view{position:fixed;inset:0}#status{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:opacity .6s ease,transform .6s ease;z-index:5}
+#status.out{opacity:0;transform:scale(.96)}
+#status .ld{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 28px 20px;border-radius:24px;background:rgba(255,255,255,.78);box-shadow:0 14px 40px rgba(40,20,70,.16),inset 0 0 0 1.5px rgba(255,255,255,.95);animation:rbIn .5s cubic-bezier(.2,.9,.3,1.2) both}
+#status .stage{position:relative;width:96px;height:96px}
+#status .halo{position:absolute;inset:6px;border-radius:50%;background:radial-gradient(circle,rgba(242,180,60,.32),rgba(140,108,240,.12) 55%,transparent 72%);animation:rbBreath 2.4s ease-in-out infinite;will-change:transform,opacity}
+#status .orbit{position:absolute;inset:4px;border-radius:50%;border:2px dashed rgba(140,108,240,.35);animation:rbSpin 6s linear infinite;will-change:transform}
+#status .orbit i{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFF6DA,#F2B43C 60%,#B8741E);box-shadow:0 0 8px rgba(242,180,60,.8)}
+#status .orbit i:nth-child(1){left:50%;top:-6px;margin-left:-5px}
+#status .orbit i:nth-child(2){left:50%;bottom:-6px;margin-left:-5px;width:7px;height:7px;background:radial-gradient(circle at 35% 30%,#F4ECFF,#8C6CF0 65%,#5A3FB0);box-shadow:0 0 8px rgba(140,108,240,.8)}
+#status .orb{position:absolute;left:26px;top:24px;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#FFFBEE 0%,#F7D27A 26%,#E9A83C 60%,#9A5A1C 100%);box-shadow:inset -5px -7px 10px rgba(90,40,10,.28),0 6px 14px rgba(150,90,20,.25);animation:rbSquash 1.6s cubic-bezier(.45,0,.55,1) infinite;will-change:transform}
+#status .orb:after{content:"";position:absolute;left:9px;top:7px;width:13px;height:8px;border-radius:50%;background:rgba(255,255,255,.85);transform:rotate(-25deg)}
+#status .shadow{position:absolute;left:28px;right:28px;bottom:10px;height:8px;border-radius:50%;background:rgba(60,30,90,.18);animation:rbShadow 1.6s cubic-bezier(.45,0,.55,1) infinite;will-change:transform,opacity}
+#status .txw{position:relative;width:180px;height:14px;overflow:hidden}
+#status .txw span{position:absolute;inset:0;text-align:center;font:800 11px Manrope,system-ui;letter-spacing:.16em;color:#4A2A6A;opacity:0;animation:rbWord 9s ease-in-out infinite;will-change:transform,opacity}
+#status .txw span:nth-child(2){animation-delay:1.8s}#status .txw span:nth-child(3){animation-delay:3.6s}#status .txw span:nth-child(4){animation-delay:5.4s}#status .txw span:nth-child(5){animation-delay:7.2s}
+#status .bar{position:relative;width:170px;height:8px;border-radius:5px;background:#ECE6F4;box-shadow:inset 0 1px 2px rgba(40,20,70,.2);overflow:hidden}
+#status .fill{position:absolute;inset:0;border-radius:5px;background:linear-gradient(90deg,#8C6CF0,#C98BE8 50%,#F2B43C);transform-origin:0 50%;transform:scaleX(.04);transition:transform 10s cubic-bezier(.15,.7,.25,1);will-change:transform}
+#status .fill.go{transform:scaleX(.9)}#status .fill.done{transform:scaleX(1);transition:transform .35s ease-out}
+#status .shine{position:absolute;top:0;bottom:0;width:40px;left:-40px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:rbShine 1.4s ease-in-out infinite;will-change:transform}
+@keyframes rbIn{from{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes rbSpin{to{transform:rotate(360deg)}}
+@keyframes rbBreath{0%,100%{transform:scale(.88);opacity:.75}50%{transform:scale(1.04);opacity:1}}
+@keyframes rbSquash{0%,100%{transform:translateY(0) scale(1.08,.92)}45%{transform:translateY(-12px) scale(.95,1.06)}55%{transform:translateY(-13px) scale(.96,1.05)}}
+@keyframes rbShadow{0%,100%{transform:scaleX(1);opacity:1}50%{transform:scaleX(.7);opacity:.5}}
+@keyframes rbWord{0%{opacity:0;transform:translateY(10px)}4%,18%{opacity:1;transform:none}22%,100%{opacity:0;transform:translateY(-10px)}}
+@keyframes rbShine{from{transform:translateX(0)}to{transform:translateX(250px)}}</style>
+</head><body><div id="view"></div><div id="status"><div class="ld"><div class="stage"><div class="halo"></div><div class="orbit"><i></i><i></i></div><div class="shadow"></div><div class="orb"></div></div><div class="txw"><span>SHAPING THE CLAY</span><span>CARVING THE DETAILS</span><span>PAINTING THE COLOURS</span><span>FITTING THE BONES</span><span>ALMOST READY</span></div><div class="bar"><div class="fill" id="ldFill"></div><div class="shine"></div></div></div></div>
+<script>(function(){const st=document.getElementById('status'),fl=document.getElementById('ldFill');requestAnimationFrame(()=>requestAnimationFrame(()=>fl.classList.add('go')));new MutationObserver(()=>{if(st.style.display==='none'&&!st.dataset.done){st.dataset.done=1;st.style.display='flex';fl.classList.add('done');setTimeout(()=>st.classList.add('out'),260);setTimeout(()=>{st.style.display='none';},900);}}).observe(st,{attributes:true,attributeFilter:['style']});})();</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {build,loadBaked,makeRig,CLIPS,HERO,BIN,RES as RES0} from './stray.js';
+const P=new URLSearchParams(location.search);const EMBED=P.has('embed');if(EMBED)document.body.classList.add('embed');
+const RESQ=+(P.get('res')||RES0);
+// ---------- scene ----------
+const W=innerWidth,H=innerHeight;const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(2,devicePixelRatio));renderer.domElement.style.opacity='0';renderer.domElement.style.transition='opacity .35s ease';renderer.setSize(W,H);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;document.getElementById('view').append(renderer.domElement);
+const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(24,W/H,.05,50);cam.position.set(...HERO.cam);const ctl=new OrbitControls(cam,renderer.domElement);ctl.target.set(...HERO.target);ctl.enableDamping=true;ctl.minDistance=1.2;ctl.maxDistance=5;ctl.update();
+{const es=new THREE.Scene();const sky=new THREE.Mesh(new THREE.SphereGeometry(10,32,16),new THREE.MeshBasicMaterial({side:THREE.BackSide,vertexColors:true}));const pc=sky.geometry.attributes.position,cols=[];const top=new THREE.Color(0xFFF6E8),mid=new THREE.Color(0xE8E0F0),bot=new THREE.Color(0x8A7A9A);for(let i=0;i<pc.count;i++){const y=pc.getY(i)/10;const c=y>0?mid.clone().lerp(top,y):mid.clone().lerp(bot,-y);cols.push(c.r,c.g,c.b);}sky.geometry.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));es.add(sky);
+ for(const[x,y,z,s,c]of[[4,6,5,5,0xFFFFFF],[-6,3,-2,4,0xBFE4FF]]){const pn=new THREE.Mesh(new THREE.PlaneGeometry(s,s*.7),new THREE.MeshBasicMaterial({color:c}));pn.position.set(x,y,z);pn.lookAt(0,0,0);es.add(pn);}
+ const pm=new THREE.PMREMGenerator(renderer);scene.environment=pm.fromScene(es,.02).texture;scene.environmentIntensity=.6;}
+const key=new THREE.DirectionalLight(0xFFEAD0,2.6);key.position.set(2.2,3.4,2.6);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=key.shadow.camera.bottom=-1;key.shadow.camera.right=key.shadow.camera.top=1;key.shadow.bias=-.0004;key.shadow.normalBias=.015;key.shadow.radius=6;key.shadow.intensity=.5;scene.add(key);
+const rim=new THREE.DirectionalLight(0xA8DAFF,2.2);rim.position.set(-2.4,1.6,-2.2);scene.add(rim);
+const fill=new THREE.HemisphereLight(0xFFF3E6,0xB8A090,.85);scene.add(fill);
+const ground=new THREE.Mesh(new THREE.CircleGeometry(3,64),new THREE.ShadowMaterial({opacity:.18}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+{const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');const gr=x.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(40,20,40,.45)');gr.addColorStop(1,'rgba(40,20,40,0)');x.fillStyle=gr;x.fillRect(0,0,128,128);const blob=new THREE.Mesh(new THREE.PlaneGeometry(.75,.6),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false}));blob.rotation.x=-Math.PI/2;blob.position.set(0,.002,.0);scene.add(blob);}
+const hero=new THREE.Group();hero.name='bloomling_hero';scene.add(hero);
+// ---------- build ----------
+const st=document.getElementById('status');
+(P.get('res')?Promise.resolve():loadBaked(BIN,RESQ)).then(()=>Promise.resolve().then(()=>{const t0=performance.now();const sk=build({res:RESQ});const rg=makeRig(sk);hero.add(rg.root);hero.userData.rig=rg;st.style.display='none';window.__built={tris:sk.userData.tris,ms:Math.round(performance.now()-t0)};}));
+// ---------- loop ----------
+const clock=new THREE.Clock();(function loop(){if(!loop.__k){loop.__k=setInterval(()=>{if(renderer.domElement.style.opacity==='1'){clearInterval(loop.__k);return;}if(document.hidden)loop(1);},600);}if(arguments[0]!==1)requestAnimationFrame(loop);const t=clock.getElapsedTime();const rg=hero.userData.rig;if(!loop.__sprFix&&t>1){loop.__sprFix=1;scene.traverse(o=>{if(o.isSprite&&o.material.blending===THREE.AdditiveBlending){o.material.blending=THREE.NormalBlending;o.material.opacity=Math.min(o.material.opacity,.85);o.material.needsUpdate=true;}});}if(rg)rg.play(CLIPS[HERO.clip].f(t),HERO.clip);const cs=hero.userData.coins;if(cs)cs.forEach((c,i)=>{c.rotation.y+=.04+i*.004;if(c.userData.base){c.position.y=c.userData.base.y+Math.sin(t*2.2+c.userData.ph)*.012;}});ctl.update();renderer.render(scene,cam);if(hero.children.length&&renderer.domElement.style.opacity==='0')(renderer.domElement.style.opacity='1');})();
+// PORTRAIT: ?portrait=1 frames head and shoulders for roster portraits
+if(P.has('portrait')){ground.visible=false;const pt=setInterval(()=>{const rg=hero.userData.rig;if(!rg||!rg.bones||!rg.bones.head)return;clearInterval(pt);setTimeout(()=>{const hp=new THREE.Vector3();rg.bones.head.getWorldPosition(hp);const up=+(P.get('up')||.05),dist=+(P.get('d')||1.25);const dir=cam.position.clone().sub(ctl.target);dir.y*=.4;dir.normalize();ctl.target.set(hp.x,hp.y+up,hp.z);cam.position.copy(ctl.target).addScaledVector(dir,dist);ctl.update();window.__portrait=1;},1400);},200);}
+addEventListener('resize',()=>{const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();});
+</script></body></html>
