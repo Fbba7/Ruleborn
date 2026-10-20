@@ -331,7 +331,7 @@ func instances() -> Array[MeshInstance3D]:
 		ground_mat.set_shader_parameter("lanes", lanes)
 	ground_mat.set_shader_parameter("lane_earth", KitGround.earth(palette).lerp(palette["soil"], 0.2))
 	var water_mat := material("water")
-	water_mat.set_shader_parameter("bank", KitGround.earth(palette).lightened(0.2).lerp(palette["grass"], 0.2))
+	water_mat.set_shader_parameter("bank", (palette["grass"] as Color).lerp(KitGround.earth(palette), 0.3))
 	var lava_mat := material("water")
 	lava_mat.set_shader_parameter("deep", Color("#C8401E"))
 	lava_mat.set_shader_parameter("foam", Color("#FFC24A"))

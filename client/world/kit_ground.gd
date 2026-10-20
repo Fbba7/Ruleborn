@@ -224,12 +224,12 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	var occ := field("occ", u, v)
 	c = c.darkened(0.09 * smoothstep(0.1, 0.6, occ) * (1.0 - apron))
 	# A sandy bank where the grass meets water.
-	var bank := smoothstep(0.12, 0.45, field("wet", u, v))
-	c = c.lerp(dirt.lightened(0.12), bank * 0.75)
+	var bank := smoothstep(0.25, 0.5, field("wet", u, v) + (n1 - 0.5) * 0.2)
+	c = c.lerp(c.lerp(dirt, 0.5).darkened(0.05), bank * 0.5)
 	if on_wet:
 		c = dirt.lerp(soil, 0.45).darkened(0.1)
 	# Higher ground catches a little more light.
-	c = c.lightened(0.03 * lvl)
+	c = c.lightened(0.07 * lvl)
 	# A worn trail between doors: trodden earth through the grass.
 	var trail := trail_at(u, v)
 	# (The shader draws the trail itself, crisp; the vertices only wear the
@@ -337,7 +337,7 @@ func _side(t: Vector2i, d: Vector2i) -> void:
 	if y1 < y0 - 0.02:
 		var rows := [0.0, 0.18, 0.55, 1.0]
 		var bulge := [0.0, 0.05, 0.035, 0.0]
-		var tint := [grass.darkened(0.1), soil.lightened(0.12), soil, rock.lerp(soil, 0.4).darkened(0.1)]
+		var tint := [grass.darkened(0.2), soil.lightened(0.05), soil.darkened(0.12), rock.lerp(soil, 0.4).darkened(0.25)]
 		if bank:
 			tint = [dirt.lightened(0.05), dirt.darkened(0.08), soil.lightened(0.05), soil.darkened(0.15)]
 		var grid: Array = []
