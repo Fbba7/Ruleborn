@@ -202,7 +202,7 @@ func _signatures() -> void:
 		var b := fx.budget(law)
 		counts[law] = b
 		if not fx.signatures.has(law) or b["triangles"] <= 0 or b["triangles"] > MAX_TRIANGLES \
-				or b["draws"] > MAX_DRAWS or fx.crowns.get_child_count() < 1:
+				or b["draws"] > MAX_DRAWS or fx.get_node_or_null("Ground") == null:
 			off.append([law, b])
 		view.queue_free()
 		await tree.process_frame

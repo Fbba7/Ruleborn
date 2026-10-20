@@ -69,6 +69,9 @@ var _clocked: Array[ShaderMaterial] = []
 ## Every law's motes in one batch, drawn in one call (§21.3), and that draw.
 var _motes: LawFxBatch
 var _mote_layer: MeshInstance3D
+## Every law's ground marks, waiting to share one draw once all are known
+## (their share of the ground depends on how many there are).
+var _decals: Array[Dictionary] = []
 var _lit: Array[ShaderMaterial] = []
 var _hooks: Array[Callable] = []
 var _watchers: Array[Callable] = []
@@ -130,6 +133,7 @@ func build(s: LawFxSite) -> void:
 	_restore_light()
 	_motes = LawFxBatch.new(LawFxBatch.Kind.MOTES)
 	_mote_layer = null
+	_decals.clear()
 	site = s
 	crowns = Node3D.new()
 	crowns.name = "Crowns"
@@ -166,15 +170,15 @@ func build(s: LawFxSite) -> void:
 			LawFxCrown.colours(str(p["school"]))[0])
 	if under.triangles > 0:
 		var ring := decal_material(17, Color.WHITE, Color("#1A0C14"))
-		ring.set_shader_parameter("lit", 0.3)
+		ring.set_meta("lit", 0.3)
 		layer(crowns, under, ring)
-	_share_ground()
 	links = Node3D.new()
 	links.name = "Links"
 	add_child(links)
 	LawFxLinks.build(self, links)
 	if paradox != "":
 		LawFxLinks.paradox(self, paradox)
+	_share_ground()
 	if _motes.triangles > 0:
 		var shared := Node3D.new()
 		shared.name = "Motes"
@@ -193,19 +197,26 @@ static func _kit_crowns() -> bool:
 	return false
 
 
-## Ground marks laid over the whole realm by several laws at once share
-## it: each is drawn fainter, so the ground under them still reads (§21.10's
-## grayscale test) and the guard's sight on it stays plain.
+## Every law's ground marks in one draw, under the sight overlay. Marks laid
+## over the whole realm by several laws at once share it: each is drawn
+## fainter, so the ground under them still reads (§21.10's grayscale test)
+## and the guard's sight on it stays plain.
 func _share_ground() -> void:
-	var marks: Array[MeshInstance3D] = []
-	for sig: Node3D in signatures.values():
-		for mi: MeshInstance3D in sig.find_children("*", "MeshInstance3D", true, false):
-			if mi.get_meta("ground", false):
-				marks.append(mi)
-	var share := 1.0 if marks.size() < 2 else (0.72 if marks.size() == 2 else 0.55)
-	for mi: MeshInstance3D in marks:
-		mi.set_meta("strength", share)
-		(mi.material_override as ShaderMaterial).set_shader_parameter("strength", share)
+	var over := 0
+	for d: Dictionary in _decals:
+		if (d["material"] as ShaderMaterial).get_meta("ground", false):
+			over += 1
+	var share := 1.0 if over < 2 else (0.72 if over == 2 else 0.55)
+	var all := LawFxBatch.new(LawFxBatch.Kind.DECALS)
+	for d: Dictionary in _decals:
+		var m: ShaderMaterial = d["material"]
+		_merge_decal(all, d["batch"], m, share if m.get_meta("ground", false) else 1.0)
+	_decals.clear()
+	if all.triangles > 0:
+		var shared := Node3D.new()
+		shared.name = "Ground"
+		add_child(shared)
+		layer(shared, all, decal_material(0, Color.WHITE)).set_meta("triangles", all.triangles)
 
 
 ## §7.5: the universe's paradox, over every realm (Reversal, Twin suns,
@@ -281,6 +292,32 @@ func sync_world(replay: RulebornReplay) -> void:
 		w.call(crew, guards)
 
 
+## `batch`'s marks written into `into` with `mat`'s look on every vertex,
+## weighed by `share`.
+func _merge_decal(into: LawFxBatch, batch: LawFxBatch, mat: ShaderMaterial, share: float) -> void:
+	if batch.triangles == 0:
+		return
+	var arrays := batch.st.commit_to_arrays()
+	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
+	var colours: PackedColorArray = arrays[Mesh.ARRAY_COLOR]
+	var c0: PackedFloat32Array = arrays[Mesh.ARRAY_CUSTOM0]
+	var a: Color = mat.get_meta("colour_a")
+	var b: Color = mat.get_meta("colour_b")
+	var look := Vector2(float(mat.get_meta("pattern")), float(mat.get_meta("lit", 1.0)))
+	var st := into.st
+	for i in verts.size():
+		var own := colours[i]
+		st.set_color(Color(a.r * own.r, a.g * own.g, a.b * own.b, own.a * share))
+		st.set_uv(uvs[i])
+		st.set_normal(Vector3.UP)
+		st.set_custom(0, Color(c0[i * 4], c0[i * 4 + 1], c0[i * 4 + 2], c0[i * 4 + 3]))
+		st.set_custom(1, Color(b.r, b.g, b.b, float(mat.get_meta("pace", 1.0))))
+		st.set_uv2(look)
+		st.add_vertex(verts[i])
+	into.triangles += batch.triangles
+
+
 func _merge_motes(batch: LawFxBatch, mat: ShaderMaterial) -> void:
 	if batch.triangles == 0:
 		return
@@ -325,6 +362,14 @@ func layer(sig: Node3D, batch: LawFxBatch, mat: ShaderMaterial, outlined := fals
 		_merge_motes(batch, mat)
 		sig.set_meta("mote_triangles", int(sig.get_meta("mote_triangles", 0)) + batch.triangles)
 		return null
+	if batch.kind == LawFxBatch.Kind.DECALS and mat.has_meta("pattern") and sig.name != "Ground":
+		if not mat.get_meta("alone", false):
+			_decals.append({"batch": batch, "material": mat})
+			sig.set_meta("mote_triangles", int(sig.get_meta("mote_triangles", 0)) + batch.triangles)
+			return null
+		var own := LawFxBatch.new(LawFxBatch.Kind.DECALS)
+		_merge_decal(own, batch, mat, 1.0)
+		batch = own
 	var mi := MeshInstance3D.new()
 	mi.mesh = batch.mesh()
 	mi.material_override = mat
@@ -359,15 +404,22 @@ func mote_material(glow := 0.35, pace := 1.0) -> ShaderMaterial:
 	return m
 
 
+## A ground mark's look: `pattern` (law_fx_decal's), its two colours and
+## its pace. They travel on the mark's vertices (every law's marks share one
+## draw), so they are kept on the material as metadata until `layer` writes
+## them; "lit" (how much of the realm's light it takes), "ground" (laid over
+## the whole realm, so shared fainter with other laws') and "alone" (drawn
+## apart, for a mark a law drives itself) may be set the same way.
 func decal_material(pattern: int, a: Color, b := Color("#1A0C14"), pace := 1.0) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = _shader("decal")
-	m.set_shader_parameter("pattern", pattern)
-	m.set_shader_parameter("colour_a", a)
-	m.set_shader_parameter("colour_b", b)
-	m.set_shader_parameter("pace", pace * _pace())
+	m.set_meta("pattern", pattern)
+	m.set_meta("colour_a", a)
+	m.set_meta("colour_b", b)
+	m.set_meta("pace", pace)
+	m.set_meta("lit", float(LIT.get(pattern, 1.0)))
+	m.set_shader_parameter("pace", _pace())
 	m.set_shader_parameter("focus", Vector2(site.heart.x, site.heart.z) if site != null else Vector2.ZERO)
-	m.set_shader_parameter("lit", float(LIT.get(pattern, 1.0)))
 	m.set_shader_parameter("steady", 1.0 if LawFxPaint.calm() else 0.0)
 	m.render_priority = UNDER
 	_lit.append(m)

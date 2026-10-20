@@ -361,7 +361,7 @@ static func _day_and_night(fx: LawFx, sig: Node3D) -> void:
 	for t: Vector2i in lights:
 		pools.append(fx.site.centre(t))
 	pools.append(LawFxPaint.home(fx, "day_and_night"))
-	var pool := LawFxPaint.rounds(fx, sig, pools, 1.6, 8, Color("#FFD27A"))
+	var pool := LawFxPaint.rounds(fx, sig, pools, 1.6, 8, Color("#FFD27A"), Color("#1A0C14"), 1.0, true)
 	var pool_mat := pool.material_override as ShaderMaterial
 	var tint := fx.tint(Color("#1A1433"), 0.0, 0.0)
 	fx.every(func(s: float) -> void:
