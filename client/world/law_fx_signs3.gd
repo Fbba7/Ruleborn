@@ -54,7 +54,7 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 				var a := k * TAU / 48.0
 				var d := 0.6 + float(k % 4) * 0.35
 				var out := Vector3(cos(a), 0, sin(a))
-				b.mote(home + out * d + Vector3(0, 0.04, 0), out * 0.001, 0.0, float(k) / 48.0, 0.08, 0.0, 3,
+				b.mote(home + out * d + Vector3(0, 0.04, 0), out * 0.001, 0.0, float(k) / 48.0, 0.12, 0.0, 3,
 					Color("#3A3448", 0.9))
 			fx.layer(sig, b, fx.mote_material(0.0))
 		"shifting_stones":
@@ -71,8 +71,10 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 				"period": [1.5, 2.5], "radius": [0.06, 0.1]})
 		"transmute":
 			# "Loot glints and shifts colour."
-			LawFxPaint.spray(fx, sig, law, {"n": 24, "shape": 2, "colour": Color("#F6C453"),
-				"colour_b": Color("#5CC46A"), "at": fx.site.heart, "reach": 1.2, "lift": [0.2, 1.0], "glow": 0.8})
+			LawFxPaint.rounds(fx, sig, [fx.site.heart], 1.4, 8, Color("#F6C453"))
+			LawFxPaint.spray(fx, sig, law, {"n": 36, "shape": 1, "colour": Color("#F6C453"),
+				"colour_b": Color("#3EA84E"), "at": fx.site.heart, "reach": 1.4, "lift": [0.2, 1.2], "radius": [0.09, 0.13],
+				"vel": Vector3(0, 0.3, 0), "period": [2.0, 3.0], "glow": 0.6})
 		"afterimage":
 			# "Faint ghost frames linger where people passed."
 			LawFxPaint.spray(fx, sig, law, {"n": 30, "shape": 9, "colour": Color("#8C6CF0", 0.45),
@@ -100,7 +102,9 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 			var at: Array = []
 			for p: Dictionary in fx.site.pylons:
 				at.append(p["at"])
-			LawFxPaint.rounds(fx, sig, at, 1.6, 4, Palette.ENERGY, INK, 3.0)
+			LawFxPaint.rounds(fx, sig, at, 2.2, 4, Color("#F05A1E"), INK, 3.0)
+			LawFxPaint.spray(fx, sig, law, {"n": 30, "shape": 8, "colour": Color("#FFD24A"), "at": home, "reach": 1.2,
+				"lift": [0.6, 1.8], "radius": [0.1, 0.14], "glow": 1.0, "pace": 3.0})
 		"sunburst":
 			# "A sun flare every 25 seconds; shade patches are marked."
 			var shade: Array = []
@@ -148,7 +152,8 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 			var steps: Array = []
 			for k in 10:
 				steps.append(fx.site.heart + Vector3(k * 0.45 - 2.0, 0, sin(k * 0.9) * 0.3 + 1.0))
-			LawFxPaint.rounds(fx, sig, steps, 0.3, 12, Color("#2A4AC0"))
+			LawFxPaint.rounds(fx, sig, steps, 0.34, 12, Color("#2A4AC0"))
+			LawFxPaint.rounds(fx, sig, steps, 0.4, 8, Color("#7AD8FF"))
 		"soul_lanterns":
 			# "Warm lantern pools in cold blue dusk."
 			fx.tint(Color("#1A2A6B"), 0.45, 0.08)
