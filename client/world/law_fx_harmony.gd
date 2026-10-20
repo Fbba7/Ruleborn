@@ -70,7 +70,13 @@ static func clash(fx: LawFx, into: Node3D, which: String, a: Vector3, b: Vector3
 				fx.every(func(s: float) -> void:
 					var u := fmod(s, 15.0)
 					var on := u > 12.0
-					var beat := int(s * 8.0) % 2 == 0
+					if LawFxPaint.calm():
+						# No strobe: the dark phase settles in and lifts.
+						tint.set_shader_parameter("wash", LawFxPaint.flash((u - 12.0) / 3.0, 0.35) if on else 0.0)
+						return
+					# Two flashes a second at most over the whole screen (WCAG
+					# 2.3.1's three-flash limit, kept well under).
+					var beat := int(s * 4.0) % 2 == 0
 					tint.set_shader_parameter("flash", 0.3 if on and beat else 0.0)
 					tint.set_shader_parameter("wash", 0.35 if on and not beat else 0.0))
 		"bloom":
@@ -139,7 +145,7 @@ static func chord(fx: LawFx, into: Node3D, id: String, pts: Array[Vector3]) -> v
 			if tint != null:
 				fx.every(func(s: float) -> void:
 					var u := fmod(s, 20.0)
-					tint.set_shader_parameter("flash", 0.7 * (1.0 - u) if u < 1.0 else 0.0))
+					tint.set_shader_parameter("flash", LawFxPaint.flash(u, 0.7)))
 		"deep_sleep":
 			LawFxPaint.spray(fx, into, slot, {"n": 16, "shape": 4, "colour": Color("#E8E0FF", 0.9), "radius": [0.1, 0.14],
 				"at": mid, "reach": 3.0, "lift": [-0.5, 0.5], "vel": Vector3(0, 0.25, 0), "period": [4.0, 6.0]})
@@ -194,7 +200,15 @@ static func paradox(fx: LawFx, into: Node3D, id: String) -> void:
 			LawFxPaint.spray(fx, into, "reversal", {"n": 70, "shape": 1, "colour": Color("#8C6CF0", 0.95),
 				"colour_b": Color("#8A6A4E", 0.95), "radius": [0.06, 0.1], "lift": [0.0, 0.3], "vel": Vector3(0, 0.6, 0),
 				"spread": Vector3(0.05, 0.2, 0.05), "period": [4.0, 6.0]})
-			fx.tint(Color("#6A4FC9"), 0.25)
+			# Upward rain: streaks rising off the whole island into the sky,
+			# and drops hanging upside down under every tree and wall.
+			LawFxPaint.spray(fx, into, "reversal_rain", {"n": 50, "shape": 3, "colour": Color("#5A3FB0", 0.85),
+				"radius": [0.06, 0.09], "lift": [0.0, 1.0], "vel": Vector3(0, 2.2, 0), "period": [1.2, 1.8]})
+			var drops: Array[Vector2i] = fx.site.tiles(LawFxSite.WALLS + LawFxSite.PLANTS)
+			LawFxPaint.spray(fx, into, "reversal_drops", {"n": 30, "shape": 9, "colour": Color("#C9B6FF", 1.0),
+				"tiles": drops, "lift": [0.05, 0.4], "vel": Vector3(0, 0.5, 0), "period": [2.0, 3.0],
+				"radius": [0.08, 0.11]})
+			fx.tint(Color("#3A1F80"), 0.45, 0.06)
 		"twin_suns":
 			# Two suns in the sky behind the island. A second light would wash
 			# the toon ramp out, so the doubling is drawn, not lit.
@@ -215,8 +229,7 @@ static func paradox(fx: LawFx, into: Node3D, id: String) -> void:
 			var tint := fx.tint(Color("#2A1A4A"), 0.0)
 			fx.every(func(s: float) -> void:
 				var u := fmod(s, 20.0)
-				var on := not (u < 1.2 and int(s * 10.0) % 3 == 0)
-				for sig: Node in fx.signatures.values():
-					(sig as Node3D).visible = on
+				var on := not (u < 1.2 and (LawFxPaint.calm() or int(s * 4.0) % 2 == 0))
+				fx.show_signatures(on)
 				if tint != null:
-					tint.set_shader_parameter("edge", 0.0 if on else 0.6))
+					tint.set_shader_parameter("edge", 0.0 if on or LawFxPaint.calm() else 0.6))

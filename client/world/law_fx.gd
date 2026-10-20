@@ -66,6 +66,9 @@ var seconds := 0.0
 var source: RulebornReplay
 
 var _clocked: Array[ShaderMaterial] = []
+## Every law's motes in one batch, drawn in one call (§21.3), and that draw.
+var _motes: LawFxBatch
+var _mote_layer: MeshInstance3D
 var _lit: Array[ShaderMaterial] = []
 var _hooks: Array[Callable] = []
 var _watchers: Array[Callable] = []
@@ -79,6 +82,12 @@ var _since := 0.0
 ## Every woven law of `replay`'s realm drawn over `v`'s world: under T5's
 ## `effects` node when the view has one, else under its world.
 static func attach(v: WorldView, replay: RulebornReplay) -> LawFx:
+	# A view that already draws this replay's laws (WorldView attaches its
+	# own, `law_fx`) is not given a second copy.
+	var own_fx: Variant = v.get("law_fx")
+	if own_fx is LawFx and is_instance_valid(own_fx) and (own_fx as LawFx).is_inside_tree() \
+			and (own_fx as LawFx).source == replay:
+		return own_fx
 	var fx := LawFx.new()
 	fx.view = v
 	fx.camera = v.camera
@@ -93,6 +102,9 @@ static func attach(v: WorldView, replay: RulebornReplay) -> LawFx:
 		(own as Node3D).visible = false
 	parent.add_child(fx)
 	fx.source = replay
+	# The view keeps it as its own, so the next attach hands it back.
+	if "law_fx" in v and v.get("law_fx") == null:
+		v.set("law_fx", fx)
 	fx.build(LawFxSite.from_replay(replay))
 	fx.sync_world(replay)
 	return fx
@@ -116,12 +128,17 @@ func build(s: LawFxSite) -> void:
 	_followers.clear()
 	signatures.clear()
 	_restore_light()
+	_motes = LawFxBatch.new(LawFxBatch.Kind.MOTES)
+	_mote_layer = null
 	site = s
 	crowns = Node3D.new()
 	crowns.name = "Crowns"
 	add_child(crowns)
 	var pools: Array = []
 	for p: Dictionary in site.pylons:
+		# A broken pylon's law has ended (§7.1): nothing of it is drawn.
+		if not p.get("standing", true):
+			continue
 		pools.append(p)
 		var law: String = p["law"]
 		if not signatures.has(law):
@@ -148,7 +165,9 @@ func build(s: LawFxSite) -> void:
 		under.decal(c + Vector3(0, 0.03, 0), Vector2(1.1, 1.1), 1.0, Vector4(c.x, c.z, 0.0, 1.1), 0.0,
 			LawFxCrown.colours(str(p["school"]))[0])
 	if under.triangles > 0:
-		layer(crowns, under, decal_material(8, Color.WHITE))
+		var ring := decal_material(17, Color.WHITE, Color("#1A0C14"))
+		ring.set_shader_parameter("lit", 0.3)
+		layer(crowns, under, ring)
 	_share_ground()
 	links = Node3D.new()
 	links.name = "Links"
@@ -156,6 +175,12 @@ func build(s: LawFxSite) -> void:
 	LawFxLinks.build(self, links)
 	if paradox != "":
 		LawFxLinks.paradox(self, paradox)
+	if _motes.triangles > 0:
+		var shared := Node3D.new()
+		shared.name = "Motes"
+		add_child(shared)
+		_mote_layer = layer(shared, _motes, mote_material(1.0))
+		_mote_layer.set_meta("triangles", _motes.triangles)
 	sync(seconds * TPS)
 
 
@@ -181,13 +206,6 @@ func _share_ground() -> void:
 	for mi: MeshInstance3D in marks:
 		mi.set_meta("strength", share)
 		(mi.material_override as ShaderMaterial).set_shader_parameter("strength", share)
-
-
-## A law's signature on its own (the law card's and Weaving's preview).
-func build_one(s: LawFxSite, law: String) -> void:
-	build(s)
-	for k: String in signatures.keys():
-		(signatures[k] as Node3D).visible = k == law
 
 
 ## §7.5: the universe's paradox, over every realm (Reversal, Twin suns,
@@ -216,6 +234,15 @@ func sync(tick: float) -> void:
 ## piece that follows a character (Soul swap's wisps, Kinship's threads)
 ## moved to where the simulation puts it.
 func sync_world(replay: RulebornReplay) -> void:
+	# A pylon broken since the last build ends its law: build again without it.
+	var changed := false
+	var now := replay.pylons()
+	for i in mini(now.size(), site.pylons.size()):
+		if bool(now[i]["standing"]) != bool(site.pylons[i].get("standing", true)):
+			site.pylons[i]["standing"] = bool(now[i]["standing"])
+			changed = true
+	if changed:
+		build(site)
 	var up := {}
 	for p: Dictionary in replay.pylons():
 		up[str(p["law"])] = bool(up.get(str(p["law"]), false)) or bool(p["standing"])
@@ -254,6 +281,28 @@ func sync_world(replay: RulebornReplay) -> void:
 		w.call(crew, guards)
 
 
+func _merge_motes(batch: LawFxBatch, mat: ShaderMaterial) -> void:
+	if batch.triangles == 0:
+		return
+	var arrays := batch.st.commit_to_arrays()
+	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
+	var colours: PackedColorArray = arrays[Mesh.ARRAY_COLOR]
+	var c0: PackedFloat32Array = arrays[Mesh.ARRAY_CUSTOM0]
+	var c1: PackedFloat32Array = arrays[Mesh.ARRAY_CUSTOM1]
+	var glow := float(mat.get_shader_parameter("glow"))
+	var pace := float(mat.get_shader_parameter("pace")) / maxf(0.01, _pace())
+	var st := _motes.st
+	for i in verts.size():
+		st.set_color(colours[i])
+		st.set_uv(uvs[i])
+		st.set_custom(0, Color(c0[i * 4], c0[i * 4 + 1], c0[i * 4 + 2], c0[i * 4 + 3]))
+		st.set_custom(1, Color(c1[i * 4], c1[i * 4 + 1], c1[i * 4 + 2], c1[i * 4 + 3]))
+		st.set_uv2(Vector2(glow, pace))
+		st.add_vertex(verts[i])
+	_motes.triangles += batch.triangles
+
+
 ## Something that redraws from the characters' places each tick: called
 ## with the crew's and the guards' world positions.
 func watch(hook: Callable) -> void:
@@ -268,8 +317,14 @@ func follow(sig: Node3D, batch: LawFxBatch, mat: ShaderMaterial, who: String) ->
 		"triangles": batch.triangles})
 
 
-## A layer of `sig`: `batch`'s mesh drawn in `mat`, moved by the clock.
+## A layer of `sig`: `batch`'s mesh drawn in `mat`, moved by the clock. A
+## layer of motes joins every other law's motes in one draw (§21.3), its
+## material's glow and pace carried by each of its motes; null comes back.
 func layer(sig: Node3D, batch: LawFxBatch, mat: ShaderMaterial, outlined := false) -> MeshInstance3D:
+	if batch.kind == LawFxBatch.Kind.MOTES and _motes != null and sig.name != "Motes":
+		_merge_motes(batch, mat)
+		sig.set_meta("mote_triangles", int(sig.get_meta("mote_triangles", 0)) + batch.triangles)
+		return null
 	var mi := MeshInstance3D.new()
 	mi.mesh = batch.mesh()
 	mi.material_override = mat
@@ -313,6 +368,7 @@ func decal_material(pattern: int, a: Color, b := Color("#1A0C14"), pace := 1.0) 
 	m.set_shader_parameter("pace", pace * _pace())
 	m.set_shader_parameter("focus", Vector2(site.heart.x, site.heart.z) if site != null else Vector2.ZERO)
 	m.set_shader_parameter("lit", float(LIT.get(pattern, 1.0)))
+	m.set_shader_parameter("steady", 1.0 if LawFxPaint.calm() else 0.0)
 	m.render_priority = UNDER
 	_lit.append(m)
 	return m
@@ -342,10 +398,11 @@ func glass_material(edge: Color, motion := 0, amount := 1.0, fill := 0.12) -> Sh
 ## A screen-space tint (§21.3): one quad just before the camera, darkening
 ## the screen's edges toward `colour` by `edge` and washing all of it by
 ## `wash`. Nothing of the world is re-rendered for it.
-func thread_material(width := 0.09) -> ShaderMaterial:
+func thread_material(width := 0.07) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = _shader("thread")
 	m.set_shader_parameter("width", width)
+	m.set_shader_parameter("steady", 1.0 if LawFxPaint.calm() else 0.0)
 	m.set_shader_parameter("pace", _pace())
 	m.render_priority = OVER
 	return m
@@ -361,6 +418,9 @@ func tint(colour: Color, edge: float, wash := 0.0) -> ShaderMaterial:
 		_tint.mesh = q
 		_tint.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		_tint.extra_cull_margin = 1000.0
+		# In front of the camera, so a perspective camera's frustum holds it;
+		# its shader puts it over the whole screen whatever its place.
+		_tint.position = Vector3(0, 0, -1.0)
 		var m := ShaderMaterial.new()
 		m.shader = _shader("tint")
 		m.render_priority = 100
@@ -368,23 +428,86 @@ func tint(colour: Color, edge: float, wash := 0.0) -> ShaderMaterial:
 		camera.add_child(_tint)
 		_clocked.append(m)
 		tree_exiting.connect(_tint.queue_free)
+	# Several laws share the one tint: the deepest edge and wash win, with
+	# the colour of the law that set the edge.
 	var mat := _tint.material_override as ShaderMaterial
-	mat.set_shader_parameter("colour", colour)
-	mat.set_shader_parameter("edge", edge)
-	mat.set_shader_parameter("wash", wash)
+	var had_edge := float(_tint.get_meta("edge", -1.0))
+	if edge > had_edge:
+		mat.set_shader_parameter("colour", colour)
+		mat.set_shader_parameter("edge", edge)
+		_tint.set_meta("edge", edge)
+	var had_wash := float(_tint.get_meta("wash", -1.0))
+	if wash > had_wash:
+		mat.set_shader_parameter("wash", wash)
+		_tint.set_meta("wash", wash)
 	return mat
 
 
 ## The realm's light, dimmed or turned by a law (Glowing dark, Day and
 ## night): the sun's and the ambient's strength as built, kept to restore.
-func light() -> Dictionary:
+func _base_light() -> Dictionary:
 	if _light.is_empty() and sun != null and environment != null:
 		_light = {"sun": sun.light_energy, "sun_colour": sun.light_color, "ambient": environment.ambient_light_energy,
 			"ambient_colour": environment.ambient_light_color}
 	return _light
 
 
+## T2's look on the attached view (its sky and the hemisphere the ambient
+## light comes from), or null in a bare scene.
+func _look() -> WorldLook:
+	var v: Variant = view.get("look") if view != null else null
+	return v as WorldLook
+
+
+## The realm's sky and ambient hemisphere between its day (0) and its
+## night (1) (§21.7, Day and night: "The sky flips between day and night"),
+## from §21.2's skies for this realm; and `dark` (0..1) dims the hemisphere
+## the ambient light comes from (Glowing dark), so the ground darkens too.
+func set_sky(night: float, dark := 0.0) -> void:
+	var l := _look()
+	if l == null:
+		return
+	var day_sky := RealmPalette.realm_sky_at(12, l.realm)
+	var night_sky := RealmPalette.realm_sky_at(23, l.realm)
+	var m := l.sky_material
+	for k: int in 3:
+		var key: String = ["top", "middle", "bottom"][k]
+		m.set_shader_parameter(key, day_sky[k].lerp(night_sky[k], night))
+	m.set_shader_parameter("stars", clampf(night * 1.4 - 0.3, 0.0, 0.9))
+	m.set_shader_parameter("moon", clampf(night * 2.0 - 1.0, 0.0, 1.0))
+	var day_h := RealmPalette.hemisphere_at(12, l.realm)
+	var night_h := RealmPalette.hemisphere_at(23, l.realm)
+	var dim := 1.0 - dark
+	l.hemi_material.set_shader_parameter("above", day_h[0].lerp(night_h[0], night) * dim)
+	l.hemi_material.set_shader_parameter("below", day_h[1].lerp(night_h[1], night) * dim)
+	_light["sky"] = true
+
+
+## Dim or brighten the realm's light from its own: the sun to `sun_k` of it,
+## the ambient to `ambient_k` and, if given, toward `colour`. Called every
+## sync, so when the view relights (the hour changes, a screen sets its sky)
+## the law's light follows from the new light, never compounding.
+func set_light(sun_k: float, ambient_k: float, colour := Color(0, 0, 0, 0)) -> void:
+	if sun == null or environment == null:
+		return
+	var base := _base_light()
+	if _light.has("wrote") and not is_equal_approx(sun.light_energy, float(_light["wrote"])):
+		# Someone else lit the realm since: that is the base now.
+		_light = {}
+		base = _base_light()
+	sun.light_energy = float(base["sun"]) * sun_k
+	environment.ambient_light_energy = float(base["ambient"]) * ambient_k
+	if colour.a > 0.0:
+		environment.ambient_light_color = colour
+	_light["wrote"] = sun.light_energy
+
+
 func _restore_light() -> void:
+	if _light.has("sky") and _look() != null:
+		# The look puts its own sky, hemisphere and light back for its hour.
+		_look().set_hour(_look().hour)
+		_light = {}
+		return
 	if _light.is_empty() or sun == null or environment == null:
 		return
 	sun.light_energy = _light["sun"]
@@ -400,7 +523,8 @@ func _exit_tree() -> void:
 
 ## Attached to a heist, it keeps itself in step with the replay: between
 ## ticks it draws on from the last one, as the world view moves its actors,
-## and on each new tick it reads the pylons and the characters again.
+## and on each new tick it reads the pylons and the characters again. On a
+## realm screen, whose replay never ticks, it runs on its own clock.
 func _process(delta: float) -> void:
 	if source == null or site == null:
 		return
@@ -411,15 +535,19 @@ func _process(delta: float) -> void:
 		sync_world(source)
 	else:
 		_since += delta
-	sync(tick + clampf(_since * TPS, 0.0, 1.0))
+	# Between ticks it draws on from the last one; where the replay stands
+	# still (a realm screen, a paused rehearsal) its clock runs on, so the
+	# realm stays alive. While a heist plays, a tick comes every 1/30 s and
+	# this is the tick's own time, the same on every replay.
+	sync(tick + _since * TPS)
 
 
 ## Haste quickens every signature's clock and Stillness all but stops it
 ## (§21.7: "Clouds race overhead; plants sway quickly", "not a leaf moves").
 func _pace() -> float:
 	if site == null:
-		return 1.0
-	var p := 1.0
+		return 0.6 if LawFxPaint.calm() else 1.0
+	var p := 0.6 if LawFxPaint.calm() else 1.0
 	for d: Dictionary in site.pylons:
 		if d["law"] == "haste":
 			p *= 1.6
@@ -448,7 +576,17 @@ func budget(law: String) -> Dictionary:
 		var passes := 2 if mi.material_override != null and mi.material_override.next_pass != null else 1
 		tris += n * passes
 		draws += passes
+	# Its motes are drawn with every other law's, in the one shared draw.
+	tris += int(sig.get_meta("mote_triangles", 0))
 	return {"triangles": tris, "draws": draws}
+
+
+## Every law's signature shown or hidden at once (Unmaking's stutter).
+func show_signatures(on: bool) -> void:
+	for sig: Node in signatures.values():
+		(sig as Node3D).visible = on
+	if _mote_layer != null:
+		_mote_layer.visible = on
 
 
 ## §21.7's movement signature of `law` as numbers a character controller

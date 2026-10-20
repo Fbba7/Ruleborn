@@ -24,6 +24,9 @@ func run() -> void:
 	_links()
 	_gaits()
 	_crowns()
+	await _creature()
+	await _restores()
+	_calm()
 	await _signatures()
 	await _same_every_time()
 
@@ -90,6 +93,81 @@ func _crowns() -> void:
 			off.append([school, tris])
 	check.call("every school's crown is its own shape, built from code within a few hundred triangles (21.2)",
 		off.is_empty() and LawFx.crown("time") != LawFx.crown("life"), "%s" % [off])
+
+
+## §21.7's movement signatures on T1's characters: Half gravity lifts a
+## walking body off the ground and Frictionless slides it, without moving the
+## model from where the caller placed it; at rest it stands as it was.
+func _creature() -> void:
+	var kinds := CreatureModel.kinds()
+	if kinds.is_empty():
+		check.call("a law changes how a character moves (21.7)", false, "no exported creatures")
+		return
+	var c := CreatureModel.make(StringName(kinds[0]))
+	tree.root.add_child(c)
+	c.place(Vector3(2, 0, 3))
+	await tree.process_frame
+	var body := LawFxCreature.body_of(c)
+	var rest_y := body.position.y
+	var g := LawFxCreature.apply(c, ["half_gravity"], 0.11, true)
+	var lifted := body.position.y > rest_y + 0.01
+	var slide := LawFxCreature.apply(c, ["frictionless"], 0.5, true)
+	var slides := c.clip == LawFxCreature.clip_for(slide, c) and float(slide["skate"]) == 1.0
+	LawFxCreature.rest(c)
+	var back := absf(body.position.y - rest_y) < 0.0001 and c.position == Vector3(2, 0, 3)
+	c.queue_free()
+	check.call("a law changes how a character moves: Half gravity lifts a walking body, Frictionless slides it, and "
+			+ "the model stays where it was placed (21.7)", lifted and slides and back and float(g["float"]) > 0.5,
+		"%s %s %s %s" % [kinds[0], lifted, slides, back])
+
+
+## A law that darkens the realm (Glowing dark) gives the realm's own sky,
+## hemisphere and light back when its effects leave, so nothing it changed
+## outlives it.
+func _restores() -> void:
+	var replay := RulebornReplay.new()
+	replay.start("11", 4500, 3, realm("glowing_dark"))
+	var view := WorldView.new()
+	view.size = Vector2(360, 640)
+	tree.root.add_child(view)
+	view.set_sky_hour(12)
+	view.show_replay(replay)
+	# Headless the view draws no LawFx of its own (in a window it does, and
+	# then the realm is already dark here).
+	var before_sun := view.sun.light_energy
+	var before_top: Color = view.look.sky_material.get_shader_parameter("top")
+	var fx := LawFx.attach(view, replay)
+	fx.sync(30)
+	var dark := view.sun.light_energy < before_sun * 0.6 \
+		and (view.look.sky_material.get_shader_parameter("top") as Color) != before_top
+	var again := LawFx.attach(view, replay) == fx
+	fx.get_parent().remove_child(fx)
+	var back := is_equal_approx(view.sun.light_energy, before_sun) \
+		and (view.look.sky_material.get_shader_parameter("top") as Color).is_equal_approx(before_top)
+	fx.queue_free()
+	view.queue_free()
+	await tree.process_frame
+	check.call("a law that darkens a realm darkens its sun and sky while woven and gives them back when its effects "
+			+ "leave; attaching twice to a view draws its laws once (21.7)", dark and back and again,
+		"%s %s %s" % [dark, back, again])
+
+
+## §20.8's reduced motion: no flash jumps, no strobe, slower signatures.
+func _calm() -> void:
+	var was := Settings.reduced_motion
+	Settings.reduced_motion = true
+	var soft := true
+	for k in 21:
+		soft = soft and LawFxPaint.flash(k / 20.0, 0.7) <= 0.2
+	var fx := LawFx.new()
+	var steady := float(fx.thread_material().get_shader_parameter("steady")) == 1.0
+	Settings.reduced_motion = false
+	var sharp := LawFxPaint.flash(0.0, 0.7) > 0.6
+	var flickers := float(fx.thread_material().get_shader_parameter("steady")) == 0.0
+	fx.free()
+	Settings.reduced_motion = was
+	check.call("with reduced motion a law's flashes swell softly, never past a fifth, and its lines stop flickering "
+			+ "(20.8, 21.7)", soft and steady and sharp and flickers, "%s %s %s %s" % [soft, steady, sharp, flickers])
 
 
 static func realm(law: String) -> PackedByteArray:

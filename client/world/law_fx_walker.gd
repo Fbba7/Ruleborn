@@ -14,14 +14,20 @@ const STEPS := 2.2
 const LOOP := 4.0
 
 var gait := LawFxGait.of("")
+var law := ""
 var body: MeshInstance3D
-## The loop it walks, round the origin, in metres.
+## T1's character walking the loop instead of the stand-in body, moved by
+## LawFxCreature; null where no character is exported.
+var figure: CreatureModel
+## The loop it walks, round `centre`, in metres.
 var reach := 1.4
+var centre := Vector3.ZERO
 var _shadow: MeshInstance3D
 
 
-func _init(law := "", mesh: ArrayMesh = null, mat: Material = null) -> void:
-	gait = LawFxGait.of(law)
+func _init(law_id := "", mesh: ArrayMesh = null, mat: Material = null) -> void:
+	gait = LawFxGait.of(law_id)
+	law = law_id
 	body = MeshInstance3D.new()
 	body.mesh = mesh
 	body.material_override = mat
@@ -45,15 +51,45 @@ func walk(t: float) -> void:
 	var u := fmod(t, LOOP) / LOOP
 	var moving := u < 0.8
 	var a := clampf(u / 0.8, 0.0, 1.0) * TAU
-	position = Vector3(cos(a) * reach, position.y, sin(a) * reach * 0.6)
+	position = centre + Vector3(cos(a) * reach, position.y - centre.y, sin(a) * reach * 0.6)
 	rotation.y = atan2(sin(a), -cos(a) * 0.6) if moving else rotation.y
-	pose(body, gait, t, moving)
-	var k := clampf(1.0 - body.position.y * 1.5, 0.45, 1.0)
+	var lift := 0.0
+	if figure != null:
+		LawFxCreature.apply(figure, [] if law == "" else [law], t, moving)
+		if not moving and figure.clip != &"idle":
+			figure.play(&"idle")
+		var fbody := LawFxCreature.body_of(figure)
+		lift = fbody.position.y if fbody != null else 0.0
+	else:
+		pose(body, gait, t, moving)
+		lift = body.position.y
+	var k := clampf(1.0 - lift * 1.5, 0.45, 1.0)
 	_shadow.scale = Vector3(k, 1.0, k)
+
+
+## Walk T1's character of `kind` instead of the stand-in body.
+func use_figure(kind: StringName) -> void:
+	var c := CreatureModel.make(kind)
+	if c == null:
+		return
+	figure = c
+	body.visible = false
+	add_child(c)
 
 
 ## A figure's body posed by `g` at `t` seconds, walking or standing.
 static func pose(node: Node3D, g: Dictionary, t: float, moving: bool) -> void:
+	var o := offsets(g, t, moving)
+	node.position = Vector3(0, float(o["lift"]), 0)
+	node.scale = o["scale"]
+	node.rotation = Vector3(-float(o["lean"]), 0.0, float(o["sway"]))
+
+
+## What a gait does to a body at `t` seconds, walking or standing, as numbers
+## to add to its rest pose: "lift" (metres up), "scale" (squash and crouch),
+## "lean" (radians forward), "sway" (radians sideways) and "rate" (its walk
+## clip's speed, times the clip's own).
+static func offsets(g: Dictionary, t: float, moving: bool) -> Dictionary:
 	var tempo := float(g["tempo"]) / maxf(0.3, float(g["stride"]))
 	var phase := t * STEPS * tempo
 	var step := absf(sin(phase * PI))
@@ -69,10 +105,9 @@ static func pose(node: Node3D, g: Dictionary, t: float, moving: bool) -> void:
 	var y := lift * pow(step, 1.0 - hang * 0.7) * (1.0 - skate) + hang * 0.06
 	var squash := float(g["squash"]) * (1.0 - step) * (1.0 - skate) if moving else 0.0
 	var crouch := float(g["crouch"]) * 0.25 + float(g["tiptoe"]) * -0.04
-	node.position = Vector3(0, y, 0)
-	node.scale = Vector3(1.0 + squash * 0.6, 1.0 - squash - crouch, 1.0 + squash * 0.6)
 	var lean := float(g["lean"]) + skate * 0.1 * sin(t * 1.3)
 	var sway := float(g["sway"]) * sin(phase * PI * 0.5) + skate * 0.12 * sin(t * 2.0)
 	if float(g["shimmer"]) > 0.5 and not moving:
 		sway = 0.0
-	node.rotation = Vector3(-lean if moving else 0.0, 0.0, sway)
+	return {"lift": y, "scale": Vector3(1.0 + squash * 0.6, 1.0 - squash - crouch, 1.0 + squash * 0.6),
+		"lean": lean if moving else 0.0, "sway": sway, "rate": float(g["tempo"]) * (1.0 - skate * 0.7)}

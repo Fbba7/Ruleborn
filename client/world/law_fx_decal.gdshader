@@ -20,6 +20,8 @@ uniform vec2 focus = vec2(0.0);
 // itself: runes, pools, aurora), and the light now (1 at noon, less at night
 // and in Glowing dark), so ice and cracks darken with the ground they lie on.
 uniform float lit = 1.0;
+// §20.8's reduced motion: 1 slows what jumps (Static's crackle).
+uniform float steady = 0.0;
 uniform float lum = 1.0;
 
 varying vec2 world;
@@ -104,9 +106,11 @@ void fragment() {
 		// Brittle stone: hairline cracks everywhere.
 		float e = cells(p * 1.6 + local.z * 3.0);
 		float fine = cells(p * 4.1 + 5.0);
-		float crack = smoothstep(0.06, 0.0, e) + smoothstep(0.035, 0.0, fine) * 0.6;
-		c = colour_b.rgb;
-		a = crack * 0.85;
+		// A dark crack in a pale lip, so it reads on light and dark ground.
+		float core = smoothstep(0.035, 0.0, e) + smoothstep(0.02, 0.0, fine) * 0.6;
+		float lip = smoothstep(0.08, 0.04, e) + smoothstep(0.045, 0.025, fine) * 0.5;
+		c = mix(colour_a.rgb, colour_b.rgb, clamp(core, 0.0, 1.0));
+		a = clamp(max(core, lip * 0.7), 0.0, 1.0) * 0.9;
 	} else if (pattern == 3) {
 		// Inward pull: faint spiral streaks drawn in toward the Heart.
 		vec2 d = p - focus;
@@ -170,12 +174,17 @@ void fragment() {
 		a = smoothstep(0.35, 0.8, n) * 0.5;
 	} else if (pattern == 10) {
 		// Static: thin crackling lines that jump about the ground.
-		float step_t = floor(s * 6.0);
+		float step_t = floor(s * mix(6.0, 0.5, steady));
 		float e = cells(p * 1.2 + vec2(hash(vec2(step_t, 1.0)), hash(vec2(step_t, 2.0))) * 7.0);
 		float on = step(0.6, hash(floor(p * 0.8) + step_t));
 		c = colour_a.rgb;
-		a = smoothstep(0.06, 0.0, e) * on;
-		c = mix(colour_a.rgb, vec3(1.0), smoothstep(0.02, 0.0, e));
+		// A white-hot line in its colour, edged in ink, so it reads on any
+		// ground.
+		float hot = smoothstep(0.03, 0.0, e);
+		float glow = smoothstep(0.06, 0.02, e);
+		float ink = smoothstep(0.09, 0.06, e) - glow;
+		c = mix(mix(vec3(0.1, 0.05, 0.08), colour_a.rgb, glow), vec3(1.0), hot);
+		a = clamp(glow + ink * 0.6, 0.0, 1.0) * on;
 	} else if (pattern == 11) {
 		// Glass: a clear floor of facets with coloured edges.
 		float e = cells(p * 0.9);
@@ -226,6 +235,38 @@ void fragment() {
 		c = mix(colour_a.rgb, colour_b.rgb, lo * 0.7);
 		c = mix(c, vec3(1.0), hi * 0.85);
 		a = 0.78;
+	} else if (pattern == 17) {
+		// A pylon's ground: a ring in its school's colour, inked at the rim,
+		// with a soft fill and four notches turning slowly.
+		vec2 d = (p - local.xy) / max(local.w, 0.1);
+		float r = length(d);
+		float ang = atan(d.y, d.x);
+		float band = smoothstep(0.09, 0.05, abs(r - 0.8));
+		float rim = smoothstep(0.035, 0.0, abs(r - 0.9));
+		float notch = step(0.9, fract(ang / 6.28318 * 4.0 + s * 0.05)) * smoothstep(0.08, 0.04, abs(r - 0.66));
+		c = mix(colour_a.rgb, colour_b.rgb, rim);
+		a = smoothstep(0.85, 0.2, r) * 0.25 + band * 0.85 + rim * 0.9 + notch * 0.8;
+		a *= step(r, 0.95);
+	} else if (pattern == 18) {
+		// Tilt: chevrons flowing downhill, inked, the way the realm slopes.
+		vec2 q = vec2(p.x + p.y, p.y - p.x) * 0.7071;
+		float v = fract(q.x * 0.9 - s * 0.6);
+		float row = fract(q.y * 0.9);
+		float chev = abs(v - 0.5 - abs(row - 0.5) * 0.6);
+		float line = smoothstep(0.09, 0.04, chev) * step(0.15, row) * step(row, 0.85);
+		float ink = smoothstep(0.13, 0.09, chev) * step(0.15, row) * step(row, 0.85) - line;
+		c = mix(colour_b.rgb, colour_a.rgb, line);
+		a = line * 0.8 + ink * 0.6;
+	} else if (pattern == 19) {
+		// Tidemark: a thin silver tide line sweeping across the ground and
+		// back, the wet ground darker behind it.
+		float u = sin(s * 0.35) * 0.5 + 0.5;
+		float d = dot(p - focus, normalize(vec2(1.0, 0.6))) / 9.0 + 0.5;
+		float line = smoothstep(0.022, 0.012, abs(d - u));
+		float edge = smoothstep(0.035, 0.022, abs(d - u)) - line;
+		float wet = step(d, u) * 0.18;
+		c = mix(colour_b.rgb, colour_a.rgb, line);
+		a = line + edge * 0.8 + wet;
 	} else {
 		// Density: the ground's grain enlarged, a heavy coarse weave.
 		float n = noise(p * 2.0);

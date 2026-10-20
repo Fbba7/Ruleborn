@@ -88,7 +88,7 @@ static func _bounce(fx: LawFx, sig: Node3D) -> void:
 		jelly.geo(g, c, RealmKit.jitter(t, 1))
 		feet.append(c)
 	if jelly.triangles > 0:
-		fx.layer(sig, jelly, fx.glass_material(Color("#FFE07A"), 3, 1.0, 0.34))
+		fx.layer(sig, jelly, fx.glass_material(Color("#C0287A"), 3, 1.0, 0.5))
 	LawFxPaint.rounds(fx, sig, LawFxPaint.some_points(feet, 24), 1.0, 4, Color("#E05CB4"))
 	LawFxPaint.spray(fx, sig, "bounce", {"n": 22, "shape": 1, "colour": Color("#FF7AC8", 0.95),
 		"radius": [0.07, 0.11], "tiles": LawFxPaint.ground(fx.site), "lift": [0.15, 0.9], "wobble": 0.3,
@@ -176,7 +176,7 @@ static func _inward_pull(fx: LawFx, sig: Node3D) -> void:
 
 ## Brittle stone: "Hairline cracks everywhere; crumbs fall from walls."
 static func _brittle_stone(fx: LawFx, sig: Node3D) -> void:
-	LawFxPaint.mark(fx, sig, LawFxPaint.ground(fx.site), 2, Color("#FFFFFF"), Color("#3A2A3A"))
+	LawFxPaint.mark(fx, sig, LawFxPaint.ground(fx.site), 2, Color("#F4ECDC"), Color("#2A1A24"))
 	var r := fx.site.rng("brittle_stone")
 	var crumbs := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	for t: Vector2i in fx.site.tiles(LawFxSite.WALLS):
@@ -234,7 +234,7 @@ static func _density(fx: LawFx, sig: Node3D) -> void:
 	var r := fx.site.rng("density")
 	var tufts := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	var ground := LawFxPaint.ground(fx.site)
-	for t: Vector2i in LawFxPaint.some(ground, 40):
+	for t: Vector2i in LawFxPaint.some(ground, 56):
 		var c := fx.site.centre(t) + Vector3(r.randf_range(-0.4, 0.4), 0, r.randf_range(-0.4, 0.4))
 		var g := Geo.new()
 		if r.randf() < 0.7:
@@ -242,9 +242,9 @@ static func _density(fx: LawFx, sig: Node3D) -> void:
 				var a := k * TAU / 4.0 + r.randf()
 				var lean := Basis(Vector3(cos(a), 0, sin(a)).cross(Vector3.UP).normalized(), 0.3)
 				g.prism(Transform3D(lean, Vector3(cos(a) * 0.05, 0, sin(a) * 0.05)), 3, 0.06, 0.0,
-					r.randf_range(0.45, 0.7), Color("#6DB85A").darkened(r.randf() * 0.2))
+					r.randf_range(0.6, 0.95), Color("#3E7A30").lightened(r.randf() * 0.15))
 		else:
-			g.ball(Geo.place(Vector3(0, 0.1, 0), 0.0, Vector3(1.3, 0.8, 1.0)), 0.2, Color("#B9AE9F"), 3, 7)
+			g.ball(Geo.place(Vector3(0, 0.13, 0), 0.0, Vector3(1.3, 0.8, 1.0)), 0.27, Color("#D8CFC2"), 3, 7)
 		tufts.geo(g, c, r.randf())
 	fx.layer(sig, tufts, fx.solid_material(5, 0.12, 0.5), true)
 
@@ -356,7 +356,6 @@ static func _haste(fx: LawFx, sig: Node3D) -> void:
 ## thirty-second day: the sun and the shade dim and brighten, a dusk wash
 ## falls over the screen in the dark phase, lanterns glow up.
 static func _day_and_night(fx: LawFx, sig: Node3D) -> void:
-	var base := fx.light()
 	var lights := fx.site.tiles(LawFxSite.LIGHTS)
 	var pools: Array = []
 	for t: Vector2i in lights:
@@ -367,9 +366,8 @@ static func _day_and_night(fx: LawFx, sig: Node3D) -> void:
 	var tint := fx.tint(Color("#1A1433"), 0.0, 0.0)
 	fx.every(func(s: float) -> void:
 		var d := sin(s * TAU / 30.0) * 0.5 + 0.5
-		if not base.is_empty():
-			fx.sun.light_energy = float(base["sun"]) * (0.3 + 0.7 * d)
-			fx.environment.ambient_light_energy = float(base["ambient"]) * (0.55 + 0.45 * d)
+		fx.set_light(0.3 + 0.7 * d, 0.55 + 0.45 * d)
+		fx.set_sky(1.0 - d, (1.0 - d) * 0.45)
 		if tint != null:
 			tint.set_shader_parameter("wash", (1.0 - d) * 0.28)
 			tint.set_shader_parameter("edge", (1.0 - d) * 0.5)

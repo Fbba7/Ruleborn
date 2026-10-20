@@ -18,7 +18,7 @@ uniform float strength = 1.0;
 // How fast the whole field runs: Haste speeds it, Stillness all but stops it.
 uniform float pace = 1.0;
 // Glow added on top of the colour, so a mote reads on dark ground too.
-uniform float glow = 0.35;
+uniform float glow = 1.0;
 // Every mote's size, times its own: one dial for reading at phone size,
 // where a tile is about 30 points (§21.1: a heist shows about 12 tiles).
 uniform float size = 1.8;
@@ -27,6 +27,7 @@ varying vec4 colour;
 varying vec2 corner;
 varying float shape;
 varying float fade;
+varying float shine;
 
 // Shapes: 0 soft dot, 1 inked dot, 2 four-point sparkle, 3 streak, 4 a "Z",
 // 5 petal, 6 ring, 7 hexagon, 8 zigzag spark, 9 drop, 10 leaf, 11 wisp.
@@ -37,7 +38,9 @@ void vertex() {
 	float radius = CUSTOM1.y * size;
 	float wobble = CUSTOM1.z;
 	shape = CUSTOM1.w;
-	float s = t * pace;
+	// A mote's own glow and pace (UV2), times the field's.
+	shine = UV2.x;
+	float s = t * pace * UV2.y;
 	vec3 at = VERTEX;
 	float u = 0.0;
 	fade = 1.0;
@@ -126,6 +129,6 @@ void fragment() {
 		ink = smoothstep(0.3, 0.45, d) * a;
 	}
 	vec3 c = mix(colour.rgb, vec3(0.102, 0.047, 0.078), ink * 0.85);
-	ALBEDO = c * (1.0 + glow * (1.0 - ink));
+	ALBEDO = c * (1.0 + shine * glow * (1.0 - ink));
 	ALPHA = clamp(a, 0.0, 1.0) * colour.a * fade * strength;
 }
