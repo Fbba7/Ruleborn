@@ -71,7 +71,7 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 				var arrow := _plate(Palette.MOTION, Palette.INK, true)
 				arrow.add_child(_icon("levelup"))
 				_pins.append({"node": arrow, "realm": str(r.get("realm", "")), "lift": 1.2,
-					"place": "%s:%d" % [str(b.get("kind", "")), int(b.get("n", 1))], "zooms": [1, 2], "rank": 2})
+					"place": "%s:%d" % [str(b.get("kind", "")), int(b.get("n", 1))], "zooms": [2], "rank": 2})
 	# §5.5's strain band over the Heart, in words beside the rings' colour.
 	if extras.has("strain"):
 		var plate := _plate(Palette.INK, Palette.STONE)

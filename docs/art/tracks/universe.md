@@ -141,6 +141,10 @@ universe, inside §21.3's 40,000 and 150.
   Stills: `round17_zoom2_skyfield_paths.png`, `round17_zoom2_verdant_paths.png`,
   `round17_compare_scout_skyfield.png` (ours at night beside the design's daytime scout still).
 
+- Round 18: level-up markers only in a close-up, so the Heart at home's realm zoom is not crowded.
+  (The design does not bob its islands in universe mode, so neither does the map.)
+  Still: `round18_home.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 
