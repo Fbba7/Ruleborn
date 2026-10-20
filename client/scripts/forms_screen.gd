@@ -44,7 +44,7 @@ func _build() -> void:
 	column.add_child(StageHeroSkin.plate(status_label))
 	body = UI.scroll(column)
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(0, UI.px(170))
+	stage.custom_minimum_size = Vector2(0, UI.px(210))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
 	cards = VBoxContainer.new()
