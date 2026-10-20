@@ -90,8 +90,8 @@ func _go() -> void:
 		view.swoop()
 		view._process(0.45)
 		view.set_process(false)
-	if OS.get_environment("ZOOM") != "":
-		view.set_zoom(int(OS.get_environment("ZOOM")))
+	# The landing's drop from the whole realm is long over by the moment shot.
+	view.set_zoom(int(OS.get_environment("ZOOM")) if OS.get_environment("ZOOM") != "" else 1)
 	if OS.get_environment("NAMES") != "":
 		# A long press: every crew member's name over its head.
 		view.anchors.names_for = 60.0
