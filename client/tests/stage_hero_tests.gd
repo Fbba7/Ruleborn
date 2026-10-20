@@ -2,7 +2,8 @@ class_name StageHeroTests
 extends RefCounted
 ## The character screens' 3D (§21.3, §21.6): every stand-in figure inside
 ## the character budget in every look, a kind's facts read from its key,
-## the stage standing what it is asked to, and portraits cached.
+## the stage standing what it is asked to — the design's model where the
+## export has the kind — and portraits cached and cut from what is drawn.
 
 var check: Callable
 
@@ -42,8 +43,11 @@ func _stage() -> void:
 	stage.show_kinds(["skyskipper", "skyskipper", "skyskipper", "skyskipper"], ["hush", "spark", "echo", "guard"])
 	var four := stage.figures.size() == 4 and stage.school == "motion" and stage.kinds[0] == "skyskipper"
 	stage.show_kinds(["the_archivist", "the_tinkerer"], ["", "shadow"], "hall")
-	var shaded := (stage.figures[1].get_child(0) as MeshInstance3D).material_override is StandardMaterial3D
-	var hall := stage.figures.size() == 2 and stage.scenery.get_child_count() > 0 and stage.school == "spirit"
+	var shaded := stage.figures[1].find_children("*", "MeshInstance3D", true, false).any(
+		func(mi: MeshInstance3D) -> bool: return mi.material_override is StandardMaterial3D)
+	var modelled: bool = stage.figures[0].get_meta("model", null) is CreatureModel
+	var hall := stage.figures.size() == 2 and stage.scenery.get_child_count() > 0 and stage.school == "spirit" \
+		and modelled
 	stage.act(1)
 	var acting: bool = stage.get("_actions")[1] >= 0.0
 	stage.free()
@@ -56,4 +60,10 @@ func _portraits() -> void:
 	var a := Portrait.of("featherkin")
 	var b := Portrait.of("featherkin")
 	var c := Portrait.of("featherkin", "hush")
-	check.call("a portrait is made once a kind and look and shared (21.3)", a == b and a != c and a.get_width() == 256)
+	var drawn := Image.create_empty(512, 512, false, Image.FORMAT_RGBA8)
+	drawn.fill_rect(Rect2i(200, 100, 100, 300), Color.WHITE)
+	drawn.fill_rect(Rect2i(10, 10, 2, 2), Color.WHITE)
+	var cut := PortraitStudio.crop(drawn)
+	check.call("a portrait is made once a kind and look and shared, cut square from the top of what is drawn, a "
+		+ "stray glint left out (21.3)", a == b and a != c and a.get_width() == 256 and cut.get_width() == 256
+		and cut.get_pixel(128, 40).a > 0.5 and cut.get_pixel(4, 4).a == 0.0)
