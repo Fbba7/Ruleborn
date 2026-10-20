@@ -1,6 +1,234 @@
 {
 	"note": "Written by tools/art/export.mjs from art/design/creatures; do not edit by hand.",
 	"kinds": {
+		"archivist": {
+			"file": "archivist.glb",
+			"group": "sage",
+			"school": "sage",
+			"triangles": 5879,
+			"body_triangles": 3395,
+			"texels_per_unit": 178.7,
+			"relief": 1,
+			"bones": 45,
+			"scale": 1.13741,
+			"scale_note": "scaled to §21.6's 1.6 m (module GAME_SCALE none gives 1.41 m)",
+			"height": 1.98,
+			"body_height": 1.6,
+			"design_height": 1.6,
+			"radius": 0.507,
+			"chest_radius": 0.2241,
+			"clips": {
+				"idle": {
+					"len": 5,
+					"label": "Idle"
+				},
+				"read": {
+					"len": 6,
+					"label": "Read"
+				},
+				"walk": {
+					"len": 1.3,
+					"label": "Walk"
+				},
+				"suspend": {
+					"len": 3.6,
+					"label": "Suspend"
+				},
+				"reveal": {
+					"len": 3.4,
+					"label": "Reveal"
+				},
+				"recall": {
+					"len": 3.8,
+					"label": "Recall"
+				},
+				"tip": {
+					"len": 2.8,
+					"label": "Tip"
+				},
+				"guard": {
+					"len": 5,
+					"label": "On guard"
+				},
+				"celebrate": {
+					"len": 2.4,
+					"label": "Celebrate"
+				},
+				"catch": {
+					"len": 3.8,
+					"label": "Catch the page"
+				},
+				"expr_kind": {
+					"len": 5.236,
+					"label": "expr_kind"
+				},
+				"expr_ponder": {
+					"len": 5.236,
+					"label": "expr_ponder"
+				},
+				"expr_amazed": {
+					"len": 5.236,
+					"label": "expr_amazed"
+				},
+				"expr_stern": {
+					"len": 5.236,
+					"label": "expr_stern"
+				}
+			},
+			"expressions": [
+				"kind",
+				"ponder",
+				"amazed",
+				"stern"
+			],
+			"sockets": [
+				{
+					"name": "socket_0",
+					"color": "#ffffff",
+					"size": 0.34,
+					"kind": "glow",
+					"from": "lantern_glow",
+					"bone": "socket_0"
+				},
+				{
+					"name": "socket_1",
+					"color": "#ffffff",
+					"size": 0.34,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_1"
+				},
+				{
+					"name": "socket_2",
+					"color": "#ffe9b0",
+					"size": 0.018,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_2"
+				},
+				{
+					"name": "socket_3",
+					"color": "#ffe9b0",
+					"size": 0.018,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_3"
+				},
+				{
+					"name": "socket_4",
+					"color": "#ffe9b0",
+					"size": 0.018,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_4"
+				},
+				{
+					"name": "socket_5",
+					"color": "#ffe9b0",
+					"size": 0.018,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_5"
+				},
+				{
+					"name": "socket_6",
+					"color": "#ffe9b0",
+					"size": 0.018,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_6"
+				},
+				{
+					"name": "socket_7",
+					"color": "#ffe9b0",
+					"size": 0.018,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_7"
+				},
+				{
+					"name": "socket_8",
+					"color": "#ffe9b0",
+					"size": 0.018,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_8"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.2772,
+						-0.0261
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						0,
+						0.0357,
+						-0.0224
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						0,
+						0.0357,
+						-0.2257
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#9FD4FF",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 725356
+		},
 		"bloomling": {
 			"file": "bloomling.glb",
 			"group": "ruleborn",
@@ -190,6 +418,410 @@
 				"len": 0.0045
 			},
 			"bytes": 605472
+		},
+		"cartographer": {
+			"file": "cartographer.glb",
+			"group": "visitor",
+			"school": "visitor",
+			"triangles": 5879,
+			"body_triangles": 2799,
+			"texels_per_unit": 393.6,
+			"relief": 1,
+			"bones": 28,
+			"scale": 0.95,
+			"height": 1.662,
+			"body_height": 0.725,
+			"design_height": 1.66,
+			"radius": 0.19,
+			"chest_radius": 0.1277,
+			"clips": {
+				"idle": {
+					"len": 4,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 4.4,
+					"label": "Check the map"
+				},
+				"walk": {
+					"len": 2.4,
+					"label": "Drift"
+				},
+				"run": {
+					"len": 1.2,
+					"label": "Catch a gust"
+				},
+				"carry": {
+					"len": 1.21,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.54,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 1.76,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.42,
+					"label": "Wade"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 4.8,
+					"label": "Doze on the rim"
+				},
+				"work": {
+					"len": 4.6,
+					"label": "Survey the horizon"
+				},
+				"ability": {
+					"len": 3,
+					"label": "Chart a map"
+				},
+				"expr_happy": {
+					"len": 5.236,
+					"label": "expr_happy"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"happy",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "socket_0",
+					"color": "#ffffff",
+					"size": 0.55,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_0"
+				},
+				{
+					"name": "ember_0",
+					"bone": "ember_0",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_1",
+					"bone": "ember_1",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_2",
+					"bone": "ember_2",
+					"kind": "ember"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.2455,
+						0.0025
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						-0.0006,
+						-0.0013,
+						0.0073
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						-0.0006,
+						-0.0013,
+						-0.1188
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#BFEFFF",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 694504
+		},
+		"collector": {
+			"file": "collector.glb",
+			"group": "visitor",
+			"school": "visitor",
+			"triangles": 5878,
+			"body_triangles": 2697,
+			"texels_per_unit": 423.7,
+			"relief": 1,
+			"bones": 29,
+			"scale": 1.1,
+			"height": 0.964,
+			"body_height": 0.813,
+			"design_height": 0.97,
+			"radius": 0.223,
+			"chest_radius": 0.1139,
+			"clips": {
+				"idle": {
+					"len": 4,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 4.4,
+					"label": "Pat the pockets"
+				},
+				"walk": {
+					"len": 1.0948,
+					"label": "Walk"
+				},
+				"run": {
+					"len": 0.595,
+					"label": "Run"
+				},
+				"carry": {
+					"len": 1.309,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.666,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 1.904,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.618,
+					"label": "Wade"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 4.8,
+					"label": "Doze with the head tucked"
+				},
+				"work": {
+					"len": 4,
+					"label": "Polish a trinket"
+				},
+				"ability": {
+					"len": 2.8,
+					"label": "Swap pages"
+				},
+				"expr_happy": {
+					"len": 5.236,
+					"label": "expr_happy"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"happy",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "socket_0",
+					"color": "#ffffff",
+					"size": 0.22,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_0"
+				},
+				{
+					"name": "socket_1",
+					"color": "#ffffff",
+					"size": 0.22,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_1"
+				},
+				{
+					"name": "ember_0",
+					"bone": "ember_0",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_1",
+					"bone": "ember_1",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_2",
+					"bone": "ember_2",
+					"kind": "ember"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.2383,
+						-0.0545
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						0.001,
+						0.0219,
+						0.0085
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						0.001,
+						0.0219,
+						-0.1062
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#C8D8FF",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 787720
 		},
 		"echoplate": {
 			"file": "echoplate.glb",
@@ -760,6 +1392,209 @@
 				"len": 0.0026
 			},
 			"bytes": 847296
+		},
+		"gardener": {
+			"file": "gardener.glb",
+			"group": "sage",
+			"school": "sage",
+			"triangles": 5639,
+			"body_triangles": 2797,
+			"texels_per_unit": 224.4,
+			"relief": 1,
+			"bones": 33,
+			"scale": 1.1995,
+			"scale_note": "scaled to §21.6's 1.55 m (module GAME_SCALE 1 gives 1.29 m)",
+			"height": 1.571,
+			"body_height": 1.55,
+			"design_height": 1.55,
+			"radius": 0.328,
+			"chest_radius": 0.1989,
+			"clips": {
+				"idle": {
+					"len": 5,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 6,
+					"label": "Idle 2"
+				},
+				"walk": {
+					"len": 0.966,
+					"label": "Walk"
+				},
+				"run": {
+					"len": 0.525,
+					"label": "Run"
+				},
+				"carry": {
+					"len": 1.155,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.47,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 1.68,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.31,
+					"label": "Wade"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 6,
+					"label": "Rest"
+				},
+				"work": {
+					"len": 4,
+					"label": "Waters the garden"
+				},
+				"p1": {
+					"len": 3.4,
+					"label": "Vine bridge"
+				},
+				"p2": {
+					"len": 3.4,
+					"label": "Renew"
+				},
+				"p3": {
+					"len": 3.4,
+					"label": "Decoy"
+				},
+				"guard": {
+					"len": 5,
+					"label": "On guard"
+				},
+				"expr_happy": {
+					"len": 5.236,
+					"label": "expr_happy"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"happy",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "ember_0",
+					"bone": "ember_0",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_1",
+					"bone": "ember_1",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_2",
+					"bone": "ember_2",
+					"kind": "ember"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.2887,
+						-0.0065
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						-0.0009,
+						0.0441,
+						-0.0264
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						-0.0009,
+						0.0441,
+						-0.2246
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#D8FF9A",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 1065956
 		},
 		"glassgolem": {
 			"file": "glassgolem.glb",
@@ -2135,6 +2970,196 @@
 			},
 			"bytes": 814408
 		},
+		"reverser": {
+			"file": "reverser.glb",
+			"group": "paradox",
+			"school": "paradox",
+			"triangles": 5420,
+			"body_triangles": 3192,
+			"texels_per_unit": 341.9,
+			"relief": 1,
+			"bones": 27,
+			"scale": 1.1,
+			"height": 0.884,
+			"body_height": 0.866,
+			"design_height": 0.9,
+			"radius": 0.22,
+			"chest_radius": 0.0835,
+			"clips": {
+				"idle": {
+					"len": 4,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 4.6,
+					"label": "Idle 2"
+				},
+				"walk": {
+					"len": 1.104,
+					"label": "Walk"
+				},
+				"run": {
+					"len": 0.6,
+					"label": "Run"
+				},
+				"carry": {
+					"len": 1.1,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.4,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 1.92,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.64,
+					"label": "Wade"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 4.8,
+					"label": "Nap"
+				},
+				"work": {
+					"len": 4.4,
+					"label": "One-hand spin"
+				},
+				"ability": {
+					"len": 2.4,
+					"label": "Reversal"
+				},
+				"expr_happy": {
+					"len": 5.236,
+					"label": "expr_happy"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"happy",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "ember_0",
+					"bone": "ember_0",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_1",
+					"bone": "ember_1",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_2",
+					"bone": "ember_2",
+					"kind": "ember"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.0389,
+						0.0647
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						0,
+						0.0489,
+						0.0113
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						0,
+						0.0489,
+						-0.0703
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#FF9AD8",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 592044
+		},
 		"rootrunner": {
 			"file": "rootrunner.glb",
 			"group": "ruleborn",
@@ -2324,6 +3349,182 @@
 				"len": 0.0045
 			},
 			"bytes": 655840
+		},
+		"skyskipper": {
+			"file": "skyskipper.glb",
+			"group": "ruleborn",
+			"school": "motion",
+			"triangles": 5875,
+			"body_triangles": 2795,
+			"texels_per_unit": 239.4,
+			"relief": 1,
+			"bones": 26,
+			"scale": 0.69589,
+			"scale_note": "scaled to §21.6's 0.8 m (module GAME_SCALE none gives 1.15 m)",
+			"height": 0.8,
+			"body_height": 0.8,
+			"design_height": 0.8,
+			"radius": 0.244,
+			"chest_radius": 0.1648,
+			"clips": {
+				"idle": {
+					"len": 4,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 5,
+					"label": "Idle 2"
+				},
+				"walk": {
+					"len": 0.92,
+					"label": "Walk"
+				},
+				"run": {
+					"len": 0.5,
+					"label": "Run"
+				},
+				"carry": {
+					"len": 1.1,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.4,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 1.6,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.2,
+					"label": "Wade"
+				},
+				"ability": {
+					"len": 1.4,
+					"label": "Ability"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 4,
+					"label": "Nap"
+				},
+				"work": {
+					"len": 1.6,
+					"label": "Work loop"
+				},
+				"expr_happy": {
+					"len": 5.236,
+					"label": "expr_happy"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"happy",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.3458,
+						0.0365
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						-0.0004,
+						0.0006,
+						0.0013
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						-0.0004,
+						0.0006,
+						-0.1669
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#9FD4FF",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 756932
 		},
 		"soulmender": {
 			"file": "soulmender.glb",
@@ -3100,6 +4301,204 @@
 			},
 			"bytes": 719760
 		},
+		"stray": {
+			"file": "stray.glb",
+			"group": "visitor",
+			"school": "visitor",
+			"triangles": 4855,
+			"body_triangles": 2999,
+			"texels_per_unit": 443.6,
+			"relief": 1,
+			"bones": 28,
+			"scale": 0.9,
+			"height": 0.556,
+			"body_height": 0.556,
+			"design_height": 0.56,
+			"radius": 0.18,
+			"chest_radius": 0.0988,
+			"clips": {
+				"idle": {
+					"len": 4,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 4,
+					"label": "Scratch an ear"
+				},
+				"walk": {
+					"len": 1.1408,
+					"label": "Walk"
+				},
+				"run": {
+					"len": 0.62,
+					"label": "Run"
+				},
+				"carry": {
+					"len": 1.364,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.736,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 1.984,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.728,
+					"label": "Wade"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 4.6,
+					"label": "Curl up"
+				},
+				"work": {
+					"len": 4.2,
+					"label": "Ask a favour"
+				},
+				"ability": {
+					"len": 2.6,
+					"label": "Follow home"
+				},
+				"expr_happy": {
+					"len": 5.236,
+					"label": "expr_happy"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"happy",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "socket_0",
+					"color": "#ffffff",
+					"size": 0.5,
+					"kind": "glow",
+					"from": "",
+					"bone": "socket_0"
+				},
+				{
+					"name": "ember_0",
+					"bone": "ember_0",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_1",
+					"bone": "ember_1",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_2",
+					"bone": "ember_2",
+					"kind": "ember"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.285,
+						-0.0302
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						0.0001,
+						0,
+						0.0071
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						0.0001,
+						0,
+						-0.0906
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#FFE0B8",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 579464
+		},
 		"tidewalker": {
 			"file": "tidewalker.glb",
 			"group": "ruleborn",
@@ -3289,6 +4688,819 @@
 				"len": 0.008
 			},
 			"bytes": 793392
+		},
+		"tinkerer": {
+			"file": "tinkerer.glb",
+			"group": "sage",
+			"school": "sage",
+			"triangles": 5875,
+			"body_triangles": 2800,
+			"texels_per_unit": 318.6,
+			"relief": 1,
+			"bones": 35,
+			"scale": 1.23584,
+			"scale_note": "scaled to §21.6's 1.2 m (module GAME_SCALE 1 gives 0.97 m)",
+			"height": 1.222,
+			"body_height": 1.2,
+			"design_height": 1.2,
+			"radius": 0.247,
+			"chest_radius": 0.1212,
+			"clips": {
+				"idle": {
+					"len": 4,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 5,
+					"label": "Idle 2"
+				},
+				"walk": {
+					"len": 1.012,
+					"label": "Walk"
+				},
+				"run": {
+					"len": 0.55,
+					"label": "Run"
+				},
+				"carry": {
+					"len": 1.21,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.54,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 1.76,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.42,
+					"label": "Wade"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 5,
+					"label": "Rest"
+				},
+				"work": {
+					"len": 2,
+					"label": "Tinkers at the bench"
+				},
+				"p1": {
+					"len": 3,
+					"label": "Invert"
+				},
+				"p2": {
+					"len": 3,
+					"label": "Jam"
+				},
+				"p3": {
+					"len": 3.4,
+					"label": "Plank"
+				},
+				"guard": {
+					"len": 4,
+					"label": "On guard"
+				},
+				"expr_happy": {
+					"len": 5.236,
+					"label": "expr_happy"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"happy",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "ember_0",
+					"bone": "ember_0",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_1",
+					"bone": "ember_1",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_2",
+					"bone": "ember_2",
+					"kind": "ember"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.3335,
+						0.0205
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						0.0059,
+						-0.0483,
+						0.0066
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						0.0059,
+						-0.0483,
+						-0.108
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#9FF0E8",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 988132
+		},
+		"twinned": {
+			"file": "twinned.glb",
+			"group": "paradox",
+			"school": "paradox",
+			"triangles": 5879,
+			"body_triangles": 3239,
+			"texels_per_unit": 511.1,
+			"relief": 1,
+			"bones": 56,
+			"scale": 1.2,
+			"height": 0.775,
+			"body_height": 0.65,
+			"design_height": 0.8,
+			"radius": 0.24,
+			"chest_radius": 0.0966,
+			"clips": {
+				"idle": {
+					"len": 3.6,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 4,
+					"label": "Idle 2"
+				},
+				"walk": {
+					"len": 1.127,
+					"label": "Walk"
+				},
+				"run": {
+					"len": 0.6125,
+					"label": "Run"
+				},
+				"carry": {
+					"len": 1.3475,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.715,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 1.96,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.695,
+					"label": "Wade"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 4.4,
+					"label": "Nap"
+				},
+				"work": {
+					"len": 3.2,
+					"label": "Twin dance"
+				},
+				"ability": {
+					"len": 2.4,
+					"label": "Twin suns"
+				},
+				"expr_happy": {
+					"len": 5.236,
+					"label": "expr_happy"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"happy",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "socket_0",
+					"color": "#ffffff",
+					"size": 0.5,
+					"kind": "glow",
+					"from": "halo",
+					"bone": "socket_0"
+				},
+				{
+					"name": "socket_1",
+					"color": "#ffffff",
+					"size": 0.32,
+					"kind": "glow",
+					"from": "halo",
+					"bone": "socket_1"
+				},
+				{
+					"name": "socket_2",
+					"color": "#fff4e0",
+					"size": 0.5,
+					"kind": "glow",
+					"from": "halo",
+					"bone": "socket_2"
+				},
+				{
+					"name": "socket_3",
+					"color": "#fff4e0",
+					"size": 0.32,
+					"kind": "glow",
+					"from": "halo",
+					"bone": "socket_3"
+				},
+				{
+					"name": "ember_0",
+					"bone": "ember_0",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_1",
+					"bone": "ember_1",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_2",
+					"bone": "ember_2",
+					"kind": "ember"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.237,
+						-0.0003
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						-0.0006,
+						0.0003,
+						0.0095
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						-0.0006,
+						0.0003,
+						-0.0849
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#FFE6A0",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0.15,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 895536
+		},
+		"unmade": {
+			"file": "unmade.glb",
+			"group": "paradox",
+			"school": "paradox",
+			"triangles": 3568,
+			"body_triangles": 3400,
+			"texels_per_unit": 459.5,
+			"relief": 1,
+			"bones": 26,
+			"scale": 1.1,
+			"height": 0.843,
+			"body_height": 0.843,
+			"design_height": 0.84,
+			"radius": 0.22,
+			"chest_radius": 0.0736,
+			"clips": {
+				"idle": {
+					"len": 4,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 4.6,
+					"label": "Idle 2"
+				},
+				"walk": {
+					"len": 1.15,
+					"label": "Walk"
+				},
+				"run": {
+					"len": 0.625,
+					"label": "Run"
+				},
+				"carry": {
+					"len": 1.375,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.75,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 2,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.75,
+					"label": "Wade"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 5,
+					"label": "Nap"
+				},
+				"work": {
+					"len": 4.4,
+					"label": "Folds itself flat"
+				},
+				"ability": {
+					"len": 2.6,
+					"label": "Unmaking"
+				},
+				"expr_happy": {
+					"len": 5.236,
+					"label": "expr_happy"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"happy",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "ember_0",
+					"bone": "ember_0",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_1",
+					"bone": "ember_1",
+					"kind": "ember"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.2733,
+						-0.0015
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						0.001,
+						0.0384,
+						-0.0006
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						0.001,
+						0.0384,
+						-0.0207
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#FFFFFF",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 513624
+		},
+		"wanderer": {
+			"file": "wanderer.glb",
+			"group": "sage",
+			"school": "sage",
+			"triangles": 5821,
+			"body_triangles": 2997,
+			"texels_per_unit": 243.7,
+			"relief": 1,
+			"bones": 32,
+			"scale": 1.18008,
+			"scale_note": "scaled to §21.6's 1.5 m (module GAME_SCALE 1 gives 1.27 m)",
+			"height": 1.5,
+			"body_height": 1.5,
+			"design_height": 1.5,
+			"radius": 0.293,
+			"chest_radius": 0.2176,
+			"clips": {
+				"idle": {
+					"len": 5,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 6,
+					"label": "Idle 2"
+				},
+				"walk": {
+					"len": 0.9752,
+					"label": "Walk"
+				},
+				"run": {
+					"len": 0.53,
+					"label": "Run"
+				},
+				"carry": {
+					"len": 1.166,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.484,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 1.696,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.332,
+					"label": "Wade"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 6,
+					"label": "Rest"
+				},
+				"work": {
+					"len": 5,
+					"label": "Reads the stars"
+				},
+				"p1": {
+					"len": 3.4,
+					"label": "Copy"
+				},
+				"p2": {
+					"len": 3.4,
+					"label": "Rift"
+				},
+				"p3": {
+					"len": 3.2,
+					"label": "Tailwind"
+				},
+				"guard": {
+					"len": 5,
+					"label": "On guard"
+				},
+				"expr_happy": {
+					"len": 5.236,
+					"label": "expr_happy"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"happy",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "ember_0",
+					"bone": "ember_0",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_1",
+					"bone": "ember_1",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_2",
+					"bone": "ember_2",
+					"kind": "ember"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.3222,
+						-0.0265
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						0.0013,
+						0.0587,
+						-0.0471
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						0.0013,
+						0.0587,
+						-0.2608
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#B8C8FF",
+			"glow": 0,
+			"surface": {
+				"metal": 0,
+				"gloss": 0,
+				"iris": 0,
+				"glass": 0
+			},
+			"fur": {
+				"shells": 0,
+				"len": 0.0045
+			},
+			"bytes": 686020
 		}
 	}
 }

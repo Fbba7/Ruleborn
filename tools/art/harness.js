@@ -282,6 +282,7 @@ const LIN = (x) => (x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4
 // sculpt's surface point and paint it with the module's own paint().
 function bake(S, pos, nrm, tan, idx, uv, img, imgN, TS, area) {
 	const sdf = S.sdf;
+	const paintOf = S.paint;
 	const e = 0.0025;
 	// Each texel takes the triangle it lies deepest in; texels up to about a
 	// texel outside a triangle's edge are painted too, so seams do not show.
@@ -306,7 +307,7 @@ function bake(S, pos, nrm, tan, idx, uv, img, imgN, TS, area) {
 			if (m > bestM[t]) { bestM[t] = m; bestF[t] = f; bestL[t * 2] = l0; bestL[t * 2 + 1] = l1; }
 		}
 	}
-	const pts = [], nrms = [], where = [], frames = [];
+	const pts = [], nrms = [], where = [], frames = [], tcol = [];
 	for (let t = 0; t < TS * TS; t++) {
 		const f = bestF[t];
 		if (f < 0) continue;
@@ -317,8 +318,13 @@ function bake(S, pos, nrm, tan, idx, uv, img, imgN, TS, area) {
 		let Y = pos[a * 3 + 1] * l0 + pos[b * 3 + 1] * l1 + pos[c * 3 + 1] * l2;
 		let Z = pos[a * 3 + 2] * l0 + pos[b * 3 + 2] * l1 + pos[c * 3 + 2] * l2;
 		let gx = 0, gy = 1, gz = 0;
+		if (!sdf) {
+			// No field: the fine mesh's nearest painted point.
+			const r = S.transfer(X, Y, Z);
+			if (r) { [gx, gy, gz] = r.normal; tcol.push(...r.color); } else tcol.push(0.5, 0.5, 0.5);
+		}
 		// Pull the point onto the sculpt's surface along the field's gradient.
-		for (let it = 0; it < 5; it++) {
+		for (let it = 0; sdf && it < 5; it++) {
 			const dd = sdf(X, Y, Z);
 			gx = sdf(X + e, Y, Z) - sdf(X - e, Y, Z); gy = sdf(X, Y + e, Z) - sdf(X, Y - e, Z); gz = sdf(X, Y, Z + e) - sdf(X, Y, Z - e);
 			const gl = Math.hypot(gx, gy, gz) || 1;
@@ -333,11 +339,14 @@ function bake(S, pos, nrm, tan, idx, uv, img, imgN, TS, area) {
 		for (const [arr, n] of [[nrm, 3], [tan, 4]]) for (let k = 0; k < n; k++) fr.push(arr[a * n + k] * l0 + arr[b * n + k] * l1 + arr[c * n + k] * l2);
 		frames.push(fr);
 	}
-	const g = new THREE.BufferGeometry();
-	g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
-	g.setAttribute('normal', new THREE.Float32BufferAttribute(nrms, 3));
-	S.paint(g);
-	const col = g.attributes.color.array, fm = g.attributes.furMask.array;
+	let col = tcol, fm = null;
+	if (sdf) {
+		const g = new THREE.BufferGeometry();
+		g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+		g.setAttribute('normal', new THREE.Float32BufferAttribute(nrms, 3));
+		paintOf(g);
+		col = g.attributes.color.array; fm = g.attributes.furMask.array;
+	}
 	const filled = new Uint8Array(TS * TS);
 	for (let i = 0; i < where.length; i++) {
 		const o = where[i] * 4;
@@ -433,13 +442,92 @@ function materialClass(m) {
 	return { c, emit, gloss, glass, alpha };
 }
 
+// The kit modules export S, build, makeRig, CLIPS, EXPR. Skyskipper and the
+// Archivist keep their sculpt and rig in two files each, imported here exactly
+// as their rig files import them so both share one module instance.
+async function loadFamily(cfg) {
+	const base = '/art/design/creatures/';
+	if (cfg.family === 'skyskipper') {
+		const Sc = await import(base + 'skyskipper-sculpt.js');
+		const R = await import(base + 'skyskipper-rig.js');
+		return { build: (o) => Sc.buildSkyskipper(o), makeRig: (src) => R.makeRig(src), CLIPS: R.CLIPS, EXPR: R.EXPR, S: null };
+	}
+	if (cfg.family === 'archivist') {
+		const Sc = await import(base + 'archivist-sculpt.js?v=6');
+		const R = await import(base + 'archivist-rig.js?v=6');
+		return { build: (o) => Sc.buildArchivist(o), makeRig: (src) => R.makeRig(src), CLIPS: R.CLIPS, EXPR: R.EXPR, S: null };
+	}
+	return import(base + cfg.module);
+}
+
+// ---------------------------------------------------------------- transfer bake
+
+// Where a module keeps its field and paint private (Skyskipper, the
+// Archivist), the low mesh takes colour and normals from the fine mesh's own
+// painted vertices instead: the nearest point on the fine surface, by a grid.
+function closestOnTri(p, a, b, c) {
+	const ab = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], ac = [c[0] - a[0], c[1] - a[1], c[2] - a[2]], ap = [p[0] - a[0], p[1] - a[1], p[2] - a[2]];
+	const dot = (u, v) => u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+	const d1 = dot(ab, ap), d2 = dot(ac, ap);
+	if (d1 <= 0 && d2 <= 0) return [1, 0, 0];
+	const bp = [p[0] - b[0], p[1] - b[1], p[2] - b[2]], d3 = dot(ab, bp), d4 = dot(ac, bp);
+	if (d3 >= 0 && d4 <= d3) return [0, 1, 0];
+	const vc = d1 * d4 - d3 * d2;
+	if (vc <= 0 && d1 >= 0 && d3 <= 0) { const v = d1 / (d1 - d3); return [1 - v, v, 0]; }
+	const cp = [p[0] - c[0], p[1] - c[1], p[2] - c[2]], d5 = dot(ab, cp), d6 = dot(ac, cp);
+	if (d6 >= 0 && d5 <= d6) return [0, 0, 1];
+	const vb = d5 * d2 - d1 * d6;
+	if (vb <= 0 && d2 >= 0 && d6 <= 0) { const w = d2 / (d2 - d6); return [1 - w, 0, w]; }
+	const va = d3 * d6 - d5 * d4;
+	if (va <= 0 && d4 - d3 >= 0 && d5 - d6 >= 0) { const w = (d4 - d3) / ((d4 - d3) + (d5 - d6)); return [0, 1 - w, w]; }
+	const den = 1 / (va + vb + vc), v = vb * den, w = vc * den;
+	return [1 - v - w, v, w];
+}
+
+function makeTransfer(fine) {
+	const P = fine.attributes.position.array, I = fine.index.array, Nn = fine.attributes.normal.array;
+	const Cc = fine.attributes.color.array, F = fine.attributes.furMask ? fine.attributes.furMask.array : null;
+	const h = 0.02, grid = new Map();
+	const key = (x, y, z) => x + ',' + y + ',' + z;
+	for (let f = 0; f < I.length / 3; f++) {
+		let x0 = 1e9, y0 = 1e9, z0 = 1e9, x1 = -1e9, y1 = -1e9, z1 = -1e9;
+		for (let k = 0; k < 3; k++) { const v = I[f * 3 + k]; x0 = Math.min(x0, P[v * 3]); x1 = Math.max(x1, P[v * 3]); y0 = Math.min(y0, P[v * 3 + 1]); y1 = Math.max(y1, P[v * 3 + 1]); z0 = Math.min(z0, P[v * 3 + 2]); z1 = Math.max(z1, P[v * 3 + 2]); }
+		for (let gx = Math.floor(x0 / h); gx <= Math.floor(x1 / h); gx++) for (let gy = Math.floor(y0 / h); gy <= Math.floor(y1 / h); gy++) for (let gz = Math.floor(z0 / h); gz <= Math.floor(z1 / h); gz++) {
+			const k = key(gx, gy, gz); let l = grid.get(k); if (!l) grid.set(k, (l = [])); l.push(f);
+		}
+	}
+	const at = (v) => [P[v * 3], P[v * 3 + 1], P[v * 3 + 2]];
+	return (x, y, z) => {
+		let best = null, bd = 1e9;
+		const cx = Math.floor(x / h), cy = Math.floor(y / h), cz = Math.floor(z / h);
+		for (let r = 1; r <= 3 && !best; r++) {
+			for (let gx = cx - r; gx <= cx + r; gx++) for (let gy = cy - r; gy <= cy + r; gy++) for (let gz = cz - r; gz <= cz + r; gz++) {
+				const l = grid.get(key(gx, gy, gz)); if (!l) continue;
+				for (const f of l) {
+					const a = I[f * 3], b = I[f * 3 + 1], c = I[f * 3 + 2];
+					const w = closestOnTri([x, y, z], at(a), at(b), at(c));
+					const qx = P[a * 3] * w[0] + P[b * 3] * w[1] + P[c * 3] * w[2] - x, qy = P[a * 3 + 1] * w[0] + P[b * 3 + 1] * w[1] + P[c * 3 + 1] * w[2] - y, qz = P[a * 3 + 2] * w[0] + P[b * 3 + 2] * w[1] + P[c * 3 + 2] * w[2] - z;
+					const d = qx * qx + qy * qy + qz * qz;
+					if (d < bd) { bd = d; best = [a, b, c, w]; }
+				}
+			}
+		}
+		if (!best) return null;
+		const [a, b, c, w] = best;
+		const mix = (arr, n, k) => arr[a * n + k] * w[0] + arr[b * n + k] * w[1] + arr[c * n + k] * w[2];
+		const n = [mix(Nn, 3, 0), mix(Nn, 3, 1), mix(Nn, 3, 2)];
+		const nl = Math.hypot(...n) || 1;
+		return { color: [mix(Cc, 3, 0), mix(Cc, 3, 1), mix(Cc, 3, 2)], normal: n.map((q) => q / nl), fur: F ? mix(F, 1, 0) : 0 };
+	};
+}
+
 // ---------------------------------------------------------------- export one kind
 
 window.exportKind = async function exportKind(cfg) {
 	const t0 = Date.now();
 	globalThis.__LOD = cfg.lod || { seg: 0.4 };
 	await MeshoptSimplifier.ready;
-	const M = await import(`/art/design/creatures/${cfg.module}`);
+	const M = await loadFamily(cfg);
 	const S = M.S;
 	const src = M.build({ res: cfg.res, shells: 0 });
 	const rig = M.makeRig(src);
@@ -635,7 +723,8 @@ window.exportKind = async function exportKind(cfg) {
 		btan.set([T.x, T.y, T.z, w], v * 4);
 	}
 	const imgN = new Uint8ClampedArray(TS * TS * 4);
-	const texels = bake(S, bpos, bnrm, btan, un.idx, pk.uv, img, imgN, TS, [0, 0, TS, TS - STRIP]);
+	const bakeSrc = S && S.sdf ? S : { transfer: makeTransfer(bg) };
+	const texels = bake(bakeSrc, bpos, bnrm, btan, un.idx, pk.uv, img, imgN, TS, [0, 0, TS, TS - STRIP]);
 	for (let y = dec.faceted ? 0 : TS - STRIP; y < TS; y++) for (let x = 0; x < TS; x++) imgN.set([128, 128, 255, 255], (y * TS + x) * 4);
 	// White cell for plain-coloured parts, and room for eye textures.
 	for (let y = TS - STRIP; y < TS; y++) for (let x = 0; x < TS; x++) img.set(x < 32 ? [255, 255, 255, 255] : [128, 128, 128, 255], (y * TS + x) * 4);
@@ -950,7 +1039,7 @@ window.exportKind = async function exportKind(cfg) {
 			body_height_units: +maxBodyY.toFixed(4),
 			floor_units: +minY.toFixed(4),
 			game_scale: M.GAME_SCALE ?? null,
-			fur: Object.assign({ len: 0.0045, dens: [900, 700, 900], shells: 4 }, (S.def && S.def.fur) || {}),
+			fur: Object.assign({ len: 0.0045, dens: [900, 700, 900], shells: 4 }, (S && S.def && S.def.fur) || {}),
 			ms: Date.now() - t0,
 			acc_by: Object.entries(accBy).sort((a, b) => b[1] - a[1]).slice(0, 12),
 			anim_bytes: 0,

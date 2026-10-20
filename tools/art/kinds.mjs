@@ -9,13 +9,14 @@
 //   tex      the atlas size
 //   height   §21.6's height in metres; when `fix` is set the model is scaled to
 //            it (by the body without plumes), otherwise the module's GAME_SCALE
-//            stands and the height is only checked
+//            stands and the height is only checked. Sages: §21.1's "about
+//            1.5 m"; the Archivist is "tall", the Tinkerer "small" (§21.6)
 //   school   the school its colour belongs to (§21.2)
 //   group    the order of §21.9's launch list
 export const KINDS = {
 	// The eighteen ruleborn.
 	featherkin: { module: 'featherkin.js', res: 0.0095, body: 2600, seg: 0.3, height: 0.6, school: 'motion', group: 'ruleborn' },
-	skyskipper: { module: 'skyskipper-rig.js', family: 'skyskipper', res: 0.0095, body: 2800, seg: 0.3, height: 0.8, fix: true, school: 'motion', group: 'ruleborn' },
+	skyskipper: { module: 'skyskipper-rig.js', family: 'skyskipper', res: 0.0078, body: 2800, seg: 0.3, height: 0.8, fix: true, school: 'motion', group: 'ruleborn' },
 	rambler: { module: 'rambler.js', res: 0.009, body: 3200, seg: 0.35, height: 0.9, school: 'motion', group: 'ruleborn' },
 	glassgolem: { module: 'glassgolem.js', res: 0.0095, body: 2400, seg: 0.4, height: 1.2, fix: true, school: 'matter', group: 'ruleborn' },
 	quarryback: { module: 'quarryback.js', res: 0.009, body: 3400, seg: 0.4, height: 0.9, school: 'matter', group: 'ruleborn' },
@@ -33,10 +34,10 @@ export const KINDS = {
 	lanternwisp: { module: 'lanternwisp.js', res: 0.006, body: 3000, seg: 0.35, height: 0.6, school: 'spirit', group: 'ruleborn' },
 	soulmender: { module: 'soulmender.js', res: 0.007, body: 3000, seg: 0.35, height: 0.9, school: 'spirit', group: 'ruleborn' },
 	// The four launch Sages.
-	archivist: { module: 'archivist-rig.js', family: 'archivist', res: 0.0095, body: 3400, seg: 0.3, height: 1.5, fix: true, school: 'sage', group: 'sage' },
-	tinkerer: { module: 'tinkerer.js', res: 0.011, body: 2800, seg: 0.3, height: 1.5, school: 'sage', group: 'sage' },
-	gardener: { module: 'gardener.js', res: 0.011, body: 2800, seg: 0.25, height: 1.5, school: 'sage', group: 'sage' },
-	wanderer: { module: 'wanderer.js', res: 0.011, body: 3000, seg: 0.3, height: 1.5, school: 'sage', group: 'sage' },
+	archivist: { module: 'archivist-rig.js', family: 'archivist', res: 0.0078, body: 3400, seg: 0.3, height: 1.6, fix: true, school: 'sage', group: 'sage' },
+	tinkerer: { module: 'tinkerer.js', res: 0.011, body: 2800, seg: 0.3, height: 1.2, fix: true, school: 'sage', group: 'sage' },
+	gardener: { module: 'gardener.js', res: 0.011, body: 2800, seg: 0.25, height: 1.55, fix: true, school: 'sage', group: 'sage' },
+	wanderer: { module: 'wanderer.js', res: 0.011, body: 3000, seg: 0.3, height: 1.5, fix: true, school: 'sage', group: 'sage' },
 	// Visitors and paradox-born.
 	cartographer: { module: 'cartographer.js', res: 0.007, body: 2800, seg: 0.3, height: 1.66, school: 'visitor', group: 'visitor' },
 	collector: { module: 'collector.js', res: 0.007, body: 3000, seg: 0.3, height: 0.97, school: 'visitor', group: 'visitor' },
@@ -45,8 +46,8 @@ export const KINDS = {
 	twinned: { module: 'twinned.js', res: 0.0065, body: 3600, seg: 0.4, height: 0.8, school: 'paradox', group: 'paradox' },
 	unmade: { module: 'unmade.js', res: 0.006, body: 3400, seg: 0.4, height: 0.84, school: 'paradox', group: 'paradox' },
 	// The rest: Sages after launch, anomalies, law creatures, wildlife.
-	chronicler: { module: 'chronicler.js', res: 0.011, body: 3000, seg: 0.3, height: 1.45, school: 'sage', group: 'sage' },
-	lamplighter: { module: 'lamplighter.js', res: 0.011, body: 3000, seg: 0.3, height: 1.3, school: 'sage', group: 'sage' },
+	chronicler: { module: 'chronicler.js', res: 0.011, body: 3000, seg: 0.3, height: 1.5, fix: true, school: 'sage', group: 'sage' },
+	lamplighter: { module: 'lamplighter.js', res: 0.011, body: 3000, seg: 0.3, height: 1.45, fix: true, school: 'sage', group: 'sage' },
 	devourer: { module: 'devourer.js', res: 0.008, body: 3400, seg: 0.35, height: 1.92, school: 'anomaly', group: 'anomaly' },
 	hourglassstorm: { module: 'hourglassstorm.js', res: 0.008, body: 3400, seg: 0.35, height: 1.93, school: 'anomaly', group: 'anomaly' },
 	wildfirebloom: { module: 'wildfirebloom.js', res: 0.0075, body: 3200, seg: 0.3, height: 1.87, school: 'anomaly', group: 'anomaly' },
