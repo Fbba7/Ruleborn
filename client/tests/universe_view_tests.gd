@@ -23,6 +23,7 @@ func run() -> void:
 	await _camera()
 	await _pins()
 	await _people()
+	await _lazy()
 	await _home()
 
 
@@ -230,6 +231,38 @@ func _people() -> void:
 		far == 0 and kinds.size() == 1 and kinds.has("featherkin")
 			and where == ["outer-2", "heart", "outer-3"] and swooped and heading.get_child(1) == title,
 		"far %d kinds %s where %s swooped %s" % [far, kinds, where, swooped])
+	view.queue_free()
+	await tree.process_frame
+
+
+## A realm's detailed buildings are made when the camera first comes to it,
+## and its island as seen close while the camera rests on it.
+func _lazy() -> void:
+	var view := _view()
+	Settings.reduced_motion = true
+	view.show_universe(UniverseSample.view(6), UniverseSample.extras())
+	view.set_zoom(0)
+	view._process(0.01)
+	var empty := true
+	for id: String in view._lods:
+		empty = empty and (view._lods[id][0] as Node3D).get_child_count() == 0
+	var none_close := view._close.is_empty()
+	view.focus_realm("outer-2", 1)
+	view._process(0.01)
+	var built := (view._lods["outer-2"][0] as Node3D).get_child_count() > 0 \
+		and (view._lods["outer-1"][0] as Node3D).get_child_count() == 0
+	var ready: bool = view._close.has("outer-2") and not (view._close["outer-2"] as Node3D).visible
+	view.focus_realm("outer-2", 2)
+	var shown: bool = (view._close["outer-2"] as Node3D).visible and not (view._rocks["outer-2"] as Node3D).visible
+	view.focus_realm("heart", 2)
+	view._process(0.01)
+	var heart_rock: bool = (view._rocks["heart"] as Node3D).visible and not view._close.has("heart")
+	Settings.reduced_motion = false
+	check.call("from afar no realm's detailed buildings or close island are made; coming to a realm makes its "
+			+ "buildings, resting there makes its island as seen close, and the close-up shows it in place of the "
+			+ "map's rock; the Heart keeps its rock (21.3)",
+		empty and none_close and built and ready and shown and heart_rock,
+		"empty %s none %s built %s ready %s shown %s heart %s" % [empty, none_close, built, ready, shown, heart_rock])
 	view.queue_free()
 	await tree.process_frame
 
