@@ -139,6 +139,9 @@ func _stand(kinds: Array) -> void:
 	var names := HBoxContainer.new()
 	for f: Dictionary in k["forms"]:
 		var p := StageHeroSkin.pill(FormsPresenter.note_name(str(f["note"])))
+		var edge := p.get_theme_stylebox("panel") as StyleBoxFlat
+		edge.border_color = StageHeroSculpt.NOTE.get(str(f["note"]), StageHeroSkin.OUTLINE)
+		edge.set_border_width_all(UI.px(1) + StageHeroSkin.edge_px())
 		p.size_flags_horizontal = Control.SIZE_EXPAND | Control.SIZE_SHRINK_CENTER
 		names.add_child(p)
 	StageHeroSkin.on_stage(stage, names, Control.PRESET_CENTER_BOTTOM).set_meta("words", true)

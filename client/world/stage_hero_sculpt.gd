@@ -8,9 +8,9 @@ extends RefCounted
 ## adds the sash and the small lantern. Built one unit tall, facing +Z, as
 ## one vertex-coloured mesh inside §21.3's 3,000 to 6,000 triangles.
 
-## The launch notes' colours, by name: Hush violet, Spark gold, Echo cyan,
-## as the designs' Forms album draws them.
-const NOTE := {"hush": Color("#7A5CE0"), "spark": Color("#F6C343"), "echo": Color("#46C8E0")}
+## The launch notes' colours, by name, as the design's character sheets
+## set them (Featherkin_dc.html `NOTE`).
+const NOTE := {"hush": Color("#8C6CF0"), "spark": Color("#F07A3C"), "echo": Color("#E05CB4")}
 const SKIN := Color("#F2C9A8")
 const WHITE := Color("#FFFDF6")
 const INK := Color("#1A0C14")
