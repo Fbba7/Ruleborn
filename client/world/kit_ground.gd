@@ -135,6 +135,36 @@ func field(key: String, u: float, v: float) -> float:
 	return lerpf(top, low, b)
 
 
+## How near the tile-space point (u, v) is to the path network: 1 on a
+## path's middle line, falling to 0 a little over a third of a tile out.
+## The network joins each path tile's centre to its path neighbours', so
+## paths are ribbons that turn and branch, never blots.
+func path_at(u: float, v: float) -> float:
+	var f: PackedFloat32Array = _fields["path"]
+	var best := 9.0
+	var cx := int(floor(u))
+	var cy := int(floor(v))
+	var p := Vector2(u, v)
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			var t := Vector2i(cx + dx, cy + dy)
+			if not inside(t) or f[index(t)] < 0.5:
+				continue
+			var a := Vector2(t) + Vector2(0.5, 0.5)
+			best = minf(best, p.distance_to(a) - 0.06)
+			for d: Vector2i in [Vector2i(1, 0), Vector2i(0, 1)]:
+				var n := t + d
+				if inside(n) and f[index(n)] >= 0.5:
+					best = minf(best, _segment(p, a, a + Vector2(d)))
+	return clampf(1.0 - best / 0.62, 0.0, 1.0)
+
+
+static func _segment(p: Vector2, a: Vector2, b: Vector2) -> float:
+	var ab := b - a
+	var t := clampf((p - a).dot(ab) / ab.length_squared(), 0.0, 1.0)
+	return p.distance_to(a + ab * t)
+
+
 ## A smooth seeded noise in [0, 1) over the ground, for the paint.
 static func noise(u: float, v: float, scale: float) -> float:
 	var p := Vector2(u, v) * scale
@@ -176,7 +206,9 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 		c = dirt.lerp(soil, 0.45).darkened(0.1)
 	# Higher ground catches a little more light.
 	c = c.lightened(0.03 * lvl)
-	var path := smoothstep(0.3, 0.62, field("path", u, v) + (n2 - 0.5) * 0.3)
+	var path := path_at(u, v)
+	# Worn earth round a path, before its cobbles start.
+	c = c.lerp(dirt.lerp(soil, 0.3), smoothstep(0.25, 0.5, path) * 0.5)
 	return [c, Vector4(path, lush, 0.0, stone)]
 
 
@@ -325,20 +357,22 @@ func _skirt(t: Vector2i, d: Vector2i, y: float) -> void:
 ## its colour (stream, marsh, spring) in COLOR.
 func _water(t: Vector2i, tint := Color.WHITE) -> void:
 	var y := levels[index(t)] * IslandBuilder.LEVEL - WATER_DROP
+	# Which sides meet the shore: west 1, east 2, north 4, south 8.
+	var mask := 0
+	var bit := 1
+	for d: Vector2i in [Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)]:
+		var nb := t + d
+		if not is_wet(nb) or levels[index(nb)] != levels[index(t)]:
+			mask |= bit
+		bit *= 2
 	var pts: Array[Vector3] = []
 	var chans: Array[Vector4] = []
 	for j in SUB + 1:
 		for i in SUB + 1:
 			var fu := float(i) / SUB
 			var fv := float(j) / SUB
-			var shore := 1.0
-			for dd: Array in [[Vector2i(-1, 0), fu], [Vector2i(1, 0), 1.0 - fu], [Vector2i(0, -1), fv],
-					[Vector2i(0, 1), 1.0 - fv]]:
-				var nb: Vector2i = t + (dd[0] as Vector2i)
-				if not is_wet(nb) or levels[index(nb)] != levels[index(t)]:
-					shore = minf(shore, float(dd[1]) * 2.0)
 			pts.append(world(t.x + fu, t.y + fv, y))
-			chans.append(Vector4(shore, 0, 0, 0))
+			chans.append(Vector4(1.0, float(mask), fu, fv))
 	var up := Vector3.UP
 	for j in SUB:
 		for i in SUB:
@@ -365,8 +399,7 @@ func _tufts(t: Vector2i) -> void:
 		scatter.moving(Geo.Anim.SHIVER, base)
 		for b in 3:
 			var a := TAU * (b / 3.0 + RealmKit.jitter(t, 70 + k))
-			var lean := Basis(Vector3(cos(a), 0, sin(a)).cross(Vector3.UP).normalized(), 0.35)
 			var col := grass.darkened(0.12).lerp(plant, 0.35).lightened(0.06 * b)
-			scatter.prism(Transform3D(lean, base + Vector3(cos(a), 0, sin(a)) * 0.03), 3, 0.035, 0.0,
-				0.16 + 0.08 * RealmKit.jitter(t, 80 + k * 3 + b), col)
+			scatter.blade(base + Vector3(cos(a), 0, sin(a)) * 0.03, 0.16 + 0.08 * RealmKit.jitter(t, 80 + k * 3 + b),
+				0.03, col, 0.35, a)
 		scatter.still()

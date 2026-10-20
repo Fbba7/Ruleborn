@@ -15,6 +15,8 @@ uniform vec4 foam : source_color = vec4(0.88, 0.97, 1.0, 1.0);
 uniform vec4 ink : source_color = vec4(0.10, 0.18, 0.32, 1.0);
 uniform float speed = 0.35;
 uniform float glowing = 0.0;
+// The bank the water's rounded corners show (the realm's sand).
+uniform vec4 bank : source_color = vec4(0.93, 0.86, 0.70, 1.0);
 
 varying vec3 wpos;
 
@@ -22,7 +24,7 @@ void vertex() {
 	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	// A slow swell, so the surface is never still.
 	if (glowing <= 0.0) {
-		VERTEX.y += sin(wpos.x * 2.1 + TIME * 1.3) * sin(wpos.z * 1.7 - TIME) * 0.012 * clamp(UV.x * 2.0, 0.0, 1.0);
+		VERTEX.y += sin(wpos.x * 2.1 + TIME * 1.3) * sin(wpos.z * 1.7 - TIME) * 0.004;
 	}
 }
 
@@ -72,7 +74,26 @@ void fragment() {
 		ALBEDO = mix(crust, melt, lit);
 		EMISSION = melt * lit * glowing * 1.4;
 	} else {
-	float shore = clamp(UV.x, 0.0, 1.0);
+	// How far this point is from the shore, in tiles: from the sides that
+	// meet it (UV.y's mask) and, where two meet, from a rounded corner.
+	int mask = int(UV.y + 0.5);
+	vec2 q = UV2;
+	float d = UV.x;
+	bool w = (mask & 1) != 0;
+	bool e = (mask & 2) != 0;
+	bool n = (mask & 4) != 0;
+	bool s = (mask & 8) != 0;
+	if (w) d = min(d, q.x);
+	if (e) d = min(d, 1.0 - q.x);
+	if (n) d = min(d, q.y);
+	if (s) d = min(d, 1.0 - q.y);
+	float rr = 0.42;
+	if (w && n && q.x < rr && q.y < rr) d = min(d, rr - length(q - vec2(rr)));
+	if (e && n && q.x > 1.0 - rr && q.y < rr) d = min(d, rr - length(q - vec2(1.0 - rr, rr)));
+	if (w && s && q.x < rr && q.y > 1.0 - rr) d = min(d, rr - length(q - vec2(rr, 1.0 - rr)));
+	if (e && s && q.x > 1.0 - rr && q.y > 1.0 - rr) d = min(d, rr - length(q - vec2(1.0 - rr)));
+	d += (vnoise(p * 6.0) - 0.5) * 0.05;
+	float shore = clamp(d * 2.0, 0.0, 1.0);
 	vec3 base = mix(foam.rgb * 0.9, deep.rgb, smoothstep(0.0, 0.85, shore)) * COLOR.rgb;
 	// Light streaks drifting along.
 	float drift = vnoise(vec2(p.x * 1.5 - t * 2.0, p.y * 5.0));
@@ -83,8 +104,10 @@ void fragment() {
 	float arc = (1.0 - smoothstep(0.0, 0.05, ring)) * step(0.45, vnoise(p * 1.3 + 3.0));
 	base = mix(base, ink.rgb, arc * 0.55 * smoothstep(0.15, 0.5, shore));
 	// The foam at the bank, broken up.
-	float edge = 1.0 - smoothstep(0.08, 0.22, shore + (vnoise(p * 7.0 + t) - 0.5) * 0.12);
+	float edge = 1.0 - smoothstep(0.05, 0.14, shore + (vnoise(p * 7.0 + t) - 0.5) * 0.08);
 	base = mix(base, foam.rgb, edge);
+	// Past the rounded shore, the bank.
+	base = mix(bank.rgb * (0.95 + 0.1 * vnoise(p * 9.0)), base, step(0.0, d));
 	ALBEDO = saturated(base);
 	EMISSION = vec3(0.0);
 	}

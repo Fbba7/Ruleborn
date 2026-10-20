@@ -190,6 +190,20 @@ func prism(at: Transform3D, sides: int, r0: float, r1: float, height: float, col
 		tri(at * Vector3.ZERO, at * b0, at * b1, col.darkened(0.2))
 
 
+## A blade of grass or a reed: a thin three-sided spike with no base,
+## leaning by `lean` (radians) toward `toward` — three triangles.
+func blade(base: Vector3, height: float, width: float, col: Color, lean := 0.0, toward := 0.0) -> void:
+	var tip := base + Vector3(sin(lean) * cos(toward), cos(lean), sin(lean) * sin(toward)) * height
+	var corners: Array[Vector3] = []
+	for k in 3:
+		var a := TAU * k / 3.0 + toward
+		corners.append(base + Vector3(cos(a), 0, sin(a)) * width)
+	for k in 3:
+		var a := corners[k]
+		var b := corners[(k + 1) % 3]
+		tri(a, b, tip, col.lightened(0.06 * k))
+
+
 ## A smooth-sided cylinder (or frustum) standing on `at`'s origin.
 func cyl(at: Transform3D, r0: float, r1: float, height: float, col: Color, sides := 10,
 		top := Color(0, 0, 0, 0)) -> void:

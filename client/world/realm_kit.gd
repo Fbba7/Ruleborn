@@ -217,13 +217,15 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
 	ground_mat.set_shader_parameter("cobble", palette["ground"].lightened(0.1))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
+	var water_mat := material("water")
+	water_mat.set_shader_parameter("bank", palette["ground"].lightened(0.12).lerp(palette["grass"], 0.25))
 	var lava_mat := material("water")
 	lava_mat.set_shader_parameter("deep", Color("#C8401E"))
 	lava_mat.set_shader_parameter("foam", Color("#FFC24A"))
 	lava_mat.set_shader_parameter("glowing", 0.8)
 	for layer: Array in [[ground, ground_mat, true], [scatter, material("toon"), false],
 			[hero, material("toon", true), true], [prop, material("toon"), true], [clear, material("clear"), false],
-			[water, material("water"), false], [lava, lava_mat, false]]:
+			[water, water_mat, false], [lava, lava_mat, false]]:
 		var m := (layer[0] as Geo).mesh()
 		if m == null:
 			continue

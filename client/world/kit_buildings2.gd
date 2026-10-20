@@ -343,8 +343,10 @@ static func _ward(b: BuildingKit) -> void:
 		b.box(0.1, 0.012, 0.03, KitStyle.lit(acc, 0.5), cos(q) * 0.33, 0.046, sin(q) * 0.33, -q + PI / 2.0)
 	for i in 4:
 		var q := i * PI / 2.0 + PI / 4.0
-		b.g.prism(b.place(cos(q) * 0.36, 0, sin(q) * 0.36, -q), 4, 0.07 * b.unit, 0.045 * b.unit, 0.44 * b.unit,
-			Color("#9C93B4"))
+		var post := [Color("#8A7A6A"), b.stone2, Color("#E6E0FF")][b.tier] as Color
+		b.g.prism(b.place(cos(q) * 0.36, 0, sin(q) * 0.36, -q), 4, 0.07 * b.unit, 0.045 * b.unit, 0.44 * b.unit, post)
+		if b.tier >= 1:
+			b.fine(0.06, 0.02, 0.06, KitStyle.GOLD, cos(q) * 0.36, 0.42, sin(q) * 0.36)
 	b.move(Geo.Anim.SPIN_Y, b.at(0, 0.42, 0))
 	b.d.gem(Geo.place(b.at(0, 0.42, 0)), 0.08 * b.unit, 0.08 * b.unit, KitStyle.lit(acc.lightened(0.3), 0.4), 4)
 	b.d.torus(Transform3D(Basis(Vector3.RIGHT, 0.6), b.at(0, 0.42, 0)), 0.16 * b.unit, 0.012 * b.unit,

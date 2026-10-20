@@ -67,26 +67,36 @@ void fragment() {
 	float cliff = UV2.x;
 	float stone = UV2.y;
 	vec2 p = wpos.xz;
-	// The brush: broad strokes across the ground, then finer ones along them.
-	float n1 = vnoise(p * 1.3);
-	float stroke = vnoise(vec2(p.x * 2.2 + p.y * 1.1, p.y * 7.0 - p.x * 2.0) + n1 * 3.0);
-	float blades = vnoise(vec2(p.x * 26.0, p.y * 9.0) + stroke * 4.0);
-	float grassy = (1.0 - cliff) * (1.0 - path) * (1.0 - stone * 0.6);
-	c *= 1.0 + (stroke - 0.5) * 0.16 * grassy + (blades - 0.5) * 0.14 * grassy * (0.6 + lush);
-	// Flecks: light blade tips and the odd dark clump, a painter's dabs.
+	// The brush: broad patches of light and shade, then dabs — each a cell
+	// of its own tint, soft at its edge, like a painter's short strokes.
+	float n1 = vnoise(p * 0.9) * 0.6 + vnoise(p * 2.3 + 5.0) * 0.4;
+	float grassy = (1.0 - cliff) * (1.0 - smoothstep(0.4, 0.46, path)) * (1.0 - stone * 0.6);
+	c *= 1.0 + (n1 - 0.5) * 0.26 * grassy;
+	vec3 dab = cells(vec2(p.x * 3.2 + p.y * 0.9, p.y * 8.5 - p.x * 0.6));
+	float soft = smoothstep(0.05, 0.6, dab.y - dab.x);
+	float tone = dab.z - 0.5;
+	vec3 warm = vec3(1.06, 1.05, 0.9);
+	vec3 cool = vec3(0.88, 0.97, 0.94);
+	c *= mix(vec3(1.0), tone > 0.0 ? warm : cool, abs(tone) * 1.1 * soft * grassy);
+	// Flecks: light blade tips and the odd dark clump.
 	vec2 cell = floor(p * 11.0);
 	float h = hash(cell);
 	vec2 inside = fract(p * 11.0) - 0.5;
-	float dab = step(length(inside * vec2(1.0, 2.2)), 0.28) * grassy;
-	c = mix(c, c * 1.18 + vec3(0.03, 0.04, 0.0), dab * step(0.9, h));
-	c = mix(c, c * 0.78, dab * step(h, 0.07) * (0.5 + lush));
-	// A path: cobbles laid in the worn earth, mortar between them.
-	if (path > 0.01) {
-		vec3 cb = cells(p * 4.2);
-		float edge = smoothstep(0.02, 0.09, cb.y - cb.x);
-		vec3 stoneC = cobble.rgb * (0.86 + 0.2 * cb.z) * (0.94 + 0.08 * n1);
+	float fleck = step(length(inside * vec2(1.0, 2.2)), 0.26) * grassy;
+	c = mix(c, c * 1.16 + vec3(0.03, 0.04, 0.0), fleck * step(0.9, h));
+	c = mix(c, c * 0.78, fleck * step(h, 0.08) * (0.5 + lush));
+	// A path: a ribbon of cobbles laid in worn earth (UV.x is how near the
+	// path's middle line this is), a darker kerb at its edge.
+	if (path > 0.3) {
+		vec3 cb = cells(p * 5.0);
+		float edge = smoothstep(0.02, 0.08, cb.y - cb.x);
+		vec3 stoneC = cobble.rgb * (0.84 + 0.22 * cb.z) * (0.95 + 0.08 * n1);
 		vec3 pathC = mix(mortar.rgb, stoneC, edge);
-		c = mix(c, pathC, smoothstep(0.35, 0.65, path + (n1 - 0.5) * 0.25));
+		float wob = (vnoise(p * 9.0) - 0.5) * 0.06;
+		float inside_ = smoothstep(0.43, 0.47, path + wob);
+		float kerb = smoothstep(0.43, 0.47, path + wob) * (1.0 - smoothstep(0.47, 0.53, path + wob));
+		c = mix(c, pathC, inside_);
+		c = mix(c, mortar.rgb * 0.8, kerb * 0.7);
 	}
 	// Scree and bare rock: grit.
 	c *= 1.0 - stone * (hash(floor(p * 30.0)) - 0.5) * 0.25;

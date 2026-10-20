@@ -52,11 +52,9 @@ func build(t: Vector2i, f: int) -> void:
 			prop.moving(Geo.Anim.SHIVER, c)
 			for k in 13:
 				var p := c + Vector3(RealmKit.jitter(t, k) - 0.5, 0, RealmKit.jitter(t, k + 9) - 0.5) * 0.86
-				var tilt := Basis(Vector3(RealmKit.jitter(t, k + 3) - 0.5, 0, RealmKit.jitter(t, k + 4) - 0.5).normalized(),
-					0.25)
 				prop.moving(Geo.Anim.SHIVER, p)
-				prop.prism(Transform3D(tilt, p), 3, 0.045, 0.0, 0.42 + 0.22 * RealmKit.jitter(t, k + 2),
-					plant.darkened(0.08 + 0.1 * (k % 3)).lerp(Color("#3E7A3A"), 0.25))
+				prop.blade(p, 0.42 + 0.22 * RealmKit.jitter(t, k + 2), 0.045,
+					plant.darkened(0.08 + 0.1 * (k % 3)).lerp(Color("#3E7A3A"), 0.25), 0.25, RealmKit.jitter(t, k + 3) * TAU)
 			prop.still()
 		RealmKit.F.CRYSTAL_WALL:
 			for k in 5:
@@ -129,17 +127,18 @@ func build(t: Vector2i, f: int) -> void:
 			for k in 7:
 				var p := c + Vector3(RealmKit.jitter(t, k) - 0.5, -0.12, RealmKit.jitter(t, k + 2) - 0.5) * 0.8
 				prop.moving(Geo.Anim.SHIVER, p)
-				prop.prism(Geo.place(p), 4, 0.03, 0.0, 0.42 + 0.25 * RealmKit.jitter(t, k + 4), Color("#6A8A3A"))
+				prop.blade(p, 0.42 + 0.25 * RealmKit.jitter(t, k + 4), 0.03, Color("#6A8A3A"), 0.1, k)
 				if k % 3 == 0:
 					prop.cyl(Geo.place(p + Vector3(0, 0.28, 0)), 0.03, 0.03, 0.12, Color("#7A4A2A"), 5)
 			prop.still()
 		RealmKit.F.FLOWER_MEADOW:
 			var petals: Array[Color] = [Color("#FF8AB0"), Color("#FFE08A"), Color("#FFFFFF"), Color("#B79BFF")]
-			for k in 14:
-				var p := c + Vector3(RealmKit.jitter(t, k) - 0.5, 0.0, RealmKit.jitter(t, k + 9) - 0.5) * 0.86
+			for k in 22:
+				var p := c + Vector3(RealmKit.jitter(t, k) - 0.5, 0.0, RealmKit.jitter(t, k + 9) - 0.5) * 0.9
+				var stem := 0.07 + 0.08 * RealmKit.jitter(t, k + 40)
 				prop.moving(Geo.Anim.SHIVER, p)
-				prop.prism(Geo.place(p), 3, 0.012, 0.012, 0.09, plant.darkened(0.2))
-				prop.ball(Geo.place(p + Vector3(0, 0.11, 0), 0.0, Vector3(1, 0.6, 1)), 0.045, petals[k % 4], 2, 5)
+				prop.blade(p, stem, 0.012, plant.darkened(0.2))
+				prop.ball(Geo.place(p + Vector3(0, stem, 0), 0.0, Vector3(1, 0.55, 1)), 0.05, petals[k % 4], 2, 6)
 			prop.still()
 		RealmKit.F.ICE_SHEET:
 			kit.clear.rbox(Geo.place(c + Vector3(0, 0.025, 0)), Vector3(0.98, 0.05, 0.98), Color("#DDF4FF"), 0.02)
@@ -223,23 +222,30 @@ func _run_yaw(t: Vector2i, f: int) -> float:
 func _ruin(t: Vector2i, c: Vector3, stone: Color) -> void:
 	var yaw := _run_yaw(t, RealmKit.F.RUIN_WALL)
 	var dir := Vector3.RIGHT.rotated(Vector3.UP, yaw)
-	var tall := [0.72, 0.5, 0.86, 0.34, 0.62]
-	for k in 5:
-		var x := -0.4 + 0.2 * k
-		var h: float = tall[(k + t.x + t.y) % 5]
-		for row in int(h / 0.18) + 1:
-			var y := row * 0.18
-			if y > h:
-				break
-			var off := 0.05 if row % 2 == 1 else 0.0
-			var col := stone.darkened(0.04 + 0.08 * RealmKit.jitter(t, k * 7 + row))
-			kit.hero.rbox(Geo.place(c + dir * (x + off) + Vector3(0, y + 0.09, 0), yaw),
-				Vector3(0.2, 0.17, 0.3), col, 0.03)
-	kit.prop.rock(Geo.place(c + dir.rotated(Vector3.UP, PI / 2.0) * 0.3 + Vector3(0, 0.05, 0)), 0.1,
-		stone.darkened(0.1), t.x)
+	var old: Color = (style["stone2"] as Color).lerp(kit.palette["rock"], 0.35)
+	var tall := [0.78, 0.46, 0.92, 0.3, 0.64]
+	for k in 4:
+		var x := -0.375 + 0.25 * k
+		var h: float = tall[(k + t.x * 3 + t.y) % 5]
+		var y := 0.0
+		var row := 0
+		while y < h:
+			var bh := 0.15 + 0.05 * RealmKit.jitter(t, k * 9 + row)
+			var off := (0.06 if row % 2 == 1 else -0.02) + (RealmKit.jitter(t, k * 5 + row) - 0.5) * 0.04
+			var col := old.lightened(0.12 * RealmKit.jitter(t, k * 7 + row)).darkened(0.05 * (row % 2))
+			kit.hero.rbox(Geo.place(c + dir * (x + off) + Vector3(0, y + bh / 2.0, 0),
+				yaw + (RealmKit.jitter(t, k + row * 3) - 0.5) * 0.12), Vector3(0.24, bh - 0.01, 0.28), col, 0.035)
+			y += bh
+			row += 1
+	# Fallen stones at its foot, and moss creeping up.
+	var side := dir.rotated(Vector3.UP, PI / 2.0)
+	for k in 2:
+		kit.prop.rock(Geo.place(c + side * (0.28 + 0.06 * k) + dir * (0.2 - 0.4 * k) + Vector3(0, 0.05, 0)),
+			0.08 + 0.03 * k, old.darkened(0.08), t.x + k)
 	kit.prop.moving(Geo.Anim.SHIVER, c)
-	kit.prop.ball(Geo.place(c + dir * 0.3 + Vector3(0, 0.5, 0.15), 0.0, Vector3(1, 0.7, 0.6)), 0.12,
-		kit.palette["plant"].darkened(0.2), 3, 6)
+	for k in 3:
+		kit.prop.ball(Geo.place(c + dir * (-0.3 + 0.3 * k) + side * 0.15 + Vector3(0, 0.08 + 0.12 * (k % 2), 0), 0.0,
+			Vector3(1.2, 0.6, 0.7)), 0.09, kit.palette["plant"].darkened(0.25), 3, 6)
 	kit.prop.still()
 
 

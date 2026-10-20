@@ -82,6 +82,8 @@ static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, col
 	elif b.tier == 2:
 		b.stone = Color("#F2EEF8")
 		b.stone2 = Color("#C9C0E6")
+	if not kind in ["ward", "law_pylon", "anchor_stone", "keeper_s_spire", "visitor_s_dock"]:
+		b._pad()
 	match kind:
 		"hearth":
 			b._hearth()
@@ -320,6 +322,17 @@ func _dress(kind: String) -> void:
 		stop()
 	if level >= 10:
 		KitBuildings2.crown(self, kind)
+
+
+## The packed-earth pad a building stands on (the design's foundation disc,
+## :981): an octagon of trodden earth and stone, wider than the house.
+func _pad() -> void:
+	var earth: Color = (palette["ground"] as Color).lerp(Color("#E8D8B8"), 0.4)
+	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.6 * unit, 0.57 * unit, 0.03 * unit, earth.darkened(0.08), false, earth)
+	for k in 6:
+		var a := TAU * k / 6.0 + 0.3
+		d.rock(Geo.place(at(cos(a) * 0.6, 0.012, sin(a) * 0.6), a, Vector3(1, 0.5, 1)), 0.035 * unit,
+			(palette["rock"] as Color).lightened(0.2), k)
 
 
 ## The Hearth: "a cottage with a round door and chimney", warm window light.
