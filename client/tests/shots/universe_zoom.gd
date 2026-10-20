@@ -30,7 +30,8 @@ func _initialize() -> void:
 		var start := Time.get_ticks_msec()
 		while Time.get_ticks_msec() - start < int(float(env.call("WIPE", "0.45")) * 1000.0):
 			await process_frame
-	print("triangles ", view.triangles, " draw calls ", view.draw_calls(), " rendered ",
+	print("triangles ", view.triangles, " drawn now ", view.drawn_triangles(), " draw calls ", view.draw_calls(),
+		" rendered ",
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME), " prims ",
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME), " calls")
 	var img := root.get_texture().get_image()

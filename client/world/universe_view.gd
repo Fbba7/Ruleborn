@@ -99,6 +99,8 @@ var _streams: Array[Dictionary] = []
 var _flight: UniverseFlight
 var _crowd: UniverseCrowd
 var _lods := {}
+var _rocks := {}
+var _close := {}
 
 
 func _init() -> void:
@@ -200,6 +202,8 @@ func _build() -> void:
 		c.queue_free()
 	islands.clear()
 	_lods.clear()
+	_rocks.clear()
+	_close.clear()
 	_crowd.show("", null, [])
 	_spinners.clear()
 	_streams.clear()
@@ -207,42 +211,32 @@ func _build() -> void:
 	var realms: Array = _view.get("realms", [])
 	var ghosts := 1 if _view.get("open") is Dictionary else 0
 	places = UniverseLayout.places(realms, ghosts)
-	var body := Geo.new()
-	var hero := Geo.new()
 	var glows := UniversePaint.new()
 	var light := UniversePaint.new()
 	var flow := UniversePaint.new()
-	var shades := UniversePaint.new()
 	for r: Dictionary in realms:
 		var id := str(r.get("realm", ""))
 		if not places.has(id):
 			continue
 		var island := UniverseIsland.new(r, places[id])
 		island.spire = int(_view.get("spire", 1))
-		island.shades = shades
-		island.build(body, hero, glows, light, flow, r.get("buildings", []))
+		_rock(id, island, glows, light, flow, r.get("buildings", []))
 		islands[id] = island
 	if ghosts > 0 and places.has("next:0"):
 		var types: Array = (_view["open"] as Dictionary).get("types", [])
 		var ghost := UniverseIsland.new({"realm": "next:0", "type": str(types[0]) if not types.is_empty() else "Heart",
 			"ghost": true}, places["next:0"])
-		ghost.build(body, hero, glows, light, flow, [])
+		_rock("next:0", ghost, glows, light, flow, [])
 		islands["next:0"] = ghost
 	_build_scatter()
 	_build_lods()
-	_build_links(hero, glows, light, flow)
+	_build_links(glows, light, flow)
 	_build_faults(light, glows)
 	_bounds = UniverseLayout.bounds(places, UniverseLayout.radius(UniverseLayout.OUTER_GRID) + 2.0)
-	triangles += body.triangles + hero.triangles + (glows.count + light.count + flow.count)
-	_add(body.mesh(), _material(), true)
-	_add(hero.mesh(), _material(true), true)
+	triangles += glows.count + light.count + flow.count
 	_add(glows.mesh(), _glow_material(0.3, 0.35), false)
 	_add(light.mesh(), _veil_material(0.0, 0.0), false)
 	_add(flow.mesh(), _veil_material(1.6, 3.0), false)
-	var shade := ShaderMaterial.new()
-	shade.shader = _shade
-	_add(shades.mesh(), shade, false)
-	triangles += shades.count
 	_build_citadel()
 	_build_heart_rings()
 	var centre := _bounds.get_center()
@@ -250,6 +244,93 @@ func _build() -> void:
 		maxf(60.0, _bounds.size.z * 0.6))
 	_flight = UniverseFlight.new(movers, islands, _view, _bounds, _streams)
 	triangles += _flight.triangles
+
+
+## An island's own rock, ground and dressing on a node of its own, so a
+## close-up draws only the islands on the screen; the realm seen close swaps
+## it for T2's island (`_show_close`).
+func _rock(id: String, island: UniverseIsland, glows: UniversePaint, light: UniversePaint,
+		flow: UniversePaint, buildings: Array) -> void:
+	var body := Geo.new()
+	var hero := Geo.new()
+	island.build(body, hero, glows, light, flow, buildings)
+	var node := Node3D.new()
+	node.name = "Rock"
+	statics.add_child(node)
+	var shade := ShaderMaterial.new()
+	shade.shader = _shade
+	for part: Array in [[body.mesh(), _material()], [hero.mesh(), _material(true)], [island.shades.mesh(), shade]]:
+		if part[0] == null:
+			continue
+		var mi := MeshInstance3D.new()
+		mi.mesh = part[0]
+		mi.material_override = part[1]
+		node.add_child(mi)
+	triangles += body.triangles + hero.triangles + island.shades.count
+	_rocks[id] = node
+
+
+## The realm seen close (zoom 2) drawn as T2 draws a realm's island, built
+## the first time it is seen close and kept; every other island its rock.
+func _show_close() -> void:
+	# Not the Heart: its citadel and buildings cover its ground, so it keeps
+	# the map's rock and the triangles go to the buildings.
+	var shown := focus_id if zoom == 2 and islands.has(focus_id) and not focus_id.begins_with("next:") \
+		and focus_id != "heart" else ""
+	if shown != "" and not _close.has(shown):
+		var isl: UniverseIsland = islands[shown]
+		var close := UniverseClose.build(isl, UniverseLayout.grid({"realm": shown}))
+		statics.add_child(close)
+		_close[shown] = close
+	for id: String in _rocks:
+		(_rocks[id] as Node3D).visible = id != shown
+	for id: String in _close:
+		(_close[id] as Node3D).visible = id == shown
+
+
+## The triangles inside the camera's view now: every mesh and instance
+## layer on show whose box the view reaches (what the phone draws in the
+## main pass; §21.3's budget is held to this at every zoom).
+func drawn_triangles() -> int:
+	var planes := camera.get_frustum()
+	var total := 0
+	for node in world.find_children("*", "GeometryInstance3D", true, false):
+		var g := node as GeometryInstance3D
+		if not g.is_visible_in_tree():
+			continue
+		var box := g.global_transform * g.get_aabb()
+		var inside := true
+		for plane: Plane in planes:
+			var out := true
+			for k in 8:
+				if not plane.is_point_over(box.get_endpoint(k)):
+					out = false
+					break
+			if out:
+				inside = false
+				break
+		if inside:
+			total += _count(g)
+	return total
+
+
+static func _count(g: GeometryInstance3D) -> int:
+	var mesh: Mesh = null
+	var times := 1
+	if g is MeshInstance3D:
+		mesh = (g as MeshInstance3D).mesh
+	elif g is MultiMeshInstance3D and (g as MultiMeshInstance3D).multimesh != null:
+		mesh = (g as MultiMeshInstance3D).multimesh.mesh
+		times = (g as MultiMeshInstance3D).multimesh.visible_instance_count
+		if times < 0:
+			times = (g as MultiMeshInstance3D).multimesh.instance_count
+	if not (mesh is ArrayMesh):
+		return 0
+	var n := 0
+	for k in mesh.get_surface_count():
+		var index := (mesh as ArrayMesh).surface_get_array_index_len(k)
+		n += (index if index > 0 else (mesh as ArrayMesh).surface_get_array_len(k)) / 3
+	return n * times
 
 
 func _add(mesh: ArrayMesh, mat: Material, shadows: bool) -> MeshInstance3D:
@@ -330,6 +411,7 @@ func _show_lods() -> void:
 		var close := zoom > 0 and id == focus_id
 		(_lods[id][0] as Node3D).visible = close
 		(_lods[id][1] as Node3D).visible = not close
+	_show_close()
 	# The realm's own characters, in a close-up only.
 	var shown := focus_id if zoom == 2 and islands.has(focus_id) else ""
 	if _crowd != null:
@@ -380,7 +462,7 @@ func _build_scatter() -> void:
 
 ## §5.3's links, each built to its gap; a rope bridge on its own node, so it
 ## sways.
-func _build_links(hero: Geo, glows: UniversePaint, light: UniversePaint, flow: UniversePaint) -> void:
+func _build_links(glows: UniversePaint, light: UniversePaint, flow: UniversePaint) -> void:
 	links.clear()
 	for l: Dictionary in _view.get("links", []):
 		var a := str(l.get("a", ""))
@@ -410,7 +492,15 @@ func _build_links(hero: Geo, glows: UniversePaint, light: UniversePaint, flow: U
 			_spinners.append({"node": mi, "axis": Vector3.RIGHT, "sway": 0.025, "speed": 1.1,
 				"phase": float(int(l.get("n", 0)))})
 		else:
-			link.build(hero, glows, flow, light)
+			# Each link its own mesh, so one off the screen is not drawn.
+			var own := Geo.new()
+			link.build(own, glows, flow, light)
+			triangles += own.triangles
+			var mi := MeshInstance3D.new()
+			mi.mesh = own.mesh()
+			mi.material_override = _material(true)
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			statics.add_child(mi)
 		if link.kind == "rift" and link.open:
 			_streams.append({"path": link.stream(), "colour": ib.school})
 
@@ -883,7 +973,7 @@ func draw_calls() -> int:
 	var n := 0
 	for node in world.find_children("*", "GeometryInstance3D", true, false):
 		var g := node as GeometryInstance3D
-		if not g.visible:
+		if not g.is_visible_in_tree():
 			continue
 		n += 1
 		var m := g.material_override as ShaderMaterial

@@ -384,7 +384,9 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 		_used.append(spot)
 		_shade(mid, 2.1, 0.5)
 		if kind == "ward":
-			_ward(hero, glows, mid, lv)
+			# With the buildings, so a close-up keeps it; from afar too.
+			_ward(near, glows, mid, lv)
+			_ward(far, UniversePaint.new(), mid, lv)
 		else:
 			var side := 4 if kind in ["vault", "keeper_s_spire"] else 3
 			# The kit's fine parts while the close-up has room for them (§21.3).

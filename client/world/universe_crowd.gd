@@ -7,8 +7,9 @@ extends RefCounted
 ## close-up shows them, and only a few, as each is a whole character's
 ## triangles (§21.3).
 
-## How many characters a close-up shows.
-const MOST := 2
+## How many characters a close-up shows: one, as each is a whole
+## character's triangles (§21.3's 3,000–6,000) on top of the realm's.
+const MOST := 1
 ## The map draws its figures larger than life, as the design's diorama does
 ## (its characters at 1.9 to 2.3 times, realm_diorama.js :611), so they read
 ## beside buildings drawn three tiles across.

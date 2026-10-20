@@ -122,6 +122,18 @@ universe, inside §21.3's 40,000 and 150.
   universe view says can be raised now (its `next` with nothing blocking), at the realm zooms.
   Still: `round14_levelup_markers.png`.
 
+- Round 16, on the third integration (its far buildings are T3's `BuildingKit.build_map`, so there is
+  one building path: the kit up close, its map version from afar). Each island is now its own node, and
+  each link its own mesh, so a zoomed-in view draws only what is on the screen. An outer realm seen close
+  (zoom 2) is T2's own island (`UniverseClose`: `WorldLook.island`, its painted meadow, strata cliffs,
+  roots, falls and scatter, toned to the map's night through its `tint`); the Heart keeps the map's rock,
+  as its citadel and buildings cover its ground. One character in a close-up. Wards are drawn with the
+  buildings, so they stay in a close-up. The budget is now held to what is in view (`drawn_triangles`,
+  counted per instance against the camera's frustum): 32,600 for the whole universe and 19,800–37,800
+  for each realm seen close, all under 40,000; `universe_zoom.gd` prints both counts.
+  Stills: `round16_home.png`, `round16_zoom0.png`, `round16_zoom1.png`, `round16_zoom2_heart.png`,
+  `round16_zoom2_skyfield.png`, `round16_zoom2_crystalline.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 
