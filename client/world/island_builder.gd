@@ -874,7 +874,7 @@ func sky_dressing() -> Array:
 		var d := r + 2.6 + _rng.randf() * 2.4
 		var y := -1.5 + _rng.randf() * 3.0
 		var c := Vector3(cos(a) * d, y, sin(a) * d)
-		var sz := 0.5 + _rng.randf() * 0.45
+		var sz := 0.85 + _rng.randf() * 0.5
 		var rim: Array[Vector2] = [Vector2(sz * 1.02, 0.06), Vector2(sz * 0.95, -0.1)]
 		var cone: Array[Vector2] = [Vector2(sz * 0.95, -0.1), Vector2(sz * 0.5, -sz * 1.0), Vector2(0.0, -sz * 2.1)]
 		var piece := LookMesh.new()
@@ -886,12 +886,23 @@ func sky_dressing() -> Array:
 			piece.tri(Vector3(0, 0.06, 0), Vector3(cos(a0), 0, sin(a0)) * sz * 1.02 + Vector3(0, 0.06, 0),
 				Vector3(cos(a1), 0, sin(a1)) * sz * 1.02 + Vector3(0, 0.06, 0), grass, Vector3.UP)
 		if kind != "emberreach" and _rng.randf() < 0.75:
-			piece.ico(Transform3D(Basis().scaled(Vector3.ONE * sz * 0.4), Vector3(0, sz * 0.38, 0)), plant)
-			piece.ico(Transform3D(Basis().scaled(Vector3.ONE * sz * 0.28), Vector3(sz * 0.25, sz * 0.55, 0.05)),
-				plant.lightened(0.1))
+			# A little round tree, as the diorama's islets carry (:1007).
+			var trunk := PackedVector3Array([Vector3(0, 0.05, 0), Vector3(0.02, sz * 0.45, 0)])
+			piece.tube(trunk, sz * 0.07, sz * 0.05, 4, Palette.WOOD.darkened(0.2))
+			piece.puff(Transform3D(Basis().scaled(Vector3(1.0, 0.85, 1.0) * sz * 0.38), Vector3(0, sz * 0.62, 0)),
+				plant, 3, 6)
+			piece.puff(Transform3D(Basis().scaled(Vector3.ONE * sz * 0.24), Vector3(sz * 0.18, sz * 0.82, 0.04)),
+				plant.lightened(0.12), 3, 5)
 		else:
 			piece.ico(Transform3D(Basis().scaled(Vector3(1, 0.7, 1) * sz * 0.35), Vector3(sz * 0.2, 0.15, 0)),
 				palette["cliff_deep"])
+		# Two roots dangling from the islet's point.
+		for rt in 2:
+			var ra := _rng.randf() * TAU
+			var start := Vector3(cos(ra) * sz * 0.3, -sz * 0.9, sin(ra) * sz * 0.3)
+			piece.tube(PackedVector3Array([start, start + Vector3(cos(ra) * 0.08, -0.35, sin(ra) * 0.08),
+				start + Vector3(cos(ra) * 0.05, -0.7 - _rng.randf() * 0.4, sin(ra) * 0.05)]), 0.04, 0.012, 3,
+				_dim(palette["dirt"], 0.7))
 		for v in piece.verts.size() / 3:
 			m.tri(piece.verts[v * 3] + c, piece.verts[v * 3 + 2] + c, piece.verts[v * 3 + 1] + c, piece.colours[v * 3],
 				piece.normals[v * 3], piece.uvs[v * 3], piece.uvs[v * 3 + 2], piece.uvs[v * 3 + 1])
