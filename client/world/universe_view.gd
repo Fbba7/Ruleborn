@@ -278,59 +278,23 @@ func _show_close() -> void:
 	var shown := focus_id if zoom == 2 and islands.has(focus_id) and not focus_id.begins_with("next:") \
 		and focus_id != "heart" else ""
 	if shown != "" and not _close.has(shown):
-		var isl: UniverseIsland = islands[shown]
-		var close := UniverseClose.build(isl, UniverseLayout.grid({"realm": shown}))
-		statics.add_child(close)
-		_close[shown] = close
+		_make_close(shown)
 	for id: String in _rocks:
 		(_rocks[id] as Node3D).visible = id != shown
 	for id: String in _close:
 		(_close[id] as Node3D).visible = id == shown
 
 
-## The triangles inside the camera's view now: every mesh and instance
-## layer on show whose box the view reaches (what the phone draws in the
-## main pass; §21.3's budget is held to this at every zoom).
+func _make_close(id: String) -> Node3D:
+	var close := UniverseClose.build(islands[id], UniverseLayout.grid({"realm": id}))
+	statics.add_child(close)
+	_close[id] = close
+	return close
+
+
+## The triangles inside the camera's view now (`UniverseBudget.drawn`).
 func drawn_triangles() -> int:
-	var planes := camera.get_frustum()
-	var total := 0
-	for node in world.find_children("*", "GeometryInstance3D", true, false):
-		var g := node as GeometryInstance3D
-		if not g.is_visible_in_tree():
-			continue
-		var box := g.global_transform * g.get_aabb()
-		var inside := true
-		for plane: Plane in planes:
-			var out := true
-			for k in 8:
-				if not plane.is_point_over(box.get_endpoint(k)):
-					out = false
-					break
-			if out:
-				inside = false
-				break
-		if inside:
-			total += _count(g)
-	return total
-
-
-static func _count(g: GeometryInstance3D) -> int:
-	var mesh: Mesh = null
-	var times := 1
-	if g is MeshInstance3D:
-		mesh = (g as MeshInstance3D).mesh
-	elif g is MultiMeshInstance3D and (g as MultiMeshInstance3D).multimesh != null:
-		mesh = (g as MultiMeshInstance3D).multimesh.mesh
-		times = (g as MultiMeshInstance3D).multimesh.visible_instance_count
-		if times < 0:
-			times = (g as MultiMeshInstance3D).multimesh.instance_count
-	if not (mesh is ArrayMesh):
-		return 0
-	var n := 0
-	for k in mesh.get_surface_count():
-		var index := (mesh as ArrayMesh).surface_get_array_index_len(k)
-		n += (index if index > 0 else (mesh as ArrayMesh).surface_get_array_len(k)) / 3
-	return n * times
+	return UniverseBudget.drawn(world, camera)
 
 
 func _add(mesh: ArrayMesh, mat: Material, shadows: bool) -> MeshInstance3D:
@@ -376,7 +340,6 @@ static func _veil_material(flow: float, streaks: float) -> ShaderMaterial:
 ## close ones are shown only on the realm the camera is on (`_show_lods`).
 func _build_lods() -> void:
 	_lods.clear()
-	var worst := 0
 	for id: String in islands:
 		var isl: UniverseIsland = islands[id]
 		var node := Node3D.new()
@@ -384,32 +347,40 @@ func _build_lods() -> void:
 		statics.add_child(node)
 		var near := Node3D.new()
 		node.add_child(near)
-		for part: Array in [[isl.near, _material(true), "Kit"], [isl.near_fine, _material(), "Fine"]]:
-			var mesh: ArrayMesh = (part[0] as Geo).mesh()
-			if mesh != null:
-				var mi := MeshInstance3D.new()
-				mi.mesh = mesh
-				mi.material_override = part[1]
-				mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-				mi.name = part[2]
-				near.add_child(mi)
-		var far_mesh := isl.far.mesh()
 		var far := MeshInstance3D.new()
-		far.mesh = far_mesh
+		far.mesh = isl.far.mesh()
 		far.material_override = _material(true)
 		far.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		node.add_child(far)
 		triangles += isl.far.triangles
-		worst = maxi(worst, isl.near.triangles + isl.near_fine.triangles - isl.far.triangles)
 		_lods[id] = [near, far]
-	# The budget counts the realm drawn close as well.
-	triangles += worst
 	_show_lods()
+
+
+## The realm's buildings drawn close, made the first time they are shown.
+func _near_of(id: String) -> Node3D:
+	var near := _lods[id][0] as Node3D
+	if near.get_child_count() > 0 or not islands.has(id):
+		return near
+	var isl: UniverseIsland = islands[id]
+	isl.build_near()
+	for part: Array in [[isl.near, _material(true), "Kit"], [isl.near_fine, _material(), "Fine"]]:
+		var mesh: ArrayMesh = (part[0] as Geo).mesh()
+		if mesh != null:
+			var mi := MeshInstance3D.new()
+			mi.mesh = mesh
+			mi.material_override = part[1]
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mi.name = part[2]
+			near.add_child(mi)
+	return near
 
 
 func _show_lods() -> void:
 	for id: String in _lods:
 		var close := zoom > 0 and id == focus_id
+		if close:
+			_near_of(id)
 		(_lods[id][0] as Node3D).visible = close
 		(_lods[id][1] as Node3D).visible = not close
 		# The kit's fine parts (windows, frames, flags) only in a close-up,
@@ -619,6 +590,11 @@ func _process(delta: float) -> void:
 			node.rotation.y += float(s["turn"]) * delta * 0.3
 		else:
 			node.rotation.x = sin(_time * float(s["speed"]) + float(s["phase"])) * float(s["sway"])
+	# Resting on a realm, its island as seen close is made ready, so the
+	# swoop in does not wait for it.
+	if zoom == 1 and _swoop >= 1.0 and focus_id != "heart" and islands.has(focus_id) \
+			and not focus_id.begins_with("next:") and not _close.has(focus_id):
+		_make_close(focus_id).visible = false
 	if _flight != null:
 		_flight.fly(_time)
 		_flight.drift(_time)

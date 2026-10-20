@@ -145,6 +145,12 @@ universe, inside §21.3's 40,000 and 150.
   (The design does not bob its islands in universe mode, so neither does the map.)
   Still: `round18_home.png`.
 
+- Round 19 (cost on the phone): the kit's detailed buildings (about 5 ms each on a desktop CPU) are built
+  for a realm only when the camera first comes to it (`UniverseIsland.build_near`), so the universe builds
+  in 172 ms instead of 454 (desktop, seven realms); while the camera rests on a realm, its T2 island for
+  the close-up is made ready, so the swoop in does not wait for it. The budget counting moved to
+  `UniverseBudget`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

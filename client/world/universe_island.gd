@@ -77,6 +77,10 @@ var shades := UniversePaint.new()
 
 ## Where buildings stand, which the meadow keeps clear of.
 var _used: Array[Vector3] = []
+## The buildings and path stones to draw close, kept until `build_near`.
+var _near_jobs: Array = []
+var _near_stones: Array = []
+var _near_built := false
 
 
 func _init(realm: Dictionary, where: Vector3) -> void:
@@ -384,21 +388,39 @@ func _buildings(hero: Geo, glows: UniversePaint, buildings: Array) -> void:
 		_lamp(hero, glows, spot)
 		_used.append(spot)
 		_shade(mid, 2.1, 0.5)
+		# Drawn close only when the camera first comes to the realm
+		# (`build_near`); from afar now.
+		_near_jobs.append([kind, mid, lv])
 		if kind == "ward":
-			# With the buildings, so a close-up keeps it; from afar too.
-			_ward(near, glows, mid, lv)
-			_ward(far, UniversePaint.new(), mid, lv)
+			_ward(far, glows, mid, lv)
 		else:
-			var side := 4 if kind in ["vault", "keeper_s_spire"] else 3
-			# The kit's fine parts while the close-up has room for them (§21.3).
-			var fine := near_fine if near.triangles + near_fine.triangles < NEAR_BUDGET else Geo.new()
-			BuildingKit.build(near, kind, mid, side, lv, palette, fine)
-			_far_building(kind, mid, side, lv)
+			_far_building(kind, mid, 4 if kind in ["vault", "keeper_s_spire"] else 3, lv)
 		places["%s:%d" % [kind, int(b.get("n", 1))]] = mid + Vector3(0, 2.2, 0)
 		# Windows lit, more of them in the realms of night (§21.2: "lanterns
 		# and glows carry the realm").
 		glows.glow(mid + Vector3(0, 0.7, 0.9), 0.7 if lit else 0.45, Color("#FFC36A", 0.7 if lit else 0.4))
 	_paths(stands)
+
+
+## The realm's buildings and paths as drawn close (T3's kit), built the
+## first time the camera comes to the realm: building all of them for every
+## realm at once costs a phone a second it need not spend.
+func build_near() -> void:
+	if _near_built:
+		return
+	_near_built = true
+	for job: Array in _near_jobs:
+		var kind: String = job[0]
+		var mid: Vector3 = job[1]
+		var lv: int = job[2]
+		if kind == "ward":
+			_ward(near, UniversePaint.new(), mid, lv)
+			continue
+		# The kit's fine parts while the close-up has room for them (§21.3).
+		var fine := near_fine if near.triangles + near_fine.triangles < NEAR_BUDGET else Geo.new()
+		BuildingKit.build(near, kind, mid, 4 if kind in ["vault", "keeper_s_spire"] else 3, lv, palette, fine)
+	for stone: Array in _near_stones:
+		near.ring(stone[0], 0.0, 0.27, stone[1], 5)
 
 
 ## A building as seen from across the universe: the realm kit's own map
@@ -459,8 +481,8 @@ func _walk(a: Vector3, b: Vector3) -> void:
 		var p := Vector3(a.x, 0, a.z) + dir * d + side
 		var f := Vector2(p.x - at.x, p.z - at.z).length() / radius
 		var t := Geo.place(Vector3(p.x, at.y + dome(f) + 0.03, p.z), k * 0.7)
-		for g: Geo in [near, far]:
-			g.ring(t, 0.0, 0.27, stone.darkened(0.06 * (k % 3)), 5)
+		far.ring(t, 0.0, 0.27, stone.darkened(0.06 * (k % 3)), 5)
+		_near_stones.append([t, stone.darkened(0.06 * (k % 3))])
 
 
 ## A lamp where a building's path leaves the plaza: the realm's warm lights
