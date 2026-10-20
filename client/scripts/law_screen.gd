@@ -1,13 +1,18 @@
 class_name LawScreen
 extends Control
 ## The law card (§21.7, §23.2, "Explain one law in seconds"): the school's
-## shape and name, the law's name, its one-line rule, its notes as symbols,
+## shape and name, the law's name, a live preview of the law on a small
+## realm (its world signature and a figure in its gait), its one-line rule,
+## its notes as symbols,
 ## its rank, its tier as pips, its pages and its one weakness (§7.7). It opens
 ## from the Codex on a law the player has met, and back to it.
 
 var law := ""
 var box: VBoxContainer
 var status_label: Label
+## §21.7's preview: the law woven on a small realm, its world signature,
+## crown and a figure walking in its gait (LawFxPreview).
+var preview: LawFxPreview
 
 
 func _ready() -> void:
@@ -30,6 +35,10 @@ func _build() -> void:
 	column.add_child(UI.title(Strings.t("LAW_CARD_TITLE")))
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))
+	preview = LawFxPreview.new()
+	column.add_child(preview)
+	if law != "":
+		preview.show_laws([law])
 	var list := UI.scroll(column)
 	box = VBoxContainer.new()
 	list.add_child(UI.plate(box))

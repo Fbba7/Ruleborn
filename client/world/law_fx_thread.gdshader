@@ -13,7 +13,7 @@ uniform float t = 0.0;
 uniform float pace = 1.0;
 uniform float strength = 1.0;
 // Half the strip's width, in metres.
-uniform float width = 0.045;
+uniform float width = 0.09;
 
 varying float along;
 varying float side;
@@ -43,7 +43,7 @@ void vertex() {
 		v.xy += n * j;
 		w *= 0.8;
 	} else if (kind > 1.5) {
-		w *= 1.3;
+		w *= 0.8;
 	}
 	v.xy += n * side * w;
 	VERTEX = v.xyz;
@@ -68,8 +68,8 @@ void fragment() {
 	} else {
 		// Chord: light runs round the triangle.
 		float run = smoothstep(0.25, 0.0, abs(fract(along - s * 0.12) - 0.5) - 0.2);
-		c = mix(c, vec3(1.0, 0.98, 0.9), run * 0.7 + step(0.7, core) * 0.35);
-		a *= 0.55 + 0.45 * run;
+		c = mix(c, vec3(1.0, 0.98, 0.9), run * 0.45);
+		a *= 0.3 + 0.45 * run;
 	}
 	ALBEDO = c * 1.15;
 	ALPHA = clamp(a * colour.a * strength, 0.0, 1.0);

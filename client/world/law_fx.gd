@@ -108,11 +108,14 @@ func build(s: LawFxSite) -> void:
 			signatures[law] = sig
 			LawFxSigns.build(self, sig, law)
 		var mat := solid_material(4, 0.6)
-		mat.set_shader_parameter("pulse", 0.6)
+		mat.set_shader_parameter("glow", 0.8)
+		mat.set_shader_parameter("pulse", 0.4)
 		var cap := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 		var top: Vector3 = p["at"] + Vector3(0, LawFxCrown.HEIGHT, 0)
-		cap.solid(LawFxCrown.mesh(str(p["school"])), Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 1.5), top), top, RealmKit.jitter(p["tile"], 9))
+		var grown := Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 1.5), top)
+		cap.solid(LawFxCrown.mesh(str(p["school"])), grown, top, RealmKit.jitter(p["tile"], 9))
 		layer(crowns, cap, mat, true)
+	_share_ground()
 	links = Node3D.new()
 	links.name = "Links"
 	add_child(links)
@@ -120,6 +123,21 @@ func build(s: LawFxSite) -> void:
 	if paradox != "":
 		LawFxLinks.paradox(self, paradox)
 	sync(seconds * TPS)
+
+
+## Ground marks laid over the whole realm by several laws at once share
+## it: each is drawn fainter, so the ground under them still reads (§21.10's
+## grayscale test) and the guard's sight on it stays plain.
+func _share_ground() -> void:
+	var marks: Array[MeshInstance3D] = []
+	for sig: Node3D in signatures.values():
+		for mi: MeshInstance3D in sig.find_children("*", "MeshInstance3D", true, false):
+			if mi.get_meta("ground", false):
+				marks.append(mi)
+	var share := 1.0 if marks.size() < 2 else (0.72 if marks.size() == 2 else 0.55)
+	for mi: MeshInstance3D in marks:
+		mi.set_meta("strength", share)
+		(mi.material_override as ShaderMaterial).set_shader_parameter("strength", share)
 
 
 ## A law's signature on its own (the law card's and Weaving's preview).
@@ -159,7 +177,7 @@ func sync_world(replay: RulebornReplay) -> void:
 		for mi: MeshInstance3D in (signatures[law] as Node3D).find_children("*", "MeshInstance3D", true, false):
 			var m := mi.material_override as ShaderMaterial
 			while m != null:
-				m.set_shader_parameter("strength", 1.0 if on else 0.0)
+				m.set_shader_parameter("strength", float(mi.get_meta("strength", 1.0)) if on else 0.0)
 				m = m.next_pass as ShaderMaterial
 	var crew: Array = []
 	for c: Dictionary in replay.crew():
@@ -275,7 +293,7 @@ func glass_material(edge: Color, motion := 0, amount := 1.0, fill := 0.12) -> Sh
 ## A screen-space tint (§21.3): one quad just before the camera, darkening
 ## the screen's edges toward `colour` by `edge` and washing all of it by
 ## `wash`. Nothing of the world is re-rendered for it.
-func thread_material(width := 0.045) -> ShaderMaterial:
+func thread_material(width := 0.09) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = _shader("thread")
 	m.set_shader_parameter("width", width)

@@ -14,7 +14,7 @@ extends RefCounted
 const HEIGHT := 1.72
 ## How strongly the crown glows: a vertex alpha under 1 glows in its colour
 ## (toon.gdshader's and law_fx_solid's `glow_from_alpha`).
-const GLOW := 0.6
+const GLOW := 0.35
 
 static var _cache := {}
 
