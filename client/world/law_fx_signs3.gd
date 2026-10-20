@@ -14,7 +14,7 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 	match law:
 		"tilt":
 			# "Trees, lanterns and banners lean one way; water runs downhill."
-			LawFxPaint.spray(fx, sig, law, {"n": 30, "shape": 3, "colour": Color("#B8741E", 0.8), "radius": [0.05, 0.08],
+			LawFxPaint.spray(fx, sig, law, {"n": 50, "shape": 3, "colour": Color("#6A3A1A", 0.9), "radius": [0.08, 0.11],
 				"tiles": ground, "lift": [0.05, 0.3], "vel": Vector3(0.9, -0.05, 0.3), "period": [2.0, 3.0]})
 			LawFxPaint.spray(fx, sig, law + "_leaves", {"n": 16, "shape": 10, "colour": Color("#5CC46A"),
 				"tiles": fx.site.tiles(LawFxSite.PLANTS), "lift": [0.4, 1.2], "vel": Vector3(0.6, -0.1, 0.2),
@@ -25,13 +25,13 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 			var r := fx.site.rng(law)
 			for t: Vector2i in LawFxPaint.some(ground, 26):
 				steps.append(fx.site.centre(t) + Vector3(r.randf_range(-0.3, 0.3), 0, r.randf_range(-0.3, 0.3)))
-			LawFxPaint.rounds(fx, sig, steps, 0.3, 12, Color("#5A3F2E"))
+			LawFxPaint.rounds(fx, sig, steps, 0.38, 12, Color("#2A1A10"))
 		"leapfrog":
 			# "Springy turf covered in hop marks."
 			var marks: Array = []
 			for t: Vector2i in LawFxPaint.some(ground, 18):
 				marks.append(fx.site.centre(t))
-			LawFxPaint.rounds(fx, sig, marks, 0.7, 4, Color("#3E9B4A"))
+			LawFxPaint.rounds(fx, sig, marks, 0.8, 4, Color("#E8F08A"))
 		"crystal_growth":
 			# "Crystals sprout where walls broke and hum softly."
 			var r := fx.site.rng(law)
@@ -42,7 +42,8 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 					var tilt := Basis(Vector3(r.randf() - 0.5, 0, r.randf() - 0.5).normalized(), 0.35)
 					g.prism(Transform3D(tilt, Vector3.ZERO), 6, 0.13, 0.0, r.randf_range(0.5, 0.85),
 						Color(Palette.MATTER.lightened(0.1), 0.7))
-					var at := fx.site.centre(t) + Vector3(r.randf_range(-0.55, 0.55), 0, r.randf_range(-0.55, 0.55))
+					var around := r.randf() * TAU
+					var at := fx.site.centre(t) + Vector3(cos(around), 0, sin(around)) * r.randf_range(0.55, 0.75)
 					b.geo(g, at, r.randf())
 			if b.triangles > 0:
 				fx.layer(sig, b, fx.solid_material(4, 1.0), true)
@@ -53,12 +54,18 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 				var a := k * TAU / 48.0
 				var d := 0.6 + float(k % 4) * 0.35
 				var out := Vector3(cos(a), 0, sin(a))
-				b.mote(home + out * d + Vector3(0, 0.04, 0), out * 0.001, 0.0, float(k) / 48.0, 0.05, 0.0, 3,
+				b.mote(home + out * d + Vector3(0, 0.04, 0), out * 0.001, 0.0, float(k) / 48.0, 0.08, 0.0, 3,
 					Color("#3A3448", 0.9))
 			fx.layer(sig, b, fx.mote_material(0.0))
 		"shifting_stones":
 			# "Walls glide along grooves with a grinding rumble."
-			LawFxPaint.mark(fx, sig, fx.site.tiles(LawFxSite.WALLS), 13, Color("#6A5A5A"), Color("#3A2A2A"))
+			# Grooves on the ground beside every wall, the way it slides.
+			var grooves: Array[Vector2i] = []
+			for t: Vector2i in fx.site.tiles(LawFxSite.WALLS):
+				for n: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+					if LawFxSite.GROUND.has(fx.site.code(t + n)) and not grooves.has(t + n):
+						grooves.append(t + n)
+			LawFxPaint.mark(fx, sig, grooves, 13, Color("#4A3A3A"), Color("#1A0C14"))
 			LawFxPaint.spray(fx, sig, law, {"n": 20, "shape": 0, "colour": Color("#B9AE9F", 0.8),
 				"tiles": fx.site.tiles(LawFxSite.WALLS), "lift": [0.0, 0.3], "vel": Vector3(0.3, 0.1, 0),
 				"period": [1.5, 2.5], "radius": [0.06, 0.1]})
@@ -72,8 +79,8 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 				"tiles": LawFxPaint.some(ground, 12), "lift": [0.3, 0.5], "radius": [0.22, 0.3]})
 		"held_breath":
 			# "Floating dust hangs still in the air."
-			LawFxPaint.spray(fx, sig, law, {"n": 90, "shape": 0, "colour": Color("#E8DCCB", 0.9),
-				"lift": [0.3, 2.4], "radius": [0.04, 0.07]})
+			LawFxPaint.spray(fx, sig, law, {"n": 90, "shape": 1, "colour": Color("#FFF6E0", 1.0),
+				"lift": [0.3, 2.4], "radius": [0.05, 0.08]})
 		"tidemark":
 			# "A thin silver tide line sweeps the ground at each mark."
 			LawFxPaint.rounds(fx, sig, [fx.site.heart], h.length(), 4, Color("#C9D3E6"), INK, 0.4)
@@ -86,8 +93,8 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 				"lift": [0.3, 0.8], "vel": Vector3(0, 0.5, 0), "period": [1.5, 2.5], "radius": [0.15, 0.22]})
 		"spark_trails":
 			# "Sparkles fade slowly on the ground."
-			LawFxPaint.spray(fx, sig, law, {"n": 50, "shape": 2, "colour": Color("#FFD24A"), "tiles": ground,
-				"lift": [0.03, 0.08], "radius": [0.05, 0.09], "glow": 0.8})
+			LawFxPaint.spray(fx, sig, law, {"n": 70, "shape": 2, "colour": Color("#FFE040"), "tiles": ground,
+				"lift": [0.03, 0.08], "radius": [0.08, 0.13], "glow": 1.0})
 		"overcharge":
 			# "Pylons pulse in threes."
 			var at: Array = []
@@ -107,8 +114,8 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 					tint.set_shader_parameter("flash", 0.5 * (1.0 - u) if u < 1.0 else 0.0))
 		"wild_paths":
 			# "Flowers bloom wherever people walk."
-			LawFxPaint.spray(fx, sig, law, {"n": 50, "shape": 5, "colour": Color("#F7A6DA"),
-				"colour_b": Color("#FFF2A0"), "tiles": ground, "lift": [0.03, 0.08], "radius": [0.05, 0.08]})
+			LawFxPaint.spray(fx, sig, law, {"n": 80, "shape": 5, "colour": Color("#F07AC0"),
+				"colour_b": Color("#FFFFFF"), "tiles": ground, "lift": [0.03, 0.08], "radius": [0.09, 0.13]})
 		"flock":
 			# "Fluffy puffballs graze across the realm."
 			var r := fx.site.rng(law)
@@ -122,7 +129,7 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 			fx.layer(sig, b, fx.solid_material(7, 0.5), true)
 		"spores":
 			# "Pollen clouds drift lazily."
-			LawFxPaint.spray(fx, sig, law, {"n": 30, "shape": 0, "colour": Color("#F6E07A", 0.6), "lift": [0.4, 1.6],
+			LawFxPaint.spray(fx, sig, law, {"n": 36, "shape": 0, "colour": Color("#FFE84A", 0.85), "lift": [0.4, 1.6],
 				"vel": Vector3(0.15, 0.02, 0.1), "period": [8.0, 12.0], "radius": [0.2, 0.35], "wobble": 0.2})
 		"swarm_birth":
 			# "Seed pods cluster around guard posts."
@@ -131,7 +138,7 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 			for post: Vector3 in fx.site.posts:
 				for k in 4:
 					var g := Geo.new()
-					g.ball(Geo.place(Vector3(0, 0.1, 0), 0.0, Vector3(0.8, 1.2, 0.8)), 0.1, Color("#7AB84A"), 3, 7)
+					g.ball(Geo.place(Vector3(0, 0.15, 0), 0.0, Vector3(0.8, 1.2, 0.8)), 0.16, Color("#C8E060"), 3, 7)
 					var a := r.randf() * TAU
 					b.geo(g, post + Vector3(cos(a) * 0.6, 0, sin(a) * 0.6), r.randf())
 			if b.triangles > 0:
@@ -141,7 +148,7 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 			var steps: Array = []
 			for k in 10:
 				steps.append(fx.site.heart + Vector3(k * 0.45 - 2.0, 0, sin(k * 0.9) * 0.3 + 1.0))
-			LawFxPaint.rounds(fx, sig, steps, 0.22, 12, Color("#8FD8FF"))
+			LawFxPaint.rounds(fx, sig, steps, 0.3, 12, Color("#2A4AC0"))
 		"soul_lanterns":
 			# "Warm lantern pools in cold blue dusk."
 			fx.tint(Color("#1A2A6B"), 0.45, 0.08)
@@ -154,7 +161,7 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 			# "Festival lanterns and confetti."
 			LawFxPaint.spray(fx, sig, law, {"n": 60, "shape": 7, "colour": Color("#E05CB4"),
 				"colour_b": Color("#3CC6D8"), "lift": [0.5, 2.5], "vel": Vector3(0.05, -0.3, 0.02),
-				"period": [4.0, 7.0], "radius": [0.04, 0.06], "wobble": 0.2})
+				"period": [4.0, 7.0], "radius": [0.07, 0.1], "wobble": 0.2})
 		"mirror_images":
 			# "Mirror glints in the corners of the eye."
 			LawFxPaint.spray(fx, sig, law, {"n": 24, "shape": 2, "colour": Color("#FFFFFF"), "lift": [0.3, 1.4],
