@@ -52,7 +52,7 @@ const LIGHTS := {
 	"heart": {"sun": 0.53, "sky": "#FFC8F0", "under": "#4B2F6E", "at": Vector3(12, 20, 8), "hour": 0.3},
 	"skyfield": {"sun": 0.59, "sky": "#CFE8FF", "under": "#6A5A40", "at": Vector3(14, 24, 6), "hour": 0.45},
 	"crystalline": {"sun": 0.57, "sky": "#C8C0FF", "under": "#2A2660", "at": Vector3(8, 22, 12), "hour": 0.25},
-	"tidehold": {"sun": 0.42, "sky": "#B8F0F0", "under": "#284860", "at": Vector3(10, 20, 14), "hour": 0.3},
+	"tidehold": {"sun": 0.37, "sky": "#B8F0F0", "under": "#284860", "at": Vector3(10, 20, 14), "hour": 0.3},
 	"emberreach": {"sun": 0.53, "sky": "#FF9A70", "under": "#2A1018", "at": Vector3(16, 14, 4), "hour": 0.2},
 	"verdant": {"sun": 0.50, "sky": "#D8FFC0", "under": "#3A4A20", "at": Vector3(12, 22, 10), "hour": 0.4},
 	"lanternvale": {"sun": 0.33, "sky": "#6060B0", "under": "#100820", "at": Vector3(8, 20, 10), "hour": 0.12},
