@@ -15,7 +15,8 @@ export class SphereGeometry extends T.SphereGeometry {
 	constructor(r, w, h, ps, pl, ts, tl) {
 		const big = r >= 0.03;
 		const part = Math.min(1, (tl ?? Math.PI) / Math.PI);
-		super(r, cap(w, big ? 14 : 8, 32), Math.max(2, Math.round(cap(h, big ? 8 : 5, 16) * Math.max(part, 0.35))), ps, pl, ts, tl);
+		const lean = f() < 0.2; // a kind with many small parts (leaves, flowers, beads) takes them lighter
+		super(r, cap(w, big ? 14 : lean ? 6 : 8, 32), Math.max(2, Math.round(cap(h, big ? 8 : lean ? 4 : 5, 16) * Math.max(part, 0.35))), ps, pl, ts, tl);
 	}
 }
 export class CylinderGeometry extends T.CylinderGeometry {
